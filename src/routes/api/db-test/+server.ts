@@ -5,18 +5,15 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    // Attempt to query a common table, e.g., 'User' or 'Character'
-    // If your schema has a different table, this might need adjustment.
-    // For a simple test, we'll try to find the first record of a 'User' model.
-    // If 'User' doesn't exist, this will throw an error, which is fine for a test.
-    const testData = await prisma.user.findFirst(); 
+    // Query the CharacterInProgress model
+    const testData = await prisma.characterInProgress.findFirst(); 
 
     return json({
       status: 'success',
       message: 'Database connection successful!',
       data: testData,
     });
-  } catch (error) {
+  } catch (error: any) { // Cast error to any to access message property
     console.error('Database connection test failed:', error);
     return json({
       status: 'error',

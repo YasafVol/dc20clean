@@ -1,7 +1,8 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client/edge'; // Changed import
+import { withAccelerate } from '@prisma/extension-accelerate'; // New import
 import { json } from '@sveltejs/kit';
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient().$extends(withAccelerate()); // Extended Prisma Client
 
 export async function GET() {
   try {

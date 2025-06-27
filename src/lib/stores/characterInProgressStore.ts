@@ -3,11 +3,11 @@
 import { writable, derived } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 import type { CharacterInProgress } from '@prisma/client'; // Assuming Prisma client is generated
-import { classesData } from '../rulesdata/classes';
+import { classesData } from '../rulesdata/classes.ts';
 
 // Define the shape of the data stored in the characterInProgressStore
 // This should mirror the CharacterInProgress Prisma model, plus any UI state
-interface CharacterInProgressStoreData extends CharacterInProgress {
+export interface CharacterInProgressStoreData extends CharacterInProgress {
   // Add any UI-specific state here if needed, e.g., current step in wizard
   currentStep: number;
   // Add temporary state for trait selection overflow
@@ -158,7 +158,7 @@ export const startingSP = derived(
   characterInProgressStore,
   ($store) => {
     if (!$store.classId) return 0;
-    const classData = classesData.find(c => c.id === $store.classId);
+    const classData = classesData.find((c: { id: string; }) => c.id === $store.classId);
     return classData?.startingSP ?? 0;
   }
 );
@@ -170,7 +170,7 @@ export const startingMP = derived(
   characterInProgressStore,
   ($store) => {
     if (!$store.classId) return 0;
-    const classData = classesData.find(c => c.id === $store.classId);
+    const classData = classesData.find((c: { id: string; }) => c.id === $store.classId);
     return classData?.startingMP ?? 0;
   }
 );
@@ -187,15 +187,25 @@ export const provisionalSkillPoints = derived(
   }
 );
 
-// Derived store for Ancestry Points Remaining (Base 4 + Negative Traits - Spent)
+import { traitsData } from '../rulesdata/traits.ts';
+import type { ITrait } from '../rulesdata/types.ts';
+
+// ... (rest of the file)
+
+// Derived store for Ancestry Points Remaining (Base 5 - Spent)
 export const ancestryPointsRemaining = derived(
   characterInProgressStore,
   ($store) => {
-    const basePoints = 4; // DC20 p.16
-    // Need to access traitsData to calculate points from negative traits
-    // For now, this calculation is incomplete without access to traitsData
-    const pointsFromNegativeTraits = 0; // Placeholder
-    return basePoints + pointsFromNegativeTraits - $store.ancestryPointsSpent;
+    const basePoints = 5;
+    const selectedTraitIds = JSON.parse($store.selectedTraitIds || '[]');
+    
+    const traits = selectedTraitIds.map((id: string) => traitsData.find((t: ITrait) => t.id === id)) as (ITrait | undefined)[];
+
+    const totalCost = traits
+      .filter((t): t is ITrait => t !== undefined)
+      .reduce((acc: number, t: ITrait) => acc + t.cost, 0);
+
+    return basePoints - totalCost;
   }
 );
 
@@ -206,7 +216,7 @@ export const ancestryPointsRemaining = derived(
 export const maxHP = derived(
   characterInProgressStore,
   ($store) => {
-    const classData = classesData.find(c => c.id === $store.classId);
+    const classData = classesData.find((c: { id: string; }) => c.id === $store.classId);
     const classHP = classData?.baseHpContribution ?? 8;
     const mightModifier = getModifier($store.attribute_might);
     const ancestryHP = 0; // Assuming 0 for MVP until Ancestry HP is implemented

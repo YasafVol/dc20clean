@@ -2,11 +2,15 @@
   import AncestrySelector from './AncestrySelector.svelte';
   import SelectedAncestries from './SelectedAncestries.svelte';
   import AncestryPointsCounter from './AncestryPointsCounter.svelte';
+  import Attributes from './Attributes.svelte';
 </script>
 
-<h1>Ancestry</h1>
+<h1>Character Creation</h1>
 
 <div class="ancestry-page">
+  <section class="attributes-section">
+    <Attributes />
+  </section>
   <section class="ancestry-selection-section">
     <h2>Choose Your Ancestry</h2>
     <AncestrySelector />

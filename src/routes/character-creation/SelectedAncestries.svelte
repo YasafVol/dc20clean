@@ -47,7 +47,15 @@
       <h3>Default Traits</h3>
       <ul>
         {#each selectedAncestry1.defaultTraitIds || [] as traitId}
-          <li>{getTrait(traitId)?.name} (Auto-selected)</li>
+          {@const trait = getTrait(traitId)}
+          {#if trait}
+            <li>
+              <label>
+                <input type="checkbox" checked={selectedTraits.includes(traitId)} on:change={() => handleToggleTrait(traitId)} />
+                {trait.name} ({trait.cost} pts) - {trait.description}
+              </label>
+            </li>
+          {/if}
         {/each}
       </ul>
       <h3>Expanded Traits</h3>
@@ -57,7 +65,7 @@
           {#if trait}
             <li>
               <label>
-                <input type="checkbox" checked={selectedTraits.includes(traitId)} on:change={() => handleToggleTrait(traitId)} disabled={selectedAncestry1?.defaultTraitIds?.includes(traitId)} />
+                <input type="checkbox" checked={selectedTraits.includes(traitId)} on:change={() => handleToggleTrait(traitId)} />
                 {trait.name} ({trait.cost} pts) - {trait.description}
               </label>
             </li>
@@ -72,7 +80,15 @@
       <h3>Default Traits</h3>
       <ul>
         {#each selectedAncestry2.defaultTraitIds || [] as traitId}
-          <li>{getTrait(traitId)?.name} (Auto-selected)</li>
+          {@const trait = getTrait(traitId)}
+          {#if trait}
+            <li>
+              <label>
+                <input type="checkbox" checked={selectedTraits.includes(traitId)} on:change={() => handleToggleTrait(traitId)} />
+                {trait.name} ({trait.cost} pts) - {trait.description}
+              </label>
+            </li>
+          {/if}
         {/each}
       </ul>
       <h3>Expanded Traits</h3>
@@ -82,7 +98,7 @@
           {#if trait}
             <li>
               <label>
-                <input type="checkbox" checked={selectedTraits.includes(traitId)} on:change={() => handleToggleTrait(traitId)} disabled={selectedAncestry2?.defaultTraitIds?.includes(traitId)} />
+                <input type="checkbox" checked={selectedTraits.includes(traitId)} on:change={() => handleToggleTrait(traitId)} />
                 {trait.name} ({trait.cost} pts) - {trait.description}
               </label>
             </li>

@@ -57,7 +57,7 @@
           {#if trait}
             <li>
               <label>
-                <input type="checkbox" checked={selectedTraits.includes(traitId)} on:change={() => handleToggleTrait(traitId)} />
+                <input type="checkbox" checked={selectedTraits.includes(traitId)} on:change={() => handleToggleTrait(traitId)} disabled={selectedAncestry1?.defaultTraitIds?.includes(traitId)} />
                 {trait.name} ({trait.cost} pts) - {trait.description}
               </label>
             </li>
@@ -82,7 +82,7 @@
           {#if trait}
             <li>
               <label>
-                <input type="checkbox" checked={selectedTraits.includes(traitId)} on:change={() => handleToggleTrait(traitId)} />
+                <input type="checkbox" checked={selectedTraits.includes(traitId)} on:change={() => handleToggleTrait(traitId)} disabled={selectedAncestry2?.defaultTraitIds?.includes(traitId)} />
                 {trait.name} ({trait.cost} pts) - {trait.description}
               </label>
             </li>

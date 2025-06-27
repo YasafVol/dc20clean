@@ -6,25 +6,41 @@
 
 <h1>Ancestry</h1>
 
-<div class="container">
-  <div class="selector-column">
+<div class="ancestry-page">
+  <section class="ancestry-selection-section">
+    <h2>Choose Your Ancestry</h2>
     <AncestrySelector />
-  </div>
-  <div class="details-column">
+  </section>
+
+  <section class="points-section">
     <AncestryPointsCounter />
+  </section>
+
+  <section class="traits-section">
+    <h2>Ancestry Traits</h2>
     <SelectedAncestries />
-  </div>
+  </section>
 </div>
 
 <style>
-  .container {
+  .ancestry-page {
     display: flex;
+    flex-direction: column;
     gap: 2rem;
+    padding: 1rem;
   }
-  .selector-column {
-    flex: 1;
+
+  .ancestry-selection-section,
+  .points-section,
+  .traits-section {
+    border: 1px solid #eee;
+    padding: 1.5rem;
+    border-radius: 8px;
+    background-color: #f9f9f9;
   }
-  .details-column {
-    flex: 2;
+
+  h2 {
+    margin-top: 0;
+    color: #333;
   }
 </style>

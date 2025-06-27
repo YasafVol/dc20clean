@@ -16,18 +16,39 @@
   function handleSelectAncestry(ancestryId: string) {
     characterInProgressStore.update((store: CharacterInProgressStoreData) => {
       const isSelected = selectedAncestries.includes(ancestryId);
+      let currentSelectedTraitIds: string[] = JSON.parse(store.selectedTraitIds || '[]');
+      const ancestry = ancestriesData.find(a => a.id === ancestryId);
+      if (!ancestry) return store; // Should not happen
+
       if (isSelected) {
-        // Deselect
-        if (store.ancestry1Id === ancestryId) store.ancestry1Id = null;
-        else if (store.ancestry2Id === ancestryId) store.ancestry2Id = null;
+        // Deselect ancestry
+        if (store.ancestry1Id === ancestryId) {
+          store.ancestry1Id = null;
+        } else if (store.ancestry2Id === ancestryId) {
+          store.ancestry2Id = null;
+        }
+        // Remove default traits
+        currentSelectedTraitIds = currentSelectedTraitIds.filter(
+          (traitId: string) => !(ancestry.defaultTraitIds || []).includes(traitId)
+        );
       } else {
-        // Select
+        // Select ancestry
         if (!store.ancestry1Id) {
           store.ancestry1Id = ancestryId;
         } else if (!store.ancestry2Id) {
           store.ancestry2Id = ancestryId;
+        } else {
+          // If two ancestries are already selected, do nothing
+          return store;
         }
+        // Add default traits if not already present
+        (ancestry.defaultTraitIds || []).forEach(traitId => {
+          if (!currentSelectedTraitIds.includes(traitId)) {
+            currentSelectedTraitIds.push(traitId);
+          }
+        });
       }
+      store.selectedTraitIds = JSON.stringify(currentSelectedTraitIds);
       return store;
     });
   }

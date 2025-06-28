@@ -47,8 +47,8 @@
     margin-top: 2rem;
   }
   .class-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 1rem;
   }
   .class-card {
@@ -57,7 +57,8 @@
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.2s;
-    text-align: center;
+    text-align: left; /* Align text to the left for better readability in a stacked layout */
+    width: 100%; /* Make cards span the full width */
   }
   .class-card:hover {
     border-color: #888;

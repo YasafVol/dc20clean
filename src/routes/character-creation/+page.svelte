@@ -3,11 +3,15 @@
   import SelectedAncestries from './SelectedAncestries.svelte';
   import AncestryPointsCounter from './AncestryPointsCounter.svelte';
   import Attributes from './Attributes.svelte';
+  import ClassSelector from './ClassSelector.svelte';
 </script>
 
 <h1>Character Creation</h1>
 
-<div class="ancestry-page">
+<div class="character-creation-page">
+  <section class="class-selection-section">
+    <ClassSelector />
+  </section>
   <section class="attributes-section">
     <Attributes />
   </section>
@@ -27,13 +31,15 @@
 </div>
 
 <style>
-  .ancestry-page {
+  .character-creation-page {
     display: flex;
     flex-direction: column;
     gap: 2rem;
     padding: 1rem;
   }
 
+  .class-selection-section,
+  .attributes-section,
   .ancestry-selection-section,
   .points-section,
   .traits-section {

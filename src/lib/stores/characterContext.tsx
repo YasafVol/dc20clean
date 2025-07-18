@@ -84,7 +84,7 @@ function characterReducer(state: CharacterInProgressStoreData, action: Character
     case 'NEXT_STEP':
       return {
         ...state,
-        currentStep: Math.min(state.currentStep + 1, 3),
+        currentStep: Math.min(state.currentStep + 1, 4),
       };
     case 'PREVIOUS_STEP':
       return {
@@ -94,7 +94,7 @@ function characterReducer(state: CharacterInProgressStoreData, action: Character
     case 'SET_STEP':
       return {
         ...state,
-        currentStep: Math.max(1, Math.min(action.step, 3)),
+        currentStep: Math.max(1, Math.min(action.step, 4)),
       };
     default:
       return state;

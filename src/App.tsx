@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { CharacterProvider } from './lib/stores/characterContext';
 import CharacterCreation from './routes/character-creation/CharacterCreation.tsx';
+import LoadCharacter from './routes/character-creation/LoadCharacter.tsx';
+import Menu from './components/Menu.tsx';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -67,6 +69,27 @@ const StyledHeader = styled.header`
   font-weight: bold;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const StyledBackButton = styled.button`
+  padding: 0.5rem 1rem;
+  border: 2px solid #fbbf24;
+  border-radius: 6px;
+  background: transparent;
+  color: #fbbf24;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  font-weight: bold;
+  
+  &:hover {
+    background: #fbbf24;
+    color: #1e1b4b;
+    transform: translateY(-2px);
+  }
 `;
 
 const StyledMain = styled.main`
@@ -84,21 +107,62 @@ const StyledFooter = styled.footer`
 `;
 
 function App() {
+  const [currentView, setCurrentView] = useState<'menu' | 'create' | 'load'>('menu');
+
+  const handleCreateCharacter = () => {
+    setCurrentView('create');
+  };
+
+  const handleLoadCharacter = () => {
+    setCurrentView('load');
+  };
+
+  const handleBackToMenu = () => {
+    setCurrentView('menu');
+  };
+
+  const renderCurrentView = () => {
+    switch (currentView) {
+      case 'menu':
+        return (
+          <Menu 
+            onCreateCharacter={handleCreateCharacter}
+            onLoadCharacter={handleLoadCharacter}
+          />
+        );
+      case 'create':
+        return (
+          <CharacterProvider>
+            <StyledHeader>
+              <StyledBackButton onClick={handleBackToMenu}>
+                ← Back to Menu
+              </StyledBackButton>
+              <span>Created by TBD Group</span>
+            </StyledHeader>
+            <StyledMain>
+              <CharacterCreation onNavigateToLoad={handleLoadCharacter} />
+            </StyledMain>
+          </CharacterProvider>
+        );
+      case 'load':
+        return (
+          <LoadCharacter onBack={handleBackToMenu} />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <CharacterProvider>
+    <>
       <GlobalStyle />
       <StyledApp>
-        <StyledHeader>
-          Created by TBD Group
-        </StyledHeader>
-        <StyledMain>
-          <CharacterCreation />
-        </StyledMain>
+        {renderCurrentView()}
         <StyledFooter>
           All rights reserved to TBD Group, 2025
         </StyledFooter>
       </StyledApp>
-    </CharacterProvider>
+    </>
   );
 }
 

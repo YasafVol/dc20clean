@@ -33,11 +33,14 @@ const StyledContainer = styled.div`
 const StyledTitle = styled.h2`
   margin-top: 0;
   color: #fbbf24;
-  font-size: 2rem;
+  font-size: 1.3rem;
   font-weight: bold;
   text-align: center;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   letter-spacing: 1px;
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
 `;
 
 const StyledGrid = styled.div`

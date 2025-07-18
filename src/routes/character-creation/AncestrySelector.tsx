@@ -21,6 +21,28 @@ const ancestryIcons: { [key: string]: string } = {
   'default': '🌟'
 };
 
+const StyledContainer = styled.div`
+  border: 2px solid #8b5cf6;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  margin-top: 2rem;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+`;
+
+const StyledTitle = styled.h2`
+  margin-top: 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
 const StyledGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -284,7 +306,8 @@ function AncestrySelector() {
   }
 
   return (
-    <>
+    <StyledContainer>
+      <StyledTitle>Choose Your Ancestry</StyledTitle>
       <StyledGrid>
         {ancestriesData.map((ancestry: IAncestry) => (
           <StyledCard
@@ -339,7 +362,7 @@ function AncestrySelector() {
           </StyledCloseHint>
         </StyledTooltip>
       )}
-    </>
+    </StyledContainer>
   );
 }
 

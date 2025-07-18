@@ -109,7 +109,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
     (state.attribute_intelligence + 2)
   );
 
-  const ancestryPointsRemaining = 4 - state.ancestryPointsSpent;
+  const ancestryPointsRemaining = 5 - state.ancestryPointsSpent;
 
   const combatMastery = Math.ceil((state.level ?? 1) / 2);
 

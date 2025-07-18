@@ -53,6 +53,34 @@ const GlobalStyle = createGlobalStyle`
 
 const StyledApp = styled.div`
   min-height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledHeader = styled.header`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: #fbbf24;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+`;
+
+const StyledMain = styled.main`
+  flex: 1;
+`;
+
+const StyledFooter = styled.footer`
+  padding: 1rem;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.8rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  border-top: 1px solid rgba(139, 92, 246, 0.3);
+  background: rgba(30, 27, 75, 0.5);
 `;
 
 function App() {
@@ -60,7 +88,15 @@ function App() {
     <CharacterProvider>
       <GlobalStyle />
       <StyledApp>
-        <CharacterCreation />
+        <StyledHeader>
+          Created by TBD Group
+        </StyledHeader>
+        <StyledMain>
+          <CharacterCreation />
+        </StyledMain>
+        <StyledFooter>
+          All rights reserved to TBD Group, 2025
+        </StyledFooter>
       </StyledApp>
     </CharacterProvider>
   );

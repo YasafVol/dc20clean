@@ -42,7 +42,10 @@ type CharacterAction =
   | { type: 'SET_ANCESTRY'; ancestry1Id: string | null; ancestry2Id: string | null }
   | { type: 'SET_TRAITS'; selectedTraitIds: string }
   | { type: 'SET_FEATURE_CHOICES'; selectedFeatureChoices: string }
-  | { type: 'UPDATE_STORE'; updates: Partial<CharacterInProgressStoreData> };
+  | { type: 'UPDATE_STORE'; updates: Partial<CharacterInProgressStoreData> }
+  | { type: 'NEXT_STEP' }
+  | { type: 'PREVIOUS_STEP' }
+  | { type: 'SET_STEP'; step: number };
 
 // Reducer function
 function characterReducer(state: CharacterInProgressStoreData, action: CharacterAction): CharacterInProgressStoreData {
@@ -78,6 +81,21 @@ function characterReducer(state: CharacterInProgressStoreData, action: Character
         ...state,
         ...action.updates,
       };
+    case 'NEXT_STEP':
+      return {
+        ...state,
+        currentStep: Math.min(state.currentStep + 1, 3),
+      };
+    case 'PREVIOUS_STEP':
+      return {
+        ...state,
+        currentStep: Math.max(state.currentStep - 1, 1),
+      };
+    case 'SET_STEP':
+      return {
+        ...state,
+        currentStep: Math.max(1, Math.min(action.step, 3)),
+      };
     default:
       return state;
   }
@@ -109,7 +127,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
     (state.attribute_intelligence + 2)
   );
 
-  const ancestryPointsRemaining = 4 - state.ancestryPointsSpent;
+  const ancestryPointsRemaining = 5 - state.ancestryPointsSpent;
 
   const combatMastery = Math.ceil((state.level ?? 1) / 2);
 

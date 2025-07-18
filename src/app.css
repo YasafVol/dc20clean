@@ -1,0 +1,49 @@
+@import 'tailwindcss';
+
+/* D&D Themed Global Styles */
+body {
+  background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
+  min-height: 100vh;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  color: #e5e7eb;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e1b4b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8b5cf6;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a855f7;
+}
+
+/* Selection colors */
+::selection {
+  background: #fbbf24;
+  color: #1e1b4b;
+}
+
+::-moz-selection {
+  background: #fbbf24;
+  color: #1e1b4b;
+}

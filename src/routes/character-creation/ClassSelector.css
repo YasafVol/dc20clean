@@ -1,0 +1,45 @@
+.class-selection-container {
+  border: 1px solid #eee;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  margin-top: 2rem;
+}
+
+.class-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.class-card {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+  min-width: 200px;
+}
+
+.class-card:hover {
+  background-color: #f0f0f0;
+}
+
+.class-card.selected {
+  border-color: #007bff;
+  background-color: #e6f3ff;
+}
+
+.class-card h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.class-card p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}

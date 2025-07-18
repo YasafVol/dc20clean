@@ -1,18 +1,22 @@
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import type { CharacterInProgress } from '@prisma/client';
+"use client"
+
+import type React from "react"
+import { createContext, useContext, useReducer, type ReactNode } from "react"
+import type { CharacterInProgress } from "@prisma/client"
+import { traitsData } from "../rulesdata/traits"
 
 // Define the shape of the data stored in the character store
 export interface CharacterInProgressStoreData extends CharacterInProgress {
-  currentStep: number;
-  overflowTraitId: string | null;
-  overflowAttributeName: string | null;
-  level: number;
-  combatMastery: number;
+  currentStep: number
+  overflowTraitId: string | null
+  overflowAttributeName: string | null
+  level: number
+  combatMastery: number
 }
 
 // Initial state for the store
 const initialCharacterInProgressState: CharacterInProgressStoreData = {
-  id: '',
+  id: "",
   attribute_might: -2,
   attribute_agility: -2,
   attribute_charisma: -2,
@@ -22,10 +26,10 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
   combatMastery: 1,
   ancestry1Id: null,
   ancestry2Id: null,
-  selectedTraitIds: '',
+  selectedTraitIds: "",
   ancestryPointsSpent: 0,
   classId: null,
-  selectedFeatureChoices: '',
+  selectedFeatureChoices: "",
   finalName: null,
   finalPlayerName: null,
   createdAt: new Date(),
@@ -33,103 +37,115 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
   currentStep: 1,
   overflowTraitId: null,
   overflowAttributeName: null,
-};
+}
 
 // Action types
-type CharacterAction = 
-  | { type: 'UPDATE_ATTRIBUTE'; attribute: string; value: number }
-  | { type: 'SET_CLASS'; classId: string | null }
-  | { type: 'SET_ANCESTRY'; ancestry1Id: string | null; ancestry2Id: string | null }
-  | { type: 'SET_TRAITS'; selectedTraitIds: string }
-  | { type: 'SET_FEATURE_CHOICES'; selectedFeatureChoices: string }
-  | { type: 'UPDATE_STORE'; updates: Partial<CharacterInProgressStoreData> };
+type CharacterAction =
+  | { type: "UPDATE_ATTRIBUTE"; attribute: string; value: number }
+  | { type: "SET_CLASS"; classId: string | null }
+  | { type: "SET_ANCESTRY"; ancestry1Id: string | null; ancestry2Id: string | null }
+  | { type: "SET_TRAITS"; selectedTraitIds: string }
+  | { type: "SET_FEATURE_CHOICES"; selectedFeatureChoices: string }
+  | { type: "UPDATE_STORE"; updates: Partial<CharacterInProgressStoreData> }
 
 // Reducer function
 function characterReducer(state: CharacterInProgressStoreData, action: CharacterAction): CharacterInProgressStoreData {
   switch (action.type) {
-    case 'UPDATE_ATTRIBUTE':
+    case "UPDATE_ATTRIBUTE":
       return {
         ...state,
         [action.attribute]: action.value,
-      };
-    case 'SET_CLASS':
+      }
+    case "SET_CLASS":
       return {
         ...state,
         classId: action.classId,
-      };
-    case 'SET_ANCESTRY':
+      }
+    case "SET_ANCESTRY":
       return {
         ...state,
         ancestry1Id: action.ancestry1Id,
         ancestry2Id: action.ancestry2Id,
-      };
-    case 'SET_TRAITS':
+      }
+    case "SET_TRAITS":
       return {
         ...state,
         selectedTraitIds: action.selectedTraitIds,
-      };
-    case 'SET_FEATURE_CHOICES':
+      }
+    case "SET_FEATURE_CHOICES":
       return {
         ...state,
         selectedFeatureChoices: action.selectedFeatureChoices,
-      };
-    case 'UPDATE_STORE':
+      }
+    case "UPDATE_STORE":
       return {
         ...state,
         ...action.updates,
-      };
+      }
     default:
-      return state;
+      return state
   }
 }
 
 // Context type
 interface CharacterContextType {
-  state: CharacterInProgressStoreData;
-  dispatch: React.Dispatch<CharacterAction>;
+  state: CharacterInProgressStoreData
+  dispatch: React.Dispatch<CharacterAction>
   // Derived values
-  attributePointsRemaining: number;
-  ancestryPointsRemaining: number;
-  combatMastery: number;
-  primeModifier: { name: string; value: number };
+  attributePointsRemaining: number
+  ancestryPointsRemaining: number
+  combatMastery: number
+  primeModifier: { name: string; value: number }
 }
 
 // Create context
-const CharacterContext = createContext<CharacterContextType | undefined>(undefined);
+const CharacterContext = createContext<CharacterContextType | undefined>(undefined)
 
 // Provider component
 export function CharacterProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(characterReducer, initialCharacterInProgressState);
+  const [state, dispatch] = useReducer(characterReducer, initialCharacterInProgressState)
 
   // Derived values
-  const attributePointsRemaining = 12 - (
-    (state.attribute_might + 2) +
-    (state.attribute_agility + 2) +
-    (state.attribute_charisma + 2) +
-    (state.attribute_intelligence + 2)
-  );
+  const attributePointsRemaining =
+    12 -
+    (state.attribute_might +
+      2 +
+      (state.attribute_agility + 2) +
+      (state.attribute_charisma + 2) +
+      (state.attribute_intelligence + 2))
 
-  const ancestryPointsRemaining = 4 - state.ancestryPointsSpent;
+  const ancestryPointsRemaining = (() => {
+    const basePoints = 5
+    const selectedTraitIds = JSON.parse(state.selectedTraitIds || "[]")
 
-  const combatMastery = Math.ceil((state.level ?? 1) / 2);
+    const traits = selectedTraitIds
+      .map((id: string) => traitsData.find((t: any) => t.id === id))
+      .filter((t: any) => t !== undefined)
+
+    const totalCost = traits.reduce((acc: number, t: any) => acc + (t.cost || 0), 0)
+
+    return basePoints - totalCost
+  })()
+
+  const combatMastery = Math.ceil((state.level ?? 1) / 2)
 
   const primeModifier = (() => {
     const attributes = [
-      { name: 'Might', value: state.attribute_might },
-      { name: 'Agility', value: state.attribute_agility },
-      { name: 'Charisma', value: state.attribute_charisma },
-      { name: 'Intelligence', value: state.attribute_intelligence },
-    ];
+      { name: "Might", value: state.attribute_might },
+      { name: "Agility", value: state.attribute_agility },
+      { name: "Charisma", value: state.attribute_charisma },
+      { name: "Intelligence", value: state.attribute_intelligence },
+    ]
 
-    let highestAttribute = attributes[0];
+    let highestAttribute = attributes[0]
     for (let i = 1; i < attributes.length; i++) {
       if (attributes[i].value > highestAttribute.value) {
-        highestAttribute = attributes[i];
+        highestAttribute = attributes[i]
       }
     }
 
-    return highestAttribute;
-  })();
+    return highestAttribute
+  })()
 
   const contextValue: CharacterContextType = {
     state,
@@ -138,25 +154,21 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
     ancestryPointsRemaining,
     combatMastery,
     primeModifier,
-  };
+  }
 
-  return (
-    <CharacterContext.Provider value={contextValue}>
-      {children}
-    </CharacterContext.Provider>
-  );
+  return <CharacterContext.Provider value={contextValue}>{children}</CharacterContext.Provider>
 }
 
 // Custom hook to use the character context
 export function useCharacter() {
-  const context = useContext(CharacterContext);
+  const context = useContext(CharacterContext)
   if (context === undefined) {
-    throw new Error('useCharacter must be used within a CharacterProvider');
+    throw new Error("useCharacter must be used within a CharacterProvider")
   }
-  return context;
+  return context
 }
 
 // Helper function to get an attribute's modifier
 export function getModifier(attributeScore: number | null | undefined): number {
-  return attributeScore ?? 0;
+  return attributeScore ?? 0
 }

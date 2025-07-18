@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useCharacter } from '../../lib/stores/characterContext';
 import AncestrySelector from './AncestrySelector.tsx';
@@ -7,6 +7,8 @@ import AncestryPointsCounter from './AncestryPointsCounter.tsx';
 import Attributes from './Attributes.tsx';
 import ClassSelector from './ClassSelector.tsx';
 import ClassFeatures from './ClassFeatures.tsx';
+import CharacterName from './CharacterName.tsx';
+import Snackbar from '../../components/Snackbar.tsx';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -152,13 +154,15 @@ const StyledButton = styled.button<{ $variant?: 'primary' | 'secondary' }>`
   }
 `;
 
-function CharacterCreation() {
-  const { state, dispatch } = useCharacter();
+function CharacterCreation({ onNavigateToLoad }: { onNavigateToLoad: () => void }) {
+  const { state, dispatch, attributePointsRemaining } = useCharacter();
+  const [showSnackbar, setShowSnackbar] = useState(false);
 
   const steps = [
     { number: 1, label: 'Class & Features' },
     { number: 2, label: 'Attributes' },
     { number: 3, label: 'Ancestry' },
+    { number: 4, label: 'Character Name' },
   ];
 
   const handleStepClick = (step: number) => {
@@ -166,7 +170,31 @@ function CharacterCreation() {
   };
 
   const handleNext = () => {
-    dispatch({ type: 'NEXT_STEP' });
+    if (state.currentStep === 4 && isStepCompleted(4)) {
+      // Character is complete, trigger completion
+      const completedCharacter = {
+        ...state,
+        completedAt: new Date().toISOString(),
+        id: Date.now().toString()
+      };
+      
+      // Save to local storage
+      const existingCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+      existingCharacters.push(completedCharacter);
+      localStorage.setItem('savedCharacters', JSON.stringify(existingCharacters));
+      
+      // Show success snackbar
+      setShowSnackbar(true);
+      
+      // Navigate to load characters page after a short delay
+      setTimeout(() => {
+        onNavigateToLoad();
+      }, 1500);
+      
+      console.log('Character completed:', completedCharacter);
+    } else {
+      dispatch({ type: 'NEXT_STEP' });
+    }
   };
 
   const handlePrevious = () => {
@@ -178,10 +206,12 @@ function CharacterCreation() {
       case 1:
         return state.classId !== null;
       case 2:
-        return state.attribute_might > -2 || state.attribute_agility > -2 || 
-               state.attribute_charisma > -2 || state.attribute_intelligence > -2;
+        return attributePointsRemaining === 0;
       case 3:
         return state.ancestry1Id !== null;
+      case 4:
+        return state.finalName !== null && state.finalName !== '' && 
+               state.finalPlayerName !== null && state.finalPlayerName !== '';
       default:
         return false;
     }
@@ -206,6 +236,8 @@ function CharacterCreation() {
             <SelectedAncestries />
           </>
         );
+      case 4:
+        return <CharacterName />;
       default:
         return null;
     }
@@ -254,9 +286,9 @@ function CharacterCreation() {
           <StyledButton 
             $variant="primary" 
             onClick={handleNext}
-            disabled={state.currentStep === 3}
+            disabled={state.currentStep === 4 && !isStepCompleted(4)}
           >
-            Next →
+            {state.currentStep === 4 ? 'Complete' : 'Next →'}
           </StyledButton>
         </StyledNavigationButtons>
       </StyledStepIndicator>
@@ -264,6 +296,13 @@ function CharacterCreation() {
       <StyledContainer>
         {renderCurrentStep()}
       </StyledContainer>
+
+      <Snackbar
+        message="Character created successfully!"
+        isVisible={showSnackbar}
+        onClose={() => setShowSnackbar(false)}
+        duration={3000}
+      />
     </div>
   );
 }

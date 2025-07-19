@@ -36,6 +36,12 @@ model CharacterInProgress {
   classId              String? // ID of the selected class
   selectedFeatureChoices String // JSON string of selected feature choice IDs/values
 
+  // Save Masteries (DC20 p.22 - choose 2 attributes for Save Mastery)
+  saveMasteryMight     Boolean @default(false)
+  saveMasteryAgility   Boolean @default(false) 
+  saveMasteryCharisma  Boolean @default(false)
+  saveMasteryIntelligence Boolean @default(false)
+
   // Stage D: Skills (MVP Scope)
   // Will add skill selection fields here later
 

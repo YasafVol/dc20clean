@@ -86,6 +86,12 @@ interface CharacterSheetData {
   finalPrimeModifierAttribute: string;
   finalCombatMastery: number;
   
+  // Save Masteries (DC20 p.22)
+  finalSaveMasteryMight: number;
+  finalSaveMasteryAgility: number;
+  finalSaveMasteryCharisma: number;
+  finalSaveMasteryIntelligence: number;
+  
   // Health & Resources
   finalHPMax: number;
   finalSPMax: number;
@@ -165,6 +171,11 @@ const getCharacterData = async (characterId: string): Promise<CharacterSheetData
       finalPrimeModifierValue: 3,
       finalPrimeModifierAttribute: "AGI",
       finalCombatMastery: 1,
+      // Save Masteries (assuming AGI and INT selected for Save Mastery)
+      finalSaveMasteryMight: -1, // No Save Mastery: just attribute value
+      finalSaveMasteryAgility: 4, // Save Mastery: 3 + 1 (CM)
+      finalSaveMasteryCharisma: 0, // No Save Mastery: just attribute value
+      finalSaveMasteryIntelligence: 4, // Save Mastery: 3 + 1 (CM)
       finalHPMax: 7,
       finalSPMax: 1,
       finalMPMax: 0,
@@ -203,14 +214,19 @@ const getCharacterData = async (characterId: string): Promise<CharacterSheetData
     'demo-character': {
       finalName: "Demo Character",
       finalPlayerName: "Player",
-      finalLevel: 2,
-      finalMight: 2,
-      finalAgility: 1,
-      finalCharisma: 3,
-      finalIntelligence: 0,
+      finalLevel: 1,
+      finalMight: 1,
+      finalAgility: 3,
+      finalCharisma: 2,
+      finalIntelligence: -2,
       finalPrimeModifierValue: 3,
-      finalPrimeModifierAttribute: "CHA",
+      finalPrimeModifierAttribute: "AGI",
       finalCombatMastery: 1,
+      // Save Masteries (assuming MIG and AGI selected for Save Mastery)
+      finalSaveMasteryMight: 2, // Save Mastery: 1 + 1 (CM)
+      finalSaveMasteryAgility: 4, // Save Mastery: 3 + 1 (CM)
+      finalSaveMasteryCharisma: 2, // No Save Mastery: just attribute value
+      finalSaveMasteryIntelligence: -2, // No Save Mastery: just attribute value
       finalHPMax: 10,
       finalSPMax: 3,
       finalMPMax: 2,
@@ -474,7 +490,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                 </StyledAttributeBox>
                 <StyledAttributeDetails>
                   <StyledAttributeName>Might</StyledAttributeName>
-                  <StyledSaveBonus>Save {characterData.finalMight >= 0 ? '+' : ''}{characterData.finalMight + characterData.finalCombatMastery}</StyledSaveBonus>
+                  <StyledSaveBonus>Save {characterData.finalSaveMasteryMight >= 0 ? '+' : ''}{characterData.finalSaveMasteryMight}</StyledSaveBonus>
                 </StyledAttributeDetails>
               </StyledAttributeItem>
 
@@ -486,7 +502,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                 </StyledAttributeBox>
                 <StyledAttributeDetails>
                   <StyledAttributeName>Agility</StyledAttributeName>
-                  <StyledSaveBonus>Save +{characterData.finalAgility + characterData.finalCombatMastery}</StyledSaveBonus>
+                  <StyledSaveBonus>Save {characterData.finalSaveMasteryAgility >= 0 ? '+' : ''}{characterData.finalSaveMasteryAgility}</StyledSaveBonus>
                 </StyledAttributeDetails>
               </StyledAttributeItem>
 
@@ -498,7 +514,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                 </StyledAttributeBox>
                 <StyledAttributeDetails>
                   <StyledAttributeName>Charisma</StyledAttributeName>
-                  <StyledSaveBonus>Save {characterData.finalCharisma >= 0 ? '+' : ''}{characterData.finalCharisma + characterData.finalCombatMastery}</StyledSaveBonus>
+                  <StyledSaveBonus>Save {characterData.finalSaveMasteryCharisma >= 0 ? '+' : ''}{characterData.finalSaveMasteryCharisma}</StyledSaveBonus>
                 </StyledAttributeDetails>
               </StyledAttributeItem>
 
@@ -510,7 +526,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                 </StyledAttributeBox>
                 <StyledAttributeDetails>
                   <StyledAttributeName>Intelligence</StyledAttributeName>
-                  <StyledSaveBonus>Save +{characterData.finalIntelligence + characterData.finalCombatMastery}</StyledSaveBonus>
+                  <StyledSaveBonus>Save {characterData.finalSaveMasteryIntelligence >= 0 ? '+' : ''}{characterData.finalSaveMasteryIntelligence}</StyledSaveBonus>
                 </StyledAttributeDetails>
               </StyledAttributeItem>
 

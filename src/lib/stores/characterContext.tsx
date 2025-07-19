@@ -8,6 +8,11 @@ export interface CharacterInProgressStoreData extends CharacterInProgress {
   overflowAttributeName: string | null;
   level: number;
   combatMastery: number;
+  // Save Masteries (will be in Prisma model but need explicit typing)
+  saveMasteryMight: boolean;
+  saveMasteryAgility: boolean;
+  saveMasteryCharisma: boolean;
+  saveMasteryIntelligence: boolean;
 }
 
 // Initial state for the store
@@ -33,11 +38,17 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
   currentStep: 1,
   overflowTraitId: null,
   overflowAttributeName: null,
+  // Save Masteries (DC20 p.22)
+  saveMasteryMight: false,
+  saveMasteryAgility: false,
+  saveMasteryCharisma: false,
+  saveMasteryIntelligence: false,
 };
 
 // Action types
 type CharacterAction = 
   | { type: 'UPDATE_ATTRIBUTE'; attribute: string; value: number }
+  | { type: 'UPDATE_SAVE_MASTERY'; attribute: string; value: boolean }
   | { type: 'SET_CLASS'; classId: string | null }
   | { type: 'SET_ANCESTRY'; ancestry1Id: string | null; ancestry2Id: string | null }
   | { type: 'SET_TRAITS'; selectedTraitIds: string }
@@ -54,6 +65,11 @@ function characterReducer(state: CharacterInProgressStoreData, action: Character
       return {
         ...state,
         [action.attribute]: action.value,
+      };
+    case 'UPDATE_SAVE_MASTERY':
+      return {
+        ...state,
+        [`saveMastery${action.attribute.charAt(0).toUpperCase() + action.attribute.slice(1)}`]: action.value,
       };
     case 'SET_CLASS':
       return {
@@ -84,7 +100,7 @@ function characterReducer(state: CharacterInProgressStoreData, action: Character
     case 'NEXT_STEP':
       return {
         ...state,
-        currentStep: Math.min(state.currentStep + 1, 4),
+        currentStep: Math.min(state.currentStep + 1, 5),
       };
     case 'PREVIOUS_STEP':
       return {
@@ -94,7 +110,7 @@ function characterReducer(state: CharacterInProgressStoreData, action: Character
     case 'SET_STEP':
       return {
         ...state,
-        currentStep: Math.max(1, Math.min(action.step, 4)),
+        currentStep: Math.max(1, Math.min(action.step, 5)),
       };
     default:
       return state;

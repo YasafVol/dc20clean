@@ -16,6 +16,11 @@ export interface CharacterInProgressStoreData extends CharacterInProgress {
   // Add Level and Combat Mastery
   level: number;
   combatMastery: number; // Derived, but included in interface for clarity
+  // Save Masteries (will be in Prisma model but need explicit typing)
+  saveMasteryMight: boolean;
+  saveMasteryAgility: boolean;
+  saveMasteryCharisma: boolean;
+  saveMasteryIntelligence: boolean;
 }
 
 // Initial state for the store, matching Prisma defaults and adding UI state
@@ -38,6 +43,12 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
 
   classId: null,
   selectedFeatureChoices: '', // JSON string of selected feature choice IDs/values
+
+  // Save Masteries (DC20 p.22)
+  saveMasteryMight: false,
+  saveMasteryAgility: false,
+  saveMasteryCharisma: false,
+  saveMasteryIntelligence: false,
 
   // Skills, Equipment, Details fields will be added/updated later
   finalName: null,

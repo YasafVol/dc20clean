@@ -24,6 +24,12 @@ export interface CharacterInProgressData {
   selectedTraitIds: string;
   selectedFeatureChoices: string;
   
+  // Save Masteries (DC20 p.22 - choose 2 attributes for Save Mastery)
+  saveMasteryMight: boolean;
+  saveMasteryAgility: boolean;
+  saveMasteryCharisma: boolean;
+  saveMasteryIntelligence: boolean;
+  
   // Character Details
   finalName: string | null;
   finalPlayerName: string | null;
@@ -61,6 +67,12 @@ export interface CalculatedCharacterStats {
   finalPrimeModifierValue: number;
   finalPrimeModifierAttribute: string;
   finalCombatMastery: number;
+  
+  // Save Masteries (DC20 p.22)
+  finalSaveMasteryMight: number;
+  finalSaveMasteryAgility: number;
+  finalSaveMasteryCharisma: number;
+  finalSaveMasteryIntelligence: number;
   
   // Health & Resources
   finalHPMax: number;
@@ -205,6 +217,37 @@ export const calculateCharacterStats = async (
   finalSaveDC += primeModifier.value; // Save DC = Base + Prime
   finalInitiativeBonus += finalCombatMastery + finalAgility; // Initiative = CM + Agility
   
+  // Calculate Save Masteries (DC20 p.22)
+  // Save Mastery = Combat Mastery + Attribute Modifier (only for selected attributes)
+  const finalSaveMasteryMight = characterData.saveMasteryMight 
+    ? finalCombatMastery + finalMight 
+    : finalMight;
+  const finalSaveMasteryAgility = characterData.saveMasteryAgility 
+    ? finalCombatMastery + finalAgility 
+    : finalAgility;
+  const finalSaveMasteryCharisma = characterData.saveMasteryCharisma 
+    ? finalCombatMastery + finalCharisma 
+    : finalCharisma;
+  const finalSaveMasteryIntelligence = characterData.saveMasteryIntelligence 
+    ? finalCombatMastery + finalIntelligence 
+    : finalIntelligence;
+    
+  console.log('Save Mastery calculations:', {
+    combatMastery: finalCombatMastery,
+    selections: {
+      might: characterData.saveMasteryMight,
+      agility: characterData.saveMasteryAgility,
+      charisma: characterData.saveMasteryCharisma,
+      intelligence: characterData.saveMasteryIntelligence
+    },
+    results: {
+      might: finalSaveMasteryMight,
+      agility: finalSaveMasteryAgility,
+      charisma: finalSaveMasteryCharisma,
+      intelligence: finalSaveMasteryIntelligence
+    }
+  });
+  
   // Jump Distance = Agility (min 1)
   const finalJumpDistance = Math.max(1, finalAgility);
   
@@ -245,6 +288,12 @@ export const calculateCharacterStats = async (
     finalPrimeModifierValue: primeModifier.value,
     finalPrimeModifierAttribute: primeModifier.attribute,
     finalCombatMastery,
+    
+    // Save Masteries (DC20 p.22)
+    finalSaveMasteryMight,
+    finalSaveMasteryAgility,
+    finalSaveMasteryCharisma,
+    finalSaveMasteryIntelligence,
     
     // Health & Resources
     finalHPMax,

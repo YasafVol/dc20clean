@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { nameByRace } from 'fantasy-name-generator';
-import { completeCharacter } from '../../lib/services/characterCompletion';
 import {
   StyledContainer,
   StyledTitle,
@@ -13,7 +12,6 @@ import {
   StyledSuggestionGrid,
   StyledSuggestionButton,
   StyledGenerateButton,
-  StyledFinishButton,
   StyledCharacterInfo,
   StyledCharacterDetails
 } from './styles/CharacterName.styles';
@@ -43,12 +41,7 @@ const generateNamesFromNPM = (race: string): string[] => {
   }
 };
 
-interface CharacterNameProps {
-  onShowSnackbar?: (message: string) => void;
-  onNavigateToLoad?: () => void;
-}
-
-function CharacterName({ onShowSnackbar, onNavigateToLoad }: CharacterNameProps = {}) {
+function CharacterName() {
   const { state, dispatch } = useCharacter();
   const [characterName, setCharacterName] = useState(state.finalName || '');
   const [playerName, setPlayerName] = useState(state.finalPlayerName || '');
@@ -140,48 +133,6 @@ function CharacterName({ onShowSnackbar, onNavigateToLoad }: CharacterNameProps 
         finalName: name
       } 
     });
-  };
-
-  const handleSubmit = async () => {
-    if (characterName.trim() && playerName.trim()) {
-      // Update the state with the current values
-      const updatedState = {
-        ...state,
-        finalName: characterName.trim(),
-        finalPlayerName: playerName.trim()
-      };
-      
-      // Update the store first
-      dispatch({ 
-        type: 'UPDATE_STORE', 
-        updates: { 
-          finalName: characterName.trim(),
-          finalPlayerName: playerName.trim()
-        } 
-      });
-      
-      // Use the shared completion function
-      if (onShowSnackbar && onNavigateToLoad) {
-        await completeCharacter(updatedState, {
-          onShowSnackbar,
-          onNavigateToLoad
-        });
-      } else {
-        // Fallback to the old behavior if callbacks aren't provided
-        try {
-          await completeCharacter(updatedState, {
-            onShowSnackbar: (message: string) => {
-              alert(message);
-            },
-            onNavigateToLoad: () => {
-              console.log('Would navigate to load page');
-            }
-          });
-        } catch (error) {
-          alert('Error creating character. Please try again.');
-        }
-      }
-    }
   };
 
   const getCharacterDescription = () => {
@@ -279,13 +230,6 @@ function CharacterName({ onShowSnackbar, onNavigateToLoad }: CharacterNameProps 
           {isGenerating ? 'Generating...' : 'Generate Names'}
         </StyledGenerateButton>
       </StyledSuggestionSection>
-
-      <StyledFinishButton
-        onClick={handleSubmit}
-        disabled={!characterName.trim() || !playerName.trim()}
-      >
-        Complete Character Creation
-      </StyledFinishButton>
     </StyledContainer>
   );
 }

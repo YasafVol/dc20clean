@@ -27,6 +27,11 @@ export const completeCharacter = async (
       ancestry2Id: characterState.ancestry2Id,
       selectedTraitIds: characterState.selectedTraitIds || '',
       selectedFeatureChoices: characterState.selectedFeatureChoices || '',
+      // Save Masteries selection
+      saveMasteryMight: characterState.saveMasteryMight || false,
+      saveMasteryAgility: characterState.saveMasteryAgility || false,
+      saveMasteryCharisma: characterState.saveMasteryCharisma || false,
+      saveMasteryIntelligence: characterState.saveMasteryIntelligence || false,
       finalName: characterState.finalName,
       finalPlayerName: characterState.finalPlayerName,
       skillsJson: characterState.skillsJson || '', // Default empty for now
@@ -37,6 +42,12 @@ export const completeCharacter = async (
     };
     
     console.log('Calculating stats for character:', characterInProgress);
+    console.log('Save Masteries selected:', {
+      might: characterInProgress.saveMasteryMight,
+      agility: characterInProgress.saveMasteryAgility,
+      charisma: characterInProgress.saveMasteryCharisma,
+      intelligence: characterInProgress.saveMasteryIntelligence
+    });
     
     // Calculate all derived stats using DC20 rules
     const completedCharacterData = await calculateCharacterStats(characterInProgress);

@@ -122,33 +122,6 @@ export const StyledGenerateButton = styled.button`
   }
 `;
 
-export const StyledFinishButton = styled.button`
-  padding: 1rem 2rem;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(145deg, #10b981 0%, #059669 100%);
-  color: white;
-  font-weight: bold;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: 100%;
-  margin-top: 2rem;
-  
-  &:hover {
-    background: linear-gradient(145deg, #059669 0%, #047857 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-  }
-  
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-    background: linear-gradient(145deg, #6b7280 0%, #4b5563 100%);
-  }
-`;
-
 export const StyledCharacterInfo = styled.div`
   margin-bottom: 1.5rem;
   padding: 1rem;

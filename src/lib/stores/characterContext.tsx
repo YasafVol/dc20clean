@@ -13,6 +13,10 @@ export interface CharacterInProgressStoreData extends CharacterInProgress {
   saveMasteryAgility: boolean;
   saveMasteryCharisma: boolean;
   saveMasteryIntelligence: boolean;
+  // Background selections (Step 3: Skills, Trades, Languages)
+  skillsJson: string;
+  tradesJson: string;
+  languagesJson: string;
 }
 
 // Initial state for the store
@@ -43,12 +47,19 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
   saveMasteryAgility: false,
   saveMasteryCharisma: false,
   saveMasteryIntelligence: false,
+  // Background selections (Step 3: Skills, Trades, Languages)
+  skillsJson: '{}',
+  tradesJson: '{}',
+  languagesJson: '{"common": {"fluency": "fluent"}}',
 };
 
 // Action types
 type CharacterAction = 
   | { type: 'UPDATE_ATTRIBUTE'; attribute: string; value: number }
   | { type: 'UPDATE_SAVE_MASTERY'; attribute: string; value: boolean }
+  | { type: 'UPDATE_SKILLS'; skillsJson: string }
+  | { type: 'UPDATE_TRADES'; tradesJson: string }
+  | { type: 'UPDATE_LANGUAGES'; languagesJson: string }
   | { type: 'SET_CLASS'; classId: string | null }
   | { type: 'SET_ANCESTRY'; ancestry1Id: string | null; ancestry2Id: string | null }
   | { type: 'SET_TRAITS'; selectedTraitIds: string }
@@ -70,6 +81,21 @@ function characterReducer(state: CharacterInProgressStoreData, action: Character
       return {
         ...state,
         [`saveMastery${action.attribute.charAt(0).toUpperCase() + action.attribute.slice(1)}`]: action.value,
+      };
+    case 'UPDATE_SKILLS':
+      return {
+        ...state,
+        skillsJson: action.skillsJson,
+      };
+    case 'UPDATE_TRADES':
+      return {
+        ...state,
+        tradesJson: action.tradesJson,
+      };
+    case 'UPDATE_LANGUAGES':
+      return {
+        ...state,
+        languagesJson: action.languagesJson,
       };
     case 'SET_CLASS':
       return {
@@ -100,7 +126,7 @@ function characterReducer(state: CharacterInProgressStoreData, action: Character
     case 'NEXT_STEP':
       return {
         ...state,
-        currentStep: Math.min(state.currentStep + 1, 5),
+        currentStep: Math.min(state.currentStep + 1, 6),
       };
     case 'PREVIOUS_STEP':
       return {
@@ -110,7 +136,7 @@ function characterReducer(state: CharacterInProgressStoreData, action: Character
     case 'SET_STEP':
       return {
         ...state,
-        currentStep: Math.max(1, Math.min(action.step, 5)),
+        currentStep: Math.max(1, Math.min(action.step, 6)),
       };
     default:
       return state;

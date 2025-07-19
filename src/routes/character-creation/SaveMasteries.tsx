@@ -8,11 +8,12 @@ import {
   StyledSaveMasteryItem,
   StyledSaveMasteryCheckbox,
   StyledSaveMasteryLabel,
-  StyledSaveMasteryDetails,
+  StyledAttributeRow,
+  StyledAttributeDescription,
   StyledAttributeName,
   StyledAttributeValue,
   StyledError
-} from './styles/SaveMasteries.styles';
+} from './styles/SaveMasteries.styles.ts';
 
 const SaveMasteries: React.FC = () => {
   const { state, dispatch } = useCharacter();
@@ -96,15 +97,15 @@ const SaveMasteries: React.FC = () => {
               disabled={!attr.selected && selectedCount >= 2}
             />
             <StyledSaveMasteryLabel>
-              <StyledSaveMasteryDetails>
+              <StyledAttributeRow>
                 <StyledAttributeName>{attr.name}</StyledAttributeName>
                 <StyledAttributeValue>
                   {attr.value >= 0 ? '+' : ''}{attr.value}
                 </StyledAttributeValue>
-              </StyledSaveMasteryDetails>
-              <div style={{ fontSize: '0.9em', color: '#666', marginTop: '0.25rem' }}>
+              </StyledAttributeRow>
+              <StyledAttributeDescription>
                 {attr.description}
-              </div>
+              </StyledAttributeDescription>
             </StyledSaveMasteryLabel>
           </StyledSaveMasteryItem>
         ))}

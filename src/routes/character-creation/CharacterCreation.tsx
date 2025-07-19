@@ -7,6 +7,7 @@ import Attributes from './Attributes.tsx';
 import ClassSelector from './ClassSelector.tsx';
 import ClassFeatures from './ClassFeatures.tsx';
 import SaveMasteries from './SaveMasteries.tsx';
+import Background from './Background.tsx';
 import CharacterName from './CharacterName.tsx';
 import Snackbar from '../../components/Snackbar.tsx';
 import { completeCharacter } from '../../lib/services/characterCompletion';
@@ -31,8 +32,9 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
     { number: 1, label: 'Class & Features' },
     { number: 2, label: 'Attributes' },
     { number: 3, label: 'Save Masteries' },
-    { number: 4, label: 'Ancestry' },
-    { number: 5, label: 'Character Name' },
+    { number: 4, label: 'Background' },
+    { number: 5, label: 'Ancestry' },
+    { number: 6, label: 'Character Name' },
   ];
 
   const handleStepClick = (step: number) => {
@@ -40,7 +42,7 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
   };
 
   const handleNext = async () => {
-    if (state.currentStep === 5 && areAllStepsCompleted()) {
+    if (state.currentStep === 6 && areAllStepsCompleted()) {
       // Character is complete, trigger completion using the service
       await completeCharacter(state, {
         onShowSnackbar: (message: string) => {
@@ -75,8 +77,56 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
         ].filter(Boolean).length;
         return selectedCount === 2;
       case 4:
-        return state.ancestry1Id !== null;
+        // Background: check if all points have been spent
+        const hasSkillSelections = state.skillsJson && state.skillsJson !== '{}';
+        const hasTradeSelections = state.tradesJson && state.tradesJson !== '{}';
+        
+        // Parse languages to check points spent
+        let languagePointsUsed = 0;
+        try {
+          const languages = JSON.parse(state.languagesJson || '{}');
+          languagePointsUsed = Object.entries(languages).reduce((sum, [langId, data]: [string, any]) => {
+            if (langId === 'common') return sum; // Common is free
+            return sum + (data.fluency === 'basic' ? 1 : data.fluency === 'advanced' ? 2 : data.fluency === 'fluent' ? 3 : 0);
+          }, 0);
+        } catch (e) {
+          languagePointsUsed = 0;
+        }
+        
+        // Calculate points used for skills and trades
+        let skillPointsUsed = 0;
+        let tradePointsUsed = 0;
+        
+        try {
+          if (hasSkillSelections) {
+            const skills = JSON.parse(state.skillsJson);
+            skillPointsUsed = Object.values(skills).reduce((sum: number, level: any) => sum + level, 0);
+          }
+        } catch (e) {
+          skillPointsUsed = 0;
+        }
+        
+        try {
+          if (hasTradeSelections) {
+            const trades = JSON.parse(state.tradesJson);
+            tradePointsUsed = Object.values(trades).reduce((sum: number, level: any) => sum + level, 0);
+          }
+        } catch (e) {
+          tradePointsUsed = 0;
+        }
+        
+        // Background gives 5 points each for skills, trades, and 3 points for languages (DC20 rules)
+        const maxSkillPoints = 5;
+        const maxTradePoints = 5;
+        const maxLanguagePoints = 3;
+        
+        // Step is complete only if ALL points have been used
+        return skillPointsUsed === maxSkillPoints && 
+               tradePointsUsed === maxTradePoints && 
+               languagePointsUsed === maxLanguagePoints;
       case 5:
+        return state.ancestry1Id !== null;
+      case 6:
         return state.finalName !== null && state.finalName !== '' && 
                state.finalPlayerName !== null && state.finalPlayerName !== '';
       default:
@@ -102,6 +152,8 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
       case 3:
         return <SaveMasteries />;
       case 4:
+        return <Background />;
+      case 5:
         return (
           <>
             <AncestrySelector />
@@ -109,7 +161,7 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
             <SelectedAncestries />
           </>
         );
-      case 5:
+      case 6:
         return <CharacterName />;
       default:
         return null;
@@ -159,9 +211,9 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
           <StyledButton 
             $variant="primary" 
             onClick={handleNext}
-            disabled={state.currentStep === 5 && !areAllStepsCompleted()}
+            disabled={state.currentStep === 6 && !areAllStepsCompleted()}
           >
-            {state.currentStep === 5 ? 'Complete' : 'Next →'}
+            {state.currentStep === 6 ? 'Complete' : 'Next →'}
           </StyledButton>
         </StyledNavigationButtons>
       </StyledStepIndicator>

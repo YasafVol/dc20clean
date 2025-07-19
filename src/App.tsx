@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 import { CharacterProvider } from './lib/stores/characterContext';
 import CharacterCreation from './routes/character-creation/CharacterCreation.tsx';
 import LoadCharacter from './routes/character-creation/LoadCharacter.tsx';
+import CharacterSheet from './routes/character-sheet/CharacterSheet.tsx';
 import Menu from './components/Menu.tsx';
+import {
+  StyledApp,
+  StyledHeader,
+  StyledBackButton,
+  StyledMain,
+  StyledFooter
+} from './styles/App.styles';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -53,61 +61,9 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-const StyledApp = styled.div`
-  min-height: 100vh;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-`;
-
-const StyledHeader = styled.header`
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  color: #fbbf24;
-  font-size: 0.9rem;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-`;
-
-const StyledBackButton = styled.button`
-  padding: 0.5rem 1rem;
-  border: 2px solid #fbbf24;
-  border-radius: 6px;
-  background: transparent;
-  color: #fbbf24;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
-  font-weight: bold;
-  
-  &:hover {
-    background: #fbbf24;
-    color: #1e1b4b;
-    transform: translateY(-2px);
-  }
-`;
-
-const StyledMain = styled.main`
-  flex: 1;
-`;
-
-const StyledFooter = styled.footer`
-  padding: 1rem;
-  text-align: center;
-  color: #9ca3af;
-  font-size: 0.8rem;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  border-top: 1px solid rgba(139, 92, 246, 0.3);
-  background: rgba(30, 27, 75, 0.5);
-`;
-
 function App() {
-  const [currentView, setCurrentView] = useState<'menu' | 'create' | 'load'>('menu');
+  const [currentView, setCurrentView] = useState<'menu' | 'create' | 'load' | 'sheet'>('menu');
+  const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
 
   const handleCreateCharacter = () => {
     setCurrentView('create');
@@ -117,8 +73,14 @@ function App() {
     setCurrentView('load');
   };
 
+  const handleViewCharacterSheet = (characterId: string) => {
+    setSelectedCharacterId(characterId);
+    setCurrentView('sheet');
+  };
+
   const handleBackToMenu = () => {
     setCurrentView('menu');
+    setSelectedCharacterId(null);
   };
 
   const renderCurrentView = () => {
@@ -146,8 +108,18 @@ function App() {
         );
       case 'load':
         return (
-          <LoadCharacter onBack={handleBackToMenu} />
+          <LoadCharacter 
+            onBack={handleBackToMenu} 
+            onSelectCharacter={handleViewCharacterSheet}
+          />
         );
+      case 'sheet':
+        return selectedCharacterId ? (
+          <CharacterSheet 
+            characterId={selectedCharacterId}
+            onBack={handleBackToMenu}
+          />
+        ) : null;
       default:
         return null;
     }

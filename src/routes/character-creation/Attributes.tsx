@@ -22,7 +22,10 @@ function Attributes() {
   function increaseAttribute(attribute: string) {
     if (attributePointsRemaining > 0) {
       const currentValue = typedState[attribute];
-      dispatch({ type: 'UPDATE_ATTRIBUTE', attribute, value: currentValue + 1 });
+      // Maximum attribute value during character creation is +3
+      if (currentValue < 3) {
+        dispatch({ type: 'UPDATE_ATTRIBUTE', attribute, value: currentValue + 1 });
+      }
     }
   }
 
@@ -54,7 +57,7 @@ function Attributes() {
               <StyledValue>{typedState['attribute_' + attribute.id]}</StyledValue>
               <StyledButton
                 onClick={() => increaseAttribute('attribute_' + attribute.id)}
-                disabled={attributePointsRemaining <= 0}
+                disabled={attributePointsRemaining <= 0 || typedState['attribute_' + attribute.id] >= 3}
               >
                 +
               </StyledButton>

@@ -8,6 +8,7 @@ import ClassSelector from './ClassSelector.tsx';
 import ClassFeatures from './ClassFeatures.tsx';
 import CharacterName from './CharacterName.tsx';
 import Snackbar from '../../components/Snackbar.tsx';
+import { completeCharacter } from '../../lib/services/characterCompletion';
 import {
   StyledContainer,
   StyledTitle,
@@ -22,6 +23,7 @@ import {
 
 const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavigateToLoad }) => {
   const { state, dispatch, attributePointsRemaining } = useCharacter();
+  const [snackbarMessage, setSnackbarMessage] = useState('');
   const [showSnackbar, setShowSnackbar] = useState(false);
 
   const steps = [
@@ -35,29 +37,17 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
     dispatch({ type: 'SET_STEP', step });
   };
 
-  const handleNext = () => {
-    if (state.currentStep === 4 && isStepCompleted(4)) {
-      // Character is complete, trigger completion
-      const completedCharacter = {
-        ...state,
-        completedAt: new Date().toISOString(),
-        id: Date.now().toString()
-      };
-      
-      // Save to local storage
-      const existingCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-      existingCharacters.push(completedCharacter);
-      localStorage.setItem('savedCharacters', JSON.stringify(existingCharacters));
-      
-      // Show success snackbar
-      setShowSnackbar(true);
-      
-      // Navigate to load characters page after a short delay
-      setTimeout(() => {
-        onNavigateToLoad();
-      }, 1500);
-      
-      console.log('Character completed:', completedCharacter);
+  const handleNext = async () => {
+    if (state.currentStep === 4 && areAllStepsCompleted()) {
+      // Character is complete, trigger completion using the service
+      await completeCharacter(state, {
+        onShowSnackbar: (message: string) => {
+          setSnackbarMessage(message);
+          setShowSnackbar(true);
+        },
+        onNavigateToLoad: onNavigateToLoad
+      });
+      return;
     } else {
       dispatch({ type: 'NEXT_STEP' });
     }
@@ -81,6 +71,10 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
       default:
         return false;
     }
+  };
+
+  const areAllStepsCompleted = () => {
+    return steps.every(step => isStepCompleted(step.number));
   };
 
   const renderCurrentStep = () => {
@@ -152,7 +146,7 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
           <StyledButton 
             $variant="primary" 
             onClick={handleNext}
-            disabled={state.currentStep === 4 && !isStepCompleted(4)}
+            disabled={state.currentStep === 4 && !areAllStepsCompleted()}
           >
             {state.currentStep === 4 ? 'Complete' : 'Next →'}
           </StyledButton>
@@ -164,7 +158,7 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
       </StyledContainer>
 
       <Snackbar
-        message="Character created successfully!"
+        message={snackbarMessage}
         isVisible={showSnackbar}
         onClose={() => setShowSnackbar(false)}
         duration={3000}

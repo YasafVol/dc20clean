@@ -1,13 +1,8 @@
 import { createCharacterPdf } from './fill';
-import prisma from '../src/lib/prisma'; // Adjust path as necessary
+import { PrismaClient } from '@prisma/client'; // Import PrismaClient
+const prisma = new PrismaClient(); // Initialize PrismaClient
 
-// Placeholder for the Character model as it's not in the provided schema.prisma
-// Assuming a model named 'Character' with an 'id' and 'data' field.
-// This will need to be updated if the actual schema differs.
-interface Character {
-  id: string;
-  data: Record<string, any>;
-}
+type CharacterSheetData = Awaited<ReturnType<typeof prisma.characterSheetData.findUnique>>; // Infer type from findUnique
 
 export const runtime = 'nodejs'; // Force Node.js runtime on Vercel
 
@@ -18,126 +13,13 @@ export default async function GET(request: Request, { params }: { params: { id: 
     return new Response('Character ID is required', { status: 400 });
   }
 
-  let character: Character | null = null;
+  let characterData: CharacterSheetData | null = null;
   try {
-    // Placeholder: Replace with actual Prisma query for the Character model
-    // Once the correct schema.prisma is provided, this will be updated.
-    // For now, we'll simulate fetching data.
-    // character = await prisma.character.findUnique({
-    //   where: { id: characterId },
-    // });
+    characterData = await prisma.characterSheetData.findUnique({
+      where: { id: characterId },
+    });
 
-    // Simulating character data for testing purposes
-    character = {
-      id: characterId,
-      data: {
-        "Character Name": "Test Character",
-        "Player Name": "Test Player",
-        "Level": 1,
-        "Might": 10,
-        "Agility": 12,
-        "Charisma": 14,
-        "Intelligence": 16,
-        "Combat Mastery": 1,
-        "Move Speed": 30,
-        "Hit Points Max": 100,
-        "Stamina Points Max": 50,
-        "Mana Points Max": 25,
-        "Physical Defense": 10,
-        "Mental Defense": 10,
-        "Save DC": 12,
-        "Death Threshold": 0,
-        "Jump Distance": 15,
-        "Rest Point Cap": 5,
-        "Grit Point Cap": 3,
-        "Initiative": 5,
-        "Mastery-Awareness-2": true, // Example of a checkbox
-        "Mastery-Athletics-4": true,
-        "Mastery-Intimidation-6": false,
-        "Mastery-Acrobatics-8": true,
-        "Mastery-Trickery-10": false,
-        "Mastery-Stealth-2": true,
-        "Mastery-Animal-4": false,
-        "Mastery-Influence-6": true,
-        "Mastery-Insight-8": false,
-        "Mastery-Investigation-10": true,
-        "Mastery-Medicine-2": false,
-        "Mastery-Survival-4": true,
-        "Mastery-Arcana-6": false,
-        "Mastery-History-8": true,
-        "Mastery-Nature-10": false,
-        "Mastery-Occultism-2": true,
-        "Mastery-Religion-4": false,
-        "Mastery-Trade-A-6": true,
-        "Mastery-Trade-B-8": false,
-        "Mastery-Trade-C-10": true,
-        "Mastery-Trade-D-2": false,
-        "Mastery-Language-A-Limited": true,
-        "Mastery-Language-B-Fluent": true,
-        "Mastery-Language-C-Limited": false,
-        "Mastery-Language-D-Fluent": false,
-        "Ancestry": "Human",
-        "Class & Subclass": "Warrior",
-        "Features": "Some class features text here.",
-        "Attack A": "Sword",
-        "Attack A Dmg": "1d8",
-        "Attack A Type": "Slashing",
-        "Attack A Notes": "Versatile (1d10)",
-        "Attack B": "Bow",
-        "Attack B Dmg": "1d6",
-        "Attack B Type": "Piercing",
-        "Attack B Notes": "Range 100/400",
-        "Carried": "Backpack, Rope",
-        "Stored": "Tent, Rations",
-        "Supplies A": "Water",
-        "Supplies A Amount": "2",
-        "Supplies B": "Food",
-        "Supplies B Amount": "3",
-        "Attuned A": "Ring of Protection",
-        "Attuned Item A": "Ring of Protection",
-        "Equipped on the Head": "Helmet",
-        "Equipped on the Body": "Leather Armor",
-        "Equipped on the Right Hand": "Sword",
-        "Equipped on the Left Hand": "Shield",
-        "Physical-Damage-Reduction": true,
-        "Elemantal-Damage-Reduction": false,
-        "Mental-Damage-Reduction": true,
-        "Burrow-Half": false,
-        "Swim-Half": true,
-        "Burrow-Full": false,
-        "Swim-Full": false,
-        "Fly-Half": true,
-        "Fly-Full": false,
-        "Climb-Half": true,
-        "Climb-Full": false,
-        "Expertise-Proficiency": true,
-        "Athletics-Proficiency": true,
-        "Intimidation-Proficiency": false,
-        "Trickery-Proficiency": true,
-        "Acrobatics-Proficiency": true,
-        "Stealth-Proficiency": true,
-        "Animal-Proficiency": false,
-        "Influence-Proficiency": true,
-        "Insight-Proficiency": true,
-        "Medicine-Proficiency": false,
-        "Investigation-Proficiency": true,
-        "Survival-Proficiency": true,
-        "History-Proficiency": true,
-        "Arcana-Proficiency": false,
-        "Nature-Proficiency": true,
-        "Trade-A-Proficiency": true,
-        "Religion-Proficiency": false,
-        "Occultism-Proficiency": true,
-        "Trade-D-Proficiency": false,
-        "Trade-C-Proficiency": true,
-        "Trade-B-Proficiency": false,
-        "Glide-Half": true,
-        "Glide-Full": false,
-        "Misc": "Some miscellaneous notes."
-      }
-    };
-
-    if (!character) {
+    if (!characterData) {
       return new Response('Character not found', { status: 404 });
     }
   } catch (error) {
@@ -145,8 +27,54 @@ export default async function GET(request: Request, { params }: { params: { id: 
     return new Response('Internal Server Error', { status: 500 });
   }
 
+  // Data Transformation: Convert CharacterSheetData to Record<string, any>
+  const transformedData: Record<string, any> = {
+    "Character Name": characterData.finalName,
+    "Player Name": characterData.finalPlayerName,
+    "Level": characterData.finalLevel,
+    "Might": characterData.finalMight,
+    "Agility": characterData.finalAgility,
+    "Charisma": characterData.finalCharisma,
+    "Intelligence": characterData.finalIntelligence,
+    "Combat Mastery": characterData.finalCombatMastery,
+    "Move Speed": characterData.finalMoveSpeed,
+    "Hit Points Max": characterData.finalHPMax,
+    "Stamina Points Max": characterData.finalSPMax,
+    "Mana Points Max": characterData.finalMPMax,
+    "Physical Defense": characterData.finalPD,
+    "Mental Defense": characterData.finalAD, // Assuming AD maps to Mental Defense
+    "Save DC": characterData.finalSaveDC,
+    "Death Threshold": characterData.finalDeathThreshold,
+    "Jump Distance": characterData.finalJumpDistance,
+    "Rest Point Cap": characterData.finalRestPoints,
+    "Grit Point Cap": characterData.finalGritPoints,
+    "Initiative": characterData.finalInitiativeBonus,
+    "Ancestry": characterData.ancestry1Name, // Assuming ancestry1Name is the primary ancestry
+    "Class & Subclass": characterData.className, // Assuming className is sufficient
+    // Parse JSON fields
+    ...JSON.parse(characterData.skillsJson || '{}'),
+    ...JSON.parse(characterData.tradesJson || '{}'),
+    ...JSON.parse(characterData.languagesJson || '{}'),
+    ...JSON.parse(characterData.selectedTraitsJson || '{}'),
+    ...JSON.parse(characterData.classFeaturesLvl1Json || '{}'),
+    ...JSON.parse(characterData.equipmentJson || '{}'),
+    // Add other fields as needed, mapping them from characterData to the PDF field names
+    // For example, if you have specific fields for damage reduction:
+    "Physical-Damage-Reduction": characterData.finalPDR,
+    "Elemantal-Damage-Reduction": characterData.finalEDR,
+    "Mental-Damage-Reduction": characterData.finalMDR,
+    // Add save masteries
+    "Save-Mastery-Might": characterData.finalSaveMasteryMight,
+    "Save-Mastery-Agility": characterData.finalSaveMasterityAgility,
+    "Save-Mastery-Charisma": characterData.finalSaveMasteryCharisma,
+    "Save-Mastery-Intelligence": characterData.finalSaveMasteryIntelligence,
+    // Add prime modifier
+    "Prime-Modifier-Value": characterData.finalPrimeModifierValue,
+    "Prime-Modifier-Attribute": characterData.finalPrimeModifierAttribute,
+  };
+
   try {
-    const pdfBytes = await createCharacterPdf(character.data);
+    const pdfBytes = await createCharacterPdf(transformedData);
 
     return new Response(pdfBytes, {
       headers: {

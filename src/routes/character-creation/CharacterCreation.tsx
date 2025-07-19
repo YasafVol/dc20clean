@@ -169,29 +169,42 @@ function CharacterCreation({ onNavigateToLoad }: { onNavigateToLoad: () => void 
     dispatch({ type: 'SET_STEP', step });
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (state.currentStep === 4 && isStepCompleted(4)) {
-      // Character is complete, trigger completion
       const completedCharacter = {
         ...state,
-        completedAt: new Date().toISOString(),
-        id: Date.now().toString()
+        // Remove completedAt and id generation here, let backend handle it
       };
-      
-      // Save to local storage
-      const existingCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-      existingCharacters.push(completedCharacter);
-      localStorage.setItem('savedCharacters', JSON.stringify(existingCharacters));
-      
-      // Show success snackbar
-      setShowSnackbar(true);
-      
-      // Navigate to load characters page after a short delay
-      setTimeout(() => {
-        onNavigateToLoad();
-      }, 1500);
-      
-      console.log('Character completed:', completedCharacter);
+
+      try {
+        const response = await fetch('/api/character/progress/complete', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(completedCharacter),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to save character.');
+        }
+
+        // Show success snackbar
+        setShowSnackbar(true);
+
+        // Navigate to load characters page after a short delay
+        setTimeout(() => {
+          onNavigateToLoad();
+        }, 1500);
+
+        console.log('Character finalized and saved to DB.');
+
+      } catch (error) {
+        console.error('Error saving character:', error);
+        // TODO: Show an error snackbar or message to the user
+      }
+
     } else {
       dispatch({ type: 'NEXT_STEP' });
     }

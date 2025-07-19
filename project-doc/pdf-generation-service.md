@@ -51,7 +51,8 @@ DC20CLEAN/                       # repo root (monorepo, pnpm workspaces)
 **Description:** This file defines the Vercel serverless function endpoint.
 *   **Route:** `GET /api/sheet/[id]` (configured via `vercel.json` rewrite).
 *   **Parameter Handling:** Reads the `id` from `params.id`. Returns a 400 response if `id` is missing.
-*   **Data Fetching (Placeholder):** Currently contains a placeholder for fetching character data from Prisma. **This section needs to be updated with the actual Prisma query for the `Character` model once its schema is confirmed.** For demonstration, it uses simulated character data.
+*   **Data Fetching:** Fetches `CharacterSheetData` from the PostgreSQL database via Prisma using the provided `id`. It handles cases where the character is not found.
+*   **Data Transformation:** Transforms the fetched `CharacterSheetData` object into a `Record<string, any>` format, parsing JSON string fields (e.g., `skillsJson`, `tradesJson`, `languagesJson`, `selectedTraitsJson`, `classFeaturesLvl1Json`, `equipmentJson`) to match the structure expected by `createCharacterPdf`.
 *   **PDF Generation:** Calls `createCharacterPdf` from `fill.ts` with the fetched character data.
 *   **Response:** Returns a `Response` object with:
     *   `Content-Type: application/pdf`
@@ -91,12 +92,18 @@ A dedicated `package.json` file was created within `pdf-service/` to manage its 
 
 ## How to Test Locally
 1.  Ensure your PostgreSQL database is running and `DATABASE_URL` is correctly set in your `.env` file.
-2.  Run `npm install` in the root directory (`dc20clean/`) to install all dependencies and generate the Prisma client.
-3.  Start the development server: `npm run dev`
-4.  Use `curl` to download a sample PDF. Replace `<id>` with any string (e.g., `123`), as the Prisma query is currently mocked:
+2.  Install dependencies for the `pdf-service`:
     ```bash
-    curl http://localhost:3000/api/sheet/<id> --output char.pdf
+    cd pdf-service ; npm install
     ```
+3.  Run `npm install` in the root directory (`dc20clean/`) to install all dependencies and generate the Prisma client.
+4.  Start the development server: `npm run dev`
+5.  Once the server is running (typically at `http://localhost:5173/`), you can access the PDF generation endpoint. The endpoint is structured as `/api/character/pdf/[id]`, where `[id]` is the `id` of a `CharacterSheetData` record in your database.
+
+    For example, if you have a character with the ID `some-character-id-123`, you would navigate to:
+    `http://localhost:5173/api/character/pdf/some-character-id-123`
+
+    Replace `some-character-id-123` with an actual `id` from your `CharacterSheetData` table. If the character exists and the data transformation is successful, a PDF file should be downloaded. Check your browser's developer console or the terminal running `npm run dev` for any errors if the download doesn't occur or if the PDF is empty/incorrect.
 
 ## Optional: Splitting `pdf-service` into its own Vercel Project
 If you later decide to deploy the `pdf-service` as a separate Vercel project:

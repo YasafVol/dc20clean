@@ -1,0 +1,1238 @@
+[
+  {
+    "name": "Carried",
+    "type": "text"
+  },
+  {
+    "name": "Stored",
+    "type": "text"
+  },
+  {
+    "name": "Supplies B Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies B",
+    "type": "text"
+  },
+  {
+    "name": "Supplies A Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies A",
+    "type": "text"
+  },
+  {
+    "name": "Supplies C Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies C",
+    "type": "text"
+  },
+  {
+    "name": "Supplies D Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies E",
+    "type": "text"
+  },
+  {
+    "name": "Supplies F Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies F",
+    "type": "text"
+  },
+  {
+    "name": "Supplies E Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies H Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies H",
+    "type": "text"
+  },
+  {
+    "name": "Supplies G Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies G",
+    "type": "text"
+  },
+  {
+    "name": "Supplies J Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies J",
+    "type": "text"
+  },
+  {
+    "name": "Supplies I Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies I",
+    "type": "text"
+  },
+  {
+    "name": "Supplies K Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies K",
+    "type": "text"
+  },
+  {
+    "name": "Attuned B",
+    "type": "text"
+  },
+  {
+    "name": "Attuned C",
+    "type": "text"
+  },
+  {
+    "name": "Attuned A",
+    "type": "text"
+  },
+  {
+    "name": "Attuned D",
+    "type": "text"
+  },
+  {
+    "name": "Attuned E",
+    "type": "text"
+  },
+  {
+    "name": "Attuned Item B",
+    "type": "text"
+  },
+  {
+    "name": "Attuned Item C",
+    "type": "text"
+  },
+  {
+    "name": "Attuned Item D",
+    "type": "text"
+  },
+  {
+    "name": "Attuned Item E",
+    "type": "text"
+  },
+  {
+    "name": "Attuned Item A",
+    "type": "text"
+  },
+  {
+    "name": "Equipped on the Head",
+    "type": "text"
+  },
+  {
+    "name": "Equipped on the Feet",
+    "type": "text"
+  },
+  {
+    "name": "Equipped on the Left Hand",
+    "type": "text"
+  },
+  {
+    "name": "Equipped on the Right Hand",
+    "type": "text"
+  },
+  {
+    "name": "Equipped on the Hands",
+    "type": "text"
+  },
+  {
+    "name": "Equipped on the Waist",
+    "type": "text"
+  },
+  {
+    "name": "Equipped on the Body",
+    "type": "text"
+  },
+  {
+    "name": "Equipped on the Mantle",
+    "type": "text"
+  },
+  {
+    "name": "Equipped on the Neck",
+    "type": "text"
+  },
+  {
+    "name": "Player Name",
+    "type": "text"
+  },
+  {
+    "name": "Ancestry",
+    "type": "text"
+  },
+  {
+    "name": "Character Name",
+    "type": "text"
+  },
+  {
+    "name": "Class & Subclass",
+    "type": "text"
+  },
+  {
+    "name": "Level",
+    "type": "text"
+  },
+  {
+    "name": "Mastery-Awareness-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Awareness-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Awareness-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Awareness-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Awareness-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Athletics-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Athletics-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Athletics-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Athletics-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Athletics-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Intimidation-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Intimidation-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Intimidation-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Intimidation-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Intimidation-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Acrobatics-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Acrobatics-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Acrobatics-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Acrobatics-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Acrobatics-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trickery-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trickery-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trickery-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trickery-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trickery-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Stealth-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Stealth-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Stealth-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Stealth-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Stealth-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Animal-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Animal-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Animal-6",
+    "type": "button"
+  },
+  {
+    "name": "Move Speed",
+    "type": "text"
+  },
+  {
+    "name": "Mastery-Animal-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Animal-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Influence-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Influence-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Influence-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Influence-8",
+    "type": "button"
+  },
+  {
+    "name": "Master-Influence-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Insight-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Insight-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Insight-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Insight-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Insight-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Investigation-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Investigation-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Investigation-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Investigation-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Investigation-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Medicine-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Medicine-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Medicine-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Medicine-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Medicine-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Survival-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Survival-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Survival-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Survival-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Survival-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Arcana-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Arcana-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Arcana-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Arcana-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Arcana-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-History-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-History-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-History-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-History-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-History-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Nature-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Nature-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Nature-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Nature-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Nature-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Occultism-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Occultism-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Occultism-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Occultism-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Occultism-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Religion-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Religion-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Religion-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Religion-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Religion-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-A-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-A-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-A-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-A-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-A-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-C-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-C-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-C-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-C-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-C-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-D-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-D-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-D-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-D-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-D-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Language-A-Limited",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Language-A-Fluent",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Language-B-Limited",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Language-B-Fluent",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Language-C-Limited",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Language-C-Fluent",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Language-D-Limited",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Language-D-Fluent",
+    "type": "button"
+  },
+  {
+    "name": "Awareness",
+    "type": "text"
+  },
+  {
+    "name": "Might Save",
+    "type": "text"
+  },
+  {
+    "name": "Athletics",
+    "type": "text"
+  },
+  {
+    "name": "Intimidation",
+    "type": "text"
+  },
+  {
+    "name": "Agility Save",
+    "type": "text"
+  },
+  {
+    "name": "Acrobatics",
+    "type": "text"
+  },
+  {
+    "name": "Trickery",
+    "type": "text"
+  },
+  {
+    "name": "Stealth",
+    "type": "text"
+  },
+  {
+    "name": "Charisma Save",
+    "type": "text"
+  },
+  {
+    "name": "Animal",
+    "type": "text"
+  },
+  {
+    "name": "Influence",
+    "type": "text"
+  },
+  {
+    "name": "Insight",
+    "type": "text"
+  },
+  {
+    "name": "Intelligence Save",
+    "type": "text"
+  },
+  {
+    "name": "Investigation",
+    "type": "text"
+  },
+  {
+    "name": "Medicine",
+    "type": "text"
+  },
+  {
+    "name": "Survival",
+    "type": "text"
+  },
+  {
+    "name": "Arcana",
+    "type": "text"
+  },
+  {
+    "name": "History",
+    "type": "text"
+  },
+  {
+    "name": "Nature",
+    "type": "text"
+  },
+  {
+    "name": "Occultism",
+    "type": "text"
+  },
+  {
+    "name": "Religion",
+    "type": "text"
+  },
+  {
+    "name": "Trade A",
+    "type": "text"
+  },
+  {
+    "name": "Custom Trade A",
+    "type": "text"
+  },
+  {
+    "name": "Custom Trade C",
+    "type": "text"
+  },
+  {
+    "name": "Custom Trade D",
+    "type": "text"
+  },
+  {
+    "name": "Language A",
+    "type": "text"
+  },
+  {
+    "name": "Language B",
+    "type": "text"
+  },
+  {
+    "name": "Language C",
+    "type": "text"
+  },
+  {
+    "name": "Language D",
+    "type": "text"
+  },
+  {
+    "name": "Features",
+    "type": "text"
+  },
+  {
+    "name": "Attack A",
+    "type": "text"
+  },
+  {
+    "name": "Attack A Dmg",
+    "type": "text"
+  },
+  {
+    "name": "Attack A Type",
+    "type": "text"
+  },
+  {
+    "name": "Attack A Notes",
+    "type": "text"
+  },
+  {
+    "name": "Attack B",
+    "type": "text"
+  },
+  {
+    "name": "Attack B Dmg",
+    "type": "text"
+  },
+  {
+    "name": "Attack B Type",
+    "type": "text"
+  },
+  {
+    "name": "Attack B Notes",
+    "type": "text"
+  },
+  {
+    "name": "Attack C",
+    "type": "text"
+  },
+  {
+    "name": "Attack C Dmg",
+    "type": "text"
+  },
+  {
+    "name": "Attack C Type",
+    "type": "text"
+  },
+  {
+    "name": "Attack C Notes",
+    "type": "text"
+  },
+  {
+    "name": "Attack Check",
+    "type": "text"
+  },
+  {
+    "name": "Save DC",
+    "type": "text"
+  },
+  {
+    "name": "Initiative",
+    "type": "text"
+  },
+  {
+    "name": "Stamina Points Max",
+    "type": "text"
+  },
+  {
+    "name": "Mana Points Max",
+    "type": "text"
+  },
+  {
+    "name": "Stamina Points Current",
+    "type": "text"
+  },
+  {
+    "name": "Mana Points Current",
+    "type": "text"
+  },
+  {
+    "name": "Hit Points Current",
+    "type": "text"
+  },
+  {
+    "name": "Mental Defense",
+    "type": "text"
+  },
+  {
+    "name": "Hit Points Max",
+    "type": "text"
+  },
+  {
+    "name": "Hit Points Temp",
+    "type": "text"
+  },
+  {
+    "name": "MD Heavy Threshold",
+    "type": "text"
+  },
+  {
+    "name": "MD Brutal Threshold",
+    "type": "text"
+  },
+  {
+    "name": "Physical Defense",
+    "type": "text"
+  },
+  {
+    "name": "PD Heavy Threshold",
+    "type": "text"
+  },
+  {
+    "name": "PD Brutal Threshold",
+    "type": "text"
+  },
+  {
+    "name": "Exhaustion -1",
+    "type": "button"
+  },
+  {
+    "name": "Exhaustion -2",
+    "type": "button"
+  },
+  {
+    "name": "Exhaustion -3",
+    "type": "button"
+  },
+  {
+    "name": "Exhaustion -4",
+    "type": "button"
+  },
+  {
+    "name": "Exhaustion -5",
+    "type": "button"
+  },
+  {
+    "name": "Death Threshold",
+    "type": "text"
+  },
+  {
+    "name": "Jump Distance",
+    "type": "text"
+  },
+  {
+    "name": "Rest Point Cap",
+    "type": "text"
+  },
+  {
+    "name": "Rest Point Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource A Cap",
+    "type": "text"
+  },
+  {
+    "name": "Resource A Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource A",
+    "type": "text"
+  },
+  {
+    "name": "Resource B Cap",
+    "type": "text"
+  },
+  {
+    "name": "Resource B Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource B",
+    "type": "text"
+  },
+  {
+    "name": "Resource C Cap",
+    "type": "text"
+  },
+  {
+    "name": "Resource C Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource C",
+    "type": "text"
+  },
+  {
+    "name": "Prime",
+    "type": "text"
+  },
+  {
+    "name": "Might",
+    "type": "text"
+  },
+  {
+    "name": "Agility",
+    "type": "text"
+  },
+  {
+    "name": "Charisma",
+    "type": "text"
+  },
+  {
+    "name": "Intelligence",
+    "type": "text"
+  },
+  {
+    "name": "Combat Mastery",
+    "type": "text"
+  },
+  {
+    "name": "Trade D",
+    "type": "text"
+  },
+  {
+    "name": "Trade C",
+    "type": "text"
+  },
+  {
+    "name": "Mastery-Trade-B-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-B-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-B-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-B-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-B-10",
+    "type": "button"
+  },
+  {
+    "name": "Trade B",
+    "type": "text"
+  },
+  {
+    "name": "Custom Trade B",
+    "type": "text"
+  },
+  {
+    "name": "Grit Point Cap",
+    "type": "text"
+  },
+  {
+    "name": "Grit Point Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource D Cap",
+    "type": "text"
+  },
+  {
+    "name": "Resource D Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource D",
+    "type": "text"
+  },
+  {
+    "name": "Resource E Cap",
+    "type": "text"
+  },
+  {
+    "name": "Resource E Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource E",
+    "type": "text"
+  },
+  {
+    "name": "Resource F Cap",
+    "type": "text"
+  },
+  {
+    "name": "Resource F Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource F",
+    "type": "text"
+  },
+  {
+    "name": "Resource G Cap",
+    "type": "text"
+  },
+  {
+    "name": "Resource G Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource G",
+    "type": "text"
+  },
+  {
+    "name": "Resource H Cap",
+    "type": "text"
+  },
+  {
+    "name": "Resource H Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource H",
+    "type": "text"
+  },
+  {
+    "name": "Resource I Cap",
+    "type": "text"
+  },
+  {
+    "name": "Resource I Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource I",
+    "type": "text"
+  },
+  {
+    "name": "Hold Breath",
+    "type": "text"
+  },
+  {
+    "name": "Attack D",
+    "type": "text"
+  },
+  {
+    "name": "Attack D Dmg",
+    "type": "text"
+  },
+  {
+    "name": "Attack D Type",
+    "type": "text"
+  },
+  {
+    "name": "Attack D Notes",
+    "type": "text"
+  },
+  {
+    "name": "Bloodied",
+    "type": "text"
+  },
+  {
+    "name": "Well-Bloodied",
+    "type": "text"
+  },
+  {
+    "name": "Physical-Damage-Reduction",
+    "type": "button"
+  },
+  {
+    "name": "Elemantal-Damage-Reduction",
+    "type": "button"
+  },
+  {
+    "name": "Mental-Damage-Reduction",
+    "type": "button"
+  },
+  {
+    "name": "Burrow-Half",
+    "type": "button"
+  },
+  {
+    "name": "Swim-Half",
+    "type": "button"
+  },
+  {
+    "name": "Burrow-Full",
+    "type": "button"
+  },
+  {
+    "name": "Swim-Full",
+    "type": "button"
+  },
+  {
+    "name": "Fly-Half",
+    "type": "button"
+  },
+  {
+    "name": "Fly-Full",
+    "type": "button"
+  },
+  {
+    "name": "Climb-Half",
+    "type": "button"
+  },
+  {
+    "name": "Climb-Full",
+    "type": "button"
+  },
+  {
+    "name": "Expertise-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Athletics-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Intimidation-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Trickery-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Acrobatics-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Stealth-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Influence-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Animal-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Insight-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Medicine-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Investigation-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Survival-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "History-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Arcana-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Nature-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Trade-A-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Religion-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Occultism-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Trade-D-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Trade-C-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Trade-B-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Glide-Half",
+    "type": "button"
+  },
+  {
+    "name": "Glide-Full",
+    "type": "button"
+  },
+  {
+    "name": "Misc",
+    "type": "text"
+  }
+]

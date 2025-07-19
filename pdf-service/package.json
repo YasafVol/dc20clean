@@ -1,0 +1,23 @@
+{
+  "name": "pdf-service",
+  "version": "1.0.0",
+  "description": "Server-side PDF generation service for DC20 character sheets",
+  "main": "src/server.ts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@pdf-lib/fontkit": "^1.0.0",
+    "@prisma/client": "^6.10.1",
+    "pdf-lib": "^1.17.1",
+    "prisma": "^6.10.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "typescript": "^5.5.3"
+  }
+}

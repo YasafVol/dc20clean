@@ -39,6 +39,7 @@ The content is organized as follows:
 .env.example
 .gitignore
 .npmrc
+.nvmrc
 .prettierignore
 .prettierrc
 .repomixignore
@@ -46,7 +47,9 @@ docker-compose.yml
 drizzle.config.ts
 e2e/demo.test.ts
 eslint.config.js
+index.html
 package.json
+package.json.backup
 playwright.config.ts
 prisma/migrations/20250526210112_init/migration.sql
 prisma/migrations/20250620112102_allow_next_in_stage_a/migration.sql
@@ -57,9 +60,10 @@ README.md
 repomix.config.json
 src/app.css
 src/app.d.ts
-src/app.html
+src/App.tsx
+src/components/Menu.tsx
+src/components/Snackbar.tsx
 src/demo.spec.ts
-src/hooks.server.ts
 src/lib/index.ts
 src/lib/rulesdata/ancestries.ts
 src/lib/rulesdata/attributes.ts
@@ -72,81 +76,3145 @@ src/lib/rulesdata/types.ts
 src/lib/server/auth.ts
 src/lib/server/db/index.ts
 src/lib/server/db/schema.ts
+src/lib/stores/characterContext.tsx
 src/lib/stores/characterInProgressStore.ts
-src/routes/+layout.svelte
-src/routes/+page.svelte
+src/main.tsx
 src/routes/api/character/progress/_backup_merge_stages_20250621/stageA+server.ts
 src/routes/api/character/progress/_backup_merge_stages_20250621/stageB+server.ts
 src/routes/api/character/progress/complete/+server.ts
-src/routes/demo/+page.svelte
-src/routes/demo/lucia/+page.server.ts
-src/routes/demo/lucia/+page.svelte
-src/routes/demo/lucia/login/+page.server.ts
-src/routes/demo/lucia/login/+page.svelte
+src/routes/character-creation/+page.svelte
+src/routes/character-creation/AncestryPointsCounter.tsx
+src/routes/character-creation/AncestrySelector.tsx
+src/routes/character-creation/Attributes.tsx
+src/routes/character-creation/CharacterCreation.tsx
+src/routes/character-creation/CharacterName.tsx
+src/routes/character-creation/ClassFeatures.tsx
+src/routes/character-creation/ClassSelector.tsx
+src/routes/character-creation/LoadCharacter.tsx
+src/routes/character-creation/SelectedAncestries.tsx
 src/routes/page.svelte.test.ts
-svelte.config.js
 tsconfig.json
+tsconfig.node.json
+vercel.json
 vite.config.ts
 vitest-setup-client.ts
+vitest.config.ts
 ```
 
 # Files
 
-## File: .repomixignore
-````
-# Add patterns to ignore here, one per line
-# Example:
-# *.log
-# tmp/
-*.pdf
-````
+## File: .nvmrc
+```
+20
+```
 
-## File: repomix.config.json
-````json
+## File: index.html
+```html
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>DC20 Character Creator</title>
+	</head>
+	<body>
+		<div id="root"></div>
+		<script type="module" src="/src/main.tsx"></script>
+	</body>
+</html>
+```
+
+## File: package.json.backup
+```
 {
-  "input": {
-    "maxFileSize": 52428800
-  },
-  "output": {
-    "filePath": "repomix-output.md",
-    "style": "markdown",
-    "parsableStyle": false,
-    "fileSummary": true,
-    "directoryStructure": true,
-    "files": true,
-    "removeComments": false,
-    "removeEmptyLines": false,
-    "compress": false,
-    "topFilesLength": 5,
-    "showLineNumbers": false,
-    "copyToClipboard": false,
-    "git": {
-      "sortByChanges": true,
-      "sortByChangesMaxCommits": 100
+	"name": "dc20clean",
+	"version": "0.0.1",
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build && npm run prepack",
+		"preview": "vite preview",
+		"prepare": "svelte-kit sync || echo '' && npx prisma generate --no-engine",
+		"prepack": "svelte-kit sync && svelte-package && publint",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"format": "prettier --write .",
+		"lint": "prettier --check . && eslint .",
+		"test:unit": "vitest",
+		"test": "npm run test:unit -- --run && npm run test:e2e",
+		"test:e2e": "playwright test",
+		"db:start": "docker compose up",
+		"db:push": "drizzle-kit push",
+		"db:migrate": "drizzle-kit migrate",
+		"db:studio": "drizzle-kit studio"
+	},
+	"files": [
+		"dist",
+		"!dist/**/*.test.*",
+		"!dist/**/*.spec.*"
+	],
+	"sideEffects": [
+		"**/*.css"
+	],
+	"svelte": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"svelte": "./dist/index.js"
+		}
+	},
+	"peerDependencies": {
+		"svelte": "^5.0.0"
+	},
+	"devDependencies": {
+		"@eslint/compat": "^1.2.5",
+		"@eslint/js": "^9.18.0",
+		"@playwright/test": "^1.49.1",
+		"@sveltejs/adapter-vercel": "^5.6.3",
+		"@sveltejs/kit": "^2.16.0",
+		"@sveltejs/package": "^2.0.0",
+		"@sveltejs/vite-plugin-svelte": "^5.0.0",
+		"@tailwindcss/forms": "^0.5.9",
+		"@tailwindcss/typography": "^0.5.15",
+		"@tailwindcss/vite": "^4.0.0",
+		"@types/node": "^22",
+		"@vitest/browser": "^3.2.3",
+		"drizzle-kit": "^0.30.2",
+		"eslint": "^9.18.0",
+		"eslint-config-prettier": "^10.0.1",
+		"eslint-plugin-svelte": "^3.0.0",
+		"globals": "^16.0.0",
+		"playwright": "^1.53.0",
+		"prettier": "^3.4.2",
+		"prettier-plugin-svelte": "^3.3.3",
+		"prettier-plugin-tailwindcss": "^0.6.11",
+		"publint": "^0.3.2",
+		"svelte": "^5.0.0",
+		"svelte-check": "^4.0.0",
+		"tailwindcss": "^4.0.0",
+		"typescript": "^5.0.0",
+		"typescript-eslint": "^8.20.0",
+		"vite": "^6.2.6",
+		"vite-plugin-devtools-json": "^0.2.0",
+		"vitest-browser-svelte": "^0.1.0"
+	},
+	"keywords": [
+		"svelte"
+	],
+	"dependencies": {
+		"@node-rs/argon2": "^2.0.2",
+		"@oslojs/crypto": "^1.0.1",
+		"@oslojs/encoding": "^1.1.0",
+		"@prisma/client": "^6.10.1",
+		"@prisma/extension-accelerate": "^2.0.1",
+		"drizzle-orm": "^0.40.0",
+		"postgres": "^3.4.5",
+		"prisma": "^6.10.1"
+	}
+}
+```
+
+## File: src/App.tsx
+```typescript
+import React, { useState } from 'react';
+import styled, { createGlobalStyle } from 'styled-components';
+import { CharacterProvider } from './lib/stores/characterContext';
+import CharacterCreation from './routes/character-creation/CharacterCreation.tsx';
+import LoadCharacter from './routes/character-creation/LoadCharacter.tsx';
+import Menu from './components/Menu.tsx';
+
+const GlobalStyle = createGlobalStyle`
+  * {
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
+    color: #e5e7eb;
+    min-height: 100vh;
+  }
+  
+  #root {
+    min-height: 100vh;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #1e1b4b;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #8b5cf6;
+    border-radius: 6px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a855f7;
+  }
+  
+  /* Selection colors */
+  ::selection {
+    background: #fbbf24;
+    color: #1e1b4b;
+  }
+  
+  ::-moz-selection {
+    background: #fbbf24;
+    color: #1e1b4b;
+  }
+`;
+
+const StyledApp = styled.div`
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledHeader = styled.header`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: #fbbf24;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const StyledBackButton = styled.button`
+  padding: 0.5rem 1rem;
+  border: 2px solid #fbbf24;
+  border-radius: 6px;
+  background: transparent;
+  color: #fbbf24;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  font-weight: bold;
+  
+  &:hover {
+    background: #fbbf24;
+    color: #1e1b4b;
+    transform: translateY(-2px);
+  }
+`;
+
+const StyledMain = styled.main`
+  flex: 1;
+`;
+
+const StyledFooter = styled.footer`
+  padding: 1rem;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.8rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  border-top: 1px solid rgba(139, 92, 246, 0.3);
+  background: rgba(30, 27, 75, 0.5);
+`;
+
+function App() {
+  const [currentView, setCurrentView] = useState<'menu' | 'create' | 'load'>('menu');
+
+  const handleCreateCharacter = () => {
+    setCurrentView('create');
+  };
+
+  const handleLoadCharacter = () => {
+    setCurrentView('load');
+  };
+
+  const handleBackToMenu = () => {
+    setCurrentView('menu');
+  };
+
+  const renderCurrentView = () => {
+    switch (currentView) {
+      case 'menu':
+        return (
+          <Menu 
+            onCreateCharacter={handleCreateCharacter}
+            onLoadCharacter={handleLoadCharacter}
+          />
+        );
+      case 'create':
+        return (
+          <CharacterProvider>
+            <StyledHeader>
+              <StyledBackButton onClick={handleBackToMenu}>
+                ← Back to Menu
+              </StyledBackButton>
+              <span>Created by TBD Group</span>
+            </StyledHeader>
+            <StyledMain>
+              <CharacterCreation onNavigateToLoad={handleLoadCharacter} />
+            </StyledMain>
+          </CharacterProvider>
+        );
+      case 'load':
+        return (
+          <LoadCharacter onBack={handleBackToMenu} />
+        );
+      default:
+        return null;
     }
-  },
-  "include": [],
-  "ignore": {
-    "useGitignore": true,
-    "useDefaultPatterns": true,
-    "customPatterns": []
-  },
-  "security": {
-    "enableSecurityCheck": true
-  },
-  "tokenCount": {
-    "encoding": "o200k_base"
+  };
+
+  return (
+    <>
+      <GlobalStyle />
+      <StyledApp>
+        {renderCurrentView()}
+        <StyledFooter>
+          All rights reserved to TBD Group, 2025
+        </StyledFooter>
+      </StyledApp>
+    </>
+  );
+}
+
+export default App;
+```
+
+## File: src/components/Menu.tsx
+```typescript
+import React from 'react';
+import styled from 'styled-components';
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
+`;
+
+const StyledTitle = styled.h1`
+  margin-bottom: 3rem;
+  color: #fbbf24;
+  text-align: center;
+  font-size: 3rem;
+  font-weight: bold;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+  letter-spacing: 2px;
+  background: linear-gradient(45deg, #fbbf24 0%, #f59e0b 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`;
+
+const StyledSubtitle = styled.p`
+  margin-bottom: 4rem;
+  color: #e5e7eb;
+  text-align: center;
+  font-size: 1.2rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  max-width: 600px;
+  line-height: 1.6;
+`;
+
+const StyledMenuGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 800px;
+  width: 100%;
+`;
+
+const StyledMenuCard = styled.button`
+  border: 2px solid #8b5cf6;
+  padding: 3rem 2rem;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+  backdrop-filter: blur(10px);
+  
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 48px rgba(139, 92, 246, 0.5);
+    border-color: #fbbf24;
+  }
+`;
+
+const StyledIcon = styled.div`
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(145deg, #8b5cf6 0%, #a855f7 100%);
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  
+  ${StyledMenuCard}:hover & {
+    background: linear-gradient(145deg, #fbbf24 0%, #f59e0b 100%);
+    transform: scale(1.1);
+  }
+`;
+
+const StyledCardTitle = styled.h2`
+  margin: 0 0 1rem 0;
+  color: #fbbf24;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+  
+  ${StyledMenuCard}:hover & {
+    color: #f59e0b;
+  }
+`;
+
+const StyledCardDescription = styled.p`
+  margin: 0;
+  color: #e5e7eb;
+  font-size: 1rem;
+  line-height: 1.6;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  opacity: 0.9;
+`;
+
+interface MenuProps {
+  onCreateCharacter: () => void;
+  onLoadCharacter: () => void;
+}
+
+function Menu({ onCreateCharacter, onLoadCharacter }: MenuProps) {
+  return (
+    <StyledContainer>
+      <StyledTitle>DC20 Character Creator</StyledTitle>
+      <StyledSubtitle>
+        Welcome to the ultimate D&D character creation experience. Choose your path to begin your adventure.
+      </StyledSubtitle>
+      
+      <StyledMenuGrid>
+        <StyledMenuCard onClick={onCreateCharacter}>
+          <StyledIcon>⚔️</StyledIcon>
+          <StyledCardTitle>Create Character</StyledCardTitle>
+          <StyledCardDescription>
+            Start fresh and create a new character from scratch. Choose your class, allocate attributes, and select your ancestry to forge your unique hero.
+          </StyledCardDescription>
+        </StyledMenuCard>
+        
+        <StyledMenuCard onClick={onLoadCharacter}>
+          <StyledIcon>📜</StyledIcon>
+          <StyledCardTitle>Load Character</StyledCardTitle>
+          <StyledCardDescription>
+            Continue working on an existing character or load a previously saved creation. Perfect for refining your build or making adjustments.
+          </StyledCardDescription>
+        </StyledMenuCard>
+      </StyledMenuGrid>
+    </StyledContainer>
+  );
+}
+
+export default Menu;
+```
+
+## File: src/components/Snackbar.tsx
+```typescript
+import React, { useEffect, useState } from 'react';
+import styled, { keyframes } from 'styled-components';
+
+const slideIn = keyframes`
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+`;
+
+const slideOut = keyframes`
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+`;
+
+const StyledSnackbar = styled.div<{ $isVisible: boolean; $isExiting: boolean }>`
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(145deg, #10b981 0%, #059669 100%);
+  color: white;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
+  font-weight: bold;
+  font-size: 0.9rem;
+  z-index: 1000;
+  min-width: 300px;
+  animation: ${props => props.$isExiting ? slideOut : slideIn} 0.3s ease-out;
+  display: ${props => props.$isVisible ? 'block' : 'none'};
+  
+  &::before {
+    content: '✓';
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+  }
+`;
+
+interface SnackbarProps {
+  message: string;
+  isVisible: boolean;
+  onClose: () => void;
+  duration?: number;
+}
+
+const Snackbar: React.FC<SnackbarProps> = ({ 
+  message, 
+  isVisible, 
+  onClose, 
+  duration = 3000 
+}) => {
+  const [isExiting, setIsExiting] = useState(false);
+
+  useEffect(() => {
+    if (isVisible) {
+      const timer = setTimeout(() => {
+        setIsExiting(true);
+        setTimeout(() => {
+          onClose();
+          setIsExiting(false);
+        }, 300); // Animation duration
+      }, duration);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible, onClose, duration]);
+
+  return (
+    <StyledSnackbar 
+      $isVisible={isVisible} 
+      $isExiting={isExiting}
+    >
+      {message}
+    </StyledSnackbar>
+  );
+};
+
+export default Snackbar;
+```
+
+## File: src/lib/stores/characterContext.tsx
+```typescript
+import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import type { CharacterInProgress } from '@prisma/client';
+
+// Define the shape of the data stored in the character store
+export interface CharacterInProgressStoreData extends CharacterInProgress {
+  currentStep: number;
+  overflowTraitId: string | null;
+  overflowAttributeName: string | null;
+  level: number;
+  combatMastery: number;
+}
+
+// Initial state for the store
+const initialCharacterInProgressState: CharacterInProgressStoreData = {
+  id: '',
+  attribute_might: -2,
+  attribute_agility: -2,
+  attribute_charisma: -2,
+  attribute_intelligence: -2,
+  pointsSpent: 0,
+  level: 1,
+  combatMastery: 1,
+  ancestry1Id: null,
+  ancestry2Id: null,
+  selectedTraitIds: '',
+  ancestryPointsSpent: 0,
+  classId: null,
+  selectedFeatureChoices: '',
+  finalName: null,
+  finalPlayerName: null,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  currentStep: 1,
+  overflowTraitId: null,
+  overflowAttributeName: null,
+};
+
+// Action types
+type CharacterAction = 
+  | { type: 'UPDATE_ATTRIBUTE'; attribute: string; value: number }
+  | { type: 'SET_CLASS'; classId: string | null }
+  | { type: 'SET_ANCESTRY'; ancestry1Id: string | null; ancestry2Id: string | null }
+  | { type: 'SET_TRAITS'; selectedTraitIds: string }
+  | { type: 'SET_FEATURE_CHOICES'; selectedFeatureChoices: string }
+  | { type: 'UPDATE_STORE'; updates: Partial<CharacterInProgressStoreData> }
+  | { type: 'NEXT_STEP' }
+  | { type: 'PREVIOUS_STEP' }
+  | { type: 'SET_STEP'; step: number };
+
+// Reducer function
+function characterReducer(state: CharacterInProgressStoreData, action: CharacterAction): CharacterInProgressStoreData {
+  switch (action.type) {
+    case 'UPDATE_ATTRIBUTE':
+      return {
+        ...state,
+        [action.attribute]: action.value,
+      };
+    case 'SET_CLASS':
+      return {
+        ...state,
+        classId: action.classId,
+      };
+    case 'SET_ANCESTRY':
+      return {
+        ...state,
+        ancestry1Id: action.ancestry1Id,
+        ancestry2Id: action.ancestry2Id,
+      };
+    case 'SET_TRAITS':
+      return {
+        ...state,
+        selectedTraitIds: action.selectedTraitIds,
+      };
+    case 'SET_FEATURE_CHOICES':
+      return {
+        ...state,
+        selectedFeatureChoices: action.selectedFeatureChoices,
+      };
+    case 'UPDATE_STORE':
+      return {
+        ...state,
+        ...action.updates,
+      };
+    case 'NEXT_STEP':
+      return {
+        ...state,
+        currentStep: Math.min(state.currentStep + 1, 4),
+      };
+    case 'PREVIOUS_STEP':
+      return {
+        ...state,
+        currentStep: Math.max(state.currentStep - 1, 1),
+      };
+    case 'SET_STEP':
+      return {
+        ...state,
+        currentStep: Math.max(1, Math.min(action.step, 4)),
+      };
+    default:
+      return state;
   }
 }
-````
+
+// Context type
+interface CharacterContextType {
+  state: CharacterInProgressStoreData;
+  dispatch: React.Dispatch<CharacterAction>;
+  // Derived values
+  attributePointsRemaining: number;
+  ancestryPointsRemaining: number;
+  combatMastery: number;
+  primeModifier: { name: string; value: number };
+}
+
+// Create context
+const CharacterContext = createContext<CharacterContextType | undefined>(undefined);
+
+// Provider component
+export function CharacterProvider({ children }: { children: ReactNode }) {
+  const [state, dispatch] = useReducer(characterReducer, initialCharacterInProgressState);
+
+  // Derived values
+  const attributePointsRemaining = 12 - (
+    (state.attribute_might + 2) +
+    (state.attribute_agility + 2) +
+    (state.attribute_charisma + 2) +
+    (state.attribute_intelligence + 2)
+  );
+
+  const ancestryPointsRemaining = 5 - state.ancestryPointsSpent;
+
+  const combatMastery = Math.ceil((state.level ?? 1) / 2);
+
+  const primeModifier = (() => {
+    const attributes = [
+      { name: 'Might', value: state.attribute_might },
+      { name: 'Agility', value: state.attribute_agility },
+      { name: 'Charisma', value: state.attribute_charisma },
+      { name: 'Intelligence', value: state.attribute_intelligence },
+    ];
+
+    let highestAttribute = attributes[0];
+    for (let i = 1; i < attributes.length; i++) {
+      if (attributes[i].value > highestAttribute.value) {
+        highestAttribute = attributes[i];
+      }
+    }
+
+    return highestAttribute;
+  })();
+
+  const contextValue: CharacterContextType = {
+    state,
+    dispatch,
+    attributePointsRemaining,
+    ancestryPointsRemaining,
+    combatMastery,
+    primeModifier,
+  };
+
+  return (
+    <CharacterContext.Provider value={contextValue}>
+      {children}
+    </CharacterContext.Provider>
+  );
+}
+
+// Custom hook to use the character context
+export function useCharacter() {
+  const context = useContext(CharacterContext);
+  if (context === undefined) {
+    throw new Error('useCharacter must be used within a CharacterProvider');
+  }
+  return context;
+}
+
+// Helper function to get an attribute's modifier
+export function getModifier(attributeScore: number | null | undefined): number {
+  return attributeScore ?? 0;
+}
+```
+
+## File: src/main.tsx
+```typescript
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+```
+
+## File: src/routes/character-creation/AncestryPointsCounter.tsx
+```typescript
+import React from 'react';
+import styled from 'styled-components';
+import { useCharacter } from '../../lib/stores/characterContext';
+
+const StyledContainer = styled.div`
+  padding: 1.5rem;
+  border: 2px solid #8b5cf6;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  margin-bottom: 1rem;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+  text-align: center;
+`;
+
+const StyledTitle = styled.h2`
+  margin: 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+`;
+
+function AncestryPointsCounter() {
+  const { ancestryPointsRemaining } = useCharacter();
+
+  return (
+    <StyledContainer>
+      <StyledTitle>Ancestry Points: {ancestryPointsRemaining}</StyledTitle>
+    </StyledContainer>
+  );
+}
+
+export default AncestryPointsCounter;
+```
+
+## File: src/routes/character-creation/AncestrySelector.tsx
+```typescript
+import { useState } from 'react';
+import styled from 'styled-components';
+import { useCharacter } from '../../lib/stores/characterContext';
+import { ancestriesData } from '../../lib/rulesdata/ancestries';
+import type { IAncestry } from '../../lib/rulesdata/types';
+
+// Ancestry-specific icons using Unicode symbols and emojis
+const ancestryIcons: { [key: string]: string } = {
+  'human': '👤',
+  'elf': '🧝‍♂️',
+  'dwarf': '🧔',
+  'halfling': '🧙‍♂️',
+  'dragonborn': '🐉',
+  'gnome': '🎭',
+  'half-elf': '🧝‍♀️',
+  'half-orc': '👹',
+  'tiefling': '😈',
+  'orc': '🗡️',
+  'goblin': '👺',
+  'kobold': '🦎',
+  'default': '🌟'
+};
+
+const StyledContainer = styled.div`
+  border: 2px solid #8b5cf6;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  margin-top: 2rem;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+`;
+
+const StyledTitle = styled.h2`
+  margin-top: 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const StyledGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+`;
+
+const StyledCard = styled.button<{ $selected: boolean }>`
+  border: 2px solid #a855f7;
+  padding: 1.5rem;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #2d1b69 0%, #4c1d95 100%);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
+    border-color: #fbbf24;
+  }
+
+  ${props => props.$selected && `
+    border-color: #ef4444;
+    background: linear-gradient(145deg, #991b1b 0%, #dc2626 100%);
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
+    transform: translateY(-2px);
+  `}
+`;
+
+const StyledCardHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+`;
+
+const StyledAncestryIcon = styled.div`
+  font-size: 2rem;
+  flex-shrink: 0;
+  background: linear-gradient(145deg, #8b5cf6 0%, #a855f7 100%);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+`;
+
+const StyledCardTitle = styled.h3`
+  margin: 0;
+  color: #fbbf24;
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledCardDescription = styled.p`
+  margin: 0;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  flex: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  position: relative;
+`;
+
+const StyledCardFooter = styled.div`
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const StyledReadMore = styled.button`
+  color: #fbbf24;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: #f59e0b;
+    background: rgba(251, 191, 36, 0.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+`;
+
+const StyledTooltip = styled.div<{ $show: boolean }>`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
+  color: #e5e7eb;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 3px solid #8b5cf6;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  z-index: 2000;
+  width: 90vw;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  font-size: 1rem;
+  line-height: 1.6;
+  opacity: ${props => props.$show ? 1 : 0};
+  pointer-events: ${props => props.$show ? 'auto' : 'none'};
+  transition: opacity 0.3s ease;
+  
+  /* Custom scrollbar for popup */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #1e1b4b;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #8b5cf6;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a855f7;
+  }
+`;
+
+const StyledTooltipOverlay = styled.div<{ $show: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1999;
+  opacity: ${props => props.$show ? 1 : 0};
+  pointer-events: ${props => props.$show ? 'auto' : 'none'};
+  transition: opacity 0.3s ease;
+`;
+
+const StyledTooltipHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #8b5cf6;
+`;
+
+const StyledTooltipIcon = styled.div`
+  font-size: 3rem;
+  background: linear-gradient(145deg, #8b5cf6 0%, #a855f7 100%);
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+`;
+
+const StyledTooltipTitle = styled.h3`
+  margin: 0;
+  color: #fbbf24;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledTooltipContent = styled.p`
+  margin: 0;
+  color: #e5e7eb;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledCloseHint = styled.div`
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #8b5cf6;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  font-style: italic;
+`;
+
+function AncestrySelector() {
+  const { state, dispatch } = useCharacter();
+  const [popupAncestry, setPopupAncestry] = useState<string | null>(null);
+  
+  const selectedAncestries: string[] = [];
+  if (state.ancestry1Id) selectedAncestries.push(state.ancestry1Id);
+  if (state.ancestry2Id) selectedAncestries.push(state.ancestry2Id);
+
+  function handleSelectAncestry(ancestryId: string) {
+    const isSelected = selectedAncestries.includes(ancestryId);
+    
+    if (isSelected) {
+      // Deselect
+      let newAncestry1Id = state.ancestry1Id;
+      let newAncestry2Id = state.ancestry2Id;
+      
+      if (state.ancestry1Id === ancestryId) {
+        newAncestry1Id = null;
+      } else if (state.ancestry2Id === ancestryId) {
+        newAncestry2Id = null;
+      }
+      
+      dispatch({ type: 'SET_ANCESTRY', ancestry1Id: newAncestry1Id, ancestry2Id: newAncestry2Id });
+    } else {
+      // Select
+      if (!state.ancestry1Id) {
+        dispatch({ type: 'SET_ANCESTRY', ancestry1Id: ancestryId, ancestry2Id: state.ancestry2Id });
+      } else if (!state.ancestry2Id) {
+        dispatch({ type: 'SET_ANCESTRY', ancestry1Id: state.ancestry1Id, ancestry2Id: ancestryId });
+      }
+    }
+  }
+
+  function getAncestryIcon(ancestryId: string): string {
+    return ancestryIcons[ancestryId.toLowerCase()] || ancestryIcons.default;
+  }
+
+  function truncateText(text: string, maxLength: number): string {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  }
+
+  function needsReadMore(text: string, maxLength: number): boolean {
+    return text.length > maxLength;
+  }
+
+  function openPopup(ancestryId: string) {
+    setPopupAncestry(ancestryId);
+  }
+
+  function closePopup() {
+    setPopupAncestry(null);
+  }
+
+  return (
+    <StyledContainer>
+      <StyledTitle>Choose Your Ancestry</StyledTitle>
+      <StyledGrid>
+        {ancestriesData.map((ancestry: IAncestry) => (
+          <StyledCard
+            key={ancestry.id}
+            type="button"
+            $selected={selectedAncestries.includes(ancestry.id)}
+            onClick={() => handleSelectAncestry(ancestry.id)}
+          >
+            <StyledCardHeader>
+              <StyledAncestryIcon>{getAncestryIcon(ancestry.id)}</StyledAncestryIcon>
+              <StyledCardTitle>{ancestry.name}</StyledCardTitle>
+            </StyledCardHeader>
+            <StyledCardDescription>
+              {truncateText(ancestry.description, 80)}
+            </StyledCardDescription>
+            {needsReadMore(ancestry.description, 80) && (
+              <StyledCardFooter>
+                <StyledReadMore 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openPopup(ancestry.id);
+                  }}
+                >
+                  read more...
+                </StyledReadMore>
+              </StyledCardFooter>
+            )}
+          </StyledCard>
+        ))}
+      </StyledGrid>
+      
+      {/* Popup overlay and content */}
+      <StyledTooltipOverlay 
+        $show={popupAncestry !== null} 
+        onClick={closePopup}
+      />
+      {popupAncestry && (
+        <StyledTooltip $show={popupAncestry !== null}>
+          <StyledTooltipHeader>
+            <StyledTooltipIcon>
+              {getAncestryIcon(popupAncestry)}
+            </StyledTooltipIcon>
+            <StyledTooltipTitle>
+              {ancestriesData.find(a => a.id === popupAncestry)?.name}
+            </StyledTooltipTitle>
+          </StyledTooltipHeader>
+          <StyledTooltipContent>
+            {ancestriesData.find(a => a.id === popupAncestry)?.description}
+          </StyledTooltipContent>
+          <StyledCloseHint>
+            Click anywhere to close
+          </StyledCloseHint>
+        </StyledTooltip>
+      )}
+    </StyledContainer>
+  );
+}
+
+export default AncestrySelector;
+```
+
+## File: src/routes/character-creation/Attributes.tsx
+```typescript
+import styled from 'styled-components';
+import { useCharacter } from '../../lib/stores/characterContext';
+import { attributesData } from '../../lib/rulesdata/attributes';
+
+const StyledContainer = styled.div`
+  border: 2px solid #8b5cf6;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  margin-top: 2rem;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+`;
+
+const StyledTitle = styled.h2`
+  margin-top: 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const StyledPointsRemaining = styled.p`
+  margin: 0.5rem 0;
+  font-weight: bold;
+  color: #ef4444;
+  font-size: 1.2rem;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+`;
+
+const StyledCard = styled.div`
+  border: 2px solid #a855f7;
+  padding: 1.5rem;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #2d1b69 0%, #4c1d95 100%);
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
+    border-color: #fbbf24;
+  }
+`;
+
+const StyledCardTitle = styled.h3`
+  margin: 0 0 0.5rem 0;
+  color: #fbbf24;
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledControls = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+`;
+
+const StyledButton = styled.button`
+  width: 45px;
+  height: 45px;
+  border: 2px solid #dc2626;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #991b1b 0%, #dc2626 100%);
+  color: #fbbf24;
+  cursor: pointer;
+  font-size: 1.4rem;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+
+  &:hover {
+    background: linear-gradient(145deg, #dc2626 0%, #ef4444 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.5);
+    border-color: #fbbf24;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: linear-gradient(145deg, #4b5563 0%, #6b7280 100%);
+    border-color: #6b7280;
+    transform: none;
+    box-shadow: none;
+  }
+`;
+
+const StyledValue = styled.p`
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  min-width: 40px;
+  color: #fbbf24;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #8b5cf6;
+`;
+
+const StyledDescription = styled.p`
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin: 0.5rem 0 1rem 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+type AttributeState = Record<string, number>;
+
+function Attributes() {
+  const { state, dispatch, attributePointsRemaining } = useCharacter();
+  const typedState = state as unknown as AttributeState;
+
+  function increaseAttribute(attribute: string) {
+    if (attributePointsRemaining > 0) {
+      const currentValue = typedState[attribute];
+      dispatch({ type: 'UPDATE_ATTRIBUTE', attribute, value: currentValue + 1 });
+    }
+  }
+
+  function decreaseAttribute(attribute: string) {
+    const currentValue = typedState[attribute];
+    if (currentValue > -2) {
+      dispatch({ type: 'UPDATE_ATTRIBUTE', attribute, value: currentValue - 1 });
+    }
+  }
+
+  return (
+    <StyledContainer>
+      <StyledTitle>Attributes</StyledTitle>
+      <StyledPointsRemaining>
+        Points Remaining: {attributePointsRemaining}
+      </StyledPointsRemaining>
+      <StyledGrid>
+        {attributesData.map((attribute) => (
+          <StyledCard key={attribute.id}>
+            <StyledCardTitle>{attribute.name}</StyledCardTitle>
+            <StyledDescription>{attribute.description}</StyledDescription>
+            <StyledControls>
+              <StyledButton
+                onClick={() => decreaseAttribute('attribute_' + attribute.id)}
+                disabled={typedState['attribute_' + attribute.id] <= -2}
+              >
+                -
+              </StyledButton>
+              <StyledValue>{typedState['attribute_' + attribute.id]}</StyledValue>
+              <StyledButton
+                onClick={() => increaseAttribute('attribute_' + attribute.id)}
+                disabled={attributePointsRemaining <= 0}
+              >
+                +
+              </StyledButton>
+            </StyledControls>
+          </StyledCard>
+        ))}
+      </StyledGrid>
+    </StyledContainer>
+  );
+}
+
+export default Attributes;
+```
+
+## File: src/routes/character-creation/CharacterCreation.tsx
+```typescript
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { useCharacter } from '../../lib/stores/characterContext';
+import AncestrySelector from './AncestrySelector.tsx';
+import SelectedAncestries from './SelectedAncestries.tsx';
+import AncestryPointsCounter from './AncestryPointsCounter.tsx';
+import Attributes from './Attributes.tsx';
+import ClassSelector from './ClassSelector.tsx';
+import ClassFeatures from './ClassFeatures.tsx';
+import CharacterName from './CharacterName.tsx';
+import Snackbar from '../../components/Snackbar.tsx';
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
+`;
+
+const StyledTitle = styled.h1`
+  margin-bottom: 2rem;
+  color: #fbbf24;
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: bold;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+  letter-spacing: 2px;
+  background: linear-gradient(45deg, #fbbf24 0%, #f59e0b 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`;
+
+const StyledStepIndicator = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+`;
+
+const StyledStepsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  flex: 1;
+`;
+
+const StyledStep = styled.div<{ $active: boolean; $completed: boolean }>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+`;
+
+const StyledStepNumber = styled.div<{ $active: boolean; $completed: boolean }>`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  
+  ${props => props.$completed && `
+    background: linear-gradient(145deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: 2px solid #10b981;
+  `}
+  
+  ${props => props.$active && !props.$completed && `
+    background: linear-gradient(145deg, #fbbf24 0%, #f59e0b 100%);
+    color: #1e1b4b;
+    border: 2px solid #fbbf24;
+  `}
+  
+  ${props => !props.$active && !props.$completed && `
+    background: transparent;
+    color: #9ca3af;
+    border: 2px solid #9ca3af;
+  `}
+`;
+
+const StyledStepLabel = styled.span<{ $active: boolean; $completed: boolean }>`
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  
+  ${props => props.$completed && `
+    color: #10b981;
+  `}
+  
+  ${props => props.$active && !props.$completed && `
+    color: #fbbf24;
+  `}
+  
+  ${props => !props.$active && !props.$completed && `
+    color: #9ca3af;
+  `}
+`;
+
+const StyledNavigationButtons = styled.div`
+  display: flex;
+  gap: 1rem;
+`;
+
+const StyledButton = styled.button<{ $variant?: 'primary' | 'secondary' }>`
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  min-width: 80px;
+  
+  ${props => props.$variant === 'primary' && `
+    background: linear-gradient(145deg, #fbbf24 0%, #f59e0b 100%);
+    color: #1e1b4b;
+    
+    &:hover {
+      background: linear-gradient(145deg, #f59e0b 0%, #d97706 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+    }
+  `}
+  
+  ${props => props.$variant === 'secondary' && `
+    background: transparent;
+    color: #9ca3af;
+    border: 2px solid #9ca3af;
+    
+    &:hover {
+      color: #fbbf24;
+      border-color: #fbbf24;
+    }
+  `}
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+`;
+
+function CharacterCreation({ onNavigateToLoad }: { onNavigateToLoad: () => void }) {
+  const { state, dispatch, attributePointsRemaining } = useCharacter();
+  const [showSnackbar, setShowSnackbar] = useState(false);
+
+  const steps = [
+    { number: 1, label: 'Class & Features' },
+    { number: 2, label: 'Attributes' },
+    { number: 3, label: 'Ancestry' },
+    { number: 4, label: 'Character Name' },
+  ];
+
+  const handleStepClick = (step: number) => {
+    dispatch({ type: 'SET_STEP', step });
+  };
+
+  const handleNext = () => {
+    if (state.currentStep === 4 && isStepCompleted(4)) {
+      // Character is complete, trigger completion
+      const completedCharacter = {
+        ...state,
+        completedAt: new Date().toISOString(),
+        id: Date.now().toString()
+      };
+      
+      // Save to local storage
+      const existingCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+      existingCharacters.push(completedCharacter);
+      localStorage.setItem('savedCharacters', JSON.stringify(existingCharacters));
+      
+      // Show success snackbar
+      setShowSnackbar(true);
+      
+      // Navigate to load characters page after a short delay
+      setTimeout(() => {
+        onNavigateToLoad();
+      }, 1500);
+      
+      console.log('Character completed:', completedCharacter);
+    } else {
+      dispatch({ type: 'NEXT_STEP' });
+    }
+  };
+
+  const handlePrevious = () => {
+    dispatch({ type: 'PREVIOUS_STEP' });
+  };
+
+  const isStepCompleted = (step: number) => {
+    switch (step) {
+      case 1:
+        return state.classId !== null;
+      case 2:
+        return attributePointsRemaining === 0;
+      case 3:
+        return state.ancestry1Id !== null;
+      case 4:
+        return state.finalName !== null && state.finalName !== '' && 
+               state.finalPlayerName !== null && state.finalPlayerName !== '';
+      default:
+        return false;
+    }
+  };
+
+  const renderCurrentStep = () => {
+    switch (state.currentStep) {
+      case 1:
+        return (
+          <>
+            <ClassSelector />
+            <ClassFeatures />
+          </>
+        );
+      case 2:
+        return <Attributes />;
+      case 3:
+        return (
+          <>
+            <AncestrySelector />
+            <AncestryPointsCounter />
+            <SelectedAncestries />
+          </>
+        );
+      case 4:
+        return <CharacterName />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div>
+      <StyledTitle>Character Creation</StyledTitle>
+      
+      <StyledStepIndicator>
+        <StyledNavigationButtons>
+          <StyledButton 
+            $variant="secondary" 
+            onClick={handlePrevious}
+            disabled={state.currentStep === 1}
+          >
+            ← Previous
+          </StyledButton>
+        </StyledNavigationButtons>
+
+        <StyledStepsContainer>
+          {steps.map((step) => (
+            <StyledStep 
+              key={step.number} 
+              $active={state.currentStep === step.number}
+              $completed={isStepCompleted(step.number)}
+              onClick={() => handleStepClick(step.number)}
+            >
+              <StyledStepNumber 
+                $active={state.currentStep === step.number}
+                $completed={isStepCompleted(step.number)}
+              >
+                {isStepCompleted(step.number) ? '✓' : step.number}
+              </StyledStepNumber>
+              <StyledStepLabel 
+                $active={state.currentStep === step.number}
+                $completed={isStepCompleted(step.number)}
+              >
+                {step.label}
+              </StyledStepLabel>
+            </StyledStep>
+          ))}
+        </StyledStepsContainer>
+
+        <StyledNavigationButtons>
+          <StyledButton 
+            $variant="primary" 
+            onClick={handleNext}
+            disabled={state.currentStep === 4 && !isStepCompleted(4)}
+          >
+            {state.currentStep === 4 ? 'Complete' : 'Next →'}
+          </StyledButton>
+        </StyledNavigationButtons>
+      </StyledStepIndicator>
+
+      <StyledContainer>
+        {renderCurrentStep()}
+      </StyledContainer>
+
+      <Snackbar
+        message="Character created successfully!"
+        isVisible={showSnackbar}
+        onClose={() => setShowSnackbar(false)}
+        duration={3000}
+      />
+    </div>
+  );
+}
+
+export default CharacterCreation;
+```
+
+## File: src/routes/character-creation/CharacterName.tsx
+```typescript
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { useCharacter } from '../../lib/stores/characterContext';
+import { nameByRace } from 'fantasy-name-generator';
+
+const StyledContainer = styled.div`
+  border: 2px solid #8b5cf6;
+  padding: 2rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  margin-top: 2rem;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+  max-width: 600px;
+  margin: 2rem auto;
+`;
+
+const StyledTitle = styled.h2`
+  margin-top: 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+  margin-bottom: 2rem;
+`;
+
+const StyledInputGroup = styled.div`
+  margin-bottom: 1.5rem;
+`;
+
+const StyledLabel = styled.label`
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #fbbf24;
+  font-weight: bold;
+  font-size: 1rem;
+`;
+
+const StyledInput = styled.input`
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #a855f7;
+  border-radius: 8px;
+  background: rgba(45, 27, 105, 0.8);
+  color: #e5e7eb;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: #fbbf24;
+    box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2);
+  }
+  
+  &::placeholder {
+    color: #9ca3af;
+  }
+`;
+
+const StyledSuggestionSection = styled.div`
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border: 2px solid #a855f7;
+  border-radius: 8px;
+  background: rgba(45, 27, 105, 0.4);
+`;
+
+const StyledSuggestionTitle = styled.h3`
+  margin: 0 0 1rem 0;
+  color: #fbbf24;
+  font-size: 1.1rem;
+  font-weight: bold;
+`;
+
+const StyledSuggestionGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  max-height: 200px;
+  overflow-y: auto;
+`;
+
+const StyledSuggestionButton = styled.button`
+  padding: 0.5rem 1rem;
+  border: 2px solid #a855f7;
+  border-radius: 6px;
+  background: transparent;
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  
+  &:hover {
+    background: #a855f7;
+    color: #1e1b4b;
+    transform: translateY(-2px);
+  }
+`;
+
+const StyledGenerateButton = styled.button`
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #fbbf24 0%, #f59e0b 100%);
+  color: #1e1b4b;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  
+  &:hover {
+    background: linear-gradient(145deg, #f59e0b 0%, #d97706 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+`;
+
+const StyledFinishButton = styled.button`
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #10b981 0%, #059669 100%);
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-top: 2rem;
+  
+  &:hover {
+    background: linear-gradient(145deg, #059669 0%, #047857 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    background: linear-gradient(145deg, #6b7280 0%, #4b5563 100%);
+  }
+`;
+
+const StyledCharacterInfo = styled.div`
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 2px solid #ef4444;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  text-align: center;
+`;
+
+const StyledCharacterDetails = styled.p`
+  margin: 0;
+  color: #e5e7eb;
+  font-size: 1rem;
+  line-height: 1.6;
+`;
+
+// Name generation using fantasy-name-generator npm package
+const generateNamesFromNPM = (race: string): string[] => {
+  try {
+    const names: string[] = [];
+    
+    // Generate 6 different names (3 male, 3 female)
+    for (let i = 0; i < 3; i++) {
+      const maleName = nameByRace(race, { gender: 'male' });
+      const femaleName = nameByRace(race, { gender: 'female' });
+      
+      if (maleName && typeof maleName === 'string') {
+        names.push(maleName);
+      }
+      if (femaleName && typeof femaleName === 'string') {
+        names.push(femaleName);
+      }
+    }
+    
+    return names.filter(name => name.length > 0);
+  } catch (error) {
+    console.error('Error generating names from npm package:', error);
+    return [];
+  }
+};
+
+function CharacterName() {
+  const { state, dispatch } = useCharacter();
+  const [characterName, setCharacterName] = useState(state.finalName || '');
+  const [playerName, setPlayerName] = useState(state.finalPlayerName || '');
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const getFallbackNames = (ancestry: string) => {
+    const fallbackNames: { [key: string]: string[] } = {
+      human: ['Aiden', 'Brianna', 'Connor', 'Diana', 'Ethan', 'Fiona'],
+      elf: ['Aerdrie', 'Berrian', 'Caelynn', 'Dayereth', 'Enna', 'Galinndan'],
+      dwarf: ['Adrik', 'Baern', 'Cathra', 'Darrak', 'Eberk', 'Falkrunn'],
+      halfling: ['Alton', 'Bree', 'Cora', 'Daisy', 'Eldon', 'Finnan'],
+      dragonborn: ['Arjhan', 'Balasar', 'Bharash', 'Donaar', 'Ghesh', 'Heskan'],
+      gnome: ['Alston', 'Boddynock', 'Brocc', 'Burgell', 'Dimble', 'Eldon'],
+      'half-elf': ['Aramil', 'Berrian', 'Carric', 'Dayereth', 'Enna', 'Galinndan'],
+      'half-orc': ['Dench', 'Feng', 'Gell', 'Henk', 'Holg', 'Imsh'],
+      tiefling: ['Akmenos', 'Amnon', 'Barakas', 'Damakos', 'Ekemon', 'Iados']
+    };
+    
+    return fallbackNames[ancestry] || fallbackNames.human;
+  };
+
+  const generateNames = () => {
+    // No need for rate limiting with npm package, but keep generating state for UX
+    if (isGenerating) {
+      return;
+    }
+    
+    setIsGenerating(true);
+    
+    try {
+      // Get character details
+      const ancestry1 = state.ancestry1Id?.toLowerCase() || 'human';
+      const ancestry2 = state.ancestry2Id?.toLowerCase();
+      
+      // Map ancestry names to npm package race names
+      const raceMapping: { [key: string]: string } = {
+        human: 'human',
+        elf: 'elf',
+        dwarf: 'dwarf',
+        halfling: 'halfling',
+        dragonborn: 'dragon',
+        gnome: 'gnome',
+        'half-elf': 'elf',
+        'half-orc': 'orc',
+        tiefling: 'demon',
+        default: 'human'
+      };
+      
+      // Always generate names from first ancestry
+      const mappedRace1 = raceMapping[ancestry1] || 'human';
+      const npmNames1 = generateNamesFromNPM(mappedRace1);
+      const fallbackNames1 = getFallbackNames(ancestry1);
+      let allNames = [...npmNames1, ...fallbackNames1].slice(0, 6);
+      
+      // If second ancestry exists, append 6 more names from it
+      if (ancestry2) {
+        const mappedRace2 = raceMapping[ancestry2] || 'human';
+        const npmNames2 = generateNamesFromNPM(mappedRace2);
+        const fallbackNames2 = getFallbackNames(ancestry2);
+        const names2 = [...npmNames2, ...fallbackNames2].slice(0, 6);
+        allNames = [...allNames, ...names2];
+      }
+      
+      // Remove duplicates and limit appropriately
+      const uniqueNames = [...new Set(allNames)];
+      
+      // Add a small delay for better UX (simulate processing)
+      setTimeout(() => {
+        setSuggestions(uniqueNames);
+        setIsGenerating(false);
+      }, 500);
+      
+    } catch (error) {
+      console.error('Error generating names:', error);
+      // Fallback to local names
+      const fallbackNames = getFallbackNames(state.ancestry1Id?.toLowerCase() || 'human');
+      setSuggestions(fallbackNames);
+      setIsGenerating(false);
+    }
+  };
+
+  const selectSuggestion = (name: string) => {
+    setCharacterName(name);
+    // Update the context immediately
+    dispatch({ 
+      type: 'UPDATE_STORE', 
+      updates: { 
+        finalName: name
+      } 
+    });
+  };
+
+  const handleSubmit = () => {
+    if (characterName.trim() && playerName.trim()) {
+      const completedCharacter = {
+        ...state,
+        finalName: characterName.trim(),
+        finalPlayerName: playerName.trim(),
+        completedAt: new Date().toISOString(),
+        id: Date.now().toString() // Simple ID generation
+      };
+      
+      // Save to local storage
+      const existingCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+      existingCharacters.push(completedCharacter);
+      localStorage.setItem('savedCharacters', JSON.stringify(existingCharacters));
+      
+      // Update the store
+      dispatch({ 
+        type: 'UPDATE_STORE', 
+        updates: { 
+          finalName: characterName.trim(),
+          finalPlayerName: playerName.trim()
+        } 
+      });
+      
+      // Show success message
+      alert('Character saved successfully!');
+      
+      // TODO: Navigate back to menu or show completion screen
+      console.log('Character completed and saved:', completedCharacter);
+    }
+  };
+
+  const getCharacterDescription = () => {
+    const ancestry1 = state.ancestry1Id;
+    const ancestry2 = state.ancestry2Id;
+    const classId = state.classId;
+    
+    let ancestryDescription = 'Your Character';
+    
+    if (ancestry1 && ancestry2) {
+      // Both ancestries exist
+      ancestryDescription = `${ancestry1.charAt(0).toUpperCase() + ancestry1.slice(1)}/${ancestry2.charAt(0).toUpperCase() + ancestry2.slice(1)}`;
+    } else if (ancestry1) {
+      // Only first ancestry
+      ancestryDescription = `${ancestry1.charAt(0).toUpperCase() + ancestry1.slice(1)}`;
+    }
+    
+    if (classId) {
+      return `${ancestryDescription} ${classId.charAt(0).toUpperCase() + classId.slice(1)}`;
+    }
+    
+    return ancestryDescription;
+  };
+
+  return (
+    <StyledContainer>
+      <StyledTitle>Name Your Character</StyledTitle>
+      
+      <StyledCharacterInfo>
+        <StyledCharacterDetails>
+          Creating: {getCharacterDescription()}
+        </StyledCharacterDetails>
+      </StyledCharacterInfo>
+      
+      <StyledInputGroup>
+        <StyledLabel htmlFor="characterName">Character Name</StyledLabel>
+        <StyledInput
+          id="characterName"
+          type="text"
+          value={characterName}
+          onChange={(e) => {
+            const value = e.target.value;
+            setCharacterName(value);
+            // Update the context immediately
+            dispatch({ 
+              type: 'UPDATE_STORE', 
+              updates: { 
+                finalName: value.trim() || null
+              } 
+            });
+          }}
+          placeholder="Enter your character's name"
+        />
+      </StyledInputGroup>
+      
+      <StyledInputGroup>
+        <StyledLabel htmlFor="playerName">Player Name</StyledLabel>
+        <StyledInput
+          id="playerName"
+          type="text"
+          value={playerName}
+          onChange={(e) => {
+            const value = e.target.value;
+            setPlayerName(value);
+            // Update the context immediately
+            dispatch({ 
+              type: 'UPDATE_STORE', 
+              updates: { 
+                finalPlayerName: value.trim() || null
+              } 
+            });
+          }}
+          placeholder="Enter your name"
+        />
+      </StyledInputGroup>
+      
+      <StyledSuggestionSection>
+        <StyledSuggestionTitle>Name Suggestions</StyledSuggestionTitle>
+        {suggestions.length > 0 && (
+          <StyledSuggestionGrid>
+            {suggestions.map((name, index) => (
+              <StyledSuggestionButton
+                key={index}
+                onClick={() => selectSuggestion(name)}
+              >
+                {name}
+              </StyledSuggestionButton>
+            ))}
+          </StyledSuggestionGrid>
+        )}
+        <StyledGenerateButton 
+          onClick={generateNames}
+          disabled={isGenerating}
+        >
+          {isGenerating ? 'Generating...' : 'Generate Names'}
+        </StyledGenerateButton>
+      </StyledSuggestionSection>
+
+      <StyledFinishButton
+        onClick={handleSubmit}
+        disabled={!characterName.trim() || !playerName.trim()}
+      >
+        Complete Character Creation
+      </StyledFinishButton>
+    </StyledContainer>
+  );
+}
+
+export default CharacterName;
+```
+
+## File: src/routes/character-creation/ClassFeatures.tsx
+```typescript
+import React from 'react';
+import styled from 'styled-components';
+import { useCharacter } from '../../lib/stores/characterContext';
+import { classesData } from '../../lib/rulesdata/classes';
+import type { IClassDefinition } from '../../lib/rulesdata/types';
+
+const StyledContainer = styled.div`
+  border: 2px solid #8b5cf6;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  margin-top: 2rem;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+`;
+
+const StyledTitle = styled.h2`
+  margin-top: 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const StyledSection = styled.div`
+  margin-top: 1rem;
+`;
+
+const StyledSectionTitle = styled.h3`
+  margin: 0 0 1rem 0;
+  color: #ef4444;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+`;
+
+const StyledCard = styled.div`
+  border: 2px solid #a855f7;
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  background: linear-gradient(145deg, #2d1b69 0%, #4c1d95 100%);
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+`;
+
+const StyledCardTitle = styled.h4`
+  margin: 0 0 0.5rem 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledCardDescription = styled.p`
+  margin: 0;
+  color: #e5e7eb;
+  line-height: 1.4;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledChoiceOptions = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const StyledLabel = styled.label`
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  cursor: pointer;
+  color: #e5e7eb;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  padding: 0.5rem;
+  border-radius: 5px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: #fbbf24;
+    background: rgba(139, 92, 246, 0.1);
+  }
+`;
+
+const StyledRadio = styled.input`
+  margin-top: 0.25rem;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  accent-color: #ef4444;
+  cursor: pointer;
+`;
+
+const StyledOptionDescription = styled.span`
+  font-size: 0.9em;
+  color: #9ca3af;
+  margin-left: 0.5rem;
+  font-style: italic;
+`;
+
+const StyledNoSelection = styled.p`
+  color: #9ca3af;
+  font-style: italic;
+  text-align: center;
+  font-size: 1.1rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+function ClassFeatures() {
+  const { state, dispatch } = useCharacter();
+  
+  const selectedClass = classesData.find(c => c.id === state.classId);
+  const selectedFeatureChoices: { [key: string]: string } = JSON.parse(state.selectedFeatureChoices || '{}');
+
+  function handleFeatureChoice(choiceId: string, value: string) {
+    const currentChoices = { ...selectedFeatureChoices };
+    currentChoices[choiceId] = value;
+    dispatch({ type: 'SET_FEATURE_CHOICES', selectedFeatureChoices: JSON.stringify(currentChoices) });
+  }
+
+  if (!selectedClass) {
+    return (
+      <StyledContainer>
+        <StyledNoSelection>Select a Class to see its features.</StyledNoSelection>
+      </StyledContainer>
+    );
+  }
+
+  return (
+    <StyledContainer>
+      <StyledTitle>{selectedClass.name} Features</StyledTitle>
+
+      <StyledSection>
+        <StyledSectionTitle>Level 1 Features</StyledSectionTitle>
+        {(selectedClass.level1Features || []).map((feature, index) => (
+          <StyledCard key={index}>
+            <StyledCardTitle>{feature.name}</StyledCardTitle>
+            <StyledCardDescription>{feature.description}</StyledCardDescription>
+          </StyledCard>
+        ))}
+      </StyledSection>
+
+      {selectedClass.featureChoicesLvl1 && selectedClass.featureChoicesLvl1.length > 0 && (
+        <StyledSection>
+          <StyledSectionTitle>Feature Choices</StyledSectionTitle>
+          {selectedClass.featureChoicesLvl1.map((choice) => (
+            <StyledCard key={choice.id}>
+              <StyledCardTitle>{choice.prompt}</StyledCardTitle>
+              {choice.type === 'select_one' && (
+                <StyledChoiceOptions>
+                  {choice.options.map((option) => (
+                    <StyledLabel key={option.value}>
+                      <StyledRadio
+                        type="radio"
+                        name={choice.id}
+                        value={option.value}
+                        checked={selectedFeatureChoices[choice.id] === option.value}
+                        onChange={() => handleFeatureChoice(choice.id, option.value)}
+                      />
+                      {option.label}
+                      {option.description && (
+                        <StyledOptionDescription>({option.description})</StyledOptionDescription>
+                      )}
+                    </StyledLabel>
+                  ))}
+                </StyledChoiceOptions>
+              )}
+            </StyledCard>
+          ))}
+        </StyledSection>
+      )}
+    </StyledContainer>
+  );
+}
+
+export default ClassFeatures;
+```
+
+## File: src/routes/character-creation/ClassSelector.tsx
+```typescript
+import { useState } from 'react';
+import styled from 'styled-components';
+import { useCharacter } from '../../lib/stores/characterContext';
+import { classesData } from '../../lib/rulesdata/classes';
+import type { IClassDefinition } from '../../lib/rulesdata/types';
+
+// Class-specific icons using Unicode symbols and emojis
+const classIcons: { [key: string]: string } = {
+  'fighter': '⚔️',
+  'wizard': '🧙‍♂️',
+  'rogue': '🗡️',
+  'cleric': '✨',
+  'ranger': '🏹',
+  'barbarian': '🪓',
+  'bard': '🎭',
+  'druid': '🌿',
+  'monk': '👊',
+  'paladin': '🛡️',
+  'sorcerer': '🔥',
+  'warlock': '👹',
+  'default': '⚡'
+};
+
+const StyledContainer = styled.div`
+  border: 2px solid #8b5cf6;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  margin-top: 2rem;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+`;
+
+const StyledTitle = styled.h2`
+  margin-top: 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const StyledGrid = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+`;
+
+const StyledCard = styled.button<{ $selected: boolean }>`
+  border: 2px solid #a855f7;
+  padding: 1.5rem;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #2d1b69 0%, #4c1d95 100%);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+  min-width: 280px;
+  max-width: 280px;
+  height: 200px;
+  text-align: left;
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
+    border-color: #fbbf24;
+  }
+
+  ${props => props.$selected && `
+    border-color: #ef4444;
+    background: linear-gradient(145deg, #991b1b 0%, #dc2626 100%);
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
+    transform: translateY(-2px);
+  `}
+`;
+
+const StyledCardHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+`;
+
+const StyledClassIcon = styled.div`
+  font-size: 2rem;
+  flex-shrink: 0;
+  background: linear-gradient(145deg, #8b5cf6 0%, #a855f7 100%);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+`;
+
+const StyledCardTitle = styled.h3`
+  margin: 0;
+  color: #fbbf24;
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledCardDescription = styled.p`
+  margin: 0;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  flex: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  position: relative;
+`;
+
+const StyledCardFooter = styled.div`
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const StyledReadMore = styled.button`
+  color: #fbbf24;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: #f59e0b;
+    background: rgba(251, 191, 36, 0.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+`;
+
+const StyledTooltip = styled.div<{ $show: boolean }>`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
+  color: #e5e7eb;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 3px solid #8b5cf6;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  z-index: 2000;
+  width: 90vw;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  font-size: 1rem;
+  line-height: 1.6;
+  opacity: ${props => props.$show ? 1 : 0};
+  pointer-events: ${props => props.$show ? 'auto' : 'none'};
+  transition: opacity 0.3s ease;
+  
+  /* Custom scrollbar for popup */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #1e1b4b;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #8b5cf6;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a855f7;
+  }
+`;
+
+const StyledTooltipOverlay = styled.div<{ $show: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1999;
+  opacity: ${props => props.$show ? 1 : 0};
+  pointer-events: ${props => props.$show ? 'auto' : 'none'};
+  transition: opacity 0.3s ease;
+`;
+
+const StyledTooltipHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #8b5cf6;
+`;
+
+const StyledTooltipIcon = styled.div`
+  font-size: 3rem;
+  background: linear-gradient(145deg, #8b5cf6 0%, #a855f7 100%);
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+`;
+
+const StyledTooltipTitle = styled.h3`
+  margin: 0;
+  color: #fbbf24;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledTooltipContent = styled.p`
+  margin: 0;
+  color: #e5e7eb;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledCloseHint = styled.div`
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #8b5cf6;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  font-style: italic;
+`;
+
+function ClassSelector() {
+  const { state, dispatch } = useCharacter();
+  const selectedClassId = state.classId;
+  const [popupClass, setPopupClass] = useState<string | null>(null);
+
+  function handleSelectClass(classId: string) {
+    if (state.classId === classId) {
+      dispatch({ type: 'SET_CLASS', classId: null }); // Deselect if already selected
+    } else {
+      dispatch({ type: 'SET_CLASS', classId }); // Select new class
+    }
+  }
+
+  function getClassIcon(classId: string): string {
+    return classIcons[classId.toLowerCase()] || classIcons.default;
+  }
+
+  function truncateText(text: string, maxLength: number): string {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  }
+
+  function needsReadMore(text: string, maxLength: number): boolean {
+    return text.length > maxLength;
+  }
+
+  function openPopup(classId: string) {
+    setPopupClass(classId);
+  }
+
+  function closePopup() {
+    setPopupClass(null);
+  }
+
+  return (
+    <StyledContainer>
+      <StyledTitle>Choose Your Class</StyledTitle>
+      <StyledGrid>
+        {classesData.map((classDef: IClassDefinition) => (
+          <StyledCard
+            key={classDef.id}
+            type="button"
+            $selected={selectedClassId === classDef.id}
+            onClick={() => handleSelectClass(classDef.id)}
+          >
+            <StyledCardHeader>
+              <StyledClassIcon>{getClassIcon(classDef.id)}</StyledClassIcon>
+              <StyledCardTitle>{classDef.name}</StyledCardTitle>
+            </StyledCardHeader>
+            <StyledCardDescription>
+              {truncateText(classDef.description, 80)}
+            </StyledCardDescription>
+            {needsReadMore(classDef.description, 80) && (
+              <StyledCardFooter>
+                <StyledReadMore 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openPopup(classDef.id);
+                  }}
+                >
+                  read more...
+                </StyledReadMore>
+              </StyledCardFooter>
+            )}
+          </StyledCard>
+        ))}
+      </StyledGrid>
+      
+      {/* Popup overlay and content */}
+      <StyledTooltipOverlay 
+        $show={popupClass !== null} 
+        onClick={closePopup}
+      />
+      {popupClass && (
+        <StyledTooltip $show={popupClass !== null}>
+          <StyledTooltipHeader>
+            <StyledTooltipIcon>
+              {getClassIcon(popupClass)}
+            </StyledTooltipIcon>
+            <StyledTooltipTitle>
+              {classesData.find(c => c.id === popupClass)?.name}
+            </StyledTooltipTitle>
+          </StyledTooltipHeader>
+          <StyledTooltipContent>
+            {classesData.find(c => c.id === popupClass)?.description}
+          </StyledTooltipContent>
+          <StyledCloseHint>
+            Click anywhere to close
+          </StyledCloseHint>
+        </StyledTooltip>
+      )}
+    </StyledContainer>
+  );
+}
+
+export default ClassSelector;
+```
+
+## File: src/routes/character-creation/LoadCharacter.tsx
+```typescript
+import { useState, useEffect } from 'react';
+import styled from 'styled-components';
+
+const StyledContainer = styled.div`
+  padding: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
+`;
+
+const StyledTitle = styled.h1`
+  margin-bottom: 2rem;
+  color: #fbbf24;
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: bold;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+  letter-spacing: 2px;
+`;
+
+const StyledCharacterGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const StyledCharacterCard = styled.div`
+  border: 2px solid #8b5cf6;
+  border-radius: 12px;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(139, 92, 246, 0.4);
+    border-color: #fbbf24;
+  }
+`;
+
+const StyledCharacterName = styled.h2`
+  margin: 0 0 1rem 0;
+  color: #fbbf24;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+`;
+
+const StyledPlayerName = styled.p`
+  margin: 0 0 1rem 0;
+  color: #e5e7eb;
+  font-size: 1rem;
+  text-align: center;
+  opacity: 0.8;
+`;
+
+const StyledCharacterDetails = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+`;
+
+const StyledDetailItem = styled.div`
+  text-align: center;
+`;
+
+const StyledDetailLabel = styled.div`
+  color: #a855f7;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+`;
+
+const StyledDetailValue = styled.div`
+  color: #e5e7eb;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 0.25rem;
+`;
+
+const StyledCompletedDate = styled.p`
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.875rem;
+  text-align: center;
+  font-style: italic;
+`;
+
+const StyledEmptyState = styled.div`
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #6b7280;
+`;
+
+const StyledEmptyTitle = styled.h2`
+  color: #a855f7;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+`;
+
+const StyledEmptyText = styled.p`
+  font-size: 1rem;
+  line-height: 1.6;
+`;
+
+const StyledBackButton = styled.button`
+  padding: 0.75rem 1.5rem;
+  margin-bottom: 2rem;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: linear-gradient(145deg, #4b5563 0%, #374151 100%);
+    transform: translateY(-2px);
+  }
+`;
+
+interface SavedCharacter {
+  id: string;
+  finalName: string;
+  finalPlayerName: string;
+  classId: string;
+  ancestry1Id: string;
+  ancestry2Id?: string;
+  completedAt: string;
+  [key: string]: any;
+}
+
+interface LoadCharacterProps {
+  onBack: () => void;
+  onLoadCharacter?: (character: SavedCharacter) => void;
+}
+
+function LoadCharacter({ onBack, onLoadCharacter }: LoadCharacterProps) {
+  const [savedCharacters, setSavedCharacters] = useState<SavedCharacter[]>([]);
+
+  useEffect(() => {
+    const characters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+    setSavedCharacters(characters);
+  }, []);
+
+  const handleCharacterClick = (character: SavedCharacter) => {
+    if (onLoadCharacter) {
+      onLoadCharacter(character);
+    } else {
+      console.log('Loading character:', character);
+      // TODO: Implement character loading logic
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const formatAncestry = (ancestry1: string, ancestry2?: string) => {
+    if (ancestry2) {
+      return `${ancestry1}/${ancestry2}`;
+    }
+    return ancestry1;
+  };
+
+  return (
+    <StyledContainer>
+      <StyledBackButton onClick={onBack}>
+        ← Back to Menu
+      </StyledBackButton>
+      
+      <StyledTitle>Load Character</StyledTitle>
+      
+      {savedCharacters.length === 0 ? (
+        <StyledEmptyState>
+          <StyledEmptyTitle>No Saved Characters</StyledEmptyTitle>
+          <StyledEmptyText>
+            You haven't created any characters yet.<br />
+            Go back to the menu and create your first character!
+          </StyledEmptyText>
+        </StyledEmptyState>
+      ) : (
+        <StyledCharacterGrid>
+          {savedCharacters.map((character) => (
+            <StyledCharacterCard 
+              key={character.id}
+              onClick={() => handleCharacterClick(character)}
+            >
+              <StyledCharacterName>
+                {character.finalName || 'Unnamed Character'}
+              </StyledCharacterName>
+              
+              <StyledPlayerName>
+                Player: {character.finalPlayerName || 'Unknown'}
+              </StyledPlayerName>
+              
+              <StyledCharacterDetails>
+                <StyledDetailItem>
+                  <StyledDetailLabel>Race</StyledDetailLabel>
+                  <StyledDetailValue>
+                    {formatAncestry(
+                      character.ancestry1Id || 'Unknown',
+                      character.ancestry2Id
+                    )}
+                  </StyledDetailValue>
+                </StyledDetailItem>
+                
+                <StyledDetailItem>
+                  <StyledDetailLabel>Class</StyledDetailLabel>
+                  <StyledDetailValue>
+                    {character.classId || 'Unknown'}
+                  </StyledDetailValue>
+                </StyledDetailItem>
+              </StyledCharacterDetails>
+              
+              <StyledCompletedDate>
+                Created: {formatDate(character.completedAt)}
+              </StyledCompletedDate>
+            </StyledCharacterCard>
+          ))}
+        </StyledCharacterGrid>
+      )}
+    </StyledContainer>
+  );
+}
+
+export default LoadCharacter;
+```
+
+## File: src/routes/character-creation/SelectedAncestries.tsx
+```typescript
+import React from 'react';
+import styled from 'styled-components';
+import { useCharacter } from '../../lib/stores/characterContext';
+import { ancestriesData } from '../../lib/rulesdata/ancestries';
+import { traitsData } from '../../lib/rulesdata/traits';
+import type { IAncestry, ITrait } from '../../lib/rulesdata/types';
+
+const StyledOuterContainer = styled.div`
+  border: 2px solid #8b5cf6;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  margin-top: 2rem;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+`;
+
+const StyledMainTitle = styled.h2`
+  margin-top: 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+`;
+
+const StyledAncestryDetails = styled.div`
+  border: 2px solid #a855f7;
+  padding: 1.5rem;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #2d1b69 0%, #4c1d95 100%);
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+`;
+
+const StyledTitle = styled.h2`
+  margin: 0 0 1rem 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+`;
+
+const StyledSubtitle = styled.h3`
+  margin: 1rem 0 0.5rem 0;
+  color: #ef4444;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  border-bottom: 1px solid #ef4444;
+  padding-bottom: 0.25rem;
+`;
+
+const StyledList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const StyledListItem = styled.li`
+  margin-bottom: 0.8rem;
+  padding: 0.5rem;
+  border-radius: 5px;
+  background: rgba(139, 92, 246, 0.1);
+  border-left: 3px solid #8b5cf6;
+`;
+
+const StyledLabel = styled.label`
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  cursor: pointer;
+  color: #e5e7eb;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  
+  &:hover {
+    color: #fbbf24;
+  }
+`;
+
+const StyledCheckbox = styled.input`
+  margin-top: 0.25rem;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  accent-color: #ef4444;
+  cursor: pointer;
+`;
+
+function SelectedAncestries() {
+  const { state, dispatch } = useCharacter();
+  
+  const selectedAncestry1 = ancestriesData.find(a => a.id === state.ancestry1Id);
+  const selectedAncestry2 = ancestriesData.find(a => a.id === state.ancestry2Id);
+  const selectedTraits: string[] = JSON.parse(state.selectedTraitIds || '[]');
+
+  function getTrait(traitId: string): ITrait | undefined {
+    return traitsData.find(t => t.id === traitId);
+  }
+
+  function handleToggleTrait(traitId: string) {
+    const trait = getTrait(traitId);
+    if (!trait) return;
+
+    let currentTraits = [...selectedTraits];
+    
+    if (currentTraits.includes(traitId)) {
+      // Deselect
+      currentTraits = currentTraits.filter(id => id !== traitId);
+    } else {
+      // Select
+      currentTraits.push(traitId);
+    }
+    
+    dispatch({ type: 'SET_TRAITS', selectedTraitIds: JSON.stringify(currentTraits) });
+  }
+
+  function renderAncestryTraits(ancestry: IAncestry) {
+    return (
+      <StyledAncestryDetails>
+        <StyledTitle>{ancestry.name}</StyledTitle>
+        
+        <StyledSubtitle>Default Traits</StyledSubtitle>
+        <StyledList>
+          {(ancestry.defaultTraitIds || []).map(traitId => {
+            const trait = getTrait(traitId);
+            if (!trait) return null;
+            return (
+              <StyledListItem key={traitId}>
+                <StyledLabel>
+                  <StyledCheckbox 
+                    type="checkbox" 
+                    checked={selectedTraits.includes(traitId)} 
+                    onChange={() => handleToggleTrait(traitId)} 
+                  />
+                  {trait.name} ({trait.cost} pts) - {trait.description}
+                </StyledLabel>
+              </StyledListItem>
+            );
+          })}
+        </StyledList>
+        
+        <StyledSubtitle>Expanded Traits</StyledSubtitle>
+        <StyledList>
+          {(ancestry.expandedTraitIds || []).map(traitId => {
+            const trait = getTrait(traitId);
+            if (!trait) return null;
+            return (
+              <StyledListItem key={traitId}>
+                <StyledLabel>
+                  <StyledCheckbox 
+                    type="checkbox" 
+                    checked={selectedTraits.includes(traitId)} 
+                    onChange={() => handleToggleTrait(traitId)} 
+                  />
+                  {trait.name} ({trait.cost} pts) - {trait.description}
+                </StyledLabel>
+              </StyledListItem>
+            );
+          })}
+        </StyledList>
+      </StyledAncestryDetails>
+    );
+  }
+
+  return (
+    <StyledOuterContainer>
+      <StyledMainTitle>Ancestry Traits</StyledMainTitle>
+      <StyledContainer>
+        {selectedAncestry1 && renderAncestryTraits(selectedAncestry1)}
+        {selectedAncestry2 && renderAncestryTraits(selectedAncestry2)}
+      </StyledContainer>
+    </StyledOuterContainer>
+  );
+}
+
+export default SelectedAncestries;
+```
+
+## File: tsconfig.node.json
+```json
+{
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "noEmit": true
+  },
+  "include": ["vite.config.ts"]
+}
+```
+
+## File: vercel.json
+```json
+{
+  "outputDirectory": "dist"
+}
+```
+
+## File: vitest.config.ts
+```typescript
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+	test: {
+		projects: [
+			{
+				extends: './vite.config.ts',
+				test: {
+					name: 'client',
+					environment: 'browser',
+					browser: {
+						enabled: true,
+						provider: 'playwright',
+						instances: [{ browser: 'chromium' }]
+					},
+					include: ['src/**/*.{test,spec}.{js,ts,jsx,tsx}'],
+					exclude: ['src/lib/server/**'],
+					setupFiles: ['./vitest-setup-client.ts']
+				}
+			},
+			{
+				extends: './vite.config.ts',
+				test: {
+					name: 'server',
+					environment: 'node',
+					include: ['src/**/*.{test,spec}.{js,ts}'],
+					exclude: ['src/**/*.{test,spec}.{js,ts,jsx,tsx}']
+				}
+			}
+		]
+	}
+});
+```
 
 ## File: .env.example
-````
+```
 DATABASE_URL="postgres://root:mysecretpassword@localhost:5432/local"
-````
+```
 
 ## File: .gitignore
-````
+```
 test-results
 node_modules
 
@@ -172,25 +3240,25 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
-````
+```
 
 ## File: .npmrc
-````
+```
 engine-strict=true
-````
+```
 
 ## File: .prettierignore
-````
+```
 # Package Managers
 package-lock.json
 pnpm-lock.yaml
 yarn.lock
 bun.lock
 bun.lockb
-````
+```
 
 ## File: .prettierrc
-````
+```
 {
 	"useTabs": true,
 	"singleQuote": true,
@@ -206,10 +3274,19 @@ bun.lockb
 		}
 	]
 }
-````
+```
+
+## File: .repomixignore
+```
+# Add patterns to ignore here, one per line
+# Example:
+# *.log
+# tmp/
+*.pdf
+```
 
 ## File: docker-compose.yml
-````yaml
+```yaml
 services:
   db:
     image: postgres
@@ -224,10 +3301,10 @@ services:
       - pgdata:/var/lib/postgresql/data
 volumes:
   pgdata:
-````
+```
 
 ## File: drizzle.config.ts
-````typescript
+```typescript
 import { defineConfig } from 'drizzle-kit';
 
 if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
@@ -239,20 +3316,20 @@ export default defineConfig({
 	verbose: true,
 	strict: true
 });
-````
+```
 
 ## File: e2e/demo.test.ts
-````typescript
+```typescript
 import { expect, test } from '@playwright/test';
 
 test('home page has expected h1', async ({ page }) => {
 	await page.goto('/');
 	await expect(page.locator('h1')).toBeVisible();
 });
-````
+```
 
 ## File: eslint.config.js
-````javascript
+```javascript
 import prettier from 'eslint-config-prettier';
 import { includeIgnoreFile } from '@eslint/compat';
 import js from '@eslint/js';
@@ -293,10 +3370,10 @@ export default ts.config(
 		}
 	}
 );
-````
+```
 
 ## File: playwright.config.ts
-````typescript
+```typescript
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
@@ -306,10 +3383,10 @@ export default defineConfig({
 	},
 	testDir: 'e2e'
 });
-````
+```
 
 ## File: prisma/migrations/20250526210112_init/migration.sql
-````sql
+```sql
 -- CreateTable
 CREATE TABLE "CharacterInProgress" (
     "id" TEXT NOT NULL,
@@ -385,23 +3462,23 @@ CREATE UNIQUE INDEX "CharacterSheetData_characterInProgressId_key" ON "Character
 
 -- AddForeignKey
 ALTER TABLE "CharacterSheetData" ADD CONSTRAINT "CharacterSheetData_characterInProgressId_fkey" FOREIGN KEY ("characterInProgressId") REFERENCES "CharacterInProgress"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-````
+```
 
 ## File: prisma/migrations/20250620112102_allow_next_in_stage_a/migration.sql
-````sql
+```sql
 -- AlterTable
 ALTER TABLE "CharacterInProgress" ADD COLUMN     "currentStep" INTEGER NOT NULL DEFAULT 1;
-````
+```
 
 ## File: prisma/migrations/migration_lock.toml
-````toml
+```toml
 # Please do not edit this file manually
 # It should be added in your version-control system (e.g., Git)
 provider = "postgresql"
-````
+```
 
 ## File: prisma/schema.prisma
-````
+```
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -518,10 +3595,10 @@ model CharacterSheetData {
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 }
-````
+```
 
 ## File: project_summary.md
-````markdown
+```markdown
 # Project Summary
 
 This document provides a comprehensive overview of the Svelte library project, including its purpose, technology stack, and structure.
@@ -564,17 +3641,102 @@ The `package.json` file defines several important scripts for managing the proje
 - `package`: Packages the `src/lib` directory into a distributable format.
 - `test`: Executes both unit and end-to-end tests.
 - `db:*`: A set of scripts for managing the PostgreSQL database, including starting the container, applying schema changes, and running migrations.
-````
+```
+
+## File: repomix.config.json
+```json
+{
+  "input": {
+    "maxFileSize": 52428800
+  },
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown",
+    "parsableStyle": false,
+    "fileSummary": true,
+    "directoryStructure": true,
+    "files": true,
+    "removeComments": false,
+    "removeEmptyLines": false,
+    "compress": false,
+    "topFilesLength": 5,
+    "showLineNumbers": false,
+    "copyToClipboard": false,
+    "git": {
+      "sortByChanges": true,
+      "sortByChangesMaxCommits": 100
+    }
+  },
+  "include": [],
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": []
+  },
+  "security": {
+    "enableSecurityCheck": true
+  },
+  "tokenCount": {
+    "encoding": "o200k_base"
+  }
+}
+```
 
 ## File: src/app.css
-````css
+```css
 @import 'tailwindcss';
-@plugin '@tailwindcss/forms';
-@plugin '@tailwindcss/typography';
-````
+
+/* D&D Themed Global Styles */
+body {
+  background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
+  min-height: 100vh;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  color: #e5e7eb;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e1b4b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8b5cf6;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a855f7;
+}
+
+/* Selection colors */
+::selection {
+  background: #fbbf24;
+  color: #1e1b4b;
+}
+
+::-moz-selection {
+  background: #fbbf24;
+  color: #1e1b4b;
+}
+```
 
 ## File: src/app.d.ts
-````typescript
+```typescript
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
 declare global {
@@ -590,26 +3752,10 @@ declare global {
 
 // interface Platform {}
 export {};
-````
-
-## File: src/app.html
-````html
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		%sveltekit.head%
-	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div>%sveltekit.body%</div>
-	</body>
-</html>
-````
+```
 
 ## File: src/demo.spec.ts
-````typescript
+```typescript
 import { describe, it, expect } from 'vitest';
 
 describe('sum test', () => {
@@ -617,45 +3763,15 @@ describe('sum test', () => {
 		expect(1 + 2).toBe(3);
 	});
 });
-````
-
-## File: src/hooks.server.ts
-````typescript
-import type { Handle } from '@sveltejs/kit';
-import * as auth from '$lib/server/auth';
-
-const handleAuth: Handle = async ({ event, resolve }) => {
-	const sessionToken = event.cookies.get(auth.sessionCookieName);
-
-	if (!sessionToken) {
-		event.locals.user = null;
-		event.locals.session = null;
-		return resolve(event);
-	}
-
-	const { session, user } = await auth.validateSessionToken(sessionToken);
-
-	if (session) {
-		auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
-	} else {
-		auth.deleteSessionTokenCookie(event);
-	}
-
-	event.locals.user = user;
-	event.locals.session = session;
-	return resolve(event);
-};
-
-export const handle: Handle = handleAuth;
-````
+```
 
 ## File: src/lib/index.ts
-````typescript
+```typescript
 // Reexport your entry components here
-````
+```
 
 ## File: src/lib/rulesdata/ancestries.ts
-````typescript
+```typescript
 // src/lib/rulesdata/ancestries.ts
 
 import type { IAncestry } from './types';
@@ -772,10 +3888,10 @@ export const ancestriesData: IAncestry[] = [
     },
   },
 ];
-````
+```
 
 ## File: src/lib/rulesdata/attributes.ts
-````typescript
+```typescript
 // src/lib/rulesdata/attributes.ts
 
 import type { IAttributeData } from './types';
@@ -818,10 +3934,10 @@ export const attributesData: IAttributeData[] = [
   ]
 }
 ];
-````
+```
 
 ## File: src/lib/rulesdata/classes.ts
-````typescript
+```typescript
 import type { IClassDefinition } from './types.js';
 
 // IClassDefinition for Barbarian:
@@ -1483,10 +4599,10 @@ export const classesData: IClassDefinition[] = [
   wizardClass,
   // Add other classes here as they are populated
 ];
-````
+```
 
 ## File: src/lib/rulesdata/languages.ts
-````typescript
+```typescript
 import type { ILanguageData } from './types';
 
 export const languagesData: ILanguageData[] = [
@@ -1569,10 +4685,10 @@ export const languagesData: ILanguageData[] = [
     description: 'Undercommon is a language spoken by inhabitants of the Underdark, such as Drow. Typical Speakers: Drow, Underdark inhabitants.'
   }
 ];
-````
+```
 
 ## File: src/lib/rulesdata/skills.ts
-````typescript
+```typescript
 import type { ISkillData } from './types';
 
 export const skillsData: ISkillData[] = [
@@ -1649,10 +4765,10 @@ export const skillsData: ISkillData[] = [
     description: 'Awareness governs your ability to detect the presence of other creatures or objects using your sight, hearing, smell, or other senses.'
   },
 ];
-````
+```
 
 ## File: src/lib/rulesdata/trades.ts
-````typescript
+```typescript
 import { ITradeData } from './types';
 
 export const tradesData: ITradeData[] = [
@@ -1902,10 +5018,10 @@ export const tradesData: ITradeData[] = [
     tools: 'Woodcarver’s Tools'
   }
 ];
-````
+```
 
 ## File: src/lib/rulesdata/traits.ts
-````typescript
+```typescript
 import type { ITrait } from './types';
 
 export const traitsData: ITrait[] = [
@@ -3236,10 +6352,10 @@ export const traitsData: ITrait[] = [
     effects: [{ type: 'GRANT_ABILITY', value: 'Shoot_Webs_1AP' }]
   },
 ];
-````
+```
 
 ## File: src/lib/rulesdata/types.ts
-````typescript
+```typescript
 // src/lib/rulesdata/types.ts
 
 // Interface for Attribute Data
@@ -3371,10 +6487,10 @@ export interface ILanguageData {
   type: 'standard' | 'exotic'; // Type of language
   description: string;
 }
-````
+```
 
 ## File: src/lib/server/auth.ts
-````typescript
+```typescript
 import type { RequestEvent } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import { sha256 } from '@oslojs/crypto/sha2';
@@ -3456,278 +6572,10 @@ export function deleteSessionTokenCookie(event: RequestEvent) {
 		path: '/'
 	});
 }
-````
-
-## File: src/lib/stores/characterInProgressStore.ts
-````typescript
-// src/lib/stores/characterInProgressStore.ts
-
-import { writable, derived } from 'svelte/store';
-import type { Writable } from 'svelte/store';
-import type { CharacterInProgress } from '@prisma/client'; // Assuming Prisma client is generated
-import { classesData } from '../rulesdata/classes';
-
-// Define the shape of the data stored in the characterInProgressStore
-// This should mirror the CharacterInProgress Prisma model, plus any UI state
-interface CharacterInProgressStoreData extends CharacterInProgress {
-  // Add any UI-specific state here if needed, e.g., current step in wizard
-  currentStep: number;
-  // Add temporary state for trait selection overflow
-  overflowTraitId: string | null;
-  overflowAttributeName: string | null;
-  // Add Level and Combat Mastery
-  level: number;
-  combatMastery: number; // Derived, but included in interface for clarity
-}
-
-// Initial state for the store, matching Prisma defaults and adding UI state
-const initialCharacterInProgressState: CharacterInProgressStoreData = {
-  id: '', // Will be set when a new character is started/loaded
-  attribute_might: -2,
-  attribute_agility: -2,
-  attribute_charisma: -2,
-  attribute_intelligence: -2,
-  pointsSpent: 0,
-
-  // Core Stats
-  level: 1, // Default to Level 1 for MVP
-  combatMastery: 1, // Calculated: Math.ceil(level / 2)
-
-  ancestry1Id: null,
-  ancestry2Id: null,
-  selectedTraitIds: '', // JSON string of selected trait IDs
-  ancestryPointsSpent: 0,
-
-  classId: null,
-  selectedFeatureChoices: '', // JSON string of selected feature choice IDs/values
-
-  // Skills, Equipment, Details fields will be added/updated later
-  finalName: null,
-  finalPlayerName: null,
-
-  createdAt: new Date(), // Placeholder, will be set by DB
-  updatedAt: new Date(), // Placeholder, will be set by DB
-
-  // UI State
-  currentStep: 1, // Start at Stage A (Attributes)
-  overflowTraitId: null,
-  overflowAttributeName: null,
-};
-
-// Create the writable store
-export const characterInProgressStore: Writable<CharacterInProgressStoreData> = writable(initialCharacterInProgressState);
-
-// Helper function to get an attribute's modifier
-// In DC20, the attribute score itself is the modifier.
-// Handles null or undefined scores by returning 0.
-export function getModifier(attributeScore: number | null | undefined): number {
-  return attributeScore ?? 0;
-}
-
-// Constant for Level 1 Combat Mastery (DC20 p.22)
-export const L1_COMBAT_MASTERY = 1; // Keep for reference, but use derived store
-
-// --- Derived Stores ---
-
-// Derived store for Combat Mastery (half level rounded up)
-export const combatMastery = derived(
-  characterInProgressStore,
-  ($store) => {
-    return Math.ceil(($store.level ?? 1) / 2); // Default to level 1 if store.level is null/undefined
-  }
-);
-
-// Derived store for the Prime Modifier Value and Attribute
-export const primeModifier = derived(
-  characterInProgressStore,
-  ($store) => {
-    const attributes = [
-      { name: 'Might', value: $store.attribute_might },
-      { name: 'Agility', value: $store.attribute_agility },
-      { name: 'Charisma', value: $store.attribute_charisma },
-      { name: 'Intelligence', value: $store.attribute_intelligence },
-    ];
-
-    // Find the highest attribute score
-    let highestAttribute = attributes[0];
-    for (let i = 1; i < attributes.length; i++) {
-      if (attributes[i].value > highestAttribute.value) {
-        highestAttribute = attributes[i];
-      }
-    }
-
-    // Handle ties: If there's a tie, the player chooses.
-    // For now, we'll just pick the first one in case of a tie.
-    // A more complex implementation might require user input on tie-breaking.
-    // Add a defensive check for highestAttribute
-    if (!highestAttribute) {
-        console.error("Error calculating primeModifier: highestAttribute is undefined.");
-        return { value: 0, attribute: 'Unknown' }; // Return a default safe value
-    }
-
-    const primeModifierValue = highestAttribute.value;
-    const primeModifierAttribute = highestAttribute.name;
-
-    return { value: primeModifierValue, attribute: primeModifierAttribute };
-  }
-);
-
-// Derived store for Save Masteries (DC20 p.22)
-export const saveMasteries = derived(
-  [characterInProgressStore, primeModifier, combatMastery],
-  ([$store, $primeModifier, $combatMastery]) => {
-    const primeModValue = $primeModifier.value;
-    const primeModAttribute = $primeModifier.attribute;
-
-    // Save Mastery = Combat Mastery + Attribute Modifier
-    // If the attribute is the Prime Modifier, use the Prime Modifier value.
-    // Otherwise, use the attribute's own modifier (which is the score itself).
-    // Use the derived combatMastery store
-    const currentCombatMastery = $combatMastery;
-
-    return {
-      might: currentCombatMastery + (primeModAttribute === 'Might' ? primeModValue : getModifier($store.attribute_might)),
-      agility: currentCombatMastery + (primeModAttribute === 'Agility' ? primeModValue : getModifier($store.attribute_agility)),
-      charisma: currentCombatMastery + (primeModAttribute === 'Charisma' ? primeModValue : getModifier($store.attribute_charisma)),
-      intelligence: currentCombatMastery + (primeModAttribute === 'Intelligence' ? primeModValue : getModifier($store.attribute_intelligence)),
-    };
-  }
-);
-
-// Derived store for Grit Points (Base + Charisma Modifier)
-export const gritPoints = derived(
-  characterInProgressStore,
-  ($store) => {
-    // Assuming base Grit Points are defined in class data, but for now use a placeholder
-    const baseGrit = 2; // Placeholder, should come from class data
-    return baseGrit + getModifier($store.attribute_charisma);
-  }
-);
-
-// Derived store for Jump Distance (Agility Modifier, min 1)
-export const jumpDistance = derived(
-  characterInProgressStore,
-  ($store) => {
-    const agilityModifier = getModifier($store.attribute_agility);
-    return agilityModifier < 1 ? 1 : agilityModifier;
-  }
-);
-
-/**
- * Derived store for Starting SP (from class)
- */
-export const startingSP = derived(
-  characterInProgressStore,
-  ($store) => {
-    if (!$store.classId) return 0;
-    const classData = classesData.find(c => c.id === $store.classId);
-    return classData?.startingSP ?? 0;
-  }
-);
-
-/**
- * Derived store for Starting MP (from class)
- */
-export const startingMP = derived(
-  characterInProgressStore,
-  ($store) => {
-    if (!$store.classId) return 0;
-    const classData = classesData.find(c => c.id === $store.classId);
-    return classData?.startingMP ?? 0;
-  }
-);
-
-// Derived store for Provisional Skill Points (5 + Intelligence Modifier + Class Bonus)
-export const provisionalSkillPoints = derived(
-  characterInProgressStore,
-  ($store) => {
-    const intelligenceModifier = getModifier($store.attribute_intelligence);
-    // Assuming class data is available to get skillPointGrantLvl1
-    // For now, use a placeholder of 0 if classId is not set
-    const classSkillBonus = 0; // Placeholder, should come from class data based on $store.classId
-    return 5 + intelligenceModifier + classSkillBonus;
-  }
-);
-
-// Derived store for Ancestry Points Remaining (Base 4 + Negative Traits - Spent)
-export const ancestryPointsRemaining = derived(
-  characterInProgressStore,
-  ($store) => {
-    const basePoints = 4; // DC20 p.16
-    // Need to access traitsData to calculate points from negative traits
-    // For now, this calculation is incomplete without access to traitsData
-    const pointsFromNegativeTraits = 0; // Placeholder
-    return basePoints + pointsFromNegativeTraits - $store.ancestryPointsSpent;
-  }
-);
-
-/**
- * Derived store for Max HP (Class HP + Might Modifier + Ancestry HP)
- * Uses selected class's baseHpContribution, defaults to 8 if not set.
- */
-export const maxHP = derived(
-  characterInProgressStore,
-  ($store) => {
-    const classData = classesData.find(c => c.id === $store.classId);
-    const classHP = classData?.baseHpContribution ?? 8;
-    const mightModifier = getModifier($store.attribute_might);
-    const ancestryHP = 0; // Assuming 0 for MVP until Ancestry HP is implemented
-    return classHP + mightModifier + ancestryHP;
-  }
-);
-
-// Derived store for Area Defense (8 + CM + Might Modifier + Charisma Modifier + Bonuses)
-export const areaDefense = derived(
-  [characterInProgressStore, combatMastery],
-  ([$store, $combatMastery]) => {
-    const mightModifier = getModifier($store.attribute_might);
-    const charismaModifier = getModifier($store.attribute_charisma);
-    const bonuses = 0; // Assuming 0 for MVP until bonuses are implemented
-    return 8 + $combatMastery + mightModifier + charismaModifier + bonuses;
-  }
-);
-
-// Derived store for Precision Defense (8 + CM + Agility Modifier + Intelligence Modifier + Bonuses)
-export const precisionDefense = derived(
-  [characterInProgressStore, combatMastery],
-  ([$store, $combatMastery]) => {
-    const agilityModifier = getModifier($store.attribute_agility);
-    const intelligenceModifier = getModifier($store.attribute_intelligence);
-    const bonuses = 0; // Assuming 0 for MVP until bonuses are implemented
-    return 8 + $combatMastery + agilityModifier + intelligenceModifier + bonuses;
-  }
-);
-
-// Derived store for Initiative (CM + Agility Modifier)
-export const initiative = derived(
-  [characterInProgressStore, combatMastery],
-  ([$store, $combatMastery]) => {
-    const agilityModifier = getModifier($store.attribute_agility);
-    return $combatMastery + agilityModifier;
-  }
-);
-````
-
-## File: src/routes/+layout.svelte
-````
-<script lang="ts">
-	import '../app.css';
-
-	let { children } = $props();
-</script>
-
-{@render children()}
-````
-
-## File: src/routes/+page.svelte
-````
-<h1>Welcome to your library project</h1>
-<p>Create your package using @sveltejs/package and preview/showcase your work with SvelteKit</p>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
-````
+```
 
 ## File: src/routes/api/character/progress/_backup_merge_stages_20250621/stageA+server.ts
-````typescript
+```typescript
 import { json, error } from '@sveltejs/kit';
 import { PrismaClient } from '@prisma/client';
 
@@ -3827,10 +6675,10 @@ export async function POST({ request }) {
     await prisma.$disconnect();
   }
 }
-````
+```
 
 ## File: src/routes/api/character/progress/_backup_merge_stages_20250621/stageB+server.ts
-````typescript
+```typescript
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { PrismaClient } from '@prisma/client';
@@ -4003,10 +6851,10 @@ export const POST: RequestHandler = async ({ request }) => {
 //         return json({ success: false, message: 'Failed to fetch Stage B data.' }, { status: 500 });
 //     }
 // };
-````
+```
 
 ## File: src/routes/api/character/progress/complete/+server.ts
-````typescript
+```typescript
 // src/routes/api/character/progress/complete/+server.ts
 
 import { json } from '@sveltejs/kit';
@@ -4144,215 +6992,10 @@ export const POST: RequestHandler = async ({ request }) => {
     return json({ error: err.message || 'Unknown error' }, { status: 500 });
   }
 };
-````
-
-## File: src/routes/demo/+page.svelte
-````
-<a href="/demo/lucia">lucia</a>
-````
-
-## File: src/routes/demo/lucia/+page.server.ts
-````typescript
-import * as auth from '$lib/server/auth';
-import { fail, redirect } from '@sveltejs/kit';
-import { getRequestEvent } from '$app/server';
-import type { Actions, PageServerLoad } from './$types';
-
-export const load: PageServerLoad = async () => {
-	const user = requireLogin();
-	return { user };
-};
-
-export const actions: Actions = {
-	logout: async (event) => {
-		if (!event.locals.session) {
-			return fail(401);
-		}
-		await auth.invalidateSession(event.locals.session.id);
-		auth.deleteSessionTokenCookie(event);
-
-		return redirect(302, '/demo/lucia/login');
-	}
-};
-
-function requireLogin() {
-	const { locals } = getRequestEvent();
-
-	if (!locals.user) {
-		return redirect(302, '/demo/lucia/login');
-	}
-
-	return locals.user;
-}
-````
-
-## File: src/routes/demo/lucia/+page.svelte
-````
-<script lang="ts">
-	import { enhance } from '$app/forms';
-	import type { PageServerData } from './$types';
-
-	let { data }: { data: PageServerData } = $props();
-</script>
-
-<h1>Hi, {data.user.username}!</h1>
-<p>Your user ID is {data.user.id}.</p>
-<form method="post" action="?/logout" use:enhance>
-	<button>Sign out</button>
-</form>
-````
-
-## File: src/routes/demo/lucia/login/+page.server.ts
-````typescript
-import { hash, verify } from '@node-rs/argon2';
-import { encodeBase32LowerCase } from '@oslojs/encoding';
-import { fail, redirect } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
-import * as auth from '$lib/server/auth';
-import { db } from '$lib/server/db';
-import * as table from '$lib/server/db/schema';
-import type { Actions, PageServerLoad } from './$types';
-
-export const load: PageServerLoad = async (event) => {
-	if (event.locals.user) {
-		return redirect(302, '/demo/lucia');
-	}
-	return {};
-};
-
-export const actions: Actions = {
-	login: async (event) => {
-		const formData = await event.request.formData();
-		const username = formData.get('username');
-		const password = formData.get('password');
-
-		if (!validateUsername(username)) {
-			return fail(400, {
-				message: 'Invalid username (min 3, max 31 characters, alphanumeric only)'
-			});
-		}
-		if (!validatePassword(password)) {
-			return fail(400, { message: 'Invalid password (min 6, max 255 characters)' });
-		}
-
-		const results = await db.select().from(table.user).where(eq(table.user.username, username));
-
-		const existingUser = results.at(0);
-		if (!existingUser) {
-			return fail(400, { message: 'Incorrect username or password' });
-		}
-
-		const validPassword = await verify(existingUser.passwordHash, password, {
-			memoryCost: 19456,
-			timeCost: 2,
-			outputLen: 32,
-			parallelism: 1
-		});
-		if (!validPassword) {
-			return fail(400, { message: 'Incorrect username or password' });
-		}
-
-		const sessionToken = auth.generateSessionToken();
-		const session = await auth.createSession(sessionToken, existingUser.id);
-		auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
-
-		return redirect(302, '/demo/lucia');
-	},
-	register: async (event) => {
-		const formData = await event.request.formData();
-		const username = formData.get('username');
-		const password = formData.get('password');
-
-		if (!validateUsername(username)) {
-			return fail(400, { message: 'Invalid username' });
-		}
-		if (!validatePassword(password)) {
-			return fail(400, { message: 'Invalid password' });
-		}
-
-		const userId = generateUserId();
-		const passwordHash = await hash(password, {
-			// recommended minimum parameters
-			memoryCost: 19456,
-			timeCost: 2,
-			outputLen: 32,
-			parallelism: 1
-		});
-
-		try {
-			await db.insert(table.user).values({ id: userId, username, passwordHash });
-
-			const sessionToken = auth.generateSessionToken();
-			const session = await auth.createSession(sessionToken, userId);
-			auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
-		} catch {
-			return fail(500, { message: 'An error has occurred' });
-		}
-		return redirect(302, '/demo/lucia');
-	}
-};
-
-function generateUserId() {
-	// ID with 120 bits of entropy, or about the same as UUID v4.
-	const bytes = crypto.getRandomValues(new Uint8Array(15));
-	const id = encodeBase32LowerCase(bytes);
-	return id;
-}
-
-function validateUsername(username: unknown): username is string {
-	return (
-		typeof username === 'string' &&
-		username.length >= 3 &&
-		username.length <= 31 &&
-		/^[a-z0-9_-]+$/.test(username)
-	);
-}
-
-function validatePassword(password: unknown): password is string {
-	return typeof password === 'string' && password.length >= 6 && password.length <= 255;
-}
-````
-
-## File: src/routes/demo/lucia/login/+page.svelte
-````
-<script lang="ts">
-	import { enhance } from '$app/forms';
-	import type { ActionData } from './$types';
-
-	let { form }: { form: ActionData } = $props();
-</script>
-
-<h1>Login/Register</h1>
-<form method="post" action="?/login" use:enhance>
-	<label>
-		Username
-		<input
-			name="username"
-			class="mt-1 rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-		/>
-	</label>
-	<label>
-		Password
-		<input
-			type="password"
-			name="password"
-			class="mt-1 rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-		/>
-	</label>
-	<button class="rounded-md bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
-		>Login</button
-	>
-	<button
-		formaction="?/register"
-		class="rounded-md bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
-		>Register</button
-	>
-</form>
-<p style="color: red">{form?.message ?? ''}</p>
-````
+```
 
 ## File: src/routes/page.svelte.test.ts
-````typescript
+```typescript
 import { page } from '@vitest/browser/context';
 import { describe, expect, it } from 'vitest';
 import { render } from 'vitest-browser-svelte';
@@ -4366,91 +7009,31 @@ describe('/+page.svelte', () => {
 		await expect.element(heading).toBeInTheDocument();
 	});
 });
-````
-
-## File: svelte.config.js
-````javascript
-import adapter from '@sveltejs/adapter-vercel';
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-
-/** @type {import('@sveltejs/kit').Config} */
-const config = {
-	// Consult https://svelte.dev/docs/kit/integrations
-	// for more information about preprocessors
-	preprocess: vitePreprocess(),
-	kit: { adapter: adapter() }
-};
-
-export default config;
-````
-
-## File: tsconfig.json
-````json
-{
-	"extends": "./.svelte-kit/tsconfig.json",
-	"compilerOptions": {
-		"allowJs": true,
-		"checkJs": true,
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"resolveJsonModule": true,
-		"skipLibCheck": true,
-		"sourceMap": true,
-		"strict": true,
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext"
-	}
-}
-````
+```
 
 ## File: vite.config.ts
-````typescript
-import devtoolsJson from 'vite-plugin-devtools-json';
+```typescript
 import tailwindcss from '@tailwindcss/vite';
-import { sveltekit } from '@sveltejs/kit/vite';
+import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-	plugins: [tailwindcss(), sveltekit(), devtoolsJson()],
-	test: {
-		projects: [
-			{
-				extends: './vite.config.ts',
-				test: {
-					name: 'client',
-					environment: 'browser',
-					browser: {
-						enabled: true,
-						provider: 'playwright',
-						instances: [{ browser: 'chromium' }]
-					},
-					include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
-					exclude: ['src/lib/server/**'],
-					setupFiles: ['./vitest-setup-client.ts']
-				}
-			},
-			{
-				extends: './vite.config.ts',
-				test: {
-					name: 'server',
-					environment: 'node',
-					include: ['src/**/*.{test,spec}.{js,ts}'],
-					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
-				}
-			}
-		]
+	plugins: [tailwindcss(), react()],
+	publicDir: 'static',
+	build: {
+		outDir: 'dist'
 	}
 });
-````
+```
 
 ## File: vitest-setup-client.ts
-````typescript
+```typescript
 /// <reference types="@vitest/browser/matchers" />
 /// <reference types="@vitest/browser/providers/playwright" />
-````
+```
 
 ## File: src/lib/server/db/index.ts
-````typescript
+```typescript
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema.js';
@@ -4460,10 +7043,10 @@ import { building } from '$app/environment';
 const client = postgres(building ? '' : env.DATABASE_URL);
 
 export const db = drizzle(client, { schema });
-````
+```
 
 ## File: src/lib/server/db/schema.ts
-````typescript
+```typescript
 import { pgTable, integer, text, timestamp } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('user', {
@@ -4484,83 +7067,313 @@ export const session = pgTable('session', {
 export type Session = typeof session.$inferSelect;
 
 export type User = typeof user.$inferSelect;
-````
+```
+
+## File: src/lib/stores/characterInProgressStore.ts
+```typescript
+// src/lib/stores/characterInProgressStore.ts
+
+import { writable, derived } from 'svelte/store';
+import type { Writable } from 'svelte/store';
+import type { CharacterInProgress } from '@prisma/client'; // Assuming Prisma client is generated
+import { classesData } from '../rulesdata/classes.ts';
+
+// Define the shape of the data stored in the characterInProgressStore
+// This should mirror the CharacterInProgress Prisma model, plus any UI state
+export interface CharacterInProgressStoreData extends CharacterInProgress {
+  // Add any UI-specific state here if needed, e.g., current step in wizard
+  currentStep: number;
+  // Add temporary state for trait selection overflow
+  overflowTraitId: string | null;
+  overflowAttributeName: string | null;
+  // Add Level and Combat Mastery
+  level: number;
+  combatMastery: number; // Derived, but included in interface for clarity
+}
+
+// Initial state for the store, matching Prisma defaults and adding UI state
+const initialCharacterInProgressState: CharacterInProgressStoreData = {
+  id: '', // Will be set when a new character is started/loaded
+  attribute_might: -2,
+  attribute_agility: -2,
+  attribute_charisma: -2,
+  attribute_intelligence: -2,
+  pointsSpent: 0,
+
+  // Core Stats
+  level: 1, // Default to Level 1 for MVP
+  combatMastery: 1, // Calculated: Math.ceil(level / 2)
+
+  ancestry1Id: null,
+  ancestry2Id: null,
+  selectedTraitIds: '', // JSON string of selected trait IDs
+  ancestryPointsSpent: 0,
+
+  classId: null,
+  selectedFeatureChoices: '', // JSON string of selected feature choice IDs/values
+
+  // Skills, Equipment, Details fields will be added/updated later
+  finalName: null,
+  finalPlayerName: null,
+
+  createdAt: new Date(), // Placeholder, will be set by DB
+  updatedAt: new Date(), // Placeholder, will be set by DB
+
+  // UI State
+  currentStep: 1, // Start at Stage A (Attributes)
+  overflowTraitId: null,
+  overflowAttributeName: null,
+};
+
+// Create the writable store
+export const characterInProgressStore: Writable<CharacterInProgressStoreData> = writable(initialCharacterInProgressState);
+
+// Helper function to get an attribute's modifier
+// In DC20, the attribute score itself is the modifier.
+// Handles null or undefined scores by returning 0.
+export function getModifier(attributeScore: number | null | undefined): number {
+  return attributeScore ?? 0;
+}
+
+// Constant for Level 1 Combat Mastery (DC20 p.22)
+export const L1_COMBAT_MASTERY = 1; // Keep for reference, but use derived store
+
+// --- Derived Stores ---
+
+// Derived store for Combat Mastery (half level rounded up)
+export const combatMastery = derived(
+  characterInProgressStore,
+  ($store) => {
+    return Math.ceil(($store.level ?? 1) / 2); // Default to level 1 if store.level is null/undefined
+  }
+);
+
+// Derived store for the Prime Modifier Value and Attribute
+export const primeModifier = derived(
+  characterInProgressStore,
+  ($store) => {
+    const attributes = [
+      { name: 'Might', value: $store.attribute_might },
+      { name: 'Agility', value: $store.attribute_agility },
+      { name: 'Charisma', value: $store.attribute_charisma },
+      { name: 'Intelligence', value: $store.attribute_intelligence },
+    ];
+
+    // Find the highest attribute score
+    let highestAttribute = attributes[0];
+    for (let i = 1; i < attributes.length; i++) {
+      if (attributes[i].value > highestAttribute.value) {
+        highestAttribute = attributes[i];
+      }
+    }
+
+    // Handle ties: If there's a tie, the player chooses.
+    // For now, we'll just pick the first one in case of a tie.
+    // A more complex implementation might require user input on tie-breaking.
+    // Add a defensive check for highestAttribute
+    if (!highestAttribute) {
+        console.error("Error calculating primeModifier: highestAttribute is undefined.");
+        return { value: 0, attribute: 'Unknown' }; // Return a default safe value
+    }
+
+    const primeModifierValue = highestAttribute.value;
+    const primeModifierAttribute = highestAttribute.name;
+
+    return { value: primeModifierValue, attribute: primeModifierAttribute };
+  }
+);
+
+// Derived store for Save Masteries (DC20 p.22)
+export const saveMasteries = derived(
+  [characterInProgressStore, primeModifier, combatMastery],
+  ([$store, $primeModifier, $combatMastery]) => {
+    const primeModValue = $primeModifier.value;
+    const primeModAttribute = $primeModifier.attribute;
+
+    // Save Mastery = Combat Mastery + Attribute Modifier
+    // If the attribute is the Prime Modifier, use the Prime Modifier value.
+    // Otherwise, use the attribute's own modifier (which is the score itself).
+    // Use the derived combatMastery store
+    const currentCombatMastery = $combatMastery;
+
+    return {
+      might: currentCombatMastery + (primeModAttribute === 'Might' ? primeModValue : getModifier($store.attribute_might)),
+      agility: currentCombatMastery + (primeModAttribute === 'Agility' ? primeModValue : getModifier($store.attribute_agility)),
+      charisma: currentCombatMastery + (primeModAttribute === 'Charisma' ? primeModValue : getModifier($store.attribute_charisma)),
+      intelligence: currentCombatMastery + (primeModAttribute === 'Intelligence' ? primeModValue : getModifier($store.attribute_intelligence)),
+    };
+  }
+);
+
+// Derived store for Grit Points (Base + Charisma Modifier)
+export const gritPoints = derived(
+  characterInProgressStore,
+  ($store) => {
+    // Assuming base Grit Points are defined in class data, but for now use a placeholder
+    const baseGrit = 2; // Placeholder, should come from class data
+    return baseGrit + getModifier($store.attribute_charisma);
+  }
+);
+
+// Derived store for Jump Distance (Agility Modifier, min 1)
+export const jumpDistance = derived(
+  characterInProgressStore,
+  ($store) => {
+    const agilityModifier = getModifier($store.attribute_agility);
+    return agilityModifier < 1 ? 1 : agilityModifier;
+  }
+);
+
+/**
+ * Derived store for Starting SP (from class)
+ */
+export const startingSP = derived(
+  characterInProgressStore,
+  ($store) => {
+    if (!$store.classId) return 0;
+    const classData = classesData.find((c: { id: string; }) => c.id === $store.classId);
+    return classData?.startingSP ?? 0;
+  }
+);
+
+/**
+ * Derived store for Starting MP (from class)
+ */
+export const startingMP = derived(
+  characterInProgressStore,
+  ($store) => {
+    if (!$store.classId) return 0;
+    const classData = classesData.find((c: { id: string; }) => c.id === $store.classId);
+    return classData?.startingMP ?? 0;
+  }
+);
+
+// Derived store for Provisional Skill Points (5 + Intelligence Modifier + Class Bonus)
+export const provisionalSkillPoints = derived(
+  characterInProgressStore,
+  ($store) => {
+    const intelligenceModifier = getModifier($store.attribute_intelligence);
+    // Assuming class data is available to get skillPointGrantLvl1
+    // For now, use a placeholder of 0 if classId is not set
+    const classSkillBonus = 0; // Placeholder, should come from class data based on $store.classId
+    return 5 + intelligenceModifier + classSkillBonus;
+  }
+);
+
+import { traitsData } from '../rulesdata/traits.ts';
+import type { ITrait } from '../rulesdata/types.ts';
+
+// ... (rest of the file)
+
+// Derived store for Ancestry Points Remaining (Base 5 - Spent)
+export const ancestryPointsRemaining = derived(
+  characterInProgressStore,
+  ($store) => {
+    const basePoints = 5;
+    const selectedTraitIds = JSON.parse($store.selectedTraitIds || '[]');
+    
+    const traits = selectedTraitIds.map((id: string) => traitsData.find((t: ITrait) => t.id === id)) as (ITrait | undefined)[];
+
+    const totalCost = traits
+      .filter((t): t is ITrait => t !== undefined)
+      .reduce((acc: number, t: ITrait) => acc + t.cost, 0);
+
+    return basePoints - totalCost;
+  }
+);
+
+/**
+ * Derived store for Max HP (Class HP + Might Modifier + Ancestry HP)
+ * Uses selected class's baseHpContribution, defaults to 8 if not set.
+ */
+export const maxHP = derived(
+  characterInProgressStore,
+  ($store) => {
+    const classData = classesData.find((c: { id: string; }) => c.id === $store.classId);
+    const classHP = classData?.baseHpContribution ?? 8;
+    const mightModifier = getModifier($store.attribute_might);
+    const ancestryHP = 0; // Assuming 0 for MVP until Ancestry HP is implemented
+    return classHP + mightModifier + ancestryHP;
+  }
+);
+
+// Derived store for Area Defense (8 + CM + Might Modifier + Charisma Modifier + Bonuses)
+export const areaDefense = derived(
+  [characterInProgressStore, combatMastery],
+  ([$store, $combatMastery]) => {
+    const mightModifier = getModifier($store.attribute_might);
+    const charismaModifier = getModifier($store.attribute_charisma);
+    const bonuses = 0; // Assuming 0 for MVP until bonuses are implemented
+    return 8 + $combatMastery + mightModifier + charismaModifier + bonuses;
+  }
+);
+
+// Derived store for Precision Defense (8 + CM + Agility Modifier + Intelligence Modifier + Bonuses)
+export const precisionDefense = derived(
+  [characterInProgressStore, combatMastery],
+  ([$store, $combatMastery]) => {
+    const agilityModifier = getModifier($store.attribute_agility);
+    const intelligenceModifier = getModifier($store.attribute_intelligence);
+    const bonuses = 0; // Assuming 0 for MVP until bonuses are implemented
+    return 8 + $combatMastery + agilityModifier + intelligenceModifier + bonuses;
+  }
+);
+
+// Derived store for Initiative (CM + Agility Modifier)
+export const initiative = derived(
+  [characterInProgressStore, combatMastery],
+  ([$store, $combatMastery]) => {
+    const agilityModifier = getModifier($store.attribute_agility);
+    return $combatMastery + agilityModifier;
+  }
+);
+```
+
+## File: tsconfig.json
+```json
+{
+	"compilerOptions": {
+		"target": "ES2020",
+		"useDefineForClassFields": true,
+		"lib": ["ES2020", "DOM", "DOM.Iterable"],
+		"module": "ESNext",
+		"skipLibCheck": true,
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"noEmit": true,
+		"jsx": "react-jsx",
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"allowJs": true,
+		"checkJs": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"sourceMap": true
+	},
+	"include": ["src"],
+	"references": [{ "path": "./tsconfig.node.json" }]
+}
+```
 
 ## File: README.md
-````markdown
-# Svelte library
-
-Everything you need to build a Svelte library, powered by [`sv`](https://npmjs.com/package/sv).
-
-Read more about creating a library [in the docs](https://svelte.dev/docs/kit/packaging).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+```markdown
+001
 ```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
-
-## Building
-
-To build your library:
-
-```bash
-npm run package
-```
-
-To create a production version of your showcase app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
-
-## Publishing
-
-Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
-
-To publish your library to [npm](https://www.npmjs.com):
-
-```bash
-npm publish
-```
-````
 
 ## File: package.json
-````json
+```json
 {
 	"name": "dc20clean",
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build && npm run prepack",
+		"build": "vite build",
 		"preview": "vite preview",
-		"prepare": "svelte-kit sync || echo '' && npx prisma generate --no-engine",
-		"prepack": "svelte-kit sync && svelte-package && publint",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"prepare": "npx prisma generate --no-engine",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"test:unit": "vitest",
@@ -4579,52 +7392,37 @@ npm publish
 	"sideEffects": [
 		"**/*.css"
 	],
-	"svelte": "./dist/index.js",
-	"types": "./dist/index.d.ts",
 	"type": "module",
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"svelte": "./dist/index.js"
-		}
-	},
-	"peerDependencies": {
-		"svelte": "^5.0.0"
-	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
 		"@eslint/js": "^9.18.0",
 		"@playwright/test": "^1.49.1",
-		"@sveltejs/adapter-vercel": "^5.6.3",
-		"@sveltejs/kit": "^2.16.0",
-		"@sveltejs/package": "^2.0.0",
-		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"@tailwindcss/forms": "^0.5.9",
 		"@tailwindcss/typography": "^0.5.15",
 		"@tailwindcss/vite": "^4.0.0",
 		"@types/node": "^22",
+		"@types/react": "^19.1.8",
+		"@types/react-dom": "^19.1.6",
+		"@vitejs/plugin-react": "^4.7.0",
 		"@vitest/browser": "^3.2.3",
 		"drizzle-kit": "^0.30.2",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
-		"eslint-plugin-svelte": "^3.0.0",
+		"eslint-plugin-react": "^7.37.5",
+		"eslint-plugin-react-hooks": "^5.2.0",
 		"globals": "^16.0.0",
 		"playwright": "^1.53.0",
 		"prettier": "^3.4.2",
-		"prettier-plugin-svelte": "^3.3.3",
 		"prettier-plugin-tailwindcss": "^0.6.11",
 		"publint": "^0.3.2",
-		"svelte": "^5.0.0",
-		"svelte-check": "^4.0.0",
 		"tailwindcss": "^4.0.0",
 		"typescript": "^5.0.0",
 		"typescript-eslint": "^8.20.0",
 		"vite": "^6.2.6",
-		"vite-plugin-devtools-json": "^0.2.0",
-		"vitest-browser-svelte": "^0.1.0"
+		"vite-plugin-devtools-json": "^0.2.0"
 	},
 	"keywords": [
-		"svelte"
+		"react"
 	],
 	"dependencies": {
 		"@node-rs/argon2": "^2.0.2",
@@ -4632,9 +7430,81 @@ npm publish
 		"@oslojs/encoding": "^1.1.0",
 		"@prisma/client": "^6.10.1",
 		"@prisma/extension-accelerate": "^2.0.1",
+		"@types/styled-components": "^5.1.34",
 		"drizzle-orm": "^0.40.0",
+		"fantasy-name-generator": "^2.0.0",
 		"postgres": "^3.4.5",
-		"prisma": "^6.10.1"
+		"prisma": "^6.10.1",
+		"react": "^19.1.0",
+		"react-dom": "^19.1.0",
+		"styled-components": "^6.1.19"
 	}
 }
-````
+```
+
+## File: src/routes/character-creation/+page.svelte
+```
+<script lang="ts">
+	import AncestrySelector from './AncestrySelector.svelte';
+	import SelectedAncestries from './SelectedAncestries.svelte';
+	import AncestryPointsCounter from './AncestryPointsCounter.svelte';
+	import Attributes from './Attributes.svelte';
+	import ClassSelector from './ClassSelector.svelte';
+	import ClassFeatures from './ClassFeatures.svelte';
+</script>
+
+<h1>Character Creation</h1>
+
+<div class="character-creation-page">
+	<h2>Choose Your Ancestry</h2>
+	<AncestrySelector />
+
+	<section class="points-section">
+		<AncestryPointsCounter />
+	</section>
+
+	<section class="traits-section">
+		<h2>Ancestry Traits</h2>
+		<SelectedAncestries />
+	</section>
+	<section class="attributes-section">
+		<Attributes />
+	</section>
+
+	<section class="class-selection-section">
+		<h2>Class Selection</h2>
+		<ClassSelector />
+	</section>
+	<section class="class-features-section">
+		<ClassFeatures />
+	</section>
+
+	<section class="ancestry-selection-section"></section>
+</div>
+
+<style>
+	.character-creation-page {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+		padding: 1rem;
+	}
+
+	.class-selection-section,
+	.attributes-section,
+	.ancestry-selection-section,
+	.points-section,
+	.traits-section,
+	.class-features-section {
+		border: 1px solid #eee;
+		padding: 1.5rem;
+		border-radius: 8px;
+		background-color: #f9f9f9;
+	}
+
+	h2 {
+		margin-top: 0;
+		color: #333;
+	}
+</style>
+```

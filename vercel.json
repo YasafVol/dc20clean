@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/sheet/:id",
+      "destination": "/pdf-service/src/server.ts"
+    }
+  ]
+}

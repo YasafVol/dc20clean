@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": false,
+    "strict": true,
+    "jsx": "react-jsx",
+    "types": ["node"]
+  },
+  "include": ["vite.config.ts"]
+}

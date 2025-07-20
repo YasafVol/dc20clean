@@ -66,13 +66,24 @@ import {
   StyledFeaturePopupSourceInfo
 } from './styles/FeaturePopup';
 
-import {
-  StyledExhaustionContainer,
-  StyledExhaustionLevel,
-  StyledExhaustionTooltip
+import { 
+  StyledExhaustionContainer, 
+  StyledExhaustionLevel, 
+  StyledExhaustionTooltip 
 } from './styles/Exhaustion';
-
-// Types for character sheet data
+import {
+  StyledDeathContainer,
+  StyledDeathTitle,
+  StyledHealthStatus,
+  StyledDeathThreshold,
+  StyledDeathStepsContainer,
+  StyledDeathStepsTitle,
+  StyledDeathStepsGrid,
+  StyledDeathStep,
+  StyledDeathStepTooltip,
+  StyledHealthStatusTooltip
+} from './styles/Death';
+import { getHealthStatus, calculateDeathThreshold, getDeathSteps } from '../../lib/rulesdata/death';// Types for character sheet data
 interface CharacterSheetProps {
   characterId: string;
   onBack: () => void;
@@ -676,6 +687,35 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
       
       return newValues;
     });
+  };
+
+  // Handle death step changes
+  const handleDeathStepChange = (step: number) => {
+    if (!characterData) return;
+    
+    const deathThreshold = calculateDeathThreshold(characterData.finalPrimeModifierValue);
+    const targetHP = -step;
+    
+    // Don't allow going below death threshold
+    if (targetHP < deathThreshold) {
+      setCurrentValues(prev => {
+        const newValues = { ...prev, currentHP: deathThreshold };
+        // Save to localStorage after state update
+        if (characterData?.id) {
+          setTimeout(() => saveCharacterData(characterData.id, newValues), 0);
+        }
+        return newValues;
+      });
+    } else {
+      setCurrentValues(prev => {
+        const newValues = { ...prev, currentHP: targetHP };
+        // Save to localStorage after state update
+        if (characterData?.id) {
+          setTimeout(() => saveCharacterData(characterData.id, newValues), 0);
+        }
+        return newValues;
+      });
+    }
   };
 
   // Helper function to safely calculate fill percentage
@@ -1286,13 +1326,63 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
             {/* Death & Exhaustion */}
             <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
-              <div style={{ flex: 1, border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', textAlign: 'center' }}>
-                <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.5rem' }}>DEATH</div>
-                <div style={{ fontSize: '0.8rem', color: '#8b4513', marginBottom: '0.3rem' }}>DEATH THRESHOLD</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#8b4513' }}>
-                  -{characterData.finalDeathThreshold}
-                </div>
-              </div>
+              <StyledDeathContainer>
+                <StyledDeathTitle>DEATH & HEALTH STATUS</StyledDeathTitle>
+                
+                {/* Health Status */}
+                {(() => {
+                  const deathThreshold = calculateDeathThreshold(characterData.finalPrimeModifierValue);
+                  const healthStatus = getHealthStatus(currentValues.currentHP, characterData.finalHPMax, deathThreshold);
+                  const deathSteps = getDeathSteps(currentValues.currentHP, deathThreshold);
+                  
+                  return (
+                    <>
+                      <StyledHealthStatusTooltip 
+                        data-tooltip={healthStatus.effects.join('\n')}
+                      >
+                        <StyledHealthStatus status={healthStatus.status}>
+                          {healthStatus.description.toUpperCase()}
+                        </StyledHealthStatus>
+                      </StyledHealthStatusTooltip>
+                      
+                      <div style={{ fontSize: '0.8rem', color: '#8b4513', marginBottom: '0.3rem' }}>DEATH THRESHOLD</div>
+                      <StyledDeathThreshold>
+                        {deathThreshold}
+                      </StyledDeathThreshold>
+                      
+                      {/* Death Steps - only show when on Death's Door */}
+                      {healthStatus.status === 'deaths-door' && (
+                        <StyledDeathStepsContainer>
+                          <StyledDeathStepsTitle>
+                            DEATH STEPS ({deathSteps.currentStep}/{deathSteps.maxSteps})
+                          </StyledDeathStepsTitle>
+                          <StyledDeathStepsGrid>
+                            {Array.from({ length: deathSteps.maxSteps }, (_, index) => {
+                              const step = index + 1;
+                              const isFilled = step <= deathSteps.currentStep;
+                              const isDead = deathSteps.isDead && step === deathSteps.maxSteps;
+                              
+                              return (
+                                <StyledDeathStep
+                                  key={step}
+                                  filled={isFilled}
+                                  isDead={isDead}
+                                  onClick={() => handleDeathStepChange(step)}
+                                >
+                                  {!isDead && step}
+                                  <StyledDeathStepTooltip>
+                                    {isDead ? 'Dead' : `${step} HP below 0`}
+                                  </StyledDeathStepTooltip>
+                                </StyledDeathStep>
+                              );
+                            })}
+                          </StyledDeathStepsGrid>
+                        </StyledDeathStepsContainer>
+                      )}
+                    </>
+                  );
+                })()}
+              </StyledDeathContainer>
               
               <div style={{ flex: 1, border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', textAlign: 'center' }}>
                 <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.5rem' }}>EXHAUSTION</div>

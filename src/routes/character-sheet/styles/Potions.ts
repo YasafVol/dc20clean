@@ -46,7 +46,7 @@ export const StyledPotionBubbles = styled.div<{ color: string; fillPercentage: n
   &::before {
     content: '';
     position: absolute;
-    top: 20%;
+    top: 60%;
     left: 20%;
     width: 8px;
     height: 8px;

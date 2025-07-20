@@ -17,7 +17,7 @@ const StyledTitle = styled.h1`
   text-align: center;
   font-size: 3rem;
   font-weight: bold;
-  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+  text-shadow: 2px 2px 4px rgba(180, 83, 9, 0.8);
   letter-spacing: 2px;
   background: linear-gradient(45deg, #fbbf24 0%, #f59e0b 100%);
   background-clip: text;

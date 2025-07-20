@@ -6,7 +6,6 @@ import AncestryPointsCounter from './AncestryPointsCounter.tsx';
 import Attributes from './Attributes.tsx';
 import ClassSelector from './ClassSelector.tsx';
 import ClassFeatures from './ClassFeatures.tsx';
-import SaveMasteries from './SaveMasteries.tsx';
 import Background from './Background.tsx';
 import CharacterName from './CharacterName.tsx';
 import Snackbar from '../../components/Snackbar.tsx';
@@ -31,10 +30,9 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
     const steps = [
     { number: 1, label: 'Class & Features' },
     { number: 2, label: 'Attributes' },
-    { number: 3, label: 'Save Masteries' },
-    { number: 4, label: 'Background' },
-    { number: 5, label: 'Ancestry' },
-    { number: 6, label: 'Character Name' },
+    { number: 3, label: 'Background' },
+    { number: 4, label: 'Ancestry' },
+    { number: 5, label: 'Character Name' },
   ];
 
   const handleStepClick = (step: number) => {
@@ -42,7 +40,7 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
   };
 
   const handleNext = async () => {
-    if (state.currentStep === 6 && areAllStepsCompleted()) {
+    if (state.currentStep === 5 && areAllStepsCompleted()) {
       // Character is complete, trigger completion using the service
       await completeCharacter(state, {
         onShowSnackbar: (message: string) => {
@@ -68,15 +66,6 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
       case 2:
         return attributePointsRemaining === 0;
       case 3:
-        // Save Masteries: exactly 2 attributes must be selected
-        const selectedCount = [
-          state.saveMasteryMight,
-          state.saveMasteryAgility,
-          state.saveMasteryCharisma,
-          state.saveMasteryIntelligence
-        ].filter(Boolean).length;
-        return selectedCount === 2;
-      case 4:
         // Background: check if all points have been spent
         const hasSkillSelections = state.skillsJson && state.skillsJson !== '{}';
         const hasTradeSelections = state.tradesJson && state.tradesJson !== '{}';
@@ -124,9 +113,9 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
         return skillPointsUsed === maxSkillPoints && 
                tradePointsUsed === maxTradePoints && 
                languagePointsUsed === maxLanguagePoints;
-      case 5:
+      case 4:
         return state.ancestry1Id !== null;
-      case 6:
+      case 5:
         return state.finalName !== null && state.finalName !== '' && 
                state.finalPlayerName !== null && state.finalPlayerName !== '';
       default:
@@ -150,10 +139,8 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
       case 2:
         return <Attributes />;
       case 3:
-        return <SaveMasteries />;
-      case 4:
         return <Background />;
-      case 5:
+      case 4:
         return (
           <>
             <AncestrySelector />
@@ -161,7 +148,7 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
             <SelectedAncestries />
           </>
         );
-      case 6:
+      case 5:
         return <CharacterName />;
       default:
         return null;
@@ -211,9 +198,9 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
           <StyledButton 
             $variant="primary" 
             onClick={handleNext}
-            disabled={state.currentStep === 6 && !areAllStepsCompleted()}
+            disabled={state.currentStep === 5 && !areAllStepsCompleted()}
           >
-            {state.currentStep === 6 ? 'Complete' : 'Next →'}
+            {state.currentStep === 5 ? 'Complete' : 'Next →'}
           </StyledButton>
         </StyledNavigationButtons>
       </StyledStepIndicator>

@@ -107,11 +107,11 @@ interface CharacterSheetData {
   finalPrimeModifierAttribute: string;
   finalCombatMastery: number;
   
-  // Save Masteries (DC20 p.22)
-  finalSaveMasteryMight: number;
-  finalSaveMasteryAgility: number;
-  finalSaveMasteryCharisma: number;
-  finalSaveMasteryIntelligence: number;
+  // Saves (Attribute + Combat Mastery)
+  finalSaveMight: number;
+  finalSaveAgility: number;
+  finalSaveCharisma: number;
+  finalSaveIntelligence: number;
   
   // Health & Resources
   finalHPMax: number;
@@ -915,7 +915,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.2rem' }}>MIGHT</div>
-                  <div style={{ fontSize: '0.9rem', color: '#8b4513' }}>SAVE +{characterData.finalSaveMasteryMight}</div>
+                  <div style={{ fontSize: '0.9rem', color: '#8b4513' }}>SAVE +{characterData.finalSaveMight}</div>
                 </div>
               </div>
               
@@ -941,7 +941,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.2rem' }}>AGILITY</div>
-                  <div style={{ fontSize: '0.9rem', color: '#8b4513' }}>SAVE +{characterData.finalSaveMasteryAgility}</div>
+                  <div style={{ fontSize: '0.9rem', color: '#8b4513' }}>SAVE +{characterData.finalSaveAgility}</div>
                 </div>
               </div>
               
@@ -967,7 +967,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.2rem' }}>CHARISMA</div>
-                  <div style={{ fontSize: '0.9rem', color: '#8b4513' }}>SAVE +{characterData.finalSaveMasteryCharisma}</div>
+                  <div style={{ fontSize: '0.9rem', color: '#8b4513' }}>SAVE +{characterData.finalSaveCharisma}</div>
                 </div>
               </div>
               
@@ -993,7 +993,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.2rem' }}>INTELLIGENCE</div>
-                  <div style={{ fontSize: '0.9rem', color: '#8b4513' }}>SAVE +{characterData.finalSaveMasteryIntelligence}</div>
+                  <div style={{ fontSize: '0.9rem', color: '#8b4513' }}>SAVE +{characterData.finalSaveIntelligence}</div>
                 </div>
               </div>
               

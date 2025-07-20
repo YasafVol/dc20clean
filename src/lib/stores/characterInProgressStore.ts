@@ -16,11 +16,6 @@ export interface CharacterInProgressStoreData extends CharacterInProgress {
   // Add Level and Combat Mastery
   level: number;
   combatMastery: number; // Derived, but included in interface for clarity
-  // Save Masteries (will be in Prisma model but need explicit typing)
-  saveMasteryMight: boolean;
-  saveMasteryAgility: boolean;
-  saveMasteryCharisma: boolean;
-  saveMasteryIntelligence: boolean;
 }
 
 // Initial state for the store, matching Prisma defaults and adding UI state
@@ -43,12 +38,6 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
 
   classId: null,
   selectedFeatureChoices: '', // JSON string of selected feature choice IDs/values
-
-  // Save Masteries (DC20 p.22)
-  saveMasteryMight: false,
-  saveMasteryAgility: false,
-  saveMasteryCharisma: false,
-  saveMasteryIntelligence: false,
 
   // Skills, Equipment, Details fields will be added/updated later
   finalName: null,
@@ -118,28 +107,6 @@ export const primeModifier = derived(
     const primeModifierAttribute = highestAttribute.name;
 
     return { value: primeModifierValue, attribute: primeModifierAttribute };
-  }
-);
-
-// Derived store for Save Masteries (DC20 p.22)
-export const saveMasteries = derived(
-  [characterInProgressStore, primeModifier, combatMastery],
-  ([$store, $primeModifier, $combatMastery]) => {
-    const primeModValue = $primeModifier.value;
-    const primeModAttribute = $primeModifier.attribute;
-
-    // Save Mastery = Combat Mastery + Attribute Modifier
-    // If the attribute is the Prime Modifier, use the Prime Modifier value.
-    // Otherwise, use the attribute's own modifier (which is the score itself).
-    // Use the derived combatMastery store
-    const currentCombatMastery = $combatMastery;
-
-    return {
-      might: currentCombatMastery + (primeModAttribute === 'Might' ? primeModValue : getModifier($store.attribute_might)),
-      agility: currentCombatMastery + (primeModAttribute === 'Agility' ? primeModValue : getModifier($store.attribute_agility)),
-      charisma: currentCombatMastery + (primeModAttribute === 'Charisma' ? primeModValue : getModifier($store.attribute_charisma)),
-      intelligence: currentCombatMastery + (primeModAttribute === 'Intelligence' ? primeModValue : getModifier($store.attribute_intelligence)),
-    };
   }
 );
 

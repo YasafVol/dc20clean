@@ -24,12 +24,6 @@ export interface CharacterInProgressData {
   selectedTraitIds: string;
   selectedFeatureChoices: string;
   
-  // Save Masteries (DC20 p.22 - choose 2 attributes for Save Mastery)
-  saveMasteryMight: boolean;
-  saveMasteryAgility: boolean;
-  saveMasteryCharisma: boolean;
-  saveMasteryIntelligence: boolean;
-  
   // Character Details
   finalName: string | null;
   finalPlayerName: string | null;
@@ -68,11 +62,11 @@ export interface CalculatedCharacterStats {
   finalPrimeModifierAttribute: string;
   finalCombatMastery: number;
   
-  // Save Masteries (DC20 p.22)
-  finalSaveMasteryMight: number;
-  finalSaveMasteryAgility: number;
-  finalSaveMasteryCharisma: number;
-  finalSaveMasteryIntelligence: number;
+  // Saves (Attribute + Combat Mastery)
+  finalSaveMight: number;
+  finalSaveAgility: number;
+  finalSaveCharisma: number;
+  finalSaveIntelligence: number;
   
   // Health & Resources
   finalHPMax: number;
@@ -217,34 +211,26 @@ export const calculateCharacterStats = async (
   finalSaveDC += primeModifier.value; // Save DC = Base + Prime
   finalInitiativeBonus += finalCombatMastery + finalAgility; // Initiative = CM + Agility
   
-  // Calculate Save Masteries (DC20 p.22)
-  // Save Mastery = Combat Mastery + Attribute Modifier (only for selected attributes)
-  const finalSaveMasteryMight = characterData.saveMasteryMight 
-    ? finalCombatMastery + finalMight 
-    : finalMight;
-  const finalSaveMasteryAgility = characterData.saveMasteryAgility 
-    ? finalCombatMastery + finalAgility 
-    : finalAgility;
-  const finalSaveMasteryCharisma = characterData.saveMasteryCharisma 
-    ? finalCombatMastery + finalCharisma 
-    : finalCharisma;
-  const finalSaveMasteryIntelligence = characterData.saveMasteryIntelligence 
-    ? finalCombatMastery + finalIntelligence 
-    : finalIntelligence;
+  // Calculate Save Values (Updated Formula)
+  // Save = Attribute Modifier + Combat Mastery (always)
+  const finalSaveMight = finalMight + finalCombatMastery;
+  const finalSaveAgility = finalAgility + finalCombatMastery;
+  const finalSaveCharisma = finalCharisma + finalCombatMastery;
+  const finalSaveIntelligence = finalIntelligence + finalCombatMastery;
     
-  console.log('Save Mastery calculations:', {
+  console.log('Save calculations:', {
     combatMastery: finalCombatMastery,
-    selections: {
-      might: characterData.saveMasteryMight,
-      agility: characterData.saveMasteryAgility,
-      charisma: characterData.saveMasteryCharisma,
-      intelligence: characterData.saveMasteryIntelligence
+    attributes: {
+      might: finalMight,
+      agility: finalAgility,
+      charisma: finalCharisma,
+      intelligence: finalIntelligence
     },
     results: {
-      might: finalSaveMasteryMight,
-      agility: finalSaveMasteryAgility,
-      charisma: finalSaveMasteryCharisma,
-      intelligence: finalSaveMasteryIntelligence
+      might: finalSaveMight,
+      agility: finalSaveAgility,
+      charisma: finalSaveCharisma,
+      intelligence: finalSaveIntelligence
     }
   });
   
@@ -289,11 +275,11 @@ export const calculateCharacterStats = async (
     finalPrimeModifierAttribute: primeModifier.attribute,
     finalCombatMastery,
     
-    // Save Masteries (DC20 p.22)
-    finalSaveMasteryMight,
-    finalSaveMasteryAgility,
-    finalSaveMasteryCharisma,
-    finalSaveMasteryIntelligence,
+    // Saves (Attribute + Combat Mastery)
+    finalSaveMight,
+    finalSaveAgility,
+    finalSaveCharisma,
+    finalSaveIntelligence,
     
     // Health & Resources
     finalHPMax,

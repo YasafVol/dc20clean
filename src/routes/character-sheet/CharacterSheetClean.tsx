@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { skillsData } from '../../lib/rulesdata/skills';
 import { tradesData } from '../../lib/rulesdata/trades';
 import { knowledgeData } from '../../lib/rulesdata/knowledge';
+import { traitsData } from '../../lib/rulesdata/traits';
+import { classesData } from '../../lib/rulesdata/classes';
+import { ancestriesData } from '../../lib/rulesdata/ancestries';
 
 // Import styled components
 import {
@@ -40,9 +43,33 @@ import {
   StyledPotionBubbles,
   StyledPotionValue,
   StyledLargePotionContainer,
-  StyledLargePotionValue,
-  StyledTempHPDisplay
+  StyledLargePotionValue
 } from './styles/Potions';
+
+import {
+  StyledFeatureGrid,
+  StyledFeatureItem,
+  StyledFeatureName,
+  StyledFeatureReadMore,
+  StyledFeatureCategory,
+  StyledFeatureCategoryTitle
+} from './styles/Features';
+
+import {
+  StyledFeaturePopupOverlay,
+  StyledFeaturePopupContent,
+  StyledFeaturePopupHeader,
+  StyledFeaturePopupTitle,
+  StyledFeaturePopupClose,
+  StyledFeaturePopupDescription,
+  StyledFeaturePopupSourceInfo
+} from './styles/FeaturePopup';
+
+import {
+  StyledExhaustionContainer,
+  StyledExhaustionLevel,
+  StyledExhaustionTooltip
+} from './styles/Exhaustion';
 
 // Types for character sheet data
 interface CharacterSheetProps {
@@ -101,6 +128,18 @@ interface CharacterSheetData {
   skillsJson?: string;
   tradesJson?: string;
   languagesJson?: string;
+  selectedTraitIds?: string; // JSON string of selected trait IDs
+  selectedFeatureChoices?: string; // JSON string of selected feature choices
+  
+  // Current values (optional, may not exist on first load)
+  currentHP?: number;
+  currentSP?: number;
+  currentMP?: number;
+  currentGritPoints?: number;
+  currentRestPoints?: number;
+  tempHP?: number;
+  actionPointsUsed?: number;
+  exhaustionLevel?: number;
 }
 
 interface SkillData {
@@ -122,13 +161,23 @@ interface LanguageData {
   fluency: 'limited' | 'fluent';
 }
 
+interface FeatureData {
+  id: string;
+  name: string;
+  description: string;
+  source: 'ancestry' | 'class' | 'choice';
+  sourceDetail?: string; // e.g., "Human (Default)", "Barbarian Lvl 1", etc.
+}
+
 interface CurrentValues {
   currentHP: number;
   currentSP: number;
   currentMP: number;
   currentGritPoints: number;
+  currentRestPoints: number;
   tempHP: number;
   actionPointsUsed: number;
+  exhaustionLevel: number; // 0-5
 }
 
 // Character data service - fetches from localStorage and uses already calculated stats
@@ -145,8 +194,12 @@ const getCharacterData = async (characterId: string): Promise<CharacterSheetData
     throw new Error(`Character with ID "${characterId}" not found in localStorage`);
   }
   
-  // Return the character data as-is since it's already calculated
-  return character;
+  // Return the character data as-is since it's already calculated, but ensure trait and feature data is included
+  return {
+    ...character,
+    selectedTraitIds: character.selectedTraitIds || character.selectedTraitsJson || '[]',
+    selectedFeatureChoices: character.selectedFeatureChoices || '{}'
+  };
 };
 
 // Save character current values back to localStorage
@@ -162,8 +215,10 @@ const saveCharacterData = (characterId: string, currentValues: CurrentValues) =>
       currentSP: currentValues.currentSP,
       currentMP: currentValues.currentMP,
       currentGritPoints: currentValues.currentGritPoints,
+      currentRestPoints: currentValues.currentRestPoints,
       tempHP: currentValues.tempHP,
       actionPointsUsed: currentValues.actionPointsUsed,
+      exhaustionLevel: currentValues.exhaustionLevel,
       lastModified: new Date().toISOString()
     };
     
@@ -179,11 +234,14 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
     currentSP: 0,
     currentMP: 0,
     currentGritPoints: 0,
+    currentRestPoints: 0,
     tempHP: 0,
     actionPointsUsed: 0,
+    exhaustionLevel: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
 
   // Load character data
   useEffect(() => {
@@ -195,15 +253,25 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
         const data = await getCharacterData(characterId);
         setCharacterData(data);
         
-        // Initialize current values with character's max values
-        setCurrentValues({
-          currentHP: data.finalHPMax,
-          currentSP: data.finalSPMax,
-          currentMP: data.finalMPMax,
-          currentGritPoints: data.finalGritPoints,
-          tempHP: 0,
-          actionPointsUsed: 0,
+        // Initialize current values - use saved values if they exist, otherwise use max values
+        const initialValues = {
+          currentHP: data.currentHP !== undefined ? data.currentHP : data.finalHPMax,
+          currentSP: data.currentSP !== undefined ? data.currentSP : data.finalSPMax,
+          currentMP: data.currentMP !== undefined ? data.currentMP : data.finalMPMax,
+          currentGritPoints: data.currentGritPoints !== undefined ? data.currentGritPoints : data.finalGritPoints,
+          currentRestPoints: data.currentRestPoints !== undefined ? data.currentRestPoints : data.finalRestPoints,
+          tempHP: data.tempHP || 0,
+          actionPointsUsed: data.actionPointsUsed || 0,
+          exhaustionLevel: data.exhaustionLevel || 0,
+        };
+        
+        console.log('Character data loaded:', { 
+          finalSPMax: data.finalSPMax, 
+          currentSP: data.currentSP, 
+          initialSP: initialValues.currentSP 
         });
+        
+        setCurrentValues(initialValues);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
@@ -234,8 +302,14 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
         case 'currentGritPoints':
           maxValue = characterData?.finalGritPoints || 0;
           break;
+        case 'currentRestPoints':
+          maxValue = characterData?.finalRestPoints || 0;
+          break;
         case 'actionPointsUsed':
           maxValue = 4; // Standard AP limit
+          break;
+        case 'exhaustionLevel':
+          maxValue = 5; // Max exhaustion level
           break;
       }
       
@@ -279,8 +353,14 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
       case 'currentGritPoints':
         maxValue = characterData?.finalGritPoints || 0;
         break;
+      case 'currentRestPoints':
+        maxValue = characterData?.finalRestPoints || 0;
+        break;
       case 'actionPointsUsed':
         maxValue = 4;
+        break;
+      case 'exhaustionLevel':
+        maxValue = 5;
         break;
     }
     
@@ -390,6 +470,136 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
     }
   };
 
+  // Get all features (traits and class features) for the character
+  const getFeaturesData = (): FeatureData[] => {
+    if (!characterData) return [];
+    
+    const features: FeatureData[] = [];
+    
+    // Get ancestry default traits
+    const ancestry1 = ancestriesData.find(a => a.name === characterData.ancestry1Name);
+    if (ancestry1) {
+      ancestry1.defaultTraitIds?.forEach(traitId => {
+        const trait = traitsData.find(t => t.id === traitId);
+        if (trait) {
+          features.push({
+            id: trait.id,
+            name: trait.name,
+            description: trait.description,
+            source: 'ancestry',
+            sourceDetail: `${ancestry1.name} (Default)`
+          });
+        }
+      });
+    }
+    
+    // Get selected ancestry traits
+    if (characterData.selectedTraitIds) {
+      try {
+        const selectedTraitIds: string[] = JSON.parse(characterData.selectedTraitIds);
+        selectedTraitIds.forEach(traitId => {
+          const trait = traitsData.find(t => t.id === traitId);
+          if (trait) {
+            // Check if this trait is not already added as default
+            const alreadyAdded = features.some(f => f.id === trait.id);
+            if (!alreadyAdded) {
+              const sourceAncestry = ancestriesData.find(a => 
+                a.expandedTraitIds.includes(traitId) || 
+                a.defaultTraitIds?.includes(traitId)
+              );
+              features.push({
+                id: trait.id,
+                name: trait.name,
+                description: trait.description,
+                source: 'ancestry',
+                sourceDetail: `${sourceAncestry?.name || 'Unknown'} (Selected)`
+              });
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error parsing selected traits JSON:', error);
+      }
+    }
+    
+    // Get class features
+    const selectedClass = classesData.find(c => c.name === characterData.className);
+    if (selectedClass) {
+      // Add level 1 features
+      selectedClass.level1Features?.forEach(feature => {
+        features.push({
+          id: feature.id,
+          name: feature.name,
+          description: feature.description,
+          source: 'class',
+          sourceDetail: `${selectedClass.name} (Lvl 1)`
+        });
+      });
+      
+      // Add selected feature choices
+      if (characterData.selectedFeatureChoices) {
+        try {
+          const selectedChoices: {[key: string]: string} = JSON.parse(characterData.selectedFeatureChoices);
+          selectedClass.featureChoicesLvl1?.forEach(choice => {
+            const selectedOptionValue = selectedChoices[choice.id];
+            if (selectedOptionValue) {
+              const selectedOption = choice.options?.find(opt => opt.value === selectedOptionValue);
+              if (selectedOption) {
+                features.push({
+                  id: `${choice.id}_${selectedOptionValue}`,
+                  name: selectedOption.label,
+                  description: selectedOption.description || 'Feature choice selected.',
+                  source: 'choice',
+                  sourceDetail: `${selectedClass.name} (Choice)`
+                });
+              }
+            }
+          });
+        } catch (error) {
+          console.error('Error parsing selected feature choices JSON:', error);
+        }
+      }
+    }
+    
+    return features;
+  };
+
+  // Handle feature popup
+  const openFeaturePopup = (feature: FeatureData) => {
+    setSelectedFeature(feature);
+  };
+
+  const closeFeaturePopup = () => {
+    setSelectedFeature(null);
+  };
+
+  // Exhaustion level descriptions (based on DC20 rules)
+  const exhaustionLevels = [
+    { level: 1, description: "Fatigued: -1 to all Checks and Saves" },
+    { level: 2, description: "Exhausted: -2 to all Checks and Saves" },
+    { level: 3, description: "Debilitated: -3 to all Checks and Saves, Speed halved" },
+    { level: 4, description: "Incapacitated: -4 to all Checks and Saves, Speed quartered" },
+    { level: 5, description: "Unconscious: Helpless, cannot take actions" }
+  ];
+
+  // Handle exhaustion level changes
+  const handleExhaustionChange = (level: number) => {
+    setCurrentValues(prev => {
+      const newLevel = prev.exhaustionLevel === level ? level - 1 : level;
+      const newValues = {
+        ...prev,
+        exhaustionLevel: Math.max(0, Math.min(5, newLevel))
+      };
+      
+      // Save to localStorage after state update
+      if (characterData?.id) {
+        setTimeout(() => saveCharacterData(characterData.id, newValues), 0);
+      }
+      
+      return newValues;
+    });
+  };
+
   // Helper function to safely calculate fill percentage
   const getFillPercentage = (current: number, max: number): number => {
     if (max === 0) return 0;
@@ -419,6 +629,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
   const trades = characterData ? getTradesData() : [];
   const knowledge = characterData ? getKnowledgeData() : [];
   const languages = characterData ? getLanguagesData() : [];
+  const features = characterData ? getFeaturesData() : [];
   const skillsByAttribute = characterData ? getSkillsByAttribute() : { might: [], agility: [], charisma: [], intelligence: [], prime: [] };
 
   if (loading) {
@@ -703,7 +914,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                       color="#22c55e" 
                       fillPercentage={getFillPercentage(currentValues.currentSP, characterData.finalSPMax)}
                     />
-                    <StyledPotionValue style={{ color: '#22c55e' }}>
+                    <StyledPotionValue>
                       {currentValues.currentSP}
                     </StyledPotionValue>
                   </StyledPotionContainer>
@@ -728,7 +939,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                       color="#3b82f6" 
                       fillPercentage={getFillPercentage(currentValues.currentMP, characterData.finalMPMax)}
                     />
-                    <StyledPotionValue style={{ color: '#3b82f6' }}>
+                    <StyledPotionValue>
                       {currentValues.currentMP}
                     </StyledPotionValue>
                   </StyledPotionContainer>
@@ -753,7 +964,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                       color="#dc2626" 
                       fillPercentage={getHPFillPercentage(currentValues.currentHP, characterData.finalHPMax, currentValues.tempHP)}
                     />
-                    <StyledLargePotionValue style={{ color: '#dc2626' }}>
+                    <StyledLargePotionValue>
                       {currentValues.currentHP}
                     </StyledLargePotionValue>
                   </StyledLargePotionContainer>
@@ -848,17 +1059,74 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
               {/* Combat Stats */}
               <div style={{ fontSize: '0.9rem', color: '#8b4513' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.3rem', borderBottom: '1px solid #e5e5e5' }}>
-                  <span>ATTACK / SPELL CHECK</span>
-                  <span style={{ fontWeight: 'bold' }}>CM + Prime</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.3rem', borderBottom: '1px solid #e5e5e5' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <span>ATTACK / SPELL CHECK</span>
+                    <span style={{ 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      width: '14px', 
+                      height: '14px', 
+                      borderRadius: '50%', 
+                      backgroundColor: '#8b4513', 
+                      color: 'white', 
+                      fontSize: '10px', 
+                      fontWeight: 'bold',
+                      cursor: 'help',
+                      verticalAlign: 'middle'
+                    }}
+                    title={`Combat Mastery (${characterData.finalCombatMastery}) + ${characterData.finalPrimeModifierAttribute} Modifier (${characterData.finalPrimeModifierValue}) = +${characterData.finalCombatMastery + characterData.finalPrimeModifierValue}`}>
+                      i
+                    </span>
+                  </div>
+                  <span style={{ fontWeight: 'bold' }}>+{characterData.finalCombatMastery + characterData.finalPrimeModifierValue}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.3rem', borderBottom: '1px solid #e5e5e5' }}>
-                  <span>SAVE DC</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.3rem', borderBottom: '1px solid #e5e5e5' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <span>SAVE DC</span>
+                    <span style={{ 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      width: '14px', 
+                      height: '14px', 
+                      borderRadius: '50%', 
+                      backgroundColor: '#8b4513', 
+                      color: 'white', 
+                      fontSize: '10px', 
+                      fontWeight: 'bold',
+                      cursor: 'help',
+                      verticalAlign: 'middle'
+                    }}
+                    title={`10 + Combat Mastery (${characterData.finalCombatMastery}) + ${characterData.finalPrimeModifierAttribute} Modifier (${characterData.finalPrimeModifierValue}) = ${characterData.finalSaveDC}`}>
+                      i
+                    </span>
+                  </div>
                   <span style={{ fontWeight: 'bold' }}>{characterData.finalSaveDC}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.3rem' }}>
-                  <span>MARTIAL CHECK</span>
-                  <span style={{ fontWeight: 'bold' }}>ATT + AP/3</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.3rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <span>MARTIAL CHECK</span>
+                    <span style={{ 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      width: '14px', 
+                      height: '14px', 
+                      borderRadius: '50%', 
+                      backgroundColor: '#8b4513', 
+                      color: 'white', 
+                      fontSize: '10px', 
+                      fontWeight: 'bold',
+                      cursor: 'help',
+                      verticalAlign: 'middle'
+                    }}
+                    title={`Attack/Spell Check (${characterData.finalCombatMastery + characterData.finalPrimeModifierValue}) + Action Points Bonus (${Math.floor(currentValues.actionPointsUsed / 3)}) = +${characterData.finalCombatMastery + characterData.finalPrimeModifierValue + Math.floor(currentValues.actionPointsUsed / 3)}`}>
+                      i
+                    </span>
+                  </div>
+                  <span style={{ fontWeight: 'bold' }}>+{characterData.finalCombatMastery + characterData.finalPrimeModifierValue + Math.floor(currentValues.actionPointsUsed / 3)}</span>
                 </div>
               </div>
             </div>
@@ -875,16 +1143,20 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
               
               <div style={{ flex: 1, border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', textAlign: 'center' }}>
                 <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.5rem' }}>EXHAUSTION</div>
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '0.2rem', marginTop: '0.5rem' }}>
-                  {[1, 2, 3, 4, 5].map(level => (
-                    <div key={level} style={{ 
-                      width: '20px', 
-                      height: '20px', 
-                      border: '1px solid #8b4513', 
-                      background: 'white' 
-                    }} />
+                <StyledExhaustionContainer>
+                  {exhaustionLevels.map(({ level, description }) => (
+                    <StyledExhaustionLevel
+                      key={level}
+                      filled={level <= currentValues.exhaustionLevel}
+                      onClick={() => handleExhaustionChange(level)}
+                    >
+                      {level}
+                      <StyledExhaustionTooltip>
+                        {description}
+                      </StyledExhaustionTooltip>
+                    </StyledExhaustionLevel>
                   ))}
-                </div>
+                </StyledExhaustionContainer>
               </div>
             </div>
 
@@ -932,9 +1204,17 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
             <div style={{ border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', marginBottom: '1rem' }}>
               <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', textAlign: 'center', marginBottom: '1rem' }}>RESOURCES</div>
               
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
                 <span style={{ fontSize: '0.9rem', color: '#8b4513' }}>REST POINTS</span>
-                <span style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalRestPoints}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <StyledResourceInput
+                    type="number"
+                    value={currentValues.currentRestPoints}
+                    onChange={(e) => handleResourceInputChange('currentRestPoints', e.target.value)}
+                    style={{ width: '40px', textAlign: 'center', border: '1px solid #8b4513', borderRadius: '4px' }}
+                  />
+                  <span style={{ fontSize: '0.9rem', color: '#8b4513' }}>/ {characterData.finalRestPoints}</span>
+                </div>
               </div>
               
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -962,20 +1242,101 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
             {/* Features */}
             <div style={{ border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', flex: 1 }}>
               <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', textAlign: 'center', marginBottom: '1rem' }}>FEATURES</div>
-              <div style={{ fontSize: '0.9rem', lineHeight: 1.4, color: '#8b4513' }}>
-                <div style={{ marginBottom: '0.8rem', padding: '0.5rem', border: '1px solid #e5e5e5', borderRadius: '4px', background: '#f9f9f9' }}>
-                  <div style={{ fontWeight: 'bold', marginBottom: '0.3rem' }}>Class Features:</div>
-                  <div>Based on {characterData.className}</div>
-                </div>
-                <div style={{ padding: '0.5rem', border: '1px solid #e5e5e5', borderRadius: '4px', background: '#f9f9f9' }}>
-                  <div style={{ fontWeight: 'bold', marginBottom: '0.3rem' }}>Ancestry Traits:</div>
-                  <div>{characterData.ancestry1Name}</div>
-                </div>
-              </div>
+              
+              {/* Organize features by source */}
+              {(() => {
+                const ancestryFeatures = features.filter(f => f.source === 'ancestry');
+                const classFeatures = features.filter(f => f.source === 'class');
+                const choiceFeatures = features.filter(f => f.source === 'choice');
+                
+                return (
+                  <div style={{ fontSize: '0.9rem', color: '#8b4513' }}>
+                    {/* Ancestry Traits */}
+                    {ancestryFeatures.length > 0 && (
+                      <StyledFeatureCategory>
+                        <StyledFeatureCategoryTitle>Ancestry Traits</StyledFeatureCategoryTitle>
+                        <StyledFeatureGrid>
+                          {ancestryFeatures.map(feature => (
+                            <StyledFeatureItem key={feature.id}>
+                              <StyledFeatureName>{feature.name}</StyledFeatureName>
+                              <StyledFeatureReadMore onClick={() => openFeaturePopup(feature)}>
+                                Info
+                              </StyledFeatureReadMore>
+                            </StyledFeatureItem>
+                          ))}
+                        </StyledFeatureGrid>
+                      </StyledFeatureCategory>
+                    )}
+                    
+                    {/* Class Features */}
+                    {classFeatures.length > 0 && (
+                      <StyledFeatureCategory>
+                        <StyledFeatureCategoryTitle>Class Features</StyledFeatureCategoryTitle>
+                        <StyledFeatureGrid>
+                          {classFeatures.map(feature => (
+                            <StyledFeatureItem key={feature.id}>
+                              <StyledFeatureName>{feature.name}</StyledFeatureName>
+                              <StyledFeatureReadMore onClick={() => openFeaturePopup(feature)}>
+                                Info
+                              </StyledFeatureReadMore>
+                            </StyledFeatureItem>
+                          ))}
+                        </StyledFeatureGrid>
+                      </StyledFeatureCategory>
+                    )}
+                    
+                    {/* Feature Choices */}
+                    {choiceFeatures.length > 0 && (
+                      <StyledFeatureCategory>
+                        <StyledFeatureCategoryTitle>Selected Features</StyledFeatureCategoryTitle>
+                        <StyledFeatureGrid>
+                          {choiceFeatures.map(feature => (
+                            <StyledFeatureItem key={feature.id}>
+                              <StyledFeatureName>{feature.name}</StyledFeatureName>
+                              <StyledFeatureReadMore onClick={() => openFeaturePopup(feature)}>
+                                Info
+                              </StyledFeatureReadMore>
+                            </StyledFeatureItem>
+                          ))}
+                        </StyledFeatureGrid>
+                      </StyledFeatureCategory>
+                    )}
+                    
+                    {/* No features message */}
+                    {features.length === 0 && (
+                      <div style={{ textAlign: 'center', fontStyle: 'italic', padding: '1rem', color: '#666' }}>
+                        No features available
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           </StyledRightColumn>
         </StyledMainGrid>
       </StyledCharacterSheet>
+      
+      {/* Feature Popup */}
+      {selectedFeature && (
+        <StyledFeaturePopupOverlay onClick={closeFeaturePopup}>
+          <StyledFeaturePopupContent onClick={(e) => e.stopPropagation()}>
+            <StyledFeaturePopupHeader>
+              <StyledFeaturePopupTitle>{selectedFeature.name}</StyledFeaturePopupTitle>
+              <StyledFeaturePopupClose onClick={closeFeaturePopup}>
+                ×
+              </StyledFeaturePopupClose>
+            </StyledFeaturePopupHeader>
+            <StyledFeaturePopupDescription>
+              {selectedFeature.description}
+            </StyledFeaturePopupDescription>
+            {selectedFeature.sourceDetail && (
+              <StyledFeaturePopupSourceInfo>
+                Source: {selectedFeature.sourceDetail}
+              </StyledFeaturePopupSourceInfo>
+            )}
+          </StyledFeaturePopupContent>
+        </StyledFeaturePopupOverlay>
+      )}
     </StyledContainer>
   );
 };

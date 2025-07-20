@@ -30,7 +30,8 @@ import {
 
 import {
   StyledResourceButton,
-  StyledResourceInput
+  StyledResourceInput,
+  StyledTempHPInput
 } from './styles/Resources';
 
 // Types for character sheet data
@@ -650,64 +651,72 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
               {/* Stamina Points */}
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.3rem' }}>STAMINA POINTS</div>
-                <div style={{ width: '80px', height: '80px', border: '3px solid #3b82f6', borderRadius: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'white', position: 'relative' }}>
-                  <div style={{ fontSize: '0.7rem', color: '#3b82f6', position: 'absolute', top: '8px' }}>MAX</div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#3b82f6' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <StyledResourceButton onClick={() => adjustResource('currentSP', -1)}>-</StyledResourceButton>
+                  <div style={{ width: '80px', height: '80px', border: '3px solid #22c55e', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
                     <StyledResourceInput
+                      variant="circle"
                       type="number"
                       value={currentValues.currentSP}
                       onChange={(e) => handleResourceInputChange('currentSP', e.target.value)}
-                      style={{ width: '35px', textAlign: 'center', border: 'none', background: 'transparent', fontSize: '1.2rem', fontWeight: 'bold' }}
+                      style={{ color: '#22c55e' }}
                     />
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: '#3b82f6' }}>/ {characterData.finalSPMax}</div>
+                  <StyledResourceButton onClick={() => adjustResource('currentSP', 1)}>+</StyledResourceButton>
+                </div>
+                <div style={{ fontSize: '1.1rem', fontWeight: '300', color: '#666', marginTop: '0.3rem', fontStyle: 'italic' }}>
+                  {characterData.finalSPMax}
                 </div>
               </div>
 
               {/* Mana Points */}
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.3rem' }}>MANA POINTS</div>
-                <div style={{ width: '80px', height: '80px', border: '3px solid #8b5cf6', borderRadius: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'white', position: 'relative' }}>
-                  <div style={{ fontSize: '0.7rem', color: '#8b5cf6', position: 'absolute', top: '8px' }}>MAX</div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#8b5cf6' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <StyledResourceButton onClick={() => adjustResource('currentMP', -1)}>-</StyledResourceButton>
+                  <div style={{ width: '80px', height: '80px', border: '3px solid #3b82f6', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
                     <StyledResourceInput
+                      variant="circle"
                       type="number"
                       value={currentValues.currentMP}
                       onChange={(e) => handleResourceInputChange('currentMP', e.target.value)}
-                      style={{ width: '35px', textAlign: 'center', border: 'none', background: 'transparent', fontSize: '1.2rem', fontWeight: 'bold' }}
+                      style={{ color: '#3b82f6' }}
                     />
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: '#8b5cf6' }}>/ {characterData.finalMPMax}</div>
+                  <StyledResourceButton onClick={() => adjustResource('currentMP', 1)}>+</StyledResourceButton>
+                </div>
+                <div style={{ fontSize: '1.1rem', fontWeight: '300', color: '#666', marginTop: '0.3rem', fontStyle: 'italic' }}>
+                  {characterData.finalMPMax}
                 </div>
               </div>
 
               {/* Hit Points */}
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.3rem' }}>HIT POINTS</div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px' }}>
-                  <StyledResourceButton onClick={() => adjustResource('currentHP', 1)}>+</StyledResourceButton>
-                  <div style={{ width: '100px', height: '100px', border: '3px solid #22c55e', borderRadius: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'white', position: 'relative' }}>
-                    <div style={{ fontSize: '0.7rem', color: '#22c55e', position: 'absolute', top: '8px' }}>MAX</div>
-                    <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#22c55e' }}>
-                      <StyledResourceInput
-                        type="number"
-                        value={currentValues.currentHP}
-                        onChange={(e) => handleResourceInputChange('currentHP', e.target.value)}
-                        style={{ width: '40px', textAlign: 'center', border: 'none', background: 'transparent', fontSize: '1.4rem', fontWeight: 'bold' }}
-                      />
-                    </div>
-                    <div style={{ fontSize: '0.8rem', color: '#22c55e' }}>/ {characterData.finalHPMax}</div>
-                    <div style={{ fontSize: '0.7rem', color: '#22c55e', position: 'absolute', bottom: '8px' }}>
-                      TEMP: 
-                      <StyledResourceInput
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <StyledResourceButton onClick={() => adjustResource('currentHP', -1)}>-</StyledResourceButton>
+                  <div style={{ width: '100px', height: '100px', border: '3px solid #dc2626', borderRadius: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
+                    <StyledResourceInput
+                      variant="circle"
+                      type="number"
+                      value={currentValues.currentHP}
+                      onChange={(e) => handleResourceInputChange('currentHP', e.target.value)}
+                      style={{ color: '#dc2626', fontSize: '1.6rem' }}
+                    />
+                    <div style={{ fontSize: '0.7rem', color: '#dc2626', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                      TEMP:
+                      <StyledTempHPInput
                         type="number"
                         value={currentValues.tempHP}
                         onChange={(e) => handleResourceInputChange('tempHP', e.target.value)}
-                        style={{ width: '25px', marginLeft: '2px', fontSize: '0.7rem' }}
+                        style={{ color: '#dc2626', background: 'transparent', border: 'none' }}
                       />
                     </div>
                   </div>
-                  <StyledResourceButton onClick={() => adjustResource('currentHP', -1)}>-</StyledResourceButton>
+                  <StyledResourceButton onClick={() => adjustResource('currentHP', 1)}>+</StyledResourceButton>
+                </div>
+                <div style={{ fontSize: '1.1rem', fontWeight: '300', color: '#666', marginTop: '0.3rem', fontStyle: 'italic' }}>
+                  {characterData.finalHPMax}
                 </div>
               </div>
             </div>

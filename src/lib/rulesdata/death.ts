@@ -75,10 +75,10 @@ export function getHealthStatus(currentHP: number, maxHP: number, deathThreshold
 
 /**
  * Calculate Death Threshold
- * Death Threshold = 0 - Prime Modifier
+ * Death Threshold = 0 HP minus Prime Modifier + Combat Mastery
  */
-export function calculateDeathThreshold(primeModifier: number): number {
-  return -primeModifier;
+export function calculateDeathThreshold(primeModifier: number, combatMastery: number): number {
+  return -(primeModifier + combatMastery);
 }
 
 /**

@@ -8,11 +8,6 @@ export interface CharacterInProgressStoreData extends CharacterInProgress {
   overflowAttributeName: string | null;
   level: number;
   combatMastery: number;
-  // Save Masteries (will be in Prisma model but need explicit typing)
-  saveMasteryMight: boolean;
-  saveMasteryAgility: boolean;
-  saveMasteryCharisma: boolean;
-  saveMasteryIntelligence: boolean;
   // Background selections (Step 3: Skills, Trades, Languages)
   skillsJson: string;
   tradesJson: string;
@@ -42,11 +37,6 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
   currentStep: 1,
   overflowTraitId: null,
   overflowAttributeName: null,
-  // Save Masteries (DC20 p.22)
-  saveMasteryMight: false,
-  saveMasteryAgility: false,
-  saveMasteryCharisma: false,
-  saveMasteryIntelligence: false,
   // Background selections (Step 3: Skills, Trades, Languages)
   skillsJson: '{}',
   tradesJson: '{}',
@@ -56,7 +46,6 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
 // Action types
 type CharacterAction = 
   | { type: 'UPDATE_ATTRIBUTE'; attribute: string; value: number }
-  | { type: 'UPDATE_SAVE_MASTERY'; attribute: string; value: boolean }
   | { type: 'UPDATE_SKILLS'; skillsJson: string }
   | { type: 'UPDATE_TRADES'; tradesJson: string }
   | { type: 'UPDATE_LANGUAGES'; languagesJson: string }
@@ -76,11 +65,6 @@ function characterReducer(state: CharacterInProgressStoreData, action: Character
       return {
         ...state,
         [action.attribute]: action.value,
-      };
-    case 'UPDATE_SAVE_MASTERY':
-      return {
-        ...state,
-        [`saveMastery${action.attribute.charAt(0).toUpperCase() + action.attribute.slice(1)}`]: action.value,
       };
     case 'UPDATE_SKILLS':
       return {

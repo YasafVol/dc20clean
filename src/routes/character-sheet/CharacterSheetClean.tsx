@@ -34,6 +34,16 @@ import {
   StyledTempHPInput
 } from './styles/Resources';
 
+import {
+  StyledPotionContainer,
+  StyledPotionFill,
+  StyledPotionBubbles,
+  StyledPotionValue,
+  StyledLargePotionContainer,
+  StyledLargePotionValue,
+  StyledTempHPDisplay
+} from './styles/Potions';
+
 // Types for character sheet data
 interface CharacterSheetProps {
   characterId: string;
@@ -212,7 +222,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
       
       switch (resource) {
         case 'currentHP':
-          maxValue = characterData?.finalHPMax || 0;
+          // HP can go up to normal max + temp HP
+          maxValue = (characterData?.finalHPMax || 0) + prev.tempHP;
           break;
         case 'currentSP':
           maxValue = characterData?.finalSPMax || 0;
@@ -233,6 +244,14 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
         [resource]: Math.max(0, Math.min(newValue, maxValue))
       };
       
+      // Special case: when reducing temp HP, cap current HP to new effective max
+      if (resource === 'tempHP' && amount < 0) {
+        const newEffectiveMaxHP = (characterData?.finalHPMax || 0) + newValues.tempHP;
+        if (prev.currentHP > newEffectiveMaxHP) {
+          newValues.currentHP = newEffectiveMaxHP;
+        }
+      }
+      
       // Save to localStorage after state update
       if (characterData?.id) {
         setTimeout(() => saveCharacterData(characterData.id, newValues), 0);
@@ -248,7 +267,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
     
     switch (resource) {
       case 'currentHP':
-        maxValue = characterData?.finalHPMax || 0;
+        // HP can go up to normal max + temp HP
+        maxValue = (characterData?.finalHPMax || 0) + currentValues.tempHP;
         break;
       case 'currentSP':
         maxValue = characterData?.finalSPMax || 0;
@@ -269,6 +289,14 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
         ...prev,
         [resource]: Math.max(0, Math.min(numValue, maxValue))
       };
+      
+      // Special case: when changing temp HP directly, cap current HP to new effective max
+      if (resource === 'tempHP') {
+        const newEffectiveMaxHP = (characterData?.finalHPMax || 0) + newValues.tempHP;
+        if (prev.currentHP > newEffectiveMaxHP) {
+          newValues.currentHP = newEffectiveMaxHP;
+        }
+      }
       
       // Save to localStorage after state update
       if (characterData?.id) {
@@ -360,6 +388,19 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
       console.error('Error parsing languages JSON:', error);
       return [];
     }
+  };
+
+  // Helper function to safely calculate fill percentage
+  const getFillPercentage = (current: number, max: number): number => {
+    if (max === 0) return 0;
+    return Math.max(0, Math.min(100, (current / max) * 100));
+  };
+
+  // Helper function for HP fill percentage (shows current HP vs total effective HP)
+  const getHPFillPercentage = (currentHP: number, maxHP: number, tempHP: number): number => {
+    const totalEffectiveHP = maxHP + tempHP;
+    if (totalEffectiveHP === 0) return 0;
+    return Math.max(0, (currentHP / totalEffectiveHP) * 100);
   };
 
   // Group skills by attribute like in the official sheet
@@ -653,15 +694,19 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                 <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.3rem' }}>STAMINA POINTS</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                   <StyledResourceButton onClick={() => adjustResource('currentSP', -1)}>-</StyledResourceButton>
-                  <div style={{ width: '80px', height: '80px', border: '3px solid #22c55e', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
-                    <StyledResourceInput
-                      variant="circle"
-                      type="number"
-                      value={currentValues.currentSP}
-                      onChange={(e) => handleResourceInputChange('currentSP', e.target.value)}
-                      style={{ color: '#22c55e' }}
+                  <StyledPotionContainer style={{ borderColor: '#22c55e' }}>
+                    <StyledPotionFill 
+                      fillPercentage={getFillPercentage(currentValues.currentSP, characterData.finalSPMax)} 
+                      color="#22c55e" 
                     />
-                  </div>
+                    <StyledPotionBubbles 
+                      color="#22c55e" 
+                      fillPercentage={getFillPercentage(currentValues.currentSP, characterData.finalSPMax)}
+                    />
+                    <StyledPotionValue style={{ color: '#22c55e' }}>
+                      {currentValues.currentSP}
+                    </StyledPotionValue>
+                  </StyledPotionContainer>
                   <StyledResourceButton onClick={() => adjustResource('currentSP', 1)}>+</StyledResourceButton>
                 </div>
                 <div style={{ fontSize: '1.1rem', fontWeight: '300', color: '#666', marginTop: '0.3rem', fontStyle: 'italic' }}>
@@ -674,15 +719,19 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                 <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.3rem' }}>MANA POINTS</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                   <StyledResourceButton onClick={() => adjustResource('currentMP', -1)}>-</StyledResourceButton>
-                  <div style={{ width: '80px', height: '80px', border: '3px solid #3b82f6', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
-                    <StyledResourceInput
-                      variant="circle"
-                      type="number"
-                      value={currentValues.currentMP}
-                      onChange={(e) => handleResourceInputChange('currentMP', e.target.value)}
-                      style={{ color: '#3b82f6' }}
+                  <StyledPotionContainer style={{ borderColor: '#3b82f6' }}>
+                    <StyledPotionFill 
+                      fillPercentage={getFillPercentage(currentValues.currentMP, characterData.finalMPMax)} 
+                      color="#3b82f6" 
                     />
-                  </div>
+                    <StyledPotionBubbles 
+                      color="#3b82f6" 
+                      fillPercentage={getFillPercentage(currentValues.currentMP, characterData.finalMPMax)}
+                    />
+                    <StyledPotionValue style={{ color: '#3b82f6' }}>
+                      {currentValues.currentMP}
+                    </StyledPotionValue>
+                  </StyledPotionContainer>
                   <StyledResourceButton onClick={() => adjustResource('currentMP', 1)}>+</StyledResourceButton>
                 </div>
                 <div style={{ fontSize: '1.1rem', fontWeight: '300', color: '#666', marginTop: '0.3rem', fontStyle: 'italic' }}>
@@ -695,28 +744,50 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                 <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.3rem' }}>HIT POINTS</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                   <StyledResourceButton onClick={() => adjustResource('currentHP', -1)}>-</StyledResourceButton>
-                  <div style={{ width: '100px', height: '100px', border: '3px solid #dc2626', borderRadius: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
-                    <StyledResourceInput
-                      variant="circle"
-                      type="number"
-                      value={currentValues.currentHP}
-                      onChange={(e) => handleResourceInputChange('currentHP', e.target.value)}
-                      style={{ color: '#dc2626', fontSize: '1.6rem' }}
+                  <StyledLargePotionContainer style={{ borderColor: '#dc2626' }}>
+                    <StyledPotionFill 
+                      fillPercentage={getHPFillPercentage(currentValues.currentHP, characterData.finalHPMax, currentValues.tempHP)} 
+                      color="#dc2626" 
                     />
-                    <div style={{ fontSize: '0.7rem', color: '#dc2626', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-                      TEMP:
-                      <StyledTempHPInput
-                        type="number"
-                        value={currentValues.tempHP}
-                        onChange={(e) => handleResourceInputChange('tempHP', e.target.value)}
-                        style={{ color: '#dc2626', background: 'transparent', border: 'none' }}
-                      />
-                    </div>
-                  </div>
+                    <StyledPotionBubbles 
+                      color="#dc2626" 
+                      fillPercentage={getHPFillPercentage(currentValues.currentHP, characterData.finalHPMax, currentValues.tempHP)}
+                    />
+                    <StyledLargePotionValue style={{ color: '#dc2626' }}>
+                      {currentValues.currentHP}
+                    </StyledLargePotionValue>
+                  </StyledLargePotionContainer>
                   <StyledResourceButton onClick={() => adjustResource('currentHP', 1)}>+</StyledResourceButton>
                 </div>
-                <div style={{ fontSize: '1.1rem', fontWeight: '300', color: '#666', marginTop: '0.3rem', fontStyle: 'italic' }}>
-                  {characterData.finalHPMax}
+                <div style={{ fontSize: '1.1rem', fontWeight: '300', color: '#666', marginTop: '0.3rem', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                  <span>{characterData.finalHPMax}</span>
+                  {currentValues.tempHP > 0 && (
+                    <span style={{ color: '#dc2626', fontWeight: 'bold', fontSize: '0.9rem' }}>
+                      (+{currentValues.tempHP} temp)
+                    </span>
+                  )}
+                </div>
+                {/* Temp HP Controls */}
+                <div style={{ fontSize: '0.8rem', color: '#dc2626', marginTop: '0.3rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem' }}>
+                  <span>TEMP HP:</span>
+                  <StyledResourceButton 
+                    onClick={() => adjustResource('tempHP', -1)}
+                    style={{ fontSize: '0.7rem', width: '20px', height: '20px', padding: '0' }}
+                  >
+                    -
+                  </StyledResourceButton>
+                  <StyledTempHPInput
+                    type="number"
+                    value={currentValues.tempHP}
+                    onChange={(e) => handleResourceInputChange('tempHP', e.target.value)}
+                    style={{ color: '#dc2626', background: 'white', border: '1px solid #dc2626', borderRadius: '3px', width: '35px', textAlign: 'center', fontSize: '0.8rem' }}
+                  />
+                  <StyledResourceButton 
+                    onClick={() => adjustResource('tempHP', 1)}
+                    style={{ fontSize: '0.7rem', width: '20px', height: '20px', padding: '0' }}
+                  >
+                    +
+                  </StyledResourceButton>
                 </div>
               </div>
             </div>

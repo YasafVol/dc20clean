@@ -136,6 +136,7 @@ interface CharacterSheetData {
   currentSP?: number;
   currentMP?: number;
   currentGritPoints?: number;
+  currentRestPoints?: number;
   tempHP?: number;
   actionPointsUsed?: number;
   exhaustionLevel?: number;
@@ -173,6 +174,7 @@ interface CurrentValues {
   currentSP: number;
   currentMP: number;
   currentGritPoints: number;
+  currentRestPoints: number;
   tempHP: number;
   actionPointsUsed: number;
   exhaustionLevel: number; // 0-5
@@ -213,6 +215,7 @@ const saveCharacterData = (characterId: string, currentValues: CurrentValues) =>
       currentSP: currentValues.currentSP,
       currentMP: currentValues.currentMP,
       currentGritPoints: currentValues.currentGritPoints,
+      currentRestPoints: currentValues.currentRestPoints,
       tempHP: currentValues.tempHP,
       actionPointsUsed: currentValues.actionPointsUsed,
       exhaustionLevel: currentValues.exhaustionLevel,
@@ -231,6 +234,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
     currentSP: 0,
     currentMP: 0,
     currentGritPoints: 0,
+    currentRestPoints: 0,
     tempHP: 0,
     actionPointsUsed: 0,
     exhaustionLevel: 0,
@@ -255,6 +259,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
           currentSP: data.currentSP !== undefined ? data.currentSP : data.finalSPMax,
           currentMP: data.currentMP !== undefined ? data.currentMP : data.finalMPMax,
           currentGritPoints: data.currentGritPoints !== undefined ? data.currentGritPoints : data.finalGritPoints,
+          currentRestPoints: data.currentRestPoints !== undefined ? data.currentRestPoints : data.finalRestPoints,
           tempHP: data.tempHP || 0,
           actionPointsUsed: data.actionPointsUsed || 0,
           exhaustionLevel: data.exhaustionLevel || 0,
@@ -296,6 +301,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
           break;
         case 'currentGritPoints':
           maxValue = characterData?.finalGritPoints || 0;
+          break;
+        case 'currentRestPoints':
+          maxValue = characterData?.finalRestPoints || 0;
           break;
         case 'actionPointsUsed':
           maxValue = 4; // Standard AP limit
@@ -344,6 +352,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
         break;
       case 'currentGritPoints':
         maxValue = characterData?.finalGritPoints || 0;
+        break;
+      case 'currentRestPoints':
+        maxValue = characterData?.finalRestPoints || 0;
         break;
       case 'actionPointsUsed':
         maxValue = 4;
@@ -1048,17 +1059,74 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
               {/* Combat Stats */}
               <div style={{ fontSize: '0.9rem', color: '#8b4513' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.3rem', borderBottom: '1px solid #e5e5e5' }}>
-                  <span>ATTACK / SPELL CHECK</span>
-                  <span style={{ fontWeight: 'bold' }}>CM + Prime</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.3rem', borderBottom: '1px solid #e5e5e5' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <span>ATTACK / SPELL CHECK</span>
+                    <span style={{ 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      width: '14px', 
+                      height: '14px', 
+                      borderRadius: '50%', 
+                      backgroundColor: '#8b4513', 
+                      color: 'white', 
+                      fontSize: '10px', 
+                      fontWeight: 'bold',
+                      cursor: 'help',
+                      verticalAlign: 'middle'
+                    }}
+                    title={`Combat Mastery (${characterData.finalCombatMastery}) + ${characterData.finalPrimeModifierAttribute} Modifier (${characterData.finalPrimeModifierValue}) = +${characterData.finalCombatMastery + characterData.finalPrimeModifierValue}`}>
+                      i
+                    </span>
+                  </div>
+                  <span style={{ fontWeight: 'bold' }}>+{characterData.finalCombatMastery + characterData.finalPrimeModifierValue}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.3rem', borderBottom: '1px solid #e5e5e5' }}>
-                  <span>SAVE DC</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.3rem', borderBottom: '1px solid #e5e5e5' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <span>SAVE DC</span>
+                    <span style={{ 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      width: '14px', 
+                      height: '14px', 
+                      borderRadius: '50%', 
+                      backgroundColor: '#8b4513', 
+                      color: 'white', 
+                      fontSize: '10px', 
+                      fontWeight: 'bold',
+                      cursor: 'help',
+                      verticalAlign: 'middle'
+                    }}
+                    title={`10 + Combat Mastery (${characterData.finalCombatMastery}) + ${characterData.finalPrimeModifierAttribute} Modifier (${characterData.finalPrimeModifierValue}) = ${characterData.finalSaveDC}`}>
+                      i
+                    </span>
+                  </div>
                   <span style={{ fontWeight: 'bold' }}>{characterData.finalSaveDC}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.3rem' }}>
-                  <span>MARTIAL CHECK</span>
-                  <span style={{ fontWeight: 'bold' }}>ATT + AP/3</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.3rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <span>MARTIAL CHECK</span>
+                    <span style={{ 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      width: '14px', 
+                      height: '14px', 
+                      borderRadius: '50%', 
+                      backgroundColor: '#8b4513', 
+                      color: 'white', 
+                      fontSize: '10px', 
+                      fontWeight: 'bold',
+                      cursor: 'help',
+                      verticalAlign: 'middle'
+                    }}
+                    title={`Attack/Spell Check (${characterData.finalCombatMastery + characterData.finalPrimeModifierValue}) + Action Points Bonus (${Math.floor(currentValues.actionPointsUsed / 3)}) = +${characterData.finalCombatMastery + characterData.finalPrimeModifierValue + Math.floor(currentValues.actionPointsUsed / 3)}`}>
+                      i
+                    </span>
+                  </div>
+                  <span style={{ fontWeight: 'bold' }}>+{characterData.finalCombatMastery + characterData.finalPrimeModifierValue + Math.floor(currentValues.actionPointsUsed / 3)}</span>
                 </div>
               </div>
             </div>
@@ -1136,9 +1204,17 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
             <div style={{ border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', marginBottom: '1rem' }}>
               <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', textAlign: 'center', marginBottom: '1rem' }}>RESOURCES</div>
               
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
                 <span style={{ fontSize: '0.9rem', color: '#8b4513' }}>REST POINTS</span>
-                <span style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalRestPoints}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <StyledResourceInput
+                    type="number"
+                    value={currentValues.currentRestPoints}
+                    onChange={(e) => handleResourceInputChange('currentRestPoints', e.target.value)}
+                    style={{ width: '40px', textAlign: 'center', border: '1px solid #8b4513', borderRadius: '4px' }}
+                  />
+                  <span style={{ fontSize: '0.9rem', color: '#8b4513' }}>/ {characterData.finalRestPoints}</span>
+                </div>
               </div>
               
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

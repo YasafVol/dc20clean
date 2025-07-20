@@ -65,6 +65,12 @@ import {
   StyledFeaturePopupSourceInfo
 } from './styles/FeaturePopup';
 
+import {
+  StyledExhaustionContainer,
+  StyledExhaustionLevel,
+  StyledExhaustionTooltip
+} from './styles/Exhaustion';
+
 // Types for character sheet data
 interface CharacterSheetProps {
   characterId: string;
@@ -132,6 +138,7 @@ interface CharacterSheetData {
   currentGritPoints?: number;
   tempHP?: number;
   actionPointsUsed?: number;
+  exhaustionLevel?: number;
 }
 
 interface SkillData {
@@ -168,6 +175,7 @@ interface CurrentValues {
   currentGritPoints: number;
   tempHP: number;
   actionPointsUsed: number;
+  exhaustionLevel: number; // 0-5
 }
 
 // Character data service - fetches from localStorage and uses already calculated stats
@@ -207,6 +215,7 @@ const saveCharacterData = (characterId: string, currentValues: CurrentValues) =>
       currentGritPoints: currentValues.currentGritPoints,
       tempHP: currentValues.tempHP,
       actionPointsUsed: currentValues.actionPointsUsed,
+      exhaustionLevel: currentValues.exhaustionLevel,
       lastModified: new Date().toISOString()
     };
     
@@ -224,6 +233,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
     currentGritPoints: 0,
     tempHP: 0,
     actionPointsUsed: 0,
+    exhaustionLevel: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -247,6 +257,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
           currentGritPoints: data.currentGritPoints !== undefined ? data.currentGritPoints : data.finalGritPoints,
           tempHP: data.tempHP || 0,
           actionPointsUsed: data.actionPointsUsed || 0,
+          exhaustionLevel: data.exhaustionLevel || 0,
         };
         
         console.log('Character data loaded:', { 
@@ -288,6 +299,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
           break;
         case 'actionPointsUsed':
           maxValue = 4; // Standard AP limit
+          break;
+        case 'exhaustionLevel':
+          maxValue = 5; // Max exhaustion level
           break;
       }
       
@@ -333,6 +347,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
         break;
       case 'actionPointsUsed':
         maxValue = 4;
+        break;
+      case 'exhaustionLevel':
+        maxValue = 5;
         break;
     }
     
@@ -543,6 +560,33 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
   const closeFeaturePopup = () => {
     setSelectedFeature(null);
+  };
+
+  // Exhaustion level descriptions (based on DC20 rules)
+  const exhaustionLevels = [
+    { level: 1, description: "Fatigued: -1 to all Checks and Saves" },
+    { level: 2, description: "Exhausted: -2 to all Checks and Saves" },
+    { level: 3, description: "Debilitated: -3 to all Checks and Saves, Speed halved" },
+    { level: 4, description: "Incapacitated: -4 to all Checks and Saves, Speed quartered" },
+    { level: 5, description: "Unconscious: Helpless, cannot take actions" }
+  ];
+
+  // Handle exhaustion level changes
+  const handleExhaustionChange = (level: number) => {
+    setCurrentValues(prev => {
+      const newLevel = prev.exhaustionLevel === level ? level - 1 : level;
+      const newValues = {
+        ...prev,
+        exhaustionLevel: Math.max(0, Math.min(5, newLevel))
+      };
+      
+      // Save to localStorage after state update
+      if (characterData?.id) {
+        setTimeout(() => saveCharacterData(characterData.id, newValues), 0);
+      }
+      
+      return newValues;
+    });
   };
 
   // Helper function to safely calculate fill percentage
@@ -1031,16 +1075,20 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
               
               <div style={{ flex: 1, border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', textAlign: 'center' }}>
                 <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.5rem' }}>EXHAUSTION</div>
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '0.2rem', marginTop: '0.5rem' }}>
-                  {[1, 2, 3, 4, 5].map(level => (
-                    <div key={level} style={{ 
-                      width: '20px', 
-                      height: '20px', 
-                      border: '1px solid #8b4513', 
-                      background: 'white' 
-                    }} />
+                <StyledExhaustionContainer>
+                  {exhaustionLevels.map(({ level, description }) => (
+                    <StyledExhaustionLevel
+                      key={level}
+                      filled={level <= currentValues.exhaustionLevel}
+                      onClick={() => handleExhaustionChange(level)}
+                    >
+                      {level}
+                      <StyledExhaustionTooltip>
+                        {description}
+                      </StyledExhaustionTooltip>
+                    </StyledExhaustionLevel>
                   ))}
-                </div>
+                </StyledExhaustionContainer>
               </div>
             </div>
 

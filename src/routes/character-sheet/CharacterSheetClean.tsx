@@ -693,7 +693,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
   const handleDeathStepChange = (step: number) => {
     if (!characterData) return;
     
-    const deathThreshold = calculateDeathThreshold(characterData.finalPrimeModifierValue);
+    const deathThreshold = calculateDeathThreshold(characterData.finalPrimeModifierValue, characterData.finalCombatMastery);
     const targetHP = -step;
     
     // Don't allow going below death threshold
@@ -1331,7 +1331,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                 
                 {/* Health Status */}
                 {(() => {
-                  const deathThreshold = calculateDeathThreshold(characterData.finalPrimeModifierValue);
+                  const deathThreshold = calculateDeathThreshold(characterData.finalPrimeModifierValue, characterData.finalCombatMastery);
                   const healthStatus = getHealthStatus(currentValues.currentHP, characterData.finalHPMax, deathThreshold);
                   const deathSteps = getDeathSteps(currentValues.currentHP, deathThreshold);
                   

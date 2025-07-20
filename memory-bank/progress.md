@@ -23,10 +23,25 @@
 
 ## 3. Current Status
 
-The project is at a point where the core character creation and finalization flow is complete. The main focus now should be on implementing the remaining stages of character creation (skills, equipment, etc.) and improving the user experience by adding features like character loading and editing.
+The project has successfully completed the SvelteKit to React migration cleanup and is now a clean React + Vite application with no legacy SvelteKit code remaining. The core character creation and finalization flow is complete. The main focus now should be on implementing the remaining stages of character creation (skills, equipment, etc.) and improving the user experience by adding features like character loading and editing.
+
+### Recent Milestone: Migration Cleanup Complete
+- All SvelteKit dependencies and configurations removed
+- Project now runs cleanly as React + Vite application
+- Comprehensive documentation created for the cleanup process
+- Development server verified to work correctly
 
 ## 4. Known Issues
 
 -   **Frontend Error Handling:** As noted in `activeContext.md`, the error handling for API calls in the frontend is minimal and should be improved.
 -   **Drizzle ORM:** The presence of Drizzle files alongside Prisma might cause confusion. It would be good to either fully remove Drizzle or clarify its role in the project.
 -   **Hardcoded Rules Data:** All the game rules (classes, traits, etc.) are currently stored in TypeScript files in `src/lib/rulesdata`. While this is fine for now, it might be beneficial to move this data to a database or a more easily updatable format in the future.
+
+## 5. Completed Milestones
+
+-   **SvelteKit to React Migration Cleanup (January 2025):** Successfully removed all SvelteKit remnants from the codebase, including:
+    -   Legacy configuration files and dependencies
+    -   SvelteKit-specific scripts and build artifacts
+    -   Outdated documentation and type declarations
+    -   Created comprehensive documentation of the cleanup process
+    -   Verified clean React + Vite operation

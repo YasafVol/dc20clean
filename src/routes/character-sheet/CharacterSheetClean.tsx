@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { skillsData } from '../../lib/rulesdata/skills';
 import { tradesData } from '../../lib/rulesdata/trades';
 import { knowledgeData } from '../../lib/rulesdata/knowledge';
+import { traitsData } from '../../lib/rulesdata/traits';
+import { classesData } from '../../lib/rulesdata/classes';
+import { ancestriesData } from '../../lib/rulesdata/ancestries';
 
 // Import styled components
 import {
@@ -40,9 +43,27 @@ import {
   StyledPotionBubbles,
   StyledPotionValue,
   StyledLargePotionContainer,
-  StyledLargePotionValue,
-  StyledTempHPDisplay
+  StyledLargePotionValue
 } from './styles/Potions';
+
+import {
+  StyledFeatureGrid,
+  StyledFeatureItem,
+  StyledFeatureName,
+  StyledFeatureReadMore,
+  StyledFeatureCategory,
+  StyledFeatureCategoryTitle
+} from './styles/Features';
+
+import {
+  StyledFeaturePopupOverlay,
+  StyledFeaturePopupContent,
+  StyledFeaturePopupHeader,
+  StyledFeaturePopupTitle,
+  StyledFeaturePopupClose,
+  StyledFeaturePopupDescription,
+  StyledFeaturePopupSourceInfo
+} from './styles/FeaturePopup';
 
 // Types for character sheet data
 interface CharacterSheetProps {
@@ -101,6 +122,8 @@ interface CharacterSheetData {
   skillsJson?: string;
   tradesJson?: string;
   languagesJson?: string;
+  selectedTraitIds?: string; // JSON string of selected trait IDs
+  selectedFeatureChoices?: string; // JSON string of selected feature choices
   
   // Current values (optional, may not exist on first load)
   currentHP?: number;
@@ -130,6 +153,14 @@ interface LanguageData {
   fluency: 'limited' | 'fluent';
 }
 
+interface FeatureData {
+  id: string;
+  name: string;
+  description: string;
+  source: 'ancestry' | 'class' | 'choice';
+  sourceDetail?: string; // e.g., "Human (Default)", "Barbarian Lvl 1", etc.
+}
+
 interface CurrentValues {
   currentHP: number;
   currentSP: number;
@@ -153,8 +184,12 @@ const getCharacterData = async (characterId: string): Promise<CharacterSheetData
     throw new Error(`Character with ID "${characterId}" not found in localStorage`);
   }
   
-  // Return the character data as-is since it's already calculated
-  return character;
+  // Return the character data as-is since it's already calculated, but ensure trait and feature data is included
+  return {
+    ...character,
+    selectedTraitIds: character.selectedTraitIds || character.selectedTraitsJson || '[]',
+    selectedFeatureChoices: character.selectedFeatureChoices || '{}'
+  };
 };
 
 // Save character current values back to localStorage
@@ -192,6 +227,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
 
   // Load character data
   useEffect(() => {
@@ -406,6 +442,109 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
     }
   };
 
+  // Get all features (traits and class features) for the character
+  const getFeaturesData = (): FeatureData[] => {
+    if (!characterData) return [];
+    
+    const features: FeatureData[] = [];
+    
+    // Get ancestry default traits
+    const ancestry1 = ancestriesData.find(a => a.name === characterData.ancestry1Name);
+    if (ancestry1) {
+      ancestry1.defaultTraitIds?.forEach(traitId => {
+        const trait = traitsData.find(t => t.id === traitId);
+        if (trait) {
+          features.push({
+            id: trait.id,
+            name: trait.name,
+            description: trait.description,
+            source: 'ancestry',
+            sourceDetail: `${ancestry1.name} (Default)`
+          });
+        }
+      });
+    }
+    
+    // Get selected ancestry traits
+    if (characterData.selectedTraitIds) {
+      try {
+        const selectedTraitIds: string[] = JSON.parse(characterData.selectedTraitIds);
+        selectedTraitIds.forEach(traitId => {
+          const trait = traitsData.find(t => t.id === traitId);
+          if (trait) {
+            // Check if this trait is not already added as default
+            const alreadyAdded = features.some(f => f.id === trait.id);
+            if (!alreadyAdded) {
+              const sourceAncestry = ancestriesData.find(a => 
+                a.expandedTraitIds.includes(traitId) || 
+                a.defaultTraitIds?.includes(traitId)
+              );
+              features.push({
+                id: trait.id,
+                name: trait.name,
+                description: trait.description,
+                source: 'ancestry',
+                sourceDetail: `${sourceAncestry?.name || 'Unknown'} (Selected)`
+              });
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error parsing selected traits JSON:', error);
+      }
+    }
+    
+    // Get class features
+    const selectedClass = classesData.find(c => c.name === characterData.className);
+    if (selectedClass) {
+      // Add level 1 features
+      selectedClass.level1Features?.forEach(feature => {
+        features.push({
+          id: feature.id,
+          name: feature.name,
+          description: feature.description,
+          source: 'class',
+          sourceDetail: `${selectedClass.name} (Lvl 1)`
+        });
+      });
+      
+      // Add selected feature choices
+      if (characterData.selectedFeatureChoices) {
+        try {
+          const selectedChoices: {[key: string]: string} = JSON.parse(characterData.selectedFeatureChoices);
+          selectedClass.featureChoicesLvl1?.forEach(choice => {
+            const selectedOptionValue = selectedChoices[choice.id];
+            if (selectedOptionValue) {
+              const selectedOption = choice.options?.find(opt => opt.value === selectedOptionValue);
+              if (selectedOption) {
+                features.push({
+                  id: `${choice.id}_${selectedOptionValue}`,
+                  name: selectedOption.label,
+                  description: selectedOption.description || 'Feature choice selected.',
+                  source: 'choice',
+                  sourceDetail: `${selectedClass.name} (Choice)`
+                });
+              }
+            }
+          });
+        } catch (error) {
+          console.error('Error parsing selected feature choices JSON:', error);
+        }
+      }
+    }
+    
+    return features;
+  };
+
+  // Handle feature popup
+  const openFeaturePopup = (feature: FeatureData) => {
+    setSelectedFeature(feature);
+  };
+
+  const closeFeaturePopup = () => {
+    setSelectedFeature(null);
+  };
+
   // Helper function to safely calculate fill percentage
   const getFillPercentage = (current: number, max: number): number => {
     if (max === 0) return 0;
@@ -435,6 +574,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
   const trades = characterData ? getTradesData() : [];
   const knowledge = characterData ? getKnowledgeData() : [];
   const languages = characterData ? getLanguagesData() : [];
+  const features = characterData ? getFeaturesData() : [];
   const skillsByAttribute = characterData ? getSkillsByAttribute() : { might: [], agility: [], charisma: [], intelligence: [], prime: [] };
 
   if (loading) {
@@ -978,20 +1118,101 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
             {/* Features */}
             <div style={{ border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', flex: 1 }}>
               <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', textAlign: 'center', marginBottom: '1rem' }}>FEATURES</div>
-              <div style={{ fontSize: '0.9rem', lineHeight: 1.4, color: '#8b4513' }}>
-                <div style={{ marginBottom: '0.8rem', padding: '0.5rem', border: '1px solid #e5e5e5', borderRadius: '4px', background: '#f9f9f9' }}>
-                  <div style={{ fontWeight: 'bold', marginBottom: '0.3rem' }}>Class Features:</div>
-                  <div>Based on {characterData.className}</div>
-                </div>
-                <div style={{ padding: '0.5rem', border: '1px solid #e5e5e5', borderRadius: '4px', background: '#f9f9f9' }}>
-                  <div style={{ fontWeight: 'bold', marginBottom: '0.3rem' }}>Ancestry Traits:</div>
-                  <div>{characterData.ancestry1Name}</div>
-                </div>
-              </div>
+              
+              {/* Organize features by source */}
+              {(() => {
+                const ancestryFeatures = features.filter(f => f.source === 'ancestry');
+                const classFeatures = features.filter(f => f.source === 'class');
+                const choiceFeatures = features.filter(f => f.source === 'choice');
+                
+                return (
+                  <div style={{ fontSize: '0.9rem', color: '#8b4513' }}>
+                    {/* Ancestry Traits */}
+                    {ancestryFeatures.length > 0 && (
+                      <StyledFeatureCategory>
+                        <StyledFeatureCategoryTitle>Ancestry Traits</StyledFeatureCategoryTitle>
+                        <StyledFeatureGrid>
+                          {ancestryFeatures.map(feature => (
+                            <StyledFeatureItem key={feature.id}>
+                              <StyledFeatureName>{feature.name}</StyledFeatureName>
+                              <StyledFeatureReadMore onClick={() => openFeaturePopup(feature)}>
+                                Info
+                              </StyledFeatureReadMore>
+                            </StyledFeatureItem>
+                          ))}
+                        </StyledFeatureGrid>
+                      </StyledFeatureCategory>
+                    )}
+                    
+                    {/* Class Features */}
+                    {classFeatures.length > 0 && (
+                      <StyledFeatureCategory>
+                        <StyledFeatureCategoryTitle>Class Features</StyledFeatureCategoryTitle>
+                        <StyledFeatureGrid>
+                          {classFeatures.map(feature => (
+                            <StyledFeatureItem key={feature.id}>
+                              <StyledFeatureName>{feature.name}</StyledFeatureName>
+                              <StyledFeatureReadMore onClick={() => openFeaturePopup(feature)}>
+                                Info
+                              </StyledFeatureReadMore>
+                            </StyledFeatureItem>
+                          ))}
+                        </StyledFeatureGrid>
+                      </StyledFeatureCategory>
+                    )}
+                    
+                    {/* Feature Choices */}
+                    {choiceFeatures.length > 0 && (
+                      <StyledFeatureCategory>
+                        <StyledFeatureCategoryTitle>Selected Features</StyledFeatureCategoryTitle>
+                        <StyledFeatureGrid>
+                          {choiceFeatures.map(feature => (
+                            <StyledFeatureItem key={feature.id}>
+                              <StyledFeatureName>{feature.name}</StyledFeatureName>
+                              <StyledFeatureReadMore onClick={() => openFeaturePopup(feature)}>
+                                Info
+                              </StyledFeatureReadMore>
+                            </StyledFeatureItem>
+                          ))}
+                        </StyledFeatureGrid>
+                      </StyledFeatureCategory>
+                    )}
+                    
+                    {/* No features message */}
+                    {features.length === 0 && (
+                      <div style={{ textAlign: 'center', fontStyle: 'italic', padding: '1rem', color: '#666' }}>
+                        No features available
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           </StyledRightColumn>
         </StyledMainGrid>
       </StyledCharacterSheet>
+      
+      {/* Feature Popup */}
+      {selectedFeature && (
+        <StyledFeaturePopupOverlay onClick={closeFeaturePopup}>
+          <StyledFeaturePopupContent onClick={(e) => e.stopPropagation()}>
+            <StyledFeaturePopupHeader>
+              <StyledFeaturePopupTitle>{selectedFeature.name}</StyledFeaturePopupTitle>
+              <StyledFeaturePopupClose onClick={closeFeaturePopup}>
+                ×
+              </StyledFeaturePopupClose>
+            </StyledFeaturePopupHeader>
+            <StyledFeaturePopupDescription>
+              {selectedFeature.description}
+            </StyledFeaturePopupDescription>
+            {selectedFeature.sourceDetail && (
+              <StyledFeaturePopupSourceInfo>
+                Source: {selectedFeature.sourceDetail}
+              </StyledFeaturePopupSourceInfo>
+            )}
+          </StyledFeaturePopupContent>
+        </StyledFeaturePopupOverlay>
+      )}
     </StyledContainer>
   );
 };

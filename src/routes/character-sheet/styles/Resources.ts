@@ -63,12 +63,43 @@ export const StyledResourceButton = styled.button<{ variant?: 'damage' | 'heal' 
   }
 `;
 
-export const StyledResourceInput = styled.input`
-  width: 40px;
+export const StyledResourceInput = styled.input<{ variant?: 'circle' | 'standard' }>`
+  width: ${props => props.variant === 'circle' ? '50px' : '40px'};
   text-align: center;
-  border: 1px solid #8b4513;
-  border-radius: 3px;
-  font-size: 0.9rem;
+  border: ${props => props.variant === 'circle' ? 'none' : '1px solid #8b4513'};
+  border-radius: ${props => props.variant === 'circle' ? '0' : '3px'};
+  background: ${props => props.variant === 'circle' ? 'transparent' : 'white'};
+  font-size: ${props => props.variant === 'circle' ? '1.4rem' : '0.9rem'};
   font-weight: bold;
-  padding: 0.2rem;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  
+  /* Remove number input spinner arrows completely */
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+  
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    display: none;
+  }
+  
+  &[type=number] {
+    -moz-appearance: textfield;
+  }
+  
+  /* Force center alignment and remove any browser default styling */
+  ${props => props.variant === 'circle' && `
+    line-height: 1;
+    vertical-align: baseline;
+    box-sizing: border-box;
+  `}
+`;
+
+export const StyledTempHPInput = styled(StyledResourceInput)`
+  width: 25px;
+  font-size: 0.7rem;
 `;

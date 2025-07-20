@@ -3,7 +3,7 @@ import { createGlobalStyle } from 'styled-components';
 import { CharacterProvider } from './lib/stores/characterContext';
 import CharacterCreation from './routes/character-creation/CharacterCreation.tsx';
 import LoadCharacter from './routes/character-creation/LoadCharacter.tsx';
-import CharacterSheet from './routes/character-sheet/CharacterSheet.tsx';
+import CharacterSheet from './routes/character-sheet/CharacterSheetClean.tsx';
 import Menu from './components/Menu.tsx';
 import {
   StyledApp,

@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
+// Import rules data
+import { skillsData } from '../../lib/rulesdata/skills';
+import { tradesData } from '../../lib/rulesdata/trades';
+import { knowledgeData } from '../../lib/rulesdata/knowledge';
+
 // Import styled components
 import {
   StyledContainer,
@@ -19,49 +24,25 @@ import {
 } from './styles/Header';
 
 import {
-  StyledAttributeSection,
-  StyledAttributeItem,
-  StyledAttributeBox,
-  StyledAttributeAbbr,
-  StyledAttributeValue,
-  StyledAttributeDetails,
-  StyledAttributeName,
-  StyledSaveBonus
-} from './styles/Attributes';
-
-import {
-  StyledSkillsSection,
-  StyledSkillItem,
   StyledProficiencyDots,
   StyledDot
 } from './styles/Skills';
 
 import {
-  StyledResourcesSection,
-  StyledResourceBox,
-  StyledResourceIcon,
-  StyledResourceControls,
   StyledResourceButton,
-  StyledResourceInput
+  StyledResourceInput,
+  StyledTempHPInput
 } from './styles/Resources';
 
 import {
-  StyledCombatSection,
-  StyledDefenseGrid,
-  StyledDefenseBox,
-  StyledDefenseValue,
-  StyledDefenseLabel,
-  StyledActionPoints,
-  StyledActionPoint
-} from './styles/Combat';
-
-import {
-  StyledInfoSection,
-  StyledSectionTitle,
-  StyledStatRow,
-  StyledStatLabel,
-  StyledStatValue
-} from './styles/Info';
+  StyledPotionContainer,
+  StyledPotionFill,
+  StyledPotionBubbles,
+  StyledPotionValue,
+  StyledLargePotionContainer,
+  StyledLargePotionValue,
+  StyledTempHPDisplay
+} from './styles/Potions';
 
 // Types for character sheet data
 interface CharacterSheetProps {
@@ -71,6 +52,7 @@ interface CharacterSheetProps {
 
 interface CharacterSheetData {
   // Basic Info
+  id: string;
   finalName: string;
   finalPlayerName?: string;
   finalLevel: number;
@@ -149,122 +131,45 @@ interface CurrentValues {
   actionPointsUsed: number;
 }
 
-// Character data service - this will be replaced with real API calls later
+// Character data service - fetches from localStorage and uses already calculated stats
 const getCharacterData = async (characterId: string): Promise<CharacterSheetData> => {
-  // For now, return mock data based on characterId
-  // In the future, this will make a real API call to the backend
   console.log('Loading character data for ID:', characterId);
   
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 500));
+  // Get characters from localStorage
+  const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
   
-  // Mock character data that matches the database structure
-  const mockCharacters: Record<string, CharacterSheetData> = {
-    'eldon-1': {
-      finalName: "Eldon Brightleaf",
-      finalPlayerName: "Clay",
-      finalLevel: 1,
-      finalMight: -1,
-      finalAgility: 3,
-      finalCharisma: 0,
-      finalIntelligence: 3,
-      finalPrimeModifierValue: 3,
-      finalPrimeModifierAttribute: "AGI",
-      finalCombatMastery: 1,
-      // Save Masteries (assuming AGI and INT selected for Save Mastery)
-      finalSaveMasteryMight: -1, // No Save Mastery: just attribute value
-      finalSaveMasteryAgility: 4, // Save Mastery: 3 + 1 (CM)
-      finalSaveMasteryCharisma: 0, // No Save Mastery: just attribute value
-      finalSaveMasteryIntelligence: 4, // Save Mastery: 3 + 1 (CM)
-      finalHPMax: 7,
-      finalSPMax: 1,
-      finalMPMax: 0,
-      finalPD: 13,
-      finalAD: 12,
-      finalSaveDC: 14,
-      finalDeathThreshold: 3,
-      finalMoveSpeed: 5,
-      finalJumpDistance: 3,
-      finalRestPoints: 0,
-      finalGritPoints: 2,
-      finalInitiativeBonus: 4,
-      className: "Ranger",
-      ancestry1Name: "Agile Explorer",
-      ancestry2Name: undefined,
-      skillsJson: JSON.stringify({
-        "athletics": 1,
-        "intimidation": 0,
-        "acrobatics": 3,
-        "trickery": 3,
-        "stealth": 5,
-        "animal": 2,
-        "influence": 0,
-        "insight": 0,
-        "investigation": 5,
-        "medicine": 5,
-        "survival": 5,
-        "awareness": 3
-      }),
-      tradesJson: JSON.stringify({}),
-      languagesJson: JSON.stringify({
-        "common": { fluency: "fluent" },
-        "elvish": { fluency: "fluent" }
-      })
-    },
-    'demo-character': {
-      finalName: "Demo Character",
-      finalPlayerName: "Player",
-      finalLevel: 1,
-      finalMight: 1,
-      finalAgility: 3,
-      finalCharisma: 2,
-      finalIntelligence: -2,
-      finalPrimeModifierValue: 3,
-      finalPrimeModifierAttribute: "AGI",
-      finalCombatMastery: 1,
-      // Save Masteries (assuming MIG and AGI selected for Save Mastery)
-      finalSaveMasteryMight: 2, // Save Mastery: 1 + 1 (CM)
-      finalSaveMasteryAgility: 4, // Save Mastery: 3 + 1 (CM)
-      finalSaveMasteryCharisma: 2, // No Save Mastery: just attribute value
-      finalSaveMasteryIntelligence: -2, // No Save Mastery: just attribute value
-      finalHPMax: 10,
-      finalSPMax: 3,
-      finalMPMax: 2,
-      finalPD: 14,
-      finalAD: 13,
-      finalSaveDC: 15,
-      finalDeathThreshold: 5,
-      finalMoveSpeed: 6,
-      finalJumpDistance: 4,
-      finalRestPoints: 1,
-      finalGritPoints: 3,
-      finalInitiativeBonus: 2,
-      className: "Warrior",
-      ancestry1Name: "Strong Fighter",
-      ancestry2Name: undefined,
-      skillsJson: JSON.stringify({
-        "athletics": 4,
-        "intimidation": 3,
-        "acrobatics": 1,
-        "insight": 2,
-        "influence": 4
-      }),
-      tradesJson: JSON.stringify({
-        "blacksmithing": 2
-      }),
-      languagesJson: JSON.stringify({
-        "common": { fluency: "fluent" },
-        "orcish": { fluency: "limited" }
-      })
-    }
-  };
-
-  const character = mockCharacters[characterId];
+  // Find the character by ID
+  const character = savedCharacters.find((char: any) => char.id === characterId);
+  
   if (!character) {
-    throw new Error(`Character with ID "${characterId}" not found`);
+    throw new Error(`Character with ID "${characterId}" not found in localStorage`);
   }
-
+  
+  // Return the character data as-is since it's already calculated
   return character;
+};
+
+// Save character current values back to localStorage
+const saveCharacterData = (characterId: string, currentValues: CurrentValues) => {
+  const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+  const characterIndex = savedCharacters.findIndex((char: any) => char.id === characterId);
+  
+  if (characterIndex !== -1) {
+    // Update the character's current values
+    savedCharacters[characterIndex] = {
+      ...savedCharacters[characterIndex],
+      currentHP: currentValues.currentHP,
+      currentSP: currentValues.currentSP,
+      currentMP: currentValues.currentMP,
+      currentGritPoints: currentValues.currentGritPoints,
+      tempHP: currentValues.tempHP,
+      actionPointsUsed: currentValues.actionPointsUsed,
+      lastModified: new Date().toISOString()
+    };
+    
+    localStorage.setItem('savedCharacters', JSON.stringify(savedCharacters));
+    console.log('Character saved to localStorage. Total characters:', savedCharacters.length);
+  }
 };
 
 const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) => {
@@ -309,7 +214,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
     loadCharacterData();
   }, [characterId]);
 
-  // Resource management functions
+  // Resource management functions with auto-save
   const adjustResource = (resource: keyof CurrentValues, amount: number) => {
     setCurrentValues(prev => {
       const newValue = prev[resource] + amount;
@@ -317,7 +222,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
       
       switch (resource) {
         case 'currentHP':
-          maxValue = characterData?.finalHPMax || 0;
+          // HP can go up to normal max + temp HP
+          maxValue = (characterData?.finalHPMax || 0) + prev.tempHP;
           break;
         case 'currentSP':
           maxValue = characterData?.finalSPMax || 0;
@@ -333,10 +239,25 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
           break;
       }
       
-      return {
+      const newValues = {
         ...prev,
         [resource]: Math.max(0, Math.min(newValue, maxValue))
       };
+      
+      // Special case: when reducing temp HP, cap current HP to new effective max
+      if (resource === 'tempHP' && amount < 0) {
+        const newEffectiveMaxHP = (characterData?.finalHPMax || 0) + newValues.tempHP;
+        if (prev.currentHP > newEffectiveMaxHP) {
+          newValues.currentHP = newEffectiveMaxHP;
+        }
+      }
+      
+      // Save to localStorage after state update
+      if (characterData?.id) {
+        setTimeout(() => saveCharacterData(characterData.id, newValues), 0);
+      }
+      
+      return newValues;
     });
   };
 
@@ -346,7 +267,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
     
     switch (resource) {
       case 'currentHP':
-        maxValue = characterData?.finalHPMax || 0;
+        // HP can go up to normal max + temp HP
+        maxValue = (characterData?.finalHPMax || 0) + currentValues.tempHP;
         break;
       case 'currentSP':
         maxValue = characterData?.finalSPMax || 0;
@@ -362,62 +284,142 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
         break;
     }
     
-    setCurrentValues(prev => ({
-      ...prev,
-      [resource]: Math.max(0, Math.min(numValue, maxValue))
+    setCurrentValues(prev => {
+      const newValues = {
+        ...prev,
+        [resource]: Math.max(0, Math.min(numValue, maxValue))
+      };
+      
+      // Special case: when changing temp HP directly, cap current HP to new effective max
+      if (resource === 'tempHP') {
+        const newEffectiveMaxHP = (characterData?.finalHPMax || 0) + newValues.tempHP;
+        if (prev.currentHP > newEffectiveMaxHP) {
+          newValues.currentHP = newEffectiveMaxHP;
+        }
+      }
+      
+      // Save to localStorage after state update
+      if (characterData?.id) {
+        setTimeout(() => saveCharacterData(characterData.id, newValues), 0);
+      }
+      
+      return newValues;
+    });
+  };
+
+  // Parse skills data from character - show ALL skills with their proficiency levels
+  const getSkillsData = (): SkillData[] => {
+    // Parse character's skill proficiencies (if any)
+    let characterSkills: Record<string, number> = {};
+    if (characterData?.skillsJson) {
+      try {
+        characterSkills = JSON.parse(characterData.skillsJson);
+      } catch (error) {
+        console.error('Error parsing skills JSON:', error);
+      }
+    }
+    
+    // Create skill data for ALL skills from rules data, merging with character's proficiencies
+    return skillsData.map(skill => ({
+      id: skill.id,
+      name: skill.name,
+      attribute: skill.attributeAssociation,
+      proficiency: characterSkills[skill.id] || 0 // Default to 0 if not found
     }));
   };
 
-  // Parse skills data from character
-  const getSkillsData = (): SkillData[] => {
-    if (!characterData?.skillsJson) {
+  // Parse trades data from character - show ONLY selected trades with their proficiency levels
+  const getTradesData = (): TradeData[] => {
+    // Parse character's trade proficiencies (if any)
+    let characterTrades: Record<string, number> = {};
+    if (characterData?.tradesJson) {
+      try {
+        characterTrades = JSON.parse(characterData.tradesJson);
+      } catch (error) {
+        console.error('Error parsing trades JSON:', error);
+      }
+    }
+    
+    // Only show trades that have been selected (proficiency > 0) from tradesData only
+    return tradesData
+      .filter(trade => characterTrades[trade.id] && characterTrades[trade.id] > 0)
+      .map(trade => ({
+        id: trade.id,
+        name: trade.name,
+        proficiency: characterTrades[trade.id] || 0
+      }));
+  };
+
+  // Parse knowledge data from character - show ALL knowledge with their proficiency levels
+  const getKnowledgeData = (): TradeData[] => {
+    // Parse character's trade proficiencies (if any) - knowledge is stored in tradesJson
+    let characterTrades: Record<string, number> = {};
+    if (characterData?.tradesJson) {
+      try {
+        characterTrades = JSON.parse(characterData.tradesJson);
+      } catch (error) {
+        console.error('Error parsing trades JSON:', error);
+      }
+    }
+    
+    // Show ALL knowledge skills with their proficiency levels
+    return knowledgeData.map(knowledge => ({
+      id: knowledge.id,
+      name: knowledge.name,
+      proficiency: characterTrades[knowledge.id] || 0 // Default to 0 if not found
+    }));
+  };
+
+  // Parse languages data from character
+  const getLanguagesData = (): LanguageData[] => {
+    if (!characterData?.languagesJson) {
       return [];
     }
     
     try {
-      const skillsFromDB = JSON.parse(characterData.skillsJson);
+      const languagesFromDB = JSON.parse(characterData.languagesJson);
       
-      // Convert the database format to our component format
-      return Object.entries(skillsFromDB).map(([skillId, proficiency]) => {
-        // Map skill IDs to names and attributes based on the rules data
-        const skillMapping: Record<string, { name: string; attribute: string }> = {
-          'athletics': { name: 'Athletics', attribute: 'might' },
-          'intimidation': { name: 'Intimidation', attribute: 'might' },
-          'acrobatics': { name: 'Acrobatics', attribute: 'agility' },
-          'trickery': { name: 'Trickery', attribute: 'agility' },
-          'stealth': { name: 'Stealth', attribute: 'agility' },
-          'animal': { name: 'Animal', attribute: 'charisma' },
-          'influence': { name: 'Influence', attribute: 'charisma' },
-          'insight': { name: 'Insight', attribute: 'charisma' },
-          'investigation': { name: 'Investigation', attribute: 'intelligence' },
-          'medicine': { name: 'Medicine', attribute: 'intelligence' },
-          'survival': { name: 'Survival', attribute: 'intelligence' },
-          'arcana': { name: 'Arcana', attribute: 'intelligence' },
-          'history': { name: 'History', attribute: 'intelligence' },
-          'nature': { name: 'Nature', attribute: 'intelligence' },
-          'occultism': { name: 'Occultism', attribute: 'intelligence' },
-          'religion': { name: 'Religion', attribute: 'intelligence' },
-          'forgery': { name: 'Forgery', attribute: 'intelligence' },
-          'awareness': { name: 'Awareness', attribute: 'prime' },
-        };
-        
-        const skillInfo = skillMapping[skillId] || { name: skillId, attribute: 'intelligence' };
-        
-        return {
-          id: skillId,
-          name: skillInfo.name,
-          attribute: skillInfo.attribute,
-          proficiency: typeof proficiency === 'number' ? proficiency : 0
-        };
-      });
+      return Object.entries(languagesFromDB).map(([langId, data]: [string, any]) => ({
+        id: langId,
+        name: langId.charAt(0).toUpperCase() + langId.slice(1), // Capitalize first letter
+        fluency: data.fluency === 'fluent' ? 'fluent' : 'limited'
+      }));
     } catch (error) {
-      console.error('Error parsing skills JSON:', error);
+      console.error('Error parsing languages JSON:', error);
       return [];
     }
   };
 
-  // Get skills data from character or empty array if no character data
-  const skills = characterData ? getSkillsData() : [];
+  // Helper function to safely calculate fill percentage
+  const getFillPercentage = (current: number, max: number): number => {
+    if (max === 0) return 0;
+    return Math.max(0, Math.min(100, (current / max) * 100));
+  };
+
+  // Helper function for HP fill percentage (shows current HP vs total effective HP)
+  const getHPFillPercentage = (currentHP: number, maxHP: number, tempHP: number): number => {
+    const totalEffectiveHP = maxHP + tempHP;
+    if (totalEffectiveHP === 0) return 0;
+    return Math.max(0, (currentHP / totalEffectiveHP) * 100);
+  };
+
+  // Group skills by attribute like in the official sheet
+  const getSkillsByAttribute = () => {
+    const skills = getSkillsData();
+    return {
+      might: skills.filter(skill => skill.attribute === 'might'),
+      agility: skills.filter(skill => skill.attribute === 'agility'),
+      charisma: skills.filter(skill => skill.attribute === 'charisma'),
+      intelligence: skills.filter(skill => skill.attribute === 'intelligence'),
+      prime: skills.filter(skill => skill.attribute === 'prime')
+    };
+  };
+
+  // Get data from character or empty defaults if no character data
+  const trades = characterData ? getTradesData() : [];
+  const knowledge = characterData ? getKnowledgeData() : [];
+  const languages = characterData ? getLanguagesData() : [];
+  const skillsByAttribute = characterData ? getSkillsByAttribute() : { might: [], agility: [], charisma: [], intelligence: [], prime: [] };
 
   if (loading) {
     return (
@@ -474,294 +476,503 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
           </div>
         </StyledHeader>
 
-        {/* Main Grid */}
+        {/* Main Grid - DC20 Official Layout */}
         <StyledMainGrid>
-          {/* Left Column - Attributes & Skills */}
+          {/* Left Column - Attributes with Skills */}
           <StyledLeftColumn>
-            {/* Attributes Section */}
-            <StyledAttributeSection>
-              <StyledSectionTitle>Attributes</StyledSectionTitle>
-              
-              {/* Might */}
-              <StyledAttributeItem>
-                <StyledAttributeBox>
-                  <StyledAttributeAbbr>MIG</StyledAttributeAbbr>
-                  <StyledAttributeValue>{characterData.finalMight}</StyledAttributeValue>
-                </StyledAttributeBox>
-                <StyledAttributeDetails>
-                  <StyledAttributeName>Might</StyledAttributeName>
-                  <StyledSaveBonus>Save {characterData.finalSaveMasteryMight >= 0 ? '+' : ''}{characterData.finalSaveMasteryMight}</StyledSaveBonus>
-                </StyledAttributeDetails>
-              </StyledAttributeItem>
-
-              {/* Agility */}
-              <StyledAttributeItem>
-                <StyledAttributeBox>
-                  <StyledAttributeAbbr>AGI</StyledAttributeAbbr>
-                  <StyledAttributeValue>{characterData.finalAgility}</StyledAttributeValue>
-                </StyledAttributeBox>
-                <StyledAttributeDetails>
-                  <StyledAttributeName>Agility</StyledAttributeName>
-                  <StyledSaveBonus>Save {characterData.finalSaveMasteryAgility >= 0 ? '+' : ''}{characterData.finalSaveMasteryAgility}</StyledSaveBonus>
-                </StyledAttributeDetails>
-              </StyledAttributeItem>
-
-              {/* Charisma */}
-              <StyledAttributeItem>
-                <StyledAttributeBox>
-                  <StyledAttributeAbbr>CHA</StyledAttributeAbbr>
-                  <StyledAttributeValue>{characterData.finalCharisma}</StyledAttributeValue>
-                </StyledAttributeBox>
-                <StyledAttributeDetails>
-                  <StyledAttributeName>Charisma</StyledAttributeName>
-                  <StyledSaveBonus>Save {characterData.finalSaveMasteryCharisma >= 0 ? '+' : ''}{characterData.finalSaveMasteryCharisma}</StyledSaveBonus>
-                </StyledAttributeDetails>
-              </StyledAttributeItem>
-
-              {/* Intelligence */}
-              <StyledAttributeItem>
-                <StyledAttributeBox>
-                  <StyledAttributeAbbr>INT</StyledAttributeAbbr>
-                  <StyledAttributeValue>{characterData.finalIntelligence}</StyledAttributeValue>
-                </StyledAttributeBox>
-                <StyledAttributeDetails>
-                  <StyledAttributeName>Intelligence</StyledAttributeName>
-                  <StyledSaveBonus>Save {characterData.finalSaveMasteryIntelligence >= 0 ? '+' : ''}{characterData.finalSaveMasteryIntelligence}</StyledSaveBonus>
-                </StyledAttributeDetails>
-              </StyledAttributeItem>
-
-              {/* Prime Modifier */}
-              <div style={{ marginTop: '1rem', textAlign: 'center', padding: '0.5rem', border: '1px solid #8b4513', borderRadius: '4px', background: 'white' }}>
-                <StyledLabel>Prime</StyledLabel>
-                <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>
+            {/* Prime Modifier & Awareness */}
+            <div style={{ marginBottom: '1rem' }}>
+              <div style={{ textAlign: 'center', padding: '0.5rem', border: '2px solid #8b4513', borderRadius: '8px', background: '#f5f5dc', marginBottom: '0.5rem' }}>
+                <StyledLabel style={{ color: '#8b4513', fontWeight: 'bold' }}>Prime</StyledLabel>
+                <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#8b4513' }}>
                   {characterData.finalPrimeModifierAttribute} +{characterData.finalPrimeModifierValue}
                 </div>
               </div>
-            </StyledAttributeSection>
-
-            {/* Skills Section */}
-            <StyledSkillsSection>
-              <StyledSectionTitle>Skills</StyledSectionTitle>
-              {skills.map(skill => (
-                <StyledSkillItem key={skill.id}>
+              
+              {/* Awareness (Prime skill) */}
+              {skillsByAttribute.prime.map(skill => (
+                <div key={skill.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.3rem', border: '1px solid #8b4513', borderRadius: '4px', background: 'white', marginBottom: '0.3rem' }}>
+                  <span style={{ fontSize: '0.9rem', color: '#8b4513' }}>{skill.name.toUpperCase()}</span>
                   <StyledProficiencyDots>
                     {[1, 2, 3, 4, 5].map(level => (
                       <StyledDot key={level} filled={level <= skill.proficiency} />
                     ))}
                   </StyledProficiencyDots>
-                  <span>{skill.name}</span>
-                  <span style={{ fontSize: '0.7rem', color: '#666' }}>
-                    {skill.attribute.toUpperCase()}
-                  </span>
-                </StyledSkillItem>
+                </div>
               ))}
-            </StyledSkillsSection>
+            </div>
+
+            {/* Might Section */}
+            <div style={{ marginBottom: '1rem', border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white' }}>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <div style={{ width: '60px', height: '60px', border: '2px solid #8b4513', borderRadius: '8px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f5f5dc', marginRight: '1rem' }}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513' }}>MIG</div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalMight}</div>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.2rem' }}>MIGHT</div>
+                  <div style={{ fontSize: '0.9rem', color: '#8b4513' }}>SAVE +{characterData.finalSaveMasteryMight}</div>
+                </div>
+              </div>
+              
+              {/* Might Skills */}
+              {skillsByAttribute.might.map(skill => (
+                <div key={skill.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.3rem', border: '1px solid #8b4513', borderRadius: '4px', background: '#f9f9f9', marginBottom: '0.3rem' }}>
+                  <span style={{ fontSize: '0.9rem', color: '#8b4513' }}>{skill.name.toUpperCase()}</span>
+                  <StyledProficiencyDots>
+                    {[1, 2, 3, 4, 5].map(level => (
+                      <StyledDot key={level} filled={level <= skill.proficiency} />
+                    ))}
+                  </StyledProficiencyDots>
+                </div>
+              ))}
+            </div>
+
+            {/* Agility Section */}
+            <div style={{ marginBottom: '1rem', border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white' }}>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <div style={{ width: '60px', height: '60px', border: '2px solid #8b4513', borderRadius: '8px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f5f5dc', marginRight: '1rem' }}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513' }}>AGI</div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalAgility}</div>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.2rem' }}>AGILITY</div>
+                  <div style={{ fontSize: '0.9rem', color: '#8b4513' }}>SAVE +{characterData.finalSaveMasteryAgility}</div>
+                </div>
+              </div>
+              
+              {/* Agility Skills */}
+              {skillsByAttribute.agility.map(skill => (
+                <div key={skill.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.3rem', border: '1px solid #8b4513', borderRadius: '4px', background: '#f9f9f9', marginBottom: '0.3rem' }}>
+                  <span style={{ fontSize: '0.9rem', color: '#8b4513' }}>{skill.name.toUpperCase()}</span>
+                  <StyledProficiencyDots>
+                    {[1, 2, 3, 4, 5].map(level => (
+                      <StyledDot key={level} filled={level <= skill.proficiency} />
+                    ))}
+                  </StyledProficiencyDots>
+                </div>
+              ))}
+            </div>
+
+            {/* Charisma Section */}
+            <div style={{ marginBottom: '1rem', border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white' }}>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <div style={{ width: '60px', height: '60px', border: '2px solid #8b4513', borderRadius: '8px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f5f5dc', marginRight: '1rem' }}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513' }}>CHA</div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalCharisma}</div>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.2rem' }}>CHARISMA</div>
+                  <div style={{ fontSize: '0.9rem', color: '#8b4513' }}>SAVE +{characterData.finalSaveMasteryCharisma}</div>
+                </div>
+              </div>
+              
+              {/* Charisma Skills */}
+              {skillsByAttribute.charisma.map(skill => (
+                <div key={skill.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.3rem', border: '1px solid #8b4513', borderRadius: '4px', background: '#f9f9f9', marginBottom: '0.3rem' }}>
+                  <span style={{ fontSize: '0.9rem', color: '#8b4513' }}>{skill.name.toUpperCase()}</span>
+                  <StyledProficiencyDots>
+                    {[1, 2, 3, 4, 5].map(level => (
+                      <StyledDot key={level} filled={level <= skill.proficiency} />
+                    ))}
+                  </StyledProficiencyDots>
+                </div>
+              ))}
+            </div>
+
+            {/* Intelligence Section */}
+            <div style={{ marginBottom: '1rem', border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white' }}>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <div style={{ width: '60px', height: '60px', border: '2px solid #8b4513', borderRadius: '8px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f5f5dc', marginRight: '1rem' }}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513' }}>INT</div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalIntelligence}</div>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.2rem' }}>INTELLIGENCE</div>
+                  <div style={{ fontSize: '0.9rem', color: '#8b4513' }}>SAVE +{characterData.finalSaveMasteryIntelligence}</div>
+                </div>
+              </div>
+              
+              {/* Intelligence Skills */}
+              {skillsByAttribute.intelligence.map(skill => (
+                <div key={skill.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.3rem', border: '1px solid #8b4513', borderRadius: '4px', background: '#f9f9f9', marginBottom: '0.3rem' }}>
+                  <span style={{ fontSize: '0.9rem', color: '#8b4513' }}>{skill.name.toUpperCase()}</span>
+                  <StyledProficiencyDots>
+                    {[1, 2, 3, 4, 5].map(level => (
+                      <StyledDot key={level} filled={level <= skill.proficiency} />
+                    ))}
+                  </StyledProficiencyDots>
+                </div>
+              ))}
+            </div>
+
+            {/* Knowledge Section */}
+            <div style={{ marginBottom: '1rem', border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white' }}>
+              <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.5rem', textAlign: 'center' }}>KNOWLEDGE</div>
+              <div style={{ fontSize: '0.8rem', color: '#8b4513', marginBottom: '0.5rem', textAlign: 'center' }}>Intelligence-based knowledge trades</div>
+              {knowledge.map(knowledgeItem => (
+                <div key={knowledgeItem.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.3rem', border: '1px solid #8b4513', borderRadius: '4px', background: '#f9f9f9', marginBottom: '0.3rem' }}>
+                  <span style={{ fontSize: '0.9rem', color: '#8b4513' }}>{knowledgeItem.name.toUpperCase()}</span>
+                  <StyledProficiencyDots>
+                    {[1, 2, 3, 4, 5].map(level => (
+                      <StyledDot key={level} filled={level <= knowledgeItem.proficiency} />
+                    ))}
+                  </StyledProficiencyDots>
+                </div>
+              ))}
+            </div>
+
+            {/* Trades Section */}
+            <div style={{ marginBottom: '1rem', border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white' }}>
+              <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.5rem', textAlign: 'center' }}>TRADES</div>
+              <div style={{ fontSize: '0.8rem', color: '#8b4513', marginBottom: '0.5rem', textAlign: 'center' }}>Selected practical trades & crafts</div>
+              {trades.length > 0 ? (
+                trades.map(trade => (
+                  <div key={trade.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.3rem', border: '1px solid #8b4513', borderRadius: '4px', background: '#f9f9f9', marginBottom: '0.3rem' }}>
+                    <span style={{ fontSize: '0.9rem', color: '#8b4513' }}>{trade.name.toUpperCase()}</span>
+                    <StyledProficiencyDots>
+                      {[1, 2, 3, 4, 5].map(level => (
+                        <StyledDot key={level} filled={level <= trade.proficiency} />
+                      ))}
+                    </StyledProficiencyDots>
+                  </div>
+                ))
+              ) : (
+                <div style={{ fontSize: '0.9rem', color: '#8b4513', textAlign: 'center', fontStyle: 'italic', padding: '1rem' }}>
+                  No trades selected
+                </div>
+              )}
+            </div>
+
+            {/* Languages Section */}
+            <div style={{ marginBottom: '1rem', border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white' }}>
+              <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.5rem', textAlign: 'center' }}>LANGUAGES</div>
+              <div style={{ fontSize: '0.8rem', color: '#8b4513', marginBottom: '0.5rem', textAlign: 'center' }}>LANGUAGE CHECK = d20 + Intelligence or Charisma</div>
+              {languages.map(language => (
+                <div key={language.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.3rem', border: '1px solid #8b4513', borderRadius: '4px', background: '#f9f9f9', marginBottom: '0.3rem' }}>
+                  <span style={{ fontSize: '0.9rem', color: '#8b4513' }}>{language.name.toUpperCase()}</span>
+                  <div style={{ display: 'flex', gap: '0.2rem' }}>
+                    <div style={{ 
+                      width: '15px', 
+                      height: '15px', 
+                      border: '1px solid #8b4513', 
+                      background: language.fluency === 'limited' ? '#8b4513' : 'white',
+                      borderRadius: '2px'
+                    }} />
+                    <span style={{ fontSize: '0.8rem', color: '#8b4513' }}>LIMITED</span>
+                    <div style={{ 
+                      width: '15px', 
+                      height: '15px', 
+                      border: '1px solid #8b4513', 
+                      background: language.fluency === 'fluent' ? '#8b4513' : 'white',
+                      borderRadius: '2px',
+                      marginLeft: '0.5rem'
+                    }} />
+                    <span style={{ fontSize: '0.8rem', color: '#8b4513' }}>FLUENT</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Currency Section */}
+            <div style={{ border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white' }}>
+              <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.5rem', textAlign: 'center' }}>CURRENCY</div>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div style={{ width: '80px', height: '80px', border: '2px solid #8b4513', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5dc' }}>
+                  <span style={{ fontSize: '0.8rem', color: '#8b4513' }}>Coins</span>
+                </div>
+              </div>
+            </div>
           </StyledLeftColumn>
 
-          {/* Middle Column - Resources & Combat */}
+          {/* Middle Column - Resources, Combat, and Core Stats */}
           <StyledMiddleColumn>
-            {/* Resources Section */}
-            <StyledResourcesSection>
+            {/* Resources Section - Circular design like official sheet */}
+            <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '1.5rem' }}>
               {/* Stamina Points */}
-              <StyledResourceBox>
-                <StyledResourceIcon bgColor="#3b82f6">SP</StyledResourceIcon>
-                <StyledLabel>Stamina Points</StyledLabel>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', margin: '0.5rem 0' }}>
-                  <StyledResourceInput
-                    type="number"
-                    value={currentValues.currentSP}
-                    onChange={(e) => handleResourceInputChange('currentSP', e.target.value)}
-                    min="0"
-                    max={characterData.finalSPMax}
-                  />
-                  <span>/ {characterData.finalSPMax}</span>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.3rem' }}>STAMINA POINTS</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <StyledResourceButton onClick={() => adjustResource('currentSP', -1)}>-</StyledResourceButton>
+                  <StyledPotionContainer style={{ borderColor: '#22c55e' }}>
+                    <StyledPotionFill 
+                      fillPercentage={getFillPercentage(currentValues.currentSP, characterData.finalSPMax)} 
+                      color="#22c55e" 
+                    />
+                    <StyledPotionBubbles 
+                      color="#22c55e" 
+                      fillPercentage={getFillPercentage(currentValues.currentSP, characterData.finalSPMax)}
+                    />
+                    <StyledPotionValue style={{ color: '#22c55e' }}>
+                      {currentValues.currentSP}
+                    </StyledPotionValue>
+                  </StyledPotionContainer>
+                  <StyledResourceButton onClick={() => adjustResource('currentSP', 1)}>+</StyledResourceButton>
                 </div>
-                <StyledResourceControls>
-                  <StyledResourceButton variant="damage" onClick={() => adjustResource('currentSP', -1)}>-</StyledResourceButton>
-                  <StyledResourceButton variant="heal" onClick={() => adjustResource('currentSP', 1)}>+</StyledResourceButton>
-                </StyledResourceControls>
-              </StyledResourceBox>
+                <div style={{ fontSize: '1.1rem', fontWeight: '300', color: '#666', marginTop: '0.3rem', fontStyle: 'italic' }}>
+                  {characterData.finalSPMax}
+                </div>
+              </div>
 
               {/* Mana Points */}
-              <StyledResourceBox>
-                <StyledResourceIcon bgColor="#8b5cf6">MP</StyledResourceIcon>
-                <StyledLabel>Mana Points</StyledLabel>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', margin: '0.5rem 0' }}>
-                  <StyledResourceInput
-                    type="number"
-                    value={currentValues.currentMP}
-                    onChange={(e) => handleResourceInputChange('currentMP', e.target.value)}
-                    min="0"
-                    max={characterData.finalMPMax}
-                  />
-                  <span>/ {characterData.finalMPMax}</span>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.3rem' }}>MANA POINTS</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <StyledResourceButton onClick={() => adjustResource('currentMP', -1)}>-</StyledResourceButton>
+                  <StyledPotionContainer style={{ borderColor: '#3b82f6' }}>
+                    <StyledPotionFill 
+                      fillPercentage={getFillPercentage(currentValues.currentMP, characterData.finalMPMax)} 
+                      color="#3b82f6" 
+                    />
+                    <StyledPotionBubbles 
+                      color="#3b82f6" 
+                      fillPercentage={getFillPercentage(currentValues.currentMP, characterData.finalMPMax)}
+                    />
+                    <StyledPotionValue style={{ color: '#3b82f6' }}>
+                      {currentValues.currentMP}
+                    </StyledPotionValue>
+                  </StyledPotionContainer>
+                  <StyledResourceButton onClick={() => adjustResource('currentMP', 1)}>+</StyledResourceButton>
                 </div>
-                <StyledResourceControls>
-                  <StyledResourceButton variant="damage" onClick={() => adjustResource('currentMP', -1)}>-</StyledResourceButton>
-                  <StyledResourceButton variant="heal" onClick={() => adjustResource('currentMP', 1)}>+</StyledResourceButton>
-                </StyledResourceControls>
-              </StyledResourceBox>
+                <div style={{ fontSize: '1.1rem', fontWeight: '300', color: '#666', marginTop: '0.3rem', fontStyle: 'italic' }}>
+                  {characterData.finalMPMax}
+                </div>
+              </div>
 
               {/* Hit Points */}
-              <StyledResourceBox>
-                <StyledResourceIcon bgColor="#22c55e">♥</StyledResourceIcon>
-                <StyledLabel>Hit Points</StyledLabel>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', margin: '0.5rem 0' }}>
-                  <StyledResourceInput
-                    type="number"
-                    value={currentValues.currentHP}
-                    onChange={(e) => handleResourceInputChange('currentHP', e.target.value)}
-                    min="0"
-                    max={characterData.finalHPMax}
-                  />
-                  <span>/ {characterData.finalHPMax}</span>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.3rem' }}>HIT POINTS</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <StyledResourceButton onClick={() => adjustResource('currentHP', -1)}>-</StyledResourceButton>
+                  <StyledLargePotionContainer style={{ borderColor: '#dc2626' }}>
+                    <StyledPotionFill 
+                      fillPercentage={getHPFillPercentage(currentValues.currentHP, characterData.finalHPMax, currentValues.tempHP)} 
+                      color="#dc2626" 
+                    />
+                    <StyledPotionBubbles 
+                      color="#dc2626" 
+                      fillPercentage={getHPFillPercentage(currentValues.currentHP, characterData.finalHPMax, currentValues.tempHP)}
+                    />
+                    <StyledLargePotionValue style={{ color: '#dc2626' }}>
+                      {currentValues.currentHP}
+                    </StyledLargePotionValue>
+                  </StyledLargePotionContainer>
+                  <StyledResourceButton onClick={() => adjustResource('currentHP', 1)}>+</StyledResourceButton>
                 </div>
-                <div style={{ fontSize: '0.8rem', margin: '0.3rem 0' }}>
-                  Temp: 
-                  <StyledResourceInput
+                <div style={{ fontSize: '1.1rem', fontWeight: '300', color: '#666', marginTop: '0.3rem', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                  <span>{characterData.finalHPMax}</span>
+                  {currentValues.tempHP > 0 && (
+                    <span style={{ color: '#dc2626', fontWeight: 'bold', fontSize: '0.9rem' }}>
+                      (+{currentValues.tempHP} temp)
+                    </span>
+                  )}
+                </div>
+                {/* Temp HP Controls */}
+                <div style={{ fontSize: '0.8rem', color: '#dc2626', marginTop: '0.3rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem' }}>
+                  <span>TEMP HP:</span>
+                  <StyledResourceButton 
+                    onClick={() => adjustResource('tempHP', -1)}
+                    style={{ fontSize: '0.7rem', width: '20px', height: '20px', padding: '0' }}
+                  >
+                    -
+                  </StyledResourceButton>
+                  <StyledTempHPInput
                     type="number"
                     value={currentValues.tempHP}
                     onChange={(e) => handleResourceInputChange('tempHP', e.target.value)}
-                    min="0"
-                    style={{ width: '35px', marginLeft: '0.3rem' }}
+                    style={{ color: '#dc2626', background: 'white', border: '1px solid #dc2626', borderRadius: '3px', width: '35px', textAlign: 'center', fontSize: '0.8rem' }}
                   />
+                  <StyledResourceButton 
+                    onClick={() => adjustResource('tempHP', 1)}
+                    style={{ fontSize: '0.7rem', width: '20px', height: '20px', padding: '0' }}
+                  >
+                    +
+                  </StyledResourceButton>
                 </div>
-                <StyledResourceControls>
-                  <StyledResourceButton variant="damage" onClick={() => adjustResource('currentHP', -1)}>-1</StyledResourceButton>
-                  <StyledResourceButton variant="damage" onClick={() => adjustResource('currentHP', -5)}>-5</StyledResourceButton>
-                  <StyledResourceButton variant="heal" onClick={() => adjustResource('currentHP', 1)}>+1</StyledResourceButton>
-                  <StyledResourceButton variant="heal" onClick={() => adjustResource('currentHP', 5)}>+5</StyledResourceButton>
-                </StyledResourceControls>
-              </StyledResourceBox>
-            </StyledResourcesSection>
+              </div>
+            </div>
 
-            {/* Defenses */}
-            <StyledDefenseGrid>
-              <StyledDefenseBox>
-                <StyledDefenseValue>{characterData.finalPD}</StyledDefenseValue>
-                <StyledDefenseLabel>Physical Defense</StyledDefenseLabel>
-              </StyledDefenseBox>
-              <StyledDefenseBox>
-                <StyledDefenseValue>{characterData.finalAD}</StyledDefenseValue>
-                <StyledDefenseLabel>Mystical Defense</StyledDefenseLabel>
-              </StyledDefenseBox>
-            </StyledDefenseGrid>
+            {/* Defenses - Shield-like design */}
+            <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '1.5rem' }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.3rem' }}>PHYSICAL</div>
+                <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.3rem' }}>DEFENSE</div>
+                <div style={{ width: '80px', height: '90px', border: '3px solid #8b4513', borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
+                  <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalPD}</div>
+                </div>
+              </div>
+
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.3rem' }}>MYSTICAL</div>
+                <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.3rem' }}>DEFENSE</div>
+                <div style={{ width: '80px', height: '90px', border: '3px solid #8b4513', borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
+                  <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalAD}</div>
+                </div>
+              </div>
+            </div>
 
             {/* Combat Section */}
-            <StyledCombatSection>
-              <StyledSectionTitle>Combat</StyledSectionTitle>
+            <div style={{ border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', marginBottom: '1.5rem' }}>
+              <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', textAlign: 'center', marginBottom: '1rem' }}>COMBAT</div>
               
               {/* Action Points */}
               <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-                <StyledLabel>Action Points</StyledLabel>
-                <StyledActionPoints>
+                <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.5rem' }}>ACTION POINTS</div>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
                   {[0, 1, 2, 3].map(index => (
-                    <StyledActionPoint
+                    <div
                       key={index}
-                      used={index < currentValues.actionPointsUsed}
                       onClick={() => {
-                        const newUsed = index < currentValues.actionPointsUsed 
-                          ? index 
-                          : index + 1;
+                        const newUsed = index < currentValues.actionPointsUsed ? index : index + 1;
                         setCurrentValues(prev => ({ ...prev, actionPointsUsed: newUsed }));
+                      }}
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        border: '2px solid #8b4513',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: index < currentValues.actionPointsUsed ? '#8b4513' : 'white',
+                        color: index < currentValues.actionPointsUsed ? 'white' : '#8b4513',
+                        cursor: 'pointer',
+                        fontWeight: 'bold'
                       }}
                     >
                       {index + 1}
-                    </StyledActionPoint>
+                    </div>
                   ))}
-                </StyledActionPoints>
+                </div>
               </div>
 
-              <StyledStatRow>
-                <StyledStatLabel>Attack/Spell Check</StyledStatLabel>
-                <StyledStatValue>CM + Prime</StyledStatValue>
-              </StyledStatRow>
-              <StyledStatRow>
-                <StyledStatLabel>Save DC</StyledStatLabel>
-                <StyledStatValue>{characterData.finalSaveDC}</StyledStatValue>
-              </StyledStatRow>
-              <StyledStatRow>
-                <StyledStatLabel>Martial Check</StyledStatLabel>
-                <StyledStatValue>ATT + AP/3</StyledStatValue>
-              </StyledStatRow>
-            </StyledCombatSection>
+              {/* Combat Stats */}
+              <div style={{ fontSize: '0.9rem', color: '#8b4513' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.3rem', borderBottom: '1px solid #e5e5e5' }}>
+                  <span>ATTACK / SPELL CHECK</span>
+                  <span style={{ fontWeight: 'bold' }}>CM + Prime</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.3rem', borderBottom: '1px solid #e5e5e5' }}>
+                  <span>SAVE DC</span>
+                  <span style={{ fontWeight: 'bold' }}>{characterData.finalSaveDC}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.3rem' }}>
+                  <span>MARTIAL CHECK</span>
+                  <span style={{ fontWeight: 'bold' }}>ATT + AP/3</span>
+                </div>
+              </div>
+            </div>
 
             {/* Death & Exhaustion */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              <StyledInfoSection>
-                <StyledSectionTitle>Death</StyledSectionTitle>
-                <div style={{ textAlign: 'center' }}>
-                  <StyledLabel>Death Threshold</StyledLabel>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#8b4513' }}>
-                    -{characterData.finalDeathThreshold}
-                  </div>
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+              <div style={{ flex: 1, border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.5rem' }}>DEATH</div>
+                <div style={{ fontSize: '0.8rem', color: '#8b4513', marginBottom: '0.3rem' }}>DEATH THRESHOLD</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#8b4513' }}>
+                  -{characterData.finalDeathThreshold}
                 </div>
-              </StyledInfoSection>
+              </div>
               
-              <StyledInfoSection>
-                <StyledSectionTitle>Exhaustion</StyledSectionTitle>
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '0.2rem' }}>
+              <div style={{ flex: 1, border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.5rem' }}>EXHAUSTION</div>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '0.2rem', marginTop: '0.5rem' }}>
                   {[1, 2, 3, 4, 5].map(level => (
                     <div key={level} style={{ 
-                      width: '15px', 
-                      height: '15px', 
+                      width: '20px', 
+                      height: '20px', 
                       border: '1px solid #8b4513', 
                       background: 'white' 
                     }} />
                   ))}
                 </div>
-              </StyledInfoSection>
+              </div>
+            </div>
+
+            {/* Attacks Section */}
+            <div style={{ border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white' }}>
+              <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', textAlign: 'center', marginBottom: '1rem' }}>ATTACKS</div>
+              <div style={{ fontSize: '0.8rem', color: '#8b4513' }}>
+                <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem', borderBottom: '1px solid #e5e5e5', paddingBottom: '0.3rem' }}>
+                  <span style={{ flex: 1, fontWeight: 'bold' }}>Name</span>
+                  <span style={{ width: '60px', fontWeight: 'bold' }}>Dmg</span>
+                  <span style={{ width: '60px', fontWeight: 'bold' }}>Type</span>
+                  <span style={{ width: '40px', fontWeight: 'bold' }}>Total</span>
+                  <span style={{ width: '40px', fontWeight: 'bold' }}>Crit</span>
+                </div>
+                {[1, 2, 3].map(i => (
+                  <div key={i} style={{ display: 'flex', gap: '1rem', marginBottom: '0.3rem', minHeight: '20px', borderBottom: '1px solid #f0f0f0' }}>
+                    <div style={{ flex: 1, border: '1px solid #e5e5e5', minHeight: '18px' }}></div>
+                    <div style={{ width: '60px', border: '1px solid #e5e5e5', minHeight: '18px' }}></div>
+                    <div style={{ width: '60px', border: '1px solid #e5e5e5', minHeight: '18px' }}></div>
+                    <div style={{ width: '40px', border: '1px solid #e5e5e5', minHeight: '18px' }}></div>
+                    <div style={{ width: '40px', border: '1px solid #e5e5e5', minHeight: '18px' }}></div>
+                  </div>
+                ))}
+              </div>
             </div>
           </StyledMiddleColumn>
 
-          {/* Right Column - Additional Info */}
+          {/* Right Column - Movement, Resources, Inventory, Features */}
           <StyledRightColumn>
             {/* Movement & Utility */}
-            <StyledInfoSection>
-              <StyledSectionTitle>Movement & Utility</StyledSectionTitle>
-              <StyledStatRow>
-                <StyledStatLabel>Move Speed</StyledStatLabel>
-                <StyledStatValue>{characterData.finalMoveSpeed}</StyledStatValue>
-              </StyledStatRow>
-              <StyledStatRow>
-                <StyledStatLabel>Jump Distance</StyledStatLabel>
-                <StyledStatValue>{characterData.finalJumpDistance}</StyledStatValue>
-              </StyledStatRow>
-            </StyledInfoSection>
+            <div style={{ border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513' }}>MOVE SPEED</div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalMoveSpeed}</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513' }}>JUMP DISTANCE</div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalJumpDistance}</div>
+                </div>
+              </div>
+            </div>
 
             {/* Resources */}
-            <StyledInfoSection>
-              <StyledSectionTitle>Resources</StyledSectionTitle>
-              <StyledStatRow>
-                <StyledStatLabel>Rest Points</StyledStatLabel>
-                <StyledStatValue>{characterData.finalRestPoints}</StyledStatValue>
-              </StyledStatRow>
-              <StyledStatRow>
-                <StyledStatLabel>Grit Points</StyledStatLabel>
-                <StyledStatValue>
+            <div style={{ border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', marginBottom: '1rem' }}>
+              <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', textAlign: 'center', marginBottom: '1rem' }}>RESOURCES</div>
+              
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
+                <span style={{ fontSize: '0.9rem', color: '#8b4513' }}>REST POINTS</span>
+                <span style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalRestPoints}</span>
+              </div>
+              
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.9rem', color: '#8b4513' }}>GRIT POINTS</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                   <StyledResourceInput
                     type="number"
                     value={currentValues.currentGritPoints}
                     onChange={(e) => handleResourceInputChange('currentGritPoints', e.target.value)}
-                    style={{ width: '30px' }}
+                    style={{ width: '40px', textAlign: 'center', border: '1px solid #8b4513', borderRadius: '4px' }}
                   />
-                  / {characterData.finalGritPoints}
-                </StyledStatValue>
-              </StyledStatRow>
-            </StyledInfoSection>
-
-            {/* Features */}
-            <StyledInfoSection style={{ flex: 1 }}>
-              <StyledSectionTitle>Features</StyledSectionTitle>
-              <div style={{ fontSize: '0.8rem', lineHeight: 1.4 }}>
-                <div style={{ marginBottom: '0.5rem' }}>
-                  <strong>Class Features:</strong> Based on {characterData.className}
-                </div>
-                <div>
-                  <strong>Ancestry Traits:</strong> {characterData.ancestry1Name}
+                  <span style={{ fontSize: '0.9rem', color: '#8b4513' }}>/ {characterData.finalGritPoints}</span>
                 </div>
               </div>
-            </StyledInfoSection>
+            </div>
+
+            {/* Inventory */}
+            <div style={{ border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', marginBottom: '1rem', minHeight: '200px' }}>
+              <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', textAlign: 'center', marginBottom: '1rem' }}>INVENTORY</div>
+              <div style={{ height: '150px', border: '1px solid #e5e5e5', borderRadius: '4px', background: '#f9f9f9' }}>
+                {/* Empty inventory space for items */}
+              </div>
+            </div>
+
+            {/* Features */}
+            <div style={{ border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', flex: 1 }}>
+              <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', textAlign: 'center', marginBottom: '1rem' }}>FEATURES</div>
+              <div style={{ fontSize: '0.9rem', lineHeight: 1.4, color: '#8b4513' }}>
+                <div style={{ marginBottom: '0.8rem', padding: '0.5rem', border: '1px solid #e5e5e5', borderRadius: '4px', background: '#f9f9f9' }}>
+                  <div style={{ fontWeight: 'bold', marginBottom: '0.3rem' }}>Class Features:</div>
+                  <div>Based on {characterData.className}</div>
+                </div>
+                <div style={{ padding: '0.5rem', border: '1px solid #e5e5e5', borderRadius: '4px', background: '#f9f9f9' }}>
+                  <div style={{ fontWeight: 'bold', marginBottom: '0.3rem' }}>Ancestry Traits:</div>
+                  <div>{characterData.ancestry1Name}</div>
+                </div>
+              </div>
+            </div>
           </StyledRightColumn>
         </StyledMainGrid>
       </StyledCharacterSheet>

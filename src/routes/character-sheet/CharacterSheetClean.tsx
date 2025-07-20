@@ -7,6 +7,7 @@ import { knowledgeData } from '../../lib/rulesdata/knowledge';
 import { traitsData } from '../../lib/rulesdata/traits';
 import { classesData } from '../../lib/rulesdata/classes';
 import { ancestriesData } from '../../lib/rulesdata/ancestries';
+import { weaponsData, WeaponData, getWeaponAttackBonus, getWeaponDamageBonus, getWeaponDamageString, getCriticalDamage, getBrutalDamage, getHeavyHitEffect, getHeavyHitDamage, getBrutalHitDamage } from '../../lib/rulesdata/weapons';
 
 // Import styled components
 import {
@@ -180,6 +181,19 @@ interface CurrentValues {
   exhaustionLevel: number; // 0-5
 }
 
+interface AttackData {
+  id: string;
+  weaponId: string;
+  name: string;
+  attackBonus: number;
+  damage: string;
+  damageType: string;
+  critRange: string;
+  critDamage: string;
+  brutalDamage: string;
+  heavyHitEffect: string;
+}
+
 // Character data service - fetches from localStorage and uses already calculated stats
 const getCharacterData = async (characterId: string): Promise<CharacterSheetData> => {
   console.log('Loading character data for ID:', characterId);
@@ -242,6 +256,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
+  const [attacks, setAttacks] = useState<AttackData[]>([
+    { id: '1', weaponId: '', name: '', attackBonus: 0, damage: '', damageType: '', critRange: '', critDamage: '', brutalDamage: '', heavyHitEffect: '' },
+    { id: '2', weaponId: '', name: '', attackBonus: 0, damage: '', damageType: '', critRange: '', critDamage: '', brutalDamage: '', heavyHitEffect: '' },
+    { id: '3', weaponId: '', name: '', attackBonus: 0, damage: '', damageType: '', critRange: '', critDamage: '', brutalDamage: '', heavyHitEffect: '' }
+  ]);
 
   // Load character data
   useEffect(() => {
@@ -573,7 +592,46 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
     setSelectedFeature(null);
   };
 
-  // Exhaustion level descriptions (based on DC20 rules)
+  // Weapon calculation and selection handlers
+  const calculateAttackData = (weapon: WeaponData): AttackData => {
+    if (!characterData) {
+      return { id: '', weaponId: weapon.id, name: weapon.name, attackBonus: 0, damage: '', damageType: weapon.damageType, critRange: '', critDamage: '', brutalDamage: '', heavyHitEffect: '' };
+    }
+
+    const mightMod = Math.floor((characterData.finalMight - 10) / 2);
+    const agilityMod = Math.floor((characterData.finalAgility - 10) / 2);
+    
+    const attackBonus = getWeaponAttackBonus(weapon, characterData.finalCombatMastery, mightMod, agilityMod);
+    const damageBonus = getWeaponDamageBonus(weapon, mightMod, agilityMod);
+    const damageString = getWeaponDamageString(weapon, damageBonus);
+    const critDamage = getCriticalDamage(weapon);
+    const brutalDamage = getBrutalDamage(weapon);
+    const heavyHitEffect = getHeavyHitEffect(weapon);
+
+    return {
+      id: weapon.id,
+      weaponId: weapon.id,
+      name: weapon.name,
+      attackBonus,
+      damage: damageString,
+      damageType: weapon.damageType,
+      critRange: '20', // DC20 doesn't use variable crit ranges
+      critDamage,
+      brutalDamage,
+      heavyHitEffect
+    };
+  };
+
+  const handleWeaponSelect = (attackIndex: number, weaponId: string) => {
+    const weapon = weaponsData.find(w => w.id === weaponId);
+    if (!weapon) return;
+
+    const newAttackData = calculateAttackData(weapon);
+    
+    setAttacks(prev => prev.map((attack, index) => 
+      index === attackIndex ? { ...newAttackData, id: attack.id } : attack
+    ));
+  };  // Exhaustion level descriptions (based on DC20 rules)
   const exhaustionLevels = [
     { level: 1, description: "Fatigued: -1 to all Checks and Saves" },
     { level: 2, description: "Exhausted: -2 to all Checks and Saves" },
@@ -623,6 +681,81 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
       intelligence: skills.filter(skill => skill.attribute === 'intelligence'),
       prime: skills.filter(skill => skill.attribute === 'prime')
     };
+  };
+
+  // Helper functions for the new damage calculation display
+  const getDamageCalculationSummary = (weapon: WeaponData): string => {
+    if (!characterData) return '';
+    
+    const mightMod = Math.floor((characterData.finalMight - 10) / 2);
+    const agilityMod = Math.floor((characterData.finalAgility - 10) / 2);
+    const damageBonus = getWeaponDamageBonus(weapon, mightMod, agilityMod);
+    
+    const baseDamage = weapon.versatileDamage || weapon.damage;
+    const attributeName = weapon.type === 'ranged' ? 'AGI' : 'MIG';
+    const attributeValue = weapon.type === 'ranged' ? agilityMod : mightMod;
+    
+    if (damageBonus === 0) {
+      return `${baseDamage} base damage`;
+    }
+    
+    return `${baseDamage} + ${attributeName}(${attributeValue}) = ${baseDamage + damageBonus}`;
+  };
+
+  const getDamageCalculationTooltip = (weapon: WeaponData): string => {
+    if (!characterData) return '';
+    
+    const mightMod = Math.floor((characterData.finalMight - 10) / 2);
+    const agilityMod = Math.floor((characterData.finalAgility - 10) / 2);
+    const baseDamage = weapon.versatileDamage || weapon.damage;
+    const hasImpact = weapon.properties.includes('Impact');
+    
+    let tooltip = `DC20 Damage Calculation:\n\n`;
+    tooltip += `Base Damage: ${baseDamage}${weapon.versatileDamage ? ` (${weapon.damage} one-handed, ${weapon.versatileDamage} two-handed)` : ''}\n`;
+    
+    const attributeName = weapon.type === 'ranged' ? 'Agility' : 'Might';
+    const attributeValue = weapon.type === 'ranged' ? agilityMod : mightMod;
+    
+    if (attributeValue > 0) {
+      tooltip += `+ ${attributeName} Modifier: +${attributeValue}\n`;
+    }
+    
+    tooltip += `\nHit Results:\n`;
+    tooltip += `• Hit: ${baseDamage}${attributeValue > 0 ? ` + ${attributeValue} = ${baseDamage + attributeValue}` : ''} damage\n`;
+    
+    // Heavy Hit calculation with Impact
+    const heavyDamage = getHeavyHitDamage(weapon);
+    tooltip += `• Heavy Hit (+5 over Defense): ${heavyDamage}${attributeValue > 0 ? ` + ${attributeValue} = ${heavyDamage + attributeValue}` : ''} damage`;
+    if (hasImpact) {
+      tooltip += ` (base ${baseDamage} + 1 heavy + 1 impact)`;
+    } else {
+      tooltip += ` (base ${baseDamage} + 1 heavy)`;
+    }
+    tooltip += `\n`;
+    
+    if (hasImpact) {
+      tooltip += `  └─ Impact: Target must make Might Save or be knocked Prone and pushed 5 feet\n`;
+    }
+    
+    // Brutal Hit calculation with Impact  
+    const brutalDamage = getBrutalHitDamage(weapon);
+    tooltip += `• Brutal Hit (+10 over Defense): ${brutalDamage}${attributeValue > 0 ? ` + ${attributeValue} = ${brutalDamage + attributeValue}` : ''} damage`;
+    if (hasImpact) {
+      tooltip += ` (base ${baseDamage} + 2 brutal + 1 impact)`;
+    } else {
+      tooltip += ` (base ${baseDamage} + 2 brutal)`;
+    }
+    tooltip += `\n`;
+    
+    if (weapon.properties.length > 0) {
+      tooltip += `\nWeapon Properties: ${weapon.properties.join(', ')}`;
+    }
+    
+    if (weapon.specialNotes) {
+      tooltip += `\nSpecial: ${weapon.specialNotes}`;
+    }
+    
+    return tooltip;
   };
 
   // Get data from character or empty defaults if no character data
@@ -1164,22 +1297,149 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
             <div style={{ border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white' }}>
               <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', textAlign: 'center', marginBottom: '1rem' }}>ATTACKS</div>
               <div style={{ fontSize: '0.8rem', color: '#8b4513' }}>
-                <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem', borderBottom: '1px solid #e5e5e5', paddingBottom: '0.3rem' }}>
-                  <span style={{ flex: 1, fontWeight: 'bold' }}>Name</span>
-                  <span style={{ width: '60px', fontWeight: 'bold' }}>Dmg</span>
-                  <span style={{ width: '60px', fontWeight: 'bold' }}>Type</span>
-                  <span style={{ width: '40px', fontWeight: 'bold' }}>Total</span>
-                  <span style={{ width: '40px', fontWeight: 'bold' }}>Crit</span>
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 0.7fr 0.8fr', gap: '0.5rem', marginBottom: '0.5rem', borderBottom: '1px solid #e5e5e5', paddingBottom: '0.3rem', alignItems: 'center' }}>
+                  <span style={{ fontWeight: 'bold' }}>Weapon</span>
+                  <span style={{ fontWeight: 'bold', textAlign: 'center', fontSize: '0.8rem', lineHeight: '1.1' }}>
+                    Base<br/>Dmg
+                  </span>
+                  <span style={{ fontWeight: 'bold', textAlign: 'center', fontSize: '0.8rem', lineHeight: '1.1' }}>
+                    Heavy<br/>Dmg
+                  </span>
+                  <span style={{ fontWeight: 'bold', textAlign: 'center', fontSize: '0.8rem', lineHeight: '1.1' }}>
+                    Brutal<br/>Dmg
+                  </span>
+                  <span style={{ fontWeight: 'bold', textAlign: 'center', fontSize: '0.8rem' }}>Type</span>
+                  <span style={{ fontWeight: 'bold', textAlign: 'center' }}>
+                    <span 
+                      title="Damage calculation info"
+                      style={{ 
+                        display: 'inline-flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        width: '14px', 
+                        height: '14px', 
+                        borderRadius: '50%', 
+                        backgroundColor: '#8b4513', 
+                        color: 'white', 
+                        fontSize: '10px', 
+                        fontWeight: 'bold',
+                        cursor: 'help'
+                      }}
+                    >
+                      i
+                    </span>
+                  </span>
                 </div>
-                {[1, 2, 3].map(i => (
-                  <div key={i} style={{ display: 'flex', gap: '1rem', marginBottom: '0.3rem', minHeight: '20px', borderBottom: '1px solid #f0f0f0' }}>
-                    <div style={{ flex: 1, border: '1px solid #e5e5e5', minHeight: '18px' }}></div>
-                    <div style={{ width: '60px', border: '1px solid #e5e5e5', minHeight: '18px' }}></div>
-                    <div style={{ width: '60px', border: '1px solid #e5e5e5', minHeight: '18px' }}></div>
-                    <div style={{ width: '40px', border: '1px solid #e5e5e5', minHeight: '18px' }}></div>
-                    <div style={{ width: '40px', border: '1px solid #e5e5e5', minHeight: '18px' }}></div>
-                  </div>
-                ))}
+                {attacks.map((attack, index) => {
+                  const weapon = attack.weaponId ? weaponsData.find(w => w.id === attack.weaponId) : null;
+                  
+                  return (
+                    <div key={attack.id} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 0.7fr 0.8fr', gap: '0.5rem', marginBottom: '0.5rem', alignItems: 'center' }}>
+                      {/* Weapon Selection */}
+                      <select
+                        value={attack.weaponId}
+                        onChange={(e) => handleWeaponSelect(index, e.target.value)}
+                        style={{ 
+                          padding: '0.2rem', 
+                          border: '1px solid #8b4513', 
+                          borderRadius: '3px', 
+                          fontSize: '0.7rem', 
+                          background: 'white',
+                          width: '100%',
+                          maxWidth: '100%',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis'
+                        }}
+                      >
+                        <option value="">Select Weapon...</option>
+                        {weaponsData.map(weapon => (
+                          <option key={weapon.id} value={weapon.id}>
+                            {weapon.name} ({weapon.weightCategory})
+                          </option>
+                        ))}
+                      </select>
+                      
+                      {/* Base Damage */}
+                      <div style={{ textAlign: 'center', fontWeight: 'bold' }}>
+                        {weapon ? (
+                          <span 
+                            title={`Base weapon damage: ${weapon.damage}${weapon.versatileDamage ? ` (${weapon.versatileDamage} when two-handed)` : ''}`}
+                            style={{ cursor: 'help' }}
+                          >
+                            {weapon.versatileDamage ? `${weapon.damage}(${weapon.versatileDamage})` : weapon.damage}
+                          </span>
+                        ) : '-'}
+                      </div>
+                      
+                      {/* Heavy Damage */}
+                      <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#d2691e' }}>
+                        {weapon ? (
+                          <span 
+                            title={weapon.properties.includes('Impact') 
+                              ? `Heavy Hit: ${getHeavyHitDamage(weapon)} damage (base ${weapon.versatileDamage || weapon.damage} + 1 heavy + 1 impact) + Target must make Might Save or be knocked Prone and pushed 5 feet`
+                              : `Heavy Hit: ${getHeavyHitDamage(weapon)} damage (base ${weapon.versatileDamage || weapon.damage} + 1 heavy)`}
+                            style={{ cursor: 'help' }}
+                          >
+                            {getHeavyHitDamage(weapon)}
+                            {weapon.properties.includes('Impact') && <span style={{ fontSize: '0.6rem', display: 'block' }}>+Prone/Push</span>}
+                          </span>
+                        ) : '-'}
+                      </div>
+                      
+                      {/* Brutal Damage */}
+                      <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#dc143c' }}>
+                        {weapon ? (
+                          <span 
+                            title={weapon.properties.includes('Impact')
+                              ? `Brutal Hit: ${getBrutalHitDamage(weapon)} damage (base ${weapon.versatileDamage || weapon.damage} + 2 brutal + 1 impact)`
+                              : `Brutal Hit: ${getBrutalHitDamage(weapon)} damage (base ${weapon.versatileDamage || weapon.damage} + 2 brutal)`}
+                            style={{ cursor: 'help' }}
+                          >
+                            {getBrutalHitDamage(weapon)}
+                          </span>
+                        ) : '-'}
+                      </div>
+                      
+                      {/* Damage Type */}
+                      <div style={{ textAlign: 'center', fontSize: '1rem', fontWeight: 'bold' }}>
+                        {weapon ? (
+                          <span 
+                            title={`${weapon.damageType.charAt(0).toUpperCase() + weapon.damageType.slice(1)} damage`}
+                            style={{ cursor: 'help' }}
+                          >
+                            {weapon.damageType === 'slashing' ? 'S' : 
+                             weapon.damageType === 'piercing' ? 'P' : 
+                             weapon.damageType === 'bludgeoning' ? 'B' : 
+                             weapon.damageType.charAt(0).toUpperCase()}
+                          </span>
+                        ) : '-'}
+                      </div>
+                      
+                      {/* Damage Calculation Info */}
+                      <div style={{ textAlign: 'center', fontSize: '1.1rem' }}>
+                        {weapon ? (
+                          <span 
+                            title={getDamageCalculationTooltip(weapon)}
+                            style={{ 
+                              display: 'inline-flex', 
+                              alignItems: 'center', 
+                              justifyContent: 'center',
+                              width: '14px', 
+                        height: '14px', 
+                        borderRadius: '50%', 
+                        backgroundColor: '#8b4513', 
+                        color: 'white', 
+                        fontSize: '10px', 
+                        fontWeight: 'bold',
+                        cursor: 'help'
+                      }}
+                    >
+                     i
+                    </span>) : '-'}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </StyledMiddleColumn>

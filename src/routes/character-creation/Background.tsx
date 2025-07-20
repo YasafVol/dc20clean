@@ -2,6 +2,7 @@ import React from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { skillsData } from '../../lib/rulesdata/skills';
 import { tradesData } from '../../lib/rulesdata/trades';
+import { knowledgeData } from '../../lib/rulesdata/knowledge';
 import { languagesData } from '../../lib/rulesdata/languages';
 import {
   StyledContainer,
@@ -19,6 +20,9 @@ import {
   StyledLanguageFluency,
   StyledPointsRemaining
 } from './styles/Background.styles.ts';
+
+// Combine trades and knowledge for selection
+const allTradesAndKnowledge = [...tradesData, ...knowledgeData];
 
 type TabType = 'skills' | 'trades' | 'languages';
 
@@ -142,7 +146,7 @@ const Background: React.FC = () => {
         Trade Points: {maxTradePoints - tradePointsUsed} / {maxTradePoints} remaining
       </StyledPointsRemaining>
       <StyledSelectionGrid>
-        {tradesData.map(trade => {
+        {allTradesAndKnowledge.map(trade => {
           const currentLevel = currentTrades[trade.id] || 0;
           return (
             <StyledSelectionItem key={trade.id}>

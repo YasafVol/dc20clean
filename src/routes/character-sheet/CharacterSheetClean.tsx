@@ -101,6 +101,14 @@ interface CharacterSheetData {
   skillsJson?: string;
   tradesJson?: string;
   languagesJson?: string;
+  
+  // Current values (optional, may not exist on first load)
+  currentHP?: number;
+  currentSP?: number;
+  currentMP?: number;
+  currentGritPoints?: number;
+  tempHP?: number;
+  actionPointsUsed?: number;
 }
 
 interface SkillData {
@@ -195,15 +203,23 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
         const data = await getCharacterData(characterId);
         setCharacterData(data);
         
-        // Initialize current values with character's max values
-        setCurrentValues({
-          currentHP: data.finalHPMax,
-          currentSP: data.finalSPMax,
-          currentMP: data.finalMPMax,
-          currentGritPoints: data.finalGritPoints,
-          tempHP: 0,
-          actionPointsUsed: 0,
+        // Initialize current values - use saved values if they exist, otherwise use max values
+        const initialValues = {
+          currentHP: data.currentHP !== undefined ? data.currentHP : data.finalHPMax,
+          currentSP: data.currentSP !== undefined ? data.currentSP : data.finalSPMax,
+          currentMP: data.currentMP !== undefined ? data.currentMP : data.finalMPMax,
+          currentGritPoints: data.currentGritPoints !== undefined ? data.currentGritPoints : data.finalGritPoints,
+          tempHP: data.tempHP || 0,
+          actionPointsUsed: data.actionPointsUsed || 0,
+        };
+        
+        console.log('Character data loaded:', { 
+          finalSPMax: data.finalSPMax, 
+          currentSP: data.currentSP, 
+          initialSP: initialValues.currentSP 
         });
+        
+        setCurrentValues(initialValues);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
@@ -703,7 +719,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                       color="#22c55e" 
                       fillPercentage={getFillPercentage(currentValues.currentSP, characterData.finalSPMax)}
                     />
-                    <StyledPotionValue style={{ color: '#22c55e' }}>
+                    <StyledPotionValue>
                       {currentValues.currentSP}
                     </StyledPotionValue>
                   </StyledPotionContainer>
@@ -728,7 +744,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                       color="#3b82f6" 
                       fillPercentage={getFillPercentage(currentValues.currentMP, characterData.finalMPMax)}
                     />
-                    <StyledPotionValue style={{ color: '#3b82f6' }}>
+                    <StyledPotionValue>
                       {currentValues.currentMP}
                     </StyledPotionValue>
                   </StyledPotionContainer>
@@ -753,7 +769,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                       color="#dc2626" 
                       fillPercentage={getHPFillPercentage(currentValues.currentHP, characterData.finalHPMax, currentValues.tempHP)}
                     />
-                    <StyledLargePotionValue style={{ color: '#dc2626' }}>
+                    <StyledLargePotionValue>
                       {currentValues.currentHP}
                     </StyledLargePotionValue>
                   </StyledLargePotionContainer>

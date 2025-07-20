@@ -22,5 +22,5 @@
 		"sourceMap": true
 	},
 	"include": ["src", "pdf-service"],
-	"references": [{ "path": "./tsconfig.node.json", "prepend": true }]
+	"references": [{ "path": "./tsconfig.node.json" }]
 }

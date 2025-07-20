@@ -50,12 +50,19 @@ eslint.config.js
 index.html
 package.json
 package.json.backup
+pdf-service/package.json
+pdf-service/src/DC20_Beta_0_9_5_fields.json
+pdf-service/src/fill.ts
+pdf-service/src/server.ts
+pdf-service/tsconfig.json
 playwright.config.ts
 prisma/migrations/20250526210112_init/migration.sql
 prisma/migrations/20250620112102_allow_next_in_stage_a/migration.sql
 prisma/migrations/migration_lock.toml
 prisma/schema.prisma
 project_summary.md
+project-doc/character-finalization.md
+project-doc/pdf-generation-service.md
 README.md
 repomix.config.json
 src/app.css
@@ -65,6 +72,7 @@ src/components/Menu.tsx
 src/components/Snackbar.tsx
 src/demo.spec.ts
 src/lib/index.ts
+src/lib/prisma.ts
 src/lib/rulesdata/ancestries.ts
 src/lib/rulesdata/attributes.ts
 src/lib/rulesdata/classes.ts
@@ -82,7 +90,6 @@ src/main.tsx
 src/routes/api/character/progress/_backup_merge_stages_20250621/stageA+server.ts
 src/routes/api/character/progress/_backup_merge_stages_20250621/stageB+server.ts
 src/routes/api/character/progress/complete/+server.ts
-src/routes/character-creation/+page.svelte
 src/routes/character-creation/AncestryPointsCounter.tsx
 src/routes/character-creation/AncestrySelector.tsx
 src/routes/character-creation/Attributes.tsx
@@ -103,13 +110,171 @@ vitest.config.ts
 
 # Files
 
+## File: .env.example
+````
+DATABASE_URL="postgres://root:mysecretpassword@localhost:5432/local"
+````
+
+## File: .gitignore
+````
+test-results
+node_modules
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
+/dist
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+````
+
+## File: .npmrc
+````
+engine-strict=true
+````
+
 ## File: .nvmrc
-```
+````
 20
-```
+````
+
+## File: .prettierignore
+````
+# Package Managers
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lock
+bun.lockb
+````
+
+## File: .prettierrc
+````
+{
+	"useTabs": true,
+	"singleQuote": true,
+	"trailingComma": "none",
+	"printWidth": 100,
+	"plugins": ["prettier-plugin-svelte", "prettier-plugin-tailwindcss"],
+	"overrides": [
+		{
+			"files": "*.svelte",
+			"options": {
+				"parser": "svelte"
+			}
+		}
+	]
+}
+````
+
+## File: .repomixignore
+````
+# Add patterns to ignore here, one per line
+# Example:
+# *.log
+# tmp/
+*.pdf
+````
+
+## File: docker-compose.yml
+````yaml
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: local
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
+````
+
+## File: drizzle.config.ts
+````typescript
+import { defineConfig } from 'drizzle-kit';
+
+if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
+
+export default defineConfig({
+	schema: './src/lib/server/db/schema.ts',
+	dialect: 'postgresql',
+	dbCredentials: { url: process.env.DATABASE_URL },
+	verbose: true,
+	strict: true
+});
+````
+
+## File: e2e/demo.test.ts
+````typescript
+import { expect, test } from '@playwright/test';
+
+test('home page has expected h1', async ({ page }) => {
+	await page.goto('/');
+	await expect(page.locator('h1')).toBeVisible();
+});
+````
+
+## File: eslint.config.js
+````javascript
+import prettier from 'eslint-config-prettier';
+import { includeIgnoreFile } from '@eslint/compat';
+import js from '@eslint/js';
+import react from 'eslint-plugin-react';
+import reactHooks from 'eslint-plugin-react-hooks';
+import globals from 'globals';
+import { fileURLToPath } from 'node:url';
+import ts from 'typescript-eslint';
+
+const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
+
+export default ts.config(
+	includeIgnoreFile(gitignorePath),
+	js.configs.recommended,
+	...ts.configs.recommended,
+	prettier,
+	{
+		languageOptions: {
+			globals: { ...globals.browser, ...globals.node },
+			parserOptions: {
+				projectService: true
+			}
+		},
+		plugins: {
+			react,
+			'react-hooks': reactHooks
+		},
+		rules: {
+			...react.configs.recommended.rules,
+			...reactHooks.configs.recommended.rules,
+			'no-undef': 'off'
+		}
+	}
+);
+````
 
 ## File: index.html
-```html
+````html
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -122,10 +287,10 @@ vitest.config.ts
 		<script type="module" src="/src/main.tsx"></script>
 	</body>
 </html>
-```
+````
 
 ## File: package.json.backup
-```
+````
 {
 	"name": "dc20clean",
 	"version": "0.0.1",
@@ -213,10 +378,1773 @@ vitest.config.ts
 		"prisma": "^6.10.1"
 	}
 }
-```
+````
+
+## File: pdf-service/package.json
+````json
+{
+  "name": "pdf-service",
+  "version": "1.0.0",
+  "description": "Server-side PDF generation service for DC20 character sheets",
+  "main": "src/server.ts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@pdf-lib/fontkit": "^1.0.0",
+    "@prisma/client": "^6.10.1",
+    "pdf-lib": "^1.17.1",
+    "prisma": "^6.10.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "typescript": "^5.5.3"
+  }
+}
+````
+
+## File: pdf-service/src/DC20_Beta_0_9_5_fields.json
+````json
+[
+  {
+    "name": "Carried",
+    "type": "text"
+  },
+  {
+    "name": "Stored",
+    "type": "text"
+  },
+  {
+    "name": "Supplies B Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies B",
+    "type": "text"
+  },
+  {
+    "name": "Supplies A Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies A",
+    "type": "text"
+  },
+  {
+    "name": "Supplies C Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies C",
+    "type": "text"
+  },
+  {
+    "name": "Supplies D Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies E",
+    "type": "text"
+  },
+  {
+    "name": "Supplies F Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies F",
+    "type": "text"
+  },
+  {
+    "name": "Supplies E Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies H Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies H",
+    "type": "text"
+  },
+  {
+    "name": "Supplies G Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies G",
+    "type": "text"
+  },
+  {
+    "name": "Supplies J Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies J",
+    "type": "text"
+  },
+  {
+    "name": "Supplies I Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies I",
+    "type": "text"
+  },
+  {
+    "name": "Supplies K Amount",
+    "type": "text"
+  },
+  {
+    "name": "Supplies K",
+    "type": "text"
+  },
+  {
+    "name": "Attuned B",
+    "type": "text"
+  },
+  {
+    "name": "Attuned C",
+    "type": "text"
+  },
+  {
+    "name": "Attuned A",
+    "type": "text"
+  },
+  {
+    "name": "Attuned D",
+    "type": "text"
+  },
+  {
+    "name": "Attuned E",
+    "type": "text"
+  },
+  {
+    "name": "Attuned Item B",
+    "type": "text"
+  },
+  {
+    "name": "Attuned Item C",
+    "type": "text"
+  },
+  {
+    "name": "Attuned Item D",
+    "type": "text"
+  },
+  {
+    "name": "Attuned Item E",
+    "type": "text"
+  },
+  {
+    "name": "Attuned Item A",
+    "type": "text"
+  },
+  {
+    "name": "Equipped on the Head",
+    "type": "text"
+  },
+  {
+    "name": "Equipped on the Feet",
+    "type": "text"
+  },
+  {
+    "name": "Equipped on the Left Hand",
+    "type": "text"
+  },
+  {
+    "name": "Equipped on the Right Hand",
+    "type": "text"
+  },
+  {
+    "name": "Equipped on the Hands",
+    "type": "text"
+  },
+  {
+    "name": "Equipped on the Waist",
+    "type": "text"
+  },
+  {
+    "name": "Equipped on the Body",
+    "type": "text"
+  },
+  {
+    "name": "Equipped on the Mantle",
+    "type": "text"
+  },
+  {
+    "name": "Equipped on the Neck",
+    "type": "text"
+  },
+  {
+    "name": "Player Name",
+    "type": "text"
+  },
+  {
+    "name": "Ancestry",
+    "type": "text"
+  },
+  {
+    "name": "Character Name",
+    "type": "text"
+  },
+  {
+    "name": "Class & Subclass",
+    "type": "text"
+  },
+  {
+    "name": "Level",
+    "type": "text"
+  },
+  {
+    "name": "Mastery-Awareness-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Awareness-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Awareness-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Awareness-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Awareness-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Athletics-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Athletics-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Athletics-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Athletics-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Athletics-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Intimidation-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Intimidation-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Intimidation-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Intimidation-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Intimidation-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Acrobatics-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Acrobatics-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Acrobatics-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Acrobatics-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Acrobatics-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trickery-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trickery-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trickery-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trickery-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trickery-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Stealth-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Stealth-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Stealth-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Stealth-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Stealth-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Animal-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Animal-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Animal-6",
+    "type": "button"
+  },
+  {
+    "name": "Move Speed",
+    "type": "text"
+  },
+  {
+    "name": "Mastery-Animal-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Animal-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Influence-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Influence-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Influence-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Influence-8",
+    "type": "button"
+  },
+  {
+    "name": "Master-Influence-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Insight-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Insight-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Insight-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Insight-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Insight-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Investigation-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Investigation-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Investigation-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Investigation-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Investigation-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Medicine-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Medicine-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Medicine-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Medicine-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Medicine-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Survival-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Survival-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Survival-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Survival-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Survival-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Arcana-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Arcana-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Arcana-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Arcana-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Arcana-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-History-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-History-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-History-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-History-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-History-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Nature-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Nature-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Nature-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Nature-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Nature-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Occultism-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Occultism-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Occultism-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Occultism-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Occultism-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Religion-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Religion-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Religion-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Religion-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Religion-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-A-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-A-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-A-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-A-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-A-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-C-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-C-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-C-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-C-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-C-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-D-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-D-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-D-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-D-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-D-10",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Language-A-Limited",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Language-A-Fluent",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Language-B-Limited",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Language-B-Fluent",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Language-C-Limited",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Language-C-Fluent",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Language-D-Limited",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Language-D-Fluent",
+    "type": "button"
+  },
+  {
+    "name": "Awareness",
+    "type": "text"
+  },
+  {
+    "name": "Might Save",
+    "type": "text"
+  },
+  {
+    "name": "Athletics",
+    "type": "text"
+  },
+  {
+    "name": "Intimidation",
+    "type": "text"
+  },
+  {
+    "name": "Agility Save",
+    "type": "text"
+  },
+  {
+    "name": "Acrobatics",
+    "type": "text"
+  },
+  {
+    "name": "Trickery",
+    "type": "text"
+  },
+  {
+    "name": "Stealth",
+    "type": "text"
+  },
+  {
+    "name": "Charisma Save",
+    "type": "text"
+  },
+  {
+    "name": "Animal",
+    "type": "text"
+  },
+  {
+    "name": "Influence",
+    "type": "text"
+  },
+  {
+    "name": "Insight",
+    "type": "text"
+  },
+  {
+    "name": "Intelligence Save",
+    "type": "text"
+  },
+  {
+    "name": "Investigation",
+    "type": "text"
+  },
+  {
+    "name": "Medicine",
+    "type": "text"
+  },
+  {
+    "name": "Survival",
+    "type": "text"
+  },
+  {
+    "name": "Arcana",
+    "type": "text"
+  },
+  {
+    "name": "History",
+    "type": "text"
+  },
+  {
+    "name": "Nature",
+    "type": "text"
+  },
+  {
+    "name": "Occultism",
+    "type": "text"
+  },
+  {
+    "name": "Religion",
+    "type": "text"
+  },
+  {
+    "name": "Trade A",
+    "type": "text"
+  },
+  {
+    "name": "Custom Trade A",
+    "type": "text"
+  },
+  {
+    "name": "Custom Trade C",
+    "type": "text"
+  },
+  {
+    "name": "Custom Trade D",
+    "type": "text"
+  },
+  {
+    "name": "Language A",
+    "type": "text"
+  },
+  {
+    "name": "Language B",
+    "type": "text"
+  },
+  {
+    "name": "Language C",
+    "type": "text"
+  },
+  {
+    "name": "Language D",
+    "type": "text"
+  },
+  {
+    "name": "Features",
+    "type": "text"
+  },
+  {
+    "name": "Attack A",
+    "type": "text"
+  },
+  {
+    "name": "Attack A Dmg",
+    "type": "text"
+  },
+  {
+    "name": "Attack A Type",
+    "type": "text"
+  },
+  {
+    "name": "Attack A Notes",
+    "type": "text"
+  },
+  {
+    "name": "Attack B",
+    "type": "text"
+  },
+  {
+    "name": "Attack B Dmg",
+    "type": "text"
+  },
+  {
+    "name": "Attack B Type",
+    "type": "text"
+  },
+  {
+    "name": "Attack B Notes",
+    "type": "text"
+  },
+  {
+    "name": "Attack C",
+    "type": "text"
+  },
+  {
+    "name": "Attack C Dmg",
+    "type": "text"
+  },
+  {
+    "name": "Attack C Type",
+    "type": "text"
+  },
+  {
+    "name": "Attack C Notes",
+    "type": "text"
+  },
+  {
+    "name": "Attack Check",
+    "type": "text"
+  },
+  {
+    "name": "Save DC",
+    "type": "text"
+  },
+  {
+    "name": "Initiative",
+    "type": "text"
+  },
+  {
+    "name": "Stamina Points Max",
+    "type": "text"
+  },
+  {
+    "name": "Mana Points Max",
+    "type": "text"
+  },
+  {
+    "name": "Stamina Points Current",
+    "type": "text"
+  },
+  {
+    "name": "Mana Points Current",
+    "type": "text"
+  },
+  {
+    "name": "Hit Points Current",
+    "type": "text"
+  },
+  {
+    "name": "Mental Defense",
+    "type": "text"
+  },
+  {
+    "name": "Hit Points Max",
+    "type": "text"
+  },
+  {
+    "name": "Hit Points Temp",
+    "type": "text"
+  },
+  {
+    "name": "MD Heavy Threshold",
+    "type": "text"
+  },
+  {
+    "name": "MD Brutal Threshold",
+    "type": "text"
+  },
+  {
+    "name": "Physical Defense",
+    "type": "text"
+  },
+  {
+    "name": "PD Heavy Threshold",
+    "type": "text"
+  },
+  {
+    "name": "PD Brutal Threshold",
+    "type": "text"
+  },
+  {
+    "name": "Exhaustion -1",
+    "type": "button"
+  },
+  {
+    "name": "Exhaustion -2",
+    "type": "button"
+  },
+  {
+    "name": "Exhaustion -3",
+    "type": "button"
+  },
+  {
+    "name": "Exhaustion -4",
+    "type": "button"
+  },
+  {
+    "name": "Exhaustion -5",
+    "type": "button"
+  },
+  {
+    "name": "Death Threshold",
+    "type": "text"
+  },
+  {
+    "name": "Jump Distance",
+    "type": "text"
+  },
+  {
+    "name": "Rest Point Cap",
+    "type": "text"
+  },
+  {
+    "name": "Rest Point Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource A Cap",
+    "type": "text"
+  },
+  {
+    "name": "Resource A Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource A",
+    "type": "text"
+  },
+  {
+    "name": "Resource B Cap",
+    "type": "text"
+  },
+  {
+    "name": "Resource B Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource B",
+    "type": "text"
+  },
+  {
+    "name": "Resource C Cap",
+    "type": "text"
+  },
+  {
+    "name": "Resource C Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource C",
+    "type": "text"
+  },
+  {
+    "name": "Prime",
+    "type": "text"
+  },
+  {
+    "name": "Might",
+    "type": "text"
+  },
+  {
+    "name": "Agility",
+    "type": "text"
+  },
+  {
+    "name": "Charisma",
+    "type": "text"
+  },
+  {
+    "name": "Intelligence",
+    "type": "text"
+  },
+  {
+    "name": "Combat Mastery",
+    "type": "text"
+  },
+  {
+    "name": "Trade D",
+    "type": "text"
+  },
+  {
+    "name": "Trade C",
+    "type": "text"
+  },
+  {
+    "name": "Mastery-Trade-B-2",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-B-4",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-B-6",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-B-8",
+    "type": "button"
+  },
+  {
+    "name": "Mastery-Trade-B-10",
+    "type": "button"
+  },
+  {
+    "name": "Trade B",
+    "type": "text"
+  },
+  {
+    "name": "Custom Trade B",
+    "type": "text"
+  },
+  {
+    "name": "Grit Point Cap",
+    "type": "text"
+  },
+  {
+    "name": "Grit Point Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource D Cap",
+    "type": "text"
+  },
+  {
+    "name": "Resource D Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource D",
+    "type": "text"
+  },
+  {
+    "name": "Resource E Cap",
+    "type": "text"
+  },
+  {
+    "name": "Resource E Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource E",
+    "type": "text"
+  },
+  {
+    "name": "Resource F Cap",
+    "type": "text"
+  },
+  {
+    "name": "Resource F Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource F",
+    "type": "text"
+  },
+  {
+    "name": "Resource G Cap",
+    "type": "text"
+  },
+  {
+    "name": "Resource G Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource G",
+    "type": "text"
+  },
+  {
+    "name": "Resource H Cap",
+    "type": "text"
+  },
+  {
+    "name": "Resource H Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource H",
+    "type": "text"
+  },
+  {
+    "name": "Resource I Cap",
+    "type": "text"
+  },
+  {
+    "name": "Resource I Current",
+    "type": "text"
+  },
+  {
+    "name": "Resource I",
+    "type": "text"
+  },
+  {
+    "name": "Hold Breath",
+    "type": "text"
+  },
+  {
+    "name": "Attack D",
+    "type": "text"
+  },
+  {
+    "name": "Attack D Dmg",
+    "type": "text"
+  },
+  {
+    "name": "Attack D Type",
+    "type": "text"
+  },
+  {
+    "name": "Attack D Notes",
+    "type": "text"
+  },
+  {
+    "name": "Bloodied",
+    "type": "text"
+  },
+  {
+    "name": "Well-Bloodied",
+    "type": "text"
+  },
+  {
+    "name": "Physical-Damage-Reduction",
+    "type": "button"
+  },
+  {
+    "name": "Elemantal-Damage-Reduction",
+    "type": "button"
+  },
+  {
+    "name": "Mental-Damage-Reduction",
+    "type": "button"
+  },
+  {
+    "name": "Burrow-Half",
+    "type": "button"
+  },
+  {
+    "name": "Swim-Half",
+    "type": "button"
+  },
+  {
+    "name": "Burrow-Full",
+    "type": "button"
+  },
+  {
+    "name": "Swim-Full",
+    "type": "button"
+  },
+  {
+    "name": "Fly-Half",
+    "type": "button"
+  },
+  {
+    "name": "Fly-Full",
+    "type": "button"
+  },
+  {
+    "name": "Climb-Half",
+    "type": "button"
+  },
+  {
+    "name": "Climb-Full",
+    "type": "button"
+  },
+  {
+    "name": "Expertise-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Athletics-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Intimidation-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Trickery-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Acrobatics-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Stealth-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Influence-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Animal-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Insight-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Medicine-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Investigation-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Survival-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "History-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Arcana-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Nature-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Trade-A-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Religion-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Occultism-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Trade-D-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Trade-C-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Trade-B-Proficiency",
+    "type": "button"
+  },
+  {
+    "name": "Glide-Half",
+    "type": "button"
+  },
+  {
+    "name": "Glide-Full",
+    "type": "button"
+  },
+  {
+    "name": "Misc",
+    "type": "text"
+  }
+]
+````
+
+## File: pdf-service/src/fill.ts
+````typescript
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import fontkit from '@pdf-lib/fontkit';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+// Load the PDF template and field map once to cache them
+const pdfTemplatePath = join(process.cwd(), 'pdf-service/src', 'DC20_Beta_0_9_5_(fillable)_Character_Sheet.pdf');
+const fieldMapPath = join(process.cwd(), 'pdf-service/src', 'DC20_Beta_0_9_5_fields.json');
+
+let cachedPdfDoc: PDFDocument | null = null;
+let cachedFieldMap: Array<{ name: string; type: string }> = [];
+
+async function loadPdfTemplate(): Promise<PDFDocument> {
+  if (!cachedPdfDoc) {
+    const existingPdfBytes = readFileSync(pdfTemplatePath);
+    cachedPdfDoc = await PDFDocument.load(existingPdfBytes);
+    cachedPdfDoc.registerFontkit(fontkit);
+  }
+  return cachedPdfDoc;
+}
+
+function loadFieldMap(): Array<{ name: string; type: string }> {
+  if (!cachedFieldMap) {
+    const fieldMapJson = readFileSync(fieldMapPath, 'utf-8');
+    cachedFieldMap = JSON.parse(fieldMapJson);
+  }
+  return cachedFieldMap;
+}
+
+export async function createCharacterPdf(data: Record<string, any>): Promise<Uint8Array> {
+  const pdfDoc = await loadPdfTemplate();
+  const form = pdfDoc.getForm();
+  const fieldMap = loadFieldMap();
+
+  for (const fieldDef of fieldMap) {
+    const fieldName = fieldDef.name;
+    const fieldType = fieldDef.type;
+    const value = data[fieldName];
+
+    if (value === undefined || value === null) {
+      // console.warn(`Data for field "${fieldName}" is missing or null. Skipping.`);
+      continue;
+    }
+
+    try {
+      if (fieldType === 'text') {
+        const textField = form.getTextField(fieldName);
+        if (textField) {
+          // Convert numbers and booleans to string
+          const stringValue = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : String(value);
+          textField.setText(stringValue);
+        } else {
+          console.warn(`Text field "${fieldName}" not found in PDF.`);
+        }
+      } else if (fieldType === 'button') {
+        const checkbox = form.getCheckBox(fieldName);
+        if (checkbox) {
+          if (value === true) {
+            checkbox.check();
+          } else if (value === false) {
+            checkbox.uncheck();
+          } else {
+            console.warn(`Checkbox field "${fieldName}" received non-boolean value: ${value}. Skipping.`);
+          }
+        } else {
+          console.warn(`Button/Checkbox field "${fieldName}" not found in PDF.`);
+        }
+      } else {
+        console.warn(`Unknown field type "${fieldType}" for field "${fieldName}". Skipping.`);
+      }
+    } catch (error) {
+      console.error(`Error setting field "${fieldName}" with value "${value}":`, error);
+    }
+  }
+
+  form.flatten(); // Flatten the form fields
+
+  return pdfDoc.save();
+}
+````
+
+## File: pdf-service/tsconfig.json
+````json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["ES2020"],
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+````
+
+## File: playwright.config.ts
+````typescript
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+	webServer: {
+		command: 'npm run build && npm run preview',
+		port: 4173
+	},
+	testDir: 'e2e'
+});
+````
+
+## File: prisma/migrations/20250526210112_init/migration.sql
+````sql
+-- CreateTable
+CREATE TABLE "CharacterInProgress" (
+    "id" TEXT NOT NULL,
+    "attribute_might" INTEGER NOT NULL DEFAULT -2,
+    "attribute_agility" INTEGER NOT NULL DEFAULT -2,
+    "attribute_charisma" INTEGER NOT NULL DEFAULT -2,
+    "attribute_intelligence" INTEGER NOT NULL DEFAULT -2,
+    "pointsSpent" INTEGER NOT NULL DEFAULT 0,
+    "ancestry1Id" TEXT,
+    "ancestry2Id" TEXT,
+    "selectedTraitIds" TEXT NOT NULL,
+    "ancestryPointsSpent" INTEGER NOT NULL DEFAULT 0,
+    "classId" TEXT,
+    "selectedFeatureChoices" TEXT NOT NULL,
+    "finalName" TEXT,
+    "finalPlayerName" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "CharacterInProgress_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "CharacterSheetData" (
+    "id" TEXT NOT NULL,
+    "characterInProgressId" TEXT NOT NULL,
+    "finalName" TEXT NOT NULL,
+    "finalPlayerName" TEXT,
+    "finalLevel" INTEGER NOT NULL DEFAULT 1,
+    "finalMight" INTEGER NOT NULL,
+    "finalAgility" INTEGER NOT NULL,
+    "finalCharisma" INTEGER NOT NULL,
+    "finalIntelligence" INTEGER NOT NULL,
+    "finalPrimeModifierValue" INTEGER NOT NULL,
+    "finalPrimeModifierAttribute" TEXT NOT NULL,
+    "finalCombatMastery" INTEGER NOT NULL DEFAULT 1,
+    "finalSaveMasteryMight" INTEGER NOT NULL,
+    "finalSaveMasterityAgility" INTEGER NOT NULL,
+    "finalSaveMasteryCharisma" INTEGER NOT NULL,
+    "finalSaveMasteryIntelligence" INTEGER NOT NULL,
+    "finalHPMax" INTEGER NOT NULL,
+    "finalSPMax" INTEGER NOT NULL,
+    "finalMPMax" INTEGER NOT NULL,
+    "finalPD" INTEGER NOT NULL,
+    "finalAD" INTEGER NOT NULL,
+    "finalPDR" TEXT,
+    "finalEDR" TEXT,
+    "finalMDR" TEXT,
+    "finalSaveDC" INTEGER NOT NULL,
+    "finalDeathThreshold" INTEGER NOT NULL,
+    "finalMoveSpeed" INTEGER NOT NULL,
+    "finalJumpDistance" INTEGER NOT NULL,
+    "finalRestPoints" INTEGER NOT NULL,
+    "finalGritPoints" INTEGER NOT NULL,
+    "finalInitiativeBonus" INTEGER NOT NULL,
+    "skillsJson" TEXT NOT NULL,
+    "tradesJson" TEXT NOT NULL,
+    "languagesJson" TEXT NOT NULL,
+    "ancestry1Name" TEXT,
+    "ancestry2Name" TEXT,
+    "selectedTraitsJson" TEXT NOT NULL,
+    "className" TEXT NOT NULL,
+    "classFeaturesLvl1Json" TEXT NOT NULL,
+    "equipmentJson" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "CharacterSheetData_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "CharacterSheetData_characterInProgressId_key" ON "CharacterSheetData"("characterInProgressId");
+
+-- AddForeignKey
+ALTER TABLE "CharacterSheetData" ADD CONSTRAINT "CharacterSheetData_characterInProgressId_fkey" FOREIGN KEY ("characterInProgressId") REFERENCES "CharacterInProgress"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+````
+
+## File: prisma/migrations/20250620112102_allow_next_in_stage_a/migration.sql
+````sql
+-- AlterTable
+ALTER TABLE "CharacterInProgress" ADD COLUMN     "currentStep" INTEGER NOT NULL DEFAULT 1;
+````
+
+## File: prisma/migrations/migration_lock.toml
+````toml
+# Please do not edit this file manually
+# It should be added in your version-control system (e.g., Git)
+provider = "postgresql"
+````
+
+## File: prisma/schema.prisma
+````
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Model to store the character creation progress
+model CharacterInProgress {
+  id                   String @id @default(uuid())
+  // Stage A: Attributes
+  attribute_might      Int    @default(-2)
+  attribute_agility    Int    @default(-2)
+  attribute_charisma   Int    @default(-2)
+  attribute_intelligence Int  @default(-2)
+  pointsSpent          Int    @default(0) // Points spent in point buy
+  currentStep          Int    @default(1) // Current stage in the wizard (1 = Stage A, 2 = Stage B, etc.)
+
+  // Core Stats
+  level                Int    @default(1)
+  combatMastery        Int    @default(1) // Calculated as half level rounded up
+
+  // Stage B: Ancestry
+  ancestry1Id          String? // ID of the first ancestry
+  ancestry2Id          String? // ID of the second ancestry (for mixed ancestry)
+  selectedTraitIds     String // JSON string of selected trait IDs
+  ancestryPointsSpent  Int    @default(0) // Points spent on traits
+
+  // Stage C: Class
+  classId              String? // ID of the selected class
+  selectedFeatureChoices String // JSON string of selected feature choice IDs/values
+
+  // Stage D: Skills (MVP Scope)
+  // Will add skill selection fields here later
+
+  // Stage E: Equipment (MVP Scope)
+  // Will add equipment selection fields here later
+
+  // Stage F: Details (MVP Scope)
+  finalName            String?
+  finalPlayerName      String?
+
+  // Link to the final character sheet data (once creation is complete)
+  finalCharacterSheet  CharacterSheetData?
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+// Model to store the final calculated character sheet data
+model CharacterSheetData {
+  id                   String @id @default(uuid())
+  characterInProgressId String @unique // Link back to the progress record
+  characterInProgress  CharacterInProgress @relation(fields: [characterInProgressId], references: [id])
+
+  // Final Calculated Stats (based on MVP mvp.md Section IV)
+  finalName            String
+  finalPlayerName      String?
+  finalLevel           Int    @default(1)
+
+  finalMight           Int
+  finalAgility         Int
+  finalCharisma        Int
+  finalIntelligence    Int
+
+  finalPrimeModifierValue Int
+  finalPrimeModifierAttribute String
+
+  finalCombatMastery   Int    @default(1)
+
+  finalSaveMasteryMight Int
+  finalSaveMasterityAgility Int
+  finalSaveMasteryCharisma Int
+  finalSaveMasteryIntelligence Int
+
+  finalHPMax           Int
+  finalSPMax           Int
+  finalMPMax           Int
+
+  finalPD              Int
+  finalAD              Int
+
+  finalPDR             String?
+  finalEDR             String?
+  finalMDR             String?
+
+  finalSaveDC          Int
+  finalDeathThreshold  Int
+  finalMoveSpeed       Int
+  finalJumpDistance    Int
+  finalRestPoints      Int
+  finalGritPoints      Int
+  finalInitiativeBonus Int
+
+  skillsJson           String // JSON string of skill data
+  tradesJson           String // JSON string of trade data
+  languagesJson        String // JSON string of language data
+
+  ancestry1Name        String?
+  ancestry2Name        String?
+  selectedTraitsJson   String // JSON string of selected traits
+
+  className            String
+  classFeaturesLvl1Json String // JSON string of Lvl 1 class features
+
+  equipmentJson        String // JSON string of equipment
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+````
+
+## File: project_summary.md
+````markdown
+# Project Summary
+
+This document provides a comprehensive overview of the Svelte library project, including its purpose, technology stack, and structure.
+
+## Overview
+
+This project is a Svelte-based library starter, designed to provide a foundation for developing and publishing reusable Svelte components. It includes a full development environment with a showcase application, a robust testing suite, and a database setup, making it suitable for building complex, data-driven libraries.
+
+## Technology Stack
+
+The project leverages a modern technology stack, including:
+
+- **Framework**: [SvelteKit](https://kit.svelte.dev/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Bundler**: [Vite](https://vitejs.dev/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Database**: [PostgreSQL](https://www.postgresql.org/) with [Drizzle ORM](https://orm.drizzle.team/)
+- **Authentication**: Inferred to be [Lucia Auth](https://lucia-auth.com/) based on file structure and dependencies
+- **Testing**:
+  - **Unit Testing**: [Vitest](https://vitest.dev/)
+  - **E2E Testing**: [Playwright](https://playwright.dev/)
+
+## Project Structure
+
+The project is organized into the following key directories:
+
+- `src/lib`: Contains the core library code intended for packaging and distribution.
+- `src/routes`: A showcase application for demonstrating the library's features.
+- `src/routes/demo/lucia`: Includes pages and server-side logic for handling user authentication.
+- `src/lib/server/auth.ts`: Server-side authentication logic.
+- `src/lib/server/db`: Database schema and connection management.
+- `e2e`: End-to-end tests for the showcase application.
+
+## Key Scripts
+
+The `package.json` file defines several important scripts for managing the project:
+
+- `dev`: Starts the development server for the showcase app.
+- `build`: Creates a production build of the showcase app.
+- `package`: Packages the `src/lib` directory into a distributable format.
+- `test`: Executes both unit and end-to-end tests.
+- `db:*`: A set of scripts for managing the PostgreSQL database, including starting the container, applying schema changes, and running migrations.
+````
+
+## File: project-doc/character-finalization.md
+````markdown
+# Character Finalization Implementation Details
+
+## Problem Overview
+Previously, the character creation process saved the *final* character object to the browser's `localStorage`. Simultaneously, the backend API (`src/routes/api/character/progress/complete/+server.ts`) only saved *in-progress* character data to the `CharacterInProgress` table. The `CharacterSheetData` model in `prisma/schema.prisma`, intended for final character sheets, remained unused. This led to data inconsistency and loss if local storage was cleared.
+
+## Goal
+To ensure all character data, both in-progress and final, is persistently stored in the PostgreSQL database via Prisma, leveraging both `CharacterInProgress` and `CharacterSheetData` models, and removing reliance on `localStorage` for final character saving.
+
+## Implementation Details
+
+### Frontend Modifications (`src/routes/character-creation/CharacterCreation.tsx`)
+- **Objective:** Replace `localStorage` saving with an API call to persist the final character data to the database.
+- **Action:**
+    1.  Located the `handleNext` function.
+    2.  Inside the `if (state.currentStep === 4 && isStepCompleted(4))` block, the existing `localStorage` saving logic was removed.
+    3.  An asynchronous `fetch` call to the backend endpoint `/api/character/progress/complete` was introduced. This call sends the complete `state` object (representing the `completedCharacter`) to the server.
+    4.  API response handling was implemented:
+        -   On success, the snackbar is shown and navigation to the load page occurs.
+        -   On error, appropriate user feedback (console error for now, with a TODO for a snackbar) is provided.
+
+### Backend Enhancements (`src/routes/api/character/progress/complete/+server.ts`)
+- **Objective:** Modify this endpoint to handle the finalization of a character, creating or updating a `CharacterSheetData` record and linking it to the `CharacterInProgress` record.
+- **Action:**
+    1.  **Data Reception:** The endpoint now correctly handles all fields necessary for both `CharacterInProgress` and `CharacterSheetData` from the incoming request `data`.
+    2.  **`CharacterInProgress` Update:**
+        -   The existing `upsert` logic for `CharacterInProgress` was modified to update the `CharacterInProgress` record with the latest state, including `currentStep` set to 4 to indicate completion.
+        -   The `id` from the frontend is used to update the correct `CharacterInProgress` record. If no `id` is provided, a new `CharacterInProgress` record is created.
+    3.  **`CharacterSheetData` Creation/Update:**
+        -   Within a Prisma transaction, after (or as part of the same transaction as) updating `CharacterInProgress`, an entry in the `CharacterSheetData` table is created or updated.
+        -   Relevant fields from the incoming `data` (and derived calculations) are mapped to the fields defined in `CharacterSheetData` in `prisma/schema.prisma`. This includes calculations for:
+            -   `finalLevel`
+            -   `finalCombatMastery`
+            -   `finalPrimeModifierValue` and `finalPrimeModifierAttribute`
+            -   `finalSaveMasteryMight`, `finalSaveMasterityAgility`, `finalSaveMasteryCharisma`, `finalSaveMasteryIntelligence`
+            -   `finalHPMax`, `finalSPMax`, `finalMPMax`
+            -   `finalPD`, `finalAD`
+            -   `finalSaveDC`
+            -   `finalDeathThreshold`
+            -   `finalMoveSpeed`, `finalJumpDistance`
+            -   `finalRestPoints`, `finalGritPoints`
+            -   `finalInitiativeBonus`
+            -   `ancestry1Name`, `ancestry2Name`
+            -   `selectedTraitsJson` (now stores ID and name)
+            -   `className`
+            -   `classFeaturesLvl1Json`
+            -   `skillsJson`, `tradesJson`, `languagesJson`, `equipmentJson`
+        -   A helper function `getModifier` was added to simplify attribute modifier calculations.
+        -   Checks are performed to see if a `CharacterSheetData` record already exists for the `characterInProgressId`. If it does, it's updated; otherwise, a new one is created.
+    4.  **Record Linking:**
+        -   The `CharacterInProgress` record is updated to link to the newly created/updated `CharacterSheetData` record by setting the `finalCharacterSheet` relation.
+
+## Testing Strategy
+1.  Create a new character through the frontend.
+2.  Complete all steps of the character creation process.
+3.  Verify that the success snackbar appears and the navigation to the load page occurs.
+4.  Manually check the PostgreSQL database to confirm:
+    -   A new record exists in the `CharacterInProgress` table with `currentStep` set to 4 and `finalName`/`finalPlayerName` populated.
+    -   A new record exists in the `CharacterSheetData` table, linked to the `CharacterInProgress` record via `characterInProgressId`, and all `final...` fields are correctly populated based on the character's selections and calculated values.
+````
+
+## File: repomix.config.json
+````json
+{
+  "input": {
+    "maxFileSize": 52428800
+  },
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown",
+    "parsableStyle": false,
+    "fileSummary": true,
+    "directoryStructure": true,
+    "files": true,
+    "removeComments": false,
+    "removeEmptyLines": false,
+    "compress": false,
+    "topFilesLength": 5,
+    "showLineNumbers": false,
+    "copyToClipboard": false,
+    "git": {
+      "sortByChanges": true,
+      "sortByChangesMaxCommits": 100
+    }
+  },
+  "include": [],
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": []
+  },
+  "security": {
+    "enableSecurityCheck": true
+  },
+  "tokenCount": {
+    "encoding": "o200k_base"
+  }
+}
+````
+
+## File: src/app.d.ts
+````typescript
+// See https://svelte.dev/docs/kit/types#app.d.ts
+// for information about these interfaces
+declare global {
+	namespace App {
+		interface Locals {
+			user: import('$lib/server/auth').SessionValidationResult['user'];
+			session: import('$lib/server/auth').SessionValidationResult['session'];
+		}
+	} // interface Error {}
+	// interface Locals {}
+} // interface PageData {}
+// interface PageState {}
+
+// interface Platform {}
+export {};
+````
 
 ## File: src/App.tsx
-```typescript
+````typescript
 import React, { useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { CharacterProvider } from './lib/stores/characterContext';
@@ -386,10 +2314,10 @@ function App() {
 }
 
 export default App;
-```
+````
 
 ## File: src/components/Menu.tsx
-```typescript
+````typescript
 import React from 'react';
 import styled from 'styled-components';
 
@@ -530,10 +2458,10 @@ function Menu({ onCreateCharacter, onLoadCharacter }: MenuProps) {
 }
 
 export default Menu;
-```
+````
 
 ## File: src/components/Snackbar.tsx
-```typescript
+````typescript
 import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 
@@ -622,3140 +2550,10 @@ const Snackbar: React.FC<SnackbarProps> = ({
 };
 
 export default Snackbar;
-```
-
-## File: src/lib/stores/characterContext.tsx
-```typescript
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import type { CharacterInProgress } from '@prisma/client';
-
-// Define the shape of the data stored in the character store
-export interface CharacterInProgressStoreData extends CharacterInProgress {
-  currentStep: number;
-  overflowTraitId: string | null;
-  overflowAttributeName: string | null;
-  level: number;
-  combatMastery: number;
-}
-
-// Initial state for the store
-const initialCharacterInProgressState: CharacterInProgressStoreData = {
-  id: '',
-  attribute_might: -2,
-  attribute_agility: -2,
-  attribute_charisma: -2,
-  attribute_intelligence: -2,
-  pointsSpent: 0,
-  level: 1,
-  combatMastery: 1,
-  ancestry1Id: null,
-  ancestry2Id: null,
-  selectedTraitIds: '',
-  ancestryPointsSpent: 0,
-  classId: null,
-  selectedFeatureChoices: '',
-  finalName: null,
-  finalPlayerName: null,
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  currentStep: 1,
-  overflowTraitId: null,
-  overflowAttributeName: null,
-};
-
-// Action types
-type CharacterAction = 
-  | { type: 'UPDATE_ATTRIBUTE'; attribute: string; value: number }
-  | { type: 'SET_CLASS'; classId: string | null }
-  | { type: 'SET_ANCESTRY'; ancestry1Id: string | null; ancestry2Id: string | null }
-  | { type: 'SET_TRAITS'; selectedTraitIds: string }
-  | { type: 'SET_FEATURE_CHOICES'; selectedFeatureChoices: string }
-  | { type: 'UPDATE_STORE'; updates: Partial<CharacterInProgressStoreData> }
-  | { type: 'NEXT_STEP' }
-  | { type: 'PREVIOUS_STEP' }
-  | { type: 'SET_STEP'; step: number };
-
-// Reducer function
-function characterReducer(state: CharacterInProgressStoreData, action: CharacterAction): CharacterInProgressStoreData {
-  switch (action.type) {
-    case 'UPDATE_ATTRIBUTE':
-      return {
-        ...state,
-        [action.attribute]: action.value,
-      };
-    case 'SET_CLASS':
-      return {
-        ...state,
-        classId: action.classId,
-      };
-    case 'SET_ANCESTRY':
-      return {
-        ...state,
-        ancestry1Id: action.ancestry1Id,
-        ancestry2Id: action.ancestry2Id,
-      };
-    case 'SET_TRAITS':
-      return {
-        ...state,
-        selectedTraitIds: action.selectedTraitIds,
-      };
-    case 'SET_FEATURE_CHOICES':
-      return {
-        ...state,
-        selectedFeatureChoices: action.selectedFeatureChoices,
-      };
-    case 'UPDATE_STORE':
-      return {
-        ...state,
-        ...action.updates,
-      };
-    case 'NEXT_STEP':
-      return {
-        ...state,
-        currentStep: Math.min(state.currentStep + 1, 4),
-      };
-    case 'PREVIOUS_STEP':
-      return {
-        ...state,
-        currentStep: Math.max(state.currentStep - 1, 1),
-      };
-    case 'SET_STEP':
-      return {
-        ...state,
-        currentStep: Math.max(1, Math.min(action.step, 4)),
-      };
-    default:
-      return state;
-  }
-}
-
-// Context type
-interface CharacterContextType {
-  state: CharacterInProgressStoreData;
-  dispatch: React.Dispatch<CharacterAction>;
-  // Derived values
-  attributePointsRemaining: number;
-  ancestryPointsRemaining: number;
-  combatMastery: number;
-  primeModifier: { name: string; value: number };
-}
-
-// Create context
-const CharacterContext = createContext<CharacterContextType | undefined>(undefined);
-
-// Provider component
-export function CharacterProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(characterReducer, initialCharacterInProgressState);
-
-  // Derived values
-  const attributePointsRemaining = 12 - (
-    (state.attribute_might + 2) +
-    (state.attribute_agility + 2) +
-    (state.attribute_charisma + 2) +
-    (state.attribute_intelligence + 2)
-  );
-
-  const ancestryPointsRemaining = 5 - state.ancestryPointsSpent;
-
-  const combatMastery = Math.ceil((state.level ?? 1) / 2);
-
-  const primeModifier = (() => {
-    const attributes = [
-      { name: 'Might', value: state.attribute_might },
-      { name: 'Agility', value: state.attribute_agility },
-      { name: 'Charisma', value: state.attribute_charisma },
-      { name: 'Intelligence', value: state.attribute_intelligence },
-    ];
-
-    let highestAttribute = attributes[0];
-    for (let i = 1; i < attributes.length; i++) {
-      if (attributes[i].value > highestAttribute.value) {
-        highestAttribute = attributes[i];
-      }
-    }
-
-    return highestAttribute;
-  })();
-
-  const contextValue: CharacterContextType = {
-    state,
-    dispatch,
-    attributePointsRemaining,
-    ancestryPointsRemaining,
-    combatMastery,
-    primeModifier,
-  };
-
-  return (
-    <CharacterContext.Provider value={contextValue}>
-      {children}
-    </CharacterContext.Provider>
-  );
-}
-
-// Custom hook to use the character context
-export function useCharacter() {
-  const context = useContext(CharacterContext);
-  if (context === undefined) {
-    throw new Error('useCharacter must be used within a CharacterProvider');
-  }
-  return context;
-}
-
-// Helper function to get an attribute's modifier
-export function getModifier(attributeScore: number | null | undefined): number {
-  return attributeScore ?? 0;
-}
-```
-
-## File: src/main.tsx
-```typescript
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
-```
-
-## File: src/routes/character-creation/AncestryPointsCounter.tsx
-```typescript
-import React from 'react';
-import styled from 'styled-components';
-import { useCharacter } from '../../lib/stores/characterContext';
-
-const StyledContainer = styled.div`
-  padding: 1.5rem;
-  border: 2px solid #8b5cf6;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-  margin-bottom: 1rem;
-  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
-  text-align: center;
-`;
-
-const StyledTitle = styled.h2`
-  margin: 0;
-  color: #fbbf24;
-  font-size: 1.3rem;
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  letter-spacing: 1px;
-  border-bottom: 2px solid #ef4444;
-  padding-bottom: 0.5rem;
-`;
-
-function AncestryPointsCounter() {
-  const { ancestryPointsRemaining } = useCharacter();
-
-  return (
-    <StyledContainer>
-      <StyledTitle>Ancestry Points: {ancestryPointsRemaining}</StyledTitle>
-    </StyledContainer>
-  );
-}
-
-export default AncestryPointsCounter;
-```
-
-## File: src/routes/character-creation/AncestrySelector.tsx
-```typescript
-import { useState } from 'react';
-import styled from 'styled-components';
-import { useCharacter } from '../../lib/stores/characterContext';
-import { ancestriesData } from '../../lib/rulesdata/ancestries';
-import type { IAncestry } from '../../lib/rulesdata/types';
-
-// Ancestry-specific icons using Unicode symbols and emojis
-const ancestryIcons: { [key: string]: string } = {
-  'human': '👤',
-  'elf': '🧝‍♂️',
-  'dwarf': '🧔',
-  'halfling': '🧙‍♂️',
-  'dragonborn': '🐉',
-  'gnome': '🎭',
-  'half-elf': '🧝‍♀️',
-  'half-orc': '👹',
-  'tiefling': '😈',
-  'orc': '🗡️',
-  'goblin': '👺',
-  'kobold': '🦎',
-  'default': '🌟'
-};
-
-const StyledContainer = styled.div`
-  border: 2px solid #8b5cf6;
-  padding: 1.5rem;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-  margin-top: 2rem;
-  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
-`;
-
-const StyledTitle = styled.h2`
-  margin-top: 0;
-  color: #fbbf24;
-  font-size: 1.3rem;
-  font-weight: bold;
-  text-align: center;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  letter-spacing: 1px;
-  border-bottom: 2px solid #ef4444;
-  padding-bottom: 0.5rem;
-  margin-bottom: 1rem;
-`;
-
-const StyledGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
-`;
-
-const StyledCard = styled.button<{ $selected: boolean }>`
-  border: 2px solid #a855f7;
-  padding: 1.5rem;
-  border-radius: 10px;
-  background: linear-gradient(145deg, #2d1b69 0%, #4c1d95 100%);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: left;
-  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
-  height: 200px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  position: relative;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
-    border-color: #fbbf24;
-  }
-
-  ${props => props.$selected && `
-    border-color: #ef4444;
-    background: linear-gradient(145deg, #991b1b 0%, #dc2626 100%);
-    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
-    transform: translateY(-2px);
-  `}
-`;
-
-const StyledCardHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-`;
-
-const StyledAncestryIcon = styled.div`
-  font-size: 2rem;
-  flex-shrink: 0;
-  background: linear-gradient(145deg, #8b5cf6 0%, #a855f7 100%);
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-`;
-
-const StyledCardTitle = styled.h3`
-  margin: 0;
-  color: #fbbf24;
-  font-size: 1.4rem;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-`;
-
-const StyledCardDescription = styled.p`
-  margin: 0;
-  color: #e5e7eb;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  flex: 1;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  position: relative;
-`;
-
-const StyledCardFooter = styled.div`
-  margin-top: 0.5rem;
-  display: flex;
-  justify-content: flex-end;
-`;
-
-const StyledReadMore = styled.button`
-  color: #fbbf24;
-  font-size: 0.85rem;
-  font-weight: bold;
-  cursor: pointer;
-  text-decoration: underline;
-  background: none;
-  border: none;
-  padding: 0.5rem 0.75rem;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    color: #f59e0b;
-    background: rgba(251, 191, 36, 0.1);
-  }
-  
-  &:active {
-    transform: scale(0.95);
-  }
-`;
-
-const StyledTooltip = styled.div<{ $show: boolean }>`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
-  color: #e5e7eb;
-  padding: 2rem;
-  border-radius: 12px;
-  border: 3px solid #8b5cf6;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-  z-index: 2000;
-  width: 90vw;
-  max-width: 500px;
-  max-height: 80vh;
-  overflow-y: auto;
-  font-size: 1rem;
-  line-height: 1.6;
-  opacity: ${props => props.$show ? 1 : 0};
-  pointer-events: ${props => props.$show ? 'auto' : 'none'};
-  transition: opacity 0.3s ease;
-  
-  /* Custom scrollbar for popup */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: #1e1b4b;
-    border-radius: 4px;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: #8b5cf6;
-    border-radius: 4px;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: #a855f7;
-  }
-`;
-
-const StyledTooltipOverlay = styled.div<{ $show: boolean }>`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  z-index: 1999;
-  opacity: ${props => props.$show ? 1 : 0};
-  pointer-events: ${props => props.$show ? 'auto' : 'none'};
-  transition: opacity 0.3s ease;
-`;
-
-const StyledTooltipHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #8b5cf6;
-`;
-
-const StyledTooltipIcon = styled.div`
-  font-size: 3rem;
-  background: linear-gradient(145deg, #8b5cf6 0%, #a855f7 100%);
-  border-radius: 50%;
-  width: 70px;
-  height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-`;
-
-const StyledTooltipTitle = styled.h3`
-  margin: 0;
-  color: #fbbf24;
-  font-size: 1.8rem;
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-`;
-
-const StyledTooltipContent = styled.p`
-  margin: 0;
-  color: #e5e7eb;
-  font-size: 1.1rem;
-  line-height: 1.6;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-`;
-
-const StyledCloseHint = styled.div`
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid #8b5cf6;
-  text-align: center;
-  color: #9ca3af;
-  font-size: 0.9rem;
-  font-style: italic;
-`;
-
-function AncestrySelector() {
-  const { state, dispatch } = useCharacter();
-  const [popupAncestry, setPopupAncestry] = useState<string | null>(null);
-  
-  const selectedAncestries: string[] = [];
-  if (state.ancestry1Id) selectedAncestries.push(state.ancestry1Id);
-  if (state.ancestry2Id) selectedAncestries.push(state.ancestry2Id);
-
-  function handleSelectAncestry(ancestryId: string) {
-    const isSelected = selectedAncestries.includes(ancestryId);
-    
-    if (isSelected) {
-      // Deselect
-      let newAncestry1Id = state.ancestry1Id;
-      let newAncestry2Id = state.ancestry2Id;
-      
-      if (state.ancestry1Id === ancestryId) {
-        newAncestry1Id = null;
-      } else if (state.ancestry2Id === ancestryId) {
-        newAncestry2Id = null;
-      }
-      
-      dispatch({ type: 'SET_ANCESTRY', ancestry1Id: newAncestry1Id, ancestry2Id: newAncestry2Id });
-    } else {
-      // Select
-      if (!state.ancestry1Id) {
-        dispatch({ type: 'SET_ANCESTRY', ancestry1Id: ancestryId, ancestry2Id: state.ancestry2Id });
-      } else if (!state.ancestry2Id) {
-        dispatch({ type: 'SET_ANCESTRY', ancestry1Id: state.ancestry1Id, ancestry2Id: ancestryId });
-      }
-    }
-  }
-
-  function getAncestryIcon(ancestryId: string): string {
-    return ancestryIcons[ancestryId.toLowerCase()] || ancestryIcons.default;
-  }
-
-  function truncateText(text: string, maxLength: number): string {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
-  }
-
-  function needsReadMore(text: string, maxLength: number): boolean {
-    return text.length > maxLength;
-  }
-
-  function openPopup(ancestryId: string) {
-    setPopupAncestry(ancestryId);
-  }
-
-  function closePopup() {
-    setPopupAncestry(null);
-  }
-
-  return (
-    <StyledContainer>
-      <StyledTitle>Choose Your Ancestry</StyledTitle>
-      <StyledGrid>
-        {ancestriesData.map((ancestry: IAncestry) => (
-          <StyledCard
-            key={ancestry.id}
-            type="button"
-            $selected={selectedAncestries.includes(ancestry.id)}
-            onClick={() => handleSelectAncestry(ancestry.id)}
-          >
-            <StyledCardHeader>
-              <StyledAncestryIcon>{getAncestryIcon(ancestry.id)}</StyledAncestryIcon>
-              <StyledCardTitle>{ancestry.name}</StyledCardTitle>
-            </StyledCardHeader>
-            <StyledCardDescription>
-              {truncateText(ancestry.description, 80)}
-            </StyledCardDescription>
-            {needsReadMore(ancestry.description, 80) && (
-              <StyledCardFooter>
-                <StyledReadMore 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openPopup(ancestry.id);
-                  }}
-                >
-                  read more...
-                </StyledReadMore>
-              </StyledCardFooter>
-            )}
-          </StyledCard>
-        ))}
-      </StyledGrid>
-      
-      {/* Popup overlay and content */}
-      <StyledTooltipOverlay 
-        $show={popupAncestry !== null} 
-        onClick={closePopup}
-      />
-      {popupAncestry && (
-        <StyledTooltip $show={popupAncestry !== null}>
-          <StyledTooltipHeader>
-            <StyledTooltipIcon>
-              {getAncestryIcon(popupAncestry)}
-            </StyledTooltipIcon>
-            <StyledTooltipTitle>
-              {ancestriesData.find(a => a.id === popupAncestry)?.name}
-            </StyledTooltipTitle>
-          </StyledTooltipHeader>
-          <StyledTooltipContent>
-            {ancestriesData.find(a => a.id === popupAncestry)?.description}
-          </StyledTooltipContent>
-          <StyledCloseHint>
-            Click anywhere to close
-          </StyledCloseHint>
-        </StyledTooltip>
-      )}
-    </StyledContainer>
-  );
-}
-
-export default AncestrySelector;
-```
-
-## File: src/routes/character-creation/Attributes.tsx
-```typescript
-import styled from 'styled-components';
-import { useCharacter } from '../../lib/stores/characterContext';
-import { attributesData } from '../../lib/rulesdata/attributes';
-
-const StyledContainer = styled.div`
-  border: 2px solid #8b5cf6;
-  padding: 1.5rem;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-  margin-top: 2rem;
-  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
-`;
-
-const StyledTitle = styled.h2`
-  margin-top: 0;
-  color: #fbbf24;
-  font-size: 1.3rem;
-  font-weight: bold;
-  text-align: center;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  letter-spacing: 1px;
-  border-bottom: 2px solid #ef4444;
-  padding-bottom: 0.5rem;
-  margin-bottom: 1rem;
-`;
-
-const StyledPointsRemaining = styled.p`
-  margin: 0.5rem 0;
-  font-weight: bold;
-  color: #ef4444;
-  font-size: 1.2rem;
-  text-align: center;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-`;
-
-const StyledGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
-`;
-
-const StyledCard = styled.div`
-  border: 2px solid #a855f7;
-  padding: 1.5rem;
-  border-radius: 10px;
-  background: linear-gradient(145deg, #2d1b69 0%, #4c1d95 100%);
-  text-align: center;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
-    border-color: #fbbf24;
-  }
-`;
-
-const StyledCardTitle = styled.h3`
-  margin: 0 0 0.5rem 0;
-  color: #fbbf24;
-  font-size: 1.4rem;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-`;
-
-const StyledControls = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 0.5rem;
-`;
-
-const StyledButton = styled.button`
-  width: 45px;
-  height: 45px;
-  border: 2px solid #dc2626;
-  border-radius: 8px;
-  background: linear-gradient(145deg, #991b1b 0%, #dc2626 100%);
-  color: #fbbf24;
-  cursor: pointer;
-  font-size: 1.4rem;
-  font-weight: bold;
-  transition: all 0.2s ease;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
-
-  &:hover {
-    background: linear-gradient(145deg, #dc2626 0%, #ef4444 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.5);
-    border-color: #fbbf24;
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    background: linear-gradient(145deg, #4b5563 0%, #6b7280 100%);
-    border-color: #6b7280;
-    transform: none;
-    box-shadow: none;
-  }
-`;
-
-const StyledValue = styled.p`
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: bold;
-  min-width: 40px;
-  color: #fbbf24;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
-  padding: 0.5rem;
-  border-radius: 6px;
-  border: 1px solid #8b5cf6;
-`;
-
-const StyledDescription = styled.p`
-  color: #e5e7eb;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  margin: 0.5rem 0 1rem 0;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-`;
-
-type AttributeState = Record<string, number>;
-
-function Attributes() {
-  const { state, dispatch, attributePointsRemaining } = useCharacter();
-  const typedState = state as unknown as AttributeState;
-
-  function increaseAttribute(attribute: string) {
-    if (attributePointsRemaining > 0) {
-      const currentValue = typedState[attribute];
-      dispatch({ type: 'UPDATE_ATTRIBUTE', attribute, value: currentValue + 1 });
-    }
-  }
-
-  function decreaseAttribute(attribute: string) {
-    const currentValue = typedState[attribute];
-    if (currentValue > -2) {
-      dispatch({ type: 'UPDATE_ATTRIBUTE', attribute, value: currentValue - 1 });
-    }
-  }
-
-  return (
-    <StyledContainer>
-      <StyledTitle>Attributes</StyledTitle>
-      <StyledPointsRemaining>
-        Points Remaining: {attributePointsRemaining}
-      </StyledPointsRemaining>
-      <StyledGrid>
-        {attributesData.map((attribute) => (
-          <StyledCard key={attribute.id}>
-            <StyledCardTitle>{attribute.name}</StyledCardTitle>
-            <StyledDescription>{attribute.description}</StyledDescription>
-            <StyledControls>
-              <StyledButton
-                onClick={() => decreaseAttribute('attribute_' + attribute.id)}
-                disabled={typedState['attribute_' + attribute.id] <= -2}
-              >
-                -
-              </StyledButton>
-              <StyledValue>{typedState['attribute_' + attribute.id]}</StyledValue>
-              <StyledButton
-                onClick={() => increaseAttribute('attribute_' + attribute.id)}
-                disabled={attributePointsRemaining <= 0}
-              >
-                +
-              </StyledButton>
-            </StyledControls>
-          </StyledCard>
-        ))}
-      </StyledGrid>
-    </StyledContainer>
-  );
-}
-
-export default Attributes;
-```
-
-## File: src/routes/character-creation/CharacterCreation.tsx
-```typescript
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { useCharacter } from '../../lib/stores/characterContext';
-import AncestrySelector from './AncestrySelector.tsx';
-import SelectedAncestries from './SelectedAncestries.tsx';
-import AncestryPointsCounter from './AncestryPointsCounter.tsx';
-import Attributes from './Attributes.tsx';
-import ClassSelector from './ClassSelector.tsx';
-import ClassFeatures from './ClassFeatures.tsx';
-import CharacterName from './CharacterName.tsx';
-import Snackbar from '../../components/Snackbar.tsx';
-
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  padding: 1rem;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
-`;
-
-const StyledTitle = styled.h1`
-  margin-bottom: 2rem;
-  color: #fbbf24;
-  text-align: center;
-  font-size: 2.2rem;
-  font-weight: bold;
-  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
-  letter-spacing: 2px;
-  background: linear-gradient(45deg, #fbbf24 0%, #f59e0b 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-`;
-
-const StyledStepIndicator = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding: 0 1rem;
-`;
-
-const StyledStepsContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
-  flex: 1;
-`;
-
-const StyledStep = styled.div<{ $active: boolean; $completed: boolean }>`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: scale(1.05);
-  }
-`;
-
-const StyledStepNumber = styled.div<{ $active: boolean; $completed: boolean }>`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 1.2rem;
-  transition: all 0.3s ease;
-  
-  ${props => props.$completed && `
-    background: linear-gradient(145deg, #10b981 0%, #059669 100%);
-    color: white;
-    border: 2px solid #10b981;
-  `}
-  
-  ${props => props.$active && !props.$completed && `
-    background: linear-gradient(145deg, #fbbf24 0%, #f59e0b 100%);
-    color: #1e1b4b;
-    border: 2px solid #fbbf24;
-  `}
-  
-  ${props => !props.$active && !props.$completed && `
-    background: transparent;
-    color: #9ca3af;
-    border: 2px solid #9ca3af;
-  `}
-`;
-
-const StyledStepLabel = styled.span<{ $active: boolean; $completed: boolean }>`
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-align: center;
-  
-  ${props => props.$completed && `
-    color: #10b981;
-  `}
-  
-  ${props => props.$active && !props.$completed && `
-    color: #fbbf24;
-  `}
-  
-  ${props => !props.$active && !props.$completed && `
-    color: #9ca3af;
-  `}
-`;
-
-const StyledNavigationButtons = styled.div`
-  display: flex;
-  gap: 1rem;
-`;
-
-const StyledButton = styled.button<{ $variant?: 'primary' | 'secondary' }>`
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
-  min-width: 80px;
-  
-  ${props => props.$variant === 'primary' && `
-    background: linear-gradient(145deg, #fbbf24 0%, #f59e0b 100%);
-    color: #1e1b4b;
-    
-    &:hover {
-      background: linear-gradient(145deg, #f59e0b 0%, #d97706 100%);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
-    }
-  `}
-  
-  ${props => props.$variant === 'secondary' && `
-    background: transparent;
-    color: #9ca3af;
-    border: 2px solid #9ca3af;
-    
-    &:hover {
-      color: #fbbf24;
-      border-color: #fbbf24;
-    }
-  `}
-  
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-  }
-`;
-
-function CharacterCreation({ onNavigateToLoad }: { onNavigateToLoad: () => void }) {
-  const { state, dispatch, attributePointsRemaining } = useCharacter();
-  const [showSnackbar, setShowSnackbar] = useState(false);
-
-  const steps = [
-    { number: 1, label: 'Class & Features' },
-    { number: 2, label: 'Attributes' },
-    { number: 3, label: 'Ancestry' },
-    { number: 4, label: 'Character Name' },
-  ];
-
-  const handleStepClick = (step: number) => {
-    dispatch({ type: 'SET_STEP', step });
-  };
-
-  const handleNext = () => {
-    if (state.currentStep === 4 && isStepCompleted(4)) {
-      // Character is complete, trigger completion
-      const completedCharacter = {
-        ...state,
-        completedAt: new Date().toISOString(),
-        id: Date.now().toString()
-      };
-      
-      // Save to local storage
-      const existingCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-      existingCharacters.push(completedCharacter);
-      localStorage.setItem('savedCharacters', JSON.stringify(existingCharacters));
-      
-      // Show success snackbar
-      setShowSnackbar(true);
-      
-      // Navigate to load characters page after a short delay
-      setTimeout(() => {
-        onNavigateToLoad();
-      }, 1500);
-      
-      console.log('Character completed:', completedCharacter);
-    } else {
-      dispatch({ type: 'NEXT_STEP' });
-    }
-  };
-
-  const handlePrevious = () => {
-    dispatch({ type: 'PREVIOUS_STEP' });
-  };
-
-  const isStepCompleted = (step: number) => {
-    switch (step) {
-      case 1:
-        return state.classId !== null;
-      case 2:
-        return attributePointsRemaining === 0;
-      case 3:
-        return state.ancestry1Id !== null;
-      case 4:
-        return state.finalName !== null && state.finalName !== '' && 
-               state.finalPlayerName !== null && state.finalPlayerName !== '';
-      default:
-        return false;
-    }
-  };
-
-  const renderCurrentStep = () => {
-    switch (state.currentStep) {
-      case 1:
-        return (
-          <>
-            <ClassSelector />
-            <ClassFeatures />
-          </>
-        );
-      case 2:
-        return <Attributes />;
-      case 3:
-        return (
-          <>
-            <AncestrySelector />
-            <AncestryPointsCounter />
-            <SelectedAncestries />
-          </>
-        );
-      case 4:
-        return <CharacterName />;
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <div>
-      <StyledTitle>Character Creation</StyledTitle>
-      
-      <StyledStepIndicator>
-        <StyledNavigationButtons>
-          <StyledButton 
-            $variant="secondary" 
-            onClick={handlePrevious}
-            disabled={state.currentStep === 1}
-          >
-            ← Previous
-          </StyledButton>
-        </StyledNavigationButtons>
-
-        <StyledStepsContainer>
-          {steps.map((step) => (
-            <StyledStep 
-              key={step.number} 
-              $active={state.currentStep === step.number}
-              $completed={isStepCompleted(step.number)}
-              onClick={() => handleStepClick(step.number)}
-            >
-              <StyledStepNumber 
-                $active={state.currentStep === step.number}
-                $completed={isStepCompleted(step.number)}
-              >
-                {isStepCompleted(step.number) ? '✓' : step.number}
-              </StyledStepNumber>
-              <StyledStepLabel 
-                $active={state.currentStep === step.number}
-                $completed={isStepCompleted(step.number)}
-              >
-                {step.label}
-              </StyledStepLabel>
-            </StyledStep>
-          ))}
-        </StyledStepsContainer>
-
-        <StyledNavigationButtons>
-          <StyledButton 
-            $variant="primary" 
-            onClick={handleNext}
-            disabled={state.currentStep === 4 && !isStepCompleted(4)}
-          >
-            {state.currentStep === 4 ? 'Complete' : 'Next →'}
-          </StyledButton>
-        </StyledNavigationButtons>
-      </StyledStepIndicator>
-
-      <StyledContainer>
-        {renderCurrentStep()}
-      </StyledContainer>
-
-      <Snackbar
-        message="Character created successfully!"
-        isVisible={showSnackbar}
-        onClose={() => setShowSnackbar(false)}
-        duration={3000}
-      />
-    </div>
-  );
-}
-
-export default CharacterCreation;
-```
-
-## File: src/routes/character-creation/CharacterName.tsx
-```typescript
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { useCharacter } from '../../lib/stores/characterContext';
-import { nameByRace } from 'fantasy-name-generator';
-
-const StyledContainer = styled.div`
-  border: 2px solid #8b5cf6;
-  padding: 2rem;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-  margin-top: 2rem;
-  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
-  max-width: 600px;
-  margin: 2rem auto;
-`;
-
-const StyledTitle = styled.h2`
-  margin-top: 0;
-  color: #fbbf24;
-  font-size: 1.3rem;
-  font-weight: bold;
-  text-align: center;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  letter-spacing: 1px;
-  border-bottom: 2px solid #ef4444;
-  padding-bottom: 0.5rem;
-  margin-bottom: 2rem;
-`;
-
-const StyledInputGroup = styled.div`
-  margin-bottom: 1.5rem;
-`;
-
-const StyledLabel = styled.label`
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #fbbf24;
-  font-weight: bold;
-  font-size: 1rem;
-`;
-
-const StyledInput = styled.input`
-  width: 100%;
-  padding: 0.75rem;
-  border: 2px solid #a855f7;
-  border-radius: 8px;
-  background: rgba(45, 27, 105, 0.8);
-  color: #e5e7eb;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  
-  &:focus {
-    outline: none;
-    border-color: #fbbf24;
-    box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2);
-  }
-  
-  &::placeholder {
-    color: #9ca3af;
-  }
-`;
-
-const StyledSuggestionSection = styled.div`
-  margin-top: 1.5rem;
-  padding: 1.5rem;
-  border: 2px solid #a855f7;
-  border-radius: 8px;
-  background: rgba(45, 27, 105, 0.4);
-`;
-
-const StyledSuggestionTitle = styled.h3`
-  margin: 0 0 1rem 0;
-  color: #fbbf24;
-  font-size: 1.1rem;
-  font-weight: bold;
-`;
-
-const StyledSuggestionGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  max-height: 200px;
-  overflow-y: auto;
-`;
-
-const StyledSuggestionButton = styled.button`
-  padding: 0.5rem 1rem;
-  border: 2px solid #a855f7;
-  border-radius: 6px;
-  background: transparent;
-  color: #e5e7eb;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
-  
-  &:hover {
-    background: #a855f7;
-    color: #1e1b4b;
-    transform: translateY(-2px);
-  }
-`;
-
-const StyledGenerateButton = styled.button`
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(145deg, #fbbf24 0%, #f59e0b 100%);
-  color: #1e1b4b;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: 100%;
-  
-  &:hover {
-    background: linear-gradient(145deg, #f59e0b 0%, #d97706 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
-  }
-  
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-  }
-`;
-
-const StyledFinishButton = styled.button`
-  padding: 1rem 2rem;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(145deg, #10b981 0%, #059669 100%);
-  color: white;
-  font-weight: bold;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: 100%;
-  margin-top: 2rem;
-  
-  &:hover {
-    background: linear-gradient(145deg, #059669 0%, #047857 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-  }
-  
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-    background: linear-gradient(145deg, #6b7280 0%, #4b5563 100%);
-  }
-`;
-
-const StyledCharacterInfo = styled.div`
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  border: 2px solid #ef4444;
-  border-radius: 8px;
-  background: rgba(239, 68, 68, 0.1);
-  text-align: center;
-`;
-
-const StyledCharacterDetails = styled.p`
-  margin: 0;
-  color: #e5e7eb;
-  font-size: 1rem;
-  line-height: 1.6;
-`;
-
-// Name generation using fantasy-name-generator npm package
-const generateNamesFromNPM = (race: string): string[] => {
-  try {
-    const names: string[] = [];
-    
-    // Generate 6 different names (3 male, 3 female)
-    for (let i = 0; i < 3; i++) {
-      const maleName = nameByRace(race, { gender: 'male' });
-      const femaleName = nameByRace(race, { gender: 'female' });
-      
-      if (maleName && typeof maleName === 'string') {
-        names.push(maleName);
-      }
-      if (femaleName && typeof femaleName === 'string') {
-        names.push(femaleName);
-      }
-    }
-    
-    return names.filter(name => name.length > 0);
-  } catch (error) {
-    console.error('Error generating names from npm package:', error);
-    return [];
-  }
-};
-
-function CharacterName() {
-  const { state, dispatch } = useCharacter();
-  const [characterName, setCharacterName] = useState(state.finalName || '');
-  const [playerName, setPlayerName] = useState(state.finalPlayerName || '');
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [isGenerating, setIsGenerating] = useState(false);
-
-  const getFallbackNames = (ancestry: string) => {
-    const fallbackNames: { [key: string]: string[] } = {
-      human: ['Aiden', 'Brianna', 'Connor', 'Diana', 'Ethan', 'Fiona'],
-      elf: ['Aerdrie', 'Berrian', 'Caelynn', 'Dayereth', 'Enna', 'Galinndan'],
-      dwarf: ['Adrik', 'Baern', 'Cathra', 'Darrak', 'Eberk', 'Falkrunn'],
-      halfling: ['Alton', 'Bree', 'Cora', 'Daisy', 'Eldon', 'Finnan'],
-      dragonborn: ['Arjhan', 'Balasar', 'Bharash', 'Donaar', 'Ghesh', 'Heskan'],
-      gnome: ['Alston', 'Boddynock', 'Brocc', 'Burgell', 'Dimble', 'Eldon'],
-      'half-elf': ['Aramil', 'Berrian', 'Carric', 'Dayereth', 'Enna', 'Galinndan'],
-      'half-orc': ['Dench', 'Feng', 'Gell', 'Henk', 'Holg', 'Imsh'],
-      tiefling: ['Akmenos', 'Amnon', 'Barakas', 'Damakos', 'Ekemon', 'Iados']
-    };
-    
-    return fallbackNames[ancestry] || fallbackNames.human;
-  };
-
-  const generateNames = () => {
-    // No need for rate limiting with npm package, but keep generating state for UX
-    if (isGenerating) {
-      return;
-    }
-    
-    setIsGenerating(true);
-    
-    try {
-      // Get character details
-      const ancestry1 = state.ancestry1Id?.toLowerCase() || 'human';
-      const ancestry2 = state.ancestry2Id?.toLowerCase();
-      
-      // Map ancestry names to npm package race names
-      const raceMapping: { [key: string]: string } = {
-        human: 'human',
-        elf: 'elf',
-        dwarf: 'dwarf',
-        halfling: 'halfling',
-        dragonborn: 'dragon',
-        gnome: 'gnome',
-        'half-elf': 'elf',
-        'half-orc': 'orc',
-        tiefling: 'demon',
-        default: 'human'
-      };
-      
-      // Always generate names from first ancestry
-      const mappedRace1 = raceMapping[ancestry1] || 'human';
-      const npmNames1 = generateNamesFromNPM(mappedRace1);
-      const fallbackNames1 = getFallbackNames(ancestry1);
-      let allNames = [...npmNames1, ...fallbackNames1].slice(0, 6);
-      
-      // If second ancestry exists, append 6 more names from it
-      if (ancestry2) {
-        const mappedRace2 = raceMapping[ancestry2] || 'human';
-        const npmNames2 = generateNamesFromNPM(mappedRace2);
-        const fallbackNames2 = getFallbackNames(ancestry2);
-        const names2 = [...npmNames2, ...fallbackNames2].slice(0, 6);
-        allNames = [...allNames, ...names2];
-      }
-      
-      // Remove duplicates and limit appropriately
-      const uniqueNames = [...new Set(allNames)];
-      
-      // Add a small delay for better UX (simulate processing)
-      setTimeout(() => {
-        setSuggestions(uniqueNames);
-        setIsGenerating(false);
-      }, 500);
-      
-    } catch (error) {
-      console.error('Error generating names:', error);
-      // Fallback to local names
-      const fallbackNames = getFallbackNames(state.ancestry1Id?.toLowerCase() || 'human');
-      setSuggestions(fallbackNames);
-      setIsGenerating(false);
-    }
-  };
-
-  const selectSuggestion = (name: string) => {
-    setCharacterName(name);
-    // Update the context immediately
-    dispatch({ 
-      type: 'UPDATE_STORE', 
-      updates: { 
-        finalName: name
-      } 
-    });
-  };
-
-  const handleSubmit = () => {
-    if (characterName.trim() && playerName.trim()) {
-      const completedCharacter = {
-        ...state,
-        finalName: characterName.trim(),
-        finalPlayerName: playerName.trim(),
-        completedAt: new Date().toISOString(),
-        id: Date.now().toString() // Simple ID generation
-      };
-      
-      // Save to local storage
-      const existingCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-      existingCharacters.push(completedCharacter);
-      localStorage.setItem('savedCharacters', JSON.stringify(existingCharacters));
-      
-      // Update the store
-      dispatch({ 
-        type: 'UPDATE_STORE', 
-        updates: { 
-          finalName: characterName.trim(),
-          finalPlayerName: playerName.trim()
-        } 
-      });
-      
-      // Show success message
-      alert('Character saved successfully!');
-      
-      // TODO: Navigate back to menu or show completion screen
-      console.log('Character completed and saved:', completedCharacter);
-    }
-  };
-
-  const getCharacterDescription = () => {
-    const ancestry1 = state.ancestry1Id;
-    const ancestry2 = state.ancestry2Id;
-    const classId = state.classId;
-    
-    let ancestryDescription = 'Your Character';
-    
-    if (ancestry1 && ancestry2) {
-      // Both ancestries exist
-      ancestryDescription = `${ancestry1.charAt(0).toUpperCase() + ancestry1.slice(1)}/${ancestry2.charAt(0).toUpperCase() + ancestry2.slice(1)}`;
-    } else if (ancestry1) {
-      // Only first ancestry
-      ancestryDescription = `${ancestry1.charAt(0).toUpperCase() + ancestry1.slice(1)}`;
-    }
-    
-    if (classId) {
-      return `${ancestryDescription} ${classId.charAt(0).toUpperCase() + classId.slice(1)}`;
-    }
-    
-    return ancestryDescription;
-  };
-
-  return (
-    <StyledContainer>
-      <StyledTitle>Name Your Character</StyledTitle>
-      
-      <StyledCharacterInfo>
-        <StyledCharacterDetails>
-          Creating: {getCharacterDescription()}
-        </StyledCharacterDetails>
-      </StyledCharacterInfo>
-      
-      <StyledInputGroup>
-        <StyledLabel htmlFor="characterName">Character Name</StyledLabel>
-        <StyledInput
-          id="characterName"
-          type="text"
-          value={characterName}
-          onChange={(e) => {
-            const value = e.target.value;
-            setCharacterName(value);
-            // Update the context immediately
-            dispatch({ 
-              type: 'UPDATE_STORE', 
-              updates: { 
-                finalName: value.trim() || null
-              } 
-            });
-          }}
-          placeholder="Enter your character's name"
-        />
-      </StyledInputGroup>
-      
-      <StyledInputGroup>
-        <StyledLabel htmlFor="playerName">Player Name</StyledLabel>
-        <StyledInput
-          id="playerName"
-          type="text"
-          value={playerName}
-          onChange={(e) => {
-            const value = e.target.value;
-            setPlayerName(value);
-            // Update the context immediately
-            dispatch({ 
-              type: 'UPDATE_STORE', 
-              updates: { 
-                finalPlayerName: value.trim() || null
-              } 
-            });
-          }}
-          placeholder="Enter your name"
-        />
-      </StyledInputGroup>
-      
-      <StyledSuggestionSection>
-        <StyledSuggestionTitle>Name Suggestions</StyledSuggestionTitle>
-        {suggestions.length > 0 && (
-          <StyledSuggestionGrid>
-            {suggestions.map((name, index) => (
-              <StyledSuggestionButton
-                key={index}
-                onClick={() => selectSuggestion(name)}
-              >
-                {name}
-              </StyledSuggestionButton>
-            ))}
-          </StyledSuggestionGrid>
-        )}
-        <StyledGenerateButton 
-          onClick={generateNames}
-          disabled={isGenerating}
-        >
-          {isGenerating ? 'Generating...' : 'Generate Names'}
-        </StyledGenerateButton>
-      </StyledSuggestionSection>
-
-      <StyledFinishButton
-        onClick={handleSubmit}
-        disabled={!characterName.trim() || !playerName.trim()}
-      >
-        Complete Character Creation
-      </StyledFinishButton>
-    </StyledContainer>
-  );
-}
-
-export default CharacterName;
-```
-
-## File: src/routes/character-creation/ClassFeatures.tsx
-```typescript
-import React from 'react';
-import styled from 'styled-components';
-import { useCharacter } from '../../lib/stores/characterContext';
-import { classesData } from '../../lib/rulesdata/classes';
-import type { IClassDefinition } from '../../lib/rulesdata/types';
-
-const StyledContainer = styled.div`
-  border: 2px solid #8b5cf6;
-  padding: 1.5rem;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-  margin-top: 2rem;
-  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
-`;
-
-const StyledTitle = styled.h2`
-  margin-top: 0;
-  color: #fbbf24;
-  font-size: 1.3rem;
-  font-weight: bold;
-  text-align: center;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  letter-spacing: 1px;
-  border-bottom: 2px solid #ef4444;
-  padding-bottom: 0.5rem;
-  margin-bottom: 1rem;
-`;
-
-const StyledSection = styled.div`
-  margin-top: 1rem;
-`;
-
-const StyledSectionTitle = styled.h3`
-  margin: 0 0 1rem 0;
-  color: #ef4444;
-  font-size: 1.5rem;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  border-bottom: 2px solid #ef4444;
-  padding-bottom: 0.5rem;
-`;
-
-const StyledCard = styled.div`
-  border: 2px solid #a855f7;
-  padding: 1.5rem;
-  border-radius: 10px;
-  margin-bottom: 1rem;
-  background: linear-gradient(145deg, #2d1b69 0%, #4c1d95 100%);
-  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
-`;
-
-const StyledCardTitle = styled.h4`
-  margin: 0 0 0.5rem 0;
-  color: #fbbf24;
-  font-size: 1.3rem;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-`;
-
-const StyledCardDescription = styled.p`
-  margin: 0;
-  color: #e5e7eb;
-  line-height: 1.4;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-`;
-
-const StyledChoiceOptions = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`;
-
-const StyledLabel = styled.label`
-  display: flex;
-  align-items: flex-start;
-  gap: 0.8rem;
-  cursor: pointer;
-  color: #e5e7eb;
-  font-size: 0.95rem;
-  line-height: 1.4;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  padding: 0.5rem;
-  border-radius: 5px;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    color: #fbbf24;
-    background: rgba(139, 92, 246, 0.1);
-  }
-`;
-
-const StyledRadio = styled.input`
-  margin-top: 0.25rem;
-  flex-shrink: 0;
-  width: 18px;
-  height: 18px;
-  accent-color: #ef4444;
-  cursor: pointer;
-`;
-
-const StyledOptionDescription = styled.span`
-  font-size: 0.9em;
-  color: #9ca3af;
-  margin-left: 0.5rem;
-  font-style: italic;
-`;
-
-const StyledNoSelection = styled.p`
-  color: #9ca3af;
-  font-style: italic;
-  text-align: center;
-  font-size: 1.1rem;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-`;
-
-function ClassFeatures() {
-  const { state, dispatch } = useCharacter();
-  
-  const selectedClass = classesData.find(c => c.id === state.classId);
-  const selectedFeatureChoices: { [key: string]: string } = JSON.parse(state.selectedFeatureChoices || '{}');
-
-  function handleFeatureChoice(choiceId: string, value: string) {
-    const currentChoices = { ...selectedFeatureChoices };
-    currentChoices[choiceId] = value;
-    dispatch({ type: 'SET_FEATURE_CHOICES', selectedFeatureChoices: JSON.stringify(currentChoices) });
-  }
-
-  if (!selectedClass) {
-    return (
-      <StyledContainer>
-        <StyledNoSelection>Select a Class to see its features.</StyledNoSelection>
-      </StyledContainer>
-    );
-  }
-
-  return (
-    <StyledContainer>
-      <StyledTitle>{selectedClass.name} Features</StyledTitle>
-
-      <StyledSection>
-        <StyledSectionTitle>Level 1 Features</StyledSectionTitle>
-        {(selectedClass.level1Features || []).map((feature, index) => (
-          <StyledCard key={index}>
-            <StyledCardTitle>{feature.name}</StyledCardTitle>
-            <StyledCardDescription>{feature.description}</StyledCardDescription>
-          </StyledCard>
-        ))}
-      </StyledSection>
-
-      {selectedClass.featureChoicesLvl1 && selectedClass.featureChoicesLvl1.length > 0 && (
-        <StyledSection>
-          <StyledSectionTitle>Feature Choices</StyledSectionTitle>
-          {selectedClass.featureChoicesLvl1.map((choice) => (
-            <StyledCard key={choice.id}>
-              <StyledCardTitle>{choice.prompt}</StyledCardTitle>
-              {choice.type === 'select_one' && (
-                <StyledChoiceOptions>
-                  {choice.options.map((option) => (
-                    <StyledLabel key={option.value}>
-                      <StyledRadio
-                        type="radio"
-                        name={choice.id}
-                        value={option.value}
-                        checked={selectedFeatureChoices[choice.id] === option.value}
-                        onChange={() => handleFeatureChoice(choice.id, option.value)}
-                      />
-                      {option.label}
-                      {option.description && (
-                        <StyledOptionDescription>({option.description})</StyledOptionDescription>
-                      )}
-                    </StyledLabel>
-                  ))}
-                </StyledChoiceOptions>
-              )}
-            </StyledCard>
-          ))}
-        </StyledSection>
-      )}
-    </StyledContainer>
-  );
-}
-
-export default ClassFeatures;
-```
-
-## File: src/routes/character-creation/ClassSelector.tsx
-```typescript
-import { useState } from 'react';
-import styled from 'styled-components';
-import { useCharacter } from '../../lib/stores/characterContext';
-import { classesData } from '../../lib/rulesdata/classes';
-import type { IClassDefinition } from '../../lib/rulesdata/types';
-
-// Class-specific icons using Unicode symbols and emojis
-const classIcons: { [key: string]: string } = {
-  'fighter': '⚔️',
-  'wizard': '🧙‍♂️',
-  'rogue': '🗡️',
-  'cleric': '✨',
-  'ranger': '🏹',
-  'barbarian': '🪓',
-  'bard': '🎭',
-  'druid': '🌿',
-  'monk': '👊',
-  'paladin': '🛡️',
-  'sorcerer': '🔥',
-  'warlock': '👹',
-  'default': '⚡'
-};
-
-const StyledContainer = styled.div`
-  border: 2px solid #8b5cf6;
-  padding: 1.5rem;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-  margin-top: 2rem;
-  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
-`;
-
-const StyledTitle = styled.h2`
-  margin-top: 0;
-  color: #fbbf24;
-  font-size: 1.3rem;
-  font-weight: bold;
-  text-align: center;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  letter-spacing: 1px;
-  border-bottom: 2px solid #ef4444;
-  padding-bottom: 0.5rem;
-  margin-bottom: 1rem;
-`;
-
-const StyledGrid = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 1rem;
-`;
-
-const StyledCard = styled.button<{ $selected: boolean }>`
-  border: 2px solid #a855f7;
-  padding: 1.5rem;
-  border-radius: 10px;
-  background: linear-gradient(145deg, #2d1b69 0%, #4c1d95 100%);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  flex: 1;
-  min-width: 280px;
-  max-width: 280px;
-  height: 200px;
-  text-align: left;
-  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
-    border-color: #fbbf24;
-  }
-
-  ${props => props.$selected && `
-    border-color: #ef4444;
-    background: linear-gradient(145deg, #991b1b 0%, #dc2626 100%);
-    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
-    transform: translateY(-2px);
-  `}
-`;
-
-const StyledCardHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-`;
-
-const StyledClassIcon = styled.div`
-  font-size: 2rem;
-  flex-shrink: 0;
-  background: linear-gradient(145deg, #8b5cf6 0%, #a855f7 100%);
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-`;
-
-const StyledCardTitle = styled.h3`
-  margin: 0;
-  color: #fbbf24;
-  font-size: 1.4rem;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-`;
-
-const StyledCardDescription = styled.p`
-  margin: 0;
-  color: #e5e7eb;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  flex: 1;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  position: relative;
-`;
-
-const StyledCardFooter = styled.div`
-  margin-top: 0.5rem;
-  display: flex;
-  justify-content: flex-end;
-`;
-
-const StyledReadMore = styled.button`
-  color: #fbbf24;
-  font-size: 0.85rem;
-  font-weight: bold;
-  cursor: pointer;
-  text-decoration: underline;
-  background: none;
-  border: none;
-  padding: 0.5rem 0.75rem;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    color: #f59e0b;
-    background: rgba(251, 191, 36, 0.1);
-  }
-  
-  &:active {
-    transform: scale(0.95);
-  }
-`;
-
-const StyledTooltip = styled.div<{ $show: boolean }>`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
-  color: #e5e7eb;
-  padding: 2rem;
-  border-radius: 12px;
-  border: 3px solid #8b5cf6;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-  z-index: 2000;
-  width: 90vw;
-  max-width: 500px;
-  max-height: 80vh;
-  overflow-y: auto;
-  font-size: 1rem;
-  line-height: 1.6;
-  opacity: ${props => props.$show ? 1 : 0};
-  pointer-events: ${props => props.$show ? 'auto' : 'none'};
-  transition: opacity 0.3s ease;
-  
-  /* Custom scrollbar for popup */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: #1e1b4b;
-    border-radius: 4px;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: #8b5cf6;
-    border-radius: 4px;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: #a855f7;
-  }
-`;
-
-const StyledTooltipOverlay = styled.div<{ $show: boolean }>`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  z-index: 1999;
-  opacity: ${props => props.$show ? 1 : 0};
-  pointer-events: ${props => props.$show ? 'auto' : 'none'};
-  transition: opacity 0.3s ease;
-`;
-
-const StyledTooltipHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #8b5cf6;
-`;
-
-const StyledTooltipIcon = styled.div`
-  font-size: 3rem;
-  background: linear-gradient(145deg, #8b5cf6 0%, #a855f7 100%);
-  border-radius: 50%;
-  width: 70px;
-  height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-`;
-
-const StyledTooltipTitle = styled.h3`
-  margin: 0;
-  color: #fbbf24;
-  font-size: 1.8rem;
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-`;
-
-const StyledTooltipContent = styled.p`
-  margin: 0;
-  color: #e5e7eb;
-  font-size: 1.1rem;
-  line-height: 1.6;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-`;
-
-const StyledCloseHint = styled.div`
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid #8b5cf6;
-  text-align: center;
-  color: #9ca3af;
-  font-size: 0.9rem;
-  font-style: italic;
-`;
-
-function ClassSelector() {
-  const { state, dispatch } = useCharacter();
-  const selectedClassId = state.classId;
-  const [popupClass, setPopupClass] = useState<string | null>(null);
-
-  function handleSelectClass(classId: string) {
-    if (state.classId === classId) {
-      dispatch({ type: 'SET_CLASS', classId: null }); // Deselect if already selected
-    } else {
-      dispatch({ type: 'SET_CLASS', classId }); // Select new class
-    }
-  }
-
-  function getClassIcon(classId: string): string {
-    return classIcons[classId.toLowerCase()] || classIcons.default;
-  }
-
-  function truncateText(text: string, maxLength: number): string {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
-  }
-
-  function needsReadMore(text: string, maxLength: number): boolean {
-    return text.length > maxLength;
-  }
-
-  function openPopup(classId: string) {
-    setPopupClass(classId);
-  }
-
-  function closePopup() {
-    setPopupClass(null);
-  }
-
-  return (
-    <StyledContainer>
-      <StyledTitle>Choose Your Class</StyledTitle>
-      <StyledGrid>
-        {classesData.map((classDef: IClassDefinition) => (
-          <StyledCard
-            key={classDef.id}
-            type="button"
-            $selected={selectedClassId === classDef.id}
-            onClick={() => handleSelectClass(classDef.id)}
-          >
-            <StyledCardHeader>
-              <StyledClassIcon>{getClassIcon(classDef.id)}</StyledClassIcon>
-              <StyledCardTitle>{classDef.name}</StyledCardTitle>
-            </StyledCardHeader>
-            <StyledCardDescription>
-              {truncateText(classDef.description, 80)}
-            </StyledCardDescription>
-            {needsReadMore(classDef.description, 80) && (
-              <StyledCardFooter>
-                <StyledReadMore 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openPopup(classDef.id);
-                  }}
-                >
-                  read more...
-                </StyledReadMore>
-              </StyledCardFooter>
-            )}
-          </StyledCard>
-        ))}
-      </StyledGrid>
-      
-      {/* Popup overlay and content */}
-      <StyledTooltipOverlay 
-        $show={popupClass !== null} 
-        onClick={closePopup}
-      />
-      {popupClass && (
-        <StyledTooltip $show={popupClass !== null}>
-          <StyledTooltipHeader>
-            <StyledTooltipIcon>
-              {getClassIcon(popupClass)}
-            </StyledTooltipIcon>
-            <StyledTooltipTitle>
-              {classesData.find(c => c.id === popupClass)?.name}
-            </StyledTooltipTitle>
-          </StyledTooltipHeader>
-          <StyledTooltipContent>
-            {classesData.find(c => c.id === popupClass)?.description}
-          </StyledTooltipContent>
-          <StyledCloseHint>
-            Click anywhere to close
-          </StyledCloseHint>
-        </StyledTooltip>
-      )}
-    </StyledContainer>
-  );
-}
-
-export default ClassSelector;
-```
-
-## File: src/routes/character-creation/LoadCharacter.tsx
-```typescript
-import { useState, useEffect } from 'react';
-import styled from 'styled-components';
-
-const StyledContainer = styled.div`
-  padding: 2rem;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
-`;
-
-const StyledTitle = styled.h1`
-  margin-bottom: 2rem;
-  color: #fbbf24;
-  text-align: center;
-  font-size: 2.2rem;
-  font-weight: bold;
-  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
-  letter-spacing: 2px;
-`;
-
-const StyledCharacterGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  max-width: 1200px;
-  margin: 0 auto;
-`;
-
-const StyledCharacterCard = styled.div`
-  border: 2px solid #8b5cf6;
-  border-radius: 12px;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(139, 92, 246, 0.4);
-    border-color: #fbbf24;
-  }
-`;
-
-const StyledCharacterName = styled.h2`
-  margin: 0 0 1rem 0;
-  color: #fbbf24;
-  font-size: 1.5rem;
-  font-weight: bold;
-  text-align: center;
-`;
-
-const StyledPlayerName = styled.p`
-  margin: 0 0 1rem 0;
-  color: #e5e7eb;
-  font-size: 1rem;
-  text-align: center;
-  opacity: 0.8;
-`;
-
-const StyledCharacterDetails = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-`;
-
-const StyledDetailItem = styled.div`
-  text-align: center;
-`;
-
-const StyledDetailLabel = styled.div`
-  color: #a855f7;
-  font-size: 0.8rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-`;
-
-const StyledDetailValue = styled.div`
-  color: #e5e7eb;
-  font-size: 1rem;
-  font-weight: bold;
-  margin-top: 0.25rem;
-`;
-
-const StyledCompletedDate = styled.p`
-  margin: 0;
-  color: #6b7280;
-  font-size: 0.875rem;
-  text-align: center;
-  font-style: italic;
-`;
-
-const StyledEmptyState = styled.div`
-  text-align: center;
-  padding: 4rem 2rem;
-  color: #6b7280;
-`;
-
-const StyledEmptyTitle = styled.h2`
-  color: #a855f7;
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-`;
-
-const StyledEmptyText = styled.p`
-  font-size: 1rem;
-  line-height: 1.6;
-`;
-
-const StyledBackButton = styled.button`
-  padding: 0.75rem 1.5rem;
-  margin-bottom: 2rem;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(145deg, #6b7280 0%, #4b5563 100%);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: linear-gradient(145deg, #4b5563 0%, #374151 100%);
-    transform: translateY(-2px);
-  }
-`;
-
-interface SavedCharacter {
-  id: string;
-  finalName: string;
-  finalPlayerName: string;
-  classId: string;
-  ancestry1Id: string;
-  ancestry2Id?: string;
-  completedAt: string;
-  [key: string]: any;
-}
-
-interface LoadCharacterProps {
-  onBack: () => void;
-  onLoadCharacter?: (character: SavedCharacter) => void;
-}
-
-function LoadCharacter({ onBack, onLoadCharacter }: LoadCharacterProps) {
-  const [savedCharacters, setSavedCharacters] = useState<SavedCharacter[]>([]);
-
-  useEffect(() => {
-    const characters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-    setSavedCharacters(characters);
-  }, []);
-
-  const handleCharacterClick = (character: SavedCharacter) => {
-    if (onLoadCharacter) {
-      onLoadCharacter(character);
-    } else {
-      console.log('Loading character:', character);
-      // TODO: Implement character loading logic
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const formatAncestry = (ancestry1: string, ancestry2?: string) => {
-    if (ancestry2) {
-      return `${ancestry1}/${ancestry2}`;
-    }
-    return ancestry1;
-  };
-
-  return (
-    <StyledContainer>
-      <StyledBackButton onClick={onBack}>
-        ← Back to Menu
-      </StyledBackButton>
-      
-      <StyledTitle>Load Character</StyledTitle>
-      
-      {savedCharacters.length === 0 ? (
-        <StyledEmptyState>
-          <StyledEmptyTitle>No Saved Characters</StyledEmptyTitle>
-          <StyledEmptyText>
-            You haven't created any characters yet.<br />
-            Go back to the menu and create your first character!
-          </StyledEmptyText>
-        </StyledEmptyState>
-      ) : (
-        <StyledCharacterGrid>
-          {savedCharacters.map((character) => (
-            <StyledCharacterCard 
-              key={character.id}
-              onClick={() => handleCharacterClick(character)}
-            >
-              <StyledCharacterName>
-                {character.finalName || 'Unnamed Character'}
-              </StyledCharacterName>
-              
-              <StyledPlayerName>
-                Player: {character.finalPlayerName || 'Unknown'}
-              </StyledPlayerName>
-              
-              <StyledCharacterDetails>
-                <StyledDetailItem>
-                  <StyledDetailLabel>Race</StyledDetailLabel>
-                  <StyledDetailValue>
-                    {formatAncestry(
-                      character.ancestry1Id || 'Unknown',
-                      character.ancestry2Id
-                    )}
-                  </StyledDetailValue>
-                </StyledDetailItem>
-                
-                <StyledDetailItem>
-                  <StyledDetailLabel>Class</StyledDetailLabel>
-                  <StyledDetailValue>
-                    {character.classId || 'Unknown'}
-                  </StyledDetailValue>
-                </StyledDetailItem>
-              </StyledCharacterDetails>
-              
-              <StyledCompletedDate>
-                Created: {formatDate(character.completedAt)}
-              </StyledCompletedDate>
-            </StyledCharacterCard>
-          ))}
-        </StyledCharacterGrid>
-      )}
-    </StyledContainer>
-  );
-}
-
-export default LoadCharacter;
-```
-
-## File: src/routes/character-creation/SelectedAncestries.tsx
-```typescript
-import React from 'react';
-import styled from 'styled-components';
-import { useCharacter } from '../../lib/stores/characterContext';
-import { ancestriesData } from '../../lib/rulesdata/ancestries';
-import { traitsData } from '../../lib/rulesdata/traits';
-import type { IAncestry, ITrait } from '../../lib/rulesdata/types';
-
-const StyledOuterContainer = styled.div`
-  border: 2px solid #8b5cf6;
-  padding: 1.5rem;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-  margin-top: 2rem;
-  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
-`;
-
-const StyledMainTitle = styled.h2`
-  margin-top: 0;
-  color: #fbbf24;
-  font-size: 1.3rem;
-  font-weight: bold;
-  text-align: center;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  letter-spacing: 1px;
-  border-bottom: 2px solid #ef4444;
-  padding-bottom: 0.5rem;
-  margin-bottom: 1rem;
-`;
-
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-`;
-
-const StyledAncestryDetails = styled.div`
-  border: 2px solid #a855f7;
-  padding: 1.5rem;
-  border-radius: 10px;
-  background: linear-gradient(145deg, #2d1b69 0%, #4c1d95 100%);
-  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
-`;
-
-const StyledTitle = styled.h2`
-  margin: 0 0 1rem 0;
-  color: #fbbf24;
-  font-size: 1.3rem;
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  text-align: center;
-  border-bottom: 2px solid #ef4444;
-  padding-bottom: 0.5rem;
-`;
-
-const StyledSubtitle = styled.h3`
-  margin: 1rem 0 0.5rem 0;
-  color: #ef4444;
-  font-size: 1.3rem;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  border-bottom: 1px solid #ef4444;
-  padding-bottom: 0.25rem;
-`;
-
-const StyledList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin: 0;
-`;
-
-const StyledListItem = styled.li`
-  margin-bottom: 0.8rem;
-  padding: 0.5rem;
-  border-radius: 5px;
-  background: rgba(139, 92, 246, 0.1);
-  border-left: 3px solid #8b5cf6;
-`;
-
-const StyledLabel = styled.label`
-  display: flex;
-  align-items: flex-start;
-  gap: 0.8rem;
-  cursor: pointer;
-  color: #e5e7eb;
-  font-size: 0.95rem;
-  line-height: 1.4;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  
-  &:hover {
-    color: #fbbf24;
-  }
-`;
-
-const StyledCheckbox = styled.input`
-  margin-top: 0.25rem;
-  flex-shrink: 0;
-  width: 18px;
-  height: 18px;
-  accent-color: #ef4444;
-  cursor: pointer;
-`;
-
-function SelectedAncestries() {
-  const { state, dispatch } = useCharacter();
-  
-  const selectedAncestry1 = ancestriesData.find(a => a.id === state.ancestry1Id);
-  const selectedAncestry2 = ancestriesData.find(a => a.id === state.ancestry2Id);
-  const selectedTraits: string[] = JSON.parse(state.selectedTraitIds || '[]');
-
-  function getTrait(traitId: string): ITrait | undefined {
-    return traitsData.find(t => t.id === traitId);
-  }
-
-  function handleToggleTrait(traitId: string) {
-    const trait = getTrait(traitId);
-    if (!trait) return;
-
-    let currentTraits = [...selectedTraits];
-    
-    if (currentTraits.includes(traitId)) {
-      // Deselect
-      currentTraits = currentTraits.filter(id => id !== traitId);
-    } else {
-      // Select
-      currentTraits.push(traitId);
-    }
-    
-    dispatch({ type: 'SET_TRAITS', selectedTraitIds: JSON.stringify(currentTraits) });
-  }
-
-  function renderAncestryTraits(ancestry: IAncestry) {
-    return (
-      <StyledAncestryDetails>
-        <StyledTitle>{ancestry.name}</StyledTitle>
-        
-        <StyledSubtitle>Default Traits</StyledSubtitle>
-        <StyledList>
-          {(ancestry.defaultTraitIds || []).map(traitId => {
-            const trait = getTrait(traitId);
-            if (!trait) return null;
-            return (
-              <StyledListItem key={traitId}>
-                <StyledLabel>
-                  <StyledCheckbox 
-                    type="checkbox" 
-                    checked={selectedTraits.includes(traitId)} 
-                    onChange={() => handleToggleTrait(traitId)} 
-                  />
-                  {trait.name} ({trait.cost} pts) - {trait.description}
-                </StyledLabel>
-              </StyledListItem>
-            );
-          })}
-        </StyledList>
-        
-        <StyledSubtitle>Expanded Traits</StyledSubtitle>
-        <StyledList>
-          {(ancestry.expandedTraitIds || []).map(traitId => {
-            const trait = getTrait(traitId);
-            if (!trait) return null;
-            return (
-              <StyledListItem key={traitId}>
-                <StyledLabel>
-                  <StyledCheckbox 
-                    type="checkbox" 
-                    checked={selectedTraits.includes(traitId)} 
-                    onChange={() => handleToggleTrait(traitId)} 
-                  />
-                  {trait.name} ({trait.cost} pts) - {trait.description}
-                </StyledLabel>
-              </StyledListItem>
-            );
-          })}
-        </StyledList>
-      </StyledAncestryDetails>
-    );
-  }
-
-  return (
-    <StyledOuterContainer>
-      <StyledMainTitle>Ancestry Traits</StyledMainTitle>
-      <StyledContainer>
-        {selectedAncestry1 && renderAncestryTraits(selectedAncestry1)}
-        {selectedAncestry2 && renderAncestryTraits(selectedAncestry2)}
-      </StyledContainer>
-    </StyledOuterContainer>
-  );
-}
-
-export default SelectedAncestries;
-```
-
-## File: tsconfig.node.json
-```json
-{
-  "compilerOptions": {
-    "composite": true,
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
-    "skipLibCheck": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "noEmit": true
-  },
-  "include": ["vite.config.ts"]
-}
-```
-
-## File: vercel.json
-```json
-{
-  "outputDirectory": "dist"
-}
-```
-
-## File: vitest.config.ts
-```typescript
-import { defineConfig } from 'vitest/config';
-
-export default defineConfig({
-	test: {
-		projects: [
-			{
-				extends: './vite.config.ts',
-				test: {
-					name: 'client',
-					environment: 'browser',
-					browser: {
-						enabled: true,
-						provider: 'playwright',
-						instances: [{ browser: 'chromium' }]
-					},
-					include: ['src/**/*.{test,spec}.{js,ts,jsx,tsx}'],
-					exclude: ['src/lib/server/**'],
-					setupFiles: ['./vitest-setup-client.ts']
-				}
-			},
-			{
-				extends: './vite.config.ts',
-				test: {
-					name: 'server',
-					environment: 'node',
-					include: ['src/**/*.{test,spec}.{js,ts}'],
-					exclude: ['src/**/*.{test,spec}.{js,ts,jsx,tsx}']
-				}
-			}
-		]
-	}
-});
-```
-
-## File: .env.example
-```
-DATABASE_URL="postgres://root:mysecretpassword@localhost:5432/local"
-```
-
-## File: .gitignore
-```
-test-results
-node_modules
-
-# Output
-.output
-.vercel
-.netlify
-.wrangler
-/.svelte-kit
-/build
-/dist
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Env
-.env
-.env.*
-!.env.example
-!.env.test
-
-# Vite
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
-```
-
-## File: .npmrc
-```
-engine-strict=true
-```
-
-## File: .prettierignore
-```
-# Package Managers
-package-lock.json
-pnpm-lock.yaml
-yarn.lock
-bun.lock
-bun.lockb
-```
-
-## File: .prettierrc
-```
-{
-	"useTabs": true,
-	"singleQuote": true,
-	"trailingComma": "none",
-	"printWidth": 100,
-	"plugins": ["prettier-plugin-svelte", "prettier-plugin-tailwindcss"],
-	"overrides": [
-		{
-			"files": "*.svelte",
-			"options": {
-				"parser": "svelte"
-			}
-		}
-	]
-}
-```
-
-## File: .repomixignore
-```
-# Add patterns to ignore here, one per line
-# Example:
-# *.log
-# tmp/
-*.pdf
-```
-
-## File: docker-compose.yml
-```yaml
-services:
-  db:
-    image: postgres
-    restart: always
-    ports:
-      - 5432:5432
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: mysecretpassword
-      POSTGRES_DB: local
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-volumes:
-  pgdata:
-```
-
-## File: drizzle.config.ts
-```typescript
-import { defineConfig } from 'drizzle-kit';
-
-if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
-
-export default defineConfig({
-	schema: './src/lib/server/db/schema.ts',
-	dialect: 'postgresql',
-	dbCredentials: { url: process.env.DATABASE_URL },
-	verbose: true,
-	strict: true
-});
-```
-
-## File: e2e/demo.test.ts
-```typescript
-import { expect, test } from '@playwright/test';
-
-test('home page has expected h1', async ({ page }) => {
-	await page.goto('/');
-	await expect(page.locator('h1')).toBeVisible();
-});
-```
-
-## File: eslint.config.js
-```javascript
-import prettier from 'eslint-config-prettier';
-import { includeIgnoreFile } from '@eslint/compat';
-import js from '@eslint/js';
-import svelte from 'eslint-plugin-svelte';
-import globals from 'globals';
-import { fileURLToPath } from 'node:url';
-import ts from 'typescript-eslint';
-import svelteConfig from './svelte.config.js';
-
-const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
-
-export default ts.config(
-	includeIgnoreFile(gitignorePath),
-	js.configs.recommended,
-	...ts.configs.recommended,
-	...svelte.configs.recommended,
-	prettier,
-	...svelte.configs.prettier,
-	{
-		languageOptions: {
-			globals: { ...globals.browser, ...globals.node }
-		},
-		rules: {
-			// typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
-			// see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
-			'no-undef': 'off'
-		}
-	},
-	{
-		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
-		languageOptions: {
-			parserOptions: {
-				projectService: true,
-				extraFileExtensions: ['.svelte'],
-				parser: ts.parser,
-				svelteConfig
-			}
-		}
-	}
-);
-```
-
-## File: playwright.config.ts
-```typescript
-import { defineConfig } from '@playwright/test';
-
-export default defineConfig({
-	webServer: {
-		command: 'npm run build && npm run preview',
-		port: 4173
-	},
-	testDir: 'e2e'
-});
-```
-
-## File: prisma/migrations/20250526210112_init/migration.sql
-```sql
--- CreateTable
-CREATE TABLE "CharacterInProgress" (
-    "id" TEXT NOT NULL,
-    "attribute_might" INTEGER NOT NULL DEFAULT -2,
-    "attribute_agility" INTEGER NOT NULL DEFAULT -2,
-    "attribute_charisma" INTEGER NOT NULL DEFAULT -2,
-    "attribute_intelligence" INTEGER NOT NULL DEFAULT -2,
-    "pointsSpent" INTEGER NOT NULL DEFAULT 0,
-    "ancestry1Id" TEXT,
-    "ancestry2Id" TEXT,
-    "selectedTraitIds" TEXT NOT NULL,
-    "ancestryPointsSpent" INTEGER NOT NULL DEFAULT 0,
-    "classId" TEXT,
-    "selectedFeatureChoices" TEXT NOT NULL,
-    "finalName" TEXT,
-    "finalPlayerName" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "CharacterInProgress_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "CharacterSheetData" (
-    "id" TEXT NOT NULL,
-    "characterInProgressId" TEXT NOT NULL,
-    "finalName" TEXT NOT NULL,
-    "finalPlayerName" TEXT,
-    "finalLevel" INTEGER NOT NULL DEFAULT 1,
-    "finalMight" INTEGER NOT NULL,
-    "finalAgility" INTEGER NOT NULL,
-    "finalCharisma" INTEGER NOT NULL,
-    "finalIntelligence" INTEGER NOT NULL,
-    "finalPrimeModifierValue" INTEGER NOT NULL,
-    "finalPrimeModifierAttribute" TEXT NOT NULL,
-    "finalCombatMastery" INTEGER NOT NULL DEFAULT 1,
-    "finalSaveMasteryMight" INTEGER NOT NULL,
-    "finalSaveMasterityAgility" INTEGER NOT NULL,
-    "finalSaveMasteryCharisma" INTEGER NOT NULL,
-    "finalSaveMasteryIntelligence" INTEGER NOT NULL,
-    "finalHPMax" INTEGER NOT NULL,
-    "finalSPMax" INTEGER NOT NULL,
-    "finalMPMax" INTEGER NOT NULL,
-    "finalPD" INTEGER NOT NULL,
-    "finalAD" INTEGER NOT NULL,
-    "finalPDR" TEXT,
-    "finalEDR" TEXT,
-    "finalMDR" TEXT,
-    "finalSaveDC" INTEGER NOT NULL,
-    "finalDeathThreshold" INTEGER NOT NULL,
-    "finalMoveSpeed" INTEGER NOT NULL,
-    "finalJumpDistance" INTEGER NOT NULL,
-    "finalRestPoints" INTEGER NOT NULL,
-    "finalGritPoints" INTEGER NOT NULL,
-    "finalInitiativeBonus" INTEGER NOT NULL,
-    "skillsJson" TEXT NOT NULL,
-    "tradesJson" TEXT NOT NULL,
-    "languagesJson" TEXT NOT NULL,
-    "ancestry1Name" TEXT,
-    "ancestry2Name" TEXT,
-    "selectedTraitsJson" TEXT NOT NULL,
-    "className" TEXT NOT NULL,
-    "classFeaturesLvl1Json" TEXT NOT NULL,
-    "equipmentJson" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "CharacterSheetData_pkey" PRIMARY KEY ("id")
-);
-
--- CreateIndex
-CREATE UNIQUE INDEX "CharacterSheetData_characterInProgressId_key" ON "CharacterSheetData"("characterInProgressId");
-
--- AddForeignKey
-ALTER TABLE "CharacterSheetData" ADD CONSTRAINT "CharacterSheetData_characterInProgressId_fkey" FOREIGN KEY ("characterInProgressId") REFERENCES "CharacterInProgress"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-```
-
-## File: prisma/migrations/20250620112102_allow_next_in_stage_a/migration.sql
-```sql
--- AlterTable
-ALTER TABLE "CharacterInProgress" ADD COLUMN     "currentStep" INTEGER NOT NULL DEFAULT 1;
-```
-
-## File: prisma/migrations/migration_lock.toml
-```toml
-# Please do not edit this file manually
-# It should be added in your version-control system (e.g., Git)
-provider = "postgresql"
-```
-
-## File: prisma/schema.prisma
-```
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-1.1.x"]
-}
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-// Model to store the character creation progress
-model CharacterInProgress {
-  id                   String @id @default(uuid())
-  // Stage A: Attributes
-  attribute_might      Int    @default(-2)
-  attribute_agility    Int    @default(-2)
-  attribute_charisma   Int    @default(-2)
-  attribute_intelligence Int  @default(-2)
-  pointsSpent          Int    @default(0) // Points spent in point buy
-  currentStep          Int    @default(1) // Current stage in the wizard (1 = Stage A, 2 = Stage B, etc.)
-
-  // Core Stats
-  level                Int    @default(1)
-  combatMastery        Int    @default(1) // Calculated as half level rounded up
-
-  // Stage B: Ancestry
-  ancestry1Id          String? // ID of the first ancestry
-  ancestry2Id          String? // ID of the second ancestry (for mixed ancestry)
-  selectedTraitIds     String // JSON string of selected trait IDs
-  ancestryPointsSpent  Int    @default(0) // Points spent on traits
-
-  // Stage C: Class
-  classId              String? // ID of the selected class
-  selectedFeatureChoices String // JSON string of selected feature choice IDs/values
-
-  // Stage D: Skills (MVP Scope)
-  // Will add skill selection fields here later
-
-  // Stage E: Equipment (MVP Scope)
-  // Will add equipment selection fields here later
-
-  // Stage F: Details (MVP Scope)
-  finalName            String?
-  finalPlayerName      String?
-
-  // Link to the final character sheet data (once creation is complete)
-  finalCharacterSheet  CharacterSheetData?
-
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-}
-
-// Model to store the final calculated character sheet data
-model CharacterSheetData {
-  id                   String @id @default(uuid())
-  characterInProgressId String @unique // Link back to the progress record
-  characterInProgress  CharacterInProgress @relation(fields: [characterInProgressId], references: [id])
-
-  // Final Calculated Stats (based on MVP mvp.md Section IV)
-  finalName            String
-  finalPlayerName      String?
-  finalLevel           Int    @default(1)
-
-  finalMight           Int
-  finalAgility         Int
-  finalCharisma        Int
-  finalIntelligence    Int
-
-  finalPrimeModifierValue Int
-  finalPrimeModifierAttribute String
-
-  finalCombatMastery   Int    @default(1)
-
-  finalSaveMasteryMight Int
-  finalSaveMasterityAgility Int
-  finalSaveMasteryCharisma Int
-  finalSaveMasteryIntelligence Int
-
-  finalHPMax           Int
-  finalSPMax           Int
-  finalMPMax           Int
-
-  finalPD              Int
-  finalAD              Int
-
-  finalPDR             String?
-  finalEDR             String?
-  finalMDR             String?
-
-  finalSaveDC          Int
-  finalDeathThreshold  Int
-  finalMoveSpeed       Int
-  finalJumpDistance    Int
-  finalRestPoints      Int
-  finalGritPoints      Int
-  finalInitiativeBonus Int
-
-  skillsJson           String // JSON string of skill data
-  tradesJson           String // JSON string of trade data
-  languagesJson        String // JSON string of language data
-
-  ancestry1Name        String?
-  ancestry2Name        String?
-  selectedTraitsJson   String // JSON string of selected traits
-
-  className            String
-  classFeaturesLvl1Json String // JSON string of Lvl 1 class features
-
-  equipmentJson        String // JSON string of equipment
-
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-}
-```
-
-## File: project_summary.md
-```markdown
-# Project Summary
-
-This document provides a comprehensive overview of the Svelte library project, including its purpose, technology stack, and structure.
-
-## Overview
-
-This project is a Svelte-based library starter, designed to provide a foundation for developing and publishing reusable Svelte components. It includes a full development environment with a showcase application, a robust testing suite, and a database setup, making it suitable for building complex, data-driven libraries.
-
-## Technology Stack
-
-The project leverages a modern technology stack, including:
-
-- **Framework**: [SvelteKit](https://kit.svelte.dev/)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Bundler**: [Vite](https://vitejs.dev/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Database**: [PostgreSQL](https://www.postgresql.org/) with [Drizzle ORM](https://orm.drizzle.team/)
-- **Authentication**: Inferred to be [Lucia Auth](https://lucia-auth.com/) based on file structure and dependencies
-- **Testing**:
-  - **Unit Testing**: [Vitest](https://vitest.dev/)
-  - **E2E Testing**: [Playwright](https://playwright.dev/)
-
-## Project Structure
-
-The project is organized into the following key directories:
-
-- `src/lib`: Contains the core library code intended for packaging and distribution.
-- `src/routes`: A showcase application for demonstrating the library's features.
-- `src/routes/demo/lucia`: Includes pages and server-side logic for handling user authentication.
-- `src/lib/server/auth.ts`: Server-side authentication logic.
-- `src/lib/server/db`: Database schema and connection management.
-- `e2e`: End-to-end tests for the showcase application.
-
-## Key Scripts
-
-The `package.json` file defines several important scripts for managing the project:
-
-- `dev`: Starts the development server for the showcase app.
-- `build`: Creates a production build of the showcase app.
-- `package`: Packages the `src/lib` directory into a distributable format.
-- `test`: Executes both unit and end-to-end tests.
-- `db:*`: A set of scripts for managing the PostgreSQL database, including starting the container, applying schema changes, and running migrations.
-```
-
-## File: repomix.config.json
-```json
-{
-  "input": {
-    "maxFileSize": 52428800
-  },
-  "output": {
-    "filePath": "repomix-output.md",
-    "style": "markdown",
-    "parsableStyle": false,
-    "fileSummary": true,
-    "directoryStructure": true,
-    "files": true,
-    "removeComments": false,
-    "removeEmptyLines": false,
-    "compress": false,
-    "topFilesLength": 5,
-    "showLineNumbers": false,
-    "copyToClipboard": false,
-    "git": {
-      "sortByChanges": true,
-      "sortByChangesMaxCommits": 100
-    }
-  },
-  "include": [],
-  "ignore": {
-    "useGitignore": true,
-    "useDefaultPatterns": true,
-    "customPatterns": []
-  },
-  "security": {
-    "enableSecurityCheck": true
-  },
-  "tokenCount": {
-    "encoding": "o200k_base"
-  }
-}
-```
-
-## File: src/app.css
-```css
-@import 'tailwindcss';
-
-/* D&D Themed Global Styles */
-body {
-  background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
-  min-height: 100vh;
-  font-family: 'Georgia', 'Times New Roman', serif;
-  color: #e5e7eb;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  margin: 0;
-  padding: 0;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 12px;
-}
-
-::-webkit-scrollbar-track {
-  background: #1e1b4b;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #8b5cf6;
-  border-radius: 6px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #a855f7;
-}
-
-/* Selection colors */
-::selection {
-  background: #fbbf24;
-  color: #1e1b4b;
-}
-
-::-moz-selection {
-  background: #fbbf24;
-  color: #1e1b4b;
-}
-```
-
-## File: src/app.d.ts
-```typescript
-// See https://svelte.dev/docs/kit/types#app.d.ts
-// for information about these interfaces
-declare global {
-	namespace App {
-		interface Locals {
-			user: import('$lib/server/auth').SessionValidationResult['user'];
-			session: import('$lib/server/auth').SessionValidationResult['session'];
-		}
-	} // interface Error {}
-	// interface Locals {}
-} // interface PageData {}
-// interface PageState {}
-
-// interface Platform {}
-export {};
-```
+````
 
 ## File: src/demo.spec.ts
-```typescript
+````typescript
 import { describe, it, expect } from 'vitest';
 
 describe('sum test', () => {
@@ -3763,15 +2561,42 @@ describe('sum test', () => {
 		expect(1 + 2).toBe(3);
 	});
 });
-```
+````
 
 ## File: src/lib/index.ts
-```typescript
+````typescript
 // Reexport your entry components here
-```
+````
+
+## File: src/lib/prisma.ts
+````typescript
+import { PrismaClient } from '@prisma/client';
+
+// PrismaClient is instantiated once and reused across hot reloads in development
+// and across invocations in production serverless environments.
+// This prevents multiple connections to the database.
+
+declare global {
+  // eslint-disable-next-line no-var
+  var prisma: PrismaClient | undefined;
+}
+
+let prisma: PrismaClient;
+
+if (process.env.NODE_ENV === 'production') {
+  prisma = new PrismaClient();
+} else {
+  if (!global.prisma) {
+    global.prisma = new PrismaClient();
+  }
+  prisma = global.prisma;
+}
+
+export default prisma;
+````
 
 ## File: src/lib/rulesdata/ancestries.ts
-```typescript
+````typescript
 // src/lib/rulesdata/ancestries.ts
 
 import type { IAncestry } from './types';
@@ -3888,10 +2713,10 @@ export const ancestriesData: IAncestry[] = [
     },
   },
 ];
-```
+````
 
 ## File: src/lib/rulesdata/attributes.ts
-```typescript
+````typescript
 // src/lib/rulesdata/attributes.ts
 
 import type { IAttributeData } from './types';
@@ -3934,10 +2759,10 @@ export const attributesData: IAttributeData[] = [
   ]
 }
 ];
-```
+````
 
 ## File: src/lib/rulesdata/classes.ts
-```typescript
+````typescript
 import type { IClassDefinition } from './types.js';
 
 // IClassDefinition for Barbarian:
@@ -4599,10 +3424,10 @@ export const classesData: IClassDefinition[] = [
   wizardClass,
   // Add other classes here as they are populated
 ];
-```
+````
 
 ## File: src/lib/rulesdata/languages.ts
-```typescript
+````typescript
 import type { ILanguageData } from './types';
 
 export const languagesData: ILanguageData[] = [
@@ -4685,10 +3510,10 @@ export const languagesData: ILanguageData[] = [
     description: 'Undercommon is a language spoken by inhabitants of the Underdark, such as Drow. Typical Speakers: Drow, Underdark inhabitants.'
   }
 ];
-```
+````
 
 ## File: src/lib/rulesdata/skills.ts
-```typescript
+````typescript
 import type { ISkillData } from './types';
 
 export const skillsData: ISkillData[] = [
@@ -4765,10 +3590,10 @@ export const skillsData: ISkillData[] = [
     description: 'Awareness governs your ability to detect the presence of other creatures or objects using your sight, hearing, smell, or other senses.'
   },
 ];
-```
+````
 
 ## File: src/lib/rulesdata/trades.ts
-```typescript
+````typescript
 import { ITradeData } from './types';
 
 export const tradesData: ITradeData[] = [
@@ -5018,10 +3843,10 @@ export const tradesData: ITradeData[] = [
     tools: 'Woodcarver’s Tools'
   }
 ];
-```
+````
 
 ## File: src/lib/rulesdata/traits.ts
-```typescript
+````typescript
 import type { ITrait } from './types';
 
 export const traitsData: ITrait[] = [
@@ -6352,10 +5177,10 @@ export const traitsData: ITrait[] = [
     effects: [{ type: 'GRANT_ABILITY', value: 'Shoot_Webs_1AP' }]
   },
 ];
-```
+````
 
 ## File: src/lib/rulesdata/types.ts
-```typescript
+````typescript
 // src/lib/rulesdata/types.ts
 
 // Interface for Attribute Data
@@ -6487,10 +5312,10 @@ export interface ILanguageData {
   type: 'standard' | 'exotic'; // Type of language
   description: string;
 }
-```
+````
 
 ## File: src/lib/server/auth.ts
-```typescript
+````typescript
 import type { RequestEvent } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import { sha256 } from '@oslojs/crypto/sha2';
@@ -6572,10 +5397,207 @@ export function deleteSessionTokenCookie(event: RequestEvent) {
 		path: '/'
 	});
 }
-```
+````
+
+## File: src/lib/stores/characterContext.tsx
+````typescript
+import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import type { CharacterInProgress } from '@prisma/client';
+
+// Define the shape of the data stored in the character store
+export interface CharacterInProgressStoreData extends CharacterInProgress {
+  currentStep: number;
+  overflowTraitId: string | null;
+  overflowAttributeName: string | null;
+  level: number;
+  combatMastery: number;
+}
+
+// Initial state for the store
+const initialCharacterInProgressState: CharacterInProgressStoreData = {
+  id: '',
+  attribute_might: -2,
+  attribute_agility: -2,
+  attribute_charisma: -2,
+  attribute_intelligence: -2,
+  pointsSpent: 0,
+  level: 1,
+  combatMastery: 1,
+  ancestry1Id: null,
+  ancestry2Id: null,
+  selectedTraitIds: '',
+  ancestryPointsSpent: 0,
+  classId: null,
+  selectedFeatureChoices: '',
+  finalName: null,
+  finalPlayerName: null,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  currentStep: 1,
+  overflowTraitId: null,
+  overflowAttributeName: null,
+};
+
+// Action types
+type CharacterAction = 
+  | { type: 'UPDATE_ATTRIBUTE'; attribute: string; value: number }
+  | { type: 'SET_CLASS'; classId: string | null }
+  | { type: 'SET_ANCESTRY'; ancestry1Id: string | null; ancestry2Id: string | null }
+  | { type: 'SET_TRAITS'; selectedTraitIds: string }
+  | { type: 'SET_FEATURE_CHOICES'; selectedFeatureChoices: string }
+  | { type: 'UPDATE_STORE'; updates: Partial<CharacterInProgressStoreData> }
+  | { type: 'NEXT_STEP' }
+  | { type: 'PREVIOUS_STEP' }
+  | { type: 'SET_STEP'; step: number };
+
+// Reducer function
+function characterReducer(state: CharacterInProgressStoreData, action: CharacterAction): CharacterInProgressStoreData {
+  switch (action.type) {
+    case 'UPDATE_ATTRIBUTE':
+      return {
+        ...state,
+        [action.attribute]: action.value,
+      };
+    case 'SET_CLASS':
+      return {
+        ...state,
+        classId: action.classId,
+      };
+    case 'SET_ANCESTRY':
+      return {
+        ...state,
+        ancestry1Id: action.ancestry1Id,
+        ancestry2Id: action.ancestry2Id,
+      };
+    case 'SET_TRAITS':
+      return {
+        ...state,
+        selectedTraitIds: action.selectedTraitIds,
+      };
+    case 'SET_FEATURE_CHOICES':
+      return {
+        ...state,
+        selectedFeatureChoices: action.selectedFeatureChoices,
+      };
+    case 'UPDATE_STORE':
+      return {
+        ...state,
+        ...action.updates,
+      };
+    case 'NEXT_STEP':
+      return {
+        ...state,
+        currentStep: Math.min(state.currentStep + 1, 4),
+      };
+    case 'PREVIOUS_STEP':
+      return {
+        ...state,
+        currentStep: Math.max(state.currentStep - 1, 1),
+      };
+    case 'SET_STEP':
+      return {
+        ...state,
+        currentStep: Math.max(1, Math.min(action.step, 4)),
+      };
+    default:
+      return state;
+  }
+}
+
+// Context type
+interface CharacterContextType {
+  state: CharacterInProgressStoreData;
+  dispatch: React.Dispatch<CharacterAction>;
+  // Derived values
+  attributePointsRemaining: number;
+  ancestryPointsRemaining: number;
+  combatMastery: number;
+  primeModifier: { name: string; value: number };
+}
+
+// Create context
+const CharacterContext = createContext<CharacterContextType | undefined>(undefined);
+
+// Provider component
+export function CharacterProvider({ children }: { children: ReactNode }) {
+  const [state, dispatch] = useReducer(characterReducer, initialCharacterInProgressState);
+
+  // Derived values
+  const attributePointsRemaining = 12 - (
+    (state.attribute_might + 2) +
+    (state.attribute_agility + 2) +
+    (state.attribute_charisma + 2) +
+    (state.attribute_intelligence + 2)
+  );
+
+  const ancestryPointsRemaining = 5 - state.ancestryPointsSpent;
+
+  const combatMastery = Math.ceil((state.level ?? 1) / 2);
+
+  const primeModifier = (() => {
+    const attributes = [
+      { name: 'Might', value: state.attribute_might },
+      { name: 'Agility', value: state.attribute_agility },
+      { name: 'Charisma', value: state.attribute_charisma },
+      { name: 'Intelligence', value: state.attribute_intelligence },
+    ];
+
+    let highestAttribute = attributes[0];
+    for (let i = 1; i < attributes.length; i++) {
+      if (attributes[i].value > highestAttribute.value) {
+        highestAttribute = attributes[i];
+      }
+    }
+
+    return highestAttribute;
+  })();
+
+  const contextValue: CharacterContextType = {
+    state,
+    dispatch,
+    attributePointsRemaining,
+    ancestryPointsRemaining,
+    combatMastery,
+    primeModifier,
+  };
+
+  return (
+    <CharacterContext.Provider value={contextValue}>
+      {children}
+    </CharacterContext.Provider>
+  );
+}
+
+// Custom hook to use the character context
+export function useCharacter() {
+  const context = useContext(CharacterContext);
+  if (context === undefined) {
+    throw new Error('useCharacter must be used within a CharacterProvider');
+  }
+  return context;
+}
+
+// Helper function to get an attribute's modifier
+export function getModifier(attributeScore: number | null | undefined): number {
+  return attributeScore ?? 0;
+}
+````
+
+## File: src/main.tsx
+````typescript
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+````
 
 ## File: src/routes/api/character/progress/_backup_merge_stages_20250621/stageA+server.ts
-```typescript
+````typescript
 import { json, error } from '@sveltejs/kit';
 import { PrismaClient } from '@prisma/client';
 
@@ -6675,10 +5697,10 @@ export async function POST({ request }) {
     await prisma.$disconnect();
   }
 }
-```
+````
 
 ## File: src/routes/api/character/progress/_backup_merge_stages_20250621/stageB+server.ts
-```typescript
+````typescript
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { PrismaClient } from '@prisma/client';
@@ -6851,151 +5873,2023 @@ export const POST: RequestHandler = async ({ request }) => {
 //         return json({ success: false, message: 'Failed to fetch Stage B data.' }, { status: 500 });
 //     }
 // };
-```
+````
 
-## File: src/routes/api/character/progress/complete/+server.ts
-```typescript
-// src/routes/api/character/progress/complete/+server.ts
+## File: src/routes/character-creation/AncestryPointsCounter.tsx
+````typescript
+import React from 'react';
+import styled from 'styled-components';
+import { useCharacter } from '../../lib/stores/characterContext';
 
-import { json } from '@sveltejs/kit';
-import { PrismaClient } from '@prisma/client';
-import { classesData } from '$lib/rulesdata/classes';
-import { traitsData } from '$lib/rulesdata/traits';
-import type { RequestHandler } from './$types';
+const StyledContainer = styled.div`
+  padding: 1.5rem;
+  border: 2px solid #8b5cf6;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  margin-bottom: 1rem;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+  text-align: center;
+`;
 
-const prisma = new PrismaClient();
+const StyledTitle = styled.h2`
+  margin: 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+`;
 
-function validateFeatureChoices(classId: string, selectedChoicesJson: string) {
-  const classData = classesData.find(c => c.id === classId);
-  if (!classData) throw new Error(`Invalid class ID: ${classId}`);
+function AncestryPointsCounter() {
+  const { ancestryPointsRemaining } = useCharacter();
 
-  const choices = JSON.parse(selectedChoicesJson || '{}');
-
-  for (const requiredChoice of classData.featureChoicesLvl1 || []) {
-    if (choices[requiredChoice.id] === undefined) {
-      throw new Error(`Missing required choice for ${classData.name}: ${requiredChoice.prompt}`);
-    }
-    const validOptions = requiredChoice.options.map(o => o.value);
-    if (!validOptions.includes(choices[requiredChoice.id])) {
-      throw new Error(`Invalid selected option for ${requiredChoice.id} in class ${classData.name}`);
-    }
-  }
+  return (
+    <StyledContainer>
+      <StyledTitle>Ancestry Points: {ancestryPointsRemaining}</StyledTitle>
+    </StyledContainer>
+  );
 }
 
-function validateAttributeCapsAfterTraits(attributes: any, selectedTraitIdsJson: string) {
-  const selectedTraitIds = JSON.parse(selectedTraitIdsJson || '[]');
-  const traits = selectedTraitIds.map((id: string) => traitsData.find(t => t.id === id)).filter((t: any) => t !== undefined);
+export default AncestryPointsCounter;
+````
 
-  const finalAttributes = { ...attributes };
+## File: src/routes/character-creation/AncestrySelector.tsx
+````typescript
+import { useState } from 'react';
+import styled from 'styled-components';
+import { useCharacter } from '../../lib/stores/characterContext';
+import { ancestriesData } from '../../lib/rulesdata/ancestries';
+import type { IAncestry } from '../../lib/rulesdata/types';
 
-  for (const trait of traits) {
-    const attrEffect = trait.effects?.find((e: any) => e.type === 'MODIFY_ATTRIBUTE');
-    if (attrEffect && attrEffect.target && typeof attrEffect.value === 'number') {
-      const attributeKey = `attribute_${attrEffect.target}`;
-      if (attributeKey in finalAttributes) {
-        finalAttributes[attributeKey] += attrEffect.value;
+// Ancestry-specific icons using Unicode symbols and emojis
+const ancestryIcons: { [key: string]: string } = {
+  'human': '👤',
+  'elf': '🧝‍♂️',
+  'dwarf': '🧔',
+  'halfling': '🧙‍♂️',
+  'dragonborn': '🐉',
+  'gnome': '🎭',
+  'half-elf': '🧝‍♀️',
+  'half-orc': '👹',
+  'tiefling': '😈',
+  'orc': '🗡️',
+  'goblin': '👺',
+  'kobold': '🦎',
+  'default': '🌟'
+};
+
+const StyledContainer = styled.div`
+  border: 2px solid #8b5cf6;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  margin-top: 2rem;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+`;
+
+const StyledTitle = styled.h2`
+  margin-top: 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const StyledGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+`;
+
+const StyledCard = styled.button<{ $selected: boolean }>`
+  border: 2px solid #a855f7;
+  padding: 1.5rem;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #2d1b69 0%, #4c1d95 100%);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
+    border-color: #fbbf24;
+  }
+
+  ${props => props.$selected && `
+    border-color: #ef4444;
+    background: linear-gradient(145deg, #991b1b 0%, #dc2626 100%);
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
+    transform: translateY(-2px);
+  `}
+`;
+
+const StyledCardHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+`;
+
+const StyledAncestryIcon = styled.div`
+  font-size: 2rem;
+  flex-shrink: 0;
+  background: linear-gradient(145deg, #8b5cf6 0%, #a855f7 100%);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+`;
+
+const StyledCardTitle = styled.h3`
+  margin: 0;
+  color: #fbbf24;
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledCardDescription = styled.p`
+  margin: 0;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  flex: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  position: relative;
+`;
+
+const StyledCardFooter = styled.div`
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const StyledReadMore = styled.button`
+  color: #fbbf24;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: #f59e0b;
+    background: rgba(251, 191, 36, 0.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+`;
+
+const StyledTooltip = styled.div<{ $show: boolean }>`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
+  color: #e5e7eb;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 3px solid #8b5cf6;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  z-index: 2000;
+  width: 90vw;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  font-size: 1rem;
+  line-height: 1.6;
+  opacity: ${props => props.$show ? 1 : 0};
+  pointer-events: ${props => props.$show ? 'auto' : 'none'};
+  transition: opacity 0.3s ease;
+  
+  /* Custom scrollbar for popup */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #1e1b4b;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #8b5cf6;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a855f7;
+  }
+`;
+
+const StyledTooltipOverlay = styled.div<{ $show: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1999;
+  opacity: ${props => props.$show ? 1 : 0};
+  pointer-events: ${props => props.$show ? 'auto' : 'none'};
+  transition: opacity 0.3s ease;
+`;
+
+const StyledTooltipHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #8b5cf6;
+`;
+
+const StyledTooltipIcon = styled.div`
+  font-size: 3rem;
+  background: linear-gradient(145deg, #8b5cf6 0%, #a855f7 100%);
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+`;
+
+const StyledTooltipTitle = styled.h3`
+  margin: 0;
+  color: #fbbf24;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledTooltipContent = styled.p`
+  margin: 0;
+  color: #e5e7eb;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledCloseHint = styled.div`
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #8b5cf6;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  font-style: italic;
+`;
+
+function AncestrySelector() {
+  const { state, dispatch } = useCharacter();
+  const [popupAncestry, setPopupAncestry] = useState<string | null>(null);
+  
+  const selectedAncestries: string[] = [];
+  if (state.ancestry1Id) selectedAncestries.push(state.ancestry1Id);
+  if (state.ancestry2Id) selectedAncestries.push(state.ancestry2Id);
+
+  function handleSelectAncestry(ancestryId: string) {
+    const isSelected = selectedAncestries.includes(ancestryId);
+    
+    if (isSelected) {
+      // Deselect
+      let newAncestry1Id = state.ancestry1Id;
+      let newAncestry2Id = state.ancestry2Id;
+      
+      if (state.ancestry1Id === ancestryId) {
+        newAncestry1Id = null;
+      } else if (state.ancestry2Id === ancestryId) {
+        newAncestry2Id = null;
+      }
+      
+      dispatch({ type: 'SET_ANCESTRY', ancestry1Id: newAncestry1Id, ancestry2Id: newAncestry2Id });
+    } else {
+      // Select
+      if (!state.ancestry1Id) {
+        dispatch({ type: 'SET_ANCESTRY', ancestry1Id: ancestryId, ancestry2Id: state.ancestry2Id });
+      } else if (!state.ancestry2Id) {
+        dispatch({ type: 'SET_ANCESTRY', ancestry1Id: state.ancestry1Id, ancestry2Id: ancestryId });
       }
     }
   }
 
-  const ATTRIBUTE_MAX_L1 = 3;
-  for (const [attrName, finalValue] of Object.entries(finalAttributes)) {
-    if (finalValue > ATTRIBUTE_MAX_L1) {
-      throw new Error(`Final attribute ${attrName.replace('attribute_', '')} exceeds Level 1 cap (+3) after applying traits.`);
-    }
+  function getAncestryIcon(ancestryId: string): string {
+    return ancestryIcons[ancestryId.toLowerCase()] || ancestryIcons.default;
   }
+
+  function truncateText(text: string, maxLength: number): string {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  }
+
+  function needsReadMore(text: string, maxLength: number): boolean {
+    return text.length > maxLength;
+  }
+
+  function openPopup(ancestryId: string) {
+    setPopupAncestry(ancestryId);
+  }
+
+  function closePopup() {
+    setPopupAncestry(null);
+  }
+
+  return (
+    <StyledContainer>
+      <StyledTitle>Choose Your Ancestry</StyledTitle>
+      <StyledGrid>
+        {ancestriesData.map((ancestry: IAncestry) => (
+          <StyledCard
+            key={ancestry.id}
+            type="button"
+            $selected={selectedAncestries.includes(ancestry.id)}
+            onClick={() => handleSelectAncestry(ancestry.id)}
+          >
+            <StyledCardHeader>
+              <StyledAncestryIcon>{getAncestryIcon(ancestry.id)}</StyledAncestryIcon>
+              <StyledCardTitle>{ancestry.name}</StyledCardTitle>
+            </StyledCardHeader>
+            <StyledCardDescription>
+              {truncateText(ancestry.description, 80)}
+            </StyledCardDescription>
+            {needsReadMore(ancestry.description, 80) && (
+              <StyledCardFooter>
+                <StyledReadMore 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openPopup(ancestry.id);
+                  }}
+                >
+                  read more...
+                </StyledReadMore>
+              </StyledCardFooter>
+            )}
+          </StyledCard>
+        ))}
+      </StyledGrid>
+      
+      {/* Popup overlay and content */}
+      <StyledTooltipOverlay 
+        $show={popupAncestry !== null} 
+        onClick={closePopup}
+      />
+      {popupAncestry && (
+        <StyledTooltip $show={popupAncestry !== null}>
+          <StyledTooltipHeader>
+            <StyledTooltipIcon>
+              {getAncestryIcon(popupAncestry)}
+            </StyledTooltipIcon>
+            <StyledTooltipTitle>
+              {ancestriesData.find(a => a.id === popupAncestry)?.name}
+            </StyledTooltipTitle>
+          </StyledTooltipHeader>
+          <StyledTooltipContent>
+            {ancestriesData.find(a => a.id === popupAncestry)?.description}
+          </StyledTooltipContent>
+          <StyledCloseHint>
+            Click anywhere to close
+          </StyledCloseHint>
+        </StyledTooltip>
+      )}
+    </StyledContainer>
+  );
 }
 
-export const POST: RequestHandler = async ({ request }) => {
+export default AncestrySelector;
+````
+
+## File: src/routes/character-creation/Attributes.tsx
+````typescript
+import styled from 'styled-components';
+import { useCharacter } from '../../lib/stores/characterContext';
+import { attributesData } from '../../lib/rulesdata/attributes';
+
+const StyledContainer = styled.div`
+  border: 2px solid #8b5cf6;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  margin-top: 2rem;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+`;
+
+const StyledTitle = styled.h2`
+  margin-top: 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const StyledPointsRemaining = styled.p`
+  margin: 0.5rem 0;
+  font-weight: bold;
+  color: #ef4444;
+  font-size: 1.2rem;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+`;
+
+const StyledCard = styled.div`
+  border: 2px solid #a855f7;
+  padding: 1.5rem;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #2d1b69 0%, #4c1d95 100%);
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
+    border-color: #fbbf24;
+  }
+`;
+
+const StyledCardTitle = styled.h3`
+  margin: 0 0 0.5rem 0;
+  color: #fbbf24;
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledControls = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+`;
+
+const StyledButton = styled.button`
+  width: 45px;
+  height: 45px;
+  border: 2px solid #dc2626;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #991b1b 0%, #dc2626 100%);
+  color: #fbbf24;
+  cursor: pointer;
+  font-size: 1.4rem;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+
+  &:hover {
+    background: linear-gradient(145deg, #dc2626 0%, #ef4444 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.5);
+    border-color: #fbbf24;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: linear-gradient(145deg, #4b5563 0%, #6b7280 100%);
+    border-color: #6b7280;
+    transform: none;
+    box-shadow: none;
+  }
+`;
+
+const StyledValue = styled.p`
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  min-width: 40px;
+  color: #fbbf24;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #8b5cf6;
+`;
+
+const StyledDescription = styled.p`
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin: 0.5rem 0 1rem 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+type AttributeState = Record<string, number>;
+
+function Attributes() {
+  const { state, dispatch, attributePointsRemaining } = useCharacter();
+  const typedState = state as unknown as AttributeState;
+
+  function increaseAttribute(attribute: string) {
+    if (attributePointsRemaining > 0) {
+      const currentValue = typedState[attribute];
+      dispatch({ type: 'UPDATE_ATTRIBUTE', attribute, value: currentValue + 1 });
+    }
+  }
+
+  function decreaseAttribute(attribute: string) {
+    const currentValue = typedState[attribute];
+    if (currentValue > -2) {
+      dispatch({ type: 'UPDATE_ATTRIBUTE', attribute, value: currentValue - 1 });
+    }
+  }
+
+  return (
+    <StyledContainer>
+      <StyledTitle>Attributes</StyledTitle>
+      <StyledPointsRemaining>
+        Points Remaining: {attributePointsRemaining}
+      </StyledPointsRemaining>
+      <StyledGrid>
+        {attributesData.map((attribute) => (
+          <StyledCard key={attribute.id}>
+            <StyledCardTitle>{attribute.name}</StyledCardTitle>
+            <StyledDescription>{attribute.description}</StyledDescription>
+            <StyledControls>
+              <StyledButton
+                onClick={() => decreaseAttribute('attribute_' + attribute.id)}
+                disabled={typedState['attribute_' + attribute.id] <= -2}
+              >
+                -
+              </StyledButton>
+              <StyledValue>{typedState['attribute_' + attribute.id]}</StyledValue>
+              <StyledButton
+                onClick={() => increaseAttribute('attribute_' + attribute.id)}
+                disabled={attributePointsRemaining <= 0}
+              >
+                +
+              </StyledButton>
+            </StyledControls>
+          </StyledCard>
+        ))}
+      </StyledGrid>
+    </StyledContainer>
+  );
+}
+
+export default Attributes;
+````
+
+## File: src/routes/character-creation/CharacterName.tsx
+````typescript
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { useCharacter } from '../../lib/stores/characterContext';
+import { nameByRace } from 'fantasy-name-generator';
+
+const StyledContainer = styled.div`
+  border: 2px solid #8b5cf6;
+  padding: 2rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  margin-top: 2rem;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+  max-width: 600px;
+  margin: 2rem auto;
+`;
+
+const StyledTitle = styled.h2`
+  margin-top: 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+  margin-bottom: 2rem;
+`;
+
+const StyledInputGroup = styled.div`
+  margin-bottom: 1.5rem;
+`;
+
+const StyledLabel = styled.label`
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #fbbf24;
+  font-weight: bold;
+  font-size: 1rem;
+`;
+
+const StyledInput = styled.input`
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #a855f7;
+  border-radius: 8px;
+  background: rgba(45, 27, 105, 0.8);
+  color: #e5e7eb;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: #fbbf24;
+    box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2);
+  }
+  
+  &::placeholder {
+    color: #9ca3af;
+  }
+`;
+
+const StyledSuggestionSection = styled.div`
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border: 2px solid #a855f7;
+  border-radius: 8px;
+  background: rgba(45, 27, 105, 0.4);
+`;
+
+const StyledSuggestionTitle = styled.h3`
+  margin: 0 0 1rem 0;
+  color: #fbbf24;
+  font-size: 1.1rem;
+  font-weight: bold;
+`;
+
+const StyledSuggestionGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  max-height: 200px;
+  overflow-y: auto;
+`;
+
+const StyledSuggestionButton = styled.button`
+  padding: 0.5rem 1rem;
+  border: 2px solid #a855f7;
+  border-radius: 6px;
+  background: transparent;
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  
+  &:hover {
+    background: #a855f7;
+    color: #1e1b4b;
+    transform: translateY(-2px);
+  }
+`;
+
+const StyledGenerateButton = styled.button`
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #fbbf24 0%, #f59e0b 100%);
+  color: #1e1b4b;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  
+  &:hover {
+    background: linear-gradient(145deg, #f59e0b 0%, #d97706 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+`;
+
+const StyledFinishButton = styled.button`
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #10b981 0%, #059669 100%);
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-top: 2rem;
+  
+  &:hover {
+    background: linear-gradient(145deg, #059669 0%, #047857 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    background: linear-gradient(145deg, #6b7280 0%, #4b5563 100%);
+  }
+`;
+
+const StyledCharacterInfo = styled.div`
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 2px solid #ef4444;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  text-align: center;
+`;
+
+const StyledCharacterDetails = styled.p`
+  margin: 0;
+  color: #e5e7eb;
+  font-size: 1rem;
+  line-height: 1.6;
+`;
+
+// Name generation using fantasy-name-generator npm package
+const generateNamesFromNPM = (race: string): string[] => {
   try {
-    const data = await request.json();
-
-    // Basic validation
-    if (!data.finalName || typeof data.finalName !== 'string' || data.finalName.trim().length === 0) {
-      return json({ error: 'Character name is required.' }, { status: 400 });
-    }
-
-    // Validate attributes and point buy (Stage A)
-    const attributes = {
-      attribute_might: data.attribute_might,
-      attribute_agility: data.attribute_agility,
-      attribute_charisma: data.attribute_charisma,
-      attribute_intelligence: data.attribute_intelligence
-    };
-    const totalPoints = Object.values(attributes).reduce((sum, v) => sum + (typeof v === 'number' ? v : 0), 0);
-    if (totalPoints !== 0) {
-      return json({ error: 'Attribute points must sum to 0 (point buy).' }, { status: 400 });
-    }
-
-    // Validate ancestry selections (Stage B)
-    if (!data.ancestry1Id) {
-      return json({ error: 'At least one ancestry must be selected.' }, { status: 400 });
-    }
-    if (data.ancestry2Id && data.ancestry1Id === data.ancestry2Id) {
-      return json({ error: 'Cannot select the same ancestry twice.' }, { status: 400 });
-    }
-
-    // Validate selected trait IDs (Stage B)
-    try {
-      const selectedTraitIds = JSON.parse(data.selectedTraitIds || '[]');
-      if (!Array.isArray(selectedTraitIds)) throw new Error();
-      // Additional trait validation can be added here
-    } catch {
-      return json({ error: 'Invalid selectedTraitIds format.' }, { status: 400 });
-    }
-
-    // Validate class selection (Stage C)
-    if (!data.classId || !classesData.find(c => c.id === data.classId)) {
-      return json({ error: 'A valid class must be selected.' }, { status: 400 });
-    }
-
-    // Validate feature choices (Stage C)
-    try {
-      validateFeatureChoices(data.classId, data.selectedFeatureChoices);
-    } catch (err: any) {
-      return json({ error: err.message }, { status: 400 });
-    }
-
-    // Cross-stage validation: attribute caps after traits
-    try {
-      validateAttributeCapsAfterTraits(attributes, data.selectedTraitIds);
-    } catch (err: any) {
-      return json({ error: err.message }, { status: 400 });
-    }
-
-    // Save to DB in a transaction
-    const result = await prisma.$transaction(async (tx) => {
-      // Upsert CharacterInProgress by id if provided, else create new
-      let character;
-      if (data.id) {
-        character = await tx.characterInProgress.update({
-          where: { id: data.id },
-          data: {
-            ...data,
-            updatedAt: new Date()
-          }
-        });
-      } else {
-        character = await tx.characterInProgress.create({
-          data: {
-            ...data,
-            createdAt: new Date(),
-            updatedAt: new Date()
-          }
-        });
+    const names: string[] = [];
+    
+    // Generate 6 different names (3 male, 3 female)
+    for (let i = 0; i < 3; i++) {
+      const maleName = nameByRace(race, { gender: 'male' });
+      const femaleName = nameByRace(race, { gender: 'female' });
+      
+      if (maleName && typeof maleName === 'string') {
+        names.push(maleName);
       }
-      return character;
-    });
-
-    return json({ success: true, id: result.id });
-  } catch (err: any) {
-    return json({ error: err.message || 'Unknown error' }, { status: 500 });
+      if (femaleName && typeof femaleName === 'string') {
+        names.push(femaleName);
+      }
+    }
+    
+    return names.filter(name => name.length > 0);
+  } catch (error) {
+    console.error('Error generating names from npm package:', error);
+    return [];
   }
 };
-```
+
+function CharacterName() {
+  const { state, dispatch } = useCharacter();
+  const [characterName, setCharacterName] = useState(state.finalName || '');
+  const [playerName, setPlayerName] = useState(state.finalPlayerName || '');
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const getFallbackNames = (ancestry: string) => {
+    const fallbackNames: { [key: string]: string[] } = {
+      human: ['Aiden', 'Brianna', 'Connor', 'Diana', 'Ethan', 'Fiona'],
+      elf: ['Aerdrie', 'Berrian', 'Caelynn', 'Dayereth', 'Enna', 'Galinndan'],
+      dwarf: ['Adrik', 'Baern', 'Cathra', 'Darrak', 'Eberk', 'Falkrunn'],
+      halfling: ['Alton', 'Bree', 'Cora', 'Daisy', 'Eldon', 'Finnan'],
+      dragonborn: ['Arjhan', 'Balasar', 'Bharash', 'Donaar', 'Ghesh', 'Heskan'],
+      gnome: ['Alston', 'Boddynock', 'Brocc', 'Burgell', 'Dimble', 'Eldon'],
+      'half-elf': ['Aramil', 'Berrian', 'Carric', 'Dayereth', 'Enna', 'Galinndan'],
+      'half-orc': ['Dench', 'Feng', 'Gell', 'Henk', 'Holg', 'Imsh'],
+      tiefling: ['Akmenos', 'Amnon', 'Barakas', 'Damakos', 'Ekemon', 'Iados']
+    };
+    
+    return fallbackNames[ancestry] || fallbackNames.human;
+  };
+
+  const generateNames = () => {
+    // No need for rate limiting with npm package, but keep generating state for UX
+    if (isGenerating) {
+      return;
+    }
+    
+    setIsGenerating(true);
+    
+    try {
+      // Get character details
+      const ancestry1 = state.ancestry1Id?.toLowerCase() || 'human';
+      const ancestry2 = state.ancestry2Id?.toLowerCase();
+      
+      // Map ancestry names to npm package race names
+      const raceMapping: { [key: string]: string } = {
+        human: 'human',
+        elf: 'elf',
+        dwarf: 'dwarf',
+        halfling: 'halfling',
+        dragonborn: 'dragon',
+        gnome: 'gnome',
+        'half-elf': 'elf',
+        'half-orc': 'orc',
+        tiefling: 'demon',
+        default: 'human'
+      };
+      
+      // Always generate names from first ancestry
+      const mappedRace1 = raceMapping[ancestry1] || 'human';
+      const npmNames1 = generateNamesFromNPM(mappedRace1);
+      const fallbackNames1 = getFallbackNames(ancestry1);
+      let allNames = [...npmNames1, ...fallbackNames1].slice(0, 6);
+      
+      // If second ancestry exists, append 6 more names from it
+      if (ancestry2) {
+        const mappedRace2 = raceMapping[ancestry2] || 'human';
+        const npmNames2 = generateNamesFromNPM(mappedRace2);
+        const fallbackNames2 = getFallbackNames(ancestry2);
+        const names2 = [...npmNames2, ...fallbackNames2].slice(0, 6);
+        allNames = [...allNames, ...names2];
+      }
+      
+      // Remove duplicates and limit appropriately
+      const uniqueNames = [...new Set(allNames)];
+      
+      // Add a small delay for better UX (simulate processing)
+      setTimeout(() => {
+        setSuggestions(uniqueNames);
+        setIsGenerating(false);
+      }, 500);
+      
+    } catch (error) {
+      console.error('Error generating names:', error);
+      // Fallback to local names
+      const fallbackNames = getFallbackNames(state.ancestry1Id?.toLowerCase() || 'human');
+      setSuggestions(fallbackNames);
+      setIsGenerating(false);
+    }
+  };
+
+  const selectSuggestion = (name: string) => {
+    setCharacterName(name);
+    // Update the context immediately
+    dispatch({ 
+      type: 'UPDATE_STORE', 
+      updates: { 
+        finalName: name
+      } 
+    });
+  };
+
+  const handleSubmit = () => {
+    if (characterName.trim() && playerName.trim()) {
+      const completedCharacter = {
+        ...state,
+        finalName: characterName.trim(),
+        finalPlayerName: playerName.trim(),
+        completedAt: new Date().toISOString(),
+        id: Date.now().toString() // Simple ID generation
+      };
+      
+      // Save to local storage
+      const existingCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+      existingCharacters.push(completedCharacter);
+      localStorage.setItem('savedCharacters', JSON.stringify(existingCharacters));
+      
+      // Update the store
+      dispatch({ 
+        type: 'UPDATE_STORE', 
+        updates: { 
+          finalName: characterName.trim(),
+          finalPlayerName: playerName.trim()
+        } 
+      });
+      
+      // Show success message
+      alert('Character saved successfully!');
+      
+      // TODO: Navigate back to menu or show completion screen
+      console.log('Character completed and saved:', completedCharacter);
+    }
+  };
+
+  const getCharacterDescription = () => {
+    const ancestry1 = state.ancestry1Id;
+    const ancestry2 = state.ancestry2Id;
+    const classId = state.classId;
+    
+    let ancestryDescription = 'Your Character';
+    
+    if (ancestry1 && ancestry2) {
+      // Both ancestries exist
+      ancestryDescription = `${ancestry1.charAt(0).toUpperCase() + ancestry1.slice(1)}/${ancestry2.charAt(0).toUpperCase() + ancestry2.slice(1)}`;
+    } else if (ancestry1) {
+      // Only first ancestry
+      ancestryDescription = `${ancestry1.charAt(0).toUpperCase() + ancestry1.slice(1)}`;
+    }
+    
+    if (classId) {
+      return `${ancestryDescription} ${classId.charAt(0).toUpperCase() + classId.slice(1)}`;
+    }
+    
+    return ancestryDescription;
+  };
+
+  return (
+    <StyledContainer>
+      <StyledTitle>Name Your Character</StyledTitle>
+      
+      <StyledCharacterInfo>
+        <StyledCharacterDetails>
+          Creating: {getCharacterDescription()}
+        </StyledCharacterDetails>
+      </StyledCharacterInfo>
+      
+      <StyledInputGroup>
+        <StyledLabel htmlFor="characterName">Character Name</StyledLabel>
+        <StyledInput
+          id="characterName"
+          type="text"
+          value={characterName}
+          onChange={(e) => {
+            const value = e.target.value;
+            setCharacterName(value);
+            // Update the context immediately
+            dispatch({ 
+              type: 'UPDATE_STORE', 
+              updates: { 
+                finalName: value.trim() || null
+              } 
+            });
+          }}
+          placeholder="Enter your character's name"
+        />
+      </StyledInputGroup>
+      
+      <StyledInputGroup>
+        <StyledLabel htmlFor="playerName">Player Name</StyledLabel>
+        <StyledInput
+          id="playerName"
+          type="text"
+          value={playerName}
+          onChange={(e) => {
+            const value = e.target.value;
+            setPlayerName(value);
+            // Update the context immediately
+            dispatch({ 
+              type: 'UPDATE_STORE', 
+              updates: { 
+                finalPlayerName: value.trim() || null
+              } 
+            });
+          }}
+          placeholder="Enter your name"
+        />
+      </StyledInputGroup>
+      
+      <StyledSuggestionSection>
+        <StyledSuggestionTitle>Name Suggestions</StyledSuggestionTitle>
+        {suggestions.length > 0 && (
+          <StyledSuggestionGrid>
+            {suggestions.map((name, index) => (
+              <StyledSuggestionButton
+                key={index}
+                onClick={() => selectSuggestion(name)}
+              >
+                {name}
+              </StyledSuggestionButton>
+            ))}
+          </StyledSuggestionGrid>
+        )}
+        <StyledGenerateButton 
+          onClick={generateNames}
+          disabled={isGenerating}
+        >
+          {isGenerating ? 'Generating...' : 'Generate Names'}
+        </StyledGenerateButton>
+      </StyledSuggestionSection>
+
+      <StyledFinishButton
+        onClick={handleSubmit}
+        disabled={!characterName.trim() || !playerName.trim()}
+      >
+        Complete Character Creation
+      </StyledFinishButton>
+    </StyledContainer>
+  );
+}
+
+export default CharacterName;
+````
+
+## File: src/routes/character-creation/ClassFeatures.tsx
+````typescript
+import React from 'react';
+import styled from 'styled-components';
+import { useCharacter } from '../../lib/stores/characterContext';
+import { classesData } from '../../lib/rulesdata/classes';
+import type { IClassDefinition } from '../../lib/rulesdata/types';
+
+const StyledContainer = styled.div`
+  border: 2px solid #8b5cf6;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  margin-top: 2rem;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+`;
+
+const StyledTitle = styled.h2`
+  margin-top: 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const StyledSection = styled.div`
+  margin-top: 1rem;
+`;
+
+const StyledSectionTitle = styled.h3`
+  margin: 0 0 1rem 0;
+  color: #ef4444;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+`;
+
+const StyledCard = styled.div`
+  border: 2px solid #a855f7;
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  background: linear-gradient(145deg, #2d1b69 0%, #4c1d95 100%);
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+`;
+
+const StyledCardTitle = styled.h4`
+  margin: 0 0 0.5rem 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledCardDescription = styled.p`
+  margin: 0;
+  color: #e5e7eb;
+  line-height: 1.4;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledChoiceOptions = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const StyledLabel = styled.label`
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  cursor: pointer;
+  color: #e5e7eb;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  padding: 0.5rem;
+  border-radius: 5px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: #fbbf24;
+    background: rgba(139, 92, 246, 0.1);
+  }
+`;
+
+const StyledRadio = styled.input`
+  margin-top: 0.25rem;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  accent-color: #ef4444;
+  cursor: pointer;
+`;
+
+const StyledOptionDescription = styled.span`
+  font-size: 0.9em;
+  color: #9ca3af;
+  margin-left: 0.5rem;
+  font-style: italic;
+`;
+
+const StyledNoSelection = styled.p`
+  color: #9ca3af;
+  font-style: italic;
+  text-align: center;
+  font-size: 1.1rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+function ClassFeatures() {
+  const { state, dispatch } = useCharacter();
+  
+  const selectedClass = classesData.find(c => c.id === state.classId);
+  const selectedFeatureChoices: { [key: string]: string } = JSON.parse(state.selectedFeatureChoices || '{}');
+
+  function handleFeatureChoice(choiceId: string, value: string) {
+    const currentChoices = { ...selectedFeatureChoices };
+    currentChoices[choiceId] = value;
+    dispatch({ type: 'SET_FEATURE_CHOICES', selectedFeatureChoices: JSON.stringify(currentChoices) });
+  }
+
+  if (!selectedClass) {
+    return (
+      <StyledContainer>
+        <StyledNoSelection>Select a Class to see its features.</StyledNoSelection>
+      </StyledContainer>
+    );
+  }
+
+  return (
+    <StyledContainer>
+      <StyledTitle>{selectedClass.name} Features</StyledTitle>
+
+      <StyledSection>
+        <StyledSectionTitle>Level 1 Features</StyledSectionTitle>
+        {(selectedClass.level1Features || []).map((feature, index) => (
+          <StyledCard key={index}>
+            <StyledCardTitle>{feature.name}</StyledCardTitle>
+            <StyledCardDescription>{feature.description}</StyledCardDescription>
+          </StyledCard>
+        ))}
+      </StyledSection>
+
+      {selectedClass.featureChoicesLvl1 && selectedClass.featureChoicesLvl1.length > 0 && (
+        <StyledSection>
+          <StyledSectionTitle>Feature Choices</StyledSectionTitle>
+          {selectedClass.featureChoicesLvl1.map((choice) => (
+            <StyledCard key={choice.id}>
+              <StyledCardTitle>{choice.prompt}</StyledCardTitle>
+              {choice.type === 'select_one' && (
+                <StyledChoiceOptions>
+                  {choice.options.map((option) => (
+                    <StyledLabel key={option.value}>
+                      <StyledRadio
+                        type="radio"
+                        name={choice.id}
+                        value={option.value}
+                        checked={selectedFeatureChoices[choice.id] === option.value}
+                        onChange={() => handleFeatureChoice(choice.id, option.value)}
+                      />
+                      {option.label}
+                      {option.description && (
+                        <StyledOptionDescription>({option.description})</StyledOptionDescription>
+                      )}
+                    </StyledLabel>
+                  ))}
+                </StyledChoiceOptions>
+              )}
+            </StyledCard>
+          ))}
+        </StyledSection>
+      )}
+    </StyledContainer>
+  );
+}
+
+export default ClassFeatures;
+````
+
+## File: src/routes/character-creation/ClassSelector.tsx
+````typescript
+import { useState } from 'react';
+import styled from 'styled-components';
+import { useCharacter } from '../../lib/stores/characterContext';
+import { classesData } from '../../lib/rulesdata/classes';
+import type { IClassDefinition } from '../../lib/rulesdata/types';
+
+// Class-specific icons using Unicode symbols and emojis
+const classIcons: { [key: string]: string } = {
+  'fighter': '⚔️',
+  'wizard': '🧙‍♂️',
+  'rogue': '🗡️',
+  'cleric': '✨',
+  'ranger': '🏹',
+  'barbarian': '🪓',
+  'bard': '🎭',
+  'druid': '🌿',
+  'monk': '👊',
+  'paladin': '🛡️',
+  'sorcerer': '🔥',
+  'warlock': '👹',
+  'default': '⚡'
+};
+
+const StyledContainer = styled.div`
+  border: 2px solid #8b5cf6;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  margin-top: 2rem;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+`;
+
+const StyledTitle = styled.h2`
+  margin-top: 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const StyledGrid = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+`;
+
+const StyledCard = styled.button<{ $selected: boolean }>`
+  border: 2px solid #a855f7;
+  padding: 1.5rem;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #2d1b69 0%, #4c1d95 100%);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+  min-width: 280px;
+  max-width: 280px;
+  height: 200px;
+  text-align: left;
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
+    border-color: #fbbf24;
+  }
+
+  ${props => props.$selected && `
+    border-color: #ef4444;
+    background: linear-gradient(145deg, #991b1b 0%, #dc2626 100%);
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
+    transform: translateY(-2px);
+  `}
+`;
+
+const StyledCardHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+`;
+
+const StyledClassIcon = styled.div`
+  font-size: 2rem;
+  flex-shrink: 0;
+  background: linear-gradient(145deg, #8b5cf6 0%, #a855f7 100%);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+`;
+
+const StyledCardTitle = styled.h3`
+  margin: 0;
+  color: #fbbf24;
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledCardDescription = styled.p`
+  margin: 0;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  flex: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  position: relative;
+`;
+
+const StyledCardFooter = styled.div`
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const StyledReadMore = styled.button`
+  color: #fbbf24;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: #f59e0b;
+    background: rgba(251, 191, 36, 0.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+`;
+
+const StyledTooltip = styled.div<{ $show: boolean }>`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
+  color: #e5e7eb;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 3px solid #8b5cf6;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  z-index: 2000;
+  width: 90vw;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  font-size: 1rem;
+  line-height: 1.6;
+  opacity: ${props => props.$show ? 1 : 0};
+  pointer-events: ${props => props.$show ? 'auto' : 'none'};
+  transition: opacity 0.3s ease;
+  
+  /* Custom scrollbar for popup */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #1e1b4b;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #8b5cf6;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a855f7;
+  }
+`;
+
+const StyledTooltipOverlay = styled.div<{ $show: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1999;
+  opacity: ${props => props.$show ? 1 : 0};
+  pointer-events: ${props => props.$show ? 'auto' : 'none'};
+  transition: opacity 0.3s ease;
+`;
+
+const StyledTooltipHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #8b5cf6;
+`;
+
+const StyledTooltipIcon = styled.div`
+  font-size: 3rem;
+  background: linear-gradient(145deg, #8b5cf6 0%, #a855f7 100%);
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+`;
+
+const StyledTooltipTitle = styled.h3`
+  margin: 0;
+  color: #fbbf24;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledTooltipContent = styled.p`
+  margin: 0;
+  color: #e5e7eb;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const StyledCloseHint = styled.div`
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #8b5cf6;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  font-style: italic;
+`;
+
+function ClassSelector() {
+  const { state, dispatch } = useCharacter();
+  const selectedClassId = state.classId;
+  const [popupClass, setPopupClass] = useState<string | null>(null);
+
+  function handleSelectClass(classId: string) {
+    if (state.classId === classId) {
+      dispatch({ type: 'SET_CLASS', classId: null }); // Deselect if already selected
+    } else {
+      dispatch({ type: 'SET_CLASS', classId }); // Select new class
+    }
+  }
+
+  function getClassIcon(classId: string): string {
+    return classIcons[classId.toLowerCase()] || classIcons.default;
+  }
+
+  function truncateText(text: string, maxLength: number): string {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  }
+
+  function needsReadMore(text: string, maxLength: number): boolean {
+    return text.length > maxLength;
+  }
+
+  function openPopup(classId: string) {
+    setPopupClass(classId);
+  }
+
+  function closePopup() {
+    setPopupClass(null);
+  }
+
+  return (
+    <StyledContainer>
+      <StyledTitle>Choose Your Class</StyledTitle>
+      <StyledGrid>
+        {classesData.map((classDef: IClassDefinition) => (
+          <StyledCard
+            key={classDef.id}
+            type="button"
+            $selected={selectedClassId === classDef.id}
+            onClick={() => handleSelectClass(classDef.id)}
+          >
+            <StyledCardHeader>
+              <StyledClassIcon>{getClassIcon(classDef.id)}</StyledClassIcon>
+              <StyledCardTitle>{classDef.name}</StyledCardTitle>
+            </StyledCardHeader>
+            <StyledCardDescription>
+              {truncateText(classDef.description, 80)}
+            </StyledCardDescription>
+            {needsReadMore(classDef.description, 80) && (
+              <StyledCardFooter>
+                <StyledReadMore 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openPopup(classDef.id);
+                  }}
+                >
+                  read more...
+                </StyledReadMore>
+              </StyledCardFooter>
+            )}
+          </StyledCard>
+        ))}
+      </StyledGrid>
+      
+      {/* Popup overlay and content */}
+      <StyledTooltipOverlay 
+        $show={popupClass !== null} 
+        onClick={closePopup}
+      />
+      {popupClass && (
+        <StyledTooltip $show={popupClass !== null}>
+          <StyledTooltipHeader>
+            <StyledTooltipIcon>
+              {getClassIcon(popupClass)}
+            </StyledTooltipIcon>
+            <StyledTooltipTitle>
+              {classesData.find(c => c.id === popupClass)?.name}
+            </StyledTooltipTitle>
+          </StyledTooltipHeader>
+          <StyledTooltipContent>
+            {classesData.find(c => c.id === popupClass)?.description}
+          </StyledTooltipContent>
+          <StyledCloseHint>
+            Click anywhere to close
+          </StyledCloseHint>
+        </StyledTooltip>
+      )}
+    </StyledContainer>
+  );
+}
+
+export default ClassSelector;
+````
+
+## File: src/routes/character-creation/LoadCharacter.tsx
+````typescript
+import { useState, useEffect } from 'react';
+import styled from 'styled-components';
+
+const StyledContainer = styled.div`
+  padding: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
+`;
+
+const StyledTitle = styled.h1`
+  margin-bottom: 2rem;
+  color: #fbbf24;
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: bold;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+  letter-spacing: 2px;
+`;
+
+const StyledCharacterGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const StyledCharacterCard = styled.div`
+  border: 2px solid #8b5cf6;
+  border-radius: 12px;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(139, 92, 246, 0.4);
+    border-color: #fbbf24;
+  }
+`;
+
+const StyledCharacterName = styled.h2`
+  margin: 0 0 1rem 0;
+  color: #fbbf24;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+`;
+
+const StyledPlayerName = styled.p`
+  margin: 0 0 1rem 0;
+  color: #e5e7eb;
+  font-size: 1rem;
+  text-align: center;
+  opacity: 0.8;
+`;
+
+const StyledCharacterDetails = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+`;
+
+const StyledDetailItem = styled.div`
+  text-align: center;
+`;
+
+const StyledDetailLabel = styled.div`
+  color: #a855f7;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+`;
+
+const StyledDetailValue = styled.div`
+  color: #e5e7eb;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 0.25rem;
+`;
+
+const StyledCompletedDate = styled.p`
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.875rem;
+  text-align: center;
+  font-style: italic;
+`;
+
+const StyledEmptyState = styled.div`
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #6b7280;
+`;
+
+const StyledEmptyTitle = styled.h2`
+  color: #a855f7;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+`;
+
+const StyledEmptyText = styled.p`
+  font-size: 1rem;
+  line-height: 1.6;
+`;
+
+const StyledBackButton = styled.button`
+  padding: 0.75rem 1.5rem;
+  margin-bottom: 2rem;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: linear-gradient(145deg, #4b5563 0%, #374151 100%);
+    transform: translateY(-2px);
+  }
+`;
+
+interface SavedCharacter {
+  id: string;
+  finalName: string;
+  finalPlayerName: string;
+  classId: string;
+  ancestry1Id: string;
+  ancestry2Id?: string;
+  completedAt: string;
+  [key: string]: any;
+}
+
+interface LoadCharacterProps {
+  onBack: () => void;
+  onLoadCharacter?: (character: SavedCharacter) => void;
+}
+
+function LoadCharacter({ onBack, onLoadCharacter }: LoadCharacterProps) {
+  const [savedCharacters, setSavedCharacters] = useState<SavedCharacter[]>([]);
+
+  useEffect(() => {
+    const characters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+    setSavedCharacters(characters);
+  }, []);
+
+  const handleCharacterClick = (character: SavedCharacter) => {
+    if (onLoadCharacter) {
+      onLoadCharacter(character);
+    } else {
+      console.log('Loading character:', character);
+      // TODO: Implement character loading logic
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const formatAncestry = (ancestry1: string, ancestry2?: string) => {
+    if (ancestry2) {
+      return `${ancestry1}/${ancestry2}`;
+    }
+    return ancestry1;
+  };
+
+  return (
+    <StyledContainer>
+      <StyledBackButton onClick={onBack}>
+        ← Back to Menu
+      </StyledBackButton>
+      
+      <StyledTitle>Load Character</StyledTitle>
+      
+      {savedCharacters.length === 0 ? (
+        <StyledEmptyState>
+          <StyledEmptyTitle>No Saved Characters</StyledEmptyTitle>
+          <StyledEmptyText>
+            You haven't created any characters yet.<br />
+            Go back to the menu and create your first character!
+          </StyledEmptyText>
+        </StyledEmptyState>
+      ) : (
+        <StyledCharacterGrid>
+          {savedCharacters.map((character) => (
+            <StyledCharacterCard 
+              key={character.id}
+              onClick={() => handleCharacterClick(character)}
+            >
+              <StyledCharacterName>
+                {character.finalName || 'Unnamed Character'}
+              </StyledCharacterName>
+              
+              <StyledPlayerName>
+                Player: {character.finalPlayerName || 'Unknown'}
+              </StyledPlayerName>
+              
+              <StyledCharacterDetails>
+                <StyledDetailItem>
+                  <StyledDetailLabel>Race</StyledDetailLabel>
+                  <StyledDetailValue>
+                    {formatAncestry(
+                      character.ancestry1Id || 'Unknown',
+                      character.ancestry2Id
+                    )}
+                  </StyledDetailValue>
+                </StyledDetailItem>
+                
+                <StyledDetailItem>
+                  <StyledDetailLabel>Class</StyledDetailLabel>
+                  <StyledDetailValue>
+                    {character.classId || 'Unknown'}
+                  </StyledDetailValue>
+                </StyledDetailItem>
+              </StyledCharacterDetails>
+              
+              <StyledCompletedDate>
+                Created: {formatDate(character.completedAt)}
+              </StyledCompletedDate>
+            </StyledCharacterCard>
+          ))}
+        </StyledCharacterGrid>
+      )}
+    </StyledContainer>
+  );
+}
+
+export default LoadCharacter;
+````
+
+## File: src/routes/character-creation/SelectedAncestries.tsx
+````typescript
+import React from 'react';
+import styled from 'styled-components';
+import { useCharacter } from '../../lib/stores/characterContext';
+import { ancestriesData } from '../../lib/rulesdata/ancestries';
+import { traitsData } from '../../lib/rulesdata/traits';
+import type { IAncestry, ITrait } from '../../lib/rulesdata/types';
+
+const StyledOuterContainer = styled.div`
+  border: 2px solid #8b5cf6;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  margin-top: 2rem;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+`;
+
+const StyledMainTitle = styled.h2`
+  margin-top: 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+`;
+
+const StyledAncestryDetails = styled.div`
+  border: 2px solid #a855f7;
+  padding: 1.5rem;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #2d1b69 0%, #4c1d95 100%);
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+`;
+
+const StyledTitle = styled.h2`
+  margin: 0 0 1rem 0;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  border-bottom: 2px solid #ef4444;
+  padding-bottom: 0.5rem;
+`;
+
+const StyledSubtitle = styled.h3`
+  margin: 1rem 0 0.5rem 0;
+  color: #ef4444;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  border-bottom: 1px solid #ef4444;
+  padding-bottom: 0.25rem;
+`;
+
+const StyledList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const StyledListItem = styled.li`
+  margin-bottom: 0.8rem;
+  padding: 0.5rem;
+  border-radius: 5px;
+  background: rgba(139, 92, 246, 0.1);
+  border-left: 3px solid #8b5cf6;
+`;
+
+const StyledLabel = styled.label`
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  cursor: pointer;
+  color: #e5e7eb;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  
+  &:hover {
+    color: #fbbf24;
+  }
+`;
+
+const StyledCheckbox = styled.input`
+  margin-top: 0.25rem;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  accent-color: #ef4444;
+  cursor: pointer;
+`;
+
+function SelectedAncestries() {
+  const { state, dispatch } = useCharacter();
+  
+  const selectedAncestry1 = ancestriesData.find(a => a.id === state.ancestry1Id);
+  const selectedAncestry2 = ancestriesData.find(a => a.id === state.ancestry2Id);
+  const selectedTraits: string[] = JSON.parse(state.selectedTraitIds || '[]');
+
+  function getTrait(traitId: string): ITrait | undefined {
+    return traitsData.find(t => t.id === traitId);
+  }
+
+  function handleToggleTrait(traitId: string) {
+    const trait = getTrait(traitId);
+    if (!trait) return;
+
+    let currentTraits = [...selectedTraits];
+    
+    if (currentTraits.includes(traitId)) {
+      // Deselect
+      currentTraits = currentTraits.filter(id => id !== traitId);
+    } else {
+      // Select
+      currentTraits.push(traitId);
+    }
+    
+    dispatch({ type: 'SET_TRAITS', selectedTraitIds: JSON.stringify(currentTraits) });
+  }
+
+  function renderAncestryTraits(ancestry: IAncestry) {
+    return (
+      <StyledAncestryDetails>
+        <StyledTitle>{ancestry.name}</StyledTitle>
+        
+        <StyledSubtitle>Default Traits</StyledSubtitle>
+        <StyledList>
+          {(ancestry.defaultTraitIds || []).map(traitId => {
+            const trait = getTrait(traitId);
+            if (!trait) return null;
+            return (
+              <StyledListItem key={traitId}>
+                <StyledLabel>
+                  <StyledCheckbox 
+                    type="checkbox" 
+                    checked={selectedTraits.includes(traitId)} 
+                    onChange={() => handleToggleTrait(traitId)} 
+                  />
+                  {trait.name} ({trait.cost} pts) - {trait.description}
+                </StyledLabel>
+              </StyledListItem>
+            );
+          })}
+        </StyledList>
+        
+        <StyledSubtitle>Expanded Traits</StyledSubtitle>
+        <StyledList>
+          {(ancestry.expandedTraitIds || []).map(traitId => {
+            const trait = getTrait(traitId);
+            if (!trait) return null;
+            return (
+              <StyledListItem key={traitId}>
+                <StyledLabel>
+                  <StyledCheckbox 
+                    type="checkbox" 
+                    checked={selectedTraits.includes(traitId)} 
+                    onChange={() => handleToggleTrait(traitId)} 
+                  />
+                  {trait.name} ({trait.cost} pts) - {trait.description}
+                </StyledLabel>
+              </StyledListItem>
+            );
+          })}
+        </StyledList>
+      </StyledAncestryDetails>
+    );
+  }
+
+  return (
+    <StyledOuterContainer>
+      <StyledMainTitle>Ancestry Traits</StyledMainTitle>
+      <StyledContainer>
+        {selectedAncestry1 && renderAncestryTraits(selectedAncestry1)}
+        {selectedAncestry2 && renderAncestryTraits(selectedAncestry2)}
+      </StyledContainer>
+    </StyledOuterContainer>
+  );
+}
+
+export default SelectedAncestries;
+````
 
 ## File: src/routes/page.svelte.test.ts
-```typescript
+````typescript
 import { page } from '@vitest/browser/context';
 import { describe, expect, it } from 'vitest';
 import { render } from 'vitest-browser-svelte';
@@ -7009,31 +7903,344 @@ describe('/+page.svelte', () => {
 		await expect.element(heading).toBeInTheDocument();
 	});
 });
-```
+````
 
-## File: vite.config.ts
-```typescript
-import tailwindcss from '@tailwindcss/vite';
-import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+## File: tsconfig.node.json
+````json
+{
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": false,
+    "strict": true,
+    "jsx": "react-jsx",
+    "types": ["node"]
+  },
+  "include": ["vite.config.ts"]
+}
+````
 
-export default defineConfig({
-	plugins: [tailwindcss(), react()],
-	publicDir: 'static',
-	build: {
-		outDir: 'dist'
-	}
-});
-```
+## File: vercel.json
+````json
+{
+  "rewrites": [
+    {
+      "source": "/api/sheet/:id",
+      "destination": "/pdf-service/src/server.ts"
+    }
+  ]
+}
+````
 
 ## File: vitest-setup-client.ts
-```typescript
+````typescript
 /// <reference types="@vitest/browser/matchers" />
 /// <reference types="@vitest/browser/providers/playwright" />
+````
+
+## File: vitest.config.ts
+````typescript
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+	test: {
+		projects: [
+			{
+				extends: './vite.config.ts',
+				test: {
+					name: 'client',
+					environment: 'browser',
+					browser: {
+						enabled: true,
+						provider: 'playwright',
+						instances: [{ browser: 'chromium' }]
+					},
+					include: ['src/**/*.{test,spec}.{js,ts,jsx,tsx}'],
+					exclude: ['src/lib/server/**'],
+					setupFiles: ['./vitest-setup-client.ts']
+				}
+			},
+			{
+				extends: './vite.config.ts',
+				test: {
+					name: 'server',
+					environment: 'node',
+					include: ['src/**/*.{test,spec}.{js,ts}'],
+					exclude: ['src/**/*.{test,spec}.{js,ts,jsx,tsx}']
+				}
+			}
+		]
+	}
+});
+````
+
+## File: pdf-service/src/server.ts
+````typescript
+import { createCharacterPdf } from './fill';
+import { PrismaClient } from '@prisma/client'; // Import PrismaClient
+const prisma = new PrismaClient(); // Initialize PrismaClient
+
+type CharacterSheetData = Awaited<ReturnType<typeof prisma.characterSheetData.findUnique>>; // Infer type from findUnique
+
+export const runtime = 'nodejs'; // Force Node.js runtime on Vercel
+
+export default async function GET(request: Request, { params }: { params: { id: string } }) {
+  const characterId = params.id;
+
+  if (!characterId) {
+    return new Response('Character ID is required', { status: 400 });
+  }
+
+  let characterData: CharacterSheetData | null = null;
+  try {
+    characterData = await prisma.characterSheetData.findUnique({
+      where: { id: characterId },
+    });
+
+    if (!characterData) {
+      return new Response('Character not found', { status: 404 });
+    }
+  } catch (error) {
+    console.error('Error fetching character:', error);
+    return new Response('Internal Server Error', { status: 500 });
+  }
+
+  // Data Transformation: Convert CharacterSheetData to Record<string, any>
+  const transformedData: Record<string, any> = {
+    "Character Name": characterData.finalName,
+    "Player Name": characterData.finalPlayerName,
+    "Level": characterData.finalLevel,
+    "Might": characterData.finalMight,
+    "Agility": characterData.finalAgility,
+    "Charisma": characterData.finalCharisma,
+    "Intelligence": characterData.finalIntelligence,
+    "Combat Mastery": characterData.finalCombatMastery,
+    "Move Speed": characterData.finalMoveSpeed,
+    "Hit Points Max": characterData.finalHPMax,
+    "Stamina Points Max": characterData.finalSPMax,
+    "Mana Points Max": characterData.finalMPMax,
+    "Physical Defense": characterData.finalPD,
+    "Mental Defense": characterData.finalAD, // Assuming AD maps to Mental Defense
+    "Save DC": characterData.finalSaveDC,
+    "Death Threshold": characterData.finalDeathThreshold,
+    "Jump Distance": characterData.finalJumpDistance,
+    "Rest Point Cap": characterData.finalRestPoints,
+    "Grit Point Cap": characterData.finalGritPoints,
+    "Initiative": characterData.finalInitiativeBonus,
+    "Ancestry": characterData.ancestry1Name, // Assuming ancestry1Name is the primary ancestry
+    "Class & Subclass": characterData.className, // Assuming className is sufficient
+    // Parse JSON fields
+    ...JSON.parse(characterData.skillsJson || '{}'),
+    ...JSON.parse(characterData.tradesJson || '{}'),
+    ...JSON.parse(characterData.languagesJson || '{}'),
+    ...JSON.parse(characterData.selectedTraitsJson || '{}'),
+    ...JSON.parse(characterData.classFeaturesLvl1Json || '{}'),
+    ...JSON.parse(characterData.equipmentJson || '{}'),
+    // Add other fields as needed, mapping them from characterData to the PDF field names
+    // For example, if you have specific fields for damage reduction:
+    "Physical-Damage-Reduction": characterData.finalPDR,
+    "Elemantal-Damage-Reduction": characterData.finalEDR,
+    "Mental-Damage-Reduction": characterData.finalMDR,
+    // Add save masteries
+    "Save-Mastery-Might": characterData.finalSaveMasteryMight,
+    "Save-Mastery-Agility": characterData.finalSaveMasterityAgility,
+    "Save-Mastery-Charisma": characterData.finalSaveMasteryCharisma,
+    "Save-Mastery-Intelligence": characterData.finalSaveMasteryIntelligence,
+    // Add prime modifier
+    "Prime-Modifier-Value": characterData.finalPrimeModifierValue,
+    "Prime-Modifier-Attribute": characterData.finalPrimeModifierAttribute,
+  };
+
+  try {
+    const pdfBytes = await createCharacterPdf(transformedData);
+
+    return new Response(pdfBytes, {
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="character_${characterId}.pdf"`,
+      },
+    });
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    return new Response('Error generating PDF', { status: 500 });
+  }
+}
+````
+
+## File: project-doc/pdf-generation-service.md
+````markdown
+# PDF Generation Service Documentation
+
+## Overview
+This document details the implementation of a self-contained, server-side PDF generation service for the DC20 character-creation monorepo. The service is designed to run on Vercel as a serverless function.
+
+## High-Level Goal
+The primary goal of this service is to generate character sheets in PDF format. When the front-end calls `GET /api/sheet/[id]` with a character ID, the service performs the following steps:
+1.  Pulls the character record from a PostgreSQL database via Prisma.
+2.  Merges the JSON payload of the character data into an AcroForm PDF template (`DC20_Beta_0_9_5_(fillable)_Character_Sheet.pdf`) using `pdf-lib`.
+3.  Flattens the form fields and streams the finished PDF back to the client with `Content-Disposition: attachment`.
+
+The service is designed for server-side execution only, with no client-side PDF rendering.
+
+## Project Structure
+The PDF service is located within the `pdf-service/` directory of the monorepo.
+
+```
+DC20CLEAN/                       # repo root (monorepo, pnpm workspaces)
+├─ pdf-service/
+│  └─ src/
+│     ├─ DC20_Beta_0_9_5_(fillable)_Character_Sheet.pdf   # PDF template
+│     ├─ DC20_Beta_0_9_5_fields.json                     # 309-field map
+│     ├─ fill.ts                                         # Pure helper for PDF filling
+│     └─ server.ts                                       # Vercel serverless function route
+├─ prisma/
+│  ├─ schema.prisma                                      # Database schema
+│  └─ migrations/…
+├─ src/
+│  └─ lib/
+│     └─ prisma.ts                                       # Global PrismaClient instance
+└─ vercel.json                                           # Vercel configuration for rewrites
 ```
 
+## Required Deliverables and Implementation Details
+
+### 1. `fill.ts`
+**Path:** `pdf-service/src/fill.ts`
+**Description:** This module provides the core logic for filling the PDF form.
+*   **Caching:** The PDF template (`DC20_Beta_0_9_5_(fillable)_Character_Sheet.pdf`) and the field map (`DC20_Beta_0_9_5_fields.json`) are loaded and cached in module scope to optimize performance for subsequent requests.
+*   **Exported Function:** `createCharacterPdf(data: Record<string, any>): Promise<Uint8Array>`
+    *   Takes a `data` object (character JSON payload) as input.
+    *   Iterates over the `fieldMap` JSON.
+    *   For each field, it attempts to set the text or check/uncheck a checkbox based on the `data` provided.
+    *   Handles type conversions: numbers and booleans are prudently converted to strings for text fields.
+    *   Includes error handling for missing fields in the PDF template or invalid data types for checkboxes.
+    *   Flattens the form fields after filling to make them non-editable.
+    *   Returns the generated PDF as a `Uint8Array`.
+
+### 2. `server.ts`
+**Path:** `pdf-service/src/server.ts`
+**Description:** This file defines the Vercel serverless function endpoint.
+*   **Route:** `GET /api/sheet/[id]` (configured via `vercel.json` rewrite).
+*   **Parameter Handling:** Reads the `id` from `params.id`. Returns a 400 response if `id` is missing.
+*   **Data Fetching:** Fetches `CharacterSheetData` from the PostgreSQL database via Prisma using the provided `id`. It handles cases where the character is not found.
+*   **Data Transformation:** Transforms the fetched `CharacterSheetData` object into a `Record<string, any>` format, parsing JSON string fields (e.g., `skillsJson`, `tradesJson`, `languagesJson`, `selectedTraitsJson`, `classFeaturesLvl1Json`, `equipmentJson`) to match the structure expected by `createCharacterPdf`.
+*   **PDF Generation:** Calls `createCharacterPdf` from `fill.ts` with the fetched character data.
+*   **Response:** Returns a `Response` object with:
+    *   `Content-Type: application/pdf`
+    *   `Content-Disposition: attachment; filename="character_[id].pdf"`
+*   **Runtime:** `export const runtime = "nodejs";` is included to force Node.js runtime on Vercel, as required.
+
+### 3. `lib/prisma.ts`
+**Path:** `src/lib/prisma.ts`
+**Description:** This helper ensures a single, global `PrismaClient` instance is used across the application, preventing multiple database connections, especially crucial in serverless environments with hot reloads.
+
+### 4. `package.json` additions (root)
+*   **Dependencies:**
+    *   `"pdf-lib"`: For PDF manipulation.
+    *   `"@pdf-lib/fontkit"`: For embedding fonts (required by `pdf-lib`).
+    *   `"@prisma/client"`: Prisma ORM client.
+*   **Scripts:**
+    *   `"prisma:generate"`: Added to the root `package.json` scripts to ensure Prisma client generation.
+
+### 5. `pdf-service/package.json`
+A dedicated `package.json` file was created within `pdf-service/` to manage its specific dependencies and ensure it can be deployed as a self-contained unit.
+
+### 6. `tsconfig.json` updates
+*   The root `tsconfig.json` was updated to include the `pdf-service` directory in its `include` paths, allowing TypeScript to correctly resolve modules within the PDF service.
+*   The `references` section for `tsconfig.node.json` was updated with `prepend: true` to resolve compilation issues.
+
+### 7. `tsconfig.node.json` updates
+*   The `noEmit` compiler option was set to `false` to resolve a TypeScript error related to referenced projects.
+
+### 8. `vercel.json`
+*   A rewrite rule was added to `vercel.json` to map incoming requests to `/api/sheet/:id` to the `pdf-service/src/server.ts` serverless function.
+
+## Constraints & Edge Cases Handled
+*   **Server-only:** `pdf-lib` is used exclusively on the server-side.
+*   **Missing/Extra Fields:** The `fill.ts` module logs warnings for fields present in the PDF template but missing in the character data, or vice-versa, without throwing errors.
+*   **Data Type Conversion:** Booleans and numbers in the character JSON are converted to strings for text fields.
+*   **Template Filename:** The template filename is currently hardcoded but can be easily parameterized if versioning is required in the future.
+
+## How to Test Locally
+1.  Ensure your PostgreSQL database is running and `DATABASE_URL` is correctly set in your `.env` file.
+2.  Install dependencies for the `pdf-service`:
+    ```bash
+    cd pdf-service ; npm install
+    ```
+3.  Run `npm install` in the root directory (`dc20clean/`) to install all dependencies and generate the Prisma client.
+4.  Start the development server: `npm run dev`
+5.  Once the server is running (typically at `http://localhost:5173/`), you can access the PDF generation endpoint. The endpoint is structured as `/api/character/pdf/[id]`, where `[id]` is the `id` of a `CharacterSheetData` record in your database.
+
+    For example, if you have a character with the ID `some-character-id-123`, you would navigate to:
+    `http://localhost:5173/api/character/pdf/some-character-id-123`
+
+    Replace `some-character-id-123` with an actual `id` from your `CharacterSheetData` table. If the character exists and the data transformation is successful, a PDF file should be downloaded. Check your browser's developer console or the terminal running `npm run dev` for any errors if the download doesn't occur or if the PDF is empty/incorrect.
+
+## Optional: Splitting `pdf-service` into its own Vercel Project
+If you later decide to deploy the `pdf-service` as a separate Vercel project:
+1.  **Create New Vercel Project:** In your Vercel dashboard, create a new project and link it to a Git repository containing only the `pdf-service` directory (or a monorepo setup where `pdf-service` is the root).
+2.  **Configure Root Directory:** Ensure the Vercel project's root directory is set to `pdf-service/`.
+3.  **Environment Variables:** Set the `DATABASE_URL` environment variable in the new Vercel project settings.
+4.  **Update Frontend:** Modify your frontend application to call the new Vercel deployment URL for the PDF service (e.g., `https://your-pdf-service.vercel.app/api/sheet/<id>`) instead of the monorepo's `/api/sheet` endpoint.
+````
+
+## File: src/app.css
+````css
+@import 'tailwindcss';
+
+/* D&D Themed Global Styles */
+body {
+  background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
+  min-height: 100vh;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  color: #e5e7eb;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e1b4b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8b5cf6;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a855f7;
+}
+
+/* Selection colors */
+::selection {
+  background: #fbbf24;
+  color: #1e1b4b;
+}
+
+::-moz-selection {
+  background: #fbbf24;
+  color: #1e1b4b;
+}
+````
+
 ## File: src/lib/server/db/index.ts
-```typescript
+````typescript
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema.js';
@@ -7043,10 +8250,10 @@ import { building } from '$app/environment';
 const client = postgres(building ? '' : env.DATABASE_URL);
 
 export const db = drizzle(client, { schema });
-```
+````
 
 ## File: src/lib/server/db/schema.ts
-```typescript
+````typescript
 import { pgTable, integer, text, timestamp } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('user', {
@@ -7067,10 +8274,10 @@ export const session = pgTable('session', {
 export type Session = typeof session.$inferSelect;
 
 export type User = typeof user.$inferSelect;
-```
+````
 
 ## File: src/lib/stores/characterInProgressStore.ts
-```typescript
+````typescript
 // src/lib/stores/characterInProgressStore.ts
 
 import { writable, derived } from 'svelte/store';
@@ -7327,10 +8534,658 @@ export const initiative = derived(
     return $combatMastery + agilityModifier;
   }
 );
-```
+````
+
+## File: src/routes/api/character/progress/complete/+server.ts
+````typescript
+// src/routes/api/character/progress/complete/+server.ts
+
+import { json } from '@sveltejs/kit';
+import { PrismaClient } from '@prisma/client';
+import { classesData } from '$lib/rulesdata/classes';
+import { traitsData } from '$lib/rulesdata/traits';
+import { ancestriesData } from '$lib/rulesdata/ancestries';
+import { skillsData } from '$lib/rulesdata/skills';
+import { tradesData } from '$lib/rulesdata/trades';
+import { languagesData } from '$lib/rulesdata/languages';
+import type { RequestHandler } from './$types';
+
+const prisma = new PrismaClient();
+
+// Helper function to get an attribute's modifier
+// In DC20, the attribute score itself is the modifier.
+// Handles null or undefined scores by returning 0.
+function getModifier(attributeScore: number | null | undefined): number {
+  return attributeScore ?? 0;
+}
+
+function validateFeatureChoices(classId: string, selectedChoicesJson: string) {
+  const classData = classesData.find(c => c.id === classId);
+  if (!classData) throw new Error(`Invalid class ID: ${classId}`);
+
+  const choices = JSON.parse(selectedChoicesJson || '{}');
+
+  for (const requiredChoice of classData.featureChoicesLvl1 || []) {
+    if (choices[requiredChoice.id] === undefined) {
+      throw new Error(`Missing required choice for ${classData.name}: ${requiredChoice.prompt}`);
+    }
+    const validOptions = requiredChoice.options.map(o => o.value);
+    if (!validOptions.includes(choices[requiredChoice.id])) {
+      throw new Error(`Invalid selected option for ${requiredChoice.id} in class ${classData.name}`);
+    }
+  }
+}
+
+function validateAttributeCapsAfterTraits(attributes: any, selectedTraitIdsJson: string) {
+  const selectedTraitIds = JSON.parse(selectedTraitIdsJson || '[]');
+  const traits = selectedTraitIds.map((id: string) => traitsData.find(t => t.id === id)).filter((t: any) => t !== undefined);
+
+  const finalAttributes = { ...attributes };
+
+  for (const trait of traits) {
+    const attrEffect = trait.effects?.find((e: any) => e.type === 'MODIFY_ATTRIBUTE');
+    if (attrEffect && attrEffect.target && typeof attrEffect.value === 'number') {
+      const attributeKey = `attribute_${attrEffect.target}`;
+      if (attributeKey in finalAttributes) {
+        finalAttributes[attributeKey] += attrEffect.value;
+      }
+    }
+  }
+
+  const ATTRIBUTE_MAX_L1 = 3;
+  for (const [attrName, finalValue] of Object.entries(finalAttributes)) {
+    if (finalValue > ATTRIBUTE_MAX_L1) {
+      throw new Error(`Final attribute ${attrName.replace('attribute_', '')} exceeds Level 1 cap (+3) after applying traits.`);
+    }
+  }
+}
+
+export const POST: RequestHandler = async ({ request }) => {
+  try {
+    const data = await request.json();
+
+    // Basic validation
+    if (!data.finalName || typeof data.finalName !== 'string' || data.finalName.trim().length === 0) {
+      return json({ error: 'Character name is required.' }, { status: 400 });
+    }
+
+    // Validate attributes and point buy (Stage A)
+    const attributes = {
+      attribute_might: data.attribute_might,
+      attribute_agility: data.attribute_agility,
+      attribute_charisma: data.attribute_charisma,
+      attribute_intelligence: data.attribute_intelligence
+    };
+    const totalPoints = Object.values(attributes).reduce((sum, v) => sum + (typeof v === 'number' ? v : 0), 0);
+    if (totalPoints !== 0) {
+      return json({ error: 'Attribute points must sum to 0 (point buy).' }, { status: 400 });
+    }
+
+    // Validate ancestry selections (Stage B)
+    if (!data.ancestry1Id) {
+      return json({ error: 'At least one ancestry must be selected.' }, { status: 400 });
+    }
+    if (data.ancestry2Id && data.ancestry1Id === data.ancestry2Id) {
+      return json({ error: 'Cannot select the same ancestry twice.' }, { status: 400 });
+    }
+
+    // Validate selected trait IDs (Stage B)
+    try {
+      const selectedTraitIds = JSON.parse(data.selectedTraitIds || '[]');
+      if (!Array.isArray(selectedTraitIds)) throw new Error();
+      // Additional trait validation can be added here
+    } catch {
+      return json({ error: 'Invalid selectedTraitIds format.' }, { status: 400 });
+    }
+
+    // Validate class selection (Stage C)
+    if (!data.classId || !classesData.find(c => c.id === data.classId)) {
+      return json({ error: 'A valid class must be selected.' }, { status: 400 });
+    }
+
+    // Validate feature choices (Stage C)
+    try {
+      validateFeatureChoices(data.classId, data.selectedFeatureChoices);
+    } catch (err: any) {
+      return json({ error: err.message }, { status: 400 });
+    }
+
+    // Cross-stage validation: attribute caps after traits
+    try {
+      validateAttributeCapsAfterTraits(attributes, data.selectedTraitIds);
+    } catch (err: any) {
+      return json({ error: err.message }, { status: 400 });
+    }
+
+    // Start a Prisma transaction for atomicity
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Upsert CharacterInProgress record
+      let characterInProgress;
+      if (data.id) {
+        characterInProgress = await tx.characterInProgress.update({
+          where: { id: data.id },
+          data: {
+            ...data, // Update all relevant fields from the frontend state
+            currentStep: 4, // Mark as completed stage
+            updatedAt: new Date(),
+          },
+        });
+      } else {
+        // If no ID, it's a new character being finalized directly
+        characterInProgress = await tx.characterInProgress.create({
+          data: {
+            ...data,
+            currentStep: 4,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        });
+      }
+
+      // 2. Prepare data for CharacterSheetData
+      // This is the most critical part: map frontend state to CharacterSheetData fields
+      // Perform calculations for final stats here using 'data' and rules data
+
+      // Helper to get modifier (attribute score itself)
+      const getMod = (attr: number | null | undefined) => attr ?? 0;
+
+      // Combat Mastery (half level rounded up)
+      const finalLevel = data.level || 1;
+      const finalCombatMastery = Math.ceil(finalLevel / 2);
+
+      // Prime Modifier
+      const attributes = [
+        { name: 'Might', value: data.attribute_might },
+        { name: 'Agility', value: data.attribute_agility },
+        { name: 'Charisma', value: data.attribute_charisma },
+        { name: 'Intelligence', value: data.attribute_intelligence },
+      ];
+      let highestAttribute = attributes[0];
+      for (let i = 1; i < attributes.length; i++) {
+        if (attributes[i].value > highestAttribute.value) {
+          highestAttribute = attributes[i];
+        }
+      }
+      const finalPrimeModifierValue = highestAttribute.value;
+      const finalPrimeModifierAttribute = highestAttribute.name;
+
+      // Save Masteries
+      const finalSaveMasteryMight = finalCombatMastery + (finalPrimeModifierAttribute === 'Might' ? finalPrimeModifierValue : getMod(data.attribute_might));
+      const finalSaveMasterityAgility = finalCombatMastery + (finalPrimeModifierAttribute === 'Agility' ? finalPrimeModifierValue : getMod(data.attribute_agility));
+      const finalSaveMasteryCharisma = finalCombatMastery + (finalPrimeModifierAttribute === 'Charisma' ? finalPrimeModifierValue : getMod(data.attribute_charisma));
+      const finalSaveMasteryIntelligence = finalCombatMastery + (finalPrimeModifierAttribute === 'Intelligence' ? finalPrimeModifierValue : getMod(data.attribute_intelligence));
+
+      // HP, SP, MP Max
+      const classData = classesData.find(c => c.id === data.classId);
+      const finalHPMax = (classData?.baseHpContribution ?? 8) + getMod(data.attribute_might); // Assuming ancestry HP is 0 for now
+      const finalSPMax = classData?.startingSP ?? 0;
+      const finalMPMax = classData?.startingMP ?? 0;
+
+      // Defenses
+      const finalPD = finalCombatMastery + getMod(data.attribute_agility) + getMod(data.attribute_intelligence);
+      const finalAD = finalCombatMastery + getMod(data.attribute_might) + getMod(data.attribute_charisma);
+
+      // Save DC
+      const finalSaveDC = 8 + Math.max(getMod(data.attribute_charisma), getMod(data.attribute_intelligence)) + finalCombatMastery;
+
+      // Death Threshold
+      const finalDeathThreshold = finalLevel * 2;
+
+      // Movement
+      const finalMoveSpeed = 30; // Default for now
+      const finalJumpDistance = getMod(data.attribute_agility) < 1 ? 1 : getMod(data.attribute_agility);
+
+      // Points
+      const finalRestPoints = 1; // Default for now
+      const finalGritPoints = 2 + getMod(data.attribute_charisma); // Base 2 + Charisma Modifier
+
+      // Initiative
+      const finalInitiativeBonus = finalCombatMastery + getMod(data.attribute_agility);
+
+      // Ancestry Names
+      const ancestry1Name = data.ancestry1Id ? ancestriesData.find(a => a.id === data.ancestry1Id)?.name : null;
+      const ancestry2Name = data.ancestry2Id ? ancestriesData.find(a => a.id === data.ancestry2Id)?.name : null;
+
+      // Selected Traits
+      const selectedTraitsJson = JSON.stringify(JSON.parse(data.selectedTraitIds || '[]').map((id: string) => {
+        const trait = traitsData.find(t => t.id === id);
+        return trait ? { id: trait.id, name: trait.name } : null;
+      }).filter(Boolean));
+
+      // Class Features Lvl 1
+      const classFeaturesLvl1Json = JSON.stringify(JSON.parse(data.selectedFeatureChoices || '{}'));
+
+      // Skills, Trades, Languages, Equipment (assuming raw data from frontend)
+      const skillsJson = JSON.stringify(data.skills || []);
+      const tradesJson = JSON.stringify(data.trades || []);
+      const languagesJson = JSON.stringify(data.languages || []);
+      const equipmentJson = JSON.stringify(data.equipment || []);
+
+      const characterSheetDataToCreate = {
+        characterInProgressId: characterInProgress.id,
+        finalName: data.finalName,
+        finalPlayerName: data.finalPlayerName,
+        finalLevel: finalLevel,
+        finalMight: data.attribute_might,
+        finalAgility: data.attribute_agility,
+        finalCharisma: data.attribute_charisma,
+        finalIntelligence: data.attribute_intelligence,
+        finalPrimeModifierValue: finalPrimeModifierValue,
+        finalPrimeModifierAttribute: finalPrimeModifierAttribute,
+        finalCombatMastery: finalCombatMastery,
+        finalSaveMasteryMight: finalSaveMasteryMight,
+        finalSaveMasterityAgility: finalSaveMasterityAgility,
+        finalSaveMasteryCharisma: finalSaveMasteryCharisma,
+        finalSaveMasteryIntelligence: finalSaveMasteryIntelligence,
+        finalHPMax: finalHPMax,
+        finalSPMax: finalSPMax,
+        finalMPMax: finalMPMax,
+        finalPD: finalPD,
+        finalAD: finalAD,
+        finalSaveDC: finalSaveDC,
+        finalDeathThreshold: finalDeathThreshold,
+        finalMoveSpeed: finalMoveSpeed,
+        finalJumpDistance: finalJumpDistance,
+        finalRestPoints: finalRestPoints,
+        finalGritPoints: finalGritPoints,
+        finalInitiativeBonus: finalInitiativeBonus,
+        skillsJson: skillsJson,
+        tradesJson: tradesJson,
+        languagesJson: languagesJson,
+        ancestry1Name: ancestry1Name,
+        ancestry2Name: ancestry2Name,
+        selectedTraitsJson: selectedTraitsJson,
+        className: classData?.name || 'Unknown Class',
+        classFeaturesLvl1Json: classFeaturesLvl1Json,
+        equipmentJson: equipmentJson,
+        finalPDR: null, // Placeholder, needs actual logic
+        finalEDR: null, // Placeholder, needs actual logic
+        finalMDR: null, // Placeholder, needs actual logic
+      };
+
+      // Check if a CharacterSheetData already exists for this CharacterInProgress
+      const existingCharacterSheet = await tx.characterSheetData.findUnique({
+        where: { characterInProgressId: characterInProgress.id },
+      });
+
+      let finalCharacterSheet;
+      if (existingCharacterSheet) {
+        // Update existing CharacterSheetData
+        finalCharacterSheet = await tx.characterSheetData.update({
+          where: { id: existingCharacterSheet.id },
+          data: characterSheetDataToCreate,
+        });
+      } else {
+        // Create new CharacterSheetData
+        finalCharacterSheet = await tx.characterSheetData.create({
+          data: characterSheetDataToCreate,
+        });
+      }
+
+      // 3. Link CharacterInProgress to CharacterSheetData
+      await tx.characterInProgress.update({
+        where: { id: characterInProgress.id },
+        data: {
+          finalCharacterSheet: {
+            connect: { id: finalCharacterSheet.id },
+          },
+        },
+      });
+
+      return { characterInProgressId: characterInProgress.id, characterSheetId: finalCharacterSheet.id };
+    });
+
+    return json({ success: true, characterInProgressId: result.characterInProgressId, characterSheetId: result.characterSheetId });
+  } catch (err: any) {
+    return json({ error: err.message || 'Unknown error' }, { status: 500 });
+  }
+};
+````
+
+## File: src/routes/character-creation/CharacterCreation.tsx
+````typescript
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { useCharacter } from '../../lib/stores/characterContext';
+import AncestrySelector from './AncestrySelector.tsx';
+import SelectedAncestries from './SelectedAncestries.tsx';
+import AncestryPointsCounter from './AncestryPointsCounter.tsx';
+import Attributes from './Attributes.tsx';
+import ClassSelector from './ClassSelector.tsx';
+import ClassFeatures from './ClassFeatures.tsx';
+import CharacterName from './CharacterName.tsx';
+import Snackbar from '../../components/Snackbar.tsx';
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
+`;
+
+const StyledTitle = styled.h1`
+  margin-bottom: 2rem;
+  color: #fbbf24;
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: bold;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+  letter-spacing: 2px;
+  background: linear-gradient(45deg, #fbbf24 0%, #f59e0b 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`;
+
+const StyledStepIndicator = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+`;
+
+const StyledStepsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  flex: 1;
+`;
+
+const StyledStep = styled.div<{ $active: boolean; $completed: boolean }>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+`;
+
+const StyledStepNumber = styled.div<{ $active: boolean; $completed: boolean }>`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  
+  ${props => props.$completed && `
+    background: linear-gradient(145deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: 2px solid #10b981;
+  `}
+  
+  ${props => props.$active && !props.$completed && `
+    background: linear-gradient(145deg, #fbbf24 0%, #f59e0b 100%);
+    color: #1e1b4b;
+    border: 2px solid #fbbf24;
+  `}
+  
+  ${props => !props.$active && !props.$completed && `
+    background: transparent;
+    color: #9ca3af;
+    border: 2px solid #9ca3af;
+  `}
+`;
+
+const StyledStepLabel = styled.span<{ $active: boolean; $completed: boolean }>`
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  
+  ${props => props.$completed && `
+    color: #10b981;
+  `}
+  
+  ${props => props.$active && !props.$completed && `
+    color: #fbbf24;
+  `}
+  
+  ${props => !props.$active && !props.$completed && `
+    color: #9ca3af;
+  `}
+`;
+
+const StyledNavigationButtons = styled.div`
+  display: flex;
+  gap: 1rem;
+`;
+
+const StyledButton = styled.button<{ $variant?: 'primary' | 'secondary' }>`
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  min-width: 80px;
+  
+  ${props => props.$variant === 'primary' && `
+    background: linear-gradient(145deg, #fbbf24 0%, #f59e0b 100%);
+    color: #1e1b4b;
+    
+    &:hover {
+      background: linear-gradient(145deg, #f59e0b 0%, #d97706 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+    }
+  `}
+  
+  ${props => props.$variant === 'secondary' && `
+    background: transparent;
+    color: #9ca3af;
+    border: 2px solid #9ca3af;
+    
+    &:hover {
+      color: #fbbf24;
+      border-color: #fbbf24;
+    }
+  `}
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+`;
+
+function CharacterCreation({ onNavigateToLoad }: { onNavigateToLoad: () => void }) {
+  const { state, dispatch, attributePointsRemaining } = useCharacter();
+  const [showSnackbar, setShowSnackbar] = useState(false);
+
+  const steps = [
+    { number: 1, label: 'Class & Features' },
+    { number: 2, label: 'Attributes' },
+    { number: 3, label: 'Ancestry' },
+    { number: 4, label: 'Character Name' },
+  ];
+
+  const handleStepClick = (step: number) => {
+    dispatch({ type: 'SET_STEP', step });
+  };
+
+  const handleNext = async () => {
+    if (state.currentStep === 4 && isStepCompleted(4)) {
+      const completedCharacter = {
+        ...state,
+        // Remove completedAt and id generation here, let backend handle it
+      };
+
+      try {
+        const response = await fetch('/api/character/progress/complete', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(completedCharacter),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to save character.');
+        }
+
+        // Show success snackbar
+        setShowSnackbar(true);
+
+        // Navigate to load characters page after a short delay
+        setTimeout(() => {
+          onNavigateToLoad();
+        }, 1500);
+
+        console.log('Character finalized and saved to DB.');
+
+      } catch (error) {
+        console.error('Error saving character:', error);
+        // TODO: Show an error snackbar or message to the user
+      }
+
+    } else {
+      dispatch({ type: 'NEXT_STEP' });
+    }
+  };
+
+  const handlePrevious = () => {
+    dispatch({ type: 'PREVIOUS_STEP' });
+  };
+
+  const isStepCompleted = (step: number) => {
+    switch (step) {
+      case 1:
+        return state.classId !== null;
+      case 2:
+        return attributePointsRemaining === 0;
+      case 3:
+        return state.ancestry1Id !== null;
+      case 4:
+        return state.finalName !== null && state.finalName !== '' && 
+               state.finalPlayerName !== null && state.finalPlayerName !== '';
+      default:
+        return false;
+    }
+  };
+
+  const renderCurrentStep = () => {
+    switch (state.currentStep) {
+      case 1:
+        return (
+          <>
+            <ClassSelector />
+            <ClassFeatures />
+          </>
+        );
+      case 2:
+        return <Attributes />;
+      case 3:
+        return (
+          <>
+            <AncestrySelector />
+            <AncestryPointsCounter />
+            <SelectedAncestries />
+          </>
+        );
+      case 4:
+        return <CharacterName />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div>
+      <StyledTitle>Character Creation</StyledTitle>
+      
+      <StyledStepIndicator>
+        <StyledNavigationButtons>
+          <StyledButton 
+            $variant="secondary" 
+            onClick={handlePrevious}
+            disabled={state.currentStep === 1}
+          >
+            ← Previous
+          </StyledButton>
+        </StyledNavigationButtons>
+
+        <StyledStepsContainer>
+          {steps.map((step) => (
+            <StyledStep 
+              key={step.number} 
+              $active={state.currentStep === step.number}
+              $completed={isStepCompleted(step.number)}
+              onClick={() => handleStepClick(step.number)}
+            >
+              <StyledStepNumber 
+                $active={state.currentStep === step.number}
+                $completed={isStepCompleted(step.number)}
+              >
+                {isStepCompleted(step.number) ? '✓' : step.number}
+              </StyledStepNumber>
+              <StyledStepLabel 
+                $active={state.currentStep === step.number}
+                $completed={isStepCompleted(step.number)}
+              >
+                {step.label}
+              </StyledStepLabel>
+            </StyledStep>
+          ))}
+        </StyledStepsContainer>
+
+        <StyledNavigationButtons>
+          <StyledButton 
+            $variant="primary" 
+            onClick={handleNext}
+            disabled={state.currentStep === 4 && !isStepCompleted(4)}
+          >
+            {state.currentStep === 4 ? 'Complete' : 'Next →'}
+          </StyledButton>
+        </StyledNavigationButtons>
+      </StyledStepIndicator>
+
+      <StyledContainer>
+        {renderCurrentStep()}
+      </StyledContainer>
+
+      <Snackbar
+        message="Character created successfully!"
+        isVisible={showSnackbar}
+        onClose={() => setShowSnackbar(false)}
+        duration={3000}
+      />
+    </div>
+  );
+}
+
+export default CharacterCreation;
+````
+
+## File: vite.config.ts
+````typescript
+import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+	plugins: [tailwindcss(), react()],
+	publicDir: 'static',
+	build: {
+		outDir: 'dist'
+	}
+});
+````
 
 ## File: tsconfig.json
-```json
+````json
 {
 	"compilerOptions": {
 		"target": "ES2020",
@@ -7354,18 +9209,18 @@ export const initiative = derived(
 		"forceConsistentCasingInFileNames": true,
 		"sourceMap": true
 	},
-	"include": ["src"],
+	"include": ["src", "pdf-service"],
 	"references": [{ "path": "./tsconfig.node.json" }]
 }
-```
+````
 
 ## File: README.md
-```markdown
+````markdown
 001
-```
+````
 
 ## File: package.json
-```json
+````json
 {
 	"name": "dc20clean",
 	"version": "0.0.1",
@@ -7382,7 +9237,8 @@ export const initiative = derived(
 		"db:start": "docker compose up",
 		"db:push": "drizzle-kit push",
 		"db:migrate": "drizzle-kit migrate",
-		"db:studio": "drizzle-kit studio"
+		"db:studio": "drizzle-kit studio",
+		"prisma:generate": "npx prisma generate"
 	},
 	"files": [
 		"dist",
@@ -7433,6 +9289,8 @@ export const initiative = derived(
 		"@types/styled-components": "^5.1.34",
 		"drizzle-orm": "^0.40.0",
 		"fantasy-name-generator": "^2.0.0",
+		"pdf-lib": "^1.17.1",
+		"@pdf-lib/fontkit": "^1.0.0",
 		"postgres": "^3.4.5",
 		"prisma": "^6.10.1",
 		"react": "^19.1.0",
@@ -7440,71 +9298,4 @@ export const initiative = derived(
 		"styled-components": "^6.1.19"
 	}
 }
-```
-
-## File: src/routes/character-creation/+page.svelte
-```
-<script lang="ts">
-	import AncestrySelector from './AncestrySelector.svelte';
-	import SelectedAncestries from './SelectedAncestries.svelte';
-	import AncestryPointsCounter from './AncestryPointsCounter.svelte';
-	import Attributes from './Attributes.svelte';
-	import ClassSelector from './ClassSelector.svelte';
-	import ClassFeatures from './ClassFeatures.svelte';
-</script>
-
-<h1>Character Creation</h1>
-
-<div class="character-creation-page">
-	<h2>Choose Your Ancestry</h2>
-	<AncestrySelector />
-
-	<section class="points-section">
-		<AncestryPointsCounter />
-	</section>
-
-	<section class="traits-section">
-		<h2>Ancestry Traits</h2>
-		<SelectedAncestries />
-	</section>
-	<section class="attributes-section">
-		<Attributes />
-	</section>
-
-	<section class="class-selection-section">
-		<h2>Class Selection</h2>
-		<ClassSelector />
-	</section>
-	<section class="class-features-section">
-		<ClassFeatures />
-	</section>
-
-	<section class="ancestry-selection-section"></section>
-</div>
-
-<style>
-	.character-creation-page {
-		display: flex;
-		flex-direction: column;
-		gap: 2rem;
-		padding: 1rem;
-	}
-
-	.class-selection-section,
-	.attributes-section,
-	.ancestry-selection-section,
-	.points-section,
-	.traits-section,
-	.class-features-section {
-		border: 1px solid #eee;
-		padding: 1.5rem;
-		border-radius: 8px;
-		background-color: #f9f9f9;
-	}
-
-	h2 {
-		margin-top: 0;
-		color: #333;
-	}
-</style>
-```
+````

@@ -1,4 +1,5 @@
 import React from 'react';
+import type { SkillData, CharacterSheetData } from '../../../types';
 import {
   AttributeSection,
   AttributeHeader,
@@ -16,26 +17,8 @@ import {
 } from '../styles/Attributes';
 import { StyledProficiencyDots, StyledDot } from '../styles/Skills';
 
-interface SkillData {
-  id: string;
-  name: string;
-  attribute: string;
-  proficiency: number;
-}
-
 interface AttributesProps {
-  characterData: {
-    finalPrimeModifierAttribute: string;
-    finalPrimeModifierValue: number;
-    finalMight: number;
-    finalAgility: number;
-    finalCharisma: number;
-    finalIntelligence: number;
-    finalSaveMight: number;
-    finalSaveAgility: number;
-    finalSaveCharisma: number;
-    finalSaveIntelligence: number;
-  };
+  characterData: CharacterSheetData;
   skillsByAttribute: {
     prime: SkillData[];
     might: SkillData[];

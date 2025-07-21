@@ -1,35 +1,13 @@
 import React from 'react';
+import type { CharacterSheetData, CurrentValues } from '../types';
 import {
   StyledCombatSection,
   StyledActionPoints,
   StyledActionPoint
 } from '../routes/character-sheet/styles/Combat';
 
-export interface CharacterData {
-  finalCombatMastery: number;
-  finalPrimeModifierValue: number;
-  finalPrimeModifierAttribute: string;
-  finalSaveDC: number;
-}
-
-export interface CurrentValues {
-  currentHP: number;
-  currentSP: number;
-  currentMP: number;
-  currentGritPoints: number;
-  currentRestPoints: number;
-  tempHP: number;
-  actionPointsUsed: number;
-  exhaustionLevel: number;
-  goldPieces: number;
-  silverPieces: number;
-  copperPieces: number;
-  electrumPieces: number;
-  platinumPieces: number;
-}
-
 export interface CombatProps {
-  characterData: CharacterData;
+  characterData: CharacterSheetData;
   currentValues: CurrentValues;
   setCurrentValues: React.Dispatch<React.SetStateAction<CurrentValues>>;
 }

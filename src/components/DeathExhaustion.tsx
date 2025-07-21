@@ -1,4 +1,5 @@
 import React from 'react';
+import type { CharacterSheetData, CurrentValues } from '../types';
 import {
   StyledDeathExhaustionContainer,
   StyledExhaustionOnlyContainer,
@@ -25,17 +26,6 @@ import {
 } from '../routes/character-sheet/styles/Exhaustion';
 
 import { getHealthStatus, calculateDeathThreshold, getDeathSteps } from '../lib/rulesdata/death';
-
-interface CharacterSheetData {
-  finalHPMax: number;
-  finalPrimeModifierValue: number;
-  finalCombatMastery: number;
-}
-
-interface CurrentValues {
-  currentHP: number;
-  exhaustionLevel: number;
-}
 
 interface DeathExhaustionProps {
   characterData: CharacterSheetData;

@@ -1,4 +1,5 @@
 import React from 'react';
+import type { CharacterSheetData } from '../types';
 import {
   StyledMovementContainer,
   StyledMovementGrid,
@@ -6,11 +7,6 @@ import {
   StyledMovementLabel,
   StyledMovementValue
 } from '../routes/character-sheet/styles/Movement.styles';
-
-interface CharacterSheetData {
-  finalMoveSpeed: number;
-  finalJumpDistance: number;
-}
 
 interface MovementProps {
   characterData: CharacterSheetData;

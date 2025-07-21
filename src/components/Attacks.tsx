@@ -1,4 +1,5 @@
 import React from 'react';
+import type { AttackData, CharacterSheetData } from '../types';
 import { WeaponData, weaponsData, getHeavyHitDamage, getBrutalHitDamage, getWeaponAttackBonus } from '../lib/rulesdata/weapons';
 import {
   StyledAttacksSection,
@@ -17,29 +18,10 @@ import {
   StyledDamageTypeCell
 } from '../routes/character-sheet/styles/Attacks';
 
-export interface AttackData {
-  id: string;
-  weaponId: string;
-  name: string;
-  attackBonus: number;
-  damage: string;
-  damageType: string;
-  critRange: string;
-  critDamage: string;
-  brutalDamage: string;
-  heavyHitEffect: string;
-}
-
-export interface CharacterData {
-  finalMight: number;
-  finalAgility: number;
-  finalCombatMastery: number;
-}
-
 export interface AttacksProps {
   attacks: AttackData[];
   setAttacks: React.Dispatch<React.SetStateAction<AttackData[]>>;
-  characterData: CharacterData;
+  characterData: CharacterSheetData;
 }
 
 const Attacks: React.FC<AttacksProps> = ({

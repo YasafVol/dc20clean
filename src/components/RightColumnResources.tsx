@@ -1,4 +1,5 @@
 import React from 'react';
+import type { CharacterSheetData, CurrentValues } from '../types';
 import {
   StyledRightResourcesContainer,
   StyledRightResourcesTitle,
@@ -8,16 +9,6 @@ import {
   StyledRightResourceInput,
   StyledRightResourceMax
 } from '../routes/character-sheet/styles/RightColumnResources.styles';
-
-interface CharacterSheetData {
-  finalRestPoints: number;
-  finalGritPoints: number;
-}
-
-interface CurrentValues {
-  currentRestPoints: number;
-  currentGritPoints: number;
-}
 
 interface RightColumnResourcesProps {
   characterData: CharacterSheetData;

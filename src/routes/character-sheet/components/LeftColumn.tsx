@@ -1,47 +1,12 @@
 import React from 'react';
+import type { SkillData, TradeData, LanguageData, CharacterSheetData } from '../../../types';
 import { StyledLeftColumn } from '../styles/Layout';
 import Attributes from './Attributes';
 import KnowledgeTrades from './KnowledgeTrades';
 import Languages from './Languages';
 
-interface SkillData {
-  id: string;
-  name: string;
-  attribute: string;
-  proficiency: number;
-}
-
-interface KnowledgeData {
-  id: string;
-  name: string;
-  proficiency: number;
-}
-
-interface TradeData {
-  id: string;
-  name: string;
-  proficiency: number;
-}
-
-interface LanguageData {
-  id: string;
-  name: string;
-  fluency: 'limited' | 'fluent';
-}
-
 interface LeftColumnProps {
-  characterData: {
-    finalPrimeModifierAttribute: string;
-    finalPrimeModifierValue: number;
-    finalMight: number;
-    finalAgility: number;
-    finalCharisma: number;
-    finalIntelligence: number;
-    finalSaveMight: number;
-    finalSaveAgility: number;
-    finalSaveCharisma: number;
-    finalSaveIntelligence: number;
-  };
+  characterData: CharacterSheetData;
   skillsByAttribute: {
     prime: SkillData[];
     might: SkillData[];
@@ -49,7 +14,7 @@ interface LeftColumnProps {
     charisma: SkillData[];
     intelligence: SkillData[];
   };
-  knowledge: KnowledgeData[];
+  knowledge: TradeData[];
   trades: TradeData[];
   languages: LanguageData[];
 }

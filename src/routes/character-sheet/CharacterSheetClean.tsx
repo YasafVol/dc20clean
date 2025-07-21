@@ -1,5 +1,18 @@
 import React, { useState, useEffect } from 'react';
 
+// Import types
+import type {
+  CharacterSheetProps,
+  CharacterSheetData,
+  SkillData,
+  TradeData,
+  LanguageData,
+  FeatureData,
+  CurrentValues,
+  AttackData,
+  InventoryItemData
+} from '../../types';
+
 // Import new component modules
 import LeftColumn from './components/LeftColumn';
 import Currency from './components/Currency';
@@ -49,145 +62,6 @@ import {
 } from './styles/FeaturePopup';
 
 import { calculateDeathThreshold } from '../../lib/rulesdata/death';
-
-// Types for character sheet data
-interface CharacterSheetProps {
-  characterId: string;
-  onBack: () => void;
-}
-
-interface CharacterSheetData {
-  // Basic Info
-  id: string;
-  finalName: string;
-  finalPlayerName?: string;
-  finalLevel: number;
-  
-  // Attributes
-  finalMight: number;
-  finalAgility: number;
-  finalCharisma: number;
-  finalIntelligence: number;
-  
-  // Calculated Stats
-  finalPrimeModifierValue: number;
-  finalPrimeModifierAttribute: string;
-  finalCombatMastery: number;
-  
-  // Saves (Attribute + Combat Mastery)
-  finalSaveMight: number;
-  finalSaveAgility: number;
-  finalSaveCharisma: number;
-  finalSaveIntelligence: number;
-  
-  // Health & Resources
-  finalHPMax: number;
-  finalSPMax: number;
-  finalMPMax: number;
-  
-  // Defenses
-  finalPD: number;
-  finalAD: number;
-  
-  // PDR (Physical Damage Reduction)
-  finalPDR: number;
-  
-  // Other Stats
-  finalSaveDC: number;
-  finalDeathThreshold: number;
-  finalMoveSpeed: number;
-  finalJumpDistance: number;
-  finalRestPoints: number;
-  finalGritPoints: number;
-  finalInitiativeBonus: number;
-  
-  // Class & Ancestry Info
-  className: string;
-  ancestry1Name?: string;
-  ancestry2Name?: string;
-  
-  // JSON data fields
-  skillsJson?: string;
-  tradesJson?: string;
-  languagesJson?: string;
-  selectedTraitIds?: string; // JSON string of selected trait IDs
-  selectedFeatureChoices?: string; // JSON string of selected feature choices
-  
-  // Current values (optional, may not exist on first load)
-  currentHP?: number;
-  currentSP?: number;
-  currentMP?: number;
-  currentGritPoints?: number;
-  currentRestPoints?: number;
-  tempHP?: number;
-  actionPointsUsed?: number;
-  exhaustionLevel?: number;
-}
-
-interface SkillData {
-  id: string;
-  name: string;
-  attribute: string;
-  proficiency: number; // 0-5
-}
-
-interface TradeData {
-  id: string;
-  name: string;
-  proficiency: number; // 0-5
-}
-
-interface LanguageData {
-  id: string;
-  name: string;
-  fluency: 'limited' | 'fluent';
-}
-
-interface FeatureData {
-  id: string;
-  name: string;
-  description: string;
-  source: 'ancestry' | 'class' | 'choice';
-  sourceDetail?: string; // e.g., "Human (Default)", "Barbarian Lvl 1", etc.
-}
-
-interface CurrentValues {
-  currentHP: number;
-  currentSP: number;
-  currentMP: number;
-  currentGritPoints: number;
-  currentRestPoints: number;
-  tempHP: number;
-  actionPointsUsed: number;
-  exhaustionLevel: number; // 0-5
-  // Currency
-  goldPieces: number;
-  silverPieces: number;
-  copperPieces: number;
-  electrumPieces: number;
-  platinumPieces: number;
-}
-
-interface AttackData {
-  id: string;
-  weaponId: string;
-  name: string;
-  attackBonus: number;
-  damage: string;
-  damageType: string;
-  critRange: string;
-  critDamage: string;
-  brutalDamage: string;
-  heavyHitEffect: string;
-}
-
-interface InventoryItemData {
-  id: string;
-  itemType: 'Weapon' | 'Armor' | 'Shield' | 'Adventuring Supply' | 'Potion' | '';
-  itemName: string;
-  count: number;
-  cost?: string;
-}
 
 // Character data service - fetches from localStorage and uses already calculated stats
 const getCharacterData = async (characterId: string): Promise<CharacterSheetData> => {

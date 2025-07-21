@@ -1,4 +1,5 @@
 import React from 'react';
+import type { InventoryItemData } from '../types';
 import { allItems } from '../lib/rulesdata/inventoryItems';
 import {
   StyledInventorySection,
@@ -15,14 +16,6 @@ import {
   StyledInventoryCost,
   StyledEmptyInventory
 } from '../routes/character-sheet/styles/Inventory';
-
-export interface InventoryItemData {
-  id: string;
-  itemType: 'Weapon' | 'Armor' | 'Shield' | 'Adventuring Supply' | 'Potion' | '';
-  itemName: string;
-  count: number;
-  cost?: string;
-}
 
 export interface InventoryProps {
   inventory: InventoryItemData[];

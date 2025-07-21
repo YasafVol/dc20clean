@@ -1,4 +1,5 @@
 import React from 'react';
+import type { TradeData } from '../../../types';
 import {
   KnowledgeTradesSection,
   SectionTitle,
@@ -8,20 +9,8 @@ import {
 import { SkillRow, SkillName } from '../styles/Attributes';
 import { StyledProficiencyDots, StyledDot } from '../styles/Skills';
 
-interface KnowledgeData {
-  id: string;
-  name: string;
-  proficiency: number;
-}
-
-interface TradeData {
-  id: string;
-  name: string;
-  proficiency: number;
-}
-
 interface KnowledgeTradesProps {
-  knowledge: KnowledgeData[];
+  knowledge: TradeData[];
   trades: TradeData[];
 }
 

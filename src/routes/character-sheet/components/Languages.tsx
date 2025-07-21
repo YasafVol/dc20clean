@@ -1,4 +1,6 @@
 import React from 'react';
+import type { LanguageData } from '../../../types';
+import { SectionTitle, SectionDescription } from '../styles/KnowledgeTrades';
 import {
   LanguagesSection,
   LanguageRow,
@@ -6,13 +8,6 @@ import {
   FluencyContainer,
   FluencyBox
 } from '../styles/Languages';
-import { SectionTitle, SectionDescription } from '../styles/KnowledgeTrades';
-
-interface LanguageData {
-  id: string;
-  name: string;
-  fluency: 'limited' | 'fluent';
-}
 
 interface LanguagesProps {
   languages: LanguageData[];

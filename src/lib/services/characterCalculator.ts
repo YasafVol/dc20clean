@@ -86,6 +86,9 @@ export interface CalculatedCharacterStats {
   finalGritPoints: number;
   finalInitiativeBonus: number;
   
+  // PDR (Physical Damage Reduction)
+  finalPDR: number;
+  
   // Class & Ancestry Info
   classId: string | null;
   className: string;
@@ -241,6 +244,9 @@ export const calculateCharacterStats = async (
   const baseGritPoints = classData?.gritPointsBase || 2;
   const finalGritPoints = baseGritPoints + finalCharisma;
   
+  // Calculate PDR (Physical Damage Reduction)
+  const finalPDR = calculatePDR(characterData, classData);
+  
   // Default skills if not provided
   let skillsJson = characterData.skillsJson;
   if (!skillsJson) {
@@ -299,6 +305,9 @@ export const calculateCharacterStats = async (
     finalGritPoints,
     finalInitiativeBonus,
     
+    // PDR (Physical Damage Reduction)
+    finalPDR,
+    
     // Class & Ancestry Info
     classId: characterData.classId,
     className: classData?.name || 'Unknown',
@@ -312,4 +321,39 @@ export const calculateCharacterStats = async (
     tradesJson: characterData.tradesJson || '{}',
     languagesJson: characterData.languagesJson || '{"common": {"fluency": "fluent"}}'
   };
+};
+
+// Helper function to calculate PDR (Physical Damage Reduction)
+const calculatePDR = (characterData: CharacterInProgressData, classData: any): number => {
+  let pdr = 0;
+  
+  // Check for Beastborn Natural Armor trait
+  if (characterData.selectedTraitIds) {
+    try {
+      const selectedTraits = JSON.parse(characterData.selectedTraitIds);
+      if (selectedTraits.includes('beastborn_natural_armor')) {
+        // Natural Armor grants PDR when not wearing armor
+        // According to DC20 rules, this grants PDR (Physical Damage Reduction)
+        pdr += 1;
+      }
+    } catch (error) {
+      console.warn('Error parsing selectedTraitIds for PDR calculation:', error);
+    }
+  }
+  
+  // Check for Barbarian Rage ability
+  if (classData?.id === 'barbarian') {
+    // Barbarian Rage grants Resistance (Half) to Physical damage
+    // This is effectively PDR, but it's a different mechanic
+    // For now, we'll note this but not add to base PDR since Rage is conditional
+    // TODO: Could add a note or separate field for conditional PDR
+  }
+  
+  // TODO: Add additional PDR sources:
+  // - Heavy Armor with PDR property (requires armor system integration)
+  // - Shell Retreat ability (conditional)
+  // - Magic items or other class features
+  // - Equipment-based PDR calculation
+  
+  return pdr;
 };

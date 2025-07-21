@@ -103,3 +103,58 @@ export const StyledTempHPInput = styled(StyledResourceInput)`
   width: 25px;
   font-size: 0.7rem;
 `;
+
+// New components for refactored layout
+export const ResourcesContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1.5rem;
+`;
+
+export const ResourceColumn = styled.div`
+  text-align: center;
+`;
+
+export const ResourceLabel = styled.div`
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #8b4513;
+  margin-bottom: 0.3rem;
+`;
+
+export const ResourceControls = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+`;
+
+export const TempHPControls = styled.div`
+  font-size: 0.8rem;
+  color: #dc2626;
+  margin-top: 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+`;
+
+export const TempHPLabel = styled.span`
+  font-weight: normal;
+`;
+
+export const TempHPInputSmall = styled.input`
+  color: #dc2626;
+  background: white;
+  border: 1px solid #dc2626;
+  border-radius: 3px;
+  width: 35px;
+  text-align: center;
+  font-size: 0.8rem;
+  padding: 2px;
+
+  &:focus {
+    outline: none;
+    border-color: #b91c1c;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
+  }
+`;

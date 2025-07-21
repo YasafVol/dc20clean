@@ -2,7 +2,7 @@
 
 import { json } from '@sveltejs/kit';
 import { PrismaClient } from '@prisma/client';
-import { classesData } from '$lib/rulesdata/classes';
+import { classesData } from '$lib/rulesdata/loaders/class.loader';
 import { traitsData } from '$lib/rulesdata/traits';
 import type { RequestHandler } from './$types';
 

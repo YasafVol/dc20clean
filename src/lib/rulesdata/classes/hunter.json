@@ -1,0 +1,85 @@
+{
+  "id": "hunter",
+  "name": "Hunter",
+  "description": "Hunters are master survivalists and natural explorers. They mark their targets to better track them and take them down, using their mastery over terrain, traps, and weapons to their advantage.",
+  "baseHpContribution": 9,
+  "startingSP": 1,
+  "startingMP": 0,
+  "skillPointGrantLvl1": 0,
+  "tradePointGrantLvl1": 0,
+  "combatTraining": ["Weapons", "Light Armor", "Light Shields"],
+  "maneuversKnownLvl1": "All Attack",
+  "techniquesKnownLvl1": 0,
+  "saveDCBase": 8,
+  "deathThresholdBase": 10,
+  "moveSpeedBase": 30,
+  "restPointsBase": 4,
+  "gritPointsBase": 2,
+  "initiativeBonusBase": 0,
+  "cantripsKnownLvl1": 0,
+  "spellsKnownLvl1": 0,
+  "level1Features": [
+    {
+      "id": "hunter_hunters_mark",
+      "name": "Hunter’s Mark",
+      "level": 1,
+      "description": "You can spend 1 AP and 1 SP to focus on and mark a creature you can see within 15 Spaces as your quarry. Alternatively, you can mark a creature by studying its tracks for at least 1 minute. While a creature is marked, you gain the following benefits: You have ADV on Awareness and Survival Checks made to find the target. The first Martial Attack against your target on your turn has ADV and ignores PDR. When you score a Heavy or Critical Hit against the target, you automatically grant a d8 Help Die to the next Attack made against the target before the start of your next turn. The target is marked as long as it’s on the same Plane of Existence as you, and vanishes early if you complete a Long Rest, fall Unconscious, or use this Feature again to mark another creature.",
+      "effects": []
+    },
+    {
+      "id": "hunter_favored_terrain",
+      "name": "Favored Terrain",
+      "level": 1,
+      "description": "You are particularly familiar with two types of environments and are adept at the skills unique to the region. Choose 2 types of Favored Terrain listed below. Coast, Desert, Forest, Grassland, Jungle, Mountain, Swamp, Tundra, Subterranean, Urban. Additionally, while you’re in one of your Favored Terrains, you have ADV on Stealth and Survival Checks and can’t be Surprised.",
+      "effects": []
+    },
+    {
+      "id": "hunter_bestiary",
+      "name": "Bestiary (Flavor Feature)",
+      "level": 1,
+      "description": "You have developed a trove of knowledge hunting creatures which you’ve recorded in your Bestiary. Your Bestiary can take the form of a book, a memory vault within your mind, or some other representation of your choice. You have ADV on Checks made to learn or recall information about any creature recorded in your Bestiary. Starting Entries: Choose a Creature Type: Aberration, Beast, Celestial, Construct, Dragon, Elemental, Fey, Fiend, Giant, Humanoid, Monstrosity, Ooze, Plant, or Undead. Your Bestiary includes prerecorded notes about various creatures of the chosen type. Making New Entries: You can spend 10 minutes of Light Activity recording information into your Bestiary about a specific creature you have slain within the last 24 hours.",
+      "effects": []
+    }
+  ],
+  "featureChoicesLvl1": [
+    {
+      "id": "hunter_favored_terrain_choice",
+      "prompt": "Choose 2 types of Favored Terrain:",
+      "type": "select_multiple",
+      "maxSelections": 2,
+      "options": [
+        { "value": "coast", "label": "Coast" },
+        { "value": "desert", "label": "Desert" },
+        { "value": "forest", "label": "Forest" },
+        { "value": "grassland", "label": "Grassland" },
+        { "value": "jungle", "label": "Jungle" },
+        { "value": "mountain", "label": "Mountain" },
+        { "value": "swamp", "label": "Swamp" },
+        { "value": "tundra", "label": "Tundra" },
+        { "value": "subterranean", "label": "Subterranean" },
+        { "value": "urban", "label": "Urban" }
+      ]
+    },
+    {
+      "id": "hunter_bestiary_choice",
+      "prompt": "Choose a starting Creature Type for your Bestiary:",
+      "type": "select_one",
+      "options": [
+        { "value": "aberration", "label": "Aberration" },
+        { "value": "beast", "label": "Beast" },
+        { "value": "celestial", "label": "Celestial" },
+        { "value": "construct", "label": "Construct" },
+        { "value": "dragon", "label": "Dragon" },
+        { "value": "elemental", "label": "Elemental" },
+        { "value": "fey", "label": "Fey" },
+        { "value": "fiend", "label": "Fiend" },
+        { "value": "giant", "label": "Giant" },
+        { "value": "humanoid", "label": "Humanoid" },
+        { "value": "monstrosity", "label": "Monstrosity" },
+        { "value": "ooze", "label": "Ooze" },
+        { "value": "plant", "label": "Plant" },
+        { "value": "undead", "label": "Undead" }
+      ]
+    }
+  ]
+}

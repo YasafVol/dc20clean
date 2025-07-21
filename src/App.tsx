@@ -6,11 +6,11 @@ import LoadCharacter from './routes/character-creation/LoadCharacter.tsx';
 import CharacterSheet from './routes/character-sheet/CharacterSheetClean.tsx';
 import Menu from './components/Menu.tsx';
 import {
-  StyledApp,
-  StyledHeader,
-  StyledBackButton,
-  StyledMain,
-  StyledFooter
+	StyledApp,
+	StyledHeader,
+	StyledBackButton,
+	StyledMain,
+	StyledFooter
 } from './styles/App.styles';
 
 const GlobalStyle = createGlobalStyle`
@@ -62,80 +62,67 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 function App() {
-  const [currentView, setCurrentView] = useState<'menu' | 'create' | 'load' | 'sheet'>('menu');
-  const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
+	const [currentView, setCurrentView] = useState<'menu' | 'create' | 'load' | 'sheet'>('menu');
+	const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
 
-  const handleCreateCharacter = () => {
-    setCurrentView('create');
-  };
+	const handleCreateCharacter = () => {
+		setCurrentView('create');
+	};
 
-  const handleLoadCharacter = () => {
-    setCurrentView('load');
-  };
+	const handleLoadCharacter = () => {
+		setCurrentView('load');
+	};
 
-  const handleViewCharacterSheet = (characterId: string) => {
-    setSelectedCharacterId(characterId);
-    setCurrentView('sheet');
-  };
+	const handleViewCharacterSheet = (characterId: string) => {
+		setSelectedCharacterId(characterId);
+		setCurrentView('sheet');
+	};
 
-  const handleBackToMenu = () => {
-    setCurrentView('menu');
-    setSelectedCharacterId(null);
-  };
+	const handleBackToMenu = () => {
+		setCurrentView('menu');
+		setSelectedCharacterId(null);
+	};
 
-  const renderCurrentView = () => {
-    switch (currentView) {
-      case 'menu':
-        return (
-          <Menu 
-            onCreateCharacter={handleCreateCharacter}
-            onLoadCharacter={handleLoadCharacter}
-          />
-        );
-      case 'create':
-        return (
-          <CharacterProvider>
-            <StyledHeader>
-              <StyledBackButton onClick={handleBackToMenu}>
-                ← Back to Menu
-              </StyledBackButton>
-              <span>Created by TBD Group</span>
-            </StyledHeader>
-            <StyledMain>
-              <CharacterCreation onNavigateToLoad={handleLoadCharacter} />
-            </StyledMain>
-          </CharacterProvider>
-        );
-      case 'load':
-        return (
-          <LoadCharacter 
-            onBack={handleBackToMenu} 
-            onSelectCharacter={handleViewCharacterSheet}
-          />
-        );
-      case 'sheet':
-        return selectedCharacterId ? (
-          <CharacterSheet 
-            characterId={selectedCharacterId}
-            onBack={handleBackToMenu}
-          />
-        ) : null;
-      default:
-        return null;
-    }
-  };
+	const renderCurrentView = () => {
+		switch (currentView) {
+			case 'menu':
+				return (
+					<Menu onCreateCharacter={handleCreateCharacter} onLoadCharacter={handleLoadCharacter} />
+				);
+			case 'create':
+				return (
+					<CharacterProvider>
+						<StyledHeader>
+							<StyledBackButton onClick={handleBackToMenu}>← Back to Menu</StyledBackButton>
+							<span>Created by TBD Group</span>
+						</StyledHeader>
+						<StyledMain>
+							<CharacterCreation onNavigateToLoad={handleLoadCharacter} />
+						</StyledMain>
+					</CharacterProvider>
+				);
+			case 'load':
+				return (
+					<LoadCharacter onBack={handleBackToMenu} onSelectCharacter={handleViewCharacterSheet} />
+				);
+			case 'sheet':
+				return selectedCharacterId ? (
+					<CharacterSheet characterId={selectedCharacterId} onBack={handleBackToMenu} />
+				) : null;
+			default:
+				return null;
+		}
+	};
 
-  return (
-    <>
-      <GlobalStyle />
-      <StyledApp>
-        {renderCurrentView()}
-        <StyledFooter>
-          All rights reserved to TBD Group, 2025
-        </StyledFooter>
-      </StyledApp>
-    </>
-  );
+	return (
+		<>
+			<GlobalStyle />
+			<StyledApp>
+				{renderCurrentView()}
+				<StyledFooter>All rights reserved to TBD Group, 2025</StyledFooter>
+			</StyledApp>
+		</>
+	);
 }
 
 export default App;

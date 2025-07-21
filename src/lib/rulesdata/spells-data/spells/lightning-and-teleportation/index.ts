@@ -7,11 +7,11 @@ import { mistyStep } from './misty-step';
 import { cracklingLightning } from './crackling-lightning';
 
 export const lightningAndTeleportationSpells = [
-  lightningBolt,
-  lightningBlade,
-  shockingGrasp,
-  gust,
-  returningShock,
-  mistyStep,
-  cracklingLightning,
+	lightningBolt,
+	lightningBlade,
+	shockingGrasp,
+	gust,
+	returningShock,
+	mistyStep,
+	cracklingLightning
 ];

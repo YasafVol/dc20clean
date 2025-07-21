@@ -6,10 +6,10 @@ import { closeWounds } from './close-wounds';
 import { deathBolt } from './death-bolt';
 
 export const additionalSpells = [
-  druidcraft,
-  findFamiliar,
-  shield,
-  tetheringVines,
-  closeWounds,
-  deathBolt,
+	druidcraft,
+	findFamiliar,
+	shield,
+	tetheringVines,
+	closeWounds,
+	deathBolt
 ];

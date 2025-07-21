@@ -7,11 +7,11 @@ import { iceKnife } from './ice-knife';
 import { silentImage } from './silent-image';
 
 export const iceAndIllusionsSpells = [
-  frostBolt,
-  minorIllusion,
-  mageHand,
-  catapult,
-  magicMissile,
-  iceKnife,
-  silentImage,
+	frostBolt,
+	minorIllusion,
+	mageHand,
+	catapult,
+	magicMissile,
+	iceKnife,
+	silentImage
 ];

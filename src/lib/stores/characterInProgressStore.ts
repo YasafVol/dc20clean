@@ -3,7 +3,7 @@
 import { writable, derived } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 import type { CharacterInProgress } from '@prisma/client'; // Assuming Prisma client is generated
-import { classesData } from '../rulesdata/classes.ts';
+import { classesData } from '../rulesdata/loaders/class.loader';
 
 // Define the shape of the data stored in the characterInProgressStore
 // This should mirror the CharacterInProgress Prisma model, plus any UI state

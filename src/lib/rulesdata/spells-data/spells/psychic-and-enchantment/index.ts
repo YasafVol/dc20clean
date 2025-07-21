@@ -7,11 +7,11 @@ import { command } from './command';
 import { sleep } from './sleep';
 
 export const psychicAndEnchantmentSpells = [
-  psiBolt,
-  message,
-  befriend,
-  psychicFear,
-  bane,
-  command,
-  sleep,
+	psiBolt,
+	message,
+	befriend,
+	psychicFear,
+	bane,
+	command,
+	sleep
 ];

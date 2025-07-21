@@ -7,11 +7,11 @@ import { fireShield } from './fire-shield';
 import { grease } from './grease';
 
 export const fireAndFlamesSpells = [
-  fireBolt,
-  minorFlameBlade,
-  dancingFlames,
-  burningFlames,
-  fogCloud,
-  fireShield,
-  grease,
+	fireBolt,
+	minorFlameBlade,
+	dancingFlames,
+	burningFlames,
+	fogCloud,
+	fireShield,
+	grease
 ];

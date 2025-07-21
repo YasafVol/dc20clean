@@ -17,12 +17,12 @@ export * from './fiendborn-ancestry-spells';
 export * from './additional-spells';
 
 export const allSpells = [
-  ...fireAndFlamesSpells,
-  ...iceAndIllusionsSpells,
-  ...lightningAndTeleportationSpells,
-  ...psychicAndEnchantmentSpells,
-  ...holyAndRestorationSpells,
-  ...specialClassSpells,
-  ...fiendbornAncestrySpells,
-  ...additionalSpells,
+	...fireAndFlamesSpells,
+	...iceAndIllusionsSpells,
+	...lightningAndTeleportationSpells,
+	...psychicAndEnchantmentSpells,
+	...holyAndRestorationSpells,
+	...specialClassSpells,
+	...fiendbornAncestrySpells,
+	...additionalSpells
 ];

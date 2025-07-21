@@ -7,11 +7,11 @@ import { heal } from './heal';
 import { shieldOfFaith } from './shield-of-faith';
 
 export const holyAndRestorationSpells = [
-  sacredBolt,
-  guidance,
-  light,
-  guidingBolt,
-  bless,
-  heal,
-  shieldOfFaith,
+	sacredBolt,
+	guidance,
+	light,
+	guidingBolt,
+	bless,
+	heal,
+	shieldOfFaith
 ];

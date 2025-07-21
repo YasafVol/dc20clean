@@ -8,6 +8,7 @@ import { traitsData } from '../../lib/rulesdata/traits';
 import { classesData } from '../../lib/rulesdata/classes';
 import { ancestriesData } from '../../lib/rulesdata/ancestries';
 import { weaponsData, WeaponData, getWeaponAttackBonus, getWeaponDamageBonus, getWeaponDamageString, getCriticalDamage, getBrutalDamage, getHeavyHitEffect, getHeavyHitDamage, getBrutalHitDamage } from '../../lib/rulesdata/weapons';
+import { allItems } from '../../lib/rulesdata/inventoryItems';
 
 // Import styled components
 import {
@@ -205,6 +206,14 @@ interface AttackData {
   heavyHitEffect: string;
 }
 
+interface InventoryItemData {
+  id: string;
+  itemType: 'Weapon' | 'Armor' | 'Shield' | 'Adventuring Supply' | 'Potion' | '';
+  itemName: string;
+  count: number;
+  cost?: string;
+}
+
 // Character data service - fetches from localStorage and uses already calculated stats
 const getCharacterData = async (characterId: string): Promise<CharacterSheetData> => {
   console.log('Loading character data for ID:', characterId);
@@ -272,6 +281,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
     { id: '2', weaponId: '', name: '', attackBonus: 0, damage: '', damageType: '', critRange: '', critDamage: '', brutalDamage: '', heavyHitEffect: '' },
     { id: '3', weaponId: '', name: '', attackBonus: 0, damage: '', damageType: '', critRange: '', critDamage: '', brutalDamage: '', heavyHitEffect: '' }
   ]);
+  const [inventory, setInventory] = useState<InventoryItemData[]>([]);
 
   // Load character data
   useEffect(() => {
@@ -662,6 +672,182 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
   const removeWeaponSlot = (attackIndex: number) => {
     setAttacks(prev => prev.filter((_, index) => index !== attackIndex));
+  };
+
+  // Inventory management functions
+  const addInventorySlot = () => {
+    const newInventoryItem: InventoryItemData = {
+      id: `inventory_${Date.now()}`,
+      itemType: '',
+      itemName: '',
+      count: 1,
+      cost: '-'
+    };
+    setInventory(prev => [...prev, newInventoryItem]);
+  };
+
+  const removeInventorySlot = (inventoryIndex: number) => {
+    setInventory(prev => prev.filter((_, index) => index !== inventoryIndex));
+  };
+
+  const handleInventoryItemSelect = (inventoryIndex: number, itemTypeOrName: string, isItemName: boolean = false) => {
+    if (!isItemName) {
+      // Selecting item type
+      const itemType = itemTypeOrName as InventoryItemData['itemType'];
+      setInventory(prev => prev.map((item, index) => 
+        index === inventoryIndex 
+          ? { ...item, itemType, itemName: '', cost: '-' }
+          : item
+      ));
+    } else {
+      // Selecting item name
+      const selectedItem = allItems.find(item => item.name === itemTypeOrName);
+      if (selectedItem) {
+        setInventory(prev => prev.map((item, index) => 
+          index === inventoryIndex 
+            ? { 
+                ...item, 
+                itemName: selectedItem.name, 
+                itemType: selectedItem.itemType,
+                cost: getItemCost(selectedItem) 
+              }
+            : item
+        ));
+      }
+    }
+  };
+
+  const handleInventoryCountChange = (inventoryIndex: number, count: number) => {
+    setInventory(prev => prev.map((item, index) => 
+      index === inventoryIndex ? { ...item, count: Math.max(1, count) } : item
+    ));
+  };
+
+  const getItemCost = (item: any, count: number = 1): string => {
+    if (!item || !('price' in item)) return '-';
+    
+    let basePrice = 0;
+    let currency = 'g';
+    
+    if (typeof item.price === 'string') {
+      // Parse string prices like "10g", "5s", etc.
+      const match = item.price.match(/(\d+)([gs]?)/);
+      if (match) {
+        basePrice = parseInt(match[1]);
+        currency = match[2] || 'g';
+      }
+    } else if (typeof item.price === 'number') {
+      basePrice = item.price;
+    }
+    
+    if (basePrice === 0) return '-';
+    
+    const totalPrice = basePrice * count;
+    return `${totalPrice}${currency}`;
+  };
+
+  const getItemExtraInfo = (item: any): string => {
+    if (!item) return 'No item selected';
+    
+    if (item.itemType === 'Weapon') {
+      const parts = [];
+      parts.push(`DAMAGE: ${item.damage || 'N/A'}`);
+      if (item.versatileDamage) {
+        parts.push(`VERSATILE: ${item.versatileDamage} (two-handed)`);
+      }
+      parts.push(`TYPE: ${item.type || 'N/A'}`);
+      parts.push(`DAMAGE TYPE: ${item.damageType || 'N/A'}`);
+      if (item.properties && item.properties.length > 0) {
+        parts.push(`PROPERTIES: ${item.properties.join(', ')}`);
+      }
+      if (item.range) {
+        parts.push(`RANGE: ${item.range}`);
+      }
+      if (item.weightCategory) {
+        parts.push(`WEIGHT: ${item.weightCategory}`);
+      }
+      if (item.cost !== undefined) {
+        parts.push(`VALUE: ${item.cost} coins`);
+      }
+      return parts.join('\n');
+      
+    } else if (item.itemType === 'Armor') {
+      const parts = [];
+      const pdBonus = item.pdBonus || 0;
+      const adBonus = item.adBonus || 0;
+      const speedPenalty = item.speedPenalty || 0;
+      
+      parts.push(`ARMOR CLASS: PD+${pdBonus}, AD+${adBonus}`);
+      if (speedPenalty !== 0) {
+        parts.push(`SPEED PENALTY: ${speedPenalty} feet`);
+      }
+      if (item.type) {
+        parts.push(`TYPE: ${item.type}`);
+      }
+      if (item.properties && item.properties.length > 0) {
+        parts.push(`PROPERTIES: ${item.properties.join(', ')}`);
+      }
+      if (item.cost !== undefined) {
+        parts.push(`VALUE: ${item.cost} coins`);
+      }
+      if (item.description) {
+        parts.push(`DESCRIPTION: ${item.description}`);
+      }
+      return parts.join('\n');
+      
+    } else if (item.itemType === 'Shield') {
+      const parts = [];
+      const pdBonus = item.pdBonus || 0;
+      const adBonus = item.adBonus || 0;
+      const speedPenalty = item.speedPenalty || 0;
+      
+      parts.push(`DEFENSE BONUS: PD+${pdBonus}, AD+${adBonus}`);
+      if (speedPenalty !== 0) {
+        parts.push(`SPEED PENALTY: ${speedPenalty} feet`);
+      }
+      if (item.type) {
+        parts.push(`TYPE: ${item.type}`);
+      }
+      if (item.properties && item.properties.length > 0) {
+        parts.push(`PROPERTIES: ${item.properties.join(', ')}`);
+      }
+      if (item.cost !== undefined) {
+        parts.push(`VALUE: ${item.cost} coins`);
+      }
+      if (item.description) {
+        parts.push(`DESCRIPTION: ${item.description}`);
+      }
+      return parts.join('\n');
+      
+    } else if (item.itemType === 'Potion') {
+      const parts = [];
+      parts.push(`HEALING: ${item.healing || 'N/A'}`);
+      parts.push(`LEVEL: ${item.level || 1}`);
+      if (item.cost !== undefined) {
+        parts.push(`VALUE: ${item.cost} coins`);
+      }
+      if (item.description) {
+        parts.push(`EFFECT: ${item.description}`);
+      } else {
+        parts.push(`EFFECT: Restores ${item.healing || 'N/A'} hit points when consumed`);
+      }
+      return parts.join('\n');
+      
+    } else if (item.itemType === 'Adventuring Supply') {
+      const parts = [];
+      if (item.description) {
+        parts.push(`DESCRIPTION: ${item.description}`);
+      }
+      if (item.cost !== undefined) {
+        parts.push(`VALUE: ${item.cost} coins`);
+      }
+      if (item.properties && item.properties.length > 0) {
+        parts.push(`PROPERTIES: ${item.properties.join(', ')}`);
+      }
+      return parts.length > 0 ? parts.join('\n') : 'Standard adventuring equipment';
+    }
+    
+    return 'Item information not available';
   };  // Exhaustion level descriptions (based on DC20 rules)
   const exhaustionLevels = [
     { level: 1, description: "Fatigued: -1 to all Checks and Saves" },
@@ -1604,6 +1790,226 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                 )}
               </div>
             </div>
+
+            {/* Inventory */}
+            <div style={{ border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', marginBottom: '1rem' }}>
+              <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', textAlign: 'center', marginBottom: '1rem' }}>INVENTORY</div>
+              
+              {/* Add Item Button */}
+              <div style={{ marginBottom: '1rem' }}>
+                <button
+                  onClick={addInventorySlot}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    backgroundColor: '#8b4513',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    fontSize: '0.9rem',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#6d3410'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#8b4513'}
+                >
+                  + Add Item
+                </button>
+              </div>
+              
+              <div style={{ fontSize: '0.8rem', color: '#8b4513' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '30px 100px 2fr 60px 30px 70px', gap: '0.5rem', marginBottom: '0.5rem', borderBottom: '1px solid #e5e5e5', paddingBottom: '0.3rem', alignItems: 'center' }}>
+                  <span></span> {/* Empty column for remove button */}
+                  <span style={{ fontWeight: 'bold' }}>Type</span>
+                  <span style={{ fontWeight: 'bold' }}>Item</span>
+                  <span style={{ fontWeight: 'bold', textAlign: 'center' }}>Count</span>
+                  <span style={{ fontWeight: 'bold', textAlign: 'center' }}>
+                    <span 
+                      title="Item information"
+                      style={{ 
+                        display: 'inline-flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        width: '14px', 
+                        height: '14px', 
+                        borderRadius: '50%', 
+                        backgroundColor: '#8b4513', 
+                        color: 'white', 
+                        fontSize: '10px', 
+                        fontWeight: 'bold',
+                        cursor: 'help'
+                      }}
+                    >
+                      i
+                    </span>
+                  </span>
+                  <span style={{ fontWeight: 'bold', textAlign: 'center' }}>Cost</span>
+                </div>
+                
+                {inventory.length === 0 ? (
+                  <div style={{ textAlign: 'center', fontStyle: 'italic', padding: '2rem', color: '#666' }}>
+                    No items added. Click "Add Item" to add your first item.
+                  </div>
+                ) : (
+                  inventory.map((item, index) => {
+                    const selectedItem = item.itemName ? allItems.find(i => i.name === item.itemName) : null;
+                    
+                    return (
+                      <div key={item.id} style={{ display: 'grid', gridTemplateColumns: '30px 100px 2fr 60px 30px 70px', gap: '0.5rem', marginBottom: '0.5rem', alignItems: 'center' }}>
+                        {/* Remove Button */}
+                        <button
+                          onClick={() => removeInventorySlot(index)}
+                          style={{
+                            width: '24px',
+                            height: '24px',
+                            border: '1px solid #dc2626',
+                            backgroundColor: '#fee2e2',
+                            color: '#dc2626',
+                            borderRadius: '4px',
+                            fontSize: '14px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '0'
+                          }}
+                          title="Remove item"
+                        >
+                          ×
+                        </button>
+                        
+                        {/* Item Type */}
+                        <select
+                          value={item.itemType}
+                          onChange={(e) => handleInventoryItemSelect(index, e.target.value, false)}
+                          style={{
+                            padding: '0.3rem',
+                            border: '1px solid #ccc',
+                            borderRadius: '4px',
+                            fontSize: '0.8rem',
+                            backgroundColor: 'white'
+                          }}
+                        >
+                          <option value="">Select Type</option>
+                          <option value="Weapon">Weapon</option>
+                          <option value="Armor">Armor</option>
+                          <option value="Shield">Shield</option>
+                          <option value="Adventuring Supply">Adventuring Supply</option>
+                          <option value="Potion">Healing Potion</option>
+                        </select>
+                        
+                        {/* Item Name */}
+                        <select
+                          value={item.itemName}
+                          onChange={(e) => handleInventoryItemSelect(index, e.target.value, true)}
+                          style={{
+                            padding: '0.3rem',
+                            border: '1px solid #ccc',
+                            borderRadius: '4px',
+                            fontSize: '0.8rem',
+                            backgroundColor: 'white'
+                          }}
+                          disabled={!item.itemType}
+                        >
+                          <option value="">Select Item</option>
+                          {item.itemType && allItems
+                            .filter(i => i.itemType === item.itemType)
+                            .map(itemData => (
+                              <option key={itemData.name} value={itemData.name}>
+                                {itemData.name}
+                              </option>
+                            ))
+                          }
+                        </select>
+                        
+                        {/* Count */}
+                        <input
+                          type="number"
+                          min="1"
+                          value={item.count}
+                          onChange={(e) => handleInventoryCountChange(index, parseInt(e.target.value) || 1)}
+                          style={{
+                            padding: '0.3rem',
+                            border: '1px solid #ccc',
+                            borderRadius: '4px',
+                            fontSize: '0.8rem',
+                            textAlign: 'center',
+                            backgroundColor: 'white'
+                          }}
+                        />
+                        
+                        {/* Info Indicator */}
+                        <div style={{ textAlign: 'center' }}>
+                          {selectedItem ? (
+                            <span 
+                              title={getItemExtraInfo(selectedItem)}
+                              style={{ 
+                                display: 'inline-flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center',
+                                width: '14px', 
+                                height: '14px', 
+                                borderRadius: '50%', 
+                                backgroundColor: '#8b4513', 
+                                color: 'white', 
+                                fontSize: '10px', 
+                                fontWeight: 'bold',
+                                cursor: 'help',
+                                position: 'relative'
+                              }}
+                              onMouseEnter={(e) => {
+                                // Create and show custom tooltip
+                                const tooltip = document.createElement('div');
+                                tooltip.innerHTML = getItemExtraInfo(selectedItem).replace(/\n/g, '<br/>');
+                                tooltip.style.cssText = `
+                                  position: absolute;
+                                  background: #2d2d2d;
+                                  color: white;
+                                  padding: 8px 12px;
+                                  border-radius: 6px;
+                                  font-size: 12px;
+                                  line-height: 1.4;
+                                  white-space: nowrap;
+                                  z-index: 1000;
+                                  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+                                  border: 1px solid #8b4513;
+                                  max-width: 300px;
+                                  white-space: normal;
+                                  word-wrap: break-word;
+                                `;
+                                
+                                document.body.appendChild(tooltip);
+                                
+                                const rect = e.currentTarget.getBoundingClientRect();
+                                tooltip.style.left = (rect.left + rect.width / 2 - tooltip.offsetWidth / 2) + 'px';
+                                tooltip.style.top = (rect.top - tooltip.offsetHeight - 8) + 'px';
+                                
+                                // Store reference for cleanup
+                                (e.currentTarget as any)._customTooltip = tooltip;
+                              }}
+                              onMouseLeave={(e) => {
+                                // Remove custom tooltip
+                                const tooltip = (e.currentTarget as any)._customTooltip;
+                                if (tooltip && tooltip.parentNode) {
+                                  tooltip.parentNode.removeChild(tooltip);
+                                }
+                                (e.currentTarget as any)._customTooltip = null;
+                              }}
+                            >
+                              i
+                            </span>
+                          ) : '-'}
+                        </div>
+                        
+                        {/* Cost */}
+                        <div style={{ textAlign: 'center', fontSize: '0.8rem', fontWeight: 'bold' }}>
+                          {getItemCost(selectedItem, item.count)}
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
           </StyledMiddleColumn>
 
           {/* Right Column - Movement, Resources, Inventory, Features */}
@@ -1650,14 +2056,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                   />
                   <span style={{ fontSize: '0.9rem', color: '#8b4513' }}>/ {characterData.finalGritPoints}</span>
                 </div>
-              </div>
-            </div>
-
-            {/* Inventory */}
-            <div style={{ border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', marginBottom: '1rem', minHeight: '200px' }}>
-              <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', textAlign: 'center', marginBottom: '1rem' }}>INVENTORY</div>
-              <div style={{ height: '150px', border: '1px solid #e5e5e5', borderRadius: '4px', background: '#f9f9f9' }}>
-                {/* Empty inventory space for items */}
               </div>
             </div>
 

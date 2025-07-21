@@ -66,53 +66,61 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
       case 2:
         return attributePointsRemaining === 0;
       case 3:
-        // Background: check if all points have been spent
-        const hasSkillSelections = state.skillsJson && state.skillsJson !== '{}';
-        const hasTradeSelections = state.tradesJson && state.tradesJson !== '{}';
+        // Background: check if meaningful selections have been made
+        // Since conversions are local state and not persisted, we check for reasonable selections
         
-        // Parse languages to check points spent
-        let languagePointsUsed = 0;
-        try {
-          const languages = JSON.parse(state.languagesJson || '{}');
-          languagePointsUsed = Object.entries(languages).reduce((sum, [langId, data]: [string, any]) => {
-            if (langId === 'common') return sum; // Common is free
-            return sum + (data.fluency === 'basic' ? 1 : data.fluency === 'advanced' ? 2 : data.fluency === 'fluent' ? 3 : 0);
-          }, 0);
-        } catch (e) {
-          languagePointsUsed = 0;
-        }
-        
-        // Calculate points used for skills and trades
+        // Parse current selections
+        let hasSkillSelections = false;
+        let hasTradeSelections = false;  
+        let hasLanguageSelections = false;
         let skillPointsUsed = 0;
         let tradePointsUsed = 0;
+        let languagePointsUsed = 0;
         
         try {
-          if (hasSkillSelections) {
+          if (state.skillsJson && state.skillsJson !== '{}') {
             const skills = JSON.parse(state.skillsJson);
             skillPointsUsed = Object.values(skills).reduce((sum: number, level: any) => sum + level, 0);
+            hasSkillSelections = skillPointsUsed > 0;
           }
-        } catch (e) {
-          skillPointsUsed = 0;
-        }
+        } catch (e) {}
         
         try {
-          if (hasTradeSelections) {
+          if (state.tradesJson && state.tradesJson !== '{}') {
             const trades = JSON.parse(state.tradesJson);
             tradePointsUsed = Object.values(trades).reduce((sum: number, level: any) => sum + level, 0);
+            hasTradeSelections = tradePointsUsed > 0;
           }
-        } catch (e) {
-          tradePointsUsed = 0;
-        }
+        } catch (e) {}
         
-        // Background gives 5 points each for skills, trades, and 3 points for languages (DC20 rules)
-        const maxSkillPoints = 5;
-        const maxTradePoints = 5;
-        const maxLanguagePoints = 3;
+        try {
+          if (state.languagesJson && state.languagesJson !== '{}') {
+            const languages = JSON.parse(state.languagesJson);
+            languagePointsUsed = Object.entries(languages).reduce((sum, [langId, data]: [string, any]) => {
+              if (langId === 'common') return sum; // Common is free
+              return sum + (data.fluency === 'basic' ? 1 : data.fluency === 'advanced' ? 2 : data.fluency === 'fluent' ? 3 : 0);
+            }, 0);
+            hasLanguageSelections = languagePointsUsed > 0;
+          }
+        } catch (e) {}
         
-        // Step is complete only if ALL points have been used
-        return skillPointsUsed === maxSkillPoints && 
-               tradePointsUsed === maxTradePoints && 
-               languagePointsUsed === maxLanguagePoints;
+        // Calculate minimum expected points (without conversions)
+        const intelligenceModifier = state.attribute_intelligence;
+        const minSkillPoints = Math.max(1, 5 + intelligenceModifier); // At least 1, even with negative Int
+        const minTradePoints = 3; // Base trade points
+        const minLanguagePoints = 2; // Base language points
+        
+        // Step is complete if:
+        // 1. User has made skill selections (at least some points spent)
+        // 2. User has made selections in trades OR languages (or both)
+        // 3. Total points used suggests they've engaged with the system meaningfully
+        
+        const totalMinPoints = minSkillPoints + minTradePoints + minLanguagePoints;
+        const totalPointsUsed = skillPointsUsed + tradePointsUsed + languagePointsUsed;
+        
+        return hasSkillSelections && 
+               (hasTradeSelections || hasLanguageSelections) &&
+               totalPointsUsed >= Math.floor(totalMinPoints * 0.6); // Used at least 60% of base allocation
       case 4:
         return state.ancestry1Id !== null;
       case 5:

@@ -1,4 +1,7 @@
 import type { IClassDefinition } from './types.js';
+import { maneuvers } from './maneuvers.js';
+import { techniques } from './techniques.js';
+import { SpellSchool } from './spells-data/types/spell.types.js';
 
 // IClassDefinition for Barbarian:
 export const barbarianClass: IClassDefinition = {
@@ -169,7 +172,24 @@ export const bardClass: IClassDefinition = {
       effects: [] // Flavor/narrative effect
     }
   ],
-  featureChoicesLvl1: [] // No explicit Lvl 1 feature choices listed for Bard on p.122
+  featureChoicesLvl1: [
+    {
+      id: 'bard_magical_expression',
+      prompt: 'Choose your Magical Expression:',
+      type: 'select_one',
+      options: [
+        { value: 'visual', label: 'Visual' },
+        { value: 'auditory', label: 'Auditory' }
+      ]
+    },
+    {
+      id: 'bard_magical_secrets',
+      prompt: 'Choose 2 spells from any spell list:',
+      type: 'select_multiple',
+      options: [],
+      maxSelections: 2,
+    }
+  ]
 };
 
 // IClassDefinition for Champion:
@@ -216,7 +236,21 @@ export const championClass: IClassDefinition = {
       effects: [] // Flavor/narrative effect
     }
   ],
-  featureChoicesLvl1: [] // No explicit Lvl 1 feature choices listed for Champion on p.125
+  featureChoicesLvl1: [
+    {
+      id: 'champion_maneuver_master',
+      prompt: 'Choose 2 Maneuvers:',
+      type: 'select_multiple',
+      maxSelections: 2,
+      options: maneuvers.map(m => ({ value: m.name, label: m.name, description: m.description }))
+    },
+    {
+      id: 'champion_technique_master',
+      prompt: 'Choose 1 Technique:',
+      type: 'select_one',
+      options: techniques.map(t => ({ value: t.name, label: t.name, description: t.description }))
+    }
+  ]
 };
 
 // IClassDefinition for Cleric:
@@ -263,7 +297,30 @@ export const clericClass: IClassDefinition = {
       effects: [] // Flavor/narrative effect
     }
   ],
-  featureChoicesLvl1: [] // No explicit Lvl 1 feature choices listed for Cleric on p.128
+  featureChoicesLvl1: [
+    {
+      id: 'cleric_divine_damage',
+      prompt: 'Choose your Divine Damage type:',
+      type: 'select_one',
+      options: [
+        { value: 'elemental', label: 'Elemental' },
+        { value: 'mystical', label: 'Mystical' }
+      ]
+    },
+    {
+      id: 'cleric_divine_domain',
+      prompt: 'Choose 2 Divine Domains:',
+      type: 'select_multiple',
+      maxSelections: 2,
+      options: [
+        // Placeholder, as the list is not in this file
+        { value: 'domain_of_life', label: 'Domain of Life' },
+        { value: 'domain_of_death', label: 'Domain of Death' },
+        { value: 'domain_of_knowledge', label: 'Domain of Knowledge' },
+        { value: 'domain_of_war', label: 'Domain of War' },
+      ]
+    }
+  ]
 };
 
 // IClassDefinition for Commander:
@@ -357,7 +414,26 @@ export const druidClass: IClassDefinition = {
       effects: [] // Flavor/narrative effect
     }
   ],
-  featureChoicesLvl1: [] // No explicit Lvl 1 feature choices listed for Druid on p.135
+  featureChoicesLvl1: [
+    {
+      id: 'druid_wild_speech_choice',
+      prompt: 'Choose your Wild Speech option:',
+      type: 'select_one',
+      options: [
+        { value: 'animals', label: 'Animals' },
+        { value: 'plants', label: 'Plants' },
+        { value: 'weather', label: 'Weather' }
+      ]
+    },
+    {
+      id: 'druid_wild_form_traits',
+      prompt: 'Spend 3 Trait Points on Beast or Wild Form Traits:',
+      type: 'select_multiple',
+      // Placeholder, as the list is not in this file
+      options: [],
+      maxSelections: 3,
+    }
+  ]
 };
 
 // IClassDefinition for Hunter:
@@ -404,7 +480,47 @@ export const hunterClass: IClassDefinition = {
       effects: [] // Flavor/narrative effect
     }
   ],
-  featureChoicesLvl1: [] // No explicit Lvl 1 feature choices listed for Hunter on p.139
+  featureChoicesLvl1: [
+    {
+      id: 'hunter_favored_terrain_choice',
+      prompt: 'Choose 2 types of Favored Terrain:',
+      type: 'select_multiple',
+      maxSelections: 2,
+      options: [
+        { value: 'coast', label: 'Coast' },
+        { value: 'desert', label: 'Desert' },
+        { value: 'forest', label: 'Forest' },
+        { value: 'grassland', label: 'Grassland' },
+        { value: 'jungle', label: 'Jungle' },
+        { value: 'mountain', label: 'Mountain' },
+        { value: 'swamp', label: 'Swamp' },
+        { value: 'tundra', label: 'Tundra' },
+        { value: 'subterranean', label: 'Subterranean' },
+        { value: 'urban', label: 'Urban' }
+      ]
+    },
+    {
+      id: 'hunter_bestiary_choice',
+      prompt: 'Choose a starting Creature Type for your Bestiary:',
+      type: 'select_one',
+      options: [
+        { value: 'aberration', label: 'Aberration' },
+        { value: 'beast', label: 'Beast' },
+        { value: 'celestial', label: 'Celestial' },
+        { value: 'construct', label: 'Construct' },
+        { value: 'dragon', label: 'Dragon' },
+        { value: 'elemental', label: 'Elemental' },
+        { value: 'fey', label: 'Fey' },
+        { value: 'fiend', label: 'Fiend' },
+        { value: 'giant', label: 'Giant' },
+        { value: 'humanoid', label: 'Humanoid' },
+        { value: 'monstrosity', label: 'Monstrosity' },
+        { value: 'ooze', label: 'Ooze' },
+        { value: 'plant', label: 'Plant' },
+        { value: 'undead', label: 'Undead' }
+      ]
+    }
+  ]
 };
 
 // IClassDefinition for Monk:
@@ -451,7 +567,25 @@ export const monkClass: IClassDefinition = {
       effects: [] // Flavor/narrative effect
     }
   ],
-  featureChoicesLvl1: [] // No explicit Lvl 1 feature choices listed for Monk on p.144
+  featureChoicesLvl1: [
+    {
+      id: 'monk_stance_choice',
+      prompt: 'Choose 2 Monk Stances:',
+      type: 'select_multiple',
+      maxSelections: 2,
+      options: [
+        { value: 'bear_stance', label: 'Bear Stance' },
+        { value: 'bull_stance', label: 'Bull Stance' },
+        { value: 'cobra_stance', label: 'Cobra Stance' },
+        { value: 'gazelle_stance', label: 'Gazelle Stance' },
+        { value: 'mantis_stance', label: 'Mantis Stance' },
+        { value: 'mongoose_stance', label: 'Mongoose Stance' },
+        { value: 'scorpion_stance', label: 'Scorpion Stance' },
+        { value: 'turtle_stance', label: 'Turtle Stance' },
+        { value: 'wolf_stance', label: 'Wolf Stance' }
+      ]
+    }
+  ]
 };
 
 // IClassDefinition for Rogue:
@@ -498,7 +632,25 @@ export const rogueClass: IClassDefinition = {
       effects: [] // Flavor/narrative effect
     }
   ],
-  featureChoicesLvl1: [] // No explicit Lvl 1 feature choices listed for Rogue on p.147
+  featureChoicesLvl1: [
+    {
+      id: 'rogue_cypher_language',
+      prompt: 'Choose a Mortal Language:',
+      type: 'select_one',
+      // Placeholder, as the list is not in this file
+      options: [{ value: 'common', label: 'Common' }]
+    },
+    {
+      id: 'rogue_cypher_demographic',
+      prompt: 'Choose a demographic for Cypher Speech:',
+      type: 'select_one',
+      options: [
+        { value: 'upper_society', label: 'Upper Society' },
+        { value: 'lower_society', label: 'Lower Society' },
+        { value: 'faction', label: 'A Faction' }
+      ]
+    }
+  ]
 };
 
 // IClassDefinition for Spellblade:
@@ -545,7 +697,32 @@ export const spellbladeClass: IClassDefinition = {
       effects: [] // Flavor/narrative effect
     }
   ],
-  featureChoicesLvl1: [] // No explicit Lvl 1 feature choices listed for Spellblade on p.154
+  featureChoicesLvl1: [
+    {
+      id: 'spellblade_bound_damage',
+      prompt: 'Choose your Bound Damage type:',
+      type: 'select_one',
+      options: [
+        { value: 'elemental', label: 'Elemental' },
+        { value: 'mystical', label: 'Mystical' }
+      ]
+    },
+    {
+      id: 'spellblade_disciplines_choice',
+      prompt: 'Choose 2 Spellblade Disciplines:',
+      type: 'select_multiple',
+      maxSelections: 2,
+      options: [
+        { value: 'magus', label: 'Magus' },
+        { value: 'warrior', label: 'Warrior' },
+        { value: 'acolyte', label: 'Acolyte' },
+        { value: 'hex_warrior', label: 'Hex Warrior' },
+        { value: 'spell_breaker', label: 'Spell Breaker' },
+        { value: 'spell_warder', label: 'Spell Warder' },
+        { value: 'blink_blade', label: 'Blink Blade' }
+      ]
+    }
+  ]
 };
 
 // IClassDefinition for Warlock:
@@ -592,7 +769,19 @@ export const warlockClass: IClassDefinition = {
       effects: [] // Flavor/narrative effect
     }
   ],
-  featureChoicesLvl1: [] // No explicit Lvl 1 feature choices listed for Warlock on p.159
+  featureChoicesLvl1: [
+    {
+      id: 'warlock_pact_boon_choice',
+      prompt: 'Choose a Pact Boon:',
+      type: 'select_one',
+      options: [
+        { value: 'weapon', label: 'Pact of the Weapon' },
+        { value: 'armor', label: 'Pact of the Armor' },
+        { value: 'cantrip', label: 'Pact of the Cantrip' },
+        { value: 'familiar', label: 'Pact of the Familiar' }
+      ]
+    }
+  ]
 };
 
 // IClassDefinition for Wizard:
@@ -639,7 +828,14 @@ export const wizardClass: IClassDefinition = {
       effects: [] // Flavor/narrative effect
     }
   ],
-  featureChoicesLvl1: [] // No explicit Lvl 1 feature choices listed for Wizard on p.163
+  featureChoicesLvl1: [
+    {
+      id: 'wizard_spell_school_choice',
+      prompt: 'Choose a Spell School:',
+      type: 'select_one',
+      options: Object.values(SpellSchool).map(school => ({ value: school, label: school }))
+    }
+  ]
 };
 
 

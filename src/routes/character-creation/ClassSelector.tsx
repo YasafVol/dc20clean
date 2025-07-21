@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
-import { classesData } from '../../lib/rulesdata/classes';
+import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import type { IClassDefinition } from '../../lib/rulesdata/types';
 import {
 	StyledContainer,

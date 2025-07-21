@@ -1,6 +1,5 @@
-import React from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
-import { classesData } from '../../lib/rulesdata/classes';
+import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import {
 	StyledContainer,
 	StyledTitle,
@@ -47,7 +46,7 @@ function ClassFeatures() {
 
 			<StyledSection>
 				<StyledSectionTitle>Level 1 Features</StyledSectionTitle>
-				{(selectedClass.level1Features || []).map((feature, index) => (
+				{(selectedClass.level1Features || []).map((feature: any, index: number) => (
 					<StyledCard key={index}>
 						<StyledCardTitle>{feature.name}</StyledCardTitle>
 						<StyledCardDescription>{feature.description}</StyledCardDescription>
@@ -58,12 +57,12 @@ function ClassFeatures() {
 			{selectedClass.featureChoicesLvl1 && selectedClass.featureChoicesLvl1.length > 0 && (
 				<StyledSection>
 					<StyledSectionTitle>Feature Choices</StyledSectionTitle>
-					{selectedClass.featureChoicesLvl1.map((choice) => (
+					{selectedClass.featureChoicesLvl1.map((choice: any) => (
 						<StyledCard key={choice.id}>
 							<StyledCardTitle>{choice.prompt}</StyledCardTitle>
 							{choice.type === 'select_one' && (
 								<StyledChoiceOptions>
-									{choice.options.map((option) => (
+									{choice.options.map((option: any) => (
 										<StyledLabel key={option.value}>
 											<StyledRadio
 												type="radio"

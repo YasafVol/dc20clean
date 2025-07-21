@@ -3,7 +3,7 @@
 
 import { skillsData } from '../rulesdata/skills';
 import { ancestriesData } from '../rulesdata/ancestries';
-import type { IClassDefinition } from '../rulesdata/types';
+import type { IClassDefinition } from '../rulesdata/schemas/class.schema';
 
 export interface CharacterInProgressData {
 	id: string;
@@ -107,7 +107,7 @@ export interface CalculatedCharacterStats {
 const getClassData = async (classId: string): Promise<IClassDefinition | null> => {
 	try {
 		// Dynamic import of class data
-		const { classesData } = await import('../rulesdata/classes');
+		const { classesData } = await import('../rulesdata/loaders/class.loader');
 
 		const classData = classesData.find((c) => c.id === classId);
 		return classData || null;

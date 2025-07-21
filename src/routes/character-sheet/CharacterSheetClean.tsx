@@ -31,7 +31,7 @@ import { skillsData } from '../../lib/rulesdata/skills';
 import { tradesData } from '../../lib/rulesdata/trades';
 import { knowledgeData } from '../../lib/rulesdata/knowledge';
 import { traitsData } from '../../lib/rulesdata/traits';
-import { classesData } from '../../lib/rulesdata/classes';
+import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { ancestriesData } from '../../lib/rulesdata/ancestries';
 
 // Import styled components
@@ -458,7 +458,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		const selectedClass = classesData.find((c) => c.name === characterData.className);
 		if (selectedClass) {
 			// Add level 1 features
-			selectedClass.level1Features?.forEach((feature) => {
+			selectedClass.level1Features?.forEach((feature: any) => {
 				features.push({
 					id: feature.id,
 					name: feature.name,
@@ -474,11 +474,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					const selectedChoices: { [key: string]: string } = JSON.parse(
 						characterData.selectedFeatureChoices
 					);
-					selectedClass.featureChoicesLvl1?.forEach((choice) => {
+					selectedClass.featureChoicesLvl1?.forEach((choice: any) => {
 						const selectedOptionValue = selectedChoices[choice.id];
 						if (selectedOptionValue) {
 							const selectedOption = choice.options?.find(
-								(opt) => opt.value === selectedOptionValue
+								(opt: any) => opt.value === selectedOptionValue
 							);
 							if (selectedOption) {
 								features.push({

@@ -1,6 +1,6 @@
 // Data mapping utilities for converting between IDs and names
 import { ancestriesData } from '../rulesdata/ancestries';
-import { classesData } from '../rulesdata/classes';
+import { classesData } from '../rulesdata/loaders/class.loader';
 import type { IAncestry, IClassDefinition } from '../rulesdata/types';
 
 export interface IdNameMapping {

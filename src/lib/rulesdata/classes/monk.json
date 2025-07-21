@@ -1,0 +1,63 @@
+{
+  "id": "monk",
+  "name": "Monk",
+  "description": "Monks are master martial artists that perfect their mind and bodies utilizing the ebb and flow of their inner energy. They use their body as a weapon and can enter into different stances that drastically change their combat abilities.",
+  "baseHpContribution": 9,
+  "startingSP": 1,
+  "startingMP": 0,
+  "skillPointGrantLvl1": 0,
+  "tradePointGrantLvl1": 0,
+  "combatTraining": ["Weapons", "Light Armor"],
+  "maneuversKnownLvl1": "All Attack",
+  "techniquesKnownLvl1": 0,
+  "saveDCBase": 8,
+  "deathThresholdBase": 10,
+  "moveSpeedBase": 30,
+  "restPointsBase": 4,
+  "gritPointsBase": 2,
+  "initiativeBonusBase": 0,
+  "cantripsKnownLvl1": 0,
+  "spellsKnownLvl1": 0,
+  "level1Features": [
+    {
+      "id": "monk_monk_training",
+      "name": "Monk Training",
+      "level": 1,
+      "description": "Your martial arts training grants you greater offense, defense, and movement. Iron Palm: Your limbs are considered Natural Weapons with the Impact Property that deal 1 Bludgeoning damage. Patient Defense: While you aren’t wearing Armor you gain +2 PD. Step of the Wind: While you aren’t wearing Armor, you gain the following benefits: You gain +1 Speed and Jump Distance. You can move a number of Spaces up to your Speed along vertical surfaces and across liquids without falling during your move. You can use your Prime Modifier instead of Agility to determine your Jump Distance and the damage you take from Falling.",
+      "effects": []
+    },
+    {
+      "id": "monk_monk_stance",
+      "name": "Monk Stance",
+      "level": 1,
+      "description": "You learn 2 Monk Stances from the list below. Entering & Exiting: In Combat, at the start of each of your turns you can freely enter or swap into one of your Monk Stances. You can also spend 1 SP on your turn to swap to a different stance. You can end your Stance at any moment for free. You can only be in 1 Monk Stance at a time. Bear Stance, Bull Stance, Cobra Stance, Gazelle Stance, Mantis Stance, Mongoose Stance, Scorpion Stance, Turtle Stance, Wolf Stance.",
+      "effects": []
+    },
+    {
+      "id": "monk_meditation",
+      "name": "Meditation (Flavor Feature)",
+      "level": 1,
+      "description": "You can enter a state of meditation during a Short Rest (1 hour) or longer. Choose 1 Charisma or Intelligence Skill. When you complete the Rest, your Skill Mastery level increases by 1 (up to your Skill Mastery Cap) for the chosen Skill until you complete another Short or longer Rest. While meditating, you remain alert to danger.",
+      "effects": []
+    }
+  ],
+  "featureChoicesLvl1": [
+    {
+      "id": "monk_stance_choice",
+      "prompt": "Choose 2 Monk Stances:",
+      "type": "select_multiple",
+      "maxSelections": 2,
+      "options": [
+        { "value": "bear_stance", "label": "Bear Stance" },
+        { "value": "bull_stance", "label": "Bull Stance" },
+        { "value": "cobra_stance", "label": "Cobra Stance" },
+        { "value": "gazelle_stance", "label": "Gazelle Stance" },
+        { "value": "mantis_stance", "label": "Mantis Stance" },
+        { "value": "mongoose_stance", "label": "Mongoose Stance" },
+        { "value": "scorpion_stance", "label": "Scorpion Stance" },
+        { "value": "turtle_stance", "label": "Turtle Stance" },
+        { "value": "wolf_stance", "label": "Wolf Stance" }
+      ]
+    }
+  ]
+}

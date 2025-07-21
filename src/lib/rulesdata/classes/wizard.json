@@ -1,0 +1,61 @@
+{
+  "id": "wizard",
+  "name": "Wizard",
+  "description": "Wizards learn to master each of the Spell Schools to control them in a structured and efficient way. They utilize sigils on the ground to enhance certain types of magic while they push spells to their limits.",
+  "baseHpContribution": 8,
+  "startingSP": 0,
+  "startingMP": 6,
+  "skillPointGrantLvl1": 2,
+  "tradePointGrantLvl1": 3,
+  "combatTraining": ["Light Armor"],
+  "maneuversKnownLvl1": 0,
+  "techniquesKnownLvl1": 0,
+  "saveDCBase": 8,
+  "deathThresholdBase": 10,
+  "moveSpeedBase": 30,
+  "restPointsBase": 4,
+  "gritPointsBase": 2,
+  "initiativeBonusBase": 0,
+  "cantripsKnownLvl1": 2,
+  "spellsKnownLvl1": 3,
+  "level1Features": [
+    {
+      "id": "wizard_spell_school_initiate",
+      "name": "Spell School Initiate",
+      "level": 1,
+      "description": "You’ve completed training in a specialized School of Magic. Choose a Spell School. You gain the following benefits: School Magic: You learn 1 Arcane Cantrip and 1 Arcane Spell from this Spell School. Signature School: When you cast a Spell from the chosen School, you can reduce its MP cost by 1. Its total MP cost before the reduction still can’t exceed your Mana Spend Limit. You can use this Feature once per Long Rest, but regain the ability to use it again when you roll for Initiative.",
+      "effects": []
+    },
+    {
+      "id": "wizard_arcane_sigil",
+      "name": "Arcane Sigil",
+      "level": 1,
+      "description": "You can spend 1 AP and 1 MP to create a 1 Space diameter Arcane Sigil on the ground beneath you that lasts for 1 minute. When you create an Arcane Sigil choose 1 Spell School (Enchantment, Necromancy, Protection, etc.) or 1 Spell Tag (Fire, Cold, Teleportation, etc.). The Arcane Sigil radiates magic of the chosen type. Using a Sigil: While a creature is within the area of your Arcane Sigil, it has ADV on Spell Checks to cast or produce the effects of Spells with the chosen Spell School or Spell Tag. Moving a Sigil: You can spend 1 AP to teleport one of your Sigils within 10 spaces to your current space, but multiple Sigils can’t coexist in the same Space.",
+      "effects": []
+    },
+    {
+      "id": "wizard_ritual_caster",
+      "name": "Ritual Caster (Flavor Feature)",
+      "level": 1,
+      "description": "You learn 1 Arcane Spell with the Ritual Spell Tag each time you gain a Wizard Class Feature (including this one). You can only gain this benefit once per Level. Additionally, when you encounter an Arcane Spell with the Ritual Spell Tag in a form you can study (such as a spellbook, a spell scroll, or from an instructor), you can spend a number of hours equal to the Spell’s base MP cost to learn it. You can only cast Spells you learn with this feature as Rituals, unless you learned it from another source.",
+      "effects": []
+    }
+  ],
+  "featureChoicesLvl1": [
+    {
+      "id": "wizard_spell_school_choice",
+      "prompt": "Choose a Spell School:",
+      "type": "select_one",
+      "options": [
+        {"value": "Abjuration", "label": "Abjuration"},
+        {"value": "Conjuration", "label": "Conjuration"},
+        {"value": "Divination", "label": "Divination"},
+        {"value": "Enchantment", "label": "Enchantment"},
+        {"value": "Evocation", "label": "Evocation"},
+        {"value": "Illusion", "label": "Illusion"},
+        {"value": "Necromancy", "label": "Necromancy"},
+        {"value": "Transmutation", "label": "Transmutation"}
+      ]
+    }
+  ]
+}

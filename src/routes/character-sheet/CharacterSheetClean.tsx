@@ -1389,41 +1389,44 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
             {/* Defenses - Shield-like design */}
             <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.3rem' }}>PHYSICAL</div>
-                <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.3rem' }}>DEFENSE</div>
-                <div style={{ width: '80px', height: '90px', border: '3px solid #8b4513', borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
+              <div style={{ textAlign: 'center', width: '120px' }}>
+                <div style={{ height: '32px', display: 'flex', flexDirection: 'column', justifyContent: 'center', marginBottom: '0.3rem' }}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', lineHeight: '1' }}>PHYSICAL</div>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', lineHeight: '1' }}>DEFENSE</div>
+                </div>
+                <div style={{ width: '80px', height: '90px', border: '3px solid #8b4513', borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white', margin: '0 auto' }}>
                   <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalPD}</div>
                 </div>
+                <div style={{ height: '20px', marginTop: '0.2rem' }}></div>
               </div>
 
-              {/* PDR - Smaller square design */}
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.3rem' }}>PDR</div>
-                <div style={{ fontSize: '0.7rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.5rem' }}>Physical Damage Reduction</div>
-                <div style={{ width: '60px', height: '60px', border: '3px solid #8b4513', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white', position: 'relative' }}>
-                  <div style={{
-                    fontSize: '1.5rem',
-                    fontWeight: 'bold',
-                    color: '#8b4513',
-                    textAlign: 'center'
-                  }}>
-                    {characterData.finalPDR || 0}
-                  </div>
+              {/* PDR - Shield-like design */}
+              <div style={{ textAlign: 'center', width: '120px' }}>
+                <div style={{ height: '32px', display: 'flex', flexDirection: 'column', justifyContent: 'center', marginBottom: '0.3rem' }}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', lineHeight: '1' }}>PHYSICAL</div>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', lineHeight: '1' }}>DMG REDUCTION</div>
                 </div>
-                {characterData.finalPDR > 0 && (
-                  <div style={{ fontSize: '0.6rem', color: '#8b4513', marginTop: '0.2rem' }}>
-                    Auto-calculated
-                  </div>
-                )}
+                <div style={{ width: '80px', height: '90px', border: '3px solid #8b4513', borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white', margin: '0 auto' }}>
+                  <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalPDR || 0}</div>
+                </div>
+                <div style={{ height: '20px', marginTop: '0.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {characterData.finalPDR > 0 && (
+                    <div style={{ fontSize: '0.6rem', color: '#8b4513' }}>
+                      Auto-calculated
+                    </div>
+                  )}
+                </div>
               </div>
 
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.3rem' }}>MYSTICAL</div>
-                <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.3rem' }}>DEFENSE</div>
-                <div style={{ width: '80px', height: '90px', border: '3px solid #8b4513', borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
+              <div style={{ textAlign: 'center', width: '120px' }}>
+                <div style={{ height: '32px', display: 'flex', flexDirection: 'column', justifyContent: 'center', marginBottom: '0.3rem' }}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', lineHeight: '1' }}>MYSTICAL</div>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#8b4513', lineHeight: '1' }}>DEFENSE</div>
+                </div>
+                <div style={{ width: '80px', height: '90px', border: '3px solid #8b4513', borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white', margin: '0 auto' }}>
                   <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalAD}</div>
                 </div>
+                <div style={{ height: '20px', marginTop: '0.2rem' }}></div>
               </div>
             </div>
 

@@ -191,6 +191,12 @@ interface CurrentValues {
   tempHP: number;
   actionPointsUsed: number;
   exhaustionLevel: number; // 0-5
+  // Currency
+  goldPieces: number;
+  silverPieces: number;
+  copperPieces: number;
+  electrumPieces: number;
+  platinumPieces: number;
 }
 
 interface AttackData {
@@ -272,6 +278,12 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
     tempHP: 0,
     actionPointsUsed: 0,
     exhaustionLevel: 0,
+    // Currency
+    goldPieces: 0,
+    silverPieces: 0,
+    copperPieces: 0,
+    electrumPieces: 0,
+    platinumPieces: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -1263,16 +1275,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                 </div>
               ))}
             </div>
-
-            {/* Currency Section */}
-            <div style={{ border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white' }}>
-              <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '0.5rem', textAlign: 'center' }}>CURRENCY</div>
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <div style={{ width: '80px', height: '80px', border: '2px solid #8b4513', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5dc' }}>
-                  <span style={{ fontSize: '0.8rem', color: '#8b4513' }}>Coins</span>
-                </div>
-              </div>
-            </div>
           </StyledLeftColumn>
 
           {/* Middle Column - Resources, Combat, and Core Stats */}
@@ -2060,7 +2062,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
             </div>
 
             {/* Features */}
-            <div style={{ border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', flex: 1 }}>
+            <div style={{ border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white', marginBottom: '1rem', height: '512px', overflowY: 'auto' }}>
               <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', textAlign: 'center', marginBottom: '1rem' }}>FEATURES</div>
               
               {/* Organize features by source */}
@@ -2131,6 +2133,141 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
                   </div>
                 );
               })()}
+            </div>
+
+            {/* Currency Section */}
+            <div style={{ border: '2px solid #8b4513', borderRadius: '8px', padding: '1rem', background: 'white' }}>
+              <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#8b4513', marginBottom: '1rem', textAlign: 'center' }}>CURRENCY</div>
+              
+              {/* Platinum Pieces */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: '#e5e4e2', border: '1px solid #d3d3d3' }}></div>
+                  <span style={{ fontSize: '0.9rem', color: '#8b4513', fontWeight: 'bold' }}>Platinum</span>
+                </div>
+                <input
+                  type="number"
+                  min="0"
+                  value={currentValues.platinumPieces}
+                  onChange={(e) => setCurrentValues(prev => ({
+                    ...prev,
+                    platinumPieces: parseInt(e.target.value) || 0
+                  }))}
+                  style={{
+                    width: '60px',
+                    padding: '0.2rem',
+                    border: '1px solid #8b4513',
+                    borderRadius: '4px',
+                    textAlign: 'center',
+                    fontSize: '0.8rem',
+                    backgroundColor: 'white'
+                  }}
+                />
+              </div>
+              
+              {/* Gold Pieces */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: '#ffd700', border: '1px solid #b8860b' }}></div>
+                  <span style={{ fontSize: '0.9rem', color: '#8b4513', fontWeight: 'bold' }}>Gold</span>
+                </div>
+                <input
+                  type="number"
+                  min="0"
+                  value={currentValues.goldPieces}
+                  onChange={(e) => setCurrentValues(prev => ({
+                    ...prev,
+                    goldPieces: parseInt(e.target.value) || 0
+                  }))}
+                  style={{
+                    width: '60px',
+                    padding: '0.2rem',
+                    border: '1px solid #8b4513',
+                    borderRadius: '4px',
+                    textAlign: 'center',
+                    fontSize: '0.8rem',
+                    backgroundColor: 'white'
+                  }}
+                />
+              </div>
+              
+              {/* Electrum Pieces */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: '#daa520', border: '1px solid #b8860b' }}></div>
+                  <span style={{ fontSize: '0.9rem', color: '#8b4513', fontWeight: 'bold' }}>Electrum</span>
+                </div>
+                <input
+                  type="number"
+                  min="0"
+                  value={currentValues.electrumPieces}
+                  onChange={(e) => setCurrentValues(prev => ({
+                    ...prev,
+                    electrumPieces: parseInt(e.target.value) || 0
+                  }))}
+                  style={{
+                    width: '60px',
+                    padding: '0.2rem',
+                    border: '1px solid #8b4513',
+                    borderRadius: '4px',
+                    textAlign: 'center',
+                    fontSize: '0.8rem',
+                    backgroundColor: 'white'
+                  }}
+                />
+              </div>
+              
+              {/* Silver Pieces */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: '#c0c0c0', border: '1px solid #a0a0a0' }}></div>
+                  <span style={{ fontSize: '0.9rem', color: '#8b4513', fontWeight: 'bold' }}>Silver</span>
+                </div>
+                <input
+                  type="number"
+                  min="0"
+                  value={currentValues.silverPieces}
+                  onChange={(e) => setCurrentValues(prev => ({
+                    ...prev,
+                    silverPieces: parseInt(e.target.value) || 0
+                  }))}
+                  style={{
+                    width: '60px',
+                    padding: '0.2rem',
+                    border: '1px solid #8b4513',
+                    borderRadius: '4px',
+                    textAlign: 'center',
+                    fontSize: '0.8rem',
+                    backgroundColor: 'white'
+                  }}
+                />
+              </div>
+              
+              {/* Copper Pieces */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: '#b87333', border: '1px solid #8b4513' }}></div>
+                  <span style={{ fontSize: '0.9rem', color: '#8b4513', fontWeight: 'bold' }}>Copper</span>
+                </div>
+                <input
+                  type="number"
+                  min="0"
+                  value={currentValues.copperPieces}
+                  onChange={(e) => setCurrentValues(prev => ({
+                    ...prev,
+                    copperPieces: parseInt(e.target.value) || 0
+                  }))}
+                  style={{
+                    width: '60px',
+                    padding: '0.2rem',
+                    border: '1px solid #8b4513',
+                    borderRadius: '4px',
+                    textAlign: 'center',
+                    fontSize: '0.8rem',
+                    backgroundColor: 'white'
+                  }}
+                />
+              </div>
             </div>
           </StyledRightColumn>
         </StyledMainGrid>

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { FeatureData } from '../types';
+import type { FeatureData } from '../../../types';
 import {
 	StyledFeaturesContainer,
 	StyledFeaturesTitle,
@@ -11,7 +11,7 @@ import {
 	StyledFeatureReadMore,
 	StyledNoFeaturesMessage,
 	StyledFeaturesContent
-} from '../routes/character-sheet/styles/Features.styles';
+} from '../styles/Features.styles';
 
 interface FeaturesProps {
 	features: FeatureData[];

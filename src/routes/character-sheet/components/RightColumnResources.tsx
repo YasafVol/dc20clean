@@ -1,5 +1,5 @@
 import React from 'react';
-import type { CharacterSheetData, CurrentValues } from '../types';
+import type { CharacterSheetData, CurrentValues } from '../../../types';
 import {
 	StyledRightResourcesContainer,
 	StyledRightResourcesTitle,
@@ -8,7 +8,7 @@ import {
 	StyledRightResourceControls,
 	StyledRightResourceInput,
 	StyledRightResourceMax
-} from '../routes/character-sheet/styles/RightColumnResources.styles';
+} from '../styles/RightColumnResources.styles';
 
 interface RightColumnResourcesProps {
 	characterData: CharacterSheetData;

@@ -1,0 +1,154 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DC20 Class Feature Schema",
+  "description": "A schema for defining a single class feature in the DC20 system, including its mechanics, choices, and benefits.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "featureName": {
+        "type": "string",
+        "description": "The name of the class feature."
+      },
+      "className": {
+        "type": "string",
+        "description": "The class this feature belongs to.",
+        "enum": [
+          "Barbarian",
+          "Bard",
+          "Champion",
+          "Cleric",
+          "Commander",
+          "Druid",
+          "Hunter",
+          "Monk",
+          "Rogue",
+          "Sorcerer",
+          "Spellblade",
+          "Warlock",
+          "Wizard"
+        ]
+      },
+      "levelGained": {
+        "type": "integer",
+        "description": "The level at which the feature is acquired."
+      },
+      "isSubclassFeature": {
+        "type": "boolean",
+        "description": "True if this feature is part of a subclass.",
+        "default": false
+      },
+      "subclassName": {
+        "type": "string",
+        "description": "The name of the subclass, if applicable."
+      },
+      "description": {
+        "type": "string",
+        "description": "The main description of the feature."
+      },
+      "isFlavor": {
+        "type": "boolean",
+        "description": "True if this is a non-mechanical flavor feature.",
+        "default": false
+      },
+      "cost": {
+        "type": "object",
+        "description": "The resource cost to use the feature.",
+        "properties": {
+          "ap": {
+            "type": "integer",
+            "description": "Action Point cost."
+          },
+          "sp": {
+            "type": "integer",
+            "description": "Stamina Point cost."
+          },
+          "mp": {
+            "type": "integer",
+            "description": "Mana Point cost."
+          },
+          "hp": {
+            "type": "integer",
+            "description": "Health Point cost."
+          }
+        },
+        "additionalProperties": false
+      },
+      "duration": {
+        "type": "string",
+        "description": "The duration of the feature's effect (e.g., '1 minute', 'Until your next turn')."
+      },
+      "usageLimit": {
+        "type": "string",
+        "description": "How often the feature can be used (e.g., 'Once per Round', 'Once per Long Rest')."
+      },
+      "choices": {
+        "type": "array",
+        "description": "A list of choices the player must make for this feature.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "prompt": {
+              "type": "string",
+              "description": "The instruction for the player (e.g., 'Choose 2 of the following')."
+            },
+            "count": {
+              "type": "integer",
+              "description": "The number of options to choose."
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "description"
+                ]
+              }
+            }
+          },
+          "required": [
+            "prompt",
+            "count",
+            "options"
+          ]
+        }
+      },
+      "benefits": {
+        "type": "array",
+        "description": "A list of named benefits or effects granted by the feature.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The name of the benefit."
+            },
+            "description": {
+              "type": "string",
+              "description": "The description of the benefit."
+            }
+          },
+          "required": [
+            "name",
+            "description"
+          ]
+        }
+      }
+    },
+    "required": [
+      "featureName",
+      "className",
+      "levelGained",
+      "description"
+    ]
+  }
+}

@@ -1,33 +1,31 @@
 import React from 'react';
+import type { CharacterSheetData } from '../../../types';
 import {
-	MovementContainer,
-	MovementStats,
-	MovementStat,
-	StatLabel,
-	StatValue
-} from '../styles/Movement';
+	StyledMovementContainer,
+	StyledMovementGrid,
+	StyledMovementStat,
+	StyledMovementLabel,
+	StyledMovementValue
+} from '../styles/Movement.styles';
 
 interface MovementProps {
-	characterData: {
-		finalMoveSpeed: number;
-		finalJumpDistance: number;
-	};
+	characterData: CharacterSheetData;
 }
 
 const Movement: React.FC<MovementProps> = ({ characterData }) => {
 	return (
-		<MovementContainer>
-			<MovementStats>
-				<MovementStat>
-					<StatLabel>MOVE SPEED</StatLabel>
-					<StatValue>{characterData.finalMoveSpeed}</StatValue>
-				</MovementStat>
-				<MovementStat>
-					<StatLabel>JUMP DISTANCE</StatLabel>
-					<StatValue>{characterData.finalJumpDistance}</StatValue>
-				</MovementStat>
-			</MovementStats>
-		</MovementContainer>
+		<StyledMovementContainer>
+			<StyledMovementGrid>
+				<StyledMovementStat>
+					<StyledMovementLabel>MOVE SPEED</StyledMovementLabel>
+					<StyledMovementValue>{characterData.finalMoveSpeed}</StyledMovementValue>
+				</StyledMovementStat>
+				<StyledMovementStat>
+					<StyledMovementLabel>JUMP DISTANCE</StyledMovementLabel>
+					<StyledMovementValue>{characterData.finalJumpDistance}</StyledMovementValue>
+				</StyledMovementStat>
+			</StyledMovementGrid>
+		</StyledMovementContainer>
 	);
 };
 

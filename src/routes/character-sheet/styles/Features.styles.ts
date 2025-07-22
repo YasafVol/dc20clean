@@ -6,7 +6,7 @@ export const StyledFeaturesContainer = styled.div`
 	padding: 1rem;
 	background: white;
 	margin-bottom: 1rem;
-	height: 512px;
+	height: 762px;
 	overflow-y: auto;
 `;
 

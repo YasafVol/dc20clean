@@ -1,6 +1,6 @@
 import React from 'react';
-import type { InventoryItemData } from '../types';
-import { allItems, type InventoryItem } from '../lib/rulesdata/inventoryItems';
+import type { InventoryItemData } from '../../../types';
+import { allItems, type InventoryItem } from '../../../lib/rulesdata/inventoryItems';
 import {
 	StyledInventorySection,
 	StyledInventoryTitle,
@@ -15,7 +15,7 @@ import {
 	StyledInventoryInfoIcon,
 	StyledInventoryCost,
 	StyledEmptyInventory
-} from '../routes/character-sheet/styles/Inventory';
+} from '../styles/Inventory';
 
 export interface InventoryProps {
 	inventory: InventoryItemData[];
@@ -53,7 +53,7 @@ const Inventory: React.FC<InventoryProps> = ({ inventory, setInventory }) => {
 			);
 		} else {
 			// Selecting item name
-			const selectedItem = allItems.find((i) => i.name === itemTypeOrName);
+			const selectedItem = allItems.find((i: any) => i.name === itemTypeOrName);
 			setInventory((prev) =>
 				prev.map((item, index) =>
 					index === inventoryIndex

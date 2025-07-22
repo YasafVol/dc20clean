@@ -1,12 +1,12 @@
 import React from 'react';
-import type { AttackData, CharacterSheetData } from '../types';
+import type { AttackData, CharacterSheetData } from '../../../types';
 import {
 	WeaponData,
 	weaponsData,
 	getHeavyHitDamage,
 	getBrutalHitDamage,
 	getWeaponAttackBonus
-} from '../lib/rulesdata/weapons';
+} from '../../../lib/rulesdata/weapons';
 import {
 	StyledAttacksSection,
 	StyledAttacksHeader,
@@ -22,7 +22,7 @@ import {
 	StyledDamageCell,
 	StyledInfoIcon,
 	StyledDamageTypeCell
-} from '../routes/character-sheet/styles/Attacks';
+} from '../styles/Attacks';
 
 export interface AttacksProps {
 	attacks: AttackData[];
@@ -52,7 +52,7 @@ const Attacks: React.FC<AttacksProps> = ({ attacks, setAttacks, characterData })
 	};
 
 	const handleWeaponSelect = (attackIndex: number, weaponId: string) => {
-		const weapon = weaponsData.find((w) => w.id === weaponId);
+		const weapon = weaponsData.find((w: any) => w.id === weaponId);
 		if (!weapon) return;
 
 		const newAttackData = calculateAttackData(weapon);
@@ -206,7 +206,7 @@ const Attacks: React.FC<AttacksProps> = ({ attacks, setAttacks, characterData })
 				) : (
 					attacks.map((attack, index) => {
 						const weapon = attack.weaponId
-							? weaponsData.find((w) => w.id === attack.weaponId)
+							? weaponsData.find((w: any) => w.id === attack.weaponId)
 							: null;
 
 						return (
@@ -219,10 +219,10 @@ const Attacks: React.FC<AttacksProps> = ({ attacks, setAttacks, characterData })
 								{/* Weapon Selection */}
 								<StyledWeaponSelect
 									value={attack.weaponId}
-									onChange={(e) => handleWeaponSelect(index, e.target.value)}
+									onChange={(e: any) => handleWeaponSelect(index, e.target.value)}
 								>
 									<option value="">Select Weapon...</option>
-									{weaponsData.map((weapon) => (
+									{weaponsData.map((weapon: any) => (
 										<option key={weapon.id} value={weapon.id}>
 											{weapon.name} ({weapon.weightCategory})
 										</option>

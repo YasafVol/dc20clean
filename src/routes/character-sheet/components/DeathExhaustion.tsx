@@ -1,10 +1,10 @@
 import React from 'react';
-import type { CharacterSheetData, CurrentValues } from '../types';
+import type { CharacterSheetData, CurrentValues } from '../../../types';
 import {
 	StyledDeathExhaustionContainer,
 	StyledExhaustionOnlyContainer,
 	StyledExhaustionOnlyTitle
-} from '../routes/character-sheet/styles/DeathExhaustion.styles';
+} from '../styles/DeathExhaustion.styles';
 
 import {
 	StyledDeathContainer,
@@ -17,15 +17,15 @@ import {
 	StyledDeathStep,
 	StyledDeathStepTooltip,
 	StyledHealthStatusTooltip
-} from '../routes/character-sheet/styles/Death';
+} from '../styles/Death';
 
 import {
 	StyledExhaustionContainer,
 	StyledExhaustionLevel,
 	StyledExhaustionTooltip
-} from '../routes/character-sheet/styles/Exhaustion';
+} from '../styles/Exhaustion';
 
-import { getHealthStatus, calculateDeathThreshold, getDeathSteps } from '../lib/rulesdata/death';
+import { getHealthStatus, calculateDeathThreshold, getDeathSteps } from '../../../lib/rulesdata/death';
 
 interface DeathExhaustionProps {
 	characterData: CharacterSheetData;

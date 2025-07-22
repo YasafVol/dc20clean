@@ -18,13 +18,13 @@ import LeftColumn from './components/LeftColumn';
 import Currency from './components/Currency';
 import Resources from './components/Resources';
 import Defenses from './components/Defenses';
-import Combat from '../../components/Combat';
-import Attacks from '../../components/Attacks';
-import Inventory from '../../components/Inventory';
-import Features from '../../components/Features';
-import Movement from '../../components/Movement';
-import RightColumnResources from '../../components/RightColumnResources';
-import DeathExhaustion from '../../components/DeathExhaustion';
+import Combat from './components/Combat';
+import Attacks from './components/Attacks';
+import Inventory from './components/Inventory';
+import Features from './components/Features';
+import Movement from './components/Movement';
+import RightColumnResources from './components/RightColumnResources';
+import DeathExhaustion from './components/DeathExhaustion';
 
 // Import rules data
 import { skillsData } from '../../lib/rulesdata/skills';

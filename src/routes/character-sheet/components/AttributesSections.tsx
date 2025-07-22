@@ -1,5 +1,5 @@
 import React from 'react';
-import type { SkillData, TradeData, LanguageData, CharacterSheetData } from '../types';
+import type { SkillData, TradeData, LanguageData, CharacterSheetData } from '../../../types';
 import {
 	StyledAttributesSectionsContainer,
 	StyledPrimeSection,
@@ -26,8 +26,8 @@ import {
 	StyledFluencyBox,
 	StyledFluencyLabel,
 	StyledNoItemsMessage
-} from '../routes/character-sheet/styles/AttributesSections.styles';
-import { StyledProficiencyDots, StyledDot } from '../routes/character-sheet/styles/Skills';
+} from '../styles/AttributesSections.styles';
+import { StyledProficiencyDots, StyledDot } from '../styles/Skills';
 
 interface SkillsByAttribute {
 	prime: SkillData[];

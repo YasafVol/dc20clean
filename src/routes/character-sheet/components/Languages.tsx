@@ -7,8 +7,10 @@ import {
 	LanguageName,
 	FluencyContainer,
 	FluencyBox,
-	FluencyLabel,
-	FluencyItem
+	FluencyHeader,
+	LanguageNameHeader,
+	FluencyHeaderContainer,
+	FluencyHeaderLabel
 } from '../styles/Languages';
 
 interface LanguagesProps {
@@ -20,18 +22,22 @@ const Languages: React.FC<LanguagesProps> = ({ languages }) => {
 		<LanguagesSection>
 			<SectionTitle>LANGUAGES</SectionTitle>
 			<SectionDescription>LANGUAGE CHECK = d20 + Intelligence or Charisma</SectionDescription>
+			
+			{/* Header with L and F labels */}
+			<FluencyHeader>
+				<LanguageNameHeader>LANGUAGE</LanguageNameHeader>
+				<FluencyHeaderContainer>
+					<FluencyHeaderLabel title="Limited">L</FluencyHeaderLabel>
+					<FluencyHeaderLabel title="Fluent">F</FluencyHeaderLabel>
+				</FluencyHeaderContainer>
+			</FluencyHeader>
+
 			{languages.map((language) => (
 				<LanguageRow key={language.id}>
 					<LanguageName>{language.name.toUpperCase()}</LanguageName>
 					<FluencyContainer>
-						<FluencyItem>
-							<FluencyLabel>LIMITED</FluencyLabel>
-							<FluencyBox filled={language.fluency === 'limited'} />
-						</FluencyItem>
-						<FluencyItem>
-							<FluencyLabel>FLUENT</FluencyLabel>
-							<FluencyBox filled={language.fluency === 'fluent'} />
-						</FluencyItem>
+						<FluencyBox filled={language.fluency === 'limited'} />
+						<FluencyBox filled={language.fluency === 'fluent'} />
 					</FluencyContainer>
 				</LanguageRow>
 			))}

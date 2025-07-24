@@ -1,0 +1,62 @@
+{
+  "id": "bard",
+  "name": "Bard",
+  "description": "Bards utilize artistic expression through various forms to connect with the emotions and heart of magic. This includes a wide range of mediums such as musical instruments, singing, dancing, drawing, painting, sculpting, poetry, storytelling, inspirational speech, and more. They are great at bringing the best out in those around them through both helping and performing, showcasing high proficiency across multiple disciplines. Bards are remarkably flexible and adaptable spellcasters, capable of tapping into a wide array of magical abilities with the appropriate artistic expression.",
+  "baseHpContribution": 8,
+  "startingSP": 0,
+  "startingMP": 6,
+  "skillPointGrantLvl1": 2,
+  "tradePointGrantLvl1": 3,
+  "combatTraining": ["Light Armor", "Light Shields"],
+  "maneuversKnownLvl1": 0,
+  "techniquesKnownLvl1": 0,
+  "saveDCBase": 8,
+  "deathThresholdBase": 10,
+  "moveSpeedBase": 30,
+  "restPointsBase": 4,
+  "gritPointsBase": 2,
+  "initiativeBonusBase": 0,
+  "cantripsKnownLvl1": 2,
+  "spellsKnownLvl1": 3,
+  "level1Features": [
+    {
+      "id": "bard_font_of_inspiration",
+      "name": "Font of Inspiration",
+      "level": 1,
+      "description": "You are an ever present source of aid for your allies. You gain the following benefits: Ranged Help Attack: The range of your Help Action when aiding an Attack increases to 10 Spaces. Help Reaction: When a creature you can see makes a Check, you can take the Help Action as a Reaction to aid them with their Check, provided you’re within range to do so.",
+      "effects": []
+    },
+    {
+      "id": "bard_remarkable_repertoire",
+      "name": "Remarkable Repertoire",
+      "level": 1,
+      "description": "You’ve picked up a few tricks along your travels, granting you the following benefits: Jack of All Trades: You gain 2 Skill Points. Magical Secrets: You learn any 2 Spells of your choice from any Spell List. Magical Expression: You learn to express your art in a unique manner, granting you the ability to alter how you cast Spells. Choose the manner of your expression: Visual or Auditory.",
+      "effects": []
+    },
+    {
+      "id": "bard_crowd_pleaser",
+      "name": "Crowd Pleaser (Flavor Feature)",
+      "level": 1,
+      "description": "When you spend at least 5 minutes performing an Artistry Trade for one or more people who are actively watching or listening to your performance, you can make an Artistry Trade Check Contested by the targets’ Charisma Save. Success: You gain ADV on Charisma Checks against the target for 1 hour or until you become hostile. Creatures have ADV on the Save if they’re considered hostile toward you.",
+      "effects": []
+    }
+  ],
+  "featureChoicesLvl1": [
+    {
+      "id": "bard_magical_expression",
+      "prompt": "Choose your Magical Expression:",
+      "type": "select_one",
+      "options": [
+        { "value": "visual", "label": "Visual" },
+        { "value": "auditory", "label": "Auditory" }
+      ]
+    },
+    {
+      "id": "bard_magical_secrets",
+      "prompt": "Choose 2 spells from any spell list:",
+      "type": "select_multiple",
+      "options": [],
+      "maxSelections": 2
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "id": "warlock",
+  "name": "Warlock",
+  "description": "Warlocks make a pact with a powerful entity that grants them magic. Their body and soul are a part of this contract and as such, they can tap into their own life force to enhance and amplify their magic and capabilities as well as drain the life force of other living creatures. They also choose a type of pact to be made that grants more powers.",
+  "baseHpContribution": 9,
+  "startingSP": 0,
+  "startingMP": 6,
+  "skillPointGrantLvl1": 0,
+  "tradePointGrantLvl1": 0,
+  "combatTraining": ["Light Armor"],
+  "maneuversKnownLvl1": 0,
+  "techniquesKnownLvl1": 0,
+  "saveDCBase": 8,
+  "deathThresholdBase": 10,
+  "moveSpeedBase": 30,
+  "restPointsBase": 4,
+  "gritPointsBase": 2,
+  "initiativeBonusBase": 0,
+  "cantripsKnownLvl1": 2,
+  "spellsKnownLvl1": 3,
+  "level1Features": [
+    {
+      "id": "warlock_warlock_contract",
+      "name": "Warlock Contract",
+      "level": 1,
+      "description": "You have a binding agreement with your patron that allows you to make sacrifices in exchange for boons. Hasty Bargain: Once per turn when you make a Check, you can spend 1 HP to gain ADV on the Check. Desperate Bargain: Once per Combat, you can spend 1 AP to regain an amount of HP equal to your Prime Modifier. When you do, you become Exposed until the end of your next turn.",
+      "effects": []
+    },
+    {
+      "id": "warlock_pact_boon",
+      "name": "Pact Boon",
+      "level": 1,
+      "description": "You gain a Pact Boon from your Patron. Choose 1 of the following options: Weapon, Armor, Cantrip, or Familiar.",
+      "effects": []
+    },
+    {
+      "id": "warlock_beseech_patron",
+      "name": "Beseech Patron (Flavor Feature)",
+      "level": 1,
+      "description": "During a Long Rest, while sleeping or meditating, you can access an Inner Sanctum within your mind. Its appearance is influenced by your psyche and is subject to change. While inside your Inner Sanctum, you can attempt to contact your Patron. If they choose to respond, they enter your mind and you might possibly be able to see or hear them. While connected to your Patron in this way, you’re aware of your surroundings but you can’t take actions or move. Your Patron chooses when to end the connection, or you can make a Mental Save against your own Save DC to force the connection to end.",
+      "effects": []
+    }
+  ],
+  "featureChoicesLvl1": [
+    {
+      "id": "warlock_pact_boon_choice",
+      "prompt": "Choose a Pact Boon:",
+      "type": "select_one",
+      "options": [
+        { "value": "weapon", "label": "Pact of the Weapon" },
+        { "value": "armor", "label": "Pact of the Armor" },
+        { "value": "cantrip", "label": "Pact of the Cantrip" },
+        { "value": "familiar", "label": "Pact of the Familiar" }
+      ]
+    }
+  ]
+}

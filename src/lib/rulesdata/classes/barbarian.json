@@ -1,0 +1,52 @@
+{
+  "id": "barbarian",
+  "name": "Barbarian",
+  "description": "Barbarians charge into battle with reckless abandon, ignoring their own safety as they brush off damage and deal even more in return. They trade defense for more offense and let out blood-crazed battle cries.",
+  "baseHpContribution": 9,
+  "startingSP": 1,
+  "startingMP": 0,
+  "skillPointGrantLvl1": 0,
+  "tradePointGrantLvl1": 0,
+  "combatTraining": ["Weapons", "All Armor", "All Shields"],
+  "maneuversKnownLvl1": "All Attack",
+  "techniquesKnownLvl1": 0,
+  "saveDCBase": 8,
+  "deathThresholdBase": 10,
+  "moveSpeedBase": 30,
+  "restPointsBase": 4,
+  "gritPointsBase": 2,
+  "initiativeBonusBase": 0,
+  "cantripsKnownLvl1": 0,
+  "spellsKnownLvl1": 0,
+  "level1Features": [
+    {
+      "id": "barbarian_rage",
+      "name": "Rage",
+      "level": 1,
+      "description": "During Combat, you can spend 1 AP and 1 SP to enter a Rage for 1 minute. For the duration, you’re subjected to the following effects: You deal +1 damage on Melee Martial Attacks. You have ADV on Might Saves. Your PD decreases by 5. You gain Resistance (Half) to Elemental and Physical damage. Ending Early: Your Rage ends early if you fall Unconscious, die, or you choose to end it for free on your turn.",
+      "effects": [
+          { "type": "GRANT_ABILITY", "value": "Rage_Mechanics_Bundle" }
+      ]
+    },
+    {
+      "id": "barbarian_berserker",
+      "name": "Berserker",
+      "level": 1,
+      "description": "Your primal savagery grants you the following benefits: Charge: When you make a Melee Martial Attack on your turn, you can move up to 2 Spaces immediately before making the Attack. Berserker Defense: While you aren’t wearing Armor you gain +2 AD. Fast Movement: You gain +1 Speed while not wearing Armor. Mighty Leap: You can use your Might instead of Agility to determine your Jump Distance and the damage you take from Falling.",
+      "effects": [
+        { "type": "GRANT_ABILITY", "subFeature": "Charge", "descriptionOverride": "Move 2 Spaces before Melee Martial Attack." },
+        { "type": "GRANT_PASSIVE", "subFeature": "Berserker_Defense", "descriptionOverride": "+2 AD when not wearing Armor." },
+        { "type": "GRANT_PASSIVE", "subFeature": "Fast_Movement", "descriptionOverride": "+1 Speed when not wearing Armor." },
+        { "type": "GRANT_PASSIVE", "subFeature": "Mighty_Leap", "descriptionOverride": "Use Might for Jump Distance & Falling Damage calc." }
+      ]
+    },
+    {
+      "id": "barbarian_shattering_force",
+      "name": "Shattering Force (Flavor)",
+      "level": 1,
+      "description": "When you Hit a structure or mundane object with a Melee Attack, it’s considered a Critical Hit.",
+      "effects": [{ "type": "FLAVOR_MECHANIC_NOTE", "value": "Melee attacks vs objects/structures are Critical Hits." }]
+    }
+  ],
+  "featureChoicesLvl1": []
+}

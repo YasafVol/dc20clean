@@ -517,12 +517,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	const getFeaturesData = (): FeatureData[] => {
 		if (!characterData) return [];
 
-		console.log('getFeaturesData called with characterData:', {
-			selectedTraitIds: characterData.selectedTraitIds,
-			selectedFeatureChoices: characterData.selectedFeatureChoices,
-			ancestry1Name: characterData.ancestry1Name
-		});
-
 		const features: FeatureData[] = [];
 
 		// Get ancestry default traits

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import AncestrySelector from './AncestrySelector.tsx';
 import SelectedAncestries from './SelectedAncestries.tsx';
-import AncestryPointsCounter from './AncestryPointsCounter.tsx';
 import Attributes from './Attributes.tsx';
 import ClassSelector from './ClassSelector.tsx';
 import ClassFeatures from './ClassFeatures.tsx';
@@ -23,7 +22,7 @@ import {
 } from './styles/CharacterCreation.styles';
 
 const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavigateToLoad }) => {
-	const { state, dispatch, attributePointsRemaining } = useCharacter();
+	const { state, dispatch, attributePointsRemaining, ancestryPointsRemaining } = useCharacter();
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 	const [showSnackbar, setShowSnackbar] = useState(false);
 
@@ -149,7 +148,7 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
 				); // Used at least 60% of base allocation
 			}
 			case 4:
-				return state.ancestry1Id !== null;
+				return state.ancestry1Id !== null && ancestryPointsRemaining >= 0;
 			case 5:
 				return (
 					state.finalName !== null &&
@@ -183,7 +182,6 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
 				return (
 					<>
 						<AncestrySelector />
-						<AncestryPointsCounter />
 						<SelectedAncestries />
 					</>
 				);

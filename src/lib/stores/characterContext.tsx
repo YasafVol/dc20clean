@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import type { CharacterInProgress } from '@prisma/client';
+import { traitsData } from '../rulesdata/traits';
 
 // Define the shape of the data stored in the character store
 export interface CharacterInProgressStoreData extends CharacterInProgress {
@@ -137,6 +138,7 @@ interface CharacterContextType {
 	// Derived values
 	attributePointsRemaining: number;
 	ancestryPointsRemaining: number;
+	ancestryPointsSpent: number;
 	combatMastery: number;
 	primeModifier: { name: string; value: number };
 }
@@ -157,7 +159,30 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 			(state.attribute_charisma + 2) +
 			(state.attribute_intelligence + 2));
 
-	const ancestryPointsRemaining = 5 - state.ancestryPointsSpent;
+	// Calculate ancestry points spent based on selected traits
+	const calculateAncestryPointsSpent = (): number => {
+		if (!state.selectedTraitIds) return 0;
+		
+		try {
+			const selectedTraitIds: string[] = JSON.parse(state.selectedTraitIds);
+			let totalCost = 0;
+			
+			selectedTraitIds.forEach((traitId) => {
+				const trait = traitsData.find((t) => t.id === traitId);
+				if (trait) {
+					totalCost += trait.cost;
+				}
+			});
+			
+			return totalCost;
+		} catch (error) {
+			console.warn('Error calculating ancestry points:', error);
+			return 0;
+		}
+	};
+
+	const ancestryPointsSpent = calculateAncestryPointsSpent();
+	const ancestryPointsRemaining = 5 - ancestryPointsSpent;
 
 	const combatMastery = Math.ceil((state.level ?? 1) / 2);
 
@@ -184,6 +209,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 		dispatch,
 		attributePointsRemaining,
 		ancestryPointsRemaining,
+		ancestryPointsSpent,
 		combatMastery,
 		primeModifier
 	};

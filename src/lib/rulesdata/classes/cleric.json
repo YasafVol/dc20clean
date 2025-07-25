@@ -57,10 +57,21 @@
       "type": "select_multiple",
       "maxSelections": 2,
       "options": [
-        { "value": "domain_of_life", "label": "Domain of Life" },
-        { "value": "domain_of_death", "label": "Domain of Death" },
-        { "value": "domain_of_knowledge", "label": "Domain of Knowledge" },
-        { "value": "domain_of_war", "label": "Domain of War" }
+        { "value": "knowledge", "label": "Knowledge" },
+        { "value": "magic", "label": "Magic" },
+        { "value": "divine_damage_expansion", "label": "Divine Damage Expansion" },
+        { "value": "life", "label": "Life" },
+        { "value": "death", "label": "Death" },
+        { "value": "grave", "label": "Grave" },
+        { "value": "light", "label": "Light" },
+        { "value": "dark", "label": "Dark" },
+        { "value": "war", "label": "War" },
+        { "value": "peace", "label": "Peace" },
+        { "value": "order", "label": "Order" },
+        { "value": "chaos", "label": "Chaos" },
+        { "value": "divination", "label": "Divination" },
+        { "value": "trickery", "label": "Trickery" },
+        { "value": "ancestral", "label": "Ancestral" }
       ]
     }
   ]

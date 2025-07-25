@@ -25,6 +25,7 @@ import Features from './components/Features';
 import Movement from './components/Movement';
 import RightColumnResources from './components/RightColumnResources';
 import DeathExhaustion from './components/DeathExhaustion';
+import PlayerNotes from './components/PlayerNotes';
 
 // Import rules data
 import { skillsData } from '../../lib/rulesdata/skills';
@@ -896,6 +897,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 						{/* Inventory */}
 						<Inventory inventory={inventory} setInventory={setInventory} />
+
+						{/* Player Notes */}
+						<PlayerNotes characterId={characterData.id} />
 					</StyledMiddleColumn>
 
 					{/* Right Column - Movement, Resources, Inventory, Features */}

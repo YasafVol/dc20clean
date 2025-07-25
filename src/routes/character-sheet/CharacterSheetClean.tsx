@@ -33,6 +33,8 @@ import { knowledgeData } from '../../lib/rulesdata/knowledge';
 import { traitsData } from '../../lib/rulesdata/traits';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { ancestriesData } from '../../lib/rulesdata/ancestries';
+import { clericDomains } from '../../lib/rulesdata/cleric-domains';
+import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
 
 // Import styled components
 import {
@@ -102,6 +104,24 @@ const saveCharacterData = (characterId: string, currentValues: CurrentValues) =>
 
 		localStorage.setItem('savedCharacters', JSON.stringify(savedCharacters));
 		console.log('Character saved to localStorage. Total characters:', savedCharacters.length);
+	}
+};
+
+// Save manual defense overrides to localStorage
+const saveManualDefense = (characterId: string, field: 'manualPD' | 'manualPDR' | 'manualAD', value: number | undefined) => {
+	const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+	const characterIndex = savedCharacters.findIndex((char: any) => char.id === characterId);
+
+	if (characterIndex !== -1) {
+		// Update the character's manual defense value
+		savedCharacters[characterIndex] = {
+			...savedCharacters[characterIndex],
+			[field]: value,
+			lastModified: new Date().toISOString()
+		};
+
+		localStorage.setItem('savedCharacters', JSON.stringify(savedCharacters));
+		console.log(`Manual defense ${field} updated for character ${characterId}:`, value);
 	}
 };
 
@@ -213,6 +233,45 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		loadCharacterData();
 	}, [characterId]);
 
+	// Calculate original defense values (without manual overrides) with detailed breakdown
+	const getCalculatedDefenses = () => {
+		if (!characterData) return { 
+			calculatedPD: 0, 
+			calculatedPDR: 0, 
+			calculatedAD: 0,
+			pdBreakdown: '',
+			adBreakdown: '',
+			pdrBreakdown: ''
+		};
+		
+		// Use the same formula as in characterCalculator.ts
+		const calculatedPD = 8 + characterData.finalCombatMastery + characterData.finalAgility + characterData.finalIntelligence;
+		const calculatedAD = 8 + characterData.finalCombatMastery + characterData.finalMight + characterData.finalCharisma;
+		
+		// Create detailed breakdown strings
+		const pdBreakdown = `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalAgility} (Agility) + ${characterData.finalIntelligence} (Intelligence) = ${calculatedPD}`;
+		const adBreakdown = `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalMight} (Might) + ${characterData.finalCharisma} (Charisma) = ${calculatedAD}`;
+		
+		// For PDR, we'd need to recalculate based on armor/class, but for now we'll use the difference
+		// between final value and any manual override
+		const calculatedPDR = characterData.manualPDR !== undefined 
+			? characterData.finalPDR // This would be the auto-calculated value stored somewhere
+			: characterData.finalPDR;
+		
+		const pdrBreakdown = calculatedPDR > 0 
+			? `${calculatedPDR} (from equipped armor and class features)`
+			: '0 (no PDR from current equipment/class)';
+		
+		return { 
+			calculatedPD, 
+			calculatedPDR, 
+			calculatedAD,
+			pdBreakdown,
+			adBreakdown,
+			pdrBreakdown
+		};
+	};
+
 	// Resource management functions with auto-save
 	const adjustResource = (resource: keyof CurrentValues, amount: number) => {
 		setCurrentValues((prev) => {
@@ -318,6 +377,22 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		});
 	};
 
+	const handleManualDefenseChange = (field: 'manualPD' | 'manualPDR' | 'manualAD', value: number | undefined) => {
+		if (!characterData?.id) return;
+
+		// Save to localStorage
+		saveManualDefense(characterData.id, field, value);
+
+		// Update local character data
+		setCharacterData((prev) => {
+			if (!prev) return prev;
+			return {
+				...prev,
+				[field]: value
+			};
+		});
+	};
+
 	// Parse skills data from character - show ALL skills with their proficiency levels
 	const getSkillsData = (): SkillData[] => {
 		// Parse character's skill proficiencies (if any)
@@ -403,9 +478,50 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		}
 	};
 
+	// Get cleric-specific information (domains and divine damage)
+	const getClericInfo = (): { domains: string[], divineDigame: string } => {
+		const domains: string[] = [];
+		let divineDigame = '';
+
+		if (characterData?.selectedFeatureChoices && characterData.className === 'Cleric') {
+			try {
+				const selectedChoices: { [key: string]: string } = JSON.parse(
+					characterData.selectedFeatureChoices
+				);
+
+				// Get divine damage choice
+				if (selectedChoices['cleric_divine_damage']) {
+					divineDigame = selectedChoices['cleric_divine_damage'];
+				}
+
+				// Get selected domains
+				if (selectedChoices['cleric_divine_domain']) {
+					const selectedDomainIds: string[] = JSON.parse(selectedChoices['cleric_divine_domain']);
+					selectedDomainIds.forEach((domainId) => {
+						// Convert the lowercase ID to the proper domain name
+						const domain = clericDomains.find((d) => d.name.toLowerCase().replace(/\s+/g, '_') === domainId || d.name.toLowerCase() === domainId);
+						if (domain) {
+							domains.push(domain.name);
+						}
+					});
+				}
+			} catch (error) {
+				console.error('Error parsing cleric feature choices:', error);
+			}
+		}
+
+		return { domains, divineDigame };
+	};
+
 	// Get all features (traits and class features) for the character
 	const getFeaturesData = (): FeatureData[] => {
 		if (!characterData) return [];
+
+		console.log('getFeaturesData called with characterData:', {
+			selectedTraitIds: characterData.selectedTraitIds,
+			selectedFeatureChoices: characterData.selectedFeatureChoices,
+			ancestry1Name: characterData.ancestry1Name
+		});
 
 		const features: FeatureData[] = [];
 
@@ -456,6 +572,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 		// Get class features
 		const selectedClass = classesData.find((c) => c.name === characterData.className);
+		
 		if (selectedClass) {
 			// Add level 1 features
 			selectedClass.level1Features?.forEach((feature: any) => {
@@ -474,20 +591,71 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					const selectedChoices: { [key: string]: string } = JSON.parse(
 						characterData.selectedFeatureChoices
 					);
+					
 					selectedClass.featureChoicesLvl1?.forEach((choice: any) => {
-						const selectedOptionValue = selectedChoices[choice.id];
-						if (selectedOptionValue) {
-							const selectedOption = choice.options?.find(
-								(opt: any) => opt.value === selectedOptionValue
-							);
-							if (selectedOption) {
-								features.push({
-									id: `${choice.id}_${selectedOptionValue}`,
-									name: selectedOption.label,
-									description: selectedOption.description || 'Feature choice selected.',
-									source: 'choice',
-									sourceDetail: `${selectedClass.name} (Choice)`
+						
+						if (choice.type === 'select_multiple') {
+							// Handle multiple selections (like cleric domains)
+							const selectedOptionValues = selectedChoices[choice.id];
+							
+							if (selectedOptionValues) {
+								const selectedValueArray: string[] = JSON.parse(selectedOptionValues);
+								
+								selectedValueArray.forEach((value) => {
+									const selectedOption = choice.options?.find(
+										(opt: any) => opt.value === value
+									);
+									
+									if (selectedOption) {
+									// Get the detailed description from the appropriate data file
+									let description = selectedOption.description || 'Feature choice selected.';
+									const detailedDescription = getDetailedClassFeatureDescription(choice.id, value);
+									if (detailedDescription) {
+										description = detailedDescription;
+									}										// Determine the source detail based on choice type
+										let sourceDetail = `${selectedClass.name} (Choice)`;
+										if (choice.id === 'cleric_divine_domain') {
+											sourceDetail = `${selectedClass.name} (Divine Domain)`;
+										} else if (choice.id === 'monk_stance_choice') {
+											sourceDetail = `${selectedClass.name} (Monk Stance)`;
+										} else if (choice.id === 'spellblade_disciplines_choice') {
+											sourceDetail = `${selectedClass.name} (Discipline)`;
+										} else if (choice.id === 'hunter_favored_terrain_choice') {
+											sourceDetail = `${selectedClass.name} (Favored Terrain)`;
+										}
+										
+										const featureToAdd = {
+											id: `${choice.id}_${value}`,
+											name: selectedOption.label,
+											description: description,
+											source: 'choice' as const,
+											sourceDetail: sourceDetail
+										};
+										features.push(featureToAdd);
+									}
 								});
+							}
+						} else {
+							// Handle single selections
+							const selectedOptionValue = selectedChoices[choice.id];
+							if (selectedOptionValue) {
+								const selectedOption = choice.options?.find(
+									(opt: any) => opt.value === selectedOptionValue
+								);
+								if (selectedOption) {
+								// Get the detailed description from the appropriate data file
+								let description = selectedOption.description || 'Feature choice selected.';
+								const detailedDescription = getDetailedClassFeatureDescription(choice.id, selectedOptionValue);
+								if (detailedDescription) {
+									description = detailedDescription;
+								}									features.push({
+										id: `${choice.id}_${selectedOptionValue}`,
+										name: selectedOption.label,
+										description: description,
+										source: 'choice',
+										sourceDetail: `${selectedClass.name} (Choice)`
+									});
+								}
 							}
 						}
 					});
@@ -640,6 +808,29 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					<StyledHeaderSection>
 						<StyledLabel>Class & Subclass</StyledLabel>
 						<StyledValue>{characterData.className}</StyledValue>
+						{characterData.className === 'Cleric' && (
+							<>
+								{(() => {
+									const clericInfo = getClericInfo();
+									return (
+										<>
+											{clericInfo.divineDigame && (
+												<>
+													<StyledLabel style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>Divine Damage</StyledLabel>
+													<StyledValue style={{ fontSize: '0.9rem' }}>{clericInfo.divineDigame.charAt(0).toUpperCase() + clericInfo.divineDigame.slice(1)}</StyledValue>
+												</>
+											)}
+											{clericInfo.domains.length > 0 && (
+												<>
+													<StyledLabel style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>Divine Domains</StyledLabel>
+													<StyledValue style={{ fontSize: '0.9rem' }}>{clericInfo.domains.join(', ')}</StyledValue>
+												</>
+											)}
+										</>
+									);
+								})()}
+							</>
+						)}
 						<StyledLabel style={{ marginTop: '0.5rem' }}>Ancestry & Background</StyledLabel>
 						<StyledValue>{characterData.ancestry1Name || 'Unknown'}</StyledValue>
 					</StyledHeaderSection>
@@ -680,7 +871,16 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						/>
 
 						{/* Defenses - Shield-like design */}
-						<Defenses characterData={characterData} />
+						<Defenses 
+							characterData={{
+								...characterData,
+								manualPD: characterData?.manualPD,
+								manualPDR: characterData?.manualPDR,
+								manualAD: characterData?.manualAD,
+							}} 
+							calculatedDefenses={getCalculatedDefenses()}
+							onUpdateManualDefense={handleManualDefenseChange}
+						/>
 
 						{/* Combat Section */}
 						<Combat

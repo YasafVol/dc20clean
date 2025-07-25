@@ -35,10 +35,15 @@ export interface CharacterSheetData {
 	finalMPMax: number;
 
 	// Defenses
-	finalPD: number;
-	finalAD: number;
+	finalPD: number; // Precision Defense
+	finalAD: number; // Area Defense
 
-	// PDR (Physical Damage Reduction)
+	// Manual Defense Overrides (optional)
+	manualPD?: number;
+	manualAD?: number;
+	manualPDR?: number;
+
+	// PDR (Precision Damage Reduction)
 	finalPDR: number;
 
 	// Other Stats

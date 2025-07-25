@@ -33,6 +33,11 @@ export interface CharacterInProgressData {
 	tradesJson?: string;
 	languagesJson?: string;
 
+	// Manual Defense Overrides
+	manualPD?: number;
+	manualAD?: number;
+	manualPDR?: number;
+
 	// Timestamps
 	createdAt: Date;
 	updatedAt?: Date;
@@ -74,8 +79,8 @@ export interface CalculatedCharacterStats {
 	finalMPMax: number;
 
 	// Defenses
-	finalPD: number;
-	finalAD: number;
+	finalPD: number; // Precision Defense
+	finalAD: number; // Area Defense
 
 	// Other Stats
 	finalSaveDC: number;
@@ -86,7 +91,7 @@ export interface CalculatedCharacterStats {
 	finalGritPoints: number;
 	finalInitiativeBonus: number;
 
-	// PDR (Physical Damage Reduction)
+	// PDR (Precision Damage Reduction)
 	finalPDR: number;
 
 	// Class & Ancestry Info
@@ -96,6 +101,8 @@ export interface CalculatedCharacterStats {
 	ancestry1Name?: string;
 	ancestry2Id: string | null;
 	ancestry2Name?: string;
+	selectedFeatureChoices?: string;
+	selectedTraitIds?: string;
 
 	// JSON data fields
 	skillsJson?: string;
@@ -180,11 +187,13 @@ export const calculateCharacterStats = async (
 	});
 
 	// Defenses (DC20 formulas)
-	// PD = 8 + CM + Agility + Intelligence + Bonuses
-	const finalPD = 8 + finalCombatMastery + finalAgility + finalIntelligence;
+	// PD (Precision Defense) = 8 + CM + Agility + Intelligence + Bonuses from items
+	const calculatedPD = 8 + finalCombatMastery + finalAgility + finalIntelligence;
+	const finalPD = characterData.manualPD !== undefined ? characterData.manualPD : calculatedPD;
 
-	// AD = 8 + CM + Might + Charisma + Bonuses
-	const finalAD = 8 + finalCombatMastery + finalMight + finalCharisma;
+	// AD (Area Defense) = 8 + CM + Might + Charisma + Bonuses from items
+	const calculatedAD = 8 + finalCombatMastery + finalMight + finalCharisma;
+	const finalAD = characterData.manualAD !== undefined ? characterData.manualAD : calculatedAD;
 
 	// Health & Resources
 	let finalHPMax = finalMight; // Base from Might
@@ -242,8 +251,9 @@ export const calculateCharacterStats = async (
 	const baseGritPoints = classData?.gritPointsBase || 2;
 	const finalGritPoints = baseGritPoints + finalCharisma;
 
-	// Calculate PDR (Physical Damage Reduction)
-	const finalPDR = calculatePDR(characterData, classData);
+	// Calculate PDR (Precision Damage Reduction) with manual override
+	const calculatedPDR = calculatePDR(characterData, classData);
+	const finalPDR = characterData.manualPDR !== undefined ? characterData.manualPDR : calculatedPDR;
 
 	// Default skills if not provided
 	let skillsJson = characterData.skillsJson;
@@ -303,7 +313,7 @@ export const calculateCharacterStats = async (
 		finalGritPoints,
 		finalInitiativeBonus,
 
-		// PDR (Physical Damage Reduction)
+		// PDR (Precision Damage Reduction)
 		finalPDR,
 
 		// Class & Ancestry Info
@@ -313,6 +323,8 @@ export const calculateCharacterStats = async (
 		ancestry1Name: ancestry1Data?.name,
 		ancestry2Id: characterData.ancestry2Id,
 		ancestry2Name: ancestry2Data?.name,
+		selectedFeatureChoices: characterData.selectedFeatureChoices,
+		selectedTraitIds: characterData.selectedTraitIds,
 
 		// JSON data fields
 		skillsJson,
@@ -321,7 +333,7 @@ export const calculateCharacterStats = async (
 	};
 };
 
-// Helper function to calculate PDR (Physical Damage Reduction)
+// Helper function to calculate PDR (Precision Damage Reduction)
 const calculatePDR = (characterData: CharacterInProgressData, classData: any): number => {
 	let pdr = 0;
 
@@ -331,7 +343,7 @@ const calculatePDR = (characterData: CharacterInProgressData, classData: any): n
 			const selectedTraits = JSON.parse(characterData.selectedTraitIds);
 			if (selectedTraits.includes('beastborn_natural_armor')) {
 				// Natural Armor grants PDR when not wearing armor
-				// According to DC20 rules, this grants PDR (Physical Damage Reduction)
+				// According to DC20 rules, this grants PDR (Precision Damage Reduction)
 				pdr += 1;
 			}
 		} catch (error) {
@@ -341,7 +353,7 @@ const calculatePDR = (characterData: CharacterInProgressData, classData: any): n
 
 	// Check for Barbarian Rage ability
 	if (classData?.id === 'barbarian') {
-		// Barbarian Rage grants Resistance (Half) to Physical damage
+		// Barbarian Rage grants Resistance (Half) to Precision damage
 		// This is effectively PDR, but it's a different mechanic
 		// For now, we'll note this but not add to base PDR since Rage is conditional
 		// TODO: Could add a note or separate field for conditional PDR

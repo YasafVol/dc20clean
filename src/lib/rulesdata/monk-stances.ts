@@ -1,6 +1,6 @@
 /**
  * @file monk-stances.ts
- * @description Contains the schemas and a complete list of all Monk Stances
+ * @description Contains the schemas and a complete list When you make a Melee Martial Attack against a target, you can make another Melee Martial Attack for free against a different target within your Melee Range. You can only make this bonus Melee Martial Attack once on each of your turns. Make a single Attack Check and apply the number rolled to each target's Precision Defense. Attack Hit: You deal your Melee Martial Attack damage.f all Monk Stances
  * from the DC20 Beta 0.9.5 rulebook (page 144).
  *
  * General Rule for All Stances:

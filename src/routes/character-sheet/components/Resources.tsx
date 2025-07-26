@@ -37,6 +37,7 @@ interface ResourcesProps {
 	onResourceInputChange: (resource: 'tempHP', value: string) => void;
 	getFillPercentage: (current: number, max: number) => number;
 	getHPFillPercentage: (current: number, max: number, tempHP: number) => number;
+	isMobile?: boolean;
 }
 
 const Resources: React.FC<ResourcesProps> = ({
@@ -45,12 +46,13 @@ const Resources: React.FC<ResourcesProps> = ({
 	onAdjustResource,
 	onResourceInputChange,
 	getFillPercentage,
-	getHPFillPercentage
+	getHPFillPercentage,
+	isMobile = false
 }) => {
 	return (
-		<ResourcesContainer>
+		<ResourcesContainer $isMobile={isMobile}>
 			{/* Stamina Points */}
-			<ResourceColumn>
+			<ResourceColumn $isMobile={isMobile}>
 				<ResourceLabel>STAMINA POINTS</ResourceLabel>
 				<ResourceControls>
 					<StyledResourceButton onClick={() => onAdjustResource('currentSP', -1)}>
@@ -85,7 +87,7 @@ const Resources: React.FC<ResourcesProps> = ({
 			</ResourceColumn>
 
 			{/* Mana Points */}
-			<ResourceColumn>
+			<ResourceColumn $isMobile={isMobile}>
 				<ResourceLabel>MANA POINTS</ResourceLabel>
 				<ResourceControls>
 					<StyledResourceButton onClick={() => onAdjustResource('currentMP', -1)}>
@@ -120,7 +122,7 @@ const Resources: React.FC<ResourcesProps> = ({
 			</ResourceColumn>
 
 			{/* Hit Points */}
-			<ResourceColumn>
+			<ResourceColumn $isMobile={isMobile}>
 				<ResourceLabel>HIT POINTS</ResourceLabel>
 				<ResourceControls>
 					<StyledResourceButton onClick={() => onAdjustResource('currentHP', -1)}>

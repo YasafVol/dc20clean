@@ -1,15 +1,18 @@
 import styled from 'styled-components';
 
-export const DefensesContainer = styled.div`
+export const DefensesContainer = styled.div<{ $isMobile?: boolean }>`
 	display: flex;
+	flex-direction: ${props => props.$isMobile ? 'column' : 'row'};
 	justify-content: space-around;
 	align-items: center;
+	gap: ${props => props.$isMobile ? '1rem' : '0'};
 	margin-bottom: 1.5rem;
 `;
 
 export const DefenseItem = styled.div`
 	text-align: center;
 	width: 120px;
+	margin: 0 auto;
 `;
 
 export const DefenseLabelContainer = styled.div`

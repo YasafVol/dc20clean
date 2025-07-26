@@ -41,6 +41,11 @@ export const StyledAddWeaponButton = styled.button`
 export const StyledAttacksContainer = styled.div`
 	font-size: 0.8rem;
 	color: #8b4513;
+	overflow-x: auto;
+
+	@media (max-width: 768px) {
+		overflow-x: visible;
+	}
 `;
 
 export const StyledAttacksHeaderRow = styled.div`
@@ -51,6 +56,18 @@ export const StyledAttacksHeaderRow = styled.div`
 	border-bottom: 1px solid #e5e5e5;
 	padding-bottom: 0.3rem;
 	align-items: center;
+
+	@media (max-width: 768px) {
+		grid-template-columns: 25px 1fr 45px 40px;
+		gap: 0.2rem;
+		font-size: 0.7rem;
+		
+		& > *:nth-child(4),
+		& > *:nth-child(5),
+		& > *:nth-child(7) {
+			display: none;
+		}
+	}
 `;
 
 export const StyledHeaderColumn = styled.span<{ align?: string }>`
@@ -58,6 +75,15 @@ export const StyledHeaderColumn = styled.span<{ align?: string }>`
 	text-align: ${(props) => props.align || 'left'};
 	font-size: 0.8rem;
 	line-height: 1.1;
+
+	@media (max-width: 768px) {
+		font-size: 0.7rem;
+		&:nth-child(4),
+		&:nth-child(5),
+		&:nth-child(7) {
+			display: none;
+		}
+	}
 `;
 
 export const StyledEmptyState = styled.div`
@@ -73,6 +99,18 @@ export const StyledAttackRow = styled.div`
 	gap: 0.5rem;
 	margin-bottom: 0.5rem;
 	align-items: center;
+
+	@media (max-width: 768px) {
+		grid-template-columns: 25px 1fr 45px 40px;
+		gap: 0.2rem;
+		font-size: 0.7rem;
+		
+		& > *:nth-child(4),
+		& > *:nth-child(5),
+		& > *:nth-child(7) {
+			display: none;
+		}
+	}
 `;
 
 export const StyledRemoveButton = styled.button`
@@ -105,6 +143,11 @@ export const StyledWeaponSelect = styled.select`
 	max-width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
+
+	@media (max-width: 768px) {
+		font-size: 0.6rem;
+		padding: 0.1rem;
+	}
 `;
 
 export const StyledDamageCell = styled.div<{ color?: string }>`

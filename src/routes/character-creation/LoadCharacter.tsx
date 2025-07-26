@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import type { SavedCharacter } from '../../lib/utils/characterEdit';
 import {
 	StyledContainer,
 	StyledTitle,
@@ -19,24 +20,14 @@ import {
 	StyledBackButton
 } from './styles/LoadCharacter.styles';
 
-interface SavedCharacter {
-	id: string;
-	finalName: string;
-	finalPlayerName: string;
-	classId: string;
-	ancestry1Id: string;
-	ancestry2Id?: string;
-	completedAt: string;
-	[key: string]: any;
-}
-
 interface LoadCharacterProps {
 	onBack: () => void;
 	onLoadCharacter?: (character: SavedCharacter) => void;
 	onSelectCharacter?: (characterId: string) => void;
+	onEditCharacter?: (character: SavedCharacter) => void;
 }
 
-function LoadCharacter({ onBack, onLoadCharacter, onSelectCharacter }: LoadCharacterProps) {
+function LoadCharacter({ onBack, onLoadCharacter, onSelectCharacter, onEditCharacter }: LoadCharacterProps) {
 	const [savedCharacters, setSavedCharacters] = useState<SavedCharacter[]>([]);
 
 	useEffect(() => {
@@ -45,7 +36,9 @@ function LoadCharacter({ onBack, onLoadCharacter, onSelectCharacter }: LoadChara
 	}, []);
 
 	const handleCharacterClick = (character: SavedCharacter) => {
-		if (onLoadCharacter) {
+		if (onEditCharacter) {
+			onEditCharacter(character);
+		} else if (onLoadCharacter) {
 			onLoadCharacter(character);
 		} else {
 			console.log('Loading character:', character);

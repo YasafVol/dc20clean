@@ -25,7 +25,11 @@ import {
 	StyledExhaustionTooltip
 } from '../styles/Exhaustion';
 
-import { getHealthStatus, calculateDeathThreshold, getDeathSteps } from '../../../lib/rulesdata/death';
+import {
+	getHealthStatus,
+	calculateDeathThreshold,
+	getDeathSteps
+} from '../../../lib/rulesdata/death';
 
 interface DeathExhaustionProps {
 	characterData: CharacterSheetData;

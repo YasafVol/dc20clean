@@ -22,7 +22,7 @@ const Languages: React.FC<LanguagesProps> = ({ languages }) => {
 		<LanguagesSection>
 			<SectionTitle>LANGUAGES</SectionTitle>
 			<SectionDescription>LANGUAGE CHECK = d20 + Intelligence or Charisma</SectionDescription>
-			
+
 			{/* Header with L and F labels */}
 			<FluencyHeader>
 				<LanguageNameHeader>LANGUAGE</LanguageNameHeader>

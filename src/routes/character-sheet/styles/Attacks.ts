@@ -80,8 +80,8 @@ export const StyledRemoveButton = styled.button`
 	height: 24px;
 	border: 1px solid #dc2626;
 	border-radius: 4px;
-	background: #dc2626;
-	color: white;
+	background-color: #fee2e2;
+	color: #dc2626;
 	font-size: 0.8rem;
 	font-weight: bold;
 	cursor: pointer;
@@ -91,7 +91,7 @@ export const StyledRemoveButton = styled.button`
 	transition: background-color 0.2s;
 
 	&:hover {
-		background-color: #b91c1c;
+		background-color: #fecaca;
 	}
 `;
 

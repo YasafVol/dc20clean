@@ -37,14 +37,7 @@ const Background: React.FC = () => {
 	const languagePointsUsed = Object.entries(currentLanguages).reduce(
 		(sum, [langId, data]: [string, any]) => {
 			if (langId === 'common') return sum; // Common is free
-			return (
-				sum +
-				(data.fluency === 'limited'
-					? 1
-					: data.fluency === 'fluent'
-						? 2
-						: 0)
-			);
+			return sum + (data.fluency === 'limited' ? 1 : data.fluency === 'fluent' ? 2 : 0);
 		},
 		0
 	);
@@ -86,10 +79,7 @@ const Background: React.FC = () => {
 		});
 	};
 
-	const handleLanguageChange = (
-		languageId: string,
-		fluency: 'limited' | 'fluent' | null
-	) => {
+	const handleLanguageChange = (languageId: string, fluency: 'limited' | 'fluent' | null) => {
 		const updatedLanguages = { ...currentLanguages };
 		if (fluency === null) {
 			delete updatedLanguages[languageId];

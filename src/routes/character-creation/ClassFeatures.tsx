@@ -35,8 +35,10 @@ function ClassFeatures() {
 
 	function handleMultipleFeatureChoice(choiceId: string, value: string, isSelected: boolean) {
 		const currentChoices = { ...selectedFeatureChoices };
-		const currentValues: string[] = currentChoices[choiceId] ? JSON.parse(currentChoices[choiceId]) : [];
-		
+		const currentValues: string[] = currentChoices[choiceId]
+			? JSON.parse(currentChoices[choiceId])
+			: [];
+
 		if (isSelected) {
 			// Add the value if not already present
 			if (!currentValues.includes(value)) {
@@ -49,7 +51,7 @@ function ClassFeatures() {
 				currentValues.splice(index, 1);
 			}
 		}
-		
+
 		currentChoices[choiceId] = JSON.stringify(currentValues);
 		dispatch({
 			type: 'SET_FEATURE_CHOICES',
@@ -88,7 +90,10 @@ function ClassFeatures() {
 							{choice.type === 'select_one' && (
 								<StyledChoiceOptions>
 									{choice.options.map((option: any) => {
-										const detailedDescription = getDetailedClassFeatureDescription(choice.id, option.value);
+										const detailedDescription = getDetailedClassFeatureDescription(
+											choice.id,
+											option.value
+										);
 										return (
 											<StyledLabel key={option.value}>
 												<StyledRadio
@@ -100,7 +105,9 @@ function ClassFeatures() {
 												/>
 												{option.label}
 												{(option.description || detailedDescription) && (
-													<StyledOptionDescription>({option.description || detailedDescription})</StyledOptionDescription>
+													<StyledOptionDescription>
+														({option.description || detailedDescription})
+													</StyledOptionDescription>
 												)}
 											</StyledLabel>
 										);
@@ -110,12 +117,17 @@ function ClassFeatures() {
 							{choice.type === 'select_multiple' && (
 								<StyledChoiceOptions>
 									{choice.options.map((option: any) => {
-										const currentValues: string[] = selectedFeatureChoices[choice.id] ? JSON.parse(selectedFeatureChoices[choice.id]) : [];
+										const currentValues: string[] = selectedFeatureChoices[choice.id]
+											? JSON.parse(selectedFeatureChoices[choice.id])
+											: [];
 										const isSelected = currentValues.includes(option.value);
 										const canSelect = currentValues.length < (choice.maxSelections || 999);
 										const isDisabled = !isSelected && !canSelect;
-										const detailedDescription = getDetailedClassFeatureDescription(choice.id, option.value);
-										
+										const detailedDescription = getDetailedClassFeatureDescription(
+											choice.id,
+											option.value
+										);
+
 										return (
 											<StyledLabel key={option.value} style={{ opacity: isDisabled ? 0.5 : 1 }}>
 												<StyledRadio
@@ -124,18 +136,26 @@ function ClassFeatures() {
 													value={option.value}
 													checked={isSelected}
 													disabled={isDisabled}
-													onChange={(e) => handleMultipleFeatureChoice(choice.id, option.value, e.target.checked)}
+													onChange={(e) =>
+														handleMultipleFeatureChoice(choice.id, option.value, e.target.checked)
+													}
 												/>
 												{option.label}
 												{(option.description || detailedDescription) && (
-													<StyledOptionDescription>{option.description || detailedDescription}</StyledOptionDescription>
+													<StyledOptionDescription>
+														{option.description || detailedDescription}
+													</StyledOptionDescription>
 												)}
 											</StyledLabel>
 										);
 									})}
 									{choice.maxSelections && (
 										<StyledOptionDescription style={{ marginTop: '8px', fontStyle: 'italic' }}>
-											Select up to {choice.maxSelections} options ({(selectedFeatureChoices[choice.id] ? JSON.parse(selectedFeatureChoices[choice.id]).length : 0)}/{choice.maxSelections} selected)
+											Select up to {choice.maxSelections} options (
+											{selectedFeatureChoices[choice.id]
+												? JSON.parse(selectedFeatureChoices[choice.id]).length
+												: 0}
+											/{choice.maxSelections} selected)
 										</StyledOptionDescription>
 									)}
 								</StyledChoiceOptions>

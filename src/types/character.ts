@@ -122,6 +122,67 @@ export interface CurrentValues {
 	platinumPieces: number;
 }
 
+// Comprehensive character state that includes both original (calculated) and current (modified) values
+export interface CharacterState {
+	// Core resource values
+	resources: {
+		original: {
+			maxHP: number;
+			maxSP: number;
+			maxMP: number;
+			maxGritPoints: number;
+			maxRestPoints: number;
+		};
+		current: {
+			currentHP: number;
+			currentSP: number;
+			currentMP: number;
+			currentGritPoints: number;
+			currentRestPoints: number;
+			tempHP: number;
+			actionPointsUsed: number;
+			exhaustionLevel: number;
+		};
+	};
+	
+	// Currency with original and current values
+	currency: {
+		original: {
+			goldPieces: number;
+			silverPieces: number;
+			copperPieces: number;
+			electrumPieces: number;
+			platinumPieces: number;
+		};
+		current: {
+			goldPieces: number;
+			silverPieces: number;
+			copperPieces: number;
+			electrumPieces: number;
+			platinumPieces: number;
+		};
+	};
+	
+	// Attacks - original is calculated from character build, current is user-modified
+	attacks: {
+		original: AttackData[];
+		current: AttackData[];
+	};
+	
+	// Inventory - original is empty/default, current is user-modified
+	inventory: {
+		original: InventoryItemData[];
+		current: InventoryItemData[];
+	};
+	
+	// Defense notes (already integrated)
+	defenseNotes?: {
+		manualPD?: { value: number; reason: string; timestamp: string };
+		manualPDR?: { value: number; reason: string; timestamp: string };
+		manualAD?: { value: number; reason: string; timestamp: string };
+	};
+}
+
 export interface AttackData {
 	id: string;
 	weaponId: string;

@@ -226,7 +226,8 @@ const Inventory: React.FC<InventoryProps> = ({ inventory, setInventory }) => {
 
 		// Store tooltip reference on the element
 		(e.currentTarget as HTMLElement & { _customTooltip?: HTMLDivElement })._customTooltip = tooltip;
-	};	const removeCustomTooltip = (e: React.MouseEvent<HTMLSpanElement>) => {
+	};
+	const removeCustomTooltip = (e: React.MouseEvent<HTMLSpanElement>) => {
 		const element = e.currentTarget as HTMLElement & { _customTooltip?: HTMLDivElement };
 		const tooltip = element._customTooltip;
 		if (tooltip && tooltip.parentNode) {

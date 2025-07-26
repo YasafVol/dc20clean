@@ -10,7 +10,8 @@ import type {
 	FeatureData,
 	CurrentValues,
 	AttackData,
-	InventoryItemData
+	InventoryItemData,
+	CharacterState
 } from '../../types';
 
 // Import new component modules
@@ -25,6 +26,20 @@ import Features from './components/Features';
 import Movement from './components/Movement';
 import RightColumnResources from './components/RightColumnResources';
 import DeathExhaustion from './components/DeathExhaustion';
+import PlayerNotes from './components/PlayerNotes';
+
+// Import character state management utilities
+import {
+	getCharacterState,
+	initializeCharacterState,
+	saveCharacterState,
+	updateCharacterState,
+	revertToOriginal,
+	characterStateToCurrentValues
+} from '../../lib/utils/characterState';
+
+// Import defense notes utilities
+import { clearDefenseNotesForField } from '../../lib/utils/defenseNotes';
 
 // Import rules data
 import { skillsData } from '../../lib/rulesdata/skills';
@@ -82,33 +97,12 @@ const getCharacterData = async (characterId: string): Promise<CharacterSheetData
 	};
 };
 
-// Save character current values back to localStorage
-const saveCharacterData = (characterId: string, currentValues: CurrentValues) => {
-	const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-	const characterIndex = savedCharacters.findIndex((char: any) => char.id === characterId);
-
-	if (characterIndex !== -1) {
-		// Update the character's current values
-		savedCharacters[characterIndex] = {
-			...savedCharacters[characterIndex],
-			currentHP: currentValues.currentHP,
-			currentSP: currentValues.currentSP,
-			currentMP: currentValues.currentMP,
-			currentGritPoints: currentValues.currentGritPoints,
-			currentRestPoints: currentValues.currentRestPoints,
-			tempHP: currentValues.tempHP,
-			actionPointsUsed: currentValues.actionPointsUsed,
-			exhaustionLevel: currentValues.exhaustionLevel,
-			lastModified: new Date().toISOString()
-		};
-
-		localStorage.setItem('savedCharacters', JSON.stringify(savedCharacters));
-		console.log('Character saved to localStorage. Total characters:', savedCharacters.length);
-	}
-};
-
 // Save manual defense overrides to localStorage
-const saveManualDefense = (characterId: string, field: 'manualPD' | 'manualPDR' | 'manualAD', value: number | undefined) => {
+const saveManualDefense = (
+	characterId: string,
+	field: 'manualPD' | 'manualPDR' | 'manualAD',
+	value: number | undefined
+) => {
 	const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
 	const characterIndex = savedCharacters.findIndex((char: any) => char.id === characterId);
 
@@ -127,6 +121,8 @@ const saveManualDefense = (characterId: string, field: 'manualPD' | 'manualPDR' 
 
 const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) => {
 	const [characterData, setCharacterData] = useState<CharacterSheetData | null>(null);
+	const [characterState, setCharacterState] = useState<CharacterState | null>(null);
+	// Keep currentValues for backwards compatibility with existing components
 	const [currentValues, setCurrentValues] = useState<CurrentValues>({
 		currentHP: 0,
 		currentSP: 0,
@@ -146,45 +142,87 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
-	const [attacks, setAttacks] = useState<AttackData[]>([
-		{
-			id: '1',
-			weaponId: '',
-			name: '',
-			attackBonus: 0,
-			damage: '',
-			damageType: '',
-			critRange: '',
-			critDamage: '',
-			brutalDamage: '',
-			heavyHitEffect: ''
-		},
-		{
-			id: '2',
-			weaponId: '',
-			name: '',
-			attackBonus: 0,
-			damage: '',
-			damageType: '',
-			critRange: '',
-			critDamage: '',
-			brutalDamage: '',
-			heavyHitEffect: ''
-		},
-		{
-			id: '3',
-			weaponId: '',
-			name: '',
-			attackBonus: 0,
-			damage: '',
-			damageType: '',
-			critRange: '',
-			critDamage: '',
-			brutalDamage: '',
-			heavyHitEffect: ''
-		}
-	]);
+	const [attacks, setAttacks] = useState<AttackData[]>([]);
 	const [inventory, setInventory] = useState<InventoryItemData[]>([]);
+
+	// Save character current values back to localStorage using comprehensive state management
+	const saveCharacterData = (characterId: string, currentValues: CurrentValues) => {
+		updateCharacterState(characterId, {
+			resources: {
+				original: characterState?.resources.original || {
+					maxHP: characterData?.finalHPMax || 0,
+					maxSP: characterData?.finalSPMax || 0,
+					maxMP: characterData?.finalMPMax || 0,
+					maxGritPoints: characterData?.finalGritPoints || 0,
+					maxRestPoints: characterData?.finalRestPoints || 0
+				},
+				current: {
+					currentHP: currentValues.currentHP,
+					currentSP: currentValues.currentSP,
+					currentMP: currentValues.currentMP,
+					currentGritPoints: currentValues.currentGritPoints,
+					currentRestPoints: currentValues.currentRestPoints,
+					tempHP: currentValues.tempHP,
+					actionPointsUsed: currentValues.actionPointsUsed,
+					exhaustionLevel: currentValues.exhaustionLevel
+				}
+			},
+			currency: {
+				original: characterState?.currency.original || {
+					goldPieces: 0,
+					silverPieces: 0,
+					copperPieces: 0,
+					electrumPieces: 0,
+					platinumPieces: 0
+				},
+				current: {
+					goldPieces: currentValues.goldPieces,
+					silverPieces: currentValues.silverPieces,
+					copperPieces: currentValues.copperPieces,
+					electrumPieces: currentValues.electrumPieces,
+					platinumPieces: currentValues.platinumPieces
+				}
+			}
+		});
+	};
+
+	// Save attacks to comprehensive state
+	const saveAttacksData = (newAttacks: AttackData[]) => {
+		updateCharacterState(characterId, {
+			attacks: {
+				original: characterState?.attacks.original || [],
+				current: newAttacks
+			}
+		});
+	};
+
+	// Save inventory to comprehensive state
+	const saveInventoryData = (newInventory: InventoryItemData[]) => {
+		updateCharacterState(characterId, {
+			inventory: {
+				original: characterState?.inventory.original || [],
+				current: newInventory
+			}
+		});
+	};
+
+	// Wrapper for setAttacks that also saves to comprehensive state
+	const updateAttacks = (newAttacks: AttackData[] | ((prev: AttackData[]) => AttackData[])) => {
+		setAttacks((prev) => {
+			const result = typeof newAttacks === 'function' ? newAttacks(prev) : newAttacks;
+			saveAttacksData(result);
+			return result;
+		});
+	};
+
+	// Wrapper for setInventory that also saves to comprehensive state
+	const updateInventory = (newInventory: InventoryItemData[] | ((prev: InventoryItemData[]) => InventoryItemData[])) => {
+		setInventory((prev) => {
+			const result = typeof newInventory === 'function' ? newInventory(prev) : newInventory;
+			saveInventoryData(result);
+			return result;
+		});
+	};
 
 	// Load character data
 	useEffect(() => {
@@ -193,36 +231,35 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 				setLoading(true);
 				setError(null);
 
+				// Load the character data from API
 				const data = await getCharacterData(characterId);
 				setCharacterData(data);
 
-				// Initialize current values - use saved values if they exist, otherwise use max values
-				const initialValues = {
-					currentHP: data.currentHP !== undefined ? data.currentHP : data.finalHPMax,
-					currentSP: data.currentSP !== undefined ? data.currentSP : data.finalSPMax,
-					currentMP: data.currentMP !== undefined ? data.currentMP : data.finalMPMax,
-					currentGritPoints:
-						data.currentGritPoints !== undefined ? data.currentGritPoints : data.finalGritPoints,
-					currentRestPoints:
-						data.currentRestPoints !== undefined ? data.currentRestPoints : data.finalRestPoints,
-					tempHP: data.tempHP || 0,
-					actionPointsUsed: data.actionPointsUsed || 0,
-					exhaustionLevel: data.exhaustionLevel || 0,
-					// Currency - default to 0 if not saved
-					goldPieces: 0,
-					silverPieces: 0,
-					copperPieces: 0,
-					electrumPieces: 0,
-					platinumPieces: 0
-				};
+				// Get existing character state from localStorage
+				const existingState = getCharacterState(characterId);
+				
+				// Initialize comprehensive character state
+				const initialState = initializeCharacterState(data, existingState);
+				setCharacterState(initialState);
 
-				console.log('Character data loaded:', {
-					finalSPMax: data.finalSPMax,
-					currentSP: data.currentSP,
-					initialSP: initialValues.currentSP
+				// Save the initial state to localStorage if it doesn't exist
+				if (!existingState) {
+					saveCharacterState(characterId, initialState);
+					console.log('Initial character state saved to localStorage');
+				}
+
+				// Update component states from the comprehensive state
+				const legacyCurrentValues = characterStateToCurrentValues(initialState);
+				setCurrentValues(legacyCurrentValues);
+				setAttacks(initialState.attacks.current);
+				setInventory(initialState.inventory.current);
+
+				console.log('Character data and state loaded:', {
+					characterData: data,
+					characterState: initialState,
+					legacyCurrentValues
 				});
 
-				setCurrentValues(initialValues);
 			} catch (err) {
 				setError(err instanceof Error ? err.message : 'An error occurred');
 			} finally {
@@ -235,36 +272,44 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 	// Calculate original defense values (without manual overrides) with detailed breakdown
 	const getCalculatedDefenses = () => {
-		if (!characterData) return { 
-			calculatedPD: 0, 
-			calculatedPDR: 0, 
-			calculatedAD: 0,
-			pdBreakdown: '',
-			adBreakdown: '',
-			pdrBreakdown: ''
-		};
-		
+		if (!characterData)
+			return {
+				calculatedPD: 0,
+				calculatedPDR: 0,
+				calculatedAD: 0,
+				pdBreakdown: '',
+				adBreakdown: '',
+				pdrBreakdown: ''
+			};
+
 		// Use the same formula as in characterCalculator.ts
-		const calculatedPD = 8 + characterData.finalCombatMastery + characterData.finalAgility + characterData.finalIntelligence;
-		const calculatedAD = 8 + characterData.finalCombatMastery + characterData.finalMight + characterData.finalCharisma;
-		
+		const calculatedPD =
+			8 +
+			characterData.finalCombatMastery +
+			characterData.finalAgility +
+			characterData.finalIntelligence;
+		const calculatedAD =
+			8 + characterData.finalCombatMastery + characterData.finalMight + characterData.finalCharisma;
+
 		// Create detailed breakdown strings
 		const pdBreakdown = `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalAgility} (Agility) + ${characterData.finalIntelligence} (Intelligence) = ${calculatedPD}`;
 		const adBreakdown = `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalMight} (Might) + ${characterData.finalCharisma} (Charisma) = ${calculatedAD}`;
-		
+
 		// For PDR, we'd need to recalculate based on armor/class, but for now we'll use the difference
 		// between final value and any manual override
-		const calculatedPDR = characterData.manualPDR !== undefined 
-			? characterData.finalPDR // This would be the auto-calculated value stored somewhere
-			: characterData.finalPDR;
-		
-		const pdrBreakdown = calculatedPDR > 0 
-			? `${calculatedPDR} (from equipped armor and class features)`
-			: '0 (no PDR from current equipment/class)';
-		
-		return { 
-			calculatedPD, 
-			calculatedPDR, 
+		const calculatedPDR =
+			characterData.manualPDR !== undefined
+				? characterData.finalPDR // This would be the auto-calculated value stored somewhere
+				: characterData.finalPDR;
+
+		const pdrBreakdown =
+			calculatedPDR > 0
+				? `${calculatedPDR} (from equipped armor and class features)`
+				: '0 (no PDR from current equipment/class)';
+
+		return {
+			calculatedPD,
+			calculatedPDR,
 			calculatedAD,
 			pdBreakdown,
 			adBreakdown,
@@ -377,7 +422,10 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		});
 	};
 
-	const handleManualDefenseChange = (field: 'manualPD' | 'manualPDR' | 'manualAD', value: number | undefined) => {
+	const handleManualDefenseChange = (
+		field: 'manualPD' | 'manualPDR' | 'manualAD',
+		value: number | undefined
+	) => {
 		if (!characterData?.id) return;
 
 		// Save to localStorage
@@ -479,7 +527,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	};
 
 	// Get cleric-specific information (domains and divine damage)
-	const getClericInfo = (): { domains: string[], divineDigame: string } => {
+	const getClericInfo = (): { domains: string[]; divineDigame: string } => {
 		const domains: string[] = [];
 		let divineDigame = '';
 
@@ -499,7 +547,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					const selectedDomainIds: string[] = JSON.parse(selectedChoices['cleric_divine_domain']);
 					selectedDomainIds.forEach((domainId) => {
 						// Convert the lowercase ID to the proper domain name
-						const domain = clericDomains.find((d) => d.name.toLowerCase().replace(/\s+/g, '_') === domainId || d.name.toLowerCase() === domainId);
+						const domain = clericDomains.find(
+							(d) =>
+								d.name.toLowerCase().replace(/\s+/g, '_') === domainId ||
+								d.name.toLowerCase() === domainId
+						);
 						if (domain) {
 							domains.push(domain.name);
 						}
@@ -516,12 +568,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	// Get all features (traits and class features) for the character
 	const getFeaturesData = (): FeatureData[] => {
 		if (!characterData) return [];
-
-		console.log('getFeaturesData called with characterData:', {
-			selectedTraitIds: characterData.selectedTraitIds,
-			selectedFeatureChoices: characterData.selectedFeatureChoices,
-			ancestry1Name: characterData.ancestry1Name
-		});
 
 		const features: FeatureData[] = [];
 
@@ -572,7 +618,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 		// Get class features
 		const selectedClass = classesData.find((c) => c.name === characterData.className);
-		
+
 		if (selectedClass) {
 			// Add level 1 features
 			selectedClass.level1Features?.forEach((feature: any) => {
@@ -591,28 +637,28 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					const selectedChoices: { [key: string]: string } = JSON.parse(
 						characterData.selectedFeatureChoices
 					);
-					
+
 					selectedClass.featureChoicesLvl1?.forEach((choice: any) => {
-						
 						if (choice.type === 'select_multiple') {
 							// Handle multiple selections (like cleric domains)
 							const selectedOptionValues = selectedChoices[choice.id];
-							
+
 							if (selectedOptionValues) {
 								const selectedValueArray: string[] = JSON.parse(selectedOptionValues);
-								
+
 								selectedValueArray.forEach((value) => {
-									const selectedOption = choice.options?.find(
-										(opt: any) => opt.value === value
-									);
-									
+									const selectedOption = choice.options?.find((opt: any) => opt.value === value);
+
 									if (selectedOption) {
-									// Get the detailed description from the appropriate data file
-									let description = selectedOption.description || 'Feature choice selected.';
-									const detailedDescription = getDetailedClassFeatureDescription(choice.id, value);
-									if (detailedDescription) {
-										description = detailedDescription;
-									}										// Determine the source detail based on choice type
+										// Get the detailed description from the appropriate data file
+										let description = selectedOption.description || 'Feature choice selected.';
+										const detailedDescription = getDetailedClassFeatureDescription(
+											choice.id,
+											value
+										);
+										if (detailedDescription) {
+											description = detailedDescription;
+										} // Determine the source detail based on choice type
 										let sourceDetail = `${selectedClass.name} (Choice)`;
 										if (choice.id === 'cleric_divine_domain') {
 											sourceDetail = `${selectedClass.name} (Divine Domain)`;
@@ -623,7 +669,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 										} else if (choice.id === 'hunter_favored_terrain_choice') {
 											sourceDetail = `${selectedClass.name} (Favored Terrain)`;
 										}
-										
+
 										const featureToAdd = {
 											id: `${choice.id}_${value}`,
 											name: selectedOption.label,
@@ -643,12 +689,16 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 									(opt: any) => opt.value === selectedOptionValue
 								);
 								if (selectedOption) {
-								// Get the detailed description from the appropriate data file
-								let description = selectedOption.description || 'Feature choice selected.';
-								const detailedDescription = getDetailedClassFeatureDescription(choice.id, selectedOptionValue);
-								if (detailedDescription) {
-									description = detailedDescription;
-								}									features.push({
+									// Get the detailed description from the appropriate data file
+									let description = selectedOption.description || 'Feature choice selected.';
+									const detailedDescription = getDetailedClassFeatureDescription(
+										choice.id,
+										selectedOptionValue
+									);
+									if (detailedDescription) {
+										description = detailedDescription;
+									}
+									features.push({
 										id: `${choice.id}_${selectedOptionValue}`,
 										name: selectedOption.label,
 										description: description,
@@ -679,10 +729,19 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 	// Currency management function
 	const handleCurrencyChange = (currency: string, value: number) => {
-		setCurrentValues((prev) => ({
-			...prev,
-			[currency]: value
-		}));
+		setCurrentValues((prev) => {
+			const newValues = {
+				...prev,
+				[currency]: value
+			};
+
+			// Save to localStorage after state update
+			if (characterData?.id) {
+				setTimeout(() => saveCharacterData(characterData.id, newValues), 0);
+			}
+
+			return newValues;
+		});
 	};
 
 	// Handle exhaustion level changes
@@ -741,6 +800,136 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		return Math.max(0, Math.min(100, (current / max) * 100));
 	};
 
+	// Copy character data to clipboard
+	// Revert character data to original values
+	const handleRevertToOriginal = (dataType: 'resources' | 'currency' | 'attacks' | 'inventory' | 'all') => {
+		if (dataType === 'all') {
+			// Revert all data types
+			revertToOriginal(characterId, 'resources');
+			revertToOriginal(characterId, 'currency');
+			revertToOriginal(characterId, 'attacks');
+			revertToOriginal(characterId, 'inventory');
+			
+			// Also clear all manual defense overrides (PDR, PD, AD)
+			clearDefenseNotesForField(characterId, 'manualPD');
+			clearDefenseNotesForField(characterId, 'manualPDR');
+			clearDefenseNotesForField(characterId, 'manualAD');
+			
+			// Clear the manual defense values in localStorage
+			saveManualDefense(characterId, 'manualPD', undefined);
+			saveManualDefense(characterId, 'manualPDR', undefined);
+			saveManualDefense(characterId, 'manualAD', undefined);
+			
+			// Reload the page to reflect changes
+			window.location.reload();
+		} else {
+			revertToOriginal(characterId, dataType);
+			
+			// Update local state based on what was reverted
+			if (dataType === 'resources') {
+				setCurrentValues(prev => ({
+					...prev,
+					currentHP: characterData?.finalHPMax || 0,
+					currentSP: characterData?.finalSPMax || 0,
+					currentMP: characterData?.finalMPMax || 0,
+					currentGritPoints: characterData?.finalGritPoints || 0,
+					currentRestPoints: characterData?.finalRestPoints || 0,
+					tempHP: 0,
+					actionPointsUsed: 0,
+					exhaustionLevel: 0
+				}));
+			} else if (dataType === 'currency') {
+				setCurrentValues(prev => ({
+					...prev,
+					goldPieces: 0,
+					silverPieces: 0,
+					copperPieces: 0,
+					electrumPieces: 0,
+					platinumPieces: 0
+				}));
+			} else if (dataType === 'attacks') {
+				// Reset to default attacks
+				const defaultAttacks: AttackData[] = [
+					{
+						id: '1',
+						weaponId: '',
+						name: '',
+						attackBonus: 0,
+						damage: '',
+						damageType: '',
+						critRange: '',
+						critDamage: '',
+						brutalDamage: '',
+						heavyHitEffect: ''
+					},
+					{
+						id: '2',
+						weaponId: '',
+						name: '',
+						attackBonus: 0,
+						damage: '',
+						damageType: '',
+						critRange: '',
+						critDamage: '',
+						brutalDamage: '',
+						heavyHitEffect: ''
+					},
+					{
+						id: '3',
+						weaponId: '',
+						name: '',
+						attackBonus: 0,
+						damage: '',
+						damageType: '',
+						critRange: '',
+						critDamage: '',
+						brutalDamage: '',
+						heavyHitEffect: ''
+					}
+				];
+				setAttacks(defaultAttacks);
+			} else if (dataType === 'inventory') {
+				setInventory([]);
+			}
+		}
+	};
+
+	const copyCharacterToClipboard = async () => {
+		try {
+			if (!characterData) {
+				alert('Character data not found');
+				return;
+			}
+
+			const character = getCharacterFromStorage(characterData.id);
+			if (!character) {
+				alert('Character data not found in storage');
+				return;
+			}
+
+			const characterBackup = {
+				...character,
+				exportedAt: new Date().toISOString(),
+				exportVersion: '1.0'
+			};
+
+			const jsonString = JSON.stringify(characterBackup, null, 2);
+			await navigator.clipboard.writeText(jsonString);
+
+			// Show success message
+			alert('Character data copied to clipboard! You can save this as a backup.');
+		} catch (error) {
+			console.error('Failed to copy character data:', error);
+			alert('Failed to copy character data to clipboard');
+		}
+	};
+
+	// Helper function to get character from localStorage
+	const getCharacterFromStorage = (characterId: string) => {
+		const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+		return savedCharacters.find((char: any) => char.id === characterId);
+	};
+
 	// Helper function for HP fill percentage (shows current HP vs total effective HP)
 	const getHPFillPercentage = (currentHP: number, maxHP: number, tempHP: number): number => {
 		const totalEffectiveHP = maxHP + tempHP;
@@ -792,7 +981,54 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	}
 
 	return (
-		<StyledContainer>
+		<StyledContainer style={{ position: 'relative' }}>
+			{/* Action Buttons - Top Right */}
+			<div style={{
+				position: 'absolute',
+				top: '1rem',
+				right: '1rem',
+				display: 'flex',
+				gap: '0.5rem',
+				zIndex: 1000
+			}}>
+				<button
+					onClick={() => handleRevertToOriginal('all')}
+					style={{
+						padding: '8px 12px',
+						fontSize: '0.8rem',
+						backgroundColor: '#c53030',
+						color: 'white',
+						border: 'none',
+						borderRadius: '6px',
+						cursor: 'pointer',
+						whiteSpace: 'nowrap',
+						fontWeight: 'bold',
+						boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+					}}
+					title="Revert all modifications back to calculated defaults"
+				>
+					🔄 Revert All
+				</button>
+				<button
+					onClick={copyCharacterToClipboard}
+					style={{
+						padding: '8px 12px',
+						fontSize: '0.8rem',
+						backgroundColor: '#8b4513',
+						color: 'white',
+						border: 'none',
+						borderRadius: '6px',
+						cursor: 'pointer',
+						whiteSpace: 'nowrap',
+						fontWeight: 'bold',
+						boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+					}}
+					title="Copy character data to clipboard for backup"
+				>
+					📋 Copy to Clipboard
+				</button>
+			</div>
+			
 			<StyledBackButton onClick={onBack}>← Back to Menu</StyledBackButton>
 
 			<StyledCharacterSheet>
@@ -816,14 +1052,23 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 										<>
 											{clericInfo.divineDigame && (
 												<>
-													<StyledLabel style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>Divine Damage</StyledLabel>
-													<StyledValue style={{ fontSize: '0.9rem' }}>{clericInfo.divineDigame.charAt(0).toUpperCase() + clericInfo.divineDigame.slice(1)}</StyledValue>
+													<StyledLabel style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
+														Divine Damage
+													</StyledLabel>
+													<StyledValue style={{ fontSize: '0.9rem' }}>
+														{clericInfo.divineDigame.charAt(0).toUpperCase() +
+															clericInfo.divineDigame.slice(1)}
+													</StyledValue>
 												</>
 											)}
 											{clericInfo.domains.length > 0 && (
 												<>
-													<StyledLabel style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>Divine Domains</StyledLabel>
-													<StyledValue style={{ fontSize: '0.9rem' }}>{clericInfo.domains.join(', ')}</StyledValue>
+													<StyledLabel style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
+														Divine Domains
+													</StyledLabel>
+													<StyledValue style={{ fontSize: '0.9rem' }}>
+														{clericInfo.domains.join(', ')}
+													</StyledValue>
 												</>
 											)}
 										</>
@@ -871,13 +1116,13 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						/>
 
 						{/* Defenses - Shield-like design */}
-						<Defenses 
+						<Defenses
 							characterData={{
 								...characterData,
 								manualPD: characterData?.manualPD,
 								manualPDR: characterData?.manualPDR,
-								manualAD: characterData?.manualAD,
-							}} 
+								manualAD: characterData?.manualAD
+							}}
 							calculatedDefenses={getCalculatedDefenses()}
 							onUpdateManualDefense={handleManualDefenseChange}
 						/>
@@ -898,10 +1143,13 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						/>
 
 						{/* Attacks Section */}
-						<Attacks attacks={attacks} setAttacks={setAttacks} characterData={characterData} />
+						<Attacks attacks={attacks} setAttacks={updateAttacks} characterData={characterData} />
 
 						{/* Inventory */}
-						<Inventory inventory={inventory} setInventory={setInventory} />
+						<Inventory inventory={inventory} setInventory={updateInventory} />
+
+						{/* Player Notes */}
+						<PlayerNotes characterId={characterData.id} />
 					</StyledMiddleColumn>
 
 					{/* Right Column - Movement, Resources, Inventory, Features */}

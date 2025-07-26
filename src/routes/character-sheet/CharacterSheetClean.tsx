@@ -46,9 +46,8 @@ import { skillsData } from '../../lib/rulesdata/skills';
 import { tradesData } from '../../lib/rulesdata/trades';
 import { knowledgeData } from '../../lib/rulesdata/knowledge';
 import { traitsData } from '../../lib/rulesdata/traits';
-import { classesData } from '../../lib/rulesdata/loaders/class.loader';
+import { findClassByName, getClassSpecificInfo, getLegacyChoiceId, getDisplayLabel } from '../../lib/rulesdata/loaders/class-features.loader';
 import { ancestriesData } from '../../lib/rulesdata/ancestries';
-import { clericDomains } from '../../lib/rulesdata/cleric-domains';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
 
 // Import styled components
@@ -149,7 +148,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
 	const [attacks, setAttacks] = useState<AttackData[]>([]);
 	const [inventory, setInventory] = useState<InventoryItemData[]>([]);
-	
+
 	// Mobile navigation state
 	type MobileSection = 'character' | 'combat' | 'features' | 'info';
 	const [activeMobileSection, setActiveMobileSection] = useState<MobileSection>('character');
@@ -237,7 +236,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	};
 
 	// Wrapper for setInventory that also saves to comprehensive state
-	const updateInventory = (newInventory: InventoryItemData[] | ((prev: InventoryItemData[]) => InventoryItemData[])) => {
+	const updateInventory = (
+		newInventory: InventoryItemData[] | ((prev: InventoryItemData[]) => InventoryItemData[])
+	) => {
 		setInventory((prev) => {
 			const result = typeof newInventory === 'function' ? newInventory(prev) : newInventory;
 			saveInventoryData(result);
@@ -258,7 +259,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 				// Get existing character state from localStorage
 				const existingState = getCharacterState(characterId);
-				
+
 				// Initialize comprehensive character state
 				const initialState = initializeCharacterState(data, existingState);
 				setCharacterState(initialState);
@@ -280,7 +281,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					characterState: initialState,
 					legacyCurrentValues
 				});
-
 			} catch (err) {
 				setError(err instanceof Error ? err.message : 'An error occurred');
 			} finally {
@@ -547,43 +547,14 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		}
 	};
 
-	// Get cleric-specific information (domains and divine damage)
-	const getClericInfo = (): { domains: string[]; divineDigame: string } => {
-		const domains: string[] = [];
-		let divineDigame = '';
-
-		if (characterData?.selectedFeatureChoices && characterData.className === 'Cleric') {
-			try {
-				const selectedChoices: { [key: string]: string } = JSON.parse(
-					characterData.selectedFeatureChoices
-				);
-
-				// Get divine damage choice
-				if (selectedChoices['cleric_divine_damage']) {
-					divineDigame = selectedChoices['cleric_divine_damage'];
-				}
-
-				// Get selected domains
-				if (selectedChoices['cleric_divine_domain']) {
-					const selectedDomainIds: string[] = JSON.parse(selectedChoices['cleric_divine_domain']);
-					selectedDomainIds.forEach((domainId) => {
-						// Convert the lowercase ID to the proper domain name
-						const domain = clericDomains.find(
-							(d) =>
-								d.name.toLowerCase().replace(/\s+/g, '_') === domainId ||
-								d.name.toLowerCase() === domainId
-						);
-						if (domain) {
-							domains.push(domain.name);
-						}
-					});
-				}
-			} catch (error) {
-				console.error('Error parsing cleric feature choices:', error);
-			}
+	// Get class-specific display information generically
+	const getClassDisplayInfo = (): { label: string; value: string }[] => {
+		if (!characterData?.className || !characterData?.selectedFeatureChoices) {
+			return [];
 		}
 
-		return { domains, divineDigame };
+		const { displayInfo } = getClassSpecificInfo(characterData.className, characterData.selectedFeatureChoices);
+		return displayInfo;
 	};
 
 	// Get all features (traits and class features) for the character
@@ -637,20 +608,22 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 			}
 		}
 
-		// Get class features
-		const selectedClass = classesData.find((c) => c.name === characterData.className);
+		// Get class features from the new class features structure
+		const selectedClassFeatures = findClassByName(characterData.className);
 
-		if (selectedClass) {
-			// Add level 1 features
-			selectedClass.level1Features?.forEach((feature: any) => {
-				features.push({
-					id: feature.id,
-					name: feature.name,
-					description: feature.description,
-					source: 'class',
-					sourceDetail: `${selectedClass.name} (Lvl 1)`
+		if (selectedClassFeatures) {
+			// Add level 1 core features
+			selectedClassFeatures.coreFeatures
+				.filter(feature => feature.levelGained === 1)
+				.forEach((feature) => {
+					features.push({
+						id: feature.featureName,
+						name: feature.featureName,
+						description: feature.description,
+						source: 'class',
+						sourceDetail: `${selectedClassFeatures.className} (Lvl 1)`
+					});
 				});
-			});
 
 			// Add selected feature choices
 			if (characterData.selectedFeatureChoices) {
@@ -659,75 +632,78 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						characterData.selectedFeatureChoices
 					);
 
-					selectedClass.featureChoicesLvl1?.forEach((choice: any) => {
-						if (choice.type === 'select_multiple') {
-							// Handle multiple selections (like cleric domains)
-							const selectedOptionValues = selectedChoices[choice.id];
+					// Process each core feature that has choices
+					selectedClassFeatures.coreFeatures.forEach((feature) => {
+						if (feature.choices) {
+							feature.choices.forEach((choice, choiceIndex) => {
+								// Use the same mapping logic as the class-features loader
+								const choiceId = getLegacyChoiceId(selectedClassFeatures.className, feature.featureName, choiceIndex);
+								const selectedOptionValues = selectedChoices[choiceId];
+								
+								if (selectedOptionValues && choice.options) {
+									if (choice.count > 1) {
+										// Handle multiple selections (like cleric domains)
+										const selectedValueArray: string[] = JSON.parse(selectedOptionValues);
 
-							if (selectedOptionValues) {
-								const selectedValueArray: string[] = JSON.parse(selectedOptionValues);
+										selectedValueArray.forEach((value) => {
+											const selectedOption = choice.options?.find((opt) => opt.name === value);
 
-								selectedValueArray.forEach((value) => {
-									const selectedOption = choice.options?.find((opt: any) => opt.value === value);
+											if (selectedOption) {
+												// Get the detailed description
+												let description = selectedOption.description || 'Feature choice selected.';
+												const detailedDescription = getDetailedClassFeatureDescription(
+													choiceId,
+													value
+												);
+												if (detailedDescription) {
+													description = detailedDescription;
+												}
+												
+												// Use generic display label
+												const displayLabel = getDisplayLabel(selectedClassFeatures.className, feature.featureName, choiceIndex);
+												const sourceDetail = `${selectedClassFeatures.className} (${displayLabel})`;
 
-									if (selectedOption) {
-										// Get the detailed description from the appropriate data file
-										let description = selectedOption.description || 'Feature choice selected.';
-										const detailedDescription = getDetailedClassFeatureDescription(
-											choice.id,
-											value
+												const featureToAdd = {
+													id: `${choiceId}_${value}`,
+													name: selectedOption.name,
+													description: description,
+													source: 'choice' as const,
+													sourceDetail: sourceDetail
+												};
+												features.push(featureToAdd);
+											}
+										});
+									} else {
+										// Handle single selections
+										const selectedOption = choice.options?.find(
+											(opt) => opt.name === selectedOptionValues
 										);
-										if (detailedDescription) {
-											description = detailedDescription;
-										} // Determine the source detail based on choice type
-										let sourceDetail = `${selectedClass.name} (Choice)`;
-										if (choice.id === 'cleric_divine_domain') {
-											sourceDetail = `${selectedClass.name} (Divine Domain)`;
-										} else if (choice.id === 'monk_stance_choice') {
-											sourceDetail = `${selectedClass.name} (Monk Stance)`;
-										} else if (choice.id === 'spellblade_disciplines_choice') {
-											sourceDetail = `${selectedClass.name} (Discipline)`;
-										} else if (choice.id === 'hunter_favored_terrain_choice') {
-											sourceDetail = `${selectedClass.name} (Favored Terrain)`;
+										if (selectedOption) {
+											// Get the detailed description
+											let description = selectedOption.description || 'Feature choice selected.';
+											const detailedDescription = getDetailedClassFeatureDescription(
+												choiceId,
+												selectedOptionValues
+											);
+											if (detailedDescription) {
+												description = detailedDescription;
+											}
+											
+											// Use generic display label
+											const displayLabel = getDisplayLabel(selectedClassFeatures.className, feature.featureName, choiceIndex);
+											const sourceDetail = `${selectedClassFeatures.className} (${displayLabel})`;
+											
+											features.push({
+												id: `${choiceId}_${selectedOptionValues}`,
+												name: selectedOption.name,
+												description: description,
+												source: 'choice',
+												sourceDetail: sourceDetail
+											});
 										}
-
-										const featureToAdd = {
-											id: `${choice.id}_${value}`,
-											name: selectedOption.label,
-											description: description,
-											source: 'choice' as const,
-											sourceDetail: sourceDetail
-										};
-										features.push(featureToAdd);
 									}
-								});
-							}
-						} else {
-							// Handle single selections
-							const selectedOptionValue = selectedChoices[choice.id];
-							if (selectedOptionValue) {
-								const selectedOption = choice.options?.find(
-									(opt: any) => opt.value === selectedOptionValue
-								);
-								if (selectedOption) {
-									// Get the detailed description from the appropriate data file
-									let description = selectedOption.description || 'Feature choice selected.';
-									const detailedDescription = getDetailedClassFeatureDescription(
-										choice.id,
-										selectedOptionValue
-									);
-									if (detailedDescription) {
-										description = detailedDescription;
-									}
-									features.push({
-										id: `${choice.id}_${selectedOptionValue}`,
-										name: selectedOption.label,
-										description: description,
-										source: 'choice',
-										sourceDetail: `${selectedClass.name} (Choice)`
-									});
 								}
-							}
+							});
 						}
 					});
 				} catch (error) {
@@ -823,32 +799,34 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 	// Copy character data to clipboard
 	// Revert character data to original values
-	const handleRevertToOriginal = (dataType: 'resources' | 'currency' | 'attacks' | 'inventory' | 'all') => {
+	const handleRevertToOriginal = (
+		dataType: 'resources' | 'currency' | 'attacks' | 'inventory' | 'all'
+	) => {
 		if (dataType === 'all') {
 			// Revert all data types
 			revertToOriginal(characterId, 'resources');
 			revertToOriginal(characterId, 'currency');
 			revertToOriginal(characterId, 'attacks');
 			revertToOriginal(characterId, 'inventory');
-			
+
 			// Also clear all manual defense overrides (PDR, PD, AD)
 			clearDefenseNotesForField(characterId, 'manualPD');
 			clearDefenseNotesForField(characterId, 'manualPDR');
 			clearDefenseNotesForField(characterId, 'manualAD');
-			
+
 			// Clear the manual defense values in localStorage
 			saveManualDefense(characterId, 'manualPD', undefined);
 			saveManualDefense(characterId, 'manualPDR', undefined);
 			saveManualDefense(characterId, 'manualAD', undefined);
-			
+
 			// Reload the page to reflect changes
 			window.location.reload();
 		} else {
 			revertToOriginal(characterId, dataType);
-			
+
 			// Update local state based on what was reverted
 			if (dataType === 'resources') {
-				setCurrentValues(prev => ({
+				setCurrentValues((prev) => ({
 					...prev,
 					currentHP: characterData?.finalHPMax || 0,
 					currentSP: characterData?.finalSPMax || 0,
@@ -860,7 +838,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					exhaustionLevel: 0
 				}));
 			} else if (dataType === 'currency') {
-				setCurrentValues(prev => ({
+				setCurrentValues((prev) => ({
 					...prev,
 					goldPieces: 0,
 					silverPieces: 0,
@@ -1019,7 +997,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					📋 Copy to Clipboard
 				</StyledActionButton>
 			</StyledActionButtons>
-			
+
 			<StyledBackButton onClick={onBack}>← Back to Menu</StyledBackButton>
 
 			<StyledCharacterSheet>
@@ -1035,38 +1013,19 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					<StyledHeaderSection>
 						<StyledLabel>Class & Subclass</StyledLabel>
 						<StyledValue>{characterData.className}</StyledValue>
-						{characterData.className === 'Cleric' && (
-							<>
-								{(() => {
-									const clericInfo = getClericInfo();
-									return (
-										<>
-											{clericInfo.divineDigame && (
-												<>
-													<StyledLabel style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
-														Divine Damage
-													</StyledLabel>
-													<StyledValue style={{ fontSize: '0.9rem' }}>
-														{clericInfo.divineDigame.charAt(0).toUpperCase() +
-															clericInfo.divineDigame.slice(1)}
-													</StyledValue>
-												</>
-											)}
-											{clericInfo.domains.length > 0 && (
-												<>
-													<StyledLabel style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
-														Divine Domains
-													</StyledLabel>
-													<StyledValue style={{ fontSize: '0.9rem' }}>
-														{clericInfo.domains.join(', ')}
-													</StyledValue>
-												</>
-											)}
-										</>
-									);
-								})()}
-							</>
-						)}
+						{(() => {
+							const classDisplayInfo = getClassDisplayInfo();
+							return classDisplayInfo.map((info, index) => (
+								<div key={index}>
+									<StyledLabel style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
+										{info.label}
+									</StyledLabel>
+									<StyledValue style={{ fontSize: '0.9rem' }}>
+										{info.value}
+									</StyledValue>
+								</div>
+							));
+						})()}
 						<StyledLabel style={{ marginTop: '0.5rem' }}>Ancestry & Background</StyledLabel>
 						<StyledValue>{characterData.ancestry1Name || 'Unknown'}</StyledValue>
 					</StyledHeaderSection>
@@ -1250,7 +1209,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 									onExhaustionChange={handleExhaustionChange}
 									onDeathStepChange={handleDeathStepChange}
 								/>
-								<Attacks attacks={attacks} setAttacks={updateAttacks} characterData={characterData} />
+								<Attacks
+									attacks={attacks}
+									setAttacks={updateAttacks}
+									characterData={characterData}
+								/>
 								<Movement characterData={characterData} />
 								<RightColumnResources
 									characterData={characterData}
@@ -1271,23 +1234,27 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						{/* Info Tab - Mobile */}
 						{activeMobileSection === 'info' && (
 							<div>
-								<div style={{
-									border: '2px solid #8b4513',
-									borderRadius: '8px',
-									padding: '1rem',
-									background: 'white',
-									marginBottom: '1rem'
-								}}>
-									<h3 style={{ 
-										color: '#8b4513', 
-										marginTop: '0', 
-										marginBottom: '1rem',
-										textAlign: 'center',
-										fontSize: '1.2rem'
-									}}>
+								<div
+									style={{
+										border: '2px solid #8b4513',
+										borderRadius: '8px',
+										padding: '1rem',
+										background: 'white',
+										marginBottom: '1rem'
+									}}
+								>
+									<h3
+										style={{
+											color: '#8b4513',
+											marginTop: '0',
+											marginBottom: '1rem',
+											textAlign: 'center',
+											fontSize: '1.2rem'
+										}}
+									>
 										Character Information
 									</h3>
-									
+
 									<div style={{ marginBottom: '1rem' }}>
 										<StyledLabel>Player Name</StyledLabel>
 										<StyledValue>{characterData.finalPlayerName || 'Unknown'}</StyledValue>
@@ -1301,38 +1268,19 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 									<div style={{ marginBottom: '1rem' }}>
 										<StyledLabel>Class & Subclass</StyledLabel>
 										<StyledValue>{characterData.className}</StyledValue>
-										{characterData.className === 'Cleric' && (
-											<>
-												{(() => {
-													const clericInfo = getClericInfo();
-													return (
-														<>
-															{clericInfo.divineDigame && (
-																<>
-																	<StyledLabel style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
-																		Divine Damage
-																	</StyledLabel>
-																	<StyledValue style={{ fontSize: '0.9rem' }}>
-																		{clericInfo.divineDigame.charAt(0).toUpperCase() +
-																			clericInfo.divineDigame.slice(1)}
-																	</StyledValue>
-																</>
-															)}
-															{clericInfo.domains.length > 0 && (
-																<>
-																	<StyledLabel style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
-																		Divine Domains
-																	</StyledLabel>
-																	<StyledValue style={{ fontSize: '0.9rem' }}>
-																		{clericInfo.domains.join(', ')}
-																	</StyledValue>
-																</>
-															)}
-														</>
-													);
-												})()}
-											</>
-										)}
+										{(() => {
+											const classDisplayInfo = getClassDisplayInfo();
+											return classDisplayInfo.map((info, index) => (
+												<div key={index}>
+													<StyledLabel style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
+														{info.label}
+													</StyledLabel>
+													<StyledValue style={{ fontSize: '0.9rem' }}>
+														{info.value}
+													</StyledValue>
+												</div>
+											));
+										})()}
 									</div>
 
 									<div style={{ marginBottom: '1rem' }}>
@@ -1351,7 +1299,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 									</div>
 
 									<div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-										<div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#8b4513' }}>DC20</div>
+										<div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#8b4513' }}>
+											DC20
+										</div>
 									</div>
 								</div>
 								<PlayerNotes characterId={characterData.id} />

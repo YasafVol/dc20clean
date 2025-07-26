@@ -9,7 +9,11 @@ import Background from './Background.tsx';
 import CharacterName from './CharacterName.tsx';
 import Snackbar from '../../components/Snackbar.tsx';
 import { completeCharacter } from '../../lib/services/characterCompletion';
-import { completeCharacterEdit, convertCharacterToInProgress, type SavedCharacter } from '../../lib/utils/characterEdit';
+import {
+	completeCharacterEdit,
+	convertCharacterToInProgress,
+	type SavedCharacter
+} from '../../lib/utils/characterEdit';
 import { calculateCharacterStats } from '../../lib/services/characterCalculator';
 import {
 	StyledContainer,
@@ -28,7 +32,10 @@ interface CharacterCreationProps {
 	editCharacter?: SavedCharacter; // If provided, we're in edit mode
 }
 
-const CharacterCreation: React.FC<CharacterCreationProps> = ({ onNavigateToLoad, editCharacter }) => {
+const CharacterCreation: React.FC<CharacterCreationProps> = ({
+	onNavigateToLoad,
+	editCharacter
+}) => {
 	const { state, dispatch, attributePointsRemaining, ancestryPointsRemaining } = useCharacter();
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 	const [showSnackbar, setShowSnackbar] = useState(false);
@@ -38,7 +45,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ onNavigateToLoad,
 		if (editCharacter) {
 			console.log('Initializing edit mode for character:', editCharacter);
 			const characterInProgress = convertCharacterToInProgress(editCharacter);
-			
+
 			// Initialize the character state with the existing character data
 			dispatch({ type: 'INITIALIZE_FROM_SAVED', character: characterInProgress });
 		}

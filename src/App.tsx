@@ -63,7 +63,9 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 function App() {
-	const [currentView, setCurrentView] = useState<'menu' | 'create' | 'load' | 'sheet' | 'edit'>('menu');
+	const [currentView, setCurrentView] = useState<'menu' | 'create' | 'load' | 'sheet' | 'edit'>(
+		'menu'
+	);
 	const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
 	const [editCharacter, setEditCharacter] = useState<SavedCharacter | null>(null);
 
@@ -118,14 +120,17 @@ function App() {
 							<span>Created by TBD Group</span>
 						</StyledHeader>
 						<StyledMain>
-							<CharacterCreation onNavigateToLoad={handleLoadCharacter} editCharacter={editCharacter || undefined} />
+							<CharacterCreation
+								onNavigateToLoad={handleLoadCharacter}
+								editCharacter={editCharacter || undefined}
+							/>
 						</StyledMain>
 					</CharacterProvider>
 				);
 			case 'load':
 				return (
-					<LoadCharacter 
-						onBack={handleBackToMenu} 
+					<LoadCharacter
+						onBack={handleBackToMenu}
 						onSelectCharacter={handleViewCharacterSheet}
 						onEditCharacter={handleEditCharacter}
 					/>

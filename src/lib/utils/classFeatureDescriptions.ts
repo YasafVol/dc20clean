@@ -1,20 +1,17 @@
 /**
  * @file classFeatureDescriptions.ts
  * @description Utility function to get detailed descriptions for class feature choices
- * from separate data files, maintaining proper data separation architecture.
+ * from the new class features structure.
  */
 
-import { clericDomains } from '../rulesdata/cleric-domains';
-import { monkStances } from '../rulesdata/monk-stances';
+import { findChoiceOption } from '../rulesdata/loaders/class-features.loader';
 
 /**
- * Gets detailed description for a class feature choice from appropriate data files.
- * Only returns descriptions for choices that have dedicated data files.
- * For other choices, returns null and the component will use basic descriptions from JSON.
+ * Gets detailed description for a class feature choice from the new class features structure.
  *
  * @param choiceId - The ID of the feature choice (e.g., 'cleric_divine_domain')
  * @param optionValue - The value of the selected option (e.g., 'knowledge')
- * @returns Detailed description string or null if no dedicated data file exists
+ * @returns Detailed description string or null if not found
  */
 export function getDetailedClassFeatureDescription(
 	choiceId: string,
@@ -43,10 +40,12 @@ export function getDetailedClassFeatureDescription(
 				travel: 'Travel',
 				ancestral: 'Ancestral'
 			};
+
 			const domainName = domainNameMap[optionValue];
-			return domainName
-				? clericDomains.find((domain) => domain.name === domainName)?.description || null
-				: null;
+			if (!domainName) return null;
+
+			const domainOption = findChoiceOption('Cleric', 'Cleric Order', 0, domainName);
+			return domainOption?.description || null;
 
 		case 'monk_stance_choice':
 			const stanceNameMap: Record<string, string> = {
@@ -60,16 +59,14 @@ export function getDetailedClassFeatureDescription(
 				turtle_stance: 'Turtle Stance',
 				wolf_stance: 'Wolf Stance'
 			};
+
 			const stanceName = stanceNameMap[optionValue];
-			const stanceData = stanceName
-				? monkStances.find((stance) => stance.name === stanceName)
-				: null;
-			return stanceData ? stanceData.description.join(' ') : null;
+			if (!stanceName) return null;
 
-		// Add other class feature choices here when their dedicated data files are created
-		// Only add cases for data files that actually exist in the codebase
-		// Do not invent or create new data files without explicit requirements
+			const stanceOption = findChoiceOption('Monk', 'Monk Stance', 0, stanceName);
+			return stanceOption?.description || null;
 
+		// Add other class feature choices here when needed
 		default:
 			return null;
 	}

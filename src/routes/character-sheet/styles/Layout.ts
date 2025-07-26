@@ -52,7 +52,7 @@ export const StyledCharacterSheet = styled.div`
 	/* Desktop/Mobile Layout Control */
 	.desktop-only {
 		display: block !important;
-		
+
 		@media (max-width: 768px) {
 			display: none !important;
 		}
@@ -60,11 +60,11 @@ export const StyledCharacterSheet = styled.div`
 
 	.mobile-only {
 		display: none !important;
-		
+
 		@media (max-width: 768px) {
 			display: block !important;
 		}
-		
+
 		> div {
 			display: flex;
 			flex-direction: column;
@@ -137,15 +137,15 @@ export const StyledMobileNavButton = styled.button<{ $isActive: boolean }>`
 	flex: 1;
 	padding: 0.75rem 0.25rem;
 	border: none;
-	background: ${props => props.$isActive ? '#f5f3f0' : 'transparent'};
-	color: ${props => props.$isActive ? '#8b4513' : '#f5f3f0'};
+	background: ${(props) => (props.$isActive ? '#f5f3f0' : 'transparent')};
+	color: ${(props) => (props.$isActive ? '#8b4513' : '#f5f3f0')};
 	font-weight: bold;
 	font-size: 0.7rem;
 	cursor: pointer;
 	transition: all 0.2s ease;
 
 	&:hover {
-		background: ${props => props.$isActive ? '#f5f3f0' : 'rgba(245, 243, 240, 0.1)'};
+		background: ${(props) => (props.$isActive ? '#f5f3f0' : 'rgba(245, 243, 240, 0.1)')};
 	}
 
 	&:active {
@@ -170,18 +170,18 @@ export const StyledActionButtons = styled.div`
 export const StyledActionButton = styled.button<{ $variant?: 'danger' | 'primary' }>`
 	padding: 8px 12px;
 	font-size: 0.8rem;
-	background-color: ${props => props.$variant === 'danger' ? '#c53030' : '#8b4513'};
+	background-color: ${(props) => (props.$variant === 'danger' ? '#c53030' : '#8b4513')};
 	color: white;
 	border: none;
 	border-radius: 6px;
 	cursor: pointer;
 	white-space: nowrap;
 	font-weight: bold;
-	box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	transition: all 0.2s ease;
 
 	&:hover {
-		background-color: ${props => props.$variant === 'danger' ? '#b32c2c' : '#7a3e11'};
+		background-color: ${(props) => (props.$variant === 'danger' ? '#b32c2c' : '#7a3e11')};
 		transform: translateY(-1px);
 	}
 

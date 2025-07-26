@@ -1,5 +1,6 @@
 import { useCharacter } from '../../lib/stores/characterContext';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
+import { findClassByName, getLegacyChoiceId } from '../../lib/rulesdata/loaders/class-features.loader';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
 import {
 	StyledContainer,
@@ -20,6 +21,7 @@ function ClassFeatures() {
 	const { state, dispatch } = useCharacter();
 
 	const selectedClass = classesData.find((c) => c.id === state.classId);
+	const selectedClassFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
 	const selectedFeatureChoices: { [key: string]: string } = JSON.parse(
 		state.selectedFeatureChoices || '{}'
 	);
@@ -59,7 +61,7 @@ function ClassFeatures() {
 		});
 	}
 
-	if (!selectedClass) {
+	if (!selectedClass || !selectedClassFeatures) {
 		return (
 			<StyledContainer>
 				<StyledNoSelection>Select a Class to see its features.</StyledNoSelection>
@@ -67,24 +69,48 @@ function ClassFeatures() {
 		);
 	}
 
+	// Get level 1 features
+	const level1Features = selectedClassFeatures.coreFeatures.filter(feature => feature.levelGained === 1);
+
+	// Get all feature choices from level 1 features
+	const featureChoices: any[] = [];
+	level1Features.forEach((feature) => {
+		if (feature.choices) {
+			feature.choices.forEach((choice, choiceIndex) => {
+				const choiceId = getLegacyChoiceId(selectedClassFeatures.className, feature.featureName, choiceIndex);
+				featureChoices.push({
+					id: choiceId,
+					prompt: choice.prompt,
+					type: choice.count > 1 ? 'select_multiple' : 'select_one',
+					maxSelections: choice.count > 1 ? choice.count : undefined,
+					options: choice.options?.map(option => ({
+						value: option.name,
+						label: option.name,
+						description: option.description
+					})) || []
+				});
+			});
+		}
+	});
+
 	return (
 		<StyledContainer>
 			<StyledTitle>{selectedClass.name} Features</StyledTitle>
 
 			<StyledSection>
 				<StyledSectionTitle>Level 1 Features</StyledSectionTitle>
-				{(selectedClass.level1Features || []).map((feature: any, index: number) => (
+				{level1Features.map((feature, index) => (
 					<StyledCard key={index}>
-						<StyledCardTitle>{feature.name}</StyledCardTitle>
+						<StyledCardTitle>{feature.featureName}</StyledCardTitle>
 						<StyledCardDescription>{feature.description}</StyledCardDescription>
 					</StyledCard>
 				))}
 			</StyledSection>
 
-			{selectedClass.featureChoicesLvl1 && selectedClass.featureChoicesLvl1.length > 0 && (
+			{featureChoices.length > 0 && (
 				<StyledSection>
 					<StyledSectionTitle>Feature Choices</StyledSectionTitle>
-					{selectedClass.featureChoicesLvl1.map((choice: any) => (
+					{featureChoices.map((choice: any) => (
 						<StyledCard key={choice.id}>
 							<StyledCardTitle>{choice.prompt}</StyledCardTitle>
 							{choice.type === 'select_one' && (
@@ -106,7 +132,7 @@ function ClassFeatures() {
 												{option.label}
 												{(option.description || detailedDescription) && (
 													<StyledOptionDescription>
-														({option.description || detailedDescription})
+														{option.description || detailedDescription}
 													</StyledOptionDescription>
 												)}
 											</StyledLabel>

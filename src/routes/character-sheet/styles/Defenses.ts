@@ -2,10 +2,10 @@ import styled from 'styled-components';
 
 export const DefensesContainer = styled.div<{ $isMobile?: boolean }>`
 	display: flex;
-	flex-direction: ${props => props.$isMobile ? 'column' : 'row'};
+	flex-direction: ${(props) => (props.$isMobile ? 'column' : 'row')};
 	justify-content: space-around;
 	align-items: center;
-	gap: ${props => props.$isMobile ? '1rem' : '0'};
+	gap: ${(props) => (props.$isMobile ? '1rem' : '0')};
 	margin-bottom: 1.5rem;
 `;
 

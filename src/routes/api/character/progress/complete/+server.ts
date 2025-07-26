@@ -3,6 +3,7 @@
 import { json } from '@sveltejs/kit';
 import { PrismaClient } from '@prisma/client';
 import { classesData } from '$lib/rulesdata/loaders/class.loader';
+import { findClassByName, getLegacyChoiceId } from '$lib/rulesdata/loaders/class-features.loader';
 import { traitsData } from '$lib/rulesdata/traits';
 import type { RequestHandler } from './$types';
 
@@ -14,17 +15,53 @@ function validateFeatureChoices(classId: string, selectedChoicesJson: string) {
 
 	const choices = JSON.parse(selectedChoicesJson || '{}');
 
-	for (const requiredChoice of classData.featureChoicesLvl1 || []) {
-		if (choices[requiredChoice.id] === undefined) {
-			throw new Error(`Missing required choice for ${classData.name}: ${requiredChoice.prompt}`);
+	// Use the new class features structure for validation
+	const classFeatures = findClassByName(classData.name);
+	if (!classFeatures) return; // No class features to validate
+
+	// Get level 1 features that have choices
+	const level1Features = classFeatures.coreFeatures.filter(feature => feature.levelGained === 1);
+	
+	level1Features.forEach((feature) => {
+		if (feature.choices) {
+			feature.choices.forEach((choice, choiceIndex) => {
+				// Create the same legacy choice ID mapping used in the UI
+				const choiceId = getLegacyChoiceId(classFeatures.className, feature.featureName, choiceIndex);
+				
+				if (choice.options && choice.options.length > 0) {
+					const selectedValue = choices[choiceId];
+					if (selectedValue === undefined) {
+						throw new Error(`Missing required choice for ${classData.name}: ${choice.prompt}`);
+					}
+					
+					// Validate the selected option(s)
+					if (choice.count > 1) {
+						// Multiple selections - should be a JSON array
+						try {
+							const selectedValues: string[] = JSON.parse(selectedValue);
+							const validOptions = choice.options.map((o) => o.name);
+							for (const value of selectedValues) {
+								if (!validOptions.includes(value)) {
+									throw new Error(`Invalid selected option for ${choiceId} in class ${classData.name}`);
+								}
+							}
+							if (selectedValues.length !== choice.count) {
+								throw new Error(`Must select exactly ${choice.count} options for ${choiceId} in class ${classData.name}`);
+							}
+						} catch (error) {
+							throw new Error(`Invalid selection format for ${choiceId} in class ${classData.name}`);
+						}
+					} else {
+						// Single selection
+						const validOptions = choice.options.map((o) => o.name);
+						if (!validOptions.includes(selectedValue)) {
+							throw new Error(`Invalid selected option for ${choiceId} in class ${classData.name}`);
+						}
+					}
+				}
+			});
 		}
-		const validOptions = requiredChoice.options.map((o) => o.value);
-		if (!validOptions.includes(choices[requiredChoice.id])) {
-			throw new Error(
-				`Invalid selected option for ${requiredChoice.id} in class ${classData.name}`
-			);
-		}
-	}
+	});
 }
 
 function validateAttributeCapsAfterTraits(attributes: any, selectedTraitIdsJson: string) {

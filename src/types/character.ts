@@ -144,7 +144,7 @@ export interface CharacterState {
 			exhaustionLevel: number;
 		};
 	};
-	
+
 	// Currency with original and current values
 	currency: {
 		original: {
@@ -162,19 +162,19 @@ export interface CharacterState {
 			platinumPieces: number;
 		};
 	};
-	
+
 	// Attacks - original is calculated from character build, current is user-modified
 	attacks: {
 		original: AttackData[];
 		current: AttackData[];
 	};
-	
+
 	// Inventory - original is empty/default, current is user-modified
 	inventory: {
 		original: InventoryItemData[];
 		current: InventoryItemData[];
 	};
-	
+
 	// Defense notes (already integrated)
 	defenseNotes?: {
 		manualPD?: { value: number; reason: string; timestamp: string };

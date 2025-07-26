@@ -27,7 +27,12 @@ interface LoadCharacterProps {
 	onEditCharacter?: (character: SavedCharacter) => void;
 }
 
-function LoadCharacter({ onBack, onLoadCharacter, onSelectCharacter, onEditCharacter }: LoadCharacterProps) {
+function LoadCharacter({
+	onBack,
+	onLoadCharacter,
+	onSelectCharacter,
+	onEditCharacter
+}: LoadCharacterProps) {
 	const [savedCharacters, setSavedCharacters] = useState<SavedCharacter[]>([]);
 
 	useEffect(() => {

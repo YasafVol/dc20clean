@@ -1,0 +1,168 @@
+{
+  "className": "Druid",
+  "coreFeatures": [
+    {
+      "featureName": "Druid Domain",
+      "levelGained": 1,
+      "description": "You can spend 1 AP and 1 MP to create your own Druid Domain that includes small plant life, sand, shallow water, or other naturally occurring features. You create up to 8 Domain Spaces along the ground or walls. The first Domain Space must be within 1 Space of you, and each additional Domain Space must be adjacent to another Domain Space. If you use this Feature again, the first Domain Space of it must be within 1 Space of you or another Domain Space. A Domain Space also disappears if you end your turn farther than 15 Spaces away from it or you die. The area is considered to be Difficult Terrain for creatures of your choice, and when you cast a Spell, you can do so as if you were standing in any Space within your Domain."
+    },
+    {
+      "featureName": "Domain Actions",
+      "levelGained": 1,
+      "description": "While you have Domain Spaces, you can take any of the following Domain Actions:",
+      "choices": [
+        {
+          "prompt": "Choose a Domain Action.",
+          "count": 1,
+          "options": [
+            {
+              "name": "Nature's Grasp",
+              "description": "You can spend 1 AP to attempt to bind a creature of your choice within your Domain. Make a Spell Check against the target's Repeated Physical Save. Success: The target is bound by your Domain, preventing it from moving for 1 minute or until the Domain Space it occupies ends."
+            },
+            {
+              "name": "Move Creature",
+              "description": "You can spend 1 AP to move a creature bound by this feature up to 2 Spaces within your Domain."
+            },
+            {
+              "name": "Move Object",
+              "description": "You can take the Object Action to use your vines to interact with any object within your Domain as if you were standing in any of your Domain Spaces. When you do, you can move the object up to 5 Spaces within your Domain."
+            },
+            {
+              "name": "Wild Growth",
+              "description": "You can spend 1 AP and 1 MP to make a DC 10 Spell Check to heal a target within your Domain. Success: The target immediately regains 2 HP. For the next minute, they regain an additional 1 HP each time they end their turn within your Domain. Success (each 5): They immediately regain +1 HP. Failure: The target only regains 2 HP immediately."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "featureName": "Wild Form",
+      "levelGained": 1,
+      "description": "You can spend 1 AP and 1 MP to transform into a Wild Form of your choice. You can spend 1 AP on your turn to shift back and forth between your True Form and any Wild Forms you currently have available. Once per Long Rest, you can transform without spending MP or using MP enhancements. When you transform from your Wild Form to your True Form, your statistics return to normal. You immediately revert to your True Form when your Wild Form HP is reduced to 0 or you die. When you transform into a Wild Form, you gain the Wild Form's current Wild Form HP, retaining any HP losses. Each Wild Form remains available until its Wild Form HP is reduced to 0 or you complete a Long Rest. You can have multiple Wild Forms available at a time which have their own Wild Form HP and Traits. Your equipment falls to the ground or merges into your Wild Form (your choice for each item). You gain the benefits of Magic Items merged with your Wild Form, but you can't activate them or spend their charges. While in your Wild Form, you're subjected to the following changes.",
+      "benefits": [
+        {
+          "name": "Stat Block",
+          "description": "You use the Wild Form Stat Block below to determine your statistics."
+        },
+        {
+          "name": "Identity",
+          "description": "You maintain your personality, intellect, and ability to speak."
+        },
+        {
+          "name": "Wild Form HP",
+          "description": "You gain a secondary pool of Wild Form Health Points, which is 3 with a maximum of 3. Damage and healing effects target your Wild Form HP before your True Form HP, and any excess damage or healing carries over to your own HP."
+        },
+        {
+          "name": "Natural Weapon",
+          "description": "You have Natural Weapons (claws, horns, fangs, etc.) which you can use to make Unarmed Strikes that deal 1 Bludgeoning, Piercing, or Slashing damage (your choice when you use this Feature)."
+        },
+        {
+          "name": "Features & Talents",
+          "description": "You don't benefit from Talents or Class Features, except Druid Class Features, Subclass Features, and Talents. Additionally, you can't cast Spells or perform Techniques."
+        },
+        {
+          "name": "Traits",
+          "description": "You don't benefit from your Ancestry Traits, but you gain 3 Trait Points to spend on Beast Traits or Wild Form Traits of your choice. You can't select negative Beast Traits. When you use this Feature, you can spend additional MP (up to your Mana Spend Limit) to gain 2 additional Trait Points per MP spent."
+        }
+      ]
+    },
+    {
+      "featureName": "Wild Speech",
+      "levelGained": 1,
+      "description": "You learn the Druidcraft Cantrip and can choose 1 of the following options:",
+      "isFlavor": true,
+      "choices": [
+        {
+          "prompt": "Choose a communication option.",
+          "count": 1,
+          "options": [
+            {
+              "name": "Animals",
+              "description": "You can understand and speak with Beasts in a limited manner. You can understand the meaning of their movements, sounds, and behaviors, and they can understand the meanings of simple words, concepts, and emotions."
+            },
+            {
+              "name": "Plants",
+              "description": "You can understand and speak with Plants in a limited manner. You can understand the meaning of their swaying, folding, unfolding of their leaves and flowers, and they can understand the meanings of simple words, concepts, and emotions."
+            },
+            {
+              "name": "Weather",
+              "description": "You can reach out to nature and cast the Commune with Nature Spell as a Ritual once per Long Rest."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "featureName": "Nature's Torrent",
+      "levelGained": 2,
+      "description": "When a creature within 10 spaces of you takes Elemental damage, you can spend 1 AP as a Reaction to summon a torrent of nature. The torrent fills a 1 Space Radius Sphere centered on the target that lasts for 1 minute. While creatures are within the area, they have Vulnerability (1) against the triggering damage type and have DisADV on Checks and Saves to resist being moved or knocked Prone. The torrent ends early if you use this Feature again, become Incapacitated, die, or choose to end it for free at anytime."
+    },
+    {
+      "featureName": "Talent",
+      "levelGained": 2,
+      "description": "You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent."
+    }
+  ],
+  "subclasses": [
+    {
+      "subclassName": "Phoenix",
+      "features": [
+        {
+          "featureName": "Flames of Rebirth",
+          "levelGained": 3,
+          "description": "You wield the power of fire to lay destruction to what exists and foster new life. You gain the following benefits:",
+          "benefits": [
+            {
+              "name": "Fiery Form",
+              "description": "When you use your Wild Form, you can choose for your creature type to become Elemental (Fire) instead of Beast. Additionally, your Wild Forms gain Fire Resistance (1) and you can choose Fire as the damage type of your Wild Form's Natural Weapon."
+            },
+            {
+              "name": "Cleansing Flames",
+              "description": "When a creature within your Druid Domain is Healed by one of your MP effects, you can remove one of the following Conditions from it: Impaired, Dazed, Burning, or Poisoned."
+            },
+            {
+              "name": "Rolling Wild Fire",
+              "description": "Creatures of your choice take 1 Fire damage for each Space they move within your Druid Domain, or if they start their turn within your Domain."
+            }
+          ]
+        },
+        {
+          "featureName": "Fire Within",
+          "levelGained": 3,
+          "description": "You are unaffected by cold weather conditions and can bring a gallon (4 liters) of liquid to a boil after making physical contact with it or its container for 1 minutes.",
+          "isFlavor": true
+        }
+      ]
+    },
+    {
+      "subclassName": "Rampant Growth",
+      "features": [
+        {
+          "featureName": "Overgrowth",
+          "levelGained": 3,
+          "description": "You gain the following benefits:",
+          "benefits": [
+            {
+              "name": "Plant Form",
+              "description": "When you use your Wild Form, you can choose for your creature type to become Plant instead of Beast. Additionally, your Wild Forms become immune to Bleeding and you can choose Poison as the damage type of your Wild Form's Natural Weapon."
+            },
+            {
+              "name": "Vineguard",
+              "description": "Plant-life in your Domain swirls to protect and support you. Creatures of your choice within your Domain gain the benefits of 1/2 Cover."
+            },
+            {
+              "name": "Thorny Grasp",
+              "description": "When a creature fails a Save against your Nature's Grasp, it begins Bleeding."
+            }
+          ]
+        },
+        {
+          "featureName": "Seed Vault",
+          "levelGained": 3,
+          "description": "You can magically produce the seeds of any mundane plant that you've ever touched.",
+          "isFlavor": true
+        }
+      ]
+    }
+  ]
+}

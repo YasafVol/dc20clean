@@ -1,0 +1,261 @@
+{
+  "className": "Cleric",
+  "coreFeatures": [
+    {
+      "featureName": "Cleric Order",
+      "levelGained": 1,
+      "description": "Your connection to your deity grants you the following benefits: You gain the benefits of 2 Divine Domains of your choice.",
+      "benefits": [
+        {
+          "name": "Divine Damage",
+          "description": "Choose an Elemental or Mystical damage type. The chosen damage type becomes your Divine Damage which is used for some Cleric Features."
+        }
+      ],
+      "choices": [
+        {
+          "prompt": "You gain the benefits of 2 Divine Domains of your choice.",
+          "count": 2,
+          "options": [
+            {
+              "name": "Knowledge",
+              "description": "Your Mastery Limit increases by 1 for all Knowledge Trades. A Trade can only benefit from 1 Feature that increases its Mastery Limit at a time. Additionally, you gain 2 Skill Points.",
+              "effects": [
+                {
+                  "type": "GRANT_SKILL_POINTS",
+                  "value": 2
+                }
+              ]
+            },
+            {
+              "name": "Magic",
+              "description": "Your maximum MP increases by 1. Choose a Spell Tag (such as Fire, Holy, or Undeath). You learn 1 Spell with the chosen Spell Tag, and when you learn a new Spell you can choose any Spell that also has the chosen Spell Tag. This can be chosen multiple times.",
+              "effects": [
+                {
+                  "type": "MODIFIER",
+                  "target": "resources.mpMax",
+                  "value": 1
+                },
+                {
+                  "type": "GRANT_SPELLS",
+                  "value": 1,
+                  "userChoiceRequired": {
+                    "prompt": "Choose a Spell Tag",
+                    "options": ["Fire", "Holy", "Undeath"]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Divine Damage Expansion",
+              "description": "When you deal damage with a Spell you can convert the damage to your Divine Damage type. Additionally, you gain Resistance (1) to your Divine Damage type."
+            },
+            {
+              "name": "Life",
+              "description": "When you produce an MP Effect that restores HP to at least 1 creature, you can restore 1 HP to 1 creature of your choice within 1 Space of you (including yourself)."
+            },
+            {
+              "name": "Death",
+              "description": "Enemy creatures within 10 Spaces of you take an additional 1 damage from Attacks while they're Well-Bloodied."
+            },
+            {
+              "name": "Grave",
+              "description": "Allied creatures within 10 Spaces of you take 1 less damage from Attacks while they're Well-Bloodied."
+            },
+            {
+              "name": "Light",
+              "description": "When you produce an MP Effect that targets at least 1 creature, you can force 1 target of your choice to make a Might or Charisma Save (their choice). Failure: Until the end of their next turn, they shed a 1 Space Aura of Bright Light and are Hindered on their next Attack."
+            },
+            {
+              "name": "Dark",
+              "description": "You gain 10 Space Darkvision. If you already have Darkvision it increases by 5 Spaces. While in an area of Dim Light, you can take the Hide Action to Hide from creatures that can see you. On a Success, you remain Hidden until you move or the area you’re in becomes Bright Light.",
+              "effects": [
+                {
+                  "type": "GRANT_PASSIVE",
+                  "value": "Darkvision",
+                  "condition": "character.passives.darkvision == null"
+                },
+                {
+                  "type": "MODIFIER",
+                  "target": "passives.darkvision",
+                  "value": 5,
+                  "condition": "character.passives.darkvision != null"
+                }
+              ]
+            },
+            {
+              "name": "War",
+              "description": "You gain Combat Training with Weapons and access to Attack Maneuvers.",
+              "effects": [
+                {
+                  "type": "GRANT_COMBAT_TRAINING",
+                  "value": ["Weapons", "Attack Maneuvers"]
+                }
+              ]
+            },
+            {
+              "name": "Peace",
+              "description": "You gain Combat Training with Heavy Armor and Heavy Shields and learn 1 Defensive Maneuver of your choice.",
+              "effects": [
+                {
+                  "type": "GRANT_COMBAT_TRAINING",
+                  "value": ["Heavy Armor", "Heavy Shields"]
+                },
+                {
+                  "type": "GRANT_MANEUVERS",
+                  "value": 1,
+                  "options": "Defensive"
+                }
+              ]
+            },
+            {
+              "name": "Order",
+              "description": "Once per turn, when a creature you can see within 10 Spaces of you makes a Check, you can spend 1 AP as a Reaction to remove all instances of ADV and DisADV from that Check."
+            },
+            {
+              "name": "Chaos",
+              "description": "When you make a Spell Check you can choose to give yourself ADV on it, but you must also roll on the Wild Magic Table. You can use this Feature once per Long Rest, and regain the ability to use it again when you roll for Initiative."
+            },
+            {
+              "name": "Divination",
+              "description": "You can’t be Flanked. When you spend MP, you gain the ability to see Invisible creatures and objects until the start of your next turn."
+            },
+            {
+              "name": "Trickery",
+              "description": "When you produce an MP Effect that targets at least 1 creature, you can choose 1 of the targets and create an illusory duplicate of it that lasts until the start of your next turn. The next Attack made against the target has DisADV, and causes the illusory duplicate to disappear."
+            },
+            {
+              "name": "Ancestral",
+              "description": "You get 2 Ancestry Points that you can spend on Traits from any Ancestry.",
+              "effects": [
+                {
+                  "type": "GRANT_ANCESTRY_POINTS",
+                  "value": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "featureName": "Divine Blessing",
+      "levelGained": 1,
+      "description": "You can spend 1 AP to say a prayer and petition your deity for their divine blessing. Choose 1 of the blessings listed below. Each blessing has a listed MP cost that you must spend to gain the blessing. Once during the next minute, you can apply the blessing to a Spell you cast. If your Spell targets more than 1 creature, the blessing only applies to 1 target of your choice. You can only have 1 blessing at a time.",
+      "choices": [
+        {
+          "prompt": "Choose a blessing.",
+          "count": 1,
+          "options": [
+            {
+              "name": "Destruction (1 MP)",
+              "description": "The target takes 3 Divine damage, provided that the result of your Spell Check is equal to or higher than the target's AD. If the Spell doesn't normally require a Spell Check, then you must make one when you apply this blessing."
+            },
+            {
+              "name": "Guidance (1 MP)",
+              "description": "The target gains a d8 Help Die that they can add to 1 Check of their choice they make within the next minute."
+            },
+            {
+              "name": "Restoration (1 MP)",
+              "description": "The target regains 3 HP."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "featureName": "Divine Omen",
+      "levelGained": 1,
+      "description": "Once per Long Rest, you can spend 10 minutes to commune with your Deity. You can ask them 1 question, which must be posed in a way that could be answered with a yes or no. The deity responds to the best of their knowledge and intentions in one of the following responses: Yes, No, or Unclear. If you commune more than once per Long Rest, you must make a DC 15 Spell Check (DC increases by 5 each time). Failure: You receive no answer.",
+      "isFlavor": true
+    },
+    {
+      "featureName": "Channel Divinity",
+      "levelGained": 2,
+      "description": "You gain the ability to channel the direct power of your deity. When you use this Feature, choose 1 of the options below. You can use this Feature once per Short Rest.",
+      "choices": [
+        {
+          "prompt": "Choose 1 of the Channel Divinity options.",
+          "count": 1,
+          "options": [
+            {
+              "name": "Divine Rebuke",
+              "description": "You can spend 2 AP to censure all creatures of your choice who can see or hear you within 5 Spaces. Make a Spell Check against each target's AD, and each target makes a Repeated Mental Save against your Save DC. Attack Hit: The target takes Divine Damage equal to your Prime Modifier. Save Failure: The target becomes Intimidated by you for 1 minute or until it takes damage again."
+            },
+            {
+              "name": "Lesser Divine Intervention",
+              "description": "You can spend 2 AP to call on your deity to intervene on your behalf. Make a DC 15 Spell Check. Success: You gain a pool of healing equal to your Prime Modifier to distribute among any number of creatures within 5 Spaces. Additionally, you regain 1 MP. Success (each 5): Increase the amount healed by an amount equal to your Prime. Failure: You can only gain a pool of healing equal to your Prime Modifier."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "featureName": "Talent",
+      "levelGained": 2,
+      "description": "You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent."
+    }
+  ],
+  "subclasses": [
+    {
+      "subclassName": "Inquisitor",
+      "features": [
+        {
+          "featureName": "Vanquish Heresy",
+          "levelGained": 3,
+          "description": "You gain the following benefits:",
+          "benefits": [
+            {
+              "name": "Iron Resolve",
+              "description": "You have Resistance to the Charmed, Intimidated, and Taunted Conditions."
+            },
+            {
+              "name": "Rebuke Heretics",
+              "description": "Creatures Intimidated by your Divine Rebuke (Channel Divinity) don't stop being Intimidated if they take damage."
+            },
+            {
+              "name": "Chastise Divine Blessing",
+              "description": "You gain the following Divine Blessing option: Chastise (1 MP) The target is branded as a heretic for 1 minute. You have ADV on Insight and Intimidation Checks made against the creature and you deal +1 Divine Damage to it with your Attacks."
+            }
+          ]
+        },
+        {
+          "featureName": "Divine Interrogator",
+          "levelGained": 3,
+          "description": "Once per Long Rest, you can interrogate a creature by asking it a Yes or No question. It makes a Charisma Save against your Save DC. Failure: It can't tell a lie to the question that you asked it. It can choose not to answer at all, but if it does answer it must be either, 'Yes,' 'No,' or 'I don't know.'",
+          "isFlavor": true
+        }
+      ]
+    },
+    {
+      "subclassName": "Priest",
+      "features": [
+        {
+          "featureName": "Sanctification",
+          "levelGained": 3,
+          "description": "You gain the following benefits:",
+          "benefits": [
+            {
+              "name": "Divine Barrier",
+              "description": "When you spend MP to heal a creature beyond their HP maximum, they gain an amount of Temp HP equal to the remaining healing. Any Temp HP gained in this way expires after 1 minute."
+            },
+            {
+              "name": "Spare the Dying",
+              "description": "When you spend MP to heal a creature on Death's Door, the HP restored is increased by an amount equal to your Prime Modifier."
+            }
+          ]
+        },
+        {
+          "featureName": "Hand of Salvation",
+          "levelGained": 3,
+          "description": "You gain a new Channel Divinity option: When another creature that you can see within 5 Spaces would be Hit by an Attack, you can spend 2 AP as a Reaction to magically pull the creature to an unoccupied Space within 1 Space of you, provided the creature is willing. The Attack misses and has no effect, and the creature is immune to all damage during this movement."
+        },
+        {
+          "featureName": "All That Ails",
+          "levelGained": 3,
+          "description": "You have an understanding and divine guidance when attempting to learn what is ailing a creature. You have ADV on Checks made to identify or determine the effects of a Disease, Poison, or Curse affecting a creature.",
+          "isFlavor": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,182 @@
+{
+  "className": "Monk",
+  "coreFeatures": [
+    {
+      "featureName": "Monk Training",
+      "levelGained": 1,
+      "description": "Your martial arts training grants you greater offense, defense, and movement.",
+      "benefits": [
+        {
+          "name": "Iron Palm",
+          "description": "Your limbs are considered Natural Weapons with the Impact Property that deal 1 Bludgeoning damage."
+        },
+        {
+          "name": "Patient Defense",
+          "description": "While you aren't wearing Armor, you gain +2 PD."
+        },
+        {
+          "name": "Step of the Wind",
+          "description": "While you aren't wearing Armor, you gain the following benefits: You gain +1 Speed and Jump Distance. You can move a number of Spaces up to your Speed along vertical surfaces and across liquids without falling during your move. You can use your Prime Modifier instead of Agility to determine your Jump Distance and the damage you take from Falling."
+        }
+      ]
+    },
+    {
+      "featureName": "Monk Stance",
+      "levelGained": 1,
+      "description": "In Combat, at the start of each of your turns you can freely enter or swap into one of your Monk Stances. You can also spend 1 SP on your turn to swap to a different stance. You can end your Stance at any moment for free. You can only be in 1 Monk Stance at a time.",
+      "choices": [
+        {
+          "prompt": "You learn 2 Monk Stances from the list below.",
+          "count": 2,
+          "options": [
+            {
+              "name": "Bear Stance",
+              "description": "+1 damage when you score a Heavy, Brutal, or Critical Hit with a Melee Martial Attack. Once on each of your turns, when you Miss an Attack with a Melee Martial Attack, you gain ADV on the next Melee Martial Attack you make before the end of your turn."
+            },
+            {
+              "name": "Bull Stance",
+              "description": "You deal +1 Bludgeoning damage whenever you Succeed on a Physical Check to push a target or knock them back. When you shove or push a target, it's knocked back 1 additional space. Additionally, you can choose to move in a straight line with the target an amount of spaces equal to how far they're knocked back. This movement requires no AP and doesn't provoke Opportunity Attacks."
+            },
+            {
+              "name": "Cobra Stance",
+              "description": "+1 damage with Melee Martial Attack against creatures that have damaged you since the start of your last turn. When a creature within your Melee Range misses you with a Melee Attack, you can spend 1 AP as a Reaction to make a Melee Martial Attack against it."
+            },
+            {
+              "name": "Gazelle Stance",
+              "description": "While not wearing Heavy Armor you gain the following benefits: +1 Movement Speed and Jump Distance. Ignore Difficult Terrain. ADV on Agility Saves and Acrobatics Checks."
+            },
+            {
+              "name": "Mantis Stance",
+              "description": "ADV on all Martial Checks to initiate, maintain, or escape Grapples. If you have a creature Grappled at the start of your turn, you get +1 AP to use on a Grapple Maneuver against the Grappled creature."
+            },
+            {
+              "name": "Mongoose Stance",
+              "description": "Your Melee Martial Attacks deal +1 damage while you're Flanked. When you make a Melee Martial Attack against a target, you can make another Melee Martial Attack for free against a different target within your Melee Range. You can only make this bonus Melee Martial Attack once on each of your turns. Make a single Attack Check and apply the number rolled to each target's Physical Defense. Attack Hit: You deal your Melee Martial Attack damage."
+            },
+            {
+              "name": "Scorpion Stance",
+              "description": "When a creature enters your Melee Range, you can make an Opportunity Attack against them with a Melee Martial Attack. When you make a Melee Martial Attack, you can spend 1 AP to deal +1 damage and force the target to make a Physical Save against your Save DC. Failure: The target is Impaired (DisADV on Physical Checks) on the next Physical Check it makes before the end of your next turn."
+            },
+            {
+              "name": "Turtle Stance",
+              "description": "Your Speed becomes 1 (unless it's already lower). You gain PDR, EDR, and MDR. You have ADV on Might Saves and Saves against being moved or knocked Prone."
+            },
+            {
+              "name": "Wolf Stance",
+              "description": "After you make an Attack with a Melee Martial Attack, you can immediately move up to 1 Space for free. You have ADV on Opportunity Attacks, and creatures have DisADV on Opportunity Attacks made against you."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "featureName": "Meditation",
+      "levelGained": 1,
+      "description": "You can enter a state of meditation during a Short Rest (1 hour) or longer. Choose 1 Charisma or Intelligence Skill. When you complete the Rest, your Skill Mastery level increases by 1 (up to your Skill Mastery Cap) for the chosen Skill until you complete another Short or longer Rest. While meditating, you remain alert to danger.",
+      "isFlavor": true
+    },
+    {
+      "featureName": "Spiritual Balance",
+      "levelGained": 2,
+      "description": "You gain the power to harness your inner spirit as a counterbalance against your physical energy.",
+      "benefits": [
+        {
+          "name": "Ki Points",
+          "description": "You have a maximum number of Ki Points equal to your Stamina Points. When your Stamina Point maximum increases, your Ki Point maximum increases equally."
+        },
+        {
+          "name": "Regaining Ki",
+          "description": "When you spend a Stamina Point on your turn, you regain a Ki Point. You regain all spent Ki Points when Combat ends. While out of Combat, any Ki Points you spend replenish immediately."
+        }
+      ]
+    },
+    {
+      "featureName": "Ki Actions",
+      "levelGained": 2,
+      "description": "You can spend 1 Ki Point at any time to perform 1 of the activities listed below:",
+      "choices": [
+        {
+          "prompt": "Choose a Ki Action to perform by spending 1 Ki Point.",
+          "count": 1,
+          "options": [
+            {
+              "name": "Deflect Attack",
+              "description": "When a creature misses you with a Ranged Attack using a physical projectile that targets your PD, you can catch the projectile with a free hand. You can immediately redirect the Attack as part of the same action at a different creature you can see within 5 Spaces. Make an Attack Check against the new target's PD. Hit: The target takes the projectile's normal damage."
+            },
+            {
+              "name": "Slow Fall",
+              "description": "Reduce damage you take from falling by an amount equal to your level."
+            },
+            {
+              "name": "Uncanny Dodge",
+              "description": "When a creature makes an Attack against you, you can impose DisADV on the attack."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "featureName": "Talent",
+      "levelGained": 2,
+      "description": "You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent."
+    }
+  ],
+  "subclasses": [
+    {
+      "subclassName": "Astral Self",
+      "features": [
+        {
+          "featureName": "Astral Awakening",
+          "levelGained": 3,
+          "description": "When you gain this feature, choose a Mystical damage type. This damage type is your Astral Damage. During Combat, you can spend 1 AP and 1 SP to manifest a portion of your astral self for 1 minute. The effect ends early if you fall Unconscious, die, or choose to end it for free.",
+          "benefits": [
+            {
+              "name": "Astral Arms",
+              "description": "You manifest 2 astral arms that can only be used to make Unarmed Strikes. They can't otherwise interact with creatures or objects. Attacks made using these Astral Arms have the Reach property, deal Astral Damage instead of the normal damage type, and can target PD or AD (choose for each Attack)."
+            },
+            {
+              "name": "Astral Deflection",
+              "description": "You can now use Deflect Attack on Ranged Attacks that miss any target within 2 Spaces."
+            }
+          ]
+        },
+        {
+          "featureName": "Astral Watch",
+          "levelGained": 3,
+          "description": "While Unconscious, your astral self remains aware of your surroundings. You can hold conversations with nearby creatures as if you were awake. While sleeping normally, you can choose to wake yourself up at any time.",
+          "isFlavor": true
+        }
+      ]
+    },
+    {
+      "subclassName": "Shifting Tide",
+      "features": [
+        {
+          "featureName": "Ebb and Flow",
+          "levelGained": 3,
+          "description": "You gain the following benefits:",
+          "benefits": [
+            {
+              "name": "Ebb",
+              "description": "When you enter a new Monk Stance, you gain 2 Spaces of movement."
+            },
+            {
+              "name": "Flow",
+              "description": "When you use your Uncanny Dodge against a Melee Attack, you can spend 1 AP to make an Opportunity Attack against the Attacker."
+            },
+            {
+              "name": "Changing Tides",
+              "description": "You can use your Deflect Attack on Melee Martial Attacks from Large or smaller creatures. When you do, you can redirect the Attack to another target within 1 Space of you."
+            }
+          ]
+        },
+        {
+          "featureName": "Fluid Movement",
+          "levelGained": 3,
+          "description": "You can move through Spaces as if you were one size Smaller.",
+          "isFlavor": true
+        }
+      ]
+    }
+  ]
+}

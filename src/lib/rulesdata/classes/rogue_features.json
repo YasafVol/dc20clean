@@ -1,0 +1,136 @@
+{
+  "className": "Rogue",
+  "coreFeatures": [
+    {
+      "featureName": "Debilitating Strike",
+      "levelGained": 1,
+      "description": "When you make an Attack with a Weapon, you can spend 1 SP to force the target to make a Physical Save against your Save DC. Save Failure: Until the start of your next turn, the target suffers 1 of the following effects of your choice. A target can't be affected by the same option more than once at a time.",
+      "choices": [
+        {
+          "prompt": "Choose 1 effect to apply.",
+          "count": 1,
+          "options": [
+            {
+              "name": "Deafened",
+              "description": "The target is Deafened."
+            },
+            {
+              "name": "Exposed",
+              "description": "The target is Exposed."
+            },
+            {
+              "name": "Hindered",
+              "description": "The target is Hindered."
+            },
+            {
+              "name": "Slowed 2",
+              "description": "The target is Slowed 2."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "featureName": "Roguish Finesse",
+      "levelGained": 1,
+      "description": "You gain the following benefits:",
+      "benefits": [
+        {
+          "name": "Cunning Action",
+          "description": "You gain movement equal to half your Speed when you take the Disengage, Feint, or Hide Actions. You can use this movement immediately before or after you take the Action.",
+          "effects": [
+            {
+              "type": "GRANT_PASSIVE",
+              "value": "Cunning Action"
+            }
+          ]
+        },
+        {
+          "name": "Skill Expertise",
+          "description": "Your Skill Mastery Limit increases by 1, up to Grandmaster (+10). A Skill can only benefit from one increase to its Mastery limit.",
+          "effects": [
+            {
+              "type": "MODIFIER",
+              "target": "skills.masteryLimit",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "name": "Multi-Skilled",
+          "description": "You gain 1 Skill Point.",
+          "effects": [
+            {
+              "type": "GRANT_SKILL_POINTS",
+              "value": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "featureName": "Cypher Speech",
+      "levelGained": 1,
+      "description": "You become Fluent in a Mortal Language of your choice. Additionally, you understand how to speak in code with a specific demographic of your choice (such as upper society, lower society, a faction, etc.). Your coded messages can be concealed in normal conversation and written communications. This allows you to leave simple messages such as 'Safety', 'Threat', or 'Wealth', or mark the location of a cache, a secret passageway, a safehouse, or an area of danger.",
+      "isFlavor": true
+    },
+    {
+      "featureName": "Cheap Shot",
+      "levelGained": 2,
+      "description": "You deal +1 damage on Martial Attacks against a creature that fulfills at least one of the following: It's Flanked or Prone. It has any Condition other than Invisible. You're Hidden from it."
+    },
+    {
+      "featureName": "Talent",
+      "levelGained": 2,
+      "description": "You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent."
+    }
+  ],
+  "subclasses": [
+    {
+      "subclassName": "Long Death",
+      "features": [
+        {
+          "featureName": "Thousand Cuts",
+          "levelGained": 3,
+          "description": "When a creature fails its Save against your Debilitating Strike, it also begins Bleeding (even if it's immune to the Condition). If a creature is affected by Bleeding from this Feature, the DC to end the Bleeding Condition is equal to your Save DC and it can no longer be ended by regaining HP."
+        },
+        {
+          "featureName": "Hundred Ways to Die",
+          "levelGained": 3,
+          "description": "You are an expert at studying and identifying weaknesses in bodies and how best to kill creatures. You have ADV on any Check made to determine how something died or could die easier. This also extends to poisons, toxins, or identifying other materials used to kill.",
+          "isFlavor": true
+        }
+      ]
+    },
+    {
+      "subclassName": "Swashbuckler",
+      "features": [
+        {
+          "featureName": "Renegade Duelist",
+          "levelGained": 3,
+          "description": "You're skilled at make a mockery of your opponents while taking advantage of their openings. You gain the following benefits:",
+          "benefits": [
+            {
+              "name": "Flourishes",
+              "description": "Your Cunning Action now also includes the Disarm and Dodge Actions."
+            },
+            {
+              "name": "Taunting Shot",
+              "description": "Once on each of your turns when you make an Attack against a creature with a Condition, you can forgo your Cheap Shot damage to force the target to make a Charisma Save. Failure: The target is Taunted until the end of your next turn."
+            },
+            {
+              "name": "Riposte",
+              "description": "When a creature within your Melee Range misses you with an Attack, it provokes an Opportunity Attack from you."
+            }
+          ]
+        },
+        {
+          "featureName": "Tall Tales",
+          "levelGained": 3,
+          "description": "You know how to play to a crowd. You can spend up to 5 minutes telling a story to a crowd of creatures (that are not immediately hostile to you) and keep their rapt attention the entire time. During this story, creatures within the crowd have DisADV on Awareness Checks.",
+          "isFlavor": true
+        }
+      ]
+    }
+  ]
+}

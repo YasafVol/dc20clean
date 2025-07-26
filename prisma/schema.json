@@ -1,0 +1,91 @@
+{
+  "generator": {
+    "client": {
+      "provider": "prisma-client-js",
+      "binaryTargets": ["native", "debian-openssl-1.1.x"]
+    }
+  },
+  "datasource": {
+    "db": {
+      "provider": "postgresql",
+      "url": "env(\"DATABASE_URL\")"
+    }
+  },
+  "models": {
+    "CharacterInProgress": {
+      "fields": [
+        { "name": "id", "type": "String", "attributes": ["@id", "@default(uuid())"] },
+        { "name": "attribute_might", "type": "Int", "attributes": ["@default(-2)"] },
+        { "name": "attribute_agility", "type": "Int", "attributes": ["@default(-2)"] },
+        { "name": "attribute_charisma", "type": "Int", "attributes": ["@default(-2)"] },
+        { "name": "attribute_intelligence", "type": "Int", "attributes": ["@default(-2)"] },
+        { "name": "pointsSpent", "type": "Int", "attributes": ["@default(0)"] },
+        { "name": "currentStep", "type": "Int", "attributes": ["@default(1)"] },
+        { "name": "level", "type": "Int", "attributes": ["@default(1)"] },
+        { "name": "combatMastery", "type": "Int", "attributes": ["@default(1)"] },
+        { "name": "ancestry1Id", "type": "String", "attributes": ["?"] },
+        { "name": "ancestry2Id", "type": "String", "attributes": ["?"] },
+        { "name": "selectedTraitIds", "type": "String" },
+        { "name": "ancestryPointsSpent", "type": "Int", "attributes": ["@default(0)"] },
+        { "name": "classId", "type": "String", "attributes": ["?"] },
+        { "name": "selectedFeatureChoices", "type": "String" },
+        { "name": "saveMasteryMight", "type": "Boolean", "attributes": ["@default(false)"] },
+        { "name": "saveMasteryAgility", "type": "Boolean", "attributes": ["@default(false)"] },
+        { "name": "saveMasteryCharisma", "type": "Boolean", "attributes": ["@default(false)"] },
+        { "name": "saveMasteryIntelligence", "type": "Boolean", "attributes": ["@default(false)"] },
+        { "name": "finalName", "type": "String", "attributes": ["?"] },
+        { "name": "finalPlayerName", "type": "String", "attributes": ["?"] },
+        { "name": "finalCharacterSheet", "type": "CharacterSheetData", "attributes": ["?"] },
+        { "name": "createdAt", "type": "DateTime", "attributes": ["@default(now())"] },
+        { "name": "updatedAt", "type": "DateTime", "attributes": ["@updatedAt"] }
+      ]
+    },
+    "CharacterSheetData": {
+      "fields": [
+        { "name": "id", "type": "String", "attributes": ["@id", "@default(uuid())"] },
+        { "name": "characterInProgressId", "type": "String", "attributes": ["@unique"] },
+        { "name": "characterInProgress", "type": "CharacterInProgress", "attributes": ["@relation(fields: [characterInProgressId], references: [id])"] },
+        { "name": "finalName", "type": "String" },
+        { "name": "finalPlayerName", "type": "String", "attributes": ["?"] },
+        { "name": "finalLevel", "type": "Int", "attributes": ["@default(1)"] },
+        { "name": "finalMight", "type": "Int" },
+        { "name": "finalAgility", "type": "Int" },
+        { "name": "finalCharisma", "type": "Int" },
+        { "name": "finalIntelligence", "type": "Int" },
+        { "name": "finalPrimeModifierValue", "type": "Int" },
+        { "name": "finalPrimeModifierAttribute", "type": "String" },
+        { "name": "finalCombatMastery", "type": "Int", "attributes": ["@default(1)"] },
+        { "name": "finalSaveMasteryMight", "type": "Int" },
+        { "name": "finalSaveMasterityAgility", "type": "Int" },
+        { "name": "finalSaveMasteryCharisma", "type": "Int" },
+        { "name": "finalSaveMasteryIntelligence", "type": "Int" },
+        { "name": "finalHPMax", "type": "Int" },
+        { "name": "finalSPMax", "type": "Int" },
+        { "name": "finalMPMax", "type": "Int" },
+        { "name": "finalPD", "type": "Int" },
+        { "name": "finalAD", "type": "Int" },
+        { "name": "finalPDR", "type": "String", "attributes": ["?"] },
+        { "name": "finalEDR", "type": "String", "attributes": ["?"] },
+        { "name": "finalMDR", "type": "String", "attributes": ["?"] },
+        { "name": "finalSaveDC", "type": "Int" },
+        { "name": "finalDeathThreshold", "type": "Int" },
+        { "name": "finalMoveSpeed", "type": "Int" },
+        { "name": "finalJumpDistance", "type": "Int" },
+        { "name": "finalRestPoints", "type": "Int" },
+        { "name": "finalGritPoints", "type": "Int" },
+        { "name": "finalInitiativeBonus", "type": "Int" },
+        { "name": "skillsJson", "type": "String" },
+        { "name": "tradesJson", "type": "String" },
+        { "name": "languagesJson", "type": "String" },
+        { "name": "ancestry1Name", "type": "String", "attributes": ["?"] },
+        { "name": "ancestry2Name", "type": "String", "attributes": ["?"] },
+        { "name": "selectedTraitsJson", "type": "String" },
+        { "name": "className", "type": "String" },
+        { "name": "classFeaturesLvl1Json", "type": "String" },
+        { "name": "equipmentJson", "type": "String" },
+        { "name": "createdAt", "type": "DateTime", "attributes": ["@default(now())"] },
+        { "name": "updatedAt", "type": "DateTime", "attributes": ["@updatedAt"] }
+      ]
+    }
+  }
+}

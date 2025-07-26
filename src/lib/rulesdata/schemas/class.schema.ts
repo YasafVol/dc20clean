@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-// Schema for ITraitEffect
-const traitEffectSchema = z.object({
+// Schema for IEffect
+const effectSchema = z.object({
   type: z.string(),
   target: z.string().optional(),
   value: z.any().optional(),
@@ -20,7 +20,7 @@ const classFeatureChoiceOptionSchema = z.object({
   value: z.string(),
   label: z.string(),
   description: z.string().optional(),
-  effectsOnChoice: z.array(traitEffectSchema).optional(),
+  effectsOnChoice: z.array(effectSchema).optional(),
 });
 
 // Schema for IClassFeatureChoice
@@ -32,13 +32,21 @@ const classFeatureChoiceSchema = z.object({
   options: z.array(classFeatureChoiceOptionSchema),
 });
 
+// Schema for IBenefit
+const benefitSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  effects: z.array(effectSchema).optional(),
+});
+
 // Schema for IClassFeature
 const classFeatureSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string(),
   level: z.number(),
-  effects: z.array(traitEffectSchema).optional(),
+  effects: z.array(effectSchema).optional(),
+  benefits: z.array(benefitSchema).optional(),
 });
 
 // Schema for IClassDefinition

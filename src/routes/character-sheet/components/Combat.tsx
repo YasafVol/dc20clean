@@ -1,10 +1,6 @@
 import React from 'react';
 import type { CharacterSheetData, CurrentValues } from '../../../types';
-import {
-	StyledCombatSection,
-	StyledActionPoints,
-	StyledActionPoint
-} from '../styles/Combat';
+import { StyledCombatSection, StyledActionPoints, StyledActionPoint } from '../styles/Combat';
 
 export interface CombatProps {
 	characterData: CharacterSheetData;

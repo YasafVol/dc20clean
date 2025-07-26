@@ -162,18 +162,18 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 	// Calculate ancestry points spent based on selected traits
 	const calculateAncestryPointsSpent = (): number => {
 		if (!state.selectedTraitIds) return 0;
-		
+
 		try {
 			const selectedTraitIds: string[] = JSON.parse(state.selectedTraitIds);
 			let totalCost = 0;
-			
+
 			selectedTraitIds.forEach((traitId) => {
 				const trait = traitsData.find((t) => t.id === traitId);
 				if (trait) {
 					totalCost += trait.cost;
 				}
 			});
-			
+
 			return totalCost;
 		} catch (error) {
 			console.warn('Error calculating ancestry points:', error);

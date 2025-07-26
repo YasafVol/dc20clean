@@ -104,7 +104,10 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
 
 				try {
 					if (state.languagesJson && state.languagesJson !== '{}') {
-						const languages = JSON.parse(state.languagesJson) as Record<string, { fluency?: string }>;
+						const languages = JSON.parse(state.languagesJson) as Record<
+							string,
+							{ fluency?: string }
+						>;
 						languagePointsUsed = Object.entries(languages).reduce(
 							(sum, [langId, data]: [string, { fluency?: string }]) => {
 								if (langId === 'common') return sum; // Common is free

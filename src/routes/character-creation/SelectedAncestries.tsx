@@ -61,8 +61,8 @@ function SelectedAncestries() {
 						const trait = getTrait(traitId);
 						if (!trait) return null;
 						const isSelected = selectedTraits.includes(traitId);
-						const wouldExceedBudget = !isSelected && (ancestryPointsSpent + trait.cost > 5);
-						
+						const wouldExceedBudget = !isSelected && ancestryPointsSpent + trait.cost > 5;
+
 						return (
 							<StyledListItem key={traitId}>
 								<StyledLabel style={{ opacity: wouldExceedBudget ? 0.5 : 1 }}>
@@ -73,7 +73,9 @@ function SelectedAncestries() {
 										onChange={() => handleToggleTrait(traitId)}
 									/>
 									{trait.name} ({trait.cost} pts) - {trait.description}
-									{wouldExceedBudget && <span style={{ color: '#ff4444' }}> (Not enough points)</span>}
+									{wouldExceedBudget && (
+										<span style={{ color: '#ff4444' }}> (Not enough points)</span>
+									)}
 								</StyledLabel>
 							</StyledListItem>
 						);
@@ -86,8 +88,8 @@ function SelectedAncestries() {
 						const trait = getTrait(traitId);
 						if (!trait) return null;
 						const isSelected = selectedTraits.includes(traitId);
-						const wouldExceedBudget = !isSelected && (ancestryPointsSpent + trait.cost > 5);
-						
+						const wouldExceedBudget = !isSelected && ancestryPointsSpent + trait.cost > 5;
+
 						return (
 							<StyledListItem key={traitId}>
 								<StyledLabel style={{ opacity: wouldExceedBudget ? 0.5 : 1 }}>
@@ -98,7 +100,9 @@ function SelectedAncestries() {
 										onChange={() => handleToggleTrait(traitId)}
 									/>
 									{trait.name} ({trait.cost} pts) - {trait.description}
-									{wouldExceedBudget && <span style={{ color: '#ff4444' }}> (Not enough points)</span>}
+									{wouldExceedBudget && (
+										<span style={{ color: '#ff4444' }}> (Not enough points)</span>
+									)}
 								</StyledLabel>
 							</StyledListItem>
 						);
@@ -112,12 +116,14 @@ function SelectedAncestries() {
 		<StyledOuterContainer>
 			<StyledMainTitle>
 				Ancestry Traits
-				<div style={{ 
-					fontSize: '0.9rem', 
-					fontWeight: 'normal', 
-					marginTop: '0.5rem',
-					color: ancestryPointsRemaining < 0 ? '#ff4444' : '#d1d5db'
-				}}>
+				<div
+					style={{
+						fontSize: '0.9rem',
+						fontWeight: 'normal',
+						marginTop: '0.5rem',
+						color: ancestryPointsRemaining < 0 ? '#ff4444' : '#d1d5db'
+					}}
+				>
 					Spent: {ancestryPointsSpent} | Remaining: {ancestryPointsRemaining}/5
 					{ancestryPointsRemaining < 0 && <span style={{ color: '#ff4444' }}> (Over budget!)</span>}
 				</div>

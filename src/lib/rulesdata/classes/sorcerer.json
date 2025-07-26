@@ -1,69 +1,87 @@
 {
-  "id": "sorcerer",
-  "name": "Sorcerer",
-  "description": "Sorcerers tap into the raw magic in their own bodies as a conduit to harness, manipulate, and sculpt magic with wild resolve. They can overload themselves and even cast Spells without Mana, pushing the limits of magic and their own bodies.",
-  "baseHpContribution": 8,
-  "startingSP": 0,
-  "startingMP": 6,
-  "skillPointGrantLvl1": 0,
-  "tradePointGrantLvl1": 0,
-  "combatTraining": ["Light Armor"],
-  "maneuversKnownLvl1": 0,
-  "techniquesKnownLvl1": 0,
-  "cantripsKnownLvl1": 2,
-  "spellsKnownLvl1": 3,
-  "saveDCBase": 8,
-  "deathThresholdBase": 10,
-  "moveSpeedBase": 30,
-  "restPointsBase": 4,
-  "gritPointsBase": 2,
-  "initiativeBonusBase": 0,
-  "level1Features": [
-    {
-      "id": "sorcerer_innate_power",
-      "name": "Innate Power",
-      "level": 1,
-      "description": "Choose a Sorcerous Origin that grants you a benefit: Intuitive Magic, Resilient Magic, or Unstable Magic. Additionally, you gain the following benefits: Your Maximum MP increases by 1. Once per Long Rest, you can use a 1 MP Spell Enhancement without spending any MP (up to your Mana Spend Limit). You regain the ability to use this benefit when you roll for Initiative.",
-      "effects": [
-          { "type": "MODIFY_MP_MAX", "value": 1 },
-          { "type": "GRANT_ABILITY", "value": "Free_1MP_Spell_Enhancement_Once_Per_Long_Rest" }
-      ]
-    },
-    {
-      "id": "sorcerer_overload_magic",
-      "name": "Overload Magic",
-      "level": 1,
-      "description": "You can spend 2 AP in Combat to channel raw magical energy for 1 minute, or until you become Incapacitated, die, or choose to end it early at any time for free. For the duration, your magic is overloaded and you’re subjected to the following effects: You gain +5 to all Spell Checks you make. You must immediately make an Attribute Save (your choice) against your Save DC upon using this Feature, and again at the start of each of your turns. Failure: You gain Exhaustion. You lose any Exhaustion gained in this way when you complete a Short Rest.",
-      "effects": [{ "type": "GRANT_ABILITY", "value": "Overload_Magic_Mechanics_Bundle" }]
-    },
-    {
-      "id": "sorcerer_sorcery_flavor",
-      "name": "Sorcery (Flavor)",
-      "level": 1,
-      "description": "You learn the Sorcery Spell.",
-      "effects": [{ "type": "GRANT_SPELL_KNOWN", "value": "sorcery_cantrip_id" }]
-    }
-  ],
-  "featureChoicesLvl1": [
-    {
-      "id": "sorcerous_origin_choice",
-      "prompt": "Choose your Sorcerous Origin (DC20 p.150):",
-      "type": "select_one",
-      "options": [
-        { "value": "intuitive_magic", "label": "Intuitive Magic", "description": "You learn an additional Spell and Cantrip from your Sorcerer Spell List.", "effectsOnChoice": [{ "type": "GRANT_BONUS_SPELL_KNOWN" }, { "type": "GRANT_BONUS_CANTRIP_KNOWN"}] },
-        { "value": "resilient_magic", "label": "Resilient Magic", "description": "You gain Dazed Resistance.", "effectsOnChoice": [{ "type": "GRANT_CONDITION_RESISTANCE", "target": "Dazed"}] },
-        { "value": "unstable_magic", "label": "Unstable Magic", "description": "When you Critically Succeed or Fail on a Spell Check, roll on the Wild Magic Table...", "effectsOnChoice": [{ "type": "ENABLE_WILD_MAGIC_TABLE_ON_CRIT_SPELL_CHECK"}] }
-      ]
-    },
-    {
-      "id": "sorcerer_spell_list_choice",
-      "prompt": "Choose Your Sorcerer Spell List (DC20 p.149):",
-      "type": "select_one",
-      "options": [
-        { "value": "arcane", "label": "Arcane Spell List" },
-        { "value": "divine", "label": "Divine Spell List" },
-        { "value": "primal", "label": "Primal Spell List" }
-      ]
-    }
-  ]
+	"id": "sorcerer",
+	"name": "Sorcerer",
+	"description": "Sorcerers tap into the raw magic in their own bodies as a conduit to harness, manipulate, and sculpt magic with wild resolve. They can overload themselves and even cast Spells without Mana, pushing the limits of magic and their own bodies.",
+	"baseHpContribution": 8,
+	"startingSP": 0,
+	"startingMP": 6,
+	"skillPointGrantLvl1": 0,
+	"tradePointGrantLvl1": 0,
+	"combatTraining": ["Light Armor"],
+	"maneuversKnownLvl1": 0,
+	"techniquesKnownLvl1": 0,
+	"cantripsKnownLvl1": 2,
+	"spellsKnownLvl1": 3,
+	"saveDCBase": 8,
+	"deathThresholdBase": 10,
+	"moveSpeedBase": 30,
+	"restPointsBase": 4,
+	"gritPointsBase": 2,
+	"initiativeBonusBase": 0,
+	"level1Features": [
+		{
+			"id": "sorcerer_innate_power",
+			"name": "Innate Power",
+			"level": 1,
+			"description": "Choose a Sorcerous Origin that grants you a benefit: Intuitive Magic, Resilient Magic, or Unstable Magic. Additionally, you gain the following benefits: Your Maximum MP increases by 1. Once per Long Rest, you can use a 1 MP Spell Enhancement without spending any MP (up to your Mana Spend Limit). You regain the ability to use this benefit when you roll for Initiative.",
+			"effects": [
+				{ "type": "MODIFY_MP_MAX", "value": 1 },
+				{ "type": "GRANT_ABILITY", "value": "Free_1MP_Spell_Enhancement_Once_Per_Long_Rest" }
+			]
+		},
+		{
+			"id": "sorcerer_overload_magic",
+			"name": "Overload Magic",
+			"level": 1,
+			"description": "You can spend 2 AP in Combat to channel raw magical energy for 1 minute, or until you become Incapacitated, die, or choose to end it early at any time for free. For the duration, your magic is overloaded and you’re subjected to the following effects: You gain +5 to all Spell Checks you make. You must immediately make an Attribute Save (your choice) against your Save DC upon using this Feature, and again at the start of each of your turns. Failure: You gain Exhaustion. You lose any Exhaustion gained in this way when you complete a Short Rest.",
+			"effects": [{ "type": "GRANT_ABILITY", "value": "Overload_Magic_Mechanics_Bundle" }]
+		},
+		{
+			"id": "sorcerer_sorcery_flavor",
+			"name": "Sorcery (Flavor)",
+			"level": 1,
+			"description": "You learn the Sorcery Spell.",
+			"effects": [{ "type": "GRANT_SPELL_KNOWN", "value": "sorcery_cantrip_id" }]
+		}
+	],
+	"featureChoicesLvl1": [
+		{
+			"id": "sorcerous_origin_choice",
+			"prompt": "Choose your Sorcerous Origin (DC20 p.150):",
+			"type": "select_one",
+			"options": [
+				{
+					"value": "intuitive_magic",
+					"label": "Intuitive Magic",
+					"description": "You learn an additional Spell and Cantrip from your Sorcerer Spell List.",
+					"effectsOnChoice": [
+						{ "type": "GRANT_BONUS_SPELL_KNOWN" },
+						{ "type": "GRANT_BONUS_CANTRIP_KNOWN" }
+					]
+				},
+				{
+					"value": "resilient_magic",
+					"label": "Resilient Magic",
+					"description": "You gain Dazed Resistance.",
+					"effectsOnChoice": [{ "type": "GRANT_CONDITION_RESISTANCE", "target": "Dazed" }]
+				},
+				{
+					"value": "unstable_magic",
+					"label": "Unstable Magic",
+					"description": "When you Critically Succeed or Fail on a Spell Check, roll on the Wild Magic Table...",
+					"effectsOnChoice": [{ "type": "ENABLE_WILD_MAGIC_TABLE_ON_CRIT_SPELL_CHECK" }]
+				}
+			]
+		},
+		{
+			"id": "sorcerer_spell_list_choice",
+			"prompt": "Choose Your Sorcerer Spell List (DC20 p.149):",
+			"type": "select_one",
+			"options": [
+				{ "value": "arcane", "label": "Arcane Spell List" },
+				{ "value": "divine", "label": "Divine Spell List" },
+				{ "value": "primal", "label": "Primal Spell List" }
+			]
+		}
+	]
 }

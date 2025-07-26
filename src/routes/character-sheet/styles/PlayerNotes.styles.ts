@@ -65,7 +65,7 @@ export const StyledNoteInput = styled.textarea`
 	min-height: 60px;
 	resize: vertical;
 	font-family: 'Georgia', serif;
-	
+
 	&:focus {
 		outline: none;
 		border-color: #8b4513;

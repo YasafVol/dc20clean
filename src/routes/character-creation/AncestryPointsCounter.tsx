@@ -4,7 +4,7 @@ import { StyledContainer, StyledTitle, StyledDetails } from './styles/AncestryPo
 
 function AncestryPointsCounter() {
 	const { ancestryPointsRemaining, ancestryPointsSpent } = useCharacter();
-	
+
 	const isOverBudget = ancestryPointsRemaining < 0;
 
 	return (

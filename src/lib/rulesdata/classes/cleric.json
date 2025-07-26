@@ -1,78 +1,78 @@
 {
-  "id": "cleric",
-  "name": "Cleric",
-  "description": "Clerics can reach out and call upon the power of a deity to aid them in battle and to support them and their allies. Clerics can range from a knowledgeable priest, to a knight in holy armor. They reach out to heir deity to empower their magic in ways mortals normally cannot.",
-  "baseHpContribution": 8,
-  "startingSP": 0,
-  "startingMP": 6,
-  "skillPointGrantLvl1": 2,
-  "tradePointGrantLvl1": 3,
-  "combatTraining": ["Light Armor", "Light Shields"],
-  "maneuversKnownLvl1": 0,
-  "techniquesKnownLvl1": 0,
-  "saveDCBase": 8,
-  "deathThresholdBase": 10,
-  "moveSpeedBase": 30,
-  "restPointsBase": 4,
-  "gritPointsBase": 2,
-  "initiativeBonusBase": 0,
-  "cantripsKnownLvl1": 2,
-  "spellsKnownLvl1": 3,
-  "level1Features": [
-    {
-      "id": "cleric_cleric_order",
-      "name": "Cleric Order",
-      "level": 1,
-      "description": "Your connection to your deity grants you the following benefits: Divine Damage: Choose an Elemental or Mystical damage type. The chosen damage type becomes your Divine Damage which is used for some Cleric Features. Divine Domain: You gain the benefits of 2 Divine Domains of your choice.",
-      "effects": []
-    },
-    {
-      "id": "cleric_divine_blessing",
-      "name": "Divine Blessing",
-      "level": 1,
-      "description": "You can spend 1 AP to say a prayer and petition your deity for their divine blessing. Choose 1 of the blessings listed below. Each blessing has a listed MP cost that you must spend to gain the blessing. Once during the next minute, you can apply the blessing to a Spell you cast. If your Spell targets more than 1 creature, the blessing only applies to 1 target of your choice. Unused Blessing: You can only have 1 blessing at a time. If you petition your deity for a blessing while you already have a blessing, the first blessing immediately ends without granting any benefit. If the blessing ends without granting any benefit, you regain the MP spent to gain the blessing.",
-      "effects": []
-    },
-    {
-      "id": "cleric_divine_omen",
-      "name": "Divine Omen (Flavor Feature)",
-      "level": 1,
-      "description": "Once per Long Rest, you can spend 10 minutes to commune with your Deity. Question: You can ask them 1 question, which must be posed in a way that could be answered with a yes or no. Response: The deity responds to the best of their knowledge and intentions in one of the following responses: Yes, No, or Unclear. Communing Again: If you commune with your deity more than once per Long Rest, you must make a DC 15 Spell Check. Failure: You receive no answer. Each time you commune again before you complete a Long Rest, the DC increases by 5.",
-      "effects": []
-    }
-  ],
-  "featureChoicesLvl1": [
-    {
-      "id": "cleric_divine_damage",
-      "prompt": "Choose your Divine Damage type:",
-      "type": "select_one",
-      "options": [
-        { "value": "elemental", "label": "Elemental" },
-        { "value": "mystical", "label": "Mystical" }
-      ]
-    },
-    {
-      "id": "cleric_divine_domain",
-      "prompt": "Choose 2 Divine Domains:",
-      "type": "select_multiple",
-      "maxSelections": 2,
-      "options": [
-        { "value": "knowledge", "label": "Knowledge" },
-        { "value": "magic", "label": "Magic" },
-        { "value": "divine_damage_expansion", "label": "Divine Damage Expansion" },
-        { "value": "life", "label": "Life" },
-        { "value": "death", "label": "Death" },
-        { "value": "grave", "label": "Grave" },
-        { "value": "light", "label": "Light" },
-        { "value": "dark", "label": "Dark" },
-        { "value": "war", "label": "War" },
-        { "value": "peace", "label": "Peace" },
-        { "value": "order", "label": "Order" },
-        { "value": "chaos", "label": "Chaos" },
-        { "value": "divination", "label": "Divination" },
-        { "value": "trickery", "label": "Trickery" },
-        { "value": "ancestral", "label": "Ancestral" }
-      ]
-    }
-  ]
+	"id": "cleric",
+	"name": "Cleric",
+	"description": "Clerics can reach out and call upon the power of a deity to aid them in battle and to support them and their allies. Clerics can range from a knowledgeable priest, to a knight in holy armor. They reach out to heir deity to empower their magic in ways mortals normally cannot.",
+	"baseHpContribution": 8,
+	"startingSP": 0,
+	"startingMP": 6,
+	"skillPointGrantLvl1": 2,
+	"tradePointGrantLvl1": 3,
+	"combatTraining": ["Light Armor", "Light Shields"],
+	"maneuversKnownLvl1": 0,
+	"techniquesKnownLvl1": 0,
+	"saveDCBase": 8,
+	"deathThresholdBase": 10,
+	"moveSpeedBase": 30,
+	"restPointsBase": 4,
+	"gritPointsBase": 2,
+	"initiativeBonusBase": 0,
+	"cantripsKnownLvl1": 2,
+	"spellsKnownLvl1": 3,
+	"level1Features": [
+		{
+			"id": "cleric_cleric_order",
+			"name": "Cleric Order",
+			"level": 1,
+			"description": "Your connection to your deity grants you the following benefits: Divine Damage: Choose an Elemental or Mystical damage type. The chosen damage type becomes your Divine Damage which is used for some Cleric Features. Divine Domain: You gain the benefits of 2 Divine Domains of your choice.",
+			"effects": []
+		},
+		{
+			"id": "cleric_divine_blessing",
+			"name": "Divine Blessing",
+			"level": 1,
+			"description": "You can spend 1 AP to say a prayer and petition your deity for their divine blessing. Choose 1 of the blessings listed below. Each blessing has a listed MP cost that you must spend to gain the blessing. Once during the next minute, you can apply the blessing to a Spell you cast. If your Spell targets more than 1 creature, the blessing only applies to 1 target of your choice. Unused Blessing: You can only have 1 blessing at a time. If you petition your deity for a blessing while you already have a blessing, the first blessing immediately ends without granting any benefit. If the blessing ends without granting any benefit, you regain the MP spent to gain the blessing.",
+			"effects": []
+		},
+		{
+			"id": "cleric_divine_omen",
+			"name": "Divine Omen (Flavor Feature)",
+			"level": 1,
+			"description": "Once per Long Rest, you can spend 10 minutes to commune with your Deity. Question: You can ask them 1 question, which must be posed in a way that could be answered with a yes or no. Response: The deity responds to the best of their knowledge and intentions in one of the following responses: Yes, No, or Unclear. Communing Again: If you commune with your deity more than once per Long Rest, you must make a DC 15 Spell Check. Failure: You receive no answer. Each time you commune again before you complete a Long Rest, the DC increases by 5.",
+			"effects": []
+		}
+	],
+	"featureChoicesLvl1": [
+		{
+			"id": "cleric_divine_damage",
+			"prompt": "Choose your Divine Damage type:",
+			"type": "select_one",
+			"options": [
+				{ "value": "elemental", "label": "Elemental" },
+				{ "value": "mystical", "label": "Mystical" }
+			]
+		},
+		{
+			"id": "cleric_divine_domain",
+			"prompt": "Choose 2 Divine Domains:",
+			"type": "select_multiple",
+			"maxSelections": 2,
+			"options": [
+				{ "value": "knowledge", "label": "Knowledge" },
+				{ "value": "magic", "label": "Magic" },
+				{ "value": "divine_damage_expansion", "label": "Divine Damage Expansion" },
+				{ "value": "life", "label": "Life" },
+				{ "value": "death", "label": "Death" },
+				{ "value": "grave", "label": "Grave" },
+				{ "value": "light", "label": "Light" },
+				{ "value": "dark", "label": "Dark" },
+				{ "value": "war", "label": "War" },
+				{ "value": "peace", "label": "Peace" },
+				{ "value": "order", "label": "Order" },
+				{ "value": "chaos", "label": "Chaos" },
+				{ "value": "divination", "label": "Divination" },
+				{ "value": "trickery", "label": "Trickery" },
+				{ "value": "ancestral", "label": "Ancestral" }
+			]
+		}
+	]
 }

@@ -1,70 +1,70 @@
 {
-  "id": "spellblade",
-  "name": "Spellblade",
-  "description": "Spellblades combine their combat prowess with their ability to harness and channel magic into weapons. They can form a bond with a weapon to imbue it with damage, call it back to them, and more. Spellblades can learn a wide range of disciplines depending on their unique combination of martial and spellcasting prowess. They even gain the ability to cast spells through their weapons.",
-  "baseHpContribution": 9,
-  "startingSP": 1,
-  "startingMP": 3,
-  "skillPointGrantLvl1": 0,
-  "tradePointGrantLvl1": 0,
-  "combatTraining": ["Weapons", "Light Armor", "Light Shields"],
-  "maneuversKnownLvl1": "All Attack",
-  "techniquesKnownLvl1": 0,
-  "saveDCBase": 8,
-  "deathThresholdBase": 10,
-  "moveSpeedBase": 30,
-  "restPointsBase": 4,
-  "gritPointsBase": 2,
-  "initiativeBonusBase": 0,
-  "cantripsKnownLvl1": 1,
-  "spellsKnownLvl1": 1,
-  "level1Features": [
-    {
-      "id": "spellblade_bound_weapon",
-      "name": "Bound Weapon",
-      "level": 1,
-      "description": "During a Quick Rest, you can magically bond with 1 Weapon and choose an Elemental or Mystical damage type to become your Bound Damage type. This bond lasts until you end it for free or use this feature again. Your Bound Weapon gains the following properties: Smite, Illuminate, Recall. Ending Early: Your bond with the Weapon ends early if you use this Feature again, or you choose to end it for free.",
-      "effects": []
-    },
-    {
-      "id": "spellblade_spellblade_disciplines",
-      "name": "Spellblade Disciplines",
-      "level": 1,
-      "description": "You learn 2 Spellblade Disciplines from the list below. Magus, Warrior, Acolyte, Hex Warrior, Spell Breaker, Spell Warder, Blink Blade.",
-      "effects": []
-    },
-    {
-      "id": "spellblade_sense_magic",
-      "name": "Sense Magic (Flavor Feature)",
-      "level": 1,
-      "description": "You can spend 1 minute focusing your mind to detect the following creature types within 20 Spaces: Aberration, Celestial, Elemental, Fey, Fiend, or Undead. Make a Spell Check against each creature’s Mental Save. Check Success: You learn the target’s creature type and know its location until the end of your next turn. Check Failure: You learn nothing and can’t use this Feature against the target again until you complete a Long Rest.",
-      "effects": []
-    }
-  ],
-  "featureChoicesLvl1": [
-    {
-      "id": "spellblade_bound_damage",
-      "prompt": "Choose your Bound Damage type:",
-      "type": "select_one",
-      "options": [
-        { "value": "elemental", "label": "Elemental" },
-        { "value": "mystical", "label": "Mystical" }
-      ]
-    },
-    {
-      "id": "spellblade_disciplines_choice",
-      "prompt": "Choose 2 Spellblade Disciplines:",
-      "type": "select_multiple",
-      "maxSelections": 2,
-      "options": [
-        { "value": "magus", "label": "Magus" },
-        { "value": "warrior", "label": "Warrior" },
-        { "value": "acolyte", "label": "Acolyte" },
-        { "value": "hex_warrior", "label": "Hex Warrior" },
-        { "value": "spell_breaker", "label": "Spell Breaker" },
-        { "value": "spell_warder", "label": "Spell Warder" },
-        { "value": "blink_blade", "label": "Blink Blade" }
-      ]
-    }
-  ]
+	"id": "spellblade",
+	"name": "Spellblade",
+	"description": "Spellblades combine their combat prowess with their ability to harness and channel magic into weapons. They can form a bond with a weapon to imbue it with damage, call it back to them, and more. Spellblades can learn a wide range of disciplines depending on their unique combination of martial and spellcasting prowess. They even gain the ability to cast spells through their weapons.",
+	"baseHpContribution": 9,
+	"startingSP": 1,
+	"startingMP": 3,
+	"skillPointGrantLvl1": 0,
+	"tradePointGrantLvl1": 0,
+	"combatTraining": ["Weapons", "Light Armor", "Light Shields"],
+	"maneuversKnownLvl1": "All Attack",
+	"techniquesKnownLvl1": 0,
+	"saveDCBase": 8,
+	"deathThresholdBase": 10,
+	"moveSpeedBase": 30,
+	"restPointsBase": 4,
+	"gritPointsBase": 2,
+	"initiativeBonusBase": 0,
+	"cantripsKnownLvl1": 1,
+	"spellsKnownLvl1": 1,
+	"level1Features": [
+		{
+			"id": "spellblade_bound_weapon",
+			"name": "Bound Weapon",
+			"level": 1,
+			"description": "During a Quick Rest, you can magically bond with 1 Weapon and choose an Elemental or Mystical damage type to become your Bound Damage type. This bond lasts until you end it for free or use this feature again. Your Bound Weapon gains the following properties: Smite, Illuminate, Recall. Ending Early: Your bond with the Weapon ends early if you use this Feature again, or you choose to end it for free.",
+			"effects": []
+		},
+		{
+			"id": "spellblade_spellblade_disciplines",
+			"name": "Spellblade Disciplines",
+			"level": 1,
+			"description": "You learn 2 Spellblade Disciplines from the list below. Magus, Warrior, Acolyte, Hex Warrior, Spell Breaker, Spell Warder, Blink Blade.",
+			"effects": []
+		},
+		{
+			"id": "spellblade_sense_magic",
+			"name": "Sense Magic (Flavor Feature)",
+			"level": 1,
+			"description": "You can spend 1 minute focusing your mind to detect the following creature types within 20 Spaces: Aberration, Celestial, Elemental, Fey, Fiend, or Undead. Make a Spell Check against each creature’s Mental Save. Check Success: You learn the target’s creature type and know its location until the end of your next turn. Check Failure: You learn nothing and can’t use this Feature against the target again until you complete a Long Rest.",
+			"effects": []
+		}
+	],
+	"featureChoicesLvl1": [
+		{
+			"id": "spellblade_bound_damage",
+			"prompt": "Choose your Bound Damage type:",
+			"type": "select_one",
+			"options": [
+				{ "value": "elemental", "label": "Elemental" },
+				{ "value": "mystical", "label": "Mystical" }
+			]
+		},
+		{
+			"id": "spellblade_disciplines_choice",
+			"prompt": "Choose 2 Spellblade Disciplines:",
+			"type": "select_multiple",
+			"maxSelections": 2,
+			"options": [
+				{ "value": "magus", "label": "Magus" },
+				{ "value": "warrior", "label": "Warrior" },
+				{ "value": "acolyte", "label": "Acolyte" },
+				{ "value": "hex_warrior", "label": "Hex Warrior" },
+				{ "value": "spell_breaker", "label": "Spell Breaker" },
+				{ "value": "spell_warder", "label": "Spell Warder" },
+				{ "value": "blink_blade", "label": "Blink Blade" }
+			]
+		}
+	]
 }

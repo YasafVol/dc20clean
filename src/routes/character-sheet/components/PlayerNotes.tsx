@@ -33,7 +33,7 @@ const PlayerNotes: React.FC<PlayerNotesProps> = ({ characterId }) => {
 		const savedNotes = localStorage.getItem(`playerNotes_${characterId}`);
 		return savedNotes ? JSON.parse(savedNotes) : [];
 	});
-	
+
 	const [newNoteText, setNewNoteText] = useState('');
 	const [isAddingNote, setIsAddingNote] = useState(false);
 	const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
@@ -59,7 +59,7 @@ const PlayerNotes: React.FC<PlayerNotesProps> = ({ characterId }) => {
 	};
 
 	const handleDeleteNote = (noteId: string) => {
-		const updatedNotes = notes.filter(note => note.id !== noteId);
+		const updatedNotes = notes.filter((note) => note.id !== noteId);
 		saveNotesToStorage(updatedNotes);
 	};
 
@@ -70,10 +70,8 @@ const PlayerNotes: React.FC<PlayerNotesProps> = ({ characterId }) => {
 
 	const handleSaveEdit = () => {
 		if (editingText.trim() && editingNoteId) {
-			const updatedNotes = notes.map(note =>
-				note.id === editingNoteId
-					? { ...note, text: editingText.trim() }
-					: note
+			const updatedNotes = notes.map((note) =>
+				note.id === editingNoteId ? { ...note, text: editingText.trim() } : note
 			);
 			saveNotesToStorage(updatedNotes);
 			setEditingNoteId(null);
@@ -94,7 +92,7 @@ const PlayerNotes: React.FC<PlayerNotesProps> = ({ characterId }) => {
 	return (
 		<StyledPlayerNotesContainer>
 			<StyledPlayerNotesTitle>Player Notes</StyledPlayerNotesTitle>
-			
+
 			<StyledNotesContent>
 				{notes.length === 0 && !isAddingNote && (
 					<StyledEmptyNotesMessage>
@@ -109,7 +107,9 @@ const PlayerNotes: React.FC<PlayerNotesProps> = ({ characterId }) => {
 								<>
 									<StyledNoteInput
 										value={editingText}
-										onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEditingText(e.target.value)}
+										onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+											setEditingText(e.target.value)
+										}
 										onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 											if (e.key === 'Enter' && !e.shiftKey) {
 												e.preventDefault();
@@ -122,12 +122,8 @@ const PlayerNotes: React.FC<PlayerNotesProps> = ({ characterId }) => {
 										autoFocus
 									/>
 									<StyledNoteActions>
-										<StyledSaveButton onClick={handleSaveEdit}>
-											Save
-										</StyledSaveButton>
-										<StyledCancelButton onClick={handleCancelEdit}>
-											Cancel
-										</StyledCancelButton>
+										<StyledSaveButton onClick={handleSaveEdit}>Save</StyledSaveButton>
+										<StyledCancelButton onClick={handleCancelEdit}>Cancel</StyledCancelButton>
 									</StyledNoteActions>
 								</>
 							) : (
@@ -137,7 +133,10 @@ const PlayerNotes: React.FC<PlayerNotesProps> = ({ characterId }) => {
 										<StyledEditButton onClick={() => handleStartEdit(note)} title="Edit note">
 											<EditIcon fontSize="small" />
 										</StyledEditButton>
-										<StyledDeleteButton onClick={() => handleDeleteNote(note.id)} title="Delete note">
+										<StyledDeleteButton
+											onClick={() => handleDeleteNote(note.id)}
+											title="Delete note"
+										>
 											×
 										</StyledDeleteButton>
 									</StyledNoteActions>
@@ -152,7 +151,9 @@ const PlayerNotes: React.FC<PlayerNotesProps> = ({ characterId }) => {
 						<>
 							<StyledNoteInput
 								value={newNoteText}
-								onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewNoteText(e.target.value)}
+								onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+									setNewNoteText(e.target.value)
+								}
 								onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 									if (e.key === 'Enter' && !e.shiftKey) {
 										e.preventDefault();
@@ -165,18 +166,12 @@ const PlayerNotes: React.FC<PlayerNotesProps> = ({ characterId }) => {
 								autoFocus
 							/>
 							<StyledNoteActions>
-								<StyledAddButton onClick={handleAddNote}>
-									Add Note
-								</StyledAddButton>
-								<StyledCancelButton onClick={handleCancelAdd}>
-									Cancel
-								</StyledCancelButton>
+								<StyledAddButton onClick={handleAddNote}>Add Note</StyledAddButton>
+								<StyledCancelButton onClick={handleCancelAdd}>Cancel</StyledCancelButton>
 							</StyledNoteActions>
 						</>
 					) : (
-						<StyledAddButton onClick={() => setIsAddingNote(true)}>
-							+ Add Note
-						</StyledAddButton>
+						<StyledAddButton onClick={() => setIsAddingNote(true)}>+ Add Note</StyledAddButton>
 					)}
 				</StyledAddNoteSection>
 			</StyledNotesContent>

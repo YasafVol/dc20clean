@@ -55,6 +55,7 @@ type CharacterAction =
 	| { type: 'SET_TRAITS'; selectedTraitIds: string }
 	| { type: 'SET_FEATURE_CHOICES'; selectedFeatureChoices: string }
 	| { type: 'UPDATE_STORE'; updates: Partial<CharacterInProgressStoreData> }
+	| { type: 'INITIALIZE_FROM_SAVED'; character: CharacterInProgressStoreData }
 	| { type: 'NEXT_STEP' }
 	| { type: 'PREVIOUS_STEP' }
 	| { type: 'SET_STEP'; step: number };
@@ -110,6 +111,10 @@ function characterReducer(
 			return {
 				...state,
 				...action.updates
+			};
+		case 'INITIALIZE_FROM_SAVED':
+			return {
+				...action.character
 			};
 		case 'NEXT_STEP':
 			return {

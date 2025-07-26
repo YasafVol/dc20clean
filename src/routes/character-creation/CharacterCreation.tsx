@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import AncestrySelector from './AncestrySelector.tsx';
 import SelectedAncestries from './SelectedAncestries.tsx';
@@ -9,6 +9,8 @@ import Background from './Background.tsx';
 import CharacterName from './CharacterName.tsx';
 import Snackbar from '../../components/Snackbar.tsx';
 import { completeCharacter } from '../../lib/services/characterCompletion';
+import { completeCharacterEdit, convertCharacterToInProgress, type SavedCharacter } from '../../lib/utils/characterEdit';
+import { calculateCharacterStats } from '../../lib/services/characterCalculator';
 import {
 	StyledContainer,
 	StyledTitle,
@@ -21,10 +23,26 @@ import {
 	StyledButton
 } from './styles/CharacterCreation.styles';
 
-const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavigateToLoad }) => {
+interface CharacterCreationProps {
+	onNavigateToLoad: () => void;
+	editCharacter?: SavedCharacter; // If provided, we're in edit mode
+}
+
+const CharacterCreation: React.FC<CharacterCreationProps> = ({ onNavigateToLoad, editCharacter }) => {
 	const { state, dispatch, attributePointsRemaining, ancestryPointsRemaining } = useCharacter();
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 	const [showSnackbar, setShowSnackbar] = useState(false);
+
+	// Initialize character state for edit mode
+	useEffect(() => {
+		if (editCharacter) {
+			console.log('Initializing edit mode for character:', editCharacter);
+			const characterInProgress = convertCharacterToInProgress(editCharacter);
+			
+			// Initialize the character state with the existing character data
+			dispatch({ type: 'INITIALIZE_FROM_SAVED', character: characterInProgress });
+		}
+	}, [editCharacter, dispatch]);
 
 	const steps = [
 		{ number: 1, label: 'Class & Features' },
@@ -40,14 +58,23 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
 
 	const handleNext = async () => {
 		if (state.currentStep === 5 && areAllStepsCompleted()) {
-			// Character is complete, trigger completion using the service
-			await completeCharacter(state, {
-				onShowSnackbar: (message: string) => {
-					setSnackbarMessage(message);
-					setShowSnackbar(true);
-				},
-				onNavigateToLoad: onNavigateToLoad
-			});
+			// Character is complete - check if we're editing or creating new
+			if (editCharacter) {
+				// Edit mode: use the enhanced completion that preserves manual modifications
+				await completeCharacterEdit(editCharacter.id, state, calculateCharacterStats);
+				setSnackbarMessage('Character updated successfully! Manual modifications preserved.');
+				setShowSnackbar(true);
+				setTimeout(() => onNavigateToLoad(), 2000);
+			} else {
+				// Create mode: use standard completion
+				await completeCharacter(state, {
+					onShowSnackbar: (message: string) => {
+						setSnackbarMessage(message);
+						setShowSnackbar(true);
+					},
+					onNavigateToLoad: onNavigateToLoad
+				});
+			}
 			return;
 		} else {
 			dispatch({ type: 'NEXT_STEP' });
@@ -65,13 +92,8 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
 			case 2:
 				return attributePointsRemaining === 0;
 			case 3: {
-				// Background: check if meaningful selections have been made
-				// Since conversions are local state and not persisted, we check for reasonable selections
-
+				// Background: check if ALL available points have been spent
 				// Parse current selections
-				let hasSkillSelections = false;
-				let hasTradeSelections = false;
-				let hasLanguageSelections = false;
 				let skillPointsUsed = 0;
 				let tradePointsUsed = 0;
 				let languagePointsUsed = 0;
@@ -83,7 +105,6 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
 							(sum: number, level: number) => sum + level,
 							0
 						);
-						hasSkillSelections = skillPointsUsed > 0;
 					}
 				} catch (e) {
 					// Ignore parsing errors
@@ -96,7 +117,6 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
 							(sum: number, level: number) => sum + level,
 							0
 						);
-						hasTradeSelections = tradePointsUsed > 0;
 					}
 				} catch (e) {
 					// Ignore parsing errors
@@ -124,31 +144,23 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
 							},
 							0
 						);
-						hasLanguageSelections = languagePointsUsed > 0;
 					}
 				} catch (e) {
 					// Ignore parsing errors
 				}
 
-				// Calculate minimum expected points (without conversions)
+				// Calculate available points based on current Intelligence
 				const intelligenceModifier = state.attribute_intelligence;
-				const minSkillPoints = Math.max(1, 5 + intelligenceModifier); // At least 1, even with negative Int
-				const minTradePoints = 3; // Base trade points
-				const minLanguagePoints = 2; // Base language points
+				const baseSkillPoints = Math.max(1, 5 + intelligenceModifier); // At least 1, even with negative Int
 
-				// Step is complete if:
-				// 1. User has made skill selections (at least some points spent)
-				// 2. User has made selections in trades OR languages (or both)
-				// 3. Total points used suggests they've engaged with the system meaningfully
+				// For completion, we require that:
+				// 1. Skill points are exactly spent (not overspent, not underspent)
+				// 2. At least some trade or language points are spent (showing engagement)
+				const skillPointsRemaining = baseSkillPoints - skillPointsUsed;
+				const hasExactlySpentAllSkillPoints = skillPointsRemaining === 0;
+				const hasSpentSomeTradeOrLanguagePoints = tradePointsUsed > 0 || languagePointsUsed > 0;
 
-				const totalMinPoints = minSkillPoints + minTradePoints + minLanguagePoints;
-				const totalPointsUsed = skillPointsUsed + tradePointsUsed + languagePointsUsed;
-
-				return (
-					hasSkillSelections &&
-					(hasTradeSelections || hasLanguageSelections) &&
-					totalPointsUsed >= Math.floor(totalMinPoints * 0.6)
-				); // Used at least 60% of base allocation
+				return hasExactlySpentAllSkillPoints && hasSpentSomeTradeOrLanguagePoints;
 			}
 			case 4:
 				return state.ancestry1Id !== null && ancestryPointsRemaining >= 0;
@@ -197,7 +209,9 @@ const CharacterCreation: React.FC<{ onNavigateToLoad: () => void }> = ({ onNavig
 
 	return (
 		<div>
-			<StyledTitle>Character Creation</StyledTitle>
+			<StyledTitle>
+				{editCharacter ? `Edit Character: ${editCharacter.finalName}` : 'Character Creation'}
+			</StyledTitle>
 
 			<StyledStepIndicator>
 				<StyledNavigationButtons>

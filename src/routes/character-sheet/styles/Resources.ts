@@ -112,14 +112,19 @@ export const StyledTempHPInput = styled(StyledResourceInput)`
 `;
 
 // New components for refactored layout
-export const ResourcesContainer = styled.div`
+export const ResourcesContainer = styled.div<{ $isMobile?: boolean }>`
 	display: flex;
+	flex-direction: ${(props) => (props.$isMobile ? 'column' : 'row')};
 	justify-content: space-around;
+	align-items: ${(props) => (props.$isMobile ? 'center' : 'stretch')};
+	gap: ${(props) => (props.$isMobile ? '1rem' : '0')};
 	margin-bottom: 1.5rem;
 `;
 
-export const ResourceColumn = styled.div`
+export const ResourceColumn = styled.div<{ $isMobile?: boolean }>`
 	text-align: center;
+	width: ${(props) => (props.$isMobile ? '100%' : 'auto')};
+	max-width: ${(props) => (props.$isMobile ? '200px' : 'none')};
 `;
 
 export const ResourceLabel = styled.div`

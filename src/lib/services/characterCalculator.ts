@@ -3,6 +3,7 @@
 
 import { skillsData } from '../rulesdata/skills';
 import { ancestriesData } from '../rulesdata/ancestries';
+import { findClassByName } from '../rulesdata/loaders/class-features.loader';
 import type { IClassDefinition } from '../rulesdata/schemas/class.schema';
 
 export interface CharacterInProgressData {
@@ -193,7 +194,7 @@ export const calculateCharacterStats = async (
 
 	// AD (Area Defense) = 8 + CM + Might + Charisma + Bonuses from items
 	const calculatedAD = 8 + finalCombatMastery + finalMight + finalCharisma;
-	const finalAD = characterData.manualAD !== undefined ? characterData.manualAD : calculatedAD;
+	let finalAD = characterData.manualAD !== undefined ? characterData.manualAD : calculatedAD;
 
 	// Health & Resources
 	let finalHPMax = finalMight; // Base from Might
@@ -215,6 +216,71 @@ export const calculateCharacterStats = async (
 		finalMoveSpeed = classData.moveSpeedBase;
 		finalRestPoints = classData.restPointsBase;
 		finalInitiativeBonus = classData.initiativeBonusBase;
+
+		// Apply effects from class features using the new class features structure
+		const classFeatures = findClassByName(classData.name);
+		if (classFeatures) {
+			// Get level 1 features
+			const level1Features = classFeatures.coreFeatures.filter(feature => feature.levelGained === 1);
+			
+			level1Features.forEach((feature) => {
+				if (feature.benefits) {
+					feature.benefits.forEach((benefit) => {
+						if (benefit.effects) {
+							benefit.effects.forEach((effect) => {
+								if (effect.type === 'MODIFIER') {
+									// For now, we'll assume the condition is met.
+									// A more robust solution would parse and evaluate the condition string.
+									if (effect.target === 'defenses.ad') {
+										finalAD += effect.value;
+									} else if (effect.target === 'coreStats.moveSpeed') {
+										finalMoveSpeed += effect.value;
+									} else if (effect.target === 'resources.mpMax') {
+										finalMPMax += effect.value;
+									} else if (effect.target === 'coreStats.jumpDistance') {
+										finalJumpDistance += effect.value;
+									}
+									// Add more target cases here as needed
+								} else if (effect.type === 'OVERRIDE') {
+									if (effect.target === 'coreStats.jumpDistance') {
+										// A more robust solution would parse the value string
+										finalJumpDistance = finalMight;
+									}
+								} else if (effect.type === 'GRANT_SKILL_POINTS') {
+									// This is a placeholder. A real implementation would need to
+									// modify the character's skill points data.
+									console.log(`Granting ${effect.value} skill points.`);
+								} else if (effect.type === 'GRANT_SPELLS') {
+									// This is a placeholder. A real implementation would need to
+									// add the spells to the character's spell list.
+									console.log(`Granting ${effect.value} spells.`);
+								} else if (effect.type === 'GRANT_CANTRIPS') {
+									// This is a placeholder. A real implementation would need to
+									// add the cantrips to the character's spell list.
+									console.log(`Granting ${effect.value} cantrips.`);
+								} else if (effect.type === 'GRANT_COMBAT_TRAINING') {
+									// This is a placeholder. A real implementation would need to
+									// add the combat training to the character's data.
+									console.log(`Granting combat training: ${effect.value}`);
+								} else if (effect.type === 'GRANT_MANEUVERS') {
+									// This is a placeholder. A real implementation would need to
+									// add the maneuvers to the character's data.
+									console.log(`Granting ${effect.value} maneuvers.`);
+								} else if (effect.type === 'GRANT_ANCESTRY_POINTS') {
+									// This is a placeholder. A real implementation would need to
+									// add the ancestry points to the character's data.
+									console.log(`Granting ${effect.value} ancestry points.`);
+								} else if (effect.type === 'GRANT_PASSIVE') {
+									// This is a placeholder. A real implementation would need to
+									// add the passive to the character's data.
+									console.log(`Granting passive: ${effect.value}`);
+								}
+							});
+						}
+					});
+				}
+			});
+		}
 	}
 
 	// Add attribute bonuses
@@ -245,7 +311,7 @@ export const calculateCharacterStats = async (
 	});
 
 	// Jump Distance = Agility (min 1)
-	const finalJumpDistance = Math.max(1, finalAgility);
+	let finalJumpDistance = Math.max(1, finalAgility);
 
 	// Grit Points = 2 + Charisma (from class base)
 	const baseGritPoints = classData?.gritPointsBase || 2;
@@ -334,7 +400,10 @@ export const calculateCharacterStats = async (
 };
 
 // Helper function to calculate PDR (Precision Damage Reduction)
-const calculatePDR = (characterData: CharacterInProgressData, classData: any): number => {
+const calculatePDR = (
+	characterData: CharacterInProgressData,
+	classData: IClassDefinition | null
+): number => {
 	let pdr = 0;
 
 	// Check for Beastborn Natural Armor trait

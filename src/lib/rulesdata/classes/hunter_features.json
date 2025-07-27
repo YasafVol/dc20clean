@@ -1,0 +1,243 @@
+{
+	"className": "Hunter",
+	"coreFeatures": [
+		{
+			"featureName": "Hunter's Mark",
+			"levelGained": 1,
+			"description": "You can spend 1 AP and 1 SP to focus on and mark a creature you can see within 15 Spaces as your quarry. Alternatively, you can mark a creature by studying its tracks for at least 1 minute. While a creature is marked, you gain the following benefits. The target is marked as long as it's on the same Plane of Existence as you, and vanishes early if you complete a Long Rest, fall Unconscious, or use this Feature again to mark another creature.",
+			"benefits": [
+				{
+					"name": "ADV on Tracking",
+					"description": "You have ADV on Awareness and Survival Checks made to find the target."
+				},
+				{
+					"name": "Advantaged Attack",
+					"description": "The first Martial Attack against your target on your turn has ADV and ignores PDR."
+				},
+				{
+					"name": "Helpful Hit",
+					"description": "When you score a Heavy or Critical Hit against the target, you automatically grant a d8 Help Die to the next Attack made against the target before the start of your next turn."
+				}
+			]
+		},
+		{
+			"featureName": "Favored Terrain",
+			"levelGained": 1,
+			"description": "You are particularly familiar with two types of environments and are adept at the skills unique to the region. Choose 2 types of Favored Terrain listed below. Additionally, while you're in one of your Favored Terrains, you have ADV on Stealth and Survival Checks and can't be Surprised.",
+			"choices": [
+				{
+					"prompt": "Choose 2 types of Favored Terrain.",
+					"count": 2,
+					"options": [
+						{
+							"name": "Coast",
+							"description": "You gain a Swim Speed equal to your Ground Speed, your Weapon Attacks no longer have DisADV as a result of being underwater, you can hold your breath twice as long as normal, and you have ADV on Awareness Checks while underwater."
+						},
+						{
+							"name": "Desert",
+							"description": "You gain Fire Resistance (Half) and Resistance to Exhaustion from hot temperatures."
+						},
+						{
+							"name": "Forest",
+							"description": "You gain 2 Skill Points to use on up to 2 of the following Skills: Animal, Awareness, Medicine, Survival, and Stealth.",
+							"effects": [
+								{
+									"type": "GRANT_SKILL_POINTS",
+									"value": 2,
+									"options": ["Animal", "Awareness", "Medicine", "Survival", "Stealth"]
+								}
+							]
+						},
+						{
+							"name": "Grassland",
+							"description": "Your Speed and Jump Distance increases by 1.",
+							"effects": [
+								{ "type": "MODIFIER", "target": "coreStats.moveSpeed", "value": 1 },
+								{ "type": "MODIFIER", "target": "coreStats.jumpDistance", "value": 1 }
+							]
+						},
+						{
+							"name": "Jungle",
+							"description": "You ignore Difficult Terrain, gain Poisoned Resistance, and have ADV on Saves against contracting Diseases."
+						},
+						{
+							"name": "Mountain",
+							"description": "You gain a Climb Speed equal to your Ground Speed, Resistance to Exhaustion from high altitudes, and Resistance (Half) to damage from Falling."
+						},
+						{
+							"name": "Swamp",
+							"description": "You gain Poison Resistance (Half) and Poisoned Resistance, and have ADV on Saves against contracting Diseases."
+						},
+						{
+							"name": "Tundra",
+							"description": "You gain Cold Resistance (Half) and Resistance to Exhaustion from cold temperatures."
+						},
+						{
+							"name": "Subterranean",
+							"description": "You gain Darkvision 10 Spaces. If you already have Darkvision, its range is increased by 5 Spaces. Additionally, you also gain a Tremorsense of 3 Spaces. If you already have a Tremorsense, it increases by 2 Spaces.",
+							"effects": [
+								{
+									"type": "GRANT_PASSIVE",
+									"value": "Darkvision",
+									"amount": 10,
+									"condition": "character.passives.darkvision == null"
+								},
+								{
+									"type": "MODIFIER",
+									"target": "passives.darkvision",
+									"value": 5,
+									"condition": "character.passives.darkvision != null"
+								},
+								{
+									"type": "GRANT_PASSIVE",
+									"value": "Tremorsense",
+									"amount": 3,
+									"condition": "character.passives.tremorsense == null"
+								},
+								{
+									"type": "MODIFIER",
+									"target": "passives.tremorsense",
+									"value": 2,
+									"condition": "character.passives.tremorsense != null"
+								}
+							]
+						},
+						{
+							"name": "Urban",
+							"description": "You gain 2 Skill Points to use on up to 2 of the following Skills: Influence, Insight, Investigation, Intimidation, and Trickery.",
+							"effects": [
+								{
+									"type": "GRANT_SKILL_POINTS",
+									"value": 2,
+									"options": ["Influence", "Insight", "Investigation", "Intimidation", "Trickery"]
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"featureName": "Bestiary",
+			"levelGained": 1,
+			"description": "You have developed a trove of knowledge hunting creatures which you've recorded in your Bestiary. Your Bestiary can take the form of a book, a memory vault within your mind, or some other representation of your choice. You have ADV on Checks made to learn or recall information about any creature recorded in your Bestiary. Starting Entries: Choose a Creature Type. Your Bestiary includes prerecorded notes about various creatures of the chosen type. Making New Entries: You can spend 10 minutes of Light Activity recording information into your Bestiary about a specific creature you have slain within the last 24 hours.",
+			"isFlavor": true
+		},
+		{
+			"featureName": "Hunter's Strike",
+			"levelGained": 2,
+			"description": "You have an assortment of unique oils, tools, and weapon accessories that you can use to modify a Weapon (or piece of ammunition) when making an Attack. You can spend 1 SP as part of a Weapon Attack to add 1 of the effects listed below. You can only use 1 of these effects per Attack. If an effect forces the target to make a Save, it does so against your Save DC.",
+			"choices": [
+				{
+					"prompt": "Choose an effect for your strike.",
+					"count": 1,
+					"options": [
+						{
+							"name": "Piercing",
+							"description": "2 Piercing damage and Physical Save against Bleeding."
+						},
+						{
+							"name": "Snare",
+							"description": "2 Bludgeoning damage and Physical Save against Immobilized until the end of your next turn."
+						},
+						{
+							"name": "Acid",
+							"description": "2 Corrosion damage and Agility Save against Slowed until the end of your next turn."
+						},
+						{
+							"name": "Toxin",
+							"description": "2 Poison damage and Might Save against Impaired until the end of your next turn."
+						},
+						{
+							"name": "Flash Bang",
+							"description": "2 Sonic damage and Mental Save against Dazed until the end of your next turn."
+						},
+						{
+							"name": "Fire Oil",
+							"description": "2 Fire damage and Physical Save against Burning."
+						}
+					]
+				}
+			]
+		},
+		{
+			"featureName": "Talent",
+			"levelGained": 2,
+			"description": "You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent."
+		}
+	],
+	"subclasses": [
+		{
+			"subclassName": "Monster Slayer",
+			"features": [
+				{
+					"featureName": "Monstrous Concoctions",
+					"levelGained": 3,
+					"description": "You hunt down your targets with the aid of Concoctions you have learned to create by hunting monsters. During a Long Rest, you can prepare ingredients for a number of Vials equal to your Prime Modifier. You can use the Object Action to convert one Vial into a Concoction of your choice and immediately drink it or administer it to a creature within 1 Space, gaining the Concoction's benefits for 10 minutes. You can only benefit from the effects of 1 Concoction at a time.",
+					"choices": [
+						{
+							"prompt": "You learn 3 Concoction Recipes of your choice from the list below.",
+							"count": 3,
+							"options": [
+								{
+									"name": "Elemental Infusion",
+									"description": "Choose an Elemental damage type. Hunter's Mark: Attacks you make against your Marked target deal +1 damage of the chosen Elemental Damage type. Elemental Tolerance: You gain Resistance (1) to the chosen Elemental Damage."
+								},
+								{
+									"name": "Hydra's Blood",
+									"description": "Hunter's Mark: When you Heavy Hit your Marked target, you regain 1 HP. Poisonous Blood: You have Poisoned Resistance and when a creature within 1 Space of you deals damage to you with an Attack, they take 1 Poison damage."
+								},
+								{
+									"name": "Basilisk Eye",
+									"description": "Hunter's Mark: You can sense the vibrations made by your Marked target, giving you Tremorsense 20 Spaces when locating them. Stone Skin: You gain Physical Resistance (1)."
+								},
+								{
+									"name": "Ooze Gel",
+									"description": "Hunter's Mark: When you Heavy Hit your Marked Target, you cover it in slime. It's Hindered until it or a creature within 1 Space of it spends 1 AP to remove the slime. Amorphous Body: You can climb difficult surfaces without needing to make a Check and can squeeze through gaps as small as 2 inches (5 cm)."
+								},
+								{
+									"name": "Aberrant Tumor",
+									"description": "Hunter's Mark: While within 20 Spaces of your Marked target, you have ADV when you use Analyze Creature on them and you have ADV on Mental Saves your Marked target forces you to make. Unreadable: You gain Psychic Resistance (1) and your thoughts can't be read by others unless you allow it."
+								},
+								{
+									"name": "Deathweed",
+									"description": "Hunter's Mark: When you score a Heavy Hit against a Marked target it bypasses their Physical Resistances and prevents them from regaining HP until the start of your next turn. Death State: You enter a state between life and death, granting you Umbral Resistance (Half), immunity to being Doomed, and ADV on Death Saves."
+								},
+								{
+									"name": "Plant Fibers",
+									"description": "Hunter's Mark: If your Marked Target fails a Save you force it to make, they can't move until the end of your next turn. Plant Stitching: You become Immune to Bleeding and gain 1 Temp HP at the end of each of your turns."
+								},
+								{
+									"name": "Divine Water",
+									"description": "Hunter's Mark: Once on each of your turns when you score a Heavy Hit against your Marked target, it also becomes Exposed on the next Attack against it before the end of your next turn. Brilliant Essence: You gain Radiant Resistance (Half) and radiate Bright Light in a 5 Space Radius."
+								}
+							]
+						}
+					]
+				},
+				{
+					"featureName": "Monster Hunter",
+					"levelGained": 3,
+					"description": "You are a master at hunting monsters. If you have 3 entries of creatures with the same Creature Type in your Hunter's Bestiary, you can add the entire Creature Type as an entry.",
+					"isFlavor": true
+				}
+			]
+		},
+		{
+			"subclassName": "Trapper",
+			"features": [
+				{
+					"featureName": "Dynamic Traps",
+					"levelGained": 3,
+					"description": "You are able to use a variety of supplies to craft traps. You can have a maximum number of Hunter's Traps equal to your Prime Modifier at any time. During a Long Rest, you can craft a number of Traps equal to your Prime Modifier. You can make 1 additional Trap as part of a Short Rest. These Traps use your Save DC. You can spend 1 AP to Set and Hide one of your Traps, and can spend 1 SP to add the damage and effect of one of your Hunter's Strike options to it. When Triggered, the Trap makes an Attack for free. Hit: The Trap deals Bludgeoning, Piercing, or Slashing damage equal to your Prime Modifier, plus the damage and effects of your Hunter's Strike."
+				},
+				{
+					"featureName": "Discerning Eye",
+					"levelGained": 3,
+					"description": "You have ADV on Awareness Checks to discover Hidden Traps and on Investigation Checks to discern how to disarm them.",
+					"isFlavor": true
+				}
+			]
+		}
+	]
+}

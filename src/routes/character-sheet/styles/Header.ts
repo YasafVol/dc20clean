@@ -7,6 +7,10 @@ export const StyledHeader = styled.div`
 	margin-bottom: 1.5rem;
 	border-bottom: 2px solid #8b4513;
 	padding-bottom: 1rem;
+
+	@media (max-width: 768px) {
+		display: none;
+	}
 `;
 
 export const StyledHeaderSection = styled.div`

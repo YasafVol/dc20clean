@@ -1,12 +1,13 @@
 // Comprehensive character state management utility
 // Handles all character data persistence with original/current value separation
 
-import type { 
-	CharacterState, 
-	CharacterSheetData, 
-	AttackData, 
+import type {
+	CharacterState,
+	CharacterSheetData,
+	AttackData,
+	SpellData,
 	InventoryItemData,
-	CurrentValues 
+	CurrentValues
 } from '../../types';
 
 // Get character state from localStorage
@@ -14,9 +15,9 @@ export const getCharacterState = (characterId: string): CharacterState | null =>
 	try {
 		const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
 		const character = savedCharacters.find((char: any) => char.id === characterId);
-		
+
 		if (!character) return null;
-		
+
 		// Return the character's state, or null if not found
 		return character.characterState || null;
 	} catch (error) {
@@ -87,17 +88,27 @@ export const initializeCharacterState = (
 	];
 
 	const originalInventory: InventoryItemData[] = [];
+	const originalSpells: SpellData[] = [];
 
 	// Use existing state if available, otherwise initialize with defaults
 	return {
 		resources: {
 			original: originalResources,
 			current: existingState?.resources.current || {
-				currentHP: characterData.currentHP !== undefined ? characterData.currentHP : originalResources.maxHP,
-				currentSP: characterData.currentSP !== undefined ? characterData.currentSP : originalResources.maxSP,
-				currentMP: characterData.currentMP !== undefined ? characterData.currentMP : originalResources.maxMP,
-				currentGritPoints: characterData.currentGritPoints !== undefined ? characterData.currentGritPoints : originalResources.maxGritPoints,
-				currentRestPoints: characterData.currentRestPoints !== undefined ? characterData.currentRestPoints : originalResources.maxRestPoints,
+				currentHP:
+					characterData.currentHP !== undefined ? characterData.currentHP : originalResources.maxHP,
+				currentSP:
+					characterData.currentSP !== undefined ? characterData.currentSP : originalResources.maxSP,
+				currentMP:
+					characterData.currentMP !== undefined ? characterData.currentMP : originalResources.maxMP,
+				currentGritPoints:
+					characterData.currentGritPoints !== undefined
+						? characterData.currentGritPoints
+						: originalResources.maxGritPoints,
+				currentRestPoints:
+					characterData.currentRestPoints !== undefined
+						? characterData.currentRestPoints
+						: originalResources.maxRestPoints,
 				tempHP: characterData.tempHP || 0,
 				actionPointsUsed: characterData.actionPointsUsed || 0,
 				exhaustionLevel: characterData.exhaustionLevel || 0
@@ -116,6 +127,10 @@ export const initializeCharacterState = (
 		attacks: {
 			original: originalAttacks,
 			current: existingState?.attacks.current || [...originalAttacks]
+		},
+		spells: {
+			original: originalSpells,
+			current: existingState?.spells?.current || []
 		},
 		inventory: {
 			original: originalInventory,
@@ -168,21 +183,21 @@ export const updateCharacterState = (
 	updates: Partial<CharacterState>
 ): void => {
 	let currentState = getCharacterState(characterId);
-	
+
 	// If no character state exists, try to create a minimal one from localStorage character data
 	if (!currentState) {
 		console.log('No character state found for ID:', characterId, '- creating minimal state');
-		
+
 		// Get character data from localStorage to initialize state
 		try {
 			const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
 			const character = savedCharacters.find((char: any) => char.id === characterId);
-			
+
 			if (!character) {
 				console.error('No character found in localStorage for ID:', characterId);
 				return;
 			}
-			
+
 			// Create minimal character state with default values
 			currentState = {
 				resources: {
@@ -194,11 +209,20 @@ export const updateCharacterState = (
 						maxRestPoints: character.finalRestPoints || 0
 					},
 					current: {
-						currentHP: character.currentHP !== undefined ? character.currentHP : (character.finalHPMax || 0),
-						currentSP: character.currentSP !== undefined ? character.currentSP : (character.finalSPMax || 0),
-						currentMP: character.currentMP !== undefined ? character.currentMP : (character.finalMPMax || 0),
-						currentGritPoints: character.currentGritPoints !== undefined ? character.currentGritPoints : (character.finalGritPoints || 0),
-						currentRestPoints: character.currentRestPoints !== undefined ? character.currentRestPoints : (character.finalRestPoints || 0),
+						currentHP:
+							character.currentHP !== undefined ? character.currentHP : character.finalHPMax || 0,
+						currentSP:
+							character.currentSP !== undefined ? character.currentSP : character.finalSPMax || 0,
+						currentMP:
+							character.currentMP !== undefined ? character.currentMP : character.finalMPMax || 0,
+						currentGritPoints:
+							character.currentGritPoints !== undefined
+								? character.currentGritPoints
+								: character.finalGritPoints || 0,
+						currentRestPoints:
+							character.currentRestPoints !== undefined
+								? character.currentRestPoints
+								: character.finalRestPoints || 0,
 						tempHP: character.tempHP || 0,
 						actionPointsUsed: character.actionPointsUsed || 0,
 						exhaustionLevel: character.exhaustionLevel || 0
@@ -224,6 +248,10 @@ export const updateCharacterState = (
 					original: [],
 					current: []
 				},
+				spells: {
+					original: [],
+					current: []
+				},
 				inventory: {
 					original: [],
 					current: []
@@ -240,38 +268,60 @@ export const updateCharacterState = (
 		...currentState,
 		...updates,
 		// Deep merge nested objects
-		resources: updates.resources ? {
-			...currentState.resources,
-			...updates.resources,
-			current: updates.resources.current ? {
-				...currentState.resources.current,
-				...updates.resources.current
-			} : currentState.resources.current,
-			original: updates.resources.original ? {
-				...currentState.resources.original,
-				...updates.resources.original
-			} : currentState.resources.original
-		} : currentState.resources,
-		currency: updates.currency ? {
-			...currentState.currency,
-			...updates.currency,
-			current: updates.currency.current ? {
-				...currentState.currency.current,
-				...updates.currency.current
-			} : currentState.currency.current,
-			original: updates.currency.original ? {
-				...currentState.currency.original,
-				...updates.currency.original
-			} : currentState.currency.original
-		} : currentState.currency,
-		attacks: updates.attacks ? {
-			...currentState.attacks,
-			...updates.attacks
-		} : currentState.attacks,
-		inventory: updates.inventory ? {
-			...currentState.inventory,
-			...updates.inventory
-		} : currentState.inventory
+		resources: updates.resources
+			? {
+					...currentState.resources,
+					...updates.resources,
+					current: updates.resources.current
+						? {
+								...currentState.resources.current,
+								...updates.resources.current
+							}
+						: currentState.resources.current,
+					original: updates.resources.original
+						? {
+								...currentState.resources.original,
+								...updates.resources.original
+							}
+						: currentState.resources.original
+				}
+			: currentState.resources,
+		currency: updates.currency
+			? {
+					...currentState.currency,
+					...updates.currency,
+					current: updates.currency.current
+						? {
+								...currentState.currency.current,
+								...updates.currency.current
+							}
+						: currentState.currency.current,
+					original: updates.currency.original
+						? {
+								...currentState.currency.original,
+								...updates.currency.original
+							}
+						: currentState.currency.original
+				}
+			: currentState.currency,
+		attacks: updates.attacks
+			? {
+					...currentState.attacks,
+					...updates.attacks
+				}
+			: currentState.attacks,
+		spells: updates.spells
+			? {
+					...currentState.spells,
+					...updates.spells
+				}
+			: currentState.spells,
+		inventory: updates.inventory
+			? {
+					...currentState.inventory,
+					...updates.inventory
+				}
+			: currentState.inventory
 	};
 
 	saveCharacterState(characterId, newState);
@@ -280,7 +330,7 @@ export const updateCharacterState = (
 // Revert a specific data type to original values
 export const revertToOriginal = (
 	characterId: string,
-	dataType: 'resources' | 'currency' | 'attacks' | 'inventory'
+	dataType: 'resources' | 'currency' | 'attacks' | 'spells' | 'inventory'
 ): void => {
 	const currentState = getCharacterState(characterId);
 	if (!currentState) {
@@ -317,6 +367,12 @@ export const revertToOriginal = (
 			updates.attacks = {
 				...currentState.attacks,
 				current: [...currentState.attacks.original]
+			};
+			break;
+		case 'spells':
+			updates.spells = {
+				...currentState.spells,
+				current: [...currentState.spells.original]
 			};
 			break;
 		case 'inventory':

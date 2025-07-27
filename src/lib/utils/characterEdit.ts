@@ -33,9 +33,14 @@ export interface SavedCharacter {
 }
 
 // Convert a saved character back to character-in-progress format for editing
-export const convertCharacterToInProgress = (savedCharacter: SavedCharacter): CharacterInProgressStoreData => {
+export const convertCharacterToInProgress = (
+	savedCharacter: SavedCharacter
+): CharacterInProgressStoreData => {
 	// Get attribute values from the correct property names (finalMight, etc. or attribute_might, etc.)
-	const getAttribute = (finalName: keyof SavedCharacter, attributeName: keyof SavedCharacter): number => {
+	const getAttribute = (
+		finalName: keyof SavedCharacter,
+		attributeName: keyof SavedCharacter
+	): number => {
 		// Try final* first (current format), then attribute_* (legacy format), then default to -2
 		if (savedCharacter[finalName] !== undefined) {
 			return savedCharacter[finalName] as number;
@@ -63,10 +68,16 @@ export const convertCharacterToInProgress = (savedCharacter: SavedCharacter): Ch
 		classId: savedCharacter.classId,
 		selectedFeatureChoices: savedCharacter.selectedFeatureChoices || '',
 		// Save masteries (default to false, but try to get from saved character if available)
-		saveMasteryMight: savedCharacter.saveMasteryMight !== undefined ? savedCharacter.saveMasteryMight : false,
-		saveMasteryAgility: savedCharacter.saveMasteryAgility !== undefined ? savedCharacter.saveMasteryAgility : false,
-		saveMasteryCharisma: savedCharacter.saveMasteryCharisma !== undefined ? savedCharacter.saveMasteryCharisma : false,
-		saveMasteryIntelligence: savedCharacter.saveMasteryIntelligence !== undefined ? savedCharacter.saveMasteryIntelligence : false,
+		saveMasteryMight:
+			savedCharacter.saveMasteryMight !== undefined ? savedCharacter.saveMasteryMight : false,
+		saveMasteryAgility:
+			savedCharacter.saveMasteryAgility !== undefined ? savedCharacter.saveMasteryAgility : false,
+		saveMasteryCharisma:
+			savedCharacter.saveMasteryCharisma !== undefined ? savedCharacter.saveMasteryCharisma : false,
+		saveMasteryIntelligence:
+			savedCharacter.saveMasteryIntelligence !== undefined
+				? savedCharacter.saveMasteryIntelligence
+				: false,
 		finalName: savedCharacter.finalName,
 		finalPlayerName: savedCharacter.finalPlayerName,
 		createdAt: new Date(savedCharacter.completedAt),
@@ -84,9 +95,12 @@ export const convertCharacterToInProgress = (savedCharacter: SavedCharacter): Ch
 // Calculate how many attribute points were spent
 const calculatePointsSpent = (character: SavedCharacter): number => {
 	const baseCost = 4; // Each attribute starts at -2, costs 4 points to get to 0
-	
+
 	// Helper to get attribute values from either format
-	const getAttribute = (finalName: keyof SavedCharacter, attributeName: keyof SavedCharacter): number => {
+	const getAttribute = (
+		finalName: keyof SavedCharacter,
+		attributeName: keyof SavedCharacter
+	): number => {
 		if (character[finalName] !== undefined) {
 			return character[finalName] as number;
 		}
@@ -95,21 +109,21 @@ const calculatePointsSpent = (character: SavedCharacter): number => {
 		}
 		return -2;
 	};
-	
+
 	const attributes = [
 		getAttribute('finalMight', 'attribute_might'),
 		getAttribute('finalAgility', 'attribute_agility'),
 		getAttribute('finalCharisma', 'attribute_charisma'),
 		getAttribute('finalIntelligence', 'attribute_intelligence')
 	];
-	
+
 	let totalSpent = 0;
-	attributes.forEach(value => {
+	attributes.forEach((value) => {
 		if (value > -2) {
 			totalSpent += baseCost + Math.max(0, value * 2); // Each point above 0 costs 2
 		}
 	});
-	
+
 	return totalSpent;
 };
 
@@ -146,7 +160,7 @@ export const completeCharacterEdit = async (
 	try {
 		// Get the existing character state (manual modifications)
 		const existingState = getCharacterState(originalCharacterId);
-		
+
 		// Calculate new stats based on the edited character build
 		const newCalculatedCharacter = await characterCalculationFn({
 			id: originalCharacterId, // Keep the same ID
@@ -171,7 +185,9 @@ export const completeCharacterEdit = async (
 
 		// Update the saved character in localStorage with NEW CALCULATED VALUES
 		const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-		const characterIndex = savedCharacters.findIndex((char: any) => char.id === originalCharacterId);
+		const characterIndex = savedCharacters.findIndex(
+			(char: any) => char.id === originalCharacterId
+		);
 
 		if (characterIndex !== -1) {
 			// Update the character with new calculated values, preserving manual modifications
@@ -206,7 +222,6 @@ export const completeCharacterEdit = async (
 				defenseNotes: existingState.defenseNotes
 			});
 		}
-		
 	} catch (error) {
 		console.error('Error completing character edit:', error);
 		throw error;

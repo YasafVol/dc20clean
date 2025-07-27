@@ -41,12 +41,14 @@ interface DefensesProps {
 		field: 'manualPD' | 'manualPDR' | 'manualAD',
 		value: number | undefined
 	) => void;
+	isMobile?: boolean;
 }
 
 const Defenses: React.FC<DefensesProps> = ({
 	characterData,
 	calculatedDefenses,
-	onUpdateManualDefense
+	onUpdateManualDefense,
+	isMobile = false
 }) => {
 	const [pendingChange, setPendingChange] = useState<{
 		field: 'manualPD' | 'manualPDR' | 'manualAD';
@@ -207,7 +209,7 @@ const Defenses: React.FC<DefensesProps> = ({
 
 	return (
 		<>
-			<DefensesContainer>
+			<DefensesContainer $isMobile={isMobile}>
 				{/* Precision Defense */}
 				<DefenseItem>
 					<DefenseLabelContainer>

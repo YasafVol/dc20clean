@@ -169,6 +169,12 @@ export interface CharacterState {
 		current: AttackData[];
 	};
 
+	// Spells - original is empty/default, current is user-selected
+	spells: {
+		original: SpellData[];
+		current: SpellData[];
+	};
+
 	// Inventory - original is empty/default, current is user-modified
 	inventory: {
 		original: InventoryItemData[];
@@ -194,6 +200,21 @@ export interface AttackData {
 	critDamage: string;
 	brutalDamage: string;
 	heavyHitEffect: string;
+}
+
+export interface SpellData {
+	id: string;
+	spellName: string;
+	school: string;
+	isCantrip: boolean;
+	cost: {
+		ap: number;
+		mp?: number;
+	};
+	range: string;
+	duration: string;
+	isPrepared?: boolean;
+	notes?: string;
 }
 
 export interface InventoryItemData {

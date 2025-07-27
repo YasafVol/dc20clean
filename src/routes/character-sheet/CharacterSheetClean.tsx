@@ -10,9 +10,13 @@ import type {
 	FeatureData,
 	CurrentValues,
 	AttackData,
+	SpellData,
 	InventoryItemData,
 	CharacterState
 } from '../../types';
+import type { Spell } from '../../lib/rulesdata/spells-data/types/spell.types';
+import type { WeaponData } from '../../lib/rulesdata/weapons';
+import type { InventoryItem } from '../../lib/rulesdata/inventoryItems';
 
 // Import new component modules
 import LeftColumn from './components/LeftColumn';
@@ -21,6 +25,7 @@ import Resources from './components/Resources';
 import Defenses from './components/Defenses';
 import Combat from './components/Combat';
 import Attacks from './components/Attacks';
+import Spells from './components/Spells';
 import Inventory from './components/Inventory';
 import Features from './components/Features';
 import Movement from './components/Movement';
@@ -146,7 +151,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
+	const [selectedSpell, setSelectedSpell] = useState<Spell | null>(null);
+	const [selectedAttack, setSelectedAttack] = useState<{attack: AttackData, weapon: WeaponData | null} | null>(null);
+	const [selectedInventoryItem, setSelectedInventoryItem] = useState<{inventoryData: InventoryItemData, item: InventoryItem | null} | null>(null);
 	const [attacks, setAttacks] = useState<AttackData[]>([]);
+	const [spells, setSpells] = useState<SpellData[]>([]);
 	const [inventory, setInventory] = useState<InventoryItemData[]>([]);
 
 	// Mobile navigation state
@@ -216,6 +225,16 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		});
 	};
 
+	// Save spells to comprehensive state
+	const saveSpellsData = (newSpells: SpellData[]) => {
+		updateCharacterState(characterId, {
+			spells: {
+				original: characterState?.spells.original || [],
+				current: newSpells
+			}
+		});
+	};
+
 	// Save inventory to comprehensive state
 	const saveInventoryData = (newInventory: InventoryItemData[]) => {
 		updateCharacterState(characterId, {
@@ -231,6 +250,15 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		setAttacks((prev) => {
 			const result = typeof newAttacks === 'function' ? newAttacks(prev) : newAttacks;
 			saveAttacksData(result);
+			return result;
+		});
+	};
+
+	// Wrapper for setSpells that also saves to comprehensive state
+	const updateSpells = (newSpells: SpellData[] | ((prev: SpellData[]) => SpellData[])) => {
+		setSpells((prev) => {
+			const result = typeof newSpells === 'function' ? newSpells(prev) : newSpells;
+			saveSpellsData(result);
 			return result;
 		});
 	};
@@ -273,8 +301,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 				// Update component states from the comprehensive state
 				const legacyCurrentValues = characterStateToCurrentValues(initialState);
 				setCurrentValues(legacyCurrentValues);
-				setAttacks(initialState.attacks.current);
-				setInventory(initialState.inventory.current);
+				setAttacks(initialState.attacks?.current || []);
+				setSpells(initialState.spells?.current || []);
+				setInventory(initialState.inventory?.current || []);
 
 				console.log('Character data and state loaded:', {
 					characterData: data,
@@ -724,6 +753,33 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		setSelectedFeature(null);
 	};
 
+	// Handle spell popup
+	const openSpellPopup = (spell: Spell) => {
+		setSelectedSpell(spell);
+	};
+
+	const closeSpellPopup = () => {
+		setSelectedSpell(null);
+	};
+
+	// Handle attack popup
+	const openAttackPopup = (attack: AttackData, weapon: WeaponData | null) => {
+		setSelectedAttack({ attack, weapon });
+	};
+
+	const closeAttackPopup = () => {
+		setSelectedAttack(null);
+	};
+
+	// Handle inventory popup
+	const openInventoryPopup = (inventoryData: InventoryItemData, item: InventoryItem | null) => {
+		setSelectedInventoryItem({ inventoryData, item });
+	};
+
+	const closeInventoryPopup = () => {
+		setSelectedInventoryItem(null);
+	};
+
 	// Currency management function
 	const handleCurrencyChange = (currency: string, value: number) => {
 		setCurrentValues((prev) => {
@@ -800,13 +856,14 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	// Copy character data to clipboard
 	// Revert character data to original values
 	const handleRevertToOriginal = (
-		dataType: 'resources' | 'currency' | 'attacks' | 'inventory' | 'all'
+		dataType: 'resources' | 'currency' | 'attacks' | 'spells' | 'inventory' | 'all'
 	) => {
 		if (dataType === 'all') {
 			// Revert all data types
 			revertToOriginal(characterId, 'resources');
 			revertToOriginal(characterId, 'currency');
 			revertToOriginal(characterId, 'attacks');
+			revertToOriginal(characterId, 'spells');
 			revertToOriginal(characterId, 'inventory');
 
 			// Also clear all manual defense overrides (PDR, PD, AD)
@@ -887,6 +944,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					}
 				];
 				setAttacks(defaultAttacks);
+			} else if (dataType === 'spells') {
+				setSpells([]);
 			} else if (dataType === 'inventory') {
 				setInventory([]);
 			}
@@ -1127,11 +1186,28 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 								onDeathStepChange={handleDeathStepChange}
 							/>
 
+							{/* Spells Section */}
+							<Spells 
+								spells={spells} 
+								setSpells={updateSpells} 
+								characterData={characterData}
+								onSpellClick={openSpellPopup}
+							/>
+
 							{/* Attacks Section */}
-							<Attacks attacks={attacks} setAttacks={updateAttacks} characterData={characterData} />
+							<Attacks 
+								attacks={attacks} 
+								setAttacks={updateAttacks} 
+								characterData={characterData}
+								onAttackClick={openAttackPopup}
+							/>
 
 							{/* Inventory */}
-							<Inventory inventory={inventory} setInventory={updateInventory} />
+							<Inventory 
+								inventory={inventory} 
+								setInventory={updateInventory}
+								onItemClick={openInventoryPopup}
+							/>
 
 							{/* Player Notes */}
 							<PlayerNotes characterId={characterData.id} />
@@ -1213,6 +1289,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 									attacks={attacks}
 									setAttacks={updateAttacks}
 									characterData={characterData}
+									onAttackClick={openAttackPopup}
 								/>
 								<Movement characterData={characterData} />
 								<RightColumnResources
@@ -1226,7 +1303,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						{/* Items Tab - Mobile */}
 						{activeMobileSection === 'features' && (
 							<div>
-								<Inventory inventory={inventory} setInventory={updateInventory} />
+								<Inventory 
+									inventory={inventory} 
+									setInventory={updateInventory}
+									onItemClick={openInventoryPopup}
+								/>
 								<Currency currentValues={currentValues} onCurrencyChange={handleCurrencyChange} />
 							</div>
 						)}
@@ -1327,6 +1408,192 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 								Source: {selectedFeature.sourceDetail}
 							</StyledFeaturePopupSourceInfo>
 						)}
+					</StyledFeaturePopupContent>
+				</StyledFeaturePopupOverlay>
+			)}
+
+			{/* Spell Popup Modal */}
+			{selectedSpell && (
+				<StyledFeaturePopupOverlay onClick={closeSpellPopup}>
+					<StyledFeaturePopupContent onClick={(e) => e.stopPropagation()}>
+						<StyledFeaturePopupHeader>
+							<StyledFeaturePopupTitle>{selectedSpell.name}</StyledFeaturePopupTitle>
+							<StyledFeaturePopupClose onClick={closeSpellPopup}>×</StyledFeaturePopupClose>
+						</StyledFeaturePopupHeader>
+						<StyledFeaturePopupDescription>
+							<strong>School:</strong> {selectedSpell.school}<br />
+							<strong>AP Cost:</strong> {selectedSpell.cost.ap}<br />
+							{selectedSpell.cost.mp && <><strong>MP Cost:</strong> {selectedSpell.cost.mp}<br /></>}
+							<strong>Range:</strong> {selectedSpell.range}<br />
+							<strong>Duration:</strong> {selectedSpell.duration}<br />
+							{selectedSpell.isCantrip && <><strong>Type:</strong> Cantrip<br /></>}
+							{selectedSpell.isRitual && <><strong>Ritual:</strong> Yes<br /></>}
+							<br />
+							{selectedSpell.effects?.[0]?.description || 'No description available.'}
+							{selectedSpell.cantripPassive && (
+								<><br /><br /><strong>Cantrip Passive:</strong> {selectedSpell.cantripPassive}</>
+							)}
+						</StyledFeaturePopupDescription>
+						{selectedSpell.enhancements?.length > 0 && (
+							<StyledFeaturePopupSourceInfo>
+								Enhancements Available: {selectedSpell.enhancements.length}
+							</StyledFeaturePopupSourceInfo>
+						)}
+					</StyledFeaturePopupContent>
+				</StyledFeaturePopupOverlay>
+			)}
+
+			{/* Attack Popup Modal */}
+			{selectedAttack && (
+				<StyledFeaturePopupOverlay onClick={closeAttackPopup}>
+					<StyledFeaturePopupContent onClick={(e) => e.stopPropagation()}>
+						<StyledFeaturePopupHeader>
+							<StyledFeaturePopupTitle>
+								{selectedAttack.weapon?.name || selectedAttack.attack.name || 'Unknown Weapon'}
+							</StyledFeaturePopupTitle>
+							<StyledFeaturePopupClose onClick={closeAttackPopup}>×</StyledFeaturePopupClose>
+						</StyledFeaturePopupHeader>
+						<StyledFeaturePopupDescription>
+							{selectedAttack.weapon ? (
+								<>
+									<strong>Weapon Type:</strong> {selectedAttack.weapon.type}<br />
+									<strong>Weight Category:</strong> {selectedAttack.weapon.weightCategory}<br />
+									<strong>Damage:</strong> {selectedAttack.weapon.damage}<br />
+									{selectedAttack.weapon.versatileDamage && (
+										<><strong>Versatile Damage:</strong> {selectedAttack.weapon.versatileDamage}<br /></>
+									)}
+									<strong>Damage Type:</strong> {selectedAttack.weapon.damageType}<br />
+									{selectedAttack.weapon.range && (
+										<><strong>Range:</strong> {selectedAttack.weapon.range.short}/{selectedAttack.weapon.range.long}<br /></>
+									)}
+									{selectedAttack.weapon.ammunition && (
+										<><strong>Ammunition:</strong> {selectedAttack.weapon.ammunition}<br /></>
+									)}
+									{selectedAttack.weapon.reload && (
+										<><strong>Reload:</strong> {selectedAttack.weapon.reload}<br /></>
+									)}
+									<br />
+									<strong>Damage Calculations:</strong><br />
+									• <strong>Hit:</strong> {selectedAttack.weapon.damage} + ability modifier<br />
+									• <strong>Heavy Hit (+5):</strong> {selectedAttack.weapon.damage} + 1 + ability modifier<br />
+									• <strong>Brutal Hit (+10):</strong> {selectedAttack.weapon.damage} + 2 + ability modifier<br />
+									<br />
+									{selectedAttack.weapon.properties.length > 0 && (
+										<><strong>Properties:</strong> {selectedAttack.weapon.properties.join(', ')}<br /></>
+									)}
+									{selectedAttack.weapon.specialNotes && (
+										<><strong>Special:</strong> {selectedAttack.weapon.specialNotes}</>
+									)}
+								</>
+							) : (
+								<>
+									<strong>Custom Attack</strong><br />
+									<strong>Attack Bonus:</strong> +{selectedAttack.attack.attackBonus}<br />
+									<strong>Damage:</strong> {selectedAttack.attack.damage}<br />
+									<strong>Damage Type:</strong> {selectedAttack.attack.damageType}<br />
+									{selectedAttack.attack.critRange && (
+										<><strong>Crit Range:</strong> {selectedAttack.attack.critRange}<br /></>
+									)}
+									{selectedAttack.attack.critDamage && (
+										<><strong>Crit Damage:</strong> {selectedAttack.attack.critDamage}<br /></>
+									)}
+									{selectedAttack.attack.brutalDamage && (
+										<><strong>Brutal Damage:</strong> {selectedAttack.attack.brutalDamage}<br /></>
+									)}
+									{selectedAttack.attack.heavyHitEffect && (
+										<><strong>Heavy Hit Effect:</strong> {selectedAttack.attack.heavyHitEffect}</>
+									)}
+								</>
+							)}
+						</StyledFeaturePopupDescription>
+					</StyledFeaturePopupContent>
+				</StyledFeaturePopupOverlay>
+			)}
+
+			{/* Inventory Popup Modal */}
+			{selectedInventoryItem && (
+				<StyledFeaturePopupOverlay onClick={closeInventoryPopup}>
+					<StyledFeaturePopupContent onClick={(e) => e.stopPropagation()}>
+						<StyledFeaturePopupHeader>
+							<StyledFeaturePopupTitle>
+								{selectedInventoryItem.item?.name || selectedInventoryItem.inventoryData.itemName || 'Unknown Item'}
+							</StyledFeaturePopupTitle>
+							<StyledFeaturePopupClose onClick={closeInventoryPopup}>×</StyledFeaturePopupClose>
+						</StyledFeaturePopupHeader>
+						<StyledFeaturePopupDescription>
+							{selectedInventoryItem.item ? (
+								<>
+									<strong>Type:</strong> {selectedInventoryItem.item.itemType}<br />
+									{selectedInventoryItem.item.itemType === 'Weapon' && (
+										<>
+											<strong>Weapon Type:</strong> {(selectedInventoryItem.item as any).type}<br />
+											<strong>Style:</strong> {(selectedInventoryItem.item as any).style}<br />
+											<strong>Handedness:</strong> {(selectedInventoryItem.item as any).handedness}<br />
+											<strong>Damage:</strong> {(selectedInventoryItem.item as any).damage}<br />
+											{(selectedInventoryItem.item as any).properties && (
+												<><strong>Properties:</strong> {(selectedInventoryItem.item as any).properties.join(', ')}<br /></>
+											)}
+											{(selectedInventoryItem.item as any).price && (
+												<><strong>Price:</strong> {(selectedInventoryItem.item as any).price}<br /></>
+											)}
+										</>
+									)}
+									{selectedInventoryItem.item.itemType === 'Armor' && (
+										<>
+											<strong>Type:</strong> {(selectedInventoryItem.item as any).type}<br />
+											<strong>PDR:</strong> {(selectedInventoryItem.item as any).pdr}<br />
+											<strong>AD Modifier:</strong> {(selectedInventoryItem.item as any).adModifier}<br />
+											{(selectedInventoryItem.item as any).agilityCap && (
+												<><strong>Agility Cap:</strong> {(selectedInventoryItem.item as any).agilityCap}<br /></>
+											)}
+											{(selectedInventoryItem.item as any).price && (
+												<><strong>Price:</strong> {(selectedInventoryItem.item as any).price}<br /></>
+											)}
+										</>
+									)}
+									{selectedInventoryItem.item.itemType === 'Shield' && (
+										<>
+											<strong>PDR:</strong> {(selectedInventoryItem.item as any).pdr}<br />
+											<strong>AD Modifier:</strong> {(selectedInventoryItem.item as any).adModifier}<br />
+											{(selectedInventoryItem.item as any).price && (
+												<><strong>Price:</strong> {(selectedInventoryItem.item as any).price}<br /></>
+											)}
+										</>
+									)}
+									{selectedInventoryItem.item.itemType === 'Potion' && (
+										<>
+											<strong>Level:</strong> {(selectedInventoryItem.item as any).level}<br />
+											<strong>Healing:</strong> {(selectedInventoryItem.item as any).healing}<br />
+											<strong>Price:</strong> {(selectedInventoryItem.item as any).price}g<br />
+										</>
+									)}
+									{selectedInventoryItem.item.itemType === 'Adventuring Supply' && (
+										<>
+											{(selectedInventoryItem.item as any).description && (
+												<><strong>Description:</strong> {(selectedInventoryItem.item as any).description}<br /></>
+											)}
+											{(selectedInventoryItem.item as any).price && (
+												<><strong>Price:</strong> {(selectedInventoryItem.item as any).price}<br /></>
+											)}
+										</>
+									)}
+									<br />
+									<strong>Count:</strong> {selectedInventoryItem.inventoryData.count}<br />
+									{selectedInventoryItem.inventoryData.cost && (
+										<><strong>Cost:</strong> {selectedInventoryItem.inventoryData.cost}</>
+									)}
+								</>
+							) : (
+								<>
+									<strong>Custom Item</strong><br />
+									<strong>Type:</strong> {selectedInventoryItem.inventoryData.itemType}<br />
+									<strong>Count:</strong> {selectedInventoryItem.inventoryData.count}<br />
+									{selectedInventoryItem.inventoryData.cost && (
+										<><strong>Cost:</strong> {selectedInventoryItem.inventoryData.cost}</>
+									)}
+								</>
+							)}
+						</StyledFeaturePopupDescription>
 					</StyledFeaturePopupContent>
 				</StyledFeaturePopupOverlay>
 			)}

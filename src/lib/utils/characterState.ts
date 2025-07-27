@@ -5,6 +5,7 @@ import type {
 	CharacterState,
 	CharacterSheetData,
 	AttackData,
+	SpellData,
 	InventoryItemData,
 	CurrentValues
 } from '../../types';
@@ -87,6 +88,7 @@ export const initializeCharacterState = (
 	];
 
 	const originalInventory: InventoryItemData[] = [];
+	const originalSpells: SpellData[] = [];
 
 	// Use existing state if available, otherwise initialize with defaults
 	return {
@@ -125,6 +127,10 @@ export const initializeCharacterState = (
 		attacks: {
 			original: originalAttacks,
 			current: existingState?.attacks.current || [...originalAttacks]
+		},
+		spells: {
+			original: originalSpells,
+			current: existingState?.spells?.current || []
 		},
 		inventory: {
 			original: originalInventory,
@@ -242,6 +248,10 @@ export const updateCharacterState = (
 					original: [],
 					current: []
 				},
+				spells: {
+					original: [],
+					current: []
+				},
 				inventory: {
 					original: [],
 					current: []
@@ -300,6 +310,12 @@ export const updateCharacterState = (
 					...updates.attacks
 				}
 			: currentState.attacks,
+		spells: updates.spells
+			? {
+					...currentState.spells,
+					...updates.spells
+				}
+			: currentState.spells,
 		inventory: updates.inventory
 			? {
 					...currentState.inventory,
@@ -314,7 +330,7 @@ export const updateCharacterState = (
 // Revert a specific data type to original values
 export const revertToOriginal = (
 	characterId: string,
-	dataType: 'resources' | 'currency' | 'attacks' | 'inventory'
+	dataType: 'resources' | 'currency' | 'attacks' | 'spells' | 'inventory'
 ): void => {
 	const currentState = getCharacterState(characterId);
 	if (!currentState) {
@@ -351,6 +367,12 @@ export const revertToOriginal = (
 			updates.attacks = {
 				...currentState.attacks,
 				current: [...currentState.attacks.original]
+			};
+			break;
+		case 'spells':
+			updates.spells = {
+				...currentState.spells,
+				current: [...currentState.spells.original]
 			};
 			break;
 		case 'inventory':

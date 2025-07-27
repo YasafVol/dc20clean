@@ -154,7 +154,7 @@ export const StyledDamageCell = styled.div<{ color?: string }>`
 	text-align: center;
 	font-weight: bold;
 	color: ${(props) => props.color || 'inherit'};
-	cursor: help;
+	cursor: pointer;
 `;
 
 export const StyledInfoIcon = styled.span`
@@ -168,12 +168,12 @@ export const StyledInfoIcon = styled.span`
 	color: white;
 	font-size: 10px;
 	font-weight: bold;
-	cursor: help;
+	cursor: pointer;
 `;
 
 export const StyledDamageTypeCell = styled.div`
 	text-align: center;
 	font-size: 1rem;
 	font-weight: bold;
-	cursor: help;
+	cursor: pointer;
 `;

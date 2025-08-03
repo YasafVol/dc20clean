@@ -78,10 +78,12 @@ function ClassFeatures() {
 	// Get level 1 features
 	const level1Features = selectedClassFeatures.coreFeatures.filter(feature => feature.levelGained === 1);
 
-	// Get all feature choices from level 1 features
+	// Get all feature choices from level 1 features (excluding in-game tactical choices)
+	const inGameChoices = ['Divine Blessing', 'Commander\'s Call', 'Debilitating Strike'];
 	const featureChoices: any[] = [];
 	level1Features.forEach((feature) => {
-		if (feature.choices) {
+		// Skip features that are in-game tactical choices, not character creation choices
+		if (feature.choices && !inGameChoices.includes(feature.featureName)) {
 			feature.choices.forEach((choice, choiceIndex) => {
 				const choiceId = getLegacyChoiceId(selectedClassFeatures.className, feature.featureName, choiceIndex);
 				featureChoices.push({

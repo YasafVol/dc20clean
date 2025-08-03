@@ -5,6 +5,54 @@
 			"featureName": "Spell School Initiate",
 			"levelGained": 1,
 			"description": "You've completed training in a specialized School of Magic. Choose a Spell School. You gain the following benefits:",
+			"choices": [
+				{
+					"prompt": "Choose a Spell School to specialize in.",
+					"count": 1,
+					"options": [
+						{
+							"name": "Astromancy",
+							"description": "Magic focused on stars, time, and cosmic forces."
+						},
+						{
+							"name": "Conjuration",
+							"description": "Magic that summons creatures and objects from other planes."
+						},
+						{
+							"name": "Destruction",
+							"description": "Magic focused on dealing damage and breaking things."
+						},
+						{
+							"name": "Divination",
+							"description": "Magic that reveals information and sees the future."
+						},
+						{
+							"name": "Enchantment",
+							"description": "Magic that influences minds and emotions."
+						},
+						{
+							"name": "Illusion",
+							"description": "Magic that deceives the senses and creates false realities."
+						},
+						{
+							"name": "Protection",
+							"description": "Magic that shields and defends against harm."
+						},
+						{
+							"name": "Restoration",
+							"description": "Magic that heals, repairs, and restores."
+						},
+						{
+							"name": "Transmutation",
+							"description": "Magic that changes and transforms matter and energy."
+						},
+						{
+							"name": "Abjuration",
+							"description": "Magic that banishes, wards, and negates other magic."
+						}
+					]
+				}
+			],
 			"benefits": [
 				{
 					"name": "School Magic",

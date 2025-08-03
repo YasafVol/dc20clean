@@ -14,7 +14,11 @@ import {
 	StyledLabel,
 	StyledRadio,
 	StyledOptionDescription,
-	StyledNoSelection
+	StyledNoSelection,
+	StyledBenefitsList,
+	StyledBenefit,
+	StyledBenefitName,
+	StyledBenefitDescription
 } from './styles/ClassFeatures.styles';
 
 function ClassFeatures() {
@@ -103,6 +107,16 @@ function ClassFeatures() {
 					<StyledCard key={index}>
 						<StyledCardTitle>{feature.featureName}</StyledCardTitle>
 						<StyledCardDescription>{feature.description}</StyledCardDescription>
+						{feature.benefits && (
+							<StyledBenefitsList>
+								{feature.benefits.map((benefit, benefitIndex) => (
+									<StyledBenefit key={benefitIndex}>
+										<StyledBenefitName>{benefit.name}</StyledBenefitName>
+										<StyledBenefitDescription>{benefit.description}</StyledBenefitDescription>
+									</StyledBenefit>
+								))}
+							</StyledBenefitsList>
+						)}
 					</StyledCard>
 				))}
 			</StyledSection>

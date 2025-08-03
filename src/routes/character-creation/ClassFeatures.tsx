@@ -2,6 +2,8 @@ import { useCharacter } from '../../lib/stores/characterContext';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { findClassByName, getLegacyChoiceId } from '../../lib/rulesdata/loaders/class-features.loader';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
+import { maneuvers, ManeuverType } from '../../lib/rulesdata/maneuvers';
+import { techniques } from '../../lib/rulesdata/techniques';
 import {
 	StyledContainer,
 	StyledTitle,
@@ -97,6 +99,62 @@ function ClassFeatures() {
 		}
 	});
 
+	// Add martial choices based on class table and features
+	const level1Data = selectedClass.levelProgression?.[0]; // Level 1 data from table
+	if (level1Data) {
+		// Get base maneuvers from table
+		let tableManeuvers = level1Data.maneuversKnown || 0;
+		let tableTechniques = level1Data.techniquesKnown || 0;
+		
+		// Add class-specific feature bonuses
+		let featureManeuvers = 0;
+		let featureTechniques = 0;
+		
+		// Check for class-specific martial bonuses from features
+		if (selectedClassFeatures.className === 'Champion') {
+			// Champion gets +2 maneuvers and +1 technique from Master-At-Arms
+			featureManeuvers = 2;
+			featureTechniques = 1;
+		}
+		
+		const totalManeuvers = tableManeuvers + featureManeuvers;
+		const totalTechniques = tableTechniques + featureTechniques;
+		
+		// Add maneuver choices if needed
+		if (totalManeuvers > 0) {
+			const availableManeuvers = selectedClassFeatures.className === 'Champion' 
+				? maneuvers.filter(m => m.type !== ManeuverType.Attack) // Champion gets all Attack maneuvers automatically
+				: maneuvers; // Other classes choose from all maneuvers
+			
+			featureChoices.push({
+				id: `${selectedClassFeatures.className.toLowerCase()}_maneuvers`,
+				prompt: `Choose ${totalManeuvers} Maneuver${totalManeuvers > 1 ? 's' : ''}`,
+				type: 'select_multiple',
+				maxSelections: totalManeuvers,
+				options: availableManeuvers.map(maneuver => ({
+					value: maneuver.name,
+					label: maneuver.name,
+					description: `${maneuver.description}${maneuver.isReaction ? ' (Reaction)' : ''}${maneuver.requirement ? ` Requirement: ${maneuver.requirement}` : ''}`
+				}))
+			});
+		}
+		
+		// Add technique choices if needed  
+		if (totalTechniques > 0) {
+			featureChoices.push({
+				id: `${selectedClassFeatures.className.toLowerCase()}_techniques`,
+				prompt: `Choose ${totalTechniques} Technique${totalTechniques > 1 ? 's' : ''}`,
+				type: totalTechniques > 1 ? 'select_multiple' : 'select_one',
+				maxSelections: totalTechniques > 1 ? totalTechniques : undefined,
+				options: techniques.map(technique => ({
+					value: technique.name,
+					label: technique.name,
+					description: `${technique.description}${technique.isReaction ? ' (Reaction)' : ''}${technique.requirement ? ` Requirement: ${technique.requirement}` : ''} Cost: ${technique.cost.ap ? `${technique.cost.ap} AP` : ''}${technique.cost.sp ? ` ${technique.cost.sp} SP` : ''}`
+				}))
+			});
+		}
+	}
+
 	return (
 		<StyledContainer>
 			<StyledTitle>{selectedClass.name} Features</StyledTitle>
@@ -120,6 +178,26 @@ function ClassFeatures() {
 					</StyledCard>
 				))}
 			</StyledSection>
+
+			{selectedClassFeatures.className === 'Champion' && (
+				<StyledSection>
+					<StyledSectionTitle>Automatic Maneuvers</StyledSectionTitle>
+					<StyledCard>
+						<StyledCardTitle>Attack Maneuvers (Automatically Known)</StyledCardTitle>
+						<StyledCardDescription>
+							As a Champion, you automatically know all Attack maneuvers. You will also choose 6 additional maneuvers and 1 technique below.
+						</StyledCardDescription>
+						<StyledBenefitsList>
+							{maneuvers.filter(m => m.type === ManeuverType.Attack).map((maneuver, index) => (
+								<StyledBenefit key={index}>
+									<StyledBenefitName>{maneuver.name}</StyledBenefitName>
+									<StyledBenefitDescription>{maneuver.description}</StyledBenefitDescription>
+								</StyledBenefit>
+							))}
+						</StyledBenefitsList>
+					</StyledCard>
+				</StyledSection>
+			)}
 
 			{featureChoices.length > 0 && (
 				<StyledSection>

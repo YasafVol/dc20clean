@@ -5,6 +5,7 @@ import {
 	getLegacyChoiceId,
 	getAvailableSpellSchools
 } from '../../lib/rulesdata/loaders/class-features.loader';
+import { SpellSchool } from '../../lib/rulesdata/spells-data/types/spell.types';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
 import { maneuvers, ManeuverType } from '../../lib/rulesdata/maneuvers';
 import { techniques } from '../../lib/rulesdata/techniques';
@@ -221,6 +222,72 @@ function ClassFeatures() {
 				}))
 			});
 		}
+	}
+
+	// Add spell school choices if needed
+	if (selectedClassFeatures.spellcastingPath?.spellList) {
+		const spellList = selectedClassFeatures.spellcastingPath.spellList;
+
+		if (spellList.type === 'all_schools' && spellList.schoolCount) {
+			// Warlock-style: choose X schools from all available
+			const availableSchools = Object.values(SpellSchool);
+			featureChoices.push({
+				id: `${selectedClassFeatures.className.toLowerCase()}_spell_schools`,
+				prompt: `Choose ${spellList.schoolCount} Spell School${spellList.schoolCount > 1 ? 's' : ''}`,
+				type: 'select_multiple',
+				maxSelections: spellList.schoolCount,
+				options: availableSchools.map((school) => ({
+					value: school,
+					label: school,
+					description: `Access to all spells from the ${school} school`
+				}))
+			});
+		} else if (spellList.type === 'schools' && spellList.schoolCount && spellList.schoolCount > 0) {
+			// Spellblade-style: choose X additional schools (already have specificSchools)
+			const availableSchools = Object.values(SpellSchool);
+			const alreadyHaveSchools = spellList.specificSchools || [];
+			const choosableSchools = availableSchools.filter(
+				(school) => !alreadyHaveSchools.includes(school)
+			);
+
+			featureChoices.push({
+				id: `${selectedClassFeatures.className.toLowerCase()}_additional_spell_schools`,
+				prompt: `Choose ${spellList.schoolCount} additional Spell School${spellList.schoolCount > 1 ? 's' : ''} (you already have: ${alreadyHaveSchools.join(', ')})`,
+				type: spellList.schoolCount > 1 ? 'select_multiple' : 'select_one',
+				maxSelections: spellList.schoolCount > 1 ? spellList.schoolCount : undefined,
+				options: choosableSchools.map((school) => ({
+					value: school,
+					label: school,
+					description: `Access to all spells from the ${school} school`
+				}))
+			});
+		}
+
+		// Check for level 1 features that require spell school choices (like Wizard's Spell School Initiate)
+		level1Features.forEach((feature) => {
+			const description = feature.description.toLowerCase();
+			if (
+				description.includes('choose a spell school') ||
+				description.includes('choose 1 spell school')
+			) {
+				const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_school`;
+
+				// Only add if not already added
+				if (!featureChoices.some((choice) => choice.id === choiceId)) {
+					const availableSchools = Object.values(SpellSchool);
+					featureChoices.push({
+						id: choiceId,
+						prompt: `${feature.featureName}: Choose a Spell School`,
+						type: 'select_one',
+						options: availableSchools.map((school) => ({
+							value: school,
+							label: school,
+							description: `Specialize in the ${school} school of magic`
+						}))
+					});
+				}
+			}
+		});
 	}
 
 	return (

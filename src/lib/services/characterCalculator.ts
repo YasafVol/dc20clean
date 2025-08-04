@@ -221,8 +221,10 @@ export const calculateCharacterStats = async (
 		const classFeatures = findClassByName(classData.name);
 		if (classFeatures) {
 			// Get level 1 features
-			const level1Features = classFeatures.coreFeatures.filter(feature => feature.levelGained === 1);
-			
+			const level1Features = classFeatures.coreFeatures.filter(
+				(feature) => feature.levelGained === 1
+			);
+
 			level1Features.forEach((feature) => {
 				if (feature.benefits) {
 					feature.benefits.forEach((benefit) => {
@@ -283,61 +285,122 @@ export const calculateCharacterStats = async (
 		}
 	}
 
-	// Process selected feature choices (like Cleric domains)
+	// Process selected feature choices (robust parsing approach)
 	if (characterData.selectedFeatureChoices && classFeatures) {
 		try {
-			const selectedChoices: { [key: string]: string } = JSON.parse(characterData.selectedFeatureChoices);
-			
-			// Process Cleric domain benefits
-			if (classFeatures.className === 'Cleric') {
-				const domainChoiceId = 'cleric_divine_domains_0'; // Standard choice ID for divine domains
-				const selectedDomains = selectedChoices[domainChoiceId];
-				
-				if (selectedDomains) {
-					const domains = JSON.parse(selectedDomains);
-					domains.forEach((domainName: string) => {
-						switch (domainName) {
-							case 'Magic':
-								finalMPMax += 1; // Magic domain: "Your maximum MP increases by 1"
-								break;
-							case 'Divine Damage Expansion':
-								// Resistance (1) to divine damage type - would be handled in defense/resistance calculation
-								break;
-							case 'Life':
-								// When you produce an MP Effect that restores HP - active ability, not stat bonus
-								break;
-							case 'Death':
-								// Enemy creatures within 10 Spaces take +1 damage while Well-Bloodied - combat effect
-								break;
-							case 'Grave':
-								// Allied creatures within 10 Spaces take -1 damage while Well-Bloodied - combat effect  
-								break;
-							case 'Light':
-								// MP Effect targeting ability - active ability, not stat bonus
-								break;
-							case 'Dark':
-								// Darkvision and Hide ability - would be handled in abilities/vision calculation
-								break;
-							case 'War':
-								// Combat abilities - would be handled in combat calculation
-								break;
-							case 'Knowledge':
-								// Knowledge trade bonuses - would be handled in skill calculation
-								break;
-							case 'Nature':
-								// Natural abilities - would be handled in abilities calculation
-								break;
-							case 'Trickery':
-								// Stealth and deception bonuses - would be handled in skill calculation
-								break;
-							case 'Tempest':
-								// Storm and weather abilities - combat effects
-								break;
-							// Note: Magic domain can be chosen multiple times for additional +1 MP each time
+			const selectedChoices: { [key: string]: string } = JSON.parse(
+				characterData.selectedFeatureChoices
+			);
+
+			// Find all level 1 features with choices
+			const level1Features = classFeatures.coreFeatures.filter(
+				(feature) => feature.levelGained === 1
+			);
+
+			level1Features.forEach((feature) => {
+				if (feature.choices) {
+					feature.choices.forEach((choice, choiceIndex) => {
+						const choiceId = `${classFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;
+						const selectedOptions = selectedChoices[choiceId];
+
+						if (selectedOptions) {
+							let optionsToProcess: string[] = [];
+
+							// Handle both single selection and multiple selection
+							try {
+								optionsToProcess = JSON.parse(selectedOptions);
+								if (!Array.isArray(optionsToProcess)) {
+									optionsToProcess = [selectedOptions];
+								}
+							} catch {
+								optionsToProcess = [selectedOptions];
+							}
+
+							// Process each selected option
+							optionsToProcess.forEach((optionName) => {
+								const selectedOption = choice.options?.find((opt) => opt.name === optionName);
+								if (selectedOption) {
+									const description = selectedOption.description.toLowerCase();
+
+									// Parse stat bonuses from descriptions using regex patterns
+
+									// MP bonuses: "your maximum mp increases by X", "mp increases by X", "+X mp"
+									const mpMatch =
+										description.match(
+											/(?:your maximum mp increases by|mp increases by|\+)\s*(\d+)\s*mp/i
+										) || description.match(/maximum mp increases by\s*(\d+)/i);
+									if (mpMatch) {
+										finalMPMax += parseInt(mpMatch[1]);
+									}
+
+									// Ancestry Points: "you get X ancestry points", "X ancestry points"
+									const ancestryMatch = description.match(
+										/(?:you get|gain)\s*(\d+)\s*ancestry points?/i
+									);
+									if (ancestryMatch) {
+										// Note: This would need to be handled in character creation logic, not just stats
+										console.log(
+											`Feature choice grants ${ancestryMatch[1]} ancestry points: ${optionName}`
+										);
+									}
+
+									// SP bonuses: "your maximum sp increases by X", "+X sp"
+									const spMatch = description.match(
+										/(?:your maximum sp increases by|sp increases by|\+)\s*(\d+)\s*sp/i
+									);
+									if (spMatch) {
+										finalSPMax += parseInt(spMatch[1]);
+									}
+
+									// HP bonuses: "your maximum hp increases by X", "+X hp"
+									const hpMatch = description.match(
+										/(?:your maximum hp increases by|hp increases by|\+)\s*(\d+)\s*hp/i
+									);
+									if (hpMatch) {
+										finalHPMax += parseInt(hpMatch[1]);
+									}
+
+									// Maneuver learning: "you learn X maneuvers", "learn X defensive maneuvers"
+									const maneuverMatch = description.match(
+										/you learn\s*(\d+)\s*(?:defensive\s+)?maneuvers?/i
+									);
+									if (maneuverMatch) {
+										// Note: This would be handled in maneuver tracking, not base stats
+										console.log(
+											`Feature choice grants ${maneuverMatch[1]} maneuvers: ${optionName}`
+										);
+									}
+
+									// Spell learning: "you learn X additional spell", "you learn X spell"
+									const spellMatch = description.match(
+										/you learn\s*(\d+)\s*(?:additional\s+)?spells?/i
+									);
+									if (spellMatch) {
+										// Note: This would be handled in spell tracking, not base stats
+										console.log(`Feature choice grants ${spellMatch[1]} spells: ${optionName}`);
+									}
+
+									// Save DC bonuses: "save dc increases by X", "+X to save dc"
+									const saveDCMatch = description.match(
+										/(?:save dc increases by|\+)\s*(\d+)(?:\s*to save dc)?/i
+									);
+									if (saveDCMatch) {
+										finalSaveDC += parseInt(saveDCMatch[1]);
+									}
+
+									// Movement speed: "move speed increases by X", "+X movement"
+									const speedMatch = description.match(
+										/(?:move speed increases by|movement.*increases by|\+)\s*(\d+)(?:\s*(?:feet|ft|spaces?))?.*(?:movement|speed)/i
+									);
+									if (speedMatch) {
+										finalMoveSpeed += parseInt(speedMatch[1]);
+									}
+								}
+							});
 						}
 					});
 				}
-			}
+			});
 		} catch (error) {
 			console.warn('Error processing feature choices:', error);
 		}

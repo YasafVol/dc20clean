@@ -10,7 +10,7 @@ const tableData = Object.values(tableModules).map((module: any) => module.defaul
 // Create progression data structure from table files (stats only, no features)
 const compatibleData = tableData.map((classTable: any) => {
 	const className = classTable.className;
-	
+
 	return {
 		id: className.toLowerCase(),
 		name: className,
@@ -26,7 +26,7 @@ const compatibleData = tableData.map((classTable: any) => {
 		techniquesKnownLvl1: classTable.levelProgression?.[0]?.techniquesKnown || 0,
 		saveDCBase: 8,
 		deathThresholdBase: 10,
-		moveSpeedBase: 30,
+		moveSpeedBase: 5, // DC20: Base movement speed is 5 spaces
 		restPointsBase: 4,
 		gritPointsBase: 2,
 		initiativeBonusBase: 0,

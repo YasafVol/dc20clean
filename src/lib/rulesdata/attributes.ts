@@ -21,7 +21,8 @@ export const attributesData: IAttributeData[] = [
 		derivedStats: [
 			{ statName: 'PD (precision defense)', formula: '8 + CM + Agility + Intelligence + Bonuses' },
 			{ statName: 'Jump Distance', formula: 'Agility (min 1)' },
-			{ statName: 'Initiative', formula: 'CM + Agility' }
+			{ statName: 'Initiative', formula: 'CM + Agility' },
+			{ statName: 'Movement Speed', formula: '5 spaces (base) + trait modifiers' }
 		]
 	},
 	{

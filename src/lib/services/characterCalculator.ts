@@ -202,7 +202,7 @@ export const calculateCharacterStats = async (
 	let finalMPMax = 0;
 	let finalSaveDC = 8; // Base
 	let finalDeathThreshold = 10; // Base
-	let finalMoveSpeed = 30; // Base
+	let finalMoveSpeed = 5; // Default base, will be set by class data
 	let finalRestPoints = 4; // Base
 	let finalInitiativeBonus = 0; // Base
 
@@ -403,6 +403,28 @@ export const calculateCharacterStats = async (
 			});
 		} catch (error) {
 			console.warn('Error processing feature choices:', error);
+		}
+	}
+
+	// Process trait effects for movement speed
+	if (characterData.selectedTraitIds) {
+		try {
+			const selectedTraitIds = JSON.parse(characterData.selectedTraitIds);
+			const traitsData = await import('../rulesdata/traits');
+
+			selectedTraitIds.forEach((traitId: string) => {
+				const trait = traitsData.traitsData.find((t) => t.id === traitId);
+				if (trait?.effects) {
+					trait.effects.forEach((effect) => {
+						if (effect.type === 'MODIFY_SPEED') {
+							// Convert from internal units (5 = 1 space) to spaces
+							finalMoveSpeed += effect.value / 5;
+						}
+					});
+				}
+			});
+		} catch (error) {
+			console.warn('Error processing trait effects for movement speed:', error);
 		}
 	}
 

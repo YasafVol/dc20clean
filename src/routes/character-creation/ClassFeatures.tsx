@@ -266,10 +266,21 @@ function ClassFeatures() {
 		// Check for level 1 features that require spell school choices (like Wizard's Spell School Initiate)
 		level1Features.forEach((feature) => {
 			const description = feature.description.toLowerCase();
-			if (
-				description.includes('choose a spell school') ||
-				description.includes('choose 1 spell school')
-			) {
+			// Only include features that are character creation choices, not in-game tactical choices
+			const isCharacterCreationChoice =
+				(description.includes('choose a spell school') ||
+					description.includes('choose 1 spell school')) &&
+				// Exclude in-game features like Arcane Sigil
+				!description.includes('when you create') &&
+				!description.includes('when you cast') &&
+				!description.includes('you can spend') &&
+				// Include features that are clearly character creation (like training/specialization)
+				(description.includes('training') ||
+					description.includes('specialize') ||
+					description.includes('initiate') ||
+					description.includes('you gain the following benefits'));
+
+			if (isCharacterCreationChoice) {
 				const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_school`;
 
 				// Only add if not already added

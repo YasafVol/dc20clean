@@ -41,6 +41,58 @@ export interface ClassSubclass {
 
 export interface ClassDefinition {
 	className: string;
+	startingEquipment?: {
+		weaponsOrShields?: string[];
+		rangedWeapon?: string;
+		alternativeWeapons?: string;
+		armor?: string;
+		packs?: string;
+	};
+	martialPath?: {
+		combatTraining?: {
+			weapons?: string[];
+			armor?: string[];
+			shields?: string[];
+		};
+		maneuvers?: {
+			learnsAllAttack?: boolean;
+			additionalKnown?: string;
+		};
+		techniques?: {
+			additionalKnown?: string;
+		};
+		staminaPoints?: {
+			maximumIncreasesBy?: string;
+		};
+		staminaRegen?: {
+			description?: string;
+			conditions?: string[];
+		};
+	};
+	spellcastingPath?: {
+		combatTraining?: {
+			armor?: string[];
+			shields?: string[];
+		};
+		spellList?: {
+			type?: string;
+			listName?: string;
+			schoolsOrTags?: string[];
+			description?: string;
+			betaNote?: string;
+		};
+		cantrips?: {
+			knownIncreasesBy?: string;
+			description?: string;
+		};
+		spells?: {
+			knownIncreasesBy?: string;
+			description?: string;
+		};
+		manaPoints?: {
+			maximumIncreasesBy?: string;
+		};
+	};
 	coreFeatures: ClassFeature[];
 	subclasses: ClassSubclass[];
 }
@@ -89,7 +141,7 @@ export function getClassSpecificInfo(
 	selectedFeatureChoices?: string
 ): { displayInfo: { label: string; value: string }[] } {
 	const displayInfo: { label: string; value: string }[] = [];
-	
+
 	if (!selectedFeatureChoices) {
 		return { displayInfo };
 	}
@@ -97,7 +149,7 @@ export function getClassSpecificInfo(
 	try {
 		const selectedChoices: { [key: string]: string } = JSON.parse(selectedFeatureChoices);
 		const classData = findClassByName(className);
-		
+
 		if (!classData) {
 			return { displayInfo };
 		}
@@ -109,7 +161,7 @@ export function getClassSpecificInfo(
 					// Create a mapping for legacy choice IDs based on class and feature
 					const legacyChoiceId = getLegacyChoiceId(className, feature.featureName, choiceIndex);
 					const selectedValue = selectedChoices[legacyChoiceId];
-					
+
 					if (selectedValue && choice.options) {
 						if (choice.count > 1) {
 							// Handle multiple selections
@@ -142,7 +194,7 @@ export function getClassSpecificInfo(
 				feature.benefits.forEach((benefit) => {
 					const legacyBenefitId = getLegacyBenefitId(className, feature.featureName, benefit.name);
 					const selectedValue = selectedChoices[legacyBenefitId];
-					
+
 					if (selectedValue) {
 						displayInfo.push({
 							label: benefit.name,
@@ -160,19 +212,31 @@ export function getClassSpecificInfo(
 }
 
 // Helper function to map class/feature combinations to legacy choice IDs
-export function getLegacyChoiceId(className: string, featureName: string, choiceIndex: number): string {
+export function getLegacyChoiceId(
+	className: string,
+	featureName: string,
+	choiceIndex: number
+): string {
 	// Generic mapping: className_featureName_choiceIndex
 	return `${className.toLowerCase()}_${featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;
 }
 
 // Helper function to map class/feature combinations to legacy benefit IDs
-export function getLegacyBenefitId(className: string, featureName: string, benefitName: string): string {
+export function getLegacyBenefitId(
+	className: string,
+	featureName: string,
+	benefitName: string
+): string {
 	// Generic mapping: className_featureName_benefitName
 	return `${className.toLowerCase()}_${featureName.toLowerCase().replace(/\s+/g, '_')}_${benefitName.toLowerCase().replace(/\s+/g, '_')}`;
 }
 
 // Helper function to get display labels for different choice types
-export function getDisplayLabel(_className: string, featureName: string, _choiceIndex: number): string {
+export function getDisplayLabel(
+	_className: string,
+	featureName: string,
+	_choiceIndex: number
+): string {
 	// Generic: just use the feature name as the label
 	return featureName;
 }

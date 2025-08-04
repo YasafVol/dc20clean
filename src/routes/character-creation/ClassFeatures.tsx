@@ -1,6 +1,9 @@
 import { useCharacter } from '../../lib/stores/characterContext';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
-import { findClassByName, getLegacyChoiceId } from '../../lib/rulesdata/loaders/class-features.loader';
+import {
+	findClassByName,
+	getLegacyChoiceId
+} from '../../lib/rulesdata/loaders/class-features.loader';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
 import { maneuvers, ManeuverType } from '../../lib/rulesdata/maneuvers';
 import { techniques } from '../../lib/rulesdata/techniques';
@@ -76,26 +79,33 @@ function ClassFeatures() {
 	}
 
 	// Get level 1 features
-	const level1Features = selectedClassFeatures.coreFeatures.filter(feature => feature.levelGained === 1);
+	const level1Features = selectedClassFeatures.coreFeatures.filter(
+		(feature) => feature.levelGained === 1
+	);
 
 	// Get all feature choices from level 1 features (excluding in-game tactical choices)
-	const inGameChoices = ['Divine Blessing', 'Commander\'s Call', 'Debilitating Strike'];
+	const inGameChoices = ['Divine Blessing', "Commander's Call", 'Debilitating Strike'];
 	const featureChoices: any[] = [];
 	level1Features.forEach((feature) => {
 		// Skip features that are in-game tactical choices, not character creation choices
 		if (feature.choices && !inGameChoices.includes(feature.featureName)) {
 			feature.choices.forEach((choice, choiceIndex) => {
-				const choiceId = getLegacyChoiceId(selectedClassFeatures.className, feature.featureName, choiceIndex);
+				const choiceId = getLegacyChoiceId(
+					selectedClassFeatures.className,
+					feature.featureName,
+					choiceIndex
+				);
 				featureChoices.push({
 					id: choiceId,
 					prompt: choice.prompt,
 					type: choice.count > 1 ? 'select_multiple' : 'select_one',
 					maxSelections: choice.count > 1 ? choice.count : undefined,
-					options: choice.options?.map(option => ({
-						value: option.name,
-						label: option.name,
-						description: option.description
-					})) || []
+					options:
+						choice.options?.map((option) => ({
+							value: option.name,
+							label: option.name,
+							description: option.description
+						})) || []
 				});
 			});
 		}
@@ -107,48 +117,57 @@ function ClassFeatures() {
 		// Get base maneuvers from table
 		let tableManeuvers = level1Data.maneuversKnown || 0;
 		let tableTechniques = level1Data.techniquesKnown || 0;
-		
+
 		// Add class-specific feature bonuses
 		let featureManeuvers = 0;
 		let featureTechniques = 0;
-		
+
 		// Check for class-specific martial bonuses from features
 		if (selectedClassFeatures.className === 'Champion') {
 			// Champion gets +2 maneuvers and +1 technique from Master-At-Arms
 			featureManeuvers = 2;
 			featureTechniques = 1;
 		}
-		
+
 		const totalManeuvers = tableManeuvers + featureManeuvers;
 		const totalTechniques = tableTechniques + featureTechniques;
-		
+
+		// Check if class gets all Attack maneuvers automatically
+		const getsAllAttackManeuvers =
+			selectedClassFeatures.className === 'Champion' ||
+			selectedClassFeatures.martialPath?.maneuvers?.learnsAllAttack === true;
+
 		// Add maneuver choices if needed
 		if (totalManeuvers > 0) {
-			const availableManeuvers = selectedClassFeatures.className === 'Champion' 
-				? maneuvers.filter(m => m.type !== ManeuverType.Attack) // Champion gets all Attack maneuvers automatically
+			const availableManeuvers = getsAllAttackManeuvers
+				? maneuvers.filter((m) => m.type !== ManeuverType.Attack) // Class gets all Attack maneuvers automatically
 				: maneuvers; // Other classes choose from all maneuvers
-			
+
+			const promptText = getsAllAttackManeuvers
+				? `Choose ${totalManeuvers} Maneuver${totalManeuvers > 1 ? 's' : ''} (Attack maneuvers are automatic)`
+				: `Choose ${totalManeuvers} Maneuver${totalManeuvers > 1 ? 's' : ''}`;
+
 			featureChoices.push({
 				id: `${selectedClassFeatures.className.toLowerCase()}_maneuvers`,
-				prompt: `Choose ${totalManeuvers} Maneuver${totalManeuvers > 1 ? 's' : ''}`,
+				prompt: promptText,
 				type: 'select_multiple',
 				maxSelections: totalManeuvers,
-				options: availableManeuvers.map(maneuver => ({
+				options: availableManeuvers.map((maneuver) => ({
 					value: maneuver.name,
 					label: maneuver.name,
 					description: `${maneuver.description}${maneuver.isReaction ? ' (Reaction)' : ''}${maneuver.requirement ? ` Requirement: ${maneuver.requirement}` : ''}`
 				}))
 			});
 		}
-		
-		// Add technique choices if needed  
+
+		// Add technique choices if needed
 		if (totalTechniques > 0) {
 			featureChoices.push({
 				id: `${selectedClassFeatures.className.toLowerCase()}_techniques`,
 				prompt: `Choose ${totalTechniques} Technique${totalTechniques > 1 ? 's' : ''}`,
 				type: totalTechniques > 1 ? 'select_multiple' : 'select_one',
 				maxSelections: totalTechniques > 1 ? totalTechniques : undefined,
-				options: techniques.map(technique => ({
+				options: techniques.map((technique) => ({
 					value: technique.name,
 					label: technique.name,
 					description: `${technique.description}${technique.isReaction ? ' (Reaction)' : ''}${technique.requirement ? ` Requirement: ${technique.requirement}` : ''} Cost: ${technique.cost.ap ? `${technique.cost.ap} AP` : ''}${technique.cost.sp ? ` ${technique.cost.sp} SP` : ''}`
@@ -160,6 +179,209 @@ function ClassFeatures() {
 	return (
 		<StyledContainer>
 			<StyledTitle>{selectedClass.name} Features</StyledTitle>
+
+			{/* Starting Equipment Section */}
+			{selectedClassFeatures.startingEquipment && (
+				<StyledSection>
+					<StyledSectionTitle>Starting Equipment</StyledSectionTitle>
+					<StyledCard>
+						<StyledCardTitle>Equipment Package</StyledCardTitle>
+						<StyledBenefitsList>
+							{selectedClassFeatures.startingEquipment.weaponsOrShields && (
+								<StyledBenefit>
+									<StyledBenefitName>Weapons/Shields</StyledBenefitName>
+									<StyledBenefitDescription>
+										{selectedClassFeatures.startingEquipment.weaponsOrShields.join(', ')}
+									</StyledBenefitDescription>
+								</StyledBenefit>
+							)}
+							{selectedClassFeatures.startingEquipment.rangedWeapon && (
+								<StyledBenefit>
+									<StyledBenefitName>Ranged Weapon</StyledBenefitName>
+									<StyledBenefitDescription>
+										{selectedClassFeatures.startingEquipment.rangedWeapon}
+									</StyledBenefitDescription>
+								</StyledBenefit>
+							)}
+							{selectedClassFeatures.startingEquipment.armor && (
+								<StyledBenefit>
+									<StyledBenefitName>Armor</StyledBenefitName>
+									<StyledBenefitDescription>
+										{selectedClassFeatures.startingEquipment.armor}
+									</StyledBenefitDescription>
+								</StyledBenefit>
+							)}
+							{selectedClassFeatures.startingEquipment.packs && (
+								<StyledBenefit>
+									<StyledBenefitName>Adventure Packs</StyledBenefitName>
+									<StyledBenefitDescription>
+										{selectedClassFeatures.startingEquipment.packs}
+									</StyledBenefitDescription>
+								</StyledBenefit>
+							)}
+						</StyledBenefitsList>
+					</StyledCard>
+				</StyledSection>
+			)}
+
+			{/* Martial Path Section */}
+			{selectedClassFeatures.martialPath && (
+				<StyledSection>
+					<StyledSectionTitle>Martial Training</StyledSectionTitle>
+					<StyledCard>
+						<StyledCardTitle>Combat Proficiencies</StyledCardTitle>
+						<StyledBenefitsList>
+							{selectedClassFeatures.martialPath.combatTraining?.weapons && (
+								<StyledBenefit>
+									<StyledBenefitName>Weapon Training</StyledBenefitName>
+									<StyledBenefitDescription>
+										{selectedClassFeatures.martialPath.combatTraining.weapons.join(', ')}
+									</StyledBenefitDescription>
+								</StyledBenefit>
+							)}
+							{selectedClassFeatures.martialPath.combatTraining?.armor && (
+								<StyledBenefit>
+									<StyledBenefitName>Armor Training</StyledBenefitName>
+									<StyledBenefitDescription>
+										{selectedClassFeatures.martialPath.combatTraining.armor.join(', ')}
+									</StyledBenefitDescription>
+								</StyledBenefit>
+							)}
+							{selectedClassFeatures.martialPath.combatTraining?.shields && (
+								<StyledBenefit>
+									<StyledBenefitName>Shield Training</StyledBenefitName>
+									<StyledBenefitDescription>
+										{selectedClassFeatures.martialPath.combatTraining.shields.join(', ')}
+									</StyledBenefitDescription>
+								</StyledBenefit>
+							)}
+						</StyledBenefitsList>
+					</StyledCard>
+
+					{selectedClassFeatures.martialPath.staminaRegen && (
+						<StyledCard>
+							<StyledCardTitle>Stamina Regeneration</StyledCardTitle>
+							<StyledCardDescription>
+								{selectedClassFeatures.martialPath.staminaRegen.description}
+							</StyledCardDescription>
+							{selectedClassFeatures.martialPath.staminaRegen.conditions && (
+								<StyledBenefitsList>
+									{selectedClassFeatures.martialPath.staminaRegen.conditions.map(
+										(condition, index) => (
+											<StyledBenefit key={index}>
+												<StyledBenefitDescription>• {condition}</StyledBenefitDescription>
+											</StyledBenefit>
+										)
+									)}
+								</StyledBenefitsList>
+							)}
+						</StyledCard>
+					)}
+				</StyledSection>
+			)}
+
+			{/* Spellcasting Path Section */}
+			{selectedClassFeatures.spellcastingPath && (
+				<StyledSection>
+					<StyledSectionTitle>Spellcasting Training</StyledSectionTitle>
+
+					{/* Combat Training for Spellcasters */}
+					{(selectedClassFeatures.spellcastingPath.combatTraining?.armor ||
+						selectedClassFeatures.spellcastingPath.combatTraining?.shields) && (
+						<StyledCard>
+							<StyledCardTitle>Combat Proficiencies</StyledCardTitle>
+							<StyledBenefitsList>
+								{selectedClassFeatures.spellcastingPath.combatTraining?.armor && (
+									<StyledBenefit>
+										<StyledBenefitName>Armor Training</StyledBenefitName>
+										<StyledBenefitDescription>
+											{selectedClassFeatures.spellcastingPath.combatTraining.armor.join(', ')}
+										</StyledBenefitDescription>
+									</StyledBenefit>
+								)}
+								{selectedClassFeatures.spellcastingPath.combatTraining?.shields && (
+									<StyledBenefit>
+										<StyledBenefitName>Shield Training</StyledBenefitName>
+										<StyledBenefitDescription>
+											{selectedClassFeatures.spellcastingPath.combatTraining.shields.join(', ')}
+										</StyledBenefitDescription>
+									</StyledBenefit>
+								)}
+							</StyledBenefitsList>
+						</StyledCard>
+					)}
+
+					{/* Spell List Information */}
+					{selectedClassFeatures.spellcastingPath.spellList && (
+						<StyledCard>
+							<StyledCardTitle>Spell List Access</StyledCardTitle>
+							<StyledBenefitsList>
+								{selectedClassFeatures.spellcastingPath.spellList.listName && (
+									<StyledBenefit>
+										<StyledBenefitName>Spell List</StyledBenefitName>
+										<StyledBenefitDescription>
+											{selectedClassFeatures.spellcastingPath.spellList.listName}
+										</StyledBenefitDescription>
+									</StyledBenefit>
+								)}
+								{selectedClassFeatures.spellcastingPath.spellList.schoolsOrTags && (
+									<StyledBenefit>
+										<StyledBenefitName>Available Schools/Tags</StyledBenefitName>
+										<StyledBenefitDescription>
+											{selectedClassFeatures.spellcastingPath.spellList.schoolsOrTags.join(', ')}
+										</StyledBenefitDescription>
+									</StyledBenefit>
+								)}
+								{selectedClassFeatures.spellcastingPath.spellList.description && (
+									<StyledBenefit>
+										<StyledBenefitName>Selection Method</StyledBenefitName>
+										<StyledBenefitDescription>
+											{selectedClassFeatures.spellcastingPath.spellList.description}
+										</StyledBenefitDescription>
+									</StyledBenefit>
+								)}
+							</StyledBenefitsList>
+							{selectedClassFeatures.spellcastingPath.spellList.betaNote && (
+								<StyledCardDescription>
+									<strong>Beta Note:</strong>{' '}
+									{selectedClassFeatures.spellcastingPath.spellList.betaNote}
+								</StyledCardDescription>
+							)}
+						</StyledCard>
+					)}
+
+					{/* Spellcasting Progression */}
+					<StyledCard>
+						<StyledCardTitle>Spellcasting Progression</StyledCardTitle>
+						<StyledBenefitsList>
+							{selectedClassFeatures.spellcastingPath.cantrips && (
+								<StyledBenefit>
+									<StyledBenefitName>Cantrips Known</StyledBenefitName>
+									<StyledBenefitDescription>
+										{selectedClassFeatures.spellcastingPath.cantrips.knownIncreasesBy}
+									</StyledBenefitDescription>
+								</StyledBenefit>
+							)}
+							{selectedClassFeatures.spellcastingPath.spells && (
+								<StyledBenefit>
+									<StyledBenefitName>Spells Known</StyledBenefitName>
+									<StyledBenefitDescription>
+										{selectedClassFeatures.spellcastingPath.spells.knownIncreasesBy}
+									</StyledBenefitDescription>
+								</StyledBenefit>
+							)}
+							{selectedClassFeatures.spellcastingPath.manaPoints && (
+								<StyledBenefit>
+									<StyledBenefitName>Mana Points</StyledBenefitName>
+									<StyledBenefitDescription>
+										{selectedClassFeatures.spellcastingPath.manaPoints.maximumIncreasesBy}
+									</StyledBenefitDescription>
+								</StyledBenefit>
+							)}
+						</StyledBenefitsList>
+					</StyledCard>
+				</StyledSection>
+			)}
 
 			<StyledSection>
 				<StyledSectionTitle>Level 1 Features</StyledSectionTitle>
@@ -181,21 +403,27 @@ function ClassFeatures() {
 				))}
 			</StyledSection>
 
-			{selectedClassFeatures.className === 'Champion' && (
+			{/* Automatic Attack Maneuvers Section */}
+			{(selectedClassFeatures.className === 'Champion' ||
+				selectedClassFeatures.martialPath?.maneuvers?.learnsAllAttack === true) && (
 				<StyledSection>
 					<StyledSectionTitle>Automatic Maneuvers</StyledSectionTitle>
 					<StyledCard>
 						<StyledCardTitle>Attack Maneuvers (Automatically Known)</StyledCardTitle>
 						<StyledCardDescription>
-							As a Champion, you automatically know all Attack maneuvers. You will also choose 6 additional maneuvers and 1 technique below.
+							{selectedClassFeatures.className === 'Champion'
+								? 'As a Champion, you automatically know all Attack maneuvers. You will also choose additional maneuvers and techniques below.'
+								: 'This class automatically knows all Attack maneuvers due to their martial training. You will also choose additional maneuvers below.'}
 						</StyledCardDescription>
 						<StyledBenefitsList>
-							{maneuvers.filter(m => m.type === ManeuverType.Attack).map((maneuver, index) => (
-								<StyledBenefit key={index}>
-									<StyledBenefitName>{maneuver.name}</StyledBenefitName>
-									<StyledBenefitDescription>{maneuver.description}</StyledBenefitDescription>
-								</StyledBenefit>
-							))}
+							{maneuvers
+								.filter((m) => m.type === ManeuverType.Attack)
+								.map((maneuver, index) => (
+									<StyledBenefit key={index}>
+										<StyledBenefitName>{maneuver.name}</StyledBenefitName>
+										<StyledBenefitDescription>{maneuver.description}</StyledBenefitDescription>
+									</StyledBenefit>
+								))}
 						</StyledBenefitsList>
 					</StyledCard>
 				</StyledSection>

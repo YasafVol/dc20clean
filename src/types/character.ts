@@ -191,7 +191,7 @@ export interface CharacterState {
 
 export interface AttackData {
 	id: string;
-	weaponId: string;
+	weaponName: string; // Changed from weaponId to weaponName to match inventory system
 	name: string;
 	attackBonus: number;
 	damage: string;

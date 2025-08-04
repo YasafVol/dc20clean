@@ -1,12 +1,16 @@
 import React from 'react';
 import type { AttackData, CharacterSheetData } from '../../../types';
+import { weapons, type Weapon, WeaponType } from '../../../lib/rulesdata/inventoryItems';
 import {
-	WeaponData,
-	weaponsData,
-	getHeavyHitDamage,
-	getBrutalHitDamage,
-	getWeaponAttackBonus
-} from '../../../lib/rulesdata/weapons';
+	parseDamage,
+	getDamageType,
+	isRangedWeapon,
+	calculateAttackBonus,
+	calculateDamage,
+	getVersatileDamage,
+	getWeaponFeatures,
+	createEmptyAttackData
+} from '../../../lib/utils/weaponUtils';
 import {
 	StyledAttacksSection,
 	StyledAttacksHeader,
@@ -28,14 +32,14 @@ export interface AttacksProps {
 	attacks: AttackData[];
 	setAttacks: React.Dispatch<React.SetStateAction<AttackData[]>>;
 	characterData: CharacterSheetData;
-	onAttackClick: (attack: AttackData, weapon: WeaponData | null) => void;
+	onAttackClick: (attack: AttackData, weapon: Weapon | null) => void;
 }
 
 const Attacks: React.FC<AttacksProps> = ({ attacks, setAttacks, characterData, onAttackClick }) => {
 	const addWeaponSlot = () => {
 		const newAttack: AttackData = {
 			id: `attack_${Date.now()}`,
-			weaponId: '',
+			weaponName: '',
 			name: '',
 			attackBonus: 0,
 			damage: '',
@@ -52,9 +56,14 @@ const Attacks: React.FC<AttacksProps> = ({ attacks, setAttacks, characterData, o
 		setAttacks((prev) => prev.filter((_, index) => index !== attackIndex));
 	};
 
-	const handleWeaponSelect = (attackIndex: number, weaponId: string) => {
-		const weapon = weaponsData.find((w: any) => w.id === weaponId);
-		if (!weapon) return;
+	const handleWeaponSelect = (attackIndex: number, weaponName: string) => {
+		console.log('Selecting weapon:', weaponName);
+		const weapon = weapons.find((w) => w.name === weaponName);
+		if (!weapon) {
+			console.error('Weapon not found:', weaponName);
+			return;
+		}
+		console.log('Found weapon:', weapon);
 
 		const newAttackData = calculateAttackData(weapon);
 
@@ -65,46 +74,39 @@ const Attacks: React.FC<AttacksProps> = ({ attacks, setAttacks, characterData, o
 		);
 	};
 
-	const calculateAttackData = (weapon: WeaponData): AttackData => {
-		if (!characterData) {
-			return {
-				id: '',
-				weaponId: weapon.id,
-				name: weapon.name,
-				attackBonus: 0,
-				damage: '',
-				damageType: weapon.damageType,
-				critRange: '',
-				critDamage: '',
-				brutalDamage: '',
-				heavyHitEffect: ''
-			};
+	const calculateAttackData = (weapon: Weapon): AttackData => {
+		if (!weapon || !characterData) {
+			return createEmptyAttackData(weapon?.name);
 		}
 
 		const mightMod = Math.floor((characterData.finalMight - 10) / 2);
 		const agilityMod = Math.floor((characterData.finalAgility - 10) / 2);
 
-		const attackBonus = getWeaponAttackBonus(
+		const attackBonus = calculateAttackBonus(
 			weapon,
 			characterData.finalCombatMastery,
 			mightMod,
 			agilityMod
 		);
-		const damageString = weapon.versatileDamage
-			? `${weapon.damage}(${weapon.versatileDamage})`
-			: weapon.damage.toString();
+
+		const damageType = getDamageType(weapon.damage);
+		const versatileInfo = getVersatileDamage(weapon);
+		const damageString = versatileInfo
+			? `${versatileInfo.oneHanded} (${versatileInfo.twoHanded} two-handed)`
+			: weapon.damage;
+
 		const critRange = '20'; // Default crit range
-		const critDamage = '';
-		const brutalDamage = '';
-		const heavyHitEffect = weapon.properties.includes('Impact') ? 'Prone/Push' : '';
+		const critDamage = calculateDamage(weapon, 'normal');
+		const brutalDamage = calculateDamage(weapon, 'brutal');
+		const heavyHitEffect = weapon.properties.includes('Impact') ? '+1 damage on Heavy Hit' : '';
 
 		return {
 			id: '',
-			weaponId: weapon.id,
+			weaponName: weapon.name,
 			name: weapon.name,
 			attackBonus,
 			damage: damageString,
-			damageType: weapon.damageType,
+			damageType,
 			critRange,
 			critDamage,
 			brutalDamage,
@@ -150,8 +152,8 @@ const Attacks: React.FC<AttacksProps> = ({ attacks, setAttacks, characterData, o
 					</StyledEmptyState>
 				) : (
 					attacks.map((attack, index) => {
-						const weapon = attack.weaponId
-							? weaponsData.find((w: any) => w.id === attack.weaponId)
+						const weapon = attack.weaponName
+							? weapons.find((w) => w.name === attack.weaponName)
 							: null;
 
 						return (
@@ -163,13 +165,13 @@ const Attacks: React.FC<AttacksProps> = ({ attacks, setAttacks, characterData, o
 
 								{/* Weapon Selection */}
 								<StyledWeaponSelect
-									value={attack.weaponId}
+									value={attack.weaponName}
 									onChange={(e: any) => handleWeaponSelect(index, e.target.value)}
 								>
 									<option value="">Select Weapon...</option>
-									{weaponsData.map((weapon: any) => (
-										<option key={weapon.id} value={weapon.id}>
-											{weapon.name} ({weapon.weightCategory})
+									{weapons.map((weapon) => (
+										<option key={weapon.name} value={weapon.name}>
+											{weapon.name} ({weapon.handedness})
 										</option>
 									))}
 								</StyledWeaponSelect>
@@ -178,15 +180,11 @@ const Attacks: React.FC<AttacksProps> = ({ attacks, setAttacks, characterData, o
 								<StyledDamageCell
 									title={
 										weapon
-											? `Base weapon damage: ${weapon.damage}${weapon.versatileDamage ? ` (${weapon.versatileDamage} when two-handed)` : ''}`
+											? `Base weapon damage: ${weapon.damage}${getVersatileDamage(weapon) ? ` (${getVersatileDamage(weapon)?.twoHanded} when two-handed)` : ''}`
 											: ''
 									}
 								>
-									{weapon
-										? weapon.versatileDamage
-											? `${weapon.damage}(${weapon.versatileDamage})`
-											: weapon.damage
-										: '-'}
+									{weapon ? attack.damage || weapon.damage : '-'}
 								</StyledDamageCell>
 
 								{/* Heavy Damage */}
@@ -195,14 +193,14 @@ const Attacks: React.FC<AttacksProps> = ({ attacks, setAttacks, characterData, o
 									title={
 										weapon
 											? weapon.properties.includes('Impact')
-												? `Heavy Hit: ${getHeavyHitDamage(weapon)} damage (base ${weapon.versatileDamage || weapon.damage} + 1 heavy + 1 impact) + Target must make Might Save or be knocked Prone and pushed 5 feet`
-												: `Heavy Hit: ${getHeavyHitDamage(weapon)} damage (base ${weapon.versatileDamage || weapon.damage} + 1 heavy)`
+												? `Heavy Hit: ${calculateDamage(weapon, 'heavy')} damage (base ${weapon.damage} + 1 heavy + 1 impact) + Target must make Might Save or be knocked Prone and pushed 5 feet`
+												: `Heavy Hit: ${calculateDamage(weapon, 'heavy')} damage (base ${weapon.damage} + 1 heavy)`
 											: ''
 									}
 								>
 									{weapon ? (
 										<>
-											{getHeavyHitDamage(weapon)}
+											{calculateDamage(weapon, 'heavy')}
 											{weapon.properties.includes('Impact') && (
 												<div style={{ fontSize: '0.6rem' }}>+Prone/Push</div>
 											)}
@@ -218,25 +216,19 @@ const Attacks: React.FC<AttacksProps> = ({ attacks, setAttacks, characterData, o
 									title={
 										weapon
 											? weapon.properties.includes('Impact')
-												? `Brutal Hit: ${getBrutalHitDamage(weapon)} damage (base ${weapon.versatileDamage || weapon.damage} + 2 brutal + 1 impact)`
-												: `Brutal Hit: ${getBrutalHitDamage(weapon)} damage (base ${weapon.versatileDamage || weapon.damage} + 2 brutal)`
+												? `Brutal Hit: ${calculateDamage(weapon, 'brutal')} damage (base ${weapon.damage} + 2 brutal + 1 impact)`
+												: `Brutal Hit: ${calculateDamage(weapon, 'brutal')} damage (base ${weapon.damage} + 2 brutal)`
 											: ''
 									}
 								>
-									{weapon ? getBrutalHitDamage(weapon) : '-'}
+									{weapon ? calculateDamage(weapon, 'brutal') : '-'}
 								</StyledDamageCell>
 
 								{/* Damage Type */}
-								<StyledDamageTypeCell title={weapon ? `${weapon.damageType} damage` : ''}>
-									{weapon
-										? weapon.damageType === 'slashing'
-											? 'S'
-											: weapon.damageType === 'piercing'
-												? 'P'
-												: weapon.damageType === 'bludgeoning'
-													? 'B'
-													: 'X'
-										: '-'}
+								<StyledDamageTypeCell
+									title={weapon ? `${getDamageType(weapon.damage)} damage` : ''}
+								>
+									{weapon ? parseDamage(weapon.damage).type : '-'}
 								</StyledDamageTypeCell>
 
 								{/* Damage Calculation Info */}

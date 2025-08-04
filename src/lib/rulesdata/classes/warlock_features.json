@@ -1,5 +1,32 @@
 {
 	"className": "Warlock",
+	"startingEquipment": {
+		"weaponsOrShields": ["1 Weapon"],
+		"armor": "1 set of Light Armor",
+		"packs": "X or Y “Packs” (Adventuring Packs Coming Soon)"
+	},
+	"spellcastingPath": {
+		"combatTraining": {
+			"armor": ["Light Armor"]
+		},
+		"spellList": {
+			"type": "all_schools",
+			"schoolCount": 4,
+			"description": "You choose 4 Spell Schools. When you learn a new Spell, you can choose any Spell from the chosen Spell Schools.",
+			"betaNote": "The Warlock works in a unique way with Spell Schools, so until more Spells are released in future updates you just get access to any of the \"Premade Lists\" that have been released. You could pick 4 Spell Schools and then grab Spells from across all the Prepared Lists if you want to, but it will be difficult without with the current number of Spells."
+		},
+		"cantrips": {
+			"knownIncreasesBy": "Cantrips Known column of the Warlock Class Table",
+			"description": "Cantrips are Spells with the Cantrip Spell Tag."
+		},
+		"spells": {
+			"knownIncreasesBy": "Spells Known column of the Warlock Class Table",
+			"description": "These can be Spells with or without the Cantrip Spell Tag."
+		},
+		"manaPoints": {
+			"maximumIncreasesBy": "Mana Points column of the Warlock Class Table"
+		}
+	},
 	"coreFeatures": [
 		{
 			"featureName": "Warlock Contract",
@@ -19,53 +46,23 @@
 		{
 			"featureName": "Pact Boon",
 			"levelGained": 1,
-			"description": "You gain a Pact Boon from your Patron.",
+			"description": "You gain a Pact Boon from your Patron. Choose 1 of the following options: Weapon, Armor, Cantrip, or Familiar.",
 			"choices": [
 				{
-					"prompt": "Choose 1 of the following options:",
+					"prompt": "Choose your Pact Boon.",
 					"count": 1,
 					"options": [
 						{
 							"name": "Pact Weapon",
-							"description": "You can choose a Weapon in your possession and bond with it, making it your Pact Weapon. You can only have 1 Pact Weapon at a time. If the Weapon has the Ammo property, it manifests its own Ammo when you load it, which immediately vanishes once the Attack is resolved. You gain the following benefits while wielding the Weapon:\n• Weapon Mastery: You’re considered to have Training with your Pact Weapon.\n• Maneuvers: You gain access to Attack Maneuvers, and learn 2 additional Save Maneuvers of your choice.",
-							"effects": [
-								{
-									"type": "GRANT_COMBAT_TRAINING",
-									"value": ["Pact Weapon"]
-								},
-								{
-									"type": "GRANT_MANEUVERS",
-									"value": "All Attack"
-								},
-								{
-									"type": "GRANT_MANEUVERS",
-									"value": 2,
-									"options": "Save"
-								}
-							]
+							"description": "You can choose a Weapon in your possession and bond with it, making it your Pact Weapon. You can only have 1 Pact Weapon at a time. If the Weapon has the Ammo property, it manifests its own Ammo when you load it, which immediately vanishes once the Attack is resolved. You gain the following benefits while wielding the Weapon:\n• Weapon Mastery: You're considered to have Training with your Pact Weapon.\n• Maneuvers: You gain access to Attack Maneuvers, and learn 2 additional Save Maneuvers of your choice.\n• Weapon Style Passive: While wielding your Pact Weapon, you benefit from that Weapon Style Passive.\n• Pocket Dimension: Using a Minor Action, you can dismiss the Weapon into a pocket dimension, summon it from that pocket dimension, or summon it from anywhere on the same plane of existence. If you don't have a free hand when you summon it, or you choose not to grab it, it appears in your Space at your feet.\n• New Pact Weapon: Over the course of a Quick Rest, you can touch a Weapon in your possession, bond with it, and make it your new Pact Weapon, ending your bond with your previous Pact Weapon."
 						},
 						{
 							"name": "Pact Armor",
-							"description": "You can choose an Armor in your possession and bond with it, making it your Pact Armor. You can only have 1 Pact Armor at a time. You gain the following benefits while wearing the Armor :\n• Armor Mastery: You’re considered to have Training with your Pact Armor.\n• Maneuvers: You learn 3 Defensive Maneuvers of your choice.\n• Mystical Armor: You gain MDR.",
-							"effects": [
-								{
-									"type": "GRANT_COMBAT_TRAINING",
-									"value": ["Pact Armor"]
-								},
-								{
-									"type": "GRANT_MANEUVERS",
-									"value": 3,
-									"options": "Defensive"
-								},
-								{
-									"type": "GRANT_PASSIVE",
-									"value": "MDR"
-								}
-							]
+							"description": "You can choose an Armor in your possession and bond with it, making it your Pact Armor. You can only have 1 Pact Armor at a time. You gain the following benefits while wearing the Armor:\n• Armor Mastery: You're considered to have Training with your Pact Armor.\n• Maneuvers: You learn 3 Defensive Maneuvers of your choice.\n• Mystical Armor: You gain MDR.\n• Pocket Dimension: Using a Minor Action, you can dismiss the Armor into a pocket dimension, summon it from that pocket dimension, or summon it from anywhere on the same plane of existence. If you aren't able to wear the Armor when you summon it, or you choose not to wear it, it appears in your Space at your feet.\n• New Pact Armor: Over the course of a Quick Rest, you can touch an Armor in your possession, bond with it, and make it your new Pact Armor, ending your bond with your previous Pact Armor."
 						},
 						{
 							"name": "Pact Cantrip",
-							"description": "Choose a Spell you know with the Cantrip Spell Tag. The chosen Spell becomes your Pact Cantrip. When you cast it, it deals an extra +1 damage to Bloodied targets, its range increases, and once per round you can grant yourself ADV on the Spell Check. You can choose a new Pact Cantrip when you complete a Long Rest."
+							"description": "Choose a Spell you know with the Cantrip Spell Tag. The chosen Spell becomes your Pact Cantrip. When you cast your Pact Cantrip, you gain the following benefits:\n• If the Spell deals damage, it deals an extra +1 damage to Bloodied targets.\n• If the Spell's range is Touch, it becomes 3 Spaces. Otherwise it increases by 5 Spaces.\n• Once per Round, when you cast your Pact Cantrip you can grant your self ADV on the Spell Check.\nChoosing a New Pact Cantrip: When you complete a Long Rest, you can choose a different Spell following the same restrictions. When you do, the new Spell becomes your new Pact Cantrip. You can only have 1 Pact Cantrip at a time."
 						},
 						{
 							"name": "Pact Familiar",
@@ -76,9 +73,9 @@
 			]
 		},
 		{
-			"featureName": "Beseech Patron",
+			"featureName": "Beseech Patron (Flavor Feature)",
 			"levelGained": 1,
-			"description": "During a Long Rest, while sleeping or meditating, you can access an Inner Sanctum within your mind. Its appearance is influenced by your psyche and is subject to change. While inside your Inner Sanctum, you can attempt to contact your Patron. If they choose to respond, they enter your mind and you might possibly be able to see or hear them. Your Patron chooses when to end the connection, or you can make a Mental Save against your own Save DC to force the connection to end.",
+			"description": "During a Long Rest, while sleeping or meditating, you can access an Inner Sanctum within your mind. Its appearance is influenced by your psyche and is subject to change. While inside your Inner Sanctum, you can attempt to contact your Patron. If they choose to respond, they enter your mind and you might possibly be able to see or hear them. While connected to your Patron in this way, you're aware of your surroundings but you can't take actions or move. Your Patron chooses when to end the connection, or you can make a Mental Save against your own Save DC to force the connection to end.",
 			"isFlavor": true
 		},
 		{
@@ -99,24 +96,10 @@
 				{
 					"featureName": "Otherworldly Gift",
 					"levelGained": 3,
-					"description": "Your patron grants you the following benefits:",
-					"benefits": [
-						{
-							"name": "Psychic Spellcasting",
-							"description": "You learn 1 Spell of your choice with the Psychic Spell Tag. When you learn a new Spell, you can choose any Spell that has the Psychic Spell Tag."
-						},
-						{
-							"name": "Forbidden Knowledge",
-							"description": "When you complete a Short or Long Rest, you temporarily learn any Spell of your choice. When you cast that Spell, its MP cost is reduced by 1 (minimum of 0). Its total MP cost before the reduction can't exceed your Mana Spend Limit. You forget the Spell immediately after you cast it or complete a Short or Long Rest."
-						},
-						{
-							"name": "Eldritch Bargain",
-							"description": "You gain a Warlock Contract option: When you make an Attack against the PD or AD of a creature, you can spend 1 HP to target its other Defense instead."
-						}
-					]
+					"description": "Your patron grants you the following benefits:\n• Psychic Spellcasting: You learn 1 Spell of your choice with the Psychic Spell Tag. When you learn a new Spell, you can choose any Spell that has the Psychic Spell Tag.\n• Forbidden Knowledge: When you complete a Short or Long Rest, you temporarily learn any Spell of your choice. When you cast that Spell, its MP cost is reduced by 1 (minimum of 0). Its total MP cost before the reduction can't exceed your Mana Spend Limit. You forget the Spell immediately after you cast it or complete a Short or Long Rest.\nYou gain the following Warlock Contract option:\n• Eldritch Bargain: When you make an Attack against the PD or AD of a creature, you can spend 1 HP to target its other Defense instead."
 				},
 				{
-					"featureName": "Alien Comprehension",
+					"featureName": "Alien Comprehension (Flavor Feature)",
 					"levelGained": 3,
 					"description": "You become Fluent in Deep Speech, and you understand the writings and ramblings of lunatics.",
 					"isFlavor": true
@@ -129,24 +112,10 @@
 				{
 					"featureName": "Fey Aspect",
 					"levelGained": 3,
-					"description": "Choose 1 of the following Conditions: Charmed or Intimidated. The chosen Condition becomes your Fey Aspect Condition. You gain the following Benefits:",
-					"benefits": [
-						{
-							"name": "Can't Trick a Trickster",
-							"description": "You have ADV on Saves against your Fey Aspect Condition."
-						},
-						{
-							"name": "Fey Step",
-							"description": "When you're Hit by an Attack, you can spend 1 AP as a Reaction to teleport up to 3 Spaces to an unoccupied Space you can see. When you do so, you become Invisible until the start of your next turn. You can use this Feature once per Long Rest, and regain the ability to use it again when you roll for Initiative."
-						},
-						{
-							"name": "Beguiling Bargain",
-							"description": "You gain a Warlock Contract option: Once on each of your turns when you cast a Spell or make an Attack that targets at least 1 creature, you can spend 1 HP to force 1 target of your choice to make a Charisma Save against your Save DC. Failure: You subject the target to your Fey Aspect Condition until the end of your next turn."
-						}
-					]
+					"description": "Choose 1 of the following Conditions: Charmed or Intimidated. The chosen Condition becomes your Fey Aspect Condition. You gain the following Benefits:\n• Can't Trick a Trickster: You have ADV on Saves against your Fey Aspect Condition.\n• Fey Step: When you're Hit by an Attack, you can spend 1 AP as a Reaction to teleport up to 3 Spaces to an unoccupied Space you can see. When you do so, you become Invisible until the start of your next turn. You can use this Feature once per Long Rest, and regain the ability to use it again when you roll for Initiative.\nYou gain the following Warlock Contract option:\n• Beguiling Bargain: Once on each of your turns when you cast a Spell or make an Attack that targets at least 1 creature, you can spend 1 HP to force 1 target of your choice to make a Charisma Save against your Save DC. Failure: You subject the target to your Fey Aspect Condition until the end of your next turn."
 				},
 				{
-					"featureName": "Dream Walker",
+					"featureName": "Dream Walker (Flavor Feature)",
 					"levelGained": 3,
 					"description": "While sleeping, you are lucid and can manipulate what appears in your dreams. Additionally, while you're in contact with a sleeping creature you can make a Spell Check against the target's Intelligence Save. Success: You can witness their dream. You choose if the creature notices that you're watching their dream or not. Failure: You can't use this Feature again on that creature until it wakes up.",
 					"isFlavor": true

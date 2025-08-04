@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import type { CharacterInProgress } from '@prisma/client';
 import { traitsData } from '../rulesdata/traits';
+import { findClassByName } from '../rulesdata/loaders/class-features.loader';
+import { classesData } from '../rulesdata/loaders/class.loader';
 
 // Define the shape of the data stored in the character store
 export interface CharacterInProgressStoreData extends CharacterInProgress {
@@ -186,8 +188,74 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 		}
 	};
 
+	// Calculate total ancestry points available (base + feature bonuses)
+	const calculateTotalAncestryPoints = (): number => {
+		let totalPoints = 5; // Base ancestry points
+
+		// Add bonus ancestry points from feature choices
+		if (state.classId && state.selectedFeatureChoices) {
+			try {
+				const selectedClass = classesData.find((c) => c.id === state.classId);
+				const classFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
+
+				if (classFeatures) {
+					const selectedChoices: { [key: string]: string } = JSON.parse(
+						state.selectedFeatureChoices
+					);
+					const level1Features = classFeatures.coreFeatures.filter(
+						(feature) => feature.levelGained === 1
+					);
+
+					level1Features.forEach((feature) => {
+						if (feature.choices) {
+							feature.choices.forEach((choice, choiceIndex) => {
+								const choiceId = `${classFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;
+								const selectedOptions = selectedChoices[choiceId];
+
+								if (selectedOptions) {
+									let optionsToProcess: string[] = [];
+
+									// Handle both single selection and multiple selection
+									try {
+										optionsToProcess = JSON.parse(selectedOptions);
+										if (!Array.isArray(optionsToProcess)) {
+											optionsToProcess = [selectedOptions];
+										}
+									} catch {
+										optionsToProcess = [selectedOptions];
+									}
+
+									// Process each selected option for ancestry point bonuses
+									optionsToProcess.forEach((optionName) => {
+										const selectedOption = choice.options?.find((opt) => opt.name === optionName);
+										if (selectedOption) {
+											const description = selectedOption.description.toLowerCase();
+
+											// Parse ancestry point bonuses: "you get X ancestry points"
+											const ancestryMatch = description.match(
+												/(?:you get|gain)\s*(\d+)\s*ancestry points?/i
+											);
+											if (ancestryMatch) {
+												totalPoints += parseInt(ancestryMatch[1]);
+											}
+										}
+									});
+								}
+							});
+						}
+					});
+				}
+			} catch (error) {
+				console.warn('Error calculating ancestry point bonuses:', error);
+			}
+		}
+
+		return totalPoints;
+	};
+
 	const ancestryPointsSpent = calculateAncestryPointsSpent();
-	const ancestryPointsRemaining = 5 - ancestryPointsSpent;
+	const totalAncestryPoints = calculateTotalAncestryPoints();
+	const ancestryPointsRemaining = totalAncestryPoints - ancestryPointsSpent;
 
 	const combatMastery = Math.ceil((state.level ?? 1) / 2);
 

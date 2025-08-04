@@ -200,10 +200,10 @@ export const calculateCharacterStats = async (
 	let finalHPMax = finalMight; // Base from Might
 	let finalSPMax = 0;
 	let finalMPMax = 0;
-	let finalSaveDC = 8; // Base
+	let finalSaveDC = 10; // Base (correct DC20 base)
 	let finalDeathThreshold = 10; // Base
-	let finalMoveSpeed = 30; // Base
-	let finalRestPoints = 4; // Base
+	let finalMoveSpeed = 5; // Default base, will be set by class data
+	let finalRestPoints = 4; // Will be set to finalHPMax later
 	let finalInitiativeBonus = 0; // Base
 
 	// Add class contributions
@@ -211,18 +211,20 @@ export const calculateCharacterStats = async (
 		finalHPMax += classData.baseHpContribution;
 		finalSPMax = classData.startingSP;
 		finalMPMax = classData.startingMP;
-		finalSaveDC = classData.saveDCBase;
+		// Note: saveDCBase is not used in correct formula, keeping base at 10
 		finalDeathThreshold = classData.deathThresholdBase;
 		finalMoveSpeed = classData.moveSpeedBase;
-		finalRestPoints = classData.restPointsBase;
+		// finalRestPoints will be set to finalHPMax after all calculations
 		finalInitiativeBonus = classData.initiativeBonusBase;
 
 		// Apply effects from class features using the new class features structure
 		const classFeatures = findClassByName(classData.name);
 		if (classFeatures) {
 			// Get level 1 features
-			const level1Features = classFeatures.coreFeatures.filter(feature => feature.levelGained === 1);
-			
+			const level1Features = classFeatures.coreFeatures.filter(
+				(feature) => feature.levelGained === 1
+			);
+
 			level1Features.forEach((feature) => {
 				if (feature.benefits) {
 					feature.benefits.forEach((benefit) => {
@@ -283,8 +285,151 @@ export const calculateCharacterStats = async (
 		}
 	}
 
+	// Process selected feature choices (robust parsing approach)
+	if (characterData.selectedFeatureChoices && classFeatures) {
+		try {
+			const selectedChoices: { [key: string]: string } = JSON.parse(
+				characterData.selectedFeatureChoices
+			);
+
+			// Find all level 1 features with choices
+			const level1Features = classFeatures.coreFeatures.filter(
+				(feature) => feature.levelGained === 1
+			);
+
+			level1Features.forEach((feature) => {
+				if (feature.choices) {
+					feature.choices.forEach((choice, choiceIndex) => {
+						const choiceId = `${classFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;
+						const selectedOptions = selectedChoices[choiceId];
+
+						if (selectedOptions) {
+							let optionsToProcess: string[] = [];
+
+							// Handle both single selection and multiple selection
+							try {
+								optionsToProcess = JSON.parse(selectedOptions);
+								if (!Array.isArray(optionsToProcess)) {
+									optionsToProcess = [selectedOptions];
+								}
+							} catch {
+								optionsToProcess = [selectedOptions];
+							}
+
+							// Process each selected option
+							optionsToProcess.forEach((optionName) => {
+								const selectedOption = choice.options?.find((opt) => opt.name === optionName);
+								if (selectedOption) {
+									const description = selectedOption.description.toLowerCase();
+
+									// Parse stat bonuses from descriptions using regex patterns
+
+									// MP bonuses: "your maximum mp increases by X", "mp increases by X", "+X mp"
+									const mpMatch =
+										description.match(
+											/(?:your maximum mp increases by|mp increases by|\+)\s*(\d+)\s*mp/i
+										) || description.match(/maximum mp increases by\s*(\d+)/i);
+									if (mpMatch) {
+										finalMPMax += parseInt(mpMatch[1]);
+									}
+
+									// Ancestry Points: "you get X ancestry points", "X ancestry points"
+									const ancestryMatch = description.match(
+										/(?:you get|gain)\s*(\d+)\s*ancestry points?/i
+									);
+									if (ancestryMatch) {
+										// Note: This would need to be handled in character creation logic, not just stats
+										console.log(
+											`Feature choice grants ${ancestryMatch[1]} ancestry points: ${optionName}`
+										);
+									}
+
+									// SP bonuses: "your maximum sp increases by X", "+X sp"
+									const spMatch = description.match(
+										/(?:your maximum sp increases by|sp increases by|\+)\s*(\d+)\s*sp/i
+									);
+									if (spMatch) {
+										finalSPMax += parseInt(spMatch[1]);
+									}
+
+									// HP bonuses: "your maximum hp increases by X", "+X hp"
+									const hpMatch = description.match(
+										/(?:your maximum hp increases by|hp increases by|\+)\s*(\d+)\s*hp/i
+									);
+									if (hpMatch) {
+										finalHPMax += parseInt(hpMatch[1]);
+									}
+
+									// Maneuver learning: "you learn X maneuvers", "learn X defensive maneuvers"
+									const maneuverMatch = description.match(
+										/you learn\s*(\d+)\s*(?:defensive\s+)?maneuvers?/i
+									);
+									if (maneuverMatch) {
+										// Note: This would be handled in maneuver tracking, not base stats
+										console.log(
+											`Feature choice grants ${maneuverMatch[1]} maneuvers: ${optionName}`
+										);
+									}
+
+									// Spell learning: "you learn X additional spell", "you learn X spell"
+									const spellMatch = description.match(
+										/you learn\s*(\d+)\s*(?:additional\s+)?spells?/i
+									);
+									if (spellMatch) {
+										// Note: This would be handled in spell tracking, not base stats
+										console.log(`Feature choice grants ${spellMatch[1]} spells: ${optionName}`);
+									}
+
+									// Save DC bonuses: "save dc increases by X", "+X to save dc"
+									const saveDCMatch = description.match(
+										/(?:save dc increases by|\+)\s*(\d+)(?:\s*to save dc)?/i
+									);
+									if (saveDCMatch) {
+										finalSaveDC += parseInt(saveDCMatch[1]);
+									}
+
+									// Movement speed: "move speed increases by X", "+X movement"
+									const speedMatch = description.match(
+										/(?:move speed increases by|movement.*increases by|\+)\s*(\d+)(?:\s*(?:feet|ft|spaces?))?.*(?:movement|speed)/i
+									);
+									if (speedMatch) {
+										finalMoveSpeed += parseInt(speedMatch[1]);
+									}
+								}
+							});
+						}
+					});
+				}
+			});
+		} catch (error) {
+			console.warn('Error processing feature choices:', error);
+		}
+	}
+
+	// Process trait effects for movement speed
+	if (characterData.selectedTraitIds) {
+		try {
+			const selectedTraitIds = JSON.parse(characterData.selectedTraitIds);
+			const traitsData = await import('../rulesdata/traits');
+
+			selectedTraitIds.forEach((traitId: string) => {
+				const trait = traitsData.traitsData.find((t) => t.id === traitId);
+				if (trait?.effects) {
+					trait.effects.forEach((effect) => {
+						if (effect.type === 'MODIFY_SPEED') {
+							// Convert from internal units (5 = 1 space) to spaces
+							finalMoveSpeed += effect.value / 5;
+						}
+					});
+				}
+			});
+		} catch (error) {
+			console.warn('Error processing trait effects for movement speed:', error);
+		}
+	}
+
 	// Add attribute bonuses
-	finalSaveDC += primeModifier.value; // Save DC = Base + Prime
+	finalSaveDC += primeModifier.value + finalCombatMastery; // Save DC = 10 + Prime + Combat Mastery
 	finalInitiativeBonus += finalCombatMastery + finalAgility; // Initiative = CM + Agility
 
 	// Calculate Save Values (Updated Formula)
@@ -331,6 +476,9 @@ export const calculateCharacterStats = async (
 		});
 		skillsJson = JSON.stringify(defaultSkills);
 	}
+
+	// DC20 Rule: Rest Points = HP
+	finalRestPoints = finalHPMax;
 
 	return {
 		// Basic Info

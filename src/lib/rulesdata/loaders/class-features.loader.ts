@@ -3,6 +3,8 @@
  * @description Loader for the new class features JSON structure
  */
 
+import { SpellSchool, SpellList } from '../spells-data/types/spell.types';
+
 // Define interfaces for the new class features structure
 export interface ClassFeatureChoice {
 	prompt: string;
@@ -41,6 +43,60 @@ export interface ClassSubclass {
 
 export interface ClassDefinition {
 	className: string;
+	startingEquipment?: {
+		weaponsOrShields?: string[];
+		rangedWeapon?: string;
+		alternativeWeapons?: string;
+		armor?: string;
+		packs?: string;
+	};
+	martialPath?: {
+		combatTraining?: {
+			weapons?: string[];
+			armor?: string[];
+			shields?: string[];
+		};
+		maneuvers?: {
+			learnsAllAttack?: boolean;
+			additionalKnown?: string;
+		};
+		techniques?: {
+			additionalKnown?: string;
+		};
+		staminaPoints?: {
+			maximumIncreasesBy?: string;
+		};
+		staminaRegen?: {
+			description?: string;
+			conditions?: string[];
+		};
+	};
+	spellcastingPath?: {
+		combatTraining?: {
+			armor?: string[];
+			shields?: string[];
+		};
+		spellList?: {
+			type?: 'specific' | 'schools' | 'any' | 'all_schools';
+			listName?: string;
+			specificSchools?: SpellSchool[];
+			spellTags?: string[];
+			schoolCount?: number; // For classes that choose X schools
+			description?: string;
+			betaNote?: string;
+		};
+		cantrips?: {
+			knownIncreasesBy?: string;
+			description?: string;
+		};
+		spells?: {
+			knownIncreasesBy?: string;
+			description?: string;
+		};
+		manaPoints?: {
+			maximumIncreasesBy?: string;
+		};
+	};
 	coreFeatures: ClassFeature[];
 	subclasses: ClassSubclass[];
 }
@@ -53,6 +109,23 @@ const rawClassFeatures = Object.values(classFeatureModules).map((module: any) =>
 
 // Export the class features data
 export const classFeaturesData: ClassDefinition[] = rawClassFeatures;
+
+// Helper function to get available spell schools for a class
+export function getAvailableSpellSchools(classData: ClassDefinition): SpellSchool[] {
+	const spellList = classData.spellcastingPath?.spellList;
+	if (!spellList) return [];
+
+	switch (spellList.type) {
+		case 'all_schools':
+			// Return all schools from the enum
+			return Object.values(SpellSchool);
+		case 'schools':
+			// Return specific schools
+			return spellList.specificSchools || [];
+		default:
+			return [];
+	}
+}
 
 // Helper function to find a class by name
 export function findClassByName(className: string): ClassDefinition | undefined {
@@ -89,7 +162,7 @@ export function getClassSpecificInfo(
 	selectedFeatureChoices?: string
 ): { displayInfo: { label: string; value: string }[] } {
 	const displayInfo: { label: string; value: string }[] = [];
-	
+
 	if (!selectedFeatureChoices) {
 		return { displayInfo };
 	}
@@ -97,7 +170,7 @@ export function getClassSpecificInfo(
 	try {
 		const selectedChoices: { [key: string]: string } = JSON.parse(selectedFeatureChoices);
 		const classData = findClassByName(className);
-		
+
 		if (!classData) {
 			return { displayInfo };
 		}
@@ -109,7 +182,7 @@ export function getClassSpecificInfo(
 					// Create a mapping for legacy choice IDs based on class and feature
 					const legacyChoiceId = getLegacyChoiceId(className, feature.featureName, choiceIndex);
 					const selectedValue = selectedChoices[legacyChoiceId];
-					
+
 					if (selectedValue && choice.options) {
 						if (choice.count > 1) {
 							// Handle multiple selections
@@ -142,7 +215,7 @@ export function getClassSpecificInfo(
 				feature.benefits.forEach((benefit) => {
 					const legacyBenefitId = getLegacyBenefitId(className, feature.featureName, benefit.name);
 					const selectedValue = selectedChoices[legacyBenefitId];
-					
+
 					if (selectedValue) {
 						displayInfo.push({
 							label: benefit.name,
@@ -160,19 +233,31 @@ export function getClassSpecificInfo(
 }
 
 // Helper function to map class/feature combinations to legacy choice IDs
-export function getLegacyChoiceId(className: string, featureName: string, choiceIndex: number): string {
+export function getLegacyChoiceId(
+	className: string,
+	featureName: string,
+	choiceIndex: number
+): string {
 	// Generic mapping: className_featureName_choiceIndex
 	return `${className.toLowerCase()}_${featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;
 }
 
 // Helper function to map class/feature combinations to legacy benefit IDs
-export function getLegacyBenefitId(className: string, featureName: string, benefitName: string): string {
+export function getLegacyBenefitId(
+	className: string,
+	featureName: string,
+	benefitName: string
+): string {
 	// Generic mapping: className_featureName_benefitName
 	return `${className.toLowerCase()}_${featureName.toLowerCase().replace(/\s+/g, '_')}_${benefitName.toLowerCase().replace(/\s+/g, '_')}`;
 }
 
 // Helper function to get display labels for different choice types
-export function getDisplayLabel(_className: string, featureName: string, _choiceIndex: number): string {
+export function getDisplayLabel(
+	_className: string,
+	featureName: string,
+	_choiceIndex: number
+): string {
 	// Generic: just use the feature name as the label
 	return featureName;
 }

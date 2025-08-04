@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
+import { classesData } from '../../lib/rulesdata/loaders/class.loader';
+import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
 import AncestrySelector from './AncestrySelector.tsx';
 import SelectedAncestries from './SelectedAncestries.tsx';
 import Attributes from './Attributes.tsx';
@@ -94,8 +96,73 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 
 	const isStepCompleted = (step: number) => {
 		switch (step) {
-			case 1:
-				return state.classId !== null;
+			case 1: {
+				if (state.classId === null) return false;
+
+				// Check if all required feature choices have been made
+				const selectedClass = classesData.find((c) => c.id === state.classId);
+				if (!selectedClass) return false;
+
+				// Check if all required feature choices have been made
+				const selectedClassFeatures = findClassByName(selectedClass.name);
+				if (!selectedClassFeatures) return false;
+
+				const selectedFeatureChoices: { [key: string]: string } = JSON.parse(
+					state.selectedFeatureChoices || '{}'
+				);
+
+				// Check if spell school choices are required and have been made
+				const spellList = selectedClassFeatures.spellcastingPath?.spellList;
+				if (spellList) {
+					// Check Warlock-style spell school selection
+					if (spellList.type === 'all_schools' && spellList.schoolCount) {
+						const choiceId = `${selectedClassFeatures.className.toLowerCase()}_spell_schools`;
+						const choice = selectedFeatureChoices[choiceId];
+						if (!choice) return false;
+						const selectedSchools = JSON.parse(choice);
+						if (selectedSchools.length !== spellList.schoolCount) return false;
+					}
+
+					// Check Spellblade-style additional school selection
+					if (spellList.type === 'schools' && spellList.schoolCount && spellList.schoolCount > 0) {
+						const choiceId = `${selectedClassFeatures.className.toLowerCase()}_additional_spell_schools`;
+						const choice = selectedFeatureChoices[choiceId];
+						if (!choice) return false;
+						if (spellList.schoolCount > 1) {
+							const selectedSchools = JSON.parse(choice);
+							if (selectedSchools.length !== spellList.schoolCount) return false;
+						}
+					}
+
+					// Check Wizard-style feature-based spell school choices
+					const level1Features = selectedClassFeatures.coreFeatures.filter(
+						(feature) => feature.levelGained === 1
+					);
+					for (const feature of level1Features) {
+						const description = feature.description.toLowerCase();
+						// Only include features that are character creation choices, not in-game tactical choices
+						const isCharacterCreationChoice =
+							(description.includes('choose a spell school') ||
+								description.includes('choose 1 spell school')) &&
+							// Exclude in-game features like Arcane Sigil
+							!description.includes('when you create') &&
+							!description.includes('when you cast') &&
+							!description.includes('you can spend') &&
+							// Include features that are clearly character creation (like training/specialization)
+							(description.includes('training') ||
+								description.includes('specialize') ||
+								description.includes('initiate') ||
+								description.includes('you gain the following benefits'));
+
+						if (isCharacterCreationChoice) {
+							const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_school`;
+							if (!selectedFeatureChoices[choiceId]) return false;
+						}
+					}
+				}
+
+				return true;
+			}
 			case 2:
 				return attributePointsRemaining === 0;
 			case 3: {

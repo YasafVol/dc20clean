@@ -10,7 +10,7 @@ function AncestryPointsCounter() {
 	return (
 		<StyledContainer>
 			<StyledTitle style={{ color: isOverBudget ? '#ff4444' : undefined }}>
-				Ancestry Points: {ancestryPointsRemaining}/5
+				Ancestry Points: {ancestryPointsRemaining}/{ancestryPointsSpent + ancestryPointsRemaining}
 			</StyledTitle>
 			<StyledDetails>
 				Spent: {ancestryPointsSpent} | Remaining: {ancestryPointsRemaining}

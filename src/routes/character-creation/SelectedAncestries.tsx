@@ -124,7 +124,8 @@ function SelectedAncestries() {
 						color: ancestryPointsRemaining < 0 ? '#ff4444' : '#d1d5db'
 					}}
 				>
-					Spent: {ancestryPointsSpent} | Remaining: {ancestryPointsRemaining}/5
+					Spent: {ancestryPointsSpent} | Remaining: {ancestryPointsRemaining}/
+					{ancestryPointsSpent + ancestryPointsRemaining}
 					{ancestryPointsRemaining < 0 && <span style={{ color: '#ff4444' }}> (Over budget!)</span>}
 				</div>
 			</StyledMainTitle>

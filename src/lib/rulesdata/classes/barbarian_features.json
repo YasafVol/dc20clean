@@ -1,5 +1,35 @@
 {
 	"className": "Barbarian",
+	"startingEquipment": {
+		"weaponsOrShields": ["2 Weapons or Shields"],
+		"rangedWeapon": "1 Ranged Weapon with 20 Ammo OR 3 Weapons with the Toss or Thrown Property",
+		"armor": "1 set of Light Armor or Heavy Armor",
+		"packs": "X or Y “Packs” (Adventuring Packs Coming Soon)"
+	},
+	"martialPath": {
+		"combatTraining": {
+			"weapons": ["Weapons"],
+			"armor": ["All Armor"],
+			"shields": ["All Shields"]
+		},
+		"maneuvers": {
+			"learnsAllAttack": true,
+			"additionalKnown": "Maneuvers Known column of the Barbarian Class Table"
+		},
+		"techniques": {
+			"additionalKnown": "Techniques Known column of the Barbarian Class Table"
+		},
+		"staminaPoints": {
+			"maximumIncreasesBy": "Stamina Points column of the Barbarian Class Table"
+		},
+		"staminaRegen": {
+			"description": "Once per round, you can regain up to half your maximum SP when:",
+			"conditions": [
+				"You score a Heavy or Critical Hit against a creature.",
+				"A Heavy or Critical Hit is scored against you."
+			]
+		}
+	},
 	"coreFeatures": [
 		{
 			"featureName": "Rage",
@@ -17,39 +47,15 @@
 				},
 				{
 					"name": "Berserker Defense",
-					"description": "While you aren't wearing Armor you gain +2 AD.",
-					"effects": [
-						{
-							"type": "MODIFIER",
-							"target": "defenses.ad",
-							"value": 2,
-							"condition": "character.armor.type == null"
-						}
-					]
+					"description": "While you aren't wearing Armor you gain +2 AD."
 				},
 				{
 					"name": "Fast Movement",
-					"description": "You gain +1 Speed while not wearing Armor.",
-					"effects": [
-						{
-							"type": "MODIFIER",
-							"target": "coreStats.moveSpeed",
-							"value": 1,
-							"condition": "character.armor.type == null"
-						}
-					]
+					"description": "You gain +1 Speed while not wearing Armor."
 				},
 				{
 					"name": "Mighty Leap",
-					"description": "You can use your Might instead of Agility to determine your Jump Distance and the damage you take from Falling.",
-					"effects": [
-						{
-							"type": "OVERRIDE",
-							"target": "coreStats.jumpDistance",
-							"value": "attributes.might",
-							"condition": "character.armor.type == null"
-						}
-					]
+					"description": "You can use your Might instead of Agility to determine your Jump Distance and the damage you take from Falling."
 				}
 			]
 		},
@@ -97,7 +103,7 @@
 				{
 					"featureName": "Raging Elements",
 					"levelGained": 3,
-					"description": "You can surround yourself with the elements. Choose 1 of the following damage types: Cold, Fire, Lightning, or Physical. The chosen Damage Type becomes your Elemental Rage damage. If you chose Physical damage, then each time you Rage you choose Bludgeoning, Piercing, or Slashing damage. While Raging, you gain a 2 Space Aura of elements that grants the following benefits:",
+					"description": "You can surround yourself with the elements (such as fire, lightning, water, earth) or violent weather (such as blizzards, storms, volcanoes, or earthquakes). Choose 1 of the following damage types: Cold, Fire, Lightning, or Physical. The chosen Damage Type becomes your Elemental Rage damage. If you chose Physical damage, then each time you Rage you choose Bludgeoning, Piercing, or Slashing damage. While Raging, you gain a 2 Space Aura of elements that grants the following benefits:",
 					"benefits": [
 						{
 							"name": "Erupting Elements",
@@ -134,9 +140,9 @@
 					]
 				},
 				{
-					"featureName": "Elemental Affinity",
+					"featureName": "Elemental Affinity (Flavor Feature)",
 					"levelGained": 3,
-					"description": "You are infused with the power of your Element and can make yourself heard over crackling infernos, howling blizzards, thundering storms, and rumbling earthquakes. You gain the following benefits: You can make your voice boom up to 3 times louder than normal. You can call upon non-harmful magic of your Elemental damage type to swirl around you in a visual display. You have Resistance to Exhaustion due to environmental effects.",
+					"description": "You are infused with the power of your Element and can make yourself heard over crackling infernos, howling blizzards, thundering storms, and rumbling earthquakes. You gain the following benefits:\n• You can make your voice boom up to 3 times louder than normal.\n• You can call upon non-harmful magic of your Elemental damage type to swirl around you in a visual display.\n• You have Resistance to Exhaustion due to environmental effects.",
 					"isFlavor": true
 				}
 			]
@@ -147,20 +153,10 @@
 				{
 					"featureName": "Ancestral Guardian",
 					"levelGained": 3,
-					"description": "You gain the following benefits:",
-					"benefits": [
-						{
-							"name": "Bestowed Protection",
-							"description": "You learn 1 of the following Maneuvers: Parry, Protect, or Raise Shield. If you already know all 3, then you can learn any Maneuver of your choice instead."
-						},
-						{
-							"name": "Spiritual Aura",
-							"description": "While Raging, you gain Mystical Resistance (1) and a 5 Space Aura that grants the following benefits: You can use the Shove Action on any creature within your Aura. When you do, the creature is pushed horizontally in a direction of your choice. You can use the Parry, Protect, and Raise Shield Maneuvers on any creature within your Aura, provided you know the Maneuver. Using Raise Shield in this way doesn't require you to be wielding a Shield."
-						}
-					]
+					"description": "Bestowed Protection: You learn 1 of the following Maneuvers: Parry, Protect, or Raise Shield. If you already know all 3, then you can learn any Maneuver of your choice instead.\nSpiritual Aura: While Raging, you gain Mystical Resistance (1) and a 5 Space Aura that grants the following benefits:\n• You can use the Shove Action on any creature within your Aura. When you do, the creature is pushed horizontally in a direction of your choice.\n• You can use the Parry, Protect, and Raise Shield Maneuvers on any creature within your Aura, provided you know the Maneuver. Using Raise Shield in this way doesn't require you to be wielding a Shield."
 				},
 				{
-					"featureName": "Ancestral Knowledge",
+					"featureName": "Ancestral Knowledge (Flavor Feature)",
 					"levelGained": 3,
 					"description": "You have ADV on Checks to recall information about the history of your Ancestries (such as Human, Dwarf, or Elf). Additionally, once per Long Rest when you make a Trade or Language Check, you can choose to gain ADV on the Check as a spirit lends you its experience.",
 					"isFlavor": true

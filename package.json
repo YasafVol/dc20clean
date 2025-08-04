@@ -73,6 +73,7 @@
 		"prisma": "^6.10.1",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",
+		"repomix": "^1.2.1",
 		"styled-components": "^6.1.19",
 		"ts-node": "^10.9.2",
 		"zod": "^4.0.5"

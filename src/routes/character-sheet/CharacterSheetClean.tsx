@@ -15,8 +15,14 @@ import type {
 	CharacterState
 } from '../../types';
 import type { Spell } from '../../lib/rulesdata/spells-data/types/spell.types';
-import type { WeaponData } from '../../lib/rulesdata/weapons';
+import type { Weapon } from '../../lib/rulesdata/inventoryItems';
 import type { InventoryItem } from '../../lib/rulesdata/inventoryItems';
+import {
+	getVersatileDamage,
+	getWeaponRange,
+	getWeaponFeatures,
+	parseDamage
+} from '../../lib/utils/weaponUtils';
 
 // Import new component modules
 import LeftColumn from './components/LeftColumn';
@@ -51,7 +57,12 @@ import { skillsData } from '../../lib/rulesdata/skills';
 import { tradesData } from '../../lib/rulesdata/trades';
 import { knowledgeData } from '../../lib/rulesdata/knowledge';
 import { traitsData } from '../../lib/rulesdata/traits';
-import { findClassByName, getClassSpecificInfo, getLegacyChoiceId, getDisplayLabel } from '../../lib/rulesdata/loaders/class-features.loader';
+import {
+	findClassByName,
+	getClassSpecificInfo,
+	getLegacyChoiceId,
+	getDisplayLabel
+} from '../../lib/rulesdata/loaders/class-features.loader';
 import { ancestriesData } from '../../lib/rulesdata/ancestries';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
 
@@ -152,8 +163,14 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	const [error, setError] = useState<string | null>(null);
 	const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
 	const [selectedSpell, setSelectedSpell] = useState<Spell | null>(null);
-	const [selectedAttack, setSelectedAttack] = useState<{attack: AttackData, weapon: WeaponData | null} | null>(null);
-	const [selectedInventoryItem, setSelectedInventoryItem] = useState<{inventoryData: InventoryItemData, item: InventoryItem | null} | null>(null);
+	const [selectedAttack, setSelectedAttack] = useState<{
+		attack: AttackData;
+		weapon: Weapon | null;
+	} | null>(null);
+	const [selectedInventoryItem, setSelectedInventoryItem] = useState<{
+		inventoryData: InventoryItemData;
+		item: InventoryItem | null;
+	} | null>(null);
 	const [attacks, setAttacks] = useState<AttackData[]>([]);
 	const [spells, setSpells] = useState<SpellData[]>([]);
 	const [inventory, setInventory] = useState<InventoryItemData[]>([]);
@@ -582,7 +599,10 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 			return [];
 		}
 
-		const { displayInfo } = getClassSpecificInfo(characterData.className, characterData.selectedFeatureChoices);
+		const { displayInfo } = getClassSpecificInfo(
+			characterData.className,
+			characterData.selectedFeatureChoices
+		);
 		return displayInfo;
 	};
 
@@ -643,7 +663,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		if (selectedClassFeatures) {
 			// Add level 1 core features
 			selectedClassFeatures.coreFeatures
-				.filter(feature => feature.levelGained === 1)
+				.filter((feature) => feature.levelGained === 1)
 				.forEach((feature) => {
 					features.push({
 						id: feature.featureName,
@@ -666,9 +686,13 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						if (feature.choices) {
 							feature.choices.forEach((choice, choiceIndex) => {
 								// Use the same mapping logic as the class-features loader
-								const choiceId = getLegacyChoiceId(selectedClassFeatures.className, feature.featureName, choiceIndex);
+								const choiceId = getLegacyChoiceId(
+									selectedClassFeatures.className,
+									feature.featureName,
+									choiceIndex
+								);
 								const selectedOptionValues = selectedChoices[choiceId];
-								
+
 								if (selectedOptionValues && choice.options) {
 									if (choice.count > 1) {
 										// Handle multiple selections (like cleric domains)
@@ -687,9 +711,13 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 												if (detailedDescription) {
 													description = detailedDescription;
 												}
-												
+
 												// Use generic display label
-												const displayLabel = getDisplayLabel(selectedClassFeatures.className, feature.featureName, choiceIndex);
+												const displayLabel = getDisplayLabel(
+													selectedClassFeatures.className,
+													feature.featureName,
+													choiceIndex
+												);
 												const sourceDetail = `${selectedClassFeatures.className} (${displayLabel})`;
 
 												const featureToAdd = {
@@ -717,11 +745,15 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 											if (detailedDescription) {
 												description = detailedDescription;
 											}
-											
+
 											// Use generic display label
-											const displayLabel = getDisplayLabel(selectedClassFeatures.className, feature.featureName, choiceIndex);
+											const displayLabel = getDisplayLabel(
+												selectedClassFeatures.className,
+												feature.featureName,
+												choiceIndex
+											);
 											const sourceDetail = `${selectedClassFeatures.className} (${displayLabel})`;
-											
+
 											features.push({
 												id: `${choiceId}_${selectedOptionValues}`,
 												name: selectedOption.name,
@@ -763,7 +795,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	};
 
 	// Handle attack popup
-	const openAttackPopup = (attack: AttackData, weapon: WeaponData | null) => {
+	const openAttackPopup = (attack: AttackData, weapon: Weapon | null) => {
 		setSelectedAttack({ attack, weapon });
 	};
 
@@ -1079,9 +1111,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 									<StyledLabel style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
 										{info.label}
 									</StyledLabel>
-									<StyledValue style={{ fontSize: '0.9rem' }}>
-										{info.value}
-									</StyledValue>
+									<StyledValue style={{ fontSize: '0.9rem' }}>{info.value}</StyledValue>
 								</div>
 							));
 						})()}
@@ -1187,24 +1217,24 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 							/>
 
 							{/* Spells Section */}
-							<Spells 
-								spells={spells} 
-								setSpells={updateSpells} 
+							<Spells
+								spells={spells}
+								setSpells={updateSpells}
 								characterData={characterData}
 								onSpellClick={openSpellPopup}
 							/>
 
 							{/* Attacks Section */}
-							<Attacks 
-								attacks={attacks} 
-								setAttacks={updateAttacks} 
+							<Attacks
+								attacks={attacks}
+								setAttacks={updateAttacks}
 								characterData={characterData}
 								onAttackClick={openAttackPopup}
 							/>
 
 							{/* Inventory */}
-							<Inventory 
-								inventory={inventory} 
+							<Inventory
+								inventory={inventory}
 								setInventory={updateInventory}
 								onItemClick={openInventoryPopup}
 							/>
@@ -1303,8 +1333,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						{/* Items Tab - Mobile */}
 						{activeMobileSection === 'features' && (
 							<div>
-								<Inventory 
-									inventory={inventory} 
+								<Inventory
+									inventory={inventory}
 									setInventory={updateInventory}
 									onItemClick={openInventoryPopup}
 								/>
@@ -1356,9 +1386,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 													<StyledLabel style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
 														{info.label}
 													</StyledLabel>
-													<StyledValue style={{ fontSize: '0.9rem' }}>
-														{info.value}
-													</StyledValue>
+													<StyledValue style={{ fontSize: '0.9rem' }}>{info.value}</StyledValue>
 												</div>
 											));
 										})()}
@@ -1421,17 +1449,40 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 							<StyledFeaturePopupClose onClick={closeSpellPopup}>×</StyledFeaturePopupClose>
 						</StyledFeaturePopupHeader>
 						<StyledFeaturePopupDescription>
-							<strong>School:</strong> {selectedSpell.school}<br />
-							<strong>AP Cost:</strong> {selectedSpell.cost.ap}<br />
-							{selectedSpell.cost.mp && <><strong>MP Cost:</strong> {selectedSpell.cost.mp}<br /></>}
-							<strong>Range:</strong> {selectedSpell.range}<br />
-							<strong>Duration:</strong> {selectedSpell.duration}<br />
-							{selectedSpell.isCantrip && <><strong>Type:</strong> Cantrip<br /></>}
-							{selectedSpell.isRitual && <><strong>Ritual:</strong> Yes<br /></>}
+							<strong>School:</strong> {selectedSpell.school}
+							<br />
+							<strong>AP Cost:</strong> {selectedSpell.cost.ap}
+							<br />
+							{selectedSpell.cost.mp && (
+								<>
+									<strong>MP Cost:</strong> {selectedSpell.cost.mp}
+									<br />
+								</>
+							)}
+							<strong>Range:</strong> {selectedSpell.range}
+							<br />
+							<strong>Duration:</strong> {selectedSpell.duration}
+							<br />
+							{selectedSpell.isCantrip && (
+								<>
+									<strong>Type:</strong> Cantrip
+									<br />
+								</>
+							)}
+							{selectedSpell.isRitual && (
+								<>
+									<strong>Ritual:</strong> Yes
+									<br />
+								</>
+							)}
 							<br />
 							{selectedSpell.effects?.[0]?.description || 'No description available.'}
 							{selectedSpell.cantripPassive && (
-								<><br /><br /><strong>Cantrip Passive:</strong> {selectedSpell.cantripPassive}</>
+								<>
+									<br />
+									<br />
+									<strong>Cantrip Passive:</strong> {selectedSpell.cantripPassive}
+								</>
 							)}
 						</StyledFeaturePopupDescription>
 						{selectedSpell.enhancements?.length > 0 && (
@@ -1456,52 +1507,100 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						<StyledFeaturePopupDescription>
 							{selectedAttack.weapon ? (
 								<>
-									<strong>Weapon Type:</strong> {selectedAttack.weapon.type}<br />
-									<strong>Weight Category:</strong> {selectedAttack.weapon.weightCategory}<br />
-									<strong>Damage:</strong> {selectedAttack.weapon.damage}<br />
-									{selectedAttack.weapon.versatileDamage && (
-										<><strong>Versatile Damage:</strong> {selectedAttack.weapon.versatileDamage}<br /></>
+									<strong>Weapon Type:</strong> {selectedAttack.weapon.type}
+									<br />
+									<strong>Handedness:</strong> {selectedAttack.weapon.handedness}
+									<br />
+									<strong>Style:</strong>{' '}
+									{Array.isArray(selectedAttack.weapon.style)
+										? selectedAttack.weapon.style.join('/')
+										: selectedAttack.weapon.style}
+									<br />
+									<strong>Damage:</strong> {selectedAttack.weapon.damage}
+									<br />
+									{getVersatileDamage(selectedAttack.weapon) && (
+										<>
+											<strong>Versatile Damage:</strong>{' '}
+											{getVersatileDamage(selectedAttack.weapon)?.twoHanded}
+											<br />
+										</>
 									)}
-									<strong>Damage Type:</strong> {selectedAttack.weapon.damageType}<br />
-									{selectedAttack.weapon.range && (
-										<><strong>Range:</strong> {selectedAttack.weapon.range.short}/{selectedAttack.weapon.range.long}<br /></>
+									<strong>Damage Type:</strong>{' '}
+									{parseDamage(selectedAttack.weapon.damage).typeDisplay}
+									<br />
+									{getWeaponRange(selectedAttack.weapon) && (
+										<>
+											<strong>Range:</strong> {getWeaponRange(selectedAttack.weapon)?.short}/
+											{getWeaponRange(selectedAttack.weapon)?.long}
+											<br />
+										</>
 									)}
-									{selectedAttack.weapon.ammunition && (
-										<><strong>Ammunition:</strong> {selectedAttack.weapon.ammunition}<br /></>
+									{selectedAttack.weapon.properties.includes('Ammo') && (
+										<>
+											<strong>Ammunition:</strong> Required
+											<br />
+										</>
 									)}
-									{selectedAttack.weapon.reload && (
-										<><strong>Reload:</strong> {selectedAttack.weapon.reload}<br /></>
+									{selectedAttack.weapon.properties.includes('Reload') && (
+										<>
+											<strong>Reload:</strong> Required
+											<br />
+										</>
 									)}
 									<br />
-									<strong>Damage Calculations:</strong><br />
-									• <strong>Hit:</strong> {selectedAttack.weapon.damage} + ability modifier<br />
-									• <strong>Heavy Hit (+5):</strong> {selectedAttack.weapon.damage} + 1 + ability modifier<br />
-									• <strong>Brutal Hit (+10):</strong> {selectedAttack.weapon.damage} + 2 + ability modifier<br />
+									<strong>Damage Calculations:</strong>
+									<br />• <strong>Hit:</strong> {selectedAttack.weapon.damage} + ability modifier
+									<br />• <strong>Heavy Hit (+5):</strong> {selectedAttack.weapon.damage} + 1 +
+									ability modifier
+									<br />• <strong>Brutal Hit (+10):</strong> {selectedAttack.weapon.damage} + 2 +
+									ability modifier
+									<br />
 									<br />
 									{selectedAttack.weapon.properties.length > 0 && (
-										<><strong>Properties:</strong> {selectedAttack.weapon.properties.join(', ')}<br /></>
+										<>
+											<strong>Properties:</strong> {selectedAttack.weapon.properties.join(', ')}
+											<br />
+										</>
 									)}
-									{selectedAttack.weapon.specialNotes && (
-										<><strong>Special:</strong> {selectedAttack.weapon.specialNotes}</>
+									{getWeaponFeatures(selectedAttack.weapon).length > 0 && (
+										<>
+											<strong>Features:</strong>{' '}
+											{getWeaponFeatures(selectedAttack.weapon).join(', ')}
+										</>
 									)}
 								</>
 							) : (
 								<>
-									<strong>Custom Attack</strong><br />
-									<strong>Attack Bonus:</strong> +{selectedAttack.attack.attackBonus}<br />
-									<strong>Damage:</strong> {selectedAttack.attack.damage}<br />
-									<strong>Damage Type:</strong> {selectedAttack.attack.damageType}<br />
+									<strong>Custom Attack</strong>
+									<br />
+									<strong>Attack Bonus:</strong> +{selectedAttack.attack.attackBonus}
+									<br />
+									<strong>Damage:</strong> {selectedAttack.attack.damage}
+									<br />
+									<strong>Damage Type:</strong> {selectedAttack.attack.damageType}
+									<br />
 									{selectedAttack.attack.critRange && (
-										<><strong>Crit Range:</strong> {selectedAttack.attack.critRange}<br /></>
+										<>
+											<strong>Crit Range:</strong> {selectedAttack.attack.critRange}
+											<br />
+										</>
 									)}
 									{selectedAttack.attack.critDamage && (
-										<><strong>Crit Damage:</strong> {selectedAttack.attack.critDamage}<br /></>
+										<>
+											<strong>Crit Damage:</strong> {selectedAttack.attack.critDamage}
+											<br />
+										</>
 									)}
 									{selectedAttack.attack.brutalDamage && (
-										<><strong>Brutal Damage:</strong> {selectedAttack.attack.brutalDamage}<br /></>
+										<>
+											<strong>Brutal Damage:</strong> {selectedAttack.attack.brutalDamage}
+											<br />
+										</>
 									)}
 									{selectedAttack.attack.heavyHitEffect && (
-										<><strong>Heavy Hit Effect:</strong> {selectedAttack.attack.heavyHitEffect}</>
+										<>
+											<strong>Heavy Hit Effect:</strong> {selectedAttack.attack.heavyHitEffect}
+										</>
 									)}
 								</>
 							)}
@@ -1516,80 +1615,126 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					<StyledFeaturePopupContent onClick={(e) => e.stopPropagation()}>
 						<StyledFeaturePopupHeader>
 							<StyledFeaturePopupTitle>
-								{selectedInventoryItem.item?.name || selectedInventoryItem.inventoryData.itemName || 'Unknown Item'}
+								{selectedInventoryItem.item?.name ||
+									selectedInventoryItem.inventoryData.itemName ||
+									'Unknown Item'}
 							</StyledFeaturePopupTitle>
 							<StyledFeaturePopupClose onClick={closeInventoryPopup}>×</StyledFeaturePopupClose>
 						</StyledFeaturePopupHeader>
 						<StyledFeaturePopupDescription>
 							{selectedInventoryItem.item ? (
 								<>
-									<strong>Type:</strong> {selectedInventoryItem.item.itemType}<br />
+									<strong>Type:</strong> {selectedInventoryItem.item.itemType}
+									<br />
 									{selectedInventoryItem.item.itemType === 'Weapon' && (
 										<>
-											<strong>Weapon Type:</strong> {(selectedInventoryItem.item as any).type}<br />
-											<strong>Style:</strong> {(selectedInventoryItem.item as any).style}<br />
-											<strong>Handedness:</strong> {(selectedInventoryItem.item as any).handedness}<br />
-											<strong>Damage:</strong> {(selectedInventoryItem.item as any).damage}<br />
+											<strong>Weapon Type:</strong> {(selectedInventoryItem.item as any).type}
+											<br />
+											<strong>Style:</strong> {(selectedInventoryItem.item as any).style}
+											<br />
+											<strong>Handedness:</strong> {(selectedInventoryItem.item as any).handedness}
+											<br />
+											<strong>Damage:</strong> {(selectedInventoryItem.item as any).damage}
+											<br />
 											{(selectedInventoryItem.item as any).properties && (
-												<><strong>Properties:</strong> {(selectedInventoryItem.item as any).properties.join(', ')}<br /></>
+												<>
+													<strong>Properties:</strong>{' '}
+													{(selectedInventoryItem.item as any).properties.join(', ')}
+													<br />
+												</>
 											)}
 											{(selectedInventoryItem.item as any).price && (
-												<><strong>Price:</strong> {(selectedInventoryItem.item as any).price}<br /></>
+												<>
+													<strong>Price:</strong> {(selectedInventoryItem.item as any).price}
+													<br />
+												</>
 											)}
 										</>
 									)}
 									{selectedInventoryItem.item.itemType === 'Armor' && (
 										<>
-											<strong>Type:</strong> {(selectedInventoryItem.item as any).type}<br />
-											<strong>PDR:</strong> {(selectedInventoryItem.item as any).pdr}<br />
-											<strong>AD Modifier:</strong> {(selectedInventoryItem.item as any).adModifier}<br />
+											<strong>Type:</strong> {(selectedInventoryItem.item as any).type}
+											<br />
+											<strong>PDR:</strong> {(selectedInventoryItem.item as any).pdr}
+											<br />
+											<strong>AD Modifier:</strong> {(selectedInventoryItem.item as any).adModifier}
+											<br />
 											{(selectedInventoryItem.item as any).agilityCap && (
-												<><strong>Agility Cap:</strong> {(selectedInventoryItem.item as any).agilityCap}<br /></>
+												<>
+													<strong>Agility Cap:</strong>{' '}
+													{(selectedInventoryItem.item as any).agilityCap}
+													<br />
+												</>
 											)}
 											{(selectedInventoryItem.item as any).price && (
-												<><strong>Price:</strong> {(selectedInventoryItem.item as any).price}<br /></>
+												<>
+													<strong>Price:</strong> {(selectedInventoryItem.item as any).price}
+													<br />
+												</>
 											)}
 										</>
 									)}
 									{selectedInventoryItem.item.itemType === 'Shield' && (
 										<>
-											<strong>PDR:</strong> {(selectedInventoryItem.item as any).pdr}<br />
-											<strong>AD Modifier:</strong> {(selectedInventoryItem.item as any).adModifier}<br />
+											<strong>PDR:</strong> {(selectedInventoryItem.item as any).pdr}
+											<br />
+											<strong>AD Modifier:</strong> {(selectedInventoryItem.item as any).adModifier}
+											<br />
 											{(selectedInventoryItem.item as any).price && (
-												<><strong>Price:</strong> {(selectedInventoryItem.item as any).price}<br /></>
+												<>
+													<strong>Price:</strong> {(selectedInventoryItem.item as any).price}
+													<br />
+												</>
 											)}
 										</>
 									)}
 									{selectedInventoryItem.item.itemType === 'Potion' && (
 										<>
-											<strong>Level:</strong> {(selectedInventoryItem.item as any).level}<br />
-											<strong>Healing:</strong> {(selectedInventoryItem.item as any).healing}<br />
+											<strong>Level:</strong> {(selectedInventoryItem.item as any).level}
+											<br />
+											<strong>Healing:</strong> {(selectedInventoryItem.item as any).healing}
+											<br />
 											<strong>Price:</strong> {(selectedInventoryItem.item as any).price}g<br />
 										</>
 									)}
 									{selectedInventoryItem.item.itemType === 'Adventuring Supply' && (
 										<>
 											{(selectedInventoryItem.item as any).description && (
-												<><strong>Description:</strong> {(selectedInventoryItem.item as any).description}<br /></>
+												<>
+													<strong>Description:</strong>{' '}
+													{(selectedInventoryItem.item as any).description}
+													<br />
+												</>
 											)}
 											{(selectedInventoryItem.item as any).price && (
-												<><strong>Price:</strong> {(selectedInventoryItem.item as any).price}<br /></>
+												<>
+													<strong>Price:</strong> {(selectedInventoryItem.item as any).price}
+													<br />
+												</>
 											)}
 										</>
 									)}
 									<br />
-									<strong>Count:</strong> {selectedInventoryItem.inventoryData.count}<br />
+									<strong>Count:</strong> {selectedInventoryItem.inventoryData.count}
+									<br />
 									{selectedInventoryItem.inventoryData.cost && (
-										<><strong>Cost:</strong> {selectedInventoryItem.inventoryData.cost}</>
+										<>
+											<strong>Cost:</strong> {selectedInventoryItem.inventoryData.cost}
+										</>
 									)}
 								</>
 							) : (
 								<>
-									<strong>Custom Item</strong><br />
-									<strong>Type:</strong> {selectedInventoryItem.inventoryData.itemType}<br />
-									<strong>Count:</strong> {selectedInventoryItem.inventoryData.count}<br />
+									<strong>Custom Item</strong>
+									<br />
+									<strong>Type:</strong> {selectedInventoryItem.inventoryData.itemType}
+									<br />
+									<strong>Count:</strong> {selectedInventoryItem.inventoryData.count}
+									<br />
 									{selectedInventoryItem.inventoryData.cost && (
-										<><strong>Cost:</strong> {selectedInventoryItem.inventoryData.cost}</>
+										<>
+											<strong>Cost:</strong> {selectedInventoryItem.inventoryData.cost}
+										</>
 									)}
 								</>
 							)}

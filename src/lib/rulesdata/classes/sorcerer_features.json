@@ -1,25 +1,42 @@
 {
 	"className": "Sorcerer",
+	"startingEquipment": {
+		"weaponsOrShields": ["1 Weapon"],
+		"armor": "1 set of Light Armor",
+		"packs": "X or Y “Packs” (Adventuring Packs Coming Soon)"
+	},
+	"spellcastingPath": {
+		"combatTraining": {
+			"armor": ["Light Armor"]
+		},
+		"spellList": {
+			"type": "any",
+			"listName": "Choose 1 Spell List (Arcane, Divine, or Primal)",
+			"description": "When you learn a new Spell, you can choose any Spell from the chosen Spell List.",
+			"betaNote": "You get access to the following \"Premade List\" that have had their Spells pre-selected for you: Fire & Flames, Ice & Illusions, Lightning & Teleportation, or Psychic & Enchantment"
+		},
+		"cantrips": {
+			"knownIncreasesBy": "Cantrips Known column of the Sorcerer Class Table",
+			"description": "Cantrips are Spells with the Cantrip Spell Tag."
+		},
+		"spells": {
+			"knownIncreasesBy": "Spells Known column of the Sorcerer Class Table",
+			"description": "These can be Spells with or without the Cantrip Spell Tag."
+		},
+		"manaPoints": {
+			"maximumIncreasesBy": "Mana Points column of the Sorcerer Class Table"
+		}
+	},
 	"coreFeatures": [
 		{
 			"featureName": "Innate Power",
 			"levelGained": 1,
-			"description": "You gain the following benefits:",
-			"benefits": [
-				{
-					"name": "Maximum MP Increase",
-					"description": "Your Maximum MP increases by 1."
-				},
-				{
-					"name": "Free Enhancement",
-					"description": "Once per Long Rest, you can use a 1 MP Spell Enhancement without spending any MP (up to your Mana Spend Limit). You regain the ability to use this benefit when you roll for Initiative."
-				}
-			]
+			"description": "Choose a Sorcerous Origin that grants you a benefit: Intuitive Magic, Resilient Magic, or Unstable Magic. Additionally, you gain the following benefits:\n• Your Maximum MP increases by 1.\n• Once per Long Rest, you can use a 1 MP Spell Enhancement without spending any MP (up to your Mana Spend Limit). You regain the ability to use this benefit when you roll for Initiative."
 		},
 		{
 			"featureName": "Sorcerous Origins",
 			"levelGained": 1,
-			"description": "Choose a Sorcerous Origin that grants you a benefit:",
+			"description": "Choose one of the following Sorcerous Origins.",
 			"choices": [
 				{
 					"prompt": "Choose a Sorcerous Origin.",
@@ -27,19 +44,7 @@
 					"options": [
 						{
 							"name": "Intuitive Magic",
-							"description": "You learn an additional Spell and Cantrip from your Sorcerer Spell List.",
-							"effects": [
-								{
-									"type": "GRANT_SPELLS",
-									"value": 1,
-									"options": "Sorcerer"
-								},
-								{
-									"type": "GRANT_CANTRIPS",
-									"value": 1,
-									"options": "Sorcerer"
-								}
-							]
+							"description": "You learn an additional Spell and Cantrip from your Sorcerer Spell List."
 						},
 						{
 							"name": "Resilient Magic",
@@ -56,10 +61,10 @@
 		{
 			"featureName": "Overload Magic",
 			"levelGained": 1,
-			"description": "You can spend 2 AP in Combat to channel raw magical energy for 1 minute, or until you become Incapacitated, die, or choose to end it early at any time for free. For the duration, your magic is overloaded and you're subjected to the following effects: You gain +5 to all Spell Checks you make. You must immediately make an Attribute Save (your choice) against your Save DC upon using this Feature, and again at the start of each of your turns. Failure: You gain Exhaustion. You lose any Exhaustion gained in this way when you complete a Short Rest."
+			"description": "You can spend 2 AP in Combat to channel raw magical energy for 1 minute, or until you become Incapacitated, die, or choose to end it early at any time for free. For the duration, your magic is overloaded and you're subjected to the following effects:\n• You gain +5 to all Spell Checks you make.\n• You must immediately make an Attribute Save (your choice) against your Save DC upon using this Feature, and again at the start of each of your turns. Failure: You gain Exhaustion. You lose any Exhaustion gained in this way when you complete a Short Rest."
 		},
 		{
-			"featureName": "Sorcery",
+			"featureName": "Sorcery (Flavor Feature)",
 			"levelGained": 1,
 			"description": "You learn the Sorcery Spell.",
 			"isFlavor": true
@@ -67,10 +72,10 @@
 		{
 			"featureName": "Meta Magic",
 			"levelGained": 2,
-			"description": "You can only use 1 of these Spell Enhancements per Spell you cast. MP spent on these Spell Enhancements doesn't count against your Mana Spend Limit.",
+			"description": "You gain 2 unique Spell Enhancements from the list below. You can only use 1 of these Spell Enhancements per Spell you cast. MP spent on these Spell Enhancements doesn't count against your Mana Spend Limit.",
 			"choices": [
 				{
-					"prompt": "You gain 2 unique Spell Enhancements from the list below.",
+					"prompt": "Choose 2 Meta Magic options.",
 					"count": 2,
 					"options": [
 						{
@@ -110,24 +115,10 @@
 				{
 					"featureName": "Celestial Spark",
 					"levelGained": 3,
-					"description": "You can use a Minor Action to emit Bright Light within a 5 Space Radius and can end the effect at any time. You also gain the following abilities:",
-					"benefits": [
-						{
-							"name": "Celestial Origin",
-							"description": "You gain 2 Ancestry Points that can only be spent on Angelborn Traits."
-						},
-						{
-							"name": "Celestial Protection",
-							"description": "You learn the Careful Spell Meta Magic option (choose another Meta Magic option if you already know it) and Careful Spell now costs 0 MP to use."
-						},
-						{
-							"name": "Celestial Overload",
-							"description": "Once per Combat while you're Overloaded, you can spend 1 AP to release a burst of radiant light in a 5 Space Aura. Creatures of your choice within range are either healed (regains 1 HP) or seared by the light (Make a Spell Check against the target's AD. Success: The target takes 1 Radiant damage)."
-						}
-					]
+					"description": "You can use a Minor Action to emit Bright Light within a 5 Space Radius and can end the effect at any time. You also gain the following abilities:\n• Celestial Origin: You gain 2 Ancestry Points that can only be spent on Angelborn Traits.\n• Celestial Protection: You learn the Careful Spell Meta Magic option (choose another Meta Magic option if you already know it) and Careful Spell now costs 0 MP to use.\n• Celestial Overload: Once per Combat while you're Overloaded, you can spend 1 AP to release a burst of radiant light in a 5 Space Aura. Creatures of your choice within range are either healed or seared by the light (your choice for each creature).\n  - Healed: The creature regains 1 HP.\n  - Seared: Make a Spell Check against the target's AD. Success: The target takes 1 Radiant damage."
 				},
 				{
-					"featureName": "Celestial Appearance",
+					"featureName": "Celestial Appearance (Flavor Feature)",
 					"levelGained": 3,
 					"description": "You gain additional angelic features such as sparkling skin, feathers, a faint halo, or other changes of your choice. If you already have these features, they're enhanced or expanded upon. Additionally, you gain 1 level of Language Mastery in Celestial. If you're already Fluent in Celestial, you gain 1 level of Language Mastery in another Language of your choice.",
 					"isFlavor": true
@@ -140,24 +131,10 @@
 				{
 					"featureName": "Draconic Spark",
 					"levelGained": 3,
-					"description": "You gain the following abilities:",
-					"benefits": [
-						{
-							"name": "Draconic Origin",
-							"description": "You gain 2 Ancestry Points that can only be spent on Dragonborn Traits. Additionally, choose a Draconic Origin from the Dragonborn Ancestry if you haven't already."
-						},
-						{
-							"name": "Draconic Overload",
-							"description": "While Overloaded, you gain Resistance (1) to Physical damage and your Draconic Origin damage type."
-						},
-						{
-							"name": "Draconic Transmutation",
-							"description": "You gain the Transmuted Spell Meta Magic (choose another Meta Magic option if you already have Transmuted Spell). Transmuted Spell now costs you 0 MP to use if you change the damage type to your Draconic Origin damage type."
-						}
-					]
+					"description": "You gain the following abilities:\n• Draconic Origin: You gain 2 Ancestry Points that can only be spent on Dragonborn Traits. Additionally, choose a Draconic Origin from the Dragonborn Ancestry if you haven't already.\n• Draconic Overload: While Overloaded, you gain Resistance (1) to Physical damage and your Draconic Origin damage type.\n• Draconic Transmutation: You gain the Transmuted Spell Meta Magic (choose another Meta Magic option if you already have Transmuted Spell). Transmuted Spell now costs you 0 MP to use if you change the damage type to your Draconic Origin damage type."
 				},
 				{
-					"featureName": "Draconic Appearance",
+					"featureName": "Draconic Appearance (Flavor Feature)",
 					"levelGained": 3,
 					"description": "You gain additional draconic features such as scales, fangs, claws, or other changes of your choice. If you already have these features, they're enhanced or expanded upon. Additionally, you gain 1 level of Language Mastery in Draconic. If you're already Fluent in Draconic, you gain 1 level of Language Mastery in another Language of your choice.",
 					"isFlavor": true

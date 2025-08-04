@@ -1,8 +1,35 @@
 {
 	"className": "Champion",
+	"startingEquipment": {
+		"weaponsOrShields": ["3 Weapons or Shields"],
+		"rangedWeapon": "1 Ranged Weapon with 20 Ammo OR 3 Weapons with the Toss or Thrown Property",
+		"armor": "1 set of Light Armor or Heavy Armor",
+		"packs": "X or Y “Packs” (Adventuring Packs Coming Soon)"
+	},
+	"martialPath": {
+		"combatTraining": {
+			"weapons": ["Weapons"],
+			"armor": ["All Armors"],
+			"shields": ["All Shields"]
+		},
+		"maneuvers": {
+			"learnsAllAttack": true,
+			"additionalKnown": "Maneuvers Known column of the Champion Class Table"
+		},
+		"techniques": {
+			"additionalKnown": "Techniques Known column of the Champion Class Table"
+		},
+		"staminaPoints": {
+			"maximumIncreasesBy": "Stamina Points column of the Champion Class Table"
+		},
+		"staminaRegen": {
+			"description": "Once per round, you can regain up to half your maximum SP when you perform a Maneuver.",
+			"conditions": []
+		}
+	},
 	"coreFeatures": [
 		{
-			"featureName": "Master-At-Arms",
+			"featureName": "Master-at-Arms",
 			"levelGained": 1,
 			"description": "Your training in warfare has granted you the following benefits:",
 			"benefits": [
@@ -27,7 +54,7 @@
 			"benefits": [
 				{
 					"name": "Combat Readiness",
-					"description": "At the start of your first turn in Combat, you gain one of the following benefits: Brace (You gain the benefits of the Dodge Action and ADV on the next Save you make until the end of Combat) or Advance (You gain the benefits of the Move Action and ADV on the next Physical Check you make until the end of Combat)."
+					"description": "At the start of your first turn in Combat, you gain one of the following benefits:\n• Brace: You gain the benefits of the Dodge Action and ADV on the next Save you make until the end of Combat.\n• Advance: You gain the benefits of the Move Action and ADV on the next Physical Check you make until the end of Combat."
 				},
 				{
 					"name": "Second Wind",
@@ -36,7 +63,7 @@
 			]
 		},
 		{
-			"featureName": "Know Your Enemy",
+			"featureName": "Know Your Enemy (Flavor Feature)",
 			"levelGained": 1,
 			"description": "You can spend 1 minute observing or interacting with a creature out of Combat (or spend 1 AP in Combat) to learn information about its physical capabilities compared to your own. Choose one of the following stats of the creature to assess: Might, Agility, PD, AD, and HP. Make a DC 10 Knowledge or Insight Check (your choice). Success: You learn if the chosen stat is higher, lower, or the same as yours.",
 			"isFlavor": true
@@ -45,20 +72,14 @@
 			"featureName": "Adaptive Tactics",
 			"levelGained": 2,
 			"description": "When you roll for Initiative, and at the end of each of your turns, you gain a d8 Tactical Die if you don't already have one. You can spend a Tactical Die to gain one of the following Tactics:",
-			"choices": [
+			"benefits": [
 				{
-					"prompt": "Choose a Tactic to use your Tactical Die on.",
-					"count": 1,
-					"options": [
-						{
-							"name": "Assault",
-							"description": "When you make a Martial Attack, you can add the die to the Attack's result."
-						},
-						{
-							"name": "Deflect",
-							"description": "When you are Attacked, you can subtract the die from the Attack's result."
-						}
-					]
+					"name": "Assault",
+					"description": "When you make a Martial Attack, you can add the die to the Attack's result."
+				},
+				{
+					"name": "Deflect",
+					"description": "When you are Attacked, you can subtract the die from the Attack's result."
 				}
 			]
 		},
@@ -75,24 +96,10 @@
 				{
 					"featureName": "Hero's Resolve",
 					"levelGained": 3,
-					"description": "Your warrior spirit refuses to yield in battle. You gain the following benefits:",
-					"benefits": [
-						{
-							"name": "Adrenaline Boost",
-							"description": "When you use your Second Wind, you gain a +5 bonus to Attack Checks you make until the end of your turn."
-						},
-						{
-							"name": "Cut Through",
-							"description": "Your Martial Attacks that score Heavy Hits ignore the target's Physical damage Resistances."
-						},
-						{
-							"name": "Unyielding Spirit",
-							"description": "While Bloodied, you gain 1 Temp HP at the start of each of your turns."
-						}
-					]
+					"description": "Your warrior spirit refuses to yield in battle. You gain the following benefits:\n• Adrenaline Boost: When you use your Second Wind, you gain a +5 bonus to Attack Checks you make until the end of your turn.\n• Cut Through: Your Martial Attacks that score Heavy Hits ignore the target's Physical damage Resistances.\n• Unyielding Spirit: While Bloodied, you gain 1 Temp HP at the start of each of your turns."
 				},
 				{
-					"featureName": "Adventuring Hero",
+					"featureName": "Adventuring Hero (Flavor Feature)",
 					"levelGained": 3,
 					"description": "You ignore the penalties of Forced March and being Encumbered (but not Heavily Encumbered).",
 					"isFlavor": true
@@ -105,24 +112,10 @@
 				{
 					"featureName": "Stalwart Protector",
 					"levelGained": 3,
-					"description": "You gain the following benefits:",
-					"benefits": [
-						{
-							"name": "Steadfast Defender",
-							"description": "You can use your Deflect Tactic against any Attack that targets a creature within your Melee Range."
-						},
-						{
-							"name": "Defensive Bash",
-							"description": "When you use a Defensive Maneuver as a Reaction to an Attack from a creature within 1 Space of you, the attacker must make a Physical Save against your Attack Check. Save Failure: The target is pushed 1 Space away or Taunted by you until the end of its next turn (your choice)."
-						},
-						{
-							"name": "Not on my Watch",
-							"description": "Creatures Taunted by you deal 1 less damage to targets within 1 Space of you."
-						}
-					]
+					"description": "You gain the following benefits:\n• Steadfast Defender: You can use your Deflect Tactic against any Attack that targets a creature within your Melee Range.\n• Defensive Bash: When you use a Defensive Maneuver as a Reaction to an Attack from a creature within 1 Space of you, the attacker must make a Physical Save against your Attack Check. Save Failure: The target is pushed 1 Space away or Taunted by you until the end of its next turn (your choice).\n• Not on my Watch: Creatures Taunted by you deal 1 less damage to targets within 1 Space of you."
 				},
 				{
-					"featureName": "Vigilant Watcher",
+					"featureName": "Vigilant Watcher (Flavor Feature)",
 					"levelGained": 3,
 					"description": "During a Long Rest, if you spend both 4 hour periods doing Light Activity, you have ADV on the Might Save you make to avoid gaining Exhaustion. Additionally, the Save DC doesn't increase on a Failure.",
 					"isFlavor": true

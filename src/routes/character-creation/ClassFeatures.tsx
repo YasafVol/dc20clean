@@ -370,11 +370,19 @@ function ClassFeatures() {
 										</StyledBenefitDescription>
 									</StyledBenefit>
 								)}
-								{selectedClassFeatures.spellcastingPath.spellList.schoolsOrTags && (
+								{selectedClassFeatures.spellcastingPath.spellList.schools && (
 									<StyledBenefit>
-										<StyledBenefitName>Available Schools/Tags</StyledBenefitName>
+										<StyledBenefitName>Available Schools</StyledBenefitName>
 										<StyledBenefitDescription>
-											{selectedClassFeatures.spellcastingPath.spellList.schoolsOrTags.join(', ')}
+											{selectedClassFeatures.spellcastingPath.spellList.schools.join(', ')}
+										</StyledBenefitDescription>
+									</StyledBenefit>
+								)}
+								{selectedClassFeatures.spellcastingPath.spellList.spellTags && (
+									<StyledBenefit>
+										<StyledBenefitName>Available Spell Tags</StyledBenefitName>
+										<StyledBenefitDescription>
+											{selectedClassFeatures.spellcastingPath.spellList.spellTags.join(', ')}
 										</StyledBenefitDescription>
 									</StyledBenefit>
 								)}

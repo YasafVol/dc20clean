@@ -11,18 +11,17 @@
 		},
 		"spellList": {
 			"type": "schools",
-			"schoolsOrTags": [
+			"schools": [
 				"Astromancy",
-				"Chronomancy",
 				"Conjuration",
 				"Divination",
 				"Enchantment",
 				"Destruction",
 				"Illusion",
-				"Necromancy",
 				"Protection",
 				"Restoration",
-				"Transmutation"
+				"Transmutation",
+				"Abjuration"
 			],
 			"description": "You choose 4 Spell Schools. When you learn a new Spell, you can choose any Spell from the chosen Spell Schools.",
 			"betaNote": "The Warlock works in a unique way with Spell Schools, so until more Spells are released in future updates you just get access to any of the \"Premade Lists\" that have been released. You could pick 4 Spell Schools and then grab Spells from across all the Prepared Lists if you want to, but it will be difficult without with the current number of Spells."

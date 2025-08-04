@@ -3,6 +3,8 @@
  * @description Loader for the new class features JSON structure
  */
 
+import { SpellSchool, SpellList } from '../spells-data/types/spell.types';
+
 // Define interfaces for the new class features structure
 export interface ClassFeatureChoice {
 	prompt: string;
@@ -75,9 +77,10 @@ export interface ClassDefinition {
 			shields?: string[];
 		};
 		spellList?: {
-			type?: string;
+			type?: 'specific' | 'schools' | 'any';
 			listName?: string;
-			schoolsOrTags?: string[];
+			schools?: SpellSchool[];
+			spellTags?: string[];
 			description?: string;
 			betaNote?: string;
 		};

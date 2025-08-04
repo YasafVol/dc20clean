@@ -200,7 +200,7 @@ export const calculateCharacterStats = async (
 	let finalHPMax = finalMight; // Base from Might
 	let finalSPMax = 0;
 	let finalMPMax = 0;
-	let finalSaveDC = 8; // Base
+	let finalSaveDC = 10; // Base (correct DC20 base)
 	let finalDeathThreshold = 10; // Base
 	let finalMoveSpeed = 5; // Default base, will be set by class data
 	let finalRestPoints = 4; // Will be set to finalHPMax later
@@ -211,7 +211,7 @@ export const calculateCharacterStats = async (
 		finalHPMax += classData.baseHpContribution;
 		finalSPMax = classData.startingSP;
 		finalMPMax = classData.startingMP;
-		finalSaveDC = classData.saveDCBase;
+		// Note: saveDCBase is not used in correct formula, keeping base at 10
 		finalDeathThreshold = classData.deathThresholdBase;
 		finalMoveSpeed = classData.moveSpeedBase;
 		// finalRestPoints will be set to finalHPMax after all calculations
@@ -429,7 +429,7 @@ export const calculateCharacterStats = async (
 	}
 
 	// Add attribute bonuses
-	finalSaveDC += primeModifier.value; // Save DC = Base + Prime
+	finalSaveDC += primeModifier.value + finalCombatMastery; // Save DC = 10 + Prime + Combat Mastery
 	finalInitiativeBonus += finalCombatMastery + finalAgility; // Initiative = CM + Agility
 
 	// Calculate Save Values (Updated Formula)

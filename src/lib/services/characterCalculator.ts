@@ -283,6 +283,66 @@ export const calculateCharacterStats = async (
 		}
 	}
 
+	// Process selected feature choices (like Cleric domains)
+	if (characterData.selectedFeatureChoices && classFeatures) {
+		try {
+			const selectedChoices: { [key: string]: string } = JSON.parse(characterData.selectedFeatureChoices);
+			
+			// Process Cleric domain benefits
+			if (classFeatures.className === 'Cleric') {
+				const domainChoiceId = 'cleric_divine_domains_0'; // Standard choice ID for divine domains
+				const selectedDomains = selectedChoices[domainChoiceId];
+				
+				if (selectedDomains) {
+					const domains = JSON.parse(selectedDomains);
+					domains.forEach((domainName: string) => {
+						switch (domainName) {
+							case 'Magic':
+								finalMPMax += 1; // Magic domain: "Your maximum MP increases by 1"
+								break;
+							case 'Divine Damage Expansion':
+								// Resistance (1) to divine damage type - would be handled in defense/resistance calculation
+								break;
+							case 'Life':
+								// When you produce an MP Effect that restores HP - active ability, not stat bonus
+								break;
+							case 'Death':
+								// Enemy creatures within 10 Spaces take +1 damage while Well-Bloodied - combat effect
+								break;
+							case 'Grave':
+								// Allied creatures within 10 Spaces take -1 damage while Well-Bloodied - combat effect  
+								break;
+							case 'Light':
+								// MP Effect targeting ability - active ability, not stat bonus
+								break;
+							case 'Dark':
+								// Darkvision and Hide ability - would be handled in abilities/vision calculation
+								break;
+							case 'War':
+								// Combat abilities - would be handled in combat calculation
+								break;
+							case 'Knowledge':
+								// Knowledge trade bonuses - would be handled in skill calculation
+								break;
+							case 'Nature':
+								// Natural abilities - would be handled in abilities calculation
+								break;
+							case 'Trickery':
+								// Stealth and deception bonuses - would be handled in skill calculation
+								break;
+							case 'Tempest':
+								// Storm and weather abilities - combat effects
+								break;
+							// Note: Magic domain can be chosen multiple times for additional +1 MP each time
+						}
+					});
+				}
+			}
+		} catch (error) {
+			console.warn('Error processing feature choices:', error);
+		}
+	}
+
 	// Add attribute bonuses
 	finalSaveDC += primeModifier.value; // Save DC = Base + Prime
 	finalInitiativeBonus += finalCombatMastery + finalAgility; // Initiative = CM + Agility

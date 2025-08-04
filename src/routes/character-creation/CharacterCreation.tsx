@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
+import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
 import AncestrySelector from './AncestrySelector.tsx';
 import SelectedAncestries from './SelectedAncestries.tsx';
 import Attributes from './Attributes.tsx';
@@ -102,8 +103,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 				const selectedClass = classesData.find((c) => c.id === state.classId);
 				if (!selectedClass) return false;
 
-				// Import and use the spell school logic
-				const { findClassByName } = require('../../lib/rulesdata/loaders/class-features.loader');
+				// Check if all required feature choices have been made
 				const selectedClassFeatures = findClassByName(selectedClass.name);
 				if (!selectedClassFeatures) return false;
 

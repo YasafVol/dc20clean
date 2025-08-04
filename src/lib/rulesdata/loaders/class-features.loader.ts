@@ -77,10 +77,11 @@ export interface ClassDefinition {
 			shields?: string[];
 		};
 		spellList?: {
-			type?: 'specific' | 'schools' | 'any';
+			type?: 'specific' | 'schools' | 'any' | 'all_schools';
 			listName?: string;
-			schools?: SpellSchool[];
+			specificSchools?: SpellSchool[];
 			spellTags?: string[];
+			schoolCount?: number; // For classes that choose X schools
 			description?: string;
 			betaNote?: string;
 		};
@@ -108,6 +109,23 @@ const rawClassFeatures = Object.values(classFeatureModules).map((module: any) =>
 
 // Export the class features data
 export const classFeaturesData: ClassDefinition[] = rawClassFeatures;
+
+// Helper function to get available spell schools for a class
+export function getAvailableSpellSchools(classData: ClassDefinition): SpellSchool[] {
+	const spellList = classData.spellcastingPath?.spellList;
+	if (!spellList) return [];
+
+	switch (spellList.type) {
+		case 'all_schools':
+			// Return all schools from the enum
+			return Object.values(SpellSchool);
+		case 'schools':
+			// Return specific schools
+			return spellList.specificSchools || [];
+		default:
+			return [];
+	}
+}
 
 // Helper function to find a class by name
 export function findClassByName(className: string): ClassDefinition | undefined {

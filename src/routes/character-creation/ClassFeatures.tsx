@@ -2,7 +2,8 @@ import { useCharacter } from '../../lib/stores/characterContext';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import {
 	findClassByName,
-	getLegacyChoiceId
+	getLegacyChoiceId,
+	getAvailableSpellSchools
 } from '../../lib/rulesdata/loaders/class-features.loader';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
 import { maneuvers, ManeuverType } from '../../lib/rulesdata/maneuvers';
@@ -370,14 +371,19 @@ function ClassFeatures() {
 										</StyledBenefitDescription>
 									</StyledBenefit>
 								)}
-								{selectedClassFeatures.spellcastingPath.spellList.schools && (
-									<StyledBenefit>
-										<StyledBenefitName>Available Schools</StyledBenefitName>
-										<StyledBenefitDescription>
-											{selectedClassFeatures.spellcastingPath.spellList.schools.join(', ')}
-										</StyledBenefitDescription>
-									</StyledBenefit>
-								)}
+								{(() => {
+									const availableSchools = getAvailableSpellSchools(selectedClassFeatures);
+									return availableSchools.length > 0 ? (
+										<StyledBenefit>
+											<StyledBenefitName>Available Schools</StyledBenefitName>
+											<StyledBenefitDescription>
+												{selectedClassFeatures.spellcastingPath.spellList?.type === 'all_schools'
+													? `Choose ${selectedClassFeatures.spellcastingPath.spellList.schoolCount || 'any'} from: ${availableSchools.join(', ')}`
+													: availableSchools.join(', ')}
+											</StyledBenefitDescription>
+										</StyledBenefit>
+									) : null;
+								})()}
 								{selectedClassFeatures.spellcastingPath.spellList.spellTags && (
 									<StyledBenefit>
 										<StyledBenefitName>Available Spell Tags</StyledBenefitName>

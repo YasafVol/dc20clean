@@ -13,7 +13,7 @@
 		},
 		"spellList": {
 			"type": "schools",
-			"schools": ["Conjuration", "Divination", "Enchantment", "Illusion", "Restoration"],
+			"specificSchools": ["Conjuration", "Divination", "Enchantment", "Illusion", "Restoration"],
 			"spellTags": ["Charm"],
 			"betaNote": "This means that the following Spells are what you would have access to:\nCantrips: Befriend, Close Wounds, Guidance, Light, Mage Hand, Message, Minor Illusion\n1 MP Spells: Bane, Bless, Command, Find Familiar, Fog Cloud, Grease, Heal, Psychic Fear, Silent Image, Sleep, Tethering Vines"
 		},

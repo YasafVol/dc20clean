@@ -36,7 +36,8 @@
 		},
 		"spellList": {
 			"type": "schools",
-			"schools": ["Destruction", "Protection"],
+			"specificSchools": ["Destruction", "Protection"],
+			"schoolCount": 1,
 			"description": "You gain access to Destruction and Protection schools, plus 1 other School of your choice",
 			"betaNote": "Until the Spell update in Beta 0.10 the Spellblade can pick between all currently available Spells from the Premade Spell Lists (within the available Schools of course)."
 		},

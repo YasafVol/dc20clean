@@ -122,12 +122,58 @@ function ClassFeatures() {
 		let featureManeuvers = 0;
 		let featureTechniques = 0;
 
-		// Check for class-specific martial bonuses from features
-		if (selectedClassFeatures.className === 'Champion') {
-			// Champion gets +2 maneuvers and +1 technique from Master-At-Arms
-			featureManeuvers = 2;
-			featureTechniques = 1;
-		}
+		// Parse feature descriptions to extract maneuver/technique bonuses
+		selectedClassFeatures.coreFeatures.forEach((feature) => {
+			if (feature.levelGained === 1) {
+				// Check main feature description
+				const description = feature.description.toLowerCase();
+
+				// Look for "you learn X maneuvers" pattern (handles "you learn 2 maneuvers")
+				const maneuverMatch = description.match(/you learn (\d+) (?:defensive )?maneuvers?/);
+				if (maneuverMatch) {
+					featureManeuvers += parseInt(maneuverMatch[1]);
+				}
+
+				// Look for "you learn 1 of the following maneuvers" pattern
+				const specificManeuverMatch = description.match(/you learn 1 of the following maneuvers/);
+				if (specificManeuverMatch) {
+					featureManeuvers += 1;
+				}
+
+				// Look for "you learn X techniques" pattern
+				const techniqueMatch = description.match(/you learn (\d+) techniques?/);
+				if (techniqueMatch) {
+					featureTechniques += parseInt(techniqueMatch[1]);
+				}
+
+				// Check benefits for maneuver/technique learning
+				feature.benefits?.forEach((benefit) => {
+					const benefitDescription = benefit.description.toLowerCase();
+
+					// Look for "you learn X maneuvers" pattern in benefits
+					const benefitManeuverMatch = benefitDescription.match(
+						/you learn (\d+) (?:defensive )?maneuvers?/
+					);
+					if (benefitManeuverMatch) {
+						featureManeuvers += parseInt(benefitManeuverMatch[1]);
+					}
+
+					// Look for "you learn 1 of the following maneuvers" pattern in benefits
+					const benefitSpecificManeuverMatch = benefitDescription.match(
+						/you learn 1 of the following maneuvers/
+					);
+					if (benefitSpecificManeuverMatch) {
+						featureManeuvers += 1;
+					}
+
+					// Look for "you learn X techniques" pattern in benefits
+					const benefitTechniqueMatch = benefitDescription.match(/you learn (\d+) techniques?/);
+					if (benefitTechniqueMatch) {
+						featureTechniques += parseInt(benefitTechniqueMatch[1]);
+					}
+				});
+			}
+		});
 
 		const totalManeuvers = tableManeuvers + featureManeuvers;
 		const totalTechniques = tableTechniques + featureTechniques;

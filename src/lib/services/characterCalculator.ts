@@ -203,7 +203,7 @@ export const calculateCharacterStats = async (
 	let finalSaveDC = 8; // Base
 	let finalDeathThreshold = 10; // Base
 	let finalMoveSpeed = 5; // Default base, will be set by class data
-	let finalRestPoints = 4; // Base
+	let finalRestPoints = 4; // Will be set to finalHPMax later
 	let finalInitiativeBonus = 0; // Base
 
 	// Add class contributions
@@ -214,7 +214,7 @@ export const calculateCharacterStats = async (
 		finalSaveDC = classData.saveDCBase;
 		finalDeathThreshold = classData.deathThresholdBase;
 		finalMoveSpeed = classData.moveSpeedBase;
-		finalRestPoints = classData.restPointsBase;
+		// finalRestPoints will be set to finalHPMax after all calculations
 		finalInitiativeBonus = classData.initiativeBonusBase;
 
 		// Apply effects from class features using the new class features structure
@@ -476,6 +476,9 @@ export const calculateCharacterStats = async (
 		});
 		skillsJson = JSON.stringify(defaultSkills);
 	}
+
+	// DC20 Rule: Rest Points = HP
+	finalRestPoints = finalHPMax;
 
 	return {
 		// Basic Info

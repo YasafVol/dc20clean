@@ -17,7 +17,7 @@ import {
 } from './styles/SelectedAncestries.styles';
 
 function SelectedAncestries() {
-	const { state, dispatch, ancestryPointsRemaining, ancestryPointsSpent } = useCharacter();
+	const { state, dispatch, ancestryPointsRemaining, ancestryPointsSpent, totalAncestryPoints } = useCharacter();
 
 	const selectedAncestry1 = ancestriesData.find((a) => a.id === state.ancestry1Id);
 	const selectedAncestry2 = ancestriesData.find((a) => a.id === state.ancestry2Id);
@@ -40,7 +40,7 @@ function SelectedAncestries() {
 		} else {
 			// Select - check if we have enough points
 			const newPointsSpent = ancestryPointsSpent + trait.cost;
-			if (newPointsSpent > 5) {
+			if (newPointsSpent > totalAncestryPoints) {
 				// Would exceed budget, don't allow selection
 				return;
 			}
@@ -61,7 +61,7 @@ function SelectedAncestries() {
 						const trait = getTrait(traitId);
 						if (!trait) return null;
 						const isSelected = selectedTraits.includes(traitId);
-						const wouldExceedBudget = !isSelected && ancestryPointsSpent + trait.cost > 5;
+						const wouldExceedBudget = !isSelected && ancestryPointsSpent + trait.cost > totalAncestryPoints;
 
 						return (
 							<StyledListItem key={traitId}>
@@ -88,7 +88,7 @@ function SelectedAncestries() {
 						const trait = getTrait(traitId);
 						if (!trait) return null;
 						const isSelected = selectedTraits.includes(traitId);
-						const wouldExceedBudget = !isSelected && ancestryPointsSpent + trait.cost > 5;
+						const wouldExceedBudget = !isSelected && ancestryPointsSpent + trait.cost > totalAncestryPoints;
 
 						return (
 							<StyledListItem key={traitId}>

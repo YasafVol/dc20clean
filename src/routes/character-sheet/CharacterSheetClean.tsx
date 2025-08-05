@@ -38,6 +38,7 @@ import Movement from './components/Movement';
 import RightColumnResources from './components/RightColumnResources';
 import DeathExhaustion from './components/DeathExhaustion';
 import PlayerNotes from './components/PlayerNotes';
+import DiceRoller from './components/DiceRoller';
 
 // Import character state management utilities
 import {
@@ -1827,6 +1828,13 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					</StyledFeaturePopupContent>
 				</StyledFeaturePopupOverlay>
 			)}
+
+			{/* Draconic Dice Roller */}
+			<DiceRoller 
+				onRoll={(results, total, rollMode) => {
+					console.log('Dice rolled:', { results, total, rollMode });
+				}}
+			/>
 		</StyledContainer>
 	);
 };

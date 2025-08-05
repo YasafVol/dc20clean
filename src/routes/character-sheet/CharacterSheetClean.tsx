@@ -508,7 +508,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		});
 	};
 
-	// Parse skills data from character - show ALL skills with their proficiency levels
+	// Parse skills data from character - show ALL skills with their proficiency levels and calculated bonuses
 	const getSkillsData = (): SkillData[] => {
 		// Parse character's skill proficiencies (if any)
 		let characterSkills: Record<string, number> = {};
@@ -521,15 +521,46 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		}
 
 		// Create skill data for ALL skills from rules data, merging with character's proficiencies
-		return skillsData.map((skill) => ({
-			id: skill.id,
-			name: skill.name,
-			attribute: skill.attributeAssociation,
-			proficiency: characterSkills[skill.id] || 0 // Default to 0 if not found
-		}));
+		return skillsData.map((skill) => {
+			const proficiency = characterSkills[skill.id] || 0;
+			const masteryBonus = proficiency * 2;
+			
+			// Get attribute modifier based on skill's attribute association
+			let attributeModifier = 0;
+			switch (skill.attributeAssociation.toLowerCase()) {
+				case 'might':
+					attributeModifier = characterData?.finalMight || 0;
+					break;
+				case 'agility':
+					attributeModifier = characterData?.finalAgility || 0;
+					break;
+				case 'charisma':
+					attributeModifier = characterData?.finalCharisma || 0;
+					break;
+				case 'intelligence':
+					attributeModifier = characterData?.finalIntelligence || 0;
+					break;
+				case 'prime':
+					// For prime skills, use the prime modifier value
+					attributeModifier = characterData?.finalPrimeModifierValue || 0;
+					break;
+				default:
+					attributeModifier = 0;
+			}
+			
+			const totalBonus = attributeModifier + masteryBonus;
+			
+			return {
+				id: skill.id,
+				name: skill.name,
+				attribute: skill.attributeAssociation,
+				proficiency,
+				bonus: totalBonus
+			};
+		});
 	};
 
-	// Parse trades data from character - show ONLY selected trades with their proficiency levels
+	// Parse trades data from character - show ONLY selected trades with their proficiency levels and calculated bonuses
 	const getTradesData = (): TradeData[] => {
 		// Parse character's trade proficiencies (if any)
 		let characterTrades: Record<string, number> = {};
@@ -544,14 +575,41 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		// Only show trades that have been selected (proficiency > 0) from tradesData only
 		return tradesData
 			.filter((trade) => characterTrades[trade.id] && characterTrades[trade.id] > 0)
-			.map((trade) => ({
-				id: trade.id,
-				name: trade.name,
-				proficiency: characterTrades[trade.id] || 0
-			}));
+			.map((trade) => {
+				const proficiency = characterTrades[trade.id] || 0;
+				const masteryBonus = proficiency * 2;
+				
+				// Get attribute modifier based on trade's attribute association
+				let attributeModifier = 0;
+				switch (trade.attributeAssociation.toLowerCase()) {
+					case 'might':
+						attributeModifier = characterData?.finalMight || 0;
+						break;
+					case 'agility':
+						attributeModifier = characterData?.finalAgility || 0;
+						break;
+					case 'charisma':
+						attributeModifier = characterData?.finalCharisma || 0;
+						break;
+					case 'intelligence':
+						attributeModifier = characterData?.finalIntelligence || 0;
+						break;
+					default:
+						attributeModifier = 0;
+				}
+				
+				const totalBonus = attributeModifier + masteryBonus;
+				
+				return {
+					id: trade.id,
+					name: trade.name,
+					proficiency,
+					bonus: totalBonus
+				};
+			});
 	};
 
-	// Parse knowledge data from character - show ALL knowledge with their proficiency levels
+	// Parse knowledge data from character - show ALL knowledge with their proficiency levels and calculated bonuses
 	const getKnowledgeData = (): TradeData[] => {
 		// Parse character's trade proficiencies (if any) - knowledge is stored in tradesJson
 		let characterTrades: Record<string, number> = {};
@@ -563,12 +621,39 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 			}
 		}
 
-		// Show ALL knowledge skills with their proficiency levels
-		return knowledgeData.map((knowledge) => ({
-			id: knowledge.id,
-			name: knowledge.name,
-			proficiency: characterTrades[knowledge.id] || 0 // Default to 0 if not found
-		}));
+		// Show ALL knowledge skills with their proficiency levels and calculated bonuses
+		return knowledgeData.map((knowledge) => {
+			const proficiency = characterTrades[knowledge.id] || 0;
+			const masteryBonus = proficiency * 2;
+			
+			// Get attribute modifier based on knowledge's attribute association
+			let attributeModifier = 0;
+			switch (knowledge.attributeAssociation.toLowerCase()) {
+				case 'might':
+					attributeModifier = characterData?.finalMight || 0;
+					break;
+				case 'agility':
+					attributeModifier = characterData?.finalAgility || 0;
+					break;
+				case 'charisma':
+					attributeModifier = characterData?.finalCharisma || 0;
+					break;
+				case 'intelligence':
+					attributeModifier = characterData?.finalIntelligence || 0;
+					break;
+				default:
+					attributeModifier = 0;
+			}
+			
+			const totalBonus = attributeModifier + masteryBonus;
+			
+			return {
+				id: knowledge.id,
+				name: knowledge.name,
+				proficiency,
+				bonus: totalBonus
+			};
+		});
 	};
 
 	// Parse languages data from character

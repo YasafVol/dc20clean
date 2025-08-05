@@ -33,11 +33,24 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 		return skills.map((skill) => (
 			<SkillRow key={skill.id}>
 				<SkillName>{skill.name.toUpperCase()}</SkillName>
-				<StyledProficiencyDots>
-					{[1, 2, 3, 4, 5].map((level) => (
-						<StyledDot key={level} filled={level <= skill.proficiency} />
-					))}
-				</StyledProficiencyDots>
+				<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+					<StyledProficiencyDots>
+						{[1, 2, 3, 4, 5].map((level) => (
+							<StyledDot key={level} filled={level <= skill.proficiency} />
+						))}
+					</StyledProficiencyDots>
+					{skill.bonus !== undefined && (
+						<span style={{
+							fontSize: '0.875rem',
+							fontWeight: '600',
+							color: skill.bonus >= 0 ? '#059669' : '#dc2626',
+							minWidth: '2rem',
+							textAlign: 'center'
+						}}>
+							{skill.bonus >= 0 ? '+' : ''}{skill.bonus}
+						</span>
+					)}
+				</div>
 			</SkillRow>
 		));
 	};

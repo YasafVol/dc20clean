@@ -3,7 +3,13 @@ import { skillsData } from '../../../lib/rulesdata/skills';
 import type {
 	BackgroundPointsData,
 	PointConversions,
-	ConversionActions
+	ConversionActions,
+	MasteryLimits,
+	MasteryInfo
+} from './BackgroundPointsManager';
+import {
+	getMasteryInfo,
+	MASTERY_TABLE
 } from './BackgroundPointsManager';
 import {
 	StyledTabContent,
@@ -18,17 +24,21 @@ import {
 
 interface SkillsTabProps {
 	currentSkills: Record<string, number>;
+	currentTrades: Record<string, number>;
 	pointsData: BackgroundPointsData;
 	conversions: PointConversions;
 	actions: ConversionActions;
+	masteryLimits: MasteryLimits;
 	onSkillChange: (skillId: string, newLevel: number) => void;
 }
 
 const SkillsTab: React.FC<SkillsTabProps> = ({
 	currentSkills,
+	currentTrades,
 	pointsData,
 	conversions,
 	actions,
+	masteryLimits,
 	onSkillChange
 }) => {
 	const canIncreaseProficiency = (
@@ -37,6 +47,24 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 		availablePoints: number
 	) => {
 		return pointsUsed + pointCost <= availablePoints;
+	};
+
+	// Enhanced validation including mastery limits
+	const canSelectMastery = (skillId: string, targetLevel: number): boolean => {
+		// Check mastery limit
+		if (targetLevel > masteryLimits.maxSkillMastery) return false;
+		
+		// Check Level 1 special rule for Adept (level 2)
+		if (targetLevel === 2) {
+			const currentlyAdept = currentSkills[skillId] === 2;
+			if (!currentlyAdept && masteryLimits.level1Validation.adeptCount >= 1) {
+				return false; // Already have one Adept skill/trade
+			}
+		}
+		
+		// Check point availability
+		const pointCost = targetLevel - (currentSkills[skillId] || 0);
+		return canIncreaseProficiency(pointCost, pointsData.skillPointsUsed, pointsData.availableSkillPoints);
 	};
 
 	// Helper function for consistent button styling
@@ -67,6 +95,34 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 
 	return (
 		<StyledTabContent>
+			{/* Level 1 Validation Warning */}
+			{!masteryLimits.level1Validation.valid && (
+				<div style={{
+					background: '#fee2e2',
+					border: '1px solid #fecaca',
+					color: '#991b1b',
+					padding: '0.75rem',
+					borderRadius: '0.5rem',
+					marginBottom: '1rem'
+				}}>
+					⚠️ Level 1 characters can only have ONE Adept (level 2) skill or trade total.
+					Currently: {masteryLimits.level1Validation.adeptCount} Adept selections.
+				</div>
+			)}
+			
+			{/* Mastery Limits Info */}
+			<div style={{
+				background: '#f3f4f6',
+				border: '1px solid #d1d5db',
+				padding: '0.5rem',
+				borderRadius: '0.375rem',
+				marginBottom: '1rem',
+				fontSize: '0.875rem'
+			}}>
+				<strong>Mastery Limits:</strong> Max level {masteryLimits.maxSkillMastery} 
+				({MASTERY_TABLE[masteryLimits.maxSkillMastery]?.name})
+			</div>
+
 			<StyledPointsRemaining>
 				Skill Points: {pointsData.availableSkillPoints - pointsData.skillPointsUsed} /{' '}
 				{pointsData.availableSkillPoints} remaining
@@ -172,52 +228,46 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 				</div>
 			</StyledPointsRemaining>
 			<StyledSelectionGrid>
-				{skillsData.map((skill) => {
-					const currentLevel = currentSkills[skill.id] || 0;
-					return (
-						<StyledSelectionItem key={skill.id}>
-							<StyledSelectionHeader>
-								<StyledSelectionName>{skill.name}</StyledSelectionName>
-								<div style={{ fontSize: '0.8rem', color: '#e2e8f0', textTransform: 'uppercase' }}>
-									{skill.attributeAssociation}
-								</div>
-							</StyledSelectionHeader>
-							<div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>
-								{skill.description}
+							{skillsData.map((skill) => {
+				const currentLevel = currentSkills[skill.id] || 0;
+				const masteryInfo = getMasteryInfo(currentLevel, masteryLimits.maxSkillMastery);
+				
+				return (
+					<StyledSelectionItem key={skill.id}>
+						<StyledSelectionHeader>
+							<StyledSelectionName>{skill.name}</StyledSelectionName>
+							<div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+								{masteryInfo.name} (+{masteryInfo.bonus}) • {skill.attributeAssociation}
 							</div>
-							<StyledProficiencySelector>
-								{[0, 1, 2, 3, 4, 5].map((level) => (
+						</StyledSelectionHeader>
+						<div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>
+							{skill.description}
+						</div>
+						<StyledProficiencySelector>
+							{[0, 1, 2, 3, 4, 5].map((level) => {
+								const masteryDisplay = getMasteryInfo(level, masteryLimits.maxSkillMastery);
+								const canSelect = canSelectMastery(skill.id, level);
+								
+								return (
 									<StyledProficiencyButton
 										key={level}
 										$active={currentLevel === level}
-										$disabled={
-											level > currentLevel &&
-											!canIncreaseProficiency(
-												level - currentLevel,
-												pointsData.skillPointsUsed,
-												pointsData.availableSkillPoints
-											)
-										}
+										$disabled={!canSelect && level !== currentLevel}
+										title={`${masteryDisplay.name} (+${masteryDisplay.bonus})`}
 										onClick={() => {
-											if (
-												level <= currentLevel ||
-												canIncreaseProficiency(
-													level - currentLevel,
-													pointsData.skillPointsUsed,
-													pointsData.availableSkillPoints
-												)
-											) {
+											if (canSelect || level === currentLevel) {
 												onSkillChange(skill.id, level);
 											}
 										}}
 									>
 										{level}
 									</StyledProficiencyButton>
-								))}
-							</StyledProficiencySelector>
-						</StyledSelectionItem>
-					);
-				})}
+								);
+							})}
+						</StyledProficiencySelector>
+					</StyledSelectionItem>
+				);
+			})}
 			</StyledSelectionGrid>
 		</StyledTabContent>
 	);

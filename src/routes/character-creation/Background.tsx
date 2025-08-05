@@ -1,6 +1,8 @@
 import React from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { useBackgroundPoints } from './components/BackgroundPointsManager';
+import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
+import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import SkillsTab from './components/SkillsTab';
 import TradesTab from './components/TradesTab';
 import LanguagesTab from './components/LanguagesTab';
@@ -42,12 +44,21 @@ const Background: React.FC = () => {
 		0
 	);
 
+	// Get class features for mastery calculations
+	const classData = state.classId ? classesData.find(c => c.id === state.classId) : null;
+	const classFeatures = classData ? findClassByName(classData.name) : null;
+
 	// Use the background points manager hook
-	const { pointsData, conversions, actions } = useBackgroundPoints(
+	const { pointsData, conversions, actions, masteryLimits } = useBackgroundPoints(
 		skillPointsUsed,
 		tradePointsUsed,
 		languagePointsUsed,
-		state.attribute_intelligence
+		state.attribute_intelligence,
+		state.level,
+		classFeatures,
+		state.selectedFeatureChoices,
+		currentSkills,
+		currentTrades
 	);
 
 	// Handler functions
@@ -99,9 +110,11 @@ const Background: React.FC = () => {
 				return (
 					<SkillsTab
 						currentSkills={currentSkills}
+						currentTrades={currentTrades}
 						pointsData={pointsData}
 						conversions={conversions}
 						actions={actions}
+						masteryLimits={masteryLimits}
 						onSkillChange={handleSkillChange}
 					/>
 				);
@@ -109,9 +122,11 @@ const Background: React.FC = () => {
 				return (
 					<TradesTab
 						currentTrades={currentTrades}
+						currentSkills={currentSkills}
 						pointsData={pointsData}
 						conversions={conversions}
 						actions={actions}
+						masteryLimits={masteryLimits}
 						onTradeChange={handleTradeChange}
 					/>
 				);

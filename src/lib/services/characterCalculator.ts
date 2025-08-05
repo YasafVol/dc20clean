@@ -109,6 +109,10 @@ export interface CalculatedCharacterStats {
 	skillsJson?: string;
 	tradesJson?: string;
 	languagesJson?: string;
+	
+	// Calculated bonus data
+	skillsWithBonuses?: any[];
+	tradesWithBonuses?: any[];
 }
 
 // Import class data (we need to create this import based on what's available)
@@ -468,7 +472,7 @@ export const calculateCharacterStats = async (
 	const calculatedPDR = calculatePDR(characterData, classData);
 	const finalPDR = characterData.manualPDR !== undefined ? characterData.manualPDR : calculatedPDR;
 
-	// Default skills if not provided
+	// Process skills with calculated bonuses
 	let skillsJson = characterData.skillsJson;
 	if (!skillsJson) {
 		// Create default skills with 0 proficiency
@@ -477,6 +481,92 @@ export const calculateCharacterStats = async (
 			defaultSkills[skill.id] = 0;
 		});
 		skillsJson = JSON.stringify(defaultSkills);
+	}
+
+	// Calculate skill bonuses: Attribute + Mastery*2
+	const skillsWithBonuses: any[] = [];
+	try {
+		const skillProficiencies = JSON.parse(skillsJson);
+		skillsData.forEach((skill) => {
+			const proficiency = skillProficiencies[skill.id] || 0;
+			const masteryBonus = proficiency * 2;
+			
+			// Get attribute modifier based on skill's attribute association
+			let attributeModifier = 0;
+			switch (skill.attributeAssociation.toLowerCase()) {
+				case 'might':
+					attributeModifier = finalMight;
+					break;
+				case 'agility':
+					attributeModifier = finalAgility;
+					break;
+				case 'charisma':
+					attributeModifier = finalCharisma;
+					break;
+				case 'intelligence':
+					attributeModifier = finalIntelligence;
+					break;
+				default:
+					attributeModifier = 0;
+			}
+			
+			const totalBonus = attributeModifier + masteryBonus;
+			
+			skillsWithBonuses.push({
+				id: skill.id,
+				name: skill.name,
+				attribute: skill.attributeAssociation,
+				proficiency,
+				bonus: totalBonus
+			});
+		});
+	} catch (error) {
+		console.warn('Error calculating skill bonuses:', error);
+	}
+
+	// Process trades with calculated bonuses
+	const tradesWithBonuses: any[] = [];
+	try {
+		const tradeProficiencies = JSON.parse(characterData.tradesJson || '{}');
+		// Import trades data
+		const { tradesData } = await import('../rulesdata/trades');
+		const { knowledgeData } = await import('../rulesdata/knowledge');
+		const allTradesAndKnowledge = [...tradesData, ...knowledgeData];
+		
+		allTradesAndKnowledge.forEach((trade) => {
+			const proficiency = tradeProficiencies[trade.id] || 0;
+			const masteryBonus = proficiency * 2;
+			
+			// Get attribute modifier based on trade's attribute association
+			let attributeModifier = 0;
+			switch (trade.attributeAssociation.toLowerCase()) {
+				case 'might':
+					attributeModifier = finalMight;
+					break;
+				case 'agility':
+					attributeModifier = finalAgility;
+					break;
+				case 'charisma':
+					attributeModifier = finalCharisma;
+					break;
+				case 'intelligence':
+					attributeModifier = finalIntelligence;
+					break;
+				default:
+					attributeModifier = 0;
+			}
+			
+			const totalBonus = attributeModifier + masteryBonus;
+			
+			tradesWithBonuses.push({
+				id: trade.id,
+				name: trade.name,
+				proficiency,
+				bonus: totalBonus
+			});
+		});
+	} catch (error) {
+		console.warn('Error calculating trade bonuses:', error);
 	}
 
 	// DC20 Rule: Rest Points = HP
@@ -545,7 +635,11 @@ export const calculateCharacterStats = async (
 		// JSON data fields
 		skillsJson,
 		tradesJson: characterData.tradesJson || '{}',
-		languagesJson: characterData.languagesJson || '{"common": {"fluency": "fluent"}}'
+		languagesJson: characterData.languagesJson || '{"common": {"fluency": "fluent"}}',
+		
+		// Calculated skill and trade bonuses
+		skillsWithBonuses,
+		tradesWithBonuses
 	};
 };
 

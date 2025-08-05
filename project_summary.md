@@ -14,7 +14,7 @@ The project leverages a modern technology stack, including:
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **Bundler**: [Vite](https://vitejs.dev/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Database**: [PostgreSQL](https://www.postgresql.org/) with [Drizzle ORM](https://orm.drizzle.team/)
+- **Database**: [PostgreSQL](https://www.postgresql.org/) with [Prisma ORM](https://www.prisma.io/)
 - **Authentication**: Inferred to be [Lucia Auth](https://lucia-auth.com/) based on file structure and dependencies
 - **Testing**:
   - **Unit Testing**: [Vitest](https://vitest.dev/)

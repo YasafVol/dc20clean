@@ -4,7 +4,13 @@ import { knowledgeData } from '../../../lib/rulesdata/knowledge';
 import type {
 	BackgroundPointsData,
 	PointConversions,
-	ConversionActions
+	ConversionActions,
+	MasteryLimits,
+	MasteryInfo
+} from './BackgroundPointsManager';
+import {
+	getMasteryInfo,
+	MASTERY_TABLE
 } from './BackgroundPointsManager';
 import {
 	StyledTabContent,
@@ -22,17 +28,21 @@ const allTradesAndKnowledge = [...tradesData, ...knowledgeData];
 
 interface TradesTabProps {
 	currentTrades: Record<string, number>;
+	currentSkills: Record<string, number>;
 	pointsData: BackgroundPointsData;
 	conversions: PointConversions;
 	actions: ConversionActions;
+	masteryLimits: MasteryLimits;
 	onTradeChange: (tradeId: string, newLevel: number) => void;
 }
 
 const TradesTab: React.FC<TradesTabProps> = ({
 	currentTrades,
+	currentSkills,
 	pointsData,
 	conversions,
 	actions,
+	masteryLimits,
 	onTradeChange
 }) => {
 	const canIncreaseProficiency = (
@@ -41,6 +51,24 @@ const TradesTab: React.FC<TradesTabProps> = ({
 		availablePoints: number
 	) => {
 		return pointsUsed + pointCost <= availablePoints;
+	};
+
+	// Enhanced validation including mastery limits
+	const canSelectMastery = (tradeId: string, targetLevel: number): boolean => {
+		// Check mastery limit
+		if (targetLevel > masteryLimits.maxTradeMastery) return false;
+		
+		// Check Level 1 special rule for Adept (level 2)
+		if (targetLevel === 2) {
+			const currentlyAdept = currentTrades[tradeId] === 2;
+			if (!currentlyAdept && masteryLimits.level1Validation.adeptCount >= 1) {
+				return false; // Already have one Adept skill/trade
+			}
+		}
+		
+		// Check point availability
+		const pointCost = targetLevel - (currentTrades[tradeId] || 0);
+		return canIncreaseProficiency(pointCost, pointsData.tradePointsUsed, pointsData.availableTradePoints);
 	};
 
 	// Helper function for consistent button styling
@@ -71,6 +99,34 @@ const TradesTab: React.FC<TradesTabProps> = ({
 
 	return (
 		<StyledTabContent>
+			{/* Level 1 Validation Warning */}
+			{!masteryLimits.level1Validation.valid && (
+				<div style={{
+					background: '#fee2e2',
+					border: '1px solid #fecaca',
+					color: '#991b1b',
+					padding: '0.75rem',
+					borderRadius: '0.5rem',
+					marginBottom: '1rem'
+				}}>
+					⚠️ Level 1 characters can only have ONE Adept (level 2) skill or trade total.
+					Currently: {masteryLimits.level1Validation.adeptCount} Adept selections.
+				</div>
+			)}
+			
+			{/* Mastery Limits Info */}
+			<div style={{
+				background: '#f3f4f6',
+				border: '1px solid #d1d5db',
+				padding: '0.5rem',
+				borderRadius: '0.375rem',
+				marginBottom: '1rem',
+				fontSize: '0.875rem'
+			}}>
+				<strong>Mastery Limits:</strong> Max level {masteryLimits.maxTradeMastery} 
+				({MASTERY_TABLE[masteryLimits.maxTradeMastery]?.name})
+			</div>
+
 			<StyledPointsRemaining>
 				Trade Points: {pointsData.availableTradePoints - pointsData.tradePointsUsed} /{' '}
 				{pointsData.availableTradePoints} remaining
@@ -183,65 +239,59 @@ const TradesTab: React.FC<TradesTabProps> = ({
 				</div>
 			</StyledPointsRemaining>
 			<StyledSelectionGrid>
-				{allTradesAndKnowledge.map((trade) => {
-					const currentLevel = currentTrades[trade.id] || 0;
-					return (
-						<StyledSelectionItem key={trade.id}>
-							<StyledSelectionHeader>
-								<StyledSelectionName>{trade.name}</StyledSelectionName>
-								<div style={{ fontSize: '0.8rem', color: '#e2e8f0', textTransform: 'uppercase' }}>
-									{trade.attributeAssociation}
-								</div>
-							</StyledSelectionHeader>
-							<div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>
-								{trade.description}
+							{allTradesAndKnowledge.map((trade) => {
+				const currentLevel = currentTrades[trade.id] || 0;
+				const masteryInfo = getMasteryInfo(currentLevel, masteryLimits.maxTradeMastery);
+				
+				return (
+					<StyledSelectionItem key={trade.id}>
+						<StyledSelectionHeader>
+							<StyledSelectionName>{trade.name}</StyledSelectionName>
+							<div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+								{masteryInfo.name} (+{masteryInfo.bonus}) • {trade.attributeAssociation}
 							</div>
-							{(trade as any).tools && (
-								<div
-									style={{
-										fontSize: '0.8rem',
-										color: '#fbbf24',
-										marginBottom: '0.5rem',
-										fontStyle: 'italic'
-									}}
-								>
-									Tools: {(trade as any).tools}
-								</div>
-							)}
-							<StyledProficiencySelector>
-								{[0, 1, 2, 3, 4, 5].map((level) => (
+						</StyledSelectionHeader>
+						<div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>
+							{trade.description}
+						</div>
+						{(trade as any).tools && (
+							<div
+								style={{
+									fontSize: '0.8rem',
+									color: '#fbbf24',
+									marginBottom: '0.5rem',
+									fontStyle: 'italic'
+								}}
+							>
+								Tools: {(trade as any).tools}
+							</div>
+						)}
+						<StyledProficiencySelector>
+							{[0, 1, 2, 3, 4, 5].map((level) => {
+								const masteryDisplay = getMasteryInfo(level, masteryLimits.maxTradeMastery);
+								const canSelect = canSelectMastery(trade.id, level);
+								
+								return (
 									<StyledProficiencyButton
 										key={level}
 										$active={currentLevel === level}
-										$disabled={
-											level > currentLevel &&
-											!canIncreaseProficiency(
-												level - currentLevel,
-												pointsData.tradePointsUsed,
-												pointsData.availableTradePoints
-											)
-										}
+										$disabled={!canSelect && level !== currentLevel}
+										title={`${masteryDisplay.name} (+${masteryDisplay.bonus})`}
 										onClick={() => {
-											if (
-												level <= currentLevel ||
-												canIncreaseProficiency(
-													level - currentLevel,
-													pointsData.tradePointsUsed,
-													pointsData.availableTradePoints
-												)
-											) {
+											if (canSelect || level === currentLevel) {
 												onTradeChange(trade.id, level);
 											}
 										}}
 									>
 										{level}
 									</StyledProficiencyButton>
-								))}
-							</StyledProficiencySelector>
-						</StyledSelectionItem>
-					);
-				})}
-			</StyledSelectionGrid>
+								);
+							})}
+						</StyledProficiencySelector>
+					</StyledSelectionItem>
+				);
+			})}
+		</StyledSelectionGrid>
 		</StyledTabContent>
 	);
 };

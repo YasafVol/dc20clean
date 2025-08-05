@@ -83,12 +83,14 @@ export interface SkillData {
 	name: string;
 	attribute: string;
 	proficiency: number; // 0-5
+	bonus?: number; // Calculated bonus: Attribute + Mastery*2
 }
 
 export interface TradeData {
 	id: string;
 	name: string;
 	proficiency: number; // 0-5
+	bonus?: number; // Calculated bonus: Attribute + Mastery*2
 }
 
 export interface LanguageData {

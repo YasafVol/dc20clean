@@ -146,6 +146,7 @@ interface CharacterContextType {
 	attributePointsRemaining: number;
 	ancestryPointsRemaining: number;
 	ancestryPointsSpent: number;
+	totalAncestryPoints: number;
 	combatMastery: number;
 	primeModifier: { name: string; value: number };
 }
@@ -283,6 +284,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 		attributePointsRemaining,
 		ancestryPointsRemaining,
 		ancestryPointsSpent,
+		totalAncestryPoints,
 		combatMastery,
 		primeModifier
 	};

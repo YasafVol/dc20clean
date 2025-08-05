@@ -165,6 +165,9 @@ export const calculateCharacterStats = async (
 	const classData = characterData.classId ? await getClassData(characterData.classId) : null;
 	console.log('Class data loaded:', classData);
 
+	// Get class features data
+	const classFeatures = classData ? findClassByName(classData.name) : null;
+
 	// Get ancestry data
 	const ancestry1Data = getAncestryData(characterData.ancestry1Id);
 	const ancestry2Data = getAncestryData(characterData.ancestry2Id);
@@ -218,7 +221,6 @@ export const calculateCharacterStats = async (
 		finalInitiativeBonus = classData.initiativeBonusBase;
 
 		// Apply effects from class features using the new class features structure
-		const classFeatures = findClassByName(classData.name);
 		if (classFeatures) {
 			// Get level 1 features
 			const level1Features = classFeatures.coreFeatures.filter(

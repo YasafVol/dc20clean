@@ -7,4 +7,3 @@
 
 ### Character Creation & Validation
 - **Fix skill and trade caps validation**: Implement proper validation for skill and trade point spending limits during character creation to prevent overspending.
-- **Fix ancestry point calculation for Cleric domain ancestry**: The Cleric's "Ancestral" domain grants +2 ancestry points, but this bonus is not being properly calculated and applied during character creation. Need to ensure domain choice benefits are reflected in available ancestry points.

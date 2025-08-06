@@ -13,6 +13,7 @@ export const StyledTitle = styled.h1`
 	text-align: center;
 	font-size: 2.2rem;
 	font-weight: bold;
+	font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
 	text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
 	letter-spacing: 2px;
 `;

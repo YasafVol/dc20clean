@@ -39,6 +39,9 @@ import {
 	StyledContainer,
 	StyledBackButton,
 	StyledCharacterSheet,
+	StyledMidBorder,
+	StyledInnerBorder,
+	StyledCornerDecoration,
 	StyledMainGrid,
 	StyledMiddleColumn,
 	StyledRightColumn
@@ -628,8 +631,16 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 			<StyledBackButton onClick={onBack}>← Back to Menu</StyledBackButton>
 
 			<StyledCharacterSheet>
-				{/* Header Section */}
-				<StyledHeader>
+				<StyledMidBorder>
+					<StyledInnerBorder>
+						{/* Corner decorations */}
+						<StyledCornerDecoration position="top-left" />
+						<StyledCornerDecoration position="top-right" />
+						<StyledCornerDecoration position="bottom-left" />
+						<StyledCornerDecoration position="bottom-right" />
+						
+						{/* Header Section */}
+						<StyledHeader>
 					<StyledHeaderSection>
 						<StyledLabel>Player Name</StyledLabel>
 						<StyledValue>{characterData.finalPlayerName || 'Unknown'}</StyledValue>
@@ -723,6 +734,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						<Currency currentValues={currentValues} onCurrencyChange={handleCurrencyChange} />
 					</StyledRightColumn>
 				</StyledMainGrid>
+					</StyledInnerBorder>
+				</StyledMidBorder>
 			</StyledCharacterSheet>
 
 			{/* Feature Popup */}

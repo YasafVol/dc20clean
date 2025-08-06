@@ -49,7 +49,6 @@ export const StyledFooter = styled.footer`
 	text-align: center;
 	color: #9ca3af;
 	font-size: 0.8rem;
-	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 	border-top: 1px solid rgba(139, 92, 246, 0.3);
-	background: rgba(30, 27, 75, 0.5);
+	background: #FDFDFC;
 `;

@@ -14,6 +14,20 @@ import {
 } from './styles/App.styles';
 
 const GlobalStyle = createGlobalStyle`
+  @font-face {
+    font-family: 'Cinzel';
+    src: url('/src/types/Fonts/Cinzel-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Urbanist';
+    src: url('/src/types/Fonts/Urbanist-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+  }
+
   * {
     box-sizing: border-box;
   }
@@ -21,10 +35,15 @@ const GlobalStyle = createGlobalStyle`
   html, body {
     margin: 0;
     padding: 0;
-    font-family: 'Georgia', 'Times New Roman', serif;
+    font-family: 'Urbanist', 'Georgia', 'Times New Roman', serif;
     background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
     color: #e5e7eb;
     min-height: 100vh;
+    font-weight: 400;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
   }
   
   #root {

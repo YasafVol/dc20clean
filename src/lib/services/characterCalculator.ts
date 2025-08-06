@@ -438,6 +438,14 @@ export const calculateCharacterStats = async (
 									if (speedMatch) {
 										finalMoveSpeed += parseInt(speedMatch[1]);
 									}
+
+									// Jump distance: "jump distance increases by X", "+X jump distance"
+									const jumpDistanceMatch = description.match(
+										/(?:jump distance increases by|jump.*increases by|\+)\s*(\d+)(?:\s*(?:feet|ft|spaces?))?.*(?:jump|distance)/i
+									);
+									if (jumpDistanceMatch) {
+										finalJumpDistance += parseInt(jumpDistanceMatch[1]);
+									}
 								}
 							});
 						}

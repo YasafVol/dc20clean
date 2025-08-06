@@ -112,7 +112,7 @@ export const StyledInventoryInfoIcon = styled.span`
 	color: white;
 	font-size: 10px;
 	font-weight: bold;
-	cursor: help;
+	cursor: pointer;
 	position: relative;
 `;
 

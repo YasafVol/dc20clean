@@ -35,10 +35,15 @@ export interface CharacterSheetData {
 	finalMPMax: number;
 
 	// Defenses
-	finalPD: number;
-	finalAD: number;
+	finalPD: number; // Precision Defense
+	finalAD: number; // Area Defense
 
-	// PDR (Physical Damage Reduction)
+	// Manual Defense Overrides (optional)
+	manualPD?: number;
+	manualAD?: number;
+	manualPDR?: number;
+
+	// PDR (Precision Damage Reduction)
 	finalPDR: number;
 
 	// Other Stats
@@ -78,12 +83,14 @@ export interface SkillData {
 	name: string;
 	attribute: string;
 	proficiency: number; // 0-5
+	bonus?: number; // Calculated bonus: Attribute + Mastery*2
 }
 
 export interface TradeData {
 	id: string;
 	name: string;
 	proficiency: number; // 0-5
+	bonus?: number; // Calculated bonus: Attribute + Mastery*2
 }
 
 export interface LanguageData {
@@ -117,9 +124,76 @@ export interface CurrentValues {
 	platinumPieces: number;
 }
 
+// Comprehensive character state that includes both original (calculated) and current (modified) values
+export interface CharacterState {
+	// Core resource values
+	resources: {
+		original: {
+			maxHP: number;
+			maxSP: number;
+			maxMP: number;
+			maxGritPoints: number;
+			maxRestPoints: number;
+		};
+		current: {
+			currentHP: number;
+			currentSP: number;
+			currentMP: number;
+			currentGritPoints: number;
+			currentRestPoints: number;
+			tempHP: number;
+			actionPointsUsed: number;
+			exhaustionLevel: number;
+		};
+	};
+
+	// Currency with original and current values
+	currency: {
+		original: {
+			goldPieces: number;
+			silverPieces: number;
+			copperPieces: number;
+			electrumPieces: number;
+			platinumPieces: number;
+		};
+		current: {
+			goldPieces: number;
+			silverPieces: number;
+			copperPieces: number;
+			electrumPieces: number;
+			platinumPieces: number;
+		};
+	};
+
+	// Attacks - original is calculated from character build, current is user-modified
+	attacks: {
+		original: AttackData[];
+		current: AttackData[];
+	};
+
+	// Spells - original is empty/default, current is user-selected
+	spells: {
+		original: SpellData[];
+		current: SpellData[];
+	};
+
+	// Inventory - original is empty/default, current is user-modified
+	inventory: {
+		original: InventoryItemData[];
+		current: InventoryItemData[];
+	};
+
+	// Defense notes (already integrated)
+	defenseNotes?: {
+		manualPD?: { value: number; reason: string; timestamp: string };
+		manualPDR?: { value: number; reason: string; timestamp: string };
+		manualAD?: { value: number; reason: string; timestamp: string };
+	};
+}
+
 export interface AttackData {
 	id: string;
-	weaponId: string;
+	weaponName: string; // Changed from weaponId to weaponName to match inventory system
 	name: string;
 	attackBonus: number;
 	damage: string;
@@ -128,6 +202,21 @@ export interface AttackData {
 	critDamage: string;
 	brutalDamage: string;
 	heavyHitEffect: string;
+}
+
+export interface SpellData {
+	id: string;
+	spellName: string;
+	school: string;
+	isCantrip: boolean;
+	cost: {
+		ap: number;
+		mp?: number;
+	};
+	range: string;
+	duration: string;
+	isPrepared?: boolean;
+	notes?: string;
 }
 
 export interface InventoryItemData {

@@ -1,4 +1,4 @@
 // Reexport your entry components here
 
 // Rules data exports
-export * from './rulesdata/weapons';
+// TODO: weapons.ts deleted - refactor attack system to use inventoryItems.ts

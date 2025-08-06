@@ -1,93 +1,36 @@
-# Git and NPM Commands Reference
+# DC20 Clean Character Sheet
 
-## Git Commands
+A comprehensive character creation and management system for the DC20 tabletop RPG system.
 
-### Pull latest changes from remote repository:
-```bash
-git pull origin main
-```
+## ✨ Recent Updates
 
-Or if you're on a different branch:
-```bash
-git pull origin <branch-name>
-```
+### Mastery System Implementation (Latest)
+- **Complete skill/trade mastery system** with level-based limits (Untrained → Grandmaster)
+- **Level 1 special rule**: Only ONE Adept skill/trade allowed for Level 1 characters
+- **Class feature mastery bonuses** automatically parsed and applied
+- **Real-time validation** with visual warnings for mastery violations
+- **Calculated bonuses display**: Shows Attribute + Mastery*2 bonuses on character sheet
+- **Enhanced UI** with mastery names, tooltips, and bonus calculations
 
-### Push commits to remote repository:
-```bash
-# First, add your changes
-git add .
+### Character Creation Features
+- **Ancestry point calculation** with class feature bonuses (e.g., Cleric Ancestral Domain +2)
+- **Background selection** with skills, trades, and languages
+- **Point conversion system**: Skills ↔ Trades, Trades → Languages
+- **Class feature selection** with dynamic choices and validation
+- **Real-time character preview** with calculated stats
 
-# Commit your changes
-git commit -m "Your commit message"
+### Character Sheet Features
+- **Live bonus calculations** for all skills, trades, and knowledge
+- **Mastery system display** with proficiency dots and calculated bonuses
+- **Complete stat management** with attribute modifiers and derived values
+- **Save/load to browser** for persistent character storage
 
-# Push to remote
-git push origin main
-```
+## 🛠️ TODO
 
-Or for a different branch:
-```bash
-git push origin <branch-name>
-```
+### Critical Issues
+- **Fix weapon selection crash**: The attack system currently crashes when selecting weapons on the character sheet page. The weapons.ts file has been deleted in favor of consolidating to inventoryItems.ts, but the attack system needs to be properly refactored to work with the inventory weapon structure. This requires updating the Attacks component to use the correct weapon properties and interfaces from inventoryItems.ts.
 
-### Other useful Git commands:
-```bash
-# Check status of your repository
-git status
-
-# View commit history
-git log --oneline
-
-# Create and switch to a new branch
-git checkout -b <new-branch-name>
-
-# Switch to existing branch
-git checkout <branch-name>
-
-# Pull with rebase (cleaner history)
-git pull --rebase origin main
-```
-
-## NPM Commands
-
-### Install dependencies:
-```bash
-npm install
-```
-
-### Run the application:
-```bash
-# Most common - runs the "start" script
-npm start
-
-# Run development server (if configured)
-npm run dev
-
-# Run build process
-npm run build
-
-# Run tests
-npm test
-```
-
-### Other useful npm commands:
-```bash
-# Install a new package
-npm install <package-name>
-
-# Install as development dependency
-npm install --save-dev <package-name>
-
-# Update packages
-npm update
-
-# View available scripts
-npm run
-
-# Check for outdated packages
-npm outdated
-```
-
-## Notes
-- The exact npm command to run your app depends on how the `package.json` file is configured
-- Most common is `npm start`, but some projects use `npm run dev` for development servers
-- Always check the project's README.md or package.json for specific run instructions
+### Enhancements
+- **Server-side mastery validation**: Add endpoint validation for mastery limits in character completion
+- **Advanced class features**: Implement remaining class-specific features and progressions
+- **Combat system**: Enhance attack calculations and combat mechanics

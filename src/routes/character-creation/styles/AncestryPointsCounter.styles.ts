@@ -20,3 +20,10 @@ export const StyledTitle = styled.h2`
 	border-bottom: 2px solid #ef4444;
 	padding-bottom: 0.5rem;
 `;
+
+export const StyledDetails = styled.div`
+	margin-top: 0.5rem;
+	color: #d1d5db;
+	font-size: 0.9rem;
+	font-weight: normal;
+`;

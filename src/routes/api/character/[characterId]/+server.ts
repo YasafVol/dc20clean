@@ -1,7 +1,10 @@
-import { json, type RequestHandler } from '@sveltejs/kit';
-import { db } from '$lib/server/db';
-import { characterSheetData, characterInProgress } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+// src/routes/api/character/[characterId]/+server.ts
+
+import { json } from '@sveltejs/kit';
+import { PrismaClient } from '@prisma/client';
+import type { RequestHandler } from './$types';
+
+const prisma = new PrismaClient();
 
 export const GET: RequestHandler = async ({ params }) => {
 	const { characterId } = params;
@@ -12,24 +15,20 @@ export const GET: RequestHandler = async ({ params }) => {
 
 	try {
 		// First try to get the finalized character sheet data
-		const finalizedCharacter = await db
-			.select()
-			.from(characterSheetData)
-			.where(eq(characterSheetData.id, characterId))
-			.limit(1);
+		const finalizedCharacter = await prisma.characterSheetData.findUnique({
+			where: { id: characterId }
+		});
 
-		if (finalizedCharacter.length > 0) {
-			return json(finalizedCharacter[0]);
+		if (finalizedCharacter) {
+			return json(finalizedCharacter);
 		}
 
 		// If not found in finalized data, check if it's in progress
-		const progressCharacter = await db
-			.select()
-			.from(characterInProgress)
-			.where(eq(characterInProgress.id, characterId))
-			.limit(1);
+		const progressCharacter = await prisma.characterInProgress.findUnique({
+			where: { id: characterId }
+		});
 
-		if (progressCharacter.length === 0) {
+		if (!progressCharacter) {
 			return json({ error: 'Character not found' }, { status: 404 });
 		}
 

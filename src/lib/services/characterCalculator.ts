@@ -3,6 +3,7 @@
 
 import { skillsData } from '../rulesdata/skills';
 import { ancestriesData } from '../rulesdata/ancestries';
+import { findClassByName } from '../rulesdata/loaders/class-features.loader';
 import type { IClassDefinition } from '../rulesdata/schemas/class.schema';
 
 export interface CharacterInProgressData {
@@ -32,6 +33,11 @@ export interface CharacterInProgressData {
 	skillsJson?: string;
 	tradesJson?: string;
 	languagesJson?: string;
+
+	// Manual Defense Overrides
+	manualPD?: number;
+	manualAD?: number;
+	manualPDR?: number;
 
 	// Timestamps
 	createdAt: Date;
@@ -74,8 +80,8 @@ export interface CalculatedCharacterStats {
 	finalMPMax: number;
 
 	// Defenses
-	finalPD: number;
-	finalAD: number;
+	finalPD: number; // Precision Defense
+	finalAD: number; // Area Defense
 
 	// Other Stats
 	finalSaveDC: number;
@@ -86,7 +92,7 @@ export interface CalculatedCharacterStats {
 	finalGritPoints: number;
 	finalInitiativeBonus: number;
 
-	// PDR (Physical Damage Reduction)
+	// PDR (Precision Damage Reduction)
 	finalPDR: number;
 
 	// Class & Ancestry Info
@@ -96,11 +102,17 @@ export interface CalculatedCharacterStats {
 	ancestry1Name?: string;
 	ancestry2Id: string | null;
 	ancestry2Name?: string;
+	selectedFeatureChoices?: string;
+	selectedTraitIds?: string;
 
 	// JSON data fields
 	skillsJson?: string;
 	tradesJson?: string;
 	languagesJson?: string;
+	
+	// Calculated bonus data
+	skillsWithBonuses?: any[];
+	tradesWithBonuses?: any[];
 }
 
 // Import class data (we need to create this import based on what's available)
@@ -157,6 +169,9 @@ export const calculateCharacterStats = async (
 	const classData = characterData.classId ? await getClassData(characterData.classId) : null;
 	console.log('Class data loaded:', classData);
 
+	// Get class features data
+	const classFeatures = classData ? findClassByName(classData.name) : null;
+
 	// Get ancestry data
 	const ancestry1Data = getAncestryData(characterData.ancestry1Id);
 	const ancestry2Data = getAncestryData(characterData.ancestry2Id);
@@ -180,20 +195,22 @@ export const calculateCharacterStats = async (
 	});
 
 	// Defenses (DC20 formulas)
-	// PD = 8 + CM + Agility + Intelligence + Bonuses
-	const finalPD = 8 + finalCombatMastery + finalAgility + finalIntelligence;
+	// PD (Precision Defense) = 8 + CM + Agility + Intelligence + Bonuses from items
+	const calculatedPD = 8 + finalCombatMastery + finalAgility + finalIntelligence;
+	const finalPD = characterData.manualPD !== undefined ? characterData.manualPD : calculatedPD;
 
-	// AD = 8 + CM + Might + Charisma + Bonuses
-	const finalAD = 8 + finalCombatMastery + finalMight + finalCharisma;
+	// AD (Area Defense) = 8 + CM + Might + Charisma + Bonuses from items
+	const calculatedAD = 8 + finalCombatMastery + finalMight + finalCharisma;
+	let finalAD = characterData.manualAD !== undefined ? characterData.manualAD : calculatedAD;
 
 	// Health & Resources
 	let finalHPMax = finalMight; // Base from Might
 	let finalSPMax = 0;
 	let finalMPMax = 0;
-	let finalSaveDC = 8; // Base
+	let finalSaveDC = 10; // Base (correct DC20 base)
 	let finalDeathThreshold = 10; // Base
-	let finalMoveSpeed = 30; // Base
-	let finalRestPoints = 4; // Base
+	let finalMoveSpeed = 5; // Default base, will be set by class data
+	let finalRestPoints = 4; // Will be set to finalHPMax later
 	let finalInitiativeBonus = 0; // Base
 
 	// Add class contributions
@@ -201,15 +218,224 @@ export const calculateCharacterStats = async (
 		finalHPMax += classData.baseHpContribution;
 		finalSPMax = classData.startingSP;
 		finalMPMax = classData.startingMP;
-		finalSaveDC = classData.saveDCBase;
+		// Note: saveDCBase is not used in correct formula, keeping base at 10
 		finalDeathThreshold = classData.deathThresholdBase;
 		finalMoveSpeed = classData.moveSpeedBase;
-		finalRestPoints = classData.restPointsBase;
+		// finalRestPoints will be set to finalHPMax after all calculations
 		finalInitiativeBonus = classData.initiativeBonusBase;
+
+		// Apply effects from class features using the new class features structure
+		if (classFeatures) {
+			// Get level 1 features
+			const level1Features = classFeatures.coreFeatures.filter(
+				(feature) => feature.levelGained === 1
+			);
+
+			level1Features.forEach((feature) => {
+				if (feature.benefits) {
+					feature.benefits.forEach((benefit) => {
+						if (benefit.effects) {
+							benefit.effects.forEach((effect) => {
+								if (effect.type === 'MODIFIER') {
+									// For now, we'll assume the condition is met.
+									// A more robust solution would parse and evaluate the condition string.
+									if (effect.target === 'defenses.ad') {
+										finalAD += effect.value;
+									} else if (effect.target === 'coreStats.moveSpeed') {
+										finalMoveSpeed += effect.value;
+									} else if (effect.target === 'resources.mpMax') {
+										finalMPMax += effect.value;
+									} else if (effect.target === 'coreStats.jumpDistance') {
+										finalJumpDistance += effect.value;
+									}
+									// Add more target cases here as needed
+								} else if (effect.type === 'OVERRIDE') {
+									if (effect.target === 'coreStats.jumpDistance') {
+										// A more robust solution would parse the value string
+										finalJumpDistance = finalMight;
+									}
+								} else if (effect.type === 'GRANT_SKILL_POINTS') {
+									// This is a placeholder. A real implementation would need to
+									// modify the character's skill points data.
+									console.log(`Granting ${effect.value} skill points.`);
+								} else if (effect.type === 'GRANT_SPELLS') {
+									// This is a placeholder. A real implementation would need to
+									// add the spells to the character's spell list.
+									console.log(`Granting ${effect.value} spells.`);
+								} else if (effect.type === 'GRANT_CANTRIPS') {
+									// This is a placeholder. A real implementation would need to
+									// add the cantrips to the character's spell list.
+									console.log(`Granting ${effect.value} cantrips.`);
+								} else if (effect.type === 'GRANT_COMBAT_TRAINING') {
+									// This is a placeholder. A real implementation would need to
+									// add the combat training to the character's data.
+									console.log(`Granting combat training: ${effect.value}`);
+								} else if (effect.type === 'GRANT_MANEUVERS') {
+									// This is a placeholder. A real implementation would need to
+									// add the maneuvers to the character's data.
+									console.log(`Granting ${effect.value} maneuvers.`);
+								} else if (effect.type === 'GRANT_ANCESTRY_POINTS') {
+									// This is a placeholder. A real implementation would need to
+									// add the ancestry points to the character's data.
+									console.log(`Granting ${effect.value} ancestry points.`);
+								} else if (effect.type === 'GRANT_PASSIVE') {
+									// This is a placeholder. A real implementation would need to
+									// add the passive to the character's data.
+									console.log(`Granting passive: ${effect.value}`);
+								}
+							});
+						}
+					});
+				}
+			});
+		}
+	}
+
+	// Process selected feature choices (robust parsing approach)
+	if (characterData.selectedFeatureChoices && classFeatures) {
+		try {
+			const selectedChoices: { [key: string]: string } = JSON.parse(
+				characterData.selectedFeatureChoices
+			);
+
+			// Find all level 1 features with choices
+			const level1Features = classFeatures.coreFeatures.filter(
+				(feature) => feature.levelGained === 1
+			);
+
+			level1Features.forEach((feature) => {
+				if (feature.choices) {
+					feature.choices.forEach((choice, choiceIndex) => {
+						const choiceId = `${classFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;
+						const selectedOptions = selectedChoices[choiceId];
+
+						if (selectedOptions) {
+							let optionsToProcess: string[] = [];
+
+							// Handle both single selection and multiple selection
+							try {
+								optionsToProcess = JSON.parse(selectedOptions);
+								if (!Array.isArray(optionsToProcess)) {
+									optionsToProcess = [selectedOptions];
+								}
+							} catch {
+								optionsToProcess = [selectedOptions];
+							}
+
+							// Process each selected option
+							optionsToProcess.forEach((optionName) => {
+								const selectedOption = choice.options?.find((opt) => opt.name === optionName);
+								if (selectedOption) {
+									const description = selectedOption.description.toLowerCase();
+
+									// Parse stat bonuses from descriptions using regex patterns
+
+									// MP bonuses: "your maximum mp increases by X", "mp increases by X", "+X mp"
+									const mpMatch =
+										description.match(
+											/(?:your maximum mp increases by|mp increases by|\+)\s*(\d+)\s*mp/i
+										) || description.match(/maximum mp increases by\s*(\d+)/i);
+									if (mpMatch) {
+										finalMPMax += parseInt(mpMatch[1]);
+									}
+
+									// Ancestry Points: "you get X ancestry points", "X ancestry points"
+									const ancestryMatch = description.match(
+										/(?:you get|gain)\s*(\d+)\s*ancestry points?/i
+									);
+									if (ancestryMatch) {
+										// Note: This would need to be handled in character creation logic, not just stats
+										console.log(
+											`Feature choice grants ${ancestryMatch[1]} ancestry points: ${optionName}`
+										);
+									}
+
+									// SP bonuses: "your maximum sp increases by X", "+X sp"
+									const spMatch = description.match(
+										/(?:your maximum sp increases by|sp increases by|\+)\s*(\d+)\s*sp/i
+									);
+									if (spMatch) {
+										finalSPMax += parseInt(spMatch[1]);
+									}
+
+									// HP bonuses: "your maximum hp increases by X", "+X hp"
+									const hpMatch = description.match(
+										/(?:your maximum hp increases by|hp increases by|\+)\s*(\d+)\s*hp/i
+									);
+									if (hpMatch) {
+										finalHPMax += parseInt(hpMatch[1]);
+									}
+
+									// Maneuver learning: "you learn X maneuvers", "learn X defensive maneuvers"
+									const maneuverMatch = description.match(
+										/you learn\s*(\d+)\s*(?:defensive\s+)?maneuvers?/i
+									);
+									if (maneuverMatch) {
+										// Note: This would be handled in maneuver tracking, not base stats
+										console.log(
+											`Feature choice grants ${maneuverMatch[1]} maneuvers: ${optionName}`
+										);
+									}
+
+									// Spell learning: "you learn X additional spell", "you learn X spell"
+									const spellMatch = description.match(
+										/you learn\s*(\d+)\s*(?:additional\s+)?spells?/i
+									);
+									if (spellMatch) {
+										// Note: This would be handled in spell tracking, not base stats
+										console.log(`Feature choice grants ${spellMatch[1]} spells: ${optionName}`);
+									}
+
+									// Save DC bonuses: "save dc increases by X", "+X to save dc"
+									const saveDCMatch = description.match(
+										/(?:save dc increases by|\+)\s*(\d+)(?:\s*to save dc)?/i
+									);
+									if (saveDCMatch) {
+										finalSaveDC += parseInt(saveDCMatch[1]);
+									}
+
+									// Movement speed: "move speed increases by X", "+X movement"
+									const speedMatch = description.match(
+										/(?:move speed increases by|movement.*increases by|\+)\s*(\d+)(?:\s*(?:feet|ft|spaces?))?.*(?:movement|speed)/i
+									);
+									if (speedMatch) {
+										finalMoveSpeed += parseInt(speedMatch[1]);
+									}
+								}
+							});
+						}
+					});
+				}
+			});
+		} catch (error) {
+			console.warn('Error processing feature choices:', error);
+		}
+	}
+
+	// Process trait effects for movement speed
+	if (characterData.selectedTraitIds) {
+		try {
+			const selectedTraitIds = JSON.parse(characterData.selectedTraitIds);
+			const traitsData = await import('../rulesdata/traits');
+
+			selectedTraitIds.forEach((traitId: string) => {
+				const trait = traitsData.traitsData.find((t) => t.id === traitId);
+				if (trait?.effects) {
+					trait.effects.forEach((effect) => {
+						if (effect.type === 'MODIFY_SPEED') {
+							// Convert from internal units (5 = 1 space) to spaces
+							finalMoveSpeed += effect.value / 5;
+						}
+					});
+				}
+			});
+		} catch (error) {
+			console.warn('Error processing trait effects for movement speed:', error);
+		}
 	}
 
 	// Add attribute bonuses
-	finalSaveDC += primeModifier.value; // Save DC = Base + Prime
+	finalSaveDC += primeModifier.value + finalCombatMastery; // Save DC = 10 + Prime + Combat Mastery
 	finalInitiativeBonus += finalCombatMastery + finalAgility; // Initiative = CM + Agility
 
 	// Calculate Save Values (Updated Formula)
@@ -236,16 +462,17 @@ export const calculateCharacterStats = async (
 	});
 
 	// Jump Distance = Agility (min 1)
-	const finalJumpDistance = Math.max(1, finalAgility);
+	let finalJumpDistance = Math.max(1, finalAgility);
 
 	// Grit Points = 2 + Charisma (from class base)
 	const baseGritPoints = classData?.gritPointsBase || 2;
 	const finalGritPoints = baseGritPoints + finalCharisma;
 
-	// Calculate PDR (Physical Damage Reduction)
-	const finalPDR = calculatePDR(characterData, classData);
+	// Calculate PDR (Precision Damage Reduction) with manual override
+	const calculatedPDR = calculatePDR(characterData, classData);
+	const finalPDR = characterData.manualPDR !== undefined ? characterData.manualPDR : calculatedPDR;
 
-	// Default skills if not provided
+	// Process skills with calculated bonuses
 	let skillsJson = characterData.skillsJson;
 	if (!skillsJson) {
 		// Create default skills with 0 proficiency
@@ -255,6 +482,95 @@ export const calculateCharacterStats = async (
 		});
 		skillsJson = JSON.stringify(defaultSkills);
 	}
+
+	// Calculate skill bonuses: Attribute + Mastery*2
+	const skillsWithBonuses: any[] = [];
+	try {
+		const skillProficiencies = JSON.parse(skillsJson);
+		skillsData.forEach((skill) => {
+			const proficiency = skillProficiencies[skill.id] || 0;
+			const masteryBonus = proficiency * 2;
+			
+			// Get attribute modifier based on skill's attribute association
+			let attributeModifier = 0;
+			switch (skill.attributeAssociation.toLowerCase()) {
+				case 'might':
+					attributeModifier = finalMight;
+					break;
+				case 'agility':
+					attributeModifier = finalAgility;
+					break;
+				case 'charisma':
+					attributeModifier = finalCharisma;
+					break;
+				case 'intelligence':
+					attributeModifier = finalIntelligence;
+					break;
+				default:
+					attributeModifier = 0;
+			}
+			
+			const totalBonus = attributeModifier + masteryBonus;
+			
+			skillsWithBonuses.push({
+				id: skill.id,
+				name: skill.name,
+				attribute: skill.attributeAssociation,
+				proficiency,
+				bonus: totalBonus
+			});
+		});
+	} catch (error) {
+		console.warn('Error calculating skill bonuses:', error);
+	}
+
+	// Process trades with calculated bonuses
+	const tradesWithBonuses: any[] = [];
+	try {
+		const tradeProficiencies = JSON.parse(characterData.tradesJson || '{}');
+		// Import trades data
+		const { tradesData } = await import('../rulesdata/trades');
+		const { knowledgeData } = await import('../rulesdata/knowledge');
+		const allTradesAndKnowledge = [...tradesData, ...knowledgeData];
+		
+		allTradesAndKnowledge.forEach((trade) => {
+			const proficiency = tradeProficiencies[trade.id] || 0;
+			const masteryBonus = proficiency * 2;
+			
+			// Get attribute modifier based on trade's attribute association
+			let attributeModifier = 0;
+			switch (trade.attributeAssociation.toLowerCase()) {
+				case 'might':
+					attributeModifier = finalMight;
+					break;
+				case 'agility':
+					attributeModifier = finalAgility;
+					break;
+				case 'charisma':
+					attributeModifier = finalCharisma;
+					break;
+				case 'intelligence':
+					attributeModifier = finalIntelligence;
+					break;
+				default:
+					attributeModifier = 0;
+			}
+			
+			const totalBonus = attributeModifier + masteryBonus;
+			
+			tradesWithBonuses.push({
+				id: trade.id,
+				name: trade.name,
+				proficiency,
+				bonus: totalBonus
+			});
+		});
+	} catch (error) {
+		console.warn('Error calculating trade bonuses:', error);
+	}
+
+	// DC20 Rule: Rest Points = HP
+	finalRestPoints = finalHPMax;
 
 	return {
 		// Basic Info
@@ -303,7 +619,7 @@ export const calculateCharacterStats = async (
 		finalGritPoints,
 		finalInitiativeBonus,
 
-		// PDR (Physical Damage Reduction)
+		// PDR (Precision Damage Reduction)
 		finalPDR,
 
 		// Class & Ancestry Info
@@ -313,16 +629,25 @@ export const calculateCharacterStats = async (
 		ancestry1Name: ancestry1Data?.name,
 		ancestry2Id: characterData.ancestry2Id,
 		ancestry2Name: ancestry2Data?.name,
+		selectedFeatureChoices: characterData.selectedFeatureChoices,
+		selectedTraitIds: characterData.selectedTraitIds,
 
 		// JSON data fields
 		skillsJson,
 		tradesJson: characterData.tradesJson || '{}',
-		languagesJson: characterData.languagesJson || '{"common": {"fluency": "fluent"}}'
+		languagesJson: characterData.languagesJson || '{"common": {"fluency": "fluent"}}',
+		
+		// Calculated skill and trade bonuses
+		skillsWithBonuses,
+		tradesWithBonuses
 	};
 };
 
-// Helper function to calculate PDR (Physical Damage Reduction)
-const calculatePDR = (characterData: CharacterInProgressData, classData: any): number => {
+// Helper function to calculate PDR (Precision Damage Reduction)
+const calculatePDR = (
+	characterData: CharacterInProgressData,
+	classData: IClassDefinition | null
+): number => {
 	let pdr = 0;
 
 	// Check for Beastborn Natural Armor trait
@@ -331,7 +656,7 @@ const calculatePDR = (characterData: CharacterInProgressData, classData: any): n
 			const selectedTraits = JSON.parse(characterData.selectedTraitIds);
 			if (selectedTraits.includes('beastborn_natural_armor')) {
 				// Natural Armor grants PDR when not wearing armor
-				// According to DC20 rules, this grants PDR (Physical Damage Reduction)
+				// According to DC20 rules, this grants PDR (Precision Damage Reduction)
 				pdr += 1;
 			}
 		} catch (error) {
@@ -341,7 +666,7 @@ const calculatePDR = (characterData: CharacterInProgressData, classData: any): n
 
 	// Check for Barbarian Rage ability
 	if (classData?.id === 'barbarian') {
-		// Barbarian Rage grants Resistance (Half) to Physical damage
+		// Barbarian Rage grants Resistance (Half) to Precision damage
 		// This is effectively PDR, but it's a different mechanic
 		// For now, we'll note this but not add to base PDR since Rage is conditional
 		// TODO: Could add a note or separate field for conditional PDR

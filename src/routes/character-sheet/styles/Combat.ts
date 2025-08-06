@@ -12,6 +12,11 @@ export const StyledDefenseGrid = styled.div`
 	grid-template-columns: 1fr 1fr;
 	gap: 1rem;
 	margin-bottom: 1rem;
+
+	@media (max-width: 768px) {
+		grid-template-columns: 1fr;
+		gap: 0.5rem;
+	}
 `;
 
 export const StyledDefenseBox = styled.div`
@@ -41,6 +46,11 @@ export const StyledActionPoints = styled.div`
 	justify-content: center;
 	gap: 0.5rem;
 	margin: 1rem 0;
+
+	@media (max-width: 768px) {
+		gap: 0.3rem;
+		flex-wrap: wrap;
+	}
 `;
 
 export const StyledActionPoint = styled.div<{ used: boolean }>`
@@ -66,6 +76,11 @@ export const StyledCombatStats = styled.div`
 	justify-content: space-between;
 	gap: 1rem;
 	margin: 1rem 0;
+
+	@media (max-width: 768px) {
+		flex-direction: column;
+		gap: 0.5rem;
+	}
 `;
 
 export const StyledCombatStatBox = styled.div`

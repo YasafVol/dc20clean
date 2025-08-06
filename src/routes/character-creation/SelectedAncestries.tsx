@@ -17,7 +17,7 @@ import {
 } from './styles/SelectedAncestries.styles';
 
 function SelectedAncestries() {
-	const { state, dispatch } = useCharacter();
+	const { state, dispatch, ancestryPointsRemaining, ancestryPointsSpent, totalAncestryPoints } = useCharacter();
 
 	const selectedAncestry1 = ancestriesData.find((a) => a.id === state.ancestry1Id);
 	const selectedAncestry2 = ancestriesData.find((a) => a.id === state.ancestry2Id);
@@ -32,12 +32,18 @@ function SelectedAncestries() {
 		if (!trait) return;
 
 		let currentTraits = [...selectedTraits];
+		const isCurrentlySelected = currentTraits.includes(traitId);
 
-		if (currentTraits.includes(traitId)) {
-			// Deselect
+		if (isCurrentlySelected) {
+			// Deselect - always allowed
 			currentTraits = currentTraits.filter((id) => id !== traitId);
 		} else {
-			// Select
+			// Select - check if we have enough points
+			const newPointsSpent = ancestryPointsSpent + trait.cost;
+			if (newPointsSpent > totalAncestryPoints) {
+				// Would exceed budget, don't allow selection
+				return;
+			}
 			currentTraits.push(traitId);
 		}
 
@@ -54,15 +60,22 @@ function SelectedAncestries() {
 					{(ancestry.defaultTraitIds || []).map((traitId) => {
 						const trait = getTrait(traitId);
 						if (!trait) return null;
+						const isSelected = selectedTraits.includes(traitId);
+						const wouldExceedBudget = !isSelected && ancestryPointsSpent + trait.cost > totalAncestryPoints;
+
 						return (
 							<StyledListItem key={traitId}>
-								<StyledLabel>
+								<StyledLabel style={{ opacity: wouldExceedBudget ? 0.5 : 1 }}>
 									<StyledCheckbox
 										type="checkbox"
-										checked={selectedTraits.includes(traitId)}
+										checked={isSelected}
+										disabled={wouldExceedBudget}
 										onChange={() => handleToggleTrait(traitId)}
 									/>
 									{trait.name} ({trait.cost} pts) - {trait.description}
+									{wouldExceedBudget && (
+										<span style={{ color: '#ff4444' }}> (Not enough points)</span>
+									)}
 								</StyledLabel>
 							</StyledListItem>
 						);
@@ -74,15 +87,22 @@ function SelectedAncestries() {
 					{(ancestry.expandedTraitIds || []).map((traitId) => {
 						const trait = getTrait(traitId);
 						if (!trait) return null;
+						const isSelected = selectedTraits.includes(traitId);
+						const wouldExceedBudget = !isSelected && ancestryPointsSpent + trait.cost > totalAncestryPoints;
+
 						return (
 							<StyledListItem key={traitId}>
-								<StyledLabel>
+								<StyledLabel style={{ opacity: wouldExceedBudget ? 0.5 : 1 }}>
 									<StyledCheckbox
 										type="checkbox"
-										checked={selectedTraits.includes(traitId)}
+										checked={isSelected}
+										disabled={wouldExceedBudget}
 										onChange={() => handleToggleTrait(traitId)}
 									/>
 									{trait.name} ({trait.cost} pts) - {trait.description}
+									{wouldExceedBudget && (
+										<span style={{ color: '#ff4444' }}> (Not enough points)</span>
+									)}
 								</StyledLabel>
 							</StyledListItem>
 						);
@@ -94,7 +114,21 @@ function SelectedAncestries() {
 
 	return (
 		<StyledOuterContainer>
-			<StyledMainTitle>Ancestry Traits</StyledMainTitle>
+			<StyledMainTitle>
+				Ancestry Traits
+				<div
+					style={{
+						fontSize: '0.9rem',
+						fontWeight: 'normal',
+						marginTop: '0.5rem',
+						color: ancestryPointsRemaining < 0 ? '#ff4444' : '#d1d5db'
+					}}
+				>
+					Spent: {ancestryPointsSpent} | Remaining: {ancestryPointsRemaining}/
+					{ancestryPointsSpent + ancestryPointsRemaining}
+					{ancestryPointsRemaining < 0 && <span style={{ color: '#ff4444' }}> (Over budget!)</span>}
+				</div>
+			</StyledMainTitle>
 			<StyledContainer>
 				{selectedAncestry1 && renderAncestryTraits(selectedAncestry1)}
 				{selectedAncestry2 && renderAncestryTraits(selectedAncestry2)}

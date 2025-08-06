@@ -1,9 +1,4 @@
-import {
-	Spell,
-	SpellSchool,
-	SpellList,
-	PremadeSpellList
-} from '../../types/spell.types';
+import { Spell, SpellSchool, SpellList, PremadeSpellList, ClassName } from '../../types/spell.types';
 
 export const lightningBolt: Spell = {
 	name: 'Lightning Bolt',

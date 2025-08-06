@@ -108,3 +108,32 @@ export const StyledNoSelection = styled.p`
 	font-size: 1.1rem;
 	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 `;
+
+export const StyledBenefitsList = styled.div`
+	margin-top: 1rem;
+	padding-left: 0.5rem;
+`;
+
+export const StyledBenefit = styled.div`
+	margin-bottom: 0.75rem;
+	padding: 0.5rem;
+	border-left: 3px solid #ef4444;
+	background: rgba(139, 92, 246, 0.1);
+	border-radius: 0 5px 5px 0;
+`;
+
+export const StyledBenefitName = styled.h5`
+	margin: 0 0 0.25rem 0;
+	color: #fbbf24;
+	font-size: 1rem;
+	font-weight: bold;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+export const StyledBenefitDescription = styled.p`
+	margin: 0;
+	color: #e5e7eb;
+	font-size: 0.9rem;
+	line-height: 1.4;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;

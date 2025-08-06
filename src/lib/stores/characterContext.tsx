@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import type { CharacterInProgress } from '@prisma/client';
+import { traitsData } from '../rulesdata/traits';
+import { findClassByName } from '../rulesdata/loaders/class-features.loader';
+import { classesData } from '../rulesdata/loaders/class.loader';
 
 // Define the shape of the data stored in the character store
 export interface CharacterInProgressStoreData extends CharacterInProgress {
@@ -54,6 +57,7 @@ type CharacterAction =
 	| { type: 'SET_TRAITS'; selectedTraitIds: string }
 	| { type: 'SET_FEATURE_CHOICES'; selectedFeatureChoices: string }
 	| { type: 'UPDATE_STORE'; updates: Partial<CharacterInProgressStoreData> }
+	| { type: 'INITIALIZE_FROM_SAVED'; character: CharacterInProgressStoreData }
 	| { type: 'NEXT_STEP' }
 	| { type: 'PREVIOUS_STEP' }
 	| { type: 'SET_STEP'; step: number };
@@ -110,6 +114,10 @@ function characterReducer(
 				...state,
 				...action.updates
 			};
+		case 'INITIALIZE_FROM_SAVED':
+			return {
+				...action.character
+			};
 		case 'NEXT_STEP':
 			return {
 				...state,
@@ -137,6 +145,8 @@ interface CharacterContextType {
 	// Derived values
 	attributePointsRemaining: number;
 	ancestryPointsRemaining: number;
+	ancestryPointsSpent: number;
+	totalAncestryPoints: number;
 	combatMastery: number;
 	primeModifier: { name: string; value: number };
 }
@@ -157,7 +167,96 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 			(state.attribute_charisma + 2) +
 			(state.attribute_intelligence + 2));
 
-	const ancestryPointsRemaining = 5 - state.ancestryPointsSpent;
+	// Calculate ancestry points spent based on selected traits
+	const calculateAncestryPointsSpent = (): number => {
+		if (!state.selectedTraitIds) return 0;
+
+		try {
+			const selectedTraitIds: string[] = JSON.parse(state.selectedTraitIds);
+			let totalCost = 0;
+
+			selectedTraitIds.forEach((traitId) => {
+				const trait = traitsData.find((t) => t.id === traitId);
+				if (trait) {
+					totalCost += trait.cost;
+				}
+			});
+
+			return totalCost;
+		} catch (error) {
+			console.warn('Error calculating ancestry points:', error);
+			return 0;
+		}
+	};
+
+	// Calculate total ancestry points available (base + feature bonuses)
+	const calculateTotalAncestryPoints = (): number => {
+		let totalPoints = 5; // Base ancestry points
+
+		// Add bonus ancestry points from feature choices
+		if (state.classId && state.selectedFeatureChoices) {
+			try {
+				const selectedClass = classesData.find((c) => c.id === state.classId);
+				const classFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
+
+				if (classFeatures) {
+					const selectedChoices: { [key: string]: string } = JSON.parse(
+						state.selectedFeatureChoices
+					);
+					const level1Features = classFeatures.coreFeatures.filter(
+						(feature) => feature.levelGained === 1
+					);
+
+					level1Features.forEach((feature) => {
+						if (feature.choices) {
+							feature.choices.forEach((choice, choiceIndex) => {
+								const choiceId = `${classFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;
+								const selectedOptions = selectedChoices[choiceId];
+
+								if (selectedOptions) {
+									let optionsToProcess: string[] = [];
+
+									// Handle both single selection and multiple selection
+									try {
+										optionsToProcess = JSON.parse(selectedOptions);
+										if (!Array.isArray(optionsToProcess)) {
+											optionsToProcess = [selectedOptions];
+										}
+									} catch {
+										optionsToProcess = [selectedOptions];
+									}
+
+									// Process each selected option for ancestry point bonuses
+									optionsToProcess.forEach((optionName) => {
+										const selectedOption = choice.options?.find((opt) => opt.name === optionName);
+										if (selectedOption) {
+											const description = selectedOption.description.toLowerCase();
+
+											// Parse ancestry point bonuses: "you get X ancestry points"
+											const ancestryMatch = description.match(
+												/(?:you get|gain)\s*(\d+)\s*ancestry points?/i
+											);
+											if (ancestryMatch) {
+												totalPoints += parseInt(ancestryMatch[1]);
+											}
+										}
+									});
+								}
+							});
+						}
+					});
+				}
+			} catch (error) {
+				console.warn('Error calculating ancestry point bonuses:', error);
+			}
+		}
+
+		return totalPoints;
+	};
+
+	const ancestryPointsSpent = calculateAncestryPointsSpent();
+	const totalAncestryPoints = calculateTotalAncestryPoints();
+	const ancestryPointsRemaining = totalAncestryPoints - ancestryPointsSpent;
 
 	const combatMastery = Math.ceil((state.level ?? 1) / 2);
 
@@ -184,6 +283,8 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 		dispatch,
 		attributePointsRemaining,
 		ancestryPointsRemaining,
+		ancestryPointsSpent,
+		totalAncestryPoints,
 		combatMastery,
 		primeModifier
 	};

@@ -525,7 +525,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		return skillsData.map((skill) => {
 			const proficiency = characterSkills[skill.id] || 0;
 			const masteryBonus = proficiency * 2;
-			
+
 			// Get attribute modifier based on skill's attribute association
 			let attributeModifier = 0;
 			switch (skill.attributeAssociation.toLowerCase()) {
@@ -548,9 +548,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 				default:
 					attributeModifier = 0;
 			}
-			
+
 			const totalBonus = attributeModifier + masteryBonus;
-			
+
 			return {
 				id: skill.id,
 				name: skill.name,
@@ -579,7 +579,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 			.map((trade) => {
 				const proficiency = characterTrades[trade.id] || 0;
 				const masteryBonus = proficiency * 2;
-				
+
 				// Get attribute modifier based on trade's attribute association
 				let attributeModifier = 0;
 				switch (trade.attributeAssociation.toLowerCase()) {
@@ -598,9 +598,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					default:
 						attributeModifier = 0;
 				}
-				
+
 				const totalBonus = attributeModifier + masteryBonus;
-				
+
 				return {
 					id: trade.id,
 					name: trade.name,
@@ -626,7 +626,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		return knowledgeData.map((knowledge) => {
 			const proficiency = characterTrades[knowledge.id] || 0;
 			const masteryBonus = proficiency * 2;
-			
+
 			// Get attribute modifier based on knowledge's attribute association
 			let attributeModifier = 0;
 			switch (knowledge.attributeAssociation.toLowerCase()) {
@@ -645,9 +645,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 				default:
 					attributeModifier = 0;
 			}
-			
+
 			const totalBonus = attributeModifier + masteryBonus;
-			
+
 			return {
 				id: knowledge.id,
 				name: knowledge.name,
@@ -1830,7 +1830,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 			)}
 
 			{/* Draconic Dice Roller */}
-			<DiceRoller 
+			<DiceRoller
 				onRoll={(results, total, rollMode) => {
 					console.log('Dice rolled:', { results, total, rollMode });
 				}}
@@ -1840,3 +1840,4 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 };
 
 export default CharacterSheet;
+

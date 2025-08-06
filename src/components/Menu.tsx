@@ -1,6 +1,69 @@
 import React from 'react';
 import styled from 'styled-components';
 
+const HeadIcon = () => (
+	<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 595.3 586.9" width="64" height="64" fill="currentColor">
+		<path d="M155.6,51c8,1.8,8.5,9.9,13.5,14s12.6,4.6,11.5,15.5c-.9,9-8.4,8.9-12.7,12.8s-3.8,13.2-14.8,13.2-10.2-8.7-14.7-13.2-12.5-3-12.8-13.7,6.9-10.1,12.1-14.9,5.1-11.8,12.9-13.5h5ZM167.6,79.9c1.4-2.1-6.7-5.1-8.5-6.9-2.6-2.5-3.5-6.4-6-9-4.3,6.4-6.9,12.4-15.5,14,6.6,5,11.8,8,15.5,15.9,3.6-6.5,6.9-11.7,14.5-14Z"/>
+		<path d="M302.1,79.2c142.9-9.8,200.3,115.9,193.8,240.8-5.9,113.8-107.4,253.6-234.2,198.2C87.9,442.3,95.1,93.4,302.1,79.2ZM305.1,91.2c-150.2,9.7-183.4,205.3-131.4,318.4,49.7,108,165.8,151.7,252.8,53.5,103-116.2,70-384.3-121.5-372Z"/>
+		<path d="M458.3,486.4c3.5-3.8,11.6-5.6,14.3-8.6,4.7-5.3,4.8-15.3,15-17.4,16.9-3.6,16.2,10.9,23.7,17.7s20.6,6.9,17.2,23.2c-2,9.9-13.8,11-18.2,15.7s-4.9,15.9-16.3,17.7-15.3-11.6-22.3-18.2c-2.3-2.2-8.1-4-10.9-6.1-8-5.9-9.7-16.5-2.7-24ZM490.6,472.2c-2.5.7-6.9,11.6-9.6,14.4s-15.2,7.5-14.9,10.8,10.9,7.2,14.4,10.6,7.9,15.6,11.8,14.9c4.9-3.6,5.6-10.2,9.6-14.4s15.1-7.9,15-10.9-11.4-7.5-14.5-10.5-7.3-16-11.8-14.9Z"/>
+		<path d="M116.3,116.2c3,3.2,5.2,10.6,7.6,13.3,4.9,5.5,15,4.2,18,15.4,4.4,16.6-11.8,16.9-18.3,24.3-6,6.8-6,18.7-20.3,17.4-12.2-1.1-12.5-13.8-17.9-18.6-5.2-4.6-15-5-17.2-14.2-4.4-18.2,10.3-16.7,17.6-24.5s4.6-11.6,10.6-15.3,15-3,19.9,2.2ZM129.4,151.5c4.5-5-11-10.2-14.2-13.6s-7.5-18-12.9-13-4.4,9.8-8.9,14-8.6,4.5-11.9,7.1c-6.8,5.2,9.1,10.3,12.4,13.3s7.2,14.8,11.4,15.1,6.2-9,8-11.5c4.9-6.8,12.7-7.5,16.1-11.3Z"/>
+		<path d="M234.2,251.8c29.4-3,68.1,15.3,60.8,49.9s-79.1,46.3-100.4,12.1c-18.6-30,9.6-58.8,39.5-61.9ZM236.2,263.8c-20.5,2.2-44,19.7-31.9,42.3s84.2,21.4,78.9-16.1c-2.8-19.8-29.9-28-47-26.2Z"/>
+		<path d="M383.9,251.8c25.6-2.9,59.4,10.1,62.1,39.1,4.5,50-84,62.9-103.6,17.8-12.7-29.3,14-53.8,41.5-57ZM386.9,263.8c-20.6,2-44.6,19.2-32.5,41.9,13.7,25.9,68.3,24.7,77.9-3.5,9.1-26.8-23.7-40.5-45.4-38.4Z"/>
+		<path d="M301.1,392.5c8.8-.9,11.1,3.1,15.8,3.5s9.2-4.2,15.8-3.8c10.6.8,34.7,15.3,41.8,23.1,14.1,15.4-14.1,32.4-26.4,37.3-25.2,10-55.7,6.9-77.7-9.1-10.9-7.9-20.7-17.8-8.1-29.9,7.7-7.3,28.2-20.1,38.7-21.2ZM303.9,404.6c-11.3.1-26.6,13.4-35.4,20.1,23.4,28.7,73.1,28.4,97.5.9.4-2-12.7-11-15.2-12.6-5.2-3.2-14.9-9.1-21-8.5s-7.5,4.1-13.2,3.9-8-3.8-12.8-3.7Z"/>
+		<path d="M295.8,341.8c3.8,0,12.1,8.9,20.1,9.5,11.5.8,17.8-9.3,23-9.7s8.5,6.5,4.2,11.2c-12,13.3-41.1,14.2-51.8-.9s-1.1-10.1,4.5-10Z"/>
+		<path d="M300,417.4c4.4-1,28.8-.9,33.7-.2s6.9,3.6,6.4,7.2c-1,3.7-3.8,5.1-7.4,5.6s-32.1.7-35.3-1.4-2.8-10,2.7-11.2Z"/>
+	</svg>
+);
+
+const GroupIcon = () => (
+	<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 595.3 570.7" width="64" height="64" fill="currentColor">
+		<path d="M427.9,541.1h-6c-6.7-2.7-6.9-18.9-2-22.4,13.1-9.4,18.2,17.2,7.9,22.4Z"/>
+		<path d="M442.6,497.4c5.7-1.3,17.2-1.4,18.2,6.4,1.3,10.1-9.9,10.5-17.3,9.3s-8.7-13.9-.8-15.7Z"/>
+		<path d="M394.8,497.4c5.7-1.3,17.2-1.4,18.2,6.4,1.3,10.1-9.9,10.5-17.3,9.3s-8.7-13.9-.8-15.7Z"/>
+		<path d="M422.7,469.4c13-2.8,12.6,18.3,7.2,22.2-13.8,9.9-18.2-19.8-7.2-22.2Z"/>
+		<path d="M173.4,541.1h-6c-6.7-2.7-6.9-18.9-2-22.4,13.1-9.4,18.2,17.2,7.9,22.4Z"/>
+		<path d="M188.1,497.4c5.7-1.3,17.2-1.4,18.2,6.4s-9.9,10.5-17.3,9.3c-8.6-1.3-8.7-13.9-.8-15.7Z"/>
+		<path d="M140.3,497.4c5.7-1.3,17.2-1.4,18.2,6.4s-9.9,10.5-17.3,9.3c-8.6-1.3-8.7-13.9-.8-15.7Z"/>
+		<path d="M168.2,469.4c13-2.8,12.6,18.3,7.2,22.2-13.8,9.9-18.2-19.8-7.2-22.2Z"/>
+		<path d="M394.8,58.5c5.7-1.3,17.2-1.4,18.2,6.4,1.3,10.1-9.9,10.5-17.3,9.3s-8.7-13.9-.8-15.7Z"/>
+		<path d="M422.7,78.5c13-2.8,12.6,18.3,7.2,22.2-13.8,9.9-18.2-19.8-7.2-22.2Z"/>
+		<path d="M442.6,58.5c5.7-1.3,17.2-1.4,18.2,6.4,1.3,10.1-9.9,10.5-17.3,9.3s-8.7-13.9-.8-15.7Z"/>
+		<path d="M422.7,30.6c13-2.8,12.6,18.3,7.2,22.2-13.8,9.9-18.2-19.8-7.2-22.2Z"/>
+		<path d="M168.2,30.6c13-2.8,12.6,18.3,7.2,22.2-13.8,9.9-18.2-19.8-7.2-22.2Z"/>
+		<path d="M168.2,78.5c13-2.8,12.6,18.3,7.2,22.2-13.8,9.9-18.2-19.8-7.2-22.2Z"/>
+		<path d="M140.3,58.5c5.7-1.3,17.2-1.4,18.2,6.4,1.3,10.1-9.9,10.5-17.3,9.3s-8.7-13.9-.8-15.7Z"/>
+		<path d="M188.1,58.5c5.7-1.3,17.2-1.4,18.2,6.4,1.3,10.1-9.9,10.5-17.3,9.3s-8.7-13.9-.8-15.7Z"/>
+		<path d="M305.7,541.1c-3.7.4-12.2.4-15.9,0-24.9-3-45.8-26.6-47.8-51.3-1.2-15.5-1.7-57.3,3-70.9,16.6-48.5,86.2-50,104.6-2.1,5.6,14.6,5.1,56.4,3.8,73-1.9,24.7-22.8,48.3-47.8,51.3ZM293.5,397.7c-20,2.2-34,18.2-35.6,38.1-1.2,14.8-1.6,53.4,3.8,66,13.4,30.9,59.4,30.6,72.2-.7s4.7-50.8,3.5-65.3c-1.8-23-20.7-40.6-44-38.1Z"/>
+		<path d="M286.5,489.4c5.6-1.2,7.2,2.6,10.8,2.8s13.7-8,16.9,2c4.6,14.6-23.1,18.4-31.4,8.5s-2.1-12,3.7-13.3Z"/>
+		<path d="M270.6,450.5c5.3-1.6,17.5-1.5,19,5.5,2.2,10.1-8.9,11.2-16.1,10.2-10.3-1.5-9.1-13.8-2.9-15.7Z"/>
+		<path d="M310.3,450.5c5.3-1.6,17.5-1.5,19,5.5,2.2,10.1-8.9,11.2-16.1,10.2-10.3-1.5-9.1-13.8-2.9-15.7Z"/>
+		<path d="M480.6,341.6c1.6,13,1.6,50.8,0,63.8-6.8,56.7-91,66.2-108.9,9-4.2-13.6-3.6-53-2.5-68.4,4.8-68.8,103.8-67.8,111.4-4.4ZM420.8,309.9c-20,2.2-34,18.2-35.6,38.1-1.2,14.8-1.6,53.4,3.8,66,13.4,30.9,59.4,30.6,72.2-.7,5.1-12.5,4.7-50.8,3.5-65.3-1.8-23-20.7-40.6-44-38.1Z"/>
+		<path d="M428.6,398.7c8.3-.1,11.3,10.8,3,15.8s-12.2,6-16.6.3c-6.5-8.2,6.6-16,13.6-16.2Z"/>
+		<path d="M437.6,362.7c5.3-1.6,17.5-1.5,19,5.5,2.2,10.1-8.9,11.2-16.1,10.2-10.3-1.5-9.1-13.8-2.9-15.7Z"/>
+		<path d="M397.8,362.7c5.3-1.6,17.5-1.5,19,5.5,2.2,10.1-8.9,11.2-16.1,10.2-10.3-1.5-9.1-13.8-2.9-15.7Z"/>
+		<path d="M480.6,166c1.6,13,1.6,50.8,0,63.8-7.6,63.3-106.6,64.3-111.4-4.4-1.1-15.4-1.7-54.8,2.5-68.4,17.8-57.2,102.1-47.7,108.9,9ZM420.8,134.4c-20,2.2-34,18.2-35.6,38.1-1.2,14.8-1.6,53.4,3.8,66,13.4,30.9,59.4,30.6,72.2-.7,5.1-12.5,4.7-50.8,3.5-65.3-1.8-23-20.7-40.6-44-38.1Z"/>
+		<path d="M437.6,187.2c5.3-1.6,17.5-1.5,19,5.5,2.2,10.1-8.9,11.2-16.1,10.2-10.3-1.5-9.1-13.8-2.9-15.7Z"/>
+		<path d="M397.8,187.2c5.3-1.6,17.5-1.5,19,5.5,2.2,10.1-8.9,11.2-16.1,10.2-10.3-1.5-9.1-13.8-2.9-15.7Z"/>
+		<path d="M424.6,224.2c7.5-.4,12.3,10.5,4.2,15.1-11.6,6.6-17.3-14.4-4.2-15.1Z"/>
+		<path d="M163.3,118.4c30.9-3.5,60,18.6,62.8,50.1,1.5,16.4,1.7,59.6-3.8,74-18.4,47.9-88,46.4-104.6-2.1-4.6-13.6-4.2-55.3-3-70.9,2-25.6,22.9-48.1,48.5-51.1ZM166.3,134.4c-20,2.2-34,18.2-35.6,38.1-1.2,14.8-1.6,53.4,3.8,66,13.4,30.9,59.4,30.6,72.2-.7,5.1-12.5,4.7-50.8,3.5-65.3-1.8-23-20.7-40.6-44-38.1Z"/>
+		<path d="M174.1,223.2c8.3-.1,11.3,10.8,3,15.8s-12.2,6-16.6.3c-6.5-8.2,6.6-16,13.6-16.2Z"/>
+		<path d="M143.3,187.2c5.3-1.6,17.5-1.5,19,5.5,2.2,10.1-8.9,11.2-16.1,10.2-10.3-1.5-9.1-13.8-2.9-15.7Z"/>
+		<path d="M183.1,187.2c5.3-1.6,17.5-1.5,19,5.5,2.2,10.1-8.9,11.2-16.1,10.2-10.3-1.5-9.1-13.8-2.9-15.7Z"/>
+		<path d="M290.5,30.7c30.9-3.5,60,18.6,62.8,50.1,1.5,16.4,1.7,59.6-3.8,74-18.4,47.9-88,46.4-104.6-2.1-4.6-13.6-4.2-55.3-3-70.9,2-25.6,22.9-48.1,48.5-51.1ZM293.5,46.6c-20,2.2-34,18.2-35.6,38.1-1.2,14.8-1.6,53.4,3.8,66,13.4,30.9,59.4,30.6,72.2-.7s4.7-50.8,3.5-65.3c-1.8-23-20.7-40.6-44-38.1Z"/>
+		<path d="M286.5,138.3c5.6-1.2,7.2,2.6,10.8,2.8s13.7-8,16.9,2c4.6,14.6-23.1,18.4-31.4,8.5s-2.1-12,3.7-13.3Z"/>
+		<path d="M270.6,99.4c5.3-1.6,17.5-1.5,19,5.5,2.2,10.1-8.9,11.2-16.1,10.2-10.3-1.5-9.1-13.8-2.9-15.7Z"/>
+		<path d="M310.3,99.4c5.3-1.6,17.5-1.5,19,5.5,2.2,10.1-8.9,11.2-16.1,10.2-10.3-1.5-9.1-13.8-2.9-15.7Z"/>
+		<path d="M290.5,206.2c30.9-3.5,60,18.6,62.8,50.1,1.5,16.4,1.7,59.6-3.8,74-18.4,47.9-88,46.4-104.6-2.1-4.6-13.6-4.2-55.3-3-70.9,2-25.6,22.9-48.1,48.5-51.1ZM293.5,222.2c-20,2.2-34,18.2-35.6,38.1-1.2,14.8-1.6,53.4,3.8,66,13.4,30.9,59.4,30.6,72.2-.7s4.7-50.8,3.5-65.3c-1.8-23-20.7-40.6-44-38.1Z"/>
+		<path d="M310.3,275c5.3-1.6,17.5-1.5,19,5.5,2.2,10.1-8.9,11.2-16.1,10.2-10.3-1.5-9.1-13.8-2.9-15.7Z"/>
+		<path d="M270.6,275c5.3-1.6,17.5-1.5,19,5.5,2.2,10.1-8.9,11.2-16.1,10.2-10.3-1.5-9.1-13.8-2.9-15.7Z"/>
+		<path d="M292.5,312.9c7.8-1.4,20.2-.2,16.7,10.8s-11.8,5.7-16.9,4.9c-8.4-1.3-9.3-13.9.2-15.7Z"/>
+		<path d="M168.3,291c29.8-1.1,55.6,22.3,57.9,52.1,1.4,19.3,2.2,61.1-6.1,77.7-22.7,45.2-91.4,37.4-103.5-11.5-3.2-12.9-3.2-62.5-.3-75.6,5.3-23.4,28.2-41.7,52-42.6ZM163.3,307.9c-17.8,2.4-31.2,19.7-32.6,37.1-1.1,14.4-1.6,55,3.8,67,16.5,36.3,72.5,26.7,75.8-15.1,1.1-14.4,1.6-55-3.8-67s-25.6-24.4-43.2-22Z"/>
+		<path d="M200,361.8c3.9,3.6,2.5,12-2.4,13.4s-16.8,1.4-18.7-4.7c-3.9-12.3,15.6-13.8,21.1-8.7Z"/>
+		<path d="M160.2,361.8c3.9,3.6,2.5,12-2.4,13.4s-16.8,1.4-18.7-4.7c-3.9-12.3,15.6-13.8,21.1-8.7Z"/>
+		<path d="M168.2,397.6c11.7-2.5,13.7,13.6,4.5,15.6-11.7,2.5-13.7-13.6-4.5-15.6Z"/>
+	</svg>
+);
+
 const StyledContainer = styled.div`
 	display: flex;
 	flex-direction: column;
@@ -8,28 +71,28 @@ const StyledContainer = styled.div`
 	justify-content: center;
 	min-height: 100vh;
 	padding: 2rem;
-	background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
+	background: url('/static/Main.png') center/cover no-repeat;
 `;
 
 const StyledTitle = styled.h1`
-	margin-bottom: 3rem;
+	margin-bottom: 0.2rem;
 	color: #fbbf24;
 	text-align: center;
 	font-size: 3rem;
 	font-weight: bold;
-	text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+	font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
 	letter-spacing: 2px;
-	background: linear-gradient(45deg, #fbbf24 0%, #f59e0b 100%);
-	background-clip: text;
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
+	margin-top: 12rem;
 `;
 
 const StyledSubtitle = styled.p`
-	margin-bottom: 4rem;
+	margin-top: 0rem;
+	margin-bottom: 2rem;
 	color: #e5e7eb;
 	text-align: center;
-	font-size: 1.2rem;
+	font-size: 1.3rem;
+	font-family: 'Urbanist', 'Georgia', 'Times New Roman', serif;
+	font-weight: 400;
 	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 	max-width: 600px;
 	line-height: 1.6;
@@ -37,57 +100,66 @@ const StyledSubtitle = styled.p`
 
 const StyledMenuGrid = styled.div`
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-	gap: 2rem;
-	max-width: 800px;
+	grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+	gap: 1.5rem;
+	max-width: 900px;
 	width: 100%;
 `;
 
 const StyledMenuCard = styled.button`
-	border: 2px solid #8b5cf6;
-	padding: 3rem 2rem;
-	border-radius: 20px;
-	background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
+	border: 1px solid #ffffff;
+	padding: 1.5rem 2rem;
+	border-radius: 8px;
+	background: transparent;
 	cursor: pointer;
 	transition: all 0.3s ease;
-	text-align: center;
-	box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
-	backdrop-filter: blur(10px);
+	text-align: left;
+	box-shadow: none;
+	backdrop-filter: none;
+	height: 120px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
 
 	&:hover {
 		transform: translateY(-8px);
-		box-shadow: 0 16px 48px rgba(139, 92, 246, 0.5);
+		box-shadow: 0 8px 24px rgba(255, 255, 255, 0.2);
 		border-color: #fbbf24;
 	}
 `;
 
 const StyledIcon = styled.div`
-	font-size: 4rem;
-	margin-bottom: 1.5rem;
-	background: linear-gradient(145deg, #8b5cf6 0%, #a855f7 100%);
-	border-radius: 50%;
-	width: 100px;
-	height: 100px;
+	font-size: 3rem;
+	background: transparent;
+	border-radius: 0;
+	width: auto;
+	height: auto;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	margin: 0 auto 1.5rem;
-	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+	margin: 0;
+	box-shadow: none;
 	transition: all 0.3s ease;
+	color: #e5e7eb;
+	font-weight: 300;
 
 	${StyledMenuCard}:hover & {
-		background: linear-gradient(145deg, #fbbf24 0%, #f59e0b 100%);
+		color: #fbbf24;
 		transform: scale(1.1);
 	}
 `;
 
 const StyledCardTitle = styled.h2`
-	margin: 0 0 1rem 0;
+	margin: 0 0 0.3rem 0;
 	color: #fbbf24;
-	font-size: 1.8rem;
+	font-size: 1.6rem;
 	font-weight: bold;
+	font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
 	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 	transition: all 0.3s ease;
+	text-align: left;
+	letter-spacing: 1px;
 
 	${StyledMenuCard}:hover & {
 		color: #f59e0b;
@@ -97,10 +169,21 @@ const StyledCardTitle = styled.h2`
 const StyledCardDescription = styled.p`
 	margin: 0;
 	color: #e5e7eb;
-	font-size: 1rem;
-	line-height: 1.6;
+	font-size: 1.1rem;
+	font-family: 'Urbanist', 'Georgia', 'Times New Roman', serif;
+	font-weight: 400;
+	line-height: 1.3;
 	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 	opacity: 0.9;
+	text-align: left;
+	letter-spacing: 1px;
+`;
+
+const StyledTextContent = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	flex: 1;
 `;
 
 interface MenuProps {
@@ -113,27 +196,33 @@ function Menu({ onCreateCharacter, onLoadCharacter }: MenuProps) {
 		<StyledContainer>
 			<StyledTitle>DC20 Character Creator</StyledTitle>
 			<StyledSubtitle>
-				Welcome to the ultimate D&D character creation experience. Choose your path to begin your
-				adventure.
+				Welcome to the ultimate DC20 character creation experience.<br />
+				Choose your path to begin your adventure.
 			</StyledSubtitle>
 
 			<StyledMenuGrid>
 				<StyledMenuCard onClick={onCreateCharacter}>
-					<StyledIcon>⚔️</StyledIcon>
-					<StyledCardTitle>Create Character</StyledCardTitle>
-					<StyledCardDescription>
-						Start fresh and create a new character from scratch. Choose your class, allocate
-						attributes, and select your ancestry to forge your unique hero.
-					</StyledCardDescription>
+					<StyledTextContent>
+						<StyledCardTitle>Create Character</StyledCardTitle>
+						<StyledCardDescription>
+							Create a new character. 
+						</StyledCardDescription>
+					</StyledTextContent>
+					<StyledIcon>
+						<HeadIcon />
+					</StyledIcon>
 				</StyledMenuCard>
 
 				<StyledMenuCard onClick={onLoadCharacter}>
-					<StyledIcon>📜</StyledIcon>
-					<StyledCardTitle>Load Character</StyledCardTitle>
-					<StyledCardDescription>
-						Continue working on an existing character or load a previously saved creation. Perfect
-						for refining your build or making adjustments.
-					</StyledCardDescription>
+					<StyledTextContent>
+						<StyledCardTitle>Load Character</StyledCardTitle>
+						<StyledCardDescription>
+							Load an existing character.
+						</StyledCardDescription>
+					</StyledTextContent>
+					<StyledIcon>
+						<GroupIcon />
+					</StyledIcon>
 				</StyledMenuCard>
 			</StyledMenuGrid>
 		</StyledContainer>

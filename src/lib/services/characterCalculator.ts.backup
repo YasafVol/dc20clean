@@ -231,12 +231,12 @@ export const calculateCharacterStats = async (
 
 	// Defenses (DC20 formulas)
 	// PD (Precision Defense) = 8 + CM + Agility + Intelligence + Bonuses from traits/items
-	let calculatedPD = 8 + finalCombatMastery + finalAgility + finalIntelligence;
-	
+	const calculatedPD = 8 + finalCombatMastery + finalAgility + finalIntelligence + processedTraitEffects.staticBonuses.pd;
+	const finalPD = characterData.manualPD !== undefined ? characterData.manualPD : calculatedPD;
 
 	// AD (Area Defense) = 8 + CM + Might + Charisma + Bonuses from traits/items
-	let calculatedAD = 8 + finalCombatMastery + finalMight + finalCharisma;
-	
+	const calculatedAD = 8 + finalCombatMastery + finalMight + finalCharisma + processedTraitEffects.staticBonuses.ad;
+	let finalAD = characterData.manualAD !== undefined ? characterData.manualAD : calculatedAD;
 
 	// Health & Resources
 	let finalHPMax = finalMight; // Base from Might
@@ -275,9 +275,7 @@ export const calculateCharacterStats = async (
 									// For now, we'll assume the condition is met.
 									// A more robust solution would parse and evaluate the condition string.
 									if (effect.target === 'defenses.ad') {
-										calculatedAD += effect.value;
-									} else if (effect.target === 'defenses.pd') {
-										calculatedPD += effect.value;
+										finalAD += effect.value;
 									} else if (effect.target === 'coreStats.moveSpeed') {
 										finalMoveSpeed += effect.value;
 									} else if (effect.target === 'resources.mpMax') {
@@ -457,15 +455,7 @@ export const calculateCharacterStats = async (
 	finalDeathThreshold += processedTraitEffects.staticBonuses.deathThreshold;
 	finalInitiativeBonus += processedTraitEffects.staticBonuses.initiativeBonus;
 
-	// Apply trait bonuses to defenses AFTER class effects
-	calculatedPD += processedTraitEffects.staticBonuses.pd;
-	calculatedAD += processedTraitEffects.staticBonuses.ad;
-
-	// Apply manual overrides LAST
-	const finalPD = characterData.manualPD !== undefined ? characterData.manualPD : calculatedPD;
-	const finalAD = characterData.manualAD !== undefined ? characterData.manualAD : calculatedAD;
-
-		// Add attribute bonuses
+	// Add attribute bonuses
 	finalSaveDC += primeModifier.value + finalCombatMastery; // Save DC = 10 + Prime + Combat Mastery
 	finalInitiativeBonus += finalCombatMastery + finalAgility; // Initiative = CM + Agility
 

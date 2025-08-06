@@ -1,6 +1,4 @@
 import React from 'react';
-import Tooltip from './Tooltip';
-import { createHPTooltip, createMPTooltip, createSPTooltip } from './StatTooltips';
 import {
 	ResourcesContainer,
 	ResourceColumn,
@@ -84,9 +82,7 @@ const Resources: React.FC<ResourcesProps> = ({
 						fontStyle: 'italic'
 					}}
 				>
-					<Tooltip content={createSPTooltip(characterData)} position="top">
-						<span style={{ cursor: 'help' }}>{characterData.finalSPMax}</span>
-					</Tooltip>
+					{characterData.finalSPMax}
 				</div>
 			</ResourceColumn>
 
@@ -121,9 +117,7 @@ const Resources: React.FC<ResourcesProps> = ({
 						fontStyle: 'italic'
 					}}
 				>
-					<Tooltip content={createMPTooltip(characterData)} position="top">
-						<span style={{ cursor: 'help' }}>{characterData.finalMPMax}</span>
-					</Tooltip>
+					{characterData.finalMPMax}
 				</div>
 			</ResourceColumn>
 
@@ -170,9 +164,7 @@ const Resources: React.FC<ResourcesProps> = ({
 						gap: '0.5rem'
 					}}
 				>
-					<Tooltip content={createHPTooltip(characterData)} position="top">
-						<span style={{ cursor: 'help' }}>{characterData.finalHPMax}</span>
-					</Tooltip>
+					<span>{characterData.finalHPMax}</span>
 					{currentValues.tempHP > 0 && (
 						<span style={{ color: '#dc2626', fontWeight: 'bold', fontSize: '0.9rem' }}>
 							(+{currentValues.tempHP} temp)

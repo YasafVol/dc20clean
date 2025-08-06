@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { createGlobalStyle } from 'styled-components';
 import { CharacterProvider } from './lib/stores/characterContext';
 import CharacterCreation from './routes/character-creation/CharacterCreation.tsx';
 import LoadCharacter from './routes/character-creation/LoadCharacter.tsx';
 import CharacterSheet from './routes/character-sheet/CharacterSheetClean.tsx';
 import type { SavedCharacter } from './lib/utils/characterEdit';
+import LevelUp from './routes/character-creation/LevelUp.tsx';
 import Menu from './components/Menu.tsx';
 import {
 	StyledApp,
@@ -55,6 +56,11 @@ const GlobalStyle = createGlobalStyle`
     min-height: 100vh;
   }
   
+  /* Remove default focus outlines */
+  button:focus {
+    outline: none;
+  }
+  
   /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 12px;
@@ -86,11 +92,12 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 function App() {
-	const [currentView, setCurrentView] = useState<'menu' | 'create' | 'load' | 'sheet' | 'edit'>(
+	const [currentView, setCurrentView] = useState<'menu' | 'create' | 'load' | 'sheet' | 'levelup'>(
 		'menu'
 	);
 	const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
 	const [editCharacter, setEditCharacter] = useState<SavedCharacter | null>(null);
+	const [levelUpCharacter, setLevelUpCharacter] = useState<SavedCharacter | null>(null);
 
 	const handleCreateCharacter = () => {
 		setEditCharacter(null); // Clear edit mode
@@ -103,7 +110,12 @@ function App() {
 
 	const handleEditCharacter = (character: SavedCharacter) => {
 		setEditCharacter(character);
-		setCurrentView('edit');
+		setCurrentView('create');
+	};
+
+	const handleLevelUp = (character: SavedCharacter) => {
+		setLevelUpCharacter(character);
+		setCurrentView('levelup');
 	};
 
 	const handleViewCharacterSheet = (characterId: string) => {
@@ -111,10 +123,13 @@ function App() {
 		setCurrentView('sheet');
 	};
 
+
+
 	const handleBackToMenu = () => {
 		setCurrentView('menu');
 		setSelectedCharacterId(null);
 		setEditCharacter(null);
+		setLevelUpCharacter(null);
 	};
 
 	const renderCurrentView = () => {
@@ -130,33 +145,59 @@ function App() {
 							<StyledBackButton onClick={handleBackToMenu}>← Back to Menu</StyledBackButton>
 						</StyledHeader>
 						<StyledMain>
-							<CharacterCreation onNavigateToLoad={handleLoadCharacter} onBackToMenu={handleBackToMenu} />
-						</StyledMain>
-					</CharacterProvider>
-				);
-			case 'edit':
-				return (
-					<CharacterProvider>
-						<StyledHeader>
-							<StyledBackButton onClick={handleBackToMenu}>← Back to Menu</StyledBackButton>
-						</StyledHeader>
-						<StyledMain>
-							<CharacterCreation
-								onNavigateToLoad={handleLoadCharacter}
+							<CharacterCreation 
+								onNavigateToLoad={handleLoadCharacter} 
 								onBackToMenu={handleBackToMenu}
-								editCharacter={editCharacter ?? undefined}
+								editCharacter={editCharacter || undefined}
 							/>
 						</StyledMain>
 					</CharacterProvider>
 				);
 			case 'load':
 				return (
-					<LoadCharacter onBack={handleBackToMenu} onSelectCharacter={handleViewCharacterSheet} onEditCharacter={handleEditCharacter} />
+					<LoadCharacter
+						onBack={handleBackToMenu}
+						onSelectCharacter={handleViewCharacterSheet}
+						onEditCharacter={handleEditCharacter}
+						onLevelUp={handleLevelUp}
+					/>
 				);
+			case 'levelup':
+				return (
+					<CharacterProvider>
+						<StyledHeader>
+							<StyledBackButton onClick={handleBackToMenu}>← Back to Menu</StyledBackButton>
+							<span>Level Up Character</span>
+						</StyledHeader>
+						<StyledMain>
+							<CharacterCreation
+								onNavigateToLoad={handleLoadCharacter}
+								onBackToMenu={handleBackToMenu}
+								editCharacter={editCharacter ?? undefined}
+							<LevelUp 
+								character={levelUpCharacter!}
+								onComplete={(updatedCharacter) => {
+									// Update the character in the list and go back to load screen
+									const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+									const characterIndex = savedCharacters.findIndex((c: SavedCharacter) => c.id === updatedCharacter.id);
+									if (characterIndex !== -1) {
+										savedCharacters[characterIndex] = updatedCharacter;
+										localStorage.setItem('savedCharacters', JSON.stringify(savedCharacters));
+									}
+									handleLoadCharacter();
+								}}
+								onBack={handleBackToMenu}
+							/>
+						</StyledMain>
+					</CharacterProvider>
+				);
+					<LoadCharacter onBack={handleBackToMenu} onSelectCharacter={handleViewCharacterSheet} onEditCharacter={handleEditCharacter} />
 			case 'sheet':
 				return selectedCharacterId ? (
-					<CharacterSheet characterId={selectedCharacterId} onBack={handleBackToMenu} />
+										<CharacterSheet
+						characterId={selectedCharacterId}
 				) : null;
+
 			default:
 				return null;
 		}

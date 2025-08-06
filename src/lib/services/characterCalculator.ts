@@ -1,9 +1,13 @@
 // DC20 Character Calculator Service
 // Handles calculation of derived stats based on DC20 rules
 
-import { skillsData } from '../rulesdata/skills';
 import { ancestriesData } from '../rulesdata/ancestries';
 import { findClassByName } from '../rulesdata/loaders/class-features.loader';
+import { classesData } from '../rulesdata/loaders/class.loader';
+import { traitsData } from '../rulesdata/traits';
+import { tradesData } from '../rulesdata/trades';
+import { knowledgeData } from '../rulesdata/knowledge';
+import { skillsData } from '../rulesdata/skills';
 import type { IClassDefinition } from '../rulesdata/schemas/class.schema';
 
 export interface CharacterInProgressData {
@@ -33,6 +37,10 @@ export interface CharacterInProgressData {
 	skillsJson?: string;
 	tradesJson?: string;
 	languagesJson?: string;
+	
+	// Spells and Maneuvers selections (for edit functionality)
+	selectedSpells?: string;
+	selectedManeuvers?: string;
 
 	// Manual Defense Overrides
 	manualPD?: number;
@@ -110,6 +118,10 @@ export interface CalculatedCharacterStats {
 	tradesJson?: string;
 	languagesJson?: string;
 	
+	// Spells and Maneuvers selections (for edit functionality)
+	selectedSpells?: string;
+	selectedManeuvers?: string;
+	
 	// Calculated bonus data
 	skillsWithBonuses?: any[];
 	tradesWithBonuses?: any[];
@@ -118,9 +130,7 @@ export interface CalculatedCharacterStats {
 // Import class data (we need to create this import based on what's available)
 const getClassData = async (classId: string): Promise<IClassDefinition | null> => {
 	try {
-		// Dynamic import of class data
-		const { classesData } = await import('../rulesdata/loaders/class.loader');
-
+		// Static import of class data
 		const classData = classesData.find((c) => c.id === classId);
 		return classData || null;
 	} catch (error) {
@@ -416,10 +426,9 @@ export const calculateCharacterStats = async (
 	if (characterData.selectedTraitIds) {
 		try {
 			const selectedTraitIds = JSON.parse(characterData.selectedTraitIds);
-			const traitsData = await import('../rulesdata/traits');
 
 			selectedTraitIds.forEach((traitId: string) => {
-				const trait = traitsData.traitsData.find((t) => t.id === traitId);
+				const trait = traitsData.find((t) => t.id === traitId);
 				if (trait?.effects) {
 					trait.effects.forEach((effect) => {
 						if (effect.type === 'MODIFY_SPEED') {
@@ -529,8 +538,6 @@ export const calculateCharacterStats = async (
 	try {
 		const tradeProficiencies = JSON.parse(characterData.tradesJson || '{}');
 		// Import trades data
-		const { tradesData } = await import('../rulesdata/trades');
-		const { knowledgeData } = await import('../rulesdata/knowledge');
 		const allTradesAndKnowledge = [...tradesData, ...knowledgeData];
 		
 		allTradesAndKnowledge.forEach((trade) => {
@@ -636,6 +643,10 @@ export const calculateCharacterStats = async (
 		skillsJson,
 		tradesJson: characterData.tradesJson || '{}',
 		languagesJson: characterData.languagesJson || '{"common": {"fluency": "fluent"}}',
+		
+		// Spells and Maneuvers selections (for edit functionality)
+		selectedSpells: characterData.selectedSpells,
+		selectedManeuvers: characterData.selectedManeuvers,
 		
 		// Calculated skill and trade bonuses
 		skillsWithBonuses,

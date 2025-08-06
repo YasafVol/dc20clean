@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { useCharacter } from '../../lib/stores/characterContext';
 import { ancestriesData } from '../../lib/rulesdata/ancestries';
 import { traitsData } from '../../lib/rulesdata/traits';

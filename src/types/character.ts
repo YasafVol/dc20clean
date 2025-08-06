@@ -5,6 +5,9 @@ export interface CharacterSheetProps {
 	onBack: () => void;
 }
 
+// Import ManeuverData type
+import type { ManeuverData } from '../routes/character-sheet/components/Maneuvers';
+
 export interface CharacterSheetData {
 	// Basic Info
 	id: string;
@@ -76,6 +79,10 @@ export interface CharacterSheetData {
 	tempHP?: number;
 	actionPointsUsed?: number;
 	exhaustionLevel?: number;
+
+	// Spells and Maneuvers
+	spells?: SpellData[];
+	maneuvers?: ManeuverData[];
 }
 
 export interface SkillData {
@@ -175,6 +182,12 @@ export interface CharacterState {
 	spells: {
 		original: SpellData[];
 		current: SpellData[];
+	};
+
+	// Maneuvers - original is empty/default, current is user-selected
+	maneuvers: {
+		original: ManeuverData[];
+		current: ManeuverData[];
 	};
 
 	// Inventory - original is empty/default, current is user-modified

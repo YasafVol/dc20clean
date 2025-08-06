@@ -3,6 +3,7 @@ import type { CharacterInProgress } from '@prisma/client';
 import { traitsData } from '../rulesdata/traits';
 import { findClassByName } from '../rulesdata/loaders/class-features.loader';
 import { classesData } from '../rulesdata/loaders/class.loader';
+import { calculateTraitCosts } from '../services/traitEffectProcessor';
 
 // Define the shape of the data stored in the character store
 export interface CharacterInProgressStoreData extends CharacterInProgress {
@@ -167,22 +168,13 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 			(state.attribute_charisma + 2) +
 			(state.attribute_intelligence + 2));
 
-	// Calculate ancestry points spent based on selected traits
+	// Calculate ancestry points spent based on selected traits (default traits are free)
 	const calculateAncestryPointsSpent = (): number => {
 		if (!state.selectedTraitIds) return 0;
 
 		try {
 			const selectedTraitIds: string[] = JSON.parse(state.selectedTraitIds);
-			let totalCost = 0;
-
-			selectedTraitIds.forEach((traitId) => {
-				const trait = traitsData.find((t) => t.id === traitId);
-				if (trait) {
-					totalCost += trait.cost;
-				}
-			});
-
-			return totalCost;
+			return calculateTraitCosts(selectedTraitIds);
 		} catch (error) {
 			console.warn('Error calculating ancestry points:', error);
 			return 0;

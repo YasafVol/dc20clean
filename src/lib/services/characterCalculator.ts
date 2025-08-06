@@ -5,6 +5,7 @@ import { skillsData } from '../rulesdata/skills';
 import { ancestriesData } from '../rulesdata/ancestries';
 import { findClassByName } from '../rulesdata/loaders/class-features.loader';
 import type { IClassDefinition } from '../rulesdata/schemas/class.schema';
+import { processTraitEffects, type ProcessedTraitEffects } from './traitEffectProcessor';
 
 export interface CharacterInProgressData {
 	id: string;
@@ -130,11 +131,21 @@ const getClassData = async (classId: string): Promise<IClassDefinition | null> =
 };
 
 // Get ancestry data by ID
-const getAncestryData = (ancestryId: string | null): { id: string; name: string } | null => {
+const getAncestryData = (ancestryId: string | null): { 
+	id: string; 
+	name: string; 
+	defaultTraitIds: string[];
+	expandedTraitIds: string[];
+} | null => {
 	if (!ancestryId) return null;
 
 	const ancestry = ancestriesData.find((a) => a.id === ancestryId);
-	return ancestry ? { id: ancestry.id, name: ancestry.name } : null;
+	return ancestry ? { 
+		id: ancestry.id, 
+		name: ancestry.name,
+		defaultTraitIds: ancestry.defaultTraitIds || [],
+		expandedTraitIds: ancestry.expandedTraitIds
+	} : null;
 };
 
 const calculatePrimeModifier = (attributes: {
@@ -177,11 +188,35 @@ export const calculateCharacterStats = async (
 	const ancestry2Data = getAncestryData(characterData.ancestry2Id);
 	console.log('Ancestry data loaded:', { ancestry1Data, ancestry2Data });
 
-	// Basic attributes
-	const finalMight = characterData.attribute_might;
-	const finalAgility = characterData.attribute_agility;
-	const finalCharisma = characterData.attribute_charisma;
-	const finalIntelligence = characterData.attribute_intelligence;
+	// Process trait effects EARLY to get attribute modifiers
+	let processedTraitEffects: ProcessedTraitEffects;
+	try {
+		const selectedTraitIds = characterData.selectedTraitIds ? JSON.parse(characterData.selectedTraitIds) : [];
+		processedTraitEffects = processTraitEffects(
+			selectedTraitIds, 
+			characterData.ancestry1Id, 
+			characterData.ancestry2Id
+		);
+		console.log('Trait effects processed:', processedTraitEffects);
+	} catch (error) {
+		console.warn('Error processing trait effects:', error);
+		// Initialize empty effects if parsing fails
+		processedTraitEffects = {
+			attributeModifiers: { might: 0, agility: 0, charisma: 0, intelligence: 0 },
+			staticBonuses: { hpMax: 0, mpMax: 0, spMax: 0, pd: 0, ad: 0, moveSpeed: 0, deathThreshold: 0, jumpDistance: 0, initiativeBonus: 0 },
+			resistances: [],
+			vulnerabilities: [],
+			abilities: [],
+			conditionalEffects: [],
+			userChoicesRequired: []
+		};
+	}
+
+	// Apply attribute modifiers from traits BEFORE other calculations
+	const finalMight = characterData.attribute_might + processedTraitEffects.attributeModifiers.might;
+	const finalAgility = characterData.attribute_agility + processedTraitEffects.attributeModifiers.agility;
+	const finalCharisma = characterData.attribute_charisma + processedTraitEffects.attributeModifiers.charisma;
+	const finalIntelligence = characterData.attribute_intelligence + processedTraitEffects.attributeModifiers.intelligence;
 
 	// Combat Mastery (half level rounded up)
 	const finalCombatMastery = Math.ceil(characterData.level / 2);
@@ -195,12 +230,12 @@ export const calculateCharacterStats = async (
 	});
 
 	// Defenses (DC20 formulas)
-	// PD (Precision Defense) = 8 + CM + Agility + Intelligence + Bonuses from items
-	const calculatedPD = 8 + finalCombatMastery + finalAgility + finalIntelligence;
+	// PD (Precision Defense) = 8 + CM + Agility + Intelligence + Bonuses from traits/items
+	const calculatedPD = 8 + finalCombatMastery + finalAgility + finalIntelligence + processedTraitEffects.staticBonuses.pd;
 	const finalPD = characterData.manualPD !== undefined ? characterData.manualPD : calculatedPD;
 
-	// AD (Area Defense) = 8 + CM + Might + Charisma + Bonuses from items
-	const calculatedAD = 8 + finalCombatMastery + finalMight + finalCharisma;
+	// AD (Area Defense) = 8 + CM + Might + Charisma + Bonuses from traits/items
+	const calculatedAD = 8 + finalCombatMastery + finalMight + finalCharisma + processedTraitEffects.staticBonuses.ad;
 	let finalAD = characterData.manualAD !== undefined ? characterData.manualAD : calculatedAD;
 
 	// Health & Resources
@@ -412,27 +447,13 @@ export const calculateCharacterStats = async (
 		}
 	}
 
-	// Process trait effects for movement speed
-	if (characterData.selectedTraitIds) {
-		try {
-			const selectedTraitIds = JSON.parse(characterData.selectedTraitIds);
-			const traitsData = await import('../rulesdata/traits');
-
-			selectedTraitIds.forEach((traitId: string) => {
-				const trait = traitsData.traitsData.find((t) => t.id === traitId);
-				if (trait?.effects) {
-					trait.effects.forEach((effect) => {
-						if (effect.type === 'MODIFY_SPEED') {
-							// Convert from internal units (5 = 1 space) to spaces
-							finalMoveSpeed += effect.value / 5;
-						}
-					});
-				}
-			});
-		} catch (error) {
-			console.warn('Error processing trait effects for movement speed:', error);
-		}
-	}
+	// Apply static bonuses from trait effects (after class effects, before manual overrides)
+	finalHPMax += processedTraitEffects.staticBonuses.hpMax;
+	finalMPMax += processedTraitEffects.staticBonuses.mpMax;
+	finalSPMax += processedTraitEffects.staticBonuses.spMax;
+	finalMoveSpeed += processedTraitEffects.staticBonuses.moveSpeed;
+	finalDeathThreshold += processedTraitEffects.staticBonuses.deathThreshold;
+	finalInitiativeBonus += processedTraitEffects.staticBonuses.initiativeBonus;
 
 	// Add attribute bonuses
 	finalSaveDC += primeModifier.value + finalCombatMastery; // Save DC = 10 + Prime + Combat Mastery

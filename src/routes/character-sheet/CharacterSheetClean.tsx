@@ -72,9 +72,6 @@ import {
 	StyledContainer,
 	StyledBackButton,
 	StyledCharacterSheet,
-	StyledMidBorder,
-	StyledInnerBorder,
-	StyledCornerDecoration,
 	StyledMainGrid,
 	StyledLeftColumn,
 	StyledMiddleColumn,
@@ -528,7 +525,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		return skillsData.map((skill) => {
 			const proficiency = characterSkills[skill.id] || 0;
 			const masteryBonus = proficiency * 2;
-			
+
 			// Get attribute modifier based on skill's attribute association
 			let attributeModifier = 0;
 			switch (skill.attributeAssociation.toLowerCase()) {
@@ -551,9 +548,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 				default:
 					attributeModifier = 0;
 			}
-			
+
 			const totalBonus = attributeModifier + masteryBonus;
-			
+
 			return {
 				id: skill.id,
 				name: skill.name,
@@ -582,7 +579,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 			.map((trade) => {
 				const proficiency = characterTrades[trade.id] || 0;
 				const masteryBonus = proficiency * 2;
-				
+
 				// Get attribute modifier based on trade's attribute association
 				let attributeModifier = 0;
 				switch (trade.attributeAssociation.toLowerCase()) {
@@ -601,9 +598,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					default:
 						attributeModifier = 0;
 				}
-				
+
 				const totalBonus = attributeModifier + masteryBonus;
-				
+
 				return {
 					id: trade.id,
 					name: trade.name,
@@ -629,7 +626,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		return knowledgeData.map((knowledge) => {
 			const proficiency = characterTrades[knowledge.id] || 0;
 			const masteryBonus = proficiency * 2;
-			
+
 			// Get attribute modifier based on knowledge's attribute association
 			let attributeModifier = 0;
 			switch (knowledge.attributeAssociation.toLowerCase()) {
@@ -648,9 +645,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 				default:
 					attributeModifier = 0;
 			}
-			
+
 			const totalBonus = attributeModifier + masteryBonus;
-			
+
 			return {
 				id: knowledge.id,
 				name: knowledge.name,
@@ -1181,16 +1178,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 			<StyledBackButton onClick={onBack}>← Back to Menu</StyledBackButton>
 
 			<StyledCharacterSheet>
-				<StyledMidBorder>
-					<StyledInnerBorder>
-						{/* Corner decorations */}
-						<StyledCornerDecoration position="top-left" />
-						<StyledCornerDecoration position="top-right" />
-						<StyledCornerDecoration position="bottom-left" />
-						<StyledCornerDecoration position="bottom-right" />
-						
-						{/* Header Section */}
-						<StyledHeader>
+				{/* Header Section */}
+				<StyledHeader>
 					<StyledHeaderSection>
 						<StyledLabel>Player Name</StyledLabel>
 						<StyledValue>{characterData.finalPlayerName || 'Unknown'}</StyledValue>
@@ -1355,12 +1344,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 							{/* Features */}
 							<Features features={features} onFeatureClick={openFeaturePopup} />
 
-						{/* Currency Section */}
-						<Currency currentValues={currentValues} onCurrencyChange={handleCurrencyChange} />
-					</StyledRightColumn>
-				</StyledMainGrid>
-					</StyledInnerBorder>
-				</StyledMidBorder>
 							{/* Currency Section */}
 							<Currency currentValues={currentValues} onCurrencyChange={handleCurrencyChange} />
 						</StyledRightColumn>
@@ -1847,7 +1830,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 			)}
 
 			{/* Draconic Dice Roller */}
-			<DiceRoller 
+			<DiceRoller
 				onRoll={(results, total, rollMode) => {
 					console.log('Dice rolled:', { results, total, rollMode });
 				}}
@@ -1857,3 +1840,4 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 };
 
 export default CharacterSheet;
+

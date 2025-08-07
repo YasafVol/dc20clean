@@ -2,7 +2,7 @@
 import styled from 'styled-components';
 
 export const StyledApp = styled.div`
-	min-height: 100vh;
+	height: 100vh;
 	position: relative;
 	display: flex;
 	flex-direction: column;
@@ -24,7 +24,7 @@ export const StyledHeader = styled.header`
 
 export const StyledBackButton = styled.button`
 	padding: 0.5rem 1rem;
-	border: 2px solid #fbbf24;
+	border: 1px solid #fbbf24;
 	border-radius: 6px;
 	background: transparent;
 	color: #fbbf24;
@@ -36,19 +36,23 @@ export const StyledBackButton = styled.button`
 	&:hover {
 		background: #fbbf24;
 		color: #1e1b4b;
-		transform: translateY(-2px);
 	}
 `;
 
 export const StyledMain = styled.main`
 	flex: 1;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
 `;
 
 export const StyledFooter = styled.footer`
-	padding: 1rem;
+	padding: 0.5rem;
 	text-align: center;
 	color: #9ca3af;
 	font-size: 0.8rem;
-	border-top: 1px solid rgba(139, 92, 246, 0.3);
-	background: #FDFDFC;
+	font-family: 'Urbanist', 'Georgia', 'Times New Roman', serif;
+	font-weight: 400;
+	border-top: none;
+	background: transparent;
 `;

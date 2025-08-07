@@ -5,40 +5,43 @@ export const StyledContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	gap: 2rem;
-	padding: 1rem;
+	padding: 6rem 1rem 1rem 1rem;
 	min-height: 100vh;
-	background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
+	background: transparent;
 `;
 
 export const StyledTitle = styled.h1`
-	margin-bottom: 2rem;
+	margin: 0rem 0;
 	color: #fbbf24;
 	text-align: center;
-	font-size: 2.2rem;
+	font-size: 3rem;
 	font-weight: bold;
 	font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
-	text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
 	letter-spacing: 2px;
-	background: linear-gradient(45deg, #fbbf24 0%, #f59e0b 100%);
-	background-clip: text;
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
 `;
 
 export const StyledStepIndicator = styled.div`
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 2rem;
-	padding: 0 1rem;
+	padding: 2rem 1.5rem;
+	background: rgba(0, 0, 0, 0.9);
+	backdrop-filter: blur(10px);
+	border-bottom: 2px solid #fbbf24;
+	z-index: 100;
 `;
 
 export const StyledStepsContainer = styled.div`
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
 	align-items: center;
-	gap: 2rem;
 	flex: 1;
+	max-width: 600px;
+	margin: 0 auto;
 `;
 
 export const StyledStep = styled.div<{ $active: boolean; $completed: boolean }>`
@@ -48,10 +51,8 @@ export const StyledStep = styled.div<{ $active: boolean; $completed: boolean }>`
 	gap: 0.5rem;
 	cursor: pointer;
 	transition: all 0.3s ease;
-
-	&:hover {
-		transform: scale(1.05);
-	}
+	flex: 1;
+	max-width: 120px;
 `;
 
 export const StyledStepNumber = styled.div<{ $active: boolean; $completed: boolean }>`
@@ -70,7 +71,7 @@ export const StyledStepNumber = styled.div<{ $active: boolean; $completed: boole
 		`
     background: linear-gradient(145deg, #10b981 0%, #059669 100%);
     color: white;
-    border: 2px solid #10b981;
+    border: 1px solid #10b981;
   `}
 
 	${(props) =>
@@ -79,7 +80,7 @@ export const StyledStepNumber = styled.div<{ $active: boolean; $completed: boole
 		`
     background: linear-gradient(145deg, #fbbf24 0%, #f59e0b 100%);
     color: #1e1b4b;
-    border: 2px solid #fbbf24;
+    border: 1px solid #fbbf24;
   `}
   
   ${(props) =>
@@ -88,7 +89,7 @@ export const StyledStepNumber = styled.div<{ $active: boolean; $completed: boole
 		`
     background: transparent;
     color: #9ca3af;
-    border: 2px solid #9ca3af;
+    border: 1px solid #9ca3af;
   `}
 `;
 
@@ -141,7 +142,6 @@ export const StyledButton = styled.button<{ $variant?: 'primary' | 'secondary' }
     
     &:hover {
       background: linear-gradient(145deg, #f59e0b 0%, #d97706 100%);
-      transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
     }
   `}
@@ -151,7 +151,7 @@ export const StyledButton = styled.button<{ $variant?: 'primary' | 'secondary' }
 		`
     background: transparent;
     color: #9ca3af;
-    border: 2px solid #9ca3af;
+    border: 1px solid #9ca3af;
     
     &:hover {
       color: #fbbf24;

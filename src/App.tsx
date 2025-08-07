@@ -5,13 +5,11 @@ import CharacterCreation from './routes/character-creation/CharacterCreation.tsx
 import LoadCharacter from './routes/character-creation/LoadCharacter.tsx';
 import CharacterSheet from './routes/character-sheet/CharacterSheetClean.tsx';
 import Menu from './components/Menu.tsx';
-import type { SavedCharacter } from './lib/utils/characterEdit';
 import {
 	StyledApp,
 	StyledHeader,
 	StyledBackButton,
-	StyledMain,
-	StyledFooter
+	StyledMain
 } from './styles/App.styles';
 
 const GlobalStyle = createGlobalStyle`
@@ -37,7 +35,7 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     font-family: 'Urbanist', 'Georgia', 'Times New Roman', serif;
-    background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
+    background: url('/static/BlackBG.png') center/cover no-repeat fixed;
     color: #e5e7eb;
     min-height: 100vh;
     font-weight: 400;
@@ -82,24 +80,15 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 function App() {
-	const [currentView, setCurrentView] = useState<'menu' | 'create' | 'load' | 'sheet' | 'edit'>(
-		'menu'
-	);
+	const [currentView, setCurrentView] = useState<'menu' | 'create' | 'load' | 'sheet'>('menu');
 	const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
-	const [editCharacter, setEditCharacter] = useState<SavedCharacter | null>(null);
 
 	const handleCreateCharacter = () => {
-		setEditCharacter(null); // Clear edit mode
 		setCurrentView('create');
 	};
 
 	const handleLoadCharacter = () => {
 		setCurrentView('load');
-	};
-
-	const handleEditCharacter = (character: SavedCharacter) => {
-		setEditCharacter(character);
-		setCurrentView('edit');
 	};
 
 	const handleViewCharacterSheet = (characterId: string) => {
@@ -110,7 +99,6 @@ function App() {
 	const handleBackToMenu = () => {
 		setCurrentView('menu');
 		setSelectedCharacterId(null);
-		setEditCharacter(null);
 	};
 
 	const renderCurrentView = () => {
@@ -124,35 +112,15 @@ function App() {
 					<CharacterProvider>
 						<StyledHeader>
 							<StyledBackButton onClick={handleBackToMenu}>← Back to Menu</StyledBackButton>
-							<span>Created by TBD Group</span>
 						</StyledHeader>
 						<StyledMain>
-							<CharacterCreation onNavigateToLoad={handleLoadCharacter} />
-						</StyledMain>
-					</CharacterProvider>
-				);
-			case 'edit':
-				return (
-					<CharacterProvider>
-						<StyledHeader>
-							<StyledBackButton onClick={handleBackToMenu}>← Back to Menu</StyledBackButton>
-							<span>Created by TBD Group</span>
-						</StyledHeader>
-						<StyledMain>
-							<CharacterCreation
-								onNavigateToLoad={handleLoadCharacter}
-								editCharacter={editCharacter || undefined}
-							/>
+							<CharacterCreation onNavigateToLoad={handleBackToMenu} />
 						</StyledMain>
 					</CharacterProvider>
 				);
 			case 'load':
 				return (
-					<LoadCharacter
-						onBack={handleBackToMenu}
-						onSelectCharacter={handleViewCharacterSheet}
-						onEditCharacter={handleEditCharacter}
-					/>
+					<LoadCharacter onBack={handleBackToMenu} onSelectCharacter={handleViewCharacterSheet} />
 				);
 			case 'sheet':
 				return selectedCharacterId ? (
@@ -168,7 +136,6 @@ function App() {
 			<GlobalStyle />
 			<StyledApp>
 				{renderCurrentView()}
-				<StyledFooter>All rights reserved to TBD Group, 2025</StyledFooter>
 			</StyledApp>
 		</>
 	);

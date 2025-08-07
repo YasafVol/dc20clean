@@ -1,12 +1,11 @@
 import styled from 'styled-components';
 
 export const StyledContainer = styled.div`
-	border: 2px solid #8b5cf6;
+	border: 1px solid white;
 	padding: 1.5rem;
 	border-radius: 12px;
-	background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+	background: transparent;
 	margin-top: 2rem;
-	box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
 `;
 
 export const StyledTitle = styled.h2`

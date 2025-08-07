@@ -4,6 +4,7 @@ import { CharacterProvider } from './lib/stores/characterContext';
 import CharacterCreation from './routes/character-creation/CharacterCreation.tsx';
 import LoadCharacter from './routes/character-creation/LoadCharacter.tsx';
 import CharacterSheet from './routes/character-sheet/CharacterSheetClean.tsx';
+import type { SavedCharacter } from './lib/utils/characterEdit';
 import Menu from './components/Menu.tsx';
 import {
 	StyledApp,
@@ -80,15 +81,24 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 function App() {
-	const [currentView, setCurrentView] = useState<'menu' | 'create' | 'load' | 'sheet'>('menu');
+	const [currentView, setCurrentView] = useState<'menu' | 'create' | 'load' | 'sheet' | 'edit'>(
+		'menu'
+	);
 	const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
+	const [editCharacter, setEditCharacter] = useState<SavedCharacter | null>(null);
 
 	const handleCreateCharacter = () => {
+		setEditCharacter(null); // Clear edit mode
 		setCurrentView('create');
 	};
 
 	const handleLoadCharacter = () => {
 		setCurrentView('load');
+	};
+
+	const handleEditCharacter = (character: SavedCharacter) => {
+		setEditCharacter(character);
+		setCurrentView('edit');
 	};
 
 	const handleViewCharacterSheet = (characterId: string) => {
@@ -99,6 +109,7 @@ function App() {
 	const handleBackToMenu = () => {
 		setCurrentView('menu');
 		setSelectedCharacterId(null);
+		setEditCharacter(null);
 	};
 
 	const renderCurrentView = () => {
@@ -114,13 +125,28 @@ function App() {
 							<StyledBackButton onClick={handleBackToMenu}>← Back to Menu</StyledBackButton>
 						</StyledHeader>
 						<StyledMain>
-							<CharacterCreation onNavigateToLoad={handleBackToMenu} />
+							<CharacterCreation onNavigateToLoad={handleLoadCharacter} onBackToMenu={handleBackToMenu} />
+						</StyledMain>
+					</CharacterProvider>
+				);
+			case 'edit':
+				return (
+					<CharacterProvider>
+						<StyledHeader>
+							<StyledBackButton onClick={handleBackToMenu}>← Back to Menu</StyledBackButton>
+						</StyledHeader>
+						<StyledMain>
+							<CharacterCreation
+								onNavigateToLoad={handleLoadCharacter}
+								onBackToMenu={handleBackToMenu}
+								editCharacter={editCharacter ?? undefined}
+							/>
 						</StyledMain>
 					</CharacterProvider>
 				);
 			case 'load':
 				return (
-					<LoadCharacter onBack={handleBackToMenu} onSelectCharacter={handleViewCharacterSheet} />
+					<LoadCharacter onBack={handleBackToMenu} onSelectCharacter={handleViewCharacterSheet} onEditCharacter={handleEditCharacter} />
 				);
 			case 'sheet':
 				return selectedCharacterId ? (

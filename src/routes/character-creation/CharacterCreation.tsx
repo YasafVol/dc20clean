@@ -31,11 +31,13 @@ import {
 
 interface CharacterCreationProps {
 	onNavigateToLoad: () => void;
+	onBackToMenu: () => void;
 	editCharacter?: SavedCharacter; // If provided, we're in edit mode
 }
 
 const CharacterCreation: React.FC<CharacterCreationProps> = ({
 	onNavigateToLoad,
+	onBackToMenu,
 	editCharacter
 }) => {
 	const { state, dispatch, attributePointsRemaining, ancestryPointsRemaining } = useCharacter();
@@ -92,7 +94,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 
 	const handlePrevious = () => {
 		if (state.currentStep === 1) {
-			onNavigateToLoad(); // Go back to home screen when on first step
+			onBackToMenu(); // Go back to home screen when on first step
 		} else {
 			dispatch({ type: 'PREVIOUS_STEP' });
 		}

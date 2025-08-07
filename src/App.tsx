@@ -13,6 +13,9 @@ import {
 	StyledMain
 } from './styles/App.styles';
 
+// Import static assets
+import blackBgImage from '/static/BlackBG.png';
+
 const GlobalStyle = createGlobalStyle`
   @font-face {
     font-family: 'Cinzel';
@@ -36,7 +39,7 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     font-family: 'Urbanist', 'Georgia', 'Times New Roman', serif;
-    background: url('/static/BlackBG.png') center/cover no-repeat fixed;
+    background: url('${blackBgImage}') center/cover no-repeat fixed;
     color: #e5e7eb;
     min-height: 100vh;
     font-weight: 400;
@@ -60,12 +63,12 @@ const GlobalStyle = createGlobalStyle`
   }
   
   ::-webkit-scrollbar-thumb {
-    background: #8b5cf6;
+    background: #fbbf24;
     border-radius: 6px;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background: #a855f7;
+    background: #f1bf3eff;
   }
   
   /* Selection colors */

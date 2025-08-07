@@ -2,7 +2,15 @@
 	"outputDirectory": "dist",
 	"routes": [
 		{
+			"src": "/assets/(.*)",
+			"dest": "/assets/$1"
+		},
+		{
 			"src": "/static/(.*)",
+			"dest": "/$1"
+		},
+		{
+			"src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
 			"dest": "/$1"
 		},
 		{

@@ -40,10 +40,10 @@ export const GroupIcon = () => (
 	</svg>
 );
 
-
+import React from 'react';
 import { StyledContainer, StyledTitle, StyledSubtitle, StyledMenuGrid, StyledTextContent, StyledMenuCard, StyledCardTitle
 , StyledCardDescription, StyledIcon
-} from './styled.js';
+} from './styled';
 
 
 interface MenuProps {

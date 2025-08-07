@@ -1,3 +1,13 @@
 {
-	"outputDirectory": "dist"
+	"outputDirectory": "dist",
+	"routes": [
+		{
+			"src": "/static/(.*)",
+			"dest": "/$1"
+		},
+		{
+			"src": "/(.*)",
+			"dest": "/index.html"
+		}
+	]
 }

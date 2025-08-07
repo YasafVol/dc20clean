@@ -1,7 +1,4 @@
-import React from 'react';
-import styled from 'styled-components';
-
-const HeadIcon = () => (
+export const HeadIcon = () => (
 	<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 595.3 586.9" width="64" height="64" fill="currentColor">
 		<path d="M155.6,51c8,1.8,8.5,9.9,13.5,14s12.6,4.6,11.5,15.5c-.9,9-8.4,8.9-12.7,12.8s-3.8,13.2-14.8,13.2-10.2-8.7-14.7-13.2-12.5-3-12.8-13.7,6.9-10.1,12.1-14.9,5.1-11.8,12.9-13.5h5ZM167.6,79.9c1.4-2.1-6.7-5.1-8.5-6.9-2.6-2.5-3.5-6.4-6-9-4.3,6.4-6.9,12.4-15.5,14,6.6,5,11.8,8,15.5,15.9,3.6-6.5,6.9-11.7,14.5-14Z"/>
 		<path d="M302.1,79.2c142.9-9.8,200.3,115.9,193.8,240.8-5.9,113.8-107.4,253.6-234.2,198.2C87.9,442.3,95.1,93.4,302.1,79.2ZM305.1,91.2c-150.2,9.7-183.4,205.3-131.4,318.4,49.7,108,165.8,151.7,252.8,53.5,103-116.2,70-384.3-121.5-372Z"/>
@@ -15,7 +12,7 @@ const HeadIcon = () => (
 	</svg>
 );
 
-const GroupIcon = () => (
+export const GroupIcon = () => (
 	<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 595.3 570.7" width="90" height="90" fill="currentColor">
 		<path d="M460,488.6c-3.9-3-2.1-7.6-3.8-11.1s-5.7-5.7-2.3-11.4c2.8-4.7,6.8-2.7,10.2-3.8,3.3-1,5.4-6.2,11.4-3.4s3.3,7.3,4.7,10.9,6.1,4.8,3.5,10.7-6.3,3.8-10.4,5c-4.1,1.3-5.8,5.1-10.5,4.1l-2.7-1.3h0ZM460.8,469.8c-1.3.8,2.4,4.5,2.9,5.9.8,2,.3,4.4,1,6.4,4-2.4,6.9-5,12-3.7-2.3-4.4-4.4-7.4-4.4-12.6-3.6,2.6-6.7,4.6-11.5,3.9Z"/>
 		<path d="M288.4,171.8c86-5.9,120.5,69.7,116.6,144.8-3.5,68.4-64.6,152.5-140.9,119.2-104.5-45.7-100.2-255.5,24.3-264.1ZM290.2,179c-90.3,5.8-110.3,123.5-79,191.5,29.9,65,99.7,91.2,152.1,32.2,62-69.9,42.1-231.1-73.1-223.8h0Z"/>
@@ -43,125 +40,11 @@ const GroupIcon = () => (
 	</svg>
 );
 
-const StyledContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	min-height: 100vh;
-	padding: 2rem;
-	background: url('/static/Main.png') center/cover no-repeat;
-`;
 
-const StyledTitle = styled.h1`
-	margin-bottom: 0.2rem;
-	color: #fbbf24;
-	text-align: center;
-	font-size: 3rem;
-	font-weight: bold;
-	font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
-	letter-spacing: 2px;
-	margin-top: 16rem;
-`;
+import { StyledContainer, StyledTitle, StyledSubtitle, StyledMenuGrid, StyledTextContent, StyledMenuCard, StyledCardTitle
+, StyledCardDescription, StyledIcon
+} from './styled.js';
 
-const StyledSubtitle = styled.p`
-	margin-top: 0rem;
-	margin-bottom: 2rem;
-	color: #e5e7eb;
-	text-align: center;
-	font-size: 1.3rem;
-	font-family: 'Urbanist', 'Georgia', 'Times New Roman', serif;
-	font-weight: 400;
-	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-	max-width: 600px;
-	line-height: 1.6;
-`;
-
-const StyledMenuGrid = styled.div`
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-	gap: 1.5rem;
-	max-width: 900px;
-	width: 100%;
-`;
-
-const StyledMenuCard = styled.button`
-	border: 1px solid #ffffff;
-	padding: 1.5rem 2rem;
-	border-radius: 8px;
-	background: transparent;
-	cursor: pointer;
-	transition: all 0.3s ease;
-	text-align: left;
-	box-shadow: none;
-	backdrop-filter: none;
-	height: 120px;
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: center;
-
-	&:hover {
-		border-color: #fbbf24;
-	}
-`;
-
-const StyledIcon = styled.div`
-	font-size: 3rem;
-	background: transparent;
-	border-radius: 0;
-	width: auto;
-	height: auto;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	margin: 0;
-	box-shadow: none;
-	transition: all 0.3s ease;
-	color: #e5e7eb;
-	font-weight: 300;
-
-	${StyledMenuCard}:hover & {
-		color: #fbbf24;
-		transform: scale(1.1);
-	}
-`;
-
-const StyledCardTitle = styled.h2`
-	margin: 0 0 0.3rem 0;
-	color: #fbbf24;
-	font-size: 1.6rem;
-	font-weight: bold;
-	font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
-	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-	transition: all 0.3s ease;
-	text-align: left;
-	letter-spacing: 1px;
-
-	${StyledMenuCard}:hover & {
-		color: #f59e0b;
-	}
-`;
-
-const StyledCardDescription = styled.p`
-	margin: 0;
-	color: #e5e7eb;
-	font-size: 1.1rem;
-	font-family: 'Urbanist', 'Georgia', 'Times New Roman', serif;
-	font-weight: 400;
-	line-height: 1.3;
-	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-	opacity: 0.9;
-	text-align: left;
-	letter-spacing: 1px;
-`;
-
-const StyledTextContent = styled.div`
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	flex: 1;
-`;
 
 interface MenuProps {
 	onCreateCharacter: () => void;

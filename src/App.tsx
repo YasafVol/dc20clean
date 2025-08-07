@@ -15,18 +15,20 @@ import {
 
 // Import static assets
 import blackBgImage from '/static/BlackBG.png';
+import cinzelFont from './types/Fonts/Cinzel-VariableFont_wght.ttf';
+import urbanistFont from './types/Fonts/Urbanist-VariableFont_wght.ttf';
 
 const GlobalStyle = createGlobalStyle`
   @font-face {
     font-family: 'Cinzel';
-    src: url('/src/types/Fonts/Cinzel-VariableFont_wght.ttf') format('truetype');
+    src: url('${cinzelFont}') format('truetype');
     font-weight: 100 900;
     font-style: normal;
   }
   
   @font-face {
     font-family: 'Urbanist';
-    src: url('/src/types/Fonts/Urbanist-VariableFont_wght.ttf') format('truetype');
+    src: url('${urbanistFont}') format('truetype');
     font-weight: 100 900;
     font-style: normal;
   }

@@ -34,7 +34,7 @@ export const wizardClass: ClassDefinition = {
       description: 'You have completed training in a specialized School of Magic.',
       choices: [
         {
-          id: 'wizard_spell_school',
+          id: 'wizard_spell_school_initiate_0',
           prompt: 'Choose your specialized Spell School',
           count: 1,
           options: [

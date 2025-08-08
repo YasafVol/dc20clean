@@ -35,7 +35,7 @@ export const clericClass: ClassDefinition = {
       description: 'Your connection to your deity grants you divine powers.',
       choices: [
         {
-          id: 'cleric_divine_damage',
+          id: 'cleric_cleric_order_0',
           prompt: 'Choose your Divine Damage type',
           count: 1,
           options: [
@@ -72,7 +72,7 @@ export const clericClass: ClassDefinition = {
           ]
         },
         {
-          id: 'cleric_divine_domain',
+          id: 'cleric_cleric_order_1',
           prompt: 'Choose 2 Divine Domains',
           count: 2,
           options: [

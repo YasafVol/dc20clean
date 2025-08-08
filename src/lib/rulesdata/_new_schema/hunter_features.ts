@@ -45,7 +45,7 @@ export const hunterClass: ClassDefinition = {
       description: 'You are particularly familiar with specific environments. While in your Favored Terrains, you have ADV on Stealth and Survival Checks and cannot be Surprised.',
       choices: [
         {
-          id: 'hunter_favored_terrain',
+          id: 'hunter_favored_terrain_0',
           prompt: 'Choose 2 types of Favored Terrain',
           count: 2,
           options: [

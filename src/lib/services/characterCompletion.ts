@@ -1,7 +1,7 @@
 // Shared character completion service
 // Handles the completion flow with proper stat calculation, snackbar, and navigation
 
-import { calculateCharacterStats, type CharacterInProgressData } from './characterCalculator';
+import type { CharacterInProgressData } from './characterCalculator';
 import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from './enhancedCharacterCalculator';
 
 export interface CharacterCompletionCallbacks {
@@ -83,9 +83,8 @@ export const completeCharacter = async (
 				ancestry2Name: enhancedResult.stats.ancestry2Name || null
 			};
 		} else {
-			console.log('Using legacy calculator for class:', characterInProgress.classId);
-			// Use the old calculator for unsupported classes
-			completedCharacterData = await calculateCharacterStats(characterInProgress);
+			// All classes are now migrated, this should not happen anymore
+			throw new Error(`Class "${characterInProgress.classId}" is not supported in the enhanced calculator. All classes should be migrated.`);
 		}
 		console.log('Character stats calculated:', completedCharacterData);
 		console.log('Class info saved:', {

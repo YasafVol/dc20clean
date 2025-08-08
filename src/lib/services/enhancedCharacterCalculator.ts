@@ -599,7 +599,17 @@ export function calculateCharacterWithBreakdowns(
       finalSaveDC,
       finalInitiativeBonus,
       finalRestPoints,
-      finalGritPoints
+      finalGritPoints,
+      
+      // Prime modifier and combat mastery (needed for UI compatibility)
+      finalPrimeModifierValue: maxValue,
+      finalPrimeModifierAttribute: primeAttribute,
+      finalCombatMastery: combatMastery,
+      
+      // Class and ancestry info for UI
+      className: getClassFeatures(buildData.classId)?.name || 'Unknown',
+      ancestry1Name: ancestriesData.find(a => a.id === buildData.ancestry1Id)?.name,
+      ancestry2Name: ancestriesData.find(a => a.id === buildData.ancestry2Id)?.name
     },
     breakdowns,
     grantedAbilities,

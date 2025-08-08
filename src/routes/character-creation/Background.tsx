@@ -45,7 +45,7 @@ const Background: React.FC = () => {
 	);
 
 	// Get class features for mastery calculations
-	const classData = state.classId ? classesData.find(c => c.id === state.classId) : null;
+	const classData = state.classId ? classesData.find(c => c.id.toLowerCase() === state.classId.toLowerCase()) : null;
 	const classFeatures = classData ? findClassByName(classData.name) : null;
 
 	// Use the background points manager hook

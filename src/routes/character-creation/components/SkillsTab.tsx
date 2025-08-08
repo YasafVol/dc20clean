@@ -46,25 +46,38 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 		pointsUsed: number,
 		availablePoints: number
 	) => {
-		return pointsUsed + pointCost <= availablePoints;
+		const canAfford = pointsUsed + pointCost <= availablePoints;
+		console.log(`canIncreaseProficiency: cost=${pointCost}, used=${pointsUsed}, available=${availablePoints}, canAfford=${canAfford}`);
+		return canAfford;
 	};
 
 	// Enhanced validation including mastery limits
 	const canSelectMastery = (skillId: string, targetLevel: number): boolean => {
 		// Check mastery limit
-		if (targetLevel > masteryLimits.maxSkillMastery) return false;
+		if (targetLevel > masteryLimits.maxSkillMastery) {
+			console.log(`Skill ${skillId} level ${targetLevel} exceeds mastery limit ${masteryLimits.maxSkillMastery}`);
+			return false;
+		}
 		
-		// Check Level 1 special rule for Adept (level 2)
+		// Check Level 1 special rule for Adept (level 2) - only count skills, not trades
 		if (targetLevel === 2) {
 			const currentlyAdept = currentSkills[skillId] === 2;
-			if (!currentlyAdept && masteryLimits.level1Validation.adeptCount >= 1) {
-				return false; // Already have one Adept skill/trade
+			const skillAdeptCount = Object.values(currentSkills).filter(level => level === 2).length;
+			if (!currentlyAdept && skillAdeptCount >= 1) {
+				console.log(`Cannot select Adept level 2 for ${skillId} - already have ${skillAdeptCount} Adept skills`);
+				return false; // Already have one Adept skill
 			}
 		}
 		
 		// Check point availability
 		const pointCost = targetLevel - (currentSkills[skillId] || 0);
-		return canIncreaseProficiency(pointCost, pointsData.skillPointsUsed, pointsData.availableSkillPoints);
+		const canAfford = canIncreaseProficiency(pointCost, pointsData.skillPointsUsed, pointsData.availableSkillPoints);
+		
+		if (!canAfford) {
+			console.log(`Cannot afford level ${targetLevel} for ${skillId}: cost=${pointCost}, used=${pointsData.skillPointsUsed}, available=${pointsData.availableSkillPoints}`);
+		}
+		
+		return canAfford;
 	};
 
 	// Helper function for consistent button styling
@@ -96,19 +109,24 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 	return (
 		<StyledTabContent>
 			{/* Level 1 Validation Warning */}
-			{!masteryLimits.level1Validation.valid && (
-				<div style={{
-					background: '#fee2e2',
-					border: '1px solid #fecaca',
-					color: '#991b1b',
-					padding: '0.75rem',
-					borderRadius: '0.5rem',
-					marginBottom: '1rem'
-				}}>
-					⚠️ Level 1 characters can only have ONE Adept (level 2) skill or trade total.
-					Currently: {masteryLimits.level1Validation.adeptCount} Adept selections.
-				</div>
-			)}
+			{(() => {
+				const skillAdeptCount = Object.values(currentSkills).filter(level => level === 2).length;
+				const isInvalid = skillAdeptCount > 1;
+				
+				return isInvalid ? (
+					<div style={{
+						background: '#fee2e2',
+						border: '1px solid #fecaca',
+						color: '#991b1b',
+						padding: '0.75rem',
+						borderRadius: '0.5rem',
+						marginBottom: '1rem'
+					}}>
+						⚠️ Level 1 characters can only have ONE Adept (level 2) skill.
+						Currently: {skillAdeptCount} Adept skill selections.
+					</div>
+				) : null;
+			})()}
 			
 			{/* Mastery Limits Info */}
 			<div style={{

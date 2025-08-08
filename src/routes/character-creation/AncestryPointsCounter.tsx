@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { useCharacter } from '../../lib/stores/characterContext';
 import { StyledContainer, StyledTitle, StyledDetails } from './styles/AncestryPointsCounter.styles';
 

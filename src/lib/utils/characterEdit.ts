@@ -3,6 +3,7 @@
 
 import type { CharacterInProgressStoreData } from '../stores/characterContext';
 import { getCharacterState, updateCharacterState } from './characterState';
+import { traitsData } from '../rulesdata/traits';
 
 export interface SavedCharacter {
 	id: string;
@@ -28,6 +29,8 @@ export interface SavedCharacter {
 	skillsJson: string;
 	tradesJson: string;
 	languagesJson: string;
+	selectedSpells?: string;
+	selectedManeuvers?: string;
 	completedAt: string;
 	[key: string]: any;
 }
@@ -88,7 +91,10 @@ export const convertCharacterToInProgress = (
 		// Background selections
 		skillsJson: savedCharacter.skillsJson || '{}',
 		tradesJson: savedCharacter.tradesJson || '{}',
-		languagesJson: savedCharacter.languagesJson || '{"common": {"fluency": "fluent"}}'
+		languagesJson: savedCharacter.languagesJson || '{"common": {"fluency": "fluent"}}',
+		// Spells and Maneuvers selections
+		selectedSpells: savedCharacter.selectedSpells || '[]',
+		selectedManeuvers: savedCharacter.selectedManeuvers || '[]'
 	};
 };
 
@@ -132,8 +138,6 @@ const calculateAncestryPointsSpent = (character: SavedCharacter): number => {
 	if (!character.selectedTraitIds) return 0;
 
 	try {
-		// Import traits data to calculate costs
-		const { traitsData } = require('../rulesdata/traits');
 		const selectedTraitIds: string[] = JSON.parse(character.selectedTraitIds);
 		let totalCost = 0;
 
@@ -180,7 +184,14 @@ export const completeCharacterEdit = async (
 			skillsJson: newCharacterState.skillsJson || '',
 			tradesJson: newCharacterState.tradesJson || '',
 			languagesJson: newCharacterState.languagesJson || '',
+			selectedSpells: newCharacterState.selectedSpells || '[]',
+			selectedManeuvers: newCharacterState.selectedManeuvers || '[]',
 			lastModified: new Date().toISOString()
+		});
+
+		console.log('🔄 completeCharacterEdit: Data passed to characterCalculationFn:', {
+			selectedSpells: newCharacterState.selectedSpells,
+			selectedManeuvers: newCharacterState.selectedManeuvers
 		});
 
 		// Update the saved character in localStorage with NEW CALCULATED VALUES

@@ -26,10 +26,26 @@ export interface SpellsProps {
 	setSpells: React.Dispatch<React.SetStateAction<SpellData[]>>;
 	characterData: CharacterSheetData;
 	onSpellClick: (spell: Spell) => void;
+	readOnly?: boolean; // New prop for read-only display
 }
 
-const Spells: React.FC<SpellsProps> = ({ spells, setSpells, characterData, onSpellClick }) => {
+const Spells: React.FC<SpellsProps> = ({ spells, setSpells, characterData, onSpellClick, readOnly = false }) => {
 	const [schoolFilter, setSchoolFilter] = useState<string>('all');
+	// Initialize with all spells expanded by default
+	const [expandedSpells, setExpandedSpells] = useState<Set<string>>(() => {
+		const expanded = new Set<string>();
+		spells.forEach(spell => {
+			if (spell.spellName) {
+				expanded.add(spell.id);
+			}
+		});
+		return expanded;
+	});
+
+	console.log('🔍 Spells component received:', {
+		spellsCount: spells.length,
+		spells: spells.map(s => ({ id: s.id, spellName: s.spellName, school: s.school }))
+	});
 
 	// Filter spells based on selected school
 	const filteredSpells = useMemo(() => {
@@ -86,24 +102,38 @@ const Spells: React.FC<SpellsProps> = ({ spells, setSpells, characterData, onSpe
 		setSchoolFilter(event.target.value);
 	};
 
+	const toggleSpellExpansion = (spellId: string) => {
+		setExpandedSpells(prev => {
+			const newSet = new Set(prev);
+			if (newSet.has(spellId)) {
+				newSet.delete(spellId);
+			} else {
+				newSet.add(spellId);
+			}
+			return newSet;
+		});
+	};
+
 	return (
 		<StyledSpellsSection>
 			<StyledSpellsHeader>
 				<StyledSpellsTitle>Spells</StyledSpellsTitle>
-				<StyledSpellsControls>
-					<label style={{ fontSize: '0.8rem', color: '#8b4513', marginRight: '0.3rem' }}>
-						Filter by School:
-					</label>
-					<StyledSchoolFilter value={schoolFilter} onChange={handleSchoolFilterChange}>
-						<option value="all">All Schools</option>
-						{(Object.values(SpellSchool) as string[]).map(school => (
-							<option key={school} value={school}>
-								{school}
-							</option>
-						))}
-					</StyledSchoolFilter>
-					<StyledAddSpellButton onClick={addSpellSlot}>+ Add Spell</StyledAddSpellButton>
-				</StyledSpellsControls>
+				{!readOnly && (
+					<StyledSpellsControls>
+						<label style={{ fontSize: '0.8rem', color: '#8b4513', marginRight: '0.3rem' }}>
+							Filter by School:
+						</label>
+						<StyledSchoolFilter value={schoolFilter} onChange={handleSchoolFilterChange}>
+							<option value="all">All Schools</option>
+							{(Object.values(SpellSchool) as string[]).map(school => (
+								<option key={school} value={school}>
+									{school}
+								</option>
+							))}
+						</StyledSchoolFilter>
+						<StyledAddSpellButton onClick={addSpellSlot}>+ Add Spell</StyledAddSpellButton>
+					</StyledSpellsControls>
+				)}
 			</StyledSpellsHeader>
 
 			<StyledSpellsContainer>
@@ -122,7 +152,7 @@ const Spells: React.FC<SpellsProps> = ({ spells, setSpells, characterData, onSpe
 
 				{spells.length === 0 ? (
 					<StyledEmptyState>
-						No spells selected. Click "Add Spell" to add spells to your character.
+						{readOnly ? 'No spells known.' : 'No spells selected. Click "Add Spell" to add spells to your character.'}
 					</StyledEmptyState>
 				) : (
 					spells.map((spell, index) => {
@@ -131,55 +161,137 @@ const Spells: React.FC<SpellsProps> = ({ spells, setSpells, characterData, onSpe
 							allSpells.find(s => s.name === spell.spellName) : null;
 							
 						return (
-							<StyledSpellRow key={spell.id}>
-								{/* Remove Button */}
-								<StyledRemoveButton onClick={() => removeSpellSlot(index)}>
-									×
-								</StyledRemoveButton>
+							<React.Fragment key={spell.id}>
+								<StyledSpellRow>
+									{/* Remove Button - only show in edit mode */}
+									{!readOnly && (
+										<StyledRemoveButton onClick={() => removeSpellSlot(index)}>
+											×
+										</StyledRemoveButton>
+									)}
 
-								{/* Spell Name Dropdown */}
-								<StyledSpellSelect
-									value={spell.spellName}
-									onChange={(e) => updateSpell(index, 'spellName', e.target.value)}
-								>
-									<option value="">Select Spell...</option>
-									{filteredSpells.map((spellOption) => (
-										<option key={spellOption.name} value={spellOption.name}>
-											{spellOption.name}
-										</option>
-									))}
-								</StyledSpellSelect>
+									{/* Spell Name - show as text in read-only mode, dropdown in edit mode */}
+									{readOnly ? (
+										<StyledSpellCell style={{ fontWeight: 'bold', color: '#2c3e50' }}>
+											{spell.spellName || 'Unknown Spell'}
+										</StyledSpellCell>
+									) : (
+										<StyledSpellSelect
+											value={spell.spellName}
+											onChange={(e) => updateSpell(index, 'spellName', e.target.value)}
+										>
+											<option value="">Select Spell...</option>
+											{filteredSpells.map((spellOption) => (
+												<option key={spellOption.name} value={spellOption.name}>
+													{spellOption.name}
+												</option>
+											))}
+										</StyledSpellSelect>
+									)}
 
-								{/* School */}
-								<StyledSpellCell>{spell.school}</StyledSpellCell>
+									{/* School */}
+									<StyledSpellCell>{spell.school}</StyledSpellCell>
 
-								{/* Type (Cantrip or Spell) */}
-								<StyledSpellCell>
-									{spell.isCantrip ? 'Cantrip' : 'Spell'}
-								</StyledSpellCell>
+									{/* Type (Cantrip or Spell) */}
+									<StyledSpellCell>
+										{spell.isCantrip ? 'Cantrip' : 'Spell'}
+									</StyledSpellCell>
 
 								{/* AP Cost */}
-								<StyledSpellCell>{spell.cost.ap}</StyledSpellCell>
+								<StyledSpellCell>{spell.cost?.ap || '-'}</StyledSpellCell>
 
 								{/* MP Cost */}
-								<StyledSpellCell>{spell.cost.mp || '-'}</StyledSpellCell>
+								<StyledSpellCell>{spell.cost?.mp || '-'}</StyledSpellCell>
 
-								{/* Range */}
-								<StyledSpellCell style={{ fontSize: '0.7rem' }}>
-									{spell.range || '-'}
-								</StyledSpellCell>
+									{/* Range */}
+									<StyledSpellCell style={{ fontSize: '0.7rem' }}>
+										{spell.range || '-'}
+									</StyledSpellCell>
 
-								{/* Spell Info */}
-								<StyledSpellCell style={{ fontSize: '0.6rem', textAlign: 'center' }}>
-									{selectedSpell ? (
-										<StyledInfoIcon onClick={() => onSpellClick(selectedSpell)}>
-											i
-										</StyledInfoIcon>
-									) : (
-										'-'
-									)}
-								</StyledSpellCell>
-							</StyledSpellRow>
+									{/* Spell Info */}
+									<StyledSpellCell style={{ fontSize: '0.6rem', textAlign: 'center' }}>
+										{selectedSpell ? (
+											<StyledInfoIcon onClick={() => onSpellClick(selectedSpell)}>
+												i
+											</StyledInfoIcon>
+										) : (
+											'-'
+										)}
+									</StyledSpellCell>
+								</StyledSpellRow>
+
+								{/* Expandable Description Section */}
+								{selectedSpell && expandedSpells.has(spell.id) && (
+									<div style={{
+										padding: '10px',
+										backgroundColor: '#f9f9f9',
+										border: '1px solid #ddd',
+										borderTop: 'none',
+										borderRadius: '0 0 4px 4px',
+										marginTop: '-0.5rem'
+									}}>
+										<div style={{ fontSize: '0.8rem' }}>
+											<strong>Description:</strong>
+											<br />
+											{selectedSpell.effects?.map((effect, effectIndex) => (
+												<div key={effectIndex} style={{ marginBottom: '0.5rem' }}>
+													{effect.title && <strong>{effect.title}:</strong>}
+													<br />
+													{effect.description}
+												</div>
+											)) || 'No description available.'}
+
+											{selectedSpell.cantripPassive && (
+												<>
+													<br />
+													<strong>Cantrip Passive:</strong> {selectedSpell.cantripPassive}
+												</>
+											)}
+
+											{selectedSpell.enhancements?.length > 0 && (
+												<>
+													<br />
+													<br />
+													<strong>Enhancements:</strong>
+													{selectedSpell.enhancements.map((enhancement, enhancementIndex) => (
+														<div key={enhancementIndex} style={{ marginTop: '0.5rem', padding: '0.5rem', backgroundColor: '#f0f0f0', borderRadius: '4px' }}>
+															<strong>{enhancement.name}</strong> ({enhancement.type} {enhancement.cost})
+															<br />
+															{enhancement.description}
+														</div>
+													))}
+												</>
+											)}
+										</div>
+									</div>
+								)}
+
+								{/* Toggle Description Button */}
+								{selectedSpell && (
+									<div style={{
+										padding: '5px',
+										textAlign: 'center',
+										borderTop: '1px solid #eee',
+										backgroundColor: '#fafafa',
+										borderRadius: '0 0 4px 4px'
+									}}>
+										<button
+											onClick={() => toggleSpellExpansion(spell.id)}
+											style={{
+												background: 'none',
+												border: '1px solid #ccc',
+												borderRadius: '4px',
+												padding: '2px 8px',
+												fontSize: '0.7rem',
+												cursor: 'pointer',
+												color: '#666'
+											}}
+										>
+											{expandedSpells.has(spell.id) ? 'Hide Description' : 'Show Description'}
+										</button>
+									</div>
+								)}
+							</React.Fragment>
 						);
 					})
 				)}

@@ -107,6 +107,13 @@ const classFeatureModules = import.meta.glob('../classes/*_features.json', { eag
 // Extract the default export (the class features object) from each module
 const rawClassFeatures = Object.values(classFeatureModules).map((module: any) => module.default);
 
+// Debug logging
+console.log('🔍 Class Features Debug:', {
+	totalModules: Object.keys(classFeatureModules).length,
+	moduleKeys: Object.keys(classFeatureModules),
+	rawClassFeatures: rawClassFeatures.map(c => c?.className || 'undefined')
+});
+
 // Export the class features data
 export const classFeaturesData: ClassDefinition[] = rawClassFeatures;
 
@@ -129,7 +136,13 @@ export function getAvailableSpellSchools(classData: ClassDefinition): SpellSchoo
 
 // Helper function to find a class by name
 export function findClassByName(className: string): ClassDefinition | undefined {
-	return classFeaturesData.find((cls) => cls.className === className);
+	console.log('🔍 findClassByName called with:', className);
+	console.log('🔍 Available classes:', classFeaturesData.map(c => c.className));
+	const result = classFeaturesData.find((cls) => 
+		cls.className.toLowerCase() === className.toLowerCase()
+	);
+	console.log('🔍 findClassByName result:', result ? 'found' : 'not found');
+	return result;
 }
 
 // Helper function to find a specific feature in a class

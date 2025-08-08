@@ -60,6 +60,7 @@ export const getBaseMasteryLimit = (characterLevel: number): number => {
 	if (characterLevel >= 15) return 4; // Master
 	if (characterLevel >= 10) return 3; // Expert
 	if (characterLevel >= 5) return 2; // Adept
+	if (characterLevel >= 1) return 2; // Level 1 characters can reach Adept (level 2)
 	return 1; // Novice
 };
 
@@ -149,6 +150,22 @@ export const validateLevel1MasteryRule = (
 		message:
 			adeptCount > 1
 				? `Level 1 characters can only have ONE Adept skill/trade (currently: ${adeptCount})`
+				: undefined
+	};
+};
+
+// Separate validation for skills only
+export const validateLevel1SkillMasteryRule = (
+	skills: Record<string, number>
+): MasteryValidation => {
+	const skillAdeptCount = Object.values(skills).filter((level) => level === 2).length;
+
+	return {
+		valid: skillAdeptCount <= 1,
+		adeptCount: skillAdeptCount,
+		message:
+			skillAdeptCount > 1
+				? `Level 1 characters can only have ONE Adept skill (currently: ${skillAdeptCount})`
 				: undefined
 	};
 };

@@ -31,7 +31,7 @@ import {
 function ClassFeatures() {
 	const { state, dispatch } = useCharacter();
 
-	const selectedClass = classesData.find((c) => c.id === state.classId);
+	const selectedClass = classesData.find((c) => c.id.toLowerCase() === state.classId?.toLowerCase());
 	const selectedClassFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
 	const selectedFeatureChoices: { [key: string]: string } = JSON.parse(
 		state.selectedFeatureChoices || '{}'

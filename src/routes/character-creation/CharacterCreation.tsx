@@ -8,6 +8,7 @@ import Attributes from './Attributes.tsx';
 import ClassSelector from './ClassSelector.tsx';
 import ClassFeatures from './ClassFeatures.tsx';
 import Background from './Background.tsx';
+import SpellsAndManeuvers from './SpellsAndManeuvers.tsx';
 import CharacterName from './CharacterName.tsx';
 import Snackbar from '../../components/Snackbar.tsx';
 import { completeCharacter } from '../../lib/services/characterCompletion';
@@ -33,12 +34,14 @@ interface CharacterCreationProps {
 	onNavigateToLoad: () => void;
 	onBackToMenu: () => void;
 	editCharacter?: SavedCharacter; // If provided, we're in edit mode
+	isLevelUp?: boolean; // If true, we're in level up mode
 }
 
 const CharacterCreation: React.FC<CharacterCreationProps> = ({
 	onNavigateToLoad,
+	editCharacter,
 	onBackToMenu,
-	editCharacter
+	isLevelUp
 }) => {
 	const { state, dispatch, attributePointsRemaining, ancestryPointsRemaining } = useCharacter();
 	const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -47,8 +50,12 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 	// Initialize character state for edit mode
 	useEffect(() => {
 		if (editCharacter) {
-			console.log('Initializing edit mode for character:', editCharacter);
+			console.log('🔄 CharacterCreation: Initializing edit mode for character:', editCharacter);
 			const characterInProgress = convertCharacterToInProgress(editCharacter);
+			console.log('🔄 CharacterCreation: Converted to in-progress format:', {
+				selectedSpells: characterInProgress.selectedSpells,
+				selectedManeuvers: characterInProgress.selectedManeuvers
+			});
 
 			// Initialize the character state with the existing character data
 			dispatch({ type: 'INITIALIZE_FROM_SAVED', character: characterInProgress });
@@ -60,7 +67,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 		{ number: 2, label: 'Attributes' },
 		{ number: 3, label: 'Background' },
 		{ number: 4, label: 'Ancestry' },
-		{ number: 5, label: 'Character Name' }
+		{ number: 5, label: 'Spells & Maneuvers' },
+		{ number: 6, label: 'Character Name' }
 	];
 
 	const handleStepClick = (step: number) => {
@@ -68,7 +76,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 	};
 
 	const handleNext = async () => {
-		if (state.currentStep === 5 && areAllStepsCompleted()) {
+		if (state.currentStep === 6 && areAllStepsCompleted()) {
 			// Character is complete - check if we're editing or creating new
 			if (editCharacter) {
 				// Edit mode: use the enhanced completion that preserves manual modifications
@@ -125,7 +133,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 				if (state.classId === null) return false;
 
 				// Check if all required feature choices have been made
-				const selectedClass = classesData.find((c) => c.id === state.classId);
+				const selectedClass = classesData.find((c) => c.id.toLowerCase() === state.classId?.toLowerCase());
 				if (!selectedClass) return false;
 
 				// Check if all required feature choices have been made
@@ -264,6 +272,66 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 			case 4:
 				return state.ancestry1Id !== null && ancestryPointsRemaining >= 0;
 			case 5:
+				// Spells & Maneuvers step - validate based on class requirements
+				if (!state.classId) return false;
+
+				// Get class data to determine what's required
+				const selectedClass = classesData.find((c) => c.id.toLowerCase() === state.classId?.toLowerCase());
+				if (!selectedClass) return false;
+
+				const selectedClassFeatures = findClassByName(selectedClass.name);
+				if (!selectedClassFeatures) return false;
+
+				// Parse current selections
+				let selectedSpells: string[] = [];
+				let selectedManeuvers: string[] = [];
+
+				try {
+					if (state.selectedSpells) {
+						selectedSpells = JSON.parse(state.selectedSpells);
+					}
+				} catch (e) {
+					// Ignore parsing errors
+				}
+
+				try {
+					if (state.selectedManeuvers) {
+						selectedManeuvers = JSON.parse(state.selectedManeuvers);
+					}
+				} catch (e) {
+					// Ignore parsing errors
+				}
+
+				// Check if class has spellcasting
+				const hasSpellcasting = selectedClassFeatures.spellcastingPath?.spellList;
+				
+				// Check if class has maneuvers (simplified check based on class features)
+				// For now, we'll use a simple heuristic: classes that are primarily martial have maneuvers
+				const martialClasses = ['barbarian', 'champion', 'hunter', 'monk', 'rogue'];
+				const hasManeuvers = martialClasses.includes(selectedClass.name.toLowerCase());
+
+				// If class has spellcasting, require spell selections
+				if (hasSpellcasting) {
+					// For classes with spellcasting, require at least some spell selections
+					// The exact number depends on the class, but we'll require at least 1
+					if (selectedSpells.length === 0) return false;
+				}
+
+				// If class has maneuvers, require maneuver selections
+				if (hasManeuvers) {
+					// For classes with maneuvers, require at least some maneuver selections
+					// The exact number depends on the class, but we'll require at least 1
+					if (selectedManeuvers.length === 0) return false;
+				}
+
+				// If class has neither spells nor maneuvers, step is complete
+				if (!hasSpellcasting && !hasManeuvers) {
+					return true;
+				}
+
+				// Step is complete if all required selections are made
+				return true;
+			case 6:
 				return (
 					state.finalName !== null &&
 					state.finalName !== '' &&
@@ -300,6 +368,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 					</>
 				);
 			case 5:
+				return <SpellsAndManeuvers />;
+			case 6:
 				return <CharacterName />;
 			default:
 				return null;
@@ -350,9 +420,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 					<StyledButton
 						$variant="primary"
 						onClick={handleNext}
-						disabled={state.currentStep === 5 && !areAllStepsCompleted()}
+						disabled={state.currentStep === 6 && !areAllStepsCompleted()}
 					>
-						{state.currentStep === 5 ? 'Complete' : 'Next →'}
+						{state.currentStep === 6 ? 'Complete' : 'Next →'}
 					</StyledButton>
 				</StyledNavigationButtons>
 			</StyledStepIndicator>

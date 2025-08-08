@@ -1,6 +1,9 @@
 // Shared character completion service
 // Handles the completion flow with proper stat calculation, snackbar, and navigation
 
+import { assignSpellsToCharacter } from './spellAssignment';
+import { allSpells } from '../rulesdata/spells-data/spells';
+import { allManeuvers } from '../rulesdata/maneuvers';
 import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from './enhancedCharacterCalculator';
 
 export interface CharacterCompletionCallbacks {
@@ -48,7 +51,7 @@ export const completeCharacter = async (
 			// Convert to enhanced build data and calculate
 			const enhancedBuildData = convertToEnhancedBuildData(characterInProgress);
 			const enhancedResult = calculateCharacterWithBreakdowns(enhancedBuildData);
-			
+
 			// Convert enhanced result back to the expected format
 			completedCharacterData = {
 				...characterInProgress,
@@ -78,7 +81,7 @@ export const completeCharacter = async (
 				grantedAbilities: enhancedResult.grantedAbilities,
 				conditionalModifiers: enhancedResult.conditionalModifiers,
 				className: enhancedResult.stats.className || 'Unknown',
-				ancestry1Name: 'Human', // TODO: Get from enhanced data  
+				ancestry1Name: 'Human', // TODO: Get from enhanced data
 				ancestry2Name: enhancedResult.stats.ancestry2Name || null
 			};
 		} else {
@@ -96,6 +99,105 @@ export const completeCharacter = async (
 			ancestry2Id: completedCharacterData.ancestry2Id,
 			ancestry2Name: completedCharacterData.ancestry2Name
 		});
+
+		// Use user-selected spells from character creation
+		if (completedCharacterData.className && characterState.selectedSpells) {
+			console.log('🔄 characterCompletion: Processing user-selected spells:', {
+				selectedSpells: characterState.selectedSpells,
+				className: completedCharacterData.className
+			});
+
+			try {
+				const selectedSpellNames = JSON.parse(characterState.selectedSpells);
+				console.log('🔄 characterCompletion: Parsed spell names:', selectedSpellNames);
+
+				if (Array.isArray(selectedSpellNames) && selectedSpellNames.length > 0) {
+					// Convert selected spell names to SpellData objects
+					const userSelectedSpells = selectedSpellNames.map((spellName: string) => {
+						const fullSpell = allSpells.find(s => s.name === spellName);
+						if (fullSpell) {
+							return {
+								id: `spell_${Date.now()}_${Math.random()}`,
+								spellName: fullSpell.name,
+								school: fullSpell.school,
+								isCantrip: fullSpell.isCantrip,
+								cost: fullSpell.cost,
+								range: fullSpell.range,
+								duration: fullSpell.duration,
+								isPrepared: true,
+								notes: ''
+							};
+						}
+						return null;
+					}).filter(Boolean);
+
+					// Save the selected spell names as a string for edit functionality
+					completedCharacterData.selectedSpells = characterState.selectedSpells;
+					// Also add spells to the completed character data as a separate property for display
+					(completedCharacterData as any).spells = userSelectedSpells;
+					console.log('🔄 characterCompletion: User selected spells assigned:', userSelectedSpells.map((s: any) => s.spellName));
+				} else {
+					console.log('🔄 characterCompletion: No user spells selected, falling back to auto-assignment');
+					// Fallback to auto-assignment if no spells were selected
+					const assignedSpells = assignSpellsToCharacter({
+						className: completedCharacterData.className,
+						level: completedCharacterData.finalLevel || 1,
+						selectedFeatureChoices: characterInProgress.selectedFeatureChoices
+					});
+					(completedCharacterData as any).spells = assignedSpells;
+					console.log('🔄 characterCompletion: Auto-assigned spells (no user selection):', assignedSpells.map((s: any) => s.spellName));
+				}
+			} catch (e) {
+				console.warn('🔄 characterCompletion: Error parsing selected spells, falling back to auto-assignment:', e);
+				// Fallback to auto-assignment
+				const assignedSpells = assignSpellsToCharacter({
+					className: completedCharacterData.className,
+					level: completedCharacterData.finalLevel || 1,
+					selectedFeatureChoices: characterInProgress.selectedFeatureChoices
+				});
+				(completedCharacterData as any).spells = assignedSpells;
+			}
+		} else {
+			console.log('🔄 characterCompletion: No spell processing - className or selectedSpells missing:', {
+				className: completedCharacterData.className,
+				hasSelectedSpells: !!characterState.selectedSpells
+			});
+		}
+
+		// Handle user-selected maneuvers
+		if (characterState.selectedManeuvers) {
+			try {
+				const selectedManeuverNames = JSON.parse(characterState.selectedManeuvers);
+				if (Array.isArray(selectedManeuverNames) && selectedManeuverNames.length > 0) {
+					// Convert selected maneuver names to ManeuverData objects
+					const userSelectedManeuvers = selectedManeuverNames.map((maneuverName: string) => {
+						const fullManeuver = allManeuvers.find(m => m.name === maneuverName);
+						if (fullManeuver) {
+							return {
+								id: `maneuver_${Date.now()}_${Math.random()}`,
+								maneuverName: fullManeuver.name,
+								type: fullManeuver.type,
+								cost: fullManeuver.cost,
+								description: fullManeuver.description,
+								isReaction: fullManeuver.isReaction,
+								trigger: fullManeuver.trigger,
+								requirement: fullManeuver.requirement,
+								notes: ''
+							};
+						}
+						return null;
+					}).filter(Boolean);
+
+					// Save the selected maneuver names as a string for edit functionality
+					completedCharacterData.selectedManeuvers = characterState.selectedManeuvers;
+					// Also add maneuvers to the completed character data as a separate property for display
+					(completedCharacterData as any).maneuvers = userSelectedManeuvers;
+					console.log('🔄 characterCompletion: User selected maneuvers assigned:', userSelectedManeuvers.map((m: any) => m.maneuverName));
+				}
+			} catch (e) {
+				console.warn('🔄 characterCompletion: Error parsing selected maneuvers:', e);
+			}
+		}
 
 		// Save to local storage
 		const existingCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');

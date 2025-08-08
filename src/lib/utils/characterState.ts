@@ -9,6 +9,7 @@ import type {
 	InventoryItemData,
 	CurrentValues
 } from '../../types';
+import { assignSpellsToCharacter } from '../services/spellAssignment';
 
 // Get character state from localStorage
 export const getCharacterState = (characterId: string): CharacterState | null => {
@@ -88,10 +89,40 @@ export const initializeCharacterState = (
 	];
 
 	const originalInventory: InventoryItemData[] = [];
-	const originalSpells: SpellData[] = [];
+	
+	// Use spells from character data if they exist, otherwise auto-assign
+	let originalSpells: SpellData[] = [];
+	console.log('🔍 initializeCharacterState: Processing spells for character:', {
+		hasSpellsProperty: !!characterData.spells,
+		spellsLength: characterData.spells?.length || 0,
+		className: characterData.className,
+		hasSelectedSpells: !!characterData.selectedSpells
+	});
+	
+	if (characterData.spells && characterData.spells.length > 0) {
+		// Use the spells that were saved with the character
+		originalSpells = characterData.spells;
+		console.log('🔍 Using saved spells from character data:', originalSpells.map(s => s.spellName));
+	} else if (characterData.className) {
+		// Fallback to auto-assignment if no spells were saved
+		console.log('🔍 No saved spells found, attempting auto-assignment for class:', characterData.className);
+		try {
+			originalSpells = assignSpellsToCharacter({
+				className: characterData.className,
+				level: characterData.level || 1,
+				selectedFeatureChoices: characterData.selectedFeatureChoices || '{}'
+			});
+			console.log('🔍 Auto-assigned spells (no saved spells):', originalSpells.map(s => s.spellName));
+		} catch (error) {
+			console.warn('🔍 Error auto-assigning spells:', error);
+			originalSpells = [];
+		}
+	} else {
+		console.log('🔍 No className found, no spells will be assigned');
+	}
 
 	// Use existing state if available, otherwise initialize with defaults
-	return {
+	const finalState = {
 		resources: {
 			original: originalResources,
 			current: existingState?.resources.current || {
@@ -130,7 +161,11 @@ export const initializeCharacterState = (
 		},
 		spells: {
 			original: originalSpells,
-			current: existingState?.spells?.current || []
+			current: originalSpells // Always use the spells from character data, not existing state
+		},
+		maneuvers: {
+			original: characterData.maneuvers || [],
+			current: characterData.maneuvers || [] // Always use maneuvers from character data
 		},
 		inventory: {
 			original: originalInventory,
@@ -138,6 +173,15 @@ export const initializeCharacterState = (
 		},
 		defenseNotes: existingState?.defenseNotes
 	};
+	
+	console.log('🔍 initializeCharacterState: Final state created:', {
+		spellsOriginal: finalState.spells.original.length,
+		spellsCurrent: finalState.spells.current.length,
+		spellsOriginalNames: finalState.spells.original.map(s => s.spellName),
+		spellsCurrentNames: finalState.spells.current.map(s => s.spellName)
+	});
+	
+	return finalState;
 };
 
 // Save complete character state to localStorage
@@ -245,16 +289,20 @@ export const updateCharacterState = (
 					}
 				},
 				attacks: {
-					original: [],
-					current: []
+					original: character.attacks || [],
+					current: character.attacks || []
 				},
 				spells: {
-					original: [],
-					current: []
+					original: character.spells || [],
+					current: character.spells || []
+				},
+				maneuvers: {
+					original: character.maneuvers || [],
+					current: character.maneuvers || []
 				},
 				inventory: {
-					original: [],
-					current: []
+					original: character.inventory || [],
+					current: character.inventory || []
 				},
 				defenseNotes: character.defenseNotes
 			};
@@ -316,6 +364,12 @@ export const updateCharacterState = (
 					...updates.spells
 				}
 			: currentState.spells,
+		maneuvers: updates.maneuvers
+			? {
+					...currentState.maneuvers,
+					...updates.maneuvers
+				}
+			: currentState.maneuvers,
 		inventory: updates.inventory
 			? {
 					...currentState.inventory,
@@ -330,7 +384,7 @@ export const updateCharacterState = (
 // Revert a specific data type to original values
 export const revertToOriginal = (
 	characterId: string,
-	dataType: 'resources' | 'currency' | 'attacks' | 'spells' | 'inventory'
+	dataType: 'resources' | 'currency' | 'attacks' | 'spells' | 'maneuvers' | 'inventory'
 ): void => {
 	const currentState = getCharacterState(characterId);
 	if (!currentState) {
@@ -373,6 +427,12 @@ export const revertToOriginal = (
 			updates.spells = {
 				...currentState.spells,
 				current: [...currentState.spells.original]
+			};
+			break;
+		case 'maneuvers':
+			updates.maneuvers = {
+				...currentState.maneuvers,
+				current: [...currentState.maneuvers.original]
 			};
 			break;
 		case 'inventory':

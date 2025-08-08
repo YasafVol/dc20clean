@@ -16,11 +16,14 @@ export interface CharacterInProgressStoreData extends CharacterInProgress {
 	skillsJson: string;
 	tradesJson: string;
 	languagesJson: string;
-	
+
 	// NEW: Enhanced effect system support
 	selectedTraitChoices: string; // JSON string of trait choices
 	cachedEffectResults?: string; // JSON string of cached calculation results
 	cacheTimestamp?: number;
+	// Spells and Maneuvers selections
+	selectedSpells: string;
+	selectedManeuvers: string;
 }
 
 // Initial state for the store
@@ -39,6 +42,10 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
 	ancestryPointsSpent: 0,
 	classId: null,
 	selectedFeatureChoices: '',
+	saveMasteryMight: false,
+	saveMasteryAgility: false,
+	saveMasteryCharisma: false,
+	saveMasteryIntelligence: false,
 	finalName: null,
 	finalPlayerName: null,
 	createdAt: new Date(),
@@ -50,11 +57,15 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
 	skillsJson: '{}',
 	tradesJson: '{}',
 	languagesJson: '{"common": {"fluency": "fluent"}}',
-	
+
 	// NEW: Enhanced effect system support
 	selectedTraitChoices: '{}',
 	cachedEffectResults: undefined,
-	cacheTimestamp: undefined
+	cacheTimestamp: undefined,
+	languagesJson: '{"common": {"fluency": "fluent"}}',
+	// Spells and Maneuvers selections
+	selectedSpells: '[]',
+	selectedManeuvers: '[]'
 };
 
 // Action types
@@ -70,6 +81,7 @@ type CharacterAction =
 	| { type: 'SET_TRAIT_CHOICES'; selectedTraitChoices: string }
 	| { type: 'UPDATE_TRAIT_CHOICE'; traitId: string; effectIndex: number; choice: string }
 	| { type: 'INVALIDATE_CACHE' }
+	| { type: 'UPDATE_SPELLS_AND_MANEUVERS'; spells: string[]; maneuvers: string[] }
 	| { type: 'UPDATE_STORE'; updates: Partial<CharacterInProgressStoreData> }
 	| { type: 'INITIALIZE_FROM_SAVED'; character: CharacterInProgressStoreData }
 	| { type: 'NEXT_STEP' }
@@ -150,19 +162,33 @@ function characterReducer(
 				cachedEffectResults: undefined,
 				cacheTimestamp: undefined
 			};
+		case 'UPDATE_SPELLS_AND_MANEUVERS':
+			console.log('🔄 CharacterContext: UPDATE_SPELLS_AND_MANEUVERS action:', {
+				spells: action.spells,
+				maneuvers: action.maneuvers
+			});
+			return {
+				...state,
+				selectedSpells: JSON.stringify(action.spells),
+				selectedManeuvers: JSON.stringify(action.maneuvers)
+			};
 		case 'UPDATE_STORE':
 			return {
 				...state,
 				...action.updates
 			};
 		case 'INITIALIZE_FROM_SAVED':
+			console.log('🔄 CharacterContext: INITIALIZE_FROM_SAVED action:', {
+				selectedSpells: action.character.selectedSpells,
+				selectedManeuvers: action.character.selectedManeuvers
+			});
 			return {
 				...action.character
 			};
 		case 'NEXT_STEP':
 			return {
 				...state,
-				currentStep: Math.min(state.currentStep + 1, 6)
+				currentStep: Math.min(state.currentStep + 1, 7)
 			};
 		case 'PREVIOUS_STEP':
 			return {
@@ -172,7 +198,7 @@ function characterReducer(
 		case 'SET_STEP':
 			return {
 				...state,
-				currentStep: Math.max(1, Math.min(action.step, 6))
+				currentStep: Math.max(1, Math.min(action.step, 7))
 			};
 		default:
 			return state;
@@ -228,7 +254,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 		// Add bonus ancestry points from feature choices
 		if (state.classId && state.selectedFeatureChoices) {
 			try {
-				const selectedClass = classesData.find((c) => c.id === state.classId);
+				const selectedClass = classesData.find((c) => c.id.toLowerCase() === state.classId?.toLowerCase());
 				const classFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
 
 				if (classFeatures) {

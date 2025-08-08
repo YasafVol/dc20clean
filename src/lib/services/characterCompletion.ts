@@ -40,7 +40,7 @@ export const completeCharacter = async (
 		console.log('Calculating stats for character:', characterInProgress);
 
 		// Check if we should use the enhanced calculator for supported classes
-		const supportedClasses = ['barbarian', 'cleric', 'hunter', 'champion', 'wizard', 'monk', 'rogue', 'sorcerer', 'spellblade', 'warlock'];
+		const supportedClasses = ['barbarian', 'cleric', 'hunter', 'champion', 'wizard', 'monk', 'rogue', 'sorcerer', 'spellblade', 'warlock', 'bard', 'druid', 'commander'];
 	const useEnhancedCalculator = supportedClasses.includes(characterInProgress.classId || '');
 
 		let completedCharacterData;

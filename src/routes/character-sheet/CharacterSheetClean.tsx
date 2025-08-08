@@ -377,7 +377,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 			};
 
 		// For supported classes, try to use enhanced calculator for accurate breakdowns
-		const supportedClasses = ['barbarian', 'cleric', 'hunter', 'champion', 'wizard', 'monk', 'rogue', 'sorcerer', 'spellblade', 'warlock'];
+		const supportedClasses = ['barbarian', 'cleric', 'hunter', 'champion', 'wizard', 'monk', 'rogue', 'sorcerer', 'spellblade', 'warlock', 'bard', 'druid', 'commander'];
 		
 		let calculatedPD, calculatedAD, calculatedPDR;
 		let pdBreakdown, adBreakdown, pdrBreakdown;

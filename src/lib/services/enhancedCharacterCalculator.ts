@@ -31,6 +31,9 @@ import { rogueClass } from '../rulesdata/_new_schema/rogue_features';
 import { sorcererClass } from '../rulesdata/_new_schema/sorcerer_features';
 import { spellbladeClass } from '../rulesdata/_new_schema/spellblade_features';
 import { warlockClass } from '../rulesdata/_new_schema/warlock_features';
+import { bardClass } from '../rulesdata/_new_schema/bard_features';
+import { druidClass } from '../rulesdata/_new_schema/druid_features';
+import { commanderClass } from '../rulesdata/_new_schema/commander_features';
 import barbarianTable from '../rulesdata/classes/barbarian_table.json';
 import clericTable from '../rulesdata/classes/cleric_table.json';
 import hunterTable from '../rulesdata/classes/hunter_table.json';
@@ -41,6 +44,9 @@ import rogueTable from '../rulesdata/classes/rogue_table.json';
 import sorcererTable from '../rulesdata/classes/sorcerer_table.json';
 import spellbladeTable from '../rulesdata/classes/spellblade_table.json';
 import warlockTable from '../rulesdata/classes/warlock_table.json';
+import bardTable from '../rulesdata/classes/bard_table.json';
+import druidTable from '../rulesdata/classes/druid_table.json';
+import commanderTable from '../rulesdata/classes/commander_table.json';
 import { attributesData } from '../rulesdata/attributes';
 import { skillsData } from '../rulesdata/skills';
 import { tradesData } from '../rulesdata/trades';
@@ -108,6 +114,12 @@ function getClassProgressionData(classId: string): any | null {
       return spellbladeTable;
     case 'warlock':
       return warlockTable;
+    case 'bard':
+      return bardTable;
+    case 'druid':
+      return druidTable;
+    case 'commander':
+      return commanderTable;
     default:
       return null;
   }
@@ -138,6 +150,12 @@ function getClassFeatures(classId: string): ClassDefinition | null {
       return spellbladeClass;
     case 'warlock':
       return warlockClass;
+    case 'bard':
+      return bardClass;
+    case 'druid':
+      return druidClass;
+    case 'commander':
+      return commanderClass;
     default:
       return null;
   }

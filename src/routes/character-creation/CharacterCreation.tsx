@@ -71,7 +71,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 			if (editCharacter) {
 				// Edit mode: use the enhanced completion that preserves manual modifications
 				// Use enhanced calculator for character editing
-				const supportedClasses = ['barbarian', 'cleric', 'hunter', 'champion', 'wizard', 'monk', 'rogue', 'sorcerer', 'spellblade', 'warlock'];
+				const supportedClasses = ['barbarian', 'cleric', 'hunter', 'champion', 'wizard', 'monk', 'rogue', 'sorcerer', 'spellblade', 'warlock', 'bard', 'druid', 'commander'];
 				
 				if (supportedClasses.includes(state.classId || '')) {
 					// Convert to enhanced format and calculate

@@ -12,6 +12,36 @@ import InventoryPopup from './components/InventoryPopup';
 // Import existing styled components that actually exist
 import { StyledContainer, StyledBackButton } from './styles/Layout';
 
+// Import desktop-specific styled components
+import {
+	StyledDesktopWrapper,
+	StyledDesktopHeader,
+	StyledCharacterName,
+	StyledCharacterSubtitle,
+	StyledAttributesGrid,
+	StyledAttributeCard,
+	StyledAttributeLabel,
+	StyledAttributeValue,
+	StyledSection,
+	StyledSectionTitle,
+	StyledResourceRow,
+	StyledResourceLabel,
+	StyledResourceValue,
+	StyledResourceBar,
+	StyledResourceFill,
+	StyledResourceControls,
+	StyledResourceButton,
+	StyledResourceInput,
+	StyledFeaturesGrid,
+	StyledFeatureCard,
+	StyledFeatureName,
+	StyledFeatureSource,
+	StyledCurrencyGrid,
+	StyledCurrencyColumn,
+	StyledCurrencyLabel,
+	StyledCurrencyInput
+} from './styles/DesktopLayout';
+
 export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () => void }> = ({ characterId, onBack }) => {
 	// Use the custom hook to get ALL data and logic
 	const {
@@ -77,11 +107,11 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 				</StyledBackButton>
 			)}
 			
-			<div style={{ padding: '2rem', backgroundColor: 'rgba(255,255,255,0.9)', margin: '2rem', borderRadius: '8px' }}>
+			<StyledDesktopWrapper>
 				{/* Character Header */}
-				<div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-					<h1 style={{ margin: '0', color: '#8b4513' }}>{characterData.finalName || 'Unnamed Character'}</h1>
-					<h2 style={{ margin: '0.5rem 0', color: '#666' }}>
+				<StyledDesktopHeader>
+					<StyledCharacterName>{characterData.finalName || 'Unnamed Character'}</StyledCharacterName>
+					<StyledCharacterSubtitle>
 						Level {characterData.finalLevel || 1} {characterData.className}
 						{characterData.ancestry1Name && (
 							<span>
@@ -90,181 +120,150 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 								{characterData.ancestry2Name && ` / ${characterData.ancestry2Name}`}
 							</span>
 						)}
-					</h2>
-				</div>
+					</StyledCharacterSubtitle>
+				</StyledDesktopHeader>
 
 				{/* Character Stats */}
-				<div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
-					<div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
-						<div style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.25rem' }}>Might</div>
-						<div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalMight}</div>
-					</div>
-					<div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
-						<div style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.25rem' }}>Agility</div>
-						<div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalAgility}</div>
-					</div>
-					<div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
-						<div style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.25rem' }}>Charisma</div>
-						<div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalCharisma}</div>
-					</div>
-					<div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
-						<div style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.25rem' }}>Intelligence</div>
-						<div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalIntelligence}</div>
-					</div>
-					<div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
-						<div style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.25rem' }}>Prime</div>
-						<div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#8b4513' }}>{characterData.finalPrimeModifierValue}</div>
-					</div>
-				</div>
+				<StyledAttributesGrid>
+					<StyledAttributeCard>
+						<StyledAttributeLabel>Might</StyledAttributeLabel>
+						<StyledAttributeValue>{characterData.finalMight}</StyledAttributeValue>
+					</StyledAttributeCard>
+					<StyledAttributeCard>
+						<StyledAttributeLabel>Agility</StyledAttributeLabel>
+						<StyledAttributeValue>{characterData.finalAgility}</StyledAttributeValue>
+					</StyledAttributeCard>
+					<StyledAttributeCard>
+						<StyledAttributeLabel>Charisma</StyledAttributeLabel>
+						<StyledAttributeValue>{characterData.finalCharisma}</StyledAttributeValue>
+					</StyledAttributeCard>
+					<StyledAttributeCard>
+						<StyledAttributeLabel>Intelligence</StyledAttributeLabel>
+						<StyledAttributeValue>{characterData.finalIntelligence}</StyledAttributeValue>
+					</StyledAttributeCard>
+					<StyledAttributeCard>
+						<StyledAttributeLabel>Prime</StyledAttributeLabel>
+						<StyledAttributeValue>{characterData.finalPrimeModifierValue}</StyledAttributeValue>
+					</StyledAttributeCard>
+				</StyledAttributesGrid>
 
 				{/* Resources */}
-				<div style={{ marginBottom: '2rem' }}>
-					<h3 style={{ color: '#8b4513', borderBottom: '2px solid #8b4513', paddingBottom: '0.5rem' }}>Resources</h3>
+				<StyledSection>
+					<StyledSectionTitle>Resources</StyledSectionTitle>
 					
 					{/* HP */}
-					<div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem', padding: '1rem', backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
-						<div style={{ fontWeight: 'bold', minWidth: '120px' }}>Hit Points:</div>
-						<div style={{ minWidth: '100px' }}>
+					<StyledResourceRow>
+						<StyledResourceLabel>Hit Points:</StyledResourceLabel>
+						<StyledResourceValue>
 							{currentValues.currentHP} / {characterData.finalHPMax}
 							{currentValues.tempHP > 0 && ` (+${currentValues.tempHP} temp)`}
-						</div>
-						<div style={{ flex: 1, height: '20px', backgroundColor: '#ddd', borderRadius: '10px', overflow: 'hidden' }}>
-							<div 
-								style={{ 
-									height: '100%', 
-									backgroundColor: '#4CAF50', 
-									width: `${getHPFillPercentage(currentValues.currentHP, characterData.finalHPMax, currentValues.tempHP)}%`,
-									transition: 'width 0.3s ease'
-								}} 
+						</StyledResourceValue>
+						<StyledResourceBar>
+							<StyledResourceFill 
+								fillPercent={getHPFillPercentage(currentValues.currentHP, characterData.finalHPMax, currentValues.tempHP)}
+								color="#4CAF50"
 							/>
-						</div>
-						<div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-							<button onClick={() => adjustResource('currentHP', -1)} style={{ width: '30px', height: '30px' }}>-</button>
-							<input
+						</StyledResourceBar>
+						<StyledResourceControls>
+							<StyledResourceButton onClick={() => adjustResource('currentHP', -1)}>-</StyledResourceButton>
+							<StyledResourceInput
 								type="number"
 								value={currentValues.currentHP}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleResourceInputChange('currentHP', e.target.value)}
-								style={{ width: '60px', textAlign: 'center' }}
 							/>
-							<button onClick={() => adjustResource('currentHP', 1)} style={{ width: '30px', height: '30px' }}>+</button>
-						</div>
-					</div>
+							<StyledResourceButton onClick={() => adjustResource('currentHP', 1)}>+</StyledResourceButton>
+						</StyledResourceControls>
+					</StyledResourceRow>
 
 					{/* Other resources with same pattern... */}
 					{characterData.finalSPMax > 0 && (
-						<div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem', padding: '1rem', backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
-							<div style={{ fontWeight: 'bold', minWidth: '120px' }}>Stamina Points:</div>
-							<div style={{ minWidth: '100px' }}>
+						<StyledResourceRow>
+							<StyledResourceLabel>Stamina Points:</StyledResourceLabel>
+							<StyledResourceValue>
 								{currentValues.currentSP} / {characterData.finalSPMax}
-							</div>
-							<div style={{ flex: 1, height: '20px', backgroundColor: '#ddd', borderRadius: '10px', overflow: 'hidden' }}>
-								<div 
-									style={{ 
-										height: '100%', 
-										backgroundColor: '#2196F3', 
-										width: `${getFillPercentage(currentValues.currentSP, characterData.finalSPMax)}%`,
-										transition: 'width 0.3s ease'
-									}} 
+							</StyledResourceValue>
+							<StyledResourceBar>
+								<StyledResourceFill 
+									fillPercent={getFillPercentage(currentValues.currentSP, characterData.finalSPMax)}
+									color="#2196F3"
 								/>
-							</div>
-							<div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-								<button onClick={() => adjustResource('currentSP', -1)} style={{ width: '30px', height: '30px' }}>-</button>
-								<input
+							</StyledResourceBar>
+							<StyledResourceControls>
+								<StyledResourceButton onClick={() => adjustResource('currentSP', -1)}>-</StyledResourceButton>
+								<StyledResourceInput
 									type="number"
 									value={currentValues.currentSP}
 									onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleResourceInputChange('currentSP', e.target.value)}
-									style={{ width: '60px', textAlign: 'center' }}
 								/>
-								<button onClick={() => adjustResource('currentSP', 1)} style={{ width: '30px', height: '30px' }}>+</button>
-							</div>
-						</div>
+								<StyledResourceButton onClick={() => adjustResource('currentSP', 1)}>+</StyledResourceButton>
+							</StyledResourceControls>
+						</StyledResourceRow>
 					)}
-				</div>
+				</StyledSection>
 
 				{/* Features */}
-				<div style={{ marginBottom: '2rem' }}>
-					<h3 style={{ color: '#8b4513', borderBottom: '2px solid #8b4513', paddingBottom: '0.5rem' }}>Features & Traits</h3>
-					<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '0.5rem' }}>
+				<StyledSection>
+					<StyledSectionTitle>Features & Traits</StyledSectionTitle>
+					<StyledFeaturesGrid>
 						{features.map((feature) => (
-							<div
+							<StyledFeatureCard
 								key={feature.id}
 								onClick={() => openFeaturePopup(feature)}
-								style={{
-									padding: '0.75rem',
-									backgroundColor: '#f9f9f9',
-									borderRadius: '4px',
-									cursor: 'pointer',
-									border: '1px solid #ddd',
-									transition: 'all 0.2s'
-								}}
-								onMouseOver={(e) => {
-									e.currentTarget.style.backgroundColor = '#f0f0f0';
-									e.currentTarget.style.borderColor = '#8b4513';
-								}}
-								onMouseOut={(e) => {
-									e.currentTarget.style.backgroundColor = '#f9f9f9';
-									e.currentTarget.style.borderColor = '#ddd';
-								}}
 							>
-								<div style={{ fontWeight: 'bold', color: '#8b4513', marginBottom: '0.25rem' }}>{feature.name}</div>
-								<div style={{ fontSize: '0.9rem', color: '#666' }}>{feature.sourceDetail}</div>
-							</div>
+								<StyledFeatureName>{feature.name}</StyledFeatureName>
+								<StyledFeatureSource>{feature.sourceDetail}</StyledFeatureSource>
+							</StyledFeatureCard>
 						))}
-					</div>
-				</div>
+					</StyledFeaturesGrid>
+				</StyledSection>
 
 				{/* Currency */}
-				<div style={{ marginBottom: '2rem' }}>
-					<h3 style={{ color: '#8b4513', borderBottom: '2px solid #8b4513', paddingBottom: '0.5rem' }}>Currency</h3>
-					<div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1rem' }}>
-						<div style={{ textAlign: 'center' }}>
-							<div style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>Gold</div>
-							<input
+				<StyledSection>
+					<StyledSectionTitle>Currency</StyledSectionTitle>
+					<StyledCurrencyGrid>
+						<StyledCurrencyColumn>
+							<StyledCurrencyLabel>Gold</StyledCurrencyLabel>
+							<StyledCurrencyInput
 								type="number"
 								value={currentValues.goldPieces}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCurrencyChange('goldPieces', parseInt(e.target.value) || 0)}
-								style={{ width: '100%', textAlign: 'center', padding: '0.5rem' }}
 							/>
-						</div>
-						<div style={{ textAlign: 'center' }}>
-							<div style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>Silver</div>
-							<input
+						</StyledCurrencyColumn>
+						<StyledCurrencyColumn>
+							<StyledCurrencyLabel>Silver</StyledCurrencyLabel>
+							<StyledCurrencyInput
 								type="number"
 								value={currentValues.silverPieces}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCurrencyChange('silverPieces', parseInt(e.target.value) || 0)}
-								style={{ width: '100%', textAlign: 'center', padding: '0.5rem' }}
 							/>
-						</div>
-						<div style={{ textAlign: 'center' }}>
-							<div style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>Copper</div>
-							<input
+						</StyledCurrencyColumn>
+						<StyledCurrencyColumn>
+							<StyledCurrencyLabel>Copper</StyledCurrencyLabel>
+							<StyledCurrencyInput
 								type="number"
 								value={currentValues.copperPieces}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCurrencyChange('copperPieces', parseInt(e.target.value) || 0)}
-								style={{ width: '100%', textAlign: 'center', padding: '0.5rem' }}
 							/>
-						</div>
-						<div style={{ textAlign: 'center' }}>
-							<div style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>Electrum</div>
-							<input
+						</StyledCurrencyColumn>
+						<StyledCurrencyColumn>
+							<StyledCurrencyLabel>Electrum</StyledCurrencyLabel>
+							<StyledCurrencyInput
 								type="number"
 								value={currentValues.electrumPieces}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCurrencyChange('electrumPieces', parseInt(e.target.value) || 0)}
-								style={{ width: '100%', textAlign: 'center', padding: '0.5rem' }}
 							/>
-						</div>
-						<div style={{ textAlign: 'center' }}>
-							<div style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>Platinum</div>
-							<input
+						</StyledCurrencyColumn>
+						<StyledCurrencyColumn>
+							<StyledCurrencyLabel>Platinum</StyledCurrencyLabel>
+							<StyledCurrencyInput
 								type="number"
 								value={currentValues.platinumPieces}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCurrencyChange('platinumPieces', parseInt(e.target.value) || 0)}
-								style={{ width: '100%', textAlign: 'center', padding: '0.5rem' }}
 							/>
-						</div>
-					</div>
-				</div>
-			</div>
+						</StyledCurrencyColumn>
+					</StyledCurrencyGrid>
+				</StyledSection>
+			</StyledDesktopWrapper>
 
 			{/* Modal Popups - same as mobile! */}
 			{selectedFeature && (

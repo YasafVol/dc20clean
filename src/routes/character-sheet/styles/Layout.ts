@@ -27,12 +27,35 @@ export const StyledBackButton = styled.button`
 	font-weight: bold;
 	z-index: 100;
 
+	.desktop-text {
+		display: inline;
+	}
+	
+	.mobile-text {
+		display: none;
+	}
+
 	@media (max-width: 768px) {
 		top: 0.5rem;
 		left: 0.5rem;
-		padding: 0.4rem 0.8rem;
-		font-size: 0.9rem;
+		padding: 0.3rem 0.5rem;
+		font-size: 1.2rem;
 		z-index: 1001; /* Above mobile nav */
+		width: 40px;
+		height: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%; /* Make it circular */
+		min-width: 40px; /* Ensure minimum size */
+		
+		.desktop-text {
+			display: none;
+		}
+		
+		.mobile-text {
+			display: inline;
+		}
 	}
 
 	&:hover {
@@ -75,6 +98,10 @@ export const StyledInnerBorder = styled.div`
 	display: flex;
 	justify-content: center;
 	flex-direction: column;
+
+	@media (max-width: 768px) {
+		padding-bottom: 7rem; /* Extra space for fixed bottom navigation */
+	}
 `;
 
 /* Corner decorations using CSS-only approach */
@@ -206,16 +233,24 @@ export const StyledMobileNav = styled.div`
 	display: flex;
 	background: #8b4513;
 	border-radius: 8px;
-	margin-bottom: 1rem;
 	overflow: hidden;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	position: sticky;
-	top: 0;
+	position: fixed !important;
+	top: auto !important;
+	bottom: 0 !important;
+	left: 0;
+	right: 0;
 	z-index: 1000;
+	margin: 0;
+	width: 100vw;
+	max-width: 100vw;
+	box-sizing: border-box;
 `;
 
 export const StyledMobileNavButton = styled.button<{ $isActive: boolean }>`
 	flex: 1;
+	min-width: 0;
+	max-width: 25vw;
 	padding: 0.75rem 0.25rem;
 	border: none;
 	background: ${(props) => (props.$isActive ? '#f5f3f0' : 'transparent')};
@@ -224,6 +259,10 @@ export const StyledMobileNavButton = styled.button<{ $isActive: boolean }>`
 	font-size: 0.7rem;
 	cursor: pointer;
 	transition: all 0.2s ease;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	box-sizing: border-box;
 
 	&:hover {
 		background: ${(props) => (props.$isActive ? '#f5f3f0' : 'rgba(245, 243, 240, 0.1)')};

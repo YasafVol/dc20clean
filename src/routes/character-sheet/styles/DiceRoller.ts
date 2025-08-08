@@ -51,10 +51,11 @@ export const StyledDiceRollerContainer = styled.div<{ $isExpanded: boolean }>`
 	}
 
 	@media (max-width: 768px) {
-		bottom: 0.5rem;
+		bottom: 4.5rem; /* Give 10-20px clearance above mobile nav */
 		right: 0.5rem;
 		width: ${props => props.$isExpanded ? '260px' : '50px'};
 		height: ${props => props.$isExpanded ? 'auto' : '50px'};
+		z-index: 999; /* Below mobile nav to prevent conflicts */
 	}
 `;
 

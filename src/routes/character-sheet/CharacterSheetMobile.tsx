@@ -16,6 +16,12 @@ const MobileContainer = styled.div`
 	height: 100vh;
 	background: #1a1a1a;
 	color: white;
+	width: 100vw;
+	max-width: 100vw;
+	overflow-x: hidden;
+	box-sizing: border-box;
+	contain: layout;
+	position: relative;
 `;
 
 const MobileHeader = styled.div`
@@ -40,19 +46,33 @@ const MobileCharacterInfo = styled.p`
 const MobileNavigation = styled.div`
 	display: flex;
 	background: #333;
-	border-bottom: 1px solid #444;
+	border-top: 1px solid #444;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 1000;
+	width: 100%;
+	max-width: 100vw;
+	box-sizing: border-box;
 `;
 
 const MobileNavButton = styled.button<{ $active: boolean }>`
 	flex: 1;
-	padding: 0.75rem;
+	max-width: 25vw;
+	padding: 0.75rem 0.25rem;
 	background: ${props => props.$active ? '#f5d020' : '#333'};
 	color: ${props => props.$active ? '#000' : '#fff'};
 	border: none;
-	font-size: 0.9rem;
+	font-size: 0.8rem;
 	font-weight: bold;
 	cursor: pointer;
 	transition: all 0.2s;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	min-width: 0;
+	box-sizing: border-box;
 
 	&:hover {
 		background: ${props => props.$active ? '#f5d020' : '#444'};
@@ -62,11 +82,22 @@ const MobileNavButton = styled.button<{ $active: boolean }>`
 const MobileContent = styled.div`
 	flex: 1;
 	overflow-y: auto;
+	overflow-x: hidden;
 	padding: 1rem;
+	padding-bottom: 7rem; /* Extra space to account for fixed bottom navigation */
+	width: 100vw;
+	max-width: 100vw;
+	box-sizing: border-box;
+	contain: layout;
+	position: relative;
 `;
 
 const MobileSection = styled.div`
 	margin-bottom: 2rem;
+	width: 100%;
+	max-width: 100vw;
+	overflow: hidden;
+	box-sizing: border-box;
 `;
 
 const MobileSectionTitle = styled.h2`
@@ -79,9 +110,13 @@ const MobileSectionTitle = styled.h2`
 
 const MobileStatGrid = styled.div`
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-	gap: 1rem;
+	grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+	gap: 0.5rem;
 	margin-bottom: 1.5rem;
+	width: 100%;
+	max-width: 100vw;
+	overflow: hidden;
+	box-sizing: border-box;
 `;
 
 const MobileStatBox = styled.div`
@@ -90,6 +125,10 @@ const MobileStatBox = styled.div`
 	border-radius: 8px;
 	text-align: center;
 	border: 1px solid #444;
+	width: 100%;
+	max-width: 100%;
+	overflow: hidden;
+	box-sizing: border-box;
 `;
 
 const MobileStatLabel = styled.div`
@@ -184,6 +223,10 @@ const MobileResourceInput = styled.input`
 const MobileItemGrid = styled.div`
 	display: grid;
 	gap: 0.75rem;
+	width: 100%;
+	max-width: 100%;
+	overflow: hidden;
+	box-sizing: border-box;
 `;
 
 const MobileItem = styled.div`
@@ -193,6 +236,10 @@ const MobileItem = styled.div`
 	padding: 1rem;
 	cursor: pointer;
 	transition: all 0.2s;
+	width: 100%;
+	max-width: 100%;
+	overflow: hidden;
+	box-sizing: border-box;
 
 	&:hover {
 		background: #333;
@@ -204,11 +251,17 @@ const MobileItemName = styled.div`
 	font-weight: bold;
 	color: #f5d020;
 	margin-bottom: 0.25rem;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	hyphens: auto;
 `;
 
 const MobileItemDetails = styled.div`
 	font-size: 0.9rem;
 	color: #ccc;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	hyphens: auto;
 `;
 
 type MobileSectionType = 'character' | 'combat' | 'features' | 'info';

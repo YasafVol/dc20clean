@@ -1165,7 +1165,10 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 				</StyledActionButton>
 			</StyledActionButtons>
 
-			<StyledBackButton onClick={onBack}>← Back to Menu</StyledBackButton>
+			<StyledBackButton onClick={onBack}>
+				<span className="desktop-text">← Back to Menu</span>
+				<span className="mobile-text">←</span>
+			</StyledBackButton>
 
 			<StyledCharacterSheet>
 				{/* Header Section */}

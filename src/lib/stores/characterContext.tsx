@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import type { CharacterInProgress } from '@prisma/client';
-import { traitsData } from '../rulesdata/traits';
+import { traitsData } from '../rulesdata/_new_schema/traits';
 import { findClassByName } from '../rulesdata/loaders/class-features.loader';
 import { classesData } from '../rulesdata/loaders/class.loader';
+import { calculateTraitCosts } from '../utils/traitCosts';
 
 // Define the shape of the data stored in the character store
 export interface CharacterInProgressStoreData extends CharacterInProgress {
@@ -15,6 +16,11 @@ export interface CharacterInProgressStoreData extends CharacterInProgress {
 	skillsJson: string;
 	tradesJson: string;
 	languagesJson: string;
+
+	// NEW: Enhanced effect system support
+	selectedTraitChoices: string; // JSON string of trait choices
+	cachedEffectResults?: string; // JSON string of cached calculation results
+	cacheTimestamp?: number;
 	// Spells and Maneuvers selections
 	selectedSpells: string;
 	selectedManeuvers: string;
@@ -51,6 +57,12 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
 	skillsJson: '{}',
 	tradesJson: '{}',
 	languagesJson: '{"common": {"fluency": "fluent"}}',
+
+	// NEW: Enhanced effect system support
+	selectedTraitChoices: '{}',
+	cachedEffectResults: undefined,
+	cacheTimestamp: undefined,
+	languagesJson: '{"common": {"fluency": "fluent"}}',
 	// Spells and Maneuvers selections
 	selectedSpells: '[]',
 	selectedManeuvers: '[]'
@@ -66,6 +78,9 @@ type CharacterAction =
 	| { type: 'SET_ANCESTRY'; ancestry1Id: string | null; ancestry2Id: string | null }
 	| { type: 'SET_TRAITS'; selectedTraitIds: string }
 	| { type: 'SET_FEATURE_CHOICES'; selectedFeatureChoices: string }
+	| { type: 'SET_TRAIT_CHOICES'; selectedTraitChoices: string }
+	| { type: 'UPDATE_TRAIT_CHOICE'; traitId: string; effectIndex: number; choice: string }
+	| { type: 'INVALIDATE_CACHE' }
 	| { type: 'UPDATE_SPELLS_AND_MANEUVERS'; spells: string[]; maneuvers: string[] }
 	| { type: 'UPDATE_STORE'; updates: Partial<CharacterInProgressStoreData> }
 	| { type: 'INITIALIZE_FROM_SAVED'; character: CharacterInProgressStoreData }
@@ -119,6 +134,33 @@ function characterReducer(
 			return {
 				...state,
 				selectedFeatureChoices: action.selectedFeatureChoices
+			};
+		case 'SET_TRAIT_CHOICES':
+			return {
+				...state,
+				selectedTraitChoices: action.selectedTraitChoices,
+				cachedEffectResults: undefined, // Invalidate cache
+				cacheTimestamp: undefined
+			};
+		case 'UPDATE_TRAIT_CHOICE':
+			const currentChoices = JSON.parse(state.selectedTraitChoices || '{}');
+			const choiceKey = `${action.traitId}-${action.effectIndex}`;
+			if (action.choice === '') {
+				delete currentChoices[choiceKey];
+			} else {
+				currentChoices[choiceKey] = action.choice;
+			}
+			return {
+				...state,
+				selectedTraitChoices: JSON.stringify(currentChoices),
+				cachedEffectResults: undefined, // Invalidate cache
+				cacheTimestamp: undefined
+			};
+		case 'INVALIDATE_CACHE':
+			return {
+				...state,
+				cachedEffectResults: undefined,
+				cacheTimestamp: undefined
 			};
 		case 'UPDATE_SPELLS_AND_MANEUVERS':
 			console.log('🔄 CharacterContext: UPDATE_SPELLS_AND_MANEUVERS action:', {
@@ -192,22 +234,13 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 			(state.attribute_charisma + 2) +
 			(state.attribute_intelligence + 2));
 
-	// Calculate ancestry points spent based on selected traits
+	// Calculate ancestry points spent based on selected traits (default traits are free)
 	const calculateAncestryPointsSpent = (): number => {
 		if (!state.selectedTraitIds) return 0;
 
 		try {
 			const selectedTraitIds: string[] = JSON.parse(state.selectedTraitIds);
-			let totalCost = 0;
-
-			selectedTraitIds.forEach((traitId) => {
-				const trait = traitsData.find((t) => t.id === traitId);
-				if (trait) {
-					totalCost += trait.cost;
-				}
-			});
-
-			return totalCost;
+			return calculateTraitCosts(selectedTraitIds);
 		} catch (error) {
 			console.warn('Error calculating ancestry points:', error);
 			return 0;

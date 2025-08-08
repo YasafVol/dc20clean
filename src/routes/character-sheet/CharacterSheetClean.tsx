@@ -67,7 +67,7 @@ import { clearDefenseNotesForField } from '../../lib/utils/defenseNotes';
 import { skillsData } from '../../lib/rulesdata/skills';
 import { tradesData } from '../../lib/rulesdata/trades';
 import { knowledgeData } from '../../lib/rulesdata/knowledge';
-import { traitsData } from '../../lib/rulesdata/traits';
+import { traitsData } from '../../lib/rulesdata/_new_schema/traits';
 import {
 	findClassByName,
 	getClassSpecificInfo,
@@ -98,7 +98,7 @@ import { calculateDeathThreshold } from '../../lib/rulesdata/death';
 import { allSpells } from '../../lib/rulesdata/spells-data/spells';
 import { allManeuvers } from '../../lib/rulesdata/maneuvers';
 
-// Character data service - fetches from localStorage and uses already calculated stats
+// Character data service - fetches from localStorage and fixes missing/invalid calculations
 const getCharacterData = async (characterId: string): Promise<CharacterSheetData> => {
 	console.log('Loading character data for ID:', characterId);
 
@@ -122,12 +122,13 @@ const getCharacterData = async (characterId: string): Promise<CharacterSheetData
 		selectedSpells: character.selectedSpells
 	});
 
-	// Convert selectedSpells string array to SpellData[] objects if spells array is empty
-	let processedCharacter = { ...character };
+	// Return the character data as-is since it's already calculated, but ensure trait and feature data is included
+	// Fix missing or invalid prime modifier values
+	const fixedCharacter = { ...character };
 
-	if ((!character.spells || character.spells.length === 0) && character.selectedSpells) {
+	if ((!fixedCharacter.spells || fixedCharacter.spells.length === 0) && fixedCharacter.selectedSpells) {
 		try {
-			const selectedSpellNames = JSON.parse(character.selectedSpells);
+			const selectedSpellNames = JSON.parse(fixedCharacter.selectedSpells);
 			console.log('🔍 getCharacterData: Converting selectedSpells to SpellData[]:', selectedSpellNames);
 
 			if (Array.isArray(selectedSpellNames) && selectedSpellNames.length > 0) {
@@ -150,7 +151,7 @@ const getCharacterData = async (characterId: string): Promise<CharacterSheetData
 					return null;
 				}).filter(Boolean);
 
-				processedCharacter.spells = userSelectedSpells;
+				fixedCharacter.spells = userSelectedSpells;
 				console.log('🔍 getCharacterData: Converted spells:', userSelectedSpells.map(s => s.spellName));
 			}
 		} catch (error) {
@@ -158,11 +159,36 @@ const getCharacterData = async (characterId: string): Promise<CharacterSheetData
 		}
 	}
 
-	// Return the character data as-is since it's already calculated, but ensure trait and feature data is included
+
+
+	// Recalculate prime modifier if missing or invalid
+	if (!fixedCharacter.finalPrimeModifierValue || isNaN(fixedCharacter.finalPrimeModifierValue)) {
+		const attributes = {
+			might: fixedCharacter.finalMight || 0,
+			agility: fixedCharacter.finalAgility || 0,
+			charisma: fixedCharacter.finalCharisma || 0,
+			intelligence: fixedCharacter.finalIntelligence || 0
+		};
+
+		const maxValue = Math.max(...Object.values(attributes));
+		const primeAttribute = Object.keys(attributes).find(
+			key => attributes[key as keyof typeof attributes] === maxValue
+		) || 'might';
+
+		fixedCharacter.finalPrimeModifierValue = maxValue;
+		fixedCharacter.finalPrimeModifierAttribute = primeAttribute;
+	}
+
+	// Fix missing combat mastery
+	if (!fixedCharacter.finalCombatMastery || isNaN(fixedCharacter.finalCombatMastery)) {
+		fixedCharacter.finalCombatMastery = Math.ceil((fixedCharacter.finalLevel || 1) / 2);
+	}
+
+	// Return the fixed character data
 	return {
-		...processedCharacter,
-		selectedTraitIds: processedCharacter.selectedTraitIds || processedCharacter.selectedTraitsJson || '[]',
-		selectedFeatureChoices: processedCharacter.selectedFeatureChoices || '{}'
+		...fixedCharacter,
+		selectedTraitIds: fixedCharacter.selectedTraitIds || fixedCharacter.selectedTraitsJson || '[]',
+		selectedFeatureChoices: fixedCharacter.selectedFeatureChoices || '{}'
 	};
 };
 
@@ -416,7 +442,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		loadCharacterData();
 	}, [characterId]);
 
-	// Calculate original defense values (without manual overrides) with detailed breakdown
+	// Calculate original defense values using enhanced calculator for supported classes
 	const getCalculatedDefenses = () => {
 		if (!characterData)
 			return {
@@ -428,30 +454,88 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 				pdrBreakdown: ''
 			};
 
-		// Use the same formula as in characterCalculator.ts
-		const calculatedPD =
-			8 +
-			characterData.finalCombatMastery +
-			characterData.finalAgility +
-			characterData.finalIntelligence;
-		const calculatedAD =
-			8 + characterData.finalCombatMastery + characterData.finalMight + characterData.finalCharisma;
+		// For supported classes, try to use enhanced calculator for accurate breakdowns
+		const supportedClasses = ['barbarian', 'cleric', 'hunter', 'champion', 'wizard', 'monk', 'rogue', 'sorcerer', 'spellblade', 'warlock', 'bard', 'druid', 'commander'];
 
-		// Create detailed breakdown strings
-		const pdBreakdown = `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalAgility} (Agility) + ${characterData.finalIntelligence} (Intelligence) = ${calculatedPD}`;
-		const adBreakdown = `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalMight} (Might) + ${characterData.finalCharisma} (Charisma) = ${calculatedAD}`;
+		let calculatedPD, calculatedAD, calculatedPDR;
+		let pdBreakdown, adBreakdown, pdrBreakdown;
 
-		// For PDR, we'd need to recalculate based on armor/class, but for now we'll use the difference
-		// between final value and any manual override
-		const calculatedPDR =
-			characterData.manualPDR !== undefined
-				? characterData.finalPDR // This would be the auto-calculated value stored somewhere
-				: characterData.finalPDR;
+		if (supportedClasses.includes(characterData.classId || '')) {
+			try {
+				// Try to recalculate using enhanced system for precise breakdown
+				const mockBuildData = {
+					id: characterData.id,
+					finalName: characterData.finalName || '',
+					level: characterData.finalLevel || 1,
+					attribute_might: characterData.finalMight || 0,
+					attribute_agility: characterData.finalAgility || 0,
+					attribute_charisma: characterData.finalCharisma || 0,
+					attribute_intelligence: characterData.finalIntelligence || 0,
+					combatMastery: characterData.finalCombatMastery || 1,
+					classId: characterData.classId || '',
+					ancestry1Id: characterData.ancestry1Id,
+					ancestry2Id: characterData.ancestry2Id,
+					selectedTraitIds: (() => {
+						try { return JSON.parse(characterData.selectedTraitIds || '[]'); }
+						catch { return []; }
+					})(),
+					selectedTraitChoices: (() => {
+						try { return JSON.parse(characterData.selectedTraitChoices || '{}'); }
+						catch { return {}; }
+					})(),
+					featureChoices: (() => {
+						try { return JSON.parse(characterData.selectedFeatureChoices || '{}'); }
+						catch { return {}; }
+					})(),
+					skillsJson: characterData.skillsJson || '{}',
+					tradesJson: characterData.tradesJson || '{}',
+					languagesJson: characterData.languagesJson || '{}',
+					lastModified: Date.now()
+				};
 
-		const pdrBreakdown =
-			calculatedPDR > 0
-				? `${calculatedPDR} (from equipped armor and class features)`
-				: '0 (no PDR from current equipment/class)';
+				const { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } = require('../../lib/services/enhancedCharacterCalculator');
+				const enhancedData = convertToEnhancedBuildData(mockBuildData);
+				const result = calculateCharacterWithBreakdowns(enhancedData);
+
+				calculatedPD = result.stats.finalPD;
+				calculatedAD = result.stats.finalAD;
+				calculatedPDR = result.stats.finalPDR;
+
+				// Get breakdowns from enhanced calculator
+				pdBreakdown = result.breakdowns?.pd ?
+					result.breakdowns.pd.effects.map(e => `${e.value > 0 ? '+' : ''}${e.value} (${e.source})`).join(' ') + ` = ${calculatedPD}` :
+					`8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalAgility} (Agility) + ${characterData.finalIntelligence} (Intelligence) = ${calculatedPD}`;
+
+				adBreakdown = result.breakdowns?.ad ?
+					result.breakdowns.ad.effects.map(e => `${e.value > 0 ? '+' : ''}${e.value} (${e.source})`).join(' ') + ` = ${calculatedAD}` :
+					`8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalMight} (Might) + ${characterData.finalCharisma} (Charisma) = ${calculatedAD}`;
+
+				pdrBreakdown = calculatedPDR > 0
+					? `${calculatedPDR} (from equipped armor and class features)`
+					: '0 (no PDR from current equipment/class)';
+
+			} catch (error) {
+				console.error('Enhanced calculator failed, using stored values:', error);
+				// Fallback to stored character values if enhanced calculator fails
+				calculatedPD = characterData.finalPD;
+				calculatedAD = characterData.finalAD;
+				calculatedPDR = characterData.finalPDR;
+
+				pdBreakdown = `${calculatedPD} (stored value - enhanced calculator failed)`;
+				adBreakdown = `${calculatedAD} (stored value - enhanced calculator failed)`;
+				pdrBreakdown = calculatedPDR > 0 ? `${calculatedPDR} (stored value)` : '0 (no PDR)';
+			}
+		} else {
+			// Class not in supported list - use stored values with warning
+			console.warn(`Class "${characterData.classId}" not in supported classes list - using stored values`);
+			calculatedPD = characterData.finalPD;
+			calculatedAD = characterData.finalAD;
+			calculatedPDR = characterData.finalPDR;
+
+			pdBreakdown = `${calculatedPD} (stored value - class not in enhanced calculator)`;
+			adBreakdown = `${calculatedAD} (stored value - class not in enhanced calculator)`;
+			pdrBreakdown = calculatedPDR > 0 ? `${calculatedPDR} (stored value)` : '0 (no PDR)';
+		}
 
 		return {
 			calculatedPD,

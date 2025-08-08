@@ -29,7 +29,7 @@ export const StyledGrid = styled.div`
 	margin-top: 1rem;
 `;
 
-export const StyledCard = styled.button<{ $selected: boolean }>`
+export const StyledCard = styled.div<{ $selected: boolean }>`
 	border: 2px solid #a855f7;
 	padding: 1.5rem;
 	border-radius: 10px;
@@ -108,17 +108,16 @@ export const StyledCardFooter = styled.div`
 	justify-content: flex-end;
 `;
 
-export const StyledReadMore = styled.button`
+export const StyledReadMore = styled.span`
 	color: #fbbf24;
 	font-size: 0.85rem;
 	font-weight: bold;
 	cursor: pointer;
 	text-decoration: underline;
-	background: none;
-	border: none;
 	padding: 0.5rem 0.75rem;
 	border-radius: 4px;
 	transition: all 0.2s ease;
+	display: inline-block;
 
 	&:hover {
 		color: #f59e0b;

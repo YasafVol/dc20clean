@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import type { CharacterInProgress } from '@prisma/client';
-import { traitsData } from '../rulesdata/traits';
+import { traitsData } from '../rulesdata/_new_schema/traits';
 import { findClassByName } from '../rulesdata/loaders/class-features.loader';
 import { classesData } from '../rulesdata/loaders/class.loader';
 import { calculateTraitCosts } from '../utils/traitCosts';

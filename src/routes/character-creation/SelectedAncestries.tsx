@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { ancestriesData } from '../../lib/rulesdata/ancestries';
-import { traitsData } from '../../lib/rulesdata/traits';
+import { traitsData } from '../../lib/rulesdata/_new_schema/traits';
 import TraitChoiceSelector from './components/TraitChoiceSelector';
 import type { IAncestry, ITrait, ITraitEffect } from '../../lib/rulesdata/types';
 import {

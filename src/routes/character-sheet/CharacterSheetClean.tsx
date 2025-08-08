@@ -57,7 +57,7 @@ import { clearDefenseNotesForField } from '../../lib/utils/defenseNotes';
 import { skillsData } from '../../lib/rulesdata/skills';
 import { tradesData } from '../../lib/rulesdata/trades';
 import { knowledgeData } from '../../lib/rulesdata/knowledge';
-import { traitsData } from '../../lib/rulesdata/traits';
+import { traitsData } from '../../lib/rulesdata/_new_schema/traits';
 import {
 	findClassByName,
 	getClassSpecificInfo,
@@ -397,9 +397,18 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					classId: characterData.classId || '',
 					ancestry1Id: characterData.ancestry1Id,
 					ancestry2Id: characterData.ancestry2Id,
-					selectedTraitIds: JSON.parse(characterData.selectedTraitIds || '[]'),
-					selectedTraitChoices: JSON.parse(characterData.selectedTraitChoices || '{}'),
-					featureChoices: JSON.parse(characterData.selectedFeatureChoices || '{}'),
+					selectedTraitIds: (() => {
+						try { return JSON.parse(characterData.selectedTraitIds || '[]'); }
+						catch { return []; }
+					})(),
+					selectedTraitChoices: (() => {
+						try { return JSON.parse(characterData.selectedTraitChoices || '{}'); }
+						catch { return {}; }
+					})(),
+					featureChoices: (() => {
+						try { return JSON.parse(characterData.selectedFeatureChoices || '{}'); }
+						catch { return {}; }
+					})(),
 					skillsJson: characterData.skillsJson || '{}',
 					tradesJson: characterData.tradesJson || '{}',
 					languagesJson: characterData.languagesJson || '{}',
@@ -428,12 +437,26 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					: '0 (no PDR from current equipment/class)';
 
 			} catch (error) {
-				console.error('Enhanced calculator failed:', error);
-				throw new Error(`Failed to calculate defenses for class "${characterData.classId}". Enhanced calculator error: ${error}`);
+				console.error('Enhanced calculator failed, using stored values:', error);
+				// Fallback to stored character values if enhanced calculator fails
+				calculatedPD = characterData.finalPD;
+				calculatedAD = characterData.finalAD;
+				calculatedPDR = characterData.finalPDR;
+
+				pdBreakdown = `${calculatedPD} (stored value - enhanced calculator failed)`;
+				adBreakdown = `${calculatedAD} (stored value - enhanced calculator failed)`;
+				pdrBreakdown = calculatedPDR > 0 ? `${calculatedPDR} (stored value)` : '0 (no PDR)';
 			}
 		} else {
-			// All classes are now migrated to the enhanced calculator
-			throw new Error(`Class "${characterData.classId}" is not supported. All classes should be migrated to the enhanced calculator.`);
+			// Class not in supported list - use stored values with warning
+			console.warn(`Class "${characterData.classId}" not in supported classes list - using stored values`);
+			calculatedPD = characterData.finalPD;
+			calculatedAD = characterData.finalAD;
+			calculatedPDR = characterData.finalPDR;
+
+			pdBreakdown = `${calculatedPD} (stored value - class not in enhanced calculator)`;
+			adBreakdown = `${calculatedAD} (stored value - class not in enhanced calculator)`;
+			pdrBreakdown = calculatedPDR > 0 ? `${calculatedPDR} (stored value)` : '0 (no PDR)';
 		}
 
 		return {

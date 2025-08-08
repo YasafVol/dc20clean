@@ -209,6 +209,9 @@ export const StyledMobileNav = styled.div`
 	margin-bottom: 1rem;
 	overflow: hidden;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	position: sticky;
+	top: 0;
+	z-index: 1000;
 `;
 
 export const StyledMobileNavButton = styled.button<{ $isActive: boolean }>`

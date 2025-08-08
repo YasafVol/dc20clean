@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 // Import types
 import type {
-	CharacterSheetProps,
 	CharacterSheetData,
 	SkillData,
 	TradeData,
@@ -13,32 +12,10 @@ import type {
 	SpellData,
 	InventoryItemData,
 	CharacterState
-} from '../../types';
-import type { Spell } from '../../lib/rulesdata/spells-data/types/spell.types';
-import type { Weapon } from '../../lib/rulesdata/inventoryItems';
-import type { InventoryItem } from '../../lib/rulesdata/inventoryItems';
-
-// Import new component modules
-import LeftColumn from './components/LeftColumn';
-import Currency from './components/Currency';
-import Resources from './components/Resources';
-import Defenses from './components/Defenses';
-import Combat from './components/Combat';
-import Attacks from './components/Attacks';
-import Spells from './components/Spells';
-import Inventory from './components/Inventory';
-import Features from './components/Features';
-import Movement from './components/Movement';
-import RightColumnResources from './components/RightColumnResources';
-import DeathExhaustion from './components/DeathExhaustion';
-import PlayerNotes from './components/PlayerNotes';
-import DiceRoller from './components/DiceRoller';
-
-// Import modal components
-import FeaturePopup from './components/FeaturePopup';
-import SpellPopup from './components/SpellPopup';
-import AttackPopup from './components/AttackPopup';
-import InventoryPopup from './components/InventoryPopup';
+} from '../../../types';
+import type { Spell } from '../../../lib/rulesdata/spells-data/types/spell.types';
+import type { Weapon } from '../../../lib/rulesdata/inventoryItems';
+import type { InventoryItem } from '../../../lib/rulesdata/inventoryItems';
 
 // Import character state management utilities
 import {
@@ -48,43 +25,25 @@ import {
 	updateCharacterState,
 	revertToOriginal,
 	characterStateToCurrentValues
-} from '../../lib/utils/characterState';
+} from '../../../lib/utils/characterState';
 
 // Import defense notes utilities
-import { clearDefenseNotesForField } from '../../lib/utils/defenseNotes';
+import { clearDefenseNotesForField } from '../../../lib/utils/defenseNotes';
 
 // Import rules data
-import { skillsData } from '../../lib/rulesdata/skills';
-import { tradesData } from '../../lib/rulesdata/trades';
-import { knowledgeData } from '../../lib/rulesdata/knowledge';
-import { traitsData } from '../../lib/rulesdata/traits';
+import { skillsData } from '../../../lib/rulesdata/skills';
+import { tradesData } from '../../../lib/rulesdata/trades';
+import { knowledgeData } from '../../../lib/rulesdata/knowledge';
+import { traitsData } from '../../../lib/rulesdata/traits';
 import {
 	findClassByName,
 	getClassSpecificInfo,
 	getLegacyChoiceId,
 	getDisplayLabel
-} from '../../lib/rulesdata/loaders/class-features.loader';
-import { ancestriesData } from '../../lib/rulesdata/ancestries';
-import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
-
-// Import styled components
-import {
-	StyledContainer,
-	StyledBackButton,
-	StyledCharacterSheet,
-	StyledMainGrid,
-	StyledLeftColumn,
-	StyledMiddleColumn,
-	StyledRightColumn,
-	StyledMobileNav,
-	StyledMobileNavButton,
-	StyledActionButtons,
-	StyledActionButton
-} from './styles/Layout';
-
-import { StyledHeader, StyledHeaderSection, StyledLabel, StyledValue } from './styles/Header';
-
-import { calculateDeathThreshold } from '../../lib/rulesdata/death';
+} from '../../../lib/rulesdata/loaders/class-features.loader';
+import { ancestriesData } from '../../../lib/rulesdata/ancestries';
+import { getDetailedClassFeatureDescription } from '../../../lib/utils/classFeatureDescriptions';
+import { calculateDeathThreshold } from '../../../lib/rulesdata/death';
 
 // Character data service - fetches from localStorage and uses already calculated stats
 const getCharacterData = async (characterId: string): Promise<CharacterSheetData> => {
@@ -130,10 +89,10 @@ const saveManualDefense = (
 	}
 };
 
-const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) => {
+export const useCharacterSheet = (characterId: string) => {
+	// All state variables
 	const [characterData, setCharacterData] = useState<CharacterSheetData | null>(null);
 	const [characterState, setCharacterState] = useState<CharacterState | null>(null);
-	// Keep currentValues for backwards compatibility with existing components
 	const [currentValues, setCurrentValues] = useState<CurrentValues>({
 		currentHP: 0,
 		currentSP: 0,
@@ -169,18 +128,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	// Mobile navigation state
 	type MobileSection = 'character' | 'combat' | 'features' | 'info';
 	const [activeMobileSection, setActiveMobileSection] = useState<MobileSection>('character');
-	const [isMobile, setIsMobile] = useState(false);
-
-	// Check if mobile resolution
-	useEffect(() => {
-		const checkMobile = () => {
-			setIsMobile(window.innerWidth <= 768);
-		};
-
-		checkMobile();
-		window.addEventListener('resize', checkMobile);
-		return () => window.removeEventListener('resize', checkMobile);
-	}, []);
 
 	// Save character current values back to localStorage using comprehensive state management
 	const saveCharacterData = (characterId: string, currentValues: CurrentValues) => {
@@ -961,7 +908,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		return Math.max(0, Math.min(100, (current / max) * 100));
 	};
 
-	// Copy character data to clipboard
 	// Revert character data to original values
 	const handleRevertToOriginal = (
 		dataType: 'resources' | 'currency' | 'attacks' | 'spells' | 'inventory' | 'all'
@@ -1124,405 +1070,54 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		? getSkillsByAttribute()
 		: { might: [], agility: [], charisma: [], intelligence: [], prime: [] };
 
-	if (loading) {
-		return (
-			<StyledContainer>
-				<div style={{ textAlign: 'center', padding: '4rem' }}>
-					<h2>Loading character sheet...</h2>
-				</div>
-			</StyledContainer>
-		);
-	}
+	return {
+		// State
+		characterData,
+		currentValues,
+		loading,
+		error,
+		selectedFeature,
+		selectedSpell,
+		selectedAttack,
+		selectedInventoryItem,
+		attacks,
+		spells,
+		inventory,
+		activeMobileSection,
+		setActiveMobileSection,
 
-	if (error || !characterData) {
-		return (
-			<StyledContainer>
-				<div style={{ textAlign: 'center', padding: '4rem' }}>
-					<h2>Error loading character sheet</h2>
-					<p>{error}</p>
-					<StyledBackButton onClick={onBack}>← Back</StyledBackButton>
-				</div>
-			</StyledContainer>
-		);
-	}
+		// Computed data
+		trades,
+		knowledge,
+		languages,
+		features,
+		skillsByAttribute,
 
-	return (
-		<StyledContainer style={{ position: 'relative' }}>
-			{/* Action Buttons - Hidden on mobile */}
-			<StyledActionButtons>
-				<StyledActionButton
-					$variant="danger"
-					onClick={() => handleRevertToOriginal('all')}
-					title="Revert all modifications back to calculated defaults"
-				>
-					🔄 Revert All
-				</StyledActionButton>
-				<StyledActionButton
-					onClick={copyCharacterToClipboard}
-					title="Copy character data to clipboard for backup"
-				>
-					📋 Copy to Clipboard
-				</StyledActionButton>
-			</StyledActionButtons>
+		// Event handlers
+		adjustResource,
+		handleResourceInputChange,
+		handleManualDefenseChange,
+		openFeaturePopup,
+		closeFeaturePopup,
+		openSpellPopup,
+		closeSpellPopup,
+		openAttackPopup,
+		closeAttackPopup,
+		openInventoryPopup,
+		closeInventoryPopup,
+		handleCurrencyChange,
+		handleExhaustionChange,
+		handleDeathStepChange,
+		handleRevertToOriginal,
+		copyCharacterToClipboard,
 
-			<StyledBackButton onClick={onBack}>← Back to Menu</StyledBackButton>
-
-			<StyledCharacterSheet>
-				{/* Header Section */}
-				<StyledHeader>
-					<StyledHeaderSection>
-						<StyledLabel>Player Name</StyledLabel>
-						<StyledValue>{characterData.finalPlayerName || 'Unknown'}</StyledValue>
-						<StyledLabel style={{ marginTop: '0.5rem' }}>Character Name</StyledLabel>
-						<StyledValue>{characterData.finalName}</StyledValue>
-					</StyledHeaderSection>
-
-					<StyledHeaderSection>
-						<StyledLabel>Class & Subclass</StyledLabel>
-						<StyledValue>{characterData.className}</StyledValue>
-						{(() => {
-							const classDisplayInfo = getClassDisplayInfo();
-							return classDisplayInfo.map((info, index) => (
-								<div key={index}>
-									<StyledLabel style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
-										{info.label}
-									</StyledLabel>
-									<StyledValue style={{ fontSize: '0.9rem' }}>{info.value}</StyledValue>
-								</div>
-							));
-						})()}
-						<StyledLabel style={{ marginTop: '0.5rem' }}>Ancestry & Background</StyledLabel>
-						<StyledValue>{characterData.ancestry1Name || 'Unknown'}</StyledValue>
-					</StyledHeaderSection>
-
-					<StyledHeaderSection>
-						<StyledLabel>Level</StyledLabel>
-						<StyledValue>{characterData.finalLevel}</StyledValue>
-						<StyledLabel style={{ marginTop: '0.5rem' }}>Combat Mastery</StyledLabel>
-						<StyledValue>+{characterData.finalCombatMastery}</StyledValue>
-					</StyledHeaderSection>
-
-					<div style={{ textAlign: 'center', alignSelf: 'center' }}>
-						<div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#8b4513' }}>DC20</div>
-					</div>
-				</StyledHeader>
-
-				{/* Mobile Navigation - Only show on mobile */}
-				{isMobile && (
-					<StyledMobileNav>
-						<StyledMobileNavButton
-							$isActive={activeMobileSection === 'character'}
-							onClick={() => setActiveMobileSection('character')}
-						>
-							🎯 Skills
-						</StyledMobileNavButton>
-						<StyledMobileNavButton
-							$isActive={activeMobileSection === 'combat'}
-							onClick={() => setActiveMobileSection('combat')}
-						>
-							⚔️ Combat
-						</StyledMobileNavButton>
-						<StyledMobileNavButton
-							$isActive={activeMobileSection === 'features'}
-							onClick={() => setActiveMobileSection('features')}
-						>
-							🎒 Items
-						</StyledMobileNavButton>
-						<StyledMobileNavButton
-							$isActive={activeMobileSection === 'info'}
-							onClick={() => setActiveMobileSection('info')}
-						>
-							ℹ️ Info
-						</StyledMobileNavButton>
-					</StyledMobileNav>
-				)}
-
-				{/* Desktop Layout - Only show on desktop */}
-				{!isMobile && (
-					<StyledMainGrid>
-						{/* Left Column - Attributes with Skills */}
-						<StyledLeftColumn>
-							<LeftColumn
-								characterData={characterData}
-								skillsByAttribute={skillsByAttribute}
-								knowledge={knowledge}
-								trades={trades}
-								languages={languages}
-							/>
-						</StyledLeftColumn>
-
-						{/* Middle Column - Resources, Combat, and Core Stats */}
-						<StyledMiddleColumn>
-							{/* Resources Section - Circular design like official sheet */}
-							<Resources
-								characterData={characterData}
-								currentValues={currentValues}
-								onAdjustResource={adjustResource}
-								onResourceInputChange={handleResourceInputChange}
-								getFillPercentage={getFillPercentage}
-								getHPFillPercentage={getHPFillPercentage}
-								isMobile={false}
-							/>
-
-							{/* Defenses - Shield-like design */}
-							<Defenses
-								characterData={{
-									...characterData,
-									manualPD: characterData?.manualPD,
-									manualPDR: characterData?.manualPDR,
-									manualAD: characterData?.manualAD
-								}}
-								calculatedDefenses={getCalculatedDefenses()}
-								onUpdateManualDefense={handleManualDefenseChange}
-								isMobile={false}
-							/>
-
-							{/* Combat Section */}
-							<Combat
-								characterData={characterData}
-								currentValues={currentValues}
-								setCurrentValues={setCurrentValues}
-							/>
-
-							{/* Death & Exhaustion */}
-							<DeathExhaustion
-								characterData={characterData}
-								currentValues={currentValues}
-								onExhaustionChange={handleExhaustionChange}
-								onDeathStepChange={handleDeathStepChange}
-							/>
-
-							{/* Spells Section */}
-							<Spells
-								spells={spells}
-								setSpells={updateSpells}
-								characterData={characterData}
-								onSpellClick={openSpellPopup}
-							/>
-
-							{/* Attacks Section */}
-							<Attacks
-								attacks={attacks}
-								setAttacks={updateAttacks}
-								characterData={characterData}
-								onAttackClick={openAttackPopup}
-							/>
-
-							{/* Inventory */}
-							<Inventory
-								inventory={inventory}
-								setInventory={updateInventory}
-								onItemClick={openInventoryPopup}
-							/>
-
-							{/* Player Notes */}
-							<PlayerNotes characterId={characterData.id} />
-						</StyledMiddleColumn>
-
-						{/* Right Column - Movement, Resources, Inventory, Features */}
-						<StyledRightColumn>
-							{/* Movement & Utility */}
-							<Movement characterData={characterData} />
-
-							{/* Resources */}
-							<RightColumnResources
-								characterData={characterData}
-								currentValues={currentValues}
-								onResourceInputChange={handleResourceInputChange}
-							/>
-
-							{/* Features */}
-							<Features features={features} onFeatureClick={openFeaturePopup} />
-
-							{/* Currency Section */}
-							<Currency currentValues={currentValues} onCurrencyChange={handleCurrencyChange} />
-						</StyledRightColumn>
-					</StyledMainGrid>
-				)}
-
-				{/* Mobile Layout - Only show on mobile */}
-				{isMobile && (
-					<div>
-						{/* Skills Tab - Mobile */}
-						{activeMobileSection === 'character' && (
-							<div>
-								<LeftColumn
-									characterData={characterData}
-									skillsByAttribute={skillsByAttribute}
-									knowledge={knowledge}
-									trades={trades}
-									languages={languages}
-								/>
-								<Features features={features} onFeatureClick={openFeaturePopup} />
-							</div>
-						)}
-
-						{/* Combat Tab - Mobile */}
-						{activeMobileSection === 'combat' && (
-							<div>
-								<Resources
-									characterData={characterData}
-									currentValues={currentValues}
-									onAdjustResource={adjustResource}
-									onResourceInputChange={handleResourceInputChange}
-									getFillPercentage={getFillPercentage}
-									getHPFillPercentage={getHPFillPercentage}
-									isMobile={true}
-								/>
-								<Defenses
-									characterData={{
-										...characterData,
-										manualPD: characterData?.manualPD,
-										manualPDR: characterData?.manualPDR,
-										manualAD: characterData?.manualAD
-									}}
-									calculatedDefenses={getCalculatedDefenses()}
-									onUpdateManualDefense={handleManualDefenseChange}
-									isMobile={true}
-								/>
-								<Combat
-									characterData={characterData}
-									currentValues={currentValues}
-									setCurrentValues={setCurrentValues}
-								/>
-								<DeathExhaustion
-									characterData={characterData}
-									currentValues={currentValues}
-									onExhaustionChange={handleExhaustionChange}
-									onDeathStepChange={handleDeathStepChange}
-								/>
-								<Spells
-									spells={spells}
-									setSpells={updateSpells}
-									characterData={characterData}
-									onSpellClick={openSpellPopup}
-								/>
-								<Attacks
-									attacks={attacks}
-									setAttacks={updateAttacks}
-									characterData={characterData}
-									onAttackClick={openAttackPopup}
-								/>
-								<Movement characterData={characterData} />
-								<RightColumnResources
-									characterData={characterData}
-									currentValues={currentValues}
-									onResourceInputChange={handleResourceInputChange}
-								/>
-							</div>
-						)}
-
-						{/* Items Tab - Mobile */}
-						{activeMobileSection === 'features' && (
-							<div>
-								<Inventory
-									inventory={inventory}
-									setInventory={updateInventory}
-									onItemClick={openInventoryPopup}
-								/>
-								<Currency currentValues={currentValues} onCurrencyChange={handleCurrencyChange} />
-							</div>
-						)}
-
-						{/* Info Tab - Mobile */}
-						{activeMobileSection === 'info' && (
-							<div>
-								<div
-									style={{
-										border: '2px solid #8b4513',
-										borderRadius: '8px',
-										padding: '1rem',
-										background: 'white',
-										marginBottom: '1rem'
-									}}
-								>
-									<h3
-										style={{
-											color: '#8b4513',
-											marginTop: '0',
-											marginBottom: '1rem',
-											textAlign: 'center',
-											fontSize: '1.2rem'
-										}}
-									>
-										Character Information
-									</h3>
-
-									<div style={{ marginBottom: '1rem' }}>
-										<StyledLabel>Player Name</StyledLabel>
-										<StyledValue>{characterData.finalPlayerName || 'Unknown'}</StyledValue>
-									</div>
-
-									<div style={{ marginBottom: '1rem' }}>
-										<StyledLabel>Character Name</StyledLabel>
-										<StyledValue>{characterData.finalName}</StyledValue>
-									</div>
-
-									<div style={{ marginBottom: '1rem' }}>
-										<StyledLabel>Class & Subclass</StyledLabel>
-										<StyledValue>{characterData.className}</StyledValue>
-										{(() => {
-											const classDisplayInfo = getClassDisplayInfo();
-											return classDisplayInfo.map((info, index) => (
-												<div key={index}>
-													<StyledLabel style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
-														{info.label}
-													</StyledLabel>
-													<StyledValue style={{ fontSize: '0.9rem' }}>{info.value}</StyledValue>
-												</div>
-											));
-										})()}
-									</div>
-
-									<div style={{ marginBottom: '1rem' }}>
-										<StyledLabel>Ancestry & Background</StyledLabel>
-										<StyledValue>{characterData.ancestry1Name || 'Unknown'}</StyledValue>
-									</div>
-
-									<div style={{ marginBottom: '1rem' }}>
-										<StyledLabel>Level</StyledLabel>
-										<StyledValue>{characterData.finalLevel}</StyledValue>
-									</div>
-
-									<div style={{ marginBottom: '1rem' }}>
-										<StyledLabel>Combat Mastery</StyledLabel>
-										<StyledValue>+{characterData.finalCombatMastery}</StyledValue>
-									</div>
-
-									<div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-										<div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#8b4513' }}>
-											DC20
-										</div>
-									</div>
-								</div>
-								<PlayerNotes characterId={characterData.id} />
-							</div>
-						)}
-					</div>
-				)}
-			</StyledCharacterSheet>
-
-			{/* Feature Popup */}
-			<FeaturePopup feature={selectedFeature} onClose={closeFeaturePopup} />
-
-			{/* Spell Popup Modal */}
-			<SpellPopup spell={selectedSpell} onClose={closeSpellPopup} />
-
-			{/* Attack Popup Modal */}
-			<AttackPopup selectedAttack={selectedAttack} onClose={closeAttackPopup} />
-
-			{/* Inventory Popup Modal */}
-			<InventoryPopup selectedInventoryItem={selectedInventoryItem} onClose={closeInventoryPopup} />
-
-			{/* Draconic Dice Roller */}
-			<DiceRoller
-				onRoll={(results, total, rollMode) => {
-					console.log('Dice rolled:', { results, total, rollMode });
-				}}
-			/>
-		</StyledContainer>
-	);
+		// Utility functions
+		getCalculatedDefenses,
+		getFillPercentage,
+		getHPFillPercentage,
+		getClassDisplayInfo,
+		updateAttacks,
+		updateSpells,
+		updateInventory
+	};
 };
-
-export default CharacterSheet;
-

@@ -159,10 +159,10 @@ const Spells: React.FC<SpellsProps> = ({ spells, setSpells, characterData, onSpe
 								</StyledSpellCell>
 
 								{/* AP Cost */}
-								<StyledSpellCell>{spell.cost.ap}</StyledSpellCell>
+								<StyledSpellCell>{spell.cost?.ap || '-'}</StyledSpellCell>
 
 								{/* MP Cost */}
-								<StyledSpellCell>{spell.cost.mp || '-'}</StyledSpellCell>
+								<StyledSpellCell>{spell.cost?.mp || '-'}</StyledSpellCell>
 
 								{/* Range */}
 								<StyledSpellCell style={{ fontSize: '0.7rem' }}>

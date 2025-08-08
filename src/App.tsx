@@ -3,7 +3,7 @@ import { createGlobalStyle } from 'styled-components';
 import { CharacterProvider } from './lib/stores/characterContext';
 import CharacterCreation from './routes/character-creation/CharacterCreation.tsx';
 import LoadCharacter from './routes/character-creation/LoadCharacter.tsx';
-import CharacterSheet from './routes/character-sheet/CharacterSheetClean.tsx';
+import CharacterSheetClean from './routes/character-sheet/CharacterSheetClean';
 import type { SavedCharacter } from './lib/utils/characterEdit';
 import Menu from './components/Menu.tsx';
 import {
@@ -155,7 +155,7 @@ function App() {
 				);
 			case 'sheet':
 				return selectedCharacterId ? (
-					<CharacterSheet characterId={selectedCharacterId} onBack={handleBackToMenu} />
+					<CharacterSheetClean characterId={selectedCharacterId} onBack={handleBackToMenu} />
 				) : null;
 			default:
 				return null;

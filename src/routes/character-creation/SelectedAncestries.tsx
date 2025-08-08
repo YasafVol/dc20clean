@@ -2,7 +2,8 @@ import React from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { ancestriesData } from '../../lib/rulesdata/ancestries';
 import { traitsData } from '../../lib/rulesdata/traits';
-import type { IAncestry, ITrait } from '../../lib/rulesdata/types';
+import TraitChoiceSelector from './components/TraitChoiceSelector';
+import type { IAncestry, ITrait, ITraitEffect } from '../../lib/rulesdata/types';
 import {
 	StyledOuterContainer,
 	StyledMainTitle,
@@ -77,6 +78,21 @@ function SelectedAncestries() {
 										<span style={{ color: '#ff4444' }}> (Not enough points)</span>
 									)}
 								</StyledLabel>
+								
+								{/* NEW: Render choice selectors if trait is selected and has user choices */}
+								{isSelected && trait.effects?.map((effect: ITraitEffect, effectIndex: number) => {
+									if (effect.userChoiceRequired) {
+										return (
+											<TraitChoiceSelector
+												key={`${traitId}-${effectIndex}`}
+												trait={trait}
+												effect={effect}
+												effectIndex={effectIndex}
+											/>
+										);
+									}
+									return null;
+								})}
 							</StyledListItem>
 						);
 					})}
@@ -104,6 +120,21 @@ function SelectedAncestries() {
 										<span style={{ color: '#ff4444' }}> (Not enough points)</span>
 									)}
 								</StyledLabel>
+								
+								{/* NEW: Render choice selectors if trait is selected and has user choices */}
+								{isSelected && trait.effects?.map((effect: ITraitEffect, effectIndex: number) => {
+									if (effect.userChoiceRequired) {
+										return (
+											<TraitChoiceSelector
+												key={`${traitId}-${effectIndex}`}
+												trait={trait}
+												effect={effect}
+												effectIndex={effectIndex}
+											/>
+										);
+									}
+									return null;
+								})}
 							</StyledListItem>
 						);
 					})}

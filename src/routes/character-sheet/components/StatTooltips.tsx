@@ -60,7 +60,7 @@ export const createSpeedTooltip = (characterData: CharacterSheetData): React.Rea
 
 export const createJumpTooltip = (characterData: CharacterSheetData): React.ReactNode => {
   const breakdown: StatBreakdown = {
-    base: Math.max(1, characterData.finalAgility || 0), // Jump = Agility (min 1)
+    base: characterData.finalAgility || 0, // Jump = Agility + modifiers
     total: characterData.finalJumpDistance
   };
   

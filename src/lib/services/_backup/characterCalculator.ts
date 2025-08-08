@@ -231,36 +231,25 @@ export const calculateCharacterStats = async (
 
 	// Defenses (DC20 formulas)
 	// PD (Precision Defense) = 8 + CM + Agility + Intelligence + Bonuses from traits/items
-	let calculatedPD = 8 + finalCombatMastery + finalAgility + finalIntelligence + processedTraitEffects.staticBonuses.pd;
+	let calculatedPD = 8 + finalCombatMastery + finalAgility + finalIntelligence;
 	
 
 	// AD (Area Defense) = 8 + CM + Might + Charisma + Bonuses from traits/items
-	let calculatedAD = 8 + finalCombatMastery + finalMight + finalCharisma + processedTraitEffects.staticBonuses.ad;
+	let calculatedAD = 8 + finalCombatMastery + finalMight + finalCharisma;
 	
 
-	// Health & Resources - Calculate from level progression
+	// Health & Resources
 	let finalHPMax = finalMight; // Base from Might
 	let finalSPMax = 0;
 	let finalMPMax = 0;
 	let finalSaveDC = 10; // Base (correct DC20 base)
-	let finalDeathThreshold = primeModifier.value + finalCombatMastery; // Prime + Combat Mastery (usually -4)
+	let finalDeathThreshold = 10; // Base
 	let finalMoveSpeed = 5; // Default base, will be set by class data
 	let finalRestPoints = 4; // Will be set to finalHPMax later
 	let finalInitiativeBonus = 0; // Base
 
-	// Add class contributions from level progression table
-	if (classData && classData.levelProgression) {
-		// Sum HP/SP/MP from all levels up to current level
-		for (let level = 1; level <= characterData.level; level++) {
-			const levelData = classData.levelProgression.find(lp => lp.level === level);
-			if (levelData) {
-				finalHPMax += levelData.healthPoints || 0;
-				finalSPMax += levelData.staminaPoints || 0;
-				finalMPMax += levelData.manaPoints || 0;
-			}
-		}
-	} else if (classData) {
-		// Fallback to old method if levelProgression not available
+	// Add class contributions
+	if (classData) {
 		finalHPMax += classData.baseHpContribution;
 		finalSPMax = classData.startingSP;
 		finalMPMax = classData.startingMP;
@@ -511,11 +500,12 @@ export const calculateCharacterStats = async (
 		}
 	});
 
-	// Jump Distance = Agility + modifiers
-	let finalJumpDistance = finalAgility + processedTraitEffects.staticBonuses.jumpDistance;
+	// Jump Distance = Agility (min 1)
+	let finalJumpDistance = Math.max(1, finalAgility);
 
-	// Grit Points = 2 + Charisma (minimum 0)
-	const finalGritPoints = Math.max(0, 2 + finalCharisma);
+	// Grit Points = 2 + Charisma (from class base)
+	const baseGritPoints = classData?.gritPointsBase || 2;
+	const finalGritPoints = baseGritPoints + finalCharisma;
 
 	// Calculate PDR (Precision Damage Reduction) with manual override
 	const calculatedPDR = calculatePDR(characterData, classData);

@@ -16,6 +16,11 @@ export interface CharacterInProgressStoreData extends CharacterInProgress {
 	skillsJson: string;
 	tradesJson: string;
 	languagesJson: string;
+	
+	// NEW: Enhanced effect system support
+	selectedTraitChoices: string; // JSON string of trait choices
+	cachedEffectResults?: string; // JSON string of cached calculation results
+	cacheTimestamp?: number;
 }
 
 // Initial state for the store
@@ -44,7 +49,12 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
 	// Background selections (Step 3: Skills, Trades, Languages)
 	skillsJson: '{}',
 	tradesJson: '{}',
-	languagesJson: '{"common": {"fluency": "fluent"}}'
+	languagesJson: '{"common": {"fluency": "fluent"}}',
+	
+	// NEW: Enhanced effect system support
+	selectedTraitChoices: '{}',
+	cachedEffectResults: undefined,
+	cacheTimestamp: undefined
 };
 
 // Action types
@@ -57,6 +67,9 @@ type CharacterAction =
 	| { type: 'SET_ANCESTRY'; ancestry1Id: string | null; ancestry2Id: string | null }
 	| { type: 'SET_TRAITS'; selectedTraitIds: string }
 	| { type: 'SET_FEATURE_CHOICES'; selectedFeatureChoices: string }
+	| { type: 'SET_TRAIT_CHOICES'; selectedTraitChoices: string }
+	| { type: 'UPDATE_TRAIT_CHOICE'; traitId: string; effectIndex: number; choice: string }
+	| { type: 'INVALIDATE_CACHE' }
 	| { type: 'UPDATE_STORE'; updates: Partial<CharacterInProgressStoreData> }
 	| { type: 'INITIALIZE_FROM_SAVED'; character: CharacterInProgressStoreData }
 	| { type: 'NEXT_STEP' }
@@ -109,6 +122,33 @@ function characterReducer(
 			return {
 				...state,
 				selectedFeatureChoices: action.selectedFeatureChoices
+			};
+		case 'SET_TRAIT_CHOICES':
+			return {
+				...state,
+				selectedTraitChoices: action.selectedTraitChoices,
+				cachedEffectResults: undefined, // Invalidate cache
+				cacheTimestamp: undefined
+			};
+		case 'UPDATE_TRAIT_CHOICE':
+			const currentChoices = JSON.parse(state.selectedTraitChoices || '{}');
+			const choiceKey = `${action.traitId}-${action.effectIndex}`;
+			if (action.choice === '') {
+				delete currentChoices[choiceKey];
+			} else {
+				currentChoices[choiceKey] = action.choice;
+			}
+			return {
+				...state,
+				selectedTraitChoices: JSON.stringify(currentChoices),
+				cachedEffectResults: undefined, // Invalidate cache
+				cacheTimestamp: undefined
+			};
+		case 'INVALIDATE_CACHE':
+			return {
+				...state,
+				cachedEffectResults: undefined,
+				cacheTimestamp: undefined
 			};
 		case 'UPDATE_STORE':
 			return {

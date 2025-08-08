@@ -41,7 +41,6 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 	onNavigateToLoad,
 	editCharacter,
 	onBackToMenu,
-	editCharacter,
 	isLevelUp
 }) => {
 	const { state, dispatch, attributePointsRemaining, ancestryPointsRemaining } = useCharacter();

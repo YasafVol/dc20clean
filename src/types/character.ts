@@ -6,7 +6,18 @@ export interface CharacterSheetProps {
 }
 
 // Import ManeuverData type
-import type { ManeuverData } from '../routes/character-sheet/components/Maneuvers';
+export interface ManeuverData {
+	id: string;
+	name: string;
+	type?: string;
+	description?: string;
+	cost?: {
+		ap: number;
+		mp?: number;
+	};
+	isReaction?: boolean;
+	notes?: string;
+}
 
 export interface CharacterSheetData {
 	// Basic Info

@@ -1380,6 +1380,14 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 							background: white;
 							font-size: 0.9rem;
 						}
+						.spell-card {
+							page-break-inside: avoid;
+							break-inside: avoid;
+						}
+						.maneuver-card {
+							page-break-inside: avoid;
+							break-inside: avoid;
+						}
 						.inventory-item {
 							display: flex;
 							justify-content: space-between;
@@ -1568,7 +1576,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 			${currentSpells.map(spell => {
 				const fullSpell = allSpells.find(s => s.name === spell.spellName);
 				return `
-					<div style="border: 2px solid #e0e0e0; border-radius: 10px; padding: 20px; background: #f8f9fa; margin-bottom: 20px;">
+					<div class="spell-card" style="border: 2px solid #e0e0e0; border-radius: 10px; padding: 20px; background: #f8f9fa; margin-bottom: 20px;">
 						<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
 							<div>
 								<h3 style="margin: 0 0 5px 0; color: #2c3e50; font-size: 1.4rem;">${spell.spellName}</h3>
@@ -1664,7 +1672,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 			${currentManeuvers.map(maneuver => {
 				const fullManeuver = allManeuvers.find(m => m.name === maneuver.maneuverName);
 				return `
-					<div style="border: 2px solid #e0e0e0; border-radius: 10px; padding: 20px; background: #f8f9fa; margin-bottom: 20px;">
+					<div class="maneuver-card" style="border: 2px solid #e0e0e0; border-radius: 10px; padding: 20px; background: #f8f9fa; margin-bottom: 20px;">
 						<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
 							<div>
 								<h3 style="margin: 0 0 5px 0; color: #2c3e50; font-size: 1.4rem;">${maneuver.maneuverName}</h3>

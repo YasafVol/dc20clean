@@ -15,7 +15,7 @@ import {
 } from './styles/App.styles';
 
 // Import static assets
-import blackBgImage from '/static/BlackBG.png';
+import blackBgImage from '/BlackBG.png';
 import cinzelFont from './types/Fonts/Cinzel-VariableFont_wght.ttf';
 import urbanistFont from './types/Fonts/Urbanist-VariableFont_wght.ttf';
 
@@ -170,13 +170,9 @@ function App() {
 							<span>Level Up Character</span>
 						</StyledHeader>
 						<StyledMain>
-							<CharacterCreation
-								onNavigateToLoad={handleLoadCharacter}
-								onBackToMenu={handleBackToMenu}
-								editCharacter={editCharacter ?? undefined}
 							<LevelUp 
 								character={levelUpCharacter!}
-								onComplete={(updatedCharacter) => {
+								onComplete={(updatedCharacter: SavedCharacter) => {
 									// Update the character in the list and go back to load screen
 									const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
 									const characterIndex = savedCharacters.findIndex((c: SavedCharacter) => c.id === updatedCharacter.id);
@@ -194,8 +190,10 @@ function App() {
 					<LoadCharacter onBack={handleBackToMenu} onSelectCharacter={handleViewCharacterSheet} onEditCharacter={handleEditCharacter} />
 			case 'sheet':
 				return selectedCharacterId ? (
-										<CharacterSheet
+					<CharacterSheet
 						characterId={selectedCharacterId}
+						onBack={handleBackToMenu}
+					/>
 				) : null;
 
 			default:

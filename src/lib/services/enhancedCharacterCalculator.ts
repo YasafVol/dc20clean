@@ -551,6 +551,10 @@ export function calculateCharacterWithBreakdowns(
   }) || 'might';
   
   const finalSaveDC = 8 + combatMastery + maxValue;
+  const finalSaveMight = finalMight + combatMastery;
+  const finalSaveAgility = finalAgility + combatMastery;
+  const finalSaveCharisma = finalCharisma + combatMastery;
+  const finalSaveIntelligence = finalIntelligence + combatMastery;
   const finalDeathThreshold = maxValue + combatMastery; // Prime + Combat Mastery (usually -4)
   const finalMoveSpeed = 5 + resolvedEffects.filter(e => e.type === 'MODIFY_STAT' && e.target === 'moveSpeed').reduce((sum, e) => sum + (e.value as number), 0);
   const finalJumpDistance = finalAgility + resolvedEffects.filter(effect => effect.type === 'MODIFY_STAT' && effect.target === 'jumpDistance').reduce((sum, effect) => sum + (effect.value as number), 0);
@@ -615,6 +619,10 @@ export function calculateCharacterWithBreakdowns(
       finalJumpDistance,
       finalDeathThreshold,
       finalSaveDC,
+      finalSaveMight,
+      finalSaveAgility,
+      finalSaveCharisma,
+      finalSaveIntelligence,
       finalInitiativeBonus,
       finalRestPoints,
       finalGritPoints,
@@ -625,7 +633,7 @@ export function calculateCharacterWithBreakdowns(
       finalCombatMastery: combatMastery,
       
       // Class and ancestry info for UI
-      className: getClassFeatures(buildData.classId)?.name || 'Unknown',
+      className: getClassFeatures(buildData.classId)?.className || 'Unknown',
       ancestry1Name: ancestriesData.find(a => a.id === buildData.ancestry1Id)?.name,
       ancestry2Name: ancestriesData.find(a => a.id === buildData.ancestry2Id)?.name
     },

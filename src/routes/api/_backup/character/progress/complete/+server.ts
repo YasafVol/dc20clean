@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client';
 import { classesData } from '$lib/rulesdata/loaders/class.loader';
 import { findClassByName, getLegacyChoiceId } from '$lib/rulesdata/loaders/class-features.loader';
 import { traitsData } from '$lib/rulesdata/traits';
+import { processTraitEffects } from '$lib/services/traitEffectProcessor';
 import type { RequestHandler } from './$types';
 
 const prisma = new PrismaClient();
@@ -64,23 +65,24 @@ function validateFeatureChoices(classId: string, selectedChoicesJson: string) {
 	});
 }
 
-function validateAttributeCapsAfterTraits(attributes: any, selectedTraitIdsJson: string) {
+function validateAttributeCapsAfterTraits(
+	attributes: any, 
+	selectedTraitIdsJson: string, 
+	ancestry1Id: string | null, 
+	ancestry2Id: string | null
+) {
 	const selectedTraitIds = JSON.parse(selectedTraitIdsJson || '[]');
-	const traits = selectedTraitIds
-		.map((id: string) => traitsData.find((t) => t.id === id))
-		.filter((t: any) => t !== undefined);
+	
+	// Use the same trait processing logic as the calculator
+	const processedEffects = processTraitEffects(selectedTraitIds, ancestry1Id, ancestry2Id);
 
-	const finalAttributes = { ...attributes };
-
-	for (const trait of traits) {
-		const attrEffect = trait.effects?.find((e: any) => e.type === 'MODIFY_ATTRIBUTE');
-		if (attrEffect && attrEffect.target && typeof attrEffect.value === 'number') {
-			const attributeKey = `attribute_${attrEffect.target}`;
-			if (attributeKey in finalAttributes) {
-				finalAttributes[attributeKey] += attrEffect.value;
-			}
-		}
-	}
+	// Apply attribute modifiers
+	const finalAttributes = {
+		attribute_might: attributes.attribute_might + processedEffects.attributeModifiers.might,
+		attribute_agility: attributes.attribute_agility + processedEffects.attributeModifiers.agility,
+		attribute_charisma: attributes.attribute_charisma + processedEffects.attributeModifiers.charisma,
+		attribute_intelligence: attributes.attribute_intelligence + processedEffects.attributeModifiers.intelligence
+	};
 
 	const ATTRIBUTE_MAX_L1 = 3;
 	for (const [attrName, finalValue] of Object.entries(finalAttributes)) {
@@ -151,7 +153,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		// Cross-stage validation: attribute caps after traits
 		try {
-			validateAttributeCapsAfterTraits(attributes, data.selectedTraitIds);
+			validateAttributeCapsAfterTraits(attributes, data.selectedTraitIds, data.ancestry1Id, data.ancestry2Id);
 		} catch (err: any) {
 			return json({ error: err.message }, { status: 400 });
 		}

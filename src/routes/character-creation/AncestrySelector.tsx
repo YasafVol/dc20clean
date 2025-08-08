@@ -100,7 +100,6 @@ function AncestrySelector() {
 				{ancestriesData.map((ancestry: IAncestry) => (
 					<StyledCard
 						key={ancestry.id}
-						type="button"
 						$selected={selectedAncestries.includes(ancestry.id)}
 						onClick={() => handleSelectAncestry(ancestry.id)}
 					>

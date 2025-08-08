@@ -16,7 +16,7 @@ import {
 	convertCharacterToInProgress,
 	type SavedCharacter
 } from '../../lib/utils/characterEdit';
-import { calculateCharacterStats } from '../../lib/services/characterCalculator';
+import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from '../../lib/services/enhancedCharacterCalculator';
 import {
 	StyledContainer,
 	StyledTitle,
@@ -72,7 +72,26 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 			// Character is complete - check if we're editing or creating new
 			if (editCharacter) {
 				// Edit mode: use the enhanced completion that preserves manual modifications
-				await completeCharacterEdit(editCharacter.id, state, calculateCharacterStats);
+				// Use enhanced calculator for character editing
+				const supportedClasses = ['barbarian', 'cleric', 'hunter', 'champion', 'wizard', 'monk', 'rogue', 'sorcerer', 'spellblade', 'warlock', 'bard', 'druid', 'commander'];
+				
+				if (supportedClasses.includes(state.classId || '')) {
+					// Convert to enhanced format and calculate
+					const enhancedData = convertToEnhancedBuildData(state);
+					const enhancedResult = calculateCharacterWithBreakdowns(enhancedData);
+					
+					// Create a calculation function that returns the enhanced result
+					const enhancedCalculatorFn = async () => ({ 
+						...enhancedResult.stats,
+						grantedAbilities: enhancedResult.grantedAbilities,
+						conditionalModifiers: enhancedResult.conditionalModifiers
+					});
+					
+					await completeCharacterEdit(editCharacter.id, state, enhancedCalculatorFn);
+				} else {
+					// All classes are now migrated to the enhanced calculator
+					throw new Error(`Class "${state.classId}" is not supported. All classes should be migrated to the enhanced calculator.`);
+				}
 				setSnackbarMessage('Character updated successfully! Manual modifications preserved.');
 				setShowSnackbar(true);
 				setTimeout(() => onNavigateToLoad(), 2000);

@@ -3,7 +3,7 @@ import type { CharacterInProgress } from '@prisma/client';
 import { traitsData } from '../rulesdata/traits';
 import { findClassByName } from '../rulesdata/loaders/class-features.loader';
 import { classesData } from '../rulesdata/loaders/class.loader';
-import { calculateTraitCosts } from '../services/traitEffectProcessor';
+import { calculateTraitCosts } from '../utils/traitCosts';
 
 // Define the shape of the data stored in the character store
 export interface CharacterInProgressStoreData extends CharacterInProgress {

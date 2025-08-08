@@ -87,8 +87,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 					
 					await completeCharacterEdit(editCharacter.id, state, enhancedCalculatorFn);
 				} else {
-					// Fallback to old calculator for non-migrated classes
-					await completeCharacterEdit(editCharacter.id, state, calculateCharacterStats);
+					// All classes are now migrated to the enhanced calculator
+					throw new Error(`Class "${state.classId}" is not supported. All classes should be migrated to the enhanced calculator.`);
 				}
 				setSnackbarMessage('Character updated successfully! Manual modifications preserved.');
 				setShowSnackbar(true);

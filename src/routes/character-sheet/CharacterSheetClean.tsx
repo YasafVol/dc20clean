@@ -428,25 +428,12 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					: '0 (no PDR from current equipment/class)';
 
 			} catch (error) {
-				console.warn('Enhanced calculator failed, falling back to manual calculation:', error);
-				// Fallback to manual calculation
-				calculatedPD = 8 + characterData.finalCombatMastery + characterData.finalAgility + characterData.finalIntelligence;
-				calculatedAD = 8 + characterData.finalCombatMastery + characterData.finalMight + characterData.finalCharisma;
-				calculatedPDR = characterData.finalPDR;
-
-				pdBreakdown = `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalAgility} (Agility) + ${characterData.finalIntelligence} (Intelligence) = ${calculatedPD}`;
-				adBreakdown = `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalMight} (Might) + ${characterData.finalCharisma} (Charisma) = ${calculatedAD}`;
-				pdrBreakdown = calculatedPDR > 0 ? `${calculatedPDR} (from equipped armor and class features)` : '0 (no PDR from current equipment/class)';
+				console.error('Enhanced calculator failed:', error);
+				throw new Error(`Failed to calculate defenses for class "${characterData.classId}". Enhanced calculator error: ${error}`);
 			}
 		} else {
-			// Fallback for non-migrated classes (shouldn't happen now)
-			calculatedPD = 8 + characterData.finalCombatMastery + characterData.finalAgility + characterData.finalIntelligence;
-			calculatedAD = 8 + characterData.finalCombatMastery + characterData.finalMight + characterData.finalCharisma;
-			calculatedPDR = characterData.finalPDR;
-
-			pdBreakdown = `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalAgility} (Agility) + ${characterData.finalIntelligence} (Intelligence) = ${calculatedPD}`;
-			adBreakdown = `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalMight} (Might) + ${characterData.finalCharisma} (Charisma) = ${calculatedAD}`;
-			pdrBreakdown = calculatedPDR > 0 ? `${calculatedPDR} (from equipped armor and class features)` : '0 (no PDR from current equipment/class)';
+			// All classes are now migrated to the enhanced calculator
+			throw new Error(`Class "${characterData.classId}" is not supported. All classes should be migrated to the enhanced calculator.`);
 		}
 
 		return {

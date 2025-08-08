@@ -1,7 +1,6 @@
 // Shared character completion service
 // Handles the completion flow with proper stat calculation, snackbar, and navigation
 
-import type { CharacterInProgressData } from './characterCalculator';
 import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from './enhancedCharacterCalculator';
 
 export interface CharacterCompletionCallbacks {
@@ -15,7 +14,7 @@ export const completeCharacter = async (
 ): Promise<void> => {
 	try {
 		// Character is complete, prepare the data for calculation
-		const characterInProgress: CharacterInProgressData = {
+		const characterInProgress = {
 			id: Date.now().toString(),
 			attribute_might: characterState.attribute_might,
 			attribute_agility: characterState.attribute_agility,

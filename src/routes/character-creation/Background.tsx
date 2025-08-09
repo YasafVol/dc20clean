@@ -63,14 +63,7 @@ const Background: React.FC = () => {
 		state
 	);
 
-	// Debug logging
-	console.log('🔍 Background Debug:', {
-		intelligenceModifier: state.attribute_intelligence,
-		baseSkillPoints: pointsData.baseSkillPoints,
-		selectedTraitIds: state.selectedTraitIds,
-		selectedFeatureChoices: state.selectedFeatureChoices,
-		classId: state.classId
-	});
+
 
 	// Handler functions
 	const handleSkillChange = (skillId: string, newLevel: number) => {

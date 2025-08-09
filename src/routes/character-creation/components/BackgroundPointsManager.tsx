@@ -206,24 +206,13 @@ export const useBackgroundPoints = (
 		if (selectedTraitIds && state) {
 			try {
 				const selectedTraitIdsList: string[] = JSON.parse(selectedTraitIds);
-				console.log('🔍 TraitsData import check:', { length: traitsData?.length, firstTrait: traitsData?.[0]?.id });
-				
-				console.log(`🔍 Trait Debug for ${targetStat}:`, {
-					selectedTraitIdsList,
-					traitsDataCount: traitsData.length
-				});
 				
 				selectedTraitIdsList.forEach(traitId => {
 					const trait = traitsData.find((t: any) => t.id === traitId);
-					console.log(`🔍 Trait "${traitId}" for ${targetStat}:`, {
-						found: !!trait,
-						effects: trait?.effects
-					});
 					
 					if (trait) {
 						trait.effects.forEach((effect: any) => {
 							if (effect.type === 'MODIFY_STAT' && effect.target === targetStat) {
-								console.log(`🔍 Found ${targetStat} bonus from trait:`, effect.value);
 								bonusPoints += (effect.value as number);
 							}
 						});
@@ -237,12 +226,6 @@ export const useBackgroundPoints = (
 		// From class features
 		if (classFeatures && selectedFeatureChoices) {
 			try {
-				console.log('🔍 ClassFeatures Debug:', {
-					className: classFeatures.className,
-					coreFeatures: classFeatures.coreFeatures?.length,
-					level1Features: classFeatures.coreFeatures?.filter((f: any) => f.levelGained === 1)?.length
-				});
-				
 				const selectedChoices: { [key: string]: string } = JSON.parse(selectedFeatureChoices);
 				const level1Features = classFeatures.coreFeatures.filter(
 					(feature: any) => feature.levelGained === 1
@@ -264,13 +247,6 @@ export const useBackgroundPoints = (
 							const choiceId = `${classFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;
 							const selectedOptions = selectedChoices[choiceId];
 
-							console.log(`🔍 Choice Debug for ${targetStat}:`, {
-								featureName: feature.featureName,
-								choiceId,
-								selectedOptions,
-								choiceKeys: Object.keys(selectedChoices)
-							});
-
 							if (selectedOptions) {
 								let optionsToProcess: string[] = [];
 								
@@ -283,20 +259,12 @@ export const useBackgroundPoints = (
 									optionsToProcess = [selectedOptions];
 								}
 
-								console.log(`🔍 Processing options for ${targetStat}:`, optionsToProcess);
-
 								optionsToProcess.forEach((optionName) => {
 									const selectedOption = choice.options?.find((opt: any) => opt.name === optionName);
-									console.log(`🔍 Option "${optionName}" for ${targetStat}:`, {
-										found: !!selectedOption,
-										effects: selectedOption?.effects,
-										fullOption: selectedOption
-									});
 									
 									if (selectedOption && selectedOption.effects) {
 										selectedOption.effects.forEach((effect: any) => {
 											if (effect.type === 'MODIFY_STAT' && effect.target === targetStat) {
-												console.log(`🔍 Found ${targetStat} bonus:`, effect.value);
 												bonusPoints += (effect.value as number);
 											}
 										});
@@ -319,14 +287,7 @@ export const useBackgroundPoints = (
 	const bonusTradePoints = calculateBonusPoints('tradePoints');
 	const bonusLanguagePoints = calculateBonusPoints('languagePoints');
 	
-	console.log('🔍 BackgroundPointsManager Debug:', {
-		intelligenceModifier,
-		bonusSkillPoints,
-		bonusTradePoints,
-		bonusLanguagePoints,
-		selectedTraitIds,
-		selectedFeatureChoices
-	});
+
 	
 	const baseSkillPoints = 5 + intelligenceModifier + bonusSkillPoints;
 	const baseTradePoints = 3 + bonusTradePoints;

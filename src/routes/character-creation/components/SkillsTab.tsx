@@ -144,22 +144,6 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 			<StyledPointsRemaining>
 				Skill Points: {pointsData.availableSkillPoints - pointsData.skillPointsUsed} /{' '}
 				{pointsData.availableSkillPoints} remaining
-				{pointsData.baseSkillPoints !== 5 && (
-					<div
-						style={{
-							fontSize: '0.9rem',
-							color: pointsData.baseSkillPoints > 5 ? '#10b981' : '#ef4444',
-							marginTop: '0.5rem',
-							padding: '0.25rem 0.5rem',
-							backgroundColor: pointsData.baseSkillPoints > 5 ? '#065f461a' : '#dc26261a',
-							borderRadius: '4px',
-							border: `1px solid ${pointsData.baseSkillPoints > 5 ? '#10b981' : '#ef4444'}33`
-						}}
-					>
-						Intelligence modifier: {pointsData.baseSkillPoints > 5 ? '+' : ''}
-						{pointsData.baseSkillPoints - 5}
-					</div>
-				)}
 				{hasConversions && (
 					<div
 						style={{

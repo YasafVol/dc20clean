@@ -298,6 +298,16 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 							);
 
 							level1Features.forEach((feature: any) => {
+								// Check for direct feature effects first
+								if (feature.effects) {
+									feature.effects.forEach((effect: any) => {
+										if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+											bonusSkillPoints += (effect.value as number);
+										}
+									});
+								}
+
+								// Check for choice-based effects
 								if (feature.choices) {
 									feature.choices.forEach((choice: any, choiceIndex: number) => {
 										const choiceId = `${classFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;

@@ -24,6 +24,11 @@ export const traitsData: Trait[] = [
 		cost: 2,
 		effects: [
 			{
+				type: 'MODIFY_STAT',
+				target: 'skillPoints',
+				value: 1
+			},
+			{
 				type: 'GRANT_SKILL_EXPERTISE',
 				target: 'any_skill',
 				value: { capIncrease: 1, levelIncrease: 1 },

@@ -6,14 +6,13 @@ export const traitsData: Trait[] = [
 		id: 'human_attribute_increase',
 		name: 'Attribute Increase',
 		description:
-			'Choose an Attribute. The chosen Attribute increases by 1 (up to the Attribute Limit).',
+			'Grants 1 Attribute Point to spend on any Attribute (up to the Attribute Limit).',
 		cost: 2,
 		effects: [
 			{
-				type: 'MODIFY_ATTRIBUTE',
-				target: 'any_attribute',
-				value: 1,
-				userChoice: { prompt: 'Choose an Attribute to increase by 1', options: ['might', 'agility', 'charisma', 'intelligence'] }
+				type: 'MODIFY_STAT',
+				target: 'attributePoints',
+				value: 1
 			}
 		]
 	},

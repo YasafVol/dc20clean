@@ -196,8 +196,15 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 
 				return true;
 			}
-			case 2:
-				return state.ancestry1Id !== null && ancestryPointsRemaining >= 0;
+			case 2: {
+				const isValid = state.ancestry1Id !== null && ancestryPointsRemaining >= 0;
+				console.log('🔍 Step 2 (Ancestry) validation:', {
+					ancestry1Id: state.ancestry1Id,
+					ancestryPointsRemaining,
+					isValid
+				});
+				return isValid;
+			}
 			case 3:
 				return attributePointsRemaining === 0;
 			case 4: {
@@ -353,8 +360,20 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 				const skillPointsRemaining = baseSkillPoints - skillPointsUsed;
 				const hasExactlySpentAllSkillPoints = skillPointsRemaining === 0;
 				const hasSpentSomeTradeOrLanguagePoints = tradePointsUsed > 0 || languagePointsUsed > 0;
+				const isValid = hasExactlySpentAllSkillPoints && hasSpentSomeTradeOrLanguagePoints;
 
-				return hasExactlySpentAllSkillPoints && hasSpentSomeTradeOrLanguagePoints;
+				console.log('🔍 Step 4 (Background) validation:', {
+					baseSkillPoints,
+					skillPointsUsed,
+					skillPointsRemaining,
+					tradePointsUsed,
+					languagePointsUsed,
+					hasExactlySpentAllSkillPoints,
+					hasSpentSomeTradeOrLanguagePoints,
+					isValid
+				});
+
+				return isValid;
 			}
 			case 5:
 				// Spells & Maneuvers step - validate based on class requirements
@@ -429,7 +448,20 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 	};
 
 	const areAllStepsCompleted = () => {
-		return steps.every((step) => isStepCompleted(step.number));
+		const results = steps.map((step) => ({
+			step: step.number,
+			label: step.label,
+			completed: isStepCompleted(step.number)
+		}));
+		
+		const allCompleted = results.every((result) => result.completed);
+		
+		console.log('🔍 areAllStepsCompleted check:', {
+			results,
+			allCompleted
+		});
+		
+		return allCompleted;
 	};
 
 	const renderCurrentStep = () => {

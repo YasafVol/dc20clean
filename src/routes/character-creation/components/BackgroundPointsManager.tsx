@@ -189,14 +189,90 @@ export const useBackgroundPoints = (
 	classFeatures: any = null,
 	selectedFeatureChoices: string = '{}',
 	currentSkills: Record<string, number> = {},
-	currentTrades: Record<string, number> = {}
+	currentTrades: Record<string, number> = {},
+	selectedTraitIds: string = '',
+	state: any = null
 ) => {
 	const [skillToTradeConversions, setSkillToTradeConversions] = React.useState(0);
 	const [tradeToSkillConversions, setTradeToSkillConversions] = React.useState(0);
 	const [tradeToLanguageConversions, setTradeToLanguageConversions] = React.useState(0);
 
+	// Calculate bonus skill points from traits and class features
+	const calculateBonusSkillPoints = (): number => {
+		let bonusPoints = 0;
+
+		// From traits
+		if (selectedTraitIds && state) {
+			try {
+				const selectedTraitIdsList: string[] = JSON.parse(selectedTraitIds);
+				const { traitsData } = require('../../../lib/rulesdata/_new_schema/traits');
+				
+				selectedTraitIdsList.forEach(traitId => {
+					const trait = traitsData.find((t: any) => t.id === traitId);
+					if (trait) {
+						trait.effects.forEach((effect: any) => {
+							if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+								bonusPoints += (effect.value as number);
+							}
+						});
+					}
+				});
+			} catch (error) {
+				console.warn('Error calculating skill points from traits:', error);
+			}
+		}
+
+		// From class features
+		if (classFeatures && selectedFeatureChoices) {
+			try {
+				const selectedChoices: { [key: string]: string } = JSON.parse(selectedFeatureChoices);
+				const level1Features = classFeatures.coreFeatures.filter(
+					(feature: any) => feature.levelGained === 1
+				);
+
+				level1Features.forEach((feature: any) => {
+					if (feature.choices) {
+						feature.choices.forEach((choice: any, choiceIndex: number) => {
+							const choiceId = `${classFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;
+							const selectedOptions = selectedChoices[choiceId];
+
+							if (selectedOptions) {
+								let optionsToProcess: string[] = [];
+								
+								try {
+									optionsToProcess = JSON.parse(selectedOptions);
+									if (!Array.isArray(optionsToProcess)) {
+										optionsToProcess = [selectedOptions];
+									}
+								} catch {
+									optionsToProcess = [selectedOptions];
+								}
+
+								optionsToProcess.forEach((optionName) => {
+									const selectedOption = choice.options?.find((opt: any) => opt.name === optionName);
+									if (selectedOption && selectedOption.effects) {
+										selectedOption.effects.forEach((effect: any) => {
+											if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+												bonusPoints += (effect.value as number);
+											}
+										});
+									}
+								});
+							}
+						});
+					}
+				});
+			} catch (error) {
+				console.warn('Error calculating skill points from class features:', error);
+			}
+		}
+
+		return bonusPoints;
+	};
+
 	// Base points according to DC20 rules
-	const baseSkillPoints = 5 + intelligenceModifier;
+	const bonusSkillPoints = calculateBonusSkillPoints();
+	const baseSkillPoints = 5 + intelligenceModifier + bonusSkillPoints;
 	const baseTradePoints = 3;
 	const baseLanguagePoints = 2;
 

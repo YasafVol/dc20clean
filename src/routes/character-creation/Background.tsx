@@ -58,7 +58,9 @@ const Background: React.FC = () => {
 		classFeatures,
 		state.selectedFeatureChoices,
 		currentSkills,
-		currentTrades
+		currentTrades,
+		state.selectedTraitIds,
+		state
 	);
 
 	// Handler functions

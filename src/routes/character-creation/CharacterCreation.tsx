@@ -258,9 +258,84 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 					// Ignore parsing errors
 				}
 
-				// Calculate available points based on current Intelligence
+				// Calculate available points based on current Intelligence + bonuses
 				const intelligenceModifier = state.attribute_intelligence;
-				const baseSkillPoints = Math.max(1, 5 + intelligenceModifier); // At least 1, even with negative Int
+				
+				// Calculate bonus skill points from traits and class features (same logic as BackgroundPointsManager)
+				let bonusSkillPoints = 0;
+				
+				// From traits
+				if (state.selectedTraitIds) {
+					try {
+						const selectedTraitIdsList: string[] = JSON.parse(state.selectedTraitIds);
+						const { traitsData } = require('../../lib/rulesdata/_new_schema/traits');
+						
+						selectedTraitIdsList.forEach((traitId: string) => {
+							const trait = traitsData.find((t: any) => t.id === traitId);
+							if (trait) {
+								trait.effects.forEach((effect: any) => {
+									if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+										bonusSkillPoints += (effect.value as number);
+									}
+								});
+							}
+						});
+					} catch (error) {
+						console.warn('Error calculating skill points from traits:', error);
+					}
+				}
+				
+				// From class features  
+				if (state.classId && state.selectedFeatureChoices) {
+					try {
+						const selectedClass = classesData.find((c) => c.id.toLowerCase() === state.classId?.toLowerCase());
+						const classFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
+						
+						if (classFeatures) {
+							const selectedChoices: { [key: string]: string } = JSON.parse(state.selectedFeatureChoices);
+							const level1Features = classFeatures.coreFeatures.filter(
+								(feature: any) => feature.levelGained === 1
+							);
+
+							level1Features.forEach((feature: any) => {
+								if (feature.choices) {
+									feature.choices.forEach((choice: any, choiceIndex: number) => {
+										const choiceId = `${classFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;
+										const selectedOptions = selectedChoices[choiceId];
+
+										if (selectedOptions) {
+											let optionsToProcess: string[] = [];
+											
+											try {
+												optionsToProcess = JSON.parse(selectedOptions);
+												if (!Array.isArray(optionsToProcess)) {
+													optionsToProcess = [selectedOptions];
+												}
+											} catch {
+												optionsToProcess = [selectedOptions];
+											}
+
+											optionsToProcess.forEach((optionName) => {
+												const selectedOption = choice.options?.find((opt: any) => opt.name === optionName);
+												if (selectedOption && selectedOption.effects) {
+													selectedOption.effects.forEach((effect: any) => {
+														if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+															bonusSkillPoints += (effect.value as number);
+														}
+													});
+												}
+											});
+										}
+									});
+								}
+							});
+						}
+					} catch (error) {
+						console.warn('Error calculating skill points from class features:', error);
+					}
+				}
+				
+				const baseSkillPoints = Math.max(1, 5 + intelligenceModifier + bonusSkillPoints); // At least 1, even with negative Int
 
 				// For completion, we require that:
 				// 1. Skill points are exactly spent (not overspent, not underspent)

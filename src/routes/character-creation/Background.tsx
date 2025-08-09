@@ -63,6 +63,15 @@ const Background: React.FC = () => {
 		state
 	);
 
+	// Debug logging
+	console.log('🔍 Background Debug:', {
+		intelligenceModifier: state.attribute_intelligence,
+		baseSkillPoints: pointsData.baseSkillPoints,
+		selectedTraitIds: state.selectedTraitIds,
+		selectedFeatureChoices: state.selectedFeatureChoices,
+		classId: state.classId
+	});
+
 	// Handler functions
 	const handleSkillChange = (skillId: string, newLevel: number) => {
 		const updatedSkills = { ...currentSkills };
@@ -154,13 +163,15 @@ const Background: React.FC = () => {
 				Choose your character's background skills, trades, and languages. You have{' '}
 				<span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{pointsData.baseSkillPoints}</span>{' '}
 				skill points{' '}
-				<span style={{ fontSize: '0.9rem', color: '#6b7280' }}>(5 + Intelligence modifier)</span>,{' '}
+				<span style={{ fontSize: '0.9rem', color: '#6b7280' }}>
+					(5 base + {state.attribute_intelligence} Int{pointsData.baseSkillPoints - 5 - state.attribute_intelligence > 0 ? ` + ${pointsData.baseSkillPoints - 5 - state.attribute_intelligence} bonus` : ''})
+				</span>,{' '}
 				<span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{pointsData.baseTradePoints}</span>{' '}
-				trade points, and{' '}
+				trade points{pointsData.baseTradePoints > 3 ? <span style={{ fontSize: '0.9rem', color: '#6b7280' }}> (3 base + {pointsData.baseTradePoints - 3} bonus)</span> : ''}, and{' '}
 				<span style={{ fontWeight: 'bold', color: '#3b82f6' }}>
 					{pointsData.baseLanguagePoints}
 				</span>{' '}
-				language points. <br />
+				language points{pointsData.baseLanguagePoints > 2 ? <span style={{ fontSize: '0.9rem', color: '#6b7280' }}> (2 base + {pointsData.baseLanguagePoints - 2} bonus)</span> : ''}. <br />
 				<span
 					style={{
 						marginTop: '0.5rem',

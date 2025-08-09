@@ -285,6 +285,15 @@ export const useBackgroundPoints = (
 	const bonusTradePoints = calculateBonusPoints('tradePoints');
 	const bonusLanguagePoints = calculateBonusPoints('languagePoints');
 	
+	console.log('🔍 BackgroundPointsManager Debug:', {
+		intelligenceModifier,
+		bonusSkillPoints,
+		bonusTradePoints,
+		bonusLanguagePoints,
+		selectedTraitIds,
+		selectedFeatureChoices
+	});
+	
 	const baseSkillPoints = 5 + intelligenceModifier + bonusSkillPoints;
 	const baseTradePoints = 3 + bonusTradePoints;
 	const baseLanguagePoints = 2 + bonusLanguagePoints;

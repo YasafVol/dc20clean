@@ -2,6 +2,7 @@ import React from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { useEnhancedCharacterCalculation } from '../../lib/hooks/useEnhancedCharacterCalculation';
 import { attributesData } from '../../lib/rulesdata/attributes';
+import AttributePointsCounter from './AttributePointsCounter';
 import styled from '@emotion/styled';
 import {
 	StyledContainer,
@@ -70,7 +71,7 @@ const ValidationMessage = styled.div<{ $type: 'error' | 'warning' }>`
 type AttributeState = Record<string, number>;
 
 function Attributes() {
-	const { state, dispatch, attributePointsRemaining } = useCharacter();
+	const { state, dispatch, attributePointsRemaining, attributePointsSpent, totalAttributePoints } = useCharacter();
 	const { 
 		getAttributeLimit, 
 		canIncreaseAttribute, 
@@ -103,7 +104,7 @@ function Attributes() {
 	return (
 		<StyledContainer>
 			<StyledTitle>Attributes</StyledTitle>
-			<StyledPointsRemaining>Points Remaining: {attributePointsRemaining}</StyledPointsRemaining>
+			<AttributePointsCounter />
 			<StyledGrid>
 				{attributesData.map((attribute) => {
 					const attributeKey = `attribute_${attribute.id}`;
@@ -152,7 +153,7 @@ function Attributes() {
 								<AttributeBreakdown>
 									<BreakdownLine>
 										<span>Base Points:</span>
-										<span>{limit.base}</span>
+										<span>{currentValue}</span>
 									</BreakdownLine>
 									{limit.traitBonuses > 0 && (
 										<BreakdownLine>

@@ -211,6 +211,8 @@ interface CharacterContextType {
 	dispatch: React.Dispatch<CharacterAction>;
 	// Derived values
 	attributePointsRemaining: number;
+	attributePointsSpent: number;
+	totalAttributePoints: number;
 	ancestryPointsRemaining: number;
 	ancestryPointsSpent: number;
 	totalAncestryPoints: number;
@@ -225,14 +227,44 @@ const CharacterContext = createContext<CharacterContextType | undefined>(undefin
 export function CharacterProvider({ children }: { children: ReactNode }) {
 	const [state, dispatch] = useReducer(characterReducer, initialCharacterInProgressState);
 
+	// Calculate attribute points from traits
+	const calculateAttributePointsFromTraits = (): number => {
+		if (!state.selectedTraitIds) return 0;
+
+		try {
+			const selectedTraitIds: string[] = JSON.parse(state.selectedTraitIds);
+			let bonusPoints = 0;
+
+			selectedTraitIds.forEach(traitId => {
+				const trait = traitsData.find(t => t.id === traitId);
+				if (trait) {
+					trait.effects.forEach(effect => {
+						if (effect.type === 'MODIFY_STAT' && effect.target === 'attributePoints') {
+							bonusPoints += (effect.value as number);
+						}
+					});
+				}
+			});
+
+			return bonusPoints;
+		} catch (error) {
+			console.warn('Error calculating attribute points from traits:', error);
+			return 0;
+		}
+	};
+
+	// Calculate total attribute points available (base 12 + trait bonuses)
+	const totalAttributePoints = 12 + calculateAttributePointsFromTraits();
+	
+	// Calculate attribute points spent (current attributes - base of -2 each = +8 total)
+	const attributePointsSpent = 
+		(state.attribute_might + 2) +
+		(state.attribute_agility + 2) +
+		(state.attribute_charisma + 2) +
+		(state.attribute_intelligence + 2);
+		
 	// Derived values
-	const attributePointsRemaining =
-		12 -
-		(state.attribute_might +
-			2 +
-			(state.attribute_agility + 2) +
-			(state.attribute_charisma + 2) +
-			(state.attribute_intelligence + 2));
+	const attributePointsRemaining = totalAttributePoints - attributePointsSpent;
 
 	// Calculate ancestry points spent based on selected traits (default traits are free)
 	const calculateAncestryPointsSpent = (): number => {
@@ -340,6 +372,8 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 		state,
 		dispatch,
 		attributePointsRemaining,
+		attributePointsSpent,
+		totalAttributePoints,
 		ancestryPointsRemaining,
 		ancestryPointsSpent,
 		totalAncestryPoints,

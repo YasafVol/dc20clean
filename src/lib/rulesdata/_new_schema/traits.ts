@@ -1000,6 +1000,114 @@ export const traitsData: Trait[] = [
 		cost: 1,
 		prerequisites: ['dragonborn_draconic_breath_weapon'],
 		effects: [{ type: 'GRANT_ABILITY', target: 'second_breath', value: 'Draconic Breath twice per Combat, enhanced damage option.' }]
+	},
+
+	// Fiendborn Traits
+	{
+		id: 'fiendborn_charming_gaze',
+		name: 'Charming Gaze',
+		description:
+			'You can spend 1 AP to gaze upon a creature you can see within 10 Spaces that can also see you. Make a Spell Check contested by the target\'s Repeated Charisma Save. Success: The creature becomes Charmed by you for 1 minute. You can use this ability once per Long Rest, and when you roll for Initiative, or meet some other unique criteria at the GM\'s discretion, this ability recharges.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'charming_gaze', value: 'Once per Long Rest, 1 AP: Charm target (Spell Check vs Charisma Save, 10 Spaces, 1 minute).' }]
+	},
+	{
+		id: 'fiendborn_divine_dampening',
+		name: 'Divine Dampening',
+		description: 'You recover 1 less HP when healed from divine sources.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'divine_dampening', value: '-1 HP from divine healing sources.' }]
+	},
+	{
+		id: 'fiendborn_fiendish_aura',
+		name: 'Fiendish Aura',
+		description:
+			'You learn the Sorcery Cantrip, but you must choose the type of energy that\'s the same as your Fiendish Origin.',
+		cost: 1,
+		effects: [
+			{ type: 'GRANT_CANTRIP', target: 'Sorcery', value: 1 },
+			{ type: 'GRANT_ABILITY', target: 'sorcery_energy_type', value: 'Must match Fiendish Origin energy type.' }
+		]
+	},
+	{
+		id: 'fiendborn_fiendish_magic',
+		name: 'Fiendish Magic',
+		description:
+			'You learn 1 Spell of your choice from the Arcane Spell List from the Destruction or Enchantment Spell Schools. If the Spell deals damage, it must be the same damage type as your Fiendish damage. Once per Long Rest, you can cast the chosen Spell spending 1 less MP than normal (minimum of 0 MP). The Spells total MP cost (before all reductions) still can\'t exceed your Mana Spend Limit.',
+		cost: 2,
+		effects: [
+			{ type: 'GRANT_SPELL', target: 'Arcane_Destruction_Enchantment', value: 1 },
+			{ type: 'GRANT_ABILITY', target: 'reduced_mp_cost', value: 'Once per Long Rest, cast chosen spell for 1 less MP (minimum 0).' }
+		]
+	},
+	{
+		id: 'fiendborn_fiendish_resistance',
+		name: 'Fiendish Resistance',
+		description: 'You gain Resistance (Half) to your Fiendish damage type.',
+		cost: 2,
+		effects: [{ type: 'GRANT_RESISTANCE', target: 'Fiendish_damage_type', value: 'half' }]
+	},
+	{
+		id: 'fiendborn_glide_speed',
+		name: 'Glide Speed',
+		description:
+			'You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren\'t Incapacitated, you gain the following benefits while in the air: Controlled Falling: You suffer no damage from Controlled Falling. Altitude Drop: If you end your turn midair, you Controlled Fall 4 Spaces. Glide Speed: You can use your movement to glide horizontally.',
+		cost: 2,
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'wings' }]
+	},
+	{
+		id: 'fiendborn_infernal_bravery',
+		name: 'Infernal Bravery',
+		description: 'You have ADV on Saves against being Intimidated.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ADV_ON_SAVE', target: 'Intimidated', value: true }]
+	},
+	{
+		id: 'fiendborn_intimidator',
+		name: 'Intimidator',
+		description: 'Once per Combat you can take the Intimidate Action as a Minor Action.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'intimidator', value: 'Once per Combat: Intimidate as Minor Action.' }]
+	},
+	{
+		id: 'fiendborn_lights_bane',
+		name: 'Light\'s Bane',
+		description: 'You can spend 1 AP to snuff out a mundane light source within 5 Spaces of you.',
+		cost: 0,
+		isMinor: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'lights_bane', value: '1 AP: Snuff out mundane light source (5 Spaces).' }]
+	},
+	{
+		id: 'fiendborn_mana_increase',
+		name: 'Mana Increase',
+		description: 'Your MP maximum increases by 1.',
+		cost: 1,
+		effects: [{ type: 'MODIFY_STAT', target: 'mp', value: 1 }]
+	},
+	{
+		id: 'fiendborn_radiant_weakness',
+		name: 'Radiant Weakness',
+		description: 'You have Radiant Vulnerability (1).',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_VULNERABILITY', target: 'Radiant', value: 1 }]
+	},
+	{
+		id: 'fiendborn_silver_tongued',
+		name: 'Silver-Tongued',
+		description:
+			'Once per Long Rest you can grant yourself ADV on an Influence Check when trying to deceive someone.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'silver_tongued', value: 'Once per Long Rest: ADV on Influence Check to deceive.' }]
+	},
+	{
+		id: 'fiendborn_superior_darkvision',
+		name: 'Superior Darkvision',
+		description: 'Your Darkvision increases to 20 Spaces.',
+		cost: 1,
+		prerequisites: ['fiendborn_darkvision'],
+		effects: [{ type: 'GRANT_SENSE', target: 'darkvision', value: 20 }]
 	}
 ];
 

@@ -812,6 +812,108 @@ export const traitsData: Trait[] = [
 		cost: -1,
 		isNegative: true,
 		effects: [{ type: 'GRANT_VULNERABILITY', target: 'Umbral', value: 1 }]
+	},
+
+	// Dwarf Traits
+	{
+		id: 'dwarf_trade_expertise',
+		name: 'Trade Expertise',
+		description:
+			'Choose a Crafting or Services Trade. Your Mastery Cap and Mastery Level in the chosen Trade both increase by 1.',
+		cost: 1,
+		effects: [
+			{
+				type: 'GRANT_TRADE_EXPERTISE',
+				target: 'any_crafting_or_services_trade',
+				value: { capIncrease: 1, levelIncrease: 1 },
+				userChoice: { prompt: 'Choose a Crafting or Services Trade for Expertise' }
+			}
+		]
+	},
+
+	// Gnome Traits
+	{
+		id: 'gnome_agility_attribute_decrease',
+		name: 'Agility Decrease',
+		description: 'You decrease your Agility by 1 (to a minimum of -2).',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'MODIFY_ATTRIBUTE', target: 'agility', value: -1 }]
+	},
+	{
+		id: 'gnome_short_legged',
+		name: 'Short-Legged',
+		description: 'Your Speed decreases by 1 Space.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'MODIFY_STAT', target: 'moveSpeed', value: -1 }]
+	},
+	{
+		id: 'gnome_storm_knowledge',
+		name: 'Storm Knowledge',
+		description:
+			'While within rainy, snowy, or stormy environments, you have ADV on Survival Checks. Additionally, you have ADV on Knowledge Checks made to recall information about rain, snow, and storms.',
+		cost: 1,
+		effects: [
+			{ type: 'GRANT_ADV_ON_CHECK', target: 'Survival', value: 'rainy_snowy_stormy_environments' },
+			{ type: 'GRANT_ADV_ON_CHECK', target: 'Knowledge', value: 'rain_snow_storms_information' }
+		]
+	},
+
+	// Orc Traits
+	{
+		id: 'orc_already_cursed',
+		name: 'Already Cursed',
+		description: 'You have ADV on Saves against Curses.',
+		cost: 0,
+		isMinor: true,
+		effects: [{ type: 'GRANT_ADV_ON_SAVE', target: 'Curses', value: true }]
+	},
+	{
+		id: 'orc_dash',
+		name: 'Orc Dash',
+		description:
+			'Once per Combat you can use your Minor Action to move, as long as that movement is towards an enemy.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'orc_dash', value: 'Once per Combat: Use Minor Action to move toward enemy.' }]
+	},
+	{
+		id: 'orc_finishing_blow',
+		name: 'Finishing Blow',
+		description: 'You deal +1 damage to creatures who are Well-Bloodied.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'finishing_blow', value: '+1 damage to Well-Bloodied creatures.' }]
+	},
+	{
+		id: 'orc_imposing_presence',
+		name: 'Imposing Presence',
+		description:
+			'Once per Combat when a creature makes an Attack against you, you can force them to make a Charisma Save. Save Failure: They must choose a new target for the Attack. If there are no other targets, then the Attack is wasted.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'imposing_presence', value: 'Once per Combat: Force attacker to retarget (Charisma Save).' }]
+	},
+	{
+		id: 'orc_intimidating_shout',
+		name: 'Intimidating Shout',
+		description:
+			'Once per Combat, you can spend 1 AP to let out an Intimidating Shout. All creatures within 5 Spaces that can hear you must make a Charisma Save contested by your Attack Check. Failure: A target is Hindered on the next Attack Check or Spell Attack it makes before the start of your next turn.',
+		cost: 2,
+		effects: [{ type: 'GRANT_ABILITY', target: 'intimidating_shout', value: 'Once per Combat, 1 AP: AoE Hinder effect (5 Spaces, Charisma Save vs Attack Check).' }]
+	},
+	{
+		id: 'orc_orcish_resolve',
+		name: 'Orcish Resolve',
+		description: 'You gain 1 additional AP while on Death\'s Door.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'orcish_resolve', value: '+1 AP while on Death\'s Door.' }]
+	},
+	{
+		id: 'orc_provocation',
+		name: 'Provocation',
+		description: 'You have DisADV on Checks and Saves against being Taunted.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'provocation', value: 'DisADV on Checks and Saves vs Taunted.' }]
 	}
 ];
 

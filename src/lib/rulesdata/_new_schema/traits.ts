@@ -710,6 +710,108 @@ export const traitsData: Trait[] = [
 		cost: -1,
 		isNegative: true,
 		effects: [{ type: 'GRANT_ABILITY', target: 'wild_mind', value: 'DisADV on Intelligence-based Checks.' }]
+	},
+
+	// Angelborn Traits
+	{
+		id: 'angelborn_radiant_resistance',
+		name: 'Radiant Resistance',
+		description: 'You have Resistance (Half) to Radiant damage.',
+		cost: 1,
+		effects: [{ type: 'GRANT_RESISTANCE', target: 'Radiant', value: 'half' }]
+	},
+	{
+		id: 'angelborn_celestial_magic',
+		name: 'Celestial Magic',
+		description:
+			'You learn 1 Spell of your choice from the Divine Spell List (Holy & Restoration during the Beta). Once per Long Rest, you can cast the chosen Spell spending 1 less MP than normal (minimum of 0 MP). The Spells total MP cost (before all reductions) still can\'t exceed your Mana Spend Limit.',
+		cost: 2,
+		effects: [
+			{ type: 'GRANT_SPELL', target: 'Divine_Spell_List', value: 1 },
+			{ type: 'GRANT_ABILITY', target: 'reduced_mp_cost', value: 'Once per Long Rest, cast chosen spell for 1 less MP (minimum 0).' }
+		]
+	},
+	{
+		id: 'angelborn_healing_touch',
+		name: 'Healing Touch',
+		description:
+			'Once per Combat, you can spend 1 AP to touch a creature and Heal it. Make a DC 10 Spell Check. Success: You can restore up to 2 HP to the target. Success (each 5): +1 HP. Failure: You only restore 2 HP.',
+		cost: 2,
+		effects: [{ type: 'GRANT_ABILITY', target: 'healing_touch', value: 'Once per Combat, 1 AP: Touch heal (DC 10 Spell Check), 2+ HP restored.' }]
+	},
+	{
+		id: 'angelborn_divine_glow',
+		name: 'Divine Glow',
+		description: 'Your body can emit a Bright Light in a 5 Space radius around you at will.',
+		cost: 0,
+		isMinor: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'divine_glow', value: 'Emit Bright Light in 5 Space radius at will.' }]
+	},
+	{
+		id: 'angelborn_mana_increase',
+		name: 'Mana Increase',
+		description: 'Your MP maximum increases by 1.',
+		cost: 1,
+		effects: [{ type: 'MODIFY_STAT', target: 'mp', value: 1 }]
+	},
+	{
+		id: 'angelborn_celestial_clarity',
+		name: 'Celestial Clarity',
+		description: 'You have ADV on Saves against being Blinded or Deafened.',
+		cost: 1,
+		effects: [
+			{ type: 'GRANT_ADV_ON_SAVE', target: 'Blinded', value: true },
+			{ type: 'GRANT_ADV_ON_SAVE', target: 'Deafened', value: true }
+		]
+	},
+	{
+		id: 'angelborn_angelic_insight',
+		name: 'Angelic Insight',
+		description:
+			'Once per Long Rest you can grant yourself ADV on an Insight Check to see if someone is lying.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'angelic_insight', value: 'Once per Long Rest: ADV on Insight Check to detect lies.' }]
+	},
+	{
+		id: 'angelborn_gift_of_the_angels',
+		name: 'Gift of the Angels',
+		description:
+			'Once per Combat you can spend 1 AP and 1 MP and touch a creature to heal them over time. The creature recovers 1 HP at the start of each of their turns for 1 minute (5 Rounds).',
+		cost: 2,
+		effects: [{ type: 'GRANT_ABILITY', target: 'gift_of_angels', value: 'Once per Combat, 1 AP + 1 MP: Touch heal over time (1 HP/turn for 5 rounds).' }]
+	},
+	{
+		id: 'angelborn_blinding_light',
+		name: 'Blinding Light',
+		description:
+			'Once per Combat, you can spend 1 AP to choose a creature within 5 Spaces and make a Spell Check contested by its Physical Save. Success: The target is Blinded until the end of your next turn.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'blinding_light', value: 'Once per Combat, 1 AP: Spell Check vs Physical Save to Blind target (5 Spaces, until end of next turn).' }]
+	},
+	{
+		id: 'angelborn_glide_speed',
+		name: 'Glide Speed',
+		description:
+			'You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren\'t Incapacitated, you gain the following benefits while in the air: Controlled Falling: You suffer no damage from Controlled Falling. Altitude Drop: If you end your turn midair, you Controlled Fall 4 Spaces. Glide Speed: You can use your movement to glide horizontally.',
+		cost: 2,
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'wings' }]
+	},
+	{
+		id: 'angelborn_pacifist',
+		name: 'Pacifist',
+		description:
+			'Your divine call is to put others before yourself and resist doing harm. You suffer a -1 penalty to all Checks and Saves made during the first round of Combat.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'pacifist', value: '-1 penalty to all Checks and Saves during first round of Combat.' }]
+	},
+	{
+		id: 'angelborn_umbral_weakness',
+		name: 'Umbral Weakness',
+		description: 'You have Umbral Vulnerability (1).',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_VULNERABILITY', target: 'Umbral', value: 1 }]
 	}
 ];
 

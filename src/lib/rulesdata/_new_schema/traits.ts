@@ -1108,6 +1108,111 @@ export const traitsData: Trait[] = [
 		cost: 1,
 		prerequisites: ['fiendborn_darkvision'],
 		effects: [{ type: 'GRANT_SENSE', target: 'darkvision', value: 20 }]
+	},
+
+	// Giantborn Traits
+	{
+		id: 'giantborn_brute',
+		name: 'Brute',
+		description: 'Once per Combat, you can take the Shove or Grapple Action as a Minor Action.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'brute', value: 'Once per Combat: Shove or Grapple as Minor Action.' }]
+	},
+	{
+		id: 'giantborn_clumsiness',
+		name: 'Clumsiness',
+		description: 'You have DisADV on Agility Checks.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'clumsiness', value: 'DisADV on Agility Checks.' }]
+	},
+	{
+		id: 'giantborn_giants_fortitude',
+		name: 'Giant\'s Fortitude',
+		description: 'You also gain the benefits of your Giant\'s Resolve Trait while Well-Bloodied.',
+		cost: 2,
+		prerequisites: ['giantborn_giants_resolve'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'giants_fortitude', value: 'Giant\'s Resolve benefits also apply while Well-Bloodied.' }]
+	},
+	{
+		id: 'giantborn_giants_resolve',
+		name: 'Giant\'s Resolve',
+		description: 'While on Death\'s Door, you reduce all damage taken by 1.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'giants_resolve', value: 'Reduce all damage by 1 while on Death\'s Door.' }]
+	},
+	{
+		id: 'giantborn_heavy_riser',
+		name: 'Heavy Riser',
+		description: 'You have to spend 4 Spaces of movement to stand up from Prone.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'heavy_riser', value: '4 Spaces of movement to stand up from Prone.' }]
+	},
+	{
+		id: 'giantborn_intelligence_attribute_decrease',
+		name: 'Intelligence Decrease',
+		description: 'You decrease your Intelligence by 1 (to a minimum of -2).',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'MODIFY_ATTRIBUTE', target: 'intelligence', value: -1 }]
+	},
+	{
+		id: 'giantborn_mighty_hurl',
+		name: 'Mighty Hurl',
+		description:
+			'You throw creatures 1 Space farther than normal, and objects (including Weapons) 5 Spaces farther than normal.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'mighty_hurl', value: 'Throw creatures +1 Space, objects +5 Spaces farther.' }]
+	},
+	{
+		id: 'giantborn_mighty_leap',
+		name: 'Mighty Leap',
+		description:
+			'You can use your Might instead of Agility to determine your Jump Distance and the damage you take from Falling.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'mighty_leap', value: 'Use Might for Jump Distance and Falling damage.' }]
+	},
+	{
+		id: 'giantborn_powerful_build',
+		name: 'Powerful Build',
+		description: 'You increase by 1 Size, but you occupy the Space of a creature 1 Size smaller.',
+		cost: 2,
+		effects: [{ type: 'GRANT_ABILITY', target: 'powerful_build', value: '+1 Size but occupy 1 Size smaller space.' }]
+	},
+	{
+		id: 'giantborn_strong_body',
+		name: 'Strong Body',
+		description:
+			'Once per Combat when you take damage from an Attack, you can reduce the damage taken by an amount equal to your Might or Agility (your choice).',
+		cost: 2,
+		effects: [{ type: 'GRANT_ABILITY', target: 'strong_body', value: 'Once per Combat: Reduce damage by Might or Agility.' }]
+	},
+	{
+		id: 'giantborn_titanic_toss',
+		name: 'Titanic Toss',
+		description:
+			'You have ADV on Checks made to throw creatures. Additionally, you don\'t have DisADV as a result of making an Attack with a Weapon with the Toss or Thrown Property at Long Range.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'titanic_toss', value: 'ADV on throwing creatures, no DisADV for long-range thrown weapons.' }]
+	},
+	{
+		id: 'giantborn_unstoppable',
+		name: 'Unstoppable',
+		description: 'You have ADV on Saves against being Slowed or Stunned.',
+		cost: 1,
+		effects: [
+			{ type: 'GRANT_ADV_ON_SAVE', target: 'Slowed', value: true },
+			{ type: 'GRANT_ADV_ON_SAVE', target: 'Stunned', value: true }
+		]
+	},
+	{
+		id: 'giantborn_unyielding_movement',
+		name: 'Unyielding Movement',
+		description: 'You\'re immune to being Slowed 2 (or higher).',
+		cost: 0,
+		isMinor: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'unyielding_movement', value: 'Immune to Slowed 2 or higher.' }]
 	}
 ];
 

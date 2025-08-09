@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import backgroundImage from '../../../assets/Desktop.png';
+import backgroundImage from '../../../assets/Desktop1920.jpg';
 
 export const StyledContainer = styled.div`
 	min-height: 100vh;

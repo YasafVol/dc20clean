@@ -14,7 +14,7 @@ import {
 } from './styles/App.styles';
 
 // Import static assets
-import blackBgImage from '/static/BlackBG.png';
+import blackBgImage from './assets/BlackBG.png';
 import cinzelFont from './types/Fonts/Cinzel-VariableFont_wght.ttf';
 import urbanistFont from './types/Fonts/Urbanist-VariableFont_wght.ttf';
 

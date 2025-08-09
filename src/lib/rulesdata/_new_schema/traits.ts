@@ -914,6 +914,92 @@ export const traitsData: Trait[] = [
 		cost: -1,
 		isNegative: true,
 		effects: [{ type: 'GRANT_ABILITY', target: 'provocation', value: 'DisADV on Checks and Saves vs Taunted.' }]
+	},
+
+	// Dragonborn Traits
+	{
+		id: 'dragonborn_concussive_breath',
+		name: 'Concussive Breath',
+		description:
+			'When you use your Draconic Breath Weapon, you can force all targets to make a Physical Save. Save Failure: The target is pushed 1 Space away +1 additional Space for every 5 it fails its Save by.',
+		cost: 1,
+		prerequisites: ['dragonborn_draconic_breath_weapon'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'concussive_breath', value: 'Draconic Breath pushes targets (Physical Save, 1+ Spaces).' }]
+	},
+	{
+		id: 'dragonborn_draconic_affinity',
+		name: 'Draconic Affinity',
+		description:
+			'When you take damage of the same type as your Draconic damage, your next Draconic Breath Weapon deals +1 bonus damage.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'draconic_affinity', value: '+1 damage on next Draconic Breath when taking same damage type.' }]
+	},
+	{
+		id: 'dragonborn_draconic_protection',
+		name: 'Draconic Protection',
+		description:
+			'Once per Combat, when an ally within 20 Spaces is on Death\'s Door, you begin to surge with an ancient power. While they remain on Death\'s Door their PD and AD increases by 5 until Combat ends.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'draconic_protection', value: 'Once per Combat: +5 PD/AD to ally on Death\'s Door (20 Spaces).' }]
+	},
+	{
+		id: 'dragonborn_draconic_ward',
+		name: 'Draconic Ward',
+		description:
+			'Once per Combat when you enter Death\'s Door, you gain 2 Temp HP. Whenever you\'re Hit by a Melee Attack while you have this Temp HP, your Attacker takes 1 Draconic damage.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'draconic_ward', value: 'Death\'s Door: +2 Temp HP, attackers take 1 Draconic damage.' }]
+	},
+	{
+		id: 'dragonborn_dying_breath',
+		name: 'Dying Breath',
+		description:
+			'Once per Combat when you enter Death\'s Door, you regain a use of your Draconic Breath Weapon and can immediately use it as a Reaction for free (0 AP).',
+		cost: 1,
+		prerequisites: ['dragonborn_draconic_breath_weapon'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'dying_breath', value: 'Death\'s Door: Regain and use Draconic Breath as Reaction (0 AP).' }]
+	},
+	{
+		id: 'dragonborn_glide_speed',
+		name: 'Glide Speed',
+		description:
+			'You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren\'t Incapacitated, you gain the following benefits while in the air: Controlled Falling: You suffer no damage from Controlled Falling. Altitude Drop: If you end your turn midair, you Controlled Fall 4 Spaces. Glide Speed: You can use your movement to glide horizontally.',
+		cost: 2,
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'wings' }]
+	},
+	{
+		id: 'dragonborn_guardians_bond',
+		name: 'Guardian\'s Bond',
+		description:
+			'Once per Combat when an ally enters Death\'s Door within 20 Spaces of you, you take an amount of True damage equal to your Prime Modifier.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'guardians_bond', value: 'Take True damage (Prime Modifier) when ally enters Death\'s Door.' }]
+	},
+	{
+		id: 'dragonborn_mana_increase',
+		name: 'Mana Increase',
+		description: 'Your MP maximum increases by 1.',
+		cost: 1,
+		effects: [{ type: 'MODIFY_STAT', target: 'mp', value: 1 }]
+	},
+	{
+		id: 'dragonborn_reptilian_superiority',
+		name: 'Reptilian Superiority',
+		description:
+			'You have ADV on Intimidation Checks against reptilian creatures of Medium Size and smaller (not including other Dragonborn).',
+		cost: 0,
+		isMinor: true,
+		effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'Intimidation', value: 'vs_reptilian_medium_small' }]
+	},
+	{
+		id: 'dragonborn_second_breath',
+		name: 'Second Breath',
+		description:
+			'You can now use your Draconic Breath Weapon twice per Combat. Additionally, whenever you use your Draconic Breath Weapon, you can spend 2 uses to increase the damage by 2 if its an Area, or by 4 if its Focused.',
+		cost: 1,
+		prerequisites: ['dragonborn_draconic_breath_weapon'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'second_breath', value: 'Draconic Breath twice per Combat, enhanced damage option.' }]
 	}
 ];
 

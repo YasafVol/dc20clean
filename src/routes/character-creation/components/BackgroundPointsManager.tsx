@@ -237,6 +237,12 @@ export const useBackgroundPoints = (
 		// From class features
 		if (classFeatures && selectedFeatureChoices) {
 			try {
+				console.log('🔍 ClassFeatures Debug:', {
+					className: classFeatures.className,
+					coreFeatures: classFeatures.coreFeatures?.length,
+					level1Features: classFeatures.coreFeatures?.filter((f: any) => f.levelGained === 1)?.length
+				});
+				
 				const selectedChoices: { [key: string]: string } = JSON.parse(selectedFeatureChoices);
 				const level1Features = classFeatures.coreFeatures.filter(
 					(feature: any) => feature.levelGained === 1
@@ -283,7 +289,8 @@ export const useBackgroundPoints = (
 									const selectedOption = choice.options?.find((opt: any) => opt.name === optionName);
 									console.log(`🔍 Option "${optionName}" for ${targetStat}:`, {
 										found: !!selectedOption,
-										effects: selectedOption?.effects
+										effects: selectedOption?.effects,
+										fullOption: selectedOption
 									});
 									
 									if (selectedOption && selectedOption.effects) {

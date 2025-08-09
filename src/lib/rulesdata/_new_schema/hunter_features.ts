@@ -116,10 +116,10 @@ export const hunterClass: ClassDefinition = {
             },
             {
               name: 'Urban',
-              description: 'Your Mastery Limit for Social Skills increases by 1.',
+              description: 'You gain 2 Skill Points to use on up to 2 of the following Skills: Influence, Insight, Investigation, Intimidation, and Trickery.',
               effects: [
                 { type: 'MODIFY_STAT', target: 'skillPoints', value: 2 },
-                { type: 'GRANT_ABILITY', target: 'favored_terrain_urban', value: 'In urban areas: ADV on Stealth and Survival, cannot be Surprised, +1 Social Skills Mastery Limit.' }
+                { type: 'GRANT_ABILITY', target: 'favored_terrain_urban', value: 'In urban areas: ADV on Stealth and Survival, cannot be Surprised.' }
               ]
             }
           ]

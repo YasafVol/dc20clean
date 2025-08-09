@@ -197,8 +197,8 @@ export const useBackgroundPoints = (
 	const [tradeToSkillConversions, setTradeToSkillConversions] = React.useState(0);
 	const [tradeToLanguageConversions, setTradeToLanguageConversions] = React.useState(0);
 
-	// Calculate bonus skill points from traits and class features
-	const calculateBonusSkillPoints = (): number => {
+	// Calculate bonus points from traits and class features
+	const calculateBonusPoints = (targetStat: string): number => {
 		let bonusPoints = 0;
 
 		// From traits
@@ -211,14 +211,14 @@ export const useBackgroundPoints = (
 					const trait = traitsData.find((t: any) => t.id === traitId);
 					if (trait) {
 						trait.effects.forEach((effect: any) => {
-							if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+							if (effect.type === 'MODIFY_STAT' && effect.target === targetStat) {
 								bonusPoints += (effect.value as number);
 							}
 						});
 					}
 				});
 			} catch (error) {
-				console.warn('Error calculating skill points from traits:', error);
+				console.warn(`Error calculating ${targetStat} from traits:`, error);
 			}
 		}
 
@@ -252,7 +252,7 @@ export const useBackgroundPoints = (
 									const selectedOption = choice.options?.find((opt: any) => opt.name === optionName);
 									if (selectedOption && selectedOption.effects) {
 										selectedOption.effects.forEach((effect: any) => {
-											if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+											if (effect.type === 'MODIFY_STAT' && effect.target === targetStat) {
 												bonusPoints += (effect.value as number);
 											}
 										});
@@ -263,7 +263,7 @@ export const useBackgroundPoints = (
 					}
 				});
 			} catch (error) {
-				console.warn('Error calculating skill points from class features:', error);
+				console.warn(`Error calculating ${targetStat} from class features:`, error);
 			}
 		}
 
@@ -271,10 +271,13 @@ export const useBackgroundPoints = (
 	};
 
 	// Base points according to DC20 rules
-	const bonusSkillPoints = calculateBonusSkillPoints();
+	const bonusSkillPoints = calculateBonusPoints('skillPoints');
+	const bonusTradePoints = calculateBonusPoints('tradePoints');
+	const bonusLanguagePoints = calculateBonusPoints('languagePoints');
+	
 	const baseSkillPoints = 5 + intelligenceModifier + bonusSkillPoints;
-	const baseTradePoints = 3;
-	const baseLanguagePoints = 2;
+	const baseTradePoints = 3 + bonusTradePoints;
+	const baseLanguagePoints = 2 + bonusLanguagePoints;
 
 	// Calculate available points after conversions
 	const availableSkillPoints =

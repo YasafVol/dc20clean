@@ -1,4 +1,5 @@
 import React from 'react';
+import { traitsData } from '../../../lib/rulesdata/_new_schema/traits';
 
 // Mastery system interfaces and data
 export interface MasteryInfo {
@@ -205,7 +206,7 @@ export const useBackgroundPoints = (
 		if (selectedTraitIds && state) {
 			try {
 				const selectedTraitIdsList: string[] = JSON.parse(selectedTraitIds);
-				const { traitsData } = require('../../../lib/rulesdata/_new_schema/traits');
+				console.log('🔍 TraitsData import check:', { length: traitsData?.length, firstTrait: traitsData?.[0]?.id });
 				
 				console.log(`🔍 Trait Debug for ${targetStat}:`, {
 					selectedTraitIdsList,

@@ -101,17 +101,42 @@ export interface ClassDefinition {
 	subclasses: ClassSubclass[];
 }
 
-// Use Vite's import.meta.glob to import all the class feature JSON files
-const classFeatureModules = import.meta.glob('../classes/*_features.json', { eager: true });
+// Import all the new schema class definitions
+import { barbarianClass } from '../_new_schema/barbarian_features';
+import { clericClass } from '../_new_schema/cleric_features';
+import { hunterClass } from '../_new_schema/hunter_features';
+import { championClass } from '../_new_schema/champion_features';
+import { wizardClass } from '../_new_schema/wizard_features';
+import { monkClass } from '../_new_schema/monk_features';
+import { rogueClass } from '../_new_schema/rogue_features';
+import { sorcererClass } from '../_new_schema/sorcerer_features';
+import { spellbladeClass } from '../_new_schema/spellblade_features';
+import { warlockClass } from '../_new_schema/warlock_features';
+import { bardClass } from '../_new_schema/bard_features';
+import { druidClass } from '../_new_schema/druid_features';
+import { commanderClass } from '../_new_schema/commander_features';
 
-// Extract the default export (the class features object) from each module
-const rawClassFeatures = Object.values(classFeatureModules).map((module: any) => module.default);
+// Use the new schema class definitions
+const rawClassFeatures = [
+	barbarianClass,
+	clericClass,
+	hunterClass,
+	championClass,
+	wizardClass,
+	monkClass,
+	rogueClass,
+	sorcererClass,
+	spellbladeClass,
+	warlockClass,
+	bardClass,
+	druidClass,
+	commanderClass
+];
 
 // Debug logging
 console.log('🔍 Class Features Debug:', {
-	totalModules: Object.keys(classFeatureModules).length,
-	moduleKeys: Object.keys(classFeatureModules),
-	rawClassFeatures: rawClassFeatures.map(c => c?.className || 'undefined')
+	totalClasses: rawClassFeatures.length,
+	classNames: rawClassFeatures.map(c => c?.className || 'undefined')
 });
 
 // Export the class features data

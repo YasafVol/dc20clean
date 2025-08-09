@@ -1213,6 +1213,143 @@ export const traitsData: Trait[] = [
 		cost: 0,
 		isMinor: true,
 		effects: [{ type: 'GRANT_ABILITY', target: 'unyielding_movement', value: 'Immune to Slowed 2 or higher.' }]
+	},
+
+	// Beastborn Traits (Essential Selection)
+	{
+		id: 'beastborn_burrow_speed',
+		name: 'Burrow Speed',
+		description: 'You gain a Burrow Speed equal to half your Movement Speed.',
+		cost: 2,
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'burrow', value: 'half_speed' }]
+	},
+	{
+		id: 'beastborn_camouflage',
+		name: 'Camouflage',
+		description:
+			'You can change the color and pattern of your body. You have ADV on Stealth Checks while motionless.',
+		cost: 2,
+		effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'Stealth', value: 'while_motionless' }]
+	},
+	{
+		id: 'beastborn_charge',
+		name: 'Charge',
+		description:
+			'If you move at least 2 Spaces in a straight line before making a Melee Attack, the damage of the Attack increases by 1.',
+		cost: 2,
+		effects: [{ type: 'GRANT_ABILITY', target: 'charge', value: '+1 damage on Melee Attack after moving 2+ Spaces straight.' }]
+	},
+	{
+		id: 'beastborn_climb_speed',
+		name: 'Climb Speed',
+		description: 'You gain a Climb Speed equal to your Ground Speed.',
+		cost: 1,
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'climb', value: 'equal_to_speed' }]
+	},
+	{
+		id: 'beastborn_cold_resistance',
+		name: 'Cold Resistance',
+		description:
+			'You have Cold Resistance (Half) and Resistance to Exhaustion from cold temperatures.',
+		cost: 2,
+		effects: [
+			{ type: 'GRANT_RESISTANCE', target: 'Cold', value: 'half' },
+			{ type: 'GRANT_ABILITY', target: 'cold_exhaustion_resistance', value: 'Resistance to cold temperature Exhaustion.' }
+		]
+	},
+	{
+		id: 'beastborn_darkvision',
+		name: 'Darkvision',
+		description: 'You have Darkvision 10 Spaces.',
+		cost: 1,
+		effects: [{ type: 'GRANT_SENSE', target: 'darkvision', value: 10 }]
+	},
+	{
+		id: 'beastborn_echolocation',
+		name: 'Echolocation',
+		description:
+			'You can spend 1 AP to roar, scream, or screech to gain Blindsight in a 10 Spaces radius that lasts until the start of your next turn. The sound can be heard from up to 100 Spaces away. You gain no benefit from this Trait in an area of Silence.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'echolocation', value: '1 AP: Blindsight 10 Spaces until next turn (100 Spaces audible).' }]
+	},
+	{
+		id: 'beastborn_natural_weapon',
+		name: 'Natural Weapon',
+		description:
+			'You have up to 2 Natural Weapons (claws, horns, fangs, tail, etc.) which you can use to make Unarmed Strikes that deal 1 Bludgeoning, Piercing, or Slashing damage (your choice upon gaining this Trait). You can perform Attack Maneuvers with your Natural Weapons.',
+		cost: 1,
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'natural_weapon',
+				value: '2 Natural Weapons for Unarmed Strikes (1 damage, chosen type).',
+				userChoice: { prompt: 'Choose damage type: Bludgeoning, Piercing, or Slashing' }
+			}
+		]
+	},
+	{
+		id: 'beastborn_swim_speed',
+		name: 'Swim Speed',
+		description: 'You gain a Swim Speed equal to your Ground Speed.',
+		cost: 1,
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'swim', value: 'equal_to_speed' }]
+	},
+	{
+		id: 'beastborn_fire_resistance',
+		name: 'Fire Resistance',
+		description:
+			'You have Fire Resistance (Half) and Resistance to Exhaustion from hot temperatures.',
+		cost: 2,
+		effects: [
+			{ type: 'GRANT_RESISTANCE', target: 'Fire', value: 'half' },
+			{ type: 'GRANT_ABILITY', target: 'heat_exhaustion_resistance', value: 'Resistance to hot temperature Exhaustion.' }
+		]
+	},
+	{
+		id: 'beastborn_natural_armor',
+		name: 'Natural Armor',
+		description: 'While you aren\'t wearing Armor, you gain +1 AD.',
+		cost: 1,
+		effects: [{ type: 'MODIFY_STAT', target: 'ad', value: 1, condition: 'not_wearing_armor' }]
+	},
+	{
+		id: 'beastborn_keen_sense',
+		name: 'Keen Sense',
+		description:
+			'Choose 1 of the following senses: hearing, sight, or smell. You make Awareness Checks with ADV using the chosen sense.',
+		cost: 1,
+		effects: [
+			{
+				type: 'GRANT_ADV_ON_CHECK',
+				target: 'Awareness',
+				value: 'chosen_sense',
+				userChoice: { prompt: 'Choose a sense: hearing, sight, or smell' }
+			}
+		]
+	},
+	{
+		id: 'beastborn_small_sized',
+		name: 'Small-Sized',
+		description: 'Your Size is considered Small.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'small_sized', value: 'Size is considered Small.' }]
+	},
+	{
+		id: 'beastborn_sunlight_sensitivity',
+		name: 'Sunlight Sensitivity',
+		description:
+			'While you or your target is in sunlight, you have DisADV on Attacks and Awareness Checks that rely on sight.',
+		cost: -2,
+		isNegative: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'sunlight_sensitivity', value: 'DisADV on Attacks and sight-based Awareness in sunlight.' }]
+	},
+	{
+		id: 'beastborn_speed_increase',
+		name: 'Speed Increase',
+		description: 'Your Speed increases by 1 Space.',
+		cost: 1,
+		effects: [{ type: 'MODIFY_STAT', target: 'moveSpeed', value: 1 }]
 	}
 ];
 

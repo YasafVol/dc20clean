@@ -1350,6 +1350,295 @@ export const traitsData: Trait[] = [
 		description: 'Your Speed increases by 1 Space.',
 		cost: 1,
 		effects: [{ type: 'MODIFY_STAT', target: 'moveSpeed', value: 1 }]
+	},
+
+	// Additional Beastborn Traits (Part 1)
+	{
+		id: 'beastborn_extended_natural_weapon',
+		name: 'Extended Natural Weapon',
+		description: 'Your Natural Weapon now has the Reach Property.',
+		cost: 2,
+		prerequisites: ['beastborn_natural_weapon'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'extended_natural_weapon', value: 'Natural Weapon gains Reach Property.' }]
+	},
+	{
+		id: 'beastborn_fast_reflexes',
+		name: 'Fast Reflexes',
+		description:
+			'You gain ADV on Initiative Checks and on the first Attack Check you make in Combat.',
+		cost: 2,
+		effects: [
+			{ type: 'GRANT_ADV_ON_CHECK', target: 'Initiative', value: true },
+			{ type: 'GRANT_ABILITY', target: 'first_attack_adv', value: 'ADV on first Attack Check in Combat.' }
+		]
+	},
+	{
+		id: 'beastborn_flyby',
+		name: 'Flyby',
+		description: 'You don\'t provoke Opportunity Attacks when you Fly out of an enemy\'s reach.',
+		cost: 1,
+		prerequisites: ['beastborn_limited_flight'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'flyby', value: 'No Opportunity Attacks when flying out of reach.' }]
+	},
+	{
+		id: 'beastborn_full_flight',
+		name: 'Full Flight',
+		description: 'You have a Fly Speed equal to your Ground Speed.',
+		cost: 2,
+		prerequisites: ['beastborn_limited_flight'],
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'fly', value: 'equal_to_speed' }]
+	},
+	{
+		id: 'beastborn_glide_speed',
+		name: 'Glide Speed',
+		description:
+			'You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren\'t Incapacitated, you gain the following benefits while in the air: Controlled Falling: You suffer no damage from Controlled Falling. Altitude Drop: If you end your turn midair, you Controlled Fall 4 Spaces. Glide Speed: You can use your movement to glide horizontally.',
+		cost: 2,
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'wings' }]
+	},
+	{
+		id: 'beastborn_hard_shell',
+		name: 'Hard Shell',
+		description:
+			'You have a large shell around your body for protection. Your AD increases by 1 (while you\'re not wearing Armor), your Movement Speed decreases by 1, and you\'re immune to being Flanked.',
+		cost: 1,
+		prerequisites: ['beastborn_thick_skinned'],
+		effects: [
+			{ type: 'MODIFY_STAT', target: 'ad', value: 1, condition: 'not_wearing_armor' },
+			{ type: 'MODIFY_STAT', target: 'moveSpeed', value: -1 },
+			{ type: 'GRANT_ABILITY', target: 'immune_flanking', value: 'Immune to being Flanked.' }
+		]
+	},
+	{
+		id: 'beastborn_hazardous_hide',
+		name: 'Hazardous Hide',
+		description:
+			'You have spikes, retractable barbs, poisonous skin, or some other form of defense mechanism to keep creatures from touching you. Choose 1 of the following damage types: Corrosion, Piercing, or Poison. While you are physically Grappled, your Grappler takes 1 damage of the chosen type at the start of each of its turns. Creatures that start their turn Grappled by you also take this damage.',
+		cost: 1,
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'hazardous_hide',
+				value: 'Grapplers take 1 damage (chosen type) per turn.',
+				userChoice: { prompt: 'Choose damage type: Corrosion, Piercing, or Poison' }
+			}
+		]
+	},
+	{
+		id: 'beastborn_intimidating_shout',
+		name: 'Intimidating Shout',
+		description:
+			'Once per Combat, you can spend 1 AP to let out an Intimidating Shout. All creatures within 5 Spaces that can hear you must make a Charisma Save contested by your Attack Check. Failure: A target is Hindered on the next Attack Check or Spell Attack it makes before the start of your next turn.',
+		cost: 2,
+		effects: [{ type: 'GRANT_ABILITY', target: 'intimidating_shout', value: 'Once per Combat, 1 AP: AoE Hinder effect (5 Spaces).' }]
+	},
+
+	// Additional Beastborn Traits (Part 2)
+	{
+		id: 'beastborn_jumper',
+		name: 'Jumper',
+		description:
+			'Your Jump Distance increases by 2, and you can take the Jump Action as a Minor Action.',
+		cost: 1,
+		effects: [
+			{ type: 'GRANT_ABILITY', target: 'increased_jump', value: 'Jump Distance +2.' },
+			{ type: 'GRANT_ABILITY', target: 'jump_minor_action', value: 'Jump Action as Minor Action.' }
+		]
+	},
+	{
+		id: 'beastborn_limited_flight',
+		name: 'Limited Flight',
+		description:
+			'You have a set of wings that grant you limited flight. Provided you aren\'t Incapacitated, you gain the following benefits: Vertical Ascent: You can spend 2 Spaces of movement to ascend 1 Space vertically. Hover: When you end your turn in the air, you maintain your altitude.',
+		cost: 2,
+		prerequisites: ['beastborn_glide_speed'],
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'limited_flight', value: 'vertical_ascent_hover' }]
+	},
+	{
+		id: 'beastborn_long_limbed',
+		name: 'Long-Limbed',
+		description: 'When you make a Melee Martial Attack, your reach is 1 Space greater than normal.',
+		cost: 3,
+		effects: [{ type: 'GRANT_ABILITY', target: 'long_limbed', value: 'Melee reach +1 Space.' }]
+	},
+	{
+		id: 'beastborn_mimicry',
+		name: 'Mimicry',
+		description:
+			'You can mimic simple sounds that you\'ve heard (such as a baby\'s crying, the creak of a door, or single words) and repeat short 3 word phrases that sound identical to what you heard. A creature can make an Insight Check contested by your Trickery Check to determine if this sound is real.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'mimicry', value: 'Mimic simple sounds and 3-word phrases (Trickery vs Insight).' }]
+	},
+	{
+		id: 'beastborn_natural_projectile',
+		name: 'Natural Projectile',
+		description:
+			'You can use your Natural Weapon to make a Ranged Martial Attack with a Range of 10 Spaces. The Natural Weapon might produce a spine, barb, fluid, or other harmful projectile (your choice).',
+		cost: 1,
+		prerequisites: ['beastborn_natural_weapon'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'natural_projectile', value: 'Natural Weapon ranged attack (10 Spaces).' }]
+	},
+	{
+		id: 'beastborn_natural_weapon_passive',
+		name: 'Natural Weapon Passive',
+		description:
+			'You can choose 1 Weapon Style that fits your desired Natural Weapon. You can benefit from the chosen Weapon Style\'s passive with your Natural Weapon.',
+		cost: 1,
+		prerequisites: ['beastborn_natural_weapon'],
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'weapon_style_passive',
+				value: 'Natural Weapon gains chosen Weapon Style passive.',
+				userChoice: { prompt: 'Choose a Weapon Style' }
+			}
+		]
+	},
+	{
+		id: 'beastborn_powerful_build',
+		name: 'Powerful Build',
+		description: 'You increase by 1 Size, but you occupy the Space of a creature 1 Size smaller.',
+		cost: 2,
+		effects: [{ type: 'GRANT_ABILITY', target: 'powerful_build', value: '+1 Size but occupy smaller space.' }]
+	},
+	{
+		id: 'beastborn_prehensile_appendage',
+		name: 'Prehensile Appendage',
+		description:
+			'You have a prehensile tail or trunk that has a reach of 1 Space and can lift up an amount of pounds equal to your Might times 5 (or half as many kilograms). You can use it to lift, hold, or drop objects, and to push, pull, or grapple creatures. It can\'t wield Weapons or Shields, you can\'t use tools with it that require manual precision, and you can\'t use it in place of Somatic Components for Spells.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'prehensile_appendage', value: 'Prehensile tail/trunk (1 Space reach, Might×5 lbs capacity).' }]
+	},
+
+	// Additional Beastborn Traits (Part 3 - Final)
+	{
+		id: 'beastborn_prowler',
+		name: 'Prowler',
+		description: 'You have ADV on Stealth Checks while in Darkness.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'Stealth', value: 'while_in_darkness' }]
+	},
+	{
+		id: 'beastborn_quick_reactions',
+		name: 'Quick Reactions',
+		description: 'While you aren\'t wearing Armor, you gain +1 PD.',
+		cost: 1,
+		effects: [{ type: 'MODIFY_STAT', target: 'pd', value: 1, condition: 'not_wearing_armor' }]
+	},
+	{
+		id: 'beastborn_reckless',
+		name: 'Reckless',
+		description: 'Your PD decreases by 1.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'MODIFY_STAT', target: 'pd', value: -1 }]
+	},
+	{
+		id: 'beastborn_rend',
+		name: 'Rend',
+		description:
+			'You can spend 1 AP when making an Attack Check with your Natural Weapon to force the target to make a Physical Save. Failure: Target begins Bleeding.',
+		cost: 1,
+		prerequisites: ['beastborn_natural_weapon'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'rend', value: '1 AP: Natural Weapon causes Bleeding (Physical Save).' }]
+	},
+	{
+		id: 'beastborn_retractable_natural_weapon',
+		name: 'Retractable Natural Weapon',
+		description:
+			'Your Natural Weapon is able to be concealed or retracted and gains the Concealable Property (gain ADV on the first Attack Check you make in Combat).',
+		cost: 1,
+		prerequisites: ['beastborn_natural_weapon'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'retractable_weapon', value: 'Natural Weapon gains Concealable Property.' }]
+	},
+	{
+		id: 'beastborn_secondary_arms',
+		name: 'Secondary Arms',
+		description:
+			'You have 2 slightly smaller secondary arms below your primary pair of arms. They function just like your primary arms, but they can\'t wield Weapons with the Heavy Property or Shields.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'secondary_arms', value: '2 secondary arms (no Heavy weapons or Shields).' }]
+	},
+	{
+		id: 'beastborn_spider_climb',
+		name: 'Spider Climb',
+		description:
+			'You can walk without falling on the ceiling and vertical surfaces normally without needing to Climb.',
+		cost: 1,
+		prerequisites: ['beastborn_climb_speed'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'spider_climb', value: 'Walk on vertical surfaces and ceilings.' }]
+	},
+	{
+		id: 'beastborn_sprint',
+		name: 'Sprint',
+		description:
+			'You can use your Minor Action to take the Move Action. Once you use this Trait, you can\'t use it again until you take a turn without taking the Move Action.',
+		cost: 2,
+		effects: [{ type: 'GRANT_ABILITY', target: 'sprint', value: 'Move Action as Minor Action (cooldown: no Move Action).' }]
+	},
+	{
+		id: 'beastborn_thick_skinned',
+		name: 'Thick-Skinned',
+		description: 'While you aren\'t wearing Armor, you gain +1 AD.',
+		cost: 1,
+		effects: [{ type: 'MODIFY_STAT', target: 'ad', value: 1, condition: 'not_wearing_armor' }]
+	},
+	{
+		id: 'beastborn_tough',
+		name: 'Tough',
+		description: 'Your HP maximum increases by 2.',
+		cost: 1,
+		effects: [{ type: 'MODIFY_STAT', target: 'hp', value: 2 }]
+	},
+	{
+		id: 'beastborn_toxic_fortitude',
+		name: 'Toxic Fortitude',
+		description: 'You have Poison Resistance (Half) and ADV on Saves against being Poisoned.',
+		cost: 2,
+		effects: [
+			{ type: 'GRANT_RESISTANCE', target: 'Poison', value: 'half' },
+			{ type: 'GRANT_ADV_ON_SAVE', target: 'Poisoned', value: true }
+		]
+	},
+	{
+		id: 'beastborn_venomous_natural_weapon',
+		name: 'Venomous Natural Weapon',
+		description:
+			'You can spend 1 AP when making an Attack Check with your Natural Weapon to force the target to make a Physical Save. Failure: Target becomes Poisoned for 1 minute.',
+		cost: 1,
+		prerequisites: ['beastborn_natural_weapon'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'venomous_weapon', value: '1 AP: Natural Weapon causes Poisoned (Physical Save, 1 minute).' }]
+	},
+	{
+		id: 'beastborn_water_breathing',
+		name: 'Water Breathing',
+		description: 'You can breathe both air and water.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'water_breathing', value: 'Breathe air and water.' }]
+	},
+	{
+		id: 'beastborn_web_walk',
+		name: 'Web Walk',
+		description: 'You ignore movement restrictions caused by webs.',
+		cost: 0,
+		isMinor: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'web_walk', value: 'Ignore web movement restrictions.' }]
+	},
+	{
+		id: 'beastborn_winged_arms',
+		name: 'Winged Arms',
+		description: 'Your arms are replaced by wings. You can\'t hold items with your hands while using your wings for flight.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'winged_arms', value: 'Arms are wings (can\'t hold items while flying).' }]
+	},
+	{
+		id: 'beastborn_short_legged',
+		name: 'Short-Legged',
+		description: 'Your Speed decreases by 1 Space.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'MODIFY_STAT', target: 'moveSpeed', value: -1 }]
 	}
 ];
 

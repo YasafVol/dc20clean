@@ -64,9 +64,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 
 	const steps = [
 		{ number: 1, label: 'Class & Features' },
-		{ number: 2, label: 'Attributes' },
-		{ number: 3, label: 'Background' },
-		{ number: 4, label: 'Ancestry' },
+		{ number: 2, label: 'Ancestry' },
+		{ number: 3, label: 'Attributes' },
+		{ number: 4, label: 'Background' },
 		{ number: 5, label: 'Spells & Maneuvers' },
 		{ number: 6, label: 'Character Name' }
 	];
@@ -197,8 +197,10 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 				return true;
 			}
 			case 2:
+				return state.ancestry1Id !== null && ancestryPointsRemaining >= 0;
+			case 3:
 				return attributePointsRemaining === 0;
-			case 3: {
+			case 4: {
 				// Background: check if ALL available points have been spent
 				// Parse current selections
 				let skillPointsUsed = 0;
@@ -269,8 +271,6 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 
 				return hasExactlySpentAllSkillPoints && hasSpentSomeTradeOrLanguagePoints;
 			}
-			case 4:
-				return state.ancestry1Id !== null && ancestryPointsRemaining >= 0;
 			case 5:
 				// Spells & Maneuvers step - validate based on class requirements
 				if (!state.classId) return false;
@@ -357,16 +357,16 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 					</>
 				);
 			case 2:
-				return <Attributes />;
-			case 3:
-				return <Background />;
-			case 4:
 				return (
 					<>
 						<AncestrySelector />
 						<SelectedAncestries />
 					</>
 				);
+			case 3:
+				return <Attributes />;
+			case 4:
+				return <Background />;
 			case 5:
 				return <SpellsAndManeuvers />;
 			case 6:

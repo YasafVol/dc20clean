@@ -206,12 +206,62 @@ const getCharacterData = async (characterId: string): Promise<CharacterSheetData
 		fixedCharacter.finalCombatMastery = Math.ceil((fixedCharacter.finalLevel || 1) / 2);
 	}
 
-	// Return the fixed character data
-	return {
-		...fixedCharacter,
-		selectedTraitIds: fixedCharacter.selectedTraitIds || fixedCharacter.selectedTraitsJson || '[]',
-		selectedFeatureChoices: fixedCharacter.selectedFeatureChoices || '{}'
-	};
+	// Try to enhance character data with calculator results
+	try {
+		console.log('🧮 Running enhanced calculator for character data...');
+		const mockBuildData = {
+			id: fixedCharacter.id,
+			finalName: fixedCharacter.finalName || '',
+			level: fixedCharacter.finalLevel || 1,
+			attribute_might: fixedCharacter.finalMight || 0,
+			attribute_agility: fixedCharacter.finalAgility || 0,
+			attribute_charisma: fixedCharacter.finalCharisma || 0,
+			attribute_intelligence: fixedCharacter.finalIntelligence || 0,
+			combatMastery: fixedCharacter.finalCombatMastery || 1,
+			classId: fixedCharacter.classId || '',
+			ancestry1Id: fixedCharacter.ancestry1Id,
+			ancestry2Id: fixedCharacter.ancestry2Id,
+			selectedTraitIds: sanitizeJsonField(fixedCharacter.selectedTraitIds, 'selectedTraitIds', []),
+			selectedTraitChoices: sanitizeJsonField(fixedCharacter.selectedTraitChoices, 'selectedTraitChoices', {}),
+			featureChoices: sanitizeJsonField(fixedCharacter.selectedFeatureChoices, 'selectedFeatureChoices', {}),
+			skillsJson: fixedCharacter.skillsJson || '{}',
+			tradesJson: fixedCharacter.tradesJson || '{}',
+			languagesJson: fixedCharacter.languagesJson || '{}',
+			lastModified: Date.now()
+		};
+
+		const enhancedData = convertToEnhancedBuildData(mockBuildData);
+		const result = calculateCharacterWithBreakdowns(enhancedData);
+
+		console.log('✅ Enhanced calculator success! Movement values:', {
+			moveSpeed: result.stats.finalMoveSpeed,
+			jumpDistance: result.stats.finalJumpDistance,
+			storedMoveSpeed: fixedCharacter.finalMoveSpeed,
+			storedJumpDistance: fixedCharacter.finalJumpDistance
+		});
+
+		// Return enhanced character data with calculated values
+		return {
+			...fixedCharacter,
+			// Override with calculated values
+			finalMoveSpeed: result.stats.finalMoveSpeed,
+			finalJumpDistance: result.stats.finalJumpDistance,
+			finalHPMax: result.stats.finalHPMax,
+			finalSPMax: result.stats.finalSPMax,
+			finalMPMax: result.stats.finalMPMax,
+			// Keep original fields for compatibility
+			selectedTraitIds: fixedCharacter.selectedTraitIds || fixedCharacter.selectedTraitsJson || '[]',
+			selectedFeatureChoices: fixedCharacter.selectedFeatureChoices || '{}'
+		};
+	} catch (error) {
+		console.warn('⚠️ Enhanced calculator failed, using stored values:', error);
+		// Return the fixed character data as fallback
+		return {
+			...fixedCharacter,
+			selectedTraitIds: fixedCharacter.selectedTraitIds || fixedCharacter.selectedTraitsJson || '[]',
+			selectedFeatureChoices: fixedCharacter.selectedFeatureChoices || '{}'
+		};
+	}
 };
 
 // Save manual defense overrides to localStorage

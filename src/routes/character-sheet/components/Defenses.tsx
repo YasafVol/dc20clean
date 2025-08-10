@@ -238,7 +238,13 @@ const Defenses: React.FC<DefensesProps> = ({
 								placeholder={characterData.finalPD.toString()}
 							/>
                         ) : (
-                            <Tooltip content={createEnhancedDefenseTooltip('PD', characterData)}>
+                            <Tooltip 
+                                content={
+                                    breakdowns?.defense_PD
+                                        ? createEnhancedDefenseTooltip(breakdowns.defense_PD, 'PD')
+                                        : getTooltip('PD')
+                                }
+                            >
                                 <ShieldValue>{characterData.finalPD}</ShieldValue>
                             </Tooltip>
                         )}
@@ -278,7 +284,13 @@ const Defenses: React.FC<DefensesProps> = ({
 								placeholder={(characterData.finalPDR || 0).toString()}
 							/>
                         ) : (
-                            <Tooltip content={createEnhancedDefenseTooltip('PD', characterData)}>
+                            <Tooltip 
+                                content={
+                                    breakdowns?.defense_PDR
+                                        ? createEnhancedDefenseTooltip(breakdowns.defense_PDR, 'PDR')
+                                        : getTooltip('PDR')
+                                }
+                            >
                                 <ShieldValue>{characterData.finalPDR || 0}</ShieldValue>
                             </Tooltip>
                         )}
@@ -321,7 +333,13 @@ const Defenses: React.FC<DefensesProps> = ({
 								placeholder={characterData.finalAD.toString()}
 							/>
                         ) : (
-                            <Tooltip content={createEnhancedDefenseTooltip('AD', characterData)}>
+                            <Tooltip 
+                                content={
+                                    breakdowns?.defense_AD
+                                        ? createEnhancedDefenseTooltip(breakdowns.defense_AD, 'AD')
+                                        : getTooltip('AD')
+                                }
+                            >
                                 <ShieldValue>{characterData.finalAD}</ShieldValue>
                             </Tooltip>
                         )}

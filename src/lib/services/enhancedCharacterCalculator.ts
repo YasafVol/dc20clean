@@ -559,6 +559,19 @@ export function calculateCharacterWithBreakdowns(
   // Calculate prime attribute first
   const maxValue = Math.max(finalMight, finalAgility, finalCharisma, finalIntelligence);
   
+  // Calculate other derived stats first
+  const finalSaveDC = 8 + combatMastery + maxValue;
+  const finalSaveMight = finalMight + combatMastery;
+  const finalSaveAgility = finalAgility + combatMastery;
+  const finalSaveCharisma = finalCharisma + combatMastery;
+  const finalSaveIntelligence = finalIntelligence + combatMastery;
+  const finalDeathThreshold = maxValue + combatMastery; // Prime + Combat Mastery (usually -4)
+  const finalMoveSpeed = 5 + resolvedEffects.filter(e => e.type === 'MODIFY_STAT' && e.target === 'moveSpeed').reduce((sum, e) => sum + (e.value as number), 0);
+  const finalJumpDistance = finalAgility + resolvedEffects.filter(effect => effect.type === 'MODIFY_STAT' && effect.target === 'jumpDistance').reduce((sum, effect) => sum + (effect.value as number), 0);
+  const finalRestPoints = finalHPMax; // Rest Points = HP
+  const finalGritPoints = Math.max(0, 2 + finalCharisma); // 2 + Charisma (minimum 0)
+  const finalInitiativeBonus = finalAgility;
+  
   // Create breakdowns for derived stats
   breakdowns.hpMax = createStatBreakdown('hpMax', finalHPMax, resolvedEffects);
   breakdowns.spMax = createStatBreakdown('spMax', finalSPMax, resolvedEffects);
@@ -583,18 +596,6 @@ export function calculateCharacterWithBreakdowns(
   const primeAttribute = ['might', 'agility', 'charisma', 'intelligence'].find(attr => {
     return breakdowns[`attribute_${attr}`].total === maxValue;
   }) || 'might';
-  
-  const finalSaveDC = 8 + combatMastery + maxValue;
-  const finalSaveMight = finalMight + combatMastery;
-  const finalSaveAgility = finalAgility + combatMastery;
-  const finalSaveCharisma = finalCharisma + combatMastery;
-  const finalSaveIntelligence = finalIntelligence + combatMastery;
-  const finalDeathThreshold = maxValue + combatMastery; // Prime + Combat Mastery (usually -4)
-  const finalMoveSpeed = 5 + resolvedEffects.filter(e => e.type === 'MODIFY_STAT' && e.target === 'moveSpeed').reduce((sum, e) => sum + (e.value as number), 0);
-  const finalJumpDistance = finalAgility + resolvedEffects.filter(effect => effect.type === 'MODIFY_STAT' && effect.target === 'jumpDistance').reduce((sum, effect) => sum + (effect.value as number), 0);
-  const finalRestPoints = finalHPMax; // Rest Points = HP
-  const finalGritPoints = Math.max(0, 2 + finalCharisma); // 2 + Charisma (minimum 0)
-  const finalInitiativeBonus = finalAgility;
   
   // 5. Validation
   const attributeLimits = validateAttributeLimits(buildData, resolvedEffects);

@@ -156,3 +156,106 @@ Legend: ✅ = used in runtime · 🟡 = exists but not wired
 
 Each area will receive the same treatment as Rules-Data: inventory → status matrix → gap list → tasks.  
 (☑ Marks will move as iterations complete.)
+
+---
+
+# Iteration 2 – Other Sub-Systems Deep Dives
+
+## 2.5  State Management
+
+### 2.5.1 Landscape
+* **React Context** – `src/lib/stores/characterContext.tsx` (current source of truth)
+* **Legacy Svelte Store** – `src/lib/stores/characterInProgressStore.ts` (`:::legacy`)
+* **Calculation Hooks** – `src/lib/hooks/*` (derive memoised stats)
+
+### 2.5.2 Status Matrix
+| Component | File(s) | Tested | Runtime | Notes |
+|-----------|---------|--------|---------|-------|
+| Character Context (React) | `characterContext.tsx` | ⬜ | ✅ | central reducer
+| Svelte Store | `characterInProgressStore.ts` | ⬜ | ✅ | keeps legacy consumers alive
+| Derived Hooks | `useAttributeCalculation.ts`… | ⬜ | ✅ | rely on context values
+
+### 2.5.3 Gaps & Tasks
+1. **Consolidate** – migrate final legacy consumers to React Context, then delete Svelte store.
+2. **Reducer Tests** – property-based Vitest for action sequences.
+3. **Devtool tracing** – add `why-did-you-render` / React DevTools notes.
+
+---
+
+## 2.6  Services
+
+### 2.6.1 Landscape
+* **Legacy Calculator** – `src/lib/services/characterCalculator.ts`
+* **Enhanced Calculator** – `enhancedCharacterCalculator.ts` (new formulae)
+* **Effect Processor (planned)** – `_backup/_new_schema/effectProcessor.ts`
+* **CharacterCompletion / spellAssignment / dataMapping** – support services
+
+### 2.6.2 Status Matrix
+| Service | File | Tested | Status |
+|---------|------|--------|--------|
+| characterCalculator (legacy) | `characterCalculator.ts` | ✅ (snapshot) | production |
+| enhancedCharacterCalculator | `enhancedCharacterCalculator.ts` | ⬜ | prototype |
+| effectProcessor | `_backup/_new_schema/effectProcessor.ts` | ⬜ | planned |
+
+### 2.6.3 Gaps & Tasks
+1. Finish **effectProcessor** and integrate with enhanced calculator.
+2. Decide **single source of truth** (legacy vs enhanced) via feature flag.
+3. Snapshot regression tests for each archetype build.
+
+---
+
+## 2.7  Persistence / API
+
+### 2.7.1 Landscape
+* **Prisma** – `schema.prisma`, migrations folder
+* **API Routes** – `src/api/character/[characterId].ts`
+* **Route Backups** – `src/routes/api/_backup/*`
+* **Auth Service** – `src/lib/server/auth.ts`
+
+### 2.7.2 Status Matrix
+| Layer | File / Path | Tested | Observations |
+|-------|-------------|--------|--------------|
+| Prisma schema | `prisma/schema.prisma` | ⬜ | generates client successfully |
+| REST endpoint | `src/api/character/[characterId].ts` | ⬜ | minimal validation |
+| SvelteKit route backups | `routes/api/_backup` | ⬜ | legacy, not mounted |
+
+### 2.7.3 Gaps & Tasks
+1. Add **contract tests** (Vitest + supertest) for `/api/character/:id` CRUD.
+2. Write **migration sanity test** that spins up `docker-compose`, runs prisma migrate, and ensures tables exist.
+3. Remove obsolete SvelteKit backup routes or document migration.
+
+---
+
+## 2.8  Testing
+
+### 2.8.1 Current Assets
+* **Unit** – `src/demo.spec.ts` (basic calc demo)
+* **E2E** – `e2e/demo.test.ts` (happy-path character creation)
+
+### 2.8.2 Coverage Summary
+* Lines with tests ≈ **5 %** of codebase.
+* No tests for context, new loaders, API endpoints, or UI edge-cases.
+
+### 2.8.3 Gaps & Tasks
+1. Target **25 %** line coverage by end of Q3.
+2. Add **Playwright journey** that creates character → saves → reloads sheet.
+3. Use **Vitest snapshots** for rule-data schemas.
+4. Configure **CI** to fail under coverage threshold.
+
+---
+
+## 2.9  Build / DevOps
+
+### 2.9.1 Landscape
+* **Vite** build with React plugin
+* **Docker-compose** for Postgres (`docker-compose.yml`)
+* **No CI config yet** (GitHub Actions / Railway, etc.)
+
+### 2.9.2 Gaps & Tasks
+1. Add **GitHub Actions** workflow: install → lint → test → build.
+2. Split Vite chunks via `manualChunks` (bundle warn >500 kB).
+3. Document **env var matrix** (local vs prod vs preview).
+
+---
+
+> _End of Iteration 2 additions_

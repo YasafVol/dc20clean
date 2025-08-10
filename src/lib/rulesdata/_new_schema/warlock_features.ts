@@ -1,8 +1,7 @@
 import type { ClassDefinition } from '../schemas/character.schema';
 
 export const warlockClass: ClassDefinition = {
-	id: 'warlock',
-	name: 'Warlock',
+	className: 'Warlock',
 	startingEquipment: {
 		weaponsOrShields: ['2 Weapons'],
 		armor: '1 set of Light Armor',

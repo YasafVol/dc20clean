@@ -1,8 +1,7 @@
 import type { ClassDefinition } from '../schemas/character.schema';
 
 export const monkClass: ClassDefinition = {
-	id: 'monk',
-	name: 'Monk',
+	className: 'Monk',
 	startingEquipment: {
 		weaponsOrShields: ['2 Weapons', '3 Weapons with the Toss or Thrown Property'],
 		armor: '1 set of Light Armor',

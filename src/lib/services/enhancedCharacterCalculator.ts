@@ -53,6 +53,23 @@ import { tradesData } from '../rulesdata/trades';
 import type { Effect, ClassDefinition } from '../rulesdata/schemas/character.schema';
 
 /**
+ * Safe JSON parse with fallback
+ */
+function safeJsonParse<T>(jsonString: string | undefined | null, fallback: T): T {
+  if (!jsonString || typeof jsonString !== 'string') {
+    return fallback;
+  }
+  
+  try {
+    const parsed = JSON.parse(jsonString);
+    return parsed !== null && parsed !== undefined ? parsed : fallback;
+  } catch (error) {
+    console.warn('Failed to parse JSON:', jsonString, 'Error:', error);
+    return fallback;
+  }
+}
+
+/**
  * Convert character context data to enhanced build data
  */
 export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterBuildData {
@@ -73,9 +90,9 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
     ancestry1Id: contextData.ancestry1Id,
     ancestry2Id: contextData.ancestry2Id,
     
-    selectedTraitIds: JSON.parse(contextData.selectedTraitIds || '[]'),
-    selectedTraitChoices: JSON.parse(contextData.selectedTraitChoices || '{}'),
-    featureChoices: JSON.parse(contextData.selectedFeatureChoices || '{}'),
+    selectedTraitIds: safeJsonParse(contextData.selectedTraitIds, []),
+    selectedTraitChoices: safeJsonParse(contextData.selectedTraitChoices, {}),
+    featureChoices: safeJsonParse(contextData.selectedFeatureChoices, {}),
     
     skillsJson: contextData.skillsJson || '{}',
     tradesJson: contextData.tradesJson || '{}',

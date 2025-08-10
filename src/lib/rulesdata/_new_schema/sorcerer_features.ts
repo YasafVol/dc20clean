@@ -1,8 +1,7 @@
 import type { ClassDefinition } from '../schemas/character.schema';
 
 export const sorcererClass: ClassDefinition = {
-	id: 'sorcerer',
-	name: 'Sorcerer',
+	className: 'Sorcerer',
 	startingEquipment: {
 		weaponsOrShields: ['2 Weapons'],
 		armor: '1 set of Light Armor',

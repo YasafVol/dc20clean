@@ -27,6 +27,27 @@ import {
 } from '../../lib/utils/weaponUtils';
 import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from '../../lib/services/enhancedCharacterCalculator';
 
+// Helper function to safely parse JSON with data sanitization
+function sanitizeJsonField(value: any, fieldName: string, fallback: any): any {
+	if (!value) return fallback;
+	
+	// If it's already parsed, return as-is
+	if (typeof value !== 'string') return value;
+	
+	// If it doesn't look like JSON, return fallback
+	if (!value.startsWith('[') && !value.startsWith('{')) {
+		console.warn(`🔧 Sanitizing corrupted ${fieldName}:`, value, '→ using fallback:', fallback);
+		return fallback;
+	}
+	
+	try {
+		return JSON.parse(value);
+	} catch (error) {
+		console.warn(`🔧 Failed to parse ${fieldName}:`, value, 'Error:', error, '→ using fallback:', fallback);
+		return fallback;
+	}
+}
+
 // Import new component modules
 import LeftColumn from './components/LeftColumn';
 import Currency from './components/Currency';
@@ -476,18 +497,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					classId: characterData.classId || '',
 					ancestry1Id: characterData.ancestry1Id,
 					ancestry2Id: characterData.ancestry2Id,
-					selectedTraitIds: (() => {
-						try { return JSON.parse(characterData.selectedTraitIds || '[]'); }
-						catch { return []; }
-					})(),
-					selectedTraitChoices: (() => {
-						try { return JSON.parse(characterData.selectedTraitChoices || '{}'); }
-						catch { return {}; }
-					})(),
-					featureChoices: (() => {
-						try { return JSON.parse(characterData.selectedFeatureChoices || '{}'); }
-						catch { return {}; }
-					})(),
+					selectedTraitIds: sanitizeJsonField(characterData.selectedTraitIds, 'selectedTraitIds', []),
+					selectedTraitChoices: sanitizeJsonField(characterData.selectedTraitChoices, 'selectedTraitChoices', {}),
+					featureChoices: sanitizeJsonField(characterData.selectedFeatureChoices, 'selectedFeatureChoices', {}),
 					skillsJson: characterData.skillsJson || '{}',
 					tradesJson: characterData.tradesJson || '{}',
 					languagesJson: characterData.languagesJson || '{}',

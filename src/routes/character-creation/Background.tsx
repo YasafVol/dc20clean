@@ -20,12 +20,10 @@ const Background: React.FC = () => {
 	const { state, dispatch } = useCharacter();
 	const [activeTab, setActiveTab] = React.useState<TabType>('skills');
 
-	// Parse current selections
-	const currentSkills = state.skillsJson ? JSON.parse(state.skillsJson) : {};
-	const currentTrades = state.tradesJson ? JSON.parse(state.tradesJson) : {};
-	const currentLanguages = state.languagesJson
-		? JSON.parse(state.languagesJson)
-		: { common: { fluency: 'fluent' } };
+	// NEW: Use typed data instead of JSON parsing
+	const currentSkills = state.skillsData || {};
+	const currentTrades = state.tradesData || {};
+	const currentLanguages = state.languagesData || { common: { fluency: 'fluent' } };
 
 	// Calculate points used
 	const skillPointsUsed = Object.values(currentSkills).reduce(
@@ -86,7 +84,7 @@ const Background: React.FC = () => {
 
 		dispatch({
 			type: 'UPDATE_SKILLS',
-			skillsJson: JSON.stringify(updatedSkills)
+			skillsData: updatedSkills
 		});
 	};
 
@@ -100,7 +98,7 @@ const Background: React.FC = () => {
 
 		dispatch({
 			type: 'UPDATE_TRADES',
-			tradesJson: JSON.stringify(updatedTrades)
+			tradesData: updatedTrades
 		});
 	};
 
@@ -114,7 +112,7 @@ const Background: React.FC = () => {
 
 		dispatch({
 			type: 'UPDATE_LANGUAGES',
-			languagesJson: JSON.stringify(updatedLanguages)
+			languagesData: updatedLanguages
 		});
 	};
 

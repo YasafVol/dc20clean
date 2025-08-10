@@ -142,9 +142,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 				const selectedClassFeatures = findClassByName(selectedClass.name);
 				if (!selectedClassFeatures) return false;
 
-				const selectedFeatureChoices: { [key: string]: string } = JSON.parse(
-					state.selectedFeatureChoices || '{}'
-				);
+				// FIXED: Use typed data instead of JSON parsing
+				const selectedFeatureChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
 
 				// Check if spell school choices are required and have been made
 				const spellList = selectedClassFeatures.spellcastingPath?.spellList;
@@ -154,7 +153,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 						const choiceId = `${selectedClassFeatures.className.toLowerCase()}_spell_schools`;
 						const choice = selectedFeatureChoices[choiceId];
 						if (!choice) return false;
-						const selectedSchools = JSON.parse(choice);
+						// FIXED: Handle both array (new) and JSON string (legacy) formats
+						const selectedSchools = Array.isArray(choice) ? choice : JSON.parse(choice);
 						if (selectedSchools.length !== spellList.schoolCount) return false;
 					}
 
@@ -216,55 +216,40 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 				let tradePointsUsed = 0;
 				let languagePointsUsed = 0;
 
-				try {
-					if (state.skillsJson && state.skillsJson !== '{}') {
-						const skills = JSON.parse(state.skillsJson) as Record<string, number>;
-						skillPointsUsed = Object.values(skills).reduce(
-							(sum: number, level: number) => sum + level,
-							0
-						);
-					}
-				} catch (e) {
-					// Ignore parsing errors
+				// FIXED: Use typed skillsData instead of JSON parsing
+				if (state.skillsData && Object.keys(state.skillsData).length > 0) {
+					skillPointsUsed = Object.values(state.skillsData).reduce(
+						(sum: number, level: number) => sum + level,
+						0
+					);
 				}
 
-				try {
-					if (state.tradesJson && state.tradesJson !== '{}') {
-						const trades = JSON.parse(state.tradesJson) as Record<string, number>;
-						tradePointsUsed = Object.values(trades).reduce(
-							(sum: number, level: number) => sum + level,
-							0
-						);
-					}
-				} catch (e) {
-					// Ignore parsing errors
+				// FIXED: Use typed tradesData instead of JSON parsing
+				if (state.tradesData && Object.keys(state.tradesData).length > 0) {
+					tradePointsUsed = Object.values(state.tradesData).reduce(
+						(sum: number, level: number) => sum + level,
+						0
+					);
 				}
 
-				try {
-					if (state.languagesJson && state.languagesJson !== '{}') {
-						const languages = JSON.parse(state.languagesJson) as Record<
-							string,
-							{ fluency?: string }
-						>;
-						languagePointsUsed = Object.entries(languages).reduce(
-							(sum, [langId, data]: [string, { fluency?: string }]) => {
-								if (langId === 'common') return sum; // Common is free
-								return (
-									sum +
-									(data.fluency === 'basic'
-										? 1
-										: data.fluency === 'advanced'
-											? 2
-											: data.fluency === 'fluent'
-												? 3
-												: 0)
-								);
-							},
-							0
-						);
-					}
-				} catch (e) {
-					// Ignore parsing errors
+				// FIXED: Use typed languagesData instead of JSON parsing
+				if (state.languagesData && Object.keys(state.languagesData).length > 0) {
+					languagePointsUsed = Object.entries(state.languagesData).reduce(
+						(sum, [langId, data]: [string, { fluency?: string }]) => {
+							if (langId === 'common') return sum; // Common is free
+							return (
+								sum +
+								(data.fluency === 'basic'
+									? 1
+									: data.fluency === 'advanced'
+										? 2
+										: data.fluency === 'fluent'
+											? 3
+											: 0)
+							);
+						},
+						0
+					);
 				}
 
                 // Available points should match BackgroundPointsManager (include bonus points and conversions)
@@ -273,12 +258,11 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
                 // Calculate bonus skill points from traits and class features (same logic as BackgroundPointsManager)
                 let bonusSkillPoints = 0;
                 
-                // From traits
-                if (state.selectedTraitIds) {
-                    try {
-                        const selectedTraitIdsList: string[] = JSON.parse(state.selectedTraitIds);
-                        
-                        selectedTraitIdsList.forEach((traitId: string) => {
+                // From traits - FIXED: Use typed data instead of JSON parsing
+                if (state.selectedTraitIds && Array.isArray(state.selectedTraitIds)) {
+                    const selectedTraitIdsList: string[] = state.selectedTraitIds;
+                    
+                    selectedTraitIdsList.forEach((traitId: string) => {
                             const trait = traitsData.find((t: any) => t.id === traitId);
                             if (trait) {
                                 trait.effects.forEach((effect: any) => {
@@ -288,9 +272,6 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
                                 });
                             }
                         });
-                    } catch (error) {
-                        // Ignore parsing errors
-                    }
                 }
                 
                 // From class features  
@@ -300,7 +281,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
                         const classFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
                         
                         if (classFeatures) {
-                            const selectedChoices: { [key: string]: string } = JSON.parse(state.selectedFeatureChoices);
+                            // FIXED: Use typed data instead of JSON parsing
+                            const selectedChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
                             const level1Features = classFeatures.coreFeatures.filter(
                                 (feature: any) => feature.levelGained === 1
                             );
@@ -396,20 +378,25 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 				let selectedSpells: string[] = [];
 				let selectedManeuvers: string[] = [];
 
-				try {
-					if (state.selectedSpells) {
-						selectedSpells = JSON.parse(state.selectedSpells);
+				// FIXED: Handle both array (new) and JSON string (legacy) formats
+				if (state.selectedSpells) {
+					try {
+						selectedSpells = Array.isArray(state.selectedSpells) 
+							? state.selectedSpells 
+							: JSON.parse(state.selectedSpells);
+					} catch (e) {
+						selectedSpells = [];
 					}
-				} catch (e) {
-					// Ignore parsing errors
 				}
 
-				try {
-					if (state.selectedManeuvers) {
-						selectedManeuvers = JSON.parse(state.selectedManeuvers);
+				if (state.selectedManeuvers) {
+					try {
+						selectedManeuvers = Array.isArray(state.selectedManeuvers) 
+							? state.selectedManeuvers 
+							: JSON.parse(state.selectedManeuvers);
+					} catch (e) {
+						selectedManeuvers = [];
 					}
-				} catch (e) {
-					// Ignore parsing errors
 				}
 
 				// Check if class has spellcasting

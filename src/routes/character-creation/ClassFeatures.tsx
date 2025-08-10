@@ -33,24 +33,26 @@ function ClassFeatures() {
 
 	const selectedClass = classesData.find((c) => c.id.toLowerCase() === state.classId?.toLowerCase());
 	const selectedClassFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
-	const selectedFeatureChoices: { [key: string]: string } = JSON.parse(
-		state.selectedFeatureChoices || '{}'
-	);
+	// NEW: Use typed data instead of JSON parsing
+	const selectedFeatureChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
 
 	function handleFeatureChoice(choiceId: string, value: string) {
 		const currentChoices = { ...selectedFeatureChoices };
 		currentChoices[choiceId] = value;
 		dispatch({
 			type: 'SET_FEATURE_CHOICES',
-			selectedFeatureChoices: JSON.stringify(currentChoices)
+			selectedFeatureChoices: currentChoices
 		});
 	}
 
 	function handleMultipleFeatureChoice(choiceId: string, value: string, isSelected: boolean) {
 		const currentChoices = { ...selectedFeatureChoices };
-		const currentValues: string[] = currentChoices[choiceId]
-			? JSON.parse(currentChoices[choiceId])
-			: [];
+		// NEW: Handle arrays directly without JSON parsing
+		const currentValues: string[] = Array.isArray(currentChoices[choiceId])
+			? [...(currentChoices[choiceId] as any)]
+			: typeof currentChoices[choiceId] === 'string' && currentChoices[choiceId].startsWith('[')
+				? JSON.parse(currentChoices[choiceId]) // Legacy support
+				: [];
 
 		if (isSelected) {
 			// Add the value if not already present
@@ -65,10 +67,10 @@ function ClassFeatures() {
 			}
 		}
 
-		currentChoices[choiceId] = JSON.stringify(currentValues);
+		currentChoices[choiceId] = currentValues;
 		dispatch({
 			type: 'SET_FEATURE_CHOICES',
-			selectedFeatureChoices: JSON.stringify(currentChoices)
+			selectedFeatureChoices: currentChoices
 		});
 	}
 
@@ -603,8 +605,11 @@ function ClassFeatures() {
 							{choice.type === 'select_multiple' && (
 								<StyledChoiceOptions>
 									{choice.options.map((option: any) => {
+										// FIXED: Handle both array (new) and JSON string (legacy) formats
 										const currentValues: string[] = selectedFeatureChoices[choice.id]
-											? JSON.parse(selectedFeatureChoices[choice.id])
+											? (Array.isArray(selectedFeatureChoices[choice.id]) 
+												? selectedFeatureChoices[choice.id] as string[]
+												: JSON.parse(selectedFeatureChoices[choice.id]))
 											: [];
 										const isSelected = currentValues.includes(option.value);
 										const canSelect = currentValues.length < (choice.maxSelections || 999);
@@ -639,7 +644,9 @@ function ClassFeatures() {
 										<StyledOptionDescription style={{ marginTop: '8px', fontStyle: 'italic' }}>
 											Select up to {choice.maxSelections} options (
 											{selectedFeatureChoices[choice.id]
-												? JSON.parse(selectedFeatureChoices[choice.id]).length
+												? (Array.isArray(selectedFeatureChoices[choice.id]) 
+													? (selectedFeatureChoices[choice.id] as string[]).length
+													: JSON.parse(selectedFeatureChoices[choice.id]).length)
 												: 0}
 											/{choice.maxSelections} selected)
 										</StyledOptionDescription>

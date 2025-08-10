@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { useEnhancedCharacterCalculation } from '../../lib/hooks/useEnhancedCharacterCalculation';
+import { useAttributeCalculation } from '../../lib/hooks/useAttributeCalculation';
 import { attributesData } from '../../lib/rulesdata/attributes';
 import AttributePointsCounter from './AttributePointsCounter';
 import styled from '@emotion/styled';
@@ -68,6 +69,62 @@ const ValidationMessage = styled.div<{ $type: 'error' | 'warning' }>`
 	}
 `;
 
+const ForcedAdjustmentIndicator = styled.div`
+	margin-top: 0.5rem;
+	padding: 0.5rem;
+	border-radius: 4px;
+	font-size: 0.75rem;
+	background-color: #fef3c7;
+	border: 1px solid #fbbf24;
+	color: #92400e;
+	
+	&:before {
+		content: '⚠️ ';
+		margin-right: 0.25rem;
+	}
+`;
+
+const EffectiveValueDisplay = styled.div`
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-top: 0.5rem;
+	font-size: 0.875rem;
+`;
+
+const BaseValue = styled.span`
+	color: #6b7280;
+`;
+
+const EffectiveValue = styled.span<{ $different: boolean }>`
+	font-weight: ${props => props.$different ? 'bold' : 'normal'};
+	color: ${props => props.$different ? '#059669' : '#374151'};
+`;
+
+const PointBreakdownSummary = styled.div`
+	background-color: #f0f9ff;
+	border: 1px solid #0ea5e9;
+	border-radius: 6px;
+	padding: 0.75rem;
+	margin-bottom: 1rem;
+	font-size: 0.875rem;
+`;
+
+const ForcedAdjustmentsWarning = styled.div`
+	background-color: #fffbeb;
+	border: 1px solid #f59e0b;
+	border-radius: 6px;
+	padding: 0.75rem;
+	margin-bottom: 1rem;
+	font-size: 0.875rem;
+	color: #92400e;
+	
+	&:before {
+		content: '⚠️ ';
+		margin-right: 0.25rem;
+	}
+`;
+
 type AttributeState = Record<string, number>;
 
 function Attributes() {
@@ -79,6 +136,9 @@ function Attributes() {
 		validateAttributeChange,
 		getStatBreakdown
 	} = useEnhancedCharacterCalculation();
+	
+	// NEW: Use intelligent attribute calculation for real-time feedback
+	const calculation = useAttributeCalculation(state);
 	const typedState = state as unknown as AttributeState;
 
 	function increaseAttribute(attribute: string) {
@@ -105,12 +165,66 @@ function Attributes() {
 		<StyledContainer>
 			<StyledTitle>Attributes</StyledTitle>
 			<AttributePointsCounter />
+			
+			{/* NEW: Enhanced point breakdown summary */}
+			<PointBreakdownSummary>
+				<BreakdownLine>
+					<span>Base Points:</span>
+					<span>11</span>
+				</BreakdownLine>
+				<BreakdownLine>
+					<span>Bonus from Traits:</span>
+					<span>{calculation.totalPointsAvailable - 11}</span>
+				</BreakdownLine>
+				<BreakdownLine>
+					<span>Spent on Attributes:</span>
+					<span>{calculation.pointsSpent - calculation.forcedAdjustments.reduce((sum, adj) => sum + adj.pointsCost, 0)}</span>
+				</BreakdownLine>
+				{calculation.forcedAdjustments.length > 0 && (
+					<BreakdownLine>
+						<span>Forced Adjustments:</span>
+						<span>{calculation.forcedAdjustments.reduce((sum, adj) => sum + adj.pointsCost, 0)}</span>
+					</BreakdownLine>
+				)}
+				<BreakdownLine>
+					<span>Points Remaining:</span>
+					<span style={{ color: calculation.pointsRemaining < 0 ? '#dc2626' : '#059669' }}>
+						{calculation.pointsRemaining}
+					</span>
+				</BreakdownLine>
+			</PointBreakdownSummary>
+			
+			{/* NEW: Forced adjustments warning */}
+			{calculation.forcedAdjustments.length > 0 && (
+				<ForcedAdjustmentsWarning>
+					{calculation.forcedAdjustments.length} forced adjustment(s) due to traits:
+					{calculation.forcedAdjustments.map((adj, index) => (
+						<div key={index} style={{ marginTop: '0.25rem' }}>
+							• {adj.attribute.charAt(0).toUpperCase() + adj.attribute.slice(1)}: 
+							{adj.originalValue} → {adj.effectiveValue} (costs {adj.pointsCost} points)
+						</div>
+					))}
+				</ForcedAdjustmentsWarning>
+			)}
+			
+			{/* Validation summary */}
+			{!calculation.isValid && (
+				<ValidationMessage $type="error">
+					Invalid build: {Math.abs(calculation.pointsRemaining)} points over budget
+				</ValidationMessage>
+			)}
+			
 			<StyledGrid>
 				{attributesData.map((attribute) => {
 					const attributeKey = `attribute_${attribute.id}`;
 					const currentValue = typedState[attributeKey] || 0;
 					const limit = getAttributeLimit(attribute.id);
 					const breakdown = getStatBreakdown(attribute.id);
+					
+					// NEW: Get effective value and forced adjustment info
+					const effectiveValue = calculation.effectiveAttributes[attribute.id] || currentValue;
+					const forcedAdjustment = calculation.forcedAdjustments.find(adj => adj.attribute === attribute.id);
+					const hasTraitEffect = effectiveValue !== currentValue;
 					
 					// Enhanced validation
 					const canIncrease = attributePointsRemaining > 0 && canIncreaseAttribute(attribute.id);
@@ -148,6 +262,16 @@ function Attributes() {
 								</StyledButton>
 							</StyledControls>
 							
+							{/* NEW: Display both base and effective values */}
+							{hasTraitEffect && (
+								<EffectiveValueDisplay>
+									<BaseValue>Base: {currentValue}</BaseValue>
+									<EffectiveValue $different={hasTraitEffect}>
+										Effective: {effectiveValue}
+									</EffectiveValue>
+								</EffectiveValueDisplay>
+							)}
+							
 							{/* Enhanced breakdown display */}
 							{(limit.traitBonuses > 0 || breakdown) && (
 								<AttributeBreakdown>
@@ -166,6 +290,13 @@ function Attributes() {
 										<span>{limit.current}</span>
 									</BreakdownLine>
 								</AttributeBreakdown>
+							)}
+							
+							{/* NEW: Forced adjustment indicator */}
+							{forcedAdjustment && (
+								<ForcedAdjustmentIndicator>
+									Forced to minimum (-2), cost: {forcedAdjustment.pointsCost} points
+								</ForcedAdjustmentIndicator>
 							)}
 							
 							{/* Validation messages */}

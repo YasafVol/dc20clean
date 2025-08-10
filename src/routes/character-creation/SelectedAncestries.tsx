@@ -22,7 +22,8 @@ function SelectedAncestries() {
 
 	const selectedAncestry1 = ancestriesData.find((a) => a.id === state.ancestry1Id);
 	const selectedAncestry2 = ancestriesData.find((a) => a.id === state.ancestry2Id);
-	const selectedTraits: string[] = JSON.parse(state.selectedTraitIds || '[]');
+	// NEW: Use typed data instead of JSON parsing
+	const selectedTraits: string[] = state.selectedTraitIds || [];
 
 	function getTrait(traitId: string): ITrait | undefined {
 		return traitsData.find((t) => t.id === traitId);
@@ -48,7 +49,7 @@ function SelectedAncestries() {
 			currentTraits.push(traitId);
 		}
 
-		dispatch({ type: 'SET_TRAITS', selectedTraitIds: JSON.stringify(currentTraits) });
+		dispatch({ type: 'SET_TRAITS', selectedTraitIds: currentTraits });
 	}
 
 	function renderAncestryTraits(ancestry: IAncestry) {

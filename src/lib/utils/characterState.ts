@@ -10,13 +10,13 @@ import type {
     CurrentValues
 } from '../../types';
 import { assignSpellsToCharacter } from '../services/spellAssignment';
+import { getAllSavedCharacters, saveAllCharacters, getCharacterById } from './storageUtils';
 
-// Get character state from localStorage
+// Get character state from localStorage - OPTIMIZED: Uses typed storage utility
 export const getCharacterState = (characterId: string): CharacterState | null => {
 	try {
-		const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-		const character = savedCharacters.find((char: any) => char.id === characterId);
-
+		const character = getCharacterById(characterId);
+		
 		if (!character) return null;
 
 		// Return the character's state, or null if not found
@@ -192,44 +192,27 @@ export const initializeCharacterState = (
 	return finalState;
 };
 
-// Save complete character state to localStorage
+// Save complete character state to localStorage - OPTIMIZED: No duplicate fields
 export const saveCharacterState = (characterId: string, state: CharacterState): void => {
 	try {
-		const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-		const characterIndex = savedCharacters.findIndex((char: any) => char.id === characterId);
+		const characters = getAllSavedCharacters();
+		const characterIndex = characters.findIndex(char => char.id === characterId);
 
-		if (characterIndex !== -1) {
-			// Update the character's state
-            savedCharacters[characterIndex] = {
-				...savedCharacters[characterIndex],
-				characterState: state,
-				// Also maintain backwards compatibility with old format
-				currentHP: state.resources.current.currentHP,
-				currentSP: state.resources.current.currentSP,
-				currentMP: state.resources.current.currentMP,
-				currentGritPoints: state.resources.current.currentGritPoints,
-				currentRestPoints: state.resources.current.currentRestPoints,
-				tempHP: state.resources.current.tempHP,
-				actionPointsUsed: state.resources.current.actionPointsUsed,
-				exhaustionLevel: state.resources.current.exhaustionLevel,
-				goldPieces: state.currency.current.goldPieces,
-				silverPieces: state.currency.current.silverPieces,
-				copperPieces: state.currency.current.copperPieces,
-				electrumPieces: state.currency.current.electrumPieces,
-                platinumPieces: state.currency.current.platinumPieces,
-                // keep manual defense legacy fields in sync for display facades
-                manualPD: state.manualDefenses?.manualPD,
-                manualPDR: state.manualDefenses?.manualPDR,
-                manualAD: state.manualDefenses?.manualAD,
-                defenseNotes: state.defenseNotes,
-                // persist breakdowns alongside the record for quick access
-                breakdowns: state.calculation?.breakdowns,
-				lastModified: new Date().toISOString()
-			};
-
-			localStorage.setItem('savedCharacters', JSON.stringify(savedCharacters));
-			console.log('Character state saved to localStorage');
+		if (characterIndex === -1) {
+			console.warn(`Character ${characterId} not found for state update`);
+			return;
 		}
+
+		// Update ONLY the characterState - no duplicates
+		// CharacterState is now the single source of truth
+		characters[characterIndex] = {
+			...characters[characterIndex],
+			characterState: state,
+			lastModified: new Date().toISOString()
+		};
+
+		saveAllCharacters(characters);
+		console.log('🚀 OPTIMIZED: Character state saved (no duplicate fields)');
 	} catch (error) {
 		console.error('Error saving character state:', error);
 	}
@@ -242,22 +225,20 @@ export const updateCharacterState = (
 ): void => {
 	let currentState = getCharacterState(characterId);
 
-	// If no character state exists, try to create a minimal one from localStorage character data
+	// If no character state exists, try to create a minimal one from character data
 	if (!currentState) {
 		console.log('No character state found for ID:', characterId, '- creating minimal state');
 
-		// Get character data from localStorage to initialize state
-		try {
-			const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-			const character = savedCharacters.find((char: any) => char.id === characterId);
+		// Get character data using typed storage utility
+		const character = getCharacterById(characterId);
+		
+		if (!character) {
+			console.error('No character found for ID:', characterId);
+			return;
+		}
 
-			if (!character) {
-				console.error('No character found in localStorage for ID:', characterId);
-				return;
-			}
-
-			// Create minimal character state with default values
-			currentState = {
+		// Create minimal character state with default values
+		currentState = {
 				resources: {
 					original: {
 						maxHP: character.finalHPMax || 0,
@@ -320,10 +301,6 @@ export const updateCharacterState = (
 				},
 				defenseNotes: character.defenseNotes
 			};
-		} catch (error) {
-			console.error('Error creating minimal character state:', error);
-			return;
-		}
 	}
 
     const newState: CharacterState = {

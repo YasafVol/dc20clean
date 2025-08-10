@@ -191,7 +191,7 @@ export const useBackgroundPoints = (
 	selectedFeatureChoices: string = '{}',
 	currentSkills: Record<string, number> = {},
 	currentTrades: Record<string, number> = {},
-	selectedTraitIds: string = '',
+	selectedTraitIds: string | string[] = '',
 	state: any = null
 ) => {
 	const [skillToTradeConversions, setSkillToTradeConversions] = React.useState(0);
@@ -202,10 +202,12 @@ export const useBackgroundPoints = (
 	const calculateBonusPoints = (targetStat: string): number => {
 		let bonusPoints = 0;
 
-		// From traits
+		// From traits - FIXED: Handle both array (new) and JSON string (legacy) formats
 		if (selectedTraitIds && state) {
 			try {
-				const selectedTraitIdsList: string[] = JSON.parse(selectedTraitIds);
+				const selectedTraitIdsList: string[] = Array.isArray(selectedTraitIds) 
+					? selectedTraitIds 
+					: JSON.parse(selectedTraitIds);
 				
 				selectedTraitIdsList.forEach(traitId => {
 					const trait = traitsData.find((t: any) => t.id === traitId);

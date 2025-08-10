@@ -24,6 +24,11 @@ export interface CharacterInProgressStoreData extends CharacterInProgress {
 	// Spells and Maneuvers selections
 	selectedSpells: string;
 	selectedManeuvers: string;
+
+	// Background conversions (persisted so validation can see them)
+	skillToTradeConversions?: number;
+	tradeToSkillConversions?: number;
+	tradeToLanguageConversions?: number;
 }
 
 // Initial state for the store
@@ -62,10 +67,13 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
 	selectedTraitChoices: '{}',
 	cachedEffectResults: undefined,
 	cacheTimestamp: undefined,
-	languagesJson: '{"common": {"fluency": "fluent"}}',
 	// Spells and Maneuvers selections
 	selectedSpells: '[]',
-	selectedManeuvers: '[]'
+	selectedManeuvers: '[]',
+	// Background conversions default
+	skillToTradeConversions: 0,
+	tradeToSkillConversions: 0,
+	tradeToLanguageConversions: 0
 };
 
 // Action types
@@ -86,7 +94,8 @@ type CharacterAction =
 	| { type: 'INITIALIZE_FROM_SAVED'; character: CharacterInProgressStoreData }
 	| { type: 'NEXT_STEP' }
 	| { type: 'PREVIOUS_STEP' }
-	| { type: 'SET_STEP'; step: number };
+	| { type: 'SET_STEP'; step: number }
+	| { type: 'SET_CONVERSIONS'; conversions: { skillToTrade?: number; tradeToSkill?: number; tradeToLanguage?: number } };
 
 // Reducer function
 function characterReducer(
@@ -199,6 +208,13 @@ function characterReducer(
 			return {
 				...state,
 				currentStep: Math.max(1, Math.min(action.step, 7))
+			};
+		case 'SET_CONVERSIONS':
+			return {
+				...state,
+				skillToTradeConversions: action.conversions.skillToTrade ?? state.skillToTradeConversions ?? 0,
+				tradeToSkillConversions: action.conversions.tradeToSkill ?? state.tradeToSkillConversions ?? 0,
+				tradeToLanguageConversions: action.conversions.tradeToLanguage ?? state.tradeToLanguageConversions ?? 0
 			};
 		default:
 			return state;

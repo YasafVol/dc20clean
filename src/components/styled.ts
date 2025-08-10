@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 // Import static assets
-import mainBgImage from '/static/Main.png';
+import mainBgImage from '/Main.png';
 
 export const StyledContainer = styled.div`
 	display: flex;

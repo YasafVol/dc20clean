@@ -5,6 +5,7 @@ import { assignSpellsToCharacter } from './spellAssignment';
 import { allSpells } from '../rulesdata/spells-data/spells';
 import { allManeuvers } from '../rulesdata/maneuvers';
 import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from './enhancedCharacterCalculator';
+import { initializeCharacterState, saveCharacterState } from '../utils/characterState';
 
 export interface CharacterCompletionCallbacks {
 	onShowSnackbar: (message: string) => void;
@@ -52,7 +53,7 @@ export const completeCharacter = async (
 			const enhancedBuildData = convertToEnhancedBuildData(characterInProgress);
 			const enhancedResult = calculateCharacterWithBreakdowns(enhancedBuildData);
 
-			// Convert enhanced result back to the expected format
+            // Convert enhanced result back to the expected format
 			completedCharacterData = {
 				...characterInProgress,
 				// Core stats from enhanced calculator
@@ -82,7 +83,9 @@ export const completeCharacter = async (
 				conditionalModifiers: enhancedResult.conditionalModifiers,
 				className: enhancedResult.stats.className || 'Unknown',
 				ancestry1Name: 'Human', // TODO: Get from enhanced data
-				ancestry2Name: enhancedResult.stats.ancestry2Name || null
+                ancestry2Name: enhancedResult.stats.ancestry2Name || null,
+                // Persist breakdowns at the record level for quick access
+                breakdowns: enhancedResult.breakdowns
 			};
 		} else {
 			// All classes are now migrated, this should not happen anymore
@@ -199,11 +202,17 @@ export const completeCharacter = async (
 			}
 		}
 
-		// Save to local storage
-		const existingCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-		existingCharacters.push(completedCharacterData);
-		localStorage.setItem('savedCharacters', JSON.stringify(existingCharacters));
-		console.log('Character saved to localStorage. Total characters:', existingCharacters.length);
+        // Save to local storage with initialized CharacterState (single source of truth)
+        const existingCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+        const initialState = initializeCharacterState(completedCharacterData as any, null);
+        existingCharacters.push({
+            ...completedCharacterData,
+            characterState: initialState
+        });
+        localStorage.setItem('savedCharacters', JSON.stringify(existingCharacters));
+        // Also ensure legacy fields and breakdowns are synced via centralized saver
+        saveCharacterState(String((completedCharacterData as any).id), initialState);
+        console.log('Character saved to localStorage. Total characters:', existingCharacters.length);
 
 		// Show success snackbar
 		callbacks.onShowSnackbar('Character created successfully!');

@@ -12,6 +12,9 @@ import {
 	RevertButton
 } from '../styles/Defenses';
 import DefenseChangeModal from './DefenseChangeModal';
+import Tooltip from './Tooltip';
+import { createEnhancedDefenseTooltip } from './EnhancedStatTooltips';
+import type { EnhancedStatBreakdown } from '../../../lib/types/effectSystem';
 import {
 	addDefenseNote,
 	getDefenseTooltipWithNotes,
@@ -41,6 +44,7 @@ interface DefensesProps {
 		field: 'manualPD' | 'manualPDR' | 'manualAD',
 		value: number | undefined
 	) => void;
+	breakdowns?: Record<string, EnhancedStatBreakdown>;
 	isMobile?: boolean;
 }
 
@@ -48,6 +52,7 @@ const Defenses: React.FC<DefensesProps> = ({
 	characterData,
 	calculatedDefenses,
 	onUpdateManualDefense,
+	breakdowns,
 	isMobile = false
 }) => {
 	const [pendingChange, setPendingChange] = useState<{
@@ -217,8 +222,8 @@ const Defenses: React.FC<DefensesProps> = ({
 						<DefenseLabel>DEFENSE</DefenseLabel>
 					</DefenseLabelContainer>
 					<ShieldContainer>
-						{onUpdateManualDefense ? (
-							<ShieldInput
+                    {onUpdateManualDefense ? (
+                            <ShieldInput
 								type="number"
 								data-field="manualPD"
 								value={
@@ -231,11 +236,12 @@ const Defenses: React.FC<DefensesProps> = ({
 								onFocus={handleInputFocus}
 								onClick={handleInputClick}
 								placeholder={characterData.finalPD.toString()}
-								title={getTooltip('PD')}
 							/>
-						) : (
-							<ShieldValue title={getTooltip('PD')}>{characterData.finalPD}</ShieldValue>
-						)}
+                        ) : (
+                            <Tooltip content={createEnhancedDefenseTooltip('PD', characterData)}>
+                                <ShieldValue>{characterData.finalPD}</ShieldValue>
+                            </Tooltip>
+                        )}
 					</ShieldContainer>
 					<DefenseFooter>
 						{characterData.manualPD !== undefined ? (
@@ -256,8 +262,8 @@ const Defenses: React.FC<DefensesProps> = ({
 						<DefenseLabel>DMG REDUCTION</DefenseLabel>
 					</DefenseLabelContainer>
 					<ShieldContainer>
-						{onUpdateManualDefense ? (
-							<ShieldInput
+                    {onUpdateManualDefense ? (
+                            <ShieldInput
 								type="number"
 								data-field="manualPDR"
 								value={
@@ -270,11 +276,12 @@ const Defenses: React.FC<DefensesProps> = ({
 								onFocus={handleInputFocus}
 								onClick={handleInputClick}
 								placeholder={(characterData.finalPDR || 0).toString()}
-								title={getTooltip('PDR')}
 							/>
-						) : (
-							<ShieldValue title={getTooltip('PDR')}>{characterData.finalPDR || 0}</ShieldValue>
-						)}
+                        ) : (
+                            <Tooltip content={createEnhancedDefenseTooltip('PD', characterData)}>
+                                <ShieldValue>{characterData.finalPDR || 0}</ShieldValue>
+                            </Tooltip>
+                        )}
 					</ShieldContainer>
 					<DefenseFooter>
 						{characterData.manualPDR !== undefined ? (
@@ -298,8 +305,8 @@ const Defenses: React.FC<DefensesProps> = ({
 						<DefenseLabel>DEFENSE</DefenseLabel>
 					</DefenseLabelContainer>
 					<ShieldContainer>
-						{onUpdateManualDefense ? (
-							<ShieldInput
+                    {onUpdateManualDefense ? (
+                            <ShieldInput
 								type="number"
 								data-field="manualAD"
 								value={
@@ -312,11 +319,12 @@ const Defenses: React.FC<DefensesProps> = ({
 								onFocus={handleInputFocus}
 								onClick={handleInputClick}
 								placeholder={characterData.finalAD.toString()}
-								title={getTooltip('AD')}
 							/>
-						) : (
-							<ShieldValue title={getTooltip('AD')}>{characterData.finalAD}</ShieldValue>
-						)}
+                        ) : (
+                            <Tooltip content={createEnhancedDefenseTooltip('AD', characterData)}>
+                                <ShieldValue>{characterData.finalAD}</ShieldValue>
+                            </Tooltip>
+                        )}
 					</ShieldContainer>
 					<DefenseFooter>
 						{characterData.manualAD !== undefined ? (

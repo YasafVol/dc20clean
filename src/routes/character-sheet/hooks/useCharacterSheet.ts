@@ -19,12 +19,13 @@ import type { InventoryItem } from '../../../lib/rulesdata/inventoryItems';
 
 // Import character state management utilities
 import {
-	getCharacterState,
-	initializeCharacterState,
-	saveCharacterState,
-	updateCharacterState,
-	revertToOriginal,
-	characterStateToCurrentValues
+    getCharacterState,
+    initializeCharacterState,
+    saveCharacterState,
+    updateCharacterState,
+    revertToOriginal,
+    characterStateToCurrentValues,
+    setManualDefense
 } from '../../../lib/utils/characterState';
 
 // Import defense notes utilities
@@ -67,27 +68,7 @@ const getCharacterData = async (characterId: string): Promise<CharacterSheetData
 	};
 };
 
-// Save manual defense overrides to localStorage
-const saveManualDefense = (
-	characterId: string,
-	field: 'manualPD' | 'manualPDR' | 'manualAD',
-	value: number | undefined
-) => {
-	const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-	const characterIndex = savedCharacters.findIndex((char: any) => char.id === characterId);
-
-	if (characterIndex !== -1) {
-		// Update the character's manual defense value
-		savedCharacters[characterIndex] = {
-			...savedCharacters[characterIndex],
-			[field]: value,
-			lastModified: new Date().toISOString()
-		};
-
-		localStorage.setItem('savedCharacters', JSON.stringify(savedCharacters));
-		console.log(`Manual defense ${field} updated for character ${characterId}:`, value);
-	}
-};
+// Manual defense persistence is centralized via characterState.setManualDefense
 
 export const useCharacterSheet = (characterId: string) => {
 	// All state variables
@@ -236,16 +217,15 @@ export const useCharacterSheet = (characterId: string) => {
 				setLoading(true);
 				setError(null);
 
-				// Load the character data from API
-				const data = await getCharacterData(characterId);
-				setCharacterData(data);
+                // Load the character data from storage
+                const data = await getCharacterData(characterId);
 
 				// Get existing character state from localStorage
 				const existingState = getCharacterState(characterId);
 
 				// Initialize comprehensive character state
 				const initialState = initializeCharacterState(data, existingState);
-				setCharacterState(initialState);
+                setCharacterState(initialState);
 
 				// Save the initial state to localStorage if it doesn't exist
 				if (!existingState) {
@@ -253,15 +233,24 @@ export const useCharacterSheet = (characterId: string) => {
 					console.log('Initial character state saved to localStorage');
 				}
 
-				// Update component states from the comprehensive state
+                // Merge manual defense overrides from CharacterState into display facade
+                const effectiveCharacterData = {
+                    ...data,
+                    manualPD: initialState.manualDefenses?.manualPD ?? (data as any).manualPD,
+                    manualPDR: initialState.manualDefenses?.manualPDR ?? (data as any).manualPDR,
+                    manualAD: initialState.manualDefenses?.manualAD ?? (data as any).manualAD
+                } as CharacterSheetData;
+                setCharacterData(effectiveCharacterData);
+
+                // Update component states from the comprehensive state
 				const legacyCurrentValues = characterStateToCurrentValues(initialState);
 				setCurrentValues(legacyCurrentValues);
 				setAttacks(initialState.attacks?.current || []);
 				setSpells(initialState.spells?.current || []);
 				setInventory(initialState.inventory?.current || []);
 
-				console.log('Character data and state loaded:', {
-					characterData: data,
+                console.log('Character data and state loaded:', {
+                    characterData: effectiveCharacterData,
 					characterState: initialState,
 					legacyCurrentValues
 				});
@@ -427,14 +416,14 @@ export const useCharacterSheet = (characterId: string) => {
 		});
 	};
 
-	const handleManualDefenseChange = (
+    const handleManualDefenseChange = (
 		field: 'manualPD' | 'manualPDR' | 'manualAD',
 		value: number | undefined
 	) => {
 		if (!characterData?.id) return;
 
-		// Save to localStorage
-		saveManualDefense(characterData.id, field, value);
+        // Persist centrally
+        setManualDefense(characterData.id, field, value);
 
 		// Update local character data
 		setCharacterData((prev) => {
@@ -920,15 +909,15 @@ export const useCharacterSheet = (characterId: string) => {
 			revertToOriginal(characterId, 'spells');
 			revertToOriginal(characterId, 'inventory');
 
-			// Also clear all manual defense overrides (PDR, PD, AD)
+            // Also clear all manual defense overrides (PDR, PD, AD)
 			clearDefenseNotesForField(characterId, 'manualPD');
 			clearDefenseNotesForField(characterId, 'manualPDR');
 			clearDefenseNotesForField(characterId, 'manualAD');
 
-			// Clear the manual defense values in localStorage
-			saveManualDefense(characterId, 'manualPD', undefined);
-			saveManualDefense(characterId, 'manualPDR', undefined);
-			saveManualDefense(characterId, 'manualAD', undefined);
+            // Clear the manual defense values in centralized state
+            setManualDefense(characterId, 'manualPD', undefined);
+            setManualDefense(characterId, 'manualPDR', undefined);
+            setManualDefense(characterId, 'manualAD', undefined);
 
 			// Reload the page to reflect changes
 			window.location.reload();
@@ -1118,6 +1107,9 @@ export const useCharacterSheet = (characterId: string) => {
 		getClassDisplayInfo,
 		updateAttacks,
 		updateSpells,
-		updateInventory
+    updateInventory,
+
+    // Persisted calculation breakdowns for drill-down UI
+    breakdowns: characterState?.calculation?.breakdowns
 	};
 };

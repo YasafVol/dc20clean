@@ -1,6 +1,8 @@
 import React from 'react';
 import Tooltip from './Tooltip';
 import { createHPTooltip, createMPTooltip, createSPTooltip } from './StatTooltips';
+import { createEnhancedTooltip } from './EnhancedStatTooltips';
+import type { EnhancedStatBreakdown } from '../../../lib/types/effectSystem';
 import {
 	ResourcesContainer,
 	ResourceColumn,
@@ -39,6 +41,7 @@ interface ResourcesProps {
 	onResourceInputChange: (resource: 'tempHP', value: string) => void;
 	getFillPercentage: (current: number, max: number) => number;
 	getHPFillPercentage: (current: number, max: number, tempHP: number) => number;
+	breakdowns?: Record<string, EnhancedStatBreakdown>;
 	isMobile?: boolean;
 }
 
@@ -49,6 +52,7 @@ const Resources: React.FC<ResourcesProps> = ({
 	onResourceInputChange,
 	getFillPercentage,
 	getHPFillPercentage,
+	breakdowns,
 	isMobile = false
 }) => {
 	return (
@@ -84,9 +88,16 @@ const Resources: React.FC<ResourcesProps> = ({
 						fontStyle: 'italic'
 					}}
 				>
-					<Tooltip content={createSPTooltip(characterData)} position="top">
-						<span style={{ cursor: 'help' }}>{characterData.finalSPMax}</span>
-					</Tooltip>
+									<Tooltip 
+					content={
+						breakdowns?.spMax 
+							? createEnhancedTooltip('Stamina Points', breakdowns.spMax)
+							: createSPTooltip(characterData)
+					} 
+					position="top"
+				>
+					<span style={{ cursor: 'help' }}>{characterData.finalSPMax}</span>
+				</Tooltip>
 				</div>
 			</ResourceColumn>
 
@@ -121,7 +132,14 @@ const Resources: React.FC<ResourcesProps> = ({
 						fontStyle: 'italic'
 					}}
 				>
-					<Tooltip content={createMPTooltip(characterData)} position="top">
+					<Tooltip 
+						content={
+							breakdowns?.mpMax 
+								? createEnhancedTooltip('Mana Points', breakdowns.mpMax)
+								: createMPTooltip(characterData)
+						} 
+						position="top"
+					>
 						<span style={{ cursor: 'help' }}>{characterData.finalMPMax}</span>
 					</Tooltip>
 				</div>
@@ -170,7 +188,14 @@ const Resources: React.FC<ResourcesProps> = ({
 						gap: '0.5rem'
 					}}
 				>
-					<Tooltip content={createHPTooltip(characterData)} position="top">
+					<Tooltip 
+						content={
+							breakdowns?.hpMax 
+								? createEnhancedTooltip('Hit Points', breakdowns.hpMax)
+								: createHPTooltip(characterData)
+						} 
+						position="top"
+					>
 						<span style={{ cursor: 'help' }}>{characterData.finalHPMax}</span>
 					</Tooltip>
 					{currentValues.tempHP > 0 && (

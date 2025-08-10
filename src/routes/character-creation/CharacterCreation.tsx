@@ -18,6 +18,7 @@ import {
 	type SavedCharacter
 } from '../../lib/utils/characterEdit';
 import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from '../../lib/services/enhancedCharacterCalculator';
+import { traitsData } from '../../lib/rulesdata/_new_schema/traits';
 import {
 	StyledContainer,
 	StyledTitle,
@@ -88,12 +89,13 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 					const enhancedData = convertToEnhancedBuildData(state);
 					const enhancedResult = calculateCharacterWithBreakdowns(enhancedData);
 					
-					// Create a calculation function that returns the enhanced result
-					const enhancedCalculatorFn = async () => ({ 
-						...enhancedResult.stats,
-						grantedAbilities: enhancedResult.grantedAbilities,
-						conditionalModifiers: enhancedResult.conditionalModifiers
-					});
+                    // Create a calculation function that returns the enhanced result (including breakdowns)
+                    const enhancedCalculatorFn = async () => ({ 
+                        ...enhancedResult.stats,
+                        grantedAbilities: enhancedResult.grantedAbilities,
+                        conditionalModifiers: enhancedResult.conditionalModifiers,
+                        breakdowns: enhancedResult.breakdowns
+                    });
 					
 					await completeCharacterEdit(editCharacter.id, state, enhancedCalculatorFn);
 				} else {
@@ -265,105 +267,109 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 					// Ignore parsing errors
 				}
 
-				// Calculate available points based on current Intelligence + bonuses
-				const intelligenceModifier = state.attribute_intelligence;
-				
-				// Calculate bonus skill points from traits and class features (same logic as BackgroundPointsManager)
-				let bonusSkillPoints = 0;
-				
-				// From traits
-				if (state.selectedTraitIds) {
-					try {
-						const selectedTraitIdsList: string[] = JSON.parse(state.selectedTraitIds);
-						const { traitsData } = require('../../lib/rulesdata/_new_schema/traits');
-						
-						selectedTraitIdsList.forEach((traitId: string) => {
-							const trait = traitsData.find((t: any) => t.id === traitId);
-							if (trait) {
-								trait.effects.forEach((effect: any) => {
-									if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
-										bonusSkillPoints += (effect.value as number);
-									}
-								});
-							}
-						});
-					} catch (error) {
-						console.warn('Error calculating skill points from traits:', error);
-					}
-				}
-				
-				// From class features  
-				if (state.classId && state.selectedFeatureChoices) {
-					try {
-						const selectedClass = classesData.find((c) => c.id.toLowerCase() === state.classId?.toLowerCase());
-						const classFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
-						
-						if (classFeatures) {
-							const selectedChoices: { [key: string]: string } = JSON.parse(state.selectedFeatureChoices);
-							const level1Features = classFeatures.coreFeatures.filter(
-								(feature: any) => feature.levelGained === 1
-							);
+                // Available points should match BackgroundPointsManager (include bonus points and conversions)
+                const intelligenceModifier = state.attribute_intelligence;
+                
+                // Calculate bonus skill points from traits and class features (same logic as BackgroundPointsManager)
+                let bonusSkillPoints = 0;
+                
+                // From traits
+                if (state.selectedTraitIds) {
+                    try {
+                        const selectedTraitIdsList: string[] = JSON.parse(state.selectedTraitIds);
+                        
+                        selectedTraitIdsList.forEach((traitId: string) => {
+                            const trait = traitsData.find((t: any) => t.id === traitId);
+                            if (trait) {
+                                trait.effects.forEach((effect: any) => {
+                                    if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+                                        bonusSkillPoints += (effect.value as number);
+                                    }
+                                });
+                            }
+                        });
+                    } catch (error) {
+                        // Ignore parsing errors
+                    }
+                }
+                
+                // From class features  
+                if (state.classId && state.selectedFeatureChoices) {
+                    try {
+                        const selectedClass = classesData.find((c) => c.id.toLowerCase() === state.classId?.toLowerCase());
+                        const classFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
+                        
+                        if (classFeatures) {
+                            const selectedChoices: { [key: string]: string } = JSON.parse(state.selectedFeatureChoices);
+                            const level1Features = classFeatures.coreFeatures.filter(
+                                (feature: any) => feature.levelGained === 1
+                            );
 
-							level1Features.forEach((feature: any) => {
-								// Check for direct feature effects first
-								if (feature.effects) {
-									feature.effects.forEach((effect: any) => {
-										if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
-											bonusSkillPoints += (effect.value as number);
-										}
-									});
-								}
+                            level1Features.forEach((feature: any) => {
+                                // Check for direct feature effects first
+                                if (feature.effects) {
+                                    feature.effects.forEach((effect: any) => {
+                                        if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+                                            bonusSkillPoints += (effect.value as number);
+                                        }
+                                    });
+                                }
 
-								// Check for choice-based effects
-								if (feature.choices) {
-									feature.choices.forEach((choice: any, choiceIndex: number) => {
-										const choiceId = `${classFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;
-										const selectedOptions = selectedChoices[choiceId];
+                                // Check for choice-based effects
+                                if (feature.choices) {
+                                    feature.choices.forEach((choice: any, choiceIndex: number) => {
+                                        const choiceId = `${classFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;
+                                        const selectedOptions = selectedChoices[choiceId];
 
-										if (selectedOptions) {
-											let optionsToProcess: string[] = [];
-											
-											try {
-												optionsToProcess = JSON.parse(selectedOptions);
-												if (!Array.isArray(optionsToProcess)) {
-													optionsToProcess = [selectedOptions];
-												}
-											} catch {
-												optionsToProcess = [selectedOptions];
-											}
+                                        if (selectedOptions) {
+                                            let optionsToProcess: string[] = [];
+                                            
+                                            try {
+                                                optionsToProcess = JSON.parse(selectedOptions);
+                                                if (!Array.isArray(optionsToProcess)) {
+                                                    optionsToProcess = [selectedOptions];
+                                                }
+                                            } catch {
+                                                optionsToProcess = [selectedOptions];
+                                            }
 
-											optionsToProcess.forEach((optionName) => {
-												const selectedOption = choice.options?.find((opt: any) => opt.name === optionName);
-												if (selectedOption && selectedOption.effects) {
-													selectedOption.effects.forEach((effect: any) => {
-														if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
-															bonusSkillPoints += (effect.value as number);
-														}
-													});
-												}
-											});
-										}
-									});
-								}
-							});
-						}
-					} catch (error) {
-						console.warn('Error calculating skill points from class features:', error);
-					}
-				}
-				
-				const baseSkillPoints = Math.max(1, 5 + intelligenceModifier + bonusSkillPoints); // At least 1, even with negative Int
+                                            optionsToProcess.forEach((optionName) => {
+                                                const selectedOption = choice.options?.find((opt: any) => opt.name === optionName);
+                                                if (selectedOption && selectedOption.effects) {
+                                                    selectedOption.effects.forEach((effect: any) => {
+                                                        if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+                                                            bonusSkillPoints += (effect.value as number);
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        // Ignore parsing errors
+                    }
+                }
+                
+                const baseSkillPoints = Math.max(1, 5 + intelligenceModifier + bonusSkillPoints);
+                const skillToTrade = state.skillToTradeConversions || 0;
+                const tradeToSkill = state.tradeToSkillConversions || 0;
+                const availableSkillPoints = baseSkillPoints - skillToTrade + Math.floor(tradeToSkill / 2);
 
-				// For completion, we require that:
-				// 1. Skill points are exactly spent (not overspent, not underspent)
-				// 2. At least some trade or language points are spent (showing engagement)
-				const skillPointsRemaining = baseSkillPoints - skillPointsUsed;
+                // For completion, require exact spend of available skill points
+                const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
 				const hasExactlySpentAllSkillPoints = skillPointsRemaining === 0;
 				const hasSpentSomeTradeOrLanguagePoints = tradePointsUsed > 0 || languagePointsUsed > 0;
 				const isValid = hasExactlySpentAllSkillPoints && hasSpentSomeTradeOrLanguagePoints;
 
 				console.log('🔍 Step 4 (Background) validation:', {
 					baseSkillPoints,
+					bonusSkillPoints,
+					skillToTrade,
+					tradeToSkill,
+					availableSkillPoints,
 					skillPointsUsed,
 					skillPointsRemaining,
 					tradePointsUsed,

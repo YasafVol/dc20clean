@@ -49,7 +49,7 @@ const Background: React.FC = () => {
 	const classFeatures = classData ? findClassByName(classData.name) : null;
 
 	// Use the background points manager hook
-	const { pointsData, conversions, actions, masteryLimits } = useBackgroundPoints(
+  const { pointsData, conversions, actions, masteryLimits } = useBackgroundPoints(
 		skillPointsUsed,
 		tradePointsUsed,
 		languagePointsUsed,
@@ -63,7 +63,17 @@ const Background: React.FC = () => {
 		state
 	);
 
-
+	// Persist conversions into context so validation sees the effective available points
+	React.useEffect(() => {
+		dispatch({
+			type: 'SET_CONVERSIONS',
+			conversions: {
+				skillToTrade: conversions.skillToTradeConversions,
+				tradeToSkill: conversions.tradeToSkillConversions,
+				tradeToLanguage: conversions.tradeToLanguageConversions
+			}
+		});
+	}, [conversions.skillToTradeConversions, conversions.tradeToSkillConversions, conversions.tradeToLanguageConversions, dispatch]);
 
 	// Handler functions
 	const handleSkillChange = (skillId: string, newLevel: number) => {

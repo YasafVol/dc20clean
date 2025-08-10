@@ -2,12 +2,12 @@
 // Handles all character data persistence with original/current value separation
 
 import type {
-	CharacterState,
-	CharacterSheetData,
-	AttackData,
-	SpellData,
-	InventoryItemData,
-	CurrentValues
+    CharacterState,
+    CharacterSheetData,
+    AttackData,
+    SpellData,
+    InventoryItemData,
+    CurrentValues
 } from '../../types';
 import { assignSpellsToCharacter } from '../services/spellAssignment';
 
@@ -122,7 +122,7 @@ export const initializeCharacterState = (
 	}
 
 	// Use existing state if available, otherwise initialize with defaults
-	const finalState = {
+    const finalState: CharacterState = {
 		resources: {
 			original: originalResources,
 			current: existingState?.resources.current || {
@@ -171,7 +171,15 @@ export const initializeCharacterState = (
 			original: originalInventory,
 			current: existingState?.inventory.current || []
 		},
-		defenseNotes: existingState?.defenseNotes
+        defenseNotes: existingState?.defenseNotes,
+        manualDefenses: existingState?.manualDefenses || {
+            manualPD: (characterData as any).manualPD,
+            manualPDR: (characterData as any).manualPDR,
+            manualAD: (characterData as any).manualAD
+        },
+        calculation: (characterData as any).breakdowns
+            ? { breakdowns: (characterData as any).breakdowns }
+            : existingState?.calculation
 	};
 	
 	console.log('🔍 initializeCharacterState: Final state created:', {
@@ -192,7 +200,7 @@ export const saveCharacterState = (characterId: string, state: CharacterState): 
 
 		if (characterIndex !== -1) {
 			// Update the character's state
-			savedCharacters[characterIndex] = {
+            savedCharacters[characterIndex] = {
 				...savedCharacters[characterIndex],
 				characterState: state,
 				// Also maintain backwards compatibility with old format
@@ -208,8 +216,14 @@ export const saveCharacterState = (characterId: string, state: CharacterState): 
 				silverPieces: state.currency.current.silverPieces,
 				copperPieces: state.currency.current.copperPieces,
 				electrumPieces: state.currency.current.electrumPieces,
-				platinumPieces: state.currency.current.platinumPieces,
-				defenseNotes: state.defenseNotes,
+                platinumPieces: state.currency.current.platinumPieces,
+                // keep manual defense legacy fields in sync for display facades
+                manualPD: state.manualDefenses?.manualPD,
+                manualPDR: state.manualDefenses?.manualPDR,
+                manualAD: state.manualDefenses?.manualAD,
+                defenseNotes: state.defenseNotes,
+                // persist breakdowns alongside the record for quick access
+                breakdowns: state.calculation?.breakdowns,
 				lastModified: new Date().toISOString()
 			};
 
@@ -312,7 +326,7 @@ export const updateCharacterState = (
 		}
 	}
 
-	const newState: CharacterState = {
+    const newState: CharacterState = {
 		...currentState,
 		...updates,
 		// Deep merge nested objects
@@ -376,6 +390,21 @@ export const updateCharacterState = (
 					...updates.inventory
 				}
 			: currentState.inventory
+        ,
+        manualDefenses: updates.manualDefenses
+            ? {
+                ...currentState.manualDefenses,
+                ...updates.manualDefenses
+            }
+            : currentState.manualDefenses,
+        calculation: updates.calculation
+            ? {
+                breakdowns: {
+                    ...(currentState.calculation?.breakdowns || {}),
+                    ...(updates.calculation?.breakdowns || {})
+                }
+            }
+            : currentState.calculation
 	};
 
 	saveCharacterState(characterId, newState);
@@ -463,4 +492,26 @@ export const characterStateToCurrentValues = (state: CharacterState): CurrentVal
 		electrumPieces: state.currency.current.electrumPieces,
 		platinumPieces: state.currency.current.platinumPieces
 	};
+};
+
+// Helpers for manual defenses centralized storage
+export const setManualDefense = (
+    characterId: string,
+    field: 'manualPD' | 'manualPDR' | 'manualAD',
+    value: number | undefined
+): void => {
+    const current = getCharacterState(characterId)?.manualDefenses || {};
+    updateCharacterState(characterId, {
+        manualDefenses: {
+            ...current,
+            [field]: value
+        }
+    });
+};
+
+export const getManualDefense = (
+    characterId: string,
+    field: 'manualPD' | 'manualPDR' | 'manualAD'
+): number | undefined => {
+    return getCharacterState(characterId)?.manualDefenses?.[field];
 };

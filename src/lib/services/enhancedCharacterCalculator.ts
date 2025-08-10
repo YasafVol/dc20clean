@@ -539,13 +539,30 @@ export function calculateCharacterWithBreakdowns(
   const finalAD = buildData.manualAD ?? (baseAD + adModifiers);
   const finalPDR = buildData.manualPDR ?? 0;
   
+  // Calculate prime attribute first
+  const maxValue = Math.max(finalMight, finalAgility, finalCharisma, finalIntelligence);
+  
   // Create breakdowns for derived stats
   breakdowns.hpMax = createStatBreakdown('hpMax', finalHPMax, resolvedEffects);
+  breakdowns.spMax = createStatBreakdown('spMax', finalSPMax, resolvedEffects);
+  breakdowns.mpMax = createStatBreakdown('mpMax', finalMPMax, resolvedEffects);
   breakdowns.pd = createStatBreakdown('pd', basePD, resolvedEffects);
   breakdowns.ad = createStatBreakdown('ad', baseAD, resolvedEffects);
   
+  // Movement breakdowns
+  breakdowns.move_speed = createStatBreakdown('moveSpeed', finalMoveSpeed, resolvedEffects);
+  breakdowns.jump_distance = createStatBreakdown('jumpDistance', finalJumpDistance, resolvedEffects);
+  
+  // Combat breakdowns
+  const attackSpellCheckBase = combatMastery + maxValue;
+  breakdowns.attack_spell_check = createStatBreakdown('attackSpellCheck', attackSpellCheckBase, resolvedEffects);
+  breakdowns.save_dc = createStatBreakdown('saveDC', finalSaveDC, resolvedEffects);
+  
+  // Martial check is Attack/Spell Check + Action Points bonus (calculated at runtime)
+  // For now, just use the base attack/spell check value
+  breakdowns.martial_check = createStatBreakdown('martialCheck', attackSpellCheckBase, resolvedEffects);
+  
   // Other stats
-  const maxValue = Math.max(finalMight, finalAgility, finalCharisma, finalIntelligence);
   const primeAttribute = ['might', 'agility', 'charisma', 'intelligence'].find(attr => {
     return breakdowns[`attribute_${attr}`].total === maxValue;
   }) || 'might';

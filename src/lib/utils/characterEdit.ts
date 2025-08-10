@@ -166,7 +166,7 @@ export const completeCharacterEdit = async (
 		const existingState = getCharacterState(originalCharacterId);
 
 		// Calculate new stats based on the edited character build
-		const newCalculatedCharacter = await characterCalculationFn({
+        const newCalculatedCharacter = await characterCalculationFn({
 			id: originalCharacterId, // Keep the same ID
 			attribute_might: newCharacterState.attribute_might,
 			attribute_agility: newCharacterState.attribute_agility,
@@ -194,7 +194,7 @@ export const completeCharacterEdit = async (
 			selectedManeuvers: newCharacterState.selectedManeuvers
 		});
 
-		// Update the saved character in localStorage with NEW CALCULATED VALUES
+        // Update the saved character in localStorage with NEW CALCULATED VALUES
 		const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
 		const characterIndex = savedCharacters.findIndex(
 			(char: any) => char.id === originalCharacterId
@@ -205,13 +205,15 @@ export const completeCharacterEdit = async (
 			savedCharacters[characterIndex] = {
 				...savedCharacters[characterIndex],
 				...newCalculatedCharacter,
+                // ensure we carry over latest breakdowns if provided by calculator
+                breakdowns: (newCalculatedCharacter as any).breakdowns || savedCharacters[characterIndex].breakdowns,
 				lastModified: new Date().toISOString()
 			};
 
 			localStorage.setItem('savedCharacters', JSON.stringify(savedCharacters));
 		}
 
-		// Update the character state to reflect new original values while preserving current (manual) values
+        // Update the character state to reflect new original values while preserving current (manual) values
 		if (existingState) {
 			updateCharacterState(originalCharacterId, {
 				resources: {
@@ -230,7 +232,10 @@ export const completeCharacterEdit = async (
 				currency: existingState.currency,
 				attacks: existingState.attacks,
 				inventory: existingState.inventory,
-				defenseNotes: existingState.defenseNotes
+                defenseNotes: existingState.defenseNotes,
+                calculation: (newCalculatedCharacter as any).breakdowns
+                    ? { breakdowns: (newCalculatedCharacter as any).breakdowns }
+                    : existingState.calculation
 			});
 		}
 	} catch (error) {

@@ -2005,6 +2005,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 								knowledge={knowledge}
 								trades={trades}
 								languages={languages}
+								breakdowns={characterState?.calculation?.breakdowns}
 							/>
 						</StyledLeftColumn>
 
@@ -2018,6 +2019,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 								onResourceInputChange={handleResourceInputChange}
 								getFillPercentage={getFillPercentage}
 								getHPFillPercentage={getHPFillPercentage}
+								breakdowns={characterState?.calculation?.breakdowns}
 								isMobile={false}
 							/>
 
@@ -2031,6 +2033,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 								}}
 								calculatedDefenses={getCalculatedDefenses()}
 								onUpdateManualDefense={handleManualDefenseChange}
+								breakdowns={characterState?.calculation?.breakdowns}
 								isMobile={false}
 							/>
 
@@ -2039,6 +2042,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 								characterData={characterData}
 								currentValues={currentValues}
 								setCurrentValues={setCurrentValues}
+								breakdowns={characterState?.calculation?.breakdowns}
 							/>
 
 							{/* Death & Exhaustion */}
@@ -2075,7 +2079,10 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						{/* Right Column - Movement, Resources, Inventory, Features */}
 						<StyledRightColumn>
 							{/* Movement & Utility */}
-							<Movement characterData={characterData} />
+							<Movement 
+								characterData={characterData} 
+								breakdowns={characterState?.calculation?.breakdowns}
+							/>
 
 							{/* Resources */}
 							<RightColumnResources
@@ -2133,6 +2140,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 									knowledge={knowledge}
 									trades={trades}
 									languages={languages}
+									breakdowns={characterState?.calculation?.breakdowns}
 								/>
 								<Features features={features} onFeatureClick={openFeaturePopup} />
 							</div>
@@ -2148,6 +2156,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 									onResourceInputChange={handleResourceInputChange}
 									getFillPercentage={getFillPercentage}
 									getHPFillPercentage={getHPFillPercentage}
+									breakdowns={characterState?.calculation?.breakdowns}
 									isMobile={true}
 								/>
 								<Defenses
@@ -2159,12 +2168,14 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 									}}
 									calculatedDefenses={getCalculatedDefenses()}
 									onUpdateManualDefense={handleManualDefenseChange}
+									breakdowns={characterState?.calculation?.breakdowns}
 									isMobile={true}
 								/>
 								<Combat
 									characterData={characterData}
 									currentValues={currentValues}
 									setCurrentValues={setCurrentValues}
+									breakdowns={characterState?.calculation?.breakdowns}
 								/>
 								<DeathExhaustion
 									characterData={characterData}
@@ -2201,7 +2212,10 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 										onManeuverClick={openManeuverPopup}
 									/>
 								)}
-								<Movement characterData={characterData} />
+								<Movement 
+									characterData={characterData} 
+									breakdowns={characterState?.calculation?.breakdowns}
+								/>
 								<RightColumnResources
 									characterData={characterData}
 									currentValues={currentValues}

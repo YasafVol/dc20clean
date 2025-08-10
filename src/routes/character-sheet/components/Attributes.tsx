@@ -40,7 +40,7 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 				<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
 					<StyledProficiencyDots>
 						{[1, 2, 3, 4, 5].map((level) => (
-							<StyledDot key={level} filled={level <= skill.proficiency} />
+							<StyledDot key={level} $filled={level <= skill.proficiency} />
 						))}
 					</StyledProficiencyDots>
 					{skill.bonus !== undefined && (

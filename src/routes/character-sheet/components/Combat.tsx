@@ -12,7 +12,7 @@ export interface CombatProps {
 	breakdowns?: Record<string, EnhancedStatBreakdown>;
 }
 
-const Combat: React.FC<CombatProps> = ({ characterData, currentValues, setCurrentValues }) => {
+const Combat: React.FC<CombatProps> = ({ characterData, currentValues, setCurrentValues, breakdowns }) => {
 	const renderActionPoints = () => {
 		return [0, 1, 2, 3].map((index) => (
 			<StyledActionPoint

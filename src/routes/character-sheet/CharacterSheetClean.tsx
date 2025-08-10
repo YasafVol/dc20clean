@@ -25,6 +25,7 @@ import {
 	getWeaponFeatures,
 	parseDamage
 } from '../../lib/utils/weaponUtils';
+import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from '../../lib/services/enhancedCharacterCalculator';
 
 // Import new component modules
 import LeftColumn from './components/LeftColumn';
@@ -493,7 +494,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					lastModified: Date.now()
 				};
 
-				const { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } = require('../../lib/services/enhancedCharacterCalculator');
+				// Import moved to top of file
 				const enhancedData = convertToEnhancedBuildData(mockBuildData);
 				const result = calculateCharacterWithBreakdowns(enhancedData);
 

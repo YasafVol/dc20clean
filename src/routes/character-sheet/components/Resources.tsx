@@ -66,12 +66,12 @@ const Resources: React.FC<ResourcesProps> = ({
 					</StyledResourceButton>
 					<StyledPotionContainer style={{ borderColor: '#22c55e' }}>
 						<StyledPotionFill
-							fillPercentage={getFillPercentage(currentValues.currentSP, characterData.finalSPMax)}
-							color="#22c55e"
+							$fillPercentage={getFillPercentage(currentValues.currentSP, characterData.finalSPMax)}
+							$color="#22c55e"
 						/>
 						<StyledPotionBubbles
-							color="#22c55e"
-							fillPercentage={getFillPercentage(currentValues.currentSP, characterData.finalSPMax)}
+							$color="#22c55e"
+							$fillPercentage={getFillPercentage(currentValues.currentSP, characterData.finalSPMax)}
 						/>
 						<StyledPotionValue>{currentValues.currentSP}</StyledPotionValue>
 					</StyledPotionContainer>
@@ -110,12 +110,12 @@ const Resources: React.FC<ResourcesProps> = ({
 					</StyledResourceButton>
 					<StyledPotionContainer style={{ borderColor: '#3b82f6' }}>
 						<StyledPotionFill
-							fillPercentage={getFillPercentage(currentValues.currentMP, characterData.finalMPMax)}
-							color="#3b82f6"
+							$fillPercentage={getFillPercentage(currentValues.currentMP, characterData.finalMPMax)}
+							$color="#3b82f6"
 						/>
 						<StyledPotionBubbles
-							color="#3b82f6"
-							fillPercentage={getFillPercentage(currentValues.currentMP, characterData.finalMPMax)}
+							$color="#3b82f6"
+							$fillPercentage={getFillPercentage(currentValues.currentMP, characterData.finalMPMax)}
 						/>
 						<StyledPotionValue>{currentValues.currentMP}</StyledPotionValue>
 					</StyledPotionContainer>
@@ -154,16 +154,16 @@ const Resources: React.FC<ResourcesProps> = ({
 					</StyledResourceButton>
 					<StyledLargePotionContainer style={{ borderColor: '#dc2626' }}>
 						<StyledPotionFill
-							fillPercentage={getHPFillPercentage(
+							$fillPercentage={getHPFillPercentage(
 								currentValues.currentHP,
 								characterData.finalHPMax,
 								currentValues.tempHP
 							)}
-							color="#dc2626"
+							$color="#dc2626"
 						/>
 						<StyledPotionBubbles
-							color="#dc2626"
-							fillPercentage={getHPFillPercentage(
+							$color="#dc2626"
+							$fillPercentage={getHPFillPercentage(
 								currentValues.currentHP,
 								characterData.finalHPMax,
 								currentValues.tempHP

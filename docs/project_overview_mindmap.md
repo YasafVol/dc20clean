@@ -90,3 +90,69 @@ Legend: `:::legacy` = slated for deprecation · `:::partial` = partially migrate
 * Drill into **Rules Data**: enumerate every data file, ownership, and migration status.
 * Produce effect-processor sequence diagram.
 * Formalise coverage targets & thresholds (Vitest + Playwright).
+
+---
+
+# Iteration 2 – Rules-Data Deep Dive
+
+## 2.1  Landscape Snapshot
+
+```mermaid
+graph TD
+    A[Rules-Data] --> B(Top-level TS)
+    A --> C(Legacy JSON classes)
+    A --> D(_new_schema TS)
+    A --> E(Backup original)
+    A --> F(Loaders)
+    A --> G(Schemas)
+    A --> H(Spells data)
+
+    C:::legacy
+    D:::partial
+    E:::archived
+
+    classDef legacy    fill:#ffcccc,color:#000
+    classDef partial   fill:#fff3cd,color:#000
+    classDef archived  fill:#e0e0e0,color:#666
+```
+
+## 2.2  Status Matrix
+
+| Dataset | Source Path | Loader | Zod-validated | Runtime Status |
+|---------|-------------|--------|---------------|----------------|
+| Ancestries / Traits | `src/lib/rulesdata/{ancestries,traits}.ts` | direct import | ✗ | ✅ production |
+| Class data (legacy) | `rulesdata/classes/*.json` | `class.loader.ts` | ✔ | ✅ production |
+| Class data (new) | `rulesdata/_new_schema/*.ts` | _none_ | ✔ | 🟡 prototype |
+| Spells data | `_new_schema/spells-data` | direct import | ✔ | ✅ production |
+| Backup dirs | `_backup_original` | — | — | 📦 archived |
+
+Legend: ✅ = used in runtime · 🟡 = exists but not wired
+
+## 2.3  Immediate Gaps
+
+1. Missing loader for new TypeScript class data.
+2. No build-time validation for top-level TS rule files.
+3. Dual-source confusion (legacy vs new) – needs feature-flag.
+4. No automated test that asserts **every** rule file passes its schema.
+
+## 2.4  Proposed Tasks (tracked for Iteration 3)
+
+- [ ] `class-new.loader.ts` with `import.meta.glob` + Zod parse.
+- [ ] ENV toggle `VITE_CLASSES_SCHEMA_VERSION = legacy|new`.
+- [ ] Vitest `rulesdata.spec.ts` – loads every file & snapshots counts.
+- [ ] Update mind-map when legacy loader is retired.
+
+---
+
+# Roadmap for Remaining Subsystems (to be expanded)
+
+| Subsystem | Key Questions for Deep-Dive |
+|-----------|-----------------------------|
+| **State Management** | Reducer invariants? Persisted fields? Context vs store overlap? |
+| **Services** | Calculator purity? Effect-processor design? Async boundaries? |
+| **Persistence / API** | Schema-to-DB fidelity? Endpoint contract tests? Auth flow? |
+| **Testing** | Coverage thresholds? CI gating? Playwright journeys? |
+| **Build / DevOps** | Roll-up chunking, docker story, prod env variables? |
+
+Each area will receive the same treatment as Rules-Data: inventory → status matrix → gap list → tasks.  
+(☑ Marks will move as iterations complete.)

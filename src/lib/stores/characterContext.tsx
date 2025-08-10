@@ -248,7 +248,10 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 		if (!state.selectedTraitIds) return 0;
 
 		try {
-			const selectedTraitIds: string[] = JSON.parse(state.selectedTraitIds);
+			// FIXED: Handle both array (new) and JSON string (legacy) formats
+			const selectedTraitIds: string[] = Array.isArray(state.selectedTraitIds) 
+				? state.selectedTraitIds 
+				: JSON.parse(state.selectedTraitIds);
 			let bonusPoints = 0;
 
 			selectedTraitIds.forEach(traitId => {
@@ -287,7 +290,10 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 		if (!state.selectedTraitIds) return 0;
 
 		try {
-			const selectedTraitIds: string[] = JSON.parse(state.selectedTraitIds);
+			// FIXED: Handle both array (new) and JSON string (legacy) formats
+			const selectedTraitIds: string[] = Array.isArray(state.selectedTraitIds) 
+				? state.selectedTraitIds 
+				: JSON.parse(state.selectedTraitIds);
 			return calculateTraitCosts(selectedTraitIds);
 		} catch (error) {
 			console.warn('Error calculating ancestry points:', error);
@@ -306,9 +312,10 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 				const classFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
 
 				if (classFeatures) {
-					const selectedChoices: { [key: string]: string } = JSON.parse(
-						state.selectedFeatureChoices
-					);
+					// FIXED: Handle both object (new) and JSON string (legacy) formats
+					const selectedChoices: { [key: string]: string } = typeof state.selectedFeatureChoices === 'object'
+						? state.selectedFeatureChoices
+						: JSON.parse(state.selectedFeatureChoices);
 					const level1Features = classFeatures.coreFeatures.filter(
 						(feature) => feature.levelGained === 1
 					);

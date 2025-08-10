@@ -197,7 +197,7 @@ export function findChoiceOption(
 // Generic function to extract class-specific display information
 export function getClassSpecificInfo(
 	className: string,
-	selectedFeatureChoices?: string
+	selectedFeatureChoices?: Record<string, string>
 ): { displayInfo: { label: string; value: string }[] } {
 	const displayInfo: { label: string; value: string }[] = [];
 
@@ -206,7 +206,7 @@ export function getClassSpecificInfo(
 	}
 
 	try {
-		const selectedChoices: { [key: string]: string } = JSON.parse(selectedFeatureChoices);
+		const selectedChoices: { [key: string]: string } = selectedFeatureChoices;
 		const classData = findClassByName(className);
 
 		if (!classData) {

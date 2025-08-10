@@ -2,38 +2,11 @@
 // Handles converting saved characters back to editable format while preserving manual modifications
 
 import type { CharacterInProgressStoreData } from '../stores/characterContext';
+import type { SavedCharacter } from '../types/dataContracts';
 import { getCharacterState, updateCharacterState } from './characterState';
 import { traitsData } from '../rulesdata/traits';
 
-export interface SavedCharacter {
-	id: string;
-	finalName: string;
-	finalPlayerName: string;
-	classId: string;
-	ancestry1Id: string;
-	ancestry2Id?: string;
-	// The saved character uses finalMight, finalAgility, etc.
-	finalMight: number;
-	finalAgility: number;
-	finalCharisma: number;
-	finalIntelligence: number;
-	// But also check for the attribute_ format for backwards compatibility
-	attribute_might?: number;
-	attribute_agility?: number;
-	attribute_charisma?: number;
-	attribute_intelligence?: number;
-	level: number;
-	combatMastery: number;
-	selectedTraitIds: string;
-	selectedFeatureChoices: string;
-	skillsJson: string;
-	tradesJson: string;
-	languagesJson: string;
-	selectedSpells?: string;
-	selectedManeuvers?: string;
-	completedAt: string;
-	[key: string]: any;
-}
+
 
 // Convert a saved character back to character-in-progress format for editing
 export const convertCharacterToInProgress = (

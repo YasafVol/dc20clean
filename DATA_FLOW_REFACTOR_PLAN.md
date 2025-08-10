@@ -243,15 +243,15 @@ const result = calculateCharacterWithBreakdowns(enhancedData);
 **1.2.1: Replace `getCharacterData` function**
 
 **Search for:**
-```typescript
-try {
-    console.log('🧮 Running enhanced calculator for character data...');
-    // ... build mock data from stored final* values ...
+    ```typescript
+    try {
+        console.log('🧮 Running enhanced calculator for character data...');
+        // ... build mock data from stored final* values ...
     const result = calculateCharacterWithBreakdowns(enhancedData);
 ```
 
 **Replace with:**
-```typescript
+        ```typescript
 import { deserializeCharacterFromStorage, getAllSavedCharacters } from '../../lib/utils/storageUtils';
 
 const getCharacterData = async (characterId: string): Promise<SavedCharacter> => {
@@ -265,13 +265,13 @@ const getCharacterData = async (characterId: string): Promise<SavedCharacter> =>
   // Trust the stored data - it's the single source of truth
   // No recalculation needed!
   return character;
-};
-```
+        };
+        ```
 
 **1.2.2: Remove import statements**
 
 **Search for and remove:**
-```typescript
+        ```typescript
 import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from '../../lib/services/enhancedCharacterCalculator';
 ```
 
@@ -301,7 +301,7 @@ git checkout HEAD~1 -- src/routes/character-sheet/CharacterSheetClean.tsx
 Remove 17+ duplicate fields, make characterState the sole authority
 
 #### 🔍 Search Pattern in `src/lib/utils/characterState.ts`
-```typescript
+        ```typescript
 // Find this pattern in saveCharacterState:
 currentHP: state.resources.current.currentHP,
 currentSP: state.resources.current.currentSP,
@@ -312,11 +312,11 @@ currentSP: state.resources.current.currentSP,
 **1.3.1: Simplify `saveCharacterState` function**
 
 **Search for:**
-```typescript
-savedCharacters[characterIndex] = {
-    ...savedCharacters[characterIndex],
+    ```typescript
+    savedCharacters[characterIndex] = {
+        ...savedCharacters[characterIndex],
     characterState: state,
-    // Also maintain backwards compatibility with old format
+        // Also maintain backwards compatibility with old format
     currentHP: state.resources.current.currentHP,
     currentSP: state.resources.current.currentSP,
 ```
@@ -342,8 +342,8 @@ export const saveCharacterState = (characterId: string, state: CharacterState): 
   };
   
   localStorage.setItem('savedCharacters', JSON.stringify(savedCharacters));
-};
-```
+    };
+    ```
 
 **1.3.2: Update UI components to use nested state**
 
@@ -355,7 +355,7 @@ character.manualPD
 ```
 
 **Replace with:**
-```typescript
+    ```typescript
 character.characterState.resources.current.currentHP
 character.characterState.resources.current.currentSP
 character.characterState.ui.manualDefenseOverrides.PD
@@ -388,7 +388,7 @@ Account for trait effects in attribute point calculations
 
 **2.1.1: Create `src/lib/hooks/useAttributeCalculation.ts`**
 
-```typescript
+    ```typescript
 import { useMemo } from 'react';
 
 interface AttributeCalculationResult {
@@ -490,8 +490,8 @@ const getCombinedTraitEffects = (traitIds: string[]) => {
 const getBonusAttributePointsFromTraits = (traitIds: string[]) => {
   // Placeholder - implement based on your trait system
   return 0;
-};
-```
+    };
+    ```
 
 #### ✅ Validation Steps for Task 2.1
 - [ ] Hook compiles without errors
@@ -544,9 +544,9 @@ export const TraitChoiceSelector: React.FC<Props> = ({ trait, isSelected, onTogg
       className={`trait-card ${!canSelect && !isSelected ? 'disabled' : ''}`}
       onClick={handleClick}
     >
-      <TraitName>{trait.name}</TraitName>
-      <TraitDescription>{trait.description}</TraitDescription>
-      
+  <TraitName>{trait.name}</TraitName>
+  <TraitDescription>{trait.description}</TraitDescription>
+
       {/* Show attribute effects preview */}
       {attributeEffects.length > 0 && (
         <div className="attribute-effects-preview">
@@ -578,8 +578,8 @@ export const TraitChoiceSelector: React.FC<Props> = ({ trait, isSelected, onTogg
         <div className="forced-adjustment-warning">
           ⚠️ This trait will require additional attribute point adjustments
         </div>
-      )}
-    </TraitCard>
+  )}
+</TraitCard>
   );
 };
 ```
@@ -595,8 +595,8 @@ import { useEnhancedCharacterCalculation } from '../../lib/hooks/useEnhancedChar
 export const Attributes: React.FC = () => {
   const { characterState, dispatch } = useCharacter();
   const calculation = useAttributeCalculation(characterState);
-  const { calculationResult } = useEnhancedCharacterCalculation();
-  
+const { calculationResult } = useEnhancedCharacterCalculation();
+
   const handleAttributeChange = (attribute: string, value: number) => {
     dispatch({
       type: 'SET_ATTRIBUTE',

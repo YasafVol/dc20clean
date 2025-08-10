@@ -84,8 +84,8 @@ type CharacterAction =
 	| { type: 'UPDATE_LANGUAGES'; languagesJson: string }
 	| { type: 'SET_CLASS'; classId: string | null }
 	| { type: 'SET_ANCESTRY'; ancestry1Id: string | null; ancestry2Id: string | null }
-	| { type: 'SET_TRAITS'; selectedTraitIds: string }
-	| { type: 'SET_FEATURE_CHOICES'; selectedFeatureChoices: string }
+	| { type: 'SET_TRAITS'; selectedTraitIds: string[] }
+	| { type: 'SET_FEATURE_CHOICES'; selectedFeatureChoices: Record<string, string> }
 	| { type: 'SET_TRAIT_CHOICES'; selectedTraitChoices: string }
 	| { type: 'UPDATE_TRAIT_CHOICE'; traitId: string; effectIndex: number; choice: string }
 	| { type: 'INVALIDATE_CACHE' }

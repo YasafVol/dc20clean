@@ -439,7 +439,9 @@ export const useCharacterSheet = (characterId: string) => {
 	const getSkillsData = (): SkillData[] => {
 		// Parse character's skill proficiencies (if any)
 		let characterSkills: Record<string, number> = {};
-		if (characterData?.skillsJson) {
+		if (characterData?.skillsData) {
+			characterSkills = characterData.skillsData;
+		} else if (characterData?.skillsJson) {
 			try {
 				characterSkills = JSON.parse(characterData.skillsJson);
 			} catch (error) {
@@ -491,7 +493,9 @@ export const useCharacterSheet = (characterId: string) => {
 	const getTradesData = (): TradeData[] => {
 		// Parse character's trade proficiencies (if any)
 		let characterTrades: Record<string, number> = {};
-		if (characterData?.tradesJson) {
+		if (characterData?.tradesData) {
+			characterTrades = characterData.tradesData;
+		} else if (characterData?.tradesJson) {
 			try {
 				characterTrades = JSON.parse(characterData.tradesJson);
 			} catch (error) {
@@ -538,9 +542,11 @@ export const useCharacterSheet = (characterId: string) => {
 
 	// Parse knowledge data from character - show ALL knowledge with their proficiency levels and calculated bonuses
 	const getKnowledgeData = (): TradeData[] => {
-		// Parse character's trade proficiencies (if any) - knowledge is stored in tradesJson
+		// Parse character's trade proficiencies (if any) - knowledge is stored in tradesData
 		let characterTrades: Record<string, number> = {};
-		if (characterData?.tradesJson) {
+		if (characterData?.tradesData) {
+			characterTrades = characterData.tradesData;
+		} else if (characterData?.tradesJson) {
 			try {
 				characterTrades = JSON.parse(characterData.tradesJson);
 			} catch (error) {
@@ -585,12 +591,12 @@ export const useCharacterSheet = (characterId: string) => {
 
 	// Parse languages data from character
 	const getLanguagesData = (): LanguageData[] => {
-		if (!characterData?.languagesJson) {
+		if (!characterData?.languagesData && !characterData?.languagesJson) {
 			return [];
 		}
 
 		try {
-			const languagesFromDB = JSON.parse(characterData.languagesJson);
+			const languagesFromDB = characterData.languagesData || JSON.parse(characterData.languagesJson || '[]');
 
 			return Object.entries(languagesFromDB)
 				.filter(([_, data]: [string, any]) => data.fluency !== 'none')
@@ -644,7 +650,9 @@ export const useCharacterSheet = (characterId: string) => {
 		// Get selected ancestry traits
 		if (characterData.selectedTraitIds) {
 			try {
-				const selectedTraitIds: string[] = JSON.parse(characterData.selectedTraitIds);
+				const selectedTraitIds: string[] = Array.isArray(characterData.selectedTraitIds) 
+					? characterData.selectedTraitIds 
+					: JSON.parse(characterData.selectedTraitIds);
 				selectedTraitIds.forEach((traitId) => {
 					const trait = traitsData.find((t) => t.id === traitId);
 					if (trait) {

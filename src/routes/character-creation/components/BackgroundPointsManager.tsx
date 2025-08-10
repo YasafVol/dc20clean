@@ -67,14 +67,14 @@ export const getBaseMasteryLimit = (characterLevel: number): number => {
 
 export const getClassMasteryBonuses = (
 	classFeatures: any,
-	selectedFeatureChoices: string,
+	selectedFeatureChoices: Record<string, string>,
 	type: 'skill' | 'trade'
 ): number => {
 	if (!classFeatures || !selectedFeatureChoices) return 0;
 
 	let bonus = 0;
 	try {
-		const selectedChoices: { [key: string]: string } = JSON.parse(selectedFeatureChoices);
+		const selectedChoices: { [key: string]: string } = selectedFeatureChoices;
 		const level1Features = classFeatures.coreFeatures?.filter(
 			(feature: any) => feature.levelGained === 1
 		);
@@ -188,7 +188,7 @@ export const useBackgroundPoints = (
 	intelligenceModifier: number,
 	characterLevel: number = 1,
 	classFeatures: any = null,
-	selectedFeatureChoices: string = '{}',
+	selectedFeatureChoices: Record<string, string> = {},
 	currentSkills: Record<string, number> = {},
 	currentTrades: Record<string, number> = {},
 	selectedTraitIds: string | string[] = '',
@@ -228,7 +228,7 @@ export const useBackgroundPoints = (
 		// From class features
 		if (classFeatures && selectedFeatureChoices) {
 			try {
-				const selectedChoices: { [key: string]: string } = JSON.parse(selectedFeatureChoices);
+				const selectedChoices: { [key: string]: string } = selectedFeatureChoices;
 				const level1Features = classFeatures.coreFeatures.filter(
 					(feature: any) => feature.levelGained === 1
 				);

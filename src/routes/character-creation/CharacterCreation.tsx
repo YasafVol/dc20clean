@@ -378,26 +378,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 				let selectedSpells: string[] = [];
 				let selectedManeuvers: string[] = [];
 
-				// FIXED: Handle both array (new) and JSON string (legacy) formats
-				if (state.selectedSpells) {
-					try {
-						selectedSpells = Array.isArray(state.selectedSpells) 
-							? state.selectedSpells 
-							: JSON.parse(state.selectedSpells);
-					} catch (e) {
-						selectedSpells = [];
-					}
-				}
-
-				if (state.selectedManeuvers) {
-					try {
-						selectedManeuvers = Array.isArray(state.selectedManeuvers) 
-							? state.selectedManeuvers 
-							: JSON.parse(state.selectedManeuvers);
-					} catch (e) {
-						selectedManeuvers = [];
-					}
-				}
+				// Use typed arrays directly
+				selectedSpells = state.selectedSpells || [];
+				selectedManeuvers = state.selectedManeuvers || [];
 
 				// Check if class has spellcasting
 				const hasSpellcasting = selectedClassFeatures.spellcastingPath?.spellList;

@@ -7,6 +7,8 @@
 
 import { SavedCharacter, CharacterState, LegacyCharacter } from '../types/dataContracts';
 
+const CURRENT_SCHEMA_VERSION = 2;
+
 /**
  * Centralized JSON serialization for localStorage
  * This is the ONLY place JSON.stringify should be used for character data
@@ -14,7 +16,7 @@ import { SavedCharacter, CharacterState, LegacyCharacter } from '../types/dataCo
 export const serializeCharacterForStorage = (character: SavedCharacter): string => {
   return JSON.stringify({
     ...character,
-    schemaVersion: '2.0.0'
+    schemaVersion: CURRENT_SCHEMA_VERSION
   });
 };
 
@@ -24,25 +26,26 @@ export const serializeCharacterForStorage = (character: SavedCharacter): string 
  */
 export const deserializeCharacterFromStorage = (jsonString: string): SavedCharacter | null => {
   try {
-    const data = JSON.parse(jsonString) as LegacyCharacter;
+    const data = JSON.parse(jsonString) as any;
     
-    // Apply migration if needed
-    if (!data.schemaVersion || data.schemaVersion === '1.0.0') {
-      return migrateCharacterToV2(data);
+    // Schema version guard - drop incompatible saves
+    if (!data.schemaVersion || data.schemaVersion !== CURRENT_SCHEMA_VERSION) {
+      console.warn(`Dropping character ${data.id} with incompatible schema version ${data.schemaVersion}`);
+      return null;
     }
     
-    // Apply defaults for missing fields (backwards compatibility)
+    // Character is already in v2 format, no migration needed
     return {
       ...data,
       selectedTraitIds: data.selectedTraitIds || [],
       selectedFeatureChoices: data.selectedFeatureChoices || {},
       skillsData: data.skillsData || {},
       tradesData: data.tradesData || {},
-      languagesData: data.languagesData || [],
+      languagesData: data.languagesData || { common: { fluency: 'fluent' } },
       spells: data.spells || [],
       maneuvers: data.maneuvers || [],
       characterState: data.characterState || getDefaultCharacterState(),
-      schemaVersion: data.schemaVersion || '2.0.0'
+      schemaVersion: CURRENT_SCHEMA_VERSION
     } as SavedCharacter;
   } catch (error) {
     console.error("Failed to parse character from storage", error);
@@ -132,83 +135,7 @@ export const saveCharacterState = (characterId: string, state: CharacterState): 
   saveAllCharacters(characters);
 };
 
-/**
- * Migration utility to convert legacy characters to new schema
- */
-const migrateCharacterToV2 = (oldCharacter: LegacyCharacter): SavedCharacter => {
-  console.log(`Migrating character ${oldCharacter.id} to schema v2.0.0`);
-  
-  return {
-    // Copy all existing fields
-    ...oldCharacter,
-    
-    // Convert JSON strings to typed data
-    selectedTraitIds: parseJsonField(
-      oldCharacter.selectedTraitIds || oldCharacter.selectedTraitsJson, 
-      []
-    ),
-    selectedFeatureChoices: parseJsonField(oldCharacter.selectedFeatureChoices, {}),
-    skillsData: parseJsonField(oldCharacter.skillsJson, {}),
-    tradesData: parseJsonField(oldCharacter.tradesJson, {}),
-    languagesData: parseJsonField(oldCharacter.languagesJson, []),
-    
-    // Ensure arrays for spells and maneuvers
-    spells: oldCharacter.spells || [],
-    maneuvers: oldCharacter.maneuvers || [],
-    
-    // Migrate character state from legacy fields if needed
-    characterState: oldCharacter.characterState || {
-      resources: {
-        current: {
-          currentHP: oldCharacter.currentHP || 0,
-          currentSP: oldCharacter.currentSP || 0,
-          currentMP: oldCharacter.currentMP || 0,
-          currentGritPoints: oldCharacter.currentGritPoints || 0,
-          currentRestPoints: oldCharacter.currentRestPoints || 0,
-          tempHP: oldCharacter.tempHP || 0,
-          actionPointsUsed: oldCharacter.actionPointsUsed || 0,
-          exhaustionLevel: oldCharacter.exhaustionLevel || 0,
-        },
-      },
-      ui: { 
-        manualDefenseOverrides: {
-          PD: oldCharacter.manualPD,
-          AD: oldCharacter.manualAD,
-          PDR: oldCharacter.manualPDR,
-        }
-      },
-      inventory: { 
-        items: [], 
-        currency: { gold: 0, silver: 0, copper: 0 } 
-      },
-      notes: { playerNotes: '' },
-    },
-    
-    // Add schema version
-    schemaVersion: '2.0.0',
-    
-    // Ensure required fields exist
-    breakdowns: oldCharacter.breakdowns || {},
-    createdAt: oldCharacter.createdAt || new Date().toISOString(),
-    lastModified: new Date().toISOString(),
-    completedAt: oldCharacter.completedAt || new Date().toISOString(),
-  } as SavedCharacter;
-};
-
-/**
- * Helper to safely parse JSON fields during migration
- */
-const parseJsonField = (value: any, fallback: any): any => {
-  if (typeof value === 'string') {
-    try {
-      return JSON.parse(value);
-    } catch {
-      console.warn('Failed to parse JSON field, using fallback:', value);
-      return fallback;
-    }
-  }
-  return value || fallback;
-};
+// Migration utilities removed - no backward compatibility support
 
 /**
  * Backup current localStorage before migration

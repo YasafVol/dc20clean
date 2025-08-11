@@ -6,23 +6,26 @@ import { classesData } from '../rulesdata/loaders/class.loader';
 import { calculateTraitCosts } from '../utils/traitCosts';
 
 // Define the shape of the data stored in the character store
-export interface CharacterInProgressStoreData extends CharacterInProgress {
+export interface CharacterInProgressStoreData extends Omit<CharacterInProgress, 'selectedTraitIds' | 'selectedFeatureChoices' | 'skillsJson' | 'tradesJson' | 'languagesJson' | 'selectedTraitChoices' | 'selectedSpells' | 'selectedManeuvers'> {
     currentStep: number;
     overflowTraitId: string | null;
     overflowAttributeName: string | null;
     level: number;
     combatMastery: number;
-    skillsJson: string;
-    tradesJson: string;
-    languagesJson: string;
-    selectedTraitChoices: string;
+    selectedTraitIds: string[];
+    selectedFeatureChoices: Record<string, any>;
+    selectedTraitChoices: Record<string, string>;
+    skillsData: Record<string, number>;
+    tradesData: Record<string, number>;
+    languagesData: Record<string, { fluency: 'limited' | 'fluent' }>;
     cachedEffectResults?: string;
     cacheTimestamp?: number;
-    selectedSpells: string;
-    selectedManeuvers: string;
+    selectedSpells: string[];
+    selectedManeuvers: string[];
     skillToTradeConversions?: number;
     tradeToSkillConversions?: number;
     tradeToLanguageConversions?: number;
+    schemaVersion?: number;
 }
 
 // Initial state for the store
@@ -37,10 +40,10 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
     combatMastery: 1,
     ancestry1Id: null,
     ancestry2Id: null,
-    selectedTraitIds: '[]',
+    selectedTraitIds: [],
     ancestryPointsSpent: 0,
     classId: null,
-    selectedFeatureChoices: '{}',
+    selectedFeatureChoices: {},
     saveMasteryMight: false,
     saveMasteryAgility: false,
     saveMasteryCharisma: false,
@@ -52,25 +55,26 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
     currentStep: 1,
     overflowTraitId: null,
     overflowAttributeName: null,
-    skillsJson: '{}',
-    tradesJson: '{}',
-    languagesJson: '{"common": {"fluency": "fluent"}}',
-    selectedTraitChoices: '{}',
+    skillsData: {},
+    tradesData: {},
+    languagesData: { common: { fluency: 'fluent' } },
+    selectedTraitChoices: {},
     cachedEffectResults: undefined,
     cacheTimestamp: undefined,
-    selectedSpells: '[]',
-    selectedManeuvers: '[]',
+    selectedSpells: [],
+    selectedManeuvers: [],
     skillToTradeConversions: 0,
     tradeToSkillConversions: 0,
-    tradeToLanguageConversions: 0
+    tradeToLanguageConversions: 0,
+    schemaVersion: 2
 };
 
 // Action types
 type CharacterAction =
     | { type: 'UPDATE_ATTRIBUTE'; attribute: string; value: number }
-    | { type: 'UPDATE_SKILLS'; skillsJson: string }
-    | { type: 'UPDATE_TRADES'; tradesJson: string }
-    | { type: 'UPDATE_LANGUAGES'; languagesJson: string }
+    | { type: 'UPDATE_SKILLS'; skillsData: Record<string, number> }
+    | { type: 'UPDATE_TRADES'; tradesData: Record<string, number> }
+    | { type: 'UPDATE_LANGUAGES'; languagesData: Record<string, { fluency: 'limited' | 'fluent' }> }
     | { type: 'SET_CLASS'; classId: string | null }
     | { type: 'SET_ANCESTRY'; ancestry1Id: string | null; ancestry2Id: string | null }
     | { type: 'SET_TRAITS'; selectedTraitIds: string[] }
@@ -94,33 +98,33 @@ function characterReducer(
         case 'UPDATE_ATTRIBUTE':
             return { ...state, [action.attribute]: action.value };
         case 'UPDATE_SKILLS':
-            return { ...state, skillsJson: action.skillsJson };
+            return { ...state, skillsData: action.skillsData };
         case 'UPDATE_TRADES':
-            return { ...state, tradesJson: action.tradesJson };
+            return { ...state, tradesData: action.tradesData };
         case 'UPDATE_LANGUAGES':
-            return { ...state, languagesJson: action.languagesJson };
+            return { ...state, languagesData: action.languagesData };
         case 'SET_CLASS':
             return { ...state, classId: action.classId };
         case 'SET_ANCESTRY':
             return { ...state, ancestry1Id: action.ancestry1Id, ancestry2Id: action.ancestry2Id };
         case 'SET_TRAITS':
-            return { ...state, selectedTraitIds: JSON.stringify(action.selectedTraitIds) };
+            return { ...state, selectedTraitIds: action.selectedTraitIds };
         case 'SET_FEATURE_CHOICES':
-            return { ...state, selectedFeatureChoices: JSON.stringify(action.selectedFeatureChoices) };
+            return { ...state, selectedFeatureChoices: action.selectedFeatureChoices };
         case 'UPDATE_TRAIT_CHOICE': {
-            const currentChoices = JSON.parse(state.selectedTraitChoices || '{}');
+            const currentChoices = { ...state.selectedTraitChoices };
             const choiceKey = `${action.traitId}-${action.effectIndex}`;
             if (action.choice === '') {
                 delete currentChoices[choiceKey];
             } else {
                 currentChoices[choiceKey] = action.choice;
             }
-            return { ...state, selectedTraitChoices: JSON.stringify(currentChoices), cachedEffectResults: undefined, cacheTimestamp: undefined };
+            return { ...state, selectedTraitChoices: currentChoices, cachedEffectResults: undefined, cacheTimestamp: undefined };
         }
         case 'INVALIDATE_CACHE':
             return { ...state, cachedEffectResults: undefined, cacheTimestamp: undefined };
         case 'UPDATE_SPELLS_AND_MANEUVERS':
-            return { ...state, selectedSpells: JSON.stringify(action.spells), selectedManeuvers: JSON.stringify(action.maneuvers) };
+            return { ...state, selectedSpells: action.spells, selectedManeuvers: action.maneuvers };
         case 'UPDATE_STORE':
             return { ...state, ...action.updates };
         case 'INITIALIZE_FROM_SAVED':
@@ -163,7 +167,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
     const [state, dispatch] = useReducer(characterReducer, initialCharacterInProgressState);
 
     const derivedValues = useMemo(() => {
-        const selectedTraitIds: string[] = safeJsonParse(state.selectedTraitIds, []);
+        const selectedTraitIds: string[] = state.selectedTraitIds;
         
         const bonusAttributePoints = selectedTraitIds.reduce((total, traitId) => {
             const trait = traitsData.find(t => t.id === traitId);
@@ -220,13 +224,4 @@ export function useCharacter() {
         throw new Error('useCharacter must be used within a CharacterProvider');
     }
     return context;
-}
-
-function safeJsonParse<T>(jsonString: string | undefined | null, fallback: T): T {
-    if (!jsonString) return fallback;
-    try {
-        return JSON.parse(jsonString);
-    } catch {
-        return fallback;
-    }
 }

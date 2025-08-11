@@ -19,7 +19,26 @@ export default ts.config(
 		rules: {
 			// typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
 			// see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
-			'no-undef': 'off'
+			'no-undef': 'off',
+			// Prevent JSON.parse/stringify in character state management (except in storageUtils.ts)
+			'no-restricted-syntax': [
+				'error',
+				{
+					selector: 'CallExpression[callee.object.name="JSON"][callee.property.name="parse"]',
+					message: 'JSON.parse is not allowed in character state management. Use typed objects directly from context.'
+				},
+				{
+					selector: 'CallExpression[callee.object.name="JSON"][callee.property.name="stringify"]',
+					message: 'JSON.stringify is not allowed in character state management. Store native objects in context.'
+				}
+			]
+		}
+	},
+	{
+		files: ['**/storageUtils.ts'],
+		rules: {
+			// Allow JSON methods only in storage utilities
+			'no-restricted-syntax': 'off'
 		}
 	}
 );

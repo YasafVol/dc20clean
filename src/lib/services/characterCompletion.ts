@@ -19,7 +19,7 @@ export const completeCharacter = async (
 	callbacks: CharacterCompletionCallbacks
 ): Promise<void> => {
 	try {
-		// Build the enhanced data for calculation (still uses attribute_ for calculator)
+		// Build the enhanced data for calculation using native objects
 		const enhancedData = convertToEnhancedBuildData({
 			id: Date.now().toString(),
 			attribute_might: characterState.attribute_might,
@@ -35,9 +35,9 @@ export const completeCharacter = async (
 			selectedFeatureChoices: characterState.selectedFeatureChoices || {},
 			finalName: characterState.finalName,
 			finalPlayerName: characterState.finalPlayerName,
-			skillsJson: JSON.stringify(characterState.skillsData || {}),
-			tradesJson: JSON.stringify(characterState.tradesData || {}),
-			languagesJson: JSON.stringify(characterState.languagesData || {}),
+			skillsData: characterState.skillsData || {},
+			tradesData: characterState.tradesData || {},
+			languagesData: characterState.languagesData || { common: { fluency: 'fluent' } },
 			createdAt: new Date(),
 			completedAt: new Date().toISOString()
 		});
@@ -128,10 +128,8 @@ export const completeCharacter = async (
 			});
 
 			try {
-				// Handle both array (new) and JSON string (legacy) formats
-				const selectedSpellNames = Array.isArray(characterState.selectedSpells)
-					? characterState.selectedSpells
-					: JSON.parse(characterState.selectedSpells);
+							// Use typed arrays directly
+			const selectedSpellNames = characterState.selectedSpells || [];
 				
 				console.log('🔄 Parsed spell names:', selectedSpellNames);
 
@@ -164,7 +162,7 @@ export const completeCharacter = async (
 					const assignedSpells = assignSpellsToCharacter({
 						className: completedCharacter.className,
 						level: completedCharacter.level || 1,
-						selectedFeatureChoices: JSON.stringify(completedCharacter.selectedFeatureChoices)
+						selectedFeatureChoices: completedCharacter.selectedFeatureChoices
 					});
 					completedCharacter.spells = assignedSpells as any;
 					console.log('🔄 Auto-assigned spells (no user selection):', assignedSpells.map((s: any) => s.spellName));
@@ -175,7 +173,7 @@ export const completeCharacter = async (
 				const assignedSpells = assignSpellsToCharacter({
 					className: completedCharacter.className,
 					level: completedCharacter.level || 1,
-					selectedFeatureChoices: JSON.stringify(completedCharacter.selectedFeatureChoices)
+					selectedFeatureChoices: completedCharacter.selectedFeatureChoices
 				});
 				completedCharacter.spells = assignedSpells as any;
 			}
@@ -184,10 +182,8 @@ export const completeCharacter = async (
 		// Handle user-selected maneuvers
 		if (characterState.selectedManeuvers) {
 			try {
-				// Handle both array (new) and JSON string (legacy) formats
-				const selectedManeuverNames = Array.isArray(characterState.selectedManeuvers)
-					? characterState.selectedManeuvers
-					: JSON.parse(characterState.selectedManeuvers);
+							// Use typed arrays directly
+			const selectedManeuverNames = characterState.selectedManeuvers || [];
 					
 				if (Array.isArray(selectedManeuverNames) && selectedManeuverNames.length > 0) {
 					// Convert selected maneuver names to ManeuverData objects

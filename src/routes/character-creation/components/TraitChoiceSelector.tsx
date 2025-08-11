@@ -212,7 +212,7 @@ const TraitChoiceSelector: React.FC<TraitChoiceSelectorProps> = ({
   const traitPointImpact = useTraitPointImpact(state, trait.id);
   
   // Get current choice from state
-  const currentChoices = JSON.parse(state.selectedTraitChoices || '{}');
+  const currentChoices = state.selectedTraitChoices || {};
   const choiceKey = `${trait.id}-${effectIndex}`;
   const currentChoice = currentChoices[choiceKey] || '';
   

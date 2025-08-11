@@ -49,28 +49,14 @@ const SpellsAndManeuvers: React.FC = () => {
 			selectedManeuvers: state.selectedManeuvers
 		});
 		
-		try {
-			if (state.selectedSpells) {
-				const spells = JSON.parse(state.selectedSpells);
-				if (Array.isArray(spells)) {
-					console.log('📚 Setting selected spells:', spells);
-					setSelectedSpells(spells);
-				}
-			}
-		} catch (e) {
-			console.warn('Failed to parse selected spells:', e);
+		if (state.selectedSpells && Array.isArray(state.selectedSpells)) {
+			console.log('📚 Setting selected spells:', state.selectedSpells);
+			setSelectedSpells(state.selectedSpells);
 		}
 
-		try {
-			if (state.selectedManeuvers) {
-				const maneuvers = JSON.parse(state.selectedManeuvers);
-				if (Array.isArray(maneuvers)) {
-					console.log('⚔️ Setting selected maneuvers:', maneuvers);
-					setSelectedManeuvers(maneuvers);
-				}
-			}
-		} catch (e) {
-			console.warn('Failed to parse selected maneuvers:', e);
+		if (state.selectedManeuvers && Array.isArray(state.selectedManeuvers)) {
+			console.log('⚔️ Setting selected maneuvers:', state.selectedManeuvers);
+			setSelectedManeuvers(state.selectedManeuvers);
 		}
 		
 		hasInitialized.current = true;
@@ -107,8 +93,8 @@ const SpellsAndManeuvers: React.FC = () => {
 			selectedFeatureChoices: state.selectedFeatureChoices
 		});
 
-		// Parse feature choices to determine available spell schools
-		const featureChoices: { [key: string]: string } = JSON.parse(state.selectedFeatureChoices || '{}');
+		// Use feature choices directly to determine available spell schools
+		const featureChoices: { [key: string]: any } = state.selectedFeatureChoices || {};
 		let availableSchools: SpellSchool[] = [];
 
 		console.log('Feature choices:', featureChoices);
@@ -123,13 +109,9 @@ const SpellsAndManeuvers: React.FC = () => {
 				const choice = featureChoices[choiceId];
 				console.log('Looking for choice:', choiceId, 'Found:', choice);
 				if (choice) {
-					try {
-						const selectedSchools = JSON.parse(choice);
-						availableSchools.push(...selectedSchools);
-						console.log('Selected schools from choice:', selectedSchools);
-					} catch (e) {
-						console.warn('Failed to parse spell school choices:', choice);
-					}
+					const selectedSchools = Array.isArray(choice) ? choice : [choice];
+					availableSchools.push(...selectedSchools);
+					console.log('Selected schools from choice:', selectedSchools);
 				}
 			} else if (spellList.type === 'schools') {
 				if (spellList.specificSchools) {
@@ -338,8 +320,8 @@ const SpellsAndManeuvers: React.FC = () => {
 		
 		// Only dispatch if we have actual changes to avoid infinite loops
 		// Check if the current selections are different from what's in state
-		const currentStateSpells = state.selectedSpells ? JSON.parse(state.selectedSpells) : [];
-		const currentStateManeuvers = state.selectedManeuvers ? JSON.parse(state.selectedManeuvers) : [];
+		const currentStateSpells = state.selectedSpells || [];
+		const currentStateManeuvers = state.selectedManeuvers || [];
 		
 		const spellsChanged = JSON.stringify(selectedSpells) !== JSON.stringify(currentStateSpells);
 		const maneuversChanged = JSON.stringify(selectedManeuvers) !== JSON.stringify(currentStateManeuvers);

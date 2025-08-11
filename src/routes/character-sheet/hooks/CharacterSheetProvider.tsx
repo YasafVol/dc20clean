@@ -284,3 +284,17 @@ export function useCharacterInventory() {
     return state.character?.characterState?.inventory || { items: [], currency: { gold: 0, silver: 0, copper: 0 } };
   }, [state.character?.characterState?.inventory]);
 }
+
+export function useCharacterSpells() {
+  const { state } = useCharacterSheet();
+  return useMemo(() => {
+    return state.character?.spells || [];
+  }, [state.character?.spells]);
+}
+
+export function useCharacterManeuvers() {
+  const { state } = useCharacterSheet();
+  return useMemo(() => {
+    return state.character?.maneuvers || [];
+  }, [state.character?.maneuvers]);
+}

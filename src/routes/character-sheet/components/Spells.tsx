@@ -3,6 +3,7 @@ import type { SpellData, CharacterSheetData } from '../../../types';
 import type { Spell } from '../../../lib/rulesdata/spells-data/types/spell.types';
 import { allSpells } from '../../../lib/rulesdata/spells-data/spells';
 import { SpellSchool } from '../../../lib/rulesdata/spells-data/types/spell.types';
+import { useCharacterSpells, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
 	StyledSpellsSection,
 	StyledSpellsHeader,
@@ -22,14 +23,19 @@ import {
 } from '../styles/Spells';
 
 export interface SpellsProps {
-	spells: SpellData[];
-	setSpells: React.Dispatch<React.SetStateAction<SpellData[]>>;
-	characterData: CharacterSheetData;
 	onSpellClick: (spell: Spell) => void;
 	readOnly?: boolean; // New prop for read-only display
 }
 
-const Spells: React.FC<SpellsProps> = ({ spells, setSpells, characterData, onSpellClick, readOnly = false }) => {
+const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
+	const { addSpell, removeSpell, updateSpell, state } = useCharacterSheet();
+	const spells = useCharacterSpells();
+	
+	if (!state.character) {
+		return <div>Loading spells...</div>;
+	}
+	
+	const characterData = state.character;
 	const [schoolFilter, setSchoolFilter] = useState<string>('all');
 	// Initialize with all spells expanded by default
 	const [expandedSpells, setExpandedSpells] = useState<Set<string>>(() => {
@@ -67,35 +73,34 @@ const Spells: React.FC<SpellsProps> = ({ spells, setSpells, characterData, onSpe
 			isPrepared: false,
 			notes: ''
 		};
-		setSpells((prev) => [...prev, newSpell]);
+		addSpell(newSpell);
 	};
 
 	const removeSpellSlot = (spellIndex: number) => {
-		setSpells((prev) => prev.filter((_, index) => index !== spellIndex));
+		const spellToRemove = spells[spellIndex];
+		if (spellToRemove) {
+			removeSpell(spellToRemove.id);
+		}
 	};
 
-	const updateSpell = (index: number, field: keyof SpellData, value: any) => {
-		setSpells((prev) => {
-			const updated = [...prev];
-			if (field === 'spellName' && value) {
-				// When spell is selected, populate all fields from spell data
-				const selectedSpell = allSpells.find(spell => spell.name === value);
-				if (selectedSpell) {
-					updated[index] = {
-						...updated[index],
-						spellName: selectedSpell.name,
-						school: selectedSpell.school,
-						isCantrip: selectedSpell.isCantrip,
-						cost: selectedSpell.cost,
-						range: selectedSpell.range,
-						duration: selectedSpell.duration
-					};
-				}
-			} else {
-				updated[index] = { ...updated[index], [field]: value };
+	const updateSpellField = (index: number, field: keyof SpellData, value: any) => {
+		const spell = spells[index];
+		if (!spell) return;
+		
+		if (field === 'spellName' && value) {
+			// When spell is selected, populate all fields from spell data
+			const selectedSpell = allSpells.find(spell => spell.name === value);
+			if (selectedSpell) {
+				updateSpell(spell.id, 'spellName', selectedSpell.name);
+				updateSpell(spell.id, 'school', selectedSpell.school);
+				updateSpell(spell.id, 'isCantrip', selectedSpell.isCantrip);
+				updateSpell(spell.id, 'cost', selectedSpell.cost);
+				updateSpell(spell.id, 'range', selectedSpell.range);
+				updateSpell(spell.id, 'duration', selectedSpell.duration);
 			}
-			return updated;
-		});
+		} else {
+			updateSpell(spell.id, field, value);
+		}
 	};
 
 	const handleSchoolFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -178,7 +183,7 @@ const Spells: React.FC<SpellsProps> = ({ spells, setSpells, characterData, onSpe
 									) : (
 										<StyledSpellSelect
 											value={spell.spellName}
-											onChange={(e) => updateSpell(index, 'spellName', e.target.value)}
+											onChange={(e) => updateSpellField(index, 'spellName', e.target.value)}
 										>
 											<option value="">Select Spell...</option>
 											{filteredSpells.map((spellOption) => (

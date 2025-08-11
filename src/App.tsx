@@ -3,7 +3,7 @@ import { createGlobalStyle } from 'styled-components';
 import { CharacterProvider } from './lib/stores/characterContext';
 import CharacterCreation from './routes/character-creation/CharacterCreation.tsx';
 import LoadCharacter from './routes/character-creation/LoadCharacter.tsx';
-import CharacterSheetClean from './routes/character-sheet/CharacterSheetClean';
+import CharacterSheetRouter from './routes/character-sheet/CharacterSheetRouter';
 import type { SavedCharacter } from './lib/utils/characterEdit';
 import LevelUp from './routes/character-creation/LevelUp.tsx';
 import Menu from './components/Menu.tsx';
@@ -187,10 +187,9 @@ function App() {
 						</StyledMain>
 					</CharacterProvider>
 				);
-					<LoadCharacter onBack={handleBackToMenu} onSelectCharacter={handleViewCharacterSheet} onEditCharacter={handleEditCharacter} />
 			case 'sheet':
 				return selectedCharacterId ? (
-					<CharacterSheetClean characterId={selectedCharacterId} onBack={handleBackToMenu} />
+					<CharacterSheetRouter characterId={selectedCharacterId} onBack={handleBackToMenu} />
 				) : null;
 
 			default:

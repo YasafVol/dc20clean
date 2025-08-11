@@ -25,6 +25,9 @@ export type SheetAction =
   | { type: 'UPDATE_ATTACK'; attackId: string; attack: Attack }
   | { type: 'ADD_SPELL'; spell: any }
   | { type: 'REMOVE_SPELL'; spellId: string }
+  | { type: 'UPDATE_SPELL'; spellId: string; field: string; value: any }
+  | { type: 'ADD_MANEUVER'; maneuver: any }
+  | { type: 'REMOVE_MANEUVER'; maneuverId: string }
   | { type: 'UPDATE_INVENTORY'; items: any[] }
   | { type: 'UPDATE_CURRENCY'; gold?: number; silver?: number; copper?: number }
   | { type: 'UPDATE_NOTES'; notes: string };
@@ -207,6 +210,58 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
         }
       };
 
+    case 'ADD_SPELL':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          spells: [...(state.character.spells || []), action.spell]
+        }
+      };
+
+    case 'REMOVE_SPELL':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          spells: (state.character.spells || []).filter((s: any) => s.id !== action.spellId)
+        }
+      };
+
+    case 'UPDATE_SPELL':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          spells: (state.character.spells || []).map((s: any) => 
+            s.id === action.spellId ? { ...s, [action.field]: action.value } : s
+          )
+        }
+      };
+
+    case 'ADD_MANEUVER':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          maneuvers: [...(state.character.maneuvers || []), action.maneuver]
+        }
+      };
+
+    case 'REMOVE_MANEUVER':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          maneuvers: (state.character.maneuvers || []).filter((m: any) => m.id !== action.maneuverId)
+        }
+      };
+
     case 'UPDATE_CURRENCY':
       if (!state.character) return state;
       return {
@@ -294,6 +349,26 @@ export function useCharacterSheetReducer() {
     dispatch({ type: 'REMOVE_ATTACK', attackId });
   }, []);
 
+  const addSpell = useCallback((spell: any) => {
+    dispatch({ type: 'ADD_SPELL', spell });
+  }, []);
+
+  const removeSpell = useCallback((spellId: string) => {
+    dispatch({ type: 'REMOVE_SPELL', spellId });
+  }, []);
+
+  const updateSpell = useCallback((spellId: string, field: string, value: any) => {
+    dispatch({ type: 'UPDATE_SPELL', spellId, field, value });
+  }, []);
+
+  const addManeuver = useCallback((maneuver: any) => {
+    dispatch({ type: 'ADD_MANEUVER', maneuver });
+  }, []);
+
+  const removeManeuver = useCallback((maneuverId: string) => {
+    dispatch({ type: 'REMOVE_MANEUVER', maneuverId });
+  }, []);
+
   const updateCurrency = useCallback((gold?: number, silver?: number, copper?: number) => {
     dispatch({ type: 'UPDATE_CURRENCY', gold, silver, copper });
   }, []);
@@ -312,6 +387,11 @@ export function useCharacterSheetReducer() {
     setManualDefense,
     addAttack,
     removeAttack,
+    addSpell,
+    removeSpell,
+    updateSpell,
+    addManeuver,
+    removeManeuver,
     updateCurrency,
     updateNotes,
   };

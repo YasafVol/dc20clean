@@ -4,15 +4,22 @@ import type { EnhancedStatBreakdown } from '../../../lib/types/effectSystem';
 import { StyledCombatSection, StyledActionPoints, StyledActionPoint } from '../styles/Combat';
 import Tooltip from './Tooltip';
 import { createEnhancedDefenseTooltip } from './EnhancedStatTooltips';
+import { useCharacterResources, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 
 export interface CombatProps {
-	characterData: CharacterSheetData;
-	currentValues: CurrentValues;
-	setCurrentValues: React.Dispatch<React.SetStateAction<CurrentValues>>;
 	breakdowns?: Record<string, EnhancedStatBreakdown>;
 }
 
-const Combat: React.FC<CombatProps> = ({ characterData, currentValues, setCurrentValues, breakdowns }) => {
+const Combat: React.FC<CombatProps> = ({ breakdowns }) => {
+	const { state, dispatch } = useCharacterSheet();
+	const resources = useCharacterResources();
+	
+	if (!state.character) {
+		return <div>Loading combat...</div>;
+	}
+	
+	const characterData = state.character;
+	const currentValues = resources.current;
 	const renderActionPoints = () => {
 		return [0, 1, 2, 3].map((index) => (
 			<StyledActionPoint
@@ -20,7 +27,8 @@ const Combat: React.FC<CombatProps> = ({ characterData, currentValues, setCurren
 				used={index < currentValues.actionPointsUsed}
 				onClick={() => {
 					const newUsed = index < currentValues.actionPointsUsed ? index : index + 1;
-					setCurrentValues((prev) => ({ ...prev, actionPointsUsed: newUsed }));
+					// TODO: Implement action points update through reducer
+					console.log('Action points update needed:', newUsed);
 				}}
 			>
 				{index + 1}

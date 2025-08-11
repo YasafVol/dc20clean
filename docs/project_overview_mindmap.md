@@ -259,3 +259,46 @@ Each area will receive the same treatment as Rules-Data: inventory → status ma
 ---
 
 > _End of Iteration 2 additions_
+
+---
+
+# Snapshot 001 – Post-Consolidation (2025-08-11)
+
+> This snapshot captures the state of DC20Clean immediately **after executing CODEBASE_CONSOLIDATION_PLAN.md** (commit 7bd3a7f).
+
+## 1  Consolidation Highlights
+- Single React Context (`src/lib/stores/characterContext.tsx`) is now the sole state store.
+- Legacy Svelte store and redundant calculator files removed.
+- `_new_schema` directory established as the authoritative rule-data source.
+- Automated rule-data validation test suite (`src/lib/rulesdata/rulesdata.spec.ts`) added.
+
+## 2  Updated Mind Map
+```mermaid
+mindmap
+  root((DC20Clean – Post-Consolidation))
+    "State Management"
+      "React Context (single)"
+      "Derived Hooks"
+    "Rules Data"
+      "_new_schema (TS)"
+      "Zod Schemas"
+    "Services"
+      "enhancedCharacterCalculator"
+      "Effect Processor (planned)"
+    "Testing"
+      "Vitest rule-data validation"
+      "Playwright E2E"
+    "Persistence"
+      "Prisma"
+    "Build / DevOps"
+      "Vite + React"
+      "Docker"
+```
+
+## 3  Next Steps
+1. Set up CI workflow (lint → test → build) per consolidation plan.
+2. Migrate any remaining imports to new loaders.
+3. Complete Effect Processor integration.
+4. Increase unit-test coverage to 25 %.
+
+---

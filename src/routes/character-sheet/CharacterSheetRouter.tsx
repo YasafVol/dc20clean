@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CharacterSheetDesktop from './CharacterSheetDesktop';
 import CharacterSheetMobile from './CharacterSheetMobile';
+import CharacterSheetSimple from './CharacterSheetSimple';
 import { CharacterSheetProvider } from './hooks/CharacterSheetProvider';
 
 // Breakpoint for mobile vs desktop (matches the existing project's mobile breakpoint)
@@ -40,11 +41,7 @@ const CharacterSheetRouter: React.FC<CharacterSheetRouterProps> = ({ characterId
 	// Both components use the EXACT same useCharacterSheet hook - zero duplication!
 	return (
 		<CharacterSheetProvider characterId={characterId}>
-			{isMobile ? (
-				<CharacterSheetMobile characterId={characterId} />
-			) : (
-				<CharacterSheetDesktop characterId={characterId} onBack={onBack} />
-			)}
+			<CharacterSheetSimple onBack={onBack} />
 		</CharacterSheetProvider>
 	);
 };

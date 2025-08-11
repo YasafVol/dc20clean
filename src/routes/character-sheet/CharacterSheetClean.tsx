@@ -202,27 +202,7 @@ const getCharacterData = async (characterId: string): Promise<CharacterSheetData
 	} as CharacterSheetData;
 };
 
-// Save manual defense overrides to localStorage
-const saveManualDefense = (
-	characterId: string,
-	field: 'manualPD' | 'manualPDR' | 'manualAD',
-	value: number | undefined
-) => {
-	const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-	const characterIndex = savedCharacters.findIndex((char: any) => char.id === characterId);
-
-	if (characterIndex !== -1) {
-		// Update the character's manual defense value
-		savedCharacters[characterIndex] = {
-			...savedCharacters[characterIndex],
-			[field]: value,
-			lastModified: new Date().toISOString()
-		};
-
-		localStorage.setItem('savedCharacters', JSON.stringify(savedCharacters));
-		console.log(`Manual defense ${field} updated for character ${characterId}:`, value);
-	}
-};
+// LEGACY: saveManualDefense function removed - now handled by CharacterSheetProvider
 
 const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) => {
 	const [characterData, setCharacterData] = useState<CharacterSheetData | null>(null);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCharacterSheet } from './hooks/useCharacterSheet';
+import { useCharacterSheet } from './hooks/CharacterSheetProvider';
 
 // Import Modal Components  
 import FeaturePopup from './components/FeaturePopup';

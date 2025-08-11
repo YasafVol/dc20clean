@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
+import { useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
 	StyledPlayerNotesContainer,
 	StyledPlayerNotesTitle,
@@ -25,19 +26,25 @@ interface PlayerNote {
 }
 
 interface PlayerNotesProps {
-	characterId: string;
+	// No props needed - uses context
 }
 
-const PlayerNotes: React.FC<PlayerNotesProps> = ({ characterId }) => {
-	const [notes, setNotes] = useState<PlayerNote[]>(() => {
-		const savedNotes = localStorage.getItem(`playerNotes_${characterId}`);
-		return savedNotes ? JSON.parse(savedNotes) : [];
-	});
+const PlayerNotes: React.FC<PlayerNotesProps> = () => {
+	const { updateNotes, state } = useCharacterSheet();
+	
+	if (!state.character) {
+		return (
+			<div style={{ padding: '1rem', color: '#666', textAlign: 'center' }}>
+				<p>Loading notes...</p>
+			</div>
+		);
+	}
 
-	const [newNoteText, setNewNoteText] = useState('');
-	const [isAddingNote, setIsAddingNote] = useState(false);
-	const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
-	const [editingText, setEditingText] = useState('');
+	const currentNotes = state.character.characterState?.notes?.playerNotes || '';
+
+	const handleNotesChange = (newNotes: string) => {
+		updateNotes(newNotes);
+	};
 
 	const saveNotesToStorage = (updatedNotes: PlayerNote[]) => {
 		localStorage.setItem(`playerNotes_${characterId}`, JSON.stringify(updatedNotes));

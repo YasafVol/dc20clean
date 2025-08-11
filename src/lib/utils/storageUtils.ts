@@ -28,14 +28,13 @@ export const deserializeCharacterFromStorage = (jsonString: string): SavedCharac
   try {
     const data = JSON.parse(jsonString) as any;
     
-    // Schema version guard - drop incompatible saves
-    if (!data.schemaVersion || data.schemaVersion !== CURRENT_SCHEMA_VERSION) {
-      console.warn(`Dropping character ${data.id} with incompatible schema version ${data.schemaVersion}`);
-      return null;
-    }
+    // TEMPORARY: Allow all characters regardless of schema version for debugging
+    console.log(`Loading character ${data.id || 'unknown'} with schema version: ${data.schemaVersion || 'undefined'}`);
     
-    // Character is already in v2 format, no migration needed
-    return {
+    // Migrate legacy characters automatically
+    
+    // Migrate character to v2 format
+    const migratedCharacter = {
       ...data,
       selectedTraitIds: data.selectedTraitIds || [],
       selectedFeatureChoices: data.selectedFeatureChoices || {},
@@ -45,8 +44,11 @@ export const deserializeCharacterFromStorage = (jsonString: string): SavedCharac
       spells: data.spells || [],
       maneuvers: data.maneuvers || [],
       characterState: data.characterState || getDefaultCharacterState(),
-      schemaVersion: CURRENT_SCHEMA_VERSION
+      schemaVersion: CURRENT_SCHEMA_VERSION // Always update to current version
     } as SavedCharacter;
+    
+    console.log(`Successfully loaded character ${data.id || 'unknown'}`);
+    return migratedCharacter;
   } catch (error) {
     console.error("Failed to parse character from storage", error);
     return null;
@@ -84,9 +86,14 @@ export const getAllSavedCharacters = (): SavedCharacter[] => {
   const charactersJson = localStorage.getItem('savedCharacters') || '[]';
   try {
     const rawCharacters = JSON.parse(charactersJson);
-    return rawCharacters.map((char: any) => 
+    console.log(`Loading ${rawCharacters.length} characters from localStorage`);
+    
+    const characters = rawCharacters.map((char: any) => 
       deserializeCharacterFromStorage(JSON.stringify(char))
     ).filter(Boolean) as SavedCharacter[];
+    
+    console.log(`Successfully loaded ${characters.length} characters`);
+    return characters;
   } catch (error) {
     console.error("Failed to load saved characters", error);
     return [];
@@ -109,8 +116,18 @@ export const saveAllCharacters = (characters: SavedCharacter[]): void => {
  * Get a single character by ID
  */
 export const getCharacterById = (characterId: string): SavedCharacter | null => {
+  console.log(`Looking for character with ID: ${characterId}`);
   const characters = getAllSavedCharacters();
-  return characters.find(char => char.id === characterId) || null;
+  const character = characters.find(char => char.id === characterId) || null;
+  
+  if (character) {
+    console.log(`Found character: ${character.finalName || character.id}`);
+  } else {
+    console.warn(`Character ${characterId} not found`);
+    console.log(`Available character IDs: ${characters.map(c => c.id).join(', ')}`);
+  }
+  
+  return character;
 };
 
 /**

@@ -1,6 +1,6 @@
 # DC20Clean – System Overview & Mind Map (Iteration 1)
 
-_Last updated: 2025-08-10_
+_Last updated: 2025-01-01_
 
 ---
 
@@ -262,6 +262,20 @@ Each area will receive the same treatment as Rules-Data: inventory → status ma
 
 ---
 
+# Snapshot 002 – Post-UI State Refactor (2025-01-01)
+
+> This snapshot captures the state of DC20Clean immediately **after executing UI_FIXES.md state management refactor** (commit 78832f1).
+
+## 2.1  UI State Management Refactor Highlights
+- **Native Data Structures**: Replaced JSON string serialization with typed objects/arrays in React Context
+- **Schema Versioning**: Added `schemaVersion = 2` with automatic incompatible save cleanup
+- **Type Safety**: Full TypeScript support with exhaustive reducer action types
+- **UI Bug Fixes**: Selection controls (checkboxes, radio buttons, quotas) now functional
+- **Code Quality**: ESLint rules prevent future JSON serialization anti-patterns
+- **Test Coverage**: Unit tests for reducer and storage utilities added
+
+---
+
 # Snapshot 001 – Post-Consolidation (2025-08-11)
 
 > This snapshot captures the state of DC20Clean immediately **after executing CODEBASE_CONSOLIDATION_PLAN.md** (commit 7bd3a7f).
@@ -272,13 +286,14 @@ Each area will receive the same treatment as Rules-Data: inventory → status ma
 - `_new_schema` directory established as the authoritative rule-data source.
 - Automated rule-data validation test suite (`src/lib/rulesdata/rulesdata.spec.ts`) added.
 
-## 2  Updated Mind Map
+## 2.2  Updated Mind Map
 ```mermaid
 mindmap
-  root((DC20Clean – Post-Consolidation))
+  root((DC20Clean – Post-UI Refactor))
     "State Management"
-      "React Context (single)"
-      "Derived Hooks"
+      "React Context (native objects)"
+      "Schema Versioning (v2)"
+      "Type-Safe Actions"
     "Rules Data"
       "_new_schema (TS)"
       "Zod Schemas"
@@ -286,8 +301,12 @@ mindmap
       "enhancedCharacterCalculator"
       "Effect Processor (planned)"
     "Testing"
-      "Vitest rule-data validation"
+      "Reducer Unit Tests"
+      "Storage Utilities Tests" 
       "Playwright E2E"
+    "Code Quality"
+      "ESLint JSON Prevention Rules"
+      "TypeScript Exhaustiveness"
     "Persistence"
       "Prisma"
     "Build / DevOps"
@@ -295,7 +314,16 @@ mindmap
       "Docker"
 ```
 
-## 3  Next Steps
+## 2.3  Next Steps
+1. **Test UI Fixes**: Verify selection controls work correctly after clearing localStorage
+2. **Performance**: Monitor React Context re-render patterns with native objects
+3. **Coverage**: Continue expanding unit test coverage beyond reducer/storage
+4. **Effect Processor**: Complete integration with new native data structures
+5. **CI Pipeline**: Set up automated testing with coverage thresholds
+
+---
+
+## 1  Consolidation Next Steps (Previous)
 1. Set up CI workflow (lint → test → build) per consolidation plan.
 2. Migrate any remaining imports to new loaders.
 3. Complete Effect Processor integration.

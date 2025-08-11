@@ -1,0 +1,318 @@
+import { useReducer, useCallback } from 'react';
+import type { SavedCharacter } from '../../../lib/types/dataContracts';
+import type { Attack } from '../../../lib/types/dataContracts';
+
+// Sheet state - wraps the SavedCharacter
+export interface SheetState {
+  character: SavedCharacter | null;
+  loading: boolean;
+  error: string | null;
+}
+
+// All possible actions for character sheet editing
+export type SheetAction =
+  | { type: 'LOAD_START' }
+  | { type: 'LOAD_SUCCESS'; character: SavedCharacter }
+  | { type: 'LOAD_ERROR'; error: string }
+  | { type: 'UPDATE_CURRENT_HP'; hp: number }
+  | { type: 'UPDATE_CURRENT_SP'; sp: number }
+  | { type: 'UPDATE_CURRENT_MP'; mp: number }
+  | { type: 'UPDATE_TEMP_HP'; tempHP: number }
+  | { type: 'UPDATE_EXHAUSTION'; level: number }
+  | { type: 'SET_MANUAL_DEFENSE'; pd?: number; ad?: number; pdr?: number }
+  | { type: 'ADD_ATTACK'; attack: Attack }
+  | { type: 'REMOVE_ATTACK'; attackId: string }
+  | { type: 'UPDATE_ATTACK'; attackId: string; attack: Attack }
+  | { type: 'ADD_SPELL'; spell: any }
+  | { type: 'REMOVE_SPELL'; spellId: string }
+  | { type: 'UPDATE_INVENTORY'; items: any[] }
+  | { type: 'UPDATE_CURRENCY'; gold?: number; silver?: number; copper?: number }
+  | { type: 'UPDATE_NOTES'; notes: string };
+
+const initialState: SheetState = {
+  character: null,
+  loading: false,
+  error: null,
+};
+
+// Reducer function
+function characterSheetReducer(state: SheetState, action: SheetAction): SheetState {
+  switch (action.type) {
+    case 'LOAD_START':
+      return { ...state, loading: true, error: null };
+    
+    case 'LOAD_SUCCESS':
+      return { ...state, character: action.character, loading: false, error: null };
+    
+    case 'LOAD_ERROR':
+      return { ...state, loading: false, error: action.error };
+
+    case 'UPDATE_CURRENT_HP':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            resources: {
+              ...state.character.characterState.resources,
+              current: {
+                ...state.character.characterState.resources.current,
+                currentHP: action.hp
+              }
+            }
+          }
+        }
+      };
+
+    case 'UPDATE_CURRENT_SP':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            resources: {
+              ...state.character.characterState.resources,
+              current: {
+                ...state.character.characterState.resources.current,
+                currentSP: action.sp
+              }
+            }
+          }
+        }
+      };
+
+    case 'UPDATE_CURRENT_MP':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            resources: {
+              ...state.character.characterState.resources,
+              current: {
+                ...state.character.characterState.resources.current,
+                currentMP: action.mp
+              }
+            }
+          }
+        }
+      };
+
+    case 'UPDATE_TEMP_HP':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            resources: {
+              ...state.character.characterState.resources,
+              current: {
+                ...state.character.characterState.resources.current,
+                tempHP: action.tempHP
+              }
+            }
+          }
+        }
+      };
+
+    case 'UPDATE_EXHAUSTION':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            resources: {
+              ...state.character.characterState.resources,
+              current: {
+                ...state.character.characterState.resources.current,
+                exhaustionLevel: action.level
+              }
+            }
+          }
+        }
+      };
+
+    case 'SET_MANUAL_DEFENSE':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            ui: {
+              ...state.character.characterState.ui,
+              manualDefenseOverrides: {
+                ...state.character.characterState.ui.manualDefenseOverrides,
+                ...(action.pd !== undefined && { PD: action.pd }),
+                ...(action.ad !== undefined && { AD: action.ad }),
+                ...(action.pdr !== undefined && { PDR: action.pdr })
+              }
+            }
+          }
+        }
+      };
+
+    case 'ADD_ATTACK':
+      if (!state.character) return state;
+      const currentAttacks = state.character.characterState.attacks || [];
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            attacks: [...currentAttacks, action.attack]
+          }
+        }
+      };
+
+    case 'REMOVE_ATTACK':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            attacks: (state.character.characterState.attacks || []).filter(
+              attack => attack.id !== action.attackId
+            )
+          }
+        }
+      };
+
+    case 'UPDATE_ATTACK':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            attacks: (state.character.characterState.attacks || []).map(
+              attack => attack.id === action.attackId ? action.attack : attack
+            )
+          }
+        }
+      };
+
+    case 'UPDATE_CURRENCY':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            inventory: {
+              ...state.character.characterState.inventory,
+              currency: {
+                ...state.character.characterState.inventory.currency,
+                ...(action.gold !== undefined && { gold: action.gold }),
+                ...(action.silver !== undefined && { silver: action.silver }),
+                ...(action.copper !== undefined && { copper: action.copper })
+              }
+            }
+          }
+        }
+      };
+
+    case 'UPDATE_INVENTORY':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            inventory: {
+              ...state.character.characterState.inventory,
+              items: action.items
+            }
+          }
+        }
+      };
+
+    case 'UPDATE_NOTES':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            notes: {
+              ...state.character.characterState.notes,
+              playerNotes: action.notes
+            }
+          }
+        }
+      };
+
+    default:
+      return state;
+  }
+}
+
+// Custom hook that exports the reducer
+export function useCharacterSheetReducer() {
+  const [state, dispatch] = useReducer(characterSheetReducer, initialState);
+
+  // Helper functions for common operations
+  const updateHP = useCallback((hp: number) => {
+    dispatch({ type: 'UPDATE_CURRENT_HP', hp });
+  }, []);
+
+  const updateSP = useCallback((sp: number) => {
+    dispatch({ type: 'UPDATE_CURRENT_SP', sp });
+  }, []);
+
+  const updateMP = useCallback((mp: number) => {
+    dispatch({ type: 'UPDATE_CURRENT_MP', mp });
+  }, []);
+
+  const setManualDefense = useCallback((pd?: number, ad?: number, pdr?: number) => {
+    dispatch({ type: 'SET_MANUAL_DEFENSE', pd, ad, pdr });
+  }, []);
+
+  const addAttack = useCallback((attack: Attack) => {
+    dispatch({ type: 'ADD_ATTACK', attack });
+  }, []);
+
+  const removeAttack = useCallback((attackId: string) => {
+    dispatch({ type: 'REMOVE_ATTACK', attackId });
+  }, []);
+
+  const updateCurrency = useCallback((gold?: number, silver?: number, copper?: number) => {
+    dispatch({ type: 'UPDATE_CURRENCY', gold, silver, copper });
+  }, []);
+
+  const updateNotes = useCallback((notes: string) => {
+    dispatch({ type: 'UPDATE_NOTES', notes });
+  }, []);
+
+  return {
+    state,
+    dispatch,
+    // Helper functions
+    updateHP,
+    updateSP,
+    updateMP,
+    setManualDefense,
+    addAttack,
+    removeAttack,
+    updateCurrency,
+    updateNotes,
+  };
+}

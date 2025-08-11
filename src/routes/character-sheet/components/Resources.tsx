@@ -2,6 +2,7 @@ import React from 'react';
 import Tooltip from './Tooltip';
 import { createHPTooltip, createMPTooltip, createSPTooltip } from './StatTooltips';
 import { createEnhancedTooltip } from './EnhancedStatTooltips';
+import { useCharacterResources, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import type { EnhancedStatBreakdown } from '../../../lib/types/effectSystem';
 import {
 	ResourcesContainer,
@@ -23,38 +24,60 @@ import {
 } from '../styles/Potions';
 
 interface ResourcesProps {
-	characterData: {
-		finalSPMax: number;
-		finalMPMax: number;
-		finalHPMax: number;
-	};
-	currentValues: {
-		currentSP: number;
-		currentMP: number;
-		currentHP: number;
-		tempHP: number;
-	};
-	onAdjustResource: (
-		resource: 'currentSP' | 'currentMP' | 'currentHP' | 'tempHP',
-		amount: number
-	) => void;
-	onResourceInputChange: (resource: 'tempHP', value: string) => void;
-	getFillPercentage: (current: number, max: number) => number;
-	getHPFillPercentage: (current: number, max: number, tempHP: number) => number;
 	breakdowns?: Record<string, EnhancedStatBreakdown>;
 	isMobile?: boolean;
 }
 
 const Resources: React.FC<ResourcesProps> = ({
-	characterData,
-	currentValues,
-	onAdjustResource,
-	onResourceInputChange,
-	getFillPercentage,
-	getHPFillPercentage,
 	breakdowns,
 	isMobile = false
 }) => {
+	const { updateHP, updateSP, updateMP, dispatch } = useCharacterSheet();
+	const resources = useCharacterResources();
+
+	if (!resources) {
+		return (
+			<div style={{ padding: '1rem', color: '#666', textAlign: 'center' }}>
+				<p>Loading character resources...</p>
+			</div>
+		);
+	}
+
+	const { current, original } = resources;
+
+	// Helper functions
+	const getFillPercentage = (current: number, max: number) => {
+		return max > 0 ? Math.min((current / max) * 100, 100) : 0;
+	};
+
+	const getHPFillPercentage = (current: number, max: number, tempHP: number) => {
+		const totalCurrent = current + tempHP;
+		return max > 0 ? Math.min((totalCurrent / max) * 100, 100) : 0;
+	};
+
+	const onAdjustResource = (resource: 'currentSP' | 'currentMP' | 'currentHP' | 'tempHP', amount: number) => {
+		switch (resource) {
+			case 'currentHP':
+				updateHP(Math.max(0, current.currentHP + amount));
+				break;
+			case 'currentSP':
+				updateSP(Math.max(0, current.currentSP + amount));
+				break;
+			case 'currentMP':
+				updateMP(Math.max(0, current.currentMP + amount));
+				break;
+			case 'tempHP':
+				dispatch({ type: 'UPDATE_TEMP_HP', tempHP: Math.max(0, current.tempHP + amount) });
+				break;
+		}
+	};
+
+	const onResourceInputChange = (resource: 'tempHP', value: string) => {
+		const numValue = parseInt(value) || 0;
+		if (resource === 'tempHP') {
+			dispatch({ type: 'UPDATE_TEMP_HP', tempHP: Math.max(0, numValue) });
+		}
+	};
 	return (
 		<ResourcesContainer $isMobile={isMobile}>
 			{/* Stamina Points */}
@@ -66,14 +89,14 @@ const Resources: React.FC<ResourcesProps> = ({
 					</StyledResourceButton>
 					<StyledPotionContainer style={{ borderColor: '#22c55e' }}>
 						<StyledPotionFill
-							$fillPercentage={getFillPercentage(currentValues.currentSP, characterData.finalSPMax)}
+							$fillPercentage={getFillPercentage(current.currentSP, original.maxSP)}
 							$color="#22c55e"
 						/>
 						<StyledPotionBubbles
 							$color="#22c55e"
-							$fillPercentage={getFillPercentage(currentValues.currentSP, characterData.finalSPMax)}
+							$fillPercentage={getFillPercentage(current.currentSP, original.maxSP)}
 						/>
-						<StyledPotionValue>{currentValues.currentSP}</StyledPotionValue>
+						<StyledPotionValue>{current.currentSP}</StyledPotionValue>
 					</StyledPotionContainer>
 					<StyledResourceButton onClick={() => onAdjustResource('currentSP', 1)}>
 						+
@@ -92,11 +115,11 @@ const Resources: React.FC<ResourcesProps> = ({
 					content={
 						breakdowns?.spMax 
 							? createEnhancedTooltip('Stamina Points', breakdowns.spMax)
-							: createSPTooltip(characterData)
+							: createSPTooltip({ finalSPMax: original.maxSP })
 					} 
 					position="top"
 				>
-					<span style={{ cursor: 'help' }}>{characterData.finalSPMax}</span>
+					<span style={{ cursor: 'help' }}>{original.maxSP}</span>
 				</Tooltip>
 				</div>
 			</ResourceColumn>
@@ -110,14 +133,14 @@ const Resources: React.FC<ResourcesProps> = ({
 					</StyledResourceButton>
 					<StyledPotionContainer style={{ borderColor: '#3b82f6' }}>
 						<StyledPotionFill
-							$fillPercentage={getFillPercentage(currentValues.currentMP, characterData.finalMPMax)}
+							$fillPercentage={getFillPercentage(current.currentMP, original.maxMP)}
 							$color="#3b82f6"
 						/>
 						<StyledPotionBubbles
 							$color="#3b82f6"
-							$fillPercentage={getFillPercentage(currentValues.currentMP, characterData.finalMPMax)}
+							$fillPercentage={getFillPercentage(current.currentMP, original.maxMP)}
 						/>
-						<StyledPotionValue>{currentValues.currentMP}</StyledPotionValue>
+						<StyledPotionValue>{current.currentMP}</StyledPotionValue>
 					</StyledPotionContainer>
 					<StyledResourceButton onClick={() => onAdjustResource('currentMP', 1)}>
 						+
@@ -136,11 +159,11 @@ const Resources: React.FC<ResourcesProps> = ({
 						content={
 							breakdowns?.mpMax 
 								? createEnhancedTooltip('Mana Points', breakdowns.mpMax)
-								: createMPTooltip(characterData)
+								: createMPTooltip({ finalMPMax: original.maxMP })
 						} 
 						position="top"
 					>
-						<span style={{ cursor: 'help' }}>{characterData.finalMPMax}</span>
+						<span style={{ cursor: 'help' }}>{original.maxMP}</span>
 					</Tooltip>
 				</div>
 			</ResourceColumn>
@@ -155,21 +178,21 @@ const Resources: React.FC<ResourcesProps> = ({
 					<StyledLargePotionContainer style={{ borderColor: '#dc2626' }}>
 						<StyledPotionFill
 							$fillPercentage={getHPFillPercentage(
-								currentValues.currentHP,
-								characterData.finalHPMax,
-								currentValues.tempHP
+								current.currentHP,
+								original.maxHP,
+								current.tempHP
 							)}
 							$color="#dc2626"
 						/>
 						<StyledPotionBubbles
 							$color="#dc2626"
 							$fillPercentage={getHPFillPercentage(
-								currentValues.currentHP,
-								characterData.finalHPMax,
-								currentValues.tempHP
+								current.currentHP,
+								original.maxHP,
+								current.tempHP
 							)}
 						/>
-						<StyledLargePotionValue>{currentValues.currentHP}</StyledLargePotionValue>
+						<StyledLargePotionValue>{current.currentHP}</StyledLargePotionValue>
 					</StyledLargePotionContainer>
 					<StyledResourceButton onClick={() => onAdjustResource('currentHP', 1)}>
 						+
@@ -192,15 +215,15 @@ const Resources: React.FC<ResourcesProps> = ({
 						content={
 							breakdowns?.hpMax 
 								? createEnhancedTooltip('Hit Points', breakdowns.hpMax)
-								: createHPTooltip(characterData)
+								: createHPTooltip({ finalHPMax: original.maxHP })
 						} 
 						position="top"
 					>
-						<span style={{ cursor: 'help' }}>{characterData.finalHPMax}</span>
+						<span style={{ cursor: 'help' }}>{original.maxHP}</span>
 					</Tooltip>
-					{currentValues.tempHP > 0 && (
+					{current.tempHP > 0 && (
 						<span style={{ color: '#dc2626', fontWeight: 'bold', fontSize: '0.9rem' }}>
-							(+{currentValues.tempHP} temp)
+							(+{current.tempHP} temp)
 						</span>
 					)}
 				</div>
@@ -216,7 +239,7 @@ const Resources: React.FC<ResourcesProps> = ({
 					</StyledResourceButton>
 					<TempHPInputSmall
 						type="number"
-						value={currentValues.tempHP}
+						value={current.tempHP}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
 							onResourceInputChange('tempHP', e.target.value)
 						}

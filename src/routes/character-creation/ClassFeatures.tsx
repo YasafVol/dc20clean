@@ -47,12 +47,10 @@ function ClassFeatures() {
 
 	function handleMultipleFeatureChoice(choiceId: string, value: string, isSelected: boolean) {
 		const currentChoices = { ...selectedFeatureChoices };
-		// NEW: Handle arrays directly without JSON parsing
+		// Handle arrays directly (no legacy JSON string support)
 		const currentValues: string[] = Array.isArray(currentChoices[choiceId])
 			? [...(currentChoices[choiceId] as any)]
-			: typeof currentChoices[choiceId] === 'string' && currentChoices[choiceId].startsWith('[')
-				? JSON.parse(currentChoices[choiceId]) // Legacy support
-				: [];
+			: [];
 
 		if (isSelected) {
 			// Add the value if not already present
@@ -605,11 +603,11 @@ function ClassFeatures() {
 							{choice.type === 'select_multiple' && (
 								<StyledChoiceOptions>
 									{choice.options.map((option: any) => {
-										// FIXED: Handle both array (new) and JSON string (legacy) formats
+										// Handle arrays directly (no legacy JSON string support)
 										const currentValues: string[] = selectedFeatureChoices[choice.id]
 											? (Array.isArray(selectedFeatureChoices[choice.id]) 
 												? selectedFeatureChoices[choice.id] as string[]
-												: JSON.parse(selectedFeatureChoices[choice.id]))
+												: [])
 											: [];
 										const isSelected = currentValues.includes(option.value);
 										const canSelect = currentValues.length < (choice.maxSelections || 999);
@@ -646,7 +644,7 @@ function ClassFeatures() {
 											{selectedFeatureChoices[choice.id]
 												? (Array.isArray(selectedFeatureChoices[choice.id]) 
 													? (selectedFeatureChoices[choice.id] as string[]).length
-													: JSON.parse(selectedFeatureChoices[choice.id]).length)
+													: 0)
 												: 0}
 											/{choice.maxSelections} selected)
 										</StyledOptionDescription>

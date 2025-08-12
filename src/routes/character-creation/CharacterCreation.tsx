@@ -153,8 +153,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 						const choiceId = `${selectedClassFeatures.className.toLowerCase()}_spell_schools`;
 						const choice = selectedFeatureChoices[choiceId];
 						if (!choice) return false;
-						// FIXED: Handle both array (new) and JSON string (legacy) formats
-						const selectedSchools = Array.isArray(choice) ? choice : JSON.parse(choice);
+						// Expect arrays directly (no more legacy JSON string support)
+						const selectedSchools = Array.isArray(choice) ? choice : [choice];
 						if (selectedSchools.length !== spellList.schoolCount) return false;
 					}
 
@@ -164,7 +164,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 						const choice = selectedFeatureChoices[choiceId];
 						if (!choice) return false;
 						if (spellList.schoolCount > 1) {
-							const selectedSchools = JSON.parse(choice);
+							const selectedSchools = Array.isArray(choice) ? choice : [choice];
 							if (selectedSchools.length !== spellList.schoolCount) return false;
 						}
 					}
@@ -306,12 +306,10 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
                                         if (selectedOptions) {
                                             let optionsToProcess: string[] = [];
                                             
-                                            try {
-                                                optionsToProcess = JSON.parse(selectedOptions);
-                                                if (!Array.isArray(optionsToProcess)) {
-                                                    optionsToProcess = [selectedOptions];
-                                                }
-                                            } catch {
+                                            // Expect arrays directly (no more legacy JSON string support)
+                                            if (Array.isArray(selectedOptions)) {
+                                                optionsToProcess = selectedOptions;
+                                            } else {
                                                 optionsToProcess = [selectedOptions];
                                             }
 

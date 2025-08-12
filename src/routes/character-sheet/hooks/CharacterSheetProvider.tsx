@@ -40,6 +40,7 @@ interface CharacterSheetContextType {
   updateMP: (mp: number) => void;
   updateTempHP: (tempHP: number) => void;
   updateActionPoints: (ap: number) => void;
+  updateExhaustion: (level: number) => void;
   setManualDefense: (pd?: number, ad?: number, pdr?: number) => void;
   addAttack: (attack: any) => void;
   removeAttack: (attackId: string) => void;
@@ -65,6 +66,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
     updateMP,
     updateTempHP,
     updateActionPoints,
+    updateExhaustion,
     setManualDefense,
     addAttack,
     removeAttack,
@@ -201,6 +203,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
     updateMP,
     updateTempHP,
     updateActionPoints,
+    updateExhaustion,
     setManualDefense,
     addAttack,
     removeAttack,

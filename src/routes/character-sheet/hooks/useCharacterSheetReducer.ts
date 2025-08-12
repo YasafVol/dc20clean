@@ -365,6 +365,10 @@ export function useCharacterSheetReducer() {
     dispatch({ type: 'UPDATE_ACTION_POINTS_USED', ap });
   }, []);
 
+  const updateExhaustion = useCallback((level: number) => {
+    dispatch({ type: 'UPDATE_EXHAUSTION', level });
+  }, []);
+
   const setManualDefense = useCallback((pd?: number, ad?: number, pdr?: number) => {
     dispatch({ type: 'SET_MANUAL_DEFENSE', pd, ad, pdr });
   }, []);
@@ -414,6 +418,7 @@ export function useCharacterSheetReducer() {
     updateMP,
     updateTempHP,
     updateActionPoints,
+    updateExhaustion,
     setManualDefense,
     addAttack,
     removeAttack,

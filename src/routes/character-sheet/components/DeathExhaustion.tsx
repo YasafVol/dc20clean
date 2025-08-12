@@ -37,7 +37,7 @@ interface DeathExhaustionProps {
 }
 
 const DeathExhaustion: React.FC<DeathExhaustionProps> = () => {
-	const { state, dispatch } = useCharacterSheet();
+	const { state, updateExhaustion } = useCharacterSheet();
 	const resources = useCharacterResources();
 	
 	if (!state.character) {
@@ -48,7 +48,7 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = () => {
 	const currentValues = resources.current;
 	
 	const onExhaustionChange = (level: number) => {
-		dispatch({ type: 'UPDATE_EXHAUSTION', level });
+		updateExhaustion(level);
 	};
 	
 	const onDeathStepChange = (step: number) => {

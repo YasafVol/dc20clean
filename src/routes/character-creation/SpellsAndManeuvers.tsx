@@ -1,5 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
+
+// Simple deep equality helper for arrays to replace JSON.stringify comparison
+const arraysEqual = <T>(a: T[], b: T[]): boolean => {
+	if (a.length !== b.length) return false;
+	return a.every((val, index) => {
+		if (Array.isArray(val) && Array.isArray(b[index])) {
+			return arraysEqual(val as any[], b[index] as any[]);
+		}
+		return val === b[index];
+	});
+};
 import { allSpells } from '../../lib/rulesdata/spells-data/spells';
 import { allManeuvers, ManeuverType } from '../../lib/rulesdata/maneuvers';
 import { SpellSchool, type ClassName } from '../../lib/rulesdata/spells-data/types/spell.types';
@@ -124,13 +135,10 @@ const SpellsAndManeuvers: React.FC = () => {
 					const choice = featureChoices[choiceId];
 					console.log('Looking for additional choice:', choiceId, 'Found:', choice);
 					if (choice) {
-						try {
-							const additionalSchools = spellList.schoolCount > 1 ? JSON.parse(choice) : [choice];
-							availableSchools.push(...additionalSchools);
-							console.log('Added additional schools:', additionalSchools);
-						} catch (e) {
-							console.warn('Failed to parse additional spell school choices:', choice);
-						}
+						// Handle additional schools (expect arrays directly)
+						const additionalSchools = spellList.schoolCount > 1 && Array.isArray(choice) ? choice : [choice];
+						availableSchools.push(...additionalSchools);
+						console.log('Added additional schools:', additionalSchools);
 					}
 				}
 			} else if (spellList.type === 'any') {
@@ -323,8 +331,8 @@ const SpellsAndManeuvers: React.FC = () => {
 		const currentStateSpells = state.selectedSpells || [];
 		const currentStateManeuvers = state.selectedManeuvers || [];
 		
-		const spellsChanged = JSON.stringify(selectedSpells) !== JSON.stringify(currentStateSpells);
-		const maneuversChanged = JSON.stringify(selectedManeuvers) !== JSON.stringify(currentStateManeuvers);
+		const spellsChanged = !arraysEqual(selectedSpells, currentStateSpells);
+		const maneuversChanged = !arraysEqual(selectedManeuvers, currentStateManeuvers);
 		
 		console.log('🔄 Change detection:', {
 			spellsChanged,

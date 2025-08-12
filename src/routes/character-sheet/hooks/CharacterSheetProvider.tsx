@@ -38,6 +38,8 @@ interface CharacterSheetContextType {
   updateHP: (hp: number) => void;
   updateSP: (sp: number) => void;
   updateMP: (mp: number) => void;
+  updateTempHP: (tempHP: number) => void;
+  updateActionPoints: (ap: number) => void;
   setManualDefense: (pd?: number, ad?: number, pdr?: number) => void;
   addAttack: (attack: any) => void;
   removeAttack: (attackId: string) => void;
@@ -61,6 +63,8 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
     updateHP,
     updateSP,
     updateMP,
+    updateTempHP,
+    updateActionPoints,
     setManualDefense,
     addAttack,
     removeAttack,
@@ -99,7 +103,13 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
       
       console.log('Character sheet data saved successfully');
     } catch (error) {
-      console.error('Error saving character sheet data:', error);
+      console.warn('Calculator error during save, proceeding with last known values:', error);
+      // Save anyway with existing character state
+      try {
+        await saveCharacterState(character.id, character.characterState);
+      } catch (saveError) {
+        console.error('Failed to save character data:', saveError);
+      }
     }
   }, []);
 
@@ -189,6 +199,8 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
     updateHP,
     updateSP,
     updateMP,
+    updateTempHP,
+    updateActionPoints,
     setManualDefense,
     addAttack,
     removeAttack,
@@ -297,4 +309,18 @@ export function useCharacterManeuvers() {
   return useMemo(() => {
     return state.character?.maneuvers || [];
   }, [state.character?.maneuvers]);
+}
+
+export function useCharacterFeatures() {
+  const { state } = useCharacterSheet();
+  return useMemo(() => {
+    return state.character?.features || [];
+  }, [state.character?.features]);
+}
+
+export function useCharacterCurrency() {
+  const { state } = useCharacterSheet();
+  return useMemo(() => {
+    return state.character?.characterState?.inventory?.currency || { gold: 0, silver: 0, copper: 0 };
+  }, [state.character?.characterState?.inventory?.currency]);
 }

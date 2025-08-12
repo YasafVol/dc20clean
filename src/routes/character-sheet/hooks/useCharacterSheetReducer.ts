@@ -19,6 +19,7 @@ export type SheetAction =
   | { type: 'UPDATE_CURRENT_MP'; mp: number }
   | { type: 'UPDATE_TEMP_HP'; tempHP: number }
   | { type: 'UPDATE_EXHAUSTION'; level: number }
+  | { type: 'UPDATE_ACTION_POINTS_USED'; ap: number }
   | { type: 'SET_MANUAL_DEFENSE'; pd?: number; ad?: number; pdr?: number }
   | { type: 'ADD_ATTACK'; attack: Attack }
   | { type: 'REMOVE_ATTACK'; attackId: string }
@@ -139,6 +140,25 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
               current: {
                 ...state.character.characterState.resources.current,
                 exhaustionLevel: action.level
+              }
+            }
+          }
+        }
+      };
+
+    case 'UPDATE_ACTION_POINTS_USED':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            resources: {
+              ...state.character.characterState.resources,
+              current: {
+                ...state.character.characterState.resources.current,
+                actionPointsUsed: action.ap
               }
             }
           }
@@ -337,6 +357,14 @@ export function useCharacterSheetReducer() {
     dispatch({ type: 'UPDATE_CURRENT_MP', mp });
   }, []);
 
+  const updateTempHP = useCallback((tempHP: number) => {
+    dispatch({ type: 'UPDATE_TEMP_HP', tempHP });
+  }, []);
+
+  const updateActionPoints = useCallback((ap: number) => {
+    dispatch({ type: 'UPDATE_ACTION_POINTS_USED', ap });
+  }, []);
+
   const setManualDefense = useCallback((pd?: number, ad?: number, pdr?: number) => {
     dispatch({ type: 'SET_MANUAL_DEFENSE', pd, ad, pdr });
   }, []);
@@ -384,6 +412,8 @@ export function useCharacterSheetReducer() {
     updateHP,
     updateSP,
     updateMP,
+    updateTempHP,
+    updateActionPoints,
     setManualDefense,
     addAttack,
     removeAttack,

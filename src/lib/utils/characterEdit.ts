@@ -5,6 +5,7 @@ import type { CharacterInProgressStoreData } from '../stores/characterContext';
 import type { SavedCharacter } from '../types/dataContracts';
 import { getCharacterState, updateCharacterState } from './characterState';
 import { traitsData } from '../rulesdata/traits';
+import { getAllSavedCharacters, saveAllCharacters } from './storageUtils';
 
 
 
@@ -166,8 +167,8 @@ export const completeCharacterEdit = async (
 			selectedManeuvers: newCharacterState.selectedManeuvers
 		});
 
-        // Update the saved character in localStorage with NEW CALCULATED VALUES
-		const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+        // Update the saved character in storage with NEW CALCULATED VALUES
+		const savedCharacters = getAllSavedCharacters();
 		const characterIndex = savedCharacters.findIndex(
 			(char: any) => char.id === originalCharacterId
 		);
@@ -182,7 +183,7 @@ export const completeCharacterEdit = async (
 				lastModified: new Date().toISOString()
 			};
 
-			localStorage.setItem('savedCharacters', JSON.stringify(savedCharacters));
+			saveAllCharacters(savedCharacters);
 		}
 
         // Update the character state to reflect new original values while preserving current (manual) values

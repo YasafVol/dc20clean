@@ -228,7 +228,9 @@ describe('useCharacterSheetReducer', () => {
     const mockCharacter = {
       id: 'test-id',
       characterState: {
-        exhaustion: 0
+        resources: {
+          current: { exhaustionLevel: 0 }
+        }
       }
     } as any;
     
@@ -242,7 +244,7 @@ describe('useCharacterSheetReducer', () => {
       result.current.dispatch({ type: 'UPDATE_EXHAUSTION', level: 2 });
     });
     
-    expect(result.current.state.character?.characterState.exhaustion).toBe(2);
+    expect(result.current.state.character?.characterState.resources.current.exhaustionLevel).toBe(2);
   });
 
   it('should provide new helper functions', () => {

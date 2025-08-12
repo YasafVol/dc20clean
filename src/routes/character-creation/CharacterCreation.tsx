@@ -341,8 +341,24 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
                 // For completion, require exact spend of available skill points
                 const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
 				const hasExactlySpentAllSkillPoints = skillPointsRemaining === 0;
+				// Calculate available trade and language points using same logic as BackgroundPointsManager
+				let bonusTradePoints = 0;
+				let bonusLanguagePoints = 0;
+				
+				// Check for ancestry bonuses (simplified calculation)
+				const baseTradePoints = 3 + bonusTradePoints;
+				const baseLanguagePoints = 2 + bonusLanguagePoints;
+				
+				const availableTradePoints = baseTradePoints + Math.floor(skillToTrade / 2) - Math.floor(tradeToSkill / 2);
+				const availableLanguagePoints = baseLanguagePoints; // No conversions affect language points currently
+				
+				// Allow completion if all skill points are spent AND either:
+				// 1. Some trade/language points were spent, OR 
+				// 2. No trade/language points are available to spend
 				const hasSpentSomeTradeOrLanguagePoints = tradePointsUsed > 0 || languagePointsUsed > 0;
-				const isValid = hasExactlySpentAllSkillPoints && hasSpentSomeTradeOrLanguagePoints;
+				const hasNoTradeOrLanguagePointsToSpend = availableTradePoints <= 0 && availableLanguagePoints <= 0;
+				
+				const isValid = hasExactlySpentAllSkillPoints && (hasSpentSomeTradeOrLanguagePoints || hasNoTradeOrLanguagePointsToSpend);
 
 				console.log('🔍 Step 4 (Background) validation:', {
 					baseSkillPoints,
@@ -352,10 +368,15 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 					availableSkillPoints,
 					skillPointsUsed,
 					skillPointsRemaining,
+					baseTradePoints,
+					baseLanguagePoints,
+					availableTradePoints,
+					availableLanguagePoints,
 					tradePointsUsed,
 					languagePointsUsed,
 					hasExactlySpentAllSkillPoints,
 					hasSpentSomeTradeOrLanguagePoints,
+					hasNoTradeOrLanguagePointsToSpend,
 					isValid
 				});
 

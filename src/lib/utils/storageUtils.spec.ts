@@ -7,7 +7,7 @@ describe('storageUtils', () => {
     localStorage.clear();
   });
 
-  test('deserializeCharacterFromStorage drops old schema versions', () => {
+  test('deserializeCharacterFromStorage auto-migrates old schema versions', () => {
     const oldCharacterJson = JSON.stringify({
       id: 'test-char',
       schemaVersion: 1,
@@ -17,7 +17,10 @@ describe('storageUtils', () => {
 
     const result = deserializeCharacterFromStorage(oldCharacterJson);
     
-    expect(result).toBeNull(); // Should drop incompatible saves
+    expect(result).not.toBeNull(); // Should auto-migrate, not drop
+    expect(result?.schemaVersion).toBe(2); // Should be migrated to current version
+    expect(result?.id).toBe('test-char');
+    expect(result?.finalName).toBe('Test Character');
   });
 
   test('deserializeCharacterFromStorage handles current schema', () => {

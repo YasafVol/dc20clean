@@ -1,16 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
-
-// Simple deep equality helper for arrays to replace JSON.stringify comparison
-const arraysEqual = <T>(a: T[], b: T[]): boolean => {
-	if (a.length !== b.length) return false;
-	return a.every((val, index) => {
-		if (Array.isArray(val) && Array.isArray(b[index])) {
-			return arraysEqual(val as any[], b[index] as any[]);
-		}
-		return val === b[index];
-	});
-};
 import { allSpells } from '../../lib/rulesdata/spells-data/spells';
 import { allManeuvers, ManeuverType } from '../../lib/rulesdata/maneuvers';
 import { SpellSchool, type ClassName } from '../../lib/rulesdata/spells-data/types/spell.types';
@@ -39,6 +28,17 @@ import {
 	StyledFilterContainer,
 	StyledFilterButton
 } from './styles/SpellsAndManeuvers.styles';
+
+// Simple deep equality helper for arrays to replace JSON.stringify comparison
+function arraysEqual<T>(a: T[], b: T[]): boolean {
+	if (a.length !== b.length) return false;
+	return a.every((val, index) => {
+		if (Array.isArray(val) && Array.isArray(b[index])) {
+			return arraysEqual(val as any[], b[index] as any[]);
+		}
+		return val === b[index];
+	});
+}
 
 const SpellsAndManeuvers: React.FC = () => {
 	console.log('🚀 SpellsAndManeuvers component is rendering!');

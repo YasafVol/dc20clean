@@ -171,4 +171,87 @@ describe('useCharacterSheetReducer', () => {
     expect(typeof result.current.updateCurrency).toBe('function');
     expect(typeof result.current.updateNotes).toBe('function');
   });
+
+  it('should handle UPDATE_TEMP_HP action', () => {
+    const { result } = renderHook(() => useCharacterSheetReducer());
+    
+    const mockCharacter = {
+      id: 'test-id',
+      characterState: {
+        resources: {
+          current: { tempHP: 0 }
+        }
+      }
+    } as any;
+    
+    // First load a character
+    act(() => {
+      result.current.dispatch({ type: 'LOAD_SUCCESS', character: mockCharacter });
+    });
+    
+    // Then update temp HP
+    act(() => {
+      result.current.dispatch({ type: 'UPDATE_TEMP_HP', tempHP: 5 });
+    });
+    
+    expect(result.current.state.character?.characterState.resources.current.tempHP).toBe(5);
+  });
+
+  it('should handle UPDATE_ACTION_POINTS_USED action', () => {
+    const { result } = renderHook(() => useCharacterSheetReducer());
+    
+    const mockCharacter = {
+      id: 'test-id',
+      characterState: {
+        resources: {
+          current: { actionPointsUsed: 0 }
+        }
+      }
+    } as any;
+    
+    // First load a character
+    act(() => {
+      result.current.dispatch({ type: 'LOAD_SUCCESS', character: mockCharacter });
+    });
+    
+    // Then update action points used
+    act(() => {
+      result.current.dispatch({ type: 'UPDATE_ACTION_POINTS_USED', ap: 3 });
+    });
+    
+    expect(result.current.state.character?.characterState.resources.current.actionPointsUsed).toBe(3);
+  });
+
+  it('should handle UPDATE_EXHAUSTION action', () => {
+    const { result } = renderHook(() => useCharacterSheetReducer());
+    
+    const mockCharacter = {
+      id: 'test-id',
+      characterState: {
+        exhaustion: 0
+      }
+    } as any;
+    
+    // First load a character
+    act(() => {
+      result.current.dispatch({ type: 'LOAD_SUCCESS', character: mockCharacter });
+    });
+    
+    // Then update exhaustion
+    act(() => {
+      result.current.dispatch({ type: 'UPDATE_EXHAUSTION', level: 2 });
+    });
+    
+    expect(result.current.state.character?.characterState.exhaustion).toBe(2);
+  });
+
+  it('should provide new helper functions', () => {
+    const { result } = renderHook(() => useCharacterSheetReducer());
+    
+    expect(typeof result.current.updateTempHP).toBe('function');
+    expect(typeof result.current.updateActionPoints).toBe('function');
+    expect(typeof result.current.updateExhaustion).toBe('function');
+    expect(typeof result.current.updateAttack).toBe('function');
+    expect(typeof result.current.updateInventory).toBe('function');
+  });
 });

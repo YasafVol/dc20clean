@@ -35,7 +35,7 @@ export interface AttacksProps {
 }
 
 const Attacks: React.FC<AttacksProps> = ({ characterData, onAttackClick }) => {
-	const { addAttack, removeAttack, dispatch } = useCharacterSheet();
+	const { addAttack, removeAttack, updateAttack } = useCharacterSheet();
 	const attacks = useCharacterAttacks();
 	const addWeaponSlot = () => {
 		const newAttack: AttackData = {
@@ -74,7 +74,7 @@ const Attacks: React.FC<AttacksProps> = ({ characterData, onAttackClick }) => {
 		const attackToUpdate = attacks[attackIndex];
 		if (attackToUpdate) {
 			const updatedAttack = { ...newAttackData, id: attackToUpdate.id };
-			dispatch({ type: 'UPDATE_ATTACK', attackId: attackToUpdate.id, attack: updatedAttack });
+			updateAttack(attackToUpdate.id, updatedAttack);
 		}
 	};
 

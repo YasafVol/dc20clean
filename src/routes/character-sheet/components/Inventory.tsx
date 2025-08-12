@@ -23,7 +23,7 @@ export interface InventoryProps {
 }
 
 const Inventory: React.FC<InventoryProps> = ({ onItemClick }) => {
-	const { dispatch } = useCharacterSheet();
+	const { updateInventory } = useCharacterSheet();
 	const inventoryData = useCharacterInventory();
 	const inventory = inventoryData.items;
 	const addInventorySlot = () => {
@@ -34,12 +34,12 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick }) => {
 			count: 1,
 			cost: '-'
 		};
-		dispatch({ type: 'UPDATE_INVENTORY', items: [...inventory, newInventoryItem] });
+		updateInventory([...inventory, newInventoryItem]);
 	};
 
 	const removeInventorySlot = (inventoryIndex: number) => {
 		const updatedInventory = inventory.filter((_, index) => index !== inventoryIndex);
-		dispatch({ type: 'UPDATE_INVENTORY', items: updatedInventory });
+		updateInventory(updatedInventory);
 	};
 
 	const handleInventoryItemSelect = (
@@ -53,7 +53,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick }) => {
 			const updatedInventory = inventory.map((item, index) =>
 				index === inventoryIndex ? { ...item, itemType, itemName: '', cost: '-' } : item
 			);
-			dispatch({ type: 'UPDATE_INVENTORY', items: updatedInventory });
+			updateInventory(updatedInventory);
 		} else {
 			// Selecting item name
 			const selectedItem = allItems.find((i: any) => i.name === itemTypeOrName);
@@ -67,7 +67,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick }) => {
 						}
 					: item
 			);
-			dispatch({ type: 'UPDATE_INVENTORY', items: updatedInventory });
+			updateInventory(updatedInventory);
 		}
 	};
 
@@ -75,7 +75,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick }) => {
 		const updatedInventory = inventory.map((item, index) =>
 			index === inventoryIndex ? { ...item, count: Math.max(1, count) } : item
 		);
-		dispatch({ type: 'UPDATE_INVENTORY', items: updatedInventory });
+		updateInventory(updatedInventory);
 	};
 
 	const getItemCost = (item: InventoryItem | undefined | null, count: number = 1): string => {

@@ -44,6 +44,8 @@ interface CharacterSheetContextType {
   setManualDefense: (pd?: number, ad?: number, pdr?: number) => void;
   addAttack: (attack: any) => void;
   removeAttack: (attackId: string) => void;
+  updateAttack: (attackId: string, attack: any) => void;
+  updateInventory: (items: any[]) => void;
   updateCurrency: (gold?: number, silver?: number, copper?: number) => void;
   updateNotes: (notes: string) => void;
   // Manual save function
@@ -70,6 +72,8 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
     setManualDefense,
     addAttack,
     removeAttack,
+    updateAttack,
+    updateInventory,
     updateCurrency,
     updateNotes,
   } = useCharacterSheetReducer();
@@ -207,6 +211,8 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
     setManualDefense,
     addAttack,
     removeAttack,
+    updateAttack,
+    updateInventory,
     updateCurrency,
     updateNotes,
     saveNow,

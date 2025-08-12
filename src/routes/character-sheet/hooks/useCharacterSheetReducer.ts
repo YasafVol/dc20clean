@@ -381,6 +381,10 @@ export function useCharacterSheetReducer() {
     dispatch({ type: 'REMOVE_ATTACK', attackId });
   }, []);
 
+  const updateAttack = useCallback((attackId: string, attack: Attack) => {
+    dispatch({ type: 'UPDATE_ATTACK', attackId, attack });
+  }, []);
+
   const addSpell = useCallback((spell: any) => {
     dispatch({ type: 'ADD_SPELL', spell });
   }, []);
@@ -399,6 +403,10 @@ export function useCharacterSheetReducer() {
 
   const removeManeuver = useCallback((maneuverId: string) => {
     dispatch({ type: 'REMOVE_MANEUVER', maneuverId });
+  }, []);
+
+  const updateInventory = useCallback((items: any[]) => {
+    dispatch({ type: 'UPDATE_INVENTORY', items });
   }, []);
 
   const updateCurrency = useCallback((gold?: number, silver?: number, copper?: number) => {
@@ -422,11 +430,13 @@ export function useCharacterSheetReducer() {
     setManualDefense,
     addAttack,
     removeAttack,
+    updateAttack,
     addSpell,
     removeSpell,
     updateSpell,
     addManeuver,
     removeManeuver,
+    updateInventory,
     updateCurrency,
     updateNotes,
   };

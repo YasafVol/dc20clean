@@ -32,7 +32,7 @@ const Resources: React.FC<ResourcesProps> = ({
 	breakdowns,
 	isMobile = false
 }) => {
-	const { updateHP, updateSP, updateMP, dispatch } = useCharacterSheet();
+	const { updateHP, updateSP, updateMP, updateTempHP } = useCharacterSheet();
 	const resources = useCharacterResources();
 
 	if (!resources) {
@@ -67,7 +67,7 @@ const Resources: React.FC<ResourcesProps> = ({
 				updateMP(Math.max(0, current.currentMP + amount));
 				break;
 			case 'tempHP':
-				dispatch({ type: 'UPDATE_TEMP_HP', tempHP: Math.max(0, current.tempHP + amount) });
+				updateTempHP(Math.max(0, current.tempHP + amount));
 				break;
 		}
 	};
@@ -75,7 +75,7 @@ const Resources: React.FC<ResourcesProps> = ({
 	const onResourceInputChange = (resource: 'tempHP', value: string) => {
 		const numValue = parseInt(value) || 0;
 		if (resource === 'tempHP') {
-			dispatch({ type: 'UPDATE_TEMP_HP', tempHP: Math.max(0, numValue) });
+			updateTempHP(Math.max(0, numValue));
 		}
 	};
 	return (

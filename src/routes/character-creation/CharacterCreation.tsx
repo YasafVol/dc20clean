@@ -262,14 +262,20 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
                 if (state.selectedTraitIds && Array.isArray(state.selectedTraitIds)) {
                     const selectedTraitIdsList: string[] = state.selectedTraitIds;
                     
+                    console.log('🔍 Selected trait IDs:', selectedTraitIdsList);
+                    
                     selectedTraitIdsList.forEach((traitId: string) => {
                             const trait = traitsData.find((t: any) => t.id === traitId);
+                            console.log(`🔍 Processing trait ${traitId}:`, trait);
                             if (trait) {
                                 trait.effects.forEach((effect: any) => {
                                     if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+                                        console.log(`🔍 Found skillPoints bonus: +${effect.value} from trait ${traitId}`);
                                         bonusSkillPoints += (effect.value as number);
                                     }
                                 });
+                            } else {
+                                console.warn(`🚨 Trait not found: ${traitId}`);
                             }
                         });
                 }
@@ -334,6 +340,13 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
                 }
                 
                 const baseSkillPoints = Math.max(1, 5 + intelligenceModifier + bonusSkillPoints);
+                
+                console.log('🔍 Skill Points Calculation:', {
+                    base: 5,
+                    intelligence: intelligenceModifier,
+                    bonusFromTraits: bonusSkillPoints,
+                    total: baseSkillPoints
+                });
                 const skillToTrade = state.skillToTradeConversions || 0;
                 const tradeToSkill = state.tradeToSkillConversions || 0;
                 const availableSkillPoints = baseSkillPoints - skillToTrade + Math.floor(tradeToSkill / 2);

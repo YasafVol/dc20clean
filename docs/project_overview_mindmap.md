@@ -1,6 +1,6 @@
 # DC20Clean – System Overview & Mind Map (Iteration 1)
 
-_Last updated: 2025-01-01_
+_Last updated: 2025-08-12_
 
 ---
 
@@ -328,5 +328,56 @@ mindmap
 2. Migrate any remaining imports to new loaders.
 3. Complete Effect Processor integration.
 4. Increase unit-test coverage to 25 %.
+
+---
+
+# Snapshot 003 – Post-Character Sheet Context Migration (2025-08-12)
+
+> This snapshot captures the state of DC20Clean immediately after migrating the Character Sheet UI to the new Context-driven architecture and restoring Desktop/Mobile views (branch `consolidation-refactor`).
+
+## 1  Highlights
+- Context provider `CharacterSheetProvider` is the single source of truth for the sheet
+- Reducer `useCharacterSheetReducer` handles all edits (resources, defenses, spells, maneuvers, inventory, notes, currency)
+- Selector hooks added: `useCharacterResources`, `useCharacterDefenses`, `useCharacterAttacks`, `useCharacterInventory`, `useCharacterSpells`, `useCharacterManeuvers`
+- Debounced auto-save to localStorage with schema v2 normalization
+- Legacy prop-drilling removed; components read from Context directly
+- Temporary `CharacterSheetSimple.tsx` removed; Router renders Desktop/Mobile (responsive)
+
+## 2  Updated Mind Map
+```mermaid
+mindmap
+  root((DC20Clean – Post-Character Sheet Context))
+    "State Management"
+      "CharacterSheetProvider (Context)"
+      "Reducer (typed actions)"
+      "Selector Hooks"
+    "Character Sheet UI"
+      "Desktop View"
+      "Mobile View"
+      "Popups (Feature/Spell/Attack/Inventory)"
+    "Persistence"
+      "LocalStorage v2 (auto-migrate)"
+    "Services"
+      "enhancedCharacterCalculator (used on save)"
+    "Testing"
+      "Reducer unit tests"
+      "E2E journey (to expand)"
+```
+
+## 3  Notable Changes
+- Spells, Maneuvers, Inventory, Features, Defenses, Currency, Notes ported to Context
+- Router switches by breakpoint and no longer uses the minimal sheet
+- Save pipeline guarded; calculator failures are warned and do not block persistence
+
+## 4  Known Issues / Follow-ups
+- Some repo-wide ESLint errors remain (outside sheet scope); to be addressed separately
+- Calculator integration to be hardened and fully typed
+- Desktop/Mobile parity to be verified for all sections and popups
+
+## 5  Next Steps
+1. Finish minor helper wiring (e.g., action points, temp HP where needed) and type tightening
+2. Add coverage for critical reducer branches and a Playwright journey: create → save → reload sheet
+3. Clean remaining legacy helpers/components after verifying no imports
+4. Promote enhanced calculator to single source of truth behind a feature flag
 
 ---

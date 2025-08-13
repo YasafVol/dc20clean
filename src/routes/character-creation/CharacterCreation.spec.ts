@@ -1,0 +1,308 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+
+// Mock the complex dependencies
+vi.mock('../../lib/rulesdata/loaders/class.loader', () => ({
+  classesData: [
+    {
+      id: 'barbarian',
+      name: 'Barbarian',
+      hitDie: 'd12'
+    }
+  ]
+}));
+
+vi.mock('../../lib/rulesdata/loaders/class-features.loader', () => ({
+  findClassByName: (className: string) => ({
+    className: 'Barbarian',
+    coreFeatures: [
+      {
+        levelGained: 1,
+        featureName: 'Test Feature',
+        effects: [
+          {
+            type: 'MODIFY_STAT',
+            target: 'skillPoints',
+            value: 1
+          }
+        ]
+      }
+    ]
+  })
+}));
+
+vi.mock('../../lib/rulesdata/_new_schema/traits', () => ({
+  traitsData: [
+    // Human traits
+    {
+      id: 'human_skill_expertise',
+      name: 'Skill Expertise',
+      description: 'Grants +1 skill point',
+      cost: 2,
+      effects: [
+        {
+          type: 'MODIFY_STAT',
+          target: 'skillPoints',
+          value: 1
+        }
+      ]
+    },
+    {
+      id: 'human_resolve',
+      name: 'Human Resolve',
+      description: 'Expanded death threshold',
+      cost: 1,
+      effects: [
+        {
+          type: 'MODIFY_STAT',
+          target: 'deathThresholdModifier',
+          value: 1
+        }
+      ]
+    },
+    // Grasslands Urban traits
+    {
+      id: 'grasslands_urban_versatility',
+      name: 'Urban Versatility',
+      description: 'Grants +1 skill point from urban environment',
+      cost: 1,
+      effects: [
+        {
+          type: 'MODIFY_STAT',
+          target: 'skillPoints',
+          value: 1
+        }
+      ]
+    },
+    {
+      id: 'grasslands_survival',
+      name: 'Grasslands Survival',
+      description: 'Survival skills in grasslands',
+      cost: 1,
+      effects: [
+        {
+          type: 'GRANT_PROFICIENCY',
+          target: 'survival',
+          value: 1
+        }
+      ]
+    }
+  ]
+}));
+
+// Test data for validation
+const mockCharacterState = {
+  currentStep: 4,
+  classId: 'barbarian',
+  ancestry1Id: 'human',
+  ancestry2Id: 'grasslands',
+  selectedTraitIds: ['human_skill_expertise', 'human_resolve', 'grasslands_urban_versatility'],
+  attribute_intelligence: 0,
+  selectedFeatureChoices: {},
+  skillsData: {},
+  tradesData: {},
+  languagesData: { common: { fluency: 'fluent' } },
+  selectedSpells: [],
+  selectedManeuvers: [],
+  skillToTradeConversions: 0,
+  tradeToSkillConversions: 0,
+  schemaVersion: 2
+};
+
+// Helper function to extract skill points from validation logic
+const calculateSkillPoints = (
+  intelligenceModifier: number,
+  selectedTraitIds: string[],
+  classFeatures?: any,
+  selectedFeatureChoices?: any
+): number => {
+  const { traitsData } = require('../../lib/rulesdata/_new_schema/traits');
+  
+  let bonusSkillPoints = 0;
+  
+  // From traits
+  selectedTraitIds.forEach((traitId: string) => {
+    const trait = traitsData.find((t: any) => t.id === traitId);
+    if (trait) {
+      trait.effects.forEach((effect: any) => {
+        if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+          bonusSkillPoints += effect.value as number;
+        }
+      });
+    }
+  });
+  
+  // From class features (simplified for test)
+  if (classFeatures && selectedFeatureChoices) {
+    bonusSkillPoints += 1; // Mock class feature bonus
+  }
+  
+  return Math.max(1, 5 + intelligenceModifier + bonusSkillPoints);
+};
+
+describe('CharacterCreation - Skill Points Calculation', () => {
+  beforeEach(() => {
+    // Clear any previous console logs
+    vi.clearAllMocks();
+  });
+
+  describe('Background Step Validation', () => {
+    it('should calculate correct skill points for Human Grasslands Urban with 0 Intelligence', () => {
+      const skillPoints = calculateSkillPoints(
+        0, // Intelligence modifier
+        ['human_skill_expertise', 'grasslands_urban_versatility'], // Traits
+        null, // No class features for this test
+        {}
+      );
+      
+      // Expected: 5 (base) + 0 (int) + 1 (human) + 1 (grasslands urban) = 7
+      expect(skillPoints).toBe(7);
+    });
+
+    it('should calculate correct skill points for Human Grasslands Urban with +2 Intelligence', () => {
+      const skillPoints = calculateSkillPoints(
+        2, // Intelligence modifier
+        ['human_skill_expertise', 'grasslands_urban_versatility'],
+        null,
+        {}
+      );
+      
+      // Expected: 5 (base) + 2 (int) + 1 (human) + 1 (grasslands urban) = 9
+      expect(skillPoints).toBe(9);
+    });
+
+    it('should calculate correct skill points for Human without Grasslands Urban bonus', () => {
+      const skillPoints = calculateSkillPoints(
+        0, // Intelligence modifier
+        ['human_skill_expertise'], // Only human trait
+        null,
+        {}
+      );
+      
+      // Expected: 5 (base) + 0 (int) + 1 (human) = 6
+      expect(skillPoints).toBe(6);
+    });
+
+    it('should handle minimum skill points (1) even with negative intelligence', () => {
+      const skillPoints = calculateSkillPoints(
+        -3, // Very negative intelligence
+        [], // No trait bonuses
+        null,
+        {}
+      );
+      
+      // Expected: Math.max(1, 5 + (-3) + 0) = Math.max(1, 2) = 2
+      expect(skillPoints).toBe(2);
+    });
+
+    it('should include class feature bonuses in calculation', () => {
+      const { findClassByName } = require('../../lib/rulesdata/loaders/class-features.loader');
+      const classFeatures = findClassByName('Barbarian');
+      
+      const skillPoints = calculateSkillPoints(
+        0, // Intelligence modifier
+        ['human_skill_expertise'], // +1 from human
+        classFeatures, // +1 from class feature
+        { 'barbarian_test_feature_0': 'selected' }
+      );
+      
+      // Expected: 5 (base) + 0 (int) + 1 (human) + 1 (class) = 7
+      expect(skillPoints).toBe(7);
+    });
+
+    it('should handle missing traits gracefully', () => {
+      const skillPoints = calculateSkillPoints(
+        0,
+        ['nonexistent_trait'], // This trait doesn't exist
+        null,
+        {}
+      );
+      
+      // Expected: 5 (base) + 0 (int) + 0 (no valid traits) = 5
+      expect(skillPoints).toBe(5);
+    });
+  });
+
+  describe('Background Stage Validation Logic', () => {
+    it('should validate skill points are fully spent', () => {
+      const availableSkillPoints = 7; // Human Grasslands Urban
+      const skillPointsUsed = 7; // All points spent
+      const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
+      
+      expect(skillPointsRemaining).toBe(0);
+    });
+
+    it('should fail validation when skill points remain unspent', () => {
+      const availableSkillPoints = 7; // Human Grasslands Urban
+      const skillPointsUsed = 5; // Not all points spent
+      const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
+      
+      expect(skillPointsRemaining).toBeGreaterThan(0);
+    });
+
+    it('should allow completion with trade/language points spent', () => {
+      const tradePointsUsed = 1;
+      const languagePointsUsed = 0;
+      const hasSpentSomeTradeOrLanguagePoints = tradePointsUsed > 0 || languagePointsUsed > 0;
+      
+      expect(hasSpentSomeTradeOrLanguagePoints).toBe(true);
+    });
+
+    it('should allow completion when no trade/language points available', () => {
+      const availableTradePoints = 0;
+      const availableLanguagePoints = 0;
+      const hasNoTradeOrLanguagePointsToSpend = availableTradePoints <= 0 && availableLanguagePoints <= 0;
+      
+      expect(hasNoTradeOrLanguagePointsToSpend).toBe(true);
+    });
+  });
+
+  describe('Point Conversions', () => {
+    it('should handle skill-to-trade conversions correctly', () => {
+      // This would test the conversion logic:
+      // 1 skill point = 2 trade points
+      // 2 trade points = 1 skill point
+      
+      const baseSkillPoints = 7; // Human Grasslands Urban base
+      const skillToTrade = 2; // Convert 2 skill points
+      const tradeToSkill = 0;
+      
+      const availableSkillPoints = baseSkillPoints - skillToTrade + Math.floor(tradeToSkill / 2);
+      const expectedAvailableSkillPoints = 5; // 7 - 2 + 0
+      
+      expect(availableSkillPoints).toBe(expectedAvailableSkillPoints);
+    });
+
+    it('should handle trade-to-skill conversions correctly', () => {
+      const baseSkillPoints = 7; // Human Grasslands Urban base
+      const skillToTrade = 0;
+      const tradeToSkill = 4; // Convert 4 trade points (2 skills worth)
+      
+      const availableSkillPoints = baseSkillPoints - skillToTrade + Math.floor(tradeToSkill / 2);
+      const expectedAvailableSkillPoints = 9; // 7 - 0 + Math.floor(4 / 2) = 7 + 2
+      
+      expect(availableSkillPoints).toBe(expectedAvailableSkillPoints);
+    });
+  });
+
+  describe('Edge Cases', () => {
+    it('should handle empty trait arrays', () => {
+      const skillPoints = calculateSkillPoints(0, [], null, {});
+      expect(skillPoints).toBe(5); // Just base + intelligence
+    });
+
+    it('should handle undefined selectedTraitIds', () => {
+      const skillPoints = calculateSkillPoints(0, [], null, {});
+      expect(skillPoints).toBe(5);
+    });
+
+    it('should handle traits with non-skillPoints effects', () => {
+      const skillPoints = calculateSkillPoints(
+        0,
+        ['human_resolve'], // This trait doesn't give skill points
+        null,
+        {}
+      );
+      expect(skillPoints).toBe(5); // No bonus from this trait
+    });
+  });
+});

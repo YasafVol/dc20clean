@@ -87,6 +87,9 @@ export const getClassMasteryBonuses = (
 						.replace(/\s+/g, '_')}_${choiceIndex}`;
 					const selectedOptions = selectedChoices[choiceId];
 
+					// DEBUG: show mapping and raw stored value
+					console.log('[getClassMasteryBonuses] class:', classFeatures?.className, 'feature:', feature?.featureName, 'choiceId:', choiceId, 'selectedOptionsRaw:', selectedOptions);
+
 					if (selectedOptions) {
 						let optionsToProcess: string[] = [];
 						try {
@@ -98,10 +101,11 @@ export const getClassMasteryBonuses = (
 							optionsToProcess = [selectedOptions];
 						}
 
+						console.log('[getClassMasteryBonuses] optionsToProcess:', optionsToProcess);
+
 						optionsToProcess.forEach((optionName) => {
-							const selectedOption = choice.options?.find(
-								(opt: any) => opt.name === optionName
-							);
+							const selectedOption = choice.options?.find((opt: any) => opt.name === optionName);
+							console.log('[getClassMasteryBonuses] matching optionName:', optionName, 'selectedOption:', selectedOption);
 							if (selectedOption) {
 								const description = selectedOption.description.toLowerCase();
 
@@ -249,6 +253,9 @@ export const useBackgroundPoints = (
 							const choiceId = `${classFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;
 							const selectedOptions = selectedChoices[choiceId];
 
+							// DEBUG
+							console.log('[calcBonus] class:', classFeatures?.className, 'feature:', feature?.featureName, 'choiceId:', choiceId, 'selectedOptionsRaw:', selectedOptions, 'targetStat:', targetStat);
+
 							if (selectedOptions) {
 								let optionsToProcess: string[] = [];
 								
@@ -261,8 +268,11 @@ export const useBackgroundPoints = (
 									optionsToProcess = [selectedOptions];
 								}
 
+								console.log('[calcBonus] optionsToProcess:', optionsToProcess);
+
 								optionsToProcess.forEach((optionName) => {
 									const selectedOption = choice.options?.find((opt: any) => opt.name === optionName);
+									console.log('[calcBonus] matching optionName:', optionName, 'selectedOption:', selectedOption);
 									
 									if (selectedOption && selectedOption.effects) {
 										selectedOption.effects.forEach((effect: any) => {

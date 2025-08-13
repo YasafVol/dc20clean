@@ -61,6 +61,15 @@ const Background: React.FC = () => {
 		state
 	);
 
+	// DEBUG: surface what the calculator is seeing for class/choices/points
+	console.log('BG debug', {
+		classId: state.classId,
+		selectedFeatureChoices: state.selectedFeatureChoices,
+		expectedHunterChoiceKey: 'hunter_favored_terrain_0',
+		pointsDataBaseSkillPoints: pointsData?.baseSkillPoints,
+		pointsData
+	});
+
 	// Persist conversions into context so validation sees the effective available points
 	React.useEffect(() => {
 		dispatch({

@@ -48,6 +48,18 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 	const [showSnackbar, setShowSnackbar] = useState(false);
 
+	// Debug current state on any changes
+	useEffect(() => {
+		console.log('🐛 CharacterCreation State Debug:', {
+			currentStep: state.currentStep,
+			ancestry1Id: state.ancestry1Id,
+			ancestry2Id: state.ancestry2Id,
+			selectedTraitIds: state.selectedTraitIds,
+			classId: state.classId,
+			calculationResult: calculationResult?.ancestry
+		});
+	}, [state.ancestry1Id, state.ancestry2Id, state.selectedTraitIds, state.currentStep, calculationResult?.ancestry]);
+
 	// Initialize character state for edit mode
 	useEffect(() => {
 		if (editCharacter) {
@@ -202,12 +214,24 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 				// Use centralized calculator for ancestry points validation
 				const ancestryData = calculationResult.ancestry || { ancestryPointsRemaining: 5 };
 				const { ancestryPointsRemaining } = ancestryData;
-				const isValid = state.ancestry1Id !== null && ancestryPointsRemaining >= 0;
+				
+				// Step is complete if:
+				// 1. At least one ancestry is selected AND
+				// 2. Points are not over budget (>= 0) AND  
+				// 3. All points are spent (== 0) for completion
+				const hasAncestry = state.ancestry1Id !== null;
+				const pointsValid = ancestryPointsRemaining >= 0;
+				const allPointsSpent = ancestryPointsRemaining === 0;
+				const isValid = hasAncestry && pointsValid && allPointsSpent;
+				
 				console.log('🔍 Step 2 (Ancestry) validation:', {
 					ancestry1Id: state.ancestry1Id,
 					ancestry2Id: state.ancestry2Id,
 					selectedTraitIds: state.selectedTraitIds,
 					ancestryPointsRemaining,
+					hasAncestry,
+					pointsValid,
+					allPointsSpent,
 					isValid
 				});
 				return isValid;

@@ -205,6 +205,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 				const isValid = state.ancestry1Id !== null && ancestryPointsRemaining >= 0;
 				console.log('🔍 Step 2 (Ancestry) validation:', {
 					ancestry1Id: state.ancestry1Id,
+					ancestry2Id: state.ancestry2Id,
+					selectedTraitIds: state.selectedTraitIds,
 					ancestryPointsRemaining,
 					isValid
 				});

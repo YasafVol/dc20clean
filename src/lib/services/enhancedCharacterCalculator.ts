@@ -260,8 +260,9 @@ function aggregateAttributedEffects(buildData: EnhancedCharacterBuildData): Attr
           const userChoice = buildData.featureChoices[choice.id];
           if (userChoice) {
             for (const option of choice.options) {
-              if (userChoice === option.name || 
-                  (Array.isArray(userChoice) && userChoice.includes(option.name))) {
+              const isSelected = userChoice === option.name || 
+                  (Array.isArray(userChoice) && userChoice.includes(option.name));
+              if (isSelected) {
                 if (option.effects) {
                   for (const effect of option.effects) {
                     effects.push({

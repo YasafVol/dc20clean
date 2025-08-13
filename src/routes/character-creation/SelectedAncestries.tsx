@@ -18,7 +18,15 @@ import {
 } from './styles/SelectedAncestries.styles';
 
 function SelectedAncestries() {
-	const { state, dispatch, ancestryPointsRemaining, ancestryPointsSpent, totalAncestryPoints } = useCharacter();
+	const { state, dispatch, calculationResult } = useCharacter();
+	
+	// Use centralized calculator for ancestry points (includes Cleric domain bonuses, etc.)
+	const ancestryData = calculationResult.ancestry || {
+		baseAncestryPoints: 5,
+		ancestryPointsUsed: 0,
+		ancestryPointsRemaining: 5
+	};
+	const { baseAncestryPoints: totalAncestryPoints, ancestryPointsUsed: ancestryPointsSpent, ancestryPointsRemaining } = ancestryData;
 
 	const selectedAncestry1 = ancestriesData.find((a) => a.id === state.ancestry1Id);
 	const selectedAncestry2 = ancestriesData.find((a) => a.id === state.ancestry2Id);

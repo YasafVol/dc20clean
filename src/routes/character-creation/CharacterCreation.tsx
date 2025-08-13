@@ -44,7 +44,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 	onBackToMenu,
 	isLevelUp
 }) => {
-	const { state, dispatch, attributePointsRemaining, ancestryPointsRemaining } = useCharacter();
+	const { state, dispatch, attributePointsRemaining, calculationResult } = useCharacter();
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 	const [showSnackbar, setShowSnackbar] = useState(false);
 
@@ -199,6 +199,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 				return true;
 			}
 			case 2: {
+				// Use centralized calculator for ancestry points validation
+				const ancestryData = calculationResult.ancestry || { ancestryPointsRemaining: 5 };
+				const { ancestryPointsRemaining } = ancestryData;
 				const isValid = state.ancestry1Id !== null && ancestryPointsRemaining >= 0;
 				console.log('🔍 Step 2 (Ancestry) validation:', {
 					ancestry1Id: state.ancestry1Id,

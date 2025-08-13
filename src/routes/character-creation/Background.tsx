@@ -1,11 +1,10 @@
 import React from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
-import { useBackgroundPoints } from './components/BackgroundPointsManager';
-import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
-import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import SkillsTab from './components/SkillsTab';
 import TradesTab from './components/TradesTab';
 import LanguagesTab from './components/LanguagesTab';
+import { InlineError } from './components/ValidationFeedback';
+import { BuildStep } from '../../lib/types/effectSystem';
 import {
 	StyledContainer,
 	StyledSubheading,
@@ -17,70 +16,45 @@ import {
 type TabType = 'skills' | 'trades' | 'languages';
 
 const Background: React.FC = () => {
-	const { state, dispatch } = useCharacter();
+	const { state, dispatch, calculationResult } = useCharacter();
 	const [activeTab, setActiveTab] = React.useState<TabType>('skills');
+	
+	// Get background data from the centralized calculator
+	const { background, validation } = calculationResult;
+	
+	if (!background) {
+		return (
+			<StyledContainer>
+				<StyledSubheading>Background (Skills, Trades & Languages)</StyledSubheading>
+				<div>Loading background calculations...</div>
+			</StyledContainer>
+		);
+	}
 
-	// NEW: Use typed data instead of JSON parsing
+	// Use typed data from state
 	const currentSkills = state.skillsData || {};
 	const currentTrades = state.tradesData || {};
 	const currentLanguages = state.languagesData || { common: { fluency: 'fluent' } };
 
-	// Calculate points used
-	const skillPointsUsed = Object.values(currentSkills).reduce(
-		(sum: number, level: any) => sum + level,
-		0
-	);
-	const tradePointsUsed = Object.values(currentTrades).reduce(
-		(sum: number, level: any) => sum + level,
-		0
-	);
-	const languagePointsUsed = Object.entries(currentLanguages).reduce(
-		(sum, [langId, data]: [string, any]) => {
-			if (langId === 'common') return sum; // Common is free
-			return sum + (data.fluency === 'limited' ? 1 : data.fluency === 'fluent' ? 2 : 0);
-		},
-		0
-	);
+	// For now, we'll create a simplified masteryLimits object
+	// TODO: This should come from the calculator in a future enhancement
+	const masteryLimits = {
+		maxSkillMastery: 2, // Level 1 characters can reach Adept
+		maxTradeMastery: 2,
+		level1Validation: {
+			valid: true,
+			adeptCount: 0
+		}
+	};
 
-	// Get class features for mastery calculations
-	const classData = state.classId ? classesData.find(c => c.id.toLowerCase() === state.classId.toLowerCase()) : null;
-	const classFeatures = classData ? findClassByName(classData.name) : null;
-
-	// Use the background points manager hook
-  const { pointsData, conversions, actions, masteryLimits } = useBackgroundPoints(
-		skillPointsUsed,
-		tradePointsUsed,
-		languagePointsUsed,
-		state.attribute_intelligence,
-		state.level,
-		classFeatures,
-		state.selectedFeatureChoices,
-		currentSkills,
-		currentTrades,
-		state.selectedTraitIds,
-		state
-	);
-
-	// DEBUG: surface what the calculator is seeing for class/choices/points
-	console.log('BG debug', {
-		classId: state.classId,
-		selectedFeatureChoices: state.selectedFeatureChoices,
-		expectedHunterChoiceKey: 'hunter_favored_terrain_0',
-		pointsDataBaseSkillPoints: pointsData?.baseSkillPoints,
-		pointsData
-	});
-
-	// Persist conversions into context so validation sees the effective available points
-	React.useEffect(() => {
-		dispatch({
-			type: 'SET_CONVERSIONS',
-			conversions: {
-				skillToTrade: conversions.skillToTradeConversions,
-				tradeToSkill: conversions.tradeToSkillConversions,
-				tradeToLanguage: conversions.tradeToLanguageConversions
-			}
-		});
-	}, [conversions.skillToTradeConversions, conversions.tradeToSkillConversions, conversions.tradeToLanguageConversions, dispatch]);
+	// For now, we'll create simplified conversion actions
+	// TODO: These should be integrated with the calculator in a future enhancement
+	const actions = {
+		convertSkillToTrade: () => console.log('Conversion not yet implemented'),
+		convertTradeToSkill: () => console.log('Conversion not yet implemented'),
+		convertTradeToLanguage: () => console.log('Conversion not yet implemented'),
+		resetConversions: () => console.log('Conversion not yet implemented')
+	};
 
 	// Handler functions
 	const handleSkillChange = (skillId: string, newLevel: number) => {
@@ -132,8 +106,8 @@ const Background: React.FC = () => {
 					<SkillsTab
 						currentSkills={currentSkills}
 						currentTrades={currentTrades}
-						pointsData={pointsData}
-						conversions={conversions}
+						pointsData={background}
+						conversions={background.conversions}
 						actions={actions}
 						masteryLimits={masteryLimits}
 						onSkillChange={handleSkillChange}
@@ -144,8 +118,8 @@ const Background: React.FC = () => {
 					<TradesTab
 						currentTrades={currentTrades}
 						currentSkills={currentSkills}
-						pointsData={pointsData}
-						conversions={conversions}
+						pointsData={background}
+						conversions={background.conversions}
 						actions={actions}
 						masteryLimits={masteryLimits}
 						onTradeChange={handleTradeChange}
@@ -155,8 +129,8 @@ const Background: React.FC = () => {
 				return (
 					<LanguagesTab
 						currentLanguages={currentLanguages}
-						pointsData={pointsData}
-						conversions={conversions}
+						pointsData={background}
+						conversions={background.conversions}
 						actions={actions}
 						onLanguageChange={handleLanguageChange}
 					/>
@@ -169,19 +143,20 @@ const Background: React.FC = () => {
 	return (
 		<StyledContainer>
 			<StyledSubheading>Background (Skills, Trades & Languages)</StyledSubheading>
+			<InlineError errors={validation.errors} currentStep={BuildStep.Background} />
 			<StyledDescription>
 				Choose your character's background skills, trades, and languages. You have{' '}
-				<span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{pointsData.baseSkillPoints}</span>{' '}
+				<span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{background.baseSkillPoints}</span>{' '}
 				skill points{' '}
 				<span style={{ fontSize: '0.9rem', color: '#6b7280' }}>
-					(5 base + {state.attribute_intelligence} Int{pointsData.baseSkillPoints - 5 - state.attribute_intelligence > 0 ? ` + ${pointsData.baseSkillPoints - 5 - state.attribute_intelligence} bonus` : ''})
+					(5 base + {state.attribute_intelligence} Int{background.baseSkillPoints - 5 - state.attribute_intelligence > 0 ? ` + ${background.baseSkillPoints - 5 - state.attribute_intelligence} bonus` : ''})
 				</span>,{' '}
-				<span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{pointsData.baseTradePoints}</span>{' '}
-				trade points{pointsData.baseTradePoints > 3 ? <span style={{ fontSize: '0.9rem', color: '#6b7280' }}> (3 base + {pointsData.baseTradePoints - 3} bonus)</span> : ''}, and{' '}
+				<span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{background.baseTradePoints}</span>{' '}
+				trade points{background.baseTradePoints > 3 ? <span style={{ fontSize: '0.9rem', color: '#6b7280' }}> (3 base + {background.baseTradePoints - 3} bonus)</span> : ''}, and{' '}
 				<span style={{ fontWeight: 'bold', color: '#3b82f6' }}>
-					{pointsData.baseLanguagePoints}
+					{background.baseLanguagePoints}
 				</span>{' '}
-				language points{pointsData.baseLanguagePoints > 2 ? <span style={{ fontSize: '0.9rem', color: '#6b7280' }}> (2 base + {pointsData.baseLanguagePoints - 2} bonus)</span> : ''}. <br />
+				language points{background.baseLanguagePoints > 2 ? <span style={{ fontSize: '0.9rem', color: '#6b7280' }}> (2 base + {background.baseLanguagePoints - 2} bonus)</span> : ''}. <br />
 				<span
 					style={{
 						marginTop: '0.5rem',
@@ -201,13 +176,13 @@ const Background: React.FC = () => {
 
 			<StyledTabContainer>
 				<StyledTab $active={activeTab === 'skills'} onClick={() => setActiveTab('skills')}>
-					Skills ({pointsData.availableSkillPoints - pointsData.skillPointsUsed} left)
+					Skills ({background.availableSkillPoints - background.skillPointsUsed} left)
 				</StyledTab>
 				<StyledTab $active={activeTab === 'trades'} onClick={() => setActiveTab('trades')}>
-					Trades ({pointsData.availableTradePoints - pointsData.tradePointsUsed} left)
+					Trades ({background.availableTradePoints - background.tradePointsUsed} left)
 				</StyledTab>
 				<StyledTab $active={activeTab === 'languages'} onClick={() => setActiveTab('languages')}>
-					Languages ({pointsData.availableLanguagePoints - pointsData.languagePointsUsed} left)
+					Languages ({background.availableLanguagePoints - background.languagePointsUsed} left)
 				</StyledTab>
 			</StyledTabContainer>
 

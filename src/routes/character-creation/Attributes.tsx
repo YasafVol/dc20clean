@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { useEnhancedCharacterCalculation } from '../../lib/hooks/useEnhancedCharacterCalculation';
-import { useAttributeCalculation } from '../../lib/hooks/useAttributeCalculation';
+
 import { attributesData } from '../../lib/rulesdata/attributes';
 import AttributePointsCounter from './AttributePointsCounter';
 import styled from '@emotion/styled';
@@ -137,9 +137,22 @@ function Attributes() {
 		getStatBreakdown
 	} = useEnhancedCharacterCalculation();
 	
-	// NEW: Use intelligent attribute calculation for real-time feedback
-	const calculation = useAttributeCalculation(state);
 	const typedState = state as unknown as AttributeState;
+	
+	// Simple replacement for useAttributeCalculation using context values
+	const calculation = {
+		totalPointsAvailable: totalAttributePoints,
+		pointsSpent: totalAttributePoints - attributePointsRemaining,
+		pointsRemaining: attributePointsRemaining,
+		forcedAdjustments: [] as any[], // Simplified for now
+		isValid: attributePointsRemaining >= 0,
+		effectiveAttributes: {
+			might: state.attribute_might,
+			agility: state.attribute_agility,
+			charisma: state.attribute_charisma,
+			intelligence: state.attribute_intelligence
+		}
+	};
 
 	function increaseAttribute(attribute: string) {
 		if (attributePointsRemaining > 0) {

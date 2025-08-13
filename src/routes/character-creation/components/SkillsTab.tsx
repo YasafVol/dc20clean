@@ -1,16 +1,62 @@
 import React from 'react';
 import { skillsData } from '../../../lib/rulesdata/skills';
-import type {
-	BackgroundPointsData,
-	PointConversions,
-	ConversionActions,
-	MasteryLimits,
-	MasteryInfo
-} from './BackgroundPointsManager';
-import {
-	getMasteryInfo,
-	MASTERY_TABLE
-} from './BackgroundPointsManager';
+// Types moved from deleted BackgroundPointsManager
+interface BackgroundPointsData {
+	skillPointsUsed: number;
+	tradePointsUsed: number;
+	languagePointsUsed: number;
+	baseSkillPoints: number;
+	baseTradePoints: number;
+	baseLanguagePoints: number;
+	availableSkillPoints: number;
+	availableTradePoints: number;
+	availableLanguagePoints: number;
+}
+
+interface PointConversions {
+	skillToTradeConversions: number;
+	tradeToSkillConversions: number;
+	tradeToLanguageConversions: number;
+}
+
+interface ConversionActions {
+	convertSkillToTrade: () => void;
+	convertTradeToSkill: () => void;
+	convertTradeToLanguage: () => void;
+	resetConversions: () => void;
+}
+
+interface MasteryLimits {
+	maxSkillMastery: number;
+	maxTradeMastery: number;
+	level1Validation: { valid: boolean; adeptCount: number };
+}
+
+interface MasteryInfo {
+	level: number;
+	name: string;
+	bonus: number;
+	available: boolean;
+}
+
+const MASTERY_TABLE = [
+	{ level: 0, name: 'Untrained', bonus: 0 },
+	{ level: 1, name: 'Novice', bonus: 2 },
+	{ level: 2, name: 'Adept', bonus: 4 },
+	{ level: 3, name: 'Expert', bonus: 6 },
+	{ level: 4, name: 'Master', bonus: 8 },
+	{ level: 5, name: 'Grandmaster', bonus: 10 }
+];
+
+const getMasteryInfo = (level: number, maxMastery: number): MasteryInfo => {
+	const masteryData = MASTERY_TABLE[level] || MASTERY_TABLE[0];
+	return {
+		level,
+		name: masteryData.name,
+		bonus: masteryData.bonus,
+		available: level <= maxMastery
+	};
+};
 import {
 	StyledTabContent,
 	StyledSelectionGrid,

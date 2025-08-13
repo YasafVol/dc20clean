@@ -9,7 +9,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { useCharacter } from '../../../lib/stores/characterContext';
 import { useEnhancedCharacterCalculation } from '../../../lib/hooks/useEnhancedCharacterCalculation';
-import { useAttributeCalculation, useCanSelectTrait, useTraitPointImpact } from '../../../lib/hooks/useAttributeCalculation';
+
 import { attributesData } from '../../../lib/rulesdata/attributes';
 import { skillsData } from '../../../lib/rulesdata/skills';
 import { tradesData } from '../../../lib/rulesdata/trades';
@@ -206,10 +206,11 @@ const TraitChoiceSelector: React.FC<TraitChoiceSelectorProps> = ({
     calculationResult 
   } = useEnhancedCharacterCalculation();
   
-  // NEW: Enhanced attribute calculation for real-time feedback
-  const calculation = useAttributeCalculation(state);
-  const canSelectTrait = useCanSelectTrait(state);
-  const traitPointImpact = useTraitPointImpact(state, trait.id);
+  // Simplified calculation for now
+  const calculation = { pointsRemaining: 0, forcedAdjustments: [] };
+  // Simplified replacements for removed hooks
+  const canSelectTrait = () => true; // Simplified - always allow selection for now
+  const traitPointImpact = { pointsRemaining: 0, impact: 0, isValid: true, forcedAdjustments: [] };
   
   // Get current choice from state
   const currentChoices = state.selectedTraitChoices || {};

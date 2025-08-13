@@ -7,6 +7,23 @@
 
 import type { Effect } from '../rulesdata/schemas/character.schema';
 
+// Build step enumeration for step-aware validation
+export enum BuildStep {
+  Class = 1,
+  Ancestry = 2,
+  Attributes = 3,
+  Background = 4,
+  SpellsAndManeuvers = 5,
+  Finalize = 6
+}
+
+// Validation error codes for stable error handling
+export type ValidationCode = 
+  | 'POINTS_OVERBUDGET' 
+  | 'CHOICE_REQUIRED' 
+  | 'CAP_EXCEEDED' 
+  | 'MASTERY_RULE_VIOLATION';
+
 // Source attribution for effects
 export interface EffectSource {
   type: 'trait' | 'class_feature' | 'choice' | 'base' | 'ancestry_default';
@@ -49,11 +66,14 @@ export interface ValidationResult {
 }
 
 export interface ValidationError {
-  type: 'attribute_limit' | 'points_exceeded' | 'required_choice' | 'mastery_limit';
+  step: BuildStep; // New: for navigation gating UI
   field: string;
+  code: ValidationCode; // New: for stable error handling
   message: string;
-  currentValue: number;
-  maxValue: number;
+  // Legacy fields made optional for backward compatibility during transition
+  type?: 'attribute_limit' | 'points_exceeded' | 'required_choice' | 'mastery_limit';
+  currentValue?: number;
+  maxValue?: number;
 }
 
 export interface ValidationWarning {
@@ -184,6 +204,27 @@ export interface EnhancedCalculationResult {
     speed: string;
     source: EffectSource;
   }>;
+  
+  // Background point calculations for UI consumption
+  background?: {
+    baseSkillPoints: number;
+    baseTradePoints: number;
+    baseLanguagePoints: number;
+    availableSkillPoints: number;
+    availableTradePoints: number;
+    availableLanguagePoints: number;
+    skillPointsUsed: number;
+    tradePointsUsed: number;
+    languagePointsUsed: number;
+    conversions: { skillToTrade: number; tradeToSkill: number; tradeToLanguage: number };
+  };
+
+  // Ancestry point calculations for UI consumption
+  ancestry?: {
+    baseAncestryPoints: number;
+    ancestryPointsUsed: number;
+    ancestryPointsRemaining: number;
+  };
   
   // Validation results
   validation: ValidationResult;

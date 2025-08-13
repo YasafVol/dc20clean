@@ -3,7 +3,9 @@ import type { CharacterInProgress } from '@prisma/client';
 import { traitsData } from '../rulesdata/_new_schema/traits';
 import { findClassByName } from '../rulesdata/loaders/class-features.loader';
 import { classesData } from '../rulesdata/loaders/class.loader';
-import { calculateTraitCosts } from '../utils/traitCosts';
+
+import { useCharacterBuilder } from '../hooks/useCharacterBuilder';
+import type { EnhancedCalculationResult } from '../types/effectSystem';
 
 // Define the shape of the data stored in the character store
 export interface CharacterInProgressStoreData extends Omit<CharacterInProgress, 'selectedTraitIds' | 'selectedFeatureChoices' | 'skillsJson' | 'tradesJson' | 'languagesJson' | 'selectedTraitChoices' | 'selectedSpells' | 'selectedManeuvers'> {
@@ -151,6 +153,7 @@ function characterReducer(
 interface CharacterContextType {
     state: CharacterInProgressStoreData;
     dispatch: React.Dispatch<CharacterAction>;
+    // Legacy derived values (DEPRECATED: to be removed in Phase 3)
     attributePointsRemaining: number;
     attributePointsSpent: number;
     totalAttributePoints: number;
@@ -159,12 +162,17 @@ interface CharacterContextType {
     totalAncestryPoints: number;
     combatMastery: number;
     primeModifier: { name: string; value: number };
+    // New centralized calculation result
+    calculationResult: EnhancedCalculationResult;
 }
 
 const CharacterContext = createContext<CharacterContextType | undefined>(undefined);
 
 export function CharacterProvider({ children }: { children: ReactNode }) {
     const [state, dispatch] = useReducer(characterReducer, initialCharacterInProgressState);
+
+    // The new central engine runs on every state change
+    const calculationResult = useCharacterBuilder(state);
 
     const derivedValues = useMemo(() => {
         const selectedTraitIds: string[] = state.selectedTraitIds;
@@ -183,7 +191,11 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
         const attributePointsSpent = (state.attribute_might + 2) + (state.attribute_agility + 2) + (state.attribute_charisma + 2) + (state.attribute_intelligence + 2);
         const attributePointsRemaining = totalAttributePoints - attributePointsSpent;
 
-        const ancestryPointsSpent = calculateTraitCosts(selectedTraitIds);
+        // Calculate actual trait costs by looking up each trait
+        const ancestryPointsSpent = selectedTraitIds.reduce((total, traitId) => {
+            const trait = traitsData.find(t => t.id === traitId);
+            return total + (trait?.cost || 0);
+        }, 0);
         const totalAncestryPoints = 5; // This can be enhanced later to include bonuses
         const ancestryPointsRemaining = totalAncestryPoints - ancestryPointsSpent;
 
@@ -209,11 +221,13 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
         };
     }, [state]);
 
-    const contextValue: CharacterContextType = {
+    // Provide both the new result and the old values
+    const contextValue: CharacterContextType = useMemo(() => ({
         state,
         dispatch,
-        ...derivedValues
-    };
+        ...derivedValues, // DEPRECATED: to be removed in Phase 3
+        calculationResult
+    }), [state, dispatch, calculationResult, derivedValues]);
 
     return <CharacterContext.Provider value={contextValue}>{children}</CharacterContext.Provider>;
 }

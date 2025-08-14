@@ -7,7 +7,7 @@ import { classesData } from '../rulesdata/loaders/class.loader';
 export interface SpellAssignmentOptions {
 	className: string;
 	level: number;
-	selectedFeatureChoices: string; // JSON string of feature choices
+	selectedFeatureChoices: Record<string, string>; // Typed feature choices
 }
 
 /**
@@ -30,8 +30,8 @@ export const assignSpellsToCharacter = (options: SpellAssignmentOptions): SpellD
 		return [];
 	}
 
-	// Parse feature choices
-	const featureChoices: { [key: string]: string } = JSON.parse(selectedFeatureChoices || '{}');
+	// Use feature choices directly
+	const featureChoices: { [key: string]: string } = selectedFeatureChoices || {};
 
 	// Get available spell schools for this class
 	let availableSchools = getAvailableSpellSchools(classFeatures, featureChoices);

@@ -1,5 +1,8 @@
 import React from 'react';
 import type { SkillData, CharacterSheetData } from '../../../types';
+import type { EnhancedStatBreakdown } from '../../../lib/types/effectSystem';
+import Tooltip from './Tooltip';
+import { createEnhancedTooltip } from './EnhancedStatTooltips';
 import {
 	AttributeSection,
 	AttributeHeader,
@@ -26,9 +29,10 @@ interface AttributesProps {
 		charisma: SkillData[];
 		intelligence: SkillData[];
 	};
+	breakdowns?: Record<string, EnhancedStatBreakdown>;
 }
 
-const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribute }) => {
+const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribute, breakdowns }) => {
 	const renderSkills = (skills: SkillData[]) => {
 		return skills.map((skill) => (
 			<SkillRow key={skill.id}>
@@ -36,7 +40,7 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 				<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
 					<StyledProficiencyDots>
 						{[1, 2, 3, 4, 5].map((level) => (
-							<StyledDot key={level} filled={level <= skill.proficiency} />
+							<StyledDot key={level} $filled={level <= skill.proficiency} />
 						))}
 					</StyledProficiencyDots>
 					{skill.bonus !== undefined && (
@@ -73,7 +77,16 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 				<AttributeHeader>
 					<AttributeBox>
 						<AttributeAbbreviation>MIG</AttributeAbbreviation>
-						<AttributeValue>{characterData.finalMight}</AttributeValue>
+						<Tooltip 
+							content={
+								breakdowns?.attribute_might 
+									? createEnhancedTooltip('Might', breakdowns.attribute_might)
+									: `${characterData.finalMight} Might`
+							} 
+							position="top"
+						>
+							<AttributeValue>{characterData.finalMight}</AttributeValue>
+						</Tooltip>
 					</AttributeBox>
 					<AttributeInfo>
 						<AttributeName>MIGHT</AttributeName>
@@ -89,7 +102,16 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 				<AttributeHeader>
 					<AttributeBox>
 						<AttributeAbbreviation>AGI</AttributeAbbreviation>
-						<AttributeValue>{characterData.finalAgility}</AttributeValue>
+						<Tooltip 
+							content={
+								breakdowns?.attribute_agility 
+									? createEnhancedTooltip('Agility', breakdowns.attribute_agility)
+									: `${characterData.finalAgility} Agility`
+							} 
+							position="top"
+						>
+							<AttributeValue>{characterData.finalAgility}</AttributeValue>
+						</Tooltip>
 					</AttributeBox>
 					<AttributeInfo>
 						<AttributeName>AGILITY</AttributeName>
@@ -105,7 +127,16 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 				<AttributeHeader>
 					<AttributeBox>
 						<AttributeAbbreviation>CHA</AttributeAbbreviation>
-						<AttributeValue>{characterData.finalCharisma}</AttributeValue>
+						<Tooltip 
+							content={
+								breakdowns?.attribute_charisma 
+									? createEnhancedTooltip('Charisma', breakdowns.attribute_charisma)
+									: `${characterData.finalCharisma} Charisma`
+							} 
+							position="top"
+						>
+							<AttributeValue>{characterData.finalCharisma}</AttributeValue>
+						</Tooltip>
 					</AttributeBox>
 					<AttributeInfo>
 						<AttributeName>CHARISMA</AttributeName>
@@ -121,7 +152,16 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 				<AttributeHeader>
 					<AttributeBox>
 						<AttributeAbbreviation>INT</AttributeAbbreviation>
-						<AttributeValue>{characterData.finalIntelligence}</AttributeValue>
+						<Tooltip 
+							content={
+								breakdowns?.attribute_intelligence 
+									? createEnhancedTooltip('Intelligence', breakdowns.attribute_intelligence)
+									: `${characterData.finalIntelligence} Intelligence`
+							} 
+							position="top"
+						>
+							<AttributeValue>{characterData.finalIntelligence}</AttributeValue>
+						</Tooltip>
 					</AttributeBox>
 					<AttributeInfo>
 						<AttributeName>INTELLIGENCE</AttributeName>

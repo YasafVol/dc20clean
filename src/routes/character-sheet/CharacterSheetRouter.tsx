@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CharacterSheetDesktop from './CharacterSheetDesktop';
 import CharacterSheetMobile from './CharacterSheetMobile';
+import { CharacterSheetProvider } from './hooks/CharacterSheetProvider';
 
 // Breakpoint for mobile vs desktop (matches the existing project's mobile breakpoint)
 const MOBILE_BREAKPOINT = 768;
@@ -37,10 +38,12 @@ const CharacterSheetRouter: React.FC<CharacterSheetRouterProps> = ({ characterId
 
 	// Route to appropriate component based on screen size
 	// Both components use the EXACT same useCharacterSheet hook - zero duplication!
-	return isMobile ? (
-		<CharacterSheetMobile characterId={characterId} />
-	) : (
-		<CharacterSheetDesktop characterId={characterId} onBack={onBack} />
+	return (
+		<CharacterSheetProvider characterId={characterId}>
+			{isMobile
+				? <CharacterSheetMobile characterId={characterId} />
+				: <CharacterSheetDesktop characterId={characterId} onBack={onBack} />}
+		</CharacterSheetProvider>
 	);
 };
 

@@ -40,7 +40,7 @@ export interface Effect {
     ;
 
   /** The specific stat, attribute, or item being affected. Standardized for the calculator. */
-  target: string; // e.g., 'might', 'hpMax', 'pd', 'ad', 'moveSpeed', 'jumpDistance', 'deathThresholdModifier', 'skillPoints', 'ancestryPoints', 'maneuver', 'technique', 'Poison', 'Charmed', 'Heavy_Armor', 'climb', 'darkvision', 'any_attribute', 'any_skill'
+  target: string; // e.g., 'might', 'hpMax', 'pd', 'ad', 'moveSpeed', 'jumpDistance', 'deathThresholdModifier', 'skillPoints', 'attributePoints', 'ancestryPoints', 'maneuver', 'technique', 'Poison', 'Charmed', 'Heavy_Armor', 'climb', 'darkvision', 'any_attribute', 'any_skill'
 
   /** The value of the effect. Can be a number, string, or complex object. */
   value: number | string | boolean | { [key: string]: any }; // e.g., 1, -1, 'half', 'equal_to_speed', true, { capIncrease: 1, levelIncrease: 1 }
@@ -183,6 +183,7 @@ export interface StatModifiers {
   skillPoints: number;
   tradePoints: number;
   languagePoints: number;
+  attributePoints: number;
   ancestryPoints: number;
   restPoints: number;
   gritPoints: number;

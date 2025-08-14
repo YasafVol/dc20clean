@@ -27,7 +27,7 @@ const KnowledgeTrades: React.FC<KnowledgeTradesProps> = ({ knowledge, trades }) 
 					<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
 						<StyledProficiencyDots>
 							{[1, 2, 3, 4, 5].map((level) => (
-								<StyledDot key={level} filled={level <= knowledgeItem.proficiency} />
+								<StyledDot key={level} $filled={level <= knowledgeItem.proficiency} />
 							))}
 						</StyledProficiencyDots>
 						{knowledgeItem.bonus !== undefined && (
@@ -57,7 +57,7 @@ const KnowledgeTrades: React.FC<KnowledgeTradesProps> = ({ knowledge, trades }) 
 						<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
 							<StyledProficiencyDots>
 								{[1, 2, 3, 4, 5].map((level) => (
-									<StyledDot key={level} filled={level <= trade.proficiency} />
+									<StyledDot key={level} $filled={level <= trade.proficiency} />
 								))}
 							</StyledProficiencyDots>
 							{trade.bonus !== undefined && (

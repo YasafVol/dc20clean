@@ -8,58 +8,63 @@ import {
 	CurrencyLabel,
 	CurrencyInput
 } from '../styles/Currency';
+import { useCharacterInventory, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 
 interface CurrencyProps {
-	currentValues: {
-		platinumPieces: number;
-		goldPieces: number;
-		electrumPieces: number;
-		silverPieces: number;
-		copperPieces: number;
-	};
-	onCurrencyChange: (currency: string, value: number) => void;
+	// No props needed - uses context
 }
 
-const Currency: React.FC<CurrencyProps> = ({ currentValues, onCurrencyChange }) => {
-	const handleInputChange = (currency: string, value: string) => {
-		onCurrencyChange(currency, parseInt(value) || 0);
+const Currency: React.FC<CurrencyProps> = () => {
+	const { updateCurrency } = useCharacterSheet();
+	const inventory = useCharacterInventory();
+
+	if (!inventory) {
+		return (
+			<div style={{ padding: '1rem', color: '#666', textAlign: 'center' }}>
+				<p>Loading currency...</p>
+			</div>
+		);
+	}
+
+	const currency = inventory.currency;
+
+	const handleInputChange = (currencyType: string, value: string) => {
+		const numValue = parseInt(value) || 0;
+		
+		switch (currencyType) {
+			case 'goldPieces':
+				updateCurrency(numValue, currency.silver, currency.copper);
+				break;
+			case 'silverPieces':
+				updateCurrency(currency.gold, numValue, currency.copper);
+				break;
+			case 'copperPieces':
+				updateCurrency(currency.gold, currency.silver, numValue);
+				break;
+		}
 	};
 
 	const currencyTypes = [
-		{
-			key: 'platinumPieces',
-			label: 'Platinum',
-			color: '#e5e4e2',
-			borderColor: '#d3d3d3',
-			value: currentValues.platinumPieces
-		},
 		{
 			key: 'goldPieces',
 			label: 'Gold',
 			color: '#ffd700',
 			borderColor: '#b8860b',
-			value: currentValues.goldPieces
-		},
-		{
-			key: 'electrumPieces',
-			label: 'Electrum',
-			color: '#daa520',
-			borderColor: '#b8860b',
-			value: currentValues.electrumPieces
+			value: currency.gold || 0
 		},
 		{
 			key: 'silverPieces',
 			label: 'Silver',
 			color: '#c0c0c0',
 			borderColor: '#a0a0a0',
-			value: currentValues.silverPieces
+			value: currency.silver || 0
 		},
 		{
 			key: 'copperPieces',
 			label: 'Copper',
 			color: '#b87333',
 			borderColor: '#8b4513',
-			value: currentValues.copperPieces
+			value: currency.copper || 0
 		}
 	];
 

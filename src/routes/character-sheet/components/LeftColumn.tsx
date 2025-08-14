@@ -1,5 +1,6 @@
 import React from 'react';
 import type { SkillData, TradeData, LanguageData, CharacterSheetData } from '../../../types';
+import type { EnhancedStatBreakdown } from '../../../lib/types/effectSystem';
 import { StyledLeftColumn } from '../styles/Layout';
 import Attributes from './Attributes';
 import KnowledgeTrades from './KnowledgeTrades';
@@ -17,6 +18,7 @@ interface LeftColumnProps {
 	knowledge: TradeData[];
 	trades: TradeData[];
 	languages: LanguageData[];
+	breakdowns?: Record<string, EnhancedStatBreakdown>;
 }
 
 const LeftColumn: React.FC<LeftColumnProps> = ({
@@ -24,11 +26,16 @@ const LeftColumn: React.FC<LeftColumnProps> = ({
 	skillsByAttribute,
 	knowledge,
 	trades,
-	languages
+	languages,
+	breakdowns
 }) => {
 	return (
 		<StyledLeftColumn>
-			<Attributes characterData={characterData} skillsByAttribute={skillsByAttribute} />
+			<Attributes 
+				characterData={characterData} 
+				skillsByAttribute={skillsByAttribute} 
+				breakdowns={breakdowns}
+			/>
 			<KnowledgeTrades knowledge={knowledge} trades={trades} />
 			<Languages languages={languages} />
 		</StyledLeftColumn>

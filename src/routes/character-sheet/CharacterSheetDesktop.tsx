@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // Import custom hook with all character sheet logic
-import { useCharacterSheet } from './hooks/useCharacterSheet';
+import { useCharacterSheet, useCharacterResources, useCharacterFeatures, useCharacterCurrency } from './hooks/CharacterSheetProvider';
 
 // Import Modal Components  
 import FeaturePopup from './components/FeaturePopup';
@@ -42,29 +42,81 @@ import {
 	StyledCurrencyInput
 } from './styles/DesktopLayout';
 
-export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () => void }> = ({ characterId, onBack }) => {
-	// Use the custom hook to get ALL data and logic
-	const {
-		characterData,
-		currentValues,
-		loading,
-		error,
-		selectedFeature,
-		selectedSpell,
-		selectedAttack,
-		selectedInventoryItem,
-		features,
-		adjustResource,
-		handleResourceInputChange,
-		openFeaturePopup,
-		closeFeaturePopup,
-		closeSpellPopup,
-		closeAttackPopup,
-		closeInventoryPopup,
-		handleCurrencyChange,
-		getFillPercentage,
-		getHPFillPercentage
-	} = useCharacterSheet(characterId);
+export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () => void }> = ({ onBack }) => {
+	// Use the Context hooks
+	const { state, updateHP, updateSP, updateMP, updateTempHP, updateActionPoints, updateCurrency, setManualDefense } = useCharacterSheet();
+	const resources = useCharacterResources();
+	const features = useCharacterFeatures();
+	const currency = useCharacterCurrency();
+	
+	// Local popup state
+	const [selectedFeature, setSelectedFeature] = useState<any>(null);
+	const [selectedSpell, setSelectedSpell] = useState<any>(null);
+	const [selectedAttack, setSelectedAttack] = useState<any>(null);
+	const [selectedInventoryItem, setSelectedInventoryItem] = useState<any>(null);
+	
+	// Helper functions
+	const adjustResource = (resource: string, amount: number) => {
+		if (!resources) return;
+		const current = resources.current;
+		
+		switch (resource) {
+			case 'currentHP':
+				updateHP(Math.max(0, current.currentHP + amount));
+				break;
+			case 'currentSP':
+				updateSP(Math.max(0, current.currentSP + amount));
+				break;
+			case 'currentMP':
+				updateMP(Math.max(0, current.currentMP + amount));
+				break;
+			case 'tempHP':
+				updateTempHP(Math.max(0, current.tempHP + amount));
+				break;
+		}
+	};
+	
+	const handleResourceInputChange = (resource: string, value: string) => {
+		const numValue = parseInt(value) || 0;
+		switch (resource) {
+			case 'currentHP':
+				updateHP(Math.max(0, numValue));
+				break;
+			case 'currentSP':
+				updateSP(Math.max(0, numValue));
+				break;
+			case 'currentMP':
+				updateMP(Math.max(0, numValue));
+				break;
+			case 'tempHP':
+				updateTempHP(Math.max(0, numValue));
+				break;
+		}
+	};
+	
+	const handleCurrencyChange = (currencyType: string, value: number) => {
+		const updates: any = {};
+		updates[currencyType.replace('Pieces', '')] = value;
+		updateCurrency(updates.gold, updates.silver, updates.copper);
+	};
+	
+	const getFillPercentage = (current: number, max: number) => {
+		return max > 0 ? (current / max) * 100 : 0;
+	};
+	
+	const getHPFillPercentage = (current: number, max: number, temp: number) => {
+		return max > 0 ? ((current + temp) / max) * 100 : 0;
+	};
+	
+	const openFeaturePopup = (feature: any) => setSelectedFeature(feature);
+	const closeFeaturePopup = () => setSelectedFeature(null);
+	const closeSpellPopup = () => setSelectedSpell(null);
+	const closeAttackPopup = () => setSelectedAttack(null);
+	const closeInventoryPopup = () => setSelectedInventoryItem(null);
+	
+	const loading = state.loading;
+	const error = state.error;
+	const characterData = state.character;
 
 	// Loading state
 	if (loading) {
@@ -152,39 +204,41 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 					<StyledSectionTitle>Resources</StyledSectionTitle>
 					
 					{/* HP */}
-					<StyledResourceRow>
-						<StyledResourceLabel>Hit Points:</StyledResourceLabel>
-						<StyledResourceValue>
-							{currentValues.currentHP} / {characterData.finalHPMax}
-							{currentValues.tempHP > 0 && ` (+${currentValues.tempHP} temp)`}
-						</StyledResourceValue>
-						<StyledResourceBar>
-							<StyledResourceFill 
-								fillPercent={getHPFillPercentage(currentValues.currentHP, characterData.finalHPMax, currentValues.tempHP)}
-								color="#4CAF50"
-							/>
-						</StyledResourceBar>
-						<StyledResourceControls>
-							<StyledResourceButton onClick={() => adjustResource('currentHP', -1)}>-</StyledResourceButton>
-							<StyledResourceInput
-								type="number"
-								value={currentValues.currentHP}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleResourceInputChange('currentHP', e.target.value)}
-							/>
-							<StyledResourceButton onClick={() => adjustResource('currentHP', 1)}>+</StyledResourceButton>
-						</StyledResourceControls>
-					</StyledResourceRow>
-
-					{/* Other resources with same pattern... */}
-					{characterData.finalSPMax > 0 && (
+					{resources && (
 						<StyledResourceRow>
-							<StyledResourceLabel>Stamina Points:</StyledResourceLabel>
+							<StyledResourceLabel>Hit Points:</StyledResourceLabel>
 							<StyledResourceValue>
-								{currentValues.currentSP} / {characterData.finalSPMax}
+								{resources.current.currentHP} / {resources.original.maxHP}
+								{resources.current.tempHP > 0 && ` (+${resources.current.tempHP} temp)`}
 							</StyledResourceValue>
 							<StyledResourceBar>
 								<StyledResourceFill 
-									fillPercent={getFillPercentage(currentValues.currentSP, characterData.finalSPMax)}
+									fillPercent={getHPFillPercentage(resources.current.currentHP, resources.original.maxHP, resources.current.tempHP)}
+									color="#4CAF50"
+								/>
+							</StyledResourceBar>
+							<StyledResourceControls>
+								<StyledResourceButton onClick={() => adjustResource('currentHP', -1)}>-</StyledResourceButton>
+								<StyledResourceInput
+									type="number"
+									value={resources.current.currentHP}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleResourceInputChange('currentHP', e.target.value)}
+								/>
+								<StyledResourceButton onClick={() => adjustResource('currentHP', 1)}>+</StyledResourceButton>
+							</StyledResourceControls>
+						</StyledResourceRow>
+					)}
+
+					{/* SP */}
+					{resources && resources.original.maxSP > 0 && (
+						<StyledResourceRow>
+							<StyledResourceLabel>Stamina Points:</StyledResourceLabel>
+							<StyledResourceValue>
+								{resources.current.currentSP} / {resources.original.maxSP}
+							</StyledResourceValue>
+							<StyledResourceBar>
+								<StyledResourceFill 
+									fillPercent={getFillPercentage(resources.current.currentSP, resources.original.maxSP)}
 									color="#2196F3"
 								/>
 							</StyledResourceBar>
@@ -192,10 +246,35 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 								<StyledResourceButton onClick={() => adjustResource('currentSP', -1)}>-</StyledResourceButton>
 								<StyledResourceInput
 									type="number"
-									value={currentValues.currentSP}
+									value={resources.current.currentSP}
 									onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleResourceInputChange('currentSP', e.target.value)}
 								/>
 								<StyledResourceButton onClick={() => adjustResource('currentSP', 1)}>+</StyledResourceButton>
+							</StyledResourceControls>
+						</StyledResourceRow>
+					)}
+
+					{/* MP */}
+					{resources && resources.original.maxMP > 0 && (
+						<StyledResourceRow>
+							<StyledResourceLabel>Mana Points:</StyledResourceLabel>
+							<StyledResourceValue>
+								{resources.current.currentMP} / {resources.original.maxMP}
+							</StyledResourceValue>
+							<StyledResourceBar>
+								<StyledResourceFill 
+									fillPercent={getFillPercentage(resources.current.currentMP, resources.original.maxMP)}
+									color="#9C27B0"
+								/>
+							</StyledResourceBar>
+							<StyledResourceControls>
+								<StyledResourceButton onClick={() => adjustResource('currentMP', -1)}>-</StyledResourceButton>
+								<StyledResourceInput
+									type="number"
+									value={resources.current.currentMP}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleResourceInputChange('currentMP', e.target.value)}
+								/>
+								<StyledResourceButton onClick={() => adjustResource('currentMP', 1)}>+</StyledResourceButton>
 							</StyledResourceControls>
 						</StyledResourceRow>
 					)}
@@ -225,7 +304,7 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 							<StyledCurrencyLabel>Gold</StyledCurrencyLabel>
 							<StyledCurrencyInput
 								type="number"
-								value={currentValues.goldPieces}
+								value={currency.gold}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCurrencyChange('goldPieces', parseInt(e.target.value) || 0)}
 							/>
 						</StyledCurrencyColumn>
@@ -233,7 +312,7 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 							<StyledCurrencyLabel>Silver</StyledCurrencyLabel>
 							<StyledCurrencyInput
 								type="number"
-								value={currentValues.silverPieces}
+								value={currency.silver}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCurrencyChange('silverPieces', parseInt(e.target.value) || 0)}
 							/>
 						</StyledCurrencyColumn>
@@ -241,24 +320,8 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 							<StyledCurrencyLabel>Copper</StyledCurrencyLabel>
 							<StyledCurrencyInput
 								type="number"
-								value={currentValues.copperPieces}
+								value={currency.copper}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCurrencyChange('copperPieces', parseInt(e.target.value) || 0)}
-							/>
-						</StyledCurrencyColumn>
-						<StyledCurrencyColumn>
-							<StyledCurrencyLabel>Electrum</StyledCurrencyLabel>
-							<StyledCurrencyInput
-								type="number"
-								value={currentValues.electrumPieces}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCurrencyChange('electrumPieces', parseInt(e.target.value) || 0)}
-							/>
-						</StyledCurrencyColumn>
-						<StyledCurrencyColumn>
-							<StyledCurrencyLabel>Platinum</StyledCurrencyLabel>
-							<StyledCurrencyInput
-								type="number"
-								value={currentValues.platinumPieces}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCurrencyChange('platinumPieces', parseInt(e.target.value) || 0)}
 							/>
 						</StyledCurrencyColumn>
 					</StyledCurrencyGrid>

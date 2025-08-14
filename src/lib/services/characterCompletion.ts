@@ -1,10 +1,13 @@
-// Shared character completion service
+// Shared character completion service - UPDATED: Uses typed data contracts
 // Handles the completion flow with proper stat calculation, snackbar, and navigation
 
 import { assignSpellsToCharacter } from './spellAssignment';
 import { allSpells } from '../rulesdata/spells-data/spells';
 import { allManeuvers } from '../rulesdata/maneuvers';
 import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from './enhancedCharacterCalculator';
+import { getDefaultCharacterState } from '../utils/storageUtils';
+import { getAllSavedCharacters, saveAllCharacters } from '../utils/storageUtils';
+import type { SavedCharacter } from '../types/dataContracts';
 
 export interface CharacterCompletionCallbacks {
 	onShowSnackbar: (message: string) => void;
@@ -16,8 +19,8 @@ export const completeCharacter = async (
 	callbacks: CharacterCompletionCallbacks
 ): Promise<void> => {
 	try {
-		// Character is complete, prepare the data for calculation
-		const characterInProgress = {
+		// Build the enhanced data for calculation using native objects
+		const enhancedData = convertToEnhancedBuildData({
 			id: Date.now().toString(),
 			attribute_might: characterState.attribute_might,
 			attribute_agility: characterState.attribute_agility,
@@ -28,88 +31,107 @@ export const completeCharacter = async (
 			classId: characterState.classId,
 			ancestry1Id: characterState.ancestry1Id,
 			ancestry2Id: characterState.ancestry2Id,
-			selectedTraitIds: characterState.selectedTraitIds || '',
-			selectedFeatureChoices: characterState.selectedFeatureChoices || '',
+			selectedTraitIds: characterState.selectedTraitIds || [],
+			selectedFeatureChoices: characterState.selectedFeatureChoices || {},
 			finalName: characterState.finalName,
 			finalPlayerName: characterState.finalPlayerName,
-			skillsJson: characterState.skillsJson || '', // Default empty for now
-			tradesJson: characterState.tradesJson || '', // Default empty for now
-			languagesJson: characterState.languagesJson || '', // Default empty for now
+			skillsData: characterState.skillsData || {},
+			tradesData: characterState.tradesData || {},
+			languagesData: characterState.languagesData || { common: { fluency: 'fluent' } },
 			createdAt: new Date(),
 			completedAt: new Date().toISOString()
+		});
+
+		console.log('Calculating stats for character using enhanced calculator');
+
+		// Run the enhanced calculator
+		const calculationResult = calculateCharacterWithBreakdowns(enhancedData);
+
+		// Create the final character with unified 'final*' schema
+		const completedCharacter: SavedCharacter = {
+			id: Date.now().toString(),
+			finalName: characterState.finalName,
+			finalPlayerName: characterState.finalPlayerName,
+			level: characterState.level || 1,
+			classId: characterState.classId,
+			className: calculationResult.stats.className || 'Unknown',
+			ancestry1Id: characterState.ancestry1Id,
+			ancestry1Name: characterState.ancestry1Name || 'Human', // TODO: Get from ancestry data
+			ancestry2Id: characterState.ancestry2Id,
+			ancestry2Name: calculationResult.stats.ancestry2Name || null,
+			
+			// Map from calculation result to final* schema
+			finalMight: calculationResult.stats.finalMight,
+			finalAgility: calculationResult.stats.finalAgility,
+			finalCharisma: calculationResult.stats.finalCharisma,
+			finalIntelligence: calculationResult.stats.finalIntelligence,
+			finalPrimeModifierValue: calculationResult.stats.finalPrimeModifierValue || 0,
+			finalPrimeModifierAttribute: calculationResult.stats.finalPrimeModifierAttribute || 'might',
+			finalCombatMastery: calculationResult.stats.finalCombatMastery || 1,
+			finalSaveMight: calculationResult.stats.finalSaveMight,
+			finalSaveAgility: calculationResult.stats.finalSaveAgility,
+			finalSaveCharisma: calculationResult.stats.finalSaveCharisma,
+			finalSaveIntelligence: calculationResult.stats.finalSaveIntelligence,
+			finalHPMax: calculationResult.stats.finalHPMax,
+			finalSPMax: calculationResult.stats.finalSPMax,
+			finalMPMax: calculationResult.stats.finalMPMax,
+			finalPD: calculationResult.stats.finalPD,
+			finalAD: calculationResult.stats.finalAD,
+			finalPDR: calculationResult.stats.finalPDR,
+			finalSaveDC: calculationResult.stats.finalSaveDC,
+			finalDeathThreshold: calculationResult.stats.finalDeathThreshold,
+			finalMoveSpeed: calculationResult.stats.finalMoveSpeed,
+			finalJumpDistance: calculationResult.stats.finalJumpDistance,
+			finalRestPoints: calculationResult.stats.finalRestPoints,
+			finalGritPoints: calculationResult.stats.finalGritPoints,
+			finalInitiativeBonus: calculationResult.stats.finalInitiativeBonus,
+			
+			// Store typed data directly (no more JSON strings)
+			selectedTraitIds: characterState.selectedTraitIds || [],
+			selectedFeatureChoices: characterState.selectedFeatureChoices || {},
+			skillsData: characterState.skillsData || {},
+			tradesData: characterState.tradesData || {},
+			languagesData: characterState.languagesData || [],
+			spells: [], // Will be populated below
+			maneuvers: [], // Will be populated below
+			
+			// Store calculation breakdowns for transparency
+			breakdowns: calculationResult.breakdowns || {},
+			
+			// Initialize default character state
+			characterState: getDefaultCharacterState(),
+			
+			// Metadata
+			createdAt: new Date().toISOString(),
+			lastModified: new Date().toISOString(),
+			completedAt: new Date().toISOString(),
+			schemaVersion: '2.0.0'
 		};
-
-		console.log('Calculating stats for character:', characterInProgress);
-
-		// Check if we should use the enhanced calculator for supported classes
-		const supportedClasses = ['barbarian', 'cleric', 'hunter', 'champion', 'wizard', 'monk', 'rogue', 'sorcerer', 'spellblade', 'warlock', 'bard', 'druid', 'commander'];
-	const useEnhancedCalculator = supportedClasses.includes(characterInProgress.classId || '');
-
-		let completedCharacterData;
-		if (useEnhancedCalculator) {
-			console.log('Using enhanced calculator for class:', characterInProgress.classId);
-			// Convert to enhanced build data and calculate
-			const enhancedBuildData = convertToEnhancedBuildData(characterInProgress);
-			const enhancedResult = calculateCharacterWithBreakdowns(enhancedBuildData);
-
-			// Convert enhanced result back to the expected format
-			completedCharacterData = {
-				...characterInProgress,
-				// Core stats from enhanced calculator
-				finalMight: enhancedResult.stats.finalMight,
-				finalAgility: enhancedResult.stats.finalAgility,
-				finalCharisma: enhancedResult.stats.finalCharisma,
-				finalIntelligence: enhancedResult.stats.finalIntelligence,
-				finalHPMax: enhancedResult.stats.finalHPMax,
-				finalSPMax: enhancedResult.stats.finalSPMax,
-				finalMPMax: enhancedResult.stats.finalMPMax,
-				finalPD: enhancedResult.stats.finalPD,
-				finalAD: enhancedResult.stats.finalAD,
-				finalPDR: enhancedResult.stats.finalPDR,
-				finalMoveSpeed: enhancedResult.stats.finalMoveSpeed,  // This will now include Grassland +1
-				finalJumpDistance: enhancedResult.stats.finalJumpDistance, // This will now include Grassland +1
-				finalDeathThreshold: enhancedResult.stats.finalDeathThreshold,
-				finalGritPoints: enhancedResult.stats.finalGritPoints,
-				finalRestPoints: enhancedResult.stats.finalRestPoints,
-				finalInitiativeBonus: enhancedResult.stats.finalInitiativeBonus,
-				finalSaveDC: enhancedResult.stats.finalSaveDC,
-				finalSaveMight: enhancedResult.stats.finalSaveMight,
-				finalSaveAgility: enhancedResult.stats.finalSaveAgility,
-				finalSaveCharisma: enhancedResult.stats.finalSaveCharisma,
-				finalSaveIntelligence: enhancedResult.stats.finalSaveIntelligence,
-				// Add granted abilities and effects for display
-				grantedAbilities: enhancedResult.grantedAbilities,
-				conditionalModifiers: enhancedResult.conditionalModifiers,
-				className: enhancedResult.stats.className || 'Unknown',
-				ancestry1Name: 'Human', // TODO: Get from enhanced data
-				ancestry2Name: enhancedResult.stats.ancestry2Name || null
-			};
-		} else {
-			// All classes are now migrated, this should not happen anymore
-			throw new Error(`Class "${characterInProgress.classId}" is not supported in the enhanced calculator. All classes should be migrated.`);
-		}
-		console.log('Character stats calculated:', completedCharacterData);
+		
+		console.log('Character stats calculated:', completedCharacter);
 		console.log('Class info saved:', {
-			classId: completedCharacterData.classId,
-			className: completedCharacterData.className
+			classId: completedCharacter.classId,
+			className: completedCharacter.className
 		});
 		console.log('Ancestry info saved:', {
-			ancestry1Id: completedCharacterData.ancestry1Id,
-			ancestry1Name: completedCharacterData.ancestry1Name,
-			ancestry2Id: completedCharacterData.ancestry2Id,
-			ancestry2Name: completedCharacterData.ancestry2Name
+			ancestry1Id: completedCharacter.ancestry1Id,
+			ancestry1Name: completedCharacter.ancestry1Name,
+			ancestry2Id: completedCharacter.ancestry2Id,
+			ancestry2Name: completedCharacter.ancestry2Name
 		});
 
-		// Use user-selected spells from character creation
-		if (completedCharacterData.className && characterState.selectedSpells) {
-			console.log('🔄 characterCompletion: Processing user-selected spells:', {
+		// Process user-selected spells from character creation
+		if (completedCharacter.className && characterState.selectedSpells) {
+			console.log('🔄 Processing user-selected spells:', {
 				selectedSpells: characterState.selectedSpells,
-				className: completedCharacterData.className
+				className: completedCharacter.className
 			});
 
 			try {
-				const selectedSpellNames = JSON.parse(characterState.selectedSpells);
-				console.log('🔄 characterCompletion: Parsed spell names:', selectedSpellNames);
+							// Use typed arrays directly
+			const selectedSpellNames = characterState.selectedSpells || [];
+				
+				console.log('🔄 Parsed spell names:', selectedSpellNames);
 
 				if (Array.isArray(selectedSpellNames) && selectedSpellNames.length > 0) {
 					// Convert selected spell names to SpellData objects
@@ -131,43 +153,38 @@ export const completeCharacter = async (
 						return null;
 					}).filter(Boolean);
 
-					// Save the selected spell names as a string for edit functionality
-					completedCharacterData.selectedSpells = characterState.selectedSpells;
-					// Also add spells to the completed character data as a separate property for display
-					(completedCharacterData as any).spells = userSelectedSpells;
-					console.log('🔄 characterCompletion: User selected spells assigned:', userSelectedSpells.map((s: any) => s.spellName));
+					// Store typed spells data
+					completedCharacter.spells = userSelectedSpells as any;
+					console.log('🔄 User selected spells assigned:', userSelectedSpells.map((s: any) => s.spellName));
 				} else {
-					console.log('🔄 characterCompletion: No user spells selected, falling back to auto-assignment');
+					console.log('🔄 No user spells selected, falling back to auto-assignment');
 					// Fallback to auto-assignment if no spells were selected
 					const assignedSpells = assignSpellsToCharacter({
-						className: completedCharacterData.className,
-						level: completedCharacterData.finalLevel || 1,
-						selectedFeatureChoices: characterInProgress.selectedFeatureChoices
+						className: completedCharacter.className,
+						level: completedCharacter.level || 1,
+						selectedFeatureChoices: completedCharacter.selectedFeatureChoices
 					});
-					(completedCharacterData as any).spells = assignedSpells;
-					console.log('🔄 characterCompletion: Auto-assigned spells (no user selection):', assignedSpells.map((s: any) => s.spellName));
+					completedCharacter.spells = assignedSpells as any;
+					console.log('🔄 Auto-assigned spells (no user selection):', assignedSpells.map((s: any) => s.spellName));
 				}
 			} catch (e) {
-				console.warn('🔄 characterCompletion: Error parsing selected spells, falling back to auto-assignment:', e);
+				console.warn('🔄 Error parsing selected spells, falling back to auto-assignment:', e);
 				// Fallback to auto-assignment
 				const assignedSpells = assignSpellsToCharacter({
-					className: completedCharacterData.className,
-					level: completedCharacterData.finalLevel || 1,
-					selectedFeatureChoices: characterInProgress.selectedFeatureChoices
+					className: completedCharacter.className,
+					level: completedCharacter.level || 1,
+					selectedFeatureChoices: completedCharacter.selectedFeatureChoices
 				});
-				(completedCharacterData as any).spells = assignedSpells;
+				completedCharacter.spells = assignedSpells as any;
 			}
-		} else {
-			console.log('🔄 characterCompletion: No spell processing - className or selectedSpells missing:', {
-				className: completedCharacterData.className,
-				hasSelectedSpells: !!characterState.selectedSpells
-			});
 		}
 
 		// Handle user-selected maneuvers
 		if (characterState.selectedManeuvers) {
 			try {
-				const selectedManeuverNames = JSON.parse(characterState.selectedManeuvers);
+							// Use typed arrays directly
+			const selectedManeuverNames = characterState.selectedManeuvers || [];
+					
 				if (Array.isArray(selectedManeuverNames) && selectedManeuverNames.length > 0) {
 					// Convert selected maneuver names to ManeuverData objects
 					const userSelectedManeuvers = selectedManeuverNames.map((maneuverName: string) => {
@@ -175,35 +192,32 @@ export const completeCharacter = async (
 						if (fullManeuver) {
 							return {
 								id: `maneuver_${Date.now()}_${Math.random()}`,
-								maneuverName: fullManeuver.name,
+								name: fullManeuver.name,
 								type: fullManeuver.type,
 								cost: fullManeuver.cost,
 								description: fullManeuver.description,
 								isReaction: fullManeuver.isReaction,
-								trigger: fullManeuver.trigger,
-								requirement: fullManeuver.requirement,
 								notes: ''
 							};
 						}
 						return null;
 					}).filter(Boolean);
 
-					// Save the selected maneuver names as a string for edit functionality
-					completedCharacterData.selectedManeuvers = characterState.selectedManeuvers;
-					// Also add maneuvers to the completed character data as a separate property for display
-					(completedCharacterData as any).maneuvers = userSelectedManeuvers;
-					console.log('🔄 characterCompletion: User selected maneuvers assigned:', userSelectedManeuvers.map((m: any) => m.maneuverName));
+					// Store typed maneuvers data
+					completedCharacter.maneuvers = userSelectedManeuvers as any;
+					console.log('🔄 User selected maneuvers assigned:', userSelectedManeuvers.map((m: any) => m.name));
 				}
 			} catch (e) {
-				console.warn('🔄 characterCompletion: Error parsing selected maneuvers:', e);
+				console.warn('🔄 Error parsing selected maneuvers:', e);
 			}
 		}
 
-		// Save to local storage
-		const existingCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-		existingCharacters.push(completedCharacterData);
-		localStorage.setItem('savedCharacters', JSON.stringify(existingCharacters));
-		console.log('Character saved to localStorage. Total characters:', existingCharacters.length);
+        // OPTIMIZED: Save using new typed storage utilities
+        const existingCharacters = getAllSavedCharacters();
+        existingCharacters.push(completedCharacter);
+        saveAllCharacters(existingCharacters);
+        
+        console.log('🚀 OPTIMIZED: Character saved using typed contracts. Total characters:', existingCharacters.length);
 
 		// Show success snackbar
 		callbacks.onShowSnackbar('Character created successfully!');
@@ -214,7 +228,7 @@ export const completeCharacter = async (
 			callbacks.onNavigateToLoad();
 		}, 1500);
 
-		console.log('Character completed with calculated stats:', completedCharacterData);
+		console.log('🚀 Character completed with typed data contracts:', completedCharacter);
 	} catch (error) {
 		console.error('Error completing character:', error);
 		callbacks.onShowSnackbar('Error creating character. Please try again.');

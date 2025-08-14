@@ -1,14 +1,25 @@
 import React from 'react';
 import type { CharacterSheetData, CurrentValues } from '../../../types';
+import type { EnhancedStatBreakdown } from '../../../lib/types/effectSystem';
 import { StyledCombatSection, StyledActionPoints, StyledActionPoint } from '../styles/Combat';
+import Tooltip from './Tooltip';
+import { createEnhancedDefenseTooltip } from './EnhancedStatTooltips';
+import { useCharacterResources, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 
 export interface CombatProps {
-	characterData: CharacterSheetData;
-	currentValues: CurrentValues;
-	setCurrentValues: React.Dispatch<React.SetStateAction<CurrentValues>>;
+	breakdowns?: Record<string, EnhancedStatBreakdown>;
 }
 
-const Combat: React.FC<CombatProps> = ({ characterData, currentValues, setCurrentValues }) => {
+const Combat: React.FC<CombatProps> = ({ breakdowns }) => {
+	const { state, dispatch } = useCharacterSheet();
+	const resources = useCharacterResources();
+	
+	if (!state.character) {
+		return <div>Loading combat...</div>;
+	}
+	
+	const characterData = state.character;
+	const currentValues = resources.current;
 	const renderActionPoints = () => {
 		return [0, 1, 2, 3].map((index) => (
 			<StyledActionPoint
@@ -16,7 +27,8 @@ const Combat: React.FC<CombatProps> = ({ characterData, currentValues, setCurren
 				used={index < currentValues.actionPointsUsed}
 				onClick={() => {
 					const newUsed = index < currentValues.actionPointsUsed ? index : index + 1;
-					setCurrentValues((prev) => ({ ...prev, actionPointsUsed: newUsed }));
+					// TODO: Implement action points update through reducer
+					console.log('Action points update needed:', newUsed);
 				}}
 			>
 				{index + 1}
@@ -66,25 +78,32 @@ const Combat: React.FC<CombatProps> = ({ characterData, currentValues, setCurren
 				>
 					<div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
 						<span>ATTACK / SPELL CHECK</span>
-						<span
-							style={{
-								display: 'inline-flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								width: '14px',
-								height: '14px',
-								borderRadius: '50%',
-								backgroundColor: '#8b4513',
-								color: 'white',
-								fontSize: '10px',
-								fontWeight: 'bold',
-								cursor: 'help',
-								verticalAlign: 'middle'
-							}}
-							title={`Combat Mastery (${characterData.finalCombatMastery}) + ${characterData.finalPrimeModifierAttribute} Modifier (${characterData.finalPrimeModifierValue}) = +${characterData.finalCombatMastery + characterData.finalPrimeModifierValue}`}
+						<Tooltip
+							tooltipContent={createEnhancedDefenseTooltip(
+								breakdowns?.attack_spell_check || { base: 0, effects: [] },
+								'Attack / Spell Check'
+							)}
+							isEnabled={!!breakdowns?.attack_spell_check}
 						>
-							i
-						</span>
+							<span
+								style={{
+									display: 'inline-flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									width: '14px',
+									height: '14px',
+									borderRadius: '50%',
+									backgroundColor: '#8b4513',
+									color: 'white',
+									fontSize: '10px',
+									fontWeight: 'bold',
+									cursor: 'help',
+									verticalAlign: 'middle'
+								}}
+							>
+								i
+							</span>
+						</Tooltip>
 					</div>
 					<span style={{ fontWeight: 'bold' }}>
 						+{characterData.finalCombatMastery + characterData.finalPrimeModifierValue}
@@ -101,25 +120,32 @@ const Combat: React.FC<CombatProps> = ({ characterData, currentValues, setCurren
 				>
 					<div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
 						<span>SAVE DC</span>
-						<span
-							style={{
-								display: 'inline-flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								width: '14px',
-								height: '14px',
-								borderRadius: '50%',
-								backgroundColor: '#8b4513',
-								color: 'white',
-								fontSize: '10px',
-								fontWeight: 'bold',
-								cursor: 'help',
-								verticalAlign: 'middle'
-							}}
-							title={`10 + Combat Mastery (${characterData.finalCombatMastery}) + ${characterData.finalPrimeModifierAttribute} Modifier (${characterData.finalPrimeModifierValue}) = ${characterData.finalSaveDC}`}
+						<Tooltip
+							tooltipContent={createEnhancedDefenseTooltip(
+								breakdowns?.save_dc || { base: 0, effects: [] },
+								'Save DC'
+							)}
+							isEnabled={!!breakdowns?.save_dc}
 						>
-							i
-						</span>
+							<span
+								style={{
+									display: 'inline-flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									width: '14px',
+									height: '14px',
+									borderRadius: '50%',
+									backgroundColor: '#8b4513',
+									color: 'white',
+									fontSize: '10px',
+									fontWeight: 'bold',
+									cursor: 'help',
+									verticalAlign: 'middle'
+								}}
+							>
+								i
+							</span>
+						</Tooltip>
 					</div>
 					<span style={{ fontWeight: 'bold' }}>{characterData.finalSaveDC}</span>
 				</div>
@@ -133,25 +159,32 @@ const Combat: React.FC<CombatProps> = ({ characterData, currentValues, setCurren
 				>
 					<div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
 						<span>MARTIAL CHECK</span>
-						<span
-							style={{
-								display: 'inline-flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								width: '14px',
-								height: '14px',
-								borderRadius: '50%',
-								backgroundColor: '#8b4513',
-								color: 'white',
-								fontSize: '10px',
-								fontWeight: 'bold',
-								cursor: 'help',
-								verticalAlign: 'middle'
-							}}
-							title={`Attack/Spell Check (${characterData.finalCombatMastery + characterData.finalPrimeModifierValue}) + Action Points Bonus (${Math.floor(currentValues.actionPointsUsed / 3)}) = +${characterData.finalCombatMastery + characterData.finalPrimeModifierValue + Math.floor(currentValues.actionPointsUsed / 3)}`}
+						<Tooltip
+							tooltipContent={createEnhancedDefenseTooltip(
+								breakdowns?.martial_check || { base: 0, effects: [] },
+								'Martial Check'
+							)}
+							isEnabled={!!breakdowns?.martial_check}
 						>
-							i
-						</span>
+							<span
+								style={{
+									display: 'inline-flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									width: '14px',
+									height: '14px',
+									borderRadius: '50%',
+									backgroundColor: '#8b4513',
+									color: 'white',
+									fontSize: '10px',
+									fontWeight: 'bold',
+									cursor: 'help',
+									verticalAlign: 'middle'
+								}}
+							>
+								i
+							</span>
+						</Tooltip>
 					</div>
 					<span style={{ fontWeight: 'bold' }}>
 						+

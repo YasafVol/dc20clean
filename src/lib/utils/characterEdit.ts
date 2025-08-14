@@ -2,38 +2,12 @@
 // Handles converting saved characters back to editable format while preserving manual modifications
 
 import type { CharacterInProgressStoreData } from '../stores/characterContext';
+import type { SavedCharacter } from '../types/dataContracts';
 import { getCharacterState, updateCharacterState } from './characterState';
 import { traitsData } from '../rulesdata/traits';
+import { getAllSavedCharacters, saveAllCharacters } from './storageUtils';
 
-export interface SavedCharacter {
-	id: string;
-	finalName: string;
-	finalPlayerName: string;
-	classId: string;
-	ancestry1Id: string;
-	ancestry2Id?: string;
-	// The saved character uses finalMight, finalAgility, etc.
-	finalMight: number;
-	finalAgility: number;
-	finalCharisma: number;
-	finalIntelligence: number;
-	// But also check for the attribute_ format for backwards compatibility
-	attribute_might?: number;
-	attribute_agility?: number;
-	attribute_charisma?: number;
-	attribute_intelligence?: number;
-	level: number;
-	combatMastery: number;
-	selectedTraitIds: string;
-	selectedFeatureChoices: string;
-	skillsJson: string;
-	tradesJson: string;
-	languagesJson: string;
-	selectedSpells?: string;
-	selectedManeuvers?: string;
-	completedAt: string;
-	[key: string]: any;
-}
+
 
 // Convert a saved character back to character-in-progress format for editing
 export const convertCharacterToInProgress = (
@@ -66,10 +40,10 @@ export const convertCharacterToInProgress = (
 		combatMastery: savedCharacter.combatMastery || 1,
 		ancestry1Id: savedCharacter.ancestry1Id,
 		ancestry2Id: savedCharacter.ancestry2Id || null,
-		selectedTraitIds: savedCharacter.selectedTraitIds || '',
+		selectedTraitIds: savedCharacter.selectedTraitIds || [],
 		ancestryPointsSpent: calculateAncestryPointsSpent(savedCharacter),
 		classId: savedCharacter.classId,
-		selectedFeatureChoices: savedCharacter.selectedFeatureChoices || '',
+		selectedFeatureChoices: savedCharacter.selectedFeatureChoices || {},
 		// Save masteries (default to false, but try to get from saved character if available)
 		saveMasteryMight:
 			savedCharacter.saveMasteryMight !== undefined ? savedCharacter.saveMasteryMight : false,
@@ -88,13 +62,15 @@ export const convertCharacterToInProgress = (
 		currentStep: 1, // Start from the beginning when editing
 		overflowTraitId: null,
 		overflowAttributeName: null,
-		// Background selections
-		skillsJson: savedCharacter.skillsJson || '{}',
-		tradesJson: savedCharacter.tradesJson || '{}',
-		languagesJson: savedCharacter.languagesJson || '{"common": {"fluency": "fluent"}}',
-		// Spells and Maneuvers selections
-		selectedSpells: savedCharacter.selectedSpells || '[]',
-		selectedManeuvers: savedCharacter.selectedManeuvers || '[]'
+		// Background selections using native objects
+		skillsData: savedCharacter.skillsData || {},
+		tradesData: savedCharacter.tradesData || {},
+		languagesData: savedCharacter.languagesData || { common: { fluency: 'fluent' } },
+		selectedTraitChoices: savedCharacter.selectedTraitChoices || {},
+		// Spells and Maneuvers selections using native arrays
+		selectedSpells: savedCharacter.selectedSpells || [],
+		selectedManeuvers: savedCharacter.selectedManeuvers || [],
+		schemaVersion: 2
 	};
 };
 
@@ -137,22 +113,19 @@ const calculatePointsSpent = (character: SavedCharacter): number => {
 const calculateAncestryPointsSpent = (character: SavedCharacter): number => {
 	if (!character.selectedTraitIds) return 0;
 
-	try {
-		const selectedTraitIds: string[] = JSON.parse(character.selectedTraitIds);
-		let totalCost = 0;
+	const selectedTraitIds: string[] = Array.isArray(character.selectedTraitIds) 
+		? character.selectedTraitIds 
+		: [];
+	let totalCost = 0;
 
-		selectedTraitIds.forEach((traitId) => {
-			const trait = traitsData.find((t: any) => t.id === traitId);
-			if (trait) {
-				totalCost += trait.cost;
-			}
-		});
+	selectedTraitIds.forEach((traitId) => {
+		const trait = traitsData.find((t: any) => t.id === traitId);
+		if (trait) {
+			totalCost += trait.cost;
+		}
+	});
 
-		return totalCost;
-	} catch (error) {
-		console.warn('Error calculating ancestry points for edit mode:', error);
-		return 0;
-	}
+	return totalCost;
 };
 
 // Enhanced character completion that preserves manual modifications
@@ -166,7 +139,7 @@ export const completeCharacterEdit = async (
 		const existingState = getCharacterState(originalCharacterId);
 
 		// Calculate new stats based on the edited character build
-		const newCalculatedCharacter = await characterCalculationFn({
+        const newCalculatedCharacter = await characterCalculationFn({
 			id: originalCharacterId, // Keep the same ID
 			attribute_might: newCharacterState.attribute_might,
 			attribute_agility: newCharacterState.attribute_agility,
@@ -194,8 +167,8 @@ export const completeCharacterEdit = async (
 			selectedManeuvers: newCharacterState.selectedManeuvers
 		});
 
-		// Update the saved character in localStorage with NEW CALCULATED VALUES
-		const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+        // Update the saved character in storage with NEW CALCULATED VALUES
+		const savedCharacters = getAllSavedCharacters();
 		const characterIndex = savedCharacters.findIndex(
 			(char: any) => char.id === originalCharacterId
 		);
@@ -205,13 +178,15 @@ export const completeCharacterEdit = async (
 			savedCharacters[characterIndex] = {
 				...savedCharacters[characterIndex],
 				...newCalculatedCharacter,
+                // ensure we carry over latest breakdowns if provided by calculator
+                breakdowns: (newCalculatedCharacter as any).breakdowns || savedCharacters[characterIndex].breakdowns,
 				lastModified: new Date().toISOString()
 			};
 
-			localStorage.setItem('savedCharacters', JSON.stringify(savedCharacters));
+			saveAllCharacters(savedCharacters);
 		}
 
-		// Update the character state to reflect new original values while preserving current (manual) values
+        // Update the character state to reflect new original values while preserving current (manual) values
 		if (existingState) {
 			updateCharacterState(originalCharacterId, {
 				resources: {
@@ -230,7 +205,10 @@ export const completeCharacterEdit = async (
 				currency: existingState.currency,
 				attacks: existingState.attacks,
 				inventory: existingState.inventory,
-				defenseNotes: existingState.defenseNotes
+                defenseNotes: existingState.defenseNotes,
+                calculation: (newCalculatedCharacter as any).breakdowns
+                    ? { breakdowns: (newCalculatedCharacter as any).breakdowns }
+                    : existingState.calculation
 			});
 		}
 	} catch (error) {

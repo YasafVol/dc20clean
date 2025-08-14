@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import type { ManeuverData, CharacterSheetData } from '../../../types';
 import type { Maneuver } from '../../../lib/rulesdata/maneuvers';
 import { maneuvers as allManeuvers } from '../../../lib/rulesdata/maneuvers';
+import { useCharacterManeuvers, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
 	StyledSpellsSection,
 	StyledSpellsHeader,
@@ -21,14 +22,19 @@ import {
 } from '../styles/Spells';
 
 export interface ManeuversProps {
-	maneuvers: ManeuverData[];
-	setManeuvers: React.Dispatch<React.SetStateAction<ManeuverData[]>>;
-	characterData: CharacterSheetData;
 	onManeuverClick: (maneuver: Maneuver) => void;
 	readOnly?: boolean;
 }
 
-const Maneuvers: React.FC<ManeuversProps> = ({ maneuvers, setManeuvers, characterData, onManeuverClick, readOnly = false }) => {
+const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false }) => {
+	const { addManeuver, removeManeuver, state } = useCharacterSheet();
+	const maneuvers = useCharacterManeuvers();
+	
+	if (!state.character) {
+		return <div>Loading maneuvers...</div>;
+	}
+	
+	const characterData = state.character;
 	const [typeFilter, setTypeFilter] = useState<string>('all');
 	const [expandedManeuvers, setExpandedManeuvers] = useState<Set<string>>(() => {
 		const expanded = new Set<string>();
@@ -62,11 +68,14 @@ const Maneuvers: React.FC<ManeuversProps> = ({ maneuvers, setManeuvers, characte
 			isReaction: false,
 			notes: ''
 		};
-		setManeuvers((prev) => [...prev, newManeuver]);
+		addManeuver(newManeuver);
 	};
 
 	const removeManeuverSlot = (maneuverIndex: number) => {
-		setManeuvers((prev) => prev.filter((_, index) => index !== maneuverIndex));
+		const maneuverToRemove = maneuvers[maneuverIndex];
+		if (maneuverToRemove) {
+			removeManeuver(maneuverToRemove.id);
+		}
 	};
 
 	const updateManeuver = (index: number, field: keyof ManeuverData, value: any) => {

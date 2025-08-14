@@ -1,8 +1,7 @@
 import type { ClassDefinition } from '../schemas/character.schema';
 
 export const rogueClass: ClassDefinition = {
-	id: 'rogue',
-	name: 'Rogue',
+	className: 'Rogue',
 	startingEquipment: {
 		weaponsOrShields: ['3 Weapons', '1 Shield'],
 		armor: '1 set of Light Armor',

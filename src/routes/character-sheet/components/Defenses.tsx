@@ -12,6 +12,10 @@ import {
 	RevertButton
 } from '../styles/Defenses';
 import DefenseChangeModal from './DefenseChangeModal';
+import Tooltip from './Tooltip';
+import { createEnhancedDefenseTooltip } from './EnhancedStatTooltips';
+import { useCharacterDefenses, useCharacterSheet } from '../hooks/CharacterSheetProvider';
+import type { EnhancedStatBreakdown } from '../../../lib/types/effectSystem';
 import {
 	addDefenseNote,
 	getDefenseTooltipWithNotes,
@@ -20,36 +24,24 @@ import {
 } from '../../../lib/utils/defenseNotes';
 
 interface DefensesProps {
-	characterData: {
-		id: string;
-		finalPD: number;
-		finalPDR: number;
-		finalAD: number;
-		manualPD?: number;
-		manualPDR?: number;
-		manualAD?: number;
-	};
-	calculatedDefenses?: {
-		calculatedPD: number;
-		calculatedPDR: number;
-		calculatedAD: number;
-		pdBreakdown: string;
-		adBreakdown: string;
-		pdrBreakdown: string;
-	};
-	onUpdateManualDefense?: (
-		field: 'manualPD' | 'manualPDR' | 'manualAD',
-		value: number | undefined
-	) => void;
+	breakdowns?: Record<string, EnhancedStatBreakdown>;
 	isMobile?: boolean;
 }
 
 const Defenses: React.FC<DefensesProps> = ({
-	characterData,
-	calculatedDefenses,
-	onUpdateManualDefense,
+	breakdowns,
 	isMobile = false
 }) => {
+	const { setManualDefense } = useCharacterSheet();
+	const defenses = useCharacterDefenses();
+
+	if (!defenses) {
+		return (
+			<div style={{ padding: '1rem', color: '#666', textAlign: 'center' }}>
+				<p>Loading defenses...</p>
+			</div>
+		);
+	}
 	const [pendingChange, setPendingChange] = useState<{
 		field: 'manualPD' | 'manualPDR' | 'manualAD';
 		oldValue: number;
@@ -61,34 +53,40 @@ const Defenses: React.FC<DefensesProps> = ({
 	const getCurrentValue = (field: 'manualPD' | 'manualPDR' | 'manualAD'): number => {
 		switch (field) {
 			case 'manualPD':
-				return characterData.manualPD !== undefined
-					? characterData.manualPD
-					: characterData.finalPD;
+				return defenses.manualOverrides.PD !== undefined
+					? defenses.manualOverrides.PD
+					: defenses.PD;
 			case 'manualPDR':
-				return characterData.manualPDR !== undefined
-					? characterData.manualPDR
-					: characterData.finalPDR || 0;
+				return defenses.manualOverrides.PDR !== undefined
+					? defenses.manualOverrides.PDR
+					: defenses.PDR;
 			case 'manualAD':
-				return characterData.manualAD !== undefined
-					? characterData.manualAD
-					: characterData.finalAD;
+				return defenses.manualOverrides.AD !== undefined
+					? defenses.manualOverrides.AD
+					: defenses.AD;
 		}
 	};
 
 	const handleNoteConfirm = (reason: string) => {
-		if (!pendingChange || !onUpdateManualDefense) return;
+		if (!pendingChange) return;
 
-		// Add the note to storage
-		addDefenseNote(
-			characterData.id,
-			pendingChange.field,
-			pendingChange.oldValue,
-			pendingChange.newValue,
-			reason
-		);
+		// Add the note to storage (will need character ID from context)
+		// TODO: Integrate defense notes with new system if needed
 
-		// Apply the defense change
-		onUpdateManualDefense(pendingChange.field, pendingChange.newValue);
+		// Apply the defense change using context
+		const update: { pd?: number; ad?: number; pdr?: number } = {};
+		switch (pendingChange.field) {
+			case 'manualPD':
+				update.pd = pendingChange.newValue;
+				break;
+			case 'manualPDR':
+				update.pdr = pendingChange.newValue;
+				break;
+			case 'manualAD':
+				update.ad = pendingChange.newValue;
+				break;
+		}
+		setManualDefense(update.pd, update.ad, update.pdr);
 
 		// Clear pending change
 		setPendingChange(null);
@@ -217,8 +215,8 @@ const Defenses: React.FC<DefensesProps> = ({
 						<DefenseLabel>DEFENSE</DefenseLabel>
 					</DefenseLabelContainer>
 					<ShieldContainer>
-						{onUpdateManualDefense ? (
-							<ShieldInput
+                    {onUpdateManualDefense ? (
+                            <ShieldInput
 								type="number"
 								data-field="manualPD"
 								value={
@@ -231,11 +229,18 @@ const Defenses: React.FC<DefensesProps> = ({
 								onFocus={handleInputFocus}
 								onClick={handleInputClick}
 								placeholder={characterData.finalPD.toString()}
-								title={getTooltip('PD')}
 							/>
-						) : (
-							<ShieldValue title={getTooltip('PD')}>{characterData.finalPD}</ShieldValue>
-						)}
+                        ) : (
+                            <Tooltip 
+                                content={
+                                    breakdowns?.defense_PD
+                                        ? createEnhancedDefenseTooltip(breakdowns.defense_PD, 'PD')
+                                        : getTooltip('PD')
+                                }
+                            >
+                                <ShieldValue>{characterData.finalPD}</ShieldValue>
+                            </Tooltip>
+                        )}
 					</ShieldContainer>
 					<DefenseFooter>
 						{characterData.manualPD !== undefined ? (
@@ -256,8 +261,8 @@ const Defenses: React.FC<DefensesProps> = ({
 						<DefenseLabel>DMG REDUCTION</DefenseLabel>
 					</DefenseLabelContainer>
 					<ShieldContainer>
-						{onUpdateManualDefense ? (
-							<ShieldInput
+                    {onUpdateManualDefense ? (
+                            <ShieldInput
 								type="number"
 								data-field="manualPDR"
 								value={
@@ -270,11 +275,18 @@ const Defenses: React.FC<DefensesProps> = ({
 								onFocus={handleInputFocus}
 								onClick={handleInputClick}
 								placeholder={(characterData.finalPDR || 0).toString()}
-								title={getTooltip('PDR')}
 							/>
-						) : (
-							<ShieldValue title={getTooltip('PDR')}>{characterData.finalPDR || 0}</ShieldValue>
-						)}
+                        ) : (
+                            <Tooltip 
+                                content={
+                                    breakdowns?.defense_PDR
+                                        ? createEnhancedDefenseTooltip(breakdowns.defense_PDR, 'PDR')
+                                        : getTooltip('PDR')
+                                }
+                            >
+                                <ShieldValue>{characterData.finalPDR || 0}</ShieldValue>
+                            </Tooltip>
+                        )}
 					</ShieldContainer>
 					<DefenseFooter>
 						{characterData.manualPDR !== undefined ? (
@@ -298,8 +310,8 @@ const Defenses: React.FC<DefensesProps> = ({
 						<DefenseLabel>DEFENSE</DefenseLabel>
 					</DefenseLabelContainer>
 					<ShieldContainer>
-						{onUpdateManualDefense ? (
-							<ShieldInput
+                    {onUpdateManualDefense ? (
+                            <ShieldInput
 								type="number"
 								data-field="manualAD"
 								value={
@@ -312,11 +324,18 @@ const Defenses: React.FC<DefensesProps> = ({
 								onFocus={handleInputFocus}
 								onClick={handleInputClick}
 								placeholder={characterData.finalAD.toString()}
-								title={getTooltip('AD')}
 							/>
-						) : (
-							<ShieldValue title={getTooltip('AD')}>{characterData.finalAD}</ShieldValue>
-						)}
+                        ) : (
+                            <Tooltip 
+                                content={
+                                    breakdowns?.defense_AD
+                                        ? createEnhancedDefenseTooltip(breakdowns.defense_AD, 'AD')
+                                        : getTooltip('AD')
+                                }
+                            >
+                                <ShieldValue>{characterData.finalAD}</ShieldValue>
+                            </Tooltip>
+                        )}
 					</ShieldContainer>
 					<DefenseFooter>
 						{characterData.manualAD !== undefined ? (

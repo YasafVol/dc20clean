@@ -1,6 +1,7 @@
 import React from 'react';
 import type { AttackData, CharacterSheetData } from '../../../types';
 import { weapons, type Weapon, WeaponType } from '../../../lib/rulesdata/inventoryItems';
+import { useCharacterAttacks, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
 	parseDamage,
 	getDamageType,
@@ -29,13 +30,13 @@ import {
 } from '../styles/Attacks';
 
 export interface AttacksProps {
-	attacks: AttackData[];
-	setAttacks: React.Dispatch<React.SetStateAction<AttackData[]>>;
 	characterData: CharacterSheetData;
 	onAttackClick: (attack: AttackData, weapon: Weapon | null) => void;
 }
 
-const Attacks: React.FC<AttacksProps> = ({ attacks, setAttacks, characterData, onAttackClick }) => {
+const Attacks: React.FC<AttacksProps> = ({ characterData, onAttackClick }) => {
+	const { addAttack, removeAttack, updateAttack } = useCharacterSheet();
+	const attacks = useCharacterAttacks();
 	const addWeaponSlot = () => {
 		const newAttack: AttackData = {
 			id: `attack_${Date.now()}`,
@@ -49,11 +50,14 @@ const Attacks: React.FC<AttacksProps> = ({ attacks, setAttacks, characterData, o
 			brutalDamage: '',
 			heavyHitEffect: ''
 		};
-		setAttacks((prev) => [...prev, newAttack]);
+		addAttack(newAttack);
 	};
 
 	const removeWeaponSlot = (attackIndex: number) => {
-		setAttacks((prev) => prev.filter((_, index) => index !== attackIndex));
+		const attackToRemove = attacks[attackIndex];
+		if (attackToRemove) {
+			removeAttack(attackToRemove.id);
+		}
 	};
 
 	const handleWeaponSelect = (attackIndex: number, weaponName: string) => {
@@ -67,11 +71,11 @@ const Attacks: React.FC<AttacksProps> = ({ attacks, setAttacks, characterData, o
 
 		const newAttackData = calculateAttackData(weapon);
 
-		setAttacks((prev) =>
-			prev.map((attack, index) =>
-				index === attackIndex ? { ...newAttackData, id: attack.id } : attack
-			)
-		);
+		const attackToUpdate = attacks[attackIndex];
+		if (attackToUpdate) {
+			const updatedAttack = { ...newAttackData, id: attackToUpdate.id };
+			updateAttack(attackToUpdate.id, updatedAttack);
+		}
 	};
 
 	const calculateAttackData = (weapon: Weapon): AttackData => {

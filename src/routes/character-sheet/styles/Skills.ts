@@ -22,10 +22,10 @@ export const StyledProficiencyDots = styled.div`
 	gap: 2px;
 `;
 
-export const StyledDot = styled.div<{ filled: boolean }>`
+export const StyledDot = styled.div<{ $filled: boolean }>`
 	width: 8px;
 	height: 8px;
 	border-radius: 50%;
 	border: 1px solid #8b4513;
-	background: ${(props) => (props.filled ? '#8b4513' : 'white')};
+	background: ${(props) => (props.$filled ? '#8b4513' : 'white')};
 `;

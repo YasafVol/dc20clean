@@ -18,6 +18,7 @@ import {
 	type SavedCharacter
 } from '../../lib/utils/characterEdit';
 import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from '../../lib/services/enhancedCharacterCalculator';
+import { traitsData } from '../../lib/rulesdata/_new_schema/traits';
 import {
 	StyledContainer,
 	StyledTitle,
@@ -43,9 +44,21 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 	onBackToMenu,
 	isLevelUp
 }) => {
-	const { state, dispatch, attributePointsRemaining, ancestryPointsRemaining } = useCharacter();
+	const { state, dispatch, attributePointsRemaining, calculationResult } = useCharacter();
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 	const [showSnackbar, setShowSnackbar] = useState(false);
+
+	// Debug current state on any changes
+	useEffect(() => {
+		console.log('🐛 CharacterCreation State Debug:', {
+			currentStep: state.currentStep,
+			ancestry1Id: state.ancestry1Id,
+			ancestry2Id: state.ancestry2Id,
+			selectedTraitIds: state.selectedTraitIds,
+			classId: state.classId,
+			calculationResult: calculationResult?.ancestry
+		});
+	}, [state.ancestry1Id, state.ancestry2Id, state.selectedTraitIds, state.currentStep, calculationResult?.ancestry]);
 
 	// Initialize character state for edit mode
 	useEffect(() => {
@@ -64,9 +77,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 
 	const steps = [
 		{ number: 1, label: 'Class & Features' },
-		{ number: 2, label: 'Attributes' },
-		{ number: 3, label: 'Background' },
-		{ number: 4, label: 'Ancestry' },
+		{ number: 2, label: 'Ancestry' },
+		{ number: 3, label: 'Attributes' },
+		{ number: 4, label: 'Background' },
 		{ number: 5, label: 'Spells & Maneuvers' },
 		{ number: 6, label: 'Character Name' }
 	];
@@ -88,12 +101,13 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 					const enhancedData = convertToEnhancedBuildData(state);
 					const enhancedResult = calculateCharacterWithBreakdowns(enhancedData);
 					
-					// Create a calculation function that returns the enhanced result
-					const enhancedCalculatorFn = async () => ({ 
-						...enhancedResult.stats,
-						grantedAbilities: enhancedResult.grantedAbilities,
-						conditionalModifiers: enhancedResult.conditionalModifiers
-					});
+                    // Create a calculation function that returns the enhanced result (including breakdowns)
+                    const enhancedCalculatorFn = async () => ({ 
+                        ...enhancedResult.stats,
+                        grantedAbilities: enhancedResult.grantedAbilities,
+                        conditionalModifiers: enhancedResult.conditionalModifiers,
+                        breakdowns: enhancedResult.breakdowns
+                    });
 					
 					await completeCharacterEdit(editCharacter.id, state, enhancedCalculatorFn);
 				} else {
@@ -140,9 +154,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 				const selectedClassFeatures = findClassByName(selectedClass.name);
 				if (!selectedClassFeatures) return false;
 
-				const selectedFeatureChoices: { [key: string]: string } = JSON.parse(
-					state.selectedFeatureChoices || '{}'
-				);
+				// FIXED: Use typed data instead of JSON parsing
+				const selectedFeatureChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
 
 				// Check if spell school choices are required and have been made
 				const spellList = selectedClassFeatures.spellcastingPath?.spellList;
@@ -152,7 +165,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 						const choiceId = `${selectedClassFeatures.className.toLowerCase()}_spell_schools`;
 						const choice = selectedFeatureChoices[choiceId];
 						if (!choice) return false;
-						const selectedSchools = JSON.parse(choice);
+						// Expect arrays directly (no more legacy JSON string support)
+						const selectedSchools = Array.isArray(choice) ? choice : [choice];
 						if (selectedSchools.length !== spellList.schoolCount) return false;
 					}
 
@@ -162,7 +176,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 						const choice = selectedFeatureChoices[choiceId];
 						if (!choice) return false;
 						if (spellList.schoolCount > 1) {
-							const selectedSchools = JSON.parse(choice);
+							const selectedSchools = Array.isArray(choice) ? choice : [choice];
 							if (selectedSchools.length !== spellList.schoolCount) return false;
 						}
 					}
@@ -196,81 +210,220 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 
 				return true;
 			}
-			case 2:
+			case 2: {
+				// Use centralized calculator for ancestry points validation
+				const ancestryData = calculationResult.ancestry || { ancestryPointsRemaining: 5 };
+				const { ancestryPointsRemaining } = ancestryData;
+				
+				// Step is complete if:
+				// 1. At least one ancestry is selected AND
+				// 2. Points are not over budget (>= 0) AND  
+				// 3. All points are spent (== 0) for completion
+				const hasAncestry = state.ancestry1Id !== null;
+				const pointsValid = ancestryPointsRemaining >= 0;
+				const allPointsSpent = ancestryPointsRemaining === 0;
+				const isValid = hasAncestry && pointsValid && allPointsSpent;
+				
+				console.log('🔍 Step 2 (Ancestry) validation:', {
+					ancestry1Id: state.ancestry1Id,
+					ancestry2Id: state.ancestry2Id,
+					selectedTraitIds: state.selectedTraitIds,
+					ancestryPointsRemaining,
+					hasAncestry,
+					pointsValid,
+					allPointsSpent,
+					isValid
+				});
+				return isValid;
+			}
+			case 3:
 				return attributePointsRemaining === 0;
-			case 3: {
+			case 4: {
 				// Background: check if ALL available points have been spent
 				// Parse current selections
 				let skillPointsUsed = 0;
 				let tradePointsUsed = 0;
 				let languagePointsUsed = 0;
 
-				try {
-					if (state.skillsJson && state.skillsJson !== '{}') {
-						const skills = JSON.parse(state.skillsJson) as Record<string, number>;
-						skillPointsUsed = Object.values(skills).reduce(
-							(sum: number, level: number) => sum + level,
-							0
-						);
-					}
-				} catch (e) {
-					// Ignore parsing errors
+				// FIXED: Use typed skillsData instead of JSON parsing
+				if (state.skillsData && Object.keys(state.skillsData).length > 0) {
+					skillPointsUsed = Object.values(state.skillsData).reduce(
+						(sum: number, level: number) => sum + level,
+						0
+					);
 				}
 
-				try {
-					if (state.tradesJson && state.tradesJson !== '{}') {
-						const trades = JSON.parse(state.tradesJson) as Record<string, number>;
-						tradePointsUsed = Object.values(trades).reduce(
-							(sum: number, level: number) => sum + level,
-							0
-						);
-					}
-				} catch (e) {
-					// Ignore parsing errors
+				// FIXED: Use typed tradesData instead of JSON parsing
+				if (state.tradesData && Object.keys(state.tradesData).length > 0) {
+					tradePointsUsed = Object.values(state.tradesData).reduce(
+						(sum: number, level: number) => sum + level,
+						0
+					);
 				}
 
-				try {
-					if (state.languagesJson && state.languagesJson !== '{}') {
-						const languages = JSON.parse(state.languagesJson) as Record<
-							string,
-							{ fluency?: string }
-						>;
-						languagePointsUsed = Object.entries(languages).reduce(
-							(sum, [langId, data]: [string, { fluency?: string }]) => {
-								if (langId === 'common') return sum; // Common is free
-								return (
-									sum +
-									(data.fluency === 'basic'
-										? 1
-										: data.fluency === 'advanced'
-											? 2
-											: data.fluency === 'fluent'
-												? 3
-												: 0)
-								);
-							},
-							0
-						);
-					}
-				} catch (e) {
-					// Ignore parsing errors
+				// FIXED: Use typed languagesData instead of JSON parsing
+				if (state.languagesData && Object.keys(state.languagesData).length > 0) {
+					languagePointsUsed = Object.entries(state.languagesData).reduce(
+						(sum, [langId, data]: [string, { fluency?: string }]) => {
+							if (langId === 'common') return sum; // Common is free
+							return (
+								sum +
+								(data.fluency === 'basic'
+									? 1
+									: data.fluency === 'advanced'
+										? 2
+										: data.fluency === 'fluent'
+											? 3
+											: 0)
+							);
+						},
+						0
+					);
 				}
 
-				// Calculate available points based on current Intelligence
-				const intelligenceModifier = state.attribute_intelligence;
-				const baseSkillPoints = Math.max(1, 5 + intelligenceModifier); // At least 1, even with negative Int
+                // Available points should match BackgroundPointsManager (include bonus points and conversions)
+                const intelligenceModifier = state.attribute_intelligence;
+                
+                // Calculate bonus skill points from traits and class features (same logic as BackgroundPointsManager)
+                let bonusSkillPoints = 0;
+                
+                // From traits - FIXED: Use typed data instead of JSON parsing
+                if (state.selectedTraitIds && Array.isArray(state.selectedTraitIds)) {
+                    const selectedTraitIdsList: string[] = state.selectedTraitIds;
+                    
+                    console.log('🔍 Selected trait IDs:', selectedTraitIdsList);
+                    
+                    selectedTraitIdsList.forEach((traitId: string) => {
+                            const trait = traitsData.find((t: any) => t.id === traitId);
+                            console.log(`🔍 Processing trait ${traitId}:`, trait);
+                            if (trait) {
+                                trait.effects.forEach((effect: any) => {
+                                    if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+                                        console.log(`🔍 Found skillPoints bonus: +${effect.value} from trait ${traitId}`);
+                                        bonusSkillPoints += (effect.value as number);
+                                    }
+                                });
+                            } else {
+                                console.warn(`🚨 Trait not found: ${traitId}`);
+                            }
+                        });
+                }
+                
+                // From class features  
+                if (state.classId && state.selectedFeatureChoices) {
+                    try {
+                        const selectedClass = classesData.find((c) => c.id.toLowerCase() === state.classId?.toLowerCase());
+                        const classFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
+                        
+                        if (classFeatures) {
+                            // FIXED: Use typed data instead of JSON parsing
+                            const selectedChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
+                            const level1Features = classFeatures.coreFeatures.filter(
+                                (feature: any) => feature.levelGained === 1
+                            );
 
-				// For completion, we require that:
-				// 1. Skill points are exactly spent (not overspent, not underspent)
-				// 2. At least some trade or language points are spent (showing engagement)
-				const skillPointsRemaining = baseSkillPoints - skillPointsUsed;
+                            level1Features.forEach((feature: any) => {
+                                // Check for direct feature effects first
+                                if (feature.effects) {
+                                    feature.effects.forEach((effect: any) => {
+                                        if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+                                            bonusSkillPoints += (effect.value as number);
+                                        }
+                                    });
+                                }
+
+                                // Check for choice-based effects
+                                if (feature.choices) {
+                                    feature.choices.forEach((choice: any, choiceIndex: number) => {
+                                        const choiceId = `${classFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;
+                                        const selectedOptions = selectedChoices[choiceId];
+
+                                        if (selectedOptions) {
+                                            let optionsToProcess: string[] = [];
+                                            
+                                            // Expect arrays directly (no more legacy JSON string support)
+                                            if (Array.isArray(selectedOptions)) {
+                                                optionsToProcess = selectedOptions;
+                                            } else {
+                                                optionsToProcess = [selectedOptions];
+                                            }
+
+                                            optionsToProcess.forEach((optionName) => {
+                                                const selectedOption = choice.options?.find((opt: any) => opt.name === optionName);
+                                                if (selectedOption && selectedOption.effects) {
+                                                    selectedOption.effects.forEach((effect: any) => {
+                                                        if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+                                                            bonusSkillPoints += (effect.value as number);
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        // Ignore parsing errors
+                    }
+                }
+                
+                const baseSkillPoints = Math.max(1, 5 + intelligenceModifier + bonusSkillPoints);
+                
+                console.log('🔍 Skill Points Calculation:', {
+                    base: 5,
+                    intelligence: intelligenceModifier,
+                    bonusFromTraits: bonusSkillPoints,
+                    total: baseSkillPoints
+                });
+                const skillToTrade = state.skillToTradeConversions || 0;
+                const tradeToSkill = state.tradeToSkillConversions || 0;
+                const availableSkillPoints = baseSkillPoints - skillToTrade + Math.floor(tradeToSkill / 2);
+
+                // For completion, require exact spend of available skill points
+                const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
 				const hasExactlySpentAllSkillPoints = skillPointsRemaining === 0;
+				// Calculate available trade and language points using same logic as BackgroundPointsManager
+				let bonusTradePoints = 0;
+				let bonusLanguagePoints = 0;
+				
+				// Check for ancestry bonuses (simplified calculation)
+				const baseTradePoints = 3 + bonusTradePoints;
+				const baseLanguagePoints = 2 + bonusLanguagePoints;
+				
+				const availableTradePoints = baseTradePoints + Math.floor(skillToTrade / 2) - Math.floor(tradeToSkill / 2);
+				const availableLanguagePoints = baseLanguagePoints; // No conversions affect language points currently
+				
+				// Allow completion if all skill points are spent AND either:
+				// 1. Some trade/language points were spent, OR 
+				// 2. No trade/language points are available to spend
 				const hasSpentSomeTradeOrLanguagePoints = tradePointsUsed > 0 || languagePointsUsed > 0;
+				const hasNoTradeOrLanguagePointsToSpend = availableTradePoints <= 0 && availableLanguagePoints <= 0;
+				
+				const isValid = hasExactlySpentAllSkillPoints && (hasSpentSomeTradeOrLanguagePoints || hasNoTradeOrLanguagePointsToSpend);
 
-				return hasExactlySpentAllSkillPoints && hasSpentSomeTradeOrLanguagePoints;
+				console.log('🔍 Step 4 (Background) validation:', {
+					baseSkillPoints,
+					bonusSkillPoints,
+					skillToTrade,
+					tradeToSkill,
+					availableSkillPoints,
+					skillPointsUsed,
+					skillPointsRemaining,
+					baseTradePoints,
+					baseLanguagePoints,
+					availableTradePoints,
+					availableLanguagePoints,
+					tradePointsUsed,
+					languagePointsUsed,
+					hasExactlySpentAllSkillPoints,
+					hasSpentSomeTradeOrLanguagePoints,
+					hasNoTradeOrLanguagePointsToSpend,
+					isValid
+				});
+
+				return isValid;
 			}
-			case 4:
-				return state.ancestry1Id !== null && ancestryPointsRemaining >= 0;
 			case 5:
 				// Spells & Maneuvers step - validate based on class requirements
 				if (!state.classId) return false;
@@ -286,21 +439,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 				let selectedSpells: string[] = [];
 				let selectedManeuvers: string[] = [];
 
-				try {
-					if (state.selectedSpells) {
-						selectedSpells = JSON.parse(state.selectedSpells);
-					}
-				} catch (e) {
-					// Ignore parsing errors
-				}
-
-				try {
-					if (state.selectedManeuvers) {
-						selectedManeuvers = JSON.parse(state.selectedManeuvers);
-					}
-				} catch (e) {
-					// Ignore parsing errors
-				}
+				// Use typed arrays directly
+				selectedSpells = state.selectedSpells || [];
+				selectedManeuvers = state.selectedManeuvers || [];
 
 				// Check if class has spellcasting
 				const hasSpellcasting = selectedClassFeatures.spellcastingPath?.spellList;
@@ -344,7 +485,20 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 	};
 
 	const areAllStepsCompleted = () => {
-		return steps.every((step) => isStepCompleted(step.number));
+		const results = steps.map((step) => ({
+			step: step.number,
+			label: step.label,
+			completed: isStepCompleted(step.number)
+		}));
+		
+		const allCompleted = results.every((result) => result.completed);
+		
+		console.log('🔍 areAllStepsCompleted check:', {
+			results,
+			allCompleted
+		});
+		
+		return allCompleted;
 	};
 
 	const renderCurrentStep = () => {
@@ -357,16 +511,16 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 					</>
 				);
 			case 2:
-				return <Attributes />;
-			case 3:
-				return <Background />;
-			case 4:
 				return (
 					<>
 						<AncestrySelector />
 						<SelectedAncestries />
 					</>
 				);
+			case 3:
+				return <Attributes />;
+			case 4:
+				return <Background />;
 			case 5:
 				return <SpellsAndManeuvers />;
 			case 6:

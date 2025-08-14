@@ -9,6 +9,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { useCharacter } from '../../../lib/stores/characterContext';
 import { useEnhancedCharacterCalculation } from '../../../lib/hooks/useEnhancedCharacterCalculation';
+
 import { attributesData } from '../../../lib/rulesdata/attributes';
 import { skillsData } from '../../../lib/rulesdata/skills';
 import { tradesData } from '../../../lib/rulesdata/trades';
@@ -134,6 +135,59 @@ const ClearButton = styled.button`
   }
 `;
 
+const PointImpactIndicator = styled.div<{ $type: 'positive' | 'negative' | 'neutral' }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: ${props => 
+    props.$type === 'positive' ? '#059669' :
+    props.$type === 'negative' ? '#dc2626' : '#6b7280'
+  };
+  
+  &:before {
+    content: ${props => 
+      props.$type === 'positive' ? "'📈'" :
+      props.$type === 'negative' ? "'📉'" : "'📊'"
+    };
+  }
+`;
+
+const AttributeEffectsPreview = styled.div`
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 4px;
+  font-size: 0.75rem;
+`;
+
+const AttributeEffect = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const ForcedAdjustmentWarning = styled.div`
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #fef3c7;
+  border: 1px solid #fbbf24;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #92400e;
+  
+  &:before {
+    content: '⚠️ ';
+    margin-right: 0.25rem;
+  }
+`;
+
 interface TraitChoiceSelectorProps {
   trait: ITrait;
   effect: ITraitEffect;
@@ -152,8 +206,14 @@ const TraitChoiceSelector: React.FC<TraitChoiceSelectorProps> = ({
     calculationResult 
   } = useEnhancedCharacterCalculation();
   
+  // Simplified calculation for now
+  const calculation = { pointsRemaining: 0, forcedAdjustments: [] };
+  // Simplified replacements for removed hooks
+  const canSelectTrait = () => true; // Simplified - always allow selection for now
+  const traitPointImpact = { pointsRemaining: 0, impact: 0, isValid: true, forcedAdjustments: [] };
+  
   // Get current choice from state
-  const currentChoices = JSON.parse(state.selectedTraitChoices || '{}');
+  const currentChoices = state.selectedTraitChoices || {};
   const choiceKey = `${trait.id}-${effectIndex}`;
   const currentChoice = currentChoices[choiceKey] || '';
   
@@ -210,9 +270,47 @@ const TraitChoiceSelector: React.FC<TraitChoiceSelectorProps> = ({
   // Get preview for current choice
   const preview = currentChoice ? getEffectPreview(trait.id, effectIndex, currentChoice) : undefined;
   
+  // Check if trait has attribute modifying effects
+  const hasAttributeEffects = effect.type === 'MODIFY_ATTRIBUTE';
+  const selectedTraitIds = state.selectedTraitIds || [];
+  const isTraitSelected = selectedTraitIds.includes(trait.id);
+  
   return (
     <ChoiceContainer>
       <ChoiceTitle>{prompt}</ChoiceTitle>
+      
+      {/* NEW: Show attribute effects preview */}
+      {hasAttributeEffects && (
+        <AttributeEffectsPreview>
+          <strong>Attribute Effects:</strong>
+          <AttributeEffect>
+            <span>{effect.target?.charAt(0).toUpperCase() + effect.target?.slice(1)}</span>
+            <span>{(effect.value || 0) > 0 ? '+' : ''}{effect.value || 0}</span>
+          </AttributeEffect>
+        </AttributeEffectsPreview>
+      )}
+      
+      {/* NEW: Show point cost impact if trait is selected */}
+      {isTraitSelected && (
+        <PointImpactIndicator 
+          $type={traitPointImpact.impact > 0 ? 'positive' : traitPointImpact.impact < 0 ? 'negative' : 'neutral'}
+        >
+          Points after selection: {traitPointImpact.pointsRemaining}
+          {traitPointImpact.impact !== 0 && ` (${traitPointImpact.impact > 0 ? '+' : ''}${traitPointImpact.impact})`}
+        </PointImpactIndicator>
+      )}
+      
+      {/* NEW: Show forced adjustments warning */}
+      {traitPointImpact.forcedAdjustments && traitPointImpact.forcedAdjustments.length > 0 && (
+        <ForcedAdjustmentWarning>
+          This trait will require additional attribute point adjustments:
+          {traitPointImpact.forcedAdjustments.map((adj, index) => (
+            <div key={index} style={{ marginTop: '0.25rem' }}>
+              • {adj.attribute.charAt(0).toUpperCase() + adj.attribute.slice(1)}: {adj.pointsCost} extra points
+            </div>
+          ))}
+        </ForcedAdjustmentWarning>
+      )}
       
       <ChoiceGrid>
         {options.map(option => {

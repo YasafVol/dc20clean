@@ -6,14 +6,13 @@ export const traitsData: Trait[] = [
 		id: 'human_attribute_increase',
 		name: 'Attribute Increase',
 		description:
-			'Choose an Attribute. The chosen Attribute increases by 1 (up to the Attribute Limit).',
+			'Grants 1 Attribute Point to spend on any Attribute (up to the Attribute Limit).',
 		cost: 2,
 		effects: [
 			{
-				type: 'MODIFY_ATTRIBUTE',
-				target: 'any_attribute',
-				value: 1,
-				userChoice: { prompt: 'Choose an Attribute to increase by 1', options: ['might', 'agility', 'charisma', 'intelligence'] }
+				type: 'MODIFY_STAT',
+				target: 'attributePoints',
+				value: 1
 			}
 		]
 	},
@@ -24,6 +23,11 @@ export const traitsData: Trait[] = [
 			'Choose a Skill. Your Mastery Cap and Mastery Level in the chosen Skill both increase by 1. You can only benefit from 1 Feature that increases your Skill Mastery Limit at a time.',
 		cost: 2,
 		effects: [
+			{
+				type: 'MODIFY_STAT',
+				target: 'skillPoints',
+				value: 1
+			},
 			{
 				type: 'GRANT_SKILL_EXPERTISE',
 				target: 'any_skill',
@@ -706,6 +710,935 @@ export const traitsData: Trait[] = [
 		cost: -1,
 		isNegative: true,
 		effects: [{ type: 'GRANT_ABILITY', target: 'wild_mind', value: 'DisADV on Intelligence-based Checks.' }]
+	},
+
+	// Angelborn Traits
+	{
+		id: 'angelborn_radiant_resistance',
+		name: 'Radiant Resistance',
+		description: 'You have Resistance (Half) to Radiant damage.',
+		cost: 1,
+		effects: [{ type: 'GRANT_RESISTANCE', target: 'Radiant', value: 'half' }]
+	},
+	{
+		id: 'angelborn_celestial_magic',
+		name: 'Celestial Magic',
+		description:
+			'You learn 1 Spell of your choice from the Divine Spell List (Holy & Restoration during the Beta). Once per Long Rest, you can cast the chosen Spell spending 1 less MP than normal (minimum of 0 MP). The Spells total MP cost (before all reductions) still can\'t exceed your Mana Spend Limit.',
+		cost: 2,
+		effects: [
+			{ type: 'GRANT_SPELL', target: 'Divine_Spell_List', value: 1 },
+			{ type: 'GRANT_ABILITY', target: 'reduced_mp_cost', value: 'Once per Long Rest, cast chosen spell for 1 less MP (minimum 0).' }
+		]
+	},
+	{
+		id: 'angelborn_healing_touch',
+		name: 'Healing Touch',
+		description:
+			'Once per Combat, you can spend 1 AP to touch a creature and Heal it. Make a DC 10 Spell Check. Success: You can restore up to 2 HP to the target. Success (each 5): +1 HP. Failure: You only restore 2 HP.',
+		cost: 2,
+		effects: [{ type: 'GRANT_ABILITY', target: 'healing_touch', value: 'Once per Combat, 1 AP: Touch heal (DC 10 Spell Check), 2+ HP restored.' }]
+	},
+	{
+		id: 'angelborn_divine_glow',
+		name: 'Divine Glow',
+		description: 'Your body can emit a Bright Light in a 5 Space radius around you at will.',
+		cost: 0,
+		isMinor: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'divine_glow', value: 'Emit Bright Light in 5 Space radius at will.' }]
+	},
+	{
+		id: 'angelborn_mana_increase',
+		name: 'Mana Increase',
+		description: 'Your MP maximum increases by 1.',
+		cost: 1,
+		effects: [{ type: 'MODIFY_STAT', target: 'mp', value: 1 }]
+	},
+	{
+		id: 'angelborn_celestial_clarity',
+		name: 'Celestial Clarity',
+		description: 'You have ADV on Saves against being Blinded or Deafened.',
+		cost: 1,
+		effects: [
+			{ type: 'GRANT_ADV_ON_SAVE', target: 'Blinded', value: true },
+			{ type: 'GRANT_ADV_ON_SAVE', target: 'Deafened', value: true }
+		]
+	},
+	{
+		id: 'angelborn_angelic_insight',
+		name: 'Angelic Insight',
+		description:
+			'Once per Long Rest you can grant yourself ADV on an Insight Check to see if someone is lying.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'angelic_insight', value: 'Once per Long Rest: ADV on Insight Check to detect lies.' }]
+	},
+	{
+		id: 'angelborn_gift_of_the_angels',
+		name: 'Gift of the Angels',
+		description:
+			'Once per Combat you can spend 1 AP and 1 MP and touch a creature to heal them over time. The creature recovers 1 HP at the start of each of their turns for 1 minute (5 Rounds).',
+		cost: 2,
+		effects: [{ type: 'GRANT_ABILITY', target: 'gift_of_angels', value: 'Once per Combat, 1 AP + 1 MP: Touch heal over time (1 HP/turn for 5 rounds).' }]
+	},
+	{
+		id: 'angelborn_blinding_light',
+		name: 'Blinding Light',
+		description:
+			'Once per Combat, you can spend 1 AP to choose a creature within 5 Spaces and make a Spell Check contested by its Physical Save. Success: The target is Blinded until the end of your next turn.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'blinding_light', value: 'Once per Combat, 1 AP: Spell Check vs Physical Save to Blind target (5 Spaces, until end of next turn).' }]
+	},
+	{
+		id: 'angelborn_glide_speed',
+		name: 'Glide Speed',
+		description:
+			'You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren\'t Incapacitated, you gain the following benefits while in the air: Controlled Falling: You suffer no damage from Controlled Falling. Altitude Drop: If you end your turn midair, you Controlled Fall 4 Spaces. Glide Speed: You can use your movement to glide horizontally.',
+		cost: 2,
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'wings' }]
+	},
+	{
+		id: 'angelborn_pacifist',
+		name: 'Pacifist',
+		description:
+			'Your divine call is to put others before yourself and resist doing harm. You suffer a -1 penalty to all Checks and Saves made during the first round of Combat.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'pacifist', value: '-1 penalty to all Checks and Saves during first round of Combat.' }]
+	},
+	{
+		id: 'angelborn_umbral_weakness',
+		name: 'Umbral Weakness',
+		description: 'You have Umbral Vulnerability (1).',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_VULNERABILITY', target: 'Umbral', value: 1 }]
+	},
+
+	// Dwarf Traits
+	{
+		id: 'dwarf_trade_expertise',
+		name: 'Trade Expertise',
+		description:
+			'Choose a Crafting or Services Trade. Your Mastery Cap and Mastery Level in the chosen Trade both increase by 1.',
+		cost: 1,
+		effects: [
+			{
+				type: 'GRANT_TRADE_EXPERTISE',
+				target: 'any_crafting_or_services_trade',
+				value: { capIncrease: 1, levelIncrease: 1 },
+				userChoice: { prompt: 'Choose a Crafting or Services Trade for Expertise' }
+			}
+		]
+	},
+
+	// Gnome Traits
+	{
+		id: 'gnome_agility_attribute_decrease',
+		name: 'Agility Decrease',
+		description: 'You decrease your Agility by 1 (to a minimum of -2).',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'MODIFY_ATTRIBUTE', target: 'agility', value: -1 }]
+	},
+	{
+		id: 'gnome_short_legged',
+		name: 'Short-Legged',
+		description: 'Your Speed decreases by 1 Space.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'MODIFY_STAT', target: 'moveSpeed', value: -1 }]
+	},
+	{
+		id: 'gnome_storm_knowledge',
+		name: 'Storm Knowledge',
+		description:
+			'While within rainy, snowy, or stormy environments, you have ADV on Survival Checks. Additionally, you have ADV on Knowledge Checks made to recall information about rain, snow, and storms.',
+		cost: 1,
+		effects: [
+			{ type: 'GRANT_ADV_ON_CHECK', target: 'Survival', value: 'rainy_snowy_stormy_environments' },
+			{ type: 'GRANT_ADV_ON_CHECK', target: 'Knowledge', value: 'rain_snow_storms_information' }
+		]
+	},
+
+	// Orc Traits
+	{
+		id: 'orc_already_cursed',
+		name: 'Already Cursed',
+		description: 'You have ADV on Saves against Curses.',
+		cost: 0,
+		isMinor: true,
+		effects: [{ type: 'GRANT_ADV_ON_SAVE', target: 'Curses', value: true }]
+	},
+	{
+		id: 'orc_dash',
+		name: 'Orc Dash',
+		description:
+			'Once per Combat you can use your Minor Action to move, as long as that movement is towards an enemy.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'orc_dash', value: 'Once per Combat: Use Minor Action to move toward enemy.' }]
+	},
+	{
+		id: 'orc_finishing_blow',
+		name: 'Finishing Blow',
+		description: 'You deal +1 damage to creatures who are Well-Bloodied.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'finishing_blow', value: '+1 damage to Well-Bloodied creatures.' }]
+	},
+	{
+		id: 'orc_imposing_presence',
+		name: 'Imposing Presence',
+		description:
+			'Once per Combat when a creature makes an Attack against you, you can force them to make a Charisma Save. Save Failure: They must choose a new target for the Attack. If there are no other targets, then the Attack is wasted.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'imposing_presence', value: 'Once per Combat: Force attacker to retarget (Charisma Save).' }]
+	},
+	{
+		id: 'orc_intimidating_shout',
+		name: 'Intimidating Shout',
+		description:
+			'Once per Combat, you can spend 1 AP to let out an Intimidating Shout. All creatures within 5 Spaces that can hear you must make a Charisma Save contested by your Attack Check. Failure: A target is Hindered on the next Attack Check or Spell Attack it makes before the start of your next turn.',
+		cost: 2,
+		effects: [{ type: 'GRANT_ABILITY', target: 'intimidating_shout', value: 'Once per Combat, 1 AP: AoE Hinder effect (5 Spaces, Charisma Save vs Attack Check).' }]
+	},
+	{
+		id: 'orc_orcish_resolve',
+		name: 'Orcish Resolve',
+		description: 'You gain 1 additional AP while on Death\'s Door.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'orcish_resolve', value: '+1 AP while on Death\'s Door.' }]
+	},
+	{
+		id: 'orc_provocation',
+		name: 'Provocation',
+		description: 'You have DisADV on Checks and Saves against being Taunted.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'provocation', value: 'DisADV on Checks and Saves vs Taunted.' }]
+	},
+
+	// Dragonborn Traits
+	{
+		id: 'dragonborn_concussive_breath',
+		name: 'Concussive Breath',
+		description:
+			'When you use your Draconic Breath Weapon, you can force all targets to make a Physical Save. Save Failure: The target is pushed 1 Space away +1 additional Space for every 5 it fails its Save by.',
+		cost: 1,
+		prerequisites: ['dragonborn_draconic_breath_weapon'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'concussive_breath', value: 'Draconic Breath pushes targets (Physical Save, 1+ Spaces).' }]
+	},
+	{
+		id: 'dragonborn_draconic_affinity',
+		name: 'Draconic Affinity',
+		description:
+			'When you take damage of the same type as your Draconic damage, your next Draconic Breath Weapon deals +1 bonus damage.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'draconic_affinity', value: '+1 damage on next Draconic Breath when taking same damage type.' }]
+	},
+	{
+		id: 'dragonborn_draconic_protection',
+		name: 'Draconic Protection',
+		description:
+			'Once per Combat, when an ally within 20 Spaces is on Death\'s Door, you begin to surge with an ancient power. While they remain on Death\'s Door their PD and AD increases by 5 until Combat ends.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'draconic_protection', value: 'Once per Combat: +5 PD/AD to ally on Death\'s Door (20 Spaces).' }]
+	},
+	{
+		id: 'dragonborn_draconic_ward',
+		name: 'Draconic Ward',
+		description:
+			'Once per Combat when you enter Death\'s Door, you gain 2 Temp HP. Whenever you\'re Hit by a Melee Attack while you have this Temp HP, your Attacker takes 1 Draconic damage.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'draconic_ward', value: 'Death\'s Door: +2 Temp HP, attackers take 1 Draconic damage.' }]
+	},
+	{
+		id: 'dragonborn_dying_breath',
+		name: 'Dying Breath',
+		description:
+			'Once per Combat when you enter Death\'s Door, you regain a use of your Draconic Breath Weapon and can immediately use it as a Reaction for free (0 AP).',
+		cost: 1,
+		prerequisites: ['dragonborn_draconic_breath_weapon'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'dying_breath', value: 'Death\'s Door: Regain and use Draconic Breath as Reaction (0 AP).' }]
+	},
+	{
+		id: 'dragonborn_glide_speed',
+		name: 'Glide Speed',
+		description:
+			'You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren\'t Incapacitated, you gain the following benefits while in the air: Controlled Falling: You suffer no damage from Controlled Falling. Altitude Drop: If you end your turn midair, you Controlled Fall 4 Spaces. Glide Speed: You can use your movement to glide horizontally.',
+		cost: 2,
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'wings' }]
+	},
+	{
+		id: 'dragonborn_guardians_bond',
+		name: 'Guardian\'s Bond',
+		description:
+			'Once per Combat when an ally enters Death\'s Door within 20 Spaces of you, you take an amount of True damage equal to your Prime Modifier.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'guardians_bond', value: 'Take True damage (Prime Modifier) when ally enters Death\'s Door.' }]
+	},
+	{
+		id: 'dragonborn_mana_increase',
+		name: 'Mana Increase',
+		description: 'Your MP maximum increases by 1.',
+		cost: 1,
+		effects: [{ type: 'MODIFY_STAT', target: 'mp', value: 1 }]
+	},
+	{
+		id: 'dragonborn_reptilian_superiority',
+		name: 'Reptilian Superiority',
+		description:
+			'You have ADV on Intimidation Checks against reptilian creatures of Medium Size and smaller (not including other Dragonborn).',
+		cost: 0,
+		isMinor: true,
+		effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'Intimidation', value: 'vs_reptilian_medium_small' }]
+	},
+	{
+		id: 'dragonborn_second_breath',
+		name: 'Second Breath',
+		description:
+			'You can now use your Draconic Breath Weapon twice per Combat. Additionally, whenever you use your Draconic Breath Weapon, you can spend 2 uses to increase the damage by 2 if its an Area, or by 4 if its Focused.',
+		cost: 1,
+		prerequisites: ['dragonborn_draconic_breath_weapon'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'second_breath', value: 'Draconic Breath twice per Combat, enhanced damage option.' }]
+	},
+
+	// Fiendborn Traits
+	{
+		id: 'fiendborn_charming_gaze',
+		name: 'Charming Gaze',
+		description:
+			'You can spend 1 AP to gaze upon a creature you can see within 10 Spaces that can also see you. Make a Spell Check contested by the target\'s Repeated Charisma Save. Success: The creature becomes Charmed by you for 1 minute. You can use this ability once per Long Rest, and when you roll for Initiative, or meet some other unique criteria at the GM\'s discretion, this ability recharges.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'charming_gaze', value: 'Once per Long Rest, 1 AP: Charm target (Spell Check vs Charisma Save, 10 Spaces, 1 minute).' }]
+	},
+	{
+		id: 'fiendborn_divine_dampening',
+		name: 'Divine Dampening',
+		description: 'You recover 1 less HP when healed from divine sources.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'divine_dampening', value: '-1 HP from divine healing sources.' }]
+	},
+	{
+		id: 'fiendborn_fiendish_aura',
+		name: 'Fiendish Aura',
+		description:
+			'You learn the Sorcery Cantrip, but you must choose the type of energy that\'s the same as your Fiendish Origin.',
+		cost: 1,
+		effects: [
+			{ type: 'GRANT_CANTRIP', target: 'Sorcery', value: 1 },
+			{ type: 'GRANT_ABILITY', target: 'sorcery_energy_type', value: 'Must match Fiendish Origin energy type.' }
+		]
+	},
+	{
+		id: 'fiendborn_fiendish_magic',
+		name: 'Fiendish Magic',
+		description:
+			'You learn 1 Spell of your choice from the Arcane Spell List from the Destruction or Enchantment Spell Schools. If the Spell deals damage, it must be the same damage type as your Fiendish damage. Once per Long Rest, you can cast the chosen Spell spending 1 less MP than normal (minimum of 0 MP). The Spells total MP cost (before all reductions) still can\'t exceed your Mana Spend Limit.',
+		cost: 2,
+		effects: [
+			{ type: 'GRANT_SPELL', target: 'Arcane_Destruction_Enchantment', value: 1 },
+			{ type: 'GRANT_ABILITY', target: 'reduced_mp_cost', value: 'Once per Long Rest, cast chosen spell for 1 less MP (minimum 0).' }
+		]
+	},
+	{
+		id: 'fiendborn_fiendish_resistance',
+		name: 'Fiendish Resistance',
+		description: 'You gain Resistance (Half) to your Fiendish damage type.',
+		cost: 2,
+		effects: [{ type: 'GRANT_RESISTANCE', target: 'Fiendish_damage_type', value: 'half' }]
+	},
+	{
+		id: 'fiendborn_glide_speed',
+		name: 'Glide Speed',
+		description:
+			'You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren\'t Incapacitated, you gain the following benefits while in the air: Controlled Falling: You suffer no damage from Controlled Falling. Altitude Drop: If you end your turn midair, you Controlled Fall 4 Spaces. Glide Speed: You can use your movement to glide horizontally.',
+		cost: 2,
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'wings' }]
+	},
+	{
+		id: 'fiendborn_infernal_bravery',
+		name: 'Infernal Bravery',
+		description: 'You have ADV on Saves against being Intimidated.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ADV_ON_SAVE', target: 'Intimidated', value: true }]
+	},
+	{
+		id: 'fiendborn_intimidator',
+		name: 'Intimidator',
+		description: 'Once per Combat you can take the Intimidate Action as a Minor Action.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'intimidator', value: 'Once per Combat: Intimidate as Minor Action.' }]
+	},
+	{
+		id: 'fiendborn_lights_bane',
+		name: 'Light\'s Bane',
+		description: 'You can spend 1 AP to snuff out a mundane light source within 5 Spaces of you.',
+		cost: 0,
+		isMinor: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'lights_bane', value: '1 AP: Snuff out mundane light source (5 Spaces).' }]
+	},
+	{
+		id: 'fiendborn_mana_increase',
+		name: 'Mana Increase',
+		description: 'Your MP maximum increases by 1.',
+		cost: 1,
+		effects: [{ type: 'MODIFY_STAT', target: 'mp', value: 1 }]
+	},
+	{
+		id: 'fiendborn_radiant_weakness',
+		name: 'Radiant Weakness',
+		description: 'You have Radiant Vulnerability (1).',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_VULNERABILITY', target: 'Radiant', value: 1 }]
+	},
+	{
+		id: 'fiendborn_silver_tongued',
+		name: 'Silver-Tongued',
+		description:
+			'Once per Long Rest you can grant yourself ADV on an Influence Check when trying to deceive someone.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'silver_tongued', value: 'Once per Long Rest: ADV on Influence Check to deceive.' }]
+	},
+	{
+		id: 'fiendborn_superior_darkvision',
+		name: 'Superior Darkvision',
+		description: 'Your Darkvision increases to 20 Spaces.',
+		cost: 1,
+		prerequisites: ['fiendborn_darkvision'],
+		effects: [{ type: 'GRANT_SENSE', target: 'darkvision', value: 20 }]
+	},
+
+	// Giantborn Traits
+	{
+		id: 'giantborn_brute',
+		name: 'Brute',
+		description: 'Once per Combat, you can take the Shove or Grapple Action as a Minor Action.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'brute', value: 'Once per Combat: Shove or Grapple as Minor Action.' }]
+	},
+	{
+		id: 'giantborn_clumsiness',
+		name: 'Clumsiness',
+		description: 'You have DisADV on Agility Checks.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'clumsiness', value: 'DisADV on Agility Checks.' }]
+	},
+	{
+		id: 'giantborn_giants_fortitude',
+		name: 'Giant\'s Fortitude',
+		description: 'You also gain the benefits of your Giant\'s Resolve Trait while Well-Bloodied.',
+		cost: 2,
+		prerequisites: ['giantborn_giants_resolve'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'giants_fortitude', value: 'Giant\'s Resolve benefits also apply while Well-Bloodied.' }]
+	},
+	{
+		id: 'giantborn_giants_resolve',
+		name: 'Giant\'s Resolve',
+		description: 'While on Death\'s Door, you reduce all damage taken by 1.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'giants_resolve', value: 'Reduce all damage by 1 while on Death\'s Door.' }]
+	},
+	{
+		id: 'giantborn_heavy_riser',
+		name: 'Heavy Riser',
+		description: 'You have to spend 4 Spaces of movement to stand up from Prone.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'heavy_riser', value: '4 Spaces of movement to stand up from Prone.' }]
+	},
+	{
+		id: 'giantborn_intelligence_attribute_decrease',
+		name: 'Intelligence Decrease',
+		description: 'You decrease your Intelligence by 1 (to a minimum of -2).',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'MODIFY_ATTRIBUTE', target: 'intelligence', value: -1 }]
+	},
+	{
+		id: 'giantborn_mighty_hurl',
+		name: 'Mighty Hurl',
+		description:
+			'You throw creatures 1 Space farther than normal, and objects (including Weapons) 5 Spaces farther than normal.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'mighty_hurl', value: 'Throw creatures +1 Space, objects +5 Spaces farther.' }]
+	},
+	{
+		id: 'giantborn_mighty_leap',
+		name: 'Mighty Leap',
+		description:
+			'You can use your Might instead of Agility to determine your Jump Distance and the damage you take from Falling.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'mighty_leap', value: 'Use Might for Jump Distance and Falling damage.' }]
+	},
+	{
+		id: 'giantborn_powerful_build',
+		name: 'Powerful Build',
+		description: 'You increase by 1 Size, but you occupy the Space of a creature 1 Size smaller.',
+		cost: 2,
+		effects: [{ type: 'GRANT_ABILITY', target: 'powerful_build', value: '+1 Size but occupy 1 Size smaller space.' }]
+	},
+	{
+		id: 'giantborn_strong_body',
+		name: 'Strong Body',
+		description:
+			'Once per Combat when you take damage from an Attack, you can reduce the damage taken by an amount equal to your Might or Agility (your choice).',
+		cost: 2,
+		effects: [{ type: 'GRANT_ABILITY', target: 'strong_body', value: 'Once per Combat: Reduce damage by Might or Agility.' }]
+	},
+	{
+		id: 'giantborn_titanic_toss',
+		name: 'Titanic Toss',
+		description:
+			'You have ADV on Checks made to throw creatures. Additionally, you don\'t have DisADV as a result of making an Attack with a Weapon with the Toss or Thrown Property at Long Range.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'titanic_toss', value: 'ADV on throwing creatures, no DisADV for long-range thrown weapons.' }]
+	},
+	{
+		id: 'giantborn_unstoppable',
+		name: 'Unstoppable',
+		description: 'You have ADV on Saves against being Slowed or Stunned.',
+		cost: 1,
+		effects: [
+			{ type: 'GRANT_ADV_ON_SAVE', target: 'Slowed', value: true },
+			{ type: 'GRANT_ADV_ON_SAVE', target: 'Stunned', value: true }
+		]
+	},
+	{
+		id: 'giantborn_unyielding_movement',
+		name: 'Unyielding Movement',
+		description: 'You\'re immune to being Slowed 2 (or higher).',
+		cost: 0,
+		isMinor: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'unyielding_movement', value: 'Immune to Slowed 2 or higher.' }]
+	},
+
+	// Beastborn Traits (Essential Selection)
+	{
+		id: 'beastborn_burrow_speed',
+		name: 'Burrow Speed',
+		description: 'You gain a Burrow Speed equal to half your Movement Speed.',
+		cost: 2,
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'burrow', value: 'half_speed' }]
+	},
+	{
+		id: 'beastborn_camouflage',
+		name: 'Camouflage',
+		description:
+			'You can change the color and pattern of your body. You have ADV on Stealth Checks while motionless.',
+		cost: 2,
+		effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'Stealth', value: 'while_motionless' }]
+	},
+	{
+		id: 'beastborn_charge',
+		name: 'Charge',
+		description:
+			'If you move at least 2 Spaces in a straight line before making a Melee Attack, the damage of the Attack increases by 1.',
+		cost: 2,
+		effects: [{ type: 'GRANT_ABILITY', target: 'charge', value: '+1 damage on Melee Attack after moving 2+ Spaces straight.' }]
+	},
+	{
+		id: 'beastborn_climb_speed',
+		name: 'Climb Speed',
+		description: 'You gain a Climb Speed equal to your Ground Speed.',
+		cost: 1,
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'climb', value: 'equal_to_speed' }]
+	},
+	{
+		id: 'beastborn_cold_resistance',
+		name: 'Cold Resistance',
+		description:
+			'You have Cold Resistance (Half) and Resistance to Exhaustion from cold temperatures.',
+		cost: 2,
+		effects: [
+			{ type: 'GRANT_RESISTANCE', target: 'Cold', value: 'half' },
+			{ type: 'GRANT_ABILITY', target: 'cold_exhaustion_resistance', value: 'Resistance to cold temperature Exhaustion.' }
+		]
+	},
+	{
+		id: 'beastborn_darkvision',
+		name: 'Darkvision',
+		description: 'You have Darkvision 10 Spaces.',
+		cost: 1,
+		effects: [{ type: 'GRANT_SENSE', target: 'darkvision', value: 10 }]
+	},
+	{
+		id: 'beastborn_echolocation',
+		name: 'Echolocation',
+		description:
+			'You can spend 1 AP to roar, scream, or screech to gain Blindsight in a 10 Spaces radius that lasts until the start of your next turn. The sound can be heard from up to 100 Spaces away. You gain no benefit from this Trait in an area of Silence.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'echolocation', value: '1 AP: Blindsight 10 Spaces until next turn (100 Spaces audible).' }]
+	},
+	{
+		id: 'beastborn_natural_weapon',
+		name: 'Natural Weapon',
+		description:
+			'You have up to 2 Natural Weapons (claws, horns, fangs, tail, etc.) which you can use to make Unarmed Strikes that deal 1 Bludgeoning, Piercing, or Slashing damage (your choice upon gaining this Trait). You can perform Attack Maneuvers with your Natural Weapons.',
+		cost: 1,
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'natural_weapon',
+				value: '2 Natural Weapons for Unarmed Strikes (1 damage, chosen type).',
+				userChoice: { prompt: 'Choose damage type: Bludgeoning, Piercing, or Slashing' }
+			}
+		]
+	},
+	{
+		id: 'beastborn_swim_speed',
+		name: 'Swim Speed',
+		description: 'You gain a Swim Speed equal to your Ground Speed.',
+		cost: 1,
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'swim', value: 'equal_to_speed' }]
+	},
+	{
+		id: 'beastborn_fire_resistance',
+		name: 'Fire Resistance',
+		description:
+			'You have Fire Resistance (Half) and Resistance to Exhaustion from hot temperatures.',
+		cost: 2,
+		effects: [
+			{ type: 'GRANT_RESISTANCE', target: 'Fire', value: 'half' },
+			{ type: 'GRANT_ABILITY', target: 'heat_exhaustion_resistance', value: 'Resistance to hot temperature Exhaustion.' }
+		]
+	},
+	{
+		id: 'beastborn_natural_armor',
+		name: 'Natural Armor',
+		description: 'While you aren\'t wearing Armor, you gain +1 AD.',
+		cost: 1,
+		effects: [{ type: 'MODIFY_STAT', target: 'ad', value: 1, condition: 'not_wearing_armor' }]
+	},
+	{
+		id: 'beastborn_keen_sense',
+		name: 'Keen Sense',
+		description:
+			'Choose 1 of the following senses: hearing, sight, or smell. You make Awareness Checks with ADV using the chosen sense.',
+		cost: 1,
+		effects: [
+			{
+				type: 'GRANT_ADV_ON_CHECK',
+				target: 'Awareness',
+				value: 'chosen_sense',
+				userChoice: { prompt: 'Choose a sense: hearing, sight, or smell' }
+			}
+		]
+	},
+	{
+		id: 'beastborn_small_sized',
+		name: 'Small-Sized',
+		description: 'Your Size is considered Small.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'small_sized', value: 'Size is considered Small.' }]
+	},
+	{
+		id: 'beastborn_sunlight_sensitivity',
+		name: 'Sunlight Sensitivity',
+		description:
+			'While you or your target is in sunlight, you have DisADV on Attacks and Awareness Checks that rely on sight.',
+		cost: -2,
+		isNegative: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'sunlight_sensitivity', value: 'DisADV on Attacks and sight-based Awareness in sunlight.' }]
+	},
+	{
+		id: 'beastborn_speed_increase',
+		name: 'Speed Increase',
+		description: 'Your Speed increases by 1 Space.',
+		cost: 1,
+		effects: [{ type: 'MODIFY_STAT', target: 'moveSpeed', value: 1 }]
+	},
+
+	// Additional Beastborn Traits (Part 1)
+	{
+		id: 'beastborn_extended_natural_weapon',
+		name: 'Extended Natural Weapon',
+		description: 'Your Natural Weapon now has the Reach Property.',
+		cost: 2,
+		prerequisites: ['beastborn_natural_weapon'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'extended_natural_weapon', value: 'Natural Weapon gains Reach Property.' }]
+	},
+	{
+		id: 'beastborn_fast_reflexes',
+		name: 'Fast Reflexes',
+		description:
+			'You gain ADV on Initiative Checks and on the first Attack Check you make in Combat.',
+		cost: 2,
+		effects: [
+			{ type: 'GRANT_ADV_ON_CHECK', target: 'Initiative', value: true },
+			{ type: 'GRANT_ABILITY', target: 'first_attack_adv', value: 'ADV on first Attack Check in Combat.' }
+		]
+	},
+	{
+		id: 'beastborn_flyby',
+		name: 'Flyby',
+		description: 'You don\'t provoke Opportunity Attacks when you Fly out of an enemy\'s reach.',
+		cost: 1,
+		prerequisites: ['beastborn_limited_flight'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'flyby', value: 'No Opportunity Attacks when flying out of reach.' }]
+	},
+	{
+		id: 'beastborn_full_flight',
+		name: 'Full Flight',
+		description: 'You have a Fly Speed equal to your Ground Speed.',
+		cost: 2,
+		prerequisites: ['beastborn_limited_flight'],
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'fly', value: 'equal_to_speed' }]
+	},
+	{
+		id: 'beastborn_glide_speed',
+		name: 'Glide Speed',
+		description:
+			'You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren\'t Incapacitated, you gain the following benefits while in the air: Controlled Falling: You suffer no damage from Controlled Falling. Altitude Drop: If you end your turn midair, you Controlled Fall 4 Spaces. Glide Speed: You can use your movement to glide horizontally.',
+		cost: 2,
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'wings' }]
+	},
+	{
+		id: 'beastborn_hard_shell',
+		name: 'Hard Shell',
+		description:
+			'You have a large shell around your body for protection. Your AD increases by 1 (while you\'re not wearing Armor), your Movement Speed decreases by 1, and you\'re immune to being Flanked.',
+		cost: 1,
+		prerequisites: ['beastborn_thick_skinned'],
+		effects: [
+			{ type: 'MODIFY_STAT', target: 'ad', value: 1, condition: 'not_wearing_armor' },
+			{ type: 'MODIFY_STAT', target: 'moveSpeed', value: -1 },
+			{ type: 'GRANT_ABILITY', target: 'immune_flanking', value: 'Immune to being Flanked.' }
+		]
+	},
+	{
+		id: 'beastborn_hazardous_hide',
+		name: 'Hazardous Hide',
+		description:
+			'You have spikes, retractable barbs, poisonous skin, or some other form of defense mechanism to keep creatures from touching you. Choose 1 of the following damage types: Corrosion, Piercing, or Poison. While you are physically Grappled, your Grappler takes 1 damage of the chosen type at the start of each of its turns. Creatures that start their turn Grappled by you also take this damage.',
+		cost: 1,
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'hazardous_hide',
+				value: 'Grapplers take 1 damage (chosen type) per turn.',
+				userChoice: { prompt: 'Choose damage type: Corrosion, Piercing, or Poison' }
+			}
+		]
+	},
+	{
+		id: 'beastborn_intimidating_shout',
+		name: 'Intimidating Shout',
+		description:
+			'Once per Combat, you can spend 1 AP to let out an Intimidating Shout. All creatures within 5 Spaces that can hear you must make a Charisma Save contested by your Attack Check. Failure: A target is Hindered on the next Attack Check or Spell Attack it makes before the start of your next turn.',
+		cost: 2,
+		effects: [{ type: 'GRANT_ABILITY', target: 'intimidating_shout', value: 'Once per Combat, 1 AP: AoE Hinder effect (5 Spaces).' }]
+	},
+
+	// Additional Beastborn Traits (Part 2)
+	{
+		id: 'beastborn_jumper',
+		name: 'Jumper',
+		description:
+			'Your Jump Distance increases by 2, and you can take the Jump Action as a Minor Action.',
+		cost: 1,
+		effects: [
+			{ type: 'GRANT_ABILITY', target: 'increased_jump', value: 'Jump Distance +2.' },
+			{ type: 'GRANT_ABILITY', target: 'jump_minor_action', value: 'Jump Action as Minor Action.' }
+		]
+	},
+	{
+		id: 'beastborn_limited_flight',
+		name: 'Limited Flight',
+		description:
+			'You have a set of wings that grant you limited flight. Provided you aren\'t Incapacitated, you gain the following benefits: Vertical Ascent: You can spend 2 Spaces of movement to ascend 1 Space vertically. Hover: When you end your turn in the air, you maintain your altitude.',
+		cost: 2,
+		prerequisites: ['beastborn_glide_speed'],
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'limited_flight', value: 'vertical_ascent_hover' }]
+	},
+	{
+		id: 'beastborn_long_limbed',
+		name: 'Long-Limbed',
+		description: 'When you make a Melee Martial Attack, your reach is 1 Space greater than normal.',
+		cost: 3,
+		effects: [{ type: 'GRANT_ABILITY', target: 'long_limbed', value: 'Melee reach +1 Space.' }]
+	},
+	{
+		id: 'beastborn_mimicry',
+		name: 'Mimicry',
+		description:
+			'You can mimic simple sounds that you\'ve heard (such as a baby\'s crying, the creak of a door, or single words) and repeat short 3 word phrases that sound identical to what you heard. A creature can make an Insight Check contested by your Trickery Check to determine if this sound is real.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'mimicry', value: 'Mimic simple sounds and 3-word phrases (Trickery vs Insight).' }]
+	},
+	{
+		id: 'beastborn_natural_projectile',
+		name: 'Natural Projectile',
+		description:
+			'You can use your Natural Weapon to make a Ranged Martial Attack with a Range of 10 Spaces. The Natural Weapon might produce a spine, barb, fluid, or other harmful projectile (your choice).',
+		cost: 1,
+		prerequisites: ['beastborn_natural_weapon'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'natural_projectile', value: 'Natural Weapon ranged attack (10 Spaces).' }]
+	},
+	{
+		id: 'beastborn_natural_weapon_passive',
+		name: 'Natural Weapon Passive',
+		description:
+			'You can choose 1 Weapon Style that fits your desired Natural Weapon. You can benefit from the chosen Weapon Style\'s passive with your Natural Weapon.',
+		cost: 1,
+		prerequisites: ['beastborn_natural_weapon'],
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'weapon_style_passive',
+				value: 'Natural Weapon gains chosen Weapon Style passive.',
+				userChoice: { prompt: 'Choose a Weapon Style' }
+			}
+		]
+	},
+	{
+		id: 'beastborn_powerful_build',
+		name: 'Powerful Build',
+		description: 'You increase by 1 Size, but you occupy the Space of a creature 1 Size smaller.',
+		cost: 2,
+		effects: [{ type: 'GRANT_ABILITY', target: 'powerful_build', value: '+1 Size but occupy smaller space.' }]
+	},
+	{
+		id: 'beastborn_prehensile_appendage',
+		name: 'Prehensile Appendage',
+		description:
+			'You have a prehensile tail or trunk that has a reach of 1 Space and can lift up an amount of pounds equal to your Might times 5 (or half as many kilograms). You can use it to lift, hold, or drop objects, and to push, pull, or grapple creatures. It can\'t wield Weapons or Shields, you can\'t use tools with it that require manual precision, and you can\'t use it in place of Somatic Components for Spells.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'prehensile_appendage', value: 'Prehensile tail/trunk (1 Space reach, Might×5 lbs capacity).' }]
+	},
+
+	// Additional Beastborn Traits (Part 3 - Final)
+	{
+		id: 'beastborn_prowler',
+		name: 'Prowler',
+		description: 'You have ADV on Stealth Checks while in Darkness.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'Stealth', value: 'while_in_darkness' }]
+	},
+	{
+		id: 'beastborn_quick_reactions',
+		name: 'Quick Reactions',
+		description: 'While you aren\'t wearing Armor, you gain +1 PD.',
+		cost: 1,
+		effects: [{ type: 'MODIFY_STAT', target: 'pd', value: 1, condition: 'not_wearing_armor' }]
+	},
+	{
+		id: 'beastborn_reckless',
+		name: 'Reckless',
+		description: 'Your PD decreases by 1.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'MODIFY_STAT', target: 'pd', value: -1 }]
+	},
+	{
+		id: 'beastborn_rend',
+		name: 'Rend',
+		description:
+			'You can spend 1 AP when making an Attack Check with your Natural Weapon to force the target to make a Physical Save. Failure: Target begins Bleeding.',
+		cost: 1,
+		prerequisites: ['beastborn_natural_weapon'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'rend', value: '1 AP: Natural Weapon causes Bleeding (Physical Save).' }]
+	},
+	{
+		id: 'beastborn_retractable_natural_weapon',
+		name: 'Retractable Natural Weapon',
+		description:
+			'Your Natural Weapon is able to be concealed or retracted and gains the Concealable Property (gain ADV on the first Attack Check you make in Combat).',
+		cost: 1,
+		prerequisites: ['beastborn_natural_weapon'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'retractable_weapon', value: 'Natural Weapon gains Concealable Property.' }]
+	},
+	{
+		id: 'beastborn_secondary_arms',
+		name: 'Secondary Arms',
+		description:
+			'You have 2 slightly smaller secondary arms below your primary pair of arms. They function just like your primary arms, but they can\'t wield Weapons with the Heavy Property or Shields.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'secondary_arms', value: '2 secondary arms (no Heavy weapons or Shields).' }]
+	},
+	{
+		id: 'beastborn_spider_climb',
+		name: 'Spider Climb',
+		description:
+			'You can walk without falling on the ceiling and vertical surfaces normally without needing to Climb.',
+		cost: 1,
+		prerequisites: ['beastborn_climb_speed'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'spider_climb', value: 'Walk on vertical surfaces and ceilings.' }]
+	},
+	{
+		id: 'beastborn_sprint',
+		name: 'Sprint',
+		description:
+			'You can use your Minor Action to take the Move Action. Once you use this Trait, you can\'t use it again until you take a turn without taking the Move Action.',
+		cost: 2,
+		effects: [{ type: 'GRANT_ABILITY', target: 'sprint', value: 'Move Action as Minor Action (cooldown: no Move Action).' }]
+	},
+	{
+		id: 'beastborn_thick_skinned',
+		name: 'Thick-Skinned',
+		description: 'While you aren\'t wearing Armor, you gain +1 AD.',
+		cost: 1,
+		effects: [{ type: 'MODIFY_STAT', target: 'ad', value: 1, condition: 'not_wearing_armor' }]
+	},
+	{
+		id: 'beastborn_tough',
+		name: 'Tough',
+		description: 'Your HP maximum increases by 2.',
+		cost: 1,
+		effects: [{ type: 'MODIFY_STAT', target: 'hp', value: 2 }]
+	},
+	{
+		id: 'beastborn_toxic_fortitude',
+		name: 'Toxic Fortitude',
+		description: 'You have Poison Resistance (Half) and ADV on Saves against being Poisoned.',
+		cost: 2,
+		effects: [
+			{ type: 'GRANT_RESISTANCE', target: 'Poison', value: 'half' },
+			{ type: 'GRANT_ADV_ON_SAVE', target: 'Poisoned', value: true }
+		]
+	},
+	{
+		id: 'beastborn_venomous_natural_weapon',
+		name: 'Venomous Natural Weapon',
+		description:
+			'You can spend 1 AP when making an Attack Check with your Natural Weapon to force the target to make a Physical Save. Failure: Target becomes Poisoned for 1 minute.',
+		cost: 1,
+		prerequisites: ['beastborn_natural_weapon'],
+		effects: [{ type: 'GRANT_ABILITY', target: 'venomous_weapon', value: '1 AP: Natural Weapon causes Poisoned (Physical Save, 1 minute).' }]
+	},
+	{
+		id: 'beastborn_water_breathing',
+		name: 'Water Breathing',
+		description: 'You can breathe both air and water.',
+		cost: 1,
+		effects: [{ type: 'GRANT_ABILITY', target: 'water_breathing', value: 'Breathe air and water.' }]
+	},
+	{
+		id: 'beastborn_web_walk',
+		name: 'Web Walk',
+		description: 'You ignore movement restrictions caused by webs.',
+		cost: 0,
+		isMinor: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'web_walk', value: 'Ignore web movement restrictions.' }]
+	},
+	{
+		id: 'beastborn_winged_arms',
+		name: 'Winged Arms',
+		description: 'Your arms are replaced by wings. You can\'t hold items with your hands while using your wings for flight.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'GRANT_ABILITY', target: 'winged_arms', value: 'Arms are wings (can\'t hold items while flying).' }]
+	},
+	{
+		id: 'beastborn_short_legged',
+		name: 'Short-Legged',
+		description: 'Your Speed decreases by 1 Space.',
+		cost: -1,
+		isNegative: true,
+		effects: [{ type: 'MODIFY_STAT', target: 'moveSpeed', value: -1 }]
 	}
 ];
 

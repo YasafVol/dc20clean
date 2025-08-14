@@ -60,65 +60,79 @@ export const hunterClass: ClassDefinition = {
             },
             {
               name: 'Forest',
-              description: 'You have ADV on Stealth Checks when you take the Hide Action.',
+              description: 'You gain 2 Skill Points to use on up to 2 of the following Skills: Animal, Awareness, Medicine, Survival, and Stealth',
               effects: [
-                { type: 'GRANT_ABILITY', target: 'favored_terrain_forest', value: 'In forest: ADV on Stealth and Survival, cannot be Surprised, ADV on Stealth when Hiding.' }
+                { type: 'MODIFY_STAT', target: 'skillPoints', value: 2 },
+                { type: 'GRANT_ABILITY', target: 'favored_terrain_forest', value: 'In forest: ADV on Stealth and Survival, cannot be Surprised.' }
               ]
             },
             {
               name: 'Desert',
-              description: 'You have Fire Resistance (Half) and are not affected by Exhaustion from hot temperatures.',
+              description: 'You gain Fire Resistance (Half) and Resistance to Exhaustion from hot temperatures',
               effects: [
                 { type: 'GRANT_RESISTANCE', target: 'Fire', value: 'half' },
-                { type: 'GRANT_ABILITY', target: 'favored_terrain_desert', value: 'In desert: ADV on Stealth and Survival, cannot be Surprised, immune to hot temperature Exhaustion.' }
+                { type: 'GRANT_ABILITY', target: 'favored_terrain_desert', value: 'In desert: ADV on Stealth and Survival, cannot be Surprised, resistance to hot temperature Exhaustion.' }
               ]
             },
             {
               name: 'Mountain',
-              description: 'You gain a Climb Speed equal to your Movement Speed.',
+              description: 'You gain a Climb Speed equal to your Ground Speed, Resistance to Exhaustion from high altitudes, and Resistance (Half) to damage from Falling',
               effects: [
                 { type: 'GRANT_MOVEMENT', target: 'climb', value: 'equal_to_speed' },
-                { type: 'GRANT_ABILITY', target: 'favored_terrain_mountain', value: 'In mountains: ADV on Stealth and Survival, cannot be Surprised.' }
+                { type: 'GRANT_RESISTANCE', target: 'Falling', value: 'half' },
+                { type: 'GRANT_ABILITY', target: 'favored_terrain_mountain', value: 'In mountains: ADV on Stealth and Survival, cannot be Surprised, resistance to altitude Exhaustion.' }
+              ]
+            },
+            {
+              name: 'Jungle',
+              description: 'You ignore Difficult Terrain, gain Poisoned Resistance, and have ADV on Saves against contracting Diseases',
+              effects: [
+                { type: 'GRANT_RESISTANCE', target: 'Poisoned', value: true },
+                { type: 'GRANT_ADV_ON_SAVE', target: 'disease', value: true },
+                { type: 'GRANT_ABILITY', target: 'favored_terrain_jungle', value: 'In jungle: ADV on Stealth and Survival, cannot be Surprised, ignore Difficult Terrain, Poisoned resistance, ADV vs diseases.' }
               ]
             },
             {
               name: 'Swamp',
-              description: 'You have Poison Resistance (Half) and are not affected by Difficult Terrain.',
+              description: 'You gain Poison Resistance (Half) and Poisoned Resistance, and have ADV on Saves against contracting Diseases',
               effects: [
                 { type: 'GRANT_RESISTANCE', target: 'Poison', value: 'half' },
-                { type: 'GRANT_ABILITY', target: 'favored_terrain_swamp', value: 'In swamp: ADV on Stealth and Survival, cannot be Surprised, ignore Difficult Terrain.' }
+                { type: 'GRANT_RESISTANCE', target: 'Poisoned', value: true },
+                { type: 'GRANT_ADV_ON_SAVE', target: 'disease', value: true },
+                { type: 'GRANT_ABILITY', target: 'favored_terrain_swamp', value: 'In swamp: ADV on Stealth and Survival, cannot be Surprised, Poison resistance, Poisoned resistance, ADV vs diseases.' }
               ]
             },
             {
               name: 'Coast',
-              description: 'You gain a Swim Speed equal to your Movement Speed.',
+              description: 'You gain a Swim Speed equal to your Ground Speed (your Weapon Attacks no longer have DisADV as a result of being underwater), you can hold your breath twice as long as normal, and you have ADV on Awareness Checks while underwater.',
               effects: [
                 { type: 'GRANT_MOVEMENT', target: 'swim', value: 'equal_to_speed' },
-                { type: 'GRANT_ABILITY', target: 'favored_terrain_coast', value: 'In coastal areas: ADV on Stealth and Survival, cannot be Surprised.' }
+                { type: 'GRANT_ABILITY', target: 'favored_terrain_coast', value: 'In coastal areas: ADV on Stealth and Survival, cannot be Surprised, no underwater weapon penalties, double breath holding, ADV on Awareness underwater.' }
               ]
             },
             {
-              name: 'Arctic',
-              description: 'You have Cold Resistance (Half) and are not affected by Exhaustion from cold temperatures.',
+              name: 'Tundra',
+              description: 'You gain Cold Resistance (Half) and Resistance to Exhaustion from cold temperatures',
               effects: [
                 { type: 'GRANT_RESISTANCE', target: 'Cold', value: 'half' },
-                { type: 'GRANT_ABILITY', target: 'favored_terrain_arctic', value: 'In arctic: ADV on Stealth and Survival, cannot be Surprised, immune to cold temperature Exhaustion.' }
+                { type: 'GRANT_ABILITY', target: 'favored_terrain_tundra', value: 'In tundra: ADV on Stealth and Survival, cannot be Surprised, resistance to cold temperature Exhaustion.' }
               ]
             },
             {
               name: 'Subterranean',
-              description: 'You have Darkvision 10 Spaces and Tremorsense 3 Spaces.',
+              description: 'You gain Darkvision 10 Spaces. If you already have Darkvision, its range is increased by 5 Spaces. Additionally, you also gain a Tremorsense of 3 Spaces. If you already have a Tremorsense, it increases by 2 Spaces.',
               effects: [
                 { type: 'GRANT_SENSE', target: 'darkvision', value: 10 },
                 { type: 'GRANT_SENSE', target: 'tremorsense', value: 3 },
-                { type: 'GRANT_ABILITY', target: 'favored_terrain_subterranean', value: 'Underground: ADV on Stealth and Survival, cannot be Surprised.' }
+                { type: 'GRANT_ABILITY', target: 'favored_terrain_subterranean', value: 'Underground: ADV on Stealth and Survival, cannot be Surprised. Conditional bonuses for existing senses handled separately.' }
               ]
             },
             {
               name: 'Urban',
-              description: 'Your Mastery Limit for Social Skills increases by 1.',
+              description: 'You gain 2 Skill Points to use on up to 2 of the following Skills: Influence, Insight, Investigation, Intimidation, and Trickery.',
               effects: [
-                { type: 'GRANT_ABILITY', target: 'favored_terrain_urban', value: 'In urban areas: ADV on Stealth and Survival, cannot be Surprised, +1 Social Skills Mastery Limit.' }
+                { type: 'MODIFY_STAT', target: 'skillPoints', value: 2 },
+                { type: 'GRANT_ABILITY', target: 'favored_terrain_urban', value: 'In urban areas: ADV on Stealth and Survival, cannot be Surprised.' }
               ]
             }
           ]

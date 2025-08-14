@@ -1,5 +1,5 @@
-import React from 'react';
-import { useCharacterSheet } from './hooks/useCharacterSheet';
+import React, { useState } from 'react';
+import { useCharacterSheet, useCharacterResources, useCharacterFeatures, useCharacterCurrency, useCharacterAttacks, useCharacterSpells, useCharacterInventory } from './hooks/CharacterSheetProvider';
 
 // Import Modal Components  
 import FeaturePopup from './components/FeaturePopup';
@@ -271,42 +271,99 @@ interface CharacterSheetMobileProps {
 }
 
 export const CharacterSheetMobile: React.FC<CharacterSheetMobileProps> = ({ characterId }) => {
-	// Use the EXACT same hook as desktop - zero duplication!
-	const {
-		characterData,
-		currentValues,
-		loading,
-		error,
-		selectedFeature,
-		selectedSpell,
-		selectedAttack,
-		selectedInventoryItem,
-		attacks,
-		spells,
-		inventory,
-		activeMobileSection,
-		setActiveMobileSection,
-		trades,
-		knowledge,
-		languages,
-		features,
-		skillsByAttribute,
-		adjustResource,
-		handleResourceInputChange,
-		openFeaturePopup,
-		closeFeaturePopup,
-		openSpellPopup,
-		closeSpellPopup,
-		openAttackPopup,
-		closeAttackPopup,
-		openInventoryPopup,
-		closeInventoryPopup,
-		handleCurrencyChange,
-		handleExhaustionChange,
-		handleDeathStepChange,
-		getFillPercentage,
-		getHPFillPercentage
-	} = useCharacterSheet(characterId);
+	// Use Context hooks
+	const { state, updateHP, updateSP, updateMP, updateTempHP, updateActionPoints, updateCurrency } = useCharacterSheet();
+	const resources = useCharacterResources();
+	const features = useCharacterFeatures();
+	const currency = useCharacterCurrency();
+	const attacks = useCharacterAttacks();
+	const spells = useCharacterSpells();
+	const inventory = useCharacterInventory();
+	
+	// Local state
+	const [activeMobileSection, setActiveMobileSection] = useState<'character' | 'combat' | 'features' | 'info'>('character');
+	const [selectedFeature, setSelectedFeature] = useState<any>(null);
+	const [selectedSpell, setSelectedSpell] = useState<any>(null);
+	const [selectedAttack, setSelectedAttack] = useState<any>(null);
+	const [selectedInventoryItem, setSelectedInventoryItem] = useState<any>(null);
+	
+	// Helper functions
+	const adjustResource = (resource: string, amount: number) => {
+		if (!resources) return;
+		const current = resources.current;
+		
+		switch (resource) {
+			case 'currentHP':
+				updateHP(Math.max(0, current.currentHP + amount));
+				break;
+			case 'currentSP':
+				updateSP(Math.max(0, current.currentSP + amount));
+				break;
+			case 'currentMP':
+				updateMP(Math.max(0, current.currentMP + amount));
+				break;
+			case 'tempHP':
+				updateTempHP(Math.max(0, current.tempHP + amount));
+				break;
+			case 'actionPointsUsed':
+				updateActionPoints(Math.max(0, Math.min(4, current.actionPointsUsed + amount)));
+				break;
+		}
+	};
+	
+	const handleResourceInputChange = (resource: string, value: string) => {
+		const numValue = parseInt(value) || 0;
+		switch (resource) {
+			case 'currentHP':
+				updateHP(Math.max(0, numValue));
+				break;
+			case 'currentSP':
+				updateSP(Math.max(0, numValue));
+				break;
+			case 'currentMP':
+				updateMP(Math.max(0, numValue));
+				break;
+			case 'tempHP':
+				updateTempHP(Math.max(0, numValue));
+				break;
+		}
+	};
+	
+	const handleCurrencyChange = (currencyType: string, value: number) => {
+		const updates: any = {};
+		updates[currencyType.replace('Pieces', '')] = value;
+		updateCurrency(updates.gold, updates.silver, updates.copper);
+	};
+	
+	const getFillPercentage = (current: number, max: number) => {
+		return max > 0 ? (current / max) * 100 : 0;
+	};
+	
+	const getHPFillPercentage = (current: number, max: number, temp: number) => {
+		return max > 0 ? ((current + temp) / max) * 100 : 0;
+	};
+	
+	// Popup handlers
+	const openFeaturePopup = (feature: any) => setSelectedFeature(feature);
+	const closeFeaturePopup = () => setSelectedFeature(null);
+	const openSpellPopup = (spell: any) => setSelectedSpell(spell);
+	const closeSpellPopup = () => setSelectedSpell(null);
+	const openAttackPopup = (attack: any) => setSelectedAttack(attack);
+	const closeAttackPopup = () => setSelectedAttack(null);
+	const openInventoryPopup = (item: any) => setSelectedInventoryItem(item);
+	const closeInventoryPopup = () => setSelectedInventoryItem(null);
+	
+	// Stub handlers for missing functionality
+	const handleExhaustionChange = (level: number) => {
+		console.log('Exhaustion change:', level);
+	};
+	const handleDeathStepChange = (step: number) => {
+		console.log('Death step change:', step);
+	};
+	
+	const loading = state.loading;
+	const error = state.error;
+	const characterData = state.character;
 
 	// Loading state
 	if (loading) {
@@ -373,24 +430,24 @@ export const CharacterSheetMobile: React.FC<CharacterSheetMobileProps> = ({ char
 					<MobileResourceHeader>
 						<MobileResourceLabel>Hit Points</MobileResourceLabel>
 						<MobileResourceValue>
-							{currentValues.currentHP} / {characterData.finalHPMax}
-							{currentValues.tempHP > 0 && ` (+${currentValues.tempHP} temp)`}
+							{resources?.current.currentHP} / {resources?.original.maxHP}
+							{resources?.current.tempHP > 0 && ` (+${resources.current.tempHP} temp)`}
 						</MobileResourceValue>
 					</MobileResourceHeader>
 					<MobileResourceBar>
 						<MobileResourceFill
-							$percentage={getHPFillPercentage(
-								currentValues.currentHP,
-								characterData.finalHPMax,
-								currentValues.tempHP
-							)}
+							$percentage={resources ? getHPFillPercentage(
+								resources.current.currentHP,
+								resources.original.maxHP,
+								resources.current.tempHP
+							) : 0}
 						/>
 					</MobileResourceBar>
 					<MobileResourceControls>
 						<MobileResourceButton onClick={() => adjustResource('currentHP', -1)}>-</MobileResourceButton>
 						<MobileResourceInput
 							type="number"
-							value={currentValues.currentHP}
+							value={resources?.current.currentHP || 0}
 							onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleResourceInputChange('currentHP', e.target.value)}
 						/>
 						<MobileResourceButton onClick={() => adjustResource('currentHP', 1)}>+</MobileResourceButton>

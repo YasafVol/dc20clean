@@ -1,5 +1,6 @@
 import React from 'react';
 import type { CharacterSheetData, CurrentValues } from '../../../types';
+import { useCharacterResources, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
 	StyledDeathExhaustionContainer,
 	StyledExhaustionOnlyContainer,
@@ -32,18 +33,28 @@ import {
 } from '../../../lib/rulesdata/death';
 
 interface DeathExhaustionProps {
-	characterData: CharacterSheetData;
-	currentValues: CurrentValues;
-	onExhaustionChange: (level: number) => void;
-	onDeathStepChange: (step: number) => void;
+	// No props needed - data comes from context
 }
 
-const DeathExhaustion: React.FC<DeathExhaustionProps> = ({
-	characterData,
-	currentValues,
-	onExhaustionChange,
-	onDeathStepChange
-}) => {
+const DeathExhaustion: React.FC<DeathExhaustionProps> = () => {
+	const { state, updateExhaustion } = useCharacterSheet();
+	const resources = useCharacterResources();
+	
+	if (!state.character) {
+		return <div>Loading...</div>;
+	}
+	
+	const characterData = state.character;
+	const currentValues = resources.current;
+	
+	const onExhaustionChange = (level: number) => {
+		updateExhaustion(level);
+	};
+	
+	const onDeathStepChange = (step: number) => {
+		// TODO: Add death step handling to reducer
+		console.log('Death step change:', step);
+	};
 	// Exhaustion level descriptions (based on DC20 rules)
 	const exhaustionLevels = [
 		{ level: 1, description: 'Fatigued: -1 to all Checks and Saves' },

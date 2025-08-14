@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { SavedCharacter } from '../../lib/utils/characterEdit';
+import { getAllSavedCharacters, saveAllCharacters } from '../../lib/utils/storageUtils';
 import {
 	StyledContainer,
 	StyledTitle,
@@ -46,7 +47,7 @@ function LoadCharacter({
 	const [characterToDelete, setCharacterToDelete] = useState<SavedCharacter | null>(null);
 
 	useEffect(() => {
-		const characters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+		const characters = getAllSavedCharacters();
 		setSavedCharacters(characters);
 	}, []);
 
@@ -84,9 +85,9 @@ function LoadCharacter({
 	const handleConfirmDelete = () => {
 		if (characterToDelete) {
 			// Remove character from localStorage
-			const characters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+			const characters = getAllSavedCharacters();
 			const updatedCharacters = characters.filter((char: SavedCharacter) => char.id !== characterToDelete.id);
-			localStorage.setItem('savedCharacters', JSON.stringify(updatedCharacters));
+			saveAllCharacters(updatedCharacters);
 			
 			// Update state
 			setSavedCharacters(updatedCharacters);

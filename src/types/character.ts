@@ -1,5 +1,7 @@
 // Character Sheet Types and Interfaces
 
+import type { EnhancedStatBreakdown } from '../lib/types/effectSystem';
+
 export interface CharacterSheetProps {
 	characterId: string;
 	onBack: () => void;
@@ -212,6 +214,18 @@ export interface CharacterState {
 		manualPD?: { value: number; reason: string; timestamp: string };
 		manualPDR?: { value: number; reason: string; timestamp: string };
 		manualAD?: { value: number; reason: string; timestamp: string };
+	};
+
+	// Centralized manual defense overrides (authoritative values)
+	manualDefenses?: {
+		manualPD?: number;
+		manualPDR?: number;
+		manualAD?: number;
+	};
+
+	// Persisted calculation breakdowns for drill-down tooltips
+	calculation?: {
+		breakdowns: Record<string, EnhancedStatBreakdown>;
 	};
 }
 

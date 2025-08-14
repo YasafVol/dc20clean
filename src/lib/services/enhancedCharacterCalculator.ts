@@ -12,11 +12,13 @@ import type {
   EffectSource, 
   EnhancedStatBreakdown,
   ValidationResult,
+  ValidationError,
   AttributeLimit,
   UnresolvedChoice,
   ChoiceOption,
   EffectPreview,
-  TraitChoiceStorage
+  TraitChoiceStorage,
+  BuildStep
 } from '../types/effectSystem';
 
 import { traitsData } from '../rulesdata/_new_schema/traits';
@@ -53,6 +55,23 @@ import { tradesData } from '../rulesdata/trades';
 import type { Effect, ClassDefinition } from '../rulesdata/schemas/character.schema';
 
 /**
+ * Safe JSON parse with fallback
+ */
+function safeJsonParse<T>(jsonString: string | undefined | null, fallback: T): T {
+  if (!jsonString || typeof jsonString !== 'string') {
+    return fallback;
+  }
+  
+  try {
+    const parsed = JSON.parse(jsonString);
+    return parsed !== null && parsed !== undefined ? parsed : fallback;
+  } catch (error) {
+    console.warn('Failed to parse JSON:', jsonString, 'Error:', error);
+    return fallback;
+  }
+}
+
+/**
  * Convert character context data to enhanced build data
  */
 export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterBuildData {
@@ -70,17 +89,22 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
     combatMastery: contextData.combatMastery || 1,
     
     classId: contextData.classId || '',
-    ancestry1Id: contextData.ancestry1Id,
-    ancestry2Id: contextData.ancestry2Id,
+    ancestry1Id: contextData.ancestry1Id || undefined,
+    ancestry2Id: contextData.ancestry2Id || undefined,
     
-    selectedTraitIds: JSON.parse(contextData.selectedTraitIds || '[]'),
-    selectedTraitChoices: JSON.parse(contextData.selectedTraitChoices || '{}'),
-    featureChoices: JSON.parse(contextData.selectedFeatureChoices || '{}'),
+    selectedTraitIds: Array.isArray(contextData.selectedTraitIds)
+      ? contextData.selectedTraitIds
+      : [],
+    selectedTraitChoices: contextData.selectedTraitChoices ?? {},
+    featureChoices: contextData.selectedFeatureChoices ?? {},
     
-    skillsJson: contextData.skillsJson || '{}',
-    tradesJson: contextData.tradesJson || '{}',
-    languagesJson: contextData.languagesJson || '{"common": {"fluency": "fluent"}}',
+    // FIX: Serialize live store objects into the JSON strings the engine expects
+    skillsJson: JSON.stringify(contextData.skillsData ?? {}),
+    tradesJson: JSON.stringify(contextData.tradesData ?? {}),
+    // Default Common to fluent when empty to match current UI assumptions
+    languagesJson: JSON.stringify(contextData.languagesData ?? { common: { fluency: 'fluent' } }),
     
+    // Optional manual overrides supported by the engine
     manualPD: contextData.manualPD,
     manualAD: contextData.manualAD,
     manualPDR: contextData.manualPDR,
@@ -167,32 +191,6 @@ function getClassFeatures(classId: string): ClassDefinition | null {
 function aggregateAttributedEffects(buildData: EnhancedCharacterBuildData): AttributedEffect[] {
   const effects: AttributedEffect[] = [];
   
-  // Add effects from ancestry default traits
-  if (buildData.ancestry1Id) {
-    const ancestry = ancestriesData.find(a => a.id === buildData.ancestry1Id);
-    if (ancestry?.defaultTraitIds) {
-      for (const traitId of ancestry.defaultTraitIds) {
-        const trait = traitsData.find(t => t.id === traitId);
-        if (trait?.effects) {
-          for (const [effectIndex, effect] of trait.effects.entries()) {
-            effects.push({
-              ...effect,
-              source: {
-                type: 'ancestry_default',
-                id: traitId,
-                name: trait.name,
-                description: trait.description,
-                category: `${ancestry.name} (Default)`
-              },
-              resolved: !effect.userChoice,
-              dependsOnChoice: effect.userChoice ? `${traitId}-${effectIndex}` : undefined
-            });
-          }
-        }
-      }
-    }
-  }
-  
   // Add effects from selected traits
   for (const traitId of buildData.selectedTraitIds) {
     const trait = traitsData.find(t => t.id === traitId);
@@ -262,8 +260,9 @@ function aggregateAttributedEffects(buildData: EnhancedCharacterBuildData): Attr
           const userChoice = buildData.featureChoices[choice.id];
           if (userChoice) {
             for (const option of choice.options) {
-              if (userChoice === option.name || 
-                  (Array.isArray(userChoice) && userChoice.includes(option.name))) {
+              const isSelected = userChoice === option.name || 
+                  (Array.isArray(userChoice) && userChoice.includes(option.name));
+              if (isSelected) {
                 if (option.effects) {
                   for (const effect of option.effects) {
                     effects.push({
@@ -539,17 +538,10 @@ export function calculateCharacterWithBreakdowns(
   const finalAD = buildData.manualAD ?? (baseAD + adModifiers);
   const finalPDR = buildData.manualPDR ?? 0;
   
-  // Create breakdowns for derived stats
-  breakdowns.hpMax = createStatBreakdown('hpMax', finalHPMax, resolvedEffects);
-  breakdowns.pd = createStatBreakdown('pd', basePD, resolvedEffects);
-  breakdowns.ad = createStatBreakdown('ad', baseAD, resolvedEffects);
-  
-  // Other stats
+  // Calculate prime attribute first
   const maxValue = Math.max(finalMight, finalAgility, finalCharisma, finalIntelligence);
-  const primeAttribute = ['might', 'agility', 'charisma', 'intelligence'].find(attr => {
-    return breakdowns[`attribute_${attr}`].total === maxValue;
-  }) || 'might';
   
+  // Calculate other derived stats first
   const finalSaveDC = 8 + combatMastery + maxValue;
   const finalSaveMight = finalMight + combatMastery;
   const finalSaveAgility = finalAgility + combatMastery;
@@ -562,11 +554,128 @@ export function calculateCharacterWithBreakdowns(
   const finalGritPoints = Math.max(0, 2 + finalCharisma); // 2 + Charisma (minimum 0)
   const finalInitiativeBonus = finalAgility;
   
-  // 5. Validation
+  // Create breakdowns for derived stats
+  breakdowns.hpMax = createStatBreakdown('hpMax', finalHPMax, resolvedEffects);
+  breakdowns.spMax = createStatBreakdown('spMax', finalSPMax, resolvedEffects);
+  breakdowns.mpMax = createStatBreakdown('mpMax', finalMPMax, resolvedEffects);
+  breakdowns.pd = createStatBreakdown('pd', basePD, resolvedEffects);
+  breakdowns.ad = createStatBreakdown('ad', baseAD, resolvedEffects);
+  
+  // Movement breakdowns
+  breakdowns.move_speed = createStatBreakdown('moveSpeed', finalMoveSpeed, resolvedEffects);
+  breakdowns.jump_distance = createStatBreakdown('jumpDistance', finalJumpDistance, resolvedEffects);
+  
+  // Combat breakdowns
+  const attackSpellCheckBase = combatMastery + maxValue;
+  breakdowns.attack_spell_check = createStatBreakdown('attackSpellCheck', attackSpellCheckBase, resolvedEffects);
+  breakdowns.save_dc = createStatBreakdown('saveDC', finalSaveDC, resolvedEffects);
+  
+  // Martial check is Attack/Spell Check + Action Points bonus (calculated at runtime)
+  // For now, just use the base attack/spell check value
+  breakdowns.martial_check = createStatBreakdown('martialCheck', attackSpellCheckBase, resolvedEffects);
+  
+  // Other stats
+  const primeAttribute = ['might', 'agility', 'charisma', 'intelligence'].find(attr => {
+    return breakdowns[`attribute_${attr}`].total === maxValue;
+  }) || 'might';
+  
+  // 4.5. Compute background points (ported from useBackgroundPoints)
+  const skills = JSON.parse(buildData.skillsJson || '{}') as Record<string, number>;
+  const trades = JSON.parse(buildData.tradesJson || '{}') as Record<string, number>;
+  const languages = JSON.parse(buildData.languagesJson || '{"common":{"fluency":"fluent"}}') as Record<string, { fluency: 'limited'|'fluent' }>;
+
+  const skillPointsUsed = Object.values(skills).reduce((a, b) => a + (b || 0), 0);
+  const tradePointsUsed = Object.values(trades).reduce((a, b) => a + (b || 0), 0);
+  const languagePointsUsed = Object.entries(languages).reduce((sum, [id, d]) => id === 'common' ? sum : sum + (d.fluency === 'limited' ? 1 : 2), 0);
+
+  const bonus = (target: string) =>
+    resolvedEffects.filter(e => e.type === 'MODIFY_STAT' && e.target === target)
+                   .reduce((s, e) => s + Number(e.value || 0), 0);
+
+  const baseSkillPoints = 5 + finalIntelligence + bonus('skillPoints');
+  const baseTradePoints = 3 + bonus('tradePoints');
+  const baseLanguagePoints = 2 + bonus('languagePoints');
+
+  const { skillToTrade = 0, tradeToSkill = 0, tradeToLanguage = 0 } = (buildData as any).conversions || {};
+
+  const availableSkillPoints = baseSkillPoints - skillToTrade + Math.floor(tradeToSkill / 2);
+  const availableTradePoints = baseTradePoints - tradeToSkill + (skillToTrade * 2) - tradeToLanguage;
+  const availableLanguagePoints = baseLanguagePoints + (tradeToLanguage * 2);
+
+  // Calculate ancestry points
+  const selectedTraitCosts = buildData.selectedTraitIds.reduce((total, traitId) => {
+    const trait = traitsData.find(t => t.id === traitId);
+    return total + (trait?.cost || 0);
+  }, 0);
+
+  const baseAncestryPoints = 5 + bonus('ancestryPoints'); // Base 5 + any bonuses from effects
+  const ancestryPointsUsed = selectedTraitCosts;
+  const ancestryPointsRemaining = baseAncestryPoints - ancestryPointsUsed;
+
+  // Background section for UI consumption
+  const background = {
+    baseSkillPoints,
+    baseTradePoints,
+    baseLanguagePoints,
+    availableSkillPoints,
+    availableTradePoints,
+    availableLanguagePoints,
+    skillPointsUsed,
+    tradePointsUsed,
+    languagePointsUsed,
+    conversions: { skillToTrade, tradeToSkill, tradeToLanguage }
+  };
+
+  // Ancestry section for UI consumption
+  const ancestry = {
+    baseAncestryPoints,
+    ancestryPointsUsed,
+    ancestryPointsRemaining
+  };
+  
+  // 5. Validation with step-aware errors
+  const errors: ValidationError[] = [];
+  
+  // Ancestry point validation
+  if (ancestryPointsUsed > baseAncestryPoints) {
+    errors.push({
+      step: BuildStep.Ancestry,
+      field: 'ancestryPoints',
+      code: 'POINTS_OVERBUDGET',
+      message: `You are ${ancestryPointsUsed - baseAncestryPoints} ancestry point(s) over budget.`
+    });
+  }
+
+  // Background point validation
+  if (skillPointsUsed > availableSkillPoints) {
+    errors.push({ 
+      step: BuildStep.Background, 
+      field: 'skillPoints', 
+      code: 'POINTS_OVERBUDGET', 
+      message: `You are ${skillPointsUsed - availableSkillPoints} skill point(s) over budget.` 
+    });
+  }
+  if (tradePointsUsed > availableTradePoints) {
+    errors.push({ 
+      step: BuildStep.Background, 
+      field: 'tradePoints', 
+      code: 'POINTS_OVERBUDGET', 
+      message: `You are ${tradePointsUsed - availableTradePoints} trade point(s) over budget.` 
+    });
+  }
+  if (languagePointsUsed > availableLanguagePoints) {
+    errors.push({ 
+      step: BuildStep.Background, 
+      field: 'languagePoints', 
+      code: 'POINTS_OVERBUDGET', 
+      message: `You are ${languagePointsUsed - availableLanguagePoints} language point(s) over budget.` 
+    });
+  }
+
   const attributeLimits = validateAttributeLimits(buildData, resolvedEffects);
   const validation: ValidationResult = {
-    isValid: !Object.values(attributeLimits).some(limit => limit.exceeded),
-    errors: [],
+    isValid: errors.length === 0 && !Object.values(attributeLimits).some(limit => limit.exceeded),
+    errors,
     warnings: [],
     attributeLimits,
     masteryLimits: {
@@ -645,6 +754,8 @@ export function calculateCharacterWithBreakdowns(
     vulnerabilities: [],
     senses: [],
     movements: [],
+    background,
+    ancestry,
     validation,
     unresolvedChoices,
     cacheTimestamp: Date.now(),

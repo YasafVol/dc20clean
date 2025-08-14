@@ -3,9 +3,10 @@ import { createGlobalStyle } from 'styled-components';
 import { CharacterProvider } from './lib/stores/characterContext';
 import CharacterCreation from './routes/character-creation/CharacterCreation.tsx';
 import LoadCharacter from './routes/character-creation/LoadCharacter.tsx';
-import CharacterSheetClean from './routes/character-sheet/CharacterSheetClean';
+import CharacterSheetRouter from './routes/character-sheet/CharacterSheetRouter';
 import type { SavedCharacter } from './lib/utils/characterEdit';
 import LevelUp from './routes/character-creation/LevelUp.tsx';
+import { getAllSavedCharacters, saveAllCharacters } from './lib/utils/storageUtils';
 import Menu from './components/Menu.tsx';
 import {
 	StyledApp,
@@ -174,11 +175,11 @@ function App() {
 								character={levelUpCharacter!}
 								onComplete={(updatedCharacter: SavedCharacter) => {
 									// Update the character in the list and go back to load screen
-									const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+									const savedCharacters = getAllSavedCharacters();
 									const characterIndex = savedCharacters.findIndex((c: SavedCharacter) => c.id === updatedCharacter.id);
 									if (characterIndex !== -1) {
 										savedCharacters[characterIndex] = updatedCharacter;
-										localStorage.setItem('savedCharacters', JSON.stringify(savedCharacters));
+										saveAllCharacters(savedCharacters);
 									}
 									handleLoadCharacter();
 								}}
@@ -187,10 +188,9 @@ function App() {
 						</StyledMain>
 					</CharacterProvider>
 				);
-					<LoadCharacter onBack={handleBackToMenu} onSelectCharacter={handleViewCharacterSheet} onEditCharacter={handleEditCharacter} />
 			case 'sheet':
 				return selectedCharacterId ? (
-					<CharacterSheetClean characterId={selectedCharacterId} onBack={handleBackToMenu} />
+					<CharacterSheetRouter characterId={selectedCharacterId} onBack={handleBackToMenu} />
 				) : null;
 
 			default:

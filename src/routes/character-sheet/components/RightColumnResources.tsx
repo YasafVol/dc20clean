@@ -1,5 +1,4 @@
 import React from 'react';
-import type { CharacterSheetData, CurrentValues } from '../../../types';
 import {
 	StyledRightResourcesContainer,
 	StyledRightResourcesTitle,
@@ -9,18 +8,22 @@ import {
 	StyledRightResourceInput,
 	StyledRightResourceMax
 } from '../styles/RightColumnResources.styles';
+import { useCharacterSheet, useCharacterResources, useCharacterCalculatedData } from '../hooks/CharacterSheetProvider';
 
 interface RightColumnResourcesProps {
-	characterData: CharacterSheetData;
-	currentValues: CurrentValues;
-	onResourceInputChange: (resource: keyof CurrentValues, value: string) => void;
+	// No props needed - data comes from context
 }
 
-const RightColumnResources: React.FC<RightColumnResourcesProps> = ({
-	characterData,
-	currentValues,
-	onResourceInputChange
-}) => {
+const RightColumnResources: React.FC<RightColumnResourcesProps> = () => {
+	const { state, updateGritPoints, updateRestPoints } = useCharacterSheet();
+	const resources = useCharacterResources();
+	const calculatedData = useCharacterCalculatedData();
+	
+	if (!state.character || !resources || !calculatedData) {
+		return <div>Loading resources...</div>;
+	}
+	const currentValues = resources.current;
+
 	return (
 		<StyledRightResourcesContainer>
 			<StyledRightResourcesTitle>RESOURCES</StyledRightResourcesTitle>
@@ -31,9 +34,9 @@ const RightColumnResources: React.FC<RightColumnResourcesProps> = ({
 					<StyledRightResourceInput
 						type="number"
 						value={currentValues.currentRestPoints}
-						onChange={(e) => onResourceInputChange('currentRestPoints', e.target.value)}
+						readOnly
 					/>
-					<StyledRightResourceMax>/ {characterData.finalRestPoints}</StyledRightResourceMax>
+					<StyledRightResourceMax>/ {calculatedData.stats.finalRestPoints}</StyledRightResourceMax>
 				</StyledRightResourceControls>
 			</StyledRightResourceRow>
 
@@ -43,9 +46,9 @@ const RightColumnResources: React.FC<RightColumnResourcesProps> = ({
 					<StyledRightResourceInput
 						type="number"
 						value={currentValues.currentGritPoints}
-						onChange={(e) => onResourceInputChange('currentGritPoints', e.target.value)}
+						readOnly
 					/>
-					<StyledRightResourceMax>/ {characterData.finalGritPoints}</StyledRightResourceMax>
+					<StyledRightResourceMax>/ {calculatedData.stats.finalGritPoints}</StyledRightResourceMax>
 				</StyledRightResourceControls>
 			</StyledRightResourceRow>
 		</StyledRightResourcesContainer>

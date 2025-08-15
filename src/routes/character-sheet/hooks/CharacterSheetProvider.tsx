@@ -556,3 +556,18 @@ export function useCharacterCurrency() {
     return state.character?.characterState?.inventory?.currency || { gold: 0, silver: 0, copper: 0 };
   }, [state.character?.characterState?.inventory?.currency]);
 }
+
+// Hook for calculated character data with breakdowns
+export function useCharacterCalculatedData() {
+  const { state } = useCharacterSheet();
+  
+  return useMemo(() => {
+    if (!state.character) return null;
+    
+    // Convert SavedCharacter to EnhancedCharacterBuildData
+    const buildData = convertToEnhancedBuildData(state.character);
+    // Run calculation to get CharacterSheetData with breakdowns
+    const calculationResult = calculateCharacterWithBreakdowns(buildData);
+    return calculationResult;
+  }, [state.character]);
+}

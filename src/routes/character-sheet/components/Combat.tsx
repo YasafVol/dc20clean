@@ -14,7 +14,7 @@ import {
 } from '../styles/Combat';
 import Tooltip from './Tooltip';
 import { createEnhancedTooltip } from './EnhancedStatTooltips';
-import { useCharacterResources, useCharacterSheet } from '../hooks/CharacterSheetProvider';
+import { useCharacterResources, useCharacterSheet, useCharacterCalculatedData } from '../hooks/CharacterSheetProvider';
 
 export interface CombatProps {
 	// No props needed - all data comes from Provider
@@ -23,16 +23,16 @@ export interface CombatProps {
 const Combat: React.FC<CombatProps> = () => {
 	const { state, updateActionPoints } = useCharacterSheet();
 	const resources = useCharacterResources();
+	const calculatedData = useCharacterCalculatedData();
 	
-	if (!state.character || !resources) {
+	if (!state.character || !resources || !calculatedData) {
 		return <div>Loading combat...</div>;
 	}
 	
-	const characterData = state.character;
 	const currentValues = resources.current;
 	
-	// Get breakdowns from character data (Provider pattern)
-	const breakdowns = characterData.breakdowns || {};
+	// Get breakdowns from calculated data (Provider pattern)
+	const breakdowns = calculatedData.breakdowns || {};
 	
 	const renderActionPoints = () => {
 		return [0, 1, 2, 3].map((index) => (
@@ -75,7 +75,7 @@ const Combat: React.FC<CombatProps> = () => {
 							content={
 								breakdowns?.attack_spell_check 
 									? createEnhancedTooltip('Attack / Spell Check', breakdowns.attack_spell_check)
-									: `Combat Mastery (${characterData.finalCombatMastery}) + Prime Modifier (${characterData.finalPrimeModifierValue})`
+									: `Combat Mastery (${calculatedData.stats.finalCombatMastery}) + Prime Modifier (${calculatedData.stats.finalPrimeModifierValue})`
 							}
 							position="top"
 						>
@@ -83,7 +83,7 @@ const Combat: React.FC<CombatProps> = () => {
 						</Tooltip>
 					</StyledCombatStatLabel>
 					<StyledCombatStatValue>
-						+{characterData.finalAttackSpellCheck || 0}
+						+{calculatedData.stats.finalAttackSpellCheck || 0}
 					</StyledCombatStatValue>
 				</StyledCombatStatRow>
 				
@@ -93,14 +93,14 @@ const Combat: React.FC<CombatProps> = () => {
 							content={
 								breakdowns?.save_dc
 									? createEnhancedTooltip('Save DC', breakdowns.save_dc)
-									: `8 + Combat Mastery (${characterData.finalCombatMastery}) + Prime Modifier (${characterData.finalPrimeModifierValue})`
+									: `8 + Combat Mastery (${calculatedData.stats.finalCombatMastery}) + Prime Modifier (${calculatedData.stats.finalPrimeModifierValue})`
 							}
 							position="top"
 						>
 							<span>SAVE DC</span>
 						</Tooltip>
 					</StyledCombatStatLabel>
-					<StyledCombatStatValue>{characterData.finalSaveDC}</StyledCombatStatValue>
+					<StyledCombatStatValue>{calculatedData.stats.finalSaveDC}</StyledCombatStatValue>
 				</StyledCombatStatRow>
 				
 				<StyledCombatStatRow>
@@ -109,7 +109,7 @@ const Combat: React.FC<CombatProps> = () => {
 							content={
 								breakdowns?.initiative
 									? createEnhancedTooltip('Initiative', breakdowns.initiative)
-									: `Combat Mastery (${characterData.finalCombatMastery}) + Agility modifier: +${characterData.finalAgility || 0}`
+									: `Combat Mastery (${calculatedData.stats.finalCombatMastery}) + Agility modifier: +${calculatedData.stats.finalAgility || 0}`
 							}
 							position="top"
 						>
@@ -117,7 +117,7 @@ const Combat: React.FC<CombatProps> = () => {
 						</Tooltip>
 					</StyledCombatStatLabel>
 					<StyledCombatStatValue>
-						+{characterData.finalInitiativeBonus || 0}
+						+{calculatedData.stats.finalInitiativeBonus || 0}
 					</StyledCombatStatValue>
 				</StyledCombatStatRow>
 
@@ -127,7 +127,7 @@ const Combat: React.FC<CombatProps> = () => {
 							content={
 								breakdowns?.martial_check
 									? createEnhancedTooltip('Martial Check', breakdowns.martial_check)
-									: `Higher of Acrobatics or Athletics skill totals`
+									: `Max of Acrobatics or Athletics skill checks`
 							}
 							position="top"
 						>
@@ -135,7 +135,7 @@ const Combat: React.FC<CombatProps> = () => {
 						</Tooltip>
 					</StyledCombatStatLabel>
 					<StyledCombatStatValue>
-						+{characterData.finalMartialCheck || 0}
+						+{(calculatedData.stats.finalMartialCheck || 0)}
 					</StyledCombatStatValue>
 				</StyledCombatStatRow>
 			</StyledCombatStatsContainer>

@@ -81,10 +81,14 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
     finalPlayerName: contextData.finalPlayerName,
     level: contextData.level || 1,
     
-    attribute_might: contextData.attribute_might || 0,
-    attribute_agility: contextData.attribute_agility || 0,
-    attribute_charisma: contextData.attribute_charisma || 0,
-    attribute_intelligence: contextData.attribute_intelligence || 0,
+    // FIX: Use the final calculated values from character sheet instead of base values
+    // Character sheet data has finalMight, finalAgility etc. (calculated modifiers)
+    // Enhanced calculator expects attribute_might etc. (base values)
+    // Since we want the martial check to use the current modifiers, we use the final values
+    attribute_might: contextData.finalMight || 0,
+    attribute_agility: contextData.finalAgility || 0,
+    attribute_charisma: contextData.finalCharisma || 0,
+    attribute_intelligence: contextData.finalIntelligence || 0,
     
     combatMastery: contextData.combatMastery || 1,
     
@@ -539,9 +543,7 @@ export function calculateCharacterWithBreakdowns(
   const finalPDR = buildData.manualPDR ?? 0;
   
   // Calculate prime attribute first
-  console.log('🔥 Prime Debug: finalMight =', finalMight, ', finalAgility =', finalAgility, ', finalCharisma =', finalCharisma, ', finalIntelligence =', finalIntelligence);
   const maxValue = Math.max(finalMight, finalAgility, finalCharisma, finalIntelligence);
-  console.log('🔥 Prime Debug: maxValue =', maxValue);
   
   // Get all attributes that have the max value for tie-breaking
   const attributesAtMax: string[] = [];
@@ -550,11 +552,8 @@ export function calculateCharacterWithBreakdowns(
   if (finalCharisma === maxValue) attributesAtMax.push('charisma');
   if (finalIntelligence === maxValue) attributesAtMax.push('intelligence');
   
-  console.log('🔥 Prime Debug: attributesAtMax =', attributesAtMax);
-  
   // For tie-breaking, use the priority order: might > agility > charisma > intelligence
   const primeAttribute = attributesAtMax[0] || 'might';
-  console.log('🔥 Prime Debug: selected primeAttribute =', primeAttribute);
   
   // Calculate other derived stats first
   const finalSaveDC = 8 + combatMastery + maxValue;

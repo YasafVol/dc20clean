@@ -1,5 +1,6 @@
 import React from 'react';
-import type { SkillData, CharacterSheetData } from '../../../types';
+import type { SkillData } from '../../../types';
+import type { SavedCharacter } from '../../../lib/types/dataContracts';
 import type { EnhancedStatBreakdown } from '../../../lib/types/effectSystem';
 import Tooltip from './Tooltip';
 import { createEnhancedTooltip } from './EnhancedStatTooltips';
@@ -22,7 +23,7 @@ import {
 import { StyledProficiencyDots, StyledDot } from '../styles/Skills';
 
 interface AttributesProps {
-	characterData: CharacterSheetData;
+	characterData: SavedCharacter;
 	skillsByAttribute: {
 		prime: SkillData[];
 		might: SkillData[];

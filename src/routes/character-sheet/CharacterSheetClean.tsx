@@ -17,7 +17,7 @@ import type {
 import type { Spell } from '../../lib/rulesdata/spells-data/types/spell.types';
 import type { Weapon } from '../../lib/rulesdata/inventoryItems';
 import type { InventoryItem } from '../../lib/rulesdata/inventoryItems';
-import type { ManeuverData } from './components/Maneuvers';
+import type { ManeuverData } from '../../types';
 import type { Maneuver } from '../../lib/rulesdata/maneuvers';
 
 // Legacy JSON parsing function - removed in favor of typed data contracts
@@ -95,7 +95,6 @@ import {
 	StyledFeaturePopupDescription
 } from './styles/FeaturePopup';
 
-import { calculateDeathThreshold } from '../../lib/rulesdata/death';
 import { allSpells } from '../../lib/rulesdata/spells-data/spells';
 import { allManeuvers } from '../../lib/rulesdata/maneuvers';
 
@@ -121,7 +120,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	const loading = state.loading;
 	const error = state.error;
 	const characterData = state.character;
-	const characterState = state.characterState;
+	const characterState = characterData?.characterState;
 	const currentValues = resources?.current || {
 		currentHP: 0,
 		currentSP: 0,
@@ -178,55 +177,12 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	}, []);
 
 
-	// Save attacks to comprehensive state
-	const saveAttacksData = (newAttacks: AttackData[]) => {
-		updateCharacterState(characterId, {
-			attacks: {
-				original: characterState?.attacks.original || [],
-				current: newAttacks
-			}
-		});
-	};
 
-	// Save spells to comprehensive state
-	const saveSpellsData = (newSpells: SpellData[]) => {
-		updateCharacterState(characterId, {
-			spells: {
-				original: characterState?.spells.original || [],
-				current: newSpells
-			}
-		});
-	};
 
-	// Save inventory to comprehensive state
-	const saveInventoryData = (newInventory: InventoryItemData[]) => {
-		updateCharacterState(characterId, {
-			inventory: {
-				original: characterState?.inventory.original || [],
-				current: newInventory
-			}
-		});
-	};
 
-	// Wrapper for setAttacks that also saves to comprehensive state
-	const updateAttacks = (newAttacks: AttackData[] | ((prev: AttackData[]) => AttackData[])) => {
-		setAttacks((prev) => {
-			const result = typeof newAttacks === 'function' ? newAttacks(prev) : newAttacks;
-			saveAttacksData(result);
-			return result;
-		});
-	};
 
-	// Wrapper for setInventory that also saves to comprehensive state
-	const updateInventory = (
-		newInventory: InventoryItemData[] | ((prev: InventoryItemData[]) => InventoryItemData[])
-	) => {
-		setInventory((prev) => {
-			const result = typeof newInventory === 'function' ? newInventory(prev) : newInventory;
-			saveInventoryData(result);
-			return result;
-		});
-	};
+
+
 
 	// Load character data
 	// Data loading is now handled by the Provider, so no useEffect needed here
@@ -279,33 +235,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		};
 	};
 
-	const handleResourceInputChange = (resource: string, value: string) => {
-		const numValue = parseInt(value) || 0;
 
-		switch (resource) {
-			case 'currentHP':
-				const maxHP = (characterData?.finalHPMax || 0) + currentValues.tempHP;
-				updateHP(Math.max(0, Math.min(numValue, maxHP)));
-				break;
-			case 'currentSP':
-				const maxSP = characterData?.finalSPMax || 0;
-				updateSP(Math.max(0, Math.min(numValue, maxSP)));
-				break;
-			case 'currentMP':
-				const maxMP = characterData?.finalMPMax || 0;
-				updateMP(Math.max(0, Math.min(numValue, maxMP)));
-				break;
-			case 'tempHP':
-				updateTempHP(Math.max(0, numValue));
-				break;
-			case 'actionPointsUsed':
-				updateActionPoints(Math.max(0, Math.min(numValue, 4)));
-				break;
-			case 'exhaustionLevel':
-				updateExhaustion(Math.max(0, Math.min(numValue, 5)));
-				break;
-		}
-	};
 
 
 	// Parse skills data from character - show ALL skills with their proficiency levels and calculated bonuses
@@ -314,12 +244,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		let characterSkills: Record<string, number> = {};
 		if (characterData?.skillsData) {
 			characterSkills = characterData.skillsData;
-		} else if (characterData?.skillsJson) {
-			try {
-				characterSkills = JSON.parse(characterData.skillsJson);
-			} catch (error) {
-				console.error('Error parsing skills JSON:', error);
-			}
 		}
 
 		// Create skill data for ALL skills from rules data, merging with character's proficiencies
@@ -368,12 +292,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		let characterTrades: Record<string, number> = {};
 		if (characterData?.tradesData) {
 			characterTrades = characterData.tradesData;
-		} else if (characterData?.tradesJson) {
-			try {
-				characterTrades = JSON.parse(characterData.tradesJson);
-			} catch (error) {
-				console.error('Error parsing trades JSON:', error);
-			}
 		}
 
 		// Only show trades that have been selected (proficiency > 0) from tradesData only
@@ -419,12 +337,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		let characterTrades: Record<string, number> = {};
 		if (characterData?.tradesData) {
 			characterTrades = characterData.tradesData;
-		} else if (characterData?.tradesJson) {
-			try {
-				characterTrades = JSON.parse(characterData.tradesJson);
-			} catch (error) {
-				console.error('Error parsing trades JSON:', error);
-			}
 		}
 
 		// Show ALL knowledge skills with their proficiency levels and calculated bonuses
@@ -464,12 +376,12 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 	// Parse languages data from character
 	const getLanguagesData = (): LanguageData[] => {
-		if (!characterData?.languagesData && !characterData?.languagesJson) {
+		if (!characterData?.languagesData) {
 			return [];
 		}
 
 		try {
-			const languagesFromDB = characterData.languagesData || JSON.parse(characterData.languagesJson || '[]');
+			const languagesFromDB = characterData.languagesData;
 
 			return Object.entries(languagesFromDB)
 				.filter(([_, data]: [string, any]) => data.fluency !== 'none')
@@ -754,43 +666,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	// Navigation functions
 
 
-	// Currency management function
-	const handleCurrencyChange = (currency: string, value: number) => {
-		// Use Provider's updateCurrency method
-		if (currency === 'goldPieces') {
-			updateCurrency(value);
-		} else if (currency === 'silverPieces') {
-			updateCurrency(undefined, value);
-		} else if (currency === 'copperPieces') {
-			updateCurrency(undefined, undefined, value);
-		}
-		// Note: Provider currently only supports gold/silver/copper
-	};
 
-	// Handle exhaustion level changes
-	const handleExhaustionChange = (level: number) => {
-		const currentLevel = currentValues.exhaustionLevel || 0;
-		const newLevel = currentLevel === level ? level - 1 : level;
-		updateExhaustion(Math.max(0, Math.min(5, newLevel)));
-	};
 
-	// Handle death step changes
-	const handleDeathStepChange = (step: number) => {
-		if (!characterData) return;
 
-		const deathThreshold = calculateDeathThreshold(
-			characterData.finalPrimeModifierValue,
-			characterData.finalCombatMastery
-		);
-		const targetHP = -step;
-
-		// Don't allow going below death threshold
-		if (targetHP < deathThreshold) {
-			updateHP(deathThreshold);
-		} else {
-			updateHP(targetHP);
-		}
-	};
 
 	// Copy character data to clipboard
 	// Revert character data to original values
@@ -875,15 +753,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 				];
 				setAttacks(defaultAttacks);
 			} else if (dataType === 'spells') {
-				// Use the original spells from character state
-				if (characterState?.spells?.original) {
-					setSpells([...characterState.spells.original]);
-				}
+				// Reset spells to empty array
+				setSpells([]);
 			} else if (dataType === 'maneuvers') {
-				// Use the original maneuvers from character state
-				if (characterState?.maneuvers?.original) {
-					setManeuvers([...characterState.maneuvers.original]);
-				}
+				// Reset maneuvers to empty array
+				setManeuvers([]);
 			} else if (dataType === 'inventory') {
 				setInventory([]);
 			}
@@ -1105,7 +979,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 					<StyledHeaderSection>
 						<StyledLabel>Level</StyledLabel>
-						<StyledValue>{characterData.finalLevel}</StyledValue>
+						<StyledValue>{characterData.level}</StyledValue>
 						<StyledLabel style={{ marginTop: '0.5rem' }}>Combat Mastery</StyledLabel>
 						<StyledValue>+{characterData.finalCombatMastery}</StyledValue>
 					</StyledHeaderSection>
@@ -1156,7 +1030,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 								knowledge={knowledge}
 								trades={trades}
 								languages={languages}
-								breakdowns={characterState?.calculation?.breakdowns}
 							/>
 						</StyledLeftColumn>
 
@@ -1164,13 +1037,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						<StyledMiddleColumn>
 							{/* Resources Section - Circular design like official sheet */}
 							<Resources
-								breakdowns={characterState?.calculation?.breakdowns}
 								isMobile={false}
 							/>
 
 							{/* Defenses - Shield-like design */}
 							<Defenses
-								breakdowns={characterState?.calculation?.breakdowns}
 								isMobile={false}
 							/>
 
@@ -1178,12 +1049,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 							<Combat />
 
 							{/* Death & Exhaustion */}
-							<DeathExhaustion
-								characterData={characterData}
-								currentValues={currentValues}
-								onExhaustionChange={handleExhaustionChange}
-								onDeathStepChange={handleDeathStepChange}
-							/>
+							<DeathExhaustion />
 
 
 
@@ -1191,37 +1057,25 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 							{/* Attacks Section */}
 							<Attacks
-								attacks={attacks}
-								setAttacks={updateAttacks}
-								characterData={characterData}
 								onAttackClick={openAttackPopup}
 							/>
 
 							{/* Inventory */}
 							<Inventory
-								inventory={inventory}
-								setInventory={updateInventory}
 								onItemClick={openInventoryPopup}
 							/>
 
 							{/* Player Notes */}
-							<PlayerNotes characterId={characterData.id} />
+							<PlayerNotes />
 						</StyledMiddleColumn>
 
 						{/* Right Column - Movement, Resources, Inventory, Features */}
 						<StyledRightColumn>
 							{/* Movement & Utility */}
-							<Movement 
-								characterData={characterData} 
-								breakdowns={characterState?.calculation?.breakdowns}
-							/>
+							<Movement />
 
 							{/* Resources */}
-							<RightColumnResources
-								characterData={characterData}
-								currentValues={currentValues}
-								onResourceInputChange={handleResourceInputChange}
-							/>
+							<RightColumnResources />
 
 							{/* Features */}
 							<Features onFeatureClick={openFeaturePopup} />
@@ -1265,7 +1119,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 									knowledge={knowledge}
 									trades={trades}
 									languages={languages}
-									breakdowns={characterState?.calculation?.breakdowns}
 								/>
 								<Features onFeatureClick={openFeaturePopup} />
 							</div>
@@ -1275,11 +1128,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						{activeMobileSection === 'combat' && (
 							<div>
 								<Resources
-									breakdowns={characterState?.calculation?.breakdowns}
 									isMobile={true}
 								/>
 								<Defenses
-									breakdowns={characterState?.calculation?.breakdowns}
 									isMobile={true}
 								/>
 								<Combat />
@@ -1301,15 +1152,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 										onManeuverClick={openManeuverPopup}
 									/>
 								)}
-								<Movement 
-									characterData={characterData} 
-									breakdowns={characterState?.calculation?.breakdowns}
-								/>
-								<RightColumnResources
-									characterData={characterData}
-									currentValues={currentValues}
-									onResourceInputChange={handleResourceInputChange}
-								/>
+								<Movement />
+								<RightColumnResources />
 							</div>
 						)}
 
@@ -1380,7 +1224,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 									<div style={{ marginBottom: '1rem' }}>
 										<StyledLabel>Level</StyledLabel>
-										<StyledValue>{characterData.finalLevel}</StyledValue>
+										<StyledValue>{characterData.level}</StyledValue>
 									</div>
 
 									<div style={{ marginBottom: '1rem' }}>

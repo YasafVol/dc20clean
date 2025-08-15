@@ -34,7 +34,12 @@ const RightColumnResources: React.FC<RightColumnResourcesProps> = () => {
 					<StyledRightResourceInput
 						type="number"
 						value={currentValues.currentRestPoints}
-						readOnly
+						min={0}
+						max={calculatedData.stats.finalRestPoints}
+						onChange={e => {
+							const val = Math.max(0, Math.min(Number(e.target.value), calculatedData.stats.finalRestPoints));
+							updateRestPoints(val);
+						}}
 					/>
 					<StyledRightResourceMax>/ {calculatedData.stats.finalRestPoints}</StyledRightResourceMax>
 				</StyledRightResourceControls>
@@ -46,7 +51,12 @@ const RightColumnResources: React.FC<RightColumnResourcesProps> = () => {
 					<StyledRightResourceInput
 						type="number"
 						value={currentValues.currentGritPoints}
-						readOnly
+						min={0}
+						max={calculatedData.stats.finalGritPoints}
+						onChange={e => {
+							const val = Math.max(0, Math.min(Number(e.target.value), calculatedData.stats.finalGritPoints));
+							updateGritPoints(val);
+						}}
 					/>
 					<StyledRightResourceMax>/ {calculatedData.stats.finalGritPoints}</StyledRightResourceMax>
 				</StyledRightResourceControls>

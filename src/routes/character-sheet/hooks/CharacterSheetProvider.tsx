@@ -207,6 +207,9 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
     };
   }, [state.character, state.loading, debouncedSave]);
 
+  const updateGritPoints = (grit: number) => dispatch({ type: 'UPDATE_CURRENT_GRIT_POINTS', grit });
+  const updateRestPoints = (rest: number) => dispatch({ type: 'UPDATE_CURRENT_REST_POINTS', rest });
+
   const contextValue: CharacterSheetContextType = {
     state,
     dispatch,
@@ -225,6 +228,8 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
     updateCurrency,
     updateNotes,
     saveNow,
+    updateGritPoints,
+    updateRestPoints,
   };
 
   return (

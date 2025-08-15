@@ -32,7 +32,9 @@ export type SheetAction =
   | { type: 'REMOVE_MANEUVER'; maneuverId: string }
   | { type: 'UPDATE_INVENTORY'; items: any[] }
   | { type: 'UPDATE_CURRENCY'; gold?: number; silver?: number; copper?: number }
-  | { type: 'UPDATE_NOTES'; notes: string };
+  | { type: 'UPDATE_NOTES'; notes: string }
+  | { type: 'UPDATE_CURRENT_GRIT_POINTS'; grit: number }
+  | { type: 'UPDATE_CURRENT_REST_POINTS'; rest: number };
 
 const initialState: SheetState = {
   character: null,
@@ -351,6 +353,43 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
             notes: {
               ...state.character.characterState.notes,
               playerNotes: action.notes
+            }
+          }
+        }
+      };
+
+    case 'UPDATE_CURRENT_GRIT_POINTS':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            resources: {
+              ...state.character.characterState.resources,
+              current: {
+                ...state.character.characterState.resources.current,
+                currentGritPoints: action.grit
+              }
+            }
+          }
+        }
+      };
+    case 'UPDATE_CURRENT_REST_POINTS':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            resources: {
+              ...state.character.characterState.resources,
+              current: {
+                ...state.character.characterState.resources.current,
+                currentRestPoints: action.rest
+              }
             }
           }
         }

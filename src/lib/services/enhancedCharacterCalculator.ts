@@ -81,28 +81,25 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
     finalName: contextData.finalName || '',
     finalPlayerName: contextData.finalPlayerName,
     level: contextData.level || 1,
-    
-    // FIX: Use the final calculated values from character sheet instead of base values
-    // Character sheet data has finalMight, finalAgility etc. (calculated modifiers)
-    // Enhanced calculator expects attribute_might etc. (base values)
-    // Since we want the martial check to use the current modifiers, we use the final values
-    attribute_might: contextData.finalMight || 0,
-    attribute_agility: contextData.finalAgility || 0,
-    attribute_charisma: contextData.finalCharisma || 0,
-    attribute_intelligence: contextData.finalIntelligence || 0,
-    
+
+    // Use final* if present, else attribute_* (for character creation)
+    attribute_might: contextData.finalMight ?? contextData.attribute_might ?? 0,
+    attribute_agility: contextData.finalAgility ?? contextData.attribute_agility ?? 0,
+    attribute_charisma: contextData.finalCharisma ?? contextData.attribute_charisma ?? 0,
+    attribute_intelligence: contextData.finalIntelligence ?? contextData.attribute_intelligence ?? 0,
+
     combatMastery: contextData.combatMastery || 1,
-    
+
     classId: contextData.classId || '',
     ancestry1Id: contextData.ancestry1Id || undefined,
     ancestry2Id: contextData.ancestry2Id || undefined,
-    
+
     selectedTraitIds: Array.isArray(contextData.selectedTraitIds)
       ? contextData.selectedTraitIds
       : [],
     selectedTraitChoices: contextData.selectedTraitChoices ?? {},
     featureChoices: contextData.selectedFeatureChoices ?? {},
-    
+
     // FIX: Serialize live store objects into the JSON strings the engine expects
     skillsJson: JSON.stringify(contextData.skillsData ?? {}),
     tradesJson: JSON.stringify(contextData.tradesData ?? {}),
@@ -110,9 +107,9 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
     languagesJson: JSON.stringify(contextData.languagesData ?? { common: { fluency: 'fluent' } }),
     
     // Optional manual overrides supported by the engine
-    manualPD: contextData.manualPD,
-    manualAD: contextData.manualAD,
-    manualPDR: contextData.manualPDR,
+  manualPD: contextData.manualPD,
+  manualAD: contextData.manualAD,
+  manualPDR: contextData.manualPDR,
     
     lastModified: Date.now()
   };

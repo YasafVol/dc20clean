@@ -122,12 +122,14 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	const error = state.error;
 	const characterData = state.character;
 	const characterState = characterData?.characterState;
-	const currentValues = resources?.current || {
-		currentHP: 0,
-		currentSP: 0,
-		currentMP: 0,
-		currentGritPoints: 0,
-		currentRestPoints: 0,
+
+	// Calculate max values for current resources
+	const characterMaxValues = characterData ? {
+		currentGritPoints: characterData.finalGritPoints,
+		currentRestPoints: characterData.finalRestPoints,
+		currentHP: characterData.finalHPMax,
+		currentSP: characterData.finalSPMax,
+		currentMP: characterData.finalMPMax,
 		tempHP: 0,
 		actionPointsUsed: 0,
 		exhaustionLevel: 0,
@@ -140,7 +142,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		copperPieces: 0,
 		electrumPieces: 0,
 		platinumPieces: 0
-	};
+	} : {};
+
+	const currentValues = resources?.current || characterMaxValues;
 	
 	// Keep local popup state (these don't need Provider)
 	const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);

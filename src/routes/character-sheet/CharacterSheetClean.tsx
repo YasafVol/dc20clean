@@ -1175,9 +1175,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 							/>
 
 							{/* Combat Section */}
-							<Combat
-								breakdowns={characterState?.calculation?.breakdowns}
-							/>
+							<Combat />
 
 							{/* Death & Exhaustion */}
 							<DeathExhaustion
@@ -1284,9 +1282,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 									breakdowns={characterState?.calculation?.breakdowns}
 									isMobile={true}
 								/>
-								<Combat
-									breakdowns={characterState?.calculation?.breakdowns}
-								/>
+								<Combat />
 								<DeathExhaustion />
 								<Spells
 									onSpellClick={openSpellPopup}

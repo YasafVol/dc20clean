@@ -86,6 +86,10 @@ export const completeCharacter = async (
 			finalGritPoints: calculationResult.stats.finalGritPoints,
 			finalInitiativeBonus: calculationResult.stats.finalInitiativeBonus,
 			
+			// Combat stats with breakdowns
+			finalAttackSpellCheck: calculationResult.stats.finalAttackSpellCheck,
+			finalMartialCheck: calculationResult.stats.finalMartialCheck,
+			
 			// Store typed data directly (no more JSON strings)
 			selectedTraitIds: characterState.selectedTraitIds || [],
 			selectedFeatureChoices: characterState.selectedFeatureChoices || {},

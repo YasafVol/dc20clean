@@ -567,7 +567,7 @@ export function calculateCharacterWithBreakdowns(
   const finalJumpDistance = finalAgility + resolvedEffects.filter(effect => effect.type === 'MODIFY_STAT' && effect.target === 'jumpDistance').reduce((sum, effect) => sum + (effect.value as number), 0);
   const finalRestPoints = finalHPMax; // Rest Points = HP
   const finalGritPoints = Math.max(0, 2 + finalCharisma); // 2 + Charisma (minimum 0)
-  const finalInitiativeBonus = finalAgility;
+  const finalInitiativeBonus = combatMastery + finalAgility; // Combat Mastery + Agility
   
   // Create breakdowns for derived stats
   breakdowns.hpMax = createStatBreakdown('hpMax', finalHPMax, resolvedEffects);
@@ -585,9 +585,26 @@ export function calculateCharacterWithBreakdowns(
   breakdowns.attack_spell_check = createStatBreakdown('attackSpellCheck', attackSpellCheckBase, resolvedEffects);
   breakdowns.save_dc = createStatBreakdown('saveDC', finalSaveDC, resolvedEffects);
   
-  // Martial check is Attack/Spell Check + Action Points bonus (calculated at runtime)
-  // For now, just use the base attack/spell check value
-  breakdowns.martial_check = createStatBreakdown('martialCheck', attackSpellCheckBase, resolvedEffects);
+  // Initiative breakdown - custom breakdown to show Combat Mastery + Agility components
+  breakdowns.initiative = {
+    statName: 'Initiative',
+    base: 0, // No base, it's a pure calculation
+    effects: [
+      {
+        source: { name: 'Combat Mastery', id: 'combatMastery', type: 'base' },
+        value: combatMastery,
+        description: `Combat Mastery: ${combatMastery}`,
+        isActive: true
+      },
+      {
+        source: { name: 'Agility Modifier', id: 'agility', type: 'base' },
+        value: finalAgility,
+        description: `Agility Modifier: ${finalAgility}`,
+        isActive: true
+      }
+    ],
+    total: finalInitiativeBonus
+  };
   
   // 4.5. Compute background points (ported from useBackgroundPoints)
   const skills = JSON.parse(buildData.skillsJson || '{}') as Record<string, number>;
@@ -641,6 +658,36 @@ export function calculateCharacterWithBreakdowns(
     baseAncestryPoints,
     ancestryPointsUsed,
     ancestryPointsRemaining
+  };
+  
+  // Calculate martial check as max(Acrobatics, Athletics) using EXISTING skill calculations
+  // Instead of recalculating, we should access the pre-computed skill totals
+  // For now, calculate here but TODO: get from character sheet's getSkillsData()
+  const acrobaticsProficiency = skills['acrobatics'] || 0;
+  const athleticsProficiency = skills['athletics'] || 0;
+  const acrobaticsTotal = finalAgility + (acrobaticsProficiency * 2); // Agility + (Proficiency × 2)
+  const athleticsTotal = finalMight + (athleticsProficiency * 2); // Might + (Proficiency × 2)
+  const finalMartialCheck = Math.max(acrobaticsTotal, athleticsTotal);
+  
+  // Create martial check breakdown for tooltip
+  breakdowns.martial_check = {
+    statName: 'Martial Check',
+    base: Math.max(finalAgility, finalMight), // Base attribute (higher one)
+    effects: [
+      {
+        source: { name: 'Acrobatics Option', id: 'acrobatics', type: 'base' },
+        value: acrobaticsTotal,
+        description: `Agility (${finalAgility}) + Proficiency ×2 (${acrobaticsProficiency * 2}) = ${acrobaticsTotal}`,
+        isActive: true
+      },
+      {
+        source: { name: 'Athletics Option', id: 'athletics', type: 'base' },
+        value: athleticsTotal,
+        description: `Might (${finalMight}) + Proficiency ×2 (${athleticsProficiency * 2}) = ${athleticsTotal}`,
+        isActive: true
+      }
+    ],
+    total: finalMartialCheck
   };
   
   // 5. Validation with step-aware errors
@@ -750,6 +797,10 @@ export function calculateCharacterWithBreakdowns(
       finalPrimeModifierValue: maxValue,
       finalPrimeModifierAttribute: primeAttribute,
       finalCombatMastery: combatMastery,
+      
+      // Combat stats with breakdowns
+      finalAttackSpellCheck: attackSpellCheckBase,
+      finalMartialCheck: finalMartialCheck,
       
       // Class and ancestry info for UI
       className: getClassFeatures(buildData.classId)?.className || 'Unknown',

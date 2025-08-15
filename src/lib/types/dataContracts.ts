@@ -93,6 +93,10 @@ export interface SavedCharacter {
   finalGritPoints: number;
   finalInitiativeBonus: number;
   
+  // Combat stats with breakdowns
+  finalAttackSpellCheck: number;
+  finalMartialCheck: number; // max(Acrobatics, Athletics)
+  
   // TYPED DATA: No more JSON strings
   selectedTraitIds: string[];
   selectedFeatureChoices: Record<string, string>;

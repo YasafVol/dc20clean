@@ -160,6 +160,10 @@ export interface EnhancedCalculationResult {
     finalPrimeModifierAttribute: string;
     finalCombatMastery: number;
     
+    // Combat stats with breakdowns
+    finalAttackSpellCheck: number;
+    finalMartialCheck: number; // max(Acrobatics, Athletics)
+    
     // Class and ancestry info for UI
     className: string;
     ancestry1Name?: string;

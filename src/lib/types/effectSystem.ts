@@ -147,9 +147,23 @@ export interface EnhancedCalculationResult {
     finalJumpDistance: number;
     finalDeathThreshold: number;
     finalSaveDC: number;
+    finalSaveMight: number;
+    finalSaveAgility: number;
+    finalSaveCharisma: number;
+    finalSaveIntelligence: number;
     finalInitiativeBonus: number;
     finalRestPoints: number;
     finalGritPoints: number;
+    
+    // Prime modifier and combat mastery (needed for UI compatibility)
+    finalPrimeModifierValue: number;
+    finalPrimeModifierAttribute: string;
+    finalCombatMastery: number;
+    
+    // Class and ancestry info for UI
+    className: string;
+    ancestry1Name?: string;
+    ancestry2Name?: string;
   };
   
   // Detailed breakdowns for tooltips

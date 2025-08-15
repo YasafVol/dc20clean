@@ -54,20 +54,20 @@ export const completeCharacter = async (
 			finalPlayerName: characterState.finalPlayerName,
 			level: characterState.level || 1,
 			classId: characterState.classId,
-			className: 'Unknown', // Will be updated from calculation result
+			className: calculationResult.stats.className || 'Unknown',
 			ancestry1Id: characterState.ancestry1Id,
-			ancestry1Name: characterState.ancestry1Name || 'Human', // TODO: Get from ancestry data
+			ancestry1Name: calculationResult.stats.ancestry1Name || 'Unknown',
 			ancestry2Id: characterState.ancestry2Id,
-			ancestry2Name: undefined, // Will be updated from calculation result
-			
+			ancestry2Name: calculationResult.stats.ancestry2Name || 'Unknown',
+
 			// Map from calculation result to final* schema
 			finalMight: calculationResult.stats.finalMight,
 			finalAgility: calculationResult.stats.finalAgility,
 			finalCharisma: calculationResult.stats.finalCharisma,
 			finalIntelligence: calculationResult.stats.finalIntelligence,
-			finalPrimeModifierValue: 0, // Will be updated from calculation result
-			finalPrimeModifierAttribute: 'might', // Will be updated from calculation result
-			finalCombatMastery: 1, // Will be updated from calculation result
+			finalPrimeModifierValue: calculationResult.stats.finalPrimeModifierValue,
+			finalPrimeModifierAttribute: calculationResult.stats.finalPrimeModifierAttribute,
+			finalCombatMastery: calculationResult.stats.finalCombatMastery,
 			finalSaveMight: calculationResult.stats.finalMight, // Use attribute values as saves for now
 			finalSaveAgility: calculationResult.stats.finalAgility,
 			finalSaveCharisma: calculationResult.stats.finalCharisma,

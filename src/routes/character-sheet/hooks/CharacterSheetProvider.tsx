@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useCharacterSheetReducer, type SheetState, type SheetAction } from './useCharacterSheetReducer';
 import { getCharacterById, saveCharacterState } from '../../../lib/utils/storageUtils';
-import { calculateCharacterWithBreakdowns } from '../../../lib/services/enhancedCharacterCalculator';
+import { calculateCharacterWithBreakdowns, convertToEnhancedBuildData } from '../../../lib/services/enhancedCharacterCalculator';
 import { ancestriesData } from '../../../lib/rulesdata/ancestries';
 import { traitsData } from '../../../lib/rulesdata/traits';
 import { findClassByName, getLegacyChoiceId, getDisplayLabel } from '../../../lib/rulesdata/loaders/class-features.loader';

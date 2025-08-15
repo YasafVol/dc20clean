@@ -26,6 +26,8 @@ import {
 	StyledExhaustionTooltip
 } from '../styles/Exhaustion';
 
+import { StyledExhaustionImpact } from '../styles/ExhaustionImpact.styles';
+
 import {
 	getHealthStatus,
 	calculateDeathThreshold,
@@ -159,6 +161,12 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = () => {
 						</StyledExhaustionLevel>
 					))}
 				</StyledExhaustionContainer>
+				{/* Show impact below the numbers */}
+				{currentValues.exhaustionLevel > 0 && (
+					<StyledExhaustionImpact>
+						{exhaustionLevels.find(e => e.level === currentValues.exhaustionLevel)?.description}
+					</StyledExhaustionImpact>
+				)}
 			</StyledExhaustionOnlyContainer>
 		</StyledDeathExhaustionContainer>
 	);

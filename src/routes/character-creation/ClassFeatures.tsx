@@ -195,8 +195,8 @@ function ClassFeatures() {
 	const level1Data = selectedClass.levelProgression?.[0]; // Level 1 data from table
 	if (level1Data) {
 		// Get base maneuvers from table
-		let tableManeuvers = level1Data.maneuversKnown || 0;
-		let tableTechniques = level1Data.techniquesKnown || 0;
+		const tableManeuvers = level1Data.maneuversKnown || 0;
+		const tableTechniques = level1Data.techniquesKnown || 0;
 
 		// Add class-specific feature bonuses
 		let featureManeuvers = 0;

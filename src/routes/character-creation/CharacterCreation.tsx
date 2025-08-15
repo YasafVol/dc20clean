@@ -384,8 +384,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
                 const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
 				const hasExactlySpentAllSkillPoints = skillPointsRemaining === 0;
 				// Calculate available trade and language points using same logic as BackgroundPointsManager
-				let bonusTradePoints = 0;
-				let bonusLanguagePoints = 0;
+				const bonusTradePoints = 0;
+				const bonusLanguagePoints = 0;
 				
 				// Check for ancestry bonuses (simplified calculation)
 				const baseTradePoints = 3 + bonusTradePoints;

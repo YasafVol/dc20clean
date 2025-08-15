@@ -306,7 +306,7 @@ function resolveEffectChoices(effects: AttributedEffect[], choices: TraitChoiceS
     }
     
     // Resolve the choice
-    let resolvedEffect = { ...effect };
+    const resolvedEffect = { ...effect };
     if (effect.target === 'any_attribute' && effect.type === 'MODIFY_ATTRIBUTE') {
       resolvedEffect.target = chosenValue;
       resolvedEffect.resolved = true;

@@ -30,6 +30,7 @@ import {
 	StyledNavigationButtons,
 	StyledButton
 } from './styles/CharacterCreation.styles';
+import { StyledStepsHeaderBG } from './styles/StepsHeaderBG.styles';
 
 interface CharacterCreationProps {
 	onNavigateToLoad: () => void;
@@ -41,8 +42,7 @@ interface CharacterCreationProps {
 const CharacterCreation: React.FC<CharacterCreationProps> = ({
 	onNavigateToLoad,
 	editCharacter,
-	onBackToMenu,
-	isLevelUp
+	onBackToMenu
 }) => {
 	const { state, dispatch, attributePointsRemaining, calculationResult } = useCharacter();
 	const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -545,31 +545,27 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 						← Previous
 					</StyledButton>
 				</StyledNavigationButtons>
-
 				<StyledStepsContainer>
-					{steps.map((step) => (
-						<StyledStep
-							key={step.number}
-							$active={state.currentStep === step.number}
-							$completed={isStepCompleted(step.number)}
-							onClick={() => handleStepClick(step.number)}
-						>
-							<StyledStepNumber
-								$active={state.currentStep === step.number}
-								$completed={isStepCompleted(step.number)}
+					{steps.map(({ number, label }) => {
+						const $active = state.currentStep === number;
+						const $completed = number < state.currentStep;
+						return (
+							<StyledStep
+								key={number}
+								$active={$active}
+								$completed={$completed}
+								onClick={() => handleStepClick(number)}
 							>
-								{isStepCompleted(step.number) ? '✓' : step.number}
-							</StyledStepNumber>
-							<StyledStepLabel
-								$active={state.currentStep === step.number}
-								$completed={isStepCompleted(step.number)}
-							>
-								{step.label}
-							</StyledStepLabel>
-						</StyledStep>
-					))}
+								<StyledStepNumber $active={$active} $completed={$completed}>
+									{number}
+								</StyledStepNumber>
+								<StyledStepLabel $active={$active} $completed={$completed}>
+									{label}
+								</StyledStepLabel>
+							</StyledStep>
+						);
+					})}
 				</StyledStepsContainer>
-
 				<StyledNavigationButtons>
 					<StyledButton
 						$variant="primary"
@@ -581,7 +577,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 				</StyledNavigationButtons>
 			</StyledStepIndicator>
 
-			<StyledContainer>{renderCurrentStep()}</StyledContainer>
+			<StyledStepsHeaderBG>
+				<StyledContainer>{renderCurrentStep()}</StyledContainer>
+			</StyledStepsHeaderBG>
 
 			<Snackbar
 				message={snackbarMessage}

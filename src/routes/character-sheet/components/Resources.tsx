@@ -51,23 +51,36 @@ const Resources: React.FC<ResourcesProps> = ({
 	};
 
 	const getHPFillPercentage = (current: number, max: number, tempHP: number) => {
+		// Total effective HP = current + temp HP
+		// Total possible HP = max + temp HP  
 		const totalCurrent = current + tempHP;
-		return max > 0 ? Math.min((totalCurrent / max) * 100, 100) : 0;
+		const totalPossible = max + tempHP;
+		return totalPossible > 0 ? Math.min((totalCurrent / totalPossible) * 100, 100) : 0;
 	};
 
 	const onAdjustResource = (resource: 'currentSP' | 'currentMP' | 'currentHP' | 'tempHP', amount: number) => {
 		switch (resource) {
 			case 'currentHP':
-				updateHP(Math.max(0, current.currentHP + amount));
+				// HP can go up to maxHP + tempHP total
+				const maxTotalHP = original.maxHP + current.tempHP;
+				const newHP = current.currentHP + amount;
+				updateHP(Math.max(0, Math.min(maxTotalHP, newHP)));
 				break;
 			case 'currentSP':
-				updateSP(Math.max(0, current.currentSP + amount));
+				updateSP(Math.max(0, Math.min(original.maxSP, current.currentSP + amount)));
 				break;
 			case 'currentMP':
-				updateMP(Math.max(0, current.currentMP + amount));
+				updateMP(Math.max(0, Math.min(original.maxMP, current.currentMP + amount)));
 				break;
 			case 'tempHP':
-				updateTempHP(Math.max(0, current.tempHP + amount));
+				const newTempHP = Math.max(0, current.tempHP + amount);
+				updateTempHP(newTempHP);
+				
+				// CRITICAL: If temp HP decreased, current HP might exceed new maximum
+				const newMaxTotalHP = original.maxHP + newTempHP;
+				if (current.currentHP > newMaxTotalHP) {
+					updateHP(newMaxTotalHP);
+				}
 				break;
 		}
 	};
@@ -75,7 +88,14 @@ const Resources: React.FC<ResourcesProps> = ({
 	const onResourceInputChange = (resource: 'tempHP', value: string) => {
 		const numValue = parseInt(value) || 0;
 		if (resource === 'tempHP') {
-			updateTempHP(Math.max(0, numValue));
+			const newTempHP = Math.max(0, numValue);
+			updateTempHP(newTempHP);
+			
+			// CRITICAL: If temp HP decreased, current HP might exceed new maximum
+			const newMaxTotalHP = original.maxHP + newTempHP;
+			if (current.currentHP > newMaxTotalHP) {
+				updateHP(newMaxTotalHP);
+			}
 		}
 	};
 	return (
@@ -192,7 +212,7 @@ const Resources: React.FC<ResourcesProps> = ({
 								current.tempHP
 							)}
 						/>
-						<StyledLargePotionValue>{current.currentHP}</StyledLargePotionValue>
+						<StyledLargePotionValue>{current.currentHP + current.tempHP}</StyledLargePotionValue>
 					</StyledLargePotionContainer>
 					<StyledResourceButton onClick={() => onAdjustResource('currentHP', 1)}>
 						+
@@ -219,7 +239,7 @@ const Resources: React.FC<ResourcesProps> = ({
 						} 
 						position="top"
 					>
-						<span style={{ cursor: 'help' }}>{original.maxHP}</span>
+						<span style={{ cursor: 'help' }}>{original.maxHP + current.tempHP}</span>
 					</Tooltip>
 					{current.tempHP > 0 && (
 						<span style={{ color: '#dc2626', fontWeight: 'bold', fontSize: '0.9rem' }}>

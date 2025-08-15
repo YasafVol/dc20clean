@@ -16,7 +16,6 @@ import {
 } from './styles/App.styles';
 
 // Import static assets
-import blackBgImage from '/BlackBG.png';
 import cinzelFont from './types/Fonts/Cinzel-VariableFont_wght.ttf';
 import urbanistFont from './types/Fonts/Urbanist-VariableFont_wght.ttf';
 
@@ -43,7 +42,6 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     font-family: 'Urbanist', 'Georgia', 'Times New Roman', serif;
-    background: url('${blackBgImage}') center/cover no-repeat fixed;
     color: #e5e7eb;
     min-height: 100vh;
     font-weight: 400;

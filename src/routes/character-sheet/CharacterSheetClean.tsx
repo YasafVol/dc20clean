@@ -72,6 +72,7 @@ import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeature
 // Import styled components
 import {
 	StyledContainer,
+	CharacterSheetGlobalStyle,
 	StyledBackButton,
 	StyledCharacterSheet,
 	StyledMainGrid,
@@ -867,6 +868,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 	return (
 		<StyledContainer style={{ position: 'relative' }}>
+			<CharacterSheetGlobalStyle />
 			{/* Action Buttons - Hidden on mobile */}
 			<StyledActionButtons>
 				<StyledActionButton

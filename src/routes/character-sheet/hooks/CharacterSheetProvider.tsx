@@ -4,6 +4,8 @@ import { getCharacterById, saveCharacterState } from '../../../lib/utils/storage
 import { calculateCharacterWithBreakdowns, convertToEnhancedBuildData } from '../../../lib/services/enhancedCharacterCalculator';
 import { ancestriesData } from '../../../lib/rulesdata/ancestries';
 import { traitsData } from '../../../lib/rulesdata/traits';
+import { knowledgeData } from '../../../lib/rulesdata/knowledge';
+import { tradesData } from '../../../lib/rulesdata/trades';
 import { findClassByName, getLegacyChoiceId, getDisplayLabel } from '../../../lib/rulesdata/loaders/class-features.loader';
 import { getDetailedClassFeatureDescription } from '../../../lib/utils/classFeatureDescriptions';
 
@@ -570,4 +572,114 @@ export function useCharacterCalculatedData() {
     const calculationResult = calculateCharacterWithBreakdowns(buildData);
     return calculationResult;
   }, [state.character]);
+}
+
+// Hook for character knowledge data
+export function useCharacterKnowledge() {
+  const { state } = useCharacterSheet();
+  
+  return useMemo(() => {
+    if (!state.character) return [];
+    
+    const character = state.character;
+    
+    // Parse character's trade proficiencies (knowledge is stored in tradesData)
+    let characterTrades: Record<string, number> = {};
+    if (character?.tradesData) {
+      characterTrades = character.tradesData;
+    }
+
+    // Show ALL knowledge skills with their proficiency levels and calculated bonuses
+    const knowledgeWithProficiency = knowledgeData.map((knowledge) => {
+      const proficiency = characterTrades[knowledge.id] || 0;
+      const masteryBonus = proficiency * 2;
+
+      // Get attribute modifier based on knowledge's attribute association
+      let attributeModifier = 0;
+      switch (knowledge.attributeAssociation.toLowerCase()) {
+        case 'might':
+          attributeModifier = character?.finalMight || 0;
+          break;
+        case 'agility':
+          attributeModifier = character?.finalAgility || 0;
+          break;
+        case 'charisma':
+          attributeModifier = character?.finalCharisma || 0;
+          break;
+        case 'intelligence':
+          attributeModifier = character?.finalIntelligence || 0;
+          break;
+        default:
+          attributeModifier = 0;
+      }
+
+      const totalBonus = attributeModifier + masteryBonus;
+
+      return {
+        id: knowledge.id,
+        name: knowledge.name,
+        proficiency,
+        bonus: totalBonus
+      };
+    });
+    
+    return knowledgeWithProficiency;
+  }, [state.character?.tradesData, state.character?.finalMight, state.character?.finalAgility, state.character?.finalCharisma, state.character?.finalIntelligence]);
+}
+
+// Hook for character trades data
+export function useCharacterTrades() {
+  const { state } = useCharacterSheet();
+  
+  return useMemo(() => {
+    if (!state.character) return [];
+    
+    const character = state.character;
+    
+    // Parse character's trade proficiencies
+    let characterTrades: Record<string, number> = {};
+    if (character?.tradesData) {
+      characterTrades = character.tradesData;
+    }
+
+    // Only show trades that have been selected (proficiency > 0) from tradesData only
+    const filteredTrades = tradesData
+      .filter((trade) => {
+        return characterTrades[trade.id] && characterTrades[trade.id] > 0;
+      })
+      .map((trade) => {
+        const proficiency = characterTrades[trade.id] || 0;
+        const masteryBonus = proficiency * 2;
+
+        // Get attribute modifier based on trade's attribute association
+        let attributeModifier = 0;
+        switch (trade.attributeAssociation.toLowerCase()) {
+          case 'might':
+            attributeModifier = character?.finalMight || 0;
+            break;
+          case 'agility':
+            attributeModifier = character?.finalAgility || 0;
+            break;
+          case 'charisma':
+            attributeModifier = character?.finalCharisma || 0;
+            break;
+          case 'intelligence':
+            attributeModifier = character?.finalIntelligence || 0;
+            break;
+          default:
+            attributeModifier = 0;
+        }
+
+        const totalBonus = attributeModifier + masteryBonus;
+
+        return {
+          id: trade.id,
+          name: trade.name,
+          proficiency,
+          bonus: totalBonus
+        };
+      });
+    
+    return filteredTrades;
+  }, [state.character?.tradesData, state.character?.finalMight, state.character?.finalAgility, state.character?.finalCharisma, state.character?.finalIntelligence]);
 }

@@ -1029,8 +1029,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 							<LeftColumn
 								characterData={characterData}
 								skillsByAttribute={skillsByAttribute}
-								knowledge={knowledge}
-								trades={trades}
 								languages={languages}
 							/>
 						</StyledLeftColumn>
@@ -1118,8 +1116,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 								<LeftColumn
 									characterData={characterData}
 									skillsByAttribute={skillsByAttribute}
-									knowledge={knowledge}
-									trades={trades}
 									languages={languages}
 								/>
 								<Features onFeatureClick={openFeaturePopup} />

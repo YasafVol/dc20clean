@@ -17,9 +17,10 @@ import type {
   UnresolvedChoice,
   ChoiceOption,
   EffectPreview,
-  TraitChoiceStorage,
-  BuildStep
+  TraitChoiceStorage
 } from '../types/effectSystem';
+
+import { BuildStep } from '../types/effectSystem';
 
 import { traitsData } from '../rulesdata/_new_schema/traits';
 import { ancestriesData } from '../rulesdata/_new_schema/ancestries';

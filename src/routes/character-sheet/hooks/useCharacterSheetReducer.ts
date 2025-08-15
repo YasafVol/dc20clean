@@ -19,6 +19,7 @@ export type SheetAction =
   | { type: 'UPDATE_CURRENT_MP'; mp: number }
   | { type: 'UPDATE_TEMP_HP'; tempHP: number }
   | { type: 'UPDATE_EXHAUSTION'; level: number }
+  | { type: 'UPDATE_DEATH_STEP'; steps: number; isDead?: boolean }
   | { type: 'UPDATE_ACTION_POINTS_USED'; ap: number }
   | { type: 'SET_MANUAL_DEFENSE'; pd?: number; ad?: number; pdr?: number }
   | { type: 'ADD_ATTACK'; attack: Attack }
@@ -140,6 +141,26 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
               current: {
                 ...state.character.characterState.resources.current,
                 exhaustionLevel: action.level
+              }
+            }
+          }
+        }
+      };
+
+    case 'UPDATE_DEATH_STEP':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            resources: {
+              ...state.character.characterState.resources,
+              current: {
+                ...state.character.characterState.resources.current,
+                deathSteps: action.steps,
+                isDead: action.isDead ?? false
               }
             }
           }
@@ -369,6 +390,10 @@ export function useCharacterSheetReducer() {
     dispatch({ type: 'UPDATE_EXHAUSTION', level });
   }, []);
 
+  const updateDeathStep = useCallback((steps: number, isDead?: boolean) => {
+    dispatch({ type: 'UPDATE_DEATH_STEP', steps, isDead });
+  }, []);
+
   const setManualDefense = useCallback((pd?: number, ad?: number, pdr?: number) => {
     dispatch({ type: 'SET_MANUAL_DEFENSE', pd, ad, pdr });
   }, []);
@@ -427,6 +452,7 @@ export function useCharacterSheetReducer() {
     updateTempHP,
     updateActionPoints,
     updateExhaustion,
+    updateDeathStep,
     setManualDefense,
     addAttack,
     removeAttack,

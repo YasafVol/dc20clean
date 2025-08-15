@@ -147,7 +147,7 @@ export const initializeCharacterState = (
 		},
 		currency: {
 			original: originalCurrency,
-			current: existingState?.currency.current || {
+			current: existingState?.currency?.current || { //FIXME this is wrong path!!!
 				goldPieces: 0,
 				silverPieces: 0,
 				copperPieces: 0,
@@ -157,7 +157,7 @@ export const initializeCharacterState = (
 		},
 		attacks: {
 			original: originalAttacks,
-			current: existingState?.attacks.current || [...originalAttacks]
+			current: existingState?.attacks?.current || [...originalAttacks] //FIXME this is wrong path!!!
 		},
 		spells: {
 			original: originalSpells,

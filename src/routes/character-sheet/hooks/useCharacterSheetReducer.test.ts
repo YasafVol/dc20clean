@@ -44,8 +44,13 @@ describe('useCharacterSheetReducer', () => {
             currentHP: 10,
             currentSP: 5,
             currentMP: 0,
+            currentGritPoints: 0,
+            currentRestPoints: 0,
             tempHP: 0,
-            exhaustionLevel: 0
+            actionPointsUsed: 0,
+            exhaustionLevel: 0,
+            deathSteps: 0,
+            isDead: false,
           },
           original: {
             maxHP: 10,

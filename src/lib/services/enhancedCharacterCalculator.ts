@@ -396,7 +396,7 @@ function validateAttributeLimits(buildData: EnhancedCharacterBuildData, effects:
       traitBonuses,
       max,
       exceeded: current > max,
-      canIncrease: current < max,
+      canIncrease: (baseValue + traitBonuses + 1) <= max, // Fixed: Check if base can be increased without total exceeding max
       canDecrease: baseValue > -2
     };
   }
@@ -539,7 +539,22 @@ export function calculateCharacterWithBreakdowns(
   const finalPDR = buildData.manualPDR ?? 0;
   
   // Calculate prime attribute first
+  console.log('🔥 Prime Debug: finalMight =', finalMight, ', finalAgility =', finalAgility, ', finalCharisma =', finalCharisma, ', finalIntelligence =', finalIntelligence);
   const maxValue = Math.max(finalMight, finalAgility, finalCharisma, finalIntelligence);
+  console.log('🔥 Prime Debug: maxValue =', maxValue);
+  
+  // Get all attributes that have the max value for tie-breaking
+  const attributesAtMax: string[] = [];
+  if (finalMight === maxValue) attributesAtMax.push('might');
+  if (finalAgility === maxValue) attributesAtMax.push('agility');
+  if (finalCharisma === maxValue) attributesAtMax.push('charisma');
+  if (finalIntelligence === maxValue) attributesAtMax.push('intelligence');
+  
+  console.log('🔥 Prime Debug: attributesAtMax =', attributesAtMax);
+  
+  // For tie-breaking, use the priority order: might > agility > charisma > intelligence
+  const primeAttribute = attributesAtMax[0] || 'might';
+  console.log('🔥 Prime Debug: selected primeAttribute =', primeAttribute);
   
   // Calculate other derived stats first
   const finalSaveDC = 8 + combatMastery + maxValue;
@@ -573,11 +588,6 @@ export function calculateCharacterWithBreakdowns(
   // Martial check is Attack/Spell Check + Action Points bonus (calculated at runtime)
   // For now, just use the base attack/spell check value
   breakdowns.martial_check = createStatBreakdown('martialCheck', attackSpellCheckBase, resolvedEffects);
-  
-  // Other stats
-  const primeAttribute = ['might', 'agility', 'charisma', 'intelligence'].find(attr => {
-    return breakdowns[`attribute_${attr}`].total === maxValue;
-  }) || 'might';
   
   // 4.5. Compute background points (ported from useBackgroundPoints)
   const skills = JSON.parse(buildData.skillsJson || '{}') as Record<string, number>;

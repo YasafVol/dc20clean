@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import CharacterSheetDesktop from './CharacterSheetDesktop';
+import CharacterSheetClean from './CharacterSheetClean';
 import CharacterSheetMobile from './CharacterSheetMobile';
 import { CharacterSheetProvider } from './hooks/CharacterSheetProvider';
 
@@ -37,12 +37,12 @@ const CharacterSheetRouter: React.FC<CharacterSheetRouterProps> = ({ characterId
 	console.log(`Rendering: ${isMobile ? 'Mobile' : 'Desktop'} component`);
 
 	// Route to appropriate component based on screen size
-	// Both components use the EXACT same useCharacterSheet hook - zero duplication!
+	// Both components now need the Provider since child components use hooks
 	return (
 		<CharacterSheetProvider characterId={characterId}>
 			{isMobile
 				? <CharacterSheetMobile characterId={characterId} />
-				: <CharacterSheetDesktop characterId={characterId} onBack={onBack} />}
+				: <CharacterSheetClean characterId={characterId} onBack={onBack || (() => {})} />}
 		</CharacterSheetProvider>
 	);
 };

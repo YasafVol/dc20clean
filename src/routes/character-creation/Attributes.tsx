@@ -33,24 +33,37 @@ const AttributeTotal = styled.div<{ $exceeded: boolean }>`
 `;
 
 const AttributeBreakdown = styled.div`
-	background-color: #f8fafc;
-	border: 1px solid #e2e8f0;
+	background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
+	border: 2px solid #8b5cf6;
 	border-radius: 6px;
 	padding: 0.75rem;
 	margin-top: 0.75rem;
 	font-size: 0.875rem;
+	color: #e5e7eb;
 `;
 
 const BreakdownLine = styled.div`
 	display: flex;
-	justify-content: space-between;
+	align-items: center;
+	gap: 0.5rem;
 	margin-bottom: 0.25rem;
 	
 	&:last-child {
 		margin-bottom: 0;
 		padding-top: 0.25rem;
-		border-top: 1px solid #d1d5db;
+		border-top: 1px solid #8b5cf6;
 		font-weight: 600;
+		color: #fbbf24;
+	}
+	
+	span:first-child {
+		flex-shrink: 0;
+		min-width: 120px;
+	}
+	
+	span:last-child {
+		font-weight: bold;
+		color: #fbbf24;
 	}
 `;
 
@@ -74,9 +87,9 @@ const ForcedAdjustmentIndicator = styled.div`
 	padding: 0.5rem;
 	border-radius: 4px;
 	font-size: 0.75rem;
-	background-color: #fef3c7;
-	border: 1px solid #fbbf24;
-	color: #92400e;
+	background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
+	border: 2px solid #fbbf24;
+	color: #fbbf24;
 	
 	&:before {
 		content: '⚠️ ';
@@ -89,35 +102,41 @@ const EffectiveValueDisplay = styled.div`
 	align-items: center;
 	gap: 0.5rem;
 	margin-top: 0.5rem;
+	padding: 0.5rem;
+	background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
+	border: 2px solid #8b5cf6;
+	border-radius: 6px;
 	font-size: 0.875rem;
+	color: #e5e7eb;
 `;
 
 const BaseValue = styled.span`
-	color: #6b7280;
+	color: #9ca3af;
 `;
 
 const EffectiveValue = styled.span<{ $different: boolean }>`
 	font-weight: ${props => props.$different ? 'bold' : 'normal'};
-	color: ${props => props.$different ? '#059669' : '#374151'};
+	color: ${props => props.$different ? '#10b981' : '#e5e7eb'};
 `;
 
 const PointBreakdownSummary = styled.div`
-	background-color: #f0f9ff;
-	border: 1px solid #0ea5e9;
+	background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
+	border: 2px solid #0ea5e9;
 	border-radius: 6px;
 	padding: 0.75rem;
 	margin-bottom: 1rem;
 	font-size: 0.875rem;
+	color: #e5e7eb;
 `;
 
 const ForcedAdjustmentsWarning = styled.div`
-	background-color: #fffbeb;
-	border: 1px solid #f59e0b;
+	background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
+	border: 2px solid #f59e0b;
 	border-radius: 6px;
 	padding: 0.75rem;
 	margin-bottom: 1rem;
 	font-size: 0.875rem;
-	color: #92400e;
+	color: #fbbf24;
 	
 	&:before {
 		content: '⚠️ ';
@@ -131,7 +150,6 @@ function Attributes() {
 	const { state, dispatch, attributePointsRemaining, attributePointsSpent, totalAttributePoints } = useCharacter();
 	const { 
 		getAttributeLimit, 
-		canIncreaseAttribute, 
 		canDecreaseAttribute,
 		validateAttributeChange,
 		getStatBreakdown
@@ -239,8 +257,10 @@ function Attributes() {
 					const forcedAdjustment = calculation.forcedAdjustments.find(adj => adj.attribute === attribute.id);
 					const hasTraitEffect = effectiveValue !== currentValue;
 					
-					// Enhanced validation
-					const canIncrease = attributePointsRemaining > 0 && canIncreaseAttribute(attribute.id);
+					// Enhanced validation with real-time state
+					// Use live validation instead of cached result to avoid timing issues
+					const realTimeValidation = validateAttributeChange(attribute.id, currentValue + 1);
+					const canIncrease = attributePointsRemaining > 0 && realTimeValidation.isValid;
 					const canDecrease = canDecreaseAttribute(attribute.id);
 					
 					return (
@@ -248,7 +268,7 @@ function Attributes() {
 							<AttributeHeader>
 								<StyledCardTitle>{attribute.name}</StyledCardTitle>
 								<AttributeTotal $exceeded={limit.exceeded}>
-									{limit.current}/{limit.max}
+									Final: {limit.current} (max {limit.max})
 								</AttributeTotal>
 							</AttributeHeader>
 							
@@ -268,7 +288,7 @@ function Attributes() {
 									disabled={!canIncrease}
 									title={!canIncrease ? (
 										attributePointsRemaining <= 0 ? "No points remaining" : 
-										"Would exceed maximum with trait bonuses"
+										realTimeValidation.message || "Cannot increase"
 									) : ""}
 								>
 									+

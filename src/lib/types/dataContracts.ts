@@ -21,6 +21,9 @@ export interface CharacterState {
       tempHP: number;
       actionPointsUsed: number;
       exhaustionLevel: number;
+      // Death tracking
+      deathSteps: number; // Current death step (0 = alive, 1+ = steps toward death)
+      isDead: boolean; // True when character has reached final death step
     };
   };
   ui: {

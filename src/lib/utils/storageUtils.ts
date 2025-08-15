@@ -5,7 +5,7 @@
  * for character data. All other parts of the application should use typed objects.
  */
 
-import { SavedCharacter, CharacterState, LegacyCharacter } from '../types/dataContracts';
+import { SavedCharacter, CharacterState } from '../types/dataContracts';
 
 const CURRENT_SCHEMA_VERSION = 2;
 
@@ -56,7 +56,7 @@ export const deserializeCharacterFromStorage = (jsonString: string): SavedCharac
 };
 
 /**
- * Create default character state for new characters
+ * Create default character state for new characters (template with 0 values)
  */
 export const getDefaultCharacterState = (): CharacterState => ({
   resources: {
@@ -69,6 +69,9 @@ export const getDefaultCharacterState = (): CharacterState => ({
       tempHP: 0,
       actionPointsUsed: 0,
       exhaustionLevel: 0,
+      // Death tracking defaults
+      deathSteps: 0,
+      isDead: false,
     },
   },
   ui: { manualDefenseOverrides: {} },
@@ -77,6 +80,38 @@ export const getDefaultCharacterState = (): CharacterState => ({
     currency: { gold: 0, silver: 0, copper: 0 } 
   },
   notes: { playerNotes: '' },
+});
+
+/**
+ * Create properly initialized character state with resources set to max values
+ */
+export const getInitializedCharacterState = (character: any): CharacterState => ({
+  resources: {
+    current: {
+      // Initialize current resources to their maximum values for new characters
+      currentHP: character.finalHPMax || 0,
+      currentSP: character.finalSPMax || 0,
+      currentMP: character.finalMPMax || 0,
+      currentGritPoints: character.finalGritPoints || 0,
+      currentRestPoints: character.finalRestPoints || 0,
+      tempHP: 0,
+      actionPointsUsed: 0,
+      exhaustionLevel: 0,
+      // Death tracking defaults
+      deathSteps: 0,
+      isDead: false,
+    },
+  },
+  ui: { 
+    manualDefenseOverrides: {} 
+  },
+  inventory: { 
+    items: [], 
+    currency: { gold: 0, silver: 0, copper: 0 } 
+  },
+  notes: { 
+    playerNotes: '' 
+  },
 });
 
 /**

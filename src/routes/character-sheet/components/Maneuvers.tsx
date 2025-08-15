@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import type { ManeuverData, CharacterSheetData } from '../../../types';
+import type { ManeuverData } from '../../../types';
 import type { Maneuver } from '../../../lib/rulesdata/maneuvers';
 import { maneuvers as allManeuvers } from '../../../lib/rulesdata/maneuvers';
 import { useCharacterManeuvers, useCharacterSheet } from '../hooks/CharacterSheetProvider';
@@ -18,7 +18,6 @@ import {
 	StyledSpellSelect,
 	StyledSchoolFilter,
 	StyledSpellCell,
-	StyledInfoIcon
 } from '../styles/Spells';
 
 export interface ManeuversProps {

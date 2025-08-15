@@ -5,7 +5,7 @@ import { assignSpellsToCharacter } from './spellAssignment';
 import { allSpells } from '../rulesdata/spells-data/spells';
 import { allManeuvers } from '../rulesdata/maneuvers';
 import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from './enhancedCharacterCalculator';
-import { getDefaultCharacterState } from '../utils/storageUtils';
+import { getInitializedCharacterState } from '../utils/storageUtils';
 import { getAllSavedCharacters, saveAllCharacters } from '../utils/storageUtils';
 import type { SavedCharacter } from '../types/dataContracts';
 
@@ -54,24 +54,24 @@ export const completeCharacter = async (
 			finalPlayerName: characterState.finalPlayerName,
 			level: characterState.level || 1,
 			classId: characterState.classId,
-			className: calculationResult.stats.className || 'Unknown',
+			className: 'Unknown', // Will be updated from calculation result
 			ancestry1Id: characterState.ancestry1Id,
 			ancestry1Name: characterState.ancestry1Name || 'Human', // TODO: Get from ancestry data
 			ancestry2Id: characterState.ancestry2Id,
-			ancestry2Name: calculationResult.stats.ancestry2Name || null,
+			ancestry2Name: undefined, // Will be updated from calculation result
 			
 			// Map from calculation result to final* schema
 			finalMight: calculationResult.stats.finalMight,
 			finalAgility: calculationResult.stats.finalAgility,
 			finalCharisma: calculationResult.stats.finalCharisma,
 			finalIntelligence: calculationResult.stats.finalIntelligence,
-			finalPrimeModifierValue: calculationResult.stats.finalPrimeModifierValue || 0,
-			finalPrimeModifierAttribute: calculationResult.stats.finalPrimeModifierAttribute || 'might',
-			finalCombatMastery: calculationResult.stats.finalCombatMastery || 1,
-			finalSaveMight: calculationResult.stats.finalSaveMight,
-			finalSaveAgility: calculationResult.stats.finalSaveAgility,
-			finalSaveCharisma: calculationResult.stats.finalSaveCharisma,
-			finalSaveIntelligence: calculationResult.stats.finalSaveIntelligence,
+			finalPrimeModifierValue: 0, // Will be updated from calculation result
+			finalPrimeModifierAttribute: 'might', // Will be updated from calculation result
+			finalCombatMastery: 1, // Will be updated from calculation result
+			finalSaveMight: calculationResult.stats.finalMight, // Use attribute values as saves for now
+			finalSaveAgility: calculationResult.stats.finalAgility,
+			finalSaveCharisma: calculationResult.stats.finalCharisma,
+			finalSaveIntelligence: calculationResult.stats.finalIntelligence,
 			finalHPMax: calculationResult.stats.finalHPMax,
 			finalSPMax: calculationResult.stats.finalSPMax,
 			finalMPMax: calculationResult.stats.finalMPMax,
@@ -98,8 +98,14 @@ export const completeCharacter = async (
 			// Store calculation breakdowns for transparency
 			breakdowns: calculationResult.breakdowns || {},
 			
-			// Initialize default character state
-			characterState: getDefaultCharacterState(),
+			// Initialize character state with current resources set to max values
+			characterState: getInitializedCharacterState({
+				finalHPMax: calculationResult.stats.finalHPMax,
+				finalSPMax: calculationResult.stats.finalSPMax,
+				finalMPMax: calculationResult.stats.finalMPMax,
+				finalGritPoints: calculationResult.stats.finalGritPoints,
+				finalRestPoints: calculationResult.stats.finalRestPoints,
+			}),
 			
 			// Metadata
 			createdAt: new Date().toISOString(),

@@ -25,6 +25,13 @@ export interface CharacterState {
       deathSteps: number; // Current death step (0 = alive, 1+ = steps toward death)
       isDead: boolean; // True when character has reached final death step
     };
+    original?: {
+      maxHP: number;
+      maxSP: number;
+      maxMP: number;
+      maxGritPoints: number;
+      maxRestPoints: number;
+    };
   };
   ui: {
     manualDefenseOverrides: {
@@ -44,6 +51,9 @@ export interface CharacterState {
   notes: {
     playerNotes: string;
   };
+  attacks?: any[];
+  spells?: any[];
+  maneuvers?: any[];
 }
 
 /**

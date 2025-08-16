@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { SavedCharacter } from '../../lib/utils/characterEdit';
+import type { SavedCharacter } from '../../lib/types/dataContracts';
 import { getAllSavedCharacters, saveAllCharacters } from '../../lib/utils/storageUtils';
 import {
 	StyledContainer,
@@ -27,21 +27,10 @@ import {
 	StyledModalButton
 } from './styles/LoadCharacter.styles';
 
-interface LoadCharacterProps {
-	onBack: () => void;
-	onLoadCharacter?: (character: SavedCharacter) => void;
-	onSelectCharacter?: (characterId: string) => void;
-	onEditCharacter?: (character: SavedCharacter) => void;
-	onLevelUp?: (character: SavedCharacter) => void;
-}
+import { useNavigate } from 'react-router-dom';
 
-function LoadCharacter({
-	onBack,
-	onLoadCharacter,
-	onSelectCharacter,
-	onEditCharacter,
-	onLevelUp
-}: LoadCharacterProps) {
+function LoadCharacter() {
+	const navigate = useNavigate();
 	const [savedCharacters, setSavedCharacters] = useState<SavedCharacter[]>([]);
 	const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 	const [characterToDelete, setCharacterToDelete] = useState<SavedCharacter | null>(null);
@@ -52,29 +41,16 @@ function LoadCharacter({
 	}, []);
 
 	const handleCharacterClick = (character: SavedCharacter) => {
-		if (onEditCharacter) {
-			onEditCharacter(character);
-		} else if (onLoadCharacter) {
-			onLoadCharacter(character);
-		} else {
-			console.log('Loading character:', character);
-			// TODO: Implement character loading logic
-		}
+		// Edit character
+		navigate(`/character/${character.id}/edit`, { state: { editCharacter: character } });
 	};
 
 	const handleViewCharacterSheet = (character: SavedCharacter, event: React.MouseEvent) => {
 		event.stopPropagation();
-		if (onSelectCharacter) {
-			onSelectCharacter(character.id);
-		}
+		navigate(`/character/${character.id}`);
 	};
 
-	const handleLevelUp = (character: SavedCharacter, event: React.MouseEvent) => {
-		event.stopPropagation();
-		if (onLevelUp) {
-			onLevelUp(character);
-		}
-	};
+	// Level up handler placeholder
 
 	const handleDeleteClick = (character: SavedCharacter, event: React.MouseEvent) => {
 		event.stopPropagation();
@@ -131,7 +107,7 @@ function LoadCharacter({
 
 	return (
 		<StyledContainer>
-			<StyledBackButton onClick={onBack}>← Back to Menu</StyledBackButton>
+			<StyledBackButton onClick={() => navigate('/menu')}>← Back to Menu</StyledBackButton>
 
 			<StyledTitle>Load Character</StyledTitle>
 
@@ -192,7 +168,7 @@ function LoadCharacter({
 								</StyledActionButton>
 								<StyledActionButton
 									variant="secondary"
-									onClick={(e) => handleLevelUp(character, e)}
+									onClick={() => navigate(`/character/${character.id}/levelup`)}
 								>
 									Level Up
 								</StyledActionButton>

@@ -102,11 +102,11 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
           resources: {
             ...character.characterState.resources,
             original: {
-              maxHP: calculationResult.finalHPMax || 0,
-              maxSP: calculationResult.finalSPMax || 0,
-              maxMP: calculationResult.finalMPMax || 0,
-              maxGritPoints: calculationResult.finalGritPoints || 0,
-              maxRestPoints: calculationResult.finalRestPoints || 0,
+              maxHP: calculationResult.stats.finalHPMax || 0,
+              maxSP: calculationResult.stats.finalSPMax || 0,
+              maxMP: calculationResult.stats.finalMPMax || 0,
+              maxGritPoints: calculationResult.stats.finalGritPoints || 0,
+              maxRestPoints: calculationResult.stats.finalRestPoints || 0,
             }
           }
         }
@@ -150,10 +150,19 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
       
       if (character) {
         // Ensure the character has a proper characterState structure
+        // --- PATCH: Normalize attacks to always be an array ---
+        let attacksRaw = character.characterState?.attacks;
+        let normalizedAttacks: any[] = [];
+        if (Array.isArray(attacksRaw)) {
+          normalizedAttacks = attacksRaw;
+        } else if (attacksRaw && typeof attacksRaw === 'object') {
+          normalizedAttacks = Object.values(attacksRaw);
+        } // else leave as []
         const normalizedCharacter = {
           ...character,
-          characterState: character.characterState || {
-            resources: {
+          characterState: {
+            ...(character.characterState || {}),
+            resources: character.characterState?.resources || {
               current: {
                 currentHP: character.finalHPMax || 0,
                 currentSP: character.finalSPMax || 0, 
@@ -172,13 +181,10 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
                 maxRestPoints: character.finalRestPoints || 0,
               }
             },
-            ui: { manualDefenseOverrides: {} },
-            inventory: { 
-              items: [], 
-              currency: { goldPieces: 0, silverPieces: 0, copperPieces: 0 } 
-            },
-            notes: { playerNotes: '' },
-            attacks: [],
+            ui: character.characterState?.ui || { manualDefenseOverrides: {} },
+            inventory: character.characterState?.inventory || { items: [], currency: { goldPieces: 0, silverPieces: 0, copperPieces: 0 } },
+            notes: character.characterState?.notes || { playerNotes: '' },
+            attacks: normalizedAttacks,
             spells: character.spells || [],
             maneuvers: character.maneuvers || [],
           }

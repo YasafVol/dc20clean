@@ -175,7 +175,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
             ui: { manualDefenseOverrides: {} },
             inventory: { 
               items: [], 
-              currency: { gold: 0, silver: 0, copper: 0 } 
+              currency: { goldPieces: 0, silverPieces: 0, copperPieces: 0 } 
             },
             notes: { playerNotes: '' },
             attacks: [],
@@ -316,7 +316,7 @@ export function useCharacterInventory() {
   const { state } = useCharacterSheet();
   
   return useMemo(() => {
-    return state.character?.characterState?.inventory || { items: [], currency: { gold: 0, silver: 0, copper: 0 } };
+    return state.character?.characterState?.inventory || { items: [], currency: { goldPieces: 0, silverPieces: 0, copperPieces: 0 } };
   }, [state.character?.characterState?.inventory]);
 }
 
@@ -560,7 +560,7 @@ export function useCharacterFeatures() {
 export function useCharacterCurrency() {
   const { state } = useCharacterSheet();
   return useMemo(() => {
-    return state.character?.characterState?.inventory?.currency || { gold: 0, silver: 0, copper: 0 };
+    return state.character?.characterState?.inventory?.currency || { goldPieces: 0, silverPieces: 0, copperPieces: 0 };
   }, [state.character?.characterState?.inventory?.currency]);
 }
 

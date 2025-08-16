@@ -31,7 +31,7 @@ export type SheetAction =
   | { type: 'ADD_MANEUVER'; maneuver: any }
   | { type: 'REMOVE_MANEUVER'; maneuverId: string }
   | { type: 'UPDATE_INVENTORY'; items: any[] }
-  | { type: 'UPDATE_CURRENCY'; gold?: number; silver?: number; copper?: number }
+  | { type: 'UPDATE_CURRENCY'; goldPieces?: number; silverPieces?: number; copperPieces?: number }
   | { type: 'UPDATE_NOTES'; notes: string }
   | { type: 'UPDATE_CURRENT_GRIT_POINTS'; grit: number }
   | { type: 'UPDATE_CURRENT_REST_POINTS'; rest: number };
@@ -317,9 +317,9 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
               ...state.character.characterState.inventory,
               currency: {
                 ...state.character.characterState.inventory.currency,
-                ...(action.gold !== undefined && { gold: action.gold }),
-                ...(action.silver !== undefined && { silver: action.silver }),
-                ...(action.copper !== undefined && { copper: action.copper })
+                ...(action.goldPieces !== undefined && { goldPieces: action.goldPieces }),
+                ...(action.silverPieces !== undefined && { silverPieces: action.silverPieces }),
+                ...(action.copperPieces !== undefined && { copperPieces: action.copperPieces })
               }
             }
           }
@@ -473,8 +473,8 @@ export function useCharacterSheetReducer() {
     dispatch({ type: 'UPDATE_INVENTORY', items });
   }, []);
 
-  const updateCurrency = useCallback((gold?: number, silver?: number, copper?: number) => {
-    dispatch({ type: 'UPDATE_CURRENCY', gold, silver, copper });
+  const updateCurrency = useCallback((goldPieces?: number, silverPieces?: number, copperPieces?: number) => {
+    dispatch({ type: 'UPDATE_CURRENCY', goldPieces, silverPieces, copperPieces });
   }, []);
 
   const updateNotes = useCallback((notes: string) => {

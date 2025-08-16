@@ -7,6 +7,14 @@ export const StyledContainer = styled.div`
 	background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
 	margin-top: 2rem;
 	box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+	max-width: 1200px;
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	@media (max-width: 900px) {
+		max-width: 98vw;
+		padding: 1rem;
+	}
 `;
 
 export const StyledTitle = styled.h2`

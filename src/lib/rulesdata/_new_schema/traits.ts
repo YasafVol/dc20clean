@@ -1664,7 +1664,6 @@ export const traitsData: Trait[] = [
 			{ type: 'MODIFY_STAT', target: 'skillPoints', value: 10 },
 			{ type: 'MODIFY_STAT', target: 'tradePoints', value: 10 },
 			{ type: 'MODIFY_STAT', target: 'languagePoints', value: 10 },
-			{ type: 'MODIFY_STAT', target: 'ancestryPoints', value: 10 },
 			{
 				type: 'GRANT_ABILITY',
 				target: 'Test',

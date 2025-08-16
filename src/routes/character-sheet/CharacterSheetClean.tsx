@@ -66,7 +66,7 @@ import {
 	getLegacyChoiceId,
 	getDisplayLabel
 } from '../../lib/rulesdata/loaders/class-features.loader';
-import { ancestriesData } from '../../lib/rulesdata/ancestries';
+import { ancestriesData } from '../../lib/rulesdata/_new_schema/ancestries';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
 
 // Import styled components

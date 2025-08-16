@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
-import { ancestriesData } from '../../lib/rulesdata/ancestries';
+import { ancestriesData } from '../../lib/rulesdata/_new_schema/ancestries';
 import type { IAncestry } from '../../lib/rulesdata/types';
 import {
 	StyledContainer,

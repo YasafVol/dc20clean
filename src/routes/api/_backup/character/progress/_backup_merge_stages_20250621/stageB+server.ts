@@ -2,8 +2,8 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { PrismaClient } from '@prisma/client';
 import type { ITrait } from '$lib/rulesdata/types'; // Import ITrait type
-import { ancestriesData as ancestries } from '$lib/rulesdata/ancestries';
-import { traitsData as traits } from '$lib/rulesdata/traits';
+import { ancestriesData as ancestries } from '$lib/rulesdata/_new_schema/ancestries';
+import { traitsData as traits } from '$lib/rulesdata/_new_schema/traits';
 
 const prisma = new PrismaClient();
 

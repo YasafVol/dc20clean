@@ -31,6 +31,7 @@ describe('Rules Data Validation', () => {
             expect(ancestry).toHaveProperty('id');
             expect(ancestry).toHaveProperty('name');
             expect(ancestry).toHaveProperty('expandedTraitIds');
+            expect(ancestry).toHaveProperty('rulesSource');
         });
     });
 

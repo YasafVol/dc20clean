@@ -66,6 +66,7 @@ flowchart LR
 1. **Data**  
    1.1 Append the ancestry object to `_new_schema/ancestries.ts`  
    ‑ `id`, `name`, `description`, `defaultTraitIds`, `expandedTraitIds`.
+   ‑ `rulesSource` (string, e.g., `DC20Beta0.95`).
 2. **Traits**  
    2.1 Create each new trait in `_new_schema/traits.ts`  
    ‑ Use unique `id = '<ancestryId>_<snake_case_trait>'`.  

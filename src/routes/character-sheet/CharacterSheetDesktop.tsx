@@ -48,7 +48,7 @@ import {
 
 export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () => void }> = ({ onBack }) => {
 	// Use the Context hooks
-	const { state, updateHP, updateSP, updateMP, updateTempHP, updateActionPoints, updateCurrency, setManualDefense } = useCharacterSheet();
+	const { state, updateHP, updateSP, updateMP, updateTempHP, updateCurrency } = useCharacterSheet();
 	const resources = useCharacterResources();
 	const features = useCharacterFeatures();
 	const currency = useCharacterCurrency();

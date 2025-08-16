@@ -324,6 +324,14 @@ export const ancestriesData: Ancestry[] = [
       prompt: 'Choose a type of Beast you are modeled after:',
       options: []
     }
+  },
+  // Test Ancestry
+  {
+    id: 'test',
+    name: 'Test',
+    description: 'An ancestry used for testing game mechanics.',
+    defaultTraitIds: ['test_test_hp'],
+    expandedTraitIds: []
   }
 ];
 

@@ -12,12 +12,16 @@ import InventoryPopup from './components/InventoryPopup';
 // Import existing styled components that actually exist
 import { StyledContainer, StyledBackButton } from './styles/Layout';
 
+// Import skills data to map skills to attributes
+import { skillsData } from '../../lib/rulesdata/skills';
+
 // Import desktop-specific styled components
 import {
 	StyledDesktopWrapper,
 	StyledDesktopHeader,
 	StyledCharacterName,
 	StyledCharacterSubtitle,
+	StyledDeathSkull,
 	StyledAttributesGrid,
 	StyledAttributeCard,
 	StyledAttributeLabel,
@@ -44,7 +48,7 @@ import {
 
 export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () => void }> = ({ onBack }) => {
 	// Use the Context hooks
-	const { state, updateHP, updateSP, updateMP, updateTempHP, updateActionPoints, updateCurrency, setManualDefense } = useCharacterSheet();
+	const { state, updateHP, updateSP, updateMP, updateTempHP, updateCurrency } = useCharacterSheet();
 	const resources = useCharacterResources();
 	const features = useCharacterFeatures();
 	const currency = useCharacterCurrency();
@@ -54,6 +58,16 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 	const [selectedSpell, setSelectedSpell] = useState<any>(null);
 	const [selectedAttack, setSelectedAttack] = useState<any>(null);
 	const [selectedInventoryItem, setSelectedInventoryItem] = useState<any>(null);
+	
+	// Helper function to get skills for an attribute
+	const getSkillsForAttribute = (attribute: string) => {
+		return skillsData
+			.filter(skill => skill.attributeAssociation === attribute)
+			.map(skill => ({
+				...skill,
+				value: characterData?.skillsData?.[skill.id] || 0
+			}));
+	};
 	
 	// Helper functions
 	const adjustResource = (resource: string, amount: number) => {
@@ -161,10 +175,24 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 			
 			<StyledDesktopWrapper>
 				{/* Character Header */}
-				<StyledDesktopHeader>
-					<StyledCharacterName>{characterData.finalName || 'Unnamed Character'}</StyledCharacterName>
+				<StyledDesktopHeader isDead={resources.current.isDead}>
+					<StyledCharacterName isDead={resources.current.isDead}>
+						{resources.current.isDead && <StyledDeathSkull>💀</StyledDeathSkull>}
+						{characterData.finalName || 'Unnamed Character'}
+						{resources.current.isDead && <StyledDeathSkull>💀</StyledDeathSkull>}
+					</StyledCharacterName>
 					<StyledCharacterSubtitle>
-						Level {characterData.finalLevel || 1} {characterData.className}
+						{resources.current.isDead && (
+							<div style={{ 
+								color: '#8B0000', 
+								fontWeight: 'bold', 
+								fontSize: '1.1rem',
+								marginBottom: '0.5rem'
+							}}>
+								💀 DEAD 💀
+							</div>
+						)}
+						Level {characterData.level || 1} {characterData.className}
 						{characterData.ancestry1Name && (
 							<span>
 								{' • '}
@@ -180,18 +208,42 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 					<StyledAttributeCard>
 						<StyledAttributeLabel>Might</StyledAttributeLabel>
 						<StyledAttributeValue>{characterData.finalMight}</StyledAttributeValue>
+						{/* Skills for Might */}
+						{getSkillsForAttribute('might').map(skill => (
+							<div key={skill.id} style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.25rem' }}>
+								{skill.name}: {skill.value}
+							</div>
+						))}
 					</StyledAttributeCard>
 					<StyledAttributeCard>
 						<StyledAttributeLabel>Agility</StyledAttributeLabel>
 						<StyledAttributeValue>{characterData.finalAgility}</StyledAttributeValue>
+						{/* Skills for Agility */}
+						{getSkillsForAttribute('agility').map(skill => (
+							<div key={skill.id} style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.25rem' }}>
+								{skill.name}: {skill.value}
+							</div>
+						))}
 					</StyledAttributeCard>
 					<StyledAttributeCard>
 						<StyledAttributeLabel>Charisma</StyledAttributeLabel>
 						<StyledAttributeValue>{characterData.finalCharisma}</StyledAttributeValue>
+						{/* Skills for Charisma */}
+						{getSkillsForAttribute('charisma').map(skill => (
+							<div key={skill.id} style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.25rem' }}>
+								{skill.name}: {skill.value}
+							</div>
+						))}
 					</StyledAttributeCard>
 					<StyledAttributeCard>
 						<StyledAttributeLabel>Intelligence</StyledAttributeLabel>
 						<StyledAttributeValue>{characterData.finalIntelligence}</StyledAttributeValue>
+						{/* Skills for Intelligence */}
+						{getSkillsForAttribute('intelligence').map(skill => (
+							<div key={skill.id} style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.25rem' }}>
+								{skill.name}: {skill.value}
+							</div>
+						))}
 					</StyledAttributeCard>
 					<StyledAttributeCard>
 						<StyledAttributeLabel>Prime</StyledAttributeLabel>
@@ -284,7 +336,7 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 				<StyledSection>
 					<StyledSectionTitle>Features & Traits</StyledSectionTitle>
 					<StyledFeaturesGrid>
-						{features.map((feature) => (
+						{features.map((feature: any) => (
 							<StyledFeatureCard
 								key={feature.id}
 								onClick={() => openFeaturePopup(feature)}

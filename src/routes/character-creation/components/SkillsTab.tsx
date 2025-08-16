@@ -80,7 +80,6 @@ interface SkillsTabProps {
 
 const SkillsTab: React.FC<SkillsTabProps> = ({
 	currentSkills,
-	currentTrades,
 	pointsData,
 	conversions,
 	actions,

@@ -17,9 +17,10 @@ import type {
   UnresolvedChoice,
   ChoiceOption,
   EffectPreview,
-  TraitChoiceStorage,
-  BuildStep
+  TraitChoiceStorage
 } from '../types/effectSystem';
+
+import { BuildStep } from '../types/effectSystem';
 
 import { traitsData } from '../rulesdata/_new_schema/traits';
 import { ancestriesData } from '../rulesdata/_new_schema/ancestries';
@@ -80,24 +81,25 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
     finalName: contextData.finalName || '',
     finalPlayerName: contextData.finalPlayerName,
     level: contextData.level || 1,
-    
-    attribute_might: contextData.attribute_might || 0,
-    attribute_agility: contextData.attribute_agility || 0,
-    attribute_charisma: contextData.attribute_charisma || 0,
-    attribute_intelligence: contextData.attribute_intelligence || 0,
-    
+
+    // Use final* if present, else attribute_* (for character creation)
+    attribute_might: contextData.finalMight ?? contextData.attribute_might ?? 0,
+    attribute_agility: contextData.finalAgility ?? contextData.attribute_agility ?? 0,
+    attribute_charisma: contextData.finalCharisma ?? contextData.attribute_charisma ?? 0,
+    attribute_intelligence: contextData.finalIntelligence ?? contextData.attribute_intelligence ?? 0,
+
     combatMastery: contextData.combatMastery || 1,
-    
+
     classId: contextData.classId || '',
     ancestry1Id: contextData.ancestry1Id || undefined,
     ancestry2Id: contextData.ancestry2Id || undefined,
-    
+
     selectedTraitIds: Array.isArray(contextData.selectedTraitIds)
       ? contextData.selectedTraitIds
       : [],
     selectedTraitChoices: contextData.selectedTraitChoices ?? {},
     featureChoices: contextData.selectedFeatureChoices ?? {},
-    
+
     // FIX: Serialize live store objects into the JSON strings the engine expects
     skillsJson: JSON.stringify(contextData.skillsData ?? {}),
     tradesJson: JSON.stringify(contextData.tradesData ?? {}),
@@ -105,9 +107,9 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
     languagesJson: JSON.stringify(contextData.languagesData ?? { common: { fluency: 'fluent' } }),
     
     // Optional manual overrides supported by the engine
-    manualPD: contextData.manualPD,
-    manualAD: contextData.manualAD,
-    manualPDR: contextData.manualPDR,
+  manualPD: contextData.manualPD,
+  manualAD: contextData.manualAD,
+  manualPDR: contextData.manualPDR,
     
     lastModified: Date.now()
   };
@@ -304,7 +306,7 @@ function resolveEffectChoices(effects: AttributedEffect[], choices: TraitChoiceS
     }
     
     // Resolve the choice
-    let resolvedEffect = { ...effect };
+    const resolvedEffect = { ...effect };
     if (effect.target === 'any_attribute' && effect.type === 'MODIFY_ATTRIBUTE') {
       resolvedEffect.target = chosenValue;
       resolvedEffect.resolved = true;
@@ -396,7 +398,7 @@ function validateAttributeLimits(buildData: EnhancedCharacterBuildData, effects:
       traitBonuses,
       max,
       exceeded: current > max,
-      canIncrease: current < max,
+      canIncrease: (baseValue + traitBonuses + 1) <= max, // Fixed: Check if base can be increased without total exceeding max
       canDecrease: baseValue > -2
     };
   }
@@ -541,6 +543,16 @@ export function calculateCharacterWithBreakdowns(
   // Calculate prime attribute first
   const maxValue = Math.max(finalMight, finalAgility, finalCharisma, finalIntelligence);
   
+  // Get all attributes that have the max value for tie-breaking
+  const attributesAtMax: string[] = [];
+  if (finalMight === maxValue) attributesAtMax.push('might');
+  if (finalAgility === maxValue) attributesAtMax.push('agility');
+  if (finalCharisma === maxValue) attributesAtMax.push('charisma');
+  if (finalIntelligence === maxValue) attributesAtMax.push('intelligence');
+  
+  // For tie-breaking, use the priority order: might > agility > charisma > intelligence
+  const primeAttribute = attributesAtMax[0] || 'might';
+  
   // Calculate other derived stats first
   const finalSaveDC = 8 + combatMastery + maxValue;
   const finalSaveMight = finalMight + combatMastery;
@@ -552,7 +564,7 @@ export function calculateCharacterWithBreakdowns(
   const finalJumpDistance = finalAgility + resolvedEffects.filter(effect => effect.type === 'MODIFY_STAT' && effect.target === 'jumpDistance').reduce((sum, effect) => sum + (effect.value as number), 0);
   const finalRestPoints = finalHPMax; // Rest Points = HP
   const finalGritPoints = Math.max(0, 2 + finalCharisma); // 2 + Charisma (minimum 0)
-  const finalInitiativeBonus = finalAgility;
+  const finalInitiativeBonus = combatMastery + finalAgility; // Combat Mastery + Agility
   
   // Create breakdowns for derived stats
   breakdowns.hpMax = createStatBreakdown('hpMax', finalHPMax, resolvedEffects);
@@ -570,14 +582,26 @@ export function calculateCharacterWithBreakdowns(
   breakdowns.attack_spell_check = createStatBreakdown('attackSpellCheck', attackSpellCheckBase, resolvedEffects);
   breakdowns.save_dc = createStatBreakdown('saveDC', finalSaveDC, resolvedEffects);
   
-  // Martial check is Attack/Spell Check + Action Points bonus (calculated at runtime)
-  // For now, just use the base attack/spell check value
-  breakdowns.martial_check = createStatBreakdown('martialCheck', attackSpellCheckBase, resolvedEffects);
-  
-  // Other stats
-  const primeAttribute = ['might', 'agility', 'charisma', 'intelligence'].find(attr => {
-    return breakdowns[`attribute_${attr}`].total === maxValue;
-  }) || 'might';
+  // Initiative breakdown - custom breakdown to show Combat Mastery + Agility components
+  breakdowns.initiative = {
+    statName: 'Initiative',
+    base: 0, // No base, it's a pure calculation
+    effects: [
+      {
+        source: { name: 'Combat Mastery', id: 'combatMastery', type: 'base' },
+        value: combatMastery,
+        description: `Combat Mastery: ${combatMastery}`,
+        isActive: true
+      },
+      {
+        source: { name: 'Agility Modifier', id: 'agility', type: 'base' },
+        value: finalAgility,
+        description: `Agility Modifier: ${finalAgility}`,
+        isActive: true
+      }
+    ],
+    total: finalInitiativeBonus
+  };
   
   // 4.5. Compute background points (ported from useBackgroundPoints)
   const skills = JSON.parse(buildData.skillsJson || '{}') as Record<string, number>;
@@ -631,6 +655,36 @@ export function calculateCharacterWithBreakdowns(
     baseAncestryPoints,
     ancestryPointsUsed,
     ancestryPointsRemaining
+  };
+  
+  // Calculate martial check as max(Acrobatics, Athletics) using EXISTING skill calculations
+  // Instead of recalculating, we should access the pre-computed skill totals
+  // For now, calculate here but TODO: get from character sheet's getSkillsData()
+  const acrobaticsProficiency = skills['acrobatics'] || 0;
+  const athleticsProficiency = skills['athletics'] || 0;
+  const acrobaticsTotal = finalAgility + (acrobaticsProficiency * 2); // Agility + (Proficiency × 2)
+  const athleticsTotal = finalMight + (athleticsProficiency * 2); // Might + (Proficiency × 2)
+  const finalMartialCheck = Math.max(acrobaticsTotal, athleticsTotal);
+  
+  // Create martial check breakdown for tooltip
+  breakdowns.martial_check = {
+    statName: 'Martial Check',
+    base: Math.max(finalAgility, finalMight), // Base attribute (higher one)
+    effects: [
+      {
+        source: { name: 'Acrobatics Option', id: 'acrobatics', type: 'base' },
+        value: acrobaticsTotal,
+        description: `Agility (${finalAgility}) + Proficiency ×2 (${acrobaticsProficiency * 2}) = ${acrobaticsTotal}`,
+        isActive: true
+      },
+      {
+        source: { name: 'Athletics Option', id: 'athletics', type: 'base' },
+        value: athleticsTotal,
+        description: `Might (${finalMight}) + Proficiency ×2 (${athleticsProficiency * 2}) = ${athleticsTotal}`,
+        isActive: true
+      }
+    ],
+    total: finalMartialCheck
   };
   
   // 5. Validation with step-aware errors
@@ -740,6 +794,10 @@ export function calculateCharacterWithBreakdowns(
       finalPrimeModifierValue: maxValue,
       finalPrimeModifierAttribute: primeAttribute,
       finalCombatMastery: combatMastery,
+      
+      // Combat stats with breakdowns
+      finalAttackSpellCheck: attackSpellCheckBase,
+      finalMartialCheck: finalMartialCheck,
       
       // Class and ancestry info for UI
       className: getClassFeatures(buildData.classId)?.className || 'Unknown',

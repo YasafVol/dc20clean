@@ -21,6 +21,16 @@ export interface CharacterState {
       tempHP: number;
       actionPointsUsed: number;
       exhaustionLevel: number;
+      // Death tracking
+      deathSteps: number; // Current death step (0 = alive, 1+ = steps toward death)
+      isDead: boolean; // True when character has reached final death step
+    };
+    original?: {
+      maxHP: number;
+      maxSP: number;
+      maxMP: number;
+      maxGritPoints: number;
+      maxRestPoints: number;
     };
   };
   ui: {
@@ -41,6 +51,9 @@ export interface CharacterState {
   notes: {
     playerNotes: string;
   };
+  attacks?: any[];
+  spells?: any[];
+  maneuvers?: any[];
 }
 
 /**
@@ -89,6 +102,10 @@ export interface SavedCharacter {
   finalRestPoints: number;
   finalGritPoints: number;
   finalInitiativeBonus: number;
+  
+  // Combat stats with breakdowns
+  finalAttackSpellCheck: number;
+  finalMartialCheck: number; // max(Acrobatics, Athletics)
   
   // TYPED DATA: No more JSON strings
   selectedTraitIds: string[];

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useCharacterSheet, useCharacterResources, useCharacterFeatures, useCharacterCurrency, useCharacterAttacks, useCharacterSpells, useCharacterInventory } from './hooks/CharacterSheetProvider';
+import { useCharacterSheet, useCharacterKnowledge, useCharacterLanguages, useCharacterTrades, useCharacterResources, useCharacterFeatures, useCharacterCurrency, useCharacterAttacks, useCharacterSpells, useCharacterInventory } from './hooks/CharacterSheetProvider';
 
 // Import Modal Components  
 import FeaturePopup from './components/FeaturePopup';
@@ -279,6 +279,9 @@ export const CharacterSheetMobile: React.FC<CharacterSheetMobileProps> = ({ char
 	const attacks = useCharacterAttacks();
 	const spells = useCharacterSpells();
 	const inventory = useCharacterInventory();
+	const knowledge = useCharacterKnowledge();
+	const trades = useCharacterTrades();
+	const languages = useCharacterLanguages();
 	
 	// Local state
 	const [activeMobileSection, setActiveMobileSection] = useState<'character' | 'combat' | 'features' | 'info'>('character');
@@ -290,7 +293,7 @@ export const CharacterSheetMobile: React.FC<CharacterSheetMobileProps> = ({ char
 	// Helper functions
 	const adjustResource = (resource: string, amount: number) => {
 		if (!resources) return;
-		const current = resources.current;
+		const current = resources?.current;
 		
 		switch (resource) {
 			case 'currentHP':
@@ -431,15 +434,15 @@ export const CharacterSheetMobile: React.FC<CharacterSheetMobileProps> = ({ char
 						<MobileResourceLabel>Hit Points</MobileResourceLabel>
 						<MobileResourceValue>
 							{resources?.current.currentHP} / {resources?.original.maxHP}
-							{resources?.current.tempHP > 0 && ` (+${resources.current.tempHP} temp)`}
+							{resources?.current.tempHP > 0 && ` (+${resources?.current.tempHP} temp)`}
 						</MobileResourceValue>
 					</MobileResourceHeader>
 					<MobileResourceBar>
 						<MobileResourceFill
 							$percentage={resources ? getHPFillPercentage(
-								resources.current.currentHP,
-								resources.original.maxHP,
-								resources.current.tempHP
+								resources?.current.currentHP,
+								resources?.original.maxHP,
+								resources?.current.tempHP
 							) : 0}
 						/>
 					</MobileResourceBar>
@@ -458,13 +461,13 @@ export const CharacterSheetMobile: React.FC<CharacterSheetMobileProps> = ({ char
 				<MobileResourceBox>
 					<MobileResourceHeader>
 						<MobileResourceLabel>Temporary HP</MobileResourceLabel>
-						<MobileResourceValue>{currentValues.tempHP}</MobileResourceValue>
+						<MobileResourceValue>{resources?.current.tempHP}</MobileResourceValue>
 					</MobileResourceHeader>
 					<MobileResourceControls>
 						<MobileResourceButton onClick={() => adjustResource('tempHP', -1)}>-</MobileResourceButton>
 						<MobileResourceInput
 							type="number"
-							value={currentValues.tempHP}
+							value={resources?.current.tempHP}
 							onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleResourceInputChange('tempHP', e.target.value)}
 						/>
 						<MobileResourceButton onClick={() => adjustResource('tempHP', 1)}>+</MobileResourceButton>
@@ -477,19 +480,19 @@ export const CharacterSheetMobile: React.FC<CharacterSheetMobileProps> = ({ char
 						<MobileResourceHeader>
 							<MobileResourceLabel>Stamina Points</MobileResourceLabel>
 							<MobileResourceValue>
-								{currentValues.currentSP} / {characterData.finalSPMax}
+								{resources?.current.currentSP} / {characterData.finalSPMax}
 							</MobileResourceValue>
 						</MobileResourceHeader>
 						<MobileResourceBar>
 							<MobileResourceFill
-								$percentage={getFillPercentage(currentValues.currentSP, characterData.finalSPMax)}
+								$percentage={getFillPercentage(resources?.current.currentSP, characterData.finalSPMax)}
 							/>
 						</MobileResourceBar>
 						<MobileResourceControls>
 							<MobileResourceButton onClick={() => adjustResource('currentSP', -1)}>-</MobileResourceButton>
 							<MobileResourceInput
 								type="number"
-								value={currentValues.currentSP}
+								value={resources?.current.currentSP}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleResourceInputChange('currentSP', e.target.value)}
 							/>
 							<MobileResourceButton onClick={() => adjustResource('currentSP', 1)}>+</MobileResourceButton>
@@ -503,19 +506,19 @@ export const CharacterSheetMobile: React.FC<CharacterSheetMobileProps> = ({ char
 						<MobileResourceHeader>
 							<MobileResourceLabel>Mana Points</MobileResourceLabel>
 							<MobileResourceValue>
-								{currentValues.currentMP} / {characterData.finalMPMax}
+								{resources?.current.currentMP} / {characterData.finalMPMax}
 							</MobileResourceValue>
 						</MobileResourceHeader>
 						<MobileResourceBar>
 							<MobileResourceFill
-								$percentage={getFillPercentage(currentValues.currentMP, characterData.finalMPMax)}
+								$percentage={getFillPercentage(resources?.current.currentMP, characterData.finalMPMax)}
 							/>
 						</MobileResourceBar>
 						<MobileResourceControls>
 							<MobileResourceButton onClick={() => adjustResource('currentMP', -1)}>-</MobileResourceButton>
 							<MobileResourceInput
 								type="number"
-								value={currentValues.currentMP}
+								value={resources?.current.currentMP}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleResourceInputChange('currentMP', e.target.value)}
 							/>
 							<MobileResourceButton onClick={() => adjustResource('currentMP', 1)}>+</MobileResourceButton>
@@ -532,7 +535,7 @@ export const CharacterSheetMobile: React.FC<CharacterSheetMobileProps> = ({ char
 						<MobileStatLabel>Gold</MobileStatLabel>
 						<MobileResourceInput
 							type="number"
-							value={currentValues.goldPieces}
+							value={currency.gold}
 							onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCurrencyChange('goldPieces', parseInt(e.target.value) || 0)}
 						/>
 					</MobileStatBox>
@@ -540,7 +543,7 @@ export const CharacterSheetMobile: React.FC<CharacterSheetMobileProps> = ({ char
 						<MobileStatLabel>Silver</MobileStatLabel>
 						<MobileResourceInput
 							type="number"
-							value={currentValues.silverPieces}
+							value={currency.silver}
 							onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCurrencyChange('silverPieces', parseInt(e.target.value) || 0)}
 						/>
 					</MobileStatBox>
@@ -548,7 +551,7 @@ export const CharacterSheetMobile: React.FC<CharacterSheetMobileProps> = ({ char
 						<MobileStatLabel>Copper</MobileStatLabel>
 						<MobileResourceInput
 							type="number"
-							value={currentValues.copperPieces}
+							value={currency.copper}
 							onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCurrencyChange('copperPieces', parseInt(e.target.value) || 0)}
 						/>
 					</MobileStatBox>
@@ -587,14 +590,14 @@ export const CharacterSheetMobile: React.FC<CharacterSheetMobileProps> = ({ char
 						<MobileStatBox
 							key={point}
 							style={{
-								background: currentValues.actionPointsUsed >= point ? '#f5d020' : '#2a2a2a',
-								color: currentValues.actionPointsUsed >= point ? '#000' : '#fff',
+								background: resources?.current?.actionPointsUsed >= point ? '#f5d020' : '#2a2a2a',
+								color: resources?.current?.actionPointsUsed >= point ? '#000' : '#fff',
 								cursor: 'pointer'
 							}}
 							onClick={() =>
 								adjustResource(
 									'actionPointsUsed',
-									currentValues.actionPointsUsed >= point ? -1 : 1
+									resources?.current?.actionPointsUsed >= point ? -1 : 1
 								)
 							}
 						>
@@ -612,8 +615,8 @@ export const CharacterSheetMobile: React.FC<CharacterSheetMobileProps> = ({ char
 						<MobileStatBox
 							key={level}
 							style={{
-								background: currentValues.exhaustionLevel >= level ? '#ff4444' : '#2a2a2a',
-								color: currentValues.exhaustionLevel >= level ? '#fff' : '#ccc',
+								background: resources?.current?.exhaustionLevel >= level ? '#ff4444' : '#2a2a2a',
+								color: resources?.current?.exhaustionLevel >= level ? '#fff' : '#ccc',
 								cursor: 'pointer'
 							}}
 							onClick={() => handleExhaustionChange(level)}
@@ -632,8 +635,8 @@ export const CharacterSheetMobile: React.FC<CharacterSheetMobileProps> = ({ char
 						<MobileStatBox
 							key={step}
 							style={{
-								background: currentValues.currentHP === -step ? '#ff4444' : '#2a2a2a',
-								color: currentValues.currentHP === -step ? '#fff' : '#ccc',
+								background: resources?.current?.currentHP === -step ? '#ff4444' : '#2a2a2a',
+								color: resources?.current?.currentHP === -step ? '#fff' : '#ccc',
 								cursor: 'pointer'
 							}}
 							onClick={() => handleDeathStepChange(step)}
@@ -709,7 +712,7 @@ export const CharacterSheetMobile: React.FC<CharacterSheetMobileProps> = ({ char
 	const renderInfoSection = () => (
 		<MobileContent>
 			{/* Skills */}
-			<MobileSection>
+			{/* <MobileSection>
 				<MobileSectionTitle>Skills</MobileSectionTitle>
 				{Object.entries(skillsByAttribute).map(([attribute, skills]) => (
 					<div key={attribute}>
@@ -728,7 +731,7 @@ export const CharacterSheetMobile: React.FC<CharacterSheetMobileProps> = ({ char
 						</MobileItemGrid>
 					</div>
 				))}
-			</MobileSection>
+			</MobileSection> */}
 
 			{/* Trades */}
 			{trades.length > 0 && (

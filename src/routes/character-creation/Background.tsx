@@ -105,7 +105,6 @@ const Background: React.FC = () => {
 				return (
 					<SkillsTab
 						currentSkills={currentSkills}
-						currentTrades={currentTrades}
 						pointsData={background}
 						conversions={background.conversions}
 						actions={actions}

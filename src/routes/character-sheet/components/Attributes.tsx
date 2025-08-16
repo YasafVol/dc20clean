@@ -1,8 +1,10 @@
 import React from 'react';
-import type { SkillData, CharacterSheetData } from '../../../types';
+import type { SkillData } from '../../../types';
+import type { SavedCharacter } from '../../../lib/types/dataContracts';
 import type { EnhancedStatBreakdown } from '../../../lib/types/effectSystem';
 import Tooltip from './Tooltip';
 import { createEnhancedTooltip } from './EnhancedStatTooltips';
+import { useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
 	AttributeSection,
 	AttributeHeader,
@@ -21,7 +23,7 @@ import {
 import { StyledProficiencyDots, StyledDot } from '../styles/Skills';
 
 interface AttributesProps {
-	characterData: CharacterSheetData;
+	characterData: SavedCharacter;
 	skillsByAttribute: {
 		prime: SkillData[];
 		might: SkillData[];
@@ -33,6 +35,12 @@ interface AttributesProps {
 }
 
 const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribute, breakdowns }) => {
+	const { state } = useCharacterSheet();
+	
+	// Get prime modifier directly from character data
+	const primeAttribute = state.character?.finalPrimeModifierAttribute || 'might';
+	const primeValue = state.character?.finalPrimeModifierValue || 0;
+	
 	const renderSkills = (skills: SkillData[]) => {
 		return skills.map((skill) => (
 			<SkillRow key={skill.id}>
@@ -65,7 +73,7 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 			<PrimeSection>
 				<PrimeLabel>Prime</PrimeLabel>
 				<PrimeValue>
-					{characterData.finalPrimeModifierAttribute} +{characterData.finalPrimeModifierValue}
+					{primeAttribute} + {primeValue}
 				</PrimeValue>
 			</PrimeSection>
 

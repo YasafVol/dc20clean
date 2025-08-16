@@ -30,13 +30,18 @@ import {
 } from '../styles/Attacks';
 
 export interface AttacksProps {
-	characterData: CharacterSheetData;
 	onAttackClick: (attack: AttackData, weapon: Weapon | null) => void;
 }
 
-const Attacks: React.FC<AttacksProps> = ({ characterData, onAttackClick }) => {
-	const { addAttack, removeAttack, updateAttack } = useCharacterSheet();
+const Attacks: React.FC<AttacksProps> = ({ onAttackClick }) => {
+	const { addAttack, removeAttack, updateAttack, state } = useCharacterSheet();
 	const attacks = useCharacterAttacks();
+	
+	if (!state.character) {
+		return <div>Loading attacks...</div>;
+	}
+	
+	const characterData = state.character;
 	const addWeaponSlot = () => {
 		const newAttack: AttackData = {
 			id: `attack_${Date.now()}`,

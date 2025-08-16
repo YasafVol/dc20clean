@@ -1,6 +1,4 @@
 import React from 'react';
-import type { CharacterSheetData } from '../../../types';
-import type { EnhancedStatBreakdown } from '../../../lib/types/effectSystem';
 import {
 	StyledMovementContainer,
 	StyledMovementGrid,
@@ -9,15 +7,26 @@ import {
 	StyledMovementValue
 } from '../styles/Movement.styles';
 import Tooltip from './Tooltip';
-import { createSpeedTooltip, createJumpTooltip } from './StatTooltips';
 import { createEnhancedTooltip } from './EnhancedStatTooltips';
+import { useCharacterSheet, useCharacterCalculatedData } from '../hooks/CharacterSheetProvider';
 
 interface MovementProps {
-	characterData: CharacterSheetData;
-	breakdowns?: Record<string, EnhancedStatBreakdown>;
+	// No props needed - data comes from context
 }
 
-const Movement: React.FC<MovementProps> = ({ characterData, breakdowns }) => {
+const Movement: React.FC<MovementProps> = () => {
+	const { state } = useCharacterSheet();
+	const calculation = useCharacterCalculatedData();
+	
+	if (!state.character || !calculation) {
+		return <div>Loading movement...</div>;
+	}
+	
+	const breakdowns = calculation.breakdowns;
+	
+	// Use calculated stats for speed and jump distance
+	const speed = calculation.stats.finalMoveSpeed;
+	const jumpDistance = calculation.stats.finalJumpDistance;
 	return (
 		<StyledMovementContainer>
 			<StyledMovementGrid>
@@ -27,11 +36,11 @@ const Movement: React.FC<MovementProps> = ({ characterData, breakdowns }) => {
 						content={
 							breakdowns?.move_speed
 								? createEnhancedTooltip('Move Speed', breakdowns.move_speed)
-							: createSpeedTooltip(characterData)
+								: `Base Movement Speed: ${speed} ft`
 						}
 						position="top"
 					>
-						<StyledMovementValue>{characterData.finalMoveSpeed}</StyledMovementValue>
+						<StyledMovementValue>{speed}</StyledMovementValue>
 					</Tooltip>
 				</StyledMovementStat>
 				<StyledMovementStat>
@@ -40,11 +49,11 @@ const Movement: React.FC<MovementProps> = ({ characterData, breakdowns }) => {
 						content={
 							breakdowns?.jump_distance
 								? createEnhancedTooltip('Jump Distance', breakdowns.jump_distance)
-							: createJumpTooltip(characterData)
+								: `Jump Distance: ${jumpDistance} ft`
 						}
 						position="top"
 					>
-						<StyledMovementValue>{characterData.finalJumpDistance}</StyledMovementValue>
+						<StyledMovementValue>{jumpDistance}</StyledMovementValue>
 					</Tooltip>
 				</StyledMovementStat>
 			</StyledMovementGrid>

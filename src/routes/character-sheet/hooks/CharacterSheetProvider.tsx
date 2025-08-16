@@ -1,7 +1,14 @@
 import React, { createContext, useContext, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useCharacterSheetReducer, type SheetState, type SheetAction } from './useCharacterSheetReducer';
 import { getCharacterById, saveCharacterState } from '../../../lib/utils/storageUtils';
-import { calculateCharacterWithBreakdowns } from '../../../lib/services/enhancedCharacterCalculator';
+import { calculateCharacterWithBreakdowns, convertToEnhancedBuildData } from '../../../lib/services/enhancedCharacterCalculator';
+import { ancestriesData } from '../../../lib/rulesdata/ancestries';
+import { traitsData } from '../../../lib/rulesdata/traits';
+import { knowledgeData } from '../../../lib/rulesdata/knowledge';
+import { tradesData } from '../../../lib/rulesdata/trades';
+import { findClassByName, getLegacyChoiceId, getDisplayLabel } from '../../../lib/rulesdata/loaders/class-features.loader';
+import { getDetailedClassFeatureDescription } from '../../../lib/utils/classFeatureDescriptions';
+import { languagesData } from '../../../lib/rulesdata/languages';
 
 // Simple debounce utility
 function useDebounce<T extends (...args: any[]) => any>(
@@ -41,6 +48,7 @@ interface CharacterSheetContextType {
   updateTempHP: (tempHP: number) => void;
   updateActionPoints: (ap: number) => void;
   updateExhaustion: (level: number) => void;
+  updateDeathStep: (steps: number, isDead?: boolean) => void;
   setManualDefense: (pd?: number, ad?: number, pdr?: number) => void;
   addAttack: (attack: any) => void;
   removeAttack: (attackId: string) => void;
@@ -69,6 +77,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
     updateTempHP,
     updateActionPoints,
     updateExhaustion,
+    updateDeathStep,
     setManualDefense,
     addAttack,
     removeAttack,
@@ -94,11 +103,11 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
           resources: {
             ...character.characterState.resources,
             original: {
-              maxHP: calculationResult.finalHPMax || 0,
-              maxSP: calculationResult.finalSPMax || 0,
-              maxMP: calculationResult.finalMPMax || 0,
-              maxGritPoints: calculationResult.finalGritPoints || 0,
-              maxRestPoints: calculationResult.finalRestPoints || 0,
+              maxHP: calculationResult.stats.finalHPMax || 0,
+              maxSP: calculationResult.stats.finalSPMax || 0,
+              maxMP: calculationResult.stats.finalMPMax || 0,
+              maxGritPoints: calculationResult.stats.finalGritPoints || 0,
+              maxRestPoints: calculationResult.stats.finalRestPoints || 0,
             }
           }
         }
@@ -142,10 +151,19 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
       
       if (character) {
         // Ensure the character has a proper characterState structure
+        // --- PATCH: Normalize attacks to always be an array ---
+        let attacksRaw = character.characterState?.attacks;
+        let normalizedAttacks: any[] = [];
+        if (Array.isArray(attacksRaw)) {
+          normalizedAttacks = attacksRaw;
+        } else if (attacksRaw && typeof attacksRaw === 'object') {
+          normalizedAttacks = Object.values(attacksRaw);
+        } // else leave as []
         const normalizedCharacter = {
           ...character,
-          characterState: character.characterState || {
-            resources: {
+          characterState: {
+            ...(character.characterState || {}),
+            resources: character.characterState?.resources || {
               current: {
                 currentHP: character.finalHPMax || 0,
                 currentSP: character.finalSPMax || 0, 
@@ -164,13 +182,10 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
                 maxRestPoints: character.finalRestPoints || 0,
               }
             },
-            ui: { manualDefenseOverrides: {} },
-            inventory: { 
-              items: [], 
-              currency: { gold: 0, silver: 0, copper: 0 } 
-            },
-            notes: { playerNotes: '' },
-            attacks: [],
+            ui: character.characterState?.ui || { manualDefenseOverrides: {} },
+            inventory: character.characterState?.inventory || { items: [], currency: { goldPieces: 0, silverPieces: 0, copperPieces: 0 } },
+            notes: character.characterState?.notes || { playerNotes: '' },
+            attacks: normalizedAttacks,
             spells: character.spells || [],
             maneuvers: character.maneuvers || [],
           }
@@ -199,6 +214,9 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
     };
   }, [state.character, state.loading, debouncedSave]);
 
+  const updateGritPoints = (grit: number) => dispatch({ type: 'UPDATE_CURRENT_GRIT_POINTS', grit });
+  const updateRestPoints = (rest: number) => dispatch({ type: 'UPDATE_CURRENT_REST_POINTS', rest });
+
   const contextValue: CharacterSheetContextType = {
     state,
     dispatch,
@@ -208,6 +226,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
     updateTempHP,
     updateActionPoints,
     updateExhaustion,
+    updateDeathStep,
     setManualDefense,
     addAttack,
     removeAttack,
@@ -216,6 +235,8 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
     updateCurrency,
     updateNotes,
     saveNow,
+    updateGritPoints,
+    updateRestPoints,
   };
 
   return (
@@ -302,7 +323,7 @@ export function useCharacterInventory() {
   const { state } = useCharacterSheet();
   
   return useMemo(() => {
-    return state.character?.characterState?.inventory || { items: [], currency: { gold: 0, silver: 0, copper: 0 } };
+    return state.character?.characterState?.inventory || { items: [], currency: { goldPieces: 0, silverPieces: 0, copperPieces: 0 } };
   }, [state.character?.characterState?.inventory]);
 }
 
@@ -322,14 +343,378 @@ export function useCharacterManeuvers() {
 
 export function useCharacterFeatures() {
   const { state } = useCharacterSheet();
+  
   return useMemo(() => {
-    return state.character?.features || [];
-  }, [state.character?.features]);
+    if (!state.character) return [];
+    
+    const character = state.character;
+    const features: any[] = [];
+
+    // Get ancestry default traits
+    const ancestry1 = ancestriesData.find((a) => a.name === character.ancestry1Name);
+    if (ancestry1) {
+      ancestry1.defaultTraitIds?.forEach((traitId) => {
+        const trait = traitsData.find((t) => t.id === traitId);
+        if (trait) {
+          features.push({
+            id: trait.id,
+            name: trait.name,
+            description: trait.description,
+            source: 'ancestry',
+            sourceDetail: `${ancestry1.name} (Default)`
+          });
+        }
+      });
+    }
+
+    // Get selected ancestry traits
+    if (character.selectedTraitIds) {
+      try {
+        let selectedTraitIds: string[] = [];
+        
+        if (Array.isArray(character.selectedTraitIds)) {
+          // Already an array
+          selectedTraitIds = character.selectedTraitIds;
+        } else {
+          // Convert to string to handle parsing
+          const traitIdsStr = String(character.selectedTraitIds);
+          
+          // Handle both JSON string and comma-separated string formats
+          if (traitIdsStr.startsWith('[') || traitIdsStr.startsWith('{')) {
+            // Looks like JSON, try parsing
+            selectedTraitIds = JSON.parse(traitIdsStr);
+          } else {
+            // Assume comma-separated string (legacy format)
+            selectedTraitIds = traitIdsStr.split(',').map((id: string) => id.trim()).filter((id: string) => id.length > 0);
+          }
+        }
+        
+        selectedTraitIds.forEach((traitId) => {
+          const trait = traitsData.find((t) => t.id === traitId);
+          if (trait) {
+            // Check if this trait is not already added as default
+            const alreadyAdded = features.some((f) => f.id === trait.id);
+            if (!alreadyAdded) {
+              const sourceAncestry = ancestriesData.find(
+                (a) => a.expandedTraitIds.includes(traitId) || a.defaultTraitIds?.includes(traitId)
+              );
+              features.push({
+                id: trait.id,
+                name: trait.name,
+                description: trait.description,
+                source: 'ancestry',
+                sourceDetail: `${sourceAncestry?.name || 'Unknown'} (Selected)`
+              });
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error parsing selected traits:', error);
+        console.error('selectedTraitIds value:', character.selectedTraitIds);
+      }
+    }
+
+    // Get class features from the new class features structure
+    const selectedClassFeatures = findClassByName(character.className);
+
+    if (selectedClassFeatures) {
+      // Add level 1 core features
+      selectedClassFeatures.coreFeatures
+        .filter((feature: any) => feature.levelGained === 1)
+        .forEach((feature: any) => {
+          features.push({
+            id: feature.featureName,
+            name: feature.featureName,
+            description: feature.description,
+            source: 'class',
+            sourceDetail: `${selectedClassFeatures.className} (Lvl 1)`
+          });
+        });
+
+      // Add selected feature choices
+      if (character.selectedFeatureChoices) {
+        try {
+          // Try to parse as JSON first
+          let selectedChoices: { [key: string]: string } = {};
+          
+          // Handle new data structure - selectedFeatureChoices is already an object
+          if (typeof character.selectedFeatureChoices === 'object' && character.selectedFeatureChoices !== null) {
+            selectedChoices = character.selectedFeatureChoices as { [key: string]: string };
+          } else if (typeof character.selectedFeatureChoices === 'string') {
+            // Legacy handling - try to parse as JSON string
+            try {
+              selectedChoices = JSON.parse(character.selectedFeatureChoices);
+            } catch (jsonError) {
+              // If JSON parsing fails, it might be legacy comma-separated data
+              console.warn('Failed to parse selectedFeatureChoices as JSON, attempting legacy format conversion:', character.selectedFeatureChoices);
+              console.warn('Skipping feature choices processing due to legacy data format');
+              return features;
+            }
+          }
+
+          // Process each core feature that has choices
+          selectedClassFeatures.coreFeatures.forEach((feature) => {
+            if (feature.choices) {
+              feature.choices.forEach((choice, choiceIndex) => {
+                // Use the same mapping logic as the class-features loader
+                const choiceId = getLegacyChoiceId(
+                  selectedClassFeatures.className,
+                  feature.featureName,
+                  choiceIndex
+                );
+                const selectedOptionValues = selectedChoices[choiceId];
+
+                if (selectedOptionValues && choice.options) {
+                  if (choice.count > 1) {
+                    // Handle multiple selections (like cleric domains)
+                    let selectedValueArray: string[] = [];
+                    
+                    if (Array.isArray(selectedOptionValues)) {
+                      // New format - already an array
+                      selectedValueArray = selectedOptionValues;
+                    } else if (typeof selectedOptionValues === 'string') {
+                      // Legacy format - JSON string or comma-separated
+                      try {
+                        selectedValueArray = JSON.parse(selectedOptionValues);
+                      } catch (parseError) {
+                        // Try comma-separated format
+                        selectedValueArray = selectedOptionValues.split(',').map(v => v.trim());
+                      }
+                    } else {
+                      console.warn('Unexpected format for choice values:', selectedOptionValues);
+                      return;
+                    }
+
+                    selectedValueArray.forEach((value) => {
+                      const selectedOption = choice.options?.find((opt) => opt.name === value);
+
+                      if (selectedOption) {
+                        // Get the detailed description
+                        let description = selectedOption.description || 'Feature choice selected.';
+                        const detailedDescription = getDetailedClassFeatureDescription(
+                          choiceId,
+                          value
+                        );
+                        if (detailedDescription) {
+                          description = detailedDescription;
+                        }
+
+                        // Use generic display label
+                        const displayLabel = getDisplayLabel(
+                          selectedClassFeatures.className,
+                          feature.featureName,
+                          choiceIndex
+                        );
+                        const sourceDetail = `${selectedClassFeatures.className} (${displayLabel})`;
+
+                        const featureToAdd = {
+                          id: `${choiceId}_${value}`,
+                          name: selectedOption.name,
+                          description: description,
+                          source: 'class' as const,
+                          sourceDetail: sourceDetail
+                        };
+                        features.push(featureToAdd);
+                      }
+                    });
+                  } else {
+                    // Handle single selections
+                    const selectedOption = choice.options?.find(
+                      (opt) => opt.name === selectedOptionValues
+                    );
+                    if (selectedOption) {
+                      // Get the detailed description
+                      let description = selectedOption.description || 'Feature choice selected.';
+                      const detailedDescription = getDetailedClassFeatureDescription(
+                        choiceId,
+                        selectedOptionValues
+                      );
+                      if (detailedDescription) {
+                        description = detailedDescription;
+                      }
+
+                      // Use generic display label
+                      const displayLabel = getDisplayLabel(
+                        selectedClassFeatures.className,
+                        feature.featureName,
+                        choiceIndex
+                      );
+                      const sourceDetail = `${selectedClassFeatures.className} (${displayLabel})`;
+
+                      features.push({
+                        id: `${choiceId}_${selectedOptionValues}`,
+                        name: selectedOption.name,
+                        description: description,
+                        source: 'class',
+                        sourceDetail: sourceDetail
+                      });
+                    }
+                  }
+                }
+              });
+            }
+          });
+        } catch (error) {
+          console.error('Error processing selected feature choices:', error);
+        }
+      }
+    }
+
+    return features;
+  }, [state.character]);
 }
 
 export function useCharacterCurrency() {
   const { state } = useCharacterSheet();
   return useMemo(() => {
-    return state.character?.characterState?.inventory?.currency || { gold: 0, silver: 0, copper: 0 };
+    return state.character?.characterState?.inventory?.currency || { goldPieces: 0, silverPieces: 0, copperPieces: 0 };
   }, [state.character?.characterState?.inventory?.currency]);
+}
+
+// Hook for calculated character data with breakdowns
+export function useCharacterCalculatedData() {
+  const { state } = useCharacterSheet();
+  
+  return useMemo(() => {
+    if (!state.character) return null;
+    
+    // Convert SavedCharacter to EnhancedCharacterBuildData
+    const buildData = convertToEnhancedBuildData(state.character);
+    // Run calculation to get CharacterSheetData with breakdowns
+    const calculationResult = calculateCharacterWithBreakdowns(buildData);
+    return calculationResult;
+  }, [state.character]);
+}
+
+// Hook for character knowledge data
+export function useCharacterKnowledge() {
+  const { state } = useCharacterSheet();
+  
+  return useMemo(() => {
+    if (!state.character) return [];
+    
+    const character = state.character;
+    
+    // Parse character's trade proficiencies (knowledge is stored in tradesData)
+    let characterTrades: Record<string, number> = {};
+    if (character?.tradesData) {
+      characterTrades = character.tradesData;
+    }
+
+    // Show ALL knowledge skills with their proficiency levels and calculated bonuses
+    const knowledgeWithProficiency = knowledgeData.map((knowledge) => {
+      const proficiency = characterTrades[knowledge.id] || 0;
+      const masteryBonus = proficiency * 2;
+
+      // Get attribute modifier based on knowledge's attribute association
+      let attributeModifier = 0;
+      switch (knowledge.attributeAssociation.toLowerCase()) {
+        case 'might':
+          attributeModifier = character?.finalMight || 0;
+          break;
+        case 'agility':
+          attributeModifier = character?.finalAgility || 0;
+          break;
+        case 'charisma':
+          attributeModifier = character?.finalCharisma || 0;
+          break;
+        case 'intelligence':
+          attributeModifier = character?.finalIntelligence || 0;
+          break;
+        default:
+          attributeModifier = 0;
+      }
+
+      const totalBonus = attributeModifier + masteryBonus;
+
+      return {
+        id: knowledge.id,
+        name: knowledge.name,
+        proficiency,
+        bonus: totalBonus
+      };
+    });
+    
+    return knowledgeWithProficiency;
+  }, [state.character?.tradesData, state.character?.finalMight, state.character?.finalAgility, state.character?.finalCharisma, state.character?.finalIntelligence]);
+}
+
+// Hook for character trades data
+export function useCharacterTrades() {
+  const { state } = useCharacterSheet();
+  
+  return useMemo(() => {
+    if (!state.character) return [];
+    
+    const character = state.character;
+    
+    // Parse character's trade proficiencies
+    let characterTrades: Record<string, number> = {};
+    if (character?.tradesData) {
+      characterTrades = character.tradesData;
+    }
+
+    // Only show trades that have been selected (proficiency > 0) from tradesData only
+    const filteredTrades = tradesData
+      .filter((trade) => {
+        return characterTrades[trade.id] && characterTrades[trade.id] > 0;
+      })
+      .map((trade) => {
+        const proficiency = characterTrades[trade.id] || 0;
+        const masteryBonus = proficiency * 2;
+
+        // Get attribute modifier based on trade's attribute association
+        let attributeModifier = 0;
+        switch (trade.attributeAssociation.toLowerCase()) {
+          case 'might':
+            attributeModifier = character?.finalMight || 0;
+            break;
+          case 'agility':
+            attributeModifier = character?.finalAgility || 0;
+            break;
+          case 'charisma':
+            attributeModifier = character?.finalCharisma || 0;
+            break;
+          case 'intelligence':
+            attributeModifier = character?.finalIntelligence || 0;
+            break;
+          default:
+            attributeModifier = 0;
+        }
+
+        const totalBonus = attributeModifier + masteryBonus;
+
+        return {
+          id: trade.id,
+          name: trade.name,
+          proficiency,
+          bonus: totalBonus
+        };
+      });
+    
+    return filteredTrades;
+  }, [state.character?.tradesData, state.character?.finalMight, state.character?.finalAgility, state.character?.finalCharisma, state.character?.finalIntelligence]);
+}
+
+// Hook for character languages
+export function useCharacterLanguages() {
+  const { state } = useCharacterSheet();
+  return React.useMemo(() => {
+    if (!state.character?.languagesData) {
+      return [];
+    }
+    try {
+      const languagesFromDB = state.character.languagesData;
+      return Object.entries(languagesFromDB)
+        .filter(([_, data]: [string, any]) => data.fluency !== 'none')
+        .map(([langId, data]: [string, any]) => ({
+          id: langId,
+          name: data.name || langId.charAt(0).toUpperCase() + langId.slice(1),
+          fluency: data.fluency as 'limited' | 'fluent'
+        }));
+    } catch (error) {
+      console.error('Error parsing languages JSON:', error);
+      return [];
+    }
+  }, [state.character?.languagesData]);
 }

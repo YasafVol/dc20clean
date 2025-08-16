@@ -19,6 +19,7 @@ export type SheetAction =
   | { type: 'UPDATE_CURRENT_MP'; mp: number }
   | { type: 'UPDATE_TEMP_HP'; tempHP: number }
   | { type: 'UPDATE_EXHAUSTION'; level: number }
+  | { type: 'UPDATE_DEATH_STEP'; steps: number; isDead?: boolean }
   | { type: 'UPDATE_ACTION_POINTS_USED'; ap: number }
   | { type: 'SET_MANUAL_DEFENSE'; pd?: number; ad?: number; pdr?: number }
   | { type: 'ADD_ATTACK'; attack: Attack }
@@ -30,8 +31,10 @@ export type SheetAction =
   | { type: 'ADD_MANEUVER'; maneuver: any }
   | { type: 'REMOVE_MANEUVER'; maneuverId: string }
   | { type: 'UPDATE_INVENTORY'; items: any[] }
-  | { type: 'UPDATE_CURRENCY'; gold?: number; silver?: number; copper?: number }
-  | { type: 'UPDATE_NOTES'; notes: string };
+  | { type: 'UPDATE_CURRENCY'; goldPieces?: number; silverPieces?: number; copperPieces?: number }
+  | { type: 'UPDATE_NOTES'; notes: string }
+  | { type: 'UPDATE_CURRENT_GRIT_POINTS'; grit: number }
+  | { type: 'UPDATE_CURRENT_REST_POINTS'; rest: number };
 
 const initialState: SheetState = {
   character: null,
@@ -140,6 +143,26 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
               current: {
                 ...state.character.characterState.resources.current,
                 exhaustionLevel: action.level
+              }
+            }
+          }
+        }
+      };
+
+    case 'UPDATE_DEATH_STEP':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            resources: {
+              ...state.character.characterState.resources,
+              current: {
+                ...state.character.characterState.resources.current,
+                deathSteps: action.steps,
+                isDead: action.isDead ?? false
               }
             }
           }
@@ -294,9 +317,9 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
               ...state.character.characterState.inventory,
               currency: {
                 ...state.character.characterState.inventory.currency,
-                ...(action.gold !== undefined && { gold: action.gold }),
-                ...(action.silver !== undefined && { silver: action.silver }),
-                ...(action.copper !== undefined && { copper: action.copper })
+                ...(action.goldPieces !== undefined && { goldPieces: action.goldPieces }),
+                ...(action.silverPieces !== undefined && { silverPieces: action.silverPieces }),
+                ...(action.copperPieces !== undefined && { copperPieces: action.copperPieces })
               }
             }
           }
@@ -335,6 +358,43 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
         }
       };
 
+    case 'UPDATE_CURRENT_GRIT_POINTS':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            resources: {
+              ...state.character.characterState.resources,
+              current: {
+                ...state.character.characterState.resources.current,
+                currentGritPoints: action.grit
+              }
+            }
+          }
+        }
+      };
+    case 'UPDATE_CURRENT_REST_POINTS':
+      if (!state.character) return state;
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          characterState: {
+            ...state.character.characterState,
+            resources: {
+              ...state.character.characterState.resources,
+              current: {
+                ...state.character.characterState.resources.current,
+                currentRestPoints: action.rest
+              }
+            }
+          }
+        }
+      };
+
     default:
       return state;
   }
@@ -367,6 +427,10 @@ export function useCharacterSheetReducer() {
 
   const updateExhaustion = useCallback((level: number) => {
     dispatch({ type: 'UPDATE_EXHAUSTION', level });
+  }, []);
+
+  const updateDeathStep = useCallback((steps: number, isDead?: boolean) => {
+    dispatch({ type: 'UPDATE_DEATH_STEP', steps, isDead });
   }, []);
 
   const setManualDefense = useCallback((pd?: number, ad?: number, pdr?: number) => {
@@ -409,8 +473,8 @@ export function useCharacterSheetReducer() {
     dispatch({ type: 'UPDATE_INVENTORY', items });
   }, []);
 
-  const updateCurrency = useCallback((gold?: number, silver?: number, copper?: number) => {
-    dispatch({ type: 'UPDATE_CURRENCY', gold, silver, copper });
+  const updateCurrency = useCallback((goldPieces?: number, silverPieces?: number, copperPieces?: number) => {
+    dispatch({ type: 'UPDATE_CURRENCY', goldPieces, silverPieces, copperPieces });
   }, []);
 
   const updateNotes = useCallback((notes: string) => {
@@ -427,6 +491,7 @@ export function useCharacterSheetReducer() {
     updateTempHP,
     updateActionPoints,
     updateExhaustion,
+    updateDeathStep,
     setManualDefense,
     addAttack,
     removeAttack,

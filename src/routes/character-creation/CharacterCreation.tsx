@@ -14,9 +14,9 @@ import Snackbar from '../../components/Snackbar.tsx';
 import { completeCharacter } from '../../lib/services/characterCompletion';
 import {
 	completeCharacterEdit,
-	convertCharacterToInProgress,
-	type SavedCharacter
+	convertCharacterToInProgress
 } from '../../lib/utils/characterEdit';
+import type { SavedCharacter } from '../../lib/types/dataContracts';
 import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from '../../lib/services/enhancedCharacterCalculator';
 import { traitsData } from '../../lib/rulesdata/_new_schema/traits';
 import {
@@ -30,20 +30,19 @@ import {
 	StyledNavigationButtons,
 	StyledButton
 } from './styles/CharacterCreation.styles';
+import { StyledStepsHeaderBG } from './styles/StepsHeaderBG.styles';
+
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface CharacterCreationProps {
-	onNavigateToLoad: () => void;
-	onBackToMenu: () => void;
-	editCharacter?: SavedCharacter; // If provided, we're in edit mode
-	isLevelUp?: boolean; // If true, we're in level up mode
+	editCharacter?: SavedCharacter;
 }
 
-const CharacterCreation: React.FC<CharacterCreationProps> = ({
-	onNavigateToLoad,
-	editCharacter,
-	onBackToMenu,
-	isLevelUp
-}) => {
+const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) => {
+	const navigate = useNavigate();
+	const location = useLocation();
+	// If editCharacter is not passed as prop, try to get it from location.state
+	const editChar = editCharacter || (location.state && (location.state as any).editCharacter);
 	const { state, dispatch, attributePointsRemaining, calculationResult } = useCharacter();
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 	const [showSnackbar, setShowSnackbar] = useState(false);
@@ -62,9 +61,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 
 	// Initialize character state for edit mode
 	useEffect(() => {
-		if (editCharacter) {
-			console.log('🔄 CharacterCreation: Initializing edit mode for character:', editCharacter);
-			const characterInProgress = convertCharacterToInProgress(editCharacter);
+		if (editChar) {
+			console.log('🔄 CharacterCreation: Initializing edit mode for character:', editChar);
+			const characterInProgress = convertCharacterToInProgress(editChar);
 			console.log('🔄 CharacterCreation: Converted to in-progress format:', {
 				selectedSpells: characterInProgress.selectedSpells,
 				selectedManeuvers: characterInProgress.selectedManeuvers
@@ -73,7 +72,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 			// Initialize the character state with the existing character data
 			dispatch({ type: 'INITIALIZE_FROM_SAVED', character: characterInProgress });
 		}
-	}, [editCharacter, dispatch]);
+	}, [editChar, dispatch]);
 
 	const steps = [
 		{ number: 1, label: 'Class & Features' },
@@ -91,32 +90,29 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 	const handleNext = async () => {
 		if (state.currentStep === 6 && areAllStepsCompleted()) {
 			// Character is complete - check if we're editing or creating new
-			if (editCharacter) {
+			if (editChar) {
 				// Edit mode: use the enhanced completion that preserves manual modifications
 				// Use enhanced calculator for character editing
 				const supportedClasses = ['barbarian', 'cleric', 'hunter', 'champion', 'wizard', 'monk', 'rogue', 'sorcerer', 'spellblade', 'warlock', 'bard', 'druid', 'commander'];
 				
 				if (supportedClasses.includes(state.classId || '')) {
-					// Convert to enhanced format and calculate
 					const enhancedData = convertToEnhancedBuildData(state);
 					const enhancedResult = calculateCharacterWithBreakdowns(enhancedData);
-					
-                    // Create a calculation function that returns the enhanced result (including breakdowns)
-                    const enhancedCalculatorFn = async () => ({ 
-                        ...enhancedResult.stats,
-                        grantedAbilities: enhancedResult.grantedAbilities,
-                        conditionalModifiers: enhancedResult.conditionalModifiers,
-                        breakdowns: enhancedResult.breakdowns
-                    });
-					
-					await completeCharacterEdit(editCharacter.id, state, enhancedCalculatorFn);
+					const enhancedCalculatorFn = async () => ({ 
+						...enhancedResult.stats,
+						grantedAbilities: enhancedResult.grantedAbilities,
+						conditionalModifiers: enhancedResult.conditionalModifiers,
+						breakdowns: enhancedResult.breakdowns
+					});
+					await completeCharacterEdit(editChar.id, state, enhancedCalculatorFn);
+					// Force reload of saved characters in LoadCharacter
+					localStorage.setItem('dc20_reload', String(Date.now()));
 				} else {
-					// All classes are now migrated to the enhanced calculator
 					throw new Error(`Class "${state.classId}" is not supported. All classes should be migrated to the enhanced calculator.`);
 				}
 				setSnackbarMessage('Character updated successfully! Manual modifications preserved.');
 				setShowSnackbar(true);
-				setTimeout(() => onNavigateToLoad(), 2000);
+				setTimeout(() => navigate('/load-character'), 2000);
 			} else {
 				// Create mode: use standard completion
 				await completeCharacter(state, {
@@ -124,7 +120,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 						setSnackbarMessage(message);
 						setShowSnackbar(true);
 					},
-					onNavigateToLoad: onNavigateToLoad
+					onNavigateToLoad: () => navigate('/load-character')
 				});
 			}
 			return;
@@ -135,7 +131,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 
 	const handlePrevious = () => {
 		if (state.currentStep === 1) {
-			onBackToMenu(); // Go back to home screen when on first step
+			navigate('/menu'); // Go back to home screen when on first step
 		} else {
 			dispatch({ type: 'PREVIOUS_STEP' });
 		}
@@ -384,8 +380,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
                 const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
 				const hasExactlySpentAllSkillPoints = skillPointsRemaining === 0;
 				// Calculate available trade and language points using same logic as BackgroundPointsManager
-				let bonusTradePoints = 0;
-				let bonusLanguagePoints = 0;
+				const bonusTradePoints = 0;
+				const bonusLanguagePoints = 0;
 				
 				// Check for ancestry bonuses (simplified calculation)
 				const baseTradePoints = 3 + bonusTradePoints;
@@ -533,7 +529,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 	return (
 		<div>
 			<StyledTitle>
-				{editCharacter ? `Edit Character: ${editCharacter.finalName}` : 'Character Creation'}
+				{editChar ? `Edit Character: ${editChar.finalName}` : 'Character Creation'}
 			</StyledTitle>
 
 			<StyledStepIndicator>
@@ -545,31 +541,27 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 						← Previous
 					</StyledButton>
 				</StyledNavigationButtons>
-
 				<StyledStepsContainer>
-					{steps.map((step) => (
-						<StyledStep
-							key={step.number}
-							$active={state.currentStep === step.number}
-							$completed={isStepCompleted(step.number)}
-							onClick={() => handleStepClick(step.number)}
-						>
-							<StyledStepNumber
-								$active={state.currentStep === step.number}
-								$completed={isStepCompleted(step.number)}
+					{steps.map(({ number, label }) => {
+						const $active = state.currentStep === number;
+						const $completed = number < state.currentStep;
+						return (
+							<StyledStep
+								key={number}
+								$active={$active}
+								$completed={$completed}
+								onClick={() => handleStepClick(number)}
 							>
-								{isStepCompleted(step.number) ? '✓' : step.number}
-							</StyledStepNumber>
-							<StyledStepLabel
-								$active={state.currentStep === step.number}
-								$completed={isStepCompleted(step.number)}
-							>
-								{step.label}
-							</StyledStepLabel>
-						</StyledStep>
-					))}
+								<StyledStepNumber $active={$active} $completed={$completed}>
+									{number}
+								</StyledStepNumber>
+								<StyledStepLabel $active={$active} $completed={$completed}>
+									{label}
+								</StyledStepLabel>
+							</StyledStep>
+						);
+					})}
 				</StyledStepsContainer>
-
 				<StyledNavigationButtons>
 					<StyledButton
 						$variant="primary"
@@ -581,7 +573,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({
 				</StyledNavigationButtons>
 			</StyledStepIndicator>
 
-			<StyledContainer>{renderCurrentStep()}</StyledContainer>
+			<StyledStepsHeaderBG>
+				<StyledContainer>{renderCurrentStep()}</StyledContainer>
+			</StyledStepsHeaderBG>
 
 			<Snackbar
 				message={snackbarMessage}

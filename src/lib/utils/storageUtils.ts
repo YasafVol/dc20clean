@@ -141,7 +141,10 @@ export const getAllSavedCharacters = (): SavedCharacter[] => {
 export const saveAllCharacters = (characters: SavedCharacter[]): void => {
   try {
     const serializedCharacters = characters.map(char => JSON.parse(serializeCharacterForStorage(char)));
+    console.log('🪓 saveAllCharacters: serializedCharacters:', serializedCharacters);
     localStorage.setItem('savedCharacters', JSON.stringify(serializedCharacters));
+    const afterSave = localStorage.getItem('savedCharacters');
+    console.log('🪓 saveAllCharacters: localStorage after save:', afterSave);
   } catch (error) {
     console.error("Failed to save characters", error);
   }

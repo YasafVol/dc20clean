@@ -4,6 +4,8 @@ A comprehensive character creation and management system for the DC20 tabletop R
 
 ## ✨ Recent Updates
 
+### Added New Ancestries
+
 ### Mastery System Implementation (Latest)
 - **Complete skill/trade mastery system** with level-based limits (Untrained → Grandmaster)
 - **Level 1 special rule**: Only ONE Adept skill/trade allowed for Level 1 characters

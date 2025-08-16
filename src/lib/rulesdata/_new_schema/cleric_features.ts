@@ -78,55 +78,46 @@ export const clericClass: ClassDefinition = {
           options: [
             {
               name: 'Magic',
-              description: 'Your Maximum MP increases by 1. You also learn 1 additional Spell with the Restoration Spell Tag.',
+              description: 'You gain the benefits listed below. You can choose this Divine Domain multiple times. Your maximum MP increases by 1 and choose a spell tag below',
               effects: [
                 { type: 'MODIFY_STAT', target: 'mpMax', value: 1 },
-                { type: 'GRANT_SPELL', target: 'restoration_tag', value: 1 }
+                { 
+                  type: 'GRANT_SPELL', 
+                  target: 'spell_tag_choice', 
+                  value: 1,
+                  userChoice: {
+                    prompt: 'Choose a Spell Tag (such as Fire, Holy, or Undeath). You learn 1 Spell with the chosen Spell Tag.',
+                    options: ['fire_tag', 'holy_tag', 'undeath_tag', 'restoration_tag', 'elemental_tag', 'illusion_tag', 'enchantment_tag', 'divination_tag']
+                  }
+                }
               ]
             },
             {
               name: 'Peace',
-              description: 'You gain Combat Training with Heavy Armor, Heavy Shields, and Weapons. Additionally, you learn 2 Defensive Maneuvers of your choice.',
+              description: 'You gain Combat Training with Heavy Armor and Heavy Shields and learn 1 Defensive Maneuver of your choice.',
               effects: [
                 { type: 'GRANT_COMBAT_TRAINING', target: 'Heavy_Armor', value: true },
                 { type: 'GRANT_COMBAT_TRAINING', target: 'Heavy_Shields', value: true },
-                { type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
-                { type: 'GRANT_CHOICE', target: 'defensive_maneuver', value: 2 }
+                { type: 'GRANT_CHOICE', target: 'defensive_maneuver', value: 1 }
               ]
             },
             {
               name: 'War',
-              description: 'You gain Combat Training with Heavy Armor, Heavy Shields, and Weapons. Additionally, you learn 2 Attack Maneuvers of your choice.',
+              description: 'You gain Combat Training with Weapons and access to Attack Maneuvers.',
               effects: [
-                { type: 'GRANT_COMBAT_TRAINING', target: 'Heavy_Armor', value: true },
-                { type: 'GRANT_COMBAT_TRAINING', target: 'Heavy_Shields', value: true },
                 { type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
                 { type: 'GRANT_CHOICE', target: 'attack_maneuver', value: 2 }
               ]
             },
             {
               name: 'Life',
-              description: 'Your Maximum HP increases by 1. You also learn 1 additional Spell with the Restoration Spell Tag.',
-              effects: [
-                { type: 'MODIFY_STAT', target: 'hpMax', value: 1 },
-                { type: 'GRANT_SPELL', target: 'restoration_tag', value: 1 }
-              ]
+              description: 'When you produce an MP Effect that restores HP to at least 1 creature, you can restore 1 HP to 1 creature of your choice within 1 Space of you (including yourself).',
+              effects: []
             },
             {
               name: 'Death',
-              description: 'You gain 1 Skill Point. You also learn 1 additional Cantrip with the Restoration Spell Tag.',
-              effects: [
-                { type: 'MODIFY_STAT', target: 'skillPoints', value: 1 },
-                { type: 'GRANT_CANTRIP', target: 'restoration_tag', value: 1 }
-              ]
-            },
-            {
-              name: 'Nature',
-              description: 'You learn 1 additional Spell with the Elemental Spell Tag. You also gain 1 Trade Point.',
-              effects: [
-                { type: 'GRANT_SPELL', target: 'elemental_tag', value: 1 },
-                { type: 'MODIFY_STAT', target: 'tradePoints', value: 1 }
-              ]
+              description: 'Enemy creatures within 10 Spaces of you take an additional 1 damage from Attacks while they’re Well-Bloodied.',
+              effects: []
             },
             {
               name: 'Ancestral',
@@ -137,7 +128,7 @@ export const clericClass: ClassDefinition = {
             },
             {
               name: 'Knowledge',
-              description: 'Your Mastery Limit increases by 1 for all Knowledge Trades. You also gain 2 Skill Points.',
+              description: 'Your Mastery Limit increases by 1 for all Knowledge Trades. A Trade can only benefit from 1 Feature that increases its Mastery Limit at a time. Additionally, yougain 2 Skill Points.',
               effects: [
                 { type: 'MODIFY_STAT', target: 'knowledgeMasteryLimit', value: 1 },
                 { type: 'MODIFY_STAT', target: 'skillPoints', value: 2 }
@@ -145,18 +136,45 @@ export const clericClass: ClassDefinition = {
             },
             {
               name: 'Trickery',
-              description: 'You learn 1 additional Cantrip with the Illusion Spell Tag. Your Mastery Limit for one Skill of your choice increases by 1.',
+              description: 'When you produce an MP Effect that targets at least 1 creature, you can choose 1 of the targets and create an illusory duplicate of it that lasts until the start of your next turn. The next Attack made against the target has DisADV,and causes the illusory duplicate to disappear.',
               effects: [
-                { type: 'GRANT_CANTRIP', target: 'illusion_tag', value: 1 },
-                { type: 'GRANT_SKILL_EXPERTISE', target: 'any_skill', value: { capIncrease: 1, levelIncrease: 0 }, userChoice: { prompt: 'Choose a Skill for increased Mastery Limit' } }
+                { type: 'GRANT_ABILITY', target: 'illusory_duplicate', value: 'When casting MP Effect targeting creatures: create illusory duplicate of 1 target until start of next turn. Next Attack vs target has DisADV and destroys duplicate.' }
               ]
             },
             {
               name: 'Light',
-              description: 'You learn 1 additional Cantrip with the Holy Spell Tag. Additionally, you learn the Light Cantrip.',
+              description: 'When you produce an MP Effect that targets at least 1 creature, you can force 1 target of your choice to make a Might or Charisma Save (their choice). Failure: Until the end of their next turn, they shed a 1 Space Aura of Bright Light and are Hindered on their next Attack.',
               effects: [
-                { type: 'GRANT_CANTRIP', target: 'holy_tag', value: 1 },
-                { type: 'GRANT_CANTRIP', target: 'light_cantrip', value: 1 }
+                { type: 'GRANT_ABILITY', target: 'blinding_radiance', value: 'When casting MP Effect targeting creatures: force 1 target to make Might or Charisma Save. Failure: shed 1 Space Bright Light Aura and Hindered on next Attack until end of their next turn.' }
+              ]
+            },
+            {
+              name: 'Grave',
+              description: "Allied creatures within 10 Spaces of you take 1 less damage from Attacks while they're Well-Bloodied.",
+              effects: [
+                { type: 'GRANT_ABILITY', target: 'protective_aura', value: 'Allied creatures within 10 Spaces take 1 less damage from Attacks while Well-Bloodied.' }
+              ]
+            },
+            {
+              name: 'Dark',
+              description: 'Your mastery over shadows grants you supernatural sight and the ability to hide yourself from other creatures.',
+              effects: [
+                { type: 'GRANT_SENSE', target: 'darkvision', value: 10 },
+                { type: 'GRANT_ABILITY', target: 'shadow_hide', value: 'While in Dim Light, you can Hide from creatures that can see you. Success: remain Hidden until you move or area becomes Bright Light.' }
+              ]
+            },
+            {
+              name: 'Order',
+              description: 'Once per turn, when a creature you can see within 10 Spaces of you makes a Check, you can spend 1 AP as a Reaction to remove all instances of ADV and DisADV from that Check.',
+              effects: [
+                { type: 'GRANT_ABILITY', target: 'neutralize_advantage', value: 'Once per turn: spend 1 AP as Reaction to remove all ADV and DisADV from any Check within 10 Spaces.' }
+              ]
+            },
+            {
+              name: 'Chaos',
+              description: 'When you make a Spell Check you can choose to give yourself ADV on it, but you must also roll on the Wild Magic Table. You can use this Feature once per Long Rest, and regain the ability to use it again when you roll for Initiative.',
+              effects: [
+                { type: 'GRANT_ABILITY', target: 'chaotic_magic', value: 'Choose to gain ADV on Spell Check + roll Wild Magic Table. Once per Long Rest, regain on Initiative roll.' }
               ]
             }
           ]

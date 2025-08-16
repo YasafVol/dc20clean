@@ -224,17 +224,26 @@ export function getClassSpecificInfo(
 					if (selectedValue && choice.options) {
 						if (choice.count > 1) {
 							// Handle multiple selections
+							let selectedValues: string[] = [];
 							try {
-								const selectedValues: string[] = JSON.parse(selectedValue);
-								if (selectedValues.length > 0) {
-									const label = getDisplayLabel(className, feature.featureName, choiceIndex);
-									displayInfo.push({
-										label,
-										value: selectedValues.join(', ')
-									});
-								}
+								// Try parsing as JSON array first
+								selectedValues = JSON.parse(selectedValue);
 							} catch (error) {
-								console.error('Error parsing multiple selection:', error);
+								// If not JSON, try comma-separated string
+								if (selectedValue.includes(',')) {
+									selectedValues = selectedValue.split(',').map((s: string) => s.trim());
+								} else {
+									// Single value that failed JSON parse
+									selectedValues = [selectedValue];
+								}
+							}
+							
+							if (selectedValues.length > 0) {
+								const label = getDisplayLabel(className, feature.featureName, choiceIndex);
+								displayInfo.push({
+									label,
+									value: selectedValues.join(', ')
+								});
 							}
 						} else {
 							// Handle single selections

@@ -101,6 +101,17 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick }) => {
 		return `${totalPrice}${currency}`;
 	};
 
+	// Helper to format shield info
+	const getShieldInfo = (shield: InventoryItem | undefined | null): string => {
+		if (!shield || shield.itemType !== 'Shield') return '';
+		const s = shield as any;
+		let info = `PD Bonus: ${s.pdBonus}\nAD Bonus: ${s.adBonus}`;
+		if (s.speedPenalty) info += `\nSpeed Penalty: ${s.speedPenalty}`;
+		if (s.agilityCheckDisadvantage) info += `\nAgility Disadvantage: Yes`;
+		if (s.properties && s.properties.length > 0) info += `\nProperties: ${s.properties.join(', ')}`;
+		return info;
+	};
+
 	return (
 		<StyledInventorySection>
 			<StyledInventoryTitle>INVENTORY</StyledInventoryTitle>
@@ -183,6 +194,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick }) => {
 									{selectedItem ? (
 										<StyledInventoryInfoIcon
 											onClick={() => onItemClick(item, selectedItem)}
+											title={selectedItem.itemType === 'Shield' ? getShieldInfo(selectedItem) : undefined}
 										>
 											i
 										</StyledInventoryInfoIcon>

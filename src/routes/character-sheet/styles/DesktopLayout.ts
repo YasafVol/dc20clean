@@ -9,20 +9,70 @@ export const StyledDesktopWrapper = styled.div`
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 `;
 
-export const StyledDesktopHeader = styled.div`
+export const StyledDesktopHeader = styled.div<{ isDead?: boolean }>`
 	text-align: center;
 	margin-bottom: 2rem;
-	border-bottom: 3px solid #8b4513;
+	border-bottom: 3px solid ${props => props.isDead ? '#8B0000' : '#8b4513'};
 	padding-bottom: 1.5rem;
+	background: ${props => props.isDead ? 
+		'linear-gradient(45deg, rgba(139, 0, 0, 0.1), rgba(139, 0, 0, 0.05))' : 
+		'transparent'
+	};
+	border-radius: ${props => props.isDead ? '8px 8px 0 0' : '0'};
+	position: relative;
+	
+	${props => props.isDead && `
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: repeating-linear-gradient(
+				45deg,
+				transparent,
+				transparent 10px,
+				rgba(139, 0, 0, 0.05) 10px,
+				rgba(139, 0, 0, 0.05) 20px
+			);
+			pointer-events: none;
+			border-radius: 8px 8px 0 0;
+		}
+	`}
 `;
 
-export const StyledCharacterName = styled.h1`
+export const StyledCharacterName = styled.h1<{ isDead?: boolean }>`
 	margin: 0;
-	color: #8b4513;
+	color: ${props => props.isDead ? '#8B0000' : '#8b4513'};
 	font-size: 2.5rem;
 	font-family: 'Georgia', serif;
 	font-weight: bold;
 	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	
+	${props => props.isDead && `
+		filter: contrast(0.8);
+		text-decoration: line-through;
+		text-decoration-color: #8B0000;
+		text-decoration-thickness: 3px;
+	`}
+`;
+
+export const StyledDeathSkull = styled.span`
+	font-size: 2rem;
+	color: #8B0000;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+	animation: pulse 2s infinite;
+	
+	@keyframes pulse {
+		0% { opacity: 0.7; }
+		50% { opacity: 1; }
+		100% { opacity: 0.7; }
+	}
 `;
 
 export const StyledCharacterSubtitle = styled.h2`

@@ -9,6 +9,7 @@ import {
 	StyledFeaturePopupClose,
 	StyledFeaturePopupDescription
 } from '../styles/FeaturePopup';
+import { getInventoryItemInfo } from '../utils/inventoryItemInfo';
 
 interface InventoryPopupProps {
 	selectedInventoryItem: {
@@ -20,6 +21,8 @@ interface InventoryPopupProps {
 
 const InventoryPopup: React.FC<InventoryPopupProps> = ({ selectedInventoryItem, onClose }) => {
 	if (!selectedInventoryItem) return null;
+
+	const infoList = getInventoryItemInfo(selectedInventoryItem.item, selectedInventoryItem.inventoryData);
 
 	return (
 		<StyledFeaturePopupOverlay onClick={onClose}>
@@ -33,107 +36,14 @@ const InventoryPopup: React.FC<InventoryPopupProps> = ({ selectedInventoryItem, 
 					<StyledFeaturePopupClose onClick={onClose}>×</StyledFeaturePopupClose>
 				</StyledFeaturePopupHeader>
 				<StyledFeaturePopupDescription>
-					{selectedInventoryItem.item ? (
-						<>
-							<strong>Type:</strong> {selectedInventoryItem.item.itemType}
-							<br />
-							{selectedInventoryItem.item.itemType === 'Weapon' && (
-								<>
-									<strong>Weapon Type:</strong> {(selectedInventoryItem.item as any).type}
-									<br />
-									<strong>Style:</strong> {(selectedInventoryItem.item as any).style}
-									<br />
-									<strong>Handedness:</strong> {(selectedInventoryItem.item as any).handedness}
-									<br />
-									<strong>Damage:</strong> {(selectedInventoryItem.item as any).damage}
-									<br />
-									{(selectedInventoryItem.item as any).properties && (
-										<>
-											<strong>Properties:</strong>{' '}
-											{(selectedInventoryItem.item as any).properties.join(', ')}
-											<br />
-										</>
-									)}
-									{(selectedInventoryItem.item as any).price && (
-										<>
-											<strong>Price:</strong> {(selectedInventoryItem.item as any).price}
-											<br />
-										</>
-									)}
-								</>
-							)}
-							{selectedInventoryItem.item.itemType === 'Armor' && (
-								<>
-									<strong>Type:</strong> {(selectedInventoryItem.item as any).type}
-									<br />
-									<strong>PDR:</strong> {(selectedInventoryItem.item as any).pdr}
-									<br />
-									<strong>AD Modifier:</strong> {(selectedInventoryItem.item as any).adModifier}
-									<br />
-									{(selectedInventoryItem.item as any).agilityCap && (
-										<>
-											<strong>Agility Cap:</strong>{' '}
-											{(selectedInventoryItem.item as any).agilityCap}
-											<br />
-										</>
-									)}
-									{(selectedInventoryItem.item as any).price && (
-										<>
-											<strong>Price:</strong> {(selectedInventoryItem.item as any).price}
-											<br />
-										</>
-									)}
-								</>
-							)}
-							{selectedInventoryItem.item.itemType === 'Shield' && (
-								<>
-									<strong>PDR:</strong> {(selectedInventoryItem.item as any).pdr}
-									<br />
-									<strong>AD Modifier:</strong> {(selectedInventoryItem.item as any).adModifier}
-									<br />
-									{(selectedInventoryItem.item as any).price && (
-										<>
-											<strong>Price:</strong> {(selectedInventoryItem.item as any).price}
-											<br />
-										</>
-									)}
-								</>
-							)}
-							{selectedInventoryItem.item.itemType === 'Potion' && (
-								<>
-									<strong>Level:</strong> {(selectedInventoryItem.item as any).level}
-									<br />
-									<strong>Healing:</strong> {(selectedInventoryItem.item as any).healing}
-									<br />
-									<strong>Price:</strong> {(selectedInventoryItem.item as any).price}g<br />
-								</>
-							)}
-							{selectedInventoryItem.item.itemType === 'Adventuring Supply' && (
-								<>
-									{(selectedInventoryItem.item as any).description && (
-										<>
-											<strong>Description:</strong>{' '}
-											{(selectedInventoryItem.item as any).description}
-											<br />
-										</>
-									)}
-									{(selectedInventoryItem.item as any).price && (
-										<>
-											<strong>Price:</strong> {(selectedInventoryItem.item as any).price}
-											<br />
-										</>
-									)}
-								</>
-							)}
-							<br />
-							<strong>Count:</strong> {selectedInventoryItem.inventoryData.count}
-							<br />
-							{selectedInventoryItem.inventoryData.cost && (
-								<>
-									<strong>Cost:</strong> {selectedInventoryItem.inventoryData.cost}
-								</>
-							)}
-						</>
+					{infoList.length > 0 ? (
+						<ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
+							{infoList.map((info) => (
+								<li key={info.label} style={{ marginBottom: '0.5em' }}>
+									<strong>{info.label}:</strong> {info.value}
+								</li>
+							))}
+						</ul>
 					) : (
 						<>
 							<strong>Custom Item</strong>

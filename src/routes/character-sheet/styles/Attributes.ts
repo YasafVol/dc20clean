@@ -150,6 +150,7 @@ export const PrimeLabel = styled.div`
 `;
 
 export const PrimeValue = styled.div`
+	text-transform: capitalize;
 	font-size: 1.4rem;
 	font-weight: bold;
 	color: #8b4513;

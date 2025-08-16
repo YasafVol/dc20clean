@@ -1,5 +1,5 @@
 import React from 'react';
-import type { TradeData } from '../../../types';
+import { useCharacterKnowledge, useCharacterTrades } from '../hooks/CharacterSheetProvider';
 import {
 	KnowledgeTradesSection,
 	SectionTitle,
@@ -10,11 +10,13 @@ import { SkillRow, SkillName } from '../styles/Attributes';
 import { StyledProficiencyDots, StyledDot } from '../styles/Skills';
 
 interface KnowledgeTradesProps {
-	knowledge: TradeData[];
-	trades: TradeData[];
+	// No props needed - component gets data from Provider hooks
 }
 
-const KnowledgeTrades: React.FC<KnowledgeTradesProps> = ({ knowledge, trades }) => {
+const KnowledgeTrades: React.FC<KnowledgeTradesProps> = () => {
+	const knowledge = useCharacterKnowledge();
+	const trades = useCharacterTrades();
+
 	return (
 		<>
 			{/* Knowledge Section */}

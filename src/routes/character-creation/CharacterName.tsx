@@ -7,13 +7,12 @@ import {
 	StyledInputGroup,
 	StyledLabel,
 	StyledInput,
-	StyledSuggestionSection,
-	StyledSuggestionTitle,
 	StyledSuggestionGrid,
 	StyledSuggestionButton,
 	StyledGenerateButton,
 	StyledCharacterInfo,
-	StyledCharacterDetails
+	StyledCharacterDetails,
+	StyledCharacterNameContainer
 } from './styles/CharacterName.styles';
 
 // Name generation using fantasy-name-generator npm package
@@ -164,6 +163,7 @@ function CharacterName() {
 				<StyledCharacterDetails>Creating: {getCharacterDescription()}</StyledCharacterDetails>
 			</StyledCharacterInfo>
 
+			<StyledCharacterNameContainer>
 			<StyledInputGroup>
 				<StyledLabel htmlFor="characterName">Character Name</StyledLabel>
 				<StyledInput
@@ -184,6 +184,23 @@ function CharacterName() {
 					placeholder="Enter your character's name"
 				/>
 			</StyledInputGroup>
+			<StyledInputGroup>
+				<StyledLabel htmlFor="characterName">Name Suggestion</StyledLabel>
+				{suggestions.length > 0 && (
+					<StyledSuggestionGrid>
+						{suggestions.map((name, index) => (
+							<StyledSuggestionButton key={index} onClick={() => selectSuggestion(name)}>
+								{name}
+							</StyledSuggestionButton>
+						))}
+					</StyledSuggestionGrid>
+				)}
+				<StyledGenerateButton onClick={generateNames} disabled={isGenerating}>
+					{isGenerating ? 'Generating...' : 'Generate Names'}
+				</StyledGenerateButton>
+			</StyledInputGroup>
+
+			</StyledCharacterNameContainer>
 
 			<StyledInputGroup>
 				<StyledLabel htmlFor="playerName">Player Name</StyledLabel>
@@ -206,21 +223,7 @@ function CharacterName() {
 				/>
 			</StyledInputGroup>
 
-			<StyledSuggestionSection>
-				<StyledSuggestionTitle>Name Suggestions</StyledSuggestionTitle>
-				{suggestions.length > 0 && (
-					<StyledSuggestionGrid>
-						{suggestions.map((name, index) => (
-							<StyledSuggestionButton key={index} onClick={() => selectSuggestion(name)}>
-								{name}
-							</StyledSuggestionButton>
-						))}
-					</StyledSuggestionGrid>
-				)}
-				<StyledGenerateButton onClick={generateNames} disabled={isGenerating}>
-					{isGenerating ? 'Generating...' : 'Generate Names'}
-				</StyledGenerateButton>
-			</StyledSuggestionSection>
+			
 		</StyledContainer>
 	);
 }

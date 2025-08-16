@@ -1,13 +1,21 @@
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 import backgroundImage from '../../../assets/Desktop.png';
+
+// Global style to override body background for character sheet
+export const CharacterSheetGlobalStyle = createGlobalStyle`
+	body {
+		background: url(${backgroundImage}) center/cover no-repeat fixed !important;
+		background-size: cover !important;
+		background-position: center center !important;
+	}
+`;
 
 export const StyledContainer = styled.div`
 	min-height: 100vh;
-	background: url(${backgroundImage}) center/cover no-repeat;
-	background-attachment: fixed;
 	padding: 1rem;
 	font-family: 'Georgia', serif;
 	color: #2d2d2d;
+	position: relative;
 
 	@media (max-width: 768px) {
 		padding: 0.5rem;

@@ -28,18 +28,40 @@ const Currency: React.FC<CurrencyProps> = () => {
 
 	const currency = inventory.currency;
 
+		// Type guard for legacy/canonical currency
+		const canonicalCurrency = {
+			goldPieces:
+				'goldPieces' in currency
+					? currency.goldPieces
+					: 'gold' in currency
+					? currency.gold
+					: 0,
+			silverPieces:
+				'silverPieces' in currency
+					? currency.silverPieces
+					: 'silver' in currency
+					? currency.silver
+					: 0,
+			copperPieces:
+				'copperPieces' in currency
+					? currency.copperPieces
+					: 'copper' in currency
+					? currency.copper
+					: 0,
+		};
+
 	const handleInputChange = (currencyType: string, value: string) => {
 		const numValue = parseInt(value) || 0;
 		
 		switch (currencyType) {
 			case 'goldPieces':
-				updateCurrency(numValue, currency.silver, currency.copper);
+				updateCurrency(numValue, canonicalCurrency.silverPieces, canonicalCurrency.copperPieces);
 				break;
 			case 'silverPieces':
-				updateCurrency(currency.gold, numValue, currency.copper);
+				updateCurrency(canonicalCurrency.goldPieces, numValue, canonicalCurrency.copperPieces);
 				break;
 			case 'copperPieces':
-				updateCurrency(currency.gold, currency.silver, numValue);
+				updateCurrency(canonicalCurrency.goldPieces, canonicalCurrency.silverPieces, numValue);
 				break;
 		}
 	};
@@ -50,21 +72,21 @@ const Currency: React.FC<CurrencyProps> = () => {
 			label: 'Gold',
 			color: '#ffd700',
 			borderColor: '#b8860b',
-			value: currency.gold || 0
+			value: canonicalCurrency.goldPieces
 		},
 		{
 			key: 'silverPieces',
 			label: 'Silver',
 			color: '#c0c0c0',
 			borderColor: '#a0a0a0',
-			value: currency.silver || 0
+			value: canonicalCurrency.silverPieces
 		},
 		{
 			key: 'copperPieces',
 			label: 'Copper',
 			color: '#b87333',
 			borderColor: '#8b4513',
-			value: currency.copper || 0
+			value: canonicalCurrency.copperPieces
 		}
 	];
 

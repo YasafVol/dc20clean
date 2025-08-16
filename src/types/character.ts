@@ -136,6 +136,9 @@ export interface CurrentValues {
 	tempHP: number;
 	actionPointsUsed: number;
 	exhaustionLevel: number; // 0-5
+	// Death tracking
+	deathSteps: number; // Current death step (0 = alive, 1+ = steps toward death)
+	isDead: boolean; // True when character has reached final death step
 	// Currency
 	goldPieces: number;
 	silverPieces: number;

@@ -70,7 +70,7 @@ flowchart LR
    2.1 Create each new trait in `_new_schema/traits.ts`  
    ‑ Use unique `id = '<ancestryId>_<snake_case_trait>'`.  
    ‑ Ensure `cost`, `description`, and `effects` array.  
-   2.2 Reuse existing `effect.type` strings **or** extend engine (see §4).
+   2.2 ⚠️ **Human-in-the-loop review required**: First attempt to reuse existing `effect.type` strings. If a new type seems unavoidable, a maintainer must review and approve the required engine & schema changes (see §4).
 3. **Types / Schema**  
    3.1 If a new `effect.type` is invented, add to Zod schema in `character.schema.ts` **and** implement logic in `enhancedCharacterCalculator.ts`.
 4. **Calculator Support**  

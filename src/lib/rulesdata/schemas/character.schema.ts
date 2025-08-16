@@ -77,6 +77,8 @@ export interface Ancestry {
   description: string;
   defaultTraitIds: string[];
   expandedTraitIds: string[];
+  /** Reference to the PDF / patch version the rules were sourced from. */
+  rulesSource?: string;
   origin?: {
     prompt: string;
     options: string[];

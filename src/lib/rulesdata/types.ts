@@ -44,6 +44,7 @@ export interface IAncestry {
 	description: string;
 	defaultTraitIds?: string[]; // Traits automatically granted
 	expandedTraitIds: string[]; // Traits available for selection
+	rulesSource?: string; // e.g., 'DC20Beta0.95' to track PDF/patch version
 	origin?: {
 		// Optional origin property for ancestries with specific origins (e.g., Dragonborn, Fiendborn, Beastborn)
 		prompt: string; // Prompt shown to the user for choosing an origin

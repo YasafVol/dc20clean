@@ -4,7 +4,7 @@ import { json } from '@sveltejs/kit';
 import { PrismaClient } from '@prisma/client';
 import { classesData } from '$lib/rulesdata/loaders/class.loader';
 import { findClassByName, getLegacyChoiceId } from '$lib/rulesdata/loaders/class-features.loader';
-import { traitsData } from '$lib/rulesdata/traits';
+import { traitsData } from '$lib/rulesdata/_new_schema/traits';
 import { processTraitEffects } from '$lib/services/traitEffectProcessor';
 import type { RequestHandler } from './$types';
 

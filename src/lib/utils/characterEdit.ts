@@ -4,7 +4,7 @@
 import type { CharacterInProgressStoreData } from '../stores/characterContext';
 import type { SavedCharacter } from '../types/dataContracts';
 import { getCharacterState, updateCharacterState } from './characterState';
-import { traitsData } from '../rulesdata/traits';
+import { traitsData } from '../rulesdata/_new_schema/traits';
 import { getAllSavedCharacters, saveAllCharacters } from './storageUtils';
 
 

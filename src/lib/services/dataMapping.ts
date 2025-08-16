@@ -1,5 +1,5 @@
 // Data mapping utilities for converting between IDs and names
-import { ancestriesData } from '../rulesdata/ancestries';
+import { ancestriesData } from '../rulesdata/_new_schema/ancestries';
 import { classesData } from '../rulesdata/loaders/class.loader';
 import type { IAncestry, IClassDefinition } from '../rulesdata/types';
 

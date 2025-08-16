@@ -2,8 +2,8 @@ import React, { createContext, useContext, useEffect, useCallback, useMemo, useR
 import { useCharacterSheetReducer, type SheetState, type SheetAction } from './useCharacterSheetReducer';
 import { getCharacterById, saveCharacterState } from '../../../lib/utils/storageUtils';
 import { calculateCharacterWithBreakdowns, convertToEnhancedBuildData } from '../../../lib/services/enhancedCharacterCalculator';
-import { ancestriesData } from '../../../lib/rulesdata/ancestries';
-import { traitsData } from '../../../lib/rulesdata/traits';
+import { ancestriesData } from '../../../lib/rulesdata/_new_schema/ancestries';
+import { traitsData } from '../../../lib/rulesdata/_new_schema/traits';
 import { knowledgeData } from '../../../lib/rulesdata/knowledge';
 import { tradesData } from '../../../lib/rulesdata/trades';
 import { findClassByName, getLegacyChoiceId, getDisplayLabel } from '../../../lib/rulesdata/loaders/class-features.loader';

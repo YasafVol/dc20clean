@@ -8,6 +8,7 @@ import { knowledgeData } from '../../../lib/rulesdata/knowledge';
 import { tradesData } from '../../../lib/rulesdata/trades';
 import { findClassByName, getLegacyChoiceId, getDisplayLabel } from '../../../lib/rulesdata/loaders/class-features.loader';
 import { getDetailedClassFeatureDescription } from '../../../lib/utils/classFeatureDescriptions';
+import { languagesData } from '../../../lib/rulesdata/languages';
 
 // Simple debounce utility
 function useDebounce<T extends (...args: any[]) => any>(
@@ -693,4 +694,27 @@ export function useCharacterTrades() {
     
     return filteredTrades;
   }, [state.character?.tradesData, state.character?.finalMight, state.character?.finalAgility, state.character?.finalCharisma, state.character?.finalIntelligence]);
+}
+
+// Hook for character languages
+export function useCharacterLanguages() {
+  const { state } = useCharacterSheet();
+  return React.useMemo(() => {
+    if (!state.character?.languagesData) {
+      return [];
+    }
+    try {
+      const languagesFromDB = state.character.languagesData;
+      return Object.entries(languagesFromDB)
+        .filter(([_, data]: [string, any]) => data.fluency !== 'none')
+        .map(([langId, data]: [string, any]) => ({
+          id: langId,
+          name: data.name || langId.charAt(0).toUpperCase() + langId.slice(1),
+          fluency: data.fluency as 'limited' | 'fluent'
+        }));
+    } catch (error) {
+      console.error('Error parsing languages JSON:', error);
+      return [];
+    }
+  }, [state.character?.languagesData]);
 }

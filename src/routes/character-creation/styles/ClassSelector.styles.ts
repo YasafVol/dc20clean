@@ -288,5 +288,5 @@ export const StyledNewClassDescription = styled.p`
 	overflow-wrap: break-word;
 	hyphens: none;
 	word-break: normal;
-	white-space: normal;
+	white-space: pre-line;
 `;

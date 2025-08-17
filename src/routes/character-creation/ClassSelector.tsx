@@ -46,7 +46,7 @@ const classData = {
 	},
 	cleric: {
 		quote: "By their light, I heal. By their will, I smite.",
-		description: "Divine caster who heals, protects, and delivers holy retribution.",
+		description: "Divine caster who heals, protects, \nand delivers holy retribution.",
 		icon: ClericIconSrc
 	},
 	commander: {
@@ -76,12 +76,12 @@ const classData = {
 	},
 	sorcerer: {
 		quote: "Power pulses in me — untamed, unstoppable.",
-		description: "Casts spells drawn from an innate magical source, not study or faith.",
+		description: "Casts spells drawn from an innate\nmagical source, not study or faith.",
 		icon: SorcererIconSrc
 	},
 	spellblade: {
 		quote: "My blade is a conduit. My magic — the edge.",
-		description: "Combines melee combat with arcane spells, weaving both into a seamless assault.",
+		description: "Combines melee combat with arcane spells, weaving both into an assault.",
 		icon: SpellBladeIconSrc
 	},
 	warlock: {

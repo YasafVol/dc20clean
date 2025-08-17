@@ -1,5 +1,6 @@
-import styled, { createGlobalStyle } from 'styled-components';
-import backgroundImage from '../../../assets/Desktop.png';
+
+import styled from 'styled-components';
+import backgroundImage from '../../../assets/Desktop1920.jpg';
 
 // Global style to override body background for character sheet
 export const CharacterSheetGlobalStyle = createGlobalStyle`

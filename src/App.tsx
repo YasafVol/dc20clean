@@ -7,7 +7,17 @@ import LoadCharacter from './routes/character-creation/LoadCharacter.tsx';
 import CharacterSheetRouter from './routes/character-sheet/CharacterSheetRouter';
 import LevelUp from './routes/character-creation/LevelUp';
 import Menu from './components/Menu.tsx';
-import { StyledApp } from './styles/App.styles';
+
+import {
+	StyledApp,
+	StyledHeader,
+	StyledBackButton,
+	StyledMain
+} from './styles/App.styles';
+
+// Import static assets
+import blackBgImage from './assets/BlackBG.jpg';
+
 import cinzelFont from './types/Fonts/Cinzel-VariableFont_wght.ttf';
 import urbanistFont from './types/Fonts/Urbanist-VariableFont_wght.ttf';
 

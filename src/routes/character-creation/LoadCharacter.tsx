@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import type { SavedCharacter } from '../../lib/utils/characterEdit';
+import type { SavedCharacter } from '../../lib/types/dataContracts';
+import { getAllSavedCharacters, saveAllCharacters } from '../../lib/utils/storageUtils';
 import {
 	StyledContainer,
 	StyledTitle,
@@ -17,55 +18,84 @@ import {
 	StyledEmptyState,
 	StyledEmptyTitle,
 	StyledEmptyText,
-	StyledBackButton
+	StyledBackButton,
+	StyledModalOverlay,
+	StyledModalContent,
+	StyledModalTitle,
+	StyledModalMessage,
+	StyledModalActions,
+	StyledModalButton
 } from './styles/LoadCharacter.styles';
 
-interface LoadCharacterProps {
-	onBack: () => void;
-	onLoadCharacter?: (character: SavedCharacter) => void;
-	onSelectCharacter?: (characterId: string) => void;
-	onEditCharacter?: (character: SavedCharacter) => void;
-}
+import { useNavigate } from 'react-router-dom';
 
-function LoadCharacter({
-	onBack,
-	onLoadCharacter,
-	onSelectCharacter,
-	onEditCharacter
-}: LoadCharacterProps) {
+function LoadCharacter() {
+	const navigate = useNavigate();
 	const [savedCharacters, setSavedCharacters] = useState<SavedCharacter[]>([]);
+	const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+	const [characterToDelete, setCharacterToDelete] = useState<SavedCharacter | null>(null);
 
 	useEffect(() => {
-		const characters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+		const characters = getAllSavedCharacters();
 		setSavedCharacters(characters);
 	}, []);
 
 	const handleCharacterClick = (character: SavedCharacter) => {
-		if (onEditCharacter) {
-			onEditCharacter(character);
-		} else if (onLoadCharacter) {
-			onLoadCharacter(character);
-		} else {
-			console.log('Loading character:', character);
-			// TODO: Implement character loading logic
-		}
+		// Edit character
+		navigate(`/character/${character.id}/edit`, { state: { editCharacter: character } });
 	};
 
 	const handleViewCharacterSheet = (character: SavedCharacter, event: React.MouseEvent) => {
 		event.stopPropagation();
-		if (onSelectCharacter) {
-			onSelectCharacter(character.id);
+		navigate(`/character/${character.id}`);
+	};
+
+	// Level up handler placeholder
+
+	const handleDeleteClick = (character: SavedCharacter, event: React.MouseEvent) => {
+		event.stopPropagation();
+		setCharacterToDelete(character);
+		setDeleteModalOpen(true);
+	};
+
+	const handleConfirmDelete = () => {
+		if (characterToDelete) {
+			// Remove character from localStorage
+			const characters = getAllSavedCharacters();
+			const updatedCharacters = characters.filter((char: SavedCharacter) => char.id !== characterToDelete.id);
+			saveAllCharacters(updatedCharacters);
+			
+			// Update state
+			setSavedCharacters(updatedCharacters);
+			
+			// Close modal
+			setDeleteModalOpen(false);
+			setCharacterToDelete(null);
 		}
 	};
 
+	const handleCancelDelete = () => {
+		setDeleteModalOpen(false);
+		setCharacterToDelete(null);
+	};
+
 	const formatDate = (dateString: string) => {
-		return new Date(dateString).toLocaleDateString('en-US', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
-			hour: '2-digit',
-			minute: '2-digit'
-		});
+		try {
+			const date = new Date(dateString);
+			// Check if the date is valid
+			if (isNaN(date.getTime())) {
+				return 'Unknown Date';
+			}
+			return date.toLocaleDateString('en-US', {
+				year: 'numeric',
+				month: 'short',
+				day: 'numeric',
+				hour: '2-digit',
+				minute: '2-digit'
+			});
+		} catch (error) {
+			return 'Unknown Date';
+		}
 	};
 
 	const formatAncestry = (ancestry1: string, ancestry2?: string) => {
@@ -77,7 +107,7 @@ function LoadCharacter({
 
 	return (
 		<StyledContainer>
-			<StyledBackButton onClick={onBack}>← Back to Menu</StyledBackButton>
+			<StyledBackButton onClick={() => navigate('/menu')}>← Back to Menu</StyledBackButton>
 
 			<StyledTitle>Load Character</StyledTitle>
 
@@ -136,10 +166,44 @@ function LoadCharacter({
 								>
 									Edit
 								</StyledActionButton>
+								<StyledActionButton
+									variant="secondary"
+									onClick={() => navigate(`/character/${character.id}/levelup`)}
+								>
+									Level Up
+								</StyledActionButton>
+								<StyledActionButton
+									variant="danger"
+									onClick={(e) => handleDeleteClick(character, e)}
+								>
+									Delete
+								</StyledActionButton>
 							</StyledCardActions>
 						</StyledCharacterCard>
 					))}
 				</StyledCharacterGrid>
+			)}
+
+			{/* Delete Confirmation Modal */}
+			{deleteModalOpen && characterToDelete && (
+				<StyledModalOverlay>
+					<StyledModalContent>
+						<StyledModalTitle>Delete Character</StyledModalTitle>
+						<StyledModalMessage>
+							Are you sure you want to delete "{characterToDelete.finalName || 'Unnamed Character'}"?
+							<br />
+							This action cannot be undone.
+						</StyledModalMessage>
+						<StyledModalActions>
+							<StyledModalButton variant="cancel" onClick={handleCancelDelete}>
+								Cancel
+							</StyledModalButton>
+							<StyledModalButton variant="delete" onClick={handleConfirmDelete}>
+								Delete
+							</StyledModalButton>
+						</StyledModalActions>
+					</StyledModalContent>
+				</StyledModalOverlay>
 			)}
 		</StyledContainer>
 	);

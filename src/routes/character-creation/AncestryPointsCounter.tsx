@@ -1,9 +1,17 @@
-import React from 'react';
+
 import { useCharacter } from '../../lib/stores/characterContext';
 import { StyledContainer, StyledTitle, StyledDetails } from './styles/AncestryPointsCounter.styles';
 
 function AncestryPointsCounter() {
-	const { ancestryPointsRemaining, ancestryPointsSpent } = useCharacter();
+	const { calculationResult } = useCharacter();
+	
+	// Use centralized calculator for ancestry points (includes Cleric domain bonuses, etc.)
+	const ancestryData = calculationResult.ancestry || {
+		baseAncestryPoints: 5,
+		ancestryPointsUsed: 0,
+		ancestryPointsRemaining: 5
+	};
+	const { ancestryPointsUsed: ancestryPointsSpent, ancestryPointsRemaining } = ancestryData;
 
 	const isOverBudget = ancestryPointsRemaining < 0;
 

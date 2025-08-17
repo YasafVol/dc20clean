@@ -69,7 +69,7 @@ const AttributesSections: React.FC<AttributesSectionsProps> = ({
 						<StyledSkillName>{skill.name.toUpperCase()}</StyledSkillName>
 						<StyledProficiencyDots>
 							{[1, 2, 3, 4, 5].map((level) => (
-								<StyledDot key={level} filled={level <= skill.proficiency} />
+								<StyledDot key={level} $filled={level <= skill.proficiency} />
 							))}
 						</StyledProficiencyDots>
 					</StyledSkillRow>
@@ -95,7 +95,7 @@ const AttributesSections: React.FC<AttributesSectionsProps> = ({
 						<StyledSkillName>{skill.name.toUpperCase()}</StyledSkillName>
 						<StyledProficiencyDots>
 							{[1, 2, 3, 4, 5].map((level) => (
-								<StyledDot key={level} filled={level <= skill.proficiency} />
+								<StyledDot key={level} $filled={level <= skill.proficiency} />
 							))}
 						</StyledProficiencyDots>
 					</StyledAttributeSkillRow>
@@ -121,7 +121,7 @@ const AttributesSections: React.FC<AttributesSectionsProps> = ({
 						<StyledSkillName>{skill.name.toUpperCase()}</StyledSkillName>
 						<StyledProficiencyDots>
 							{[1, 2, 3, 4, 5].map((level) => (
-								<StyledDot key={level} filled={level <= skill.proficiency} />
+								<StyledDot key={level} $filled={level <= skill.proficiency} />
 							))}
 						</StyledProficiencyDots>
 					</StyledAttributeSkillRow>
@@ -147,7 +147,7 @@ const AttributesSections: React.FC<AttributesSectionsProps> = ({
 						<StyledSkillName>{skill.name.toUpperCase()}</StyledSkillName>
 						<StyledProficiencyDots>
 							{[1, 2, 3, 4, 5].map((level) => (
-								<StyledDot key={level} filled={level <= skill.proficiency} />
+								<StyledDot key={level} $filled={level <= skill.proficiency} />
 							))}
 						</StyledProficiencyDots>
 					</StyledAttributeSkillRow>
@@ -173,7 +173,7 @@ const AttributesSections: React.FC<AttributesSectionsProps> = ({
 						<StyledSkillName>{skill.name.toUpperCase()}</StyledSkillName>
 						<StyledProficiencyDots>
 							{[1, 2, 3, 4, 5].map((level) => (
-								<StyledDot key={level} filled={level <= skill.proficiency} />
+								<StyledDot key={level} $filled={level <= skill.proficiency} />
 							))}
 						</StyledProficiencyDots>
 					</StyledAttributeSkillRow>
@@ -189,7 +189,7 @@ const AttributesSections: React.FC<AttributesSectionsProps> = ({
 						<StyledSkillName>{knowledgeItem.name.toUpperCase()}</StyledSkillName>
 						<StyledProficiencyDots>
 							{[1, 2, 3, 4, 5].map((level) => (
-								<StyledDot key={level} filled={level <= knowledgeItem.proficiency} />
+								<StyledDot key={level} $filled={level <= knowledgeItem.proficiency} />
 							))}
 						</StyledProficiencyDots>
 					</StyledAttributeSkillRow>
@@ -206,7 +206,7 @@ const AttributesSections: React.FC<AttributesSectionsProps> = ({
 							<StyledSkillName>{trade.name.toUpperCase()}</StyledSkillName>
 							<StyledProficiencyDots>
 								{[1, 2, 3, 4, 5].map((level) => (
-									<StyledDot key={level} filled={level <= trade.proficiency} />
+									<StyledDot key={level} $filled={level <= trade.proficiency} />
 								))}
 							</StyledProficiencyDots>
 						</StyledAttributeSkillRow>

@@ -1,5 +1,6 @@
 import React from 'react';
 import type { FeatureData } from '../../../types';
+import { useCharacterSheet, useCharacterFeatures } from '../hooks/CharacterSheetProvider';
 import {
 	StyledFeaturesContainer,
 	StyledFeaturesTitle,
@@ -14,11 +15,17 @@ import {
 } from '../styles/Features.styles';
 
 interface FeaturesProps {
-	features: FeatureData[];
 	onFeatureClick: (feature: FeatureData) => void;
 }
 
-const Features: React.FC<FeaturesProps> = ({ features, onFeatureClick }) => {
+const Features: React.FC<FeaturesProps> = ({ onFeatureClick }) => {
+	const { state } = useCharacterSheet();
+	const features = useCharacterFeatures(); // Use our enhanced hook!
+	
+	if (!state.character) {
+		return <div>Loading features...</div>;
+	}
+	
 	// Organize features by source
 	const ancestryFeatures = features.filter((f) => f.source === 'ancestry');
 	const classFeatures = features.filter((f) => f.source === 'class');

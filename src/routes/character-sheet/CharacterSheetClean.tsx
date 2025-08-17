@@ -1,28 +1,26 @@
 import React, { useState, useEffect } from 'react';
 
+// Import Provider hooks
+import { useCharacterSheet, useCharacterResources } from './hooks/CharacterSheetProvider';
+
 // Import types
 import type {
 	CharacterSheetProps,
-	CharacterSheetData,
 	SkillData,
 	TradeData,
 	LanguageData,
 	FeatureData,
-	CurrentValues,
 	AttackData,
 	SpellData,
 	InventoryItemData,
-	CharacterState
 } from '../../types';
 import type { Spell } from '../../lib/rulesdata/spells-data/types/spell.types';
 import type { Weapon } from '../../lib/rulesdata/inventoryItems';
 import type { InventoryItem } from '../../lib/rulesdata/inventoryItems';
-import {
-	getVersatileDamage,
-	getWeaponRange,
-	getWeaponFeatures,
-	parseDamage
-} from '../../lib/utils/weaponUtils';
+import type { ManeuverData } from '../../types';
+import type { Maneuver } from '../../lib/rulesdata/maneuvers';
+
+// Legacy JSON parsing function - removed in favor of typed data contracts
 
 // Import new component modules
 import LeftColumn from './components/LeftColumn';
@@ -32,22 +30,26 @@ import Defenses from './components/Defenses';
 import Combat from './components/Combat';
 import Attacks from './components/Attacks';
 import Spells from './components/Spells';
+import Maneuvers from './components/Maneuvers';
 import Inventory from './components/Inventory';
 import Features from './components/Features';
 import Movement from './components/Movement';
 import RightColumnResources from './components/RightColumnResources';
 import DeathExhaustion from './components/DeathExhaustion';
+
 import PlayerNotes from './components/PlayerNotes';
 import DiceRoller from './components/DiceRoller';
 
+// Import modal components
+import FeaturePopup from './components/FeaturePopup';
+import SpellPopup from './components/SpellPopup';
+import AttackPopup from './components/AttackPopup';
+import InventoryPopup from './components/InventoryPopup';
+
 // Import character state management utilities
 import {
-	getCharacterState,
-	initializeCharacterState,
-	saveCharacterState,
 	updateCharacterState,
 	revertToOriginal,
-	characterStateToCurrentValues
 } from '../../lib/utils/characterState';
 
 // Import defense notes utilities
@@ -57,19 +59,20 @@ import { clearDefenseNotesForField } from '../../lib/utils/defenseNotes';
 import { skillsData } from '../../lib/rulesdata/skills';
 import { tradesData } from '../../lib/rulesdata/trades';
 import { knowledgeData } from '../../lib/rulesdata/knowledge';
-import { traitsData } from '../../lib/rulesdata/traits';
+import { traitsData } from '../../lib/rulesdata/_new_schema/traits';
 import {
 	findClassByName,
 	getClassSpecificInfo,
 	getLegacyChoiceId,
 	getDisplayLabel
 } from '../../lib/rulesdata/loaders/class-features.loader';
-import { ancestriesData } from '../../lib/rulesdata/ancestries';
+import { ancestriesData } from '../../lib/rulesdata/_new_schema/ancestries';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
 
 // Import styled components
 import {
 	StyledContainer,
+	CharacterSheetGlobalStyle,
 	StyledBackButton,
 	StyledCharacterSheet,
 	StyledMainGrid,
@@ -90,80 +93,63 @@ import {
 	StyledFeaturePopupHeader,
 	StyledFeaturePopupTitle,
 	StyledFeaturePopupClose,
-	StyledFeaturePopupDescription,
-	StyledFeaturePopupSourceInfo
+	StyledFeaturePopupDescription
 } from './styles/FeaturePopup';
 
-import { calculateDeathThreshold } from '../../lib/rulesdata/death';
+import { allSpells } from '../../lib/rulesdata/spells-data/spells';
+import { allManeuvers } from '../../lib/rulesdata/maneuvers';
 
-// Character data service - fetches from localStorage and uses already calculated stats
-const getCharacterData = async (characterId: string): Promise<CharacterSheetData> => {
-	console.log('Loading character data for ID:', characterId);
+import { handlePrintCharacterSheet } from "./utils";
 
-	// Get characters from localStorage
-	const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-
-	// Find the character by ID
-	const character = savedCharacters.find((char: any) => char.id === characterId);
-
-	if (!character) {
-		throw new Error(`Character with ID "${characterId}" not found in localStorage`);
-	}
-
-	// Return the character data as-is since it's already calculated, but ensure trait and feature data is included
-	return {
-		...character,
-		selectedTraitIds: character.selectedTraitIds || character.selectedTraitsJson || '[]',
-		selectedFeatureChoices: character.selectedFeatureChoices || '{}'
-	};
-};
-
-// Save manual defense overrides to localStorage
-const saveManualDefense = (
-	characterId: string,
-	field: 'manualPD' | 'manualPDR' | 'manualAD',
-	value: number | undefined
-) => {
-	const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-	const characterIndex = savedCharacters.findIndex((char: any) => char.id === characterId);
-
-	if (characterIndex !== -1) {
-		// Update the character's manual defense value
-		savedCharacters[characterIndex] = {
-			...savedCharacters[characterIndex],
-			[field]: value,
-			lastModified: new Date().toISOString()
-		};
-
-		localStorage.setItem('savedCharacters', JSON.stringify(savedCharacters));
-		console.log(`Manual defense ${field} updated for character ${characterId}:`, value);
-	}
-};
+// LEGACY: saveManualDefense function removed - now handled by CharacterSheetProvider
 
 const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) => {
-	const [characterData, setCharacterData] = useState<CharacterSheetData | null>(null);
-	const [characterState, setCharacterState] = useState<CharacterState | null>(null);
-	// Keep currentValues for backwards compatibility with existing components
-	const [currentValues, setCurrentValues] = useState<CurrentValues>({
-		currentHP: 0,
-		currentSP: 0,
-		currentMP: 0,
-		currentGritPoints: 0,
-		currentRestPoints: 0,
+	// Use Provider hooks for data and update methods
+	const { 
+		state, 
+		updateHP,
+		updateSP,
+		updateMP,
+		updateTempHP,
+		updateActionPoints,
+		updateExhaustion,
+		updateCurrency,
+	} = useCharacterSheet();
+	const resources = useCharacterResources();
+	
+	// Get data from Provider instead of local state
+	const loading = state.loading;
+	const error = state.error;
+	const characterData = state.character;
+	const characterState = characterData?.characterState;
+
+	// Calculate max values for current resources
+	const characterMaxValues = characterData ? {
+		currentGritPoints: characterData.finalGritPoints,
+		currentRestPoints: characterData.finalRestPoints,
+		currentHP: characterData.finalHPMax,
+		currentSP: characterData.finalSPMax,
+		currentMP: characterData.finalMPMax,
 		tempHP: 0,
 		actionPointsUsed: 0,
 		exhaustionLevel: 0,
+		// Death tracking
+		deathSteps: 0,
+		isDead: false,
 		// Currency
 		goldPieces: 0,
 		silverPieces: 0,
 		copperPieces: 0,
 		electrumPieces: 0,
 		platinumPieces: 0
-	});
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	} : {};
+
+	const currentValues = resources?.current || characterMaxValues;
+	
+	// Keep local popup state (these don't need Provider)
 	const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
 	const [selectedSpell, setSelectedSpell] = useState<Spell | null>(null);
+	const [selectedManeuver, setSelectedManeuver] = useState<Maneuver | null>(null);
 	const [selectedAttack, setSelectedAttack] = useState<{
 		attack: AttackData;
 		weapon: Weapon | null;
@@ -174,7 +160,10 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	} | null>(null);
 	const [attacks, setAttacks] = useState<AttackData[]>([]);
 	const [spells, setSpells] = useState<SpellData[]>([]);
+	const [maneuvers, setManeuvers] = useState<ManeuverData[]>([]);
 	const [inventory, setInventory] = useState<InventoryItemData[]>([]);
+
+
 
 	// Mobile navigation state
 	type MobileSection = 'character' | 'combat' | 'features' | 'info';
@@ -192,153 +181,18 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		return () => window.removeEventListener('resize', checkMobile);
 	}, []);
 
-	// Save character current values back to localStorage using comprehensive state management
-	const saveCharacterData = (characterId: string, currentValues: CurrentValues) => {
-		updateCharacterState(characterId, {
-			resources: {
-				original: characterState?.resources.original || {
-					maxHP: characterData?.finalHPMax || 0,
-					maxSP: characterData?.finalSPMax || 0,
-					maxMP: characterData?.finalMPMax || 0,
-					maxGritPoints: characterData?.finalGritPoints || 0,
-					maxRestPoints: characterData?.finalRestPoints || 0
-				},
-				current: {
-					currentHP: currentValues.currentHP,
-					currentSP: currentValues.currentSP,
-					currentMP: currentValues.currentMP,
-					currentGritPoints: currentValues.currentGritPoints,
-					currentRestPoints: currentValues.currentRestPoints,
-					tempHP: currentValues.tempHP,
-					actionPointsUsed: currentValues.actionPointsUsed,
-					exhaustionLevel: currentValues.exhaustionLevel
-				}
-			},
-			currency: {
-				original: characterState?.currency.original || {
-					goldPieces: 0,
-					silverPieces: 0,
-					copperPieces: 0,
-					electrumPieces: 0,
-					platinumPieces: 0
-				},
-				current: {
-					goldPieces: currentValues.goldPieces,
-					silverPieces: currentValues.silverPieces,
-					copperPieces: currentValues.copperPieces,
-					electrumPieces: currentValues.electrumPieces,
-					platinumPieces: currentValues.platinumPieces
-				}
-			}
-		});
-	};
 
-	// Save attacks to comprehensive state
-	const saveAttacksData = (newAttacks: AttackData[]) => {
-		updateCharacterState(characterId, {
-			attacks: {
-				original: characterState?.attacks.original || [],
-				current: newAttacks
-			}
-		});
-	};
 
-	// Save spells to comprehensive state
-	const saveSpellsData = (newSpells: SpellData[]) => {
-		updateCharacterState(characterId, {
-			spells: {
-				original: characterState?.spells.original || [],
-				current: newSpells
-			}
-		});
-	};
 
-	// Save inventory to comprehensive state
-	const saveInventoryData = (newInventory: InventoryItemData[]) => {
-		updateCharacterState(characterId, {
-			inventory: {
-				original: characterState?.inventory.original || [],
-				current: newInventory
-			}
-		});
-	};
 
-	// Wrapper for setAttacks that also saves to comprehensive state
-	const updateAttacks = (newAttacks: AttackData[] | ((prev: AttackData[]) => AttackData[])) => {
-		setAttacks((prev) => {
-			const result = typeof newAttacks === 'function' ? newAttacks(prev) : newAttacks;
-			saveAttacksData(result);
-			return result;
-		});
-	};
 
-	// Wrapper for setSpells that also saves to comprehensive state
-	const updateSpells = (newSpells: SpellData[] | ((prev: SpellData[]) => SpellData[])) => {
-		setSpells((prev) => {
-			const result = typeof newSpells === 'function' ? newSpells(prev) : newSpells;
-			saveSpellsData(result);
-			return result;
-		});
-	};
 
-	// Wrapper for setInventory that also saves to comprehensive state
-	const updateInventory = (
-		newInventory: InventoryItemData[] | ((prev: InventoryItemData[]) => InventoryItemData[])
-	) => {
-		setInventory((prev) => {
-			const result = typeof newInventory === 'function' ? newInventory(prev) : newInventory;
-			saveInventoryData(result);
-			return result;
-		});
-	};
+
 
 	// Load character data
-	useEffect(() => {
-		const loadCharacterData = async () => {
-			try {
-				setLoading(true);
-				setError(null);
+	// Data loading is now handled by the Provider, so no useEffect needed here
 
-				// Load the character data from API
-				const data = await getCharacterData(characterId);
-				setCharacterData(data);
-
-				// Get existing character state from localStorage
-				const existingState = getCharacterState(characterId);
-
-				// Initialize comprehensive character state
-				const initialState = initializeCharacterState(data, existingState);
-				setCharacterState(initialState);
-
-				// Save the initial state to localStorage if it doesn't exist
-				if (!existingState) {
-					saveCharacterState(characterId, initialState);
-					console.log('Initial character state saved to localStorage');
-				}
-
-				// Update component states from the comprehensive state
-				const legacyCurrentValues = characterStateToCurrentValues(initialState);
-				setCurrentValues(legacyCurrentValues);
-				setAttacks(initialState.attacks?.current || []);
-				setSpells(initialState.spells?.current || []);
-				setInventory(initialState.inventory?.current || []);
-
-				console.log('Character data and state loaded:', {
-					characterData: data,
-					characterState: initialState,
-					legacyCurrentValues
-				});
-			} catch (err) {
-				setError(err instanceof Error ? err.message : 'An error occurred');
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		loadCharacterData();
-	}, [characterId]);
-
-	// Calculate original defense values (without manual overrides) with detailed breakdown
+	// Calculate original defense values using enhanced calculator for supported classes
 	const getCalculatedDefenses = () => {
 		if (!characterData)
 			return {
@@ -350,30 +204,31 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 				pdrBreakdown: ''
 			};
 
-		// Use the same formula as in characterCalculator.ts
-		const calculatedPD =
-			8 +
-			characterData.finalCombatMastery +
-			characterData.finalAgility +
-			characterData.finalIntelligence;
-		const calculatedAD =
-			8 + characterData.finalCombatMastery + characterData.finalMight + characterData.finalCharisma;
+		// OPTIMIZED: Trust stored defense values and breakdowns (no recalculation needed)
+		let calculatedPD, calculatedAD, calculatedPDR;
+		let pdBreakdown, adBreakdown, pdrBreakdown;
 
-		// Create detailed breakdown strings
-		const pdBreakdown = `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalAgility} (Agility) + ${characterData.finalIntelligence} (Intelligence) = ${calculatedPD}`;
-		const adBreakdown = `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalMight} (Might) + ${characterData.finalCharisma} (Charisma) = ${calculatedAD}`;
+		// Use stored values - they are the single source of truth
+		calculatedPD = characterData.finalPD;
+		calculatedAD = characterData.finalAD;
+		calculatedPDR = characterData.finalPDR;
 
-		// For PDR, we'd need to recalculate based on armor/class, but for now we'll use the difference
-		// between final value and any manual override
-		const calculatedPDR =
-			characterData.manualPDR !== undefined
-				? characterData.finalPDR // This would be the auto-calculated value stored somewhere
-				: characterData.finalPDR;
+		// Use stored breakdowns if available, otherwise create simple fallback
+		const storedBreakdowns = (characterData as any).breakdowns || {};
+		
+		pdBreakdown = storedBreakdowns.pd?.effects ?
+			storedBreakdowns.pd.effects.map((e: any) => `${e.value > 0 ? '+' : ''}${e.value} (${e.source.name || e.source})`).join(' ') + ` = ${calculatedPD}` :
+			`8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalAgility} (Agility) + ${characterData.finalIntelligence} (Intelligence) = ${calculatedPD}`;
 
-		const pdrBreakdown =
-			calculatedPDR > 0
-				? `${calculatedPDR} (from equipped armor and class features)`
-				: '0 (no PDR from current equipment/class)';
+		adBreakdown = storedBreakdowns.ad?.effects ?
+			storedBreakdowns.ad.effects.map((e: any) => `${e.value > 0 ? '+' : ''}${e.value} (${e.source.name || e.source})`).join(' ') + ` = ${calculatedAD}` :
+			`8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalMight} (Might) + ${characterData.finalCharisma} (Charisma) = ${calculatedAD}`;
+
+		pdrBreakdown = calculatedPDR > 0
+			? `${calculatedPDR} (from stored calculation)`
+			: '0 (no PDR)';
+
+		console.log('🚀 OPTIMIZED: Using stored defense values (no recalculation needed)');
 
 		return {
 			calculatedPD,
@@ -385,140 +240,15 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		};
 	};
 
-	// Resource management functions with auto-save
-	const adjustResource = (resource: keyof CurrentValues, amount: number) => {
-		setCurrentValues((prev) => {
-			const newValue = prev[resource] + amount;
-			let maxValue = 999;
 
-			switch (resource) {
-				case 'currentHP':
-					// HP can go up to normal max + temp HP
-					maxValue = (characterData?.finalHPMax || 0) + prev.tempHP;
-					break;
-				case 'currentSP':
-					maxValue = characterData?.finalSPMax || 0;
-					break;
-				case 'currentMP':
-					maxValue = characterData?.finalMPMax || 0;
-					break;
-				case 'currentGritPoints':
-					maxValue = characterData?.finalGritPoints || 0;
-					break;
-				case 'currentRestPoints':
-					maxValue = characterData?.finalRestPoints || 0;
-					break;
-				case 'actionPointsUsed':
-					maxValue = 4; // Standard AP limit
-					break;
-				case 'exhaustionLevel':
-					maxValue = 5; // Max exhaustion level
-					break;
-			}
 
-			const newValues = {
-				...prev,
-				[resource]: Math.max(0, Math.min(newValue, maxValue))
-			};
-
-			// Special case: when reducing temp HP, cap current HP to new effective max
-			if (resource === 'tempHP' && amount < 0) {
-				const newEffectiveMaxHP = (characterData?.finalHPMax || 0) + newValues.tempHP;
-				if (prev.currentHP > newEffectiveMaxHP) {
-					newValues.currentHP = newEffectiveMaxHP;
-				}
-			}
-
-			// Save to localStorage after state update
-			if (characterData?.id) {
-				setTimeout(() => saveCharacterData(characterData.id, newValues), 0);
-			}
-
-			return newValues;
-		});
-	};
-
-	const handleResourceInputChange = (resource: keyof CurrentValues, value: string) => {
-		const numValue = parseInt(value) || 0;
-		let maxValue = 999;
-
-		switch (resource) {
-			case 'currentHP':
-				// HP can go up to normal max + temp HP
-				maxValue = (characterData?.finalHPMax || 0) + currentValues.tempHP;
-				break;
-			case 'currentSP':
-				maxValue = characterData?.finalSPMax || 0;
-				break;
-			case 'currentMP':
-				maxValue = characterData?.finalMPMax || 0;
-				break;
-			case 'currentGritPoints':
-				maxValue = characterData?.finalGritPoints || 0;
-				break;
-			case 'currentRestPoints':
-				maxValue = characterData?.finalRestPoints || 0;
-				break;
-			case 'actionPointsUsed':
-				maxValue = 4;
-				break;
-			case 'exhaustionLevel':
-				maxValue = 5;
-				break;
-		}
-
-		setCurrentValues((prev) => {
-			const newValues = {
-				...prev,
-				[resource]: Math.max(0, Math.min(numValue, maxValue))
-			};
-
-			// Special case: when changing temp HP directly, cap current HP to new effective max
-			if (resource === 'tempHP') {
-				const newEffectiveMaxHP = (characterData?.finalHPMax || 0) + newValues.tempHP;
-				if (prev.currentHP > newEffectiveMaxHP) {
-					newValues.currentHP = newEffectiveMaxHP;
-				}
-			}
-
-			// Save to localStorage after state update
-			if (characterData?.id) {
-				setTimeout(() => saveCharacterData(characterData.id, newValues), 0);
-			}
-
-			return newValues;
-		});
-	};
-
-	const handleManualDefenseChange = (
-		field: 'manualPD' | 'manualPDR' | 'manualAD',
-		value: number | undefined
-	) => {
-		if (!characterData?.id) return;
-
-		// Save to localStorage
-		saveManualDefense(characterData.id, field, value);
-
-		// Update local character data
-		setCharacterData((prev) => {
-			if (!prev) return prev;
-			return {
-				...prev,
-				[field]: value
-			};
-		});
-	};
 
 	// Parse skills data from character - show ALL skills with their proficiency levels and calculated bonuses
 	const getSkillsData = (): SkillData[] => {
 		// Parse character's skill proficiencies (if any)
 		let characterSkills: Record<string, number> = {};
-		if (characterData?.skillsJson) {
-			try {
-				characterSkills = JSON.parse(characterData.skillsJson);
-			} catch (error) {
-				console.error('Error parsing skills JSON:', error);
-			}
+		if (characterData?.skillsData) {
+			characterSkills = characterData.skillsData;
 		}
 
 		// Create skill data for ALL skills from rules data, merging with character's proficiencies
@@ -565,12 +295,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	const getTradesData = (): TradeData[] => {
 		// Parse character's trade proficiencies (if any)
 		let characterTrades: Record<string, number> = {};
-		if (characterData?.tradesJson) {
-			try {
-				characterTrades = JSON.parse(characterData.tradesJson);
-			} catch (error) {
-				console.error('Error parsing trades JSON:', error);
-			}
+		if (characterData?.tradesData) {
+			characterTrades = characterData.tradesData;
 		}
 
 		// Only show trades that have been selected (proficiency > 0) from tradesData only
@@ -612,14 +338,10 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 	// Parse knowledge data from character - show ALL knowledge with their proficiency levels and calculated bonuses
 	const getKnowledgeData = (): TradeData[] => {
-		// Parse character's trade proficiencies (if any) - knowledge is stored in tradesJson
+		// Parse character's trade proficiencies (if any) - knowledge is stored in tradesData
 		let characterTrades: Record<string, number> = {};
-		if (characterData?.tradesJson) {
-			try {
-				characterTrades = JSON.parse(characterData.tradesJson);
-			} catch (error) {
-				console.error('Error parsing trades JSON:', error);
-			}
+		if (characterData?.tradesData) {
+			characterTrades = characterData.tradesData;
 		}
 
 		// Show ALL knowledge skills with their proficiency levels and calculated bonuses
@@ -659,12 +381,12 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 	// Parse languages data from character
 	const getLanguagesData = (): LanguageData[] => {
-		if (!characterData?.languagesJson) {
+		if (!characterData?.languagesData) {
 			return [];
 		}
 
 		try {
-			const languagesFromDB = JSON.parse(characterData.languagesJson);
+			const languagesFromDB = characterData.languagesData;
 
 			return Object.entries(languagesFromDB)
 				.filter(([_, data]: [string, any]) => data.fluency !== 'none')
@@ -718,7 +440,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		// Get selected ancestry traits
 		if (characterData.selectedTraitIds) {
 			try {
-				const selectedTraitIds: string[] = JSON.parse(characterData.selectedTraitIds);
+				const selectedTraitIds: string[] = Array.isArray(characterData.selectedTraitIds) 
+					? characterData.selectedTraitIds 
+					: JSON.parse(characterData.selectedTraitIds);
 				selectedTraitIds.forEach((traitId) => {
 					const trait = traitsData.find((t) => t.id === traitId);
 					if (trait) {
@@ -763,9 +487,26 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 			// Add selected feature choices
 			if (characterData.selectedFeatureChoices) {
 				try {
-					const selectedChoices: { [key: string]: string } = JSON.parse(
-						characterData.selectedFeatureChoices
-					);
+					// Try to parse as JSON first
+					let selectedChoices: { [key: string]: string } = {};
+					
+					// Handle new data structure - selectedFeatureChoices is already an object
+					if (typeof characterData.selectedFeatureChoices === 'object' && characterData.selectedFeatureChoices !== null) {
+						selectedChoices = characterData.selectedFeatureChoices as { [key: string]: string };
+					} else if (typeof characterData.selectedFeatureChoices === 'string') {
+						// Legacy handling - try to parse as JSON string
+						try {
+							selectedChoices = JSON.parse(characterData.selectedFeatureChoices);
+						} catch (jsonError) {
+							// If JSON parsing fails, it might be legacy comma-separated data
+							console.warn('Failed to parse selectedFeatureChoices as JSON, attempting legacy format conversion:', characterData.selectedFeatureChoices);
+							
+							// For legacy data that might be stored as "Magic,Trickery" format
+							// We'll skip processing for now to prevent errors
+							console.warn('Skipping feature choices processing due to legacy data format');
+							return features;
+						}
+					}
 
 					// Process each core feature that has choices
 					selectedClassFeatures.coreFeatures.forEach((feature) => {
@@ -782,7 +523,28 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 								if (selectedOptionValues && choice.options) {
 									if (choice.count > 1) {
 										// Handle multiple selections (like cleric domains)
-										const selectedValueArray: string[] = JSON.parse(selectedOptionValues);
+										let selectedValueArray: string[] = [];
+										
+										if (Array.isArray(selectedOptionValues)) {
+											// New format - already an array
+											selectedValueArray = selectedOptionValues;
+										} else if (typeof selectedOptionValues === 'string') {
+											// Legacy format - JSON string or comma-separated
+											try {
+												selectedValueArray = JSON.parse(selectedOptionValues);
+											} catch (parseError) {
+												// Try comma-separated format
+												if (selectedOptionValues.includes(',')) {
+													selectedValueArray = selectedOptionValues.split(',').map(v => v.trim());
+												} else {
+													// Single value that failed JSON parse
+													selectedValueArray = [selectedOptionValues];
+												}
+											}
+										} else {
+											console.warn('Unexpected format for choice values:', selectedOptionValues);
+											return; // Use return instead of continue in forEach
+										}
 
 										selectedValueArray.forEach((value) => {
 											const selectedOption = choice.options?.find((opt) => opt.name === value);
@@ -880,6 +642,14 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		setSelectedSpell(null);
 	};
 
+	const openManeuverPopup = (maneuver: Maneuver) => {
+		setSelectedManeuver(maneuver);
+	};
+
+	const closeManeuverPopup = () => {
+		setSelectedManeuver(null);
+	};
+
 	// Handle attack popup
 	const openAttackPopup = (attack: AttackData, weapon: Weapon | null) => {
 		setSelectedAttack({ attack, weapon });
@@ -898,83 +668,17 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		setSelectedInventoryItem(null);
 	};
 
-	// Currency management function
-	const handleCurrencyChange = (currency: string, value: number) => {
-		setCurrentValues((prev) => {
-			const newValues = {
-				...prev,
-				[currency]: value
-			};
+	// Navigation functions
 
-			// Save to localStorage after state update
-			if (characterData?.id) {
-				setTimeout(() => saveCharacterData(characterData.id, newValues), 0);
-			}
 
-			return newValues;
-		});
-	};
 
-	// Handle exhaustion level changes
-	const handleExhaustionChange = (level: number) => {
-		setCurrentValues((prev) => {
-			const newLevel = prev.exhaustionLevel === level ? level - 1 : level;
-			const newValues = {
-				...prev,
-				exhaustionLevel: Math.max(0, Math.min(5, newLevel))
-			};
 
-			// Save to localStorage after state update
-			if (characterData?.id) {
-				setTimeout(() => saveCharacterData(characterData.id, newValues), 0);
-			}
 
-			return newValues;
-		});
-	};
-
-	// Handle death step changes
-	const handleDeathStepChange = (step: number) => {
-		if (!characterData) return;
-
-		const deathThreshold = calculateDeathThreshold(
-			characterData.finalPrimeModifierValue,
-			characterData.finalCombatMastery
-		);
-		const targetHP = -step;
-
-		// Don't allow going below death threshold
-		if (targetHP < deathThreshold) {
-			setCurrentValues((prev) => {
-				const newValues = { ...prev, currentHP: deathThreshold };
-				// Save to localStorage after state update
-				if (characterData?.id) {
-					setTimeout(() => saveCharacterData(characterData.id, newValues), 0);
-				}
-				return newValues;
-			});
-		} else {
-			setCurrentValues((prev) => {
-				const newValues = { ...prev, currentHP: targetHP };
-				// Save to localStorage after state update
-				if (characterData?.id) {
-					setTimeout(() => saveCharacterData(characterData.id, newValues), 0);
-				}
-				return newValues;
-			});
-		}
-	};
-
-	// Helper function to safely calculate fill percentage
-	const getFillPercentage = (current: number, max: number): number => {
-		if (max === 0) return 0;
-		return Math.max(0, Math.min(100, (current / max) * 100));
-	};
 
 	// Copy character data to clipboard
 	// Revert character data to original values
 	const handleRevertToOriginal = (
-		dataType: 'resources' | 'currency' | 'attacks' | 'spells' | 'inventory' | 'all'
+		dataType: 'resources' | 'currency' | 'attacks' | 'spells' | 'maneuvers' | 'inventory' | 'all'
 	) => {
 		if (dataType === 'all') {
 			// Revert all data types
@@ -982,6 +686,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 			revertToOriginal(characterId, 'currency');
 			revertToOriginal(characterId, 'attacks');
 			revertToOriginal(characterId, 'spells');
+			revertToOriginal(characterId, 'maneuvers');
 			revertToOriginal(characterId, 'inventory');
 
 			// Also clear all manual defense overrides (PDR, PD, AD)
@@ -989,10 +694,10 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 			clearDefenseNotesForField(characterId, 'manualPDR');
 			clearDefenseNotesForField(characterId, 'manualAD');
 
-			// Clear the manual defense values in localStorage
-			saveManualDefense(characterId, 'manualPD', undefined);
-			saveManualDefense(characterId, 'manualPDR', undefined);
-			saveManualDefense(characterId, 'manualAD', undefined);
+			// TODO: Clear the manual defense values in localStorage
+			// saveManualDefense(characterId, 'manualPD', undefined);
+			// saveManualDefense(characterId, 'manualPDR', undefined);
+			// saveManualDefense(characterId, 'manualAD', undefined);
 
 			// Reload the page to reflect changes
 			window.location.reload();
@@ -1001,32 +706,22 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 			// Update local state based on what was reverted
 			if (dataType === 'resources') {
-				setCurrentValues((prev) => ({
-					...prev,
-					currentHP: characterData?.finalHPMax || 0,
-					currentSP: characterData?.finalSPMax || 0,
-					currentMP: characterData?.finalMPMax || 0,
-					currentGritPoints: characterData?.finalGritPoints || 0,
-					currentRestPoints: characterData?.finalRestPoints || 0,
-					tempHP: 0,
-					actionPointsUsed: 0,
-					exhaustionLevel: 0
-				}));
+				// Revert to max values using Provider methods
+				updateHP(characterData?.finalHPMax || 0);
+				updateSP(characterData?.finalSPMax || 0);
+				updateMP(characterData?.finalMPMax || 0);
+				updateTempHP(0);
+				updateActionPoints(0);
+				updateExhaustion(0);
 			} else if (dataType === 'currency') {
-				setCurrentValues((prev) => ({
-					...prev,
-					goldPieces: 0,
-					silverPieces: 0,
-					copperPieces: 0,
-					electrumPieces: 0,
-					platinumPieces: 0
-				}));
+				// Reset currency using Provider method
+				updateCurrency(0, 0, 0);
 			} else if (dataType === 'attacks') {
 				// Reset to default attacks
 				const defaultAttacks: AttackData[] = [
 					{
 						id: '1',
-						weaponId: '',
+						weaponName: '',
 						name: '',
 						attackBonus: 0,
 						damage: '',
@@ -1038,7 +733,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					},
 					{
 						id: '2',
-						weaponId: '',
+						weaponName: '',
 						name: '',
 						attackBonus: 0,
 						damage: '',
@@ -1050,7 +745,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 					},
 					{
 						id: '3',
-						weaponId: '',
+						weaponName: '',
 						name: '',
 						attackBonus: 0,
 						damage: '',
@@ -1063,7 +758,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 				];
 				setAttacks(defaultAttacks);
 			} else if (dataType === 'spells') {
+				// Reset spells to empty array
 				setSpells([]);
+			} else if (dataType === 'maneuvers') {
+				// Reset maneuvers to empty array
+				setManeuvers([]);
 			} else if (dataType === 'inventory') {
 				setInventory([]);
 			}
@@ -1104,13 +803,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	const getCharacterFromStorage = (characterId: string) => {
 		const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
 		return savedCharacters.find((char: any) => char.id === characterId);
-	};
-
-	// Helper function for HP fill percentage (shows current HP vs total effective HP)
-	const getHPFillPercentage = (currentHP: number, maxHP: number, tempHP: number): number => {
-		const totalEffectiveHP = maxHP + tempHP;
-		if (totalEffectiveHP === 0) return 0;
-		return Math.max(0, (currentHP / totalEffectiveHP) * 100);
 	};
 
 	// Group skills by attribute like in the official sheet
@@ -1156,8 +848,31 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		);
 	}
 
+	// Wrapper function to call the extracted print function with all required parameters
+	const handlePrint = () => {
+		if (!characterData) return;
+		
+		handlePrintCharacterSheet(
+			characterData,
+			attacks,
+			spells,
+			characterState,
+			maneuvers,
+			getCalculatedDefenses,
+			currentValues,
+			features,
+			languages,
+			trades,
+			inventory,
+			skillsByAttribute,
+			allSpells,
+			allManeuvers
+		);
+	};
+
 	return (
 		<StyledContainer style={{ position: 'relative' }}>
+			<CharacterSheetGlobalStyle />
 			{/* Action Buttons - Hidden on mobile */}
 			<StyledActionButtons>
 				<StyledActionButton
@@ -1173,18 +888,81 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 				>
 					📋 Copy to Clipboard
 				</StyledActionButton>
+				<StyledActionButton
+					onClick={handlePrint}
+					title="Print character sheet as PDF"
+				>
+					🖨️ Print PDF
+				</StyledActionButton>
 			</StyledActionButtons>
 
-			<StyledBackButton onClick={onBack}>← Back to Menu</StyledBackButton>
+			<StyledBackButton onClick={onBack}>
+				<span className="desktop-text">← Back to Menu</span>
+				<span className="mobile-text">←</span>
+			</StyledBackButton>
 
-			<StyledCharacterSheet>
+			<StyledCharacterSheet className="character-sheet-content">
 				{/* Header Section */}
-				<StyledHeader>
+				<StyledHeader style={{
+					background: (currentValues as any)?.isDead ? 
+						'linear-gradient(45deg, rgba(139, 0, 0, 0.1), rgba(139, 0, 0, 0.05))' : 
+						'transparent',
+					borderColor: (currentValues as any)?.isDead ? '#8B0000' : undefined,
+					position: 'relative'
+				}}>
+					{(currentValues as any)?.isDead && (
+						<div style={{
+							position: 'absolute',
+							top: 0,
+							left: 0,
+							right: 0,
+							bottom: 0,
+							background: `repeating-linear-gradient(
+								45deg,
+								transparent,
+								transparent 10px,
+								rgba(139, 0, 0, 0.05) 10px,
+								rgba(139, 0, 0, 0.05) 20px
+							)`,
+							pointerEvents: 'none'
+						}} />
+					)}
 					<StyledHeaderSection>
 						<StyledLabel>Player Name</StyledLabel>
 						<StyledValue>{characterData.finalPlayerName || 'Unknown'}</StyledValue>
 						<StyledLabel style={{ marginTop: '0.5rem' }}>Character Name</StyledLabel>
-						<StyledValue>{characterData.finalName}</StyledValue>
+						<StyledValue style={{
+							color: (currentValues as any)?.isDead ? '#8B0000' : undefined,
+							textDecoration: (currentValues as any)?.isDead ? 'line-through' : undefined,
+							textDecorationColor: (currentValues as any)?.isDead ? '#8B0000' : undefined,
+							textDecorationThickness: (currentValues as any)?.isDead ? '2px' : undefined,
+							display: 'flex',
+							alignItems: 'center',
+							gap: '0.5rem'
+						}}>
+							{(currentValues as any)?.isDead && <span style={{ 
+								fontSize: '1.5rem', 
+								color: '#8B0000',
+								animation: 'pulse 2s infinite'
+							}}>💀</span>}
+							{characterData.finalName}
+							{(currentValues as any)?.isDead && <span style={{ 
+								fontSize: '1.5rem', 
+								color: '#8B0000',
+								animation: 'pulse 2s infinite'
+							}}>💀</span>}
+						</StyledValue>
+						{(currentValues as any)?.isDead && (
+							<div style={{ 
+								color: '#8B0000', 
+								fontWeight: 'bold', 
+								fontSize: '1rem',
+								marginTop: '0.25rem',
+								textAlign: 'center'
+							}}>
+								💀 DEAD 💀
+							</div>
+						)}
 					</StyledHeaderSection>
 
 					<StyledHeaderSection>
@@ -1207,7 +985,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 					<StyledHeaderSection>
 						<StyledLabel>Level</StyledLabel>
-						<StyledValue>{characterData.finalLevel}</StyledValue>
+						<StyledValue>{characterData.level}</StyledValue>
 						<StyledLabel style={{ marginTop: '0.5rem' }}>Combat Mastery</StyledLabel>
 						<StyledValue>+{characterData.finalCombatMastery}</StyledValue>
 					</StyledHeaderSection>
@@ -1255,8 +1033,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 							<LeftColumn
 								characterData={characterData}
 								skillsByAttribute={skillsByAttribute}
-								knowledge={knowledge}
-								trades={trades}
 								languages={languages}
 							/>
 						</StyledLeftColumn>
@@ -1265,89 +1041,74 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						<StyledMiddleColumn>
 							{/* Resources Section - Circular design like official sheet */}
 							<Resources
-								characterData={characterData}
-								currentValues={currentValues}
-								onAdjustResource={adjustResource}
-								onResourceInputChange={handleResourceInputChange}
-								getFillPercentage={getFillPercentage}
-								getHPFillPercentage={getHPFillPercentage}
 								isMobile={false}
 							/>
 
 							{/* Defenses - Shield-like design */}
 							<Defenses
-								characterData={{
-									...characterData,
-									manualPD: characterData?.manualPD,
-									manualPDR: characterData?.manualPDR,
-									manualAD: characterData?.manualAD
-								}}
-								calculatedDefenses={getCalculatedDefenses()}
-								onUpdateManualDefense={handleManualDefenseChange}
 								isMobile={false}
 							/>
 
 							{/* Combat Section */}
-							<Combat
-								characterData={characterData}
-								currentValues={currentValues}
-								setCurrentValues={setCurrentValues}
-							/>
+							<Combat />
 
 							{/* Death & Exhaustion */}
-							<DeathExhaustion
-								characterData={characterData}
-								currentValues={currentValues}
-								onExhaustionChange={handleExhaustionChange}
-								onDeathStepChange={handleDeathStepChange}
-							/>
+							<DeathExhaustion />
 
-							{/* Spells Section */}
-							<Spells
-								spells={spells}
-								setSpells={updateSpells}
-								characterData={characterData}
-								onSpellClick={openSpellPopup}
-							/>
+
+
+
 
 							{/* Attacks Section */}
 							<Attacks
-								attacks={attacks}
-								setAttacks={updateAttacks}
-								characterData={characterData}
 								onAttackClick={openAttackPopup}
 							/>
 
 							{/* Inventory */}
 							<Inventory
-								inventory={inventory}
-								setInventory={updateInventory}
 								onItemClick={openInventoryPopup}
 							/>
 
 							{/* Player Notes */}
-							<PlayerNotes characterId={characterData.id} />
+							<PlayerNotes />
 						</StyledMiddleColumn>
 
 						{/* Right Column - Movement, Resources, Inventory, Features */}
 						<StyledRightColumn>
 							{/* Movement & Utility */}
-							<Movement characterData={characterData} />
+							<Movement />
 
 							{/* Resources */}
-							<RightColumnResources
-								characterData={characterData}
-								currentValues={currentValues}
-								onResourceInputChange={handleResourceInputChange}
-							/>
+							<RightColumnResources />
 
 							{/* Features */}
-							<Features features={features} onFeatureClick={openFeaturePopup} />
+							<Features onFeatureClick={openFeaturePopup} />
 
 							{/* Currency Section */}
-							<Currency currentValues={currentValues} onCurrencyChange={handleCurrencyChange} />
+							<Currency />
 						</StyledRightColumn>
 					</StyledMainGrid>
+				)}
+
+				{/* Spells Section - Full width, after main content */}
+				{characterData.className && findClassByName(characterData.className)?.spellcastingPath && (
+					<div style={{ marginTop: '2rem', padding: '1rem', background: 'white', borderRadius: '8px', border: '2px solid #e0e0e0' }}>
+						<h2 style={{ color: '#2c3e50', marginBottom: '1rem', textAlign: 'center' }}>Spells</h2>
+						<Spells
+							onSpellClick={openSpellPopup}
+							readOnly={true}
+						/>
+					</div>
+				)}
+
+				{/* Maneuvers Section - Full width, after main content */}
+				{characterData.className && findClassByName(characterData.className)?.martialPath && (
+					<div style={{ marginTop: '2rem', padding: '1rem', background: 'white', borderRadius: '8px', border: '2px solid #e0e0e0' }}>
+						<h2 style={{ color: '#2c3e50', marginBottom: '1rem', textAlign: 'center' }}>Maneuvers</h2>
+						<Maneuvers
+							onManeuverClick={openManeuverPopup}
+						/>
+					</div>
 				)}
 
 				{/* Mobile Layout - Only show on mobile */}
@@ -1359,11 +1120,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 								<LeftColumn
 									characterData={characterData}
 									skillsByAttribute={skillsByAttribute}
-									knowledge={knowledge}
-									trades={trades}
 									languages={languages}
 								/>
-								<Features features={features} onFeatureClick={openFeaturePopup} />
+								<Features onFeatureClick={openFeaturePopup} />
 							</div>
 						)}
 
@@ -1371,48 +1130,32 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						{activeMobileSection === 'combat' && (
 							<div>
 								<Resources
-									characterData={characterData}
-									currentValues={currentValues}
-									onAdjustResource={adjustResource}
-									onResourceInputChange={handleResourceInputChange}
-									getFillPercentage={getFillPercentage}
-									getHPFillPercentage={getHPFillPercentage}
 									isMobile={true}
 								/>
 								<Defenses
-									characterData={{
-										...characterData,
-										manualPD: characterData?.manualPD,
-										manualPDR: characterData?.manualPDR,
-										manualAD: characterData?.manualAD
-									}}
-									calculatedDefenses={getCalculatedDefenses()}
-									onUpdateManualDefense={handleManualDefenseChange}
 									isMobile={true}
 								/>
-								<Combat
-									characterData={characterData}
-									currentValues={currentValues}
-									setCurrentValues={setCurrentValues}
-								/>
-								<DeathExhaustion
-									characterData={characterData}
-									currentValues={currentValues}
-									onExhaustionChange={handleExhaustionChange}
-									onDeathStepChange={handleDeathStepChange}
+								<Combat />
+								<DeathExhaustion />
+								<Spells
+									onSpellClick={openSpellPopup}
 								/>
 								<Attacks
-									attacks={attacks}
-									setAttacks={updateAttacks}
-									characterData={characterData}
 									onAttackClick={openAttackPopup}
 								/>
-								<Movement characterData={characterData} />
-								<RightColumnResources
-									characterData={characterData}
-									currentValues={currentValues}
-									onResourceInputChange={handleResourceInputChange}
-								/>
+								{characterData.className && findClassByName(characterData.className)?.spellcastingPath && (
+									<Spells
+										onSpellClick={openSpellPopup}
+										readOnly={true}
+									/>
+								)}
+								{characterData.className && findClassByName(characterData.className)?.martialPath && (
+									<Maneuvers
+										onManeuverClick={openManeuverPopup}
+									/>
+								)}
+								<Movement />
+								<RightColumnResources />
 							</div>
 						)}
 
@@ -1420,11 +1163,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						{activeMobileSection === 'features' && (
 							<div>
 								<Inventory
-									inventory={inventory}
-									setInventory={updateInventory}
 									onItemClick={openInventoryPopup}
 								/>
-								<Currency currentValues={currentValues} onCurrencyChange={handleCurrencyChange} />
+								<Currency />
 							</div>
 						)}
 
@@ -1485,7 +1226,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 									<div style={{ marginBottom: '1rem' }}>
 										<StyledLabel>Level</StyledLabel>
-										<StyledValue>{characterData.finalLevel}</StyledValue>
+										<StyledValue>{characterData.level}</StyledValue>
 									</div>
 
 									<div style={{ marginBottom: '1rem' }}>
@@ -1499,7 +1240,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 										</div>
 									</div>
 								</div>
-								<PlayerNotes characterId={characterData.id} />
+								<PlayerNotes />
 							</div>
 						)}
 					</div>
@@ -1507,24 +1248,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 			</StyledCharacterSheet>
 
 			{/* Feature Popup */}
-			{selectedFeature && (
-				<StyledFeaturePopupOverlay onClick={closeFeaturePopup}>
-					<StyledFeaturePopupContent onClick={(e) => e.stopPropagation()}>
-						<StyledFeaturePopupHeader>
-							<StyledFeaturePopupTitle>{selectedFeature.name}</StyledFeaturePopupTitle>
-							<StyledFeaturePopupClose onClick={closeFeaturePopup}>×</StyledFeaturePopupClose>
-						</StyledFeaturePopupHeader>
-						<StyledFeaturePopupDescription>
-							{selectedFeature.description}
-						</StyledFeaturePopupDescription>
-						{selectedFeature.sourceDetail && (
-							<StyledFeaturePopupSourceInfo>
-								Source: {selectedFeature.sourceDetail}
-							</StyledFeaturePopupSourceInfo>
-						)}
-					</StyledFeaturePopupContent>
-				</StyledFeaturePopupOverlay>
-			)}
+			<FeaturePopup feature={selectedFeature} onClose={closeFeaturePopup} />
 
 			{/* Spell Popup Modal */}
 			{selectedSpell && (
@@ -1562,7 +1286,15 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 								</>
 							)}
 							<br />
-							{selectedSpell.effects?.[0]?.description || 'No description available.'}
+							<strong>Description:</strong>
+							<br />
+							{selectedSpell.effects?.map((effect, index) => (
+								<div key={index} style={{ marginBottom: '0.5rem' }}>
+									{effect.title && <strong>{effect.title}:</strong>}
+									<br />
+									{effect.description}
+								</div>
+							)) || 'No description available.'}
 							{selectedSpell.cantripPassive && (
 								<>
 									<br />
@@ -1570,264 +1302,67 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 									<strong>Cantrip Passive:</strong> {selectedSpell.cantripPassive}
 								</>
 							)}
+							{selectedSpell.enhancements?.length > 0 && (
+								<>
+									<br />
+									<br />
+									<strong>Enhancements:</strong>
+									{selectedSpell.enhancements.map((enhancement, index) => (
+										<div key={index} style={{ marginTop: '0.5rem', padding: '0.5rem', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+											<strong>{enhancement.name}</strong> ({enhancement.type} {enhancement.cost})
+											<br />
+											{enhancement.description}
+										</div>
+									))}
+								</>
+							)}
 						</StyledFeaturePopupDescription>
-						{selectedSpell.enhancements?.length > 0 && (
-							<StyledFeaturePopupSourceInfo>
-								Enhancements Available: {selectedSpell.enhancements.length}
-							</StyledFeaturePopupSourceInfo>
-						)}
 					</StyledFeaturePopupContent>
 				</StyledFeaturePopupOverlay>
 			)}
+
+			{/* Maneuver Popup Modal */}
+			{selectedManeuver && (
+				<StyledFeaturePopupOverlay onClick={closeManeuverPopup}>
+					<StyledFeaturePopupContent onClick={(e) => e.stopPropagation()}>
+						<StyledFeaturePopupHeader>
+							<StyledFeaturePopupTitle>{selectedManeuver.name}</StyledFeaturePopupTitle>
+							<StyledFeaturePopupClose onClick={closeManeuverPopup}>×</StyledFeaturePopupClose>
+						</StyledFeaturePopupHeader>
+						<StyledFeaturePopupDescription>
+							<strong>Type:</strong> {selectedManeuver.type}
+							<br />
+							<strong>AP Cost:</strong> {selectedManeuver.cost.ap}
+							<br />
+							<strong>Action Type:</strong> {selectedManeuver.isReaction ? 'Reaction' : 'Action'}
+							<br />
+							{selectedManeuver.trigger && (
+								<>
+									<strong>Trigger:</strong> {selectedManeuver.trigger}
+									<br />
+								</>
+							)}
+							{selectedManeuver.requirement && (
+								<>
+									<strong>Requirement:</strong> {selectedManeuver.requirement}
+									<br />
+								</>
+							)}
+							<br />
+							<strong>Description:</strong>
+							<br />
+							{selectedManeuver.description}
+						</StyledFeaturePopupDescription>
+					</StyledFeaturePopupContent>
+				</StyledFeaturePopupOverlay>
+			)}
+			<SpellPopup spell={selectedSpell} onClose={closeSpellPopup} />
 
 			{/* Attack Popup Modal */}
-			{selectedAttack && (
-				<StyledFeaturePopupOverlay onClick={closeAttackPopup}>
-					<StyledFeaturePopupContent onClick={(e) => e.stopPropagation()}>
-						<StyledFeaturePopupHeader>
-							<StyledFeaturePopupTitle>
-								{selectedAttack.weapon?.name || selectedAttack.attack.name || 'Unknown Weapon'}
-							</StyledFeaturePopupTitle>
-							<StyledFeaturePopupClose onClick={closeAttackPopup}>×</StyledFeaturePopupClose>
-						</StyledFeaturePopupHeader>
-						<StyledFeaturePopupDescription>
-							{selectedAttack.weapon ? (
-								<>
-									<strong>Weapon Type:</strong> {selectedAttack.weapon.type}
-									<br />
-									<strong>Handedness:</strong> {selectedAttack.weapon.handedness}
-									<br />
-									<strong>Style:</strong>{' '}
-									{Array.isArray(selectedAttack.weapon.style)
-										? selectedAttack.weapon.style.join('/')
-										: selectedAttack.weapon.style}
-									<br />
-									<strong>Damage:</strong> {selectedAttack.weapon.damage}
-									<br />
-									{getVersatileDamage(selectedAttack.weapon) && (
-										<>
-											<strong>Versatile Damage:</strong>{' '}
-											{getVersatileDamage(selectedAttack.weapon)?.twoHanded}
-											<br />
-										</>
-									)}
-									<strong>Damage Type:</strong>{' '}
-									{parseDamage(selectedAttack.weapon.damage).typeDisplay}
-									<br />
-									{getWeaponRange(selectedAttack.weapon) && (
-										<>
-											<strong>Range:</strong> {getWeaponRange(selectedAttack.weapon)?.short}/
-											{getWeaponRange(selectedAttack.weapon)?.long}
-											<br />
-										</>
-									)}
-									{selectedAttack.weapon.properties.includes('Ammo') && (
-										<>
-											<strong>Ammunition:</strong> Required
-											<br />
-										</>
-									)}
-									{selectedAttack.weapon.properties.includes('Reload') && (
-										<>
-											<strong>Reload:</strong> Required
-											<br />
-										</>
-									)}
-									<br />
-									<strong>Damage Calculations:</strong>
-									<br />• <strong>Hit:</strong> {selectedAttack.weapon.damage} + ability modifier
-									<br />• <strong>Heavy Hit (+5):</strong> {selectedAttack.weapon.damage} + 1 +
-									ability modifier
-									<br />• <strong>Brutal Hit (+10):</strong> {selectedAttack.weapon.damage} + 2 +
-									ability modifier
-									<br />
-									<br />
-									{selectedAttack.weapon.properties.length > 0 && (
-										<>
-											<strong>Properties:</strong> {selectedAttack.weapon.properties.join(', ')}
-											<br />
-										</>
-									)}
-									{getWeaponFeatures(selectedAttack.weapon).length > 0 && (
-										<>
-											<strong>Features:</strong>{' '}
-											{getWeaponFeatures(selectedAttack.weapon).join(', ')}
-										</>
-									)}
-								</>
-							) : (
-								<>
-									<strong>Custom Attack</strong>
-									<br />
-									<strong>Attack Bonus:</strong> +{selectedAttack.attack.attackBonus}
-									<br />
-									<strong>Damage:</strong> {selectedAttack.attack.damage}
-									<br />
-									<strong>Damage Type:</strong> {selectedAttack.attack.damageType}
-									<br />
-									{selectedAttack.attack.critRange && (
-										<>
-											<strong>Crit Range:</strong> {selectedAttack.attack.critRange}
-											<br />
-										</>
-									)}
-									{selectedAttack.attack.critDamage && (
-										<>
-											<strong>Crit Damage:</strong> {selectedAttack.attack.critDamage}
-											<br />
-										</>
-									)}
-									{selectedAttack.attack.brutalDamage && (
-										<>
-											<strong>Brutal Damage:</strong> {selectedAttack.attack.brutalDamage}
-											<br />
-										</>
-									)}
-									{selectedAttack.attack.heavyHitEffect && (
-										<>
-											<strong>Heavy Hit Effect:</strong> {selectedAttack.attack.heavyHitEffect}
-										</>
-									)}
-								</>
-							)}
-						</StyledFeaturePopupDescription>
-					</StyledFeaturePopupContent>
-				</StyledFeaturePopupOverlay>
-			)}
+			<AttackPopup selectedAttack={selectedAttack} onClose={closeAttackPopup} />
 
 			{/* Inventory Popup Modal */}
-			{selectedInventoryItem && (
-				<StyledFeaturePopupOverlay onClick={closeInventoryPopup}>
-					<StyledFeaturePopupContent onClick={(e) => e.stopPropagation()}>
-						<StyledFeaturePopupHeader>
-							<StyledFeaturePopupTitle>
-								{selectedInventoryItem.item?.name ||
-									selectedInventoryItem.inventoryData.itemName ||
-									'Unknown Item'}
-							</StyledFeaturePopupTitle>
-							<StyledFeaturePopupClose onClick={closeInventoryPopup}>×</StyledFeaturePopupClose>
-						</StyledFeaturePopupHeader>
-						<StyledFeaturePopupDescription>
-							{selectedInventoryItem.item ? (
-								<>
-									<strong>Type:</strong> {selectedInventoryItem.item.itemType}
-									<br />
-									{selectedInventoryItem.item.itemType === 'Weapon' && (
-										<>
-											<strong>Weapon Type:</strong> {(selectedInventoryItem.item as any).type}
-											<br />
-											<strong>Style:</strong> {(selectedInventoryItem.item as any).style}
-											<br />
-											<strong>Handedness:</strong> {(selectedInventoryItem.item as any).handedness}
-											<br />
-											<strong>Damage:</strong> {(selectedInventoryItem.item as any).damage}
-											<br />
-											{(selectedInventoryItem.item as any).properties && (
-												<>
-													<strong>Properties:</strong>{' '}
-													{(selectedInventoryItem.item as any).properties.join(', ')}
-													<br />
-												</>
-											)}
-											{(selectedInventoryItem.item as any).price && (
-												<>
-													<strong>Price:</strong> {(selectedInventoryItem.item as any).price}
-													<br />
-												</>
-											)}
-										</>
-									)}
-									{selectedInventoryItem.item.itemType === 'Armor' && (
-										<>
-											<strong>Type:</strong> {(selectedInventoryItem.item as any).type}
-											<br />
-											<strong>PDR:</strong> {(selectedInventoryItem.item as any).pdr}
-											<br />
-											<strong>AD Modifier:</strong> {(selectedInventoryItem.item as any).adModifier}
-											<br />
-											{(selectedInventoryItem.item as any).agilityCap && (
-												<>
-													<strong>Agility Cap:</strong>{' '}
-													{(selectedInventoryItem.item as any).agilityCap}
-													<br />
-												</>
-											)}
-											{(selectedInventoryItem.item as any).price && (
-												<>
-													<strong>Price:</strong> {(selectedInventoryItem.item as any).price}
-													<br />
-												</>
-											)}
-										</>
-									)}
-									{selectedInventoryItem.item.itemType === 'Shield' && (
-										<>
-											<strong>PDR:</strong> {(selectedInventoryItem.item as any).pdr}
-											<br />
-											<strong>AD Modifier:</strong> {(selectedInventoryItem.item as any).adModifier}
-											<br />
-											{(selectedInventoryItem.item as any).price && (
-												<>
-													<strong>Price:</strong> {(selectedInventoryItem.item as any).price}
-													<br />
-												</>
-											)}
-										</>
-									)}
-									{selectedInventoryItem.item.itemType === 'Potion' && (
-										<>
-											<strong>Level:</strong> {(selectedInventoryItem.item as any).level}
-											<br />
-											<strong>Healing:</strong> {(selectedInventoryItem.item as any).healing}
-											<br />
-											<strong>Price:</strong> {(selectedInventoryItem.item as any).price}g<br />
-										</>
-									)}
-									{selectedInventoryItem.item.itemType === 'Adventuring Supply' && (
-										<>
-											{(selectedInventoryItem.item as any).description && (
-												<>
-													<strong>Description:</strong>{' '}
-													{(selectedInventoryItem.item as any).description}
-													<br />
-												</>
-											)}
-											{(selectedInventoryItem.item as any).price && (
-												<>
-													<strong>Price:</strong> {(selectedInventoryItem.item as any).price}
-													<br />
-												</>
-											)}
-										</>
-									)}
-									<br />
-									<strong>Count:</strong> {selectedInventoryItem.inventoryData.count}
-									<br />
-									{selectedInventoryItem.inventoryData.cost && (
-										<>
-											<strong>Cost:</strong> {selectedInventoryItem.inventoryData.cost}
-										</>
-									)}
-								</>
-							) : (
-								<>
-									<strong>Custom Item</strong>
-									<br />
-									<strong>Type:</strong> {selectedInventoryItem.inventoryData.itemType}
-									<br />
-									<strong>Count:</strong> {selectedInventoryItem.inventoryData.count}
-									<br />
-									{selectedInventoryItem.inventoryData.cost && (
-										<>
-											<strong>Cost:</strong> {selectedInventoryItem.inventoryData.cost}
-										</>
-									)}
-								</>
-							)}
-						</StyledFeaturePopupDescription>
-					</StyledFeaturePopupContent>
-				</StyledFeaturePopupOverlay>
-			)}
+			<InventoryPopup selectedInventoryItem={selectedInventoryItem} onClose={closeInventoryPopup} />
 
 			{/* Draconic Dice Roller */}
 			<DiceRoller

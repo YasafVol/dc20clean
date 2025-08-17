@@ -101,7 +101,7 @@ function ClassSelector() {
 	const selectedClassId = state.classId;
 
 	function handleSelectClass(classId: string) {
-		if (state.classId === classId) {
+		if (state.classId?.toLowerCase() === classId.toLowerCase()) {
 			dispatch({ type: 'SET_CLASS', classId: null }); // Deselect if already selected
 		} else {
 			dispatch({ type: 'SET_CLASS', classId }); // Select new class

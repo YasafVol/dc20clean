@@ -31,25 +31,25 @@ import {
 function ClassFeatures() {
 	const { state, dispatch } = useCharacter();
 
-	const selectedClass = classesData.find((c) => c.id === state.classId);
+	const selectedClass = classesData.find((c) => c.id.toLowerCase() === state.classId?.toLowerCase());
 	const selectedClassFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
-	const selectedFeatureChoices: { [key: string]: string } = JSON.parse(
-		state.selectedFeatureChoices || '{}'
-	);
+	// NEW: Use typed data instead of JSON parsing
+	const selectedFeatureChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
 
 	function handleFeatureChoice(choiceId: string, value: string) {
 		const currentChoices = { ...selectedFeatureChoices };
 		currentChoices[choiceId] = value;
 		dispatch({
 			type: 'SET_FEATURE_CHOICES',
-			selectedFeatureChoices: JSON.stringify(currentChoices)
+			selectedFeatureChoices: currentChoices
 		});
 	}
 
 	function handleMultipleFeatureChoice(choiceId: string, value: string, isSelected: boolean) {
 		const currentChoices = { ...selectedFeatureChoices };
-		const currentValues: string[] = currentChoices[choiceId]
-			? JSON.parse(currentChoices[choiceId])
+		// Handle arrays directly (no legacy JSON string support)
+		const currentValues: string[] = Array.isArray(currentChoices[choiceId])
+			? [...(currentChoices[choiceId] as any)]
 			: [];
 
 		if (isSelected) {
@@ -65,10 +65,10 @@ function ClassFeatures() {
 			}
 		}
 
-		currentChoices[choiceId] = JSON.stringify(currentValues);
+		currentChoices[choiceId] = currentValues;
 		dispatch({
 			type: 'SET_FEATURE_CHOICES',
-			selectedFeatureChoices: JSON.stringify(currentChoices)
+			selectedFeatureChoices: currentChoices
 		});
 	}
 
@@ -111,14 +111,92 @@ function ClassFeatures() {
 				});
 			});
 		}
+
+		// NEW: Extract userChoice options from feature effects
+		if (feature.effects) {
+			feature.effects.forEach((effect, effectIndex) => {
+				if (effect.userChoice) {
+					const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_effect_${effectIndex}_user_choice`;
+					
+					// Transform the userChoice options into the format expected by the UI
+					const options = effect.userChoice.options?.map((optionValue: string) => {
+						// Create a human-readable label from the option value
+						const label = optionValue.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
+						return {
+							value: optionValue,
+							label: label,
+							description: `Choose ${label.toLowerCase()} for this effect.`
+						};
+					}) || [];
+
+					featureChoices.push({
+						id: choiceId,
+						prompt: effect.userChoice.prompt,
+						type: 'select_one',
+						options: options
+					});
+				}
+			});
+		}
+
+		// Also check userChoice options in choice option effects
+		if (feature.choices && !inGameChoices.includes(feature.featureName)) {
+			feature.choices.forEach((choice, choiceIndex) => {
+				const parentChoiceId = getLegacyChoiceId(
+					selectedClassFeatures.className,
+					feature.featureName,
+					choiceIndex
+				);
+				
+				choice.options?.forEach((option, optionIndex) => {
+					// Only process userChoice effects if this option is actually selected
+					const isOptionSelected = (() => {
+						const selectedValues = selectedFeatureChoices[parentChoiceId];
+						if (choice.count > 1) {
+							// Multiple selection choice - check if option is in array
+							return Array.isArray(selectedValues) && selectedValues.includes(option.name);
+						} else {
+							// Single selection choice - check if option matches
+							return selectedValues === option.name;
+						}
+					})();
+
+					if (isOptionSelected && (option as any).effects) {
+						(option as any).effects.forEach((effect: any, effectIndex: number) => {
+							if (effect.userChoice) {
+								const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_choice_${choiceIndex}_option_${optionIndex}_effect_${effectIndex}_user_choice`;
+								
+								// Transform the userChoice options into the format expected by the UI
+								const options = effect.userChoice.options?.map((optionValue: string) => {
+									// Create a human-readable label from the option value
+									const label = optionValue.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
+									return {
+										value: optionValue,
+										label: label,
+										description: `Choose ${label.toLowerCase()} for this effect.`
+									};
+								}) || [];
+
+								featureChoices.push({
+									id: choiceId,
+									prompt: `${option.name}: ${effect.userChoice.prompt}`,
+									type: 'select_one',
+									options: options
+								});
+							}
+						});
+					}
+				});
+			});
+		}
 	});
 
 	// Add martial choices based on class table and features
 	const level1Data = selectedClass.levelProgression?.[0]; // Level 1 data from table
 	if (level1Data) {
 		// Get base maneuvers from table
-		let tableManeuvers = level1Data.maneuversKnown || 0;
-		let tableTechniques = level1Data.techniquesKnown || 0;
+		const tableManeuvers = level1Data.maneuversKnown || 0;
+		const tableTechniques = level1Data.techniquesKnown || 0;
 
 		// Add class-specific feature bonuses
 		let featureManeuvers = 0;
@@ -603,8 +681,11 @@ function ClassFeatures() {
 							{choice.type === 'select_multiple' && (
 								<StyledChoiceOptions>
 									{choice.options.map((option: any) => {
+										// Handle arrays directly (no legacy JSON string support)
 										const currentValues: string[] = selectedFeatureChoices[choice.id]
-											? JSON.parse(selectedFeatureChoices[choice.id])
+											? (Array.isArray(selectedFeatureChoices[choice.id]) 
+												? selectedFeatureChoices[choice.id] as unknown as string[]
+												: [])
 											: [];
 										const isSelected = currentValues.includes(option.value);
 										const canSelect = currentValues.length < (choice.maxSelections || 999);
@@ -639,7 +720,9 @@ function ClassFeatures() {
 										<StyledOptionDescription style={{ marginTop: '8px', fontStyle: 'italic' }}>
 											Select up to {choice.maxSelections} options (
 											{selectedFeatureChoices[choice.id]
-												? JSON.parse(selectedFeatureChoices[choice.id]).length
+												? (Array.isArray(selectedFeatureChoices[choice.id]) 
+													? (selectedFeatureChoices[choice.id] as unknown as string[]).length
+													: 0)
 												: 0}
 											/{choice.maxSelections} selected)
 										</StyledOptionDescription>

@@ -7,6 +7,68 @@ export const StyledCombatSection = styled.div`
 	background: rgba(245, 243, 240, 0.5);
 `;
 
+export const StyledCombatTitle = styled.div`
+	font-size: 1.1rem;
+	font-weight: bold;
+	color: #8b4513;
+	text-align: center;
+	margin-bottom: 1rem;
+`;
+
+export const StyledActionPointsContainer = styled.div`
+	text-align: center;
+	margin-bottom: 1rem;
+`;
+
+export const StyledActionPointsTitle = styled.div`
+	font-size: 0.9rem;
+	font-weight: bold;
+	color: #8b4513;
+	margin-bottom: 0.5rem;
+`;
+
+export const StyledCombatStatsContainer = styled.div`
+	font-size: 0.9rem;
+	color: #8b4513;
+`;
+
+export const StyledCombatStatRow = styled.div`
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.3rem;
+	border-bottom: 1px solid #e5e5e5;
+
+	&:last-child {
+		border-bottom: none;
+	}
+`;
+
+export const StyledCombatStatLabel = styled.div`
+	display: flex;
+	align-items: center;
+	gap: 0.3rem;
+`;
+
+export const StyledCombatStatValue = styled.span`
+	font-weight: bold;
+`;
+
+export const StyledInfoIcon = styled.span`
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background-color: #8b4513;
+	color: white;
+	font-size: 10px;
+	font-weight: bold;
+	cursor: help;
+	vertical-align: middle;
+`;
+
 export const StyledDefenseGrid = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 1fr;
@@ -92,13 +154,13 @@ export const StyledCombatStatBox = styled.div`
 	flex: 1;
 `;
 
-export const StyledCombatStatValue = styled.div`
+export const StyledCombatStatBoxValue = styled.div`
 	font-size: 1.5rem;
 	font-weight: bold;
 	color: #333;
 `;
 
-export const StyledCombatStatLabel = styled.div`
+export const StyledCombatStatBoxLabel = styled.div`
 	font-size: 0.7rem;
 	font-weight: bold;
 	text-transform: uppercase;

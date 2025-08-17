@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 // Import static assets
+
 import mainBgImage from '../assets/Main.jpg';
 
 export const StyledContainer = styled.div`

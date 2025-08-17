@@ -1,12 +1,14 @@
 import React from 'react';
-import type { SkillData, TradeData, LanguageData, CharacterSheetData } from '../../../types';
+import type { SkillData, LanguageData } from '../../../types';
+import type { SavedCharacter } from '../../../lib/types/dataContracts';
+import type { EnhancedStatBreakdown } from '../../../lib/types/effectSystem';
 import { StyledLeftColumn } from '../styles/Layout';
 import Attributes from './Attributes';
 import KnowledgeTrades from './KnowledgeTrades';
 import Languages from './Languages';
 
 interface LeftColumnProps {
-	characterData: CharacterSheetData;
+	characterData: SavedCharacter;
 	skillsByAttribute: {
 		prime: SkillData[];
 		might: SkillData[];
@@ -14,22 +16,24 @@ interface LeftColumnProps {
 		charisma: SkillData[];
 		intelligence: SkillData[];
 	};
-	knowledge: TradeData[];
-	trades: TradeData[];
 	languages: LanguageData[];
+	breakdowns?: Record<string, EnhancedStatBreakdown>;
 }
 
 const LeftColumn: React.FC<LeftColumnProps> = ({
 	characterData,
 	skillsByAttribute,
-	knowledge,
-	trades,
-	languages
+	languages,
+	breakdowns
 }) => {
 	return (
 		<StyledLeftColumn>
-			<Attributes characterData={characterData} skillsByAttribute={skillsByAttribute} />
-			<KnowledgeTrades knowledge={knowledge} trades={trades} />
+			<Attributes 
+				characterData={characterData} 
+				skillsByAttribute={skillsByAttribute} 
+				breakdowns={breakdowns}
+			/>
+			<KnowledgeTrades />
 			<Languages languages={languages} />
 		</StyledLeftColumn>
 	);

@@ -1,22 +1,55 @@
 import React from 'react';
 import type { CharacterSheetData, CurrentValues } from '../../../types';
-import { StyledCombatSection, StyledActionPoints, StyledActionPoint } from '../styles/Combat';
+import { 
+	StyledCombatSection, 
+	StyledActionPoints, 
+	StyledActionPoint,
+	StyledCombatTitle,
+	StyledActionPointsContainer,
+	StyledActionPointsTitle,
+	StyledCombatStatsContainer,
+	StyledCombatStatRow,
+	StyledCombatStatLabel,
+	StyledCombatStatValue
+} from '../styles/Combat';
+import Tooltip from './Tooltip';
+import { createEnhancedTooltip } from './EnhancedStatTooltips';
+import { useCharacterResources, useCharacterSheet, useCharacterCalculatedData } from '../hooks/CharacterSheetProvider';
 
 export interface CombatProps {
-	characterData: CharacterSheetData;
-	currentValues: CurrentValues;
-	setCurrentValues: React.Dispatch<React.SetStateAction<CurrentValues>>;
+	// No props needed - all data comes from Provider
 }
 
-const Combat: React.FC<CombatProps> = ({ characterData, currentValues, setCurrentValues }) => {
+const Combat: React.FC<CombatProps> = () => {
+	const { state, updateActionPoints } = useCharacterSheet();
+	const resources = useCharacterResources();
+	const calculatedData = useCharacterCalculatedData();
+	
+	if (!state.character || !resources || !calculatedData) {
+		return <div>Loading combat...</div>;
+	}
+	
+	const currentValues = resources.current;
+	
+	// Get breakdowns from calculated data (Provider pattern)
+	const breakdowns = calculatedData.breakdowns || {};
+	
 	const renderActionPoints = () => {
 		return [0, 1, 2, 3].map((index) => (
 			<StyledActionPoint
 				key={index}
-				used={index < currentValues.actionPointsUsed}
+				used={index < (currentValues.actionPointsUsed || 0)}
 				onClick={() => {
-					const newUsed = index < currentValues.actionPointsUsed ? index : index + 1;
-					setCurrentValues((prev) => ({ ...prev, actionPointsUsed: newUsed }));
+					const currentUsed = currentValues.actionPointsUsed || 0;
+					const targetUsed = index + 1; // Circle number (1-4)
+					
+					if (currentUsed >= targetUsed) {
+						// Already used this circle or higher, so reduce to previous level
+						updateActionPoints(targetUsed - 1);
+					} else {
+						// Not used yet, so set to this level
+						updateActionPoints(targetUsed);
+					}
 				}}
 			>
 				{index + 1}
@@ -26,141 +59,86 @@ const Combat: React.FC<CombatProps> = ({ characterData, currentValues, setCurren
 
 	return (
 		<StyledCombatSection>
-			<div
-				style={{
-					fontSize: '1.1rem',
-					fontWeight: 'bold',
-					color: '#8b4513',
-					textAlign: 'center',
-					marginBottom: '1rem'
-				}}
-			>
-				COMBAT
-			</div>
+			<StyledCombatTitle>COMBAT</StyledCombatTitle>
 
 			{/* Action Points */}
-			<div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-				<div
-					style={{
-						fontSize: '0.9rem',
-						fontWeight: 'bold',
-						color: '#8b4513',
-						marginBottom: '0.5rem'
-					}}
-				>
-					ACTION POINTS
-				</div>
+			<StyledActionPointsContainer>
+				<StyledActionPointsTitle>ACTION POINTS</StyledActionPointsTitle>
 				<StyledActionPoints>{renderActionPoints()}</StyledActionPoints>
-			</div>
+			</StyledActionPointsContainer>
 
 			{/* Combat Stats */}
-			<div style={{ fontSize: '0.9rem', color: '#8b4513' }}>
-				<div
-					style={{
-						display: 'flex',
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						padding: '0.3rem',
-						borderBottom: '1px solid #e5e5e5'
-					}}
-				>
-					<div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-						<span>ATTACK / SPELL CHECK</span>
-						<span
-							style={{
-								display: 'inline-flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								width: '14px',
-								height: '14px',
-								borderRadius: '50%',
-								backgroundColor: '#8b4513',
-								color: 'white',
-								fontSize: '10px',
-								fontWeight: 'bold',
-								cursor: 'help',
-								verticalAlign: 'middle'
-							}}
-							title={`Combat Mastery (${characterData.finalCombatMastery}) + ${characterData.finalPrimeModifierAttribute} Modifier (${characterData.finalPrimeModifierValue}) = +${characterData.finalCombatMastery + characterData.finalPrimeModifierValue}`}
+			<StyledCombatStatsContainer>
+				<StyledCombatStatRow>
+					<StyledCombatStatLabel>
+						<Tooltip
+							content={
+								breakdowns?.attack_spell_check 
+									? createEnhancedTooltip('Attack / Spell Check', breakdowns.attack_spell_check)
+									: `Combat Mastery (${calculatedData.stats.finalCombatMastery}) + Prime Modifier (${calculatedData.stats.finalPrimeModifierValue})`
+							}
+							position="top"
 						>
-							i
-						</span>
-					</div>
-					<span style={{ fontWeight: 'bold' }}>
-						+{characterData.finalCombatMastery + characterData.finalPrimeModifierValue}
-					</span>
-				</div>
-				<div
-					style={{
-						display: 'flex',
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						padding: '0.3rem',
-						borderBottom: '1px solid #e5e5e5'
-					}}
-				>
-					<div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-						<span>SAVE DC</span>
-						<span
-							style={{
-								display: 'inline-flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								width: '14px',
-								height: '14px',
-								borderRadius: '50%',
-								backgroundColor: '#8b4513',
-								color: 'white',
-								fontSize: '10px',
-								fontWeight: 'bold',
-								cursor: 'help',
-								verticalAlign: 'middle'
-							}}
-							title={`10 + Combat Mastery (${characterData.finalCombatMastery}) + ${characterData.finalPrimeModifierAttribute} Modifier (${characterData.finalPrimeModifierValue}) = ${characterData.finalSaveDC}`}
+							<span>ATTACK / SPELL CHECK</span>
+						</Tooltip>
+					</StyledCombatStatLabel>
+					<StyledCombatStatValue>
+						+{calculatedData.stats.finalAttackSpellCheck || 0}
+					</StyledCombatStatValue>
+				</StyledCombatStatRow>
+				
+				<StyledCombatStatRow>
+					<StyledCombatStatLabel>
+						<Tooltip
+							content={
+								breakdowns?.save_dc
+									? createEnhancedTooltip('Save DC', breakdowns.save_dc)
+									: `8 + Combat Mastery (${calculatedData.stats.finalCombatMastery}) + Prime Modifier (${calculatedData.stats.finalPrimeModifierValue})`
+							}
+							position="top"
 						>
-							i
-						</span>
-					</div>
-					<span style={{ fontWeight: 'bold' }}>{characterData.finalSaveDC}</span>
-				</div>
-				<div
-					style={{
-						display: 'flex',
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						padding: '0.3rem'
-					}}
-				>
-					<div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-						<span>MARTIAL CHECK</span>
-						<span
-							style={{
-								display: 'inline-flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								width: '14px',
-								height: '14px',
-								borderRadius: '50%',
-								backgroundColor: '#8b4513',
-								color: 'white',
-								fontSize: '10px',
-								fontWeight: 'bold',
-								cursor: 'help',
-								verticalAlign: 'middle'
-							}}
-							title={`Attack/Spell Check (${characterData.finalCombatMastery + characterData.finalPrimeModifierValue}) + Action Points Bonus (${Math.floor(currentValues.actionPointsUsed / 3)}) = +${characterData.finalCombatMastery + characterData.finalPrimeModifierValue + Math.floor(currentValues.actionPointsUsed / 3)}`}
+							<span>SAVE DC</span>
+						</Tooltip>
+					</StyledCombatStatLabel>
+					<StyledCombatStatValue>{calculatedData.stats.finalSaveDC}</StyledCombatStatValue>
+				</StyledCombatStatRow>
+				
+				<StyledCombatStatRow>
+					<StyledCombatStatLabel>
+						<Tooltip
+							content={
+								breakdowns?.initiative
+									? createEnhancedTooltip('Initiative', breakdowns.initiative)
+									: `Combat Mastery (${calculatedData.stats.finalCombatMastery}) + Agility modifier: +${calculatedData.stats.finalAgility || 0}`
+							}
+							position="top"
 						>
-							i
-						</span>
-					</div>
-					<span style={{ fontWeight: 'bold' }}>
-						+
-						{characterData.finalCombatMastery +
-							characterData.finalPrimeModifierValue +
-							Math.floor(currentValues.actionPointsUsed / 3)}
-					</span>
-				</div>
-			</div>
+							<span>INITIATIVE</span>
+						</Tooltip>
+					</StyledCombatStatLabel>
+					<StyledCombatStatValue>
+						+{calculatedData.stats.finalInitiativeBonus || 0}
+					</StyledCombatStatValue>
+				</StyledCombatStatRow>
+
+				<StyledCombatStatRow>
+					<StyledCombatStatLabel>
+						<Tooltip
+							content={
+								breakdowns?.martial_check
+									? createEnhancedTooltip('Martial Check', breakdowns.martial_check)
+									: `Max of Acrobatics or Athletics skill checks`
+							}
+							position="top"
+						>
+							<span>MARTIAL CHECK</span>
+						</Tooltip>
+					</StyledCombatStatLabel>
+					<StyledCombatStatValue>
+						+{(calculatedData.stats.finalMartialCheck || 0)}
+					</StyledCombatStatValue>
+				</StyledCombatStatRow>
+			</StyledCombatStatsContainer>
 		</StyledCombatSection>
 	);
 };

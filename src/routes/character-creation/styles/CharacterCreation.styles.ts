@@ -8,6 +8,7 @@ export const StyledContainer = styled.div`
 	padding: 6rem 1rem 1rem 1rem;
 	min-height: 100vh;
 	background: transparent;
+	width: 100%;
 `;
 
 export const StyledTitle = styled.h1`

@@ -1,14 +1,14 @@
 import { DefenseNote } from '../../types/defenseNotes';
+import { getCharacterById, getAllSavedCharacters, saveAllCharacters } from './storageUtils';
 
-// Get character from localStorage
+// Get character from storage using centralized utility
 const getCharacterFromStorage = (characterId: string) => {
-	const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-	return savedCharacters.find((char: any) => char.id === characterId);
+	return getCharacterById(characterId);
 };
 
-// Save character back to localStorage
+// Save character back to storage using centralized utility
 const saveCharacterToStorage = (characterId: string, updates: any) => {
-	const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+	const savedCharacters = getAllSavedCharacters();
 	const characterIndex = savedCharacters.findIndex((char: any) => char.id === characterId);
 
 	if (characterIndex !== -1) {
@@ -17,7 +17,7 @@ const saveCharacterToStorage = (characterId: string, updates: any) => {
 			...updates,
 			lastModified: new Date().toISOString()
 		};
-		localStorage.setItem('savedCharacters', JSON.stringify(savedCharacters));
+		saveAllCharacters(savedCharacters);
 	}
 };
 

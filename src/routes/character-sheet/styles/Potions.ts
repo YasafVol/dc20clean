@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 interface PotionCircleProps {
-	fillPercentage: number;
-	color: string;
+	$fillPercentage: number;
+	$color: string;
 }
 
 export const StyledPotionContainer = styled.div`
@@ -23,20 +23,20 @@ export const StyledPotionFill = styled.div<PotionCircleProps>`
 	bottom: 0;
 	left: 0;
 	right: 0;
-	height: ${(props) => Math.max(0, props.fillPercentage)}%;
-	background: linear-gradient(to top, ${(props) => props.color}dd, ${(props) => props.color}aa);
+	height: ${(props) => Math.max(0, props.$fillPercentage)}%;
+	background: linear-gradient(to top, ${(props) => props.$color}dd, ${(props) => props.$color}aa);
 	border-radius: 0 0 50px 50px;
 	transition: height 0.3s ease-in-out;
 `;
 
-export const StyledPotionBubbles = styled.div<{ color: string; fillPercentage: number }>`
+export const StyledPotionBubbles = styled.div<{ $color: string; $fillPercentage: number }>`
 	position: absolute;
 	top: 0;
 	left: 0;
 	right: 0;
 	bottom: 0;
 	pointer-events: none;
-	opacity: ${(props) => (props.fillPercentage > 20 ? 0.3 : 0)};
+	opacity: ${(props) => (props.$fillPercentage > 20 ? 0.3 : 0)};
 	transition: opacity 0.3s ease-in-out;
 
 	&::before {

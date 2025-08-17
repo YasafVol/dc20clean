@@ -1,6 +1,7 @@
 import React from 'react';
 import type { InventoryItemData } from '../../../types';
 import { allItems, type InventoryItem } from '../../../lib/rulesdata/inventoryItems';
+import { useCharacterInventory, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
 	StyledInventorySection,
 	StyledInventoryTitle,
@@ -18,12 +19,13 @@ import {
 } from '../styles/Inventory';
 
 export interface InventoryProps {
-	inventory: InventoryItemData[];
-	setInventory: React.Dispatch<React.SetStateAction<InventoryItemData[]>>;
 	onItemClick: (inventoryData: InventoryItemData, item: InventoryItem | null) => void;
 }
 
-const Inventory: React.FC<InventoryProps> = ({ inventory, setInventory, onItemClick }) => {
+const Inventory: React.FC<InventoryProps> = ({ onItemClick }) => {
+	const { updateInventory } = useCharacterSheet();
+	const inventoryData = useCharacterInventory();
+	const inventory = inventoryData.items;
 	const addInventorySlot = () => {
 		const newInventoryItem: InventoryItemData = {
 			id: `inventory_${Date.now()}`,
@@ -32,11 +34,12 @@ const Inventory: React.FC<InventoryProps> = ({ inventory, setInventory, onItemCl
 			count: 1,
 			cost: '-'
 		};
-		setInventory((prev) => [...prev, newInventoryItem]);
+		updateInventory([...inventory, newInventoryItem]);
 	};
 
 	const removeInventorySlot = (inventoryIndex: number) => {
-		setInventory((prev) => prev.filter((_, index) => index !== inventoryIndex));
+		const updatedInventory = inventory.filter((_, index) => index !== inventoryIndex);
+		updateInventory(updatedInventory);
 	};
 
 	const handleInventoryItemSelect = (
@@ -47,35 +50,32 @@ const Inventory: React.FC<InventoryProps> = ({ inventory, setInventory, onItemCl
 		if (!isItemName) {
 			// Selecting item type
 			const itemType = itemTypeOrName as InventoryItemData['itemType'];
-			setInventory((prev) =>
-				prev.map((item, index) =>
-					index === inventoryIndex ? { ...item, itemType, itemName: '', cost: '-' } : item
-				)
+			const updatedInventory = inventory.map((item, index) =>
+				index === inventoryIndex ? { ...item, itemType, itemName: '', cost: '-' } : item
 			);
+			updateInventory(updatedInventory);
 		} else {
 			// Selecting item name
 			const selectedItem = allItems.find((i: any) => i.name === itemTypeOrName);
-			setInventory((prev) =>
-				prev.map((item, index) =>
-					index === inventoryIndex
-						? {
-								...item,
-								itemName: itemTypeOrName,
-								itemType: selectedItem?.itemType || item.itemType,
-								cost: getItemCost(selectedItem)
-							}
-						: item
-				)
+			const updatedInventory = inventory.map((item, index) =>
+				index === inventoryIndex
+					? {
+							...item,
+							itemName: itemTypeOrName,
+							itemType: selectedItem?.itemType || item.itemType,
+							cost: getItemCost(selectedItem)
+						}
+					: item
 			);
+			updateInventory(updatedInventory);
 		}
 	};
 
 	const handleInventoryCountChange = (inventoryIndex: number, count: number) => {
-		setInventory((prev) =>
-			prev.map((item, index) =>
-				index === inventoryIndex ? { ...item, count: Math.max(1, count) } : item
-			)
+		const updatedInventory = inventory.map((item, index) =>
+			index === inventoryIndex ? { ...item, count: Math.max(1, count) } : item
 		);
+		updateInventory(updatedInventory);
 	};
 
 	const getItemCost = (item: InventoryItem | undefined | null, count: number = 1): string => {
@@ -99,6 +99,17 @@ const Inventory: React.FC<InventoryProps> = ({ inventory, setInventory, onItemCl
 
 		const totalPrice = basePrice * count;
 		return `${totalPrice}${currency}`;
+	};
+
+	// Helper to format shield info
+	const getShieldInfo = (shield: InventoryItem | undefined | null): string => {
+		if (!shield || shield.itemType !== 'Shield') return '';
+		const s = shield as any;
+		let info = `PD Bonus: ${s.pdBonus}\nAD Bonus: ${s.adBonus}`;
+		if (s.speedPenalty) info += `\nSpeed Penalty: ${s.speedPenalty}`;
+		if (s.agilityCheckDisadvantage) info += `\nAgility Disadvantage: Yes`;
+		if (s.properties && s.properties.length > 0) info += `\nProperties: ${s.properties.join(', ')}`;
+		return info;
 	};
 
 	return (
@@ -183,6 +194,7 @@ const Inventory: React.FC<InventoryProps> = ({ inventory, setInventory, onItemCl
 									{selectedItem ? (
 										<StyledInventoryInfoIcon
 											onClick={() => onItemClick(item, selectedItem)}
+											title={selectedItem.itemType === 'Shield' ? getShieldInfo(selectedItem) : undefined}
 										>
 											i
 										</StyledInventoryInfoIcon>

@@ -1,10 +1,30 @@
 import React from 'react';
 import { languagesData } from '../../../lib/rulesdata/languages';
-import type {
-	BackgroundPointsData,
-	PointConversions,
-	ConversionActions
-} from './BackgroundPointsManager';
+// Types moved from deleted BackgroundPointsManager
+interface BackgroundPointsData {
+	skillPointsUsed: number;
+	tradePointsUsed: number;
+	languagePointsUsed: number;
+	baseSkillPoints: number;
+	baseTradePoints: number;
+	baseLanguagePoints: number;
+	availableSkillPoints: number;
+	availableTradePoints: number;
+	availableLanguagePoints: number;
+}
+
+interface PointConversions {
+	skillToTradeConversions: number;
+	tradeToSkillConversions: number;
+	tradeToLanguageConversions: number;
+}
+
+interface ConversionActions {
+	convertSkillToTrade: () => void;
+	convertTradeToSkill: () => void;
+	convertTradeToLanguage: () => void;
+	resetConversions: () => void;
+}
 import {
 	StyledTabContent,
 	StyledSelectionGrid,

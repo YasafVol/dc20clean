@@ -101,11 +101,43 @@ export interface ClassDefinition {
 	subclasses: ClassSubclass[];
 }
 
-// Use Vite's import.meta.glob to import all the class feature JSON files
-const classFeatureModules = import.meta.glob('../classes/*_features.json', { eager: true });
+// Import all the new schema class definitions
+import { barbarianClass } from '../_new_schema/barbarian_features';
+import { clericClass } from '../_new_schema/cleric_features';
+import { hunterClass } from '../_new_schema/hunter_features';
+import { championClass } from '../_new_schema/champion_features';
+import { wizardClass } from '../_new_schema/wizard_features';
+import { monkClass } from '../_new_schema/monk_features';
+import { rogueClass } from '../_new_schema/rogue_features';
+import { sorcererClass } from '../_new_schema/sorcerer_features';
+import { spellbladeClass } from '../_new_schema/spellblade_features';
+import { warlockClass } from '../_new_schema/warlock_features';
+import { bardClass } from '../_new_schema/bard_features';
+import { druidClass } from '../_new_schema/druid_features';
+import { commanderClass } from '../_new_schema/commander_features';
 
-// Extract the default export (the class features object) from each module
-const rawClassFeatures = Object.values(classFeatureModules).map((module: any) => module.default);
+// Use the new schema class definitions
+const rawClassFeatures = [
+	barbarianClass,
+	clericClass,
+	hunterClass,
+	championClass,
+	wizardClass,
+	monkClass,
+	rogueClass,
+	sorcererClass,
+	spellbladeClass,
+	warlockClass,
+	bardClass,
+	druidClass,
+	commanderClass
+];
+
+// Debug logging
+console.log('🔍 Class Features Debug:', {
+	totalClasses: rawClassFeatures.length,
+	classNames: rawClassFeatures.map(c => c?.className || 'undefined')
+});
 
 // Export the class features data
 export const classFeaturesData: ClassDefinition[] = rawClassFeatures;
@@ -129,7 +161,13 @@ export function getAvailableSpellSchools(classData: ClassDefinition): SpellSchoo
 
 // Helper function to find a class by name
 export function findClassByName(className: string): ClassDefinition | undefined {
-	return classFeaturesData.find((cls) => cls.className === className);
+	console.log('🔍 findClassByName called with:', className);
+	console.log('🔍 Available classes:', classFeaturesData.map(c => c.className));
+	const result = classFeaturesData.find((cls) => 
+		cls.className.toLowerCase() === className.toLowerCase()
+	);
+	console.log('🔍 findClassByName result:', result ? 'found' : 'not found');
+	return result;
 }
 
 // Helper function to find a specific feature in a class
@@ -159,7 +197,7 @@ export function findChoiceOption(
 // Generic function to extract class-specific display information
 export function getClassSpecificInfo(
 	className: string,
-	selectedFeatureChoices?: string
+	selectedFeatureChoices?: Record<string, string>
 ): { displayInfo: { label: string; value: string }[] } {
 	const displayInfo: { label: string; value: string }[] = [];
 
@@ -168,7 +206,7 @@ export function getClassSpecificInfo(
 	}
 
 	try {
-		const selectedChoices: { [key: string]: string } = JSON.parse(selectedFeatureChoices);
+		const selectedChoices: { [key: string]: string } = selectedFeatureChoices;
 		const classData = findClassByName(className);
 
 		if (!classData) {
@@ -186,17 +224,26 @@ export function getClassSpecificInfo(
 					if (selectedValue && choice.options) {
 						if (choice.count > 1) {
 							// Handle multiple selections
+							let selectedValues: string[] = [];
 							try {
-								const selectedValues: string[] = JSON.parse(selectedValue);
-								if (selectedValues.length > 0) {
-									const label = getDisplayLabel(className, feature.featureName, choiceIndex);
-									displayInfo.push({
-										label,
-										value: selectedValues.join(', ')
-									});
-								}
+								// Try parsing as JSON array first
+								selectedValues = JSON.parse(selectedValue);
 							} catch (error) {
-								console.error('Error parsing multiple selection:', error);
+								// If not JSON, try comma-separated string
+								if (selectedValue.includes(',')) {
+									selectedValues = selectedValue.split(',').map((s: string) => s.trim());
+								} else {
+									// Single value that failed JSON parse
+									selectedValues = [selectedValue];
+								}
+							}
+							
+							if (selectedValues.length > 0) {
+								const label = getDisplayLabel(className, feature.featureName, choiceIndex);
+								displayInfo.push({
+									label,
+									value: selectedValues.join(', ')
+								});
 							}
 						} else {
 							// Handle single selections

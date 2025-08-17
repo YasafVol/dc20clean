@@ -1,5 +1,6 @@
 import React from 'react';
 import type { CharacterSheetData, CurrentValues } from '../../../types';
+import { useCharacterResources, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
 	StyledDeathExhaustionContainer,
 	StyledExhaustionOnlyContainer,
@@ -25,6 +26,8 @@ import {
 	StyledExhaustionTooltip
 } from '../styles/Exhaustion';
 
+import { StyledExhaustionImpact } from '../styles/ExhaustionImpact.styles';
+
 import {
 	getHealthStatus,
 	calculateDeathThreshold,
@@ -32,18 +35,40 @@ import {
 } from '../../../lib/rulesdata/death';
 
 interface DeathExhaustionProps {
-	characterData: CharacterSheetData;
-	currentValues: CurrentValues;
-	onExhaustionChange: (level: number) => void;
-	onDeathStepChange: (step: number) => void;
+	// No props needed - data comes from context
 }
 
-const DeathExhaustion: React.FC<DeathExhaustionProps> = ({
-	characterData,
-	currentValues,
-	onExhaustionChange,
-	onDeathStepChange
-}) => {
+const DeathExhaustion: React.FC<DeathExhaustionProps> = () => {
+	const { state, updateExhaustion, updateDeathStep } = useCharacterSheet();
+	const resources = useCharacterResources();
+	
+	if (!state.character) {
+		return <div>Loading...</div>;
+	}
+	
+	const characterData = state.character;
+	const currentValues = resources.current;
+	
+	const onExhaustionChange = (level: number) => {
+		updateExhaustion(level);
+	};
+	
+	const onDeathStepChange = (step: number) => {
+		// Calculate death threshold and max steps
+		const deathThreshold = calculateDeathThreshold(
+			characterData.finalPrimeModifierValue,
+			characterData.finalCombatMastery
+		);
+		const deathSteps = getDeathSteps(currentValues.currentHP, deathThreshold);
+		
+		// Check if clicking on final step should mark as dead
+		const isDead = step === deathSteps.maxSteps;
+		
+		// Update the death step in state
+		updateDeathStep(step, isDead);
+		
+		console.log('Death step changed to:', step, isDead ? '(DEAD)' : '');
+	};
 	// Exhaustion level descriptions (based on DC20 rules)
 	const exhaustionLevels = [
 		{ level: 1, description: 'Fatigued: -1 to all Checks and Saves' },
@@ -70,6 +95,10 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({
 						deathThreshold
 					);
 					const deathSteps = getDeathSteps(currentValues.currentHP, deathThreshold);
+					
+					// Use manual death step tracking if it exists, otherwise use calculated values
+					const actualCurrentStep = currentValues.deathSteps > 0 ? currentValues.deathSteps : deathSteps.currentStep;
+					const isActuallyDead = currentValues.isDead || deathSteps.isDead;
 
 					return (
 						<>
@@ -88,13 +117,13 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({
 							{healthStatus.status === 'deaths-door' && (
 								<StyledDeathStepsContainer>
 									<StyledDeathStepsTitle>
-										DEATH STEPS ({deathSteps.currentStep}/{deathSteps.maxSteps})
+										DEATH STEPS ({actualCurrentStep}/{deathSteps.maxSteps})
 									</StyledDeathStepsTitle>
 									<StyledDeathStepsGrid>
 										{Array.from({ length: deathSteps.maxSteps }, (_, index) => {
 											const step = index + 1;
-											const isFilled = step <= deathSteps.currentStep;
-											const isDead = deathSteps.isDead && step === deathSteps.maxSteps;
+											const isFilled = step <= actualCurrentStep;
+											const isDead = isActuallyDead && step === deathSteps.maxSteps;
 
 											return (
 												<StyledDeathStep
@@ -132,6 +161,12 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({
 						</StyledExhaustionLevel>
 					))}
 				</StyledExhaustionContainer>
+				{/* Show impact below the numbers */}
+				{currentValues.exhaustionLevel > 0 && (
+					<StyledExhaustionImpact>
+						{exhaustionLevels.find(e => e.level === currentValues.exhaustionLevel)?.description}
+					</StyledExhaustionImpact>
+				)}
 			</StyledExhaustionOnlyContainer>
 		</StyledDeathExhaustionContainer>
 	);

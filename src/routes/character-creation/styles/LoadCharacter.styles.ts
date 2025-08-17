@@ -42,27 +42,58 @@ export const StyledCharacterCard = styled.div`
 `;
 
 export const StyledCardActions = styled.div`
-	display: flex;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
 	gap: 0.5rem;
 	margin-top: 1rem;
 `;
 
-export const StyledActionButton = styled.button<{ variant?: 'primary' | 'secondary' }>`
+export const StyledActionButton = styled.button<{ variant?: 'primary' | 'secondary' | 'danger' }>`
 	flex: 1;
 	padding: 0.6rem 1rem;
-	border: 2px solid ${(props) => (props.variant === 'primary' ? '#fbbf24' : '#8b5cf6')};
+	border: 2px solid ${(props) => {
+		if (props.variant === 'primary') return '#fbbf24';
+		if (props.variant === 'danger') return '#ef4444';
+		return '#8b5cf6';
+	}};
 	border-radius: 6px;
-	background: ${(props) => (props.variant === 'primary' ? '#fbbf24' : 'transparent')};
-	color: ${(props) => (props.variant === 'primary' ? '#1e1b4b' : '#8b5cf6')};
+	background: ${(props) => {
+		if (props.variant === 'primary') return '#fbbf24';
+		if (props.variant === 'danger') return 'transparent';
+		return 'transparent';
+	}};
+	color: ${(props) => {
+		if (props.variant === 'primary') return '#1e1b4b';
+		if (props.variant === 'danger') return '#ef4444';
+		return '#8b5cf6';
+	}};
 	cursor: pointer;
 	transition: all 0.3s ease;
 	font-size: 0.9rem;
 	font-weight: bold;
+	outline: none; /* Remove default focus outline */
 
 	&:hover {
-		background: ${(props) => (props.variant === 'primary' ? '#f59e0b' : '#8b5cf6')};
-		color: ${(props) => (props.variant === 'primary' ? '#1e1b4b' : 'white')};
+		background: ${(props) => {
+			if (props.variant === 'primary') return '#f59e0b';
+			if (props.variant === 'danger') return '#ef4444';
+			return '#8b5cf6';
+		}};
+		color: ${(props) => {
+			if (props.variant === 'primary') return '#1e1b4b';
+			if (props.variant === 'danger') return 'white';
+			return 'white';
+		}};
 		transform: translateY(-1px);
+	}
+
+	&:focus {
+		outline: none;
+		box-shadow: 0 0 0 2px ${(props) => {
+			if (props.variant === 'primary') return '#fbbf24';
+			if (props.variant === 'danger') return '#ef4444';
+			return '#8b5cf6';
+		}};
 	}
 `;
 
@@ -147,5 +178,68 @@ export const StyledBackButton = styled.button`
 	&:hover {
 		background: linear-gradient(145deg, #4b5563 0%, #374151 100%);
 		transform: translateY(-2px);
+	}
+`;
+
+// Modal styles for delete confirmation
+export const StyledModalOverlay = styled.div`
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.7);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
+`;
+
+export const StyledModalContent = styled.div`
+	background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+	border: 2px solid #ef4444;
+	border-radius: 12px;
+	padding: 2rem;
+	max-width: 400px;
+	width: 90%;
+	text-align: center;
+	box-shadow: 0 8px 32px rgba(239, 68, 68, 0.3);
+`;
+
+export const StyledModalTitle = styled.h3`
+	color: #ef4444;
+	font-size: 1.5rem;
+	margin-bottom: 1rem;
+	font-weight: bold;
+`;
+
+export const StyledModalMessage = styled.p`
+	color: #e5e7eb;
+	font-size: 1rem;
+	margin-bottom: 2rem;
+	line-height: 1.5;
+`;
+
+export const StyledModalActions = styled.div`
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+`;
+
+export const StyledModalButton = styled.button<{ variant: 'cancel' | 'delete' }>`
+	padding: 0.75rem 1.5rem;
+	border: 2px solid ${(props) => (props.variant === 'delete' ? '#ef4444' : '#6b7280')};
+	border-radius: 6px;
+	background: ${(props) => (props.variant === 'delete' ? '#ef4444' : 'transparent')};
+	color: ${(props) => (props.variant === 'delete' ? 'white' : '#6b7280')};
+	cursor: pointer;
+	transition: all 0.3s ease;
+	font-size: 0.9rem;
+	font-weight: bold;
+
+	&:hover {
+		background: ${(props) => (props.variant === 'delete' ? '#dc2626' : '#6b7280')};
+		color: white;
+		transform: translateY(-1px);
 	}
 `;

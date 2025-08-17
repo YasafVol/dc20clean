@@ -1,8 +1,9 @@
-import React from 'react';
+
 import { useCharacter } from '../../lib/stores/characterContext';
-import { ancestriesData } from '../../lib/rulesdata/ancestries';
-import { traitsData } from '../../lib/rulesdata/traits';
-import type { IAncestry, ITrait } from '../../lib/rulesdata/types';
+import { ancestriesData } from '../../lib/rulesdata/_new_schema/ancestries';
+import { traitsData } from '../../lib/rulesdata/_new_schema/traits';
+import TraitChoiceSelector from './components/TraitChoiceSelector';
+import type { IAncestry, ITrait, ITraitEffect } from '../../lib/rulesdata/types';
 import {
 	StyledOuterContainer,
 	StyledMainTitle,
@@ -17,11 +18,20 @@ import {
 } from './styles/SelectedAncestries.styles';
 
 function SelectedAncestries() {
-	const { state, dispatch, ancestryPointsRemaining, ancestryPointsSpent, totalAncestryPoints } = useCharacter();
+	const { state, dispatch, calculationResult } = useCharacter();
+	
+	// Use centralized calculator for ancestry points (includes Cleric domain bonuses, etc.)
+	const ancestryData = calculationResult.ancestry || {
+		baseAncestryPoints: 5,
+		ancestryPointsUsed: 0,
+		ancestryPointsRemaining: 5
+	};
+	const { baseAncestryPoints: totalAncestryPoints, ancestryPointsUsed: ancestryPointsSpent, ancestryPointsRemaining } = ancestryData;
 
 	const selectedAncestry1 = ancestriesData.find((a) => a.id === state.ancestry1Id);
 	const selectedAncestry2 = ancestriesData.find((a) => a.id === state.ancestry2Id);
-	const selectedTraits: string[] = JSON.parse(state.selectedTraitIds || '[]');
+	// NEW: Use typed data instead of JSON parsing
+	const selectedTraits: string[] = state.selectedTraitIds || [];
 
 	function getTrait(traitId: string): ITrait | undefined {
 		return traitsData.find((t) => t.id === traitId);
@@ -47,7 +57,7 @@ function SelectedAncestries() {
 			currentTraits.push(traitId);
 		}
 
-		dispatch({ type: 'SET_TRAITS', selectedTraitIds: JSON.stringify(currentTraits) });
+		dispatch({ type: 'SET_TRAITS', selectedTraitIds: currentTraits });
 	}
 
 	function renderAncestryTraits(ancestry: IAncestry) {
@@ -77,6 +87,21 @@ function SelectedAncestries() {
 										<span style={{ color: '#ff4444' }}> (Not enough points)</span>
 									)}
 								</StyledLabel>
+								
+								{/* NEW: Render choice selectors if trait is selected and has user choices */}
+								{isSelected && trait.effects?.map((effect: ITraitEffect, effectIndex: number) => {
+									if (effect.userChoiceRequired) {
+										return (
+											<TraitChoiceSelector
+												key={`${traitId}-${effectIndex}`}
+												trait={trait}
+												effect={effect}
+												effectIndex={effectIndex}
+											/>
+										);
+									}
+									return null;
+								})}
 							</StyledListItem>
 						);
 					})}
@@ -104,6 +129,21 @@ function SelectedAncestries() {
 										<span style={{ color: '#ff4444' }}> (Not enough points)</span>
 									)}
 								</StyledLabel>
+								
+								{/* NEW: Render choice selectors if trait is selected and has user choices */}
+								{isSelected && trait.effects?.map((effect: ITraitEffect, effectIndex: number) => {
+									if (effect.userChoiceRequired) {
+										return (
+											<TraitChoiceSelector
+												key={`${traitId}-${effectIndex}`}
+												trait={trait}
+												effect={effect}
+												effectIndex={effectIndex}
+											/>
+										);
+									}
+									return null;
+								})}
 							</StyledListItem>
 						);
 					})}

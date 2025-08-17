@@ -40,18 +40,16 @@ export const GroupIcon = () => (
 	</svg>
 );
 
-import React from 'react';
 import { StyledContainer, StyledTitle, StyledSubtitle, StyledMenuGrid, StyledTextContent, StyledMenuCard, StyledCardTitle
 , StyledCardDescription, StyledIcon
 } from './styled';
 
 
-interface MenuProps {
-	onCreateCharacter: () => void;
-	onLoadCharacter: () => void;
-}
 
-function Menu({ onCreateCharacter, onLoadCharacter }: MenuProps) {
+import { useNavigate } from 'react-router-dom';
+
+function Menu() {
+	const navigate = useNavigate();
 	return (
 		<StyledContainer>
 			<StyledTitle>DC20 Character Creator</StyledTitle>
@@ -61,7 +59,7 @@ function Menu({ onCreateCharacter, onLoadCharacter }: MenuProps) {
 			</StyledSubtitle>
 
 			<StyledMenuGrid>
-				<StyledMenuCard onClick={onCreateCharacter}>
+				<StyledMenuCard onClick={() => navigate('/create-character')}>
 					<StyledTextContent>
 						<StyledCardTitle>Create Character</StyledCardTitle>
 						<StyledCardDescription>
@@ -73,7 +71,7 @@ function Menu({ onCreateCharacter, onLoadCharacter }: MenuProps) {
 					</StyledIcon>
 				</StyledMenuCard>
 
-				<StyledMenuCard onClick={onLoadCharacter}>
+				<StyledMenuCard onClick={() => navigate('/load-character')}>
 					<StyledTextContent>
 						<StyledCardTitle>Load Character</StyledCardTitle>
 						<StyledCardDescription>

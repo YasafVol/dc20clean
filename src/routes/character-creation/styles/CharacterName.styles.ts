@@ -28,6 +28,12 @@ export const StyledInputGroup = styled.div`
 	margin-bottom: 1.5rem;
 `;
 
+export const StyledCharacterNameContainer = styled.div`
+	display: flex;
+	gap: 10px;
+	flex-direction: row;
+`;
+
 export const StyledLabel = styled.label`
 	display: block;
 	margin-bottom: 0.5rem;
@@ -55,21 +61,6 @@ export const StyledInput = styled.input`
 	&::placeholder {
 		color: #9ca3af;
 	}
-`;
-
-export const StyledSuggestionSection = styled.div`
-	margin-top: 1.5rem;
-	padding: 1.5rem;
-	border: 2px solid #a855f7;
-	border-radius: 8px;
-	background: rgba(45, 27, 105, 0.4);
-`;
-
-export const StyledSuggestionTitle = styled.h3`
-	margin: 0 0 1rem 0;
-	color: #fbbf24;
-	font-size: 1.1rem;
-	font-weight: bold;
 `;
 
 export const StyledSuggestionGrid = styled.div`

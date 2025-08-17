@@ -1,8 +1,24 @@
 // Character Sheet Types and Interfaces
 
+import type { EnhancedStatBreakdown } from '../lib/types/effectSystem';
+
 export interface CharacterSheetProps {
 	characterId: string;
 	onBack: () => void;
+}
+
+// Import ManeuverData type
+export interface ManeuverData {
+	id: string;
+	name: string;
+	type?: string;
+	description?: string;
+	cost?: {
+		ap: number;
+		mp?: number;
+	};
+	isReaction?: boolean;
+	notes?: string;
 }
 
 export interface CharacterSheetData {
@@ -76,6 +92,10 @@ export interface CharacterSheetData {
 	tempHP?: number;
 	actionPointsUsed?: number;
 	exhaustionLevel?: number;
+
+	// Spells and Maneuvers
+	spells?: SpellData[];
+	maneuvers?: ManeuverData[];
 }
 
 export interface SkillData {
@@ -116,6 +136,9 @@ export interface CurrentValues {
 	tempHP: number;
 	actionPointsUsed: number;
 	exhaustionLevel: number; // 0-5
+	// Death tracking
+	deathSteps: number; // Current death step (0 = alive, 1+ = steps toward death)
+	isDead: boolean; // True when character has reached final death step
 	// Currency
 	goldPieces: number;
 	silverPieces: number;
@@ -177,6 +200,12 @@ export interface CharacterState {
 		current: SpellData[];
 	};
 
+	// Maneuvers - original is empty/default, current is user-selected
+	maneuvers: {
+		original: ManeuverData[];
+		current: ManeuverData[];
+	};
+
 	// Inventory - original is empty/default, current is user-modified
 	inventory: {
 		original: InventoryItemData[];
@@ -188,6 +217,18 @@ export interface CharacterState {
 		manualPD?: { value: number; reason: string; timestamp: string };
 		manualPDR?: { value: number; reason: string; timestamp: string };
 		manualAD?: { value: number; reason: string; timestamp: string };
+	};
+
+	// Centralized manual defense overrides (authoritative values)
+	manualDefenses?: {
+		manualPD?: number;
+		manualPDR?: number;
+		manualAD?: number;
+	};
+
+	// Persisted calculation breakdowns for drill-down tooltips
+	calculation?: {
+		breakdowns: Record<string, EnhancedStatBreakdown>;
 	};
 }
 

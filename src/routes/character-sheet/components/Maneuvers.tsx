@@ -17,7 +17,7 @@ import {
 	StyledRemoveButton,
 	StyledSpellSelect,
 	StyledSchoolFilter,
-	StyledSpellCell,
+	StyledSpellCell
 } from '../styles/Spells';
 
 export interface ManeuversProps {
@@ -28,17 +28,17 @@ export interface ManeuversProps {
 const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false }) => {
 	const { addManeuver, removeManeuver, state } = useCharacterSheet();
 	const maneuvers = useCharacterManeuvers();
-	
+
 	if (!state.character) {
 		return <div>Loading maneuvers...</div>;
 	}
-	
+
 	const characterData = state.character;
 	const [typeFilter, setTypeFilter] = useState<string>('all');
 	const [expandedManeuvers, setExpandedManeuvers] = useState<Set<string>>(() => {
 		const expanded = new Set<string>();
 		// Expand all maneuvers by default
-		maneuvers.forEach(maneuver => {
+		maneuvers.forEach((maneuver) => {
 			expanded.add(maneuver.id);
 		});
 		return expanded;
@@ -46,7 +46,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 
 	console.log('🔍 Maneuvers component received:', {
 		maneuversCount: maneuvers.length,
-		maneuvers: maneuvers.map(m => ({ id: m.id, name: m.name, type: m.type }))
+		maneuvers: maneuvers.map((m) => ({ id: m.id, name: m.name, type: m.type }))
 	});
 
 	// Filter maneuvers based on selected type
@@ -54,7 +54,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 		if (typeFilter === 'all') {
 			return allManeuvers;
 		}
-		return allManeuvers.filter(maneuver => maneuver.type === typeFilter);
+		return allManeuvers.filter((maneuver) => maneuver.type === typeFilter);
 	}, [typeFilter]);
 
 	const addManeuverSlot = () => {
@@ -82,7 +82,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 			const updated = [...prev];
 			if (field === 'name' && value) {
 				// When maneuver is selected, populate all fields from maneuver data
-				const selectedManeuver = allManeuvers.find(maneuver => maneuver.name === value);
+				const selectedManeuver = allManeuvers.find((maneuver) => maneuver.name === value);
 				if (selectedManeuver) {
 					updated[index] = {
 						...updated[index],
@@ -101,7 +101,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 	};
 
 	const toggleManeuverExpansion = (maneuverId: string) => {
-		setExpandedManeuvers(prev => {
+		setExpandedManeuvers((prev) => {
 			const newSet = new Set(prev);
 			if (newSet.has(maneuverId)) {
 				newSet.delete(maneuverId);
@@ -113,7 +113,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 	};
 
 	const getUniqueTypes = () => {
-		const types = new Set(allManeuvers.map(maneuver => maneuver.type));
+		const types = new Set(allManeuvers.map((maneuver) => maneuver.type));
 		return Array.from(types).sort();
 	};
 
@@ -129,13 +129,13 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 								onChange={(e) => setTypeFilter(e.target.value)}
 							>
 								<option value="all">All Types</option>
-								{getUniqueTypes().map(type => (
-									<option key={type} value={type}>{type}</option>
+								{getUniqueTypes().map((type) => (
+									<option key={type} value={type}>
+										{type}
+									</option>
 								))}
 							</StyledSchoolFilter>
-							<StyledAddSpellButton onClick={addManeuverSlot}>
-								+ Add Maneuver
-							</StyledAddSpellButton>
+							<StyledAddSpellButton onClick={addManeuverSlot}>+ Add Maneuver</StyledAddSpellButton>
 						</>
 					)}
 				</StyledSpellsControls>
@@ -144,7 +144,9 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 			<StyledSpellsContainer>
 				{maneuvers.length === 0 ? (
 					<StyledEmptyState>
-						{readOnly ? 'No maneuvers selected' : 'No maneuvers added yet. Click "Add Maneuver" to get started.'}
+						{readOnly
+							? 'No maneuvers selected'
+							: 'No maneuvers added yet. Click "Add Maneuver" to get started.'}
 					</StyledEmptyState>
 				) : (
 					<>
@@ -160,10 +162,13 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 							<StyledSpellRow key={maneuver.id}>
 								<StyledSpellCell>
 									{readOnly ? (
-										<span onClick={() => {
-											const fullManeuver = allManeuvers.find(m => m.name === maneuver.name);
-											if (fullManeuver) onManeuverClick(fullManeuver);
-										}} style={{ cursor: 'pointer', color: '#2563eb' }}>
+										<span
+											onClick={() => {
+												const fullManeuver = allManeuvers.find((m) => m.name === maneuver.name);
+												if (fullManeuver) onManeuverClick(fullManeuver);
+											}}
+											style={{ cursor: 'pointer', color: '#2563eb' }}
+										>
 											{maneuver.name || 'Unnamed Maneuver'}
 										</span>
 									) : (
@@ -172,26 +177,29 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 											onChange={(e) => updateManeuver(index, 'name', e.target.value)}
 										>
 											<option value="">Select a maneuver...</option>
-											{filteredManeuvers.map(m => (
-												<option key={m.name} value={m.name}>{m.name}</option>
+											{filteredManeuvers.map((m) => (
+												<option key={m.name} value={m.name}>
+													{m.name}
+												</option>
 											))}
 										</StyledSpellSelect>
 									)}
 								</StyledSpellCell>
 								<StyledSpellCell>{maneuver.type || '-'}</StyledSpellCell>
-								<StyledSpellCell>{maneuver.cost?.ap ? `${maneuver.cost.ap} AP` : '-'}</StyledSpellCell>
+								<StyledSpellCell>
+									{maneuver.cost?.ap ? `${maneuver.cost.ap} AP` : '-'}
+								</StyledSpellCell>
 								<StyledSpellCell>
 									{maneuver.description ? (
 										<div>
-											<span 
+											<span
 												onClick={() => toggleManeuverExpansion(maneuver.id)}
 												style={{ cursor: 'pointer', color: '#2563eb' }}
 											>
-												{expandedManeuvers.has(maneuver.id) ? '▼' : '▶'} 
-												{maneuver.description.length > 50 
-													? `${maneuver.description.substring(0, 50)}...` 
-													: maneuver.description
-												}
+												{expandedManeuvers.has(maneuver.id) ? '▼' : '▶'}
+												{maneuver.description.length > 50
+													? `${maneuver.description.substring(0, 50)}...`
+													: maneuver.description}
 											</span>
 											{expandedManeuvers.has(maneuver.id) && (
 												<div style={{ marginTop: '5px', fontSize: '0.9em', color: '#666' }}>
@@ -199,7 +207,9 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 												</div>
 											)}
 										</div>
-									) : '-'}
+									) : (
+										'-'
+									)}
 								</StyledSpellCell>
 								{!readOnly && (
 									<StyledSpellCell>

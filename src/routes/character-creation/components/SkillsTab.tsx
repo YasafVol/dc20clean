@@ -92,7 +92,9 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 		availablePoints: number
 	) => {
 		const canAfford = pointsUsed + pointCost <= availablePoints;
-		console.log(`canIncreaseProficiency: cost=${pointCost}, used=${pointsUsed}, available=${availablePoints}, canAfford=${canAfford}`);
+		console.log(
+			`canIncreaseProficiency: cost=${pointCost}, used=${pointsUsed}, available=${availablePoints}, canAfford=${canAfford}`
+		);
 		return canAfford;
 	};
 
@@ -100,28 +102,38 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 	const canSelectMastery = (skillId: string, targetLevel: number): boolean => {
 		// Check mastery limit
 		if (targetLevel > masteryLimits.maxSkillMastery) {
-			console.log(`Skill ${skillId} level ${targetLevel} exceeds mastery limit ${masteryLimits.maxSkillMastery}`);
+			console.log(
+				`Skill ${skillId} level ${targetLevel} exceeds mastery limit ${masteryLimits.maxSkillMastery}`
+			);
 			return false;
 		}
-		
+
 		// Check Level 1 special rule for Adept (level 2) - only count skills, not trades
 		if (targetLevel === 2) {
 			const currentlyAdept = currentSkills[skillId] === 2;
-			const skillAdeptCount = Object.values(currentSkills).filter(level => level === 2).length;
+			const skillAdeptCount = Object.values(currentSkills).filter((level) => level === 2).length;
 			if (!currentlyAdept && skillAdeptCount >= 1) {
-				console.log(`Cannot select Adept level 2 for ${skillId} - already have ${skillAdeptCount} Adept skills`);
+				console.log(
+					`Cannot select Adept level 2 for ${skillId} - already have ${skillAdeptCount} Adept skills`
+				);
 				return false; // Already have one Adept skill
 			}
 		}
-		
+
 		// Check point availability
 		const pointCost = targetLevel - (currentSkills[skillId] || 0);
-		const canAfford = canIncreaseProficiency(pointCost, pointsData.skillPointsUsed, pointsData.availableSkillPoints);
-		
+		const canAfford = canIncreaseProficiency(
+			pointCost,
+			pointsData.skillPointsUsed,
+			pointsData.availableSkillPoints
+		);
+
 		if (!canAfford) {
-			console.log(`Cannot afford level ${targetLevel} for ${skillId}: cost=${pointCost}, used=${pointsData.skillPointsUsed}, available=${pointsData.availableSkillPoints}`);
+			console.log(
+				`Cannot afford level ${targetLevel} for ${skillId}: cost=${pointCost}, used=${pointsData.skillPointsUsed}, available=${pointsData.availableSkillPoints}`
+			);
 		}
-		
+
 		return canAfford;
 	};
 
@@ -155,35 +167,39 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 		<StyledTabContent>
 			{/* Level 1 Validation Warning */}
 			{(() => {
-				const skillAdeptCount = Object.values(currentSkills).filter(level => level === 2).length;
+				const skillAdeptCount = Object.values(currentSkills).filter((level) => level === 2).length;
 				const isInvalid = skillAdeptCount > 1;
-				
+
 				return isInvalid ? (
-					<div style={{
-						background: '#fee2e2',
-						border: '1px solid #fecaca',
-						color: '#991b1b',
-						padding: '0.75rem',
-						borderRadius: '0.5rem',
-						marginBottom: '1rem'
-					}}>
-						⚠️ Level 1 characters can only have ONE Adept (level 2) skill.
-						Currently: {skillAdeptCount} Adept skill selections.
+					<div
+						style={{
+							background: '#fee2e2',
+							border: '1px solid #fecaca',
+							color: '#991b1b',
+							padding: '0.75rem',
+							borderRadius: '0.5rem',
+							marginBottom: '1rem'
+						}}
+					>
+						⚠️ Level 1 characters can only have ONE Adept (level 2) skill. Currently:{' '}
+						{skillAdeptCount} Adept skill selections.
 					</div>
 				) : null;
 			})()}
-			
+
 			{/* Mastery Limits Info */}
-			<div style={{
-				background: '#f3f4f6',
-				border: '1px solid #d1d5db',
-				padding: '0.5rem',
-				borderRadius: '0.375rem',
-				marginBottom: '1rem',
-				fontSize: '0.875rem'
-			}}>
-				<strong>Mastery Limits:</strong> Max level {masteryLimits.maxSkillMastery} 
-				({MASTERY_TABLE[masteryLimits.maxSkillMastery]?.name})
+			<div
+				style={{
+					background: '#f3f4f6',
+					border: '1px solid #d1d5db',
+					padding: '0.5rem',
+					borderRadius: '0.375rem',
+					marginBottom: '1rem',
+					fontSize: '0.875rem'
+				}}
+			>
+				<strong>Mastery Limits:</strong> Max level {masteryLimits.maxSkillMastery}(
+				{MASTERY_TABLE[masteryLimits.maxSkillMastery]?.name})
 			</div>
 
 			<StyledPointsRemaining>
@@ -275,46 +291,46 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 				</div>
 			</StyledPointsRemaining>
 			<StyledSelectionGrid>
-							{skillsData.map((skill) => {
-				const currentLevel = currentSkills[skill.id] || 0;
-				const masteryInfo = getMasteryInfo(currentLevel, masteryLimits.maxSkillMastery);
-				
-				return (
-					<StyledSelectionItem key={skill.id}>
-						<StyledSelectionHeader>
-							<StyledSelectionName>{skill.name}</StyledSelectionName>
-							<div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
-								{masteryInfo.name} (+{masteryInfo.bonus}) • {skill.attributeAssociation}
+				{skillsData.map((skill) => {
+					const currentLevel = currentSkills[skill.id] || 0;
+					const masteryInfo = getMasteryInfo(currentLevel, masteryLimits.maxSkillMastery);
+
+					return (
+						<StyledSelectionItem key={skill.id}>
+							<StyledSelectionHeader>
+								<StyledSelectionName>{skill.name}</StyledSelectionName>
+								<div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+									{masteryInfo.name} (+{masteryInfo.bonus}) • {skill.attributeAssociation}
+								</div>
+							</StyledSelectionHeader>
+							<div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>
+								{skill.description}
 							</div>
-						</StyledSelectionHeader>
-						<div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>
-							{skill.description}
-						</div>
-						<StyledProficiencySelector>
-							{[0, 1, 2, 3, 4, 5].map((level) => {
-								const masteryDisplay = getMasteryInfo(level, masteryLimits.maxSkillMastery);
-								const canSelect = canSelectMastery(skill.id, level);
-								
-								return (
-									<StyledProficiencyButton
-										key={level}
-										$active={currentLevel === level}
-										$disabled={!canSelect && level !== currentLevel}
-										title={`${masteryDisplay.name} (+${masteryDisplay.bonus})`}
-										onClick={() => {
-											if (canSelect || level === currentLevel) {
-												onSkillChange(skill.id, level);
-											}
-										}}
-									>
-										{level}
-									</StyledProficiencyButton>
-								);
-							})}
-						</StyledProficiencySelector>
-					</StyledSelectionItem>
-				);
-			})}
+							<StyledProficiencySelector>
+								{[0, 1, 2, 3, 4, 5].map((level) => {
+									const masteryDisplay = getMasteryInfo(level, masteryLimits.maxSkillMastery);
+									const canSelect = canSelectMastery(skill.id, level);
+
+									return (
+										<StyledProficiencyButton
+											key={level}
+											$active={currentLevel === level}
+											$disabled={!canSelect && level !== currentLevel}
+											title={`${masteryDisplay.name} (+${masteryDisplay.bonus})`}
+											onClick={() => {
+												if (canSelect || level === currentLevel) {
+													onSkillChange(skill.id, level);
+												}
+											}}
+										>
+											{level}
+										</StyledProficiencyButton>
+									);
+								})}
+							</StyledProficiencySelector>
+						</StyledSelectionItem>
+					);
+				})}
 			</StyledSelectionGrid>
 		</StyledTabContent>
 	);

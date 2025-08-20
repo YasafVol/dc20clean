@@ -3,11 +3,11 @@
 > **Purpose**  
 > This document is the _single authoritative reference_ (“bible”) for everything related to **Classes**, their **Features**, and **Level Progression**.  
 > • Humans can follow the numbered guides & check-lists.  
-> • AI agents can parse the 🗂 *File Maps* and ⬢ *Mermaid* graphs to discover dependencies.
+> • AI agents can parse the 🗂 _File Maps_ and ⬢ _Mermaid_ graphs to discover dependencies.
 
 ---
 
-## 1  High-Level Pipeline
+## 1 High-Level Pipeline
 
 ```mermaid
 flowchart LR
@@ -46,30 +46,30 @@ flowchart LR
 
 ---
 
-## 2  Key Files & Their Roles
+## 2 Key Files & Their Roles
 
-| Layer | File / Dir | Responsibility |
-|-------|------------|----------------|
-| **Rule Data (canonical)** | `src/lib/rulesdata/_new_schema/*_features.ts` | Declarative definition of each class’s core & subclass features |
-| | `src/lib/rulesdata/_new_schema/*_table.json` | Level-by-level progression tables (HP, MP, features gained, etc.) |
-| **Type Contracts** | `src/lib/rulesdata/types.ts` | TS interfaces `IClassDefinition`, `IClassFeature`, `IClassFeatureChoice` |
-| | `src/lib/rulesdata/schemas/class.schema.ts` | Zod schema used for validation & effect typing |
-| **Validation Layer** | `src/lib/rulesdata/loaders/class.loader.ts` | Loads progression tables, validates against schema |
-| | `src/lib/rulesdata/loaders/class-features.loader.ts` | Loads feature files & exposes `classFeaturesData` |
-| | `src/lib/rulesdata/rulesdata.spec.ts` | Unit test that asserts every class passes the schema |
-| **Runtime Engine** | `src/lib/services/enhancedCharacterCalculator.ts` | Aggregates class effects, resolves choices, outputs stats |
-| **State Layer** | `src/lib/stores/characterContext.tsx`<br>`src/lib/hooks/useCharacterBuilder.ts` | Provides calculated results to UI |
-| **UI** | `src/routes/character-creation/*` (selection)<br>`src/routes/character-sheet/*` (display) | Import `classesData` / `classFeaturesData` directly |
+| Layer                     | File / Dir                                                                                | Responsibility                                                           |
+| ------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| **Rule Data (canonical)** | `src/lib/rulesdata/_new_schema/*_features.ts`                                             | Declarative definition of each class’s core & subclass features          |
+|                           | `src/lib/rulesdata/_new_schema/*_table.json`                                              | Level-by-level progression tables (HP, MP, features gained, etc.)        |
+| **Type Contracts**        | `src/lib/rulesdata/types.ts`                                                              | TS interfaces `IClassDefinition`, `IClassFeature`, `IClassFeatureChoice` |
+|                           | `src/lib/rulesdata/schemas/class.schema.ts`                                               | Zod schema used for validation & effect typing                           |
+| **Validation Layer**      | `src/lib/rulesdata/loaders/class.loader.ts`                                               | Loads progression tables, validates against schema                       |
+|                           | `src/lib/rulesdata/loaders/class-features.loader.ts`                                      | Loads feature files & exposes `classFeaturesData`                        |
+|                           | `src/lib/rulesdata/rulesdata.spec.ts`                                                     | Unit test that asserts every class passes the schema                     |
+| **Runtime Engine**        | `src/lib/services/enhancedCharacterCalculator.ts`                                         | Aggregates class effects, resolves choices, outputs stats                |
+| **State Layer**           | `src/lib/stores/characterContext.tsx`<br>`src/lib/hooks/useCharacterBuilder.ts`           | Provides calculated results to UI                                        |
+| **UI**                    | `src/routes/character-creation/*` (selection)<br>`src/routes/character-sheet/*` (display) | Import `classesData` / `classFeaturesData` directly                      |
 
 ---
 
-## 3  Adding **New Class** – Checklist ✅
+## 3 Adding **New Class** – Checklist ✅
 
 1. **Data**  
    1.1 Create progression table: `_new_schema/<class>_table.json`  
    ‑ Required keys: `className`, `levelProgression[]` (hp, mp, features, etc.).  
    1.2 Create feature file: `_new_schema/<class>_features.ts` exporting `<class>Class` that conforms to `ClassDefinition`.  
-   ‑ Include `coreFeatures`, `subclasses`, and any starting equipment blocks.  
+   ‑ Include `coreFeatures`, `subclasses`, and any starting equipment blocks.
 2. **Names & IDs**  
    ‑ `className` (PascalCase) must match table file and UI strings.  
    ‑ Exported constant should follow the `<name>Class` pattern (e.g., `paladinClass`).
@@ -89,7 +89,7 @@ flowchart LR
    ‑ Add dedicated calculation tests for complex mechanics.
 8. **Docs**  
    ‑ Append a bullet to this file under “Next Classes Added”.
-9. **Commit Message Template**  
+9. **Commit Message Template**
    ```
    feat(rules): add <ClassName> class & N core features
    - *_features.ts: +N entries
@@ -99,37 +99,39 @@ flowchart LR
 
 ---
 
-## 4  Adding **New Class Feature Effect Type** – Decision Matrix
+## 4 Adding **New Class Feature Effect Type** – Decision Matrix
 
-| Question | Yes | No |
-|----------|-----|----|
-| Does an existing `effect.type` cover the mechanic? | Use it → go to Step 3 | Create new type → continue |
-| Does the effect alter a **numeric stat**? | Implement in calculator (`createStatBreakdown`) | Use `GRANT_ABILITY` + manual rules text |
-| Does the UI need to resolve **user choice**? | Add `userChoiceRequired` in feature & update `resolveEffectChoices` | — |
+| Question                                           | Yes                                                                 | No                                      |
+| -------------------------------------------------- | ------------------------------------------------------------------- | --------------------------------------- |
+| Does an existing `effect.type` cover the mechanic? | Use it → go to Step 3                                               | Create new type → continue              |
+| Does the effect alter a **numeric stat**?          | Implement in calculator (`createStatBreakdown`)                     | Use `GRANT_ABILITY` + manual rules text |
+| Does the UI need to resolve **user choice**?       | Add `userChoiceRequired` in feature & update `resolveEffectChoices` | —                                       |
 
 **When a new type is created:**
-1. Extend `IClassFeature.effects[].type` JSDoc comment (open list).  
-2. Extend Zod schema validation.  
-3. Implement logic in calculator.  
+
+1. Extend `IClassFeature.effects[].type` JSDoc comment (open list).
+2. Extend Zod schema validation.
+3. Implement logic in calculator.
 4. Write unit test(s).
 
 ---
 
-## 5  Troubleshooting FAQ 🤖
+## 5 Troubleshooting FAQ 🤖
 
-| Symptom | Likely Cause | Fix |
-|---------|--------------|-----|
-| **Vite import error** for class files | File path typo (`_new_schema/...`) | Check `import ... classFeaturesData` paths |
-| New class not visible in UI | Missing `_features.ts` or `_table.json` file, or mismatched `className` | Verify file names & exported constant |
-| Unit test `rulesdata.spec.ts` fails | Schema violation (missing field / wrong effect) | Inspect test output & update data |
-| Stats not updating for new effect | Effect type not handled in calculator | Add case to `createStatBreakdown` |
-| Feature choice dropdown empty | `choices` array missing `options` | Populate `options` with `label` & `value` fields |
+| Symptom                               | Likely Cause                                                            | Fix                                              |
+| ------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------ |
+| **Vite import error** for class files | File path typo (`_new_schema/...`)                                      | Check `import ... classFeaturesData` paths       |
+| New class not visible in UI           | Missing `_features.ts` or `_table.json` file, or mismatched `className` | Verify file names & exported constant            |
+| Unit test `rulesdata.spec.ts` fails   | Schema violation (missing field / wrong effect)                         | Inspect test output & update data                |
+| Stats not updating for new effect     | Effect type not handled in calculator                                   | Add case to `createStatBreakdown`                |
+| Feature choice dropdown empty         | `choices` array missing `options`                                       | Populate `options` with `label` & `value` fields |
 
 ---
 
-## 6  Future Evolution
-- **Effect Processor** integration will unify class & ancestry effect handling—update §3 Step 4 when landed.  
-- **Subclass-driven UI**: dynamic forms may auto-render based on schema.  
+## 6 Future Evolution
+
+- **Effect Processor** integration will unify class & ancestry effect handling—update §3 Step 4 when landed.
+- **Subclass-driven UI**: dynamic forms may auto-render based on schema.
 - **Data-driven progression editor** planned; stay tuned.
 
 ---

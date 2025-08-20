@@ -3,11 +3,13 @@
 Updated: {{DATE}}
 
 ### Scope and constraints
+
 - **Goal**: Restore the full-featured character sheet UI (Desktop/Mobile) using the new Context provider and reducer, replacing the temporary minimal sheet.
 - **Constraint**: No data migration or backward compatibility. We assume a clean slate for character data in localStorage.
 - **Out of scope now**: Repo-wide ESLint/type cleanup and enhanced-calculator correctness. Only adjust sheet wiring and UI data flow.
 
 ### Current state (baseline)
+
 - New state system implemented via `CharacterSheetProvider` + `useCharacterSheetReducer`.
 - Many child components (Resources, Defenses, Inventory, Spells/Maneuvers, PlayerNotes, Currency) are already refactored to pull from Context.
 - `CharacterSheetSimple.tsx` is no longer required (already removed).
@@ -23,6 +25,7 @@ Updated: {{DATE}}
       - `updateActionPoints(ap: number)` dispatching the new action
 
   Example additions:
+
   ```ts
   // SheetAction
   | { type: 'UPDATE_ACTION_POINTS_USED'; ap: number };
@@ -67,15 +70,20 @@ Updated: {{DATE}}
   - Quiet calculator failures during save (avoid red console spam): wrap `calculateCharacterWithBreakdowns` in try/catch and `console.warn` on error.
 
   Example selector additions:
+
   ```ts
   export function useCharacterFeatures() {
-    const { state } = useCharacterSheet();
-    return useMemo(() => state.character?.features || [], [state.character?.features]);
+  	const { state } = useCharacterSheet();
+  	return useMemo(() => state.character?.features || [], [state.character?.features]);
   }
 
   export function useCharacterCurrency() {
-    const { state } = useCharacterSheet();
-    return useMemo(() => state.character?.characterState?.inventory?.currency || { gold: 0, silver: 0, copper: 0 }, [state.character?.characterState?.inventory?.currency]);
+  	const { state } = useCharacterSheet();
+  	return useMemo(
+  		() =>
+  			state.character?.characterState?.inventory?.currency || { gold: 0, silver: 0, copper: 0 },
+  		[state.character?.characterState?.inventory?.currency]
+  	);
   }
   ```
 
@@ -103,34 +111,38 @@ Updated: {{DATE}}
   - Replace the temporary minimal rendering with Desktop/Mobile selection:
   ```tsx
   return (
-    <CharacterSheetProvider characterId={characterId}>
-      {isMobile
-        ? <CharacterSheetMobile characterId={characterId} />
-        : <CharacterSheetDesktop characterId={characterId} onBack={onBack} />}
-    </CharacterSheetProvider>
+  	<CharacterSheetProvider characterId={characterId}>
+  		{isMobile ? (
+  			<CharacterSheetMobile characterId={characterId} />
+  		) : (
+  			<CharacterSheetDesktop characterId={characterId} onBack={onBack} />
+  		)}
+  	</CharacterSheetProvider>
   );
   ```
 
 ### Phase 4 – Cleanup
+
 - `CharacterSheetSimple.tsx` is already removed.
 - Remove `components/StatTooltips.tsx` only if unused (grep imports first).
 
 ### Acceptance criteria
+
 - Desktop and Mobile sheets render using Context-based data only (no prop drilling).
 - Editing resources (HP/SP/MP/TempHP/AP), defenses overrides, inventory, spells/maneuvers, currency, and notes persists after refresh.
 - Router selects Desktop/Mobile based on width breakpoint and no longer renders the minimal sheet.
 - Console logs show at most warnings from calculator; no red errors from sheet flow.
 
 ### Risks and mitigations
+
 - **Calculator throws**: guarded with try/catch and `console.warn`; saving still proceeds with last known values.
 - **Legacy prop expectations**: verify each child and convert to selector hooks to avoid runtime undefineds.
 - **Currency mismatches**: ensure UI uses `{ gold, silver, copper }` consistently.
 
 ### Task checklist
+
 - **Reducer**: add `UPDATE_ACTION_POINTS_USED`; ensure `updateTempHP` and `updateActionPoints` helpers are returned.
 - **Provider**: include helpers in context; add `useCharacterFeatures`, `useCharacterCurrency`; wrap calculator with warn on error.
 - **Desktop/Mobile**: switch to Context + selectors; keep popups local; wire AP/currency/resources/defenses.
 - **Router**: switch to Desktop/Mobile.
 - **Cleanup**: remove unused `StatTooltips.tsx` only if not imported.
-
-

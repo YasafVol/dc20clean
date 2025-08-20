@@ -149,13 +149,16 @@ export const StyledBarbarianIcon = styled.div<{
 	align-items: center;
 	justify-content: center;
 	position: relative;
-	
+
 	img {
-		width: ${props => props.$iconSize || '28px'};
-		height: ${props => props.$iconSize || '28px'};
+		width: ${(props) => props.$iconSize || '28px'};
+		height: ${(props) => props.$iconSize || '28px'};
 		object-fit: contain;
 		filter: brightness(0) saturate(100%); /* Makes the SVG black */
-		transform: translate(${props => props.$iconOffsetX || '0px'}, ${props => props.$iconOffsetY || '0px'});
+		transform: translate(
+			${(props) => props.$iconOffsetX || '0px'},
+			${(props) => props.$iconOffsetY || '0px'}
+		);
 	}
 `;
 
@@ -246,13 +249,16 @@ export const StyledNewClassIcon = styled.div<{
 	align-items: center;
 	justify-content: center;
 	position: relative;
-	
+
 	img {
-		width: ${props => props.$iconSize || '28px'};
-		height: ${props => props.$iconSize || '28px'};
+		width: ${(props) => props.$iconSize || '28px'};
+		height: ${(props) => props.$iconSize || '28px'};
 		object-fit: contain;
 		filter: brightness(0) saturate(100%); /* Makes the SVG black */
-		transform: translate(${props => props.$iconOffsetX || '0px'}, ${props => props.$iconOffsetY || '0px'});
+		transform: translate(
+			${(props) => props.$iconOffsetX || '0px'},
+			${(props) => props.$iconOffsetY || '0px'}
+		);
 	}
 `;
 

@@ -15,9 +15,9 @@ export interface SpellAssignmentOptions {
  */
 export const assignSpellsToCharacter = (options: SpellAssignmentOptions): SpellData[] => {
 	const { className, level, selectedFeatureChoices } = options;
-	
+
 	// Get class data
-	const classData = classesData.find(c => c.name === className);
+	const classData = classesData.find((c) => c.name === className);
 	if (!classData) {
 		console.warn(`Class data not found for: ${className}`);
 		return [];
@@ -35,15 +35,18 @@ export const assignSpellsToCharacter = (options: SpellAssignmentOptions): SpellD
 
 	// Get available spell schools for this class
 	let availableSchools = getAvailableSpellSchools(classFeatures, featureChoices);
-	
+
 	// If no schools were determined from feature choices, use default schools
 	if (availableSchools.length === 0) {
 		availableSchools = getDefaultSpellSchools(className);
-		console.log(`No spell schools determined from choices, using defaults for ${className}:`, availableSchools);
+		console.log(
+			`No spell schools determined from choices, using defaults for ${className}:`,
+			availableSchools
+		);
 	}
-	
+
 	// Get spell counts for this level
-	const levelData = classData.levelProgression?.find(l => l.level === level);
+	const levelData = classData.levelProgression?.find((l) => l.level === level);
 	if (!levelData) {
 		console.warn(`Level data not found for ${className} level ${level}`);
 		return [];
@@ -60,20 +63,28 @@ export const assignSpellsToCharacter = (options: SpellAssignmentOptions): SpellD
 
 	// Get available spells for this class and schools
 	const availableSpells = getAvailableSpellsForClass(className, availableSchools);
-	
-	console.log(`Found ${availableSpells.length} available spells for ${className} with schools ${availableSchools}:`, 
-		availableSpells.map(s => ({ name: s.name, school: s.school, isCantrip: s.isCantrip })));
-	
-	// Separate cantrips and spells
-	const availableCantrips = availableSpells.filter(spell => spell.isCantrip);
-	const availableRegularSpells = availableSpells.filter(spell => !spell.isCantrip);
 
-	console.log(`Available cantrips: ${availableCantrips.length}`, availableCantrips.map(s => s.name));
-	console.log(`Available regular spells: ${availableRegularSpells.length}`, availableRegularSpells.map(s => s.name));
+	console.log(
+		`Found ${availableSpells.length} available spells for ${className} with schools ${availableSchools}:`,
+		availableSpells.map((s) => ({ name: s.name, school: s.school, isCantrip: s.isCantrip }))
+	);
+
+	// Separate cantrips and spells
+	const availableCantrips = availableSpells.filter((spell) => spell.isCantrip);
+	const availableRegularSpells = availableSpells.filter((spell) => !spell.isCantrip);
+
+	console.log(
+		`Available cantrips: ${availableCantrips.length}`,
+		availableCantrips.map((s) => s.name)
+	);
+	console.log(
+		`Available regular spells: ${availableRegularSpells.length}`,
+		availableRegularSpells.map((s) => s.name)
+	);
 
 	// Assign cantrips first
 	const assignedSpells: SpellData[] = [];
-	
+
 	// Assign cantrips
 	for (let i = 0; i < cantripsToAssign && i < availableCantrips.length; i++) {
 		const cantrip = availableCantrips[i];
@@ -86,17 +97,23 @@ export const assignSpellsToCharacter = (options: SpellAssignmentOptions): SpellD
 		assignedSpells.push(createSpellData(spell));
 	}
 
-	console.log(`Assigned ${assignedSpells.length} spells:`, assignedSpells.map(s => s.spellName));
-	
+	console.log(
+		`Assigned ${assignedSpells.length} spells:`,
+		assignedSpells.map((s) => s.spellName)
+	);
+
 	return assignedSpells;
 };
 
 /**
  * Get available spell schools for a class based on feature choices
  */
-function getAvailableSpellSchools(classFeatures: any, featureChoices: { [key: string]: string }): SpellSchool[] {
+function getAvailableSpellSchools(
+	classFeatures: any,
+	featureChoices: { [key: string]: string }
+): SpellSchool[] {
 	const schools: SpellSchool[] = [];
-	
+
 	// Check if class has spellcasting
 	if (!classFeatures.spellcastingPath?.spellList) {
 		return schools;
@@ -122,7 +139,7 @@ function getAvailableSpellSchools(classFeatures: any, featureChoices: { [key: st
 		if (spellList.specificSchools) {
 			schools.push(...spellList.specificSchools);
 		}
-		
+
 		if (spellList.schoolCount && spellList.schoolCount > 0) {
 			const choiceId = `${classFeatures.className.toLowerCase()}_additional_spell_schools`;
 			const choice = featureChoices[choiceId];
@@ -174,14 +191,16 @@ function getAvailableSpellSchools(classFeatures: any, featureChoices: { [key: st
  */
 function getAvailableSpellsForClass(className: string, schools: SpellSchool[]): any[] {
 	// Filter spells by class and schools
-	return allSpells.filter(spell => {
+	return allSpells.filter((spell) => {
 		// Check if spell is available to this class
 		// Since many spells have empty availableClasses arrays, we'll use a more flexible approach
-		const isAvailableToClass = spell.availableClasses.length === 0 || spell.availableClasses.includes(className as ClassName);
-		
+		const isAvailableToClass =
+			spell.availableClasses.length === 0 ||
+			spell.availableClasses.includes(className as ClassName);
+
 		// Check if spell is in one of the available schools
 		const isInAvailableSchool = schools.includes(spell.school);
-		
+
 		return isAvailableToClass && isInAvailableSchool;
 	});
 }
@@ -223,4 +242,4 @@ export const getDefaultSpellSchools = (className: string): SpellSchool[] => {
 		default:
 			return [];
 	}
-}; 
+};

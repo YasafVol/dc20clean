@@ -11,7 +11,8 @@ This document maps current violations of the architectural guard rails defined i
 ## **Rule 5 & 6: localStorage/JSON.parse/JSON.stringify Violations** 🔴 **CRITICAL**
 
 ### **Direct localStorage Access (Rule 5 Violation)**
-*"All `localStorage` interactions must be handled exclusively by `storageUtils.ts`"*
+
+_"All `localStorage` interactions must be handled exclusively by `storageUtils.ts`"_
 
 ```typescript
 // ❌ VIOLATIONS:
@@ -25,7 +26,8 @@ src/lib/utils/defenseNotes.ts:5,11,20
 ```
 
 ### **JSON.parse/stringify Outside storageUtils (Rule 6 Violation)**
-*"`JSON.parse()` and `JSON.stringify()` are forbidden outside of `storageUtils.ts`"*
+
+_"`JSON.parse()` and `JSON.stringify()` are forbidden outside of `storageUtils.ts`"_
 
 ```typescript
 // ❌ MAJOR VIOLATIONS:
@@ -48,7 +50,7 @@ src/lib/utils/defenseNotes.ts:5,11,20
 
 ## **Rule 2: Direct dispatch() Usage** ⚠️ **MODERATE**
 
-*"All state modifications must use typed actions through the reducer pattern"*
+_"All state modifications must use typed actions through the reducer pattern"_
 
 ### **Components calling dispatch directly (should use helpers)**
 
@@ -68,7 +70,7 @@ src/routes/character-sheet/components/Resources.tsx:70,78
 
 ## **Rule 4: UI Components Performing Calculations** ⚠️ **MODERATE**
 
-*"The `enhancedCharacterCalculator.ts` is the single source of truth for all character stat computation"*
+_"The `enhancedCharacterCalculator.ts` is the single source of truth for all character stat computation"_
 
 ### **Manual calculations in UI (should use pre-calculated values)**
 
@@ -90,7 +92,7 @@ src/routes/character-sheet/hooks/CharacterSheetProvider.tsx:251,252,253
 
 ## **Rule 8: Missing Unit Tests** ⚠️ **MODERATE**
 
-*"All reducers, utilities, and services must have unit tests"*
+_"All reducers, utilities, and services must have unit tests"_
 
 ### **New reducer actions without tests**
 
@@ -115,7 +117,7 @@ src/lib/hooks/useEnhancedCharacterCalculation.spec.ts
 
 ## **Rule 3: Effect Objects vs Description Parsing** ⚠️ **LOW**
 
-*"Game mechanics must be represented as Effect objects with structured data, not description parsing"*
+_"Game mechanics must be represented as Effect objects with structured data, not description parsing"_
 
 No direct violations found, but potential areas of concern in legacy code that may need review.
 
@@ -123,7 +125,7 @@ No direct violations found, but potential areas of concern in legacy code that m
 
 ## **Rule 7: rulesdata.spec.ts Validation** ⚠️ **LOW**
 
-*"All rule-data must be validated using the rulesdata.spec.ts test"*
+_"All rule-data must be validated using the rulesdata.spec.ts test"_
 
 Existing but may need expansion for new rule data files.
 
@@ -132,25 +134,28 @@ Existing but may need expansion for new rule data files.
 ## **Priority Fix Order**
 
 ### 🔴 **CRITICAL Priority**
+
 1. **Fix localStorage/JSON violations** - These break the fundamental persistence architecture and schema versioning
    - Move all localStorage calls to storageUtils.ts
    - Replace JSON.parse/stringify with typed utilities
 
-### ⚠️ **HIGH Priority**  
+### ⚠️ **HIGH Priority**
+
 2. **Replace direct dispatch calls with helper functions** - Improves type safety and maintainability
    - Add missing helper functions to CharacterSheetProvider
    - Update components to use helpers instead of raw dispatch
 
 ### ⚠️ **MEDIUM Priority**
+
 3. **Add missing unit tests for new reducer actions** - Ensures reliability
    - Test UPDATE_ACTION_POINTS_USED action
    - Expand test coverage for UPDATE_TEMP_HP
-   
 4. **Eliminate manual calculations in UI components** - Ensures consistency
    - Move calculations to enhancedCharacterCalculator
    - Use pre-calculated values from breakdowns
 
 ### ⚠️ **LOW Priority**
+
 5. **Expand test coverage for utilities/services** - Long-term maintainability
    - Add test files for defenseNotes, spellAssignment, etc.
    - Review and expand rulesdata validation

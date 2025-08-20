@@ -2,12 +2,12 @@
 // Handles all character data persistence with original/current value separation
 
 import type {
-    CharacterState,
-    CharacterSheetData,
-    AttackData,
-    SpellData,
-    InventoryItemData,
-    CurrentValues
+	CharacterState,
+	CharacterSheetData,
+	AttackData,
+	SpellData,
+	InventoryItemData,
+	CurrentValues
 } from '../../types';
 import { assignSpellsToCharacter } from '../services/spellAssignment';
 import { getAllSavedCharacters, saveAllCharacters, getCharacterById } from './storageUtils';
@@ -16,7 +16,7 @@ import { getAllSavedCharacters, saveAllCharacters, getCharacterById } from './st
 export const getCharacterState = (characterId: string): CharacterState | null => {
 	try {
 		const character = getCharacterById(characterId);
-		
+
 		if (!character) return null;
 
 		// Return the character's state, or null if not found
@@ -89,7 +89,7 @@ export const initializeCharacterState = (
 	];
 
 	const originalInventory: InventoryItemData[] = [];
-	
+
 	// Use spells from character data if they exist, otherwise auto-assign
 	let originalSpells: SpellData[] = [];
 	console.log('🔍 initializeCharacterState: Processing spells for character:', {
@@ -98,21 +98,30 @@ export const initializeCharacterState = (
 		className: characterData.className,
 		hasSelectedSpells: !!characterData.selectedSpells
 	});
-	
+
 	if (characterData.spells && characterData.spells.length > 0) {
 		// Use the spells that were saved with the character
 		originalSpells = characterData.spells;
-		console.log('🔍 Using saved spells from character data:', originalSpells.map(s => s.spellName));
+		console.log(
+			'🔍 Using saved spells from character data:',
+			originalSpells.map((s) => s.spellName)
+		);
 	} else if (characterData.className) {
 		// Fallback to auto-assignment if no spells were saved
-		console.log('🔍 No saved spells found, attempting auto-assignment for class:', characterData.className);
+		console.log(
+			'🔍 No saved spells found, attempting auto-assignment for class:',
+			characterData.className
+		);
 		try {
 			originalSpells = assignSpellsToCharacter({
 				className: characterData.className,
 				level: characterData.level || 1,
 				selectedFeatureChoices: characterData.selectedFeatureChoices || '{}'
 			});
-			console.log('🔍 Auto-assigned spells (no saved spells):', originalSpells.map(s => s.spellName));
+			console.log(
+				'🔍 Auto-assigned spells (no saved spells):',
+				originalSpells.map((s) => s.spellName)
+			);
 		} catch (error) {
 			console.warn('🔍 Error auto-assigning spells:', error);
 			originalSpells = [];
@@ -122,7 +131,7 @@ export const initializeCharacterState = (
 	}
 
 	// Use existing state if available, otherwise initialize with defaults
-    const finalState: CharacterState = {
+	const finalState: CharacterState = {
 		resources: {
 			original: originalResources,
 			current: existingState?.resources.current || {
@@ -147,7 +156,8 @@ export const initializeCharacterState = (
 		},
 		currency: {
 			original: originalCurrency,
-			current: existingState?.currency?.current || { //FIXME this is wrong path!!!
+			current: existingState?.currency?.current || {
+				//FIXME this is wrong path!!!
 				goldPieces: 0,
 				silverPieces: 0,
 				copperPieces: 0,
@@ -171,24 +181,24 @@ export const initializeCharacterState = (
 			original: originalInventory,
 			current: existingState?.inventory.current || []
 		},
-        defenseNotes: existingState?.defenseNotes,
-        manualDefenses: existingState?.manualDefenses || {
-            manualPD: (characterData as any).manualPD,
-            manualPDR: (characterData as any).manualPDR,
-            manualAD: (characterData as any).manualAD
-        },
-        calculation: (characterData as any).breakdowns
-            ? { breakdowns: (characterData as any).breakdowns }
-            : existingState?.calculation
+		defenseNotes: existingState?.defenseNotes,
+		manualDefenses: existingState?.manualDefenses || {
+			manualPD: (characterData as any).manualPD,
+			manualPDR: (characterData as any).manualPDR,
+			manualAD: (characterData as any).manualAD
+		},
+		calculation: (characterData as any).breakdowns
+			? { breakdowns: (characterData as any).breakdowns }
+			: existingState?.calculation
 	};
-	
+
 	console.log('🔍 initializeCharacterState: Final state created:', {
 		spellsOriginal: finalState.spells.original.length,
 		spellsCurrent: finalState.spells.current.length,
-		spellsOriginalNames: finalState.spells.original.map(s => s.spellName),
-		spellsCurrentNames: finalState.spells.current.map(s => s.spellName)
+		spellsOriginalNames: finalState.spells.original.map((s) => s.spellName),
+		spellsCurrentNames: finalState.spells.current.map((s) => s.spellName)
 	});
-	
+
 	return finalState;
 };
 
@@ -196,7 +206,7 @@ export const initializeCharacterState = (
 export const saveCharacterState = (characterId: string, state: CharacterState): void => {
 	try {
 		const characters = getAllSavedCharacters();
-		const characterIndex = characters.findIndex(char => char.id === characterId);
+		const characterIndex = characters.findIndex((char) => char.id === characterId);
 
 		if (characterIndex === -1) {
 			console.warn(`Character ${characterId} not found for state update`);
@@ -231,7 +241,7 @@ export const updateCharacterState = (
 
 		// Get character data using typed storage utility
 		const character = getCharacterById(characterId);
-		
+
 		if (!character) {
 			console.error('No character found for ID:', characterId);
 			return;
@@ -239,71 +249,71 @@ export const updateCharacterState = (
 
 		// Create minimal character state with default values
 		currentState = {
-				resources: {
-					original: {
-						maxHP: character.finalHPMax || 0,
-						maxSP: character.finalSPMax || 0,
-						maxMP: character.finalMPMax || 0,
-						maxGritPoints: character.finalGritPoints || 0,
-						maxRestPoints: character.finalRestPoints || 0
-					},
-					current: {
-						currentHP:
-							character.currentHP !== undefined ? character.currentHP : character.finalHPMax || 0,
-						currentSP:
-							character.currentSP !== undefined ? character.currentSP : character.finalSPMax || 0,
-						currentMP:
-							character.currentMP !== undefined ? character.currentMP : character.finalMPMax || 0,
-						currentGritPoints:
-							character.currentGritPoints !== undefined
-								? character.currentGritPoints
-								: character.finalGritPoints || 0,
-						currentRestPoints:
-							character.currentRestPoints !== undefined
-								? character.currentRestPoints
-								: character.finalRestPoints || 0,
-						tempHP: character.tempHP || 0,
-						actionPointsUsed: character.actionPointsUsed || 0,
-						exhaustionLevel: character.exhaustionLevel || 0
-					}
+			resources: {
+				original: {
+					maxHP: character.finalHPMax || 0,
+					maxSP: character.finalSPMax || 0,
+					maxMP: character.finalMPMax || 0,
+					maxGritPoints: character.finalGritPoints || 0,
+					maxRestPoints: character.finalRestPoints || 0
 				},
-				currency: {
-					original: {
-						goldPieces: 0,
-						silverPieces: 0,
-						copperPieces: 0,
-						electrumPieces: 0,
-						platinumPieces: 0
-					},
-					current: {
-						goldPieces: character.goldPieces || 0,
-						silverPieces: character.silverPieces || 0,
-						copperPieces: character.copperPieces || 0,
-						electrumPieces: character.electrumPieces || 0,
-						platinumPieces: character.platinumPieces || 0
-					}
+				current: {
+					currentHP:
+						character.currentHP !== undefined ? character.currentHP : character.finalHPMax || 0,
+					currentSP:
+						character.currentSP !== undefined ? character.currentSP : character.finalSPMax || 0,
+					currentMP:
+						character.currentMP !== undefined ? character.currentMP : character.finalMPMax || 0,
+					currentGritPoints:
+						character.currentGritPoints !== undefined
+							? character.currentGritPoints
+							: character.finalGritPoints || 0,
+					currentRestPoints:
+						character.currentRestPoints !== undefined
+							? character.currentRestPoints
+							: character.finalRestPoints || 0,
+					tempHP: character.tempHP || 0,
+					actionPointsUsed: character.actionPointsUsed || 0,
+					exhaustionLevel: character.exhaustionLevel || 0
+				}
+			},
+			currency: {
+				original: {
+					goldPieces: 0,
+					silverPieces: 0,
+					copperPieces: 0,
+					electrumPieces: 0,
+					platinumPieces: 0
 				},
-				attacks: {
-					original: character.attacks || [],
-					current: character.attacks || []
-				},
-				spells: {
-					original: character.spells || [],
-					current: character.spells || []
-				},
-				maneuvers: {
-					original: character.maneuvers || [],
-					current: character.maneuvers || []
-				},
-				inventory: {
-					original: character.inventory || [],
-					current: character.inventory || []
-				},
-				defenseNotes: character.defenseNotes
-			};
+				current: {
+					goldPieces: character.goldPieces || 0,
+					silverPieces: character.silverPieces || 0,
+					copperPieces: character.copperPieces || 0,
+					electrumPieces: character.electrumPieces || 0,
+					platinumPieces: character.platinumPieces || 0
+				}
+			},
+			attacks: {
+				original: character.attacks || [],
+				current: character.attacks || []
+			},
+			spells: {
+				original: character.spells || [],
+				current: character.spells || []
+			},
+			maneuvers: {
+				original: character.maneuvers || [],
+				current: character.maneuvers || []
+			},
+			inventory: {
+				original: character.inventory || [],
+				current: character.inventory || []
+			},
+			defenseNotes: character.defenseNotes
+		};
 	}
 
-    const newState: CharacterState = {
+	const newState: CharacterState = {
 		...currentState,
 		...updates,
 		// Deep merge nested objects
@@ -366,22 +376,21 @@ export const updateCharacterState = (
 					...currentState.inventory,
 					...updates.inventory
 				}
-			: currentState.inventory
-        ,
-        manualDefenses: updates.manualDefenses
-            ? {
-                ...currentState.manualDefenses,
-                ...updates.manualDefenses
-            }
-            : currentState.manualDefenses,
-        calculation: updates.calculation
-            ? {
-                breakdowns: {
-                    ...(currentState.calculation?.breakdowns || {}),
-                    ...(updates.calculation?.breakdowns || {})
-                }
-            }
-            : currentState.calculation
+			: currentState.inventory,
+		manualDefenses: updates.manualDefenses
+			? {
+					...currentState.manualDefenses,
+					...updates.manualDefenses
+				}
+			: currentState.manualDefenses,
+		calculation: updates.calculation
+			? {
+					breakdowns: {
+						...(currentState.calculation?.breakdowns || {}),
+						...(updates.calculation?.breakdowns || {})
+					}
+				}
+			: currentState.calculation
 	};
 
 	saveCharacterState(characterId, newState);
@@ -473,22 +482,22 @@ export const characterStateToCurrentValues = (state: CharacterState): CurrentVal
 
 // Helpers for manual defenses centralized storage
 export const setManualDefense = (
-    characterId: string,
-    field: 'manualPD' | 'manualPDR' | 'manualAD',
-    value: number | undefined
+	characterId: string,
+	field: 'manualPD' | 'manualPDR' | 'manualAD',
+	value: number | undefined
 ): void => {
-    const current = getCharacterState(characterId)?.manualDefenses || {};
-    updateCharacterState(characterId, {
-        manualDefenses: {
-            ...current,
-            [field]: value
-        }
-    });
+	const current = getCharacterState(characterId)?.manualDefenses || {};
+	updateCharacterState(characterId, {
+		manualDefenses: {
+			...current,
+			[field]: value
+		}
+	});
 };
 
 export const getManualDefense = (
-    characterId: string,
-    field: 'manualPD' | 'manualPDR' | 'manualAD'
+	characterId: string,
+	field: 'manualPD' | 'manualPDR' | 'manualAD'
 ): number | undefined => {
-    return getCharacterState(characterId)?.manualDefenses?.[field];
+	return getCharacterState(characterId)?.manualDefenses?.[field];
 };

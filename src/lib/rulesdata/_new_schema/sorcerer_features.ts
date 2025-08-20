@@ -21,20 +21,32 @@ export const sorcererClass: ClassDefinition = {
 			id: 'draconic_bloodline',
 			featureName: 'Draconic Bloodline',
 			levelGained: 1,
-			description: 'Choose a draconic ancestor. You gain resistance to the associated damage type and bonus spells.',
+			description:
+				'Choose a draconic ancestor. You gain resistance to the associated damage type and bonus spells.',
 			effects: [
 				{
 					type: 'GRANT_CHOICE',
 					target: 'draconic_bloodline',
 					value: {
 						prompt: 'Choose your Draconic Bloodline',
-						options: ['red', 'blue', 'green', 'black', 'white', 'gold', 'silver', 'bronze', 'copper', 'brass']
+						options: [
+							'red',
+							'blue',
+							'green',
+							'black',
+							'white',
+							'gold',
+							'silver',
+							'bronze',
+							'copper',
+							'brass'
+						]
 					},
 					userChoice: {
 						prompt: 'Choose your Draconic Ancestor',
 						options: [
 							'Red Dragon (Fire)',
-							'Blue Dragon (Lightning)', 
+							'Blue Dragon (Lightning)',
 							'Green Dragon (Poison)',
 							'Black Dragon (Acid)',
 							'White Dragon (Cold)',
@@ -52,7 +64,8 @@ export const sorcererClass: ClassDefinition = {
 			id: 'draconic_resilience',
 			featureName: 'Draconic Resilience',
 			levelGained: 1,
-			description: 'Your hit point maximum increases by 1, and it increases by 1 again whenever you gain a level in this class.',
+			description:
+				'Your hit point maximum increases by 1, and it increases by 1 again whenever you gain a level in this class.',
 			effects: [
 				{
 					type: 'MODIFY_STAT',
@@ -65,7 +78,8 @@ export const sorcererClass: ClassDefinition = {
 			id: 'sorcery_points',
 			featureName: 'Sorcery Points',
 			levelGained: 2,
-			description: 'You have sorcery points equal to your sorcerer level. You can use these to cast additional spells or enhance your magic.',
+			description:
+				'You have sorcery points equal to your sorcerer level. You can use these to cast additional spells or enhance your magic.',
 			effects: [
 				{
 					type: 'GRANT_RESOURCE',
@@ -78,7 +92,8 @@ export const sorcererClass: ClassDefinition = {
 			id: 'metamagic',
 			featureName: 'Metamagic',
 			levelGained: 3,
-			description: 'You gain the ability to twist your spells to suit your needs. You learn metamagic options that you can use with sorcery points.',
+			description:
+				'You gain the ability to twist your spells to suit your needs. You learn metamagic options that you can use with sorcery points.',
 			effects: [
 				{
 					type: 'GRANT_CHOICE',
@@ -86,7 +101,16 @@ export const sorcererClass: ClassDefinition = {
 					value: {
 						prompt: 'Choose 2 Metamagic options',
 						count: 2,
-						options: ['careful_spell', 'distant_spell', 'empowered_spell', 'extended_spell', 'heightened_spell', 'quickened_spell', 'subtle_spell', 'twinned_spell']
+						options: [
+							'careful_spell',
+							'distant_spell',
+							'empowered_spell',
+							'extended_spell',
+							'heightened_spell',
+							'quickened_spell',
+							'subtle_spell',
+							'twinned_spell'
+						]
 					},
 					userChoice: {
 						prompt: 'Choose 2 Metamagic options',

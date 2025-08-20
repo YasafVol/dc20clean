@@ -34,13 +34,17 @@ interface AttributesProps {
 	breakdowns?: Record<string, EnhancedStatBreakdown>;
 }
 
-const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribute, breakdowns }) => {
+const Attributes: React.FC<AttributesProps> = ({
+	characterData,
+	skillsByAttribute,
+	breakdowns
+}) => {
 	const { state } = useCharacterSheet();
-	
+
 	// Get prime modifier directly from character data
 	const primeAttribute = state.character?.finalPrimeModifierAttribute || 'might';
 	const primeValue = state.character?.finalPrimeModifierValue || 0;
-	
+
 	const renderSkills = (skills: SkillData[]) => {
 		return skills.map((skill) => (
 			<SkillRow key={skill.id}>
@@ -52,14 +56,17 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 						))}
 					</StyledProficiencyDots>
 					{skill.bonus !== undefined && (
-						<span style={{
-							fontSize: '0.875rem',
-							fontWeight: '600',
-							color: skill.bonus >= 0 ? '#059669' : '#dc2626',
-							minWidth: '2rem',
-							textAlign: 'center'
-						}}>
-							{skill.bonus >= 0 ? '+' : ''}{skill.bonus}
+						<span
+							style={{
+								fontSize: '0.875rem',
+								fontWeight: '600',
+								color: skill.bonus >= 0 ? '#059669' : '#dc2626',
+								minWidth: '2rem',
+								textAlign: 'center'
+							}}
+						>
+							{skill.bonus >= 0 ? '+' : ''}
+							{skill.bonus}
 						</span>
 					)}
 				</div>
@@ -85,12 +92,12 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 				<AttributeHeader>
 					<AttributeBox>
 						<AttributeAbbreviation>MIG</AttributeAbbreviation>
-						<Tooltip 
+						<Tooltip
 							content={
-								breakdowns?.attribute_might 
+								breakdowns?.attribute_might
 									? createEnhancedTooltip('Might', breakdowns.attribute_might)
 									: `${characterData.finalMight} Might`
-							} 
+							}
 							position="top"
 						>
 							<AttributeValue>{characterData.finalMight}</AttributeValue>
@@ -110,12 +117,12 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 				<AttributeHeader>
 					<AttributeBox>
 						<AttributeAbbreviation>AGI</AttributeAbbreviation>
-						<Tooltip 
+						<Tooltip
 							content={
-								breakdowns?.attribute_agility 
+								breakdowns?.attribute_agility
 									? createEnhancedTooltip('Agility', breakdowns.attribute_agility)
 									: `${characterData.finalAgility} Agility`
-							} 
+							}
 							position="top"
 						>
 							<AttributeValue>{characterData.finalAgility}</AttributeValue>
@@ -135,12 +142,12 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 				<AttributeHeader>
 					<AttributeBox>
 						<AttributeAbbreviation>CHA</AttributeAbbreviation>
-						<Tooltip 
+						<Tooltip
 							content={
-								breakdowns?.attribute_charisma 
+								breakdowns?.attribute_charisma
 									? createEnhancedTooltip('Charisma', breakdowns.attribute_charisma)
 									: `${characterData.finalCharisma} Charisma`
-							} 
+							}
 							position="top"
 						>
 							<AttributeValue>{characterData.finalCharisma}</AttributeValue>
@@ -160,12 +167,12 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 				<AttributeHeader>
 					<AttributeBox>
 						<AttributeAbbreviation>INT</AttributeAbbreviation>
-						<Tooltip 
+						<Tooltip
 							content={
-								breakdowns?.attribute_intelligence 
+								breakdowns?.attribute_intelligence
 									? createEnhancedTooltip('Intelligence', breakdowns.attribute_intelligence)
 									: `${characterData.finalIntelligence} Intelligence`
-							} 
+							}
 							position="top"
 						>
 							<AttributeValue>{characterData.finalIntelligence}</AttributeValue>

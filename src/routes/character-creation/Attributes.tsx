@@ -29,7 +29,7 @@ const AttributeHeader = styled.div`
 const AttributeTotal = styled.div<{ $exceeded: boolean }>`
 	font-size: 1.1rem;
 	font-weight: bold;
-	color: ${props => props.$exceeded ? '#dc2626' : '#059669'};
+	color: ${(props) => (props.$exceeded ? '#dc2626' : '#059669')};
 `;
 
 const AttributeBreakdown = styled.div`
@@ -47,7 +47,7 @@ const BreakdownLine = styled.div`
 	align-items: center;
 	gap: 0.5rem;
 	margin-bottom: 0.25rem;
-	
+
 	&:last-child {
 		margin-bottom: 0;
 		padding-top: 0.25rem;
@@ -55,12 +55,12 @@ const BreakdownLine = styled.div`
 		font-weight: 600;
 		color: #fbbf24;
 	}
-	
+
 	span:first-child {
 		flex-shrink: 0;
 		min-width: 120px;
 	}
-	
+
 	span:last-child {
 		font-weight: bold;
 		color: #fbbf24;
@@ -72,12 +72,12 @@ const ValidationMessage = styled.div<{ $type: 'error' | 'warning' }>`
 	padding: 0.5rem;
 	border-radius: 4px;
 	font-size: 0.75rem;
-	background-color: ${props => props.$type === 'error' ? '#fef2f2' : '#fffbeb'};
-	border: 1px solid ${props => props.$type === 'error' ? '#fecaca' : '#fed7aa'};
-	color: ${props => props.$type === 'error' ? '#dc2626' : '#d97706'};
-	
+	background-color: ${(props) => (props.$type === 'error' ? '#fef2f2' : '#fffbeb')};
+	border: 1px solid ${(props) => (props.$type === 'error' ? '#fecaca' : '#fed7aa')};
+	color: ${(props) => (props.$type === 'error' ? '#dc2626' : '#d97706')};
+
 	&:before {
-		content: ${props => props.$type === 'error' ? "'⚠️ '" : "'💡 '"};
+		content: ${(props) => (props.$type === 'error' ? "'⚠️ '" : "'💡 '")};
 		margin-right: 0.25rem;
 	}
 `;
@@ -90,7 +90,7 @@ const ForcedAdjustmentIndicator = styled.div`
 	background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
 	border: 2px solid #fbbf24;
 	color: #fbbf24;
-	
+
 	&:before {
 		content: '⚠️ ';
 		margin-right: 0.25rem;
@@ -115,8 +115,8 @@ const BaseValue = styled.span`
 `;
 
 const EffectiveValue = styled.span<{ $different: boolean }>`
-	font-weight: ${props => props.$different ? 'bold' : 'normal'};
-	color: ${props => props.$different ? '#10b981' : '#e5e7eb'};
+	font-weight: ${(props) => (props.$different ? 'bold' : 'normal')};
+	color: ${(props) => (props.$different ? '#10b981' : '#e5e7eb')};
 `;
 
 const PointBreakdownSummary = styled.div`
@@ -137,7 +137,7 @@ const ForcedAdjustmentsWarning = styled.div`
 	margin-bottom: 1rem;
 	font-size: 0.875rem;
 	color: #fbbf24;
-	
+
 	&:before {
 		content: '⚠️ ';
 		margin-right: 0.25rem;
@@ -147,46 +147,35 @@ const ForcedAdjustmentsWarning = styled.div`
 type AttributeState = Record<string, number>;
 
 function Attributes() {
-	const { state, dispatch, attributePointsRemaining, attributePointsSpent, totalAttributePoints } = useCharacter();
-	const { 
-		getAttributeLimit, 
-		canDecreaseAttribute,
-		validateAttributeChange,
-		getStatBreakdown
-	} = useEnhancedCharacterCalculation();
-	
+	const { state, dispatch, calculationResult } = useCharacter();
+	const { getAttributeLimit, canDecreaseAttribute, validateAttributeChange, getStatBreakdown } =
+		useEnhancedCharacterCalculation();
+
 	const typedState = state as unknown as AttributeState;
-	
-	// Simple replacement for useAttributeCalculation using context values
-	const calculation = {
-		totalPointsAvailable: totalAttributePoints,
-		pointsSpent: totalAttributePoints - attributePointsRemaining,
-		pointsRemaining: attributePointsRemaining,
-		forcedAdjustments: [] as any[], // Simplified for now
-		isValid: attributePointsRemaining >= 0,
-		effectiveAttributes: {
-			might: state.attribute_might,
-			agility: state.attribute_agility,
-			charisma: state.attribute_charisma,
-			intelligence: state.attribute_intelligence
-		}
-	};
+
+	// Derive totals from the central calculation engine
+	const limits = calculationResult.validation.attributeLimits;
+	const traitBonusTotal = Object.values(limits).reduce(
+		(sum, lim) => sum + (lim.traitBonuses || 0),
+		0
+	);
+	const totalPoints = 12 + traitBonusTotal;
+	const spent = Object.values(limits).reduce((sum, lim) => sum + (lim.current + 2), 0);
+	const pointsRemaining = totalPoints - spent;
 
 	function increaseAttribute(attribute: string) {
-		if (attributePointsRemaining > 0) {
-			const currentValue = typedState[attribute];
-			const validation = validateAttributeChange(attribute.replace('attribute_', ''), currentValue + 1);
-			
-			if (validation.isValid) {
-				dispatch({ type: 'UPDATE_ATTRIBUTE', attribute, value: currentValue + 1 });
-			}
+		const currentValue = typedState[attribute];
+		const attrId = attribute.replace('attribute_', '');
+		const validation = validateAttributeChange(attrId, currentValue + 1);
+		if (pointsRemaining > 0 && validation.isValid) {
+			dispatch({ type: 'UPDATE_ATTRIBUTE', attribute, value: currentValue + 1 });
 		}
 	}
 
 	function decreaseAttribute(attribute: string) {
 		const currentValue = typedState[attribute];
-		const validation = validateAttributeChange(attribute.replace('attribute_', ''), currentValue - 1);
-		
+		const attrId = attribute.replace('attribute_', '');
+		const validation = validateAttributeChange(attrId, currentValue - 1);
 		if (validation.isValid) {
 			dispatch({ type: 'UPDATE_ATTRIBUTE', attribute, value: currentValue - 1 });
 		}
@@ -196,89 +185,78 @@ function Attributes() {
 		<StyledContainer>
 			<StyledTitle>Attributes</StyledTitle>
 			<AttributePointsCounter />
-			
-			{/* NEW: Enhanced point breakdown summary */}
+
+			{/* Point breakdown summary */}
 			<PointBreakdownSummary>
 				<BreakdownLine>
 					<span>Base Points:</span>
-					<span>11</span>
+					<span>12</span>
 				</BreakdownLine>
 				<BreakdownLine>
 					<span>Bonus from Traits:</span>
-					<span>{calculation.totalPointsAvailable - 11}</span>
+					<span>{traitBonusTotal}</span>
 				</BreakdownLine>
 				<BreakdownLine>
 					<span>Spent on Attributes:</span>
-					<span>{calculation.pointsSpent - calculation.forcedAdjustments.reduce((sum, adj) => sum + adj.pointsCost, 0)}</span>
+					<span>{spent}</span>
 				</BreakdownLine>
-				{calculation.forcedAdjustments.length > 0 && (
-					<BreakdownLine>
-						<span>Forced Adjustments:</span>
-						<span>{calculation.forcedAdjustments.reduce((sum, adj) => sum + adj.pointsCost, 0)}</span>
-					</BreakdownLine>
-				)}
 				<BreakdownLine>
 					<span>Points Remaining:</span>
-					<span style={{ color: calculation.pointsRemaining < 0 ? '#dc2626' : '#059669' }}>
-						{calculation.pointsRemaining}
+					<span style={{ color: pointsRemaining < 0 ? '#dc2626' : '#059669' }}>
+						{pointsRemaining}
 					</span>
 				</BreakdownLine>
 			</PointBreakdownSummary>
-			
-			{/* NEW: Forced adjustments warning */}
-			{calculation.forcedAdjustments.length > 0 && (
+
+			{/* Forced adjustments warning */}
+			{calculationResult.forcedAdjustments.length > 0 && (
 				<ForcedAdjustmentsWarning>
-					{calculation.forcedAdjustments.length} forced adjustment(s) due to traits:
-					{calculation.forcedAdjustments.map((adj, index) => (
+					{calculationResult.forcedAdjustments.length} forced adjustment(s) due to traits:
+					{calculationResult.forcedAdjustments.map((adj, index) => (
 						<div key={index} style={{ marginTop: '0.25rem' }}>
-							• {adj.attribute.charAt(0).toUpperCase() + adj.attribute.slice(1)}: 
-							{adj.originalValue} → {adj.effectiveValue} (costs {adj.pointsCost} points)
+							• {adj.attribute.charAt(0).toUpperCase() + adj.attribute.slice(1)}:{adj.originalValue}{' '}
+							→ {adj.effectiveValue} (costs {adj.pointsCost} points)
 						</div>
 					))}
 				</ForcedAdjustmentsWarning>
 			)}
-			
+
 			{/* Validation summary */}
-			{!calculation.isValid && (
+			{!calculationResult.isValid && (
 				<ValidationMessage $type="error">
-					Invalid build: {Math.abs(calculation.pointsRemaining)} points over budget
+					Invalid build: {Math.abs(pointsRemaining)} points over budget
 				</ValidationMessage>
 			)}
-			
+
 			<StyledGrid>
 				{attributesData.map((attribute) => {
 					const attributeKey = `attribute_${attribute.id}`;
 					const currentValue = typedState[attributeKey] || 0;
 					const limit = getAttributeLimit(attribute.id);
-					const breakdown = getStatBreakdown(attribute.id);
-					
-					// NEW: Get effective value and forced adjustment info
-					const effectiveValue = calculation.effectiveAttributes[attribute.id] || currentValue;
-					const forcedAdjustment = calculation.forcedAdjustments.find(adj => adj.attribute === attribute.id);
+					const breakdown = getStatBreakdown(`attribute_${attribute.id}`);
+
+					// Effective value includes trait bonuses
+					const effectiveValue = limit.current;
 					const hasTraitEffect = effectiveValue !== currentValue;
-					
-					// Enhanced validation with real-time state
-					// Use live validation instead of cached result to avoid timing issues
+
+					// Live validation and enablement
 					const realTimeValidation = validateAttributeChange(attribute.id, currentValue + 1);
-					const canIncrease = attributePointsRemaining > 0 && realTimeValidation.isValid;
+					const canIncrease = pointsRemaining > 0 && realTimeValidation.isValid;
 					const canDecrease = canDecreaseAttribute(attribute.id);
-					
+
 					return (
 						<StyledCard key={attribute.id}>
 							<AttributeHeader>
 								<StyledCardTitle>{attribute.name}</StyledCardTitle>
-								<AttributeTotal $exceeded={limit.exceeded}>
-									Final: {limit.current} (max {limit.max})
-								</AttributeTotal>
 							</AttributeHeader>
-							
+
 							<StyledDescription>{attribute.description}</StyledDescription>
-							
+
 							<StyledControls>
 								<StyledButton
 									onClick={() => decreaseAttribute(attributeKey)}
 									disabled={!canDecrease}
-									title={!canDecrease ? "Cannot decrease below -2" : ""}
+									title={!canDecrease ? 'Cannot decrease below -2' : ''}
 								>
 									-
 								</StyledButton>
@@ -286,25 +264,20 @@ function Attributes() {
 								<StyledButton
 									onClick={() => increaseAttribute(attributeKey)}
 									disabled={!canIncrease}
-									title={!canIncrease ? (
-										attributePointsRemaining <= 0 ? "No points remaining" : 
-										realTimeValidation.message || "Cannot increase"
-									) : ""}
+									title={!canIncrease ? (pointsRemaining <= 0 ? 'No points remaining' : realTimeValidation.message || 'Cannot increase') : ''}
 								>
 									+
 								</StyledButton>
 							</StyledControls>
-							
-							{/* NEW: Display both base and effective values */}
+
+							{/* Display both base and effective values */}
 							{hasTraitEffect && (
 								<EffectiveValueDisplay>
 									<BaseValue>Base: {currentValue}</BaseValue>
-									<EffectiveValue $different={hasTraitEffect}>
-										Effective: {effectiveValue}
-									</EffectiveValue>
+									<EffectiveValue $different={hasTraitEffect}>Effective: {effectiveValue}</EffectiveValue>
 								</EffectiveValueDisplay>
 							)}
-							
+
 							{/* Enhanced breakdown display */}
 							{(limit.traitBonuses > 0 || breakdown) && (
 								<AttributeBreakdown>
@@ -324,25 +297,25 @@ function Attributes() {
 									</BreakdownLine>
 								</AttributeBreakdown>
 							)}
-							
-							{/* NEW: Forced adjustment indicator */}
-							{forcedAdjustment && (
+
+							{/* Forced adjustment indicator */}
+							{calculationResult.forcedAdjustments.find(
+								(adj) => adj.attribute === attribute.id
+							) && (
 								<ForcedAdjustmentIndicator>
-									Forced to minimum (-2), cost: {forcedAdjustment.pointsCost} points
+									Forced to minimum (-2), cost: {calculationResult.forcedAdjustments.find(
+										(adj) => adj.attribute === attribute.id
+									)?.pointsCost} points
 								</ForcedAdjustmentIndicator>
 							)}
-							
+
 							{/* Validation messages */}
 							{limit.exceeded && (
-								<ValidationMessage $type="error">
-									Exceeds maximum limit of +{limit.max}
-								</ValidationMessage>
+								<ValidationMessage $type="error">Exceeds maximum limit of +{limit.max}</ValidationMessage>
 							)}
-							
-							{!limit.exceeded && !canIncrease && attributePointsRemaining > 0 && (
-								<ValidationMessage $type="warning">
-									Cannot increase further due to trait bonuses
-								</ValidationMessage>
+
+							{!limit.exceeded && !canIncrease && pointsRemaining > 0 && (
+								<ValidationMessage $type="warning">Cannot increase further due to trait bonuses</ValidationMessage>
 							)}
 						</StyledCard>
 					);

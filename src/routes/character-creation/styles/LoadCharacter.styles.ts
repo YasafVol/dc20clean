@@ -51,11 +51,12 @@ export const StyledCardActions = styled.div`
 export const StyledActionButton = styled.button<{ variant?: 'primary' | 'secondary' | 'danger' }>`
 	flex: 1;
 	padding: 0.6rem 1rem;
-	border: 2px solid ${(props) => {
-		if (props.variant === 'primary') return '#fbbf24';
-		if (props.variant === 'danger') return '#ef4444';
-		return '#8b5cf6';
-	}};
+	border: 2px solid
+		${(props) => {
+			if (props.variant === 'primary') return '#fbbf24';
+			if (props.variant === 'danger') return '#ef4444';
+			return '#8b5cf6';
+		}};
 	border-radius: 6px;
 	background: ${(props) => {
 		if (props.variant === 'primary') return '#fbbf24';
@@ -89,11 +90,12 @@ export const StyledActionButton = styled.button<{ variant?: 'primary' | 'seconda
 
 	&:focus {
 		outline: none;
-		box-shadow: 0 0 0 2px ${(props) => {
-			if (props.variant === 'primary') return '#fbbf24';
-			if (props.variant === 'danger') return '#ef4444';
-			return '#8b5cf6';
-		}};
+		box-shadow: 0 0 0 2px
+			${(props) => {
+				if (props.variant === 'primary') return '#fbbf24';
+				if (props.variant === 'danger') return '#ef4444';
+				return '#8b5cf6';
+			}};
 	}
 `;
 

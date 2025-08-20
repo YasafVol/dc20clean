@@ -1,8 +1,8 @@
 import React from 'react';
 import type { CharacterSheetData, CurrentValues } from '../../../types';
-import { 
-	StyledCombatSection, 
-	StyledActionPoints, 
+import {
+	StyledCombatSection,
+	StyledActionPoints,
 	StyledActionPoint,
 	StyledCombatTitle,
 	StyledActionPointsContainer,
@@ -14,7 +14,11 @@ import {
 } from '../styles/Combat';
 import Tooltip from './Tooltip';
 import { createEnhancedTooltip } from './EnhancedStatTooltips';
-import { useCharacterResources, useCharacterSheet, useCharacterCalculatedData } from '../hooks/CharacterSheetProvider';
+import {
+	useCharacterResources,
+	useCharacterSheet,
+	useCharacterCalculatedData
+} from '../hooks/CharacterSheetProvider';
 
 export interface CombatProps {
 	// No props needed - all data comes from Provider
@@ -24,16 +28,16 @@ const Combat: React.FC<CombatProps> = () => {
 	const { state, updateActionPoints } = useCharacterSheet();
 	const resources = useCharacterResources();
 	const calculatedData = useCharacterCalculatedData();
-	
+
 	if (!state.character || !resources || !calculatedData) {
 		return <div>Loading combat...</div>;
 	}
-	
+
 	const currentValues = resources.current;
-	
+
 	// Get breakdowns from calculated data (Provider pattern)
 	const breakdowns = calculatedData.breakdowns || {};
-	
+
 	const renderActionPoints = () => {
 		return [0, 1, 2, 3].map((index) => (
 			<StyledActionPoint
@@ -42,7 +46,7 @@ const Combat: React.FC<CombatProps> = () => {
 				onClick={() => {
 					const currentUsed = currentValues.actionPointsUsed || 0;
 					const targetUsed = index + 1; // Circle number (1-4)
-					
+
 					if (currentUsed >= targetUsed) {
 						// Already used this circle or higher, so reduce to previous level
 						updateActionPoints(targetUsed - 1);
@@ -73,7 +77,7 @@ const Combat: React.FC<CombatProps> = () => {
 					<StyledCombatStatLabel>
 						<Tooltip
 							content={
-								breakdowns?.attack_spell_check 
+								breakdowns?.attack_spell_check
 									? createEnhancedTooltip('Attack / Spell Check', breakdowns.attack_spell_check)
 									: `Combat Mastery (${calculatedData.stats.finalCombatMastery}) + Prime Modifier (${calculatedData.stats.finalPrimeModifierValue})`
 							}
@@ -86,7 +90,7 @@ const Combat: React.FC<CombatProps> = () => {
 						+{calculatedData.stats.finalAttackSpellCheck || 0}
 					</StyledCombatStatValue>
 				</StyledCombatStatRow>
-				
+
 				<StyledCombatStatRow>
 					<StyledCombatStatLabel>
 						<Tooltip
@@ -102,7 +106,7 @@ const Combat: React.FC<CombatProps> = () => {
 					</StyledCombatStatLabel>
 					<StyledCombatStatValue>{calculatedData.stats.finalSaveDC}</StyledCombatStatValue>
 				</StyledCombatStatRow>
-				
+
 				<StyledCombatStatRow>
 					<StyledCombatStatLabel>
 						<Tooltip
@@ -135,7 +139,7 @@ const Combat: React.FC<CombatProps> = () => {
 						</Tooltip>
 					</StyledCombatStatLabel>
 					<StyledCombatStatValue>
-						+{(calculatedData.stats.finalMartialCheck || 0)}
+						+{calculatedData.stats.finalMartialCheck || 0}
 					</StyledCombatStatValue>
 				</StyledCombatStatRow>
 			</StyledCombatStatsContainer>

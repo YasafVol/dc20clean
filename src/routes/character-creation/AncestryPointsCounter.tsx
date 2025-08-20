@@ -1,10 +1,9 @@
-
 import { useCharacter } from '../../lib/stores/characterContext';
 import { StyledContainer, StyledTitle, StyledDetails } from './styles/AncestryPointsCounter.styles';
 
 function AncestryPointsCounter() {
 	const { calculationResult } = useCharacter();
-	
+
 	// Use centralized calculator for ancestry points (includes Cleric domain bonuses, etc.)
 	const ancestryData = calculationResult.ancestry || {
 		baseAncestryPoints: 5,

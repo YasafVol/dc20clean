@@ -1,6 +1,6 @@
 /**
  * Unified Data Contracts for Character System
- * 
+ *
  * This file establishes the single source of truth for character data schemas.
  * All components should use these types instead of legacy JSON string patterns.
  */
@@ -11,49 +11,49 @@ import type { EnhancedStatBreakdown } from './effectSystem';
 export type { ManeuverData, SpellData, InventoryItemData } from '../../types/character';
 
 export interface CharacterState {
-  resources: {
-    current: {
-      currentHP: number;
-      currentSP: number;
-      currentMP: number;
-      currentGritPoints: number;
-      currentRestPoints: number;
-      tempHP: number;
-      actionPointsUsed: number;
-      exhaustionLevel: number;
-      // Death tracking
-      deathSteps: number; // Current death step (0 = alive, 1+ = steps toward death)
-      isDead: boolean; // True when character has reached final death step
-    };
-    original?: {
-      maxHP: number;
-      maxSP: number;
-      maxMP: number;
-      maxGritPoints: number;
-      maxRestPoints: number;
-    };
-  };
-  ui: {
-    manualDefenseOverrides: {
-      PD?: number;
-      AD?: number;
-      PDR?: number;
-    };
-  };
-  inventory: {
-    items: any[]; // Will use proper InventoryItemData once imported
-    currency: {
-      gold: number;
-      silver: number;
-      copper: number;
-    };
-  };
-  notes: {
-    playerNotes: string;
-  };
-  attacks?: any[];
-  spells?: any[];
-  maneuvers?: any[];
+	resources: {
+		current: {
+			currentHP: number;
+			currentSP: number;
+			currentMP: number;
+			currentGritPoints: number;
+			currentRestPoints: number;
+			tempHP: number;
+			actionPointsUsed: number;
+			exhaustionLevel: number;
+			// Death tracking
+			deathSteps: number; // Current death step (0 = alive, 1+ = steps toward death)
+			isDead: boolean; // True when character has reached final death step
+		};
+		original?: {
+			maxHP: number;
+			maxSP: number;
+			maxMP: number;
+			maxGritPoints: number;
+			maxRestPoints: number;
+		};
+	};
+	ui: {
+		manualDefenseOverrides: {
+			PD?: number;
+			AD?: number;
+			PDR?: number;
+		};
+	};
+	inventory: {
+		items: any[]; // Will use proper InventoryItemData once imported
+		currency: {
+			gold: number;
+			silver: number;
+			copper: number;
+		};
+	};
+	notes: {
+		playerNotes: string;
+	};
+	attacks?: any[];
+	spells?: any[];
+	maneuvers?: any[];
 }
 
 /**
@@ -61,72 +61,72 @@ export interface CharacterState {
  * Uses 'final*' naming convention throughout for consistency
  */
 export interface SavedCharacter {
-  // Core Identity
-  id: string;
-  finalName: string;
-  finalPlayerName?: string;
-  level: number;
-  
-  // Classes & Ancestry
-  classId: string;
-  className: string;
-  ancestry1Id?: string;
-  ancestry1Name?: string;
-  ancestry2Id?: string; 
-  ancestry2Name?: string;
-  
-  // UNIFIED SCHEMA: Only 'final*' names used throughout
-  finalMight: number;
-  finalAgility: number;
-  finalCharisma: number;
-  finalIntelligence: number;
-  
-  // All calculated stats
-  finalPrimeModifierValue: number;
-  finalPrimeModifierAttribute: string;
-  finalCombatMastery: number;
-  finalSaveMight: number;
-  finalSaveAgility: number;
-  finalSaveCharisma: number;
-  finalSaveIntelligence: number;
-  finalHPMax: number;
-  finalSPMax: number;
-  finalMPMax: number;
-  finalPD: number;
-  finalAD: number;
-  finalPDR: number;
-  finalSaveDC: number;
-  finalDeathThreshold: number;
-  finalMoveSpeed: number;
-  finalJumpDistance: number;
-  finalRestPoints: number;
-  finalGritPoints: number;
-  finalInitiativeBonus: number;
-  
-  // Combat stats with breakdowns
-  finalAttackSpellCheck: number;
-  finalMartialCheck: number; // max(Acrobatics, Athletics)
-  
-  // TYPED DATA: No more JSON strings
-  selectedTraitIds: string[];
-  selectedFeatureChoices: Record<string, string>;
-  skillsData: Record<string, number>;
-  tradesData: Record<string, number>;
-  languagesData: string[];
-  spells: any[]; // Will use proper SpellData once imported
-  maneuvers: any[]; // Will use proper ManeuverData once imported
-  
-  // Dynamic state as nested object
-  characterState: CharacterState;
-  
-  // Calculation transparency
-  breakdowns: Record<string, EnhancedStatBreakdown>;
-  
-  // Metadata
-  createdAt: string;
-  lastModified: string;
-  completedAt: string;
-  schemaVersion: string; // For migration tracking
+	// Core Identity
+	id: string;
+	finalName: string;
+	finalPlayerName?: string;
+	level: number;
+
+	// Classes & Ancestry
+	classId: string;
+	className: string;
+	ancestry1Id?: string;
+	ancestry1Name?: string;
+	ancestry2Id?: string;
+	ancestry2Name?: string;
+
+	// UNIFIED SCHEMA: Only 'final*' names used throughout
+	finalMight: number;
+	finalAgility: number;
+	finalCharisma: number;
+	finalIntelligence: number;
+
+	// All calculated stats
+	finalPrimeModifierValue: number;
+	finalPrimeModifierAttribute: string;
+	finalCombatMastery: number;
+	finalSaveMight: number;
+	finalSaveAgility: number;
+	finalSaveCharisma: number;
+	finalSaveIntelligence: number;
+	finalHPMax: number;
+	finalSPMax: number;
+	finalMPMax: number;
+	finalPD: number;
+	finalAD: number;
+	finalPDR: number;
+	finalSaveDC: number;
+	finalDeathThreshold: number;
+	finalMoveSpeed: number;
+	finalJumpDistance: number;
+	finalRestPoints: number;
+	finalGritPoints: number;
+	finalInitiativeBonus: number;
+
+	// Combat stats with breakdowns
+	finalAttackSpellCheck: number;
+	finalMartialCheck: number; // max(Acrobatics, Athletics)
+
+	// TYPED DATA: No more JSON strings
+	selectedTraitIds: string[];
+	selectedFeatureChoices: Record<string, string>;
+	skillsData: Record<string, number>;
+	tradesData: Record<string, number>;
+	languagesData: string[];
+	spells: any[]; // Will use proper SpellData once imported
+	maneuvers: any[]; // Will use proper ManeuverData once imported
+
+	// Dynamic state as nested object
+	characterState: CharacterState;
+
+	// Calculation transparency
+	breakdowns: Record<string, EnhancedStatBreakdown>;
+
+	// Metadata
+	createdAt: string;
+	lastModified: string;
+	completedAt: string;
+	schemaVersion: string; // For migration tracking
 }
 
 /**
@@ -134,35 +134,35 @@ export interface SavedCharacter {
  * This will be removed after migration is complete
  */
 export interface LegacyCharacter {
-  id: string;
-  finalName: string;
-  finalPlayerName?: string;
-  finalLevel: number;
-  
-  // Legacy JSON string fields that need migration
-  selectedTraitIds?: string; // JSON string
-  selectedTraitsJson?: string; // Alternative JSON string
-  selectedFeatureChoices?: string; // JSON string
-  skillsJson?: string; // JSON string
-  tradesJson?: string; // JSON string
-  languagesJson?: string; // JSON string
-  
-  // Legacy duplicate fields that need removal
-  currentHP?: number;
-  currentSP?: number;
-  currentMP?: number;
-  currentGritPoints?: number;
-  currentRestPoints?: number;
-  tempHP?: number;
-  actionPointsUsed?: number;
-  exhaustionLevel?: number;
-  manualPD?: number;
-  manualAD?: number;
-  manualPDR?: number;
-  
-  // Character state (may or may not exist)
-  characterState?: CharacterState;
-  
-  // All other fields from SavedCharacter
-  [key: string]: any;
+	id: string;
+	finalName: string;
+	finalPlayerName?: string;
+	finalLevel: number;
+
+	// Legacy JSON string fields that need migration
+	selectedTraitIds?: string; // JSON string
+	selectedTraitsJson?: string; // Alternative JSON string
+	selectedFeatureChoices?: string; // JSON string
+	skillsJson?: string; // JSON string
+	tradesJson?: string; // JSON string
+	languagesJson?: string; // JSON string
+
+	// Legacy duplicate fields that need removal
+	currentHP?: number;
+	currentSP?: number;
+	currentMP?: number;
+	currentGritPoints?: number;
+	currentRestPoints?: number;
+	tempHP?: number;
+	actionPointsUsed?: number;
+	exhaustionLevel?: number;
+	manualPD?: number;
+	manualAD?: number;
+	manualPDR?: number;
+
+	// Character state (may or may not exist)
+	characterState?: CharacterState;
+
+	// All other fields from SavedCharacter
+	[key: string]: any;
 }

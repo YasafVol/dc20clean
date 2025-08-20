@@ -1,10 +1,10 @@
 # DC20Clean – System Overview & Mind Map (Iteration 1)
 
-_Last updated: 2025-08-12_
+_Last updated: 2025-08-20_
 
 ---
 
-## 1  High-Level Mind Map
+## 1 High-Level Mind Map
 
 ```mermaid
 mindmap
@@ -23,14 +23,14 @@ mindmap
         "Routing"
     "State Management"
       "React Context (characterContext)"
-      "Legacy Svelte Store (characterInProgressStore)":::legacy
+      "useCharacterBuilder Hook"
     "Rules Data"
       "Ancestries / Traits (TS)"
-      "Classes (JSON)":::partial
+      "Classes (JSON tables + TS features via loader)"
       "Spells & Maneuvers"
       "Schemas (Zod)"
     "Services"
-      "Character Calculator"
+      "Enhanced Character Calculator"
       "Effect Processor":::planned
       "Spell Assignment"
     "Persistence"
@@ -42,23 +42,23 @@ mindmap
     "Build / DevOps"
       "Vite + React"
       "Docker + Prisma Migrations"
-      "CI (TBD)"
+      "CI (GitHub Actions)"
 ```
 
 Legend: `:::legacy` = slated for deprecation · `:::partial` = partially migrated · `:::planned` = not yet implemented.
 
 ---
 
-## 2  Current Test-Coverage Heat-Map (approx.)
+## 2 Current Test-Coverage Heat-Map (approx.)
 
-| Area | Key Files | Unit Tests | E2E Tests | Status |
-|------|-----------|-----------|-----------|--------|
-| Character Calculator | `src/lib/services/characterCalculator.ts` | ✅ (good) | ⬜ | Solid
-| React Context | `src/lib/stores/characterContext.tsx` | ⬜ | ⬜ | **Missing**
-| Character Creation UI | `src/routes/character-creation/*` | ⬜ | ✅ | Partial
-| Character Sheet UI | `src/routes/character-sheet/*` | ⬜ | ✅ (basic nav) | Light
-| Rule-Data Loaders | `src/lib/rulesdata/loaders/*` | ✅ | ⬜ | Fair
-| API Routes | `src/api/*` | ⬜ | ⬜ | None
+| Area                  | Key Files                                 | Unit Tests | E2E Tests      | Status      |
+| --------------------- | ----------------------------------------- | ---------- | -------------- | ----------- |
+| Character Calculator  | `src/lib/services/characterCalculator.ts` | ✅ (good)  | ⬜             | Solid       |
+| React Context         | `src/lib/stores/characterContext.tsx`     | ⬜         | ⬜             | **Missing** |
+| Character Creation UI | `src/routes/character-creation/*`         | ⬜         | ✅             | Partial     |
+| Character Sheet UI    | `src/routes/character-sheet/*`            | ⬜         | ✅ (basic nav) | Light       |
+| Rule-Data Loaders     | `src/lib/rulesdata/loaders/*`             | ✅         | ⬜             | Fair        |
+| API Routes            | `src/api/*`                               | ⬜         | ⬜             | None        |
 
 ⬜ = none · ✅ = exists
 
@@ -66,7 +66,7 @@ Legend: `:::legacy` = slated for deprecation · `:::partial` = partially migrate
 
 ---
 
-## 3  Opportunities to Augment Coverage
+## 3 Opportunities to Augment Coverage
 
 1. **Snapshot calculator contracts** with a golden-master per character archetype.
 2. **Context reducer property-based tests** to fuzz random actions.
@@ -75,7 +75,7 @@ Legend: `:::legacy` = slated for deprecation · `:::partial` = partially migrate
 
 ---
 
-## 4  Proposed Cursor Project Rules (draft)
+## 4 Proposed Cursor Project Rules (draft)
 
 1. **Folder Boundaries** – No component in `src/routes/character-sheet` may import from `src/routes/character-creation`.
 2. **Data Imports** – Only loader modules under `src/lib/rulesdata/loaders` may import raw JSON/TS data files.
@@ -87,15 +87,15 @@ Legend: `:::legacy` = slated for deprecation · `:::partial` = partially migrate
 
 ### ⏭️ Next Iteration
 
-* Drill into **Rules Data**: enumerate every data file, ownership, and migration status.
-* Produce effect-processor sequence diagram.
-* Formalise coverage targets & thresholds (Vitest + Playwright).
+- Drill into **Rules Data**: enumerate every data file, ownership, and migration status.
+- Produce effect-processor sequence diagram.
+- Formalise coverage targets & thresholds (Vitest + Playwright).
 
 ---
 
 # Iteration 2 – Rules-Data Deep Dive
 
-## 2.1  Landscape Snapshot
+## 2.1 Landscape Snapshot
 
 ```mermaid
 graph TD
@@ -116,26 +116,26 @@ graph TD
     classDef archived  fill:#e0e0e0,color:#666
 ```
 
-## 2.2  Status Matrix
+## 2.2 Status Matrix
 
-| Dataset | Source Path | Loader | Zod-validated | Runtime Status |
-|---------|-------------|--------|---------------|----------------|
-| Ancestries / Traits | `src/lib/rulesdata/{ancestries,traits}.ts` | direct import | ✗ | ✅ production |
-| Class data (legacy) | `rulesdata/classes/*.json` | `class.loader.ts` | ✔ | ✅ production |
-| Class data (new) | `rulesdata/_new_schema/*.ts` | _none_ | ✔ | 🟡 prototype |
-| Spells data | `_new_schema/spells-data` | direct import | ✔ | ✅ production |
-| Backup dirs | `_backup_original` | — | — | 📦 archived |
+| Dataset             | Source Path                                | Loader            | Zod-validated | Runtime Status |
+| ------------------- | ------------------------------------------ | ----------------- | ------------- | -------------- |
+| Ancestries / Traits | `src/lib/rulesdata/{ancestries,traits}.ts` | direct import     | ✗             | ✅ production  |
+| Class data (legacy) | `rulesdata/classes/*.json`                 | `class.loader.ts` | ✔            | ✅ production  |
+| Class data (new)    | `rulesdata/_new_schema/*.ts`               | _none_            | ✔            | 🟡 prototype   |
+| Spells data         | `_new_schema/spells-data`                  | direct import     | ✔            | ✅ production  |
+| Backup dirs         | `_backup_original`                         | —                 | —             | 📦 archived    |
 
 Legend: ✅ = used in runtime · 🟡 = exists but not wired
 
-## 2.3  Immediate Gaps
+## 2.3 Immediate Gaps
 
 1. Missing loader for new TypeScript class data.
 2. No build-time validation for top-level TS rule files.
 3. Dual-source confusion (legacy vs new) – needs feature-flag.
 4. No automated test that asserts **every** rule file passes its schema.
 
-## 2.4  Proposed Tasks (tracked for Iteration 3)
+## 2.4 Proposed Tasks (tracked for Iteration 3)
 
 - [ ] `class-new.loader.ts` with `import.meta.glob` + Zod parse.
 - [ ] ENV toggle `VITE_CLASSES_SCHEMA_VERSION = legacy|new`.
@@ -146,13 +146,13 @@ Legend: ✅ = used in runtime · 🟡 = exists but not wired
 
 # Roadmap for Remaining Subsystems (to be expanded)
 
-| Subsystem | Key Questions for Deep-Dive |
-|-----------|-----------------------------|
-| **State Management** | Reducer invariants? Persisted fields? Context vs store overlap? |
-| **Services** | Calculator purity? Effect-processor design? Async boundaries? |
-| **Persistence / API** | Schema-to-DB fidelity? Endpoint contract tests? Auth flow? |
-| **Testing** | Coverage thresholds? CI gating? Playwright journeys? |
-| **Build / DevOps** | Roll-up chunking, docker story, prod env variables? |
+| Subsystem             | Key Questions for Deep-Dive                                     |
+| --------------------- | --------------------------------------------------------------- |
+| **State Management**  | Reducer invariants? Persisted fields? Context vs store overlap? |
+| **Services**          | Calculator purity? Effect-processor design? Async boundaries?   |
+| **Persistence / API** | Schema-to-DB fidelity? Endpoint contract tests? Auth flow?      |
+| **Testing**           | Coverage thresholds? CI gating? Playwright journeys?            |
+| **Build / DevOps**    | Roll-up chunking, docker story, prod env variables?             |
 
 Each area will receive the same treatment as Rules-Data: inventory → status matrix → gap list → tasks.  
 (☑ Marks will move as iterations complete.)
@@ -161,82 +161,94 @@ Each area will receive the same treatment as Rules-Data: inventory → status ma
 
 # Iteration 2 – Other Sub-Systems Deep Dives
 
-## 2.5  State Management
+## 2.5 State Management
 
 ### 2.5.1 Landscape
-* **React Context** – `src/lib/stores/characterContext.tsx` (current source of truth)
-* **Legacy Svelte Store** – `src/lib/stores/characterInProgressStore.ts` (`:::legacy`)
-* **Calculation Hooks** – `src/lib/hooks/*` (derive memoised stats)
+
+- **React Context** – `src/lib/stores/characterContext.tsx` (current source of truth)
+- **Legacy Svelte Store** – `src/lib/stores/characterInProgressStore.ts` (`:::legacy`)
+- **Calculation Hooks** – `src/lib/hooks/*` (derive memoised stats)
 
 ### 2.5.2 Status Matrix
-| Component | File(s) | Tested | Runtime | Notes |
-|-----------|---------|--------|---------|-------|
-| Character Context (React) | `characterContext.tsx` | ⬜ | ✅ | central reducer
-| Svelte Store | `characterInProgressStore.ts` | ⬜ | ✅ | keeps legacy consumers alive
-| Derived Hooks | `useAttributeCalculation.ts`… | ⬜ | ✅ | rely on context values
+
+| Component                 | File(s)                       | Tested | Runtime | Notes                        |
+| ------------------------- | ----------------------------- | ------ | ------- | ---------------------------- |
+| Character Context (React) | `characterContext.tsx`        | ⬜     | ✅      | central reducer              |
+| Svelte Store              | `characterInProgressStore.ts` | ⬜     | ✅      | keeps legacy consumers alive |
+| Derived Hooks             | `useAttributeCalculation.ts`… | ⬜     | ✅      | rely on context values       |
 
 ### 2.5.3 Gaps & Tasks
+
 1. **Consolidate** – migrate final legacy consumers to React Context, then delete Svelte store.
 2. **Reducer Tests** – property-based Vitest for action sequences.
 3. **Devtool tracing** – add `why-did-you-render` / React DevTools notes.
 
 ---
 
-## 2.6  Services
+## 2.6 Services
 
 ### 2.6.1 Landscape
-* **Legacy Calculator** – `src/lib/services/characterCalculator.ts`
-* **Enhanced Calculator** – `enhancedCharacterCalculator.ts` (new formulae)
-* **Effect Processor (planned)** – `_backup/_new_schema/effectProcessor.ts`
-* **CharacterCompletion / spellAssignment / dataMapping** – support services
+
+- **Legacy Calculator** – `src/lib/services/characterCalculator.ts`
+- **Enhanced Calculator** – `enhancedCharacterCalculator.ts` (new formulae)
+- **Effect Processor (planned)** – `_backup/_new_schema/effectProcessor.ts`
+- **CharacterCompletion / spellAssignment / dataMapping** – support services
 
 ### 2.6.2 Status Matrix
-| Service | File | Tested | Status |
-|---------|------|--------|--------|
-| characterCalculator (legacy) | `characterCalculator.ts` | ✅ (snapshot) | production |
-| enhancedCharacterCalculator | `enhancedCharacterCalculator.ts` | ⬜ | prototype |
-| effectProcessor | `_backup/_new_schema/effectProcessor.ts` | ⬜ | planned |
+
+| Service                      | File                                     | Tested        | Status     |
+| ---------------------------- | ---------------------------------------- | ------------- | ---------- |
+| characterCalculator (legacy) | `characterCalculator.ts`                 | ✅ (snapshot) | production |
+| enhancedCharacterCalculator  | `enhancedCharacterCalculator.ts`         | ⬜            | prototype  |
+| effectProcessor              | `_backup/_new_schema/effectProcessor.ts` | ⬜            | planned    |
 
 ### 2.6.3 Gaps & Tasks
+
 1. Finish **effectProcessor** and integrate with enhanced calculator.
 2. Decide **single source of truth** (legacy vs enhanced) via feature flag.
 3. Snapshot regression tests for each archetype build.
 
 ---
 
-## 2.7  Persistence / API
+## 2.7 Persistence / API
 
 ### 2.7.1 Landscape
-* **Prisma** – `schema.prisma`, migrations folder
-* **API Routes** – `src/api/character/[characterId].ts`
-* **Route Backups** – `src/routes/api/_backup/*`
-* **Auth Service** – `src/lib/server/auth.ts`
+
+- **Prisma** – `schema.prisma`, migrations folder
+- **API Routes** – `src/api/character/[characterId].ts`
+- **Route Backups** – `src/routes/api/_backup/*`
+- **Auth Service** – `src/lib/server/auth.ts`
 
 ### 2.7.2 Status Matrix
-| Layer | File / Path | Tested | Observations |
-|-------|-------------|--------|--------------|
-| Prisma schema | `prisma/schema.prisma` | ⬜ | generates client successfully |
-| REST endpoint | `src/api/character/[characterId].ts` | ⬜ | minimal validation |
-| SvelteKit route backups | `routes/api/_backup` | ⬜ | legacy, not mounted |
+
+| Layer                   | File / Path                          | Tested | Observations                  |
+| ----------------------- | ------------------------------------ | ------ | ----------------------------- |
+| Prisma schema           | `prisma/schema.prisma`               | ⬜     | generates client successfully |
+| REST endpoint           | `src/api/character/[characterId].ts` | ⬜     | minimal validation            |
+| SvelteKit route backups | `routes/api/_backup`                 | ⬜     | legacy, not mounted           |
 
 ### 2.7.3 Gaps & Tasks
+
 1. Add **contract tests** (Vitest + supertest) for `/api/character/:id` CRUD.
 2. Write **migration sanity test** that spins up `docker-compose`, runs prisma migrate, and ensures tables exist.
 3. Remove obsolete SvelteKit backup routes or document migration.
 
 ---
 
-## 2.8  Testing
+## 2.8 Testing
 
 ### 2.8.1 Current Assets
-* **Unit** – `src/demo.spec.ts` (basic calc demo)
-* **E2E** – `e2e/demo.test.ts` (happy-path character creation)
+
+- **Unit** – `src/demo.spec.ts` (basic calc demo)
+- **E2E** – `e2e/demo.test.ts` (happy-path character creation)
 
 ### 2.8.2 Coverage Summary
-* Lines with tests ≈ **5 %** of codebase.
-* No tests for context, new loaders, API endpoints, or UI edge-cases.
+
+- Lines with tests ≈ **5 %** of codebase.
+- No tests for context, new loaders, API endpoints, or UI edge-cases.
 
 ### 2.8.3 Gaps & Tasks
+
 1. Target **25 %** line coverage by end of Q3.
 2. Add **Playwright journey** that creates character → saves → reloads sheet.
 3. Use **Vitest snapshots** for rule-data schemas.
@@ -244,14 +256,16 @@ Each area will receive the same treatment as Rules-Data: inventory → status ma
 
 ---
 
-## 2.9  Build / DevOps
+## 2.9 Build / DevOps
 
 ### 2.9.1 Landscape
-* **Vite** build with React plugin
-* **Docker-compose** for Postgres (`docker-compose.yml`)
-* **No CI config yet** (GitHub Actions / Railway, etc.)
+
+- **Vite** build with React plugin
+- **Docker-compose** for Postgres (`docker-compose.yml`)
+- **No CI config yet** (GitHub Actions / Railway, etc.)
 
 ### 2.9.2 Gaps & Tasks
+
 1. Add **GitHub Actions** workflow: install → lint → test → build.
 2. Split Vite chunks via `manualChunks` (bundle warn >500 kB).
 3. Document **env var matrix** (local vs prod vs preview).
@@ -266,7 +280,8 @@ Each area will receive the same treatment as Rules-Data: inventory → status ma
 
 > This snapshot captures the state of DC20Clean immediately **after executing UI_FIXES.md state management refactor** (commit 78832f1).
 
-## 2.1  UI State Management Refactor Highlights
+## 2.1 UI State Management Refactor Highlights
+
 - **Native Data Structures**: Replaced JSON string serialization with typed objects/arrays in React Context
 - **Schema Versioning**: Added `schemaVersion = 2` with automatic incompatible save cleanup
 - **Type Safety**: Full TypeScript support with exhaustive reducer action types
@@ -280,13 +295,15 @@ Each area will receive the same treatment as Rules-Data: inventory → status ma
 
 > This snapshot captures the state of DC20Clean immediately **after executing CODEBASE_CONSOLIDATION_PLAN.md** (commit 7bd3a7f).
 
-## 1  Consolidation Highlights
+## 1 Consolidation Highlights
+
 - Single React Context (`src/lib/stores/characterContext.tsx`) is now the sole state store.
 - Legacy Svelte store and redundant calculator files removed.
 - `_new_schema` directory established as the authoritative rule-data source.
 - Automated rule-data validation test suite (`src/lib/rulesdata/rulesdata.spec.ts`) added.
 
-## 2.2  Updated Mind Map
+## 2.2 Updated Mind Map
+
 ```mermaid
 mindmap
   root((DC20Clean – Post-UI Refactor))
@@ -302,7 +319,7 @@ mindmap
       "Effect Processor (planned)"
     "Testing"
       "Reducer Unit Tests"
-      "Storage Utilities Tests" 
+      "Storage Utilities Tests"
       "Playwright E2E"
     "Code Quality"
       "ESLint JSON Prevention Rules"
@@ -314,7 +331,8 @@ mindmap
       "Docker"
 ```
 
-## 2.3  Next Steps
+## 2.3 Next Steps
+
 1. **Test UI Fixes**: Verify selection controls work correctly after clearing localStorage
 2. **Performance**: Monitor React Context re-render patterns with native objects
 3. **Coverage**: Continue expanding unit test coverage beyond reducer/storage
@@ -323,7 +341,8 @@ mindmap
 
 ---
 
-## 1  Consolidation Next Steps (Previous)
+## 1 Consolidation Next Steps (Previous)
+
 1. Set up CI workflow (lint → test → build) per consolidation plan.
 2. Migrate any remaining imports to new loaders.
 3. Complete Effect Processor integration.
@@ -335,7 +354,8 @@ mindmap
 
 > This snapshot captures the state of DC20Clean immediately after implementing the **Centralized Character Creation Calculation Logic v2.1** - a comprehensive refactor that consolidates all character stat and validation calculations into a single, source-of-truth engine (branch `consolidation-refactor`).
 
-## 1  Highlights
+## 1 Highlights
+
 - **Centralized Calculator**: `enhancedCharacterCalculator.ts` is now the single source of truth for all character calculations
 - **React Hook Integration**: `useCharacterBuilder` hook provides memoized access to calculation results
 - **Step-Aware Validation**: Navigation logic uses centralized validation with `BuildStep` and `ValidationCode` enums
@@ -344,7 +364,8 @@ mindmap
 - **Parity Testing**: Test harness implemented to ensure calculation consistency
 - **Legacy Cleanup**: Removed fragmented calculation hooks and deprecated files
 
-## 2  Technical Architecture Changes
+## 2 Technical Architecture Changes
+
 ```mermaid
 graph LR
     A[Character Context State] --> B[useCharacterBuilder Hook]
@@ -352,22 +373,23 @@ graph LR
     C --> D[EnhancedCalculationResult]
     D --> E[UI Components]
     D --> F[Navigation Validation]
-    
+
     C --> G[Effect Aggregation]
     G --> H[Traits]
     G --> I[Class Features]
     G --> J[User Choices]
-    
+
     C --> K[Step-Aware Validation]
     K --> L[BuildStep.Ancestry]
     K --> M[BuildStep.Background]
     K --> N[ValidationCode.POINTS_OVERBUDGET]
-    
+
     style C fill:#4ade80,color:#000
     style D fill:#fbbf24,color:#000
 ```
 
-## 3  Key Fixes Implemented
+## 3 Key Fixes Implemented
+
 - **Ancestry Points**: Correctly calculates class feature bonuses (e.g., Cleric Ancestral domain +2 points)
 - **Skill Points**: Uses final intelligence value including trait bonuses
 - **Trait Costs**: Sums actual trait costs instead of counting selections
@@ -375,7 +397,8 @@ graph LR
 - **Stage Completion**: Navigation requires all points to be spent (not just under budget)
 - **UI Consistency**: All components read from centralized calculator instead of legacy derived values
 
-## 4  Updated Mind Map
+## 4 Updated Mind Map
+
 ```mermaid
 mindmap
   root((DC20Clean – Post-Centralized Engine))
@@ -411,29 +434,35 @@ mindmap
       "TypeScript Exhaustiveness"
 ```
 
-## 5  Performance & Validation
+## 5 Performance & Validation
+
 - **Memoization**: `useCharacterBuilder` hook prevents unnecessary recalculations
 - **Real-time Validation**: Step completion updates instantly as user makes selections
 - **Source Attribution**: Every stat breakdown shows which traits/features contribute
 - **Test Coverage**: 37/37 unit tests passing with comprehensive calculation scenarios
 
-## 6  Files Modified/Created
+## 6 Files Modified/Created
+
 ### Created:
+
 - `src/lib/hooks/useCharacterBuilder.ts` - Main interface hook
 - `src/lib/types/effectSystem.ts` - Enhanced type definitions
 - `src/tests/parity/characterEngine.parity.spec.ts` - Parity testing (disabled due to JSX parsing)
 
 ### Enhanced:
+
 - `src/lib/services/enhancedCharacterCalculator.ts` - Complete rewrite with step-aware validation
 - `src/lib/stores/characterContext.tsx` - Integration with centralized calculator
 - `src/routes/character-creation/CharacterCreation.tsx` - Simplified navigation logic
 
 ### Removed:
+
 - `src/lib/hooks/useAttributeCalculation.ts` - Replaced by centralized system
 - `src/lib/utils/traitCosts.ts` - Logic moved to calculator
 - `src/routes/character-creation/components/BackgroundPointsManager.tsx` - Replaced by centralized background calculation
 
-## 7  Next Steps
+## 7 Next Steps
+
 1. **Expand Parity Testing**: Resolve JSX parsing issues and enable comprehensive regression tests
 2. **Performance Monitoring**: Track memoization effectiveness with React DevTools
 3. **Effect System**: Complete integration of remaining effect types and user choices
@@ -446,7 +475,8 @@ mindmap
 
 > This snapshot captures the state of DC20Clean immediately after migrating the Character Sheet UI to the new Context-driven architecture and restoring Desktop/Mobile views (branch `consolidation-refactor`).
 
-## 1  Highlights
+## 1 Highlights
+
 - Context provider `CharacterSheetProvider` is the single source of truth for the sheet
 - Reducer `useCharacterSheetReducer` handles all edits (resources, defenses, spells, maneuvers, inventory, notes, currency)
 - Selector hooks added: `useCharacterResources`, `useCharacterDefenses`, `useCharacterAttacks`, `useCharacterInventory`, `useCharacterSpells`, `useCharacterManeuvers`
@@ -454,7 +484,8 @@ mindmap
 - Legacy prop-drilling removed; components read from Context directly
 - Temporary `CharacterSheetSimple.tsx` removed; Router renders Desktop/Mobile (responsive)
 
-## 2  Updated Mind Map
+## 2 Updated Mind Map
+
 ```mermaid
 mindmap
   root((DC20Clean – Post-Character Sheet Context))
@@ -475,17 +506,20 @@ mindmap
       "E2E journey (to expand)"
 ```
 
-## 3  Notable Changes
+## 3 Notable Changes
+
 - Spells, Maneuvers, Inventory, Features, Defenses, Currency, Notes ported to Context
 - Router switches by breakpoint and no longer uses the minimal sheet
 - Save pipeline guarded; calculator failures are warned and do not block persistence
 
-## 4  Known Issues / Follow-ups
+## 4 Known Issues / Follow-ups
+
 - Some repo-wide ESLint errors remain (outside sheet scope); to be addressed separately
 - Calculator integration to be hardened and fully typed
 - Desktop/Mobile parity to be verified for all sections and popups
 
-## 5  Next Steps
+## 5 Next Steps
+
 1. Finish minor helper wiring (e.g., action points, temp HP where needed) and type tightening
 2. Add coverage for critical reducer branches and a Playwright journey: create → save → reload sheet
 3. Clean remaining legacy helpers/components after verifying no imports
@@ -497,32 +531,34 @@ mindmap
 
 > This snapshot captures the state of DC20Clean immediately after completing the **rule system rationalization** - consolidating all rule data into a single canonical source and eliminating legacy import paths (commits `e16b555` and `c6bcb5f`).
 
-## 1  Highlights
+## 1 Highlights
+
 - **Single Source of Truth**: All rule data now lives in `src/lib/rulesdata/_new_schema/`
 - **Import Cleanup**: Updated 10 files to import directly from canonical sources
-- **Legacy Elimination**: Removed temporary shim files and duplicate rule data  
+- **Legacy Elimination**: Removed temporary shim files and duplicate rule data
 - **Test Ancestry Added**: "Test" ancestry with powerful "Test HP" trait for system testing
 - **Zero Technical Debt**: No remaining rule file duplication or confusion
 - **Dependency Fix**: Resolved missing `react-router-dom` causing e2e test failures
 
-## 2  Rule System Architecture (Final)
+## 2 Rule System Architecture (Final)
+
 ```mermaid
 graph LR
     A[UI Components] --> B[Direct Imports]
     B --> C[_new_schema/traits.ts]
-    B --> D[_new_schema/ancestries.ts] 
+    B --> D[_new_schema/ancestries.ts]
     B --> E[_new_schema/class_features.ts]
-    
+
     F[Legacy Files] -.-> G[DELETED]
     H[Backup Files] --> I[.backup extension]
-    
+
     C --> J[enhancedCharacterCalculator]
     D --> J
     E --> J
-    
+
     J --> K[Character Builder Hook]
     K --> A
-    
+
     style C fill:#4ade80,color:#000
     style D fill:#4ade80,color:#000
     style E fill:#4ade80,color:#000
@@ -530,8 +566,10 @@ graph LR
     style J fill:#fbbf24,color:#000
 ```
 
-## 3  Files Modified/Removed
+## 3 Files Modified/Removed
+
 ### Updated Import Paths (10 files):
+
 - `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx`
 - `src/lib/utils/characterEdit.ts`
 - `src/routes/api/_backup/character/progress/complete/+server.ts`
@@ -542,18 +580,22 @@ graph LR
 - `src/lib/services/dataMapping.ts`
 
 ### Added:
+
 - Test ancestry with Test HP trait (cost 5, +3 any attribute, +10 all stats, special ability)
 - Package dependency: `react-router-dom`
 
 ### Removed:
+
 - `src/lib/rulesdata/traits.ts` (legacy file)
 - `src/lib/rulesdata/ancestries.ts` (legacy file)
 
 ### Preserved:
+
 - `src/lib/rulesdata/traits.ts.backup` (original legacy data)
 - `src/lib/rulesdata/ancestries.ts.backup` (original legacy data)
 
-## 4  Updated Mind Map
+## 4 Updated Mind Map
+
 ```mermaid
 mindmap
   root((DC20Clean – Post-Rule Rationalization))
@@ -564,7 +606,7 @@ mindmap
     "Rules Data Architecture"
       "_new_schema/ (CANONICAL)"
         "traits.ts"
-        "ancestries.ts" 
+        "ancestries.ts"
         "class_features.ts"
       "Direct Imports Only"
       "Zero Legacy Files"
@@ -591,21 +633,24 @@ mindmap
         "No Shim Files"
 ```
 
-## 5  Test Coverage Validation
+## 5 Test Coverage Validation
+
 - **Unit Tests**: 37/37 passing ✅
-- **E2E Tests**: 1/1 passing ✅  
+- **E2E Tests**: 1/1 passing ✅
 - **Build**: Successful with no errors ✅
 - **Rule Validation**: All new trait/ancestry data structured correctly ✅
 - **Import Resolution**: All 10 updated files compile successfully ✅
 
-## 6  Rule System Benefits Achieved
+## 6 Rule System Benefits Achieved
+
 1. **Maintainability**: Single canonical source eliminates confusion
 2. **Developer Experience**: Clear import paths, no duplicate definitions
 3. **Testing**: New ancestry provides powerful test case for system validation
 4. **Performance**: Direct imports eliminate shim layer overhead
 5. **Documentation**: Backup files preserve migration history
 
-## 7  Next Steps
+## 7 Next Steps
+
 1. **UI Testing**: Verify Test ancestry appears correctly in character creator
 2. **Effect Testing**: Validate Test HP trait calculations in character sheet
 3. **Performance**: Monitor impact of consolidated rule imports

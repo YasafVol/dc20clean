@@ -12,7 +12,7 @@ import type {
 	FeatureData,
 	AttackData,
 	SpellData,
-	InventoryItemData,
+	InventoryItemData
 } from '../../types';
 import type { Spell } from '../../lib/rulesdata/spells-data/types/spell.types';
 import type { Weapon } from '../../lib/rulesdata/inventoryItems';
@@ -47,10 +47,7 @@ import AttackPopup from './components/AttackPopup';
 import InventoryPopup from './components/InventoryPopup';
 
 // Import character state management utilities
-import {
-	updateCharacterState,
-	revertToOriginal,
-} from '../../lib/utils/characterState';
+import { updateCharacterState, revertToOriginal } from '../../lib/utils/characterState';
 
 // Import defense notes utilities
 import { clearDefenseNotesForField } from '../../lib/utils/defenseNotes';
@@ -99,24 +96,24 @@ import {
 import { allSpells } from '../../lib/rulesdata/spells-data/spells';
 import { allManeuvers } from '../../lib/rulesdata/maneuvers';
 
-import { handlePrintCharacterSheet } from "./utils";
+import { handlePrintCharacterSheet } from './utils';
 
 // LEGACY: saveManualDefense function removed - now handled by CharacterSheetProvider
 
 const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) => {
 	// Use Provider hooks for data and update methods
-	const { 
-		state, 
+	const {
+		state,
 		updateHP,
 		updateSP,
 		updateMP,
 		updateTempHP,
 		updateActionPoints,
 		updateExhaustion,
-		updateCurrency,
+		updateCurrency
 	} = useCharacterSheet();
 	const resources = useCharacterResources();
-	
+
 	// Get data from Provider instead of local state
 	const loading = state.loading;
 	const error = state.error;
@@ -124,28 +121,30 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	const characterState = characterData?.characterState;
 
 	// Calculate max values for current resources
-	const characterMaxValues = characterData ? {
-		currentGritPoints: characterData.finalGritPoints,
-		currentRestPoints: characterData.finalRestPoints,
-		currentHP: characterData.finalHPMax,
-		currentSP: characterData.finalSPMax,
-		currentMP: characterData.finalMPMax,
-		tempHP: 0,
-		actionPointsUsed: 0,
-		exhaustionLevel: 0,
-		// Death tracking
-		deathSteps: 0,
-		isDead: false,
-		// Currency
-		goldPieces: 0,
-		silverPieces: 0,
-		copperPieces: 0,
-		electrumPieces: 0,
-		platinumPieces: 0
-	} : {};
+	const characterMaxValues = characterData
+		? {
+				currentGritPoints: characterData.finalGritPoints,
+				currentRestPoints: characterData.finalRestPoints,
+				currentHP: characterData.finalHPMax,
+				currentSP: characterData.finalSPMax,
+				currentMP: characterData.finalMPMax,
+				tempHP: 0,
+				actionPointsUsed: 0,
+				exhaustionLevel: 0,
+				// Death tracking
+				deathSteps: 0,
+				isDead: false,
+				// Currency
+				goldPieces: 0,
+				silverPieces: 0,
+				copperPieces: 0,
+				electrumPieces: 0,
+				platinumPieces: 0
+			}
+		: {};
 
 	const currentValues = resources?.current || characterMaxValues;
-	
+
 	// Keep local popup state (these don't need Provider)
 	const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
 	const [selectedSpell, setSelectedSpell] = useState<Spell | null>(null);
@@ -163,8 +162,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	const [maneuvers, setManeuvers] = useState<ManeuverData[]>([]);
 	const [inventory, setInventory] = useState<InventoryItemData[]>([]);
 
-
-
 	// Mobile navigation state
 	type MobileSection = 'character' | 'combat' | 'features' | 'info';
 	const [activeMobileSection, setActiveMobileSection] = useState<MobileSection>('character');
@@ -180,14 +177,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		window.addEventListener('resize', checkMobile);
 		return () => window.removeEventListener('resize', checkMobile);
 	}, []);
-
-
-
-
-
-
-
-
 
 	// Load character data
 	// Data loading is now handled by the Provider, so no useEffect needed here
@@ -215,18 +204,20 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 		// Use stored breakdowns if available, otherwise create simple fallback
 		const storedBreakdowns = (characterData as any).breakdowns || {};
-		
-		pdBreakdown = storedBreakdowns.pd?.effects ?
-			storedBreakdowns.pd.effects.map((e: any) => `${e.value > 0 ? '+' : ''}${e.value} (${e.source.name || e.source})`).join(' ') + ` = ${calculatedPD}` :
-			`8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalAgility} (Agility) + ${characterData.finalIntelligence} (Intelligence) = ${calculatedPD}`;
 
-		adBreakdown = storedBreakdowns.ad?.effects ?
-			storedBreakdowns.ad.effects.map((e: any) => `${e.value > 0 ? '+' : ''}${e.value} (${e.source.name || e.source})`).join(' ') + ` = ${calculatedAD}` :
-			`8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalMight} (Might) + ${characterData.finalCharisma} (Charisma) = ${calculatedAD}`;
+		pdBreakdown = storedBreakdowns.pd?.effects
+			? storedBreakdowns.pd.effects
+					.map((e: any) => `${e.value > 0 ? '+' : ''}${e.value} (${e.source.name || e.source})`)
+					.join(' ') + ` = ${calculatedPD}`
+			: `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalAgility} (Agility) + ${characterData.finalIntelligence} (Intelligence) = ${calculatedPD}`;
 
-		pdrBreakdown = calculatedPDR > 0
-			? `${calculatedPDR} (from stored calculation)`
-			: '0 (no PDR)';
+		adBreakdown = storedBreakdowns.ad?.effects
+			? storedBreakdowns.ad.effects
+					.map((e: any) => `${e.value > 0 ? '+' : ''}${e.value} (${e.source.name || e.source})`)
+					.join(' ') + ` = ${calculatedAD}`
+			: `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalMight} (Might) + ${characterData.finalCharisma} (Charisma) = ${calculatedAD}`;
+
+		pdrBreakdown = calculatedPDR > 0 ? `${calculatedPDR} (from stored calculation)` : '0 (no PDR)';
 
 		console.log('🚀 OPTIMIZED: Using stored defense values (no recalculation needed)');
 
@@ -239,9 +230,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 			pdrBreakdown
 		};
 	};
-
-
-
 
 	// Parse skills data from character - show ALL skills with their proficiency levels and calculated bonuses
 	const getSkillsData = (): SkillData[] => {
@@ -440,8 +428,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		// Get selected ancestry traits
 		if (characterData.selectedTraitIds) {
 			try {
-				const selectedTraitIds: string[] = Array.isArray(characterData.selectedTraitIds) 
-					? characterData.selectedTraitIds 
+				const selectedTraitIds: string[] = Array.isArray(characterData.selectedTraitIds)
+					? characterData.selectedTraitIds
 					: JSON.parse(characterData.selectedTraitIds);
 				selectedTraitIds.forEach((traitId) => {
 					const trait = traitsData.find((t) => t.id === traitId);
@@ -489,9 +477,12 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 				try {
 					// Try to parse as JSON first
 					let selectedChoices: { [key: string]: string } = {};
-					
+
 					// Handle new data structure - selectedFeatureChoices is already an object
-					if (typeof characterData.selectedFeatureChoices === 'object' && characterData.selectedFeatureChoices !== null) {
+					if (
+						typeof characterData.selectedFeatureChoices === 'object' &&
+						characterData.selectedFeatureChoices !== null
+					) {
 						selectedChoices = characterData.selectedFeatureChoices as { [key: string]: string };
 					} else if (typeof characterData.selectedFeatureChoices === 'string') {
 						// Legacy handling - try to parse as JSON string
@@ -499,8 +490,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 							selectedChoices = JSON.parse(characterData.selectedFeatureChoices);
 						} catch (jsonError) {
 							// If JSON parsing fails, it might be legacy comma-separated data
-							console.warn('Failed to parse selectedFeatureChoices as JSON, attempting legacy format conversion:', characterData.selectedFeatureChoices);
-							
+							console.warn(
+								'Failed to parse selectedFeatureChoices as JSON, attempting legacy format conversion:',
+								characterData.selectedFeatureChoices
+							);
+
 							// For legacy data that might be stored as "Magic,Trickery" format
 							// We'll skip processing for now to prevent errors
 							console.warn('Skipping feature choices processing due to legacy data format');
@@ -524,7 +518,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 									if (choice.count > 1) {
 										// Handle multiple selections (like cleric domains)
 										let selectedValueArray: string[] = [];
-										
+
 										if (Array.isArray(selectedOptionValues)) {
 											// New format - already an array
 											selectedValueArray = selectedOptionValues;
@@ -535,7 +529,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 											} catch (parseError) {
 												// Try comma-separated format
 												if (selectedOptionValues.includes(',')) {
-													selectedValueArray = selectedOptionValues.split(',').map(v => v.trim());
+													selectedValueArray = selectedOptionValues.split(',').map((v) => v.trim());
 												} else {
 													// Single value that failed JSON parse
 													selectedValueArray = [selectedOptionValues];
@@ -669,11 +663,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	};
 
 	// Navigation functions
-
-
-
-
-
 
 	// Copy character data to clipboard
 	// Revert character data to original values
@@ -851,7 +840,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	// Wrapper function to call the extracted print function with all required parameters
 	const handlePrint = () => {
 		if (!characterData) return;
-		
+
 		handlePrintCharacterSheet(
 			characterData,
 			attacks,
@@ -888,10 +877,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 				>
 					📋 Copy to Clipboard
 				</StyledActionButton>
-				<StyledActionButton
-					onClick={handlePrint}
-					title="Print character sheet as PDF"
-				>
+				<StyledActionButton onClick={handlePrint} title="Print character sheet as PDF">
 					🖨️ Print PDF
 				</StyledActionButton>
 			</StyledActionButtons>
@@ -903,63 +889,83 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 			<StyledCharacterSheet className="character-sheet-content">
 				{/* Header Section */}
-				<StyledHeader style={{
-					background: (currentValues as any)?.isDead ? 
-						'linear-gradient(45deg, rgba(139, 0, 0, 0.1), rgba(139, 0, 0, 0.05))' : 
-						'transparent',
-					borderColor: (currentValues as any)?.isDead ? '#8B0000' : undefined,
-					position: 'relative'
-				}}>
+				<StyledHeader
+					style={{
+						background: (currentValues as any)?.isDead
+							? 'linear-gradient(45deg, rgba(139, 0, 0, 0.1), rgba(139, 0, 0, 0.05))'
+							: 'transparent',
+						borderColor: (currentValues as any)?.isDead ? '#8B0000' : undefined,
+						position: 'relative'
+					}}
+				>
 					{(currentValues as any)?.isDead && (
-						<div style={{
-							position: 'absolute',
-							top: 0,
-							left: 0,
-							right: 0,
-							bottom: 0,
-							background: `repeating-linear-gradient(
+						<div
+							style={{
+								position: 'absolute',
+								top: 0,
+								left: 0,
+								right: 0,
+								bottom: 0,
+								background: `repeating-linear-gradient(
 								45deg,
 								transparent,
 								transparent 10px,
 								rgba(139, 0, 0, 0.05) 10px,
 								rgba(139, 0, 0, 0.05) 20px
 							)`,
-							pointerEvents: 'none'
-						}} />
+								pointerEvents: 'none'
+							}}
+						/>
 					)}
 					<StyledHeaderSection>
 						<StyledLabel>Player Name</StyledLabel>
 						<StyledValue>{characterData.finalPlayerName || 'Unknown'}</StyledValue>
 						<StyledLabel style={{ marginTop: '0.5rem' }}>Character Name</StyledLabel>
-						<StyledValue style={{
-							color: (currentValues as any)?.isDead ? '#8B0000' : undefined,
-							textDecoration: (currentValues as any)?.isDead ? 'line-through' : undefined,
-							textDecorationColor: (currentValues as any)?.isDead ? '#8B0000' : undefined,
-							textDecorationThickness: (currentValues as any)?.isDead ? '2px' : undefined,
-							display: 'flex',
-							alignItems: 'center',
-							gap: '0.5rem'
-						}}>
-							{(currentValues as any)?.isDead && <span style={{ 
-								fontSize: '1.5rem', 
-								color: '#8B0000',
-								animation: 'pulse 2s infinite'
-							}}>💀</span>}
+						<StyledValue
+							style={{
+								color: (currentValues as any)?.isDead ? '#8B0000' : undefined,
+								textDecoration: (currentValues as any)?.isDead ? 'line-through' : undefined,
+								textDecorationColor: (currentValues as any)?.isDead ? '#8B0000' : undefined,
+								textDecorationThickness: (currentValues as any)?.isDead ? '2px' : undefined,
+								display: 'flex',
+								alignItems: 'center',
+								gap: '0.5rem'
+							}}
+						>
+							{(currentValues as any)?.isDead && (
+								<span
+									style={{
+										fontSize: '1.5rem',
+										color: '#8B0000',
+										animation: 'pulse 2s infinite'
+									}}
+								>
+									💀
+								</span>
+							)}
 							{characterData.finalName}
-							{(currentValues as any)?.isDead && <span style={{ 
-								fontSize: '1.5rem', 
-								color: '#8B0000',
-								animation: 'pulse 2s infinite'
-							}}>💀</span>}
+							{(currentValues as any)?.isDead && (
+								<span
+									style={{
+										fontSize: '1.5rem',
+										color: '#8B0000',
+										animation: 'pulse 2s infinite'
+									}}
+								>
+									💀
+								</span>
+							)}
 						</StyledValue>
 						{(currentValues as any)?.isDead && (
-							<div style={{ 
-								color: '#8B0000', 
-								fontWeight: 'bold', 
-								fontSize: '1rem',
-								marginTop: '0.25rem',
-								textAlign: 'center'
-							}}>
+							<div
+								style={{
+									color: '#8B0000',
+									fontWeight: 'bold',
+									fontSize: '1rem',
+									marginTop: '0.25rem',
+									textAlign: 'center'
+								}}
+							>
 								💀 DEAD 💀
 							</div>
 						)}
@@ -1040,14 +1046,10 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						{/* Middle Column - Resources, Combat, and Core Stats */}
 						<StyledMiddleColumn>
 							{/* Resources Section - Circular design like official sheet */}
-							<Resources
-								isMobile={false}
-							/>
+							<Resources isMobile={false} />
 
 							{/* Defenses - Shield-like design */}
-							<Defenses
-								isMobile={false}
-							/>
+							<Defenses isMobile={false} />
 
 							{/* Combat Section */}
 							<Combat />
@@ -1055,19 +1057,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 							{/* Death & Exhaustion */}
 							<DeathExhaustion />
 
-
-
-
-
 							{/* Attacks Section */}
-							<Attacks
-								onAttackClick={openAttackPopup}
-							/>
+							<Attacks onAttackClick={openAttackPopup} />
 
 							{/* Inventory */}
-							<Inventory
-								onItemClick={openInventoryPopup}
-							/>
+							<Inventory onItemClick={openInventoryPopup} />
 
 							{/* Player Notes */}
 							<PlayerNotes />
@@ -1092,22 +1086,35 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 				{/* Spells Section - Full width, after main content */}
 				{characterData.className && findClassByName(characterData.className)?.spellcastingPath && (
-					<div style={{ marginTop: '2rem', padding: '1rem', background: 'white', borderRadius: '8px', border: '2px solid #e0e0e0' }}>
+					<div
+						style={{
+							marginTop: '2rem',
+							padding: '1rem',
+							background: 'white',
+							borderRadius: '8px',
+							border: '2px solid #e0e0e0'
+						}}
+					>
 						<h2 style={{ color: '#2c3e50', marginBottom: '1rem', textAlign: 'center' }}>Spells</h2>
-						<Spells
-							onSpellClick={openSpellPopup}
-							readOnly={true}
-						/>
+						<Spells onSpellClick={openSpellPopup} readOnly={true} />
 					</div>
 				)}
 
 				{/* Maneuvers Section - Full width, after main content */}
 				{characterData.className && findClassByName(characterData.className)?.martialPath && (
-					<div style={{ marginTop: '2rem', padding: '1rem', background: 'white', borderRadius: '8px', border: '2px solid #e0e0e0' }}>
-						<h2 style={{ color: '#2c3e50', marginBottom: '1rem', textAlign: 'center' }}>Maneuvers</h2>
-						<Maneuvers
-							onManeuverClick={openManeuverPopup}
-						/>
+					<div
+						style={{
+							marginTop: '2rem',
+							padding: '1rem',
+							background: 'white',
+							borderRadius: '8px',
+							border: '2px solid #e0e0e0'
+						}}
+					>
+						<h2 style={{ color: '#2c3e50', marginBottom: '1rem', textAlign: 'center' }}>
+							Maneuvers
+						</h2>
+						<Maneuvers onManeuverClick={openManeuverPopup} />
 					</div>
 				)}
 
@@ -1129,31 +1136,20 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						{/* Combat Tab - Mobile */}
 						{activeMobileSection === 'combat' && (
 							<div>
-								<Resources
-									isMobile={true}
-								/>
-								<Defenses
-									isMobile={true}
-								/>
+								<Resources isMobile={true} />
+								<Defenses isMobile={true} />
 								<Combat />
 								<DeathExhaustion />
-								<Spells
-									onSpellClick={openSpellPopup}
-								/>
-								<Attacks
-									onAttackClick={openAttackPopup}
-								/>
-								{characterData.className && findClassByName(characterData.className)?.spellcastingPath && (
-									<Spells
-										onSpellClick={openSpellPopup}
-										readOnly={true}
-									/>
-								)}
-								{characterData.className && findClassByName(characterData.className)?.martialPath && (
-									<Maneuvers
-										onManeuverClick={openManeuverPopup}
-									/>
-								)}
+								<Spells onSpellClick={openSpellPopup} />
+								<Attacks onAttackClick={openAttackPopup} />
+								{characterData.className &&
+									findClassByName(characterData.className)?.spellcastingPath && (
+										<Spells onSpellClick={openSpellPopup} readOnly={true} />
+									)}
+								{characterData.className &&
+									findClassByName(characterData.className)?.martialPath && (
+										<Maneuvers onManeuverClick={openManeuverPopup} />
+									)}
 								<Movement />
 								<RightColumnResources />
 							</div>
@@ -1162,9 +1158,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						{/* Items Tab - Mobile */}
 						{activeMobileSection === 'features' && (
 							<div>
-								<Inventory
-									onItemClick={openInventoryPopup}
-								/>
+								<Inventory onItemClick={openInventoryPopup} />
 								<Currency />
 							</div>
 						)}
@@ -1308,7 +1302,15 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 									<br />
 									<strong>Enhancements:</strong>
 									{selectedSpell.enhancements.map((enhancement, index) => (
-										<div key={index} style={{ marginTop: '0.5rem', padding: '0.5rem', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+										<div
+											key={index}
+											style={{
+												marginTop: '0.5rem',
+												padding: '0.5rem',
+												backgroundColor: '#f5f5f5',
+												borderRadius: '4px'
+											}}
+										>
 											<strong>{enhancement.name}</strong> ({enhancement.type} {enhancement.cost})
 											<br />
 											{enhancement.description}
@@ -1375,4 +1377,3 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 };
 
 export default CharacterSheet;
-

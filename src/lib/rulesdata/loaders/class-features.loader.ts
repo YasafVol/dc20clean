@@ -115,6 +115,7 @@ import { warlockClass } from '../_new_schema/warlock_features';
 import { bardClass } from '../_new_schema/bard_features';
 import { druidClass } from '../_new_schema/druid_features';
 import { commanderClass } from '../_new_schema/commander_features';
+import { psionClass } from '../_new_schema/psion_features';
 
 // Use the new schema class definitions
 const rawClassFeatures = [
@@ -130,7 +131,8 @@ const rawClassFeatures = [
 	warlockClass,
 	bardClass,
 	druidClass,
-	commanderClass
+	commanderClass,
+	psionClass
 ];
 
 // Debug logging

@@ -34,9 +34,9 @@ export const StyledCard = styled.div<{ $selected: boolean }>`
 	cursor: pointer;
 	transition: all 0s ease;
 	flex: 1;
-	min-width: 300px;
-	max-width: 300px;
-	height: 190px;
+	min-width: 380px;
+	max-width: 380px;
+	height: 180px;
 	text-align: left;
 	position: relative;
 	display: flex;

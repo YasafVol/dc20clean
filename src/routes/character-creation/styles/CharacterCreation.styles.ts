@@ -54,6 +54,7 @@ export const StyledStep = styled.div<{ $active: boolean; $completed: boolean }>`
 	transition: all 0.3s ease;
 	flex: 1;
 	max-width: 120px;
+	min-height: 80px;
 `;
 
 export const StyledStepNumber = styled.div<{ $active: boolean; $completed: boolean }>`
@@ -98,6 +99,11 @@ export const StyledStepLabel = styled.span<{ $active: boolean; $completed: boole
 	font-size: 0.9rem;
 	font-weight: 600;
 	text-align: center;
+	line-height: 1.2;
+	min-height: 2.4rem;
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
 
 	${(props) =>
 		props.$completed &&

@@ -14,6 +14,10 @@ export const StyledContainer = styled.div`
 		max-width: 98vw;
 		padding: 1rem;
 	}
+
+	 /* Give breathing room at the bottom so the cards don't abut
+		 the page edge on small viewports */
+	 padding-bottom: 3rem;
 `;
 
 export const StyledTitle = styled.h2`
@@ -38,38 +42,44 @@ export const StyledPointsRemaining = styled.p`
 
 export const StyledGrid = styled.div`
 	display: flex;
-	flex-wrap: wrap;
+	/* Keep the cards on one line; allow horizontal scroll on narrow viewports */
+	flex-wrap: nowrap;
 	gap: 1rem;
 	margin-top: 1rem;
+	justify-content: space-between;
+	overflow-x: auto;
+	align-items: stretch; /* make card heights align */
 `;
 
 export const StyledCard = styled.div`
 	border: 1px solid white;
-	padding: 1.5rem;
+	padding: 1.2rem 1.2rem 2.2rem; /* extra bottom padding for validation message */
 	border-radius: 10px;
 	background: transparent;
 	text-align: center;
 	transition: all 0s ease;
-	flex: 1;
-	min-width: 250px;
-	max-width: 280px;
-	height: auto;
+	 /* Force four cards per row where possible, but allow horizontal scroll
+		 on smaller viewports via the grid's overflow-x:auto */
+	 flex: 0 0 23%;
+	 min-width: 240px;
+	 max-width: 28%;
+	 height: 260px; /* consistent card height for visual alignment */
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	overflow: hidden;
+	 overflow: hidden;
 
 	&:hover {
 		border-color: #fbbf24;
 	}
 	
 	@media (max-width: 900px) {
-		min-width: 200px;
+		min-width: 180px;
 	}
 `;
 
 export const StyledCardTitle = styled.h3`
-	margin: 0 0 0.5rem 0;
+	margin: 0 0 0.25rem 0;
 	color: #fbbf24;
 	font-size: 1.4rem;
 	font-weight: bold;
@@ -82,13 +92,13 @@ export const StyledControls = styled.div`
 	align-items: center;
 	justify-content: space-between;
 	gap: 1rem;
-	margin: 1rem auto;
+	margin: 0.5rem auto;
 	width: 80%;
 `;
 
 export const StyledButton = styled.button`
 	width: 40px;
-	height: 40px;
+	height: 35px;
 	border: 1px solid white;
 	border-radius: 8px;
 	background: transparent;
@@ -96,10 +106,18 @@ export const StyledButton = styled.button`
 	cursor: pointer;
 	font-size: 1.4rem;
 	font-weight: bold;
+	line-height: 1;
+	padding: 0;
+	margin: 0;
 	transition: all 0s ease;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	
+	/* Fine-tune vertical alignment for + and - symbols */
+	padding-top: 0;
+	/* 4px bottom padding ensures + and - symbols are visually centered in the button */
+	padding-bottom: 4px;
 
 	&:hover {
 		border-color: #fbbf24;
@@ -130,5 +148,5 @@ export const StyledDescription = styled.p`
 	color: #e5e7eb;
 	font-size: 0.9rem;
 	line-height: 1.4;
-	margin: 0.5rem 0 1rem 0;
+	margin: 0.25rem 0 0.5rem 0;
 `;

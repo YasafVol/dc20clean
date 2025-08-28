@@ -12,6 +12,7 @@ import {
 	StyledCardDescription,
 	StyledNewClassQuote
 } from './styles/AncestrySelector.styles';
+import { StyledNoSelection } from './styles/ClassFeatures.styles';
 
 // Ancestry-specific icons using Unicode symbols and emojis
 const ancestryIcons: { [key: string]: string } = {
@@ -95,6 +96,7 @@ function AncestrySelector() {
 	return (
 		<StyledContainer>
 			<StyledTitle>Choose Your Ancestry</StyledTitle>
+			<StyledNoSelection style={{ margin: '-1.25rem 0 1.5rem', fontSize: '1.1rem', textAlign: 'center', width: '100%' }}>Select up to 2 ancestries for your character.</StyledNoSelection>
 			<StyledGrid>
 				{ancestriesData.map((ancestry: IAncestry) => (
 					<StyledCard

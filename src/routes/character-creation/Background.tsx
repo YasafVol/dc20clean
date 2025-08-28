@@ -13,6 +13,13 @@ import {
 	StyledTab
 } from './styles/Background.styles.ts';
 
+// Import the PointConversions interface
+interface PointConversions {
+	skillToTradeConversions: number;
+	tradeToSkillConversions: number;
+	tradeToLanguageConversions: number;
+}
+
 type TabType = 'skills' | 'trades' | 'languages';
 
 const Background: React.FC = () => {
@@ -35,6 +42,13 @@ const Background: React.FC = () => {
 	const currentSkills = state.skillsData || {};
 	const currentTrades = state.tradesData || {};
 	const currentLanguages = state.languagesData || { common: { fluency: 'fluent' } };
+	
+	// Adapt conversions to match the expected interface
+	const adaptedConversions: PointConversions = {
+		skillToTradeConversions: background.conversions?.skillToTrade || 0,
+		tradeToSkillConversions: background.conversions?.tradeToSkill || 0,
+		tradeToLanguageConversions: background.conversions?.tradeToLanguage || 0
+	};
 
 	// For now, we'll create a simplified masteryLimits object
 	// TODO: This should come from the calculator in a future enhancement
@@ -105,8 +119,9 @@ const Background: React.FC = () => {
 				return (
 					<SkillsTab
 						currentSkills={currentSkills}
+						currentTrades={currentTrades}
 						pointsData={background}
-						conversions={background.conversions}
+						conversions={adaptedConversions}
 						actions={actions}
 						masteryLimits={masteryLimits}
 						onSkillChange={handleSkillChange}
@@ -118,7 +133,7 @@ const Background: React.FC = () => {
 						currentTrades={currentTrades}
 						currentSkills={currentSkills}
 						pointsData={background}
-						conversions={background.conversions}
+						conversions={adaptedConversions}
 						actions={actions}
 						masteryLimits={masteryLimits}
 						onTradeChange={handleTradeChange}
@@ -129,7 +144,7 @@ const Background: React.FC = () => {
 					<LanguagesTab
 						currentLanguages={currentLanguages}
 						pointsData={background}
-						conversions={background.conversions}
+						conversions={adaptedConversions}
 						actions={actions}
 						onLanguageChange={handleLanguageChange}
 					/>
@@ -161,10 +176,11 @@ const Background: React.FC = () => {
 						marginTop: '0.5rem',
 						display: 'inline-block',
 						padding: '0.25rem 0.5rem',
-						backgroundColor: '#f3f4f6',
+						background: 'transparent',
+						border: '1px solid white',
 						borderRadius: '4px',
 						fontSize: '0.9rem',
-						color: '#374151'
+						color: '#e2e8f0'
 					}}
 				>
 					💡 Conversions: 1 skill ↔ 2 trade • 1 trade → 2 language

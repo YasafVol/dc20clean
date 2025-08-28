@@ -1,25 +1,22 @@
 import styled from 'styled-components';
 
 export const StyledContainer = styled.div`
-	border: 2px solid #8b5cf6;
+	border: none;
 	padding: 1.5rem;
 	border-radius: 12px;
-	background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-	margin-top: 2rem;
-	box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+	background: transparent;
+	margin-top: 0;
 	color: white;
 	font-family: 'Inter', sans-serif;
 `;
 
 export const StyledSubheading = styled.h2`
-	margin-top: 0;
+	margin-top: -1rem;
 	color: #fbbf24;
-	font-size: 1.3rem;
+	font-size: 2.4rem;
 	font-weight: bold;
 	text-align: center;
-	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 	letter-spacing: 1px;
-	border-bottom: 2px solid #ef4444;
 	padding-bottom: 0.5rem;
 	margin-bottom: 1rem;
 `;
@@ -36,9 +33,9 @@ export const StyledTabContainer = styled.div`
 	display: flex;
 	justify-content: center;
 	margin-bottom: 1.5rem;
-	border: 2px solid #a855f7;
+	border: 1px solid white;
 	border-radius: 10px;
-	background: rgba(45, 27, 105, 0.3);
+	background: transparent;
 	padding: 0.5rem;
 	gap: 0.5rem;
 `;
@@ -69,12 +66,11 @@ export const StyledTabContent = styled.div`
 `;
 
 export const StyledPointsRemaining = styled.div`
-	margin: 0.5rem 0;
+	margin: 1rem 0;
 	font-weight: bold;
 	color: #ef4444;
 	font-size: 1.2rem;
 	text-align: center;
-	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 	margin-bottom: 1.5rem;
 `;
 
@@ -86,17 +82,14 @@ export const StyledSelectionGrid = styled.div`
 `;
 
 export const StyledSelectionItem = styled.div`
-	border: 2px solid #a855f7;
+	border: 1px solid white;
 	padding: 1.5rem;
 	border-radius: 10px;
-	background: linear-gradient(145deg, #2d1b69 0%, #4c1d95 100%);
-	transition: all 0.3s ease;
-	box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+	background: transparent;
+	transition: all 0s ease;
 
 	&:hover {
 		border-color: #fbbf24;
-		transform: translateY(-2px);
-		box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
 	}
 `;
 
@@ -112,7 +105,8 @@ export const StyledSelectionName = styled.h4`
 	font-weight: 600;
 	margin: 0;
 	color: #fbbf24;
-	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+	text-transform: uppercase;
+	letter-spacing: 1px;
 `;
 
 export const StyledProficiencySelector = styled.div`
@@ -124,17 +118,16 @@ export const StyledProficiencySelector = styled.div`
 
 export const StyledProficiencyButton = styled.button<{ $active?: boolean; $disabled?: boolean }>`
 	padding: 0.5rem 1rem;
-	border: 2px solid ${(props) => (props.$active ? '#fbbf24' : '#6b7280')};
+	border: 1px solid ${(props) => (props.$active ? '#fbbf24' : 'white')};
 	border-radius: 6px;
 	background: ${(props) => (props.$active ? '#fbbf24' : 'transparent')};
 	color: ${(props) => (props.$active ? '#1e1b4b' : '#e2e8f0')};
 	font-weight: 600;
 	cursor: ${(props) => (props.$disabled ? 'not-allowed' : 'pointer')};
-	transition: all 0.2s ease;
+	transition: all 0s ease;
 	opacity: ${(props) => (props.$disabled ? 0.5 : 1)};
 
 	&:hover:not(:disabled) {
-		background: ${(props) => (props.$active ? '#f59e0b' : 'rgba(251, 191, 36, 0.1)')};
 		border-color: #fbbf24;
 	}
 `;
@@ -147,7 +140,7 @@ export const StyledLanguageFluency = styled.div`
 `;
 
 export const StyledError = styled.div`
-	background-color: rgba(239, 68, 68, 0.1);
+	background-color: transparent;
 	border: 1px solid #ef4444;
 	color: #ef4444;
 	padding: 0.75rem;
@@ -155,4 +148,26 @@ export const StyledError = styled.div`
 	margin-top: 1rem;
 	font-size: 0.9rem;
 	text-align: center;
+`;
+
+export const StyledActionButton = styled.button<{ $enabled?: boolean }>`
+	padding: 0.5rem 1rem;
+	background-color: transparent;
+	color: white;
+	border: 1px solid white;
+	border-radius: 6px;
+	font-size: 0.875rem;
+	font-weight: 500;
+	cursor: ${(props) => (props.$enabled ? 'pointer' : 'not-allowed')};
+	transition: all 0.2s ease;
+	opacity: ${(props) => (props.$enabled ? 1 : 0.6)};
+
+	&:hover {
+		border-color: ${(props) => (props.$enabled ? '#fbbf24' : 'white')};
+	}
+
+	&:disabled {
+		cursor: not-allowed;
+		opacity: 0.6;
+	}
 `;

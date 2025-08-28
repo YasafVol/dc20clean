@@ -568,7 +568,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					<StyledButton
 						$variant="primary"
 						onClick={handleNext}
-						disabled={state.currentStep === 6 && !areAllStepsCompleted()}
+						// Temporarily remove the disabled check to ensure the button is clickable
+						// disabled={state.currentStep === 6 && !areAllStepsCompleted()}
 					>
 						{state.currentStep === 6 ? 'Complete' : 'Next →'}
 					</StyledButton>

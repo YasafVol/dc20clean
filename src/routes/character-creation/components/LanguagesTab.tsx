@@ -33,7 +33,8 @@ import {
 	StyledSelectionName,
 	StyledProficiencyButton,
 	StyledLanguageFluency,
-	StyledPointsRemaining
+	StyledPointsRemaining,
+	StyledActionButton
 } from '../styles/Background.styles';
 
 interface LanguagesTabProps {
@@ -56,26 +57,6 @@ const LanguagesTab: React.FC<LanguagesTabProps> = ({
 	};
 
 	// Helper function for consistent button styling
-	const getButtonStyle = (enabled: boolean, variant: 'primary' | 'danger' = 'primary') => ({
-		padding: '0.5rem 1rem',
-		backgroundColor: enabled ? (variant === 'primary' ? '#3b82f6' : '#ef4444') : '#6b7280',
-		color: 'white',
-		border: 'none',
-		borderRadius: '6px',
-		fontSize: '0.875rem',
-		fontWeight: '500',
-		cursor: enabled ? 'pointer' : 'not-allowed',
-		transition: 'all 0.2s ease',
-		opacity: enabled ? 1 : 0.6,
-		':hover': enabled
-			? {
-					backgroundColor: variant === 'primary' ? '#2563eb' : '#dc2626',
-					transform: 'translateY(-1px)',
-					boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
-				}
-			: {}
-	});
-
 	const hasConversions =
 		conversions.skillToTradeConversions > 0 ||
 		conversions.tradeToSkillConversions > 0 ||
@@ -110,50 +91,20 @@ const LanguagesTab: React.FC<LanguagesTabProps> = ({
 						flexWrap: 'wrap'
 					}}
 				>
-					<button
+					<StyledActionButton
 						onClick={actions.convertTradeToLanguage}
 						disabled={pointsData.availableTradePoints - pointsData.tradePointsUsed < 1}
-						style={getButtonStyle(
-							pointsData.availableTradePoints - pointsData.tradePointsUsed >= 1
-						)}
-						onMouseEnter={(e) => {
-							if (pointsData.availableTradePoints - pointsData.tradePointsUsed >= 1) {
-								e.currentTarget.style.backgroundColor = '#2563eb';
-								e.currentTarget.style.transform = 'translateY(-1px)';
-								e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
-							}
-						}}
-						onMouseLeave={(e) => {
-							if (pointsData.availableTradePoints - pointsData.tradePointsUsed >= 1) {
-								e.currentTarget.style.backgroundColor = '#3b82f6';
-								e.currentTarget.style.transform = 'translateY(0)';
-								e.currentTarget.style.boxShadow = 'none';
-							}
-						}}
+						$enabled={pointsData.availableTradePoints - pointsData.tradePointsUsed >= 1}
 					>
 						Convert 1 Trade → 2 Language Points
-					</button>
-					<button
+					</StyledActionButton>
+					<StyledActionButton
 						onClick={actions.resetConversions}
 						disabled={!hasConversions}
-						style={getButtonStyle(hasConversions, 'danger')}
-						onMouseEnter={(e) => {
-							if (hasConversions) {
-								e.currentTarget.style.backgroundColor = '#dc2626';
-								e.currentTarget.style.transform = 'translateY(-1px)';
-								e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
-							}
-						}}
-						onMouseLeave={(e) => {
-							if (hasConversions) {
-								e.currentTarget.style.backgroundColor = '#ef4444';
-								e.currentTarget.style.transform = 'translateY(0)';
-								e.currentTarget.style.boxShadow = 'none';
-							}
-						}}
+						$enabled={hasConversions}
 					>
 						Reset Conversions
-					</button>
+					</StyledActionButton>
 				</div>
 			</StyledPointsRemaining>
 			<StyledSelectionGrid>

@@ -11,6 +11,7 @@ import {
 	StyledNewClassQuote,
 	StyledNewClassDescription
 } from './styles/ClassSelector.styles';
+import { StyledNoSelection } from './styles/ClassFeatures.styles';
 
 // Import all SVG icons
 import BarbarianIconSrc from '../../assets/SVG/Barbarian.svg';
@@ -31,11 +32,11 @@ import WizardIconSrc from '../../assets/SVG/Wizard.svg';
 const classData = {
 	barbarian: {
 		quote: "My rage is my shield, my weapon, my answer.",
-		description: "Unleashes devastating attacks and shrugs off harm by entering a powerful rage.",
+		description: "Unleashes devastating attacks and shrugs off harm through rage.",
 		icon: BarbarianIconSrc
 	},
 	bard: {
-		quote: "A single chord can lift an army — or break it.",
+		quote: "A single chord can lift an army - or break it.",
 		description: "Casts spells and boosts allies through versatile performance magic.",
 		icon: BardIconSrc
 	},
@@ -80,7 +81,7 @@ const classData = {
 		icon: SorcererIconSrc
 	},
 	spellblade: {
-		quote: "My blade is a conduit. My magic — the edge.",
+		quote: "My blade is a conduit.\nMy magic — the edge.",
 		description: "Combines melee combat with arcane spells, weaving both into an assault.",
 		icon: SpellBladeIconSrc
 	},
@@ -111,6 +112,7 @@ function ClassSelector() {
 	return (
 		<StyledContainer>
 			<StyledTitle>Choose Your Class</StyledTitle>
+			<StyledNoSelection style={{ margin: '-1.25rem 0 1.5rem', fontSize: '1.1rem', textAlign: 'center', width: '100%' }}>Select a Class to see its features.</StyledNoSelection>
 			<StyledGrid>
 				{classesData.map((classDef) => {
 					const classInfo = classData[classDef.id as keyof typeof classData];

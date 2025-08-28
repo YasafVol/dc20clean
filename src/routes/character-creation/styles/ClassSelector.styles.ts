@@ -97,103 +97,6 @@ export const StyledCardDescription = styled.p`
 	hyphens: auto;
 `;
 
-// Special Barbarian Card Components
-export const StyledBarbarianCard = styled.button<{ $selected: boolean }>`
-	border: 1px solid white;
-	padding: 1.5rem 1.5rem 1.5rem 1.5rem;
-	border-radius: 10px;
-	background: transparent;
-	cursor: pointer;
-	transition: all 0s ease;
-	flex: 1;
-	min-width: 320px;
-	max-width: 320px;
-	height: 200px;
-	text-align: left;
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	overflow: hidden;
-
-	&:hover {
-		border-color: #fbbf24;
-	}
-
-	${(props) =>
-		props.$selected &&
-		`
-    border: 2px solid #fbbf24;
-  `}
-`;
-
-export const StyledBarbarianHeader = styled.div`
-	display: flex;
-	align-items: center;
-	gap: 0.75rem;
-	margin-bottom: 0.5rem;
-`;
-
-export const StyledBarbarianIcon = styled.div<{
-	$iconSize?: string;
-	$iconOffsetX?: string;
-	$iconOffsetY?: string;
-}>`
-	width: 45px;
-	height: 45px;
-	flex-shrink: 0;
-	background-color: #fbbf24;
-	border-radius: 50%;
-	border: 2px solid #fbbf24;
-	box-sizing: border-box;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	position: relative;
-	
-	img {
-		width: ${props => props.$iconSize || '28px'};
-		height: ${props => props.$iconSize || '28px'};
-		object-fit: contain;
-		filter: brightness(0) saturate(100%); /* Makes the SVG black */
-		transform: translate(${props => props.$iconOffsetX || '0px'}, ${props => props.$iconOffsetY || '0px'});
-	}
-`;
-
-export const StyledBarbarianTitle = styled.h3`
-	margin: 0;
-	color: #fbbf24;
-	font-size: 1.4rem;
-	font-weight: bold;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-`;
-
-export const StyledBarbarianQuote = styled.div`
-	margin-bottom: 0.75rem;
-	font-style: italic;
-	color: #fbbf24;
-	font-size: 0.85rem;
-	line-height: 1.3;
-	border-left: 2px solid #fbbf24;
-	padding-left: 0.75rem;
-`;
-
-export const StyledBarbarianDescription = styled.p`
-	margin: 0;
-	color: #e5e7eb;
-	font-size: 0.8rem;
-	font-weight: 300;
-	line-height: 1.3;
-	flex: 1;
-	overflow: hidden;
-	display: -webkit-box;
-	-webkit-line-clamp: 3;
-	-webkit-box-orient: vertical;
-	position: relative;
-	word-wrap: break-word;
-	hyphens: none;
-`;
-
 // Generic class card components that can be reused for all classes
 export const StyledNewClassCard = styled.button<{ $selected: boolean }>`
 	border: 1px solid white;
@@ -267,10 +170,11 @@ export const StyledNewClassTitle = styled.h3`
 
 export const StyledNewClassQuote = styled.div`
 	margin-bottom: 0.75rem;
+	font-family: 'Libre Baskerville', serif;
 	font-style: italic;
-	color: #fbbf24;
+	color: white;
 	font-size: 0.85rem;
-	line-height: 1.3;
+	line-height: 1.5;
 	border-left: 2px solid #fbbf24;
 	padding-left: 0.75rem;
 `;

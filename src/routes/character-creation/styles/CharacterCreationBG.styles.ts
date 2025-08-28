@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import BlackBG from '/src/assets/BlackBG.jpg';
 
 export const CharacterCreationBG = styled.div`
   min-height: 100vh;
@@ -8,6 +9,6 @@ export const CharacterCreationBG = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('/src/assets/BlackBG.jpg') center center/cover no-repeat fixed;
+  background: url(${BlackBG}) center center/cover no-repeat fixed;
   z-index: -1;
 `;

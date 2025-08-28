@@ -1,8 +1,9 @@
 
 import styled from 'styled-components';
+import BlackBG from '/src/assets/BlackBG.png';
 
 export const StyledStepsHeaderBG = styled.div`
-  background-image: url('/static/BlackBG.png');
+  background-image: url(${BlackBG});
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

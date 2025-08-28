@@ -29,7 +29,7 @@ const AttributeTotal = styled.div<{ $exceeded: boolean }>`
 	font-size: 1rem;
 	font-weight: bold;
 	color: ${props => props.$exceeded ? '#dc2626' : '#059669'};
-	margin-bottom: 0.75rem;
+	margin-bottom: 0.25rem;
 `;
 
 const AttributeBreakdown = styled.div`
@@ -68,16 +68,23 @@ const BreakdownLine = styled.div`
 `;
 
 const ValidationMessage = styled.div<{ $type: 'error' | 'warning' }>`
-	margin-top: 0.5rem;
-	padding: 0.5rem;
+	/* Place the validation/feedback message at the bottom-left of the card,
+	   italicized with a leading asterisk. */
+	position: absolute;
+	left: 1rem;
+	right: auto;
+	bottom: 0.9rem;
+	font-size: 0.85rem;
+	color: ${props => props.$type === 'error' ? '#ef4444' : '#e5e7eb'};
+	text-align: left;
+	padding: 0.25rem 0.5rem 0.25rem 0;
+	pointer-events: none; /* non-interactive decorative note */
+	background: transparent;
 	border-radius: 4px;
-	font-size: 0.75rem;
-	background-color: ${props => props.$type === 'error' ? '#fef2f2' : '#fffbeb'};
-	border: 1px solid ${props => props.$type === 'error' ? '#fecaca' : '#fed7aa'};
-	color: ${props => props.$type === 'error' ? '#dc2626' : '#d97706'};
-	
+	font-style: italic;
+
 	&:before {
-		content: ${props => props.$type === 'error' ? "'⚠️ '" : "'💡 '"};
+		content: "* ";
 		margin-right: 0.25rem;
 	}
 `;
@@ -119,17 +126,8 @@ const EffectiveValue = styled.span<{ $different: boolean }>`
 	color: ${props => props.$different ? '#10b981' : '#e5e7eb'};
 `;
 
-const PointBreakdownSummary = styled.div`
-	background: transparent;
-	border: 1px solid #fbbf24;
-	border-radius: 6px;
-	padding: 1rem;
-	margin: 1.5rem auto;
-	font-size: 0.9rem;
-	color: #e5e7eb;
-	max-width: 500px;
-	text-align: center;
-`;
+// Removed PointBreakdownSummary: duplicate small points frame was creating a second
+// "Points Remaining" display in the middle of the page. The main counter is
 
 const ForcedAdjustmentsWarning = styled.div`
 	background: transparent;
@@ -199,34 +197,7 @@ function Attributes() {
 			<StyledTitle>Attributes</StyledTitle>
 			<AttributePointsCounter />
 			
-			{/* NEW: Enhanced point breakdown summary */}
-			<PointBreakdownSummary>
-				<BreakdownLine>
-					<span>Base Points:</span>
-					<span>11</span>
-				</BreakdownLine>
-				<BreakdownLine>
-					<span>Bonus from Traits:</span>
-					<span>{calculation.totalPointsAvailable - 11}</span>
-				</BreakdownLine>
-				<BreakdownLine>
-					<span>Spent on Attributes:</span>
-					<span>{calculation.pointsSpent - calculation.forcedAdjustments.reduce((sum, adj) => sum + adj.pointsCost, 0)}</span>
-				</BreakdownLine>
-				{calculation.forcedAdjustments.length > 0 && (
-					<BreakdownLine>
-						<span>Forced Adjustments:</span>
-						<span>{calculation.forcedAdjustments.reduce((sum, adj) => sum + adj.pointsCost, 0)}</span>
-					</BreakdownLine>
-				)}
-				<BreakdownLine>
-					<span>Points Remaining:</span>
-					<span style={{ color: calculation.pointsRemaining < 0 ? '#dc2626' : '#059669' }}>
-						{calculation.pointsRemaining}
-					</span>
-				</BreakdownLine>
-			</PointBreakdownSummary>
-			
+			{/* The enhanced breakdown summary was removed to avoid duplicating the
 			{/* NEW: Forced adjustments warning */}
 			{calculation.forcedAdjustments.length > 0 && (
 				<ForcedAdjustmentsWarning>

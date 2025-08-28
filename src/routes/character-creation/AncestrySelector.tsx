@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { ancestriesData } from '../../lib/rulesdata/_new_schema/ancestries';
 import type { IAncestry } from '../../lib/rulesdata/types';
@@ -11,15 +10,7 @@ import {
 	StyledAncestryIcon,
 	StyledCardTitle,
 	StyledCardDescription,
-	StyledCardFooter,
-	StyledReadMore,
-	StyledTooltip,
-	StyledTooltipOverlay,
-	StyledTooltipHeader,
-	StyledTooltipIcon,
-	StyledTooltipTitle,
-	StyledTooltipContent,
-	StyledCloseHint
+	StyledNewClassQuote
 } from './styles/AncestrySelector.styles';
 
 // Ancestry-specific icons using Unicode symbols and emojis
@@ -39,9 +30,30 @@ const ancestryIcons: { [key: string]: string } = {
 	default: '🌟'
 };
 
+// Ancestry quotes
+const ancestryQuotes: { [key: string]: string } = {
+	human: "Adaptable and ambitious, we forge our own destiny.",
+	elf: "Centuries of wisdom flow through our veins.",
+	dwarf: "Stone is our blood, mountains our home.",
+	halfling: "Small in stature, but great in courage.",
+	dragonborn: "We carry the might of dragons in our souls.",
+	gnome: "Curiosity and invention are the pillars of progress.",
+	orc: "Strength and honor - nothing less matters.",
+	giantborn: "We stand tall above the rest, unbowed by time.",
+	angelborn: "Divine light guides our path through darkness.",
+	fiendborn: "Darkness flows within, but our choices define us.",
+	beastborn: "Nature's gifts shape our bodies and spirits.",
+	penguinborn: "We waddle with pride through ice and water.",
+	gremlin: "Small but fierce, we thrive in chaos.",
+	goblin: "Clever tactics over brute strength.",
+	terraborn: "Earth is our ally, stone our sanctuary.",
+	shadowborn: "We embrace the darkness others fear.",
+	psyborn: "The mind's potential knows no limits.",
+	default: "A proud lineage with unique talents."
+};
+
 function AncestrySelector() {
 	const { state, dispatch } = useCharacter();
-	const [popupAncestry, setPopupAncestry] = useState<string | null>(null);
 
 	const selectedAncestries: string[] = [];
 	if (state.ancestry1Id) selectedAncestries.push(state.ancestry1Id);
@@ -76,21 +88,8 @@ function AncestrySelector() {
 		return ancestryIcons[ancestryId.toLowerCase()] || ancestryIcons.default;
 	}
 
-	function truncateText(text: string, maxLength: number): string {
-		if (text.length <= maxLength) return text;
-		return text.substring(0, maxLength) + '...';
-	}
-
-	function needsReadMore(text: string, maxLength: number): boolean {
-		return text.length > maxLength;
-	}
-
-	function openPopup(ancestryId: string) {
-		setPopupAncestry(ancestryId);
-	}
-
-	function closePopup() {
-		setPopupAncestry(null);
+	function getAncestryQuote(ancestryId: string): string {
+		return ancestryQuotes[ancestryId.toLowerCase()] || ancestryQuotes.default;
 	}
 
 	return (
@@ -107,39 +106,13 @@ function AncestrySelector() {
 							<StyledAncestryIcon>{getAncestryIcon(ancestry.id)}</StyledAncestryIcon>
 							<StyledCardTitle>{ancestry.name}</StyledCardTitle>
 						</StyledCardHeader>
-						<StyledCardDescription>{truncateText(ancestry.description, 80)}</StyledCardDescription>
-						{needsReadMore(ancestry.description, 80) && (
-							<StyledCardFooter>
-								<StyledReadMore
-									onClick={(e) => {
-										e.stopPropagation();
-										openPopup(ancestry.id);
-									}}
-								>
-									read more...
-								</StyledReadMore>
-							</StyledCardFooter>
-						)}
+						<StyledNewClassQuote>
+							{getAncestryQuote(ancestry.id)}
+						</StyledNewClassQuote>
+						<StyledCardDescription>{ancestry.description}</StyledCardDescription>
 					</StyledCard>
 				))}
 			</StyledGrid>
-
-			{/* Popup overlay and content */}
-			<StyledTooltipOverlay $show={popupAncestry !== null} onClick={closePopup} />
-			{popupAncestry && (
-				<StyledTooltip $show={popupAncestry !== null}>
-					<StyledTooltipHeader>
-						<StyledTooltipIcon>{getAncestryIcon(popupAncestry)}</StyledTooltipIcon>
-						<StyledTooltipTitle>
-							{ancestriesData.find((a) => a.id === popupAncestry)?.name}
-						</StyledTooltipTitle>
-					</StyledTooltipHeader>
-					<StyledTooltipContent>
-						{ancestriesData.find((a) => a.id === popupAncestry)?.description}
-					</StyledTooltipContent>
-					<StyledCloseHint>Click anywhere to close</StyledCloseHint>
-				</StyledTooltip>
-			)}
 		</StyledContainer>
 	);
 }

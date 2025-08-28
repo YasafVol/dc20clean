@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { useCharacter } from '../../lib/stores/characterContext';
 import { useEnhancedCharacterCalculation } from '../../lib/hooks/useEnhancedCharacterCalculation';
 
@@ -8,7 +8,6 @@ import styled from '@emotion/styled';
 import {
 	StyledContainer,
 	StyledTitle,
-	StyledPointsRemaining,
 	StyledGrid,
 	StyledCard,
 	StyledCardTitle,
@@ -21,20 +20,21 @@ import {
 // Additional styled components for enhanced display
 const AttributeHeader = styled.div`
 	display: flex;
-	justify-content: space-between;
+	justify-content: center;
 	align-items: center;
-	margin-bottom: 0.5rem;
+	margin-bottom: 1rem;
 `;
 
 const AttributeTotal = styled.div<{ $exceeded: boolean }>`
-	font-size: 1.1rem;
+	font-size: 1rem;
 	font-weight: bold;
 	color: ${props => props.$exceeded ? '#dc2626' : '#059669'};
+	margin-bottom: 0.75rem;
 `;
 
 const AttributeBreakdown = styled.div`
-	background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
-	border: 2px solid #8b5cf6;
+	background: transparent;
+	border: 1px solid white;
 	border-radius: 6px;
 	padding: 0.75rem;
 	margin-top: 0.75rem;
@@ -51,7 +51,7 @@ const BreakdownLine = styled.div`
 	&:last-child {
 		margin-bottom: 0;
 		padding-top: 0.25rem;
-		border-top: 1px solid #8b5cf6;
+		border-top: 1px solid white;
 		font-weight: 600;
 		color: #fbbf24;
 	}
@@ -87,8 +87,8 @@ const ForcedAdjustmentIndicator = styled.div`
 	padding: 0.5rem;
 	border-radius: 4px;
 	font-size: 0.75rem;
-	background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
-	border: 2px solid #fbbf24;
+	background: transparent;
+	border: 1px solid #fbbf24;
 	color: #fbbf24;
 	
 	&:before {
@@ -103,8 +103,8 @@ const EffectiveValueDisplay = styled.div`
 	gap: 0.5rem;
 	margin-top: 0.5rem;
 	padding: 0.5rem;
-	background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
-	border: 2px solid #8b5cf6;
+	background: transparent;
+	border: 1px solid white;
 	border-radius: 6px;
 	font-size: 0.875rem;
 	color: #e5e7eb;
@@ -120,18 +120,20 @@ const EffectiveValue = styled.span<{ $different: boolean }>`
 `;
 
 const PointBreakdownSummary = styled.div`
-	background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
-	border: 2px solid #0ea5e9;
+	background: transparent;
+	border: 1px solid #fbbf24;
 	border-radius: 6px;
-	padding: 0.75rem;
-	margin-bottom: 1rem;
-	font-size: 0.875rem;
+	padding: 1rem;
+	margin: 1.5rem auto;
+	font-size: 0.9rem;
 	color: #e5e7eb;
+	max-width: 500px;
+	text-align: center;
 `;
 
 const ForcedAdjustmentsWarning = styled.div`
-	background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
-	border: 2px solid #f59e0b;
+	background: transparent;
+	border: 1px solid #f59e0b;
 	border-radius: 6px;
 	padding: 0.75rem;
 	margin-bottom: 1rem;
@@ -147,7 +149,7 @@ const ForcedAdjustmentsWarning = styled.div`
 type AttributeState = Record<string, number>;
 
 function Attributes() {
-	const { state, dispatch, attributePointsRemaining, attributePointsSpent, totalAttributePoints } = useCharacter();
+	const { state, dispatch, attributePointsRemaining, totalAttributePoints } = useCharacter();
 	const { 
 		getAttributeLimit, 
 		canDecreaseAttribute,
@@ -267,10 +269,10 @@ function Attributes() {
 						<StyledCard key={attribute.id}>
 							<AttributeHeader>
 								<StyledCardTitle>{attribute.name}</StyledCardTitle>
-								<AttributeTotal $exceeded={limit.exceeded}>
-									Final: {limit.current} (max {limit.max})
-								</AttributeTotal>
 							</AttributeHeader>
+							<AttributeTotal $exceeded={limit.exceeded}>
+								Final: {limit.current} (max {limit.max})
+							</AttributeTotal>
 							
 							<StyledDescription>{attribute.description}</StyledDescription>
 							

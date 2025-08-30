@@ -208,26 +208,6 @@ function Attributes() {
 				</BreakdownLine>
 			</PointBreakdownSummary>
 
-			{/* Forced adjustments warning */}
-			{calculationResult.forcedAdjustments.length > 0 && (
-				<ForcedAdjustmentsWarning>
-					{calculationResult.forcedAdjustments.length} forced adjustment(s) due to traits:
-					{calculationResult.forcedAdjustments.map((adj, index) => (
-						<div key={index} style={{ marginTop: '0.25rem' }}>
-							• {adj.attribute.charAt(0).toUpperCase() + adj.attribute.slice(1)}:{adj.originalValue}{' '}
-							→ {adj.effectiveValue} (costs {adj.pointsCost} points)
-						</div>
-					))}
-				</ForcedAdjustmentsWarning>
-			)}
-
-			{/* Validation summary */}
-			{!calculationResult.isValid && (
-				<ValidationMessage $type="error">
-					Invalid build: {Math.abs(pointsRemaining)} points over budget
-				</ValidationMessage>
-			)}
-
 			<StyledGrid>
 				{attributesData.map((attribute) => {
 					const attributeKey = `attribute_${attribute.id}`;
@@ -296,17 +276,6 @@ function Attributes() {
 										<span>{limit.current}</span>
 									</BreakdownLine>
 								</AttributeBreakdown>
-							)}
-
-							{/* Forced adjustment indicator */}
-							{calculationResult.forcedAdjustments.find(
-								(adj) => adj.attribute === attribute.id
-							) && (
-								<ForcedAdjustmentIndicator>
-									Forced to minimum (-2), cost: {calculationResult.forcedAdjustments.find(
-										(adj) => adj.attribute === attribute.id
-									)?.pointsCost} points
-								</ForcedAdjustmentIndicator>
 							)}
 
 							{/* Validation messages */}

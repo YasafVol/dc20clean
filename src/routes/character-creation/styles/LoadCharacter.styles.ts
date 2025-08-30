@@ -4,7 +4,8 @@ import styled from 'styled-components';
 export const StyledContainer = styled.div`
 	padding: 2rem;
 	min-height: 100vh;
-	background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
+	background: url('/src/assets/BlackBG.jpg') center/cover no-repeat;
+	background-attachment: fixed;
 `;
 
 export const StyledTitle = styled.h1`
@@ -14,7 +15,6 @@ export const StyledTitle = styled.h1`
 	font-size: 2.2rem;
 	font-weight: bold;
 	font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
-	text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
 	letter-spacing: 2px;
 `;
 
@@ -27,17 +27,15 @@ export const StyledCharacterGrid = styled.div`
 `;
 
 export const StyledCharacterCard = styled.div`
-	border: 2px solid #8b5cf6;
+	border: 1px solid white;
 	border-radius: 12px;
 	padding: 1.5rem;
-	background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-	box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+	background: transparent;
 	transition: all 0.3s ease;
 
 	&:hover {
-		transform: translateY(-4px);
-		box-shadow: 0 12px 40px rgba(139, 92, 246, 0.4);
 		border-color: #fbbf24;
+		transform: translateY(-2px);
 	}
 `;
 
@@ -51,10 +49,10 @@ export const StyledCardActions = styled.div`
 export const StyledActionButton = styled.button<{ variant?: 'primary' | 'secondary' | 'danger' }>`
 	flex: 1;
 	padding: 0.6rem 1rem;
-	border: 2px solid ${(props) => {
+	border: 1px solid ${(props) => {
 		if (props.variant === 'primary') return '#fbbf24';
 		if (props.variant === 'danger') return '#ef4444';
-		return '#8b5cf6';
+		return 'white';
 	}};
 	border-radius: 6px;
 	background: ${(props) => {
@@ -63,9 +61,9 @@ export const StyledActionButton = styled.button<{ variant?: 'primary' | 'seconda
 		return 'transparent';
 	}};
 	color: ${(props) => {
-		if (props.variant === 'primary') return '#1e1b4b';
+		if (props.variant === 'primary') return 'black';
 		if (props.variant === 'danger') return '#ef4444';
-		return '#8b5cf6';
+		return 'white';
 	}};
 	cursor: pointer;
 	transition: all 0.3s ease;
@@ -77,12 +75,12 @@ export const StyledActionButton = styled.button<{ variant?: 'primary' | 'seconda
 		background: ${(props) => {
 			if (props.variant === 'primary') return '#f59e0b';
 			if (props.variant === 'danger') return '#ef4444';
-			return '#8b5cf6';
+			return 'white';
 		}};
 		color: ${(props) => {
-			if (props.variant === 'primary') return '#1e1b4b';
+			if (props.variant === 'primary') return 'black';
 			if (props.variant === 'danger') return 'white';
-			return 'white';
+			return 'black';
 		}};
 		transform: translateY(-1px);
 	}
@@ -92,7 +90,7 @@ export const StyledActionButton = styled.button<{ variant?: 'primary' | 'seconda
 		box-shadow: 0 0 0 2px ${(props) => {
 			if (props.variant === 'primary') return '#fbbf24';
 			if (props.variant === 'danger') return '#ef4444';
-			return '#8b5cf6';
+			return 'white';
 		}};
 	}
 `;
@@ -125,7 +123,7 @@ export const StyledDetailItem = styled.div`
 `;
 
 export const StyledDetailLabel = styled.div`
-	color: #a855f7;
+	color: #fbbf24;
 	font-size: 0.8rem;
 	font-weight: bold;
 	text-transform: uppercase;
@@ -154,7 +152,7 @@ export const StyledEmptyState = styled.div`
 `;
 
 export const StyledEmptyTitle = styled.h2`
-	color: #a855f7;
+	color: #fbbf24;
 	font-size: 1.5rem;
 	margin-bottom: 1rem;
 `;
@@ -167,16 +165,17 @@ export const StyledEmptyText = styled.p`
 export const StyledBackButton = styled.button`
 	padding: 0.75rem 1.5rem;
 	margin-bottom: 2rem;
-	border: none;
+	border: 1px solid white;
 	border-radius: 8px;
-	background: linear-gradient(145deg, #6b7280 0%, #4b5563 100%);
+	background: transparent;
 	color: white;
 	font-weight: bold;
 	cursor: pointer;
 	transition: all 0.3s ease;
 
 	&:hover {
-		background: linear-gradient(145deg, #4b5563 0%, #374151 100%);
+		border-color: #fbbf24;
+		color: #fbbf24;
 		transform: translateY(-2px);
 	}
 `;
@@ -196,14 +195,14 @@ export const StyledModalOverlay = styled.div`
 `;
 
 export const StyledModalContent = styled.div`
-	background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+	background: rgba(15, 23, 42, 0.95);
 	border: 2px solid #ef4444;
 	border-radius: 12px;
 	padding: 2rem;
 	max-width: 400px;
 	width: 90%;
 	text-align: center;
-	box-shadow: 0 8px 32px rgba(239, 68, 68, 0.3);
+	backdrop-filter: blur(10px);
 `;
 
 export const StyledModalTitle = styled.h3`

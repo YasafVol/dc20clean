@@ -65,7 +65,8 @@ import {
 	StyledSelectionName,
 	StyledProficiencySelector,
 	StyledProficiencyButton,
-	StyledPointsRemaining
+	StyledPointsRemaining,
+	StyledActionButton
 } from '../styles/Background.styles';
 
 interface SkillsTabProps {
@@ -126,26 +127,6 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 	};
 
 	// Helper function for consistent button styling
-	const getButtonStyle = (enabled: boolean, variant: 'primary' | 'danger' = 'primary') => ({
-		padding: '0.5rem 1rem',
-		backgroundColor: enabled ? (variant === 'primary' ? '#3b82f6' : '#ef4444') : '#6b7280',
-		color: 'white',
-		border: 'none',
-		borderRadius: '6px',
-		fontSize: '0.875rem',
-		fontWeight: '500',
-		cursor: enabled ? 'pointer' : 'not-allowed',
-		transition: 'all 0.2s ease',
-		opacity: enabled ? 1 : 0.6,
-		':hover': enabled
-			? {
-					backgroundColor: variant === 'primary' ? '#2563eb' : '#dc2626',
-					transform: 'translateY(-1px)',
-					boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
-				}
-			: {}
-	});
-
 	const hasConversions =
 		conversions.skillToTradeConversions > 0 ||
 		conversions.tradeToSkillConversions > 0 ||
@@ -160,7 +141,7 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 				
 				return isInvalid ? (
 					<div style={{
-						background: '#fee2e2',
+						background: 'transparent',
 						border: '1px solid #fecaca',
 						color: '#991b1b',
 						padding: '0.75rem',
@@ -175,12 +156,13 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 			
 			{/* Mastery Limits Info */}
 			<div style={{
-				background: '#f3f4f6',
-				border: '1px solid #d1d5db',
+				background: 'transparent',
+				border: '1px solid white',
 				padding: '0.5rem',
 				borderRadius: '0.375rem',
 				marginBottom: '1rem',
-				fontSize: '0.875rem'
+				fontSize: '0.875rem',
+				color: 'white'
 			}}>
 				<strong>Mastery Limits:</strong> Max level {masteryLimits.maxSkillMastery} 
 				({MASTERY_TABLE[masteryLimits.maxSkillMastery]?.name})
@@ -193,12 +175,12 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 					<div
 						style={{
 							fontSize: '0.9rem',
-							color: '#6366f1',
+							color: 'white',
 							marginTop: '0.5rem',
 							padding: '0.25rem 0.5rem',
-							backgroundColor: '#6366f11a',
+							backgroundColor: 'transparent',
 							borderRadius: '4px',
-							border: '1px solid #6366f133'
+							border: '1px solid white'
 						}}
 					>
 						Active conversions:{' '}
@@ -228,50 +210,20 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 						flexWrap: 'wrap'
 					}}
 				>
-					<button
+					<StyledActionButton
 						onClick={actions.convertSkillToTrade}
 						disabled={pointsData.availableSkillPoints - pointsData.skillPointsUsed < 1}
-						style={getButtonStyle(
-							pointsData.availableSkillPoints - pointsData.skillPointsUsed >= 1
-						)}
-						onMouseEnter={(e) => {
-							if (pointsData.availableSkillPoints - pointsData.skillPointsUsed >= 1) {
-								e.currentTarget.style.backgroundColor = '#2563eb';
-								e.currentTarget.style.transform = 'translateY(-1px)';
-								e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
-							}
-						}}
-						onMouseLeave={(e) => {
-							if (pointsData.availableSkillPoints - pointsData.skillPointsUsed >= 1) {
-								e.currentTarget.style.backgroundColor = '#3b82f6';
-								e.currentTarget.style.transform = 'translateY(0)';
-								e.currentTarget.style.boxShadow = 'none';
-							}
-						}}
+						$enabled={pointsData.availableSkillPoints - pointsData.skillPointsUsed >= 1}
 					>
 						Convert 1 Skill → 2 Trade Points
-					</button>
-					<button
+					</StyledActionButton>
+					<StyledActionButton
 						onClick={actions.resetConversions}
 						disabled={!hasConversions}
-						style={getButtonStyle(hasConversions, 'danger')}
-						onMouseEnter={(e) => {
-							if (hasConversions) {
-								e.currentTarget.style.backgroundColor = '#dc2626';
-								e.currentTarget.style.transform = 'translateY(-1px)';
-								e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
-							}
-						}}
-						onMouseLeave={(e) => {
-							if (hasConversions) {
-								e.currentTarget.style.backgroundColor = '#ef4444';
-								e.currentTarget.style.transform = 'translateY(0)';
-								e.currentTarget.style.boxShadow = 'none';
-							}
-						}}
+						$enabled={hasConversions}
 					>
 						Reset Conversions
-					</button>
+					</StyledActionButton>
 				</div>
 			</StyledPointsRemaining>
 			<StyledSelectionGrid>

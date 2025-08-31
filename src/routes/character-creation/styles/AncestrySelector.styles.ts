@@ -1,83 +1,78 @@
 import styled from 'styled-components';
 
 export const StyledContainer = styled.div`
-	border: 2px solid #8b5cf6;
+	border: none;
 	padding: 1.5rem;
 	border-radius: 12px;
-	background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-	margin-top: 2rem;
-	box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+	background: transparent;
+	margin-top: 0;
 `;
 
 export const StyledTitle = styled.h2`
-	margin-top: 0;
+	margin-top: -1rem;
 	color: #fbbf24;
-	font-size: 1.3rem;
+	font-size: 2.4rem;
 	font-weight: bold;
 	text-align: center;
-	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 	letter-spacing: 1px;
-	border-bottom: 2px solid #ef4444;
 	padding-bottom: 0.5rem;
 	margin-bottom: 1rem;
 `;
 
 export const StyledGrid = styled.div`
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	display: flex;
+	flex-wrap: wrap;
 	gap: 1rem;
 	margin-top: 1rem;
 `;
 
 export const StyledCard = styled.div<{ $selected: boolean }>`
-	border: 2px solid #a855f7;
+	border: 1px solid white;
 	padding: 1.5rem;
 	border-radius: 10px;
-	background: linear-gradient(145deg, #2d1b69 0%, #4c1d95 100%);
+	background: transparent;
 	cursor: pointer;
-	transition: all 0.3s ease;
+	transition: all 0s ease;
+	flex: 1;
+	min-width: 380px;
+	max-width: 380px;
+	height: 180px;
 	text-align: left;
-	box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
-	height: 200px;
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
-	position: relative;
 
 	&:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
 		border-color: #fbbf24;
 	}
 
 	${(props) =>
 		props.$selected &&
 		`
-    border-color: #ef4444;
-    background: linear-gradient(145deg, #991b1b 0%, #dc2626 100%);
-    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
-    transform: translateY(-2px);
-  `}
+		border: 2px solid #fbbf24;
+	`}
 `;
 
 export const StyledCardHeader = styled.div`
 	display: flex;
 	align-items: center;
-	gap: 1rem;
-	margin-bottom: 1rem;
+	gap: 0.75rem;
+	margin-bottom: 0.5rem;
 `;
 
 export const StyledAncestryIcon = styled.div`
-	font-size: 2rem;
+	width: 45px;
+	height: 45px;
 	flex-shrink: 0;
-	background: linear-gradient(145deg, #8b5cf6 0%, #a855f7 100%);
+	background-color: #fbbf24;
 	border-radius: 50%;
-	width: 50px;
-	height: 50px;
+	border: 2px solid #fbbf24;
+	box-sizing: border-box;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+	font-size: 1.8rem;
 `;
 
 export const StyledCardTitle = styled.h3`
@@ -85,21 +80,52 @@ export const StyledCardTitle = styled.h3`
 	color: #fbbf24;
 	font-size: 1.4rem;
 	font-weight: bold;
-	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+	text-transform: uppercase;
+	letter-spacing: 1px;
 `;
 
 export const StyledCardDescription = styled.p`
 	margin: 0;
 	color: #e5e7eb;
-	font-size: 0.9rem;
-	line-height: 1.4;
-	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+	font-size: 0.8rem;
+	font-weight: 300;
+	line-height: 1.3;
 	flex: 1;
-	overflow: hidden;
-	display: -webkit-box;
-	-webkit-line-clamp: 3;
-	-webkit-box-orient: vertical;
-	position: relative;
+	overflow-y: auto;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	hyphens: none;
+	word-break: normal;
+	white-space: pre-line;
+
+	/* Custom scrollbar for description */
+	::-webkit-scrollbar {
+		width: 4px;
+	}
+
+	::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: #fbbf24;
+		border-radius: 4px;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		background: #f1bf3eff;
+	}
+`;
+
+export const StyledNewClassQuote = styled.div`
+	margin-bottom: 0.75rem;
+	font-family: 'Libre Baskerville', serif;
+	font-style: italic;
+	color: white;
+	font-size: 0.85rem;
+	line-height: 1.5;
+	border-left: 2px solid #fbbf24;
+	padding-left: 0.75rem;
 `;
 
 export const StyledCardFooter = styled.div`
@@ -138,7 +164,7 @@ export const StyledTooltip = styled.div<{ $show: boolean }>`
 	color: #e5e7eb;
 	padding: 2rem;
 	border-radius: 12px;
-	border: 3px solid #8b5cf6;
+	border: 3px solid white;
 	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
 	z-index: 2000;
 	width: 90vw;
@@ -162,12 +188,12 @@ export const StyledTooltip = styled.div<{ $show: boolean }>`
 	}
 
 	::-webkit-scrollbar-thumb {
-		background: #8b5cf6;
+		background: #fbbf24;
 		border-radius: 4px;
 	}
 
 	::-webkit-scrollbar-thumb:hover {
-		background: #a855f7;
+		background: #f1bf3eff;
 	}
 `;
 
@@ -190,19 +216,21 @@ export const StyledTooltipHeader = styled.div`
 	gap: 1rem;
 	margin-bottom: 1.5rem;
 	padding-bottom: 1rem;
-	border-bottom: 2px solid #8b5cf6;
+	border-bottom: 2px solid white;
 `;
 
 export const StyledTooltipIcon = styled.div`
-	font-size: 3rem;
-	background: linear-gradient(145deg, #8b5cf6 0%, #a855f7 100%);
+	width: 60px;
+	height: 60px;
+	flex-shrink: 0;
+	background-color: #fbbf24;
 	border-radius: 50%;
-	width: 70px;
-	height: 70px;
+	border: 2px solid #fbbf24;
+	box-sizing: border-box;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+	font-size: 2.5rem;
 `;
 
 export const StyledTooltipTitle = styled.h3`
@@ -210,7 +238,8 @@ export const StyledTooltipTitle = styled.h3`
 	color: #fbbf24;
 	font-size: 1.8rem;
 	font-weight: bold;
-	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+	text-transform: uppercase;
+	letter-spacing: 1px;
 `;
 
 export const StyledTooltipContent = styled.p`
@@ -218,13 +247,12 @@ export const StyledTooltipContent = styled.p`
 	color: #e5e7eb;
 	font-size: 1.1rem;
 	line-height: 1.6;
-	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 `;
 
 export const StyledCloseHint = styled.div`
 	margin-top: 1.5rem;
 	padding-top: 1rem;
-	border-top: 1px solid #8b5cf6;
+	border-top: 1px solid white;
 	text-align: center;
 	color: #9ca3af;
 	font-size: 0.9rem;

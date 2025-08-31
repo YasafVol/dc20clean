@@ -14,6 +14,7 @@ import blackBgImage from './assets/BlackBG.jpg';
 
 import cinzelFont from './types/Fonts/Cinzel-VariableFont_wght.ttf';
 import urbanistFont from './types/Fonts/Urbanist-VariableFont_wght.ttf';
+import libreBaskervilleItalic from './types/Fonts/LibreBaskerville-Italic.ttf';
 
 const GlobalStyle = createGlobalStyle`
 	@font-face {
@@ -27,6 +28,12 @@ const GlobalStyle = createGlobalStyle`
 		src: url('${urbanistFont}') format('truetype');
 		font-weight: 100 900;
 		font-style: normal;
+	}
+	@font-face {
+		font-family: 'Libre Baskerville';
+		src: url('${libreBaskervilleItalic}') format('truetype');
+		font-weight: normal;
+		font-style: italic;
 	}
 	* {
 		box-sizing: border-box;

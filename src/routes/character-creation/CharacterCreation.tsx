@@ -30,6 +30,7 @@ import {
 	StyledNavigationButtons,
 	StyledButton
 } from './styles/CharacterCreation.styles';
+import { CharacterCreationBG } from './styles/CharacterCreationBG.styles';
 import { StyledStepsHeaderBG } from './styles/StepsHeaderBG.styles';
 
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -538,7 +539,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				return (
 					<>
 						<ClassSelector />
-						<ClassFeatures />
+						{state.classId && <ClassFeatures />}
 					</>
 				);
 			case 2:
@@ -562,7 +563,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	};
 
 	return (
-		<div>
+		<div style={{ position: 'relative', zIndex: 1 }}>
+			<CharacterCreationBG />
 			<StyledTitle>
 				{editChar ? `Edit Character: ${editChar.finalName}` : 'Character Creation'}
 			</StyledTitle>
@@ -598,7 +600,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					<StyledButton
 						$variant="primary"
 						onClick={handleNext}
-						disabled={state.currentStep === 6 && !areAllStepsCompleted()}
+						// Temporarily remove the disabled check to ensure the button is clickable
+						// disabled={state.currentStep === 6 && !areAllStepsCompleted()}
 					>
 						{state.currentStep === 6 ? 'Complete' : 'Next →'}
 					</StyledButton>

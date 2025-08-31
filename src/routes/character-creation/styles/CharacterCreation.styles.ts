@@ -54,6 +54,7 @@ export const StyledStep = styled.div<{ $active: boolean; $completed: boolean }>`
 	transition: all 0.3s ease;
 	flex: 1;
 	max-width: 120px;
+	min-height: 80px;
 `;
 
 export const StyledStepNumber = styled.div<{ $active: boolean; $completed: boolean }>`
@@ -98,6 +99,11 @@ export const StyledStepLabel = styled.span<{ $active: boolean; $completed: boole
 	font-size: 0.9rem;
 	font-weight: 600;
 	text-align: center;
+	line-height: 1.2;
+	min-height: 2.4rem;
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
 
 	${(props) =>
 		props.$completed &&
@@ -132,30 +138,23 @@ export const StyledButton = styled.button<{ $variant?: 'primary' | 'secondary' }
 	font-size: 0.9rem;
 	cursor: pointer;
 	transition: all 0.3s ease;
-	border: none;
 	min-width: 80px;
+	border: 1px solid white;
+	background: transparent;
+	color: white;
 
 	${(props) =>
 		props.$variant === 'primary' &&
 		`
-    background: linear-gradient(145deg, #fbbf24 0%, #f59e0b 100%);
-    color: #1e1b4b;
-    
-    &:hover {
-      background: linear-gradient(145deg, #f59e0b 0%, #d97706 100%);
-      box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+    &:hover:not(:disabled) {
+      border-color: #fbbf24;
     }
   `}
 
 	${(props) =>
 		props.$variant === 'secondary' &&
 		`
-    background: transparent;
-    color: #9ca3af;
-    border: 1px solid #9ca3af;
-    
-    &:hover {
-      color: #fbbf24;
+    &:hover:not(:disabled) {
       border-color: #fbbf24;
     }
   `}
@@ -163,6 +162,7 @@ export const StyledButton = styled.button<{ $variant?: 'primary' | 'secondary' }
   &:disabled {
 		opacity: 0.5;
 		cursor: not-allowed;
-		transform: none;
+		border-color: #666;
+		color: #666;
 	}
 `;

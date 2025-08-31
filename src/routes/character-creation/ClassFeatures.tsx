@@ -21,7 +21,7 @@ import {
 	StyledLabel,
 	StyledRadio,
 	StyledOptionDescription,
-	StyledNoSelection,
+	StyledNoSelection, // Keep this for use in ClassSelector
 	StyledBenefitsList,
 	StyledBenefit,
 	StyledBenefitName,
@@ -75,11 +75,7 @@ function ClassFeatures() {
 	}
 
 	if (!selectedClass || !selectedClassFeatures) {
-		return (
-			<StyledContainer>
-				<StyledNoSelection>Select a Class to see its features.</StyledNoSelection>
-			</StyledContainer>
-		);
+		return null; // Don't render anything when no class is selected
 	}
 
 	// Get level 1 features

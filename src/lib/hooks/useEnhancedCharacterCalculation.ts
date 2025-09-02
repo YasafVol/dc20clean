@@ -39,11 +39,15 @@ export function useEnhancedCharacterCalculation(): CharacterCalculationHook {
     state.selectedTraitIds,
     state.selectedTraitChoices,
     state.selectedFeatureChoices,
-    state.skillsJson,
-    state.tradesJson,
-    state.languagesJson,
+    state.skillsData,
+    state.tradesData,
+    state.languagesData,
     state.level,
-    state.combatMastery
+    state.combatMastery,
+    // Include conversions in dependencies
+    state.skillToTradeConversions,
+    state.tradeToSkillConversions,
+    state.tradeToLanguageConversions
   ]);
   
   // Perform calculation with caching

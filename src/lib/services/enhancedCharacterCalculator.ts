@@ -106,6 +106,13 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
     // Default Common to fluent when empty to match current UI assumptions
     languagesJson: JSON.stringify(contextData.languagesData ?? { common: { fluency: 'fluent' } }),
     
+    // Include point conversions
+    conversions: {
+      skillToTrade: contextData.skillToTradeConversions ?? 0,
+      tradeToSkill: contextData.tradeToSkillConversions ?? 0,
+      tradeToLanguage: contextData.tradeToLanguageConversions ?? 0
+    },
+    
     // Optional manual overrides supported by the engine
   manualPD: contextData.manualPD,
   manualAD: contextData.manualAD,

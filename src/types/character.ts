@@ -258,6 +258,16 @@ export interface SpellData {
 	duration: string;
 	isPrepared?: boolean;
 	notes?: string;
+	// Additional properties needed for spell popup
+	effects?: Array<{
+		description: string;
+		damage?: any;
+		healing?: any;
+		modifier?: any;
+	}>;
+	enhancements?: Array<any>;
+	isRitual?: boolean;
+	cantripPassive?: string;
 }
 
 export interface InventoryItemData {

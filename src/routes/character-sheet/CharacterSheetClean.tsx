@@ -1091,15 +1091,16 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 				)}
 
 				{/* Spells Section - Full width, after main content */}
-				{characterData.className && findClassByName(characterData.className)?.spellcastingPath && (
+				{(characterData.className && findClassByName(characterData.className)?.spellcastingPath) || 
+				 (characterData.spells && characterData.spells.length > 0) ? (
 					<div style={{ marginTop: '2rem', padding: '1rem', background: 'white', borderRadius: '8px', border: '2px solid #e0e0e0' }}>
 						<h2 style={{ color: '#2c3e50', marginBottom: '1rem', textAlign: 'center' }}>Spells</h2>
 						<Spells
 							onSpellClick={openSpellPopup}
-							readOnly={true}
+							readOnly={false}
 						/>
 					</div>
-				)}
+				) : null}
 
 				{/* Maneuvers Section - Full width, after main content */}
 				{characterData.className && findClassByName(characterData.className)?.martialPath && (

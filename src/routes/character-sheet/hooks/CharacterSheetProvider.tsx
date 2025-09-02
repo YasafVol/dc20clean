@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useCharacterSheetReducer, type SheetState, type SheetAction } from './useCharacterSheetReducer';
-import { getCharacterById, saveCharacterState } from '../../../lib/utils/storageUtils';
+import { getCharacterById, saveCharacter } from '../../../lib/utils/storageUtils';
+import type { SavedCharacter } from '../../../lib/types/dataContracts';
 import { calculateCharacterWithBreakdowns, convertToEnhancedBuildData } from '../../../lib/services/enhancedCharacterCalculator';
 import { ancestriesData } from '../../../lib/rulesdata/_new_schema/ancestries';
 import { traitsData } from '../../../lib/rulesdata/_new_schema/traits';
@@ -8,7 +9,6 @@ import { knowledgeData } from '../../../lib/rulesdata/knowledge';
 import { tradesData } from '../../../lib/rulesdata/trades';
 import { findClassByName, getLegacyChoiceId, getDisplayLabel } from '../../../lib/rulesdata/loaders/class-features.loader';
 import { getDetailedClassFeatureDescription } from '../../../lib/utils/classFeatureDescriptions';
-import { languagesData } from '../../../lib/rulesdata/languages';
 
 // Simple debounce utility
 function useDebounce<T extends (...args: any[]) => any>(
@@ -53,6 +53,9 @@ interface CharacterSheetContextType {
   addAttack: (attack: any) => void;
   removeAttack: (attackId: string) => void;
   updateAttack: (attackId: string, attack: any) => void;
+  addSpell: (spell: any) => void;
+  removeSpell: (spellId: string) => void;
+  updateSpell: (spellId: string, field: string, value: any) => void;
   updateInventory: (items: any[]) => void;
   updateCurrency: (gold?: number, silver?: number, copper?: number) => void;
   updateNotes: (notes: string) => void;
@@ -82,21 +85,27 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
     addAttack,
     removeAttack,
     updateAttack,
+    addSpell,
+    removeSpell,
+    updateSpell,
     updateInventory,
     updateCurrency,
     updateNotes,
   } = useCharacterSheetReducer();
 
-  // Save function that runs enhanced calculator and persists to storage
-  const saveCharacterData = useCallback(async (character: any) => {
+    // Save function that runs enhanced calculator and persists to storage
+  const saveCharacterData = useCallback(async (character: SavedCharacter) => {
     if (!character) return;
-
+    
+    console.log('Saving character data:', character.id);
+    
     try {
-      // Run enhanced calculator to update original stats
-      const calculationResult = calculateCharacterWithBreakdowns(character);
+      // Run enhanced calculator to get updated stats
+      const calculationData = convertToEnhancedBuildData(character);
+      const calculationResult = calculateCharacterWithBreakdowns(calculationData);
       
-      // Update the character's original resource values with calculated results
-      const updatedCharacter = {
+      // Update character with calculated values and original resource maxes
+      const updatedCharacter: SavedCharacter = {
         ...character,
         characterState: {
           ...character.characterState,
@@ -113,15 +122,15 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
         }
       };
 
-      // Save to localStorage via storage utils
-      await saveCharacterState(character.id, updatedCharacter.characterState);
+      // Save the entire character (includes spells, maneuvers, etc.)
+      await saveCharacter(updatedCharacter);
       
       console.log('Character sheet data saved successfully');
     } catch (error) {
       console.warn('Calculator error during save, proceeding with last known values:', error);
-      // Save anyway with existing character state
+      // Save anyway with existing character data
       try {
-        await saveCharacterState(character.id, character.characterState);
+        await saveCharacter(character);
       } catch (saveError) {
         console.error('Failed to save character data:', saveError);
       }
@@ -231,12 +240,13 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
     addAttack,
     removeAttack,
     updateAttack,
+    addSpell,
+    removeSpell,
+    updateSpell,
     updateInventory,
     updateCurrency,
     updateNotes,
     saveNow,
-    updateGritPoints,
-    updateRestPoints,
   };
 
   return (

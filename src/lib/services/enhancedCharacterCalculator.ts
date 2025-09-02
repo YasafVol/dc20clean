@@ -406,7 +406,7 @@ function validateAttributeLimits(buildData: EnhancedCharacterBuildData, effects:
       max,
       exceeded: current > max,
       canIncrease: (baseValue + traitBonuses + 1) <= max, // Fixed: Check if base can be increased without total exceeding max
-      canDecrease: baseValue > -2
+      canDecrease: baseValue > -2 // Always allow decrease if above minimum, regardless of point budget
     };
   }
   

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 // Import custom hook with all character sheet logic
-import { useCharacterSheet, useCharacterResources, useCharacterFeatures, useCharacterCurrency } from './hooks/CharacterSheetProvider';
+import { useCharacterSheet, useCharacterResources, useCharacterFeatures, useCharacterCurrency, useCharacterSpells } from './hooks/CharacterSheetProvider';
 
 // Import Modal Components  
 import FeaturePopup from './components/FeaturePopup';
@@ -43,15 +43,36 @@ import {
 	StyledCurrencyGrid,
 	StyledCurrencyColumn,
 	StyledCurrencyLabel,
-	StyledCurrencyInput
+	StyledCurrencyInput,
+	StyledSpellsContainer,
+	StyledSpellsHeader,
+	StyledSpellsHeaderTitle,
+	StyledAddSpellButton,
+	StyledSpellsTable,
+	StyledSpellsTableHeader,
+	StyledSpellsTableHeaderRow,
+	StyledSpellsTableHeaderCell,
+	StyledSpellsTableBody,
+	StyledSpellsTableRow,
+	StyledSpellsTableCell,
+	StyledSpellName,
+	StyledSpellSchool,
+	StyledSpellCost,
+	StyledSpellRange,
+	StyledSpellDuration,
+	StyledSpellPrepared,
+	StyledSpellActions,
+	StyledSpellActionButton,
+	StyledSpellsEmptyState
 } from './styles/DesktopLayout';
 
 export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () => void }> = ({ onBack }) => {
 	// Use the Context hooks
-	const { state, updateHP, updateSP, updateMP, updateTempHP, updateCurrency } = useCharacterSheet();
+	const { state, updateHP, updateSP, updateMP, updateTempHP, updateCurrency, addSpell, removeSpell, updateSpell } = useCharacterSheet();
 	const resources = useCharacterResources();
 	const features = useCharacterFeatures();
 	const currency = useCharacterCurrency();
+	const spells = useCharacterSpells();
 	
 	// Local popup state
 	const [selectedFeature, setSelectedFeature] = useState<any>(null);
@@ -112,6 +133,34 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 		const updates: any = {};
 		updates[currencyType.replace('Pieces', '')] = value;
 		updateCurrency(updates.gold, updates.silver, updates.copper);
+	};
+
+	// Spell management functions
+	const handleAddSpell = () => {
+		const newSpell = {
+			id: `spell_${Date.now()}_${Math.random()}`,
+			spellName: 'New Spell',
+			school: 'Evocation',
+			isCantrip: false,
+			cost: { ap: 1, mp: 1 },
+			range: '5 Spaces',
+			duration: 'Instant',
+			isPrepared: false,
+			notes: ''
+		};
+		addSpell(newSpell);
+	};
+
+	const handleDeleteSpell = (spellId: string) => {
+		removeSpell(spellId);
+	};
+
+	const handleTogglePrepared = (spell: any) => {
+		updateSpell(spell.id, 'isPrepared', !spell.isPrepared);
+	};
+
+	const handleSpellClick = (spell: any) => {
+		setSelectedSpell(spell);
 	};
 	
 	const getFillPercentage = (current: number, max: number) => {
@@ -346,6 +395,89 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 							</StyledFeatureCard>
 						))}
 					</StyledFeaturesGrid>
+				</StyledSection>
+
+				{/* Spells */}
+				<StyledSection>
+					<StyledSectionTitle>Spells</StyledSectionTitle>
+					<StyledSpellsContainer>
+						<StyledSpellsHeader>
+							<StyledSpellsHeaderTitle>Spellbook</StyledSpellsHeaderTitle>
+							<StyledAddSpellButton onClick={handleAddSpell}>
+								+ Add Spell
+							</StyledAddSpellButton>
+						</StyledSpellsHeader>
+						
+						{spells && spells.length > 0 ? (
+							<StyledSpellsTable>
+								<StyledSpellsTableHeader>
+									<StyledSpellsTableHeaderRow>
+										<StyledSpellsTableHeaderCell>Spell</StyledSpellsTableHeaderCell>
+										<StyledSpellsTableHeaderCell>Cost</StyledSpellsTableHeaderCell>
+										<StyledSpellsTableHeaderCell>Range</StyledSpellsTableHeaderCell>
+										<StyledSpellsTableHeaderCell>Duration</StyledSpellsTableHeaderCell>
+										<StyledSpellsTableHeaderCell>Prepared</StyledSpellsTableHeaderCell>
+										<StyledSpellsTableHeaderCell>Actions</StyledSpellsTableHeaderCell>
+									</StyledSpellsTableHeaderRow>
+								</StyledSpellsTableHeader>
+								<StyledSpellsTableBody>
+									{spells.map((spell: any) => (
+										<StyledSpellsTableRow key={spell.id}>
+											<StyledSpellsTableCell>
+												<StyledSpellName onClick={() => handleSpellClick(spell)}>
+													{spell.spellName || 'Unnamed Spell'}
+												</StyledSpellName>
+												<StyledSpellSchool>
+													{spell.school} {spell.isCantrip ? '(Cantrip)' : ''}
+												</StyledSpellSchool>
+											</StyledSpellsTableCell>
+											<StyledSpellsTableCell>
+												<StyledSpellCost>
+													{spell.cost?.ap ? `${spell.cost.ap} AP` : ''}
+													{spell.cost?.ap && spell.cost?.mp ? ', ' : ''}
+													{spell.cost?.mp ? `${spell.cost.mp} MP` : ''}
+													{!spell.cost?.ap && !spell.cost?.mp ? 'No Cost' : ''}
+												</StyledSpellCost>
+											</StyledSpellsTableCell>
+											<StyledSpellsTableCell>
+												<StyledSpellRange>{spell.range || 'Unknown'}</StyledSpellRange>
+											</StyledSpellsTableCell>
+											<StyledSpellsTableCell>
+												<StyledSpellDuration>{spell.duration || 'Unknown'}</StyledSpellDuration>
+											</StyledSpellsTableCell>
+											<StyledSpellsTableCell>
+												<StyledSpellPrepared isPrepared={spell.isPrepared}>
+													{spell.isPrepared ? '✓' : '✗'}
+												</StyledSpellPrepared>
+											</StyledSpellsTableCell>
+											<StyledSpellsTableCell>
+												<StyledSpellActions>
+													<StyledSpellActionButton 
+														className="prepare"
+														onClick={() => handleTogglePrepared(spell)}
+														title={spell.isPrepared ? 'Unprepare' : 'Prepare'}
+													>
+														{spell.isPrepared ? '⬇' : '⬆'}
+													</StyledSpellActionButton>
+													<StyledSpellActionButton 
+														className="delete"
+														onClick={() => handleDeleteSpell(spell.id)}
+														title="Delete Spell"
+													>
+														🗑
+													</StyledSpellActionButton>
+												</StyledSpellActions>
+											</StyledSpellsTableCell>
+										</StyledSpellsTableRow>
+									))}
+								</StyledSpellsTableBody>
+							</StyledSpellsTable>
+						) : (
+							<StyledSpellsEmptyState>
+								No spells learned yet. Click "Add Spell" to add your first spell!
+							</StyledSpellsEmptyState>
+						)}
+					</StyledSpellsContainer>
 				</StyledSection>
 
 				{/* Currency */}

@@ -48,11 +48,6 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 		return expanded;
 	});
 
-	console.log('🔍 Spells component received:', {
-		spellsCount: spells.length,
-		spells: spells.map(s => ({ id: s.id, spellName: s.spellName, school: s.school }))
-	});
-
 	// Filter spells based on selected school
 	const filteredSpells = useMemo(() => {
 		if (schoolFilter === 'all') {
@@ -60,6 +55,17 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 		}
 		return allSpells.filter(spell => spell.school === schoolFilter);
 	}, [schoolFilter]);
+
+	// Filter character's spells based on selected school
+	const filteredCharacterSpells = useMemo(() => {
+		if (schoolFilter === 'all') {
+			return spells;
+		}
+		return spells.filter(spell => {
+			// Show spells that match the selected school, or empty spells (for adding new ones)
+			return !spell.spellName || spell.school === schoolFilter;
+		});
+	}, [spells, schoolFilter]);
 
 	const addSpellSlot = () => {
 		const newSpell: SpellData = {
@@ -97,6 +103,20 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 				updateSpell(spell.id, 'cost', selectedSpell.cost);
 				updateSpell(spell.id, 'range', selectedSpell.range);
 				updateSpell(spell.id, 'duration', selectedSpell.duration);
+				// Copy over additional properties for the popup
+				if (selectedSpell.effects) updateSpell(spell.id, 'effects', selectedSpell.effects);
+				if (selectedSpell.enhancements) updateSpell(spell.id, 'enhancements', selectedSpell.enhancements);
+				if (selectedSpell.isRitual !== undefined) updateSpell(spell.id, 'isRitual', selectedSpell.isRitual);
+				if (selectedSpell.cantripPassive) updateSpell(spell.id, 'cantripPassive', selectedSpell.cantripPassive);
+				
+				// Automatically expand the spell to show description
+				setExpandedSpells(prev => {
+					const newSet = new Set(prev);
+					newSet.add(spell.id);
+					return newSet;
+				});
+			} else {
+				console.warn('Could not find spell in allSpells:', value);
 			}
 		} else {
 			updateSpell(spell.id, field, value);
@@ -136,7 +156,9 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 								</option>
 							))}
 						</StyledSchoolFilter>
-						<StyledAddSpellButton onClick={addSpellSlot}>+ Add Spell</StyledAddSpellButton>
+						<StyledAddSpellButton onClick={addSpellSlot}>
+							+ Add {schoolFilter !== 'all' ? `${schoolFilter} ` : ''}Spell
+						</StyledAddSpellButton>
 					</StyledSpellsControls>
 				)}
 			</StyledSpellsHeader>
@@ -150,17 +172,19 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 					<StyledHeaderColumn>AP Cost</StyledHeaderColumn>
 					<StyledHeaderColumn>MP Cost</StyledHeaderColumn>
 					<StyledHeaderColumn>Range</StyledHeaderColumn>
-					<StyledHeaderColumn>
-						<StyledInfoIcon title="Spell details and description">i</StyledInfoIcon>
-					</StyledHeaderColumn>
 				</StyledSpellsHeaderRow>
 
-				{spells.length === 0 ? (
+				{filteredCharacterSpells.length === 0 ? (
 					<StyledEmptyState>
-						{readOnly ? 'No spells known.' : 'No spells selected. Click "Add Spell" to add spells to your character.'}
+						{schoolFilter !== 'all' 
+							? `No ${schoolFilter} spells found. ${readOnly ? '' : 'Click "Add Spell" to add spells to your character.'}`
+							: readOnly ? 'No spells known.' : 'No spells selected. Click "Add Spell" to add spells to your character.'
+						}
 					</StyledEmptyState>
 				) : (
-					spells.map((spell, index) => {
+					filteredCharacterSpells.map((spell) => {
+						// Get the original index for update operations
+						const originalIndex = spells.findIndex(s => s.id === spell.id);
 						// Get the selected spell details for info display
 						const selectedSpell = spell.spellName ? 
 							allSpells.find(s => s.name === spell.spellName) : null;
@@ -170,7 +194,7 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 								<StyledSpellRow>
 									{/* Remove Button - only show in edit mode */}
 									{!readOnly && (
-										<StyledRemoveButton onClick={() => removeSpellSlot(index)}>
+										<StyledRemoveButton onClick={() => removeSpellSlot(originalIndex)}>
 											×
 										</StyledRemoveButton>
 									)}
@@ -183,9 +207,15 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 									) : (
 										<StyledSpellSelect
 											value={spell.spellName}
-											onChange={(e) => updateSpellField(index, 'spellName', e.target.value)}
+											onChange={(e) => updateSpellField(originalIndex, 'spellName', e.target.value)}
 										>
 											<option value="">Select Spell...</option>
+											{/* Always include the currently selected spell, even if it doesn't match filter */}
+											{spell.spellName && !filteredSpells.find(s => s.name === spell.spellName) && (
+												<option key={spell.spellName} value={spell.spellName}>
+													{spell.spellName}
+												</option>
+											)}
 											{filteredSpells.map((spellOption) => (
 												<option key={spellOption.name} value={spellOption.name}>
 													{spellOption.name}
@@ -213,16 +243,7 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 										{spell.range || '-'}
 									</StyledSpellCell>
 
-									{/* Spell Info */}
-									<StyledSpellCell style={{ fontSize: '0.6rem', textAlign: 'center' }}>
-										{selectedSpell ? (
-											<StyledInfoIcon onClick={() => onSpellClick(selectedSpell)}>
-												i
-											</StyledInfoIcon>
-										) : (
-											'-'
-										)}
-									</StyledSpellCell>
+									
 								</StyledSpellRow>
 
 								{/* Expandable Description Section */}

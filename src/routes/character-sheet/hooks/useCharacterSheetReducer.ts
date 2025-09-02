@@ -255,33 +255,48 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 
     case 'ADD_SPELL':
       if (!state.character) return state;
+      const newSpells = [...(state.character.spells || []), action.spell];
       return {
         ...state,
         character: {
           ...state.character,
-          spells: [...(state.character.spells || []), action.spell]
+          spells: newSpells,
+          characterState: {
+            ...state.character.characterState,
+            spells: newSpells
+          }
         }
       };
 
     case 'REMOVE_SPELL':
       if (!state.character) return state;
+      const filteredSpells = (state.character.spells || []).filter((s: any) => s.id !== action.spellId);
       return {
         ...state,
         character: {
           ...state.character,
-          spells: (state.character.spells || []).filter((s: any) => s.id !== action.spellId)
+          spells: filteredSpells,
+          characterState: {
+            ...state.character.characterState,
+            spells: filteredSpells
+          }
         }
       };
 
     case 'UPDATE_SPELL':
       if (!state.character) return state;
+      const updatedSpells = (state.character.spells || []).map((s: any) => 
+        s.id === action.spellId ? { ...s, [action.field]: action.value } : s
+      );
       return {
         ...state,
         character: {
           ...state.character,
-          spells: (state.character.spells || []).map((s: any) => 
-            s.id === action.spellId ? { ...s, [action.field]: action.value } : s
-          )
+          spells: updatedSpells,
+          characterState: {
+            ...state.character.characterState,
+            spells: updatedSpells
+          }
         }
       };
 

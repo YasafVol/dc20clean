@@ -22,7 +22,10 @@ interface InventoryPopupProps {
 const InventoryPopup: React.FC<InventoryPopupProps> = ({ selectedInventoryItem, onClose }) => {
 	if (!selectedInventoryItem) return null;
 
-	const infoList = getInventoryItemInfo(selectedInventoryItem.item, selectedInventoryItem.inventoryData);
+	const infoList = getInventoryItemInfo(
+		selectedInventoryItem.item,
+		selectedInventoryItem.inventoryData
+	);
 
 	return (
 		<StyledFeaturePopupOverlay onClick={onClose}>

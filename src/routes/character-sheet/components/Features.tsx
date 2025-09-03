@@ -21,11 +21,11 @@ interface FeaturesProps {
 const Features: React.FC<FeaturesProps> = ({ onFeatureClick }) => {
 	const { state } = useCharacterSheet();
 	const features = useCharacterFeatures(); // Use our enhanced hook!
-	
+
 	if (!state.character) {
 		return <div>Loading features...</div>;
 	}
-	
+
 	// Organize features by source
 	const ancestryFeatures = features.filter((f) => f.source === 'ancestry');
 	const classFeatures = features.filter((f) => f.source === 'class');

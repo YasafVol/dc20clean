@@ -66,8 +66,7 @@ import {
 	StyledSelectionName,
 	StyledProficiencySelector,
 	StyledProficiencyButton,
-	StyledPointsRemaining,
-	StyledActionButton
+	StyledPointsRemaining
 } from '../styles/Background.styles';
 
 // Combine trades and knowledge for selection
@@ -104,7 +103,7 @@ const TradesTab: React.FC<TradesTabProps> = ({
 	const canSelectMastery = (tradeId: string, targetLevel: number): boolean => {
 		// Check mastery limit
 		if (targetLevel > masteryLimits.maxTradeMastery) return false;
-		
+
 		// Check Level 1 special rule for Adept (level 2)
 		if (targetLevel === 2) {
 			const currentlyAdept = currentTrades[tradeId] === 2;
@@ -112,11 +111,36 @@ const TradesTab: React.FC<TradesTabProps> = ({
 				return false; // Already have one Adept skill/trade
 			}
 		}
-		
+
 		// Check point availability
 		const pointCost = targetLevel - (currentTrades[tradeId] || 0);
-		return canIncreaseProficiency(pointCost, pointsData.tradePointsUsed, pointsData.availableTradePoints);
+		return canIncreaseProficiency(
+			pointCost,
+			pointsData.tradePointsUsed,
+			pointsData.availableTradePoints
+		);
 	};
+
+	// Helper function for consistent button styling
+	const getButtonStyle = (enabled: boolean, variant: 'primary' | 'danger' = 'primary') => ({
+		padding: '0.5rem 1rem',
+		backgroundColor: enabled ? (variant === 'primary' ? '#3b82f6' : '#ef4444') : '#6b7280',
+		color: 'white',
+		border: 'none',
+		borderRadius: '6px',
+		fontSize: '0.875rem',
+		fontWeight: '500',
+		cursor: enabled ? 'pointer' : 'not-allowed',
+		transition: 'all 0.2s ease',
+		opacity: enabled ? 1 : 0.6,
+		':hover': enabled
+			? {
+					backgroundColor: variant === 'primary' ? '#2563eb' : '#dc2626',
+					transform: 'translateY(-1px)',
+					boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+				}
+			: {}
+	});
 
 	const hasConversions =
 		conversions.skillToTradeConversions > 0 ||
@@ -127,31 +151,34 @@ const TradesTab: React.FC<TradesTabProps> = ({
 		<StyledTabContent>
 			{/* Level 1 Validation Warning */}
 			{!masteryLimits.level1Validation.valid && (
-				<div style={{
-					background: 'transparent',
-					border: '1px solid #fecaca',
-					color: '#991b1b',
-					padding: '0.75rem',
-					borderRadius: '0.5rem',
-					marginBottom: '1rem'
-				}}>
-					⚠️ Level 1 characters can only have ONE Adept (level 2) skill or trade total.
-					Currently: {masteryLimits.level1Validation.adeptCount} Adept selections.
+				<div
+					style={{
+						background: '#fee2e2',
+						border: '1px solid #fecaca',
+						color: '#991b1b',
+						padding: '0.75rem',
+						borderRadius: '0.5rem',
+						marginBottom: '1rem'
+					}}
+				>
+					⚠️ Level 1 characters can only have ONE Adept (level 2) skill or trade total. Currently:{' '}
+					{masteryLimits.level1Validation.adeptCount} Adept selections.
 				</div>
 			)}
-			
+
 			{/* Mastery Limits Info */}
-			<div style={{
-				background: 'transparent',
-				border: '1px solid white',
-				padding: '0.5rem',
-				borderRadius: '0.375rem',
-				marginBottom: '1rem',
-				fontSize: '0.875rem',
-				color: 'white'
-			}}>
-				<strong>Mastery Limits:</strong> Max level {masteryLimits.maxTradeMastery} 
-				({MASTERY_TABLE[masteryLimits.maxTradeMastery]?.name})
+			<div
+				style={{
+					background: '#f3f4f6',
+					border: '1px solid #d1d5db',
+					padding: '0.5rem',
+					borderRadius: '0.375rem',
+					marginBottom: '1rem',
+					fontSize: '0.875rem'
+				}}
+			>
+				<strong>Mastery Limits:</strong> Max level {masteryLimits.maxTradeMastery}(
+				{MASTERY_TABLE[masteryLimits.maxTradeMastery]?.name})
 			</div>
 
 			<StyledPointsRemaining>
@@ -161,12 +188,12 @@ const TradesTab: React.FC<TradesTabProps> = ({
 					<div
 						style={{
 							fontSize: '0.9rem',
-							color: 'white',
+							color: '#6366f1',
 							marginTop: '0.5rem',
 							padding: '0.25rem 0.5rem',
-							backgroundColor: 'transparent',
+							backgroundColor: '#6366f11a',
 							borderRadius: '4px',
-							border: '1px solid white'
+							border: '1px solid #6366f133'
 						}}
 					>
 						Active conversions:{' '}
@@ -196,83 +223,129 @@ const TradesTab: React.FC<TradesTabProps> = ({
 						flexWrap: 'wrap'
 					}}
 				>
-					<StyledActionButton
+					<button
 						onClick={actions.convertTradeToSkill}
 						disabled={pointsData.availableTradePoints - pointsData.tradePointsUsed < 2}
-						$enabled={pointsData.availableTradePoints - pointsData.tradePointsUsed >= 2}
+						style={getButtonStyle(
+							pointsData.availableTradePoints - pointsData.tradePointsUsed >= 2
+						)}
+						onMouseEnter={(e) => {
+							if (pointsData.availableTradePoints - pointsData.tradePointsUsed >= 2) {
+								e.currentTarget.style.backgroundColor = '#2563eb';
+								e.currentTarget.style.transform = 'translateY(-1px)';
+								e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+							}
+						}}
+						onMouseLeave={(e) => {
+							if (pointsData.availableTradePoints - pointsData.tradePointsUsed >= 2) {
+								e.currentTarget.style.backgroundColor = '#3b82f6';
+								e.currentTarget.style.transform = 'translateY(0)';
+								e.currentTarget.style.boxShadow = 'none';
+							}
+						}}
 					>
 						Convert 2 Trade → 1 Skill Point
-					</StyledActionButton>
-					<StyledActionButton
+					</button>
+					<button
 						onClick={actions.convertTradeToLanguage}
 						disabled={pointsData.availableTradePoints - pointsData.tradePointsUsed < 1}
-						$enabled={pointsData.availableTradePoints - pointsData.tradePointsUsed >= 1}
+						style={getButtonStyle(
+							pointsData.availableTradePoints - pointsData.tradePointsUsed >= 1
+						)}
+						onMouseEnter={(e) => {
+							if (pointsData.availableTradePoints - pointsData.tradePointsUsed >= 1) {
+								e.currentTarget.style.backgroundColor = '#2563eb';
+								e.currentTarget.style.transform = 'translateY(-1px)';
+								e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+							}
+						}}
+						onMouseLeave={(e) => {
+							if (pointsData.availableTradePoints - pointsData.tradePointsUsed >= 1) {
+								e.currentTarget.style.backgroundColor = '#3b82f6';
+								e.currentTarget.style.transform = 'translateY(0)';
+								e.currentTarget.style.boxShadow = 'none';
+							}
+						}}
 					>
 						Convert 1 Trade → 2 Language Points
-					</StyledActionButton>
-					<StyledActionButton
+					</button>
+					<button
 						onClick={actions.resetConversions}
 						disabled={!hasConversions}
-						$enabled={hasConversions}
+						style={getButtonStyle(hasConversions, 'danger')}
+						onMouseEnter={(e) => {
+							if (hasConversions) {
+								e.currentTarget.style.backgroundColor = '#dc2626';
+								e.currentTarget.style.transform = 'translateY(-1px)';
+								e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+							}
+						}}
+						onMouseLeave={(e) => {
+							if (hasConversions) {
+								e.currentTarget.style.backgroundColor = '#ef4444';
+								e.currentTarget.style.transform = 'translateY(0)';
+								e.currentTarget.style.boxShadow = 'none';
+							}
+						}}
 					>
 						Reset Conversions
-					</StyledActionButton>
+					</button>
 				</div>
 			</StyledPointsRemaining>
 			<StyledSelectionGrid>
-							{allTradesAndKnowledge.map((trade) => {
-				const currentLevel = currentTrades[trade.id] || 0;
-				const masteryInfo = getMasteryInfo(currentLevel, masteryLimits.maxTradeMastery);
-				
-				return (
-					<StyledSelectionItem key={trade.id}>
-						<StyledSelectionHeader>
-							<StyledSelectionName>{trade.name}</StyledSelectionName>
-							<div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
-								{masteryInfo.name} (+{masteryInfo.bonus}) • {trade.attributeAssociation}
+				{allTradesAndKnowledge.map((trade) => {
+					const currentLevel = currentTrades[trade.id] || 0;
+					const masteryInfo = getMasteryInfo(currentLevel, masteryLimits.maxTradeMastery);
+
+					return (
+						<StyledSelectionItem key={trade.id}>
+							<StyledSelectionHeader>
+								<StyledSelectionName>{trade.name}</StyledSelectionName>
+								<div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+									{masteryInfo.name} (+{masteryInfo.bonus}) • {trade.attributeAssociation}
+								</div>
+							</StyledSelectionHeader>
+							<div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>
+								{trade.description}
 							</div>
-						</StyledSelectionHeader>
-						<div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>
-							{trade.description}
-						</div>
-						{(trade as any).tools && (
-							<div
-								style={{
-									fontSize: '0.8rem',
-									color: '#fbbf24',
-									marginBottom: '0.5rem',
-									fontStyle: 'italic'
-								}}
-							>
-								Tools: {(trade as any).tools}
-							</div>
-						)}
-						<StyledProficiencySelector>
-							{[0, 1, 2, 3, 4, 5].map((level) => {
-								const masteryDisplay = getMasteryInfo(level, masteryLimits.maxTradeMastery);
-								const canSelect = canSelectMastery(trade.id, level);
-								
-								return (
-									<StyledProficiencyButton
-										key={level}
-										$active={currentLevel === level}
-										$disabled={!canSelect && level !== currentLevel}
-										title={`${masteryDisplay.name} (+${masteryDisplay.bonus})`}
-										onClick={() => {
-											if (canSelect || level === currentLevel) {
-												onTradeChange(trade.id, level);
-											}
-										}}
-									>
-										{level}
-									</StyledProficiencyButton>
-								);
-							})}
-						</StyledProficiencySelector>
-					</StyledSelectionItem>
-				);
-			})}
-		</StyledSelectionGrid>
+							{(trade as any).tools && (
+								<div
+									style={{
+										fontSize: '0.8rem',
+										color: '#fbbf24',
+										marginBottom: '0.5rem',
+										fontStyle: 'italic'
+									}}
+								>
+									Tools: {(trade as any).tools}
+								</div>
+							)}
+							<StyledProficiencySelector>
+								{[0, 1, 2, 3, 4, 5].map((level) => {
+									const masteryDisplay = getMasteryInfo(level, masteryLimits.maxTradeMastery);
+									const canSelect = canSelectMastery(trade.id, level);
+
+									return (
+										<StyledProficiencyButton
+											key={level}
+											$active={currentLevel === level}
+											$disabled={!canSelect && level !== currentLevel}
+											title={`${masteryDisplay.name} (+${masteryDisplay.bonus})`}
+											onClick={() => {
+												if (canSelect || level === currentLevel) {
+													onTradeChange(trade.id, level);
+												}
+											}}
+										>
+											{level}
+										</StyledProficiencyButton>
+									);
+								})}
+							</StyledProficiencySelector>
+						</StyledSelectionItem>
+					);
+				})}
+			</StyledSelectionGrid>
 		</StyledTabContent>
 	);
 };

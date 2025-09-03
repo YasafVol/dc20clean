@@ -57,8 +57,7 @@ const AttackPopup: React.FC<AttackPopupProps> = ({ selectedAttack, onClose }) =>
 									<br />
 								</>
 							)}
-							<strong>Damage Type:</strong>{' '}
-							{parseDamage(selectedAttack.weapon.damage).typeDisplay}
+							<strong>Damage Type:</strong> {parseDamage(selectedAttack.weapon.damage).typeDisplay}
 							<br />
 							{getWeaponRange(selectedAttack.weapon) && (
 								<>
@@ -82,8 +81,8 @@ const AttackPopup: React.FC<AttackPopupProps> = ({ selectedAttack, onClose }) =>
 							<br />
 							<strong>Damage Calculations:</strong>
 							<br />• <strong>Hit:</strong> {selectedAttack.weapon.damage} + ability modifier
-							<br />• <strong>Heavy Hit (+5):</strong> {selectedAttack.weapon.damage} + 1 +
-							ability modifier
+							<br />• <strong>Heavy Hit (+5):</strong> {selectedAttack.weapon.damage} + 1 + ability
+							modifier
 							<br />• <strong>Brutal Hit (+10):</strong> {selectedAttack.weapon.damage} + 2 +
 							ability modifier
 							<br />
@@ -96,8 +95,7 @@ const AttackPopup: React.FC<AttackPopupProps> = ({ selectedAttack, onClose }) =>
 							)}
 							{getWeaponFeatures(selectedAttack.weapon).length > 0 && (
 								<>
-									<strong>Features:</strong>{' '}
-									{getWeaponFeatures(selectedAttack.weapon).join(', ')}
+									<strong>Features:</strong> {getWeaponFeatures(selectedAttack.weapon).join(', ')}
 								</>
 							)}
 						</>

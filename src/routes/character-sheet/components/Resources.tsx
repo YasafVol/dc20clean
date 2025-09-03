@@ -28,10 +28,7 @@ interface ResourcesProps {
 	isMobile?: boolean;
 }
 
-const Resources: React.FC<ResourcesProps> = ({
-	breakdowns,
-	isMobile = false
-}) => {
+const Resources: React.FC<ResourcesProps> = ({ breakdowns, isMobile = false }) => {
 	const { updateHP, updateSP, updateMP, updateTempHP } = useCharacterSheet();
 	const resources = useCharacterResources();
 
@@ -52,13 +49,16 @@ const Resources: React.FC<ResourcesProps> = ({
 
 	const getHPFillPercentage = (current: number, max: number, tempHP: number) => {
 		// Total effective HP = current + temp HP
-		// Total possible HP = max + temp HP  
+		// Total possible HP = max + temp HP
 		const totalCurrent = current + tempHP;
 		const totalPossible = max + tempHP;
 		return totalPossible > 0 ? Math.min((totalCurrent / totalPossible) * 100, 100) : 0;
 	};
 
-	const onAdjustResource = (resource: 'currentSP' | 'currentMP' | 'currentHP' | 'tempHP', amount: number) => {
+	const onAdjustResource = (
+		resource: 'currentSP' | 'currentMP' | 'currentHP' | 'tempHP',
+		amount: number
+	) => {
 		switch (resource) {
 			case 'currentHP':
 				// HP can go up to maxHP + tempHP total
@@ -75,7 +75,7 @@ const Resources: React.FC<ResourcesProps> = ({
 			case 'tempHP':
 				const newTempHP = Math.max(0, current.tempHP + amount);
 				updateTempHP(newTempHP);
-				
+
 				// CRITICAL: If temp HP decreased, current HP might exceed new maximum
 				const newMaxTotalHP = original.maxHP + newTempHP;
 				if (current.currentHP > newMaxTotalHP) {
@@ -90,7 +90,7 @@ const Resources: React.FC<ResourcesProps> = ({
 		if (resource === 'tempHP') {
 			const newTempHP = Math.max(0, numValue);
 			updateTempHP(newTempHP);
-			
+
 			// CRITICAL: If temp HP decreased, current HP might exceed new maximum
 			const newMaxTotalHP = original.maxHP + newTempHP;
 			if (current.currentHP > newMaxTotalHP) {
@@ -131,16 +131,16 @@ const Resources: React.FC<ResourcesProps> = ({
 						fontStyle: 'italic'
 					}}
 				>
-									<Tooltip 
-					content={
-						breakdowns?.spMax 
-							? createEnhancedTooltip('Stamina Points', breakdowns.spMax)
-							: createSPTooltip({ finalSPMax: original.maxSP })
-					} 
-					position="top"
-				>
-					<span style={{ cursor: 'help' }}>{original.maxSP}</span>
-				</Tooltip>
+					<Tooltip
+						content={
+							breakdowns?.spMax
+								? createEnhancedTooltip('Stamina Points', breakdowns.spMax)
+								: createSPTooltip({ finalSPMax: original.maxSP })
+						}
+						position="top"
+					>
+						<span style={{ cursor: 'help' }}>{original.maxSP}</span>
+					</Tooltip>
 				</div>
 			</ResourceColumn>
 
@@ -175,12 +175,12 @@ const Resources: React.FC<ResourcesProps> = ({
 						fontStyle: 'italic'
 					}}
 				>
-					<Tooltip 
+					<Tooltip
 						content={
-							breakdowns?.mpMax 
+							breakdowns?.mpMax
 								? createEnhancedTooltip('Mana Points', breakdowns.mpMax)
 								: createMPTooltip({ finalMPMax: original.maxMP })
-						} 
+						}
 						position="top"
 					>
 						<span style={{ cursor: 'help' }}>{original.maxMP}</span>
@@ -231,12 +231,12 @@ const Resources: React.FC<ResourcesProps> = ({
 						gap: '0.5rem'
 					}}
 				>
-					<Tooltip 
+					<Tooltip
 						content={
-							breakdowns?.hpMax 
+							breakdowns?.hpMax
 								? createEnhancedTooltip('Hit Points', breakdowns.hpMax)
 								: createHPTooltip({ finalHPMax: original.maxHP })
-						} 
+						}
 						position="top"
 					>
 						<span style={{ cursor: 'help' }}>{original.maxHP + current.tempHP}</span>

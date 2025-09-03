@@ -30,17 +30,17 @@ export interface SpellsProps {
 const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 	const { addSpell, removeSpell, updateSpell, state } = useCharacterSheet();
 	const spells = useCharacterSpells();
-	
+
 	if (!state.character) {
 		return <div>Loading spells...</div>;
 	}
-	
+
 	const characterData = state.character;
 	const [schoolFilter, setSchoolFilter] = useState<string>('all');
 	// Initialize with all spells expanded by default
 	const [expandedSpells, setExpandedSpells] = useState<Set<string>>(() => {
 		const expanded = new Set<string>();
-		spells.forEach(spell => {
+		spells.forEach((spell) => {
 			if (spell.spellName) {
 				expanded.add(spell.id);
 			}
@@ -50,7 +50,7 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 
 	console.log('🔍 Spells component received:', {
 		spellsCount: spells.length,
-		spells: spells.map(s => ({ id: s.id, spellName: s.spellName, school: s.school }))
+		spells: spells.map((s) => ({ id: s.id, spellName: s.spellName, school: s.school }))
 	});
 
 	// Filter spells based on selected school
@@ -58,7 +58,7 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 		if (schoolFilter === 'all') {
 			return allSpells;
 		}
-		return allSpells.filter(spell => spell.school === schoolFilter);
+		return allSpells.filter((spell) => spell.school === schoolFilter);
 	}, [schoolFilter]);
 
 	const addSpellSlot = () => {
@@ -86,10 +86,10 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 	const updateSpellField = (index: number, field: keyof SpellData, value: any) => {
 		const spell = spells[index];
 		if (!spell) return;
-		
+
 		if (field === 'spellName' && value) {
 			// When spell is selected, populate all fields from spell data
-			const selectedSpell = allSpells.find(spell => spell.name === value);
+			const selectedSpell = allSpells.find((spell) => spell.name === value);
 			if (selectedSpell) {
 				updateSpell(spell.id, 'spellName', selectedSpell.name);
 				updateSpell(spell.id, 'school', selectedSpell.school);
@@ -108,7 +108,7 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 	};
 
 	const toggleSpellExpansion = (spellId: string) => {
-		setExpandedSpells(prev => {
+		setExpandedSpells((prev) => {
 			const newSet = new Set(prev);
 			if (newSet.has(spellId)) {
 				newSet.delete(spellId);
@@ -130,7 +130,7 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 						</label>
 						<StyledSchoolFilter value={schoolFilter} onChange={handleSchoolFilterChange}>
 							<option value="all">All Schools</option>
-							{(Object.values(SpellSchool) as string[]).map(school => (
+							{(Object.values(SpellSchool) as string[]).map((school) => (
 								<option key={school} value={school}>
 									{school}
 								</option>
@@ -157,14 +157,17 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 
 				{spells.length === 0 ? (
 					<StyledEmptyState>
-						{readOnly ? 'No spells known.' : 'No spells selected. Click "Add Spell" to add spells to your character.'}
+						{readOnly
+							? 'No spells known.'
+							: 'No spells selected. Click "Add Spell" to add spells to your character.'}
 					</StyledEmptyState>
 				) : (
 					spells.map((spell, index) => {
 						// Get the selected spell details for info display
-						const selectedSpell = spell.spellName ? 
-							allSpells.find(s => s.name === spell.spellName) : null;
-							
+						const selectedSpell = spell.spellName
+							? allSpells.find((s) => s.name === spell.spellName)
+							: null;
+
 						return (
 							<React.Fragment key={spell.id}>
 								<StyledSpellRow>
@@ -198,15 +201,13 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 									<StyledSpellCell>{spell.school}</StyledSpellCell>
 
 									{/* Type (Cantrip or Spell) */}
-									<StyledSpellCell>
-										{spell.isCantrip ? 'Cantrip' : 'Spell'}
-									</StyledSpellCell>
+									<StyledSpellCell>{spell.isCantrip ? 'Cantrip' : 'Spell'}</StyledSpellCell>
 
-								{/* AP Cost */}
-								<StyledSpellCell>{spell.cost?.ap || '-'}</StyledSpellCell>
+									{/* AP Cost */}
+									<StyledSpellCell>{spell.cost?.ap || '-'}</StyledSpellCell>
 
-								{/* MP Cost */}
-								<StyledSpellCell>{spell.cost?.mp || '-'}</StyledSpellCell>
+									{/* MP Cost */}
+									<StyledSpellCell>{spell.cost?.mp || '-'}</StyledSpellCell>
 
 									{/* Range */}
 									<StyledSpellCell style={{ fontSize: '0.7rem' }}>
@@ -216,9 +217,7 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 									{/* Spell Info */}
 									<StyledSpellCell style={{ fontSize: '0.6rem', textAlign: 'center' }}>
 										{selectedSpell ? (
-											<StyledInfoIcon onClick={() => onSpellClick(selectedSpell)}>
-												i
-											</StyledInfoIcon>
+											<StyledInfoIcon onClick={() => onSpellClick(selectedSpell)}>i</StyledInfoIcon>
 										) : (
 											'-'
 										)}
@@ -227,14 +226,16 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 
 								{/* Expandable Description Section */}
 								{selectedSpell && expandedSpells.has(spell.id) && (
-									<div style={{
-										padding: '10px',
-										backgroundColor: '#f9f9f9',
-										border: '1px solid #ddd',
-										borderTop: 'none',
-										borderRadius: '0 0 4px 4px',
-										marginTop: '-0.5rem'
-									}}>
+									<div
+										style={{
+											padding: '10px',
+											backgroundColor: '#f9f9f9',
+											border: '1px solid #ddd',
+											borderTop: 'none',
+											borderRadius: '0 0 4px 4px',
+											marginTop: '-0.5rem'
+										}}
+									>
 										<div style={{ fontSize: '0.8rem' }}>
 											<strong>Description:</strong>
 											<br />
@@ -259,8 +260,17 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 													<br />
 													<strong>Enhancements:</strong>
 													{selectedSpell.enhancements.map((enhancement, enhancementIndex) => (
-														<div key={enhancementIndex} style={{ marginTop: '0.5rem', padding: '0.5rem', backgroundColor: '#f0f0f0', borderRadius: '4px' }}>
-															<strong>{enhancement.name}</strong> ({enhancement.type} {enhancement.cost})
+														<div
+															key={enhancementIndex}
+															style={{
+																marginTop: '0.5rem',
+																padding: '0.5rem',
+																backgroundColor: '#f0f0f0',
+																borderRadius: '4px'
+															}}
+														>
+															<strong>{enhancement.name}</strong> ({enhancement.type}{' '}
+															{enhancement.cost})
 															<br />
 															{enhancement.description}
 														</div>
@@ -273,13 +283,15 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 
 								{/* Toggle Description Button */}
 								{selectedSpell && (
-									<div style={{
-										padding: '5px',
-										textAlign: 'center',
-										borderTop: '1px solid #eee',
-										backgroundColor: '#fafafa',
-										borderRadius: '0 0 4px 4px'
-									}}>
+									<div
+										style={{
+											padding: '5px',
+											textAlign: 'center',
+											borderTop: '1px solid #eee',
+											backgroundColor: '#fafafa',
+											borderRadius: '0 0 4px 4px'
+										}}
+									>
 										<button
 											onClick={() => toggleSpellExpansion(spell.id)}
 											style={{

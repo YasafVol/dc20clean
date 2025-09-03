@@ -12,18 +12,13 @@ import {
 } from '../styles/Defenses';
 import DefenseChangeModal from './DefenseChangeModal';
 import { useCharacterDefenses, useCharacterSheet } from '../hooks/CharacterSheetProvider';
-import {
-	getDefenseDisplayName,
-	clearDefenseNotesForField
-} from '../../../lib/utils/defenseNotes';
+import { getDefenseDisplayName, clearDefenseNotesForField } from '../../../lib/utils/defenseNotes';
 
 interface DefensesProps {
 	isMobile?: boolean;
 }
 
-const Defenses: React.FC<DefensesProps> = ({
-	isMobile = false
-}) => {
+const Defenses: React.FC<DefensesProps> = ({ isMobile = false }) => {
 	const { setManualDefense, state } = useCharacterSheet();
 	const defenses = useCharacterDefenses();
 
@@ -254,7 +249,9 @@ const Defenses: React.FC<DefensesProps> = ({
 								</RevertButton>
 							</>
 						) : (
-							(character.finalPDR || 0) > 0 && <AutoCalculatedNote>Auto-calculated</AutoCalculatedNote>
+							(character.finalPDR || 0) > 0 && (
+								<AutoCalculatedNote>Auto-calculated</AutoCalculatedNote>
+							)
 						)}
 					</DefenseFooter>
 				</DefenseItem>

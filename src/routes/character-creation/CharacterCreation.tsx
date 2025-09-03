@@ -12,12 +12,12 @@ import SpellsAndManeuvers from './SpellsAndManeuvers.tsx';
 import CharacterName from './CharacterName.tsx';
 import Snackbar from '../../components/Snackbar.tsx';
 import { completeCharacter } from '../../lib/services/characterCompletion';
-import {
-	completeCharacterEdit,
-	convertCharacterToInProgress
-} from '../../lib/utils/characterEdit';
+import { completeCharacterEdit, convertCharacterToInProgress } from '../../lib/utils/characterEdit';
 import type { SavedCharacter } from '../../lib/types/dataContracts';
-import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from '../../lib/services/enhancedCharacterCalculator';
+import {
+	convertToEnhancedBuildData,
+	calculateCharacterWithBreakdowns
+} from '../../lib/services/enhancedCharacterCalculator';
 import { traitsData } from '../../lib/rulesdata/_new_schema/traits';
 import {
 	StyledContainer,
@@ -58,7 +58,13 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			classId: state.classId,
 			calculationResult: calculationResult?.ancestry
 		});
-	}, [state.ancestry1Id, state.ancestry2Id, state.selectedTraitIds, state.currentStep, calculationResult?.ancestry]);
+	}, [
+		state.ancestry1Id,
+		state.ancestry2Id,
+		state.selectedTraitIds,
+		state.currentStep,
+		calculationResult?.ancestry
+	]);
 
 	// Initialize character state for edit mode
 	useEffect(() => {
@@ -94,12 +100,26 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			if (editChar) {
 				// Edit mode: use the enhanced completion that preserves manual modifications
 				// Use enhanced calculator for character editing
-				const supportedClasses = ['barbarian', 'cleric', 'hunter', 'champion', 'wizard', 'monk', 'rogue', 'sorcerer', 'spellblade', 'warlock', 'bard', 'druid', 'commander'];
-				
+				const supportedClasses = [
+					'barbarian',
+					'cleric',
+					'hunter',
+					'champion',
+					'wizard',
+					'monk',
+					'rogue',
+					'sorcerer',
+					'spellblade',
+					'warlock',
+					'bard',
+					'druid',
+					'commander'
+				];
+
 				if (supportedClasses.includes(state.classId || '')) {
 					const enhancedData = convertToEnhancedBuildData(state);
 					const enhancedResult = calculateCharacterWithBreakdowns(enhancedData);
-					const enhancedCalculatorFn = async () => ({ 
+					const enhancedCalculatorFn = async () => ({
 						...enhancedResult.stats,
 						grantedAbilities: enhancedResult.grantedAbilities,
 						conditionalModifiers: enhancedResult.conditionalModifiers,
@@ -109,7 +129,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					// Force reload of saved characters in LoadCharacter
 					localStorage.setItem('dc20_reload', String(Date.now()));
 				} else {
-					throw new Error(`Class "${state.classId}" is not supported. All classes should be migrated to the enhanced calculator.`);
+					throw new Error(
+						`Class "${state.classId}" is not supported. All classes should be migrated to the enhanced calculator.`
+					);
 				}
 				setSnackbarMessage('Character updated successfully! Manual modifications preserved.');
 				setShowSnackbar(true);
@@ -144,7 +166,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				if (state.classId === null) return false;
 
 				// Check if all required feature choices have been made
-				const selectedClass = classesData.find((c) => c.id.toLowerCase() === state.classId?.toLowerCase());
+				const selectedClass = classesData.find(
+					(c) => c.id.toLowerCase() === state.classId?.toLowerCase()
+				);
 				if (!selectedClass) return false;
 
 				// Check if all required feature choices have been made
@@ -152,7 +176,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				if (!selectedClassFeatures) return false;
 
 				// FIXED: Use typed data instead of JSON parsing
-				const selectedFeatureChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
+				const selectedFeatureChoices: { [key: string]: string } =
+					state.selectedFeatureChoices || {};
 
 				// Check if spell school choices are required and have been made
 				const spellList = selectedClassFeatures.spellcastingPath?.spellList;
@@ -211,16 +236,16 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				// Use centralized calculator for ancestry points validation
 				const ancestryData = calculationResult.ancestry || { ancestryPointsRemaining: 5 };
 				const { ancestryPointsRemaining } = ancestryData;
-				
+
 				// Step is complete if:
 				// 1. At least one ancestry is selected AND
-				// 2. Points are not over budget (>= 0) AND  
+				// 2. Points are not over budget (>= 0) AND
 				// 3. All points are spent (== 0) for completion
 				const hasAncestry = state.ancestry1Id !== null;
 				const pointsValid = ancestryPointsRemaining >= 0;
 				const allPointsSpent = ancestryPointsRemaining === 0;
 				const isValid = hasAncestry && pointsValid && allPointsSpent;
-				
+
 				console.log('🔍 Step 2 (Ancestry) validation:', {
 					ancestry1Id: state.ancestry1Id,
 					ancestry2Id: state.ancestry2Id,
@@ -278,126 +303,134 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					);
 				}
 
-                // Available points should match BackgroundPointsManager (include bonus points and conversions)
-                const intelligenceModifier = state.attribute_intelligence;
-                
-                // Calculate bonus skill points from traits and class features (same logic as BackgroundPointsManager)
-                let bonusSkillPoints = 0;
-                
-                // From traits - FIXED: Use typed data instead of JSON parsing
-                if (state.selectedTraitIds && Array.isArray(state.selectedTraitIds)) {
-                    const selectedTraitIdsList: string[] = state.selectedTraitIds;
-                    
-                    console.log('🔍 Selected trait IDs:', selectedTraitIdsList);
-                    
-                    selectedTraitIdsList.forEach((traitId: string) => {
-                            const trait = traitsData.find((t: any) => t.id === traitId);
-                            console.log(`🔍 Processing trait ${traitId}:`, trait);
-                            if (trait) {
-                                trait.effects.forEach((effect: any) => {
-                                    if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
-                                        console.log(`🔍 Found skillPoints bonus: +${effect.value} from trait ${traitId}`);
-                                        bonusSkillPoints += (effect.value as number);
-                                    }
-                                });
-                            } else {
-                                console.warn(`🚨 Trait not found: ${traitId}`);
-                            }
-                        });
-                }
-                
-                // From class features  
-                if (state.classId && state.selectedFeatureChoices) {
-                    try {
-                        const selectedClass = classesData.find((c) => c.id.toLowerCase() === state.classId?.toLowerCase());
-                        const classFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
-                        
-                        if (classFeatures) {
-                            // FIXED: Use typed data instead of JSON parsing
-                            const selectedChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
-                            const level1Features = classFeatures.coreFeatures.filter(
-                                (feature: any) => feature.levelGained === 1
-                            );
+				// Available points should match BackgroundPointsManager (include bonus points and conversions)
+				const intelligenceModifier = state.attribute_intelligence;
 
-                            level1Features.forEach((feature: any) => {
-                                // Check for direct feature effects first
-                                if (feature.effects) {
-                                    feature.effects.forEach((effect: any) => {
-                                        if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
-                                            bonusSkillPoints += (effect.value as number);
-                                        }
-                                    });
-                                }
+				// Calculate bonus skill points from traits and class features (same logic as BackgroundPointsManager)
+				let bonusSkillPoints = 0;
 
-                                // Check for choice-based effects
-                                if (feature.choices) {
-                                    feature.choices.forEach((choice: any, choiceIndex: number) => {
-                                        const choiceId = `${classFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;
-                                        const selectedOptions = selectedChoices[choiceId];
+				// From traits - FIXED: Use typed data instead of JSON parsing
+				if (state.selectedTraitIds && Array.isArray(state.selectedTraitIds)) {
+					const selectedTraitIdsList: string[] = state.selectedTraitIds;
 
-                                        if (selectedOptions) {
-                                            let optionsToProcess: string[] = [];
-                                            
-                                            // Expect arrays directly (no more legacy JSON string support)
-                                            if (Array.isArray(selectedOptions)) {
-                                                optionsToProcess = selectedOptions;
-                                            } else {
-                                                optionsToProcess = [selectedOptions];
-                                            }
+					console.log('🔍 Selected trait IDs:', selectedTraitIdsList);
 
-                                            optionsToProcess.forEach((optionName) => {
-                                                const selectedOption = choice.options?.find((opt: any) => opt.name === optionName);
-                                                if (selectedOption && selectedOption.effects) {
-                                                    selectedOption.effects.forEach((effect: any) => {
-                                                        if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
-                                                            bonusSkillPoints += (effect.value as number);
-                                                        }
-                                                    });
-                                                }
-                                            });
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    } catch (error) {
-                        // Ignore parsing errors
-                    }
-                }
-                
-                const baseSkillPoints = Math.max(1, 5 + intelligenceModifier + bonusSkillPoints);
-                
-                console.log('🔍 Skill Points Calculation:', {
-                    base: 5,
-                    intelligence: intelligenceModifier,
-                    bonusFromTraits: bonusSkillPoints,
-                    total: baseSkillPoints
-                });
-                const skillToTrade = state.skillToTradeConversions || 0;
-                const tradeToSkill = state.tradeToSkillConversions || 0;
-                const availableSkillPoints = baseSkillPoints - skillToTrade + Math.floor(tradeToSkill / 2);
+					selectedTraitIdsList.forEach((traitId: string) => {
+						const trait = traitsData.find((t: any) => t.id === traitId);
+						console.log(`🔍 Processing trait ${traitId}:`, trait);
+						if (trait) {
+							trait.effects.forEach((effect: any) => {
+								if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+									console.log(`🔍 Found skillPoints bonus: +${effect.value} from trait ${traitId}`);
+									bonusSkillPoints += effect.value as number;
+								}
+							});
+						} else {
+							console.warn(`🚨 Trait not found: ${traitId}`);
+						}
+					});
+				}
 
-                // For completion, require exact spend of available skill points
-                const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
+				// From class features
+				if (state.classId && state.selectedFeatureChoices) {
+					try {
+						const selectedClass = classesData.find(
+							(c) => c.id.toLowerCase() === state.classId?.toLowerCase()
+						);
+						const classFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
+
+						if (classFeatures) {
+							// FIXED: Use typed data instead of JSON parsing
+							const selectedChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
+							const level1Features = classFeatures.coreFeatures.filter(
+								(feature: any) => feature.levelGained === 1
+							);
+
+							level1Features.forEach((feature: any) => {
+								// Check for direct feature effects first
+								if (feature.effects) {
+									feature.effects.forEach((effect: any) => {
+										if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+											bonusSkillPoints += effect.value as number;
+										}
+									});
+								}
+
+								// Check for choice-based effects
+								if (feature.choices) {
+									feature.choices.forEach((choice: any, choiceIndex: number) => {
+										const choiceId = `${classFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;
+										const selectedOptions = selectedChoices[choiceId];
+
+										if (selectedOptions) {
+											let optionsToProcess: string[] = [];
+
+											// Expect arrays directly (no more legacy JSON string support)
+											if (Array.isArray(selectedOptions)) {
+												optionsToProcess = selectedOptions;
+											} else {
+												optionsToProcess = [selectedOptions];
+											}
+
+											optionsToProcess.forEach((optionName) => {
+												const selectedOption = choice.options?.find(
+													(opt: any) => opt.name === optionName
+												);
+												if (selectedOption && selectedOption.effects) {
+													selectedOption.effects.forEach((effect: any) => {
+														if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+															bonusSkillPoints += effect.value as number;
+														}
+													});
+												}
+											});
+										}
+									});
+								}
+							});
+						}
+					} catch (error) {
+						// Ignore parsing errors
+					}
+				}
+
+				const baseSkillPoints = Math.max(1, 5 + intelligenceModifier + bonusSkillPoints);
+
+				console.log('🔍 Skill Points Calculation:', {
+					base: 5,
+					intelligence: intelligenceModifier,
+					bonusFromTraits: bonusSkillPoints,
+					total: baseSkillPoints
+				});
+				const skillToTrade = state.skillToTradeConversions || 0;
+				const tradeToSkill = state.tradeToSkillConversions || 0;
+				const availableSkillPoints = baseSkillPoints - skillToTrade + Math.floor(tradeToSkill / 2);
+
+				// For completion, require exact spend of available skill points
+				const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
 				const hasExactlySpentAllSkillPoints = skillPointsRemaining === 0;
 				// Calculate available trade and language points using same logic as BackgroundPointsManager
 				const bonusTradePoints = 0;
 				const bonusLanguagePoints = 0;
-				
+
 				// Check for ancestry bonuses (simplified calculation)
 				const baseTradePoints = 3 + bonusTradePoints;
 				const baseLanguagePoints = 2 + bonusLanguagePoints;
-				
-				const availableTradePoints = baseTradePoints + Math.floor(skillToTrade / 2) - Math.floor(tradeToSkill / 2);
+
+				const availableTradePoints =
+					baseTradePoints + Math.floor(skillToTrade / 2) - Math.floor(tradeToSkill / 2);
 				const availableLanguagePoints = baseLanguagePoints; // No conversions affect language points currently
-				
+
 				// Allow completion if all skill points are spent AND either:
-				// 1. Some trade/language points were spent, OR 
+				// 1. Some trade/language points were spent, OR
 				// 2. No trade/language points are available to spend
 				const hasSpentSomeTradeOrLanguagePoints = tradePointsUsed > 0 || languagePointsUsed > 0;
-				const hasNoTradeOrLanguagePointsToSpend = availableTradePoints <= 0 && availableLanguagePoints <= 0;
-				
-				const isValid = hasExactlySpentAllSkillPoints && (hasSpentSomeTradeOrLanguagePoints || hasNoTradeOrLanguagePointsToSpend);
+				const hasNoTradeOrLanguagePointsToSpend =
+					availableTradePoints <= 0 && availableLanguagePoints <= 0;
+
+				const isValid =
+					hasExactlySpentAllSkillPoints &&
+					(hasSpentSomeTradeOrLanguagePoints || hasNoTradeOrLanguagePointsToSpend);
 
 				console.log('🔍 Step 4 (Background) validation:', {
 					baseSkillPoints,
@@ -426,7 +459,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				if (!state.classId) return false;
 
 				// Get class data to determine what's required
-				const selectedClass = classesData.find((c) => c.id.toLowerCase() === state.classId?.toLowerCase());
+				const selectedClass = classesData.find(
+					(c) => c.id.toLowerCase() === state.classId?.toLowerCase()
+				);
 				if (!selectedClass) return false;
 
 				const selectedClassFeatures = findClassByName(selectedClass.name);
@@ -442,7 +477,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 				// Check if class has spellcasting
 				const hasSpellcasting = selectedClassFeatures.spellcastingPath?.spellList;
-				
+
 				// Check if class has maneuvers (simplified check based on class features)
 				// For now, we'll use a simple heuristic: classes that are primarily martial have maneuvers
 				const martialClasses = ['barbarian', 'champion', 'hunter', 'monk', 'rogue'];
@@ -487,14 +522,14 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			label: step.label,
 			completed: isStepCompleted(step.number)
 		}));
-		
+
 		const allCompleted = results.every((result) => result.completed);
-		
+
 		console.log('🔍 areAllStepsCompleted check:', {
 			results,
 			allCompleted
 		});
-		
+
 		return allCompleted;
 	};
 
@@ -536,10 +571,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 			<StyledStepIndicator>
 				<StyledNavigationButtons>
-					<StyledButton
-						$variant="secondary"
-						onClick={handlePrevious}
-					>
+					<StyledButton $variant="secondary" onClick={handlePrevious}>
 						← Previous
 					</StyledButton>
 				</StyledNavigationButtons>

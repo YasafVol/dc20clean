@@ -40,14 +40,21 @@ export const spellbladeClass: ClassDefinition = {
 			id: 'fighting_style',
 			featureName: 'Fighting Style',
 			levelGained: 1,
-			description: 'You adopt a particular style of fighting as your specialty. Choose one Fighting Style.',
+			description:
+				'You adopt a particular style of fighting as your specialty. Choose one Fighting Style.',
 			effects: [
 				{
 					type: 'GRANT_CHOICE',
 					target: 'fighting_style',
 					value: {
 						prompt: 'Choose a Fighting Style',
-						options: ['defense', 'dueling', 'great_weapon_fighting', 'protection', 'two_weapon_fighting']
+						options: [
+							'defense',
+							'dueling',
+							'great_weapon_fighting',
+							'protection',
+							'two_weapon_fighting'
+						]
 					},
 					userChoice: {
 						prompt: 'Choose your Fighting Style',
@@ -66,7 +73,8 @@ export const spellbladeClass: ClassDefinition = {
 			id: 'spellstrike',
 			featureName: 'Spellstrike',
 			levelGained: 2,
-			description: 'When you cast a spell that requires a Spell Attack, you can deliver the spell through a weapon attack.',
+			description:
+				'When you cast a spell that requires a Spell Attack, you can deliver the spell through a weapon attack.',
 			effects: [
 				{
 					type: 'GRANT_ABILITY',
@@ -79,7 +87,8 @@ export const spellbladeClass: ClassDefinition = {
 			id: 'arcane_weapon',
 			featureName: 'Arcane Weapon',
 			levelGained: 2,
-			description: 'You can use a bonus action to imbue a weapon you\'re holding with magical energy.',
+			description:
+				"You can use a bonus action to imbue a weapon you're holding with magical energy.",
 			effects: [
 				{
 					type: 'GRANT_ABILITY',

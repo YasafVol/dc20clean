@@ -24,7 +24,7 @@ export const StyledFeaturePopupContent = styled.div`
 	margin: 1rem;
 	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 	box-sizing: border-box;
-	
+
 	@media (max-width: 768px) {
 		width: calc(100vw - 10rem);
 		margin: 5rem 1rem 1rem 1rem;

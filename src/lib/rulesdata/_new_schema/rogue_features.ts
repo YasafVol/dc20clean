@@ -28,7 +28,8 @@ export const rogueClass: ClassDefinition = {
 			id: 'rogue_expertise',
 			featureName: 'Expertise',
 			levelGained: 1,
-			description: 'Choose 2 Skills. Your Mastery Cap and Mastery Level in those Skills both increase by 1.',
+			description:
+				'Choose 2 Skills. Your Mastery Cap and Mastery Level in those Skills both increase by 1.',
 			effects: [
 				{
 					type: 'GRANT_SKILL_EXPERTISE',
@@ -45,7 +46,8 @@ export const rogueClass: ClassDefinition = {
 			id: 'sneak_attack',
 			featureName: 'Sneak Attack',
 			levelGained: 1,
-			description: 'Once per turn, you can deal extra damage when you have ADV on an Attack Check or when you Flank the target.',
+			description:
+				'Once per turn, you can deal extra damage when you have ADV on an Attack Check or when you Flank the target.',
 			effects: [
 				{
 					type: 'GRANT_ABILITY',
@@ -56,9 +58,10 @@ export const rogueClass: ClassDefinition = {
 		},
 		{
 			id: 'thieves_cant',
-			featureName: 'Thieves\' Cant',
+			featureName: "Thieves' Cant",
 			levelGained: 1,
-			description: 'You know a secret mix of dialect, jargon, and code that allows you to hide messages in seemingly normal conversation.',
+			description:
+				'You know a secret mix of dialect, jargon, and code that allows you to hide messages in seemingly normal conversation.',
 			effects: [
 				{
 					type: 'GRANT_ABILITY',

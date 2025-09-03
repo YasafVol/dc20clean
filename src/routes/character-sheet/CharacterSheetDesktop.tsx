@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 
 // Import custom hook with all character sheet logic
-import { useCharacterSheet, useCharacterResources, useCharacterFeatures, useCharacterCurrency } from './hooks/CharacterSheetProvider';
+import {
+	useCharacterSheet,
+	useCharacterResources,
+	useCharacterFeatures,
+	useCharacterCurrency
+} from './hooks/CharacterSheetProvider';
 
-// Import Modal Components  
+// Import Modal Components
 import FeaturePopup from './components/FeaturePopup';
 import SpellPopup from './components/SpellPopup';
 import AttackPopup from './components/AttackPopup';
@@ -46,34 +51,36 @@ import {
 	StyledCurrencyInput
 } from './styles/DesktopLayout';
 
-export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () => void }> = ({ onBack }) => {
+export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () => void }> = ({
+	onBack
+}) => {
 	// Use the Context hooks
 	const { state, updateHP, updateSP, updateMP, updateTempHP, updateCurrency } = useCharacterSheet();
 	const resources = useCharacterResources();
 	const features = useCharacterFeatures();
 	const currency = useCharacterCurrency();
-	
+
 	// Local popup state
 	const [selectedFeature, setSelectedFeature] = useState<any>(null);
 	const [selectedSpell, setSelectedSpell] = useState<any>(null);
 	const [selectedAttack, setSelectedAttack] = useState<any>(null);
 	const [selectedInventoryItem, setSelectedInventoryItem] = useState<any>(null);
-	
+
 	// Helper function to get skills for an attribute
 	const getSkillsForAttribute = (attribute: string) => {
 		return skillsData
-			.filter(skill => skill.attributeAssociation === attribute)
-			.map(skill => ({
+			.filter((skill) => skill.attributeAssociation === attribute)
+			.map((skill) => ({
 				...skill,
 				value: characterData?.skillsData?.[skill.id] || 0
 			}));
 	};
-	
+
 	// Helper functions
 	const adjustResource = (resource: string, amount: number) => {
 		if (!resources) return;
 		const current = resources.current;
-		
+
 		switch (resource) {
 			case 'currentHP':
 				updateHP(Math.max(0, current.currentHP + amount));
@@ -89,7 +96,7 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 				break;
 		}
 	};
-	
+
 	const handleResourceInputChange = (resource: string, value: string) => {
 		const numValue = parseInt(value) || 0;
 		switch (resource) {
@@ -107,27 +114,27 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 				break;
 		}
 	};
-	
+
 	const handleCurrencyChange = (currencyType: string, value: number) => {
 		const updates: any = {};
 		updates[currencyType.replace('Pieces', '')] = value;
 		updateCurrency(updates.gold, updates.silver, updates.copper);
 	};
-	
+
 	const getFillPercentage = (current: number, max: number) => {
 		return max > 0 ? (current / max) * 100 : 0;
 	};
-	
+
 	const getHPFillPercentage = (current: number, max: number, temp: number) => {
 		return max > 0 ? ((current + temp) / max) * 100 : 0;
 	};
-	
+
 	const openFeaturePopup = (feature: any) => setSelectedFeature(feature);
 	const closeFeaturePopup = () => setSelectedFeature(null);
 	const closeSpellPopup = () => setSelectedSpell(null);
 	const closeAttackPopup = () => setSelectedAttack(null);
 	const closeInventoryPopup = () => setSelectedInventoryItem(null);
-	
+
 	const loading = state.loading;
 	const error = state.error;
 	const characterData = state.character;
@@ -136,7 +143,14 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 	if (loading) {
 		return (
 			<StyledContainer>
-				<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+				<div
+					style={{
+						display: 'flex',
+						justifyContent: 'center',
+						alignItems: 'center',
+						height: '50vh'
+					}}
+				>
 					Loading character data...
 				</div>
 			</StyledContainer>
@@ -147,7 +161,15 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 	if (error) {
 		return (
 			<StyledContainer>
-				<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh', color: 'red' }}>
+				<div
+					style={{
+						display: 'flex',
+						justifyContent: 'center',
+						alignItems: 'center',
+						height: '50vh',
+						color: 'red'
+					}}
+				>
 					Error: {error}
 				</div>
 			</StyledContainer>
@@ -158,7 +180,14 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 	if (!characterData) {
 		return (
 			<StyledContainer>
-				<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+				<div
+					style={{
+						display: 'flex',
+						justifyContent: 'center',
+						alignItems: 'center',
+						height: '50vh'
+					}}
+				>
 					Character not found
 				</div>
 			</StyledContainer>
@@ -167,12 +196,8 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 
 	return (
 		<StyledContainer>
-			{onBack && (
-				<StyledBackButton onClick={onBack}>
-					← Back to Menu
-				</StyledBackButton>
-			)}
-			
+			{onBack && <StyledBackButton onClick={onBack}>← Back to Menu</StyledBackButton>}
+
 			<StyledDesktopWrapper>
 				{/* Character Header */}
 				<StyledDesktopHeader isDead={resources.current.isDead}>
@@ -183,12 +208,14 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 					</StyledCharacterName>
 					<StyledCharacterSubtitle>
 						{resources.current.isDead && (
-							<div style={{ 
-								color: '#8B0000', 
-								fontWeight: 'bold', 
-								fontSize: '1.1rem',
-								marginBottom: '0.5rem'
-							}}>
+							<div
+								style={{
+									color: '#8B0000',
+									fontWeight: 'bold',
+									fontSize: '1.1rem',
+									marginBottom: '0.5rem'
+								}}
+							>
 								💀 DEAD 💀
 							</div>
 						)}
@@ -209,8 +236,11 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 						<StyledAttributeLabel>Might</StyledAttributeLabel>
 						<StyledAttributeValue>{characterData.finalMight}</StyledAttributeValue>
 						{/* Skills for Might */}
-						{getSkillsForAttribute('might').map(skill => (
-							<div key={skill.id} style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.25rem' }}>
+						{getSkillsForAttribute('might').map((skill) => (
+							<div
+								key={skill.id}
+								style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.25rem' }}
+							>
 								{skill.name}: {skill.value}
 							</div>
 						))}
@@ -219,8 +249,11 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 						<StyledAttributeLabel>Agility</StyledAttributeLabel>
 						<StyledAttributeValue>{characterData.finalAgility}</StyledAttributeValue>
 						{/* Skills for Agility */}
-						{getSkillsForAttribute('agility').map(skill => (
-							<div key={skill.id} style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.25rem' }}>
+						{getSkillsForAttribute('agility').map((skill) => (
+							<div
+								key={skill.id}
+								style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.25rem' }}
+							>
 								{skill.name}: {skill.value}
 							</div>
 						))}
@@ -229,8 +262,11 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 						<StyledAttributeLabel>Charisma</StyledAttributeLabel>
 						<StyledAttributeValue>{characterData.finalCharisma}</StyledAttributeValue>
 						{/* Skills for Charisma */}
-						{getSkillsForAttribute('charisma').map(skill => (
-							<div key={skill.id} style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.25rem' }}>
+						{getSkillsForAttribute('charisma').map((skill) => (
+							<div
+								key={skill.id}
+								style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.25rem' }}
+							>
 								{skill.name}: {skill.value}
 							</div>
 						))}
@@ -239,8 +275,11 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 						<StyledAttributeLabel>Intelligence</StyledAttributeLabel>
 						<StyledAttributeValue>{characterData.finalIntelligence}</StyledAttributeValue>
 						{/* Skills for Intelligence */}
-						{getSkillsForAttribute('intelligence').map(skill => (
-							<div key={skill.id} style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.25rem' }}>
+						{getSkillsForAttribute('intelligence').map((skill) => (
+							<div
+								key={skill.id}
+								style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.25rem' }}
+							>
 								{skill.name}: {skill.value}
 							</div>
 						))}
@@ -254,7 +293,7 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 				{/* Resources */}
 				<StyledSection>
 					<StyledSectionTitle>Resources</StyledSectionTitle>
-					
+
 					{/* HP */}
 					{resources && (
 						<StyledResourceRow>
@@ -264,19 +303,29 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 								{resources.current.tempHP > 0 && ` (+${resources.current.tempHP} temp)`}
 							</StyledResourceValue>
 							<StyledResourceBar>
-								<StyledResourceFill 
-									fillPercent={getHPFillPercentage(resources.current.currentHP, resources.original.maxHP, resources.current.tempHP)}
+								<StyledResourceFill
+									fillPercent={getHPFillPercentage(
+										resources.current.currentHP,
+										resources.original.maxHP,
+										resources.current.tempHP
+									)}
 									color="#4CAF50"
 								/>
 							</StyledResourceBar>
 							<StyledResourceControls>
-								<StyledResourceButton onClick={() => adjustResource('currentHP', -1)}>-</StyledResourceButton>
+								<StyledResourceButton onClick={() => adjustResource('currentHP', -1)}>
+									-
+								</StyledResourceButton>
 								<StyledResourceInput
 									type="number"
 									value={resources.current.currentHP}
-									onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleResourceInputChange('currentHP', e.target.value)}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+										handleResourceInputChange('currentHP', e.target.value)
+									}
 								/>
-								<StyledResourceButton onClick={() => adjustResource('currentHP', 1)}>+</StyledResourceButton>
+								<StyledResourceButton onClick={() => adjustResource('currentHP', 1)}>
+									+
+								</StyledResourceButton>
 							</StyledResourceControls>
 						</StyledResourceRow>
 					)}
@@ -289,19 +338,28 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 								{resources.current.currentSP} / {resources.original.maxSP}
 							</StyledResourceValue>
 							<StyledResourceBar>
-								<StyledResourceFill 
-									fillPercent={getFillPercentage(resources.current.currentSP, resources.original.maxSP)}
+								<StyledResourceFill
+									fillPercent={getFillPercentage(
+										resources.current.currentSP,
+										resources.original.maxSP
+									)}
 									color="#2196F3"
 								/>
 							</StyledResourceBar>
 							<StyledResourceControls>
-								<StyledResourceButton onClick={() => adjustResource('currentSP', -1)}>-</StyledResourceButton>
+								<StyledResourceButton onClick={() => adjustResource('currentSP', -1)}>
+									-
+								</StyledResourceButton>
 								<StyledResourceInput
 									type="number"
 									value={resources.current.currentSP}
-									onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleResourceInputChange('currentSP', e.target.value)}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+										handleResourceInputChange('currentSP', e.target.value)
+									}
 								/>
-								<StyledResourceButton onClick={() => adjustResource('currentSP', 1)}>+</StyledResourceButton>
+								<StyledResourceButton onClick={() => adjustResource('currentSP', 1)}>
+									+
+								</StyledResourceButton>
 							</StyledResourceControls>
 						</StyledResourceRow>
 					)}
@@ -314,19 +372,28 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 								{resources.current.currentMP} / {resources.original.maxMP}
 							</StyledResourceValue>
 							<StyledResourceBar>
-								<StyledResourceFill 
-									fillPercent={getFillPercentage(resources.current.currentMP, resources.original.maxMP)}
+								<StyledResourceFill
+									fillPercent={getFillPercentage(
+										resources.current.currentMP,
+										resources.original.maxMP
+									)}
 									color="#9C27B0"
 								/>
 							</StyledResourceBar>
 							<StyledResourceControls>
-								<StyledResourceButton onClick={() => adjustResource('currentMP', -1)}>-</StyledResourceButton>
+								<StyledResourceButton onClick={() => adjustResource('currentMP', -1)}>
+									-
+								</StyledResourceButton>
 								<StyledResourceInput
 									type="number"
 									value={resources.current.currentMP}
-									onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleResourceInputChange('currentMP', e.target.value)}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+										handleResourceInputChange('currentMP', e.target.value)
+									}
 								/>
-								<StyledResourceButton onClick={() => adjustResource('currentMP', 1)}>+</StyledResourceButton>
+								<StyledResourceButton onClick={() => adjustResource('currentMP', 1)}>
+									+
+								</StyledResourceButton>
 							</StyledResourceControls>
 						</StyledResourceRow>
 					)}
@@ -337,10 +404,7 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 					<StyledSectionTitle>Features & Traits</StyledSectionTitle>
 					<StyledFeaturesGrid>
 						{features.map((feature: any) => (
-							<StyledFeatureCard
-								key={feature.id}
-								onClick={() => openFeaturePopup(feature)}
-							>
+							<StyledFeatureCard key={feature.id} onClick={() => openFeaturePopup(feature)}>
 								<StyledFeatureName>{feature.name}</StyledFeatureName>
 								<StyledFeatureSource>{feature.sourceDetail}</StyledFeatureSource>
 							</StyledFeatureCard>
@@ -357,7 +421,9 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 							<StyledCurrencyInput
 								type="number"
 								value={currency.gold}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCurrencyChange('goldPieces', parseInt(e.target.value) || 0)}
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+									handleCurrencyChange('goldPieces', parseInt(e.target.value) || 0)
+								}
 							/>
 						</StyledCurrencyColumn>
 						<StyledCurrencyColumn>
@@ -365,7 +431,9 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 							<StyledCurrencyInput
 								type="number"
 								value={currency.silver}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCurrencyChange('silverPieces', parseInt(e.target.value) || 0)}
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+									handleCurrencyChange('silverPieces', parseInt(e.target.value) || 0)
+								}
 							/>
 						</StyledCurrencyColumn>
 						<StyledCurrencyColumn>
@@ -373,7 +441,9 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 							<StyledCurrencyInput
 								type="number"
 								value={currency.copper}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCurrencyChange('copperPieces', parseInt(e.target.value) || 0)}
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+									handleCurrencyChange('copperPieces', parseInt(e.target.value) || 0)
+								}
 							/>
 						</StyledCurrencyColumn>
 					</StyledCurrencyGrid>
@@ -381,26 +451,11 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 			</StyledDesktopWrapper>
 
 			{/* Modal Popups - same as mobile! */}
-			{selectedFeature && (
-				<FeaturePopup
-					feature={selectedFeature}
-					onClose={closeFeaturePopup}
-				/>
-			)}
+			{selectedFeature && <FeaturePopup feature={selectedFeature} onClose={closeFeaturePopup} />}
 
-			{selectedSpell && (
-				<SpellPopup
-					spell={selectedSpell}
-					onClose={closeSpellPopup}
-				/>
-			)}
+			{selectedSpell && <SpellPopup spell={selectedSpell} onClose={closeSpellPopup} />}
 
-			{selectedAttack && (
-				<AttackPopup
-					selectedAttack={selectedAttack}
-					onClose={closeAttackPopup}
-				/>
-			)}
+			{selectedAttack && <AttackPopup selectedAttack={selectedAttack} onClose={closeAttackPopup} />}
 
 			{selectedInventoryItem && (
 				<InventoryPopup

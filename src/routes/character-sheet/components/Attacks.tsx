@@ -36,11 +36,11 @@ export interface AttacksProps {
 const Attacks: React.FC<AttacksProps> = ({ onAttackClick }) => {
 	const { addAttack, removeAttack, updateAttack, state } = useCharacterSheet();
 	const attacks = useCharacterAttacks();
-	
+
 	if (!state.character) {
 		return <div>Loading attacks...</div>;
 	}
-	
+
 	const characterData = state.character;
 	const addWeaponSlot = () => {
 		const newAttack: AttackData = {

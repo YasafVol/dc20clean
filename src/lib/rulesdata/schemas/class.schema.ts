@@ -73,20 +73,22 @@ export const classSchema = z.object({
 	cantripsKnownLvl1: z.number().optional(),
 	spellsKnownLvl1: z.number().optional(),
 	// Level progression data for future level gaining
-	levelProgression: z.array(z.object({
-		level: z.number(),
-		healthPoints: z.number(),
-		attributePoints: z.number(),
-		skillPoints: z.number(),
-		tradePoints: z.number(),
-		staminaPoints: z.number(),
-		maneuversKnown: z.number(),
-		techniquesKnown: z.number(),
-		manaPoints: z.number(),
-		cantripsKnown: z.number(),
-		spellsKnown: z.number(),
-		features: z.string() // Description of features gained at this level
-	})),
+	levelProgression: z.array(
+		z.object({
+			level: z.number(),
+			healthPoints: z.number(),
+			attributePoints: z.number(),
+			skillPoints: z.number(),
+			tradePoints: z.number(),
+			staminaPoints: z.number(),
+			maneuversKnown: z.number(),
+			techniquesKnown: z.number(),
+			manaPoints: z.number(),
+			cantripsKnown: z.number(),
+			spellsKnown: z.number(),
+			features: z.string() // Description of features gained at this level
+		})
+	),
 	// Features should be handled by class-features.loader.ts, but keeping for schema compatibility
 	level1Features: z.array(classFeatureSchema).optional(),
 	featureChoicesLvl1: z.array(classFeatureChoiceSchema).optional()

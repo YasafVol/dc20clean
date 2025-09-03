@@ -28,31 +28,27 @@ const Currency: React.FC<CurrencyProps> = () => {
 
 	const currency = inventory.currency;
 
-		// Type guard for legacy/canonical currency
-		const canonicalCurrency = {
-			goldPieces:
-				'goldPieces' in currency
-					? currency.goldPieces
-					: 'gold' in currency
-					? currency.gold
-					: 0,
-			silverPieces:
-				'silverPieces' in currency
-					? currency.silverPieces
-					: 'silver' in currency
+	// Type guard for legacy/canonical currency
+	const canonicalCurrency = {
+		goldPieces:
+			'goldPieces' in currency ? currency.goldPieces : 'gold' in currency ? currency.gold : 0,
+		silverPieces:
+			'silverPieces' in currency
+				? currency.silverPieces
+				: 'silver' in currency
 					? currency.silver
 					: 0,
-			copperPieces:
-				'copperPieces' in currency
-					? currency.copperPieces
-					: 'copper' in currency
+		copperPieces:
+			'copperPieces' in currency
+				? currency.copperPieces
+				: 'copper' in currency
 					? currency.copper
-					: 0,
-		};
+					: 0
+	};
 
 	const handleInputChange = (currencyType: string, value: string) => {
 		const numValue = parseInt(value) || 0;
-		
+
 		switch (currencyType) {
 			case 'goldPieces':
 				updateCurrency(numValue, canonicalCurrency.silverPieces, canonicalCurrency.copperPieces);

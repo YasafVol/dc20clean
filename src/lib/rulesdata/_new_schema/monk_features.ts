@@ -23,7 +23,8 @@ export const monkClass: ClassDefinition = {
 			maximumIncreasesBy: 'Stamina Points column of the Monk Class Table'
 		},
 		staminaRegen: {
-			description: 'Once per round, you can regain up to half your maximum SP when you succeed on an Attack Check, Athletics Check, or Acrobatics Check.',
+			description:
+				'Once per round, you can regain up to half your maximum SP when you succeed on an Attack Check, Athletics Check, or Acrobatics Check.',
 			conditions: []
 		}
 	},
@@ -37,7 +38,8 @@ export const monkClass: ClassDefinition = {
 				{
 					type: 'GRANT_ABILITY',
 					target: 'iron_palm',
-					value: 'Your limbs are considered Natural Weapons with the Impact Property that deal 1 Bludgeoning damage.'
+					value:
+						'Your limbs are considered Natural Weapons with the Impact Property that deal 1 Bludgeoning damage.'
 				},
 				{
 					type: 'MODIFY_STAT',
@@ -60,7 +62,8 @@ export const monkClass: ClassDefinition = {
 				{
 					type: 'GRANT_ABILITY',
 					target: 'step_of_wind',
-					value: 'While not wearing Armor: move on vertical surfaces and across liquids, use Prime Modifier for Jump Distance and Fall damage.'
+					value:
+						'While not wearing Armor: move on vertical surfaces and across liquids, use Prime Modifier for Jump Distance and Fall damage.'
 				}
 			]
 		},
@@ -68,7 +71,8 @@ export const monkClass: ClassDefinition = {
 			id: 'monk_stance',
 			featureName: 'Monk Stance',
 			levelGained: 1,
-			description: 'You learn 2 Monk Stances. You can enter/swap stances at the start of your turn or spend 1 SP to swap during your turn.',
+			description:
+				'You learn 2 Monk Stances. You can enter/swap stances at the start of your turn or spend 1 SP to swap during your turn.',
 			effects: [
 				{
 					type: 'GRANT_CHOICE',
@@ -78,7 +82,7 @@ export const monkClass: ClassDefinition = {
 						count: 2,
 						options: [
 							'bear_stance',
-							'bull_stance', 
+							'bull_stance',
 							'cobra_stance',
 							'gazelle_stance',
 							'tiger_stance',

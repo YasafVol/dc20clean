@@ -115,6 +115,7 @@ import { warlockClass } from '../_new_schema/warlock_features';
 import { bardClass } from '../_new_schema/bard_features';
 import { druidClass } from '../_new_schema/druid_features';
 import { commanderClass } from '../_new_schema/commander_features';
+import { psionClass } from '../_new_schema/psion_features';
 
 // Use the new schema class definitions
 const rawClassFeatures = [
@@ -130,13 +131,14 @@ const rawClassFeatures = [
 	warlockClass,
 	bardClass,
 	druidClass,
-	commanderClass
+	commanderClass,
+	psionClass
 ];
 
 // Debug logging
 console.log('🔍 Class Features Debug:', {
 	totalClasses: rawClassFeatures.length,
-	classNames: rawClassFeatures.map(c => c?.className || 'undefined')
+	classNames: rawClassFeatures.map((c) => c?.className || 'undefined')
 });
 
 // Export the class features data
@@ -162,9 +164,12 @@ export function getAvailableSpellSchools(classData: ClassDefinition): SpellSchoo
 // Helper function to find a class by name
 export function findClassByName(className: string): ClassDefinition | undefined {
 	console.log('🔍 findClassByName called with:', className);
-	console.log('🔍 Available classes:', classFeaturesData.map(c => c.className));
-	const result = classFeaturesData.find((cls) => 
-		cls.className.toLowerCase() === className.toLowerCase()
+	console.log(
+		'🔍 Available classes:',
+		classFeaturesData.map((c) => c.className)
+	);
+	const result = classFeaturesData.find(
+		(cls) => cls.className.toLowerCase() === className.toLowerCase()
 	);
 	console.log('🔍 findClassByName result:', result ? 'found' : 'not found');
 	return result;
@@ -237,7 +242,7 @@ export function getClassSpecificInfo(
 									selectedValues = [selectedValue];
 								}
 							}
-							
+
 							if (selectedValues.length > 0) {
 								const label = getDisplayLabel(className, feature.featureName, choiceIndex);
 								displayInfo.push({

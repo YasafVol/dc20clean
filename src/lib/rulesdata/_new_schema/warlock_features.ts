@@ -47,7 +47,8 @@ export const warlockClass: ClassDefinition = {
 			id: 'pact_magic',
 			featureName: 'Pact Magic',
 			levelGained: 1,
-			description: 'Your arcane research and magic bestowed by your patron have given you facility with spells.',
+			description:
+				'Your arcane research and magic bestowed by your patron have given you facility with spells.',
 			effects: [
 				{
 					type: 'GRANT_SPELLCASTING',
@@ -60,7 +61,8 @@ export const warlockClass: ClassDefinition = {
 			id: 'eldritch_invocations',
 			featureName: 'Eldritch Invocations',
 			levelGained: 2,
-			description: 'You learn eldritch invocations, fragments of forbidden knowledge that imbue you with an abiding magical ability.',
+			description:
+				'You learn eldritch invocations, fragments of forbidden knowledge that imbue you with an abiding magical ability.',
 			effects: [
 				{
 					type: 'GRANT_CHOICE',
@@ -68,7 +70,16 @@ export const warlockClass: ClassDefinition = {
 					value: {
 						prompt: 'Choose 2 Eldritch Invocations',
 						count: 2,
-						options: ['agonizing_blast', 'armor_of_shadows', 'beast_speech', 'beguiling_influence', 'devil_sight', 'eldritch_sight', 'eyes_of_rune_keeper', 'fiendish_vigor']
+						options: [
+							'agonizing_blast',
+							'armor_of_shadows',
+							'beast_speech',
+							'beguiling_influence',
+							'devil_sight',
+							'eldritch_sight',
+							'eyes_of_rune_keeper',
+							'fiendish_vigor'
+						]
 					},
 					userChoice: {
 						prompt: 'Choose 2 Eldritch Invocations',
@@ -77,7 +88,7 @@ export const warlockClass: ClassDefinition = {
 							'Armor of Shadows',
 							'Beast Speech',
 							'Beguiling Influence',
-							'Devil\'s Sight',
+							"Devil's Sight",
 							'Eldritch Sight',
 							'Eyes of the Rune Keeper',
 							'Fiendish Vigor'

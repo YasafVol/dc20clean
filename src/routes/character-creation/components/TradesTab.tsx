@@ -1,6 +1,5 @@
 import React from 'react';
 import { tradesData } from '../../../lib/rulesdata/trades';
-import { knowledgeData } from '../../../lib/rulesdata/knowledge';
 // Types moved from deleted BackgroundPointsManager
 interface BackgroundPointsData {
 	skillPointsUsed: number;
@@ -70,7 +69,7 @@ import {
 } from '../styles/Background.styles';
 
 // Combine trades and knowledge for selection
-const allTradesAndKnowledge = [...tradesData, ...knowledgeData];
+const allTradesAndKnowledge = tradesData;
 
 interface TradesTabProps {
 	currentTrades: Record<string, number>;

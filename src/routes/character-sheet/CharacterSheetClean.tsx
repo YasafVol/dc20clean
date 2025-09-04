@@ -55,7 +55,6 @@ import { clearDefenseNotesForField } from '../../lib/utils/defenseNotes';
 // Import rules data
 import { skillsData } from '../../lib/rulesdata/skills';
 import { tradesData } from '../../lib/rulesdata/trades';
-import { knowledgeData } from '../../lib/rulesdata/knowledge';
 import { traitsData } from '../../lib/rulesdata/_new_schema/traits';
 import {
 	findClassByName,
@@ -333,38 +332,40 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		}
 
 		// Show ALL knowledge skills with their proficiency levels and calculated bonuses
-		return knowledgeData.map((knowledge) => {
-			const proficiency = characterTrades[knowledge.id] || 0;
-			const masteryBonus = proficiency * 2;
+		return tradesData
+			.filter((trade) => trade.tools === 'none')
+			.map((knowledge) => {
+				const proficiency = characterTrades[knowledge.id] || 0;
+				const masteryBonus = proficiency * 2;
 
-			// Get attribute modifier based on knowledge's attribute association
-			let attributeModifier = 0;
-			switch (knowledge.attributeAssociation.toLowerCase()) {
-				case 'might':
-					attributeModifier = characterData?.finalMight || 0;
-					break;
-				case 'agility':
-					attributeModifier = characterData?.finalAgility || 0;
-					break;
-				case 'charisma':
-					attributeModifier = characterData?.finalCharisma || 0;
-					break;
-				case 'intelligence':
-					attributeModifier = characterData?.finalIntelligence || 0;
-					break;
-				default:
-					attributeModifier = 0;
-			}
+				// Get attribute modifier based on knowledge's attribute association
+				let attributeModifier = 0;
+				switch (knowledge.attributeAssociation.toLowerCase()) {
+					case 'might':
+						attributeModifier = characterData?.finalMight || 0;
+						break;
+					case 'agility':
+						attributeModifier = characterData?.finalAgility || 0;
+						break;
+					case 'charisma':
+						attributeModifier = characterData?.finalCharisma || 0;
+						break;
+					case 'intelligence':
+						attributeModifier = characterData?.finalIntelligence || 0;
+						break;
+					default:
+						attributeModifier = 0;
+				}
 
-			const totalBonus = attributeModifier + masteryBonus;
+				const totalBonus = attributeModifier + masteryBonus;
 
-			return {
-				id: knowledge.id,
-				name: knowledge.name,
-				proficiency,
-				bonus: totalBonus
-			};
-		});
+				return {
+					id: knowledge.id,
+					name: knowledge.name,
+					proficiency,
+					bonus: totalBonus
+				};
+			});
 	};
 
 	// Parse languages data from character

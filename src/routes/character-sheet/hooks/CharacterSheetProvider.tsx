@@ -11,7 +11,6 @@ import {
 } from '../../../lib/services/enhancedCharacterCalculator';
 import { ancestriesData } from '../../../lib/rulesdata/_new_schema/ancestries';
 import { traitsData } from '../../../lib/rulesdata/_new_schema/traits';
-import { knowledgeData } from '../../../lib/rulesdata/knowledge';
 import { tradesData } from '../../../lib/rulesdata/trades';
 import {
 	findClassByName,
@@ -645,38 +644,40 @@ export function useCharacterKnowledge() {
 		}
 
 		// Show ALL knowledge skills with their proficiency levels and calculated bonuses
-		const knowledgeWithProficiency = knowledgeData.map((knowledge) => {
-			const proficiency = characterTrades[knowledge.id] || 0;
-			const masteryBonus = proficiency * 2;
+		const knowledgeWithProficiency = tradesData
+			.filter((trade) => trade.tools === 'none')
+			.map((knowledge) => {
+				const proficiency = characterTrades[knowledge.id] || 0;
+				const masteryBonus = proficiency * 2;
 
-			// Get attribute modifier based on knowledge's attribute association
-			let attributeModifier = 0;
-			switch (knowledge.attributeAssociation.toLowerCase()) {
-				case 'might':
-					attributeModifier = character?.finalMight || 0;
-					break;
-				case 'agility':
-					attributeModifier = character?.finalAgility || 0;
-					break;
-				case 'charisma':
-					attributeModifier = character?.finalCharisma || 0;
-					break;
-				case 'intelligence':
-					attributeModifier = character?.finalIntelligence || 0;
-					break;
-				default:
-					attributeModifier = 0;
-			}
+				// Get attribute modifier based on knowledge's attribute association
+				let attributeModifier = 0;
+				switch (knowledge.attributeAssociation.toLowerCase()) {
+					case 'might':
+						attributeModifier = character?.finalMight || 0;
+						break;
+					case 'agility':
+						attributeModifier = character?.finalAgility || 0;
+						break;
+					case 'charisma':
+						attributeModifier = character?.finalCharisma || 0;
+						break;
+					case 'intelligence':
+						attributeModifier = character?.finalIntelligence || 0;
+						break;
+					default:
+						attributeModifier = 0;
+				}
 
-			const totalBonus = attributeModifier + masteryBonus;
+				const totalBonus = attributeModifier + masteryBonus;
 
-			return {
-				id: knowledge.id,
-				name: knowledge.name,
-				proficiency,
-				bonus: totalBonus
-			};
-		});
+				return {
+					id: knowledge.id,
+					name: knowledge.name,
+					proficiency,
+					bonus: totalBonus
+				};
+			});
 
 		return knowledgeWithProficiency;
 	}, [

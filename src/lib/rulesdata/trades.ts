@@ -15,7 +15,7 @@ export const tradesData: ITradeData[] = [
 		attributeAssociation: 'intelligence',
 		description:
 			'Architecture is the knowledge of building design, construction, and structural integrity. This includes understanding how buildings are constructed, identifying weak points, and designing structures.',
-		tools: undefined // Knowledge trade
+		tools: 'none' // Knowledge trade
 	},
 	{
 		id: 'blacksmithing',
@@ -79,7 +79,7 @@ export const tradesData: ITradeData[] = [
 		attributeAssociation: 'intelligence',
 		description:
 			'Deciphering is the understanding of coded messages, ancient scripts, or hidden meanings. This includes analyzing patterns, symbols, and languages to uncover hidden information.',
-		tools: undefined // Knowledge trade
+		tools: 'none' // Knowledge trade
 	},
 	{
 		id: 'disguise',
@@ -135,7 +135,7 @@ export const tradesData: ITradeData[] = [
 		attributeAssociation: 'intelligence',
 		description:
 			'Linguistics is the study of languages, their structure, and origins. This includes understanding grammar, syntax, and the history of languages.',
-		tools: undefined // Knowledge trade
+		tools: 'none' // Knowledge trade
 	},
 	{
 		id: 'masonry',
@@ -215,7 +215,7 @@ export const tradesData: ITradeData[] = [
 		attributeAssociation: 'intelligence',
 		description:
 			'Survival is the knowledge and skills needed to survive in the wilderness. This includes tracking, foraging, shelter building, and navigating in natural environments.',
-		tools: undefined // Knowledge trade
+		tools: 'none' // Knowledge trade
 	},
 	{
 		id: 'tailoring',
@@ -239,7 +239,7 @@ export const tradesData: ITradeData[] = [
 		attributeAssociation: 'agility',
 		description:
 			'Vehicles (Land) is the proficiency in operating land-based vehicles. This includes riding horses, driving carts, and operating other land vehicles.',
-		tools: undefined
+		tools: 'none'
 	},
 	{
 		id: 'vehicles_water',
@@ -247,7 +247,7 @@ export const tradesData: ITradeData[] = [
 		attributeAssociation: 'agility',
 		description:
 			'Vehicles (Water) is the proficiency in operating water-based vehicles. This includes sailing boats, piloting ships, and operating other water vehicles.',
-		tools: undefined
+		tools: 'none'
 	},
 	{
 		id: 'woodcarving',
@@ -256,5 +256,45 @@ export const tradesData: ITradeData[] = [
 		description:
 			'Woodcarving is the creating of art or objects from wood. This includes shaping wood using knives, chisels, and other tools.',
 		tools: "Woodcarver's Tools"
+	},
+	{
+		id: 'arcana',
+		name: 'Arcana',
+		attributeAssociation: 'intelligence',
+		description:
+			'Arcana is the study of magic, its history, theories, and the planes of existence. This includes recalling information about spells, magical creatures, and magical phenomena.',
+		tools: 'none' // Knowledge trade
+	},
+	{
+		id: 'history',
+		name: 'History',
+		attributeAssociation: 'intelligence',
+		description:
+			'History is the study of past events, ancient lore, and how civilizations have shaped the present. This includes recalling information about historical figures, events, and cultures.',
+		tools: 'none' // Knowledge trade
+	},
+	{
+		id: 'nature',
+		name: 'Nature',
+		attributeAssociation: 'intelligence',
+		description:
+			'Nature is the study of the natural world, including plants, animals, weather patterns, and natural phenomena.',
+		tools: 'none' // Knowledge trade
+	},
+	{
+		id: 'religion',
+		name: 'Religion',
+		attributeAssociation: 'intelligence',
+		description:
+			'Religion is the knowledge of deities, religious practices, and holy texts. This includes understanding religious beliefs, rituals, and scriptures.',
+		tools: 'none' // Knowledge trade
+	},
+	{
+		id: 'occultism',
+		name: 'Occultism',
+		attributeAssociation: 'intelligence',
+		description:
+			'Occultism is the study of hidden mysteries, forbidden lore, and supernatural phenomena beyond normal magical understanding.',
+		tools: 'none' // Knowledge trade
 	}
 ];

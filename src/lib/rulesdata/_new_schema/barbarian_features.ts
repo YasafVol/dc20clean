@@ -2,17 +2,25 @@ import type { ClassDefinition } from '../schemas/character.schema';
 
 export const barbarianClass: ClassDefinition = {
 	className: 'Barbarian',
-	startingStats: {
-		hp: 10, // From barbarian_table.json
-		sp: 6,
-		mp: 0,
-		skillPoints: 4,
-		tradePoints: 3,
-		languagePoints: 2,
-		maneuversKnown: 0, // All Attack maneuvers + additional from table
-		techniquesKnown: 1,
-		cantripsKnown: 0,
-		spellsKnown: 0
+	martialPath: {
+		combatTraining: {
+			weapons: ['Weapons'],
+			armor: ['All_Armor'],
+			shields: ['All_Shields']
+		},
+		maneuvers: {
+			learnsAllAttack: true,
+			additionalKnown: 'Maneuvers Known column of the Barbarian Class Table'
+		},
+		techniques: {
+			additionalKnown: 'Techniques Known column of the Barbarian Class Table'
+		},
+		staminaPoints: {
+			maximumIncreasesBy: 'Stamina Points column of the Barbarian Class Table'
+		},
+		staminaRegen: {
+			description: 'Once per round, you can regain up to half your maximum SP when you score a Heavy or Critical Hit against a creature, or when a Heavy or Critical Hit is scored against you.',
+		}
 	},
 	coreFeatures: [
 		{

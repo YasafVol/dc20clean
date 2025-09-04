@@ -133,18 +133,78 @@ export interface Subclass {
 /** The complete, robust definition for a single class. */
 export interface ClassDefinition {
 	className: string;
-	// This section contains data derived from the level progression table for easy access at Lvl 1.
-	startingStats: {
-		hp: number;
-		sp: number;
-		mp: number;
-		skillPoints: number;
-		tradePoints: number;
-		languagePoints: number;
-		maneuversKnown: number;
-		techniquesKnown: number;
-		cantripsKnown: number;
-		spellsKnown: number;
+	// Path objects define the class's progression mechanics
+	martialPath?: {
+		combatTraining?: {
+			weapons?: string[];
+			armor?: string[];
+			shields?: string[];
+		};
+		maneuvers?: {
+			learnsAllAttack?: boolean;
+			additionalKnown?: string;
+		};
+		techniques?: {
+			additionalKnown?: string;
+		};
+		staminaPoints?: {
+			maximumIncreasesBy?: string;
+		};
+		staminaRegen?: {
+			description?: string;
+			conditions?: string[];
+		};
+	};
+	spellcasterPath?: {
+		spellcastingProgression?: string;
+		spellcastingAttribute?: string;
+		spellList?: any;
+		cantrips?: {
+			description?: string;
+		};
+		spells?: {
+			description?: string;
+		};
+		manaPoints?: {
+			maximumIncreasesBy?: string;
+		};
+	};
+	hybridPath?: {
+		martialAspect?: {
+			combatTraining?: {
+				weapons?: string[];
+				armor?: string[];
+				shields?: string[];
+			};
+			maneuvers?: {
+				learnsAllAttack?: boolean;
+				additionalKnown?: string;
+			};
+			techniques?: {
+				additionalKnown?: string;
+			};
+			staminaPoints?: {
+				maximumIncreasesBy?: string;
+			};
+			staminaRegen?: {
+				description?: string;
+				conditions?: string[];
+			};
+		};
+		spellcastingAspect?: {
+			spellcastingProgression?: string;
+			spellcastingAttribute?: string;
+			spellList?: any;
+			cantrips?: {
+				description?: string;
+			};
+			spells?: {
+				description?: string;
+			};
+			manaPoints?: {
+				maximumIncreasesBy?: string;
+			};
+		};
 	};
 	coreFeatures: ClassFeature[];
 	subclasses: Subclass[];

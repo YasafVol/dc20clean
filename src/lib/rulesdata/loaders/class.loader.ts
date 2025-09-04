@@ -39,30 +39,26 @@ const compatibleData = tableData.map((classTable: any) => {
 			'A scholarly arcane caster who learns spells through study and masters a broad range of magical effects.'
 	};
 
+	const level1 = classTable.levelProgression?.[0];
+
 	return {
 		id: className.toLowerCase(),
 		name: className,
 		description: classDescriptions[className] || `${className} class progression table`,
-		baseHpContribution: classTable.levelProgression?.[0]?.healthPoints || 0,
-		startingSP: classTable.levelProgression?.[0]?.staminaPoints || 0,
-		startingMP: classTable.levelProgression?.[0]?.manaPoints || 0,
-		// Add other required fields with default values
-		skillPointGrantLvl1: classTable.levelProgression?.[0]?.skillPoints || 0,
-		tradePointGrantLvl1: classTable.levelProgression?.[0]?.tradePoints || 0,
-		combatTraining: [],
-		maneuversKnownLvl1: classTable.levelProgression?.[0]?.maneuversKnown || 0,
-		techniquesKnownLvl1: classTable.levelProgression?.[0]?.techniquesKnown || 0,
-		saveDCBase: 8,
-		deathThresholdBase: 10,
-		moveSpeedBase: 5, // DC20: Base movement speed is 5 spaces
-		restPointsBase: 4,
-		gritPointsBase: 2,
-		initiativeBonusBase: 0,
-		cantripsKnownLvl1: classTable.levelProgression?.[0]?.cantripsKnown || 0,
-		spellsKnownLvl1: classTable.levelProgression?.[0]?.spellsKnown || 0,
-		// Store the full level progression for future level gaining
+
+		level1Stats: {
+			healthPoints: level1?.healthPoints || 0,
+			staminaPoints: level1?.staminaPoints || 0,
+			manaPoints: level1?.manaPoints || 0,
+			skillPoints: level1?.skillPoints || 0,
+			tradePoints: level1?.tradePoints || 0,
+			maneuversKnown: level1?.maneuversKnown || 0,
+			techniquesKnown: level1?.techniquesKnown || 0,
+			cantripsKnown: level1?.cantripsKnown || 0,
+			spellsKnown: level1?.spellsKnown || 0
+		},
+
 		levelProgression: classTable.levelProgression,
-		// Empty arrays for features - these should be handled by class-features.loader.ts
 		level1Features: [],
 		featureChoicesLvl1: []
 	};

@@ -74,15 +74,6 @@ export const POST: RequestHandler = async ({ request }) => {
 			);
 		}
 
-		// Validate minor trait limit
-		const minorTraits = selectedTraitObjects.filter((t: ITrait) => t.isMinor);
-		if (minorTraits.length > 1) {
-			return json(
-				{ success: false, message: `Maximum of 1 minor trait allowed, got: ${minorTraits.length}` },
-				{ status: 400 }
-			);
-		}
-
 		// Validate negative trait point gain limit
 		const pointsFromNegative = selectedTraitObjects
 			.filter((t: ITrait) => t.cost < 0)

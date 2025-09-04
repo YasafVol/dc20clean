@@ -62,7 +62,6 @@ export interface Trait {
 	name: string;
 	description: string;
 	cost: number;
-	isMinor?: boolean;
 	isNegative?: boolean;
 	prerequisites?: string[];
 	effects: Effect[]; // Every mechanical benefit is now an Effect.

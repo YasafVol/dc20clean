@@ -1,3 +1,7 @@
+
+
+
+
 import { test, expect } from '@playwright/test';
 
 test('Human Cleric E2E: domains Ancestral + Magic, full flow and saved object', async ({ page, context }) => {

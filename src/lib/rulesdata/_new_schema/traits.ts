@@ -47,7 +47,6 @@ export const traitsData: Trait[] = [
 		name: 'Undying',
 		description: 'You have ADV on Saves against the Doomed Condition.',
 		cost: 0,
-		isMinor: true,
 		effects: [{ type: 'GRANT_ADV_ON_SAVE', target: 'Doomed', value: 'ADV' }]
 	},
 	{
@@ -150,7 +149,6 @@ export const traitsData: Trait[] = [
 		name: 'Discerning Sight',
 		description: 'You have ADV on Checks and Saves made to discern through visual illusions.',
 		cost: 0,
-		isMinor: true,
 		effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'Discern Visual Illusions', value: 'ADV' }]
 	},
 	{
@@ -209,7 +207,6 @@ export const traitsData: Trait[] = [
 		description:
 			'While within forests, jungles, and swamps, you have ADV on Survival Checks. Additionally, you have ADV on Nature Checks made to recall information about plants.',
 		cost: 0,
-		isMinor: true,
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
@@ -278,7 +275,6 @@ export const traitsData: Trait[] = [
 		name: 'Iron Stomach',
 		description: 'You have ADV on Saves against effects that come from consuming food or liquids.',
 		cost: 0,
-		isMinor: true,
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
@@ -346,7 +342,6 @@ export const traitsData: Trait[] = [
 		description:
 			'While underground, you have ADV on Survival Checks. Additionally, you have ADV on Nature Checks made to recall information about stones, gems, and metals.',
 		cost: 0,
-		isMinor: true,
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
@@ -438,7 +433,6 @@ export const traitsData: Trait[] = [
 		description:
 			'You can speak to Beasts in a limited manner. They can understand the meanings of simple words, concepts, or states of emotion.',
 		cost: 0,
-		isMinor: true,
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
@@ -591,7 +585,6 @@ export const traitsData: Trait[] = [
 		description:
 			'You can naturally tell what the weather is going to be in the next hour in the area within 1 mile of you. You do not have DisADV on Checks or Saves as a result of naturally occurring weather.',
 		cost: 0,
-		isMinor: true,
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
@@ -945,7 +938,6 @@ export const traitsData: Trait[] = [
 		name: 'Divine Glow',
 		description: 'Your body can emit a Bright Light in a 5 Space radius around you at will.',
 		cost: 0,
-		isMinor: true,
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
@@ -1098,7 +1090,6 @@ export const traitsData: Trait[] = [
 		name: 'Already Cursed',
 		description: 'You have ADV on Saves against Curses.',
 		cost: 0,
-		isMinor: true,
 		effects: [{ type: 'GRANT_ADV_ON_SAVE', target: 'Curses', value: true }]
 	},
 	{
@@ -1410,7 +1401,6 @@ export const traitsData: Trait[] = [
 		name: "Light's Bane",
 		description: 'You can spend 1 AP to snuff out a mundane light source within 5 Spaces of you.',
 		cost: 0,
-		isMinor: true,
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
@@ -2136,7 +2126,6 @@ export const traitsData: Trait[] = [
 		name: 'Web Walk',
 		description: 'You ignore movement restrictions caused by webs.',
 		cost: 0,
-		isMinor: true,
 		effects: [
 			{ type: 'GRANT_ABILITY', target: 'web_walk', value: 'Ignore web movement restrictions.' }
 		]
@@ -2243,7 +2232,6 @@ export const traitsData: Trait[] = [
 		description:
 			'You can spend 1 AP to change appearance to look like a Halfling (reverts under stress).',
 		cost: 0,
-		isMinor: true,
 		effects: [{ type: 'GRANT_ABILITY', target: 'Halfling Disguise', value: true }]
 	},
 	{

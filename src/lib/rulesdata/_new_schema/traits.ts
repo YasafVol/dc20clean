@@ -2593,8 +2593,8 @@ export const traitsData: Trait[] = [
 			'You have ADV on Checks and Saves to avoid or escape being Grappled or Restrained.',
 		cost: 2,
 		effects: [
-			{ type: 'GRANT_ADV_ON_CHECK', target: 'Avoid_or_Escape_Grapple_Restrained' },
-			{ type: 'GRANT_ADV_ON_SAVE', target: 'Avoid_or_Escape_Grapple_Restrained' }
+			{ type: 'GRANT_ADV_ON_CHECK', target: 'Avoid_or_Escape_Grapple_Restrained', value: true },
+			{ type: 'GRANT_ADV_ON_SAVE', target: 'Avoid_or_Escape_Grapple_Restrained', value: true }
 		]
 	},
 	{
@@ -2770,7 +2770,7 @@ export const traitsData: Trait[] = [
 		name: 'Iron Mind',
 		description: 'You have ADV on Saves to maintain your Concentration.',
 		cost: 1,
-		effects: [{ type: 'GRANT_ADV_ON_SAVE', target: 'Concentration' }]
+		effects: [{ type: 'GRANT_ADV_ON_SAVE', target: 'Concentration', value: true }]
 	},
 	{
 		id: 'psyborn_frail',

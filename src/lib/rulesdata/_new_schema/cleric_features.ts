@@ -7,17 +7,22 @@ import type { ClassDefinition } from '../schemas/character.schema';
 
 export const clericClass: ClassDefinition = {
 	className: 'Cleric',
-	startingStats: {
-		hp: 8,
-		sp: 0,
-		mp: 6,
-		skillPoints: 3,
-		tradePoints: 3,
-		languagePoints: 2,
-		maneuversKnown: 0,
-		techniquesKnown: 0,
-		cantripsKnown: 2,
-		spellsKnown: 3
+	spellcasterPath: {
+		spellcastingProgression: 'full',
+		spellcastingAttribute: 'charisma',
+		spellList: {
+			description: 'Divine spells from multiple domains and schools',
+			type: 'divine'
+		},
+		cantrips: {
+			description: 'Cantrips Known column of the Cleric Class Table'
+		},
+		spells: {
+			description: 'Spells Known column of the Cleric Class Table'
+		},
+		manaPoints: {
+			maximumIncreasesBy: 'Mana Points column of the Cleric Class Table'
+		}
 	},
 	coreFeatures: [
 		{

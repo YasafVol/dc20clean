@@ -380,6 +380,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
                 });
                 const skillToTrade = state.skillToTradeConversions || 0;
                 const tradeToSkill = state.tradeToSkillConversions || 0;
+                const tradeToLanguage = state.tradeToLanguageConversions || 0;
                 const availableSkillPoints = baseSkillPoints - skillToTrade + Math.floor(tradeToSkill / 2);
 
                 // Calculate available trade and language points using same logic as BackgroundPointsManager
@@ -392,8 +393,21 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
                 const baseTradePoints = Math.max(0, 3 + bonusTradePoints);
                 const baseLanguagePoints = Math.max(0, 2 + bonusLanguagePoints);
                 
-                const availableTradePoints = Math.max(0, baseTradePoints + Math.floor(skillToTrade / 2) - Math.floor(tradeToSkill / 2));
-                const availableLanguagePoints = Math.max(0, baseLanguagePoints); // No conversions affect language points currently
+                // FIXED: Properly handle all conversions
+                const availableTradePoints = Math.max(0, baseTradePoints + (skillToTrade * 2) - tradeToSkill - tradeToLanguage);
+                const availableLanguagePoints = Math.max(0, baseLanguagePoints + (tradeToLanguage * 2));
+
+                console.log('🔍 CONVERSION DEBUG:', {
+                    skillToTrade,
+                    tradeToSkill,
+                    tradeToLanguage,
+                    baseTradePoints,
+                    baseLanguagePoints,
+                    availableTradePoints: `${baseTradePoints} + (${skillToTrade} * 2) - ${tradeToSkill} - ${tradeToLanguage} = ${availableTradePoints}`,
+                    availableLanguagePoints: `${baseLanguagePoints} + (${tradeToLanguage} * 2) = ${availableLanguagePoints}`,
+                    tradePointsUsed,
+                    languagePointsUsed
+                });
 
 				// For completion, allow for overspending if the UI permitted it
 				// This handles cases where UI and validation calculations differ
@@ -451,12 +465,14 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				selectedManeuvers = state.selectedManeuvers || [];
 
 				// Check if class has spellcasting
-				const hasSpellcasting = selectedClassFeatures.spellcastingPath?.spellList;
+				const hasSpellcasting = selectedClassFeatures.spellcastingPath?.spellList || 
+					((selectedClassFeatures as any).startingStats?.cantripsKnown > 0 || (selectedClassFeatures as any).startingStats?.spellsKnown > 0);
 				
 				// Check if class has maneuvers (simplified check based on class features)
 				// For now, we'll use a simple heuristic: classes that are primarily martial have maneuvers
 				const martialClasses = ['barbarian', 'champion', 'hunter', 'monk', 'rogue'];
-				const hasManeuvers = martialClasses.includes(selectedClass.name.toLowerCase());
+				const hasManeuvers = martialClasses.includes(selectedClass.name.toLowerCase()) ||
+					((selectedClassFeatures as any).startingStats?.maneuversKnown > 0);
 
 				// If class has spellcasting, require spell selections
 				if (hasSpellcasting) {
@@ -477,7 +493,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					return true;
 				}
 
-				// Step is complete if all required selections are made
+				// Step is complete if we reach here (all required selections are made)
 				return true;
 			case 6:
 				return (

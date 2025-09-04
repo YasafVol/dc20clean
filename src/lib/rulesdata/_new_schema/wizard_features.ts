@@ -7,17 +7,22 @@ import type { ClassDefinition } from '../schemas/character.schema';
 
 export const wizardClass: ClassDefinition = {
 	className: 'Wizard',
-	startingStats: {
-		hp: 6,
-		sp: 0,
-		mp: 6,
-		skillPoints: 4,
-		tradePoints: 3,
-		languagePoints: 2,
-		maneuversKnown: 0,
-		techniquesKnown: 0,
-		cantripsKnown: 3,
-		spellsKnown: 4
+	spellcasterPath: {
+		spellcastingProgression: 'full',
+		spellcastingAttribute: 'intelligence',
+		spellList: {
+			description: 'Arcane spells from multiple schools of magic',
+			type: 'arcane'
+		},
+		cantrips: {
+			description: 'Cantrips Known column of the Wizard Class Table'
+		},
+		spells: {
+			description: 'Spells Known column of the Wizard Class Table'
+		},
+		manaPoints: {
+			maximumIncreasesBy: 'Mana Points column of the Wizard Class Table'
+		}
 	},
 	coreFeatures: [
 		{

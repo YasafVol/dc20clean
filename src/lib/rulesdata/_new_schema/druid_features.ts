@@ -7,17 +7,22 @@ import type { ClassDefinition } from '../schemas/character.schema';
 
 export const druidClass: ClassDefinition = {
 	className: 'Druid',
-	startingStats: {
-		hp: 8, // From druid_table.json level 1
-		sp: 0,
-		mp: 6,
-		skillPoints: 4,
-		tradePoints: 3,
-		languagePoints: 2,
-		maneuversKnown: 0,
-		techniquesKnown: 0,
-		cantripsKnown: 2,
-		spellsKnown: 3
+	spellcasterPath: {
+		spellcastingProgression: 'full',
+		spellcastingAttribute: 'intelligence',
+		spellList: {
+			description: 'Primal spells focused on nature and the elements',
+			type: 'primal'
+		},
+		cantrips: {
+			description: 'Cantrips Known column of the Druid Class Table'
+		},
+		spells: {
+			description: 'Spells Known column of the Druid Class Table'
+		},
+		manaPoints: {
+			maximumIncreasesBy: 'Mana Points column of the Druid Class Table'
+		}
 	},
 	coreFeatures: [
 		{

@@ -7,17 +7,25 @@ import type { ClassDefinition } from '../schemas/character.schema';
 
 export const hunterClass: ClassDefinition = {
 	className: 'Hunter',
-	startingStats: {
-		hp: 9,
-		sp: 6,
-		mp: 0,
-		skillPoints: 5,
-		tradePoints: 4,
-		languagePoints: 2,
-		maneuversKnown: 4,
-		techniquesKnown: 1,
-		cantripsKnown: 0,
-		spellsKnown: 0
+	martialPath: {
+		combatTraining: {
+			weapons: ['Weapons'],
+			armor: ['Light_Armor'],
+			shields: ['Light_Shields']
+		},
+		maneuvers: {
+			learnsAllAttack: false,
+			additionalKnown: 'Maneuvers Known column of the Hunter Class Table'
+		},
+		techniques: {
+			additionalKnown: 'Techniques Known column of the Hunter Class Table'
+		},
+		staminaPoints: {
+			maximumIncreasesBy: 'Stamina Points column of the Hunter Class Table'
+		},
+		staminaRegen: {
+			description: 'Once per round, you can regain up to half your maximum SP when you score a Heavy or Critical Hit.',
+		}
 	},
 	coreFeatures: [
 		{

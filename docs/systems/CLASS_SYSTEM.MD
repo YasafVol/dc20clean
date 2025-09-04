@@ -12,14 +12,14 @@
 ```mermaid
 flowchart LR
     subgraph Rule-Data
-        A1[_new_schema/*_features.ts]
-        A2[_new_schema/*_table.json]
+        A1[classes-data/features/*_features.ts]
+        A2[classes-data/tables/*_table.json]
         style A1 fill:#4ade80,color:#000
         style A2 fill:#4ade80,color:#000
     end
 
     subgraph Types & Schemas
-        B1[types.ts – IClassDefinition / IClassFeature]
+        B1[schemas/types.ts – IClassDefinition / IClassFeature]
         B2[schemas/class.schema.ts – Zod Effects]
     end
 
@@ -50,9 +50,9 @@ flowchart LR
 
 | Layer                     | File / Dir                                                                                | Responsibility                                                           |
 | ------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| **Rule Data (canonical)** | `src/lib/rulesdata/_new_schema/*_features.ts`                                             | Declarative definition of each class’s core & subclass features          |
-|                           | `src/lib/rulesdata/_new_schema/*_table.json`                                              | Level-by-level progression tables (HP, MP, features gained, etc.)        |
-| **Type Contracts**        | `src/lib/rulesdata/types.ts`                                                              | TS interfaces `IClassDefinition`, `IClassFeature`, `IClassFeatureChoice` |
+| **Rule Data (canonical)** | `src/lib/rulesdata/classes-data/features/*_features.ts`                                             | Declarative definition of each class’s core & subclass features          |
+|                           | `src/lib/rulesdata/classes-data/tables/*_table.json`                                              | Level-by-level progression tables (HP, MP, features gained, etc.)        |
+| **Type Contracts**        | `src/lib/rulesdata/schemas/types.ts`                                                              | TS interfaces `IClassDefinition`, `IClassFeature`, `IClassFeatureChoice` |
 |                           | `src/lib/rulesdata/schemas/class.schema.ts`                                               | Zod schema used for validation & effect typing                           |
 | **Validation Layer**      | `src/lib/rulesdata/loaders/class.loader.ts`                                               | Loads progression tables, validates against schema                       |
 |                           | `src/lib/rulesdata/loaders/class-features.loader.ts`                                      | Loads feature files & exposes `classFeaturesData`                        |
@@ -66,9 +66,9 @@ flowchart LR
 ## 3 Adding **New Class** – Checklist ✅
 
 1. **Data**  
-   1.1 Create progression table: `_new_schema/<class>_table.json`  
+   1.1 Create progression table: `classes-data/tables/<class>_table.json`  
    ‑ Required keys: `className`, `levelProgression[]` (hp, mp, features, etc.).  
-   1.2 Create feature file: `_new_schema/<class>_features.ts` exporting `<class>Class` that conforms to `ClassDefinition`.  
+   1.2 Create feature file: `classes-data/features/<class>_features.ts` exporting `<class>Class` that conforms to `ClassDefinition`.  
    ‑ Include `coreFeatures`, `subclasses`, and any starting equipment blocks.
 2. **Names & IDs**  
    ‑ `className` (PascalCase) must match table file and UI strings.  
@@ -120,7 +120,7 @@ flowchart LR
 
 | Symptom                               | Likely Cause                                                            | Fix                                              |
 | ------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------ |
-| **Vite import error** for class files | File path typo (`_new_schema/...`)                                      | Check `import ... classFeaturesData` paths       |
+| **Vite import error** for class files | File path typo (`classes-data/...`)                                      | Check `import ... classFeaturesData` paths       |
 | New class not visible in UI           | Missing `_features.ts` or `_table.json` file, or mismatched `className` | Verify file names & exported constant            |
 | Unit test `rulesdata.spec.ts` fails   | Schema violation (missing field / wrong effect)                         | Inspect test output & update data                |
 | Stats not updating for new effect     | Effect type not handled in calculator                                   | Add case to `createStatBreakdown`                |

@@ -12,12 +12,12 @@
 ```mermaid
 flowchart LR
     subgraph Rule-Data
-        A1[_new_schema/traits.ts]
+        A1[ancestries/traits.ts]
         style A1 fill:#4ade80,color:#000
     end
 
     subgraph Types & Schemas
-        B1[types.ts – ITrait / ITraitEffect]
+        B1[schemas/types.ts – ITrait / ITraitEffect]
         B2[schemas/character.schema.ts – Effect / Trait]
     end
 
@@ -45,8 +45,8 @@ flowchart LR
 
 | Layer                | File / Dir                                                        | Responsibility                                                |
 | -------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------- |
-| Rule Data (canonical) | `src/lib/rulesdata/_new_schema/traits.ts`                         | Declarative list of `traitsData` objects                      |
-| Type Contracts       | `src/lib/rulesdata/types.ts`                                      | TS interfaces `ITrait`, `ITraitEffect` (legacy/aux typing)    |
+| Rule Data (canonical) | `src/lib/rulesdata/ancestries/traits.ts`                         | Declarative list of `traitsData` objects                      |
+| Type Contracts       | `src/lib/rulesdata/schemas/types.ts`                                      | TS interfaces `ITrait`, `ITraitEffect` (legacy/aux typing)    |
 |                      | `src/lib/rulesdata/schemas/character.schema.ts`                   | Canonical `Effect` union and `Trait` interface                |
 | Validation Tests     | `src/lib/rulesdata/rulesdata.spec.ts`                             | Loads trait data and asserts required fields are present      |
 | Runtime Engine       | `src/lib/services/enhancedCharacterCalculator.ts`                 | Aggregates effects, resolves choices, computes breakdowns     |
@@ -62,7 +62,7 @@ Notes:
 ## 3 Adding New Trait – Checklist ✅
 
 1. Data  
-   1.1 Append the trait object to `_new_schema/traits.ts`  
+   1.1 Append the trait object to `ancestries/traits.ts`  
    – Required fields: `id`, `name`, `description`, `cost`, `effects: Effect[]`.  
    – Optional flags: `isMinor`, `isNegative`, `prerequisites: string[]`.
 
@@ -126,11 +126,11 @@ When a new type is created:
 
 | Symptom                                         | Likely Cause                                                     | Fix                                                             |
 | ----------------------------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------- |
-| Trait not visible / loaded                      | Not added to `_new_schema/traits.ts` or `id` mismatch            | Verify entry and `id` format                                    |
+| Trait not visible / loaded                      | Not added to `ancestries/traits.ts` or `id` mismatch            | Verify entry and `id` format                                    |
 | Unit test `rulesdata.spec.ts` fails             | Missing required fields or malformed `effects`                   | Ensure `id`, `name`, `cost`, and `effects[]` are present        |
 | Stats not updating for new numeric effect       | `target` not recognized in calculator                           | Map `target` in `createStatBreakdown` or associated aggregators  |
 | Choice prompt not appearing in UI               | `effect.userChoice` missing or unresolved                        | Add `userChoice`; ensure `resolveEffectChoices` supports target  |
-| Vite import error for traits                    | Import path typo                                                 | Use `_new_schema/traits`                                        |
+| Vite import error for traits                    | Import path typo                                                 | Use `ancestries/traits`                                        |
 
 ---
 

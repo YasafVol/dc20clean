@@ -21,7 +21,7 @@ flowchart LR
     end
 
     subgraph Types & Schemas
-        B1[types.ts – ISkillData / ITradeData / ILanguageData]
+        B1[schemas/types.ts – ISkillData / ITradeData / ILanguageData]
         B2[schemas/character.schema.ts – Effect union for background-related buffs]
     end
 
@@ -45,7 +45,7 @@ flowchart LR
 | Rule Data (canonical) | `src/lib/rulesdata/skills.ts`                           | Declarative `skillsData` array                                      |
 |                      | `src/lib/rulesdata/trades.ts`                           | Declarative `tradesData` array                                      |
 |                      | `src/lib/rulesdata/languages.ts`                        | Declarative `languagesData` array                                   |
-| Type Contracts       | `src/lib/rulesdata/types.ts`                            | `ISkillData`, `ITradeData`, `ILanguageData`                         |
+| Type Contracts       | `src/lib/rulesdata/schemas/types.ts`                            | `ISkillData`, `ITradeData`, `ILanguageData`                         |
 | Runtime Engine       | `src/lib/services/enhancedCharacterCalculator.ts`       | Computes base budgets, applies trait bonuses, conversions, and usage |
 | State Layer          | `src/lib/stores/characterContext.tsx`                   | Stores background point allocations and conversion counts            |
 | Hook                 | `src/lib/hooks/useCharacterBuilder.ts`                  | Runs calculator and returns `calculationResult.background`           |

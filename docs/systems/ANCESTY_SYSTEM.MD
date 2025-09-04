@@ -12,16 +12,14 @@
 ```mermaid
 flowchart LR
     subgraph Rule-Data
-        A1[_new_schema/traits.ts]
-        A2[_new_schema/ancestries.ts]
-        A3[_new_schema/class_features.ts]
+        A1[ancestries/traits.ts]
+        A2[ancestries/ancestries.ts]
         style A1 fill:#4ade80,color:#000
         style A2 fill:#4ade80,color:#000
-        style A3 fill:#4ade80,color:#000
     end
 
     subgraph Types & Schemas
-        B1[types.ts – ITrait / IAncestry]
+        B1[schemas/types.ts – ITrait / IAncestry]
         B2[schemas/character.schema.ts – Zod Effects]
     end
 
@@ -50,9 +48,9 @@ flowchart LR
 
 | Layer                     | File / Dir                                                                                | Responsibility                                             |
 | ------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| **Rule Data (canonical)** | `src/lib/rulesdata/_new_schema/traits.ts`                                                 | Declarative list of `traitsData` objects                   |
-|                           | `src/lib/rulesdata/_new_schema/ancestries.ts`                                             | Declarative list of `ancestriesData` objects               |
-| **Type Contracts**        | `src/lib/rulesdata/types.ts`                                                              | TS interfaces `ITrait`, `IAncestry`, `ITraitEffect`        |
+| **Rule Data (canonical)** | `src/lib/rulesdata/ancestries/traits.ts`                                                 | Declarative list of `traitsData` objects                   |
+|                           | `src/lib/rulesdata/ancestries/ancestries.ts`                                             | Declarative list of `ancestriesData` objects               |
+| **Type Contracts**        | `src/lib/rulesdata/schemas/types.ts`                                                              | TS interfaces `ITrait`, `IAncestry`, `ITraitEffect`        |
 |                           | `src/lib/rulesdata/schemas/character.schema.ts`                                           | Zod schema used for validation & effect typing             |
 | **Validation Tests**      | `src/lib/rulesdata/rulesdata.spec.ts`                                                     | Loads every trait / ancestry and asserts schema compliance |
 | **Runtime Engine**        | `src/lib/services/enhancedCharacterCalculator.ts`                                         | Aggregates effects, resolves choices, outputs stats        |
@@ -64,11 +62,11 @@ flowchart LR
 ## 3 Adding **New Ancestry** – Checklist ✅
 
 1. **Data**  
-   1.1 Append the ancestry object to `_new_schema/ancestries.ts`  
+   1.1 Append the ancestry object to `ancestries/ancestries.ts`  
    ‑ `id`, `name`, `description`, `defaultTraitIds`, `expandedTraitIds`.
    ‑ `rulesSource` (string, e.g., `DC20Beta0.95`).
 2. **Traits**  
-   2.1 Create each new trait in `_new_schema/traits.ts`  
+   2.1 Create each new trait in `ancestries/traits.ts`  
    ‑ Use unique `id = '<ancestryId>_<snake_case_trait>'`.  
    ‑ Ensure `cost`, `description`, and `effects` array.  
    2.2 ⚠️ **Human-in-the-loop review required**: First attempt to reuse existing `effect.type` strings. If a new type seems unavoidable, a maintainer must review and approve the required engine & schema changes (see §4).
@@ -116,8 +114,8 @@ flowchart LR
 
 | Symptom                                     | Likely Cause                                           | Fix                                     |
 | ------------------------------------------- | ------------------------------------------------------ | --------------------------------------- |
-| **Vite import error** for traits/ancestries | File path typo (should be `_new_schema/...`)           | Search `import .*rulesdata/traits` etc. |
-| New ancestry not visible in UI              | Not added to `_new_schema/ancestries.ts` or wrong `id` | Check default/expanded trait IDs        |
+| **Vite import error** for traits/ancestries | File path typo (should be `ancestries/...`)           | Search `import .*rulesdata/traits` etc. |
+| New ancestry not visible in UI              | Not added to `ancestries/ancestries.ts` or wrong `id` | Check default/expanded trait IDs        |
 | Unit test `rulesdata.spec.ts` fails         | Schema violation (missing field / wrong effect)        | Inspect test output & update data       |
 | Stats not updating for new effect           | Effect type not handled in calculator                  | Add case to `createStatBreakdown`       |
 

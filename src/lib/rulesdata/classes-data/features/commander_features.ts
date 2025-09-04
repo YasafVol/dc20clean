@@ -3,7 +3,7 @@
  * Based on DC20 Commander features with martial abilities and leadership
  */
 
-import type { ClassDefinition } from '../schemas/character.schema';
+import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const commanderClass: ClassDefinition = {
 	className: 'Commander',

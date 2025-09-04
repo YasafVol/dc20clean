@@ -3,7 +3,7 @@
  * Based on DC20 Wizard features with spell school specialization
  */
 
-import type { ClassDefinition } from '../schemas/character.schema';
+import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const wizardClass: ClassDefinition = {
 	className: 'Wizard',

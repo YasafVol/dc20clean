@@ -1,4 +1,4 @@
-import type { ClassDefinition } from '../schemas/character.schema';
+import type { ClassDefinition } from '../../schemas/character.schema';
 
 /**
  * Psion Class Definition – Draft implementation derived from Spellblade template.

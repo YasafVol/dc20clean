@@ -3,7 +3,7 @@
  * Based on DC20 Bard features with spellcasting and performance abilities
  */
 
-import type { ClassDefinition } from '../schemas/character.schema';
+import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const bardClass: ClassDefinition = {
 	className: 'Bard',

@@ -3,7 +3,7 @@
  * Based on DC20 Druid features with wild form and domain abilities
  */
 
-import type { ClassDefinition } from '../schemas/character.schema';
+import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const druidClass: ClassDefinition = {
 	className: 'Druid',

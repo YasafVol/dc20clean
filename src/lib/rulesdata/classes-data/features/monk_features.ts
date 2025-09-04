@@ -1,4 +1,4 @@
-import type { ClassDefinition } from '../schemas/character.schema';
+import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const monkClass: ClassDefinition = {
 	className: 'Monk',

@@ -3,7 +3,7 @@
  * Based on the DC20 rule analysis from classAndAncestryAndCalcRefactor.md
  */
 
-import type { ClassDefinition } from '../schemas/character.schema';
+import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const hunterClass: ClassDefinition = {
 	className: 'Hunter',

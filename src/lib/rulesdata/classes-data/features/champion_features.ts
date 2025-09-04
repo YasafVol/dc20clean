@@ -3,7 +3,7 @@
  * Based on DC20 Champion features
  */
 
-import type { ClassDefinition } from '../schemas/character.schema';
+import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const championClass: ClassDefinition = {
 	className: 'Champion',

@@ -150,7 +150,6 @@ function Attributes() {
 	const { state, dispatch, attributePointsRemaining, totalAttributePoints } = useCharacter();
 	const { 
 		getAttributeLimit, 
-		canDecreaseAttribute,
 		validateAttributeChange,
 		getStatBreakdown
 	} = useEnhancedCharacterCalculation();
@@ -234,7 +233,8 @@ function Attributes() {
 					// Use live validation instead of cached result to avoid timing issues
 					const realTimeValidation = validateAttributeChange(attribute.id, currentValue + 1);
 					const canIncrease = attributePointsRemaining > 0 && realTimeValidation.isValid;
-					const canDecrease = canDecreaseAttribute(attribute.id);
+					// Simple real-time decrease check: can decrease if above minimum
+					const canDecrease = currentValue > -2;
 					
 					return (
 						<StyledCard key={attribute.id}>

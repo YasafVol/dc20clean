@@ -210,14 +210,6 @@ export const tradesData: ITradeData[] = [
 		tools: "Smith's Tools"
 	},
 	{
-		id: 'survival',
-		name: 'Survival',
-		attributeAssociation: 'intelligence',
-		description:
-			'Survival is the knowledge and skills needed to survive in the wilderness. This includes tracking, foraging, shelter building, and navigating in natural environments.',
-		tools: undefined // Knowledge trade
-	},
-	{
 		id: 'tailoring',
 		name: 'Tailoring',
 		attributeAssociation: 'agility',

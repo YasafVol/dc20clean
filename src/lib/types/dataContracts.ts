@@ -116,6 +116,11 @@ export interface SavedCharacter {
   spells: any[]; // Will use proper SpellData once imported
   maneuvers: any[]; // Will use proper ManeuverData once imported
   
+  // Background point conversions - CRITICAL for editing characters
+  skillToTradeConversions?: number;
+  tradeToSkillConversions?: number;
+  tradeToLanguageConversions?: number;
+  
   // Dynamic state as nested object
   characterState: CharacterState;
   

@@ -292,6 +292,13 @@ export interface EnhancedCharacterBuildData {
   tradesJson: string;
   languagesJson: string;
   
+  // Point conversions
+  conversions?: {
+    skillToTrade: number;
+    tradeToSkill: number;
+    tradeToLanguage: number;
+  };
+  
   // Manual Overrides
   manualPD?: number;
   manualAD?: number;

@@ -106,6 +106,13 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
     // Default Common to fluent when empty to match current UI assumptions
     languagesJson: JSON.stringify(contextData.languagesData ?? { common: { fluency: 'fluent' } }),
     
+    // Include point conversions
+    conversions: {
+      skillToTrade: contextData.skillToTradeConversions ?? 0,
+      tradeToSkill: contextData.tradeToSkillConversions ?? 0,
+      tradeToLanguage: contextData.tradeToLanguageConversions ?? 0
+    },
+    
     // Optional manual overrides supported by the engine
   manualPD: contextData.manualPD,
   manualAD: contextData.manualAD,
@@ -399,7 +406,7 @@ function validateAttributeLimits(buildData: EnhancedCharacterBuildData, effects:
       max,
       exceeded: current > max,
       canIncrease: (baseValue + traitBonuses + 1) <= max, // Fixed: Check if base can be increased without total exceeding max
-      canDecrease: baseValue > -2
+      canDecrease: baseValue > -2 // Always allow decrease if above minimum, regardless of point budget
     };
   }
   

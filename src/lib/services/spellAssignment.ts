@@ -1,5 +1,5 @@
 import { allSpells } from '../rulesdata/spells-data/spells';
-import { SpellSchool, type ClassName } from '../rulesdata/spells-data/types/spell.types';
+import { SpellSchool } from '../rulesdata/schemas/spell.schema';
 import type { SpellData } from '../../types/character';
 import { findClassByName } from '../rulesdata/loaders/class-features.loader';
 import { classesData } from '../rulesdata/loaders/class.loader';

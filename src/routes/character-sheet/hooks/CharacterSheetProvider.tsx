@@ -9,8 +9,8 @@ import {
 	calculateCharacterWithBreakdowns,
 	convertToEnhancedBuildData
 } from '../../../lib/services/enhancedCharacterCalculator';
-import { ancestriesData } from '../../../lib/rulesdata/_new_schema/ancestries';
-import { traitsData } from '../../../lib/rulesdata/_new_schema/traits';
+import { ancestriesData } from '../../../lib/rulesdata/ancestries/ancestries';
+import { traitsData } from '../../../lib/rulesdata/ancestries/traits';
 import { tradesData } from '../../../lib/rulesdata/trades';
 import {
 	findClassByName,

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import type { ManeuverData } from '../../../types';
 import type { Maneuver } from '../../../lib/rulesdata/maneuvers';
-import { maneuvers as allManeuvers } from '../../../lib/rulesdata/maneuvers';
+import { maneuvers as allManeuvers } from '../../../lib/rulesdata/martials/maneuvers';
 import { useCharacterManeuvers, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
 	StyledSpellsSection,

@@ -5,10 +5,10 @@ import {
 	getLegacyChoiceId,
 	getAvailableSpellSchools
 } from '../../lib/rulesdata/loaders/class-features.loader';
-import { SpellSchool } from '../../lib/rulesdata/spells-data/types/spell.types';
+import { SpellSchool } from '../../lib/rulesdata/schemas/spell.schema';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
-import { maneuvers, ManeuverType } from '../../lib/rulesdata/maneuvers';
-import { techniques } from '../../lib/rulesdata/techniques';
+import { maneuvers, ManeuverType } from '../../lib/rulesdata/martials/maneuvers';
+import { techniques } from '../../lib/rulesdata/martials/techniques';
 import {
 	StyledContainer,
 	StyledTitle,

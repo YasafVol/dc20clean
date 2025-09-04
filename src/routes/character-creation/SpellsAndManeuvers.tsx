@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { allSpells } from '../../lib/rulesdata/spells-data/spells';
-import { allManeuvers, ManeuverType } from '../../lib/rulesdata/maneuvers';
-import { SpellSchool, type ClassName } from '../../lib/rulesdata/spells-data/types/spell.types';
+import { allManeuvers, ManeuverType } from '../../lib/rulesdata/martials/maneuvers';
+import { SpellSchool, type ClassName } from '../../lib/rulesdata/schemas/spell.schema';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
 import {

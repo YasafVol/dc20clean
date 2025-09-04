@@ -1,6 +1,6 @@
 import { useCharacter } from '../../lib/stores/characterContext';
-import { ancestriesData } from '../../lib/rulesdata/_new_schema/ancestries';
-import { traitsData } from '../../lib/rulesdata/_new_schema/traits';
+import { ancestriesData } from '../../lib/rulesdata/ancestries/ancestries';
+import { traitsData } from '../../lib/rulesdata/ancestries/traits';
 import TraitChoiceSelector from './components/TraitChoiceSelector';
 import type { IAncestry, ITrait, ITraitEffect } from '../../lib/rulesdata/types';
 import {

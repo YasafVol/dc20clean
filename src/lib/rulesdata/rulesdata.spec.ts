@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { classesDataSchema } from './schemas/class.schema';
 import { classesData } from './loaders/class.loader';
-import { traitsData as newTraitsData } from './_new_schema/traits';
-import { ancestriesData as newAncestriesData } from './_new_schema/ancestries';
+import { traitsData as newTraitsData } from './ancestries/traits';
+import { ancestriesData as newAncestriesData } from './ancestries/ancestries';
 import { allSpells } from './spells-data/spells';
-import { maneuvers } from './maneuvers';
-import { techniques } from './techniques';
+import { allManeuvers } from './martials/maneuvers';
+import { allTechniques } from './martials/techniques';
 import { allItems } from './inventoryItems';
 
 describe('Rules Data Validation', () => {
@@ -46,8 +46,8 @@ describe('Rules Data Validation', () => {
 	});
 
 	it('should ensure all maneuvers have required properties', () => {
-		expect(maneuvers.length).toBeGreaterThan(0);
-		maneuvers.forEach((maneuver) => {
+		expect(allManeuvers.length).toBeGreaterThan(0);
+		allManeuvers.forEach((maneuver) => {
 			expect(maneuver).toHaveProperty('name');
 			expect(maneuver).toHaveProperty('type');
 			expect(maneuver).toHaveProperty('cost');
@@ -56,8 +56,8 @@ describe('Rules Data Validation', () => {
 	});
 
 	it('should ensure all techniques have required properties', () => {
-		expect(techniques.length).toBeGreaterThan(0);
-		techniques.forEach((technique) => {
+		expect(allTechniques.length).toBeGreaterThan(0);
+		allTechniques.forEach((technique) => {
 			expect(technique).toHaveProperty('name');
 			expect(technique).toHaveProperty('cost');
 			expect(technique).toHaveProperty('description');

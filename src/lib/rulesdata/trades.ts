@@ -1,4 +1,4 @@
-import { ITradeData } from './types';
+import { ITradeData } from './schemas/types';
 
 export const tradesData: ITradeData[] = [
 	{

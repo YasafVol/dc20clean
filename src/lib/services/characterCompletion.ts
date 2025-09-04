@@ -3,7 +3,7 @@
 
 import { assignSpellsToCharacter } from './spellAssignment';
 import { allSpells } from '../rulesdata/spells-data/spells';
-import { allManeuvers } from '../rulesdata/maneuvers';
+import { allManeuvers } from '../rulesdata/martials/maneuvers';
 import {
 	convertToEnhancedBuildData,
 	calculateCharacterWithBreakdowns

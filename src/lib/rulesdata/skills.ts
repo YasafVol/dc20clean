@@ -1,4 +1,4 @@
-import type { ISkillData } from './types';
+import { ISkillData } from './schemas/types';
 
 export const skillsData: ISkillData[] = [
 	{

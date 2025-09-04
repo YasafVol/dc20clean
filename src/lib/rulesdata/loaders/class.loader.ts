@@ -2,7 +2,7 @@ import { classesDataSchema, type IClassDefinition } from '../schemas/class.schem
 
 // Use Vite's import.meta.glob to import only the class table JSON files.
 // The `eager: true` option imports the modules directly, so they are available synchronously.
-const tableModules = import.meta.glob('../_new_schema/*_table.json', { eager: true });
+const tableModules = import.meta.glob('../classes-data/tables/*_table.json', { eager: true });
 
 // Extract the default export (the class object) from each module.
 const tableData = Object.values(tableModules).map((module: any) => module.default);

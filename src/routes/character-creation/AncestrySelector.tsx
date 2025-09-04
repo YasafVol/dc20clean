@@ -1,5 +1,5 @@
 import { useCharacter } from '../../lib/stores/characterContext';
-import { ancestriesData } from '../../lib/rulesdata/_new_schema/ancestries';
+import { ancestriesData } from '../../lib/rulesdata/ancestries/ancestries';
 import type { IAncestry } from '../../lib/rulesdata/types';
 import {
 	StyledContainer,

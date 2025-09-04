@@ -18,7 +18,7 @@ import {
 	convertToEnhancedBuildData,
 	calculateCharacterWithBreakdowns
 } from '../../lib/services/enhancedCharacterCalculator';
-import { traitsData } from '../../lib/rulesdata/_new_schema/traits';
+import { traitsData } from '../../lib/rulesdata/ancestries/traits';
 import {
 	StyledContainer,
 	StyledTitle,

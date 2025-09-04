@@ -1,6 +1,6 @@
 // src/lib/rulesdata/attributes.ts
 
-import type { IAttributeData } from './types';
+import { IAttributeData } from './schemas/types';
 // To be placed in: src/lib/rulesdata/attributes.ts
 export const attributesData: IAttributeData[] = [
 	// TODO: Replace bracketed placeholders with accurate information from the DC20 Beta 0.9.5 rulebook.

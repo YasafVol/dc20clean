@@ -1,10 +1,10 @@
+import type { Spell } from '../../../schemas/spell.schema';
 import {
-	Spell,
 	SpellSchool,
 	SpellList,
-	PremadeSpellList,
-	ClassName
-} from '../../types/spell.types';
+	ClassName,
+	PremadeSpellList
+} from '../../../schemas/spell.schema';
 
 export const lightningBolt: Spell = {
 	name: 'Lightning Bolt',

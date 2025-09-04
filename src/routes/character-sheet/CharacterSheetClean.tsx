@@ -55,14 +55,14 @@ import { clearDefenseNotesForField } from '../../lib/utils/defenseNotes';
 // Import rules data
 import { skillsData } from '../../lib/rulesdata/skills';
 import { tradesData } from '../../lib/rulesdata/trades';
-import { traitsData } from '../../lib/rulesdata/_new_schema/traits';
+import { traitsData } from '../../lib/rulesdata/ancestries/traits';
 import {
 	findClassByName,
 	getClassSpecificInfo,
 	getLegacyChoiceId,
 	getDisplayLabel
 } from '../../lib/rulesdata/loaders/class-features.loader';
-import { ancestriesData } from '../../lib/rulesdata/_new_schema/ancestries';
+import { ancestriesData } from '../../lib/rulesdata/ancestries/ancestries';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
 
 // Import styled components
@@ -93,7 +93,7 @@ import {
 } from './styles/FeaturePopup';
 
 import { allSpells } from '../../lib/rulesdata/spells-data/spells';
-import { allManeuvers } from '../../lib/rulesdata/maneuvers';
+import { allManeuvers } from '../../lib/rulesdata/martials/maneuvers';
 
 import { handlePrintCharacterSheet } from './utils';
 

@@ -57,23 +57,6 @@ import { tradesData } from '../rulesdata/trades';
 import type { Effect, ClassDefinition } from '../rulesdata/schemas/character.schema';
 
 /**
- * Safe JSON parse with fallback
- */
-function safeJsonParse<T>(jsonString: string | undefined | null, fallback: T): T {
-	if (!jsonString || typeof jsonString !== 'string') {
-		return fallback;
-	}
-
-	try {
-		const parsed = JSON.parse(jsonString);
-		return parsed !== null && parsed !== undefined ? parsed : fallback;
-	} catch (error) {
-		console.warn('Failed to parse JSON:', jsonString, 'Error:', error);
-		return fallback;
-	}
-}
-
-/**
  * Convert character context data to enhanced build data
  */
 export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterBuildData {
@@ -102,11 +85,11 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 		selectedTraitChoices: contextData.selectedTraitChoices ?? {},
 		featureChoices: contextData.selectedFeatureChoices ?? {},
 
-		// FIX: Serialize live store objects into the JSON strings the engine expects
-		skillsJson: JSON.stringify(contextData.skillsData ?? {}),
-		tradesJson: JSON.stringify(contextData.tradesData ?? {}),
+		// Pass data as native objects, removing the unnecessary stringify step
+		skillsData: contextData.skillsData ?? {},
+		tradesData: contextData.tradesData ?? {},
 		// Default Common to fluent when empty to match current UI assumptions
-		languagesJson: JSON.stringify(contextData.languagesData ?? { common: { fluency: 'fluent' } }),
+		languagesData: contextData.languagesData ?? { common: { fluency: 'fluent' } },
 
 		// Optional manual overrides supported by the engine
 		manualPD: contextData.manualPD,
@@ -602,6 +585,11 @@ export function calculateCharacterWithBreakdowns(
 	const finalRestPoints = finalHPMax; // Rest Points = HP
 	const finalGritPoints = Math.max(0, 2 + finalCharisma); // 2 + Charisma (minimum 0)
 	const finalInitiativeBonus = combatMastery + finalAgility; // Combat Mastery + Agility
+	const finalAttributePoints =
+		12 +
+		resolvedEffects
+			.filter((e) => e.type === 'MODIFY_STAT' && e.target === 'attributePoints')
+			.reduce((sum, e) => sum + (e.value as number), 0);
 
 	// Create breakdowns for derived stats
 	breakdowns.hpMax = createStatBreakdown('hpMax', finalHPMax, resolvedEffects);
@@ -609,6 +597,12 @@ export function calculateCharacterWithBreakdowns(
 	breakdowns.mpMax = createStatBreakdown('mpMax', finalMPMax, resolvedEffects);
 	breakdowns.pd = createStatBreakdown('pd', basePD, resolvedEffects);
 	breakdowns.ad = createStatBreakdown('ad', baseAD, resolvedEffects);
+
+	breakdowns.attributePoints = createStatBreakdown(
+		'attributePoints',
+		finalAttributePoints,
+		resolvedEffects
+	);
 
 	// Movement breakdowns
 	breakdowns.move_speed = createStatBreakdown('moveSpeed', finalMoveSpeed, resolvedEffects);
@@ -649,11 +643,9 @@ export function calculateCharacterWithBreakdowns(
 	};
 
 	// 4.5. Compute background points (ported from useBackgroundPoints)
-	const skills = JSON.parse(buildData.skillsJson || '{}') as Record<string, number>;
-	const trades = JSON.parse(buildData.tradesJson || '{}') as Record<string, number>;
-	const languages = JSON.parse(
-		buildData.languagesJson || '{"common":{"fluency":"fluent"}}'
-	) as Record<string, { fluency: 'limited' | 'fluent' }>;
+	const skills = buildData.skillsData ?? {};
+	const trades = buildData.tradesData ?? {};
+	const languages = buildData.languagesData ?? { common: { fluency: 'fluent' } };
 
 	const skillPointsUsed = Object.values(skills).reduce((a, b) => a + (b || 0), 0);
 	const tradePointsUsed = Object.values(trades).reduce((a, b) => a + (b || 0), 0);
@@ -849,6 +841,7 @@ export function calculateCharacterWithBreakdowns(
 			finalPrimeModifierValue: maxValue,
 			finalPrimeModifierAttribute: primeAttribute,
 			finalCombatMastery: combatMastery,
+			finalAttributePoints,
 
 			// Combat stats with breakdowns
 			finalAttackSpellCheck: attackSpellCheckBase,

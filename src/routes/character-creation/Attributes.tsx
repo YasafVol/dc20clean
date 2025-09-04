@@ -8,7 +8,6 @@ import styled from '@emotion/styled';
 import {
 	StyledContainer,
 	StyledTitle,
-	StyledPointsRemaining,
 	StyledGrid,
 	StyledCard,
 	StyledCardTitle,
@@ -155,12 +154,8 @@ function Attributes() {
 
 	// Derive totals from the central calculation engine
 	const limits = calculationResult.validation.attributeLimits;
-	const traitBonusTotal = Object.values(limits).reduce(
-		(sum, lim) => sum + (lim.traitBonuses || 0),
-		0
-	);
-	const totalPoints = 12 + traitBonusTotal;
-	const spent = Object.values(limits).reduce((sum, lim) => sum + (lim.current + 2), 0);
+	const totalPoints = calculationResult.stats.finalAttributePoints ?? 12;
+	const spent = Object.values(limits).reduce((sum, lim) => sum + (lim.base + 2), 0);
 	const pointsRemaining = totalPoints - spent;
 
 	function increaseAttribute(attribute: string) {
@@ -190,11 +185,7 @@ function Attributes() {
 			<PointBreakdownSummary>
 				<BreakdownLine>
 					<span>Base Points:</span>
-					<span>12</span>
-				</BreakdownLine>
-				<BreakdownLine>
-					<span>Bonus from Traits:</span>
-					<span>{traitBonusTotal}</span>
+					<span>{totalPoints}</span>
 				</BreakdownLine>
 				<BreakdownLine>
 					<span>Spent on Attributes:</span>
@@ -213,11 +204,9 @@ function Attributes() {
 					const attributeKey = `attribute_${attribute.id}`;
 					const currentValue = typedState[attributeKey] || 0;
 					const limit = getAttributeLimit(attribute.id);
-					const breakdown = getStatBreakdown(`attribute_${attribute.id}`);
 
 					// Effective value includes trait bonuses
 					const effectiveValue = limit.current;
-					const hasTraitEffect = effectiveValue !== currentValue;
 
 					// Live validation and enablement
 					const realTimeValidation = validateAttributeChange(attribute.id, currentValue + 1);
@@ -249,7 +238,6 @@ function Attributes() {
 									+
 								</StyledButton>
 							</StyledControls>
-
 
 							
 						</StyledCard>

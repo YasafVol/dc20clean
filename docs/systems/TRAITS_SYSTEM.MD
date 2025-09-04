@@ -68,7 +68,7 @@ Notes:
 
 2. IDs & Conventions  
    – Prefer `id = '<ancestryId>_<snake_case_trait>'` for ancestry-tied traits.  
-   – Keep `target` values consistent with calculator expectations (e.g., `hpMax`, `pd`, `moveSpeed`, `any_attribute`, `any_skill`).
+   – Keep `target` values consistent with calculator expectations (e.g., `hpMax`, `pd`, `moveSpeed`, `attributePoints`, `any_attribute`, `any_skill`).
 
 3. Effects  
    – Reuse existing `Effect.type` strings from `schemas/character.schema.ts` whenever possible.  
@@ -128,7 +128,7 @@ When a new type is created:
 | ----------------------------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------- |
 | Trait not visible / loaded                      | Not added to `ancestries/traits.ts` or `id` mismatch            | Verify entry and `id` format                                    |
 | Unit test `rulesdata.spec.ts` fails             | Missing required fields or malformed `effects`                   | Ensure `id`, `name`, `cost`, and `effects[]` are present        |
-| Stats not updating for new numeric effect       | `target` not recognized in calculator                           | Map `target` in `createStatBreakdown` or associated aggregators  |
+| Stats not updating for new numeric effect       | `target` not recognized in calculator                           | Map `target` in `createStatBreakdown` or associated aggregators (e.g., `finalAttributePoints`) |
 | Choice prompt not appearing in UI               | `effect.userChoice` missing or unresolved                        | Add `userChoice`; ensure `resolveEffectChoices` supports target  |
 | Vite import error for traits                    | Import path typo                                                 | Use `ancestries/traits`                                        |
 

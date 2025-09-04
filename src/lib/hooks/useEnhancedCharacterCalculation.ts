@@ -53,12 +53,7 @@ export function useEnhancedCharacterCalculation(): CharacterCalculationHook {
 			const cacheAge = Date.now() - state.cacheTimestamp;
 			if (cacheAge < 5000) {
 				// Cache for 5 seconds
-				try {
-					const cached = JSON.parse(state.cachedEffectResults);
-					return { ...cached, isFromCache: true };
-				} catch (e) {
-					// Cache is invalid, recalculate
-				}
+				return { ...state.cachedEffectResults, isFromCache: true };
 			}
 		}
 
@@ -70,7 +65,7 @@ export function useEnhancedCharacterCalculation(): CharacterCalculationHook {
 			dispatch({
 				type: 'UPDATE_STORE',
 				updates: {
-					cachedEffectResults: JSON.stringify(result),
+					cachedEffectResults: result,
 					cacheTimestamp: result.cacheTimestamp
 				}
 			});

@@ -3,6 +3,7 @@ import { SpellSchool } from '../rulesdata/schemas/spell.schema';
 import type { SpellData } from '../../types/character';
 import { findClassByName } from '../rulesdata/loaders/class-features.loader';
 import { classesData } from '../rulesdata/loaders/class.loader';
+import { parseJsonSafe } from '../utils/storageUtils';
 
 export interface SpellAssignmentOptions {
 	className: string;
@@ -127,12 +128,8 @@ function getAvailableSpellSchools(
 		const choiceId = `${classFeatures.className.toLowerCase()}_spell_schools`;
 		const choice = featureChoices[choiceId];
 		if (choice) {
-			try {
-				const selectedSchools = JSON.parse(choice);
-				schools.push(...selectedSchools);
-			} catch (e) {
-				console.warn('Failed to parse spell school choices:', choice);
-			}
+			const selectedSchools = parseJsonSafe<string[]>(choice) ?? [choice];
+			schools.push(...selectedSchools);
 		}
 	} else if (spellList.type === 'schools') {
 		// Spellblade-style: specific schools + additional chosen schools
@@ -144,12 +141,11 @@ function getAvailableSpellSchools(
 			const choiceId = `${classFeatures.className.toLowerCase()}_additional_spell_schools`;
 			const choice = featureChoices[choiceId];
 			if (choice) {
-				try {
-					const additionalSchools = spellList.schoolCount > 1 ? JSON.parse(choice) : [choice];
-					schools.push(...additionalSchools);
-				} catch (e) {
-					console.warn('Failed to parse additional spell school choices:', choice);
-				}
+				const additionalSchools =
+					spellList.schoolCount > 1
+						? parseJsonSafe<string[]>(choice) ?? [choice]
+						: [choice];
+				schools.push(...additionalSchools);
 			}
 		}
 	} else if (spellList.type === 'any') {

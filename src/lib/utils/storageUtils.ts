@@ -58,6 +58,27 @@ export const deserializeCharacterFromStorage = (jsonString: string): SavedCharac
 };
 
 /**
+ * Deep clones an object using JSON serialization.
+ * This is a controlled use of JSON.parse and JSON.stringify,
+ * intended for creating copies of complex, non-class objects.
+ */
+export const deepClone = <T>(obj: T): T => {
+	return JSON.parse(JSON.stringify(obj));
+};
+
+/**
+ * Safely parses a JSON string without throwing an error.
+ * Returns undefined if parsing fails.
+ */
+export function parseJsonSafe<T = any>(jsonString: string): T | undefined {
+	try {
+		return JSON.parse(jsonString);
+	} catch {
+		return undefined;
+	}
+}
+
+/**
  * Create default character state for new characters (template with 0 values)
  */
 export const getDefaultCharacterState = (): CharacterState => ({

@@ -159,6 +159,7 @@ export interface EnhancedCalculationResult {
 		finalPrimeModifierValue: number;
 		finalPrimeModifierAttribute: string;
 		finalCombatMastery: number;
+		finalAttributePoints: number;
 
 		// Combat stats with breakdowns
 		finalAttackSpellCheck: number;
@@ -288,9 +289,9 @@ export interface EnhancedCharacterBuildData {
 	featureChoices: Record<string, any>; // User choices for class features
 
 	// Skills/Trades/Languages
-	skillsJson: string;
-	tradesJson: string;
-	languagesJson: string;
+	skillsData: Record<string, number>;
+	tradesData: Record<string, number>;
+	languagesData: Record<string, { fluency: 'limited' | 'fluent' }>;
 
 	// Manual Overrides
 	manualPD?: number;

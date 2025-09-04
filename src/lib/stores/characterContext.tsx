@@ -31,7 +31,7 @@ export interface CharacterInProgressStoreData
 	skillsData: Record<string, number>;
 	tradesData: Record<string, number>;
 	languagesData: Record<string, { fluency: 'limited' | 'fluent' }>;
-	cachedEffectResults?: string;
+	cachedEffectResults?: EnhancedCalculationResult;
 	cacheTimestamp?: number;
 	selectedSpells: string[];
 	selectedManeuvers: string[];

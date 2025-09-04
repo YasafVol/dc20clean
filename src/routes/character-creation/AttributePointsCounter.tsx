@@ -5,10 +5,9 @@ import { StyledContainer, StyledTitle, StyledDetails } from './styles/AncestryPo
 function AttributePointsCounter() {
 	const { calculationResult } = useCharacter();
 	const limits = calculationResult.validation.attributeLimits;
-	// Base 12 total points + trait bonuses
-	const total = 12 + Object.values(limits).reduce((sum, lim) => sum + (lim.traitBonuses || 0), 0);
-	// Each attribute baseline is -2; spent is sum(current + 2)
-	const spent = Object.values(limits).reduce((sum, lim) => sum + (lim.current + 2), 0);
+	const total = calculationResult.stats.finalAttributePoints ?? 12;
+	// Each attribute baseline is -2; spent is sum(base + 2)
+	const spent = Object.values(limits).reduce((sum, lim) => sum + (lim.base + 2), 0);
 	const remaining = total - spent;
 
 	const isOverBudget = remaining < 0;

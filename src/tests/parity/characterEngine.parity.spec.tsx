@@ -116,6 +116,46 @@ const fixtures: CharacterInProgressStoreData[] = [
 		tradeToSkillConversions: 0,
 		tradeToLanguageConversions: 0,
 		schemaVersion: 2
+	},
+	{
+		// Human with Attribute Increase Trait
+		id: 'test-human-attr-increase',
+		attribute_might: 0,
+		attribute_agility: 0,
+		attribute_charisma: 0,
+		attribute_intelligence: 0,
+		pointsSpent: 0,
+		level: 1,
+		combatMastery: 1,
+		ancestry1Id: 'human',
+		ancestry2Id: null,
+		selectedTraitIds: ['human_attribute_increase'],
+		ancestryPointsSpent: 2,
+		classId: 'cleric',
+		selectedFeatureChoices: {},
+		saveMasteryMight: false,
+		saveMasteryAgility: false,
+		saveMasteryCharisma: false,
+		saveMasteryIntelligence: false,
+		finalName: 'Test Attr Inc',
+		finalPlayerName: 'Test Player',
+		createdAt: new Date(),
+		updatedAt: new Date(),
+		currentStep: 3,
+		overflowTraitId: null,
+		overflowAttributeName: null,
+		skillsData: {},
+		tradesData: {},
+		languagesData: { common: { fluency: 'fluent' } },
+		selectedTraitChoices: {},
+		cachedEffectResults: undefined,
+		cacheTimestamp: undefined,
+		selectedSpells: [],
+		selectedManeuvers: [],
+		skillToTradeConversions: 0,
+		tradeToSkillConversions: 0,
+		tradeToLanguageConversions: 0,
+		schemaVersion: 2
 	}
 ];
 
@@ -184,7 +224,11 @@ function runNewCalculations(fixtureState: CharacterInProgressStoreData) {
 		availableLanguagePoints: result.background?.availableLanguagePoints || 0,
 		baseLanguagePoints: result.background?.baseLanguagePoints || 0,
 		languagePointsUsed: result.background?.languagePointsUsed || 0,
-		attributePointsRemaining: 0 // TODO: derive from new system when implemented
+		attributePointsTotal: result.stats.finalAttributePoints,
+		attributePointsSpent: Object.values(result.validation.attributeLimits).reduce(
+			(sum, lim) => sum + (lim.base + 2),
+			0
+		)
 	};
 }
 
@@ -208,6 +252,21 @@ describe('Character Engine Parity Tests', () => {
 			expect(modern.skillPointsUsed).toBe(legacy.skillPointsUsed);
 			expect(modern.tradePointsUsed).toBe(legacy.tradePointsUsed);
 			expect(modern.languagePointsUsed).toBe(legacy.languagePointsUsed);
+		});
+
+		it('calculates attribute points correctly', () => {
+			const modern = runNewCalculations(fixture);
+			const expectedTotal =
+				12 +
+				(fixture.selectedTraitIds.includes('human_attribute_increase') ? 1 : 0);
+			expect(modern.attributePointsTotal).toBe(expectedTotal);
+			const remaining = modern.attributePointsTotal - modern.attributePointsSpent;
+			// Example check
+			if (fixture.id === 'test-human-attr-increase') {
+				// 0+2 * 4 = 8 spent. 13 total. 5 remaining.
+				expect(modern.attributePointsSpent).toBe(8);
+				expect(remaining).toBe(5);
+			}
 		});
 
 		it('converts context → buildData without loss', () => {

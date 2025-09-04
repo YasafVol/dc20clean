@@ -37,9 +37,6 @@ src/routes/character-creation/CharacterCreation.tsx:157,167,310
 src/routes/character-creation/ClassFeatures.tsx:54,612,649
 src/routes/character-creation/LoadCharacter.tsx:49,87,89
 src/routes/character-sheet/CharacterSheetClean.tsx:133,197,200,615,669,720,768,824,869,888,1215,1782
-src/lib/services/spellAssignment.ts:114,131
-src/lib/services/enhancedCharacterCalculator.ts:64
-src/lib/hooks/useEnhancedCharacterCalculation.ts:56,72
 src/lib/utils/characterEdit.ts:170,185
 src/lib/utils/defenseNotes.ts:5,11,20
 ```

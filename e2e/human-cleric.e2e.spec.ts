@@ -32,6 +32,8 @@ test('Human Cleric E2E: domains Ancestral + Magic, full flow and saved object', 
   await page.getByRole('button', { name: 'Next →' }).click();
 
   // Step 3: Attributes (13 total = 12 + human attribute increase)
+  // Check that we start with 13 points from the human trait bonus
+  await expect(page.getByText(/Attribute Points:\s*13|Remaining:\s*13/)).toBeVisible();
   // Helper to click the + inside a specific attribute card
   async function incAttr(name: string, times: number) {
     const card = page.locator('div', { has: page.getByRole('heading', { name }) });

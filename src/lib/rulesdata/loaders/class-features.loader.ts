@@ -11,6 +11,7 @@ import {
 	type ITraitEffect
 } from '../schemas/types';
 import { traitsData } from '../ancestries/traits';
+import { parseJsonSafe } from '../../utils/storageUtils';
 
 // Define interfaces for the new class features structure
 export interface ClassFeatureChoice {
@@ -235,17 +236,14 @@ export function getClassSpecificInfo(
 
 					if (selectedValue && choice.options) {
 						if (choice.count > 1) {
-							// Handle multiple selections
-							let selectedValues: string[] = [];
-							try {
-								// Try parsing as JSON array first
-								selectedValues = JSON.parse(selectedValue);
-							} catch (error) {
-								// If not JSON, try comma-separated string
+							// Handle multiple selections from stringified JSON or comma-separated list
+							let selectedValues: string[] = parseJsonSafe<string[]>(selectedValue) ?? [];
+
+							if (selectedValues.length === 0) {
+								// Fallback for non-JSON strings
 								if (selectedValue.includes(',')) {
 									selectedValues = selectedValue.split(',').map((s: string) => s.trim());
 								} else {
-									// Single value that failed JSON parse
 									selectedValues = [selectedValue];
 								}
 							}

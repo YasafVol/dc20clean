@@ -222,10 +222,10 @@ export const getAllSavedCharacters = (): SavedCharacter[] => {
 
 #### ✅ Validation Steps for Task 1.1
 
-- [ ] Files created without TypeScript errors
-- [ ] Import statements resolve correctly
-- [ ] `npm run build` succeeds
-- [ ] No circular dependency warnings
+- [x] Files created without TypeScript errors
+- [x] Import statements resolve correctly
+- [x] `npm run build` succeeds
+- [x] No circular dependency warnings
 
 ---
 
@@ -290,10 +290,10 @@ import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from '..
 
 #### ✅ Validation Steps for Task 1.2
 
-- [ ] Character sheet loads without recalculation
-- [ ] No console errors in browser
-- [ ] Character data displays correctly
-- [ ] Load time improved (measure with DevTools)
+- [x] Character sheet loads without recalculation
+- [x] No console errors in browser
+- [x] Character data displays correctly
+- [x] Load time improved (measure with DevTools)
 
 #### 🔙 Rollback Instructions
 
@@ -383,10 +383,10 @@ grep -r "character\.manual" src/routes/character-sheet/components/
 
 #### ✅ Validation Steps for Task 1.3
 
-- [ ] No duplicate fields in localStorage
-- [ ] Character state updates correctly
-- [ ] UI shows current HP/SP values
-- [ ] Manual defense overrides work
+- [x] No duplicate fields in localStorage
+- [x] Character state updates correctly
+- [x] UI shows current HP/SP values
+- [x] Manual defense overrides work
 
 ---
 
@@ -748,9 +748,9 @@ const traits = character.selectedTraitIds || [];
 
 #### ✅ Validation Steps for Task 3.1
 
-- [ ] No more `JSON.parse` calls in component files
-- [ ] Skills/trades/languages display correctly
-- [ ] Trait selection works with typed data
+- [x] No more `JSON.parse` calls in component files
+- [x] Skills/trades/languages display correctly
+- [x] Trait selection works with typed data
 
 ---
 
@@ -863,10 +863,10 @@ localStorage.setItem('savedCharacters', JSON.stringify(savedCharacters));
 
 #### ✅ Validation Steps for Task 3.2
 
-- [ ] Character creation completes successfully
-- [ ] Saved character uses new schema
-- [ ] No JSON string fields in saved data
-- [ ] Character loads correctly in sheet
+- [x] Character creation completes successfully
+- [x] Saved character uses new schema
+- [x] No JSON string fields in saved data
+- [x] Character loads correctly in sheet
 
 ---
 

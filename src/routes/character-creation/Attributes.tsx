@@ -250,42 +250,8 @@ function Attributes() {
 								</StyledButton>
 							</StyledControls>
 
-							{/* Display both base and effective values */}
-							{hasTraitEffect && (
-								<EffectiveValueDisplay>
-									<BaseValue>Base: {currentValue}</BaseValue>
-									<EffectiveValue $different={hasTraitEffect}>Effective: {effectiveValue}</EffectiveValue>
-								</EffectiveValueDisplay>
-							)}
 
-							{/* Enhanced breakdown display */}
-							{(limit.traitBonuses > 0 || breakdown) && (
-								<AttributeBreakdown>
-									<BreakdownLine>
-										<span>Base Points:</span>
-										<span>{currentValue}</span>
-									</BreakdownLine>
-									{limit.traitBonuses > 0 && (
-										<BreakdownLine>
-											<span>Trait Bonuses:</span>
-											<span>+{limit.traitBonuses}</span>
-										</BreakdownLine>
-									)}
-									<BreakdownLine>
-										<span>Total:</span>
-										<span>{limit.current}</span>
-									</BreakdownLine>
-								</AttributeBreakdown>
-							)}
-
-							{/* Validation messages */}
-							{limit.exceeded && (
-								<ValidationMessage $type="error">Exceeds maximum limit of +{limit.max}</ValidationMessage>
-							)}
-
-							{!limit.exceeded && !canIncrease && pointsRemaining > 0 && (
-								<ValidationMessage $type="warning">Cannot increase further due to trait bonuses</ValidationMessage>
-							)}
+							
 						</StyledCard>
 					);
 				})}

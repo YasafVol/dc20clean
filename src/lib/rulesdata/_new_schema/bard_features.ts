@@ -7,17 +7,22 @@ import type { ClassDefinition } from '../schemas/character.schema';
 
 export const bardClass: ClassDefinition = {
 	className: 'Bard',
-	startingStats: {
-		hp: 8, // From bard_table.json level 1
-		sp: 0,
-		mp: 6,
-		skillPoints: 4,
-		tradePoints: 3,
-		languagePoints: 2,
-		maneuversKnown: 0,
-		techniquesKnown: 0,
-		cantripsKnown: 2,
-		spellsKnown: 3
+	spellcasterPath: {
+		spellcastingProgression: 'full',
+		spellcastingAttribute: 'charisma',
+		spellList: {
+			description: 'You learn any 2 Spells of your choice from any Spell List.',
+			type: 'any'
+		},
+		cantrips: {
+			description: 'Cantrips Known column of the Bard Class Table'
+		},
+		spells: {
+			description: 'Spells Known column of the Bard Class Table'
+		},
+		manaPoints: {
+			maximumIncreasesBy: 'Mana Points column of the Bard Class Table'
+		}
 	},
 	coreFeatures: [
 		{

@@ -7,17 +7,25 @@ import type { ClassDefinition } from '../schemas/character.schema';
 
 export const commanderClass: ClassDefinition = {
 	className: 'Commander',
-	startingStats: {
-		hp: 9, // From commander_table.json level 1
-		sp: 1,
-		mp: 0,
-		skillPoints: 4,
-		tradePoints: 3,
-		languagePoints: 2,
-		maneuversKnown: 4, // All Attack maneuvers + 4 additional
-		techniquesKnown: 0,
-		cantripsKnown: 0,
-		spellsKnown: 0
+	martialPath: {
+		combatTraining: {
+			weapons: ['Weapons'],
+			armor: ['All_Armor'],
+			shields: ['All_Shields']
+		},
+		maneuvers: {
+			learnsAllAttack: true,
+			additionalKnown: 'Maneuvers Known column of the Commander Class Table'
+		},
+		techniques: {
+			additionalKnown: 'Techniques Known column of the Commander Class Table'
+		},
+		staminaPoints: {
+			maximumIncreasesBy: 'Stamina Points column of the Commander Class Table'
+		},
+		staminaRegen: {
+			description: 'Once per round, regain up to half maximum SP when you grant a creature a Help Die.',
+		}
 	},
 	coreFeatures: [
 		{

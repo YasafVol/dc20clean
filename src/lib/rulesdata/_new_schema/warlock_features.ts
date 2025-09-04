@@ -2,23 +2,13 @@ import type { ClassDefinition } from '../schemas/character.schema';
 
 export const warlockClass: ClassDefinition = {
 	className: 'Warlock',
-	startingEquipment: {
-		weaponsOrShields: ['2 Weapons'],
-		armor: '1 set of Light Armor',
-		packs: 'X or Y Packs (Adventuring Packs Coming Soon)'
-	},
 	spellcasterPath: {
-		spellcastingProgression: 'warlock',
-		spellcastingAttribute: 'charisma',
-		spellsKnown: {
+		spells: {
 			description: 'Spells Known column of the Warlock Class Table'
-		},
-		ritualCasting: false,
-		spellPreparation: false
+		}
 	},
 	coreFeatures: [
 		{
-			id: 'otherworldly_patron',
 			featureName: 'Otherworldly Patron',
 			levelGained: 1,
 			description: 'You have struck a pact with an otherworldly being. Choose your patron type.',
@@ -44,21 +34,15 @@ export const warlockClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'pact_magic',
 			featureName: 'Pact Magic',
 			levelGained: 1,
 			description:
 				'Your arcane research and magic bestowed by your patron have given you facility with spells.',
 			effects: [
-				{
-					type: 'GRANT_SPELLCASTING',
-					target: 'warlock_spellcasting',
-					value: 'Pact Magic: short rest spell slot recovery'
-				}
+				{ type: 'GRANT_ABILITY', target: 'pact_magic', value: 'Pact Magic: short rest spell slot recovery' }
 			]
 		},
 		{
-			id: 'eldritch_invocations',
 			featureName: 'Eldritch Invocations',
 			levelGained: 2,
 			description:
@@ -98,7 +82,6 @@ export const warlockClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'pact_boon',
 			featureName: 'Pact Boon',
 			levelGained: 3,
 			description: 'Your otherworldly patron bestows a gift upon you for your loyal service.',
@@ -121,5 +104,6 @@ export const warlockClass: ClassDefinition = {
 				}
 			]
 		}
-	]
+	],
+	subclasses: []
 };

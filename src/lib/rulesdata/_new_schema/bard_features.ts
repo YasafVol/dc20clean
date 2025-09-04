@@ -8,8 +8,6 @@ import type { ClassDefinition } from '../schemas/character.schema';
 export const bardClass: ClassDefinition = {
 	className: 'Bard',
 	spellcasterPath: {
-		spellcastingProgression: 'full',
-		spellcastingAttribute: 'charisma',
 		spellList: {
 			description: 'You learn any 2 Spells of your choice from any Spell List.',
 			type: 'any'

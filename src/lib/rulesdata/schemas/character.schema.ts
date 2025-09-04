@@ -156,8 +156,6 @@ export interface ClassDefinition {
 		};
 	};
 	spellcasterPath?: {
-		spellcastingProgression?: string;
-		spellcastingAttribute?: string;
 		spellList?: any;
 		cantrips?: {
 			description?: string;
@@ -192,8 +190,6 @@ export interface ClassDefinition {
 			};
 		};
 		spellcastingAspect?: {
-			spellcastingProgression?: string;
-			spellcastingAttribute?: string;
 			spellList?: any;
 			cantrips?: {
 				description?: string;

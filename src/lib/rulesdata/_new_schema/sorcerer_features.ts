@@ -8,8 +8,6 @@ export const sorcererClass: ClassDefinition = {
 		packs: 'X or Y Packs (Adventuring Packs Coming Soon)'
 	},
 	spellcasterPath: {
-		spellcastingProgression: 'full',
-		spellcastingAttribute: 'charisma',
 		spellsKnown: {
 			description: 'Spells Known column of the Sorcerer Class Table'
 		},

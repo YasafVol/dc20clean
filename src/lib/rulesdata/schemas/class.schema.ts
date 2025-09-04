@@ -67,8 +67,6 @@ const martialPathSchema = z.object({
 }).optional();
 
 const spellcasterPathSchema = z.object({
-    spellcastingProgression: z.string(),
-    spellcastingAttribute: z.string(),
     spellList: z.any().optional(),
     cantrips: z.object({ description: z.string() }).optional(),
     spells: z.object({ description: z.string() }).optional(),

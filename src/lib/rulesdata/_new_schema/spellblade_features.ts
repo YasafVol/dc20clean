@@ -26,8 +26,6 @@ export const spellbladeClass: ClassDefinition = {
 			}
 		},
 		spellcastingAspect: {
-			spellcastingProgression: 'half',
-			spellcastingAttribute: 'intelligence',
 			spellsKnown: {
 				description: 'Spells Known column of the Spellblade Class Table'
 			},

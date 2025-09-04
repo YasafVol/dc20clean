@@ -8,8 +8,6 @@ import type { ClassDefinition } from '../schemas/character.schema';
 export const wizardClass: ClassDefinition = {
 	className: 'Wizard',
 	spellcasterPath: {
-		spellcastingProgression: 'full',
-		spellcastingAttribute: 'intelligence',
 		spellList: {
 			description: 'Arcane spells from multiple schools of magic',
 			type: 'arcane'

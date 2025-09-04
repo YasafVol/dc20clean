@@ -8,8 +8,6 @@ import type { ClassDefinition } from '../schemas/character.schema';
 export const clericClass: ClassDefinition = {
 	className: 'Cleric',
 	spellcasterPath: {
-		spellcastingProgression: 'full',
-		spellcastingAttribute: 'charisma',
 		spellList: {
 			description: 'Divine spells from multiple domains and schools',
 			type: 'divine'

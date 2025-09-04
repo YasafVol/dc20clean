@@ -8,8 +8,6 @@ import type { ClassDefinition } from '../schemas/character.schema';
 export const druidClass: ClassDefinition = {
 	className: 'Druid',
 	spellcasterPath: {
-		spellcastingProgression: 'full',
-		spellcastingAttribute: 'intelligence',
 		spellList: {
 			description: 'Primal spells focused on nature and the elements',
 			type: 'primal'

@@ -7,17 +7,25 @@ import type { ClassDefinition } from '../schemas/character.schema';
 
 export const championClass: ClassDefinition = {
 	className: 'Champion',
-	startingStats: {
-		hp: 10,
-		sp: 6,
-		mp: 0,
-		skillPoints: 3,
-		tradePoints: 3,
-		languagePoints: 2,
-		maneuversKnown: 4,
-		techniquesKnown: 1,
-		cantripsKnown: 0,
-		spellsKnown: 0
+	martialPath: {
+		combatTraining: {
+			weapons: ['Weapons'],
+			armor: ['All_Armors'],
+			shields: ['All_Shields']
+		},
+		maneuvers: {
+			learnsAllAttack: true,
+			additionalKnown: 'Maneuvers Known column of the Champion Class Table'
+		},
+		techniques: {
+			additionalKnown: 'Techniques Known column of the Champion Class Table'
+		},
+		staminaPoints: {
+			maximumIncreasesBy: 'Stamina Points column of the Champion Class Table'
+		},
+		staminaRegen: {
+			description: 'Once per round, you can regain up to half your maximum SP when you perform a Maneuver.',
+		}
 	},
 	coreFeatures: [
 		{

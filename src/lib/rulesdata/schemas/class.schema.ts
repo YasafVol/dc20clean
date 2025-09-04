@@ -51,28 +51,53 @@ const classFeatureSchema = z.object({
 	benefits: z.array(benefitSchema).optional()
 });
 
+// ADD THESE SCHEMAS
+const combatTrainingSchema = z.object({
+    weapons: z.array(z.string()).optional(),
+    armor: z.array(z.string()).optional(),
+    shields: z.array(z.string()).optional()
+}).optional();
+
+const martialPathSchema = z.object({
+    combatTraining: combatTrainingSchema,
+    maneuvers: z.object({ learnsAllAttack: z.boolean().optional(), additionalKnown: z.string().optional() }).optional(),
+    techniques: z.object({ additionalKnown: z.string().optional() }).optional(),
+    staminaPoints: z.object({ maximumIncreasesBy: z.string().optional() }).optional(),
+    staminaRegen: z.object({ description: z.string().optional(), conditions: z.array(z.string()).optional() }).optional()
+}).optional();
+
+const spellcasterPathSchema = z.object({
+    spellcastingProgression: z.string(),
+    spellcastingAttribute: z.string(),
+    spellList: z.any().optional(),
+    cantrips: z.object({ description: z.string() }).optional(),
+    spells: z.object({ description: z.string() }).optional(),
+    manaPoints: z.object({ maximumIncreasesBy: z.string().optional() }).optional(),
+}).optional();
+
+const hybridPathSchema = z.object({
+    martialAspect: martialPathSchema,
+    spellcastingAspect: spellcasterPathSchema
+}).optional();
+
 // Schema for IClassDefinition
 export const classSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	description: z.string(),
-	baseHpContribution: z.number(),
-	startingSP: z.number(),
-	startingMP: z.number(),
-	skillPointGrantLvl1: z.number().optional(),
-	tradePointGrantLvl1: z.number().optional(),
-	combatTraining: z.array(z.string()).optional(),
-	maneuversKnownLvl1: z.union([z.string(), z.number()]).optional(),
-	techniquesKnownLvl1: z.number().optional(),
-	saveDCBase: z.number(),
-	deathThresholdBase: z.number(),
-	moveSpeedBase: z.number(),
-	restPointsBase: z.number(),
-	gritPointsBase: z.number(),
-	initiativeBonusBase: z.number(),
-	cantripsKnownLvl1: z.number().optional(),
-	spellsKnownLvl1: z.number().optional(),
-	// Level progression data for future level gaining
+
+	level1Stats: z.object({
+		healthPoints: z.number(),
+		staminaPoints: z.number(),
+		manaPoints: z.number(),
+		skillPoints: z.number(),
+		tradePoints: z.number(),
+		maneuversKnown: z.number(),
+		techniquesKnown: z.number(),
+		cantripsKnown: z.number(),
+		spellsKnown: z.number(),
+	}),
+
 	levelProgression: z.array(
 		z.object({
 			level: z.number(),
@@ -86,10 +111,14 @@ export const classSchema = z.object({
 			manaPoints: z.number(),
 			cantripsKnown: z.number(),
 			spellsKnown: z.number(),
-			features: z.string() // Description of features gained at this level
+			features: z.string()
 		})
 	),
-	// Features should be handled by class-features.loader.ts, but keeping for schema compatibility
+
+	martialPath: martialPathSchema,
+	spellcasterPath: spellcasterPathSchema,
+	hybridPath: hybridPathSchema,
+
 	level1Features: z.array(classFeatureSchema).optional(),
 	featureChoicesLvl1: z.array(classFeatureChoiceSchema).optional()
 });

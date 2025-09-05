@@ -56,6 +56,8 @@ interface CharacterSheetContextType {
   addSpell: (spell: any) => void;
   removeSpell: (spellId: string) => void;
   updateSpell: (spellId: string, field: string, value: any) => void;
+  addManeuver: (maneuver: any) => void;
+  removeManeuver: (maneuverId: string) => void;
   updateInventory: (items: any[]) => void;
   updateCurrency: (gold?: number, silver?: number, copper?: number) => void;
   updateNotes: (notes: string) => void;
@@ -88,6 +90,8 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
     addSpell,
     removeSpell,
     updateSpell,
+    addManeuver,
+    removeManeuver,
     updateInventory,
     updateCurrency,
     updateNotes,
@@ -243,6 +247,8 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
     addSpell,
     removeSpell,
     updateSpell,
+    addManeuver,
+    removeManeuver,
     updateInventory,
     updateCurrency,
     updateNotes,

@@ -180,6 +180,7 @@ interface CharacterContextType {
 	dispatch: React.Dispatch<CharacterAction>;
 	// New centralized calculation result only
 	calculationResult: EnhancedCalculationResult;
+	attributePointsRemaining: number;
 }
 
 const CharacterContext = createContext<CharacterContextType | undefined>(undefined);
@@ -195,26 +196,36 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 
 	// Removed legacy derived values; all consumers should use calculationResult instead
 
+	// NEW: Calculate attribute points remaining
+	const attributePointsRemaining = useMemo(() => {
+		const totalAttributePoints = calculationResult.stats.finalAttributePoints ?? 12;
+		const attributePointsSpent =
+			(state.attribute_might + 2) +
+			(state.attribute_agility + 2) +
+			(state.attribute_charisma + 2) +
+			(state.attribute_intelligence + 2);
+		return totalAttributePoints - attributePointsSpent;
+	}, [
+		calculationResult.stats.finalAttributePoints,
+		state.attribute_might,
+		state.attribute_agility,
+		state.attribute_charisma,
+		state.attribute_intelligence
+	]);
+
 	// Provide both the new result and the old values
 	const contextValue: CharacterContextType = useMemo(
 		() => ({
 			state,
 			dispatch,
-			calculationResult
+			calculationResult,
+			attributePointsRemaining
 		}),
-		[state, dispatch, calculationResult]
+		[state, dispatch, calculationResult, attributePointsRemaining]
 	);
 
 	return (
-		<CharacterContext.Provider
-			value={{
-				state: state.characterState,
-				dispatch,
-				attributePointsRemaining: calculationResult.stats.attributePointsRemaining,
-				calculationResult,
-				hasHydrated,
-			}}
-		>
+		<CharacterContext.Provider value={contextValue}>
 			{children}
 		</CharacterContext.Provider>
 	);

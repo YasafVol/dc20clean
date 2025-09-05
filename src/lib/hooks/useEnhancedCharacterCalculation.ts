@@ -16,9 +16,9 @@ import type {
 	EnhancedCalculationResult,
 	EnhancedStatBreakdown,
 	AttributeLimit,
-	EffectPreview
+	EffectPreview,
+	EnhancedCharacterBuildData
 } from '../types/effectSystem';
-import type { EnhancedCharacterBuildData } from '../types/character';
 
 // --- Constants ---
 const CACHE_TTL = 500; // 500ms time-to-live for cache
@@ -57,7 +57,7 @@ export function useEnhancedCharacterCalculation(): CharacterCalculationHook {
 		null
 	);
 	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<string | undefined>();
 
 	// Memoize the calculation to avoid re-running on every render
 	const performCalculation = useCallback(async () => {

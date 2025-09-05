@@ -245,3 +245,127 @@ export const StyledModalButton = styled.button<{ variant: 'cancel' | 'delete' }>
 		transform: translateY(-1px);
 	}
 `;
+
+// Import functionality styles
+export const StyledImportButton = styled.button`
+	padding: 0.75rem 1.5rem;
+	margin-bottom: 2rem;
+	margin-left: 1rem;
+	border: 1px solid #10b981;
+	border-radius: 8px;
+	background: transparent;
+	color: #10b981;
+	font-weight: bold;
+	cursor: pointer;
+	transition: all 0.3s ease;
+
+	&:hover {
+		border-color: #059669;
+		background: #10b981;
+		color: white;
+		transform: translateY(-2px);
+	}
+`;
+
+export const StyledImportModalContent = styled.div`
+	background: rgba(15, 23, 42, 0.95);
+	border: 2px solid #10b981;
+	border-radius: 12px;
+	padding: 2rem;
+	max-width: 600px;
+	width: 90%;
+	text-align: left;
+	backdrop-filter: blur(10px);
+`;
+
+export const StyledImportModalTitle = styled.h3`
+	color: #10b981;
+	font-size: 1.5rem;
+	margin-bottom: 1rem;
+	font-weight: bold;
+	text-align: center;
+`;
+
+export const StyledImportTextarea = styled.textarea`
+	width: 100%;
+	min-height: 300px;
+	padding: 1rem;
+	border: 2px solid #374151;
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.3);
+	color: #e5e7eb;
+	font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+	font-size: 0.875rem;
+	line-height: 1.4;
+	resize: vertical;
+	margin-bottom: 1rem;
+
+	&:focus {
+		outline: none;
+		border-color: #10b981;
+	}
+
+	&::placeholder {
+		color: #6b7280;
+	}
+`;
+
+export const StyledImportActions = styled.div`
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+	margin-top: 1rem;
+`;
+
+export const StyledImportButton2 = styled.button<{ variant: 'cancel' | 'import' }>`
+	padding: 0.75rem 1.5rem;
+	border: 2px solid ${(props) => (props.variant === 'import' ? '#10b981' : '#6b7280')};
+	border-radius: 6px;
+	background: ${(props) => (props.variant === 'import' ? '#10b981' : 'transparent')};
+	color: ${(props) => (props.variant === 'import' ? 'white' : '#6b7280')};
+	cursor: pointer;
+	transition: all 0.3s ease;
+	font-size: 0.9rem;
+	font-weight: bold;
+
+	&:hover {
+		background: ${(props) => (props.variant === 'import' ? '#059669' : '#6b7280')};
+		color: white;
+		transform: translateY(-1px);
+	}
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+		transform: none;
+	}
+`;
+
+export const StyledImportMessage = styled.p<{ type?: 'error' | 'success' | 'info' }>`
+	margin: 0.5rem 0;
+	padding: 0.75rem;
+	border-radius: 6px;
+	background: ${(props) => {
+		if (props.type === 'error') return 'rgba(239, 68, 68, 0.1)';
+		if (props.type === 'success') return 'rgba(16, 185, 129, 0.1)';
+		return 'rgba(59, 130, 246, 0.1)';
+	}};
+	border: 1px solid ${(props) => {
+		if (props.type === 'error') return '#ef4444';
+		if (props.type === 'success') return '#10b981';
+		return '#3b82f6';
+	}};
+	color: ${(props) => {
+		if (props.type === 'error') return '#ef4444';
+		if (props.type === 'success') return '#10b981';
+		return '#3b82f6';
+	}};
+	font-size: 0.875rem;
+	line-height: 1.4;
+`;
+
+export const StyledButtonRow = styled.div`
+	display: flex;
+	gap: 1rem;
+	margin-bottom: 2rem;
+`;

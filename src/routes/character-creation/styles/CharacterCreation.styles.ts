@@ -45,7 +45,7 @@ export const StyledStepsContainer = styled.div`
 	margin: 0 auto;
 `;
 
-export const StyledStep = styled.div<{ $active: boolean; $completed: boolean }>`
+export const StyledStep = styled.div<{ $active: boolean; $completed: boolean; $error?: boolean }>`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -57,7 +57,7 @@ export const StyledStep = styled.div<{ $active: boolean; $completed: boolean }>`
 	min-height: 80px;
 `;
 
-export const StyledStepNumber = styled.div<{ $active: boolean; $completed: boolean }>`
+export const StyledStepNumber = styled.div<{ $active: boolean; $completed: boolean; $error?: boolean }>`
 	width: 40px;
 	height: 40px;
 	border-radius: 50%;
@@ -82,20 +82,31 @@ export const StyledStepNumber = styled.div<{ $active: boolean; $completed: boole
 		`
     background: linear-gradient(145deg, #fbbf24 0%, #f59e0b 100%);
     color: #1e1b4b;
-    border: 1px solid #fbbf24;
+    border: 2px solid #fbbf24;
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
+    transform: scale(1.1);
   `}
   
   ${(props) =>
 		!props.$active &&
 		!props.$completed &&
+		!props.$error &&
 		`
     background: transparent;
     color: #9ca3af;
     border: 1px solid #9ca3af;
   `}
+
+  ${(props) =>
+		props.$error &&
+		`
+    background: linear-gradient(145deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: 1px solid #ef4444;
+  `}
 `;
 
-export const StyledStepLabel = styled.span<{ $active: boolean; $completed: boolean }>`
+export const StyledStepLabel = styled.span<{ $active: boolean; $completed: boolean; $error?: boolean }>`
 	font-size: 0.9rem;
 	font-weight: 600;
 	text-align: center;
@@ -116,13 +127,22 @@ export const StyledStepLabel = styled.span<{ $active: boolean; $completed: boole
 		!props.$completed &&
 		`
     color: #fbbf24;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
   `}
   
-  ${(props) =>
+	${(props) =>
 		!props.$active &&
 		!props.$completed &&
+		!props.$error &&
 		`
     color: #9ca3af;
+  `}
+
+	${(props) =>
+		props.$error &&
+		`
+    color: #ef4444;
   `}
 `;
 

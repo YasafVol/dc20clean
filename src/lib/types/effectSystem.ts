@@ -293,6 +293,13 @@ export interface EnhancedCharacterBuildData {
 	tradesData: Record<string, number>;
 	languagesData: Record<string, { fluency: 'limited' | 'fluent' }>;
 
+	// Point conversions
+	conversions?: {
+		skillToTrade: number;
+		tradeToSkill: number;
+		tradeToLanguage: number;
+	};
+
 	// Manual Overrides
 	manualPD?: number;
 	manualAD?: number;

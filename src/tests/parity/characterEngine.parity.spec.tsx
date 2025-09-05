@@ -275,7 +275,7 @@ describe('Character Engine Parity Tests', () => {
 			expect(buildData.classId).toBe(fixture.classId);
 			expect(buildData.attribute_intelligence).toBe(fixture.attribute_intelligence);
 			expect(buildData.selectedTraitIds).toEqual(fixture.selectedTraitIds);
-			expect(typeof buildData.skillsJson).toBe('string');
+			expect(typeof buildData.skillsData).toBe('object');
 		});
 	});
 

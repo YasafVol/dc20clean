@@ -1,10 +1,13 @@
 import React, { createContext, useContext, useReducer, useMemo, ReactNode } from 'react';
 import type { CharacterInProgress } from '@prisma/client';
-import { traitsData } from '../rulesdata/_new_schema/traits';
+import { traitsData } from '../rulesdata/ancestries/traits';
 import { findClassByName } from '../rulesdata/loaders/class-features.loader';
 import { classesData } from '../rulesdata/loaders/class.loader';
 
-import { useCharacterBuilder } from '../hooks/useCharacterBuilder';
+import {
+	calculateCharacterWithBreakdowns,
+	convertToEnhancedBuildData
+} from '../services/enhancedCharacterCalculator';
 import type { EnhancedCalculationResult } from '../types/effectSystem';
 
 // Define the shape of the data stored in the character store
@@ -185,7 +188,10 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 	const [state, dispatch] = useReducer(characterReducer, initialCharacterInProgressState);
 
 	// The new central engine runs on every state change
-	const calculationResult = useCharacterBuilder(state);
+	const calculationResult = useMemo(() => {
+		const buildData = convertToEnhancedBuildData(state);
+		return calculateCharacterWithBreakdowns(buildData);
+	}, [state]);
 
 	// Removed legacy derived values; all consumers should use calculationResult instead
 
@@ -199,7 +205,19 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 		[state, dispatch, calculationResult]
 	);
 
-	return <CharacterContext.Provider value={contextValue}>{children}</CharacterContext.Provider>;
+	return (
+		<CharacterContext.Provider
+			value={{
+				state: state.characterState,
+				dispatch,
+				attributePointsRemaining: calculationResult.stats.attributePointsRemaining,
+				calculationResult,
+				hasHydrated,
+			}}
+		>
+			{children}
+		</CharacterContext.Provider>
+	);
 }
 
 export function useCharacter() {

@@ -2,10 +2,10 @@ import React from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { StyledContainer, StyledTitle, StyledDetails } from './styles/AncestryPointsCounter.styles';
 
-function AttributePointsCounter() {
+function AttributePointsCounter({ totalAttributePoints }: { totalAttributePoints: number }) {
 	const { calculationResult } = useCharacter();
 	const limits = calculationResult.validation.attributeLimits;
-	const total = calculationResult.stats.finalAttributePoints ?? 12;
+	const total = totalAttributePoints;
 	// Each attribute baseline is -2; spent is sum(base + 2)
 	const spent = Object.values(limits).reduce((sum, lim) => sum + (lim.base + 2), 0);
 	const remaining = total - spent;

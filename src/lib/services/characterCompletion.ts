@@ -41,6 +41,10 @@ export const completeCharacter = async (
 			skillsData: characterState.skillsData || {},
 			tradesData: characterState.tradesData || {},
 			languagesData: characterState.languagesData || { common: { fluency: 'fluent' } },
+			// CRITICAL: Include conversions for proper background validation
+			skillToTradeConversions: characterState.skillToTradeConversions || 0,
+			tradeToSkillConversions: characterState.tradeToSkillConversions || 0,
+			tradeToLanguageConversions: characterState.tradeToLanguageConversions || 0,
 			createdAt: new Date(),
 			completedAt: new Date().toISOString()
 		});
@@ -101,6 +105,11 @@ export const completeCharacter = async (
 			languagesData: characterState.languagesData || [],
 			spells: [], // Will be populated below
 			maneuvers: [], // Will be populated below
+
+			// CRITICAL: Store conversions for character editing
+			skillToTradeConversions: characterState.skillToTradeConversions || 0,
+			tradeToSkillConversions: characterState.tradeToSkillConversions || 0,
+			tradeToLanguageConversions: characterState.tradeToLanguageConversions || 0,
 
 			// Store calculation breakdowns for transparency
 			breakdowns: calculationResult.breakdowns || {},

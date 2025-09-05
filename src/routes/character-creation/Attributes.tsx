@@ -1,6 +1,5 @@
 import React from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
-import { useAttributeCalculation } from '../../lib/hooks/useAttributeCalculation';
 import { useEnhancedCharacterCalculation } from '../../lib/hooks/useEnhancedCharacterCalculation';
 
 import { attributesData } from '../../lib/rulesdata/attributes';
@@ -147,20 +146,20 @@ const ForcedAdjustmentsWarning = styled.div`
 type AttributeState = Record<string, number>;
 
 function Attributes() {
-	const { state, dispatch } = useCharacter();
-	const calculation = useAttributeCalculation(state);
-	const { getAttributeLimit, canDecreaseAttribute, validateAttributeChange } =
+	const { state, dispatch, attributePointsRemaining, calculationResult } = useCharacter();
+	const { getAttributeLimit, validateAttributeChange, getStatBreakdown } =
 		useEnhancedCharacterCalculation();
 
-	const typedState = state as unknown as AttributeState;
+	const totalAttributePoints = calculationResult.stats.finalAttributePoints ?? 12;
+	const limits = calculationResult.validation.attributeLimits;
 
-	const { pointsRemaining } = calculation;
+	const typedState = state as unknown as AttributeState;
 
 	function increaseAttribute(attribute: string) {
 		const currentValue = typedState[attribute];
 		const attrId = attribute.replace('attribute_', '');
 		const validation = validateAttributeChange(attrId, currentValue + 1);
-		if (pointsRemaining > 0 && validation.isValid) {
+		if (attributePointsRemaining > 0 && validation.isValid) {
 			dispatch({ type: 'UPDATE_ATTRIBUTE', attribute, value: currentValue + 1 });
 		}
 	}
@@ -177,40 +176,21 @@ function Attributes() {
 	return (
 		<StyledContainer>
 			<StyledTitle>Attributes</StyledTitle>
-			<AttributePointsCounter />
-
-			{/* Point breakdown summary from new hook */}
-			<PointBreakdownSummary>
-				<BreakdownLine>
-					<span>Total Points Available:</span>
-					<span>{calculation.totalPointsAvailable}</span>
-				</BreakdownLine>
-				<BreakdownLine>
-					<span>Spent on Attributes:</span>
-					<span>{calculation.pointsSpent}</span>
-				</BreakdownLine>
-				<BreakdownLine>
-					<span>Points Remaining:</span>
-					<span style={{ color: calculation.pointsRemaining < 0 ? '#dc2626' : '#059669' }}>
-						{calculation.pointsRemaining}
-					</span>
-				</BreakdownLine>
-			</PointBreakdownSummary>
-
-			{calculation.forcedAdjustments.length > 0 && (
-				<ForcedAdjustmentsWarning>
-					{calculation.forcedAdjustments.length} forced adjustment(s) due to traits
-				</ForcedAdjustmentsWarning>
-			)}
+			<AttributePointsCounter totalAttributePoints={totalAttributePoints} />
 
 			<StyledGrid>
 				{attributesData.map((attribute) => {
 					const attributeKey = `attribute_${attribute.id}`;
 					const currentValue = typedState[attributeKey] || 0;
 					const limit = getAttributeLimit(attribute.id);
+					const breakdown = getStatBreakdown(attribute.id);
 
-					const canIncrease = pointsRemaining > 0 && limit.canIncrease;
-					const canDecrease = canDecreaseAttribute(attribute.id);
+					// Enhanced validation with real-time state
+					// Use live validation instead of cached result to avoid timing issues
+					const realTimeValidation = validateAttributeChange(attribute.id, currentValue + 1);
+					const canIncrease = attributePointsRemaining > 0 && realTimeValidation.isValid;
+					// Simple real-time decrease check: can decrease if above minimum
+					const canDecrease = currentValue > -2;
 
 					return (
 						<StyledCard key={attribute.id}>
@@ -234,7 +214,7 @@ function Attributes() {
 									disabled={!canIncrease}
 									title={
 										!canIncrease
-											? pointsRemaining <= 0
+											? attributePointsRemaining <= 0
 												? 'No points remaining'
 												: 'Cannot increase above +3'
 											: ''

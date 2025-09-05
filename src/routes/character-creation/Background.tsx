@@ -22,11 +22,12 @@ const Background: React.FC = () => {
 	// Get background data from the centralized calculator
 	const { background, validation } = calculationResult;
 
+	// Early return if background data is not available
 	if (!background) {
 		return (
 			<StyledContainer>
 				<StyledSubheading>Background (Skills, Trades & Languages)</StyledSubheading>
-				<div>Loading background calculations...</div>
+				<div>Loading background data...</div>
 			</StyledContainer>
 		);
 	}
@@ -46,34 +47,71 @@ const Background: React.FC = () => {
 		}
 	};
 
-	// Conversion actions wired to store and calculator
+	// Conversion actions with proper logic using calculated values
 	const actions = {
-		convertSkillToTrade: () =>
-			dispatch({
-				type: 'SET_CONVERSIONS',
-				conversions: {
-					skillToTrade: (state.skillToTradeConversions ?? 0) + 1
-				}
-			}),
-		convertTradeToSkill: () =>
-			dispatch({
-				type: 'SET_CONVERSIONS',
-				conversions: {
-					tradeToSkill: (state.tradeToSkillConversions ?? 0) + 1
-				}
-			}),
-		convertTradeToLanguage: () =>
-			dispatch({
-				type: 'SET_CONVERSIONS',
-				conversions: {
-					tradeToLanguage: (state.tradeToLanguageConversions ?? 0) + 1
-				}
-			}),
-		resetConversions: () =>
+		convertSkillToTrade: () => {
+			const currentSkillToTrade = state.skillToTradeConversions || 0;
+			const { availableSkillPoints } = background;
+
+			// Calculate current skill points used (this should come from summing the skillsData)
+			const skillPointsUsed = Object.values(state.skillsData || {}).reduce(
+				(sum, level) => sum + level,
+				0
+			);
+			const remainingSkillPoints = availableSkillPoints - skillPointsUsed;
+
+			// Only allow conversion if we have at least 1 skill point remaining
+			if (remainingSkillPoints >= 1) {
+				dispatch({
+					type: 'SET_CONVERSIONS',
+					conversions: { skillToTrade: currentSkillToTrade + 1 }
+				});
+			}
+		},
+		convertTradeToSkill: () => {
+			const currentTradeToSkill = state.tradeToSkillConversions || 0;
+			const { availableTradePoints } = background;
+
+			// Calculate current trade points used
+			const tradePointsUsed = Object.values(state.tradesData || {}).reduce(
+				(sum, level) => sum + level,
+				0
+			);
+			const remainingTradePoints = availableTradePoints - tradePointsUsed;
+
+			// Only allow conversion if we have at least 2 trade points remaining (costs 2 trade = 1 skill)
+			if (remainingTradePoints >= 2) {
+				dispatch({
+					type: 'SET_CONVERSIONS',
+					conversions: { tradeToSkill: currentTradeToSkill + 2 }
+				});
+			}
+		},
+		convertTradeToLanguage: () => {
+			const currentTradeToLanguage = state.tradeToLanguageConversions || 0;
+			const { availableTradePoints } = background;
+
+			// Calculate current trade points used
+			const tradePointsUsed = Object.values(state.tradesData || {}).reduce(
+				(sum, level) => sum + level,
+				0
+			);
+			const remainingTradePoints = availableTradePoints - tradePointsUsed;
+
+			// Only allow conversion if we have at least 1 trade point remaining
+			if (remainingTradePoints >= 1) {
+				dispatch({
+					type: 'SET_CONVERSIONS',
+					conversions: { tradeToLanguage: currentTradeToLanguage + 1 }
+				});
+			}
+		},
+		resetConversions: () => {
 			dispatch({
 				type: 'SET_CONVERSIONS',
 				conversions: { skillToTrade: 0, tradeToSkill: 0, tradeToLanguage: 0 }
-			})
+			});
+		}
 	};
 
 	// Handler functions

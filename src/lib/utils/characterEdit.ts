@@ -58,6 +58,10 @@ export const convertCharacterToInProgress = (
 				: { common: { fluency: 'fluent' } },
 		selectedSpells: Array.isArray(savedCharacter.spells) ? savedCharacter.spells : [],
 		selectedManeuvers: Array.isArray(savedCharacter.maneuvers) ? savedCharacter.maneuvers : [],
+		// CRITICAL: Restore conversions for background step validation
+		skillToTradeConversions: savedCharacter.skillToTradeConversions || 0,
+		tradeToSkillConversions: savedCharacter.tradeToSkillConversions || 0,
+		tradeToLanguageConversions: savedCharacter.tradeToLanguageConversions || 0,
 		schemaVersion:
 			typeof savedCharacter.schemaVersion === 'number' ? savedCharacter.schemaVersion : 2
 	};
@@ -148,6 +152,10 @@ export const completeCharacterEdit = async (
 			selectedManeuvers: Array.isArray(newCharacterState.selectedManeuvers)
 				? newCharacterState.selectedManeuvers
 				: [],
+			// CRITICAL: Include conversions for proper background validation during editing
+			skillToTradeConversions: newCharacterState.skillToTradeConversions || 0,
+			tradeToSkillConversions: newCharacterState.tradeToSkillConversions || 0,
+			tradeToLanguageConversions: newCharacterState.tradeToLanguageConversions || 0,
 			lastModified: new Date().toISOString()
 		});
 
@@ -169,6 +177,10 @@ export const completeCharacterEdit = async (
 				...savedCharacters[characterIndex],
 				...newCalculatedCharacter,
 				selectedFeatureChoices: newCharacterState.selectedFeatureChoices,
+				// CRITICAL: Save conversions for future editing
+				skillToTradeConversions: newCharacterState.skillToTradeConversions || 0,
+				tradeToSkillConversions: newCharacterState.tradeToSkillConversions || 0,
+				tradeToLanguageConversions: newCharacterState.tradeToLanguageConversions || 0,
 				// ensure we carry over latest breakdowns if provided by calculator
 				breakdowns:
 					(newCalculatedCharacter as any).breakdowns || savedCharacters[characterIndex].breakdowns,

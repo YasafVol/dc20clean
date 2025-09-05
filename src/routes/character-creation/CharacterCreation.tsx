@@ -95,6 +95,13 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	};
 
 	const handleNext = async () => {
+		// Check if current step is completed before allowing advancement
+		if (!isStepCompleted(state.currentStep)) {
+			setSnackbarMessage('Please complete all requirements for this step before continuing.');
+			setShowSnackbar(true);
+			return;
+		}
+
 		if (state.currentStep === 6 && areAllStepsCompleted()) {
 			// Character is complete - check if we're editing or creating new
 			if (editChar) {
@@ -287,17 +294,15 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				if (state.languagesData && Object.keys(state.languagesData).length > 0) {
 					languagePointsUsed = Object.entries(state.languagesData).reduce(
 						(sum, [langId, data]: [string, { fluency?: string }]) => {
-							if (langId === 'common') return sum; // Common is free
-							return (
-								sum +
-								(data.fluency === 'basic'
-									? 1
-									: data.fluency === 'advanced'
-										? 2
-										: data.fluency === 'fluent'
-											? 3
-											: 0)
-							);
+							if (langId === 'common') {
+								return sum; // Common is free
+							}
+							const cost = data.fluency === 'limited'
+								? 1
+								: data.fluency === 'fluent'
+									? 2
+									: 0; // 'none' or any other value costs 0
+							return sum + cost;
 						},
 						0
 					);
@@ -317,11 +322,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 					selectedTraitIdsList.forEach((traitId: string) => {
 						const trait = traitsData.find((t: any) => t.id === traitId);
-						console.log(`🔍 Processing trait ${traitId}:`, trait);
 						if (trait) {
 							trait.effects.forEach((effect: any) => {
 								if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
-									console.log(`🔍 Found skillPoints bonus: +${effect.value} from trait ${traitId}`);
 									bonusSkillPoints += effect.value as number;
 								}
 							});
@@ -341,7 +344,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 						if (classFeatures) {
 							// FIXED: Use typed data instead of JSON parsing
-							const selectedChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
+							const selectedChoices: { [key: string]: string } =
+								state.selectedFeatureChoices || {};
 							const level1Features = classFeatures.coreFeatures.filter(
 								(feature: any) => feature.levelGained === 1
 							);
@@ -378,7 +382,10 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 												);
 												if (selectedOption && selectedOption.effects) {
 													selectedOption.effects.forEach((effect: any) => {
-														if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
+														if (
+															effect.type === 'MODIFY_STAT' &&
+															effect.target === 'skillPoints'
+														) {
 															bonusSkillPoints += effect.value as number;
 														}
 													});
@@ -404,35 +411,51 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				});
 				const skillToTrade = state.skillToTradeConversions || 0;
 				const tradeToSkill = state.tradeToSkillConversions || 0;
+				const tradeToLanguage = state.tradeToLanguageConversions || 0;
 				const availableSkillPoints = baseSkillPoints - skillToTrade + Math.floor(tradeToSkill / 2);
 
-				// For completion, require exact spend of available skill points
-				const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
-				const hasExactlySpentAllSkillPoints = skillPointsRemaining === 0;
 				// Calculate available trade and language points using same logic as BackgroundPointsManager
+				// TODO: Add proper ancestry and feature bonus calculations for trade/language points
 				const bonusTradePoints = 0;
 				const bonusLanguagePoints = 0;
 
-				// Check for ancestry bonuses (simplified calculation)
-				const baseTradePoints = 3 + bonusTradePoints;
-				const baseLanguagePoints = 2 + bonusLanguagePoints;
+				// For now, allow some flexibility - if available points is 0 or negative,
+				// don't require spending them (handles edge cases with conversions)
+				const baseTradePoints = Math.max(0, 3 + bonusTradePoints);
+				const baseLanguagePoints = Math.max(0, 2 + bonusLanguagePoints);
 
-				const availableTradePoints =
-					baseTradePoints + Math.floor(skillToTrade / 2) - Math.floor(tradeToSkill / 2);
-				const availableLanguagePoints = baseLanguagePoints; // No conversions affect language points currently
+				// FIXED: Properly handle all conversions
+				const availableTradePoints = Math.max(
+					0,
+					baseTradePoints + skillToTrade * 2 - tradeToSkill - tradeToLanguage
+				);
+				const availableLanguagePoints = Math.max(0, baseLanguagePoints + tradeToLanguage * 2);
 
-				// Allow completion if all skill points are spent AND either:
-				// 1. Some trade/language points were spent, OR
-				// 2. No trade/language points are available to spend
-				const hasSpentSomeTradeOrLanguagePoints = tradePointsUsed > 0 || languagePointsUsed > 0;
-				const hasNoTradeOrLanguagePointsToSpend =
-					availableTradePoints <= 0 && availableLanguagePoints <= 0;
+				console.log('🔍 CONVERSION DEBUG:', {
+					skillToTrade,
+					tradeToSkill,
+					tradeToLanguage,
+					baseTradePoints,
+					baseLanguagePoints,
+					availableTradePoints: `${baseTradePoints} + (${skillToTrade} * 2) - ${tradeToSkill} - ${tradeToLanguage} = ${availableTradePoints}`,
+					availableLanguagePoints: `${baseLanguagePoints} + (${tradeToLanguage} * 2) = ${availableLanguagePoints}`,
+					tradePointsUsed,
+					languagePointsUsed
+				});
 
-				const isValid =
-					hasExactlySpentAllSkillPoints &&
-					(hasSpentSomeTradeOrLanguagePoints || hasNoTradeOrLanguagePointsToSpend);
-
-				console.log('🔍 Step 4 (Background) validation:', {
+				// For completion, allow for overspending if the UI permitted it
+				// This handles cases where UI and validation calculations differ
+				const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
+				const tradePointsRemaining = availableTradePoints - tradePointsUsed;
+				const languagePointsRemaining = availableLanguagePoints - languagePointsUsed;
+				
+				const hasExactlySpentAllSkillPoints = skillPointsRemaining === 0;
+				// Allow completion if points are spent exactly OR if overspent (UI allowed it)
+				const hasExactlySpentAllTradePoints = tradePointsRemaining <= 0;
+				const hasExactlySpentAllLanguagePoints = languagePointsRemaining <= 0;
+				
+				// Step is complete when all skill points are spent and trade/language are spent or overspent
+				const isValid = hasExactlySpentAllSkillPoints && hasExactlySpentAllTradePoints && hasExactlySpentAllLanguagePoints;				console.log('🔍 Step 4 (Background) validation:', {
 					baseSkillPoints,
 					bonusSkillPoints,
 					skillToTrade,
@@ -446,9 +469,11 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					availableLanguagePoints,
 					tradePointsUsed,
 					languagePointsUsed,
+					tradePointsRemaining,
+					languagePointsRemaining,
 					hasExactlySpentAllSkillPoints,
-					hasSpentSomeTradeOrLanguagePoints,
-					hasNoTradeOrLanguagePointsToSpend,
+					hasExactlySpentAllTradePoints,
+					hasExactlySpentAllLanguagePoints,
 					isValid
 				});
 
@@ -476,12 +501,16 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				selectedManeuvers = state.selectedManeuvers || [];
 
 				// Check if class has spellcasting
-				const hasSpellcasting = selectedClassFeatures.spellcastingPath?.spellList;
+				const hasSpellcasting =
+					selectedClassFeatures.spellcastingPath?.spellList ||
+					((selectedClassFeatures as any).startingStats?.cantripsKnown > 0 ||
+						(selectedClassFeatures as any).startingStats?.spellsKnown > 0);
 
 				// Check if class has maneuvers (simplified check based on class features)
 				// For now, we'll use a simple heuristic: classes that are primarily martial have maneuvers
 				const martialClasses = ['barbarian', 'champion', 'hunter', 'monk', 'rogue'];
-				const hasManeuvers = martialClasses.includes(selectedClass.name.toLowerCase());
+				const hasManeuvers = martialClasses.includes(selectedClass.name.toLowerCase()) ||
+					((selectedClassFeatures as any).startingStats?.maneuversKnown > 0);
 
 				// If class has spellcasting, require spell selections
 				if (hasSpellcasting) {
@@ -502,7 +531,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					return true;
 				}
 
-				// Step is complete if all required selections are made
+				// Step is complete if we reach here (all required selections are made)
 				return true;
 			case 6:
 				return (
@@ -578,18 +607,20 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				<StyledStepsContainer>
 					{steps.map(({ number, label }) => {
 						const $active = state.currentStep === number;
-						const $completed = number < state.currentStep;
+						const $completed = isStepCompleted(number);
+						const $error = !$active && !$completed && number < state.currentStep;
 						return (
 							<StyledStep
 								key={number}
 								$active={$active}
 								$completed={$completed}
+								$error={$error}
 								onClick={() => handleStepClick(number)}
 							>
-								<StyledStepNumber $active={$active} $completed={$completed}>
+								<StyledStepNumber $active={$active} $completed={$completed} $error={$error}>
 									{number}
 								</StyledStepNumber>
-								<StyledStepLabel $active={$active} $completed={$completed}>
+								<StyledStepLabel $active={$active} $completed={$completed} $error={$error}>
 									{label}
 								</StyledStepLabel>
 							</StyledStep>

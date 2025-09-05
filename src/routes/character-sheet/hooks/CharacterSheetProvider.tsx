@@ -4,11 +4,9 @@ import {
 	type SheetState,
 	type SheetAction
 } from './useCharacterSheetReducer';
-import { getCharacterById, saveCharacterState } from '../../../lib/utils/storageUtils';
-import {
-	calculateCharacterWithBreakdowns,
-	convertToEnhancedBuildData
-} from '../../../lib/services/enhancedCharacterCalculator';
+import { getCharacterById, saveCharacter } from '../../../lib/utils/storageUtils';
+import type { SavedCharacter } from '../../../lib/types/dataContracts';
+import { calculateCharacterWithBreakdowns, convertToEnhancedBuildData } from '../../../lib/services/enhancedCharacterCalculator';
 import { ancestriesData } from '../../../lib/rulesdata/ancestries/ancestries';
 import { traitsData } from '../../../lib/rulesdata/ancestries/traits';
 import { tradesData } from '../../../lib/rulesdata/trades';
@@ -18,7 +16,6 @@ import {
 	getDisplayLabel
 } from '../../../lib/rulesdata/loaders/class-features.loader';
 import { getDetailedClassFeatureDescription } from '../../../lib/utils/classFeatureDescriptions';
-import { languagesData } from '../../../lib/rulesdata/languages';
 
 // Simple debounce utility
 function useDebounce<T extends (...args: any[]) => any>(
@@ -66,6 +63,9 @@ interface CharacterSheetContextType {
 	addAttack: (attack: any) => void;
 	removeAttack: (attackId: string) => void;
 	updateAttack: (attackId: string, attack: any) => void;
+	addSpell: (spell: any) => void;
+	removeSpell: (spellId: string) => void;
+	updateSpell: (spellId: string, field: string, value: any) => void;
 	updateInventory: (items: any[]) => void;
 	updateCurrency: (gold?: number, silver?: number, copper?: number) => void;
 	updateNotes: (notes: string) => void;
@@ -95,21 +95,27 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		addAttack,
 		removeAttack,
 		updateAttack,
+		addSpell,
+		removeSpell,
+		updateSpell,
 		updateInventory,
 		updateCurrency,
 		updateNotes
 	} = useCharacterSheetReducer();
 
 	// Save function that runs enhanced calculator and persists to storage
-	const saveCharacterData = useCallback(async (character: any) => {
+	const saveCharacterData = useCallback(async (character: SavedCharacter) => {
 		if (!character) return;
 
-		try {
-			// Run enhanced calculator to update original stats
-			const calculationResult = calculateCharacterWithBreakdowns(character);
+		console.log('Saving character data:', character.id);
 
-			// Update the character's original resource values with calculated results
-			const updatedCharacter = {
+		try {
+			// Run enhanced calculator to get updated stats
+			const calculationData = convertToEnhancedBuildData(character);
+			const calculationResult = calculateCharacterWithBreakdowns(calculationData);
+
+			// Update character with calculated values and original resource maxes
+			const updatedCharacter: SavedCharacter = {
 				...character,
 				characterState: {
 					...character.characterState,
@@ -126,115 +132,63 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 				}
 			};
 
-			// Save to localStorage via storage utils
-			await saveCharacterState(character.id, updatedCharacter.characterState);
+			// Save the entire character (includes spells, maneuvers, etc.)
+			await saveCharacter(updatedCharacter);
 
 			console.log('Character sheet data saved successfully');
 		} catch (error) {
 			console.warn('Calculator error during save, proceeding with last known values:', error);
-			// Save anyway with existing character state
+			// Save anyway with existing character data
 			try {
-				await saveCharacterState(character.id, character.characterState);
+				await saveCharacter(character);
 			} catch (saveError) {
 				console.error('Failed to save character data:', saveError);
 			}
 		}
 	}, []);
 
-	// Debounced save - runs 750ms after last change
-	const debouncedSave = useDebounce(saveCharacterData, 750);
+	// Debounced save function
+	const debouncedSave = useDebounce(saveCharacterData, 2000);
 
-	// Manual save function for explicit save actions
+	// Effect to auto-save when state changes
+	useEffect(() => {
+		if (state.character) {
+			debouncedSave(state.character);
+		}
+		// Clean up on unmount
+		return () => debouncedSave.cancel();
+	}, [state.character, debouncedSave]);
+
+	// Effect to load character data on mount
+	useEffect(() => {
+		const loadCharacter = async () => {
+			try {
+				dispatch({ type: 'LOAD_START' });
+				const characterData = await getCharacterById(characterId);
+				if (characterData) {
+					dispatch({ type: 'LOAD_SUCCESS', character: characterData });
+				} else {
+					dispatch({ type: 'LOAD_ERROR', error: 'Character not found' });
+				}
+			} catch (error) {
+				console.error('Error loading character:', error);
+				dispatch({
+					type: 'LOAD_ERROR',
+					error: `Failed to load character: ${error instanceof Error ? error.message : 'Unknown error'}`
+				});
+			}
+		};
+		loadCharacter();
+	}, [characterId, dispatch]);
+
+	// Manual save function exposed through context
 	const saveNow = useCallback(async () => {
 		if (state.character) {
-			debouncedSave.cancel(); // Cancel any pending debounced save
+			// Cancel any pending debounced save
+			debouncedSave.cancel();
 			await saveCharacterData(state.character);
 		}
 	}, [state.character, saveCharacterData, debouncedSave]);
-
-	// Load character data on mount or when characterId changes
-	useEffect(() => {
-		if (!characterId) return;
-
-		dispatch({ type: 'LOAD_START' });
-
-		try {
-			const character = getCharacterById(characterId);
-			console.log('Raw character data:', character);
-
-			if (character) {
-				// Ensure the character has a proper characterState structure
-				// --- PATCH: Normalize attacks to always be an array ---
-				let attacksRaw = character.characterState?.attacks;
-				let normalizedAttacks: any[] = [];
-				if (Array.isArray(attacksRaw)) {
-					normalizedAttacks = attacksRaw;
-				} else if (attacksRaw && typeof attacksRaw === 'object') {
-					normalizedAttacks = Object.values(attacksRaw);
-				} // else leave as []
-				const normalizedCharacter = {
-					...character,
-					characterState: {
-						...(character.characterState || {}),
-						resources: character.characterState?.resources || {
-							current: {
-								currentHP: character.finalHPMax || 0,
-								currentSP: character.finalSPMax || 0,
-								currentMP: character.finalMPMax || 0,
-								currentGritPoints: character.finalGritPoints || 0,
-								currentRestPoints: character.finalRestPoints || 0,
-								tempHP: 0,
-								actionPointsUsed: 0,
-								exhaustionLevel: 0
-							},
-							original: {
-								maxHP: character.finalHPMax || 0,
-								maxSP: character.finalSPMax || 0,
-								maxMP: character.finalMPMax || 0,
-								maxGritPoints: character.finalGritPoints || 0,
-								maxRestPoints: character.finalRestPoints || 0
-							}
-						},
-						ui: character.characterState?.ui || { manualDefenseOverrides: {} },
-						inventory: character.characterState?.inventory || {
-							items: [],
-							currency: { goldPieces: 0, silverPieces: 0, copperPieces: 0 }
-						},
-						notes: character.characterState?.notes || { playerNotes: '' },
-						attacks: normalizedAttacks,
-						spells: character.spells || [],
-						maneuvers: character.maneuvers || []
-					}
-				};
-
-				console.log('Normalized character:', normalizedCharacter);
-				dispatch({ type: 'LOAD_SUCCESS', character: normalizedCharacter });
-			} else {
-				dispatch({ type: 'LOAD_ERROR', error: 'Character not found' });
-			}
-		} catch (error) {
-			console.error('Error loading character:', error);
-			dispatch({
-				type: 'LOAD_ERROR',
-				error: `Failed to load character: ${error instanceof Error ? error.message : 'Unknown error'}`
-			});
-		}
-	}, [characterId, dispatch]);
-
-	// Auto-save when character data changes
-	useEffect(() => {
-		if (state.character && !state.loading) {
-			debouncedSave(state.character);
-		}
-
-		// Cleanup debounced function on unmount
-		return () => {
-			debouncedSave.cancel();
-		};
-	}, [state.character, state.loading, debouncedSave]);
-
-	const updateGritPoints = (grit: number) => dispatch({ type: 'UPDATE_CURRENT_GRIT_POINTS', grit });
-	const updateRestPoints = (rest: number) => dispatch({ type: 'UPDATE_CURRENT_REST_POINTS', rest });
 
 	const contextValue: CharacterSheetContextType = {
 		state,
@@ -250,16 +204,19 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		addAttack,
 		removeAttack,
 		updateAttack,
+		addSpell,
+		removeSpell,
+		updateSpell,
 		updateInventory,
 		updateCurrency,
 		updateNotes,
-		saveNow,
-		updateGritPoints,
-		updateRestPoints
+		saveNow
 	};
 
 	return (
-		<CharacterSheetContext.Provider value={contextValue}>{children}</CharacterSheetContext.Provider>
+		<CharacterSheetContext.Provider value={contextValue}>
+			{children}
+		</CharacterSheetContext.Provider>
 	);
 }
 

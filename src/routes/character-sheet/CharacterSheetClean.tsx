@@ -1086,7 +1086,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 				)}
 
 				{/* Spells Section - Full width, after main content */}
-				{characterData.className && findClassByName(characterData.className)?.spellcastingPath && (
+				{(characterData.className && findClassByName(characterData.className)?.spellcastingPath) ||
+				(characterData.spells && characterData.spells.length > 0) ? (
 					<div
 						style={{
 							marginTop: '2rem',
@@ -1097,9 +1098,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						}}
 					>
 						<h2 style={{ color: '#2c3e50', marginBottom: '1rem', textAlign: 'center' }}>Spells</h2>
-						<Spells onSpellClick={openSpellPopup} readOnly={true} />
+						<Spells onSpellClick={openSpellPopup} readOnly={false} />
 					</div>
-				)}
+				) : null}
 
 				{/* Maneuvers Section - Full width, after main content */}
 				{characterData.className && findClassByName(characterData.className)?.martialPath && (

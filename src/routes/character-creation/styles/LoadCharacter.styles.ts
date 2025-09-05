@@ -5,8 +5,9 @@ import BlackBG from '/src/assets/BlackBG.jpg';
 export const StyledContainer = styled.div`
 	padding: 2rem;
 	min-height: 100vh;
-	background: url(${BlackBG}) center/cover no-repeat;
-	background-attachment: fixed;
+	background: url(${BlackBG}) center center no-repeat;
+	background-size: cover;
+	position: relative;
 `;
 
 export const StyledTitle = styled.h1`

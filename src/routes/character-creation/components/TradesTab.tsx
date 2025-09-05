@@ -29,7 +29,9 @@ interface ConversionActions {
 interface MasteryLimits {
 	maxSkillMastery: number;
 	maxTradeMastery: number;
-	level1Validation: { valid: boolean; adeptCount: number };
+	currentAdeptCount: number;
+	maxAdeptCount: number;
+	canSelectAdept: boolean;
 }
 
 interface MasteryInfo {
@@ -103,11 +105,14 @@ const TradesTab: React.FC<TradesTabProps> = ({
 		// Check mastery limit
 		if (targetLevel > masteryLimits.maxTradeMastery) return false;
 
-		// Check Level 1 special rule for Adept (level 2)
-		if (targetLevel === 2) {
-			const currentlyAdept = currentTrades[tradeId] === 2;
-			if (!currentlyAdept && masteryLimits.level1Validation.adeptCount >= 1) {
-				return false; // Already have one Adept skill/trade
+		// Check Adept (level 2+) limits using new mastery cap system
+		if (targetLevel >= 2) {
+			const currentLevel = currentTrades[tradeId] || 0;
+			const currentlyAdept = currentLevel >= 2;
+			
+			// If this trade isn't currently Adept and we're at the limit, can't select
+			if (!currentlyAdept && masteryLimits.currentAdeptCount >= masteryLimits.maxAdeptCount) {
+				return false;
 			}
 		}
 
@@ -148,8 +153,8 @@ const TradesTab: React.FC<TradesTabProps> = ({
 
 	return (
 		<StyledTabContent>
-			{/* Level 1 Validation Warning */}
-			{!masteryLimits.level1Validation.valid && (
+			{/* Adept Limit Warning */}
+			{masteryLimits.currentAdeptCount > masteryLimits.maxAdeptCount && (
 				<div
 					style={{
 						background: '#fee2e2',
@@ -160,8 +165,7 @@ const TradesTab: React.FC<TradesTabProps> = ({
 						marginBottom: '1rem'
 					}}
 				>
-					⚠️ Level 1 characters can only have ONE Adept (level 2) skill or trade total. Currently:{' '}
-					{masteryLimits.level1Validation.adeptCount} Adept selections.
+					⚠️ You have exceeded your Adept limit. Currently: {masteryLimits.currentAdeptCount}/{masteryLimits.maxAdeptCount} Adept selections.
 				</div>
 			)}
 

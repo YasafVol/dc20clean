@@ -41,10 +41,9 @@ const Background: React.FC = () => {
 	const masteryLimits = {
 		maxSkillMastery: calculationResult.validation.masteryLimits.maxSkillMastery,
 		maxTradeMastery: calculationResult.validation.masteryLimits.maxTradeMastery,
-		level1Validation: {
-			valid: calculationResult.validation.masteryLimits.currentAdeptCount <= 1,
-			adeptCount: calculationResult.validation.masteryLimits.currentAdeptCount
-		}
+		currentAdeptCount: calculationResult.validation.masteryLimits.currentAdeptCount,
+		maxAdeptCount: calculationResult.validation.masteryLimits.maxAdeptCount,
+		canSelectAdept: calculationResult.validation.masteryLimits.canSelectAdept
 	};
 
 	// Conversion actions with proper logic using calculated values

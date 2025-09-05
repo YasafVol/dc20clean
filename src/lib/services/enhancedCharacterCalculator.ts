@@ -880,19 +880,6 @@ export function calculateCharacterWithBreakdowns(
 	const baseAdeptSlots = (buildData.level === 1) ? 1 : 0;
 	const bonusAdeptSlots = skillMasteryCapEffects.reduce((total, effect) => total + effect.count, 0);
 	const maxAdeptCount = baseAdeptSlots + bonusAdeptSlots;
-	
-	// DEBUG: Log mastery calculations
-	console.log('🎯 MASTERY DEBUG:', {
-		level: buildData.level,
-		baseAdeptSlots,
-		bonusAdeptSlots,
-		maxAdeptCount,
-		currentSkillAdeptCount,
-		currentTradeAdeptCount,
-		totalCurrentAdeptCount,
-		skillMasteryCapEffects,
-		canSelectAdept: totalCurrentAdeptCount < maxAdeptCount
-	});
 
 	// Max mastery accounts for level + available Adept slots
 	// If character has Adept slots available, they can reach Adept level (2)

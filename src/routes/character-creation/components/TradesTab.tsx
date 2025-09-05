@@ -75,7 +75,6 @@ const allTradesAndKnowledge = tradesData;
 
 interface TradesTabProps {
 	currentTrades: Record<string, number>;
-	currentSkills: Record<string, number>;
 	pointsData: BackgroundPointsData;
 	conversions: PointConversions;
 	actions: ConversionActions;
@@ -85,7 +84,6 @@ interface TradesTabProps {
 
 const TradesTab: React.FC<TradesTabProps> = ({
 	currentTrades,
-	currentSkills,
 	pointsData,
 	conversions,
 	actions,

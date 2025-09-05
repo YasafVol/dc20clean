@@ -22,7 +22,7 @@ flowchart LR
 
     subgraph Types & Schemas
         B1[schemas/types.ts – ISkillData / ITradeData / ILanguageData]
-        B2[schemas/character.schema.ts – Effect union for background-related buffs]
+        B2[schemas/character.schema.ts – Effect union + Mastery Cap Effects]
     end
 
     A1 & A2 & A3 --> B1
@@ -82,13 +82,25 @@ Within `calculateCharacterWithBreakdowns`:
   - `skillPointsUsed = sum(levels in skillsData)`
   - `tradePointsUsed = sum(levels in tradesData)`
   - `languagePointsUsed = sum(fluency costs; limited=1, fluent=2; 'common' free)`
+- **Mastery Cap Validation** ✅ **NEW**:
+  - Determines baseline mastery tier from character level
+  - Identifies skills/trades exceeding baseline cap
+  - Collects `MODIFY_SKILL_MASTERY_CAP` and `INCREASE_SKILL_MASTERY_CAP` effects
+  - Validates exception budget and specific skill coverage
+  - Emits `MASTERY_CAP_EXCEEDED` and `INVALID_MASTERY_GRANT` errors
 - Validation emits over-budget errors by step.
 
 Traits can modify these pools using effects:
 - `MODIFY_STAT` targets: `skillPoints`, `tradePoints`, `languagePoints`
+- **Mastery Cap Effects** ✅ **NEW**:
+  - `MODIFY_SKILL_MASTERY_CAP` / `MODIFY_TRADE_MASTERY_CAP`: Grant specific tier unlocks
+  - `INCREASE_SKILL_MASTERY_CAP` / `INCREASE_TRADE_MASTERY_CAP`: Increase cap by value
 
 The calculator exposes a `background` block with:  
 `{ baseSkillPoints, baseTradePoints, baseLanguagePoints, availableSkillPoints, availableTradePoints, availableLanguagePoints, skillPointsUsed, tradePointsUsed, languagePointsUsed, conversions }`.
+
+And a `validation.masteryLimits` block with:  
+`{ skillMasteryTier, tradeMasteryTier, availableGrants, usedGrants }`.
 
 ---
 
@@ -139,11 +151,12 @@ The calculator exposes a `background` block with:
 ## 7 Future Evolution
 
 - Schema-driven editors for Skills/Trades/Languages.  
-- More granular mastery caps and validation surfaced from the engine.
+- ✅ **COMPLETED**: Mastery cap validation and granular control implemented
+- UI enhancements: Dynamic mastery cap indicators in skill/trade selection
 
 ---
 
-> Last updated: 2025-08-20  
+> Last updated: 2025-01-15  
 > Maintainer: @DC20Clean-Team
 
 

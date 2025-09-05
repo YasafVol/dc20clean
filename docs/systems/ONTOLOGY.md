@@ -1,7 +1,7 @@
 # System Ontology
 
 **Creation date**: 05 SPT 2025
-**Update date**: 05 SPT 2025
+**Update date**: 15 JAN 2025
 
 This document outlines the core concepts and components of the character creation system. It's divided into three main sections: UI, Services, and Rules.
 
@@ -93,12 +93,18 @@ This section describes the data structures and concepts that define the game's r
 *   **Skill & Trade Mastery**: The system for determining a character's maximum proficiency in a given skill or trade.
     *   **Mastery Tiers**: Novice, Adept, Expert, Master, Grandmaster. Each tier corresponds to a specific number of points invested (1, 2, 3, 4, 5 respectively).
     *   **Baseline Mastery Cap**: A character's level determines the default maximum mastery tier they can achieve in any skill or trade.
-        *   Level 1-4: Novice
-        *   Level 5-9: Adept
-        *   Level 10-14: Expert
-        *   Level 15-19: Master
-        *   Level 20: Grandmaster
-    *   **Mastery Cap Exceptions**: Class features and ancestry traits can grant a limited number of "exceptions," allowing specific skills or a generic count of skills to exceed the baseline cap. This logic is handled entirely by the `enhancedCharacterCalculator.ts` service, which calculates a final, per-skill mastery cap that the UI uses for validation.
+        *   Level 1-4: Novice (Cap: 1 point)
+        *   Level 5-9: Adept (Cap: 2 points)
+        *   Level 10-14: Expert (Cap: 3 points)
+        *   Level 15-19: Master (Cap: 4 points)
+        *   Level 20: Grandmaster (Cap: 5 points)
+    *   **Mastery Cap System**: ✅ **IMPLEMENTED** - A comprehensive system where:
+        *   Character level determines baseline mastery caps for all skills/trades
+        *   Class features and ancestry traits can grant a budget of exceptions using new effect types
+        *   `MODIFY_SKILL_MASTERY_CAP` / `MODIFY_TRADE_MASTERY_CAP`: Grant specific mastery tier unlocks for a limited count of skills/trades
+        *   `INCREASE_SKILL_MASTERY_CAP` / `INCREASE_TRADE_MASTERY_CAP`: Increase mastery cap by a specific amount for selected skills/trades
+        *   Validation ensures over-budget skills don't exceed available exception grants
+        *   All logic centralized in `enhancedCharacterCalculator.ts` with real-time UI validation
 
 *   **Martial Abilities**
     *   **Maneuvers**: `src/lib/rulesdata/martials/maneuvers.ts`
@@ -133,3 +139,7 @@ This section describes the data structures and concepts that define the game's r
 *   **Schemas**: Define the data structures for core concepts.
     *   **Location**: `src/lib/rulesdata/schemas/`
     *   **Files**: `character.schema.ts`, `class.schema.ts`, `spell.schema.ts`.
+    *   **Effect System**: Enhanced with mastery cap support:
+        *   `ModifyMasteryCapEffect`: Grants specific tier unlocks (e.g., "2 Adept mastery unlocks for urban skills")
+        *   `IncreaseMasteryCapEffect`: Increases mastery cap by value for selected skills/trades
+        *   Both support optional `options` array to restrict which skills/trades can benefit

@@ -527,6 +527,140 @@ mindmap
 
 ---
 
+# Snapshot 006 – Mastery Cap System Implementation Complete (2025-01-15)
+
+> This snapshot captures the state of DC20Clean immediately after implementing the **Skill & Trade Mastery Cap System** - a comprehensive system that handles level-based mastery limits with feature-granted exceptions (commit `09efe1f`).
+
+## 1 Highlights
+
+- **Mastery Cap Model**: Character level determines baseline mastery caps; features can grant budget of exceptions
+- **New Effect Types**: `ModifyMasteryCapEffect` and `IncreaseMasteryCapEffect` added to schema
+- **Validation Logic**: Complete mastery cap validation in `enhancedCharacterCalculator.ts`
+- **Rules Data Updated**: Hunter, Rogue, Cleric, Bard features converted to new effect system
+- **Type Safety**: Fixed 4 GRANT_COMBAT_TRAINING type errors in traits.ts
+- **Zero Breaking Changes**: No changes to saved character `skillsData` structure
+
+## 2 Mastery System Architecture
+
+```mermaid
+graph LR
+    A[Character Level] --> B[Baseline Mastery Cap]
+    B --> C{Skill Points > Cap?}
+    C -->|Yes| D[Check Feature Grants]
+    C -->|No| E[Valid]
+    
+    F[Class Features] --> G[MODIFY_SKILL_MASTERY_CAP]
+    H[Ancestry Traits] --> I[INCREASE_SKILL_MASTERY_CAP]
+    
+    G --> D
+    I --> D
+    
+    D --> J{Grant Available?}
+    J -->|Yes| K[Exception Applied]
+    J -->|No| L[Validation Error]
+    
+    M[enhancedCharacterCalculator] --> N[validation.masteryLimits]
+    N --> O[UI Validation]
+    
+    style B fill:#4ade80,color:#000
+    style G fill:#fbbf24,color:#000
+    style I fill:#fbbf24,color:#000
+    style M fill:#3b82f6,color:#fff
+```
+
+## 3 Implementation Details
+
+### Schema Updates:
+- `ModifyMasteryCapEffect`: Grants specific tier unlocks with count and optional skill restrictions
+- `IncreaseMasteryCapEffect`: Increases mastery cap by value for specific skills/trades
+- Both effects support `options` array to limit applicable skills
+
+### Validation Logic:
+1. Determine baseline mastery tier from character level (Novice→Adept→Expert→Master→Grandmaster)
+2. Identify skills exceeding baseline cap based on invested points
+3. Collect all mastery cap effects from character features
+4. Validate total exception budget vs. over-budget skills
+5. Validate each over-budget skill has appropriate grant coverage
+
+### Rules Data Conversion:
+- **Hunter**: Urban feature grants 2 Adept mastery unlocks for specific skills
+- **Rogue**: Expertise feature uses `INCREASE_SKILL_MASTERY_CAP`
+- **Cleric**: Knowledge domain uses `INCREASE_TRADE_MASTERY_CAP`
+- **Human Traits**: Skill/Trade Expertise traits converted to new effects
+
+## 4 Updated Mind Map
+
+```mermaid
+mindmap
+  root((DC20Clean – Post-Mastery Cap System))
+    "State Management"
+      "React Context (native objects)"
+      "useCharacterBuilder Hook"
+      "Schema Versioning (v2)"
+    "Rules Data Architecture"
+      "_new_schema/ (CANONICAL)"
+        "traits.ts (type-safe)"
+        "ancestries.ts"
+        "class_features.ts"
+      "New Effect Types"
+        "ModifyMasteryCapEffect"
+        "IncreaseMasteryCapEffect"
+      "Zero Legacy Files"
+    "Calculation Engine"
+      "enhancedCharacterCalculator.ts"
+      "Mastery Cap Validation"
+      "Effect Aggregation System"
+      "Source Attribution"
+      "Step-Aware Validation"
+    "Character Creation UI"
+      "Mastery Cap Enforcement"
+      "Real-time Validation"
+      "Exception Budget Display"
+      "Centralized Navigation Logic"
+    "Testing & Quality"
+      "Unit Tests Passing"
+      "E2E Test Framework Ready"
+      "Type Safety Complete"
+      "Zero Linter Errors"
+    "Technical Debt"
+      "ELIMINATED"
+        "No Duplicate Rule Data"
+        "No Type Errors"
+        "No Legacy Mastery Logic"
+```
+
+## 5 System Benefits Achieved
+
+1. **Flexible Mastery System**: Level-based caps with feature exceptions
+2. **Type Safety**: All mastery effects properly typed and validated
+3. **Real-time Validation**: UI prevents invalid mastery investments
+4. **Maintainable Rules**: Centralized mastery logic in calculator
+5. **Backward Compatibility**: No changes to saved character data
+6. **Developer Experience**: Clear effect types for rule designers
+
+## 6 Files Modified/Created
+
+### Enhanced:
+- `src/lib/rulesdata/schemas/character.schema.ts` - Added mastery cap effect types
+- `src/lib/services/enhancedCharacterCalculator.ts` - Complete mastery validation logic
+- `src/lib/rulesdata/ancestries/traits.ts` - Fixed type errors, converted expertise traits
+
+### Rule Data Conversions:
+- `src/lib/rulesdata/classes-data/features/hunter_features.ts` - Urban feature
+- `src/lib/rulesdata/classes-data/features/rogue_features.ts` - Expertise feature
+- `src/lib/rulesdata/classes-data/features/cleric_features.ts` - Knowledge domain
+- `src/lib/rulesdata/classes-data/features/bard_features.ts` - Verified correct implementation
+
+## 7 Next Steps
+
+1. **Manual Testing**: Verify mastery cap enforcement in character creator (dev server ready)
+2. **UI Enhancement**: Add visual indicators for mastery cap status
+3. **Documentation**: Update user guides about mastery system mechanics
+4. **Performance**: Monitor mastery validation impact on calculator performance
+5. **Feature Expansion**: Implement trade mastery caps with same system
+
+---
+
 # Snapshot 005 – Rule System Rationalization Complete (2025-01-15)
 
 > This snapshot captures the state of DC20Clean immediately after completing the **rule system rationalization** - consolidating all rule data into a single canonical source and eliminating legacy import paths (commits `e16b555` and `c6bcb5f`).

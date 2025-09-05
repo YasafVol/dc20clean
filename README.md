@@ -32,7 +32,7 @@ A comprehensive character creation and management system for the DC20 tabletop R
 
 ## 🛠️ TODO
 
-- **retaking traits**: the ancestry system currently does not support traits you can retake and neither does the UI
+- **retaking traits**: the ancestry system currently does not support traits you can retake and neither does the UI. only relevant trait - beastborn, keen senses. priority: very very low.
 
 ### Critical Issues
 

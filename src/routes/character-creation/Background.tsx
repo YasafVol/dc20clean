@@ -163,6 +163,7 @@ const Background: React.FC = () => {
 				return (
 					<SkillsTab
 						currentSkills={currentSkills}
+						currentTrades={currentTrades}
 						pointsData={background}
 						conversions={{
 							skillToTradeConversions: background.conversions.skillToTrade,

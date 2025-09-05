@@ -90,18 +90,14 @@ export const traitsData: Trait[] = [
 		id: 'human_attribute_decrease',
 		name: 'Attribute Decrease',
 		description:
-			'Choose an Attribute. You decrease the chosen Attribute by 1 (to a minimum of -2).',
+			'Choose an Attribute. You decrease the chosen Attribute by 1 (to a minimum of -2). **.',
 		cost: -1,
 		isNegative: true,
 		effects: [
 			{
-				type: 'MODIFY_ATTRIBUTE',
-				target: 'any_attribute',
-				value: -1,
-				userChoice: {
-					prompt: 'Choose an Attribute to decrease by 1',
-					options: ['might', 'agility', 'charisma', 'intelligence']
-				}
+				type: 'MODIFY_STAT',
+				target: 'attributePoints',
+				value: -1
 			}
 		]
 	},
@@ -235,10 +231,12 @@ export const traitsData: Trait[] = [
 	{
 		id: 'elf_might_decrease',
 		name: 'Might Decrease',
-		description: 'Your Might decreases by 1 (to a minimum of -2).',
+		description: 'Your Might decreases by 1 (to a minimum of -2).**',
 		cost: -1,
 		isNegative: true,
-		effects: [{ type: 'MODIFY_ATTRIBUTE', target: 'might', value: -1 }]
+		effects: [
+			{ type: 'MODIFY_STAT', target: 'attributePoints', value: -1 }
+		]
 	},
 
 	// Dwarf Traits (p. 109)
@@ -354,10 +352,12 @@ export const traitsData: Trait[] = [
 	{
 		id: 'dwarf_charisma_attribute_decrease',
 		name: 'Charisma Decrease',
-		description: 'Your Charisma decreases by 1 (to a minimum of -2).',
+		description: 'Your Charisma decreases by 1 (to a minimum of -2).**',
 		cost: -1,
 		isNegative: true,
-		effects: [{ type: 'MODIFY_ATTRIBUTE', target: 'charisma', value: -1 }]
+		effects: [
+			{ type: 'MODIFY_STAT', target: 'attributePoints', value: -1 }
+		]
 	},
 	{
 		id: 'dwarf_short_legged',
@@ -509,10 +509,12 @@ export const traitsData: Trait[] = [
 	{
 		id: 'halfling_intelligence_attribute_decrease',
 		name: 'Intelligence Decrease',
-		description: 'Your Intelligence decreases by 1 (to a minimum of -2).',
+		description: 'Your Intelligence decreases by 1 (to a minimum of -2).**',
 		cost: -1,
 		isNegative: true,
-		effects: [{ type: 'MODIFY_ATTRIBUTE', target: 'intelligence', value: -1 }]
+		effects: [
+			{ type: 'MODIFY_STAT', target: 'attributePoints', value: -1 }
+		]
 	},
 	{
 		id: 'halfling_short_legged',
@@ -1059,10 +1061,12 @@ export const traitsData: Trait[] = [
 	{
 		id: 'gnome_agility_attribute_decrease',
 		name: 'Agility Decrease',
-		description: 'You decrease your Agility by 1 (to a minimum of -2).',
+		description: 'You decrease your Agility by 1 (to a minimum of -2).**',
 		cost: -1,
 		isNegative: true,
-		effects: [{ type: 'MODIFY_ATTRIBUTE', target: 'agility', value: -1 }]
+		effects: [
+			{ type: 'MODIFY_STAT', target: 'attributePoints', value: -1 }
+		]
 	},
 	{
 		id: 'gnome_short_legged',
@@ -1280,7 +1284,6 @@ export const traitsData: Trait[] = [
 		description:
 			'You have ADV on Intimidation Checks against reptilian creatures of Medium Size and smaller (not including other Dragonborn).',
 		cost: 0,
-		isMinor: true,
 		effects: [
 			{ type: 'GRANT_ADV_ON_CHECK', target: 'Intimidation', value: 'vs_reptilian_medium_small' }
 		]
@@ -1513,10 +1516,12 @@ export const traitsData: Trait[] = [
 	{
 		id: 'giantborn_intelligence_attribute_decrease',
 		name: 'Intelligence Decrease',
-		description: 'You decrease your Intelligence by 1 (to a minimum of -2).',
+		description: 'You decrease your Intelligence by 1 (to a minimum of -2).**',
 		cost: -1,
 		isNegative: true,
-		effects: [{ type: 'MODIFY_ATTRIBUTE', target: 'intelligence', value: -1 }]
+		effects: [
+			{ type: 'MODIFY_STAT', target: 'attributePoints', value: -1 }
+		]
 	},
 	{
 		id: 'giantborn_mighty_hurl',
@@ -1602,7 +1607,6 @@ export const traitsData: Trait[] = [
 		name: 'Unyielding Movement',
 		description: "You're immune to being Slowed 2 (or higher).",
 		cost: 0,
-		isMinor: true,
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
@@ -2347,7 +2351,6 @@ export const traitsData: Trait[] = [
 		name: 'Natural Trapper',
 		description: 'You have ADV on Checks to gather materials for Traps and to build them.',
 		cost: 0,
-		isMinor: true,
 		effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'Gather_and_Build_Traps', value: true }]
 	},
 	{
@@ -2446,7 +2449,6 @@ export const traitsData: Trait[] = [
 		description:
 			"You can use your hands as Sculptor's Tools or Mason's Tools to shape soil, sand, stone, or rock. When you do, you can use your Prime Modifier instead of the normal Attribute on any Checks you make.",
 		cost: 0,
-		isMinor: true,
 		effects: [{ type: 'GRANT_ABILITY', target: 'Mold Earth', value: true }]
 	},
 	{
@@ -2571,7 +2573,6 @@ export const traitsData: Trait[] = [
 		description:
 			"You don't sleep as others do. Instead, you drift into a state of semi-consciousness and become shrouded in a veil of darkness. While within this state, you appear inert but can still see and hear as normal. Taking any action, other than speaking, interrupts this state.",
 		cost: 0,
-		isMinor: true,
 		effects: [{ type: 'GRANT_ABILITY', target: 'Sleepless', value: true }]
 	},
 	{
@@ -2689,7 +2690,6 @@ export const traitsData: Trait[] = [
 		description:
 			"Your surface thoughts can't be read against your will, and you have ADV on Checks or Saves to resist attempts to read deeper into your mind.",
 		cost: 0,
-		isMinor: true,
 		effects: [{ type: 'GRANT_ABILITY', target: 'Shrouded Mind', value: true }]
 	},
 	{

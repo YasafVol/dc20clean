@@ -7,7 +7,6 @@ import {
 } from '../../lib/rulesdata/loaders/class-features.loader';
 import { SpellSchool } from '../../lib/rulesdata/spells-data/types/spell.types';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
-import { maneuvers, ManeuverType } from '../../lib/rulesdata/maneuvers';
 import { techniques } from '../../lib/rulesdata/techniques';
 import {
 	StyledContainer,
@@ -190,31 +189,17 @@ function ClassFeatures() {
 	// Add martial choices based on class table and features
 	const level1Data = selectedClass.levelProgression?.[0]; // Level 1 data from table
 	if (level1Data) {
-		// Get base maneuvers from table
-		const tableManeuvers = level1Data.maneuversKnown || 0;
+		// Get base techniques from table (maneuvers are handled in Step 5)
 		const tableTechniques = level1Data.techniquesKnown || 0;
 
-		// Add class-specific feature bonuses
-		let featureManeuvers = 0;
+		// Add class-specific feature bonuses for techniques only
 		let featureTechniques = 0;
 
-		// Parse feature descriptions to extract maneuver/technique bonuses
+		// Parse feature descriptions to extract technique bonuses
 		selectedClassFeatures.coreFeatures.forEach((feature) => {
 			if (feature.levelGained === 1) {
 				// Check main feature description
 				const description = feature.description.toLowerCase();
-
-				// Look for "you learn X maneuvers" pattern (handles "you learn 2 maneuvers")
-				const maneuverMatch = description.match(/you learn (\d+) (?:defensive )?maneuvers?/);
-				if (maneuverMatch) {
-					featureManeuvers += parseInt(maneuverMatch[1]);
-				}
-
-				// Look for "you learn 1 of the following maneuvers" pattern
-				const specificManeuverMatch = description.match(/you learn 1 of the following maneuvers/);
-				if (specificManeuverMatch) {
-					featureManeuvers += 1;
-				}
 
 				// Look for "you learn X techniques" pattern
 				const techniqueMatch = description.match(/you learn (\d+) techniques?/);
@@ -222,25 +207,9 @@ function ClassFeatures() {
 					featureTechniques += parseInt(techniqueMatch[1]);
 				}
 
-				// Check benefits for maneuver/technique learning
+				// Check benefits for technique learning
 				feature.benefits?.forEach((benefit) => {
 					const benefitDescription = benefit.description.toLowerCase();
-
-					// Look for "you learn X maneuvers" pattern in benefits
-					const benefitManeuverMatch = benefitDescription.match(
-						/you learn (\d+) (?:defensive )?maneuvers?/
-					);
-					if (benefitManeuverMatch) {
-						featureManeuvers += parseInt(benefitManeuverMatch[1]);
-					}
-
-					// Look for "you learn 1 of the following maneuvers" pattern in benefits
-					const benefitSpecificManeuverMatch = benefitDescription.match(
-						/you learn 1 of the following maneuvers/
-					);
-					if (benefitSpecificManeuverMatch) {
-						featureManeuvers += 1;
-					}
 
 					// Look for "you learn X techniques" pattern in benefits
 					const benefitTechniqueMatch = benefitDescription.match(/you learn (\d+) techniques?/);
@@ -251,36 +220,7 @@ function ClassFeatures() {
 			}
 		});
 
-		const totalManeuvers = tableManeuvers + featureManeuvers;
 		const totalTechniques = tableTechniques + featureTechniques;
-
-		// Check if class gets all Attack maneuvers automatically
-		const getsAllAttackManeuvers =
-			selectedClassFeatures.className === 'Champion' ||
-			selectedClassFeatures.martialPath?.maneuvers?.learnsAllAttack === true;
-
-		// Add maneuver choices if needed
-		if (totalManeuvers > 0) {
-			const availableManeuvers = getsAllAttackManeuvers
-				? maneuvers.filter((m) => m.type !== ManeuverType.Attack) // Class gets all Attack maneuvers automatically
-				: maneuvers; // Other classes choose from all maneuvers
-
-			const promptText = getsAllAttackManeuvers
-				? `Choose ${totalManeuvers} Maneuver${totalManeuvers > 1 ? 's' : ''} (Attack maneuvers are automatic)`
-				: `Choose ${totalManeuvers} Maneuver${totalManeuvers > 1 ? 's' : ''}`;
-
-			featureChoices.push({
-				id: `${selectedClassFeatures.className.toLowerCase()}_maneuvers`,
-				prompt: promptText,
-				type: 'select_multiple',
-				maxSelections: totalManeuvers,
-				options: availableManeuvers.map((maneuver) => ({
-					value: maneuver.name,
-					label: maneuver.name,
-					description: `${maneuver.description}${maneuver.isReaction ? ' (Reaction)' : ''}${maneuver.requirement ? ` Requirement: ${maneuver.requirement}` : ''}`
-				}))
-			});
-		}
 
 		// Add technique choices if needed
 		if (totalTechniques > 0) {
@@ -614,32 +554,6 @@ function ClassFeatures() {
 					</StyledCard>
 				))}
 			</StyledSection>
-
-			{/* Automatic Attack Maneuvers Section */}
-			{(selectedClassFeatures.className === 'Champion' ||
-				selectedClassFeatures.martialPath?.maneuvers?.learnsAllAttack === true) && (
-				<StyledSection>
-					<StyledSectionTitle>Automatic Maneuvers</StyledSectionTitle>
-					<StyledCard>
-						<StyledCardTitle>Attack Maneuvers (Automatically Known)</StyledCardTitle>
-						<StyledCardDescription>
-							{selectedClassFeatures.className === 'Champion'
-								? 'As a Champion, you automatically know all Attack maneuvers. You will also choose additional maneuvers and techniques below.'
-								: 'This class automatically knows all Attack maneuvers due to their martial training. You will also choose additional maneuvers below.'}
-						</StyledCardDescription>
-						<StyledBenefitsList>
-							{maneuvers
-								.filter((m) => m.type === ManeuverType.Attack)
-								.map((maneuver, index) => (
-									<StyledBenefit key={index}>
-										<StyledBenefitName>{maneuver.name}</StyledBenefitName>
-										<StyledBenefitDescription>{maneuver.description}</StyledBenefitDescription>
-									</StyledBenefit>
-								))}
-						</StyledBenefitsList>
-					</StyledCard>
-				</StyledSection>
-			)}
 
 			{featureChoices.length > 0 && (
 				<StyledSection>

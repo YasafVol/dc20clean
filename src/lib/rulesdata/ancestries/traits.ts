@@ -133,8 +133,8 @@ export const traitsData: Trait[] = [
 		description: 'You gain Combat Training with Heavy Armor and All Shields.',
 		cost: 1,
 		effects: [
-			{ type: 'GRANT_COMBAT_TRAINING', target: 'Heavy_Armor', value: 'ADV' },
-			{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Shields', value: 'ADV' }
+			{ type: 'GRANT_COMBAT_TRAINING', target: 'Heavy_Armor', value: true },
+			{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Shields', value: true }
 		]
 	},
 	{
@@ -399,8 +399,8 @@ export const traitsData: Trait[] = [
 		description: 'You gain Combat Training with Heavy Armor and All Shields.',
 		cost: 1,
 		effects: [
-			{ type: 'GRANT_COMBAT_TRAINING', target: 'Heavy_Armor', value: 'ADV' },
-			{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Shields', value: 'ADV' }
+			{ type: 'GRANT_COMBAT_TRAINING', target: 'Heavy_Armor', value: true },
+			{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Shields', value: true }
 		]
 	},
 	{

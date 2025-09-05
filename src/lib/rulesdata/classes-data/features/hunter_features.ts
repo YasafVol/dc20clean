@@ -87,10 +87,9 @@ export const hunterClass: ClassDefinition = {
 								'You gain 2 Skill Points to use on up to 2 of the following Skills: Animal, Awareness, Medicine, Survival, and Stealth',
 							effects: [
 								{
-									type: 'MODIFY_SKILL_MASTERY_CAP',
-									tier: 'Adept',
-									count: 2,
-									options: ['animal', 'awareness', 'medicine', 'survival', 'stealth']
+									type: 'MODIFY_STAT',
+									target: 'skillPoints',
+									value: 2
 								},
 								{
 									type: 'GRANT_ABILITY',
@@ -208,10 +207,9 @@ export const hunterClass: ClassDefinition = {
 								'You gain 2 Skill Points to use on up to 2 of the following Skills: Influence, Insight, Investigation, Intimidation, and Trickery.',
 							effects: [
 								{
-									type: 'MODIFY_SKILL_MASTERY_CAP',
-									tier: 'Adept',
-									count: 2,
-									options: ['influence', 'insight', 'investigation', 'intimidation', 'trickery']
+									type: 'MODIFY_STAT',
+									target: 'skillPoints',
+									value: 2
 								},
 								{
 									type: 'GRANT_ABILITY',

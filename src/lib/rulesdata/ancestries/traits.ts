@@ -26,6 +26,11 @@ export const traitsData: Trait[] = [
 				type: 'INCREASE_SKILL_MASTERY_CAP',
 				count: 1,
 				value: 1
+			},
+			{
+				type: 'MODIFY_STAT',
+				target: 'skillPoints',
+				value: 1
 			}
 		]
 	},
@@ -53,6 +58,11 @@ export const traitsData: Trait[] = [
 			{
 				type: 'INCREASE_TRADE_MASTERY_CAP',
 				count: 1,
+				value: 1
+			},
+			{
+				type: 'MODIFY_STAT',
+				target: 'tradePoints',
 				value: 1
 			}
 		]

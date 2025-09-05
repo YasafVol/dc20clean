@@ -1,10 +1,11 @@
 // Styled components for LoadCharacter component
 import styled from 'styled-components';
+import BlackBG from '/src/assets/BlackBG.jpg';
 
 export const StyledContainer = styled.div`
 	padding: 2rem;
 	min-height: 100vh;
-	background: url('/src/assets/BlackBG.jpg') center/cover no-repeat;
+	background: url(${BlackBG}) center/cover no-repeat;
 	background-attachment: fixed;
 `;
 

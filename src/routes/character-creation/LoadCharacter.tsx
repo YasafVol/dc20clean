@@ -154,12 +154,13 @@ function LoadCharacter() {
 				});
 			}
 
-			// Ensure character has proper structure
+			// Ensure character has proper structure and update timestamps
+			const currentTime = new Date().toISOString();
 			characterToImport = {
 				...characterToImport,
 				id: characterToImport.id || generateNewCharacterId(),
-				importedAt: new Date().toISOString(),
-				lastModified: new Date().toISOString(),
+				importedAt: currentTime,
+				lastModified: currentTime, // Always update to current time when importing
 				schemaVersion: 2,
 				// Ensure character state exists
 				characterState: characterToImport.characterState || getInitializedCharacterState(characterToImport),
@@ -275,6 +276,9 @@ function LoadCharacter() {
 
 							<StyledCompletedDate>
 								Created: {formatDate(character.createdAt || character.completedAt)}
+								{character.lastModified && character.lastModified !== character.createdAt && character.lastModified !== character.completedAt && (
+									<div>Last Modified: {formatDate(character.lastModified)}</div>
+								)}
 							</StyledCompletedDate>
 
 							<StyledCardActions>

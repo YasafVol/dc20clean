@@ -1,6 +1,6 @@
 # DC20Clean – System Overview & Mind Map (Iteration 1)
 
-_Last updated: 2025-08-20_
+_Last updated: 2025-01-15_
 
 ---
 
@@ -529,7 +529,7 @@ mindmap
 
 # Snapshot 006 – Mastery Cap System Implementation Complete (2025-01-15)
 
-> This snapshot captures the state of DC20Clean immediately after implementing the **Skill & Trade Mastery Cap System** - a comprehensive system that handles level-based mastery limits with feature-granted exceptions (commit `09efe1f`).
+> This snapshot captures the state of DC20Clean immediately after implementing the **Skill & Trade Mastery Cap System** - a comprehensive system that handles level-based mastery limits with feature-granted exceptions (commit `79527f4`).
 
 ## 1 Highlights
 

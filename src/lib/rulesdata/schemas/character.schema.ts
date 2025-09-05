@@ -7,50 +7,150 @@
 // I. CORE EFFECT MODEL - The Heart of the System
 // ================================================================= //
 
-/**
- * A universal, machine-readable representation of a single mechanical effect.
- * This can be attached to traits, class features, choices, items, etc.
- */
-export interface Effect {
-	/** The action to be performed by the calculation engine. */
-	type: // --- Stat & Attribute Modification ---
-	| 'MODIFY_ATTRIBUTE' // Modifies a core attribute (Might, Agility, etc.).
-		| 'MODIFY_STAT' // Modifies a derived or resource stat (hpMax, pd, moveSpeed, etc.).
-		| 'SET_VALUE' // Overrides a stat with a specific value or another stat's value.
+/** A universal, machine-readable representation of a single mechanical effect. */
+export type Effect =
+	| ModifyAttributeEffect
+	| ModifyStatEffect
+	| SetValueEffect
+	| GrantAbilityEffect
+	| GrantResistanceEffect
+	| GrantVulnerabilityEffect
+	| GrantAdvantageOnSaveEffect
+	| GrantAdvantageOnCheckEffect
+	| GrantCombatTrainingEffect
+	| GrantMovementEffect
+	| GrantSenseEffect
+	| GrantChoiceEffect
+	| GrantSkillExpertiseEffect
+	| GrantTradeExpertiseEffect
+	| GrantSpellEffect
+	| GrantCantripEffect
+	| GrantManeuverEffect
+	| ModifyMasteryCapEffect
+	| IncreaseMasteryCapEffect;
 
-		// --- Grants & Abilities ---
-		| 'GRANT_ABILITY' // Grants a descriptive, in-game ability or feature.
-		| 'GRANT_RESISTANCE' // Grants resistance to damage types or conditions.
-		| 'GRANT_VULNERABILITY' // Grants vulnerability to a damage type.
-		| 'GRANT_ADV_ON_SAVE' // Grants advantage on saves against specific conditions or types.
-		| 'GRANT_ADV_ON_CHECK' // Grants advantage on specific skill/ability checks.
-		| 'GRANT_COMBAT_TRAINING' // Grants proficiency with armor, weapons, or shields.
-		| 'GRANT_MOVEMENT' // Grants a special movement type like Climb or Swim.
-		| 'GRANT_SENSE' // Grants a sense like Darkvision or Tremorsense.
+// --- Effect Type Interfaces ---
 
-		// --- Choices & Progression ---
-		| 'GRANT_CHOICE' // Grants the player a choice (e.g., learn 2 maneuvers).
-		| 'GRANT_SKILL_EXPERTISE' // A specific effect for Human/Rogue skill expertise.
-		| 'GRANT_TRADE_EXPERTISE' // A specific effect for Human trade expertise.
-		| 'GRANT_SPELL' // Grants a known spell.
-		| 'GRANT_CANTRIP' // Grants a known cantrip.
-		| 'GRANT_MANEUVERS' // Grants knowledge of maneuvers.
-		| 'GRANT_TECHNIQUES'; // Grants knowledge of techniques.
+export interface ModifyAttributeEffect {
+	type: 'MODIFY_ATTRIBUTE';
+	target: string;
+	value: number;
+	userChoice?: { prompt: string; options?: string[] };
+}
 
-	/** The specific stat, attribute, or item being affected. Standardized for the calculator. */
-	target: string; // e.g., 'might', 'hpMax', 'pd', 'ad', 'moveSpeed', 'jumpDistance', 'deathThresholdModifier', 'skillPoints', 'attributePoints', 'ancestryPoints', 'maneuver', 'technique', 'Poison', 'Charmed', 'Heavy_Armor', 'climb', 'darkvision', 'any_attribute', 'any_skill'
+export interface ModifyStatEffect {
+	type: 'MODIFY_STAT';
+	target: string;
+	value: number;
+	condition?: string;
+}
 
-	/** The value of the effect. Can be a number, string, or complex object. */
-	value: number | string | boolean | { [key: string]: any }; // e.g., 1, -1, 'half', 'equal_to_speed', true, { capIncrease: 1, levelIncrease: 1 }
+export interface SetValueEffect {
+	type: 'SET_VALUE';
+	target: string;
+	value: string | number;
+}
 
-	/** An optional condition under which this effect is active. */
-	condition?: string; // e.g., 'not_wearing_armor', 'bloodied'
+export interface GrantAbilityEffect {
+	type: 'GRANT_ABILITY';
+	target: string;
+	value: string;
+}
 
-	/** If this effect requires a choice from the player to be resolved. */
-	userChoice?: {
-		prompt: string;
-		options?: string[]; // e.g., ['might', 'agility', 'charisma', 'intelligence']
-	};
+export interface GrantResistanceEffect {
+	type: 'GRANT_RESISTANCE';
+	target: string;
+	value: string | number | boolean;
+}
+
+export interface GrantVulnerabilityEffect {
+	type: 'GRANT_VULNERABILITY';
+	target: string;
+	value: number;
+}
+
+export interface GrantAdvantageOnSaveEffect {
+	type: 'GRANT_ADV_ON_SAVE';
+	target: string;
+	value: string | boolean;
+}
+
+export interface GrantAdvantageOnCheckEffect {
+	type: 'GRANT_ADV_ON_CHECK';
+	target: string;
+	value: string | boolean;
+}
+
+export interface GrantCombatTrainingEffect {
+	type: 'GRANT_COMBAT_TRAINING';
+	target: string;
+	value: boolean;
+}
+
+export interface GrantMovementEffect {
+	type: 'GRANT_MOVEMENT';
+	target: string;
+	value: string;
+}
+
+export interface GrantSenseEffect {
+	type: 'GRANT_SENSE';
+	target: string;
+	value: number;
+}
+
+export interface GrantChoiceEffect {
+	type: 'GRANT_CHOICE';
+	target: string;
+	value: number;
+	userChoice?: { prompt: string; options?: string[] };
+}
+
+export interface GrantSkillExpertiseEffect {
+	type: 'GRANT_SKILL_EXPERTISE';
+	target: string;
+	value: { capIncrease: number; levelIncrease: number };
+	userChoice?: { prompt: string; count?: number };
+}
+
+export interface GrantTradeExpertiseEffect {
+	type: 'GRANT_TRADE_EXPERTISE';
+	target: string;
+	value: { capIncrease: number; levelIncrease: number };
+	userChoice?: { prompt: string };
+}
+
+export interface GrantSpellEffect {
+	type: 'GRANT_SPELL';
+	target: string;
+	value: number | string;
+	userChoice?: { prompt: string; options?: string[] };
+}
+
+export interface GrantCantripEffect {
+	type: 'GRANT_CANTRIP';
+	target: string;
+	value: number;
+}
+
+export interface GrantManeuverEffect {
+	type: 'GRANT_MANEUVERS' | 'GRANT_TECHNIQUES';
+	target: string;
+	value: number;
+}
+
+export interface ModifyMasteryCapEffect {
+	type: 'MODIFY_SKILL_MASTERY_CAP' | 'MODIFY_TRADE_MASTERY_CAP';
+	tier: 'Adept' | 'Expert' | 'Master' | 'Grandmaster';
+	count: number;
+	options?: string[];
+}
+
+export interface IncreaseMasteryCapEffect {
+	type: 'INCREASE_SKILL_MASTERY_CAP' | 'INCREASE_TRADE_MASTERY_CAP';
+	count: number;
+	value: number;
+	options?: string[];
 }
 
 // ================================================================= //

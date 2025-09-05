@@ -202,7 +202,7 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 				{MASTERY_TABLE[masteryLimits.maxSkillMastery]?.name})
 			</div>
 
-			<StyledPointsRemaining>
+			<StyledPointsRemaining data-testid="skill-points-remaining">
 				Skill Points: {pointsData.availableSkillPoints - pointsData.skillPointsUsed} /{' '}
 				{pointsData.availableSkillPoints} remaining
 				{hasConversions && (
@@ -296,7 +296,7 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 					const masteryInfo = getMasteryInfo(currentLevel, masteryLimits.maxSkillMastery);
 
 					return (
-						<StyledSelectionItem key={skill.id}>
+						<StyledSelectionItem key={skill.id} data-testid={`skill-item-${skill.id}`}>
 							<StyledSelectionHeader>
 								<StyledSelectionName>{skill.name}</StyledSelectionName>
 								<div style={{ fontSize: '0.75rem', color: '#6b7280' }}>

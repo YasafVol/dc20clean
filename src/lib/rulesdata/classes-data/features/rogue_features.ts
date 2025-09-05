@@ -32,13 +32,9 @@ export const rogueClass: ClassDefinition = {
 				'Choose 2 Skills. Your Mastery Cap and Mastery Level in those Skills both increase by 1.',
 			effects: [
 				{
-					type: 'GRANT_SKILL_EXPERTISE',
-					target: 'any_skill',
-					value: { capIncrease: 1, levelIncrease: 1 },
-					userChoice: {
-						prompt: 'Choose 2 Skills for Expertise',
-						count: 2
-					}
+					type: 'INCREASE_SKILL_MASTERY_CAP',
+					count: 2,
+					value: 1
 				}
 			]
 		},

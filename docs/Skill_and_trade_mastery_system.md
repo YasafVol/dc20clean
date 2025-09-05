@@ -1,0 +1,141 @@
+### LLM Execution Prompt
+
+```
+Hello. You are a senior software engineer tasked with refactoring our game's skill mastery system. We are implementing a new "Mastery Cap" model to handle how features grant exceptions to level-based skill limits.
+
+**Your Goal:** Implement all the necessary code changes according to the detailed plan below.
+
+**The Model:**
+We are implementing the "Mastery Cap" model.
+- A character's level determines a baseline mastery cap for all skills (e.g., Novice).
+- Features can grant a budget of exceptions, allowing a limited number of specific skills to have a higher cap (e.g., Adept).
+- This requires **no changes** to the saved character's `skillsData` structure. The logic is entirely within the calculation engine.
+
+**Execution Plan:**
+Please follow these steps precisely.
+
+**1. Update Schema (`src/lib/rulesdata/schemas/character.schema.ts`):**
+   - Add the `ModifyMasteryCapEffect` and `IncreaseMasteryCapEffect` interface definitions as specified in the plan document.
+   - Add these new types to the `Effect` union type.
+
+**2. Update Calculation Engine (`src/lib/services/enhancedCharacterCalculator.ts`):**
+   - Implement the validation logic inside the `calculateCharacterWithBreakdowns` function, before the final `validation` object is constructed.
+   - The logic should:
+     a. Determine the character's base mastery tier from their level.
+     b. Identify all skills in `buildData.skillsData` that have more points invested than the base tier allows.
+     c. Collect all `MODIFY_SKILL_MASTERY_CAP` and `INCREASE_SKILL_MASTERY_CAP` effects from the character's features.
+     d. Calculate the total budget of exceptions provided by these effects.
+     e. Add a validation error if the number of over-budget skills exceeds the total exception budget.
+     f. Add a validation error for any specific over-budget skill that isn't covered by an appropriate grant (i.e., it's not in the `options` list of any applicable grant).
+   - Update the `validation.masteryLimits` object to pass the calculated base tier and the available grants to the UI.
+
+**3. Refactor Rules Data (`src/lib/rulesdata/...`):**
+   - [x] Convert `hunter_features.ts` to use `MODIFY_SKILL_MASTERY_CAP`.
+   - [x] Convert `bard_features.ts` (Jack of All Trades) to use generic `MODIFY_SKILL_MASTERY_CAP`.
+   - [x] Convert `rogue_features.ts` (Expertise) to use `INCREASE_SKILL_MASTERY_CAP`.
+   - [x] Convert `cleric_features.ts` (Knowledge) to use `INCREASE_TRADE_MASTERY_CAP`.
+   - [ ] Convert `traits.ts` (Human traits) to use `INCREASE_SKILL_MASTERY_CAP` and `INCREASE_TRADE_MASTERY_CAP`. (Note: This file has many type errors to fix).
+
+**4. Finalization & Documentation:**
+    - [ ] Testing
+        - [ ] Manually test the character creation flow for a Hunter (Urban) to ensure the mastery cap is correctly applied and limited.
+        - [ ] Manually test a Human Rogue to ensure the generic `Skill Expertise` trait functions correctly.
+    - [ ] Update Documentation
+        - [ ] Update `docs/systems/ONTOLOGY.md` to reflect the new mastery system logic, summarizing the information from the "System Description" section of this document.
+    - [ ] Commit
+        - [ ] Commit all changes with a descriptive message referencing this plan.
+
+```
+
+---
+
+### System Description
+
+This document outlines the implementation of a new system for managing Skill and Trade Mastery. The system is designed to be robust, maintainable, and integrate cleanly with the existing character creation architecture. It replaces a more simplistic mastery limit with a dynamic, per-skill "Mastery Cap" that can be modified by character features.
+
+This system primarily impacts three areas of the existing ontology:
+
+1.  **Rules Ontology (`src/lib/rulesdata/`):**
+    *   **New Effects:** We will introduce new effect types (e.g., `MODIFY_SKILL_MASTERY_CAP`) into the `character.schema.ts`. These effects will be the primary mechanism by which class and ancestry features grant exceptions to standard mastery limits.
+    *   **Mastery Tiers:** The core concept of Mastery Tiers (Novice, Adept, Expert, etc.) is now formally tied to character level as a baseline, and to skill point investment for validation.
+        *   **Character Level to Baseline Cap:**
+            *   Level 1-4: Novice
+            *   Level 5-9: Adept
+            *   Level 10-14: Expert
+            *   Level 15-19: Master
+            *   Level 20: Grandmaster
+    *   **Feature Refactoring:** Existing features that grant "Skill Points" or "Mastery" will be refactored to use these new, more precise effects.
+
+2.  **Services Ontology (`src/lib/services/`):**
+    *   **`enhancedCharacterCalculator.ts`**: This service is the core of the new system. It will house all the logic for calculating the final Mastery Cap for each individual skill and trade.
+    *   **Calculation Flow:**
+        1.  Determine the character's baseline mastery cap from their level.
+        2.  Collect all `...MASTERY_CAP` effects from the character's chosen class features, ancestry traits, etc.
+        3.  For each skill/trade the character has invested points in, determine if the points exceed the baseline cap.
+        4.  If they do, check if an exception from a feature effect can be applied.
+        5.  Validate that the total number of exceptions used does not exceed the budget granted by the features.
+    *   **Validation Output:** The calculator will produce a `validation.masteryLimits` object that the UI can use to understand the state of the character's mastery progression, including which grants are available and how many have been used.
+
+3.  **UI Ontology:**
+    *   **`Background.tsx` (`SkillsTab.tsx`, `TradesTab.tsx`):** These components will be the primary consumers of the new validation object.
+    *   **Dynamic Controls:** The UI will read the calculated mastery caps and available grants to dynamically enable or disable the "+" buttons for increasing a skill's mastery. This ensures the user cannot invest points in a skill unless:
+        *   They have reached the required character level for the next tier.
+        *   OR they have an available mastery grant from a feature that can be applied to that specific skill.
+
+This approach ensures that the complex rules logic is centralized in the `enhancedCharacterCalculator`, while the UI remains a reactive and straightforward reflection of the character's valid options. It avoids scattering business logic across UI components and requires no changes to the shape of the saved character data, enhancing system stability.
+
+---
+
+### Implementation Plan
+
+#### Phase 1: Schema & Data Definition (Completed)
+
+- [x] **Update `src/lib/rulesdata/schemas/character.schema.ts`**
+    - [x] Add `ModifyMasteryCapEffect` and `IncreaseMasteryCapEffect` interfaces.
+    - [x] Add the new effect types to the `Effect` union type.
+    - [x] Refactor `Effect` type to use individual interfaces for better type safety.
+
+#### Phase 2: Update Calculation Engine (Completed)
+
+- [x] **Update `src/lib/services/enhancedCharacterCalculator.ts`**
+    - [x] Implement helper functions to map character level and skill points to numeric mastery tiers.
+    - [x] Implement the core validation logic.
+    - [x] Update the `validation.masteryLimits` object.
+
+#### Phase 3: Refactor Rules Data (Partially Complete, Manual Fixes Required)
+
+- [x] **Update `src/lib/rulesdata/classes-data/features/hunter_features.ts`**
+- [x] **Update `src/lib/rulesdata/classes-data/features/rogue_features.ts`**
+- [x] **Update `src/lib/rulesdata/classes-data/features/cleric_features.ts`**
+
+- [ ] **CORRECTION: Update `src/lib/rulesdata/classes-data/features/bard_features.ts`**
+    - [ ] **Issue:** `Jack of All Trades` was incorrectly changed to grant Adept mastery.
+    - [ ] **Fix:** Revert the effect to `[{ type: 'MODIFY_STAT', target: 'skillPoints', value: 2 }]`.
+
+- [ ] **MANUAL CLEANUP: Update `src/lib/rulesdata/ancestries/traits.ts`**
+    - [ ] **Task 1: Refactor `..._expertise` traits.** Replace old expertise effects with the new `INCREASE_..._MASTERY_CAP` effect.
+        - [ ] `human_skill_expertise`
+        - [ ] `human_trade_expertise`
+        - [ ] `elf_trade_expertise_elf`
+        - [ ] `halfling_trade_expertise`
+        - [ ] `gnome_trade_expertise`
+        - [ ] `dwarf_trade_expertise`
+        - [ ] `goblin_trade_expertise`
+    - [ ] **Task 2: Fix Schema Validation Errors.** The schema update revealed many pre-existing type errors that must be fixed manually.
+        - [ ] Find all instances of `GRANT_ABILITY` effects where `value` is a boolean (`true`) and replace it with a descriptive string matching the trait's description.
+        - [ ] Find all instances of `GRANT_ADV_ON_...` effects where `value` is a boolean (`true`) and replace it with the string literal `'ADV'`.
+        - [ ] Remove any invalid `userChoice` properties from effects that do not support them.
+    - [ ] **Task 3: Revert Incorrect Edits.** Automated edits have damaged this file. Revert any traits that were incorrectly modified by the automation to their original state before applying other fixes.
+
+#### Phase 4: Finalization & Documentation (Partially Complete)
+
+- [x] **Testing (Automated)**
+    - [x] Create e2e test `e2e/hunter-urban.e2e.spec.ts`.
+    - [x] Create unit tests `src/lib/services/enhancedCharacterCalculator.spec.ts`.
+- [x] **Update Documentation**
+    - [x] Update `docs/systems/ONTOLOGY.md` to reflect the new mastery system logic.
+- [ ] **Testing (Manual)**
+    - [ ] Manually test the character creation flow for a Hunter (Urban).
+    - [ ] Manually test a Human Rogue.
+- [ ] **Commit**
+    - [ ] Commit all changes with a descriptive message referencing this plan.

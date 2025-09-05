@@ -124,6 +124,7 @@ function ClassSelector() {
 							type="button"
 							$selected={selectedClassId === classDef.id}
 							onClick={() => handleSelectClass(classDef.id)}
+							data-testid={`class-card-${classDef.id}`}
 						>
 							<StyledNewClassHeader>
 								<StyledNewClassIcon $iconSize="28px" $iconOffsetX="0px" $iconOffsetY="0px">

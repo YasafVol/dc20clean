@@ -19,6 +19,10 @@ import type {
 	EffectPreview,
 	TraitChoiceStorage
 } from '../types/effectSystem';
+import {
+	type ModifyMasteryCapEffect,
+	type IncreaseMasteryCapEffect
+} from '../rulesdata/schemas/character.schema';
 
 import { BuildStep } from '../types/effectSystem';
 import { traitsData } from '../rulesdata/ancestries/traits';
@@ -774,17 +778,93 @@ export function calculateCharacterWithBreakdowns(
 	}
 
 	const attributeLimits = validateAttributeLimits(buildData, resolvedEffects);
+
+	// --- START MASTERY CAP CALCULATION ---
+	const masteryTiers: Record<string, number> = {
+		Novice: 1,
+		Adept: 2,
+		Expert: 3,
+		Master: 4,
+		Grandmaster: 5
+	};
+	const pointToTier: Record<number, number> = { 1: 2, 2: 3, 3: 4, 4: 5 }; // Adept, Expert...
+
+	// Helper to convert level to a numeric mastery tier
+	const getMasteryTierFromLevel = (level: number): number => {
+		if (level >= 20) return masteryTiers.Grandmaster;
+		if (level >= 15) return masteryTiers.Master;
+		if (level >= 10) return masteryTiers.Expert;
+		if (level >= 5) return masteryTiers.Adept;
+		return masteryTiers.Novice;
+	};
+
+	// Helper to convert skill points to a numeric mastery tier
+	const getMasteryTierFromPoints = (points: number): number => {
+		return pointToTier[points] || masteryTiers.Novice;
+	};
+
+	const baseSkillMasteryTier = getMasteryTierFromLevel(buildData.level);
+	const baseTradeMasteryTier = getMasteryTierFromLevel(buildData.level); // Assuming same progression
+
+	const skillMasteryCapEffects = resolvedEffects.filter(
+		(e): e is ModifyMasteryCapEffect | IncreaseMasteryCapEffect =>
+			e.type === 'MODIFY_SKILL_MASTERY_CAP' || e.type === 'INCREASE_SKILL_MASTERY_CAP'
+	);
+
+	// 1. Identify all skills that are "over budget" based on level alone.
+	const skillsOverLevelCap: string[] = [];
+	if (buildData.skillsData) {
+		for (const [skillId, points] of Object.entries(buildData.skillsData)) {
+			if (points > 0 && getMasteryTierFromPoints(points) > baseSkillMasteryTier) {
+				skillsOverLevelCap.push(skillId);
+			}
+		}
+	}
+
+	// 2. Tally the total budget of exceptions from features.
+	let totalCapExceptionsBudget = 0;
+	for (const effect of skillMasteryCapEffects) {
+		totalCapExceptionsBudget += effect.count;
+	}
+
+	// 3. Validate that the number of over-budget skills does not exceed the total exception budget.
+	if (skillsOverLevelCap.length > totalCapExceptionsBudget) {
+		errors.push({
+			step: BuildStep.Background,
+			field: 'skills',
+			code: 'MASTERY_CAP_EXCEEDED',
+			message: `You have raised ${
+				skillsOverLevelCap.length
+			} skills above your level's mastery limit, but your features only grant exceptions for ${totalCapExceptionsBudget}.`
+		});
+	}
+
+	// 4. Validate that each specific over-budget skill is covered by a valid feature.
+	for (const skillId of skillsOverLevelCap) {
+		const isCovered = skillMasteryCapEffects.some(
+			(effect) => !effect.options || effect.options.includes(skillId)
+		);
+		if (!isCovered) {
+			errors.push({
+				step: BuildStep.Background,
+				field: skillId,
+				code: 'INVALID_MASTERY_GRANT',
+				message: `The ${skillId} skill has been raised to a mastery level that is not permitted by any of your features.`
+			});
+		}
+	}
+	// --- END MASTERY CAP CALCULATION ---
+	
 	const validation: ValidationResult = {
 		isValid: errors.length === 0 && !Object.values(attributeLimits).some((limit) => limit.exceeded),
 		errors,
 		warnings: [],
 		attributeLimits,
 		masteryLimits: {
-			maxSkillMastery: 1, // Default for level 1
-			maxTradeMastery: 1,
-			currentAdeptCount: 0,
-			maxAdeptCount: 1,
-			canSelectAdept: true
+			skillMasteryTier: baseSkillMasteryTier,
+			tradeMasteryTier: baseTradeMasteryTier, // assuming similar logic for trades
+			availableGrants: skillMasteryCapEffects,
+			usedGrants: skillsOverLevelCap.length
 		}
 	};
 

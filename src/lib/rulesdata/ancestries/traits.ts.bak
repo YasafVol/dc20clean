@@ -80,131 +80,19 @@ export const traitsData: Trait[] = [
 		effects: [{ type: 'GRANT_ADV_ON_SAVE', target: 'Death_Save', value: 'ADV' }]
 	},
 	{
-		id: 'human_toughness',
-		name: 'Toughness',
-		description: 'Your HP maximum increases by 1.',
-		cost: 1,
-		effects: [{ type: 'MODIFY_STAT', target: 'hpMax', value: 1 }]
-	},
-	{
-		id: 'human_toxic_fortitude',
-		name: 'Toxic Fortitude',
-		description: 'You have Poison Resistance (Half) and ADV on Saves against being Poisoned.',
-		cost: 2,
-		effects: [
-			{ type: 'GRANT_RESISTANCE', target: 'Poison', value: 'half' },
-			{ type: 'GRANT_ADV_ON_SAVE', target: 'Poisoned', value: 'ADV' }
-		]
-	},
-	{
-		id: 'human_physically_sturdy',
-		name: 'Physically Sturdy',
-		description: 'You have ADV on Saves against being Impaired, Deafened, or Petrified.',
-		cost: 2,
-		effects: [
-			{ type: 'GRANT_ADV_ON_SAVE', target: 'Impaired', value: 'ADV' },
-			{ type: 'GRANT_ADV_ON_SAVE', target: 'Deafened', value: 'ADV' },
-			{ type: 'GRANT_ADV_ON_SAVE', target: 'Petrified', value: 'ADV' }
-		]
-	},
-	{
-		id: 'human_iron_stomach',
-		name: 'Iron Stomach',
-		description: 'You have ADV on Saves against effects that come from consuming food or liquids.',
-		cost: 0,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'iron_stomach',
-				value: 'You have ADV on Saves against effects from consuming food or liquids.'
-			}
-		]
-	},
-	{
-		id: 'human_thick_skinned',
-		name: 'Thick-Skinned',
-		description: 'While you are not wearing Armor, you gain +1 AD.',
-		cost: 1,
-		effects: [{ type: 'MODIFY_STAT', target: 'ad', value: 1, condition: 'not_wearing_armor' }]
-	},
-	{
-		id: 'human_natural_combatant',
-		name: 'Natural Combatant',
-		description: 'You gain Combat Training with Heavy Armor and All Shields.',
-		cost: 1,
-		effects: [
-			{ type: 'GRANT_COMBAT_TRAINING', target: 'Heavy_Armor', value: 'ADV' },
-			{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Shields', value: 'ADV' }
-		]
-	},
-	{
-		id: 'human_stone_blood',
-		name: 'Stone Blood',
+		id: 'human_attribute_decrease',
+		name: 'Attribute Decrease',
 		description:
-			'You have ADV on Saves against Bleeding. Additionally, you can spend 1 AP to end the Bleeding Condition on yourself.',
-		cost: 1,
-		effects: [
-			{ type: 'GRANT_ADV_ON_SAVE', target: 'Bleeding', value: 'ADV' },
-			{
-				type: 'GRANT_ABILITY',
-				target: 'stone_blood',
-				value: 'You can spend 1 AP to end the Bleeding Condition on yourself.'
-			}
-		]
-	},
-	{
-		id: 'human_minor_tremorsense',
-		name: 'Minor Tremorsense',
-		description: 'You have Tremorsense 3 Spaces.',
-		cost: 1,
-		effects: [{ type: 'GRANT_SENSE', target: 'tremorsense', value: 3 }]
-	},
-	{
-		id: 'human_stubborn',
-		name: 'Stubborn',
-		description: 'You have ADV on Saves against being Taunted and against being forcibly moved.',
-		cost: 2,
-		effects: [
-			{ type: 'GRANT_ADV_ON_SAVE', target: 'Taunted', value: 'ADV' },
-			{
-				type: 'GRANT_ABILITY',
-				target: 'stubborn',
-				value: 'You have ADV on Saves against being forcibly moved.'
-			}
-		]
-	},
-	{
-		id: 'human_earthen_knowledge',
-		name: 'Earthen Knowledge',
-		description:
-			'While underground, you have ADV on Survival Checks. Additionally, you have ADV on Nature Checks made to recall information about stones, gems, and metals.',
-		cost: 0,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'earthen_knowledge',
-				value:
-					'You have ADV on Survival Checks while underground and ADV on Nature Checks about stones, gems, and metals.'
-			}
-		]
-	},
-	{
-		id: 'human_charisma_attribute_decrease',
-		name: 'Charisma Decrease',
-		description: 'Your Charisma decreases by 1 (to a minimum of -2).**',
+			'Choose an Attribute. You decrease the chosen Attribute by 1 (to a minimum of -2). **.',
 		cost: -1,
 		isNegative: true,
 		effects: [
-			{ type: 'MODIFY_STAT', target: 'attributePoints', value: -1 }
+			{
+				type: 'MODIFY_STAT',
+				target: 'attributePoints',
+				value: -1
+			}
 		]
-	},
-	{
-		id: 'human_short_legged',
-		name: 'Short-Legged',
-		description: 'Your Speed decreases by 1 Space.',
-		cost: -1,
-		isNegative: true,
-		effects: [{ type: 'MODIFY_STAT', target: 'moveSpeed', value: -1 }]
 	},
 
 	// Elf Traits (p. 108)

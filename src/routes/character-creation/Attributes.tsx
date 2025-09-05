@@ -205,6 +205,7 @@ function Attributes() {
 									onClick={() => decreaseAttribute(attributeKey)}
 									disabled={!canDecrease}
 									title={!canDecrease ? 'Cannot decrease below -2' : ''}
+									data-testid={`${attribute.id}-decrease`}
 								>
 									-
 								</StyledButton>
@@ -219,6 +220,7 @@ function Attributes() {
 												: 'Cannot increase above +3'
 											: ''
 									}
+									data-testid={`${attribute.id}-increase`}
 								>
 									+
 								</StyledButton>

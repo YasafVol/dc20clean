@@ -103,6 +103,7 @@ function AncestrySelector() {
 						key={ancestry.id}
 						$selected={selectedAncestries.includes(ancestry.id)}
 						onClick={() => handleSelectAncestry(ancestry.id)}
+						data-testid={`ancestry-card-${ancestry.id}`}
 					>
 						<StyledCardHeader>
 							<StyledAncestryIcon>{getAncestryIcon(ancestry.id)}</StyledAncestryIcon>

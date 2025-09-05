@@ -183,7 +183,22 @@ export const clericClass: ClassDefinition = {
 							description:
 								'Your Mastery Limit increases by 1 for all Knowledge Trades. A Trade can only benefit from 1 Feature that increases its Mastery Limit at a time. Additionally, yougain 2 Skill Points.',
 							effects: [
-								{ type: 'MODIFY_STAT', target: 'knowledgeMasteryLimit', value: 1 },
+								{
+									type: 'INCREASE_TRADE_MASTERY_CAP',
+									value: 1,
+									count: 9,
+									options: [
+										'architecture',
+										'deciphering',
+										'linguistics',
+										'survival',
+										'arcana',
+										'history',
+										'nature',
+										'religion',
+										'occultism'
+									]
+								},
 								{ type: 'MODIFY_STAT', target: 'skillPoints', value: 2 }
 							]
 						},
@@ -275,7 +290,22 @@ export const clericClass: ClassDefinition = {
 			levelGained: 1,
 			description: 'Your divine connection enhances your understanding.',
 			effects: [
-				{ type: 'MODIFY_STAT', target: 'knowledgeMasteryLimit', value: 1 },
+				{
+					type: 'INCREASE_TRADE_MASTERY_CAP',
+					value: 1,
+					count: 9,
+					options: [
+						'architecture',
+						'deciphering',
+						'linguistics',
+						'survival',
+						'arcana',
+						'history',
+						'nature',
+						'religion',
+						'occultism'
+					]
+				},
 				{ type: 'MODIFY_STAT', target: 'skillPoints', value: 2 }
 			]
 		},

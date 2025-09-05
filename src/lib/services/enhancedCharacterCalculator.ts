@@ -827,20 +827,32 @@ export function calculateCharacterWithBreakdowns(
 		totalCapExceptionsBudget += effect.count;
 	}
 
-	// 3. Validate that the number of over-budget skills does not exceed the total exception budget.
-	if (skillsOverLevelCap.length > totalCapExceptionsBudget) {
+	// 3. Calculate total allowed Adept skills (level 1 base + feature grants)
+	const baseAdeptSlotsForValidation = (buildData.level === 1) ? 1 : 0;
+	const totalAllowedAdeptSkills = baseAdeptSlotsForValidation + totalCapExceptionsBudget;
+	
+	// Validate that over-level skills don't exceed total budget (including Level 1 default)
+	if (skillsOverLevelCap.length > totalAllowedAdeptSkills) {
 		errors.push({
 			step: BuildStep.Background,
 			field: 'skills',
 			code: 'MASTERY_CAP_EXCEEDED',
 			message: `You have raised ${
 				skillsOverLevelCap.length
-			} skills above your level's mastery limit, but your features only grant exceptions for ${totalCapExceptionsBudget}.`
+			} skills above your level's mastery limit, but you can only have ${totalAllowedAdeptSkills} Adept skills (${baseAdeptSlotsForValidation} base + ${totalCapExceptionsBudget} from features).`
 		});
 	}
 
-	// 4. Validate that each specific over-budget skill is covered by a valid feature.
-	for (const skillId of skillsOverLevelCap) {
+	// 4. Validate specific skill coverage (accounting for Level 1 default slot)
+	let skillsNeedingFeatureCoverage = [...skillsOverLevelCap];
+	
+	// Level 1 characters get 1 free Adept skill, so remove one from validation if needed
+	if (buildData.level === 1 && skillsNeedingFeatureCoverage.length > 0) {
+		skillsNeedingFeatureCoverage.pop(); // Remove one skill from validation (Level 1 default)
+	}
+	
+	// Check remaining skills against feature options
+	for (const skillId of skillsNeedingFeatureCoverage) {
 		const isCovered = skillMasteryCapEffects.some(
 			(effect) => !effect.options || effect.options.includes(skillId)
 		);
@@ -849,22 +861,41 @@ export function calculateCharacterWithBreakdowns(
 				step: BuildStep.Background,
 				field: skillId,
 				code: 'INVALID_MASTERY_GRANT',
-				message: `The ${skillId} skill has been raised to a mastery level that is not permitted by any of your features.`
+				message: `The ${skillId} skill has been raised to Adept level, but is not permitted by any of your features.`
 			});
 		}
 	}
 	// --- END MASTERY CAP CALCULATION ---
 	
+	// Calculate mastery limits in correct interface format
+	const currentSkillAdeptCount = buildData.skillsData 
+		? Object.values(buildData.skillsData).filter(points => points >= 2).length 
+		: 0;
+	const currentTradeAdeptCount = buildData.tradesData 
+		? Object.values(buildData.tradesData).filter(points => points >= 2).length 
+		: 0;
+	const totalCurrentAdeptCount = currentSkillAdeptCount + currentTradeAdeptCount;
+
+	// Level 1 gets 1 base Adept slot + bonus slots from features
+	const baseAdeptSlots = (buildData.level === 1) ? 1 : 0;
+	const bonusAdeptSlots = skillMasteryCapEffects.reduce((total, effect) => total + effect.count, 0);
+	const maxAdeptCount = baseAdeptSlots + bonusAdeptSlots;
+
+	// Max mastery is level-based + any individual bonuses
+	const maxSkillMastery = Math.max(1, baseSkillMasteryTier);
+	const maxTradeMastery = Math.max(1, baseTradeMasteryTier);
+
 	const validation: ValidationResult = {
 		isValid: errors.length === 0 && !Object.values(attributeLimits).some((limit) => limit.exceeded),
 		errors,
 		warnings: [],
 		attributeLimits,
 		masteryLimits: {
-			skillMasteryTier: baseSkillMasteryTier,
-			tradeMasteryTier: baseTradeMasteryTier, // assuming similar logic for trades
-			availableGrants: skillMasteryCapEffects,
-			usedGrants: skillsOverLevelCap.length
+			maxSkillMastery,
+			maxTradeMastery,
+			currentAdeptCount: totalCurrentAdeptCount,
+			maxAdeptCount,
+			canSelectAdept: totalCurrentAdeptCount < maxAdeptCount
 		}
 	};
 

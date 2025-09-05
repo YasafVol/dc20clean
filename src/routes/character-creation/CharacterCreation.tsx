@@ -464,36 +464,59 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				selectedSpells = state.selectedSpells || [];
 				selectedManeuvers = state.selectedManeuvers || [];
 
-				// Check if class has spellcasting
-				const hasSpellcasting = selectedClassFeatures.spellcastingPath?.spellList || 
-					((selectedClassFeatures as any).startingStats?.cantripsKnown > 0 || (selectedClassFeatures as any).startingStats?.spellsKnown > 0);
-				
-				// Check if class has maneuvers (simplified check based on class features)
-				// For now, we'll use a simple heuristic: classes that are primarily martial have maneuvers
-				const martialClasses = ['barbarian', 'champion', 'hunter', 'monk', 'rogue'];
-				const hasManeuvers = martialClasses.includes(selectedClass.name.toLowerCase()) ||
-					((selectedClassFeatures as any).startingStats?.maneuversKnown > 0);
+				// Get spell/maneuver counts from level progression (same logic as SpellsAndManeuvers component)
+				const levelData = selectedClass.levelProgression?.find(l => l.level === state.level);
+				const requiredCantripCount = levelData?.cantripsKnown || 0;
+				const requiredSpellCount = levelData?.spellsKnown || 0;
+				const requiredManeuverCount = levelData?.maneuversKnown || 0;
 
-				// If class has spellcasting, require spell selections
-				if (hasSpellcasting) {
-					// For classes with spellcasting, require at least some spell selections
-					// The exact number depends on the class, but we'll require at least 1
-					if (selectedSpells.length === 0) return false;
+				// For now, treat all selected spells as regular spells since we don't have easy cantrip lookup here
+				const selectedSpellCount = selectedSpells.length;
+
+				console.log('🔍 Step 5 validation details:', {
+					classId: state.classId,
+					level: state.level,
+					requiredCantripCount,
+					requiredSpellCount, 
+					requiredManeuverCount,
+					selectedSpellCount,
+					selectedManeuverCount: selectedManeuvers.length,
+					hasSpellRequirements: requiredCantripCount > 0 || requiredSpellCount > 0,
+					hasManeuverRequirements: requiredManeuverCount > 0
+				});
+
+				// Check spell requirements
+				if (requiredCantripCount > 0 || requiredSpellCount > 0) {
+					// For simplicity, require total spell count to meet combined cantrip + spell requirement
+					const totalRequiredSpells = requiredCantripCount + requiredSpellCount;
+					if (selectedSpellCount < totalRequiredSpells) {
+						console.log('❌ Step 5 validation failed: insufficient spells', {
+							required: totalRequiredSpells,
+							selected: selectedSpellCount
+						});
+						return false;
+					}
 				}
 
-				// If class has maneuvers, require maneuver selections
-				if (hasManeuvers) {
-					// For classes with maneuvers, require at least some maneuver selections
-					// The exact number depends on the class, but we'll require at least 1
-					if (selectedManeuvers.length === 0) return false;
+				// Check maneuver requirements  
+				if (requiredManeuverCount > 0) {
+					if (selectedManeuvers.length < requiredManeuverCount) {
+						console.log('❌ Step 5 validation failed: insufficient maneuvers', {
+							required: requiredManeuverCount,
+							selected: selectedManeuvers.length
+						});
+						return false;
+					}
 				}
 
-				// If class has neither spells nor maneuvers, step is complete
-				if (!hasSpellcasting && !hasManeuvers) {
+				// If no requirements, step is complete
+				const hasRequirements = requiredCantripCount > 0 || requiredSpellCount > 0 || requiredManeuverCount > 0;
+				if (!hasRequirements) {
 					return true;
 				}
 
 				// Step is complete if we reach here (all required selections are made)
+				console.log('✅ Step 5 validation passed');
 				return true;
 			case 6:
 				return (

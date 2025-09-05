@@ -894,9 +894,10 @@ export function calculateCharacterWithBreakdowns(
 		canSelectAdept: totalCurrentAdeptCount < maxAdeptCount
 	});
 
-	// Max mastery is level-based + any individual bonuses
-	const maxSkillMastery = Math.max(1, baseSkillMasteryTier);
-	const maxTradeMastery = Math.max(1, baseTradeMasteryTier);
+	// Max mastery accounts for level + available Adept slots
+	// If character has Adept slots available, they can reach Adept level (2)
+	const maxSkillMastery = maxAdeptCount > 0 ? Math.max(2, baseSkillMasteryTier) : Math.max(1, baseSkillMasteryTier);
+	const maxTradeMastery = maxAdeptCount > 0 ? Math.max(2, baseTradeMasteryTier) : Math.max(1, baseTradeMasteryTier);
 
 	const validation: ValidationResult = {
 		isValid: errors.length === 0 && !Object.values(attributeLimits).some((limit) => limit.exceeded),

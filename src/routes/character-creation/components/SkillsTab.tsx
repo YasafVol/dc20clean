@@ -115,10 +115,20 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 			const currentLevel = currentSkills[skillId] || 0;
 			const currentlyAdept = currentLevel >= 2;
 			
+			// DEBUG: Log mastery check
+			console.log(`🔍 ${skillId} Adept Check:`, {
+				targetLevel,
+				currentLevel,
+				currentlyAdept,
+				currentAdeptCount: masteryLimits.currentAdeptCount,
+				maxAdeptCount: masteryLimits.maxAdeptCount,
+				canSelect: masteryLimits.canSelectAdept
+			});
+			
 			// If this skill isn't currently Adept and we're at the limit, can't select
 			if (!currentlyAdept && masteryLimits.currentAdeptCount >= masteryLimits.maxAdeptCount) {
 				console.log(
-					`Cannot select Adept: ${masteryLimits.currentAdeptCount}/${masteryLimits.maxAdeptCount} Adept slots used`
+					`❌ Cannot select Adept: ${masteryLimits.currentAdeptCount}/${masteryLimits.maxAdeptCount} Adept slots used`
 				);
 				return false;
 			}

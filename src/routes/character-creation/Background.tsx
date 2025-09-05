@@ -45,6 +45,9 @@ const Background: React.FC = () => {
 		maxAdeptCount: calculationResult.validation.masteryLimits.maxAdeptCount,
 		canSelectAdept: calculationResult.validation.masteryLimits.canSelectAdept
 	};
+	
+	// DEBUG: Log mastery limits received in UI
+	console.log('🎨 UI MASTERY LIMITS:', masteryLimits);
 
 	// Conversion actions with proper logic using calculated values
 	const actions = {

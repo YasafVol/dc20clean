@@ -299,7 +299,7 @@ const TradesTab: React.FC<TradesTabProps> = ({
 					const masteryInfo = getMasteryInfo(currentLevel, masteryLimits.maxTradeMastery);
 
 					return (
-						<StyledSelectionItem key={trade.id}>
+						<StyledSelectionItem key={trade.id} data-testid={`trade-item-${trade.id}`}>
 							<StyledSelectionHeader>
 								<StyledSelectionName>{trade.name}</StyledSelectionName>
 								<div style={{ fontSize: '0.75rem', color: '#6b7280' }}>

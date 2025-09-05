@@ -84,17 +84,34 @@ test.describe('Human Cleric E2E', () => {
     // Trades - Use data-testid
     await page.getByTestId('trades-tab').click();
     await page.getByRole('button', { name: /Convert 1 Trade.*2 Language/i }).click();
-    for (let i = 0; i < 2; i++) await page.getByRole('button', { name: /Alchemy \+/ }).click();
-    for (const t of ['Blacksmithing','Calligraphy','Gaming']) {
-      await page.getByRole('button', { name: new RegExp(`${t} \\+`) }).click();
+
+    // Helper to set a trade to a specific mastery level
+    async function setTradeLevel(tradeName: string, level: number) {
+      const tradeRow = page.getByTestId(`trade-item-${tradeName.toLowerCase()}`);
+      await tradeRow.getByRole('button', { name: `${level}`, exact: true }).click();
+    }
+
+    // Set trade levels: Alchemy to 2, others to 1
+    await setTradeLevel('Alchemy', 2);
+    const otherTrades = ['Blacksmithing', 'Calligraphy', 'Gaming'];
+    for (const trade of otherTrades) {
+      await setTradeLevel(trade, 1);
     }
     await expect(page.getByText(/Trade Points:\s*0\s*\/\s*\d+/)).toBeVisible();
 
     // Languages - Use data-testid
     await page.getByTestId('languages-tab').click();
-    await page.getByRole('button', { name: /Elvish Fluent/i }).click();
-    await page.getByRole('button', { name: /Draconic Limited/i }).click();
-    await page.getByRole('button', { name: /Dwarvish Limited/i }).click();
+
+    // Helper to set a language to a specific fluency level
+    async function setLanguage(languageName: string, fluency: 'Limited' | 'Fluent') {
+      const languageRow = page.getByTestId(`language-item-${languageName.toLowerCase()}`);
+      await languageRow.getByRole('button', { name: new RegExp(`^${fluency}`) }).click();
+    }
+
+    // Set language fluencies
+    await setLanguage('Elvish', 'Fluent');
+    await setLanguage('Draconic', 'Limited'); 
+    await setLanguage('Dwarvish', 'Limited');
     await expect(page.getByText(/Language Points:\s*0\s*\/\s*\d+/)).toBeVisible();
     await page.getByRole('button', { name: 'Next →' }).click();
 
@@ -112,6 +129,7 @@ test.describe('Human Cleric E2E', () => {
       return list.find((c: any) => c.finalName === 'human cleric test');
     });
 
+
     expect(saved).toBeTruthy();
     expect(saved.classId).toBe('cleric');
     expect(saved.ancestry1Id).toBe('human');
@@ -123,12 +141,12 @@ test.describe('Human Cleric E2E', () => {
       expect.arrayContaining(['human_attribute_increase', 'human_skill_expertise', 'human_resolve', 'human_undying'])
     );
 
-    expect(saved.attribute_might).toBe(2);
-    expect(saved.attribute_intelligence).toBe(3);
-    expect(saved.attribute_agility).toBe(0);
-    expect(saved.attribute_charisma).toBe(0);
+    expect(saved.finalMight).toBe(2);
+    expect(saved.finalIntelligence).toBe(3);
+    expect(saved.finalAgility).toBe(0);
+    expect(saved.finalCharisma).toBe(0);
 
-    expect(saved.skillsData).toMatchObject({ athletics: 2, intimidation: 1, acrobatics: 1, insight: 1, investigation: 1, trickery: 1, stealth: 1, survival: 1 });
+    expect(saved.skillsData).toMatchObject({ athletics: 2, intimidation: 1, acrobatics: 1, insight: 1, investigation: 1, trickery: 1, stealth: 1, survival: 1, animal: 1 });
     expect(saved.tradesData).toMatchObject({ alchemy: 2, blacksmithing: 1, calligraphy: 1, gaming: 1 });
     expect(saved.languagesData).toMatchObject({
       common: { fluency: 'fluent' }, elvish: { fluency: 'fluent' }, draconic: { fluency: 'limited' }, dwarvish: { fluency: 'limited' }

@@ -1,21 +1,27 @@
 import styled from 'styled-components';
 
-export const CurrencyContainer = styled.div`
-	border: 2px solid #8b4513;
+export const CurrencyContainer = styled.div.withConfig({
+	shouldForwardProp: (prop) => prop !== 'isMobile'
+})<{ isMobile?: boolean }>`
+	border: 2px solid ${props => props.isMobile ? 'rgb(68,68,68)' : '#8b4513'};
 	border-radius: 8px;
 	padding: 1rem;
-	background: white;
+	background: ${props => props.isMobile ? 'rgb(42,42,42)' : 'white'};
 `;
 
-export const CurrencyTitle = styled.div`
+export const CurrencyTitle = styled.div.withConfig({
+	shouldForwardProp: (prop) => prop !== 'isMobile'
+})<{ isMobile?: boolean }>`
 	font-size: 1.1rem;
 	font-weight: bold;
-	color: #8b4513;
+	color: ${props => props.isMobile ? '#f5d020' : '#8b4513'};
 	margin-bottom: 1rem;
 	text-align: center;
 `;
 
-export const CurrencyRow = styled.div`
+export const CurrencyRow = styled.div.withConfig({
+	shouldForwardProp: (prop) => prop !== 'isMobile'
+})<{ isMobile?: boolean }>`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -26,13 +32,17 @@ export const CurrencyRow = styled.div`
 	}
 `;
 
-export const CurrencyIconContainer = styled.div`
+export const CurrencyIconContainer = styled.div.withConfig({
+	shouldForwardProp: (prop) => prop !== 'isMobile'
+})<{ isMobile?: boolean }>`
 	display: flex;
 	align-items: center;
 	gap: 0.3rem;
 `;
 
-export const CurrencyIcon = styled.div<{ color: string; borderColor: string }>`
+export const CurrencyIcon = styled.div.withConfig({
+	shouldForwardProp: (prop) => !['isMobile', 'color', 'borderColor'].includes(prop)
+})<{ color: string; borderColor: string; isMobile?: boolean }>`
 	width: 16px;
 	height: 16px;
 	border-radius: 50%;
@@ -40,24 +50,29 @@ export const CurrencyIcon = styled.div<{ color: string; borderColor: string }>`
 	border: 1px solid ${(props) => props.borderColor};
 `;
 
-export const CurrencyLabel = styled.span`
+export const CurrencyLabel = styled.span.withConfig({
+	shouldForwardProp: (prop) => prop !== 'isMobile'
+})<{ isMobile?: boolean }>`
 	font-size: 0.9rem;
-	color: #8b4513;
+	color: ${props => props.isMobile ? 'white' : '#8b4513'};
 	font-weight: bold;
 `;
 
-export const CurrencyInput = styled.input`
+export const CurrencyInput = styled.input.withConfig({
+	shouldForwardProp: (prop) => prop !== 'isMobile'
+})<{ isMobile?: boolean }>`
 	width: 60px;
 	padding: 0.2rem;
-	border: 1px solid #8b4513;
+	border: 1px solid ${props => props.isMobile ? 'rgb(68,68,68)' : '#8b4513'};
 	border-radius: 4px;
 	text-align: center;
 	font-size: 0.8rem;
-	background-color: white;
+	background-color: ${props => props.isMobile ? 'rgb(42,42,42)' : 'white'};
+	color: ${props => props.isMobile ? 'white' : 'black'};
 
 	&:focus {
 		outline: none;
-		border-color: #6d3410;
-		box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.2);
+		border-color: ${props => props.isMobile ? '#f5d020' : '#6d3410'};
+		box-shadow: 0 0 0 2px ${props => props.isMobile ? 'rgba(245, 208, 32, 0.2)' : 'rgba(139, 69, 19, 0.2)'};
 	}
 `;

@@ -198,13 +198,14 @@ const Defenses: React.FC<DefensesProps> = ({
 		<>
 			<DefensesContainer $isMobile={isMobile}>
 				{/* Precision Defense */}
-				<DefenseItem>
-					<DefenseLabelContainer>
-						<DefenseLabel>PRECISION</DefenseLabel>
-						<DefenseLabel>DEFENSE</DefenseLabel>
+				<DefenseItem $isMobile={isMobile}>
+					<DefenseLabelContainer $isMobile={isMobile}>
+						<DefenseLabel $isMobile={isMobile}>PRECISION</DefenseLabel>
+						<DefenseLabel $isMobile={isMobile}>DEFENSE</DefenseLabel>
 					</DefenseLabelContainer>
-					<ShieldContainer>
+					<ShieldContainer $isMobile={isMobile}>
 						<ShieldInput
+							$isMobile={isMobile}
 							type="number"
 							data-field="manualPD"
 							value={defenses.PD}
@@ -215,11 +216,11 @@ const Defenses: React.FC<DefensesProps> = ({
 							placeholder={character.finalPD?.toString() || '0'}
 						/>
 					</ShieldContainer>
-					<DefenseFooter>
+					<DefenseFooter $isMobile={isMobile}>
 						{defenses.manualOverrides.PD !== undefined ? (
 							<>
-								<AutoCalculatedNote>Manual override</AutoCalculatedNote>
-								<RevertButton onClick={() => handleRevert('manualPD')}>
+								<AutoCalculatedNote $isMobile={isMobile}>Manual override</AutoCalculatedNote>
+								<RevertButton $isMobile={isMobile} onClick={() => handleRevert('manualPD')}>
 									Revert to auto ({character.finalPD || 0})
 								</RevertButton>
 							</>
@@ -228,13 +229,14 @@ const Defenses: React.FC<DefensesProps> = ({
 				</DefenseItem>
 
 				{/* Precision Damage Reduction */}
-				<DefenseItem>
-					<DefenseLabelContainer>
-						<DefenseLabel>PRECISION</DefenseLabel>
-						<DefenseLabel>DMG REDUCTION</DefenseLabel>
+				<DefenseItem $isMobile={isMobile}>
+					<DefenseLabelContainer $isMobile={isMobile}>
+						<DefenseLabel $isMobile={isMobile}>PRECISION</DefenseLabel>
+						<DefenseLabel $isMobile={isMobile}>DMG REDUCTION</DefenseLabel>
 					</DefenseLabelContainer>
-					<ShieldContainer>
+					<ShieldContainer $isMobile={isMobile}>
 						<ShieldInput
+							$isMobile={isMobile}
 							type="number"
 							data-field="manualPDR"
 							value={defenses.PDR}
@@ -245,28 +247,29 @@ const Defenses: React.FC<DefensesProps> = ({
 							placeholder={(character.finalPDR || 0).toString()}
 						/>
 					</ShieldContainer>
-					<DefenseFooter>
+					<DefenseFooter $isMobile={isMobile}>
 						{defenses.manualOverrides.PDR !== undefined ? (
 							<>
-								<AutoCalculatedNote>Manual override</AutoCalculatedNote>
-								<RevertButton onClick={() => handleRevert('manualPDR')}>
+								<AutoCalculatedNote $isMobile={isMobile}>Manual override</AutoCalculatedNote>
+								<RevertButton $isMobile={isMobile} onClick={() => handleRevert('manualPDR')}>
 									Revert to auto ({character.finalPDR || 0})
 								</RevertButton>
 							</>
 						) : (
-							(character.finalPDR || 0) > 0 && <AutoCalculatedNote>Auto-calculated</AutoCalculatedNote>
+							(character.finalPDR || 0) > 0 && <AutoCalculatedNote $isMobile={isMobile}>Auto-calculated</AutoCalculatedNote>
 						)}
 					</DefenseFooter>
 				</DefenseItem>
 
 				{/* Area Defense */}
-				<DefenseItem>
-					<DefenseLabelContainer>
-						<DefenseLabel>AREA</DefenseLabel>
-						<DefenseLabel>DEFENSE</DefenseLabel>
+				<DefenseItem $isMobile={isMobile}>
+					<DefenseLabelContainer $isMobile={isMobile}>
+						<DefenseLabel $isMobile={isMobile}>AREA</DefenseLabel>
+						<DefenseLabel $isMobile={isMobile}>DEFENSE</DefenseLabel>
 					</DefenseLabelContainer>
-					<ShieldContainer>
+					<ShieldContainer $isMobile={isMobile}>
 						<ShieldInput
+							$isMobile={isMobile}
 							type="number"
 							data-field="manualAD"
 							value={defenses.AD}
@@ -277,11 +280,11 @@ const Defenses: React.FC<DefensesProps> = ({
 							placeholder={character.finalAD?.toString() || '0'}
 						/>
 					</ShieldContainer>
-					<DefenseFooter>
+					<DefenseFooter $isMobile={isMobile}>
 						{defenses.manualOverrides.AD !== undefined ? (
 							<>
-								<AutoCalculatedNote>Manual override</AutoCalculatedNote>
-								<RevertButton onClick={() => handleRevert('manualAD')}>
+								<AutoCalculatedNote $isMobile={isMobile}>Manual override</AutoCalculatedNote>
+								<RevertButton $isMobile={isMobile} onClick={() => handleRevert('manualAD')}>
 									Revert to auto ({character.finalAD || 0})
 								</RevertButton>
 							</>

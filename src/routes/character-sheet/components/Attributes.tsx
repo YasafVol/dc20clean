@@ -32,9 +32,10 @@ interface AttributesProps {
 		intelligence: SkillData[];
 	};
 	breakdowns?: Record<string, EnhancedStatBreakdown>;
+	isMobile?: boolean;
 }
 
-const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribute, breakdowns }) => {
+const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribute, breakdowns, isMobile = false }) => {
 	const { state } = useCharacterSheet();
 	
 	// Get prime modifier directly from character data
@@ -43,19 +44,21 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 	
 	const renderSkills = (skills: SkillData[]) => {
 		return skills.map((skill) => (
-			<SkillRow key={skill.id}>
-				<SkillName>{skill.name.toUpperCase()}</SkillName>
+			<SkillRow key={skill.id} $isMobile={isMobile}>
+				<SkillName $isMobile={isMobile}>{skill.name.toUpperCase()}</SkillName>
 				<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
 					<StyledProficiencyDots>
 						{[1, 2, 3, 4, 5].map((level) => (
-							<StyledDot key={level} $filled={level <= skill.proficiency} />
+							<StyledDot key={level} $filled={level <= skill.proficiency} $isMobile={isMobile} />
 						))}
 					</StyledProficiencyDots>
 					{skill.bonus !== undefined && (
 						<span style={{
 							fontSize: '0.875rem',
 							fontWeight: '600',
-							color: skill.bonus >= 0 ? '#059669' : '#dc2626',
+							color: skill.bonus >= 0 
+								? (isMobile ? '#22c55e' : '#059669')  // Green-500 for mobile, darker green for desktop
+								: (isMobile ? '#ef4444' : '#dc2626'), // Red-500 for mobile, darker red for desktop
 							minWidth: '2rem',
 							textAlign: 'center'
 						}}>
@@ -70,9 +73,9 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 	return (
 		<>
 			{/* Prime Modifier & Awareness */}
-			<PrimeSection>
-				<PrimeLabel>Prime</PrimeLabel>
-				<PrimeValue>
+			<PrimeSection $isMobile={isMobile}>
+				<PrimeLabel $isMobile={isMobile}>Prime</PrimeLabel>
+				<PrimeValue $isMobile={isMobile}>
 					{primeAttribute} + {primeValue}
 				</PrimeValue>
 			</PrimeSection>
@@ -81,10 +84,10 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 			{renderSkills(skillsByAttribute.prime)}
 
 			{/* Might Section */}
-			<AttributeSection>
+			<AttributeSection $isMobile={isMobile}>
 				<AttributeHeader>
-					<AttributeBox>
-						<AttributeAbbreviation>MIG</AttributeAbbreviation>
+					<AttributeBox $isMobile={isMobile}>
+						<AttributeAbbreviation $isMobile={isMobile}>MIG</AttributeAbbreviation>
 						<Tooltip 
 							content={
 								breakdowns?.attribute_might 
@@ -93,12 +96,12 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 							} 
 							position="top"
 						>
-							<AttributeValue>{characterData.finalMight}</AttributeValue>
+							<AttributeValue $isMobile={isMobile}>{characterData.finalMight}</AttributeValue>
 						</Tooltip>
 					</AttributeBox>
-					<AttributeInfo>
-						<AttributeName>MIGHT</AttributeName>
-						<AttributeSave>SAVE +{characterData.finalSaveMight}</AttributeSave>
+					<AttributeInfo $isMobile={isMobile}>
+						<AttributeName $isMobile={isMobile}>MIGHT</AttributeName>
+						<AttributeSave $isMobile={isMobile}>SAVE +{characterData.finalSaveMight}</AttributeSave>
 					</AttributeInfo>
 				</AttributeHeader>
 
@@ -106,10 +109,10 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 			</AttributeSection>
 
 			{/* Agility Section */}
-			<AttributeSection>
+			<AttributeSection $isMobile={isMobile}>
 				<AttributeHeader>
-					<AttributeBox>
-						<AttributeAbbreviation>AGI</AttributeAbbreviation>
+					<AttributeBox $isMobile={isMobile}>
+						<AttributeAbbreviation $isMobile={isMobile}>AGI</AttributeAbbreviation>
 						<Tooltip 
 							content={
 								breakdowns?.attribute_agility 
@@ -118,12 +121,12 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 							} 
 							position="top"
 						>
-							<AttributeValue>{characterData.finalAgility}</AttributeValue>
+							<AttributeValue $isMobile={isMobile}>{characterData.finalAgility}</AttributeValue>
 						</Tooltip>
 					</AttributeBox>
-					<AttributeInfo>
-						<AttributeName>AGILITY</AttributeName>
-						<AttributeSave>SAVE +{characterData.finalSaveAgility}</AttributeSave>
+					<AttributeInfo $isMobile={isMobile}>
+						<AttributeName $isMobile={isMobile}>AGILITY</AttributeName>
+						<AttributeSave $isMobile={isMobile}>SAVE +{characterData.finalSaveAgility}</AttributeSave>
 					</AttributeInfo>
 				</AttributeHeader>
 
@@ -131,10 +134,10 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 			</AttributeSection>
 
 			{/* Charisma Section */}
-			<AttributeSection>
+			<AttributeSection $isMobile={isMobile}>
 				<AttributeHeader>
-					<AttributeBox>
-						<AttributeAbbreviation>CHA</AttributeAbbreviation>
+					<AttributeBox $isMobile={isMobile}>
+						<AttributeAbbreviation $isMobile={isMobile}>CHA</AttributeAbbreviation>
 						<Tooltip 
 							content={
 								breakdowns?.attribute_charisma 
@@ -143,12 +146,12 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 							} 
 							position="top"
 						>
-							<AttributeValue>{characterData.finalCharisma}</AttributeValue>
+							<AttributeValue $isMobile={isMobile}>{characterData.finalCharisma}</AttributeValue>
 						</Tooltip>
 					</AttributeBox>
-					<AttributeInfo>
-						<AttributeName>CHARISMA</AttributeName>
-						<AttributeSave>SAVE +{characterData.finalSaveCharisma}</AttributeSave>
+					<AttributeInfo $isMobile={isMobile}>
+						<AttributeName $isMobile={isMobile}>CHARISMA</AttributeName>
+						<AttributeSave $isMobile={isMobile}>SAVE +{characterData.finalSaveCharisma}</AttributeSave>
 					</AttributeInfo>
 				</AttributeHeader>
 
@@ -156,10 +159,10 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 			</AttributeSection>
 
 			{/* Intelligence Section */}
-			<AttributeSection>
+			<AttributeSection $isMobile={isMobile}>
 				<AttributeHeader>
-					<AttributeBox>
-						<AttributeAbbreviation>INT</AttributeAbbreviation>
+					<AttributeBox $isMobile={isMobile}>
+						<AttributeAbbreviation $isMobile={isMobile}>INT</AttributeAbbreviation>
 						<Tooltip 
 							content={
 								breakdowns?.attribute_intelligence 
@@ -168,12 +171,12 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 							} 
 							position="top"
 						>
-							<AttributeValue>{characterData.finalIntelligence}</AttributeValue>
+							<AttributeValue $isMobile={isMobile}>{characterData.finalIntelligence}</AttributeValue>
 						</Tooltip>
 					</AttributeBox>
-					<AttributeInfo>
-						<AttributeName>INTELLIGENCE</AttributeName>
-						<AttributeSave>SAVE +{characterData.finalSaveIntelligence}</AttributeSave>
+					<AttributeInfo $isMobile={isMobile}>
+						<AttributeName $isMobile={isMobile}>INTELLIGENCE</AttributeName>
+						<AttributeSave $isMobile={isMobile}>SAVE +{characterData.finalSaveIntelligence}</AttributeSave>
 					</AttributeInfo>
 				</AttributeHeader>
 

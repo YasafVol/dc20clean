@@ -15,29 +15,33 @@ import {
 
 interface LanguagesProps {
 	languages: LanguageData[];
+	isMobile?: boolean;
 }
 
-const Languages: React.FC<LanguagesProps> = ({ languages }) => {
+const Languages: React.FC<LanguagesProps> = ({ languages, isMobile }) => {
+	// Mobile detection logic
+	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
+	
 	return (
-		<LanguagesSection>
-			<SectionTitle>LANGUAGES</SectionTitle>
-			<SectionDescription>LANGUAGE CHECK = d20 + Intelligence or Charisma</SectionDescription>
+		<LanguagesSection $isMobile={effectiveIsMobile}>
+			<SectionTitle $isMobile={effectiveIsMobile}>LANGUAGES</SectionTitle>
+			<SectionDescription $isMobile={effectiveIsMobile}>LANGUAGE CHECK = d20 + Intelligence or Charisma</SectionDescription>
 
 			{/* Header with L and F labels */}
-			<FluencyHeader>
-				<LanguageNameHeader>LANGUAGE</LanguageNameHeader>
-				<FluencyHeaderContainer>
-					<FluencyHeaderLabel title="Limited">L</FluencyHeaderLabel>
-					<FluencyHeaderLabel title="Fluent">F</FluencyHeaderLabel>
+			<FluencyHeader $isMobile={effectiveIsMobile}>
+				<LanguageNameHeader $isMobile={effectiveIsMobile}>LANGUAGE</LanguageNameHeader>
+				<FluencyHeaderContainer $isMobile={effectiveIsMobile}>
+					<FluencyHeaderLabel $isMobile={effectiveIsMobile} title="Limited">L</FluencyHeaderLabel>
+					<FluencyHeaderLabel $isMobile={effectiveIsMobile} title="Fluent">F</FluencyHeaderLabel>
 				</FluencyHeaderContainer>
 			</FluencyHeader>
 
 			{languages.map((language) => (
-				<LanguageRow key={language.id}>
-					<LanguageName>{language.name.toUpperCase()}</LanguageName>
-					<FluencyContainer>
-						<FluencyBox filled={language.fluency === 'limited'} />
-						<FluencyBox filled={language.fluency === 'fluent'} />
+				<LanguageRow $isMobile={effectiveIsMobile} key={language.id}>
+					<LanguageName $isMobile={effectiveIsMobile}>{language.name.toUpperCase()}</LanguageName>
+					<FluencyContainer $isMobile={effectiveIsMobile}>
+						<FluencyBox $isMobile={effectiveIsMobile} filled={language.fluency === 'limited'} />
+						<FluencyBox $isMobile={effectiveIsMobile} filled={language.fluency === 'fluent'} />
 					</FluencyContainer>
 				</LanguageRow>
 			))}

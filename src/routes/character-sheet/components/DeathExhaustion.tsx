@@ -35,19 +35,22 @@ import {
 } from '../../../lib/rulesdata/death';
 
 interface DeathExhaustionProps {
-	// No props needed - data comes from context
+	isMobile?: boolean;
 }
 
-const DeathExhaustion: React.FC<DeathExhaustionProps> = () => {
+const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 	const { state, updateExhaustion, updateDeathStep } = useCharacterSheet();
 	const resources = useCharacterResources();
 	
-	if (!state.character) {
+	if (!state.character || !resources) {
 		return <div>Loading...</div>;
 	}
 	
 	const characterData = state.character;
-	const currentValues = resources.current;
+	const currentValues = resources?.current;
+	
+	// Mobile detection logic
+	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
 	
 	const onExhaustionChange = (level: number) => {
 		updateExhaustion(level);
@@ -79,9 +82,9 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = () => {
 	];
 
 	return (
-		<StyledDeathExhaustionContainer>
-			<StyledDeathContainer>
-				<StyledDeathTitle>DEATH & HEALTH STATUS</StyledDeathTitle>
+		<StyledDeathExhaustionContainer $isMobile={effectiveIsMobile}>
+			<StyledDeathContainer $isMobile={effectiveIsMobile}>
+				<StyledDeathTitle $isMobile={effectiveIsMobile}>DEATH & HEALTH STATUS</StyledDeathTitle>
 
 				{/* Health Status */}
 				{(() => {
@@ -111,15 +114,15 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = () => {
 							<div style={{ fontSize: '0.8rem', color: '#8b4513', marginBottom: '0.3rem' }}>
 								DEATH THRESHOLD
 							</div>
-							<StyledDeathThreshold>{deathThreshold}</StyledDeathThreshold>
+							<StyledDeathThreshold $isMobile={effectiveIsMobile}>{deathThreshold}</StyledDeathThreshold>
 
 							{/* Death Steps - only show when on Death's Door */}
 							{healthStatus.status === 'deaths-door' && (
-								<StyledDeathStepsContainer>
-									<StyledDeathStepsTitle>
+								<StyledDeathStepsContainer $isMobile={effectiveIsMobile}>
+									<StyledDeathStepsTitle $isMobile={effectiveIsMobile}>
 										DEATH STEPS ({actualCurrentStep}/{deathSteps.maxSteps})
 									</StyledDeathStepsTitle>
-									<StyledDeathStepsGrid>
+									<StyledDeathStepsGrid $isMobile={effectiveIsMobile}>
 										{Array.from({ length: deathSteps.maxSteps }, (_, index) => {
 											const step = index + 1;
 											const isFilled = step <= actualCurrentStep;
@@ -147,13 +150,14 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = () => {
 				})()}
 			</StyledDeathContainer>
 
-			<StyledExhaustionOnlyContainer>
-				<StyledExhaustionOnlyTitle>EXHAUSTION</StyledExhaustionOnlyTitle>
-				<StyledExhaustionContainer>
+			<StyledExhaustionOnlyContainer $isMobile={effectiveIsMobile}>
+				<StyledExhaustionOnlyTitle $isMobile={effectiveIsMobile}>EXHAUSTION</StyledExhaustionOnlyTitle>
+				<StyledExhaustionContainer $isMobile={effectiveIsMobile}>
 					{exhaustionLevels.map(({ level, description }) => (
 						<StyledExhaustionLevel
 							key={level}
 							filled={level <= currentValues.exhaustionLevel}
+							$isMobile={effectiveIsMobile}
 							onClick={() => onExhaustionChange(level)}
 						>
 							{level}

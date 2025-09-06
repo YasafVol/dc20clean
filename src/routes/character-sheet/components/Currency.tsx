@@ -11,12 +11,15 @@ import {
 import { useCharacterInventory, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 
 interface CurrencyProps {
-	// No props needed - uses context
+	isMobile?: boolean;
 }
 
-const Currency: React.FC<CurrencyProps> = () => {
+const Currency: React.FC<CurrencyProps> = ({ isMobile = false }) => {
 	const { updateCurrency } = useCharacterSheet();
 	const inventory = useCharacterInventory();
+
+	// Simple fix: check screen size if prop isn't passed correctly
+	const effectiveIsMobile = isMobile || window.innerWidth <= 768;
 
 	if (!inventory) {
 		return (
@@ -91,16 +94,17 @@ const Currency: React.FC<CurrencyProps> = () => {
 	];
 
 	return (
-		<CurrencyContainer>
-			<CurrencyTitle>CURRENCY</CurrencyTitle>
+		<CurrencyContainer isMobile={effectiveIsMobile}>
+			<CurrencyTitle isMobile={effectiveIsMobile}>CURRENCY</CurrencyTitle>
 
 			{currencyTypes.map(({ key, label, color, borderColor, value }) => (
-				<CurrencyRow key={key}>
-					<CurrencyIconContainer>
-						<CurrencyIcon color={color} borderColor={borderColor} />
-						<CurrencyLabel>{label}</CurrencyLabel>
+				<CurrencyRow key={key} isMobile={effectiveIsMobile}>
+					<CurrencyIconContainer isMobile={effectiveIsMobile}>
+						<CurrencyIcon color={color} borderColor={borderColor} isMobile={effectiveIsMobile} />
+						<CurrencyLabel isMobile={effectiveIsMobile}>{label}</CurrencyLabel>
 					</CurrencyIconContainer>
 					<CurrencyInput
+						isMobile={effectiveIsMobile}
 						type="number"
 						min="0"
 						value={value}

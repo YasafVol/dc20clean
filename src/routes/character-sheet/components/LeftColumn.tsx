@@ -20,6 +20,7 @@ interface LeftColumnProps {
 	breakdowns?: Record<string, EnhancedStatBreakdown>;
 	onKnowledgeInfoClick?: (knowledgeName: string) => void;
 	onTradeInfoClick?: (tradeName: string) => void;
+	isMobile?: boolean;
 }
 
 const LeftColumn: React.FC<LeftColumnProps> = ({
@@ -28,7 +29,8 @@ const LeftColumn: React.FC<LeftColumnProps> = ({
 	languages,
 	breakdowns,
 	onKnowledgeInfoClick,
-	onTradeInfoClick
+	onTradeInfoClick,
+	isMobile = false
 }) => {
 	return (
 		<StyledLeftColumn>
@@ -36,12 +38,14 @@ const LeftColumn: React.FC<LeftColumnProps> = ({
 				characterData={characterData} 
 				skillsByAttribute={skillsByAttribute} 
 				breakdowns={breakdowns}
+				isMobile={isMobile}
 			/>
 			<KnowledgeTrades 
 				onKnowledgeInfoClick={onKnowledgeInfoClick}
 				onTradeInfoClick={onTradeInfoClick}
+				isMobile={isMobile}
 			/>
-			<Languages languages={languages} />
+			<Languages languages={languages} isMobile={isMobile} />
 		</StyledLeftColumn>
 	);
 };

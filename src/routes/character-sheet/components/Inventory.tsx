@@ -20,9 +20,10 @@ import {
 
 export interface InventoryProps {
 	onItemClick: (inventoryData: InventoryItemData, item: InventoryItem | null) => void;
+	isMobile?: boolean;
 }
 
-const Inventory: React.FC<InventoryProps> = ({ onItemClick }) => {
+const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) => {
 	const { updateInventory } = useCharacterSheet();
 	const inventoryData = useCharacterInventory();
 	const inventory = inventoryData.items;
@@ -113,13 +114,13 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick }) => {
 	};
 
 	return (
-		<StyledInventorySection>
-			<StyledInventoryTitle>INVENTORY</StyledInventoryTitle>
+		<StyledInventorySection $isMobile={isMobile}>
+			<StyledInventoryTitle $isMobile={isMobile}>INVENTORY</StyledInventoryTitle>
 
 			{/* Add Item Button */}
-			<StyledAddItemButton onClick={addInventorySlot}>+ Add Item</StyledAddItemButton>
+			<StyledAddItemButton $isMobile={isMobile} onClick={addInventorySlot}>+ Add Item</StyledAddItemButton>
 
-			<StyledInventoryContainer>
+			<StyledInventoryContainer $isMobile={isMobile}>
 				<StyledInventoryHeaderRow>
 					<span></span> {/* Empty column for remove button */}
 					<StyledInventoryHeaderColumn>Type</StyledInventoryHeaderColumn>
@@ -153,6 +154,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick }) => {
 
 								{/* Item Type */}
 								<StyledInventorySelect
+									$isMobile={isMobile}
 									value={item.itemType}
 									onChange={(e) => handleInventoryItemSelect(index, e.target.value, false)}
 								>
@@ -166,6 +168,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick }) => {
 
 								{/* Item Name */}
 								<StyledInventorySelect
+									$isMobile={isMobile}
 									value={item.itemName}
 									onChange={(e) => handleInventoryItemSelect(index, e.target.value, true)}
 									disabled={!item.itemType}
@@ -183,6 +186,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick }) => {
 
 								{/* Count */}
 								<StyledInventoryInput
+									$isMobile={isMobile}
 									type="number"
 									min="1"
 									value={item.count}
@@ -193,6 +197,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick }) => {
 								<div style={{ textAlign: 'center' }}>
 									{selectedItem ? (
 										<StyledInventoryInfoIcon
+											$isMobile={isMobile}
 											onClick={() => onItemClick(item, selectedItem)}
 											title={selectedItem.itemType === 'Shield' ? getShieldInfo(selectedItem) : undefined}
 										>

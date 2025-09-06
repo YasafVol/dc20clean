@@ -88,6 +88,7 @@ Within `calculateCharacterWithBreakdowns`:
   - Collects `MODIFY_SKILL_MASTERY_CAP` and `INCREASE_SKILL_MASTERY_CAP` effects
   - Validates exception budget and specific skill coverage
   - Emits `MASTERY_CAP_EXCEEDED` and `INVALID_MASTERY_GRANT` errors
+  - All characters have 1 base Adept slot by default; raising additional skills/trades to Adept requires granted exceptions
 - Validation emits over-budget errors by step.
 
 Traits can modify these pools using effects:
@@ -100,7 +101,8 @@ The calculator exposes a `background` block with:
 `{ baseSkillPoints, baseTradePoints, baseLanguagePoints, availableSkillPoints, availableTradePoints, availableLanguagePoints, skillPointsUsed, tradePointsUsed, languagePointsUsed, conversions }`.
 
 And a `validation.masteryLimits` block with:  
-`{ skillMasteryTier, tradeMasteryTier, availableGrants, usedGrants }`.
+`{ maxSkillMastery, maxTradeMastery, currentAdeptCount, maxAdeptCount, canSelectAdept }`.
+At level 1, `maxAdeptCount` is 1 (base Adept slot) plus any granted exceptions.
 
 ---
 

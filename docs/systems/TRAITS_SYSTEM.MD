@@ -56,6 +56,7 @@ flowchart LR
 Notes:
 - Use `schemas/character.schema.ts` as the source of truth for `Effect.type` strings.
 - `traits.ts` currently imports `Trait` from `schemas/character.schema.ts` to ensure alignment.
+- For resource maximums, use `hpMax`, `spMax`, and `mpMax` as `target` values. Avoid `mp` (not processed for maximums).
 
 ---
 

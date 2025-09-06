@@ -104,6 +104,7 @@ This section describes the data structures and concepts that define the game's r
         *   `MODIFY_SKILL_MASTERY_CAP` / `MODIFY_TRADE_MASTERY_CAP`: Grant specific mastery tier unlocks for a limited count of skills/trades
         *   `INCREASE_SKILL_MASTERY_CAP` / `INCREASE_TRADE_MASTERY_CAP`: Increase mastery cap by a specific amount for selected skills/trades
         *   Validation ensures over-budget skills don't exceed available exception grants
+        *   All characters have 1 base Adept slot by default; additional Adept mastery requires feature grants
         *   All logic centralized in `enhancedCharacterCalculator.ts` with real-time UI validation
 
 *   **Martial Abilities**
@@ -143,3 +144,4 @@ This section describes the data structures and concepts that define the game's r
         *   `ModifyMasteryCapEffect`: Grants specific tier unlocks (e.g., "2 Adept mastery unlocks for urban skills")
         *   `IncreaseMasteryCapEffect`: Increases mastery cap by value for selected skills/trades
         *   Both support optional `options` array to restrict which skills/trades can benefit
+        *   For resource maximums, targets should be `hpMax`, `spMax`, and `mpMax` (avoid `mp`)

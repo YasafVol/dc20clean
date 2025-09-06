@@ -57,6 +57,8 @@ flowchart LR
 | **State Layer**           | `src/lib/stores/characterContext.tsx`<br>`src/lib/hooks/useCharacterBuilder.ts`           | Provides calculated results to UI                          |
 | **UI**                    | `src/routes/character-creation/*` (selection)<br>`src/routes/character-sheet/*` (display) | Import `ancestriesData` / `traitsData` directly            |
 
+Note: Class features can modify ancestry budgets via effects (e.g., Cleric “Ancestral” domain adds `+2` to `ancestryPoints`). Ensure such effects are applied before spending ancestry points.
+
 ---
 
 ## 3 Adding **New Ancestry** – Checklist ✅

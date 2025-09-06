@@ -27,6 +27,7 @@ The project leverages a modern technology stack, including:
 - **Rules Engine**: Comprehensive DC20 rules implementation with effect system
 - **Real-time Calculations**: Dynamic stat calculations and validation
 - **Responsive UI**: Works on desktop and mobile devices
+ - **Cleric Domain Budgets**: Domains like Ancestral can increase ancestry points; Magic grants +1 MP
 
 ## Project Structure
 

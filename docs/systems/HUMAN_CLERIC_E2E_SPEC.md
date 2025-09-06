@@ -21,7 +21,7 @@ This document is written for both product and engineering audiences. It contains
 
 ### Key System Concepts and Invariants
 - Class selection precedes Ancestry in this flow.
-- Ancestry points baseline: Human has 5 base ancestry points. Cleric selection contributes an additional 2 ancestry points. Total ancestry points = 7.
+- Ancestry points baseline: Human has 5 base ancestry points. Selecting the Cleric "Ancestral" domain grants +2 ancestry points. Total ancestry points = 7 when that domain is chosen.
 - Attribute baseline: Each attribute begins at -2. Increasing by +1 requires one click on the corresponding increase button.
 - Attribute budget: Base pool at level 1 is 12 points. The Human trait “Attribute Increase” adds +1 to this pool for the next stage, making 13 total for this flow. Trait bonuses should not be charged as spent points; they should not reduce the pool available for base allocations.
 - Cleric “Magic” domain adds +1 MP to the character (should be visible in resources at or after finalization).
@@ -29,13 +29,13 @@ This document is written for both product and engineering audiences. It contains
 
 ### Target Build: Human Cleric
 1) Class: Cleric
-   - Rationale: Ensures class bonus of +2 to Ancestry points applies early and domain choices shape later availability.
-   - Expected Result: Ancestry points total becomes 7 (5 base + 2 class). “Next →” enabled after valid selection.
+   - Rationale: Choose the class first so domain choices (next step) can modify budgets (e.g., Ancestral → +2 ancestry points).
+   - Expected Result: “Next →” enabled after valid selection. No ancestry point change occurs until domains are chosen.
 
 2) Cleric Domains (feature choice multi-select)
    - Choices: Ancestral, Magic
-   - Rationale: These are representative, verify multi-select stability, and drive downstream options.
-   - Expected Result: Both checkboxes can be checked deterministically without strict-mode violations. “Next →” enabled. Magic domain increases MP by +1 (assert at resources/summary step).
+   - Rationale: Representative choices that verify multi-select stability and drive downstream options.
+   - Expected Result: Both checkboxes can be checked deterministically without strict-mode violations. “Next →” enabled. Magic domain increases MP by +1 (assert at resources/summary step). Selecting Ancestral increases available Ancestry points by +2 (Human total becomes 7).
 
 3) Ancestry: Human
    - Points to spend: 7 total (from Step 1).

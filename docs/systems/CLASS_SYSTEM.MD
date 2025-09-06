@@ -27,7 +27,7 @@ flowchart LR
     A2 --> B1
 
     subgraph Compile-Time Validation
-        C1[class.loader.ts + class-features.loader.ts]
+        C1[class.loader.ts]
         C2[rulesdata.spec.ts]
     end
 
@@ -54,8 +54,7 @@ flowchart LR
 |                           | `src/lib/rulesdata/classes-data/tables/*_table.json`                                              | Level-by-level progression tables (HP, MP, features gained, etc.)        |
 | **Type Contracts**        | `src/lib/rulesdata/schemas/types.ts`                                                              | TS interfaces `IClassDefinition`, `IClassFeature`, `IClassFeatureChoice` |
 |                           | `src/lib/rulesdata/schemas/class.schema.ts`                                               | Zod schema used for validation & effect typing                           |
-| **Validation Layer**      | `src/lib/rulesdata/loaders/class.loader.ts`                                               | Loads progression tables, validates against schema                       |
-|                           | `src/lib/rulesdata/loaders/class-features.loader.ts`                                      | Loads feature files & exposes `classFeaturesData`                        |
+| **Validation Layer**      | `src/lib/rulesdata/loaders/class.loader.ts`                                               | Loads progression tables and features, validates against schema          |
 |                           | `src/lib/rulesdata/rulesdata.spec.ts`                                                     | Unit test that asserts every class passes the schema                     |
 | **Runtime Engine**        | `src/lib/services/enhancedCharacterCalculator.ts`                                         | Aggregates class effects, resolves choices, outputs stats                |
 | **State Layer**           | `src/lib/stores/characterContext.tsx`<br>`src/lib/hooks/useCharacterBuilder.ts`           | Provides calculated results to UI                                        |
@@ -130,7 +129,7 @@ flowchart LR
 
 ## 6 Future Evolution
 
-- **Effect Processor** integration will unify class & ancestry effect handling—update §3 Step 4 when landed.
+-- Effect Processor integration will unify class & ancestry effect handling—update §3 Step 4 when landed.
 - **Subclass-driven UI**: dynamic forms may auto-render based on schema.
 - **Data-driven progression editor** planned; stay tuned.
 

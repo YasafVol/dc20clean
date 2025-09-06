@@ -61,6 +61,7 @@ export interface GrantResistanceEffect {
 	type: 'GRANT_RESISTANCE';
 	target: string;
 	value: string | number | boolean;
+	optional?: string;
 }
 
 export interface GrantVulnerabilityEffect {

@@ -30,7 +30,6 @@ export const monkClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
-			id: 'monk_training',
 			featureName: 'Monk Training',
 			levelGained: 1,
 			description: 'Your martial arts training grants you greater offense, defense, and movement.',
@@ -103,18 +102,5 @@ export const monkClass: ClassDefinition = {
 				}
 			]
 		},
-		{
-			id: 'mastery_progression',
-			featureName: 'Mastery Progression',
-			levelGained: 1,
-			description: 'You gain Combat Mastery progression as shown on the class table.',
-			effects: [
-				{
-					type: 'MODIFY_STAT',
-					target: 'combatMastery',
-					value: 'level_based'
-				}
-			]
-		}
 	]
 };

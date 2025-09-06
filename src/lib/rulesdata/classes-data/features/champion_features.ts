@@ -24,7 +24,8 @@ export const championClass: ClassDefinition = {
 			maximumIncreasesBy: 'Stamina Points column of the Champion Class Table'
 		},
 		staminaRegen: {
-			description: 'Once per round, you can regain up to half your maximum SP when you perform a Maneuver.',
+			description:
+				'Once per round, you can regain up to half your maximum SP when you perform a Maneuver.'
 		}
 	},
 	coreFeatures: [

@@ -24,7 +24,8 @@ export const commanderClass: ClassDefinition = {
 			maximumIncreasesBy: 'Stamina Points column of the Commander Class Table'
 		},
 		staminaRegen: {
-			description: 'Once per round, regain up to half maximum SP when you grant a creature a Help Die.',
+			description:
+				'Once per round, regain up to half maximum SP when you grant a creature a Help Die.'
 		}
 	},
 	coreFeatures: [
@@ -36,7 +37,7 @@ export const commanderClass: ClassDefinition = {
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Armor', value: true },
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Shields', value: true },
-				{ type: 'GRANT_MANEUVERS', target: 'all_attack', value: true }
+				{ type: 'GRANT_MANEUVERS', target: 'all_attack', value: 4 }
 			],
 			benefits: [
 				{

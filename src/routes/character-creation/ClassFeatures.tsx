@@ -7,7 +7,7 @@ import {
 } from '../../lib/rulesdata/loaders/class-features.loader';
 import { SpellSchool } from '../../lib/rulesdata/schemas/spell.schema';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
-import { techniques } from '../../lib/rulesdata/techniques';
+import { techniques } from '../../lib/rulesdata/martials/techniques';
 import {
 	StyledContainer,
 	StyledTitle,

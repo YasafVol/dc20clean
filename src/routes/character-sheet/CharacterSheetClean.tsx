@@ -62,7 +62,7 @@ import {
 	getLegacyChoiceId,
 	getDisplayLabel
 } from '../../lib/rulesdata/loaders/class-features.loader';
-import { ancestriesData } from '../../lib/rulesdata/_new_schema/ancestries';
+import { ancestriesData } from '../../lib/rulesdata/ancestries/ancestries';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
 

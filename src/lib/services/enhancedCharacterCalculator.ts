@@ -843,7 +843,7 @@ export function calculateCharacterWithBreakdowns(
 	}
 
 	// 4. Validate specific skill coverage
-	let skillsNeedingFeatureCoverage = [...skillsOverLevelCap];
+	const skillsNeedingFeatureCoverage = [...skillsOverLevelCap];
 
 	// Check remaining skills against feature options
 	for (const skillId of skillsNeedingFeatureCoverage) {

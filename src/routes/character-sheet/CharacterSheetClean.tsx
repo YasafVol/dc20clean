@@ -201,30 +201,29 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 			};
 
 		// OPTIMIZED: Trust stored defense values and breakdowns (no recalculation needed)
-		let calculatedPD, calculatedAD, calculatedPDR;
-		let pdBreakdown, adBreakdown, pdrBreakdown;
 
 		// Use stored values - they are the single source of truth
-		calculatedPD = characterData.finalPD;
-		calculatedAD = characterData.finalAD;
-		calculatedPDR = characterData.finalPDR;
+		const calculatedPD = characterData.finalPD;
+		const calculatedAD = characterData.finalAD;
+		const calculatedPDR = characterData.finalPDR;
 
 		// Use stored breakdowns if available, otherwise create simple fallback
 		const storedBreakdowns = (characterData as any).breakdowns || {};
 
-		pdBreakdown = storedBreakdowns.pd?.effects
+		const pdBreakdown = storedBreakdowns.pd?.effects
 			? storedBreakdowns.pd.effects
 					.map((e: any) => `${e.value > 0 ? '+' : ''}${e.value} (${e.source.name || e.source})`)
 					.join(' ') + ` = ${calculatedPD}`
 			: `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalAgility} (Agility) + ${characterData.finalIntelligence} (Intelligence) = ${calculatedPD}`;
 
-		adBreakdown = storedBreakdowns.ad?.effects
+		const adBreakdown = storedBreakdowns.ad?.effects
 			? storedBreakdowns.ad.effects
 					.map((e: any) => `${e.value > 0 ? '+' : ''}${e.value} (${e.source.name || e.source})`)
 					.join(' ') + ` = ${calculatedAD}`
 			: `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalMight} (Might) + ${characterData.finalCharisma} (Charisma) = ${calculatedAD}`;
 
-		pdrBreakdown = calculatedPDR > 0 ? `${calculatedPDR} (from stored calculation)` : '0 (no PDR)';
+		const pdrBreakdown =
+			calculatedPDR > 0 ? `${calculatedPDR} (from stored calculation)` : '0 (no PDR)';
 
 		console.log('🚀 OPTIMIZED: Using stored defense values (no recalculation needed)');
 

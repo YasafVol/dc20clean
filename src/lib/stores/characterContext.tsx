@@ -213,15 +213,19 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 		state.attribute_intelligence
 	]);
 
+	// Calculate total attribute points
+	const totalAttributePoints = calculationResult.stats.finalAttributePoints ?? 12;
+
 	// Provide both the new result and the old values
 	const contextValue: CharacterContextType = useMemo(
 		() => ({
 			state,
 			dispatch,
 			calculationResult,
-			attributePointsRemaining
+			attributePointsRemaining,
+			totalAttributePoints
 		}),
-		[state, dispatch, calculationResult, attributePointsRemaining]
+		[state, dispatch, calculationResult, attributePointsRemaining, totalAttributePoints]
 	);
 
 	return (

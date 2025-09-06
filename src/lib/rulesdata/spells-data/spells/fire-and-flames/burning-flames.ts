@@ -1,5 +1,5 @@
 import type { Spell } from '../../../schemas/spell.schema';
-import { SpellSchool, SpellList, PremadeSpellList } from '../../../schemas/spell.schema';
+import { SpellSchool, PremadeSpellList } from '../../../schemas/spell.schema';
 
 export const burningFlames: Spell = {
 	name: 'Burning Flames',

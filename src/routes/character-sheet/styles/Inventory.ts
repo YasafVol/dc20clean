@@ -1,40 +1,46 @@
 import styled from 'styled-components';
 
-export const StyledInventorySection = styled.div`
-	border: 2px solid #8b4513;
+interface MobileStyledProps {
+	$isMobile?: boolean;
+}
+
+export const StyledInventorySection = styled.div<MobileStyledProps>`
+	border: 1px solid ${(props) => (props.$isMobile ? 'rgb(68,68,68)' : '#8b4513')};
 	border-radius: 8px;
 	padding: 1rem;
-	background: white;
+	background: ${(props) => (props.$isMobile ? 'rgb(42,42,42)' : 'white')};
 	margin-bottom: 1rem;
+	color: ${(props) => (props.$isMobile ? 'white' : 'black')};
 `;
 
-export const StyledInventoryTitle = styled.div`
+export const StyledInventoryTitle = styled.div<MobileStyledProps>`
 	font-size: 1.1rem;
 	font-weight: bold;
-	color: #8b4513;
+	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
 	text-align: center;
 	margin-bottom: 1rem;
 `;
 
-export const StyledAddItemButton = styled.button`
+export const StyledAddItemButton = styled.button<MobileStyledProps>`
 	padding: 0.5rem 1rem;
-	background-color: #8b4513;
-	color: white;
+	background-color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
+	color: ${(props) => (props.$isMobile ? '#1a1a1a' : 'white')};
 	border: none;
 	border-radius: 4px;
 	font-size: 0.9rem;
 	cursor: pointer;
 	transition: background-color 0.2s;
 	margin-bottom: 1rem;
+	font-weight: bold;
 
 	&:hover {
-		background-color: #6d3410;
+		background-color: ${(props) => (props.$isMobile ? '#d4b01e' : '#6d3410')};
 	}
 `;
 
-export const StyledInventoryContainer = styled.div`
+export const StyledInventoryContainer = styled.div<MobileStyledProps>`
 	font-size: 0.8rem;
-	color: #8b4513;
+	color: ${(props) => (props.$isMobile ? 'white' : 'black')};
 `;
 
 export const StyledInventoryHeaderRow = styled.div`
@@ -47,7 +53,9 @@ export const StyledInventoryHeaderRow = styled.div`
 	align-items: center;
 `;
 
-export const StyledInventoryHeaderColumn = styled.span<{ align?: string }>`
+export const StyledInventoryHeaderColumn = styled.span.withConfig({
+	shouldForwardProp: (prop) => prop !== 'align'
+})<{ align?: string }>`
 	font-weight: bold;
 	text-align: ${(props) => props.align || 'left'};
 `;
@@ -79,32 +87,34 @@ export const StyledRemoveItemButton = styled.button`
 	}
 `;
 
-export const StyledInventorySelect = styled.select`
+export const StyledInventorySelect = styled.select<MobileStyledProps>`
 	padding: 0.3rem;
-	border: 1px solid #ccc;
+	border: 1px solid ${(props) => (props.$isMobile ? 'rgb(68,68,68)' : '#ccc')};
 	border-radius: 4px;
 	font-size: 0.8rem;
-	background-color: white;
+	background-color: ${(props) => (props.$isMobile ? 'rgb(42,42,42)' : 'white')};
+	color: ${(props) => (props.$isMobile ? 'white' : 'black')};
 
 	&:disabled {
-		background-color: #f5f5f5;
+		background-color: ${(props) => (props.$isMobile ? 'rgb(30,30,30)' : '#f5f5f5')};
 		color: #999;
 	}
 `;
 
-export const StyledInventoryInput = styled.input`
+export const StyledInventoryInput = styled.input<MobileStyledProps>`
 	padding: 0.3rem;
-	border: 1px solid #ccc;
+	border: 1px solid ${(props) => (props.$isMobile ? 'rgb(68,68,68)' : '#ccc')};
 	border-radius: 4px;
 	font-size: 0.8rem;
 	text-align: center;
-	background-color: white;
+	background-color: ${(props) => (props.$isMobile ? 'rgb(42,42,42)' : 'white')};
+	color: ${(props) => (props.$isMobile ? 'white' : 'black')};
 `;
 
-export const StyledInventoryInfoIcon = styled.span`
+export const StyledInventoryInfoIcon = styled.span<MobileStyledProps>`
 	background: transparent;
-	color: #8b4513;
-	border: 1px solid #8b4513;
+	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
+	border: 1px solid ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
 	border-radius: 50%;
 	width: 20px;
 	height: 20px;
@@ -118,8 +128,8 @@ export const StyledInventoryInfoIcon = styled.span`
 	flex-shrink: 0;
 
 	&:hover {
-		background: #8b4513;
-		color: white;
+		background: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
+		color: ${(props) => (props.$isMobile ? 'rgb(42,42,42)' : 'white')};
 	}
 `;
 

@@ -4,35 +4,39 @@ import type { Maneuver } from '../../../lib/rulesdata/maneuvers';
 import { maneuvers as allManeuvers } from '../../../lib/rulesdata/martials/maneuvers';
 import { useCharacterManeuvers, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
-	StyledSpellsSection,
-	StyledSpellsHeader,
-	StyledSpellsTitle,
-	StyledSpellsControls,
-	StyledAddSpellButton,
-	StyledSpellsContainer,
-	StyledSpellsHeaderRow,
-	StyledHeaderColumn,
-	StyledEmptyState,
-	StyledSpellRow,
-	StyledRemoveButton,
-	StyledSpellSelect,
-	StyledSchoolFilter,
-	StyledSpellCell
-} from '../styles/Spells';
+	StyledManeuversSection,
+	StyledManeuversHeader,
+	StyledManeuversTitle,
+	StyledManeuversControls,
+	StyledManeuversContainer,
+	StyledManeuversHeaderRow,
+	StyledManeuverHeaderColumn,
+	StyledManeuverEmptyState,
+	StyledManeuverRow,
+	StyledManeuverRemoveButton,
+	StyledManeuverSelect,
+	StyledManeuverTypeFilter,
+	StyledManeuverCell,
+	StyledManeuverNameCell,
+	StyledAddManeuverButton
+} from '../styles/Maneuvers.styles';
 
 export interface ManeuversProps {
 	onManeuverClick: (maneuver: Maneuver) => void;
 	readOnly?: boolean;
+	isMobile?: boolean;
 }
 
-const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false }) => {
+const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false, isMobile }) => {
 	const { addManeuver, removeManeuver, state } = useCharacterSheet();
 	const maneuvers = useCharacterManeuvers();
 
 	if (!state.character) {
 		return <div>Loading maneuvers...</div>;
 	}
-	
+
+	// Mobile detection logic
+	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
 	const [typeFilter, setTypeFilter] = useState<string>('all');
 	const [expandedManeuvers, setExpandedManeuvers] = useState<Set<string>>(() => {
 		const expanded = new Set<string>();
@@ -58,7 +62,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 		if (typeFilter === 'all') {
 			return maneuvers;
 		}
-		return maneuvers.filter(maneuver => {
+		return maneuvers.filter((maneuver) => {
 			// Show maneuvers that match the selected type, or empty maneuvers (for adding new ones)
 			return !maneuver.name || maneuver.type === typeFilter;
 		});
@@ -90,7 +94,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 
 		if (field === 'name' && value) {
 			// When maneuver is selected, populate all fields from maneuver data
-			const selectedManeuver = allManeuvers.find(maneuver => maneuver.name === value);
+			const selectedManeuver = allManeuvers.find((maneuver) => maneuver.name === value);
 			if (selectedManeuver) {
 				const updatedManeuver: ManeuverData = {
 					...maneuverToUpdate,
@@ -130,15 +134,16 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 	};
 
 	return (
-		<StyledSpellsSection>
-			<StyledSpellsHeader>
-				<StyledSpellsTitle>Maneuvers</StyledSpellsTitle>
-				<StyledSpellsControls>
+		<StyledManeuversSection $isMobile={effectiveIsMobile}>
+			<StyledManeuversHeader $isMobile={effectiveIsMobile}>
+				<StyledManeuversTitle $isMobile={effectiveIsMobile}>Maneuvers</StyledManeuversTitle>
+				<StyledManeuversControls $isMobile={effectiveIsMobile}>
 					{!readOnly && (
 						<>
-							<StyledSchoolFilter
+							<StyledManeuverTypeFilter
+								$isMobile={effectiveIsMobile}
 								value={typeFilter}
-								onChange={(e) => setTypeFilter(e.target.value)}
+								onChange={(e: any) => setTypeFilter(e.target.value)}
 							>
 								<option value="all">All Types</option>
 								{getUniqueTypes().map((type) => (
@@ -146,105 +151,139 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 										{type}
 									</option>
 								))}
-							</StyledSchoolFilter>
-							<StyledAddSpellButton onClick={addManeuverSlot}>+ Add Maneuver</StyledAddSpellButton>
+							</StyledManeuverTypeFilter>
+							<StyledAddManeuverButton $isMobile={effectiveIsMobile} onClick={addManeuverSlot}>
+								+ Add Maneuver
+							</StyledAddManeuverButton>
 						</>
 					)}
-				</StyledSpellsControls>
-			</StyledSpellsHeader>
+				</StyledManeuversControls>
+			</StyledManeuversHeader>
 
-			<StyledSpellsContainer>
-				<StyledSpellsHeaderRow>
+			<StyledManeuversContainer $isMobile={effectiveIsMobile}>
+				<StyledManeuversHeaderRow $isMobile={effectiveIsMobile}>
 					<span></span> {/* Empty column for remove button */}
-					<StyledHeaderColumn>Maneuver</StyledHeaderColumn>
-					<StyledHeaderColumn>Type</StyledHeaderColumn>
-					<StyledHeaderColumn>Cost</StyledHeaderColumn>
-					<StyledHeaderColumn>Timing</StyledHeaderColumn>
-				</StyledSpellsHeaderRow>
+					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
+						Maneuver
+					</StyledManeuverHeaderColumn>
+					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
+						Type
+					</StyledManeuverHeaderColumn>
+					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
+						Cost
+					</StyledManeuverHeaderColumn>
+					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
+						Timing
+					</StyledManeuverHeaderColumn>
+				</StyledManeuversHeaderRow>
 
 				{filteredCharacterManeuvers.length === 0 ? (
-					<StyledEmptyState>
-						{typeFilter !== 'all' 
+					<StyledManeuverEmptyState $isMobile={effectiveIsMobile}>
+						{typeFilter !== 'all'
 							? `No ${typeFilter} maneuvers found. ${readOnly ? '' : 'Click "Add Maneuver" to add maneuvers to your character.'}`
-							: readOnly ? 'No maneuvers selected' : 'No maneuvers added yet. Click "Add Maneuver" to get started.'
-						}
-					</StyledEmptyState>
+							: readOnly
+								? 'No maneuvers selected'
+								: 'No maneuvers added yet. Click "Add Maneuver" to get started.'}
+					</StyledManeuverEmptyState>
 				) : (
 					filteredCharacterManeuvers.map((maneuver) => {
 						// Get the original index for update operations
-						const originalIndex = maneuvers.findIndex(m => m.id === maneuver.id);
-						const selectedManeuver = maneuver.name ? 
-							allManeuvers.find(m => m.name === maneuver.name) : null;
-							
+						const originalIndex = maneuvers.findIndex((m) => m.id === maneuver.id);
+						const selectedManeuver = maneuver.name
+							? allManeuvers.find((m) => m.name === maneuver.name)
+							: null;
+
 						return (
 							<React.Fragment key={maneuver.id}>
-								<StyledSpellRow>
+								<StyledManeuverRow $isMobile={effectiveIsMobile}>
 									{/* Remove Button - only show in edit mode */}
 									{!readOnly && (
-										<StyledRemoveButton onClick={() => removeManeuverSlot(originalIndex)}>
+										<StyledManeuverRemoveButton
+											$isMobile={effectiveIsMobile}
+											onClick={() => removeManeuverSlot(originalIndex)}
+										>
 											×
-										</StyledRemoveButton>
+										</StyledManeuverRemoveButton>
 									)}
 
 									{/* Maneuver Name - show as text in read-only mode, dropdown in edit mode */}
 									{readOnly ? (
-										<StyledSpellCell 
+										<StyledManeuverNameCell
+											$isMobile={effectiveIsMobile}
 											style={{ fontWeight: 'bold', color: '#2c3e50', cursor: 'pointer' }}
 											onClick={() => {
 												if (selectedManeuver) onManeuverClick(selectedManeuver);
 											}}
 										>
 											{maneuver.name || 'Unknown Maneuver'}
-										</StyledSpellCell>
+										</StyledManeuverNameCell>
 									) : (
-										<StyledSpellSelect
+										<StyledManeuverSelect
+											$isMobile={effectiveIsMobile}
 											value={maneuver.name || ''}
-											onChange={(e) => updateManeuver(originalIndex, 'name', e.target.value)}
+											onChange={(e: any) => updateManeuver(originalIndex, 'name', e.target.value)}
 										>
 											<option value="">Select Maneuver...</option>
 											{/* Always include the currently selected maneuver, even if it doesn't match filter */}
-											{maneuver.name && !filteredManeuvers.find(m => m.name === maneuver.name) && (
-												<option key={maneuver.name} value={maneuver.name}>
-													{maneuver.name}
-												</option>
-											)}
+											{maneuver.name &&
+												!filteredManeuvers.find((m) => m.name === maneuver.name) && (
+													<option key={maneuver.name} value={maneuver.name}>
+														{maneuver.name}
+													</option>
+												)}
 											{filteredManeuvers
-												.filter(maneuverOption => {
+												.filter((maneuverOption) => {
 													// Don't show maneuvers that are already selected by other maneuver slots
-													const isAlreadySelected = maneuvers.some(existingManeuver => 
-														existingManeuver.name === maneuverOption.name && existingManeuver.id !== maneuver.id
+													const isAlreadySelected = maneuvers.some(
+														(existingManeuver) =>
+															existingManeuver.name === maneuverOption.name &&
+															existingManeuver.id !== maneuver.id
 													);
 													return !isAlreadySelected;
 												})
-												.map(m => (
-													<option key={m.name} value={m.name}>{m.name}</option>
+												.map((m) => (
+													<option key={m.name} value={m.name}>
+														{m.name}
+													</option>
 												))}
-										</StyledSpellSelect>
+										</StyledManeuverSelect>
 									)}
 
 									{/* Type */}
-									<StyledSpellCell>{maneuver.type || '-'}</StyledSpellCell>
+									<StyledManeuverCell $isMobile={effectiveIsMobile}>
+										{maneuver.type || '-'}
+									</StyledManeuverCell>
 
 									{/* Cost */}
-									<StyledSpellCell>{maneuver.cost?.ap ? `${maneuver.cost.ap} AP` : '-'}</StyledSpellCell>
+									<StyledManeuverCell $isMobile={effectiveIsMobile}>
+										{maneuver.cost?.ap ? `${maneuver.cost.ap} AP` : '-'}
+									</StyledManeuverCell>
 
 									{/* Range/Reaction */}
-									<StyledSpellCell style={{ fontSize: '0.7rem' }}>
+									<StyledManeuverCell $isMobile={effectiveIsMobile} style={{ fontSize: '0.7rem' }}>
 										{selectedManeuver?.isReaction ? 'Reaction' : 'Action'}
-									</StyledSpellCell>
-								</StyledSpellRow>
+									</StyledManeuverCell>
+								</StyledManeuverRow>
 
 								{/* Expandable Description Section */}
 								{selectedManeuver && expandedManeuvers.has(maneuver.id) && (
-									<div style={{
-										backgroundColor: '#f8f9fa',
-										padding: '15px',
-										border: '1px solid #e9ecef',
-										borderTop: 'none',
-										borderRadius: '0 0 5px 5px',
-										marginBottom: '10px'
-									}}>
-										<div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+									<div
+										style={{
+											backgroundColor: '#f8f9fa',
+											padding: '15px',
+											border: '1px solid #e9ecef',
+											borderTop: 'none',
+											borderRadius: '0 0 5px 5px',
+											marginBottom: '10px'
+										}}
+									>
+										<div
+											style={{
+												display: 'flex',
+												justifyContent: 'space-between',
+												marginBottom: '10px'
+											}}
+										>
 											<strong style={{ color: '#8b4513' }}>Description:</strong>
 											<button
 												onClick={() => toggleManeuverExpansion(maneuver.id)}
@@ -261,24 +300,27 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 												Hide Description
 											</button>
 										</div>
-										
+
 										{/* Main Description */}
 										<div style={{ marginBottom: '15px', lineHeight: '1.4' }}>
-											<strong>{selectedManeuver.name}:</strong><br />
+											<strong>{selectedManeuver.name}:</strong>
+											<br />
 											{selectedManeuver.description}
 										</div>
 
 										{/* Requirements */}
 										{selectedManeuver.requirement && (
 											<div style={{ marginBottom: '10px' }}>
-												<strong style={{ color: '#8b4513' }}>Requirements:</strong> {selectedManeuver.requirement}
+												<strong style={{ color: '#8b4513' }}>Requirements:</strong>{' '}
+												{selectedManeuver.requirement}
 											</div>
 										)}
 
 										{/* Trigger */}
 										{selectedManeuver.trigger && (
 											<div style={{ marginBottom: '10px' }}>
-												<strong style={{ color: '#8b4513' }}>Trigger:</strong> {selectedManeuver.trigger}
+												<strong style={{ color: '#8b4513' }}>Trigger:</strong>{' '}
+												{selectedManeuver.trigger}
 											</div>
 										)}
 									</div>
@@ -286,15 +328,17 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 
 								{/* Show Description Button (when collapsed) */}
 								{selectedManeuver && !expandedManeuvers.has(maneuver.id) && (
-									<div style={{
-										textAlign: 'center',
-										padding: '5px',
-										backgroundColor: '#f8f9fa',
-										border: '1px solid #e9ecef',
-										borderTop: 'none',
-										borderRadius: '0 0 5px 5px',
-										marginBottom: '10px'
-									}}>
+									<div
+										style={{
+											textAlign: 'center',
+											padding: '5px',
+											backgroundColor: '#f8f9fa',
+											border: '1px solid #e9ecef',
+											borderTop: 'none',
+											borderRadius: '0 0 5px 5px',
+											marginBottom: '10px'
+										}}
+									>
 										<button
 											onClick={() => toggleManeuverExpansion(maneuver.id)}
 											style={{
@@ -315,8 +359,8 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 						);
 					})
 				)}
-			</StyledSpellsContainer>
-		</StyledSpellsSection>
+			</StyledManeuversContainer>
+		</StyledManeuversSection>
 	);
 };
 

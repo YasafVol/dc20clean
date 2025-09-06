@@ -11,10 +11,10 @@ import { createEnhancedTooltip } from './EnhancedStatTooltips';
 import { useCharacterSheet, useCharacterCalculatedData } from '../hooks/CharacterSheetProvider';
 
 interface MovementProps {
-	// No props needed - data comes from context
+	isMobile?: boolean;
 }
 
-const Movement: React.FC<MovementProps> = () => {
+const Movement: React.FC<MovementProps> = ({ isMobile }) => {
 	const { state } = useCharacterSheet();
 	const calculation = useCharacterCalculatedData();
 
@@ -24,14 +24,17 @@ const Movement: React.FC<MovementProps> = () => {
 
 	const breakdowns = calculation.breakdowns;
 
+	// Mobile detection logic
+	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
+
 	// Use calculated stats for speed and jump distance
 	const speed = calculation.stats.finalMoveSpeed;
 	const jumpDistance = calculation.stats.finalJumpDistance;
 	return (
-		<StyledMovementContainer>
-			<StyledMovementGrid>
-				<StyledMovementStat>
-					<StyledMovementLabel>MOVE SPEED</StyledMovementLabel>
+		<StyledMovementContainer $isMobile={effectiveIsMobile}>
+			<StyledMovementGrid $isMobile={effectiveIsMobile}>
+				<StyledMovementStat $isMobile={effectiveIsMobile}>
+					<StyledMovementLabel $isMobile={effectiveIsMobile}>MOVE SPEED</StyledMovementLabel>
 					<Tooltip
 						content={
 							breakdowns?.move_speed
@@ -40,11 +43,11 @@ const Movement: React.FC<MovementProps> = () => {
 						}
 						position="top"
 					>
-						<StyledMovementValue>{speed}</StyledMovementValue>
+						<StyledMovementValue $isMobile={effectiveIsMobile}>{speed}</StyledMovementValue>
 					</Tooltip>
 				</StyledMovementStat>
-				<StyledMovementStat>
-					<StyledMovementLabel>JUMP DISTANCE</StyledMovementLabel>
+				<StyledMovementStat $isMobile={effectiveIsMobile}>
+					<StyledMovementLabel $isMobile={effectiveIsMobile}>JUMP DISTANCE</StyledMovementLabel>
 					<Tooltip
 						content={
 							breakdowns?.jump_distance
@@ -53,7 +56,7 @@ const Movement: React.FC<MovementProps> = () => {
 						}
 						position="top"
 					>
-						<StyledMovementValue>{jumpDistance}</StyledMovementValue>
+						<StyledMovementValue $isMobile={effectiveIsMobile}>{jumpDistance}</StyledMovementValue>
 					</Tooltip>
 				</StyledMovementStat>
 			</StyledMovementGrid>

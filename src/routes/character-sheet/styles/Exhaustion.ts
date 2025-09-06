@@ -1,19 +1,33 @@
 import styled from 'styled-components';
 
-export const StyledExhaustionContainer = styled.div`
+interface MobileStyledProps {
+	$isMobile?: boolean;
+}
+
+export const StyledExhaustionContainer = styled.div<MobileStyledProps>`
 	display: flex;
 	justify-content: center;
 	gap: 0.3rem;
 	margin-top: 0.5rem;
 `;
 
-export const StyledExhaustionLevel = styled.div<{ filled: boolean }>`
+export const StyledExhaustionLevel = styled.div<{ filled: boolean; $isMobile?: boolean }>`
 	position: relative;
 	width: 24px;
 	height: 24px;
-	border: 2px solid #8b4513;
-	background: ${(props) => (props.filled ? '#8b4513' : 'white')};
-	color: ${(props) => (props.filled ? 'white' : '#8b4513')};
+	border: 2px solid ${(props) => (props.$isMobile ? 'rgb(68, 68, 68)' : '#8b4513')};
+	background: ${(props) => {
+		if (props.filled) {
+			return props.$isMobile ? '#f5d020' : '#8b4513';
+		}
+		return props.$isMobile ? 'rgb(42, 42, 42)' : 'white';
+	}};
+	color: ${(props) => {
+		if (props.filled) {
+			return props.$isMobile ? 'rgb(42, 42, 42)' : 'white';
+		}
+		return props.$isMobile ? '#f5d020' : '#8b4513';
+	}};
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -29,7 +43,12 @@ export const StyledExhaustionLevel = styled.div<{ filled: boolean }>`
 	padding-top: 1px;
 
 	&:hover {
-		background: ${(props) => (props.filled ? '#654321' : '#f5f5dc')};
+		background: ${(props) => {
+			if (props.filled) {
+				return props.$isMobile ? '#d4b01c' : '#654321';
+			}
+			return props.$isMobile ? 'rgb(52, 52, 52)' : '#f5f5dc';
+		}};
 		transform: scale(1.1);
 	}
 `;

@@ -6,11 +6,7 @@ import {
 	StyledNotesContent
 } from '../styles/PlayerNotes.styles';
 
-interface PlayerNotesProps {
-	// No props needed - uses context
-}
-
-const PlayerNotes: React.FC<PlayerNotesProps> = () => {
+const PlayerNotes: React.FC = () => {
 	const { updateNotes, state } = useCharacterSheet();
 
 	if (!state.character) {

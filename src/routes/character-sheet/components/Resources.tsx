@@ -37,10 +37,7 @@ interface ResourcesProps {
 	isMobile?: boolean;
 }
 
-const Resources: React.FC<ResourcesProps> = ({
-	breakdowns,
-	isMobile = false
-}) => {
+const Resources: React.FC<ResourcesProps> = ({ breakdowns, isMobile = false }) => {
 	const { updateHP, updateSP, updateMP, updateTempHP } = useCharacterSheet();
 	const resources = useCharacterResources();
 
@@ -61,13 +58,16 @@ const Resources: React.FC<ResourcesProps> = ({
 
 	const getHPFillPercentage = (current: number, max: number, tempHP: number) => {
 		// Total effective HP = current + temp HP
-		// Total possible HP = max + temp HP  
+		// Total possible HP = max + temp HP
 		const totalCurrent = current + tempHP;
 		const totalPossible = max + tempHP;
 		return totalPossible > 0 ? Math.min((totalCurrent / totalPossible) * 100, 100) : 0;
 	};
 
-	const onAdjustResource = (resource: 'currentSP' | 'currentMP' | 'currentHP' | 'tempHP', amount: number) => {
+	const onAdjustResource = (
+		resource: 'currentSP' | 'currentMP' | 'currentHP' | 'tempHP',
+		amount: number
+	) => {
 		switch (resource) {
 			case 'currentHP':
 				// HP can only go from 0 to maxHP (never exceed base maxHP)
@@ -92,7 +92,7 @@ const Resources: React.FC<ResourcesProps> = ({
 		if (resource === 'tempHP') {
 			const newTempHP = Math.max(0, numValue);
 			updateTempHP(newTempHP);
-			
+
 			// CRITICAL: If temp HP decreased, current HP might exceed new maximum
 			const newMaxTotalHP = original.maxHP + newTempHP;
 			if (current.currentHP > newMaxTotalHP) {
@@ -108,15 +108,23 @@ const Resources: React.FC<ResourcesProps> = ({
 					<MobileResourceBox>
 						<MobileResourceHeader>
 							<MobileResourceLabel>Hit Points</MobileResourceLabel>
-							<MobileResourceValue>{current.currentHP + current.tempHP} / {original.maxHP + current.tempHP}</MobileResourceValue>
+							<MobileResourceValue>
+								{current.currentHP + current.tempHP} / {original.maxHP + current.tempHP}
+							</MobileResourceValue>
 						</MobileResourceHeader>
 						<MobileResourceBar>
 							{/* Combined HP bar with gradient showing base HP (dark red) and temp HP (light red) */}
 							<MobileResourceFill
-								$fillPercentage={(original.maxHP + current.tempHP) > 0 ? ((current.currentHP + current.tempHP) / (original.maxHP + current.tempHP)) * 100 : 0}
-								$color={current.tempHP > 0 
-									? `linear-gradient(to right, #dc2626 ${original.maxHP / (original.maxHP + current.tempHP) * 100}%, #f87171 ${original.maxHP / (original.maxHP + current.tempHP) * 100}%)`
-									: "#dc2626"
+								$fillPercentage={
+									original.maxHP + current.tempHP > 0
+										? ((current.currentHP + current.tempHP) / (original.maxHP + current.tempHP)) *
+											100
+										: 0
+								}
+								$color={
+									current.tempHP > 0
+										? `linear-gradient(to right, #dc2626 ${(original.maxHP / (original.maxHP + current.tempHP)) * 100}%, #f87171 ${(original.maxHP / (original.maxHP + current.tempHP)) * 100}%)`
+										: '#dc2626'
 								}
 							/>
 						</MobileResourceBar>
@@ -129,7 +137,10 @@ const Resources: React.FC<ResourcesProps> = ({
 								value={current.currentHP}
 								onChange={(e) => {
 									// HP can only go from 0 to maxHP (never exceed base maxHP)
-									const value = Math.max(0, Math.min(original.maxHP, parseInt(e.target.value) || 0));
+									const value = Math.max(
+										0,
+										Math.min(original.maxHP, parseInt(e.target.value) || 0)
+									);
 									updateHP(value);
 								}}
 							/>
@@ -137,9 +148,15 @@ const Resources: React.FC<ResourcesProps> = ({
 								+
 							</MobileResourceButton>
 						</MobileResourceControls>
-						
+
 						{/* Temp HP Section - Always visible */}
-						<div style={{ marginTop: '0.5rem', borderTop: '1px solid rgb(68, 68, 68)', paddingTop: '0.5rem' }}>
+						<div
+							style={{
+								marginTop: '0.5rem',
+								borderTop: '1px solid rgb(68, 68, 68)',
+								paddingTop: '0.5rem'
+							}}
+						>
 							<MobileResourceHeader>
 								<MobileResourceLabel>Temp HP</MobileResourceLabel>
 								<MobileResourceValue>{current.tempHP}</MobileResourceValue>
@@ -164,7 +181,9 @@ const Resources: React.FC<ResourcesProps> = ({
 					<MobileResourceBox>
 						<MobileResourceHeader>
 							<MobileResourceLabel>Mana Points</MobileResourceLabel>
-							<MobileResourceValue>{current.currentMP} / {original.maxMP}</MobileResourceValue>
+							<MobileResourceValue>
+								{current.currentMP} / {original.maxMP}
+							</MobileResourceValue>
 						</MobileResourceHeader>
 						<MobileResourceBar>
 							<MobileResourceFill
@@ -180,7 +199,10 @@ const Resources: React.FC<ResourcesProps> = ({
 								type="number"
 								value={current.currentMP}
 								onChange={(e) => {
-									const value = Math.max(0, Math.min(original.maxMP, parseInt(e.target.value) || 0));
+									const value = Math.max(
+										0,
+										Math.min(original.maxMP, parseInt(e.target.value) || 0)
+									);
 									updateMP(value);
 								}}
 							/>
@@ -194,7 +216,9 @@ const Resources: React.FC<ResourcesProps> = ({
 					<MobileResourceBox>
 						<MobileResourceHeader>
 							<MobileResourceLabel>Stamina Points</MobileResourceLabel>
-							<MobileResourceValue>{current.currentSP} / {original.maxSP}</MobileResourceValue>
+							<MobileResourceValue>
+								{current.currentSP} / {original.maxSP}
+							</MobileResourceValue>
 						</MobileResourceHeader>
 						<MobileResourceBar>
 							<MobileResourceFill
@@ -210,7 +234,10 @@ const Resources: React.FC<ResourcesProps> = ({
 								type="number"
 								value={current.currentSP}
 								onChange={(e) => {
-									const value = Math.max(0, Math.min(original.maxSP, parseInt(e.target.value) || 0));
+									const value = Math.max(
+										0,
+										Math.min(original.maxSP, parseInt(e.target.value) || 0)
+									);
 									updateSP(value);
 								}}
 							/>
@@ -245,13 +272,21 @@ const Resources: React.FC<ResourcesProps> = ({
 								+
 							</StyledResourceButton>
 						</ResourceControls>
-						<div style={{ fontSize: '1.1rem', fontWeight: '300', color: '#666', marginTop: '0.3rem', fontStyle: 'italic' }}>
-							<Tooltip 
+						<div
+							style={{
+								fontSize: '1.1rem',
+								fontWeight: '300',
+								color: '#666',
+								marginTop: '0.3rem',
+								fontStyle: 'italic'
+							}}
+						>
+							<Tooltip
 								content={
-									breakdowns?.spMax 
+									breakdowns?.spMax
 										? createEnhancedTooltip('Stamina Points', breakdowns.spMax)
 										: createSPTooltip({ finalSPMax: original.maxSP } as any)
-								} 
+								}
 								position="top"
 							>
 								<span style={{ cursor: 'help' }}>{original.maxSP}</span>
@@ -281,13 +316,21 @@ const Resources: React.FC<ResourcesProps> = ({
 								+
 							</StyledResourceButton>
 						</ResourceControls>
-						<div style={{ fontSize: '1.1rem', fontWeight: '300', color: '#666', marginTop: '0.3rem', fontStyle: 'italic' }}>
-							<Tooltip 
+						<div
+							style={{
+								fontSize: '1.1rem',
+								fontWeight: '300',
+								color: '#666',
+								marginTop: '0.3rem',
+								fontStyle: 'italic'
+							}}
+						>
+							<Tooltip
 								content={
-									breakdowns?.mpMax 
+									breakdowns?.mpMax
 										? createEnhancedTooltip('Mana Points', breakdowns.mpMax)
 										: createMPTooltip({ finalMPMax: original.maxMP } as any)
-								} 
+								}
 								position="top"
 							>
 								<span style={{ cursor: 'help' }}>{original.maxMP}</span>
@@ -304,26 +347,48 @@ const Resources: React.FC<ResourcesProps> = ({
 							</StyledResourceButton>
 							<StyledLargePotionContainer style={{ borderColor: '#dc2626' }}>
 								<StyledPotionFill
-									$fillPercentage={getHPFillPercentage(current.currentHP, original.maxHP, current.tempHP)}
+									$fillPercentage={getHPFillPercentage(
+										current.currentHP,
+										original.maxHP,
+										current.tempHP
+									)}
 									$color="#dc2626"
 								/>
 								<StyledPotionBubbles
 									$color="#dc2626"
-									$fillPercentage={getHPFillPercentage(current.currentHP, original.maxHP, current.tempHP)}
+									$fillPercentage={getHPFillPercentage(
+										current.currentHP,
+										original.maxHP,
+										current.tempHP
+									)}
 								/>
-								<StyledLargePotionValue>{current.currentHP + current.tempHP}</StyledLargePotionValue>
+								<StyledLargePotionValue>
+									{current.currentHP + current.tempHP}
+								</StyledLargePotionValue>
 							</StyledLargePotionContainer>
 							<StyledResourceButton onClick={() => onAdjustResource('currentHP', 1)}>
 								+
 							</StyledResourceButton>
 						</ResourceControls>
-						<div style={{ fontSize: '1.1rem', fontWeight: '300', color: '#666', marginTop: '0.3rem', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-							<Tooltip 
+						<div
+							style={{
+								fontSize: '1.1rem',
+								fontWeight: '300',
+								color: '#666',
+								marginTop: '0.3rem',
+								fontStyle: 'italic',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								gap: '0.5rem'
+							}}
+						>
+							<Tooltip
 								content={
-									breakdowns?.hpMax 
+									breakdowns?.hpMax
 										? createEnhancedTooltip('Hit Points', breakdowns.hpMax)
 										: createHPTooltip({ finalHPMax: original.maxHP } as any)
-								} 
+								}
 								position="top"
 							>
 								<span style={{ cursor: 'help' }}>{original.maxHP + current.tempHP}</span>

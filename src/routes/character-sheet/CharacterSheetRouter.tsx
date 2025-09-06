@@ -14,12 +14,25 @@ interface CharacterSheetRouterProps {
 
 const CharacterSheetRouter: React.FC<CharacterSheetRouterProps> = ({ characterId }) => {
 	const navigate = useNavigate();
-	const [isMobile, setIsMobile] = useState(false);
+
+	// Initialize isMobile with immediate detection to prevent double rendering
+	const [isMobile, setIsMobile] = useState(() => {
+		// Only do this check if window is available (client-side)
+		if (typeof window !== 'undefined') {
+			const mobile = window.innerWidth <= MOBILE_BREAKPOINT;
+			console.log(`🗻 Gimli's Initial Mobile Check: width=${window.innerWidth}, mobile=${mobile}`);
+			return mobile;
+		}
+		return false;
+	});
 
 	useEffect(() => {
 		const checkMobile = () => {
 			const width = window.innerWidth;
 			const mobile = width <= MOBILE_BREAKPOINT;
+			console.log(
+				`🗻 Gimli's Responsive Check: width=${width}, mobile=${mobile}, breakpoint=${MOBILE_BREAKPOINT}`
+			);
 			setIsMobile(mobile);
 		};
 		checkMobile();
@@ -31,11 +44,13 @@ const CharacterSheetRouter: React.FC<CharacterSheetRouterProps> = ({ characterId
 
 	return (
 		<CharacterSheetProvider characterId={characterId}>
-			{isMobile ? (
-				<CharacterSheetMobile characterId={characterId} />
-			) : (
-				<CharacterSheetClean characterId={characterId} onBack={handleBackToMenu} />
-			)}
+			{(() => {
+				if (isMobile) {
+					return <CharacterSheetMobile />;
+				} else {
+					return <CharacterSheetClean characterId={characterId} onBack={handleBackToMenu} />;
+				}
+			})()}
 		</CharacterSheetProvider>
 	);
 };

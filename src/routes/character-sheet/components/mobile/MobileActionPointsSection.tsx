@@ -33,10 +33,12 @@ const MobileActionPointsSection: React.FC<MobileActionPointsSectionProps> = ({
 						<div style={{ fontSize: '10px', marginTop: '2px' }}>
 							{point === 1 ? 'Free' : point === 2 ? 'Move' : point === 3 ? 'Action' : 'Focus'}
 						</div>
-						<div style={{
-							fontSize: '8px',
-							color: resources?.current?.actionPointsUsed >= point ? '#fff' : '#f5d020'
-						}}>
+						<div
+							style={{
+								fontSize: '8px',
+								color: resources?.current?.actionPointsUsed >= point ? '#fff' : '#f5d020'
+							}}
+						>
 							{resources?.current?.actionPointsUsed >= point ? '●' : '○'}
 						</div>
 					</MobileActionPoint>

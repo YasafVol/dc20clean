@@ -107,7 +107,7 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 		if (targetLevel >= 2) {
 			const currentLevel = currentSkills[skillId] || 0;
 			const currentlyAdept = currentLevel >= 2;
-			
+
 			// If this skill isn't currently Adept and we're at the limit, can't select
 			if (!currentlyAdept && masteryLimits.currentAdeptCount >= masteryLimits.maxAdeptCount) {
 				return false;
@@ -153,7 +153,6 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 
 	return (
 		<StyledTabContent>
-
 			{/* Mastery Limits Info */}
 			<div
 				style={{

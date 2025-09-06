@@ -46,7 +46,8 @@ const MobileAttributesSection: React.FC<MobileAttributesSectionProps> = ({
 						<MobileAttributeItem key={attr.key}>
 							<MobileAttributeLabel>{attr.label}</MobileAttributeLabel>
 							<MobileAttributeValue>
-								{value} ({modifier >= 0 ? '+' : ''}{modifier})
+								{value} ({modifier >= 0 ? '+' : ''}
+								{modifier})
 							</MobileAttributeValue>
 						</MobileAttributeItem>
 					);

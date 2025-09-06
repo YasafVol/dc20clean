@@ -1,18 +1,22 @@
 import styled from 'styled-components';
 
-export const StyledDeathContainer = styled.div`
+interface MobileStyledProps {
+	$isMobile?: boolean;
+}
+
+export const StyledDeathContainer = styled.div<MobileStyledProps>`
 	flex: 1;
-	border: 2px solid #8b4513;
+	border: 2px solid ${(props) => (props.$isMobile ? 'rgb(68, 68, 68)' : '#8b4513')};
 	border-radius: 8px;
 	padding: 1rem;
-	background: white;
+	background: ${(props) => (props.$isMobile ? 'rgb(42, 42, 42)' : 'white')};
 	text-align: center;
 `;
 
-export const StyledDeathTitle = styled.div`
+export const StyledDeathTitle = styled.div<MobileStyledProps>`
 	font-size: 0.9rem;
 	font-weight: bold;
-	color: #8b4513;
+	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
 	margin-bottom: 0.5rem;
 	font-family: 'Inter', sans-serif;
 `;
@@ -59,26 +63,26 @@ export const StyledHealthStatus = styled.div<{
 	}};
 `;
 
-export const StyledDeathThreshold = styled.div`
+export const StyledDeathThreshold = styled.div<MobileStyledProps>`
 	font-size: 1.5rem;
 	font-weight: bold;
-	color: #8b4513;
+	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
 	margin-bottom: 0.5rem;
 `;
 
-export const StyledDeathStepsContainer = styled.div`
+export const StyledDeathStepsContainer = styled.div<MobileStyledProps>`
 	margin-top: 0.5rem;
 `;
 
-export const StyledDeathStepsTitle = styled.div`
+export const StyledDeathStepsTitle = styled.div<MobileStyledProps>`
 	font-size: 0.8rem;
 	font-weight: bold;
-	color: #dc2626;
+	color: ${(props) => (props.$isMobile ? '#ff6b6b' : '#dc2626')};
 	margin-bottom: 0.3rem;
 	font-family: 'Inter', sans-serif;
 `;
 
-export const StyledDeathStepsGrid = styled.div`
+export const StyledDeathStepsGrid = styled.div<MobileStyledProps>`
 	display: flex;
 	justify-content: center;
 	gap: 0.2rem;

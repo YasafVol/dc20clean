@@ -101,6 +101,6 @@ export const monkClass: ClassDefinition = {
 					}
 				}
 			]
-		},
+		}
 	]
 };

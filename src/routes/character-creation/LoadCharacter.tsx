@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import type { SavedCharacter } from '../../lib/types/dataContracts';
-import { getAllSavedCharacters, saveAllCharacters, getInitializedCharacterState } from '../../lib/utils/storageUtils';
+import {
+	getAllSavedCharacters,
+	saveAllCharacters,
+	getInitializedCharacterState
+} from '../../lib/utils/storageUtils';
 import {
 	StyledContainer,
 	StyledTitle,
@@ -42,11 +46,14 @@ function LoadCharacter() {
 	const [savedCharacters, setSavedCharacters] = useState<SavedCharacter[]>([]);
 	const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 	const [characterToDelete, setCharacterToDelete] = useState<SavedCharacter | null>(null);
-	
+
 	// Import functionality state
 	const [importModalOpen, setImportModalOpen] = useState(false);
 	const [importJsonText, setImportJsonText] = useState('');
-	const [importMessage, setImportMessage] = useState<{ text: string; type: 'error' | 'success' | 'info' } | null>(null);
+	const [importMessage, setImportMessage] = useState<{
+		text: string;
+		type: 'error' | 'success' | 'info';
+	} | null>(null);
 	const [isImporting, setIsImporting] = useState(false);
 
 	useEffect(() => {
@@ -132,17 +139,18 @@ function LoadCharacter() {
 			}
 
 			// Check for essential character properties
-			const hasRequiredFields = parsedData.finalName || parsedData.id || parsedData.ancestry1Id || parsedData.classId;
+			const hasRequiredFields =
+				parsedData.finalName || parsedData.id || parsedData.ancestry1Id || parsedData.classId;
 			if (!hasRequiredFields) {
 				throw new Error('Invalid character data: missing required character fields');
 			}
 
 			// Get current characters to check for duplicates
 			const existingCharacters = getAllSavedCharacters();
-			
+
 			// Check if character with same ID already exists
-			const existingCharacter = existingCharacters.find(char => char.id === parsedData.id);
-			
+			const existingCharacter = existingCharacters.find((char) => char.id === parsedData.id);
+
 			let characterToImport = { ...parsedData };
 
 			if (existingCharacter) {
@@ -150,9 +158,9 @@ function LoadCharacter() {
 				const newId = generateNewCharacterId();
 				characterToImport.id = newId;
 				characterToImport.finalName = `${parsedData.finalName || 'Imported Character'} (Copy)`;
-				setImportMessage({ 
-					text: `Character with ID "${parsedData.id}" already exists. Importing as new character with ID "${newId}"`, 
-					type: 'info' 
+				setImportMessage({
+					text: `Character with ID "${parsedData.id}" already exists. Importing as new character with ID "${newId}"`,
+					type: 'info'
 				});
 			}
 
@@ -165,7 +173,8 @@ function LoadCharacter() {
 				lastModified: currentTime, // Always update to current time when importing
 				schemaVersion: 2,
 				// Ensure character state exists
-				characterState: characterToImport.characterState || getInitializedCharacterState(characterToImport),
+				characterState:
+					characterToImport.characterState || getInitializedCharacterState(characterToImport),
 				// Ensure required arrays exist
 				selectedTraitIds: characterToImport.selectedTraitIds || [],
 				selectedFeatureChoices: characterToImport.selectedFeatureChoices || {},
@@ -181,22 +190,21 @@ function LoadCharacter() {
 			saveAllCharacters(updatedCharacters);
 			setSavedCharacters(updatedCharacters);
 
-			setImportMessage({ 
-				text: `Successfully imported character "${characterToImport.finalName || characterToImport.id}"!`, 
-				type: 'success' 
+			setImportMessage({
+				text: `Successfully imported character "${characterToImport.finalName || characterToImport.id}"!`,
+				type: 'success'
 			});
 
 			// Close modal after a short delay
 			setTimeout(() => {
 				handleImportCancel();
 			}, 2000);
-
 		} catch (error) {
 			console.error('Import error:', error);
 			const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-			setImportMessage({ 
-				text: `Failed to import character: ${errorMessage}`, 
-				type: 'error' 
+			setImportMessage({
+				text: `Failed to import character: ${errorMessage}`,
+				type: 'error'
 			});
 		} finally {
 			setIsImporting(false);
@@ -278,9 +286,11 @@ function LoadCharacter() {
 
 							<StyledCompletedDate>
 								Created: {formatDate(character.createdAt || character.completedAt)}
-								{character.lastModified && character.lastModified !== character.createdAt && character.lastModified !== character.completedAt && (
-									<div>Last Modified: {formatDate(character.lastModified)}</div>
-								)}
+								{character.lastModified &&
+									character.lastModified !== character.createdAt &&
+									character.lastModified !== character.completedAt && (
+										<div>Last Modified: {formatDate(character.lastModified)}</div>
+									)}
 							</StyledCompletedDate>
 
 							<StyledCardActions>
@@ -322,7 +332,7 @@ function LoadCharacter() {
 						<p style={{ color: '#e5e7eb', marginBottom: '1rem' }}>
 							Paste the character JSON data from the clipboard (exported from character sheet):
 						</p>
-						
+
 						<StyledImportTextarea
 							value={importJsonText}
 							onChange={(e) => setImportJsonText(e.target.value)}
@@ -339,8 +349,8 @@ function LoadCharacter() {
 							<StyledImportButton2 variant="cancel" onClick={handleImportCancel}>
 								Cancel
 							</StyledImportButton2>
-							<StyledImportButton2 
-								variant="import" 
+							<StyledImportButton2
+								variant="import"
 								onClick={handleImportCharacter}
 								disabled={isImporting || !importJsonText.trim()}
 							>

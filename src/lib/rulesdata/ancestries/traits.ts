@@ -237,9 +237,7 @@ export const traitsData: Trait[] = [
 		description: 'Your Might decreases by 1 (to a minimum of -2).**',
 		cost: -1,
 		isNegative: true,
-		effects: [
-			{ type: 'MODIFY_STAT', target: 'attributePoints', value: -1 }
-		]
+		effects: [{ type: 'MODIFY_STAT', target: 'attributePoints', value: -1 }]
 	},
 
 	// Dwarf Traits (p. 109)
@@ -358,9 +356,7 @@ export const traitsData: Trait[] = [
 		description: 'Your Charisma decreases by 1 (to a minimum of -2).**',
 		cost: -1,
 		isNegative: true,
-		effects: [
-			{ type: 'MODIFY_STAT', target: 'attributePoints', value: -1 }
-		]
+		effects: [{ type: 'MODIFY_STAT', target: 'attributePoints', value: -1 }]
 	},
 	{
 		id: 'dwarf_short_legged',
@@ -514,9 +510,7 @@ export const traitsData: Trait[] = [
 		description: 'Your Intelligence decreases by 1 (to a minimum of -2).**',
 		cost: -1,
 		isNegative: true,
-		effects: [
-			{ type: 'MODIFY_STAT', target: 'attributePoints', value: -1 }
-		]
+		effects: [{ type: 'MODIFY_STAT', target: 'attributePoints', value: -1 }]
 	},
 	{
 		id: 'halfling_short_legged',
@@ -1112,9 +1106,7 @@ export const traitsData: Trait[] = [
 		description: 'You decrease your Agility by 1 (to a minimum of -2).**',
 		cost: -1,
 		isNegative: true,
-		effects: [
-			{ type: 'MODIFY_STAT', target: 'attributePoints', value: -1 }
-		]
+		effects: [{ type: 'MODIFY_STAT', target: 'attributePoints', value: -1 }]
 	},
 	{
 		id: 'gnome_short_legged',
@@ -1567,9 +1559,7 @@ export const traitsData: Trait[] = [
 		description: 'You decrease your Intelligence by 1 (to a minimum of -2).**',
 		cost: -1,
 		isNegative: true,
-		effects: [
-			{ type: 'MODIFY_STAT', target: 'attributePoints', value: -1 }
-		]
+		effects: [{ type: 'MODIFY_STAT', target: 'attributePoints', value: -1 }]
 	},
 	{
 		id: 'giantborn_mighty_hurl',
@@ -2239,14 +2229,22 @@ export const traitsData: Trait[] = [
 		description: 'Your Size is considered Small.',
 		cost: -1,
 		isNegative: true,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Small-Sized', value: 'Your Size is considered Small.' }]
+		effects: [
+			{ type: 'GRANT_ABILITY', target: 'Small-Sized', value: 'Your Size is considered Small.' }
+		]
 	},
 	{
 		id: 'gremlin_sneaky',
 		name: 'Sneaky',
 		description: 'You can Hide while only Partially Concealed or behind 1/2 Cover.',
 		cost: 2,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Sneaky', value: 'You can Hide while only Partially Concealed or behind 1/2 Cover.' }]
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'Sneaky',
+				value: 'You can Hide while only Partially Concealed or behind 1/2 Cover.'
+			}
+		]
 	},
 	{
 		id: 'gremlin_thriller',
@@ -2254,7 +2252,14 @@ export const traitsData: Trait[] = [
 		description:
 			'Once per Round, when a hostile creature within 5 Spaces becomes Intimidated, Frightened, or Terrified, you gain ADV on the next Check or Save you make.',
 		cost: 2,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Thriller', value: 'Once per Round, when a hostile creature within 5 Spaces becomes Intimidated, Frightened, or Terrified, you gain ADV on the next Check or Save you make.' }]
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'Thriller',
+				value:
+					'Once per Round, when a hostile creature within 5 Spaces becomes Intimidated, Frightened, or Terrified, you gain ADV on the next Check or Save you make.'
+			}
+		]
 	},
 	{
 		id: 'gremlin_surprise',
@@ -2272,7 +2277,14 @@ export const traitsData: Trait[] = [
 		description:
 			'You can move through the space of a hostile creature 1 size larger than you as Difficult Terrain.',
 		cost: 1,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Deft Footwork', value: 'You can move through the space of a hostile creature 1 size larger than you as Difficult Terrain.' }]
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'Deft Footwork',
+				value:
+					'You can move through the space of a hostile creature 1 size larger than you as Difficult Terrain.'
+			}
+		]
 	},
 	{
 		id: 'gremlin_halfling_disguise',
@@ -2280,7 +2292,14 @@ export const traitsData: Trait[] = [
 		description:
 			'You can spend 1 AP to change appearance to look like a Halfling (reverts under stress).',
 		cost: 0,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Halfling Disguise', value: 'You can spend 1 AP to change appearance to look like a Halfling (reverts under stress).' }]
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'Halfling Disguise',
+				value:
+					'You can spend 1 AP to change appearance to look like a Halfling (reverts under stress).'
+			}
+		]
 	},
 	{
 		id: 'gremlin_bravery',
@@ -2326,7 +2345,13 @@ export const traitsData: Trait[] = [
 		name: 'Natural Weapon',
 		description: 'Natural Weapons for Unarmed Strikes.',
 		cost: 1,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Natural Weapon', value: 'Natural Weapons for Unarmed Strikes.' }]
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'Natural Weapon',
+				value: 'Natural Weapons for Unarmed Strikes.'
+			}
+		]
 	},
 	{
 		id: 'gremlin_climb_speed',
@@ -2355,7 +2380,9 @@ export const traitsData: Trait[] = [
 		description: 'Your Size is considered Small.',
 		cost: -1,
 		isNegative: true,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Small-Sized', value: 'Your Size is considered Small.' }]
+		effects: [
+			{ type: 'GRANT_ABILITY', target: 'Small-Sized', value: 'Your Size is considered Small.' }
+		]
 	},
 	{
 		id: 'goblin_escape_artist',
@@ -2374,7 +2401,14 @@ export const traitsData: Trait[] = [
 		description:
 			'Once per Round, you can gain ADV on a Melee Attack. You are Exposed on the next Attack against you until the start of your next turn.',
 		cost: 2,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Aggressive', value: 'Once per Round, you can gain ADV on a Melee Attack. You are Exposed on the next Attack against you until the start of your next turn.' }]
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'Aggressive',
+				value:
+					'Once per Round, you can gain ADV on a Melee Attack. You are Exposed on the next Attack against you until the start of your next turn.'
+			}
+		]
 	},
 	{
 		id: 'goblin_eager_for_combat',
@@ -2388,7 +2422,13 @@ export const traitsData: Trait[] = [
 		name: 'Small Fury',
 		description: 'You deal +1 damage to Large or larger creatures on a Heavy or Critical Hit.',
 		cost: 1,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Small Fury', value: 'You deal +1 damage to Large or larger creatures on a Heavy or Critical Hit.' }]
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'Small Fury',
+				value: 'You deal +1 damage to Large or larger creatures on a Heavy or Critical Hit.'
+			}
+		]
 	},
 	{
 		id: 'goblin_natural_trapper',
@@ -2403,14 +2443,27 @@ export const traitsData: Trait[] = [
 		description:
 			'When you Hit a creature with a Melee Attack, you can spend 1 AP to immediately move up to your Speed without provoking Opportunity Attacks from the target.',
 		cost: 2,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Hit and Run', value: 'When you Hit a creature with a Melee Attack, you can spend 1 AP to immediately move up to your Speed without provoking Opportunity Attacks from the target.' }]
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'Hit and Run',
+				value:
+					'When you Hit a creature with a Melee Attack, you can spend 1 AP to immediately move up to your Speed without provoking Opportunity Attacks from the target.'
+			}
+		]
 	},
 	{
 		id: 'goblin_pack_tactics',
 		name: 'Pack Tactics',
 		description: 'You gain an additional +2 bonus to Attacks against creatures you are Flanking.',
 		cost: 2,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Pack Tactics', value: 'You gain an additional +2 bonus to Attacks against creatures you are Flanking.' }]
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'Pack Tactics',
+				value: 'You gain an additional +2 bonus to Attacks against creatures you are Flanking.'
+			}
+		]
 	},
 	{
 		id: 'goblin_trapper',
@@ -2473,7 +2526,13 @@ export const traitsData: Trait[] = [
 		name: 'Sneaky',
 		description: 'You can Hide while only Partially Concealed or behind 1/2 Cover.',
 		cost: 2,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Sneaky', value: 'You can Hide while only Partially Concealed or behind 1/2 Cover.' }]
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'Sneaky',
+				value: 'You can Hide while only Partially Concealed or behind 1/2 Cover.'
+			}
+		]
 	},
 	{
 		id: 'goblin_reckless',
@@ -2516,7 +2575,14 @@ export const traitsData: Trait[] = [
 		description:
 			"You can use your hands as Sculptor's Tools or Mason's Tools to shape soil, sand, stone, or rock. When you do, you can use your Prime Modifier instead of the normal Attribute on any Checks you make.",
 		cost: 0,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Mold Earth', value: 'You can use your hands as Sculptor\'s Tools or Mason\'s Tools to shape soil, sand, stone, or rock. When you do, you can use your Prime Modifier instead of the normal Attribute on any Checks you make.' }]
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'Mold Earth',
+				value:
+					"You can use your hands as Sculptor's Tools or Mason's Tools to shape soil, sand, stone, or rock. When you do, you can use your Prime Modifier instead of the normal Attribute on any Checks you make."
+			}
+		]
 	},
 	{
 		id: 'terraborn_stone_blood',
@@ -2526,7 +2592,11 @@ export const traitsData: Trait[] = [
 		cost: 1,
 		effects: [
 			{ type: 'GRANT_ADV_ON_SAVE', target: 'Bleeding', value: 'ADV' },
-			{ type: 'GRANT_ABILITY', target: 'End Bleeding (1 AP)', value: 'You can spend 1 AP to end the Bleeding Condition on yourself.' }
+			{
+				type: 'GRANT_ABILITY',
+				target: 'End Bleeding (1 AP)',
+				value: 'You can spend 1 AP to end the Bleeding Condition on yourself.'
+			}
 		]
 	},
 	{
@@ -2547,7 +2617,13 @@ export const traitsData: Trait[] = [
 		name: 'Earth Walker',
 		description: "You're not affected by Difficult Terrain created by rock, dirt, mud, or sand.",
 		cost: 1,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Earth Walker', value: 'You\'re not affected by Difficult Terrain created by rock, dirt, mud, or sand.' }]
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'Earth Walker',
+				value: "You're not affected by Difficult Terrain created by rock, dirt, mud, or sand."
+			}
+		]
 	},
 	{
 		id: 'terraborn_superior_tremorsense',
@@ -2833,8 +2909,7 @@ export const traitsData: Trait[] = [
 		cost: -1,
 		isNegative: true,
 		effects: [{ type: 'MODIFY_STAT', target: 'hpMax', value: -2 }]
-	},
-	
+	}
 ];
 
 // Helper functions for accessing trait data

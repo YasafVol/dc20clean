@@ -257,8 +257,7 @@ describe('Character Engine Parity Tests', () => {
 		it('calculates attribute points correctly', () => {
 			const modern = runNewCalculations(fixture);
 			const expectedTotal =
-				12 +
-				(fixture.selectedTraitIds.includes('human_attribute_increase') ? 1 : 0);
+				12 + (fixture.selectedTraitIds.includes('human_attribute_increase') ? 1 : 0);
 			expect(modern.attributePointsTotal).toBe(expectedTotal);
 			const remaining = modern.attributePointsTotal - modern.attributePointsSpent;
 			// Example check

@@ -3,21 +3,25 @@ This file is a merged representation of the entire codebase, combined into a sin
 # File Summary
 
 ## Purpose
+
 This file contains a packed representation of the entire repository's contents.
 It is designed to be easily consumable by AI systems for analysis, code review,
 or other automated processes.
 
 ## File Format
+
 The content is organized as follows:
+
 1. This summary section
 2. Repository information
 3. Directory structure
 4. Repository files (if enabled)
 5. Multiple file entries, each consisting of:
-  a. A header with the file path (## File: path/to/file)
-  b. The full contents of the file in a code block
+   a. A header with the file path (## File: path/to/file)
+   b. The full contents of the file in a code block
 
 ## Usage Guidelines
+
 - This file should be treated as read-only. Any changes should be made to the
   original repository files, not this packed version.
 - When processing this file, use the file path to distinguish
@@ -26,6 +30,7 @@ The content is organized as follows:
   the same level of security as you would the original repository.
 
 ## Notes
+
 - Some files may have been excluded based on .gitignore rules and Repomix's configuration
 - Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
 - Files matching patterns in .gitignore are excluded
@@ -33,6 +38,7 @@ The content is organized as follows:
 - Files are sorted by Git change count (files with more changes are at the bottom)
 
 # Directory Structure
+
 ```
 .cursor-rules/
   rules.yaml
@@ -403,29 +409,35 @@ vitest.config.ts
 # Files
 
 ## File: docs/HUMAN_CLERIC_E2E_SPEC.md
-`````markdown
+
+````markdown
 ## Human Cleric E2E Test Specification (Playwright)
 
 ### Purpose
+
 Validate that a user can complete the Character Creation flow for a Human Cleric and that the UI interactions and budgets (ancestry, attributes) behave correctly and deterministically.
 
 This document is written for both product and engineering audiences. It contains:
+
 - User-facing intent and rationale for choices
 - Exact technical selectors and stability strategies
 - Expected outcomes at each step
 - A machine-readable test plan
 
 ### Scope
+
 - Covers the full Character Creation wizard from start to finish for: Class = Cleric, Ancestry = Human.
 - Focuses on budgets, step validation, and stable selectors.
 - Excludes deep spell/maneuver correctness beyond minimal valid selections necessary to progress.
 
 ### Preconditions
+
 - Application can be launched at `/character-creation` (Playwright baseURL configured).
 - No prior character data interferes with the run (clear localStorage at test start).
 - UI exposes stable `data-testid` for attribute controls and uses accessible roles for navigation.
 
 ### Key System Concepts and Invariants
+
 - Class selection precedes Ancestry in this flow.
 - Ancestry points baseline: Human has 5 base ancestry points. Cleric selection contributes an additional 2 ancestry points. Total ancestry points = 7.
 - Attribute baseline: Each attribute begins at -2. Increasing by +1 requires one click on the corresponding increase button.
@@ -434,16 +446,17 @@ This document is written for both product and engineering audiences. It contains
 - Human “Skill Expertise” grants +1 skill point and permits one chosen skill to exceed the default level 1 mastery cap (allow mastery 2 for one skill).
 
 ### Target Build: Human Cleric
-1) Class: Cleric
+
+1. Class: Cleric
    - Rationale: Ensures class bonus of +2 to Ancestry points applies early and domain choices shape later availability.
    - Expected Result: Ancestry points total becomes 7 (5 base + 2 class). “Next →” enabled after valid selection.
 
-2) Cleric Domains (feature choice multi-select)
+2. Cleric Domains (feature choice multi-select)
    - Choices: Ancestral, Magic
    - Rationale: These are representative, verify multi-select stability, and drive downstream options.
    - Expected Result: Both checkboxes can be checked deterministically without strict-mode violations. “Next →” enabled. Magic domain increases MP by +1 (assert at resources/summary step).
 
-3) Ancestry: Human
+3. Ancestry: Human
    - Points to spend: 7 total (from Step 1).
    - Planned selections to consume the base Human point budget (examples; exact names must match UI labels):
      - Attribute Increase
@@ -454,7 +467,7 @@ This document is written for both product and engineering audiences. It contains
    - Rationale: Verifies the budget totals and that “Remaining: 0” can be reached with valid Human trait choices.
    - Expected Result: Ancestry points UI shows Remaining: 0. “Next →” enabled. Attribute Increase ensures next stage attribute points total is 13 (12 base +1). Skill Expertise grants +1 skill point and allows one skill to reach mastery 2 at level 1.
 
-4) Attributes
+4. Attributes
    - Baseline: All attributes start at -2.
    - Planned target values:
      - Might: +2 (requires 4 clicks from -2)
@@ -464,21 +477,22 @@ This document is written for both product and engineering audiences. It contains
    - Rationale: Ensures the attribute budget system decrements correctly and that trait bonuses are not double-counted against the spend pool.
    - Expected Result: Attribute points total is 13 (12 base +1 from Attribute Increase). After the allocations above (total 13 clicks), Attribute points UI shows Remaining: 0. Increase buttons become disabled when Remaining is 0. “Next →” enabled.
 
-5) Background (skills, trades, languages)
+5. Background (skills, trades, languages)
    - Action: Make the minimal valid selections required to satisfy validation. Use the +1 skill point from Skill Expertise to allocate an additional skill, and elevate one chosen skill to mastery 2 (beyond the default level 1 cap) to validate the cap override.
    - Rationale: Progresses the wizard, minimal coupling to dynamic lists; verifies Skill Expertise effects are honored.
    - Expected Result: Available skill points reflect +1 from Skill Expertise. UI permits one skill to reach mastery 2 at level 1. “Next →” becomes enabled once valid; clicking proceeds to the next step.
 
-6) Spells and Maneuvers
+6. Spells and Maneuvers
    - Action: Make minimal valid selections appropriate for a level 1 cleric with chosen domains.
    - Rationale: Sanity check that domain-driven availability appears and validation gates work.
    - Expected Result: Able to proceed/finish with valid selections. No strict-mode violations.
 
-7) Finalization
+7. Finalization
    - Action: Reach summary/finish screen. Optionally verify persistence by checking presence of a saved character key in localStorage.
    - Expected Result: Flow completes successfully; no timeouts; navigation buttons only enabled when valid. Resources reflect MP increased by +1 due to Magic domain.
 
 ### Selector Strategy and Stability
+
 - Navigation buttons: `getByRole('button', { name: 'Next →' })`
 - Class selection: use robust role- or label-based locators specific to Cleric.
 - Cleric domains: precise inputs to avoid strict-mode violations:
@@ -491,21 +505,25 @@ This document is written for both product and engineering audiences. It contains
 - Attributes: `getByTestId('<attributeId>-increase')` and `getByTestId('<attributeId>-decrease')`
 
 ### Flakiness Mitigation
+
 - Always gate interactions with `expect(locator).toBeVisible()` / `toBeEnabled()` before clicking.
 - Use specific locators to avoid strict-mode violations (ambiguity across multiple elements).
 - Avoid text-only locators for generic labels (e.g., "Next"). Prefer role + accessible name.
 - Clear localStorage at test start to eliminate residue.
 
 ### Observability
+
 - Prefer running headed and/or with slowMo during debugging: `--headed --slow-mo=250`.
 - Collect trace and video on failure for CI runs (Playwright config):
   - `use: { trace: 'retain-on-failure', video: 'retain-on-failure' }`.
 
 ### Non-goals
+
 - Deep verification of domain-driven spell lists beyond confirming forward progress with minimal valid selections.
 - Cross-browser visual diffs.
 
 ### Risks and Edge Cases
+
 - Attribute budget miscalculation if trait bonuses are accidentally included as “spent”. The UI should consume only base allocations for the spend pool.
 - Ambiguous locators causing strict-mode violations; use the precise selectors above.
 
@@ -527,7 +545,7 @@ test:
       target: class
       value: Cleric
       expect:
-        - ancestry_points_total: 7  # 5 base + 2 class
+        - ancestry_points_total: 7 # 5 base + 2 class
         - next_enabled: true
 
     - id: choose_domains
@@ -537,7 +555,7 @@ test:
         - css: 'input[type=checkbox][name="cleric_cleric_order_1"][value="Magic"]'
       expect:
         - next_enabled: true
-        - mp_delta: +1  # Magic domain adds +1 MP
+        - mp_delta: +1 # Magic domain adds +1 MP
 
     - id: select_ancestry
       action: select
@@ -549,11 +567,11 @@ test:
           - Skill Expertise
           - Human Resolve
           - Undying
-        spend_all_points: true  # choose additional valid options until Remaining: 0
+        spend_all_points: true # choose additional valid options until Remaining: 0
       expect:
         - ancestry_points_remaining: 0
-        - attribute_points_total_next_stage: 13  # 12 base + 1 from Attribute Increase
-        - available_skill_points_delta: +1  # from Skill Expertise
+        - attribute_points_total_next_stage: 13 # 12 base + 1 from Attribute Increase
+        - available_skill_points_delta: +1 # from Skill Expertise
         - allow_one_skill_mastery_two: true
         - next_enabled: true
 
@@ -612,6 +630,7 @@ stability:
 ---
 
 ### Implementation Notes (for the test file)
+
 - File name suggestion: `e2e/human-cleric.e2e.spec.ts`.
 - Use `test.describe` with title including “Human Cleric” so runs can be filtered with `--grep "Human Cleric"`.
 - At test start, run `await page.addInitScript(() => localStorage.clear());` or use `page.evaluate` to clear localStorage before navigation.
@@ -619,23 +638,26 @@ stability:
 - After each budgeted step (Ancestry and Attributes), assert `Remaining: 0` is visible before proceeding.
 
 ### Rationale Recap
+
 - Choosing Cleric first ensures the class-derived ancestry bonus (+2) is included before the ancestry budget is spent, yielding 7 total ancestry points.
 - Human trait selection is structured to consume the entire budget deterministically by selecting four known traits plus two additional valid choices.
 - Attribute allocations use explicit click counts from the -2 baseline to reach target values and verify that “remaining” decrements correctly and disables further increases when exhausted.
-`````
+````
 
 ## File: e2e/demo.test.ts
-`````typescript
+
+```typescript
 import { expect, test } from '@playwright/test';
 
 test('home page has expected h1', async ({ page }) => {
 	await page.goto('/');
 	await expect(page.locator('h1')).toBeVisible();
 });
-`````
+```
 
 ## File: prisma/migrations/20250526210112_init/migration.sql
-`````sql
+
+```sql
 -- CreateTable
 CREATE TABLE "CharacterInProgress" (
     "id" TEXT NOT NULL,
@@ -711,23 +733,26 @@ CREATE UNIQUE INDEX "CharacterSheetData_characterInProgressId_key" ON "Character
 
 -- AddForeignKey
 ALTER TABLE "CharacterSheetData" ADD CONSTRAINT "CharacterSheetData_characterInProgressId_fkey" FOREIGN KEY ("characterInProgressId") REFERENCES "CharacterInProgress"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-`````
+```
 
 ## File: prisma/migrations/20250620112102_allow_next_in_stage_a/migration.sql
-`````sql
+
+```sql
 -- AlterTable
 ALTER TABLE "CharacterInProgress" ADD COLUMN     "currentStep" INTEGER NOT NULL DEFAULT 1;
-`````
+```
 
 ## File: prisma/migrations/migration_lock.toml
-`````toml
+
+```toml
 # Please do not edit this file manually
 # It should be added in your version-control system (e.g., Git)
 provider = "postgresql"
-`````
+```
 
 ## File: prisma/schema.json
-`````json
+
+```json
 {
 	"generator": {
 		"client": {
@@ -823,10 +848,11 @@ provider = "postgresql"
 		}
 	}
 }
-`````
+```
 
 ## File: prisma/schema.prisma
-`````
+
+```
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -867,7 +893,7 @@ model CharacterInProgress {
 
   // Save Masteries (DC20 p.22 - choose 2 attributes for Save Mastery)
   saveMasteryMight     Boolean @default(false)
-  saveMasteryAgility   Boolean @default(false) 
+  saveMasteryAgility   Boolean @default(false)
   saveMasteryCharisma  Boolean @default(false)
   saveMasteryIntelligence Boolean @default(false)
 
@@ -949,10 +975,11 @@ model CharacterSheetData {
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 }
-`````
+```
 
 ## File: src/assets/SVG/Barbarian.svg
-`````
+
+```
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 493.04 359.05">
   <path d="M58.31,296.4l-1.24.36c-12.22,3.59-19.72,14.24-18.65,26.49.93,10.6,8.69,22.06,23.94,23.77l.5.06h367.14l.5-.06c16.44-1.85,23.94-14.81,23.95-26.08.01-13.08-9.01-23.24-21.95-24.72l-.51-.06-373.69.23Z"/>
@@ -962,10 +989,11 @@ model CharacterSheetData {
   <path d="M448.95,97.48c-13.42,21.34-33.04,39.43-58.32,53.76l-9.2,5.21,6.62,8.25c13.45,16.76,22.77,31.2,29.31,45.44l1.46,3.17,18-3.58c25.99-28.25,44.08-76.45,44.07-117.51,0-2.48-.35-4.93-.7-7.31-.4-2.79-.81-5.66-.47-7.46l.64-3.37-15.77-5.6-15.63,28.99Z"/>
   <path d="M13,75.06c-3.51,43.93,8.25,87.44,33.14,122.52,1.65,2.33,3.42,4.47,5.13,6.54,2.25,2.72,4.37,5.28,5.81,7.79l3.97,6.9,12.99-5.49,1.46-3.18c8.19-17.88,19.98-33.69,29.34-45.47l6.54-8.24-9.15-5.19c-25.28-14.33-44.91-32.42-58.32-53.76L15.43,44.69l-2.43,30.38Z"/>
 </svg>
-`````
+```
 
 ## File: src/assets/SVG/Bard.svg
-`````
+
+```
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 493.75 497.27">
   <path d="M48,451.36c25.77,22.79,58.2,34.84,93.79,34.84,39.46,0,79.11-15.44,108.78-42.35,28.46-25.81,53.46-63.02,70.41-104.78,17.21-42.42,24.79-86.55,21.34-124.27-1-10.95-3.3-21.81-5.52-32.31l-2.89-13.72-16.33,52.28c-20.88,50.7-49.35,98.34-82.34,137.78-51.1,61.1-101.45,90.8-153.9,90.8-10.14,0-20.47-1.16-30.71-3.44l-2.64,5.18Z"/>
@@ -975,19 +1003,21 @@ model CharacterSheetData {
   <path d="M218.86,226.48c-1.21,0-2.54.11-3.96.33-12.39,1.93-28.87,15.02-35.52,23.32-2.43,3.04-14.09,20.32-10.84,29.21.68,1.87,2.3,4.25,6.12,5,1.33.26,2.74.39,4.17.39,18.3,0,41.01-21.29,47.39-35.65,3.78-8.5,4.37-14.54,1.82-18.46-1.79-2.75-4.88-4.15-9.18-4.15Z"/>
   <path d="M150.94,379.5c-.83,0-1.7-.13-2.6-.39l-83.33-25.11c-2.43-1.2-3.07-3.71-2.84-5.68.23-2.01,1.43-4.34,4.12-4.89.32-.07.59-.1.85-.1.43,0,.87.09,1.52.22.24.05.5.1.78.15,13.8,2.53,28.88,7.83,43.46,12.95,13.42,4.71,27.28,9.58,40.39,12.41,2.76,1.48,4.06,3.78,3.49,6.21-.49,2.1-2.49,4.23-5.84,4.23Z"/>
 </svg>
-`````
+```
 
 ## File: src/assets/SVG/Cahmpion.svg
-`````
+
+```
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 413.17 538.4">
   <path d="M38.79,376.11c-.82,4.72-6.24,10.69-11.48,16.47-3.6,3.97-7,7.72-9.47,11.63l-3.48,5.52,114.22,109.55v-200.42l-7.29-.65s-.31-.06-1.18-.56c-5.01-2.92-10.3-5.85-15.41-8.68-9.65-5.35-19.62-10.87-28.06-16.49-6.18-4.11-6.88-4.74-7.34-9.99-1.36-15.41-1.59-48.86.02-63.27.22-2,1.23-6.66,5.65-6.66,1.46,0,3.12.51,4.78,1.47,15.71,9.92,32.47,19.17,48.68,28.12,15.55,8.58,31.59,17.43,46.73,26.91,1.08.68,2.12,1.29,3.1,1.88,5.56,3.31,6.57,3.9,6.99,8.44,1.06,11.28.56,23.92.07,36.15-.46,11.61-.94,23.62-.15,35l.27,3.83,21.62,14.98,20.66-15.11.26-3.71c.79-11.37.31-23.37-.14-34.97-.48-12.25-.99-24.91.07-36.18.35-3.72.84-4.39,3.69-6.51,17.04-8.42,33.89-18.92,50.17-29.09,16.52-10.31,33.59-20.96,50.39-29.08,2.45-1.18,4.77-1.81,6.72-1.81,1.74,0,4.13,0,4.88,5.49,1.86,13.69,1.38,49.64.1,64.1-.39,4.44-1.49,6.31-5.33,9.08-7.6,5.5-18.58,11.4-29.2,17.1-5.87,3.15-11.37,6.1-16.29,8.97-.87.51-1.18.56-1.2.57l-7.27.65v200.31l111.42-105.92.45-2.62c.86-5.04-2.23-8.57-9.69-17.1-9.67-11.06-11.85-14.78-12.33-15.8l.07-.35-.11-1.19c-2.33-26.07-1.15-54.34,0-81.69,3.3-79.16,6.72-161-69.62-212.37-11.06-7.44-37.52-21.57-51.53-22.15-.43-.02-.77-.02-1.05-.02-2.96,0-5.31,1.01-6.99,3.01-1.35,1.6-2,3.57-1.91,5.7-2.83,11.38-3.75,24.21-4.64,36.63-.86,12.04-1.75,24.48-4.38,34.71-1.25,4.86-1.82,5.51-8.78,6.11-4.65.4-11.54.63-18.9.63s-14.26-.23-18.91-.63c-7.77-.67-8.1-2.51-8.66-5.55l-10.89-82.14-8.4,1.71c-63.39,12.89-116.5,74.26-120.91,139.71-2.02,30.04-1.11,61.53-.23,92,.81,27.98,1.65,56.89.19,84.26Z"/>
   <path d="M202.41,13.97c-.6.31-2.69,1.16-4.37,1.84-12.54,5.08-21.59,8.74-21.74,16.73v.6s13.33,100.85,13.33,100.85h33.9l13.95-106.88-31.55-14.99-3.53,1.84Z"/>
 </svg>
-`````
+```
 
 ## File: src/assets/SVG/Cleric.svg
-`````
+
+```
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 411.34 563.09">
   <path d="M200.39,20.52c-.4,0-.84.06-1.34.18l-.92.22-.41.85c-14.35,29.5-38.45,53.12-71.61,70.19-28.74,14.79-63.02,23.84-99.13,26.16l-2.74.18,1,2.55c21.14,53.69,19.97,106.94-3.22,146.11l-2.58,4.36,40.8-11.93-.3-1.76c-7.33-42.51,4.53-85.95,32.53-119.2,28.48-33.8,69.81-53.19,113.4-53.19,6.11,0,12.31.39,18.44,1.15,38.54,4.78,74.51,25.65,98.67,57.25,24.17,31.6,34.48,70.09,29.03,108.39l-.27,1.87,39.27,7.86-2.67-5.85c-4.69-10.23-9.54-20.81-11.69-31.97-5.31-27.6-2.23-54.76,9.69-85.47,1.97-5.08,4.47-10.15,6.88-15.06l1.91-3.88-2.89-.27c-35.6-3.28-68.44-11.59-97.59-24.7-31.39-14.11-58.57-33.85-80.79-58.66-1.5-1.67-3.07-3.96-4.59-6.17-1.83-2.66-3.72-5.42-5.62-7.3-.15-.14-.26-.28-.37-.41-.48-.56-1.28-1.49-2.88-1.49Z"/>
@@ -1000,10 +1030,11 @@ model CharacterSheetData {
   <path d="M282.61,239.78c-1.84,0-3.36-.91-4.07-2.43-.82-1.78-.35-3.92,1.3-5.87,1.33-1.58,3.81-3.3,6.21-4.96,2.14-1.49,4.36-3.03,5.9-4.56.13-.13.25-.23.35-.32.85-.73,1.63-1.61,1.14-3.66l-.21-.87-.83-.33c-1.1-.44-2.98-1.03-5.16-1.7-3.76-1.17-11.58-3.6-12.58-4.91-1.09-1.53-1.27-3.39-.47-4.97.82-1.63,2.5-2.62,4.48-2.65,2.32.03,24.14,7.49,27.46,9.39,1.93,1.1,3.07,2.32,3.39,3.62.3,1.21-.07,2.7-1.1,4.41-3.32,1.97-7.07,5.57-11.02,9.38-4.43,4.27-9.02,8.68-12.35,9.97-.83.32-1.65.49-2.44.49Z"/>
   <path d="M132.62,239.09c-.13,0-.26,0-.39-.01-2.25-.13-9.44-6.37-14.2-10.49-4.32-3.74-8.4-7.29-11.03-8.7-2.16-2.42-1.79-3.8-1.66-4.26,1.19-4.42,12.67-7.88,20.27-10.16,4.54-1.37,8.19-2.46,10.27-3.68.14-.01.28-.02.42-.02,2.76,0,4.54,2.03,5.02,3.91.26,1,.53,3.5-2.47,5.14-.65.36-3.44,1.28-5.91,2.09-10.52,3.47-11.83,4.15-11.75,6.03l.03.62.42.46c1.25,1.39,3.64,3.15,6.4,5.19,3.12,2.3,7.82,5.78,8.33,7.25.66,1.93.51,3.83-.39,5.09-.72,1.01-1.88,1.54-3.36,1.54Z"/>
 </svg>
-`````
+```
 
 ## File: src/assets/SVG/Commander.svg
-`````
+
+```
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 523.72 524.81">
   <path d="M240.53,511.54h42.54v-83.68l-4,1.41c-5.44,1.91-10.7,2.84-16.1,2.84s-11.17-.9-18.66-2.91l-3.78-1.02v83.35Z"/>
@@ -1019,10 +1050,11 @@ model CharacterSheetData {
   <path d="M306.34,368.82c-1.31,0-2.45-.48-3.36-1.43-1.54-1.59-2.33-4.31-2.22-7.67.41-12.67,2.78-26.63,5.07-40.14,1.84-10.85,3.74-22.05,4.62-32.57,8.15-13.09,15.08-28.91,21.78-44.21,7.29-16.65,14.84-33.86,23.8-47.13,1.48-2.2,2.13-3.07,3.78-3.43.68-.15,1.35-.22,1.99-.22,3.18,0,5.37,1.76,6.04,4.84l-.17,103.27-54.86,65.5c-2.17,2.06-4.46,3.19-6.47,3.19ZM322.9,289.74l-6.43,51.44,39.17-45.44v-57.59l-5.67-1.37-27.06,52.96Z"/>
   <path d="M169.76,259.17c-1.77,0-3.35-.69-4.46-1.93-1.22-1.37-1.77-3.32-1.54-5.49l10.3-57.44c.66-.89,1.68-1.41,3.3-2.19.39-.19.78-.38,1.17-.57,7.01-3.58,38.59-16.66,44.11-17.51.65-.1,1.29-.15,1.91-.15,2.4,0,5.41.71,6.17,4.11,1.21,5.38.92,30.09.24,37.68-.03.32-.05.63-.07.95-.09,1.25-.17,2.08-.48,2.73l-57.64,39.2c-1.01.41-2.02.62-3,.62ZM185.01,202.91l-6.74,36.43,40.35-26.39v-23.77l-33.61,13.73Z"/>
 </svg>
-`````
+```
 
 ## File: src/assets/SVG/Druid.svg
-`````
+
+```
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 466.74 555.25">
   <path d="M278.57,71.16c-.52-8.41-4.19-57.09-3.25-64.57.42-3.34,1.99-4.16,3.7-6.59h4.83c22.42,17.89,41.45,43.69,50.12,71.29,4.28,13.63,6.37,38.43,11.2,49.21,1.44,3.22,8.37,9.49,10.95,13.21,13.85,19.99,23.86,38.08,20.42,63.52-2.72,20.12-41.3,58.18-61.84,58.97-15.02.58-52.21-16.26-59.87-29.62-7.76-13.55-5.41-48.09,4.25-60.33,0,0,22.69-43.12,19.48-95.09Z"/>
@@ -1034,10 +1066,11 @@ model CharacterSheetData {
   <path d="M403,127.17c11.17-1.19,36.96,29.06,41.52,38.95,6.94,15.07,3.77,28.08,7.52,42.02.78,2.92,5.9,8.1,7.56,11.77,6.94,15.31,7.92,40.77,6.69,57.44-2.88,39.19-59.75,100.03-94.05,55.33-8.1-10.55-23.42-41.23-23.25-54.16.32-24.5,32.86-43.14,45.68-61.95,4.44-22.55,4.52-45.65,3.99-68.6-.13-5.74-5.06-19.79,4.35-20.79Z"/>
   <path d="M438.45,200.57c.47-22.32-9.07-42.36-27.76-54.37,2.39,18.94.58,37.9-1.21,56.78,9.65-3.67,18.71-4.99,28.97-2.42Z"/>
 </svg>
-`````
+```
 
 ## File: src/assets/SVG/GroupIcon.svg
-`````
+
+```
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 595.3 570.7">
   <!-- Generator: Adobe Illustrator 29.6.1, SVG Export Plug-In . SVG Version: 2.1.1 Build 9)  -->
@@ -1065,10 +1098,11 @@ model CharacterSheetData {
   <path d="M411.9,239.3h0c-5.7.7-11.3,2.8-15.9,6,.8,2.4,1.6,4.9,2.3,7.4,4.1-3.4,9.7-5.6,14.9-6.2h0c10.3-1.1,26.6,3.8,28.3,15.8,2.5,17.4-22.8,21.8-37.8,16.7.4,2.9.7,5.8.9,8.7,17.6,4.4,40.8-3.4,43.9-18.4,4.4-20.8-18.9-31.8-36.6-30Z"/>
   <path d="M191.1,281.7c-11.8,3.1-26.8-.2-32-10-7.3-13.7,7.2-24,19.5-25.2,5.9-.6,13.1.8,18.8,3.9.7-2.4,1.5-4.7,2.4-7-7-3.6-15.6-4.9-22.9-4.1h0c-16.5,1.9-32.6,16.6-25,34.2,6.2,14.2,23.7,18.8,38.6,15.7.2-2.5.4-5,.6-7.5Z"/>
 </svg>
-`````
+```
 
 ## File: src/assets/SVG/HeadIcon.svg
-`````
+
+```
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 595.3 586.9">
   <!-- Generator: Adobe Illustrator 29.6.1, SVG Export Plug-In . SVG Version: 2.1.1 Build 9)  -->
@@ -1082,20 +1116,22 @@ model CharacterSheetData {
   <path d="M295.8,341.8c3.8,0,12.1,8.9,20.1,9.5,11.5.8,17.8-9.3,23-9.7s8.5,6.5,4.2,11.2c-12,13.3-41.1,14.2-51.8-.9s-1.1-10.1,4.5-10Z"/>
   <path d="M300,417.4c4.4-1,28.8-.9,33.7-.2s6.9,3.6,6.4,7.2c-1,3.7-3.8,5.1-7.4,5.6s-32.1.7-35.3-1.4-2.8-10,2.7-11.2Z"/>
 </svg>
-`````
+```
 
 ## File: src/assets/SVG/Hunter.svg
-`````
+
+```
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 511.27 511.27">
   <path d="M273.28.27l30.13,4.29c95.66,18.35,174.77,92.7,199.23,186.92l8.06,46.33c-.55,11.79.75,24.22,0,35.93-13.46,210.62-269.81,314.47-427.49,170.69C-82.49,293.34,16.35,13.92,237.37.27h35.91ZM249.13,51.46C97.78,55.92,2.94,220.82,76.58,354.25c77.53,140.49,280.04,140.63,357.48,0,76.13-138.26-27.88-307.41-184.93-302.79Z"/>
   <path d="M248.13,102.36c109.07-5.7,189.63,105.26,150.59,207.55-44.13,115.65-201.42,135.02-270.5,31.6-66.67-99.8,1.14-232.94,119.91-239.15ZM244.15,154.27c-70.04,6.25-111.41,84.65-79.99,147.29,36.05,71.86,138.86,75.45,179.12,5.78,42.43-73.42-15.62-160.53-99.13-153.07Z"/>
   <path d="M247.1,205.13c71.8-9.14,78.5,94.77,15.58,101.42-70.81,7.49-77.42-93.55-15.58-101.42Z"/>
 </svg>
-`````
+```
 
 ## File: src/assets/SVG/Monk.svg
-`````
+
+```
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 476.6 475.11">
   <path d="M288.37,194.3c.44-8.81.89-17.92.19-26.04.87-4.05,4.17-6.53,9.82-7.35,3.57-.52,6.66-.77,9.45-.77,10.75,0,16.48,3.67,17.5,11.22,1.24,9.12.99,48.15-1.16,55.08-2.3,7.43-9.17,12.24-17.5,12.24s-16.68-4.6-18.1-14.87c-1.23-8.92-.71-19.39-.21-29.5Z"/>
@@ -1104,10 +1140,11 @@ model CharacterSheetData {
   <path d="M464.12,259.45h-72.65c2.78-16.25,2.15-34.39-1.88-53.92-.66-3.19-4.67-18.08-8.79-27.51l25.12-22.01c5.69,11.75,10.14,23.67,13.46,36.21.65,2.45,1.16,5.82,1.66,9.07.68,4.47,1.38,9.08,2.5,11.87.39.97,2.68,4.01,3.89,4.35l.13.04h36.56v41.91Z"/>
   <path d="M312.3,374.52c-4.93,4.56-19.72,7.82-26.54,8.55-.5.05-1.14.08-1.96.08s-1.76-.03-2.74-.05c-1.11-.03-2.29-.06-3.48-.06-3.37,0-11.27,0-12.06,5.57-.28,1.99.13,3.64,1.23,4.91,1.66,1.91,4.76,2.84,9.49,2.84,3.87,0,8.12-.64,10.93-1.07.69-.1,1.3-.2,1.83-.27,5.53-.75,10.73-1.91,15.47-3.45v72.23h-134.19c.71-9.49.18-20.04-.36-30.3-.56-10.78-1.14-21.93-.24-31.69l.03-.29-.13-.26c-1.84-3.55-3.75-7.12-5.78-10.88-10.5-19.56-22.4-41.72-24.02-63.6-1.22-16.49-1.92-56.3,1.08-73.58.93-5.37,7.58-12.61,12.54-13.7h72.18c-1.31,19.84-13.08,33.57-31.65,36.83-.71.12-1.62.14-2.42.14-.36,0-1.94-.02-2.35-.02-2.49,0-7.12,0-8.83,3.51-.92,1.9-1.04,3.61-.35,5.08,1.53,3.25,6.55,4.48,10.98,5.55,1.67.41,3.25.79,4.36,1.23,23.96,9.45,32.37,35.23,35.2,55.2.16,1.1.26,3.21.39,5.66.53,10.45,1.07,15.3,2.85,16.45,1.02.66,2.39,1.02,3.87,1.02s2.84-.36,3.87-1.02c2.46-1.59,2.44-8.92,2.14-19.11-.08-2.68-.15-4.99-.06-6.22,1.42-20.63,13.2-36.93,30.73-42.54,1.54-.49,3.38-.74,5.15-.98,4.44-.6,9.47-1.29,11.03-6.13l.03-.1v-.1c.22-1.99-.22-3.6-1.27-4.76-1.27-1.4-3.4-2.11-6.33-2.11-8.45,0-22.08,5.88-25.83,7.91-10.12,5.48-16.71,13.35-22.2,21.22-5.23-12.94-14.58-24.13-26.01-31.17,16.45-7.54,28-24.62,29.61-44.09l.12-1.42c.61-6.82,1.08-12.21-8.34-13.05-8.46-.76-20.77-1.17-34.65-1.17s-28.02.44-37.45,1.18c-3.35.26-7.46,1.08-10.24,2.03-2.14.73-3.72,1.76-5.26,2.76-.94.61-1.85,1.2-2.85,1.7v-62.84c0-3.91,5.57-8.53,9.88-9.25,1.62-.27,4.96-.73,9.02-.73,6.34,0,17.12,1.18,18.04,9.08.75,6.38.3,13.97-.12,21.3-.48,8.18-.97,16.64.17,23.61.74,4.51,3.75,6.52,6.41,6.52,2.84,0,5.3-2.04,6.41-5.33l.04-.11v-.12c.65-6.88.28-14.48-.07-21.83-.38-7.85-.77-15.96.08-23.05.73-6.04,4.09-8.81,11.61-9.57,2.75-.28,5.18-.41,7.43-.41,8.72,0,14.25,2,16.45,5.96,2.51,4.52,1.99,16.3,1.48,27.69-.39,8.76-.75,17.03.23,22.13.53,2.74,2.77,4.5,5.71,4.5,2.58,0,5.47-1.48,6-4.31v-.11c.5-6.83.21-14.16-.08-21.24-.31-7.62-.62-15.5.05-22.68.77-8.19,6.27-12,17.31-12,2.91,0,5.84.25,8.07.48,7.48.75,10.74,3.4,11.6,9.46-1.18,9.64-.5,21.38.15,32.75.77,13.28,1.56,27.01-.59,37.48-1.52,7.38-9.36,13.86-17.13,14.15-.1,0-.19,0-.29,0-1.23,0-2.49-.28-3.71-.55-1.21-.27-2.46-.54-3.67-.54-2.03,0-3.66.8-4.97,2.45-1.81,2.27-1.75,4.16-1.38,5.35.62,2,2.63,3.65,5.5,4.53,2.46.75,5.05,1.13,7.7,1.13,13.62,0,26.69-9.97,29.98-22.54,5.68,4.6,12.38,7.01,19.49,7.01,6.65,0,12.82-2.11,17.87-5.74l.91,12.82c-.83,8.27-.49,19.6-.08,32.67.96,30.92,2.15,69.4-13.01,83.42Z"/>
 </svg>
-`````
+```
 
 ## File: src/assets/SVG/Rogue.svg
-`````
+
+```
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 518.88 537.12">
   <path d="M226.39,413.7c-.2-3.25-.47-7.7,1.42-9.55,2.67-2.62,20.45-10.08,24.73-10.7,1.92-.28,3.89-.42,5.86-.42,10.52,0,21.47,3.96,33.48,12.11l-2.82,50.96c-2.41,24.72-12.91,47.49-29.57,64.17-3.34-.91-15.45-20.41-18.22-26.12-11.18-23.09-13.77-54.23-14.78-78.79-.02-.51-.05-1.06-.09-1.65Z"/>
@@ -1116,19 +1153,21 @@ model CharacterSheetData {
   <path d="M359.54,363.87c-13.91,0-26.92-6.69-38.68-19.89,28.38-33.4,69.06-55.43,111.92-60.61-2.84,18.32-12.21,38.32-25.23,53.74-14.55,17.25-31.6,26.75-48.01,26.75h0Z"/>
   <path d="M359.72,164.31c-3.23-11.8-13.99-23.71-30.76-23.71-1.74,0-3.53.13-5.32.39-4.77.69-8.68,3.03-12.47,5.29-3.14,1.88-6.11,3.65-9.54,4.57-4.08,1.09-7.87,1.25-11.37,1.25h0c-1.21,0-2.43-.02-3.67-.04-.39,0-.79-.01-1.19-.02.13-6.12.4-12.33.66-18.36.53-12.07,1.07-24.54.5-36.86-.18-3.92-1.04-9.98-1.94-16.39-1.61-11.36-3.43-24.24-2.13-29.2.95-3.63,2.36-6.25,3.73-8.77,2.82-5.21,5.26-9.71,2.41-20.48C284.99,8.22,274.63,0,260.92,0,250.58,0,240.53,4.92,234.7,12.85c-3.87,5.27-7.66,14.2-3.71,26.87.66,2.13,1.83,4.22,2.96,6.25,1.07,1.91,2.07,3.72,2.47,5.25,1.22,4.66-.57,17.6-2.15,29.03-.9,6.54-1.75,12.71-1.92,16.57-.55,12.44,0,25.04.51,37.22.26,5.95.52,12.09.65,18.14-1.7.27-3.38.41-5.02.41-7.63,0-13.73-3-19.62-5.9-5.95-2.93-12.09-5.96-19.8-5.96-2.8,0-5.61.39-8.57,1.18-11.98,3.21-20.64,13.7-22.05,26.73-1.43,13.17,4.67,24.97,15.91,30.8,5.5,2.85,10.47,4.24,15.19,4.24,6.83,0,12.14-2.84,17.77-5.85,5.23-2.8,10.64-5.69,17.68-6.41.83-.09,1.75-.13,2.82-.13s2.27.05,3.39.09c1.14.04,2.31.09,3.47.09.41,0,.79,0,1.16-.02.15,4.97,2.29,8.12,4.88,9.32-1.9,13.12-5.97,31.44-14.47,40.24-18.13,18.76-4.2,27.66-4.2,27.66,0,0,37.39,19.29,37.39,30.7,0-16.01,24.9-22.4,34.74-30.7s-.07-21.24-6.62-27.66c-4.92-4.82-8.03-13.73-8.91-38.75,2.39-2.12,4.28-6.1,4.44-11,1.69-.26,3.38-.39,5.04-.39,8.38,0,15.26,3.3,21.92,6.5,6.49,3.12,12.62,6.06,19.87,6.06,5.27,0,10.53-1.6,16.08-4.88,12.07-7.14,17.46-20.58,13.72-34.24Z"/>
 </svg>
-`````
+```
 
 ## File: src/assets/SVG/Sorcerer.svg
-`````
+
+```
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 334.46 529.1">
   <path d="M281.61,381.19c-3.82,5.1-11.95,21.55-15.77,24.1-4.57,3.04-12.51,2.32-15.3-2.61-2.58-4.55-.47-32.15-.95-39.98-1.27-20.64-7.72-43.76-23.09-58.21,1.08,7.93,6.11,14.49,3.37,22.81-2.15,6.55-9.94,8.89-16.27,7.41-6.56-1.53-23.22-21.62-27.95-27.64-20.05-25.53-38.37-57.08-29.4-90.75-2.1,1-3.27,3.76-4.19,5.76-8.81,19.17-2.63,51.48,1.77,71.72,5.33,24.5,19.62,56.87,22.05,79.73,1.17,10.98-1.02,18.05-13.62,15.73-4.79-.88-18.72-12.18-22.79-16.01-18.87-17.74-35.22-48.58-37.72-74.54-.85-8.84.63-18.84,0-27.82l-4.23,7.83c-7.27,21.75-2.33,59.06,2.47,81.58,1.73,8.14,7.3,22.11,7.84,28.97.55,6.94-5.24,15.4-12.08,16.78-7.96,1.6-25.64-6.49-33.49-10.07-5.39-2.46-10.51-5.47-15.54-8.58-.47,14.81,9.05,31.32,17.91,42.94,51.12,67.04,143.75,75.13,200.13,9.55,8.02-9.32,24.62-36.96,24.62-48.82v-17.32c-2.94.37-5.94,4.99-7.77,7.44Z"/>
   <path d="M303.19,290.13L166.76,16.89,28.21,295.38c-39.15,85.16,9.53,192.94,101.4,214.76,130.28,30.93,228.8-102.27,173.58-220.01ZM125.33,492.38c-39.86-14.44-102.8-66.81-94.37-114.48,3.34-18.86,15.31-6.53,23.98-1.87,6.6,3.55,14.1,7.62,20.96,10.5,2.87,1.21,15.47,6.83,17.47,5.06-5.33-17.64-10.07-35.84-12.42-54.2-2.8-21.89-5.5-69.64,16.27-83.12,10.4-6.44,20.66,1.22,20.32,12.99-.27,9.32-1.86,18.58-1.09,28.28,2.33,29.16,19.56,58.07,42.95,75.07-6.49-26.37-15.92-52.08-21.49-78.71-5.72-27.32-13.28-72.26,12.16-91.76,7.63-5.85,29.91-15.08,30.4.95.22,7.41-3.1,6.7-5.79,11.09-21.36,34.96,14.76,81.1,39.23,104.9-.7-8.11-10.87-26.11-10.44-33,.25-4.01,4.37-6.62,7.98-6.86,3.96-.26,16.18,9.48,19.74,12.6,26.91,23.56,33.44,56.72,33.06,91.29,6.68-8.94,22.29-31.83,35.02-18.81,10.32,10.56,2.79,41.71-2.35,54.16-26.23,63.49-106.69,99.44-171.58,75.93Z"/>
 </svg>
-`````
+```
 
 ## File: src/assets/SVG/SpellBlade.svg
-`````
+
+```
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 499.28 499.95">
   <path d="M251.67,464.18c-10.26,0-20.35.35-25.7.89-1.52.15-6.31,1.09-8.28,2.77-2.94,2.49-4.08,6.41-2.98,10.22,1.22,4.22,4.78,7.23,9.28,7.87,5.26.74,18.04,1,27.39,1h0c11.75,0,21.07-.36,24.92-.97,5.31-.84,8.98-5.12,8.93-10.41-.04-4.14-2.68-9.34-10-10.37-4.51-.63-13.1-1-23.57-1Z"/>
@@ -1140,10 +1179,11 @@ model CharacterSheetData {
   <path d="M152.28,76.05c-62.39,0-134.59,9.66-139.13,84.96-1.93,31.97,6.45,58.12,24.91,77.72,23.55,25.01,63.97,38.79,113.81,38.79,1.52,0,3.03-.01,4.55-.04h.16s32.65-3.11,32.65-3.11l-.51-22.09-2.14.21c-11.8,1.13-22.29,1.68-32.06,1.68-51.55,0-83.62-15.52-98.06-47.46-8.31-18.37-9.19-35.04-2.62-49.53,7.93-17.49,27.09-31.62,53.95-39.79,19.34-5.88,41.93-8.86,67.16-8.86,37.07,0,80.97,6.46,130.46,19.21,6.36,1.64,12.99,3.49,20,5.46,26.36,7.38,56.24,15.75,84.27,15.75,17.05,0,31.45-3.04,44.01-9.28,21.95-10.91,39.51-41.83,30.59-79.8-5.34-22.74-22.1-47.05-53.12-47.05-1.81,0-3.67.09-5.54.25-24.89,2.26-37.76,17.03-50.2,31.31-8.79,10.09-17.09,19.61-29.29,24.62-16.81,6.9-42.14,10.26-77.42,10.26-17.38,0-35.07-.77-50.67-1.46-8.89-.39-17.28-.76-24.79-.95-2.75-.07-5.56-.15-8.43-.23-10.45-.29-21.26-.6-32.55-.6Z"/>
   <path d="M245.82,64.77c1.76,0,3.52.02,5.28.06.97.02,1.97.25,3.03.49,1.23.28,2.49.57,3.89.59h.17c1.75.03,6.4.11,11.54.11h0c18.92,0,19.64-.95,20.39-1.96l.96-1.28-38.91-45.82-43.45,45.72,3.64.66c7.3,1.33,14.7,1.51,20.98,1.51,2.09,0,4.17-.02,6.26-.04,2.08-.02,4.15-.04,6.23-.04Z"/>
 </svg>
-`````
+```
 
 ## File: src/assets/SVG/Warlock.svg
-`````
+
+```
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 435.79 500.29">
   <path d="M206.85,497.92l-43.03-173.62c1.44-2.63,4.2-4.68,7.27-4.74,23.07,3.86,46.47,5.91,69.91,5.06,7.12-.26,21.56-3.59,27.68-1.83,2.61.75,4.54,4.35,3.5,7.01l-51.63,164.98c-2.49,5.72-8.95,7.34-13.7,3.13Z"/>
@@ -1166,20 +1206,22 @@ model CharacterSheetData {
   <path d="M237.46,250.71c43.4-12.23,43.78-65.54.51-78.84,5.32,25.81,6.71,53.24-.51,78.84Z"/>
   <path d="M199.54,250.72c-6.72-25.81-4.32-52.87,0-78.84-43.31,13.3-43.53,66.13,0,78.84Z"/>
 </svg>
-`````
+```
 
 ## File: src/assets/SVG/Wizard.svg
-`````
+
+```
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 477.34 444.79">
   <path d="M19.18,343.75l1.1,1.02c41.69,38.52,95.36,66.42,151.14,78.57,22.48,4.89,46.16,7.38,70.39,7.38,33.81,0,68.78-4.77,103.95-14.17,41.48-11.09,78.11-27.49,108.87-48.74l1.44-1-106.5-49.21-.28.03c-24.75,2.84-48.66,4.28-71.06,4.28-56.63,0-107.35-9.24-150.76-27.47l-.4-.17-107.87,49.48Z"/>
   <path d="M135.44,282.13l.82.34c40.78,16.92,87.04,25.14,141.42,25.14h0c20.43,0,41.59-1.15,64.7-3.51l.9-.09v-29.95l-1.1.11c-20.52,2.06-40.64,3.1-59.82,3.1-39.83,0-76.73-4.49-109.69-13.33-4.15-1.12-8.33-2.51-12.38-3.86-5.34-1.79-10.86-3.63-16.39-4.85l-.92-.2-7.55,27.11Z"/>
   <path d="M348.52,14.81c-.56,0-1.13.07-1.61.13-3.69.49-11.5,3.46-17.21,5.62-1.53.58-2.9,1.1-3.97,1.49-52.46,19.02-100.97,49.03-136.6,84.52l-.18.18-40.07,134.12.84.34c13.56,5.54,28.92,10.09,45.63,13.52,23.61,4.85,46.71,6.65,74.47,8.51h30.09s43.37-3.1,43.37-3.1v-83.56l-39.94-57.01c-.26-2.18.33-4.21,1.66-5.74,1.33-1.53,3.26-2.41,5.3-2.41,1.54,0,3.08.51,4.45,1.47,2.79,1.95,6.62,8.14,10.01,13.6,2.67,4.32,5.2,8.39,7.31,10.68l.9.98,44.04-72.35c.71-.66,2.33-1.9,2.83-2.13h48.78l-77.11-47.98c-.87-.58-1.83-.86-2.99-.86Z"/>
 </svg>
-`````
+```
 
 ## File: src/components/Snackbar.tsx
-`````typescript
+
+```typescript
 import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 
@@ -1260,10 +1302,11 @@ const Snackbar: React.FC<SnackbarProps> = ({ message, isVisible, onClose, durati
 };
 
 export default Snackbar;
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/barbarian_table.json
-`````json
+## File: src/lib/rulesdata/\_new_schema/barbarian_table.json
+
+```json
 {
 	"className": "Barbarian",
 	"levelProgression": [
@@ -1409,10 +1452,11 @@ export default Snackbar;
 		}
 	]
 }
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/bard_table.json
-`````json
+## File: src/lib/rulesdata/\_new_schema/bard_table.json
+
+```json
 {
 	"className": "Bard",
 	"levelProgression": [
@@ -1558,10 +1602,11 @@ export default Snackbar;
 		}
 	]
 }
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/champion_table.json
-`````json
+## File: src/lib/rulesdata/\_new_schema/champion_table.json
+
+```json
 {
 	"className": "Champion",
 	"levelProgression": [
@@ -1707,10 +1752,11 @@ export default Snackbar;
 		}
 	]
 }
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/cleric_table.json
-`````json
+## File: src/lib/rulesdata/\_new_schema/cleric_table.json
+
+```json
 {
 	"className": "Cleric",
 	"levelProgression": [
@@ -1856,10 +1902,11 @@ export default Snackbar;
 		}
 	]
 }
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/commander_table.json
-`````json
+## File: src/lib/rulesdata/\_new_schema/commander_table.json
+
+```json
 {
 	"className": "Commander",
 	"levelProgression": [
@@ -2005,10 +2052,11 @@ export default Snackbar;
 		}
 	]
 }
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/druid_table.json
-`````json
+## File: src/lib/rulesdata/\_new_schema/druid_table.json
+
+```json
 {
 	"className": "Druid",
 	"levelProgression": [
@@ -2154,10 +2202,11 @@ export default Snackbar;
 		}
 	]
 }
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/hunter_table.json
-`````json
+## File: src/lib/rulesdata/\_new_schema/hunter_table.json
+
+```json
 {
 	"className": "Hunter",
 	"levelProgression": [
@@ -2303,10 +2352,11 @@ export default Snackbar;
 		}
 	]
 }
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/monk_table.json
-`````json
+## File: src/lib/rulesdata/\_new_schema/monk_table.json
+
+```json
 {
 	"className": "Monk",
 	"levelProgression": [
@@ -2452,10 +2502,11 @@ export default Snackbar;
 		}
 	]
 }
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/rogue_table.json
-`````json
+## File: src/lib/rulesdata/\_new_schema/rogue_table.json
+
+```json
 {
 	"className": "Rogue",
 	"levelProgression": [
@@ -2601,10 +2652,11 @@ export default Snackbar;
 		}
 	]
 }
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/sorcerer_table.json
-`````json
+## File: src/lib/rulesdata/\_new_schema/sorcerer_table.json
+
+```json
 {
 	"className": "Sorcerer",
 	"levelProgression": [
@@ -2750,10 +2802,11 @@ export default Snackbar;
 		}
 	]
 }
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/spellblade_table.json
-`````json
+## File: src/lib/rulesdata/\_new_schema/spellblade_table.json
+
+```json
 {
 	"className": "Spellblade",
 	"levelProgression": [
@@ -2899,10 +2952,11 @@ export default Snackbar;
 		}
 	]
 }
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/warlock_table.json
-`````json
+## File: src/lib/rulesdata/\_new_schema/warlock_table.json
+
+```json
 {
 	"className": "Warlock",
 	"levelProgression": [
@@ -3048,10 +3102,11 @@ export default Snackbar;
 		}
 	]
 }
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/wizard_table.json
-`````json
+## File: src/lib/rulesdata/\_new_schema/wizard_table.json
+
+```json
 {
 	"className": "Wizard",
 	"levelProgression": [
@@ -3197,10 +3252,11 @@ export default Snackbar;
 		}
 	]
 }
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/additional-spells/close-wounds.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const closeWounds: Spell = {
@@ -3236,10 +3292,11 @@ export const closeWounds: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/additional-spells/death-bolt.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const deathBolt: Spell = {
@@ -3277,10 +3334,11 @@ export const deathBolt: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/additional-spells/druidcraft.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, PremadeSpellList } from '../../types/spell.types';
 
 export const druidcraft: Spell = {
@@ -3312,10 +3370,11 @@ export const druidcraft: Spell = {
 	],
 	enhancements: [] // No enhancements specified in PDF
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/additional-spells/find-familiar.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, PremadeSpellList } from '../../types/spell.types';
 
 export const findFamiliar: Spell = {
@@ -3338,10 +3397,11 @@ export const findFamiliar: Spell = {
 	],
 	enhancements: [] // No enhancements specified in PDF
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/additional-spells/index.ts
-`````typescript
+
+```typescript
 import { druidcraft } from './druidcraft';
 import { findFamiliar } from './find-familiar';
 import { shield } from './shield';
@@ -3357,10 +3417,11 @@ export const additionalSpells = [
 	closeWounds,
 	deathBolt
 ];
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/additional-spells/shield.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, PremadeSpellList } from '../../types/spell.types';
 
 export const shield: Spell = {
@@ -3402,10 +3463,11 @@ export const shield: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/additional-spells/tethering-vines.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const tetheringVines: Spell = {
@@ -3429,10 +3491,11 @@ export const tetheringVines: Spell = {
 		{ type: 'MP', cost: 1, name: 'Widen Vines', description: 'The radius increases by 1 Space.' }
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/fiendborn-ancestry-spells/acid-bolt.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const acidBolt: Spell = {
@@ -3465,18 +3528,20 @@ export const acidBolt: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/fiendborn-ancestry-spells/index.ts
-`````typescript
+
+```typescript
 import { poisonBolt } from './poison-bolt';
 import { acidBolt } from './acid-bolt';
 
 export const fiendbornAncestrySpells = [poisonBolt, acidBolt];
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/fiendborn-ancestry-spells/poison-bolt.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const poisonBolt: Spell = {
@@ -3509,10 +3574,11 @@ export const poisonBolt: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/fire-and-flames/burning-flames.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const burningFlames: Spell = {
@@ -3549,10 +3615,11 @@ export const burningFlames: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/fire-and-flames/dancing-flames.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const dancingFlames: Spell = {
@@ -3582,10 +3649,11 @@ export const dancingFlames: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/fire-and-flames/fire-shield.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const fireShield: Spell = {
@@ -3614,10 +3682,11 @@ export const fireShield: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/fire-and-flames/fog-cloud.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const fogCloud: Spell = {
@@ -3646,10 +3715,11 @@ export const fogCloud: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/fire-and-flames/grease.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const grease: Spell = {
@@ -3679,10 +3749,11 @@ export const grease: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/fire-and-flames/index.ts
-`````typescript
+
+```typescript
 import { fireBolt } from './fire-bolt';
 import { minorFlameBlade } from './minor-flame-blade';
 import { dancingFlames } from './dancing-flames';
@@ -3700,10 +3771,11 @@ export const fireAndFlamesSpells = [
 	fireShield,
 	grease
 ];
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/fire-and-flames/minor-flame-blade.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const minorFlameBlade: Spell = {
@@ -3740,10 +3812,11 @@ export const minorFlameBlade: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/holy-and-restoration/bless.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const bless: Spell = {
@@ -3778,10 +3851,11 @@ export const bless: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/holy-and-restoration/guidance.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const guidance: Spell = {
@@ -3817,10 +3891,11 @@ export const guidance: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/holy-and-restoration/guiding-bolt.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const guidingBolt: Spell = {
@@ -3850,10 +3925,11 @@ export const guidingBolt: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/holy-and-restoration/heal.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const heal: Spell = {
@@ -3889,10 +3965,11 @@ export const heal: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/holy-and-restoration/index.ts
-`````typescript
+
+```typescript
 import { sacredBolt } from './sacred-bolt';
 import { guidance } from './guidance';
 import { light } from './light';
@@ -3910,10 +3987,11 @@ export const holyAndRestorationSpells = [
 	heal,
 	shieldOfFaith
 ];
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/holy-and-restoration/light.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const light: Spell = {
@@ -3943,10 +4021,11 @@ export const light: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/holy-and-restoration/shield-of-faith.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const shieldOfFaith: Spell = {
@@ -3975,10 +4054,11 @@ export const shieldOfFaith: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/ice-and-illusions/catapult.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const catapult: Spell = {
@@ -4002,10 +4082,11 @@ export const catapult: Spell = {
 		{ type: 'MP', cost: 1, name: 'Damage', description: 'You deal +2 Bludgeoning damage.' }
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/ice-and-illusions/ice-knife.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const iceKnife: Spell = {
@@ -4034,10 +4115,11 @@ export const iceKnife: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/ice-and-illusions/index.ts
-`````typescript
+
+```typescript
 import { frostBolt } from './frost-bolt';
 import { minorIllusion } from './minor-illusion';
 import { mageHand } from './mage-hand';
@@ -4055,10 +4137,11 @@ export const iceAndIllusionsSpells = [
 	iceKnife,
 	silentImage
 ];
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/ice-and-illusions/mage-hand.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, PremadeSpellList } from '../../types/spell.types';
 
 export const mageHand: Spell = {
@@ -4083,10 +4166,11 @@ export const mageHand: Spell = {
 		{ type: 'MP', cost: 1, name: 'Lasting Hand', description: 'The duration increases to 1 hour.' }
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/ice-and-illusions/magic-missile.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const magicMissile: Spell = {
@@ -4111,10 +4195,11 @@ export const magicMissile: Spell = {
 		{ type: 'MP', cost: 1, name: 'Range', description: 'You increase the range to 15 Spaces.' }
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/ice-and-illusions/minor-illusion.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const minorIllusion: Spell = {
@@ -4143,10 +4228,11 @@ export const minorIllusion: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/ice-and-illusions/silent-image.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const silentImage: Spell = {
@@ -4175,10 +4261,11 @@ export const silentImage: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/lightning-and-teleportation/crackling-lightning.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const cracklingLightning: Spell = {
@@ -4215,10 +4302,11 @@ export const cracklingLightning: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/lightning-and-teleportation/gust.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const gust: Spell = {
@@ -4258,10 +4346,11 @@ export const gust: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/lightning-and-teleportation/index.ts
-`````typescript
+
+```typescript
 import { lightningBolt } from './lightning-bolt';
 import { lightningBlade } from './lightning-blade';
 import { shockingGrasp } from './shocking-grasp';
@@ -4279,10 +4368,11 @@ export const lightningAndTeleportationSpells = [
 	mistyStep,
 	cracklingLightning
 ];
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/lightning-and-teleportation/lightning-blade.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const lightningBlade: Spell = {
@@ -4312,10 +4402,11 @@ export const lightningBlade: Spell = {
 		{ type: 'MP', cost: 1, name: 'Duration', description: 'You increase the duration to 1 minute.' }
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/lightning-and-teleportation/misty-step.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const mistyStep: Spell = {
@@ -4344,10 +4435,11 @@ export const mistyStep: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/lightning-and-teleportation/returning-shock.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const returningShock: Spell = {
@@ -4377,10 +4469,11 @@ export const returningShock: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/lightning-and-teleportation/shocking-grasp.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const shockingGrasp: Spell = {
@@ -4410,10 +4503,11 @@ export const shockingGrasp: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/psychic-and-enchantment/bane.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const bane: Spell = {
@@ -4448,10 +4542,11 @@ export const bane: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/psychic-and-enchantment/befriend.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const befriend: Spell = {
@@ -4492,10 +4587,11 @@ export const befriend: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/psychic-and-enchantment/command.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const command: Spell = {
@@ -4520,10 +4616,11 @@ export const command: Spell = {
 		{ type: 'MP', cost: 2, name: 'Targets', description: 'You can add 1 additional target.' }
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/psychic-and-enchantment/index.ts
-`````typescript
+
+```typescript
 import { psiBolt } from './psi-bolt';
 import { message } from './message';
 import { befriend } from './befriend';
@@ -4541,10 +4638,11 @@ export const psychicAndEnchantmentSpells = [
 	command,
 	sleep
 ];
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/psychic-and-enchantment/message.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const message: Spell = {
@@ -4568,10 +4666,11 @@ export const message: Spell = {
 		{ type: 'MP', cost: 1, name: 'Range', description: 'You increase the range to 30 Spaces.' }
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/psychic-and-enchantment/psychic-fear.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const psychicFear: Spell = {
@@ -4601,10 +4700,11 @@ export const psychicFear: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/psychic-and-enchantment/sleep.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, SpellList, PremadeSpellList } from '../../types/spell.types';
 
 export const sleep: Spell = {
@@ -4628,17 +4728,19 @@ export const sleep: Spell = {
 		{ type: 'MP', cost: 1, name: 'Slumber', description: 'You increase the HP affected by 10.' }
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/special-class-spells/index.ts
-`````typescript
+
+```typescript
 import { sorcery } from './sorcery';
 
 export const specialClassSpells = [sorcery];
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/special-class-spells/sorcery.ts
-`````typescript
+
+```typescript
 import { Spell, SpellSchool, ClassName, PremadeSpellList } from '../../types/spell.types';
 
 export const sorcery: Spell = {
@@ -4667,10 +4769,11 @@ export const sorcery: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/index.ts
-`````typescript
+
+```typescript
 import { fireAndFlamesSpells } from './fire-and-flames';
 import { iceAndIllusionsSpells } from './ice-and-illusions';
 import { lightningAndTeleportationSpells } from './lightning-and-teleportation';
@@ -4699,10 +4802,11 @@ export const allSpells = [
 	...fiendbornAncestrySpells,
 	...additionalSpells
 ];
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/types/spell.types.ts
-`````typescript
+
+```typescript
 // ./spells-data/types/spell.types.ts
 
 /**
@@ -4780,10 +4884,11 @@ export interface Spell {
 	cantripPassive?: string;
 	enhancements: SpellEnhancement[];
 }
-`````
+```
 
 ## File: src/lib/rulesdata/attributes.ts
-`````typescript
+
+```typescript
 // src/lib/rulesdata/attributes.ts
 
 import type { IAttributeData } from './types';
@@ -4824,10 +4929,11 @@ export const attributesData: IAttributeData[] = [
 		derivedStats: [{ statName: 'Base Skill Points', formula: '5 + Intelligence' }]
 	}
 ];
-`````
+```
 
 ## File: src/lib/rulesdata/death.ts
-`````typescript
+
+```typescript
 /**
  * DC20 Death & Health Threshold Rules
  * Based on official DC20 rulebook pages for Health Points & Death's Door
@@ -4996,10 +5102,11 @@ export function getDeathSteps(
 
 	return { currentStep, maxSteps, isDead };
 }
-`````
+```
 
 ## File: src/lib/rulesdata/inventoryItems.ts
-`````typescript
+
+```typescript
 // inventoryItems.ts
 
 //==============================================================================
@@ -5757,10 +5864,11 @@ export const allItems = [
 	...adventuringSupplies,
 	...healingPotions
 ];
-`````
+```
 
 ## File: src/lib/rulesdata/knowledge.ts
-`````typescript
+
+```typescript
 import { ITradeData } from './types';
 
 export const knowledgeData: ITradeData[] = [
@@ -5805,10 +5913,11 @@ export const knowledgeData: ITradeData[] = [
 		tools: undefined // Knowledge trade
 	}
 ];
-`````
+```
 
 ## File: src/lib/rulesdata/languages.ts
-`````typescript
+
+```typescript
 import type { ILanguageData } from './types';
 
 export const languagesData: ILanguageData[] = [
@@ -5898,10 +6007,11 @@ export const languagesData: ILanguageData[] = [
 			'Undercommon is a language spoken by inhabitants of the Underdark, such as Drow. Typical Speakers: Drow, Underdark inhabitants.'
 	}
 ];
-`````
+```
 
 ## File: src/lib/rulesdata/maneuvers.ts
-`````typescript
+
+```typescript
 /**
  * @file maneuvers.ts
  * @description Contains the schemas and a complete list of all Martial Maneuvers
@@ -6139,10 +6249,11 @@ export const maneuvers: Maneuver[] = [
 
 /** A simple alias for the main maneuvers array. */
 export const allManeuvers = maneuvers;
-`````
+```
 
 ## File: src/lib/rulesdata/skills.ts
-`````typescript
+
+```typescript
 import type { ISkillData } from './types';
 
 export const skillsData: ISkillData[] = [
@@ -6230,10 +6341,11 @@ export const skillsData: ISkillData[] = [
 			'Awareness governs your ability to detect the presence of other creatures or objects using your sight, hearing, smell, or other senses.'
 	}
 ];
-`````
+```
 
 ## File: src/lib/rulesdata/techniques.ts
-`````typescript
+
+```typescript
 /**
  * @file techniques.ts
  * @description Contains the schemas and a complete list of all Martial Techniques
@@ -6489,10 +6601,11 @@ export const techniques: Technique[] = [
 
 /** A simple alias for the main techniques array. */
 export const allTechniques = techniques;
-`````
+```
 
 ## File: src/lib/rulesdata/trades.ts
-`````typescript
+
+```typescript
 import { ITradeData } from './types';
 
 export const tradesData: ITradeData[] = [
@@ -6753,10 +6866,11 @@ export const tradesData: ITradeData[] = [
 		tools: "Woodcarver's Tools"
 	}
 ];
-`````
+```
 
 ## File: src/lib/server/auth.ts
-`````typescript
+
+```typescript
 import type { RequestEvent } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import { sha256 } from '@oslojs/crypto/sha2';
@@ -6838,10 +6952,11 @@ export function deleteSessionTokenCookie(event: RequestEvent) {
 		path: '/'
 	});
 }
-`````
+```
 
 ## File: src/lib/utils/classFeatureDescriptions.ts
-`````typescript
+
+```typescript
 /**
  * @file classFeatureDescriptions.ts
  * @description Utility function to get detailed descriptions for class feature choices
@@ -6935,10 +7050,11 @@ export function hasDetailedDescription(choiceId: string): choiceId is SupportedC
 	];
 	return supportedChoices.includes(choiceId as SupportedClassFeatureChoices);
 }
-`````
+```
 
 ## File: src/lib/utils/weaponUtils.ts
-`````typescript
+
+```typescript
 // weaponUtils.ts
 // Utility functions for working with inventory weapons in the attack system
 
@@ -7166,18 +7282,20 @@ export function createEmptyAttackData(weaponName?: string): any {
 		heavyHitEffect: ''
 	};
 }
-`````
+```
 
 ## File: src/lib/index.ts
-`````typescript
+
+```typescript
 // Reexport your entry components here
 
 // Rules data exports
 // TODO: weapons.ts deleted - refactor attack system to use inventoryItems.ts
-`````
+```
 
-## File: src/routes/api/_backup/character/[characterId]/+server.ts
-`````typescript
+## File: src/routes/api/\_backup/character/[characterId]/+server.ts
+
+```typescript
 // src/routes/api/character/[characterId]/+server.ts
 
 import { json } from '@sveltejs/kit';
@@ -7225,10 +7343,11 @@ export const GET: RequestHandler = async ({ params }) => {
 		return json({ error: 'Internal server error' }, { status: 500 });
 	}
 };
-`````
+```
 
-## File: src/routes/api/_backup/character/progress/_backup_merge_stages_20250621/stageA+server.ts
-`````typescript
+## File: src/routes/api/\_backup/character/progress/\_backup_merge_stages_20250621/stageA+server.ts
+
+```typescript
 import { json, error } from '@sveltejs/kit';
 import { PrismaClient } from '@prisma/client';
 
@@ -7337,10 +7456,11 @@ export async function POST({ request }) {
 		await prisma.$disconnect();
 	}
 }
-`````
+```
 
 ## File: src/routes/character-sheet/components/DefenseChangeModal.tsx
-`````typescript
+
+```typescript
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
@@ -7431,7 +7551,7 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
 			? `
 		background: #8b4513;
 		color: white;
-		
+
 		&:hover {
 			background-color: #6d3410;
 		}
@@ -7439,7 +7559,7 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
 			: `
 		background: #f9f9f9;
 		color: #8b4513;
-		
+
 		&:hover {
 			background: #8b4513;
 			color: white;
@@ -7544,10 +7664,11 @@ const DefenseChangeModal: React.FC<DefenseChangeModalProps> = ({
 };
 
 export default DefenseChangeModal;
-`````
+```
 
 ## File: src/routes/character-sheet/components/Languages.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import type { LanguageData } from '../../../types';
 import { SectionTitle, SectionDescription } from '../styles/KnowledgeTrades';
@@ -7596,10 +7717,11 @@ const Languages: React.FC<LanguagesProps> = ({ languages }) => {
 };
 
 export default Languages;
-`````
+```
 
 ## File: src/routes/character-sheet/components/Resources.tsx.backup
-`````
+
+```
 import React from 'react';
 import {
 	ResourcesContainer,
@@ -7803,10 +7925,11 @@ const Resources: React.FC<ResourcesProps> = ({
 };
 
 export default Resources;
-`````
+```
 
 ## File: src/routes/character-sheet/components/SpellPopup.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import type { Spell } from '../../../lib/rulesdata/spells-data/types/spell.types';
 import {
@@ -7882,10 +8005,11 @@ const SpellPopup: React.FC<SpellPopupProps> = ({ spell, onClose }) => {
 };
 
 export default SpellPopup;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/AttributesSections.styles.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledAttributesSectionsContainer = styled.div`
@@ -8063,10 +8187,11 @@ export const StyledNoItemsMessage = styled.div`
 	font-style: italic;
 	padding: 1rem;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Currency.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const CurrencyContainer = styled.div`
@@ -8130,10 +8255,11 @@ export const CurrencyInput = styled.input`
 		box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.2);
 	}
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Death.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledDeathContainer = styled.div`
@@ -8328,10 +8454,11 @@ export const StyledHealthStatusTooltip = styled.div`
 		visibility: visible;
 	}
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/DeathExhaustion.styles.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledDeathExhaustionContainer = styled.div`
@@ -8355,10 +8482,11 @@ export const StyledExhaustionOnlyTitle = styled.div`
 	color: #8b4513;
 	margin-bottom: 0.5rem;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Defenses.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const DefensesContainer = styled.div<{ $isMobile?: boolean }>`
@@ -8472,10 +8600,11 @@ export const RevertButton = styled.button`
 		background: rgba(139, 69, 19, 0.2);
 	}
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Exhaustion.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledExhaustionContainer = styled.div`
@@ -8542,10 +8671,11 @@ export const StyledExhaustionTooltip = styled.div`
 		visibility: visible;
 	}
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Features.styles.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledFeaturesContainer = styled.div`
@@ -8628,10 +8758,11 @@ export const StyledFeaturesContent = styled.div`
 	font-size: 0.9rem;
 	color: #8b4513;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Features.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledFeatureGrid = styled.div`
@@ -8690,10 +8821,11 @@ export const StyledFeatureCategoryTitle = styled.h4`
 	border-bottom: 1px solid #8b4513;
 	padding-bottom: 0.2rem;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Header.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledHeader = styled.div`
@@ -8729,10 +8861,11 @@ export const StyledValue = styled.div`
 	padding: 0.2rem 0;
 	min-height: 1.5rem;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Info.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledInfoSection = styled.div`
@@ -8768,10 +8901,11 @@ export const StyledStatValue = styled.span`
 	font-weight: bold;
 	color: #2d2d2d;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Inventory.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledInventorySection = styled.div`
@@ -8902,10 +9036,11 @@ export const StyledEmptyInventory = styled.div`
 	padding: 2rem;
 	color: #666;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/KnowledgeTrades.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const KnowledgeTradesSection = styled.div`
@@ -8938,10 +9073,11 @@ export const EmptyMessage = styled.div`
 	font-style: italic;
 	padding: 1rem;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Languages.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const LanguagesSection = styled.div`
@@ -9043,10 +9179,11 @@ export const FluencyHeaderLabel = styled.span`
 	min-width: 15px;
 	cursor: help;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Movement.styles.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledMovementContainer = styled.div`
@@ -9079,10 +9216,11 @@ export const StyledMovementValue = styled.div`
 	font-weight: bold;
 	color: #8b4513;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Movement.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const MovementContainer = styled.div`
@@ -9115,10 +9253,11 @@ export const StatValue = styled.div`
 	font-weight: bold;
 	color: #8b4513;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/PlayerNotes.styles.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledPlayerNotesContainer = styled.div`
@@ -9324,10 +9463,11 @@ export const StyledEmptyNotesMessage = styled.div`
 	background: #f9f9f9;
 	font-size: 0.9rem;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Resources.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledResourcesSection = styled.div`
@@ -9500,10 +9640,11 @@ export const TempHPInputSmall = styled.input`
 		box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
 	}
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/RightColumnResources.styles.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledRightResourcesContainer = styled.div`
@@ -9564,10 +9705,11 @@ export const StyledRightResourceMax = styled.span`
 	font-size: 0.9rem;
 	color: #8b4513;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Spells.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledSpellsSection = styled.div`
@@ -9748,10 +9890,11 @@ export const StyledInfoIcon = styled.span`
 	font-weight: bold;
 	cursor: pointer;
 `;
-`````
+```
 
 ## File: src/styles/App.styles.ts
-`````typescript
+
+```typescript
 // Styled components for App component
 import styled from 'styled-components';
 
@@ -9810,10 +9953,11 @@ export const StyledFooter = styled.footer`
 	border-top: none;
 	background: transparent;
 `;
-`````
+```
 
 ## File: src/types/defenseNotes.ts
-`````typescript
+
+```typescript
 export interface DefenseNote {
 	id: string;
 	timestamp: Date;
@@ -9827,16 +9971,18 @@ export interface DefenseNotesData {
 	characterId: string;
 	notes: DefenseNote[];
 }
-`````
+```
 
 ## File: src/types/index.ts
-`````typescript
+
+```typescript
 // Main export file for all types
 export * from './character';
-`````
+```
 
 ## File: src/app.d.ts
-`````typescript
+
+```typescript
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
 declare global {
@@ -9852,10 +9998,11 @@ declare global {
 
 // interface Platform {}
 export {};
-`````
+```
 
 ## File: src/demo.spec.ts
-`````typescript
+
+```typescript
 import { describe, it, expect } from 'vitest';
 
 describe('sum test', () => {
@@ -9863,10 +10010,11 @@ describe('sum test', () => {
 		expect(1 + 2).toBe(3);
 	});
 });
-`````
+```
 
 ## File: src/main.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
@@ -9876,15 +10024,17 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 		<App />
 	</React.StrictMode>
 );
-`````
+```
 
 ## File: .env.example
-`````
+
+```
 DATABASE_URL="postgres://root:mysecretpassword@localhost:5432/local"
-`````
+```
 
 ## File: .gitignore
-`````
+
+```
 test-results
 node_modules
 
@@ -9918,31 +10068,35 @@ dev.log
 # Copilot Memory Files
 .copilot-memory-classname-audit.md
 .copilot-memory.md
-`````
+```
 
 ## File: .npmrc
-`````
+
+```
 engine-strict=true
 registry=https://registry.npmjs.org/
-`````
+```
 
 ## File: .nvmrc
-`````
+
+```
 20
-`````
+```
 
 ## File: .prettierignore
-`````
+
+```
 # Package Managers
 package-lock.json
 pnpm-lock.yaml
 yarn.lock
 bun.lock
 bun.lockb
-`````
+```
 
 ## File: .prettierrc
-`````
+
+```
 {
 	"useTabs": true,
 	"singleQuote": true,
@@ -9950,19 +10104,21 @@ bun.lockb
 	"printWidth": 100,
 	"plugins": ["prettier-plugin-tailwindcss"]
 }
-`````
+```
 
 ## File: .repomixignore
-`````
+
+```
 # Add patterns to ignore here, one per line
 # Example:
 # *.log
 # tmp/
 *.pdf
-`````
+```
 
 ## File: docker-compose.yml
-`````yaml
+
+```yaml
 services:
   db:
     image: postgres
@@ -9977,10 +10133,11 @@ services:
       - pgdata:/var/lib/postgresql/data
 volumes:
   pgdata:
-`````
+```
 
 ## File: package.json.backup
-`````
+
+```
 {
 	"name": "dc20clean",
 	"version": "0.0.1",
@@ -10068,10 +10225,11 @@ volumes:
 		"prisma": "^6.10.1"
 	}
 }
-`````
+```
 
 ## File: repomix.config.json
-`````json
+
+```json
 {
 	"input": {
 		"maxFileSize": 52428800
@@ -10107,10 +10265,11 @@ volumes:
 		"encoding": "o200k_base"
 	}
 }
-`````
+```
 
 ## File: tsconfig.json
-`````json
+
+```json
 {
 	"compilerOptions": {
 		"target": "ES2020",
@@ -10138,10 +10297,11 @@ volumes:
 	"include": ["src", "pdf-service"],
 	"references": [{ "path": "./tsconfig.node.json" }]
 }
-`````
+```
 
 ## File: tsconfig.node.json
-`````json
+
+```json
 {
 	"compilerOptions": {
 		"composite": true,
@@ -10155,10 +10315,11 @@ volumes:
 	},
 	"include": ["vite.config.ts"]
 }
-`````
+```
 
 ## File: vercel.json
-`````json
+
+```json
 {
 	"outputDirectory": "dist",
 	"routes": [
@@ -10180,16 +10341,18 @@ volumes:
 		}
 	]
 }
-`````
+```
 
 ## File: vitest-setup-client.ts
-`````typescript
+
+```typescript
 /// <reference types="@vitest/browser/matchers" />
 /// <reference types="@vitest/browser/providers/playwright" />
-`````
+```
 
 ## File: vitest.config.ts
-`````typescript
+
+```typescript
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -10222,10 +10385,11 @@ export default defineConfig({
 		]
 	}
 });
-`````
+```
 
 ## File: .github/copilot-instructions.md
-`````markdown
+
+```markdown
 ---
 applyTo: '**'
 ---
@@ -10296,10 +10460,11 @@ You must always adhere to all the sections in this instructions file. `Instructi
     - Next steps / unresolved issues
 - This is not documentation. It's a devlog written for a version of yourself that just came back from a blackout with no memory of the last 45 minutes.
   This file is your brain between sessions. Keep it sharp.
-`````
+```
 
 ## File: docs/legacy/Centralize Character Creation Calculation Logic.md
-`````markdown
+
+````markdown
 # Project Plan: Centralize Character Creation Engine v2.1 (with Code)
 
 ## 1. Executive Summary
@@ -10680,10 +10845,11 @@ This project will refactor the character creation data flow from a distributed, 
   1.  Delete the following files: `useAttributeCalculation.ts`, `traitCosts.ts`.
   2.  In `src/lib/stores/characterContext.tsx`, remove the entire `derivedValues` `useMemo` block and its properties from the `contextValue`.
 - **Definition of Done:** The codebase is fully migrated, clean, and relies only on the new centralized architecture.
-`````
+````
 
 ## File: docs/legacy/CLASS_REFACTOR_PLAN.md
-`````markdown
+
+````markdown
 # Refactoring Plan: Externalizing Class Data
 
 **Date:** July 21, 2025
@@ -10782,10 +10948,11 @@ This architecture involves:
   1. Confirm that the list of all 13 classes is displayed correctly.
   2. Select a class and verify that its description, features, and choices are rendered accurately.
   3. Test a few different classes to ensure all JSON files were loaded and parsed correctly.
-`````
+````
 
 ## File: docs/legacy/SESSION_CONTEXT.md
-`````markdown
+
+````markdown
 # DC20 Character Sheet Development Session Context
 
 ## Project Overview
@@ -11089,10 +11256,11 @@ This architecture involves:
 ---
 
 **Session Summary**: Fixed character creation validation bug and completely redesigned PDR to match shield aesthetic with perfect alignment. All three defense shields (PD, PDR, MD) now have consistent appearance and spacing. Git configuration properly set for correct commit attribution.
-`````
+````
 
 ## File: docs/legacy/SESSION_SUMMARY_SPELLS_IMPLEMENTATION.md
-`````markdown
+
+````markdown
 # Spells Component Implementation Session Summary
 
 ## Session Overview
@@ -11268,10 +11436,11 @@ This architecture involves:
 - 🔍 **Next Step**: Debug why component is not executing/rendering
 
 The implementation is technically sound but requires debugging to identify why the component isn't appearing in the user interface.
-`````
+````
 
 ## File: docs/BACKGROUND_SYSTEM.MD
-`````markdown
+
+````markdown
 # DC20Clean – Background System (Skills, Trades, Languages)
 
 > Purpose  
@@ -11314,29 +11483,30 @@ flowchart LR
 
 ## 2 Key Files & Their Roles
 
-| Layer                | File / Dir                                              | Responsibility                                                      |
-| -------------------- | ------------------------------------------------------- | ------------------------------------------------------------------- |
-| Rule Data (canonical) | `src/lib/rulesdata/skills.ts`                           | Declarative `skillsData` array                                      |
-|                      | `src/lib/rulesdata/trades.ts`                           | Declarative `tradesData` array                                      |
-|                      | `src/lib/rulesdata/languages.ts`                        | Declarative `languagesData` array                                   |
-| Type Contracts       | `src/lib/rulesdata/types.ts`                            | `ISkillData`, `ITradeData`, `ILanguageData`                         |
-| Runtime Engine       | `src/lib/services/enhancedCharacterCalculator.ts`       | Computes base budgets, applies trait bonuses, conversions, and usage |
-| State Layer          | `src/lib/stores/characterContext.tsx`                   | Stores background point allocations and conversion counts            |
-| Hook                 | `src/lib/hooks/useCharacterBuilder.ts`                  | Runs calculator and returns `calculationResult.background`           |
-| UI                   | `src/routes/character-creation/Background.tsx` and tabs | Renders editors for skills/trades/languages                          |
+| Layer                 | File / Dir                                              | Responsibility                                                       |
+| --------------------- | ------------------------------------------------------- | -------------------------------------------------------------------- |
+| Rule Data (canonical) | `src/lib/rulesdata/skills.ts`                           | Declarative `skillsData` array                                       |
+|                       | `src/lib/rulesdata/trades.ts`                           | Declarative `tradesData` array                                       |
+|                       | `src/lib/rulesdata/languages.ts`                        | Declarative `languagesData` array                                    |
+| Type Contracts        | `src/lib/rulesdata/types.ts`                            | `ISkillData`, `ITradeData`, `ILanguageData`                          |
+| Runtime Engine        | `src/lib/services/enhancedCharacterCalculator.ts`       | Computes base budgets, applies trait bonuses, conversions, and usage |
+| State Layer           | `src/lib/stores/characterContext.tsx`                   | Stores background point allocations and conversion counts            |
+| Hook                  | `src/lib/hooks/useCharacterBuilder.ts`                  | Runs calculator and returns `calculationResult.background`           |
+| UI                    | `src/routes/character-creation/Background.tsx` and tabs | Renders editors for skills/trades/languages                          |
 
 ---
 
 ## 3 Data Shapes
 
-- Skills: `ISkillData { id, name, attributeAssociation, description }`  
-- Trades: `ITradeData { id, name, attributeAssociation, description, tools? }`  
+- Skills: `ISkillData { id, name, attributeAssociation, description }`
+- Trades: `ITradeData { id, name, attributeAssociation, description, tools? }`
 - Languages: `ILanguageData { id, name, type: 'standard'|'exotic', description }`
 
-Background allocations in store:  
-- `skillsData: Record<string, number>` – mastery levels per skill  
-- `tradesData: Record<string, number>` – mastery levels per trade  
-- `languagesData: Record<string, { fluency: 'limited' | 'fluent' }>` – per-language fluency  
+Background allocations in store:
+
+- `skillsData: Record<string, number>` – mastery levels per skill
+- `tradesData: Record<string, number>` – mastery levels per trade
+- `languagesData: Record<string, { fluency: 'limited' | 'fluent' }>` – per-language fluency
 - Conversions: `{ skillToTrade, tradeToSkill, tradeToLanguage }` numbers on the store
 
 ---
@@ -11344,6 +11514,7 @@ Background allocations in store:
 ## 4 Calculation Model
 
 Within `calculateCharacterWithBreakdowns`:
+
 - Base budgets (Level 1 defaults):
   - Skill Points = `5 + Intelligence + bonus('skillPoints')`
   - Trade Points = `3 + bonus('tradePoints')`
@@ -11359,6 +11530,7 @@ Within `calculateCharacterWithBreakdowns`:
 - Validation emits over-budget errors by step.
 
 Traits can modify these pools using effects:
+
 - `MODIFY_STAT` targets: `skillPoints`, `tradePoints`, `languagePoints`
 
 The calculator exposes a `background` block with:  
@@ -11389,7 +11561,7 @@ The calculator exposes a `background` block with:
    – Add unit tests for any formula changes or new conversions.  
    – Run `npm run test:unit`.
 
-6. Commit Message Template  
+6. Commit Message Template
    ```
    feat(background): update <skills|trades|languages> definitions and budgets
    - rulesdata/<file>.ts: +N updates
@@ -11401,34 +11573,37 @@ The calculator exposes a `background` block with:
 
 ## 6 Troubleshooting FAQ 🤖
 
-| Symptom                                       | Likely Cause                                    | Fix                                                         |
-| --------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------- |
-| Over-budget errors even with minimal choices  | Conversion math or base budget regression       | Re-check §4 formulas and state conversions wiring           |
-| Language points miscounting                   | `common` included in cost                       | Ensure `common` is excluded from `languagePointsUsed` calc  |
-| Trait background bonuses not applied          | Missing `MODIFY_STAT` handling for pool target  | Ensure target matches one of `skillPoints/tradePoints/languagePoints` |
-| New pool not reflected in UI                  | UI not reading calculator `background`          | Update components to use `calculationResult.background`     |
+| Symptom                                      | Likely Cause                                   | Fix                                                                   |
+| -------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------- |
+| Over-budget errors even with minimal choices | Conversion math or base budget regression      | Re-check §4 formulas and state conversions wiring                     |
+| Language points miscounting                  | `common` included in cost                      | Ensure `common` is excluded from `languagePointsUsed` calc            |
+| Trait background bonuses not applied         | Missing `MODIFY_STAT` handling for pool target | Ensure target matches one of `skillPoints/tradePoints/languagePoints` |
+| New pool not reflected in UI                 | UI not reading calculator `background`         | Update components to use `calculationResult.background`               |
 
 ---
 
 ## 7 Future Evolution
 
-- Schema-driven editors for Skills/Trades/Languages.  
+- Schema-driven editors for Skills/Trades/Languages.
 - More granular mastery caps and validation surfaced from the engine.
 
 ---
 
 > Last updated: 2025-08-20  
 > Maintainer: @DC20Clean-Team
-`````
+````
 
 ## File: docs/BACKGROUND_UI_REFACTOR.md
-`````markdown
+
+```markdown
 # Background Section UI Refactoring Memory
 
 ## Overview
+
 We have updated the styling of the Background section in the character creation flow to match the Class Selection screen, using white borders and transparent backgrounds instead of purple-themed elements.
 
 ## Changes Made
+
 1. Added `StyledActionButton` component to `Background.styles.ts` - a styled button with white borders and transparent background
 2. Updated `SkillsTab.tsx` to use `StyledActionButton` for conversion buttons and info sections
 3. Updated `TradesTab.tsx` to use `StyledActionButton` for conversion buttons and info sections
@@ -11437,23 +11612,27 @@ We have updated the styling of the Background section in the character creation 
 6. Standardized the info sections to use white borders on transparent backgrounds
 
 ## Styling Approach
+
 - Replaced colored borders with white borders
 - Switched colored backgrounds to transparent backgrounds
 - Used the `$enabled` prop for StyledActionButton instead of inline styles
 - Implemented proper hover effects through styled-components CSS
 
 ## Known Issues
+
 - The button functionality has some issues in production that will be fixed separately
 - The styling updates are prioritized over functionality fixes for now
 
 ## Next Steps
+
 - Test the visual appearance across all sections of the background page
 - Ensure consistency with the Class Selection screen
 - Address functionality issues in a separate update
-`````
+```
 
 ## File: docs/project_summary.md
-`````markdown
+
+```markdown
 # Project Summary
 
 This document provides a comprehensive overview of the Svelte library project, including its purpose, technology stack, and structure.
@@ -11496,10 +11675,11 @@ The `package.json` file defines several important scripts for managing the proje
 - `package`: Packages the `src/lib` directory into a distributable format.
 - `test`: Executes both unit and end-to-end tests.
 - `db:*`: A set of scripts for managing the PostgreSQL database, including starting the container, applying schema changes, and running migrations.
-`````
+```
 
 ## File: docs/TRAITS_SYSTEM.MD
-`````markdown
+
+````markdown
 # DC20Clean – Traits System (Vertical Slice)
 
 > Purpose  
@@ -11545,17 +11725,18 @@ flowchart LR
 
 ## 2 Key Files & Their Roles
 
-| Layer                | File / Dir                                                        | Responsibility                                                |
-| -------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------- |
-| Rule Data (canonical) | `src/lib/rulesdata/_new_schema/traits.ts`                         | Declarative list of `traitsData` objects                      |
-| Type Contracts       | `src/lib/rulesdata/types.ts`                                      | TS interfaces `ITrait`, `ITraitEffect` (legacy/aux typing)    |
-|                      | `src/lib/rulesdata/schemas/character.schema.ts`                   | Canonical `Effect` union and `Trait` interface                |
-| Validation Tests     | `src/lib/rulesdata/rulesdata.spec.ts`                             | Loads trait data and asserts required fields are present      |
-| Runtime Engine       | `src/lib/services/enhancedCharacterCalculator.ts`                 | Aggregates effects, resolves choices, computes breakdowns     |
-| State Layer          | `src/lib/stores/characterContext.tsx`<br>`src/lib/hooks/useCharacterBuilder.ts` | Provides calculated results and selected choices to UI |
-| UI                   | `src/routes/character-creation/*` (selection)<br>`src/routes/character-sheet/*` (display) | Components import `traitsData` results via context |
+| Layer                 | File / Dir                                                                                | Responsibility                                             |
+| --------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| Rule Data (canonical) | `src/lib/rulesdata/_new_schema/traits.ts`                                                 | Declarative list of `traitsData` objects                   |
+| Type Contracts        | `src/lib/rulesdata/types.ts`                                                              | TS interfaces `ITrait`, `ITraitEffect` (legacy/aux typing) |
+|                       | `src/lib/rulesdata/schemas/character.schema.ts`                                           | Canonical `Effect` union and `Trait` interface             |
+| Validation Tests      | `src/lib/rulesdata/rulesdata.spec.ts`                                                     | Loads trait data and asserts required fields are present   |
+| Runtime Engine        | `src/lib/services/enhancedCharacterCalculator.ts`                                         | Aggregates effects, resolves choices, computes breakdowns  |
+| State Layer           | `src/lib/stores/characterContext.tsx`<br>`src/lib/hooks/useCharacterBuilder.ts`           | Provides calculated results and selected choices to UI     |
+| UI                    | `src/routes/character-creation/*` (selection)<br>`src/routes/character-sheet/*` (display) | Components import `traitsData` results via context         |
 
 Notes:
+
 - Use `schemas/character.schema.ts` as the source of truth for `Effect.type` strings.
 - `traits.ts` currently imports `Trait` from `schemas/character.schema.ts` to ensure alignment.
 
@@ -11579,10 +11760,10 @@ Notes:
 4. Choice-based Traits  
    – If the effect requires player input, add `userChoice` to the effect: `{ prompt, options? }`.  
    – `resolveEffectChoices` currently resolves:  
-     • `MODIFY_ATTRIBUTE` with `target: 'any_attribute'`  
-     • `GRANT_SKILL_EXPERTISE` with `target: 'any_skill'`  
-     • `GRANT_TRADE_EXPERTISE` with `target: 'any_trade'`  
-   – If you introduce a new "any_*" pattern, extend `resolveEffectChoices` and `getOptionsForEffect` accordingly.
+    • `MODIFY_ATTRIBUTE` with `target: 'any_attribute'`  
+    • `GRANT_SKILL_EXPERTISE` with `target: 'any_skill'`  
+    • `GRANT_TRADE_EXPERTISE` with `target: 'any_trade'`  
+   – If you introduce a new "any\_\*" pattern, extend `resolveEffectChoices` and `getOptionsForEffect` accordingly.
 
 5. Calculator Support  
    – Numeric buffs/debuffs → ensure the `target` is recognized by `createStatBreakdown` or aggregated in `calculateCharacterWithBreakdowns`.  
@@ -11599,7 +11780,7 @@ Notes:
 8. Docs  
    – If the trait creates a new general mechanic, document it under §4.
 
-9. Commit Message Template  
+9. Commit Message Template
    ```
    feat(rules): add <TraitName> trait
    - traits.ts: +1 entry (<ancestryId>_<trait_id>)
@@ -11610,168 +11791,195 @@ Notes:
 
 ## 4 Adding New Trait Effect Type – Decision Matrix
 
-| Question                                           | Yes                                                            | No                                      |
-| -------------------------------------------------- | -------------------------------------------------------------- | --------------------------------------- |
-| Does an existing `Effect.type` cover the mechanic? | Use it → go to Step 5                                          | Create new type → continue              |
-| Does the effect alter a numeric stat?              | Implement in calculator (`createStatBreakdown` or dedicated)   | Use `GRANT_ABILITY` + manual rules text |
-| Does the UI need to resolve user choice?           | Add `effect.userChoice` and extend `resolveEffectChoices` if needed | —                                  |
+| Question                                           | Yes                                                                 | No                                      |
+| -------------------------------------------------- | ------------------------------------------------------------------- | --------------------------------------- |
+| Does an existing `Effect.type` cover the mechanic? | Use it → go to Step 5                                               | Create new type → continue              |
+| Does the effect alter a numeric stat?              | Implement in calculator (`createStatBreakdown` or dedicated)        | Use `GRANT_ABILITY` + manual rules text |
+| Does the UI need to resolve user choice?           | Add `effect.userChoice` and extend `resolveEffectChoices` if needed | —                                       |
 
 When a new type is created:
-1. Extend the `Effect.type` union in `schemas/character.schema.ts`.  
-2. Implement handling in `enhancedCharacterCalculator.ts` (aggregation and/or breakdown).  
-3. Update any helpers (`getOptionsForEffect`, `resolveEffectChoices`) if choices are involved.  
+
+1. Extend the `Effect.type` union in `schemas/character.schema.ts`.
+2. Implement handling in `enhancedCharacterCalculator.ts` (aggregation and/or breakdown).
+3. Update any helpers (`getOptionsForEffect`, `resolveEffectChoices`) if choices are involved.
 4. Write unit tests.
 
 ---
 
 ## 5 Troubleshooting FAQ 🤖
 
-| Symptom                                         | Likely Cause                                                     | Fix                                                             |
-| ----------------------------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------- |
-| Trait not visible / loaded                      | Not added to `_new_schema/traits.ts` or `id` mismatch            | Verify entry and `id` format                                    |
-| Unit test `rulesdata.spec.ts` fails             | Missing required fields or malformed `effects`                   | Ensure `id`, `name`, `cost`, and `effects[]` are present        |
-| Stats not updating for new numeric effect       | `target` not recognized in calculator                           | Map `target` in `createStatBreakdown` or associated aggregators  |
-| Choice prompt not appearing in UI               | `effect.userChoice` missing or unresolved                        | Add `userChoice`; ensure `resolveEffectChoices` supports target  |
-| Vite import error for traits                    | Import path typo                                                 | Use `_new_schema/traits`                                        |
+| Symptom                                   | Likely Cause                                          | Fix                                                             |
+| ----------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------- |
+| Trait not visible / loaded                | Not added to `_new_schema/traits.ts` or `id` mismatch | Verify entry and `id` format                                    |
+| Unit test `rulesdata.spec.ts` fails       | Missing required fields or malformed `effects`        | Ensure `id`, `name`, `cost`, and `effects[]` are present        |
+| Stats not updating for new numeric effect | `target` not recognized in calculator                 | Map `target` in `createStatBreakdown` or associated aggregators |
+| Choice prompt not appearing in UI         | `effect.userChoice` missing or unresolved             | Add `userChoice`; ensure `resolveEffectChoices` supports target |
+| Vite import error for traits              | Import path typo                                      | Use `_new_schema/traits`                                        |
 
 ---
 
 ## 6 Future Evolution
 
-- Effect Processor unification may centralize trait effect resolution across ancestries and classes.  
+- Effect Processor unification may centralize trait effect resolution across ancestries and classes.
 - Schema-driven editors may auto-render trait forms from `Trait` and `Effect` metadata.
 
 ---
 
 > Last updated: 2025-08-20  
 > Maintainer: @DC20Clean-Team
-`````
+````
 
 ## File: e2e/human-cleric.e2e.spec.ts
-`````typescript
+
+```typescript
 import { test, expect } from '@playwright/test';
 
-test('Human Cleric E2E: domains Ancestral + Magic, full flow and saved object', async ({ page, context }) => {
-  await context.addInitScript(() => localStorage.clear());
+test('Human Cleric E2E: domains Ancestral + Magic, full flow and saved object', async ({
+	page,
+	context
+}) => {
+	await context.addInitScript(() => localStorage.clear());
 
-  await page.goto('/');
-  await page.goto('/create-character');
+	await page.goto('/');
+	await page.goto('/create-character');
 
-  // Step 1: Class & Features
-  await page.getByText(/^Cleric$/).click();
-  // Select 2 domains (multi-select): Ancestral and Magic
-  await expect(page.getByText('Choose 2 Divine Domains')).toBeVisible();
-  await page.locator('input[type=checkbox][name="cleric_cleric_order_1"][value="Ancestral"]').check();
-  await page.locator('input[type=checkbox][name="cleric_cleric_order_1"][value="Magic"]').check();
-  await page.getByRole('button', { name: 'Next →' }).click();
+	// Step 1: Class & Features
+	await page.getByText(/^Cleric$/).click();
+	// Select 2 domains (multi-select): Ancestral and Magic
+	await expect(page.getByText('Choose 2 Divine Domains')).toBeVisible();
+	await page
+		.locator('input[type=checkbox][name="cleric_cleric_order_1"][value="Ancestral"]')
+		.check();
+	await page.locator('input[type=checkbox][name="cleric_cleric_order_1"][value="Magic"]').check();
+	await page.getByRole('button', { name: 'Next →' }).click();
 
-  // Step 2: Ancestry (Human). Spend 7 points: 5 default + Trade Expertise (1) + Unbreakable (1)
-  await page.getByText(/^Human$/).click();
-  // Select default Human traits (5 points total)
-  await page.getByLabel(/Attribute Increase/i).check();
-  await page.getByLabel(/Skill Expertise/i).check();
-  await page.getByLabel(/Human Resolve/i).check();
-  await page.getByLabel(/Undying/i).check();
-  // Expanded traits to reach 7 total
-  await page.getByLabel(/Trade Expertise/i).check();
-  await page.getByLabel(/Unbreakable/i).check();
-  await expect(page.getByText(/Remaining:\s*0/)).toBeVisible();
-  await page.getByRole('button', { name: 'Next →' }).click();
+	// Step 2: Ancestry (Human). Spend 7 points: 5 default + Trade Expertise (1) + Unbreakable (1)
+	await page.getByText(/^Human$/).click();
+	// Select default Human traits (5 points total)
+	await page.getByLabel(/Attribute Increase/i).check();
+	await page.getByLabel(/Skill Expertise/i).check();
+	await page.getByLabel(/Human Resolve/i).check();
+	await page.getByLabel(/Undying/i).check();
+	// Expanded traits to reach 7 total
+	await page.getByLabel(/Trade Expertise/i).check();
+	await page.getByLabel(/Unbreakable/i).check();
+	await expect(page.getByText(/Remaining:\s*0/)).toBeVisible();
+	await page.getByRole('button', { name: 'Next →' }).click();
 
-  // Step 3: Attributes (13 total = 12 + human attribute increase)
-  // Helper to click the + inside a specific attribute card
-  async function incAttr(name: string, times: number) {
-    const card = page.locator('div', { has: page.getByRole('heading', { name }) });
-    for (let i = 0; i < times; i++) {
-      await card.getByRole('button', { name: '+' }).click();
-    }
-  }
-  await incAttr('Might', 2);
-  await incAttr('Intelligence', 3);
-  await expect(page.getByText(/Attribute Points:\s*0|Remaining:\s*0/)).toBeVisible();
-  await page.getByRole('button', { name: 'Next →' }).click();
+	// Step 3: Attributes (13 total = 12 + human attribute increase)
+	// Helper to click the + inside a specific attribute card
+	async function incAttr(name: string, times: number) {
+		const card = page.locator('div', { has: page.getByRole('heading', { name }) });
+		for (let i = 0; i < times; i++) {
+			await card.getByRole('button', { name: '+' }).click();
+		}
+	}
+	await incAttr('Might', 2);
+	await incAttr('Intelligence', 3);
+	await expect(page.getByText(/Attribute Points:\s*0|Remaining:\s*0/)).toBeVisible();
+	await page.getByRole('button', { name: 'Next →' }).click();
 
-  // Step 4: Background – Skills
-  await page.getByText(/^Skills$/).click();
-  // Convert 1 skill → 2 trade
-  await page.getByRole('button', { name: /Convert 1 Skill.*2 Trade/i }).click();
-  // Invest: Athletics +2; Intimidation, Acrobatics, Insight, Investigation +1
-  for (let i = 0; i < 2; i++) await page.getByRole('button', { name: /Athletics \+/ }).click();
-  for (const s of ['Intimidation','Acrobatics','Insight','Investigation']) {
-    await page.getByRole('button', { name: new RegExp(`${s} \\+`) }).click();
-  }
-  await expect(page.getByText(/Skill Points:\s*0\s*\/\s*\d+/)).toBeVisible();
+	// Step 4: Background – Skills
+	await page.getByText(/^Skills$/).click();
+	// Convert 1 skill → 2 trade
+	await page.getByRole('button', { name: /Convert 1 Skill.*2 Trade/i }).click();
+	// Invest: Athletics +2; Intimidation, Acrobatics, Insight, Investigation +1
+	for (let i = 0; i < 2; i++) await page.getByRole('button', { name: /Athletics \+/ }).click();
+	for (const s of ['Intimidation', 'Acrobatics', 'Insight', 'Investigation']) {
+		await page.getByRole('button', { name: new RegExp(`${s} \\+`) }).click();
+	}
+	await expect(page.getByText(/Skill Points:\s*0\s*\/\s*\d+/)).toBeVisible();
 
-  // Trades
-  await page.getByText(/^Trades$/).click();
-  // Convert 1 trade → 2 language
-  await page.getByRole('button', { name: /Convert 1 Trade.*2 Language/i }).click();
-  // Invest: Alchemy +2, Blacksmithing +1, Calligraphy +1, Gaming +1
-  for (let i = 0; i < 2; i++) await page.getByRole('button', { name: /Alchemy \+/ }).click();
-  for (const t of ['Blacksmithing','Calligraphy','Gaming']) {
-    await page.getByRole('button', { name: new RegExp(`${t} \\+`) }).click();
-  }
-  await expect(page.getByText(/Trade Points:\s*0\s*\/\s*\d+/)).toBeVisible();
+	// Trades
+	await page.getByText(/^Trades$/).click();
+	// Convert 1 trade → 2 language
+	await page.getByRole('button', { name: /Convert 1 Trade.*2 Language/i }).click();
+	// Invest: Alchemy +2, Blacksmithing +1, Calligraphy +1, Gaming +1
+	for (let i = 0; i < 2; i++) await page.getByRole('button', { name: /Alchemy \+/ }).click();
+	for (const t of ['Blacksmithing', 'Calligraphy', 'Gaming']) {
+		await page.getByRole('button', { name: new RegExp(`${t} \\+`) }).click();
+	}
+	await expect(page.getByText(/Trade Points:\s*0\s*\/\s*\d+/)).toBeVisible();
 
-  // Languages
-  await page.getByText(/^Languages$/).click();
-  await page.getByRole('button', { name: /Elvish Fluent/i }).click();
-  await page.getByRole('button', { name: /Draconic Limited/i }).click();
-  await page.getByRole('button', { name: /Dwarvish Limited/i }).click();
-  await expect(page.getByText(/Language Points:\s*0\s*\/\s*\d+/)).toBeVisible();
-  await page.getByRole('button', { name: 'Next →' }).click();
+	// Languages
+	await page.getByText(/^Languages$/).click();
+	await page.getByRole('button', { name: /Elvish Fluent/i }).click();
+	await page.getByRole('button', { name: /Draconic Limited/i }).click();
+	await page.getByRole('button', { name: /Dwarvish Limited/i }).click();
+	await expect(page.getByText(/Language Points:\s*0\s*\/\s*\d+/)).toBeVisible();
+	await page.getByRole('button', { name: 'Next →' }).click();
 
-  // Step 5: skip spells/maneuvers
-  await page.getByRole('button', { name: 'Next →' }).click();
+	// Step 5: skip spells/maneuvers
+	await page.getByRole('button', { name: 'Next →' }).click();
 
-  // Step 6: Names
-  await page.getByLabel(/Character Name/i).fill('human cleric test');
-  await page.getByLabel(/Player Name/i).fill('playwright');
-  await page.getByText(/Complete|Finish/i).click();
+	// Step 6: Names
+	await page.getByLabel(/Character Name/i).fill('human cleric test');
+	await page.getByLabel(/Player Name/i).fill('playwright');
+	await page.getByText(/Complete|Finish/i).click();
 
-  // Verify saved character from localStorage
-  const saved = await page.evaluate(() => {
-    const list = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-    return list.find((c: any) => c.finalName === 'human cleric test');
-  });
+	// Verify saved character from localStorage
+	const saved = await page.evaluate(() => {
+		const list = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+		return list.find((c: any) => c.finalName === 'human cleric test');
+	});
 
-  expect(saved).toBeTruthy();
-  expect(saved.classId).toBe('cleric');
-  expect(saved.ancestry1Id).toBe('human');
-  // Domains selection key may vary; ensure choices contain Ancestral and Magic somewhere
-  const choices = saved.selectedFeatureChoices || {};
-  const allChoiceValues = Object.values(choices).flat();
-  expect(allChoiceValues).toEqual(expect.arrayContaining(['Ancestral','Magic']));
+	expect(saved).toBeTruthy();
+	expect(saved.classId).toBe('cleric');
+	expect(saved.ancestry1Id).toBe('human');
+	// Domains selection key may vary; ensure choices contain Ancestral and Magic somewhere
+	const choices = saved.selectedFeatureChoices || {};
+	const allChoiceValues = Object.values(choices).flat();
+	expect(allChoiceValues).toEqual(expect.arrayContaining(['Ancestral', 'Magic']));
 
-  // Traits contain Trade Expertise, Unbreakable, and Attribute Increase
-  expect(saved.selectedTraitIds).toEqual(
-    expect.arrayContaining(['human_trade_expertise','human_unbreakable','human_attribute_increase'])
-  );
+	// Traits contain Trade Expertise, Unbreakable, and Attribute Increase
+	expect(saved.selectedTraitIds).toEqual(
+		expect.arrayContaining([
+			'human_trade_expertise',
+			'human_unbreakable',
+			'human_attribute_increase'
+		])
+	);
 
-  // Attributes
-  expect(saved.attribute_might).toBeGreaterThanOrEqual(2);
-  expect(saved.attribute_intelligence).toBeGreaterThanOrEqual(3);
+	// Attributes
+	expect(saved.attribute_might).toBeGreaterThanOrEqual(2);
+	expect(saved.attribute_intelligence).toBeGreaterThanOrEqual(3);
 
-  // Background allocations minimums
-  expect(saved.skillsData).toMatchObject({ athletics: 2, intimidation: 1, acrobatics: 1, insight: 1, investigation: 1 });
-  expect(saved.tradesData).toMatchObject({ alchemy: 2, blacksmithing: 1, calligraphy: 1, gaming: 1 });
-  expect(saved.languagesData).toMatchObject({
-    common: { fluency: 'fluent' }, elvish: { fluency: 'fluent' }, draconic: { fluency: 'limited' }, dwarvish: { fluency: 'limited' }
-  });
+	// Background allocations minimums
+	expect(saved.skillsData).toMatchObject({
+		athletics: 2,
+		intimidation: 1,
+		acrobatics: 1,
+		insight: 1,
+		investigation: 1
+	});
+	expect(saved.tradesData).toMatchObject({
+		alchemy: 2,
+		blacksmithing: 1,
+		calligraphy: 1,
+		gaming: 1
+	});
+	expect(saved.languagesData).toMatchObject({
+		common: { fluency: 'fluent' },
+		elvish: { fluency: 'fluent' },
+		draconic: { fluency: 'limited' },
+		dwarvish: { fluency: 'limited' }
+	});
 });
-`````
+```
 
 ## File: src/lib/config/features.ts
-`````typescript
+
+```typescript
 // Feature flags for enabling new systems during development
 export const FEATURES = {
 	NEW_EFFECT_SYSTEM:
 		process.env.NODE_ENV === 'development' && process.env.VITE_NEW_EFFECTS === 'true'
 };
-`````
+```
 
 ## File: src/lib/hooks/useEnhancedCharacterCalculation.ts
-`````typescript
+
+```typescript
 /**
  * Enhanced Character Calculation Hook
  *
@@ -12059,10 +12267,11 @@ export function useStatBreakdowns() {
 	const { calculationResult } = useEnhancedCharacterCalculation();
 	return calculationResult.breakdowns;
 }
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/barbarian_features.ts
-`````typescript
+## File: src/lib/rulesdata/\_new_schema/barbarian_features.ts
+
+```typescript
 import type { ClassDefinition } from '../schemas/character.schema';
 
 export const barbarianClass: ClassDefinition = {
@@ -12453,10 +12662,11 @@ export const barbarianClass: ClassDefinition = {
 		}
 	]
 };
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/bard_features.ts
-`````typescript
+## File: src/lib/rulesdata/\_new_schema/bard_features.ts
+
+```typescript
 /**
  * Bard Class Definition - New Effect Schema
  * Based on DC20 Bard features with spellcasting and performance abilities
@@ -12759,10 +12969,11 @@ export const bardClass: ClassDefinition = {
 		}
 	]
 };
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/champion_features.ts
-`````typescript
+## File: src/lib/rulesdata/\_new_schema/champion_features.ts
+
+```typescript
 /**
  * Champion Class Definition - New Effect Schema
  * Based on DC20 Champion features
@@ -12906,10 +13117,11 @@ export const championClass: ClassDefinition = {
 	],
 	subclasses: []
 };
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/commander_features.ts
-`````typescript
+## File: src/lib/rulesdata/\_new_schema/commander_features.ts
+
+```typescript
 /**
  * Commander Class Definition - New Effect Schema
  * Based on DC20 Commander features with martial abilities and leadership
@@ -13197,10 +13409,11 @@ export const commanderClass: ClassDefinition = {
 		}
 	]
 };
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/druid_features.ts
-`````typescript
+## File: src/lib/rulesdata/\_new_schema/druid_features.ts
+
+```typescript
 /**
  * Druid Class Definition - New Effect Schema
  * Based on DC20 Druid features with wild form and domain abilities
@@ -13502,10 +13715,11 @@ export const druidClass: ClassDefinition = {
 		}
 	]
 };
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/hunter_features.ts
-`````typescript
+## File: src/lib/rulesdata/\_new_schema/hunter_features.ts
+
+```typescript
 /**
  * Hunter Class Definition - New Effect Schema
  * Based on the DC20 rule analysis from classAndAncestryAndCalcRefactor.md
@@ -13744,10 +13958,11 @@ export const hunterClass: ClassDefinition = {
 	],
 	subclasses: []
 };
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/wizard_features.ts
-`````typescript
+## File: src/lib/rulesdata/\_new_schema/wizard_features.ts
+
+```typescript
 /**
  * Wizard Class Definition - New Effect Schema
  * Based on DC20 Wizard features with spell school specialization
@@ -13911,10 +14126,11 @@ export const wizardClass: ClassDefinition = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/loaders/class.loader.ts
-`````typescript
+
+```typescript
 import { classesDataSchema, type IClassDefinition } from '../schemas/class.schema';
 
 // Use Vite's import.meta.glob to import only the class table JSON files.
@@ -13991,10 +14207,11 @@ const validatedData = classesDataSchema.parse(compatibleData);
 
 // Export the validated data with the correct type.
 export const classesData: IClassDefinition[] = validatedData;
-`````
+```
 
 ## File: src/lib/rulesdata/schemas/class.schema.ts
-`````typescript
+
+```typescript
 import { z } from 'zod';
 
 // Schema for IEffect
@@ -14096,10 +14313,11 @@ export const classesDataSchema = z.array(classSchema);
 
 // Infer the TypeScript type from the schema
 export type IClassDefinition = z.infer<typeof classSchema>;
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/fire-and-flames/fire-bolt.ts
-`````typescript
+
+```typescript
 import {
 	Spell,
 	SpellSchool,
@@ -14142,10 +14360,11 @@ export const fireBolt: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/holy-and-restoration/sacred-bolt.ts
-`````typescript
+
+```typescript
 import {
 	Spell,
 	SpellSchool,
@@ -14189,10 +14408,11 @@ export const sacredBolt: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/ice-and-illusions/frost-bolt.ts
-`````typescript
+
+```typescript
 import {
 	Spell,
 	SpellSchool,
@@ -14236,10 +14456,11 @@ export const frostBolt: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/lightning-and-teleportation/lightning-bolt.ts
-`````typescript
+
+```typescript
 import {
 	Spell,
 	SpellSchool,
@@ -14283,10 +14504,11 @@ export const lightningBolt: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/spells-data/spells/psychic-and-enchantment/psi-bolt.ts
-`````typescript
+
+```typescript
 import {
 	Spell,
 	SpellSchool,
@@ -14330,10 +14552,11 @@ export const psiBolt: Spell = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/types.ts
-`````typescript
+
+```typescript
 // src/lib/rulesdata/types.ts
 
 // Interface for Attribute Data
@@ -14468,10 +14691,11 @@ export interface ILanguageData {
 	type: 'standard' | 'exotic'; // Type of language
 	description: string;
 }
-`````
+```
 
 ## File: src/lib/services/dataMapping.ts
-`````typescript
+
+```typescript
 // Data mapping utilities for converting between IDs and names
 import { ancestriesData } from '../rulesdata/_new_schema/ancestries';
 import { classesData } from '../rulesdata/loaders/class.loader';
@@ -14572,10 +14796,11 @@ export const normalizeCharacterData = (characterData: any): any => {
 
 	return normalized;
 };
-`````
+```
 
 ## File: src/lib/utils/defenseNotes.ts
-`````typescript
+
+```typescript
 import { DefenseNote } from '../../types/defenseNotes';
 import { getCharacterById, getAllSavedCharacters, saveAllCharacters } from './storageUtils';
 
@@ -14721,10 +14946,11 @@ export const getDefenseDisplayName = (field: 'manualPD' | 'manualPDR' | 'manualA
 			return field;
 	}
 };
-`````
+```
 
-## File: src/routes/api/_backup/character/progress/_backup_merge_stages_20250621/stageB+server.ts
-`````typescript
+## File: src/routes/api/\_backup/character/progress/\_backup_merge_stages_20250621/stageB+server.ts
+
+```typescript
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { PrismaClient } from '@prisma/client';
@@ -14944,10 +15170,11 @@ export const POST: RequestHandler = async ({ request }) => {
 //         return json({ success: false, message: 'Failed to fetch Stage B data.' }, { status: 500 });
 //     }
 // };
-`````
+```
 
 ## File: src/routes/character-creation/styles/Background.styles.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledContainer = styled.div`
@@ -15121,10 +15348,11 @@ export const StyledActionButton = styled.button<{ $enabled?: boolean }>`
 		opacity: 0.6;
 	}
 `;
-`````
+```
 
 ## File: src/routes/character-creation/styles/ClassFeatures.styles.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledContainer = styled.div`
@@ -15259,10 +15487,11 @@ export const StyledBenefitDescription = styled.p`
 	font-size: 0.9rem;
 	line-height: 1.4;
 `;
-`````
+```
 
 ## File: src/routes/character-creation/styles/SelectedAncestries.styles.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledOuterContainer = styled.div`
@@ -15353,10 +15582,11 @@ export const StyledCheckbox = styled.input`
 	accent-color: #fbbf24;
 	cursor: pointer;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/components/AttackPopup.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import type { AttackData } from '../../../types';
 import type { Weapon } from '../../../lib/rulesdata/inventoryItems';
@@ -15500,10 +15730,11 @@ const AttackPopup: React.FC<AttackPopupProps> = ({ selectedAttack, onClose }) =>
 };
 
 export default AttackPopup;
-`````
+```
 
 ## File: src/routes/character-sheet/components/AttributesSections.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import type { SkillData, TradeData, LanguageData, CharacterSheetData } from '../../../types';
 import {
@@ -15745,10 +15976,11 @@ const AttributesSections: React.FC<AttributesSectionsProps> = ({
 };
 
 export default AttributesSections;
-`````
+```
 
 ## File: src/routes/character-sheet/components/DiceRoller.tsx
-`````typescript
+
+```typescript
 import React, { useState } from 'react';
 import { StyledDiceRollerContainer } from '../styles/DiceRoller';
 import {
@@ -16251,10 +16483,11 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll }) => {
 };
 
 export default DiceRoller;
-`````
+```
 
 ## File: src/routes/character-sheet/components/EnhancedFeatures.tsx
-`````typescript
+
+```typescript
 /**
  * Enhanced Features Display with Source Attribution
  *
@@ -16662,10 +16895,11 @@ const EnhancedFeatures: React.FC<EnhancedFeaturesProps> = ({ calculationResult }
 };
 
 export default EnhancedFeatures;
-`````
+```
 
 ## File: src/routes/character-sheet/components/EnhancedStatTooltips.tsx
-`````typescript
+
+```typescript
 /**
  * Enhanced Stat Tooltips with Effect Attribution
  *
@@ -16965,10 +17199,11 @@ export const createEnhancedJumpTooltip = (
 		</div>
 	);
 };
-`````
+```
 
 ## File: src/routes/character-sheet/components/FeaturePopup.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import type { FeatureData } from '../../../types';
 import {
@@ -17008,10 +17243,11 @@ const FeaturePopup: React.FC<FeaturePopupProps> = ({ feature, onClose }) => {
 };
 
 export default FeaturePopup;
-`````
+```
 
 ## File: src/routes/character-sheet/components/FloatingBackground.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import styled from 'styled-components';
 import backgroundImage from '../../../assets/Desktop.png';
@@ -17052,10 +17288,11 @@ const FloatingBackground: React.FC = () => {
 };
 
 export default FloatingBackground;
-`````
+```
 
 ## File: src/routes/character-sheet/components/StatTooltips.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import type { CharacterSheetData } from '../../../types';
 
@@ -17225,10 +17462,11 @@ export const createSPTooltip = (characterData: CharacterSheetData): React.ReactN
 		</div>
 	);
 };
-`````
+```
 
 ## File: src/routes/character-sheet/components/Tooltip.tsx
-`````typescript
+
+```typescript
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -17372,10 +17610,11 @@ const Tooltip: React.FC<TooltipProps> = ({
 };
 
 export default Tooltip;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Attacks.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledAttacksSection = styled.div`
@@ -17555,10 +17794,11 @@ export const StyledDamageTypeCell = styled.div`
 	font-weight: bold;
 	cursor: pointer;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Attributes.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledAttributeSection = styled.div`
@@ -17716,10 +17956,11 @@ export const PrimeValue = styled.div`
 	font-weight: bold;
 	color: #8b4513;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Combat.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledCombatSection = styled.div`
@@ -17889,10 +18130,11 @@ export const StyledCombatStatBoxLabel = styled.div`
 	color: #666;
 	margin-top: 0.2rem;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/DiceRoller.ts
-`````typescript
+
+```typescript
 import styled, { keyframes, css } from 'styled-components';
 
 // Draconic fire animations
@@ -18361,10 +18603,11 @@ export const StyledDiceHistory = styled.div`
 		letter-spacing: 0.5px;
 	}
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/FeaturePopup.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledFeaturePopupOverlay = styled.div`
@@ -18490,10 +18733,11 @@ export const StyledFeaturePopupSourceInfo = styled.div`
 	color: #666;
 	font-style: italic;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Potions.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 interface PotionCircleProps {
@@ -18626,10 +18870,11 @@ export const StyledTempHPDisplay = styled.div`
 	gap: 0.2rem;
 	text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Skills.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledSkillsSection = styled.div`
@@ -18661,10 +18906,11 @@ export const StyledDot = styled.div<{ $filled: boolean }>`
 	border: 1px solid #8b4513;
 	background: ${(props) => (props.$filled ? '#8b4513' : 'white')};
 `;
-`````
+```
 
 ## File: src/styles/GlobalFonts.ts
-`````typescript
+
+```typescript
 import { createGlobalStyle } from 'styled-components';
 
 export const GlobalFonts = createGlobalStyle`
@@ -18676,10 +18922,11 @@ export const GlobalFonts = createGlobalStyle`
     font-display: swap;
   }
 `;
-`````
+```
 
 ## File: src/tests/parity/characterEngine.parity.spec.tsx
-`````typescript
+
+```typescript
 /**
  * Character Engine Parity Tests
  *
@@ -18946,10 +19193,11 @@ describe('Character Engine Parity Tests', () => {
 		expect(() => calculateCharacterWithBreakdowns(convertToEnhancedBuildData(empty))).not.toThrow();
 	});
 });
-`````
+```
 
 ## File: index.html
-`````html
+
+```html
 <!doctype html>
 <html lang="en">
 	<head>
@@ -18963,10 +19211,11 @@ describe('Character Engine Parity Tests', () => {
 		<script type="module" src="/src/main.tsx"></script>
 	</body>
 </html>
-`````
+```
 
 ## File: playwright.config.ts
-`````typescript
+
+```typescript
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
@@ -18979,10 +19228,11 @@ export default defineConfig({
 	},
 	testDir: 'e2e'
 });
-`````
+```
 
 ## File: vite.config.ts
-`````typescript
+
+```typescript
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
@@ -19011,19 +19261,21 @@ export default defineConfig({
 		outDir: 'dist'
 	}
 });
-`````
+```
 
 ## File: .cursor-rules/rules.yaml
-`````yaml
+
+```yaml
 ---
 description:
 globs:
 alwaysApply: false
 ---
-`````
+```
 
 ## File: .github/workflows/ci.yml
-`````yaml
+
+```yaml
 name: CI
 
 on:
@@ -19055,10 +19307,11 @@ jobs:
 
       - name: Build
         run: npm run build
-`````
+```
 
 ## File: docs/legacy/CALCULATION_FIXES_SUMMARY.md
-`````markdown
+
+````markdown
 # ✅ **CHARACTER SHEET CALCULATION FIXES**
 
 ## 🚨 **ISSUES IDENTIFIED AND FIXED**
@@ -19264,9 +19517,10 @@ These fixes ensure that:
 6. **All modifiers** are properly applied
 
 **The character sheet now provides accurate, DC20-compliant calculations!** 🎉
-`````
+````
 
 ## File: docs/legacy/classAndAncestryAndCalcRefactor.md
+
 `````markdown
 ### **A Unified Plan for a Robust Character Data Schema**
 
@@ -20003,7 +20257,8 @@ VITE_NEW_EFFECTS=true
 `````
 
 ## File: docs/legacy/IMPLEMENTATION_COMPLETE.md
-`````markdown
+
+````markdown
 # ✅ ENHANCED CHARACTER SYSTEM - IMPLEMENTATION COMPLETE
 
 ## 🎉 **MAJOR MILESTONE ACHIEVED**
@@ -20242,10 +20497,11 @@ The enhanced character system is **fully operational** and ready to provide user
 - ✅ Complete transparency in character building
 
 **The vision of a robust, maintainable, and scalable character creation system has been successfully realized!** 🚀
-`````
+````
 
 ## File: docs/legacy/REFACTOR_SUMMARY.md
-`````markdown
+
+````markdown
 # Character Data Schema Refactor - COMPLETED ✅
 
 ## Executive Summary
@@ -20346,10 +20602,11 @@ The system successfully eliminates the primary technical debt in character calcu
 5. Create admin tools for non-technical rule editing
 
 **Status: Core refactor complete and validated ✅**
-`````
+````
 
 ## File: docs/CHAR_SHEET_REFACTOR.md
-`````markdown
+
+````markdown
 # Character-Sheet State Refactor v1.0
 
 | Ticket | `TICKET-UI-147`           |
@@ -20457,10 +20714,11 @@ Trigger `save(state.character)` inside a `useEffect` watching `state.character`.
 ---
 
 _End of Plan_
-`````
+````
 
 ## File: docs/CHAR_SHEET_UI_REFACTOR.md
-`````markdown
+
+````markdown
 ### Character Sheet UI Refactor Plan (Context-Based, Aggressive)
 
 Updated: {{DATE}}
@@ -20609,10 +20867,11 @@ Updated: {{DATE}}
 - **Desktop/Mobile**: switch to Context + selectors; keep popups local; wire AP/currency/resources/defenses.
 - **Router**: switch to Desktop/Mobile.
 - **Cleanup**: remove unused `StatTooltips.tsx` only if not imported.
-`````
+````
 
 ## File: docs/CLASS_SYSTEM.MD
-`````markdown
+
+````markdown
 # DC20Clean – Class System (Vertical Slice)
 
 > **Purpose**  
@@ -20753,10 +21012,11 @@ flowchart LR
 
 > _Last updated: 2025-08-18_  
 > Maintainer: @DC20Clean-Team
-`````
+````
 
 ## File: docs/CODEBASE_CONSOLIDATION_PLAN.md
-`````markdown
+
+````markdown
 Excellent. You've provided two key pieces of information:
 
 1.  A detailed, executable plan for refactoring the codebase.
@@ -21179,9 +21439,10 @@ Begin with Action Item 1.
     	});
     });
     ```
-`````
+````
 
 ## File: docs/DATA_FLOW_REFACTOR_PLAN_PARTIAL.md
+
 `````markdown
 # AI-Optimized Character System Refactor Plan
 
@@ -21432,38 +21693,47 @@ const result = calculateCharacterWithBreakdowns(enhancedData);
 **1.2.1: Replace `getCharacterData` function**
 
 **Search for:**
+
 ```typescript
 try {
 console.log('🧮 Running enhanced calculator for character data...');
 // ... build mock data from stored final\* values ...
 const result = calculateCharacterWithBreakdowns(enhancedData);
 
-````
+```
 
 **Replace with:**
-        ```typescript
-import { deserializeCharacterFromStorage, getAllSavedCharacters } from '../../lib/utils/storageUtils';
+
+```typescript
+import {
+	deserializeCharacterFromStorage,
+	getAllSavedCharacters
+} from '../../lib/utils/storageUtils';
 
 const getCharacterData = async (characterId: string): Promise<SavedCharacter> => {
-  const savedCharacters = getAllSavedCharacters();
-  const character = savedCharacters.find((char) => char.id === characterId);
+	const savedCharacters = getAllSavedCharacters();
+	const character = savedCharacters.find((char) => char.id === characterId);
 
-  if (!character) {
-    throw new Error(`Character with ID ${characterId} not found`);
-  }
+	if (!character) {
+		throw new Error(`Character with ID ${characterId} not found`);
+	}
 
-  // Trust the stored data - it's the single source of truth
-  // No recalculation needed!
-  return character;
-        };
-        ```
+	// Trust the stored data - it's the single source of truth
+	// No recalculation needed!
+	return character;
+};
+```
 
 **1.2.2: Remove import statements**
 
 **Search for and remove:**
-        ```typescript
-import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from '../../lib/services/enhancedCharacterCalculator';
-````
+
+```typescript
+import {
+	convertToEnhancedBuildData,
+	calculateCharacterWithBreakdowns
+} from '../../lib/services/enhancedCharacterCalculator';
+```
 
 **1.2.3: Remove helper functions**
 
@@ -21509,14 +21779,15 @@ currentSP: state.resources.current.currentSP,
 **1.3.1: Simplify `saveCharacterState` function**
 
 **Search for:**
-    ```typescript
-    savedCharacters[characterIndex] = {
-        ...savedCharacters[characterIndex],
-    characterState: state,
-        // Also maintain backwards compatibility with old format
-    currentHP: state.resources.current.currentHP,
-    currentSP: state.resources.current.currentSP,
+```typescript
+savedCharacters[characterIndex] = {
+...savedCharacters[characterIndex],
+characterState: state,
+// Also maintain backwards compatibility with old format
+currentHP: state.resources.current.currentHP,
+currentSP: state.resources.current.currentSP,
 ````
+`````
 
 **Replace with:**
 
@@ -21553,18 +21824,19 @@ character.manualPD
 ````
 
 **Replace with:**
-```typescript
-character.characterState.resources.current.currentHP
-character.characterState.resources.current.currentSP
-character.characterState.ui.manualDefenseOverrides.PD
 
-````
+```typescript
+character.characterState.resources.current.currentHP;
+character.characterState.resources.current.currentSP;
+character.characterState.ui.manualDefenseOverrides.PD;
+```
 
 #### 🔍 Files to update (use grep to find them):
+
 ```bash
 grep -r "character\.current" src/routes/character-sheet/components/
 grep -r "character\.manual" src/routes/character-sheet/components/
-````
+```
 
 #### ✅ Validation Steps for Task 1.3
 
@@ -21695,7 +21967,8 @@ const getBonusAttributePointsFromTraits = (traitIds: string[]) => {
 // Placeholder - implement based on your trait system
 return 0;
 };
-```
+
+````
 
 #### ✅ Validation Steps for Task 2.1
 
@@ -21788,7 +22061,7 @@ export const TraitChoiceSelector: React.FC<Props> = ({ trait, isSelected, onTogg
 </TraitCard>
   );
 };
-```
+````
 
 **2.2.2: Update `src/routes/character-creation/Attributes.tsx`**
 
@@ -22194,14 +22467,16 @@ if (backup) {
 6. **LOW**: Task 3.1-3.2 (Cleanup) - Code quality improvements
 
 **Start with Task 1.2 for immediate impact, then proceed in dependency order.**
+
 `````
 
 ## File: docs/RULES_VIOLATION_MAPPING.md
-`````markdown
+
+````markdown
 # 🚨 Architectural Rule Violations Map
 
-**Generated**: 2025-01-12  
-**Status**: Post-Character Sheet Context Migration  
+**Generated**: 2025-01-12
+**Status**: Post-Character Sheet Context Migration
 **Rules Source**: `.cursor-rules/rules.yaml`
 
 This document maps current violations of the architectural guard rails defined in our rules configuration.
@@ -22376,10 +22651,11 @@ Existing but may need expansion for new rule data files.
 - `.cursor-rules/rules.yaml` - Source architectural rules
 - `docs/project_overview_mindmap.md` - Current system overview
 - `docs/CHAR_SHEET_UI_REFACTOR.md` - Recent successful refactor following rules
-`````
+````
 
 ## File: docs/TODO.md
-`````markdown
+
+```markdown
 # TODO Tracker
 
 ## 1) Normalize Class “Path” Structures (martial, spellcasting, hybrid)
@@ -22455,13 +22731,14 @@ Existing but may need expansion for new rule data files.
 
 ---
 
-Owner: maintainers  
-Created: 2025-08-19  
+Owner: maintainers
+Created: 2025-08-19
 Status: open
-`````
+```
 
 ## File: docs/UI_FIXES.md
-`````markdown
+
+````markdown
 Of course. Forgoing backward compatibility significantly simplifies the implementation, making it faster and cleaner. The plan will now focus on a "clean slate" refactor.
 
 Here is the revised technical plan, updated to remove all backward compatibility logic.
@@ -22722,7 +22999,7 @@ The `characterEdit.ts` utility no longer needs complex hydration logic.
 
 ### Step 5: Introduce a `schemaVersion` Field
 
-Add `schemaVersion: 2` to `CharacterInProgressStoreData` and ensure it is saved with every character.  
+Add `schemaVersion: 2` to `CharacterInProgressStoreData` and ensure it is saved with every character.
 On application bootstrap, wipe `localStorage` records whose version is missing or < 2.
 
 ### Step 6: Automated Tests & Code-Quality Gates
@@ -22737,10 +23014,11 @@ On application bootstrap, wipe `localStorage` records whose version is missing o
 3. **Lint / CI**
    - Add ESLint `no-restricted-syntax` rule banning `JSON.parse`/`JSON.stringify` inside `src/`.
    - Integrate `vitest --coverage`
-`````
+````
 
 ## File: docs/UI_TESTING_GUIDE.md
-`````markdown
+
+````markdown
 # 🎯 **UI Testing Guide for Enhanced Effect System**
 
 ## ✅ **What's Available for Testing**
@@ -22962,10 +23240,11 @@ This POC demonstrates:
 - ✅ **UI integration works** (real-time updates, tooltips)
 
 **Next step**: Expand to remaining classes or deploy this subset! 🎉
-`````
+````
 
 ## File: docs/WEAPON_REFACTOR_PLAN.md
-`````markdown
+
+````markdown
 # Weapon System Refactor Plan
 
 ## Using inventoryItems.ts for Weapons
@@ -23297,10 +23576,11 @@ function parseRange(properties: WeaponProperty[]): { short: number; long: number
 **Total Estimated Time**: 15-20 hours
 
 This plan provides a structured approach to migrating from the deleted `weapons.ts` to the comprehensive `inventoryItems.ts` system while maintaining functionality and adding new capabilities.
-`````
+````
 
 ## File: src/components/Menu.tsx
-`````typescript
+
+```typescript
 export const HeadIcon = () => (
 	<svg
 		id="Layer_1"
@@ -23410,10 +23690,11 @@ function Menu() {
 }
 
 export default Menu;
-`````
+```
 
 ## File: src/components/styled.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 // Import static assets
 
@@ -23538,10 +23819,11 @@ export const StyledTextContent = styled.div`
 	align-items: flex-start;
 	flex: 1;
 `;
-`````
+```
 
 ## File: src/lib/hooks/useCharacterBuilder.ts
-`````typescript
+
+```typescript
 /**
  * Character Builder Hook
  *
@@ -23571,10 +23853,11 @@ export function useCharacterBuilder(
 
 	return calculationResult;
 }
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/cleric_features.ts
-`````typescript
+## File: src/lib/rulesdata/\_new_schema/cleric_features.ts
+
+```typescript
 /**
  * Cleric Class Definition - New Effect Schema
  * Based on the DC20 rule analysis from classAndAncestryAndCalcRefactor.md
@@ -23870,10 +24153,11 @@ export const clericClass: ClassDefinition = {
 	],
 	subclasses: []
 };
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/monk_features.ts
-`````typescript
+## File: src/lib/rulesdata/\_new_schema/monk_features.ts
+
+```typescript
 import type { ClassDefinition } from '../schemas/character.schema';
 
 export const monkClass: ClassDefinition = {
@@ -23994,10 +24278,11 @@ export const monkClass: ClassDefinition = {
 		}
 	]
 };
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/psion_features.ts
-`````typescript
+## File: src/lib/rulesdata/\_new_schema/psion_features.ts
+
+```typescript
 import type { ClassDefinition } from '../schemas/character.schema';
 
 /**
@@ -24107,10 +24392,11 @@ export const psionClass: ClassDefinition = {
 	],
 	subclasses: []
 };
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/psion_table.json
-`````json
+## File: src/lib/rulesdata/\_new_schema/psion_table.json
+
+```json
 {
 	"className": "Psion",
 	"levelProgression": [
@@ -24276,10 +24562,11 @@ export const psionClass: ClassDefinition = {
 		}
 	]
 }
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/rogue_features.ts
-`````typescript
+## File: src/lib/rulesdata/\_new_schema/rogue_features.ts
+
+```typescript
 import type { ClassDefinition } from '../schemas/character.schema';
 
 export const rogueClass: ClassDefinition = {
@@ -24367,10 +24654,11 @@ export const rogueClass: ClassDefinition = {
 		}
 	]
 };
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/sorcerer_features.ts
-`````typescript
+## File: src/lib/rulesdata/\_new_schema/sorcerer_features.ts
+
+```typescript
 import type { ClassDefinition } from '../schemas/character.schema';
 
 export const sorcererClass: ClassDefinition = {
@@ -24503,10 +24791,11 @@ export const sorcererClass: ClassDefinition = {
 		}
 	]
 };
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/spellblade_features.ts
-`````typescript
+## File: src/lib/rulesdata/\_new_schema/spellblade_features.ts
+
+```typescript
 import type { ClassDefinition } from '../schemas/character.schema';
 
 export const spellbladeClass: ClassDefinition = {
@@ -24608,10 +24897,11 @@ export const spellbladeClass: ClassDefinition = {
 		}
 	]
 };
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/warlock_features.ts
-`````typescript
+## File: src/lib/rulesdata/\_new_schema/warlock_features.ts
+
+```typescript
 import type { ClassDefinition } from '../schemas/character.schema';
 
 export const warlockClass: ClassDefinition = {
@@ -24737,10 +25027,11 @@ export const warlockClass: ClassDefinition = {
 		}
 	]
 };
-`````
+```
 
 ## File: src/lib/rulesdata/schemas/character.schema.ts
-`````typescript
+
+```typescript
 /**
  * @file src/lib/rulesdata/schemas/character.schema.ts
  * @description The definitive schema for all character creation data, designed for robust, machine-readable processing.
@@ -24965,10 +25256,11 @@ export interface EffectProcessingResult {
 	senses: Array<{ type: string; range: number }>;
 	movements: Array<{ type: string; speed: string }>;
 }
-`````
+```
 
 ## File: src/lib/services/spellAssignment.ts
-`````typescript
+
+```typescript
 import { allSpells } from '../rulesdata/spells-data/spells';
 import { SpellSchool, type ClassName } from '../rulesdata/spells-data/types/spell.types';
 import type { SpellData } from '../../types/character';
@@ -25214,10 +25506,11 @@ export const getDefaultSpellSchools = (className: string): SpellSchool[] => {
 			return [];
 	}
 };
-`````
+```
 
 ## File: src/lib/stores/characterContext.reducer.spec.ts
-`````typescript
+
+```typescript
 import { describe, test, expect } from 'vitest';
 import type { CharacterInProgressStoreData } from './characterContext';
 
@@ -25282,10 +25575,11 @@ describe('characterReducer', () => {
 		expect(Array.isArray(result.selectedManeuvers)).toBe(true);
 	});
 });
-`````
+```
 
-## File: src/routes/api/_backup/character/progress/complete/+server.ts
-`````typescript
+## File: src/routes/api/\_backup/character/progress/complete/+server.ts
+
+```typescript
 // src/routes/api/character/progress/complete/+server.ts
 
 import { json } from '@sveltejs/kit';
@@ -25492,10 +25786,11 @@ export const POST: RequestHandler = async ({ request }) => {
 		return json({ error: err.message || 'Unknown error' }, { status: 500 });
 	}
 };
-`````
+```
 
 ## File: src/routes/character-creation/components/LanguagesTab.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import { languagesData } from '../../../lib/rulesdata/languages';
 // Types moved from deleted BackgroundPointsManager
@@ -25670,10 +25965,11 @@ const LanguagesTab: React.FC<LanguagesTabProps> = ({
 };
 
 export default LanguagesTab;
-`````
+```
 
 ## File: src/routes/character-creation/components/ValidationFeedback.tsx
-`````typescript
+
+```typescript
 /**
  * Validation Feedback Components
  *
@@ -25743,10 +26039,11 @@ export const GlobalValidationBanner: React.FC<GlobalValidationBannerProps> = ({
 		</div>
 	);
 };
-`````
+```
 
 ## File: src/routes/character-creation/styles/AncestryPointsCounter.styles.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledContainer = styled.div`
@@ -25789,7 +26086,7 @@ export const StyledPointsRow = styled.div`
 	margin-bottom: 0.8rem;
 	color: #e5e7eb;
 	font-size: 1rem;
-	
+
 	&:last-child {
 		margin-bottom: 0;
 		padding-top: 0.8rem;
@@ -25809,12 +26106,13 @@ export const StyledPointsValue = styled.span<{ $highlight?: boolean }>`
 	font-weight: bold;
 	min-width: 40px;
 	text-align: right;
-	color: ${props => props.$highlight ? '#fbbf24' : 'inherit'};
+	color: ${(props) => (props.$highlight ? '#fbbf24' : 'inherit')};
 `;
-`````
+```
 
 ## File: src/routes/character-creation/styles/AncestrySelector.styles.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledContainer = styled.div`
@@ -26075,28 +26373,30 @@ export const StyledCloseHint = styled.div`
 	font-size: 0.9rem;
 	font-style: italic;
 `;
-`````
+```
 
 ## File: src/routes/character-creation/styles/CharacterCreationBG.styles.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 import BlackBG from '/src/assets/BlackBG.jpg';
 
 export const CharacterCreationBG = styled.div`
-  min-height: 100vh;
-  width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url(${BlackBG}) center center/cover no-repeat fixed;
-  z-index: -1;
+	min-height: 100vh;
+	width: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: url(${BlackBG}) center center/cover no-repeat fixed;
+	z-index: -1;
 `;
-`````
+```
 
 ## File: src/routes/character-creation/styles/CharacterName.styles.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledContainer = styled.div`
@@ -26218,10 +26518,11 @@ export const StyledCharacterDetails = styled.p`
 	font-size: 1rem;
 	line-height: 1.6;
 `;
-`````
+```
 
 ## File: src/routes/character-creation/styles/LoadCharacter.styles.ts
-`````typescript
+
+```typescript
 // Styled components for LoadCharacter component
 import styled from 'styled-components';
 
@@ -26469,10 +26770,11 @@ export const StyledModalButton = styled.button<{ variant: 'cancel' | 'delete' }>
 		transform: translateY(-1px);
 	}
 `;
-`````
+```
 
 ## File: src/routes/character-creation/styles/SpellsAndManeuvers.styles.ts
-`````typescript
+
+```typescript
 // Styled components for SpellsAndManeuvers component
 import styled from 'styled-components';
 
@@ -26678,10 +26980,11 @@ export const StyledFilterButton = styled.button<{ $active: boolean }>`
 		transform: translateY(-1px);
 	}
 `;
-`````
+```
 
 ## File: src/routes/character-creation/AncestryPointsCounter.tsx
-`````typescript
+
+```typescript
 import { useCharacter } from '../../lib/stores/characterContext';
 import { StyledContainer, StyledTitle, StyledDetails } from './styles/AncestryPointsCounter.styles';
 
@@ -26712,10 +27015,11 @@ function AncestryPointsCounter() {
 }
 
 export default AncestryPointsCounter;
-`````
+```
 
 ## File: src/routes/character-creation/AttributePointsCounter.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { StyledContainer, StyledTitle, StyledDetails } from './styles/AncestryPointsCounter.styles';
@@ -26745,10 +27049,11 @@ function AttributePointsCounter() {
 }
 
 export default AttributePointsCounter;
-`````
+```
 
 ## File: src/routes/character-creation/CharacterName.tsx
-`````typescript
+
+```typescript
 import { useState } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { nameByRace } from 'fantasy-name-generator';
@@ -26977,10 +27282,11 @@ function CharacterName() {
 }
 
 export default CharacterName;
-`````
+```
 
 ## File: src/routes/character-creation/LevelUp.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { getCharacterById } from '../../lib/utils/storageUtils';
@@ -27030,10 +27336,11 @@ const LevelUp: React.FC = () => {
 };
 
 export default LevelUp;
-`````
+```
 
 ## File: src/routes/character-sheet/components/InventoryPopup.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import type { InventoryItemData } from '../../../types';
 import type { InventoryItem } from '../../../lib/rulesdata/inventoryItems';
@@ -27105,10 +27412,11 @@ const InventoryPopup: React.FC<InventoryPopupProps> = ({ selectedInventoryItem, 
 };
 
 export default InventoryPopup;
-`````
+```
 
 ## File: src/routes/character-sheet/components/Spells.tsx
-`````typescript
+
+```typescript
 import React, { useState, useMemo } from 'react';
 import type { SpellData, CharacterSheetData } from '../../../types';
 import type { Spell } from '../../../lib/rulesdata/spells-data/types/spell.types';
@@ -27429,10 +27737,11 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 };
 
 export default Spells;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/DesktopLayout.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 // Desktop-specific layout components
@@ -27737,10 +28046,11 @@ export const StyledCurrencyInput = styled.input`
 		box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.2);
 	}
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/ExhaustionImpact.styles.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledExhaustionImpact = styled.div`
@@ -27750,10 +28060,11 @@ export const StyledExhaustionImpact = styled.div`
 	text-align: center;
 	font-weight: 500;
 `;
-`````
+```
 
 ## File: src/routes/character-sheet/utils/inventoryItemInfo.ts
-`````typescript
+
+```typescript
 import type { InventoryItem } from '../../../lib/rulesdata/inventoryItems';
 import type { InventoryItemData } from '../../../types';
 
@@ -27830,10 +28141,11 @@ export function getInventoryItemInfo(
 
 	return info;
 }
-`````
+```
 
 ## File: src/routes/character-sheet/utils.ts
-`````typescript
+
+```typescript
 import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
 import type {
 	CharacterSheetData,
@@ -28101,7 +28413,7 @@ export const handlePrintCharacterSheet = (
                             </div>
                             <div class="dc20-logo">DC20</div>
                         </div>
-                        
+
                         <div class="main-grid">
                             <div class="column">
                                 <div class="section">
@@ -28112,7 +28424,7 @@ export const handlePrintCharacterSheet = (
                                         <div class="resource-circle">${currentValues.currentMP}/${characterData.finalMPMax}</div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="section">
                                     <div class="section-title">Defenses</div>
                                     <div style="text-align: center;">
@@ -28130,7 +28442,7 @@ export const handlePrintCharacterSheet = (
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="section">
                                     <div class="section-title">Attributes</div>
                                     <div class="skill-row">
@@ -28150,7 +28462,7 @@ export const handlePrintCharacterSheet = (
                         <span class="skill-bonus">+${characterData.finalIntelligence}</span>
                     </div>
                 </div>
-                
+
                 <div class="section">
                     <div class="section-title">Skills</div>
                     ${Object.entries(skillsByAttribute)
@@ -28176,7 +28488,7 @@ export const handlePrintCharacterSheet = (
 											.join('')}
                 </div>
             </div>
-            
+
             <div class="column">
                 <div class="section">
                     <div class="section-title">Attacks</div>
@@ -28191,11 +28503,11 @@ export const handlePrintCharacterSheet = (
 											)
 											.join('')}
                 </div>
-                
 
-                
 
-                
+
+
+
                 <div class="section">
                     <div class="section-title">Features</div>
                     ${features
@@ -28210,7 +28522,7 @@ export const handlePrintCharacterSheet = (
 											.join('')}
                 </div>
             </div>
-            
+
             <div class="column">
                 <div class="section">
                     <div class="section-title">Inventory</div>
@@ -28225,7 +28537,7 @@ export const handlePrintCharacterSheet = (
 											)
 											.join('')}
                 </div>
-                
+
                 <div class="section">
                     <div class="section-title">Languages</div>
                     ${languages
@@ -28239,7 +28551,7 @@ export const handlePrintCharacterSheet = (
 											)
 											.join('')}
                 </div>
-                
+
                 <div class="section">
                     <div class="section-title">Trades</div>
                     ${trades
@@ -28279,9 +28591,9 @@ export const handlePrintCharacterSheet = (
             </div>
             <div class="dc20-logo">DC20</div>
         </div>
-        
+
         <h2 style="text-align: center; color: #8b4513; margin-bottom: 30px;">Spells</h2>
-        
+
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
             ${currentSpells
 							.map((spell) => {
@@ -28297,7 +28609,7 @@ export const handlePrintCharacterSheet = (
                                 ${spell.isCantrip ? '<span style="background: #e74c3c; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-left: 8px;">Cantrip</span>' : ''}
                             </div>
                         </div>
-                        
+
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;">
                             <div>
                                 <span style="font-weight: bold; color: #7f8c8d; font-size: 0.8rem; text-transform: uppercase;">Cost</span><br>
@@ -28312,7 +28624,7 @@ export const handlePrintCharacterSheet = (
                                 <span style="color: #2c3e50; font-size: 0.9rem;">${spell.duration}</span>
                             </div>
                         </div>
-                        
+
                         ${
 													fullSpell && fullSpell.effects && fullSpell.effects.length > 0
 														? `
@@ -28332,7 +28644,7 @@ export const handlePrintCharacterSheet = (
                         `
 														: ''
 												}
-                        
+
                         ${
 													fullSpell && fullSpell.cantripPassive
 														? `
@@ -28343,7 +28655,7 @@ export const handlePrintCharacterSheet = (
                         `
 														: ''
 												}
-                        
+
                         ${
 													fullSpell && fullSpell.enhancements && fullSpell.enhancements.length > 0
 														? `
@@ -28364,7 +28676,7 @@ export const handlePrintCharacterSheet = (
                         `
 														: ''
 												}
-                        
+
                         ${
 													spell.notes
 														? `
@@ -28407,9 +28719,9 @@ export const handlePrintCharacterSheet = (
             </div>
             <div class="dc20-logo">DC20</div>
         </div>
-        
+
         <h2 style="text-align: center; color: #8b4513; margin-bottom: 30px;">Maneuvers</h2>
-        
+
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
             ${currentManeuvers
 							.map((maneuver) => {
@@ -28425,7 +28737,7 @@ export const handlePrintCharacterSheet = (
                                 ${maneuver.isReaction ? '<span style="background: #e67e22; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-left: 8px;">Reaction</span>' : ''}
                             </div>
                         </div>
-                        
+
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;">
                             <div>
                                 <span style="font-weight: bold; color: #7f8c8d; font-size: 0.8rem; text-transform: uppercase;">Cost</span><br>
@@ -28452,7 +28764,7 @@ export const handlePrintCharacterSheet = (
 																: ''
 														}
                         </div>
-                        
+
                         ${
 													fullManeuver && fullManeuver.description
 														? `
@@ -28463,7 +28775,7 @@ export const handlePrintCharacterSheet = (
                         `
 														: ''
 												}
-                        
+
                         ${
 													fullManeuver && fullManeuver.trigger
 														? `
@@ -28474,7 +28786,7 @@ export const handlePrintCharacterSheet = (
                         `
 														: ''
 												}
-                        
+
                         ${
 													fullManeuver && fullManeuver.requirement
 														? `
@@ -28485,7 +28797,7 @@ export const handlePrintCharacterSheet = (
                         `
 														: ''
 												}
-                        
+
                         ${
 													maneuver.notes
 														? `
@@ -28525,10 +28837,11 @@ export const handlePrintCharacterSheet = (
 		alert('Failed to print character sheet');
 	}
 };
-`````
+```
 
 ## File: src/types/character.ts
-`````typescript
+
+```typescript
 // Character Sheet Types and Interfaces
 
 import type { EnhancedStatBreakdown } from '../lib/types/effectSystem';
@@ -28798,10 +29111,11 @@ export interface InventoryItemData {
 	count: number;
 	cost?: string;
 }
-`````
+```
 
 ## File: eslint.config.js
-`````javascript
+
+```javascript
 import prettier from 'eslint-config-prettier';
 import { includeIgnoreFile } from '@eslint/compat';
 import js from '@eslint/js';
@@ -28848,10 +29162,11 @@ export default ts.config(
 		}
 	}
 );
-`````
+```
 
 ## File: README.md
-`````markdown
+
+```markdown
 # DC20 Clean Character Sheet
 
 A comprehensive character creation and management system for the DC20 tabletop RPG system.
@@ -28895,10 +29210,11 @@ A comprehensive character creation and management system for the DC20 tabletop R
 - **Server-side mastery validation**: Add endpoint validation for mastery limits in character completion
 - **Advanced class features**: Implement remaining class-specific features and progressions
 - **Combat system**: Enhance attack calculations and combat mechanics
-`````
+```
 
-## File: src/lib/rulesdata/_new_schema/ancestries.ts
-`````typescript
+## File: src/lib/rulesdata/\_new_schema/ancestries.ts
+
+```typescript
 import type { Ancestry } from '../schemas/character.schema';
 
 // This file mirrors the full modular content from src/lib/rulesdata/ancestries.ts
@@ -29398,10 +29714,11 @@ export const ancestriesData: Ancestry[] = [
 export const getAncestryData = (id: string): Ancestry | undefined => {
 	return ancestriesData.find((ancestry) => ancestry.id === id);
 };
-`````
+```
 
 ## File: src/lib/rulesdata/rulesdata.spec.ts
-`````typescript
+
+```typescript
 import { describe, it, expect } from 'vitest';
 import { classesDataSchema } from './schemas/class.schema';
 import { classesData } from './loaders/class.loader';
@@ -29476,10 +29793,11 @@ describe('Rules Data Validation', () => {
 		});
 	});
 });
-`````
+```
 
 ## File: src/lib/utils/storageUtils.spec.ts
-`````typescript
+
+```typescript
 import { describe, test, expect, beforeEach } from 'vitest';
 import { deserializeCharacterFromStorage, serializeCharacterForStorage } from './storageUtils';
 
@@ -29541,10 +29859,11 @@ describe('storageUtils', () => {
 		expect(parsed.selectedTraitIds).toEqual(['trait1']);
 	});
 });
-`````
+```
 
 ## File: src/routes/character-creation/components/TradesTab.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import { tradesData } from '../../../lib/rulesdata/trades';
 import { knowledgeData } from '../../../lib/rulesdata/knowledge';
@@ -29898,10 +30217,11 @@ const TradesTab: React.FC<TradesTabProps> = ({
 };
 
 export default TradesTab;
-`````
+```
 
 ## File: src/routes/character-creation/styles/Attributes.styles.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledContainer = styled.div`
@@ -29919,9 +30239,9 @@ export const StyledContainer = styled.div`
 		padding: 1rem;
 	}
 
-	 /* Give breathing room at the bottom so the cards don't abut
+	/* Give breathing room at the bottom so the cards don't abut
 		 the page edge on small viewports */
-	 padding-bottom: 3rem;
+	padding-bottom: 3rem;
 `;
 
 export const StyledTitle = styled.h2`
@@ -29962,21 +30282,21 @@ export const StyledCard = styled.div`
 	background: transparent;
 	text-align: center;
 	transition: all 0s ease;
-	 /* Force four cards per row where possible, but allow horizontal scroll
+	/* Force four cards per row where possible, but allow horizontal scroll
 		 on smaller viewports via the grid's overflow-x:auto */
-	 flex: 0 0 23%;
-	 min-width: 240px;
-	 max-width: 28%;
-	 height: 260px; /* consistent card height for visual alignment */
+	flex: 0 0 23%;
+	min-width: 240px;
+	max-width: 28%;
+	height: 260px; /* consistent card height for visual alignment */
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	 overflow: hidden;
+	overflow: hidden;
 
 	&:hover {
 		border-color: #fbbf24;
 	}
-	
+
 	@media (max-width: 900px) {
 		min-width: 180px;
 	}
@@ -30017,7 +30337,7 @@ export const StyledButton = styled.button`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	
+
 	/* Fine-tune vertical alignment for + and - symbols */
 	padding-top: 0;
 	/* 4px bottom padding ensures + and - symbols are visually centered in the button */
@@ -30054,10 +30374,11 @@ export const StyledDescription = styled.p`
 	line-height: 1.4;
 	margin: 0.25rem 0 0.5rem 0;
 `;
-`````
+```
 
 ## File: src/routes/character-creation/styles/CharacterCreation.styles.ts
-`````typescript
+
+```typescript
 // Styled components for CharacterCreation component
 import styled from 'styled-components';
 
@@ -30144,7 +30465,7 @@ export const StyledStepNumber = styled.div<{ $active: boolean; $completed: boole
     color: #1e1b4b;
     border: 1px solid #fbbf24;
   `}
-  
+
   ${(props) =>
 		!props.$active &&
 		!props.$completed &&
@@ -30177,7 +30498,7 @@ export const StyledStepLabel = styled.span<{ $active: boolean; $completed: boole
 		`
     color: #fbbf24;
   `}
-  
+
   ${(props) =>
 		!props.$active &&
 		!props.$completed &&
@@ -30218,7 +30539,7 @@ export const StyledButton = styled.button<{ $variant?: 'primary' | 'secondary' }
       border-color: #fbbf24;
     }
   `}
-  
+
   &:disabled {
 		opacity: 0.5;
 		cursor: not-allowed;
@@ -30226,10 +30547,11 @@ export const StyledButton = styled.button<{ $variant?: 'primary' | 'secondary' }
 		color: #666;
 	}
 `;
-`````
+```
 
 ## File: src/routes/character-creation/styles/ClassSelector.styles.ts
-`````typescript
+
+```typescript
 import styled, { css } from 'styled-components';
 
 export const StyledContainer = styled.div`
@@ -30528,10 +30850,11 @@ export const StyledNewClassDescription = styled.p`
 	word-break: normal;
 	white-space: pre-line;
 `;
-`````
+```
 
 ## File: src/routes/character-creation/styles/StepsHeaderBG.styles.ts
-`````typescript
+
+```typescript
 import styled from 'styled-components';
 
 export const StyledStepsHeaderBG = styled.div`
@@ -30545,10 +30868,11 @@ export const StyledStepsHeaderBG = styled.div`
 	align-items: center;
 	justify-content: center;
 `;
-`````
+```
 
 ## File: src/routes/character-creation/AncestrySelector.tsx
-`````typescript
+
+```typescript
 import { useCharacter } from '../../lib/stores/characterContext';
 import { ancestriesData } from '../../lib/rulesdata/_new_schema/ancestries';
 import type { IAncestry } from '../../lib/rulesdata/types';
@@ -30671,10 +30995,11 @@ function AncestrySelector() {
 }
 
 export default AncestrySelector;
-`````
+```
 
 ## File: src/routes/character-creation/ClassSelector.tsx
-`````typescript
+
+```typescript
 import { useCharacter } from '../../lib/stores/characterContext';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import {
@@ -30823,10 +31148,11 @@ function ClassSelector() {
 }
 
 export default ClassSelector;
-`````
+```
 
 ## File: src/routes/character-creation/LoadCharacter.tsx
-`````typescript
+
+```typescript
 import { useState, useEffect } from 'react';
 import type { SavedCharacter } from '../../lib/types/dataContracts';
 import { getAllSavedCharacters, saveAllCharacters } from '../../lib/utils/storageUtils';
@@ -31042,10 +31368,11 @@ function LoadCharacter() {
 }
 
 export default LoadCharacter;
-`````
+```
 
 ## File: src/routes/character-sheet/components/Currency.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import {
 	CurrencyContainer,
@@ -31159,10 +31486,11 @@ const Currency: React.FC<CurrencyProps> = () => {
 };
 
 export default Currency;
-`````
+```
 
 ## File: src/routes/character-sheet/components/Features.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import type { FeatureData } from '../../../types';
 import { useCharacterSheet, useCharacterFeatures } from '../hooks/CharacterSheetProvider';
@@ -31262,10 +31590,11 @@ const Features: React.FC<FeaturesProps> = ({ onFeatureClick }) => {
 };
 
 export default Features;
-`````
+```
 
 ## File: src/routes/character-sheet/components/KnowledgeTrades.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import { useCharacterKnowledge, useCharacterTrades } from '../hooks/CharacterSheetProvider';
 import {
@@ -31359,10 +31688,11 @@ const KnowledgeTrades: React.FC<KnowledgeTradesProps> = () => {
 };
 
 export default KnowledgeTrades;
-`````
+```
 
 ## File: src/routes/character-sheet/components/Maneuvers.tsx
-`````typescript
+
+```typescript
 import React, { useState, useMemo } from 'react';
 import type { ManeuverData } from '../../../types';
 import type { Maneuver } from '../../../lib/rulesdata/maneuvers';
@@ -31593,10 +31923,11 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 };
 
 export default Maneuvers;
-`````
+```
 
 ## File: src/routes/character-sheet/components/Movement.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import {
 	StyledMovementContainer,
@@ -31661,10 +31992,11 @@ const Movement: React.FC<MovementProps> = () => {
 };
 
 export default Movement;
-`````
+```
 
 ## File: src/routes/character-sheet/components/PlayerNotes.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import { useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
@@ -31722,10 +32054,11 @@ const PlayerNotes: React.FC<PlayerNotesProps> = () => {
 };
 
 export default PlayerNotes;
-`````
+```
 
 ## File: src/routes/character-sheet/components/RightColumnResources.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import {
 	StyledRightResourcesContainer,
@@ -31804,10 +32137,11 @@ const RightColumnResources: React.FC<RightColumnResourcesProps> = () => {
 };
 
 export default RightColumnResources;
-`````
+```
 
 ## File: src/routes/character-sheet/styles/Layout.ts
-`````typescript
+
+```typescript
 import styled, { createGlobalStyle } from 'styled-components';
 import backgroundImage from '../../../assets/Desktop1920.jpg';
 
@@ -32012,7 +32346,7 @@ export const StyledCornerDecoration = styled.div<{
 		right: 0;
 		transform: scaleX(-1);
 	`}
-	
+
 	${(props) =>
 		props.position === 'bottom-right' &&
 		`
@@ -32020,7 +32354,7 @@ export const StyledCornerDecoration = styled.div<{
 		bottom: 0;
 		transform: scale(-1);
 	`}
-	
+
 	${(props) =>
 		props.position === 'bottom-left' &&
 		`
@@ -32155,10 +32489,11 @@ export const StyledActionButton = styled.button<{ $variant?: 'danger' | 'primary
 		transform: translateY(0);
 	}
 `;
-`````
+```
 
 ## File: package.json
-`````json
+
+```json
 {
 	"name": "dc20clean",
 	"version": "0.0.1",
@@ -32174,14 +32509,8 @@ export const StyledActionButton = styled.button<{ $variant?: 'danger' | 'primary
 		"test:e2e": "playwright test",
 		"db:start": "docker compose up"
 	},
-	"files": [
-		"dist",
-		"!dist/**/*.test.*",
-		"!dist/**/*.spec.*"
-	],
-	"sideEffects": [
-		"**/*.css"
-	],
+	"files": ["dist", "!dist/**/*.test.*", "!dist/**/*.spec.*"],
+	"sideEffects": ["**/*.css"],
 	"type": "module",
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
@@ -32212,9 +32541,7 @@ export const StyledActionButton = styled.button<{ $variant?: 'danger' | 'primary
 		"vite": "^6.2.6",
 		"vite-plugin-devtools-json": "^0.2.0"
 	},
-	"keywords": [
-		"react"
-	],
+	"keywords": ["react"],
 	"dependencies": {
 		"@emotion/react": "^11.14.0",
 		"@emotion/styled": "^11.14.1",
@@ -32238,15 +32565,16 @@ export const StyledActionButton = styled.button<{ $variant?: 'danger' | 'primary
 		"zod": "^4.0.5"
 	}
 }
-`````
+```
 
 ## File: docs/ANCESTY_SYSTEM.MD
-`````markdown
+
+````markdown
 # DC20Clean – Ancestry & Trait System (Vertical Slice)
 
-> **Purpose**  
-> This document is the _single authoritative reference_ (“bible”) for everything related to **Ancestries** and **Traits**.  
-> • Humans can follow the numbered guides & check-lists.  
+> **Purpose**
+> This document is the _single authoritative reference_ (“bible”) for everything related to **Ancestries** and **Traits**.
+> • Humans can follow the numbered guides & check-lists.
 > • AI agents can parse the 🗂 _File Maps_ and ⬢ _Mermaid_ graphs to discover dependencies.
 
 ---
@@ -32307,27 +32635,27 @@ flowchart LR
 
 ## 3 Adding **New Ancestry** – Checklist ✅
 
-1. **Data**  
-   1.1 Append the ancestry object to `_new_schema/ancestries.ts`  
+1. **Data**
+   1.1 Append the ancestry object to `_new_schema/ancestries.ts`
    ‑ `id`, `name`, `description`, `defaultTraitIds`, `expandedTraitIds`.
    ‑ `rulesSource` (string, e.g., `DC20Beta0.95`).
-2. **Traits**  
-   2.1 Create each new trait in `_new_schema/traits.ts`  
-   ‑ Use unique `id = '<ancestryId>_<snake_case_trait>'`.  
-   ‑ Ensure `cost`, `description`, and `effects` array.  
+2. **Traits**
+   2.1 Create each new trait in `_new_schema/traits.ts`
+   ‑ Use unique `id = '<ancestryId>_<snake_case_trait>'`.
+   ‑ Ensure `cost`, `description`, and `effects` array.
    2.2 ⚠️ **Human-in-the-loop review required**: First attempt to reuse existing `effect.type` strings. If a new type seems unavoidable, a maintainer must review and approve the required engine & schema changes (see §4).
-3. **Types / Schema**  
+3. **Types / Schema**
    3.1 If a new `effect.type` is invented, add to Zod schema in `character.schema.ts` **and** implement logic in `enhancedCharacterCalculator.ts`.
-4. **Calculator Support**  
-   4.1 If the effect is **numeric** → map in `createStatBreakdown` or similar.  
+4. **Calculator Support**
+   4.1 If the effect is **numeric** → map in `createStatBreakdown` or similar.
    4.2 If it’s an **ability** → emit as `GRANT_ABILITY` (requires no engine change).
-5. **UI**  
-   5.1 No code changes: components import arrays directly.  
+5. **UI**
+   5.1 No code changes: components import arrays directly.
    5.2 Edge-cases: add banner images / icons if needed.
-6. **Tests**  
-   6.1 Run `npm run test:unit`; `rulesdata.spec.ts` will fail on schema violations.  
+6. **Tests**
+   6.1 Run `npm run test:unit`; `rulesdata.spec.ts` will fail on schema violations.
    6.2 Add a specific calculation test if the trait is complex.
-7. **Docs**  
+7. **Docs**
    7.1 Append a bullet to this file under “Next Ancestries Added”.
 8. **Commit Message Template**
    ```
@@ -32374,12 +32702,13 @@ flowchart LR
 
 ---
 
-> _Last updated: 2025-01-15_  
+> _Last updated: 2025-01-15_
 > Maintainer: @DC20Clean-Team
-`````
+````
 
 ## File: src/lib/rulesdata/loaders/class-features.loader.ts
-`````typescript
+
+```typescript
 /**
  * @file class-features.loader.ts
  * @description Loader for the new class features JSON structure
@@ -32695,10 +33024,11 @@ export function getDisplayLabel(
 	// Generic: just use the feature name as the label
 	return featureName;
 }
-`````
+```
 
 ## File: src/lib/types/effectSystem.ts
-`````typescript
+
+```typescript
 /**
  * Enhanced Effect System Types
  *
@@ -33034,10 +33364,11 @@ export interface CharacterCalculationHook {
 	invalidateCache: () => void;
 	refreshCalculation: () => Promise<void>;
 }
-`````
+```
 
 ## File: src/lib/utils/characterState.ts
-`````typescript
+
+```typescript
 // Comprehensive character state management utility
 // Handles all character data persistence with original/current value separation
 
@@ -33541,10 +33872,11 @@ export const getManualDefense = (
 ): number | undefined => {
 	return getCharacterState(characterId)?.manualDefenses?.[field];
 };
-`````
+```
 
 ## File: src/routes/character-creation/components/SkillsTab.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import { skillsData } from '../../../lib/rulesdata/skills';
 // Types moved from deleted BackgroundPointsManager
@@ -33884,10 +34216,11 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 };
 
 export default SkillsTab;
-`````
+```
 
 ## File: src/routes/character-creation/components/TraitChoiceSelector.tsx
-`````typescript
+
+```typescript
 /**
  * Trait Choice Selector Component
  *
@@ -34249,10 +34582,11 @@ const TraitChoiceSelector: React.FC<TraitChoiceSelectorProps> = ({
 };
 
 export default TraitChoiceSelector;
-`````
+```
 
 ## File: src/routes/character-creation/CharacterCreation.spec.ts
-`````typescript
+
+```typescript
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 // Mock the complex dependencies
@@ -34518,10 +34852,11 @@ describe('CharacterCreation - Skill Points Calculation', () => {
 		});
 	});
 });
-`````
+```
 
 ## File: src/routes/character-creation/SelectedAncestries.tsx
-`````typescript
+
+```typescript
 import { useCharacter } from '../../lib/stores/characterContext';
 import { ancestriesData } from '../../lib/rulesdata/_new_schema/ancestries';
 import { traitsData } from '../../lib/rulesdata/_new_schema/traits';
@@ -34709,10 +35044,11 @@ function SelectedAncestries() {
 }
 
 export default SelectedAncestries;
-`````
+```
 
 ## File: src/routes/character-creation/SpellsAndManeuvers.tsx
-`````typescript
+
+```typescript
 import React, { useState, useEffect, useRef } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { allSpells } from '../../lib/rulesdata/spells-data/spells';
@@ -35388,10 +35724,11 @@ const SpellsAndManeuvers: React.FC = () => {
 };
 
 export default SpellsAndManeuvers;
-`````
+```
 
 ## File: src/routes/character-sheet/components/Attacks.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import type { AttackData, CharacterSheetData } from '../../../types';
 import { weapons, type Weapon, WeaponType } from '../../../lib/rulesdata/inventoryItems';
@@ -35652,10 +35989,11 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick }) => {
 };
 
 export default Attacks;
-`````
+```
 
 ## File: src/routes/character-sheet/components/Inventory.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import type { InventoryItemData } from '../../../types';
 import { allItems, type InventoryItem } from '../../../lib/rulesdata/inventoryItems';
@@ -35875,10 +36213,11 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick }) => {
 };
 
 export default Inventory;
-`````
+```
 
 ## File: src/routes/character-sheet/components/LeftColumn.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import type { SkillData, LanguageData } from '../../../types';
 import type { SavedCharacter } from '../../../lib/types/dataContracts';
@@ -35921,10 +36260,11 @@ const LeftColumn: React.FC<LeftColumnProps> = ({
 };
 
 export default LeftColumn;
-`````
+```
 
 ## File: src/routes/character-sheet/CharacterSheetMobile.tsx
-`````typescript
+
+```typescript
 import React, { useState } from 'react';
 import {
 	useCharacterSheet,
@@ -36831,10 +37171,11 @@ export const CharacterSheetMobile: React.FC<CharacterSheetMobileProps> = ({ char
 };
 
 export default CharacterSheetMobile;
-`````
+```
 
 ## File: src/lib/types/dataContracts.ts
-`````typescript
+
+```typescript
 /**
  * Unified Data Contracts for Character System
  *
@@ -37003,10 +37344,11 @@ export interface LegacyCharacter {
 	// All other fields from SavedCharacter
 	[key: string]: any;
 }
-`````
+```
 
 ## File: src/routes/character-sheet/components/Attributes.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import type { SkillData } from '../../../types';
 import type { SavedCharacter } from '../../../lib/types/dataContracts';
@@ -37200,10 +37542,11 @@ const Attributes: React.FC<AttributesProps> = ({
 };
 
 export default Attributes;
-`````
+```
 
 ## File: src/routes/character-sheet/components/DeathExhaustion.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import type { CharacterSheetData, CurrentValues } from '../../../types';
 import { useCharacterResources, useCharacterSheet } from '../hooks/CharacterSheetProvider';
@@ -37380,10 +37723,11 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = () => {
 };
 
 export default DeathExhaustion;
-`````
+```
 
 ## File: src/routes/character-sheet/components/Defenses.tsx
-`````typescript
+
+```typescript
 import React, { useState } from 'react';
 import {
 	DefensesContainer,
@@ -37689,10 +38033,11 @@ const Defenses: React.FC<DefensesProps> = ({ isMobile = false }) => {
 };
 
 export default Defenses;
-`````
+```
 
 ## File: src/routes/character-sheet/hooks/useCharacterSheetReducer.test.ts
-`````typescript
+
+```typescript
 import { describe, it, expect } from 'vitest';
 import { useCharacterSheetReducer } from './useCharacterSheetReducer';
 import { renderHook, act } from '@testing-library/react';
@@ -37961,10 +38306,11 @@ describe('useCharacterSheetReducer', () => {
 		expect(typeof result.current.updateInventory).toBe('function');
 	});
 });
-`````
+```
 
 ## File: src/routes/character-sheet/CharacterSheetDesktop.tsx
-`````typescript
+
+```typescript
 import React, { useState } from 'react';
 
 // Import custom hook with all character sheet logic
@@ -38435,10 +38781,11 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 };
 
 export default CharacterSheetDesktop;
-`````
+```
 
 ## File: src/lib/utils/storageUtils.ts
-`````typescript
+
+```typescript
 /**
  * Centralized Storage Utilities
  *
@@ -38662,10 +39009,11 @@ export const restoreFromBackup = (): boolean => {
 	console.warn('No backup found to restore from');
 	return false;
 };
-`````
+```
 
 ## File: src/routes/character-creation/ClassFeatures.tsx
-`````typescript
+
+```typescript
 import { useCharacter } from '../../lib/stores/characterContext';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import {
@@ -39410,10 +39758,11 @@ function ClassFeatures() {
 }
 
 export default ClassFeatures;
-`````
+```
 
 ## File: src/routes/character-sheet/components/Combat.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import type { CharacterSheetData, CurrentValues } from '../../../types';
 import {
@@ -39564,10 +39913,11 @@ const Combat: React.FC<CombatProps> = () => {
 };
 
 export default Combat;
-`````
+```
 
 ## File: src/routes/character-sheet/components/Resources.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import Tooltip from './Tooltip';
 import { createHPTooltip, createMPTooltip, createSPTooltip } from './StatTooltips';
@@ -39847,10 +40197,11 @@ const Resources: React.FC<ResourcesProps> = ({ breakdowns, isMobile = false }) =
 };
 
 export default Resources;
-`````
+```
 
 ## File: src/routes/character-sheet/CharacterSheetRouter.tsx
-`````typescript
+
+```typescript
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CharacterSheetClean from './CharacterSheetClean';
@@ -39894,10 +40245,11 @@ const CharacterSheetRouter: React.FC<CharacterSheetRouterProps> = ({ characterId
 };
 
 export default CharacterSheetRouter;
-`````
+```
 
 ## File: src/lib/services/characterCompletion.ts
-`````typescript
+
+```typescript
 // Shared character completion service - UPDATED: Uses typed data contracts
 // Handles the completion flow with proper stat calculation, snackbar, and navigation
 
@@ -40163,10 +40515,11 @@ export const completeCharacter = async (
 		callbacks.onShowSnackbar('Error creating character. Please try again.');
 	}
 };
-`````
+```
 
 ## File: src/lib/stores/characterContext.tsx
-`````typescript
+
+```typescript
 import React, { createContext, useContext, useReducer, useMemo, ReactNode } from 'react';
 import type { CharacterInProgress } from '@prisma/client';
 import { traitsData } from '../rulesdata/_new_schema/traits';
@@ -40378,10 +40731,11 @@ export function useCharacter() {
 	}
 	return context;
 }
-`````
+```
 
 ## File: src/lib/utils/characterEdit.ts
-`````typescript
+
+```typescript
 // Character edit mode utilities
 // Handles converting saved characters back to editable format while preserving manual modifications
 
@@ -40598,10 +40952,11 @@ export const completeCharacterEdit = async (
 		throw error;
 	}
 };
-`````
+```
 
 ## File: src/routes/character-creation/Attributes.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { useEnhancedCharacterCalculation } from '../../lib/hooks/useEnhancedCharacterCalculation';
@@ -40899,10 +41254,11 @@ function Attributes() {
 }
 
 export default Attributes;
-`````
+```
 
 ## File: src/routes/character-creation/Background.tsx
-`````typescript
+
+```typescript
 import React from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import SkillsTab from './components/SkillsTab';
@@ -41150,10 +41506,11 @@ const Background: React.FC = () => {
 };
 
 export default Background;
-`````
+```
 
 ## File: src/App.tsx
-`````typescript
+
+```typescript
 import { createGlobalStyle } from 'styled-components';
 import { BrowserRouter, Routes, Route, useParams, Navigate } from 'react-router-dom';
 import CharacterCreation from './routes/character-creation/CharacterCreation.tsx';
@@ -41275,10 +41632,11 @@ function CharacterSheetRouteWrapper() {
 }
 
 export default App;
-`````
+```
 
 ## File: docs/project_overview_mindmap.md
-`````markdown
+
+````markdown
 # DC20Clean – System Overview & Mind Map (Iteration 1)
 
 _Last updated: 2025-08-20_
@@ -41435,7 +41793,7 @@ Legend: ✅ = used in runtime · 🟡 = exists but not wired
 | **Testing**           | Coverage thresholds? CI gating? Playwright journeys?            |
 | **Build / DevOps**    | Roll-up chunking, docker story, prod env variables?             |
 
-Each area will receive the same treatment as Rules-Data: inventory → status matrix → gap list → tasks.  
+Each area will receive the same treatment as Rules-Data: inventory → status matrix → gap list → tasks.
 (☑ Marks will move as iterations complete.)
 
 ---
@@ -41939,10 +42297,11 @@ mindmap
 5. **Documentation**: Update developer onboarding guides with new import patterns
 
 ---
-`````
+````
 
-## File: src/lib/rulesdata/_new_schema/traits.ts
-`````typescript
+## File: src/lib/rulesdata/\_new_schema/traits.ts
+
+```typescript
 import type { Trait } from '../schemas/character.schema';
 
 export const traitsData: Trait[] = [
@@ -44735,10 +45094,11 @@ export const getTraitData = (id: string): Trait | undefined => {
 export const getTraitsByAncestry = (ancestryId: string): Trait[] => {
 	return traitsData.filter((trait) => trait.id.startsWith(ancestryId + '_'));
 };
-`````
+```
 
 ## File: src/routes/character-sheet/hooks/useCharacterSheetReducer.ts
-`````typescript
+
+```typescript
 import { useReducer, useCallback } from 'react';
 import type { SavedCharacter } from '../../../lib/types/dataContracts';
 import type { Attack } from '../../../lib/types/dataContracts';
@@ -45252,10 +45612,11 @@ export function useCharacterSheetReducer() {
 		updateNotes
 	};
 }
-`````
+```
 
 ## File: src/lib/services/enhancedCharacterCalculator.ts
-`````typescript
+
+```typescript
 /**
  * Enhanced Character Calculator with Effect Attribution
  *
@@ -46132,10 +46493,11 @@ export function calculateCharacterWithBreakdowns(
 		isFromCache: false
 	};
 }
-`````
+```
 
 ## File: src/routes/character-sheet/hooks/CharacterSheetProvider.tsx
-`````typescript
+
+```typescript
 import React, { createContext, useContext, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
 	useCharacterSheetReducer,
@@ -46911,10 +47273,11 @@ export function useCharacterLanguages() {
 		}
 	}, [state.character?.languagesData]);
 }
-`````
+```
 
 ## File: src/routes/character-sheet/CharacterSheetClean.tsx
-`````typescript
+
+```typescript
 import React, { useState, useEffect } from 'react';
 
 // Import Provider hooks
@@ -48294,10 +48657,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 };
 
 export default CharacterSheet;
-`````
+```
 
 ## File: src/routes/character-creation/CharacterCreation.tsx
-`````typescript
+
+```typescript
 import React, { useState, useEffect } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
@@ -48923,4 +49287,5 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 };
 
 export default CharacterCreation;
+```
 `````

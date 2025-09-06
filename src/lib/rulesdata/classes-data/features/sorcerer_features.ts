@@ -5,21 +5,21 @@ export const sorcererClass: ClassDefinition = {
 	startingEquipment: {
 		weaponsOrShields: ['1 Weapon'],
 		armor: '1 set of Light Armor',
-		packs: 'X or Y "Packs" (Adventuring Packs Coming Soon)',
+		packs: 'X or Y "Packs" (Adventuring Packs Coming Soon)'
 	},
 	spellcasterPath: {
 		spellList: ['Arcane', 'Divine', 'Primal'],
 		cantrips: {
 			description:
-				'The number of Cantrips you know increases as shown in the Cantrips Known column of the Sorcerer Class Table.',
+				'The number of Cantrips you know increases as shown in the Cantrips Known column of the Sorcerer Class Table.'
 		},
 		spells: {
 			description:
-				'The number of Spells you know increases as shown in the Spells Known column of the Sorcerer Class Table.',
+				'The number of Spells you know increases as shown in the Spells Known column of the Sorcerer Class Table.'
 		},
 		manaPoints: {
-			maximumIncreasesBy: 'as shown in the Mana Points column of the Sorcerer Class Table.',
-		},
+			maximumIncreasesBy: 'as shown in the Mana Points column of the Sorcerer Class Table.'
+		}
 	},
 	coreFeatures: [
 		{
@@ -31,7 +31,7 @@ export const sorcererClass: ClassDefinition = {
 				{
 					name: 'Increased Maximum MP',
 					description: 'Your maximum MP increases by 1.',
-					effects: [{ type: 'MODIFY_STAT', target: 'mpMax', value: 1 }],
+					effects: [{ type: 'MODIFY_STAT', target: 'mpMax', value: 1 }]
 				},
 				{
 					name: 'Free Spell Enhancement',
@@ -41,10 +41,10 @@ export const sorcererClass: ClassDefinition = {
 						{
 							type: 'GRANT_ABILITY',
 							target: 'free_spell_enhancement',
-							value: 'Once per Long Rest, use a 1 MP Spell Enhancement for free.',
-						},
-					],
-				},
+							value: 'Once per Long Rest, use a 1 MP Spell Enhancement for free.'
+						}
+					]
+				}
 			],
 			choices: [
 				{
@@ -54,28 +54,27 @@ export const sorcererClass: ClassDefinition = {
 					options: [
 						{
 							name: 'Intuitive Magic',
-							description:
-								'Learn an additional Spell and Cantrip from your Sorcerer Spell List.',
+							description: 'Learn an additional Spell and Cantrip from your Sorcerer Spell List.',
 							effects: [
 								{
 									type: 'GRANT_SPELL',
 									target: 'sorcerer_spell_list',
 									value: 1,
 									userChoice: {
-										prompt: 'Choose an additional spell from the sorcerer list',
-									},
+										prompt: 'Choose an additional spell from the sorcerer list'
+									}
 								},
 								{
 									type: 'GRANT_CANTRIP',
 									target: 'sorcerer_spell_list',
-									value: 1,
-								},
-							],
+									value: 1
+								}
+							]
 						},
 						{
 							name: 'Resilient Magic',
 							description: 'You gain Dazed Resistance.',
-							effects: [{ type: 'GRANT_RESISTANCE', target: 'Dazed', value: true }],
+							effects: [{ type: 'GRANT_RESISTANCE', target: 'Dazed', value: true }]
 						},
 						{
 							name: 'Unstable Magic',
@@ -86,13 +85,13 @@ export const sorcererClass: ClassDefinition = {
 									type: 'GRANT_ABILITY',
 									target: 'unstable_magic',
 									value:
-										'When you Critically Succeed or Fail on a Spell Check, roll on the Wild Magic Table.',
-								},
-							],
-						},
-					],
-				},
-			],
+										'When you Critically Succeed or Fail on a Spell Check, roll on the Wild Magic Table.'
+								}
+							]
+						}
+					]
+				}
+			]
 		},
 		{
 			featureName: 'Overload Magic',
@@ -108,9 +107,9 @@ export const sorcererClass: ClassDefinition = {
 							type: 'MODIFY_STAT',
 							target: 'spellCheck',
 							value: 5,
-							condition: 'While Overload Magic is active',
-						},
-					],
+							condition: 'While Overload Magic is active'
+						}
+					]
 				},
 				{
 					name: 'Overload Strain',
@@ -121,18 +120,18 @@ export const sorcererClass: ClassDefinition = {
 							type: 'GRANT_ABILITY',
 							target: 'overload_strain',
 							value:
-								'Must save vs Exhaustion when using Overload Magic and at the start of each turn.',
-						},
-					],
-				},
-			],
+								'Must save vs Exhaustion when using Overload Magic and at the start of each turn.'
+						}
+					]
+				}
+			]
 		},
 		{
 			featureName: 'Sorcery',
 			levelGained: 1,
 			isFlavor: true,
 			description: 'You learn the Sorcery Spell.',
-			effects: [{ type: 'GRANT_SPELL', target: 'Sorcery', value: 1 }],
+			effects: [{ type: 'GRANT_SPELL', target: 'Sorcery', value: 1 }]
 		},
 		{
 			featureName: 'Meta Magic',
@@ -149,35 +148,35 @@ export const sorcererClass: ClassDefinition = {
 							name: 'Careful Spell',
 							description:
 								"When you Cast a Spell that targets an Area of Effect, you can choose to protect some of the creatures from the Spell's full force. Spend 1 MP and choose a number of creatures up to your Prime Modifier. All chosen creatures are immune to the Spell's damage and effects.",
-							effects: [],
+							effects: []
 						},
 						{
 							name: 'Heightened Spell',
 							description:
 								'When you Cast a Spell that forces a creature to make a Save to resist its effects, you can spend 1 MP to give 1 target DisADV on its first Save against the Spell.',
-							effects: [],
+							effects: []
 						},
 						{
 							name: 'Quickened Spell',
 							description:
 								'You can spend 1 MP to reduce the AP cost of a Spell by 1 (minimum of 1 AP).',
-							effects: [],
+							effects: []
 						},
 						{
 							name: 'Subtle Spell',
 							description:
 								'When you cast a Spell, you can spend 1 MP to cast it without any Somatic or Verbal Components.',
-							effects: [],
+							effects: []
 						},
 						{
 							name: 'Transmuted Spell',
 							description:
 								'When you cast a Spell that deals a type of damage from the following list, you can spend 1 MP to change that damage type to one of the other listed types: Cold, Corrosion, Fire, Lightning, Poison, or Sonic.',
-							effects: [],
-						},
-					],
-				},
-			],
+							effects: []
+						}
+					]
+				}
+			]
 		},
 		{
 			featureName: 'Talent',
@@ -189,10 +188,10 @@ export const sorcererClass: ClassDefinition = {
 					type: 'GRANT_CHOICE',
 					target: 'talent',
 					value: 1,
-					userChoice: { prompt: 'Choose 1 Talent' },
-				},
-			],
-		},
+					userChoice: { prompt: 'Choose 1 Talent' }
+				}
+			]
+		}
 	],
 	subclasses: [
 		{
@@ -211,9 +210,9 @@ export const sorcererClass: ClassDefinition = {
 								{
 									type: 'GRANT_ABILITY',
 									target: 'celestial_origin',
-									value: 'Gain 2 Ancestry Points for Angelborn Traits.',
-								},
-							],
+									value: 'Gain 2 Ancestry Points for Angelborn Traits.'
+								}
+							]
 						},
 						{
 							name: 'Celestial Protection',
@@ -223,9 +222,9 @@ export const sorcererClass: ClassDefinition = {
 								{
 									type: 'GRANT_ABILITY',
 									target: 'careful_spell',
-									value: 'Learn Careful Spell. It costs 0 MP.',
-								},
-							],
+									value: 'Learn Careful Spell. It costs 0 MP.'
+								}
+							]
 						},
 						{
 							name: 'Celestial Overload',
@@ -235,11 +234,11 @@ export const sorcererClass: ClassDefinition = {
 								{
 									type: 'GRANT_ABILITY',
 									target: 'celestial_overload',
-									value: 'Spend 1 AP while overloaded for AoE heal/damage.',
-								},
-							],
-						},
-					],
+									value: 'Spend 1 AP while overloaded for AoE heal/damage.'
+								}
+							]
+						}
+					]
 				},
 				{
 					featureName: 'Celestial Appearance (Flavor Feature)',
@@ -252,11 +251,11 @@ export const sorcererClass: ClassDefinition = {
 							type: 'GRANT_ABILITY',
 							target: 'celestial_appearance',
 							value:
-								'Gain angelic features. If already fluent in Celestial, gain 1 Language Mastery.',
-						},
-					],
-				},
-			],
+								'Gain angelic features. If already fluent in Celestial, gain 1 Language Mastery.'
+						}
+					]
+				}
+			]
 		},
 		{
 			subclassName: 'Draconic',
@@ -274,10 +273,9 @@ export const sorcererClass: ClassDefinition = {
 								{
 									type: 'GRANT_ABILITY',
 									target: 'draconic_origin',
-									value:
-										'Gain 2 Ancestry Points for Dragonborn Traits & choose a Draconic Origin.',
-								},
-							],
+									value: 'Gain 2 Ancestry Points for Dragonborn Traits & choose a Draconic Origin.'
+								}
+							]
 						},
 						{
 							name: 'Draconic Overload',
@@ -288,15 +286,15 @@ export const sorcererClass: ClassDefinition = {
 									type: 'GRANT_RESISTANCE',
 									target: 'Physical',
 									value: 1,
-									condition: 'While Overloaded',
+									condition: 'While Overloaded'
 								},
 								{
 									type: 'GRANT_RESISTANCE',
 									target: 'Draconic Origin Damage Type',
 									value: 1,
-									condition: 'While Overloaded',
-								},
-							],
+									condition: 'While Overloaded'
+								}
+							]
 						},
 						{
 							name: 'Draconic Transmutation',
@@ -307,11 +305,11 @@ export const sorcererClass: ClassDefinition = {
 									type: 'GRANT_ABILITY',
 									target: 'draconic_transmutation',
 									value:
-										'Gain Transmuted Spell. Cost is 0 MP if changing to Draconic Origin damage type.',
-								},
-							],
-						},
-					],
+										'Gain Transmuted Spell. Cost is 0 MP if changing to Draconic Origin damage type.'
+								}
+							]
+						}
+					]
 				},
 				{
 					featureName: 'Draconic Appearance (Flavor Feature)',
@@ -324,11 +322,11 @@ export const sorcererClass: ClassDefinition = {
 							type: 'GRANT_ABILITY',
 							target: 'draconic_appearance',
 							value:
-								'Gain draconic features and 1 level of Language Mastery in Draconic (or another language if already fluent).',
-						},
-					],
-				},
-			],
-		},
-	],
+								'Gain draconic features and 1 level of Language Mastery in Draconic (or another language if already fluent).'
+						}
+					]
+				}
+			]
+		}
+	]
 };

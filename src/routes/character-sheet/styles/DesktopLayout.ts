@@ -406,7 +406,7 @@ export const StyledSpellName = styled.div`
 	color: #8b4513;
 	margin-bottom: 0.25rem;
 	cursor: pointer;
-	
+
 	&:hover {
 		text-decoration: underline;
 	}
@@ -436,7 +436,7 @@ export const StyledSpellDuration = styled.div`
 export const StyledSpellPrepared = styled.div<{ isPrepared: boolean }>`
 	text-align: center;
 	font-weight: bold;
-	color: ${props => props.isPrepared ? '#4CAF50' : '#888'};
+	color: ${(props) => (props.isPrepared ? '#4CAF50' : '#888')};
 `;
 
 export const StyledSpellActions = styled.div`
@@ -476,8 +476,8 @@ export const StyledSpellActionButton = styled.button`
 	&.prepare {
 		&:hover {
 			background: #e8f5e8;
-			border-color: #4CAF50;
-			color: #4CAF50;
+			border-color: #4caf50;
+			color: #4caf50;
 		}
 	}
 `;

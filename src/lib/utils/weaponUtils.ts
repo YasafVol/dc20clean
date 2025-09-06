@@ -1,7 +1,7 @@
 // weaponUtils.ts
 // Utility functions for working with inventory weapons in the attack system
 
-import { Weapon, WeaponType, WeaponProperty } from '../rulesdata/inventoryItems';
+import { Weapon, WeaponType } from '../rulesdata/inventoryItems';
 
 export interface ParsedDamage {
 	amount: number;
@@ -18,7 +18,7 @@ export interface ParsedDamage {
  * Parse damage string like "1 S", "2 B", "1 S/P" into structured data
  */
 export function parseDamage(damageStr: string): ParsedDamage {
-	const match = damageStr.trim().match(/^(\d+)\s+([SPBG\/]+)$/);
+	const match = damageStr.trim().match(/^(\d+)\s+([SPBG/]+)$/);
 	if (!match) {
 		// Fallback for malformed damage strings
 		return { amount: 0, type: 'B', typeDisplay: 'bludgeoning' };

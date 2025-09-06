@@ -1,37 +1,41 @@
 import styled from 'styled-components';
 
-export const StyledCombatSection = styled.div`
-	border: 2px solid #8b4513;
+interface MobileStyledProps {
+	$isMobile?: boolean;
+}
+
+export const StyledCombatSection = styled.div<MobileStyledProps>`
+	border: 2px solid ${(props) => (props.$isMobile ? 'rgb(68, 68, 68)' : '#8b4513')};
 	border-radius: 8px;
 	padding: 1rem;
-	background: white
+	background: ${(props) => (props.$isMobile ? 'rgb(42, 42, 42)' : 'white')};
 `;
 
-export const StyledCombatTitle = styled.div`
+export const StyledCombatTitle = styled.div<MobileStyledProps>`
 	font-size: 1.1rem;
 	font-weight: bold;
-	color: #8b4513;
+	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
 	text-align: center;
 	margin-bottom: 1rem;
 	font-family: 'Inter', sans-serif;
 `;
 
-export const StyledActionPointsContainer = styled.div`
+export const StyledActionPointsContainer = styled.div<MobileStyledProps>`
 	text-align: center;
 	margin-bottom: 1rem;
 `;
 
-export const StyledActionPointsTitle = styled.div`
+export const StyledActionPointsTitle = styled.div<MobileStyledProps>`
 	font-size: 0.9rem;
 	font-weight: bold;
-	color: #8b4513;
+	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
 	margin-bottom: 0.5rem;
 	font-family: 'Inter', sans-serif;
 `;
 
-export const StyledCombatStatsContainer = styled.div`
+export const StyledCombatStatsContainer = styled.div<MobileStyledProps>`
 	font-size: 0.9rem;
-	color: #8b4513;
+	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
 `;
 
 export const StyledCombatStatRow = styled.div`
@@ -112,7 +116,7 @@ export const StyledDefenseLabel = styled.div`
 	margin-top: 0.2rem;
 `;
 
-export const StyledActionPoints = styled.div`
+export const StyledActionPoints = styled.div<MobileStyledProps>`
 	display: flex;
 	justify-content: center;
 	gap: 0.5rem;
@@ -124,16 +128,26 @@ export const StyledActionPoints = styled.div`
 	}
 `;
 
-export const StyledActionPoint = styled.div<{ used: boolean }>`
+export const StyledActionPoint = styled.div<{ used: boolean; $isMobile?: boolean }>`
 	width: 40px;
 	height: 40px;
-	border: 2px solid #8b4513;
+	border: 2px solid ${(props) => (props.$isMobile ? 'rgb(68, 68, 68)' : '#8b4513')};
 	border-radius: 50%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: ${(props) => (props.used ? '#8b4513' : 'white')};
-	color: ${(props) => (props.used ? 'white' : '#8b4513')};
+	background: ${(props) => {
+		if (props.used) {
+			return props.$isMobile ? '#f5d020' : '#8b4513';
+		}
+		return props.$isMobile ? 'rgb(42, 42, 42)' : 'white';
+	}};
+	color: ${(props) => {
+		if (props.used) {
+			return props.$isMobile ? 'rgb(42, 42, 42)' : 'white';
+		}
+		return props.$isMobile ? '#f5d020' : '#8b4513';
+	}};
 	cursor: pointer;
 	font-weight: bold;
 	font-size: 16px;
@@ -144,7 +158,12 @@ export const StyledActionPoint = styled.div<{ used: boolean }>`
 	padding-top: 1px;
 
 	&:hover {
-		background: ${(props) => (props.used ? '#6b3410' : '#f0f0f0')};
+		background: ${(props) => {
+			if (props.used) {
+				return props.$isMobile ? '#d4b01c' : '#6b3410';
+			}
+			return props.$isMobile ? 'rgb(52, 52, 52)' : '#f0f0f0';
+		}};
 	}
 `;
 

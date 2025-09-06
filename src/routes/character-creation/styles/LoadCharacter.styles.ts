@@ -353,11 +353,12 @@ export const StyledImportMessage = styled.p<{ type?: 'error' | 'success' | 'info
 		if (props.type === 'success') return 'rgba(16, 185, 129, 0.1)';
 		return 'rgba(59, 130, 246, 0.1)';
 	}};
-	border: 1px solid ${(props) => {
-		if (props.type === 'error') return '#ef4444';
-		if (props.type === 'success') return '#10b981';
-		return '#3b82f6';
-	}};
+	border: 1px solid
+		${(props) => {
+			if (props.type === 'error') return '#ef4444';
+			if (props.type === 'success') return '#10b981';
+			return '#3b82f6';
+		}};
 	color: ${(props) => {
 		if (props.type === 'error') return '#ef4444';
 		if (props.type === 'success') return '#10b981';

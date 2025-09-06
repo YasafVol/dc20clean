@@ -76,12 +76,22 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 	onBack
 }) => {
 	// Use the Context hooks
-	const { state, updateHP, updateSP, updateMP, updateTempHP, updateCurrency, addSpell, removeSpell, updateSpell } = useCharacterSheet();
+	const {
+		state,
+		updateHP,
+		updateSP,
+		updateMP,
+		updateTempHP,
+		updateCurrency,
+		addSpell,
+		removeSpell,
+		updateSpell
+	} = useCharacterSheet();
 	const resources = useCharacterResources();
 	const features = useCharacterFeatures();
 	const currency = useCharacterCurrency();
 	const spells = useCharacterSpells();
-	
+
 	// Local popup state
 	const [selectedFeature, setSelectedFeature] = useState<any>(null);
 	const [selectedSpell, setSelectedSpell] = useState<any>(null);
@@ -250,14 +260,14 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 
 			<StyledDesktopWrapper>
 				{/* Character Header */}
-				<StyledDesktopHeader isDead={resources.current.isDead}>
-					<StyledCharacterName isDead={resources.current.isDead}>
-						{resources.current.isDead && <StyledDeathSkull>💀</StyledDeathSkull>}
+				<StyledDesktopHeader isDead={resources?.current?.isDead || false}>
+					<StyledCharacterName isDead={resources?.current?.isDead || false}>
+						{resources?.current?.isDead && <StyledDeathSkull>💀</StyledDeathSkull>}
 						{characterData.finalName || 'Unnamed Character'}
-						{resources.current.isDead && <StyledDeathSkull>💀</StyledDeathSkull>}
+						{resources?.current?.isDead && <StyledDeathSkull>💀</StyledDeathSkull>}
 					</StyledCharacterName>
 					<StyledCharacterSubtitle>
-						{resources.current.isDead && (
+						{resources?.current?.isDead && (
 							<div
 								style={{
 									color: '#8B0000',
@@ -468,11 +478,9 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 					<StyledSpellsContainer>
 						<StyledSpellsHeader>
 							<StyledSpellsHeaderTitle>Spellbook</StyledSpellsHeaderTitle>
-							<StyledAddSpellButton onClick={handleAddSpell}>
-								+ Add Spell
-							</StyledAddSpellButton>
+							<StyledAddSpellButton onClick={handleAddSpell}>+ Add Spell</StyledAddSpellButton>
 						</StyledSpellsHeader>
-						
+
 						{spells && spells.length > 0 ? (
 							<StyledSpellsTable>
 								<StyledSpellsTableHeader>
@@ -517,14 +525,14 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 											</StyledSpellsTableCell>
 											<StyledSpellsTableCell>
 												<StyledSpellActions>
-													<StyledSpellActionButton 
+													<StyledSpellActionButton
 														className="prepare"
 														onClick={() => handleTogglePrepared(spell)}
 														title={spell.isPrepared ? 'Unprepare' : 'Prepare'}
 													>
 														{spell.isPrepared ? '⬇' : '⬆'}
 													</StyledSpellActionButton>
-													<StyledSpellActionButton 
+													<StyledSpellActionButton
 														className="delete"
 														onClick={() => handleDeleteSpell(spell.id)}
 														title="Delete Spell"
@@ -553,7 +561,7 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 							<StyledCurrencyLabel>Gold</StyledCurrencyLabel>
 							<StyledCurrencyInput
 								type="number"
-								value={currency.gold}
+								value={'gold' in currency ? currency.gold : currency.goldPieces}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
 									handleCurrencyChange('goldPieces', parseInt(e.target.value) || 0)
 								}
@@ -563,7 +571,7 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 							<StyledCurrencyLabel>Silver</StyledCurrencyLabel>
 							<StyledCurrencyInput
 								type="number"
-								value={currency.silver}
+								value={'silver' in currency ? currency.silver : currency.silverPieces}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
 									handleCurrencyChange('silverPieces', parseInt(e.target.value) || 0)
 								}
@@ -573,7 +581,7 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 							<StyledCurrencyLabel>Copper</StyledCurrencyLabel>
 							<StyledCurrencyInput
 								type="number"
-								value={currency.copper}
+								value={'copper' in currency ? currency.copper : currency.copperPieces}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
 									handleCurrencyChange('copperPieces', parseInt(e.target.value) || 0)
 								}

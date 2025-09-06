@@ -219,21 +219,21 @@ export const saveCharacterState = (characterId: string, state: CharacterState): 
  * Save an entire character (includes spells, maneuvers, and other root-level data)
  */
 export const saveCharacter = (character: SavedCharacter): void => {
-  const characters = getAllSavedCharacters();
-  const characterIndex = characters.findIndex(char => char.id === character.id);
-  
-  if (characterIndex === -1) {
-    console.warn(`Character ${character.id} not found for update`);
-    return;
-  }
-  
-  // Update the entire character with new lastModified timestamp
-  characters[characterIndex] = {
-    ...character,
-    lastModified: new Date().toISOString()
-  };
-  
-  saveAllCharacters(characters);
+	const characters = getAllSavedCharacters();
+	const characterIndex = characters.findIndex((char) => char.id === character.id);
+
+	if (characterIndex === -1) {
+		console.warn(`Character ${character.id} not found for update`);
+		return;
+	}
+
+	// Update the entire character with new lastModified timestamp
+	characters[characterIndex] = {
+		...character,
+		lastModified: new Date().toISOString()
+	};
+
+	saveAllCharacters(characters);
 };
 
 // Migration utilities removed - no backward compatibility support

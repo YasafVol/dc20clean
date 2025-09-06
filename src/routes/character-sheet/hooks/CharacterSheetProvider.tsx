@@ -107,6 +107,8 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
     updateInventory,
     updateCurrency,
     updateNotes,
+    updateGritPoints,
+    updateRestPoints,
   } = useCharacterSheetReducer();
 
 	// Save function that runs enhanced calculator and persists to storage

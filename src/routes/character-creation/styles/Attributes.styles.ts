@@ -48,63 +48,77 @@ export const StyledGrid = styled.div`
 	margin-top: 1rem;
 	justify-content: space-between;
 	overflow-x: auto;
-	align-items: stretch; /* make card heights align */
+	align-items: flex-start; /* align to top to accommodate validation messages */
 `;
 
-export const StyledCard = styled.div`
-	border: 1px solid white;
-	padding: 1.2rem 1.2rem 2.2rem; /* extra bottom padding for validation message */
-	border-radius: 10px;
-	background: transparent;
-	text-align: center;
-	transition: all 0s ease;
-	 /* Force four cards per row where possible, but allow horizontal scroll
-		 on smaller viewports via the grid's overflow-x:auto */
-	 flex: 0 0 23%;
-	 min-width: 240px;
-	 max-width: 28%;
-	 height: 260px; /* consistent card height for visual alignment */
-	position: relative;
+export const StyledCardContainer = styled.div`
+	/* Container for card + validation message */
+	flex: 0 0 23%;
+	min-width: 240px;
+	max-width: 28%;
 	display: flex;
 	flex-direction: column;
-	 overflow: hidden;
-
-	&:hover {
-		border-color: #fbbf24;
-	}
+	align-items: center;
 	
 	@media (max-width: 900px) {
 		min-width: 180px;
 	}
 `;
 
+export const StyledCard = styled.div`
+	border: 1px solid white;
+	padding: 1rem; /* removed extra bottom padding */
+	border-radius: 10px;
+	background: transparent;
+	text-align: center;
+	transition: all 0s ease;
+	width: 100%; /* take full width of container */
+	height: 220px; /* much shorter height like in mockup */
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between; /* distribute content evenly */
+	align-items: center;
+	overflow: hidden;
+
+	&:hover {
+		border-color: #fbbf24;
+	}
+	
+	@media (max-width: 900px) {
+		height: 200px;
+		padding: 0.8rem;
+	}
+`;
+
 export const StyledCardTitle = styled.h3`
-	margin: 0 0 0.25rem 0;
+	margin: 0;
 	color: #fbbf24;
-	font-size: 1.4rem;
+	font-size: 1.3rem; /* slightly smaller to fit better */
 	font-weight: bold;
 	text-transform: uppercase;
 	letter-spacing: 1px;
+	text-align: center;
 `;
 
 export const StyledControls = styled.div`
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
-	gap: 1rem;
-	margin: 0.5rem auto;
-	width: 80%;
+	justify-content: center;
+	gap: 1rem; /* tighter gap */
+	margin: 0.5rem auto 0 auto; /* tighter margins */
+	width: 100%;
 `;
 
 export const StyledButton = styled.button`
-	width: 40px;
-	height: 35px;
+	width: 36px; /* slightly smaller */
+	height: 32px; /* slightly smaller */
 	border: 1px solid white;
 	border-radius: 8px;
 	background: transparent;
 	color: #fbbf24;
 	cursor: pointer;
-	font-size: 1.4rem;
+	font-size: 1.3rem; /* slightly smaller font */
 	font-weight: bold;
 	line-height: 1;
 	padding: 0;
@@ -132,11 +146,11 @@ export const StyledButton = styled.button`
 
 export const StyledValue = styled.p`
 	margin: 0;
-	font-size: 2.2rem;
+	font-size: 2rem; /* slightly smaller */
 	font-weight: bold;
-	min-width: 40px;
+	min-width: 36px; /* slightly smaller */
 	color: #fbbf24;
-	padding: 0.5rem;
+	padding: 0.3rem; /* tighter padding */
 	border-radius: 6px;
 	border: none;
 	display: flex;
@@ -146,7 +160,13 @@ export const StyledValue = styled.p`
 
 export const StyledDescription = styled.p`
 	color: #e5e7eb;
-	font-size: 0.9rem;
-	line-height: 1.4;
-	margin: 0.25rem 0 0.5rem 0;
+	font-size: 0.85rem; /* slightly smaller */
+	line-height: 1.3; /* tighter line height */
+	margin: 0;
+	text-align: center;
+	flex-grow: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 0.5rem; /* slight horizontal padding */
 `;

@@ -25,7 +25,6 @@ export const rogueClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
-			id: 'rogue_expertise',
 			featureName: 'Expertise',
 			levelGained: 1,
 			description:
@@ -39,7 +38,6 @@ export const rogueClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'sneak_attack',
 			featureName: 'Sneak Attack',
 			levelGained: 1,
 			description:
@@ -53,7 +51,6 @@ export const rogueClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'thieves_cant',
 			featureName: "Thieves' Cant",
 			levelGained: 1,
 			description:
@@ -67,7 +64,6 @@ export const rogueClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'cunning_action',
 			featureName: 'Cunning Action',
 			levelGained: 2,
 			description: 'You can use your Minor Action to take the Disengage, Hide, or Dash action.',

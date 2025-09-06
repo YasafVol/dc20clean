@@ -24,7 +24,8 @@ export const hunterClass: ClassDefinition = {
 			maximumIncreasesBy: 'Stamina Points column of the Hunter Class Table'
 		},
 		staminaRegen: {
-			description: 'Once per round, you can regain up to half your maximum SP when you score a Heavy or Critical Hit.',
+			description:
+				'Once per round, you can regain up to half your maximum SP when you score a Heavy or Critical Hit.'
 		}
 	},
 	coreFeatures: [

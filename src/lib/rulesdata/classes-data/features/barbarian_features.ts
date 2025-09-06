@@ -19,7 +19,8 @@ export const barbarianClass: ClassDefinition = {
 			maximumIncreasesBy: 'Stamina Points column of the Barbarian Class Table'
 		},
 		staminaRegen: {
-			description: 'Once per round, you can regain up to half your maximum SP when you score a Heavy or Critical Hit against a creature, or when a Heavy or Critical Hit is scored against you.',
+			description:
+				'Once per round, you can regain up to half your maximum SP when you score a Heavy or Critical Hit against a creature, or when a Heavy or Critical Hit is scored against you.'
 		}
 	},
 	coreFeatures: [
@@ -31,7 +32,7 @@ export const barbarianClass: ClassDefinition = {
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Armor', value: true },
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Shields', value: true },
-				{ type: 'GRANT_MANEUVERS', target: 'all_attack', value: true }
+				{ type: 'GRANT_MANEUVERS', target: 'all_attack', value: 4 }
 			],
 			benefits: [
 				{
@@ -47,7 +48,7 @@ export const barbarianClass: ClassDefinition = {
 					name: 'Maneuver Knowledge',
 					description:
 						'You learn all Attack maneuvers plus additional maneuvers as shown on the Barbarian Class Table.',
-					effects: [{ type: 'GRANT_MANEUVERS', target: 'all_attack', value: true }]
+					effects: [{ type: 'GRANT_MANEUVERS', target: 'all_attack', value: 4 }]
 				},
 				{
 					name: 'Stamina Regeneration',
@@ -344,7 +345,7 @@ export const barbarianClass: ClassDefinition = {
 					description: 'Bestowed Protection and Spiritual Aura while Raging.',
 					effects: [
 						{ type: 'GRANT_CHOICE', target: 'guardian_maneuver', value: 1 },
-						{ type: 'GRANT_RESISTANCE', target: 'Mystical', value: 1, condition: 'raging' },
+						{ type: 'GRANT_RESISTANCE', target: 'Mystical', value: 1, optional: 'while raging' },
 						{
 							type: 'GRANT_ABILITY',
 							target: 'spiritual_aura',
@@ -361,17 +362,17 @@ export const barbarianClass: ClassDefinition = {
 								{
 									name: 'Parry',
 									description: 'Learn the Parry maneuver.',
-									effects: [{ type: 'GRANT_CHOICE', target: 'maneuver', value: 'Parry' }]
+									effects: [{ type: 'GRANT_MANEUVERS', target: 'Parry', value: 1 }]
 								},
 								{
 									name: 'Protect',
 									description: 'Learn the Protect maneuver.',
-									effects: [{ type: 'GRANT_CHOICE', target: 'maneuver', value: 'Protect' }]
+									effects: [{ type: 'GRANT_MANEUVERS', target: 'Protect', value: 1 }]
 								},
 								{
 									name: 'Raise Shield',
 									description: 'Learn the Raise Shield maneuver.',
-									effects: [{ type: 'GRANT_CHOICE', target: 'maneuver', value: 'Raise Shield' }]
+									effects: [{ type: 'GRANT_MANEUVERS', target: 'Raise Shield', value: 1 }]
 								}
 							]
 						}

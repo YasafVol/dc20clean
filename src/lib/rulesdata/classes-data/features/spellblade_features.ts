@@ -26,16 +26,12 @@ export const spellbladeClass: ClassDefinition = {
 			}
 		},
 		spellcastingAspect: {
-			spellsKnown: {
-				description: 'Spells Known column of the Spellblade Class Table'
-			},
-			ritualCasting: true,
-			spellPreparation: true
+			ritualCasting: false,
+			spellPreparation: false
 		}
 	},
 	coreFeatures: [
 		{
-			id: 'fighting_style',
 			featureName: 'Fighting Style',
 			levelGained: 1,
 			description:
@@ -68,7 +64,6 @@ export const spellbladeClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'spellstrike',
 			featureName: 'Spellstrike',
 			levelGained: 2,
 			description:

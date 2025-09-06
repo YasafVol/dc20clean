@@ -1,10 +1,13 @@
 // Styled components for LoadCharacter component
 import styled from 'styled-components';
+import BlackBG from '/src/assets/BlackBG.jpg';
 
 export const StyledContainer = styled.div`
 	padding: 2rem;
 	min-height: 100vh;
-	background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
+	background: url(${BlackBG}) center center no-repeat;
+	background-size: cover;
+	position: relative;
 `;
 
 export const StyledTitle = styled.h1`

@@ -222,11 +222,19 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 													{spell.spellName}
 												</option>
 											)}
-											{filteredSpells.map((spellOption) => (
-												<option key={spellOption.name} value={spellOption.name}>
-													{spellOption.name}
-												</option>
-											))}
+											{filteredSpells
+												.filter(spellOption => {
+													// Don't show spells that are already selected by other spell slots
+													const isAlreadySelected = spells.some(existingSpell => 
+														existingSpell.spellName === spellOption.name && existingSpell.id !== spell.id
+													);
+													return !isAlreadySelected;
+												})
+												.map((spellOption) => (
+													<option key={spellOption.name} value={spellOption.name}>
+														{spellOption.name}
+													</option>
+												))}
 										</StyledSpellSelect>
 									)}
 

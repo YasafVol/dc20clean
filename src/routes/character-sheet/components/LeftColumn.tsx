@@ -18,13 +18,17 @@ interface LeftColumnProps {
 	};
 	languages: LanguageData[];
 	breakdowns?: Record<string, EnhancedStatBreakdown>;
+	onKnowledgeInfoClick?: (knowledgeName: string) => void;
+	onTradeInfoClick?: (tradeName: string) => void;
 }
 
 const LeftColumn: React.FC<LeftColumnProps> = ({
 	characterData,
 	skillsByAttribute,
 	languages,
-	breakdowns
+	breakdowns,
+	onKnowledgeInfoClick,
+	onTradeInfoClick
 }) => {
 	return (
 		<StyledLeftColumn>
@@ -33,7 +37,10 @@ const LeftColumn: React.FC<LeftColumnProps> = ({
 				skillsByAttribute={skillsByAttribute} 
 				breakdowns={breakdowns}
 			/>
-			<KnowledgeTrades />
+			<KnowledgeTrades 
+				onKnowledgeInfoClick={onKnowledgeInfoClick}
+				onTradeInfoClick={onTradeInfoClick}
+			/>
 			<Languages languages={languages} />
 		</StyledLeftColumn>
 	);

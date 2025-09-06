@@ -4,16 +4,21 @@ import {
 	KnowledgeTradesSection,
 	SectionTitle,
 	SectionDescription,
-	EmptyMessage
+	EmptyMessage,
+	StyledInfoButton
 } from '../styles/KnowledgeTrades';
 import { SkillRow, SkillName } from '../styles/Attributes';
 import { StyledProficiencyDots, StyledDot } from '../styles/Skills';
 
 interface KnowledgeTradesProps {
-	// No props needed - component gets data from Provider hooks
+	onKnowledgeInfoClick?: (knowledgeName: string) => void;
+	onTradeInfoClick?: (tradeName: string) => void;
 }
 
-const KnowledgeTrades: React.FC<KnowledgeTradesProps> = () => {
+const KnowledgeTrades: React.FC<KnowledgeTradesProps> = ({ 
+	onKnowledgeInfoClick, 
+	onTradeInfoClick 
+}) => {
 	const knowledge = useCharacterKnowledge();
 	const trades = useCharacterTrades();
 
@@ -23,7 +28,7 @@ const KnowledgeTrades: React.FC<KnowledgeTradesProps> = () => {
 			<KnowledgeTradesSection>
 				<SectionTitle>KNOWLEDGE</SectionTitle>
 				<SectionDescription>Intelligence-based knowledge trades</SectionDescription>
-							{knowledge.map((knowledgeItem) => (
+								{knowledge.map((knowledgeItem) => (
 				<SkillRow key={knowledgeItem.id}>
 					<SkillName>{knowledgeItem.name.toUpperCase()}</SkillName>
 					<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -43,6 +48,9 @@ const KnowledgeTrades: React.FC<KnowledgeTradesProps> = () => {
 								{knowledgeItem.bonus >= 0 ? '+' : ''}{knowledgeItem.bonus}
 							</span>
 						)}
+						<StyledInfoButton onClick={() => onKnowledgeInfoClick?.(knowledgeItem.name)}>
+							i
+						</StyledInfoButton>
 					</div>
 				</SkillRow>
 			))}
@@ -53,7 +61,7 @@ const KnowledgeTrades: React.FC<KnowledgeTradesProps> = () => {
 				<SectionTitle>TRADES</SectionTitle>
 				<SectionDescription>Selected practical trades & crafts</SectionDescription>
 				{trades.length > 0 ? (
-									trades.map((trade) => (
+					trades.map((trade) => (
 					<SkillRow key={trade.id}>
 						<SkillName>{trade.name.toUpperCase()}</SkillName>
 						<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -73,6 +81,9 @@ const KnowledgeTrades: React.FC<KnowledgeTradesProps> = () => {
 									{trade.bonus >= 0 ? '+' : ''}{trade.bonus}
 								</span>
 							)}
+							<StyledInfoButton onClick={() => onTradeInfoClick?.(trade.name)}>
+								i
+							</StyledInfoButton>
 						</div>
 					</SkillRow>
 				))

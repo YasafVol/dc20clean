@@ -115,18 +115,52 @@ test.describe('Human Cleric E2E', () => {
     await expect(page.getByText(/Language Points:\s*0\s*\/\s*\d+/)).toBeVisible();
     await page.getByRole('button', { name: 'Next →' }).click();
 
-    // Step 5: skip spells/maneuvers
+    // Step 5: Spells & Maneuvers - Detailed Testing
+    await expect(page.getByText(/Total Selected:\s*0\/5/i)).toBeVisible();
+    
+    // Select the required spells by properly reading each card's title and clicking its Add button
+    console.log('Adding Guidance...');
+    await page.getByRole('heading', { name: 'Guidance', exact: true }).locator('..').locator('..').getByRole('button', { name: 'Add' }).click();
+    await page.waitForTimeout(500);
+    
+    console.log('Adding Shield...');
+    await page.getByRole('heading', { name: 'Shield', exact: true }).locator('..').locator('..').getByRole('button', { name: 'Add' }).click();
+    await page.waitForTimeout(500);
+    
+    console.log('Adding Bless...');
+    await page.getByRole('heading', { name: 'Bless', exact: true }).locator('..').locator('..').getByRole('button', { name: 'Add' }).click();
+    await page.waitForTimeout(500);
+    
+    console.log('Adding Heal...');
+    await page.getByRole('heading', { name: 'Heal', exact: true }).locator('..').locator('..').getByRole('button', { name: 'Add' }).click();
+    await page.waitForTimeout(500);
+    
+    console.log('Adding Shield of Faith...');
+    await page.getByRole('heading', { name: 'Shield of Faith', exact: true }).locator('..').locator('..').getByRole('button', { name: 'Add' }).click();
+    await page.waitForTimeout(1000);
+    
+    // Debug: check what the current count shows
+    const currentCount = await page.textContent('[data-testid="spell-counter"], .spell-counter, :has-text("Total Selected")').catch(() => 'Counter not found');
+    console.log('Current counter text:', currentCount);
+    
+    // Verify all 5 spells are selected - try different possible formats
+    try {
+      await expect(page.getByText(/Total Selected:\s*5\/5/i)).toBeVisible({ timeout: 5000 });
+    } catch (e) {
+      console.log('Primary counter format not found, trying alternatives...');
+      await expect(page.getByText(/5\/5/)).toBeVisible({ timeout: 2000 });
+    }
     await page.getByRole('button', { name: 'Next →' }).click();
 
     // Step 6: Names
-    await page.getByLabel(/Character Name/i).fill('human cleric test');
-    await page.getByLabel(/Player Name/i).fill('playwright');
+    await page.getByLabel(/Character Name/i).fill('testy');
+    await page.getByLabel(/Player Name/i).fill('e2e automation');
     await page.getByText(/Complete|Finish/i).click();
 
     // Verify saved character from localStorage
     const saved = await page.evaluate(() => {
       const list = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-      return list.find((c: any) => c.finalName === 'human cleric test');
+      return list.find((c: any) => c.finalName === 'testy');
     });
 
 

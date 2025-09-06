@@ -9,6 +9,11 @@ export const StyledContainer = styled.div`
 	min-height: 100vh;
 	background: transparent;
 	width: 100%;
+
+	@media (max-width: 768px) {
+		padding: 8rem 0.5rem 1rem 0.5rem;
+		gap: 1rem;
+	}
 `;
 
 export const StyledTitle = styled.h1`
@@ -19,6 +24,13 @@ export const StyledTitle = styled.h1`
 	font-weight: bold;
 	font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
 	letter-spacing: 2px;
+
+	@media (max-width: 768px) {
+		font-size: 2rem;
+		letter-spacing: 1px;
+		margin-bottom: 1rem;
+		line-height: 1.1;
+	}
 `;
 
 export const StyledStepIndicator = styled.div`
@@ -34,6 +46,13 @@ export const StyledStepIndicator = styled.div`
 	backdrop-filter: blur(10px);
 	border-bottom: 2px solid #fbbf24;
 	z-index: 100;
+
+	@media (max-width: 768px) {
+		padding: 1rem 0.5rem;
+		flex-direction: column;
+		gap: 0.5rem;
+		min-height: auto;
+	}
 `;
 
 export const StyledStepsContainer = styled.div`
@@ -43,6 +62,19 @@ export const StyledStepsContainer = styled.div`
 	flex: 1;
 	max-width: 600px;
 	margin: 0 auto;
+	overflow-x: auto;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	@media (max-width: 768px) {
+		max-width: none;
+		gap: 0.25rem;
+		padding: 0 0.5rem;
+		justify-content: flex-start;
+	}
 `;
 
 export const StyledStep = styled.div<{ $active: boolean; $completed: boolean; $error?: boolean }>`
@@ -55,6 +87,14 @@ export const StyledStep = styled.div<{ $active: boolean; $completed: boolean; $e
 	flex: 1;
 	max-width: 120px;
 	min-height: 80px;
+
+	@media (max-width: 768px) {
+		flex: 0 0 auto;
+		min-width: 80px;
+		max-width: 80px;
+		min-height: 60px;
+		gap: 0.25rem;
+	}
 `;
 
 export const StyledStepNumber = styled.div<{ $active: boolean; $completed: boolean; $error?: boolean }>`
@@ -67,6 +107,12 @@ export const StyledStepNumber = styled.div<{ $active: boolean; $completed: boole
 	font-weight: bold;
 	font-size: 1.2rem;
 	transition: all 0.3s ease;
+
+	@media (max-width: 768px) {
+		width: 32px;
+		height: 32px;
+		font-size: 1rem;
+	}
 
 	${(props) =>
 		props.$completed &&
@@ -116,6 +162,14 @@ export const StyledStepLabel = styled.span<{ $active: boolean; $completed: boole
 	align-items: flex-start;
 	justify-content: center;
 
+	@media (max-width: 768px) {
+		font-size: 0.65rem;
+		min-height: 1.8rem;
+		line-height: 1.1;
+		word-break: break-word;
+		hyphens: auto;
+	}
+
 	${(props) =>
 		props.$completed &&
 		`
@@ -149,6 +203,13 @@ export const StyledStepLabel = styled.span<{ $active: boolean; $completed: boole
 export const StyledNavigationButtons = styled.div`
 	display: flex;
 	gap: 1rem;
+
+	@media (max-width: 768px) {
+		width: 100%;
+		justify-content: space-between;
+		gap: 0.5rem;
+		order: 2;
+	}
 `;
 
 export const StyledButton = styled.button<{ $variant?: 'primary' | 'secondary' }>`

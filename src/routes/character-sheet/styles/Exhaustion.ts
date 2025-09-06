@@ -17,11 +17,16 @@ export const StyledExhaustionLevel = styled.div<{ filled: boolean }>`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 0.8rem;
+	font-size: 14px;
 	font-weight: bold;
 	cursor: pointer;
 	border-radius: 3px;
 	transition: all 0.2s ease;
+	line-height: 1;
+	text-align: center;
+	user-select: none;
+	font-family: 'Inter', sans-serif;
+	padding-top: 1px;
 
 	&:hover {
 		background: ${(props) => (props.filled ? '#654321' : '#f5f5dc')};

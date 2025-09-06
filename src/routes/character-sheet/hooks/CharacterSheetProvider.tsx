@@ -71,6 +71,8 @@ interface CharacterSheetContextType {
   updateInventory: (items: any[]) => void;
   updateCurrency: (gold?: number, silver?: number, copper?: number) => void;
   updateNotes: (notes: string) => void;
+  updateGritPoints: (grit: number) => void;
+  updateRestPoints: (rest: number) => void;
   // Manual save function
   saveNow: () => Promise<void>;
 }
@@ -216,6 +218,8 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
     updateInventory,
     updateCurrency,
     updateNotes,
+    updateGritPoints,
+    updateRestPoints,
     saveNow,
   };
 

@@ -4,7 +4,7 @@ export const StyledCombatSection = styled.div`
 	border: 2px solid #8b4513;
 	border-radius: 8px;
 	padding: 1rem;
-	background: rgba(245, 243, 240, 0.5);
+	background: white
 `;
 
 export const StyledCombatTitle = styled.div`
@@ -13,6 +13,7 @@ export const StyledCombatTitle = styled.div`
 	color: #8b4513;
 	text-align: center;
 	margin-bottom: 1rem;
+	font-family: 'Inter', sans-serif;
 `;
 
 export const StyledActionPointsContainer = styled.div`
@@ -25,6 +26,7 @@ export const StyledActionPointsTitle = styled.div`
 	font-weight: bold;
 	color: #8b4513;
 	margin-bottom: 0.5rem;
+	font-family: 'Inter', sans-serif;
 `;
 
 export const StyledCombatStatsContainer = styled.div`
@@ -55,18 +57,25 @@ export const StyledCombatStatValue = styled.span`
 `;
 
 export const StyledInfoIcon = styled.span`
-	display: inline-flex;
+	background: transparent;
+	color: #8b4513;
+	border: 1px solid #8b4513;
+	border-radius: 50%;
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+	font-style: italic;
+	font-size: 0.8rem;
+	font-weight: bold;
+	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 14px;
-	height: 14px;
-	border-radius: 50%;
-	background-color: #8b4513;
-	color: white;
-	font-size: 10px;
-	font-weight: bold;
-	cursor: help;
-	vertical-align: middle;
+	flex-shrink: 0;
+
+	&:hover {
+		background: #8b4513;
+		color: white;
+	}
 `;
 
 export const StyledDefenseGrid = styled.div`
@@ -127,6 +136,12 @@ export const StyledActionPoint = styled.div<{ used: boolean }>`
 	color: ${(props) => (props.used ? 'white' : '#8b4513')};
 	cursor: pointer;
 	font-weight: bold;
+	font-size: 16px;
+	line-height: 1;
+	text-align: center;
+	user-select: none;
+	font-family: 'Inter', sans-serif;
+	padding-top: 1px;
 
 	&:hover {
 		background: ${(props) => (props.used ? '#6b3410' : '#f0f0f0')};

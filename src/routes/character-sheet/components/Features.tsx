@@ -45,7 +45,7 @@ const Features: React.FC<FeaturesProps> = ({ onFeatureClick }) => {
 								<StyledFeatureItem key={feature.id}>
 									<StyledFeatureName>{feature.name}</StyledFeatureName>
 									<StyledFeatureReadMore onClick={() => onFeatureClick(feature)}>
-										Info
+										i
 									</StyledFeatureReadMore>
 								</StyledFeatureItem>
 							))}
@@ -62,7 +62,7 @@ const Features: React.FC<FeaturesProps> = ({ onFeatureClick }) => {
 								<StyledFeatureItem key={feature.id}>
 									<StyledFeatureName>{feature.name}</StyledFeatureName>
 									<StyledFeatureReadMore onClick={() => onFeatureClick(feature)}>
-										Info
+										i
 									</StyledFeatureReadMore>
 								</StyledFeatureItem>
 							))}
@@ -79,7 +79,7 @@ const Features: React.FC<FeaturesProps> = ({ onFeatureClick }) => {
 								<StyledFeatureItem key={feature.id}>
 									<StyledFeatureName>{feature.name}</StyledFeatureName>
 									<StyledFeatureReadMore onClick={() => onFeatureClick(feature)}>
-										Info
+										i
 									</StyledFeatureReadMore>
 								</StyledFeatureItem>
 							))}

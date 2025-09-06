@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 
 export const DefensesContainer = styled.div<{ $isMobile?: boolean }>`
+	border: 2px solid #8b4513;
+    border-radius: 8px;
+    padding: 1rem;
+    background: white;
 	display: flex;
 	flex-direction: ${(props) => (props.$isMobile ? 'column' : 'row')};
 	justify-content: space-around;

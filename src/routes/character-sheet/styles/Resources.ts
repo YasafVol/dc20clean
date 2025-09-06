@@ -116,15 +116,16 @@ export const ResourcesContainer = styled.div<{ $isMobile?: boolean }>`
 	display: flex;
 	flex-direction: ${(props) => (props.$isMobile ? 'column' : 'row')};
 	justify-content: space-around;
-	align-items: ${(props) => (props.$isMobile ? 'center' : 'stretch')};
+	align-items: ${(props) => (props.$isMobile ? 'stretch' : 'stretch')};
 	gap: ${(props) => (props.$isMobile ? '1rem' : '0')};
 	margin-bottom: 1.5rem;
+	width: 100%;
 `;
 
 export const ResourceColumn = styled.div<{ $isMobile?: boolean }>`
 	text-align: center;
 	width: ${(props) => (props.$isMobile ? '100%' : 'auto')};
-	max-width: ${(props) => (props.$isMobile ? '200px' : 'none')};
+	max-width: ${(props) => (props.$isMobile ? 'none' : 'none')};
 `;
 
 export const ResourceLabel = styled.div`

@@ -20,7 +20,16 @@ import {
 	StyledPotionBubbles,
 	StyledPotionValue,
 	StyledLargePotionContainer,
-	StyledLargePotionValue
+	StyledLargePotionValue,
+	MobileResourceBox,
+	MobileResourceHeader,
+	MobileResourceLabel,
+	MobileResourceValue,
+	MobileResourceBar,
+	MobileResourceFill,
+	MobileResourceControls,
+	MobileResourceButton,
+	MobileResourceInput
 } from '../styles/Potions';
 
 interface ResourcesProps {
@@ -28,7 +37,10 @@ interface ResourcesProps {
 	isMobile?: boolean;
 }
 
-const Resources: React.FC<ResourcesProps> = ({ breakdowns, isMobile = false }) => {
+const Resources: React.FC<ResourcesProps> = ({
+	breakdowns,
+	isMobile = false
+}) => {
 	const { updateHP, updateSP, updateMP, updateTempHP } = useCharacterSheet();
 	const resources = useCharacterResources();
 
@@ -49,22 +61,18 @@ const Resources: React.FC<ResourcesProps> = ({ breakdowns, isMobile = false }) =
 
 	const getHPFillPercentage = (current: number, max: number, tempHP: number) => {
 		// Total effective HP = current + temp HP
-		// Total possible HP = max + temp HP
+		// Total possible HP = max + temp HP  
 		const totalCurrent = current + tempHP;
 		const totalPossible = max + tempHP;
 		return totalPossible > 0 ? Math.min((totalCurrent / totalPossible) * 100, 100) : 0;
 	};
 
-	const onAdjustResource = (
-		resource: 'currentSP' | 'currentMP' | 'currentHP' | 'tempHP',
-		amount: number
-	) => {
+	const onAdjustResource = (resource: 'currentSP' | 'currentMP' | 'currentHP' | 'tempHP', amount: number) => {
 		switch (resource) {
 			case 'currentHP':
-				// HP can go up to maxHP + tempHP total
-				const maxTotalHP = original.maxHP + current.tempHP;
+				// HP can only go from 0 to maxHP (never exceed base maxHP)
 				const newHP = current.currentHP + amount;
-				updateHP(Math.max(0, Math.min(maxTotalHP, newHP)));
+				updateHP(Math.max(0, Math.min(original.maxHP, newHP)));
 				break;
 			case 'currentSP':
 				updateSP(Math.max(0, Math.min(original.maxSP, current.currentSP + amount)));
@@ -75,12 +83,6 @@ const Resources: React.FC<ResourcesProps> = ({ breakdowns, isMobile = false }) =
 			case 'tempHP':
 				const newTempHP = Math.max(0, current.tempHP + amount);
 				updateTempHP(newTempHP);
-
-				// CRITICAL: If temp HP decreased, current HP might exceed new maximum
-				const newMaxTotalHP = original.maxHP + newTempHP;
-				if (current.currentHP > newMaxTotalHP) {
-					updateHP(newMaxTotalHP);
-				}
 				break;
 		}
 	};
@@ -90,7 +92,7 @@ const Resources: React.FC<ResourcesProps> = ({ breakdowns, isMobile = false }) =
 		if (resource === 'tempHP') {
 			const newTempHP = Math.max(0, numValue);
 			updateTempHP(newTempHP);
-
+			
 			// CRITICAL: If temp HP decreased, current HP might exceed new maximum
 			const newMaxTotalHP = original.maxHP + newTempHP;
 			if (current.currentHP > newMaxTotalHP) {
@@ -100,178 +102,265 @@ const Resources: React.FC<ResourcesProps> = ({ breakdowns, isMobile = false }) =
 	};
 	return (
 		<ResourcesContainer $isMobile={isMobile}>
-			{/* Stamina Points */}
-			<ResourceColumn $isMobile={isMobile}>
-				<ResourceLabel>STAMINA POINTS</ResourceLabel>
-				<ResourceControls>
-					<StyledResourceButton onClick={() => onAdjustResource('currentSP', -1)}>
-						-
-					</StyledResourceButton>
-					<StyledPotionContainer style={{ borderColor: '#22c55e' }}>
-						<StyledPotionFill
-							$fillPercentage={getFillPercentage(current.currentSP, original.maxSP)}
-							$color="#22c55e"
-						/>
-						<StyledPotionBubbles
-							$color="#22c55e"
-							$fillPercentage={getFillPercentage(current.currentSP, original.maxSP)}
-						/>
-						<StyledPotionValue>{current.currentSP}</StyledPotionValue>
-					</StyledPotionContainer>
-					<StyledResourceButton onClick={() => onAdjustResource('currentSP', 1)}>
-						+
-					</StyledResourceButton>
-				</ResourceControls>
-				<div
-					style={{
-						fontSize: '1.1rem',
-						fontWeight: '300',
-						color: '#666',
-						marginTop: '0.3rem',
-						fontStyle: 'italic'
-					}}
-				>
-					<Tooltip
-						content={
-							breakdowns?.spMax
-								? createEnhancedTooltip('Stamina Points', breakdowns.spMax)
-								: createSPTooltip({ finalSPMax: original.maxSP })
-						}
-						position="top"
-					>
-						<span style={{ cursor: 'help' }}>{original.maxSP}</span>
-					</Tooltip>
-				</div>
-			</ResourceColumn>
+			{isMobile ? (
+				<>
+					{/* Hit Points - Mobile */}
+					<MobileResourceBox>
+						<MobileResourceHeader>
+							<MobileResourceLabel>Hit Points</MobileResourceLabel>
+							<MobileResourceValue>{current.currentHP + current.tempHP} / {original.maxHP + current.tempHP}</MobileResourceValue>
+						</MobileResourceHeader>
+						<MobileResourceBar>
+							{/* Combined HP bar with gradient showing base HP (dark red) and temp HP (light red) */}
+							<MobileResourceFill
+								$fillPercentage={(original.maxHP + current.tempHP) > 0 ? ((current.currentHP + current.tempHP) / (original.maxHP + current.tempHP)) * 100 : 0}
+								$color={current.tempHP > 0 
+									? `linear-gradient(to right, #dc2626 ${original.maxHP / (original.maxHP + current.tempHP) * 100}%, #f87171 ${original.maxHP / (original.maxHP + current.tempHP) * 100}%)`
+									: "#dc2626"
+								}
+							/>
+						</MobileResourceBar>
+						<MobileResourceControls>
+							<MobileResourceButton onClick={() => onAdjustResource('currentHP', -1)}>
+								-
+							</MobileResourceButton>
+							<MobileResourceInput
+								type="number"
+								value={current.currentHP}
+								onChange={(e) => {
+									// HP can only go from 0 to maxHP (never exceed base maxHP)
+									const value = Math.max(0, Math.min(original.maxHP, parseInt(e.target.value) || 0));
+									updateHP(value);
+								}}
+							/>
+							<MobileResourceButton onClick={() => onAdjustResource('currentHP', 1)}>
+								+
+							</MobileResourceButton>
+						</MobileResourceControls>
+						
+						{/* Temp HP Section - Always visible */}
+						<div style={{ marginTop: '0.5rem', borderTop: '1px solid rgb(68, 68, 68)', paddingTop: '0.5rem' }}>
+							<MobileResourceHeader>
+								<MobileResourceLabel>Temp HP</MobileResourceLabel>
+								<MobileResourceValue>{current.tempHP}</MobileResourceValue>
+							</MobileResourceHeader>
+							<MobileResourceControls>
+								<MobileResourceButton onClick={() => onAdjustResource('tempHP', -1)}>
+									-
+								</MobileResourceButton>
+								<MobileResourceInput
+									type="number"
+									value={current.tempHP}
+									onChange={(e) => onResourceInputChange('tempHP', e.target.value)}
+								/>
+								<MobileResourceButton onClick={() => onAdjustResource('tempHP', 1)}>
+									+
+								</MobileResourceButton>
+							</MobileResourceControls>
+						</div>
+					</MobileResourceBox>
 
-			{/* Mana Points */}
-			<ResourceColumn $isMobile={isMobile}>
-				<ResourceLabel>MANA POINTS</ResourceLabel>
-				<ResourceControls>
-					<StyledResourceButton onClick={() => onAdjustResource('currentMP', -1)}>
-						-
-					</StyledResourceButton>
-					<StyledPotionContainer style={{ borderColor: '#3b82f6' }}>
-						<StyledPotionFill
-							$fillPercentage={getFillPercentage(current.currentMP, original.maxMP)}
-							$color="#3b82f6"
-						/>
-						<StyledPotionBubbles
-							$color="#3b82f6"
-							$fillPercentage={getFillPercentage(current.currentMP, original.maxMP)}
-						/>
-						<StyledPotionValue>{current.currentMP}</StyledPotionValue>
-					</StyledPotionContainer>
-					<StyledResourceButton onClick={() => onAdjustResource('currentMP', 1)}>
-						+
-					</StyledResourceButton>
-				</ResourceControls>
-				<div
-					style={{
-						fontSize: '1.1rem',
-						fontWeight: '300',
-						color: '#666',
-						marginTop: '0.3rem',
-						fontStyle: 'italic'
-					}}
-				>
-					<Tooltip
-						content={
-							breakdowns?.mpMax
-								? createEnhancedTooltip('Mana Points', breakdowns.mpMax)
-								: createMPTooltip({ finalMPMax: original.maxMP })
-						}
-						position="top"
-					>
-						<span style={{ cursor: 'help' }}>{original.maxMP}</span>
-					</Tooltip>
-				</div>
-			</ResourceColumn>
+					{/* Mana Points - Mobile */}
+					<MobileResourceBox>
+						<MobileResourceHeader>
+							<MobileResourceLabel>Mana Points</MobileResourceLabel>
+							<MobileResourceValue>{current.currentMP} / {original.maxMP}</MobileResourceValue>
+						</MobileResourceHeader>
+						<MobileResourceBar>
+							<MobileResourceFill
+								$fillPercentage={getFillPercentage(current.currentMP, original.maxMP)}
+								$color="#3b82f6"
+							/>
+						</MobileResourceBar>
+						<MobileResourceControls>
+							<MobileResourceButton onClick={() => onAdjustResource('currentMP', -1)}>
+								-
+							</MobileResourceButton>
+							<MobileResourceInput
+								type="number"
+								value={current.currentMP}
+								onChange={(e) => {
+									const value = Math.max(0, Math.min(original.maxMP, parseInt(e.target.value) || 0));
+									updateMP(value);
+								}}
+							/>
+							<MobileResourceButton onClick={() => onAdjustResource('currentMP', 1)}>
+								+
+							</MobileResourceButton>
+						</MobileResourceControls>
+					</MobileResourceBox>
 
-			{/* Hit Points */}
-			<ResourceColumn $isMobile={isMobile}>
-				<ResourceLabel>HIT POINTS</ResourceLabel>
-				<ResourceControls>
-					<StyledResourceButton onClick={() => onAdjustResource('currentHP', -1)}>
-						-
-					</StyledResourceButton>
-					<StyledLargePotionContainer style={{ borderColor: '#dc2626' }}>
-						<StyledPotionFill
-							$fillPercentage={getHPFillPercentage(
-								current.currentHP,
-								original.maxHP,
-								current.tempHP
+					{/* Stamina Points - Mobile */}
+					<MobileResourceBox>
+						<MobileResourceHeader>
+							<MobileResourceLabel>Stamina Points</MobileResourceLabel>
+							<MobileResourceValue>{current.currentSP} / {original.maxSP}</MobileResourceValue>
+						</MobileResourceHeader>
+						<MobileResourceBar>
+							<MobileResourceFill
+								$fillPercentage={getFillPercentage(current.currentSP, original.maxSP)}
+								$color="#22c55e"
+							/>
+						</MobileResourceBar>
+						<MobileResourceControls>
+							<MobileResourceButton onClick={() => onAdjustResource('currentSP', -1)}>
+								-
+							</MobileResourceButton>
+							<MobileResourceInput
+								type="number"
+								value={current.currentSP}
+								onChange={(e) => {
+									const value = Math.max(0, Math.min(original.maxSP, parseInt(e.target.value) || 0));
+									updateSP(value);
+								}}
+							/>
+							<MobileResourceButton onClick={() => onAdjustResource('currentSP', 1)}>
+								+
+							</MobileResourceButton>
+						</MobileResourceControls>
+					</MobileResourceBox>
+				</>
+			) : (
+				<>
+					{/* Desktop view - existing code */}
+					{/* Stamina Points */}
+					<ResourceColumn $isMobile={isMobile}>
+						<ResourceLabel>STAMINA POINTS</ResourceLabel>
+						<ResourceControls>
+							<StyledResourceButton onClick={() => onAdjustResource('currentSP', -1)}>
+								-
+							</StyledResourceButton>
+							<StyledPotionContainer style={{ borderColor: '#22c55e' }}>
+								<StyledPotionFill
+									$fillPercentage={getFillPercentage(current.currentSP, original.maxSP)}
+									$color="#22c55e"
+								/>
+								<StyledPotionBubbles
+									$color="#22c55e"
+									$fillPercentage={getFillPercentage(current.currentSP, original.maxSP)}
+								/>
+								<StyledPotionValue>{current.currentSP}</StyledPotionValue>
+							</StyledPotionContainer>
+							<StyledResourceButton onClick={() => onAdjustResource('currentSP', 1)}>
+								+
+							</StyledResourceButton>
+						</ResourceControls>
+						<div style={{ fontSize: '1.1rem', fontWeight: '300', color: '#666', marginTop: '0.3rem', fontStyle: 'italic' }}>
+							<Tooltip 
+								content={
+									breakdowns?.spMax 
+										? createEnhancedTooltip('Stamina Points', breakdowns.spMax)
+										: createSPTooltip({ finalSPMax: original.maxSP } as any)
+								} 
+								position="top"
+							>
+								<span style={{ cursor: 'help' }}>{original.maxSP}</span>
+							</Tooltip>
+						</div>
+					</ResourceColumn>
+
+					{/* Mana Points */}
+					<ResourceColumn $isMobile={isMobile}>
+						<ResourceLabel>MANA POINTS</ResourceLabel>
+						<ResourceControls>
+							<StyledResourceButton onClick={() => onAdjustResource('currentMP', -1)}>
+								-
+							</StyledResourceButton>
+							<StyledPotionContainer style={{ borderColor: '#3b82f6' }}>
+								<StyledPotionFill
+									$fillPercentage={getFillPercentage(current.currentMP, original.maxMP)}
+									$color="#3b82f6"
+								/>
+								<StyledPotionBubbles
+									$color="#3b82f6"
+									$fillPercentage={getFillPercentage(current.currentMP, original.maxMP)}
+								/>
+								<StyledPotionValue>{current.currentMP}</StyledPotionValue>
+							</StyledPotionContainer>
+							<StyledResourceButton onClick={() => onAdjustResource('currentMP', 1)}>
+								+
+							</StyledResourceButton>
+						</ResourceControls>
+						<div style={{ fontSize: '1.1rem', fontWeight: '300', color: '#666', marginTop: '0.3rem', fontStyle: 'italic' }}>
+							<Tooltip 
+								content={
+									breakdowns?.mpMax 
+										? createEnhancedTooltip('Mana Points', breakdowns.mpMax)
+										: createMPTooltip({ finalMPMax: original.maxMP } as any)
+								} 
+								position="top"
+							>
+								<span style={{ cursor: 'help' }}>{original.maxMP}</span>
+							</Tooltip>
+						</div>
+					</ResourceColumn>
+
+					{/* Hit Points */}
+					<ResourceColumn $isMobile={isMobile}>
+						<ResourceLabel>HIT POINTS</ResourceLabel>
+						<ResourceControls>
+							<StyledResourceButton onClick={() => onAdjustResource('currentHP', -1)}>
+								-
+							</StyledResourceButton>
+							<StyledLargePotionContainer style={{ borderColor: '#dc2626' }}>
+								<StyledPotionFill
+									$fillPercentage={getHPFillPercentage(current.currentHP, original.maxHP, current.tempHP)}
+									$color="#dc2626"
+								/>
+								<StyledPotionBubbles
+									$color="#dc2626"
+									$fillPercentage={getHPFillPercentage(current.currentHP, original.maxHP, current.tempHP)}
+								/>
+								<StyledLargePotionValue>{current.currentHP + current.tempHP}</StyledLargePotionValue>
+							</StyledLargePotionContainer>
+							<StyledResourceButton onClick={() => onAdjustResource('currentHP', 1)}>
+								+
+							</StyledResourceButton>
+						</ResourceControls>
+						<div style={{ fontSize: '1.1rem', fontWeight: '300', color: '#666', marginTop: '0.3rem', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+							<Tooltip 
+								content={
+									breakdowns?.hpMax 
+										? createEnhancedTooltip('Hit Points', breakdowns.hpMax)
+										: createHPTooltip({ finalHPMax: original.maxHP } as any)
+								} 
+								position="top"
+							>
+								<span style={{ cursor: 'help' }}>{original.maxHP + current.tempHP}</span>
+							</Tooltip>
+							{current.tempHP > 0 && (
+								<span style={{ color: '#dc2626', fontWeight: 'bold', fontSize: '0.9rem' }}>
+									(+{current.tempHP} temp)
+								</span>
 							)}
-							$color="#dc2626"
-						/>
-						<StyledPotionBubbles
-							$color="#dc2626"
-							$fillPercentage={getHPFillPercentage(
-								current.currentHP,
-								original.maxHP,
-								current.tempHP
-							)}
-						/>
-						<StyledLargePotionValue>{current.currentHP + current.tempHP}</StyledLargePotionValue>
-					</StyledLargePotionContainer>
-					<StyledResourceButton onClick={() => onAdjustResource('currentHP', 1)}>
-						+
-					</StyledResourceButton>
-				</ResourceControls>
-				<div
-					style={{
-						fontSize: '1.1rem',
-						fontWeight: '300',
-						color: '#666',
-						marginTop: '0.3rem',
-						fontStyle: 'italic',
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						gap: '0.5rem'
-					}}
-				>
-					<Tooltip
-						content={
-							breakdowns?.hpMax
-								? createEnhancedTooltip('Hit Points', breakdowns.hpMax)
-								: createHPTooltip({ finalHPMax: original.maxHP })
-						}
-						position="top"
-					>
-						<span style={{ cursor: 'help' }}>{original.maxHP + current.tempHP}</span>
-					</Tooltip>
-					{current.tempHP > 0 && (
-						<span style={{ color: '#dc2626', fontWeight: 'bold', fontSize: '0.9rem' }}>
-							(+{current.tempHP} temp)
-						</span>
-					)}
-				</div>
+						</div>
 
-				{/* Temp HP Controls */}
-				<TempHPControls>
-					<TempHPLabel>TEMP HP:</TempHPLabel>
-					<StyledResourceButton
-						onClick={() => onAdjustResource('tempHP', -1)}
-						style={{ fontSize: '0.7rem', width: '20px', height: '20px', padding: '0' }}
-					>
-						-
-					</StyledResourceButton>
-					<TempHPInputSmall
-						type="number"
-						value={current.tempHP}
-						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-							onResourceInputChange('tempHP', e.target.value)
-						}
-					/>
-					<StyledResourceButton
-						onClick={() => onAdjustResource('tempHP', 1)}
-						style={{ fontSize: '0.7rem', width: '20px', height: '20px', padding: '0' }}
-					>
-						+
-					</StyledResourceButton>
-				</TempHPControls>
-			</ResourceColumn>
+						{/* Temp HP Controls - Desktop */}
+						<TempHPControls>
+							<TempHPLabel>TEMP HP:</TempHPLabel>
+							<StyledResourceButton
+								onClick={() => onAdjustResource('tempHP', -1)}
+								style={{ fontSize: '0.7rem', width: '20px', height: '20px', padding: '0' }}
+							>
+								-
+							</StyledResourceButton>
+							<TempHPInputSmall
+								type="number"
+								value={current.tempHP}
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+									onResourceInputChange('tempHP', e.target.value)
+								}
+							/>
+							<StyledResourceButton
+								onClick={() => onAdjustResource('tempHP', 1)}
+								style={{ fontSize: '0.7rem', width: '20px', height: '20px', padding: '0' }}
+							>
+								+
+							</StyledResourceButton>
+						</TempHPControls>
+					</ResourceColumn>
+				</>
+			)}
 		</ResourcesContainer>
 	);
 };

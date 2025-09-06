@@ -638,6 +638,36 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 		setSelectedSpell(null);
 	};
 
+	// Handle knowledge info popup
+	const handleKnowledgeInfoClick = (knowledgeName: string) => {
+		const knowledgeItem = knowledgeData.find(k => k.name.toLowerCase() === knowledgeName.toLowerCase());
+		if (knowledgeItem) {
+			const featureData: FeatureData = {
+				id: knowledgeItem.id,
+				name: knowledgeItem.name,
+				description: knowledgeItem.description,
+				source: 'choice', // Using 'choice' since it's not ancestry or class
+				sourceDetail: 'Knowledge'
+			};
+			setSelectedFeature(featureData);
+		}
+	};
+
+	// Handle trade info popup  
+	const handleTradeInfoClick = (tradeName: string) => {
+		const tradeItem = tradesData.find(t => t.name.toLowerCase() === tradeName.toLowerCase());
+		if (tradeItem) {
+			const featureData: FeatureData = {
+				id: tradeItem.id,
+				name: tradeItem.name,
+				description: tradeItem.description,
+				source: 'choice', // Using 'choice' since it's not ancestry or class
+				sourceDetail: 'Trade'
+			};
+			setSelectedFeature(featureData);
+		}
+	};
+
 	const openManeuverPopup = (maneuver: Maneuver) => {
 		setSelectedManeuver(maneuver);
 	};
@@ -1042,6 +1072,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 								characterData={characterData}
 								skillsByAttribute={skillsByAttribute}
 								languages={languages}
+								onKnowledgeInfoClick={handleKnowledgeInfoClick}
+								onTradeInfoClick={handleTradeInfoClick}
 							/>
 						</StyledLeftColumn>
 
@@ -1140,6 +1172,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 									characterData={characterData}
 									skillsByAttribute={skillsByAttribute}
 									languages={languages}
+									onKnowledgeInfoClick={handleKnowledgeInfoClick}
+									onTradeInfoClick={handleTradeInfoClick}
 								/>
 								<Features onFeatureClick={openFeaturePopup} />
 							</div>

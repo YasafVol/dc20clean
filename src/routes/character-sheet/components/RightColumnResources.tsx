@@ -15,10 +15,10 @@ import {
 } from '../hooks/CharacterSheetProvider';
 
 interface RightColumnResourcesProps {
-	// No props needed - data comes from context
+	isMobile?: boolean;
 }
 
-const RightColumnResources: React.FC<RightColumnResourcesProps> = () => {
+const RightColumnResources: React.FC<RightColumnResourcesProps> = ({ isMobile = false }) => {
 	const { state, updateGritPoints, updateRestPoints } = useCharacterSheet();
 	const resources = useCharacterResources();
 	const calculatedData = useCharacterCalculatedData();
@@ -29,13 +29,14 @@ const RightColumnResources: React.FC<RightColumnResourcesProps> = () => {
 	const currentValues = resources.current;
 
 	return (
-		<StyledRightResourcesContainer>
-			<StyledRightResourcesTitle>RESOURCES</StyledRightResourcesTitle>
+		<StyledRightResourcesContainer $isMobile={isMobile}>
+			<StyledRightResourcesTitle $isMobile={isMobile}>RESOURCES</StyledRightResourcesTitle>
 
 			<StyledRightResourceRow>
-				<StyledRightResourceLabel>REST POINTS</StyledRightResourceLabel>
+				<StyledRightResourceLabel $isMobile={isMobile}>REST POINTS</StyledRightResourceLabel>
 				<StyledRightResourceControls>
 					<StyledRightResourceInput
+						$isMobile={isMobile}
 						type="number"
 						value={currentValues.currentRestPoints}
 						min={0}
@@ -48,14 +49,15 @@ const RightColumnResources: React.FC<RightColumnResourcesProps> = () => {
 							updateRestPoints(val);
 						}}
 					/>
-					<StyledRightResourceMax>/ {calculatedData.stats.finalRestPoints}</StyledRightResourceMax>
+					<StyledRightResourceMax $isMobile={isMobile}>/ {calculatedData.stats.finalRestPoints}</StyledRightResourceMax>
 				</StyledRightResourceControls>
 			</StyledRightResourceRow>
 
 			<StyledRightResourceRow>
-				<StyledRightResourceLabel>GRIT POINTS</StyledRightResourceLabel>
+				<StyledRightResourceLabel $isMobile={isMobile}>GRIT POINTS</StyledRightResourceLabel>
 				<StyledRightResourceControls>
 					<StyledRightResourceInput
+						$isMobile={isMobile}
 						type="number"
 						value={currentValues.currentGritPoints}
 						min={0}
@@ -68,7 +70,7 @@ const RightColumnResources: React.FC<RightColumnResourcesProps> = () => {
 							updateGritPoints(val);
 						}}
 					/>
-					<StyledRightResourceMax>/ {calculatedData.stats.finalGritPoints}</StyledRightResourceMax>
+					<StyledRightResourceMax $isMobile={isMobile}>/ {calculatedData.stats.finalGritPoints}</StyledRightResourceMax>
 				</StyledRightResourceControls>
 			</StyledRightResourceRow>
 		</StyledRightResourcesContainer>

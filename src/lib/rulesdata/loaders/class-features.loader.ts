@@ -3,7 +3,8 @@
  * @description Loader for the new class features JSON structure
  */
 
-import { SpellSchool, SpellList } from '../schemas/spell.schema';
+import type { Spell } from '../schemas/spell.schema';
+import { SpellSchool } from '../schemas/spell.schema';
 import {
 	type IClassFeature,
 	type IClassFeatureChoice,

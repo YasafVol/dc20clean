@@ -102,18 +102,25 @@ export const StyledInventoryInput = styled.input`
 `;
 
 export const StyledInventoryInfoIcon = styled.span`
-	display: inline-flex;
+	background: transparent;
+	color: #8b4513;
+	border: 1px solid #8b4513;
+	border-radius: 50%;
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+	font-style: italic;
+	font-size: 0.8rem;
+	font-weight: bold;
+	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 14px;
-	height: 14px;
-	border-radius: 50%;
-	background-color: #8b4513;
-	color: white;
-	font-size: 10px;
-	font-weight: bold;
-	cursor: pointer;
-	position: relative;
+	flex-shrink: 0;
+
+	&:hover {
+		background: #8b4513;
+		color: white;
+	}
 `;
 
 export const StyledInventoryCost = styled.div`

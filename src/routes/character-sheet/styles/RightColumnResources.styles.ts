@@ -1,17 +1,17 @@
 import styled from 'styled-components';
 
-export const StyledRightResourcesContainer = styled.div`
-	border: 2px solid #8b4513;
+export const StyledRightResourcesContainer = styled.div<{ $isMobile?: boolean }>`
+	border: ${props => props.$isMobile ? '1px solid #f5d020' : '2px solid #8b4513'};
 	border-radius: 8px;
 	padding: 1rem;
-	background: white;
+	background: ${props => props.$isMobile ? '#2a2a2a' : 'white'};
 	margin-bottom: 1rem;
 `;
 
-export const StyledRightResourcesTitle = styled.div`
+export const StyledRightResourcesTitle = styled.div<{ $isMobile?: boolean }>`
 	font-size: 1.1rem;
 	font-weight: bold;
-	color: #8b4513;
+	color: ${props => props.$isMobile ? '#f5d020' : '#8b4513'};
 	text-align: center;
 	margin-bottom: 1rem;
 `;
@@ -27,9 +27,9 @@ export const StyledRightResourceRow = styled.div`
 	}
 `;
 
-export const StyledRightResourceLabel = styled.span`
+export const StyledRightResourceLabel = styled.span<{ $isMobile?: boolean }>`
 	font-size: 0.9rem;
-	color: #8b4513;
+	color: ${props => props.$isMobile ? '#ffffff' : '#8b4513'};
 `;
 
 export const StyledRightResourceControls = styled.div`
@@ -38,23 +38,24 @@ export const StyledRightResourceControls = styled.div`
 	gap: 0.3rem;
 `;
 
-export const StyledRightResourceInput = styled.input`
+export const StyledRightResourceInput = styled.input<{ $isMobile?: boolean }>`
 	width: 40px;
 	text-align: center;
-	border: 1px solid #8b4513;
+	border: ${props => props.$isMobile ? '1px solid #555' : '1px solid #8b4513'};
 	border-radius: 4px;
 	padding: 0.2rem;
 	font-size: 0.9rem;
-	color: #8b4513;
+	color: ${props => props.$isMobile ? '#f5d020' : '#8b4513'};
+	background: ${props => props.$isMobile ? '#333' : 'white'};
 
 	&:focus {
 		outline: none;
-		border-color: #654321;
-		box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.2);
+		border-color: ${props => props.$isMobile ? '#f5d020' : '#654321'};
+		box-shadow: 0 0 0 2px ${props => props.$isMobile ? 'rgba(245, 208, 32, 0.2)' : 'rgba(139, 69, 19, 0.2)'};
 	}
 `;
 
-export const StyledRightResourceMax = styled.span`
+export const StyledRightResourceMax = styled.span<{ $isMobile?: boolean }>`
 	font-size: 0.9rem;
-	color: #8b4513;
+	color: ${props => props.$isMobile ? '#ffffff' : '#8b4513'};
 `;

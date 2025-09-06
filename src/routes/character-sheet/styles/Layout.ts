@@ -14,7 +14,7 @@ export const CharacterSheetGlobalStyle = createGlobalStyle`
 export const StyledContainer = styled.div`
 	min-height: 100vh;
 	padding: 1rem;
-	font-family: 'Georgia', serif;
+	font-family: 'Inter', sans-serif;
 	color: #2d2d2d;
 	position: relative;
 

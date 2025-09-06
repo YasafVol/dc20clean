@@ -20,4 +20,5 @@ export const StyledExhaustionOnlyTitle = styled.div`
 	font-weight: bold;
 	color: #8b4513;
 	margin-bottom: 0.5rem;
+	font-family: 'Inter', sans-serif;
 `;

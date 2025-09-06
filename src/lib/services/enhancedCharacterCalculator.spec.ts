@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { calculateCharacterWithBreakdowns } from './enhancedCharacterCalculator';
 import { type Character, type CharacterCalculationBreakdown } from '../types/character';
 import { type Effect } from '../rulesdata/schemas/character.schema';
-import { skills as skillsData} from '../rulesdata/skills'
-import { trades as tradesData} from '../rulesdata/trades'
+import { skillsData } from '../rulesdata/skills'
+import { tradesData } from '../rulesdata/trades'
 
 // A baseline character build for testing
 const createTestCharacter = (level: number, skills: Record<string, number>, effects: Effect[] = []): Character => ({
@@ -36,13 +36,13 @@ describe('enhancedCharacterCalculator Mastery Cap Logic', () => {
         // Level 1 character can only have Novice (1 point) skills
         const character = createTestCharacter(1, { athletics: 2 }); // Attempting Adept
         const { validation } = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
-        expect(validation.errors.some(e => e.includes('Athletics mastery cap exceeded'))).toBe(true);
+        expect(validation.errors.some(e => e.message.includes('mastery limit'))).toBe(true);
     });
 
     it('should allow Adept skills for a Level 5 character', () => {
         const character = createTestCharacter(5, { athletics: 2 }); // Adept is valid at level 5
         const { validation } = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
-        expect(validation.errors.some(e => e.includes('Athletics mastery cap exceeded'))).toBe(false);
+        expect(validation.errors.some(e => e.message.includes('Athletics mastery cap exceeded'))).toBe(false);
     });
 
     it('should apply a MODIFY_SKILL_MASTERY_CAP effect correctly', () => {
@@ -55,7 +55,7 @@ describe('enhancedCharacterCalculator Mastery Cap Logic', () => {
         // Level 1 character attempts to get Adept in a skill covered by the grant
         const character = createTestCharacter(1, { influence: 2 }, [urbanHunterEffect]);
         const { validation } = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
-        expect(validation.errors.some(e => e.includes('Influence mastery cap exceeded'))).toBe(false);
+        expect(validation.errors.some(e => e.message.includes('mastery limit'))).toBe(false);
     });
 
     it('should respect the count limit of a MODIFY_SKILL_MASTERY_CAP effect', () => {
@@ -68,7 +68,7 @@ describe('enhancedCharacterCalculator Mastery Cap Logic', () => {
         // Level 1 character attempts to get Adept in THREE skills, but the grant only allows 2
         const character = createTestCharacter(1, { influence: 2, insight: 2, investigation: 2 }, [urbanHunterEffect]);
         const { validation } = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
-        expect(validation.errors.some(e => e.includes('Mastery grant budget exceeded'))).toBe(true);
+        expect(validation.errors.some(e => e.message.includes('Mastery grant budget exceeded'))).toBe(true);
     });
 
     it('should not apply a MODIFY effect to a skill not in its options', () => {
@@ -81,7 +81,7 @@ describe('enhancedCharacterCalculator Mastery Cap Logic', () => {
         // Level 1 character attempts to get Adept in Athletics, which is not covered by the grant
         const character = createTestCharacter(1, { athletics: 2 }, [urbanHunterEffect]);
         const { validation } = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
-        expect(validation.errors.some(e => e.includes('Athletics mastery cap exceeded'))).toBe(true);
+        expect(validation.errors.some(e => e.message.includes('Athletics mastery cap exceeded'))).toBe(true);
     });
 
     it('should apply an INCREASE_SKILL_MASTERY_CAP effect correctly', () => {
@@ -93,7 +93,7 @@ describe('enhancedCharacterCalculator Mastery Cap Logic', () => {
         // Level 1 character (base Novice) with +1 tier grant should be able to get Adept
         const character = createTestCharacter(1, { stealth: 2 }, [expertiseEffect]);
         const { validation } = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
-        expect(validation.errors.some(e => e.includes('Stealth mastery cap exceeded'))).toBe(false);
+        expect(validation.errors.some(e => e.message.includes('mastery limit'))).toBe(false);
     });
 
      it('should handle a combination of MODIFY and INCREASE effects', () => {

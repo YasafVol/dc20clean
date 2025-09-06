@@ -827,8 +827,8 @@ export function calculateCharacterWithBreakdowns(
 		totalCapExceptionsBudget += effect.count;
 	}
 
-	// 3. Calculate total allowed Adept skills (level 1 base + feature grants)
-	const baseAdeptSlotsForValidation = (buildData.level === 1) ? 1 : 0;
+	// 3. Calculate total allowed Adept skills (only from feature grants for Level 1-4)
+	const baseAdeptSlotsForValidation = 0; // Level 1-4 get no base Adept slots - must earn them through features
 	const totalAllowedAdeptSkills = baseAdeptSlotsForValidation + totalCapExceptionsBudget;
 	
 	// Validate that over-level skills don't exceed total budget (including Level 1 default)
@@ -839,17 +839,12 @@ export function calculateCharacterWithBreakdowns(
 			code: 'MASTERY_CAP_EXCEEDED',
 			message: `You have raised ${
 				skillsOverLevelCap.length
-			} skills above your level's mastery limit, but you can only have ${totalAllowedAdeptSkills} Adept skills (${baseAdeptSlotsForValidation} base + ${totalCapExceptionsBudget} from features).`
+			} skills above your level's mastery limit, but you can only have ${totalAllowedAdeptSkills} Adept skills (${totalCapExceptionsBudget} from features).`
 		});
 	}
 
-	// 4. Validate specific skill coverage (accounting for Level 1 default slot)
+	// 4. Validate specific skill coverage 
 	let skillsNeedingFeatureCoverage = [...skillsOverLevelCap];
-	
-	// Level 1 characters get 1 free Adept skill, so remove one from validation if needed
-	if (buildData.level === 1 && skillsNeedingFeatureCoverage.length > 0) {
-		skillsNeedingFeatureCoverage.pop(); // Remove one skill from validation (Level 1 default)
-	}
 	
 	// Check remaining skills against feature options
 	for (const skillId of skillsNeedingFeatureCoverage) {

@@ -257,6 +257,7 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 								{/* Expandable Description Section */}
 								{selectedSpell && expandedSpells.has(spell.id) && (
 									<div style={{
+										color: '#333',
 										padding: '10px',
 										backgroundColor: '#f9f9f9',
 										border: '1px solid #ddd',

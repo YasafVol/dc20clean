@@ -251,7 +251,9 @@ const Defenses: React.FC<DefensesProps> = ({ isMobile = false }) => {
 								</RevertButton>
 							</>
 						) : (
-							(character.finalPDR || 0) > 0 && <AutoCalculatedNote $isMobile={isMobile}>Auto-calculated</AutoCalculatedNote>
+							(character.finalPDR || 0) > 0 && (
+								<AutoCalculatedNote $isMobile={isMobile}>Auto-calculated</AutoCalculatedNote>
+							)
 						)}
 					</DefenseFooter>
 				</DefenseItem>

@@ -1,5 +1,4 @@
 import React from 'react';
-import type { CharacterSheetData, CurrentValues } from '../../../types';
 import {
 	StyledCombatSection,
 	StyledActionPoints,
@@ -71,8 +70,12 @@ const Combat: React.FC<CombatProps> = ({ isMobile }) => {
 
 			{/* Action Points */}
 			<StyledActionPointsContainer $isMobile={effectiveIsMobile}>
-				<StyledActionPointsTitle $isMobile={effectiveIsMobile}>ACTION POINTS</StyledActionPointsTitle>
-				<StyledActionPoints $isMobile={effectiveIsMobile}>{renderActionPoints()}</StyledActionPoints>
+				<StyledActionPointsTitle $isMobile={effectiveIsMobile}>
+					ACTION POINTS
+				</StyledActionPointsTitle>
+				<StyledActionPoints $isMobile={effectiveIsMobile}>
+					{renderActionPoints()}
+				</StyledActionPoints>
 			</StyledActionPointsContainer>
 
 			{/* Combat Stats */}
@@ -108,9 +111,7 @@ const Combat: React.FC<CombatProps> = ({ isMobile }) => {
 							<span>SAVE DC</span>
 						</Tooltip>
 					</StyledCombatStatLabel>
-					<StyledCombatStatValue>
-						{calculatedData.stats.finalSaveDC}
-					</StyledCombatStatValue>
+					<StyledCombatStatValue>{calculatedData.stats.finalSaveDC}</StyledCombatStatValue>
 				</StyledCombatStatRow>
 
 				<StyledCombatStatRow>

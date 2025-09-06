@@ -6,17 +6,17 @@ interface MobileStyledProps {
 
 export const StyledDeathContainer = styled.div<MobileStyledProps>`
 	flex: 1;
-	border: 2px solid ${props => props.$isMobile ? 'rgb(68, 68, 68)' : '#8b4513'};
+	border: 2px solid ${(props) => (props.$isMobile ? 'rgb(68, 68, 68)' : '#8b4513')};
 	border-radius: 8px;
 	padding: 1rem;
-	background: ${props => props.$isMobile ? 'rgb(42, 42, 42)' : 'white'};
+	background: ${(props) => (props.$isMobile ? 'rgb(42, 42, 42)' : 'white')};
 	text-align: center;
 `;
 
 export const StyledDeathTitle = styled.div<MobileStyledProps>`
 	font-size: 0.9rem;
 	font-weight: bold;
-	color: ${props => props.$isMobile ? '#f5d020' : '#8b4513'};
+	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
 	margin-bottom: 0.5rem;
 	font-family: 'Inter', sans-serif;
 `;
@@ -66,7 +66,7 @@ export const StyledHealthStatus = styled.div<{
 export const StyledDeathThreshold = styled.div<MobileStyledProps>`
 	font-size: 1.5rem;
 	font-weight: bold;
-	color: ${props => props.$isMobile ? '#f5d020' : '#8b4513'};
+	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
 	margin-bottom: 0.5rem;
 `;
 
@@ -77,7 +77,7 @@ export const StyledDeathStepsContainer = styled.div<MobileStyledProps>`
 export const StyledDeathStepsTitle = styled.div<MobileStyledProps>`
 	font-size: 0.8rem;
 	font-weight: bold;
-	color: ${props => props.$isMobile ? '#ff6b6b' : '#dc2626'};
+	color: ${(props) => (props.$isMobile ? '#ff6b6b' : '#dc2626')};
 	margin-bottom: 0.3rem;
 	font-family: 'Inter', sans-serif;
 `;

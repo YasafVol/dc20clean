@@ -200,7 +200,8 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 	const attributePointsRemaining = useMemo(() => {
 		const totalAttributePoints = calculationResult.stats.finalAttributePoints ?? 12;
 		const attributePointsSpent =
-			(state.attribute_might + 2) +
+			state.attribute_might +
+			2 +
 			(state.attribute_agility + 2) +
 			(state.attribute_charisma + 2) +
 			(state.attribute_intelligence + 2);
@@ -228,11 +229,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 		[state, dispatch, calculationResult, attributePointsRemaining, totalAttributePoints]
 	);
 
-	return (
-		<CharacterContext.Provider value={contextValue}>
-			{children}
-		</CharacterContext.Provider>
-	);
+	return <CharacterContext.Provider value={contextValue}>{children}</CharacterContext.Provider>;
 }
 
 export function useCharacter() {

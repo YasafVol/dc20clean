@@ -50,9 +50,9 @@ flowchart LR
 
 | Layer                     | File / Dir                                                                                | Responsibility                                                           |
 | ------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| **Rule Data (canonical)** | `src/lib/rulesdata/classes-data/features/*_features.ts`                                             | Declarative definition of each class’s core & subclass features          |
-|                           | `src/lib/rulesdata/classes-data/tables/*_table.json`                                              | Level-by-level progression tables (HP, MP, features gained, etc.)        |
-| **Type Contracts**        | `src/lib/rulesdata/schemas/types.ts`                                                              | TS interfaces `IClassDefinition`, `IClassFeature`, `IClassFeatureChoice` |
+| **Rule Data (canonical)** | `src/lib/rulesdata/classes-data/features/*_features.ts`                                   | Declarative definition of each class’s core & subclass features          |
+|                           | `src/lib/rulesdata/classes-data/tables/*_table.json`                                      | Level-by-level progression tables (HP, MP, features gained, etc.)        |
+| **Type Contracts**        | `src/lib/rulesdata/schemas/types.ts`                                                      | TS interfaces `IClassDefinition`, `IClassFeature`, `IClassFeatureChoice` |
 |                           | `src/lib/rulesdata/schemas/class.schema.ts`                                               | Zod schema used for validation & effect typing                           |
 | **Validation Layer**      | `src/lib/rulesdata/loaders/class.loader.ts`                                               | Loads progression tables and features, validates against schema          |
 |                           | `src/lib/rulesdata/rulesdata.spec.ts`                                                     | Unit test that asserts every class passes the schema                     |
@@ -119,7 +119,7 @@ flowchart LR
 
 | Symptom                               | Likely Cause                                                            | Fix                                              |
 | ------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------ |
-| **Vite import error** for class files | File path typo (`classes-data/...`)                                      | Check `import ... classFeaturesData` paths       |
+| **Vite import error** for class files | File path typo (`classes-data/...`)                                     | Check `import ... classFeaturesData` paths       |
 | New class not visible in UI           | Missing `_features.ts` or `_table.json` file, or mismatched `className` | Verify file names & exported constant            |
 | Unit test `rulesdata.spec.ts` fails   | Schema violation (missing field / wrong effect)                         | Inspect test output & update data                |
 | Stats not updating for new effect     | Effect type not handled in calculator                                   | Add case to `createStatBreakdown`                |
@@ -130,6 +130,7 @@ flowchart LR
 ## 6 Future Evolution
 
 -- Effect Processor integration will unify class & ancestry effect handling—update §3 Step 4 when landed.
+
 - **Subclass-driven UI**: dynamic forms may auto-render based on schema.
 - **Data-driven progression editor** planned; stay tuned.
 

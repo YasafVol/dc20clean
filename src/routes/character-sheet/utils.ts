@@ -1,6 +1,5 @@
 import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
 import type {
-	CharacterSheetData,
 	AttackData,
 	SpellData,
 	ManeuverData,
@@ -12,8 +11,9 @@ import type {
 	InventoryItemData,
 	SkillData
 } from '../../types';
+import type { SavedCharacter } from '../../lib/types/dataContracts';
 import type { Spell } from '../../lib/rulesdata/schemas/spell.schema';
-import type { Maneuver } from '../../lib/rulesdata/maneuvers';
+import type { Maneuver } from '../../lib/rulesdata/martials/maneuvers';
 
 interface CalculatedDefenses {
 	calculatedPD: number;
@@ -26,7 +26,7 @@ interface SkillsByAttribute {
 }
 
 export const handlePrintCharacterSheet = (
-	characterData: CharacterSheetData,
+	characterData: SavedCharacter,
 	attacks: AttackData[],
 	spells: SpellData[],
 	characterState: CharacterState | null,
@@ -259,7 +259,7 @@ export const handlePrintCharacterSheet = (
                             </div>
                             <div class="header-section">
                                 <div class="label">Level</div>
-                                <div class="value">${characterData.finalLevel}</div>
+                                <div class="value">${characterData.level}</div>
                                 <div class="label">Combat Mastery</div>
                                 <div class="value">+${characterData.finalCombatMastery}</div>
                             </div>
@@ -439,7 +439,7 @@ export const handlePrintCharacterSheet = (
             </div>
             <div class="header-section">
                 <div class="label">Level</div>
-                <div class="value">${characterData.finalLevel}</div>
+                <div class="value">${characterData.level}</div>
             </div>
             <div class="dc20-logo">DC20</div>
         </div>
@@ -567,7 +567,7 @@ export const handlePrintCharacterSheet = (
             </div>
             <div class="header-section">
                 <div class="label">Level</div>
-                <div class="value">${characterData.finalLevel}</div>
+                <div class="value">${characterData.level}</div>
             </div>
             <div class="dc20-logo">DC20</div>
         </div>

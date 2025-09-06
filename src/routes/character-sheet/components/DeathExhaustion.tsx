@@ -40,7 +40,7 @@ interface DeathExhaustionProps {
 const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 	const { state, updateExhaustion, updateDeathStep } = useCharacterSheet();
 	const resources = useCharacterResources();
-	
+
 	if (!state.character || !resources) {
 		return <div>Loading...</div>;
 	}
@@ -49,7 +49,7 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 
 	// Mobile detection logic
 	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
-	
+
 	const currentValues = resources.current;
 
 	const onExhaustionChange = (level: number) => {
@@ -115,7 +115,9 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 							<div style={{ fontSize: '0.8rem', color: '#8b4513', marginBottom: '0.3rem' }}>
 								DEATH THRESHOLD
 							</div>
-							<StyledDeathThreshold $isMobile={effectiveIsMobile}>{deathThreshold}</StyledDeathThreshold>
+							<StyledDeathThreshold $isMobile={effectiveIsMobile}>
+								{deathThreshold}
+							</StyledDeathThreshold>
 
 							{/* Death Steps - only show when on Death's Door */}
 							{healthStatus.status === 'deaths-door' && (
@@ -152,7 +154,9 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 			</StyledDeathContainer>
 
 			<StyledExhaustionOnlyContainer $isMobile={effectiveIsMobile}>
-				<StyledExhaustionOnlyTitle $isMobile={effectiveIsMobile}>EXHAUSTION</StyledExhaustionOnlyTitle>
+				<StyledExhaustionOnlyTitle $isMobile={effectiveIsMobile}>
+					EXHAUSTION
+				</StyledExhaustionOnlyTitle>
 				<StyledExhaustionContainer $isMobile={effectiveIsMobile}>
 					{exhaustionLevels.map(({ level, description }) => (
 						<StyledExhaustionLevel

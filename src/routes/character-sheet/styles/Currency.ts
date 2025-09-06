@@ -3,10 +3,10 @@ import styled from 'styled-components';
 export const CurrencyContainer = styled.div.withConfig({
 	shouldForwardProp: (prop) => prop !== 'isMobile'
 })<{ isMobile?: boolean }>`
-	border: 2px solid ${props => props.isMobile ? 'rgb(68,68,68)' : '#8b4513'};
+	border: 2px solid ${(props) => (props.isMobile ? 'rgb(68,68,68)' : '#8b4513')};
 	border-radius: 8px;
 	padding: 1rem;
-	background: ${props => props.isMobile ? 'rgb(42,42,42)' : 'white'};
+	background: ${(props) => (props.isMobile ? 'rgb(42,42,42)' : 'white')};
 `;
 
 export const CurrencyTitle = styled.div.withConfig({
@@ -14,7 +14,7 @@ export const CurrencyTitle = styled.div.withConfig({
 })<{ isMobile?: boolean }>`
 	font-size: 1.1rem;
 	font-weight: bold;
-	color: ${props => props.isMobile ? '#f5d020' : '#8b4513'};
+	color: ${(props) => (props.isMobile ? '#f5d020' : '#8b4513')};
 	margin-bottom: 1rem;
 	text-align: center;
 `;
@@ -54,7 +54,7 @@ export const CurrencyLabel = styled.span.withConfig({
 	shouldForwardProp: (prop) => prop !== 'isMobile'
 })<{ isMobile?: boolean }>`
 	font-size: 0.9rem;
-	color: ${props => props.isMobile ? 'white' : '#8b4513'};
+	color: ${(props) => (props.isMobile ? 'white' : '#8b4513')};
 	font-weight: bold;
 `;
 
@@ -63,16 +63,17 @@ export const CurrencyInput = styled.input.withConfig({
 })<{ isMobile?: boolean }>`
 	width: 60px;
 	padding: 0.2rem;
-	border: 1px solid ${props => props.isMobile ? 'rgb(68,68,68)' : '#8b4513'};
+	border: 1px solid ${(props) => (props.isMobile ? 'rgb(68,68,68)' : '#8b4513')};
 	border-radius: 4px;
 	text-align: center;
 	font-size: 0.8rem;
-	background-color: ${props => props.isMobile ? 'rgb(42,42,42)' : 'white'};
-	color: ${props => props.isMobile ? 'white' : 'black'};
+	background-color: ${(props) => (props.isMobile ? 'rgb(42,42,42)' : 'white')};
+	color: ${(props) => (props.isMobile ? 'white' : 'black')};
 
 	&:focus {
 		outline: none;
-		border-color: ${props => props.isMobile ? '#f5d020' : '#6d3410'};
-		box-shadow: 0 0 0 2px ${props => props.isMobile ? 'rgba(245, 208, 32, 0.2)' : 'rgba(139, 69, 19, 0.2)'};
+		border-color: ${(props) => (props.isMobile ? '#f5d020' : '#6d3410')};
+		box-shadow: 0 0 0 2px
+			${(props) => (props.isMobile ? 'rgba(245, 208, 32, 0.2)' : 'rgba(139, 69, 19, 0.2)')};
 	}
 `;

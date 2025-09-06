@@ -15,9 +15,9 @@ export const StyledContainer = styled.div`
 		padding: 1rem;
 	}
 
-	 /* Give breathing room at the bottom so the cards don't abut
+	/* Give breathing room at the bottom so the cards don't abut
 		 the page edge on small viewports */
-	 padding-bottom: 3rem;
+	padding-bottom: 3rem;
 `;
 
 export const StyledTitle = styled.h2`
@@ -59,7 +59,7 @@ export const StyledCardContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	
+
 	@media (max-width: 900px) {
 		min-width: 180px;
 	}
@@ -84,7 +84,7 @@ export const StyledCard = styled.div`
 	&:hover {
 		border-color: #fbbf24;
 	}
-	
+
 	@media (max-width: 900px) {
 		height: 200px;
 		padding: 0.8rem;
@@ -127,7 +127,7 @@ export const StyledButton = styled.button`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	
+
 	/* Fine-tune vertical alignment for + and - symbols */
 	padding-top: 0;
 	/* 4px bottom padding ensures + and - symbols are visually centered in the button */

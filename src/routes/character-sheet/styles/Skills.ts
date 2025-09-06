@@ -5,10 +5,10 @@ interface MobileStyledProps {
 }
 
 export const StyledSkillsSection = styled.div<MobileStyledProps>`
-	border: 2px solid ${props => props.$isMobile ? 'rgb(68,68,68)' : '#8b4513'};
+	border: 2px solid ${(props) => (props.$isMobile ? 'rgb(68,68,68)' : '#8b4513')};
 	border-radius: 8px;
 	padding: 1rem;
-	background: ${props => props.$isMobile ? 'rgb(42,42,42)' : 'rgba(245, 243, 240, 0.5)'};
+	background: ${(props) => (props.$isMobile ? 'rgb(42,42,42)' : 'rgba(245, 243, 240, 0.5)')};
 	flex: 1;
 `;
 
@@ -30,7 +30,7 @@ export const StyledDot = styled.div<{ $filled: boolean; $isMobile?: boolean }>`
 	width: 8px;
 	height: 8px;
 	border-radius: 50%;
-	border: 1px solid ${props => props.$isMobile ? 'rgb(68,68,68)' : '#8b4513'};
+	border: 1px solid ${(props) => (props.$isMobile ? 'rgb(68,68,68)' : '#8b4513')};
 	background: ${(props) => {
 		if (props.$filled) {
 			return props.$isMobile ? '#f5d020' : '#8b4513';

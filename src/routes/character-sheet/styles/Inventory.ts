@@ -5,26 +5,26 @@ interface MobileStyledProps {
 }
 
 export const StyledInventorySection = styled.div<MobileStyledProps>`
-	border: 1px solid ${props => props.$isMobile ? 'rgb(68,68,68)' : '#8b4513'};
+	border: 1px solid ${(props) => (props.$isMobile ? 'rgb(68,68,68)' : '#8b4513')};
 	border-radius: 8px;
 	padding: 1rem;
-	background: ${props => props.$isMobile ? 'rgb(42,42,42)' : 'white'};
+	background: ${(props) => (props.$isMobile ? 'rgb(42,42,42)' : 'white')};
 	margin-bottom: 1rem;
-	color: ${props => props.$isMobile ? 'white' : 'black'};
+	color: ${(props) => (props.$isMobile ? 'white' : 'black')};
 `;
 
 export const StyledInventoryTitle = styled.div<MobileStyledProps>`
 	font-size: 1.1rem;
 	font-weight: bold;
-	color: ${props => props.$isMobile ? '#f5d020' : '#8b4513'};
+	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
 	text-align: center;
 	margin-bottom: 1rem;
 `;
 
 export const StyledAddItemButton = styled.button<MobileStyledProps>`
 	padding: 0.5rem 1rem;
-	background-color: ${props => props.$isMobile ? '#f5d020' : '#8b4513'};
-	color: ${props => props.$isMobile ? '#1a1a1a' : 'white'};
+	background-color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
+	color: ${(props) => (props.$isMobile ? '#1a1a1a' : 'white')};
 	border: none;
 	border-radius: 4px;
 	font-size: 0.9rem;
@@ -34,13 +34,13 @@ export const StyledAddItemButton = styled.button<MobileStyledProps>`
 	font-weight: bold;
 
 	&:hover {
-		background-color: ${props => props.$isMobile ? '#d4b01e' : '#6d3410'};
+		background-color: ${(props) => (props.$isMobile ? '#d4b01e' : '#6d3410')};
 	}
 `;
 
 export const StyledInventoryContainer = styled.div<MobileStyledProps>`
 	font-size: 0.8rem;
-	color: ${props => props.$isMobile ? 'white' : 'black'};
+	color: ${(props) => (props.$isMobile ? 'white' : 'black')};
 `;
 
 export const StyledInventoryHeaderRow = styled.div`
@@ -89,32 +89,32 @@ export const StyledRemoveItemButton = styled.button`
 
 export const StyledInventorySelect = styled.select<MobileStyledProps>`
 	padding: 0.3rem;
-	border: 1px solid ${props => props.$isMobile ? 'rgb(68,68,68)' : '#ccc'};
+	border: 1px solid ${(props) => (props.$isMobile ? 'rgb(68,68,68)' : '#ccc')};
 	border-radius: 4px;
 	font-size: 0.8rem;
-	background-color: ${props => props.$isMobile ? 'rgb(42,42,42)' : 'white'};
-	color: ${props => props.$isMobile ? 'white' : 'black'};
+	background-color: ${(props) => (props.$isMobile ? 'rgb(42,42,42)' : 'white')};
+	color: ${(props) => (props.$isMobile ? 'white' : 'black')};
 
 	&:disabled {
-		background-color: ${props => props.$isMobile ? 'rgb(30,30,30)' : '#f5f5f5'};
+		background-color: ${(props) => (props.$isMobile ? 'rgb(30,30,30)' : '#f5f5f5')};
 		color: #999;
 	}
 `;
 
 export const StyledInventoryInput = styled.input<MobileStyledProps>`
 	padding: 0.3rem;
-	border: 1px solid ${props => props.$isMobile ? 'rgb(68,68,68)' : '#ccc'};
+	border: 1px solid ${(props) => (props.$isMobile ? 'rgb(68,68,68)' : '#ccc')};
 	border-radius: 4px;
 	font-size: 0.8rem;
 	text-align: center;
-	background-color: ${props => props.$isMobile ? 'rgb(42,42,42)' : 'white'};
-	color: ${props => props.$isMobile ? 'white' : 'black'};
+	background-color: ${(props) => (props.$isMobile ? 'rgb(42,42,42)' : 'white')};
+	color: ${(props) => (props.$isMobile ? 'white' : 'black')};
 `;
 
 export const StyledInventoryInfoIcon = styled.span<MobileStyledProps>`
 	background: transparent;
-	color: ${props => props.$isMobile ? '#f5d020' : '#8b4513'};
-	border: 1px solid ${props => props.$isMobile ? '#f5d020' : '#8b4513'};
+	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
+	border: 1px solid ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
 	border-radius: 50%;
 	width: 20px;
 	height: 20px;
@@ -128,8 +128,8 @@ export const StyledInventoryInfoIcon = styled.span<MobileStyledProps>`
 	flex-shrink: 0;
 
 	&:hover {
-		background: ${props => props.$isMobile ? '#f5d020' : '#8b4513'};
-		color: ${props => props.$isMobile ? 'rgb(42,42,42)' : 'white'};
+		background: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
+		color: ${(props) => (props.$isMobile ? 'rgb(42,42,42)' : 'white')};
 	}
 `;
 

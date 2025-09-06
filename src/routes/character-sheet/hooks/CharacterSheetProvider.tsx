@@ -6,7 +6,10 @@ import {
 } from './useCharacterSheetReducer';
 import { getCharacterById, saveCharacter } from '../../../lib/utils/storageUtils';
 import type { SavedCharacter } from '../../../lib/types/dataContracts';
-import { calculateCharacterWithBreakdowns, convertToEnhancedBuildData } from '../../../lib/services/enhancedCharacterCalculator';
+import {
+	calculateCharacterWithBreakdowns,
+	convertToEnhancedBuildData
+} from '../../../lib/services/enhancedCharacterCalculator';
 import { ancestriesData } from '../../../lib/rulesdata/ancestries/ancestries';
 import { traitsData } from '../../../lib/rulesdata/ancestries/traits';
 import { tradesData } from '../../../lib/rulesdata/trades';
@@ -49,32 +52,32 @@ function useDebounce<T extends (...args: any[]) => any>(
 
 // Context type that components will consume
 interface CharacterSheetContextType {
-  state: SheetState;
-  dispatch: React.Dispatch<SheetAction>;
-  // Helper functions from the reducer
-  updateHP: (hp: number) => void;
-  updateSP: (sp: number) => void;
-  updateMP: (mp: number) => void;
-  updateTempHP: (tempHP: number) => void;
-  updateActionPoints: (ap: number) => void;
-  updateExhaustion: (level: number) => void;
-  updateDeathStep: (steps: number, isDead?: boolean) => void;
-  setManualDefense: (pd?: number, ad?: number, pdr?: number) => void;
-  addAttack: (attack: any) => void;
-  removeAttack: (attackId: string) => void;
-  updateAttack: (attackId: string, attack: any) => void;
-  addSpell: (spell: any) => void;
-  removeSpell: (spellId: string) => void;
-  updateSpell: (spellId: string, field: string, value: any) => void;
-  addManeuver: (maneuver: any) => void;
-  removeManeuver: (maneuverId: string) => void;
-  updateInventory: (items: any[]) => void;
-  updateCurrency: (gold?: number, silver?: number, copper?: number) => void;
-  updateNotes: (notes: string) => void;
-  updateGritPoints: (grit: number) => void;
-  updateRestPoints: (rest: number) => void;
-  // Manual save function
-  saveNow: () => Promise<void>;
+	state: SheetState;
+	dispatch: React.Dispatch<SheetAction>;
+	// Helper functions from the reducer
+	updateHP: (hp: number) => void;
+	updateSP: (sp: number) => void;
+	updateMP: (mp: number) => void;
+	updateTempHP: (tempHP: number) => void;
+	updateActionPoints: (ap: number) => void;
+	updateExhaustion: (level: number) => void;
+	updateDeathStep: (steps: number, isDead?: boolean) => void;
+	setManualDefense: (pd?: number, ad?: number, pdr?: number) => void;
+	addAttack: (attack: any) => void;
+	removeAttack: (attackId: string) => void;
+	updateAttack: (attackId: string, attack: any) => void;
+	addSpell: (spell: any) => void;
+	removeSpell: (spellId: string) => void;
+	updateSpell: (spellId: string, field: string, value: any) => void;
+	addManeuver: (maneuver: any) => void;
+	removeManeuver: (maneuverId: string) => void;
+	updateInventory: (items: any[]) => void;
+	updateCurrency: (gold?: number, silver?: number, copper?: number) => void;
+	updateNotes: (notes: string) => void;
+	updateGritPoints: (grit: number) => void;
+	updateRestPoints: (rest: number) => void;
+	// Manual save function
+	saveNow: () => Promise<void>;
 }
 
 const CharacterSheetContext = createContext<CharacterSheetContextType | undefined>(undefined);
@@ -85,31 +88,31 @@ interface CharacterSheetProviderProps {
 }
 
 export function CharacterSheetProvider({ children, characterId }: CharacterSheetProviderProps) {
-  const {
-    state,
-    dispatch,
-    updateHP,
-    updateSP,
-    updateMP,
-    updateTempHP,
-    updateActionPoints,
-    updateExhaustion,
-    updateDeathStep,
-    setManualDefense,
-    addAttack,
-    removeAttack,
-    updateAttack,
-    addSpell,
-    removeSpell,
-    updateSpell,
-    addManeuver,
-    removeManeuver,
-    updateInventory,
-    updateCurrency,
-    updateNotes,
-    updateGritPoints,
-    updateRestPoints,
-  } = useCharacterSheetReducer();
+	const {
+		state,
+		dispatch,
+		updateHP,
+		updateSP,
+		updateMP,
+		updateTempHP,
+		updateActionPoints,
+		updateExhaustion,
+		updateDeathStep,
+		setManualDefense,
+		addAttack,
+		removeAttack,
+		updateAttack,
+		addSpell,
+		removeSpell,
+		updateSpell,
+		addManeuver,
+		removeManeuver,
+		updateInventory,
+		updateCurrency,
+		updateNotes,
+		updateGritPoints,
+		updateRestPoints
+	} = useCharacterSheetReducer();
 
 	// Save function that runs enhanced calculator and persists to storage
 	const saveCharacterData = useCallback(async (character: SavedCharacter) => {
@@ -198,37 +201,35 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		}
 	}, [state.character, saveCharacterData, debouncedSave]);
 
-  const contextValue: CharacterSheetContextType = {
-    state,
-    dispatch,
-    updateHP,
-    updateSP,
-    updateMP,
-    updateTempHP,
-    updateActionPoints,
-    updateExhaustion,
-    updateDeathStep,
-    setManualDefense,
-    addAttack,
-    removeAttack,
-    updateAttack,
-    addSpell,
-    removeSpell,
-    updateSpell,
-    addManeuver,
-    removeManeuver,
-    updateInventory,
-    updateCurrency,
-    updateNotes,
-    updateGritPoints,
-    updateRestPoints,
-    saveNow,
-  };
+	const contextValue: CharacterSheetContextType = {
+		state,
+		dispatch,
+		updateHP,
+		updateSP,
+		updateMP,
+		updateTempHP,
+		updateActionPoints,
+		updateExhaustion,
+		updateDeathStep,
+		setManualDefense,
+		addAttack,
+		removeAttack,
+		updateAttack,
+		addSpell,
+		removeSpell,
+		updateSpell,
+		addManeuver,
+		removeManeuver,
+		updateInventory,
+		updateCurrency,
+		updateNotes,
+		updateGritPoints,
+		updateRestPoints,
+		saveNow
+	};
 
 	return (
-		<CharacterSheetContext.Provider value={contextValue}>
-			{children}
-		</CharacterSheetContext.Provider>
+		<CharacterSheetContext.Provider value={contextValue}>{children}</CharacterSheetContext.Provider>
 	);
 }
 

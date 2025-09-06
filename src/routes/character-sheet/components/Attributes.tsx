@@ -62,9 +62,14 @@ const Attributes: React.FC<AttributesProps> = ({
 							style={{
 								fontSize: '0.875rem',
 								fontWeight: '600',
-								color: skill.bonus >= 0
-								? (isMobile ? '#22c55e' : '#059669')  // Green-500 for mobile, darker green for desktop
-								: (isMobile ? '#ef4444' : '#dc2626'), // Red-500 for mobile, darker red for desktop
+								color:
+									skill.bonus >= 0
+										? isMobile
+											? '#22c55e'
+											: '#059669' // Green-500 for mobile, darker green for desktop
+										: isMobile
+											? '#ef4444'
+											: '#dc2626', // Red-500 for mobile, darker red for desktop
 								minWidth: '2rem',
 								textAlign: 'center'
 							}}
@@ -96,7 +101,7 @@ const Attributes: React.FC<AttributesProps> = ({
 				<AttributeHeader>
 					<AttributeBox $isMobile={isMobile}>
 						<AttributeAbbreviation $isMobile={isMobile}>MIG</AttributeAbbreviation>
-						<Tooltip 
+						<Tooltip
 							content={
 								breakdowns?.attribute_might
 									? createEnhancedTooltip('Might', breakdowns.attribute_might)
@@ -121,7 +126,7 @@ const Attributes: React.FC<AttributesProps> = ({
 				<AttributeHeader>
 					<AttributeBox $isMobile={isMobile}>
 						<AttributeAbbreviation $isMobile={isMobile}>AGI</AttributeAbbreviation>
-						<Tooltip 
+						<Tooltip
 							content={
 								breakdowns?.attribute_agility
 									? createEnhancedTooltip('Agility', breakdowns.attribute_agility)
@@ -134,7 +139,9 @@ const Attributes: React.FC<AttributesProps> = ({
 					</AttributeBox>
 					<AttributeInfo $isMobile={isMobile}>
 						<AttributeName $isMobile={isMobile}>AGILITY</AttributeName>
-						<AttributeSave $isMobile={isMobile}>SAVE +{characterData.finalSaveAgility}</AttributeSave>
+						<AttributeSave $isMobile={isMobile}>
+							SAVE +{characterData.finalSaveAgility}
+						</AttributeSave>
 					</AttributeInfo>
 				</AttributeHeader>
 
@@ -146,7 +153,7 @@ const Attributes: React.FC<AttributesProps> = ({
 				<AttributeHeader>
 					<AttributeBox $isMobile={isMobile}>
 						<AttributeAbbreviation $isMobile={isMobile}>CHA</AttributeAbbreviation>
-						<Tooltip 
+						<Tooltip
 							content={
 								breakdowns?.attribute_charisma
 									? createEnhancedTooltip('Charisma', breakdowns.attribute_charisma)
@@ -159,7 +166,9 @@ const Attributes: React.FC<AttributesProps> = ({
 					</AttributeBox>
 					<AttributeInfo $isMobile={isMobile}>
 						<AttributeName $isMobile={isMobile}>CHARISMA</AttributeName>
-						<AttributeSave $isMobile={isMobile}>SAVE +{characterData.finalSaveCharisma}</AttributeSave>
+						<AttributeSave $isMobile={isMobile}>
+							SAVE +{characterData.finalSaveCharisma}
+						</AttributeSave>
 					</AttributeInfo>
 				</AttributeHeader>
 
@@ -171,7 +180,7 @@ const Attributes: React.FC<AttributesProps> = ({
 				<AttributeHeader>
 					<AttributeBox $isMobile={isMobile}>
 						<AttributeAbbreviation $isMobile={isMobile}>INT</AttributeAbbreviation>
-						<Tooltip 
+						<Tooltip
 							content={
 								breakdowns?.attribute_intelligence
 									? createEnhancedTooltip('Intelligence', breakdowns.attribute_intelligence)
@@ -179,12 +188,16 @@ const Attributes: React.FC<AttributesProps> = ({
 							}
 							position="top"
 						>
-							<AttributeValue $isMobile={isMobile}>{characterData.finalIntelligence}</AttributeValue>
+							<AttributeValue $isMobile={isMobile}>
+								{characterData.finalIntelligence}
+							</AttributeValue>
 						</Tooltip>
 					</AttributeBox>
 					<AttributeInfo $isMobile={isMobile}>
 						<AttributeName $isMobile={isMobile}>INTELLIGENCE</AttributeName>
-						<AttributeSave $isMobile={isMobile}>SAVE +{characterData.finalSaveIntelligence}</AttributeSave>
+						<AttributeSave $isMobile={isMobile}>
+							SAVE +{characterData.finalSaveIntelligence}
+						</AttributeSave>
 					</AttributeInfo>
 				</AttributeHeader>
 

@@ -15,7 +15,7 @@ export const StyledExhaustionLevel = styled.div<{ filled: boolean; $isMobile?: b
 	position: relative;
 	width: 24px;
 	height: 24px;
-	border: 2px solid ${props => props.$isMobile ? 'rgb(68, 68, 68)' : '#8b4513'};
+	border: 2px solid ${(props) => (props.$isMobile ? 'rgb(68, 68, 68)' : '#8b4513')};
 	background: ${(props) => {
 		if (props.filled) {
 			return props.$isMobile ? '#f5d020' : '#8b4513';

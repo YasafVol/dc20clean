@@ -154,7 +154,7 @@ export const MobileResourceLabel = styled.div`
 	font-size: 0.875rem;
 	font-weight: 600;
 	text-transform: capitalize;
-	
+
 	/* Extra specificity to override MobileCombatWrapper * selector */
 	&&& {
 		color: #fbbf24 !important;
@@ -203,30 +203,30 @@ export const MobileResourceControls = styled.div`
 
 export const MobileResourceButton = styled.button`
 	width: 40px;
-    height: 40px;
-    border: none;
-    background: rgb(68, 68, 68);
-    color: white;
-    border-radius: 4px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
+	height: 40px;
+	border: none;
+	background: rgb(68, 68, 68);
+	color: white;
+	border-radius: 4px;
+	font-size: 1.2rem;
+	font-weight: bold;
+	cursor: pointer;
+	transition: background-color 0.2s;
 `;
 
 export const MobileResourceInput = styled.input`
 	flex: 1;
 	background: rgb(51, 51, 51) !important;
-    border: 1px solid rgb(85, 85, 85);
+	border: 1px solid rgb(85, 85, 85);
 	border-radius: 4px;
 	padding: 0.25rem 0.5rem;
 	font-size: 0.875rem;
 	text-align: center;
 	color: #ffffff !important;
-	
+
 	/* Extra specificity to override MobileCombatWrapper * selector */
 	&&& {
 		background: rgb(51, 51, 51) !important;
 		color: #ffffff !important;
 	}
-	`;
+`;

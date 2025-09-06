@@ -21,18 +21,24 @@ interface LanguagesProps {
 const Languages: React.FC<LanguagesProps> = ({ languages, isMobile }) => {
 	// Mobile detection logic
 	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
-	
+
 	return (
 		<LanguagesSection $isMobile={effectiveIsMobile}>
 			<SectionTitle $isMobile={effectiveIsMobile}>LANGUAGES</SectionTitle>
-			<SectionDescription $isMobile={effectiveIsMobile}>LANGUAGE CHECK = d20 + Intelligence or Charisma</SectionDescription>
+			<SectionDescription $isMobile={effectiveIsMobile}>
+				LANGUAGE CHECK = d20 + Intelligence or Charisma
+			</SectionDescription>
 
 			{/* Header with L and F labels */}
 			<FluencyHeader $isMobile={effectiveIsMobile}>
 				<LanguageNameHeader $isMobile={effectiveIsMobile}>LANGUAGE</LanguageNameHeader>
 				<FluencyHeaderContainer $isMobile={effectiveIsMobile}>
-					<FluencyHeaderLabel $isMobile={effectiveIsMobile} title="Limited">L</FluencyHeaderLabel>
-					<FluencyHeaderLabel $isMobile={effectiveIsMobile} title="Fluent">F</FluencyHeaderLabel>
+					<FluencyHeaderLabel $isMobile={effectiveIsMobile} title="Limited">
+						L
+					</FluencyHeaderLabel>
+					<FluencyHeaderLabel $isMobile={effectiveIsMobile} title="Fluent">
+						F
+					</FluencyHeaderLabel>
 				</FluencyHeaderContainer>
 			</FluencyHeader>
 

@@ -40,7 +40,7 @@ const LeftColumn: React.FC<LeftColumnProps> = ({
 				breakdowns={breakdowns}
 				isMobile={isMobile}
 			/>
-			<KnowledgeTrades 
+			<KnowledgeTrades
 				onKnowledgeInfoClick={onKnowledgeInfoClick}
 				onTradeInfoClick={onTradeInfoClick}
 				isMobile={isMobile}

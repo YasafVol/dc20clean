@@ -40,7 +40,7 @@ export const StyledPointsRow = styled.div`
 	margin-bottom: 0.8rem;
 	color: #e5e7eb;
 	font-size: 1rem;
-	
+
 	&:last-child {
 		margin-bottom: 0;
 		padding-top: 0.8rem;
@@ -60,5 +60,5 @@ export const StyledPointsValue = styled.span<{ $highlight?: boolean }>`
 	font-weight: bold;
 	min-width: 40px;
 	text-align: right;
-	color: ${props => props.$highlight ? '#fbbf24' : 'inherit'};
+	color: ${(props) => (props.$highlight ? '#fbbf24' : 'inherit')};
 `;

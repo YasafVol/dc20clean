@@ -32,9 +32,7 @@ const MobileAttacksSection: React.FC<MobileAttacksSectionProps> = ({
 		<MobileSection>
 			<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 				<MobileSectionTitle>Attacks</MobileSectionTitle>
-				<MobileAddButton onClick={handleAddAttack}>
-					+ Add Attack
-				</MobileAddButton>
+				<MobileAddButton onClick={handleAddAttack}>+ Add Attack</MobileAddButton>
 			</div>
 			<MobileItemGrid>
 				{attacks.map((attack) => (

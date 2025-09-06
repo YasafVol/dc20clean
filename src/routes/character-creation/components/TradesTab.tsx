@@ -107,7 +107,7 @@ const TradesTab: React.FC<TradesTabProps> = ({
 		if (targetLevel >= 2) {
 			const currentLevel = currentTrades[tradeId] || 0;
 			const currentlyAdept = currentLevel >= 2;
-			
+
 			// If this trade isn't currently Adept and we're at the limit, can't select
 			if (!currentlyAdept && masteryLimits.currentAdeptCount >= masteryLimits.maxAdeptCount) {
 				return false;
@@ -163,7 +163,8 @@ const TradesTab: React.FC<TradesTabProps> = ({
 						marginBottom: '1rem'
 					}}
 				>
-					⚠️ You have exceeded your Adept limit. Currently: {masteryLimits.currentAdeptCount}/{masteryLimits.maxAdeptCount} Adept selections.
+					⚠️ You have exceeded your Adept limit. Currently: {masteryLimits.currentAdeptCount}/
+					{masteryLimits.maxAdeptCount} Adept selections.
 				</div>
 			)}
 

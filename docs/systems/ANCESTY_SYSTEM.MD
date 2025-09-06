@@ -48,9 +48,9 @@ flowchart LR
 
 | Layer                     | File / Dir                                                                                | Responsibility                                             |
 | ------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| **Rule Data (canonical)** | `src/lib/rulesdata/ancestries/traits.ts`                                                 | Declarative list of `traitsData` objects                   |
-|                           | `src/lib/rulesdata/ancestries/ancestries.ts`                                             | Declarative list of `ancestriesData` objects               |
-| **Type Contracts**        | `src/lib/rulesdata/schemas/types.ts`                                                              | TS interfaces `ITrait`, `IAncestry`, `ITraitEffect`        |
+| **Rule Data (canonical)** | `src/lib/rulesdata/ancestries/traits.ts`                                                  | Declarative list of `traitsData` objects                   |
+|                           | `src/lib/rulesdata/ancestries/ancestries.ts`                                              | Declarative list of `ancestriesData` objects               |
+| **Type Contracts**        | `src/lib/rulesdata/schemas/types.ts`                                                      | TS interfaces `ITrait`, `IAncestry`, `ITraitEffect`        |
 |                           | `src/lib/rulesdata/schemas/character.schema.ts`                                           | Zod schema used for validation & effect typing             |
 | **Validation Tests**      | `src/lib/rulesdata/rulesdata.spec.ts`                                                     | Loads every trait / ancestry and asserts schema compliance |
 | **Runtime Engine**        | `src/lib/services/enhancedCharacterCalculator.ts`                                         | Aggregates effects, resolves choices, outputs stats        |
@@ -114,12 +114,12 @@ Note: Class features can modify ancestry budgets via effects (e.g., Cleric “An
 
 ## 5 Troubleshooting FAQ 🤖
 
-| Symptom                                     | Likely Cause                                           | Fix                                     |
-| ------------------------------------------- | ------------------------------------------------------ | --------------------------------------- |
+| Symptom                                     | Likely Cause                                          | Fix                                     |
+| ------------------------------------------- | ----------------------------------------------------- | --------------------------------------- |
 | **Vite import error** for traits/ancestries | File path typo (should be `ancestries/...`)           | Search `import .*rulesdata/traits` etc. |
 | New ancestry not visible in UI              | Not added to `ancestries/ancestries.ts` or wrong `id` | Check default/expanded trait IDs        |
-| Unit test `rulesdata.spec.ts` fails         | Schema violation (missing field / wrong effect)        | Inspect test output & update data       |
-| Stats not updating for new effect           | Effect type not handled in calculator                  | Add case to `createStatBreakdown`       |
+| Unit test `rulesdata.spec.ts` fails         | Schema violation (missing field / wrong effect)       | Inspect test output & update data       |
+| Stats not updating for new effect           | Effect type not handled in calculator                 | Add case to `createStatBreakdown`       |
 
 ---
 

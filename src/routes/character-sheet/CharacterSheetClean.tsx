@@ -5,7 +5,6 @@ import { useCharacterSheet, useCharacterResources } from './hooks/CharacterSheet
 
 // Import types
 import type {
-	CharacterSheetProps,
 	SkillData,
 	TradeData,
 	LanguageData,
@@ -18,7 +17,7 @@ import type { Spell } from '../../lib/rulesdata/schemas/spell.schema';
 import type { Weapon } from '../../lib/rulesdata/inventoryItems';
 import type { InventoryItem } from '../../lib/rulesdata/inventoryItems';
 import type { ManeuverData } from '../../types';
-import type { Maneuver } from '../../lib/rulesdata/maneuvers';
+import type { Maneuver } from '../../lib/rulesdata/martials/maneuvers';
 
 // Legacy JSON parsing function - removed in favor of typed data contracts
 
@@ -47,7 +46,7 @@ import AttackPopup from './components/AttackPopup';
 import InventoryPopup from './components/InventoryPopup';
 
 // Import character state management utilities
-import { updateCharacterState, revertToOriginal } from '../../lib/utils/characterState';
+import { revertToOriginal } from '../../lib/utils/characterState';
 
 // Import defense notes utilities
 import { clearDefenseNotesForField } from '../../lib/utils/defenseNotes';
@@ -98,9 +97,16 @@ import { allManeuvers } from '../../lib/rulesdata/martials/maneuvers';
 
 import { handlePrintCharacterSheet } from './utils';
 
+// Define component props
+interface CharacterSheetCleanProps {
+	characterId: string;
+	onBack?: () => void;
+	isVisible?: boolean;
+}
+
 // LEGACY: saveManualDefense function removed - now handled by CharacterSheetProvider
 
-const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, onBack, isVisible = true }) => {
+const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, onBack }) => {
 	console.log('🧙‍♂️ CharacterSheetClean component rendering! characterId:', characterId);
 	// Use Provider hooks for data and update methods
 	const {
@@ -641,12 +647,15 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 
 	// Handle knowledge info popup
 	const handleKnowledgeInfoClick = (knowledgeName: string) => {
-		const knowledgeItem = knowledgeData.find(k => k.name.toLowerCase() === knowledgeName.toLowerCase());
+		const knowledgeData = getKnowledgeData();
+		const knowledgeItem = knowledgeData.find(
+			(k: any) => k.name.toLowerCase() === knowledgeName.toLowerCase()
+		);
 		if (knowledgeItem) {
 			const featureData: FeatureData = {
 				id: knowledgeItem.id,
 				name: knowledgeItem.name,
-				description: knowledgeItem.description,
+				description: (knowledgeItem as any).description || 'No description available.',
 				source: 'choice', // Using 'choice' since it's not ancestry or class
 				sourceDetail: 'Knowledge'
 			};
@@ -654,9 +663,9 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 		}
 	};
 
-	// Handle trade info popup  
+	// Handle trade info popup
 	const handleTradeInfoClick = (tradeName: string) => {
-		const tradeItem = tradesData.find(t => t.name.toLowerCase() === tradeName.toLowerCase());
+		const tradeItem = tradesData.find((t) => t.name.toLowerCase() === tradeName.toLowerCase());
 		if (tradeItem) {
 			const featureData: FeatureData = {
 				id: tradeItem.id,
@@ -841,7 +850,6 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 
 	// Get data from character or empty defaults if no character data
 	const trades = characterData ? getTradesData() : [];
-	const knowledge = characterData ? getKnowledgeData() : [];
 	const languages = characterData ? getLanguagesData() : [];
 	const features = characterData ? getFeaturesData() : [];
 	const skillsByAttribute = characterData
@@ -878,10 +886,10 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 			characterData,
 			attacks,
 			spells,
-			characterState,
+			characterState as any,
 			maneuvers,
 			getCalculatedDefenses,
-			currentValues,
+			currentValues as any,
 			features,
 			languages,
 			trades,
@@ -1137,31 +1145,44 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 				) : null}
 
 				{/* Maneuvers Section - Full width, after main content */}
-				{characterData.className && (() => {
-					// Check if character should have maneuvers by looking at their class progression
-					const selectedClass = classesData.find((c: any) => c.id.toLowerCase() === characterData.className?.toLowerCase());
-					if (!selectedClass) return null;
-					
-					// Check if this class/level has any maneuvers from level progression
-					const levelData = selectedClass.levelProgression?.find((l: any) => l.level === characterData.level);
-					const hasManeuvers = (levelData?.maneuversKnown || 0) > 0;
-					
-					console.log('🔍 Maneuvers section check:', {
-						className: characterData.className,
-						level: characterData.level,
-						maneuversKnown: levelData?.maneuversKnown,
-						hasManeuvers
-					});
-					
-					return hasManeuvers ? (
-						<div style={{ marginTop: '2rem', padding: '1rem', background: 'white', borderRadius: '8px', border: '2px solid #e0e0e0' }}>
-							<h2 style={{ color: '#2c3e50', marginBottom: '1rem', textAlign: 'center' }}>Maneuvers</h2>
-							<Maneuvers
-								onManeuverClick={openManeuverPopup}
-							/>
-						</div>
-					) : null;
-				})()}
+				{characterData.className &&
+					(() => {
+						// Check if character should have maneuvers by looking at their class progression
+						const selectedClass = classesData.find(
+							(c: any) => c.id.toLowerCase() === characterData.className?.toLowerCase()
+						);
+						if (!selectedClass) return null;
+
+						// Check if this class/level has any maneuvers from level progression
+						const levelData = selectedClass.levelProgression?.find(
+							(l: any) => l.level === characterData.level
+						);
+						const hasManeuvers = (levelData?.maneuversKnown || 0) > 0;
+
+						console.log('🔍 Maneuvers section check:', {
+							className: characterData.className,
+							level: characterData.level,
+							maneuversKnown: levelData?.maneuversKnown,
+							hasManeuvers
+						});
+
+						return hasManeuvers ? (
+							<div
+								style={{
+									marginTop: '2rem',
+									padding: '1rem',
+									background: 'white',
+									borderRadius: '8px',
+									border: '2px solid #e0e0e0'
+								}}
+							>
+								<h2 style={{ color: '#2c3e50', marginBottom: '1rem', textAlign: 'center' }}>
+									Maneuvers
+								</h2>
+								<Maneuvers onManeuverClick={openManeuverPopup} />
+							</div>
+						) : null;
+					})()}
 
 				{/* Mobile Layout - Only show on mobile */}
 				{isMobile && (
@@ -1187,33 +1208,28 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 								<Defenses isMobile={true} />
 								<Combat />
 								<DeathExhaustion />
-								<Spells
-									onSpellClick={openSpellPopup}
-								/>
-								<Attacks
-									onAttackClick={openAttackPopup}
-								/>
-								{characterData.className && findClassByName(characterData.className)?.spellcastingPath && (
-									<Spells
-										onSpellClick={openSpellPopup}
-										readOnly={true}
-									/>
-								)}
-								{characterData.className && (() => {
-									// Check if character should have maneuvers by looking at their class progression
-									const selectedClass = classesData.find((c: any) => c.id.toLowerCase() === characterData.className?.toLowerCase());
-									if (!selectedClass) return null;
-									
-									// Check if this class/level has any maneuvers from level progression
-									const levelData = selectedClass.levelProgression?.find((l: any) => l.level === characterData.level);
-									const hasManeuvers = (levelData?.maneuversKnown || 0) > 0;
-									
-									return hasManeuvers ? (
-										<Maneuvers
-											onManeuverClick={openManeuverPopup}
-										/>
-									) : null;
-								})()}
+								<Spells onSpellClick={openSpellPopup} />
+								<Attacks onAttackClick={openAttackPopup} />
+								{characterData.className &&
+									findClassByName(characterData.className)?.spellcastingPath && (
+										<Spells onSpellClick={openSpellPopup} readOnly={true} />
+									)}
+								{characterData.className &&
+									(() => {
+										// Check if character should have maneuvers by looking at their class progression
+										const selectedClass = classesData.find(
+											(c: any) => c.id.toLowerCase() === characterData.className?.toLowerCase()
+										);
+										if (!selectedClass) return null;
+
+										// Check if this class/level has any maneuvers from level progression
+										const levelData = selectedClass.levelProgression?.find(
+											(l: any) => l.level === characterData.level
+										);
+										const hasManeuvers = (levelData?.maneuversKnown || 0) > 0;
+
+										return hasManeuvers ? <Maneuvers onManeuverClick={openManeuverPopup} /> : null;
+									})()}
 								<Movement />
 								<RightColumnResources />
 							</div>

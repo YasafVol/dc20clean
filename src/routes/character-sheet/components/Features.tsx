@@ -42,12 +42,19 @@ const Features: React.FC<FeaturesProps> = ({ onFeatureClick, isMobile }) => {
 				{/* Ancestry Traits */}
 				{ancestryFeatures.length > 0 && (
 					<StyledFeatureCategory $isMobile={effectiveIsMobile}>
-						<StyledFeatureCategoryTitle $isMobile={effectiveIsMobile}>Ancestry Traits</StyledFeatureCategoryTitle>
+						<StyledFeatureCategoryTitle $isMobile={effectiveIsMobile}>
+							Ancestry Traits
+						</StyledFeatureCategoryTitle>
 						<StyledFeatureGrid $isMobile={effectiveIsMobile}>
 							{ancestryFeatures.map((feature) => (
 								<StyledFeatureItem $isMobile={effectiveIsMobile} key={feature.id}>
-									<StyledFeatureName $isMobile={effectiveIsMobile}>{feature.name}</StyledFeatureName>
-									<StyledFeatureReadMore $isMobile={effectiveIsMobile} onClick={() => onFeatureClick(feature)}>
+									<StyledFeatureName $isMobile={effectiveIsMobile}>
+										{feature.name}
+									</StyledFeatureName>
+									<StyledFeatureReadMore
+										$isMobile={effectiveIsMobile}
+										onClick={() => onFeatureClick(feature)}
+									>
 										i
 									</StyledFeatureReadMore>
 								</StyledFeatureItem>
@@ -59,12 +66,19 @@ const Features: React.FC<FeaturesProps> = ({ onFeatureClick, isMobile }) => {
 				{/* Class Features */}
 				{classFeatures.length > 0 && (
 					<StyledFeatureCategory $isMobile={effectiveIsMobile}>
-						<StyledFeatureCategoryTitle $isMobile={effectiveIsMobile}>Class Features</StyledFeatureCategoryTitle>
+						<StyledFeatureCategoryTitle $isMobile={effectiveIsMobile}>
+							Class Features
+						</StyledFeatureCategoryTitle>
 						<StyledFeatureGrid $isMobile={effectiveIsMobile}>
 							{classFeatures.map((feature) => (
 								<StyledFeatureItem $isMobile={effectiveIsMobile} key={feature.id}>
-									<StyledFeatureName $isMobile={effectiveIsMobile}>{feature.name}</StyledFeatureName>
-									<StyledFeatureReadMore $isMobile={effectiveIsMobile} onClick={() => onFeatureClick(feature)}>
+									<StyledFeatureName $isMobile={effectiveIsMobile}>
+										{feature.name}
+									</StyledFeatureName>
+									<StyledFeatureReadMore
+										$isMobile={effectiveIsMobile}
+										onClick={() => onFeatureClick(feature)}
+									>
 										i
 									</StyledFeatureReadMore>
 								</StyledFeatureItem>
@@ -76,12 +90,19 @@ const Features: React.FC<FeaturesProps> = ({ onFeatureClick, isMobile }) => {
 				{/* Feature Choices */}
 				{choiceFeatures.length > 0 && (
 					<StyledFeatureCategory $isMobile={effectiveIsMobile}>
-						<StyledFeatureCategoryTitle $isMobile={effectiveIsMobile}>Selected Features</StyledFeatureCategoryTitle>
+						<StyledFeatureCategoryTitle $isMobile={effectiveIsMobile}>
+							Selected Features
+						</StyledFeatureCategoryTitle>
 						<StyledFeatureGrid $isMobile={effectiveIsMobile}>
 							{choiceFeatures.map((feature) => (
 								<StyledFeatureItem $isMobile={effectiveIsMobile} key={feature.id}>
-									<StyledFeatureName $isMobile={effectiveIsMobile}>{feature.name}</StyledFeatureName>
-									<StyledFeatureReadMore $isMobile={effectiveIsMobile} onClick={() => onFeatureClick(feature)}>
+									<StyledFeatureName $isMobile={effectiveIsMobile}>
+										{feature.name}
+									</StyledFeatureName>
+									<StyledFeatureReadMore
+										$isMobile={effectiveIsMobile}
+										onClick={() => onFeatureClick(feature)}
+									>
 										i
 									</StyledFeatureReadMore>
 								</StyledFeatureItem>
@@ -92,7 +113,9 @@ const Features: React.FC<FeaturesProps> = ({ onFeatureClick, isMobile }) => {
 
 				{/* No features message */}
 				{features.length === 0 && (
-					<StyledNoFeaturesMessage $isMobile={effectiveIsMobile}>No features available</StyledNoFeaturesMessage>
+					<StyledNoFeaturesMessage $isMobile={effectiveIsMobile}>
+						No features available
+					</StyledNoFeaturesMessage>
 				)}
 			</StyledFeaturesContent>
 		</StyledFeaturesContainer>

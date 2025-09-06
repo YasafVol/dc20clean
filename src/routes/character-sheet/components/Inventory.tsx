@@ -118,7 +118,9 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 			<StyledInventoryTitle $isMobile={isMobile}>INVENTORY</StyledInventoryTitle>
 
 			{/* Add Item Button */}
-			<StyledAddItemButton $isMobile={isMobile} onClick={addInventorySlot}>+ Add Item</StyledAddItemButton>
+			<StyledAddItemButton $isMobile={isMobile} onClick={addInventorySlot}>
+				+ Add Item
+			</StyledAddItemButton>
 
 			<StyledInventoryContainer $isMobile={isMobile}>
 				<StyledInventoryHeaderRow>

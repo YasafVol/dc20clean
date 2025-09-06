@@ -5,10 +5,10 @@ interface MobileStyledProps {
 }
 
 export const StyledMovementContainer = styled.div<MobileStyledProps>`
-	border: 2px solid ${props => props.$isMobile ? 'rgb(68, 68, 68)' : '#8b4513'};
+	border: 2px solid ${(props) => (props.$isMobile ? 'rgb(68, 68, 68)' : '#8b4513')};
 	border-radius: 8px;
 	padding: 1rem;
-	background: ${props => props.$isMobile ? 'rgb(42, 42, 42)' : 'white'};
+	background: ${(props) => (props.$isMobile ? 'rgb(42, 42, 42)' : 'white')};
 	margin-bottom: 1rem;
 `;
 
@@ -30,13 +30,13 @@ export const StyledMovementStat = styled.div<MobileStyledProps>`
 export const StyledMovementLabel = styled.div<MobileStyledProps>`
 	font-size: 0.8rem;
 	font-weight: bold;
-	color: ${props => props.$isMobile ? '#f5d020' : '#8b4513'};
+	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
 `;
 
 export const StyledMovementValue = styled.div<MobileStyledProps>`
 	font-size: 1.5rem;
 	font-weight: bold;
-	color: ${props => props.$isMobile ? '#f5d020' : '#8b4513'};
+	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
 	display: flex;
 	align-items: center;
 	justify-content: center;

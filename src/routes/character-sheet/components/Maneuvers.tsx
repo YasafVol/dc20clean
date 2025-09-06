@@ -34,7 +34,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 	if (!state.character) {
 		return <div>Loading maneuvers...</div>;
 	}
-	
+
 	// Mobile detection logic
 	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
 	const [typeFilter, setTypeFilter] = useState<string>('all');
@@ -62,7 +62,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 		if (typeFilter === 'all') {
 			return maneuvers;
 		}
-		return maneuvers.filter(maneuver => {
+		return maneuvers.filter((maneuver) => {
 			// Show maneuvers that match the selected type, or empty maneuvers (for adding new ones)
 			return !maneuver.name || maneuver.type === typeFilter;
 		});
@@ -94,7 +94,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 
 		if (field === 'name' && value) {
 			// When maneuver is selected, populate all fields from maneuver data
-			const selectedManeuver = allManeuvers.find(maneuver => maneuver.name === value);
+			const selectedManeuver = allManeuvers.find((maneuver) => maneuver.name === value);
 			if (selectedManeuver) {
 				const updatedManeuver: ManeuverData = {
 					...maneuverToUpdate,
@@ -163,32 +163,45 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 			<StyledManeuversContainer $isMobile={effectiveIsMobile}>
 				<StyledManeuversHeaderRow $isMobile={effectiveIsMobile}>
 					<span></span> {/* Empty column for remove button */}
-					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>Maneuver</StyledManeuverHeaderColumn>
-					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>Type</StyledManeuverHeaderColumn>
-					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>Cost</StyledManeuverHeaderColumn>
-					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>Timing</StyledManeuverHeaderColumn>
+					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
+						Maneuver
+					</StyledManeuverHeaderColumn>
+					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
+						Type
+					</StyledManeuverHeaderColumn>
+					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
+						Cost
+					</StyledManeuverHeaderColumn>
+					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
+						Timing
+					</StyledManeuverHeaderColumn>
 				</StyledManeuversHeaderRow>
 
 				{filteredCharacterManeuvers.length === 0 ? (
 					<StyledManeuverEmptyState $isMobile={effectiveIsMobile}>
-						{typeFilter !== 'all' 
+						{typeFilter !== 'all'
 							? `No ${typeFilter} maneuvers found. ${readOnly ? '' : 'Click "Add Maneuver" to add maneuvers to your character.'}`
-							: readOnly ? 'No maneuvers selected' : 'No maneuvers added yet. Click "Add Maneuver" to get started.'
-						}
+							: readOnly
+								? 'No maneuvers selected'
+								: 'No maneuvers added yet. Click "Add Maneuver" to get started.'}
 					</StyledManeuverEmptyState>
 				) : (
 					filteredCharacterManeuvers.map((maneuver) => {
 						// Get the original index for update operations
-						const originalIndex = maneuvers.findIndex(m => m.id === maneuver.id);
-						const selectedManeuver = maneuver.name ? 
-							allManeuvers.find(m => m.name === maneuver.name) : null;
-							
+						const originalIndex = maneuvers.findIndex((m) => m.id === maneuver.id);
+						const selectedManeuver = maneuver.name
+							? allManeuvers.find((m) => m.name === maneuver.name)
+							: null;
+
 						return (
 							<React.Fragment key={maneuver.id}>
 								<StyledManeuverRow $isMobile={effectiveIsMobile}>
 									{/* Remove Button - only show in edit mode */}
 									{!readOnly && (
-										<StyledManeuverRemoveButton $isMobile={effectiveIsMobile} onClick={() => removeManeuverSlot(originalIndex)}>
+										<StyledManeuverRemoveButton
+											$isMobile={effectiveIsMobile}
+											onClick={() => removeManeuverSlot(originalIndex)}
+										>
 											×
 										</StyledManeuverRemoveButton>
 									)}
@@ -212,30 +225,39 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 										>
 											<option value="">Select Maneuver...</option>
 											{/* Always include the currently selected maneuver, even if it doesn't match filter */}
-											{maneuver.name && !filteredManeuvers.find(m => m.name === maneuver.name) && (
-												<option key={maneuver.name} value={maneuver.name}>
-													{maneuver.name}
-												</option>
-											)}
+											{maneuver.name &&
+												!filteredManeuvers.find((m) => m.name === maneuver.name) && (
+													<option key={maneuver.name} value={maneuver.name}>
+														{maneuver.name}
+													</option>
+												)}
 											{filteredManeuvers
-												.filter(maneuverOption => {
+												.filter((maneuverOption) => {
 													// Don't show maneuvers that are already selected by other maneuver slots
-													const isAlreadySelected = maneuvers.some(existingManeuver => 
-														existingManeuver.name === maneuverOption.name && existingManeuver.id !== maneuver.id
+													const isAlreadySelected = maneuvers.some(
+														(existingManeuver) =>
+															existingManeuver.name === maneuverOption.name &&
+															existingManeuver.id !== maneuver.id
 													);
 													return !isAlreadySelected;
 												})
-												.map(m => (
-													<option key={m.name} value={m.name}>{m.name}</option>
+												.map((m) => (
+													<option key={m.name} value={m.name}>
+														{m.name}
+													</option>
 												))}
 										</StyledManeuverSelect>
 									)}
 
 									{/* Type */}
-									<StyledManeuverCell $isMobile={effectiveIsMobile}>{maneuver.type || '-'}</StyledManeuverCell>
+									<StyledManeuverCell $isMobile={effectiveIsMobile}>
+										{maneuver.type || '-'}
+									</StyledManeuverCell>
 
 									{/* Cost */}
-									<StyledManeuverCell $isMobile={effectiveIsMobile}>{maneuver.cost?.ap ? `${maneuver.cost.ap} AP` : '-'}</StyledManeuverCell>
+									<StyledManeuverCell $isMobile={effectiveIsMobile}>
+										{maneuver.cost?.ap ? `${maneuver.cost.ap} AP` : '-'}
+									</StyledManeuverCell>
 
 									{/* Range/Reaction */}
 									<StyledManeuverCell $isMobile={effectiveIsMobile} style={{ fontSize: '0.7rem' }}>
@@ -245,15 +267,23 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 
 								{/* Expandable Description Section */}
 								{selectedManeuver && expandedManeuvers.has(maneuver.id) && (
-									<div style={{
-										backgroundColor: '#f8f9fa',
-										padding: '15px',
-										border: '1px solid #e9ecef',
-										borderTop: 'none',
-										borderRadius: '0 0 5px 5px',
-										marginBottom: '10px'
-									}}>
-										<div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+									<div
+										style={{
+											backgroundColor: '#f8f9fa',
+											padding: '15px',
+											border: '1px solid #e9ecef',
+											borderTop: 'none',
+											borderRadius: '0 0 5px 5px',
+											marginBottom: '10px'
+										}}
+									>
+										<div
+											style={{
+												display: 'flex',
+												justifyContent: 'space-between',
+												marginBottom: '10px'
+											}}
+										>
 											<strong style={{ color: '#8b4513' }}>Description:</strong>
 											<button
 												onClick={() => toggleManeuverExpansion(maneuver.id)}
@@ -270,24 +300,27 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 												Hide Description
 											</button>
 										</div>
-										
+
 										{/* Main Description */}
 										<div style={{ marginBottom: '15px', lineHeight: '1.4' }}>
-											<strong>{selectedManeuver.name}:</strong><br />
+											<strong>{selectedManeuver.name}:</strong>
+											<br />
 											{selectedManeuver.description}
 										</div>
 
 										{/* Requirements */}
 										{selectedManeuver.requirement && (
 											<div style={{ marginBottom: '10px' }}>
-												<strong style={{ color: '#8b4513' }}>Requirements:</strong> {selectedManeuver.requirement}
+												<strong style={{ color: '#8b4513' }}>Requirements:</strong>{' '}
+												{selectedManeuver.requirement}
 											</div>
 										)}
 
 										{/* Trigger */}
 										{selectedManeuver.trigger && (
 											<div style={{ marginBottom: '10px' }}>
-												<strong style={{ color: '#8b4513' }}>Trigger:</strong> {selectedManeuver.trigger}
+												<strong style={{ color: '#8b4513' }}>Trigger:</strong>{' '}
+												{selectedManeuver.trigger}
 											</div>
 										)}
 									</div>
@@ -295,15 +328,17 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 
 								{/* Show Description Button (when collapsed) */}
 								{selectedManeuver && !expandedManeuvers.has(maneuver.id) && (
-									<div style={{
-										textAlign: 'center',
-										padding: '5px',
-										backgroundColor: '#f8f9fa',
-										border: '1px solid #e9ecef',
-										borderTop: 'none',
-										borderRadius: '0 0 5px 5px',
-										marginBottom: '10px'
-									}}>
+									<div
+										style={{
+											textAlign: 'center',
+											padding: '5px',
+											backgroundColor: '#f8f9fa',
+											border: '1px solid #e9ecef',
+											borderTop: 'none',
+											borderRadius: '0 0 5px 5px',
+											marginBottom: '10px'
+										}}
+									>
 										<button
 											onClick={() => toggleManeuverExpansion(maneuver.id)}
 											style={{

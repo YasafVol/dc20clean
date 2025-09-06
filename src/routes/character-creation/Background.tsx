@@ -265,13 +265,25 @@ const Background: React.FC = () => {
 			</StyledDescription>
 
 			<StyledTabContainer>
-				<StyledTab $active={activeTab === 'skills'} onClick={() => setActiveTab('skills')} data-testid="skills-tab">
+				<StyledTab
+					$active={activeTab === 'skills'}
+					onClick={() => setActiveTab('skills')}
+					data-testid="skills-tab"
+				>
 					Skills ({background.availableSkillPoints - background.skillPointsUsed} left)
 				</StyledTab>
-				<StyledTab $active={activeTab === 'trades'} onClick={() => setActiveTab('trades')} data-testid="trades-tab">
+				<StyledTab
+					$active={activeTab === 'trades'}
+					onClick={() => setActiveTab('trades')}
+					data-testid="trades-tab"
+				>
 					Trades ({background.availableTradePoints - background.tradePointsUsed} left)
 				</StyledTab>
-				<StyledTab $active={activeTab === 'languages'} onClick={() => setActiveTab('languages')} data-testid="languages-tab">
+				<StyledTab
+					$active={activeTab === 'languages'}
+					onClick={() => setActiveTab('languages')}
+					data-testid="languages-tab"
+				>
 					Languages ({background.availableLanguagePoints - background.languagePointsUsed} left)
 				</StyledTab>
 			</StyledTabContainer>

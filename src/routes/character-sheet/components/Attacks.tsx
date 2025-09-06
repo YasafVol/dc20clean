@@ -1,15 +1,13 @@
 import React from 'react';
-import type { AttackData, CharacterSheetData } from '../../../types';
-import { weapons, type Weapon, WeaponType } from '../../../lib/rulesdata/inventoryItems';
+import type { AttackData } from '../../../types';
+import { weapons, type Weapon } from '../../../lib/rulesdata/inventoryItems';
 import { useCharacterAttacks, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
 	parseDamage,
 	getDamageType,
-	isRangedWeapon,
 	calculateAttackBonus,
 	calculateDamage,
 	getVersatileDamage,
-	getWeaponFeatures,
 	createEmptyAttackData
 } from '../../../lib/utils/weaponUtils';
 import {
@@ -131,7 +129,9 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 		<StyledAttacksSection $isMobile={effectiveIsMobile}>
 			<StyledAttacksHeader $isMobile={effectiveIsMobile}>
 				<StyledAttacksTitle $isMobile={effectiveIsMobile}>ATTACKS</StyledAttacksTitle>
-				<StyledAddWeaponButton $isMobile={effectiveIsMobile} onClick={addWeaponSlot}>+ Add Weapon</StyledAddWeaponButton>
+				<StyledAddWeaponButton $isMobile={effectiveIsMobile} onClick={addWeaponSlot}>
+					+ Add Weapon
+				</StyledAddWeaponButton>
 			</StyledAttacksHeader>
 
 			<StyledAttacksContainer $isMobile={effectiveIsMobile}>
@@ -153,7 +153,9 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 						<br />
 						Dmg
 					</StyledHeaderColumn>
-					<StyledHeaderColumn $isMobile={effectiveIsMobile} align="center">Type</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile} align="center">
+						Type
+					</StyledHeaderColumn>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile} align="center">
 						<StyledInfoIcon $isMobile={effectiveIsMobile}>i</StyledInfoIcon>
 					</StyledHeaderColumn>
@@ -172,7 +174,11 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 						return (
 							<StyledAttackRow $isMobile={effectiveIsMobile} key={attack.id}>
 								{/* Remove Button */}
-								<StyledRemoveButton $isMobile={effectiveIsMobile} onClick={() => removeWeaponSlot(index)} title="Remove weapon">
+								<StyledRemoveButton
+									$isMobile={effectiveIsMobile}
+									onClick={() => removeWeaponSlot(index)}
+									title="Remove weapon"
+								>
 									×
 								</StyledRemoveButton>
 
@@ -252,7 +258,12 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 								{/* Damage Calculation Info */}
 								<div style={{ textAlign: 'center', fontSize: '1.1rem' }}>
 									{weapon ? (
-										<StyledInfoIcon $isMobile={effectiveIsMobile} onClick={() => onAttackClick(attack, weapon)}>i</StyledInfoIcon>
+										<StyledInfoIcon
+											$isMobile={effectiveIsMobile}
+											onClick={() => onAttackClick(attack, weapon)}
+										>
+											i
+										</StyledInfoIcon>
 									) : (
 										'-'
 									)}

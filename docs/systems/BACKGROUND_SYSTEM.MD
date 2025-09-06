@@ -40,29 +40,30 @@ flowchart LR
 
 ## 2 Key Files & Their Roles
 
-| Layer                | File / Dir                                              | Responsibility                                                      |
-| -------------------- | ------------------------------------------------------- | ------------------------------------------------------------------- |
-| Rule Data (canonical) | `src/lib/rulesdata/skills.ts`                           | Declarative `skillsData` array                                      |
-|                      | `src/lib/rulesdata/trades.ts`                           | Declarative `tradesData` array                                      |
-|                      | `src/lib/rulesdata/languages.ts`                        | Declarative `languagesData` array                                   |
-| Type Contracts       | `src/lib/rulesdata/schemas/types.ts`                            | `ISkillData`, `ITradeData`, `ILanguageData`                         |
-| Runtime Engine       | `src/lib/services/enhancedCharacterCalculator.ts`       | Computes base budgets, applies trait bonuses, conversions, and usage |
-| State Layer          | `src/lib/stores/characterContext.tsx`                   | Stores background point allocations and conversion counts            |
-| Hook                 | `src/lib/hooks/useCharacterBuilder.ts`                  | Runs calculator and returns `calculationResult.background`           |
-| UI                   | `src/routes/character-creation/Background.tsx` and tabs | Renders editors for skills/trades/languages                          |
+| Layer                 | File / Dir                                              | Responsibility                                                       |
+| --------------------- | ------------------------------------------------------- | -------------------------------------------------------------------- |
+| Rule Data (canonical) | `src/lib/rulesdata/skills.ts`                           | Declarative `skillsData` array                                       |
+|                       | `src/lib/rulesdata/trades.ts`                           | Declarative `tradesData` array                                       |
+|                       | `src/lib/rulesdata/languages.ts`                        | Declarative `languagesData` array                                    |
+| Type Contracts        | `src/lib/rulesdata/schemas/types.ts`                    | `ISkillData`, `ITradeData`, `ILanguageData`                          |
+| Runtime Engine        | `src/lib/services/enhancedCharacterCalculator.ts`       | Computes base budgets, applies trait bonuses, conversions, and usage |
+| State Layer           | `src/lib/stores/characterContext.tsx`                   | Stores background point allocations and conversion counts            |
+| Hook                  | `src/lib/hooks/useCharacterBuilder.ts`                  | Runs calculator and returns `calculationResult.background`           |
+| UI                    | `src/routes/character-creation/Background.tsx` and tabs | Renders editors for skills/trades/languages                          |
 
 ---
 
 ## 3 Data Shapes
 
-- Skills: `ISkillData { id, name, attributeAssociation, description }`  
-- Trades: `ITradeData { id, name, attributeAssociation, description, tools? }`  
+- Skills: `ISkillData { id, name, attributeAssociation, description }`
+- Trades: `ITradeData { id, name, attributeAssociation, description, tools? }`
 - Languages: `ILanguageData { id, name, type: 'standard'|'exotic', description }`
 
-Background allocations in store:  
-- `skillsData: Record<string, number>` – mastery levels per skill  
-- `tradesData: Record<string, number>` – mastery levels per trade  
-- `languagesData: Record<string, { fluency: 'limited' | 'fluent' }>` – per-language fluency  
+Background allocations in store:
+
+- `skillsData: Record<string, number>` – mastery levels per skill
+- `tradesData: Record<string, number>` – mastery levels per trade
+- `languagesData: Record<string, { fluency: 'limited' | 'fluent' }>` – per-language fluency
 - Conversions: `{ skillToTrade, tradeToSkill, tradeToLanguage }` numbers on the store
 
 ---
@@ -70,6 +71,7 @@ Background allocations in store:
 ## 4 Calculation Model
 
 Within `calculateCharacterWithBreakdowns`:
+
 - Base budgets (Level 1 defaults):
   - Skill Points = `5 + Intelligence + bonus('skillPoints')`
   - Trade Points = `3 + bonus('tradePoints')`
@@ -92,6 +94,7 @@ Within `calculateCharacterWithBreakdowns`:
 - Validation emits over-budget errors by step.
 
 Traits can modify these pools using effects:
+
 - `MODIFY_STAT` targets: `skillPoints`, `tradePoints`, `languagePoints`
 - **Mastery Cap Effects** ✅ **NEW**:
   - `MODIFY_SKILL_MASTERY_CAP` / `MODIFY_TRADE_MASTERY_CAP`: Grant specific tier unlocks
@@ -129,7 +132,7 @@ At level 1, `maxAdeptCount` is 1 (base Adept slot) plus any granted exceptions.
    – Add unit tests for any formula changes or new conversions.  
    – Run `npm run test:unit`.
 
-6. Commit Message Template  
+6. Commit Message Template
    ```
    feat(background): update <skills|trades|languages> definitions and budgets
    - rulesdata/<file>.ts: +N updates
@@ -141,18 +144,18 @@ At level 1, `maxAdeptCount` is 1 (base Adept slot) plus any granted exceptions.
 
 ## 6 Troubleshooting FAQ 🤖
 
-| Symptom                                       | Likely Cause                                    | Fix                                                         |
-| --------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------- |
-| Over-budget errors even with minimal choices  | Conversion math or base budget regression       | Re-check §4 formulas and state conversions wiring           |
-| Language points miscounting                   | `common` included in cost                       | Ensure `common` is excluded from `languagePointsUsed` calc  |
-| Trait background bonuses not applied          | Missing `MODIFY_STAT` handling for pool target  | Ensure target matches one of `skillPoints/tradePoints/languagePoints` |
-| New pool not reflected in UI                  | UI not reading calculator `background`          | Update components to use `calculationResult.background`     |
+| Symptom                                      | Likely Cause                                   | Fix                                                                   |
+| -------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------- |
+| Over-budget errors even with minimal choices | Conversion math or base budget regression      | Re-check §4 formulas and state conversions wiring                     |
+| Language points miscounting                  | `common` included in cost                      | Ensure `common` is excluded from `languagePointsUsed` calc            |
+| Trait background bonuses not applied         | Missing `MODIFY_STAT` handling for pool target | Ensure target matches one of `skillPoints/tradePoints/languagePoints` |
+| New pool not reflected in UI                 | UI not reading calculator `background`         | Update components to use `calculationResult.background`               |
 
 ---
 
 ## 7 Future Evolution
 
-- Schema-driven editors for Skills/Trades/Languages.  
+- Schema-driven editors for Skills/Trades/Languages.
 - ✅ **COMPLETED**: Mastery cap validation and granular control implemented
 - UI enhancements: Dynamic mastery cap indicators in skill/trade selection
 
@@ -160,5 +163,3 @@ At level 1, `maxAdeptCount` is 1 (base Adept slot) plus any granted exceptions.
 
 > Last updated: 2025-01-15  
 > Maintainer: @DC20Clean-Team
-
-

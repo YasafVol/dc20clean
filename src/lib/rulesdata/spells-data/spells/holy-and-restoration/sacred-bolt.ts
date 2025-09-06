@@ -1,10 +1,5 @@
 import type { Spell } from '../../../schemas/spell.schema';
-import {
-	SpellSchool,
-	SpellList,
-	ClassName,
-	PremadeSpellList
-} from '../../../schemas/spell.schema';
+import { SpellSchool, SpellList, ClassName, PremadeSpellList } from '../../../schemas/spell.schema';
 
 export const sacredBolt: Spell = {
 	name: 'Sacred Bolt',

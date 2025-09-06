@@ -12,7 +12,7 @@ interface PlayerNotesProps {
 
 const PlayerNotes: React.FC<PlayerNotesProps> = () => {
 	const { updateNotes, state } = useCharacterSheet();
-	
+
 	if (!state.character) {
 		return (
 			<div style={{ padding: '1rem', color: '#666', textAlign: 'center' }}>
@@ -29,10 +29,8 @@ const PlayerNotes: React.FC<PlayerNotesProps> = () => {
 
 	return (
 		<StyledPlayerNotesContainer>
-			<StyledPlayerNotesTitle>
-				Player Notes
-			</StyledPlayerNotesTitle>
-			
+			<StyledPlayerNotesTitle>Player Notes</StyledPlayerNotesTitle>
+
 			<StyledNotesContent>
 				<textarea
 					value={currentNotes}

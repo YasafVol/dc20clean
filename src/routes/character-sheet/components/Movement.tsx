@@ -17,16 +17,16 @@ interface MovementProps {
 const Movement: React.FC<MovementProps> = ({ isMobile }) => {
 	const { state } = useCharacterSheet();
 	const calculation = useCharacterCalculatedData();
-	
+
 	if (!state.character || !calculation) {
 		return <div>Loading movement...</div>;
 	}
-	
+
 	const breakdowns = calculation.breakdowns;
-	
+
 	// Mobile detection logic
 	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
-	
+
 	// Use calculated stats for speed and jump distance
 	const speed = calculation.stats.finalMoveSpeed;
 	const jumpDistance = calculation.stats.finalJumpDistance;

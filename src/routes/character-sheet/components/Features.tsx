@@ -22,11 +22,11 @@ interface FeaturesProps {
 const Features: React.FC<FeaturesProps> = ({ onFeatureClick, isMobile }) => {
 	const { state } = useCharacterSheet();
 	const features = useCharacterFeatures(); // Use our enhanced hook!
-	
+
 	if (!state.character) {
 		return <div>Loading features...</div>;
 	}
-	
+
 	// Mobile detection logic
 	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
 	// Organize features by source

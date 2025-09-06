@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Spell } from '../../../lib/rulesdata/spells-data/types/spell.types';
+import type { Spell } from '../../../lib/rulesdata/schemas/spell.schema';
 import {
 	StyledFeaturePopupOverlay,
 	StyledFeaturePopupContent,

@@ -76,12 +76,14 @@ function LoadCharacter() {
 		if (characterToDelete) {
 			// Remove character from localStorage
 			const characters = getAllSavedCharacters();
-			const updatedCharacters = characters.filter((char: SavedCharacter) => char.id !== characterToDelete.id);
+			const updatedCharacters = characters.filter(
+				(char: SavedCharacter) => char.id !== characterToDelete.id
+			);
 			saveAllCharacters(updatedCharacters);
-			
+
 			// Update state
 			setSavedCharacters(updatedCharacters);
-			
+
 			// Close modal
 			setDeleteModalOpen(false);
 			setCharacterToDelete(null);
@@ -355,7 +357,8 @@ function LoadCharacter() {
 					<StyledModalContent>
 						<StyledModalTitle>Delete Character</StyledModalTitle>
 						<StyledModalMessage>
-							Are you sure you want to delete "{characterToDelete.finalName || 'Unnamed Character'}"?
+							Are you sure you want to delete "{characterToDelete.finalName || 'Unnamed Character'}
+							"?
 							<br />
 							This action cannot be undone.
 						</StyledModalMessage>

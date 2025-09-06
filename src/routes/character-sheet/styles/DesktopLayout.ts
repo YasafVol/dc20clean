@@ -12,16 +12,18 @@ export const StyledDesktopWrapper = styled.div`
 export const StyledDesktopHeader = styled.div<{ isDead?: boolean }>`
 	text-align: center;
 	margin-bottom: 2rem;
-	border-bottom: 3px solid ${props => props.isDead ? '#8B0000' : '#8b4513'};
+	border-bottom: 3px solid ${(props) => (props.isDead ? '#8B0000' : '#8b4513')};
 	padding-bottom: 1.5rem;
-	background: ${props => props.isDead ? 
-		'linear-gradient(45deg, rgba(139, 0, 0, 0.1), rgba(139, 0, 0, 0.05))' : 
-		'transparent'
-	};
-	border-radius: ${props => props.isDead ? '8px 8px 0 0' : '0'};
+	background: ${(props) =>
+		props.isDead
+			? 'linear-gradient(45deg, rgba(139, 0, 0, 0.1), rgba(139, 0, 0, 0.05))'
+			: 'transparent'};
+	border-radius: ${(props) => (props.isDead ? '8px 8px 0 0' : '0')};
 	position: relative;
-	
-	${props => props.isDead && `
+
+	${(props) =>
+		props.isDead &&
+		`
 		&::before {
 			content: '';
 			position: absolute;
@@ -44,7 +46,7 @@ export const StyledDesktopHeader = styled.div<{ isDead?: boolean }>`
 
 export const StyledCharacterName = styled.h1<{ isDead?: boolean }>`
 	margin: 0;
-	color: ${props => props.isDead ? '#8B0000' : '#8b4513'};
+	color: ${(props) => (props.isDead ? '#8B0000' : '#8b4513')};
 	font-size: 2.5rem;
 	font-family: 'Georgia', serif;
 	font-weight: bold;
@@ -53,8 +55,10 @@ export const StyledCharacterName = styled.h1<{ isDead?: boolean }>`
 	align-items: center;
 	justify-content: center;
 	gap: 0.5rem;
-	
-	${props => props.isDead && `
+
+	${(props) =>
+		props.isDead &&
+		`
 		filter: contrast(0.8);
 		text-decoration: line-through;
 		text-decoration-color: #8B0000;
@@ -64,14 +68,20 @@ export const StyledCharacterName = styled.h1<{ isDead?: boolean }>`
 
 export const StyledDeathSkull = styled.span`
 	font-size: 2rem;
-	color: #8B0000;
+	color: #8b0000;
 	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 	animation: pulse 2s infinite;
-	
+
 	@keyframes pulse {
-		0% { opacity: 0.7; }
-		50% { opacity: 1; }
-		100% { opacity: 0.7; }
+		0% {
+			opacity: 0.7;
+		}
+		50% {
+			opacity: 1;
+		}
+		100% {
+			opacity: 0.7;
+		}
 	}
 `;
 
@@ -172,8 +182,8 @@ export const StyledResourceBar = styled.div`
 
 export const StyledResourceFill = styled.div<{ fillPercent: number; color: string }>`
 	height: 100%;
-	background-color: ${props => props.color};
-	width: ${props => props.fillPercent}%;
+	background-color: ${(props) => props.color};
+	width: ${(props) => props.fillPercent}%;
 	transition: width 0.3s ease;
 	border-radius: 9px;
 `;

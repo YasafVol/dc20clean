@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import type { SpellData, CharacterSheetData } from '../../../types';
-import type { Spell } from '../../../lib/rulesdata/spells-data/types/spell.types';
+import type { Spell } from '../../../lib/rulesdata/schemas/spell.schema';
 import { allSpells } from '../../../lib/rulesdata/spells-data/spells';
-import { SpellSchool } from '../../../lib/rulesdata/spells-data/types/spell.types';
+import { SpellSchool } from '../../../lib/rulesdata/schemas/spell.schema';
 import { useCharacterSpells, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
 	StyledSpellsSection,

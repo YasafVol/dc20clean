@@ -3,8 +3,11 @@
 
 import { assignSpellsToCharacter } from './spellAssignment';
 import { allSpells } from '../rulesdata/spells-data/spells';
-import { allManeuvers } from '../rulesdata/maneuvers';
-import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from './enhancedCharacterCalculator';
+import { allManeuvers } from '../rulesdata/martials/maneuvers';
+import {
+	convertToEnhancedBuildData,
+	calculateCharacterWithBreakdowns
+} from './enhancedCharacterCalculator';
 import { getInitializedCharacterState } from '../utils/storageUtils';
 import { getAllSavedCharacters, saveAllCharacters } from '../utils/storageUtils';
 import type { SavedCharacter } from '../types/dataContracts';
@@ -89,11 +92,11 @@ export const completeCharacter = async (
 			finalRestPoints: calculationResult.stats.finalRestPoints,
 			finalGritPoints: calculationResult.stats.finalGritPoints,
 			finalInitiativeBonus: calculationResult.stats.finalInitiativeBonus,
-			
+
 			// Combat stats with breakdowns
 			finalAttackSpellCheck: calculationResult.stats.finalAttackSpellCheck,
 			finalMartialCheck: calculationResult.stats.finalMartialCheck,
-			
+
 			// Store typed data directly (no more JSON strings)
 			selectedTraitIds: characterState.selectedTraitIds || [],
 			selectedFeatureChoices: characterState.selectedFeatureChoices || {},
@@ -102,31 +105,31 @@ export const completeCharacter = async (
 			languagesData: characterState.languagesData || [],
 			spells: [], // Will be populated below
 			maneuvers: [], // Will be populated below
-			
+
 			// CRITICAL: Store conversions for character editing
 			skillToTradeConversions: characterState.skillToTradeConversions || 0,
 			tradeToSkillConversions: characterState.tradeToSkillConversions || 0,
 			tradeToLanguageConversions: characterState.tradeToLanguageConversions || 0,
-			
+
 			// Store calculation breakdowns for transparency
 			breakdowns: calculationResult.breakdowns || {},
-			
+
 			// Initialize character state with current resources set to max values
 			characterState: getInitializedCharacterState({
 				finalHPMax: calculationResult.stats.finalHPMax,
 				finalSPMax: calculationResult.stats.finalSPMax,
 				finalMPMax: calculationResult.stats.finalMPMax,
 				finalGritPoints: calculationResult.stats.finalGritPoints,
-				finalRestPoints: calculationResult.stats.finalRestPoints,
+				finalRestPoints: calculationResult.stats.finalRestPoints
 			}),
-			
+
 			// Metadata
 			createdAt: new Date().toISOString(),
 			lastModified: new Date().toISOString(),
 			completedAt: new Date().toISOString(),
 			schemaVersion: '2.0.0'
 		};
-		
+
 		console.log('Character stats calculated:', completedCharacter);
 		console.log('Class info saved:', {
 			classId: completedCharacter.classId,
@@ -147,34 +150,39 @@ export const completeCharacter = async (
 			});
 
 			try {
-							// Use typed arrays directly
-			const selectedSpellNames = characterState.selectedSpells || [];
-				
+				// Use typed arrays directly
+				const selectedSpellNames = characterState.selectedSpells || [];
+
 				console.log('🔄 Parsed spell names:', selectedSpellNames);
 
 				if (Array.isArray(selectedSpellNames) && selectedSpellNames.length > 0) {
 					// Convert selected spell names to SpellData objects
-					const userSelectedSpells = selectedSpellNames.map((spellName: string) => {
-						const fullSpell = allSpells.find(s => s.name === spellName);
-						if (fullSpell) {
-							return {
-								id: `spell_${Date.now()}_${Math.random()}`,
-								spellName: fullSpell.name,
-								school: fullSpell.school,
-								isCantrip: fullSpell.isCantrip,
-								cost: fullSpell.cost,
-								range: fullSpell.range,
-								duration: fullSpell.duration,
-								isPrepared: true,
-								notes: ''
-							};
-						}
-						return null;
-					}).filter(Boolean);
+					const userSelectedSpells = selectedSpellNames
+						.map((spellName: string) => {
+							const fullSpell = allSpells.find((s) => s.name === spellName);
+							if (fullSpell) {
+								return {
+									id: `spell_${Date.now()}_${Math.random()}`,
+									spellName: fullSpell.name,
+									school: fullSpell.school,
+									isCantrip: fullSpell.isCantrip,
+									cost: fullSpell.cost,
+									range: fullSpell.range,
+									duration: fullSpell.duration,
+									isPrepared: true,
+									notes: ''
+								};
+							}
+							return null;
+						})
+						.filter(Boolean);
 
 					// Store typed spells data
 					completedCharacter.spells = userSelectedSpells as any;
-					console.log('🔄 User selected spells assigned:', userSelectedSpells.map((s: any) => s.spellName));
+					console.log(
+						'🔄 User selected spells assigned:',
+						userSelectedSpells.map((s: any) => s.spellName)
+					);
 				} else {
 					console.log('🔄 No user spells selected, falling back to auto-assignment');
 					// Fallback to auto-assignment if no spells were selected
@@ -184,7 +192,10 @@ export const completeCharacter = async (
 						selectedFeatureChoices: completedCharacter.selectedFeatureChoices
 					});
 					completedCharacter.spells = assignedSpells as any;
-					console.log('🔄 Auto-assigned spells (no user selection):', assignedSpells.map((s: any) => s.spellName));
+					console.log(
+						'🔄 Auto-assigned spells (no user selection):',
+						assignedSpells.map((s: any) => s.spellName)
+					);
 				}
 			} catch (e) {
 				console.warn('🔄 Error parsing selected spells, falling back to auto-assignment:', e);
@@ -201,42 +212,50 @@ export const completeCharacter = async (
 		// Handle user-selected maneuvers
 		if (characterState.selectedManeuvers) {
 			try {
-							// Use typed arrays directly
-			const selectedManeuverNames = characterState.selectedManeuvers || [];
-					
+				// Use typed arrays directly
+				const selectedManeuverNames = characterState.selectedManeuvers || [];
+
 				if (Array.isArray(selectedManeuverNames) && selectedManeuverNames.length > 0) {
 					// Convert selected maneuver names to ManeuverData objects
-					const userSelectedManeuvers = selectedManeuverNames.map((maneuverName: string) => {
-						const fullManeuver = allManeuvers.find(m => m.name === maneuverName);
-						if (fullManeuver) {
-							return {
-								id: `maneuver_${Date.now()}_${Math.random()}`,
-								name: fullManeuver.name,
-								type: fullManeuver.type,
-								cost: fullManeuver.cost,
-								description: fullManeuver.description,
-								isReaction: fullManeuver.isReaction,
-								notes: ''
-							};
-						}
-						return null;
-					}).filter(Boolean);
+					const userSelectedManeuvers = selectedManeuverNames
+						.map((maneuverName: string) => {
+							const fullManeuver = allManeuvers.find((m) => m.name === maneuverName);
+							if (fullManeuver) {
+								return {
+									id: `maneuver_${Date.now()}_${Math.random()}`,
+									name: fullManeuver.name,
+									type: fullManeuver.type,
+									cost: fullManeuver.cost,
+									description: fullManeuver.description,
+									isReaction: fullManeuver.isReaction,
+									notes: ''
+								};
+							}
+							return null;
+						})
+						.filter(Boolean);
 
 					// Store typed maneuvers data
 					completedCharacter.maneuvers = userSelectedManeuvers as any;
-					console.log('🔄 User selected maneuvers assigned:', userSelectedManeuvers.map((m: any) => m.name));
+					console.log(
+						'🔄 User selected maneuvers assigned:',
+						userSelectedManeuvers.map((m: any) => m.name)
+					);
 				}
 			} catch (e) {
 				console.warn('🔄 Error parsing selected maneuvers:', e);
 			}
 		}
 
-        // OPTIMIZED: Save using new typed storage utilities
-        const existingCharacters = getAllSavedCharacters();
-        existingCharacters.push(completedCharacter);
-        saveAllCharacters(existingCharacters);
-        
-        console.log('🚀 OPTIMIZED: Character saved using typed contracts. Total characters:', existingCharacters.length);
+		// OPTIMIZED: Save using new typed storage utilities
+		const existingCharacters = getAllSavedCharacters();
+		existingCharacters.push(completedCharacter);
+		saveAllCharacters(existingCharacters);
+
+		console.log(
+			'🚀 OPTIMIZED: Character saved using typed contracts. Total characters:',
+			existingCharacters.length
+		);
 
 		// Show success snackbar
 		callbacks.onShowSnackbar('Character created successfully!');

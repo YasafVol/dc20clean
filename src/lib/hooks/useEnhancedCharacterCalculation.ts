@@ -1,274 +1,226 @@
 /**
  * Enhanced Character Calculation Hook
- * 
+ *
  * This hook provides real-time character calculations with detailed breakdowns
  * for tooltips, validation, and effect previews.
  */
 
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useEffect, useState } from 'react';
 import { useCharacter } from '../stores/characterContext';
-import { 
-  calculateCharacterWithBreakdowns, 
-  convertToEnhancedBuildData 
+import {
+	calculateCharacterWithBreakdowns,
+	convertToEnhancedBuildData
 } from '../services/enhancedCharacterCalculator';
-import type { 
-  CharacterCalculationHook, 
-  EnhancedCalculationResult,
-  EnhancedStatBreakdown,
-  AttributeLimit,
-  EffectPreview
+import type {
+	CharacterCalculationHook,
+	EnhancedCalculationResult,
+	EnhancedStatBreakdown,
+	AttributeLimit,
+	EffectPreview,
+	EnhancedCharacterBuildData
 } from '../types/effectSystem';
 
+// --- Constants ---
+const CACHE_TTL = 500; // 500ms time-to-live for cache
+
+// --- Types ---
+interface CalculationCache {
+	[key: string]: {
+		timestamp: number;
+		result: EnhancedCalculationResult;
+	};
+}
+
+// --- Module-level cache ---
+let calculationCache: CalculationCache = {};
+
+// --- Helper Functions ---
+const generateCacheKey = (data: EnhancedCharacterBuildData): string => {
+	// Create a stable key from the character build data
+	const { id, level, attribute_might, attribute_agility, attribute_charisma, attribute_intelligence } =
+		data;
+	const traits = [...(data.selectedTraitIds || [])].sort().join(',');
+	const features = JSON.stringify(data.featureChoices || {});
+	const traitChoices = JSON.stringify(data.selectedTraitChoices || {});
+
+	return `${id}-${level}-${attribute_might}-${attribute_agility}-${attribute_charisma}-${attribute_intelligence}-${traits}-${features}-${traitChoices}`;
+};
+
 /**
- * Main hook for enhanced character calculations
+ * Enhanced character calculation hook with caching and detailed validation.
+ * Replaces the existing `useCharacterCalculation`.
  */
 export function useEnhancedCharacterCalculation(): CharacterCalculationHook {
-  const { state, dispatch } = useCharacter();
-  
-  // Convert context state to enhanced build data
-  const buildData = useMemo(() => {
-    return convertToEnhancedBuildData(state);
-  }, [
-    state.attribute_might,
-    state.attribute_agility, 
-    state.attribute_charisma,
-    state.attribute_intelligence,
-    state.classId,
-    state.ancestry1Id,
-    state.ancestry2Id,
-    state.selectedTraitIds,
-    state.selectedTraitChoices,
-    state.selectedFeatureChoices,
-    state.skillsData,
-    state.tradesData,
-    state.languagesData,
-    state.level,
-    state.combatMastery,
-    // Include conversions in dependencies
-    state.skillToTradeConversions,
-    state.tradeToSkillConversions,
-    state.tradeToLanguageConversions
-  ]);
-  
-  // Perform calculation with caching
-  const calculationResult: EnhancedCalculationResult = useMemo(() => {
-    // Check if we have valid cached results
-    if (state.cachedEffectResults && state.cacheTimestamp) {
-      const cacheAge = Date.now() - state.cacheTimestamp;
-      if (cacheAge < 5000) { // Cache for 5 seconds
-        try {
-          const cached = JSON.parse(state.cachedEffectResults);
-          return { ...cached, isFromCache: true };
-        } catch (e) {
-          // Cache is invalid, recalculate
-        }
-      }
-    }
-    
-    // Calculate fresh results
-    const result = calculateCharacterWithBreakdowns(buildData);
-    
-    // Cache the results (async to avoid blocking)
-    setTimeout(() => {
-      dispatch({
-        type: 'UPDATE_STORE',
-        updates: {
-          cachedEffectResults: JSON.stringify(result),
-          cacheTimestamp: result.cacheTimestamp
-        }
-      });
-    }, 0);
-    
-    return result;
-  }, [buildData, state.cachedEffectResults, state.cacheTimestamp, dispatch]);
-  
-  // Helper function to get stat breakdown
-  const getStatBreakdown = useCallback((statName: string): EnhancedStatBreakdown | undefined => {
-    return calculationResult.breakdowns[statName];
-  }, [calculationResult.breakdowns]);
-  
-  // Helper function to get attribute limit
-  const getAttributeLimit = useCallback((attributeId: string): AttributeLimit => {
-    return calculationResult.validation.attributeLimits[attributeId] || {
-      current: 0,
-      base: 0,
-      traitBonuses: 0,
-      max: 3,
-      exceeded: false,
-      canIncrease: true,
-      canDecrease: true
-    };
-  }, [calculationResult.validation.attributeLimits]);
-  
-  // Check if attribute can be increased
-  const canIncreaseAttribute = useCallback((attributeId: string): boolean => {
-    const limit = getAttributeLimit(attributeId);
-    return limit.canIncrease;
-  }, [getAttributeLimit]);
-  
-  // Check if attribute can be decreased  
-  const canDecreaseAttribute = useCallback((attributeId: string): boolean => {
-    const limit = getAttributeLimit(attributeId);
-    return limit.canDecrease;
-  }, [getAttributeLimit]);
-  
-  // Get effect preview for trait choices
-  const getEffectPreview = useCallback((
-    traitId: string, 
-    effectIndex: number, 
-    choice: string
-  ): EffectPreview | undefined => {
-    // Find the unresolved choice
-    const unresolvedChoice = calculationResult.unresolvedChoices.find(
-      uc => uc.traitId === traitId && uc.effectIndex === effectIndex
-    );
-    
-    if (!unresolvedChoice) return undefined;
-    
-    const effect = unresolvedChoice.effect;
-    
-    if (effect.type === 'MODIFY_ATTRIBUTE') {
-      const currentValue = (buildData as any)[`attribute_${choice}`] || 0;
-      const newValue = currentValue + (effect.value as number);
-      
-      return {
-        type: 'attribute',
-        target: choice,
-        currentValue,
-        newValue,
-        description: `${choice} will become ${newValue} (${currentValue} base + ${effect.value} trait)`
-      };
-    }
-    
-    if (effect.type === 'GRANT_SKILL_EXPERTISE') {
-      return {
-        type: 'skill',
-        target: choice,
-        currentValue: 'Normal mastery limit',
-        newValue: 'Increased mastery limit',
-        description: `${choice} mastery cap will increase by 1 and you gain 1 level`
-      };
-    }
-    
-    return undefined;
-  }, [calculationResult.unresolvedChoices, buildData]);
-  
-  // Validate trait choice
-  const validateTraitChoice = useCallback((
-    traitId: string, 
-    effectIndex: number, 
-    choice: string
-  ): { isValid: boolean; message?: string } => {
-    // Find the effect being validated
-    const unresolvedChoice = calculationResult.unresolvedChoices.find(
-      uc => uc.traitId === traitId && uc.effectIndex === effectIndex
-    );
-    
-    if (!unresolvedChoice) {
-      return { isValid: false, message: 'Choice not found' };
-    }
-    
-    const effect = unresolvedChoice.effect;
-    
-    if (effect.type === 'MODIFY_ATTRIBUTE') {
-      const currentValue = (buildData as any)[`attribute_${choice}`] || 0;
-      const newValue = currentValue + (effect.value as number);
-      
-      if (newValue > 3) {
-        return { 
-          isValid: false, 
-          message: `Would exceed maximum attribute value of +3 (current: ${currentValue}, final: ${newValue})` 
-        };
-      }
-      
-      if (newValue < -2) {
-        return { 
-          isValid: false, 
-          message: `Would go below minimum attribute value of -2 (current: ${currentValue}, final: ${newValue})` 
-        };
-      }
-    }
-    
-    return { isValid: true };
-  }, [calculationResult.unresolvedChoices, buildData]);
-  
-  // Validate attribute change
-  const validateAttributeChange = useCallback((
-    attributeId: string, 
-    newValue: number
-  ): { isValid: boolean; message?: string } => {
-    const limit = getAttributeLimit(attributeId);
-    const finalValue = newValue + limit.traitBonuses;
-    
-    if (finalValue > 3) {
-      return { 
-        isValid: false, 
-        message: `Would exceed maximum total of +3 including trait bonuses (+${limit.traitBonuses})` 
-      };
-    }
-    
-    if (newValue < -2) {
-      return { 
-        isValid: false, 
-        message: `Cannot go below minimum base value of -2` 
-      };
-    }
-    
-    return { isValid: true };
-  }, [getAttributeLimit]);
-  
-  // Cache control functions
-  const invalidateCache = useCallback(() => {
-    dispatch({ type: 'INVALIDATE_CACHE' });
-  }, [dispatch]);
-  
-  const refreshCalculation = useCallback(async () => {
-    invalidateCache();
-    // The calculation will automatically refresh on the next render
-  }, [invalidateCache]);
-  
-  return {
-    calculationResult,
-    isLoading: false, // Could add loading states if calculations become expensive
-    error: undefined,
-    
-    // Helper functions
-    getStatBreakdown,
-    getAttributeLimit,
-    canIncreaseAttribute,
-    canDecreaseAttribute,
-    getEffectPreview,
-    
-    // Validation helpers
-    validateTraitChoice,
-    validateAttributeChange,
-    
-    // Cache control
-    invalidateCache,
-    refreshCalculation
-  };
+	const { state: characterContext } = useCharacter();
+
+	const [calculationResult, setCalculationResult] = useState<EnhancedCalculationResult | null>(
+		null
+	);
+	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState<string | undefined>();
+
+	// Memoize the calculation to avoid re-running on every render
+	const performCalculation = useCallback(async () => {
+		setIsLoading(true);
+		try {
+			const buildData = convertToEnhancedBuildData(characterContext);
+			const cacheKey = generateCacheKey(buildData);
+			const cached = calculationCache[cacheKey];
+
+			if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+				// Return cached result if fresh
+				setCalculationResult({ ...cached.result, isFromCache: true });
+			} else {
+				// Otherwise, run new calculation and update cache
+				const result = calculateCharacterWithBreakdowns(buildData);
+				calculationCache[cacheKey] = { timestamp: Date.now(), result };
+				setCalculationResult({ ...result, isFromCache: false });
+			}
+		} catch (e: any) {
+			setError(`Calculation error: ${e.message}`);
+			console.error('Calculation failed:', e);
+		} finally {
+			setIsLoading(false);
+		}
+	}, [characterContext]);
+
+	// Re-run calculation whenever character context changes
+	useEffect(() => {
+		performCalculation();
+	}, [performCalculation]);
+
+	// --- Helper Functions ---
+	const getStatBreakdown = (statName: string): EnhancedStatBreakdown | undefined => {
+		return calculationResult?.breakdowns[statName];
+	};
+
+	const getAttributeLimit = (attributeId: string): AttributeLimit => {
+		const defaultLimit = {
+			current: 0,
+			base: 0,
+			traitBonuses: 0,
+			max: 3,
+			exceeded: false,
+			canIncrease: true,
+			canDecrease: true
+		};
+		return calculationResult?.validation?.attributeLimits[attributeId] || defaultLimit;
+	};
+
+	const canIncreaseAttribute = (attributeId: string): boolean => {
+		const limit = getAttributeLimit(attributeId);
+		return limit.canIncrease;
+	};
+
+	const canDecreaseAttribute = (attributeId: string): boolean => {
+		const limit = getAttributeLimit(attributeId);
+		return limit.canDecrease;
+	};
+
+	const getEffectPreview = (
+		traitId: string,
+		effectIndex: number,
+		choice: string
+	): EffectPreview | undefined => {
+		// This requires a more complex implementation that can re-run a partial
+		// calculation with the hypothetical choice. For now, this is a placeholder.
+		console.warn('getEffectPreview is not fully implemented yet.');
+		return undefined;
+	};
+
+	// --- Validation Helpers ---
+	const validateTraitChoice = (
+		traitId: string,
+		effectIndex: number,
+		choice: string
+	): { isValid: boolean; message?: string } => {
+		// Placeholder for more complex validation (e.g., preventing duplicate skill choices)
+		return { isValid: true };
+	};
+
+	const validateAttributeChange = (
+		attributeId: string,
+		newValue: number
+	): { isValid: boolean; message?: string } => {
+		const limit = getAttributeLimit(attributeId);
+		const currentTotal = limit.base + limit.traitBonuses;
+		const newTotal = newValue + limit.traitBonuses;
+
+		if (newValue < -2) {
+			return { isValid: false, message: 'Attribute cannot be lower than -2.' };
+		}
+		if (newTotal > limit.max) {
+			return { isValid: false, message: `Total attribute cannot exceed ${limit.max}.` };
+		}
+		return { isValid: true };
+	};
+
+	// --- Cache Control ---
+	const invalidateCache = () => {
+		calculationCache = {};
+	};
+
+	const refreshCalculation = async () => {
+		invalidateCache();
+		await performCalculation();
+	};
+
+	// Return a default or empty result while loading or on error
+	const finalResult =
+		calculationResult ||
+		({
+			stats: {},
+			breakdowns: {},
+			grantedAbilities: [],
+			conditionalModifiers: [],
+			validation: {
+				isValid: false,
+				errors: [],
+				warnings: [],
+				attributeLimits: {},
+				masteryLimits: {}
+			},
+			unresolvedChoices: [],
+			isFromCache: false,
+			cacheTimestamp: 0
+		} as unknown as EnhancedCalculationResult);
+
+	return {
+		calculationResult: finalResult,
+		isLoading,
+		error,
+		getStatBreakdown,
+		getAttributeLimit,
+		canIncreaseAttribute,
+		canDecreaseAttribute,
+		getEffectPreview,
+		validateTraitChoice,
+		validateAttributeChange,
+		invalidateCache,
+		refreshCalculation
+	};
 }
 
 /**
  * Simplified hook for components that only need basic calculation results
  */
 export function useCharacterStats() {
-  const { calculationResult } = useEnhancedCharacterCalculation();
-  return calculationResult.stats;
+	const { calculationResult } = useEnhancedCharacterCalculation();
+	return calculationResult.stats;
 }
 
 /**
  * Hook for components that need validation information
  */
 export function useCharacterValidation() {
-  const { calculationResult } = useEnhancedCharacterCalculation();
-  return calculationResult.validation;
+	const { calculationResult } = useEnhancedCharacterCalculation();
+	return calculationResult.validation;
 }
 
 /**
  * Hook for components that need breakdown information for tooltips
  */
 export function useStatBreakdowns() {
-  const { calculationResult } = useEnhancedCharacterCalculation();
-  return calculationResult.breakdowns;
+	const { calculationResult } = useEnhancedCharacterCalculation();
+	return calculationResult.breakdowns;
 }

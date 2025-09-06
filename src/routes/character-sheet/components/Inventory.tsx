@@ -199,7 +199,9 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 										<StyledInventoryInfoIcon
 											$isMobile={isMobile}
 											onClick={() => onItemClick(item, selectedItem)}
-											title={selectedItem.itemType === 'Shield' ? getShieldInfo(selectedItem) : undefined}
+											title={
+												selectedItem.itemType === 'Shield' ? getShieldInfo(selectedItem) : undefined
+											}
 										>
 											i
 										</StyledInventoryInfoIcon>

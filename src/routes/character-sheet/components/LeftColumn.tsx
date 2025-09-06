@@ -34,9 +34,9 @@ const LeftColumn: React.FC<LeftColumnProps> = ({
 }) => {
 	return (
 		<StyledLeftColumn>
-			<Attributes 
-				characterData={characterData} 
-				skillsByAttribute={skillsByAttribute} 
+			<Attributes
+				characterData={characterData}
+				skillsByAttribute={skillsByAttribute}
 				breakdowns={breakdowns}
 				isMobile={isMobile}
 			/>

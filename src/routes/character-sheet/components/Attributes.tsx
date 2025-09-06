@@ -35,13 +35,18 @@ interface AttributesProps {
 	isMobile?: boolean;
 }
 
-const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribute, breakdowns, isMobile = false }) => {
+const Attributes: React.FC<AttributesProps> = ({
+	characterData,
+	skillsByAttribute,
+	breakdowns,
+	isMobile = false
+}) => {
 	const { state } = useCharacterSheet();
-	
+
 	// Get prime modifier directly from character data
 	const primeAttribute = state.character?.finalPrimeModifierAttribute || 'might';
 	const primeValue = state.character?.finalPrimeModifierValue || 0;
-	
+
 	const renderSkills = (skills: SkillData[]) => {
 		return skills.map((skill) => (
 			<SkillRow key={skill.id} $isMobile={isMobile}>
@@ -53,16 +58,19 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 						))}
 					</StyledProficiencyDots>
 					{skill.bonus !== undefined && (
-						<span style={{
-							fontSize: '0.875rem',
-							fontWeight: '600',
-							color: skill.bonus >= 0 
+						<span
+							style={{
+								fontSize: '0.875rem',
+								fontWeight: '600',
+								color: skill.bonus >= 0
 								? (isMobile ? '#22c55e' : '#059669')  // Green-500 for mobile, darker green for desktop
 								: (isMobile ? '#ef4444' : '#dc2626'), // Red-500 for mobile, darker red for desktop
-							minWidth: '2rem',
-							textAlign: 'center'
-						}}>
-							{skill.bonus >= 0 ? '+' : ''}{skill.bonus}
+								minWidth: '2rem',
+								textAlign: 'center'
+							}}
+						>
+							{skill.bonus >= 0 ? '+' : ''}
+							{skill.bonus}
 						</span>
 					)}
 				</div>
@@ -90,10 +98,10 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 						<AttributeAbbreviation $isMobile={isMobile}>MIG</AttributeAbbreviation>
 						<Tooltip 
 							content={
-								breakdowns?.attribute_might 
+								breakdowns?.attribute_might
 									? createEnhancedTooltip('Might', breakdowns.attribute_might)
 									: `${characterData.finalMight} Might`
-							} 
+							}
 							position="top"
 						>
 							<AttributeValue $isMobile={isMobile}>{characterData.finalMight}</AttributeValue>
@@ -115,10 +123,10 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 						<AttributeAbbreviation $isMobile={isMobile}>AGI</AttributeAbbreviation>
 						<Tooltip 
 							content={
-								breakdowns?.attribute_agility 
+								breakdowns?.attribute_agility
 									? createEnhancedTooltip('Agility', breakdowns.attribute_agility)
 									: `${characterData.finalAgility} Agility`
-							} 
+							}
 							position="top"
 						>
 							<AttributeValue $isMobile={isMobile}>{characterData.finalAgility}</AttributeValue>
@@ -140,10 +148,10 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 						<AttributeAbbreviation $isMobile={isMobile}>CHA</AttributeAbbreviation>
 						<Tooltip 
 							content={
-								breakdowns?.attribute_charisma 
+								breakdowns?.attribute_charisma
 									? createEnhancedTooltip('Charisma', breakdowns.attribute_charisma)
 									: `${characterData.finalCharisma} Charisma`
-							} 
+							}
 							position="top"
 						>
 							<AttributeValue $isMobile={isMobile}>{characterData.finalCharisma}</AttributeValue>
@@ -165,10 +173,10 @@ const Attributes: React.FC<AttributesProps> = ({ characterData, skillsByAttribut
 						<AttributeAbbreviation $isMobile={isMobile}>INT</AttributeAbbreviation>
 						<Tooltip 
 							content={
-								breakdowns?.attribute_intelligence 
+								breakdowns?.attribute_intelligence
 									? createEnhancedTooltip('Intelligence', breakdowns.attribute_intelligence)
 									: `${characterData.finalIntelligence} Intelligence`
-							} 
+							}
 							position="top"
 						>
 							<AttributeValue $isMobile={isMobile}>{characterData.finalIntelligence}</AttributeValue>

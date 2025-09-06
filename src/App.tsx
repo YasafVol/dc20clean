@@ -1,4 +1,3 @@
-
 import { createGlobalStyle } from 'styled-components';
 import { BrowserRouter, Routes, Route, useParams, Navigate } from 'react-router-dom';
 import CharacterCreation from './routes/character-creation/CharacterCreation.tsx';
@@ -8,12 +7,7 @@ import CharacterSheetRouter from './routes/character-sheet/CharacterSheetRouter'
 import LevelUp from './routes/character-creation/LevelUp';
 import Menu from './components/Menu.tsx';
 
-import {
-	StyledApp,
-	StyledHeader,
-	StyledBackButton,
-	StyledMain
-} from './styles/App.styles';
+import { StyledApp, StyledHeader, StyledBackButton, StyledMain } from './styles/App.styles';
 
 // Import static assets
 import blackBgImage from './assets/BlackBG.jpg';
@@ -21,7 +15,6 @@ import blackBgImage from './assets/BlackBG.jpg';
 import cinzelFont from './types/Fonts/Cinzel-VariableFont_wght.ttf';
 import urbanistFont from './types/Fonts/Urbanist-VariableFont_wght.ttf';
 import libreBaskervilleItalic from './types/Fonts/LibreBaskerville-Italic.ttf';
-
 
 const GlobalStyle = createGlobalStyle`
 	@font-face {
@@ -85,10 +78,7 @@ const GlobalStyle = createGlobalStyle`
 	}
 `;
 
-
 function App() {
-	
-
 	return (
 		<>
 			<GlobalStyle />
@@ -97,20 +87,25 @@ function App() {
 					<Routes>
 						<Route path="/" element={<Navigate to="/menu" replace />} />
 						<Route path="/menu" element={<Menu />} />
-						<Route path="/create-character" element={
-							<CharacterProvider>
-								<CharacterCreation />
-							</CharacterProvider>
-						} />
+						<Route
+							path="/create-character"
+							element={
+								<CharacterProvider>
+									<CharacterCreation />
+								</CharacterProvider>
+							}
+						/>
 						<Route path="/load-character" element={<LoadCharacter />} />
 						<Route path="/character/:id" element={<CharacterSheetRouteWrapper />} />
-						<Route path="/character/:id/edit" element={
-							<CharacterProvider>
-								<CharacterCreation />
-							</CharacterProvider>
-						} />
+						<Route
+							path="/character/:id/edit"
+							element={
+								<CharacterProvider>
+									<CharacterCreation />
+								</CharacterProvider>
+							}
+						/>
 						<Route path="/character/:id/levelup" element={<LevelUp />} />
-
 					</Routes>
 				</BrowserRouter>
 			</StyledApp>

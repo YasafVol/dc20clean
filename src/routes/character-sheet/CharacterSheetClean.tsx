@@ -12,9 +12,9 @@ import type {
 	FeatureData,
 	AttackData,
 	SpellData,
-	InventoryItemData,
+	InventoryItemData
 } from '../../types';
-import type { Spell } from '../../lib/rulesdata/spells-data/types/spell.types';
+import type { Spell } from '../../lib/rulesdata/schemas/spell.schema';
 import type { Weapon } from '../../lib/rulesdata/inventoryItems';
 import type { InventoryItem } from '../../lib/rulesdata/inventoryItems';
 import type { ManeuverData } from '../../types';
@@ -47,10 +47,7 @@ import AttackPopup from './components/AttackPopup';
 import InventoryPopup from './components/InventoryPopup';
 
 // Import character state management utilities
-import {
-	updateCharacterState,
-	revertToOriginal,
-} from '../../lib/utils/characterState';
+import { updateCharacterState, revertToOriginal } from '../../lib/utils/characterState';
 
 // Import defense notes utilities
 import { clearDefenseNotesForField } from '../../lib/utils/defenseNotes';
@@ -58,15 +55,14 @@ import { clearDefenseNotesForField } from '../../lib/utils/defenseNotes';
 // Import rules data
 import { skillsData } from '../../lib/rulesdata/skills';
 import { tradesData } from '../../lib/rulesdata/trades';
-import { knowledgeData } from '../../lib/rulesdata/knowledge';
-import { traitsData } from '../../lib/rulesdata/_new_schema/traits';
+import { traitsData } from '../../lib/rulesdata/ancestries/traits';
 import {
 	findClassByName,
 	getClassSpecificInfo,
 	getLegacyChoiceId,
 	getDisplayLabel
 } from '../../lib/rulesdata/loaders/class-features.loader';
-import { ancestriesData } from '../../lib/rulesdata/_new_schema/ancestries';
+import { ancestriesData } from '../../lib/rulesdata/ancestries/ancestries';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
 
@@ -98,27 +94,27 @@ import {
 } from './styles/FeaturePopup';
 
 import { allSpells } from '../../lib/rulesdata/spells-data/spells';
-import { allManeuvers } from '../../lib/rulesdata/maneuvers';
+import { allManeuvers } from '../../lib/rulesdata/martials/maneuvers';
 
-import { handlePrintCharacterSheet } from "./utils";
+import { handlePrintCharacterSheet } from './utils';
 
 // LEGACY: saveManualDefense function removed - now handled by CharacterSheetProvider
 
 const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, onBack, isVisible = true }) => {
 	console.log('🧙‍♂️ CharacterSheetClean component rendering! characterId:', characterId);
 	// Use Provider hooks for data and update methods
-	const { 
-		state, 
+	const {
+		state,
 		updateHP,
 		updateSP,
 		updateMP,
 		updateTempHP,
 		updateActionPoints,
 		updateExhaustion,
-		updateCurrency,
+		updateCurrency
 	} = useCharacterSheet();
 	const resources = useCharacterResources();
-	
+
 	// Get data from Provider instead of local state
 	const loading = state.loading;
 	const error = state.error;
@@ -126,28 +122,30 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 	const characterState = characterData?.characterState;
 
 	// Calculate max values for current resources
-	const characterMaxValues = characterData ? {
-		currentGritPoints: characterData.finalGritPoints,
-		currentRestPoints: characterData.finalRestPoints,
-		currentHP: characterData.finalHPMax,
-		currentSP: characterData.finalSPMax,
-		currentMP: characterData.finalMPMax,
-		tempHP: 0,
-		actionPointsUsed: 0,
-		exhaustionLevel: 0,
-		// Death tracking
-		deathSteps: 0,
-		isDead: false,
-		// Currency
-		goldPieces: 0,
-		silverPieces: 0,
-		copperPieces: 0,
-		electrumPieces: 0,
-		platinumPieces: 0
-	} : {};
+	const characterMaxValues = characterData
+		? {
+				currentGritPoints: characterData.finalGritPoints,
+				currentRestPoints: characterData.finalRestPoints,
+				currentHP: characterData.finalHPMax,
+				currentSP: characterData.finalSPMax,
+				currentMP: characterData.finalMPMax,
+				tempHP: 0,
+				actionPointsUsed: 0,
+				exhaustionLevel: 0,
+				// Death tracking
+				deathSteps: 0,
+				isDead: false,
+				// Currency
+				goldPieces: 0,
+				silverPieces: 0,
+				copperPieces: 0,
+				electrumPieces: 0,
+				platinumPieces: 0
+			}
+		: {};
 
 	const currentValues = resources?.current || characterMaxValues;
-	
+
 	// Keep local popup state (these don't need Provider)
 	const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
 	const [selectedSpell, setSelectedSpell] = useState<Spell | null>(null);
@@ -165,8 +163,6 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 	const [maneuvers, setManeuvers] = useState<ManeuverData[]>([]);
 	const [inventory, setInventory] = useState<InventoryItemData[]>([]);
 
-
-
 	// Mobile navigation state
 	type MobileSection = 'character' | 'combat' | 'features' | 'info';
 	const [activeMobileSection, setActiveMobileSection] = useState<MobileSection>('character');
@@ -182,14 +178,6 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 		window.addEventListener('resize', checkMobile);
 		return () => window.removeEventListener('resize', checkMobile);
 	}, []);
-
-
-
-
-
-
-
-
 
 	// Load character data
 	// Data loading is now handled by the Provider, so no useEffect needed here
@@ -217,18 +205,20 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 
 		// Use stored breakdowns if available, otherwise create simple fallback
 		const storedBreakdowns = (characterData as any).breakdowns || {};
-		
-		pdBreakdown = storedBreakdowns.pd?.effects ?
-			storedBreakdowns.pd.effects.map((e: any) => `${e.value > 0 ? '+' : ''}${e.value} (${e.source.name || e.source})`).join(' ') + ` = ${calculatedPD}` :
-			`8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalAgility} (Agility) + ${characterData.finalIntelligence} (Intelligence) = ${calculatedPD}`;
 
-		adBreakdown = storedBreakdowns.ad?.effects ?
-			storedBreakdowns.ad.effects.map((e: any) => `${e.value > 0 ? '+' : ''}${e.value} (${e.source.name || e.source})`).join(' ') + ` = ${calculatedAD}` :
-			`8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalMight} (Might) + ${characterData.finalCharisma} (Charisma) = ${calculatedAD}`;
+		pdBreakdown = storedBreakdowns.pd?.effects
+			? storedBreakdowns.pd.effects
+					.map((e: any) => `${e.value > 0 ? '+' : ''}${e.value} (${e.source.name || e.source})`)
+					.join(' ') + ` = ${calculatedPD}`
+			: `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalAgility} (Agility) + ${characterData.finalIntelligence} (Intelligence) = ${calculatedPD}`;
 
-		pdrBreakdown = calculatedPDR > 0
-			? `${calculatedPDR} (from stored calculation)`
-			: '0 (no PDR)';
+		adBreakdown = storedBreakdowns.ad?.effects
+			? storedBreakdowns.ad.effects
+					.map((e: any) => `${e.value > 0 ? '+' : ''}${e.value} (${e.source.name || e.source})`)
+					.join(' ') + ` = ${calculatedAD}`
+			: `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalMight} (Might) + ${characterData.finalCharisma} (Charisma) = ${calculatedAD}`;
+
+		pdrBreakdown = calculatedPDR > 0 ? `${calculatedPDR} (from stored calculation)` : '0 (no PDR)';
 
 		console.log('🚀 OPTIMIZED: Using stored defense values (no recalculation needed)');
 
@@ -241,9 +231,6 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 			pdrBreakdown
 		};
 	};
-
-
-
 
 	// Parse skills data from character - show ALL skills with their proficiency levels and calculated bonuses
 	const getSkillsData = (): SkillData[] => {
@@ -347,38 +334,40 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 		}
 
 		// Show ALL knowledge skills with their proficiency levels and calculated bonuses
-		return knowledgeData.map((knowledge) => {
-			const proficiency = characterTrades[knowledge.id] || 0;
-			const masteryBonus = proficiency * 2;
+		return tradesData
+			.filter((trade) => trade.tools === 'none')
+			.map((knowledge) => {
+				const proficiency = characterTrades[knowledge.id] || 0;
+				const masteryBonus = proficiency * 2;
 
-			// Get attribute modifier based on knowledge's attribute association
-			let attributeModifier = 0;
-			switch (knowledge.attributeAssociation.toLowerCase()) {
-				case 'might':
-					attributeModifier = characterData?.finalMight || 0;
-					break;
-				case 'agility':
-					attributeModifier = characterData?.finalAgility || 0;
-					break;
-				case 'charisma':
-					attributeModifier = characterData?.finalCharisma || 0;
-					break;
-				case 'intelligence':
-					attributeModifier = characterData?.finalIntelligence || 0;
-					break;
-				default:
-					attributeModifier = 0;
-			}
+				// Get attribute modifier based on knowledge's attribute association
+				let attributeModifier = 0;
+				switch (knowledge.attributeAssociation.toLowerCase()) {
+					case 'might':
+						attributeModifier = characterData?.finalMight || 0;
+						break;
+					case 'agility':
+						attributeModifier = characterData?.finalAgility || 0;
+						break;
+					case 'charisma':
+						attributeModifier = characterData?.finalCharisma || 0;
+						break;
+					case 'intelligence':
+						attributeModifier = characterData?.finalIntelligence || 0;
+						break;
+					default:
+						attributeModifier = 0;
+				}
 
-			const totalBonus = attributeModifier + masteryBonus;
+				const totalBonus = attributeModifier + masteryBonus;
 
-			return {
-				id: knowledge.id,
-				name: knowledge.name,
-				proficiency,
-				bonus: totalBonus
-			};
-		});
+				return {
+					id: knowledge.id,
+					name: knowledge.name,
+					proficiency,
+					bonus: totalBonus
+				};
+			});
 	};
 
 	// Parse languages data from character
@@ -442,8 +431,8 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 		// Get selected ancestry traits
 		if (characterData.selectedTraitIds) {
 			try {
-				const selectedTraitIds: string[] = Array.isArray(characterData.selectedTraitIds) 
-					? characterData.selectedTraitIds 
+				const selectedTraitIds: string[] = Array.isArray(characterData.selectedTraitIds)
+					? characterData.selectedTraitIds
 					: JSON.parse(characterData.selectedTraitIds);
 				selectedTraitIds.forEach((traitId) => {
 					const trait = traitsData.find((t) => t.id === traitId);
@@ -491,9 +480,12 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 				try {
 					// Try to parse as JSON first
 					let selectedChoices: { [key: string]: string } = {};
-					
+
 					// Handle new data structure - selectedFeatureChoices is already an object
-					if (typeof characterData.selectedFeatureChoices === 'object' && characterData.selectedFeatureChoices !== null) {
+					if (
+						typeof characterData.selectedFeatureChoices === 'object' &&
+						characterData.selectedFeatureChoices !== null
+					) {
 						selectedChoices = characterData.selectedFeatureChoices as { [key: string]: string };
 					} else if (typeof characterData.selectedFeatureChoices === 'string') {
 						// Legacy handling - try to parse as JSON string
@@ -501,8 +493,11 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 							selectedChoices = JSON.parse(characterData.selectedFeatureChoices);
 						} catch (jsonError) {
 							// If JSON parsing fails, it might be legacy comma-separated data
-							console.warn('Failed to parse selectedFeatureChoices as JSON, attempting legacy format conversion:', characterData.selectedFeatureChoices);
-							
+							console.warn(
+								'Failed to parse selectedFeatureChoices as JSON, attempting legacy format conversion:',
+								characterData.selectedFeatureChoices
+							);
+
 							// For legacy data that might be stored as "Magic,Trickery" format
 							// We'll skip processing for now to prevent errors
 							console.warn('Skipping feature choices processing due to legacy data format');
@@ -526,7 +521,7 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 									if (choice.count > 1) {
 										// Handle multiple selections (like cleric domains)
 										let selectedValueArray: string[] = [];
-										
+
 										if (Array.isArray(selectedOptionValues)) {
 											// New format - already an array
 											selectedValueArray = selectedOptionValues;
@@ -537,7 +532,7 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 											} catch (parseError) {
 												// Try comma-separated format
 												if (selectedOptionValues.includes(',')) {
-													selectedValueArray = selectedOptionValues.split(',').map(v => v.trim());
+													selectedValueArray = selectedOptionValues.split(',').map((v) => v.trim());
 												} else {
 													// Single value that failed JSON parse
 													selectedValueArray = [selectedOptionValues];
@@ -701,11 +696,6 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 	};
 
 	// Navigation functions
-
-
-
-
-
 
 	// Copy character data to clipboard
 	// Revert character data to original values
@@ -883,7 +873,7 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 	// Wrapper function to call the extracted print function with all required parameters
 	const handlePrint = () => {
 		if (!characterData) return;
-		
+
 		handlePrintCharacterSheet(
 			characterData,
 			attacks,
@@ -920,10 +910,7 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 				>
 					📋 Copy to Clipboard
 				</StyledActionButton>
-				<StyledActionButton
-					onClick={handlePrint}
-					title="Print character sheet as PDF"
-				>
+				<StyledActionButton onClick={handlePrint} title="Print character sheet as PDF">
 					🖨️ Print PDF
 				</StyledActionButton>
 			</StyledActionButtons>
@@ -935,63 +922,83 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 
 			<StyledCharacterSheet className="character-sheet-content">
 				{/* Header Section */}
-				<StyledHeader style={{
-					background: (currentValues as any)?.isDead ? 
-						'linear-gradient(45deg, rgba(139, 0, 0, 0.1), rgba(139, 0, 0, 0.05))' : 
-						'transparent',
-					borderColor: (currentValues as any)?.isDead ? '#8B0000' : undefined,
-					position: 'relative'
-				}}>
+				<StyledHeader
+					style={{
+						background: (currentValues as any)?.isDead
+							? 'linear-gradient(45deg, rgba(139, 0, 0, 0.1), rgba(139, 0, 0, 0.05))'
+							: 'transparent',
+						borderColor: (currentValues as any)?.isDead ? '#8B0000' : undefined,
+						position: 'relative'
+					}}
+				>
 					{(currentValues as any)?.isDead && (
-						<div style={{
-							position: 'absolute',
-							top: 0,
-							left: 0,
-							right: 0,
-							bottom: 0,
-							background: `repeating-linear-gradient(
+						<div
+							style={{
+								position: 'absolute',
+								top: 0,
+								left: 0,
+								right: 0,
+								bottom: 0,
+								background: `repeating-linear-gradient(
 								45deg,
 								transparent,
 								transparent 10px,
 								rgba(139, 0, 0, 0.05) 10px,
 								rgba(139, 0, 0, 0.05) 20px
 							)`,
-							pointerEvents: 'none'
-						}} />
+								pointerEvents: 'none'
+							}}
+						/>
 					)}
 					<StyledHeaderSection>
 						<StyledLabel>Player Name</StyledLabel>
 						<StyledValue>{characterData.finalPlayerName || 'Unknown'}</StyledValue>
 						<StyledLabel style={{ marginTop: '0.5rem' }}>Character Name</StyledLabel>
-						<StyledValue style={{
-							color: (currentValues as any)?.isDead ? '#8B0000' : undefined,
-							textDecoration: (currentValues as any)?.isDead ? 'line-through' : undefined,
-							textDecorationColor: (currentValues as any)?.isDead ? '#8B0000' : undefined,
-							textDecorationThickness: (currentValues as any)?.isDead ? '2px' : undefined,
-							display: 'flex',
-							alignItems: 'center',
-							gap: '0.5rem'
-						}}>
-							{(currentValues as any)?.isDead && <span style={{ 
-								fontSize: '1.5rem', 
-								color: '#8B0000',
-								animation: 'pulse 2s infinite'
-							}}>💀</span>}
+						<StyledValue
+							style={{
+								color: (currentValues as any)?.isDead ? '#8B0000' : undefined,
+								textDecoration: (currentValues as any)?.isDead ? 'line-through' : undefined,
+								textDecorationColor: (currentValues as any)?.isDead ? '#8B0000' : undefined,
+								textDecorationThickness: (currentValues as any)?.isDead ? '2px' : undefined,
+								display: 'flex',
+								alignItems: 'center',
+								gap: '0.5rem'
+							}}
+						>
+							{(currentValues as any)?.isDead && (
+								<span
+									style={{
+										fontSize: '1.5rem',
+										color: '#8B0000',
+										animation: 'pulse 2s infinite'
+									}}
+								>
+									💀
+								</span>
+							)}
 							{characterData.finalName}
-							{(currentValues as any)?.isDead && <span style={{ 
-								fontSize: '1.5rem', 
-								color: '#8B0000',
-								animation: 'pulse 2s infinite'
-							}}>💀</span>}
+							{(currentValues as any)?.isDead && (
+								<span
+									style={{
+										fontSize: '1.5rem',
+										color: '#8B0000',
+										animation: 'pulse 2s infinite'
+									}}
+								>
+									💀
+								</span>
+							)}
 						</StyledValue>
 						{(currentValues as any)?.isDead && (
-							<div style={{ 
-								color: '#8B0000', 
-								fontWeight: 'bold', 
-								fontSize: '1rem',
-								marginTop: '0.25rem',
-								textAlign: 'center'
-							}}>
+							<div
+								style={{
+									color: '#8B0000',
+									fontWeight: 'bold',
+									fontSize: '1rem',
+									marginTop: '0.25rem',
+									textAlign: 'center'
+								}}
+							>
 								💀 DEAD 💀
 							</div>
 						)}
@@ -1074,14 +1081,10 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 						{/* Middle Column - Resources, Combat, and Core Stats */}
 						<StyledMiddleColumn>
 							{/* Resources Section - Circular design like official sheet */}
-							<Resources
-								isMobile={false}
-							/>
+							<Resources isMobile={false} />
 
 							{/* Defenses - Shield-like design */}
-							<Defenses
-								isMobile={false}
-							/>
+							<Defenses isMobile={false} />
 
 							{/* Combat Section */}
 							<Combat />
@@ -1089,19 +1092,11 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 							{/* Death & Exhaustion */}
 							<DeathExhaustion />
 
-
-
-
-
 							{/* Attacks Section */}
-							<Attacks
-								onAttackClick={openAttackPopup}
-							/>
+							<Attacks onAttackClick={openAttackPopup} />
 
 							{/* Inventory */}
-							<Inventory
-								onItemClick={openInventoryPopup}
-							/>
+							<Inventory onItemClick={openInventoryPopup} />
 
 							{/* Player Notes */}
 							<PlayerNotes />
@@ -1125,14 +1120,19 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 				)}
 
 				{/* Spells Section - Full width, after main content */}
-				{(characterData.className && findClassByName(characterData.className)?.spellcastingPath) || 
-				 (characterData.spells && characterData.spells.length > 0) ? (
-					<div style={{ marginTop: '2rem', padding: '1rem', background: 'white', borderRadius: '8px', border: '2px solid #e0e0e0' }}>
+				{(characterData.className && findClassByName(characterData.className)?.spellcastingPath) ||
+				(characterData.spells && characterData.spells.length > 0) ? (
+					<div
+						style={{
+							marginTop: '2rem',
+							padding: '1rem',
+							background: 'white',
+							borderRadius: '8px',
+							border: '2px solid #e0e0e0'
+						}}
+					>
 						<h2 style={{ color: '#2c3e50', marginBottom: '1rem', textAlign: 'center' }}>Spells</h2>
-						<Spells
-							onSpellClick={openSpellPopup}
-							readOnly={false}
-						/>
+						<Spells onSpellClick={openSpellPopup} readOnly={false} />
 					</div>
 				) : null}
 
@@ -1183,12 +1183,8 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 						{/* Combat Tab - Mobile */}
 						{activeMobileSection === 'combat' && (
 							<div>
-								<Resources
-									isMobile={true}
-								/>
-								<Defenses
-									isMobile={true}
-								/>
+								<Resources isMobile={true} />
+								<Defenses isMobile={true} />
 								<Combat />
 								<DeathExhaustion />
 								<Spells
@@ -1226,9 +1222,7 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 						{/* Items Tab - Mobile */}
 						{activeMobileSection === 'features' && (
 							<div>
-								<Inventory
-									onItemClick={openInventoryPopup}
-								/>
+								<Inventory onItemClick={openInventoryPopup} />
 								<Currency isMobile={true} />
 							</div>
 						)}
@@ -1372,7 +1366,15 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 									<br />
 									<strong>Enhancements:</strong>
 									{selectedSpell.enhancements.map((enhancement, index) => (
-										<div key={index} style={{ marginTop: '0.5rem', padding: '0.5rem', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+										<div
+											key={index}
+											style={{
+												marginTop: '0.5rem',
+												padding: '0.5rem',
+												backgroundColor: '#f5f5f5',
+												borderRadius: '4px'
+											}}
+										>
 											<strong>{enhancement.name}</strong> ({enhancement.type} {enhancement.cost})
 											<br />
 											{enhancement.description}
@@ -1439,4 +1441,3 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 };
 
 export default CharacterSheetClean;
-

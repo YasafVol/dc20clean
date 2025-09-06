@@ -1,5 +1,4 @@
 import React from 'react';
-import type { CharacterSheetData, CurrentValues } from '../../../types';
 import { useCharacterResources, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
 	StyledDeathExhaustionContainer,
@@ -45,17 +44,18 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 	if (!state.character || !resources) {
 		return <div>Loading...</div>;
 	}
-	
+
 	const characterData = state.character;
-	const currentValues = resources?.current;
-	
+
 	// Mobile detection logic
 	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
 	
+	const currentValues = resources.current;
+
 	const onExhaustionChange = (level: number) => {
 		updateExhaustion(level);
 	};
-	
+
 	const onDeathStepChange = (step: number) => {
 		// Calculate death threshold and max steps
 		const deathThreshold = calculateDeathThreshold(
@@ -63,13 +63,13 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 			characterData.finalCombatMastery
 		);
 		const deathSteps = getDeathSteps(currentValues.currentHP, deathThreshold);
-		
+
 		// Check if clicking on final step should mark as dead
 		const isDead = step === deathSteps.maxSteps;
-		
+
 		// Update the death step in state
 		updateDeathStep(step, isDead);
-		
+
 		console.log('Death step changed to:', step, isDead ? '(DEAD)' : '');
 	};
 	// Exhaustion level descriptions (based on DC20 rules)
@@ -98,9 +98,10 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 						deathThreshold
 					);
 					const deathSteps = getDeathSteps(currentValues.currentHP, deathThreshold);
-					
+
 					// Use manual death step tracking if it exists, otherwise use calculated values
-					const actualCurrentStep = currentValues.deathSteps > 0 ? currentValues.deathSteps : deathSteps.currentStep;
+					const actualCurrentStep =
+						currentValues.deathSteps > 0 ? currentValues.deathSteps : deathSteps.currentStep;
 					const isActuallyDead = currentValues.isDead || deathSteps.isDead;
 
 					return (
@@ -168,7 +169,7 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 				{/* Show impact below the numbers */}
 				{currentValues.exhaustionLevel > 0 && (
 					<StyledExhaustionImpact>
-						{exhaustionLevels.find(e => e.level === currentValues.exhaustionLevel)?.description}
+						{exhaustionLevels.find((e) => e.level === currentValues.exhaustionLevel)?.description}
 					</StyledExhaustionImpact>
 				)}
 			</StyledExhaustionOnlyContainer>

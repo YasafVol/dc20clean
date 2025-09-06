@@ -1,9 +1,15 @@
-import { Spell, SpellSchool, SpellList, ClassName, PremadeSpellList } from '../../types/spell.types';
+import type { Spell } from '../../../schemas/spell.schema';
+import {
+	SpellSchool,
+	SpellList,
+	ClassName,
+	PremadeSpellList
+} from '../../../schemas/spell.schema';
 
 export const psiBolt: Spell = {
 	name: 'Psi Bolt',
 	premadeList: PremadeSpellList.PsychicAndEnchantment,
-	school: SpellSchool.Destruction,
+	school: SpellSchool.Psychic,
 	isCantrip: true,
 	cost: { ap: 1 },
 	range: '10 Spaces',

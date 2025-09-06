@@ -37,14 +37,14 @@ export interface AttacksProps {
 const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 	const { addAttack, removeAttack, updateAttack, state } = useCharacterSheet();
 	const attacks = useCharacterAttacks();
-	
+
 	if (!state.character) {
 		return <div>Loading attacks...</div>;
 	}
-	
+
 	// Mobile detection logic
 	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
-	
+
 	const characterData = state.character;
 	const addWeaponSlot = () => {
 		const newAttack: AttackData = {

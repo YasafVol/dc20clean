@@ -11,7 +11,6 @@ import {
 	StyledNewClassQuote,
 	StyledNewClassDescription
 } from './styles/ClassSelector.styles';
-import { StyledNoSelection } from './styles/ClassFeatures.styles';
 
 // Import all SVG icons
 import BarbarianIconSrc from '../../assets/SVG/Barbarian.svg';
@@ -31,68 +30,70 @@ import WizardIconSrc from '../../assets/SVG/Wizard.svg';
 // Class data with quotes and descriptions
 const classData = {
 	barbarian: {
-		quote: "My rage is my shield, my weapon, my answer.",
-		description: "Unleashes devastating attacks and shrugs off harm through rage.",
+		quote: 'My rage is my shield, my weapon, my answer.',
+		description: 'Unleashes devastating attacks and shrugs off harm by entering a powerful rage.',
 		icon: BarbarianIconSrc
 	},
 	bard: {
-		quote: "A single chord can lift an army - or break it.",
-		description: "Casts spells and boosts allies through versatile performance magic.",
+		quote: 'A single chord can lift an army — or break it.',
+		description: 'Casts spells and boosts allies through versatile performance magic.',
 		icon: BardIconSrc
 	},
 	champion: {
-		quote: "Stand tall. Strike true. Never fall.",
-		description: "A master of physical combat who thrives on precise blows and resilience.",
+		quote: 'Stand tall. Strike true. Never fall.',
+		description: 'A master of physical combat who thrives on precise blows and resilience.',
 		icon: ChampionIconSrc
 	},
 	cleric: {
-		quote: "By their light, I heal. By their will, I smite.",
-		description: "Divine caster who heals, protects, \nand delivers holy retribution.",
+		quote: 'By their light, I heal. By their will, I smite.',
+		description: 'Divine caster who heals, protects, \nand delivers holy retribution.',
 		icon: ClericIconSrc
 	},
 	commander: {
-		quote: "Your strength is mine to guide.",
-		description: "Leads the battlefield with tactical commands and rallying presence.",
+		quote: 'Your strength is mine to guide.',
+		description: 'Leads the battlefield with tactical commands and rallying presence.',
 		icon: CommanderIconSrc
 	},
 	druid: {
 		quote: "I am the storm. I am the roots. I am nature's will.",
-		description: "Wields primal magic and transforms into beasts to protect the natural order.",
+		description: 'Wields primal magic and transforms into beasts to protect the natural order.',
 		icon: DruidIconSrc
 	},
 	hunter: {
-		quote: "I see before others hear. I strike before others see.",
-		description: "Expert tracker and marksman who thrives in wild terrain and against chosen prey.",
+		quote: 'I see before others hear. I strike before others see.',
+		description: 'Expert tracker and marksman who thrives in wild terrain and against chosen prey.',
 		icon: HunterIconSrc
 	},
 	monk: {
-		quote: "The path is breath, balance, and the beauty of stillness.",
-		description: "Uses inner energy (Focus) for swift, disciplined, and supernatural combat.",
+		quote: 'The path is breath, balance, and the beauty of stillness.',
+		description: 'Uses inner energy (Focus) for swift, disciplined, and supernatural combat.',
 		icon: MonkIconSrc
 	},
 	rogue: {
-		quote: "One cut. One moment. One chance.",
-		description: "Excels in stealth, precision, and exploiting weaknesses with devastating strikes.",
+		quote: 'One cut. One moment. One chance.',
+		description:
+			'Excels in stealth, precision, and exploiting weaknesses with devastating strikes.',
 		icon: RogueIconSrc
 	},
 	sorcerer: {
-		quote: "Power pulses in me — untamed, unstoppable.",
-		description: "Casts spells drawn from an innate\nmagical source, not study or faith.",
+		quote: 'Power pulses in me — untamed, unstoppable.',
+		description: 'Casts spells drawn from an innate\nmagical source, not study or faith.',
 		icon: SorcererIconSrc
 	},
 	spellblade: {
-		quote: "My blade is a conduit.\nMy magic — the edge.",
-		description: "Combines melee combat with arcane spells, weaving both into an assault.",
+		quote: 'My blade is a conduit. My magic — the edge.',
+		description: 'Combines melee combat with arcane spells, weaving both into an assault.',
 		icon: SpellBladeIconSrc
 	},
 	warlock: {
-		quote: "The pact is sealed. The power is mine.",
-		description: "Channels spells through a bargain with a Patron, gaining unique arcane abilities.",
+		quote: 'The pact is sealed. The power is mine.',
+		description:
+			'Channels spells through a bargain with a Patron, gaining unique arcane abilities.',
 		icon: WarlockIconSrc
 	},
 	wizard: {
 		quote: "I don't believe in luck. I believe in preparation.",
-		description: "Master of studied magic with the widest spell access and deep arcane knowledge.",
+		description: 'Master of studied magic with the widest spell access and deep arcane knowledge.',
 		icon: WizardIconSrc
 	}
 };
@@ -112,11 +113,10 @@ function ClassSelector() {
 	return (
 		<StyledContainer>
 			<StyledTitle>Choose Your Class</StyledTitle>
-			<StyledNoSelection style={{ margin: '-1.25rem 0 1.5rem', fontSize: '1.1rem', textAlign: 'center', width: '100%' }}>Select a Class to see its features.</StyledNoSelection>
 			<StyledGrid>
 				{classesData.map((classDef) => {
 					const classInfo = classData[classDef.id as keyof typeof classData];
-					
+
 					// Use the new unified class card design for all classes
 					return (
 						<StyledNewClassCard
@@ -124,19 +124,16 @@ function ClassSelector() {
 							type="button"
 							$selected={selectedClassId === classDef.id}
 							onClick={() => handleSelectClass(classDef.id)}
+							data-testid={`class-card-${classDef.id}`}
 						>
 							<StyledNewClassHeader>
-								<StyledNewClassIcon 
-									$iconSize="28px"
-									$iconOffsetX="0px"
-									$iconOffsetY="0px"
-								>
+								<StyledNewClassIcon $iconSize="28px" $iconOffsetX="0px" $iconOffsetY="0px">
 									<img src={classInfo?.icon} alt={classDef.name} />
 								</StyledNewClassIcon>
 								<StyledNewClassTitle>{classDef.name}</StyledNewClassTitle>
 							</StyledNewClassHeader>
 							<StyledNewClassQuote>
-								{classInfo?.quote || "A powerful adventurer."}
+								{classInfo?.quote || 'A powerful adventurer.'}
 							</StyledNewClassQuote>
 							<StyledNewClassDescription>
 								{classInfo?.description || classDef.description}

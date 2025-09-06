@@ -65,7 +65,7 @@ export const StyledAttacksHeaderRow = styled.div<MobileStyledProps>`
 		grid-template-columns: 25px 1fr 45px 40px;
 		gap: 0.2rem;
 		font-size: 0.7rem;
-		
+
 		& > *:nth-child(4),
 		& > *:nth-child(5),
 		& > *:nth-child(7) {
@@ -109,7 +109,7 @@ export const StyledAttackRow = styled.div<MobileStyledProps>`
 		grid-template-columns: 25px 1fr 45px 40px;
 		gap: 0.2rem;
 		font-size: 0.7rem;
-		
+
 		& > *:nth-child(4),
 		& > *:nth-child(5),
 		& > *:nth-child(7) {

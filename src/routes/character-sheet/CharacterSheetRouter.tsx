@@ -14,7 +14,7 @@ interface CharacterSheetRouterProps {
 
 const CharacterSheetRouter: React.FC<CharacterSheetRouterProps> = ({ characterId }) => {
 	const navigate = useNavigate();
-	
+
 	// Initialize isMobile with immediate detection to prevent double rendering
 	const [isMobile, setIsMobile] = useState(() => {
 		// Only do this check if window is available (client-side)
@@ -43,12 +43,9 @@ const CharacterSheetRouter: React.FC<CharacterSheetRouterProps> = ({ characterId
 	return (
 		<CharacterSheetProvider characterId={characterId}>
 			{(() => {
-				console.log(`🧙‍♂️ Router render decision: isMobile=${isMobile}, rendering=${isMobile ? 'MOBILE' : 'DESKTOP'}`);
 				if (isMobile) {
-					console.log('🔥 Router: Rendering CharacterSheetMobile component');
 					return <CharacterSheetMobile />;
 				} else {
-					console.log('🔥 Router: Rendering CharacterSheetClean component');
 					return <CharacterSheetClean characterId={characterId} onBack={handleBackToMenu} />;
 				}
 			})()}

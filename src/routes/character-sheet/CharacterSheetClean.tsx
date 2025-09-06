@@ -14,7 +14,7 @@ import type {
 	SpellData,
 	InventoryItemData
 } from '../../types';
-import type { Spell } from '../../lib/rulesdata/spells-data/types/spell.types';
+import type { Spell } from '../../lib/rulesdata/schemas/spell.schema';
 import type { Weapon } from '../../lib/rulesdata/inventoryItems';
 import type { InventoryItem } from '../../lib/rulesdata/inventoryItems';
 import type { ManeuverData } from '../../types';

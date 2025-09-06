@@ -12,7 +12,7 @@ import type {
 	InventoryItemData,
 	SkillData
 } from '../../types';
-import type { Spell } from '../../lib/rulesdata/spells-data/types/spell.types';
+import type { Spell } from '../../lib/rulesdata/schemas/spell.schema';
 import type { Maneuver } from '../../lib/rulesdata/maneuvers';
 
 interface CalculatedDefenses {

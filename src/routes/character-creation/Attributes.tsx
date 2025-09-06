@@ -194,7 +194,7 @@ function Attributes() {
 	return (
 		<StyledContainer>
 			<StyledTitle>Attributes</StyledTitle>
-			<AttributePointsCounter />
+			<AttributePointsCounter totalAttributePoints={totalAttributePoints} />
 			
 			{/* The enhanced breakdown summary was removed to avoid duplicating the
 			{/* NEW: Forced adjustments warning */}
@@ -253,6 +253,7 @@ function Attributes() {
 										onClick={() => decreaseAttribute(attributeKey)}
 										disabled={!canDecrease}
 										title={!canDecrease ? "Cannot decrease below -2" : ""}
+										data-testid={`${attribute.id}-decrease`}
 									>
 										-
 									</StyledButton>
@@ -264,6 +265,7 @@ function Attributes() {
 											attributePointsRemaining <= 0 ? "No points remaining" : 
 											realTimeValidation.message || "Cannot increase"
 										) : ""}
+										data-testid={`${attribute.id}-increase`}
 									>
 										+
 									</StyledButton>

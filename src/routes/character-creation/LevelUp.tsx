@@ -2,12 +2,10 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { getCharacterById } from '../../lib/utils/storageUtils';
 
-
-
 const LevelUp: React.FC = () => {
 	const { id } = useParams();
 	const character = id ? getCharacterById(id) : null;
-	
+
 	const handleLevelUp = () => {
 		if (!character) return;
 		// For now, just increment the level and call onComplete
@@ -28,7 +26,7 @@ const LevelUp: React.FC = () => {
 			<p>Current Level: {character.level || 1}</p>
 			<p>New Level: {(character.level || 1) + 1}</p>
 			<div style={{ marginTop: '20px' }}>
-				<button 
+				<button
 					onClick={handleLevelUp}
 					style={{
 						backgroundColor: '#fbbf24',

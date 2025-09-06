@@ -13,22 +13,15 @@ import {
 	StyledTab
 } from './styles/Background.styles.ts';
 
-// Import the PointConversions interface
-interface PointConversions {
-	skillToTradeConversions: number;
-	tradeToSkillConversions: number;
-	tradeToLanguageConversions: number;
-}
-
 type TabType = 'skills' | 'trades' | 'languages';
 
 const Background: React.FC = () => {
 	const { state, dispatch, calculationResult } = useCharacter();
 	const [activeTab, setActiveTab] = React.useState<TabType>('skills');
-	
+
 	// Get background data from the centralized calculator
 	const { background, validation } = calculationResult;
-	
+
 	// Early return if background data is not available
 	if (!background) {
 		return (
@@ -43,23 +36,14 @@ const Background: React.FC = () => {
 	const currentSkills = state.skillsData || {};
 	const currentTrades = state.tradesData || {};
 	const currentLanguages = state.languagesData || { common: { fluency: 'fluent' } };
-	
-	// Adapt conversions to match the expected interface
-	const adaptedConversions: PointConversions = {
-		skillToTradeConversions: background.conversions?.skillToTrade || 0,
-		tradeToSkillConversions: background.conversions?.tradeToSkill || 0,
-		tradeToLanguageConversions: background.conversions?.tradeToLanguage || 0
-	};
 
-	// For now, we'll create a simplified masteryLimits object
-	// TODO: This should come from the calculator in a future enhancement
+	// Mastery limits from centralized calculator
 	const masteryLimits = {
-		maxSkillMastery: 2, // Level 1 characters can reach Adept
-		maxTradeMastery: 2,
-		level1Validation: {
-			valid: true,
-			adeptCount: 0
-		}
+		maxSkillMastery: calculationResult.validation.masteryLimits.maxSkillMastery,
+		maxTradeMastery: calculationResult.validation.masteryLimits.maxTradeMastery,
+		currentAdeptCount: calculationResult.validation.masteryLimits.currentAdeptCount,
+		maxAdeptCount: calculationResult.validation.masteryLimits.maxAdeptCount,
+		canSelectAdept: calculationResult.validation.masteryLimits.canSelectAdept
 	};
 
 	// Conversion actions with proper logic using calculated values
@@ -67,11 +51,14 @@ const Background: React.FC = () => {
 		convertSkillToTrade: () => {
 			const currentSkillToTrade = state.skillToTradeConversions || 0;
 			const { availableSkillPoints } = background;
-			
+
 			// Calculate current skill points used (this should come from summing the skillsData)
-			const skillPointsUsed = Object.values(state.skillsData || {}).reduce((sum, level) => sum + level, 0);
+			const skillPointsUsed = Object.values(state.skillsData || {}).reduce(
+				(sum, level) => sum + level,
+				0
+			);
 			const remainingSkillPoints = availableSkillPoints - skillPointsUsed;
-			
+
 			// Only allow conversion if we have at least 1 skill point remaining
 			if (remainingSkillPoints >= 1) {
 				dispatch({
@@ -83,11 +70,14 @@ const Background: React.FC = () => {
 		convertTradeToSkill: () => {
 			const currentTradeToSkill = state.tradeToSkillConversions || 0;
 			const { availableTradePoints } = background;
-			
+
 			// Calculate current trade points used
-			const tradePointsUsed = Object.values(state.tradesData || {}).reduce((sum, level) => sum + level, 0);
+			const tradePointsUsed = Object.values(state.tradesData || {}).reduce(
+				(sum, level) => sum + level,
+				0
+			);
 			const remainingTradePoints = availableTradePoints - tradePointsUsed;
-			
+
 			// Only allow conversion if we have at least 2 trade points remaining (costs 2 trade = 1 skill)
 			if (remainingTradePoints >= 2) {
 				dispatch({
@@ -99,11 +89,14 @@ const Background: React.FC = () => {
 		convertTradeToLanguage: () => {
 			const currentTradeToLanguage = state.tradeToLanguageConversions || 0;
 			const { availableTradePoints } = background;
-			
+
 			// Calculate current trade points used
-			const tradePointsUsed = Object.values(state.tradesData || {}).reduce((sum, level) => sum + level, 0);
+			const tradePointsUsed = Object.values(state.tradesData || {}).reduce(
+				(sum, level) => sum + level,
+				0
+			);
 			const remainingTradePoints = availableTradePoints - tradePointsUsed;
-			
+
 			// Only allow conversion if we have at least 1 trade point remaining
 			if (remainingTradePoints >= 1) {
 				dispatch({
@@ -171,7 +164,11 @@ const Background: React.FC = () => {
 						currentSkills={currentSkills}
 						currentTrades={currentTrades}
 						pointsData={background}
-						conversions={adaptedConversions}
+						conversions={{
+							skillToTradeConversions: background.conversions.skillToTrade,
+							tradeToSkillConversions: background.conversions.tradeToSkill,
+							tradeToLanguageConversions: background.conversions.tradeToLanguage
+						}}
 						actions={actions}
 						masteryLimits={masteryLimits}
 						onSkillChange={handleSkillChange}
@@ -181,9 +178,12 @@ const Background: React.FC = () => {
 				return (
 					<TradesTab
 						currentTrades={currentTrades}
-						currentSkills={currentSkills}
 						pointsData={background}
-						conversions={adaptedConversions}
+						conversions={{
+							skillToTradeConversions: background.conversions.skillToTrade,
+							tradeToSkillConversions: background.conversions.tradeToSkill,
+							tradeToLanguageConversions: background.conversions.tradeToLanguage
+						}}
 						actions={actions}
 						masteryLimits={masteryLimits}
 						onTradeChange={handleTradeChange}
@@ -194,7 +194,11 @@ const Background: React.FC = () => {
 					<LanguagesTab
 						currentLanguages={currentLanguages}
 						pointsData={background}
-						conversions={adaptedConversions}
+						conversions={{
+							skillToTradeConversions: background.conversions.skillToTrade,
+							tradeToSkillConversions: background.conversions.tradeToSkill,
+							tradeToLanguageConversions: background.conversions.tradeToLanguage
+						}}
 						actions={actions}
 						onLanguageChange={handleLanguageChange}
 					/>
@@ -213,24 +217,45 @@ const Background: React.FC = () => {
 				<span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{background.baseSkillPoints}</span>{' '}
 				skill points{' '}
 				<span style={{ fontSize: '0.9rem', color: '#6b7280' }}>
-					(5 base + {state.attribute_intelligence} Int{background.baseSkillPoints - 5 - state.attribute_intelligence > 0 ? ` + ${background.baseSkillPoints - 5 - state.attribute_intelligence} bonus` : ''})
-				</span>,{' '}
-				<span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{background.baseTradePoints}</span>{' '}
-				trade points{background.baseTradePoints > 3 ? <span style={{ fontSize: '0.9rem', color: '#6b7280' }}> (3 base + {background.baseTradePoints - 3} bonus)</span> : ''}, and{' '}
+					(5 base + {state.attribute_intelligence} Int
+					{background.baseSkillPoints - 5 - state.attribute_intelligence > 0
+						? ` + ${background.baseSkillPoints - 5 - state.attribute_intelligence} bonus`
+						: ''}
+					)
+				</span>
+				, <span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{background.baseTradePoints}</span>{' '}
+				trade points
+				{background.baseTradePoints > 3 ? (
+					<span style={{ fontSize: '0.9rem', color: '#6b7280' }}>
+						{' '}
+						(3 base + {background.baseTradePoints - 3} bonus)
+					</span>
+				) : (
+					''
+				)}
+				, and{' '}
 				<span style={{ fontWeight: 'bold', color: '#3b82f6' }}>
 					{background.baseLanguagePoints}
 				</span>{' '}
-				language points{background.baseLanguagePoints > 2 ? <span style={{ fontSize: '0.9rem', color: '#6b7280' }}> (2 base + {background.baseLanguagePoints - 2} bonus)</span> : ''}. <br />
+				language points
+				{background.baseLanguagePoints > 2 ? (
+					<span style={{ fontSize: '0.9rem', color: '#6b7280' }}>
+						{' '}
+						(2 base + {background.baseLanguagePoints - 2} bonus)
+					</span>
+				) : (
+					''
+				)}
+				. <br />
 				<span
 					style={{
 						marginTop: '0.5rem',
 						display: 'inline-block',
 						padding: '0.25rem 0.5rem',
-						background: 'transparent',
-						border: '1px solid white',
+						backgroundColor: '#f3f4f6',
 						borderRadius: '4px',
 						fontSize: '0.9rem',
-						color: '#e2e8f0'
+						color: '#374151'
 					}}
 				>
 					💡 Conversions: 1 skill ↔ 2 trade • 1 trade → 2 language
@@ -240,13 +265,13 @@ const Background: React.FC = () => {
 			</StyledDescription>
 
 			<StyledTabContainer>
-				<StyledTab $active={activeTab === 'skills'} onClick={() => setActiveTab('skills')}>
+				<StyledTab $active={activeTab === 'skills'} onClick={() => setActiveTab('skills')} data-testid="skills-tab">
 					Skills ({background.availableSkillPoints - background.skillPointsUsed} left)
 				</StyledTab>
-				<StyledTab $active={activeTab === 'trades'} onClick={() => setActiveTab('trades')}>
+				<StyledTab $active={activeTab === 'trades'} onClick={() => setActiveTab('trades')} data-testid="trades-tab">
 					Trades ({background.availableTradePoints - background.tradePointsUsed} left)
 				</StyledTab>
-				<StyledTab $active={activeTab === 'languages'} onClick={() => setActiveTab('languages')}>
+				<StyledTab $active={activeTab === 'languages'} onClick={() => setActiveTab('languages')} data-testid="languages-tab">
 					Languages ({background.availableLanguagePoints - background.languagePointsUsed} left)
 				</StyledTab>
 			</StyledTabContainer>

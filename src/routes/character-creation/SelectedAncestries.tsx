@@ -1,7 +1,6 @@
-
 import { useCharacter } from '../../lib/stores/characterContext';
-import { ancestriesData } from '../../lib/rulesdata/_new_schema/ancestries';
-import { traitsData } from '../../lib/rulesdata/_new_schema/traits';
+import { ancestriesData } from '../../lib/rulesdata/ancestries/ancestries';
+import { traitsData } from '../../lib/rulesdata/ancestries/traits';
 import TraitChoiceSelector from './components/TraitChoiceSelector';
 import type { IAncestry, ITrait, ITraitEffect } from '../../lib/rulesdata/types';
 import {
@@ -19,14 +18,18 @@ import {
 
 function SelectedAncestries() {
 	const { state, dispatch, calculationResult } = useCharacter();
-	
+
 	// Use centralized calculator for ancestry points (includes Cleric domain bonuses, etc.)
 	const ancestryData = calculationResult.ancestry || {
 		baseAncestryPoints: 5,
 		ancestryPointsUsed: 0,
 		ancestryPointsRemaining: 5
 	};
-	const { baseAncestryPoints: totalAncestryPoints, ancestryPointsUsed: ancestryPointsSpent, ancestryPointsRemaining } = ancestryData;
+	const {
+		baseAncestryPoints: totalAncestryPoints,
+		ancestryPointsUsed: ancestryPointsSpent,
+		ancestryPointsRemaining
+	} = ancestryData;
 
 	const selectedAncestry1 = ancestriesData.find((a) => a.id === state.ancestry1Id);
 	const selectedAncestry2 = ancestriesData.find((a) => a.id === state.ancestry2Id);
@@ -71,7 +74,8 @@ function SelectedAncestries() {
 						const trait = getTrait(traitId);
 						if (!trait) return null;
 						const isSelected = selectedTraits.includes(traitId);
-						const wouldExceedBudget = !isSelected && ancestryPointsSpent + trait.cost > totalAncestryPoints;
+						const wouldExceedBudget =
+							!isSelected && ancestryPointsSpent + trait.cost > totalAncestryPoints;
 
 						return (
 							<StyledListItem key={traitId}>
@@ -87,21 +91,22 @@ function SelectedAncestries() {
 										<span style={{ color: '#ff4444' }}> (Not enough points)</span>
 									)}
 								</StyledLabel>
-								
+
 								{/* NEW: Render choice selectors if trait is selected and has user choices */}
-								{isSelected && trait.effects?.map((effect: ITraitEffect, effectIndex: number) => {
-									if (effect.userChoiceRequired) {
-										return (
-											<TraitChoiceSelector
-												key={`${traitId}-${effectIndex}`}
-												trait={trait}
-												effect={effect}
-												effectIndex={effectIndex}
-											/>
-										);
-									}
-									return null;
-								})}
+								{isSelected &&
+									trait.effects?.map((effect: ITraitEffect, effectIndex: number) => {
+										if (effect.userChoiceRequired) {
+											return (
+												<TraitChoiceSelector
+													key={`${traitId}-${effectIndex}`}
+													trait={trait}
+													effect={effect}
+													effectIndex={effectIndex}
+												/>
+											);
+										}
+										return null;
+									})}
 							</StyledListItem>
 						);
 					})}
@@ -113,7 +118,8 @@ function SelectedAncestries() {
 						const trait = getTrait(traitId);
 						if (!trait) return null;
 						const isSelected = selectedTraits.includes(traitId);
-						const wouldExceedBudget = !isSelected && ancestryPointsSpent + trait.cost > totalAncestryPoints;
+						const wouldExceedBudget =
+							!isSelected && ancestryPointsSpent + trait.cost > totalAncestryPoints;
 
 						return (
 							<StyledListItem key={traitId}>
@@ -129,21 +135,22 @@ function SelectedAncestries() {
 										<span style={{ color: '#ff4444' }}> (Not enough points)</span>
 									)}
 								</StyledLabel>
-								
+
 								{/* NEW: Render choice selectors if trait is selected and has user choices */}
-								{isSelected && trait.effects?.map((effect: ITraitEffect, effectIndex: number) => {
-									if (effect.userChoiceRequired) {
-										return (
-											<TraitChoiceSelector
-												key={`${traitId}-${effectIndex}`}
-												trait={trait}
-												effect={effect}
-												effectIndex={effectIndex}
-											/>
-										);
-									}
-									return null;
-								})}
+								{isSelected &&
+									trait.effects?.map((effect: ITraitEffect, effectIndex: number) => {
+										if (effect.userChoiceRequired) {
+											return (
+												<TraitChoiceSelector
+													key={`${traitId}-${effectIndex}`}
+													trait={trait}
+													effect={effect}
+													effectIndex={effectIndex}
+												/>
+											);
+										}
+										return null;
+									})}
 							</StyledListItem>
 						);
 					})}

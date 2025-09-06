@@ -1,12 +1,10 @@
-import {
-	findClassByName,
-} from '../../lib/rulesdata/loaders/class-features.loader';
-import type { 
-	CharacterSheetData, 
-	AttackData, 
-	SpellData, 
-	ManeuverData, 
-	CurrentValues, 
+import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
+import type {
+	CharacterSheetData,
+	AttackData,
+	SpellData,
+	ManeuverData,
+	CurrentValues,
 	FeatureData,
 	LanguageData,
 	TradeData,
@@ -14,7 +12,7 @@ import type {
 	InventoryItemData,
 	SkillData
 } from '../../types';
-import type { Spell } from '../../lib/rulesdata/spells-data/types/spell.types';
+import type { Spell } from '../../lib/rulesdata/schemas/spell.schema';
 import type { Maneuver } from '../../lib/rulesdata/maneuvers';
 
 interface CalculatedDefenses {
@@ -43,39 +41,43 @@ export const handlePrintCharacterSheet = (
 	allSpells: Spell[],
 	allManeuvers: Maneuver[]
 ): void => {
-        try {
-            if (!characterData) {
-                alert('Character data not found');
-                return;
-            }
+	try {
+		if (!characterData) {
+			alert('Character data not found');
+			return;
+		}
 
-            // Create a new window for printing
-            const printWindow = window.open('', '_blank');
-            if (!printWindow) {
-                alert('Please allow popups to print the character sheet');
-                return;
-            }
+		// Create a new window for printing
+		const printWindow = window.open('', '_blank');
+		if (!printWindow) {
+			alert('Please allow popups to print the character sheet');
+			return;
+		}
 
-            // Get the character sheet element
-            const characterSheetElement = document.querySelector('.character-sheet-content');
-            if (!characterSheetElement) {
-                alert('Character sheet content not found');
-                return;
-            }
+		// Get the character sheet element
+		const characterSheetElement = document.querySelector('.character-sheet-content');
+		if (!characterSheetElement) {
+			alert('Character sheet content not found');
+			return;
+		}
 
-            // Get current data for printing
-            const currentAttacks = attacks;
-            const currentSpells = spells.length > 0 ? spells : (characterState?.spells?.current || []);
-            const currentManeuvers = maneuvers.length > 0 ? maneuvers : (characterState?.maneuvers?.current || []);
+		// Get current data for printing
+		const currentAttacks = attacks;
+		const currentSpells = spells.length > 0 ? spells : characterState?.spells?.current || [];
+		const currentManeuvers =
+			maneuvers.length > 0 ? maneuvers : characterState?.maneuvers?.current || [];
 
-            // Debug logging
-            console.log('Print function - currentSpells:', currentSpells);
-            console.log('Print function - spells state:', spells);
-            console.log('Print function - characterState?.spells?.current:', characterState?.spells?.current);
-            console.log('Print function - currentManeuvers:', currentManeuvers);
+		// Debug logging
+		console.log('Print function - currentSpells:', currentSpells);
+		console.log('Print function - spells state:', spells);
+		console.log(
+			'Print function - characterState?.spells?.current:',
+			characterState?.spells?.current
+		);
+		console.log('Print function - currentManeuvers:', currentManeuvers);
 
-            // Create print-friendly HTML
-            const printHTML = `
+		// Create print-friendly HTML
+		const printHTML = `
                 <!DOCTYPE html>
                 <html>
                 <head>
@@ -315,31 +317,43 @@ export const handlePrintCharacterSheet = (
                 
                 <div class="section">
                     <div class="section-title">Skills</div>
-                    ${Object.entries(skillsByAttribute).map(([attr, skills]) => 
-                        skills.length > 0 ? `
+                    ${Object.entries(skillsByAttribute)
+											.map(([attr, skills]) =>
+												skills.length > 0
+													? `
                             <div style="margin-bottom: 10px;">
                                 <div style="font-weight: bold; color: #8b4513; margin-bottom: 5px;">${attr.charAt(0).toUpperCase() + attr.slice(1)}</div>
-                                ${skills.map(skill => `
+                                ${skills
+																	.map(
+																		(skill) => `
                                     <div class="skill-row">
                                         <span class="skill-name">${skill.name}</span>
                                         <span class="skill-bonus">+${skill.bonus}</span>
                                     </div>
-                                `).join('')}
+                                `
+																	)
+																	.join('')}
                             </div>
-                        ` : ''
-                    ).join('')}
+                        `
+													: ''
+											)
+											.join('')}
                 </div>
             </div>
             
             <div class="column">
                 <div class="section">
                     <div class="section-title">Attacks</div>
-                    ${currentAttacks.map(attack => `
+                    ${currentAttacks
+											.map(
+												(attack) => `
                         <div class="attack-row">
                             <span class="skill-name">${attack.name}</span>
                             <span class="skill-bonus">+${attack.attackBonus}</span>
                         </div>
-                    `).join('')}
+                    `
+											)
+											.join('')}
                 </div>
                 
 
@@ -348,50 +362,70 @@ export const handlePrintCharacterSheet = (
                 
                 <div class="section">
                     <div class="section-title">Features</div>
-                    ${features.map(feature => `
+                    ${features
+											.map(
+												(feature) => `
                         <div style="margin-bottom: 8px; padding: 5px; border: 1px solid #ddd; border-radius: 4px; background: white;">
                             <strong>${feature.name}</strong><br>
                             <small>${feature.source}</small>
                         </div>
-                    `).join('')}
+                    `
+											)
+											.join('')}
                 </div>
             </div>
             
             <div class="column">
                 <div class="section">
                     <div class="section-title">Inventory</div>
-                    ${inventory.map(item => `
+                    ${inventory
+											.map(
+												(item) => `
                         <div class="inventory-item">
                             <span>${item.itemName}</span>
                             <span>${item.count}</span>
                         </div>
-                    `).join('')}
+                    `
+											)
+											.join('')}
                 </div>
                 
                 <div class="section">
                     <div class="section-title">Languages</div>
-                    ${languages.map(lang => `
+                    ${languages
+											.map(
+												(lang) => `
                         <div class="skill-row">
                             <span class="skill-name">${lang.name}</span>
                             <span class="skill-bonus">${lang.fluency}</span>
                         </div>
-                    `).join('')}
+                    `
+											)
+											.join('')}
                 </div>
                 
                 <div class="section">
                     <div class="section-title">Trades</div>
-                    ${trades.map(trade => `
+                    ${trades
+											.map(
+												(trade) => `
                         <div class="skill-row">
                             <span class="skill-name">${trade.name}</span>
                             <span class="skill-bonus">+${trade.bonus}</span>
                         </div>
-                    `).join('')}
+                    `
+											)
+											.join('')}
                 </div>
             </div>
         </div>
     </div>
 
-    ${characterData.className && findClassByName(characterData.className)?.spellcastingPath && currentSpells.length > 0 ? `
+    ${
+			characterData.className &&
+			findClassByName(characterData.className)?.spellcastingPath &&
+			currentSpells.length > 0
+				? `
     <div class="page-break"></div>
     <div class="character-sheet">
         <div class="header">
@@ -413,9 +447,10 @@ export const handlePrintCharacterSheet = (
         <h2 style="text-align: center; color: #8b4513; margin-bottom: 30px;">Spells</h2>
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
-            ${currentSpells.map(spell => {
-                const fullSpell = allSpells.find(s => s.name === spell.spellName);
-                return `
+            ${currentSpells
+							.map((spell) => {
+								const fullSpell = allSpells.find((s) => s.name === spell.spellName);
+								return `
                     <div class="spell-card" style="border: 2px solid #e0e0e0; border-radius: 10px; padding: 20px; background: #f8f9fa; margin-bottom: 20px;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
                             <div>
@@ -442,52 +477,83 @@ export const handlePrintCharacterSheet = (
                             </div>
                         </div>
                         
-                        ${fullSpell && fullSpell.effects && fullSpell.effects.length > 0 ? `
+                        ${
+													fullSpell && fullSpell.effects && fullSpell.effects.length > 0
+														? `
                             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
                                 <h4 style="color: #2c3e50; margin: 0 0 10px 0; font-size: 1.1rem;">Description</h4>
-                                ${fullSpell.effects.map((effect, index) => `
+                                ${fullSpell.effects
+																	.map(
+																		(effect, index) => `
                                     <div style="margin-bottom: ${index < fullSpell.effects.length - 1 ? '15px' : '0'};">
                                         ${effect.title ? `<strong style="color: #2c3e50; font-size: 1rem;">${effect.title}:</strong><br />` : ''}
                                         <span style="color: #34495e; line-height: 1.6; font-size: 0.95rem;">${effect.description}</span>
                                     </div>
-                                `).join('')}
+                                `
+																	)
+																	.join('')}
                             </div>
-                        ` : ''}
+                        `
+														: ''
+												}
                         
-                        ${fullSpell && fullSpell.cantripPassive ? `
+                        ${
+													fullSpell && fullSpell.cantripPassive
+														? `
                             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
                                 <h4 style="color: #2c3e50; margin: 0 0 10px 0; font-size: 1.1rem;">Cantrip Passive</h4>
                                 <p style="color: #34495e; line-height: 1.6; margin: 0; font-size: 0.95rem;">${fullSpell.cantripPassive}</p>
                             </div>
-                        ` : ''}
+                        `
+														: ''
+												}
                         
-                        ${fullSpell && fullSpell.enhancements && fullSpell.enhancements.length > 0 ? `
+                        ${
+													fullSpell && fullSpell.enhancements && fullSpell.enhancements.length > 0
+														? `
                             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
                                 <h4 style="color: #2c3e50; margin: 0 0 10px 0; font-size: 1.1rem;">Enhancements</h4>
-                                ${fullSpell.enhancements.map((enhancement) => `
+                                ${fullSpell.enhancements
+																	.map(
+																		(enhancement) => `
                                     <div style="margin-top: 10px; padding: 10px; background-color: #f0f0f0; border-radius: 4px;">
                                         <strong style="color: #2c3e50; font-size: 0.95rem;">${enhancement.name}</strong> (${enhancement.type} ${enhancement.cost})
                                         <br />
                                         <span style="color: #34495e; line-height: 1.6; font-size: 0.9rem;">${enhancement.description}</span>
                                     </div>
-                                `).join('')}
+                                `
+																	)
+																	.join('')}
                             </div>
-                        ` : ''}
+                        `
+														: ''
+												}
                         
-                        ${spell.notes ? `
+                        ${
+													spell.notes
+														? `
                             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
                                 <h4 style="color: #2c3e50; margin: 0 0 10px 0; font-size: 1.1rem;">Notes</h4>
                                 <p style="color: #34495e; line-height: 1.6; margin: 0; font-size: 0.95rem;">${spell.notes}</p>
                             </div>
-                        ` : ''}
+                        `
+														: ''
+												}
                     </div>
                 `;
-            }).join('')}
+							})
+							.join('')}
         </div>
     </div>
-    ` : ''}
+    `
+				: ''
+		}
 
-    ${characterData.className && findClassByName(characterData.className)?.martialPath && currentManeuvers.length > 0 ? `
+    ${
+			characterData.className &&
+			findClassByName(characterData.className)?.martialPath &&
+			currentManeuvers.length > 0
+				? `
     <div class="page-break"></div>
     <div class="character-sheet">
         <div class="header">
@@ -509,9 +575,10 @@ export const handlePrintCharacterSheet = (
         <h2 style="text-align: center; color: #8b4513; margin-bottom: 30px;">Maneuvers</h2>
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
-            ${currentManeuvers.map(maneuver => {
-                const fullManeuver = allManeuvers.find(m => m.name === maneuver.name);
-                return `
+            ${currentManeuvers
+							.map((maneuver) => {
+								const fullManeuver = allManeuvers.find((m) => m.name === maneuver.name);
+								return `
                     <div class="maneuver-card" style="border: 2px solid #e0e0e0; border-radius: 10px; padding: 20px; background: #f8f9fa; margin-bottom: 20px;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
                             <div>
@@ -528,70 +595,97 @@ export const handlePrintCharacterSheet = (
                                 <span style="font-weight: bold; color: #7f8c8d; font-size: 0.8rem; text-transform: uppercase;">Cost</span><br>
                                 <span style="color: #2c3e50; font-size: 0.9rem;">${maneuver.cost ? `${maneuver.cost.ap} AP${maneuver.cost.mp ? `, ${maneuver.cost.mp} MP` : ''}` : 'N/A'}</span>
                             </div>
-                            ${fullManeuver && fullManeuver.trigger ? `
+                            ${
+															fullManeuver && fullManeuver.trigger
+																? `
                                 <div>
                                     <span style="font-weight: bold; color: #7f8c8d; font-size: 0.8rem; text-transform: uppercase;">Trigger</span><br>
                                     <span style="color: #2c3e50; font-size: 0.9rem;">${fullManeuver.trigger}</span>
                                 </div>
-                            ` : ''}
-                            ${fullManeuver && fullManeuver.requirement ? `
+                            `
+																: ''
+														}
+                            ${
+															fullManeuver && fullManeuver.requirement
+																? `
                                 <div>
                                     <span style="font-weight: bold; color: #7f8c8d; font-size: 0.8rem; text-transform: uppercase;">Requirement</span><br>
                                     <span style="color: #2c3e50; font-size: 0.9rem;">${fullManeuver.requirement}</span>
                                 </div>
-                            ` : ''}
+                            `
+																: ''
+														}
                         </div>
                         
-                        ${fullManeuver && fullManeuver.description ? `
+                        ${
+													fullManeuver && fullManeuver.description
+														? `
                             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
                                 <h4 style="color: #2c3e50; margin: 0 0 10px 0; font-size: 1.1rem;">Description</h4>
                                 <p style="color: #34495e; line-height: 1.6; margin: 0; font-size: 0.95rem;">${fullManeuver.description}</p>
                             </div>
-                        ` : ''}
+                        `
+														: ''
+												}
                         
-                        ${fullManeuver && fullManeuver.trigger ? `
+                        ${
+													fullManeuver && fullManeuver.trigger
+														? `
                             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
                                 <h4 style="color: #2c3e50; margin: 0 0 10px 0; font-size: 1.1rem;">Trigger</h4>
                                 <p style="color: #34495e; line-height: 1.6; margin: 0; font-size: 0.95rem; font-style: italic;">${fullManeuver.trigger}</p>
                             </div>
-                        ` : ''}
+                        `
+														: ''
+												}
                         
-                        ${fullManeuver && fullManeuver.requirement ? `
+                        ${
+													fullManeuver && fullManeuver.requirement
+														? `
                             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
                                 <h4 style="color: #2c3e50; margin: 0 0 10px 0; font-size: 1.1rem;">Requirement</h4>
                                 <p style="color: #34495e; line-height: 1.6; margin: 0; font-size: 0.95rem;">${fullManeuver.requirement}</p>
                             </div>
-                        ` : ''}
+                        `
+														: ''
+												}
                         
-                        ${maneuver.notes ? `
+                        ${
+													maneuver.notes
+														? `
                             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
                                 <h4 style="color: #2c3e50; margin: 0 0 10px 0; font-size: 1.1rem;">Notes</h4>
                                 <p style="color: #34495e; line-height: 1.6; margin: 0; font-size: 0.95rem;">${maneuver.notes}</p>
                             </div>
-                        ` : ''}
+                        `
+														: ''
+												}
                     </div>
                 `;
-            }).join('')}
+							})
+							.join('')}
         </div>
     </div>
-    ` : ''}
+    `
+				: ''
+		}
 </body>
 </html>
             `;
 
-            // Write the HTML to the new window
-            printWindow.document.write(printHTML);
-            printWindow.document.close();
+		// Write the HTML to the new window
+		printWindow.document.write(printHTML);
+		printWindow.document.close();
 
-            // Wait for content to load, then print
-            printWindow.onload = () => {
-                setTimeout(() => {
-                    printWindow.print();
-                    printWindow.close();
-                }, 500);
-            };
-        } catch (error) {
-            console.error('Failed to print character sheet:', error);
-            alert('Failed to print character sheet');
-        }
-    };
+		// Wait for content to load, then print
+		printWindow.onload = () => {
+			setTimeout(() => {
+				printWindow.print();
+				printWindow.close();
+			}, 500);
+		};
+	} catch (error) {
+		console.error('Failed to print character sheet:', error);
+		alert('Failed to print character sheet');
+	}
+};

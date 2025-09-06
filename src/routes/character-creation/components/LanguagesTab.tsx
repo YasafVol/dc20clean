@@ -113,7 +113,7 @@ const LanguagesTab: React.FC<LanguagesTabProps> = ({
 					const isCommon = language.id === 'common';
 
 					return (
-						<StyledSelectionItem key={language.id}>
+						<StyledSelectionItem key={language.id} data-testid={`language-item-${language.id}`}>
 							<StyledSelectionHeader>
 								<StyledSelectionName>
 									{language.name}

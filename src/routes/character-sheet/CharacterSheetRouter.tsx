@@ -31,9 +31,11 @@ const CharacterSheetRouter: React.FC<CharacterSheetRouterProps> = ({ characterId
 
 	return (
 		<CharacterSheetProvider characterId={characterId}>
-			{isMobile
-				? <CharacterSheetMobile characterId={characterId} />
-				: <CharacterSheetClean characterId={characterId} onBack={handleBackToMenu} />}
+			{isMobile ? (
+				<CharacterSheetMobile characterId={characterId} />
+			) : (
+				<CharacterSheetClean characterId={characterId} onBack={handleBackToMenu} />
+			)}
 		</CharacterSheetProvider>
 	);
 };

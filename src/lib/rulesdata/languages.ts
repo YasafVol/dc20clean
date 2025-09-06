@@ -1,4 +1,4 @@
-import type { ILanguageData } from './types';
+import { ILanguageData } from './schemas/types';
 
 export const languagesData: ILanguageData[] = [
 	{

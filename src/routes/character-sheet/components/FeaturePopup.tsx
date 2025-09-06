@@ -25,9 +25,7 @@ const FeaturePopup: React.FC<FeaturePopupProps> = ({ feature, onClose }) => {
 					<StyledFeaturePopupTitle>{feature.name}</StyledFeaturePopupTitle>
 					<StyledFeaturePopupClose onClick={onClose}>×</StyledFeaturePopupClose>
 				</StyledFeaturePopupHeader>
-				<StyledFeaturePopupDescription>
-					{feature.description}
-				</StyledFeaturePopupDescription>
+				<StyledFeaturePopupDescription>{feature.description}</StyledFeaturePopupDescription>
 				{feature.sourceDetail && (
 					<StyledFeaturePopupSourceInfo>
 						Source: {feature.sourceDetail}

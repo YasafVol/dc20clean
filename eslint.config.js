@@ -25,11 +25,13 @@ export default ts.config(
 				'error',
 				{
 					selector: 'CallExpression[callee.object.name="JSON"][callee.property.name="parse"]',
-					message: 'JSON.parse is not allowed in character state management. Use typed objects directly from context.'
+					message:
+						'JSON.parse is not allowed in character state management. Use typed objects directly from context.'
 				},
 				{
 					selector: 'CallExpression[callee.object.name="JSON"][callee.property.name="stringify"]',
-					message: 'JSON.stringify is not allowed in character state management. Store native objects in context.'
+					message:
+						'JSON.stringify is not allowed in character state management. Store native objects in context.'
 				}
 			]
 		}

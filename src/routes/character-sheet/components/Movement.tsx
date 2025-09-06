@@ -17,13 +17,13 @@ interface MovementProps {
 const Movement: React.FC<MovementProps> = () => {
 	const { state } = useCharacterSheet();
 	const calculation = useCharacterCalculatedData();
-	
+
 	if (!state.character || !calculation) {
 		return <div>Loading movement...</div>;
 	}
-	
+
 	const breakdowns = calculation.breakdowns;
-	
+
 	// Use calculated stats for speed and jump distance
 	const speed = calculation.stats.finalMoveSpeed;
 	const jumpDistance = calculation.stats.finalJumpDistance;

@@ -1,4 +1,3 @@
-
 import styled, { createGlobalStyle } from 'styled-components';
 import backgroundImage from '../../../assets/Desktop1920.jpg';
 
@@ -39,7 +38,7 @@ export const StyledBackButton = styled.button`
 	.desktop-text {
 		display: inline;
 	}
-	
+
 	.mobile-text {
 		display: none;
 	}
@@ -57,11 +56,11 @@ export const StyledBackButton = styled.button`
 		justify-content: center;
 		border-radius: 50%; /* Make it circular */
 		min-width: 40px; /* Ensure minimum size */
-		
+
 		.desktop-text {
 			display: none;
 		}
-		
+
 		.mobile-text {
 			display: inline;
 		}
@@ -114,13 +113,15 @@ export const StyledInnerBorder = styled.div`
 `;
 
 /* Corner decorations using CSS-only approach */
-export const StyledCornerDecoration = styled.div<{ position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' }>`
+export const StyledCornerDecoration = styled.div<{
+	position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+}>`
 	position: absolute;
 	width: 3em;
 	height: 3em;
 	margin: -3px;
 	z-index: 10;
-	
+
 	/* Create decorative corner using CSS */
 	position: relative;
 
@@ -162,31 +163,57 @@ export const StyledCornerDecoration = styled.div<{ position: 'top-left' | 'top-r
 		position: absolute;
 		width: 100%;
 		height: 100%;
-		background: 
+		background:
 			radial-gradient(circle at 20% 20%, #8b4513 0%, #8b4513 15%, transparent 15%),
-			linear-gradient(45deg, #8b4513 0%, #8b4513 6px, transparent 6px, transparent 12px, #8b4513 12px, #8b4513 18px, transparent 18px),
-			linear-gradient(-45deg, #8b4513 0%, #8b4513 6px, transparent 6px, transparent 12px, #8b4513 12px, #8b4513 18px, transparent 18px);
+			linear-gradient(
+				45deg,
+				#8b4513 0%,
+				#8b4513 6px,
+				transparent 6px,
+				transparent 12px,
+				#8b4513 12px,
+				#8b4513 18px,
+				transparent 18px
+			),
+			linear-gradient(
+				-45deg,
+				#8b4513 0%,
+				#8b4513 6px,
+				transparent 6px,
+				transparent 12px,
+				#8b4513 12px,
+				#8b4513 18px,
+				transparent 18px
+			);
 		border-radius: 4px;
 	}
-	
-	${props => props.position === 'top-left' && `
+
+	${(props) =>
+		props.position === 'top-left' &&
+		`
 		left: 0;
 		top: 0;
 	`}
-	
-	${props => props.position === 'top-right' && `
+
+	${(props) =>
+		props.position === 'top-right' &&
+		`
 		top: 0;
 		right: 0;
 		transform: scaleX(-1);
 	`}
 	
-	${props => props.position === 'bottom-right' && `
+	${(props) =>
+		props.position === 'bottom-right' &&
+		`
 		right: 0;
 		bottom: 0;
 		transform: scale(-1);
 	`}
 	
-	${props => props.position === 'bottom-left' && `
+	${(props) =>
+		props.position === 'bottom-left' &&
+		`
 		left: 0;
 		bottom: 0;
 		transform: scaleY(-1);

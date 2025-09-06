@@ -3,7 +3,15 @@
  * @description Loader for the new class features JSON structure
  */
 
-import { SpellSchool, SpellList } from '../spells-data/types/spell.types';
+import { SpellSchool, SpellList } from '../schemas/spell.schema';
+import {
+	type IClassFeature,
+	type IClassFeatureChoice,
+	type IClassFeatureChoiceOption,
+	type ITraitEffect
+} from '../schemas/types';
+import { traitsData } from '../ancestries/traits';
+import { parseJsonSafe } from '../../utils/storageUtils';
 
 // Define interfaces for the new class features structure
 export interface ClassFeatureChoice {
@@ -102,19 +110,20 @@ export interface ClassDefinition {
 }
 
 // Import all the new schema class definitions
-import { barbarianClass } from '../_new_schema/barbarian_features';
-import { clericClass } from '../_new_schema/cleric_features';
-import { hunterClass } from '../_new_schema/hunter_features';
-import { championClass } from '../_new_schema/champion_features';
-import { wizardClass } from '../_new_schema/wizard_features';
-import { monkClass } from '../_new_schema/monk_features';
-import { rogueClass } from '../_new_schema/rogue_features';
-import { sorcererClass } from '../_new_schema/sorcerer_features';
-import { spellbladeClass } from '../_new_schema/spellblade_features';
-import { warlockClass } from '../_new_schema/warlock_features';
-import { bardClass } from '../_new_schema/bard_features';
-import { druidClass } from '../_new_schema/druid_features';
-import { commanderClass } from '../_new_schema/commander_features';
+import { barbarianClass } from '../classes-data/features/barbarian_features';
+import { clericClass } from '../classes-data/features/cleric_features';
+import { hunterClass } from '../classes-data/features/hunter_features';
+import { championClass } from '../classes-data/features/champion_features';
+import { wizardClass } from '../classes-data/features/wizard_features';
+import { monkClass } from '../classes-data/features/monk_features';
+import { rogueClass } from '../classes-data/features/rogue_features';
+import { sorcererClass } from '../classes-data/features/sorcerer_features';
+import { spellbladeClass } from '../classes-data/features/spellblade_features';
+import { warlockClass } from '../classes-data/features/warlock_features';
+import { bardClass } from '../classes-data/features/bard_features';
+import { druidClass } from '../classes-data/features/druid_features';
+import { commanderClass } from '../classes-data/features/commander_features';
+import { psionClass } from '../classes-data/features/psion_features';
 
 // Use the new schema class definitions
 const rawClassFeatures = [
@@ -130,13 +139,14 @@ const rawClassFeatures = [
 	warlockClass,
 	bardClass,
 	druidClass,
-	commanderClass
+	commanderClass,
+	psionClass
 ];
 
 // Debug logging
 console.log('🔍 Class Features Debug:', {
 	totalClasses: rawClassFeatures.length,
-	classNames: rawClassFeatures.map(c => c?.className || 'undefined')
+	classNames: rawClassFeatures.map((c) => c?.className || 'undefined')
 });
 
 // Export the class features data
@@ -162,9 +172,12 @@ export function getAvailableSpellSchools(classData: ClassDefinition): SpellSchoo
 // Helper function to find a class by name
 export function findClassByName(className: string): ClassDefinition | undefined {
 	console.log('🔍 findClassByName called with:', className);
-	console.log('🔍 Available classes:', classFeaturesData.map(c => c.className));
-	const result = classFeaturesData.find((cls) => 
-		cls.className.toLowerCase() === className.toLowerCase()
+	console.log(
+		'🔍 Available classes:',
+		classFeaturesData.map((c) => c.className)
+	);
+	const result = classFeaturesData.find(
+		(cls) => cls.className.toLowerCase() === className.toLowerCase()
 	);
 	console.log('🔍 findClassByName result:', result ? 'found' : 'not found');
 	return result;
@@ -223,21 +236,18 @@ export function getClassSpecificInfo(
 
 					if (selectedValue && choice.options) {
 						if (choice.count > 1) {
-							// Handle multiple selections
-							let selectedValues: string[] = [];
-							try {
-								// Try parsing as JSON array first
-								selectedValues = JSON.parse(selectedValue);
-							} catch (error) {
-								// If not JSON, try comma-separated string
+							// Handle multiple selections from stringified JSON or comma-separated list
+							let selectedValues: string[] = parseJsonSafe<string[]>(selectedValue) ?? [];
+
+							if (selectedValues.length === 0) {
+								// Fallback for non-JSON strings
 								if (selectedValue.includes(',')) {
 									selectedValues = selectedValue.split(',').map((s: string) => s.trim());
 								} else {
-									// Single value that failed JSON parse
 									selectedValues = [selectedValue];
 								}
 							}
-							
+
 							if (selectedValues.length > 0) {
 								const label = getDisplayLabel(className, feature.featureName, choiceIndex);
 								displayInfo.push({

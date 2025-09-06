@@ -21,20 +21,24 @@ function validateFeatureChoices(classId: string, selectedChoicesJson: string) {
 	if (!classFeatures) return; // No class features to validate
 
 	// Get level 1 features that have choices
-	const level1Features = classFeatures.coreFeatures.filter(feature => feature.levelGained === 1);
-	
+	const level1Features = classFeatures.coreFeatures.filter((feature) => feature.levelGained === 1);
+
 	level1Features.forEach((feature) => {
 		if (feature.choices) {
 			feature.choices.forEach((choice, choiceIndex) => {
 				// Create the same legacy choice ID mapping used in the UI
-				const choiceId = getLegacyChoiceId(classFeatures.className, feature.featureName, choiceIndex);
-				
+				const choiceId = getLegacyChoiceId(
+					classFeatures.className,
+					feature.featureName,
+					choiceIndex
+				);
+
 				if (choice.options && choice.options.length > 0) {
 					const selectedValue = choices[choiceId];
 					if (selectedValue === undefined) {
 						throw new Error(`Missing required choice for ${classData.name}: ${choice.prompt}`);
 					}
-					
+
 					// Validate the selected option(s)
 					if (choice.count > 1) {
 						// Multiple selections - should be a JSON array
@@ -43,14 +47,20 @@ function validateFeatureChoices(classId: string, selectedChoicesJson: string) {
 							const validOptions = choice.options.map((o) => o.name);
 							for (const value of selectedValues) {
 								if (!validOptions.includes(value)) {
-									throw new Error(`Invalid selected option for ${choiceId} in class ${classData.name}`);
+									throw new Error(
+										`Invalid selected option for ${choiceId} in class ${classData.name}`
+									);
 								}
 							}
 							if (selectedValues.length !== choice.count) {
-								throw new Error(`Must select exactly ${choice.count} options for ${choiceId} in class ${classData.name}`);
+								throw new Error(
+									`Must select exactly ${choice.count} options for ${choiceId} in class ${classData.name}`
+								);
 							}
 						} catch (error) {
-							throw new Error(`Invalid selection format for ${choiceId} in class ${classData.name}`);
+							throw new Error(
+								`Invalid selection format for ${choiceId} in class ${classData.name}`
+							);
 						}
 					} else {
 						// Single selection
@@ -66,13 +76,13 @@ function validateFeatureChoices(classId: string, selectedChoicesJson: string) {
 }
 
 function validateAttributeCapsAfterTraits(
-	attributes: any, 
-	selectedTraitIdsJson: string, 
-	ancestry1Id: string | null, 
+	attributes: any,
+	selectedTraitIdsJson: string,
+	ancestry1Id: string | null,
 	ancestry2Id: string | null
 ) {
 	const selectedTraitIds = JSON.parse(selectedTraitIdsJson || '[]');
-	
+
 	// Use the same trait processing logic as the calculator
 	const processedEffects = processTraitEffects(selectedTraitIds, ancestry1Id, ancestry2Id);
 
@@ -80,8 +90,10 @@ function validateAttributeCapsAfterTraits(
 	const finalAttributes = {
 		attribute_might: attributes.attribute_might + processedEffects.attributeModifiers.might,
 		attribute_agility: attributes.attribute_agility + processedEffects.attributeModifiers.agility,
-		attribute_charisma: attributes.attribute_charisma + processedEffects.attributeModifiers.charisma,
-		attribute_intelligence: attributes.attribute_intelligence + processedEffects.attributeModifiers.intelligence
+		attribute_charisma:
+			attributes.attribute_charisma + processedEffects.attributeModifiers.charisma,
+		attribute_intelligence:
+			attributes.attribute_intelligence + processedEffects.attributeModifiers.intelligence
 	};
 
 	const ATTRIBUTE_MAX_L1 = 3;
@@ -153,7 +165,12 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		// Cross-stage validation: attribute caps after traits
 		try {
-			validateAttributeCapsAfterTraits(attributes, data.selectedTraitIds, data.ancestry1Id, data.ancestry2Id);
+			validateAttributeCapsAfterTraits(
+				attributes,
+				data.selectedTraitIds,
+				data.ancestry1Id,
+				data.ancestry2Id
+			);
 		} catch (err: any) {
 			return json({ error: err.message }, { status: 400 });
 		}

@@ -5,9 +5,9 @@ import {
 	getLegacyChoiceId,
 	getAvailableSpellSchools
 } from '../../lib/rulesdata/loaders/class-features.loader';
-import { SpellSchool } from '../../lib/rulesdata/spells-data/types/spell.types';
+import { SpellSchool } from '../../lib/rulesdata/schemas/spell.schema';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
-import { techniques } from '../../lib/rulesdata/techniques';
+import { techniques } from '../../lib/rulesdata/martials/techniques';
 import {
 	StyledContainer,
 	StyledTitle,
@@ -30,7 +30,9 @@ import {
 function ClassFeatures() {
 	const { state, dispatch } = useCharacter();
 
-	const selectedClass = classesData.find((c) => c.id.toLowerCase() === state.classId?.toLowerCase());
+	const selectedClass = classesData.find(
+		(c) => c.id.toLowerCase() === state.classId?.toLowerCase()
+	);
 	const selectedClassFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
 	// NEW: Use typed data instead of JSON parsing
 	const selectedFeatureChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
@@ -112,17 +114,20 @@ function ClassFeatures() {
 			feature.effects.forEach((effect, effectIndex) => {
 				if (effect.userChoice) {
 					const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_effect_${effectIndex}_user_choice`;
-					
+
 					// Transform the userChoice options into the format expected by the UI
-					const options = effect.userChoice.options?.map((optionValue: string) => {
-						// Create a human-readable label from the option value
-						const label = optionValue.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
-						return {
-							value: optionValue,
-							label: label,
-							description: `Choose ${label.toLowerCase()} for this effect.`
-						};
-					}) || [];
+					const options =
+						effect.userChoice.options?.map((optionValue: string) => {
+							// Create a human-readable label from the option value
+							const label = optionValue
+								.replace(/_/g, ' ')
+								.replace(/\b\w/g, (l: string) => l.toUpperCase());
+							return {
+								value: optionValue,
+								label: label,
+								description: `Choose ${label.toLowerCase()} for this effect.`
+							};
+						}) || [];
 
 					featureChoices.push({
 						id: choiceId,
@@ -142,7 +147,7 @@ function ClassFeatures() {
 					feature.featureName,
 					choiceIndex
 				);
-				
+
 				choice.options?.forEach((option, optionIndex) => {
 					// Only process userChoice effects if this option is actually selected
 					const isOptionSelected = (() => {
@@ -160,17 +165,20 @@ function ClassFeatures() {
 						(option as any).effects.forEach((effect: any, effectIndex: number) => {
 							if (effect.userChoice) {
 								const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_choice_${choiceIndex}_option_${optionIndex}_effect_${effectIndex}_user_choice`;
-								
+
 								// Transform the userChoice options into the format expected by the UI
-								const options = effect.userChoice.options?.map((optionValue: string) => {
-									// Create a human-readable label from the option value
-									const label = optionValue.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
-									return {
-										value: optionValue,
-										label: label,
-										description: `Choose ${label.toLowerCase()} for this effect.`
-									};
-								}) || [];
+								const options =
+									effect.userChoice.options?.map((optionValue: string) => {
+										// Create a human-readable label from the option value
+										const label = optionValue
+											.replace(/_/g, ' ')
+											.replace(/\b\w/g, (l: string) => l.toUpperCase());
+										return {
+											value: optionValue,
+											label: label,
+											description: `Choose ${label.toLowerCase()} for this effect.`
+										};
+									}) || [];
 
 								featureChoices.push({
 									id: choiceId,
@@ -593,9 +601,9 @@ function ClassFeatures() {
 									{choice.options.map((option: any) => {
 										// Handle arrays directly (no legacy JSON string support)
 										const currentValues: string[] = selectedFeatureChoices[choice.id]
-											? (Array.isArray(selectedFeatureChoices[choice.id]) 
-												? selectedFeatureChoices[choice.id] as unknown as string[]
-												: [])
+											? Array.isArray(selectedFeatureChoices[choice.id])
+												? (selectedFeatureChoices[choice.id] as unknown as string[])
+												: []
 											: [];
 										const isSelected = currentValues.includes(option.value);
 										const canSelect = currentValues.length < (choice.maxSelections || 999);
@@ -630,9 +638,9 @@ function ClassFeatures() {
 										<StyledOptionDescription style={{ marginTop: '8px', fontStyle: 'italic' }}>
 											Select up to {choice.maxSelections} options (
 											{selectedFeatureChoices[choice.id]
-												? (Array.isArray(selectedFeatureChoices[choice.id]) 
+												? Array.isArray(selectedFeatureChoices[choice.id])
 													? (selectedFeatureChoices[choice.id] as unknown as string[]).length
-													: 0)
+													: 0
 												: 0}
 											/{choice.maxSelections} selected)
 										</StyledOptionDescription>

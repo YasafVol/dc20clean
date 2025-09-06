@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import type { ManeuverData } from '../../../types';
 import type { Maneuver } from '../../../lib/rulesdata/maneuvers';
-import { maneuvers as allManeuvers } from '../../../lib/rulesdata/maneuvers';
+import { maneuvers as allManeuvers } from '../../../lib/rulesdata/martials/maneuvers';
 import { useCharacterManeuvers, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
 	StyledSpellsSection,
@@ -17,7 +17,7 @@ import {
 	StyledRemoveButton,
 	StyledSpellSelect,
 	StyledSchoolFilter,
-	StyledSpellCell,
+	StyledSpellCell
 } from '../styles/Spells';
 
 export interface ManeuversProps {
@@ -28,7 +28,7 @@ export interface ManeuversProps {
 const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false }) => {
 	const { addManeuver, removeManeuver, state } = useCharacterSheet();
 	const maneuvers = useCharacterManeuvers();
-	
+
 	if (!state.character) {
 		return <div>Loading maneuvers...</div>;
 	}
@@ -42,7 +42,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 
 	console.log('🔍 Maneuvers component received:', {
 		maneuversCount: maneuvers.length,
-		maneuvers: maneuvers.map(m => ({ id: m.id, name: m.name, type: m.type }))
+		maneuvers: maneuvers.map((m) => ({ id: m.id, name: m.name, type: m.type }))
 	});
 
 	// Filter maneuvers based on selected type
@@ -50,7 +50,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 		if (typeFilter === 'all') {
 			return allManeuvers;
 		}
-		return allManeuvers.filter(maneuver => maneuver.type === typeFilter);
+		return allManeuvers.filter((maneuver) => maneuver.type === typeFilter);
 	}, [typeFilter]);
 
 	// Filter character's maneuvers based on selected type
@@ -113,7 +113,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 	};
 
 	const toggleManeuverExpansion = (maneuverId: string) => {
-		setExpandedManeuvers(prev => {
+		setExpandedManeuvers((prev) => {
 			const newSet = new Set(prev);
 			if (newSet.has(maneuverId)) {
 				newSet.delete(maneuverId);
@@ -125,7 +125,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 	};
 
 	const getUniqueTypes = () => {
-		const types = new Set(allManeuvers.map(maneuver => maneuver.type));
+		const types = new Set(allManeuvers.map((maneuver) => maneuver.type));
 		return Array.from(types).sort();
 	};
 
@@ -141,13 +141,13 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 								onChange={(e) => setTypeFilter(e.target.value)}
 							>
 								<option value="all">All Types</option>
-								{getUniqueTypes().map(type => (
-									<option key={type} value={type}>{type}</option>
+								{getUniqueTypes().map((type) => (
+									<option key={type} value={type}>
+										{type}
+									</option>
 								))}
 							</StyledSchoolFilter>
-							<StyledAddSpellButton onClick={addManeuverSlot}>
-								+ Add Maneuver
-							</StyledAddSpellButton>
+							<StyledAddSpellButton onClick={addManeuverSlot}>+ Add Maneuver</StyledAddSpellButton>
 						</>
 					)}
 				</StyledSpellsControls>

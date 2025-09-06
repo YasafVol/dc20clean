@@ -164,42 +164,41 @@ function CharacterName() {
 			</StyledCharacterInfo>
 
 			<StyledCharacterNameContainer>
-			<StyledInputGroup>
-				<StyledLabel htmlFor="characterName">Character Name</StyledLabel>
-				<StyledInput
-					id="characterName"
-					type="text"
-					value={characterName}
-					onChange={(e) => {
-						const value = e.target.value;
-						setCharacterName(value);
-						// Update the context immediately
-						dispatch({
-							type: 'UPDATE_STORE',
-							updates: {
-								finalName: value.trim() || null
-							}
-						});
-					}}
-					placeholder="Enter your character's name"
-				/>
-			</StyledInputGroup>
-			<StyledInputGroup>
-				<StyledLabel htmlFor="characterName">Name Suggestion</StyledLabel>
-				{suggestions.length > 0 && (
-					<StyledSuggestionGrid>
-						{suggestions.map((name, index) => (
-							<StyledSuggestionButton key={index} onClick={() => selectSuggestion(name)}>
-								{name}
-							</StyledSuggestionButton>
-						))}
-					</StyledSuggestionGrid>
-				)}
-				<StyledGenerateButton onClick={generateNames} disabled={isGenerating}>
-					{isGenerating ? 'Generating...' : 'Generate Names'}
-				</StyledGenerateButton>
-			</StyledInputGroup>
-
+				<StyledInputGroup>
+					<StyledLabel htmlFor="characterName">Character Name</StyledLabel>
+					<StyledInput
+						id="characterName"
+						type="text"
+						value={characterName}
+						onChange={(e) => {
+							const value = e.target.value;
+							setCharacterName(value);
+							// Update the context immediately
+							dispatch({
+								type: 'UPDATE_STORE',
+								updates: {
+									finalName: value.trim() || null
+								}
+							});
+						}}
+						placeholder="Enter your character's name"
+					/>
+				</StyledInputGroup>
+				<StyledInputGroup>
+					<StyledLabel htmlFor="characterName">Name Suggestion</StyledLabel>
+					{suggestions.length > 0 && (
+						<StyledSuggestionGrid>
+							{suggestions.map((name, index) => (
+								<StyledSuggestionButton key={index} onClick={() => selectSuggestion(name)}>
+									{name}
+								</StyledSuggestionButton>
+							))}
+						</StyledSuggestionGrid>
+					)}
+					<StyledGenerateButton onClick={generateNames} disabled={isGenerating}>
+						{isGenerating ? 'Generating...' : 'Generate Names'}
+					</StyledGenerateButton>
+				</StyledInputGroup>
 			</StyledCharacterNameContainer>
 
 			<StyledInputGroup>
@@ -222,8 +221,6 @@ function CharacterName() {
 					placeholder="Enter your name"
 				/>
 			</StyledInputGroup>
-
-			
 		</StyledContainer>
 	);
 }

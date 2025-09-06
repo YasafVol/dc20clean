@@ -16,6 +16,7 @@ export const StyledFeaturesTitle = styled.div`
 	color: #8b4513;
 	text-align: center;
 	margin-bottom: 1rem;
+	font-family: 'Inter', sans-serif;
 `;
 
 export const StyledFeatureCategory = styled.div`
@@ -29,6 +30,7 @@ export const StyledFeatureCategoryTitle = styled.div`
 	margin-bottom: 0.5rem;
 	padding-bottom: 0.3rem;
 	border-bottom: 1px solid #8b4513;
+	font-family: 'Inter', sans-serif;
 `;
 
 export const StyledFeatureGrid = styled.div`
@@ -55,17 +57,24 @@ export const StyledFeatureName = styled.span`
 `;
 
 export const StyledFeatureReadMore = styled.button`
-	background: #8b4513;
-	color: white;
-	border: none;
-	border-radius: 3px;
-	padding: 0.2rem 0.5rem;
-	font-size: 0.7rem;
+	background: transparent;
+	color: #8b4513;
+	border: 1px solid #8b4513;
+	border-radius: 50%;
+	width: 20px;
+	height: 20px;
 	cursor: pointer;
+	font-style: italic;
+	font-size: 0.8rem;
 	font-weight: bold;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
 
 	&:hover {
-		background: #654321;
+		background: #8b4513;
+		color: white;
 	}
 `;
 

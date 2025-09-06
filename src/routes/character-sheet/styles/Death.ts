@@ -14,6 +14,7 @@ export const StyledDeathTitle = styled.div`
 	font-weight: bold;
 	color: #8b4513;
 	margin-bottom: 0.5rem;
+	font-family: 'Inter', sans-serif;
 `;
 
 export const StyledHealthStatus = styled.div<{
@@ -74,6 +75,7 @@ export const StyledDeathStepsTitle = styled.div`
 	font-weight: bold;
 	color: #dc2626;
 	margin-bottom: 0.3rem;
+	font-family: 'Inter', sans-serif;
 `;
 
 export const StyledDeathStepsGrid = styled.div`
@@ -99,11 +101,16 @@ export const StyledDeathStep = styled.div<{ filled: boolean; isDead: boolean }>`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 0.7rem;
+	font-size: 12px;
 	font-weight: bold;
 	cursor: pointer;
 	border-radius: 3px;
 	transition: all 0.2s ease;
+	line-height: 1;
+	text-align: center;
+	user-select: none;
+	font-family: 'Inter', sans-serif;
+	padding-top: 1px;
 
 	&:hover {
 		background: ${(props) => {

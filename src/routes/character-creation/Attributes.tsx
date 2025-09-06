@@ -9,6 +9,7 @@ import {
 	StyledContainer,
 	StyledTitle,
 	StyledGrid,
+	StyledCardContainer,
 	StyledCard,
 	StyledCardTitle,
 	StyledControls,
@@ -22,14 +23,16 @@ const AttributeHeader = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	margin-bottom: 1rem;
+	margin-bottom: 0.25rem; /* tighter spacing */
+	text-align: center;
 `;
 
 const AttributeTotal = styled.div<{ $exceeded: boolean }>`
-	font-size: 1rem;
+	font-size: 0.9rem; /* slightly smaller */
 	font-weight: bold;
 	color: ${props => props.$exceeded ? '#dc2626' : '#059669'};
-	margin-bottom: 0.25rem;
+	margin-bottom: 0.25rem; /* tighter spacing */
+	text-align: center;
 `;
 
 const AttributeBreakdown = styled.div`
@@ -68,16 +71,13 @@ const BreakdownLine = styled.div`
 `;
 
 const ValidationMessage = styled.div<{ $type: 'error' | 'warning' }>`
-	/* Place the validation/feedback message at the bottom-left of the card,
-	   italicized with a leading asterisk. */
-	position: absolute;
-	left: 1rem;
-	right: auto;
-	bottom: 0.9rem;
+	/* Place the validation/feedback message below the card */
+	position: static;
+	margin-top: 0.5rem;
 	font-size: 0.85rem;
 	color: ${props => props.$type === 'error' ? '#ef4444' : '#e5e7eb'};
-	text-align: left;
-	padding: 0.25rem 0.5rem 0.25rem 0;
+	text-align: center;
+	padding: 0.25rem 0.5rem;
 	pointer-events: none; /* non-interactive decorative note */
 	background: transparent;
 	border-radius: 4px;
@@ -237,75 +237,77 @@ function Attributes() {
 					const canDecrease = currentValue > -2;
 					
 					return (
-						<StyledCard key={attribute.id}>
-							<AttributeHeader>
-								<StyledCardTitle>{attribute.name}</StyledCardTitle>
-							</AttributeHeader>
-							<AttributeTotal $exceeded={limit.exceeded}>
-								Final: {limit.current} (max {limit.max})
-							</AttributeTotal>
-							
-							<StyledDescription>{attribute.description}</StyledDescription>
-							
-							<StyledControls>
-								<StyledButton
-									onClick={() => decreaseAttribute(attributeKey)}
-									disabled={!canDecrease}
-									title={!canDecrease ? "Cannot decrease below -2" : ""}
-								>
-									-
-								</StyledButton>
-								<StyledValue>{currentValue}</StyledValue>
-								<StyledButton
-									onClick={() => increaseAttribute(attributeKey)}
-									disabled={!canIncrease}
-									title={!canIncrease ? (
-										attributePointsRemaining <= 0 ? "No points remaining" : 
-										realTimeValidation.message || "Cannot increase"
-									) : ""}
-								>
-									+
-								</StyledButton>
-							</StyledControls>
-							
-							{/* NEW: Display both base and effective values */}
-							{hasTraitEffect && (
-								<EffectiveValueDisplay>
-									<BaseValue>Base: {currentValue}</BaseValue>
-									<EffectiveValue $different={hasTraitEffect}>
-										Effective: {effectiveValue}
-									</EffectiveValue>
-								</EffectiveValueDisplay>
-							)}
-							
-							{/* Enhanced breakdown display */}
-							{(limit.traitBonuses > 0 || breakdown) && (
-								<AttributeBreakdown>
-									<BreakdownLine>
-										<span>Base Points:</span>
-										<span>{currentValue}</span>
-									</BreakdownLine>
-									{limit.traitBonuses > 0 && (
+						<StyledCardContainer key={attribute.id}>
+							<StyledCard>
+								<AttributeHeader>
+									<StyledCardTitle>{attribute.name}</StyledCardTitle>
+								</AttributeHeader>
+								<AttributeTotal $exceeded={limit.exceeded}>
+									Final: {limit.current} (max {limit.max})
+								</AttributeTotal>
+								
+								<StyledDescription>{attribute.description}</StyledDescription>
+								
+								<StyledControls>
+									<StyledButton
+										onClick={() => decreaseAttribute(attributeKey)}
+										disabled={!canDecrease}
+										title={!canDecrease ? "Cannot decrease below -2" : ""}
+									>
+										-
+									</StyledButton>
+									<StyledValue>{currentValue}</StyledValue>
+									<StyledButton
+										onClick={() => increaseAttribute(attributeKey)}
+										disabled={!canIncrease}
+										title={!canIncrease ? (
+											attributePointsRemaining <= 0 ? "No points remaining" : 
+											realTimeValidation.message || "Cannot increase"
+										) : ""}
+									>
+										+
+									</StyledButton>
+								</StyledControls>
+								
+								{/* NEW: Display both base and effective values */}
+								{hasTraitEffect && (
+									<EffectiveValueDisplay>
+										<BaseValue>Base: {currentValue}</BaseValue>
+										<EffectiveValue $different={hasTraitEffect}>
+											Effective: {effectiveValue}
+										</EffectiveValue>
+									</EffectiveValueDisplay>
+								)}
+								
+								{/* Enhanced breakdown display */}
+								{(limit.traitBonuses > 0 || breakdown) && (
+									<AttributeBreakdown>
 										<BreakdownLine>
-											<span>Trait Bonuses:</span>
-											<span>+{limit.traitBonuses}</span>
+											<span>Base Points:</span>
+											<span>{currentValue}</span>
 										</BreakdownLine>
-									)}
-									<BreakdownLine>
-										<span>Total:</span>
-										<span>{limit.current}</span>
-									</BreakdownLine>
-								</AttributeBreakdown>
-							)}
+										{limit.traitBonuses > 0 && (
+											<BreakdownLine>
+												<span>Trait Bonuses:</span>
+												<span>+{limit.traitBonuses}</span>
+											</BreakdownLine>
+										)}
+										<BreakdownLine>
+											<span>Total:</span>
+											<span>{limit.current}</span>
+										</BreakdownLine>
+									</AttributeBreakdown>
+								)}
+								
+								{/* NEW: Forced adjustment indicator */}
+								{forcedAdjustment && (
+									<ForcedAdjustmentIndicator>
+										Forced to minimum (-2), cost: {forcedAdjustment.pointsCost} points
+									</ForcedAdjustmentIndicator>
+								)}
+							</StyledCard>
 							
-							{/* NEW: Forced adjustment indicator */}
-							{forcedAdjustment && (
-								<ForcedAdjustmentIndicator>
-									Forced to minimum (-2), cost: {forcedAdjustment.pointsCost} points
-								</ForcedAdjustmentIndicator>
-							)}
-							
-							{/* Validation messages */}
+							{/* Validation messages - now outside the card */}
 							{limit.exceeded && (
 								<ValidationMessage $type="error">
 									Exceeds maximum limit of +{limit.max}
@@ -317,7 +319,7 @@ function Attributes() {
 									Cannot increase further due to trait bonuses
 								</ValidationMessage>
 							)}
-						</StyledCard>
+						</StyledCardContainer>
 					);
 				})}
 			</StyledGrid>

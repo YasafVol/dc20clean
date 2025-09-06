@@ -21,10 +21,10 @@ import {
 } from '../hooks/CharacterSheetProvider';
 
 export interface CombatProps {
-	// No props needed - all data comes from Provider
+	isMobile?: boolean;
 }
 
-const Combat: React.FC<CombatProps> = () => {
+const Combat: React.FC<CombatProps> = ({ isMobile }) => {
 	const { state, updateActionPoints } = useCharacterSheet();
 	const resources = useCharacterResources();
 	const calculatedData = useCharacterCalculatedData();
@@ -38,11 +38,15 @@ const Combat: React.FC<CombatProps> = () => {
 	// Get breakdowns from calculated data (Provider pattern)
 	const breakdowns = calculatedData.breakdowns || {};
 
+	// Mobile detection logic
+	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
+
 	const renderActionPoints = () => {
 		return [0, 1, 2, 3].map((index) => (
 			<StyledActionPoint
 				key={index}
 				used={index < (currentValues.actionPointsUsed || 0)}
+				$isMobile={effectiveIsMobile}
 				onClick={() => {
 					const currentUsed = currentValues.actionPointsUsed || 0;
 					const targetUsed = index + 1; // Circle number (1-4)
@@ -62,17 +66,17 @@ const Combat: React.FC<CombatProps> = () => {
 	};
 
 	return (
-		<StyledCombatSection>
-			<StyledCombatTitle>COMBAT</StyledCombatTitle>
+		<StyledCombatSection $isMobile={effectiveIsMobile}>
+			<StyledCombatTitle $isMobile={effectiveIsMobile}>COMBAT</StyledCombatTitle>
 
 			{/* Action Points */}
-			<StyledActionPointsContainer>
-				<StyledActionPointsTitle>ACTION POINTS</StyledActionPointsTitle>
-				<StyledActionPoints>{renderActionPoints()}</StyledActionPoints>
+			<StyledActionPointsContainer $isMobile={effectiveIsMobile}>
+				<StyledActionPointsTitle $isMobile={effectiveIsMobile}>ACTION POINTS</StyledActionPointsTitle>
+				<StyledActionPoints $isMobile={effectiveIsMobile}>{renderActionPoints()}</StyledActionPoints>
 			</StyledActionPointsContainer>
 
 			{/* Combat Stats */}
-			<StyledCombatStatsContainer>
+			<StyledCombatStatsContainer $isMobile={effectiveIsMobile}>
 				<StyledCombatStatRow>
 					<StyledCombatStatLabel>
 						<Tooltip
@@ -104,7 +108,9 @@ const Combat: React.FC<CombatProps> = () => {
 							<span>SAVE DC</span>
 						</Tooltip>
 					</StyledCombatStatLabel>
-					<StyledCombatStatValue>{calculatedData.stats.finalSaveDC}</StyledCombatStatValue>
+					<StyledCombatStatValue>
+						{calculatedData.stats.finalSaveDC}
+					</StyledCombatStatValue>
 				</StyledCombatStatRow>
 
 				<StyledCombatStatRow>

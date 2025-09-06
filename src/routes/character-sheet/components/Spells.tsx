@@ -25,9 +25,10 @@ import {
 export interface SpellsProps {
 	onSpellClick: (spell: Spell) => void;
 	readOnly?: boolean; // New prop for read-only display
+	isMobile?: boolean;
 }
 
-const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
+const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false, isMobile }) => {
 	const { addSpell, removeSpell, updateSpell, state } = useCharacterSheet();
 	const spells = useCharacterSpells();
 	
@@ -36,6 +37,10 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 	}
 	
 	const characterData = state.character;
+	
+	// Mobile detection logic
+	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
+	
 	const [schoolFilter, setSchoolFilter] = useState<string>('all');
 	// Initialize with all spells expanded by default
 	const [expandedSpells, setExpandedSpells] = useState<Set<string>>(() => {
@@ -140,15 +145,15 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 	};
 
 	return (
-		<StyledSpellsSection>
-			<StyledSpellsHeader>
-				<StyledSpellsTitle>Spells</StyledSpellsTitle>
+		<StyledSpellsSection $isMobile={effectiveIsMobile}>
+			<StyledSpellsHeader $isMobile={effectiveIsMobile}>
+				<StyledSpellsTitle $isMobile={effectiveIsMobile}>Spells</StyledSpellsTitle>
 				{!readOnly && (
-					<StyledSpellsControls>
-						<label style={{ fontSize: '0.8rem', color: '#8b4513', marginRight: '0.3rem' }}>
+					<StyledSpellsControls $isMobile={effectiveIsMobile}>
+						<label style={{ fontSize: '0.8rem', color: effectiveIsMobile ? '#f5d020' : '#8b4513', marginRight: '0.3rem' }}>
 							Filter by School:
 						</label>
-						<StyledSchoolFilter value={schoolFilter} onChange={handleSchoolFilterChange}>
+						<StyledSchoolFilter $isMobile={effectiveIsMobile} value={schoolFilter} onChange={handleSchoolFilterChange}>
 							<option value="all">All Schools</option>
 							{(Object.values(SpellSchool) as string[]).map(school => (
 								<option key={school} value={school}>
@@ -156,26 +161,26 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 								</option>
 							))}
 						</StyledSchoolFilter>
-						<StyledAddSpellButton onClick={addSpellSlot}>
+						<StyledAddSpellButton $isMobile={effectiveIsMobile} onClick={addSpellSlot}>
 							+ Add {schoolFilter !== 'all' ? `${schoolFilter} ` : ''}Spell
 						</StyledAddSpellButton>
 					</StyledSpellsControls>
 				)}
 			</StyledSpellsHeader>
 
-			<StyledSpellsContainer>
-				<StyledSpellsHeaderRow>
+			<StyledSpellsContainer $isMobile={effectiveIsMobile}>
+				<StyledSpellsHeaderRow $isMobile={effectiveIsMobile}>
 					<span></span> {/* Empty column for remove button */}
-					<StyledHeaderColumn>Spell Name</StyledHeaderColumn>
-					<StyledHeaderColumn>School</StyledHeaderColumn>
-					<StyledHeaderColumn>Type</StyledHeaderColumn>
-					<StyledHeaderColumn>AP Cost</StyledHeaderColumn>
-					<StyledHeaderColumn>MP Cost</StyledHeaderColumn>
-					<StyledHeaderColumn>Range</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>Spell Name</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>School</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>Type</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>AP Cost</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>MP Cost</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>Range</StyledHeaderColumn>
 				</StyledSpellsHeaderRow>
 
 				{filteredCharacterSpells.length === 0 ? (
-					<StyledEmptyState>
+					<StyledEmptyState $isMobile={effectiveIsMobile}>
 						{schoolFilter !== 'all' 
 							? `No ${schoolFilter} spells found. ${readOnly ? '' : 'Click "Add Spell" to add spells to your character.'}`
 							: readOnly ? 'No spells known.' : 'No spells selected. Click "Add Spell" to add spells to your character.'
@@ -191,21 +196,22 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 							
 						return (
 							<React.Fragment key={spell.id}>
-								<StyledSpellRow>
+								<StyledSpellRow $isMobile={effectiveIsMobile}>
 									{/* Remove Button - only show in edit mode */}
 									{!readOnly && (
-										<StyledRemoveButton onClick={() => removeSpellSlot(originalIndex)}>
+										<StyledRemoveButton $isMobile={effectiveIsMobile} onClick={() => removeSpellSlot(originalIndex)}>
 											×
 										</StyledRemoveButton>
 									)}
 
 									{/* Spell Name - show as text in read-only mode, dropdown in edit mode */}
 									{readOnly ? (
-										<StyledSpellCell style={{ fontWeight: 'bold', color: '#2c3e50' }}>
+										<StyledSpellCell $isMobile={effectiveIsMobile} style={{ fontWeight: 'bold', color: effectiveIsMobile ? '#f5d020' : '#2c3e50' }}>
 											{spell.spellName || 'Unknown Spell'}
 										</StyledSpellCell>
 									) : (
 										<StyledSpellSelect
+											$isMobile={effectiveIsMobile}
 											value={spell.spellName}
 											onChange={(e) => updateSpellField(originalIndex, 'spellName', e.target.value)}
 										>
@@ -233,21 +239,21 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 									)}
 
 									{/* School */}
-									<StyledSpellCell>{spell.school}</StyledSpellCell>
+									<StyledSpellCell $isMobile={effectiveIsMobile}>{spell.school}</StyledSpellCell>
 
 									{/* Type (Cantrip or Spell) */}
-									<StyledSpellCell>
+									<StyledSpellCell $isMobile={effectiveIsMobile}>
 										{spell.isCantrip ? 'Cantrip' : 'Spell'}
 									</StyledSpellCell>
 
 								{/* AP Cost */}
-								<StyledSpellCell>{spell.cost?.ap || '-'}</StyledSpellCell>
+								<StyledSpellCell $isMobile={effectiveIsMobile}>{spell.cost?.ap || '-'}</StyledSpellCell>
 
 								{/* MP Cost */}
-								<StyledSpellCell>{spell.cost?.mp || '-'}</StyledSpellCell>
+								<StyledSpellCell $isMobile={effectiveIsMobile}>{spell.cost?.mp || '-'}</StyledSpellCell>
 
 									{/* Range */}
-									<StyledSpellCell style={{ fontSize: '0.7rem' }}>
+									<StyledSpellCell $isMobile={effectiveIsMobile} style={{ fontSize: '0.7rem' }}>
 										{spell.range || '-'}
 									</StyledSpellCell>
 
@@ -265,6 +271,18 @@ const Spells: React.FC<SpellsProps> = ({ onSpellClick, readOnly = false }) => {
 										borderRadius: '0 0 4px 4px',
 										marginTop: '-0.5rem'
 									}}>
+										{/* Spell Name Header */}
+										<div style={{ 
+											fontSize: '1rem', 
+											fontWeight: 'bold', 
+											color: '#8b4513', 
+											marginBottom: '0.5rem',
+											borderBottom: '1px solid #ddd',
+											paddingBottom: '0.3rem'
+										}}>
+											{selectedSpell.name}
+										</div>
+										
 										<div style={{ fontSize: '0.8rem' }}>
 											<strong>Description:</strong>
 											<br />

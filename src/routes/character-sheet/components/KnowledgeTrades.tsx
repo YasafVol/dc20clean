@@ -13,11 +13,13 @@ import { StyledProficiencyDots, StyledDot } from '../styles/Skills';
 interface KnowledgeTradesProps {
 	onKnowledgeInfoClick?: (knowledgeName: string) => void;
 	onTradeInfoClick?: (tradeName: string) => void;
+	isMobile?: boolean;
 }
 
 const KnowledgeTrades: React.FC<KnowledgeTradesProps> = ({ 
 	onKnowledgeInfoClick, 
-	onTradeInfoClick 
+	onTradeInfoClick,
+	isMobile = false
 }) => {
 	const knowledge = useCharacterKnowledge();
 	const trades = useCharacterTrades();
@@ -25,30 +27,30 @@ const KnowledgeTrades: React.FC<KnowledgeTradesProps> = ({
 	return (
 		<>
 			{/* Knowledge Section */}
-			<KnowledgeTradesSection>
-				<SectionTitle>KNOWLEDGE</SectionTitle>
-				<SectionDescription>Intelligence-based knowledge trades</SectionDescription>
+			<KnowledgeTradesSection $isMobile={isMobile}>
+				<SectionTitle $isMobile={isMobile}>KNOWLEDGE</SectionTitle>
+				<SectionDescription $isMobile={isMobile}>Intelligence-based knowledge trades</SectionDescription>
 								{knowledge.map((knowledgeItem) => (
-				<SkillRow key={knowledgeItem.id}>
-					<SkillName>{knowledgeItem.name.toUpperCase()}</SkillName>
+				<SkillRow key={knowledgeItem.id} $isMobile={isMobile}>
+					<SkillName $isMobile={isMobile}>{knowledgeItem.name.toUpperCase()}</SkillName>
 					<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-						<StyledProficiencyDots>
+						<StyledProficiencyDots $isMobile={isMobile}>
 							{[1, 2, 3, 4, 5].map((level) => (
-								<StyledDot key={level} $filled={level <= knowledgeItem.proficiency} />
+								<StyledDot key={level} $filled={level <= knowledgeItem.proficiency} $isMobile={isMobile} />
 							))}
 						</StyledProficiencyDots>
 						{knowledgeItem.bonus !== undefined && (
 							<span style={{
 								fontSize: '0.875rem',
 								fontWeight: '600',
-								color: knowledgeItem.bonus >= 0 ? '#059669' : '#dc2626',
+								color: knowledgeItem.bonus >= 0 ? (isMobile ? '#22c55e' : '#059669') : (isMobile ? '#ef4444' : '#dc2626'),
 								minWidth: '2rem',
 								textAlign: 'center'
 							}}>
 								{knowledgeItem.bonus >= 0 ? '+' : ''}{knowledgeItem.bonus}
 							</span>
 						)}
-						<StyledInfoButton onClick={() => onKnowledgeInfoClick?.(knowledgeItem.name)}>
+						<StyledInfoButton $isMobile={isMobile} onClick={() => onKnowledgeInfoClick?.(knowledgeItem.name)}>
 							i
 						</StyledInfoButton>
 					</div>
@@ -57,38 +59,38 @@ const KnowledgeTrades: React.FC<KnowledgeTradesProps> = ({
 		</KnowledgeTradesSection>
 
 			{/* Trades Section */}
-			<KnowledgeTradesSection>
-				<SectionTitle>TRADES</SectionTitle>
-				<SectionDescription>Selected practical trades & crafts</SectionDescription>
+			<KnowledgeTradesSection $isMobile={isMobile}>
+				<SectionTitle $isMobile={isMobile}>TRADES</SectionTitle>
+				<SectionDescription $isMobile={isMobile}>Selected practical trades & crafts</SectionDescription>
 				{trades.length > 0 ? (
 					trades.map((trade) => (
-					<SkillRow key={trade.id}>
-						<SkillName>{trade.name.toUpperCase()}</SkillName>
+					<SkillRow key={trade.id} $isMobile={isMobile}>
+						<SkillName $isMobile={isMobile}>{trade.name.toUpperCase()}</SkillName>
 						<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-							<StyledProficiencyDots>
+							<StyledProficiencyDots $isMobile={isMobile}>
 								{[1, 2, 3, 4, 5].map((level) => (
-									<StyledDot key={level} $filled={level <= trade.proficiency} />
+									<StyledDot key={level} $filled={level <= trade.proficiency} $isMobile={isMobile} />
 								))}
 							</StyledProficiencyDots>
 							{trade.bonus !== undefined && (
 								<span style={{
 									fontSize: '0.875rem',
 									fontWeight: '600',
-									color: trade.bonus >= 0 ? '#059669' : '#dc2626',
+									color: trade.bonus >= 0 ? (isMobile ? '#22c55e' : '#059669') : (isMobile ? '#ef4444' : '#dc2626'),
 									minWidth: '2rem',
 									textAlign: 'center'
 								}}>
 									{trade.bonus >= 0 ? '+' : ''}{trade.bonus}
 								</span>
 							)}
-							<StyledInfoButton onClick={() => onTradeInfoClick?.(trade.name)}>
+							<StyledInfoButton $isMobile={isMobile} onClick={() => onTradeInfoClick?.(trade.name)}>
 								i
 							</StyledInfoButton>
 						</div>
 					</SkillRow>
 				))
 				) : (
-					<EmptyMessage>No trades selected</EmptyMessage>
+					<EmptyMessage $isMobile={isMobile}>No trades selected</EmptyMessage>
 				)}
 			</KnowledgeTradesSection>
 		</>

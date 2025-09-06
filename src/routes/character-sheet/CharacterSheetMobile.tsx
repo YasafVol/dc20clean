@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import type { SkillData } from '../../types';
 
+console.log('📱 CharacterSheetMobile.tsx file loaded!');
+console.log('📱 CharacterSheetMobile.tsx module executing!');
+
 // Hooks
 import { useCharacterSheet } from './hooks/CharacterSheetProvider';
 
@@ -18,6 +21,9 @@ import {
 	MobileSectionTitle,
 	MobileCombatWrapper
 } from './styles/CharacterSheetMobile.styles';
+
+// Import consistent mobile box styling
+import { MobileResourceBox } from './styles/Potions';
 
 // Import the existing functional components
 import LeftColumn from './components/LeftColumn';
@@ -54,20 +60,23 @@ import InventoryPopup from './components/InventoryPopup';
  * - Maintained all original functionality
  */
 const CharacterSheetMobile: React.FC = () => {
-	// Use Provider hooks for data
+	console.log('📱📱📱 MOBILE COMPONENT FUNCTION EXECUTING! 📱📱📱');
+	console.log('🧙‍♂️ CharacterSheetMobile component rendering!');
+	
+	// Hook to get character data and sheet actions
 	const { state } = useCharacterSheet();
 	const characterData = state.character;
-
-	// Navigation state - start with skills tab like original
-	const [activeTab, setActiveTab] = useState('skills');
 	
-	// Modal state
+	// State management for mobile navigation
+	const [activeTab, setActiveTab] = useState<string>('skills');
+	
+	// State for modal popups
 	const [selectedFeature, setSelectedFeature] = useState<any>(null);
 	const [selectedSpell, setSelectedSpell] = useState<any>(null);
 	const [selectedAttack, setSelectedAttack] = useState<any>(null);
 	const [selectedInventoryItem, setSelectedInventoryItem] = useState<any>(null);
-
-	// Modal handlers
+	
+	// Popup close handlers
 	const closeFeaturePopup = () => setSelectedFeature(null);
 	const closeSpellPopup = () => setSelectedSpell(null);
 	const closeAttackPopup = () => setSelectedAttack(null);
@@ -190,6 +199,7 @@ ${characterData.characterState?.notes?.playerNotes || 'No notes'}`;
 
 	// Render content based on active tab  
 	const renderTabContent = () => {
+		console.log(`📱 CharacterSheetMobile activeTab: "${activeTab}"`);
 		if (!characterData) return null;
 
 		// Calculate skill data like in original
@@ -198,38 +208,45 @@ ${characterData.characterState?.notes?.playerNotes || 'No notes'}`;
 
 		switch (activeTab) {
 			case 'skills':
+				console.log('📱 CharacterSheetMobile rendering SKILLS tab');
 				return (
 					<div>
 						<LeftColumn
 							characterData={characterData}
 							skillsByAttribute={skillsByAttribute}
 							languages={languages}
+							isMobile={true}
 						/>
-						<Features onFeatureClick={openFeaturePopup} />
+						<Features onFeatureClick={openFeaturePopup} isMobile={true} />
 					</div>
 				);
 			case 'combat':
+				console.log('📱 CharacterSheetMobile rendering COMBAT tab');
 				return (
 					<MobileCombatWrapper>
 						<Resources isMobile={true} />
-						<Defenses />
-						<Combat />
-						<DeathExhaustion />
-						<Spells onSpellClick={openSpellPopup} />
-						<Attacks onAttackClick={openAttackPopup} />
-						<Maneuvers onManeuverClick={openManeuverPopup} />
-						<Movement />
+						<Defenses isMobile={true} />
+						<Combat isMobile={true} />
+						<DeathExhaustion isMobile={true} />
+						<Spells onSpellClick={openSpellPopup} isMobile={true} />
+						<Attacks onAttackClick={openAttackPopup} isMobile={true} />
+						<Maneuvers onManeuverClick={openManeuverPopup} isMobile={true} />
+						<Movement isMobile={true} />
 					</MobileCombatWrapper>
 				);
 			case 'inventory':
 			case 'items':
+				console.log('📱 CharacterSheetMobile rendering ITEMS tab with Currency');
+				const testMobile = true;
+				console.log('📱 testMobile variable:', testMobile);
 				return (
 					<div>
 						<Inventory onItemClick={openInventoryPopup} />
-						<Currency />
+						<Currency isMobile={testMobile} />
 					</div>
 				);
 			case 'info':
+				console.log('📱 CharacterSheetMobile rendering INFO tab');
 				return (
 					<div>
 						{/* Character Summary */}
@@ -252,7 +269,7 @@ ${characterData.characterState?.notes?.playerNotes || 'No notes'}`;
 									📋 Copy
 								</button>
 							</div>
-							<div style={{ padding: '1rem', backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', marginBottom: '1rem' }}>
+							<MobileResourceBox>
 								<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.9rem' }}>
 									<div><strong>Character:</strong> {characterData.finalName}</div>
 									<div><strong>Player:</strong> {characterData.finalPlayerName || 'Unknown'}</div>
@@ -263,7 +280,7 @@ ${characterData.characterState?.notes?.playerNotes || 'No notes'}`;
 										<div><strong>Heritage:</strong> {characterData.ancestry2Name}</div>
 									)}
 								</div>
-							</div>
+							</MobileResourceBox>
 						</MobileSection>
 
 						{/* Resources - Grit and Rest Points */}
@@ -275,7 +292,7 @@ ${characterData.characterState?.notes?.playerNotes || 'No notes'}`;
 						{/* Core Stats Summary */}
 						<MobileSection>
 							<MobileSectionTitle>Core Statistics</MobileSectionTitle>
-							<div style={{ padding: '1rem', backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', marginBottom: '1rem' }}>
+							<MobileResourceBox>
 								<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.9rem' }}>
 									<div><strong>HP Max:</strong> {characterData.finalHPMax}</div>
 									<div><strong>SP Max:</strong> {characterData.finalSPMax}</div>
@@ -286,13 +303,13 @@ ${characterData.characterState?.notes?.playerNotes || 'No notes'}`;
 									<div><strong>Jump Distance:</strong> {characterData.finalJumpDistance} ft</div>
 									<div><strong>Death Threshold:</strong> {characterData.finalDeathThreshold}</div>
 								</div>
-							</div>
+							</MobileResourceBox>
 						</MobileSection>
 
 						{/* Attributes Summary */}
 						<MobileSection>
 							<MobileSectionTitle>Attributes</MobileSectionTitle>
-							<div style={{ padding: '1rem', backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', marginBottom: '1rem' }}>
+							<MobileResourceBox>
 								<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.9rem' }}>
 									<div><strong>Might:</strong> {characterData.finalMight}</div>
 									<div><strong>Agility:</strong> {characterData.finalAgility}</div>
@@ -302,13 +319,13 @@ ${characterData.characterState?.notes?.playerNotes || 'No notes'}`;
 										<strong>Prime:</strong> {characterData.finalPrimeModifierAttribute.toUpperCase()} (+{characterData.finalPrimeModifierValue})
 									</div>
 								</div>
-							</div>
+							</MobileResourceBox>
 						</MobileSection>
 
 						{/* Player Notes */}
 						<MobileSection>
 							<MobileSectionTitle>Player Notes</MobileSectionTitle>
-							<div style={{ padding: '1rem', backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', marginBottom: '1rem' }}>
+							<MobileResourceBox>
 								<textarea
 									value={localNotes}
 									onChange={(e) => setLocalNotes(e.target.value)}
@@ -330,20 +347,20 @@ ${characterData.characterState?.notes?.playerNotes || 'No notes'}`;
 								<div style={{ marginTop: '0.5rem', fontSize: '0.7rem', color: '#aaa' }}>
 									💡 Tip: Notes are saved locally while editing. Use the main save function to persist changes.
 								</div>
-							</div>
+							</MobileResourceBox>
 						</MobileSection>
 
 						{/* Character Metadata */}
 						<MobileSection>
 							<MobileSectionTitle>Character Info</MobileSectionTitle>
-							<div style={{ padding: '1rem', backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', fontSize: '0.8rem' }}>
+							<MobileResourceBox style={{ fontSize: '0.8rem' }}>
 								<div><strong>Created:</strong> {new Date(characterData.createdAt).toLocaleDateString()}</div>
 								<div><strong>Last Modified:</strong> {new Date(characterData.lastModified).toLocaleDateString()}</div>
 								{characterData.completedAt && (
 									<div><strong>Completed:</strong> {new Date(characterData.completedAt).toLocaleDateString()}</div>
 								)}
 								<div><strong>Schema Version:</strong> {characterData.schemaVersion}</div>
-							</div>
+							</MobileResourceBox>
 						</MobileSection>
 					</div>
 				);

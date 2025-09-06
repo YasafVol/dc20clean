@@ -100,7 +100,8 @@ import { handlePrintCharacterSheet } from './utils';
 
 // LEGACY: saveManualDefense function removed - now handled by CharacterSheetProvider
 
-const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) => {
+const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, onBack, isVisible = true }) => {
+	console.log('🧙‍♂️ CharacterSheetClean component rendering! characterId:', characterId);
 	// Use Provider hooks for data and update methods
 	const {
 		state,
@@ -1113,7 +1114,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 							<Features onFeatureClick={openFeaturePopup} />
 
 							{/* Currency Section */}
-							<Currency />
+							<Currency isMobile={false} />
 						</StyledRightColumn>
 					</StyledMainGrid>
 				)}
@@ -1222,7 +1223,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 						{activeMobileSection === 'features' && (
 							<div>
 								<Inventory onItemClick={openInventoryPopup} />
-								<Currency />
+								<Currency isMobile={true} />
 							</div>
 						)}
 
@@ -1439,4 +1440,4 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 	);
 };
 
-export default CharacterSheet;
+export default CharacterSheetClean;

@@ -503,6 +503,14 @@ export function useCharacterSheetReducer() {
 		dispatch({ type: 'UPDATE_NOTES', notes });
 	}, []);
 
+	const updateGritPoints = useCallback((grit: number) => {
+		dispatch({ type: 'UPDATE_CURRENT_GRIT_POINTS', grit });
+	}, []);
+
+	const updateRestPoints = useCallback((rest: number) => {
+		dispatch({ type: 'UPDATE_CURRENT_REST_POINTS', rest });
+	}, []);
+
 	return {
 		state,
 		dispatch,
@@ -525,6 +533,8 @@ export function useCharacterSheetReducer() {
 		removeManeuver,
 		updateInventory,
 		updateCurrency,
-		updateNotes
+		updateNotes,
+		updateGritPoints,
+		updateRestPoints
 	};
 }

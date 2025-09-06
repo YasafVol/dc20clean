@@ -645,7 +645,10 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 
 	// Handle knowledge info popup
 	const handleKnowledgeInfoClick = (knowledgeName: string) => {
+		console.log('Knowledge clicked:', knowledgeName);
+		console.log('Available knowledge data:', knowledgeData);
 		const knowledgeItem = knowledgeData.find(k => k.name.toLowerCase() === knowledgeName.toLowerCase());
+		console.log('Found knowledge item:', knowledgeItem);
 		if (knowledgeItem) {
 			const featureData: FeatureData = {
 				id: knowledgeItem.id,
@@ -654,13 +657,17 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 				source: 'choice', // Using 'choice' since it's not ancestry or class
 				sourceDetail: 'Knowledge'
 			};
+			console.log('Created feature data:', featureData);
 			setSelectedFeature(featureData);
 		}
 	};
 
 	// Handle trade info popup  
 	const handleTradeInfoClick = (tradeName: string) => {
+		console.log('Trade clicked:', tradeName);
+		console.log('Available trades data:', tradesData);
 		const tradeItem = tradesData.find(t => t.name.toLowerCase() === tradeName.toLowerCase());
+		console.log('Found trade item:', tradeItem);
 		if (tradeItem) {
 			const featureData: FeatureData = {
 				id: tradeItem.id,
@@ -669,6 +676,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ characterId, onBack }) 
 				source: 'choice', // Using 'choice' since it's not ancestry or class
 				sourceDetail: 'Trade'
 			};
+			console.log('Created feature data:', featureData);
 			setSelectedFeature(featureData);
 		}
 	};

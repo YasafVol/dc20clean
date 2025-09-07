@@ -34,22 +34,37 @@ const MobileResourceSection: React.FC<MobileResourceSectionProps> = ({
 						{resources?.current?.currentHP || 0} / {characterData.finalHPMax}
 						{resources?.current.tempHP > 0 && ` (+${resources?.current.tempHP} temp)`}
 					</MobileResourceValue>
-					<MobileResourceBar 
-						$percentage={getFillPercentage(resources?.current?.currentHP || 0, characterData.finalHPMax)} 
+					<MobileResourceBar
+						$percentage={getFillPercentage(
+							resources?.current?.currentHP || 0,
+							characterData.finalHPMax
+						)}
 					/>
 					<MobileResourceControls>
-						<MobileResourceButton onClick={() => adjustResource('currentHP', -1)}>-</MobileResourceButton>
-						<span style={{ color: '#f5d020', fontSize: '14px', minWidth: '40px', textAlign: 'center' }}>
+						<MobileResourceButton onClick={() => adjustResource('currentHP', -1)}>
+							-
+						</MobileResourceButton>
+						<span
+							style={{ color: '#f5d020', fontSize: '14px', minWidth: '40px', textAlign: 'center' }}
+						>
 							HP
 						</span>
-						<MobileResourceButton onClick={() => adjustResource('currentHP', 1)}>+</MobileResourceButton>
+						<MobileResourceButton onClick={() => adjustResource('currentHP', 1)}>
+							+
+						</MobileResourceButton>
 					</MobileResourceControls>
 					<MobileResourceControls style={{ marginTop: '4px' }}>
-						<MobileResourceButton onClick={() => adjustResource('tempHP', -1)}>-</MobileResourceButton>
-						<span style={{ color: '#ccc', fontSize: '12px', minWidth: '40px', textAlign: 'center' }}>
+						<MobileResourceButton onClick={() => adjustResource('tempHP', -1)}>
+							-
+						</MobileResourceButton>
+						<span
+							style={{ color: '#ccc', fontSize: '12px', minWidth: '40px', textAlign: 'center' }}
+						>
 							Temp
 						</span>
-						<MobileResourceButton onClick={() => adjustResource('tempHP', 1)}>+</MobileResourceButton>
+						<MobileResourceButton onClick={() => adjustResource('tempHP', 1)}>
+							+
+						</MobileResourceButton>
 					</MobileResourceControls>
 				</MobileResourceItem>
 
@@ -60,15 +75,29 @@ const MobileResourceSection: React.FC<MobileResourceSectionProps> = ({
 						<MobileResourceValue>
 							{resources?.current?.currentSP || 0} / {characterData.finalSPMax}
 						</MobileResourceValue>
-						<MobileResourceBar 
-							$percentage={getFillPercentage(resources?.current.currentSP, characterData.finalSPMax)} 
+						<MobileResourceBar
+							$percentage={getFillPercentage(
+								resources?.current.currentSP,
+								characterData.finalSPMax
+							)}
 						/>
 						<MobileResourceControls>
-							<MobileResourceButton onClick={() => adjustResource('currentSP', -1)}>-</MobileResourceButton>
-							<span style={{ color: '#f5d020', fontSize: '14px', minWidth: '40px', textAlign: 'center' }}>
+							<MobileResourceButton onClick={() => adjustResource('currentSP', -1)}>
+								-
+							</MobileResourceButton>
+							<span
+								style={{
+									color: '#f5d020',
+									fontSize: '14px',
+									minWidth: '40px',
+									textAlign: 'center'
+								}}
+							>
 								SP
 							</span>
-							<MobileResourceButton onClick={() => adjustResource('currentSP', 1)}>+</MobileResourceButton>
+							<MobileResourceButton onClick={() => adjustResource('currentSP', 1)}>
+								+
+							</MobileResourceButton>
 						</MobileResourceControls>
 					</MobileResourceItem>
 				)}
@@ -80,15 +109,29 @@ const MobileResourceSection: React.FC<MobileResourceSectionProps> = ({
 						<MobileResourceValue>
 							{resources?.current?.currentMP || 0} / {characterData.finalMPMax}
 						</MobileResourceValue>
-						<MobileResourceBar 
-							$percentage={getFillPercentage(resources?.current.currentMP, characterData.finalMPMax)} 
+						<MobileResourceBar
+							$percentage={getFillPercentage(
+								resources?.current.currentMP,
+								characterData.finalMPMax
+							)}
 						/>
 						<MobileResourceControls>
-							<MobileResourceButton onClick={() => adjustResource('currentMP', -1)}>-</MobileResourceButton>
-							<span style={{ color: '#f5d020', fontSize: '14px', minWidth: '40px', textAlign: 'center' }}>
+							<MobileResourceButton onClick={() => adjustResource('currentMP', -1)}>
+								-
+							</MobileResourceButton>
+							<span
+								style={{
+									color: '#f5d020',
+									fontSize: '14px',
+									minWidth: '40px',
+									textAlign: 'center'
+								}}
+							>
 								MP
 							</span>
-							<MobileResourceButton onClick={() => adjustResource('currentMP', 1)}>+</MobileResourceButton>
+							<MobileResourceButton onClick={() => adjustResource('currentMP', 1)}>
+								+
+							</MobileResourceButton>
 						</MobileResourceControls>
 					</MobileResourceItem>
 				)}
@@ -101,11 +144,22 @@ const MobileResourceSection: React.FC<MobileResourceSectionProps> = ({
 							{resources?.current?.currentRestPoints || 0} / {resources?.original?.maxRestPoints}
 						</MobileResourceValue>
 						<MobileResourceControls>
-							<MobileResourceButton onClick={() => adjustResource('currentRestPoints', -1)}>-</MobileResourceButton>
-							<span style={{ color: '#f5d020', fontSize: '14px', minWidth: '40px', textAlign: 'center' }}>
+							<MobileResourceButton onClick={() => adjustResource('currentRestPoints', -1)}>
+								-
+							</MobileResourceButton>
+							<span
+								style={{
+									color: '#f5d020',
+									fontSize: '14px',
+									minWidth: '40px',
+									textAlign: 'center'
+								}}
+							>
 								RP
 							</span>
-							<MobileResourceButton onClick={() => adjustResource('currentRestPoints', 1)}>+</MobileResourceButton>
+							<MobileResourceButton onClick={() => adjustResource('currentRestPoints', 1)}>
+								+
+							</MobileResourceButton>
 						</MobileResourceControls>
 					</MobileResourceItem>
 				)}
@@ -118,11 +172,22 @@ const MobileResourceSection: React.FC<MobileResourceSectionProps> = ({
 							{resources?.current?.currentGritPoints || 0} / {resources?.original?.maxGritPoints}
 						</MobileResourceValue>
 						<MobileResourceControls>
-							<MobileResourceButton onClick={() => adjustResource('currentGritPoints', -1)}>-</MobileResourceButton>
-							<span style={{ color: '#f5d020', fontSize: '14px', minWidth: '40px', textAlign: 'center' }}>
+							<MobileResourceButton onClick={() => adjustResource('currentGritPoints', -1)}>
+								-
+							</MobileResourceButton>
+							<span
+								style={{
+									color: '#f5d020',
+									fontSize: '14px',
+									minWidth: '40px',
+									textAlign: 'center'
+								}}
+							>
 								GP
 							</span>
-							<MobileResourceButton onClick={() => adjustResource('currentGritPoints', 1)}>+</MobileResourceButton>
+							<MobileResourceButton onClick={() => adjustResource('currentGritPoints', 1)}>
+								+
+							</MobileResourceButton>
 						</MobileResourceControls>
 					</MobileResourceItem>
 				)}

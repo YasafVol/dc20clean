@@ -72,7 +72,7 @@ export const MobileItem = styled.div`
 	border-radius: 4px;
 	padding: 8px;
 	cursor: pointer;
-	
+
 	&:hover {
 		border-color: #f5d020;
 	}
@@ -87,7 +87,7 @@ export const MobileItemName = styled.div`
 export const MobileItemDetails = styled.div`
 	font-size: 12px;
 	color: #ccc;
-	
+
 	div {
 		margin-bottom: 2px;
 	}
@@ -140,7 +140,7 @@ export const MobileResourceButton = styled.button`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	
+
 	&:hover {
 		background: #fff;
 	}
@@ -156,14 +156,14 @@ export const MobileResourceBar = styled.div<{ $percentage: number }>`
 	overflow: hidden;
 	position: relative;
 	margin: 4px 0;
-	
+
 	&::after {
 		content: '';
 		position: absolute;
 		top: 0;
 		left: 0;
 		height: 100%;
-		width: ${props => props.$percentage}%;
+		width: ${(props) => props.$percentage}%;
 		background: linear-gradient(90deg, #f5d020, #b8940a);
 		transition: width 0.3s ease;
 	}
@@ -184,7 +184,7 @@ export const MobileStatBox = styled.div`
 	text-align: center;
 	cursor: pointer;
 	transition: all 0.2s ease;
-	
+
 	&:hover {
 		border-color: #f5d020;
 	}
@@ -214,8 +214,8 @@ export const MobileNavigationGrid = styled.div`
 `;
 
 export const MobileNavButton = styled.button<{ $active: boolean }>`
-	background: ${props => props.$active ? '#f5d020' : 'transparent'};
-	color: ${props => props.$active ? '#1a1a1a' : '#f5d020'};
+	background: ${(props) => (props.$active ? '#f5d020' : 'transparent')};
+	color: ${(props) => (props.$active ? '#1a1a1a' : '#f5d020')};
 	border: 2px solid #f5d020;
 	border-radius: 8px;
 	padding: 0.75rem 0.5rem;
@@ -223,9 +223,9 @@ export const MobileNavButton = styled.button<{ $active: boolean }>`
 	font-weight: bold;
 	cursor: pointer;
 	transition: all 0.2s ease;
-	
+
 	&:hover {
-		background: ${props => props.$active ? '#f5d020' : 'rgba(245, 208, 32, 0.1)'};
+		background: ${(props) => (props.$active ? '#f5d020' : 'rgba(245, 208, 32, 0.1)')};
 	}
 `;
 
@@ -242,8 +242,8 @@ export const MobileNavigationContainer = styled.div`
 `;
 
 export const MobileNavigationButton = styled.button<{ $active: boolean }>`
-	background: ${props => props.$active ? '#f5d020' : 'transparent'};
-	color: ${props => props.$active ? '#1a1a1a' : '#f5d020'};
+	background: ${(props) => (props.$active ? '#f5d020' : 'transparent')};
+	color: ${(props) => (props.$active ? '#1a1a1a' : '#f5d020')};
 	border: 2px solid #f5d020;
 	border-radius: 8px;
 	padding: 0.75rem 0.5rem;
@@ -251,9 +251,9 @@ export const MobileNavigationButton = styled.button<{ $active: boolean }>`
 	font-weight: bold;
 	cursor: pointer;
 	transition: all 0.2s ease;
-	
+
 	&:hover {
-		background: ${props => props.$active ? '#f5d020' : 'rgba(245, 208, 32, 0.1)'};
+		background: ${(props) => (props.$active ? '#f5d020' : 'rgba(245, 208, 32, 0.1)')};
 	}
 `;
 
@@ -261,28 +261,29 @@ export const MobileNavigationButton = styled.button<{ $active: boolean }>`
 export const MobileCombatWrapper = styled.div`
 	/* Keep the same styling as skills tab - brown/tan boxes but fix text color */
 
-	
 	/* Mobile resource section - white buttons and text */
-	& button[style*="background"]:not([style*="transparent"]) {
+	& button[style*='background']:not([style*='transparent']) {
 		background: #ffffff !important;
 		color: #000000 !important;
 		border: 1px solid #666 !important;
 	}
-	
+
 	/* Resource labels and values white */
-	& div[style*="STAMINA POINTS"],
-	& div[style*="MANA POINTS"], 
-	& div[style*="HIT POINTS"],
-	& div[style*="TEMP HP"] {
+	& div[style*='STAMINA POINTS'],
+	& div[style*='MANA POINTS'],
+	& div[style*='HIT POINTS'],
+	& div[style*='TEMP HP'] {
 		color: #ffffff !important;
 	}
-	
+
 	/* Input fields should be readable */
-	& input, & select, & textarea {
+	& input,
+	& select,
+	& textarea {
 		color: #2a2a2a !important;
 		background: rgba(255, 255, 255, 0.8) !important;
 	}
-`;// Form components
+`; // Form components
 export const MobileInput = styled.input`
 	width: 100%;
 	padding: 8px;
@@ -291,7 +292,7 @@ export const MobileInput = styled.input`
 	border-radius: 4px;
 	color: #f5d020;
 	font-size: 14px;
-	
+
 	&:focus {
 		outline: none;
 		border-color: #f5d020;
@@ -328,14 +329,15 @@ export const MobileAttributeValue = styled.div`
 	font-weight: bold;
 `;
 
-export const MobileSelect = styled.select`	width: 100%;
+export const MobileSelect = styled.select`
+	width: 100%;
 	padding: 4px;
 	border: 1px solid #f5d020;
 	border-radius: 4px;
 	background: #2a2a2a;
 	color: #f5d020;
 	font-size: 14px;
-	
+
 	&:focus {
 		outline: none;
 		border-color: #fff;
@@ -351,7 +353,7 @@ export const MobileAddButton = styled.button`
 	padding: 4px 8px;
 	font-size: 12px;
 	cursor: pointer;
-	
+
 	&:hover {
 		background: #f5d020;
 		color: #1a1a1a;
@@ -373,7 +375,7 @@ export const MobileDeleteButton = styled.button`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	
+
 	&:hover {
 		background: #c82333;
 	}
@@ -405,7 +407,7 @@ export const MobileCurrencyInput = styled.input`
 	color: #f5d020;
 	text-align: center;
 	font-size: 14px;
-	
+
 	&:focus {
 		outline: none;
 		border-color: #f5d020;
@@ -420,16 +422,16 @@ export const MobileExhaustionGrid = styled.div`
 `;
 
 export const MobileExhaustionLevel = styled.div<{ $active: boolean }>`
-	background: ${props => props.$active ? '#dc3545' : '#333'};
-	color: ${props => props.$active ? 'white' : '#ccc'};
-	border: 1px solid ${props => props.$active ? '#dc3545' : '#555'};
+	background: ${(props) => (props.$active ? '#dc3545' : '#333')};
+	color: ${(props) => (props.$active ? 'white' : '#ccc')};
+	border: 1px solid ${(props) => (props.$active ? '#dc3545' : '#555')};
 	border-radius: 4px;
 	padding: 8px 4px;
 	text-align: center;
 	cursor: pointer;
 	font-size: 12px;
 	transition: all 0.2s ease;
-	
+
 	&:hover {
 		border-color: #f5d020;
 	}
@@ -443,16 +445,16 @@ export const MobileActionPointsGrid = styled.div`
 `;
 
 export const MobileActionPoint = styled.div<{ $used: boolean }>`
-	background: ${props => props.$used ? '#b8940a' : '#2a2a2a'};
-	color: ${props => props.$used ? '#fff' : '#f5d020'};
+	background: ${(props) => (props.$used ? '#b8940a' : '#2a2a2a')};
+	color: ${(props) => (props.$used ? '#fff' : '#f5d020')};
 	border: 1px solid #f5d020;
 	border-radius: 4px;
 	padding: 8px;
 	text-align: center;
 	cursor: pointer;
 	transition: all 0.2s ease;
-	
+
 	&:hover {
-		transform: scale(${props => props.$used ? 0.95 : 1.05});
+		transform: scale(${(props) => (props.$used ? 0.95 : 1.05)});
 	}
 `;

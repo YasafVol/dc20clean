@@ -297,11 +297,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 							if (langId === 'common') {
 								return sum; // Common is free
 							}
-							const cost = data.fluency === 'limited'
-								? 1
-								: data.fluency === 'fluent'
-									? 2
-									: 0; // 'none' or any other value costs 0
+							const cost = data.fluency === 'limited' ? 1 : data.fluency === 'fluent' ? 2 : 0; // 'none' or any other value costs 0
 							return sum + cost;
 						},
 						0
@@ -344,8 +340,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 						if (classFeatures) {
 							// FIXED: Use typed data instead of JSON parsing
-							const selectedChoices: { [key: string]: string } =
-								state.selectedFeatureChoices || {};
+							const selectedChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
 							const level1Features = classFeatures.coreFeatures.filter(
 								(feature: any) => feature.levelGained === 1
 							);
@@ -382,10 +377,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 												);
 												if (selectedOption && selectedOption.effects) {
 													selectedOption.effects.forEach((effect: any) => {
-														if (
-															effect.type === 'MODIFY_STAT' &&
-															effect.target === 'skillPoints'
-														) {
+														if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
 															bonusSkillPoints += effect.value as number;
 														}
 													});
@@ -448,14 +440,18 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
 				const tradePointsRemaining = availableTradePoints - tradePointsUsed;
 				const languagePointsRemaining = availableLanguagePoints - languagePointsUsed;
-				
+
 				const hasExactlySpentAllSkillPoints = skillPointsRemaining === 0;
 				// Allow completion if points are spent exactly OR if overspent (UI allowed it)
 				const hasExactlySpentAllTradePoints = tradePointsRemaining <= 0;
 				const hasExactlySpentAllLanguagePoints = languagePointsRemaining <= 0;
-				
+
 				// Step is complete when all skill points are spent and trade/language are spent or overspent
-				const isValid = hasExactlySpentAllSkillPoints && hasExactlySpentAllTradePoints && hasExactlySpentAllLanguagePoints;				console.log('🔍 Step 4 (Background) validation:', {
+				const isValid =
+					hasExactlySpentAllSkillPoints &&
+					hasExactlySpentAllTradePoints &&
+					hasExactlySpentAllLanguagePoints;
+				console.log('🔍 Step 4 (Background) validation:', {
 					baseSkillPoints,
 					bonusSkillPoints,
 					skillToTrade,
@@ -501,7 +497,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				selectedManeuvers = state.selectedManeuvers || [];
 
 				// Get spell/maneuver counts from level progression (same logic as SpellsAndManeuvers component)
-				const levelData = selectedClass.levelProgression?.find(l => l.level === state.level);
+				const levelData = selectedClass.levelProgression?.find((l) => l.level === state.level);
 				const requiredCantripCount = levelData?.cantripsKnown || 0;
 				const requiredSpellCount = levelData?.spellsKnown || 0;
 				const requiredManeuverCount = levelData?.maneuversKnown || 0;
@@ -513,7 +509,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					classId: state.classId,
 					level: state.level,
 					requiredCantripCount,
-					requiredSpellCount, 
+					requiredSpellCount,
 					requiredManeuverCount,
 					selectedSpellCount,
 					selectedManeuverCount: selectedManeuvers.length,
@@ -534,7 +530,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					}
 				}
 
-				// Check maneuver requirements  
+				// Check maneuver requirements
 				if (requiredManeuverCount > 0) {
 					if (selectedManeuvers.length < requiredManeuverCount) {
 						console.log('❌ Step 5 validation failed: insufficient maneuvers', {
@@ -546,7 +542,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				}
 
 				// If no requirements, step is complete
-				const hasRequirements = requiredCantripCount > 0 || requiredSpellCount > 0 || requiredManeuverCount > 0;
+				const hasRequirements =
+					requiredCantripCount > 0 || requiredSpellCount > 0 || requiredManeuverCount > 0;
 				if (!hasRequirements) {
 					return true;
 				}

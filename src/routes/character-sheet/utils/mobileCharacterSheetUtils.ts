@@ -89,7 +89,7 @@ export const convertSpellToCharacterData = (ruleSpell: any, spellId: string) => 
 	id: spellId,
 	spellName: ruleSpell.name,
 	school: ruleSpell.school,
-	level: ruleSpell.isCantrip ? 0 : (ruleSpell.cost?.spellLevel || 1),
+	level: ruleSpell.isCantrip ? 0 : ruleSpell.cost?.spellLevel || 1,
 	castingTime: 'Action',
 	range: ruleSpell.range,
 	duration: ruleSpell.duration,
@@ -126,7 +126,7 @@ export const convertInventoryItemToCharacterData = (ruleItem: InventoryItem, ite
  * Show detailed maneuver information in alert
  */
 export const showManeuverDetails = (maneuver: any, allManeuvers: Maneuver[]) => {
-	const maneuverDetails = allManeuvers.find(m => m.name === maneuver.name);
+	const maneuverDetails = allManeuvers.find((m) => m.name === maneuver.name);
 	if (maneuverDetails) {
 		const info = `${maneuverDetails.name}\n\nType: ${maneuverDetails.type}\nCost: ${maneuverDetails.cost}\n\nDescription: ${maneuverDetails.description}\n\nRequirement: ${maneuverDetails.requirement || 'None'}\nTrigger: ${maneuverDetails.trigger || 'N/A'}`;
 		alert(info);

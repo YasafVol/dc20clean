@@ -49,7 +49,9 @@ const RightColumnResources: React.FC<RightColumnResourcesProps> = ({ isMobile = 
 							updateRestPoints(val);
 						}}
 					/>
-					<StyledRightResourceMax $isMobile={isMobile}>/ {calculatedData.stats.finalRestPoints}</StyledRightResourceMax>
+					<StyledRightResourceMax $isMobile={isMobile}>
+						/ {calculatedData.stats.finalRestPoints}
+					</StyledRightResourceMax>
 				</StyledRightResourceControls>
 			</StyledRightResourceRow>
 
@@ -70,7 +72,9 @@ const RightColumnResources: React.FC<RightColumnResourcesProps> = ({ isMobile = 
 							updateGritPoints(val);
 						}}
 					/>
-					<StyledRightResourceMax $isMobile={isMobile}>/ {calculatedData.stats.finalGritPoints}</StyledRightResourceMax>
+					<StyledRightResourceMax $isMobile={isMobile}>
+						/ {calculatedData.stats.finalGritPoints}
+					</StyledRightResourceMax>
 				</StyledRightResourceControls>
 			</StyledRightResourceRow>
 		</StyledRightResourcesContainer>

@@ -43,17 +43,18 @@ flowchart LR
 
 ## 2 Key Files & Their Roles
 
-| Layer                | File / Dir                                                        | Responsibility                                                |
-| -------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------- |
-| Rule Data (canonical) | `src/lib/rulesdata/ancestries/traits.ts`                         | Declarative list of `traitsData` objects                      |
-| Type Contracts       | `src/lib/rulesdata/schemas/types.ts`                                      | TS interfaces `ITrait`, `ITraitEffect` (legacy/aux typing)    |
-|                      | `src/lib/rulesdata/schemas/character.schema.ts`                   | Canonical `Effect` union and `Trait` interface                |
-| Validation Tests     | `src/lib/rulesdata/rulesdata.spec.ts`                             | Loads trait data and asserts required fields are present      |
-| Runtime Engine       | `src/lib/services/enhancedCharacterCalculator.ts`                 | Aggregates effects, resolves choices, computes breakdowns     |
-| State Layer          | `src/lib/stores/characterContext.tsx`<br>`src/lib/hooks/useCharacterBuilder.ts` | Provides calculated results and selected choices to UI |
-| UI                   | `src/routes/character-creation/*` (selection)<br>`src/routes/character-sheet/*` (display) | Components import `traitsData` results via context |
+| Layer                 | File / Dir                                                                                | Responsibility                                             |
+| --------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| Rule Data (canonical) | `src/lib/rulesdata/ancestries/traits.ts`                                                  | Declarative list of `traitsData` objects                   |
+| Type Contracts        | `src/lib/rulesdata/schemas/types.ts`                                                      | TS interfaces `ITrait`, `ITraitEffect` (legacy/aux typing) |
+|                       | `src/lib/rulesdata/schemas/character.schema.ts`                                           | Canonical `Effect` union and `Trait` interface             |
+| Validation Tests      | `src/lib/rulesdata/rulesdata.spec.ts`                                                     | Loads trait data and asserts required fields are present   |
+| Runtime Engine        | `src/lib/services/enhancedCharacterCalculator.ts`                                         | Aggregates effects, resolves choices, computes breakdowns  |
+| State Layer           | `src/lib/stores/characterContext.tsx`<br>`src/lib/hooks/useCharacterBuilder.ts`           | Provides calculated results and selected choices to UI     |
+| UI                    | `src/routes/character-creation/*` (selection)<br>`src/routes/character-sheet/*` (display) | Components import `traitsData` results via context         |
 
 Notes:
+
 - Use `schemas/character.schema.ts` as the source of truth for `Effect.type` strings.
 - `traits.ts` currently imports `Trait` from `schemas/character.schema.ts` to ensure alignment.
 - For resource maximums, use `hpMax`, `spMax`, and `mpMax` as `target` values. Avoid `mp` (not processed for maximums).
@@ -78,10 +79,10 @@ Notes:
 4. Choice-based Traits  
    – If the effect requires player input, add `userChoice` to the effect: `{ prompt, options? }`.  
    – `resolveEffectChoices` currently resolves:  
-     • `MODIFY_ATTRIBUTE` with `target: 'any_attribute'`  
-     • `GRANT_SKILL_EXPERTISE` with `target: 'any_skill'`  
-     • `GRANT_TRADE_EXPERTISE` with `target: 'any_trade'`  
-   – If you introduce a new "any_*" pattern, extend `resolveEffectChoices` and `getOptionsForEffect` accordingly.
+    • `MODIFY_ATTRIBUTE` with `target: 'any_attribute'`  
+    • `GRANT_SKILL_EXPERTISE` with `target: 'any_skill'`  
+    • `GRANT_TRADE_EXPERTISE` with `target: 'any_trade'`  
+   – If you introduce a new "any\_\*" pattern, extend `resolveEffectChoices` and `getOptionsForEffect` accordingly.
 
 5. Calculator Support  
    – Numeric buffs/debuffs → ensure the `target` is recognized by `createStatBreakdown` or aggregated in `calculateCharacterWithBreakdowns`.  
@@ -98,7 +99,7 @@ Notes:
 8. Docs  
    – If the trait creates a new general mechanic, document it under §4.
 
-9. Commit Message Template  
+9. Commit Message Template
    ```
    feat(rules): add <TraitName> trait
    - traits.ts: +1 entry (<ancestryId>_<trait_id>)
@@ -109,40 +110,39 @@ Notes:
 
 ## 4 Adding New Trait Effect Type – Decision Matrix
 
-| Question                                           | Yes                                                            | No                                      |
-| -------------------------------------------------- | -------------------------------------------------------------- | --------------------------------------- |
-| Does an existing `Effect.type` cover the mechanic? | Use it → go to Step 5                                          | Create new type → continue              |
-| Does the effect alter a numeric stat?              | Implement in calculator (`createStatBreakdown` or dedicated)   | Use `GRANT_ABILITY` + manual rules text |
-| Does the UI need to resolve user choice?           | Add `effect.userChoice` and extend `resolveEffectChoices` if needed | —                                  |
+| Question                                           | Yes                                                                 | No                                      |
+| -------------------------------------------------- | ------------------------------------------------------------------- | --------------------------------------- |
+| Does an existing `Effect.type` cover the mechanic? | Use it → go to Step 5                                               | Create new type → continue              |
+| Does the effect alter a numeric stat?              | Implement in calculator (`createStatBreakdown` or dedicated)        | Use `GRANT_ABILITY` + manual rules text |
+| Does the UI need to resolve user choice?           | Add `effect.userChoice` and extend `resolveEffectChoices` if needed | —                                       |
 
 When a new type is created:
-1. Extend the `Effect.type` union in `schemas/character.schema.ts`.  
-2. Implement handling in `enhancedCharacterCalculator.ts` (aggregation and/or breakdown).  
-3. Update any helpers (`getOptionsForEffect`, `resolveEffectChoices`) if choices are involved.  
+
+1. Extend the `Effect.type` union in `schemas/character.schema.ts`.
+2. Implement handling in `enhancedCharacterCalculator.ts` (aggregation and/or breakdown).
+3. Update any helpers (`getOptionsForEffect`, `resolveEffectChoices`) if choices are involved.
 4. Write unit tests.
 
 ---
 
 ## 5 Troubleshooting FAQ 🤖
 
-| Symptom                                         | Likely Cause                                                     | Fix                                                             |
-| ----------------------------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------- |
-| Trait not visible / loaded                      | Not added to `ancestries/traits.ts` or `id` mismatch            | Verify entry and `id` format                                    |
-| Unit test `rulesdata.spec.ts` fails             | Missing required fields or malformed `effects`                   | Ensure `id`, `name`, `cost`, and `effects[]` are present        |
-| Stats not updating for new numeric effect       | `target` not recognized in calculator                           | Map `target` in `createStatBreakdown` or associated aggregators (e.g., `finalAttributePoints`) |
-| Choice prompt not appearing in UI               | `effect.userChoice` missing or unresolved                        | Add `userChoice`; ensure `resolveEffectChoices` supports target  |
-| Vite import error for traits                    | Import path typo                                                 | Use `ancestries/traits`                                        |
+| Symptom                                   | Likely Cause                                         | Fix                                                                                            |
+| ----------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Trait not visible / loaded                | Not added to `ancestries/traits.ts` or `id` mismatch | Verify entry and `id` format                                                                   |
+| Unit test `rulesdata.spec.ts` fails       | Missing required fields or malformed `effects`       | Ensure `id`, `name`, `cost`, and `effects[]` are present                                       |
+| Stats not updating for new numeric effect | `target` not recognized in calculator                | Map `target` in `createStatBreakdown` or associated aggregators (e.g., `finalAttributePoints`) |
+| Choice prompt not appearing in UI         | `effect.userChoice` missing or unresolved            | Add `userChoice`; ensure `resolveEffectChoices` supports target                                |
+| Vite import error for traits              | Import path typo                                     | Use `ancestries/traits`                                                                        |
 
 ---
 
 ## 6 Future Evolution
 
-- Effect Processor unification may centralize trait effect resolution across ancestries and classes.  
+- Effect Processor unification may centralize trait effect resolution across ancestries and classes.
 - Schema-driven editors may auto-render trait forms from `Trait` and `Effect` metadata.
 
 ---
 
 > Last updated: 2025-08-20  
 > Maintainer: @DC20Clean-Team
-
-

@@ -1,7 +1,5 @@
 # TODO Tracker
 
-
-
 ## 1. Flesh out Unit Tests for Core Logic
 
 - **current gap**:
@@ -24,4 +22,3 @@
 - **references**:
   - Vitest Documentation
   - React Testing Library (for hooks)
-

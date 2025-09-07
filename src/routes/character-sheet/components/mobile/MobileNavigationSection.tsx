@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-	MobileNavigation,
-	MobileNavButton
-} from '../../styles/CharacterSheetMobile.styles';
+import { MobileNavigation, MobileNavButton } from '../../styles/CharacterSheetMobile.styles';
 
 interface MobileNavigationSectionProps {
 	activeTab: string;

@@ -830,7 +830,7 @@ export function calculateCharacterWithBreakdowns(
 	// 3. Calculate total allowed Adept skills (only from feature grants for Level 1-4)
 	const baseAdeptSlotsForValidation = 0; // Level 1-4 get no base Adept slots - must earn them through features
 	const totalAllowedAdeptSkills = baseAdeptSlotsForValidation + totalCapExceptionsBudget;
-	
+
 	// Validate that over-level skills don't exceed total budget (including Level 1 default)
 	if (skillsOverLevelCap.length > totalAllowedAdeptSkills) {
 		errors.push({
@@ -843,9 +843,9 @@ export function calculateCharacterWithBreakdowns(
 		});
 	}
 
-	// 4. Validate specific skill coverage 
+	// 4. Validate specific skill coverage
 	let skillsNeedingFeatureCoverage = [...skillsOverLevelCap];
-	
+
 	// Check remaining skills against feature options
 	for (const skillId of skillsNeedingFeatureCoverage) {
 		const isCovered = skillMasteryCapEffects.some(
@@ -861,25 +861,27 @@ export function calculateCharacterWithBreakdowns(
 		}
 	}
 	// --- END MASTERY CAP CALCULATION ---
-	
+
 	// Calculate mastery limits in correct interface format
-	const currentSkillAdeptCount = buildData.skillsData 
-		? Object.values(buildData.skillsData).filter(points => points >= 2).length 
+	const currentSkillAdeptCount = buildData.skillsData
+		? Object.values(buildData.skillsData).filter((points) => points >= 2).length
 		: 0;
-	const currentTradeAdeptCount = buildData.tradesData 
-		? Object.values(buildData.tradesData).filter(points => points >= 2).length 
+	const currentTradeAdeptCount = buildData.tradesData
+		? Object.values(buildData.tradesData).filter((points) => points >= 2).length
 		: 0;
 	const totalCurrentAdeptCount = currentSkillAdeptCount + currentTradeAdeptCount;
 
 	// Level 1 gets 1 base Adept slot + bonus slots from features
-	const baseAdeptSlots = (buildData.level === 1) ? 1 : 0;
+	const baseAdeptSlots = buildData.level === 1 ? 1 : 0;
 	const bonusAdeptSlots = skillMasteryCapEffects.reduce((total, effect) => total + effect.count, 0);
 	const maxAdeptCount = baseAdeptSlots + bonusAdeptSlots;
 
 	// Max mastery accounts for level + available Adept slots
 	// If character has Adept slots available, they can reach Adept level (2)
-	const maxSkillMastery = maxAdeptCount > 0 ? Math.max(2, baseSkillMasteryTier) : Math.max(1, baseSkillMasteryTier);
-	const maxTradeMastery = maxAdeptCount > 0 ? Math.max(2, baseTradeMasteryTier) : Math.max(1, baseTradeMasteryTier);
+	const maxSkillMastery =
+		maxAdeptCount > 0 ? Math.max(2, baseSkillMasteryTier) : Math.max(1, baseSkillMasteryTier);
+	const maxTradeMastery =
+		maxAdeptCount > 0 ? Math.max(2, baseTradeMasteryTier) : Math.max(1, baseTradeMasteryTier);
 
 	const validation: ValidationResult = {
 		isValid: errors.length === 0 && !Object.values(attributeLimits).some((limit) => limit.exceeded),

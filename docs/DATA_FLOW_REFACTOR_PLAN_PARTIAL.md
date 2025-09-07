@@ -247,38 +247,47 @@ const result = calculateCharacterWithBreakdowns(enhancedData);
 **1.2.1: Replace `getCharacterData` function**
 
 **Search for:**
+
 ```typescript
 try {
 console.log('🧮 Running enhanced calculator for character data...');
 // ... build mock data from stored final\* values ...
 const result = calculateCharacterWithBreakdowns(enhancedData);
 
-````
+```
 
 **Replace with:**
-        ```typescript
-import { deserializeCharacterFromStorage, getAllSavedCharacters } from '../../lib/utils/storageUtils';
+
+```typescript
+import {
+	deserializeCharacterFromStorage,
+	getAllSavedCharacters
+} from '../../lib/utils/storageUtils';
 
 const getCharacterData = async (characterId: string): Promise<SavedCharacter> => {
-  const savedCharacters = getAllSavedCharacters();
-  const character = savedCharacters.find((char) => char.id === characterId);
+	const savedCharacters = getAllSavedCharacters();
+	const character = savedCharacters.find((char) => char.id === characterId);
 
-  if (!character) {
-    throw new Error(`Character with ID ${characterId} not found`);
-  }
+	if (!character) {
+		throw new Error(`Character with ID ${characterId} not found`);
+	}
 
-  // Trust the stored data - it's the single source of truth
-  // No recalculation needed!
-  return character;
-        };
-        ```
+	// Trust the stored data - it's the single source of truth
+	// No recalculation needed!
+	return character;
+};
+```
 
 **1.2.2: Remove import statements**
 
 **Search for and remove:**
-        ```typescript
-import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from '../../lib/services/enhancedCharacterCalculator';
-````
+
+```typescript
+import {
+	convertToEnhancedBuildData,
+	calculateCharacterWithBreakdowns
+} from '../../lib/services/enhancedCharacterCalculator';
+```
 
 **1.2.3: Remove helper functions**
 
@@ -324,13 +333,14 @@ currentSP: state.resources.current.currentSP,
 **1.3.1: Simplify `saveCharacterState` function**
 
 **Search for:**
-    ```typescript
-    savedCharacters[characterIndex] = {
-        ...savedCharacters[characterIndex],
-    characterState: state,
-        // Also maintain backwards compatibility with old format
-    currentHP: state.resources.current.currentHP,
-    currentSP: state.resources.current.currentSP,
+```typescript
+savedCharacters[characterIndex] = {
+...savedCharacters[characterIndex],
+characterState: state,
+// Also maintain backwards compatibility with old format
+currentHP: state.resources.current.currentHP,
+currentSP: state.resources.current.currentSP,
+
 ````
 
 **Replace with:**
@@ -368,18 +378,19 @@ character.manualPD
 ````
 
 **Replace with:**
-```typescript
-character.characterState.resources.current.currentHP
-character.characterState.resources.current.currentSP
-character.characterState.ui.manualDefenseOverrides.PD
 
-````
+```typescript
+character.characterState.resources.current.currentHP;
+character.characterState.resources.current.currentSP;
+character.characterState.ui.manualDefenseOverrides.PD;
+```
 
 #### 🔍 Files to update (use grep to find them):
+
 ```bash
 grep -r "character\.current" src/routes/character-sheet/components/
 grep -r "character\.manual" src/routes/character-sheet/components/
-````
+```
 
 #### ✅ Validation Steps for Task 1.3
 
@@ -510,7 +521,8 @@ const getBonusAttributePointsFromTraits = (traitIds: string[]) => {
 // Placeholder - implement based on your trait system
 return 0;
 };
-```
+
+````
 
 #### ✅ Validation Steps for Task 2.1
 
@@ -603,7 +615,7 @@ export const TraitChoiceSelector: React.FC<Props> = ({ trait, isSelected, onTogg
 </TraitCard>
   );
 };
-```
+````
 
 **2.2.2: Update `src/routes/character-creation/Attributes.tsx`**
 

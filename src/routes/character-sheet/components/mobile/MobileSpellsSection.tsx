@@ -32,9 +32,7 @@ const MobileSpellsSection: React.FC<MobileSpellsSectionProps> = ({
 		<MobileSection>
 			<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 				<MobileSectionTitle>Spells</MobileSectionTitle>
-				<MobileAddButton onClick={handleAddSpell}>
-					+ Add Spell
-				</MobileAddButton>
+				<MobileAddButton onClick={handleAddSpell}>+ Add Spell</MobileAddButton>
 			</div>
 			{spells.length > 0 && (
 				<MobileItemGrid>

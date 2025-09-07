@@ -37,7 +37,7 @@ const LeftColumn: React.FC<LeftColumnProps> = ({
 				skillsByAttribute={skillsByAttribute}
 				breakdowns={breakdowns}
 			/>
-			<KnowledgeTrades 
+			<KnowledgeTrades
 				onKnowledgeInfoClick={onKnowledgeInfoClick}
 				onTradeInfoClick={onTradeInfoClick}
 			/>

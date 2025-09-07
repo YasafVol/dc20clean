@@ -4,7 +4,7 @@ export const StyledCombatSection = styled.div`
 	border: 2px solid #8b4513;
 	border-radius: 8px;
 	padding: 1rem;
-	background: white
+	background: white;
 `;
 
 export const StyledCombatTitle = styled.div`

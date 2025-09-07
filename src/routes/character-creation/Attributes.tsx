@@ -1,4 +1,3 @@
-
 import { useCharacter } from '../../lib/stores/characterContext';
 import { useEnhancedCharacterCalculation } from '../../lib/hooks/useEnhancedCharacterCalculation';
 
@@ -30,7 +29,7 @@ const AttributeHeader = styled.div`
 const AttributeTotal = styled.div<{ $exceeded: boolean }>`
 	font-size: 0.9rem; /* slightly smaller */
 	font-weight: bold;
-	color: ${props => props.$exceeded ? '#dc2626' : '#059669'};
+	color: ${(props) => (props.$exceeded ? '#dc2626' : '#059669')};
 	margin-bottom: 0.25rem; /* tighter spacing */
 	text-align: center;
 `;
@@ -50,7 +49,7 @@ const BreakdownLine = styled.div`
 	align-items: center;
 	gap: 0.5rem;
 	margin-bottom: 0.25rem;
-	
+
 	&:last-child {
 		margin-bottom: 0;
 		padding-top: 0.25rem;
@@ -58,12 +57,12 @@ const BreakdownLine = styled.div`
 		font-weight: 600;
 		color: #fbbf24;
 	}
-	
+
 	span:first-child {
 		flex-shrink: 0;
 		min-width: 120px;
 	}
-	
+
 	span:last-child {
 		font-weight: bold;
 		color: #fbbf24;
@@ -75,7 +74,7 @@ const ValidationMessage = styled.div<{ $type: 'error' | 'warning' }>`
 	position: static;
 	margin-top: 0.5rem;
 	font-size: 0.85rem;
-	color: ${props => props.$type === 'error' ? '#ef4444' : '#e5e7eb'};
+	color: ${(props) => (props.$type === 'error' ? '#ef4444' : '#e5e7eb')};
 	text-align: center;
 	padding: 0.25rem 0.5rem;
 	pointer-events: none; /* non-interactive decorative note */
@@ -84,7 +83,7 @@ const ValidationMessage = styled.div<{ $type: 'error' | 'warning' }>`
 	font-style: italic;
 
 	&:before {
-		content: "* ";
+		content: '* ';
 		margin-right: 0.25rem;
 	}
 `;
@@ -97,7 +96,7 @@ const ForcedAdjustmentIndicator = styled.div`
 	background: transparent;
 	border: 1px solid #fbbf24;
 	color: #fbbf24;
-	
+
 	&:before {
 		content: '⚠️ ';
 		margin-right: 0.25rem;
@@ -122,8 +121,8 @@ const BaseValue = styled.span`
 `;
 
 const EffectiveValue = styled.span<{ $different: boolean }>`
-	font-weight: ${props => props.$different ? 'bold' : 'normal'};
-	color: ${props => props.$different ? '#10b981' : '#e5e7eb'};
+	font-weight: ${(props) => (props.$different ? 'bold' : 'normal')};
+	color: ${(props) => (props.$different ? '#10b981' : '#e5e7eb')};
 `;
 
 // Removed PointBreakdownSummary: duplicate small points frame was creating a second
@@ -137,7 +136,7 @@ const ForcedAdjustmentsWarning = styled.div`
 	margin-bottom: 1rem;
 	font-size: 0.875rem;
 	color: #fbbf24;
-	
+
 	&:before {
 		content: '⚠️ ';
 		margin-right: 0.25rem;
@@ -148,14 +147,11 @@ type AttributeState = Record<string, number>;
 
 function Attributes() {
 	const { state, dispatch, attributePointsRemaining, totalAttributePoints } = useCharacter();
-	const { 
-		getAttributeLimit, 
-		validateAttributeChange,
-		getStatBreakdown
-	} = useEnhancedCharacterCalculation();
-	
+	const { getAttributeLimit, validateAttributeChange, getStatBreakdown } =
+		useEnhancedCharacterCalculation();
+
 	const typedState = state as unknown as AttributeState;
-	
+
 	// Simple replacement for useAttributeCalculation using context values
 	const calculation = {
 		totalPointsAvailable: totalAttributePoints,
@@ -174,8 +170,11 @@ function Attributes() {
 	function increaseAttribute(attribute: string) {
 		if (attributePointsRemaining > 0) {
 			const currentValue = typedState[attribute];
-			const validation = validateAttributeChange(attribute.replace('attribute_', ''), currentValue + 1);
-			
+			const validation = validateAttributeChange(
+				attribute.replace('attribute_', ''),
+				currentValue + 1
+			);
+
 			if (validation.isValid) {
 				dispatch({ type: 'UPDATE_ATTRIBUTE', attribute, value: currentValue + 1 });
 			}
@@ -184,8 +183,11 @@ function Attributes() {
 
 	function decreaseAttribute(attribute: string) {
 		const currentValue = typedState[attribute];
-		const validation = validateAttributeChange(attribute.replace('attribute_', ''), currentValue - 1);
-		
+		const validation = validateAttributeChange(
+			attribute.replace('attribute_', ''),
+			currentValue - 1
+		);
+
 		if (validation.isValid) {
 			dispatch({ type: 'UPDATE_ATTRIBUTE', attribute, value: currentValue - 1 });
 		}
@@ -195,7 +197,7 @@ function Attributes() {
 		<StyledContainer>
 			<StyledTitle>Attributes</StyledTitle>
 			<AttributePointsCounter totalAttributePoints={totalAttributePoints} />
-			
+
 			{/* The enhanced breakdown summary was removed to avoid duplicating the
 			{/* NEW: Forced adjustments warning */}
 			{calculation.forcedAdjustments.length > 0 && (
@@ -203,39 +205,41 @@ function Attributes() {
 					{calculation.forcedAdjustments.length} forced adjustment(s) due to traits:
 					{calculation.forcedAdjustments.map((adj, index) => (
 						<div key={index} style={{ marginTop: '0.25rem' }}>
-							• {adj.attribute.charAt(0).toUpperCase() + adj.attribute.slice(1)}: 
-							{adj.originalValue} → {adj.effectiveValue} (costs {adj.pointsCost} points)
+							• {adj.attribute.charAt(0).toUpperCase() + adj.attribute.slice(1)}:{adj.originalValue}{' '}
+							→ {adj.effectiveValue} (costs {adj.pointsCost} points)
 						</div>
 					))}
 				</ForcedAdjustmentsWarning>
 			)}
-			
+
 			{/* Validation summary */}
 			{!calculation.isValid && (
 				<ValidationMessage $type="error">
 					Invalid build: {Math.abs(calculation.pointsRemaining)} points over budget
 				</ValidationMessage>
 			)}
-			
+
 			<StyledGrid>
 				{attributesData.map((attribute) => {
 					const attributeKey = `attribute_${attribute.id}`;
 					const currentValue = typedState[attributeKey] || 0;
 					const limit = getAttributeLimit(attribute.id);
 					const breakdown = getStatBreakdown(attribute.id);
-					
+
 					// NEW: Get effective value and forced adjustment info
 					const effectiveValue = calculation.effectiveAttributes[attribute.id] || currentValue;
-					const forcedAdjustment = calculation.forcedAdjustments.find(adj => adj.attribute === attribute.id);
+					const forcedAdjustment = calculation.forcedAdjustments.find(
+						(adj) => adj.attribute === attribute.id
+					);
 					const hasTraitEffect = effectiveValue !== currentValue;
-					
+
 					// Enhanced validation with real-time state
 					// Use live validation instead of cached result to avoid timing issues
 					const realTimeValidation = validateAttributeChange(attribute.id, currentValue + 1);
 					const canIncrease = attributePointsRemaining > 0 && realTimeValidation.isValid;
 					// Simple real-time decrease check: can decrease if above minimum
 					const canDecrease = currentValue > -2;
-					
+
 					return (
 						<StyledCardContainer key={attribute.id}>
 							<StyledCard>
@@ -245,14 +249,14 @@ function Attributes() {
 								<AttributeTotal $exceeded={limit.exceeded}>
 									Final: {limit.current} (max {limit.max})
 								</AttributeTotal>
-								
+
 								<StyledDescription>{attribute.description}</StyledDescription>
-								
+
 								<StyledControls>
 									<StyledButton
 										onClick={() => decreaseAttribute(attributeKey)}
 										disabled={!canDecrease}
-										title={!canDecrease ? "Cannot decrease below -2" : ""}
+										title={!canDecrease ? 'Cannot decrease below -2' : ''}
 										data-testid={`${attribute.id}-decrease`}
 									>
 										-
@@ -261,16 +265,19 @@ function Attributes() {
 									<StyledButton
 										onClick={() => increaseAttribute(attributeKey)}
 										disabled={!canIncrease}
-										title={!canIncrease ? (
-											attributePointsRemaining <= 0 ? "No points remaining" : 
-											realTimeValidation.message || "Cannot increase"
-										) : ""}
+										title={
+											!canIncrease
+												? attributePointsRemaining <= 0
+													? 'No points remaining'
+													: realTimeValidation.message || 'Cannot increase'
+												: ''
+										}
 										data-testid={`${attribute.id}-increase`}
 									>
 										+
 									</StyledButton>
 								</StyledControls>
-								
+
 								{/* NEW: Display both base and effective values */}
 								{hasTraitEffect && (
 									<EffectiveValueDisplay>
@@ -280,7 +287,7 @@ function Attributes() {
 										</EffectiveValue>
 									</EffectiveValueDisplay>
 								)}
-								
+
 								{/* Enhanced breakdown display */}
 								{(limit.traitBonuses > 0 || breakdown) && (
 									<AttributeBreakdown>
@@ -300,7 +307,7 @@ function Attributes() {
 										</BreakdownLine>
 									</AttributeBreakdown>
 								)}
-								
+
 								{/* NEW: Forced adjustment indicator */}
 								{forcedAdjustment && (
 									<ForcedAdjustmentIndicator>
@@ -308,14 +315,14 @@ function Attributes() {
 									</ForcedAdjustmentIndicator>
 								)}
 							</StyledCard>
-							
+
 							{/* Validation messages - now outside the card */}
 							{limit.exceeded && (
 								<ValidationMessage $type="error">
 									Exceeds maximum limit of +{limit.max}
 								</ValidationMessage>
 							)}
-							
+
 							{!limit.exceeded && !canIncrease && attributePointsRemaining > 0 && (
 								<ValidationMessage $type="warning">
 									Cannot increase further due to trait bonuses

@@ -548,20 +548,20 @@ graph LR
     B --> C{Skill Points > Cap?}
     C -->|Yes| D[Check Feature Grants]
     C -->|No| E[Valid]
-    
+
     F[Class Features] --> G[MODIFY_SKILL_MASTERY_CAP]
     H[Ancestry Traits] --> I[INCREASE_SKILL_MASTERY_CAP]
-    
+
     G --> D
     I --> D
-    
+
     D --> J{Grant Available?}
     J -->|Yes| K[Exception Applied]
     J -->|No| L[Validation Error]
-    
+
     M[enhancedCharacterCalculator] --> N[validation.masteryLimits]
     N --> O[UI Validation]
-    
+
     style B fill:#4ade80,color:#000
     style G fill:#fbbf24,color:#000
     style I fill:#fbbf24,color:#000
@@ -571,11 +571,13 @@ graph LR
 ## 3 Implementation Details
 
 ### Schema Updates:
+
 - `ModifyMasteryCapEffect`: Grants specific tier unlocks with count and optional skill restrictions
 - `IncreaseMasteryCapEffect`: Increases mastery cap by value for specific skills/trades
 - Both effects support `options` array to limit applicable skills
 
 ### Validation Logic:
+
 1. Determine baseline mastery tier from character level (Novice→Adept→Expert→Master→Grandmaster)
 2. Identify skills exceeding baseline cap based on invested points
 3. Collect all mastery cap effects from character features
@@ -583,6 +585,7 @@ graph LR
 5. Validate each over-budget skill has appropriate grant coverage
 
 ### Rules Data Conversion:
+
 - **Hunter**: Urban feature grants 2 Adept mastery unlocks for specific skills
 - **Rogue**: Expertise feature uses `INCREASE_SKILL_MASTERY_CAP`
 - **Cleric**: Knowledge domain uses `INCREASE_TRADE_MASTERY_CAP`
@@ -641,11 +644,13 @@ mindmap
 ## 6 Files Modified/Created
 
 ### Enhanced:
+
 - `src/lib/rulesdata/schemas/character.schema.ts` - Added mastery cap effect types
 - `src/lib/services/enhancedCharacterCalculator.ts` - Complete mastery validation logic
 - `src/lib/rulesdata/ancestries/traits.ts` - Fixed type errors, converted expertise traits
 
 ### Rule Data Conversions:
+
 - `src/lib/rulesdata/classes-data/features/hunter_features.ts` - Urban feature
 - `src/lib/rulesdata/classes-data/features/rogue_features.ts` - Expertise feature
 - `src/lib/rulesdata/classes-data/features/cleric_features.ts` - Knowledge domain

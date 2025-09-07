@@ -52,31 +52,43 @@ const classFeatureSchema = z.object({
 });
 
 // ADD THESE SCHEMAS
-const combatTrainingSchema = z.object({
-    weapons: z.array(z.string()).optional(),
-    armor: z.array(z.string()).optional(),
-    shields: z.array(z.string()).optional()
-}).optional();
+const combatTrainingSchema = z
+	.object({
+		weapons: z.array(z.string()).optional(),
+		armor: z.array(z.string()).optional(),
+		shields: z.array(z.string()).optional()
+	})
+	.optional();
 
-const martialPathSchema = z.object({
-    combatTraining: combatTrainingSchema,
-    maneuvers: z.object({ learnsAllAttack: z.boolean().optional(), additionalKnown: z.string().optional() }).optional(),
-    techniques: z.object({ additionalKnown: z.string().optional() }).optional(),
-    staminaPoints: z.object({ maximumIncreasesBy: z.string().optional() }).optional(),
-    staminaRegen: z.object({ description: z.string().optional(), conditions: z.array(z.string()).optional() }).optional()
-}).optional();
+const martialPathSchema = z
+	.object({
+		combatTraining: combatTrainingSchema,
+		maneuvers: z
+			.object({ learnsAllAttack: z.boolean().optional(), additionalKnown: z.string().optional() })
+			.optional(),
+		techniques: z.object({ additionalKnown: z.string().optional() }).optional(),
+		staminaPoints: z.object({ maximumIncreasesBy: z.string().optional() }).optional(),
+		staminaRegen: z
+			.object({ description: z.string().optional(), conditions: z.array(z.string()).optional() })
+			.optional()
+	})
+	.optional();
 
-const spellcasterPathSchema = z.object({
-    spellList: z.any().optional(),
-    cantrips: z.object({ description: z.string() }).optional(),
-    spells: z.object({ description: z.string() }).optional(),
-    manaPoints: z.object({ maximumIncreasesBy: z.string().optional() }).optional(),
-}).optional();
+const spellcasterPathSchema = z
+	.object({
+		spellList: z.any().optional(),
+		cantrips: z.object({ description: z.string() }).optional(),
+		spells: z.object({ description: z.string() }).optional(),
+		manaPoints: z.object({ maximumIncreasesBy: z.string().optional() }).optional()
+	})
+	.optional();
 
-const hybridPathSchema = z.object({
-    martialAspect: martialPathSchema,
-    spellcastingAspect: spellcasterPathSchema
-}).optional();
+const hybridPathSchema = z
+	.object({
+		martialAspect: martialPathSchema,
+		spellcastingAspect: spellcasterPathSchema
+	})
+	.optional();
 
 // Schema for IClassDefinition
 export const classSchema = z.object({
@@ -93,7 +105,7 @@ export const classSchema = z.object({
 		maneuversKnown: z.number(),
 		techniquesKnown: z.number(),
 		cantripsKnown: z.number(),
-		spellsKnown: z.number(),
+		spellsKnown: z.number()
 	}),
 
 	levelProgression: z.array(

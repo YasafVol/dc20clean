@@ -37,8 +37,14 @@ let calculationCache: CalculationCache = {};
 // --- Helper Functions ---
 const generateCacheKey = (data: EnhancedCharacterBuildData): string => {
 	// Create a stable key from the character build data
-	const { id, level, attribute_might, attribute_agility, attribute_charisma, attribute_intelligence } =
-		data;
+	const {
+		id,
+		level,
+		attribute_might,
+		attribute_agility,
+		attribute_charisma,
+		attribute_intelligence
+	} = data;
 	const traits = [...(data.selectedTraitIds || [])].sort().join(',');
 	const features = JSON.stringify(data.featureChoices || {});
 	const traitChoices = JSON.stringify(data.selectedTraitChoices || {});

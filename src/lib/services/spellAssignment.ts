@@ -142,9 +142,7 @@ function getAvailableSpellSchools(
 			const choice = featureChoices[choiceId];
 			if (choice) {
 				const additionalSchools =
-					spellList.schoolCount > 1
-						? parseJsonSafe<string[]>(choice) ?? [choice]
-						: [choice];
+					spellList.schoolCount > 1 ? (parseJsonSafe<string[]>(choice) ?? [choice]) : [choice];
 				schools.push(...additionalSchools);
 			}
 		}

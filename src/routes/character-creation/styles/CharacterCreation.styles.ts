@@ -97,7 +97,11 @@ export const StyledStep = styled.div<{ $active: boolean; $completed: boolean; $e
 	}
 `;
 
-export const StyledStepNumber = styled.div<{ $active: boolean; $completed: boolean; $error?: boolean }>`
+export const StyledStepNumber = styled.div<{
+	$active: boolean;
+	$completed: boolean;
+	$error?: boolean;
+}>`
 	width: 40px;
 	height: 40px;
 	border-radius: 50%;
@@ -152,7 +156,11 @@ export const StyledStepNumber = styled.div<{ $active: boolean; $completed: boole
   `}
 `;
 
-export const StyledStepLabel = styled.span<{ $active: boolean; $completed: boolean; $error?: boolean }>`
+export const StyledStepLabel = styled.span<{
+	$active: boolean;
+	$completed: boolean;
+	$error?: boolean;
+}>`
 	font-size: 0.9rem;
 	font-weight: 600;
 	text-align: center;

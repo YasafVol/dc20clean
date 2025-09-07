@@ -33,24 +33,24 @@ const ancestryIcons: { [key: string]: string } = {
 
 // Ancestry quotes
 const ancestryQuotes: { [key: string]: string } = {
-	human: "Adaptable and ambitious, we forge our own destiny.",
-	elf: "Centuries of wisdom flow through our veins.",
-	dwarf: "Stone is our blood, mountains our home.",
-	halfling: "Small in stature, but great in courage.",
-	dragonborn: "We carry the might of dragons in our souls.",
-	gnome: "Curiosity and invention are the pillars of progress.",
-	orc: "Strength and honor - nothing less matters.",
-	giantborn: "We stand tall above the rest, unbowed by time.",
-	angelborn: "Divine light guides our path through darkness.",
-	fiendborn: "Darkness flows within, but our choices define us.",
+	human: 'Adaptable and ambitious, we forge our own destiny.',
+	elf: 'Centuries of wisdom flow through our veins.',
+	dwarf: 'Stone is our blood, mountains our home.',
+	halfling: 'Small in stature, but great in courage.',
+	dragonborn: 'We carry the might of dragons in our souls.',
+	gnome: 'Curiosity and invention are the pillars of progress.',
+	orc: 'Strength and honor - nothing less matters.',
+	giantborn: 'We stand tall above the rest, unbowed by time.',
+	angelborn: 'Divine light guides our path through darkness.',
+	fiendborn: 'Darkness flows within, but our choices define us.',
 	beastborn: "Nature's gifts shape our bodies and spirits.",
-	penguinborn: "We waddle with pride through ice and water.",
-	gremlin: "Small but fierce, we thrive in chaos.",
-	goblin: "Clever tactics over brute strength.",
-	terraborn: "Earth is our ally, stone our sanctuary.",
-	shadowborn: "We embrace the darkness others fear.",
+	penguinborn: 'We waddle with pride through ice and water.',
+	gremlin: 'Small but fierce, we thrive in chaos.',
+	goblin: 'Clever tactics over brute strength.',
+	terraborn: 'Earth is our ally, stone our sanctuary.',
+	shadowborn: 'We embrace the darkness others fear.',
 	psyborn: "The mind's potential knows no limits.",
-	default: "A proud lineage with unique talents."
+	default: 'A proud lineage with unique talents.'
 };
 
 function AncestrySelector() {
@@ -96,7 +96,16 @@ function AncestrySelector() {
 	return (
 		<StyledContainer>
 			<StyledTitle>Choose Your Ancestry</StyledTitle>
-			<StyledNoSelection style={{ margin: '-1.25rem 0 1.5rem', fontSize: '1.1rem', textAlign: 'center', width: '100%' }}>Select up to 2 ancestries for your character.</StyledNoSelection>
+			<StyledNoSelection
+				style={{
+					margin: '-1.25rem 0 1.5rem',
+					fontSize: '1.1rem',
+					textAlign: 'center',
+					width: '100%'
+				}}
+			>
+				Select up to 2 ancestries for your character.
+			</StyledNoSelection>
 			<StyledGrid>
 				{ancestriesData.map((ancestry: IAncestry) => (
 					<StyledCard
@@ -109,9 +118,7 @@ function AncestrySelector() {
 							<StyledAncestryIcon>{getAncestryIcon(ancestry.id)}</StyledAncestryIcon>
 							<StyledCardTitle>{ancestry.name}</StyledCardTitle>
 						</StyledCardHeader>
-						<StyledNewClassQuote>
-							{getAncestryQuote(ancestry.id)}
-						</StyledNewClassQuote>
+						<StyledNewClassQuote>{getAncestryQuote(ancestry.id)}</StyledNewClassQuote>
 						<StyledCardDescription>{ancestry.description}</StyledCardDescription>
 					</StyledCard>
 				))}

@@ -2,6 +2,393 @@ name: CI
 
 on:
   push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ '**' ]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install deps
+        run: npm ci
+      - name: Run lint
+        run: npm run lint
+
+  unit:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install deps
+        run: npm ci
+      - name: Run unit tests
+        run: npm run test:unit -- --run
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install deps
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Pack dist
+        run: |
+          if [ -d dist ]; then tar -czf dist.tar.gz dist; else echo 'no dist' && exit 1; fi
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-artifact
+          path: dist.tar.gz
+
+  e2e:
+    name: E2E
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - device: desktop
+            shardIndex: 1
+            totalShards: 2
+          - device: desktop
+            shardIndex: 2
+            totalShards: 2
+          - device: desktop
+            shardIndex: 1
+            totalShards: 4
+          - device: desktop
+            shardIndex: 2
+            totalShards: 4
+          - device: desktop
+            shardIndex: 3
+            totalShards: 4
+          - device: desktop
+            shardIndex: 4
+            totalShards: 4
+          - device: mobile
+            shardIndex: 1
+            totalShards: 2
+          - device: mobile
+            shardIndex: 2
+            totalShards: 2
+          - device: mobile
+            shardIndex: 1
+            totalShards: 4
+          - device: mobile
+            shardIndex: 2
+            totalShards: 4
+          - device: mobile
+            shardIndex: 3
+            totalShards: 4
+          - device: mobile
+            shardIndex: 4
+            totalShards: 4
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-cache-${{ runner.os }}-v1
+          restore-keys: |
+            playwright-cache-${{ runner.os }}-v1
+      - name: Install deps
+        run: npm ci
+      - name: Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-artifact
+          path: ./
+      - name: Extract dist
+        run: tar -xzf dist.tar.gz
+      - name: Install Playwright browsers (chromium only)
+        run: npx playwright install chromium
+      - name: Run Playwright E2E shard
+        env:
+          PLAYWRIGHT_SKIP_BUILD: '1'
+          E2E_FIXTURE: ./test-character-gibble.json
+          E2E_WORKERS: 2
+        run: |
+          echo "Running device=${{ matrix.device }} shard=${{ matrix.shardIndex }}/${{ matrix.totalShards }}"
+          npx playwright test --project=${{ matrix.device }} --shard=${{ matrix.shardIndex }}/${{ matrix.totalShards }} --workers=$E2E_WORKERS --reporter=list
+      - name: Upload Playwright results (test-results)
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results-${{ matrix.device }}-shard-${{ matrix.shardIndex }}-of-${{ matrix.totalShards }}
+          path: test-results
+      - name: Upload Playwright report (playwright-report)
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.device }}-shard-${{ matrix.shardIndex }}-of-${{ matrix.totalShards }}
+          path: playwright-report
+
+name: CI
+
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ '**' ]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install deps
+        run: npm ci
+      - name: Run lint
+        run: npm run lint
+
+  unit:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install deps
+        run: npm ci
+      - name: Run unit tests
+        run: npm run test:unit -- --run
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    outputs:
+      dist-artifact: dist-artifact
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install deps
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Pack dist
+        run: |
+          if [ -d dist ]; then tar -czf dist.tar.gz dist; else echo 'no dist directory' && exit 1; fi
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-artifact
+          path: dist.tar.gz
+
+  e2e:
+    name: E2E
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        device: [desktop, mobile]
+        shardIndex: [1,2]
+        totalShards: [2]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-cache-${{ runner.os }}-v1
+          restore-keys: |
+            playwright-cache-${{ runner.os }}-v1
+      - name: Install deps
+        run: npm ci
+      - name: Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-artifact
+          path: ./
+      - name: Extract dist
+        run: tar -xzf dist.tar.gz
+      - name: Install Playwright browsers (chromium only)
+        run: npx playwright install chromium
+      - name: Run Playwright E2E shard
+        env:
+          PLAYWRIGHT_SKIP_BUILD: '1'
+          E2E_FIXTURE: ./test-character-gibble.json
+          # tune E2E_WORKERS per runner capacity
+          E2E_WORKERS: 2
+        run: |
+          SHARD=${{ matrix.shardIndex }}
+          TOTAL=${{ matrix.totalShards }}
+          npx playwright test --project=${{ matrix.device }} --shard=${SHARD}/${TOTAL} --workers=$E2E_WORKERS --reporter=list
+      - name: Upload Playwright results
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results-${{ matrix.device }}-shard-${{ matrix.shardIndex }}
+          path: test-results
+name: CI
+
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ '**' ]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install deps
+        run: npm ci
+      - name: Run lint
+        run: npm run lint
+
+  unit:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install deps
+        run: npm ci
+      - name: Run unit tests
+        run: npm run test:unit -- --run
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    outputs:
+      dist-path: ${{ steps.upload.outputs.artifact-path }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install deps
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Pack dist
+        run: |
+          tar -czf dist.tar.gz dist
+          echo "artifact-path=dist.tar.gz" >> $GITHUB_OUTPUT
+        id: pack
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-artifact
+          path: dist.tar.gz
+
+  e2e:
+    name: E2E
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        device: [desktop, mobile]
+        shard: [1/2, 2/2]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-cache-${{ runner.os }}-v1
+          restore-keys: |
+            playwright-cache-${{ runner.os }}-v1
+      - name: Install deps
+        run: npm ci
+      - name: Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-artifact
+          path: ./
+      - name: Extract dist
+        run: tar -xzf dist.tar.gz
+      - name: Install Playwright browsers (chromium only)
+        run: npx playwright install chromium
+      - name: Run Playwright E2E shard
+        env:
+          PLAYWRIGHT_SKIP_BUILD: '1'
+          E2E_FIXTURE: ./test-character-gibble.json
+          E2E_WORKERS: 2
+        run: |
+          npx playwright test --project=${{ matrix.device }} --shard=${{ matrix.shard }} --workers=$E2E_WORKERS --reporter=list
+      - name: Upload Playwright results
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results-${{ matrix.device }}-${{ matrix.shard }}
+          path: test-results || playwright-report || ''
+name: CI
+
+on:
+  push:
     branches: ['**']
   pull_request:
     branches: ['**']

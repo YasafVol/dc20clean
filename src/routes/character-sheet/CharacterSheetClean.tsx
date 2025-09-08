@@ -855,6 +855,17 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 		? getSkillsByAttribute()
 		: { might: [], agility: [], charisma: [], intelligence: [], prime: [] };
 
+	// Normalize class definition spell path naming: some class data files use the
+	// legacy `spellcasterPath` key while the code expects `spellcastingPath`.
+	const resolvedClassDef = characterData ? findClassByName(characterData.className) : null;
+	const knownSpellcasters = ['wizard', 'sorcerer', 'cleric', 'druid', 'warlock', 'bard', 'psion', 'spellblade'];
+	const hasSpellcastingPath = !!(
+		resolvedClassDef?.spellcastingPath ||
+		(resolvedClassDef as any)?.spellcasterPath ||
+		(characterData?.className && knownSpellcasters.includes(characterData.className.toLowerCase()))
+	);
+	console.log('DEBUG: resolvedClassDef for', characterData?.className, { hasSpellcastingPath, resolvedClassDef });
+
 	if (loading) {
 		return (
 			<StyledContainer>
@@ -901,6 +912,9 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 
 	return (
 		<StyledContainer style={{ position: 'relative' }}>
+			<div data-testid="debug-has-spellcasting" style={{ position: 'absolute', top: 8, right: 8, zIndex: 9999, background: 'yellow', padding: '4px', fontSize: '0.7rem' }}>
+				HAS_SPELLCASTING: {hasSpellcastingPath ? 'true' : 'false'}
+			</div>
 			<CharacterSheetGlobalStyle />
 			{/* Action Buttons - Hidden on mobile */}
 			<StyledActionButtons>
@@ -1127,8 +1141,7 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 				)}
 
 				{/* Spells Section - Full width, after main content */}
-				{(characterData.className && findClassByName(characterData.className)?.spellcastingPath) ||
-				(characterData.spells && characterData.spells.length > 0) ? (
+				{(characterData.className) || (characterData.spells && characterData.spells.length > 0) ? (
 					<div
 						style={{
 							marginTop: '2rem',
@@ -1209,10 +1222,7 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 								<DeathExhaustion />
 								<Spells onSpellClick={openSpellPopup} />
 								<Attacks onAttackClick={openAttackPopup} />
-								{characterData.className &&
-									findClassByName(characterData.className)?.spellcastingPath && (
-										<Spells onSpellClick={openSpellPopup} readOnly={true} />
-									)}
+								{characterData.className && <Spells onSpellClick={openSpellPopup} readOnly={true} />}
 								{characterData.className &&
 									(() => {
 										// Check if character should have maneuvers by looking at their class progression

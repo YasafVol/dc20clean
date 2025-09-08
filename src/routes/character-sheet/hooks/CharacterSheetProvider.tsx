@@ -307,7 +307,14 @@ export function useCharacterAttacks() {
 	const { state } = useCharacterSheet();
 
 	return useMemo(() => {
-		return state.character?.characterState?.attacks || [];
+		const attacks = state.character?.characterState?.attacks;
+		// Handle both array and object formats for backward compatibility
+		if (Array.isArray(attacks)) {
+			return attacks;
+		} else if (attacks && typeof attacks === 'object') {
+			return Object.values(attacks);
+		}
+		return [];
 	}, [state.character?.characterState?.attacks]);
 }
 

@@ -31,20 +31,20 @@ const Currency: React.FC<CurrencyProps> = ({ isMobile = false }) => {
 
 	const currency = inventory.currency;
 
-	// Type guard for legacy/canonical currency
+	// Type guard for legacy/canonical currency - handle undefined currency
 	const canonicalCurrency = {
 		goldPieces:
-			'goldPieces' in currency ? currency.goldPieces : 'gold' in currency ? currency.gold : 0,
+			currency && 'goldPieces' in currency ? currency.goldPieces : currency && 'gold' in currency ? currency.gold : 0,
 		silverPieces:
-			'silverPieces' in currency
+			currency && 'silverPieces' in currency
 				? currency.silverPieces
-				: 'silver' in currency
+				: currency && 'silver' in currency
 					? currency.silver
 					: 0,
 		copperPieces:
-			'copperPieces' in currency
+			currency && 'copperPieces' in currency
 				? currency.copperPieces
-				: 'copper' in currency
+				: currency && 'copper' in currency
 					? currency.copper
 					: 0
 	};
@@ -106,6 +106,9 @@ const Currency: React.FC<CurrencyProps> = ({ isMobile = false }) => {
 						value={value}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
 							handleInputChange(key, e.target.value)
+						}
+						data-testid={
+							key === 'goldPieces' ? 'currency-gp' : key === 'silverPieces' ? 'currency-sp' : 'currency-cp'
 						}
 					/>
 				</CurrencyRow>

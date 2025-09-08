@@ -118,7 +118,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 			<StyledInventoryTitle $isMobile={isMobile}>INVENTORY</StyledInventoryTitle>
 
 			{/* Add Item Button */}
-			<StyledAddItemButton $isMobile={isMobile} onClick={addInventorySlot}>
+			<StyledAddItemButton $isMobile={isMobile} onClick={addInventorySlot} data-testid="add-item">
 				+ Add Item
 			</StyledAddItemButton>
 
@@ -150,6 +150,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 								<StyledRemoveItemButton
 									onClick={() => removeInventorySlot(index)}
 									title="Remove item"
+									aria-label={`Remove item ${index + 1}`}
 								>
 									×
 								</StyledRemoveItemButton>
@@ -174,6 +175,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 									value={item.itemName}
 									onChange={(e) => handleInventoryItemSelect(index, e.target.value, true)}
 									disabled={!item.itemType}
+									data-testid="item-name"
 								>
 									<option value="">Select Item</option>
 									{item.itemType &&
@@ -204,6 +206,8 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 											title={
 												selectedItem.itemType === 'Shield' ? getShieldInfo(selectedItem) : undefined
 											}
+											data-testid="info-btn"
+											aria-label={`item-info-${index + 1}`}
 										>
 											i
 										</StyledInventoryInfoIcon>

@@ -129,7 +129,11 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 		<StyledAttacksSection $isMobile={effectiveIsMobile}>
 			<StyledAttacksHeader $isMobile={effectiveIsMobile}>
 				<StyledAttacksTitle $isMobile={effectiveIsMobile}>ATTACKS</StyledAttacksTitle>
-				<StyledAddWeaponButton $isMobile={effectiveIsMobile} onClick={addWeaponSlot}>
+				<StyledAddWeaponButton
+					$isMobile={effectiveIsMobile}
+					onClick={addWeaponSlot}
+					data-testid="add-weapon"
+				>
 					+ Add Weapon
 				</StyledAddWeaponButton>
 			</StyledAttacksHeader>
@@ -178,6 +182,7 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 									$isMobile={effectiveIsMobile}
 									onClick={() => removeWeaponSlot(index)}
 									title="Remove weapon"
+									aria-label={`Remove weapon ${index + 1}`}
 								>
 									×
 								</StyledRemoveButton>
@@ -187,6 +192,7 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 									$isMobile={effectiveIsMobile}
 									value={attack.weaponName}
 									onChange={(e: any) => handleWeaponSelect(index, e.target.value)}
+									data-testid="weapon-name"
 								>
 									<option value="">Select Weapon...</option>
 									{weapons.map((weapon) => (
@@ -204,6 +210,7 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 											? `Base weapon damage: ${weapon.damage}${getVersatileDamage(weapon) ? ` (${getVersatileDamage(weapon)?.twoHanded} when two-handed)` : ''}`
 											: ''
 									}
+									data-testid="weapon-damage"
 								>
 									{weapon ? attack.damage || weapon.damage : '-'}
 								</StyledDamageCell>
@@ -261,6 +268,8 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 										<StyledInfoIcon
 											$isMobile={effectiveIsMobile}
 											onClick={() => onAttackClick(attack, weapon)}
+											data-testid="info-btn"
+											aria-label={`attack-info-${index + 1}`}
 										>
 											i
 										</StyledInfoIcon>

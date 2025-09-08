@@ -9,6 +9,10 @@ export default defineConfig({
 	},
 	use: {
 		baseURL: 'http://localhost:4173',
+		// Default: do not write screenshots unless explicitly enabled via env var
+		// Use 'only-on-failure' to be conservative, and allow E2E_SCREENSHOTS=1 to force screenshots
+		screenshot: process.env.E2E_SCREENSHOTS ? 'on' : 'only-on-failure',
+		trace: process.env.E2E_TRACES ? 'on' : 'on-first-retry'
 	},
 	testDir: 'e2e',
 	projects: [

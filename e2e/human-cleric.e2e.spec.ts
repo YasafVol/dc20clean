@@ -191,6 +191,9 @@ test.describe('Human Cleric E2E', () => {
 		await page.getByLabel(/Player Name/i).fill('e2e automation');
 		await page.getByText(/Complete|Finish/i).click();
 
+		// After completion, app navigates to Load Character
+		await page.waitForURL('**/load-character');
+
 		// Verify saved character from localStorage
 		const saved = await page.evaluate(() => {
 			const list = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
@@ -241,5 +244,16 @@ test.describe('Human Cleric E2E', () => {
 			draconic: { fluency: 'limited' },
 			dwarvish: { fluency: 'limited' }
 		});
+
+		// Open character sheet and verify stats are rendered
+		const charCard = page.locator('div', { hasText: 'testy' }).first();
+		await charCard.getByRole('button', { name: 'View Sheet' }).click();
+		await page.waitForURL('**/character/**');
+
+		// Movement stats visible on sheet
+		await expect(page.getByText(/MOVE SPEED/i).first()).toBeVisible();
+		await expect(page.getByText(/JUMP DISTANCE/i).first()).toBeVisible();
+		// Expect move speed base (no modifiers) to be visible as a standalone value (desktop movement)
+		await expect(page.getByText(/^5$/).first()).toBeVisible();
 	});
 });

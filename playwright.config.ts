@@ -1,8 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const skipBuild = process.env.PLAYWRIGHT_SKIP_BUILD === '1';
+
 export default defineConfig({
 	webServer: {
-		command: 'npm run build && npm run preview',
+		// When PLAYWRIGHT_SKIP_BUILD=1 we only preview the existing build artifact.
+		// Otherwise build then preview.
+		command: skipBuild ? 'npm run preview' : 'npm run build && npm run preview',
 		port: 4173,
 		reuseExistingServer: true,
 		timeout: 120000
@@ -26,7 +30,7 @@ export default defineConfig({
 		{
 			name: 'mobile',
 			use: {
-				...devices['iPhone 12'],
+				...devices['iPhone 12']
 			}
 		}
 	]

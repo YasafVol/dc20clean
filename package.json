@@ -17,6 +17,10 @@
 		"e2e:desktop": "E2E_FIXTURE=./test-character-gibble.json npx playwright test --project=desktop --workers=1",
 		"e2e:mobile": "E2E_FIXTURE=./test-character-gibble.json npx playwright test --project=mobile --workers=1",
 		"e2e:all": "E2E_FIXTURE=./test-character-gibble.json npx playwright test --workers=1",
+		"e2e:parallel:desktop": "E2E_FIXTURE=./test-character-gibble.json E2E_WORKERS=${E2E_WORKERS:-4} npx playwright test --project=desktop --workers=${E2E_WORKERS:-4}",
+		"e2e:parallel:mobile": "E2E_FIXTURE=./test-character-gibble.json E2E_WORKERS=${E2E_WORKERS:-4} npx playwright test --project=mobile --workers=${E2E_WORKERS:-4}",
+		"e2e:parallel:all": "E2E_FIXTURE=./test-character-gibble.json E2E_WORKERS=${E2E_WORKERS:-4} npx playwright test --workers=${E2E_WORKERS:-4}",
+		"e2e:parallel:auto": "E2E_FIXTURE=./test-character-gibble.json E2E_WORKERS=$(node -e \"console.log(Math.max(1, Math.floor(require('os').cpus().length/2)))\") npx playwright test --workers=$E2E_WORKERS",
 		"db:start": "docker compose up"
 	},
 	"files": [

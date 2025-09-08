@@ -5,7 +5,7 @@
  * for tooltips, validation, and effect previews.
  */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useMemo, useCallback, useEffect, useState } from 'react';
 import { useCharacter } from '../stores/characterContext';
 import {
 	calculateCharacterWithBreakdowns,

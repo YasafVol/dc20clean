@@ -18,7 +18,7 @@ export function getDetailedClassFeatureDescription(
 	optionValue: string
 ): string | null {
 	switch (choiceId) {
-		case 'cleric_divine_domain': {
+		case 'cleric_divine_domain':
 			// Map lowercase option value to proper name for lookup
 			const domainNameMap: Record<string, string> = {
 				knowledge: 'Knowledge',
@@ -46,9 +46,8 @@ export function getDetailedClassFeatureDescription(
 
 			const domainOption = findChoiceOption('Cleric', 'Cleric Order', 0, domainName);
 			return domainOption?.description || null;
-		}
 
-		case 'monk_stance_choice': {
+		case 'monk_stance_choice':
 			const stanceNameMap: Record<string, string> = {
 				bear_stance: 'Bear Stance',
 				bull_stance: 'Bull Stance',
@@ -66,7 +65,6 @@ export function getDetailedClassFeatureDescription(
 
 			const stanceOption = findChoiceOption('Monk', 'Monk Stance', 0, stanceName);
 			return stanceOption?.description || null;
-		}
 
 		// Add other class feature choices here when needed
 		default:

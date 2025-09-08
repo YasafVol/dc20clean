@@ -5,18 +5,18 @@
  * for tooltips and real-time validation for the UI.
  */
 
-// @ts-nocheck - Temporary bypass for effect system type migration
-
 import type {
 	EnhancedCalculationResult,
 	EnhancedCharacterBuildData,
 	AttributedEffect,
+	EffectSource,
 	EnhancedStatBreakdown,
 	ValidationResult,
 	ValidationError,
 	AttributeLimit,
 	UnresolvedChoice,
 	ChoiceOption,
+	EffectPreview,
 	TraitChoiceStorage
 } from '../types/effectSystem';
 import {
@@ -40,6 +40,7 @@ import { warlockClass } from '../rulesdata/classes-data/features/warlock_feature
 import { bardClass } from '../rulesdata/classes-data/features/bard_features';
 import { druidClass } from '../rulesdata/classes-data/features/druid_features';
 import { commanderClass } from '../rulesdata/classes-data/features/commander_features';
+import { psionClass } from '../rulesdata/classes-data/features/psion_features';
 
 import barbarianTable from '../rulesdata/classes-data/tables/barbarian_table.json';
 import clericTable from '../rulesdata/classes-data/tables/cleric_table.json';
@@ -57,7 +58,7 @@ import commanderTable from '../rulesdata/classes-data/tables/commander_table.jso
 import { attributesData } from '../rulesdata/attributes';
 import { skillsData } from '../rulesdata/skills';
 import { tradesData } from '../rulesdata/trades';
-import type { ClassDefinition } from '../rulesdata/schemas/character.schema';
+import type { Effect, ClassDefinition } from '../rulesdata/schemas/character.schema';
 
 /**
  * Convert character context data to enhanced build data
@@ -843,7 +844,7 @@ export function calculateCharacterWithBreakdowns(
 	}
 
 	// 4. Validate specific skill coverage
-	const skillsNeedingFeatureCoverage = [...skillsOverLevelCap];
+	let skillsNeedingFeatureCoverage = [...skillsOverLevelCap];
 
 	// Check remaining skills against feature options
 	for (const skillId of skillsNeedingFeatureCoverage) {

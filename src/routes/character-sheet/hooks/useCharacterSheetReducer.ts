@@ -1,6 +1,6 @@
 import { useReducer, useCallback } from 'react';
 import type { SavedCharacter } from '../../../lib/types/dataContracts';
-import type { AttackData } from '../../../types';
+import type { Attack } from '../../../lib/types/dataContracts';
 
 // Sheet state - wraps the SavedCharacter
 export interface SheetState {
@@ -22,9 +22,9 @@ export type SheetAction =
 	| { type: 'UPDATE_DEATH_STEP'; steps: number; isDead?: boolean }
 	| { type: 'UPDATE_ACTION_POINTS_USED'; ap: number }
 	| { type: 'SET_MANUAL_DEFENSE'; pd?: number; ad?: number; pdr?: number }
-	| { type: 'ADD_ATTACK'; attack: AttackData }
+	| { type: 'ADD_ATTACK'; attack: Attack }
 	| { type: 'REMOVE_ATTACK'; attackId: string }
-	| { type: 'UPDATE_ATTACK'; attackId: string; attack: AttackData }
+	| { type: 'UPDATE_ATTACK'; attackId: string; attack: Attack }
 	| { type: 'ADD_SPELL'; spell: any }
 	| { type: 'REMOVE_SPELL'; spellId: string }
 	| { type: 'UPDATE_SPELL'; spellId: string; field: string; value: any }
@@ -464,7 +464,7 @@ export function useCharacterSheetReducer() {
 		dispatch({ type: 'SET_MANUAL_DEFENSE', pd, ad, pdr });
 	}, []);
 
-	const addAttack = useCallback((attack: AttackData) => {
+	const addAttack = useCallback((attack: Attack) => {
 		dispatch({ type: 'ADD_ATTACK', attack });
 	}, []);
 
@@ -472,7 +472,7 @@ export function useCharacterSheetReducer() {
 		dispatch({ type: 'REMOVE_ATTACK', attackId });
 	}, []);
 
-	const updateAttack = useCallback((attackId: string, attack: AttackData) => {
+	const updateAttack = useCallback((attackId: string, attack: Attack) => {
 		dispatch({ type: 'UPDATE_ATTACK', attackId, attack });
 	}, []);
 
@@ -511,14 +511,6 @@ export function useCharacterSheetReducer() {
 		dispatch({ type: 'UPDATE_NOTES', notes });
 	}, []);
 
-	const updateGritPoints = useCallback((grit: number) => {
-		dispatch({ type: 'UPDATE_CURRENT_GRIT_POINTS', grit });
-	}, []);
-
-	const updateRestPoints = useCallback((rest: number) => {
-		dispatch({ type: 'UPDATE_CURRENT_REST_POINTS', rest });
-	}, []);
-
 	return {
 		state,
 		dispatch,
@@ -541,8 +533,6 @@ export function useCharacterSheetReducer() {
 		removeManeuver,
 		updateInventory,
 		updateCurrency,
-		updateNotes,
-		updateGritPoints,
-		updateRestPoints
+		updateNotes
 	};
 }

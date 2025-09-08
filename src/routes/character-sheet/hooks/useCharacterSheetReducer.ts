@@ -49,6 +49,8 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 			return { ...state, loading: true, error: null };
 
 		case 'LOAD_SUCCESS':
+			// Keep the character as-is. We intentionally do NOT normalize attacks here.
+			// The app will preserve the shape (array or object) supplied at creation.
 			return { ...state, character: action.character, loading: false, error: null };
 
 		case 'LOAD_ERROR':
@@ -211,55 +213,51 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 
 		case 'ADD_ATTACK':
 			if (!state.character) return state;
-			const currentAttacks = Array.isArray(state.character.characterState.attacks) 
-				? state.character.characterState.attacks 
-				: Object.values(state.character.characterState.attacks || {});
-			return {
-				...state,
-				character: {
-					...state.character,
-					characterState: {
-						...state.character.characterState,
-						attacks: [...currentAttacks, action.attack]
+			{
+				const arr = state.character.characterState.attacks || [];
+				return {
+					...state,
+					character: {
+						...state.character,
+						characterState: {
+							...state.character.characterState,
+							attacks: [...arr, action.attack]
+						}
 					}
-				}
-			};
+				};
+			}
 
 		case 'REMOVE_ATTACK':
 			if (!state.character) return state;
-			const attacksToFilter = Array.isArray(state.character.characterState.attacks) 
-				? state.character.characterState.attacks 
-				: Object.values(state.character.characterState.attacks || {});
-			return {
-				...state,
-				character: {
-					...state.character,
-					characterState: {
-						...state.character.characterState,
-						attacks: attacksToFilter.filter(
-							(attack) => attack.id !== action.attackId
-						)
+			{
+				const arr = state.character.characterState.attacks || [];
+				return {
+					...state,
+					character: {
+						...state.character,
+						characterState: {
+							...state.character.characterState,
+							attacks: arr.filter((attack: any) => attack.id !== action.attackId)
+						}
 					}
-				}
-			};
+				};
+			}
 
 		case 'UPDATE_ATTACK':
 			if (!state.character) return state;
-			const attacksToUpdate = Array.isArray(state.character.characterState.attacks) 
-				? state.character.characterState.attacks 
-				: Object.values(state.character.characterState.attacks || {});
-			return {
-				...state,
-				character: {
-					...state.character,
-					characterState: {
-						...state.character.characterState,
-						attacks: attacksToUpdate.map((attack) =>
-							attack.id === action.attackId ? action.attack : attack
-						)
+			{
+				const arr = state.character.characterState.attacks || [];
+				return {
+					...state,
+					character: {
+						...state.character,
+						characterState: {
+							...state.character.characterState,
+							attacks: arr.map((attack: any) => (attack.id === action.attackId ? action.attack : attack))
+						}
 					}
-				}
-			};
+				};
+			}
 
 		case 'ADD_SPELL':
 			if (!state.character) return state;

@@ -197,17 +197,50 @@ export const saveAllCharacters = (characters: SavedCharacter[]): void => {
  */
 export const getCharacterById = (characterId: string): SavedCharacter | null => {
 	console.log(`Looking for character with ID: ${characterId}`);
-	const characters = getAllSavedCharacters();
-	const character = characters.find((char) => char.id === characterId) || null;
+	// Read raw savedCharacters so we can migrate a single character in-place if needed
+	const charactersJson = localStorage.getItem('savedCharacters') || '[]';
+	try {
+		const rawCharacters = JSON.parse(charactersJson) as any[];
+		const rawIndex = rawCharacters.findIndex((c) => c && c.id === characterId);
+		if (rawIndex === -1) {
+			console.warn(`Character ${characterId} not found`);
+			console.log(`Available character IDs: ${rawCharacters.map((c) => c && c.id).filter(Boolean).join(', ')}`);
+			return null;
+		}
 
-	if (character) {
-		console.log(`Found character: ${character.finalName || character.id}`);
-	} else {
-		console.warn(`Character ${characterId} not found`);
-		console.log(`Available character IDs: ${characters.map((c) => c.id).join(', ')}`);
+		const rawChar = rawCharacters[rawIndex];
+
+		// Deserialize using the centralized deserializer (this will normalize in-memory)
+		const deserialized = deserializeCharacterFromStorage(JSON.stringify(rawChar));
+		if (!deserialized) {
+			console.warn(`Failed to deserialize character ${characterId}`);
+			return null;
+		}
+
+		// If the stored raw character had attacks as an object map, convert it and persist
+		try {
+			const attacksRaw = rawChar?.characterState?.attacks;
+			if (attacksRaw && !Array.isArray(attacksRaw) && typeof attacksRaw === 'object') {
+				console.log(`Detected legacy attacks map for character ${characterId}, migrating single character`);
+				// Backup before mutating stored data
+				backupCharacterData();
+				// Convert to array and persist the raw characters array
+				rawChar.characterState = rawChar.characterState || {};
+				rawChar.characterState.attacks = Object.values(attacksRaw);
+				rawCharacters[rawIndex] = rawChar;
+				localStorage.setItem('savedCharacters', JSON.stringify(rawCharacters));
+				console.log(`Migrated and saved character ${characterId} with attacks as array`);
+			}
+		} catch (mErr) {
+			console.warn(`Failed to migrate and persist character ${characterId}`, mErr);
+		}
+
+		console.log(`Found character: ${deserialized.finalName || deserialized.id}`);
+		return deserialized;
+	} catch (err) {
+		console.error('Failed to load saved characters for lookup', err);
+		return null;
 	}
-
-	return character;
 };
 
 /**
@@ -278,5 +311,72 @@ export const restoreFromBackup = (): boolean => {
 		return true;
 	}
 	console.warn('No backup found to restore from');
+	return false;
+};
+
+/**
+ * One-time migration: convert any characterState.attacks stored as an object map
+ * into an array (Object.values) and persist the rewritten savedCharacters.
+ * This function makes a backup before mutating localStorage.
+ */
+export const migrateSavedCharactersToArrayAttacks = (): boolean => {
+	try {
+		const raw = localStorage.getItem('savedCharacters');
+		if (!raw) {
+			console.log('No savedCharacters in localStorage, nothing to migrate');
+			return false;
+		}
+
+		// Backup current data
+		backupCharacterData();
+
+		const parsed = JSON.parse(raw) as any[];
+		let didChange = false;
+
+		const rewritten = parsed.map((char) => {
+			try {
+				const cs = char.characterState || {};
+				const attacksRaw = cs.attacks;
+				if (attacksRaw && !Array.isArray(attacksRaw) && typeof attacksRaw === 'object') {
+					// Convert object map to array
+					cs.attacks = Object.values(attacksRaw);
+					didChange = true;
+				}
+				return { ...char, characterState: cs };
+			} catch (e) {
+				console.warn('Failed to process character during migration', e);
+				return char;
+			}
+		});
+
+		if (didChange) {
+			localStorage.setItem('savedCharacters', JSON.stringify(rewritten));
+			console.log('Migration complete: savedCharacters updated to canonical attacks array shape');
+		} else {
+			console.log('Migration: no characters needed attacks migration');
+		}
+
+		return didChange;
+	} catch (err) {
+		console.error('Migration failed', err);
+		return false;
+	}
+};
+
+/**
+ * Convenience function that will run the migration if the flag is present on window
+ * or when explicitly invoked. This avoids running migration automatically in prod.
+ */
+export const runMigrationIfRequested = (force = false): boolean => {
+	if (force) return migrateSavedCharactersToArrayAttacks();
+	try {
+		const win: any = typeof window !== 'undefined' ? window : undefined;
+		if (win && win.__MIGRATE_ATTACKS_TO_ARRAY__ === true) {
+			console.log('Migration flag detected on window, running migration');
+			return migrateSavedCharactersToArrayAttacks();
+		}
+	} catch (e) {
+		// ignore
+	}
 	return false;
 };

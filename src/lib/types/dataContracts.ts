@@ -51,6 +51,7 @@ export interface CharacterState {
 	notes: {
 		playerNotes: string;
 	};
+	// attacks are an array of attack objects. We enforce array-only shape.
 	attacks?: any[];
 	spells?: any[];
 	maneuvers?: any[];

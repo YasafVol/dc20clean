@@ -140,6 +140,62 @@ describe('useCharacterSheetReducer', () => {
 		expect(result.current.state.character?.characterState.attacks[0]).toEqual(newAttack);
 	});
 
+	it('should handle REMOVE_ATTACK action for array attacks', () => {
+		const { result } = renderHook(() => useCharacterSheetReducer());
+
+		const mockCharacter = {
+			id: 'test-id',
+			characterState: {
+				attacks: [
+					{ id: 'a1', name: 'Spear' },
+					{ id: 'a2', name: 'Dagger' }
+				]
+			}
+		} as any;
+
+		// First load a character
+		act(() => {
+			result.current.dispatch({ type: 'LOAD_SUCCESS', character: mockCharacter });
+		});
+
+		// Then remove an attack
+		act(() => {
+			result.current.dispatch({ type: 'REMOVE_ATTACK', attackId: 'a1' });
+		});
+
+		expect((result.current.state.character!.characterState.attacks as any[])).toHaveLength(1);
+		expect(((result.current.state.character!.characterState.attacks as any[])[0].id)).toBe('a2');
+	});
+
+	it('should handle UPDATE_ATTACK action for array attacks', () => {
+		const { result } = renderHook(() => useCharacterSheetReducer());
+
+		const mockCharacter = {
+			id: 'test-id',
+			characterState: {
+				attacks: [
+					{ id: 'a1', name: 'Spear', attackBonus: 1 },
+					{ id: 'a2', name: 'Dagger', attackBonus: 2 }
+				]
+			}
+		} as any;
+
+		const updatedAttack = { id: 'a2', name: 'Dagger', attackBonus: 5 } as any;
+
+		// First load a character
+		act(() => {
+			result.current.dispatch({ type: 'LOAD_SUCCESS', character: mockCharacter });
+		});
+
+		// Then update an attack
+		act(() => {
+			result.current.dispatch({ type: 'UPDATE_ATTACK', attackId: 'a2', attack: updatedAttack });
+		});
+
+		const attacksArr = result.current.state.character!.characterState.attacks as any[];
+		expect(attacksArr.find((a: any) => a.id === 'a2').attackBonus).toBe(5);
+	});
+
 	it('should handle SET_MANUAL_DEFENSE action', () => {
 		const { result } = renderHook(() => useCharacterSheetReducer());
 

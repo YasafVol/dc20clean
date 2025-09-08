@@ -14,6 +14,7 @@ You must always adhere to all the sections in this instructions file. `Instructi
 - Run commands in interactive mode.
 - Check for `SESSION_CONTEXT.md` document, this is a structured markdown file with condence helpful information about the codebase structure, flows and nuances. Don't generate
   the file if it's missing.
+- if node version is incorrect, run 'nvm use 20' command to switch to node 20.
 
 ## Coding Standards
 

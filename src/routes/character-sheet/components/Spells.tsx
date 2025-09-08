@@ -149,11 +149,11 @@ const Spells: React.FC<SpellsProps> = ({
 	};
 
 	return (
-		<StyledSpellsSection $isMobile={effectiveIsMobile}>
+		<StyledSpellsSection $isMobile={effectiveIsMobile} data-testid="spells-section">
 			<StyledSpellsHeader $isMobile={effectiveIsMobile}>
 				<StyledSpellsTitle $isMobile={effectiveIsMobile}>Spells</StyledSpellsTitle>
 				{!readOnly && (
-					<StyledSpellsControls $isMobile={effectiveIsMobile}>
+					<StyledSpellsControls $isMobile={effectiveIsMobile} data-testid="spells-controls">
 						<label
 							style={{
 								fontSize: '0.8rem',
@@ -167,6 +167,7 @@ const Spells: React.FC<SpellsProps> = ({
 							$isMobile={effectiveIsMobile}
 							value={schoolFilter}
 							onChange={handleSchoolFilterChange}
+							data-testid="spell-filter"
 						>
 							<option value="all">All Schools</option>
 							{(Object.values(SpellSchool) as string[]).map((school) => (
@@ -175,14 +176,19 @@ const Spells: React.FC<SpellsProps> = ({
 								</option>
 							))}
 						</StyledSchoolFilter>
-						<StyledAddSpellButton $isMobile={effectiveIsMobile} onClick={addSpellSlot}>
+						<StyledAddSpellButton
+							$isMobile={effectiveIsMobile}
+							onClick={addSpellSlot}
+							data-testid="add-spell"
+							aria-label="Add Spell"
+						>
 							+ Add {schoolFilter !== 'all' ? `${schoolFilter} ` : ''}Spell
 						</StyledAddSpellButton>
 					</StyledSpellsControls>
 				)}
 			</StyledSpellsHeader>
 
-			<StyledSpellsContainer $isMobile={effectiveIsMobile}>
+			<StyledSpellsContainer $isMobile={effectiveIsMobile} data-testid="spells-container">
 				<StyledSpellsHeaderRow $isMobile={effectiveIsMobile}>
 					<span></span> {/* Empty column for remove button */}
 					<StyledHeaderColumn $isMobile={effectiveIsMobile}>Spell Name</StyledHeaderColumn>
@@ -212,12 +218,13 @@ const Spells: React.FC<SpellsProps> = ({
 
 						return (
 							<React.Fragment key={spell.id}>
-								<StyledSpellRow $isMobile={effectiveIsMobile}>
+								<StyledSpellRow $isMobile={effectiveIsMobile} data-testid={`spell-row-${spell.id}`}>
 									{/* Remove Button - only show in edit mode */}
 									{!readOnly && (
 										<StyledRemoveButton
 											$isMobile={effectiveIsMobile}
 											onClick={() => removeSpellSlot(originalIndex)}
+											data-testid={`remove-spell-${spell.id}`}
 										>
 											×
 										</StyledRemoveButton>
@@ -239,6 +246,7 @@ const Spells: React.FC<SpellsProps> = ({
 											$isMobile={effectiveIsMobile}
 											value={spell.spellName}
 											onChange={(e) => updateSpellField(originalIndex, 'spellName', e.target.value)}
+											data-testid={`spell-name-${spell.id}`}
 										>
 											<option value="">Select Spell...</option>
 											{/* Always include the currently selected spell, even if it doesn't match filter */}
@@ -260,10 +268,10 @@ const Spells: React.FC<SpellsProps> = ({
 												})
 												.map((spellOption) => (
 													<option key={spellOption.name} value={spellOption.name}>
-														{spellOption.name}
+													{spellOption.name}
 													</option>
 												))}
-										</StyledSpellSelect>
+											</StyledSpellSelect>
 									)}
 
 									{/* School */}
@@ -375,6 +383,7 @@ const Spells: React.FC<SpellsProps> = ({
 									>
 										<button
 											onClick={() => toggleSpellExpansion(spell.id)}
+											data-testid={`toggle-spell-desc-${spell.id}`}
 											style={{
 												background: 'none',
 												border: '1px solid #ccc',

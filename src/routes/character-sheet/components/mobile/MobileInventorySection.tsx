@@ -34,7 +34,7 @@ const MobileInventorySection: React.FC<MobileInventorySectionProps> = ({
 		<MobileSection>
 			<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 				<MobileSectionTitle>Inventory</MobileSectionTitle>
-				<MobileAddButton onClick={handleAddInventoryItem}>+ Add Item</MobileAddButton>
+				<MobileAddButton onClick={handleAddInventoryItem} data-testid="add-item">+ Add Item</MobileAddButton>
 			</div>
 			{items.length > 0 && (
 				<MobileItemGrid>
@@ -58,6 +58,7 @@ const MobileInventorySection: React.FC<MobileInventorySectionProps> = ({
 												handleInventorySelection(item.id, e.target.value);
 											}
 										}}
+										data-testid="item-name"
 									>
 										<option value="">Select an item...</option>
 										{allItems.map((ruleItem) => (

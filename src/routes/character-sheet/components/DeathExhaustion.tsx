@@ -153,10 +153,29 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 				})()}
 			</StyledDeathContainer>
 
-			<StyledExhaustionOnlyContainer $isMobile={effectiveIsMobile}>
-				<StyledExhaustionOnlyTitle $isMobile={effectiveIsMobile}>
-					EXHAUSTION
-				</StyledExhaustionOnlyTitle>
+			<StyledExhaustionOnlyContainer data-testid="exhaustion-btn" $isMobile={effectiveIsMobile}>
+				<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+					<StyledExhaustionOnlyTitle data-testid="exhaustion-btn" $isMobile={effectiveIsMobile}>
+						EXHAUSTION
+					</StyledExhaustionOnlyTitle>
+					{/* Small hook button for E2E to open/focus exhaustion */}
+					<button
+						data-testid="exhaustion-btn"
+						aria-label="Open Exhaustion"
+						onClick={() => {
+							try {
+								// scroll the exhaustion container into view for test interactions
+								const el = document.querySelector('[data-testid="exhaustion-btn"]');
+								if (el) (el as HTMLElement).scrollIntoView({ behavior: 'auto', block: 'center' });
+							} catch (e) {
+								/* ignore */
+							}
+						}}
+						style={{ background: 'none', border: 'none', color: '#8b4513', cursor: 'pointer' }}
+					>
+						i
+					</button>
+				</div>
 				<StyledExhaustionContainer $isMobile={effectiveIsMobile}>
 					{exhaustionLevels.map(({ level, description }) => (
 						<StyledExhaustionLevel
@@ -164,6 +183,7 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 							filled={level <= currentValues.exhaustionLevel}
 							$isMobile={effectiveIsMobile}
 							onClick={() => onExhaustionChange(level)}
+							data-testid={`exhaustion-${level}`}
 						>
 							{level}
 							<StyledExhaustionTooltip>{description}</StyledExhaustionTooltip>

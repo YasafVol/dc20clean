@@ -211,7 +211,9 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 
 		case 'ADD_ATTACK':
 			if (!state.character) return state;
-			const currentAttacks = state.character.characterState.attacks || [];
+			const currentAttacks = Array.isArray(state.character.characterState.attacks) 
+				? state.character.characterState.attacks 
+				: Object.values(state.character.characterState.attacks || {});
 			return {
 				...state,
 				character: {
@@ -225,13 +227,16 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 
 		case 'REMOVE_ATTACK':
 			if (!state.character) return state;
+			const attacksToFilter = Array.isArray(state.character.characterState.attacks) 
+				? state.character.characterState.attacks 
+				: Object.values(state.character.characterState.attacks || {});
 			return {
 				...state,
 				character: {
 					...state.character,
 					characterState: {
 						...state.character.characterState,
-						attacks: (state.character.characterState.attacks || []).filter(
+						attacks: attacksToFilter.filter(
 							(attack) => attack.id !== action.attackId
 						)
 					}
@@ -240,13 +245,16 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 
 		case 'UPDATE_ATTACK':
 			if (!state.character) return state;
+			const attacksToUpdate = Array.isArray(state.character.characterState.attacks) 
+				? state.character.characterState.attacks 
+				: Object.values(state.character.characterState.attacks || {});
 			return {
 				...state,
 				character: {
 					...state.character,
 					characterState: {
 						...state.character.characterState,
-						attacks: (state.character.characterState.attacks || []).map((attack) =>
+						attacks: attacksToUpdate.map((attack) =>
 							attack.id === action.attackId ? action.attack : attack
 						)
 					}

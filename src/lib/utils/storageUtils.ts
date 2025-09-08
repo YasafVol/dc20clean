@@ -45,7 +45,21 @@ export const deserializeCharacterFromStorage = (jsonString: string): SavedCharac
 			languagesData: data.languagesData || { common: { fluency: 'fluent' } },
 			spells: data.spells || [],
 			maneuvers: data.maneuvers || [],
-			characterState: data.characterState || getDefaultCharacterState(),
+			characterState: {
+				...(data.characterState || getDefaultCharacterState()),
+				// Normalize attacks from object to array format for backward compatibility
+				attacks: Array.isArray(data.characterState?.attacks) 
+					? data.characterState.attacks 
+					: Object.values(data.characterState?.attacks || {}),
+				// Normalize spells to array if not already
+				spells: Array.isArray(data.characterState?.spells) 
+					? data.characterState.spells 
+					: data.spells || [],
+				// Normalize maneuvers to array if not already
+				maneuvers: Array.isArray(data.characterState?.maneuvers) 
+					? data.characterState.maneuvers 
+					: data.maneuvers || []
+			},
 			schemaVersion: CURRENT_SCHEMA_VERSION // Always update to current version
 		} as SavedCharacter;
 
@@ -102,7 +116,10 @@ export const getDefaultCharacterState = (): CharacterState => ({
 		items: [],
 		currency: { gold: 0, silver: 0, copper: 0 }
 	},
-	notes: { playerNotes: '' }
+	notes: { playerNotes: '' },
+	attacks: [],
+	spells: [],
+	maneuvers: []
 });
 
 /**

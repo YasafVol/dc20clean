@@ -1,0 +1,64 @@
+{
+  "id": "rich-0001",
+  "finalName": "Rich Gibble",
+  "finalPlayerName": "QA",
+  "level": 2,
+  "classId": "wizard",
+  "className": "Wizard",
+  "ancestry1Id": "gnome",
+  "ancestry1Name": "Gnome",
+  "finalMight": 1,
+  "finalAgility": 2,
+  "finalCharisma": 0,
+  "finalIntelligence": 4,
+  "finalHPMax": 12,
+  "finalSPMax": 2,
+  "finalMPMax": 6,
+  "finalPD": 14,
+  "finalAD": 10,
+  "finalPDR": 1,
+  "spells": [],
+  "maneuvers": [
+    {
+      "id": "man_1",
+      "name": "Test Maneuver",
+      "description": "A test maneuver",
+      "cost": { "ap": 1 }
+    }
+  ],
+  "attacks": [
+    {
+      "id": "atk_1",
+      "name": "Test Weapon",
+      "damage": "1d8",
+      "type": "Slash"
+    }
+  ],
+  "inventoryItems": [
+    {
+      "id": "item_1",
+      "name": "Test Item",
+      "count": 1
+    }
+  ],
+  "characterState": {
+    "resources": {
+      "current": {
+        "currentHP": 12,
+        "currentSP": 2,
+        "currentMP": 6,
+        "tempHP": 1,
+        "exhaustionLevel": 0
+      },
+      "original": {
+        "maxHP": 12,
+        "maxSP": 2,
+        "maxMP": 6
+      }
+    },
+    "spells": [],
+    "maneuvers": [],
+    "attacks": [],
+    "notes": { "playerNotes": "" }
+  }
+}

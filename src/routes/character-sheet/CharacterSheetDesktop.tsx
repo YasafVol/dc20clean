@@ -462,11 +462,13 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 				{/* Features */}
 				<StyledSection>
 					<StyledSectionTitle>Features & Traits</StyledSectionTitle>
-					<StyledFeaturesGrid>
+						<StyledFeaturesGrid>
 						{features.map((feature: any) => (
-							<StyledFeatureCard key={feature.id} onClick={() => openFeaturePopup(feature)}>
+							<StyledFeatureCard key={feature.id} onClick={() => openFeaturePopup(feature)} data-testid={`feature-card-${feature.id}`}>
 								<StyledFeatureName>{feature.name}</StyledFeatureName>
 								<StyledFeatureSource>{feature.sourceDetail}</StyledFeatureSource>
+								{/* Small info button for e2e to explicitly open feature details */}
+								<button aria-label={`feature-info-${feature.id}`} data-testid={`feat-info-${feature.id}`} onClick={(e) => { e.stopPropagation(); openFeaturePopup(feature); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8b4513' }}>i</button>
 							</StyledFeatureCard>
 						))}
 					</StyledFeaturesGrid>
@@ -478,7 +480,7 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 					<StyledSpellsContainer>
 						<StyledSpellsHeader>
 							<StyledSpellsHeaderTitle>Spellbook</StyledSpellsHeaderTitle>
-							<StyledAddSpellButton onClick={handleAddSpell}>+ Add Spell</StyledAddSpellButton>
+							<StyledAddSpellButton data-testid="add-spell" onClick={handleAddSpell}>+ Add Spell</StyledAddSpellButton>
 						</StyledSpellsHeader>
 
 						{spells && spells.length > 0 ? (
@@ -560,6 +562,7 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 						<StyledCurrencyColumn>
 							<StyledCurrencyLabel>Gold</StyledCurrencyLabel>
 							<StyledCurrencyInput
+								data-testid="currency-gold"
 								type="number"
 								value={'gold' in currency ? currency.gold : currency.goldPieces}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -570,6 +573,7 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 						<StyledCurrencyColumn>
 							<StyledCurrencyLabel>Silver</StyledCurrencyLabel>
 							<StyledCurrencyInput
+								data-testid="currency-silver"
 								type="number"
 								value={'silver' in currency ? currency.silver : currency.silverPieces}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -580,6 +584,7 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 						<StyledCurrencyColumn>
 							<StyledCurrencyLabel>Copper</StyledCurrencyLabel>
 							<StyledCurrencyInput
+								data-testid="currency-copper"
 								type="number"
 								value={'copper' in currency ? currency.copper : currency.copperPieces}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>

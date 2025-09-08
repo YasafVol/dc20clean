@@ -14,6 +14,9 @@
 		"test:e2e:ui": "playwright test --ui",
 		"test:e2e:headed": "playwright test --headed",
 		"test:e2e:debug": "playwright test --debug",
+		"e2e:desktop": "E2E_FIXTURE=./test-character-gibble.json npx playwright test --project=desktop --workers=1",
+		"e2e:mobile": "E2E_FIXTURE=./test-character-gibble.json npx playwright test --project=mobile --workers=1",
+		"e2e:all": "E2E_FIXTURE=./test-character-gibble.json npx playwright test --workers=1",
 		"db:start": "docker compose up"
 	},
 	"files": [

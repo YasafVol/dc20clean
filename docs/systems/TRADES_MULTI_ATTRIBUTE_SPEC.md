@@ -41,28 +41,18 @@ Notes
   - Keep `bonus?: number` (for knowledge compat), and add `bonuses?: Array<{ attribute: 'might' | 'agility' | 'charisma' | 'intelligence'; total: number }>`
   - UI renders `bonuses` when present; otherwise falls back to `bonus`.
 
+#### Normalization rules (authoritative)
+- Data field name is `attributeAssociations: string[]` everywhere in code.
+  - If Section 12 shows `attributeAssociation` as an array, treat it as `attributeAssociations` when implementing.
+- Knowledge trades must use `tools: 'none'` (lowercase) for consistency with current code.
+- Attribute abbreviations for UI formatting: A=Agility, M=Might, C=Charisma, I=Intelligence.
+
 ---
 
 ## 3. Canonical Trade List Changes
 
-Apply the following multi-attribute mappings to `src/lib/rulesdata/trades.ts` (keeping names as they exist in data):
+Apply multi-attribute mappingsand all other changes needed to `src/lib/rulesdata/trades.ts` (according to Section 12 in this document):
 
-- Alchemy – Tools: Alchemist's Supplies – Attributes: Intelligence, Agility
-- Brewing – Tools: Brewer's Supplies – Attributes: Agility, Intelligence, Charisma
-- Carpentry – Tools: Carpenter's Tools – Attributes: Agility, Might
-- Cartography – Tools: Cartographer's Tools – Attributes: Intelligence, Agility
-- Cooking – Tools: Cook's Utensils – Attributes: Agility, Intelligence, Charisma
-- Disguise – Tools: Disguise Kit – Attributes: Agility, Charisma
-- Gaming – Tools: Gaming Set – Attributes: Intelligence, Charisma
-- Glassblowing – Tools: Glassblower's Tools – Attributes: Agility, Might (add new entry)
-- Lockpicking – Tools: Lockpicking Tools – Attributes: Agility, Intelligence (add new entry)
-- Music (Musician) – Tools: Musical Instrument – Attributes: Agility, Charisma
-- Tinkering – Tools: Tinkerer's Tools – Attributes: Agility, Intelligence (add new entry)
-- Vehicles (Land) – Tools: Vehicle – Attributes: Agility, Intelligence, Might
-- Vehicles (Water) – Tools: Vehicle – Attributes: Agility, Intelligence, Might
-
-Knowledge Trades
-- Keep as tools: 'none', governed by Intelligence (unchanged in this spec).
 
 ---
 
@@ -213,7 +203,6 @@ Acceptance Criteria
 - `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx` – Character sheet data hooks
 - `src/routes/character-creation/components/TradesTab.tsx` – Trades UI in creation flow
 - `src/lib/rulesdata/trades.spec.ts` – Rules data tests
-
 
 ## 12. update trades
 
@@ -415,3 +404,16 @@ Acceptance Criteria
 		"tools": "Lockpicking Tools"
 	}
 ]
+
+## 13. ID Rename & Migration Policy
+
+- Default policy: preserve existing IDs unless explicitly stated below.
+- Specific remaps for this task:
+  - `music` → keep as `music` id, but set name to "Musician" (no ID change)
+  - `thieves` → keep as `thieves` id, but set name to "Lockpicking" (no ID change)
+  - `deciphering` → keep as `deciphering` id, but set name to "Cryptography" (no ID change)
+  - `vehicles_land` and `vehicles_water` → keep both entries (no consolidation) to avoid breaking existing saves; update attributes/tools only
+- New trades added in Section 12 use new IDs as listed.
+- If you strongly prefer consolidating vehicles into a single `vehicles` entry, do it in a separate migration PR that remaps saved characters.
+
+---

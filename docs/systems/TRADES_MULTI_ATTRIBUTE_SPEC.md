@@ -180,7 +180,7 @@ Acceptance Criteria
 ### 10.1 Checklist
 
 - [ ] Update `ITradeData` to use `attributeAssociations[]`
-- [ ] Convert `trades.ts` data and add new entries + Vehicles updates
+- [ ] Convert `trades.ts` data and add new entries + Vehicles updates (see Section 12)
 - [ ] Extend `TradeData` with `bonuses[]`
 - [ ] Compute multi-attribute totals in `useCharacterTrades()`
 - [ ] Render bonuses string in Character Sheet Trades components
@@ -194,7 +194,7 @@ Acceptance Criteria
 | Task | Owner | Status | PR | Notes |
 | ---- | ----- | ------ | -- | ----- |
 | Schema change `ITradeData` |  | Not Started |  |  |
-| Data updates `trades.ts` |  | Not Started |  | Include Glassblowing, Lockpicking, Tinkering; Vehicles tools=Vehicle |
+| Data updates `trades.ts` |  | Ready |  | See Section 12; Include Glassblowing, Lockpicking, Tinkering; Vehicles tools=Vehicle |
 | UI type `TradeData` bonuses |  | Not Started |  |  |
 | Hook `useCharacterTrades()` |  | Not Started |  | Compute and sort bonuses |
 | Character Sheet render |  | Not Started |  | Multi-attribute string |

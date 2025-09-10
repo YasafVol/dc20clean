@@ -169,29 +169,29 @@ Acceptance Criteria
 
 ### 10.1 Checklist
 
-- [ ] Update `ITradeData` to use `attributeAssociations[]`
-- [ ] Convert `trades.ts` data and add new entries + Vehicles updates (see Section 12)
-- [ ] Extend `TradeData` with `bonuses[]`
-- [ ] Compute multi-attribute totals in `useCharacterTrades()`
-- [ ] Render bonuses string in Character Sheet Trades components
-- [ ] Show plural attribute list in `TradesTab.tsx`
-- [ ] Update descriptors in `TraitChoiceSelector.tsx`
-- [ ] Update `trades.spec.ts` and add formatting test (optional)
-- [ ] Update `docs/systems/BACKGROUND_SYSTEM.MD` to link this spec
+- [x] Update `ITradeData` to use `attributeAssociations[]`
+- [x] Convert `trades.ts` data and add new entries + Vehicles updates (see Section 12)
+- [x] Extend `TradeData` with `bonuses[]`
+- [x] Compute multi-attribute totals in `useCharacterTrades()`
+- [x] Render bonuses string in Character Sheet Trades components
+- [x] Show plural attribute list in `TradesTab.tsx`
+- [x] Update descriptors in `TraitChoiceSelector.tsx`
+- [x] Update `trades.spec.ts` and add formatting test (optional)
+- [x] Update `docs/systems/BACKGROUND_SYSTEM.MD` to link this spec
 
 ### 10.2 Status Table
 
 | Task | Owner | Status | PR | Notes |
 | ---- | ----- | ------ | -- | ----- |
-| Schema change `ITradeData` |  | Not Started |  |  |
-| Data updates `trades.ts` |  | Ready |  | See Section 12; Include Glassblowing, Lockpicking, Tinkering; Vehicles tools=Vehicle |
-| UI type `TradeData` bonuses |  | Not Started |  |  |
-| Hook `useCharacterTrades()` |  | Not Started |  | Compute and sort bonuses |
-| Character Sheet render |  | Not Started |  | Multi-attribute string |
-| Creation UI `TradesTab` |  | Not Started |  | Joined attributes display |
-| TraitChoice descriptors |  | Not Started |  | Use joined attributes |
-| Tests update |  | Not Started |  | Knowledge tools; attributes sets |
-| Background doc link |  | Not Started |  | Link to this spec |
+| Schema change `ITradeData` |  | Completed |  |  |
+| Data updates `trades.ts` |  | Completed |  | See Section 12; Include Glassblowing, Lockpicking, Tinkering; Vehicles tools=Vehicle |
+| UI type `TradeData` bonuses |  | Completed |  |  |
+| Hook `useCharacterTrades()` |  | Completed |  | Compute and sort bonuses |
+| Character Sheet render |  | Completed |  | Multi-attribute string |
+| Creation UI `TradesTab` |  | Completed |  | Joined attributes display |
+| TraitChoice descriptors |  | Completed |  | Use joined attributes |
+| Tests update |  | Completed |  | Knowledge tools; attributes sets |
+| Background doc link |  | Completed |  | Link to this spec |
 
 ---
 

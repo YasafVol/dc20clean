@@ -44,8 +44,13 @@ The project is organized into the following key directories:
 
 The `package.json` file defines several important scripts for managing the project:
 
-- `dev`: Starts the development server
-- `build`: Creates a production build
+- `dev`: Starts the development server (Vite)
+- `build`: Creates a production build to `dist/`
+- `preview`: Serves the built app on port 4173
+- `lint`: Prettier check + ESLint
+- `format`: Auto-format with Prettier
 - `test:unit`: Runs unit tests with Vitest
 - `test:e2e`: Runs end-to-end tests with Playwright
-- `db:*`: Database management scripts with Prisma migrations
+- `test`: Runs unit tests (in run mode) then E2E
+- `prepare`: Generates Prisma client
+- `db:start`: Starts local Postgres via Docker Compose

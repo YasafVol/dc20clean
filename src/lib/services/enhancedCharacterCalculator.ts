@@ -9,14 +9,12 @@ import type {
 	EnhancedCalculationResult,
 	EnhancedCharacterBuildData,
 	AttributedEffect,
-	EffectSource,
 	EnhancedStatBreakdown,
 	ValidationResult,
 	ValidationError,
 	AttributeLimit,
 	UnresolvedChoice,
 	ChoiceOption,
-	EffectPreview,
 	TraitChoiceStorage
 } from '../types/effectSystem';
 import {
@@ -55,10 +53,11 @@ import warlockTable from '../rulesdata/classes-data/tables/warlock_table.json';
 import bardTable from '../rulesdata/classes-data/tables/bard_table.json';
 import druidTable from '../rulesdata/classes-data/tables/druid_table.json';
 import commanderTable from '../rulesdata/classes-data/tables/commander_table.json';
+import psionTable from '../rulesdata/classes-data/tables/psion_table.json';
 import { attributesData } from '../rulesdata/attributes';
 import { skillsData } from '../rulesdata/skills';
 import { tradesData } from '../rulesdata/trades';
-import type { Effect, ClassDefinition } from '../rulesdata/schemas/character.schema';
+import type { ClassDefinition } from '../rulesdata/schemas/character.schema';
 
 /**
  * Convert character context data to enhanced build data
@@ -142,6 +141,8 @@ function getClassProgressionData(classId: string): any | null {
 			return druidTable;
 		case 'commander':
 			return commanderTable;
+		case 'psion':
+			return psionTable;
 		default:
 			return null;
 	}
@@ -178,6 +179,8 @@ function getClassFeatures(classId: string): ClassDefinition | null {
 			return druidClass;
 		case 'commander':
 			return commanderClass;
+		case 'psion':
+			return psionClass;
 		default:
 			return null;
 	}
@@ -532,16 +535,7 @@ export function calculateCharacterWithBreakdowns(
 		finalMPMax = baseMP + finalIntelligence;
 	}
 
-	// Apply effect modifiers
-	finalHPMax += resolvedEffects
-		.filter((e) => e.type === 'MODIFY_STAT' && e.target === 'hpMax')
-		.reduce((sum, e) => sum + (e.value as number), 0);
-	finalSPMax += resolvedEffects
-		.filter((e) => e.type === 'MODIFY_STAT' && e.target === 'spMax')
-		.reduce((sum, e) => sum + (e.value as number), 0);
-	finalMPMax += resolvedEffects
-		.filter((e) => e.type === 'MODIFY_STAT' && e.target === 'mpMax')
-		.reduce((sum, e) => sum + (e.value as number), 0);
+	// Do not apply effect modifiers here; breakdowns will add modifiers to base values
 
 	// Defenses with modifiers
 	const basePD = 8 + combatMastery + finalAgility + finalIntelligence;
@@ -576,24 +570,12 @@ export function calculateCharacterWithBreakdowns(
 	const finalSaveCharisma = finalCharisma + combatMastery;
 	const finalSaveIntelligence = finalIntelligence + combatMastery;
 	const finalDeathThreshold = maxValue + combatMastery; // Prime + Combat Mastery (usually -4)
-	const finalMoveSpeed =
-		5 +
-		resolvedEffects
-			.filter((e) => e.type === 'MODIFY_STAT' && e.target === 'moveSpeed')
-			.reduce((sum, e) => sum + (e.value as number), 0);
-	const finalJumpDistance =
-		finalAgility +
-		resolvedEffects
-			.filter((effect) => effect.type === 'MODIFY_STAT' && effect.target === 'jumpDistance')
-			.reduce((sum, effect) => sum + (effect.value as number), 0);
+	const baseMoveSpeed = 5;
+	const baseJumpDistance = finalAgility;
 	const finalRestPoints = finalHPMax; // Rest Points = HP
 	const finalGritPoints = Math.max(0, 2 + finalCharisma); // 2 + Charisma (minimum 0)
 	const finalInitiativeBonus = combatMastery + finalAgility; // Combat Mastery + Agility
-	const finalAttributePoints =
-		12 +
-		resolvedEffects
-			.filter((e) => e.type === 'MODIFY_STAT' && e.target === 'attributePoints')
-			.reduce((sum, e) => sum + (e.value as number), 0);
+	// Attribute points handled via breakdowns to avoid double counting
 
 	// Create breakdowns for derived stats
 	breakdowns.hpMax = createStatBreakdown('hpMax', finalHPMax, resolvedEffects);
@@ -602,19 +584,19 @@ export function calculateCharacterWithBreakdowns(
 	breakdowns.pd = createStatBreakdown('pd', basePD, resolvedEffects);
 	breakdowns.ad = createStatBreakdown('ad', baseAD, resolvedEffects);
 
-	breakdowns.attributePoints = createStatBreakdown(
-		'attributePoints',
-		finalAttributePoints,
-		resolvedEffects
-	);
+	breakdowns.attributePoints = createStatBreakdown('attributePoints', 12, resolvedEffects);
 
 	// Movement breakdowns
-	breakdowns.move_speed = createStatBreakdown('moveSpeed', finalMoveSpeed, resolvedEffects);
-	breakdowns.jump_distance = createStatBreakdown(
-		'jumpDistance',
-		finalJumpDistance,
-		resolvedEffects
-	);
+	breakdowns.move_speed = createStatBreakdown('moveSpeed', baseMoveSpeed, resolvedEffects);
+	breakdowns.jump_distance = createStatBreakdown('jumpDistance', baseJumpDistance, resolvedEffects);
+
+	// Use breakdown totals for final values to avoid double counting
+	finalHPMax = breakdowns.hpMax.total;
+	finalSPMax = breakdowns.spMax.total;
+	finalMPMax = breakdowns.mpMax.total;
+	const finalMoveSpeed = breakdowns.move_speed.total;
+	const finalJumpDistance = breakdowns.jump_distance.total;
+	const finalAttributePoints = breakdowns.attributePoints.total;
 
 	// Combat breakdowns
 	const attackSpellCheckBase = combatMastery + maxValue;
@@ -787,7 +769,6 @@ export function calculateCharacterWithBreakdowns(
 		Master: 4,
 		Grandmaster: 5
 	};
-	const pointToTier: Record<number, number> = { 1: 2, 2: 3, 3: 4, 4: 5 }; // Adept, Expert...
 
 	// Helper to convert level to a numeric mastery tier
 	const getMasteryTierFromLevel = (level: number): number => {
@@ -798,9 +779,13 @@ export function calculateCharacterWithBreakdowns(
 		return masteryTiers.Novice;
 	};
 
-	// Helper to convert skill points to a numeric mastery tier
+	// Helper to convert skill points to a numeric mastery tier (2+=Adept)
 	const getMasteryTierFromPoints = (points: number): number => {
-		return pointToTier[points] || masteryTiers.Novice;
+		if (points >= 5) return masteryTiers.Grandmaster;
+		if (points >= 4) return masteryTiers.Master;
+		if (points >= 3) return masteryTiers.Expert;
+		if (points >= 2) return masteryTiers.Adept;
+		return masteryTiers.Novice;
 	};
 
 	const baseSkillMasteryTier = getMasteryTierFromLevel(buildData.level);
@@ -827,8 +812,8 @@ export function calculateCharacterWithBreakdowns(
 		totalCapExceptionsBudget += effect.count;
 	}
 
-	// 3. Calculate total allowed Adept skills (only from feature grants for Level 1-4)
-	const baseAdeptSlotsForValidation = 0; // Level 1-4 get no base Adept slots - must earn them through features
+	// 3. Calculate total allowed Adept skills (Level 1 has 1 base slot)
+	const baseAdeptSlotsForValidation = buildData.level === 1 ? 1 : 0;
 	const totalAllowedAdeptSkills = baseAdeptSlotsForValidation + totalCapExceptionsBudget;
 
 	// Validate that over-level skills don't exceed total budget (including Level 1 default)
@@ -843,22 +828,23 @@ export function calculateCharacterWithBreakdowns(
 		});
 	}
 
-	// 4. Validate specific skill coverage
-	let skillsNeedingFeatureCoverage = [...skillsOverLevelCap];
-
-	// Check remaining skills against feature options
-	for (const skillId of skillsNeedingFeatureCoverage) {
-		const isCovered = skillMasteryCapEffects.some(
+	// 4. Validate specific skill coverage, allowing base Adept slots to cover any skill
+	let freeBaseSlots = baseAdeptSlotsForValidation;
+	for (const skillId of skillsOverLevelCap) {
+		const isCoveredByFeature = skillMasteryCapEffects.some(
 			(effect) => !effect.options || effect.options.includes(skillId)
 		);
-		if (!isCovered) {
-			errors.push({
-				step: BuildStep.Background,
-				field: skillId,
-				code: 'INVALID_MASTERY_GRANT',
-				message: `The ${skillId} skill has been raised to Adept level, but is not permitted by any of your features.`
-			});
+		if (isCoveredByFeature) continue;
+		if (freeBaseSlots > 0) {
+			freeBaseSlots -= 1;
+			continue;
 		}
+		errors.push({
+			step: BuildStep.Background,
+			field: skillId,
+			code: 'INVALID_MASTERY_GRANT',
+			message: `The ${skillId} skill has been raised to Adept level, but is not permitted by your features or base allowances.`
+		});
 	}
 	// --- END MASTERY CAP CALCULATION ---
 
@@ -871,7 +857,7 @@ export function calculateCharacterWithBreakdowns(
 		: 0;
 	const totalCurrentAdeptCount = currentSkillAdeptCount + currentTradeAdeptCount;
 
-	// Level 1 gets 1 base Adept slot + bonus slots from features
+	// Baseline: Level 1 has 1 base Adept slot
 	const baseAdeptSlots = buildData.level === 1 ? 1 : 0;
 	const bonusAdeptSlots = skillMasteryCapEffects.reduce((total, effect) => total + effect.count, 0);
 	const maxAdeptCount = baseAdeptSlots + bonusAdeptSlots;

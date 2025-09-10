@@ -36,11 +36,17 @@ const createTestCharacter = (
 });
 
 describe('enhancedCharacterCalculator Mastery Cap Logic', () => {
-	it('should enforce the correct baseline mastery cap based on level', () => {
-		// Level 1 character can only have Novice (1 point) skills
-		const character = createTestCharacter(1, { athletics: 2 }); // Attempting Adept
+	it('should allow one Adept skill at Level 1 baseline', () => {
+		// Level 1 character is allowed one Adept skill by default
+		const character = createTestCharacter(1, { athletics: 2 });
 		const { validation } = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
-		expect(validation.errors.some((e) => e.message.includes('mastery limit'))).toBe(true);
+		expect(validation.errors.some((e) => e.message.includes('mastery limit'))).toBe(false);
+	});
+
+	it('should error when Level 1 has two Adept skills without features', () => {
+		const character = createTestCharacter(1, { athletics: 2, stealth: 2 });
+		const { validation } = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
+		expect(validation.errors.some((e) => e.message.includes("mastery limit"))).toBe(true);
 	});
 
 	it('should allow Adept skills for a Level 5 character', () => {

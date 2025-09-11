@@ -1,6 +1,7 @@
 /**
- * Cleric Class Definition - New Effect Schema
- * Based on the DC20 rule analysis from classAndAncestryAndCalcRefactor.md
+ * Cleric Class Definition
+ * Based on the DC20 rulebook provided.
+ * 10 SEPT 2025
  */
 
 import type { ClassDefinition } from '../../schemas/character.schema';
@@ -9,17 +10,17 @@ export const clericClass: ClassDefinition = {
 	className: 'Cleric',
 	spellcasterPath: {
 		spellList: {
-			description: 'Divine spells from multiple domains and schools',
+			description: 'When you learn a new Spell, you can choose any Spell on the Divine Spell List.',
 			type: 'divine'
 		},
 		cantrips: {
-			description: 'Cantrips Known column of the Cleric Class Table'
+			description: 'The number of Cantrips you know increases as shown in the Cantrips Known column of the Cleric Class Table.'
 		},
 		spells: {
-			description: 'Spells Known column of the Cleric Class Table'
+			description: 'The number of Spells you know increases as shown in the Spells Known column of the Cleric Class Table.'
 		},
 		manaPoints: {
-			maximumIncreasesBy: 'Mana Points column of the Cleric Class Table'
+			maximumIncreasesBy: 'Your maximum number of Mana Points increases as shown in the Mana Points column of the Cleric Class Table.'
 		}
 	},
 	coreFeatures: [
@@ -35,121 +36,70 @@ export const clericClass: ClassDefinition = {
 		{
 			featureName: 'Cleric Order',
 			levelGained: 1,
-			description: 'Your connection to your deity grants you divine powers.',
+			description: 'Your connection to your deity grants you the following benefits: Choose an Elemental or Mystical damage type to become your Divine Damage, and gain the benefits of 2 Divine Domains of your choice.',
 			choices: [
 				{
-					id: 'cleric_cleric_order_0',
+					id: 'cleric_divine_damage',
 					prompt: 'Choose your Divine Damage type',
 					count: 1,
 					options: [
-						{
-							name: 'Cold',
-							description: 'Your divine damage is Cold.',
-							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'divine_damage_cold',
-									value: 'Your Divine Damage type is Cold.'
-								}
-							]
-						},
-						{
-							name: 'Fire',
-							description: 'Your divine damage is Fire.',
-							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'divine_damage_fire',
-									value: 'Your Divine Damage type is Fire.'
-								}
-							]
-						},
-						{
-							name: 'Lightning',
-							description: 'Your divine damage is Lightning.',
-							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'divine_damage_lightning',
-									value: 'Your Divine Damage type is Lightning.'
-								}
-							]
-						},
-						{
-							name: 'Acid',
-							description: 'Your divine damage is Acid.',
-							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'divine_damage_acid',
-									value: 'Your Divine Damage type is Acid.'
-								}
-							]
-						},
-						{
-							name: 'Poison',
-							description: 'Your divine damage is Poison.',
-							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'divine_damage_poison',
-									value: 'Your Divine Damage type is Poison.'
-								}
-							]
-						},
-						{
-							name: 'Psychic',
-							description: 'Your divine damage is Psychic.',
-							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'divine_damage_psychic',
-									value: 'Your Divine Damage type is Psychic.'
-								}
-							]
-						}
+						{ name: 'Fire', description: 'Your Divine Damage type is Fire.', effects: [] },
+						{ name: 'Cold', description: 'Your Divine Damage type is Cold.', effects: [] },
+						{ name: 'Lightning', description: 'Your Divine Damage type is Lightning.', effects: [] },
+						{ name: 'Acid', description: 'Your Divine Damage type is Corrosion.', effects: [] },
+						{ name: 'Poison', description: 'Your Divine Damage type is Poison.', effects: [] },
+						{ name: 'Radiant', description: 'Your Divine Damage type is Radiant.', effects: [] },
+						{ name: 'Umbral', description: 'Your Divine Damage type is Umbral.', effects: [] },
+						{ name: 'Psychic', description: 'Your Divine Damage type is Psychic.', effects: [] }
 					]
 				},
 				{
-					id: 'cleric_cleric_order_1',
+					id: 'cleric_divine_domain',
 					prompt: 'Choose 2 Divine Domains',
 					count: 2,
 					options: [
 						{
-							name: 'Magic',
-							description:
-								'You gain the benefits listed below. You can choose this Divine Domain multiple times. Your maximum MP increases by 1 and choose a spell tag below',
+							name: 'Knowledge',
+							description: 'Your Mastery Limit increases by 1 for all Knowledge Trades. Additionally, you gain 2 Skill Points.',
 							effects: [
-								{ type: 'MODIFY_STAT', target: 'mpMax', value: 1 },
-								{
-									type: 'GRANT_SPELL',
-									target: 'spell_tag_choice',
-									value: 1,
-									userChoice: {
-										prompt:
-											'Choose a Spell Tag (such as Fire, Holy, or Undeath). You learn 1 Spell with the chosen Spell Tag.',
-										options: [
-											'fire_tag',
-											'holy_tag',
-											'undeath_tag',
-											'restoration_tag',
-											'elemental_tag',
-											'illusion_tag',
-											'enchantment_tag',
-											'divination_tag'
-										]
-									}
-								}
+								{ type: 'MODIFY_STAT', target: 'knowledgeMasteryLimit', value: 1 },
+								{ type: 'MODIFY_STAT', target: 'skillPoints', value: 2 }
 							]
 						},
 						{
-							name: 'Peace',
-							description:
-								'You gain Combat Training with Heavy Armor and Heavy Shields and learn 1 Defensive Maneuver of your choice.',
+							name: 'Magic',
+							description: 'Your maximum MP increases by 1. Choose a Spell Tag (such as Fire, Holy, or Undeath). You learn 1 Spell with the chosen Spell Tag, and when you learn a new Spell you can choose any Spell that also has the chosen Spell Tag.',
 							effects: [
-								{ type: 'GRANT_COMBAT_TRAINING', target: 'Heavy_Armor', value: true },
-								{ type: 'GRANT_COMBAT_TRAINING', target: 'Heavy_Shields', value: true },
-								{ type: 'GRANT_CHOICE', target: 'defensive_maneuver', value: 1 }
+								{ type: 'MODIFY_STAT', target: 'mpMax', value: 1 },
+								{ type: 'GRANT_SPELL', target: 'by_tag', value: 1, userChoice: { prompt: 'Choose a Spell Tag', options: ['Fire', 'Holy', 'Undeath'] } }
+							]
+						},
+						{
+							name: 'Life',
+							description: 'When you produce an MP Effect that restores HP to at least 1 creature, you can restore 1 HP to 1 creature of your choice within 1 Space of you (including yourself).',
+							effects: []
+						},
+						{
+							name: 'Death',
+							description: "Enemy creatures within 10 Spaces of you take an additional 1 damage from Attacks while they're Well-Bloodied.",
+							effects: []
+						},
+						{
+							name: 'Grave',
+							description: "Allied creatures within 10 Spaces of you take 1 less damage from Attacks while they're Well-Bloodied.",
+							effects: []
+						},
+						{
+							name: 'Light',
+							description: 'When you produce an MP Effect that targets at least 1 creature, you can force 1 target to make a Might or Charisma Save. Failure: Until the end of their next turn, they shed a 1 Space Aura of Bright Light and are Hindered on their next Attack.',
+							effects: []
+						},
+						{
+							name: 'Dark',
+							description: 'You gain 10 Space Darkvision (or increase it by 5). While in Dim Light, you can take the Hide Action to Hide from creatures that can see you. On a Success, you remain Hidden until you move or the area becomes Bright Light.',
+							effects: [
+								{ type: 'GRANT_SENSE', target: 'darkvision', value: 10 },
+								{ type: 'GRANT_ABILITY', target: 'shadow_hide', value: 'Can Hide in Dim Light; remains Hidden until moving or area becomes Bright Light.' }
 							]
 						},
 						{
@@ -157,172 +107,144 @@ export const clericClass: ClassDefinition = {
 							description: 'You gain Combat Training with Weapons and access to Attack Maneuvers.',
 							effects: [
 								{ type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
-								{ type: 'GRANT_CHOICE', target: 'attack_maneuver', value: 2 }
+								{ type: 'GRANT_ABILITY', target: 'Attack_Maneuvers', value: 'Gain access to Attack Maneuvers.' }
 							]
 						},
 						{
-							name: 'Life',
-							description:
-								'When you produce an MP Effect that restores HP to at least 1 creature, you can restore 1 HP to 1 creature of your choice within 1 Space of you (including yourself).',
-							effects: []
-						},
-						{
-							name: 'Death',
-							description:
-								'Enemy creatures within 10 Spaces of you take an additional 1 damage from Attacks while they’re Well-Bloodied.',
-							effects: []
-						},
-						{
-							name: 'Ancestral',
-							description:
-								'You gain 2 Ancestry Points, which you can spend on Traits for your chosen Ancestry.',
-							effects: [{ type: 'MODIFY_STAT', target: 'ancestryPoints', value: 2 }]
-						},
-						{
-							name: 'Knowledge',
-							description:
-								'Your Mastery Limit increases by 1 for all Knowledge Trades. A Trade can only benefit from 1 Feature that increases its Mastery Limit at a time. Additionally, yougain 2 Skill Points.',
+							name: 'Peace',
+							description: 'You gain Combat Training with Heavy Armor and Heavy Shields and learn 1 Defensive Maneuver of your choice.',
 							effects: [
-								{
-									type: 'INCREASE_TRADE_MASTERY_CAP',
-									value: 1,
-									count: 9,
-									options: [
-										'architecture',
-										'deciphering',
-										'linguistics',
-										'survival',
-										'arcana',
-										'history',
-										'nature',
-										'religion',
-										'occultism'
-									]
-								},
-								{ type: 'MODIFY_STAT', target: 'skillPoints', value: 2 }
-							]
-						},
-						{
-							name: 'Trickery',
-							description:
-								'When you produce an MP Effect that targets at least 1 creature, you can choose 1 of the targets and create an illusory duplicate of it that lasts until the start of your next turn. The next Attack made against the target has DisADV,and causes the illusory duplicate to disappear.',
-							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'illusory_duplicate',
-									value:
-										'When casting MP Effect targeting creatures: create illusory duplicate of 1 target until start of next turn. Next Attack vs target has DisADV and destroys duplicate.'
-								}
-							]
-						},
-						{
-							name: 'Light',
-							description:
-								'When you produce an MP Effect that targets at least 1 creature, you can force 1 target of your choice to make a Might or Charisma Save (their choice). Failure: Until the end of their next turn, they shed a 1 Space Aura of Bright Light and are Hindered on their next Attack.',
-							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'blinding_radiance',
-									value:
-										'When casting MP Effect targeting creatures: force 1 target to make Might or Charisma Save. Failure: shed 1 Space Bright Light Aura and Hindered on next Attack until end of their next turn.'
-								}
-							]
-						},
-						{
-							name: 'Grave',
-							description:
-								"Allied creatures within 10 Spaces of you take 1 less damage from Attacks while they're Well-Bloodied.",
-							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'protective_aura',
-									value:
-										'Allied creatures within 10 Spaces take 1 less damage from Attacks while Well-Bloodied.'
-								}
-							]
-						},
-						{
-							name: 'Dark',
-							description:
-								'Your mastery over shadows grants you supernatural sight and the ability to hide yourself from other creatures.',
-							effects: [
-								{ type: 'GRANT_SENSE', target: 'darkvision', value: 10 },
-								{
-									type: 'GRANT_ABILITY',
-									target: 'shadow_hide',
-									value:
-										'While in Dim Light, you can Hide from creatures that can see you. Success: remain Hidden until you move or area becomes Bright Light.'
-								}
+								{ type: 'GRANT_COMBAT_TRAINING', target: 'Heavy_Armor', value: true },
+								{ type: 'GRANT_COMBAT_TRAINING', target: 'Heavy_Shields', value: true },
+								{ type: 'GRANT_CHOICE', target: 'defensive_maneuver', value: 1 }
 							]
 						},
 						{
 							name: 'Order',
-							description:
-								'Once per turn, when a creature you can see within 10 Spaces of you makes a Check, you can spend 1 AP as a Reaction to remove all instances of ADV and DisADV from that Check.',
-							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'neutralize_advantage',
-									value:
-										'Once per turn: spend 1 AP as Reaction to remove all ADV and DisADV from any Check within 10 Spaces.'
-								}
-							]
+							description: 'Once per turn, when a creature you can see within 10 Spaces of you makes a Check, you can spend 1 AP as a Reaction to remove all instances of ADV and DisADV from that Check.',
+							effects: []
 						},
 						{
 							name: 'Chaos',
-							description:
-								'When you make a Spell Check you can choose to give yourself ADV on it, but you must also roll on the Wild Magic Table. You can use this Feature once per Long Rest, and regain the ability to use it again when you roll for Initiative.',
+							description: 'When you make a Spell Check you can choose to give yourself ADV on it, but you must also roll on the Wild Magic Table. You can use this Feature once per Long Rest, and regain the ability to use it again when you roll for Initiative.',
+							effects: []
+						},
+						{
+							name: 'Divination',
+							description: "You can't be Flanked. When you spend MP, you gain the ability to see Invisible creatures and objects until the start of your next turn.",
 							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'chaotic_magic',
-									value:
-										'Choose to gain ADV on Spell Check + roll Wild Magic Table. Once per Long Rest, regain on Initiative roll.'
-								}
+								{ type: 'GRANT_ABILITY', target: 'condition_immunity_flanked', value: "You can't be Flanked." },
+								{ type: 'GRANT_ABILITY', target: 'see_invisible_on_mp_spend', value: 'When you spend MP, you gain the ability to see Invisible creatures and objects until the start of your next turn.' }
 							]
+						},
+						{
+							name: 'Trickery',
+							description: 'When you produce an MP Effect that targets at least 1 creature, you can choose 1 of the targets and create an illusory duplicate of it that lasts until the start of your next turn. The next Attack made against the target has DisADV, and causes the illusory duplicate to disappear.',
+							effects: []
+						},
+						{
+							name: 'Ancestral',
+							description: 'You get 2 Ancestry Points that you can spend on Traits from any Ancestry.',
+							effects: [{ type: 'MODIFY_STAT', target: 'ancestryPoints', value: 2 }]
 						}
 					]
 				}
 			]
 		},
 		{
-			featureName: 'Knowledge',
+			featureName: 'Divine Damage Expansion',
 			levelGained: 1,
-			description: 'Your divine connection enhances your understanding.',
-			effects: [
-				{
-					type: 'INCREASE_TRADE_MASTERY_CAP',
-					value: 1,
-					count: 9,
-					options: [
-						'architecture',
-						'deciphering',
-						'linguistics',
-						'survival',
-						'arcana',
-						'history',
-						'nature',
-						'religion',
-						'occultism'
-					]
-				},
-				{ type: 'MODIFY_STAT', target: 'skillPoints', value: 2 }
-			]
+			description: 'When you deal damage with a Spell you can convert the damage to your Divine Damage type. Additionally, you gain Resistance (1) to your Divine Damage type.',
+			effects: []
 		},
 		{
 			featureName: 'Divine Blessing',
-			levelGained: 2,
-			description:
-				'You can spend 2 AP to grant a creature within 5 Spaces a d8 Help Die for any d20 Check, Attack, or Save. You can do this a number of times equal to your Charisma (minimum 1), and you regain all uses when you finish a Long Rest.',
-			effects: [
+			levelGained: 1,
+			description: "You can spend 1 AP to say a prayer and petition your deity for their divine blessing. Choose 1 of the blessings listed below. Each blessing has a listed MP cost that you must spend to gain the blessing. Once during the next minute, you can apply the blessing to a Spell you cast. If your Spell targets more than 1 creature, the blessing only applies to 1 target of your choice. You can only have 1 blessing at a time. If the blessing ends without granting any benefit, you regain the MP spent.",
+			benefits: [
 				{
-					type: 'GRANT_ABILITY',
-					target: 'divine_blessing',
-					value:
-						'Spend 2 AP to grant d8 Help Die within 5 Spaces, uses = Charisma (min 1) per Long Rest.'
+					name: 'Destruction',
+					description: "(1 MP) The target takes 3 Divine damage, provided that the result of your Spell Check is equal to or higher than the target's AD. If the Spell doesn't normally require a Spell Check, then you must make one when you apply this blessing.",
+					effects: []
+				},
+				{
+					name: 'Guidance',
+					description: '(1 MP) The target gains a d8 Help Die that they can add to 1 Check of their choice they make within the next minute.',
+					effects: []
+				},
+				{
+					name: 'Restoration',
+					description: '(1 MP) The target regains 3 HP.',
+					effects: []
+				}
+			]
+		},
+		{
+			featureName: 'Divine Omen (Flavor Feature)',
+			levelGained: 1,
+			description: 'Once per Long Rest, you can spend 10 minutes to commune with your Deity and ask one yes-or-no question.',
+			effects: []
+		},
+		{
+			featureName: 'Channel Divinity',
+			levelGained: 2,
+			description: 'You gain the ability to channel the direct power of your deity. When you use this Feature, choose 1 of the options below. You can use this Feature once per Short Rest.',
+			benefits: [
+				{
+					name: 'Divine Rebuke',
+					description: "You can spend 2 AP to censure all creatures of your choice who can see or hear you within 5 Spaces. Make a Spell Check against each target's AD, and each target makes a Repeated Mental Save against your Save DC. Attack Hit: The target takes Divine Damage equal to your Prime Modifier. Save Failure: The target becomes Intimidated by you for 1 minute or until it takes damage again.",
+					effects: []
+				},
+				{
+					name: 'Lesser Divine Intervention',
+					description: "You can spend 2 AP to call on your deity to intervene on your behalf when your need is great to replenish you and your allies. Make a DC 15 Spell Check. Success: You gain a pool of healing equal to your Prime Modifier that you can use to restore HP to any number of creatures within 5 Spaces, distributing the HP among them. Additionally, you regain 1 MP. Success (each 5): Increase the amount healed by an amount equal to your Prime Modifier. Failure: You can only gain a pool of healing equal to your Prime Modifier.",
+					effects: []
+				}
+			]
+		},
+		{
+			featureName: 'Talent',
+			levelGained: 2,
+			description: 'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
+			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
+		}
+	],
+	subclasses: [
+		{
+			subclassName: 'Inquisitor',
+			description: 'You are an agent of divine justice, rooting out heresy and deception.',
+			features: [
+				{
+					featureName: 'Vanquish Heresy',
+					levelGained: 3,
+					description: 'You gain Resistance to Charmed, Intimidated, and Taunted. Creatures Intimidated by your Divine Rebuke don\'t stop being Intimidated if they take damage. You also gain the "Chastise" Divine Blessing option.',
+					effects: []
+				},
+				{
+					featureName: 'Divine Interrogator (Flavor Feature)',
+					levelGained: 3,
+					description: "Once per Long Rest, you can interrogate a creature by asking it a Yes or No question. It makes a Charisma Save against your Save DC. Failure: It can't tell a lie to the question that you asked it.",
+					effects: []
+				}
+			]
+		},
+		{
+			subclassName: 'Priest',
+			description: 'You are a beacon of faith, healing the wounded and protecting the innocent.',
+			features: [
+				{
+					featureName: 'Sanctification',
+					levelGained: 3,
+					description: "When you spend MP to heal a creature beyond their HP maximum, they gain an amount of Temp HP equal to the remaining healing. When you spend MP to heal a creature on Death's Door, the HP restored is increased by an amount equal to your Prime Modifier. You also gain the 'Hand of Salvation' Channel Divinity option.",
+					effects: []
+				},
+				{
+					featureName: 'All That Ails (Flavor Feature)',
+					levelGained: 3,
+					description: 'You have ADV on Checks made to identify or determine the effects of a Disease, Poison, or Curse affecting a creature.',
+					effects: []
 				}
 			]
 		}
-	],
-	subclasses: []
+	]
 };

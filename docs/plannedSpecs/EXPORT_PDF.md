@@ -49,8 +49,8 @@ This plan adapts the provided guide to your project's specific file structure, c
     *   **Tasks:**
         1.  Create `src/lib/pdf/transformers.ts` with `transformCalculatedCharacterToPdfData(result) => PdfExportData`.
         2.  Create `src/lib/pdf/fillPdf.ts` exporting `fillPdfFromData(data: PdfExportData, opts?: { flatten?: boolean }): Promise<Blob>`.
-        3.  Import the template as a URL for Vite bundling:
-           - `import templateUrl from '@/lib/pdf/095/DC20_Beta_0_9_5_(fillable)_Character_Sheet.pdf?url'`
+        3.  Import the template as a URL for Vite bundling (use relative path, no alias):
+           - `import templateUrl from '../../lib/pdf/095/DC20_Beta_0_9_5_(fillable)_Character_Sheet.pdf?url'`
            - `const templateArrayBuffer = await fetch(templateUrl).then(r => r.arrayBuffer())`
         4.  Use `PDFDocument.load(templateArrayBuffer)`, get form, set fields based on `fieldMap`, optionally `form.flatten()` if `opts.flatten`.
         5.  Return `new Blob([await pdfDoc.save()], { type: 'application/pdf' })`.

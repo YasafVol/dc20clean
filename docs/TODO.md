@@ -22,3 +22,14 @@
 - **references**:
   - Vitest Documentation
   - React Testing Library (for hooks)
+
+---
+
+## 2. Low-Priority System Docs (nice to have)
+
+- Weapons & Items System — items schema, weapon damage derivation, UI interactions.
+- Currency System — model, validation, persistence, UI mapping.
+- Status & Exhaustion System — levels, effects, modal behavior.
+- Persistence & API — save/load mapping, Prisma schema, API contract.
+
+These are tracked for future work; current focus is on the newly added Spells, Martials, Calculation, Effect docs, and Character Sheet overview.

@@ -58,10 +58,36 @@ Tips
 - Use `docker compose up` for local DB; verify Prisma client generation after schema changes.
 
 ## Architecture References
-- See `docs/systems` for system specs and overviews. Start with:
-  - `docs/systems/project_summary.md`
-  - `docs/systems/BACKGROUND_SYSTEM.MD`
-  - `docs/systems/TRADES_MULTI_ATTRIBUTE_SPEC.md`
+- See `docs/systems` for system specs and overviews.
+
+## Systems Index (start here)
+
+- Background System: `docs/systems/BACKGROUND_SYSTEM.MD`
+- Trades Multi-Attribute: `docs/systems/TRADES_MULTI_ATTRIBUTE_SPEC.md`
+- Traits System: `docs/systems/TRAITS_SYSTEM.MD`
+- Classes System: `docs/systems/CLASS_SYSTEM.MD`
+- Ancestries System: `docs/systems/ANCESTRY_SYSTEM.MD`
+- Ontology & Flows: `docs/systems/ONTOLOGY.md`
+- Calculation & Derived Stats: `docs/systems/CALCULATION_SYSTEM.MD`
+- Spells System: `docs/systems/SPELLS_SYSTEM.MD`
+- Martials System: `docs/systems/MARTIALS_SYSTEM.MD`
+- Character Sheet Overview: `docs/systems/CHARACTER_SHEET.MD`
+
+## Agent Brief Template
+
+- Goal: <one-sentence outcome>
+- Relevant systems:
+  - Background → `docs/systems/BACKGROUND_SYSTEM.MD#4-calculation-model`
+  - Trades Multi-Attribute → `docs/systems/TRADES_MULTI_ATTRIBUTE_SPEC.md#6-code-touchpoints`
+  - Effect types → `docs/systems/EFFECT_SYSTEM.MD#2-effect-categories`
+- Touchpoints:
+  - Data/types: `src/lib/rulesdata/**`, `src/lib/rulesdata/schemas/**`
+  - Services: `src/lib/services/enhancedCharacterCalculator.ts`
+  - UI: `src/routes/character-creation/**`, `src/routes/character-sheet/**`
+- Acceptance:
+  - Enumerate 2–4 checks (e.g., Brewing example in Trades spec §4)
+- Constraints:
+  - Follow lint rules; keep IDs stable; avoid migrations unless spec says
 
 ## Agent-Specific Notes
 - Follow lint rules strictly; avoid unrelated refactors. Keep changes minimal and focused. Update or add tests when modifying behavior.

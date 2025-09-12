@@ -26,40 +26,41 @@ This plan adapts the provided guide to your project's specific file structure, c
 
 ---
 
-### **Milestone 1: Backend API Endpoint**
+### **Milestone 1: Client-Side Export (No Server API)**
 
-**Goal:** Create a serverless API endpoint that accepts character data and returns a filled PDF.
+**Goal:** Fill and download the PDF entirely in the browser using `pdf-lib`. No server runtime required.
 
-*   **Issue M1.1: Implement PDF Export API Route**
-    *   **Labels:** `backend`, `P0`
+*   **Issue M1.1: Add dependency and lazy-load**
+    *   **Labels:** `frontend`, `P0`
     *   **Tasks:**
-        1.  Create a new API route file: `src/api/export/pdf.ts`.
-        2.  This file will export a handler function (e.g., `POST`) that accepts a request with the character data.
-        3.  Use `PdfExportDataSchema.parse(request.body)` to validate the incoming data.
-        4.  On validation failure, return a `400 Bad Request` with a clear error message.
+        1.  Install `pdf-lib`.
+        2.  Lazy import it inside the export flow to keep initial bundle small.
+        3.  Optional: use `file-saver` (or `URL.createObjectURL`) for download.
 
-*   **Issue M1.2: Create the Field Map**
-    *   **Labels:** `backend`, `P0`
+*   **Issue M1.2: Field Map module**
+    *   **Labels:** `frontend`, `P0`
     *   **Tasks:**
-        1.  Create `src/lib/pdf/fieldMap.ts`.
-        2.  Implement a mapping object, `const fieldMap: Record<keyof PdfExportData, string> = { ... }`, which maps keys from our `PdfExportData` DTO to the actual PDF field names discovered in **M0.1**.
-        3.  For checkboxes, the map should handle "on" values, e.g., `someCheckbox: { field: 'PDFCheckBoxField', onValue: 'Yes' }`.
+        1.  Create `src/lib/pdf/fieldMap.dc20-0.9.5.ts`.
+        2.  Implement `const fieldMap: Record<string, string | { field: string; onValue?: string }>` mapping DTO paths to PDF field IDs (from M0.1).
+        3.  Include checkbox on-values where required (e.g., `Yes`).
 
-*   **Issue M1.3: Develop PDF Filling Service**
-    *   **Labels:** `backend`, `P0`
+*   **Issue M1.3: PDF transformer and filler**
+    *   **Labels:** `frontend`, `P0`
     *   **Tasks:**
-        1.  Create a service file at `src/lib/services/pdfGenerator.ts`.
-        2.  Implement an async function `fillPdf(data: PdfExportData): Promise<Uint8Array>`.
-        3.  Inside this function:
-            *   Load the template PDF from `src/lib/pdf/095/DC20_Beta_0_9_5_(fillable)_Character_Sheet.pdf`.
-            *   Lazily import and use `pdf-lib` to get the form.
-            *   Iterate over the `fieldMap`, using the validated `data` to populate the form fields (`textField.setText()`, `checkBox.check()`, etc.).
-            *   Initially, **do not** flatten the form (`form.flatten()`).
-            *   Return the generated PDF as a `Uint8Array`.
-        4.  In the `src/api/export/pdf.ts` route, call this service and stream the resulting `Uint8Array` back to the client with the appropriate headers:
-            *   `Content-Type: application/pdf`
-            *   `Content-Disposition: attachment; filename="character_sheet.pdf"`
-            *   `Cache-Control: no-store`
+        1.  Create `src/lib/pdf/transformers.ts` with `transformCalculatedCharacterToPdfData(result) => PdfExportData`.
+        2.  Create `src/lib/pdf/fillPdf.ts` exporting `fillPdfFromData(data: PdfExportData, opts?: { flatten?: boolean }): Promise<Blob>`.
+        3.  Import the template as a URL for Vite bundling:
+           - `import templateUrl from '@/lib/pdf/095/DC20_Beta_0_9_5_(fillable)_Character_Sheet.pdf?url'`
+           - `const templateArrayBuffer = await fetch(templateUrl).then(r => r.arrayBuffer())`
+        4.  Use `PDFDocument.load(templateArrayBuffer)`, get form, set fields based on `fieldMap`, optionally `form.flatten()` if `opts.flatten`.
+        5.  Return `new Blob([await pdfDoc.save()], { type: 'application/pdf' })`.
+
+*   **Issue M1.4: Acceptance**
+    *   **Labels:** `frontend`, `P0`
+    *   **Checks:**
+        - Clicking Export produces a valid, openable PDF in Preview/Adobe/Chrome.
+        - Fields are editable by default; flattened variant removes field editability.
+        - No server/API required.
 
 ---
 
@@ -82,9 +83,8 @@ This plan adapts the provided guide to your project's specific file structure, c
             *   Gather all necessary character data from your `CharacterSheetProvider` context.
             *   Use `convertToEnhancedBuildData` and `calculateCharacterWithBreakdowns` from `src/lib/services/enhancedCharacterCalculator.ts` to get a complete, calculated character object.
             *   **Crucially, create a new utility function, `transformCalculatedCharacterToPdfData(character: EnhancedCalculationResult): PdfExportData`, to map the calculator's output to the `PdfExportData` DTO structure.** This is the primary transformation step.
-            *   POST this `PdfExportData` object to the `/api/export/pdf` endpoint.
-            *   Receive the PDF blob from the API.
-            *   Use a utility like `file-saver` or a simple `URL.createObjectURL` link to trigger the download in the browser.
+            *   Lazy import the filler `fillPdfFromData`, fetch the template URL, and generate a Blob.
+            *   Use `URL.createObjectURL` or `file-saver` to trigger the download.
             *   Generate a dynamic, clean filename, e.g., `CharacterName_Level_Class.pdf`.
             *   Display a success or error notification to the user.
 
@@ -98,13 +98,12 @@ This plan adapts the provided guide to your project's specific file structure, c
     *   **Labels:** `test`, `P1`
     *   **Tasks:**
         1.  Create a new test file: `e2e/export.e2e.spec.ts`.
-        2.  Use an existing test character file (e.g., `e2e/test-character-rich.json`) as the input fixture.
+        2.  Use an existing test character fixture (e.g., `e2e/test-character-rich.json`).
         3.  The test will:
-            *   Programmatically POST the fixture data to the `/api/export/pdf` endpoint.
-            *   Receive the resulting PDF buffer.
-            *   Use `pdf-lib` again within the test to load the *output* PDF.
-            *   Read the values from the form fields and assert that they match the expected values from the input fixture.
-        4.  This test will act as a "golden fixture" test, failing CI if a code change (e.g., in the calculator) or a field map change breaks the output.
+            *   Navigate to character sheet, click Export, wait for download.
+            *   Assert filename hygiene and non-empty size.
+            *   Optional: reopen the PDF with `pdf-lib` in the test, read a few fields, and assert values.
+        4.  This test acts as a golden test guarding template drift and field map changes.
 
 ---
 
@@ -115,10 +114,18 @@ This plan adapts the provided guide to your project's specific file structure, c
 *   **Issue M4.1: Add "Flattened PDF" Option**
     *   **Labels:** `backend`, `frontend`, `P1`
     *   **Tasks:**
-        *   **Backend:** Update the `/api/export/pdf` endpoint to accept an optional query parameter, `?flatten=true`. If present, call `form.flatten()` in `pdfGenerator.ts` before saving.
-        *   **Frontend:** Add a second button or a checkbox in the UI for "Export Flattened PDF (non-editable)".
+        *   **Frontend:** Add a second button or a checkbox in the UI for "Export Flattened PDF (non-editable)" which passes `{ flatten: true }` to the client filler.
 
 *   **Issue M4.2: Add Basic Performance Monitoring**
     *   **Labels:** `perf`, `P2`
     *   **Tasks:**
-        *   In the `/api/export/pdf` Vercel function, add simple logging to measure the duration of the PDF generation process to monitor for cold starts vs. warm execution times.
+        *   Log timings in the client flow (start→filled→saved) and ensure `pdf-lib` is lazy loaded.
+
+---
+
+### **Notes & Dev scripts**
+
+- Add `pdf-lib` dependency.
+- Keep the field-lister as a Node dev script:
+  - `scripts/listPdfFields.ts` reads the template from `src/lib/pdf/095/*.pdf`, enumerates `getForm().getFields()`, and writes `docs/systems/pdf-form-fields-v0.9.5.json`.
+- Import the PDF template in client using Vite’s `?url` suffix to avoid bundling the binary into JS.

@@ -36,11 +36,16 @@ Tips
 - Prettier: tabs, single quotes, width 100; Tailwind class sorting.
 - ESLint: TS + React recommended. JSON parse/stringify is restricted except in `**/storageUtils.ts`.
 - File names: `PascalCase` for components, `camelCase` for modules/hooks, tests as `*.test.ts[x]`.
+- Always use full, descriptive naming for functions, variables, and components.
+- Example: wrong `genYmdStr`; right `generateDateString`.
 
 ## Testing Guidelines
 - Unit: Vitest. Place tests near source: `src/**/Foo.test.tsx`.
 - E2E: Playwright in `e2e/`. Config runs a web server on `http://localhost:4173`.
 - Useful envs: `PLAYWRIGHT_SKIP_BUILD=1`, `E2E_SCREENSHOTS=1`, `E2E_TRACES=1`.
+- Never modify unit or E2E tests without explicit written user approval.
+- If a test appears incorrect, do not change it. Instead, share the rationale and a proposed diff in a comment/PR description and proceed only after explicit approval.
+- Do not update snapshots or golden files (e.g., `-u`) without prior approval.
 
 ## Graphite (Stacked PRs)
 - Install: `brew install withgraphite/tap/graphite` (or see graphite.dev).

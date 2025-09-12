@@ -116,7 +116,7 @@ This section describes the data structures and concepts that define the game's r
   - **Location**: `src/lib/rulesdata/spells-data/`
   - **Structure**: Spells are organized into categories (e.g., Fire and Flames, Holy and Restoration).
 
-- **Calculated Values**: These are values derived from the character's base statistics and choices. Examples include:
+- **Calculated Values**: These are values derived from the character's base statistics and choices. See also `docs/systems/CALCULATION_SYSTEM.MD`. Examples include:
   - **Health Points (HP)**
     - **Formula**: `Might Attribute + HP from Class Level Table + HP from Effects`
   - **Stamina Points (SP)**
@@ -137,7 +137,7 @@ This section describes the data structures and concepts that define the game's r
     - **Save DC**: `8 + Combat Mastery + Prime Attribute Modifier`
     - **Initiative**: `Combat Mastery + Agility`
 
-- **Schemas**: Define the data structures for core concepts.
+- **Schemas**: Define the data structures for core concepts. See also `docs/systems/EFFECT_SYSTEM.MD` for effect types.
   - **Location**: `src/lib/rulesdata/schemas/`
   - **Files**: `character.schema.ts`, `class.schema.ts`, `spell.schema.ts`.
   - **Effect System**: Enhanced with mastery cap support:

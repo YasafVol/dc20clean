@@ -261,13 +261,22 @@ export function useCharacterResources() {
 			maxRestPoints: state.character.finalRestPoints || 0
 		};
 
+		// Clamp/sync Rest Points current to calculated max (handles ancestry HP bonuses changing max)
+		const adjustedCurrent = {
+			...current,
+			currentRestPoints:
+				current.currentRestPoints && current.currentRestPoints > 0
+					? Math.min(current.currentRestPoints, original.maxRestPoints)
+					: original.maxRestPoints
+		};
+
 		return {
-			current,
+			current: adjustedCurrent,
 			original,
 			// Derived values
-			hpPercentage: original.maxHP > 0 ? (current.currentHP / original.maxHP) * 100 : 0,
-			spPercentage: original.maxSP > 0 ? (current.currentSP / original.maxSP) * 100 : 0,
-			mpPercentage: original.maxMP > 0 ? (current.currentMP / original.maxMP) * 100 : 0
+			hpPercentage: original.maxHP > 0 ? (adjustedCurrent.currentHP / original.maxHP) * 100 : 0,
+			spPercentage: original.maxSP > 0 ? (adjustedCurrent.currentSP / original.maxSP) * 100 : 0,
+			mpPercentage: original.maxMP > 0 ? (adjustedCurrent.currentMP / original.maxMP) * 100 : 0
 		};
 	}, [
 		state.character?.characterState?.resources,

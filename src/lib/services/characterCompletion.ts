@@ -75,10 +75,12 @@ export const completeCharacter = async (
 			finalPrimeModifierValue: calculationResult.stats.finalPrimeModifierValue,
 			finalPrimeModifierAttribute: calculationResult.stats.finalPrimeModifierAttribute,
 			finalCombatMastery: calculationResult.stats.finalCombatMastery,
-			finalSaveMight: calculationResult.stats.finalMight, // Use attribute values as saves for now
-			finalSaveAgility: calculationResult.stats.finalAgility,
-			finalSaveCharisma: calculationResult.stats.finalCharisma,
-			finalSaveIntelligence: calculationResult.stats.finalIntelligence,
+			// Saves = attribute + Combat Mastery
+			finalSaveMight: calculationResult.stats.finalMight + calculationResult.stats.finalCombatMastery,
+			finalSaveAgility: calculationResult.stats.finalAgility + calculationResult.stats.finalCombatMastery,
+			finalSaveCharisma: calculationResult.stats.finalCharisma + calculationResult.stats.finalCombatMastery,
+			finalSaveIntelligence:
+				calculationResult.stats.finalIntelligence + calculationResult.stats.finalCombatMastery,
 			finalHPMax: calculationResult.stats.finalHPMax,
 			finalSPMax: calculationResult.stats.finalSPMax,
 			finalMPMax: calculationResult.stats.finalMPMax,
@@ -92,6 +94,13 @@ export const completeCharacter = async (
 			finalRestPoints: calculationResult.stats.finalRestPoints,
 			finalGritPoints: calculationResult.stats.finalGritPoints,
 			finalInitiativeBonus: calculationResult.stats.finalInitiativeBonus,
+			// Derived thresholds and bloodied values
+			finalPDHeavyThreshold: calculationResult.stats.finalPD + 5,
+			finalPDBrutalThreshold: calculationResult.stats.finalPD + 10,
+			finalADHeavyThreshold: calculationResult.stats.finalAD + 5,
+			finalADBrutalThreshold: calculationResult.stats.finalAD + 10,
+			bloodiedValue: Math.ceil(calculationResult.stats.finalHPMax / 2),
+			wellBloodiedValue: Math.ceil(calculationResult.stats.finalHPMax / 4),
 
 			// Combat stats with breakdowns
 			finalAttackSpellCheck: calculationResult.stats.finalAttackSpellCheck,
@@ -102,7 +111,7 @@ export const completeCharacter = async (
 			selectedFeatureChoices: characterState.selectedFeatureChoices || {},
 			skillsData: characterState.skillsData || {},
 			tradesData: characterState.tradesData || {},
-			languagesData: characterState.languagesData || [],
+			languagesData: characterState.languagesData || { common: { fluency: 'fluent' } },
 			spells: [], // Will be populated below
 			maneuvers: [], // Will be populated below
 

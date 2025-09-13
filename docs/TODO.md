@@ -33,3 +33,13 @@
 - Persistence & API — save/load mapping, Prisma schema, API contract.
 
 These are tracked for future work; current focus is on the newly added Spells, Martials, Calculation, Effect docs, and Character Sheet overview.
+
+---
+
+## 3. PDF Export and Calculation Follow-ups
+
+- [ ] bug: Rest Points cap should equal final HP Max (after bonuses)
+- [ ] feat: Extend character schema with `heavyAD`, `heavyPD`, `brutalAD`, `brutalPD`
+  - heavy = AD/PD + 5, brutal = AD/PD + 10
+  - pass these fields through to PDF export DTO/schema
+- [ ] bug: Attribute save values should be `attribute + combat mastery`

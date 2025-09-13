@@ -1,0 +1,1238 @@
+[
+  {
+    "name": "Carried",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Stored",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies B Amount",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies B",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies A Amount",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies A",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies C Amount",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies C",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies D Amount",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies E",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies F Amount",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies F",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies E Amount",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies H Amount",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies H",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies G Amount",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies G",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies J Amount",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies J",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies I Amount",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies I",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies K Amount",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Supplies K",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attuned B",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attuned C",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attuned A",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attuned D",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attuned E",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attuned Item B",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attuned Item C",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attuned Item D",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attuned Item E",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attuned Item A",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Equipped on the Head",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Equipped on the Feet",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Equipped on the Left Hand",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Equipped on the Right Hand",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Equipped on the Hands",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Equipped on the Waist",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Equipped on the Body",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Equipped on the Mantle",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Equipped on the Neck",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Player Name",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Ancestry",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Character Name",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Class & Subclass",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Level",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Mastery-Awareness-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Awareness-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Awareness-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Awareness-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Awareness-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Athletics-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Athletics-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Athletics-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Athletics-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Athletics-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Intimidation-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Intimidation-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Intimidation-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Intimidation-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Intimidation-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Acrobatics-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Acrobatics-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Acrobatics-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Acrobatics-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Acrobatics-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trickery-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trickery-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trickery-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trickery-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trickery-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Stealth-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Stealth-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Stealth-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Stealth-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Stealth-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Animal-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Animal-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Animal-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Move Speed",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Mastery-Animal-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Animal-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Influence-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Influence-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Influence-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Influence-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Master-Influence-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Insight-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Insight-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Insight-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Insight-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Insight-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Investigation-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Investigation-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Investigation-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Investigation-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Investigation-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Medicine-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Medicine-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Medicine-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Medicine-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Medicine-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Survival-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Survival-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Survival-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Survival-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Survival-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Arcana-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Arcana-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Arcana-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Arcana-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Arcana-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-History-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-History-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-History-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-History-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-History-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Nature-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Nature-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Nature-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Nature-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Nature-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Occultism-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Occultism-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Occultism-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Occultism-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Occultism-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Religion-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Religion-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Religion-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Religion-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Religion-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-A-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-A-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-A-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-A-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-A-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-C-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-C-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-C-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-C-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-C-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-D-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-D-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-D-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-D-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-D-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Language-A-Limited",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Language-A-Fluent",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Language-B-Limited",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Language-B-Fluent",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Language-C-Limited",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Language-C-Fluent",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Language-D-Limited",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Language-D-Fluent",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Awareness",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Might Save",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Athletics",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Intimidation",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Agility Save",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Acrobatics",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Trickery",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Stealth",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Charisma Save",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Animal",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Influence",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Insight",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Intelligence Save",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Investigation",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Medicine",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Survival",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Arcana",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "History",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Nature",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Occultism",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Religion",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Trade A",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Custom Trade A",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Custom Trade C",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Custom Trade D",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Language A",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Language B",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Language C",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Language D",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Features",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attack A",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attack A Dmg",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attack A Type",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attack A Notes",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attack B",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attack B Dmg",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attack B Type",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attack B Notes",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attack C",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attack C Dmg",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attack C Type",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attack C Notes",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attack Check",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Save DC",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Initiative",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Stamina Points Max",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Mana Points Max",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Stamina Points Current",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Mana Points Current",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Hit Points Current",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Mental Defense",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Hit Points Max",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Hit Points Temp",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "MD Heavy Threshold",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "MD Brutal Threshold",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Physical Defense",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "PD Heavy Threshold",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "PD Brutal Threshold",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Exhaustion -1",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Exhaustion -2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Exhaustion -3",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Exhaustion -4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Exhaustion -5",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Death Threshold",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Jump Distance",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Rest Point Cap",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Rest Point Current",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource A Cap",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource A Current",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource A",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource B Cap",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource B Current",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource B",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource C Cap",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource C Current",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource C",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Prime",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Might",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Agility",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Charisma",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Intelligence",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Combat Mastery",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Trade D",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Trade C",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Mastery-Trade-B-2",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-B-4",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-B-6",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-B-8",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mastery-Trade-B-10",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Trade B",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Custom Trade B",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Grit Point Cap",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Grit Point Current",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource D Cap",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource D Current",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource D",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource E Cap",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource E Current",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource E",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource F Cap",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource F Current",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource F",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource G Cap",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource G Current",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource G",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource H Cap",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource H Current",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource H",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource I Cap",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource I Current",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Resource I",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Hold Breath",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attack D",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attack D Dmg",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attack D Type",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Attack D Notes",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Bloodied",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Well-Bloodied",
+    "type": "PDFTextField"
+  },
+  {
+    "name": "Physical-Damage-Reduction",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Elemantal-Damage-Reduction",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Mental-Damage-Reduction",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Burrow-Half",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Swim-Half",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Burrow-Full",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Swim-Full",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Fly-Half",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Fly-Full",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Climb-Half",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Climb-Full",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Expertise-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Athletics-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Intimidation-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Trickery-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Acrobatics-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Stealth-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Influence-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Animal-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Insight-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Medicine-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Investigation-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Survival-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "History-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Arcana-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Nature-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Trade-A-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Religion-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Occultism-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Trade-D-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Trade-C-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Trade-B-Proficiency",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Glide-Half",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Glide-Full",
+    "type": "PDFCheckBox"
+  },
+  {
+    "name": "Misc",
+    "type": "PDFTextField"
+  }
+]

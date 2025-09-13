@@ -104,6 +104,16 @@ export interface SavedCharacter {
 	finalGritPoints: number;
 	finalInitiativeBonus: number;
 
+	// Derived thresholds
+	finalPDHeavyThreshold?: number;
+	finalPDBrutalThreshold?: number;
+	finalADHeavyThreshold?: number;
+	finalADBrutalThreshold?: number;
+
+	// Bloodied values
+	bloodiedValue?: number; // ceil(HPMax / 2)
+	wellBloodiedValue?: number; // ceil(HPMax / 4)
+
 	// Combat stats with breakdowns
 	finalAttackSpellCheck: number;
 	finalMartialCheck: number; // max(Acrobatics, Athletics)
@@ -113,7 +123,8 @@ export interface SavedCharacter {
 	selectedFeatureChoices: Record<string, string>;
 	skillsData: Record<string, number>;
 	tradesData: Record<string, number>;
-	languagesData: string[];
+	// Languages can be either a list of names or a map of name -> { fluency }
+	languagesData: any;
 	spells: any[]; // Will use proper SpellData once imported
 	maneuvers: any[]; // Will use proper ManeuverData once imported
 

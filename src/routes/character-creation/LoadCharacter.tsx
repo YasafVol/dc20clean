@@ -237,11 +237,29 @@ function LoadCharacter() {
 		return ancestry1;
 	};
 
-	// Non-disruptive Export PDF handler (placeholder)
+	// Non-disruptive Export PDF handler
 	const handleExportPdf = async (character: SavedCharacter, event: React.MouseEvent) => {
 		event.stopPropagation();
 		try {
-			alert(`Export PDF is coming soon for: ${character.finalName || character.id}`);
+			const [{ transformSavedCharacterToPdfData }, { fillPdfFromData }] = await Promise.all([
+				import('../../lib/pdf/transformers'),
+				import('../../lib/pdf/fillPdf')
+			]);
+			const pdfData = transformSavedCharacterToPdfData(character);
+			const blob = await fillPdfFromData(pdfData, { flatten: false });
+			const safeName = (character.finalName || character.id || 'Character')
+				.replace(/[^A-Za-z0-9]+/g, '_')
+				.replace(/^_+|_+$/g, '')
+				.slice(0, 60);
+			const fileName = `${safeName}_vDC20-0.9.5.pdf`;
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = fileName;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
 		} catch (err) {
 			console.error('Export PDF failed', err);
 			alert('Failed to export PDF');

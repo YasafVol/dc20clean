@@ -74,21 +74,21 @@ Stamp
 ## Task Tracker
 
 M0: Foundation & Tooling
-- [ ] M0.1 Field Lister: `scripts/listPdfFields.ts` → `docs/systems/pdf-form-fields-v0.9.5.json`
-- [ ] M0.2 DTO + Schema: `src/lib/types/pdfExport.ts` (type + `PdfExportDataSchema`)
-- [ ] M0.3 Local Export (Manual E2E POC):
-  - [ ] `tests/fixtures/pdf-export-basic.json` (static payload)
-  - [ ] `scripts/localExportPOC.ts` (validate → fill → write `test-results/local-export.pdf`)
+- [x] M0.1 Field Lister: `scripts/listPdfFields.ts` → `docs/systems/pdf-form-fields-v0.9.5.json`
+- [x] M0.2 DTO + Schema: `src/lib/types/pdfExport.ts` (type + `PdfExportDataSchema`)
+- [x] M0.3 Local Export (Manual E2E POC):
+  - [x] `tests/fixtures/pdf-export-basic.json` (static payload)
+  - [x] `scripts/localExportPOC.ts` (validate → fill → write `test-results/local-export.pdf`)
   - [ ] HUMAN REVIEW: open PDF in 3 viewers; verify core fields
 
 M1: Export Plumbing (client modules)
-- [ ] `src/lib/pdf/fieldMap.dc20-0.9.5.ts` (DTO path → PDF field IDs)
-- [ ] `src/lib/pdf/transformers.ts` (`transformCalculatedCharacterToPdfData`)
-- [ ] `src/lib/pdf/fillPdf.ts` (`fillPdfFromData`, optional `flatten`)
+- [x] `src/lib/pdf/fieldMap.dc20-0.9.5.ts` (DTO path → PDF field IDs)
+- [x] `src/lib/pdf/transformers.ts` (`transformCalculatedCharacterToPdfData`)
+- [x] `src/lib/pdf/fillPdf.ts` (`fillPdfFromData`, optional `flatten`)
 
 M2: UI Integration (additive)
-- [ ] Wire “Export PDF” CTA in `LoadCharacter.tsx` to transform → fill → download
-- [ ] Filename hygiene + disabled state + error toast
+- [x] Wire “Export PDF” CTA in `LoadCharacter.tsx` to transform → fill → download
+- [x] Filename hygiene + disabled state + error toast
 - [ ] HUMAN REVIEW: export on desktop/mobile; verify no flow changes
 
 M3: Tests & Quality
@@ -98,3 +98,23 @@ M3: Tests & Quality
 M4: Polish
 - [ ] Optional flattened export toggle
 - [ ] Basic timing logs and lazy-load verification
+
+
+
+
+## Progress Summary (to date)
+
+- Field lister added (ESM) and field JSON generated for v0.9.5; local POC writes `test-results/local-export.pdf`.
+- DTO + Zod schema created: `src/lib/types/pdfExport.ts` (mirrors `src/lib/pdf/095/sheet.json`).
+- Client modules implemented:
+  - Field map `src/lib/pdf/fieldMap.dc20-0.9.5.ts` covers identity, skills, defenses, resources, languages, mastery ladders, and attacks.
+  - Transformer `src/lib/pdf/transformers.ts` maps `SavedCharacter` → `PdfExportData`.
+  - Filler `src/lib/pdf/fillPdf.ts` loads template via Vite `?url` and fills with `pdf-lib`.
+- UI wired: Load Character now lazy-loads transformer/filler and downloads `<Name>_vDC20-0.9.5.pdf`.
+- Calculation updates applied to character data (not only the PDF):
+  - Saves = attribute + Combat Mastery.
+  - Heavy/Brutal thresholds computed and stored: PD/AD +5 and +10.
+  - Bloodied, Well-Bloodied values computed: ceil(HPMax/2), ceil(HPMax/4).
+  - Rest Points max = HP Max; UI clamps current RP to max.
+  - Languages mark Limited/Fluent from `languagesData` (default Common → Fluent).
+  - Mastery ladders set via proficiency×2 to Novice/Master (2/4/6/8/10); Trade A–D exclude knowledge trades (Arcana/History/Nature/Occultism/Religion).

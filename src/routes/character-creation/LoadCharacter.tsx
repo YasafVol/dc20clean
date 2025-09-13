@@ -237,6 +237,17 @@ function LoadCharacter() {
 		return ancestry1;
 	};
 
+	// Non-disruptive Export PDF handler (placeholder)
+	const handleExportPdf = async (character: SavedCharacter, event: React.MouseEvent) => {
+		event.stopPropagation();
+		try {
+			alert(`Export PDF is coming soon for: ${character.finalName || character.id}`);
+		} catch (err) {
+			console.error('Export PDF failed', err);
+			alert('Failed to export PDF');
+		}
+	};
+
 	return (
 		<StyledContainer>
 			<StyledButtonRow>
@@ -299,6 +310,13 @@ function LoadCharacter() {
 									onClick={(e) => handleViewCharacterSheet(character, e)}
 								>
 									View Sheet
+								</StyledActionButton>
+								<StyledActionButton
+									variant="secondary"
+									onClick={(e) => handleExportPdf(character, e)}
+									title="Export this character to a fillable PDF"
+								>
+									Export PDF
 								</StyledActionButton>
 								<StyledActionButton
 									variant="secondary"

@@ -70,3 +70,31 @@ Stamp
 - Run field lister: `npm run export:list-fields` (writes `docs/systems/pdf-form-fields-v0.9.5.json`).
 - Import the PDF template via: `import templateUrl from '../../lib/pdf/095/DC20_Beta_0_9_5_(fillable)_Character_Sheet.pdf?url'` in client code.
 - Keep IDs and existing types stable; avoid unrelated refactors.
+
+## Task Tracker
+
+M0: Foundation & Tooling
+- [ ] M0.1 Field Lister: `scripts/listPdfFields.ts` → `docs/systems/pdf-form-fields-v0.9.5.json`
+- [ ] M0.2 DTO + Schema: `src/lib/types/pdfExport.ts` (type + `PdfExportDataSchema`)
+- [ ] M0.3 Local Export (Manual E2E POC):
+  - [ ] `tests/fixtures/pdf-export-basic.json` (static payload)
+  - [ ] `scripts/localExportPOC.ts` (validate → fill → write `test-results/local-export.pdf`)
+  - [ ] HUMAN REVIEW: open PDF in 3 viewers; verify core fields
+
+M1: Export Plumbing (client modules)
+- [ ] `src/lib/pdf/fieldMap.dc20-0.9.5.ts` (DTO path → PDF field IDs)
+- [ ] `src/lib/pdf/transformers.ts` (`transformCalculatedCharacterToPdfData`)
+- [ ] `src/lib/pdf/fillPdf.ts` (`fillPdfFromData`, optional `flatten`)
+
+M2: UI Integration (additive)
+- [ ] Wire “Export PDF” CTA in `LoadCharacter.tsx` to transform → fill → download
+- [ ] Filename hygiene + disabled state + error toast
+- [ ] HUMAN REVIEW: export on desktop/mobile; verify no flow changes
+
+M3: Tests & Quality
+- [ ] Unit: transformer → expected `PdfExportData`
+- [ ] E2E: click Export → assert filename + size (optional: assert fields)
+
+M4: Polish
+- [ ] Optional flattened export toggle
+- [ ] Basic timing logs and lazy-load verification

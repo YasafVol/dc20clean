@@ -29,6 +29,16 @@ Stamp
 - Script: `scripts/listPdfFields.ts` enumerates AcroForm fields of the template and outputs JSON.
 - DTO: `PdfExportData` type + Zod schema in `src/lib/types/pdfExport.ts` (mirrors `sheet.json`).
 
+#### M0.3: Local Export (Manual E2E POC)
+- Create `tests/fixtures/pdf-export-basic.json` — a static character payload (minimal but representative).
+- Create `scripts/localExportPOC.ts` that:
+  - Loads the fixture, validates/coerces with `PdfExportDataSchema`.
+  - Loads `src/lib/pdf/095/DC20_Beta_0_9_5_(fillable)_Character_Sheet.pdf` via fs.
+  - Fills fields using keys (or `fieldMap` once available) with `pdf-lib`.
+  - Writes `test-results/local-export.pdf` locally (Git-ignored).
+- NPM script: `export:local` → `ts-node scripts/localExportPOC.ts`.
+- Acceptance: Running the script produces an openable PDF without touching the app UI.
+
 ### M1: Client-Side Export (No Server API)
 - Dependency: add `pdf-lib`; lazy-load in the export flow.
 - Field map module: `src/lib/pdf/fieldMap.dc20-0.9.5.ts` mapping DTO paths → PDF fields (incl. checkbox on-values).

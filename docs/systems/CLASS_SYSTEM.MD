@@ -73,7 +73,7 @@ flowchart LR
    ‑ `className` (PascalCase) must match table file and UI strings.  
    ‑ Exported constant should follow the `<name>Class` pattern (e.g., `paladinClass`).
 3. **Effects**  
-   ‑ Re-use existing `effect.type` strings whenever possible.  
+   ‑ Re-use existing `effect.type` strings whenever possible (see `docs/systems/EFFECT_SYSTEM.MD`).  
    ‑ If a genuinely new mechanic is required, see §4 before merging.
 4. **Types / Schema**  
    ‑ Add new `effect.type` to `class.schema.ts` **and** `types.ts` as needed.  

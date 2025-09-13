@@ -55,9 +55,14 @@ flowchart LR
 
 Notes:
 
-- Use `schemas/character.schema.ts` as the source of truth for `Effect.type` strings.
+- Use `schemas/character.schema.ts` as the source of truth for `Effect.type` strings. See also `docs/systems/EFFECT_SYSTEM.MD`.
 - `traits.ts` currently imports `Trait` from `schemas/character.schema.ts` to ensure alignment.
 - For resource maximums, use `hpMax`, `spMax`, and `mpMax` as `target` values. Avoid `mp` (not processed for maximums).
+
+### Acceptance Criteria (Traits)
+
+- Numeric effects targeting `hpMax|spMax|mpMax` appear in breakdowns and affect final maxima.
+- Choice-based effects (`any_attribute`, `any_skill`, `any_trade`) prompt once and persist to the calculated result.
 
 ---
 

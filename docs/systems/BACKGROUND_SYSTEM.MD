@@ -56,7 +56,7 @@ flowchart LR
 ## 3 Data Shapes
 
 - Skills: `ISkillData { id, name, attributeAssociation, description }`
-- Trades: `ITradeData { id, name, attributeAssociation, description, tools? }`
+- Trades: `ITradeData { id, name, attributeAssociations[], description, tools? }`
   - For multi-attribute trades, see `docs/systems/TRADES_MULTI_ATTRIBUTE_SPEC.md` (canonical field: `attributeAssociations: string[]`).
 - Languages: `ILanguageData { id, name, type: 'standard'|'exotic', description }`
 
@@ -68,6 +68,12 @@ Background allocations in store:
 - Conversions: `{ skillToTrade, tradeToSkill, tradeToLanguage }` numbers on the store
 
 ---
+
+### Acceptance Criteria (Background)
+
+- Conversions follow documented formulas; over-budget states disable submit and surface errors.
+- Mastery cap validation emits `MASTERY_CAP_EXCEEDED` unless exceptions are granted.
+
 
 ## 4 Calculation Model
 

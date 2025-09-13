@@ -21,7 +21,8 @@
 		"e2e:parallel:mobile": "E2E_FIXTURE=./test-character-gibble.json E2E_WORKERS=${E2E_WORKERS:-4} npx playwright test --project=mobile --workers=${E2E_WORKERS:-4}",
 		"e2e:parallel:all": "E2E_FIXTURE=./test-character-gibble.json E2E_WORKERS=${E2E_WORKERS:-4} npx playwright test --workers=${E2E_WORKERS:-4}",
 		"e2e:parallel:auto": "E2E_FIXTURE=./test-character-gibble.json E2E_WORKERS=$(node -e \"console.log(Math.max(1, Math.floor(require('os').cpus().length/2)))\") npx playwright test --workers=$E2E_WORKERS",
-		"db:start": "docker compose up"
+		"db:start": "docker compose up",
+		"export:list-fields": "ts-node scripts/listPdfFields.ts | tee docs/systems/pdf-form-fields-v0.9.5.json"
 	},
 	"files": [
 		"dist",
@@ -77,6 +78,7 @@
 		"@types/styled-components": "^5.1.34",
 		"fantasy-name-generator": "^2.0.0",
 		"prettier-plugin-tailwindcss": "^0.6.14",
+		"pdf-lib": "^1.17.1",
 		"prisma": "^6.10.1",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",

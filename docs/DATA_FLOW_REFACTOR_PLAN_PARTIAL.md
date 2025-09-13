@@ -1021,3 +1021,28 @@ if (backup) {
 6. **LOW**: Task 3.1-3.2 (Cleanup) - Code quality improvements
 
 **Start with Task 1.2 for immediate impact, then proceed in dependency order.**
+
+---
+
+## State Log
+
+- Timestamp (UTC): 2025-09-12T21:23:05Z
+- Branch: improveDocs
+- HEAD: f476741 2025-09-13 00:21:53 +0300 docs(plannedSpecs): add Export PDF Sheet state log with timestamp and git stamp
+
+### Current State Summary
+
+- Typed `SavedCharacter`/`CharacterState` present (`src/lib/types/dataContracts.ts`).
+- Centralized storage utils (`src/lib/utils/storageUtils.ts`) with serialize/deserialize, defaults, backup/restore.
+- Completion pipeline writes typed saves with breakdowns; initializes `characterState` from maxes.
+- Systems docs added (Spells, Martials, Calculation, Effect, Character Sheet); AGENTS Systems Index present.
+
+### Leftover Tasks (prioritized)
+
+1) Eliminate sheet-side recalculation (read from `SavedCharacter`, recalc only on edits)
+2) Add `useAttributeCalculation` and gate trait/attribute UI
+3) Migrate legacy string fields to typed (`skillsJson/tradesJson/languagesJson/selectedTraitIds`)
+4) Purge residual JSON usage outside `storageUtils`
+5) Align `languagesData` canonical shape and migrate
+6) Tests for migration/attribute hook/sheet no-recalc; trim storage logging
+

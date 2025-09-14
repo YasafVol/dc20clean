@@ -254,6 +254,8 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 
 	const misc = '';
 	const deathThreshold = character.finalDeathThreshold ?? 0;
+    const bloodiedValue = (character as any).bloodiedValue ?? Math.ceil((character.finalHPMax ?? 0) / 2);
+    const wellBloodiedValue = (character as any).wellBloodiedValue ?? Math.ceil((character.finalHPMax ?? 0) / 4);
 
 	return {
 		characterName,
@@ -323,7 +325,9 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 		attunement,
 		inventory,
 		misc,
-		deathThreshold
+		deathThreshold,
+		bloodiedValue,
+		wellBloodiedValue
 	};
 }
 

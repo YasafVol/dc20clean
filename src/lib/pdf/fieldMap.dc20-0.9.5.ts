@@ -104,7 +104,13 @@ export const fieldMap_dc20_095: FieldMapItem[] = [
 	{ path: 'attacks[0].name', field: 'Attack A', type: 'text' },
 	{ path: 'attacks[0].damage', field: 'Attack A Dmg', type: 'text' },
 	{ path: 'attacks[0].type', field: 'Attack A Type', type: 'text' },
-	{ path: 'attacks[0].notes', field: 'Attack A Notes', type: 'text' }
+	{ path: 'attacks[0].notes', field: 'Attack A Notes', type: 'text' },
+
+	// Trades labels
+	{ path: 'tradeA', field: 'Custom Trade A', type: 'text' },
+	{ path: 'tradeB', field: 'Custom Trade B', type: 'text' },
+	{ path: 'tradeC', field: 'Custom Trade C', type: 'text' },
+	{ path: 'tradeD', field: 'Custom Trade D', type: 'text' }
 ];
 
 

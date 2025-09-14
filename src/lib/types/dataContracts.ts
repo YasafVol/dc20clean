@@ -125,6 +125,29 @@ export interface SavedCharacter {
 	tradesData: Record<string, number>;
 	// Languages can be either a list of names or a map of name -> { fluency }
 	languagesData: any;
+
+	// Precomputed values for PDF/UI consumption (no calculations in transformers/components)
+	// Optional for backward compatibility; FE should consume if present
+	skillTotals?: Record<string, number>; // e.g., { acrobatics: 4, athletics: 3, ... }
+	masteryLadders?: {
+		skills?: Record<string, { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }>;
+		knowledgeTrades?: Record<
+			'arcana' | 'history' | 'nature' | 'occultism' | 'religion',
+			{ '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }
+		>;
+		practicalTrades?: {
+			A?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean } };
+			B?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean } };
+			C?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean } };
+			D?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean } };
+		};
+	};
+	languageMastery?: {
+		A?: { name: string; limited: boolean; fluent: boolean };
+		B?: { name: string; limited: boolean; fluent: boolean };
+		C?: { name: string; limited: boolean; fluent: boolean };
+		D?: { name: string; limited: boolean; fluent: boolean };
+	};
 	spells: any[]; // Will use proper SpellData once imported
 	maneuvers: any[]; // Will use proper ManeuverData once imported
 

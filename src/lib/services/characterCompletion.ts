@@ -112,6 +112,11 @@ export const completeCharacter = async (
 			skillsData: characterState.skillsData || {},
 			tradesData: characterState.tradesData || {},
 			languagesData: characterState.languagesData || { common: { fluency: 'fluent' } },
+
+			// New precomputed structures (optional until FE migration)
+			skillTotals: undefined,
+			masteryLadders: undefined,
+			languageMastery: undefined,
 			spells: [], // Will be populated below
 			maneuvers: [], // Will be populated below
 

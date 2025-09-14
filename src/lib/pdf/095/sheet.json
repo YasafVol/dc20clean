@@ -1,0 +1,146 @@
+{
+    "characterName": "", "playerName": "", "level": 1,
+    "ancestry": "", "classAndSubclass": "", "features": "",
+  
+    "prime": 0, "might": 0, "agility": 0, "charisma": 0, "intelligence": 0, "combatMastery": 0,
+  
+    "mightSave": 0, "agilitySave": 0, "charismaSave": 0, "intelligenceSave": 0,
+    "awareness": 0, "athletics": 0, "intimidation": 0, "acrobatics": 0, "trickery": 0, "stealth": 0,
+    "animal": 0, "influence": 0, "insight": 0,
+    "investigation": 0, "medicine": 0, "survival": 0, "arcana": 0, "history": 0, "nature": 0, "occultism": 0, "religion": 0,
+  
+    "tradeA": "", "tradeB": "", "tradeC": "", "tradeD": "",
+    "customTradeA": "", "customTradeB": "", "customTradeC": "", "customTradeD": "",
+  
+    "mastery": {
+      "Awareness": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "Athletics": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "Intimidation": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "Acrobatics": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "Trickery": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "Stealth": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "Animal": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "Influence": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "Insight": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "Investigation": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "Medicine": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "Survival": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "Arcana": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "History": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "Nature": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "Occultism": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "Religion": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "TradeA": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "TradeB": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "TradeC": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "TradeD": { "2": false, "4": false, "6": false, "8": false, "10": false },
+      "LanguageA": { "Limited": false, "Fluent": false },
+      "LanguageB": { "Limited": false, "Fluent": false },
+      "LanguageC": { "Limited": false, "Fluent": false },
+      "LanguageD": { "Limited": false, "Fluent": false }
+    },
+  
+    "proficiency": {
+      "expertise": false,
+      "athletics": false, "intimidation": false, "trickery": false, "acrobatics": false, "stealth": false,
+      "influence": false, "animal": false, "insight": false, "medicine": false, "investigation": false, "survival": false,
+      "history": false, "arcana": false, "nature": false, "tradeA": false, "religion": false, "occultism": false,
+      "tradeD": false, "tradeC": false, "tradeB": false
+    },
+  
+    "attackCheck": 0,
+    "saveDC": 0,
+    "initiative": 0,
+  
+    "attacks": [
+      { "name": "", "damage": "", "type": "", "notes": "" },
+      { "name": "", "damage": "", "type": "", "notes": "" },
+      { "name": "", "damage": "", "type": "", "notes": "" },
+      { "name": "", "damage": "", "type": "", "notes": "" }
+    ],
+  
+    "hitPoints": { "max": 0, "current": 0, "temp": 0 },
+    "stamina": { "max": 0, "current": 0 },
+    "mana": { "max": 0, "current": 0 },
+    "grit": { "cap": 0, "current": 0 },
+  
+    "restPoints": { "cap": 0, "current": 0 },
+  
+    "resources": [
+      { "label": "", "cap": 0, "current": 0 },
+      { "label": "", "cap": 0, "current": 0 },
+      { "label": "", "cap": 0, "current": 0 },
+      { "label": "", "cap": 0, "current": 0 },
+      { "label": "", "cap": 0, "current": 0 },
+      { "label": "", "cap": 0, "current": 0 },
+      { "label": "", "cap": 0, "current": 0 },
+      { "label": "", "cap": 0, "current": 0 },
+      { "label": "", "cap": 0, "current": 0 }
+    ],
+  
+    "defense": {
+      "physical": 0, "physicalHeavyThreshold": 0, "physicalBrutalThreshold": 0,
+      "mental": 0, "mentalHeavyThreshold": 0, "mentalBrutalThreshold": 0
+    },
+    "bloodied": false,
+    "wellBloodied": false,
+    "reduction": { "physical": false, "elemental": false, "mental": false },
+  
+    "moveSpeed": 0,
+    "movement": {
+      "burrow": { "half": false, "full": false },
+      "swim": { "half": false, "full": false },
+      "fly": { "half": false, "full": false },
+      "climb": { "half": false, "full": false },
+      "glide": { "half": false, "full": false }
+    },
+    "jumpDistance": 0,
+    "holdBreath": 0,
+  
+    "exhaustion": { "-1": false, "-2": false, "-3": false, "-4": false, "-5": false },
+  
+    "languages": [
+      { "name": "", "limited": false, "fluent": false },
+      { "name": "", "limited": false, "fluent": false },
+      { "name": "", "limited": false, "fluent": false },
+      { "name": "", "limited": false, "fluent": false }
+    ],
+  
+    "equipped": {
+      "head": "", "neck": "", "mantle": "", "body": "",
+      "waist": "", "hands": "", "ringRight": "", "ringLeft": "", "feet": ""
+    },
+  
+    "attunement": {
+      "slots": 0,
+      "items": [
+        { "name": "", "active": false },
+        { "name": "", "active": false },
+        { "name": "", "active": false },
+        { "name": "", "active": false },
+        { "name": "", "active": false }
+      ]
+    },
+  
+    "inventory": {
+      "carried": "",
+      "stored": "",
+      "supplies": [
+        { "label": "", "amount": 0 },
+        { "label": "", "amount": 0 },
+        { "label": "", "amount": 0 },
+        { "label": "", "amount": 0 },
+        { "label": "", "amount": 0 },
+        { "label": "", "amount": 0 },
+        { "label": "", "amount": 0 },
+        { "label": "", "amount": 0 },
+        { "label": "", "amount": 0 },
+        { "label": "", "amount": 0 },
+        { "label": "", "amount": 0 }
+      ]
+    },
+  
+    "misc": "",
+    "deathThreshold": 0
+  }
+  

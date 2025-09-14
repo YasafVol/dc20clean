@@ -43,3 +43,19 @@ These are tracked for future work; current focus is on the newly added Spells, M
   - heavy = AD/PD + 5, brutal = AD/PD + 10
   - pass these fields through to PDF export DTO/schema
 - [ ] bug: Attribute save values should be `attribute + combat mastery`
+
+---
+
+## 4. FE Ticket: Move UI calculations to character data
+
+- **Goal**: Remove all derived-calculation logic from UI components and `pdf` transformers; consume precomputed values on `SavedCharacter` instead.
+- **Scope**:
+  - Skills: use `skillTotals` rather than recomputing from `skillsData`.
+  - Mastery ladders: read from `masteryLadders.skills` and `masteryLadders.knowledgeTrades` and `masteryLadders.practicalTrades` (A–D).
+  - Trades labeling: use `masteryLadders.practicalTrades.{A..D}.label`.
+  - Languages: use fixed `languageMastery` A–D for Limited/Fluent instead of recalculating from `languagesData` at render.
+  - Defenses/bloodied: use `finalPD/AD` thresholds and `bloodiedValue`/`wellBloodiedValue` already on character.
+- **Acceptance**:
+  - No UI behavior changes; rendered values equal before/after migration for existing characters.
+  - `pdf` transformer contains zero math (only mapping from `SavedCharacter`).
+  - Unit tests cover consumption of the new fields and fall back gracefully when absent.

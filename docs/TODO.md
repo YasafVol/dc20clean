@@ -59,3 +59,39 @@ These are tracked for future work; current focus is on the newly added Spells, M
   - No UI behavior changes; rendered values equal before/after migration for existing characters.
   - `pdf` transformer contains zero math (only mapping from `SavedCharacter`).
   - Unit tests cover consumption of the new fields and fall back gracefully when absent.
+
+---
+
+## 0. Epic: Persist mastery/totals on character (skills, trades, languages)
+
+- **Problem**:
+  - `SavedCharacter` stores ranks (`skillsData`, `tradesData`) and languages fluency only.
+  - Character Sheet re-derives mastery levels and totals at render; PDF transformer mirrors that logic, risking drift.
+
+- **Goal**:
+  - Persist ready-to-use fields on `SavedCharacter` so UI and PDF export consume without recomputing.
+  - Keep existing UI fields/flows untouched; fields are additive and optional during rollout.
+
+- **Deliverables**:
+  - For each skill and trade:
+    - governingAttributes: string[]
+    - baseAttributeValues: Record<'might'|'agility'|'charisma'|'intelligence', number>
+    - masteryLevel: number (rank×2)
+    - masteryLadder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }
+    - finalValue: number = max(baseAttributeValues[allowed]) + masteryLevel
+  - Knowledge trades: same ladder/finalValue, allowed attributes from spec (typically Intelligence).
+  - Practical trades A–D: { label, ladder, finalValue } chosen from non-knowledge trades with highest values.
+  - Languages: fixed `languageMastery` A–D = { name, limited, fluent } derived from `languagesData`.
+  - Keep `languagesData` as source of truth; `languageMastery` is denormalized for UI/PDF.
+
+- **Plan**:
+  1) Compute fields in `characterCompletion.ts` using final attributes + ranks; write to new optional fields on `SavedCharacter` (already typed).
+  2) Update PDF transformer to read only from these new fields; remove inline math.
+  3) Open FE ticket (Section 4) to migrate UI to consume new fields; keep current UI in place until merged.
+
+- **Non-Goals**:
+  - No change to existing UI components now; no schema migrations for stored saves (fields are optional).
+
+- **Acceptance**:
+  - Local export PDF matches UI for skills/trades/languages on multiple samples.
+  - No regressions in Character Sheet rendering.

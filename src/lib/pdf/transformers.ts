@@ -24,10 +24,11 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 	const charismaSave = (character.finalCharisma || 0) + (character.finalCombatMastery || 0);
 	const intelligenceSave = (character.finalIntelligence || 0) + (character.finalCombatMastery || 0);
 
-	// Skills: compute totals = associated attribute + (proficiency × 2)
-	const prof = (id: string) => (character as any).skillsData?.[id] ?? 0;
-	const getMasteryBonus = (id: string) => prof(id) * 2;
-	const attr = (key: 'might' | 'agility' | 'charisma' | 'intelligence' | 'prime') => {
+	// Skills: prefer precomputed skillTotals; fallback to recomputing
+	const totals = (character as any).skillTotals as Record<string, number> | undefined;
+	const fallbackProf = (id: string) => (character as any).skillsData?.[id] ?? 0;
+	const getFallbackMasteryBonus = (id: string) => fallbackProf(id) * 2;
+	const fallbackAttr = (key: 'might' | 'agility' | 'charisma' | 'intelligence' | 'prime') => {
 		switch (key) {
 			case 'might':
 				return character.finalMight || 0;
@@ -42,23 +43,25 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 				return character.finalPrimeModifierValue || 0;
 		}
 	};
-	const awareness = attr('prime') + getMasteryBonus('awareness');
-	const athletics = attr('might') + getMasteryBonus('athletics');
-	const intimidation = attr('might') + getMasteryBonus('intimidation');
-	const acrobatics = attr('agility') + getMasteryBonus('acrobatics');
-	const trickery = attr('agility') + getMasteryBonus('trickery');
-	const stealth = attr('agility') + getMasteryBonus('stealth');
-	const animal = attr('charisma') + getMasteryBonus('animal');
-	const influence = attr('charisma') + getMasteryBonus('influence');
-	const insight = attr('charisma') + getMasteryBonus('insight');
-	const investigation = attr('intelligence') + getMasteryBonus('investigation');
-	const medicine = attr('intelligence') + getMasteryBonus('medicine');
-	const survival = attr('intelligence') + getMasteryBonus('survival');
-	const arcana = (character as any).tradesData?.arcana ?? 0;
-	const history = (character as any).tradesData?.history ?? 0;
-	const nature = (character as any).tradesData?.nature ?? 0;
-	const occultism = (character as any).tradesData?.occultism ?? 0;
-	const religion = (character as any).tradesData?.religion ?? 0;
+	const awareness = totals?.awareness ?? (fallbackAttr('prime') + getFallbackMasteryBonus('awareness'));
+	const athletics = totals?.athletics ?? (fallbackAttr('might') + getFallbackMasteryBonus('athletics'));
+	const intimidation = totals?.intimidation ?? (fallbackAttr('might') + getFallbackMasteryBonus('intimidation'));
+	const acrobatics = totals?.acrobatics ?? (fallbackAttr('agility') + getFallbackMasteryBonus('acrobatics'));
+	const trickery = totals?.trickery ?? (fallbackAttr('agility') + getFallbackMasteryBonus('trickery'));
+	const stealth = totals?.stealth ?? (fallbackAttr('agility') + getFallbackMasteryBonus('stealth'));
+	const animal = totals?.animal ?? (fallbackAttr('charisma') + getFallbackMasteryBonus('animal'));
+	const influence = totals?.influence ?? (fallbackAttr('charisma') + getFallbackMasteryBonus('influence'));
+	const insight = totals?.insight ?? (fallbackAttr('charisma') + getFallbackMasteryBonus('insight'));
+	const investigation = totals?.investigation ?? (fallbackAttr('intelligence') + getFallbackMasteryBonus('investigation'));
+	const medicine = totals?.medicine ?? (fallbackAttr('intelligence') + getFallbackMasteryBonus('medicine'));
+	const survival = totals?.survival ?? (fallbackAttr('intelligence') + getFallbackMasteryBonus('survival'));
+
+	// Knowledge trades: prefer mastery ladders/trade mastery for levels if needed; PDF expects numbers in fields, so map to ranks here with fallback
+	const arcana = (character as any).knowledgeTradeMastery?.arcana?.finalValue ?? ((character as any).tradesData?.arcana ?? 0) * 2;
+	const history = (character as any).knowledgeTradeMastery?.history?.finalValue ?? ((character as any).tradesData?.history ?? 0) * 2;
+	const nature = (character as any).knowledgeTradeMastery?.nature?.finalValue ?? ((character as any).tradesData?.nature ?? 0) * 2;
+	const occultism = (character as any).knowledgeTradeMastery?.occultism?.finalValue ?? ((character as any).tradesData?.occultism ?? 0) * 2;
+	const religion = (character as any).knowledgeTradeMastery?.religion?.finalValue ?? ((character as any).tradesData?.religion ?? 0) * 2;
 
 	// Trades (labels)
 	const tradesData: Record<string, number> = (character as any).tradesData || {};
@@ -75,14 +78,28 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 	const customTradeC = '';
 	const customTradeD = '';
 
-	// Mastery & proficiency - default false for POC; full mapping later
+	// Mastery & proficiency - prefer precomputed ladders
 	const makeMastery = () => ({ '2': false, '4': false, '6': false, '8': false, '10': false });
-	const setLevels = (target: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }, bonus: number) => {
-		target['2'] = bonus >= 2;
-		target['4'] = bonus >= 4;
-		target['6'] = bonus >= 6;
-		target['8'] = bonus >= 8;
-		target['10'] = bonus >= 10;
+	const setLevelsFromLadder = (
+		target: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean },
+		ladder:
+			| { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }
+			| undefined,
+		fallbackBonus: number
+	) => {
+		if (ladder) {
+			target['2'] = !!ladder['2'];
+			target['4'] = !!ladder['4'];
+			target['6'] = !!ladder['6'];
+			target['8'] = !!ladder['8'];
+			target['10'] = !!ladder['10'];
+		} else {
+			target['2'] = fallbackBonus >= 2;
+			target['4'] = fallbackBonus >= 4;
+			target['6'] = fallbackBonus >= 6;
+			target['8'] = fallbackBonus >= 8;
+			target['10'] = fallbackBonus >= 10;
+		}
 	};
 
 	const mastery: PdfExportData['mastery'] = {
@@ -113,34 +130,40 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 		LanguageD: { Limited: false, Fluent: false }
 	};
 
-	// Populate mastery based on proficiencies (bonus = proficiency * 2)
-	setLevels(mastery.Awareness, getMasteryBonus('awareness'));
-	setLevels(mastery.Athletics, getMasteryBonus('athletics'));
-	setLevels(mastery.Intimidation, getMasteryBonus('intimidation'));
-	setLevels(mastery.Acrobatics, getMasteryBonus('acrobatics'));
-	setLevels(mastery.Trickery, getMasteryBonus('trickery'));
-	setLevels(mastery.Stealth, getMasteryBonus('stealth'));
-	setLevels(mastery.Animal, getMasteryBonus('animal'));
-	setLevels(mastery.Influence, getMasteryBonus('influence'));
-	setLevels(mastery.Insight, getMasteryBonus('insight'));
-	setLevels(mastery.Investigation, getMasteryBonus('investigation'));
-	setLevels(mastery.Medicine, getMasteryBonus('medicine'));
-	setLevels(mastery.Survival, getMasteryBonus('survival'));
+	// Populate mastery from precomputed ladders where possible
+	const ladders = (character as any).masteryLadders?.skills as Record<string, any> | undefined;
+	const fallbackBonus = (id: string) => getFallbackMasteryBonus(id);
+	setLevelsFromLadder(mastery.Awareness, ladders?.awareness, fallbackBonus('awareness'));
+	setLevelsFromLadder(mastery.Athletics, ladders?.athletics, fallbackBonus('athletics'));
+	setLevelsFromLadder(mastery.Intimidation, ladders?.intimidation, fallbackBonus('intimidation'));
+	setLevelsFromLadder(mastery.Acrobatics, ladders?.acrobatics, fallbackBonus('acrobatics'));
+	setLevelsFromLadder(mastery.Trickery, ladders?.trickery, fallbackBonus('trickery'));
+	setLevelsFromLadder(mastery.Stealth, ladders?.stealth, fallbackBonus('stealth'));
+	setLevelsFromLadder(mastery.Animal, ladders?.animal, fallbackBonus('animal'));
+	setLevelsFromLadder(mastery.Influence, ladders?.influence, fallbackBonus('influence'));
+	setLevelsFromLadder(mastery.Insight, ladders?.insight, fallbackBonus('insight'));
+	setLevelsFromLadder(mastery.Investigation, ladders?.investigation, fallbackBonus('investigation'));
+	setLevelsFromLadder(mastery.Medicine, ladders?.medicine, fallbackBonus('medicine'));
+	setLevelsFromLadder(mastery.Survival, ladders?.survival, fallbackBonus('survival'));
 
-	// Knowledge trades from tradesData
-	const tradeMastery = (id: string) => ((tradesData?.[id] ?? 0) * 2);
-	setLevels(mastery.Arcana, tradeMastery('arcana'));
-	setLevels(mastery.History, tradeMastery('history'));
-	setLevels(mastery.Nature, tradeMastery('nature'));
-	setLevels(mastery.Occultism, tradeMastery('occultism'));
-	setLevels(mastery.Religion, tradeMastery('religion'));
+	// Knowledge trade ladders
+	const kLadders = (character as any).masteryLadders?.knowledgeTrades as Record<string, any> | undefined;
+	const tradeMasteryFallback = (id: string) => ((tradesData?.[id] ?? 0) * 2);
+	setLevelsFromLadder(mastery.Arcana, kLadders?.arcana, tradeMasteryFallback('arcana'));
+	setLevelsFromLadder(mastery.History, kLadders?.history, tradeMasteryFallback('history'));
+	setLevelsFromLadder(mastery.Nature, kLadders?.nature, tradeMasteryFallback('nature'));
+	setLevelsFromLadder(mastery.Occultism, kLadders?.occultism, tradeMasteryFallback('occultism'));
+	setLevelsFromLadder(mastery.Religion, kLadders?.religion, tradeMasteryFallback('religion'));
 
-	// Trades: map first 4 entries to A-D
+	// Practical Trade ladders A–D from precomputed; fallback to ranks order
+	const practical = (character as any).masteryLadders?.practicalTrades as
+		| { A?: { label: string; ladder: any }; B?: { label: string; ladder: any }; C?: { label: string; ladder: any }; D?: { label: string; ladder: any } }
+		| undefined;
 	const tradeBonus = (index: number) => (tradeEntriesForAD[index]?.[1] ?? 0) * 2;
-	setLevels(mastery.TradeA, tradeBonus(0));
-	setLevels(mastery.TradeB, tradeBonus(1));
-	setLevels(mastery.TradeC, tradeBonus(2));
-	setLevels(mastery.TradeD, tradeBonus(3));
+	setLevelsFromLadder(mastery.TradeA, practical?.A?.ladder, tradeBonus(0));
+	setLevelsFromLadder(mastery.TradeB, practical?.B?.ladder, tradeBonus(1));
+	setLevelsFromLadder(mastery.TradeC, practical?.C?.ladder, tradeBonus(2));
+	setLevelsFromLadder(mastery.TradeD, practical?.D?.ladder, tradeBonus(3));
 
 	const proficiency: PdfExportData['proficiency'] = {
 		expertise: false,
@@ -217,21 +240,36 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 	const exLevel = character.characterState?.resources?.current?.exhaustionLevel ?? 0;
 	const exhaustion = { '-1': exLevel <= -1, '-2': exLevel <= -2, '-3': exLevel <= -3, '-4': exLevel <= -4, '-5': exLevel <= -5 } as PdfExportData['exhaustion'];
 
-	// Languages from languagesData keys/array
-	const langMap = (character as any).languagesData || {};
-	const langKeys = Object.keys(langMap);
-	const languages: PdfExportData['languages'] = [0, 1, 2, 3].map((i) => {
-		const name = langKeys[i] || '';
-		const fluency = (langMap?.[name]?.fluency as string) || (name ? 'fluent' : '');
-		const fluent = fluency === 'fluent';
-		const limited = fluency === 'limited';
-		// Mastery language checkboxes
-		if (i === 0) mastery.LanguageA = { Limited: limited, Fluent: fluent };
-		if (i === 1) mastery.LanguageB = { Limited: limited, Fluent: fluent };
-		if (i === 2) mastery.LanguageC = { Limited: limited, Fluent: fluent };
-		if (i === 3) mastery.LanguageD = { Limited: limited, Fluent: fluent };
-		return { name, limited, fluent };
-	});
+	// Languages: prefer precomputed languageMastery; fallback to languagesData
+	let languages: PdfExportData['languages'] = [] as any;
+	const lm = (character as any).languageMastery as
+		| { A?: { name: string; limited: boolean; fluent: boolean }; B?: { name: string; limited: boolean; fluent: boolean }; C?: { name: string; limited: boolean; fluent: boolean }; D?: { name: string; limited: boolean; fluent: boolean } }
+		| undefined;
+	if (lm) {
+		const a = lm.A || { name: '', limited: false, fluent: false };
+		const b = lm.B || { name: '', limited: false, fluent: false };
+		const c = lm.C || { name: '', limited: false, fluent: false };
+		const d = lm.D || { name: '', limited: false, fluent: false };
+		mastery.LanguageA = { Limited: a.limited, Fluent: a.fluent };
+		mastery.LanguageB = { Limited: b.limited, Fluent: b.fluent };
+		mastery.LanguageC = { Limited: c.limited, Fluent: c.fluent };
+		mastery.LanguageD = { Limited: d.limited, Fluent: d.fluent };
+		languages = [a, b, c, d];
+	} else {
+		const langMap = (character as any).languagesData || {};
+		const langKeys = Object.keys(langMap);
+		languages = [0, 1, 2, 3].map((i) => {
+			const name = langKeys[i] || '';
+			const fluency = (langMap?.[name]?.fluency as string) || (name ? 'fluent' : '');
+			const fluent = fluency === 'fluent';
+			const limited = fluency === 'limited';
+			if (i === 0) mastery.LanguageA = { Limited: limited, Fluent: fluent };
+			if (i === 1) mastery.LanguageB = { Limited: limited, Fluent: fluent };
+			if (i === 2) mastery.LanguageC = { Limited: limited, Fluent: fluent };
+			if (i === 3) mastery.LanguageD = { Limited: limited, Fluent: fluent };
+			return { name, limited, fluent } as any;
+		});
+	}
 
 	// Equipment/attunement/inventory
 	const equipped = {

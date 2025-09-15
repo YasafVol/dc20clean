@@ -110,9 +110,16 @@ Traits can modify these pools using effects:
 The calculator exposes a `background` block with:  
 `{ baseSkillPoints, baseTradePoints, baseLanguagePoints, availableSkillPoints, availableTradePoints, availableLanguagePoints, skillPointsUsed, tradePointsUsed, languagePointsUsed, conversions }`.
 
-And a `validation.masteryLimits` block with:  
-`{ maxSkillMastery, maxTradeMastery, currentAdeptCount, maxAdeptCount, canSelectAdept }`.
-At level 1, `maxAdeptCount` is 1 (base Adept slot) plus any granted exceptions.
+Denormalized outputs persisted on `SavedCharacter` (for UI/PDF consumption):
+- `skillTotals: Record<skillId, number>`
+- `skillMastery: Record<skillId, { governingAttributes, baseAttributeValues, masteryLevel, masteryLadder, finalValue }>`
+- `knowledgeTradeMastery: Record<'arcana'|'history'|'nature'|'occultism'|'religion', ...>`
+- `masteryLadders: { skills, knowledgeTrades, practicalTrades: { A..D: { label, ladder, finalValue } } }`
+- `languageMastery: { A..D: { name, limited, fluent } }`
+- `bloodiedValue`, `wellBloodiedValue`, and PD/AD heavy/brutal thresholds
+
+Validation also exposes a `masteryLimits` block with:  
+`{ maxSkillMastery, maxTradeMastery, currentAdeptCount, maxAdeptCount, canSelectAdept }`. At level 1, `maxAdeptCount` is 1 (base Adept slot) plus any granted exceptions.
 
 ---
 

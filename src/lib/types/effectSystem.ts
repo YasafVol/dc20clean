@@ -22,7 +22,9 @@ export type ValidationCode =
 	| 'POINTS_OVERBUDGET'
 	| 'CHOICE_REQUIRED'
 	| 'CAP_EXCEEDED'
-	| 'MASTERY_RULE_VIOLATION';
+	| 'MASTERY_RULE_VIOLATION'
+	| 'MASTERY_CAP_EXCEEDED'
+	| 'INVALID_MASTERY_GRANT';
 
 // Source attribution for effects
 export interface EffectSource {
@@ -105,7 +107,7 @@ export interface UnresolvedChoice {
 	traitId: string;
 	traitName: string;
 	effectIndex: number;
-	effect: Effect;
+	effect: Effect | AttributedEffect;
 	prompt: string;
 	options: ChoiceOption[];
 	isRequired: boolean;

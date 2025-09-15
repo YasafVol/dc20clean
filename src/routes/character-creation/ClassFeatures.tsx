@@ -38,8 +38,29 @@ function ClassFeatures() {
 	const selectedFeatureChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
 
 	function handleFeatureChoice(choiceId: string, value: string) {
-		const currentChoices = { ...selectedFeatureChoices };
+		const currentChoices: Record<string, any> = { ...selectedFeatureChoices };
 		currentChoices[choiceId] = value;
+
+		// If this is a legacy key, also store under canonical id
+		try {
+			if (selectedClassFeatures) {
+				for (const feature of selectedClassFeatures.coreFeatures) {
+					if (!feature.choices) continue;
+					for (let c = 0; c < feature.choices.length; c++) {
+						const legacyKey = getLegacyChoiceId(
+							selectedClassFeatures.className,
+							feature.featureName,
+							c
+						);
+						if (legacyKey === choiceId) {
+							const canonicalId = feature.choices[c].id as string | undefined;
+							if (canonicalId) currentChoices[canonicalId] = value;
+						}
+					}
+				}
+			}
+		} catch {}
+
 		dispatch({
 			type: 'SET_FEATURE_CHOICES',
 			selectedFeatureChoices: currentChoices
@@ -47,7 +68,7 @@ function ClassFeatures() {
 	}
 
 	function handleMultipleFeatureChoice(choiceId: string, value: string, isSelected: boolean) {
-		const currentChoices = { ...selectedFeatureChoices };
+		const currentChoices: Record<string, any> = { ...selectedFeatureChoices };
 		// Handle arrays directly (no legacy JSON string support)
 		const currentValues: string[] = Array.isArray(currentChoices[choiceId])
 			? [...(currentChoices[choiceId] as any)]
@@ -67,6 +88,27 @@ function ClassFeatures() {
 		}
 
 		currentChoices[choiceId] = currentValues;
+
+		// If this is a legacy key, also store under canonical id
+		try {
+			if (selectedClassFeatures) {
+				for (const feature of selectedClassFeatures.coreFeatures) {
+					if (!feature.choices) continue;
+					for (let c = 0; c < feature.choices.length; c++) {
+						const legacyKey = getLegacyChoiceId(
+							selectedClassFeatures.className,
+							feature.featureName,
+							c
+						);
+						if (legacyKey === choiceId) {
+							const canonicalId = feature.choices[c].id as string | undefined;
+							if (canonicalId) currentChoices[canonicalId] = currentValues;
+						}
+					}
+				}
+			}
+		} catch {}
+
 		dispatch({
 			type: 'SET_FEATURE_CHOICES',
 			selectedFeatureChoices: currentChoices

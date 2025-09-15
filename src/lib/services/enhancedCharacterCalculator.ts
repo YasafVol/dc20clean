@@ -23,6 +23,7 @@ import {
 } from '../rulesdata/schemas/character.schema';
 
 import { BuildStep } from '../types/effectSystem';
+import { getLegacyChoiceId } from '../rulesdata/loaders/class-features.loader';
 import { traitsData } from '../rulesdata/ancestries/traits';
 import { ancestriesData } from '../rulesdata/ancestries/ancestries';
 import { barbarianClass } from '../rulesdata/classes-data/features/barbarian_features';
@@ -257,8 +258,17 @@ function aggregateAttributedEffects(buildData: EnhancedCharacterBuildData): Attr
 
 			// Chosen options from feature choices
 			if (feature.choices) {
-				for (const choice of feature.choices) {
-					const userChoice = buildData.featureChoices[choice.id];
+				for (let choiceIndex = 0; choiceIndex < feature.choices.length; choiceIndex++) {
+					const choice = feature.choices[choiceIndex];
+					// Prefer canonical choice.id, but accept legacy UI key as fallback
+					const legacyKey = getLegacyChoiceId(
+						classFeatures.className,
+						feature.featureName,
+						choiceIndex
+					);
+					const userChoice =
+						(buildData as any).featureChoices?.[choice.id] ??
+						(buildData as any).featureChoices?.[legacyKey];
 					if (userChoice) {
 						for (const option of choice.options) {
 							const isSelected =

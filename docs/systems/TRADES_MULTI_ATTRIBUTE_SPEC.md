@@ -94,7 +94,7 @@ Trait Choice UI (if describing trades)
 
 - Calculations/Provider Hooks
   - `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx` → in `useCharacterTrades()` compute per-attribute totals and return `bonuses`
-  - Persistence (Task 0): denormalized mastery is computed during completion and saved to `SavedCharacter` (`masteryLadders.practicalTrades`, `knowledgeTradeMastery`, `skillTotals`).
+  - Persistence (Task 0): denormalized mastery is computed during completion and saved to `SavedCharacter` (`masteryLadders.practicalTrades`, `knowledgeTradeMastery`, `skillTotals`, and per-trade totals carried via mastery ladders). The PDF transformer prefers these fields with guarded fallback.
   - Knowledge hook remains unchanged
 
 - UI Components

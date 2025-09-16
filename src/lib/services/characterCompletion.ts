@@ -11,6 +11,7 @@ import {
 import { getInitializedCharacterState } from '../utils/storageUtils';
 import { getAllSavedCharacters, saveAllCharacters } from '../utils/storageUtils';
 import type { SavedCharacter } from '../types/dataContracts';
+import { denormalizeMastery } from './denormalizeMastery';
 
 export interface CharacterCompletionCallbacks {
 	onShowSnackbar: (message: string) => void;
@@ -53,6 +54,21 @@ export const completeCharacter = async (
 
 		// Run the enhanced calculator
 		const calculationResult = calculateCharacterWithBreakdowns(enhancedData);
+
+		// Compute denormalized mastery/totals (Task 0)
+		const finalAttributes = {
+			might: calculationResult.stats.finalMight,
+			agility: calculationResult.stats.finalAgility,
+			charisma: calculationResult.stats.finalCharisma,
+			intelligence: calculationResult.stats.finalIntelligence,
+			prime: calculationResult.stats.finalPrimeModifierValue
+		};
+		const denorm = denormalizeMastery({
+			finalAttributes,
+			skillsRanks: characterState.skillsData || {},
+			tradesRanks: characterState.tradesData || {},
+			languagesData: characterState.languagesData || { common: { fluency: 'fluent' } }
+		});
 
 		// Create the final character with unified 'final*' schema
 		const completedCharacter: SavedCharacter = {
@@ -114,9 +130,11 @@ export const completeCharacter = async (
 			languagesData: characterState.languagesData || { common: { fluency: 'fluent' } },
 
 			// New precomputed structures (optional until FE migration)
-			skillTotals: undefined,
-			masteryLadders: undefined,
-			languageMastery: undefined,
+			skillTotals: denorm.skillTotals,
+			skillMastery: denorm.skillMastery,
+			knowledgeTradeMastery: denorm.knowledgeTradeMastery,
+			masteryLadders: denorm.masteryLadders,
+			languageMastery: denorm.languageMastery,
 			spells: [], // Will be populated below
 			maneuvers: [], // Will be populated below
 

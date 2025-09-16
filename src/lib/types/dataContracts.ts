@@ -10,6 +10,23 @@ import type { EnhancedStatBreakdown } from './effectSystem';
 // Re-export necessary types from existing files
 export type { ManeuverData, SpellData, InventoryItemData } from '../../types/character';
 
+// Optional denormalized mastery structures (Task 0)
+export interface MasteryLadder {
+	'2': boolean;
+	'4': boolean;
+	'6': boolean;
+	'8': boolean;
+	'10': boolean;
+}
+
+export interface DenormalizedMasteryEntry {
+	governingAttributes: string[];
+	baseAttributeValues: { might: number; agility: number; charisma: number; intelligence: number };
+	masteryLevel: number; // rank × 2
+	masteryLadder: MasteryLadder;
+	finalValue: number; // max(allowed base attr) + masteryLevel
+}
+
 export interface CharacterState {
 	resources: {
 		current: {
@@ -128,7 +145,15 @@ export interface SavedCharacter {
 
 	// Precomputed values for PDF/UI consumption (no calculations in transformers/components)
 	// Optional for backward compatibility; FE should consume if present
+	// Totals per skill (finalValue)
 	skillTotals?: Record<string, number>; // e.g., { acrobatics: 4, athletics: 3, ... }
+	// Full denormalized mastery entries
+	skillMastery?: Record<string, DenormalizedMasteryEntry>;
+	knowledgeTradeMastery?: Record<
+		'arcana' | 'history' | 'nature' | 'occultism' | 'religion',
+		DenormalizedMasteryEntry
+	>;
+	// Lightweight ladders for easy consumption
 	masteryLadders?: {
 		skills?: Record<string, { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }>;
 		knowledgeTrades?: Record<
@@ -136,12 +161,13 @@ export interface SavedCharacter {
 			{ '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }
 		>;
 		practicalTrades?: {
-			A?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean } };
-			B?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean } };
-			C?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean } };
-			D?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean } };
+			A?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }; finalValue: number };
+			B?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }; finalValue: number };
+			C?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }; finalValue: number };
+			D?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }; finalValue: number };
 		};
 	};
+	// Fixed language mastery A–D derived from languagesData
 	languageMastery?: {
 		A?: { name: string; limited: boolean; fluent: boolean };
 		B?: { name: string; limited: boolean; fluent: boolean };

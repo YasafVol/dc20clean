@@ -49,12 +49,19 @@ These are tracked for future work; current focus is on the newly added Spells, M
 ## 4. FE Ticket: Move UI calculations to character data
 
 - **Goal**: Remove all derived-calculation logic from UI components and `pdf` transformers; consume precomputed values on `SavedCharacter` instead.
-- **Scope**:
-  - Skills: use `skillTotals` rather than recomputing from `skillsData`.
-  - Mastery ladders: read from `masteryLadders.skills` and `masteryLadders.knowledgeTrades` and `masteryLadders.practicalTrades` (A–D).
-  - Trades labeling: use `masteryLadders.practicalTrades.{A..D}.label`.
-  - Languages: use fixed `languageMastery` A–D for Limited/Fluent instead of recalculating from `languagesData` at render.
-  - Defenses/bloodied: use `finalPD/AD` thresholds and `bloodiedValue`/`wellBloodiedValue` already on character.
+- **Context (implemented in Task 0)**:
+  - `SavedCharacter` now persists denormalized background data:
+    - `skillTotals`, `skillMastery`, `knowledgeTradeMastery`
+    - `masteryLadders.skills`, `masteryLadders.knowledgeTrades`, `masteryLadders.practicalTrades` (A–D with `{ label, ladder, finalValue }`)
+    - `languageMastery` (A–D with `{ name, limited, fluent }`)
+    - `bloodiedValue`, `wellBloodiedValue`, `finalPD/AD` heavy/brutal thresholds
+  - The PDF transformer already prefers these fields and falls back only if absent.
+- **Scope for FE migration**:
+  - Skills: read `skillTotals` (and `skillMastery` if needed for tooltips) instead of recomputing from `skillsData`.
+  - Mastery ladders: render from `masteryLadders.skills`, `masteryLadders.knowledgeTrades`, `masteryLadders.practicalTrades`.
+  - Trades labels: use `masteryLadders.practicalTrades.{A..D}.label`.
+  - Languages: use `languageMastery` A–D for Limited/Fluent, keep `languagesData` as source of truth.
+  - Defenses/bloodied: display `finalPD/AD` thresholds and `bloodiedValue`/`wellBloodiedValue` directly.
 - **Acceptance**:
   - No UI behavior changes; rendered values equal before/after migration for existing characters.
   - `pdf` transformer contains zero math (only mapping from `SavedCharacter`).

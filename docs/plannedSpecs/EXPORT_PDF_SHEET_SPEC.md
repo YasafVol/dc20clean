@@ -1,5 +1,21 @@
 # Export PDF Character Sheet — Specification
 
+---
+
+Implementation status (Task 0)
+
+- The PDF transformer (`src/lib/pdf/transformers.ts`) now prefers precomputed fields on `SavedCharacter` and falls back to legacy math only when missing.
+- Mastery ladders (skills, knowledge trades, practical trades A–D) are denormalized and mapped to the form's checkbox fields via `fieldMap.dc20-0.9.5.ts`.
+- Language mastery (A–D Limited/Fluent) is populated from `languageMastery` (or `languagesData` fallback).
+- PD/AD heavy/brutal thresholds and Bloodied/Well‑Bloodied values are filled.
+- Local export script (`scripts/localExportPOC.mjs`) mirrors the same mapping for offline validation; see `test-results/local-export.pdf`.
+
+Remaining follow‑ups (tracked in TODO §4)
+
+- Migrate UI to read `skillTotals`, `masteryLadders`, and `languageMastery` directly (remove UI math).
+- Expand mapping if additional PDF fields are needed beyond the current coverage (equipment, inventory rows, etc.).
+- Verify more sample characters to ensure parity across classes/ancestries.
+
 Stamp
 - Date: 2025-09-13
 - Branch: improveDocs

@@ -110,9 +110,18 @@ Traits can modify these pools using effects:
 The calculator exposes a `background` block with:  
 `{ baseSkillPoints, baseTradePoints, baseLanguagePoints, availableSkillPoints, availableTradePoints, availableLanguagePoints, skillPointsUsed, tradePointsUsed, languagePointsUsed, conversions }`.
 
-And a `validation.masteryLimits` block with:  
-`{ maxSkillMastery, maxTradeMastery, currentAdeptCount, maxAdeptCount, canSelectAdept }`.
-At level 1, `maxAdeptCount` is 1 (base Adept slot) plus any granted exceptions.
+Denormalized outputs persisted on `SavedCharacter` (for UI/PDF consumption) — additive/optional fields introduced by Task 0:
+- `skillTotals: Record<skillId, number>`
+- `skillMastery: Record<skillId, { governingAttributes, baseAttributeValues, masteryLevel, masteryLadder, finalValue }>`
+- `knowledgeTradeMastery: Record<'arcana'|'history'|'nature'|'occultism'|'religion', ...>`
+- `masteryLadders: { skills, knowledgeTrades, practicalTrades: { A..D: { label, ladder, finalValue } } }`
+- `languageMastery: { A..D: { name, limited, fluent } }`
+- `bloodiedValue`, `wellBloodiedValue`, and PD/AD heavy/brutal thresholds
+
+Transformer note: `src/lib/pdf/transformers.ts` reads these fields when present and only falls back to legacy math if they are missing, ensuring backward compatibility.
+
+Validation also exposes a `masteryLimits` block with:  
+`{ maxSkillMastery, maxTradeMastery, currentAdeptCount, maxAdeptCount, canSelectAdept }`. At level 1, `maxAdeptCount` is 1 (base Adept slot) plus any granted exceptions.
 
 ---
 
@@ -168,5 +177,5 @@ At level 1, `maxAdeptCount` is 1 (base Adept slot) plus any granted exceptions.
 
 ---
 
-> Last updated: 2025-01-15  
+> Last updated: 2025-09-15  
 > Maintainer: @DC20Clean-Team

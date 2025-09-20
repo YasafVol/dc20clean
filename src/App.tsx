@@ -6,6 +6,7 @@ import LoadCharacter from './routes/character-creation/LoadCharacter.tsx';
 import CharacterSheetRouter from './routes/character-sheet/CharacterSheetRouter';
 import LevelUp from './routes/character-creation/LevelUp';
 import Menu from './components/Menu.tsx';
+import CreateCharacterNG from './routes/create-character-ng/CreateCharacterNG';
 
 import { StyledApp } from './styles/App.styles';
 
@@ -86,6 +87,7 @@ function App() {
 					<Routes>
 						<Route path="/" element={<Navigate to="/menu" replace />} />
 						<Route path="/menu" element={<Menu />} />
+						<Route path="/create-character-ng" element={<CreateCharacterNG />} />
 						<Route
 							path="/create-character"
 							element={

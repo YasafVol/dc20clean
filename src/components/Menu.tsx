@@ -82,7 +82,7 @@ function Menu() {
 			</StyledSubtitle>
 
 			<StyledMenuGrid>
-				<StyledMenuCard onClick={() => navigate('/create-character')}>
+				<StyledMenuCard onClick={() => navigate('/create-character-ng')}>
 					<StyledTextContent>
 						<StyledCardTitle>Create Character</StyledCardTitle>
 						<StyledCardDescription>Create a new character.</StyledCardDescription>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Provider } from 'jotai';
 import CharacterCreationStepperContainer from './components/CharacterCreationStepperContainer';
-import ClassFeatures from './steps/class-features/ClassFeatures';
+import Class from './steps/class/Class';
+import Features from './steps/features/Features';
 import Ancestry from './steps/ancestry/Ancestry';
 import Attributes from './steps/attributes/Attributes';
 import Background from './steps/background/Background';
@@ -16,7 +17,8 @@ import {
 
 // Step components mapping
 const stepComponents = {
-	'class': ClassFeatures,
+	'class': Class,
+	'features': Features,
 	'ancestry': Ancestry,
 	'attributes': Attributes,
 	'background': Background,
@@ -32,7 +34,7 @@ const CreateCharacterNGContent: React.FC = () => {
 	};
 
 	// Get the current step component
-	const CurrentStepComponent = stepComponents[currentStepId as keyof typeof stepComponents] || ClassFeatures;
+	const CurrentStepComponent = stepComponents[currentStepId as keyof typeof stepComponents] || Class;
 
 	return (
 		<StyledPageContainer>

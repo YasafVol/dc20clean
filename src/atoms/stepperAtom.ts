@@ -9,7 +9,8 @@ export const stepValidationAtom = atom<Record<string, boolean>>({});
 
 // Character creation steps definition
 export const characterCreationStepsAtom = atom<Array<{ id: string; label: string; status?: 'upcoming' | 'in-progress' | 'completed' | 'error' }>>([
-  { id: 'class', label: 'CLASS &\nFEATURES' },
+  { id: 'class', label: 'CLASS' },
+  { id: 'features', label: 'FEATURES' },
   { id: 'ancestry', label: 'ANCESTRY' },
   { id: 'attributes', label: 'ATTRIBUTES' },
   { id: 'background', label: 'BACKGROUND' },

@@ -1,80 +1,59 @@
 import React, { useState } from 'react';
-import { Stepper, type Step } from '../../design-system';
+import { Provider } from 'jotai';
+import CharacterCreationStepperContainer from './components/CharacterCreationStepperContainer';
+import ClassFeatures from './steps/class-features/ClassFeatures';
+import Ancestry from './steps/ancestry/Ancestry';
+import Attributes from './steps/attributes/Attributes';
+import Background from './steps/background/Background';
+import Spells from './steps/spells/Spells';
+import Finish from './steps/finish/Finish';
 import {
 	StyledPageContainer,
 	StyledMainContent,
 	StyledContentFrame,
-	StyledFrameContent,
-	StyledTitle,
-	StyledSubtitle,
 	StyledStepperContainer
 } from './CreateCharacterNG.styles';
 
-const characterCreationSteps: Step[] = [
-	{ id: 'class', label: 'CLASS &\nFEATURES' },
-	{ id: 'ancestry', label: 'ANCESTRY' },
-	{ id: 'attributes', label: 'ATTRIBUTES' },
-	{ id: 'background', label: 'BACKGROUND' },
-	{ id: 'spells', label: 'SPELLS &\nMANEUVERS' },
-	{ id: 'finish', label: 'FINISH' }
-];
+// Step components mapping
+const stepComponents = {
+	'class': ClassFeatures,
+	'ancestry': Ancestry,
+	'attributes': Attributes,
+	'background': Background,
+	'spells': Spells,
+	'finish': Finish,
+};
 
-const CreateCharacterNG: React.FC = () => {
-	const [currentStep, setCurrentStep] = useState(0);
+const CreateCharacterNGContent: React.FC = () => {
+	const [currentStepId, setCurrentStepId] = useState('class');
 
-	const handleStepClick = (stepIndex: number) => {
-		setCurrentStep(stepIndex);
+	const handleStepChange = (_stepIndex: number, stepId: string) => {
+		setCurrentStepId(stepId);
 	};
 
-	const handlePrevious = () => {
-		if (currentStep > 0) {
-			setCurrentStep(currentStep - 1);
-		}
-	};
-
-	const handleNext = () => {
-		if (currentStep < characterCreationSteps.length - 1) {
-			setCurrentStep(currentStep + 1);
-		}
-	};
-
-	// Mark steps as completed, current, or upcoming
-	const stepsWithStatus = characterCreationSteps.map((step, index) => ({
-		...step,
-		status: index < currentStep ? 'completed' as const : 
-		        index === currentStep ? 'in-progress' as const : 
-		        'upcoming' as const
-	}));
+	// Get the current step component
+	const CurrentStepComponent = stepComponents[currentStepId as keyof typeof stepComponents] || ClassFeatures;
 
 	return (
 		<StyledPageContainer>
 			<StyledMainContent>
 				<StyledStepperContainer>
-					<Stepper
-						steps={stepsWithStatus}
-						current={currentStep}
-						onStepClick={handleStepClick}
-						onBack={handlePrevious}
-						onNext={handleNext}
-						backLabel="BACK"
-						nextLabel="NEXT"
-						showNavigation={true}
-					/>
+					<CharacterCreationStepperContainer onStepChange={handleStepChange} />
 				</StyledStepperContainer>
 				
 				<StyledContentFrame>
-					<StyledFrameContent>
-						<StyledTitle>Create Character (NG)</StyledTitle>
-						<StyledSubtitle>
-							Step {currentStep + 1} of {characterCreationSteps.length}: {characterCreationSteps[currentStep].label?.replace('\n', ' ')}
-						</StyledSubtitle>
-						<p style={{ color: '#e5e7eb', marginTop: '2rem' }}>
-							Content for "{characterCreationSteps[currentStep].label?.replace('\n', ' ')}" will be implemented here.
-						</p>
-					</StyledFrameContent>
+					<CurrentStepComponent />
 				</StyledContentFrame>
 			</StyledMainContent>
 		</StyledPageContainer>
+	);
+};
+
+const CreateCharacterNG: React.FC = () => {
+	return (
+		<Provider>
+			<CreateCharacterNGContent />
+		</Provider>
 	);
 };
 

@@ -1,6 +1,6 @@
 # Stepper Component
 
-A wizard-style stepper component that shows progress through multiple steps. Supports both controlled props and Recoil state management.
+A wizard-style stepper component that shows progress through multiple steps. Supports both controlled props and Jotai state management.
 
 ## Usage
 
@@ -22,24 +22,25 @@ function MyWizard() {
 }
 ```
 
-### Using Recoil State
+### Using Jotai State
 
 ```tsx
-import { RecoilRoot } from 'recoil';
+import { Provider, useSetAtom } from 'jotai';
+import { useEffect } from 'react';
 import { Stepper } from '../design-system';
 import { stepperStepsAtom, stepperCurrentStepAtom } from '../atoms/stepperAtom';
 
 function App() {
   return (
-    <RecoilRoot>
-      <MyWizardWithRecoil />
-    </RecoilRoot>
+    <Provider>
+      <MyWizardWithJotai />
+    </Provider>
   );
 }
 
-function MyWizardWithRecoil() {
-  // Set initial steps
-  const setSteps = useSetRecoilState(stepperStepsAtom);
+function MyWizardWithJotai() {
+  // Set initial steps using useSetAtom if needed
+  const setSteps = useSetAtom(stepperStepsAtom);
   
   useEffect(() => {
     setSteps([
@@ -49,16 +50,16 @@ function MyWizardWithRecoil() {
     ]);
   }, [setSteps]);
 
-  return <Stepper useRecoil />;
+  return <Stepper useState />;
 }
 ```
 
 ## Props
 
-- `steps?: Step[]` - Array of steps (optional when using Recoil)
-- `current?: number` - Current step index (optional when using Recoil)
+- `steps?: Step[]` - Array of steps (optional when using state management)
+- `current?: number` - Current step index (optional when using state management)
 - `onStepClick?: (index: number) => void` - Click handler
-- `useRecoil?: boolean` - Whether to use Recoil state
+- `useState?: boolean` - Whether to use state management
 - `aria-label?: string` - Accessibility label
 
 ## Step Status

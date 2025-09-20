@@ -1,8 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { RecoilRoot } from 'recoil';
+import { Provider } from 'jotai';
 import Stepper from '../Stepper';
 import { sampleSteps } from './sampleSteps';
-import { stepperCurrentStepAtom, stepperStepsAtom } from '../../../atoms/stepperAtom';
 
 const meta: Meta<typeof Stepper> = {
   title: 'Design System/Stepper',
@@ -20,12 +19,12 @@ export const Default: Story = {
   },
 };
 
-export const UsingRecoil: Story = {
+export const UsingState: Story = {
   decorators: [
     (Story) => (
-      <RecoilRoot initializeState={({ set }) => { set(stepperStepsAtom, sampleSteps); set(stepperCurrentStepAtom, 1); }}>
+      <Provider>
         <Story />
-      </RecoilRoot>
+      </Provider>
     ),
   ],
 };

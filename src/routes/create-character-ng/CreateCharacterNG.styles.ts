@@ -58,39 +58,3 @@ export const StyledContentFrame = styled.div`
 		background-size: cover;
 	}
 `;
-
-// Placeholder content inside the frame
-export const StyledFrameContent = styled.div`
-	text-align: center;
-	color: #fff;
-	padding: 2rem;
-	background: rgba(0, 0, 0, 0.3);
-	border-radius: 12px;
-	backdrop-filter: blur(5px);
-`;
-
-export const StyledTitle = styled.h1`
-	margin: 0 0 1rem 0;
-	color: #fbbf24;
-	font-size: 3rem;
-	font-weight: bold;
-	font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
-	letter-spacing: 2px;
-	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-
-	@media (max-width: 768px) {
-		font-size: 2rem;
-		letter-spacing: 1px;
-	}
-`;
-
-export const StyledSubtitle = styled.p`
-	margin: 0;
-	color: #e5e7eb;
-	font-size: 1.2rem;
-	line-height: 1.6;
-	
-	@media (max-width: 768px) {
-		font-size: 1rem;
-	}
-`;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 import {
   StepperWrapper,
   StepList,
@@ -20,7 +20,7 @@ export type Step = {
 };
 
 type Props = {
-  steps?: Step[]; // optional when using Recoil
+  steps?: Step[]; // optional when using state management
   current?: number; // index of current step when controlled
   onStepClick?: (index: number) => void;
   onBack?: () => void; // Back button handler
@@ -29,7 +29,7 @@ type Props = {
   nextLabel?: string; // Custom next button label
   showNavigation?: boolean; // Whether to show Back/Next buttons
   'aria-label'?: string;
-  useRecoil?: boolean; // whether to use Recoil state
+  useState?: boolean; // whether to use State management
 };
 
 // Internal component that renders the actual stepper
@@ -94,8 +94,8 @@ const StepperContent: React.FC<{
   );
 };
 
-// Component that uses Recoil state
-const StepperWithRecoil: React.FC<Pick<Props, 'onStepClick' | 'onBack' | 'onNext' | 'backLabel' | 'nextLabel' | 'showNavigation' | 'aria-label'>> = ({ 
+// Component that uses state management
+const StepperWithState: React.FC<Pick<Props, 'onStepClick' | 'onBack' | 'onNext' | 'backLabel' | 'nextLabel' | 'showNavigation' | 'aria-label'>> = ({ 
   onStepClick, 
   onBack, 
   onNext, 
@@ -104,8 +104,8 @@ const StepperWithRecoil: React.FC<Pick<Props, 'onStepClick' | 'onBack' | 'onNext
   showNavigation, 
   'aria-label': ariaLabel 
 }) => {
-  const [currentStep, setCurrentStep] = useRecoilState(stepperCurrentStepAtom);
-  const steps = useRecoilValue(stepperStepsAtom);
+  const [currentStep, setCurrentStep] = useAtom(stepperCurrentStepAtom);
+  const steps = useAtomValue(stepperStepsAtom);
 
   const handleStepClick = (idx: number) => {
     setCurrentStep(idx);
@@ -151,11 +151,11 @@ export const Stepper: React.FC<Props> = ({
   nextLabel, 
   showNavigation = true,
   'aria-label': ariaLabel, 
-  useRecoil = false 
+  useState = false 
 }) => {
-  if (useRecoil) {
+  if (useState) {
     return (
-      <StepperWithRecoil 
+      <StepperWithState 
         onStepClick={onStepClick} 
         onBack={onBack}
         onNext={onNext}

@@ -6,6 +6,8 @@
  */
 
 import { SavedCharacter, CharacterState } from '../types/dataContracts';
+import { InventoryItem } from '../rulesdata/inventoryItems';
+import { registerCustomItem } from '../rulesdata/inventoryItems';
 
 const CURRENT_SCHEMA_VERSION = 2;
 
@@ -379,4 +381,64 @@ export const runMigrationIfRequested = (force = false): boolean => {
 		// ignore
 	}
 	return false;
+};
+
+// -------------------------------
+// Custom Items persistence helpers
+// -------------------------------
+
+const CUSTOM_ITEMS_KEY = 'customItems';
+
+export const getCustomItemsFromStorage = (): InventoryItem[] => {
+	try {
+		const raw = localStorage.getItem(CUSTOM_ITEMS_KEY) || '[]';
+		const parsed = JSON.parse(raw) as InventoryItem[];
+		return Array.isArray(parsed) ? parsed : [];
+	} catch (e) {
+		console.warn('Failed to parse custom items from storage', e);
+		return [];
+	}
+};
+
+export const saveCustomItemsToStorage = (items: InventoryItem[]): void => {
+	try {
+		localStorage.setItem(CUSTOM_ITEMS_KEY, JSON.stringify(items));
+		console.log('Saved custom items to localStorage');
+	} catch (e) {
+		console.error('Failed to save custom items to storage', e);
+	}
+};
+
+export const addCustomItem = (item: InventoryItem): void => {
+	const items = getCustomItemsFromStorage();
+	// avoid duplicates by name
+	if (!items.find((i) => i.name === item.name)) {
+		items.push(item);
+		saveCustomItemsToStorage(items);
+		try {
+			registerCustomItem(item);
+		} catch (e) {
+			console.warn('Failed to register custom item at runtime', e);
+		}
+	}
+};
+
+/**
+ * Load custom items from localStorage into the runtime registry.
+ * Call this once at app startup or when the character sheet mounts.
+ */
+export const loadCustomItemsIntoRuntime = (): void => {
+	try {
+		const items = getCustomItemsFromStorage();
+		items.forEach((it) => {
+			try {
+				registerCustomItem(it as InventoryItem);
+			} catch (e) {
+				// ignore single failures
+			}
+		});
+		console.log(`Loaded ${items.length} custom items into runtime`);
+	} catch (e) {
+		console.warn('Failed to load custom items into runtime', e);
+	}
 };

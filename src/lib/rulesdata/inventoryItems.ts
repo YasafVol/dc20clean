@@ -748,10 +748,25 @@ export const healingPotions: HealingPotion[] = [
 	}
 ];
 
-export const allItems = [
-	...weapons,
-	...armors,
-	...shields,
-	...adventuringSupplies,
-	...healingPotions
-];
+// Runtime-custom items registered by users (stored in localStorage)
+export const customItems: InventoryItem[] = [];
+
+export const registerCustomItem = (item: InventoryItem) => {
+	// Avoid duplicates by name
+	const exists = customItems.find((i) => i.name === item.name);
+	if (!exists) customItems.push(item);
+};
+
+export const getAllItems = (): InventoryItem[] => {
+	return [
+		...weapons,
+		...armors,
+		...shields,
+		...adventuringSupplies,
+		...healingPotions,
+		...customItems
+	];
+};
+
+// Backwards-compatible snapshot export for modules/tests that import `allItems`.
+export const allItems: InventoryItem[] = getAllItems();

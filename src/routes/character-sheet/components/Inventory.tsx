@@ -1,6 +1,7 @@
 import React from 'react';
 import type { InventoryItemData } from '../../../types';
-import { allItems, type InventoryItem } from '../../../lib/rulesdata/inventoryItems';
+import { getAllItems, type InventoryItem } from '../../../lib/rulesdata/inventoryItems';
+import CustomItemModal from './CustomItemModal';
 import { useCharacterInventory, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
 	StyledInventorySection,
@@ -38,6 +39,27 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 		updateInventory([...inventory, newInventoryItem]);
 	};
 
+	const [showAddMenu, setShowAddMenu] = React.useState(false);
+	const [showCustomModal, setShowCustomModal] = React.useState(false);
+
+	const handleAddButtonClick = () => {
+		setShowAddMenu((s) => !s);
+	};
+
+	const handleAddCustomSaved = (item: InventoryItem) => {
+		// Insert the custom item into this character's inventory and close modal
+		const newInventoryItem: InventoryItemData = {
+			id: `inventory_${Date.now()}`,
+			itemType: item.itemType as any,
+			itemName: item.name,
+			count: 1,
+			cost: (item as any).price ? `${(item as any).price}` : '-'
+		};
+		updateInventory([...inventory, newInventoryItem]);
+		setShowCustomModal(false);
+		setShowAddMenu(false);
+	};
+
 	const removeInventorySlot = (inventoryIndex: number) => {
 		const updatedInventory = inventory.filter((_, index) => index !== inventoryIndex);
 		updateInventory(updatedInventory);
@@ -57,7 +79,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 			updateInventory(updatedInventory);
 		} else {
 			// Selecting item name
-			const selectedItem = allItems.find((i: any) => i.name === itemTypeOrName);
+			const selectedItem = getAllItems().find((i: InventoryItem) => i.name === itemTypeOrName);
 			const updatedInventory = inventory.map((item, index) =>
 				index === inventoryIndex
 					? {
@@ -117,10 +139,22 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 		<StyledInventorySection $isMobile={isMobile}>
 			<StyledInventoryTitle $isMobile={isMobile}>INVENTORY</StyledInventoryTitle>
 
-			{/* Add Item Button */}
-			<StyledAddItemButton $isMobile={isMobile} onClick={addInventorySlot} data-testid="add-item">
-				+ Add Item
-			</StyledAddItemButton>
+			{/* Add Item Button with menu */}
+			<div style={{ position: 'relative', display: 'inline-block' }}>
+				<StyledAddItemButton $isMobile={isMobile} onClick={handleAddButtonClick} data-testid="add-item">
+					+ Add Item
+				</StyledAddItemButton>
+				{showAddMenu && (
+					<div style={{ position: 'absolute', right: 0, background: 'white', border: '1px solid #ccc', zIndex: 50 }}>
+						<button onClick={() => { addInventorySlot(); setShowAddMenu(false); }} style={{ display: 'block', padding: '8px 12px' }}>Add Item</button>
+						<button onClick={() => { setShowCustomModal(true); setShowAddMenu(false); }} style={{ display: 'block', padding: '8px 12px' }}>Add Custom Item</button>
+					</div>
+				)}
+			</div>
+
+			{showCustomModal && (
+				<CustomItemModal onClose={() => setShowCustomModal(false)} onSave={handleAddCustomSaved} />
+			)}
 
 			<StyledInventoryContainer $isMobile={isMobile}>
 				<StyledInventoryHeaderRow>
@@ -141,7 +175,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 				) : (
 					inventory.map((item, index) => {
 						const selectedItem = item.itemName
-							? allItems.find((i) => i.name === item.itemName)
+							? getAllItems().find((i) => i.name === item.itemName)
 							: null;
 
 						return (
@@ -179,13 +213,13 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 								>
 									<option value="">Select Item</option>
 									{item.itemType &&
-										allItems
-											.filter((i) => i.itemType === item.itemType)
-											.map((itemData) => (
-												<option key={itemData.name} value={itemData.name}>
-													{itemData.name}
-												</option>
-											))}
+											getAllItems()
+												.filter((i) => i.itemType === item.itemType)
+												.map((itemData) => (
+													<option key={itemData.name} value={itemData.name}>
+														{itemData.name}
+													</option>
+												))}
 								</StyledInventorySelect>
 
 								{/* Count */}

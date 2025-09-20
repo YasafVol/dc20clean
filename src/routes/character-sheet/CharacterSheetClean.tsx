@@ -94,6 +94,7 @@ import {
 
 import { allSpells } from '../../lib/rulesdata/spells-data/spells';
 import { allManeuvers } from '../../lib/rulesdata/martials/maneuvers';
+import { loadCustomItemsIntoRuntime } from '../../lib/utils/storageUtils';
 
 import { handlePrintCharacterSheet } from './utils';
 
@@ -108,6 +109,11 @@ interface CharacterSheetCleanProps {
 
 const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, onBack }) => {
 	console.log('🧙‍♂️ CharacterSheetClean component rendering! characterId:', characterId);
+
+	useEffect(() => {
+		// Load any user-registered custom items into runtime rules
+		loadCustomItemsIntoRuntime();
+	}, []);
 	// Use Provider hooks for data and update methods
 	const {
 		state,

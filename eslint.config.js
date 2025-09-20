@@ -1,3 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from "eslint-plugin-storybook";
+
 import prettier from 'eslint-config-prettier';
 import { includeIgnoreFile } from '@eslint/compat';
 import js from '@eslint/js';
@@ -8,11 +11,11 @@ import ts from 'typescript-eslint';
 const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
 
 export default ts.config(
-	includeIgnoreFile(gitignorePath),
-	js.configs.recommended,
-	...ts.configs.recommended,
-	prettier,
-	{
+    includeIgnoreFile(gitignorePath),
+    js.configs.recommended,
+    ...ts.configs.recommended,
+    prettier,
+    {
 		languageOptions: {
 			globals: { ...globals.browser, ...globals.node }
 		},
@@ -36,11 +39,12 @@ export default ts.config(
 			]
 		}
 	},
-	{
+    {
 		files: ['**/storageUtils.ts'],
 		rules: {
 			// Allow JSON methods only in storage utilities
 			'no-restricted-syntax': 'off'
 		}
-	}
+	},
+    storybook.configs["flat/recommended"]
 );

@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "isolatedModules": false,
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "types": ["vite/client", "react", "node", "vitest"]
+  },
+  "include": ["src/design-system/**/*"]
+}

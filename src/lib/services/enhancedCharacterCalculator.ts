@@ -573,8 +573,8 @@ export function calculateCharacterWithBreakdowns(
 	// For tie-breaking, use the priority order: might > agility > charisma > intelligence
 	const primeAttribute = attributesAtMax[0] || 'might';
 
-	// Calculate other derived stats first
-	const finalSaveDC = 8 + combatMastery + maxValue;
+    // Calculate other derived stats first (DC20 sheet: 10 + Combat Mastery + Prime)
+    const finalSaveDC = 10 + combatMastery + maxValue;
 	const finalSaveMight = finalMight + combatMastery;
 	const finalSaveAgility = finalAgility + combatMastery;
 	const finalSaveCharisma = finalCharisma + combatMastery;

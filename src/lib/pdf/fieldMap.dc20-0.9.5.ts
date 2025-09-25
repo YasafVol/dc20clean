@@ -1,0 +1,241 @@
+export type FieldMapItem = {
+	path: string; // path in PdfExportData, e.g. "characterName", "hitPoints.max"
+	field: string; // PDF field name
+	type: 'text' | 'checkbox';
+};
+
+// Minimal but useful initial mapping. Extend as needed.
+export const fieldMap_dc20_095: FieldMapItem[] = [
+	// Identity
+	{ path: 'characterName', field: 'Character Name', type: 'text' },
+	{ path: 'playerName', field: 'Player Name', type: 'text' },
+	{ path: 'level', field: 'Level', type: 'text' },
+	{ path: 'ancestry', field: 'Ancestry', type: 'text' },
+	{ path: 'classAndSubclass', field: 'Class & Subclass', type: 'text' },
+	{ path: 'features', field: 'Features', type: 'text' },
+
+	// Attributes
+	{ path: 'prime', field: 'Prime', type: 'text' },
+	{ path: 'might', field: 'Might', type: 'text' },
+	{ path: 'agility', field: 'Agility', type: 'text' },
+	{ path: 'charisma', field: 'Charisma', type: 'text' },
+	{ path: 'intelligence', field: 'Intelligence', type: 'text' },
+	{ path: 'combatMastery', field: 'Combat Mastery', type: 'text' },
+
+	// Saves
+	{ path: 'mightSave', field: 'Might Save', type: 'text' },
+	{ path: 'agilitySave', field: 'Agility Save', type: 'text' },
+	{ path: 'charismaSave', field: 'Charisma Save', type: 'text' },
+	{ path: 'intelligenceSave', field: 'Intelligence Save', type: 'text' },
+
+	// Skills
+	{ path: 'awareness', field: 'Awareness', type: 'text' },
+	{ path: 'athletics', field: 'Athletics', type: 'text' },
+	{ path: 'intimidation', field: 'Intimidation', type: 'text' },
+	{ path: 'acrobatics', field: 'Acrobatics', type: 'text' },
+	{ path: 'trickery', field: 'Trickery', type: 'text' },
+	{ path: 'stealth', field: 'Stealth', type: 'text' },
+	{ path: 'animal', field: 'Animal', type: 'text' },
+	{ path: 'influence', field: 'Influence', type: 'text' },
+	{ path: 'insight', field: 'Insight', type: 'text' },
+	{ path: 'investigation', field: 'Investigation', type: 'text' },
+	{ path: 'medicine', field: 'Medicine', type: 'text' },
+	{ path: 'survival', field: 'Survival', type: 'text' },
+	{ path: 'arcana', field: 'Arcana', type: 'text' },
+	{ path: 'history', field: 'History', type: 'text' },
+	{ path: 'nature', field: 'Nature', type: 'text' },
+	{ path: 'occultism', field: 'Occultism', type: 'text' },
+	{ path: 'religion', field: 'Religion', type: 'text' },
+
+	// Mastery ladders for skills (checkboxes)
+	{ path: 'mastery.Awareness.2', field: 'Mastery-Awareness-2', type: 'checkbox' },
+	{ path: 'mastery.Awareness.4', field: 'Mastery-Awareness-4', type: 'checkbox' },
+	{ path: 'mastery.Awareness.6', field: 'Mastery-Awareness-6', type: 'checkbox' },
+	{ path: 'mastery.Awareness.8', field: 'Mastery-Awareness-8', type: 'checkbox' },
+	{ path: 'mastery.Awareness.10', field: 'Mastery-Awareness-10', type: 'checkbox' },
+	{ path: 'mastery.Athletics.2', field: 'Mastery-Athletics-2', type: 'checkbox' },
+	{ path: 'mastery.Athletics.4', field: 'Mastery-Athletics-4', type: 'checkbox' },
+	{ path: 'mastery.Athletics.6', field: 'Mastery-Athletics-6', type: 'checkbox' },
+	{ path: 'mastery.Athletics.8', field: 'Mastery-Athletics-8', type: 'checkbox' },
+	{ path: 'mastery.Athletics.10', field: 'Mastery-Athletics-10', type: 'checkbox' },
+	{ path: 'mastery.Intimidation.2', field: 'Mastery-Intimidation-2', type: 'checkbox' },
+	{ path: 'mastery.Intimidation.4', field: 'Mastery-Intimidation-4', type: 'checkbox' },
+	{ path: 'mastery.Intimidation.6', field: 'Mastery-Intimidation-6', type: 'checkbox' },
+	{ path: 'mastery.Intimidation.8', field: 'Mastery-Intimidation-8', type: 'checkbox' },
+	{ path: 'mastery.Intimidation.10', field: 'Mastery-Intimidation-10', type: 'checkbox' },
+	{ path: 'mastery.Acrobatics.2', field: 'Mastery-Acrobatics-2', type: 'checkbox' },
+	{ path: 'mastery.Acrobatics.4', field: 'Mastery-Acrobatics-4', type: 'checkbox' },
+	{ path: 'mastery.Acrobatics.6', field: 'Mastery-Acrobatics-6', type: 'checkbox' },
+	{ path: 'mastery.Acrobatics.8', field: 'Mastery-Acrobatics-8', type: 'checkbox' },
+	{ path: 'mastery.Acrobatics.10', field: 'Mastery-Acrobatics-10', type: 'checkbox' },
+	{ path: 'mastery.Trickery.2', field: 'Mastery-Trickery-2', type: 'checkbox' },
+	{ path: 'mastery.Trickery.4', field: 'Mastery-Trickery-4', type: 'checkbox' },
+	{ path: 'mastery.Trickery.6', field: 'Mastery-Trickery-6', type: 'checkbox' },
+	{ path: 'mastery.Trickery.8', field: 'Mastery-Trickery-8', type: 'checkbox' },
+	{ path: 'mastery.Trickery.10', field: 'Mastery-Trickery-10', type: 'checkbox' },
+	{ path: 'mastery.Stealth.2', field: 'Mastery-Stealth-2', type: 'checkbox' },
+	{ path: 'mastery.Stealth.4', field: 'Mastery-Stealth-4', type: 'checkbox' },
+	{ path: 'mastery.Stealth.6', field: 'Mastery-Stealth-6', type: 'checkbox' },
+	{ path: 'mastery.Stealth.8', field: 'Mastery-Stealth-8', type: 'checkbox' },
+	{ path: 'mastery.Stealth.10', field: 'Mastery-Stealth-10', type: 'checkbox' },
+	{ path: 'mastery.Animal.2', field: 'Mastery-Animal-2', type: 'checkbox' },
+	{ path: 'mastery.Animal.4', field: 'Mastery-Animal-4', type: 'checkbox' },
+	{ path: 'mastery.Animal.6', field: 'Mastery-Animal-6', type: 'checkbox' },
+	{ path: 'mastery.Animal.8', field: 'Mastery-Animal-8', type: 'checkbox' },
+	{ path: 'mastery.Animal.10', field: 'Mastery-Animal-10', type: 'checkbox' },
+	{ path: 'mastery.Influence.2', field: 'Mastery-Influence-2', type: 'checkbox' },
+	{ path: 'mastery.Influence.4', field: 'Mastery-Influence-4', type: 'checkbox' },
+	{ path: 'mastery.Influence.6', field: 'Mastery-Influence-6', type: 'checkbox' },
+	{ path: 'mastery.Influence.8', field: 'Mastery-Influence-8', type: 'checkbox' },
+	{ path: 'mastery.Influence.10', field: 'Master-Influence-10', type: 'checkbox' },
+	{ path: 'mastery.Insight.2', field: 'Mastery-Insight-2', type: 'checkbox' },
+	{ path: 'mastery.Insight.4', field: 'Mastery-Insight-4', type: 'checkbox' },
+	{ path: 'mastery.Insight.6', field: 'Mastery-Insight-6', type: 'checkbox' },
+	{ path: 'mastery.Insight.8', field: 'Mastery-Insight-8', type: 'checkbox' },
+	{ path: 'mastery.Insight.10', field: 'Mastery-Insight-10', type: 'checkbox' },
+	{ path: 'mastery.Investigation.2', field: 'Mastery-Investigation-2', type: 'checkbox' },
+	{ path: 'mastery.Investigation.4', field: 'Mastery-Investigation-4', type: 'checkbox' },
+	{ path: 'mastery.Investigation.6', field: 'Mastery-Investigation-6', type: 'checkbox' },
+	{ path: 'mastery.Investigation.8', field: 'Mastery-Investigation-8', type: 'checkbox' },
+	{ path: 'mastery.Investigation.10', field: 'Mastery-Investigation-10', type: 'checkbox' },
+	{ path: 'mastery.Medicine.2', field: 'Mastery-Medicine-2', type: 'checkbox' },
+	{ path: 'mastery.Medicine.4', field: 'Mastery-Medicine-4', type: 'checkbox' },
+	{ path: 'mastery.Medicine.6', field: 'Mastery-Medicine-6', type: 'checkbox' },
+	{ path: 'mastery.Medicine.8', field: 'Mastery-Medicine-8', type: 'checkbox' },
+	{ path: 'mastery.Medicine.10', field: 'Mastery-Medicine-10', type: 'checkbox' },
+	{ path: 'mastery.Survival.2', field: 'Mastery-Survival-2', type: 'checkbox' },
+	{ path: 'mastery.Survival.4', field: 'Mastery-Survival-4', type: 'checkbox' },
+	{ path: 'mastery.Survival.6', field: 'Mastery-Survival-6', type: 'checkbox' },
+	{ path: 'mastery.Survival.8', field: 'Mastery-Survival-8', type: 'checkbox' },
+	{ path: 'mastery.Survival.10', field: 'Mastery-Survival-10', type: 'checkbox' },
+
+	// Knowledge trade mastery (checkboxes)
+	{ path: 'mastery.Arcana.2', field: 'Mastery-Arcana-2', type: 'checkbox' },
+	{ path: 'mastery.Arcana.4', field: 'Mastery-Arcana-4', type: 'checkbox' },
+	{ path: 'mastery.Arcana.6', field: 'Mastery-Arcana-6', type: 'checkbox' },
+	{ path: 'mastery.Arcana.8', field: 'Mastery-Arcana-8', type: 'checkbox' },
+	{ path: 'mastery.Arcana.10', field: 'Mastery-Arcana-10', type: 'checkbox' },
+	{ path: 'mastery.History.2', field: 'Mastery-History-2', type: 'checkbox' },
+	{ path: 'mastery.History.4', field: 'Mastery-History-4', type: 'checkbox' },
+	{ path: 'mastery.History.6', field: 'Mastery-History-6', type: 'checkbox' },
+	{ path: 'mastery.History.8', field: 'Mastery-History-8', type: 'checkbox' },
+	{ path: 'mastery.History.10', field: 'Mastery-History-10', type: 'checkbox' },
+	{ path: 'mastery.Nature.2', field: 'Mastery-Nature-2', type: 'checkbox' },
+	{ path: 'mastery.Nature.4', field: 'Mastery-Nature-4', type: 'checkbox' },
+	{ path: 'mastery.Nature.6', field: 'Mastery-Nature-6', type: 'checkbox' },
+	{ path: 'mastery.Nature.8', field: 'Mastery-Nature-8', type: 'checkbox' },
+	{ path: 'mastery.Nature.10', field: 'Mastery-Nature-10', type: 'checkbox' },
+	{ path: 'mastery.Occultism.2', field: 'Mastery-Occultism-2', type: 'checkbox' },
+	{ path: 'mastery.Occultism.4', field: 'Mastery-Occultism-4', type: 'checkbox' },
+	{ path: 'mastery.Occultism.6', field: 'Mastery-Occultism-6', type: 'checkbox' },
+	{ path: 'mastery.Occultism.8', field: 'Mastery-Occultism-8', type: 'checkbox' },
+	{ path: 'mastery.Occultism.10', field: 'Mastery-Occultism-10', type: 'checkbox' },
+	{ path: 'mastery.Religion.2', field: 'Mastery-Religion-2', type: 'checkbox' },
+	{ path: 'mastery.Religion.4', field: 'Mastery-Religion-4', type: 'checkbox' },
+	{ path: 'mastery.Religion.6', field: 'Mastery-Religion-6', type: 'checkbox' },
+	{ path: 'mastery.Religion.8', field: 'Mastery-Religion-8', type: 'checkbox' },
+	{ path: 'mastery.Religion.10', field: 'Mastery-Religion-10', type: 'checkbox' },
+
+	// Combat stats
+	{ path: 'attackCheck', field: 'Attack Check', type: 'text' },
+	{ path: 'saveDC', field: 'Save DC', type: 'text' },
+	{ path: 'initiative', field: 'Initiative', type: 'text' },
+
+	// HP/SP/MP/Grit/Rest
+	{ path: 'hitPoints.max', field: 'Hit Points Max', type: 'text' },
+	{ path: 'hitPoints.current', field: 'Hit Points Current', type: 'text' },
+	{ path: 'hitPoints.temp', field: 'Hit Points Temp', type: 'text' },
+	{ path: 'stamina.max', field: 'Stamina Points Max', type: 'text' },
+	{ path: 'stamina.current', field: 'Stamina Points Current', type: 'text' },
+	{ path: 'mana.max', field: 'Mana Points Max', type: 'text' },
+	{ path: 'mana.current', field: 'Mana Points Current', type: 'text' },
+	{ path: 'grit.cap', field: 'Grit Point Cap', type: 'text' },
+	{ path: 'grit.current', field: 'Grit Point Current', type: 'text' },
+	{ path: 'restPoints.cap', field: 'Rest Point Cap', type: 'text' },
+	{ path: 'restPoints.current', field: 'Rest Point Current', type: 'text' },
+
+	// Defense
+	{ path: 'defense.mental', field: 'Mental Defense', type: 'text' },
+	{ path: 'defense.mentalHeavyThreshold', field: 'MD Heavy Threshold', type: 'text' },
+	{ path: 'defense.mentalBrutalThreshold', field: 'MD Brutal Threshold', type: 'text' },
+	{ path: 'defense.physical', field: 'Physical Defense', type: 'text' },
+	{ path: 'defense.physicalHeavyThreshold', field: 'PD Heavy Threshold', type: 'text' },
+	{ path: 'defense.physicalBrutalThreshold', field: 'PD Brutal Threshold', type: 'text' },
+
+	// Bloodied values (as text fields in the sheet)
+	{ path: 'bloodiedValue', field: 'Bloodied', type: 'text' },
+	{ path: 'wellBloodiedValue', field: 'Well-Bloodied', type: 'text' },
+
+	// Movement & misc
+	{ path: 'moveSpeed', field: 'Move Speed', type: 'text' },
+	{ path: 'jumpDistance', field: 'Jump Distance', type: 'text' },
+	{ path: 'deathThreshold', field: 'Death Threshold', type: 'text' },
+
+	// Languages (names)
+	{ path: 'languages[0].name', field: 'Language A', type: 'text' },
+	{ path: 'languages[1].name', field: 'Language B', type: 'text' },
+	{ path: 'languages[2].name', field: 'Language C', type: 'text' },
+	{ path: 'languages[3].name', field: 'Language D', type: 'text' },
+	// Language mastery checkboxes
+	{ path: 'mastery.LanguageA.Limited', field: 'Mastery-Language-A-Limited', type: 'checkbox' },
+	{ path: 'mastery.LanguageA.Fluent', field: 'Mastery-Language-A-Fluent', type: 'checkbox' },
+	{ path: 'mastery.LanguageB.Limited', field: 'Mastery-Language-B-Limited', type: 'checkbox' },
+	{ path: 'mastery.LanguageB.Fluent', field: 'Mastery-Language-B-Fluent', type: 'checkbox' },
+	{ path: 'mastery.LanguageC.Limited', field: 'Mastery-Language-C-Limited', type: 'checkbox' },
+	{ path: 'mastery.LanguageC.Fluent', field: 'Mastery-Language-C-Fluent', type: 'checkbox' },
+	{ path: 'mastery.LanguageD.Limited', field: 'Mastery-Language-D-Limited', type: 'checkbox' },
+	{ path: 'mastery.LanguageD.Fluent', field: 'Mastery-Language-D-Fluent', type: 'checkbox' },
+
+	// Reduction checkboxes
+	{ path: 'reduction.physical', field: 'Physical-Damage-Reduction', type: 'checkbox' },
+	{ path: 'reduction.elemental', field: 'Elemantal-Damage-Reduction', type: 'checkbox' },
+	{ path: 'reduction.mental', field: 'Mental-Damage-Reduction', type: 'checkbox' },
+
+	// Exhaustion
+	{ path: "exhaustion['-1']", field: 'Exhaustion -1', type: 'checkbox' },
+	{ path: "exhaustion['-2']", field: 'Exhaustion -2', type: 'checkbox' },
+	{ path: "exhaustion['-3']", field: 'Exhaustion -3', type: 'checkbox' },
+	{ path: "exhaustion['-4']", field: 'Exhaustion -4', type: 'checkbox' },
+	{ path: "exhaustion['-5']", field: 'Exhaustion -5', type: 'checkbox' },
+
+	// Attacks (first row only for initial mapping)
+	{ path: 'attacks[0].name', field: 'Attack A', type: 'text' },
+	{ path: 'attacks[0].damage', field: 'Attack A Dmg', type: 'text' },
+	{ path: 'attacks[0].type', field: 'Attack A Type', type: 'text' },
+	{ path: 'attacks[0].notes', field: 'Attack A Notes', type: 'text' },
+
+	// Trades A–D numeric modifiers (primary fields on the sheet)
+	{ path: 'tradeAModifier', field: 'Trade A', type: 'text' },
+	{ path: 'tradeBModifier', field: 'Trade B', type: 'text' },
+	{ path: 'tradeCModifier', field: 'Trade C', type: 'text' },
+	{ path: 'tradeDModifier', field: 'Trade D', type: 'text' },
+	// Custom trade lines hold the labels/names
+	{ path: 'tradeA', field: 'Custom Trade A', type: 'text' },
+	{ path: 'tradeB', field: 'Custom Trade B', type: 'text' },
+	{ path: 'tradeC', field: 'Custom Trade C', type: 'text' },
+	{ path: 'tradeD', field: 'Custom Trade D', type: 'text' },
+
+	// Practical trade mastery checkboxes
+	{ path: 'mastery.TradeA.2', field: 'Mastery-Trade-A-2', type: 'checkbox' },
+	{ path: 'mastery.TradeA.4', field: 'Mastery-Trade-A-4', type: 'checkbox' },
+	{ path: 'mastery.TradeA.6', field: 'Mastery-Trade-A-6', type: 'checkbox' },
+	{ path: 'mastery.TradeA.8', field: 'Mastery-Trade-A-8', type: 'checkbox' },
+	{ path: 'mastery.TradeA.10', field: 'Mastery-Trade-A-10', type: 'checkbox' },
+	{ path: 'mastery.TradeB.2', field: 'Mastery-Trade-B-2', type: 'checkbox' },
+	{ path: 'mastery.TradeB.4', field: 'Mastery-Trade-B-4', type: 'checkbox' },
+	{ path: 'mastery.TradeB.6', field: 'Mastery-Trade-B-6', type: 'checkbox' },
+	{ path: 'mastery.TradeB.8', field: 'Mastery-Trade-B-8', type: 'checkbox' },
+	{ path: 'mastery.TradeB.10', field: 'Mastery-Trade-B-10', type: 'checkbox' },
+	{ path: 'mastery.TradeC.2', field: 'Mastery-Trade-C-2', type: 'checkbox' },
+	{ path: 'mastery.TradeC.4', field: 'Mastery-Trade-C-4', type: 'checkbox' },
+	{ path: 'mastery.TradeC.6', field: 'Mastery-Trade-C-6', type: 'checkbox' },
+	{ path: 'mastery.TradeC.8', field: 'Mastery-Trade-C-8', type: 'checkbox' },
+	{ path: 'mastery.TradeC.10', field: 'Mastery-Trade-C-10', type: 'checkbox' },
+	{ path: 'mastery.TradeD.2', field: 'Mastery-Trade-D-2', type: 'checkbox' },
+	{ path: 'mastery.TradeD.4', field: 'Mastery-Trade-D-4', type: 'checkbox' },
+	{ path: 'mastery.TradeD.6', field: 'Mastery-Trade-D-6', type: 'checkbox' },
+	{ path: 'mastery.TradeD.8', field: 'Mastery-Trade-D-8', type: 'checkbox' },
+	{ path: 'mastery.TradeD.10', field: 'Mastery-Trade-D-10', type: 'checkbox' }
+];
+
+

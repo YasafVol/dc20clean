@@ -94,6 +94,7 @@ Trait Choice UI (if describing trades)
 
 - Calculations/Provider Hooks
   - `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx` → in `useCharacterTrades()` compute per-attribute totals and return `bonuses`
+  - Persistence (Task 0): denormalized mastery is computed during completion and saved to `SavedCharacter` (`masteryLadders.practicalTrades`, `knowledgeTradeMastery`, `skillTotals`, and per-trade totals carried via mastery ladders). The PDF transformer prefers these fields with guarded fallback.
   - Knowledge hook remains unchanged
 
 - UI Components
@@ -114,7 +115,8 @@ Trait Choice UI (if describing trades)
 
 Saved Characters
 - No change to storage schema for `tradesData` (still `Record<string, number>` proficiency).
-- Multi-attribute is purely a data and presentation change; calculations read final attributes from the character and display multiple totals.
+- Denormalized fields are additive and optional: `skillTotals`, `masteryLadders`, `knowledgeTradeMastery` (used by UI/PDF when present).
+- Multi-attribute remains a data and presentation change for interactive UI; persisted denorm is used for export and eventual UI migration.
 
 Vehicles Consolidation (optional future)
 - If combining `Vehicles (Land)` and `Vehicles (Water)` into one entry, a save migration must remap IDs. Out of scope for this spec.

@@ -204,12 +204,12 @@ export const fieldMap_dc20_095: FieldMapItem[] = [
 	{ path: 'attacks[0].type', field: 'Attack A Type', type: 'text' },
 	{ path: 'attacks[0].notes', field: 'Attack A Notes', type: 'text' },
 
-	// Trades labels (prefer primary fields)
-	{ path: 'tradeA', field: 'Trade A', type: 'text' },
-	{ path: 'tradeB', field: 'Trade B', type: 'text' },
-	{ path: 'tradeC', field: 'Trade C', type: 'text' },
-	{ path: 'tradeD', field: 'Trade D', type: 'text' },
-	// Also fill custom trade fields for compatibility
+	// Trades A–D numeric modifiers (primary fields on the sheet)
+	{ path: 'tradeAModifier', field: 'Trade A', type: 'text' },
+	{ path: 'tradeBModifier', field: 'Trade B', type: 'text' },
+	{ path: 'tradeCModifier', field: 'Trade C', type: 'text' },
+	{ path: 'tradeDModifier', field: 'Trade D', type: 'text' },
+	// Custom trade lines hold the labels/names
 	{ path: 'tradeA', field: 'Custom Trade A', type: 'text' },
 	{ path: 'tradeB', field: 'Custom Trade B', type: 'text' },
 	{ path: 'tradeC', field: 'Custom Trade C', type: 'text' },

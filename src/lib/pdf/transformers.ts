@@ -425,10 +425,29 @@ export function transformCalculatedCharacterToPdfData(
   const religion = denorm.knowledgeTradeMastery.religion?.finalValue ?? 0;
 
   // Trades A–D labels from denorm practical picks
-  const tradeA = denorm.masteryLadders.practicalTrades.A?.label || '';
-  const tradeB = denorm.masteryLadders.practicalTrades.B?.label || '';
-  const tradeC = denorm.masteryLadders.practicalTrades.C?.label || '';
-  const tradeD = denorm.masteryLadders.practicalTrades.D?.label || '';
+  const practical = denorm.masteryLadders.practicalTrades;
+  const allPicks = [
+    practical.A && { slot: 'A', ...practical.A },
+    practical.B && { slot: 'B', ...practical.B },
+    practical.C && { slot: 'C', ...practical.C },
+    practical.D && { slot: 'D', ...practical.D }
+  ].filter(Boolean) as Array<{ slot: string; label: string; ladder: any; finalValue: number }>;
+  // Only include trades with ranked mastery (any ladder step true)
+  const hasAnyStep = (ladder: any) => !!(ladder?.['2'] || ladder?.['4'] || ladder?.['6'] || ladder?.['8'] || ladder?.['10']);
+  const rankedPicks = allPicks.filter((p) => hasAnyStep(p.ladder));
+
+  const pickLabel = (index: number) => rankedPicks[index]?.label || '';
+  const pickValue = (index: number) => rankedPicks[index]?.finalValue ?? undefined;
+  const pickLadder = (index: number) => rankedPicks[index]?.ladder || undefined;
+
+  const tradeA = pickLabel(0);
+  const tradeB = pickLabel(1);
+  const tradeC = pickLabel(2);
+  const tradeD = pickLabel(3);
+  const tradeAModifier = pickValue(0);
+  const tradeBModifier = pickValue(1);
+  const tradeCModifier = pickValue(2);
+  const tradeDModifier = pickValue(3);
   const customTradeA = '';
   const customTradeB = '';
   const customTradeC = '';
@@ -454,10 +473,10 @@ export function transformCalculatedCharacterToPdfData(
     Nature: denorm.masteryLadders.knowledgeTrades.nature || makeFive(),
     Occultism: denorm.masteryLadders.knowledgeTrades.occultism || makeFive(),
     Religion: denorm.masteryLadders.knowledgeTrades.religion || makeFive(),
-    TradeA: denorm.masteryLadders.practicalTrades.A?.ladder || makeFive(),
-    TradeB: denorm.masteryLadders.practicalTrades.B?.ladder || makeFive(),
-    TradeC: denorm.masteryLadders.practicalTrades.C?.ladder || makeFive(),
-    TradeD: denorm.masteryLadders.practicalTrades.D?.ladder || makeFive(),
+    TradeA: pickLadder(0) || makeFive(),
+    TradeB: pickLadder(1) || makeFive(),
+    TradeC: pickLadder(2) || makeFive(),
+    TradeD: pickLadder(3) || makeFive(),
     LanguageA: { Limited: !!denorm.languageMastery.A?.limited, Fluent: !!denorm.languageMastery.A?.fluent },
     LanguageB: { Limited: !!denorm.languageMastery.B?.limited, Fluent: !!denorm.languageMastery.B?.fluent },
     LanguageC: { Limited: !!denorm.languageMastery.C?.limited, Fluent: !!denorm.languageMastery.C?.fluent },
@@ -609,6 +628,10 @@ export function transformCalculatedCharacterToPdfData(
     tradeB,
     tradeC,
     tradeD,
+    tradeAModifier,
+    tradeBModifier,
+    tradeCModifier,
+    tradeDModifier,
     customTradeA,
     customTradeB,
     customTradeC,

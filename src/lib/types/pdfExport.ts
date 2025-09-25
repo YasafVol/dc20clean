@@ -202,6 +202,11 @@ export const PdfExportDataSchema = z.object({
 	tradeB: z.string(),
 	tradeC: z.string(),
 	tradeD: z.string(),
+  // Practical trade numeric modifiers (for PDF fields labeled Trade A–D)
+  tradeAModifier: z.number().optional(),
+  tradeBModifier: z.number().optional(),
+  tradeCModifier: z.number().optional(),
+  tradeDModifier: z.number().optional(),
 	customTradeA: z.string(),
 	customTradeB: z.string(),
 	customTradeC: z.string(),

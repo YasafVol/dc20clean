@@ -146,6 +146,7 @@ export function denormalizeMastery(input: DenormalizeInput): DenormalizeOutput {
 		if (KNOWLEDGE_TRADE_IDS.has(trade.id)) continue;
 		const rank = Number(tradesRanks?.[trade.id] ?? 0);
 		const masteryLevel = Math.max(0, rank * 2);
+		if (masteryLevel === 0) continue;
 		const governing = [trade.attributeAssociation];
 		const finalValue = computeFinalValue(governing as any, finalAttributes, masteryLevel);
 		practicalPool.push({ id: trade.id, name: trade.name, finalValue, ladder: buildLadder(masteryLevel) });

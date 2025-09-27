@@ -4,30 +4,59 @@ import { SectionWrapper, Header, Title, ToggleIcon, Content } from './Collapsibl
 type Props = {
   title: React.ReactNode;
   defaultExpanded?: boolean;
-  selected?: boolean; // when the title is selected
-  action?: React.ReactNode; // optional action button that might be another design-system component
+  expanded?: boolean; // Controlled mode for accordion behavior
+  onToggle?: (expanded: boolean) => void; // Callback for accordion behavior
+  selected?: boolean; // when the section is selected
+  action?: React.ReactNode; // optional action button shown only when expanded
   children?: React.ReactNode; // content rendered when expanded
   'aria-label'?: string;
 };
 
-export const CollapsibleSection: React.FC<Props> = ({ title, defaultExpanded = false, selected = false, action, children, 'aria-label': ariaLabel }) => {
-  const [expanded, setExpanded] = useState<boolean>(defaultExpanded);
-
-  const toggle = () => setExpanded((s) => !s);
+export const CollapsibleSection: React.FC<Props> = ({ 
+  title, 
+  defaultExpanded = false, 
+  expanded: controlledExpanded,
+  onToggle,
+  selected = false, 
+  action, 
+  children, 
+  'aria-label': ariaLabel 
+}) => {
+  const [internalExpanded, setInternalExpanded] = useState<boolean>(defaultExpanded);
+  
+  // Use controlled mode if expanded prop is provided, otherwise use internal state
+  const isExpanded = controlledExpanded !== undefined ? controlledExpanded : internalExpanded;
+  
+  const toggle = () => {
+    const newExpanded = !isExpanded;
+    
+    if (controlledExpanded !== undefined) {
+      // Controlled mode - call the callback
+      onToggle?.(newExpanded);
+    } else {
+      // Uncontrolled mode - update internal state
+      setInternalExpanded(newExpanded);
+    }
+  };
 
   return (
-    <SectionWrapper>
-      <Header onClick={toggle} aria-expanded={expanded} aria-label={ariaLabel ?? 'Toggle section'} $expanded={expanded}>
-  <Title $selected={selected} $expanded={expanded}>{title}</Title>
+    <SectionWrapper $selected={selected}>
+      <Header onClick={toggle} aria-expanded={isExpanded} aria-label={ariaLabel ?? 'Toggle section'} $expanded={isExpanded}>
+        <Title $selected={selected} $expanded={isExpanded}>{title}</Title>
 
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          {action}
-          <ToggleIcon aria-hidden>{expanded ? '▾' : '▸'}</ToggleIcon>
+          {/* Only show action when expanded */}
+          {isExpanded && action && (
+            <div onClick={(e) => e.stopPropagation()}>
+              {action}
+            </div>
+          )}
+          <ToggleIcon aria-hidden>{isExpanded ? '▾' : '▸'}</ToggleIcon>
         </div>
       </Header>
 
-      {expanded ? (
-        <Content $expanded={expanded} role="region" aria-hidden={false}>
+      {isExpanded ? (
+        <Content $expanded={isExpanded} role="region" aria-hidden={false}>
           {children}
         </Content>
       ) : null}

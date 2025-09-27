@@ -12,7 +12,8 @@ import {
 	StyledPageContainer,
 	StyledMainContent,
 	StyledContentFrame,
-	StyledStepperContainer
+	StyledStepperContainer,
+	StyledStepperHeader
 } from './CreateCharacterNG.styles';
 
 // Step components mapping
@@ -38,11 +39,13 @@ const CreateCharacterNGContent: React.FC = () => {
 
 	return (
 		<StyledPageContainer>
-			<StyledMainContent>
+			<StyledStepperHeader>
 				<StyledStepperContainer>
 					<CharacterCreationStepperContainer onStepChange={handleStepChange} />
 				</StyledStepperContainer>
-				
+			</StyledStepperHeader>
+			
+			<StyledMainContent>
 				<StyledContentFrame>
 					<CurrentStepComponent />
 				</StyledContentFrame>

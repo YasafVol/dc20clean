@@ -26,6 +26,10 @@ export const colorTokens = {
   backgroundSecondary: '#1f2937', // Secondary background
   backgroundOverlay: 'rgba(0, 0, 0, 0.9)', // Overlay backgrounds
   
+  // Scrollbar Colors
+  scrollThumb: '#B0B1D8',    // Light purple/blue scroll thumb
+  scrollBorder: '#1E1E1E',   // Dark gray scroll border
+  
   // Legacy design tokens (existing)
   sectionBorder: '#0C0C0C',
   titleSelected: '#823434',
@@ -60,6 +64,10 @@ export const cssVariables = {
   '--color-background-secondary': colorTokens.backgroundSecondary,
   '--color-background-overlay': colorTokens.backgroundOverlay,
   
+  // Scrollbar Colors
+  '--color-scroll-thumb': colorTokens.scrollThumb,
+  '--color-scroll-border': colorTokens.scrollBorder,
+  
   // Legacy colors
   '--color-section-border': colorTokens.sectionBorder,
   '--color-title-selected': colorTokens.titleSelected,
@@ -74,6 +82,36 @@ export const injectCSSVariables = () => {
   Object.entries(cssVariables).forEach(([property, value]) => {
     root.style.setProperty(property, value);
   });
+  
+  // Inject global scrollbar styles
+  const style = document.createElement('style');
+  style.textContent = `
+    /* Global scrollbar styling */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-scroll-thumb) transparent;
+    }
+    
+    *::-webkit-scrollbar {
+      width: 12px;
+    }
+    
+    *::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    *::-webkit-scrollbar-thumb {
+      background: var(--color-scroll-thumb);
+      border: 2px solid var(--color-scroll-border);
+      border-radius: 6px;
+    }
+    
+    *::-webkit-scrollbar-thumb:hover {
+      background: var(--color-scroll-thumb);
+      opacity: 0.8;
+    }
+  `;
+  document.head.appendChild(style);
 };
 
 // CSS variable accessor functions (for use in styled-components)
@@ -101,6 +139,10 @@ export const colors = {
   background: 'var(--color-background)',
   backgroundSecondary: 'var(--color-background-secondary)',
   backgroundOverlay: 'var(--color-background-overlay)',
+  
+  // Scrollbar Colors
+  scrollThumb: 'var(--color-scroll-thumb)',
+  scrollBorder: 'var(--color-scroll-border)',
   
   // Legacy colors (for backwards compatibility)
   sectionBorder: 'var(--color-section-border)',

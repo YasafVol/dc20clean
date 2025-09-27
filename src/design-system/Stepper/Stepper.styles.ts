@@ -4,8 +4,7 @@ import { stepperColors } from '../styles/stepperColors';
 export const StepperWrapper = styled.nav`
   display: flex;
   align-items: center;
-  width: 964px;
-  height: 106px;
+  width: 100%;
   background: ${stepperColors.background};
   padding: 18px 24px;
   border-radius: 16px;

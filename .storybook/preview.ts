@@ -1,4 +1,8 @@
 import type { Preview } from '@storybook/react-vite';
+import { injectCSSVariables } from '../src/design-system/styles/colors';
+
+// Inject CSS variables for Storybook
+injectCSSVariables();
 
 const preview: Preview = {
 	parameters: {

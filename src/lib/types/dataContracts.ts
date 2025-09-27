@@ -10,6 +10,23 @@ import type { EnhancedStatBreakdown } from './effectSystem';
 // Re-export necessary types from existing files
 export type { ManeuverData, SpellData, InventoryItemData } from '../../types/character';
 
+// Optional denormalized mastery structures (Task 0)
+export interface MasteryLadder {
+	'2': boolean;
+	'4': boolean;
+	'6': boolean;
+	'8': boolean;
+	'10': boolean;
+}
+
+export interface DenormalizedMasteryEntry {
+	governingAttributes: string[];
+	baseAttributeValues: { might: number; agility: number; charisma: number; intelligence: number };
+	masteryLevel: number; // rank × 2
+	masteryLadder: MasteryLadder;
+	finalValue: number; // max(allowed base attr) + masteryLevel
+}
+
 export interface CharacterState {
 	resources: {
 		current: {
@@ -104,6 +121,16 @@ export interface SavedCharacter {
 	finalGritPoints: number;
 	finalInitiativeBonus: number;
 
+	// Derived thresholds
+	finalPDHeavyThreshold?: number;
+	finalPDBrutalThreshold?: number;
+	finalADHeavyThreshold?: number;
+	finalADBrutalThreshold?: number;
+
+	// Bloodied values
+	bloodiedValue?: number; // ceil(HPMax / 2)
+	wellBloodiedValue?: number; // ceil(HPMax / 4)
+
 	// Combat stats with breakdowns
 	finalAttackSpellCheck: number;
 	finalMartialCheck: number; // max(Acrobatics, Athletics)
@@ -113,7 +140,40 @@ export interface SavedCharacter {
 	selectedFeatureChoices: Record<string, string>;
 	skillsData: Record<string, number>;
 	tradesData: Record<string, number>;
-	languagesData: string[];
+	// Languages can be either a list of names or a map of name -> { fluency }
+	languagesData: any;
+
+	// Precomputed values for PDF/UI consumption (no calculations in transformers/components)
+	// Optional for backward compatibility; FE should consume if present
+	// Totals per skill (finalValue)
+	skillTotals?: Record<string, number>; // e.g., { acrobatics: 4, athletics: 3, ... }
+	// Full denormalized mastery entries
+	skillMastery?: Record<string, DenormalizedMasteryEntry>;
+	knowledgeTradeMastery?: Record<
+		'arcana' | 'history' | 'nature' | 'occultism' | 'religion',
+		DenormalizedMasteryEntry
+	>;
+	// Lightweight ladders for easy consumption
+	masteryLadders?: {
+		skills?: Record<string, { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }>;
+		knowledgeTrades?: Record<
+			'arcana' | 'history' | 'nature' | 'occultism' | 'religion',
+			{ '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }
+		>;
+		practicalTrades?: {
+			A?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }; finalValue: number };
+			B?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }; finalValue: number };
+			C?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }; finalValue: number };
+			D?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }; finalValue: number };
+		};
+	};
+	// Fixed language mastery A–D derived from languagesData
+	languageMastery?: {
+		A?: { name: string; limited: boolean; fluent: boolean };
+		B?: { name: string; limited: boolean; fluent: boolean };
+		C?: { name: string; limited: boolean; fluent: boolean };
+		D?: { name: string; limited: boolean; fluent: boolean };
+	};
 	spells: any[]; // Will use proper SpellData once imported
 	maneuvers: any[]; // Will use proper ManeuverData once imported
 

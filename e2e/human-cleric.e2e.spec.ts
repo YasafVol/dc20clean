@@ -7,7 +7,7 @@ test.describe('Human Cleric E2E', () => {
 		await page.goto('/');
 		await page.getByRole('button', { name: /Create Character/i }).click();
 
-		// Step 1: Class & Features - Use data-testid
+		// Step 1: Class & Features - Use data-testid; ancestral give +2 ancestry points & Magic give +1 MP
 		await page.getByTestId('class-card-cleric').click();
 		await expect(page.getByText('Choose 2 Divine Domains')).toBeVisible();
 		await page
@@ -68,25 +68,16 @@ test.describe('Human Cleric E2E', () => {
 			await skillRow.getByRole('button', { name: `${level}`, exact: true }).click();
 		}
 
-		// The "Skill Expertise" trait allows raising one skill to level 2. We use this on Athletics.
-		// This happens without spending from the main point pool.
+		// The "Skill Expertise" trait adds +1 skill point and increases the mastery cap.
+		// We set two skills to 2: Athletics and Intimidation. Pool math: 5 base + INT(3) + Skill Expertise(+1) = 9 → convert 1 skill → 2 trade = 8 remaining.
 		await setSkillLevel('Athletics', 2);
+		await setSkillLevel('Intimidation', 2);
 
-		// Spend skill points. Base (5) + INT(3) + Cleric Knowledge(2) = 10 total
-		// Convert 1 skill → 2 trade, leaving 9 points to spend.
+		// Convert 1 skill → 2 trade, leaving 8 skill points to spend (as shown in the screenshot).
 		await page.getByRole('button', { name: /Convert 1 Skill.*2 Trade/i }).click();
 
-		// Spend the 9 points on 9 other skills.
-		const skillsToLevel = [
-			'Intimidation',
-			'Acrobatics',
-			'Insight',
-			'Investigation',
-			'Trickery',
-			'Stealth',
-			'Survival',
-			'Animal'
-		];
+		// Spend the remaining points: set these four skills to 1 (total spend: 2+2+(4×1) = 8).
+		const skillsToLevel = ['Acrobatics', 'Trickery', 'Stealth', 'Animal'];
 		for (const skill of skillsToLevel) {
 			await setSkillLevel(skill, 1);
 		}
@@ -103,15 +94,11 @@ test.describe('Human Cleric E2E', () => {
 			await tradeRow.getByRole('button', { name: `${level}`, exact: true }).click();
 		}
 
-		// Set trade levels: Alchemy to 2, others to 1
-		await setTradeLevel('Alchemy', 2);
-		const otherTrades = ['Blacksmithing', 'Calligraphy', 'Gaming'];
-		for (const trade of otherTrades) {
+		// Spend 4 available trade points (after converting 1 trade → 2 language): four trades to 1
+		const tradeSelections = ['Blacksmithing', 'Calligraphy', 'Gaming', 'Herbalism'];
+		for (const trade of tradeSelections) {
 			await setTradeLevel(trade, 1);
 		}
-		// Spend any remaining trade points
-		await setTradeLevel('Herbalism', 1);
-		await setTradeLevel('Navigation', 1);
 		await expect(page.getByText(/Trade Points:\s*\d+\s*\/\s*\d+\s*remaining/i)).toBeVisible();
 
 		// Languages - Use data-testid
@@ -231,22 +218,20 @@ test.describe('Human Cleric E2E', () => {
 		expect(saved.finalCharisma).toBe(0);
 		expect(saved.finalMoveSpeed).toBe(5);
 
+		// Expect skills to match the allocations in the screenshot
 		expect(saved.skillsData).toMatchObject({
 			athletics: 2,
-			intimidation: 1,
+			intimidation: 2,
 			acrobatics: 1,
-			insight: 1,
-			investigation: 1,
 			trickery: 1,
 			stealth: 1,
-			survival: 1,
 			animal: 1
 		});
 		expect(saved.tradesData).toMatchObject({
-			alchemy: 2,
 			blacksmithing: 1,
 			calligraphy: 1,
-			gaming: 1
+			gaming: 1,
+			herbalism: 1
 		});
 		expect(saved.languagesData).toMatchObject({
 			common: { fluency: 'fluent' },

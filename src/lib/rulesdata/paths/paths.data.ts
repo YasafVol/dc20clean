@@ -1,6 +1,6 @@
 // paths.data.ts
 
-import { CharacterPath } from './path.types';
+import { CharacterPath } from './paths.types';
 
 /**
  * An array containing the definitions for all available Character Paths.

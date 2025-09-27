@@ -1,0 +1,105 @@
+# DC20Clean – PDF Export System
+
+> Purpose
+>
+> Capture the architecture, scope, and acceptance criteria for exporting a calculated character sheet to the official DC20 0.9.5 fillable PDF. This document translates the planning spec in `docs/plannedSpecs/EXPORT_PDF.md` into a system overview aligned with existing docs.
+
+---
+
+## 1. Goal & Scope
+
+- Deliver an entirely client-side export flow that produces an editable PDF mirroring the 0.9.5 template.
+- Keep the PDF field mapping and DTO definitions versioned so we can evolve the sheet without breaking prior exports.
+- Minimize bundle impact through lazy loading and on-demand work.
+
+Out of scope (tracked as future ideas in Section 8): flattened exports toggle, performance metrics, server-side generation.
+
+---
+
+## 2. Systems & Touchpoints
+
+- **Character Calculation** — `src/lib/services/enhancedCharacterCalculator.ts` outputs `EnhancedCalculationResult`; this is the canonical source for values exported to the PDF.
+- **Transformation Layer** — new module `src/lib/pdf/transformers.ts` will map calculation results into a structured DTO that matches the PDF field list.
+- **PDF Field Map** — `src/lib/pdf/fieldMap.dc20-0.9.5.ts` maps DTO paths to PDF form field identifiers and checkbox on-values.
+- **PDF Filler** — `src/lib/pdf/fillPdf.ts` loads the template, applies the field map with `pdf-lib`, and returns a Blob (optionally flattened).
+- **UI Integration** — `src/routes/character-sheet/CharacterSheetClean.tsx` provides the primary entry point via an “Export PDF” CTA.
+
+---
+
+## 3. Data Contracts
+
+### 3.1 PdfExportData (DTO)
+
+- Defined in `src/lib/types/pdfExport.ts` with a Zod schema for runtime validation.
+- Mirrors the JSON shape in `src/lib/pdf/095/sheet.json`, capturing sections, repeated rows, checkbox state, and derived text.
+- Acts as the API between the transformer and filler; any changes must update both the type and field map.
+
+### 3.2 PDF Field Manifest
+
+- Script `scripts/listPdfFields.ts` enumerates form fields in `src/lib/pdf/095/DC20_Beta_0_9_5_(fillable)_Character_Sheet.pdf` using `pdf-lib`.
+- Output lives in `docs/systems/pdf-form-fields-v0.9.5.json` and is the authority for field names/on-values.
+
+---
+
+## 4. Runtime Flow
+
+1. **Trigger** — User clicks “Export PDF” in the character sheet UI.
+2. **Preparation** — UI gathers the current editable character, normalizes it with `convertToEnhancedBuildData`, and runs `calculateCharacterWithBreakdowns`.
+3. **Transformation** — `transformCalculatedCharacterToPdfData(characterResult)` produces a validated `PdfExportData` object.
+4. **Lazy Load** — UI dynamically imports `fillPdfFromData` (and `pdf-lib`) to avoid upfront bundle cost.
+5. **Fill & Save** — `fillPdfFromData` loads the template via `?url`, fills fields based on the map, optionally flattens, and returns a Blob for download.
+6. **Download** — UI uses `URL.createObjectURL` (or `file-saver`) to prompt the user with a sanitized filename (e.g., `Aela_Level_6_Ranger.pdf`).
+7. **Feedback** — UI surfaces success or error notifications, resetting loading state accordingly.
+
+---
+
+## 5. Dependencies & Tooling
+
+- `pdf-lib` — core dependency for reading/modifying form fields. Imported lazily so it does not inflate the main bundle.
+- Optional `file-saver` — parity with existing download flows; may fall back to native `URL.createObjectURL`.
+- Dev script `scripts/listPdfFields.ts` — ensures field identifiers stay in sync with template updates.
+
+---
+
+## 6. Implementation Checklist (Milestones)
+
+- **Milestone 0 – Foundation**
+  - Generate field manifest (`listPdfFields.ts`; commit output JSON).
+  - Add `PdfExportData` type + Zod schema (`src/lib/types/pdfExport.ts`).
+- **Milestone 1 – Client Export Core**
+  - Install `pdf-lib`; ensure lazy import inside the export flow.
+  - Create `fieldMap.dc20-0.9.5.ts`, `transformers.ts`, and `fillPdf.ts` modules.
+  - Implement `fillPdfFromData(data, { flatten? })` returning `Blob`.
+- **Milestone 2 – UI Integration**
+  - Add “Export PDF” button to `CharacterSheetClean.tsx` with loading state.
+  - Implement `handleExportClick` wiring calculator → transformer → filler → download.
+  - Provide success/error messaging and dynamic filename.
+- **Milestone 3 – Testing**
+  - Add Playwright spec `e2e/export.e2e.spec.ts` validating download and smoke-checking field values.
+  - Consider unit tests for `transformCalculatedCharacterToPdfData` covering key sections.
+
+---
+
+## 7. Acceptance Criteria
+
+- Exported PDF opens in Preview, Chrome, and Adobe Acrobat without corruption.
+- Editable export retains form fields; flattened variant removes editability.
+- Field values (text, numbers, checkboxes) match the calculated character data for representative test builds.
+- Export action communicates success/failure and never blocks the UI after completion.
+- E2E test downloads a non-empty file with the expected filename pattern.
+
+---
+
+## 8. Future Enhancements
+
+- **Flattened Toggle** — add UI control to call `fillPdfFromData` with `{ flatten: true }`.
+- **Performance Telemetry** — log timing metrics around load → fill → save for monitoring.
+- **Template Versioning** — support multiple template versions via namespaced field maps and DTOs.
+- **Server-Side Rendering** — consider Node-based rendering if browser constraints arise.
+
+---
+
+> Last updated: 2025-09-27
+> Maintainer: @DC20Clean-Team
+
+

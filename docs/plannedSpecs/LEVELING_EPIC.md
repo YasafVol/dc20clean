@@ -39,6 +39,8 @@ Based on the `repomix` file you provided and our previous discussions, I have re
 
 5.  **Finalization:** The completed character object saved to storage will accurately reflect all stats, features, and choices appropriate for its level.
 
+6.  **Verification checkpoints:** Human reviews are required after data migration (HR-1a/HR-1), post-calculator integration (HR-2), and once the Leveling Choices UI matches the wireframes (HR-2.5/HR-3).
+
 ---
 
 ### 3. Technical Architecture & Data Model Changes
@@ -156,23 +158,27 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M1.4**  | **(Types)** Update `class.schema.ts` with `LevelGains` and new `ClassLevel` interfaces.     | ✅ Done   | -              |
 | **M1.5**  | **(Data)** Standardize feature IDs in `classes-data/features/*.ts`; document naming rules. | ❌ To Do   | M1.2           |
 | **M1.6**  | **(Validation)** Add progression ↔ feature ID consistency check (script or unit test).     | ❌ To Do   | M1.5           |
-| **HR-1**  | **HUMAN REVIEW:** Confirm Milestone 1 changes are correct before proceeding.         | ⏳ Pending | M1.3           |
+| **HR-1a** | **HUMAN REVIEW:** Spot-check feature ID mapping before loader/schema migration.      | ⏳ Pending | M1.5           |
+| **HR-1**  | **HUMAN REVIEW:** Confirm Milestone 1 changes are correct before proceeding.         | ⏳ Pending | M1.6           |
 | **M2.1**  | **(Data)** Create Talent system files: `talent.types.ts`, `talents.data.ts`.         | ✅ Done   | HR-1           |
 | **M2.2**  | **(Data)** Create all class-specific talent files in `classes-data/talents/`.       | ✅ Done   | M2.1           |
 | **M2.3**  | **(Loader)** Create `talent.loader.ts` to aggregate all talent data.                   | ✅ Done   | M2.2           |
 | **M2.4**  | **(Engine)** Enhance `enhancedCharacterCalculator.ts` to aggregate stats by level.     | ❌ To Do   | HR-1           |
 | **M2.5**  | **(Service)** Implement `classProgressionResolver.ts` and expose via loaders.           | ❌ To Do   | M1.6           |
 | **M2.6**  | **(Engine)** Integrate resolver output into `calculateCharacterWithBreakdowns`.        | ❌ To Do   | M2.5           |
+| **M2.7**  | **(Persistence)** Update save/edit flows to store new level-up state fields.          | ❌ To Do   | M2.6           |
 | **UT-1**  | **(Test)** Write unit tests for the new aggregation logic in the calculator.         | ❌ To Do   | M2.4           |
 | **UT-2**  | **(Test)** Cover resolver (level > 1 feature unlocks, budget totals).                 | ❌ To Do   | M2.6           |
-| **HR-2**  | **HUMAN REVIEW:** Validate engine logic and data structures are sound.              | ⏳ Pending | UT-1           |
+| **UT-3**  | **(Test)** Verify persistence/edit flows serialize new level-up fields.              | ❌ To Do   | M2.7           |
+| **HR-2**  | **HUMAN REVIEW:** Validate engine logic, resolver output, and persistence wiring.   | ⏳ Pending | UT-2, UT-3     |
 | **M3.1**  | **(UI)** Add Level selection dropdown to `ClassSelector.tsx`.                            | ❌ To Do   | HR-2           |
 | **M3.2**  | **(UI)** Build the new `LevelingChoices.tsx` component.                                  | ❌ To Do   | M3.1           |
 | **M3.3**  | **(UI)** Modify `CharacterCreation.tsx` to conditionally render the new stage.         | ❌ To Do   | M3.2           |
 | **M3.4**  | **(UI)** Update subsequent stages to use the aggregated point totals.                      | ❌ To Do   | M3.3           |
 | **M3.5**  | **(State)** Persist resolver outputs (features, pending choices) in `characterContext`. | ❌ To Do   | M2.6           |
 | **M3.6**  | **(UI)** Render resolver-derived feature unlocks in creation & sheet views.           | ❌ To Do   | M3.5           |
-| **HR-3**  | **HUMAN REVIEW:** Confirm UI flow is intuitive and functional.                     | ⏳ Pending | M3.4           |
+| **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.6           |
+| **HR-3**  | **HUMAN REVIEW:** Confirm UI flow is intuitive and functional.                     | ⏳ Pending | M3.4, HR-2.5   |
 | **M4.1**  | **(E2E Test)** Create `levelup-wizard.e2e.spec.ts` to test a Level 5 Wizard creation.   | ❌ To Do   | HR-3           |
 | **M4.2**  | **(Manual Test)** Manually test character creation at levels 2 and 4.               | ❌ To Do   | M4.1           |
 | **M4.3**  | **(Documentation)** Update relevant `.md` system files with changes.                     | ❌ To Do   | M4.2           |

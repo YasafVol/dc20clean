@@ -154,7 +154,7 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | :-------- | :----------------------------------------------------------------------------------- | :------ | :------------- |
 | **M1.1**  | **(Script)** Create `scripts/refactor-tables.ts` to automate `json` to `ts` conversion.      | ✅ Done   | -              |
 | **M1.2**  | **(Manual)** Review generated `.progression.ts` files and replace placeholder feature IDs (through level 3). | ✅ Done   | M1.1           |
-| **M1.3**  | **(Refactor)** Update `class.loader.ts` to use new progression files (levels ≤ 3) and stage legacy cleanup. | 🚧 In Progress | M1.2           |
+| **M1.3**  | **(Refactor)** Update `class.loader.ts` to use new progression files (levels ≤ 3) and stage legacy cleanup. | ✅ Done   | M1.2           |
 | **M1.4**  | **(Types)** Update `class.schema.ts` with `LevelGains` and new `ClassLevel` interfaces.     | ✅ Done   | -              |
 | **M1.5**  | **(Data)** Standardize feature IDs in `classes-data/features/*.ts`; document naming rules. | ❌ To Do   | M1.2           |
 | **M1.6**  | **(Validation)** Add progression ↔ feature ID consistency check (script or unit test).     | ❌ To Do   | M1.5           |

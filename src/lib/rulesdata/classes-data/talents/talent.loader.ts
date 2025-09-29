@@ -2,7 +2,7 @@ import type { Talent } from '../talents/talent.types';
 import { generalTalents, multiclassTalents } from '../talents/talents.data';
 
 // Use Vite's import.meta.glob to dynamically import all class talent files
-const classTalentModules = import.meta.glob('../classes-data/talents/*.talents.ts', { eager: true });
+const classTalentModules = import.meta.glob('./*.talents.ts', { eager: true });
 
 // Extract the talent arrays from each module
 const classTalents: Talent[] = Object.values(classTalentModules).flatMap((module: any) => {

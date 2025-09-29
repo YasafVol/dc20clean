@@ -30,7 +30,6 @@ export const commanderClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
-			id: 'commander_martial_path',
 			featureName: 'Martial Path',
 			levelGained: 1,
 			description: 'You gain extensive combat training and martial prowess.',
@@ -66,7 +65,6 @@ export const commanderClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'commander_inspiring_presence',
 			featureName: 'Inspiring Presence',
 			levelGained: 1,
 			description: 'Whenever you spend SP while in Combat, you can restore HP to nearby allies.',
@@ -80,7 +78,6 @@ export const commanderClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'commander_commanders_call',
 			featureName: "Commander's Call",
 			levelGained: 1,
 			description: 'You can spend 1 AP and 1 SP to command a willing creature within 5 Spaces.',
@@ -123,7 +120,6 @@ export const commanderClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'commander_natural_leader',
 			featureName: 'Natural Leader',
 			levelGained: 1,
 			description:
@@ -135,7 +131,6 @@ export const commanderClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'commander_commanding_aura',
 			featureName: 'Commanding Aura',
 			levelGained: 2,
 			description: "You're surrounded by a 5 Space Aura that allows you to aid and support allies.",
@@ -176,7 +171,6 @@ export const commanderClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'commander_talent_level_2',
 			featureName: 'Talent',
 			levelGained: 2,
 			description:

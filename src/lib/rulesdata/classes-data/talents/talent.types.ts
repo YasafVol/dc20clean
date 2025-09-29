@@ -1,4 +1,4 @@
-import type { Effect } from '../schemas/character.schema';
+import type { Effect } from '../../schemas/character.schema';
 
 export type TalentCategory = 'General' | 'Class' | 'Multiclass';
 

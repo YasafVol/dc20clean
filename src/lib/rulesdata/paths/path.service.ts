@@ -1,6 +1,6 @@
 // path.service.ts
 
-import { CharacterPath, PathBenefits, PathId } from './path.types';
+import { PathBenefits, PathId } from './paths.types';
 import { CHARACTER_PATHS } from './paths.data';
 
 // A type defining the character's state for path progression.
@@ -54,38 +54,3 @@ export function calculateTotalPathBenefits(progressionState: PathProgressionStat
 
   return totalBenefits;
 }
-
-// --- EXAMPLE USAGE ---
-
-// Let's create a character's path progression state.
-// This character has spent 2 points in the Spellcaster Path and 1 in the Martial Path.
-const hybridCharacterProgression: PathProgressionState = {
-  spellcaster_path: 2,
-  martial_path: 1,
-};
-
-// Now, we use our service function to calculate the total benefits.
-const derivedBenefits = calculateTotalPathBenefits(hybridCharacterProgression);
-
-/*
-Expected Calculation:
-- From Spellcaster Path (Level 1 & 2):
-  - manaPoints: 2 + 2 = 4
-  - cantripsLearned: 1 + 1 = 2
-  - spellsLearned: 1 + 0 = 1
-- From Martial Path (Level 1):
-  - staminaPoints: 1
-  - maneuversLearned: 1
-  - techniquesLearned: 1
-
-The console output will be:
-{
-  staminaPoints: 1,
-  maneuversLearned: 1,
-  techniquesLearned: 1,
-  manaPoints: 4,
-  cantripsLearned: 2,
-  spellsLearned: 1
-}
-*/
-console.log(derivedBenefits);

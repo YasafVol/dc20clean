@@ -15,7 +15,9 @@ export const sorcererProgression: any[] = [
     "gainedTechniquesKnown": 0,
     "gains": {
       "classFeatures": [
-        "placeholder_lvl_1_features"
+        "sorcerer_innate_power",
+        "sorcerer_overload_magic",
+        "sorcerer_sorcery_spell"
       ]
     }
   },
@@ -32,7 +34,8 @@ export const sorcererProgression: any[] = [
       "talents": 1,
       "pathPoints": 1,
       "classFeatures": [
-        "placeholder_class_feature"
+        "sorcerer_meta_magic",
+        "sorcerer_talent_level_2"
       ]
     }
   },

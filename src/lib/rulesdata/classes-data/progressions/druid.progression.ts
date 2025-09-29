@@ -15,7 +15,10 @@ export const druidProgression: any[] = [
     "gainedTechniquesKnown": 0,
     "gains": {
       "classFeatures": [
-        "placeholder_lvl_1_features"
+        "druid_spellcasting_path",
+        "druid_domain",
+        "druid_wild_form",
+        "druid_wild_speech"
       ]
     }
   },
@@ -32,7 +35,8 @@ export const druidProgression: any[] = [
       "talents": 1,
       "pathPoints": 1,
       "classFeatures": [
-        "placeholder_class_feature"
+        "druid_natures_torrent",
+        "druid_talent_level_2"
       ]
     }
   },

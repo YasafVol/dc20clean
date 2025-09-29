@@ -15,7 +15,10 @@ export const bardProgression: any[] = [
     "gainedTechniquesKnown": 0,
     "gains": {
       "classFeatures": [
-        "placeholder_lvl_1_features"
+        "bard_spellcasting_path",
+        "bard_font_of_inspiration",
+        "bard_remarkable_repertoire",
+        "bard_crowd_pleaser"
       ]
     }
   },
@@ -32,7 +35,8 @@ export const bardProgression: any[] = [
       "talents": 1,
       "pathPoints": 1,
       "classFeatures": [
-        "placeholder_class_feature"
+        "bard_bardic_performance",
+        "bard_talent_level_2"
       ]
     }
   },

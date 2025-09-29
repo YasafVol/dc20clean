@@ -15,7 +15,10 @@ export const barbarianProgression: any[] = [
     "gainedTechniquesKnown": 0,
     "gains": {
       "classFeatures": [
-        "placeholder_lvl_1_features"
+        "barbarian_martial_path",
+        "barbarian_rage",
+        "barbarian_berserker",
+        "barbarian_shattering_force"
       ]
     }
   },
@@ -32,7 +35,8 @@ export const barbarianProgression: any[] = [
       "talents": 1,
       "pathPoints": 1,
       "classFeatures": [
-        "placeholder_class_feature"
+        "barbarian_battlecry",
+        "barbarian_level_2_talent"
       ]
     }
   },

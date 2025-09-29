@@ -15,7 +15,10 @@ export const wizardProgression: any[] = [
     "gainedTechniquesKnown": 0,
     "gains": {
       "classFeatures": [
-        "placeholder_lvl_1_features"
+        "wizard_spellcasting_path",
+        "wizard_spell_school_initiate",
+        "wizard_arcane_sigil",
+        "wizard_ritual_caster"
       ]
     }
   },
@@ -32,7 +35,8 @@ export const wizardProgression: any[] = [
       "talents": 1,
       "pathPoints": 1,
       "classFeatures": [
-        "placeholder_class_feature"
+        "wizard_prepared_spell",
+        "wizard_talent_level_2"
       ]
     }
   },

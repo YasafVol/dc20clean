@@ -24,6 +24,7 @@ export const bardClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
+			id: 'bard_spellcasting_path',
 			featureName: 'Spellcasting Path',
 			levelGained: 1,
 			description: 'You gain the ability to cast spells from multiple schools.',
@@ -33,6 +34,7 @@ export const bardClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'bard_font_of_inspiration',
 			featureName: 'Font of Inspiration',
 			levelGained: 1,
 			description: 'You are an ever present source of aid for your allies.',
@@ -64,6 +66,7 @@ export const bardClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'bard_remarkable_repertoire',
 			featureName: 'Remarkable Repertoire',
 			levelGained: 1,
 			description: "You've picked up a few tricks along your travels.",
@@ -97,6 +100,7 @@ export const bardClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'bard_crowd_pleaser',
 			featureName: 'Crowd Pleaser',
 			levelGained: 1,
 			description:
@@ -111,6 +115,7 @@ export const bardClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'bard_bardic_performance',
 			featureName: 'Bardic Performance',
 			levelGained: 2,
 			description:
@@ -174,6 +179,7 @@ export const bardClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'bard_talent_level_2',
 			featureName: 'Talent',
 			levelGained: 2,
 			description:

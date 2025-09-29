@@ -15,7 +15,10 @@ export const championProgression: any[] = [
     "gainedTechniquesKnown": 0,
     "gains": {
       "classFeatures": [
-        "placeholder_lvl_1_features"
+        "champion_martial_path",
+        "champion_master_at_arms",
+        "champion_fighting_spirit",
+        "champion_know_your_enemy"
       ]
     }
   },
@@ -32,7 +35,7 @@ export const championProgression: any[] = [
       "talents": 1,
       "pathPoints": 1,
       "classFeatures": [
-        "placeholder_class_feature"
+        "champion_adaptive_tactics"
       ]
     }
   },

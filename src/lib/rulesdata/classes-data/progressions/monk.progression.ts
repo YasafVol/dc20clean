@@ -15,7 +15,8 @@ export const monkProgression: any[] = [
     "gainedTechniquesKnown": 0,
     "gains": {
       "classFeatures": [
-        "placeholder_lvl_1_features"
+        "monk_training",
+        "monk_stance"
       ]
     }
   },
@@ -32,7 +33,7 @@ export const monkProgression: any[] = [
       "talents": 1,
       "pathPoints": 1,
       "classFeatures": [
-        "placeholder_class_feature"
+        "monk_talent_level_2"
       ]
     }
   },

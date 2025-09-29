@@ -15,7 +15,12 @@ export const psionProgression: any[] = [
     "gainedTechniquesKnown": 0,
     "gains": {
       "classFeatures": [
-        "placeholder_lvl_1_features"
+        "psion_spellcasting_path",
+        "psion_stamina",
+        "psion_psionic_mind",
+        "psion_telekinesis",
+        "psion_telekinetic_grapple",
+        "psion_telepathy"
       ]
     }
   },
@@ -32,7 +37,10 @@ export const psionProgression: any[] = [
       "talents": 1,
       "pathPoints": 1,
       "classFeatures": [
-        "placeholder_class_feature"
+        "psion_mind_sense",
+        "psion_invade_mind",
+        "psion_psionic_resolve",
+        "psion_talent_level_2"
       ]
     }
   },

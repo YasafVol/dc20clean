@@ -30,6 +30,7 @@ export const championClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
+			id: 'champion_martial_path',
 			featureName: 'Martial Path',
 			levelGained: 1,
 			description: 'You gain extensive combat training.',
@@ -50,6 +51,7 @@ export const championClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'champion_master_at_arms',
 			featureName: 'Master-at-Arms',
 			levelGained: 1,
 			description: 'Your training in warfare has granted you extensive weapon mastery.',
@@ -87,6 +89,7 @@ export const championClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'champion_fighting_spirit',
 			featureName: 'Fighting Spirit',
 			levelGained: 1,
 			description: 'You stand ready for Combat at any moment.',
@@ -119,6 +122,7 @@ export const championClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'champion_know_your_enemy',
 			featureName: 'Know Your Enemy',
 			levelGained: 1,
 			description:
@@ -134,6 +138,7 @@ export const championClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'champion_adaptive_tactics',
 			featureName: 'Adaptive Tactics',
 			levelGained: 2,
 			description:

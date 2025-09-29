@@ -15,7 +15,9 @@ export const hunterProgression: any[] = [
     "gainedTechniquesKnown": 0,
     "gains": {
       "classFeatures": [
-        "placeholder_lvl_1_features"
+        "hunter_martial_path",
+        "hunter_mark",
+        "hunter_favored_terrain"
       ]
     }
   },
@@ -32,7 +34,8 @@ export const hunterProgression: any[] = [
       "talents": 1,
       "pathPoints": 1,
       "classFeatures": [
-        "placeholder_class_feature"
+        "hunter_strike",
+        "hunter_talent_level_2"
       ]
     }
   },

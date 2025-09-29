@@ -25,6 +25,7 @@ export const barbarianClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
+			id: 'barbarian_martial_path',
 			featureName: 'Martial Path',
 			levelGained: 1,
 			description: 'You gain combat training and martial prowess.',
@@ -66,6 +67,7 @@ export const barbarianClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'barbarian_rage',
 			featureName: 'Rage',
 			levelGained: 1,
 			description: 'During Combat, you can spend 1 AP and 1 SP to enter a Rage for 1 minute.',
@@ -79,6 +81,7 @@ export const barbarianClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'barbarian_berserker',
 			featureName: 'Berserker',
 			levelGained: 1,
 			description: 'Your primal savagery grants you the following benefits:',
@@ -116,6 +119,7 @@ export const barbarianClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'barbarian_shattering_force',
 			featureName: 'Shattering Force',
 			levelGained: 1,
 			description:
@@ -130,6 +134,7 @@ export const barbarianClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'barbarian_battlecry',
 			featureName: 'Battlecry',
 			levelGained: 2,
 			description: 'You can spend 1 AP and 1 SP to release a shout of your choice.',
@@ -186,6 +191,7 @@ export const barbarianClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'barbarian_level_2_talent',
 			featureName: 'Talent',
 			levelGained: 2,
 			description:
@@ -199,6 +205,7 @@ export const barbarianClass: ClassDefinition = {
 			description: 'Harness the power of the elements in your rage.',
 			features: [
 				{
+					id: 'barbarian_elemental_fury_raging_elements',
 					featureName: 'Raging Elements',
 					levelGained: 3,
 					description: 'You can surround yourself with the elements while raging.',
@@ -320,6 +327,7 @@ export const barbarianClass: ClassDefinition = {
 					]
 				},
 				{
+					id: 'barbarian_elemental_fury_elemental_affinity',
 					featureName: 'Elemental Affinity',
 					levelGained: 3,
 					description: 'You are infused with the power of your Element.',
@@ -340,6 +348,7 @@ export const barbarianClass: ClassDefinition = {
 			description: 'Call upon ancestral spirits to aid you in battle.',
 			features: [
 				{
+					id: 'barbarian_spirit_guardian_ancestral_guardian',
 					featureName: 'Ancestral Guardian',
 					levelGained: 3,
 					description: 'Bestowed Protection and Spiritual Aura while Raging.',
@@ -379,6 +388,7 @@ export const barbarianClass: ClassDefinition = {
 					]
 				},
 				{
+					id: 'barbarian_spirit_guardian_ancestral_knowledge',
 					featureName: 'Ancestral Knowledge',
 					levelGained: 3,
 					description:

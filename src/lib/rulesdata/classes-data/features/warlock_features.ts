@@ -21,6 +21,7 @@ export const warlockClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
+			id: 'warlock_contract',
 			featureName: 'Warlock Contract',
 			levelGained: 1,
 			description:
@@ -54,6 +55,7 @@ export const warlockClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'warlock_pact_boon',
 			featureName: 'Pact Boon',
 			levelGained: 1,
 			description:
@@ -137,6 +139,7 @@ export const warlockClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'warlock_life_tap',
 			featureName: 'Life Tap',
 			levelGained: 2,
 			description:
@@ -151,6 +154,7 @@ export const warlockClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'warlock_talent_level_2',
 			featureName: 'Talent',
 			levelGained: 2,
 			description:

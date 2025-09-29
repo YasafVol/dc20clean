@@ -15,7 +15,8 @@ export const warlockProgression: any[] = [
     "gainedTechniquesKnown": 0,
     "gains": {
       "classFeatures": [
-        "placeholder_lvl_1_features"
+        "warlock_contract",
+        "warlock_pact_boon"
       ]
     }
   },
@@ -32,7 +33,8 @@ export const warlockProgression: any[] = [
       "talents": 1,
       "pathPoints": 1,
       "classFeatures": [
-        "placeholder_class_feature"
+        "warlock_life_tap",
+        "warlock_talent_level_2"
       ]
     }
   },

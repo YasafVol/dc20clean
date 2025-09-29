@@ -24,12 +24,14 @@ export const wizardClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
+			id: 'wizard_spellcasting_path',
 			featureName: 'Spellcasting Path',
 			levelGained: 1,
 			description: 'You gain the ability to cast arcane spells.',
 			effects: [{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }]
 		},
 		{
+			id: 'wizard_spell_school_initiate',
 			featureName: 'Spell School Initiate',
 			levelGained: 1,
 			description: 'You have completed training in a specialized School of Magic.',
@@ -100,6 +102,7 @@ export const wizardClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'wizard_arcane_sigil',
 			featureName: 'Arcane Sigil',
 			levelGained: 1,
 			description:
@@ -114,6 +117,7 @@ export const wizardClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'wizard_ritual_caster',
 			featureName: 'Ritual Caster',
 			levelGained: 1,
 			description:
@@ -129,6 +133,7 @@ export const wizardClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'wizard_prepared_spell',
 			featureName: 'Prepared Spell',
 			levelGained: 2,
 			description:
@@ -141,6 +146,14 @@ export const wizardClass: ClassDefinition = {
 						'Choose 1 Prepared Spell per Long Rest: Mana Limit Break (+1 to Spend Limit once per Long Rest, regain on Initiative) and Rehearsed Casting (opponents have DisADV in Spell Duels).'
 				}
 			]
+		},
+		{
+			id: 'wizard_talent_level_2',
+			featureName: 'Talent',
+			levelGained: 2,
+			description:
+				'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
+			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
 		}
 	],
 	subclasses: [

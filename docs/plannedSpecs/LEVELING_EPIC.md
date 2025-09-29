@@ -153,7 +153,7 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | Ticket ID | Task Description                                                                     | Status  | Dependencies   |
 | :-------- | :----------------------------------------------------------------------------------- | :------ | :------------- |
 | **M1.1**  | **(Script)** Create `scripts/refactor-tables.ts` to automate `json` to `ts` conversion.      | ✅ Done   | -              |
-| **M1.2**  | **(Manual)** Review generated `.progression.ts` files and replace placeholder feature IDs (through level 3). | 🚧 In Progress | M1.1           |
+| **M1.2**  | **(Manual)** Review generated `.progression.ts` files and replace placeholder feature IDs (through level 3). | ✅ Done   | M1.1           |
 | **M1.3**  | **(Refactor)** Update `class.loader.ts` to use new progression files (levels ≤ 3) and stage legacy cleanup. | 🚧 In Progress | M1.2           |
 | **M1.4**  | **(Types)** Update `class.schema.ts` with `LevelGains` and new `ClassLevel` interfaces.     | ✅ Done   | -              |
 | **M1.5**  | **(Data)** Standardize feature IDs in `classes-data/features/*.ts`; document naming rules. | ❌ To Do   | M1.2           |
@@ -199,8 +199,9 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 
 ### 7. Current Review Findings (September 26, 2025)
 
-*   **Paths module compile failure:** `paths.data.ts` and `path.service.ts` import from `./path.types`, but the file is named `paths.types.ts`. Rename the file or update the imports so CI/Linux builds succeed.
-*   **Talent schema import mismatch:** `talent.types.ts` references `../schemas/character.schema`, which does not exist. Point the import to `../../schemas/character.schema` to keep builds passing.
-*   **Talent loader glob bug:** `talent.loader.ts` uses `../classes-data/talents/*.talents.ts`, resulting in an empty set because it resolves to `classes-data/classes-data`. Adjust the glob (e.g., `./*.talents.ts`) so class talents load correctly.
-*   **Unwanted runtime side effects:** `path.service.ts` includes top-level sample code with `console.log`. Remove or guard this demo code to prevent noise in production builds and tests.
+*   **Paths module compile failure:** `paths.data.ts` and `path.service.ts` import from `./path.types`, but the file is named `paths.types.ts`. Rename the file or update the imports so CI/Linux builds succeed. ✅ Resolved September 29, 2025.
+*   **Talent schema import mismatch:** `talent.types.ts` references `../schemas/character.schema`, which does not exist. Point the import to `../../schemas/character.schema` to keep builds passing. ✅ Resolved September 29, 2025.
+*   **Talent loader glob bug:** `talent.loader.ts` uses `../classes-data/talents/*.talents.ts`, resulting in an empty set because it resolves to `classes-data/classes-data`. Adjust the glob (e.g., `./*.talents.ts`) so class talents load correctly. ✅ Resolved September 29, 2025.
+*   **Unwanted runtime side effects:** `path.service.ts` includes top-level sample code with `console.log`. Remove or guard this demo code to prevent noise in production builds and tests. ✅ Resolved September 29, 2025.
+*   **Progression placeholder cleanup:** Levels 1–2 for all base classes now reference real feature IDs. Higher-level placeholders remain until new data exists. ✅ Updated September 29, 2025.
 *   **Aurora Progress Log (Sep 28, 2025 @ 12:20):** M1.2 feature ID audit in progress through level 3; higher-level placeholders deferred until data exists.

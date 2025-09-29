@@ -15,7 +15,10 @@ export const commanderProgression: any[] = [
     "gainedTechniquesKnown": 0,
     "gains": {
       "classFeatures": [
-        "placeholder_lvl_1_features"
+        "commander_martial_path",
+        "commander_inspiring_presence",
+        "commander_commanders_call",
+        "commander_natural_leader"
       ]
     }
   },
@@ -32,7 +35,8 @@ export const commanderProgression: any[] = [
       "talents": 1,
       "pathPoints": 1,
       "classFeatures": [
-        "placeholder_class_feature"
+        "commander_commanding_aura",
+        "commander_talent_level_2"
       ]
     }
   },

@@ -15,7 +15,7 @@ export const spellbladeProgression: any[] = [
     "gainedTechniquesKnown": 0,
     "gains": {
       "classFeatures": [
-        "placeholder_lvl_1_features"
+        "spellblade_fighting_style"
       ]
     }
   },
@@ -32,7 +32,8 @@ export const spellbladeProgression: any[] = [
       "talents": 1,
       "pathPoints": 1,
       "classFeatures": [
-        "placeholder_class_feature"
+        "spellblade_spellstrike",
+        "arcane_weapon"
       ]
     }
   },

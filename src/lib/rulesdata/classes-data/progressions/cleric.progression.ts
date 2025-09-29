@@ -15,7 +15,11 @@ export const clericProgression: any[] = [
     "gainedTechniquesKnown": 0,
     "gains": {
       "classFeatures": [
-        "placeholder_lvl_1_features"
+        "cleric_spellcasting_path",
+        "cleric_order",
+        "cleric_divine_damage_expansion",
+        "cleric_divine_blessing",
+        "cleric_divine_omen"
       ]
     }
   },
@@ -32,7 +36,8 @@ export const clericProgression: any[] = [
       "talents": 1,
       "pathPoints": 1,
       "classFeatures": [
-        "placeholder_class_feature"
+        "cleric_channel_divinity",
+        "cleric_talent_level_2"
       ]
     }
   },

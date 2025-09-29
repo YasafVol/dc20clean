@@ -30,6 +30,7 @@ export const hunterClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
+			id: 'hunter_martial_path',
 			featureName: 'Martial Path',
 			levelGained: 1,
 			description: 'You gain training in martial combat.',
@@ -45,6 +46,7 @@ export const hunterClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'hunter_mark',
 			featureName: "Hunter's Mark",
 			levelGained: 1,
 			description:
@@ -59,6 +61,7 @@ export const hunterClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'hunter_favored_terrain',
 			featureName: 'Favored Terrain',
 			levelGained: 1,
 			description:
@@ -224,6 +227,7 @@ export const hunterClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'hunter_strike',
 			featureName: "Hunter's Strike",
 			levelGained: 2,
 			description:
@@ -236,6 +240,14 @@ export const hunterClass: ClassDefinition = {
 						"Against Hunter's Mark target: spend 1 SP for +1d8 damage (+2d8 Heavy Hit, +3d8 Critical Hit)."
 				}
 			]
+		},
+		{
+			id: 'hunter_talent_level_2',
+			featureName: 'Talent',
+			levelGained: 2,
+			description:
+				'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
+			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
 		},
 		{
 			featureName: 'Bestiary',

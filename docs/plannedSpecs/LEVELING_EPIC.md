@@ -13,15 +13,15 @@ Based on the `repomix` file you provided and our previous discussions, I have re
 
 ### 1. Project Charter & Vision
 
-**1.1. Goal:** To enhance the character creation wizard to allow users to create a new character at any level from 1 to 5, ensuring all rules, features, and choice-based progression are correctly applied and validated.
+**1.1. Goal:** To enhance the character creation wizard to allow users to create a new character at any level from 1 to 3, ensuring all rules, features, and choice-based progression are correctly applied and validated.
 
-**1.2. Core Value Proposition:** To provide a seamless, intuitive, and rules-accurate character creation experience for any level, removing the need for manual level-by-level progression and complex bookkeeping. The system will be the single source of truth for character creation, from a Level 1 adventurer to a Level 5 veteran.
+**1.2. Core Value Proposition:** To provide a seamless, intuitive, and rules-accurate character creation experience for any level, removing the need for manual level-by-level progression and complex bookkeeping. The system will be the single source of truth for character creation, from a Level 1 adventurer to a Level 3 veteran, with future milestones extending beyond once data exists.
 
 ---
 
 ### 2. Core Functional Requirements
 
-1.  **Level Selection:** The first screen of the character creator (`Class & Features`) will include a dropdown menu allowing the user to select a starting level from 1 to 5. The default will be Level 1.
+1.  **Level Selection:** The first screen of the character creator (`Class & Features`) will include a dropdown menu allowing the user to select a starting level from 1 to 3. The default will be Level 1.
 
 2.  **Stat & Choice Aggregation:** The application's calculation engine (`enhancedCharacterCalculator.ts`) will read the character's selected class and target level. It will then aggregate all stat points, features, and choices (Talents, Path Points, etc.) granted from Level 1 up to the selected level, based on the class's progression table.
 
@@ -88,7 +88,7 @@ Based on the `repomix` file you provided and our previous discussions, I have re
     *   Audit `src/lib/rulesdata/classes-data/features/*.ts` to ensure every `coreFeatures` and subclass `features` entry exports a unique `id` alongside `featureName` and `levelGained`.
     *   Document the ID convention (e.g., `wizard_spell_school_initiate_1`) in `docs/systems/LEVELING_SYSTEM.MD` so future features remain consistent.
 *   **Refine per-level gains**
-    *   Replace `placeholder_*` values in `src/lib/rulesdata/classes-data/progressions/*.progression.ts` with the real feature IDs from the feature catalog.
+    *   Replace `placeholder_*` values in `src/lib/rulesdata/classes-data/progressions/*.progression.ts` with the real feature IDs from the feature catalog for levels 1–2, matching the entries defined in the corresponding `*_features` files. Class features beyond level 2 do not yet exist, so any `placeholder_class_feature` entries at higher levels should remain until new feature data is authored.
     *   Keep the progression files “dumb”: numeric budget deltas plus `featureUnlocks: string[]` and flags such as `subclassFeatureChoice`—no repeated descriptions.
     *   Add a lightweight validator (unit test or script) that cross-checks every ID referenced in progression files against the feature definitions.
 *   **Create a resolver helper**
@@ -153,8 +153,8 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | Ticket ID | Task Description                                                                     | Status  | Dependencies   |
 | :-------- | :----------------------------------------------------------------------------------- | :------ | :------------- |
 | **M1.1**  | **(Script)** Create `scripts/refactor-tables.ts` to automate `json` to `ts` conversion.      | ✅ Done   | -              |
-| **M1.2**  | **(Manual)** Review generated `.progression.ts` files and replace placeholder feature IDs. | ❌ **To Do** | M1.1           |
-| **M1.3**  | **(Refactor)** Update `class.loader.ts` to use new progression files; delete old `tables/`. | ❌ To Do   | M1.2           |
+| **M1.2**  | **(Manual)** Review generated `.progression.ts` files and replace placeholder feature IDs (through level 3). | 🚧 In Progress | M1.1           |
+| **M1.3**  | **(Refactor)** Update `class.loader.ts` to use new progression files (levels ≤ 3) and stage legacy cleanup. | 🚧 In Progress | M1.2           |
 | **M1.4**  | **(Types)** Update `class.schema.ts` with `LevelGains` and new `ClassLevel` interfaces.     | ✅ Done   | -              |
 | **M1.5**  | **(Data)** Standardize feature IDs in `classes-data/features/*.ts`; document naming rules. | ❌ To Do   | M1.2           |
 | **M1.6**  | **(Validation)** Add progression ↔ feature ID consistency check (script or unit test).     | ❌ To Do   | M1.5           |
@@ -179,15 +179,15 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M3.6**  | **(UI)** Render resolver-derived feature unlocks in creation & sheet views.           | ❌ To Do   | M3.5           |
 | **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.6           |
 | **HR-3**  | **HUMAN REVIEW:** Confirm UI flow is intuitive and functional.                     | ⏳ Pending | M3.4, HR-2.5   |
-| **M4.1**  | **(E2E Test)** Create `levelup-wizard.e2e.spec.ts` to test a Level 5 Wizard creation.   | ❌ To Do   | HR-3           |
-| **M4.2**  | **(Manual Test)** Manually test character creation at levels 2 and 4.               | ❌ To Do   | M4.1           |
+| **M4.1**  | **(E2E Test)** Create `levelup-wizard.e2e.spec.ts` to test a Level 3 Wizard creation.   | ❌ To Do   | HR-3           |
+| **M4.2**  | **(Manual Test)** Manually test character creation at levels 2 and 3.               | ❌ To Do   | M4.1           |
 | **M4.3**  | **(Documentation)** Update relevant `.md` system files with changes.                     | ❌ To Do   | M4.2           |
 
 ---
 
 ### 6. Acceptance Criteria (Definition of Done)
 
-*   A user can successfully create a valid Level 1-5 character of any class.
+*   A user can successfully create a valid Level 1-3 character of any class.
 *   The `enhancedCharacterCalculator` correctly calculates and provides the total budgets for all points and choices for the selected level.
 *   The "Leveling Choices" stage appears only when `level > 1`, renders budgets/choices from the resolver, and enforces completion rules (budgets zero, choices resolved).
 *   All subsequent stages correctly use the aggregated point totals and unlocked features stored in `characterContext`.
@@ -203,3 +203,4 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 *   **Talent schema import mismatch:** `talent.types.ts` references `../schemas/character.schema`, which does not exist. Point the import to `../../schemas/character.schema` to keep builds passing.
 *   **Talent loader glob bug:** `talent.loader.ts` uses `../classes-data/talents/*.talents.ts`, resulting in an empty set because it resolves to `classes-data/classes-data`. Adjust the glob (e.g., `./*.talents.ts`) so class talents load correctly.
 *   **Unwanted runtime side effects:** `path.service.ts` includes top-level sample code with `console.log`. Remove or guard this demo code to prevent noise in production builds and tests.
+*   **Aurora Progress Log (Sep 28, 2025 @ 12:20):** M1.2 feature ID audit in progress through level 3; higher-level placeholders deferred until data exists.

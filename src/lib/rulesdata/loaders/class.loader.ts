@@ -74,6 +74,17 @@ for (const [filePath, module] of Object.entries(progressionModules)) {
 	const key = match[1];
 	const exportName = `${key}Progression`;
 	const progression = (module as Record<string, unknown>)[exportName];
+	
+	if (key === 'barbarian') {
+		console.log('🔍 Loading barbarian progression:', {
+			key,
+			exportName,
+			hasProgression: !!progression,
+			isArray: Array.isArray(progression),
+			level2: Array.isArray(progression) ? progression[1] : null
+		});
+	}
+	
 	if (Array.isArray(progression)) {
 		progressionDataByKey[key] = progression as ProgressionLevel[];
 	}

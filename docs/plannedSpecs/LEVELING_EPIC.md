@@ -164,13 +164,13 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M2.2**  | **(Data)** Create all class-specific talent files in `classes-data/talents/`.       | ✅ Done   | M2.1           |
 | **M2.3**  | **(Loader)** Create `talent.loader.ts` to aggregate all talent data.                   | ✅ Done   | M2.2           |
 | **M2.4**  | **(Engine)** Enhance `enhancedCharacterCalculator.ts` to aggregate stats by level.     | ✅ Done   | HR-1           |
-| **M2.5**  | **(Service)** Implement `classProgressionResolver.ts` and expose via loaders.           | ❌ To Do   | M1.6           |
-| **M2.6**  | **(Engine)** Integrate resolver output into `calculateCharacterWithBreakdowns`.        | ❌ To Do   | M2.5           |
-| **M2.7**  | **(Persistence)** Update save/edit flows to store new level-up state fields.          | ❌ To Do   | M2.6           |
-| **UT-1**  | **(Test)** Write unit tests for the new aggregation logic in the calculator.         | ❌ To Do   | M2.4           |
-| **UT-2**  | **(Test)** Cover resolver (level > 1 feature unlocks, budget totals).                 | ❌ To Do   | M2.6           |
-| **UT-3**  | **(Test)** Verify persistence/edit flows serialize new level-up fields.              | ❌ To Do   | M2.7           |
-| **HR-2**  | **HUMAN REVIEW:** Validate engine logic, resolver output, and persistence wiring.   | ⏳ Pending | UT-2, UT-3     |
+| **M2.5**  | **(Service)** Implement `classProgressionResolver.ts` and expose via loaders.           | ✅ Done   | M1.6           |
+| **M2.6**  | **(Engine)** Integrate resolver output into `calculateCharacterWithBreakdowns`.        | ✅ Done   | M2.5           |
+| **M2.7**  | **(Persistence)** Update save/edit flows to store new level-up state fields.          | ✅ Done   | M2.6           |
+| **UT-1**  | **(Test)** Write unit tests for the new aggregation logic in the calculator.         | ✅ Done   | M2.4           |
+| **UT-2**  | **(Test)** Cover resolver (level > 1 feature unlocks, budget totals).                 | ✅ Done   | M2.6           |
+| **UT-3**  | **(Test)** Verify persistence/edit flows serialize new level-up fields.              | ⏳ Skipped | M2.7           |
+| **HR-2**  | **HUMAN REVIEW:** Validate engine logic, resolver output, and persistence wiring.   | ⏳ Pending | UT-2           |
 | **M3.1**  | **(UI)** Add Level selection dropdown to `ClassSelector.tsx`.                            | ❌ To Do   | HR-2           |
 | **M3.2**  | **(UI)** Build the new `LevelingChoices.tsx` component.                                  | ❌ To Do   | M3.1           |
 | **M3.3**  | **(UI)** Modify `CharacterCreation.tsx` to conditionally render the new stage.         | ❌ To Do   | M3.2           |

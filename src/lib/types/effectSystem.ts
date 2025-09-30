@@ -263,6 +263,14 @@ export interface EnhancedCalculationResult {
 		pendingSubclassChoices: number;
 	};
 
+	// Resolved class features (from resolver)
+	resolvedFeatures?: {
+		unlockedFeatures: Array<any>; // ClassFeature objects
+		pendingFeatureChoices: Array<any>; // PendingFeatureChoice objects
+		availableSubclassChoice: boolean;
+		subclassChoiceLevel?: number;
+	};
+
 	// Validation results
 	validation: ValidationResult;
 

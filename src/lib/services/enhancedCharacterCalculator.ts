@@ -21,6 +21,7 @@ import {
 	type ModifyMasteryCapEffect,
 	type IncreaseMasteryCapEffect
 } from '../rulesdata/schemas/character.schema';
+import { resolveClassProgression } from '../rulesdata/classes-data/classProgressionResolver';
 
 import { BuildStep } from '../types/effectSystem';
 import { getLegacyChoiceId } from '../rulesdata/loaders/class-features.loader';
@@ -609,7 +610,10 @@ export function calculateCharacterWithBreakdowns(
 	// 2. Resolve user choices
 	const resolvedEffects = resolveEffectChoices(rawEffects, buildData.selectedTraitChoices);
 
-	// 3. Get class progression and aggregate gains by level
+	// 3. Resolve class progression (budgets + features)
+	const resolvedProgression = resolveClassProgression(buildData.classId, buildData.level);
+	
+	// 4. Get legacy class progression data for mana/cantrips/spells (still from tables)
 	const classProgressionData = getClassProgressionData(buildData.classId);
 	const progressionGains = aggregateProgressionGains(classProgressionData, buildData.level);
 
@@ -1071,6 +1075,12 @@ export function calculateCharacterWithBreakdowns(
 			totalSpellsKnown: progressionGains.totalSpellsKnown,
 			unlockedFeatureIds: progressionGains.unlockedFeatureIds,
 			pendingSubclassChoices: progressionGains.pendingSubclassChoices
+		},
+		resolvedFeatures: {
+			unlockedFeatures: resolvedProgression.unlockedFeatures,
+			pendingFeatureChoices: resolvedProgression.pendingFeatureChoices,
+			availableSubclassChoice: resolvedProgression.availableSubclassChoice,
+			subclassChoiceLevel: resolvedProgression.subclassChoiceLevel
 		},
 		validation,
 		unresolvedChoices,

@@ -143,6 +143,13 @@ export interface SavedCharacter {
 	// Languages can be either a list of names or a map of name -> { fluency }
 	languagesData: any;
 
+	// LEVEL PROGRESSION DATA (M2.7)
+	selectedTalents?: string[]; // IDs of talents chosen
+	pathPointAllocations?: { martial?: number; spellcasting?: number }; // Path point distribution
+	unlockedFeatureIds?: string[]; // Features gained from leveling
+	selectedSubclass?: string; // Subclass name if chosen
+	pendingSubclassChoice?: boolean; // True if subclass choice is available but not made
+
 	// Precomputed values for PDF/UI consumption (no calculations in transformers/components)
 	// Optional for backward compatibility; FE should consume if present
 	// Totals per skill (finalValue)

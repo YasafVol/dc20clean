@@ -122,21 +122,28 @@ export const completeCharacter = async (
 			finalAttackSpellCheck: calculationResult.stats.finalAttackSpellCheck,
 			finalMartialCheck: calculationResult.stats.finalMartialCheck,
 
-			// Store typed data directly (no more JSON strings)
-			selectedTraitIds: characterState.selectedTraitIds || [],
-			selectedFeatureChoices: characterState.selectedFeatureChoices || {},
-			skillsData: characterState.skillsData || {},
-			tradesData: characterState.tradesData || {},
-			languagesData: characterState.languagesData || { common: { fluency: 'fluent' } },
+		// Store typed data directly (no more JSON strings)
+		selectedTraitIds: characterState.selectedTraitIds || [],
+		selectedFeatureChoices: characterState.selectedFeatureChoices || {},
+		skillsData: characterState.skillsData || {},
+		tradesData: characterState.tradesData || {},
+		languagesData: characterState.languagesData || { common: { fluency: 'fluent' } },
 
-			// New precomputed structures (optional until FE migration)
-			skillTotals: denorm.skillTotals,
-			skillMastery: denorm.skillMastery,
-			knowledgeTradeMastery: denorm.knowledgeTradeMastery,
-			masteryLadders: denorm.masteryLadders,
-			languageMastery: denorm.languageMastery,
-			spells: [], // Will be populated below
-			maneuvers: [], // Will be populated below
+		// Level progression data (M2.7)
+		selectedTalents: characterState.selectedTalents || [],
+		pathPointAllocations: characterState.pathPointAllocations || {},
+		unlockedFeatureIds: calculationResult.resolvedFeatures?.unlockedFeatures.map(f => f.id || f.featureName) || [],
+		selectedSubclass: characterState.selectedSubclass,
+		pendingSubclassChoice: calculationResult.resolvedFeatures?.availableSubclassChoice && !characterState.selectedSubclass,
+
+		// New precomputed structures (optional until FE migration)
+		skillTotals: denorm.skillTotals,
+		skillMastery: denorm.skillMastery,
+		knowledgeTradeMastery: denorm.knowledgeTradeMastery,
+		masteryLadders: denorm.masteryLadders,
+		languageMastery: denorm.languageMastery,
+		spells: [], // Will be populated below
+		maneuvers: [], // Will be populated below
 
 			// CRITICAL: Store conversions for character editing
 			skillToTradeConversions: characterState.skillToTradeConversions || 0,

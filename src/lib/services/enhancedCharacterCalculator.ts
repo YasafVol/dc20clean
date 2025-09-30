@@ -730,8 +730,8 @@ export function calculateCharacterWithBreakdowns(
 	breakdowns.pd = createStatBreakdown('pd', basePD, resolvedEffects);
 	breakdowns.ad = createStatBreakdown('ad', baseAD, resolvedEffects);
 
-	// Use aggregated attribute points from progression gains (replaces hardcoded 12)
-	breakdowns.attributePoints = createStatBreakdown('attributePoints', progressionGains.totalAttributePoints, resolvedEffects);
+	// Base 12 + any attribute points gained from leveling
+	breakdowns.attributePoints = createStatBreakdown('attributePoints', 12 + progressionGains.totalAttributePoints, resolvedEffects);
 
 	// Movement breakdowns
 	breakdowns.move_speed = createStatBreakdown('moveSpeed', baseMoveSpeed, resolvedEffects);

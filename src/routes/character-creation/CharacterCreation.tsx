@@ -584,15 +584,15 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				let selectedSpells: string[] = [];
 				let selectedManeuvers: string[] = [];
 
-				// Use typed arrays directly
-				selectedSpells = state.selectedSpells || [];
-				selectedManeuvers = state.selectedManeuvers || [];
+			// Use typed arrays directly
+			selectedSpells = state.selectedSpells || [];
+			selectedManeuvers = state.selectedManeuvers || [];
 
-				// Get spell/maneuver counts from level progression (same logic as SpellsAndManeuvers component)
-				const levelData = selectedClass.levelProgression?.find((l) => l.level === state.level);
-				const requiredCantripCount = levelData?.cantripsKnown || 0;
-				const requiredSpellCount = levelData?.spellsKnown || 0;
-				const requiredManeuverCount = levelData?.maneuversKnown || 0;
+			// Get spell/maneuver counts from levelBudgets (uses .progression.ts data)
+			const budgets = calculationResult?.levelBudgets;
+			const requiredCantripCount = budgets?.totalCantripsKnown || 0;
+			const requiredSpellCount = budgets?.totalSpellsKnown || 0;
+			const requiredManeuverCount = budgets?.totalManeuversKnown || 0;
 
 				// For now, treat all selected spells as regular spells since we don't have easy cantrip lookup here
 				const selectedSpellCount = selectedSpells.length;

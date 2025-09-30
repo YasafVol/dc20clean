@@ -730,7 +730,8 @@ export function calculateCharacterWithBreakdowns(
 	breakdowns.pd = createStatBreakdown('pd', basePD, resolvedEffects);
 	breakdowns.ad = createStatBreakdown('ad', baseAD, resolvedEffects);
 
-	breakdowns.attributePoints = createStatBreakdown('attributePoints', 12, resolvedEffects);
+	// Use aggregated attribute points from progression gains (replaces hardcoded 12)
+	breakdowns.attributePoints = createStatBreakdown('attributePoints', progressionGains.totalAttributePoints, resolvedEffects);
 
 	// Movement breakdowns
 	breakdowns.move_speed = createStatBreakdown('moveSpeed', baseMoveSpeed, resolvedEffects);
@@ -791,9 +792,10 @@ export function calculateCharacterWithBreakdowns(
 			.filter((e) => e.type === 'MODIFY_STAT' && e.target === target)
 			.reduce((s, e) => s + Number(e.value || 0), 0);
 
-	const baseSkillPoints = 5 + finalIntelligence + bonus('skillPoints');
-	const baseTradePoints = 3 + bonus('tradePoints');
-	const baseLanguagePoints = 2 + bonus('languagePoints');
+	// Use aggregated skill/trade points from progression gains + bonuses from effects
+	const baseSkillPoints = progressionGains.totalSkillPoints + finalIntelligence + bonus('skillPoints');
+	const baseTradePoints = progressionGains.totalTradePoints + bonus('tradePoints');
+	const baseLanguagePoints = 2 + bonus('languagePoints'); // Languages stay at 2 (not level-dependent)
 
 	const {
 		skillToTrade = 0,

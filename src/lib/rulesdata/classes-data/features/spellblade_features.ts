@@ -1,6 +1,6 @@
 import type { ClassDefinition } from '../../schemas/character.schema';
 
-export const spellbladeClassV2: ClassDefinition = {
+export const spellbladeClass: ClassDefinition = {
 	className: 'Spellblade',
 	startingEquipment: {
 		weaponsOrShields: [

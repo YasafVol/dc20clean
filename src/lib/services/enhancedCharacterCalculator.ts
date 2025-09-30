@@ -547,13 +547,23 @@ function aggregateProgressionGains(
 		};
 	}
 
+	console.log('🔍 AGGREGATION START:', {
+		classId: classProgressionData?.id,
+		targetLevel,
+		hasProgression: !!classProgressionData?.levelProgression,
+		progressionLength: classProgressionData?.levelProgression?.length
+	});
+
 	for (let level = 1; level <= targetLevel; level++) {
 		const levelData = classProgressionData.levelProgression.find((lp: any) => lp.level === level);
-		if (!levelData) continue;
+		if (!levelData) {
+			console.warn(`⚠️ Level ${level} not found in progression!`);
+			continue;
+		}
 
 		console.log(`📊 Level ${level} data:`, {
 			hasGains: !!levelData.gains,
-			gains: levelData.gains,
+			gains: JSON.stringify(levelData.gains),
 			talents: levelData.gains?.talents,
 			pathPoints: levelData.gains?.pathPoints
 		});
@@ -585,6 +595,14 @@ function aggregateProgressionGains(
 			}
 		}
 	}
+
+	console.log('✅ AGGREGATION COMPLETE:', {
+		totalTalents,
+		totalPathPoints,
+		totalSkillPoints,
+		totalTradePoints,
+		unlockedFeatureIds: unlockedFeatureIds.length
+	});
 
 	return {
 		totalHP,

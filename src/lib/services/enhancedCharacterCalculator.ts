@@ -551,6 +551,13 @@ function aggregateProgressionGains(
 		const levelData = classProgressionData.levelProgression.find((lp: any) => lp.level === level);
 		if (!levelData) continue;
 
+		console.log(`📊 Level ${level} data:`, {
+			hasGains: !!levelData.gains,
+			gains: levelData.gains,
+			talents: levelData.gains?.talents,
+			pathPoints: levelData.gains?.pathPoints
+		});
+
 		// Aggregate legacy numeric stats (always present)
 		totalHP += levelData.healthPoints || 0;
 		totalSP += levelData.staminaPoints || 0;

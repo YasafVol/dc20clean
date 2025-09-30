@@ -15,9 +15,9 @@ export const rogueProgression: any[] = [
     "gainedTechniquesKnown": 0,
     "gains": {
       "classFeatures": [
-        "rogue_expertise",
-        "rogue_sneak_attack",
-        "rogue_thieves_cant"
+        "rogue_debilitating_strike",
+        "rogue_roguish_finesse",
+        "rogue_cypher_speech"
       ]
     }
   },
@@ -34,7 +34,7 @@ export const rogueProgression: any[] = [
       "talents": 1,
       "pathPoints": 1,
       "classFeatures": [
-        "rogue_cunning_action",
+        "rogue_cheap_shot",
         "rogue_talent_level_2"
       ]
     }

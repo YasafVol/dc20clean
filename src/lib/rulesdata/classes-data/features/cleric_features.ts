@@ -25,6 +25,7 @@ export const clericClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
+			id: 'cleric_spellcasting_path',
 			featureName: 'Spellcasting Path',
 			levelGained: 1,
 			description: 'You gain the ability to cast spells and use divine magic.',
@@ -34,6 +35,7 @@ export const clericClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'cleric_order',
 			featureName: 'Cleric Order',
 			levelGained: 1,
 			description: 'Your connection to your deity grants you the following benefits: Choose an Elemental or Mystical damage type to become your Divine Damage, and gain the benefits of 2 Divine Domains of your choice.',

@@ -116,6 +116,13 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
  * Get class level progression data by ID
  */
 function getClassProgressionData(classId: string): any | null {
+	// Use the new classesData which includes the gains field
+	const classData = classesData.find(c => c.id === classId);
+	if (classData) {
+		return classData;
+	}
+	
+	// Fallback to old table data (should not be needed)
 	switch (classId) {
 		case 'barbarian':
 			return barbarianTable;

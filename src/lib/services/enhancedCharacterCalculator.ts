@@ -576,17 +576,17 @@ function aggregateProgressionGains(
 			pathPoints: levelData.gains?.pathPoints
 		});
 
-		// Aggregate legacy numeric stats (always present)
-		totalHP += levelData.healthPoints || 0;
-		totalSP += levelData.staminaPoints || 0;
-		totalMP += levelData.manaPoints || 0;
-		totalSkillPoints += levelData.skillPoints || 0;
-		totalTradePoints += levelData.tradePoints || 0;
-		totalAttributePoints += levelData.attributePoints || 0;
-		totalManeuversKnown += levelData.maneuversKnown || 0;
-		totalTechniquesKnown += levelData.techniquesKnown || 0;
-		totalCantripsKnown += levelData.cantripsKnown || 0;
-		totalSpellsKnown += levelData.spellsKnown || 0;
+		// Aggregate numeric stats from progression files (gained* fields)
+		totalHP += levelData.gainedHealth || levelData.healthPoints || 0;
+		totalSP += levelData.gainedStaminaPoints || levelData.staminaPoints || 0;
+		totalMP += levelData.gainedManaPoints || levelData.manaPoints || 0;
+		totalSkillPoints += levelData.gainedSkillPoints || levelData.skillPoints || 0;
+		totalTradePoints += levelData.gainedTradePoints || levelData.tradePoints || 0;
+		totalAttributePoints += levelData.gainedAttributePoints || levelData.attributePoints || 0;
+		totalManeuversKnown += levelData.gainedManeuversKnown || levelData.maneuversKnown || 0;
+		totalTechniquesKnown += levelData.gainedTechniquesKnown || levelData.techniquesKnown || 0;
+		totalCantripsKnown += levelData.gainedCantripsKnown || levelData.cantripsKnown || 0;
+		totalSpellsKnown += levelData.gainedSpellsKnown || levelData.spellsKnown || 0;
 
 		// Aggregate new structured gains (if present)
 		if (levelData.gains) {

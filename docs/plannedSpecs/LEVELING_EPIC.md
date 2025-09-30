@@ -158,8 +158,8 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M1.4**  | **(Types)** Update `class.schema.ts` with `LevelGains` and new `ClassLevel` interfaces.     | ✅ Done   | -              |
 | **M1.5**  | **(Data)** Standardize feature IDs in `classes-data/features/*.ts`; document naming rules. | ✅ Done   | M1.2           |
 | **M1.6**  | **(Validation)** Add progression ↔ feature ID consistency check (script or unit test).     | ✅ Done   | M1.5           |
-| **HR-1a** | **HUMAN REVIEW:** Spot-check feature ID mapping before loader/schema migration.      | ⏳ Pending | M1.5           |
-| **HR-1**  | **HUMAN REVIEW:** Confirm Milestone 1 changes are correct before proceeding.         | ⏳ Pending | M1.6           |
+| **HR-1a** | **HUMAN REVIEW:** Spot-check feature ID mapping before loader/schema migration.      | ✅ Done   | M1.5           |
+| **HR-1**  | **HUMAN REVIEW:** Confirm Milestone 1 changes are correct before proceeding.         | ✅ Done   | M1.6           |
 | **M2.1**  | **(Data)** Create Talent system files: `talent.types.ts`, `talents.data.ts`.         | ✅ Done   | HR-1           |
 | **M2.2**  | **(Data)** Create all class-specific talent files in `classes-data/talents/`.       | ✅ Done   | M2.1           |
 | **M2.3**  | **(Loader)** Create `talent.loader.ts` to aggregate all talent data.                   | ✅ Done   | M2.2           |

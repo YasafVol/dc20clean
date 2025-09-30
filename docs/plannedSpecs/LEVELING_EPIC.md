@@ -156,7 +156,7 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M1.2**  | **(Manual)** Review generated `.progression.ts` files and replace placeholder feature IDs (through level 3). | ✅ Done   | M1.1           |
 | **M1.3**  | **(Refactor)** Update `class.loader.ts` to use new progression files (levels ≤ 3) and stage legacy cleanup. | ✅ Done   | M1.2           |
 | **M1.4**  | **(Types)** Update `class.schema.ts` with `LevelGains` and new `ClassLevel` interfaces.     | ✅ Done   | -              |
-| **M1.5**  | **(Data)** Standardize feature IDs in `classes-data/features/*.ts`; document naming rules. | ❌ To Do   | M1.2           |
+| **M1.5**  | **(Data)** Standardize feature IDs in `classes-data/features/*.ts`; document naming rules. | ✅ Done   | M1.2           |
 | **M1.6**  | **(Validation)** Add progression ↔ feature ID consistency check (script or unit test).     | ❌ To Do   | M1.5           |
 | **HR-1a** | **HUMAN REVIEW:** Spot-check feature ID mapping before loader/schema migration.      | ⏳ Pending | M1.5           |
 | **HR-1**  | **HUMAN REVIEW:** Confirm Milestone 1 changes are correct before proceeding.         | ⏳ Pending | M1.6           |

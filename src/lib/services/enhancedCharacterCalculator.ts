@@ -610,8 +610,16 @@ export function calculateCharacterWithBreakdowns(
 	// 2. Resolve user choices
 	const resolvedEffects = resolveEffectChoices(rawEffects, buildData.selectedTraitChoices);
 
-	// 3. Resolve class progression (budgets + features)
-	const resolvedProgression = resolveClassProgression(buildData.classId, buildData.level);
+	// 3. Resolve class progression (budgets + features) - only if class is selected
+	let resolvedProgression = null;
+	if (buildData.classId) {
+		try {
+			resolvedProgression = resolveClassProgression(buildData.classId, buildData.level);
+		} catch (error) {
+			// If class progression fails, continue without it (will use defaults)
+			console.warn(`Failed to resolve progression for class ${buildData.classId}:`, error);
+		}
+	}
 	
 	// 4. Get legacy class progression data for mana/cantrips/spells (still from tables)
 	const classProgressionData = getClassProgressionData(buildData.classId);
@@ -1076,11 +1084,16 @@ export function calculateCharacterWithBreakdowns(
 			unlockedFeatureIds: progressionGains.unlockedFeatureIds,
 			pendingSubclassChoices: progressionGains.pendingSubclassChoices
 		},
-		resolvedFeatures: {
+		resolvedFeatures: resolvedProgression ? {
 			unlockedFeatures: resolvedProgression.unlockedFeatures,
 			pendingFeatureChoices: resolvedProgression.pendingFeatureChoices,
 			availableSubclassChoice: resolvedProgression.availableSubclassChoice,
 			subclassChoiceLevel: resolvedProgression.subclassChoiceLevel
+		} : {
+			unlockedFeatures: [],
+			pendingFeatureChoices: [],
+			availableSubclassChoice: false,
+			subclassChoiceLevel: undefined
 		},
 		validation,
 		unresolvedChoices,

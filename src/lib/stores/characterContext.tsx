@@ -44,6 +44,9 @@ export interface CharacterInProgressStoreData
 	schemaVersion?: number;
 	selectedTalents?: string[];
 	pathPointAllocations?: { martial?: number; spellcasting?: number };
+	selectedMulticlassOption?: 'acquire' | 'adapt' | null;
+	selectedMulticlassClass?: string;
+	selectedMulticlassFeature?: string;
 }
 
 // Initial state for the store
@@ -111,7 +114,8 @@ type CharacterAction =
 			conversions: { skillToTrade?: number; tradeToSkill?: number; tradeToLanguage?: number };
 	  }
 	| { type: 'SET_SELECTED_TALENTS'; talents: string[] }
-	| { type: 'SET_PATH_POINTS'; pathPoints: { martial?: number; spellcasting?: number } };
+	| { type: 'SET_PATH_POINTS'; pathPoints: { martial?: number; spellcasting?: number } }
+	| { type: 'SET_MULTICLASS'; option: 'acquire' | 'adapt' | null; classId: string; featureId: string };
 
 // Reducer function
 function characterReducer(
@@ -135,6 +139,13 @@ function characterReducer(
 			return { ...state, selectedTalents: action.talents };
 		case 'SET_PATH_POINTS':
 			return { ...state, pathPointAllocations: action.pathPoints };
+		case 'SET_MULTICLASS':
+			return { 
+				...state, 
+				selectedMulticlassOption: action.option,
+				selectedMulticlassClass: action.classId,
+				selectedMulticlassFeature: action.featureId
+			};
 		case 'SET_ANCESTRY':
 			return { ...state, ancestry1Id: action.ancestry1Id, ancestry2Id: action.ancestry2Id };
 		case 'SET_TRAITS':

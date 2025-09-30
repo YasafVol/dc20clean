@@ -270,17 +270,25 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				// Leveling Choices step (only exists if level > 1)
 				if (state.level > 1) {
 					// Validate that all talent and path points have been spent
-					const resolvedProgression = calculationResult?.resolvedFeatures;
 					const budgets = calculationResult?.levelBudgets;
 					
-					if (!budgets) return false;
+					if (!budgets) {
+						console.log('❌ Leveling validation failed: no budgets found');
+						return false;
+					}
 					
-					// Check talents: must have exactly the right number selected
+					// Check talents: must have exactly the right number selected (including multiclass)
 					const selectedTalents = state.selectedTalents || [];
-					if (selectedTalents.length !== budgets.totalTalents) {
+					// Note: multiclass feature is stored separately but counts toward talent budget
+					const selectedMulticlass = state.selectedMulticlassFeature;
+					const totalTalentsSelected = selectedTalents.length + (selectedMulticlass ? 1 : 0);
+					
+					if (totalTalentsSelected !== budgets.totalTalents) {
 						console.log('❌ Leveling validation failed: talents not fully selected', {
-							selected: selectedTalents.length,
-							required: budgets.totalTalents
+							selected: totalTalentsSelected,
+							required: budgets.totalTalents,
+							regularTalents: selectedTalents.length,
+							multiclass: selectedMulticlass ? 1 : 0
 						});
 						return false;
 					}
@@ -297,7 +305,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					}
 					
 					console.log('✅ Leveling choices validated', {
-						talents: selectedTalents.length,
+						totalTalents: totalTalentsSelected,
 						pathPoints: totalAllocated
 					});
 					return true;

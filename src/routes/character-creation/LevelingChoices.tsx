@@ -391,6 +391,10 @@ function LevelingChoices() {
 	const availableTalentPoints = budgets.totalTalents;
 	const availablePathPoints = budgets.totalPathPoints;
 	const usedPathPoints = (pathPoints.martial || 0) + (pathPoints.spellcasting || 0);
+	
+	// Count multiclass selection as a talent
+	const multiclassTalentUsed = selectedMulticlassOption && selectedMulticlassFeature ? 1 : 0;
+	const totalTalentsUsed = selectedTalents.length + multiclassTalentUsed;
 
 	// Define General Talents (hardcoded as per spec)
 	const generalTalents = [
@@ -432,6 +436,12 @@ function LevelingChoices() {
 		
 		if (!featureId || !selectedMulticlassClass) {
 			setMulticlassFeatureDetail(null);
+			dispatch({ 
+				type: 'SET_MULTICLASS', 
+				option: selectedMulticlassOption, 
+				classId: selectedMulticlassClass || '', 
+				featureId: '' 
+			});
 			return;
 		}
 
@@ -447,6 +457,14 @@ function LevelingChoices() {
 				setMulticlassFeatureDetail(feature);
 			}
 		}
+		
+		// Sync to store
+		dispatch({ 
+			type: 'SET_MULTICLASS', 
+			option: selectedMulticlassOption, 
+			classId: selectedMulticlassClass, 
+			featureId 
+		});
 	};
 
 	const getMulticlassFeatures = () => {
@@ -466,7 +484,7 @@ function LevelingChoices() {
 		let newTalents: string[];
 		if (selectedTalents.includes(talentId)) {
 			newTalents = selectedTalents.filter(id => id !== talentId);
-		} else if (selectedTalents.length < availableTalentPoints) {
+		} else if (totalTalentsUsed < availableTalentPoints) {
 			newTalents = [...selectedTalents, talentId];
 		} else {
 			return;
@@ -503,7 +521,7 @@ function LevelingChoices() {
 						<TalentCard
 							key={talent.id}
 							$selected={selectedTalents.includes(talent.id)}
-							$disabled={!selectedTalents.includes(talent.id) && selectedTalents.length >= availableTalentPoints}
+							$disabled={!selectedTalents.includes(talent.id) && totalTalentsUsed >= availableTalentPoints}
 							onClick={() => handleTalentToggle(talent.id)}
 						>
 							<TalentName>{talent.name}</TalentName>
@@ -523,7 +541,7 @@ function LevelingChoices() {
 							<TalentCard
 								key={talent.id}
 								$selected={selectedTalents.includes(talent.id)}
-								$disabled={!selectedTalents.includes(talent.id) && selectedTalents.length >= availableTalentPoints}
+								$disabled={!selectedTalents.includes(talent.id) && totalTalentsUsed >= availableTalentPoints}
 								onClick={() => handleTalentToggle(talent.id)}
 							>
 								<TalentName>{talent.name}</TalentName>
@@ -541,14 +559,14 @@ function LevelingChoices() {
 				
 				<MulticlassOption
 					$selected={selectedMulticlassOption === 'acquire'}
-					$disabled={selectedTalents.length >= availableTalentPoints && selectedMulticlassOption !== 'acquire'}
+					$disabled={totalTalentsUsed >= availableTalentPoints && selectedMulticlassOption !== 'acquire'}
 					onClick={() => {
 						if (selectedMulticlassOption === 'acquire') {
 							setSelectedMulticlassOption(null);
 							setSelectedMulticlassClass('');
 							setSelectedMulticlassFeature('');
 							setMulticlassFeatureDetail(null);
-						} else if (selectedTalents.length < availableTalentPoints) {
+						} else if (totalTalentsUsed < availableTalentPoints) {
 							setSelectedMulticlassOption('acquire');
 							setSelectedMulticlassClass('');
 							setSelectedMulticlassFeature('');
@@ -562,7 +580,7 @@ function LevelingChoices() {
 
 				<MulticlassOption
 					$selected={selectedMulticlassOption === 'adapt'}
-					$disabled={state.level < 5 || (selectedTalents.length >= availableTalentPoints && selectedMulticlassOption !== 'adapt')}
+					$disabled={state.level < 5 || (totalTalentsUsed >= availableTalentPoints && selectedMulticlassOption !== 'adapt')}
 					onClick={() => {
 						if (state.level >= 5) {
 							if (selectedMulticlassOption === 'adapt') {
@@ -570,7 +588,7 @@ function LevelingChoices() {
 								setSelectedMulticlassClass('');
 								setSelectedMulticlassFeature('');
 								setMulticlassFeatureDetail(null);
-							} else if (selectedTalents.length < availableTalentPoints) {
+							} else if (totalTalentsUsed < availableTalentPoints) {
 								setSelectedMulticlassOption('adapt');
 								setSelectedMulticlassClass('');
 								setSelectedMulticlassFeature('');
@@ -689,10 +707,10 @@ function LevelingChoices() {
 			</Subtitle>
 
 			<BudgetSummary>
-				<BudgetTab $active={activeTab === 'talents'} onClick={() => setActiveTab('talents')}>
-					<BudgetLabel>Talents</BudgetLabel>
-					<BudgetValue>{selectedTalents.length} / {availableTalentPoints}</BudgetValue>
-				</BudgetTab>
+		<BudgetTab $active={activeTab === 'talents'} onClick={() => setActiveTab('talents')}>
+				<BudgetLabel>Talents</BudgetLabel>
+				<BudgetValue>{totalTalentsUsed} / {availableTalentPoints}</BudgetValue>
+			</BudgetTab>
 				<BudgetTab $active={activeTab === 'pathPoints'} onClick={() => setActiveTab('pathPoints')}>
 					<BudgetLabel>Path Points</BudgetLabel>
 					<BudgetValue>{usedPathPoints} / {availablePathPoints}</BudgetValue>

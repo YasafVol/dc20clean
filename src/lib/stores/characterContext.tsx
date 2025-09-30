@@ -92,6 +92,7 @@ type CharacterAction =
 	| { type: 'UPDATE_TRADES'; tradesData: Record<string, number> }
 	| { type: 'UPDATE_LANGUAGES'; languagesData: Record<string, { fluency: 'limited' | 'fluent' }> }
 	| { type: 'SET_CLASS'; classId: string | null }
+	| { type: 'SET_LEVEL'; level: number }
 	| { type: 'SET_ANCESTRY'; ancestry1Id: string | null; ancestry2Id: string | null }
 	| { type: 'SET_TRAITS'; selectedTraitIds: string[] }
 	| { type: 'SET_FEATURE_CHOICES'; selectedFeatureChoices: Record<string, any> }
@@ -124,6 +125,8 @@ function characterReducer(
 			return { ...state, languagesData: action.languagesData };
 		case 'SET_CLASS':
 			return { ...state, classId: action.classId };
+		case 'SET_LEVEL':
+			return { ...state, level: action.level };
 		case 'SET_ANCESTRY':
 			return { ...state, ancestry1Id: action.ancestry1Id, ancestry2Id: action.ancestry2Id };
 		case 'SET_TRAITS':

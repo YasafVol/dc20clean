@@ -11,6 +11,7 @@ import {
 	StyledNewClassQuote,
 	StyledNewClassDescription
 } from './styles/ClassSelector.styles';
+import styled from 'styled-components';
 
 // Import all SVG icons
 import BarbarianIconSrc from '../../assets/SVG/Barbarian.svg';
@@ -98,9 +99,59 @@ const classData = {
 	}
 };
 
+// Styled components for level selector
+const LevelSelectorContainer = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+	margin-bottom: 2rem;
+	padding: 1rem;
+	background: rgba(0, 0, 0, 0.3);
+	border-radius: 8px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+`;
+
+const LevelLabel = styled.label`
+	font-family: 'Cinzel', serif;
+	font-size: 1.1rem;
+	color: #d4af37;
+	font-weight: 600;
+`;
+
+const LevelSelect = styled.select`
+	font-family: 'Urbanist', sans-serif;
+	font-size: 1rem;
+	padding: 0.5rem 1rem;
+	background: rgba(0, 0, 0, 0.5);
+	color: white;
+	border: 1px solid #d4af37;
+	border-radius: 4px;
+	cursor: pointer;
+	min-width: 100px;
+	
+	&:hover {
+		background: rgba(212, 175, 55, 0.1);
+	}
+	
+	&:focus {
+		outline: none;
+		border-color: #ffd700;
+		box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+	}
+`;
+
+const LevelInfo = styled.span`
+	font-family: 'Urbanist', sans-serif;
+	font-size: 0.9rem;
+	color: rgba(255, 255, 255, 0.7);
+	font-style: italic;
+`;
+
 function ClassSelector() {
 	const { state, dispatch } = useCharacter();
 	const selectedClassId = state.classId;
+	const selectedLevel = state.level || 1;
 
 	function handleSelectClass(classId: string) {
 		if (state.classId?.toLowerCase() === classId.toLowerCase()) {
@@ -110,9 +161,36 @@ function ClassSelector() {
 		}
 	}
 
+	function handleLevelChange(event: React.ChangeEvent<HTMLSelectElement>) {
+		const newLevel = parseInt(event.target.value, 10);
+		dispatch({ type: 'SET_LEVEL', level: newLevel });
+	}
+
 	return (
 		<StyledContainer>
 			<StyledTitle>Choose Your Class</StyledTitle>
+			
+			<LevelSelectorContainer>
+				<LevelLabel htmlFor="character-level">Starting Level:</LevelLabel>
+				<LevelSelect
+					id="character-level"
+					value={selectedLevel}
+					onChange={handleLevelChange}
+					data-testid="level-selector"
+				>
+					{Array.from({ length: 20 }, (_, i) => i + 1).map((level) => (
+						<option key={level} value={level}>
+							Level {level}
+						</option>
+					))}
+				</LevelSelect>
+				{selectedLevel > 1 && (
+					<LevelInfo>
+						You'll choose talents, path points, and features after selecting your class
+					</LevelInfo>
+				)}
+			</LevelSelectorContainer>
+
 			<StyledGrid>
 				{classesData.map((classDef) => {
 					const classInfo = classData[classDef.id as keyof typeof classData];

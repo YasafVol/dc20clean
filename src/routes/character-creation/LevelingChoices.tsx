@@ -418,9 +418,11 @@ function LevelingChoices() {
 		}
 	];
 
-	// Filter class talents for the current class
+	// Filter class talents for the current class AND level requirement
 	const classTalents = allTalents.filter(
-		t => t.category === 'Class' && t.prerequisites?.classId === state.classId
+		t => t.category === 'Class' 
+		&& t.prerequisites?.classId === state.classId
+		&& (!t.prerequisites?.level || state.level >= t.prerequisites.level)
 	);
 
 	// Handle multiclass class selection

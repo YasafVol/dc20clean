@@ -118,6 +118,12 @@ const compatibleData = tableData.map((classTable: any) => {
 		const newLevel = progression.find((p) => p.level === legacyLevel.level);
 		const gains = newLevel?.gains;
 		
+		console.log(`🔧 Building level ${legacyLevel.level}:`, {
+			foundNewLevel: !!newLevel,
+			hasGains: !!gains,
+			gainsValue: JSON.stringify(gains)
+		});
+		
 		return {
 			level: legacyLevel.level,
 			healthPoints: newLevel?.gainedHealth ?? legacyLevel.healthPoints ?? 0,

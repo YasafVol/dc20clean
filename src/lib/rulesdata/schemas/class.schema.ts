@@ -98,7 +98,7 @@ const levelGainsSchema = z.object({
 	classFeatures: z.array(z.string()).optional(),
 	subclassFeatureChoice: z.boolean().optional(),
 	epicBoon: z.boolean().optional()
-}).optional();
+}).optional().nullable();
 
 // Schema for ClassLevel - complete level progression entry
 const classLevelSchema = z.object({

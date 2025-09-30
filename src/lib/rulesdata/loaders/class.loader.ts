@@ -167,6 +167,14 @@ const compatibleData = tableData.map((classTable: any) => {
 	};
 });
 
+console.log('🔍 BEFORE ZOD PARSE - Sample Barbarian Level 2:', 
+	compatibleData.find((c: any) => c.id === 'barbarian')?.levelProgression?.find((l: any) => l.level === 2)
+);
+
 const validatedData = classesDataSchema.parse(compatibleData);
+
+console.log('🔍 AFTER ZOD PARSE - Sample Barbarian Level 2:', 
+	validatedData.find((c: any) => c.id === 'barbarian')?.levelProgression?.find((l: any) => l.level === 2)
+);
 
 export const classesData: IClassDefinition[] = validatedData;

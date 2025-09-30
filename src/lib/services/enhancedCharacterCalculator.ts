@@ -22,6 +22,7 @@ import {
 	type IncreaseMasteryCapEffect
 } from '../rulesdata/schemas/character.schema';
 import { resolveClassProgression } from '../rulesdata/classes-data/classProgressionResolver';
+import { classesData } from '../rulesdata/loaders/class.loader';
 
 import { BuildStep } from '../types/effectSystem';
 import { getLegacyChoiceId } from '../rulesdata/loaders/class-features.loader';

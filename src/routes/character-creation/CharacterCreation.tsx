@@ -269,8 +269,37 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			case 2:
 				// Leveling Choices step (only exists if level > 1)
 				if (state.level > 1) {
-					// For now, this step is always complete (no validation required)
-					// In the future, you could validate talent/path point selections here
+					// Validate that all talent and path points have been spent
+					const resolvedProgression = calculationResult?.resolvedFeatures;
+					const budgets = calculationResult?.levelBudgets;
+					
+					if (!budgets) return false;
+					
+					// Check talents: must have exactly the right number selected
+					const selectedTalents = state.selectedTalents || [];
+					if (selectedTalents.length !== budgets.totalTalents) {
+						console.log('❌ Leveling validation failed: talents not fully selected', {
+							selected: selectedTalents.length,
+							required: budgets.totalTalents
+						});
+						return false;
+					}
+					
+					// Check path points: must allocate exactly the available points
+					const pathAllocations = state.pathPointAllocations || { martial: 0, spellcasting: 0 };
+					const totalAllocated = (pathAllocations.martial || 0) + (pathAllocations.spellcasting || 0);
+					if (totalAllocated !== budgets.totalPathPoints) {
+						console.log('❌ Leveling validation failed: path points not fully allocated', {
+							allocated: totalAllocated,
+							required: budgets.totalPathPoints
+						});
+						return false;
+					}
+					
+					console.log('✅ Leveling choices validated', {
+						talents: selectedTalents.length,
+						pathPoints: totalAllocated
+					});
 					return true;
 				}
 				// If level === 1, step 2 is Ancestry (fall through to ancestryStep case)

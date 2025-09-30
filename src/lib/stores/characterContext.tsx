@@ -42,6 +42,8 @@ export interface CharacterInProgressStoreData
 	tradeToSkillConversions?: number;
 	tradeToLanguageConversions?: number;
 	schemaVersion?: number;
+	selectedTalents?: string[];
+	pathPointAllocations?: { martial?: number; spellcasting?: number };
 }
 
 // Initial state for the store
@@ -107,7 +109,9 @@ type CharacterAction =
 	| {
 			type: 'SET_CONVERSIONS';
 			conversions: { skillToTrade?: number; tradeToSkill?: number; tradeToLanguage?: number };
-	  };
+	  }
+	| { type: 'SET_SELECTED_TALENTS'; talents: string[] }
+	| { type: 'SET_PATH_POINTS'; pathPoints: { martial?: number; spellcasting?: number } };
 
 // Reducer function
 function characterReducer(
@@ -127,6 +131,10 @@ function characterReducer(
 			return { ...state, classId: action.classId };
 		case 'SET_LEVEL':
 			return { ...state, level: action.level };
+		case 'SET_SELECTED_TALENTS':
+			return { ...state, selectedTalents: action.talents };
+		case 'SET_PATH_POINTS':
+			return { ...state, pathPointAllocations: action.pathPoints };
 		case 'SET_ANCESTRY':
 			return { ...state, ancestry1Id: action.ancestry1Id, ancestry2Id: action.ancestry2Id };
 		case 'SET_TRAITS':

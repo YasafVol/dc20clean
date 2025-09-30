@@ -216,8 +216,8 @@ const FeatureDetailDescription = styled.div`
 `;
 
 const PathContainer = styled.div`
-	display: flex;
-	flex-direction: column;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
 	gap: 2rem;
 `;
 
@@ -342,25 +342,13 @@ const EmptyState = styled.div`
 	font-style: italic;
 `;
 
-const InfoBanner = styled.div`
-	background: rgba(212, 175, 55, 0.15);
-	border: 1px solid rgba(212, 175, 55, 0.4);
-	border-radius: 4px;
-	padding: 1rem;
-	margin-bottom: 1.5rem;
-	font-family: 'Urbanist', sans-serif;
-	font-size: 0.95rem;
-	color: rgba(255, 255, 255, 0.9);
-	line-height: 1.5;
-`;
-
 type ActiveTab = 'talents' | 'pathPoints';
 
 function LevelingChoices() {
-	const { state } = useCharacter();
+	const { state, dispatch } = useCharacter();
 	const [activeTab, setActiveTab] = useState<ActiveTab>('talents');
-	const [selectedTalents, setSelectedTalents] = useState<string[]>([]);
-	const [pathPoints, setPathPoints] = useState({ martial: 0, spellcasting: 0 });
+	const [selectedTalents, setSelectedTalents] = useState<string[]>(state.selectedTalents || []);
+	const [pathPoints, setPathPoints] = useState(state.pathPointAllocations || { martial: 0, spellcasting: 0 });
 	const [resolvedProgression, setResolvedProgression] = useState<any>(null);
 	
 	// Multiclass state
@@ -402,7 +390,7 @@ function LevelingChoices() {
 	const budgets = resolvedProgression.budgets;
 	const availableTalentPoints = budgets.totalTalents;
 	const availablePathPoints = budgets.totalPathPoints;
-	const usedPathPoints = pathPoints.martial + pathPoints.spellcasting;
+	const usedPathPoints = (pathPoints.martial || 0) + (pathPoints.spellcasting || 0);
 
 	// Define General Talents (hardcoded as per spec)
 	const generalTalents = [
@@ -475,22 +463,33 @@ function LevelingChoices() {
 	};
 
 	const handleTalentToggle = (talentId: string) => {
+		let newTalents: string[];
 		if (selectedTalents.includes(talentId)) {
-			setSelectedTalents(selectedTalents.filter(id => id !== talentId));
+			newTalents = selectedTalents.filter(id => id !== talentId);
 		} else if (selectedTalents.length < availableTalentPoints) {
-			setSelectedTalents([...selectedTalents, talentId]);
+			newTalents = [...selectedTalents, talentId];
+		} else {
+			return;
 		}
+		setSelectedTalents(newTalents);
+		dispatch({ type: 'SET_SELECTED_TALENTS', talents: newTalents });
 	};
 
 	const handlePathPointAdd = (path: 'martial' | 'spellcasting') => {
 		if (usedPathPoints < availablePathPoints) {
-			setPathPoints({ ...pathPoints, [path]: pathPoints[path] + 1 });
+			const currentValue = pathPoints[path] || 0;
+			const newPathPoints = { ...pathPoints, [path]: currentValue + 1 };
+			setPathPoints(newPathPoints);
+			dispatch({ type: 'SET_PATH_POINTS', pathPoints: newPathPoints });
 		}
 	};
 
 	const handlePathPointRemove = (path: 'martial' | 'spellcasting') => {
-		if (pathPoints[path] > 0) {
-			setPathPoints({ ...pathPoints, [path]: pathPoints[path] - 1 });
+		const currentValue = pathPoints[path] || 0;
+		if (currentValue > 0) {
+			const newPathPoints = { ...pathPoints, [path]: currentValue - 1 };
+			setPathPoints(newPathPoints);
+			dispatch({ type: 'SET_PATH_POINTS', pathPoints: newPathPoints });
 		}
 	};
 
@@ -623,12 +622,8 @@ function LevelingChoices() {
 
 	const renderPathPointsTab = () => (
 		<PathContainer>
-			<InfoBanner>
-				Spending 4 Spellcaster points on the Spellcaster Path grants you all benefits after spending 2 Path Points on the Martial Path. Benefit: Once per round, you regain up to half your maximum SP when you use a Spell Enhancement.
-			</InfoBanner>
-
 			{CHARACTER_PATHS.map(path => {
-				const currentLevel = path.id === 'martial_path' ? pathPoints.martial : pathPoints.spellcasting;
+				const currentLevel = path.id === 'martial_path' ? (pathPoints.martial || 0) : (pathPoints.spellcasting || 0);
 				
 				return (
 					<PathCard key={path.id}>

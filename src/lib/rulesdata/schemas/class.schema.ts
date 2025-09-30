@@ -91,16 +91,14 @@ const hybridPathSchema = z
 	.optional();
 
 // Schema for LevelGains - structured progression data per level
-const levelGainsSchema = z
-	.object({
-		talents: z.number().optional(),
-		pathPoints: z.number().optional(),
-		ancestryPoints: z.number().optional(),
-		classFeatures: z.array(z.string()).optional(),
-		subclassFeatureChoice: z.boolean().optional(),
-		epicBoon: z.boolean().optional()
-	})
-	.optional();
+const levelGainsSchema = z.object({
+	talents: z.number().optional(),
+	pathPoints: z.number().optional(),
+	ancestryPoints: z.number().optional(),
+	classFeatures: z.array(z.string()).optional(),
+	subclassFeatureChoice: z.boolean().optional(),
+	epicBoon: z.boolean().optional()
+}).optional();
 
 // Schema for ClassLevel - complete level progression entry
 const classLevelSchema = z.object({

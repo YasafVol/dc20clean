@@ -116,6 +116,8 @@ const compatibleData = tableData.map((classTable: any) => {
 
 	const buildLevelEntry = (legacyLevel: LegacyLevelEntry) => {
 		const newLevel = progression.find((p) => p.level === legacyLevel.level);
+		const gains = newLevel?.gains;
+		
 		return {
 			level: legacyLevel.level,
 			healthPoints: newLevel?.gainedHealth ?? legacyLevel.healthPoints ?? 0,
@@ -128,7 +130,8 @@ const compatibleData = tableData.map((classTable: any) => {
 			manaPoints: legacyLevel.manaPoints ?? 0,
 			cantripsKnown: legacyLevel.cantripsKnown ?? 0,
 			spellsKnown: legacyLevel.spellsKnown ?? 0,
-			features: formatGains(newLevel?.gains, legacyLevel.features)
+			features: formatGains(gains, legacyLevel.features),
+			gains // Include structured gains for new calculator
 		};
 	};
 

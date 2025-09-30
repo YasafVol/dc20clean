@@ -163,7 +163,7 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M2.1**  | **(Data)** Create Talent system files: `talent.types.ts`, `talents.data.ts`.         | ✅ Done   | HR-1           |
 | **M2.2**  | **(Data)** Create all class-specific talent files in `classes-data/talents/`.       | ✅ Done   | M2.1           |
 | **M2.3**  | **(Loader)** Create `talent.loader.ts` to aggregate all talent data.                   | ✅ Done   | M2.2           |
-| **M2.4**  | **(Engine)** Enhance `enhancedCharacterCalculator.ts` to aggregate stats by level.     | ❌ To Do   | HR-1           |
+| **M2.4**  | **(Engine)** Enhance `enhancedCharacterCalculator.ts` to aggregate stats by level.     | ✅ Done   | HR-1           |
 | **M2.5**  | **(Service)** Implement `classProgressionResolver.ts` and expose via loaders.           | ❌ To Do   | M1.6           |
 | **M2.6**  | **(Engine)** Integrate resolver output into `calculateCharacterWithBreakdowns`.        | ❌ To Do   | M2.5           |
 | **M2.7**  | **(Persistence)** Update save/edit flows to store new level-up state fields.          | ❌ To Do   | M2.6           |

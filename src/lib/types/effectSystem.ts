@@ -247,6 +247,22 @@ export interface EnhancedCalculationResult {
 		ancestryPointsRemaining: number;
 	};
 
+	// Level progression budgets (from class progression)
+	levelBudgets?: {
+		totalTalents: number;
+		totalPathPoints: number;
+		totalAncestryPoints: number;
+		totalSkillPoints: number;
+		totalTradePoints: number;
+		totalAttributePoints: number;
+		totalManeuversKnown: number;
+		totalTechniquesKnown: number;
+		totalCantripsKnown: number;
+		totalSpellsKnown: number;
+		unlockedFeatureIds: string[];
+		pendingSubclassChoices: number;
+	};
+
 	// Validation results
 	validation: ValidationResult;
 
@@ -309,6 +325,22 @@ export interface EnhancedCharacterBuildData {
 
 	// Timestamps for caching
 	lastModified: number;
+
+	// Level-based budgets (populated by aggregateProgressionGains)
+	levelBudgets?: {
+		totalTalents: number;
+		totalPathPoints: number;
+		totalAncestryPoints: number;
+		totalSkillPoints: number;
+		totalTradePoints: number;
+		totalAttributePoints: number;
+		totalManeuversKnown: number;
+		totalTechniquesKnown: number;
+		totalCantripsKnown: number;
+		totalSpellsKnown: number;
+		unlockedFeatureIds: string[];
+		pendingSubclassChoices: number; // Count of subclass features player needs to choose
+	};
 }
 
 // Hook result for character calculation

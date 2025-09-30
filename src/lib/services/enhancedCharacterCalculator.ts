@@ -488,6 +488,116 @@ function getOptionsForEffect(effect: AttributedEffect): ChoiceOption[] {
 }
 
 /**
+ * Aggregate all progression gains from level 1 to target level
+ */
+function aggregateProgressionGains(
+	classProgressionData: any,
+	targetLevel: number
+): {
+	totalHP: number;
+	totalSP: number;
+	totalMP: number;
+	totalSkillPoints: number;
+	totalTradePoints: number;
+	totalAttributePoints: number;
+	totalManeuversKnown: number;
+	totalTechniquesKnown: number;
+	totalCantripsKnown: number;
+	totalSpellsKnown: number;
+	totalTalents: number;
+	totalPathPoints: number;
+	totalAncestryPoints: number;
+	unlockedFeatureIds: string[];
+	pendingSubclassChoices: number;
+} {
+	let totalHP = 0;
+	let totalSP = 0;
+	let totalMP = 0;
+	let totalSkillPoints = 0;
+	let totalTradePoints = 0;
+	let totalAttributePoints = 0;
+	let totalManeuversKnown = 0;
+	let totalTechniquesKnown = 0;
+	let totalCantripsKnown = 0;
+	let totalSpellsKnown = 0;
+	let totalTalents = 0;
+	let totalPathPoints = 0;
+	let totalAncestryPoints = 0;
+	const unlockedFeatureIds: string[] = [];
+	let pendingSubclassChoices = 0;
+
+	if (!classProgressionData?.levelProgression) {
+		return {
+			totalHP,
+			totalSP,
+			totalMP,
+			totalSkillPoints,
+			totalTradePoints,
+			totalAttributePoints,
+			totalManeuversKnown,
+			totalTechniquesKnown,
+			totalCantripsKnown,
+			totalSpellsKnown,
+			totalTalents,
+			totalPathPoints,
+			totalAncestryPoints,
+			unlockedFeatureIds,
+			pendingSubclassChoices
+		};
+	}
+
+	for (let level = 1; level <= targetLevel; level++) {
+		const levelData = classProgressionData.levelProgression.find((lp: any) => lp.level === level);
+		if (!levelData) continue;
+
+		// Aggregate legacy numeric stats (always present)
+		totalHP += levelData.healthPoints || 0;
+		totalSP += levelData.staminaPoints || 0;
+		totalMP += levelData.manaPoints || 0;
+		totalSkillPoints += levelData.skillPoints || 0;
+		totalTradePoints += levelData.tradePoints || 0;
+		totalAttributePoints += levelData.attributePoints || 0;
+		totalManeuversKnown += levelData.maneuversKnown || 0;
+		totalTechniquesKnown += levelData.techniquesKnown || 0;
+		totalCantripsKnown += levelData.cantripsKnown || 0;
+		totalSpellsKnown += levelData.spellsKnown || 0;
+
+		// Aggregate new structured gains (if present)
+		if (levelData.gains) {
+			totalTalents += levelData.gains.talents || 0;
+			totalPathPoints += levelData.gains.pathPoints || 0;
+			totalAncestryPoints += levelData.gains.ancestryPoints || 0;
+
+			if (levelData.gains.classFeatures) {
+				unlockedFeatureIds.push(...levelData.gains.classFeatures);
+			}
+
+			if (levelData.gains.subclassFeatureChoice) {
+				pendingSubclassChoices++;
+			}
+		}
+	}
+
+	return {
+		totalHP,
+		totalSP,
+		totalMP,
+		totalSkillPoints,
+		totalTradePoints,
+		totalAttributePoints,
+		totalManeuversKnown,
+		totalTechniquesKnown,
+		totalCantripsKnown,
+		totalSpellsKnown,
+		totalTalents,
+		totalPathPoints,
+		totalAncestryPoints,
+		unlockedFeatureIds,
+		pendingSubclassChoices
+	};
+}
+
+/**
  * Main calculation function with detailed breakdowns
  */
 export function calculateCharacterWithBreakdowns(
@@ -499,11 +609,9 @@ export function calculateCharacterWithBreakdowns(
 	// 2. Resolve user choices
 	const resolvedEffects = resolveEffectChoices(rawEffects, buildData.selectedTraitChoices);
 
-	// 3. Calculate base stats
+	// 3. Get class progression and aggregate gains by level
 	const classProgressionData = getClassProgressionData(buildData.classId);
-	const baseHP = 0; // Will calculate from level progression
-	const baseSP = 0; // Will calculate from level progression
-	const baseMP = 0; // Will calculate from level progression
+	const progressionGains = aggregateProgressionGains(classProgressionData, buildData.level);
 
 	// 4. Create detailed breakdowns
 	const breakdowns: Record<string, EnhancedStatBreakdown> = {};
@@ -523,27 +631,10 @@ export function calculateCharacterWithBreakdowns(
 	// Derived stats
 	const combatMastery = buildData.combatMastery;
 
-	// Health & Resources - sum from level progression + modifiers
-	let finalHPMax = finalMight; // Base from Might
-	let finalSPMax = 0;
-	let finalMPMax = 0;
-
-	// Calculate from level progression if available
-	if (classProgressionData?.levelProgression) {
-		for (let level = 1; level <= buildData.level; level++) {
-			const levelData = classProgressionData.levelProgression.find((lp: any) => lp.level === level);
-			if (levelData) {
-				finalHPMax += levelData.healthPoints || 0;
-				finalSPMax += levelData.staminaPoints || 0;
-				finalMPMax += levelData.manaPoints || 0;
-			}
-		}
-	} else {
-		// Fallback to base calculation
-		finalHPMax += baseHP + (buildData.level - 1);
-		finalSPMax = baseSP + finalAgility;
-		finalMPMax = baseMP + finalIntelligence;
-	}
+	// Health & Resources - use aggregated progression gains
+	let finalHPMax = finalMight + progressionGains.totalHP;
+	let finalSPMax = progressionGains.totalSP;
+	let finalMPMax = progressionGains.totalMP;
 
 	// Do not apply effect modifiers here; breakdowns will add modifiers to base values
 
@@ -967,6 +1058,20 @@ export function calculateCharacterWithBreakdowns(
 		movements: [],
 		background,
 		ancestry,
+		levelBudgets: {
+			totalTalents: progressionGains.totalTalents,
+			totalPathPoints: progressionGains.totalPathPoints,
+			totalAncestryPoints: progressionGains.totalAncestryPoints,
+			totalSkillPoints: progressionGains.totalSkillPoints,
+			totalTradePoints: progressionGains.totalTradePoints,
+			totalAttributePoints: progressionGains.totalAttributePoints,
+			totalManeuversKnown: progressionGains.totalManeuversKnown,
+			totalTechniquesKnown: progressionGains.totalTechniquesKnown,
+			totalCantripsKnown: progressionGains.totalCantripsKnown,
+			totalSpellsKnown: progressionGains.totalSpellsKnown,
+			unlockedFeatureIds: progressionGains.unlockedFeatureIds,
+			pendingSubclassChoices: progressionGains.pendingSubclassChoices
+		},
 		validation,
 		unresolvedChoices,
 		cacheTimestamp: Date.now(),

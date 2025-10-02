@@ -178,7 +178,7 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M3.5**  | **(UI)** Implement talent effects system in calculator.                                    | ✅ Done   | M3.4           |
 | **M3.5.1**| **(Data)** Attribute and mastery-to-level cap enforcement.                             | ❌ To Do   | M3.5           |
 | **M3.5**  | **(State)** Persist resolver outputs (features, pending choices) in `characterContext`. | ❌ To Do   | M2.6           |
-| **M3.6**  | **(UI)** Render resolver-derived feature unlocks in creation & sheet views.           | ❌ To Do   | M3.5           |
+| **M3.6**  | **(UI)** Render resolver-derived feature unlocks in creation & sheet views.           | ✅ Done   | M3.5           |
 | **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.6           |
 | **HR-3**  | **HUMAN REVIEW:** Confirm UI flow is intuitive and functional.                     | ⏳ Pending | M3.4, HR-2.5   |
 | **M4.1**  | **(E2E Test)** Create `levelup-wizard.e2e.spec.ts` to test a Level 3 Wizard creation.   | ❌ To Do   | HR-3           |

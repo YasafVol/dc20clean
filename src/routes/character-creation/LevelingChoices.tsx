@@ -5,6 +5,7 @@ import { allTalents } from '../../lib/rulesdata/classes-data/talents/talent.load
 import { CHARACTER_PATHS } from '../../lib/rulesdata/paths/paths.data';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
+import type { ClassFeature, FeatureBenefit } from '../../lib/rulesdata/schemas/character.schema';
 import styled from 'styled-components';
 
 // Styled Components
@@ -332,6 +333,66 @@ const PathSpecialRulesText = styled.div`
 	font-size: 0.9rem;
 	color: rgba(255, 255, 255, 0.8);
 	line-height: 1.5;
+`;
+
+// Feature Display Styled Components
+const FeatureCard = styled.div`
+	background: rgba(0, 0, 0, 0.4);
+	border: 2px solid rgba(100, 149, 237, 0.3);
+	border-radius: 8px;
+	padding: 1rem;
+	text-align: left;
+`;
+
+const FeatureName = styled.h4`
+	font-family: 'Cinzel', serif;
+	font-size: 1.1rem;
+	color: #6495ed;
+	margin: 0 0 0.25rem 0;
+`;
+
+const FeatureLevel = styled.div`
+	font-family: 'Urbanist', sans-serif;
+	font-size: 0.85rem;
+	color: rgba(255, 255, 255, 0.6);
+	margin-bottom: 0.5rem;
+`;
+
+const FeatureDescription = styled.p`
+	font-family: 'Urbanist', sans-serif;
+	font-size: 0.95rem;
+	color: rgba(255, 255, 255, 0.9);
+	line-height: 1.4;
+	margin: 0.5rem 0;
+`;
+
+const FeatureBenefits = styled.div`
+	margin-top: 0.75rem;
+	padding-top: 0.75rem;
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
+`;
+
+const BenefitItem = styled.div`
+	font-family: 'Urbanist', sans-serif;
+	font-size: 0.9rem;
+	color: rgba(255, 255, 255, 0.8);
+	margin-bottom: 0.5rem;
+	line-height: 1.3;
+`;
+
+const BenefitName = styled.strong`
+	color: #8ab4f8;
+`;
+
+const BenefitDesc = styled.span`
+	color: rgba(255, 255, 255, 0.8);
+`;
+
+const InfoText = styled.p`
+	font-family: 'Urbanist', sans-serif;
+	font-size: 0.95rem;
+	color: rgba(255, 255, 255, 0.7);
+	line-height: 1.4;
 `;
 
 const EmptyState = styled.div`
@@ -720,6 +781,35 @@ function LevelingChoices() {
 			</BudgetSummary>
 
 			{activeTab === 'talents' ? renderTalentsTab() : renderPathPointsTab()}
+
+			{/* Unlocked Features Section */}
+			{resolvedProgression.unlockedFeatures.length > 0 && (
+				<Section style={{ marginTop: '3rem' }}>
+					<SectionTitle>Unlocked Features (Level {state.level})</SectionTitle>
+					<InfoText style={{ marginBottom: '1rem' }}>
+						These features are automatically granted by your class progression:
+					</InfoText>
+					<TalentGrid>
+						{resolvedProgression.unlockedFeatures.map((feature: ClassFeature, idx: number) => (
+							<FeatureCard key={idx}>
+								<FeatureName>{feature.featureName}</FeatureName>
+								<FeatureLevel>Level {feature.levelGained}</FeatureLevel>
+								<FeatureDescription>{feature.description}</FeatureDescription>
+								{feature.benefits && feature.benefits.length > 0 && (
+									<FeatureBenefits>
+										{feature.benefits.map((benefit: FeatureBenefit, bIdx: number) => (
+											<BenefitItem key={bIdx}>
+												<BenefitName>{benefit.name}:</BenefitName>{' '}
+												<BenefitDesc>{benefit.description}</BenefitDesc>
+											</BenefitItem>
+										))}
+									</FeatureBenefits>
+								)}
+							</FeatureCard>
+						))}
+					</TalentGrid>
+				</Section>
+			)}
 		</Container>
 	);
 }

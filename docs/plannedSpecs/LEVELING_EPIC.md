@@ -175,10 +175,14 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M3.2**  | **(UI)** Build the new `LevelingChoices.tsx` component.                                  | ✅ Done   | M3.1           |
 | **M3.3**  | **(UI)** Modify `CharacterCreation.tsx` to conditionally render the new stage.         | ✅ Done   | M3.2           |
 | **M3.4**  | **(UI)** Update subsequent stages to use the aggregated point totals.                      | ✅ Done   | M3.3           |
-| **M3.5**  | **(UI)** Implement talent effects system in calculator.                                    | ✅ Done   | M3.4           |
-| **M3.5.1**| **(Data)** Attribute and mastery-to-level cap enforcement.                             | ❌ To Do   | M3.5           |
-| **M3.5**  | **(State)** Persist resolver outputs (features, pending choices) in `characterContext`. | ❌ To Do   | M2.6           |
-| **M3.6**  | **(UI)** Render resolver-derived feature unlocks in creation & sheet views.           | ✅ Done   | M3.5           |
+| **M3.5**    | **(UI)** Implement talent effects system in calculator.                                  | ✅ Done   | M3.4           |
+| **M3.5.1a** | **(Data)** Create single source of truth for caps in `levelCaps.ts`.                  | ❌ To Do   | M3.5           |
+| **M3.5.1b** | **(Engine)** Update calculator to use `levelCaps.ts` for mastery validation.         | ❌ To Do   | M3.5.1a        |
+| **M3.5.1c** | **(UI)** Update Attributes and Background components to use dynamic caps.             | ❌ To Do   | M3.5.1b        |
+| **M3.5.1d** | **(Docs)** Update system documentation with cap references.                           | ❌ To Do   | M3.5.1c        |
+| **M3.5.1e** | **(Verify)** Confirm no PDF export system impact.                                       | ❌ To Do   | M3.5.1d        |
+| **M3.5**    | **(State)** Persist resolver outputs (features, pending choices) in `characterContext`. | ❌ To Do   | M2.6           |
+| **M3.6**    | **(UI)** Render resolver-derived feature unlocks in creation & sheet views.           | ✅ Done   | M3.5           |
 | **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.6           |
 | **HR-3**  | **HUMAN REVIEW:** Confirm UI flow is intuitive and functional.                     | ⏳ Pending | M3.4, HR-2.5   |
 | **M4.1**  | **(E2E Test)** Create `levelup-wizard.e2e.spec.ts` to test a Level 3 Wizard creation.   | ❌ To Do   | HR-3           |
@@ -191,28 +195,101 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 
 **Goal:** Implement level-based caps for attributes and skill/trade mastery to prevent characters from exceeding their level-appropriate limits.
 
+**Rationale:**
+Currently, attribute caps are hardcoded (max +3) and mastery caps only go up to level 10 (Novice/Adept/Expert). This prevents proper character creation at higher levels and creates multiple sources of truth for the same data:
+- `SkillsTab.tsx` defines `MASTERY_TABLE` with tier names and bonuses
+- `enhancedCharacterCalculator.ts` defines `masteryTiers` with numeric values
+- `getMaxMasteryForLevel()` hardcodes level thresholds
+
+This milestone consolidates all cap data into a single source of truth and extends support through level 20.
+
 **Tasks:**
-1. **Create Cap Table Data** (`src/lib/rulesdata/progression/levelCaps.ts`):
-   - Define `LevelCaps` interface with `level`, `maxAttributeValue`, `maxSkillMastery`, `maxTradeMastery`
-   - Create `LEVEL_CAPS` array with caps for levels 1-20
-   - Export helper function `getLevelCaps(level: number): LevelCaps`
 
-2. **Update Attributes Stage** (`src/routes/character-creation/Attributes.tsx`):
-   - Import `getLevelCaps` and use character level from context
-   - Replace hardcoded attribute cap (currently 3) with `levelCaps.maxAttributeValue`
-   - Update UI to show current cap based on level
+**M3.5.1a - Create Single Source of Truth for Caps** (`src/lib/rulesdata/progression/levelCaps.ts`):
+1. Define `MasteryTierDefinition` interface with tier number, name, and bonus
+2. Create `MASTERY_TIERS` array (canonical definition):
+   ```typescript
+   { tier: 0, name: 'Untrained', bonus: 0 }
+   { tier: 1, name: 'Novice', bonus: 2 }
+   { tier: 2, name: 'Adept', bonus: 4 }
+   { tier: 3, name: 'Expert', bonus: 6 }
+   { tier: 4, name: 'Master', bonus: 8 }
+   { tier: 5, name: 'Grandmaster', bonus: 10 }
+   ```
+3. Define `LevelCaps` interface with:
+   - `level: number`
+   - `maxAttributeValue: number`
+   - `maxSkillMasteryTier: number`
+   - `maxTradeMasteryTier: number`
+4. Create `LEVEL_CAPS_TABLE` with **explicit rows for each level 1-20**:
+   - Levels 1-4: Attribute +3, Novice (tier 1)
+   - Levels 5-9: Attribute +4, Adept (tier 2)
+   - Levels 10-14: Attribute +5, Expert (tier 3)
+   - Levels 15-19: Attribute +6, Master (tier 4)
+   - Level 20: Attribute +7, Grandmaster (tier 5)
+5. Export helper functions:
+   - `getLevelCaps(level: number): LevelCaps`
+   - `getMasteryTierByNumber(tier: number): MasteryTierDefinition`
+   - `getMasteryTierByName(name: string): MasteryTierDefinition | undefined`
 
-3. **Update Background Stage** (`src/routes/character-creation/Background.tsx`):
-   - Import `getLevelCaps` and use character level from context
-   - Apply `levelCaps.maxSkillMastery` and `levelCaps.maxTradeMastery` to skill/trade dropdowns
-   - Update validation to enforce mastery caps
+**M3.5.1b - Update Calculator** (`src/lib/services/enhancedCharacterCalculator.ts`):
+1. **Remove** hardcoded `masteryTiers` constant (lines 939-941)
+2. **Remove** `getMaxMasteryForLevel()` function (lines 948-952)
+3. **Import** `getLevelCaps, MASTERY_TIERS` from `levelCaps.ts`
+4. **Replace** mastery cap logic to use:
+   ```typescript
+   const caps = getLevelCaps(buildData.level);
+   const maxSkillMastery = caps.maxSkillMasteryTier;
+   const maxTradeMastery = caps.maxTradeMasteryTier;
+   ```
+5. **Update** references to `masteryTiers.Novice/Adept/Expert` to use `MASTERY_TIERS[tier]`
 
-4. **Review Existing Mastery System**:
-   - Check if skill/trade mastery point system already has cap enforcement
-   - If existing logic can serve as scaffolding, document and reuse it
-   - If not, implement from scratch
+**M3.5.1c - Update UI Components**:
+1. **SkillsTab.tsx** and **TradesTab.tsx**:
+   - **Remove** local `MASTERY_TABLE` constant (lines 44-51)
+   - **Import** `MASTERY_TIERS` from `levelCaps.ts`
+   - **Update** `getMasteryInfo()` to use imported `MASTERY_TIERS`
+2. **Attributes.tsx**:
+   - **Import** `getLevelCaps` from `levelCaps.ts`
+   - **Replace** hardcoded max attribute value (3) with `getLevelCaps(state.level).maxAttributeValue`
+   - **Update** UI text to show dynamic cap (e.g., "max +4" for level 5)
+3. **Background.tsx**:
+   - No changes needed - already reads caps from `calculationResult.validation.masteryLimits`
 
-**Note:** Review existing skill and trade mastery point system implementation to see whether we already have cap enforcement logic that can serve as scaffolding for this milestone.
+**M3.5.1d - Update System Documentation**:
+1. **BACKGROUND_SYSTEM.MD** (Section 4):
+   - Update mastery cap validation description to reference `levelCaps.ts`
+   - Document the level thresholds for each mastery tier
+2. **CALCULATION_SYSTEM.MD** (Section 4):
+   - Update mastery cap validation section to reference single source of truth
+   - Add reference to `levelCaps.ts` for cap lookup
+3. **CHARACTER_CREATION_FLOW.MD**:
+   - Update Stage 3 (Attributes) to note dynamic caps based on level
+   - Update Stage 4 (Background) to note mastery caps from `levelCaps.ts`
+4. **LEVELING_SYSTEM.MD** (Section 3.4):
+   - Add note about dynamic attribute caps affecting budget display
+   - Reference `levelCaps.ts` as canonical source for progression thresholds
+
+**M3.5.1e - Verify No PDF Export Impact**:
+1. Review `PDF_EXPORT_SYSTEM.MD` to confirm no breaking changes
+2. Verify `src/lib/pdf/transformers.ts` (when implemented) will read calculated values, not raw caps
+3. Confirm field map doesn't need updates (PDF shows final values, not caps)
+
+**Testing & Validation**:
+- Create Level 5 character: verify max attribute is +4, max mastery is Adept
+- Create Level 10 character: verify max attribute is +5, max mastery is Expert
+- Create Level 15 character: verify max attribute is +6, max mastery is Master
+- Create Level 20 character: verify max attribute is +7, max mastery is Grandmaster
+- Verify calculator mastery validation still works correctly
+- Verify Background stage still enforces mastery caps via calculator
+
+**Acceptance Criteria**:
+- Single `levelCaps.ts` file is the only source for cap definitions
+- All hardcoded mastery tables removed from UI components and calculator
+- Attribute caps dynamically adjust based on character level
+- Mastery caps correctly enforce up to level 20 (not just level 10)
+- No duplicate definitions of mastery tiers/bonuses
+- System documentation accurately reflects the new single source of truth
 
 ---
 

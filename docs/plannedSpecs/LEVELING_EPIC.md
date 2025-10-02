@@ -386,19 +386,15 @@ With count-based storage (M3.7), users need a way to select talents multiple tim
 
 **Example Calculation (Level 5 Barbarian with 2 martial path points):**
 - **Combat Mastery:** `Math.ceil(5 / 2) = 3` ✅
-- **SP:** Base 1 (L1) + 1 (L3) + 2 (path) = 4... wait, you said total should be 3?
-  
-Let me re-check your numbers:
-- L1: +1 SP (progression)
-- L3: +1 SP (progression)
-- Path L1: +1 SP
-- Path L2: +1 SP
-- **Total: 4 SP**
+- **SP:** 1 (L1) + 1 (L3) + 1 (path L1) = **3** ✅
+- **Maneuvers:** 4 (L1) + 1 (L5) + 1 (path L1) + 1 (path L2) = **7** ✅
+- **Techniques:** 1 (L3) + 1 (path L1) = **2** ✅
 
-But you said it should be 3... Let me check if there's a different rule.
-
-**M3.9e - Verify Expected Values:**
-Confirm the correct formulas with user before implementing.
+**Note:** Martial Path progression corrected in `paths.data.ts`:
+- Level 1: +1 SP, +1 maneuver, +1 technique
+- Level 2: +1 maneuver (NOT +1 SP)
+- Level 3: +1 SP, +1 maneuver, +1 technique
+- Level 4: +1 maneuver (NOT +1 SP)
 
 ---
 

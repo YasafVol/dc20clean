@@ -1,5 +1,6 @@
 import React from 'react';
 import { skillsData } from '../../../lib/rulesdata/skills';
+import { MASTERY_TIERS, type MasteryTierDefinition } from '../../../lib/rulesdata/progression/levelCaps';
 // Types moved from deleted BackgroundPointsManager
 interface BackgroundPointsData {
 	skillPointsUsed: number;
@@ -41,17 +42,8 @@ interface MasteryInfo {
 	available: boolean;
 }
 
-const MASTERY_TABLE = [
-	{ level: 0, name: 'Untrained', bonus: 0 },
-	{ level: 1, name: 'Novice', bonus: 2 },
-	{ level: 2, name: 'Adept', bonus: 4 },
-	{ level: 3, name: 'Expert', bonus: 6 },
-	{ level: 4, name: 'Master', bonus: 8 },
-	{ level: 5, name: 'Grandmaster', bonus: 10 }
-];
-
 const getMasteryInfo = (level: number, maxMastery: number): MasteryInfo => {
-	const masteryData = MASTERY_TABLE[level] || MASTERY_TABLE[0];
+	const masteryData = MASTERY_TIERS[level] || MASTERY_TIERS[0];
 	return {
 		level,
 		name: masteryData.name,

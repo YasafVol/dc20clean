@@ -24,6 +24,7 @@ import {
 import { resolveClassProgression } from '../rulesdata/classes-data/classProgressionResolver';
 import { classesData } from '../rulesdata/loaders/class.loader';
 import { findTalentById } from '../rulesdata/classes-data/talents/talent.loader';
+import { getLevelCaps, MASTERY_TIERS, getMasteryTierByNumber } from '../rulesdata/progression/levelCaps';
 
 import { BuildStep } from '../types/effectSystem';
 import { getLegacyChoiceId } from '../rulesdata/loaders/class-features.loader';
@@ -433,6 +434,7 @@ function validateAttributeLimits(
 	effects: AttributedEffect[]
 ): Record<string, AttributeLimit> {
 	const limits: Record<string, AttributeLimit> = {};
+	const levelCaps = getLevelCaps(buildData.level);
 
 	for (const attr of attributesData) {
 		const baseValue = (buildData as any)[`attribute_${attr.id}`] || 0;
@@ -444,7 +446,7 @@ function validateAttributeLimits(
 			.reduce((sum, effect) => sum + (effect.value as number), 0);
 
 		const current = baseValue + traitBonuses;
-		const max = 3; // Level 1 limit
+		const max = levelCaps.maxAttributeValue;
 
 		limits[attr.id] = {
 			current,
@@ -935,34 +937,20 @@ export function calculateCharacterWithBreakdowns(
 	const attributeLimits = validateAttributeLimits(buildData, resolvedEffects);
 
 	// --- START MASTERY CAP CALCULATION ---
-	const masteryTiers: Record<string, number> = {
-		Novice: 1,
-		Adept: 2,
-		Expert: 3,
-		Master: 4,
-		Grandmaster: 5
-	};
-
-	// Helper to convert level to a numeric mastery tier
-	const getMasteryTierFromLevel = (level: number): number => {
-		if (level >= 20) return masteryTiers.Grandmaster;
-		if (level >= 15) return masteryTiers.Master;
-		if (level >= 10) return masteryTiers.Expert;
-		if (level >= 5) return masteryTiers.Adept;
-		return masteryTiers.Novice;
-	};
+	// Get caps from canonical source
+	const levelCaps = getLevelCaps(buildData.level);
 
 	// Helper to convert skill points to a numeric mastery tier (2+=Adept)
 	const getMasteryTierFromPoints = (points: number): number => {
-		if (points >= 5) return masteryTiers.Grandmaster;
-		if (points >= 4) return masteryTiers.Master;
-		if (points >= 3) return masteryTiers.Expert;
-		if (points >= 2) return masteryTiers.Adept;
-		return masteryTiers.Novice;
+		if (points >= 5) return 5; // Grandmaster
+		if (points >= 4) return 4; // Master
+		if (points >= 3) return 3; // Expert
+		if (points >= 2) return 2; // Adept
+		return 1; // Novice
 	};
 
-	const baseSkillMasteryTier = getMasteryTierFromLevel(buildData.level);
-	const baseTradeMasteryTier = getMasteryTierFromLevel(buildData.level); // Assuming same progression
+	const baseSkillMasteryTier = levelCaps.maxSkillMasteryTier;
+	const baseTradeMasteryTier = levelCaps.maxTradeMasteryTier;
 
 	const skillMasteryCapEffects = resolvedEffects.filter(
 		(e): e is ModifyMasteryCapEffect | IncreaseMasteryCapEffect =>

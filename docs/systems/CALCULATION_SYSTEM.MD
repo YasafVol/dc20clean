@@ -5,12 +5,13 @@
 
  ---
 
- ## 1. Key Files & Roles
+## 1. Key Files & Roles
 
- - `src/lib/services/enhancedCharacterCalculator.ts` — core engine
- - `src/lib/hooks/useCharacterBuilder.ts` — exposes calculation results to UI
- - `src/lib/rulesdata/schemas/character.schema.ts` — canonical `Effect` union
- - `src/lib/rulesdata/attributes.ts` — base attributes and modifiers
+- `src/lib/services/enhancedCharacterCalculator.ts` — core engine
+- `src/lib/hooks/useCharacterBuilder.ts` — exposes calculation results to UI
+- `src/lib/rulesdata/schemas/character.schema.ts` — canonical `Effect` union
+- `src/lib/rulesdata/attributes.ts` — base attributes and modifiers
+- `src/lib/rulesdata/progression/levelCaps.ts` — **single source of truth** for attribute/mastery caps by level
 
  ---
 
@@ -43,13 +44,25 @@
 
  ---
 
- ## 4. Mastery Cap Validation (Skills/Trades)
+## 4. Mastery Cap Validation (Skills/Trades)
 
- - Baseline caps from level; all characters have 1 base Adept slot.
- - Exception grants via effects:
-   - `MODIFY_SKILL_MASTERY_CAP` / `MODIFY_TRADE_MASTERY_CAP`
-   - `INCREASE_SKILL_MASTERY_CAP` / `INCREASE_TRADE_MASTERY_CAP`
- - Calculator computes: `maxSkillMastery`, `maxTradeMastery`, `currentAdeptCount`, `maxAdeptCount`, `canSelectAdept`.
+### 4.1. Level-Based Caps (Canonical Source)
+
+All cap logic now references `src/lib/rulesdata/progression/levelCaps.ts`:
+
+- **`MASTERY_TIERS`**: Defines tier names (Untrained, Novice, Adept, Expert, Master, Grandmaster) and bonuses (+0, +2, +4, +6, +8, +10)
+- **`LEVEL_CAPS_TABLE`**: Explicit rows for levels 1-20 defining:
+  - `maxAttributeValue`: Attribute modifier cap (e.g., +3 at L1-4, +4 at L5-9, ..., +7 at L20)
+  - `maxSkillMasteryTier`: Max skill mastery tier (1=Novice at L1-4, 2=Adept at L5-9, etc.)
+  - `maxTradeMasteryTier`: Max trade mastery tier (same progression as skills)
+- **`getLevelCaps(level)`**: Returns caps for a given level
+
+### 4.2. Effect-Based Exceptions
+
+- Exception grants via effects:
+  - `MODIFY_SKILL_MASTERY_CAP` / `MODIFY_TRADE_MASTERY_CAP`
+  - `INCREASE_SKILL_MASTERY_CAP` / `INCREASE_TRADE_MASTERY_CAP`
+- Calculator computes: `maxSkillMastery`, `maxTradeMastery`, `currentAdeptCount`, `maxAdeptCount`, `canSelectAdept`.
 
  ---
 
@@ -74,9 +87,24 @@
  - `docs/systems/EFFECT_SYSTEM.MD` — effect types and targets
  - `docs/systems/BACKGROUND_SYSTEM.MD#4-calculation-model`
 
- ---
+---
 
- > Last updated: 2025-09-12
- > Maintainer: @DC20Clean-Team
+## 8. Level-Based Cap Table (Implementation Reference)
+
+See `src/lib/rulesdata/progression/levelCaps.ts` for the complete table.
+
+**Sample Progression:**
+- **L1-4**: Attribute +3, Mastery Tier 1 (Novice)
+- **L5-9**: Attribute +4, Mastery Tier 2 (Adept)
+- **L10-14**: Attribute +5, Mastery Tier 3 (Expert)
+- **L15-19**: Attribute +6, Mastery Tier 4 (Master)
+- **L20**: Attribute +7, Mastery Tier 5 (Grandmaster)
+
+All UI components (Attributes, Background/Skills/Trades tabs) and the calculator reference this canonical source.
+
+---
+
+> Last updated: 2025-10-02
+> Maintainer: @DC20Clean-Team
 
 

@@ -178,7 +178,7 @@ function ClassSelector() {
 					onChange={handleLevelChange}
 					data-testid="level-selector"
 				>
-					{Array.from({ length: 3 }, (_, i) => i + 1).map((level) => (
+					{Array.from({ length: 5 }, (_, i) => i + 1).map((level) => (
 						<option key={level} value={level}>
 							Level {level}
 						</option>

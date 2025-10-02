@@ -820,8 +820,9 @@ export function calculateCharacterWithBreakdowns(
 			.reduce((s, e) => s + Number(e.value || 0), 0);
 
 	// Use aggregated skill/trade points from progression gains + bonuses from effects
-	const baseSkillPoints = progressionGains.totalSkillPoints + finalIntelligence + bonus('skillPoints');
-	const baseTradePoints = progressionGains.totalTradePoints + bonus('tradePoints');
+	// Base values: 5 skill points, 3 trade points, 2 language points at level 1
+	const baseSkillPoints = 5 + progressionGains.totalSkillPoints + finalIntelligence + bonus('skillPoints');
+	const baseTradePoints = 3 + progressionGains.totalTradePoints + bonus('tradePoints');
 	const baseLanguagePoints = 2 + bonus('languagePoints'); // Languages stay at 2 (not level-dependent)
 
 	const {

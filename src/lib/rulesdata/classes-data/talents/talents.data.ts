@@ -9,18 +9,18 @@ export const generalTalents: Talent[] = [
     effects: [{ type: 'MODIFY_STAT', target: 'attributePoints', value: 1 }],
   },
   {
-    id: 'general_skill_or_trade_increase',
-    name: 'Skill or Trade Increase',
+    id: 'general_skill_increase',
+    name: 'Skill Point Increase',
     category: 'General',
-    description: 'You gain 3 Skill or Trade Points to put into any Skill or Trade of your choice.',
-    effects: [
-      {
-        type: 'GRANT_CHOICE',
-        target: 'skill_or_trade_points',
-        value: 3,
-        userChoice: { prompt: 'Choose to gain 3 Skill Points or 3 Trade Points' },
-      },
-    ],
+    description: 'You gain 3 Skill Points to put into any Skill of your choice.',
+    effects: [{ type: 'MODIFY_STAT', target: 'skillPoints', value: 3 }],
+  },
+  {
+    id: 'general_trade_increase',
+    name: 'Trade Point Increase',
+    category: 'General',
+    description: 'You gain 3 Trade Points to put into any Trade of your choice.',
+    effects: [{ type: 'MODIFY_STAT', target: 'tradePoints', value: 3 }],
   },
   {
     id: 'general_martial_expansion',

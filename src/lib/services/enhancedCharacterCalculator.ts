@@ -1018,8 +1018,8 @@ export function calculateCharacterWithBreakdowns(
 		: 0;
 	const totalCurrentAdeptCount = currentSkillAdeptCount + currentTradeAdeptCount;
 
-	// Baseline: Level 1 has 1 base Adept slot
-	const baseAdeptSlots = buildData.level === 1 ? 1 : 0;
+	// Baseline: All characters have at least 1 base Adept slot (level 1 rule applies to all levels)
+	const baseAdeptSlots = 1;
 	const bonusAdeptSlots = skillMasteryCapEffects.reduce((total, effect) => total + effect.count, 0);
 	const maxAdeptCount = baseAdeptSlots + bonusAdeptSlots;
 

@@ -457,25 +457,28 @@ function LevelingChoices() {
 	const multiclassTalentUsed = selectedMulticlassOption && selectedMulticlassFeature ? 1 : 0;
 	const totalTalentsUsed = selectedTalents.length + multiclassTalentUsed;
 
-	// Define General Talents (hardcoded as per spec)
+	// Define General Talents - use IDs that match talents.data.ts so effects work
 	const generalTalents = [
 		{
 			id: 'general_attribute_increase',
 			name: 'Attribute Increase',
 			category: 'General',
-			description: 'You gain 1 Attribute Point to put into any Attribute of your choice.'
+			description: 'You gain 1 Attribute Point to put into any Attribute of your choice.',
+			effects: [{ type: 'MODIFY_STAT', target: 'attributePoints', value: 1 }]
 		},
 		{
 			id: 'general_skill_increase',
 			name: 'Skill Point Increase',
 			category: 'General',
-			description: 'You gain 3 Skill Points to put into any Skill of your choice.'
+			description: 'You gain 3 Skill Points to put into any Skill of your choice.',
+			effects: [{ type: 'MODIFY_STAT', target: 'skillPoints', value: 3 }]
 		},
 		{
 			id: 'general_trade_increase',
 			name: 'Trade Point Increase',
 			category: 'General',
-			description: 'You gain 3 Trade Points to put into any Trade of your choice.'
+			description: 'You gain 3 Trade Points to put into any Trade of your choice.',
+			effects: [{ type: 'MODIFY_STAT', target: 'tradePoints', value: 3 }]
 		}
 	];
 

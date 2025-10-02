@@ -189,14 +189,15 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	const isStepCompleted = (step: number) => {
 		// Adjust step numbers based on whether leveling choices exist
 		const hasLevelingStep = state.level > 1;
+		const levelingStep = 2;
 		const ancestryStep = hasLevelingStep ? 3 : 2;
 		const attributesStep = hasLevelingStep ? 4 : 3;
 		const backgroundStep = hasLevelingStep ? 5 : 4;
 		const spellsStep = hasLevelingStep ? 6 : 5;
 		const nameStep = hasLevelingStep ? 7 : 6;
 
-		switch (step) {
-			case 1: {
+		// Step 1: Class Selection
+		if (step === 1) {
 				if (state.classId === null) return false;
 
 				// Check if all required feature choices have been made
@@ -265,10 +266,10 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				}
 
 				return true;
-			}
-			case 2:
-				// Leveling Choices step (only exists if level > 1)
-				if (state.level > 1) {
+		}
+
+		// Step 2: Leveling Choices (only if level > 1)
+		if (step === levelingStep && hasLevelingStep) {
 					// Validate that all talent and path points have been spent
 					const budgets = calculationResult?.levelBudgets;
 					
@@ -309,56 +310,30 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 						pathPoints: totalAllocated
 					});
 					return true;
-				}
-				// If level === 1, step 2 is Ancestry (fall through to ancestryStep case)
-				if (step === ancestryStep) {
-					// Use centralized calculator for ancestry points validation
-					const ancestryData = calculationResult.ancestry || { ancestryPointsRemaining: 5 };
-					const { ancestryPointsRemaining } = ancestryData;
+		}
 
-					// Step is complete if:
-					// 1. At least one ancestry is selected AND
-					// 2. Points are not over budget (>= 0) AND
-					// 3. All points are spent (== 0) for completion
-					const hasAncestry = state.ancestry1Id !== null;
-					const pointsValid = ancestryPointsRemaining >= 0;
-					const allPointsSpent = ancestryPointsRemaining === 0;
-					const isValid = hasAncestry && pointsValid && allPointsSpent;
+		// Ancestry step
+		if (step === ancestryStep) {
+			// Use centralized calculator for ancestry points validation
+			const ancestryData = calculationResult.ancestry || { ancestryPointsRemaining: 5 };
+			const { ancestryPointsRemaining } = ancestryData;
 
-					console.log('🔍 Step (Ancestry) validation:', {
-						ancestry1Id: state.ancestry1Id,
-						ancestry2Id: state.ancestry2Id,
-						selectedTraitIds: state.selectedTraitIds,
-						ancestryPointsRemaining,
-						hasAncestry,
-						pointsValid,
-						allPointsSpent,
-						isValid
-					});
-					return isValid;
-				}
-				return false;
-			default:
-				// Handle ancestry step dynamically
-				if (step === ancestryStep) {
-					// Use centralized calculator for ancestry points validation
-					const ancestryData = calculationResult.ancestry || { ancestryPointsRemaining: 5 };
-					const { ancestryPointsRemaining } = ancestryData;
+			const hasAncestry = state.ancestry1Id !== null;
+			const pointsValid = ancestryPointsRemaining >= 0;
+			const allPointsSpent = ancestryPointsRemaining === 0;
+			const isValid = hasAncestry && pointsValid && allPointsSpent;
 
-					const hasAncestry = state.ancestry1Id !== null;
-					const pointsValid = ancestryPointsRemaining >= 0;
-					const allPointsSpent = ancestryPointsRemaining === 0;
-					const isValid = hasAncestry && pointsValid && allPointsSpent;
+			console.log('🔍 Ancestry validation:', { step, ancestryStep, isValid });
+			return isValid;
+		}
 
-					console.log('🔍 Ancestry validation:', { step, ancestryStep, isValid });
-					return isValid;
-				}
+		// Attributes step
+		if (step === attributesStep) {
+			return attributePointsRemaining === 0;
+		}
 
-				if (step === attributesStep) {
-					return attributePointsRemaining === 0;
-				}
-
-				if (step === backgroundStep) {
+		// Background step
+		if (step === backgroundStep) {
 				// Background: check if ALL available points have been spent
 				// Parse current selections
 				let skillPointsUsed = 0;
@@ -564,10 +539,11 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					isValid
 				});
 
-					return isValid;
-				}
+			return isValid;
+		}
 
-				if (step === spellsStep) {
+		// Spells & Maneuvers step
+		if (step === spellsStep) {
 				// Spells & Maneuvers step - validate based on class requirements
 				if (!state.classId) return false;
 
@@ -640,22 +616,23 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					return true;
 				}
 
-					// Step is complete if we reach here (all required selections are made)
-					console.log('✅ Spells validation passed');
-					return true;
-				}
-
-				if (step === nameStep) {
-					return (
-						state.finalName !== null &&
-						state.finalName !== '' &&
-						state.finalPlayerName !== null &&
-						state.finalPlayerName !== ''
-					);
-				}
-
-				return false;
+			// Step is complete if we reach here (all required selections are made)
+			console.log('✅ Spells validation passed');
+			return true;
 		}
+
+		// Character Name step
+		if (step === nameStep) {
+			return (
+				state.finalName !== null &&
+				state.finalName !== '' &&
+				state.finalPlayerName !== null &&
+				state.finalPlayerName !== ''
+			);
+		}
+
+		// Unknown step
+		return false;
 	};
 
 	const areAllStepsCompleted = () => {

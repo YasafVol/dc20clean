@@ -176,6 +176,7 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M3.3**  | **(UI)** Modify `CharacterCreation.tsx` to conditionally render the new stage.         | ✅ Done   | M3.2           |
 | **M3.4**  | **(UI)** Update subsequent stages to use the aggregated point totals.                      | ✅ Done   | M3.3           |
 | **M3.5**  | **(UI)** Implement talent effects system in calculator.                                    | ✅ Done   | M3.4           |
+| **M3.5.1**| **(Data)** Attribute and mastery-to-level cap enforcement.                             | ❌ To Do   | M3.5           |
 | **M3.5**  | **(State)** Persist resolver outputs (features, pending choices) in `characterContext`. | ❌ To Do   | M2.6           |
 | **M3.6**  | **(UI)** Render resolver-derived feature unlocks in creation & sheet views.           | ❌ To Do   | M3.5           |
 | **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.6           |
@@ -183,6 +184,35 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M4.1**  | **(E2E Test)** Create `levelup-wizard.e2e.spec.ts` to test a Level 3 Wizard creation.   | ❌ To Do   | HR-3           |
 | **M4.2**  | **(Manual Test)** Manually test character creation at levels 2 and 3.               | ❌ To Do   | M4.1           |
 | **M4.3**  | **(Documentation)** Update relevant `.md` system files with changes.                     | ❌ To Do   | M4.2           |
+
+---
+
+### 5.1. Milestone M3.5.1: Attribute and Mastery-to-Level Cap Enforcement
+
+**Goal:** Implement level-based caps for attributes and skill/trade mastery to prevent characters from exceeding their level-appropriate limits.
+
+**Tasks:**
+1. **Create Cap Table Data** (`src/lib/rulesdata/progression/levelCaps.ts`):
+   - Define `LevelCaps` interface with `level`, `maxAttributeValue`, `maxSkillMastery`, `maxTradeMastery`
+   - Create `LEVEL_CAPS` array with caps for levels 1-20
+   - Export helper function `getLevelCaps(level: number): LevelCaps`
+
+2. **Update Attributes Stage** (`src/routes/character-creation/Attributes.tsx`):
+   - Import `getLevelCaps` and use character level from context
+   - Replace hardcoded attribute cap (currently 3) with `levelCaps.maxAttributeValue`
+   - Update UI to show current cap based on level
+
+3. **Update Background Stage** (`src/routes/character-creation/Background.tsx`):
+   - Import `getLevelCaps` and use character level from context
+   - Apply `levelCaps.maxSkillMastery` and `levelCaps.maxTradeMastery` to skill/trade dropdowns
+   - Update validation to enforce mastery caps
+
+4. **Review Existing Mastery System**:
+   - Check if skill/trade mastery point system already has cap enforcement
+   - If existing logic can serve as scaffolding, document and reuse it
+   - If not, implement from scratch
+
+**Note:** Review existing skill and trade mastery point system implementation to see whether we already have cap enforcement logic that can serve as scaffolding for this milestone.
 
 ---
 

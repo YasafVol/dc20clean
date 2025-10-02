@@ -335,6 +335,12 @@ export interface EnhancedCharacterBuildData {
 	// Timestamps for caching
 	lastModified: number;
 
+	// Path Point Allocations (M3.9)
+	pathPointAllocations?: { 
+		martial?: number; 
+		spellcasting?: number; 
+	};
+
 	// Level-based budgets (populated by aggregateProgressionGains)
 	levelBudgets?: {
 		totalTalents: number;

@@ -66,6 +66,63 @@ import type { ClassDefinition } from '../rulesdata/schemas/character.schema';
 import { CHARACTER_PATHS } from '../rulesdata/paths/paths.data';
 
 /**
+ * Helper to aggregate path point benefits based on allocations
+ * @param pathPointAllocations - How many points allocated to each path
+ * @returns Aggregated benefits from all allocated path levels
+ */
+function aggregatePathBenefits(pathPointAllocations?: { martial?: number; spellcasting?: number }): {
+	totalSP: number;
+	totalMP: number;
+	totalManeuversKnown: number;
+	totalTechniquesKnown: number;
+	totalCantripsKnown: number;
+	totalSpellsKnown: number;
+} {
+	let totalSP = 0;
+	let totalMP = 0;
+	let totalManeuversKnown = 0;
+	let totalTechniquesKnown = 0;
+	let totalCantripsKnown = 0;
+	let totalSpellsKnown = 0;
+
+	if (!pathPointAllocations) {
+		return { totalSP, totalMP, totalManeuversKnown, totalTechniquesKnown, totalCantripsKnown, totalSpellsKnown };
+	}
+
+	// Martial Path bonuses
+	if (pathPointAllocations.martial) {
+		const martialPath = CHARACTER_PATHS.find(p => p.id === 'martial_path');
+		if (martialPath) {
+			for (let level = 1; level <= pathPointAllocations.martial; level++) {
+				const levelData = martialPath.progression.find(p => p.pathLevel === level);
+				if (levelData?.benefits) {
+					totalSP += levelData.benefits.staminaPoints || 0;
+					totalManeuversKnown += levelData.benefits.maneuversLearned || 0;
+					totalTechniquesKnown += levelData.benefits.techniquesLearned || 0;
+				}
+			}
+		}
+	}
+
+	// Spellcaster Path bonuses
+	if (pathPointAllocations.spellcasting) {
+		const spellcasterPath = CHARACTER_PATHS.find(p => p.id === 'spellcaster_path');
+		if (spellcasterPath) {
+			for (let level = 1; level <= pathPointAllocations.spellcasting; level++) {
+				const levelData = spellcasterPath.progression.find(p => p.pathLevel === level);
+				if (levelData?.benefits) {
+					totalMP += levelData.benefits.manaPoints || 0;
+					totalCantripsKnown += levelData.benefits.cantripsLearned || 0;
+					totalSpellsKnown += levelData.benefits.spellsLearned || 0;
+				}
+			}
+		}
+	}
+
+	return { totalSP, totalMP, totalManeuversKnown, totalTechniquesKnown, totalCantripsKnown, totalSpellsKnown };
+}
+
+/**
  * Convert character context data to enhanced build data
  */
 export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterBuildData {
@@ -115,6 +172,9 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 			tradeToSkill: contextData.tradeToSkillConversions ?? 0,
 			tradeToLanguage: contextData.tradeToLanguageConversions ?? 0
 		},
+
+		// Path Point Allocations (M3.9)
+		pathPointAllocations: contextData.pathPointAllocations,
 
 		lastModified: Date.now()
 	};
@@ -533,7 +593,8 @@ function getOptionsForEffect(effect: AttributedEffect): ChoiceOption[] {
  */
 function aggregateProgressionGains(
 	classProgressionData: any,
-	targetLevel: number
+	targetLevel: number,
+	pathPointAllocations?: { martial?: number; spellcasting?: number }
 ): {
 	totalHP: number;
 	totalSP: number;
@@ -636,12 +697,34 @@ function aggregateProgressionGains(
 		}
 	}
 
-	console.log('✅ AGGREGATION COMPLETE:', {
+	console.log('✅ AGGREGATION COMPLETE (before path bonuses):', {
 		totalTalents,
 		totalPathPoints,
 		totalSkillPoints,
 		totalTradePoints,
-		unlockedFeatureIds: unlockedFeatureIds.length
+		unlockedFeatureIds: unlockedFeatureIds.length,
+		totalSP,
+		totalMP,
+		totalManeuversKnown,
+		totalTechniquesKnown
+	});
+
+	// Add path bonuses to progression totals
+	const pathBonuses = aggregatePathBenefits(pathPointAllocations);
+	totalSP += pathBonuses.totalSP;
+	totalMP += pathBonuses.totalMP;
+	totalManeuversKnown += pathBonuses.totalManeuversKnown;
+	totalTechniquesKnown += pathBonuses.totalTechniquesKnown;
+	totalCantripsKnown += pathBonuses.totalCantripsKnown;
+	totalSpellsKnown += pathBonuses.totalSpellsKnown;
+
+	console.log('✅ PATH BONUSES APPLIED:', {
+		pathAllocations: pathPointAllocations,
+		bonuses: pathBonuses,
+		finalSP: totalSP,
+		finalMP: totalMP,
+		finalManeuvers: totalManeuversKnown,
+		finalTechniques: totalTechniquesKnown
 	});
 
 	return {
@@ -688,7 +771,11 @@ export function calculateCharacterWithBreakdowns(
 	
 	// 4. Get legacy class progression data for mana/cantrips/spells (still from tables)
 	const classProgressionData = getClassProgressionData(buildData.classId);
-	const progressionGains = aggregateProgressionGains(classProgressionData, buildData.level);
+	const progressionGains = aggregateProgressionGains(
+		classProgressionData, 
+		buildData.level,
+		buildData.pathPointAllocations
+	);
 
 	// 4. Create detailed breakdowns
 	const breakdowns: Record<string, EnhancedStatBreakdown> = {};

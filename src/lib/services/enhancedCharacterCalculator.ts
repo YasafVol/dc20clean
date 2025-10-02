@@ -995,39 +995,61 @@ export function calculateCharacterWithBreakdowns(
 		totalCapExceptionsBudget += effect.count;
 	}
 
-	// 3. Calculate total allowed Adept skills (Level 1 has 1 base slot)
-	const baseAdeptSlotsForValidation = buildData.level === 1 ? 1 : 0;
-	const totalAllowedAdeptSkills = baseAdeptSlotsForValidation + totalCapExceptionsBudget;
-
-	// Validate that over-level skills don't exceed total budget (including Level 1 default)
-	if (skillsOverLevelCap.length > totalAllowedAdeptSkills) {
-		errors.push({
-			step: BuildStep.Background,
-			field: 'skills',
-			code: 'MASTERY_CAP_EXCEEDED',
-			message: `You have raised ${
-				skillsOverLevelCap.length
-			} skills above your level's mastery limit, but you can only have ${totalAllowedAdeptSkills} Adept skills (${totalCapExceptionsBudget} from features).`
+	// 3. Validate skills that exceed the level's natural mastery cap
+	// At level 5+, Adept (tier 2) is the natural cap, so it's unlimited (like Novice at level 1)
+	// Only enforce slot limits when trying to exceed the natural cap
+	const naturalCapAllowsAdept = baseSkillMasteryTier >= 2;
+	
+	if (naturalCapAllowsAdept) {
+		// Level 5+: Adept is unlimited. Only validate skills that go ABOVE Adept (tier 3+)
+		const skillsAboveNaturalCap = skillsOverLevelCap.filter(skillId => {
+			const points = buildData.skillsData?.[skillId] || 0;
+			return getMasteryTierFromPoints(points) > baseSkillMasteryTier;
 		});
-	}
-
-	// 4. Validate specific skill coverage, allowing base Adept slots to cover any skill
-	let freeBaseSlots = baseAdeptSlotsForValidation;
-	for (const skillId of skillsOverLevelCap) {
-		const isCoveredByFeature = skillMasteryCapEffects.some(
-			(effect) => !effect.options || effect.options.includes(skillId)
-		);
-		if (isCoveredByFeature) continue;
-		if (freeBaseSlots > 0) {
-			freeBaseSlots -= 1;
-			continue;
+		
+		// Only feature exceptions can grant mastery above natural cap
+		if (skillsAboveNaturalCap.length > totalCapExceptionsBudget) {
+			errors.push({
+				step: BuildStep.Background,
+				field: 'skills',
+				code: 'MASTERY_CAP_EXCEEDED',
+				message: `You have raised ${skillsAboveNaturalCap.length} skills above your level's natural mastery cap (tier ${baseSkillMasteryTier}), but you only have ${totalCapExceptionsBudget} exception slots from features.`
+			});
 		}
-		errors.push({
-			step: BuildStep.Background,
-			field: skillId,
-			code: 'INVALID_MASTERY_GRANT',
-			message: `The ${skillId} skill has been raised to Adept level, but is not permitted by your features or base allowances.`
-		});
+	} else {
+		// Level 1-4: Natural cap is Novice (tier 1), so Adept requires exception slots
+		// Level 1 gets 1 base Adept slot, higher levels need feature exceptions
+		const baseAdeptSlotsForValidation = buildData.level === 1 ? 1 : 0;
+		const totalAllowedAdeptSkills = baseAdeptSlotsForValidation + totalCapExceptionsBudget;
+
+		// Validate that over-level skills don't exceed total budget
+		if (skillsOverLevelCap.length > totalAllowedAdeptSkills) {
+			errors.push({
+				step: BuildStep.Background,
+				field: 'skills',
+				code: 'MASTERY_CAP_EXCEEDED',
+				message: `You have raised ${skillsOverLevelCap.length} skills to Adept level, but you can only have ${totalAllowedAdeptSkills} Adept skills (${baseAdeptSlotsForValidation} base + ${totalCapExceptionsBudget} from features).`
+			});
+		}
+
+		// Validate specific skill coverage
+		let freeBaseSlots = baseAdeptSlotsForValidation;
+		for (const skillId of skillsOverLevelCap) {
+			const isCoveredByFeature = skillMasteryCapEffects.some(
+				(effect) => !effect.options || effect.options.includes(skillId)
+			);
+			if (isCoveredByFeature) continue;
+			if (freeBaseSlots > 0) {
+				freeBaseSlots -= 1;
+				continue;
+			}
+			errors.push({
+				step: BuildStep.Background,
+				field: skillId,
+				code: 'INVALID_MASTERY_GRANT',
+				message: `The ${skillId} skill has been raised to Adept level, but is not permitted by your features or base allowances.`
+			});
+		}
 	}
 	// --- END MASTERY CAP CALCULATION ---
 
@@ -1040,17 +1062,27 @@ export function calculateCharacterWithBreakdowns(
 		: 0;
 	const totalCurrentAdeptCount = currentSkillAdeptCount + currentTradeAdeptCount;
 
-	// Baseline: All characters have at least 1 base Adept slot (level 1 rule applies to all levels)
-	const baseAdeptSlots = 1;
-	const bonusAdeptSlots = skillMasteryCapEffects.reduce((total, effect) => total + effect.count, 0);
-	const maxAdeptCount = baseAdeptSlots + bonusAdeptSlots;
+	// Calculate mastery limits for UI display
+	// If level naturally allows Adept (tier 2+), then Adept is unlimited (like Novice at level 1)
+	// Only use slot system for levels below natural Adept cap (levels 1-4)
+	let maxAdeptCount: number;
+	let canSelectAdept: boolean;
+	
+	if (naturalCapAllowsAdept) {
+		// Level 5+: Adept is unlimited, no slot restriction
+		maxAdeptCount = 999; // Effectively unlimited for UI
+		canSelectAdept = true; // Always can select Adept at this level
+	} else {
+		// Level 1-4: Use slot system (1 base slot at level 1, 0 at levels 2-4)
+		const baseAdeptSlots = buildData.level === 1 ? 1 : 0;
+		const bonusAdeptSlots = skillMasteryCapEffects.reduce((total, effect) => total + effect.count, 0);
+		maxAdeptCount = baseAdeptSlots + bonusAdeptSlots;
+		canSelectAdept = totalCurrentAdeptCount < maxAdeptCount;
+	}
 
-	// Max mastery accounts for level + available Adept slots
-	// If character has Adept slots available, they can reach Adept level (2)
-	const maxSkillMastery =
-		maxAdeptCount > 0 ? Math.max(2, baseSkillMasteryTier) : Math.max(1, baseSkillMasteryTier);
-	const maxTradeMastery =
-		maxAdeptCount > 0 ? Math.max(2, baseTradeMasteryTier) : Math.max(1, baseTradeMasteryTier);
+	// Max mastery tier for UI dropdowns
+	const maxSkillMastery = baseSkillMasteryTier;
+	const maxTradeMastery = baseTradeMasteryTier;
 
 	const validation: ValidationResult = {
 		isValid: errors.length === 0 && !Object.values(attributeLimits).some((limit) => limit.exceeded),
@@ -1062,7 +1094,7 @@ export function calculateCharacterWithBreakdowns(
 			maxTradeMastery,
 			currentAdeptCount: totalCurrentAdeptCount,
 			maxAdeptCount,
-			canSelectAdept: totalCurrentAdeptCount < maxAdeptCount
+			canSelectAdept
 		}
 	};
 

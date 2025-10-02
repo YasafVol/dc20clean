@@ -845,7 +845,7 @@ export function calculateCharacterWithBreakdowns(
 	const ancestryPointsUsed = selectedTraitCosts;
 	const ancestryPointsRemaining = baseAncestryPoints - ancestryPointsUsed;
 
-	// Background section for UI consumption
+	// Background section for UI consumption with detailed breakdown
 	const background = {
 		baseSkillPoints,
 		baseTradePoints,
@@ -856,7 +856,28 @@ export function calculateCharacterWithBreakdowns(
 		skillPointsUsed,
 		tradePointsUsed,
 		languagePointsUsed,
-		conversions: { skillToTrade, tradeToSkill, tradeToLanguage }
+		conversions: { skillToTrade, tradeToSkill, tradeToLanguage },
+		// Breakdown for UI display
+		breakdown: {
+			skillPoints: {
+				base: 5,
+				intelligence: finalIntelligence,
+				progression: progressionGains.totalSkillPoints,
+				talents: bonus('skillPoints'),
+				total: baseSkillPoints
+			},
+			tradePoints: {
+				base: 3,
+				progression: progressionGains.totalTradePoints,
+				talents: bonus('tradePoints'),
+				total: baseTradePoints
+			},
+			languagePoints: {
+				base: 2,
+				talents: bonus('languagePoints'),
+				total: baseLanguagePoints
+			}
+		}
 	};
 
 	// Ancestry section for UI consumption

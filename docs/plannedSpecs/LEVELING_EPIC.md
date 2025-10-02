@@ -178,6 +178,7 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M3.5**    | **(UI)** Implement talent effects system in calculator.                                  | ✅ Done   | M3.4           |
 | **M3.5.1**  | **(Feature)** Implement attribute and mastery-to-level cap enforcement.               | ✅ Done   | M3.5           |
 | **M3.5.1a** | **(Data)** Create single source of truth for caps in `levelCaps.ts`.                  | ✅ Done   | M3.5           |
+| **M3.5.1f** | **(Fix)** Make mastery unlimited at natural cap (L5: Adept, L10: Expert, etc.).       | ✅ Done   | M3.5.1e        |
 | **M3.5.1b** | **(Engine)** Update calculator to use `levelCaps.ts` for mastery validation.         | ✅ Done   | M3.5.1a        |
 | **M3.5.1c** | **(UI)** Update Attributes and Background components to use dynamic caps.             | ✅ Done   | M3.5.1b        |
 | **M3.5.1d** | **(Docs)** Update system documentation with cap references.                           | ✅ Done   | M3.5.1c        |
@@ -357,9 +358,21 @@ This milestone consolidates all cap data into a single source of truth and exten
 2. Verify `src/lib/pdf/transformers.ts` (when implemented) will read calculated values, not raw caps
 3. Confirm field map doesn't need updates (PDF shows final values, not caps)
 
+**M3.5.1f - Fix Unlimited Mastery at Natural Cap**:
+1. **Issue:** Mastery slot system incorrectly applied at all levels
+   - Level 5+ was limited to 1 Adept selection despite Adept being the natural cap
+   - Treated Adept as "exception" even when it's the normal limit
+2. **Fix:** Changed validation logic to check `levelAllowsUnlimitedMastery = baseSkillMasteryTier >= 2`
+   - Level 1-4: Natural cap = Novice → Adept requires slots (1 at L1)
+   - Level 5-9: Natural cap = Adept → Adept unlimited, Expert requires exception
+   - Level 10-14: Natural cap = Expert → Expert unlimited, Master requires exception
+   - Level 15-19: Natural cap = Master → Master unlimited, Grandmaster requires exception
+   - Level 20: Natural cap = Grandmaster → All unlimited
+3. **Result:** All tiers up to natural cap are unlimited (like Novice at level 1)
+
 ---
 
-**Implementation Summary (M3.5.1a-e):**
+**Implementation Summary (M3.5.1a-f):**
 
 ✅ **Created** `src/lib/rulesdata/progression/levelCaps.ts`:
 - `MASTERY_TIERS`: Canonical array of 6 tiers (Untrained → Grandmaster) with bonuses
@@ -381,6 +394,12 @@ This milestone consolidates all cap data into a single source of truth and exten
 - Added Section 8 with sample progression table (L1-4: +3/Novice, L5-9: +4/Adept, etc.)
 
 ✅ **Verified** PDF export has no impact: transformers read final calculated values, not validation logic.
+
+✅ **Fixed** mastery slot logic (M3.5.1f):
+- Renamed `naturalCapAllowsAdept` → `levelAllowsUnlimitedMastery` for clarity
+- All tiers up to natural cap are now unlimited (L5: Adept unlimited, L10: Expert unlimited, etc.)
+- Validation only checks skills ABOVE natural cap
+- Updated `CALCULATION_SYSTEM.MD` with unlimited mastery table
 
 **Testing & Validation**:
 - **Current Test Configuration**: Level cap opened to 5 for testing (ClassSelector.tsx, line 181)

@@ -996,12 +996,15 @@ export function calculateCharacterWithBreakdowns(
 	}
 
 	// 3. Validate skills that exceed the level's natural mastery cap
-	// At level 5+, Adept (tier 2) is the natural cap, so it's unlimited (like Novice at level 1)
+	// If level naturally allows tier 2+, those tiers are unlimited (like Novice at level 1)
 	// Only enforce slot limits when trying to exceed the natural cap
-	const naturalCapAllowsAdept = baseSkillMasteryTier >= 2;
+	const levelAllowsUnlimitedMastery = baseSkillMasteryTier >= 2;
 	
-	if (naturalCapAllowsAdept) {
-		// Level 5+: Adept is unlimited. Only validate skills that go ABOVE Adept (tier 3+)
+	if (levelAllowsUnlimitedMastery) {
+		// Level 5+: All tiers up to natural cap are unlimited
+		// Only validate skills that exceed the natural cap
+		// E.g., L5: Adept unlimited, Expert needs exception
+		//       L10: Expert unlimited, Master needs exception
 		const skillsAboveNaturalCap = skillsOverLevelCap.filter(skillId => {
 			const points = buildData.skillsData?.[skillId] || 0;
 			return getMasteryTierFromPoints(points) > baseSkillMasteryTier;
@@ -1063,15 +1066,15 @@ export function calculateCharacterWithBreakdowns(
 	const totalCurrentAdeptCount = currentSkillAdeptCount + currentTradeAdeptCount;
 
 	// Calculate mastery limits for UI display
-	// If level naturally allows Adept (tier 2+), then Adept is unlimited (like Novice at level 1)
-	// Only use slot system for levels below natural Adept cap (levels 1-4)
+	// If level naturally allows tier 2+, all tiers up to cap are unlimited (like Novice at level 1)
+	// Only use slot system for levels below the natural cap (levels 1-4 trying to reach Adept)
 	let maxAdeptCount: number;
 	let canSelectAdept: boolean;
 	
-	if (naturalCapAllowsAdept) {
-		// Level 5+: Adept is unlimited, no slot restriction
+	if (levelAllowsUnlimitedMastery) {
+		// Level 5+: All tiers up to natural cap are unlimited
 		maxAdeptCount = 999; // Effectively unlimited for UI
-		canSelectAdept = true; // Always can select Adept at this level
+		canSelectAdept = true; // Always can select up to natural cap
 	} else {
 		// Level 1-4: Use slot system (1 base slot at level 1, 0 at levels 2-4)
 		const baseAdeptSlots = buildData.level === 1 ? 1 : 0;

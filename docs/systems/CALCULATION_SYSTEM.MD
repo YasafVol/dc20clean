@@ -57,7 +57,21 @@ All cap logic now references `src/lib/rulesdata/progression/levelCaps.ts`:
   - `maxTradeMasteryTier`: Max trade mastery tier (same progression as skills)
 - **`getLevelCaps(level)`**: Returns caps for a given level
 
-### 4.2. Effect-Based Exceptions
+### 4.2. Unlimited Mastery at Natural Cap
+
+**Core Rule:** All mastery tiers **up to and including** the level's natural cap are unlimited.
+
+| Level Range | Natural Cap | Unlimited Tiers | Exception Slots Needed For |
+|-------------|-------------|-----------------|----------------------------|
+| 1-4         | Tier 1 (Novice) | Novice | Adept+ (L1 gets 1 free Adept slot) |
+| 5-9         | Tier 2 (Adept) | Novice, Adept | Expert+ |
+| 10-14       | Tier 3 (Expert) | Novice, Adept, Expert | Master+ |
+| 15-19       | Tier 4 (Master) | Novice, Adept, Expert, Master | Grandmaster |
+| 20          | Tier 5 (Grandmaster) | All tiers | None |
+
+**Example:** At level 5, you can select as many Adept skills as you want (just like Novice is unlimited at level 1).
+
+### 4.3. Effect-Based Exceptions
 
 - Exception grants via effects:
   - `MODIFY_SKILL_MASTERY_CAP` / `MODIFY_TRADE_MASTERY_CAP`

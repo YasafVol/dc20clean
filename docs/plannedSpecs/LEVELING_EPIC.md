@@ -184,10 +184,12 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M3.5.1d** | **(Docs)** Update system documentation with cap references.                           | ✅ Done   | M3.5.1c        |
 | **M3.5.1e** | **(Verify)** Confirm no PDF export system impact.                                       | ✅ Done   | M3.5.1d        |
 | **M3.6**    | **(UI)** Render resolver-derived feature unlocks in creation & sheet views.           | ✅ Done   | M3.5           |
-| **M3.7**    | **(Refactor)** Change talent storage from `string[]` to `Record<string, number>`.    | ❌ To Do   | M3.6           |
-| **M3.8**    | **(UI)** Add +/- counter UI for general talents to allow multiple selections.        | ❌ To Do   | M3.7           |
-| **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.8           |
-| **HR-3**  | **HUMAN REVIEW:** Confirm UI flow is intuitive and functional.                     | ⏳ Pending | M3.8, HR-2.5   |
+| **M3.7**    | **(Refactor)** Change talent storage from `string[]` to `Record<string, number>`.    | ✅ Done   | M3.6           |
+| **M3.8**    | **(UI)** Add +/- counter UI for general talents to allow multiple selections.        | ✅ Done   | M3.7           |
+| **M3.9**    | **(Fix)** Fix combat mastery, SP/MP/maneuver/technique calculations with path bonuses. | ❌ To Do   | M3.8           |
+| **M3.10**   | **(Feature)** Implement subclass selection at level 3 in Class stage.                | ❌ To Do   | M3.9           |
+| **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.10          |
+| **HR-3**  | **HUMAN REVIEW:** Confirm UI flow is intuitive and functional.                     | ⏳ Pending | M3.10, HR-2.5  |
 | **M4.1**  | **(E2E Test)** Create `levelup-wizard.e2e.spec.ts` to test a Level 3 Wizard creation.   | ❌ To Do   | HR-3           |
 | **M4.2**  | **(Manual Test)** Manually test character creation at levels 2 and 3.               | ❌ To Do   | M4.1           |
 | **M4.3**  | **(Documentation)** Update relevant `.md` system files with changes.                     | ❌ To Do   | M4.2           |
@@ -312,6 +314,128 @@ With count-based storage (M3.7), users need a way to select talents multiple tim
 - Verify +/- buttons disable appropriately (budget exhausted, count = 0)
 - Verify class/multiclass talents remain single-select
 - Verify skill points correctly increase when taking "Skill Point Increase" multiple times
+
+---
+
+### 5.4. Milestone M3.9: Fix Combat Mastery and Path Bonuses
+
+**Status:** ❌ To Do
+
+**Goal:** Fix calculation bugs where combat mastery is hardcoded and path point bonuses are not applied.
+
+**Issues:**
+1. **Combat Mastery:** Currently hardcoded to 1, should be `Math.ceil(level / 2)`
+   - Level 1-2: 1
+   - Level 3-4: 2
+   - Level 5-6: 3
+   - etc.
+
+2. **Path Bonuses Not Applied:** `aggregateProgressionGains()` only sums from progression data, doesn't add bonuses from `pathPointAllocations`
+   - Martial Path Level 1: +1 SP, +1 maneuver, +1 technique
+   - Martial Path Level 2: +1 SP
+   - Spellcaster Path Level 1: +2 MP, +1 cantrip, +1 spell
+   - Spellcaster Path Level 2: +2 MP, +1 cantrip
+
+**Tasks:**
+
+**M3.9a - Fix Combat Mastery Calculation:**
+1. In `enhancedCharacterCalculator.ts` line 84, replace `combatMastery: contextData.combatMastery || 1`
+2. Calculate: `combatMastery: Math.ceil((contextData.level || 1) / 2)`
+3. Remove line 707 `const combatMastery = buildData.combatMastery;`
+4. Calculate directly: `const combatMastery = Math.ceil(buildData.level / 2);`
+
+**M3.9b - Add Path Bonus Calculation:**
+1. Import `CHARACTER_PATHS` from `paths.data.ts` in `enhancedCharacterCalculator.ts`
+2. In `aggregateProgressionGains()`, after aggregating progression data:
+   ```typescript
+   // Apply path point bonuses
+   const pathAllocations = buildData.pathPointAllocations || { martial: 0, spellcasting: 0 };
+   
+   // Apply martial path bonuses
+   if (pathAllocations.martial > 0) {
+     const martialPath = CHARACTER_PATHS.find(p => p.id === 'martial_path');
+     for (let i = 1; i <= pathAllocations.martial && i <= 4; i++) {
+       const pathLevel = martialPath.progression[i - 1];
+       totalSP += pathLevel.benefits.staminaPoints || 0;
+       totalManeuversKnown += pathLevel.benefits.maneuversLearned || 0;
+       totalTechniquesKnown += pathLevel.benefits.techniquesLearned || 0;
+     }
+   }
+   
+   // Apply spellcaster path bonuses
+   if (pathAllocations.spellcasting > 0) {
+     const spellcasterPath = CHARACTER_PATHS.find(p => p.id === 'spellcaster_path');
+     for (let i = 1; i <= pathAllocations.spellcasting && i <= 4; i++) {
+       const pathLevel = spellcasterPath.progression[i - 1];
+       totalMP += pathLevel.benefits.manaPoints || 0;
+       totalCantripsKnown += pathLevel.benefits.cantripsLearned || 0;
+       totalSpellsKnown += pathLevel.benefits.spellsLearned || 0;
+     }
+   }
+   ```
+
+**M3.9c - Update Tests:**
+1. Update `enhancedCharacterCalculator.aggregation.test.ts` to test path bonuses
+2. Create test case: Level 5 Barbarian with 2 martial path points
+   - Expected: +2 SP (from path), +1 maneuver (from path), +1 technique (from path)
+3. Verify combat mastery: Level 5 = 3
+
+**M3.9d - Add Type Safety:**
+1. Add `pathPointAllocations?: { martial?: number; spellcasting?: number }` to `EnhancedCharacterBuildData`
+2. Import path types from `paths.types.ts`
+
+**Example Calculation (Level 5 Barbarian with 2 martial path points):**
+- **Combat Mastery:** `Math.ceil(5 / 2) = 3` ✅
+- **SP:** Base 1 (L1) + 1 (L3) + 2 (path) = 4... wait, you said total should be 3?
+  
+Let me re-check your numbers:
+- L1: +1 SP (progression)
+- L3: +1 SP (progression)
+- Path L1: +1 SP
+- Path L2: +1 SP
+- **Total: 4 SP**
+
+But you said it should be 3... Let me check if there's a different rule.
+
+**M3.9e - Verify Expected Values:**
+Confirm the correct formulas with user before implementing.
+
+---
+
+### 5.5. Milestone M3.10: Subclass Selection at Level 3
+
+**Status:** ❌ To Do
+
+**Goal:** Implement subclass choice UI at Class stage when character has `pendingSubclassChoice` flag.
+
+**Tasks:**
+
+**M3.10a - Detect Subclass Requirement:**
+1. In `ClassFeatures.tsx`, check `calculationResult.levelBudgets.pendingSubclassChoices > 0`
+2. If true, show subclass selection UI
+3. Get available subclasses from class definition
+
+**M3.10b - Create Subclass Selector UI:**
+1. Add new component `SubclassSelector.tsx`
+2. Display subclass options with descriptions
+3. Show features granted by subclass at level 3
+4. Store selection in context: `selectedSubclass: string`
+
+**M3.10c - Add Validation:**
+1. In `CharacterCreation.tsx` step 1 validation
+2. Check if `pendingSubclassChoices > 0`
+3. If yes, verify `state.selectedSubclass` is not null
+4. Block progression if subclass not chosen
+
+**M3.10d - Update Calculator:**
+1. In `aggregateProgressionGains()`, when processing `subclassFeatureChoice: true`
+2. Look up selected subclass features
+3. Add to `unlockedFeatureIds` array
+
+**M3.10e - Update Context:**
+1. Add `selectedSubclass?: string` to character state
+2. Add `SET_SUBCLASS` action type
+3. Persist in storage
 
 ---
 

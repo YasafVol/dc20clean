@@ -183,11 +183,91 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M3.5.1d** | **(Docs)** Update system documentation with cap references.                           | ✅ Done   | M3.5.1c        |
 | **M3.5.1e** | **(Verify)** Confirm no PDF export system impact.                                       | ✅ Done   | M3.5.1d        |
 | **M3.6**    | **(UI)** Render resolver-derived feature unlocks in creation & sheet views.           | ✅ Done   | M3.5           |
-| **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.6           |
-| **HR-3**  | **HUMAN REVIEW:** Confirm UI flow is intuitive and functional.                     | ⏳ Pending | M3.4, HR-2.5   |
+| **M3.7**    | **(Refactor)** Change talent storage from `string[]` to `Record<string, number>`.    | ❌ To Do   | M3.6           |
+| **M3.8**    | **(UI)** Add +/- counter UI for general talents to allow multiple selections.        | ❌ To Do   | M3.7           |
+| **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.8           |
+| **HR-3**  | **HUMAN REVIEW:** Confirm UI flow is intuitive and functional.                     | ⏳ Pending | M3.8, HR-2.5   |
 | **M4.1**  | **(E2E Test)** Create `levelup-wizard.e2e.spec.ts` to test a Level 3 Wizard creation.   | ❌ To Do   | HR-3           |
 | **M4.2**  | **(Manual Test)** Manually test character creation at levels 2 and 3.               | ❌ To Do   | M4.1           |
 | **M4.3**  | **(Documentation)** Update relevant `.md` system files with changes.                     | ❌ To Do   | M4.2           |
+
+---
+
+### 5.2. Milestone M3.7: Count-Based Talent Storage
+
+**Status:** ❌ To Do
+
+**Goal:** Refactor talent selection from array-based (`string[]`) to count-based (`Record<string, number>`) to support selecting the same talent multiple times.
+
+**Rationale:**
+Currently, talents are stored as `selectedTalents: ['general_skill_increase', 'general_attribute_increase']`. This doesn't allow selecting the same talent multiple times (e.g., taking "Skill Point Increase" twice for +6 skill points). Count-based storage is more efficient, easier to query, and better for UI display.
+
+**Tasks:**
+
+**M3.7a - Update Type Definitions**:
+1. Change `selectedTalents?: string[]` to `selectedTalents?: Record<string, number>` in `characterContext.tsx`
+2. Update `EnhancedCharacterBuildData` interface in `effectSystem.ts`
+3. Example: `{ 'general_skill_increase': 2, 'general_attribute_increase': 1 }`
+
+**M3.7b - Update Context Reducer**:
+1. Modify `SET_SELECTED_TALENTS` action type to accept `Record<string, number>`
+2. Update reducer logic to handle count-based storage
+3. Ensure backward compatibility for saved characters (migration helper if needed)
+
+**M3.7c - Update Calculator**:
+1. Modify `aggregateAttributedEffects()` in `enhancedCharacterCalculator.ts` (lines 231-248)
+2. Change from `for (const talentId of selectedTalents)` to `for (const [talentId, count] of Object.entries(selectedTalents))`
+3. Apply effects `count` times: `for (let i = 0; i < count; i++) { effects.push(...) }`
+
+**M3.7d - Update Validation**:
+1. Update `CharacterCreation.tsx` leveling step validation (line 284)
+2. Change from `selectedTalents.length` to `Object.values(selectedTalents).reduce((sum, count) => sum + count, 0)`
+3. Test that validation correctly counts total talent selections
+
+---
+
+### 5.3. Milestone M3.8: General Talent Counter UI
+
+**Status:** ❌ To Do
+
+**Goal:** Add increment/decrement UI for general talents to allow selecting the same talent multiple times.
+
+**Rationale:**
+With count-based storage (M3.7), users need a way to select talents multiple times. Instead of toggle behavior, general talents should have +/- buttons with a counter display.
+
+**Tasks:**
+
+**M3.8a - Update General Talent Cards**:
+1. Modify `LevelingChoices.tsx` general talent rendering (lines 583-599)
+2. Replace click-to-toggle with +/- button controls
+3. Add counter badge showing selection count (e.g., "x2")
+
+**M3.8b - Implement Increment/Decrement Logic**:
+1. Replace `handleTalentToggle()` with `handleGeneralTalentIncrement()` and `handleGeneralTalentDecrement()`
+2. Increment: Check budget, increment count in `selectedTalents` record
+3. Decrement: Decrement count, remove key if count reaches 0
+4. Dispatch updated `selectedTalents` to context
+
+**M3.8c - Update UI Display**:
+1. Show current count as badge (e.g., "Skill Point Increase x2")
+2. Disable "+" button when budget exhausted
+3. Disable "−" button when count is 0
+4. Add hover tooltips explaining that general talents can be taken multiple times
+
+**M3.8d - Keep Class/Multiclass Talents Single-Select**:
+1. Class talents and multiclass talents remain toggle behavior (only once)
+2. Only general talents get the counter UI
+3. Update validation to handle mixed selection types
+
+**Example UI:**
+```
+┌─────────────────────────────────┐
+│ Skill Point Increase        x2 │
+│ General                         │
+│ Gain 3 skill points             │
+│ [−]  [+]                        │
+└─────────────────────────────────┘
+```
 
 ---
 

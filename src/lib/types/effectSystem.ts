@@ -28,11 +28,11 @@ export type ValidationCode =
 
 // Source attribution for effects
 export interface EffectSource {
-	type: 'trait' | 'class_feature' | 'choice' | 'base' | 'ancestry_default';
+	type: 'trait' | 'class_feature' | 'choice' | 'base' | 'ancestry_default' | 'talent';
 	id: string;
 	name: string;
 	description?: string;
-	category?: string; // e.g., "Human Trait", "Barbarian Level 1"
+	category?: string; // e.g., "Human Trait", "Barbarian Level 1", "Talent"
 }
 
 // Effect with source attribution and resolution status
@@ -313,6 +313,7 @@ export interface EnhancedCharacterBuildData {
 	selectedTraitIds: string[]; // Array of trait IDs
 	selectedTraitChoices: TraitChoiceStorage; // User choices for traits
 	featureChoices: Record<string, any>; // User choices for class features
+	selectedTalents?: string[]; // Array of talent IDs from leveling choices
 
 	// Skills/Trades/Languages
 	skillsData: Record<string, number>;

@@ -23,6 +23,7 @@ import {
 } from '../rulesdata/schemas/character.schema';
 import { resolveClassProgression } from '../rulesdata/classes-data/classProgressionResolver';
 import { classesData } from '../rulesdata/loaders/class.loader';
+import { findTalentById } from '../rulesdata/classes-data/talents/talent.loader';
 
 import { BuildStep } from '../types/effectSystem';
 import { getLegacyChoiceId } from '../rulesdata/loaders/class-features.loader';
@@ -85,11 +86,14 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 		ancestry1Id: contextData.ancestry1Id || undefined,
 		ancestry2Id: contextData.ancestry2Id || undefined,
 
-		selectedTraitIds: Array.isArray(contextData.selectedTraitIds)
-			? contextData.selectedTraitIds
-			: [],
-		selectedTraitChoices: contextData.selectedTraitChoices ?? {},
-		featureChoices: contextData.selectedFeatureChoices ?? {},
+	selectedTraitIds: Array.isArray(contextData.selectedTraitIds)
+		? contextData.selectedTraitIds
+		: [],
+	selectedTraitChoices: contextData.selectedTraitChoices ?? {},
+	featureChoices: contextData.selectedFeatureChoices ?? {},
+	selectedTalents: Array.isArray(contextData.selectedTalents)
+		? contextData.selectedTalents
+		: [],
 
 		// Pass data as native objects, removing the unnecessary stringify step
 		skillsData: contextData.skillsData ?? {},
@@ -218,6 +222,27 @@ function aggregateAttributedEffects(buildData: EnhancedCharacterBuildData): Attr
 					},
 					resolved: !effect.userChoice,
 					dependsOnChoice: effect.userChoice ? `${traitId}-${effectIndex}` : undefined
+				});
+			}
+		}
+	}
+
+	// Add effects from selected talents
+	const selectedTalents = buildData.selectedTalents || [];
+	for (const talentId of selectedTalents) {
+		const talent = findTalentById(talentId);
+		if (talent?.effects) {
+			for (const effect of talent.effects) {
+				effects.push({
+					...effect,
+					source: {
+						type: 'talent' as const,
+						id: talentId,
+						name: talent.name,
+						description: talent.description,
+						category: 'Talent'
+					},
+					resolved: true
 				});
 			}
 		}

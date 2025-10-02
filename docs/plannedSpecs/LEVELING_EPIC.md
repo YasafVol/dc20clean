@@ -175,6 +175,7 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M3.2**  | **(UI)** Build the new `LevelingChoices.tsx` component.                                  | ✅ Done   | M3.1           |
 | **M3.3**  | **(UI)** Modify `CharacterCreation.tsx` to conditionally render the new stage.         | ✅ Done   | M3.2           |
 | **M3.4**  | **(UI)** Update subsequent stages to use the aggregated point totals.                      | ✅ Done   | M3.3           |
+| **M3.5**  | **(UI)** Implement talent effects system in calculator.                                    | ✅ Done   | M3.4           |
 | **M3.5**  | **(State)** Persist resolver outputs (features, pending choices) in `characterContext`. | ❌ To Do   | M2.6           |
 | **M3.6**  | **(UI)** Render resolver-derived feature unlocks in creation & sheet views.           | ❌ To Do   | M3.5           |
 | **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.6           |

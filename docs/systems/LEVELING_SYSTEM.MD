@@ -81,7 +81,38 @@ flowchart TD
     2.  **Path Point Allocation:** Allows the user to spend their `pathPointsToSpend` budget on the Martial and Spellcaster paths.
 -   The "Next" button for this stage will be disabled until all points are spent.
 
-### 3.4. Dynamic Budgeting in Subsequent Stages
+### 3.4. Path Point Bonuses (M3.9 - ✅ IMPLEMENTED)
+
+Path points grant immediate bonuses to character resources based on allocation:
+
+**Martial Path Progression:**
+| Path Level | Stamina Points | Maneuvers Learned | Techniques Learned |
+|------------|----------------|-------------------|-------------------|
+| 1          | +1             | +1                | +1                |
+| 2          | —              | +1                | —                 |
+| 3          | +1             | +1                | +1                |
+| 4          | —              | +1                | —                 |
+
+**Spellcaster Path Progression:**
+| Path Level | Mana Points | Cantrips Learned | Spells Learned |
+|------------|-------------|------------------|----------------|
+| 1          | +2          | +1               | +1             |
+| 2          | +2          | +1               | —              |
+| 3          | +2          | +1               | +1             |
+| 4          | +2          | —                | +1             |
+
+**Implementation:**
+- Path bonuses are calculated by `aggregatePathBenefits()` in `enhancedCharacterCalculator.ts`
+- Bonuses are added to base progression gains in `aggregateProgressionGains()`
+- Data source: `src/lib/rulesdata/paths/paths.data.ts`
+- Type: `pathPointAllocations?: { martial?: number; spellcasting?: number }` in `EnhancedCharacterBuildData`
+
+**Example (Level 5 Barbarian with 2 martial path points):**
+- SP: 1 (L1) + 1 (L3) + 1 (path L1) = **3**
+- Maneuvers: 4 (L1) + 1 (L5) + 1 (path L1) + 1 (path L2) = **7**
+- Techniques: 1 (L3) + 1 (L5) + 1 (path L1) = **3**
+
+### 3.5. Dynamic Budgeting in Subsequent Stages
 -   **Ancestry (Stage 3):** The "Ancestry Points Remaining" counter will be initialized with `5 + aggregated ancestryPoints`.
 -   **Attributes (Stage 4):** The "Attribute Points Remaining" counter will be initialized with `12 + aggregated attributePoints`.
 -   **Background (Stage 5):** The Skill, Trade, and Language point counters will be initialized with their base values plus any aggregated points from the progression tables.
@@ -105,5 +136,14 @@ flowchart TD
 
 ---
 
-> _Last updated: September 26, 2025_  
+## 6. Implementation Status
+
+| Milestone | Status | Description |
+|-----------|--------|-------------|
+| M3.9: Combat Mastery & Path Bonuses | ✅ **DONE** | Combat mastery formula fixed, path bonuses integrated into calculations |
+| M3.10: Subclass Selection | 🚧 **NEXT** | UI for subclass choice at level 3, validation, feature application |
+
+---
+
+> _Last updated: October 2, 2025_  
 > _Maintainer: @DC20Clean-Team_

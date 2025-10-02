@@ -15,19 +15,78 @@
 
  ---
 
- ## 2. Formula Summary (Level 1 defaults)
+ ## 2. Formula Summary
 
- - HP Max = `Might + classTable.hp + sum(effects.hpMax)`
- - SP Max = `Agility + classTable.sp + sum(effects.spMax)`
- - MP Max = `Intelligence + classTable.mp + sum(effects.mpMax)`
- - PD = `8 + Combat Mastery + Agility + Intelligence + sum(effects.pd)`
- - AD = `8 + Combat Mastery + Might + Charisma + sum(effects.ad)`
- - Save DC = `8 + Combat Mastery + Prime Attribute Mod`
- - Initiative = `Combat Mastery + Agility`
- - Background Budgets (see Background doc):
-   - Skills = `5 + Intelligence + bonus(skillPoints)`
-   - Trades = `3 + bonus(tradePoints)`
-   - Languages = `2 + bonus(languagePoints)`
+### Core Calculations
+
+ - **Combat Mastery** = `Math.ceil(level / 2)`
+   - Level 1-2: 1
+   - Level 3-4: 2
+   - Level 5-6: 3, etc.
+ - **Prime Attribute** = highest attribute value (tie-breaker: might > agility > charisma > intelligence)
+
+### Health & Resources
+
+ - **HP Max** = `Might + sum(progressionGains.totalHP) + sum(effects.hpMax)`
+ - **SP Max** = `sum(progressionGains.totalSP) + sum(pathBonuses.SP) + sum(effects.spMax)`
+ - **MP Max** = `sum(progressionGains.totalMP) + sum(pathBonuses.MP) + sum(effects.mpMax)`
+ - **Rest Points** = HP Max
+ - **Grit Points** = `max(0, 2 + Charisma)`
+
+### Defenses & Combat
+
+ - **PD** = `8 + Combat Mastery + Agility + Intelligence + sum(effects.pd)`
+ - **AD** = `8 + Combat Mastery + Might + Charisma + sum(effects.ad)`
+ - **Save DC** = `10 + Combat Mastery + Prime Attribute`
+ - **Death Threshold** = `Prime Attribute + Combat Mastery`
+ - **Initiative** = `Combat Mastery + Agility`
+ - **Attack/Spell Check** = `Combat Mastery + Prime Attribute + sum(effects.attackSpellCheck)`
+ - **Martial Check** = `max(Acrobatics total, Athletics total)`
+   - Acrobatics = `Agility + (proficiency × 2)`
+   - Athletics = `Might + (proficiency × 2)`
+
+### Saves
+
+ - **Save Might** = `Might + Combat Mastery`
+ - **Save Agility** = `Agility + Combat Mastery`
+ - **Save Charisma** = `Charisma + Combat Mastery`
+ - **Save Intelligence** = `Intelligence + Combat Mastery`
+
+### Movement
+
+ - **Move Speed** = `5 + sum(effects.moveSpeed)`
+ - **Jump Distance** = `Agility + sum(effects.jumpDistance)`
+
+### Background Budgets
+
+ - **Skills** = `5 + Intelligence + sum(progressionGains.totalSkillPoints) + sum(effects.skillPoints)`
+ - **Trades** = `3 + sum(progressionGains.totalTradePoints) + sum(effects.tradePoints)`
+ - **Languages** = `2 + sum(effects.languagePoints)` (does NOT scale with level)
+
+### Progression Gains (from Class + Path)
+
+ - **Maneuvers Known** = `sum(progressionGains.totalManeuversKnown) + sum(pathBonuses.maneuvers)`
+ - **Techniques Known** = `sum(progressionGains.totalTechniquesKnown) + sum(pathBonuses.techniques)`
+ - **Cantrips Known** = `sum(progressionGains.totalCantripsKnown) + sum(pathBonuses.cantrips)`
+ - **Spells Known** = `sum(progressionGains.totalSpellsKnown) + sum(pathBonuses.spells)`
+ - **Talents** = `sum(progressionGains.totalTalents)`
+ - **Path Points** = `sum(progressionGains.totalPathPoints)`
+ - **Ancestry Points** = `5 + sum(progressionGains.totalAncestryPoints) + sum(effects.ancestryPoints)`
+ - **Attribute Points** = `12 + sum(progressionGains.totalAttributePoints) + sum(effects.attributePoints)`
+
+### Path Bonuses (M3.9)
+
+**Martial Path:**
+- Level 1: +1 SP, +1 maneuver, +1 technique
+- Level 2: +1 maneuver
+- Level 3: +1 SP, +1 maneuver, +1 technique
+- Level 4: +1 maneuver
+
+**Spellcaster Path:**
+- Level 1: +2 MP, +1 cantrip, +1 spell
+- Level 2: +2 MP, +1 cantrip
+- Level 3: +2 MP, +1 cantrip, +1 spell
+- Level 4: +2 MP, +1 spell
 
  ---
 

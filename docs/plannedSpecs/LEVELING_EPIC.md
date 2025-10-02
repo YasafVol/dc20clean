@@ -186,7 +186,7 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M3.6**    | **(UI)** Render resolver-derived feature unlocks in creation & sheet views.           | ✅ Done   | M3.5           |
 | **M3.7**    | **(Refactor)** Change talent storage from `string[]` to `Record<string, number>`.    | ✅ Done   | M3.6           |
 | **M3.8**    | **(UI)** Add +/- counter UI for general talents to allow multiple selections.        | ✅ Done   | M3.7           |
-| **M3.9**    | **(Fix)** Fix combat mastery, SP/MP/maneuver/technique calculations with path bonuses. | ❌ To Do   | M3.8           |
+| **M3.9**    | **(Fix)** Fix combat mastery, SP/MP/maneuver/technique calculations with path bonuses. | ✅ Done   | M3.8           |
 | **M3.10**   | **(Feature)** Implement subclass selection at level 3 in Class stage.                | ❌ To Do   | M3.9           |
 | **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.10          |
 | **HR-3**  | **HUMAN REVIEW:** Confirm UI flow is intuitive and functional.                     | ⏳ Pending | M3.10, HR-2.5  |
@@ -319,7 +319,7 @@ With count-based storage (M3.7), users need a way to select talents multiple tim
 
 ### 5.4. Milestone M3.9: Fix Combat Mastery and Path Bonuses
 
-**Status:** ❌ To Do
+**Status:** ✅ **DONE** (October 2, 2025)
 
 **Goal:** Fix calculation bugs where combat mastery is hardcoded and path point bonuses are not applied.
 
@@ -336,65 +336,56 @@ With count-based storage (M3.7), users need a way to select talents multiple tim
    - Spellcaster Path Level 1: +2 MP, +1 cantrip, +1 spell
    - Spellcaster Path Level 2: +2 MP, +1 cantrip
 
-**Tasks:**
+**What Was Implemented:**
 
-**M3.9a - Fix Combat Mastery Calculation:**
-1. In `enhancedCharacterCalculator.ts` line 84, replace `combatMastery: contextData.combatMastery || 1`
-2. Calculate: `combatMastery: Math.ceil((contextData.level || 1) / 2)`
-3. Remove line 707 `const combatMastery = buildData.combatMastery;`
-4. Calculate directly: `const combatMastery = Math.ceil(buildData.level / 2);`
+**M3.9a - Combat Mastery Calculation:** ✅
+- Removed duplicate calculations (was in 3 places)
+- Now calculated once: `Math.ceil(buildData.level / 2)` at line 709
+- Verified: Level 1-2 = 1, Level 3-4 = 2, Level 5-6 = 3
 
-**M3.9b - Add Path Bonus Calculation:**
-1. Import `CHARACTER_PATHS` from `paths.data.ts` in `enhancedCharacterCalculator.ts`
-2. In `aggregateProgressionGains()`, after aggregating progression data:
-   ```typescript
-   // Apply path point bonuses
-   const pathAllocations = buildData.pathPointAllocations || { martial: 0, spellcasting: 0 };
-   
-   // Apply martial path bonuses
-   if (pathAllocations.martial > 0) {
-     const martialPath = CHARACTER_PATHS.find(p => p.id === 'martial_path');
-     for (let i = 1; i <= pathAllocations.martial && i <= 4; i++) {
-       const pathLevel = martialPath.progression[i - 1];
-       totalSP += pathLevel.benefits.staminaPoints || 0;
-       totalManeuversKnown += pathLevel.benefits.maneuversLearned || 0;
-       totalTechniquesKnown += pathLevel.benefits.techniquesLearned || 0;
-     }
-   }
-   
-   // Apply spellcaster path bonuses
-   if (pathAllocations.spellcasting > 0) {
-     const spellcasterPath = CHARACTER_PATHS.find(p => p.id === 'spellcaster_path');
-     for (let i = 1; i <= pathAllocations.spellcasting && i <= 4; i++) {
-       const pathLevel = spellcasterPath.progression[i - 1];
-       totalMP += pathLevel.benefits.manaPoints || 0;
-       totalCantripsKnown += pathLevel.benefits.cantripsLearned || 0;
-       totalSpellsKnown += pathLevel.benefits.spellsLearned || 0;
-     }
-   }
-   ```
+**M3.9b - Path Bonus Calculation:** ✅
+- Created `aggregatePathBenefits()` helper function (lines 68-123)
+- Integrated into `aggregateProgressionGains()` (lines 709-725)
+- Correctly applies bonuses from both Martial and Spellcaster paths
+- Data source: `src/lib/rulesdata/paths/paths.data.ts`
 
-**M3.9c - Update Tests:**
-1. Update `enhancedCharacterCalculator.aggregation.test.ts` to test path bonuses
-2. Create test case: Level 5 Barbarian with 2 martial path points
-   - Expected: +2 SP (from path), +1 maneuver (from path), +1 technique (from path)
-3. Verify combat mastery: Level 5 = 3
+**M3.9c - Testing:** ✅
+- Created `pathBonuses.test.ts` with 4 comprehensive test cases
+- All tests passing:
+  - Level 5 Barbarian with 2 martial path points
+  - Level 5 Wizard with 2 spellcaster path points
+  - Level 1 baseline (no path points)
+  - Mixed allocation (1 martial + 1 spellcasting)
 
-**M3.9d - Add Type Safety:**
-1. Add `pathPointAllocations?: { martial?: number; spellcasting?: number }` to `EnhancedCharacterBuildData`
-2. Import path types from `paths.types.ts`
+**M3.9d - Type Safety:** ✅
+- Added `pathPointAllocations?: { martial?: number; spellcasting?: number }` to `EnhancedCharacterBuildData`
+- Type properly passed through: context → calculator → aggregation
 
-**Example Calculation (Level 5 Barbarian with 2 martial path points):**
+**M3.9e - Documentation:** ✅
+- Created `docs/CALCULATION_AUDIT.md` - comprehensive calculation flow documentation
+- Updated `docs/systems/CALCULATION_SYSTEM.MD` - all formulas corrected and path bonuses documented
+- Updated `docs/systems/LEVELING_SYSTEM.MD` - added path bonus tables and implementation status
+
+**Verified Example (Level 5 Barbarian with 2 martial path points):**
 - **Combat Mastery:** `Math.ceil(5 / 2) = 3` ✅
 - **SP:** 1 (L1) + 1 (L3) + 1 (path L1) = **3** ✅
 - **Maneuvers:** 4 (L1) + 1 (L5) + 1 (path L1) + 1 (path L2) = **7** ✅
-- **Techniques:** 1 (L3) + 1 (path L1) = **2** ✅
+- **Techniques:** 1 (L3) + 1 (L5) + 1 (path L1) = **3** ✅
 
-**Note:** Martial Path progression corrected in `paths.data.ts`:
+**Corrected Martial Path Data:**
 - Level 1: +1 SP, +1 maneuver, +1 technique
-- Level 2: +1 maneuver (NOT +1 SP)
+- Level 2: +1 maneuver ONLY (was incorrectly +1 SP)
 - Level 3: +1 SP, +1 maneuver, +1 technique
-- Level 4: +1 maneuver (NOT +1 SP)
+- Level 4: +1 maneuver ONLY (was incorrectly +1 SP)
+
+**Files Modified:**
+1. `src/lib/services/enhancedCharacterCalculator.ts` - Combat mastery fix, path bonus integration
+2. `src/lib/types/effectSystem.ts` - Added pathPointAllocations type
+3. `src/lib/rulesdata/paths/paths.data.ts` - Corrected martial path progression
+4. `src/lib/services/pathBonuses.test.ts` - Comprehensive test suite (NEW)
+5. `docs/CALCULATION_AUDIT.md` - Full calculation documentation (NEW)
+6. `docs/systems/CALCULATION_SYSTEM.MD` - Updated formulas
+7. `docs/systems/LEVELING_SYSTEM.MD` - Added path bonus tables
 
 ---
 

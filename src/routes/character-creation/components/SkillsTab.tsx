@@ -157,7 +157,7 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 				}}
 			>
 				<strong>Mastery Limits:</strong> Max level {masteryLimits.maxSkillMastery}(
-				{MASTERY_TABLE[masteryLimits.maxSkillMastery]?.name})
+				{MASTERY_TIERS[masteryLimits.maxSkillMastery]?.name})
 			</div>
 
 			<StyledPointsRemaining data-testid="skill-points-remaining">

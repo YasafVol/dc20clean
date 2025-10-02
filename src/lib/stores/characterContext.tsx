@@ -42,7 +42,7 @@ export interface CharacterInProgressStoreData
 	tradeToSkillConversions?: number;
 	tradeToLanguageConversions?: number;
 	schemaVersion?: number;
-	selectedTalents?: string[];
+	selectedTalents?: Record<string, number>; // Changed from string[] to count-based
 	pathPointAllocations?: { martial?: number; spellcasting?: number };
 	selectedMulticlassOption?: 'acquire' | 'adapt' | null;
 	selectedMulticlassClass?: string;
@@ -113,7 +113,7 @@ type CharacterAction =
 			type: 'SET_CONVERSIONS';
 			conversions: { skillToTrade?: number; tradeToSkill?: number; tradeToLanguage?: number };
 	  }
-	| { type: 'SET_SELECTED_TALENTS'; talents: string[] }
+	| { type: 'SET_SELECTED_TALENTS'; talents: Record<string, number> }
 	| { type: 'SET_PATH_POINTS'; pathPoints: { martial?: number; spellcasting?: number } }
 	| { type: 'SET_MULTICLASS'; option: 'acquire' | 'adapt' | null; classId: string; featureId: string };
 

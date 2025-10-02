@@ -93,6 +93,73 @@ const TalentGrid = styled.div`
 	margin-bottom: 2rem;
 `;
 
+// General talent card with counter UI
+const GeneralTalentCard = styled.div<{ $hasCount: boolean }>`
+	background: ${props => props.$hasCount ? 'rgba(212, 175, 55, 0.2)' : 'rgba(0, 0, 0, 0.4)'};
+	border: 2px solid ${props => props.$hasCount ? '#d4af37' : 'rgba(255, 255, 255, 0.1)'};
+	border-radius: 8px;
+	padding: 1rem;
+	text-align: left;
+	cursor: default;
+	transition: border-color 0.2s;
+
+	&:hover {
+		border-color: #d4af37;
+	}
+`;
+
+const TalentHeader = styled.div`
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 0.5rem;
+`;
+
+const CountBadge = styled.span`
+	background: rgba(212, 175, 55, 0.9);
+	color: #1a1a1a;
+	font-family: 'Urbanist', sans-serif;
+	font-size: 0.9rem;
+	font-weight: 700;
+	padding: 0.25rem 0.75rem;
+	border-radius: 12px;
+`;
+
+const TalentControls = styled.div`
+	display: flex;
+	gap: 0.5rem;
+	margin-top: 0.75rem;
+`;
+
+const TalentButton = styled.button`
+	flex: 1;
+	background: rgba(212, 175, 55, 0.2);
+	border: 2px solid #d4af37;
+	border-radius: 6px;
+	color: #d4af37;
+	font-family: 'Urbanist', sans-serif;
+	font-size: 1.25rem;
+	font-weight: 700;
+	padding: 0.5rem;
+	cursor: pointer;
+	transition: all 0.2s;
+
+	&:hover:not(:disabled) {
+		background: rgba(212, 175, 55, 0.3);
+		transform: translateY(-1px);
+	}
+
+	&:active:not(:disabled) {
+		transform: translateY(0);
+	}
+
+	&:disabled {
+		opacity: 0.3;
+		cursor: not-allowed;
+	}
+`;
+
+// Class/multiclass talent card (toggle behavior)
 const TalentCard = styled.button<{ $selected: boolean; $disabled: boolean }>`
 	background: ${props => props.$selected ? 'rgba(212, 175, 55, 0.2)' : 'rgba(0, 0, 0, 0.4)'};
 	border: 2px solid ${props => props.$selected ? '#d4af37' : 'rgba(255, 255, 255, 0.1)'};
@@ -408,7 +475,7 @@ type ActiveTab = 'talents' | 'pathPoints';
 function LevelingChoices() {
 	const { state, dispatch } = useCharacter();
 	const [activeTab, setActiveTab] = useState<ActiveTab>('talents');
-	const [selectedTalents, setSelectedTalents] = useState<string[]>(state.selectedTalents || []);
+	const [selectedTalents, setSelectedTalents] = useState<Record<string, number>>(state.selectedTalents || {});
 	const [pathPoints, setPathPoints] = useState(state.pathPointAllocations || { martial: 0, spellcasting: 0 });
 	const [resolvedProgression, setResolvedProgression] = useState<any>(null);
 	
@@ -455,7 +522,9 @@ function LevelingChoices() {
 	
 	// Count multiclass selection as a talent
 	const multiclassTalentUsed = selectedMulticlassOption && selectedMulticlassFeature ? 1 : 0;
-	const totalTalentsUsed = selectedTalents.length + multiclassTalentUsed;
+	// Count total talent selections from the count-based record
+	const totalTalentsFromRecord = Object.values(selectedTalents).reduce((sum, count) => sum + count, 0);
+	const totalTalentsUsed = totalTalentsFromRecord + multiclassTalentUsed;
 
 	// Define General Talents - use IDs that match talents.data.ts so effects work
 	const generalTalents = [
@@ -546,12 +615,40 @@ function LevelingChoices() {
 		return classFeatures.coreFeatures.filter(f => f.levelGained === targetLevel);
 	};
 
-	const handleTalentToggle = (talentId: string) => {
-		let newTalents: string[];
-		if (selectedTalents.includes(talentId)) {
-			newTalents = selectedTalents.filter(id => id !== talentId);
+	// Handle general talent increment/decrement (count-based)
+	const handleGeneralTalentIncrement = (talentId: string) => {
+		if (totalTalentsUsed >= availableTalentPoints) return;
+		
+		const newTalents = { ...selectedTalents };
+		newTalents[talentId] = (newTalents[talentId] || 0) + 1;
+		setSelectedTalents(newTalents);
+		dispatch({ type: 'SET_SELECTED_TALENTS', talents: newTalents });
+	};
+
+	const handleGeneralTalentDecrement = (talentId: string) => {
+		const currentCount = selectedTalents[talentId] || 0;
+		if (currentCount === 0) return;
+		
+		const newTalents = { ...selectedTalents };
+		if (currentCount === 1) {
+			// Remove key if count reaches 0
+			delete newTalents[talentId];
+		} else {
+			newTalents[talentId] = currentCount - 1;
+		}
+		setSelectedTalents(newTalents);
+		dispatch({ type: 'SET_SELECTED_TALENTS', talents: newTalents });
+	};
+
+	// Handle class/multiclass talent toggle (single-select)
+	const handleClassTalentToggle = (talentId: string) => {
+		const newTalents = { ...selectedTalents };
+		if (newTalents[talentId]) {
+			// Already selected, remove it
+			delete newTalents[talentId];
 		} else if (totalTalentsUsed < availableTalentPoints) {
-			newTalents = [...selectedTalents, talentId];
+			// Select it (count = 1 for class talents)
+			newTalents[talentId] = 1;
 		} else {
 			return;
 		}
@@ -579,26 +676,41 @@ function LevelingChoices() {
 
 	const renderTalentsTab = () => (
 		<>
-			{/* General Talents */}
+			{/* General Talents - count-based with +/- buttons */}
 			<Section>
 				<SectionTitle>General Talents</SectionTitle>
 				<TalentGrid>
-					{generalTalents.map(talent => (
-						<TalentCard
-							key={talent.id}
-							$selected={selectedTalents.includes(talent.id)}
-							$disabled={!selectedTalents.includes(talent.id) && totalTalentsUsed >= availableTalentPoints}
-							onClick={() => handleTalentToggle(talent.id)}
-						>
-							<TalentName>{talent.name}</TalentName>
-							<TalentCategory>{talent.category}</TalentCategory>
-							<TalentDescription>{talent.description}</TalentDescription>
-						</TalentCard>
-					))}
+					{generalTalents.map(talent => {
+						const count = selectedTalents[talent.id] || 0;
+						return (
+							<GeneralTalentCard key={talent.id} $hasCount={count > 0}>
+								<TalentHeader>
+									<TalentName>{talent.name}</TalentName>
+									{count > 0 && <CountBadge>x{count}</CountBadge>}
+								</TalentHeader>
+								<TalentCategory>{talent.category}</TalentCategory>
+								<TalentDescription>{talent.description}</TalentDescription>
+								<TalentControls>
+									<TalentButton
+										onClick={() => handleGeneralTalentDecrement(talent.id)}
+										disabled={count === 0}
+									>
+										−
+									</TalentButton>
+									<TalentButton
+										onClick={() => handleGeneralTalentIncrement(talent.id)}
+										disabled={totalTalentsUsed >= availableTalentPoints}
+									>
+										+
+									</TalentButton>
+								</TalentControls>
+							</GeneralTalentCard>
+						);
+					})}
 				</TalentGrid>
 			</Section>
 
-			{/* Class Talents */}
+			{/* Class Talents - single-select toggle */}
 			{classTalents.length > 0 && (
 				<Section>
 					<SectionTitle>Class Talents</SectionTitle>
@@ -606,9 +718,9 @@ function LevelingChoices() {
 						{classTalents.map(talent => (
 							<TalentCard
 								key={talent.id}
-								$selected={selectedTalents.includes(talent.id)}
-								$disabled={!selectedTalents.includes(talent.id) && totalTalentsUsed >= availableTalentPoints}
-								onClick={() => handleTalentToggle(talent.id)}
+								$selected={!!selectedTalents[talent.id]}
+								$disabled={!selectedTalents[talent.id] && totalTalentsUsed >= availableTalentPoints}
+								onClick={() => handleClassTalentToggle(talent.id)}
 							>
 								<TalentName>{talent.name}</TalentName>
 								<TalentCategory>{talent.category} - {resolvedProgression.className}</TalentCategory>

@@ -279,18 +279,20 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					}
 					
 					// Check talents: must have exactly the right number selected (including multiclass)
-					const selectedTalents = state.selectedTalents || [];
-					// Note: multiclass feature is stored separately but counts toward talent budget
-					const selectedMulticlass = state.selectedMulticlassFeature;
-					const totalTalentsSelected = selectedTalents.length + (selectedMulticlass ? 1 : 0);
-					
-					if (totalTalentsSelected !== budgets.totalTalents) {
-						console.log('❌ Leveling validation failed: talents not fully selected', {
-							selected: totalTalentsSelected,
-							required: budgets.totalTalents,
-							regularTalents: selectedTalents.length,
-							multiclass: selectedMulticlass ? 1 : 0
-						});
+				const selectedTalents = state.selectedTalents || {};
+				// Note: multiclass feature is stored separately but counts toward talent budget
+				const selectedMulticlass = state.selectedMulticlassFeature;
+				// Count total talent selections from the count-based record
+				const talentsFromRecord = Object.values(selectedTalents).reduce((sum, count) => sum + count, 0);
+				const totalTalentsSelected = talentsFromRecord + (selectedMulticlass ? 1 : 0);
+				
+				if (totalTalentsSelected !== budgets.totalTalents) {
+					console.log('❌ Leveling validation failed: talents not fully selected', {
+						selected: totalTalentsSelected,
+						required: budgets.totalTalents,
+						regularTalents: talentsFromRecord,
+						multiclass: selectedMulticlass ? 1 : 0
+					});
 						return false;
 					}
 					

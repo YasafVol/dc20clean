@@ -92,9 +92,9 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 		: [],
 	selectedTraitChoices: contextData.selectedTraitChoices ?? {},
 	featureChoices: contextData.selectedFeatureChoices ?? {},
-	selectedTalents: Array.isArray(contextData.selectedTalents)
+	selectedTalents: contextData.selectedTalents && typeof contextData.selectedTalents === 'object'
 		? contextData.selectedTalents
-		: [],
+		: {},
 
 		// Pass data as native objects, removing the unnecessary stringify step
 		skillsData: contextData.skillsData ?? {},
@@ -228,23 +228,26 @@ function aggregateAttributedEffects(buildData: EnhancedCharacterBuildData): Attr
 		}
 	}
 
-	// Add effects from selected talents
-	const selectedTalents = buildData.selectedTalents || [];
-	for (const talentId of selectedTalents) {
+	// Add effects from selected talents (count-based: apply effects multiple times)
+	const selectedTalents = buildData.selectedTalents || {};
+	for (const [talentId, count] of Object.entries(selectedTalents)) {
 		const talent = findTalentById(talentId);
-		if (talent?.effects) {
-			for (const effect of talent.effects) {
-				effects.push({
-					...effect,
-					source: {
-						type: 'talent' as const,
-						id: talentId,
-						name: talent.name,
-						description: talent.description,
-						category: 'Talent'
-					},
-					resolved: true
-				});
+		if (talent?.effects && count > 0) {
+			// Apply talent effects 'count' times (e.g., if selected twice, add effects twice)
+			for (let i = 0; i < count; i++) {
+				for (const effect of talent.effects) {
+					effects.push({
+						...effect,
+						source: {
+							type: 'talent' as const,
+							id: talentId,
+							name: talent.name,
+							description: talent.description,
+							category: 'Talent'
+						},
+						resolved: true
+					});
+				}
 			}
 		}
 	}

@@ -196,7 +196,7 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 
 ### 5.2. Milestone M3.7: Count-Based Talent Storage
 
-**Status:** ❌ To Do
+**Status:** ✅ Done
 
 **Goal:** Refactor talent selection from array-based (`string[]`) to count-based (`Record<string, number>`) to support selecting the same talent multiple times.
 
@@ -229,7 +229,7 @@ Currently, talents are stored as `selectedTalents: ['general_skill_increase', 'g
 
 ### 5.3. Milestone M3.8: General Talent Counter UI
 
-**Status:** ❌ To Do
+**Status:** ✅ Done
 
 **Goal:** Add increment/decrement UI for general talents to allow selecting the same talent multiple times.
 
@@ -269,6 +269,49 @@ With count-based storage (M3.7), users need a way to select talents multiple tim
 │ [−]  [+]                        │
 └─────────────────────────────────┘
 ```
+
+---
+
+**Implementation Summary (M3.7-M3.8):**
+
+✅ **Type Definitions Updated:**
+- `characterContext.tsx`: `selectedTalents?: Record<string, number>`
+- `effectSystem.ts`: `selectedTalents?: Record<string, number>`
+- Changed action type to accept `Record<string, number>`
+
+✅ **Calculator Updated (`enhancedCharacterCalculator.ts`):**
+- Changed loop from `for (const talentId of selectedTalents)` to `for (const [talentId, count] of Object.entries(selectedTalents))`
+- Apply effects `count` times: `for (let i = 0; i < count; i++)`
+- Updated `convertToEnhancedBuildData` to use empty object `{}` as default
+
+✅ **Validation Updated:**
+- `LevelingChoices.tsx`: Count total with `Object.values(selectedTalents).reduce((sum, count) => sum + count, 0)`
+- `CharacterCreation.tsx`: Same pattern for step validation
+
+✅ **UI Components Added:**
+- `GeneralTalentCard`: New styled component with `$hasCount` prop
+- `TalentHeader`: Flex container for name and badge
+- `CountBadge`: Gold badge showing "x2", "x3", etc.
+- `TalentControls`: Container for +/- buttons
+- `TalentButton`: Styled increment/decrement buttons with hover/disabled states
+
+✅ **Handler Functions:**
+- `handleGeneralTalentIncrement()`: Increment count, add key if new
+- `handleGeneralTalentDecrement()`: Decrement count, remove key if reaches 0
+- `handleClassTalentToggle()`: Toggle class talents (count = 1 or delete)
+
+✅ **UI Behavior:**
+- General talents: +/- buttons, counter badge, can select multiple times
+- Class talents: Single-select toggle (click to select/deselect)
+- Multiclass talents: Single-select toggle (existing behavior)
+- Budget validation: Correctly counts all talent selections
+
+**Testing:**
+- Verify general talents can be selected multiple times
+- Verify counter badge displays correctly ("x2", "x3")
+- Verify +/- buttons disable appropriately (budget exhausted, count = 0)
+- Verify class/multiclass talents remain single-select
+- Verify skill points correctly increase when taking "Skill Point Increase" multiple times
 
 ---
 

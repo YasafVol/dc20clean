@@ -313,7 +313,7 @@ export interface EnhancedCharacterBuildData {
 	selectedTraitIds: string[]; // Array of trait IDs
 	selectedTraitChoices: TraitChoiceStorage; // User choices for traits
 	featureChoices: Record<string, any>; // User choices for class features
-	selectedTalents?: string[]; // Array of talent IDs from leveling choices
+	selectedTalents?: Record<string, number>; // Count-based talent selection { talentId: count }
 
 	// Skills/Trades/Languages
 	skillsData: Record<string, number>;

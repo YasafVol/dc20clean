@@ -13,9 +13,9 @@ export const CHARACTER_PATHS: CharacterPath[] = [
     description: 'Focuses on combat training, maneuvers, and techniques.',
     progression: [
       { pathLevel: 1, benefits: { staminaPoints: 1, maneuversLearned: 1, techniquesLearned: 1 } },
-      { pathLevel: 2, benefits: { staminaPoints: 1 } },
+      { pathLevel: 2, benefits: { maneuversLearned: 1 } },
       { pathLevel: 3, benefits: { staminaPoints: 1, maneuversLearned: 1, techniquesLearned: 1 } },
-      { pathLevel: 4, benefits: { staminaPoints: 1 } },
+      { pathLevel: 4, benefits: { maneuversLearned: 1 } },
     ],
     specialRules: [
       // CORRECTED RULE:

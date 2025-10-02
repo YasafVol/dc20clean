@@ -63,6 +63,7 @@ import { attributesData } from '../rulesdata/attributes';
 import { skillsData } from '../rulesdata/skills';
 import { tradesData } from '../rulesdata/trades';
 import type { ClassDefinition } from '../rulesdata/schemas/character.schema';
+import { CHARACTER_PATHS } from '../rulesdata/paths/paths.data';
 
 /**
  * Convert character context data to enhanced build data
@@ -81,7 +82,8 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 		attribute_intelligence:
 			contextData.finalIntelligence ?? contextData.attribute_intelligence ?? 0,
 
-		combatMastery: contextData.combatMastery || 1,
+		// combatMastery is calculated in calculateCharacterWithBreakdowns, not stored
+		combatMastery: 0, // Will be overridden by calculation
 
 		classId: contextData.classId || '',
 		ancestry1Id: contextData.ancestry1Id || undefined,
@@ -703,8 +705,8 @@ export function calculateCharacterWithBreakdowns(
 	const finalCharisma = breakdowns.attribute_charisma.total;
 	const finalIntelligence = breakdowns.attribute_intelligence.total;
 
-	// Derived stats
-	const combatMastery = buildData.combatMastery;
+	// Derived stats - Combat Mastery calculated from level
+	const combatMastery = Math.ceil(buildData.level / 2);
 
 	// Health & Resources - use aggregated progression gains
 	let finalHPMax = finalMight + progressionGains.totalHP;

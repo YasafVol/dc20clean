@@ -31,7 +31,7 @@ export const completeCharacter = async (
 			attribute_charisma: characterState.attribute_charisma,
 			attribute_intelligence: characterState.attribute_intelligence,
 			level: characterState.level || 1,
-			combatMastery: characterState.combatMastery || 1,
+			// combatMastery is calculated by the calculator, not passed as input
 			classId: characterState.classId,
 			ancestry1Id: characterState.ancestry1Id,
 			ancestry2Id: characterState.ancestry2Id,

@@ -196,6 +196,18 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		const spellsStep = hasLevelingStep ? 6 : 5;
 		const nameStep = hasLevelingStep ? 7 : 6;
 
+		console.log('🔍 isStepCompleted debug:', {
+			step,
+			'state.level': state.level,
+			hasLevelingStep,
+			levelingStep,
+			ancestryStep,
+			attributesStep,
+			backgroundStep,
+			spellsStep,
+			nameStep
+		});
+
 		// Step 1: Class Selection
 		if (step === 1) {
 				if (state.classId === null) return false;
@@ -336,210 +348,95 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 		// Background step
 		if (step === backgroundStep) {
-				// Background: check if ALL available points have been spent
-				// Parse current selections
-				let skillPointsUsed = 0;
-				let tradePointsUsed = 0;
-				let languagePointsUsed = 0;
+			// Use calculator's background data instead of recalculating
+			const background = calculationResult?.background;
+			if (!background) {
+				console.warn('⚠️ Background validation: calculator result not available');
+				return false;
+			}
 
-				// FIXED: Use typed skillsData instead of JSON parsing
-				if (state.skillsData && Object.keys(state.skillsData).length > 0) {
-					skillPointsUsed = Object.values(state.skillsData).reduce(
-						(sum: number, level: number) => sum + level,
-						0
-					);
-				}
+			// Calculate current usage
+			let skillPointsUsed = 0;
+			let tradePointsUsed = 0;
+			let languagePointsUsed = 0;
 
-				// FIXED: Use typed tradesData instead of JSON parsing
-				if (state.tradesData && Object.keys(state.tradesData).length > 0) {
-					tradePointsUsed = Object.values(state.tradesData).reduce(
-						(sum: number, level: number) => sum + level,
-						0
-					);
-				}
-
-				// FIXED: Use typed languagesData instead of JSON parsing
-				if (state.languagesData && Object.keys(state.languagesData).length > 0) {
-					languagePointsUsed = Object.entries(state.languagesData).reduce(
-						(sum, [langId, data]: [string, { fluency?: string }]) => {
-							if (langId === 'common') {
-								return sum; // Common is free
-							}
-							const cost = data.fluency === 'limited' ? 1 : data.fluency === 'fluent' ? 2 : 0; // 'none' or any other value costs 0
-							return sum + cost;
-						},
-						0
-					);
-				}
-
-				// Available points should match BackgroundPointsManager (include bonus points and conversions)
-				const intelligenceModifier = state.attribute_intelligence;
-
-				// Calculate bonus skill points from traits and class features (same logic as BackgroundPointsManager)
-				let bonusSkillPoints = 0;
-
-				// From traits - FIXED: Use typed data instead of JSON parsing
-				if (state.selectedTraitIds && Array.isArray(state.selectedTraitIds)) {
-					const selectedTraitIdsList: string[] = state.selectedTraitIds;
-
-					console.log('🔍 Selected trait IDs:', selectedTraitIdsList);
-
-					selectedTraitIdsList.forEach((traitId: string) => {
-						const trait = traitsData.find((t: any) => t.id === traitId);
-						if (trait) {
-							trait.effects.forEach((effect: any) => {
-								if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
-									bonusSkillPoints += effect.value as number;
-								}
-							});
-						} else {
-							console.warn(`🚨 Trait not found: ${traitId}`);
-						}
-					});
-				}
-
-				// From class features
-				if (state.classId && state.selectedFeatureChoices) {
-					try {
-						const selectedClass = classesData.find(
-							(c) => c.id.toLowerCase() === state.classId?.toLowerCase()
-						);
-						const classFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
-
-						if (classFeatures) {
-							// FIXED: Use typed data instead of JSON parsing
-							const selectedChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
-							const level1Features = classFeatures.coreFeatures.filter(
-								(feature: any) => feature.levelGained === 1
-							);
-
-							level1Features.forEach((feature: any) => {
-								// Check for direct feature effects first
-								if (feature.effects) {
-									feature.effects.forEach((effect: any) => {
-										if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
-											bonusSkillPoints += effect.value as number;
-										}
-									});
-								}
-
-								// Check for choice-based effects
-								if (feature.choices) {
-									feature.choices.forEach((choice: any, choiceIndex: number) => {
-										const choiceId = `${classFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;
-										const selectedOptions = selectedChoices[choiceId];
-
-										if (selectedOptions) {
-											let optionsToProcess: string[] = [];
-
-											// Expect arrays directly (no more legacy JSON string support)
-											if (Array.isArray(selectedOptions)) {
-												optionsToProcess = selectedOptions;
-											} else {
-												optionsToProcess = [selectedOptions];
-											}
-
-											optionsToProcess.forEach((optionName) => {
-												const selectedOption = choice.options?.find(
-													(opt: any) => opt.name === optionName
-												);
-												if (selectedOption && selectedOption.effects) {
-													selectedOption.effects.forEach((effect: any) => {
-														if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
-															bonusSkillPoints += effect.value as number;
-														}
-													});
-												}
-											});
-										}
-									});
-								}
-							});
-						}
-					} catch (error) {
-						// Ignore parsing errors
-					}
-				}
-
-				const baseSkillPoints = Math.max(1, 5 + intelligenceModifier + bonusSkillPoints);
-
-				console.log('🔍 Skill Points Calculation:', {
-					base: 5,
-					intelligence: intelligenceModifier,
-					bonusFromTraits: bonusSkillPoints,
-					total: baseSkillPoints
-				});
-				const skillToTrade = state.skillToTradeConversions || 0;
-				const tradeToSkill = state.tradeToSkillConversions || 0;
-				const tradeToLanguage = state.tradeToLanguageConversions || 0;
-				const availableSkillPoints = baseSkillPoints - skillToTrade + Math.floor(tradeToSkill / 2);
-
-				// Calculate available trade and language points using same logic as BackgroundPointsManager
-				// TODO: Add proper ancestry and feature bonus calculations for trade/language points
-				const bonusTradePoints = 0;
-				const bonusLanguagePoints = 0;
-
-				// For now, allow some flexibility - if available points is 0 or negative,
-				// don't require spending them (handles edge cases with conversions)
-				const baseTradePoints = Math.max(0, 3 + bonusTradePoints);
-				const baseLanguagePoints = Math.max(0, 2 + bonusLanguagePoints);
-
-				// FIXED: Properly handle all conversions
-				const availableTradePoints = Math.max(
-					0,
-					baseTradePoints + skillToTrade * 2 - tradeToSkill - tradeToLanguage
+			// FIXED: Use typed skillsData instead of JSON parsing
+			if (state.skillsData && Object.keys(state.skillsData).length > 0) {
+				skillPointsUsed = Object.values(state.skillsData).reduce(
+					(sum: number, level: number) => sum + level,
+					0
 				);
-				const availableLanguagePoints = Math.max(0, baseLanguagePoints + tradeToLanguage * 2);
+			}
 
-				console.log('🔍 CONVERSION DEBUG:', {
-					skillToTrade,
-					tradeToSkill,
-					tradeToLanguage,
-					baseTradePoints,
-					baseLanguagePoints,
-					availableTradePoints: `${baseTradePoints} + (${skillToTrade} * 2) - ${tradeToSkill} - ${tradeToLanguage} = ${availableTradePoints}`,
-					availableLanguagePoints: `${baseLanguagePoints} + (${tradeToLanguage} * 2) = ${availableLanguagePoints}`,
-					tradePointsUsed,
-					languagePointsUsed
-				});
+			// FIXED: Use typed tradesData instead of JSON parsing
+			if (state.tradesData && Object.keys(state.tradesData).length > 0) {
+				tradePointsUsed = Object.values(state.tradesData).reduce(
+					(sum: number, level: number) => sum + level,
+					0
+				);
+			}
 
-				// For completion, allow for overspending if the UI permitted it
-				// This handles cases where UI and validation calculations differ
-				const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
-				const tradePointsRemaining = availableTradePoints - tradePointsUsed;
-				const languagePointsRemaining = availableLanguagePoints - languagePointsUsed;
+			// FIXED: Use typed languagesData instead of JSON parsing
+			if (state.languagesData && Object.keys(state.languagesData).length > 0) {
+				languagePointsUsed = Object.entries(state.languagesData).reduce(
+					(sum, [langId, data]: [string, { fluency?: string }]) => {
+						if (langId === 'common') {
+							return sum; // Common is free
+						}
+						const cost = data.fluency === 'limited' ? 1 : data.fluency === 'fluent' ? 2 : 0; // 'none' or any other value costs 0
+						return sum + cost;
+					},
+					0
+				);
+			}
 
-				const hasExactlySpentAllSkillPoints = skillPointsRemaining === 0;
-				// Allow completion if points are spent exactly OR if overspent (UI allowed it)
-				const hasExactlySpentAllTradePoints = tradePointsRemaining <= 0;
-				const hasExactlySpentAllLanguagePoints = languagePointsRemaining <= 0;
+			// Use calculator's values instead of recalculating
+			const availableSkillPoints = background.availableSkillPoints;
+			const availableTradePoints = background.availableTradePoints;
+			const availableLanguagePoints = background.availableLanguagePoints;
 
-				// Step is complete when all skill points are spent and trade/language are spent or overspent
-				const isValid =
-					hasExactlySpentAllSkillPoints &&
-					hasExactlySpentAllTradePoints &&
-					hasExactlySpentAllLanguagePoints;
-				console.log('🔍 Step 4 (Background) validation:', {
-					baseSkillPoints,
-					bonusSkillPoints,
-					skillToTrade,
-					tradeToSkill,
-					availableSkillPoints,
-					skillPointsUsed,
-					skillPointsRemaining,
-					baseTradePoints,
-					baseLanguagePoints,
-					availableTradePoints,
-					availableLanguagePoints,
-					tradePointsUsed,
-					languagePointsUsed,
-					tradePointsRemaining,
-					languagePointsRemaining,
+			// Calculate remaining points
+			const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
+			const tradePointsRemaining = availableTradePoints - tradePointsUsed;
+			const languagePointsRemaining = availableLanguagePoints - languagePointsUsed;
+
+			// Require exact spending - no overspending or underspending allowed
+			const hasExactlySpentAllSkillPoints = skillPointsRemaining === 0;
+			const hasExactlySpentAllTradePoints = tradePointsRemaining === 0;
+			const hasExactlySpentAllLanguagePoints = languagePointsRemaining === 0;
+
+			// Step is complete when all skill points are spent and trade/language are spent or overspent
+			const isValid =
+				hasExactlySpentAllSkillPoints &&
+				hasExactlySpentAllTradePoints &&
+				hasExactlySpentAllLanguagePoints;
+
+			if (!isValid) {
+				console.log('❌ Background validation FAILED:', {
 					hasExactlySpentAllSkillPoints,
 					hasExactlySpentAllTradePoints,
 					hasExactlySpentAllLanguagePoints,
-					isValid
+					skillPointsRemaining,
+					tradePointsRemaining,
+					languagePointsRemaining
 				});
+			}
+
+			console.log('🔍 Background validation (step ' + backgroundStep + '):', {
+				availableSkillPoints,
+				skillPointsUsed,
+				skillPointsRemaining,
+				availableTradePoints,
+				tradePointsUsed,
+				tradePointsRemaining,
+				availableLanguagePoints,
+				languagePointsUsed,
+				languagePointsRemaining,
+				hasExactlySpentAllSkillPoints,
+				hasExactlySpentAllTradePoints,
+				hasExactlySpentAllLanguagePoints,
+				isValid
+			});
 
 			return isValid;
 		}

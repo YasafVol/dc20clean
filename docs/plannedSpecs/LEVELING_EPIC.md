@@ -188,7 +188,8 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M3.8**    | **(UI)** Add +/- counter UI for general talents to allow multiple selections.        | ✅ Done   | M3.7           |
 | **M3.9**    | **(Fix)** Fix combat mastery, SP/MP/maneuver/technique calculations with path bonuses. | ✅ Done   | M3.8           |
 | **M3.10**   | **(Feature)** Implement subclass selection at level 3 in Class stage.                | ❌ To Do   | M3.9           |
-| **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.10          |
+| **M3.11**   | **(UI)** Improve class features display - show level-filtered features at Stage 1, refactor Stage 2. | ❌ To Do   | M3.10          |
+| **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.11          |
 | **HR-3**  | **HUMAN REVIEW:** Confirm UI flow is intuitive and functional.                     | ⏳ Pending | M3.10, HR-2.5  |
 | **M4.1**  | **(E2E Test)** Create `levelup-wizard.e2e.spec.ts` to test a Level 3 Wizard creation.   | ❌ To Do   | HR-3           |
 | **M4.2**  | **(Manual Test)** Manually test character creation at levels 2 and 3.               | ❌ To Do   | M4.1           |
@@ -423,6 +424,159 @@ With count-based storage (M3.7), users need a way to select talents multiple tim
 1. Add `selectedSubclass?: string` to character state
 2. Add `SET_SUBCLASS` action type
 3. Persist in storage
+
+---
+
+### 5.6. Milestone M3.11: UI Improvements - Class Features Display
+
+**Status:** ❌ To Do
+
+**Goal:** Improve how class features are displayed during character creation, showing level-appropriate features clearly at each stage.
+
+**Issues:**
+1. **Stage 1 (Class & Features):** Currently shows all features regardless of level, making it unclear which features the character actually gets
+2. **Stage 2 (Leveling Choices):** Shows unlocked features but presentation could be improved
+3. **Redundancy:** Features might be shown in both stages, causing confusion
+
+**Proposed Solution:**
+Show features at Stage 1 filtered by selected level, potentially making Stage 2's feature display redundant.
+
+---
+
+**M3.11a - Enhance ClassFeatures.tsx (Stage 1):**
+
+**Goal:** Show only features unlocked at selected level, organized by when they're gained.
+
+1. **Get Level from Context:**
+   ```typescript
+   const { state } = useCharacter();
+   const selectedLevel = state.level || 1;
+   ```
+
+2. **Use Resolver to Get Features by Level:**
+   ```typescript
+   const { resolvedFeatures } = calculationResult;
+   const unlockedFeatureIds = resolvedFeatures.unlockedFeatures.map(f => f.id);
+   ```
+
+3. **Group Features by Level Unlocked:**
+   ```typescript
+   // Use progression data to determine which level each feature unlocks
+   const featuresByLevel = groupFeaturesByLevel(unlockedFeatureIds, classProgressionData);
+   ```
+
+4. **Display with Level Headers:**
+   ```tsx
+   {Object.entries(featuresByLevel).map(([level, features]) => (
+     <LevelSection key={level}>
+       <LevelHeader>Level {level}</LevelHeader>
+       {features.map(feature => (
+         <FeatureCard key={feature.id}>
+           <FeatureName>{feature.name}</FeatureName>
+           <FeatureDescription>{feature.description}</FeatureDescription>
+         </FeatureCard>
+       ))}
+     </LevelSection>
+   ))}
+   ```
+
+5. **Add Visual Indicators:**
+   - Current level features highlighted
+   - Previous level features shown but dimmed/collapsed
+   - Future levels not shown
+
+**M3.11b - Create Helper Function:**
+
+Create `groupFeaturesByLevel()` in `enhancedCharacterCalculator.ts` or new utility file:
+
+```typescript
+function groupFeaturesByLevel(
+  featureIds: string[],
+  classProgressionData: any
+): Record<number, ClassFeature[]> {
+  const grouped: Record<number, ClassFeature[]> = {};
+  
+  // Iterate through progression levels
+  classProgressionData.levelProgression.forEach((levelData: any) => {
+    if (levelData.gains?.classFeatures) {
+      const levelFeatures = levelData.gains.classFeatures
+        .filter((id: string) => featureIds.includes(id))
+        .map((id: string) => findFeatureById(id))
+        .filter(Boolean);
+      
+      if (levelFeatures.length > 0) {
+        grouped[levelData.level] = levelFeatures;
+      }
+    }
+  });
+  
+  return grouped;
+}
+```
+
+**M3.11c - Improve LevelingChoices.tsx (Stage 2):**
+
+**Option 1: Remove Feature Display (if redundant)**
+- If Stage 1 shows all features clearly, Stage 2 only needs to show:
+  - Talent selection UI
+  - Path point allocation UI
+  - Remove unlocked features section entirely
+
+**Option 2: Show Only NEW Features at Current Level**
+- Show features unlocked at the selected level only
+- Add context: "You gained these features upon reaching level X"
+- Keep it minimal and focused on what changed
+
+**Recommendation:** Option 1 - Remove from Stage 2 if Stage 1 provides comprehensive view.
+
+**M3.11d - Add Feature Details Modal:**
+
+Enhance feature cards with more information:
+1. Click feature to open detailed modal
+2. Show:
+   - Full description
+   - Granted effects (from Effects system)
+   - Prerequisites (if any)
+   - Source (class, subclass, etc.)
+
+**M3.11e - Style Improvements:**
+
+1. **Collapsible Level Sections:**
+   - Past levels: Collapsed by default, expandable
+   - Current level: Expanded, highlighted
+   - Future levels: Hidden
+
+2. **Visual Hierarchy:**
+   - Use cards for features
+   - Different colors for feature types (passive, active, choice)
+   - Icons for feature categories
+
+3. **Loading States:**
+   - Show skeleton while calculating
+   - Smooth transitions when level changes
+
+---
+
+**Acceptance Criteria:**
+
+1. ✅ Stage 1 shows only features unlocked up to selected level
+2. ✅ Features are grouped by the level they unlock at
+3. ✅ Current level features are visually highlighted
+4. ✅ Past level features are visible but de-emphasized
+5. ✅ Stage 2 either removes feature display or shows minimal "what's new" section
+6. ✅ Clicking a feature shows detailed information
+7. ✅ UI updates smoothly when level selection changes
+
+---
+
+**Testing:**
+
+- [ ] Create Level 1 character - verify only L1 features shown
+- [ ] Create Level 3 character - verify features grouped by L1, L2, L3
+- [ ] Change level dropdown - verify feature list updates correctly
+- [ ] Click feature cards - verify details modal opens
+- [ ] Navigate to Stage 2 - verify no redundant feature display
+- [ ] Verify subclass features (M3.10) integrate correctly
 
 ---
 

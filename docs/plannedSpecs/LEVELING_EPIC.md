@@ -390,40 +390,159 @@ With count-based storage (M3.7), users need a way to select talents multiple tim
 
 ---
 
-### 5.5. Milestone M3.10: Subclass Selection at Level 3
+### 5.5. Milestone M3.10: Dynamic Feature Choice System (Subclass & More)
 
 **Status:** ❌ To Do
 
-**Goal:** Implement subclass choice UI at Class stage when character has `pendingSubclassChoice` flag.
+**Goal:** Implement a dynamic, progression-driven system for presenting and resolving class feature choices (including subclass selections) at any appropriate level during character creation.
 
-**Tasks:**
+**Philosophy:** Feature choices should be **declarative and data-driven**. The UI automatically detects and presents choices based on what the `*.progression.ts` files specify, without hardcoding level-specific logic.
 
-**M3.10a - Detect Subclass Requirement:**
-1. In `ClassFeatures.tsx`, check `calculationResult.levelBudgets.pendingSubclassChoices > 0`
-2. If true, show subclass selection UI
-3. Get available subclasses from class definition
+---
+
+**Current State Analysis:**
+
+**What Works:**
+- ✅ `classProgressionResolver.ts` detects `subclassFeatureChoice: true` from progression files
+- ✅ Returns `availableSubclassChoice: boolean` and `subclassChoiceLevel?: number`
+- ✅ Returns `pendingFeatureChoices: PendingFeatureChoice[]` for features with embedded choices
+- ✅ `ClassFeatures.tsx` handles Level 1 feature choices (spell schools, domain choices)
+
+**What's Missing:**
+- ❌ No UI for subclass selection (Level 3+)
+- ❌ No state management for `selectedSubclass`
+- ❌ No validation blocking progression when required choices unmade
+- ❌ Subclass features not applied to character calculations
+
+**Data Source (from `*.progression.ts`):**
+```typescript
+{
+  "level": 3,
+  "gains": {
+    "subclassFeatureChoice": true  // ← Drives UI presentation
+  }
+}
+```
+
+**Proposed Location:** Show subclass selection in **Stage 1 (Class & Features)** alongside other class-defining choices.
+
+---
+
+**M3.10a - Add Subclass State Management:**
+
+1. **Update `characterContext.tsx`:**
+   ```typescript
+   // Add to CharacterInProgressStoreData interface
+   selectedSubclass?: string;
+   
+   // Add action type
+   | { type: 'SET_SUBCLASS'; subclass: string | null }
+   
+   // Add reducer case
+   case 'SET_SUBCLASS':
+     return { ...state, selectedSubclass: action.subclass };
+   ```
+
+2. **Add to `effectSystem.ts` (EnhancedCharacterBuildData):**
+   ```typescript
+   selectedSubclass?: string;
+   ```
+
+---
 
 **M3.10b - Create Subclass Selector UI:**
-1. Add new component `SubclassSelector.tsx`
-2. Display subclass options with descriptions
-3. Show features granted by subclass at level 3
-4. Store selection in context: `selectedSubclass: string`
 
-**M3.10c - Add Validation:**
-1. In `CharacterCreation.tsx` step 1 validation
-2. Check if `pendingSubclassChoices > 0`
-3. If yes, verify `state.selectedSubclass` is not null
-4. Block progression if subclass not chosen
+1. **Create `SubclassSelector.tsx` component:**
+   - Fetch subclasses: `getAvailableSubclasses(state.classId)`
+   - Display as radio buttons or cards
+   - Include subclass name and description
+   - On selection: `dispatch({ type: 'SET_SUBCLASS', subclass: selectedId })`
 
-**M3.10d - Update Calculator:**
-1. In `aggregateProgressionGains()`, when processing `subclassFeatureChoice: true`
-2. Look up selected subclass features
-3. Add to `unlockedFeatureIds` array
+2. **Integrate in `ClassFeatures.tsx`:**
+   ```typescript
+   const calculationResult = useMemo(() => calculateCharacterWithBreakdowns(...), [...]);
+   const needsSubclass = calculationResult?.resolvedFeatures?.availableSubclassChoice;
+   const subclassLevel = calculationResult?.resolvedFeatures?.subclassChoiceLevel;
+   
+   // Render after class features section
+   {needsSubclass && !state.selectedSubclass && (
+     <SubclassSelector 
+       classId={state.classId} 
+       choiceLevel={subclassLevel}
+       onSelect={(subclass) => dispatch({ type: 'SET_SUBCLASS', subclass })}
+     />
+   )}
+   ```
 
-**M3.10e - Update Context:**
-1. Add `selectedSubclass?: string` to character state
-2. Add `SET_SUBCLASS` action type
-3. Persist in storage
+---
+
+**M3.10c - Apply Subclass Features in Calculator:**
+
+1. **Update `convertToEnhancedBuildData()`:**
+   ```typescript
+   selectedSubclass: contextData.selectedSubclass,
+   ```
+
+2. **Update `aggregateProgressionGains()` in `enhancedCharacterCalculator.ts`:**
+   ```typescript
+   // After aggregating class features
+   if (buildData.selectedSubclass) {
+     const subclassFeatures = resolveSubclassFeatures(
+       buildData.classId,
+       buildData.selectedSubclass,
+       buildData.level
+     );
+     
+     subclassFeatures.forEach(feature => {
+       unlockedFeatureIds.push(feature.id);
+       // Apply effects if feature has them
+     });
+   }
+   ```
+
+---
+
+**M3.10d - Add Validation:**
+
+1. **Update `CharacterCreation.tsx` Step 1 validation:**
+   ```typescript
+   if (step === 1) {
+     // ... existing validation ...
+     
+     // NEW: Check for required subclass choice
+     const needsSubclass = calculationResult?.resolvedFeatures?.availableSubclassChoice;
+     if (needsSubclass && !state.selectedSubclass) {
+       console.log('❌ Step 1 incomplete: Subclass required at level', 
+                   calculationResult?.resolvedFeatures?.subclassChoiceLevel);
+       return false;
+     }
+     
+     return true;
+   }
+   ```
+
+---
+
+**Acceptance Criteria:**
+
+1. ✅ Level 3+ character shows subclass selector in Stage 1
+2. ✅ Available subclasses fetched dynamically from class data
+3. ✅ Selecting subclass stores in state
+4. ✅ Subclass features applied to character (visible in unlocked features)
+5. ✅ Validation blocks Stage 1 advancement without subclass (if required)
+6. ✅ Level 1-2 characters do NOT see subclass selector
+7. ✅ Multiple subclass choice levels work (Level 3, 6, 9)
+
+---
+
+**Testing:**
+
+- [ ] Level 1 Barbarian → no subclass selector
+- [ ] Level 3 Barbarian → subclass selector appears in Stage 1
+- [ ] Select "Berserker" → state updates, features appear
+- [ ] Try advancing without selecting → blocked
+- [ ] Level 6 character → Level 6 subclass choice works
+- [ ] Test with Wizard, Cleric, etc.
 
 ---
 

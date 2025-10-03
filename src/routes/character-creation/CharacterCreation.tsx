@@ -274,10 +274,21 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 							const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_school`;
 							if (!selectedFeatureChoices[choiceId]) return false;
 						}
-					}
 				}
+			}
 
-				return true;
+			// NEW (M3.10d): Check if subclass selection is required
+			const needsSubclass = calculationResult?.resolvedFeatures?.availableSubclassChoice;
+			if (needsSubclass && !state.selectedSubclass) {
+				const subclassLevel = calculationResult?.resolvedFeatures?.subclassChoiceLevel;
+				console.log(
+					'❌ Step 1 incomplete: Subclass selection required at level',
+					subclassLevel
+				);
+				return false;
+			}
+
+			return true;
 		}
 
 		// Step 2: Leveling Choices (only if level > 1)

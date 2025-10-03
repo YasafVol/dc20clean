@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import {
@@ -8,6 +9,11 @@ import {
 import { SpellSchool } from '../../lib/rulesdata/schemas/spell.schema';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
 import { techniques } from '../../lib/rulesdata/martials/techniques';
+import {
+	calculateCharacterWithBreakdowns,
+	convertToEnhancedBuildData
+} from '../../lib/services/enhancedCharacterCalculator';
+import { SubclassSelector } from './SubclassSelector';
 import {
 	StyledContainer,
 	StyledTitle,
@@ -36,6 +42,21 @@ function ClassFeatures() {
 	const selectedClassFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
 	// NEW: Use typed data instead of JSON parsing
 	const selectedFeatureChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
+
+	// Calculate character to check for subclass choice requirement
+	const calculationResult = useMemo(() => {
+		if (!state.classId) return null;
+		try {
+			const enhancedData = convertToEnhancedBuildData(state);
+			return calculateCharacterWithBreakdowns(enhancedData);
+		} catch (error) {
+			console.error('Failed to calculate character:', error);
+			return null;
+		}
+	}, [state]);
+
+	const needsSubclassChoice = calculationResult?.resolvedFeatures?.availableSubclassChoice;
+	const subclassChoiceLevel = calculationResult?.resolvedFeatures?.subclassChoiceLevel;
 
 	function handleFeatureChoice(choiceId: string, value: string) {
 		const currentChoices: Record<string, any> = { ...selectedFeatureChoices };
@@ -692,6 +713,16 @@ function ClassFeatures() {
 						</StyledCard>
 					))}
 				</StyledSection>
+			)}
+
+			{/* Subclass Selection (Level 3+) */}
+			{needsSubclassChoice && state.classId && (
+				<SubclassSelector
+					classId={state.classId}
+					choiceLevel={subclassChoiceLevel}
+					selectedSubclass={state.selectedSubclass}
+					onSelect={(subclass) => dispatch({ type: 'SET_SUBCLASS', subclass })}
+				/>
 			)}
 		</StyledContainer>
 	);

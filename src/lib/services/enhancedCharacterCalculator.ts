@@ -21,7 +21,7 @@ import {
 	type ModifyMasteryCapEffect,
 	type IncreaseMasteryCapEffect
 } from '../rulesdata/schemas/character.schema';
-import { resolveClassProgression } from '../rulesdata/classes-data/classProgressionResolver';
+import { resolveClassProgression, resolveSubclassFeatures } from '../rulesdata/classes-data/classProgressionResolver';
 import { classesData } from '../rulesdata/loaders/class.loader';
 import { findTalentById } from '../rulesdata/classes-data/talents/talent.loader';
 import { getLevelCaps, MASTERY_TIERS, getMasteryTierByNumber } from '../rulesdata/progression/levelCaps';
@@ -154,6 +154,7 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 	selectedTalents: contextData.selectedTalents && typeof contextData.selectedTalents === 'object'
 		? contextData.selectedTalents
 		: {},
+	selectedSubclass: contextData.selectedSubclass,
 
 		// Pass data as native objects, removing the unnecessary stringify step
 		skillsData: contextData.skillsData ?? {},
@@ -594,7 +595,8 @@ function getOptionsForEffect(effect: AttributedEffect): ChoiceOption[] {
 function aggregateProgressionGains(
 	classProgressionData: any,
 	targetLevel: number,
-	pathPointAllocations?: { martial?: number; spellcasting?: number }
+	pathPointAllocations?: { martial?: number; spellcasting?: number },
+	selectedSubclass?: string
 ): {
 	totalHP: number;
 	totalSP: number;
@@ -727,6 +729,33 @@ function aggregateProgressionGains(
 		finalTechniques: totalTechniquesKnown
 	});
 
+	// Apply subclass features (M3.10c)
+	if (selectedSubclass && classProgressionData?.id) {
+		try {
+			const subclassFeatures = resolveSubclassFeatures(
+				classProgressionData.id,
+				selectedSubclass,
+				targetLevel
+			);
+
+			console.log('🎭 SUBCLASS FEATURES APPLIED:', {
+				subclass: selectedSubclass,
+				featuresCount: subclassFeatures.length,
+				featureIds: subclassFeatures.map((f) => f.id || f.featureName)
+			});
+
+			// Add subclass feature IDs to unlocked features
+			subclassFeatures.forEach((feature) => {
+				const featureId = feature.id || feature.featureName;
+				if (featureId) {
+					unlockedFeatureIds.push(featureId);
+				}
+			});
+		} catch (error) {
+			console.error('Failed to resolve subclass features:', error);
+		}
+	}
+
 	return {
 		totalHP,
 		totalSP,
@@ -774,7 +803,8 @@ export function calculateCharacterWithBreakdowns(
 	const progressionGains = aggregateProgressionGains(
 		classProgressionData, 
 		buildData.level,
-		buildData.pathPointAllocations
+		buildData.pathPointAllocations,
+		buildData.selectedSubclass
 	);
 
 	// 4. Create detailed breakdowns

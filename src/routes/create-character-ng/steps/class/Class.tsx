@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { StyledContainer, StyledContent } from './Class.styles';
+import { 
+  StyledContainer, 
+  StyledContent, 
+  StyledClassDetails, 
+  StyledQuote, 
+  StyledDescription 
+} from './Class.styles';
 import { CollapsibleSection } from '../../../../design-system';
 import { Button } from '../../../../design-system';
 import { classesData } from '../../../../lib/rulesdata/loaders/class.loader';
@@ -97,24 +103,14 @@ const Class: React.FC<ClassProps> = () => {
                 />
               }
             >
-              <div style={{ padding: '1rem 0' }}>
-                <div style={{ 
-                  fontStyle: 'italic', 
-                  color: 'var(--cornflower)', 
-                  marginBottom: '0.75rem',
-                  borderLeft: '2px solid var(--cornflower)',
-                  paddingLeft: '0.75rem'
-                }}>
+              <StyledClassDetails>
+                <StyledQuote>
                   "{classInfo?.quote || 'A powerful adventurer.'}"
-                </div>
-                <p style={{ 
-                  color: 'var(--pearl)', 
-                  lineHeight: '1.5',
-                  margin: '0'
-                }}>
+                </StyledQuote>
+                <StyledDescription>
                   {classInfo?.description || classDef.description}
-                </p>
-              </div>
+                </StyledDescription>
+              </StyledClassDetails>
             </CollapsibleSection>
           );
         })}

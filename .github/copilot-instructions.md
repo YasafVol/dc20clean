@@ -28,6 +28,18 @@ You must always adhere to all the sections in this instructions file. `Instructi
 - Use constants instead of magic values.
 - Follow DRY principles - centralize shared functionality.
 - **Styled components MUST be in separate `.ts` files** - never inline styled components in component files. Create dedicated style files like `ComponentName.styles.ts` or in a `styles/` directory.
+- **NO INLINE STYLES** - NEVER use `style={{}}` prop in JSX. Always create a styled component instead. This is a hard rule with no exceptions.
+
+## Component Composition & Architecture
+
+- **SMALL COMPONENTS ONLY** - Break down large components into smaller, focused ones. Aim for components under 200 lines.
+- **AVOID PROP DRILLING** - If passing more than 3-4 props, consider breaking into smaller components or using composition.
+- **NO MASSIVE FILES** - Keep files under 300 lines. If a file grows beyond this, it needs to be split.
+- **SINGLE RESPONSIBILITY** - Each component should do ONE thing well. If it does multiple things, split it.
+- **COMPOSE, DON'T COMPLICATE** - Build complex UIs from small, reusable components rather than giant monolithic ones.
+- **CO-LOCATION** - Keep related components close together in the file structure (e.g., `ComponentName/index.tsx`, `ComponentName/SubComponent.tsx`).
+- **EXTRACT EARLY** - When you see repeated JSX patterns or logic, extract them into separate components immediately.
+- **THINK LEGO BLOCKS** - Every component should be like a Lego piece: small, reusable, and composable.
 
 ## Planning And Execution
 

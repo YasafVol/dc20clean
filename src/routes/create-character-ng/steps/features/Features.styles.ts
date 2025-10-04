@@ -16,11 +16,24 @@ export const StyledTitle = styled.h2`
 
 export const StyledContent = styled.div`
 	color: var(--pearl);
-	text-align: center;
+	max-width: 900px;
+	margin: 0 auto;
 
 	p {
 		margin: 0;
 		font-size: 1.1rem;
 		line-height: 1.6;
 	}
+`;
+
+export const StyledInstruction = styled.p`
+	margin-bottom: 2rem;
+	color: var(--pearl);
+	font-size: 1.1rem;
+`;
+
+export const StyledNote = styled.p`
+	margin-top: 1rem;
+	font-size: 0.9rem;
+	color: var(--iron);
 `;

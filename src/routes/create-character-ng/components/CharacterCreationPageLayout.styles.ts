@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import BlackBG from '/src/assets/BlackBG.jpg';
-import frameBackground2 from '/src/assets/dc20-ng/framebackground2.png';
+import BlackBG from '../../../assets/BlackBG.jpg';
+import frameBackground2 from '../../../assets/dc20-ng/framebackground2.png';
 
 // Main page container with full screen background
 export const StyledPageContainer = styled.div`

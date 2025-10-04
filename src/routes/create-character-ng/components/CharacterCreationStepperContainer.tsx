@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { Stepper } from '../../../design-system';
 import {
 	stepperCurrentStepAtom,
@@ -7,6 +7,7 @@ import {
 	stepValidationAtom
 } from '../../../atoms/stepperAtom';
 import { validateAllSteps } from '../utils/stepValidation';
+import { useCharacter } from '../../../lib/stores/characterContext';
 
 interface CharacterCreationStepperContainerProps {
 	onStepChange?: (stepIndex: number, stepId: string) => void;
@@ -17,16 +18,14 @@ const CharacterCreationStepperContainer: React.FC<CharacterCreationStepperContai
 }) => {
 	const [currentStep, setCurrentStep] = useAtom(stepperCurrentStepAtom);
 	const steps = useAtomValue(characterCreationStepsAtom);
-	const setValidationResults = useSetAtom(stepValidationAtom);
+	const [validationResults, setValidationResults] = useAtom(stepValidationAtom);
+	const { state: characterState } = useCharacter();
 
-	// Initialize validation on mount
+	// Re-validate whenever character state changes
 	useEffect(() => {
-		const validationResults = validateAllSteps();
-		setValidationResults(validationResults);
-	}, [setValidationResults]);
-
-	// Get current validation results
-	const validationResults = useAtomValue(stepValidationAtom);
+		const newValidationResults = validateAllSteps(characterState);
+		setValidationResults(newValidationResults);
+	}, [characterState, setValidationResults]);
 
 	// Map steps with proper status based on current step and validation
 	const stepsWithStatus = steps.map((step, index) => {
@@ -65,12 +64,26 @@ const CharacterCreationStepperContainer: React.FC<CharacterCreationStepperContai
 
 	const handleNext = () => {
 		if (currentStep < steps.length - 1) {
+			// Check if current step is valid before allowing navigation
+			const currentStepId = steps[currentStep]?.id;
+			const isCurrentStepValid = validationResults[currentStepId];
+
+			if (isCurrentStepValid === false) {
+				// Don't allow navigation if current step is invalid
+				return;
+			}
+
 			const newStep = currentStep + 1;
 			setCurrentStep(newStep);
 			const stepId = steps[newStep]?.id || '';
 			onStepChange?.(newStep, stepId);
 		}
 	};
+
+	// Check if next button should be disabled
+	const currentStepId = steps[currentStep]?.id;
+	const isCurrentStepValid = validationResults[currentStepId];
+	const isNextDisabled = currentStep >= steps.length - 1 || isCurrentStepValid === false;
 
 	return (
 		<Stepper
@@ -83,6 +96,7 @@ const CharacterCreationStepperContainer: React.FC<CharacterCreationStepperContai
 			nextLabel="NEXT"
 			showNavigation={true}
 			useState={false} // Use controlled mode
+			nextDisabled={isNextDisabled}
 		/>
 	);
 };

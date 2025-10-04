@@ -13,3 +13,5 @@ export { Button } from './Button/Button';
 export type { DSButtonProps } from './Button/Button';
 export { Checkbox } from './Checkbox/Checkbox';
 export type { CheckboxProps } from './Checkbox/Checkbox';
+export { RadioButton } from './RadioButton/RadioButton';
+export type { RadioButtonProps } from './RadioButton/RadioButton';

@@ -47,10 +47,12 @@ export const ToggleIcon = styled.span`
 `;
 
 export const Content = styled.div<{ $expanded: boolean }>`
-	padding: ${({ $expanded }) => ($expanded ? '12px 18px' : '0 18px')};
-	max-height: ${({ $expanded }) => ($expanded ? '100vh' : '0')};
+	padding: ${(props) => (props.$expanded ? '16px' : '0')};
 	overflow: hidden;
-	transition:
-		max-height 240ms ease,
-		padding 180ms ease;
+	transition: all 0.2s ease-in-out;
+`;
+
+export const ActionContainer = styled.div`
+	display: flex;
+	align-items: center;
 `;

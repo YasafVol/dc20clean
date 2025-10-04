@@ -88,7 +88,14 @@ function App() {
 					<Routes>
 						<Route path="/" element={<Navigate to="/menu" replace />} />
 						<Route path="/menu" element={<Menu />} />
-						<Route path="/create-character-ng" element={<CreateCharacterNG />} />
+						<Route
+							path="/create-character-ng"
+							element={
+								<CharacterProvider>
+									<CreateCharacterNG />
+								</CharacterProvider>
+							}
+						/>
 						<Route
 							path="/create-character"
 							element={

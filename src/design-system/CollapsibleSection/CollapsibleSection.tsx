@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { SectionWrapper, Header, Title, ToggleIcon, Content } from './CollapsibleSection.styles';
+import {
+	SectionWrapper,
+	Header,
+	Title,
+	ToggleIcon,
+	Content,
+	ActionContainer
+} from './CollapsibleSection.styles';
 
 type Props = {
 	title: React.ReactNode;
@@ -51,13 +58,12 @@ export const CollapsibleSection: React.FC<Props> = ({
 					{title}
 				</Title>
 
-				<div style={{ display: 'flex', alignItems: 'center' }}>
+				<ActionContainer>
 					{/* Only show action when expanded */}
 					{isExpanded && action && <div onClick={(e) => e.stopPropagation()}>{action}</div>}
 					<ToggleIcon aria-hidden>{isExpanded ? '▾' : '▸'}</ToggleIcon>
-				</div>
-			</Header>
-
+				</ActionContainer>
+			</Header>{' '}
 			{isExpanded ? (
 				<Content $expanded={isExpanded} role="region" aria-hidden={false}>
 					{children}

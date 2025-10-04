@@ -28,6 +28,7 @@ type Props = {
 	backLabel?: string; // Custom back button label
 	nextLabel?: string; // Custom next button label
 	showNavigation?: boolean; // Whether to show Back/Next buttons
+	nextDisabled?: boolean; // Whether to disable the next button (in addition to last step check)
 	'aria-label'?: string;
 	useState?: boolean; // whether to use State management
 };
@@ -42,6 +43,7 @@ const StepperContent: React.FC<{
 	backLabel?: string;
 	nextLabel?: string;
 	showNavigation?: boolean;
+	nextDisabled?: boolean;
 	'aria-label'?: string;
 }> = ({
 	steps,
@@ -52,6 +54,7 @@ const StepperContent: React.FC<{
 	backLabel = 'BACK',
 	nextLabel = 'NEXT',
 	showNavigation = true,
+	nextDisabled = false,
 	'aria-label': ariaLabel
 }) => {
 	const activeIndex =
@@ -59,6 +62,7 @@ const StepperContent: React.FC<{
 
 	const isFirstStep = activeIndex <= 0;
 	const isLastStep = activeIndex >= steps.length - 1;
+	const isNextButtonDisabled = isLastStep || nextDisabled;
 
 	return (
 		<StepperWrapper aria-label={ariaLabel ?? 'Stepper navigation'}>
@@ -101,9 +105,9 @@ const StepperContent: React.FC<{
 
 			{showNavigation && (
 				<NavigationButton
-					$disabled={isLastStep}
+					$disabled={isNextButtonDisabled}
 					onClick={onNext}
-					disabled={isLastStep}
+					disabled={isNextButtonDisabled}
 					type="button"
 				>
 					{nextLabel}
@@ -124,6 +128,7 @@ const StepperWithState: React.FC<
 		| 'backLabel'
 		| 'nextLabel'
 		| 'showNavigation'
+		| 'nextDisabled'
 		| 'aria-label'
 	>
 > = ({
@@ -133,6 +138,7 @@ const StepperWithState: React.FC<
 	backLabel,
 	nextLabel,
 	showNavigation,
+	nextDisabled,
 	'aria-label': ariaLabel
 }) => {
 	const [currentStep, setCurrentStep] = useAtom(stepperCurrentStepAtom);
@@ -167,6 +173,7 @@ const StepperWithState: React.FC<
 			backLabel={backLabel}
 			nextLabel={nextLabel}
 			showNavigation={showNavigation}
+			nextDisabled={nextDisabled}
 			aria-label={ariaLabel}
 		/>
 	);
@@ -181,6 +188,7 @@ export const Stepper: React.FC<Props> = ({
 	backLabel,
 	nextLabel,
 	showNavigation = true,
+	nextDisabled = false,
 	'aria-label': ariaLabel,
 	useState = false
 }) => {
@@ -193,6 +201,7 @@ export const Stepper: React.FC<Props> = ({
 				backLabel={backLabel}
 				nextLabel={nextLabel}
 				showNavigation={showNavigation}
+				nextDisabled={nextDisabled}
 				aria-label={ariaLabel}
 			/>
 		);
@@ -208,6 +217,7 @@ export const Stepper: React.FC<Props> = ({
 			backLabel={backLabel}
 			nextLabel={nextLabel}
 			showNavigation={showNavigation}
+			nextDisabled={nextDisabled}
 			aria-label={ariaLabel}
 		/>
 	);

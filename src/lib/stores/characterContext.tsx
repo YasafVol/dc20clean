@@ -1,8 +1,5 @@
 import React, { createContext, useContext, useReducer, useMemo, ReactNode } from 'react';
 import type { CharacterInProgress } from '@prisma/client';
-import { traitsData } from '../rulesdata/ancestries/traits';
-import { findClassByName } from '../rulesdata/loaders/class-features.loader';
-import { classesData } from '../rulesdata/loaders/class.loader';
 
 import {
 	calculateCharacterWithBreakdowns,
@@ -42,6 +39,11 @@ export interface CharacterInProgressStoreData
 	tradeToSkillConversions?: number;
 	tradeToLanguageConversions?: number;
 	schemaVersion?: number;
+	// Feature grants from class features
+	grantedTechniques?: number; // Bonus techniques from features like "Technique Master"
+	grantedManeuvers?: number; // Bonus maneuvers from features
+	grantedSpells?: number; // Bonus spells from features
+	grantedAbilities?: string[]; // Passive abilities from features (e.g., "technique_master")
 }
 
 // Initial state for the store
@@ -82,6 +84,10 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
 	skillToTradeConversions: 0,
 	tradeToSkillConversions: 0,
 	tradeToLanguageConversions: 0,
+	grantedTechniques: 0,
+	grantedManeuvers: 0,
+	grantedSpells: 0,
+	grantedAbilities: [],
 	schemaVersion: 2
 };
 

@@ -15,6 +15,7 @@ You must always adhere to all the sections in this instructions file. `Instructi
 - Check for `SESSION_CONTEXT.md` document, this is a structured markdown file with condence helpful information about the codebase structure, flows and nuances. Don't generate
   the file if it's missing.
 - if node version is incorrect, run 'nvm use 20' command to switch to node 20.
+- **DO NOT restart dev server unnecessarily** - Vite has hot-reload enabled. Only restart if there's a legitimate error or the user explicitly requests it. Code changes will reflect automatically.
 
 ## Coding Standards
 
@@ -29,6 +30,7 @@ You must always adhere to all the sections in this instructions file. `Instructi
 - Follow DRY principles - centralize shared functionality.
 - **Styled components MUST be in separate `.ts` files** - never inline styled components in component files. Create dedicated style files like `ComponentName.styles.ts` or in a `styles/` directory.
 - **NO INLINE STYLES** - NEVER use `style={{}}` prop in JSX. Always create a styled component instead. This is a hard rule with no exceptions.
+- **NO BUSINESS LOGIC IN FRONTEND** - All game rules, calculations, and data extraction MUST be in `src/lib/rulesdata/` or `src/lib/services/`. Frontend components should be "dumb" and only render data. This is mandatory.
 
 ## Component Composition & Architecture
 
@@ -56,6 +58,7 @@ You must always adhere to all the sections in this instructions file. `Instructi
   - Check that your solution adheres to the coding stadards section.
   - If you found something to improve, do it.
 - When you finish a task, before yielding control back to user, run `make validate` command (if available in makefile) to check if there are any validation issues.
+- **VALIDATE IMPLEMENTATIONS** - After each iteration, check for runtime errors, missing providers, imports, or context issues. Test that the app actually runs before declaring success.
 
 ## Research
 

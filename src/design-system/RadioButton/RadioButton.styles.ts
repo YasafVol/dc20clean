@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const StyledCheckboxWrapper = styled.div`
+export const StyledRadioButtonWrapper = styled.div`
 	display: flex;
 	align-items: center;
 	gap: 12px;
@@ -8,40 +8,17 @@ export const StyledCheckboxWrapper = styled.div`
 	user-select: none;
 `;
 
-export const StyledCheckboxInput = styled.input`
-	appearance: none;
-	-webkit-appearance: none;
-	-moz-appearance: none;
+export const StyledRadioButtonInput = styled.input`
 	width: 20px;
 	height: 20px;
 	cursor: pointer;
+	accent-color: var(--russet);
 	flex-shrink: 0;
 	margin-top: 2px;
-	border: 2px solid var(--iron);
-	border-radius: 2px;
-	background-color: transparent;
-	position: relative;
-	transition: all 0.2s ease;
 	outline: none;
 
 	&:focus {
 		outline: none;
-	}
-
-	&:checked {
-		background-color: var(--alabaster);
-		border-color: var(--russet);
-	}
-
-	&:checked::after {
-		content: '';
-		position: absolute;
-		top: 2px;
-		left: 2px;
-		right: 2px;
-		bottom: 2px;
-		background-color: var(--russet);
-		border-radius: 1px;
 	}
 
 	&:disabled {
@@ -50,7 +27,7 @@ export const StyledCheckboxInput = styled.input`
 	}
 `;
 
-export const StyledCheckboxLabel = styled.label<{ $disabled?: boolean }>`
+export const StyledRadioButtonLabel = styled.label<{ $disabled?: boolean; $selected?: boolean }>`
 	cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
 	opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};
 	flex: 1;
@@ -63,8 +40,8 @@ export const StyledTextContainer = styled.div`
 	flex-wrap: wrap;
 `;
 
-export const StyledMainText = styled.span`
-	color: var(--russet);
+export const StyledMainText = styled.span<{ $selected?: boolean }>`
+	color: ${({ $selected }) => ($selected ? 'var(--russet)' : 'var(--iron)')};
 	font-size: 12px;
 	font-weight: 600;
 	line-height: 1.4;

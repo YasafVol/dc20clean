@@ -32,10 +32,10 @@ export const Header = styled.button<{ $expanded: boolean }>`
 `;
 
 export const Title = styled.span<{ $selected?: boolean; $expanded?: boolean }>`
-  font-weight: 600;
+  font-weight: 500; /* Urbanist Medium */
+  font-size: 21px;
   /* When collapsed, use iron. When expanded, use russet */
   color: ${({ $expanded }) => ($expanded ? 'var(--russet)' : 'var(--iron)')};
-  font-size: 16px;
 `;
 
 export const ToggleIcon = styled.span`

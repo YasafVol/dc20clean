@@ -37,17 +37,18 @@ const GlobalStyle = createGlobalStyle`
 	}
 	* {
 		box-sizing: border-box;
+		font-family: 'Urbanist', sans-serif;
 	}
 	html, body {
 		margin: 0;
 		padding: 0;
-		font-family: 'Urbanist', 'Georgia', 'Times New Roman', serif;
+		font-family: 'Urbanist', sans-serif;
 		color: #e5e7eb;
 		min-height: 100vh;
 		font-weight: 400;
 	}
 	h1, h2, h3, h4, h5, h6 {
-		font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
+		font-family: 'Urbanist', sans-serif;
 	}
 	#root {
 		min-height: 100vh;

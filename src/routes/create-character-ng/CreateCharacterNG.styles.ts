@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import BlackBG from '/src/assets/BlackBG.jpg';
 import frameBackground2 from '/src/assets/dc20-ng/framebackground2.png';
-import { colors } from '../../design-system/styles/colors';
 
 // Main page container with full screen background
 export const StyledPageContainer = styled.div`
@@ -37,12 +36,49 @@ export const StyledStepperContainer = styled.div`
 // Scrollable content area
 export const StyledMainContent = styled.div`
 	flex: 1;
-	overflow-y: auto;
+	overflow: hidden; // No scroll here - frame will handle scrolling
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: flex-start;
 	padding: 2rem;
+
+	@media (max-width: 768px) {
+		padding: 1rem;
+	}
+`;
+
+// Middle content frame with framebackground2.png
+export const StyledContentFrame = styled.div`
+	width: 100%;
+	max-width: 1100px;
+	height: 600px; // Fixed height to match frame
+	background: url(${frameBackground2}) center center no-repeat;
+	background-size: contain;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 3rem;
+	overflow: hidden; // Hide overflow, inner wrapper will scroll
+	
+	@media (max-width: 768px) {
+		max-width: calc(100% - 20px);
+		height: 400px;
+		padding: 2rem 1rem;
+		background-size: cover;
+	}
+`;
+
+// Inner scrollable content wrapper
+export const StyledScrollableWrapper = styled.div`
+	width: 100%;
+	max-width: 746px;
+	height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding-right: 20px;
 	
 	// Custom scrollbar styling
 	&::-webkit-scrollbar {
@@ -54,45 +90,17 @@ export const StyledMainContent = styled.div`
 	}
 	
 	&::-webkit-scrollbar-thumb {
-		background: ${colors.scrollThumb};
-		border: 2px solid ${colors.scrollBorder};
+		background: var(--lavender);
+		border: 2px solid var(--onyx);
 		border-radius: 6px;
 	}
 	
 	&::-webkit-scrollbar-thumb:hover {
-		background: ${colors.scrollThumb};
+		background: var(--lavender);
 		opacity: 0.8;
 	}
 	
 	// Firefox scrollbar styling
 	scrollbar-width: thin;
-	scrollbar-color: ${colors.scrollThumb} transparent;
-
-	@media (max-width: 768px) {
-		padding: 1rem;
-	}
-`;
-
-// Middle content frame with framebackground2.png
-export const StyledContentFrame = styled.div`
-	width: 100%;
-	max-width: 1100px;
-	min-height: 600px;
-	background: url(${frameBackground2}) center center no-repeat;
-	background-size: contain;
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	padding: 3rem;
-	margin-bottom: 2rem; // Add some bottom spacing
-	
-	@media (max-width: 768px) {
-		max-width: calc(100% - 20px);
-		min-height: 400px;
-		padding: 2rem 1rem;
-		background-size: cover;
-		margin-bottom: 1rem;
-	}
+	scrollbar-color: var(--lavender) transparent;
 `;

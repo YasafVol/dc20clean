@@ -1,0 +1,63 @@
+/* CSS Color Variables - Named like proper colors should be! */
+
+:root {
+  /* Golden hues */
+  --cornflower: #fbbf24;
+  --marigold: #f59e0b;
+  
+  /* Pure and light */
+  --alabaster: #ffffff;
+  --pearl: #e5e7eb;
+  --pewter: #9ca3af;
+  --midnight: #1e1b4b;
+  
+  /* Nature's finest */
+  --emerald: #10b981;
+  --forest: #059669;
+  --crimson: #ef4444;
+  --burgundy: #dc2626;
+  --amber: #fbbf24;
+  
+  /* Foundation stones */
+  --slate: #6b7280;
+  --silver: #9ca3af;
+  --obsidian: #000000;
+  --charcoal: #1f2937;
+  --shadow: rgba(0, 0, 0, 0.9);
+  
+  /* Mystical touches */
+  --lavender: #B0B1D8;
+  --onyx: #1E1E1E;
+  
+  /* Ancient legacy colors */
+  --coal: #0C0C0C;
+  --russet: #823434;
+  --iron: #1E1E1E;
+  --copper: #AD393B;
+  --mist: #D9D9D9;
+}
+
+/* Global scrollbar styling using our new color names */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--lavender) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--lavender);
+  border: 2px solid var(--onyx);
+  border-radius: 6px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--lavender);
+  opacity: 0.8;
+}

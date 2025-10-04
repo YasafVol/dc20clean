@@ -1,6 +1,5 @@
 import { StoryObj } from '@storybook/react';
 import CollapsibleSection from '../CollapsibleSection';
-import { colors } from '../../styles/colors';
 import { Button } from '../../';
 
 export default {
@@ -16,7 +15,7 @@ export const Default: Story = {
     defaultExpanded: true,
     selected: true,
     action: (
-  <Button label="Choose this Ancestry" bg={colors.actionButtonBg} />
+  <Button label="Choose this Ancestry" bg="#AD393B" />
     ),
     children: (
       <div>

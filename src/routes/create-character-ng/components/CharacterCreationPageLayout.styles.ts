@@ -94,6 +94,7 @@ export const StyledContentWrapper = styled.div`
 	flex: 1;
 	min-height: 0;
 	overflow-y: auto; // Scrolling happens here, next to the content
+	overflow-x: hidden; // Prevent horizontal scroll
 	display: flex;
 	flex-direction: column;
 	gap: 0;
@@ -105,24 +106,24 @@ export const StyledContentWrapper = styled.div`
 	}
 	
 	&::-webkit-scrollbar-track {
-		background: rgba(255, 255, 255, 0.1); // Always visible track background
+		background: transparent;
 		border-radius: 6px;
 	}
 	
 	&::-webkit-scrollbar-thumb {
-		background: var(--color-scroll-thumb);
-		border: 2px solid var(--color-scroll-border);
+		background: var(--lavender);
+		border: 2px solid var(--onyx);
 		border-radius: 6px;
 	}
 	
 	&::-webkit-scrollbar-thumb:hover {
-		background: var(--color-scroll-thumb);
+		background: var(--lavender);
 		opacity: 0.8;
 	}
 	
 	// Firefox scrollbar styling
 	scrollbar-width: thin;
-	scrollbar-color: var(--color-scroll-thumb) transparent;
+	scrollbar-color: var(--lavender) transparent;
 	
 	@media (max-width: 746px) {
 		width: 100%;
@@ -138,5 +139,6 @@ export const StyledInnerContent = styled.div`
 	display: flex;
 	flex-direction: column;
 	gap: 0;
+	flex-shrink: 0; // Don't shrink the content, let it expand and trigger scroll
 `;
 

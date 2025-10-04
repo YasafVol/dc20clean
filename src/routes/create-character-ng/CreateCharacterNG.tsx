@@ -12,6 +12,7 @@ import {
 	StyledPageContainer,
 	StyledMainContent,
 	StyledContentFrame,
+	StyledScrollableWrapper,
 	StyledStepperContainer,
 	StyledStepperHeader
 } from './CreateCharacterNG.styles';
@@ -47,7 +48,9 @@ const CreateCharacterNGContent: React.FC = () => {
 			
 			<StyledMainContent>
 				<StyledContentFrame>
-					<CurrentStepComponent />
+					<StyledScrollableWrapper>
+						<CurrentStepComponent />
+					</StyledScrollableWrapper>
 				</StyledContentFrame>
 			</StyledMainContent>
 		</StyledPageContainer>

@@ -5,7 +5,6 @@ export type { Step, StepStatus } from './Stepper/Stepper';
 
 // Design system styles / tokens
 export { stepperColors } from './styles/stepperColors';
-export { colors } from './styles/colors';
 
 // Sample data for stories / demos (now in meta folder)
 export { sampleSteps } from './Stepper/meta/sampleSteps';

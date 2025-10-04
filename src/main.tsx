@@ -1,10 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { injectCSSVariables } from './design-system/styles/colors';
-
-// Inject CSS variables on app startup
-injectCSSVariables();
+import './design-system/styles/colors.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>

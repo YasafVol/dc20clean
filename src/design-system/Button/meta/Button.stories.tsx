@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { Button } from '../Button';
-import { colors } from '../../styles/colors';
 
 const meta: Meta<typeof Button> = {
   title: 'DesignSystem/Button',
@@ -14,6 +13,6 @@ type Story = StoryObj<typeof Button>;
 export const Primary: Story = {
   args: {
     label: 'Primary Action',
-    bg: colors.actionButtonBg,
+    bg: '#AD393B', // copper
   },
 };

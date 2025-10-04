@@ -1,8 +1,7 @@
 import styled from 'styled-components';
-import { colors } from '../styles/colors';
 
 export const SectionWrapper = styled.div<{ $selected?: boolean }>`
-  border: 1px solid ${colors.sectionBorder};
+  border: 1px solid var(--coal);
   border-radius: 8px;
   overflow: hidden;
   background: transparent; // Made transparent as requested
@@ -11,8 +10,8 @@ export const SectionWrapper = styled.div<{ $selected?: boolean }>`
   ${({ $selected }) =>
     $selected &&
     `
-    border-color: ${colors.primary};
-    box-shadow: 0 0 0 1px ${colors.primary};
+    border-color: var(--cornflower);
+    box-shadow: 0 0 0 1px var(--cornflower);
   `}
 `;
 
@@ -34,8 +33,8 @@ export const Header = styled.button<{ $expanded: boolean }>`
 
 export const Title = styled.span<{ $selected?: boolean; $expanded?: boolean }>`
   font-weight: 600;
-  /* When collapsed, use titleDefault (#1E1E1E). When expanded, use titleSelected (#823434) */
-  color: ${({ $expanded }) => ($expanded ? colors.titleSelected : colors.titleDefault)};
+  /* When collapsed, use iron. When expanded, use russet */
+  color: ${({ $expanded }) => ($expanded ? 'var(--russet)' : 'var(--iron)')};
   font-size: 16px;
 `;
 
@@ -44,7 +43,7 @@ export const ToggleIcon = styled.span`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: ${colors.titleDefault};
+  color: var(--iron);
 `;
 
 export const Content = styled.div<{ $expanded: boolean }>`

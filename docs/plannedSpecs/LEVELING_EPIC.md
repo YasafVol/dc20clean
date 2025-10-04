@@ -581,156 +581,250 @@ With count-based storage (M3.7), users need a way to select talents multiple tim
 
 ---
 
-### 5.6. Milestone M3.11: UI Improvements - Class Features Display
+### 5.6. Milestone M3.11: Class Stage Subclass UI Improvements
 
 **Status:** ❌ To Do
 
-**Goal:** Improve how class features are displayed during character creation, showing level-appropriate features clearly at each stage.
+**Goal:** Enhance the subclass selection UI to display subclass features, benefits, and handle nested sub-choices in a data-driven manner, ensuring all choices are recorded in character data.
 
-**Issues:**
-1. **Stage 1 (Class & Features):** Currently shows all features regardless of level, making it unclear which features the character actually gets
-2. **Stage 2 (Leveling Choices):** Shows unlocked features but presentation could be improved
-3. **Redundancy:** Features might be shown in both stages, causing confusion
-
-**Proposed Solution:**
-Show features at Stage 1 filtered by selected level, potentially making Stage 2's feature display redundant.
+**Estimated Effort:** 10-15 hours
 
 ---
 
-**M3.11a - Enhance ClassFeatures.tsx (Stage 1):**
+#### Current Issues:
 
-**Goal:** Show only features unlocked at selected level, organized by when they're gained.
+1. **Subclass UI shows only name and description** - Users cannot make educated decisions without seeing:
+   - What features the subclass grants
+   - What benefits each feature provides
+   - What choices (if any) come with each feature
 
-1. **Get Level from Context:**
-   ```typescript
-   const { state } = useCharacter();
-   const selectedLevel = state.level || 1;
-   ```
+2. **Subclass features with nested choices are not handled:**
+   - Example: Barbarian "Elemental Fury" has 2 features at Level 3:
+     - `Raging Elements` with **2 nested choices**: Elemental damage type (4 options) + Aura type (3 options)
+     - `Elemental Affinity` (no choices)
+   - Example: Barbarian "Spirit Guardian" has 1 feature with choices at Level 3:
+     - `Ancestral Guardian` with **1 nested choice**: Guardian maneuver (3 options)
 
-2. **Use Resolver to Get Features by Level:**
-   ```typescript
-   const { resolvedFeatures } = calculationResult;
-   const unlockedFeatureIds = resolvedFeatures.unlockedFeatures.map(f => f.id);
-   ```
+3. **No data storage for subclass feature choices:**
+   - `selectedFeatureChoices: Record<string, any>` exists but subclass choices not properly namespaced
+   - Risk of ID collisions between class features and subclass features
 
-3. **Group Features by Level Unlocked:**
-   ```typescript
-   // Use progression data to determine which level each feature unlocks
-   const featuresByLevel = groupFeaturesByLevel(unlockedFeatureIds, classProgressionData);
-   ```
-
-4. **Display with Level Headers:**
-   ```tsx
-   {Object.entries(featuresByLevel).map(([level, features]) => (
-     <LevelSection key={level}>
-       <LevelHeader>Level {level}</LevelHeader>
-       {features.map(feature => (
-         <FeatureCard key={feature.id}>
-           <FeatureName>{feature.name}</FeatureName>
-           <FeatureDescription>{feature.description}</FeatureDescription>
-         </FeatureCard>
-       ))}
-     </LevelSection>
-   ))}
-   ```
-
-5. **Add Visual Indicators:**
-   - Current level features highlighted
-   - Previous level features shown but dimmed/collapsed
-   - Future levels not shown
-
-**M3.11b - Create Helper Function:**
-
-Create `groupFeaturesByLevel()` in `enhancedCharacterCalculator.ts` or new utility file:
-
-```typescript
-function groupFeaturesByLevel(
-  featureIds: string[],
-  classProgressionData: any
-): Record<number, ClassFeature[]> {
-  const grouped: Record<number, ClassFeature[]> = {};
-  
-  // Iterate through progression levels
-  classProgressionData.levelProgression.forEach((levelData: any) => {
-    if (levelData.gains?.classFeatures) {
-      const levelFeatures = levelData.gains.classFeatures
-        .filter((id: string) => featureIds.includes(id))
-        .map((id: string) => findFeatureById(id))
-        .filter(Boolean);
-      
-      if (levelFeatures.length > 0) {
-        grouped[levelData.level] = levelFeatures;
-      }
-    }
-  });
-  
-  return grouped;
-}
-```
-
-**M3.11c - Improve LevelingChoices.tsx (Stage 2):**
-
-**Option 1: Remove Feature Display (if redundant)**
-- If Stage 1 shows all features clearly, Stage 2 only needs to show:
-  - Talent selection UI
-  - Path point allocation UI
-  - Remove unlocked features section entirely
-
-**Option 2: Show Only NEW Features at Current Level**
-- Show features unlocked at the selected level only
-- Add context: "You gained these features upon reaching level X"
-- Keep it minimal and focused on what changed
-
-**Recommendation:** Option 1 - Remove from Stage 2 if Stage 1 provides comprehensive view.
-
-**M3.11d - Add Feature Details Modal:**
-
-Enhance feature cards with more information:
-1. Click feature to open detailed modal
-2. Show:
-   - Full description
-   - Granted effects (from Effects system)
-   - Prerequisites (if any)
-   - Source (class, subclass, etc.)
-
-**M3.11e - Style Improvements:**
-
-1. **Collapsible Level Sections:**
-   - Past levels: Collapsed by default, expandable
-   - Current level: Expanded, highlighted
-   - Future levels: Hidden
-
-2. **Visual Hierarchy:**
-   - Use cards for features
-   - Different colors for feature types (passive, active, choice)
-   - Icons for feature categories
-
-3. **Loading States:**
-   - Show skeleton while calculating
-   - Smooth transitions when level changes
+4. **No validation for required subclass feature choices:**
+   - User can select subclass but skip making required sub-choices
+   - No visual indication that choices are pending
 
 ---
+
+#### Solution Architecture:
+
+**Data-Driven Feature Display:**
+- Subclass card should expand to show all features from `subclass.features[]`
+- Each feature should display its `benefits[]` (if any)
+- Each feature should display its `choices[]` (if any) with UI to make selections
+- All display driven by the data structure in `*_features.ts` files
+
+**Choice Storage:**
+- Store subclass feature choices with namespaced keys: `${classId}_${subclassName}_${choiceId}`
+- Example: `barbarian_Elemental Fury_barbarian_elemental_rage_damage_type: "Fire"`
+- Ensures no collisions and clear tracking
+
+**Progressive Disclosure:**
+- Show collapsed subclass cards initially (name + description)
+- Expand selected subclass to show features and choices
+- Visual indicators for required vs optional choices
+
+---
+
+**M3.11a - Display Subclass Features:**
+
+Expand `SubclassSelector.tsx` to show features and benefits when a subclass is selected.
+
+**Files to Change:**
+- `src/routes/character-creation/SubclassSelector.tsx`
+- `src/routes/character-creation/styles/SubclassSelector.styles.ts`
+
+**Changes:**
+1. Add expandable card UI with state: `const [expandedSubclass, setExpandedSubclass] = useState<string | null>(null);`
+2. Filter and render subclass features: `subclass.features.filter(f => f.levelGained <= choiceLevel)`
+3. Display feature name, description, and benefits in styled components
+4. Add styled components: `SubclassFeaturesList`, `FeatureCard`, `FeatureTitle`, `FeatureDescription`, `BenefitItem`, `BenefitName`, `BenefitDescription`
 
 **Acceptance Criteria:**
-
-1. ✅ Stage 1 shows only features unlocked up to selected level
-2. ✅ Features are grouped by the level they unlock at
-3. ✅ Current level features are visually highlighted
-4. ✅ Past level features are visible but de-emphasized
-5. ✅ Stage 2 either removes feature display or shows minimal "what's new" section
-6. ✅ Clicking a feature shows detailed information
-7. ✅ UI updates smoothly when level selection changes
+- [ ] Selecting a subclass expands the card to show features
+- [ ] Features are filtered by `levelGained <= choiceLevel`
+- [ ] Each feature shows name, description, and benefits (if any)
+- [ ] Unselected subclass cards remain collapsed
+- [ ] UI matches existing design system
 
 ---
 
-**Testing:**
+**M3.11b - Implement Feature Choice UI:**
 
-- [ ] Create Level 1 character - verify only L1 features shown
-- [ ] Create Level 3 character - verify features grouped by L1, L2, L3
-- [ ] Change level dropdown - verify feature list updates correctly
-- [ ] Click feature cards - verify details modal opens
-- [ ] Navigate to Stage 2 - verify no redundant feature display
-- [ ] Verify subclass features (M3.10) integrate correctly
+Add interactive nested choice UI for subclass features with radio/checkbox selection.
+
+**Files to Change:**
+- `src/routes/character-creation/SubclassSelector.tsx` (continued)
+- `src/routes/character-creation/styles/SubclassSelector.styles.ts` (add choice styles)
+
+**Changes:**
+1. Create `FeatureChoicesSection` component to render feature choices
+2. Implement choice selection logic: radio behavior for `count: 1`, checkbox behavior for `count > 1`
+3. Display choice prompt, status indicator (✅ complete or ⚠️ with count), and options
+4. Add styled components: `ChoicesContainer`, `ChoiceSection`, `ChoiceHeader`, `ChoicePrompt`, `ChoiceStatus`, `ChoiceHint`, `ChoiceOptions`, `ChoiceOptionCard`, `OptionName`, `OptionDescription`, `SelectedIcon`
+5. Pass `selectedFeatureChoices` and `onChoiceChange` handler as props
+
+**Acceptance Criteria:**
+- [ ] Each feature's choices render with prompt and options
+- [ ] Single-select choices (count: 1) behave like radio buttons
+- [ ] Multi-select choices (count > 1) behave like checkboxes with count limit
+- [ ] Selected options are visually distinct with border and checkmark
+- [ ] Choice state persists in `selectedFeatureChoices`
+- [ ] Namespaced keys format: `${classId}_${subclassName}_${choiceId}`
+- [ ] Choice status shows completion: ✅ or ⚠️ with count
+
+---
+
+**M3.11c - Calculator Integration:**
+
+Apply effects from selected subclass feature choices in the character calculator.
+
+**Files to Change:**
+- `src/lib/services/enhancedCharacterCalculator.ts`
+- `src/lib/types/effectSystem.ts`
+
+**Changes:**
+1. Update `aggregateAttributedEffects()` to process subclass feature choices
+2. Iterate through `buildData.selectedFeatureChoices`, filter by subclass prefix
+3. Find matching choice options and apply their effects
+4. Add new effect source type: `subclass_feature_choice` with `id`, `name`, and `optionName`
+
+**Acceptance Criteria:**
+- [ ] Subclass feature choice effects are loaded and applied
+- [ ] Effects appear in calculation result with correct source attribution
+- [ ] Choosing different options changes the calculated values appropriately
+- [ ] Multiple choices on same feature work correctly
+
+---
+
+**M3.11d - Add Validation:**
+
+Prevent progression until all required subclass feature choices are made.
+
+**Files to Change:**
+- `src/routes/character-creation/CharacterCreation.tsx`
+- `src/routes/character-creation/SubclassSelector.tsx`
+
+**Changes:**
+1. Add `validateSubclassChoices()` helper function
+2. Update Step 1 validation in `isStepCompleted()` to check subclass choices
+3. Add `getIncompleteChoicesCount()` helper in SubclassSelector
+4. Display warning banner when choices are incomplete
+5. Log clear error messages for debugging
+
+**Acceptance Criteria:**
+- [ ] Cannot proceed to next step without completing all subclass feature choices
+- [ ] Validation checks all features with `levelGained <= currentLevel`
+- [ ] Validation checks all choices have `selections.length === choice.count`
+- [ ] Clear error messages in console and UI
+- [ ] Warning banner appears when choices are incomplete
+- [ ] Warning banner disappears when all choices complete
+
+---
+
+**M3.11e - Create Helper Utilities:**
+
+Create reusable utilities for working with subclass data.
+
+**Files to Create:**
+- `src/lib/rulesdata/classes-data/classUtils.ts`
+
+**Functions:**
+- `getSubclassByName(classId: string, subclassName: string): Subclass | undefined`
+- `getSubclassFeaturesByLevel(classId: string, subclassName: string, level: number): ClassFeature[]`
+- `getFeatureChoiceKey(classId: string, subclassName: string, choiceId: string): string`
+- `validateSubclassChoicesComplete(classId: string, subclassName: string, level: number, selectedChoices: Record<string, string[]>): { isValid: boolean; incompleteChoices: string[] }`
+
+**Acceptance Criteria:**
+- [ ] All utilities have proper TypeScript types
+- [ ] All utilities handle edge cases (null/undefined inputs)
+- [ ] Utilities are imported and used in SubclassSelector, CharacterCreation, and calculator
+- [ ] Code duplication is eliminated
+
+---
+
+#### Testing Checklist:
+
+**Manual Testing:**
+
+- [ ] **Level 3 Barbarian → Elemental Fury:**
+  1. Select Barbarian class, level 3
+  2. Select "Elemental Fury" subclass
+  3. Verify card expands to show 2 features
+  4. Verify "Raging Elements" shows 2 choice sections
+  5. Select "Fire" for damage type
+  6. Select "Slowing Aura" for aura type
+  7. Verify both choices show ✅ checkmark
+  8. Verify can proceed to next step
+  9. Complete character creation
+  10. Verify choices are in exported character data
+
+- [ ] **Level 3 Barbarian → Spirit Guardian:**
+  1. Select Barbarian class, level 3
+  2. Select "Spirit Guardian" subclass
+  3. Verify card expands to show 2 features
+  4. Verify "Ancestral Guardian" shows 1 choice section
+  5. Select "Parry" maneuver
+  6. Verify choice shows ✅ checkmark
+  7. Verify can proceed to next step
+
+- [ ] **Validation Testing:**
+  1. Select Barbarian, level 3, Elemental Fury
+  2. Expand subclass but don't make choices
+  3. Try to proceed - verify blocked with error
+  4. Make only 1 choice (damage type)
+  5. Try to proceed - verify still blocked
+  6. Make 2nd choice (aura type)
+  7. Try to proceed - verify now allowed
+
+- [ ] **Calculator Integration:**
+  1. Create Level 3 Barbarian with Elemental Fury
+  2. Choose "Fire" damage type
+  3. Inspect calculation result
+  4. Verify effect from "Fire" choice is present
+
+- [ ] **Edge Cases:**
+  1. Test class without subclasses (Level 1 characters)
+  2. Test subclass features without choices
+  3. Test changing subclass selection after making choices
+  4. Verify old choices are cleared when switching subclasses
+
+---
+
+#### Files to Modify:
+
+1. `src/routes/character-creation/SubclassSelector.tsx` - Main UI changes
+2. `src/routes/character-creation/styles/SubclassSelector.styles.ts` - New styled components
+3. `src/routes/character-creation/CharacterCreation.tsx` - Validation logic
+4. `src/lib/services/enhancedCharacterCalculator.ts` - Calculator integration
+5. `src/lib/types/effectSystem.ts` - Type updates
+6. `src/lib/rulesdata/classes-data/classUtils.ts` - NEW: Utility functions
+
+---
+
+#### Dependencies & Risks:
+
+**Dependencies:**
+- M3.10 must be complete (subclass selection)
+- Effect system must support `subclass_feature_choice` source type
+
+**Risks:**
+- Complex nested data structures may cause rendering issues
+- State management for multiple nested choices needs careful handling
+
+**Mitigation:**
+- Use React.memo for choice option cards
+- Test with classes having most choices (Barbarian Elemental Fury)
+- Add error boundaries around choice rendering
 
 ---
 

@@ -1,7 +1,38 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { CLASS_FEATURES_MAP } from '../../lib/rulesdata/loaders/class-features.loader';
 import type { Subclass, ClassFeature } from '../../lib/rulesdata/schemas/character.schema';
+import { barbarianClass } from '../../lib/rulesdata/classes-data/features/barbarian_features';
+import { clericClass } from '../../lib/rulesdata/classes-data/features/cleric_features';
+import { druidClass } from '../../lib/rulesdata/classes-data/features/druid_features';
+import { wizardClass } from '../../lib/rulesdata/classes-data/features/wizard_features';
+import { hunterClass } from '../../lib/rulesdata/classes-data/features/hunter_features';
+import { championClass } from '../../lib/rulesdata/classes-data/features/champion_features';
+import { rogueClass } from '../../lib/rulesdata/classes-data/features/rogue_features';
+import { sorcererClass } from '../../lib/rulesdata/classes-data/features/sorcerer_features';
+import { spellbladeClass } from '../../lib/rulesdata/classes-data/features/spellblade_features';
+import { warlockClass } from '../../lib/rulesdata/classes-data/features/warlock_features';
+import { bardClass } from '../../lib/rulesdata/classes-data/features/bard_features';
+import { commanderClass } from '../../lib/rulesdata/classes-data/features/commander_features';
+import { monkClass } from '../../lib/rulesdata/classes-data/features/monk_features';
+import { psionClass } from '../../lib/rulesdata/classes-data/features/psion_features';
+
+// Map of class IDs to their feature definitions
+const CLASS_FEATURES_MAP: Record<string, any> = {
+	barbarian: barbarianClass,
+	cleric: clericClass,
+	druid: druidClass,
+	wizard: wizardClass,
+	hunter: hunterClass,
+	champion: championClass,
+	rogue: rogueClass,
+	sorcerer: sorcererClass,
+	spellblade: spellbladeClass,
+	warlock: warlockClass,
+	bard: bardClass,
+	commander: commanderClass,
+	monk: monkClass,
+	psion: psionClass
+};
 
 const Container = styled.div`
 	margin-top: 2rem;

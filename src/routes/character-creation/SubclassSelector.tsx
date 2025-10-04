@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { getAvailableSubclasses } from '../../lib/rulesdata/classes-data/classProgressionResolver';
+import { CLASS_FEATURES_MAP } from '../../lib/rulesdata/loaders/class-features.loader';
+import type { Subclass, ClassFeature } from '../../lib/rulesdata/schemas/character.schema';
 
 const Container = styled.div`
 	margin-top: 2rem;
@@ -115,6 +116,73 @@ const SubclassHeader = styled.div`
 	margin-bottom: 0.5rem;
 `;
 
+const SubclassFeaturesList = styled.div`
+	margin-top: 1rem;
+	padding-top: 1rem;
+	border-top: 1px solid rgba(212, 175, 55, 0.3);
+`;
+
+const FeatureCard = styled.div`
+	background: rgba(0, 0, 0, 0.2);
+	border: 1px solid rgba(139, 69, 19, 0.3);
+	border-radius: 6px;
+	padding: 1rem;
+	margin-bottom: 0.75rem;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+`;
+
+const FeatureTitle = styled.h5`
+	font-family: 'Cinzel', serif;
+	font-size: 1rem;
+	color: #d4af37;
+	margin: 0 0 0.5rem 0;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+`;
+
+const FeatureDescription = styled.p`
+	font-family: 'Urbanist', sans-serif;
+	font-size: 0.9rem;
+	color: rgba(255, 255, 255, 0.8);
+	margin: 0 0 0.75rem 0;
+	line-height: 1.4;
+`;
+
+const BenefitsList = styled.div`
+	margin-top: 0.75rem;
+`;
+
+const BenefitItem = styled.div`
+	padding: 0.5rem 0.75rem;
+	margin-bottom: 0.5rem;
+	background: rgba(139, 69, 19, 0.1);
+	border-left: 2px solid rgba(212, 175, 55, 0.4);
+	border-radius: 3px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+`;
+
+const BenefitName = styled.h6`
+	font-family: 'Urbanist', sans-serif;
+	font-size: 0.85rem;
+	color: #d4af37;
+	font-weight: 600;
+	margin: 0 0 0.25rem 0;
+`;
+
+const BenefitDescription = styled.p`
+	font-family: 'Urbanist', sans-serif;
+	font-size: 0.8rem;
+	color: rgba(255, 255, 255, 0.7);
+	margin: 0;
+	line-height: 1.3;
+`;
+
 interface SubclassSelectorProps {
 	classId: string;
 	choiceLevel?: number;
@@ -124,15 +192,22 @@ interface SubclassSelectorProps {
 
 export function SubclassSelector({
 	classId,
-	choiceLevel,
+	choiceLevel = 1,
 	selectedSubclass,
 	onSelect
 }: SubclassSelectorProps) {
-	const subclasses = getAvailableSubclasses(classId);
+	// Get full subclass data from class features
+	const classFeatures = CLASS_FEATURES_MAP[classId];
+	const subclasses: Subclass[] = classFeatures?.subclasses || [];
 
 	if (subclasses.length === 0) {
 		return null; // No subclasses available for this class
 	}
+
+	// Filter features by level gained
+	const getFeaturesByLevel = (subclass: Subclass): ClassFeature[] => {
+		return subclass.features?.filter((f) => f.levelGained <= choiceLevel) || [];
+	};
 
 	return (
 		<Container>
@@ -146,21 +221,54 @@ export function SubclassSelector({
 			</Description>
 
 			<SubclassGrid>
-				{subclasses.map((subclass) => (
-					<SubclassCard
-						key={subclass.name}
-						selected={selectedSubclass === subclass.name}
-						onClick={() => onSelect(subclass.name)}
-					>
-						<SubclassHeader>
-							<RadioIndicator selected={selectedSubclass === subclass.name} />
-							<SubclassName>{subclass.name}</SubclassName>
-						</SubclassHeader>
-						{subclass.description && (
-							<SubclassDescription>{subclass.description}</SubclassDescription>
-						)}
-					</SubclassCard>
-				))}
+				{subclasses.map((subclass) => {
+					const isSelected = selectedSubclass === subclass.subclassName;
+					const features = getFeaturesByLevel(subclass);
+
+					return (
+						<SubclassCard
+							key={subclass.subclassName}
+							selected={isSelected}
+							onClick={() => onSelect(subclass.subclassName)}
+						>
+							<SubclassHeader>
+								<RadioIndicator selected={isSelected} />
+								<SubclassName>{subclass.subclassName}</SubclassName>
+							</SubclassHeader>
+							{subclass.description && (
+								<SubclassDescription>{subclass.description}</SubclassDescription>
+							)}
+
+							{/* Show features when selected */}
+							{isSelected && features.length > 0 && (
+								<SubclassFeaturesList>
+									{features.map((feature, idx) => (
+										<FeatureCard key={feature.id || `${feature.featureName}-${idx}`}>
+											<FeatureTitle>{feature.featureName}</FeatureTitle>
+											{feature.description && (
+												<FeatureDescription>{feature.description}</FeatureDescription>
+											)}
+
+											{/* Show Benefits */}
+											{feature.benefits && feature.benefits.length > 0 && (
+												<BenefitsList>
+													{feature.benefits.map((benefit, benefitIdx) => (
+														<BenefitItem key={benefit.name || benefitIdx}>
+															<BenefitName>{benefit.name}</BenefitName>
+															{benefit.description && (
+																<BenefitDescription>{benefit.description}</BenefitDescription>
+															)}
+														</BenefitItem>
+													))}
+												</BenefitsList>
+											)}
+										</FeatureCard>
+									))}
+								</SubclassFeaturesList>
+							)}
+						</SubclassCard>
+					);
+				})}
 			</SubclassGrid>
 		</Container>
 	);

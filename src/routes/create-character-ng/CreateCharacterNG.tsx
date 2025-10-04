@@ -19,13 +19,13 @@ import {
 
 // Step components mapping
 const stepComponents = {
-	'class': Class,
-	'features': Features,
-	'ancestry': Ancestry,
-	'attributes': Attributes,
-	'background': Background,
-	'spells': Spells,
-	'finish': Finish,
+	class: Class,
+	features: Features,
+	ancestry: Ancestry,
+	attributes: Attributes,
+	background: Background,
+	spells: Spells,
+	finish: Finish
 };
 
 const CreateCharacterNGContent: React.FC = () => {
@@ -36,7 +36,8 @@ const CreateCharacterNGContent: React.FC = () => {
 	};
 
 	// Get the current step component
-	const CurrentStepComponent = stepComponents[currentStepId as keyof typeof stepComponents] || Class;
+	const CurrentStepComponent =
+		stepComponents[currentStepId as keyof typeof stepComponents] || Class;
 
 	return (
 		<StyledPageContainer>
@@ -45,7 +46,7 @@ const CreateCharacterNGContent: React.FC = () => {
 					<CharacterCreationStepperContainer onStepChange={handleStepChange} />
 				</StyledStepperContainer>
 			</StyledStepperHeader>
-			
+
 			<StyledMainContent>
 				<StyledContentFrame>
 					<StyledScrollableWrapper>

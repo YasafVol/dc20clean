@@ -60,7 +60,7 @@ export const StyledContentFrame = styled.div`
 	flex-direction: column;
 	align-items: center;
 	padding: 2rem; // Reduced padding for more content space
-	
+
 	@media (max-width: 768px) {
 		max-width: calc(100% - 20px);
 		padding: 1rem;
@@ -80,7 +80,7 @@ export const StyledScrollableContent = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center; // Center the content wrapper
-	
+
 	@media (max-width: 768px) {
 		padding: 1rem;
 		background-size: cover;
@@ -99,32 +99,32 @@ export const StyledContentWrapper = styled.div`
 	flex-direction: column;
 	gap: 0;
 	padding-right: 20px; // 20px space between content and scrollbar
-	
+
 	// Custom scrollbar styling to match design
 	&::-webkit-scrollbar {
 		width: 12px;
 	}
-	
+
 	&::-webkit-scrollbar-track {
 		background: transparent;
 		border-radius: 6px;
 	}
-	
+
 	&::-webkit-scrollbar-thumb {
 		background: var(--lavender);
 		border: 2px solid var(--onyx);
 		border-radius: 6px;
 	}
-	
+
 	&::-webkit-scrollbar-thumb:hover {
 		background: var(--lavender);
 		opacity: 0.8;
 	}
-	
+
 	// Firefox scrollbar styling
 	scrollbar-width: thin;
 	scrollbar-color: var(--lavender) transparent;
-	
+
 	@media (max-width: 746px) {
 		width: 100%;
 		max-width: calc(100% - 2rem);
@@ -141,4 +141,3 @@ export const StyledInnerContent = styled.div`
 	gap: 0;
 	flex-shrink: 0; // Don't shrink the content, let it expand and trigger scroll
 `;
-

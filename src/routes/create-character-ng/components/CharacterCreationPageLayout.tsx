@@ -17,9 +17,9 @@ interface CharacterCreationPageLayoutProps {
 	onStepChange?: (stepIndex: number, stepId: string) => void;
 }
 
-const CharacterCreationPageLayoutContent: React.FC<CharacterCreationPageLayoutProps> = ({ 
-	children, 
-	onStepChange 
+const CharacterCreationPageLayoutContent: React.FC<CharacterCreationPageLayoutProps> = ({
+	children,
+	onStepChange
 }) => {
 	return (
 		<StyledPageContainer>
@@ -28,14 +28,12 @@ const CharacterCreationPageLayoutContent: React.FC<CharacterCreationPageLayoutPr
 					<CharacterCreationStepperContainer onStepChange={onStepChange} />
 				</StyledStepperContainer>
 			</StyledStepperHeader>
-			
+
 			<StyledMainContent>
 				<StyledContentFrame>
 					<StyledScrollableContent>
 						<StyledContentWrapper>
-							<StyledInnerContent>
-								{children}
-							</StyledInnerContent>
+							<StyledInnerContent>{children}</StyledInnerContent>
 						</StyledContentWrapper>
 					</StyledScrollableContent>
 				</StyledContentFrame>

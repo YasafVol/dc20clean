@@ -62,7 +62,7 @@ export const StyledContentFrame = styled.div`
 	justify-content: center;
 	padding: 3rem;
 	overflow: hidden; // Hide overflow, inner wrapper will scroll
-	
+
 	@media (max-width: 768px) {
 		max-width: calc(100% - 20px);
 		height: 400px;
@@ -79,27 +79,27 @@ export const StyledScrollableWrapper = styled.div`
 	overflow-y: auto;
 	overflow-x: hidden;
 	padding-right: 20px;
-	
+
 	// Custom scrollbar styling
 	&::-webkit-scrollbar {
 		width: 12px;
 	}
-	
+
 	&::-webkit-scrollbar-track {
 		background: transparent;
 	}
-	
+
 	&::-webkit-scrollbar-thumb {
 		background: var(--lavender);
 		border: 2px solid var(--onyx);
 		border-radius: 6px;
 	}
-	
+
 	&::-webkit-scrollbar-thumb:hover {
 		background: var(--lavender);
 		opacity: 0.8;
 	}
-	
+
 	// Firefox scrollbar styling
 	scrollbar-width: thin;
 	scrollbar-color: var(--lavender) transparent;

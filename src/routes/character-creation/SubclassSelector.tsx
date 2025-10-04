@@ -15,6 +15,15 @@ import { bardClass } from '../../lib/rulesdata/classes-data/features/bard_featur
 import { commanderClass } from '../../lib/rulesdata/classes-data/features/commander_features';
 import { monkClass } from '../../lib/rulesdata/classes-data/features/monk_features';
 import { psionClass } from '../../lib/rulesdata/classes-data/features/psion_features';
+import {
+	FeatureCard,
+	FeatureTitle,
+	FeatureDescription,
+	BenefitsList,
+	BenefitItem,
+	BenefitName,
+	BenefitDescription
+} from './styles/shared/FeatureDisplay.styles';
 
 // Map of class IDs to their feature definitions
 const CLASS_FEATURES_MAP: Record<string, any> = {
@@ -151,67 +160,6 @@ const SubclassFeaturesList = styled.div`
 	margin-top: 1rem;
 	padding-top: 1rem;
 	border-top: 1px solid rgba(212, 175, 55, 0.3);
-`;
-
-const FeatureCard = styled.div`
-	background: rgba(0, 0, 0, 0.2);
-	border: 1px solid rgba(139, 69, 19, 0.3);
-	border-radius: 6px;
-	padding: 1rem;
-	margin-bottom: 0.75rem;
-
-	&:last-child {
-		margin-bottom: 0;
-	}
-`;
-
-const FeatureTitle = styled.h5`
-	font-family: 'Cinzel', serif;
-	font-size: 1rem;
-	color: #d4af37;
-	margin: 0 0 0.5rem 0;
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
-`;
-
-const FeatureDescription = styled.p`
-	font-family: 'Urbanist', sans-serif;
-	font-size: 0.9rem;
-	color: rgba(255, 255, 255, 0.8);
-	margin: 0 0 0.75rem 0;
-	line-height: 1.4;
-`;
-
-const BenefitsList = styled.div`
-	margin-top: 0.75rem;
-`;
-
-const BenefitItem = styled.div`
-	padding: 0.5rem 0.75rem;
-	margin-bottom: 0.5rem;
-	background: rgba(139, 69, 19, 0.1);
-	border-left: 2px solid rgba(212, 175, 55, 0.4);
-	border-radius: 3px;
-
-	&:last-child {
-		margin-bottom: 0;
-	}
-`;
-
-const BenefitName = styled.h6`
-	font-family: 'Urbanist', sans-serif;
-	font-size: 0.85rem;
-	color: #d4af37;
-	font-weight: 600;
-	margin: 0 0 0.25rem 0;
-`;
-
-const BenefitDescription = styled.p`
-	font-family: 'Urbanist', sans-serif;
-	font-size: 0.8rem;
-	color: rgba(255, 255, 255, 0.7);
-	margin: 0;
-	line-height: 1.3;
 `;
 
 interface SubclassSelectorProps {

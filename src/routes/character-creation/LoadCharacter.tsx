@@ -237,6 +237,75 @@ function LoadCharacter() {
 		return ancestry1;
 	};
 
+	// Non-disruptive Export PDF handler
+	const handleExportPdf = async (character: SavedCharacter, event: React.MouseEvent) => {
+		event.stopPropagation();
+		try {
+			const [pdf, calc, denormMod] = await Promise.all([
+				import('../../lib/pdf/transformers'),
+				import('../../lib/services/enhancedCharacterCalculator'),
+				import('../../lib/services/denormalizeMastery')
+			]);
+			const { fillPdfFromData } = await import('../../lib/pdf/fillPdf');
+			// Build enhanced data from saved character and compute fresh stats
+			const buildData = calc.convertToEnhancedBuildData({
+				...character,
+				attribute_might: character.finalMight,
+				attribute_agility: character.finalAgility,
+				attribute_charisma: character.finalCharisma,
+				attribute_intelligence: character.finalIntelligence,
+				classId: character.classId,
+				ancestry1Id: character.ancestry1Id,
+				ancestry2Id: character.ancestry2Id,
+				selectedTraitIds: character.selectedTraitIds || [],
+				selectedTraitChoices: (character as any).selectedTraitChoices || {},
+				featureChoices: character.selectedFeatureChoices || {},
+				skillsData: character.skillsData || {},
+				tradesData: character.tradesData || {},
+				languagesData: character.languagesData || { common: { fluency: 'fluent' } }
+			});
+			const calcResult = calc.calculateCharacterWithBreakdowns(buildData);
+			// Use existing denorm if present; otherwise compute now to avoid PDF-only math
+			const denorm = character.masteryLadders && character.skillTotals && character.knowledgeTradeMastery && character.languageMastery
+				? ({
+					masteryLadders: character.masteryLadders,
+					skillTotals: (character as any).skillTotals,
+					knowledgeTradeMastery: (character as any).knowledgeTradeMastery,
+					languageMastery: (character as any).languageMastery
+				  } as any)
+				: denormMod.denormalizeMastery({
+					finalAttributes: {
+						might: calcResult.stats.finalMight,
+						agility: calcResult.stats.finalAgility,
+						charisma: calcResult.stats.finalCharisma,
+						intelligence: calcResult.stats.finalIntelligence,
+						prime: calcResult.stats.finalPrimeModifierValue
+					},
+					skillsRanks: character.skillsData || {},
+					tradesRanks: character.tradesData || {},
+					languagesData: character.languagesData || { common: { fluency: 'fluent' } }
+				});
+			const pdfData = pdf.transformCalculatedCharacterToPdfData(calcResult, { saved: character, denorm });
+			const blob = await fillPdfFromData(pdfData, { flatten: false });
+			const safeName = (character.finalName || character.id || 'Character')
+				.replace(/[^A-Za-z0-9]+/g, '_')
+				.replace(/^_+|_+$/g, '')
+				.slice(0, 60);
+			const fileName = `${safeName}_vDC20-0.9.5.pdf`;
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = fileName;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+		} catch (err) {
+			console.error('Export PDF failed', err);
+			alert('Failed to export PDF');
+		}
+	};
+
 	return (
 		<StyledContainer>
 			<StyledButtonRow>
@@ -299,6 +368,14 @@ function LoadCharacter() {
 									onClick={(e) => handleViewCharacterSheet(character, e)}
 								>
 									View Sheet
+								</StyledActionButton>
+								<StyledActionButton
+									variant="secondary"
+									onClick={(e) => handleExportPdf(character, e)}
+									title="Export this character to a fillable PDF"
+									disabled={false}
+								>
+									Export PDF
 								</StyledActionButton>
 								<StyledActionButton
 									variant="secondary"

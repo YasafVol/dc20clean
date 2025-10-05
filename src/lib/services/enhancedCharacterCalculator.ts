@@ -315,6 +315,43 @@ function aggregateAttributedEffects(buildData: EnhancedCharacterBuildData): Attr
 		}
 	}
 
+	// Add effects from subclass feature choices
+	if (buildData.selectedSubclass && buildData.selectedFeatureChoices) {
+		const subclassFeatures = resolveSubclassFeatures(
+			buildData.classId,
+			buildData.selectedSubclass,
+			buildData.level
+		);
+
+		for (const feature of subclassFeatures) {
+			if (feature.choices) {
+				for (const choice of feature.choices) {
+					const choiceKey = `${buildData.classId}_${buildData.selectedSubclass}_${choice.id}`;
+					const selections = buildData.selectedFeatureChoices[choiceKey] || [];
+
+					for (const selectedOptionName of selections) {
+						const option = choice.options?.find((opt) => opt.name === selectedOptionName);
+						if (option?.effects) {
+							for (const effect of option.effects) {
+								effects.push({
+									...effect,
+									source: {
+										type: 'subclass_feature_choice' as any,
+										id: choice.id,
+										name: selectedOptionName,
+										description: option.description,
+										category: `${buildData.selectedSubclass} - ${feature.featureName}`
+									},
+									resolved: true
+								});
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	// Add effects from class features
 	const classFeatures = getClassFeatures(buildData.classId);
 	if (classFeatures) {

@@ -277,18 +277,37 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				}
 			}
 
-			// NEW (M3.10d): Check if subclass selection is required
-			const needsSubclass = calculationResult?.resolvedFeatures?.availableSubclassChoice;
-			if (needsSubclass && !state.selectedSubclass) {
-				const subclassLevel = calculationResult?.resolvedFeatures?.subclassChoiceLevel;
+		// NEW (M3.10d): Check if subclass selection is required
+		const needsSubclass = calculationResult?.resolvedFeatures?.availableSubclassChoice;
+		if (needsSubclass && !state.selectedSubclass) {
+			const subclassLevel = calculationResult?.resolvedFeatures?.subclassChoiceLevel;
+			console.log(
+				'❌ Step 1 incomplete: Subclass selection required at level',
+				subclassLevel
+			);
+			return false;
+		}
+
+		// NEW (M3.11d): Validate all subclass feature choices are complete
+		if (state.selectedSubclass && state.classId) {
+			const { validateSubclassChoicesComplete } = require('../../lib/rulesdata/classes-data/classUtils');
+			const validation = validateSubclassChoicesComplete(
+				state.classId,
+				state.selectedSubclass,
+				state.level,
+				state.selectedFeatureChoices || {}
+			);
+
+			if (!validation.isValid) {
 				console.log(
-					'❌ Step 1 incomplete: Subclass selection required at level',
-					subclassLevel
+					'❌ Step 1 incomplete: Subclass feature choices incomplete',
+					validation.incompleteChoices
 				);
 				return false;
 			}
+		}
 
-			return true;
+		return true;
 		}
 
 		// Step 2: Leveling Choices (only if level > 1)

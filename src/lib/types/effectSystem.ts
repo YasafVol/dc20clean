@@ -28,11 +28,11 @@ export type ValidationCode =
 
 // Source attribution for effects
 export interface EffectSource {
-	type: 'trait' | 'class_feature' | 'choice' | 'base' | 'ancestry_default' | 'talent';
+	type: 'trait' | 'class_feature' | 'choice' | 'base' | 'ancestry_default' | 'talent' | 'subclass_feature_choice';
 	id: string;
 	name: string;
 	description?: string;
-	category?: string; // e.g., "Human Trait", "Barbarian Level 1", "Talent"
+	category?: string; // e.g., "Human Trait", "Barbarian Level 1", "Talent", "Elemental Fury - Raging Elements"
 }
 
 // Effect with source attribution and resolution status

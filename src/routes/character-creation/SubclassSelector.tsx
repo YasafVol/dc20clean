@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import type { Subclass, ClassFeature } from '../../lib/rulesdata/schemas/character.schema';
+import { getSubclassByName, getFeatureChoiceKey } from '../../lib/rulesdata/classes-data/classUtils';
 import { barbarianClass } from '../../lib/rulesdata/classes-data/features/barbarian_features';
 import { clericClass } from '../../lib/rulesdata/classes-data/features/cleric_features';
 import { druidClass } from '../../lib/rulesdata/classes-data/features/druid_features';
@@ -336,7 +337,7 @@ export function SubclassSelector({
 											{feature.choices && feature.choices.length > 0 && onChoiceChange && (
 												<ChoicesContainer>
 													{feature.choices.map((choice) => {
-														const choiceKey = `${classId}_${subclass.subclassName}_${choice.id}`;
+														const choiceKey = getFeatureChoiceKey(classId, subclass.subclassName, choice.id);
 														const currentSelections = selectedFeatureChoices[choiceKey] || [];
 														const isComplete = currentSelections.length === choice.count;
 

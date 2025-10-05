@@ -7,6 +7,14 @@ import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
 import type { ClassFeature, FeatureBenefit } from '../../lib/rulesdata/schemas/character.schema';
 import styled from 'styled-components';
+import {
+	FeatureCard,
+	FeatureDescription,
+	FeatureLevel,
+	BenefitItem,
+	BenefitName,
+	BenefitDescription
+} from './styles/shared/FeatureDisplay.styles';
 
 // Styled Components
 const Container = styled.div`
@@ -402,15 +410,8 @@ const PathSpecialRulesText = styled.div`
 	line-height: 1.5;
 `;
 
-// Feature Display Styled Components
-const FeatureCard = styled.div`
-	background: rgba(0, 0, 0, 0.4);
-	border: 2px solid rgba(100, 149, 237, 0.3);
-	border-radius: 8px;
-	padding: 1rem;
-	text-align: left;
-`;
-
+// Feature Display - using shared styled components from FeatureDisplay.styles.ts
+// Kept local: FeatureName (different color scheme for Leveling stage)
 const FeatureName = styled.h4`
 	font-family: 'Cinzel', serif;
 	font-size: 1.1rem;
@@ -418,41 +419,11 @@ const FeatureName = styled.h4`
 	margin: 0 0 0.25rem 0;
 `;
 
-const FeatureLevel = styled.div`
-	font-family: 'Urbanist', sans-serif;
-	font-size: 0.85rem;
-	color: rgba(255, 255, 255, 0.6);
-	margin-bottom: 0.5rem;
-`;
-
-const FeatureDescription = styled.p`
-	font-family: 'Urbanist', sans-serif;
-	font-size: 0.95rem;
-	color: rgba(255, 255, 255, 0.9);
-	line-height: 1.4;
-	margin: 0.5rem 0;
-`;
-
+// Alias for shared BenefitsList component
 const FeatureBenefits = styled.div`
 	margin-top: 0.75rem;
 	padding-top: 0.75rem;
 	border-top: 1px solid rgba(255, 255, 255, 0.1);
-`;
-
-const BenefitItem = styled.div`
-	font-family: 'Urbanist', sans-serif;
-	font-size: 0.9rem;
-	color: rgba(255, 255, 255, 0.8);
-	margin-bottom: 0.5rem;
-	line-height: 1.3;
-`;
-
-const BenefitName = styled.strong`
-	color: #8ab4f8;
-`;
-
-const BenefitDesc = styled.span`
-	color: rgba(255, 255, 255, 0.8);
 `;
 
 const InfoText = styled.p`
@@ -915,7 +886,7 @@ function LevelingChoices() {
 										{feature.benefits.map((benefit: FeatureBenefit, bIdx: number) => (
 											<BenefitItem key={bIdx}>
 												<BenefitName>{benefit.name}:</BenefitName>{' '}
-												<BenefitDesc>{benefit.description}</BenefitDesc>
+												<BenefitDescription>{benefit.description}</BenefitDescription>
 											</BenefitItem>
 										))}
 									</FeatureBenefits>

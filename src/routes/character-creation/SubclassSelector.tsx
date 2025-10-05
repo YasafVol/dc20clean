@@ -162,18 +162,108 @@ const SubclassFeaturesList = styled.div`
 	border-top: 1px solid rgba(212, 175, 55, 0.3);
 `;
 
+// Choice UI Styled Components
+const ChoicesContainer = styled.div`
+	margin-top: 1.5rem;
+	padding-top: 1rem;
+	border-top: 1px solid rgba(212, 175, 55, 0.3);
+`;
+
+const ChoiceSection = styled.div`
+	margin-bottom: 2rem;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+`;
+
+const ChoiceHeader = styled.div`
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 0.5rem;
+`;
+
+const ChoicePrompt = styled.h5`
+	color: #d4af37;
+	font-size: 0.95rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	margin: 0;
+`;
+
+const ChoiceStatus = styled.span<{ complete: boolean }>`
+	font-size: 0.9rem;
+	color: ${(props) => (props.complete ? '#4caf50' : '#ff9800')};
+	font-weight: 600;
+`;
+
+const ChoiceHint = styled.p`
+	font-size: 0.85rem;
+	color: rgba(255, 255, 255, 0.6);
+	margin: 0 0 1rem 0;
+`;
+
+const ChoiceOptions = styled.div`
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	gap: 1rem;
+`;
+
+const ChoiceOptionCard = styled.div<{ selected: boolean }>`
+	padding: 1rem;
+	background: rgba(0, 0, 0, 0.3);
+	border: 2px solid ${(props) => (props.selected ? '#d4af37' : 'rgba(212, 175, 55, 0.3)')};
+	border-radius: 8px;
+	cursor: pointer;
+	transition: all 0.2s;
+	position: relative;
+
+	&:hover {
+		border-color: ${(props) => (props.selected ? '#d4af37' : 'rgba(212, 175, 55, 0.6)')};
+		transform: translateY(-2px);
+	}
+`;
+
+const OptionName = styled.h6`
+	color: #d4af37;
+	font-size: 0.9rem;
+	font-weight: 600;
+	margin: 0 0 0.5rem 0;
+`;
+
+const OptionDescription = styled.p`
+	font-size: 0.85rem;
+	color: rgba(255, 255, 255, 0.8);
+	line-height: 1.4;
+	margin: 0;
+`;
+
+const SelectedIcon = styled.span`
+	position: absolute;
+	top: 0.5rem;
+	right: 0.5rem;
+	color: #d4af37;
+	font-size: 1.2rem;
+`;
+
 interface SubclassSelectorProps {
 	classId: string;
 	choiceLevel?: number;
 	selectedSubclass?: string;
+	selectedFeatureChoices?: Record<string, string[]>;
 	onSelect: (subclass: string) => void;
+	onChoiceChange?: (choiceKey: string, selections: string[]) => void;
 }
 
 export function SubclassSelector({
 	classId,
 	choiceLevel = 1,
 	selectedSubclass,
-	onSelect
+	selectedFeatureChoices = {},
+	onSelect,
+	onChoiceChange
 }: SubclassSelectorProps) {
 	// Get full subclass data from class features
 	const classFeatures = CLASS_FEATURES_MAP[classId];
@@ -240,6 +330,65 @@ export function SubclassSelector({
 														</BenefitItem>
 													))}
 												</BenefitsList>
+											)}
+
+											{/* Show Choices */}
+											{feature.choices && feature.choices.length > 0 && onChoiceChange && (
+												<ChoicesContainer>
+													{feature.choices.map((choice) => {
+														const choiceKey = `${classId}_${subclass.subclassName}_${choice.id}`;
+														const currentSelections = selectedFeatureChoices[choiceKey] || [];
+														const isComplete = currentSelections.length === choice.count;
+
+														const handleOptionClick = (optionName: string) => {
+															if (choice.count === 1) {
+																// Radio behavior: replace selection
+																onChoiceChange(choiceKey, [optionName]);
+															} else {
+																// Checkbox behavior: toggle in array
+																const newSelections = currentSelections.includes(optionName)
+																	? currentSelections.filter((s) => s !== optionName)
+																	: [...currentSelections, optionName].slice(0, choice.count);
+																onChoiceChange(choiceKey, newSelections);
+															}
+														};
+
+														return (
+															<ChoiceSection key={choice.id}>
+																<ChoiceHeader>
+																	<ChoicePrompt>{choice.prompt}</ChoicePrompt>
+																	<ChoiceStatus complete={isComplete}>
+																		{isComplete
+																			? '✅'
+																			: `⚠️ ${currentSelections.length}/${choice.count}`}
+																	</ChoiceStatus>
+																</ChoiceHeader>
+																<ChoiceHint>Select {choice.count} option(s)</ChoiceHint>
+
+																<ChoiceOptions>
+																	{choice.options?.map((option) => {
+																		const isSelected = currentSelections.includes(option.name);
+
+																		return (
+																			<ChoiceOptionCard
+																				key={option.name}
+																				selected={isSelected}
+																				onClick={(e) => {
+																					e.stopPropagation(); // Prevent subclass card click
+																					handleOptionClick(option.name);
+																				}}
+																			>
+																				<OptionName>{option.name}</OptionName>
+																				<OptionDescription>{option.description}</OptionDescription>
+																				{isSelected && <SelectedIcon>✓</SelectedIcon>}
+																			</ChoiceOptionCard>
+																		);
+																	})}
+																</ChoiceOptions>
+															</ChoiceSection>
+														);
+													})}
+												</ChoicesContainer>
 											)}
 										</FeatureCard>
 									))}

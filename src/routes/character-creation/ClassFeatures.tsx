@@ -717,12 +717,22 @@ function ClassFeatures() {
 
 			{/* Subclass Selection (Level 3+) */}
 			{needsSubclassChoice && state.classId && (
-				<SubclassSelector
-					classId={state.classId}
-					choiceLevel={subclassChoiceLevel}
-					selectedSubclass={state.selectedSubclass}
-					onSelect={(subclass) => dispatch({ type: 'SET_SUBCLASS', subclass })}
-				/>
+			<SubclassSelector
+				classId={state.classId}
+				choiceLevel={subclassChoiceLevel}
+				selectedSubclass={state.selectedSubclass}
+				selectedFeatureChoices={state.selectedFeatureChoices}
+				onSelect={(subclass) => dispatch({ type: 'SET_SUBCLASS', subclass })}
+				onChoiceChange={(choiceKey, selections) => {
+					dispatch({
+						type: 'SET_FEATURE_CHOICES',
+						selectedFeatureChoices: {
+							...state.selectedFeatureChoices,
+							[choiceKey]: selections
+						}
+					});
+				}}
+			/>
 			)}
 		</StyledContainer>
 	);

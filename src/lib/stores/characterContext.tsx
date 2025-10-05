@@ -48,6 +48,9 @@ export interface CharacterInProgressStoreData
 	selectedMulticlassClass?: string;
 	selectedMulticlassFeature?: string;
 	selectedSubclass?: string; // Subclass selection (e.g., "Berserker" for Barbarian at Level 3)
+	isLevelUpMode?: boolean; // Indicates character is being leveled up
+	originalLevel?: number; // Store original level for comparison
+	sourceCharacterId?: string; // Track which character is being leveled up
 }
 
 // Initial state for the store
@@ -117,7 +120,8 @@ type CharacterAction =
 	| { type: 'SET_SELECTED_TALENTS'; talents: Record<string, number> }
 	| { type: 'SET_PATH_POINTS'; pathPoints: { martial?: number; spellcasting?: number } }
 	| { type: 'SET_MULTICLASS'; option: 'acquire' | 'adapt' | null; classId: string; featureId: string }
-	| { type: 'SET_SUBCLASS'; subclass: string | null };
+	| { type: 'SET_SUBCLASS'; subclass: string | null }
+	| { type: 'ENTER_LEVEL_UP_MODE'; originalLevel: number; characterId: string };
 
 // Reducer function
 function characterReducer(
@@ -150,6 +154,13 @@ function characterReducer(
 			};
 		case 'SET_SUBCLASS':
 			return { ...state, selectedSubclass: action.subclass ?? undefined };
+		case 'ENTER_LEVEL_UP_MODE':
+			return {
+				...state,
+				isLevelUpMode: true,
+				originalLevel: action.originalLevel,
+				sourceCharacterId: action.characterId
+			};
 		case 'SET_ANCESTRY':
 			return { ...state, ancestry1Id: action.ancestry1Id, ancestry2Id: action.ancestry2Id };
 		case 'SET_TRAITS':

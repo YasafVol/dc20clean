@@ -5,6 +5,8 @@ import {
 	saveAllCharacters,
 	getInitializedCharacterState
 } from '../../lib/utils/storageUtils';
+import { checkSchemaCompatibility } from '../../lib/types/schemaVersion';
+import { migrateCharacterSchema } from '../../lib/utils/schemaMigration';
 import {
 	StyledContainer,
 	StyledTitle,
@@ -71,7 +73,37 @@ function LoadCharacter() {
 		navigate(`/character/${character.id}`);
 	};
 
-	// Level up handler placeholder
+	// Level up handler
+	const handleLevelUp = (character: SavedCharacter, event: React.MouseEvent) => {
+		event.stopPropagation();
+
+		// Check schema compatibility
+		const compatibility = checkSchemaCompatibility(character.schemaVersion);
+
+		if (!compatibility.isCompatible) {
+			alert(compatibility.message);
+			return;
+		}
+
+		// Migrate if needed
+		let characterToLoad = character;
+		if (compatibility.needsMigration && compatibility.canAutoMigrate) {
+			console.log('📦 Migrating character schema before level-up', compatibility.message);
+			characterToLoad = migrateCharacterSchema(character);
+			// Save migrated version
+			const allChars = getAllSavedCharacters();
+			const updated = allChars.map((c) => (c.id === character.id ? characterToLoad : c));
+			saveAllCharacters(updated);
+		}
+
+		// Navigate to character creation with level-up state
+		navigate('/character-creation', {
+			state: {
+				levelUpCharacter: characterToLoad,
+				isLevelUp: true
+			}
+		});
+	};
 
 	const handleDeleteClick = (character: SavedCharacter, event: React.MouseEvent) => {
 		event.stopPropagation();
@@ -383,12 +415,12 @@ function LoadCharacter() {
 								>
 									Edit
 								</StyledActionButton>
-								<StyledActionButton
-									variant="secondary"
-									onClick={() => navigate(`/character/${character.id}/levelup`)}
-								>
-									Level Up
-								</StyledActionButton>
+							<StyledActionButton
+								variant="secondary"
+								onClick={(e) => handleLevelUp(character, e)}
+							>
+								Level Up
+							</StyledActionButton>
 								<StyledActionButton
 									variant="danger"
 									onClick={(e) => handleDeleteClick(character, e)}

@@ -15,6 +15,8 @@ import Snackbar from '../../components/Snackbar.tsx';
 import { completeCharacter } from '../../lib/services/characterCompletion';
 import { completeCharacterEdit, convertCharacterToInProgress } from '../../lib/utils/characterEdit';
 import type { SavedCharacter } from '../../lib/types/dataContracts';
+import { convertSavedCharacterToContext } from '../../lib/utils/characterToContext';
+import { getAllSavedCharacters, saveAllCharacters } from '../../lib/utils/storageUtils';
 import {
 	convertToEnhancedBuildData,
 	calculateCharacterWithBreakdowns
@@ -46,6 +48,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	const location = useLocation();
 	// If editCharacter is not passed as prop, try to get it from location.state
 	const editChar = editCharacter || (location.state && (location.state as any).editCharacter);
+	// Check for level-up mode
+	const levelUpCharacter = (location.state as any)?.levelUpCharacter;
+	const isLevelUpMode = (location.state as any)?.isLevelUp;
 	const { state, dispatch, attributePointsRemaining, calculationResult } = useCharacter();
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 	const [showSnackbar, setShowSnackbar] = useState(false);
@@ -82,6 +87,88 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			dispatch({ type: 'INITIALIZE_FROM_SAVED', character: characterInProgress });
 		}
 	}, [editChar, dispatch]);
+
+	// Initialize character state for level-up mode
+	useEffect(() => {
+		if (isLevelUpMode && levelUpCharacter) {
+			console.log('⬆️ CharacterCreation: Initializing level-up mode for character:', levelUpCharacter.finalName);
+			const contextData = convertSavedCharacterToContext(levelUpCharacter);
+
+			// Dispatch all data
+			dispatch({ type: 'ENTER_LEVEL_UP_MODE', originalLevel: levelUpCharacter.level, characterId: levelUpCharacter.id });
+			dispatch({ type: 'SET_CLASS', classId: contextData.classId! });
+			dispatch({ type: 'SET_LEVEL', level: contextData.level! });
+			
+			if (contextData.ancestry1Id) {
+				dispatch({ type: 'SET_ANCESTRY', ancestry1Id: contextData.ancestry1Id, ancestry2Id: contextData.ancestry2Id || null });
+			}
+			if (contextData.selectedTraitIds && contextData.selectedTraitIds.length > 0) {
+				dispatch({ type: 'SET_TRAITS', selectedTraitIds: contextData.selectedTraitIds });
+			}
+			if (contextData.selectedTraitChoices) {
+				Object.entries(contextData.selectedTraitChoices).forEach(([key, value]) => {
+					const [traitId, effectIndex] = key.split('-');
+					dispatch({ type: 'UPDATE_TRAIT_CHOICE', traitId, effectIndex: parseInt(effectIndex), choice: value });
+				});
+			}
+			
+			// Update attributes
+			dispatch({
+				type: 'UPDATE_STORE',
+				updates: {
+					attribute_might: contextData.attribute_might,
+					attribute_agility: contextData.attribute_agility,
+					attribute_charisma: contextData.attribute_charisma,
+					attribute_intelligence: contextData.attribute_intelligence
+				}
+			});
+			
+			// Background
+			dispatch({ type: 'UPDATE_SKILLS', skillsData: contextData.skillsData! });
+			dispatch({ type: 'UPDATE_TRADES', tradesData: contextData.tradesData! });
+			dispatch({ type: 'UPDATE_LANGUAGES', languagesData: contextData.languagesData! });
+			dispatch({
+				type: 'SET_CONVERSIONS',
+				conversions: {
+					skillToTrade: contextData.skillToTradeConversions,
+					tradeToSkill: contextData.tradeToSkillConversions,
+					tradeToLanguage: contextData.tradeToLanguageConversions
+				}
+			});
+			
+			// Leveling
+			if (contextData.selectedTalents) {
+				dispatch({ type: 'SET_SELECTED_TALENTS', talents: contextData.selectedTalents });
+			}
+			if (contextData.pathPointAllocations) {
+				dispatch({ type: 'SET_PATH_POINTS', pathPoints: contextData.pathPointAllocations });
+			}
+			if (contextData.selectedSubclass) {
+				dispatch({ type: 'SET_SUBCLASS', subclass: contextData.selectedSubclass });
+			}
+			if (contextData.selectedFeatureChoices) {
+				dispatch({ type: 'SET_FEATURE_CHOICES', selectedFeatureChoices: contextData.selectedFeatureChoices });
+			}
+			
+			// Spells & Maneuvers
+			dispatch({
+				type: 'UPDATE_SPELLS_AND_MANEUVERS',
+				spells: contextData.selectedSpells || [],
+				maneuvers: contextData.selectedManeuvers || []
+			});
+			
+			// Character Name
+			dispatch({
+				type: 'UPDATE_STORE',
+				updates: {
+					finalName: contextData.finalName,
+					finalPlayerName: contextData.finalPlayerName
+				}
+			});
+
+			console.log('✅ Level-up mode: Character data loaded', levelUpCharacter.finalName);
+		}
+	}, [isLevelUpMode, levelUpCharacter, dispatch]);
 
 	// Dynamic steps based on level
 	const getSteps = () => {
@@ -123,8 +210,47 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		}
 
 		if (state.currentStep === maxStep && areAllStepsCompleted()) {
-			// Character is complete - check if we're editing or creating new
-			if (editChar) {
+			// Character is complete - check if we're editing, leveling up, or creating new
+			if (state.isLevelUpMode && state.sourceCharacterId) {
+				// Level-up mode: complete character then update existing
+				console.log('⬆️ Completing level-up for character:', state.sourceCharacterId);
+				
+				// Create a custom onNavigateToLoad that updates instead of creates
+				const originalId = state.sourceCharacterId;
+				const allChars = getAllSavedCharacters();
+				const originalCreatedAt = allChars.find(c => c.id === originalId)?.createdAt;
+				
+				await completeCharacter(state, {
+					onShowSnackbar: (message: string) => {
+						setSnackbarMessage('Character leveled up successfully!');
+						setShowSnackbar(true);
+					},
+					onNavigateToLoad: () => {
+						// completeCharacter adds a new character, we need to replace it with updated original
+						const updatedChars = getAllSavedCharacters();
+						const newChar = updatedChars[updatedChars.length - 1]; // Last one added
+						
+						// Update the original character, remove the new one
+						const final = updatedChars
+							.filter(c => c.id !== newChar.id) // Remove newly created
+							.map(char => {
+								if (char.id === originalId) {
+									// Replace original with updated data
+									return {
+										...newChar,
+										id: originalId,
+										createdAt: originalCreatedAt || char.createdAt
+									};
+								}
+								return char;
+							});
+						
+						saveAllCharacters(final);
+						console.log('✅ Character updated via level-up', originalId);
+						navigate(`/character/${originalId}`);
+					}
+				});
+			} else if (editChar) {
 				// Edit mode: use the enhanced completion that preserves manual modifications
 				// Use enhanced calculator for character editing
 				const supportedClasses = [

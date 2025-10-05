@@ -171,8 +171,13 @@ const TradesTab: React.FC<TradesTabProps> = ({
 					fontSize: '0.875rem'
 				}}
 			>
-				<strong>Mastery Limits:</strong> Max level {masteryLimits.maxTradeMastery}(
+				<strong>Mastery Limits:</strong> Max level {masteryLimits.maxTradeMastery} (
 				{MASTERY_TIERS[masteryLimits.maxTradeMastery]?.name})
+				{masteryLimits.maxTradeMastery >= 2 && masteryLimits.maxAdeptCount < 999 && (
+					<div style={{ marginTop: '0.25rem', color: '#6366f1' }}>
+						Adept slots: {masteryLimits.currentAdeptCount} / {masteryLimits.maxAdeptCount} used
+					</div>
+				)}
 			</div>
 
 			<StyledPointsRemaining>

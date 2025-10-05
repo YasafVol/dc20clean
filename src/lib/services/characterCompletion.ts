@@ -12,6 +12,7 @@ import { getInitializedCharacterState } from '../utils/storageUtils';
 import { getAllSavedCharacters, saveAllCharacters } from '../utils/storageUtils';
 import type { SavedCharacter } from '../types/dataContracts';
 import { denormalizeMastery } from './denormalizeMastery';
+import { CURRENT_SCHEMA_VERSION } from '../types/schemaVersion';
 
 export interface CharacterCompletionCallbacks {
 	onShowSnackbar: (message: string) => void;
@@ -162,11 +163,11 @@ export const completeCharacter = async (
 				finalRestPoints: calculationResult.stats.finalRestPoints
 			}),
 
-			// Metadata
-			createdAt: new Date().toISOString(),
-			lastModified: new Date().toISOString(),
-			completedAt: new Date().toISOString(),
-			schemaVersion: '2.0.0'
+		// Metadata
+		createdAt: new Date().toISOString(),
+		lastModified: new Date().toISOString(),
+		completedAt: new Date().toISOString(),
+		schemaVersion: CURRENT_SCHEMA_VERSION
 		};
 
 		console.log('Character stats calculated:', completedCharacter);

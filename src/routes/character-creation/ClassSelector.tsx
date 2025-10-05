@@ -152,8 +152,13 @@ function ClassSelector() {
 	const { state, dispatch } = useCharacter();
 	const selectedClassId = state.classId;
 	const selectedLevel = state.level || 1;
+	const isLevelUpMode = state.isLevelUpMode;
+	const originalLevel = state.originalLevel;
 
 	function handleSelectClass(classId: string) {
+		// In level-up mode, can't change class
+		if (isLevelUpMode) return;
+		
 		if (state.classId?.toLowerCase() === classId.toLowerCase()) {
 			dispatch({ type: 'SET_CLASS', classId: null }); // Deselect if already selected
 		} else {
@@ -166,19 +171,40 @@ function ClassSelector() {
 		dispatch({ type: 'SET_LEVEL', level: newLevel });
 	}
 
+	// In level-up mode, show levels from originalLevel + 1 to 5
+	const availableLevels = isLevelUpMode && originalLevel
+		? Array.from({ length: 5 - originalLevel }, (_, i) => originalLevel + i + 1)
+		: Array.from({ length: 5 }, (_, i) => i + 1);
+
 	return (
 		<StyledContainer>
 			<StyledTitle>Choose Your Class</StyledTitle>
 			
+			{isLevelUpMode && originalLevel && (
+				<div style={{
+					background: '#6366f1',
+					color: 'white',
+					padding: '0.75rem',
+					borderRadius: '6px',
+					marginBottom: '1rem',
+					textAlign: 'center',
+					fontWeight: 500
+				}}>
+					⬆️ Leveling up from Level {originalLevel} to Level {selectedLevel}
+				</div>
+			)}
+			
 			<LevelSelectorContainer>
-				<LevelLabel htmlFor="character-level">Starting Level:</LevelLabel>
+				<LevelLabel htmlFor="character-level">
+					{isLevelUpMode ? 'New Level:' : 'Starting Level:'}
+				</LevelLabel>
 				<LevelSelect
 					id="character-level"
 					value={selectedLevel}
 					onChange={handleLevelChange}
 					data-testid="level-selector"
 				>
-					{Array.from({ length: 5 }, (_, i) => i + 1).map((level) => (
+					{availableLevels.map((level) => (
 						<option key={level} value={level}>
 							Level {level}
 						</option>
@@ -203,6 +229,10 @@ function ClassSelector() {
 							$selected={selectedClassId === classDef.id}
 							onClick={() => handleSelectClass(classDef.id)}
 							data-testid={`class-card-${classDef.id}`}
+							style={{
+								opacity: isLevelUpMode ? 0.6 : 1,
+								cursor: isLevelUpMode ? 'not-allowed' : 'pointer'
+							}}
 						>
 							<StyledNewClassHeader>
 								<StyledNewClassIcon $iconSize="28px" $iconOffsetX="0px" $iconOffsetY="0px">

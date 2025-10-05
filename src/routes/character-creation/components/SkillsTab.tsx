@@ -156,8 +156,13 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 					fontSize: '0.875rem'
 				}}
 			>
-				<strong>Mastery Limits:</strong> Max level {masteryLimits.maxSkillMastery}(
+				<strong>Mastery Limits:</strong> Max level {masteryLimits.maxSkillMastery} (
 				{MASTERY_TIERS[masteryLimits.maxSkillMastery]?.name})
+				{masteryLimits.maxSkillMastery >= 2 && masteryLimits.maxAdeptCount < 999 && (
+					<div style={{ marginTop: '0.25rem', color: '#6366f1' }}>
+						Adept slots: {masteryLimits.currentAdeptCount} / {masteryLimits.maxAdeptCount} used
+					</div>
+				)}
 			</div>
 
 			<StyledPointsRemaining data-testid="skill-points-remaining">

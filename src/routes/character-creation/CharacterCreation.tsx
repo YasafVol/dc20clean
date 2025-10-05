@@ -19,6 +19,7 @@ import {
 	convertToEnhancedBuildData,
 	calculateCharacterWithBreakdowns
 } from '../../lib/services/enhancedCharacterCalculator';
+import { validateSubclassChoicesComplete } from '../../lib/rulesdata/classes-data/classUtils';
 import { traitsData } from '../../lib/rulesdata/ancestries/traits';
 import {
 	StyledContainer,
@@ -290,7 +291,6 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 		// NEW (M3.11d): Validate all subclass feature choices are complete
 		if (state.selectedSubclass && state.classId) {
-			const { validateSubclassChoicesComplete } = require('../../lib/rulesdata/classes-data/classUtils');
 			const validation = validateSubclassChoicesComplete(
 				state.classId,
 				state.selectedSubclass,

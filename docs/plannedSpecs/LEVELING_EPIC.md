@@ -188,7 +188,7 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M3.8**    | **(UI)** Add +/- counter UI for general talents to allow multiple selections.        | ✅ Done   | M3.7           |
 | **M3.9**    | **(Fix)** Fix combat mastery, SP/MP/maneuver/technique calculations with path bonuses. | ✅ Done   | M3.8           |
 | **M3.10**   | **(Feature)** Implement dynamic subclass selection system driven by progression files. | ✅ Done   | M3.9           |
-| **M3.11**   | **(UI)** Improve class features display - show level-filtered features at Stage 1, refactor Stage 2. | ❌ To Do   | M3.10          |
+| **M3.11**   | **(UI)** Class Stage Subclass UI Improvements - display features, nested choices, validation, helper utils. | ✅ Done   | M3.10          |
 | **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.11          |
 | **HR-3**  | **HUMAN REVIEW:** Confirm UI flow is intuitive and functional.                     | ⏳ Pending | M3.10, HR-2.5  |
 | **M4.1**  | **(E2E Test)** Create `levelup-wizard.e2e.spec.ts` to test a Level 3 Wizard creation.   | ❌ To Do   | HR-3           |

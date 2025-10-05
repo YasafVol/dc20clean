@@ -309,8 +309,8 @@ export function SubclassSelector({
 								<SubclassDescription>{subclass.description}</SubclassDescription>
 							)}
 
-							{/* Show features when selected */}
-							{isSelected && features.length > 0 && (
+							{/* Show features for all subclasses */}
+							{features.length > 0 && (
 								<SubclassFeaturesList>
 									{features.map((feature, idx) => (
 										<FeatureCard key={feature.id || `${feature.featureName}-${idx}`}>
@@ -333,8 +333,8 @@ export function SubclassSelector({
 												</BenefitsList>
 											)}
 
-											{/* Show Choices */}
-											{feature.choices && feature.choices.length > 0 && onChoiceChange && (
+											{/* Show Choices only when this subclass is selected */}
+											{isSelected && feature.choices && feature.choices.length > 0 && onChoiceChange && (
 												<ChoicesContainer>
 													{feature.choices.map((choice) => {
 														const choiceKey = getFeatureChoiceKey(classId, subclass.subclassName, choice.id);

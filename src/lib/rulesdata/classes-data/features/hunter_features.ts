@@ -73,7 +73,6 @@ export const hunterClass: ClassDefinition = {
 					count: 2,
 					options: [
 						{
-							id: 'grassland',
 							name: 'Grassland',
 							description: 'Your Speed and Jump Distance increases by 1.',
 							effects: [
@@ -87,7 +86,6 @@ export const hunterClass: ClassDefinition = {
 							]
 						},
 						{
-							id: 'forest',
 							name: 'Forest',
 							description:
 								'You gain 2 Skill Points to use on up to 2 of the following Skills: Animal, Awareness, Medicine, Survival, and Stealth',
@@ -105,7 +103,6 @@ export const hunterClass: ClassDefinition = {
 							]
 						},
 						{
-							id: 'desert',
 							name: 'Desert',
 							description:
 								'You gain Fire Resistance (Half) and Resistance to Exhaustion from hot temperatures',
@@ -120,7 +117,6 @@ export const hunterClass: ClassDefinition = {
 							]
 						},
 						{
-							id: 'mountain',
 							name: 'Mountain',
 							description:
 								'You gain a Climb Speed equal to your Ground Speed, Resistance to Exhaustion from high altitudes, and Resistance (Half) to damage from Falling',
@@ -136,7 +132,6 @@ export const hunterClass: ClassDefinition = {
 							]
 						},
 						{
-							id: 'jungle',
 							name: 'Jungle',
 							description:
 								'You ignore Difficult Terrain, gain Poisoned Resistance, and have ADV on Saves against contracting Diseases',
@@ -152,7 +147,6 @@ export const hunterClass: ClassDefinition = {
 							]
 						},
 						{
-							id: 'swamp',
 							name: 'Swamp',
 							description:
 								'You gain Poison Resistance (Half) and Poisoned Resistance, and have ADV on Saves against contracting Diseases',
@@ -169,7 +163,6 @@ export const hunterClass: ClassDefinition = {
 							]
 						},
 						{
-							id: 'coast',
 							name: 'Coast',
 							description:
 								'You gain a Swim Speed equal to your Ground Speed (your Weapon Attacks no longer have DisADV as a result of being underwater), you can hold your breath twice as long as normal, and you have ADV on Awareness Checks while underwater.',
@@ -184,7 +177,6 @@ export const hunterClass: ClassDefinition = {
 							]
 						},
 						{
-							id: 'tundra',
 							name: 'Tundra',
 							description:
 								'You gain Cold Resistance (Half) and Resistance to Exhaustion from cold temperatures',
@@ -199,7 +191,6 @@ export const hunterClass: ClassDefinition = {
 							]
 						},
 						{
-							id: 'subterranean',
 							name: 'Subterranean',
 							description:
 								'You gain Darkvision 10 Spaces. If you already have Darkvision, its range is increased by 5 Spaces. Additionally, you also gain a Tremorsense of 3 Spaces. If you already have a Tremorsense, it increases by 2 Spaces.',
@@ -215,7 +206,6 @@ export const hunterClass: ClassDefinition = {
 							]
 						},
 						{
-							id: 'urban',
 							name: 'Urban',
 							description:
 								'You gain 2 Skill Points to use on up to 2 of the following Skills: Influence, Insight, Investigation, Intimidation, and Trickery.',
@@ -249,20 +239,20 @@ export const hunterClass: ClassDefinition = {
 					prompt: 'Choose a Creature Type for your starting entries',
 					count: 1,
 					options: [
-						{ id: 'aberration', name: 'Aberration' },
-						{ id: 'beast', name: 'Beast' },
-						{ id: 'celestial', name: 'Celestial' },
-						{ id: 'construct', name: 'Construct' },
-						{ id: 'dragon', name: 'Dragon' },
-						{ id: 'elemental', name: 'Elemental' },
-						{ id: 'fey', name: 'Fey' },
-						{ id: 'fiend', name: 'Fiend' },
-						{ id: 'giant', name: 'Giant' },
-						{ id: 'humanoid', name: 'Humanoid' },
-						{ id: 'monstrosity', name: 'Monstrosity' },
-						{ id: 'ooze', name: 'Ooze' },
-						{ id: 'plant', name: 'Plant' },
-						{ id: 'undead', name: 'Undead' }
+						{ name: 'Aberration', description: 'Twisted creatures of unnatural origin.', effects: [] },
+						{ name: 'Beast', description: 'Natural animals and creatures.', effects: [] },
+						{ name: 'Celestial', description: 'Divine and holy beings.', effects: [] },
+						{ name: 'Construct', description: 'Artificial and animated creations.', effects: [] },
+						{ name: 'Dragon', description: 'Ancient reptilian beings of immense power.', effects: [] },
+						{ name: 'Elemental', description: 'Living manifestations of natural forces.', effects: [] },
+						{ name: 'Fey', description: 'Magical beings from the Feywild.', effects: [] },
+						{ name: 'Fiend', description: 'Evil entities from lower planes.', effects: [] },
+						{ name: 'Giant', description: 'Massive humanoid creatures.', effects: [] },
+						{ name: 'Humanoid', description: 'Bipedal civilized species.', effects: [] },
+						{ name: 'Monstrosity', description: 'Frightening creatures of legend.', effects: [] },
+						{ name: 'Ooze', description: 'Amorphous and corrosive beings.', effects: [] },
+						{ name: 'Plant', description: 'Botanical and fungal creatures.', effects: [] },
+						{ name: 'Undead', description: 'Reanimated dead and spirits.', effects: [] }
 					]
 				}
 			]
@@ -302,7 +292,6 @@ export const hunterClass: ClassDefinition = {
 							count: 3,
 							options: [
 								{
-									id: 'elemental_infusion',
 									name: 'Elemental Infusion',
 									description:
 										'Choose an Elemental damage type. Attacks against your Marked target deal +1 damage of that type. You gain Resistance (1) to that type.',
@@ -311,18 +300,14 @@ export const hunterClass: ClassDefinition = {
 											type: 'GRANT_CHOICE',
 											target: 'elemental_infusion_type',
 											value: 1,
-											options: [
-												{ name: 'Fire' },
-												{ name: 'Cold' },
-												{ name: 'Lightning' },
-												{ name: 'Poison' },
-												{ name: 'Corrosion' }
-											]
+											userChoice: {
+												prompt: 'Choose an elemental damage type',
+												options: ['Fire', 'Cold', 'Lightning', 'Poison', 'Corrosion']
+											}
 										}
 									]
 								},
 								{
-									id: 'hydras_blood',
 									name: "Hydra's Blood",
 									description:
 										'When you Heavy Hit your Marked target, you regain 1 HP. You have Poisoned Resistance and attackers take 1 Poison damage.',
@@ -336,7 +321,6 @@ export const hunterClass: ClassDefinition = {
 									]
 								},
 								{
-									id: 'basilisk_eye',
 									name: 'Basilisk Eye',
 									description:
 										'You gain Tremorsense 20 Spaces for your Marked target. You gain Physical Resistance (1).',
@@ -349,7 +333,6 @@ export const hunterClass: ClassDefinition = {
 									]
 								},
 								{
-									id: 'ooze_gel',
 									name: 'Ooze Gel',
 									description:
 										"When you Heavy Hit your Marked Target, it's Hindered. You can climb difficult surfaces and squeeze through small gaps.",
@@ -363,7 +346,6 @@ export const hunterClass: ClassDefinition = {
 									]
 								},
 								{
-									id: 'aberrant_tumor',
 									name: 'Aberrant Tumor',
 									description:
 										'While within 20 Spaces of your Marked target, you have ADV on Analyze Creature checks and Mental Saves. You gain Psychic Resistance (1).',
@@ -377,7 +359,6 @@ export const hunterClass: ClassDefinition = {
 									]
 								},
 								{
-									id: 'deathweed',
 									name: 'Deathweed',
 									description:
 										'Heavy Hits against a Marked target bypass Physical Resistances and prevent HP regain. You gain Umbral Resistance (Half), immunity to Doomed, and ADV on Death Saves.',
@@ -391,7 +372,6 @@ export const hunterClass: ClassDefinition = {
 									]
 								},
 								{
-									id: 'plant_fibers',
 									name: 'Plant Fibers',
 									description:
 										"If your Marked Target fails a Save you force, they can't move. You become Immune to Bleeding and gain 1 Temp HP at the end of each turn.",
@@ -405,7 +385,6 @@ export const hunterClass: ClassDefinition = {
 									]
 								},
 								{
-									id: 'divine_water',
 									name: 'Divine Water',
 									description:
 										'Heavy Hits against your Marked target also make it Exposed. You gain Radiant Resistance (Half) and radiate Bright Light in a 5 Space Radius.',

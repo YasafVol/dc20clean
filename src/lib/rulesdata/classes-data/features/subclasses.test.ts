@@ -104,7 +104,10 @@ describe('Class Subclass Availability at Level 3', () => {
 			className: 'Hunter',
 			classDefinition: hunterClass,
 			level: 3,
-			expectedSubclasses: [] // Currently no subclasses defined
+			expectedSubclasses: [
+				{ name: 'Monster Slayer' },
+				{ name: 'Trapper' }
+			]
 		},
 		{
 			classId: 'monk',

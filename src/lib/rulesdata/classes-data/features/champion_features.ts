@@ -100,21 +100,10 @@ export const championClass: ClassDefinition = {
 						'At the start of your first turn in Combat, you gain one of the following benefits: Brace (Dodge Action + ADV on next Save) or Advance (Move Action + ADV on next Physical Check).',
 					effects: [
 						{
-							type: 'GRANT_CHOICE',
-							target: 'combat_readiness',
-							value: 1,
-							options: [
-								{
-									name: 'Brace',
-									description:
-										'Gain the benefits of the Dodge Action and ADV on the next Save you make until the end of Combat.'
-								},
-								{
-									name: 'Advance',
-									description:
-										'Gain the benefits of the Move Action and ADV on the next Physical Check you make until the end of Combat.'
-								}
-							]
+							type: 'GRANT_ABILITY',
+							target: 'combat_readiness_brace',
+							value:
+								'First turn in Combat: choose Brace (Dodge + ADV on Save) or Advance (Move + ADV on Physical Check).'
 						}
 					]
 				},

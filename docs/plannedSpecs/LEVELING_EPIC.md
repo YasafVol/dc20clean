@@ -193,7 +193,8 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M3.13**   | **(Feature)** Implement semantic versioning and schema compatibility system. | ✅ Done   | M3.12          |
 | **M3.14**   | **(Feature)** Implement level-up flow with respeccing support. | ✅ Done   | M3.13          |
 | **M3.15**   | **(Testing)** Manual test level-up flow and schema migration. | ❌ To Do   | M3.14          |
-| **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.15          |
+| **M3.16**   | **(Bug Fixes)** Critical bug fixes: missing subclasses, monk stances, validation removal. | ❌ To Do   | M3.14          |
+| **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.15, M3.16   |
 | **HR-3**  | **HUMAN REVIEW:** Confirm UI flow is intuitive and functional.                     | ⏳ Pending | M3.15, HR-2.5  |
 | **M4.1**  | **(E2E Test)** Create `levelup-wizard.e2e.spec.ts` to test a Level 3 Wizard creation.   | ❌ To Do   | HR-3           |
 | **M4.2**  | **(Manual Test)** Manually test character creation at levels 2 and 3.               | ❌ To Do   | M4.1           |
@@ -1006,3 +1007,329 @@ This milestone consolidates all cap data into a single source of truth and exten
 *   **Unwanted runtime side effects:** `path.service.ts` includes top-level sample code with `console.log`. Remove or guard this demo code to prevent noise in production builds and tests. ✅ Resolved September 29, 2025.
 *   **Progression placeholder cleanup:** Levels 1–2 for all base classes now reference real feature IDs. Higher-level placeholders remain until new data exists. ✅ Updated September 29, 2025.
 *   **Aurora Progress Log (Sep 28, 2025 @ 12:20):** M1.2 feature ID audit in progress through level 3; higher-level placeholders deferred until data exists.
+
+---
+
+### 5.17. Milestone M3.16: Critical Bug Fixes - Subclasses, Monk Stances, Validation
+
+**Status:** ❌ To Do
+
+**Goal:** Fix three critical bugs discovered during manual testing of the leveling system.
+
+**Dependencies:** M3.14 (Level-Up Flow)
+
+---
+
+#### Bug #1: Missing Subclasses in Level 3 Selection
+
+**Problem:**
+Some classes are missing their subclasses when reaching Level 3 in the character creator. This is likely due to:
+- Incomplete or missing subclass definitions in `*_features.ts` files
+- Incorrect `levelGained` values on subclass definitions
+- Data not being properly loaded or filtered
+
+**Solution Plan:**
+
+**M3.16a - Audit All Class Feature Files**
+
+1. Create comprehensive documentation of expected subclasses per class
+2. Review each `*_features.ts` file to verify subclass definitions
+3. Create a reference map in LEVELING_EPIC.md for tracking
+
+**M3.16b - Create Unit Tests for Subclass Discovery**
+
+File to create:
+- `src/lib/rulesdata/classes-data/features/subclasses.test.ts`
+
+Test structure:
+```typescript
+describe('Class Subclass Availability at Level 3', () => {
+  const testCases = [
+    { classId: 'barbarian', level: 3, expectedSubclasses: ['berserker', 'totem_warrior', 'storm_herald'] },
+    { classId: 'bard', level: 3, expectedSubclasses: ['college_of_lore', 'college_of_valor', 'college_of_whispers'] },
+    { classId: 'champion', level: 3, expectedSubclasses: ['guardian', 'slayer', 'warlord'] },
+    { classId: 'cleric', level: 3, expectedSubclasses: ['life_domain', 'war_domain', 'knowledge_domain'] },
+    { classId: 'commander', level: 3, expectedSubclasses: ['tactician', 'warlord', 'strategist'] },
+    { classId: 'druid', level: 3, expectedSubclasses: ['circle_of_land', 'circle_of_moon', 'circle_of_wildfire'] },
+    { classId: 'hunter', level: 3, expectedSubclasses: ['beast_master', 'monster_slayer', 'horizon_walker'] },
+    { classId: 'monk', level: 3, expectedSubclasses: ['way_of_the_open_hand', 'way_of_shadow', 'way_of_the_four_elements'] },
+    { classId: 'rogue', level: 3, expectedSubclasses: ['assassin', 'thief', 'arcane_trickster'] },
+    { classId: 'sorcerer', level: 3, expectedSubclasses: ['draconic_bloodline', 'wild_magic', 'shadow_magic'] },
+    { classId: 'spellblade', level: 3, expectedSubclasses: ['arcane_warrior', 'eldritch_knight', 'blade_dancer'] },
+    { classId: 'warlock', level: 3, expectedSubclasses: ['fiend_patron', 'archfey_patron', 'great_old_one'] },
+    { classId: 'wizard', level: 3, expectedSubclasses: ['school_of_evocation', 'school_of_abjuration', 'school_of_illusion'] }
+  ];
+
+  testCases.forEach(({ classId, level, expectedSubclasses }) => {
+    it(\`should have \${expectedSubclasses.length} subclasses for \${classId} at level \${level}\`, () => {
+      const classFeatures = getClassFeaturesByClassId(classId);
+      expect(classFeatures).toBeDefined();
+      
+      const subclasses = classFeatures.subclasses || [];
+      const availableSubclasses = subclasses.filter(sc => 
+        sc.levelGained === undefined || sc.levelGained <= level
+      );
+      
+      expect(availableSubclasses.length).toBe(expectedSubclasses.length);
+      
+      expectedSubclasses.forEach(expectedId => {
+        const found = availableSubclasses.find(sc => 
+          sc.id === expectedId || sc.subclassName.toLowerCase().replace(/\\s+/g, '_') === expectedId
+        );
+        expect(found).toBeDefined();
+      });
+    });
+  });
+});
+```
+
+**M3.16c - Run Tests and Create Fix Plan**
+
+1. Run the unit tests to identify which classes are missing subclasses
+2. For each failing test, examine the corresponding `*_features.ts` file
+3. Create a detailed fix plan with:
+   - Which files need updates
+   - What subclass definitions are missing
+   - What `levelGained` values need correction
+
+**M3.16d - Fix Feature Files**
+
+Based on test results, update `*_features.ts` files to:
+- Add missing subclass definitions
+- Correct `levelGained` values (should be 3 for most classes)
+- Ensure subclass IDs match expected naming conventions
+
+**M3.16e - Update Class System Documentation**
+
+File to create/update:
+- `src/lib/rulesdata/classes-data/SUBCLASS_REFERENCE.md`
+
+Content: Complete table of all classes and their subclasses with level requirements.
+
+---
+
+#### Bug #2: Monk Stance Selection Limited to 1
+
+**Problem:**
+Level 1 Monk feature "Martial Stances" should allow selecting 2 stances, but the UI only allows selecting 1.
+
+**Root Cause:**
+The choice definition in `monk_features.ts` likely has `count: 1` instead of `count: 2`.
+
+**Solution Plan:**
+
+**M3.16f - Fix Monk Stance Choice Count**
+
+File to modify:
+- `src/lib/rulesdata/classes-data/features/monk_features.ts`
+
+Changes:
+1. Locate the "Martial Stances" feature at level 1
+2. Find the choice definition for stance selection
+3. Update `count: 1` to `count: 2`
+4. Verify options array includes all available stances
+
+Example fix:
+```typescript
+{
+  id: 'martial_stances',
+  name: 'Martial Stances',
+  levelGained: 1,
+  description: 'You learn two martial stances...',
+  benefits: ['Learn 2 martial stances'],
+  choices: [
+    {
+      id: 'initial_stances',
+      prompt: 'Choose 2 martial stances',
+      count: 2, // ← Change from 1 to 2
+      options: [
+        { id: 'defensive_stance', name: 'Defensive Stance', description: '...' },
+        { id: 'aggressive_stance', name: 'Aggressive Stance', description: '...' },
+        { id: 'balanced_stance', name: 'Balanced Stance', description: '...' },
+        // ... more stances
+      ]
+    }
+  ]
+}
+```
+
+**M3.16g - Add Unit Test for Monk Stances**
+
+File to modify:
+- `src/lib/rulesdata/classes-data/features/monk_features.test.ts` (create if needed)
+
+Test:
+```typescript
+describe('Monk Martial Stances', () => {
+  it('should allow selecting 2 stances at level 1', () => {
+    const monkFeatures = getClassFeaturesByClassId('monk');
+    const stanceFeature = monkFeatures.features.find(f => f.id === 'martial_stances');
+    
+    expect(stanceFeature).toBeDefined();
+    expect(stanceFeature.levelGained).toBe(1);
+    
+    const stanceChoice = stanceFeature.choices?.[0];
+    expect(stanceChoice).toBeDefined();
+    expect(stanceChoice.count).toBe(2);
+    expect(stanceChoice.options.length).toBeGreaterThanOrEqual(3);
+  });
+});
+```
+
+---
+
+#### Bug #3: Validation Causing Issues in Leveling Stage
+
+**Problem:**
+The leveling choices validation is too strict and blocking progression unnecessarily during development/testing.
+
+**Temporary Solution:**
+Remove validation temporarily, add TODO comments for proper implementation later.
+
+**Solution Plan:**
+
+**M3.16h - Temporarily Disable Leveling Validation**
+
+File to modify:
+- `src/routes/character-creation/CharacterCreation.tsx`
+
+Changes in `isStepCompleted()` function:
+
+Find the leveling step validation (around line 290-310):
+```typescript
+if (step === levelingStep) {
+  // TODO: Re-enable validation after testing phase
+  // Currently disabled to allow flexible testing and debugging
+  console.warn('⚠️ Leveling validation temporarily disabled - re-enable in production');
+  return true; // ← Temporarily bypass validation
+  
+  /* Original validation logic - restore later:
+  const availableTalents = calculationResult?.resolvedFeatures?.talentPointsAvailable || 0;
+  const usedTalents = Object.values(state.selectedTalents || {}).reduce((sum, count) => sum + count, 0);
+  
+  if (usedTalents !== availableTalents) {
+    console.error('Leveling validation failed: talent points mismatch', {
+      available: availableTalents,
+      used: usedTalents
+    });
+    return false;
+  }
+  
+  // ... path point validation
+  // ... combat mastery validation
+  return true;
+  */
+}
+```
+
+**M3.16i - Add Issue Tracker for Validation Re-enabling**
+
+Create GitHub issue or add to M4.x milestones:
+```
+## M4.4: Re-enable and Improve Leveling Validation
+
+**Context:** Validation temporarily disabled in M3.16h
+
+**Requirements:**
+- Restore talent point validation
+- Restore path point validation
+- Add graceful error messages
+- Allow partial completion for testing
+- Add "Skip validation" developer flag
+
+**Acceptance:**
+- Validation blocks progression when points unspent
+- Clear user feedback on what's missing
+- No false positives
+```
+
+---
+
+#### Implementation Order
+
+1. **M3.16a** - Audit class features (1 hour)
+2. **M3.16b** - Create subclass unit tests (1 hour)
+3. **M3.16c** - Run tests, analyze failures (30 min)
+4. **M3.16d** - Fix feature files based on test results (2-4 hours, depends on findings)
+5. **M3.16e** - Document subclass reference (30 min)
+6. **M3.16f** - Fix monk stance count (5 min)
+7. **M3.16g** - Add monk stance test (15 min)
+8. **M3.16h** - Disable leveling validation (10 min)
+9. **M3.16i** - Create validation re-enable task (5 min)
+
+**Total Estimated Time:** 5-7 hours
+
+---
+
+#### Acceptance Criteria
+
+**Bug #1 (Subclasses):**
+- [ ] All 13 classes have unit tests for subclass availability
+- [ ] All tests pass (each class shows expected subclasses at level 3)
+- [ ] Manual test: Create level 3 character for each class, verify subclasses appear
+- [ ] Documentation updated with complete subclass reference
+
+**Bug #2 (Monk Stances):**
+- [ ] Monk level 1 "Martial Stances" choice allows selecting 2 stances
+- [ ] UI shows checkboxes (not radio buttons) for stance selection
+- [ ] Validation prevents progression unless exactly 2 stances selected
+- [ ] Unit test verifies `count: 2` in feature definition
+
+**Bug #3 (Validation):**
+- [ ] Leveling step validation bypassed with console warning
+- [ ] TODO comment clearly explains temporary nature
+- [ ] Original validation code preserved in comments
+- [ ] Issue/milestone created for re-enabling validation
+- [ ] No regression in other step validations (ancestry, attributes, etc.)
+
+---
+
+#### Files to Create
+
+- `src/lib/rulesdata/classes-data/features/subclasses.test.ts`
+- `src/lib/rulesdata/classes-data/SUBCLASS_REFERENCE.md`
+- `src/lib/rulesdata/classes-data/features/monk_features.test.ts` (if doesn't exist)
+
+#### Files to Modify
+
+- All `src/lib/rulesdata/classes-data/features/*_features.ts` files (TBD after test results)
+- `src/lib/rulesdata/classes-data/features/monk_features.ts`
+- `src/routes/character-creation/CharacterCreation.tsx`
+- `docs/plannedSpecs/LEVELING_EPIC.md` (this file)
+
+---
+
+#### Testing Plan
+
+**Unit Tests:**
+```bash
+npm run test:unit -- subclasses.test.ts
+npm run test:unit -- monk_features.test.ts
+```
+
+**Manual Tests:**
+1. For each class, create level 3 character and verify subclass selection UI appears
+2. Create level 1 Monk, verify can select 2 stances
+3. Create level 2+ character, verify can proceed past leveling stage without validation errors
+
+---
+
+#### Risk Assessment
+
+**Low Risk:**
+- M3.16f (Monk stance fix) - Simple count change
+- M3.16h (Disable validation) - Temporary, reversible
+
+**Medium Risk:**
+- M3.16b-d (Subclass testing and fixes) - May uncover many missing definitions
+- Potential for extensive feature file updates
+
+**High Risk:**
+- None
+
+**Mitigation:**
+- Comprehensive unit tests guide the fixes
+- Preserve original validation code in comments
+- Document all subclass expectations for future reference
+
+---

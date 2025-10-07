@@ -193,7 +193,7 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M3.13**   | **(Feature)** Implement semantic versioning and schema compatibility system. | ✅ Done   | M3.12          |
 | **M3.14**   | **(Feature)** Implement level-up flow with respeccing support. | ✅ Done   | M3.13          |
 | **M3.15**   | **(Testing)** Manual test level-up flow and schema migration. | ❌ To Do   | M3.14          |
-| **M3.16**   | **(Bug Fixes)** Critical bug fixes: missing subclasses, monk stances, validation removal. | ❌ To Do   | M3.14          |
+| **M3.16**   | **(Bug Fixes)** Critical bug fixes: missing subclasses, monk stances, validation removal. | ✅ Done   | M3.14          |
 | **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.15, M3.16   |
 | **HR-3**  | **HUMAN REVIEW:** Confirm UI flow is intuitive and functional.                     | ⏳ Pending | M3.15, HR-2.5  |
 | **M4.1**  | **(E2E Test)** Create `levelup-wizard.e2e.spec.ts` to test a Level 3 Wizard creation.   | ❌ To Do   | HR-3           |

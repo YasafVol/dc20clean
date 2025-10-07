@@ -1270,32 +1270,32 @@ Create GitHub issue or add to M4.x milestones:
 - [ ] Documentation updated with complete subclass reference
 
 **Bug #2 (Monk Stances):**
-- [ ] Monk level 1 "Martial Stances" choice allows selecting 2 stances
-- [ ] UI shows checkboxes (not radio buttons) for stance selection
-- [ ] Validation prevents progression unless exactly 2 stances selected
-- [ ] Unit test verifies `count: 2` in feature definition
+- [x] Monk level 1 "Martial Stances" choice allows selecting 2 stances
+- [x] UI shows checkboxes (not radio buttons) for stance selection
+- [x] Validation prevents progression unless exactly 2 stances selected
+- [x] Unit test verifies `count: 2` in feature definition
 
 **Bug #3 (Validation):**
-- [ ] Leveling step validation bypassed with console warning
-- [ ] TODO comment clearly explains temporary nature
-- [ ] Original validation code preserved in comments
-- [ ] Issue/milestone created for re-enabling validation
-- [ ] No regression in other step validations (ancestry, attributes, etc.)
+- [x] Leveling step validation bypassed with console warning
+- [x] TODO comment clearly explains temporary nature
+- [x] Original validation code preserved in comments
+- [x] Issue/milestone created for re-enabling validation (M4.4)
+- [x] No regression in other step validations (ancestry, attributes, etc.)
 
 ---
 
 #### Files to Create
 
-- `src/lib/rulesdata/classes-data/features/subclasses.test.ts`
-- `src/lib/rulesdata/classes-data/SUBCLASS_REFERENCE.md`
-- `src/lib/rulesdata/classes-data/features/monk_features.test.ts` (if doesn't exist)
+- `src/lib/rulesdata/classes-data/features/subclasses.test.ts` (pending Bug #1)
+- `src/lib/rulesdata/classes-data/SUBCLASS_REFERENCE.md` (pending Bug #1)
+- ✅ `src/lib/rulesdata/classes-data/features/monk_features.test.ts` (created)
 
 #### Files to Modify
 
-- All `src/lib/rulesdata/classes-data/features/*_features.ts` files (TBD after test results)
-- `src/lib/rulesdata/classes-data/features/monk_features.ts`
-- `src/routes/character-creation/CharacterCreation.tsx`
-- `docs/plannedSpecs/LEVELING_EPIC.md` (this file)
+- All `src/lib/rulesdata/classes-data/features/*_features.ts` files (TBD after test results - Bug #1)
+- ✅ `src/lib/rulesdata/classes-data/features/monk_features.ts` (updated stance choices to count: 2)
+- ✅ `src/routes/character-creation/CharacterCreation.tsx` (disabled leveling validation)
+- ✅ `docs/plannedSpecs/LEVELING_EPIC.md` (this file)
 
 ---
 

@@ -436,51 +436,59 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		return true;
 		}
 
-		// Step 2: Leveling Choices (only if level > 1)
-		if (step === levelingStep && hasLevelingStep) {
-					// Validate that all talent and path points have been spent
-					const budgets = calculationResult?.levelBudgets;
-					
-					if (!budgets) {
-						console.log('❌ Leveling validation failed: no budgets found');
-						return false;
-					}
-					
-					// Check talents: must have exactly the right number selected (including multiclass)
-				const selectedTalents = state.selectedTalents || {};
-				// Note: multiclass feature is stored separately but counts toward talent budget
-				const selectedMulticlass = state.selectedMulticlassFeature;
-				// Count total talent selections from the count-based record
-				const talentsFromRecord = Object.values(selectedTalents).reduce((sum, count) => sum + count, 0);
-				const totalTalentsSelected = talentsFromRecord + (selectedMulticlass ? 1 : 0);
-				
-				if (totalTalentsSelected !== budgets.totalTalents) {
-					console.log('❌ Leveling validation failed: talents not fully selected', {
-						selected: totalTalentsSelected,
-						required: budgets.totalTalents,
-						regularTalents: talentsFromRecord,
-						multiclass: selectedMulticlass ? 1 : 0
-					});
-						return false;
-					}
-					
-					// Check path points: must allocate exactly the available points
-					const pathAllocations = state.pathPointAllocations || { martial: 0, spellcasting: 0 };
-					const totalAllocated = (pathAllocations.martial || 0) + (pathAllocations.spellcasting || 0);
-					if (totalAllocated !== budgets.totalPathPoints) {
-						console.log('❌ Leveling validation failed: path points not fully allocated', {
-							allocated: totalAllocated,
-							required: budgets.totalPathPoints
-						});
-						return false;
-					}
-					
-					console.log('✅ Leveling choices validated', {
-						totalTalents: totalTalentsSelected,
-						pathPoints: totalAllocated
-					});
-					return true;
+	// Step 2: Leveling Choices (only if level > 1)
+	if (step === levelingStep && hasLevelingStep) {
+		// TODO: Re-enable validation after testing phase (M4.4)
+		// Currently disabled to allow flexible testing and debugging during development
+		console.warn('⚠️ Leveling validation temporarily disabled - re-enable in production (see M4.4 in LEVELING_EPIC.md)');
+		return true; // ← Temporarily bypass validation
+		
+		/* Original validation logic - restore in M4.4:
+		
+		// Validate that all talent and path points have been spent
+		const budgets = calculationResult?.levelBudgets;
+		
+		if (!budgets) {
+			console.log('❌ Leveling validation failed: no budgets found');
+			return false;
 		}
+		
+		// Check talents: must have exactly the right number selected (including multiclass)
+		const selectedTalents = state.selectedTalents || {};
+		// Note: multiclass feature is stored separately but counts toward talent budget
+		const selectedMulticlass = state.selectedMulticlassFeature;
+		// Count total talent selections from the count-based record
+		const talentsFromRecord = Object.values(selectedTalents).reduce((sum, count) => sum + count, 0);
+		const totalTalentsSelected = talentsFromRecord + (selectedMulticlass ? 1 : 0);
+		
+		if (totalTalentsSelected !== budgets.totalTalents) {
+			console.log('❌ Leveling validation failed: talents not fully selected', {
+				selected: totalTalentsSelected,
+				required: budgets.totalTalents,
+				regularTalents: talentsFromRecord,
+				multiclass: selectedMulticlass ? 1 : 0
+			});
+			return false;
+		}
+		
+		// Check path points: must allocate exactly the available points
+		const pathAllocations = state.pathPointAllocations || { martial: 0, spellcasting: 0 };
+		const totalAllocated = (pathAllocations.martial || 0) + (pathAllocations.spellcasting || 0);
+		if (totalAllocated !== budgets.totalPathPoints) {
+			console.log('❌ Leveling validation failed: path points not fully allocated', {
+				allocated: totalAllocated,
+				required: budgets.totalPathPoints
+			});
+			return false;
+		}
+		
+		console.log('✅ Leveling choices validated', {
+			totalTalents: totalTalentsSelected,
+			pathPoints: totalAllocated
+		});
+		return true;
+		*/
+	}
 
 		// Ancestry step
 		if (step === ancestryStep) {

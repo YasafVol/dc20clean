@@ -102,25 +102,59 @@ export const monkClass: ClassDefinition = {
 			levelGained: 1,
 			description:
 				'You learn 2 Monk Stances. Start of turn: freely enter or swap stances. Spend 1 SP on your turn to change stance; only one stance active at a time.',
-			effects: [
+			benefits: ['Learn 2 Monk Stances'],
+			choices: [
 				{
-					type: 'GRANT_CHOICE',
-					target: 'monk_stances',
-					value: 2,
-					userChoice: {
-						prompt: 'Choose 2 Monk Stances',
-						options: [
-							'Bear Stance (Big Hits)',
-							'Bull Stance (Knockback)',
-							'Cobra Stance (Counter)',
-							'Gazelle Stance (Nimble)',
-							'Mantis Stance (Grapple)',
-							'Mongoose Stance (Multi)',
-							'Scorpion Stance (Quick Strike)',
-							'Turtle Stance (Sturdy)',
-							'Wolf Stance (Hit & Run)'
-						]
-					}
+					id: 'initial_stances',
+					prompt: 'Choose 2 Monk Stances',
+					count: 2,
+					options: [
+						{
+							id: 'bear_stance',
+							name: 'Bear Stance',
+							description: 'Big Hits - Your attacks deal massive damage with overwhelming force.'
+						},
+						{
+							id: 'bull_stance',
+							name: 'Bull Stance',
+							description: 'Knockback - Drive enemies backward with powerful strikes.'
+						},
+						{
+							id: 'cobra_stance',
+							name: 'Cobra Stance',
+							description: 'Counter - Strike back at opponents who dare attack you.'
+						},
+						{
+							id: 'gazelle_stance',
+							name: 'Gazelle Stance',
+							description: 'Nimble - Move with exceptional grace and speed.'
+						},
+						{
+							id: 'mantis_stance',
+							name: 'Mantis Stance',
+							description: 'Grapple - Seize and control your opponents with superior technique.'
+						},
+						{
+							id: 'mongoose_stance',
+							name: 'Mongoose Stance',
+							description: 'Multi - Execute rapid combinations of attacks.'
+						},
+						{
+							id: 'scorpion_stance',
+							name: 'Scorpion Stance',
+							description: 'Quick Strike - Attack with blinding speed before opponents can react.'
+						},
+						{
+							id: 'turtle_stance',
+							name: 'Turtle Stance',
+							description: 'Sturdy - Become an immovable fortress of defense.'
+						},
+						{
+							id: 'wolf_stance',
+							name: 'Wolf Stance',
+							description: 'Hit & Run - Strike swiftly and escape before retaliation.'
+						}
+					]
 				}
 			]
 		},

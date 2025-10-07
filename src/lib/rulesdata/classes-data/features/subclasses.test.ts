@@ -67,7 +67,10 @@ describe('Class Subclass Availability at Level 3', () => {
 			className: 'Champion',
 			classDefinition: championClass,
 			level: 3,
-			expectedSubclasses: [] // Currently no subclasses defined
+			expectedSubclasses: [
+				{ name: 'Hero' },
+				{ name: 'Sentinel' }
+			]
 		},
 		{
 			classId: 'cleric',
@@ -165,7 +168,8 @@ describe('Class Subclass Availability at Level 3', () => {
 			classDefinition: wizardClass,
 			level: 3,
 			expectedSubclasses: [
-				{ name: 'Portal Mage' }
+				{ name: 'Portal Mage' },
+				{ name: 'Witch' }
 			]
 		}
 	];

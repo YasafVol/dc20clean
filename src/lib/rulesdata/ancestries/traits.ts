@@ -24,7 +24,7 @@ export const traitsData: Trait[] = [
 		effects: [
 			{
 				type: 'INCREASE_SKILL_MASTERY_CAP',
-				target: 'chosen_skill',
+				count: 1,
 				value: 1
 			},
 			{
@@ -57,7 +57,7 @@ export const traitsData: Trait[] = [
 		effects: [
 			{
 				type: 'INCREASE_TRADE_MASTERY_CAP',
-				target: 'chosen_trade',
+				count: 1,
 				value: 1
 			},
 			{
@@ -477,7 +477,7 @@ export const traitsData: Trait[] = [
 		effects: [
 			{
 				type: 'INCREASE_TRADE_MASTERY_CAP',
-				target: 'chosen_trade',
+				count: 1,
 				value: 1
 			}
 		]
@@ -637,7 +637,7 @@ export const traitsData: Trait[] = [
 		effects: [
 			{
 				type: 'INCREASE_TRADE_MASTERY_CAP',
-				target: 'chosen_trade',
+				count: 1,
 				value: 1
 			}
 		]
@@ -923,7 +923,7 @@ export const traitsData: Trait[] = [
 		effects: [
 			{
 				type: 'INCREASE_TRADE_MASTERY_CAP',
-				target: 'chosen_trade',
+				count: 1,
 				value: 1
 			}
 		]
@@ -2301,7 +2301,7 @@ export const traitsData: Trait[] = [
 		effects: [
 			{
 				type: 'INCREASE_TRADE_MASTERY_CAP',
-				target: 'chosen_trade',
+				count: 1,
 				value: 1
 			}
 		]

@@ -427,12 +427,20 @@ describe('Ancestry & Trait System', () => {
 					expect(effect.type).toBeDefined();
 					expect(typeof effect.type).toBe('string');
 
-					// Every effect must have a target
-					if (!effect.target) {
-						console.error(`❌ Trait "${trait.name}" (${trait.id}) has effect type "${effect.type}" without target`);
+					// Most effects must have a target, but INCREASE_*_MASTERY_CAP use 'count' instead
+					const masteryCapEffects = ['INCREASE_SKILL_MASTERY_CAP', 'INCREASE_TRADE_MASTERY_CAP'];
+					if (masteryCapEffects.includes(effect.type)) {
+						// These effects use 'count' field instead of 'target'
+						expect((effect as any).count).toBeDefined();
+						expect(typeof (effect as any).count).toBe('number');
+					} else {
+						// All other effects must have a target
+						if (!effect.target) {
+							console.error(`❌ Trait "${trait.name}" (${trait.id}) has effect type "${effect.type}" without target`);
+						}
+						expect(effect.target).toBeDefined();
+						expect(typeof effect.target).toBe('string');
 					}
-					expect(effect.target).toBeDefined();
-					expect(typeof effect.target).toBe('string');
 
 					// Every effect must have a value (can be various types)
 					expect(effect.value).toBeDefined();

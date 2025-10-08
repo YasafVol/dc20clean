@@ -123,12 +123,102 @@ Note: Class features can modify ancestry budgets via effects (e.g., Cleric “An
 
 ---
 
-## 6 Future Evolution
+## 6 Testing 🧪
 
-- **Effect Processor** integration will further centralise logic—update §3 Step 4 when landed.
-- **Schema-driven forms** may auto-render trait editors using this document’s file maps.
+### 6.1 Test Suite
+
+**Location**: `src/lib/rulesdata/ancestries/ancestries.test.ts`
+
+**Coverage**: 34 comprehensive tests validating:
+
+#### Data Structure & Schema Compliance
+- ✅ Ancestry data loads successfully
+- ✅ All required fields present (`id`, `name`, `description`, `rulesSource`, `defaultTraitIds`, `expandedTraitIds`)
+- ✅ Unique ancestry IDs and names
+- ✅ **Non-empty trait lists** (every ancestry must have at least one trait)
+- ✅ Valid `rulesSource` values
+- ✅ Trait data loads successfully
+- ✅ All required trait fields present (`id`, `name`, `description`, `cost`, `effects`)
+- ✅ Unique trait IDs
+- ✅ Valid cost values (numeric)
+- ✅ Non-empty effects arrays
+
+#### ID Format & Naming Conventions
+- ✅ `ancestry_trait` naming convention followed
+- ✅ `snake_case` for ancestry IDs
+- ✅ Trait ID prefixes match ancestry IDs
+
+#### Trait-to-Ancestry Relationships
+- ✅ All referenced traits exist in `defaultTraitIds`
+- ✅ All referenced traits exist in `expandedTraitIds`
+- ✅ No duplicates between default and expanded
+- ✅ No duplicate trait IDs within lists
+- ✅ **Zero orphaned traits** (all traits referenced by at least one ancestry)
+
+#### Effect System Validation
+- ✅ Only valid effect types used
+- ✅ Valid target values for `MODIFY_STAT` effects
+- ✅ Numeric values for numeric effect types
+- ✅ Proper `userChoice` structure for choice-based effects
+- ✅ **All effects have required `target` field**
+
+#### Cost & Budget Validation
+- ✅ Default trait costs calculate correctly (should equal 5 for most ancestries)
+- ✅ Valid costs for negative traits (negative values, `isNegative: true`)
+- ✅ Consistent cost structure across all traits
+
+#### Schema Compliance
+- ✅ Valid optional fields when present
+- ✅ Valid effect structure for all effects
+
+#### Data Coverage Statistics
+- ✅ Reports total ancestry count (17)
+- ✅ Reports total trait count (239)
+- ✅ Reports trait distribution per ancestry
+- ✅ Reports effect type usage distribution
+- ✅ Reports cost distribution
+
+### 6.2 Running Tests
+
+```bash
+# Run ancestry tests only
+npm run test:unit -- ancestries.test.ts
+
+# Run all unit tests
+npm run test:unit
+
+# Run with UI (useful for debugging)
+npm run test:unit -- ancestries.test.ts --ui
+```
+
+### 6.3 Test-Driven Data Quality
+
+The test suite enforces strict data quality rules:
+
+- **No placeholder ancestries**: Every ancestry must have traits defined
+- **No orphaned traits**: Every trait must be referenced by at least one ancestry
+- **No missing references**: All trait IDs in ancestry lists must exist
+- **Strict schema**: All effects must have `type`, `target`, and `value` fields
+- **Naming conventions**: IDs must follow `ancestry_trait` pattern
+
+### 6.4 When Tests Fail
+
+| Test Failure | Common Causes | Fix |
+|-------------|---------------|-----|
+| "should have non-empty trait lists" | Added ancestry with empty trait arrays | Add traits or remove placeholder ancestry |
+| "should reference only existing traits" | Typo in trait ID, or trait not defined | Fix ID or create the missing trait |
+| "should not have orphaned traits" | Trait defined but not referenced by any ancestry | Add to an ancestry's trait list or remove trait |
+| "should have valid effect structure" | Missing `target` field in effect | Add `target` field (not `count` or `options`) |
+| "should follow ancestry_trait naming" | Trait ID doesn't match `ancestry_trait` pattern | Rename trait ID to match pattern |
 
 ---
 
-> _Last updated: 2025-01-15_  
+## 7 Future Evolution
+
+- **Effect Processor** integration will further centralise logic—update §3 Step 4 when landed.
+- **Schema-driven forms** may auto-render trait editors using this document's file maps.
+
+---
+
+> _Last updated: 2025-10-08_  
 > Maintainer: @DC20Clean-Team

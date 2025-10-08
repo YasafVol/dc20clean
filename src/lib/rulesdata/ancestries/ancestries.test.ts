@@ -67,16 +67,16 @@ describe('Ancestry & Trait System', () => {
 			expect(uniqueNames.size).toBe(names.length);
 		});
 
-		it('should have non-empty trait lists', () => {
-			ancestriesData.forEach((ancestry: Ancestry) => {
-				const totalTraits = ancestry.defaultTraitIds.length + ancestry.expandedTraitIds.length;
-				if (totalTraits === 0) {
-					console.warn(`⚠️  ${ancestry.name} has NO traits defined (placeholder ancestry)`);
-				}
-				// Allow 0 traits for placeholder ancestries like Penguinborn
-				expect(totalTraits).toBeGreaterThanOrEqual(0);
-			});
+	it('should have non-empty trait lists', () => {
+		ancestriesData.forEach((ancestry: Ancestry) => {
+			const totalTraits = ancestry.defaultTraitIds.length + ancestry.expandedTraitIds.length;
+			if (totalTraits === 0) {
+				console.error(`❌ ${ancestry.name} has NO traits defined`);
+			}
+			// Every ancestry must have at least one trait (default or expanded)
+			expect(totalTraits).toBeGreaterThan(0);
 		});
+	});
 
 		it('should have valid rulesSource values', () => {
 			const validSources = ['DC20Beta0.95', 'DC20Beta0.9', 'Custom', 'Homebrew'];

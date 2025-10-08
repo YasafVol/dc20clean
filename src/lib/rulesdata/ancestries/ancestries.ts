@@ -335,15 +335,6 @@ export const ancestriesData: Ancestry[] = [
 		}
 	},
 	{
-		id: 'penguinborn',
-		name: 'Penguinborn',
-		description:
-			'Penguinborn are adaptable creatures, at home in both frigid waters and bustling crowds.',
-		rulesSource: 'DC20Magazine10',
-		defaultTraitIds: [],
-		expandedTraitIds: []
-	},
-	{
 		id: 'gremlin',
 		name: 'Gremlin',
 		description: 'Gremlins are small, sneaky creatures that thrive on surprise and intimidation.',

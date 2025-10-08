@@ -42,7 +42,6 @@ export const wizardClass: ClassDefinition = {
 					count: 1,
 					options: [
 						{
-							id: 'fire_flames',
 							name: 'Fire & Flames',
 							description: 'Specialize in fire magic and flame manipulation.',
 							effects: [
@@ -57,7 +56,6 @@ export const wizardClass: ClassDefinition = {
 							]
 						},
 						{
-							id: 'ice_illusions',
 							name: 'Ice & Illusions',
 							description: 'Specialize in ice magic and illusion spells.',
 							effects: [
@@ -72,7 +70,6 @@ export const wizardClass: ClassDefinition = {
 							]
 						},
 						{
-							id: 'lightning_teleportation',
 							name: 'Lightning & Teleportation',
 							description: 'Specialize in lightning magic and teleportation spells.',
 							effects: [
@@ -87,7 +84,6 @@ export const wizardClass: ClassDefinition = {
 							]
 						},
 						{
-							id: 'psychic_enchantment',
 							name: 'Psychic & Enchantment',
 							description: 'Specialize in psychic magic and enchantment spells.',
 							effects: [
@@ -230,7 +226,6 @@ export const wizardClass: ClassDefinition = {
 							count: 1,
 							options: [
 								{
-									id: 'bewitching_hex',
 									name: 'Bewitching Hex',
 									description: '(1 MP) The target becomes Charmed by you for the duration.',
 									effects: [
@@ -242,7 +237,6 @@ export const wizardClass: ClassDefinition = {
 									]
 								},
 								{
-									id: 'reaping_life_hex',
 									name: 'Reaping/Life Hex',
 									description:
 										'(1 MP) The target takes 1 True damage and you regain 1 HP at the end of each of its turns for the duration.',
@@ -255,7 +249,6 @@ export const wizardClass: ClassDefinition = {
 									]
 								},
 								{
-									id: 'vermin_hex',
 									name: 'Vermin Hex',
 									description:
 										"(1 MP) The target can't speak and its Size decreases by 1 at the end of each of its turns until it's tiny.",

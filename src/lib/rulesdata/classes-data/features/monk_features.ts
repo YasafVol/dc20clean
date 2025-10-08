@@ -102,7 +102,6 @@ export const monkClass: ClassDefinition = {
 			levelGained: 1,
 			description:
 				'You learn 2 Monk Stances. Start of turn: freely enter or swap stances. Spend 1 SP on your turn to change stance; only one stance active at a time.',
-			benefits: ['Learn 2 Monk Stances'],
 			choices: [
 				{
 					id: 'initial_stances',
@@ -110,49 +109,49 @@ export const monkClass: ClassDefinition = {
 					count: 2,
 					options: [
 						{
-							id: 'bear_stance',
 							name: 'Bear Stance',
-							description: 'Big Hits - Your attacks deal massive damage with overwhelming force.'
+							description: 'Big Hits - Your attacks deal massive damage with overwhelming force.',
+							effects: []
 						},
 						{
-							id: 'bull_stance',
 							name: 'Bull Stance',
-							description: 'Knockback - Drive enemies backward with powerful strikes.'
+							description: 'Knockback - Drive enemies backward with powerful strikes.',
+							effects: []
 						},
 						{
-							id: 'cobra_stance',
 							name: 'Cobra Stance',
-							description: 'Counter - Strike back at opponents who dare attack you.'
+							description: 'Counter - Strike back at opponents who dare attack you.',
+							effects: []
 						},
 						{
-							id: 'gazelle_stance',
 							name: 'Gazelle Stance',
-							description: 'Nimble - Move with exceptional grace and speed.'
+							description: 'Nimble - Move with exceptional grace and speed.',
+							effects: []
 						},
 						{
-							id: 'mantis_stance',
 							name: 'Mantis Stance',
-							description: 'Grapple - Seize and control your opponents with superior technique.'
+							description: 'Grapple - Seize and control your opponents with superior technique.',
+							effects: []
 						},
 						{
-							id: 'mongoose_stance',
 							name: 'Mongoose Stance',
-							description: 'Multi - Execute rapid combinations of attacks.'
+							description: 'Multi - Execute rapid combinations of attacks.',
+							effects: []
 						},
 						{
-							id: 'scorpion_stance',
 							name: 'Scorpion Stance',
-							description: 'Quick Strike - Attack with blinding speed before opponents can react.'
+							description: 'Quick Strike - Attack with blinding speed before opponents can react.',
+							effects: []
 						},
 						{
-							id: 'turtle_stance',
 							name: 'Turtle Stance',
-							description: 'Sturdy - Become an immovable fortress of defense.'
+							description: 'Sturdy - Become an immovable fortress of defense.',
+							effects: []
 						},
 						{
-							id: 'wolf_stance',
 							name: 'Wolf Stance',
-							description: 'Hit & Run - Strike swiftly and escape before retaliation.'
+							description: 'Hit & Run - Strike swiftly and escape before retaliation.',
+							effects: []
 						}
 					]
 				}

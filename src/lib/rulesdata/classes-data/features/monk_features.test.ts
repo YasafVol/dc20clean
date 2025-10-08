@@ -20,11 +20,12 @@ describe('Monk Martial Stances', () => {
 		// Verify we have at least 3 stance options (must have at least count+1 to have meaningful choice)
 		expect(stanceChoice?.options.length).toBeGreaterThanOrEqual(3);
 		
-		// Verify all stance options have required fields
+		// Verify all stance options have required fields (name, description, effects)
 		stanceChoice?.options.forEach(option => {
-			expect(option.id).toBeDefined();
 			expect(option.name).toBeDefined();
 			expect(option.description).toBeDefined();
+			expect(option.effects).toBeDefined();
+			expect(Array.isArray(option.effects)).toBe(true);
 		});
 	});
 
@@ -35,22 +36,22 @@ describe('Monk Martial Stances', () => {
 		// Verify we have all 9 traditional monk stances
 		expect(stanceChoice?.options.length).toBe(9);
 		
-		const expectedStances = [
-			'bear_stance',
-			'bull_stance',
-			'cobra_stance',
-			'gazelle_stance',
-			'mantis_stance',
-			'mongoose_stance',
-			'scorpion_stance',
-			'turtle_stance',
-			'wolf_stance'
+		const expectedStanceNames = [
+			'Bear Stance',
+			'Bull Stance',
+			'Cobra Stance',
+			'Gazelle Stance',
+			'Mantis Stance',
+			'Mongoose Stance',
+			'Scorpion Stance',
+			'Turtle Stance',
+			'Wolf Stance'
 		];
 		
-		const actualStanceIds = stanceChoice?.options.map(o => o.id) || [];
+		const actualStanceNames = stanceChoice?.options.map(o => o.name) || [];
 		
-		expectedStances.forEach(expectedId => {
-			expect(actualStanceIds).toContain(expectedId);
+		expectedStanceNames.forEach(expectedName => {
+			expect(actualStanceNames).toContain(expectedName);
 		});
 	});
 });

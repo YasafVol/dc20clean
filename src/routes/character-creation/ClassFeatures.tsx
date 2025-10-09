@@ -140,15 +140,20 @@ function ClassFeatures() {
 		return null; // Don't render anything when no class is selected
 	}
 
-	// Get level 1 features
-	const level1Features = selectedClassFeatures.coreFeatures.filter(
-		(feature) => feature.levelGained === 1
-	);
+	// Get features up to current level, grouped by level
+	const featuresByLevel: Record<number, typeof selectedClassFeatures.coreFeatures> = {};
+	for (let level = 1; level <= state.level; level++) {
+		featuresByLevel[level] = selectedClassFeatures.coreFeatures.filter(
+			(feature) => feature.levelGained === level
+		);
+	}
 
-	// Get all feature choices from level 1 features (excluding in-game tactical choices)
+	// Get all feature choices from all features up to current level (excluding in-game tactical choices)
 	const inGameChoices = ['Divine Blessing', "Commander's Call", 'Debilitating Strike'];
 	const featureChoices: any[] = [];
-	level1Features.forEach((feature) => {
+	for (let level = 1; level <= state.level; level++) {
+		const levelFeatures = featuresByLevel[level] || [];
+		levelFeatures.forEach((feature) => {
 		// Skip features that are in-game tactical choices, not character creation choices
 		if (feature.choices && !inGameChoices.includes(feature.featureName)) {
 			feature.choices.forEach((choice, choiceIndex) => {
@@ -255,7 +260,8 @@ function ClassFeatures() {
 				});
 			});
 		}
-	});
+		});
+	}
 
 	// Add martial choices based on class table and features
 	const level1Data = selectedClass.levelProgression?.[0]; // Level 1 data from table
@@ -266,9 +272,10 @@ function ClassFeatures() {
 		// Add class-specific feature bonuses for techniques only
 		let featureTechniques = 0;
 
-		// Parse feature descriptions to extract technique bonuses
-		selectedClassFeatures.coreFeatures.forEach((feature) => {
-			if (feature.levelGained === 1) {
+		// Parse feature descriptions to extract technique bonuses from all features up to current level
+		for (let level = 1; level <= state.level; level++) {
+			const levelFeatures = featuresByLevel[level] || [];
+			levelFeatures.forEach((feature) => {
 				// Check main feature description
 				const description = feature.description.toLowerCase();
 
@@ -288,8 +295,8 @@ function ClassFeatures() {
 						featureTechniques += parseInt(benefitTechniqueMatch[1]);
 					}
 				});
-			}
-		});
+			});
+		}
 
 		const totalTechniques = tableTechniques + featureTechniques;
 
@@ -348,42 +355,45 @@ function ClassFeatures() {
 			});
 		}
 
-		// Check for level 1 features that require spell school choices (like Wizard's Spell School Initiate)
-		level1Features.forEach((feature) => {
-			const description = feature.description.toLowerCase();
-			// Only include features that are character creation choices, not in-game tactical choices
-			const isCharacterCreationChoice =
-				(description.includes('choose a spell school') ||
-					description.includes('choose 1 spell school')) &&
-				// Exclude in-game features like Arcane Sigil
-				!description.includes('when you create') &&
-				!description.includes('when you cast') &&
-				!description.includes('you can spend') &&
-				// Include features that are clearly character creation (like training/specialization)
-				(description.includes('training') ||
-					description.includes('specialize') ||
-					description.includes('initiate') ||
-					description.includes('you gain the following benefits'));
+		// Check for features at all levels that require spell school choices (like Wizard's Spell School Initiate)
+		for (let level = 1; level <= state.level; level++) {
+			const levelFeatures = featuresByLevel[level] || [];
+			levelFeatures.forEach((feature) => {
+				const description = feature.description.toLowerCase();
+				// Only include features that are character creation choices, not in-game tactical choices
+				const isCharacterCreationChoice =
+					(description.includes('choose a spell school') ||
+						description.includes('choose 1 spell school')) &&
+					// Exclude in-game features like Arcane Sigil
+					!description.includes('when you create') &&
+					!description.includes('when you cast') &&
+					!description.includes('you can spend') &&
+					// Include features that are clearly character creation (like training/specialization)
+					(description.includes('training') ||
+						description.includes('specialize') ||
+						description.includes('initiate') ||
+						description.includes('you gain the following benefits'));
 
-			if (isCharacterCreationChoice) {
-				const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_school`;
+				if (isCharacterCreationChoice) {
+					const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_school`;
 
-				// Only add if not already added
-				if (!featureChoices.some((choice) => choice.id === choiceId)) {
-					const availableSchools = Object.values(SpellSchool);
-					featureChoices.push({
-						id: choiceId,
-						prompt: `${feature.featureName}: Choose a Spell School`,
-						type: 'select_one',
-						options: availableSchools.map((school) => ({
-							value: school,
-							label: school,
-							description: `Specialize in the ${school} school of magic`
-						}))
-					});
+					// Only add if not already added
+					if (!featureChoices.some((choice) => choice.id === choiceId)) {
+						const availableSchools = Object.values(SpellSchool);
+						featureChoices.push({
+							id: choiceId,
+							prompt: `${feature.featureName}: Choose a Spell School`,
+							type: 'select_one',
+							options: availableSchools.map((school) => ({
+								value: school,
+								label: school,
+								description: `Specialize in the ${school} school of magic`
+							}))
+						});
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	return (
@@ -606,25 +616,31 @@ function ClassFeatures() {
 				</StyledSection>
 			)}
 
-			<StyledSection>
-				<StyledSectionTitle>Level 1 Features</StyledSectionTitle>
-				{level1Features.map((feature, index) => (
-					<StyledCard key={index}>
-						<StyledCardTitle>{feature.featureName}</StyledCardTitle>
-						<StyledCardDescription>{feature.description}</StyledCardDescription>
-						{feature.benefits && (
-							<StyledBenefitsList>
-								{feature.benefits.map((benefit, benefitIndex) => (
-									<StyledBenefit key={benefitIndex}>
-										<StyledBenefitName>{benefit.name}</StyledBenefitName>
-										<StyledBenefitDescription>{benefit.description}</StyledBenefitDescription>
-									</StyledBenefit>
-								))}
-							</StyledBenefitsList>
-						)}
-					</StyledCard>
+			{/* Class Features - Grouped by Level */}
+			{Object.entries(featuresByLevel)
+				.sort(([a], [b]) => Number(a) - Number(b))
+				.filter(([, features]) => features.length > 0)
+				.map(([level, features]) => (
+					<StyledSection key={level}>
+						<StyledSectionTitle>Level {level} Features</StyledSectionTitle>
+						{features.map((feature, index) => (
+							<StyledCard key={index}>
+								<StyledCardTitle>{feature.featureName}</StyledCardTitle>
+								<StyledCardDescription>{feature.description}</StyledCardDescription>
+								{feature.benefits && (
+									<StyledBenefitsList>
+										{feature.benefits.map((benefit, benefitIndex) => (
+											<StyledBenefit key={benefitIndex}>
+												<StyledBenefitName>{benefit.name}</StyledBenefitName>
+												<StyledBenefitDescription>{benefit.description}</StyledBenefitDescription>
+											</StyledBenefit>
+										))}
+									</StyledBenefitsList>
+								)}
+							</StyledCard>
+						))}
+					</StyledSection>
 				))}
-			</StyledSection>
 
 			{featureChoices.length > 0 && (
 				<StyledSection>

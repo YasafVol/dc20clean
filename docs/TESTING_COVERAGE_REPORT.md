@@ -1,17 +1,18 @@
 # Testing Coverage Report
 
-**Generated:** October 8, 2025  
+**Generated:** October 9, 2025  
 **Repository:** DC20 Character Builder
 
 ## Executive Summary
 
 The codebase has **limited test coverage** with approximately:
-- **10.1%** unit test coverage for `src/lib/` (15 test files for 149 source files)
+- **10.7%** unit test coverage for `src/lib/` (16 test files for 149 source files)
 - **2.1%** component test coverage for `src/routes/` (2 test files for 95 component files)
 - **10 E2E test suites** covering critical user flows
 
 ### Recent Additions ✨
 - **Ancestry & Trait System**: 34 comprehensive tests validating all 17 ancestries and 239 traits
+- **Multiclass System**: 31 comprehensive tests validating all 6 tiers, prerequisites, and helpers
 
 ### Test Infrastructure
 - **Unit Testing:** Vitest with browser and node test projects
@@ -41,6 +42,7 @@ The codebase has **limited test coverage** with approximately:
   - Multiple classes (barbarian, cleric, wizard, rogue, monk)
 - ✅ **`monk_features.test.ts`** - Monk stance selection validation
 - ✅ **`subclasses.test.ts`** - Subclass feature validation
+- ✅ **`multiclass.test.ts`** - Multiclass talent system validation (31 tests)
 
 #### Data & Services
 - ✅ **`trades.spec.ts`** - Trades and knowledge trades validation
@@ -138,7 +140,7 @@ The codebase has **limited test coverage** with approximately:
 #### Progression & Leveling
 - ❌ `progression/levelCaps.ts` - Level cap logic
 - ❌ Leveling up flow
-- ❌ Multiclassing (if supported)
+- ✅ **`multiclass.test.ts`** - Multiclass system (31 tests)
 
 #### Data Schemas
 - ❌ `schemas/character.schema.ts` - Character schema validation
@@ -446,12 +448,14 @@ The DC20 Character Builder has **foundational testing** in place with good E2E c
 
 ## Appendix: Test File Inventory
 
-### Unit Tests (14 files)
+### Unit Tests (16 files)
 ```
 src/lib/hooks/useEnhancedCharacterCalculation.spec.ts
+src/lib/rulesdata/ancestries/ancestries.test.ts
 src/lib/rulesdata/classes-data/classProgressionResolver.test.ts
 src/lib/rulesdata/classes-data/features/monk_features.test.ts
 src/lib/rulesdata/classes-data/features/subclasses.test.ts
+src/lib/rulesdata/progression/multiclass.test.ts
 src/lib/rulesdata/rulesdata.spec.ts
 src/lib/rulesdata/trades.spec.ts
 src/lib/services/denormalizeMastery.spec.ts

@@ -63,7 +63,7 @@ import { attributesData } from '../rulesdata/attributes';
 import { skillsData } from '../rulesdata/skills';
 import { tradesData } from '../rulesdata/trades';
 import type { ClassDefinition } from '../rulesdata/schemas/character.schema';
-import { CHARACTER_PATHS } from '../rulesdata/paths/paths.data';
+import { CHARACTER_PATHS } from '../rulesdata/progression/paths/paths.data';
 
 /**
  * Helper to aggregate path point benefits based on allocations

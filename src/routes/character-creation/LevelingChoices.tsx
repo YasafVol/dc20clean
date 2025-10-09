@@ -2,19 +2,11 @@ import { useState, useEffect } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { resolveClassProgression } from '../../lib/rulesdata/classes-data/classProgressionResolver';
 import { allTalents } from '../../lib/rulesdata/classes-data/talents/talent.loader';
-import { CHARACTER_PATHS } from '../../lib/rulesdata/paths/paths.data';
+import { CHARACTER_PATHS } from '../../lib/rulesdata/progression/paths/paths.data';
+import { MULTICLASS_TIERS, type MulticlassTier } from '../../lib/rulesdata/progression/multiclass';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
-import type { ClassFeature, FeatureBenefit } from '../../lib/rulesdata/schemas/character.schema';
 import styled from 'styled-components';
-import {
-	FeatureCard,
-	FeatureDescription,
-	FeatureLevel,
-	BenefitItem,
-	BenefitName,
-	BenefitDescription
-} from './styles/shared/FeatureDisplay.styles';
 
 // Styled Components
 const Container = styled.div`
@@ -412,26 +404,6 @@ const PathSpecialRulesText = styled.div`
 
 // Feature Display - using shared styled components from FeatureDisplay.styles.ts
 // Kept local: FeatureName (different color scheme for Leveling stage)
-const FeatureName = styled.h4`
-	font-family: 'Cinzel', serif;
-	font-size: 1.1rem;
-	color: #6495ed;
-	margin: 0 0 0.25rem 0;
-`;
-
-// Alias for shared BenefitsList component
-const FeatureBenefits = styled.div`
-	margin-top: 0.75rem;
-	padding-top: 0.75rem;
-	border-top: 1px solid rgba(255, 255, 255, 0.1);
-`;
-
-const InfoText = styled.p`
-	font-family: 'Urbanist', sans-serif;
-	font-size: 0.95rem;
-	color: rgba(255, 255, 255, 0.7);
-	line-height: 1.4;
-`;
 
 const EmptyState = styled.div`
 	text-align: center;
@@ -450,8 +422,7 @@ function LevelingChoices() {
 	const [pathPoints, setPathPoints] = useState(state.pathPointAllocations || { martial: 0, spellcasting: 0 });
 	const [resolvedProgression, setResolvedProgression] = useState<any>(null);
 	
-	// Multiclass state - now supports all 6 tiers
-	type MulticlassTier = 'novice' | 'adept' | 'expert' | 'master' | 'grandmaster' | 'legendary';
+	// Multiclass state - now supports all 6 tiers (type imported from multiclass.ts)
 	const [selectedMulticlassOption, setSelectedMulticlassOption] = useState<MulticlassTier | null>(null);
 	const [selectedMulticlassClass, setSelectedMulticlassClass] = useState<string>('');
 	const [selectedMulticlassFeature, setSelectedMulticlassFeature] = useState<string>('');
@@ -597,74 +568,8 @@ function LevelingChoices() {
 		return true;
 	};
 
-	// Define multiclass tiers with their requirements and feature levels
-	const multiclassTiers = [
-		{ 
-			id: 'novice' as MulticlassTier, 
-			name: 'Novice Multiclass', 
-			levelRequired: 2, 
-			description: 'You can choose a 1st Level Class Feature from any Class.',
-			targetLevel: 1,
-			includeSubclass: false,
-			minClassFeatures: 0, // No prerequisite
-			minSubclassFeatures: 0
-		},
-		{ 
-			id: 'adept' as MulticlassTier, 
-			name: 'Adept Multiclass', 
-			levelRequired: 4, 
-			description: 'You can choose a 2nd Level Class Feature from any Class.',
-			targetLevel: 2,
-			includeSubclass: false,
-			minClassFeatures: 0, // No prerequisite
-			minSubclassFeatures: 0
-		},
-		{ 
-			id: 'expert' as MulticlassTier, 
-			name: 'Expert Multiclass', 
-			levelRequired: 7, 
-			description: 'Choose a 5th Level Class Feature OR a 3rd Level Subclass Feature from a class you have at least 1 Class Feature from.',
-			targetLevel: 5,
-			includeSubclass: true,
-			subclassLevel: 3,
-			minClassFeatures: 1, // Must have 1+ class features
-			minSubclassFeatures: 0
-		},
-		{ 
-			id: 'master' as MulticlassTier, 
-			name: 'Master Multiclass', 
-			levelRequired: 10, 
-			description: 'Choose a 6th Level Subclass Feature from a Subclass you have at least 1 Subclass Feature from.',
-			targetLevel: 6,
-			includeSubclass: true,
-			subclassLevel: 6,
-			subclassOnly: true,
-			minClassFeatures: 0,
-			minSubclassFeatures: 1 // Must have 1+ subclass features
-		},
-		{ 
-			id: 'grandmaster' as MulticlassTier, 
-			name: 'Grandmaster Multiclass', 
-			levelRequired: 13, 
-			description: 'Choose an 8th Level Class Capstone Feature from any Class you have at least 2 Class Features from.',
-			targetLevel: 8,
-			includeSubclass: false,
-			minClassFeatures: 2, // Must have 2+ class features
-			minSubclassFeatures: 0
-		},
-		{ 
-			id: 'legendary' as MulticlassTier, 
-			name: 'Legendary Multiclass', 
-			levelRequired: 17, 
-			description: 'Choose a 9th Level Subclass Capstone Feature from any Subclass you have at least 2 Subclass Features from.',
-			targetLevel: 9,
-			includeSubclass: true,
-			subclassLevel: 9,
-			subclassOnly: true,
-			minClassFeatures: 0,
-			minSubclassFeatures: 2 // Must have 2+ subclass features
-		},
-	];
+	// Use multiclass tiers from centralized definition
+	const multiclassTiers = MULTICLASS_TIERS;
 
 	// Helper: Get classes that meet prerequisites for the selected tier
 	const getEligibleClasses = (): typeof classesData => {

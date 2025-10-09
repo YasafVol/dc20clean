@@ -530,6 +530,73 @@ function LevelingChoices() {
 		&& (!t.prerequisites?.level || state.level >= t.prerequisites.level)
 	);
 
+	// Helper: Count class features owned per class (for multiclass prerequisites)
+	// This counts features from the character's main class progression
+	const getOwnedClassFeatures = (targetClassId: string): number => {
+		if (!state.classId || !state.level) return 0;
+		
+		// If target class is the character's main class, count features from progression
+		if (targetClassId === state.classId && resolvedProgression) {
+			// Features unlocked from level 1 to current level
+			return resolvedProgression.unlockedFeatureIds?.length || 0;
+		}
+		
+		// TODO: Count multiclass features from other classes (stored in character state)
+		// For now, return 0 for other classes (will implement when multiclass effects are applied)
+		return 0;
+	};
+
+	// Helper: Count subclass features owned per subclass
+	const getOwnedSubclassFeatures = (targetClassId: string): number => {
+		if (!state.classId || !state.level) return 0;
+		
+		// If target class is the character's main class and they have a subclass
+		if (targetClassId === state.classId && state.selectedSubclass && resolvedProgression) {
+			// Count subclass features from progression
+			// Subclass features typically start at level 3
+			if (state.level >= 3) {
+				// Rough estimate: subclass features at levels 3, 6, 9, etc.
+				// TODO: Get exact count from resolved subclass features
+				const subclassLevels = [3, 6, 9, 12, 15, 18].filter(lvl => lvl <= state.level);
+				return subclassLevels.length;
+			}
+		}
+		
+		// TODO: Count multiclass subclass features (will implement when multiclass effects are applied)
+		return 0;
+	};
+
+	// Helper: Check if character meets prerequisites for a multiclass tier
+	const meetsMulticlassPrerequisites = (tier: typeof multiclassTiers[0]): boolean => {
+		// Level requirement (already checked in filter, but include for completeness)
+		if (state.level < tier.levelRequired) return false;
+
+		// No additional prerequisites for Novice and Adept
+		if (tier.minClassFeatures === 0 && tier.minSubclassFeatures === 0) return true;
+
+		// For Expert/Grandmaster: Need N class features from ANY class
+		if (tier.minClassFeatures > 0) {
+			// Check if character has enough features from their main class OR any multiclass
+			const mainClassFeatures = getOwnedClassFeatures(state.classId || '');
+			if (mainClassFeatures >= tier.minClassFeatures) return true;
+			
+			// TODO: Check multiclass feature counts when implemented
+			return false;
+		}
+
+		// For Master/Legendary: Need N subclass features from ANY subclass
+		if (tier.minSubclassFeatures > 0) {
+			// Check if character has enough subclass features
+			const mainSubclassFeatures = getOwnedSubclassFeatures(state.classId || '');
+			if (mainSubclassFeatures >= tier.minSubclassFeatures) return true;
+			
+			// TODO: Check multiclass subclass feature counts when implemented
+			return false;
+		}
+
+		return true;
+	};
+
 	// Define multiclass tiers with their requirements and feature levels
 	const multiclassTiers = [
 		{ 
@@ -538,7 +605,9 @@ function LevelingChoices() {
 			levelRequired: 2, 
 			description: 'You can choose a 1st Level Class Feature from any Class.',
 			targetLevel: 1,
-			includeSubclass: false
+			includeSubclass: false,
+			minClassFeatures: 0, // No prerequisite
+			minSubclassFeatures: 0
 		},
 		{ 
 			id: 'adept' as MulticlassTier, 
@@ -546,26 +615,32 @@ function LevelingChoices() {
 			levelRequired: 4, 
 			description: 'You can choose a 2nd Level Class Feature from any Class.',
 			targetLevel: 2,
-			includeSubclass: false
+			includeSubclass: false,
+			minClassFeatures: 0, // No prerequisite
+			minSubclassFeatures: 0
 		},
 		{ 
 			id: 'expert' as MulticlassTier, 
 			name: 'Expert Multiclass', 
 			levelRequired: 7, 
-			description: 'Choose a 5th Level Class Feature OR a 3rd Level Subclass Feature from a class you have at least 1 feature from.',
+			description: 'Choose a 5th Level Class Feature OR a 3rd Level Subclass Feature from a class you have at least 1 Class Feature from.',
 			targetLevel: 5,
 			includeSubclass: true,
-			subclassLevel: 3
+			subclassLevel: 3,
+			minClassFeatures: 1, // Must have 1+ class features
+			minSubclassFeatures: 0
 		},
 		{ 
 			id: 'master' as MulticlassTier, 
 			name: 'Master Multiclass', 
 			levelRequired: 10, 
-			description: 'Choose a 6th Level Subclass Feature from a subclass you have at least 1 feature from.',
+			description: 'Choose a 6th Level Subclass Feature from a Subclass you have at least 1 Subclass Feature from.',
 			targetLevel: 6,
 			includeSubclass: true,
 			subclassLevel: 6,
-			subclassOnly: true
+			subclassOnly: true,
+			minClassFeatures: 0,
+			minSubclassFeatures: 1 // Must have 1+ subclass features
 		},
 		{ 
 			id: 'grandmaster' as MulticlassTier, 
@@ -573,7 +648,9 @@ function LevelingChoices() {
 			levelRequired: 13, 
 			description: 'Choose an 8th Level Class Capstone Feature from any Class you have at least 2 Class Features from.',
 			targetLevel: 8,
-			includeSubclass: false
+			includeSubclass: false,
+			minClassFeatures: 2, // Must have 2+ class features
+			minSubclassFeatures: 0
 		},
 		{ 
 			id: 'legendary' as MulticlassTier, 
@@ -583,9 +660,42 @@ function LevelingChoices() {
 			targetLevel: 9,
 			includeSubclass: true,
 			subclassLevel: 9,
-			subclassOnly: true
+			subclassOnly: true,
+			minClassFeatures: 0,
+			minSubclassFeatures: 2 // Must have 2+ subclass features
 		},
 	];
+
+	// Helper: Get classes that meet prerequisites for the selected tier
+	const getEligibleClasses = (): typeof classesData => {
+		if (!selectedMulticlassOption) return classesData;
+		
+		const selectedTier = multiclassTiers.find(t => t.id === selectedMulticlassOption);
+		if (!selectedTier) return classesData;
+
+		// Novice and Adept: All classes available
+		if (selectedTier.minClassFeatures === 0 && selectedTier.minSubclassFeatures === 0) {
+			return classesData;
+		}
+
+		// Expert/Grandmaster: Filter to classes where character has N+ class features
+		if (selectedTier.minClassFeatures > 0) {
+			return classesData.filter(cls => {
+				const featuresOwned = getOwnedClassFeatures(cls.id);
+				return featuresOwned >= selectedTier.minClassFeatures;
+			});
+		}
+
+		// Master/Legendary: Filter to classes where character has N+ subclass features
+		if (selectedTier.minSubclassFeatures > 0) {
+			return classesData.filter(cls => {
+				const subclassFeaturesOwned = getOwnedSubclassFeatures(cls.id);
+				return subclassFeaturesOwned >= selectedTier.minSubclassFeatures;
+			});
+		}
+
+		return classesData;
+	};
 
 	// Handle multiclass class selection
 	const handleMulticlassClassChange = (classId: string) => {
@@ -766,12 +876,12 @@ function LevelingChoices() {
 				</Section>
 			)}
 
-			{/* Multiclass Talents - Only show tiers that meet level prerequisites */}
+			{/* Multiclass Talents - Only show tiers that meet all prerequisites */}
 			<Section>
 				<SectionTitle>Multiclass Talents</SectionTitle>
 				
 				{multiclassTiers
-					.filter(tier => state.level >= tier.levelRequired) // Only show available tiers
+					.filter(tier => state.level >= tier.levelRequired && meetsMulticlassPrerequisites(tier))
 					.map((tier) => {
 						const isSelected = selectedMulticlassOption === tier.id;
 						const isDisabled = totalTalentsUsed >= availableTalentPoints && !isSelected;
@@ -810,7 +920,7 @@ function LevelingChoices() {
 							onChange={(e) => handleMulticlassClassChange(e.target.value)}
 						>
 							<option value="">Choose a class...</option>
-							{classesData.map(cls => (
+							{getEligibleClasses().map(cls => (
 								<option key={cls.id} value={cls.id}>{cls.name}</option>
 							))}
 						</Dropdown>

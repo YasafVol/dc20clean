@@ -231,11 +231,11 @@ const MulticlassSubtext = styled.div`
 `;
 
 const MulticlassPickerContainer = styled.div`
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
 	margin-top: 1rem;
-	padding: 1rem;
+	padding: 1.5rem;
 	background: rgba(0, 0, 0, 0.2);
 	border-radius: 8px;
 `;
@@ -260,27 +260,70 @@ const Dropdown = styled.select`
 	}
 `;
 
-const FeatureDetailPanel = styled.div`
-	grid-column: 1 / -1;
-	padding: 1.5rem;
-	background: rgba(0, 0, 0, 0.4);
-	border: 1px solid rgba(212, 175, 55, 0.3);
-	border-radius: 8px;
+const FeatureCardContainer = styled.div`
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+	gap: 1rem;
 	margin-top: 1rem;
 `;
 
-const FeatureDetailTitle = styled.div`
-	font-family: 'Cinzel', serif;
-	font-size: 1.3rem;
-	color: #d4af37;
-	margin-bottom: 1rem;
+const MulticlassFeatureCard = styled.div<{ $selected: boolean }>`
+	background: ${props => props.$selected ? 'rgba(212, 175, 55, 0.2)' : 'rgba(0, 0, 0, 0.3)'};
+	border: 2px solid ${props => props.$selected ? '#d4af37' : 'rgba(212, 175, 55, 0.3)'};
+	border-radius: 8px;
+	padding: 1.25rem;
+	cursor: pointer;
+	transition: all 0.2s ease;
+
+	&:hover {
+		border-color: #d4af37;
+		background: rgba(212, 175, 55, 0.15);
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+	}
 `;
 
-const FeatureDetailDescription = styled.div`
+const FeatureCardTitle = styled.h4`
+	font-family: 'Cinzel', serif;
+	font-size: 1.1rem;
+	color: #d4af37;
+	margin: 0 0 0.5rem 0;
+	display: flex;
+	align-items: center;
+`;
+
+const FeatureCardLevel = styled.div`
 	font-family: 'Urbanist', sans-serif;
-	font-size: 1rem;
-	color: rgba(255, 255, 255, 0.9);
-	line-height: 1.6;
+	font-size: 0.85rem;
+	color: rgba(255, 255, 255, 0.6);
+	margin-bottom: 0.75rem;
+`;
+
+const FeatureCardDescription = styled.p`
+	font-family: 'Urbanist', sans-serif;
+	font-size: 0.9rem;
+	color: rgba(255, 255, 255, 0.8);
+	line-height: 1.5;
+	margin: 0;
+`;
+
+const SelectedBadge = styled.span`
+	display: inline-block;
+	background: #d4af37;
+	color: #1a1a1a;
+	padding: 0.25rem 0.75rem;
+	border-radius: 12px;
+	font-family: 'Urbanist', sans-serif;
+	font-size: 0.75rem;
+	font-weight: 600;
+	margin-left: 0.5rem;
+`;
+
+const InfoText = styled.p`
+	font-family: 'Urbanist', sans-serif;
+	font-size: 0.95rem;
+	color: rgba(255, 255, 255, 0.7);
+	line-height: 1.4;
 `;
 
 const PathContainer = styled.div`
@@ -426,7 +469,6 @@ function LevelingChoices() {
 	const [selectedMulticlassOption, setSelectedMulticlassOption] = useState<MulticlassTier | null>(null);
 	const [selectedMulticlassClass, setSelectedMulticlassClass] = useState<string>('');
 	const [selectedMulticlassFeature, setSelectedMulticlassFeature] = useState<string>('');
-	const [multiclassFeatureDetail, setMulticlassFeatureDetail] = useState<any>(null);
 
 	// Resolve progression when class/level changes
 	useEffect(() => {
@@ -606,39 +648,11 @@ function LevelingChoices() {
 	const handleMulticlassClassChange = (classId: string) => {
 		setSelectedMulticlassClass(classId);
 		setSelectedMulticlassFeature('');
-		setMulticlassFeatureDetail(null);
 	};
 
 	// Handle multiclass feature selection
 	const handleMulticlassFeatureChange = (featureId: string) => {
 		setSelectedMulticlassFeature(featureId);
-		
-		if (!featureId || !selectedMulticlassClass) {
-			setMulticlassFeatureDetail(null);
-			dispatch({ 
-				type: 'SET_MULTICLASS', 
-				option: selectedMulticlassOption, 
-				classId: selectedMulticlassClass || '', 
-				featureId: '' 
-			});
-			return;
-		}
-
-		// Load feature details
-		const selectedClass = classesData.find(c => c.id === selectedMulticlassClass);
-		if (selectedClass) {
-			const classFeatures = findClassByName(selectedClass.name);
-			if (classFeatures) {
-				const selectedTier = multiclassTiers.find(t => t.id === selectedMulticlassOption);
-				if (selectedTier) {
-					const targetLevel = selectedTier.targetLevel;
-					const feature = classFeatures.coreFeatures.find(
-						f => f.levelGained === targetLevel && f.featureName === featureId
-					);
-					setMulticlassFeatureDetail(feature);
-				}
-			}
-		}
 		
 		// Sync to store
 		dispatch({ 
@@ -662,7 +676,14 @@ function LevelingChoices() {
 		if (!selectedTier) return [];
 
 		const targetLevel = selectedTier.targetLevel;
-		return classFeatures.coreFeatures.filter(f => f.levelGained === targetLevel);
+		
+		// Filter out path-related features (Martial Path, Spellcaster Path)
+		const PATH_FEATURE_NAMES = ['Martial Path', 'Spellcaster Path', 'Path Points'];
+		
+		return classFeatures.coreFeatures.filter(f => 
+			f.levelGained === targetLevel && 
+			!PATH_FEATURE_NAMES.some(pathName => f.featureName.includes(pathName))
+		);
 	};
 
 	// Handle general talent increment/decrement (count-based)
@@ -802,13 +823,11 @@ function LevelingChoices() {
 										setSelectedMulticlassOption(null);
 										setSelectedMulticlassClass('');
 										setSelectedMulticlassFeature('');
-										setMulticlassFeatureDetail(null);
 									} else if (totalTalentsUsed < availableTalentPoints) {
 										// Select this tier
 										setSelectedMulticlassOption(tier.id);
 										setSelectedMulticlassClass('');
 										setSelectedMulticlassFeature('');
-										setMulticlassFeatureDetail(null);
 									}
 								}}
 							>
@@ -830,24 +849,31 @@ function LevelingChoices() {
 							))}
 						</Dropdown>
 
-						<Dropdown
-							value={selectedMulticlassFeature}
-							onChange={(e) => handleMulticlassFeatureChange(e.target.value)}
-							disabled={!selectedMulticlassClass}
-						>
-							<option value="">Choose a feature...</option>
-							{getMulticlassFeatures().map(feature => (
-								<option key={feature.featureName} value={feature.featureName}>
-									{feature.featureName}
-								</option>
-							))}
-						</Dropdown>
+						{selectedMulticlassClass && getMulticlassFeatures().length > 0 && (
+							<FeatureCardContainer>
+								{getMulticlassFeatures().map(feature => (
+									<MulticlassFeatureCard
+										key={feature.featureName}
+										$selected={selectedMulticlassFeature === feature.featureName}
+										onClick={() => handleMulticlassFeatureChange(feature.featureName)}
+									>
+										<FeatureCardTitle>
+											{feature.featureName}
+											{selectedMulticlassFeature === feature.featureName && (
+												<SelectedBadge>✓ Selected</SelectedBadge>
+											)}
+										</FeatureCardTitle>
+										<FeatureCardLevel>Level {feature.levelGained} Feature</FeatureCardLevel>
+										<FeatureCardDescription>{feature.description}</FeatureCardDescription>
+									</MulticlassFeatureCard>
+								))}
+							</FeatureCardContainer>
+						)}
 
-						{multiclassFeatureDetail && (
-							<FeatureDetailPanel>
-								<FeatureDetailTitle>{multiclassFeatureDetail.featureName}</FeatureDetailTitle>
-								<FeatureDetailDescription>{multiclassFeatureDetail.description}</FeatureDetailDescription>
-							</FeatureDetailPanel>
+						{selectedMulticlassClass && getMulticlassFeatures().length === 0 && (
+							<InfoText style={{ marginTop: '1rem', textAlign: 'center' }}>
+								No features available at this level for the selected class.
+							</InfoText>
 						)}
 					</MulticlassPickerContainer>
 				)}

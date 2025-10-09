@@ -194,7 +194,8 @@ The stage follows the UX patterns illustrated in `docs/assets/leveling_choices_w
 | **M3.14**   | **(Feature)** Implement level-up flow with respeccing support. | ✅ Done   | M3.13          |
 | **M3.15**   | **(Testing)** Manual test level-up flow and schema migration. | ❌ To Do   | M3.14          |
 | **M3.16**   | **(Bug Fixes)** Critical bug fixes: missing subclasses, monk stances, validation removal. | ✅ Done   | M3.14          |
-| **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.15, M3.16   |
+| **M3.17**   | **(Feature)** Complete multiclass talent system implementation (all 6 tiers, effects, subclass support). | ✅ Done   | M3.16          |
+| **HR-2.5**| **HUMAN REVIEW:** Walk Leveling Choices UI vs. wireframes before polish work.        | ⏳ Pending | M3.15, M3.17   |
 | **HR-3**  | **HUMAN REVIEW:** Confirm UI flow is intuitive and functional.                     | ⏳ Pending | M3.15, HR-2.5  |
 | **M4.1**  | **(E2E Test)** Create `levelup-wizard.e2e.spec.ts` to test a Level 3 Wizard creation.   | ❌ To Do   | HR-3           |
 | **M4.2**  | **(Manual Test)** Manually test character creation at levels 2 and 3.               | ❌ To Do   | M4.1           |
@@ -1333,3 +1334,183 @@ npm run test:unit -- monk_features.test.ts
 - Document all subclass expectations for future reference
 
 ---
+### 5.18. Milestone M3.17: Complete Multiclass Talent System
+
+**Status:** ✅ Done
+
+**Goal:** Implement full multiclass talent system with all 6 tiers, effects application, subclass feature support, and comprehensive testing.
+
+**Dependencies:** M3.16 (Bug Fixes)
+
+---
+
+#### Overview
+
+The multiclass talent system allows characters to gain features from other classes by spending talent points. This milestone implements the complete system from UI to effects to persistence.
+
+---
+
+#### Implemented Components
+
+**M3.17a - Multiclass System Refactoring** ✅
+- Extracted multiclass definitions to `src/lib/rulesdata/progression/multiclass.ts`
+- Created centralized `MULTICLASS_TIERS` constant (single source of truth)
+- Moved `src/lib/rulesdata/paths/` to `src/lib/rulesdata/progression/paths/`
+- Added helper functions: `getMulticlassTier()`, `getAvailableMulticlassTiers()`
+- Defined `MulticlassTier` and `MulticlassTierDefinition` types
+
+**M3.17b - UI Expansion for All 6 Tiers** ✅
+- Dynamic tier rendering based on character level
+- Tier-specific prerequisites displayed
+- Conditional visibility (only show available tiers)
+- All 6 tiers: Novice (L2), Adept (L4), Expert (L7), Master (L10), Grandmaster (L13), Legendary (L17)
+
+**M3.17c - Prerequisite Enforcement** ✅
+- Level requirements validated
+- Feature count prerequisites enforced
+- Helper functions: `getOwnedClassFeatures()`, `getOwnedSubclassFeatures()`, `meetsMulticlassPrerequisites()`
+- Class dropdown filtered by prerequisites (`getEligibleClasses()`)
+
+**M3.17d - Card-Based Feature Selection UI** ✅
+- Replaced dropdown with expandable feature cards
+- Each card shows: name, level, description, selected status
+- Hover effects and visual feedback
+- "✓ Selected" badge for chosen features
+- Filtered out path-related features (Martial/Spellcaster Path)
+
+**M3.17e - Effects Application** ✅
+- Integrated multiclass feature effects into calculator
+- Added to `aggregateAttributedEffects()` in `enhancedCharacterCalculator.ts`
+- Effects sourced as 'multiclass_feature' with proper attribution
+- Properly resolved alongside trait/talent/class effects
+
+**M3.17f - Subclass Feature Support** ✅
+- Expert tier: Shows both core AND subclass features
+- Master tier: Shows ONLY subclass features (level 6)
+- Legendary tier: Shows ONLY subclass features (level 9)
+- Features prefixed with subclass name for clarity
+- Updated `getMulticlassFeatures()` to include subclass features
+
+**M3.17g - Data Persistence** ✅
+- Added multiclass fields to `EnhancedCharacterBuildData` interface
+- Added multiclass fields to `SavedCharacter` interface
+- Integrated with `characterCompletion.ts`
+- Selections persist across save/load
+- Supports level-up respeccing
+
+**M3.17h - Unit Testing** ✅
+- Created comprehensive test suite: `multiclass.test.ts`
+- 31 tests covering all aspects
+- Data integrity, tier definitions, prerequisites, helper functions
+- All tests passing
+
+---
+
+#### Type Definitions
+
+```typescript
+export type MulticlassTier = 'novice' | 'adept' | 'expert' | 'master' | 'grandmaster' | 'legendary';
+
+export interface MulticlassTierDefinition {
+  id: MulticlassTier;
+  name: string;
+  levelRequired: number;
+  description: string;
+  targetLevel: number;
+  includeSubclass: boolean;
+  subclassLevel?: number;
+  subclassOnly?: boolean;
+  minClassFeatures: number;
+  minSubclassFeatures: number;
+}
+```
+
+---
+
+#### Tier Specifications
+
+| Tier | Level | Target Feature | Subclass? | Prerequisites |
+|------|-------|----------------|-----------|---------------|
+| **Novice** | 2 | Level 1 core | No | None |
+| **Adept** | 4 | Level 2 core | No | None |
+| **Expert** | 7 | Level 5 core OR Level 3 subclass | Yes | 1+ class features |
+| **Master** | 10 | Level 6 subclass only | Yes | 1+ subclass features |
+| **Grandmaster** | 13 | Level 8 core (capstone) | No | 2+ class features |
+| **Legendary** | 17 | Level 9 subclass (capstone) | Yes | 2+ subclass features |
+
+---
+
+#### Files Modified
+
+**New Files:**
+- `src/lib/rulesdata/progression/multiclass.ts` - Tier definitions and helpers
+- `src/lib/rulesdata/progression/multiclass.test.ts` - Unit tests (31 tests)
+
+**Modified Files:**
+- `src/routes/character-creation/LevelingChoices.tsx` - UI implementation
+- `src/lib/services/enhancedCharacterCalculator.ts` - Effects application
+- `src/lib/services/characterCompletion.ts` - Persistence
+- `src/lib/types/effectSystem.ts` - Type definitions
+- `src/lib/types/dataContracts.ts` - SavedCharacter schema
+- `src/lib/stores/characterContext.tsx` - Context state
+
+**Moved:**
+- `src/lib/rulesdata/paths/` → `src/lib/rulesdata/progression/paths/`
+
+---
+
+#### Testing Coverage
+
+**Unit Tests (31 total):**
+- ✅ Data integrity (6 tiers, unique IDs, ordering)
+- ✅ Individual tier property validation
+- ✅ Prerequisite requirement verification
+- ✅ `getMulticlassTier()` functionality
+- ✅ `getAvailableMulticlassTiers()` level filtering
+- ✅ Subclass support flag validation
+
+**Test Results:**
+```
+Test Files  1 passed (1)
+     Tests  31 passed (31)
+```
+
+---
+
+#### Impact Summary
+
+**Calculator Integration:**
+- Multiclass feature effects now modify character stats
+- Effects properly attributed in breakdowns
+- Integrated with existing effect resolution pipeline
+
+**UI/UX:**
+- Clear visual hierarchy with card-based selection
+- Dynamic tier availability based on level and prerequisites
+- Intuitive feature comparison and selection
+- No confusion with path system
+
+**Data Flow:**
+- Complete pipeline: UI → Context → Calculator → Persistence
+- Selections preserved across save/load
+- Supports level-up respeccing
+
+---
+
+#### Commits
+
+1. `a28e057` - Initial 6-tier UI expansion
+2. `3c9deed` - Hide unavailable tiers, remove unlocked features
+3. `2764c1f` - Prerequisite enforcement
+4. `e017d8d` - Multiclass system refactoring
+5. `37916de` - Card-based UI redesign
+6. `ddcfe11` - Effects application and persistence
+7. `5b6da20` - Subclass feature support
+8. `6f0de71` - Unit tests
+
+---
+
+**Total Implementation Time:** ~8 hours
+
+**Status:** ✅ Complete - All functionality implemented, tested, and documented
+

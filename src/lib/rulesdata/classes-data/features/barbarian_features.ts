@@ -133,63 +133,36 @@ export const barbarianClass: ClassDefinition = {
 				}
 			]
 		},
-		{
-			id: 'barbarian_battlecry',
-			featureName: 'Battlecry',
-			levelGained: 2,
-			description: 'You can spend 1 AP and 1 SP to release a shout of your choice.',
-			effects: [
-				{
-					type: 'GRANT_ABILITY',
-					target: 'battlecry',
-					value:
-						'Spend 1 AP and 1 SP to release a shout affecting allies within 10 Spaces until start of your next turn.'
-				}
-			],
-			choices: [
-				{
-					id: 'barbarian_battlecry_choice',
-					prompt: 'Choose a shout to learn.',
-					count: 3, // Learn all three shout options
-					options: [
-						{
-							name: 'Fortitude Shout',
-							description:
-								'Each creature gains Resistance (1) against the next source of Physical or Elemental damage.',
-							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'fortitude_shout',
-									value: 'Grant allies Resistance (1) against next Physical or Elemental damage.'
-								}
-							]
-						},
-						{
-							name: 'Fury Shout',
-							description: 'Each creature deals +1 damage on their next Attack against 1 target.',
-							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'fury_shout',
-									value: 'Grant allies +1 damage on their next Attack.'
-								}
-							]
-						},
-						{
-							name: 'Urgent Shout',
-							description: 'Each creature gains +1 Speed until the start of your next turn.',
-							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'urgent_shout',
-									value: 'Grant allies +1 Speed until start of your next turn.'
-								}
-							]
-						}
-					]
-				}
-			]
-		},
+	{
+		id: 'barbarian_battlecry',
+		featureName: 'Battlecry',
+		levelGained: 2,
+		description:
+			'You can spend 1 AP and 1 SP to release a shout of your choice. You gain all three shout options: Fortitude Shout (grants allies Resistance (1) against next Physical or Elemental damage), Fury Shout (grants allies +1 damage on their next Attack), and Urgent Shout (grants allies +1 Speed until start of your next turn). All shouts affect allies within 10 Spaces until the start of your next turn.',
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'battlecry',
+				value:
+					'Spend 1 AP and 1 SP to release a shout affecting allies within 10 Spaces until start of your next turn.'
+			},
+			{
+				type: 'GRANT_ABILITY',
+				target: 'fortitude_shout',
+				value: 'Grant allies Resistance (1) against next Physical or Elemental damage.'
+			},
+			{
+				type: 'GRANT_ABILITY',
+				target: 'fury_shout',
+				value: 'Grant allies +1 damage on their next Attack.'
+			},
+			{
+				type: 'GRANT_ABILITY',
+				target: 'urgent_shout',
+				value: 'Grant allies +1 Speed until start of your next turn.'
+			}
+		]
+	},
 		{
 			id: 'barbarian_level_2_talent',
 			featureName: 'Talent',

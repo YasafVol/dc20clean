@@ -147,3 +147,81 @@ Path points grant immediate bonuses to character resources based on allocation:
 
 > _Last updated: October 2, 2025_  
 > _Maintainer: @DC20Clean-Team_
+
+---
+
+## 10. Multiclass System
+
+### 10.1. Overview
+
+The multiclass talent system allows characters to gain features from other classes by spending **Talent Points**. This system is fully integrated into the leveling choices stage.
+
+**Location:** `src/lib/rulesdata/progression/multiclass.ts`
+
+**Detailed Documentation:** See `docs/systems/MULTICLASS_SYSTEM.MD`
+
+### 10.2. Six Multiclass Tiers
+
+| Tier | Level | Feature Level | Subclass? | Prerequisites |
+|------|-------|--------------|-----------|---------------|
+| Novice | 2+ | 1st level | No | None |
+| Adept | 4+ | 2nd level | No | None |
+| Expert | 7+ | 5th or 3rd subclass | Yes | 1+ class features |
+| Master | 10+ | 6th subclass only | Yes | 1+ subclass features |
+| Grandmaster | 13+ | 8th level (capstone) | No | 2+ class features |
+| Legendary | 17+ | 9th subclass (capstone) | Yes | 2+ subclass features |
+
+### 10.3. Implementation Highlights
+
+**UI:** 
+- Card-based feature selection in `LevelingChoices.tsx`
+- Dynamic tier availability based on level
+- Prerequisite validation before showing tiers
+- Path features automatically filtered out
+
+**Effects:**
+- Integrated into `aggregateAttributedEffects()` in calculator
+- Multiclass feature effects modify character stats
+- Properly attributed for breakdowns and tooltips
+
+**Persistence:**
+- Multiclass selections saved to `SavedCharacter`
+- Preserved across save/load and level-up
+- Fields: `selectedMulticlassOption`, `selectedMulticlassClass`, `selectedMulticlassFeature`
+
+**Testing:**
+- 31 unit tests in `multiclass.test.ts`
+- All tests passing
+- Coverage: data integrity, prerequisites, helper functions
+
+### 10.4. Related Milestones
+
+- **M3.17:** Complete multiclass system implementation
+- **Status:** ✅ Done
+- **Epic Reference:** `docs/plannedSpecs/LEVELING_EPIC.md` §5.18
+
+---
+
+## 11. System Integration Summary
+
+The leveling system is now a comprehensive, data-driven pipeline that handles:
+
+1. ✅ **Class Selection** - All 14 classes with progression tables
+2. ✅ **Level Selection** - Characters from level 1 to 5 (expandable to 20)
+3. ✅ **Attribute Caps** - Dynamic caps based on level from `levelCaps.ts`
+4. ✅ **Mastery Caps** - Level-based skill/trade mastery limits
+5. ✅ **Talent System** - General, class, and multiclass talents
+6. ✅ **Path Points** - Martial and Spellcaster path progression
+7. ✅ **Subclass Selection** - Dynamic subclass choice at level 3+
+8. ✅ **Multiclass Features** - 6-tier multiclass talent system
+9. ✅ **Effect Application** - All features apply effects to stats
+10. ✅ **Persistence** - Complete save/load/level-up support
+
+**Next Steps:**
+- Manual testing (M3.15)
+- E2E test suite (M4.1)
+- Additional system documentation (M4.3)
+
+---
+
+```

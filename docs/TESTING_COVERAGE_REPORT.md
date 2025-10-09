@@ -6,11 +6,12 @@
 ## Executive Summary
 
 The codebase has **limited test coverage** with approximately:
-- **10.7%** unit test coverage for `src/lib/` (16 test files for 149 source files)
-- **2.1%** component test coverage for `src/routes/` (2 test files for 95 component files)
+- **10.8%** unit test coverage for `src/lib/` (18 test files for 149 source files)
+- **4.2%** component test coverage for `src/routes/` (4 test files for 95 component files)
 - **10 E2E test suites** covering critical user flows
 
 ### Recent Additions ✨
+- **ClassFeatures Component**: 29 comprehensive tests (14 logic + 15 component) validating progressive feature display
 - **Ancestry & Trait System**: 34 comprehensive tests validating all 17 ancestries and 239 traits
 - **Multiclass System**: 31 comprehensive tests validating all 6 tiers, prerequisites, and helpers
 
@@ -59,6 +60,8 @@ The codebase has **limited test coverage** with approximately:
 
 #### Components
 - ✅ **`CharacterCreation.spec.ts`** - Character creation flow
+- ✅ **`ClassFeatures.test.tsx`** - Class features component rendering (15 tests)
+- ✅ **`ClassFeatures.logic.test.ts`** - Class features logic and algorithms (14 tests)
 
 ---
 
@@ -156,7 +159,12 @@ The codebase has **limited test coverage** with approximately:
 - ❌ `AttributePointsCounter.tsx`
 - ❌ `Attributes.tsx`
 - ❌ `Background.tsx`
-- ❌ `ClassFeatures.tsx`
+- ✅ `ClassFeatures.tsx` - **Comprehensive coverage** (29 tests)
+  - Progressive feature display by level
+  - Feature choice ordering
+  - Benefits rendering
+  - Equipment and training sections
+  - Edge cases (empty sections, no class)
 - ❌ `ClassSelector.tsx`
 - ❌ `CharacterName.tsx`
 - ❌ `LevelingChoices.tsx`
@@ -410,14 +418,14 @@ npm run test:e2e
 |--------|-------|--------|----------|----------|
 | **Core Calculation** | 5 | 4 | 80% | ✅ Good |
 | **Class System** | 30 | 3 | 10% | 🔴 Critical |
-| **Ancestry/Traits** | 2 | 0 | 0% | 🔴 Critical |
+| **Ancestry/Traits** | 2 | 1 | 50% | ✅ Good |
 | **Talents** | 15 | 0 | 0% | 🟡 Medium |
 | **Skills/Trades** | 2 | 1 | 50% | 🟢 Good |
 | **Spells** | 60+ | 1 | <5% | 🟡 Medium |
 | **Martials** | 3 | 0 | 0% | 🟡 Medium |
 | **Services** | 6 | 4 | 67% | 🟢 Good |
 | **State Management** | 3 | 2 | 67% | 🟢 Good |
-| **UI Components** | 95 | 2 | 2% | 🔴 Critical |
+| **UI Components** | 95 | 4 | 4.2% | 🟡 Improving |
 | **PDF Export** | 2 | 0 | 0% | 🟡 Medium |
 | **E2E Flows** | - | 10 | - | 🟢 Good |
 
@@ -448,7 +456,7 @@ The DC20 Character Builder has **foundational testing** in place with good E2E c
 
 ## Appendix: Test File Inventory
 
-### Unit Tests (16 files)
+### Unit Tests (18 files)
 ```
 src/lib/hooks/useEnhancedCharacterCalculation.spec.ts
 src/lib/rulesdata/ancestries/ancestries.test.ts
@@ -466,11 +474,15 @@ src/lib/services/spellAssignment.spec.ts
 src/lib/stores/characterContext.reducer.spec.ts
 src/lib/utils/defenseNotes.spec.ts
 src/lib/utils/storageUtils.spec.ts
+src/routes/character-creation/ClassFeatures.logic.test.ts
+src/routes/character-creation/ClassFeatures.test.tsx
 ```
 
-### Component Tests (2 files)
+### Component Tests (4 files)
 ```
 src/routes/character-creation/CharacterCreation.spec.ts
+src/routes/character-creation/ClassFeatures.logic.test.ts
+src/routes/character-creation/ClassFeatures.test.tsx
 src/routes/character-sheet/hooks/useCharacterSheetReducer.test.ts
 ```
 

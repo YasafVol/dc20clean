@@ -36,6 +36,91 @@ import {
 function ClassFeatures() {
 	const { state, dispatch } = useCharacter();
 
+	// Helper function to render a single choice card
+	const renderChoiceCard = (choice: any) => (
+		<StyledCard key={choice.id}>
+			<StyledCardTitle>{choice.prompt}</StyledCardTitle>
+			{choice.type === 'select_one' && (
+				<StyledChoiceOptions>
+					{choice.options.map((option: any) => {
+						const detailedDescription = getDetailedClassFeatureDescription(
+							choice.id,
+							option.value
+						);
+						return (
+							<StyledLabel key={option.value}>
+								<StyledRadio
+									type="radio"
+									name={choice.id}
+									value={option.value}
+									checked={selectedFeatureChoices[choice.id] === option.value}
+									onChange={() => handleFeatureChoice(choice.id, option.value)}
+								/>
+								{option.label}
+								{(option.description || detailedDescription) && (
+									<StyledOptionDescription>
+										{option.description || detailedDescription}
+									</StyledOptionDescription>
+								)}
+							</StyledLabel>
+						);
+					})}
+				</StyledChoiceOptions>
+			)}
+			{choice.type === 'select_multiple' && (
+				<StyledChoiceOptions>
+					{choice.options.map((option: any) => {
+						// Handle arrays directly (no legacy JSON string support)
+						const currentValues: string[] = selectedFeatureChoices[choice.id]
+							? Array.isArray(selectedFeatureChoices[choice.id])
+								? (selectedFeatureChoices[choice.id] as unknown as string[])
+								: []
+							: [];
+						const isSelected = currentValues.includes(option.value);
+						const canSelect = currentValues.length < (choice.maxSelections || 999);
+						const isDisabled = !isSelected && !canSelect;
+						const detailedDescription = getDetailedClassFeatureDescription(
+							choice.id,
+							option.value
+						);
+
+						return (
+							<StyledLabel key={option.value} style={{ opacity: isDisabled ? 0.5 : 1 }}>
+								<StyledRadio
+									type="checkbox"
+									name={choice.id}
+									value={option.value}
+									checked={isSelected}
+									disabled={isDisabled}
+									onChange={(e) =>
+										handleMultipleFeatureChoice(choice.id, option.value, e.target.checked)
+									}
+								/>
+								{option.label}
+								{(option.description || detailedDescription) && (
+									<StyledOptionDescription>
+										{option.description || detailedDescription}
+									</StyledOptionDescription>
+								)}
+							</StyledLabel>
+						);
+					})}
+					{choice.maxSelections && (
+						<StyledOptionDescription style={{ marginTop: '8px', fontStyle: 'italic' }}>
+							Select up to {choice.maxSelections} options (
+							{selectedFeatureChoices[choice.id]
+								? Array.isArray(selectedFeatureChoices[choice.id])
+									? (selectedFeatureChoices[choice.id] as unknown as string[]).length
+									: 0
+								: 0}
+							/{choice.maxSelections} selected)
+						</StyledOptionDescription>
+					)}
+				</StyledChoiceOptions>
+			)}
+		</StyledCard>
+	);
+
 	const selectedClass = classesData.find(
 		(c) => c.id.toLowerCase() === state.classId?.toLowerCase()
 	);
@@ -167,6 +252,7 @@ function ClassFeatures() {
 					prompt: choice.prompt,
 					type: choice.count > 1 ? 'select_multiple' : 'select_one',
 					maxSelections: choice.count > 1 ? choice.count : undefined,
+					level: level, // Track which level this choice belongs to
 					options:
 						choice.options?.map((option) => ({
 							value: option.name,
@@ -201,6 +287,7 @@ function ClassFeatures() {
 						id: choiceId,
 						prompt: effect.userChoice.prompt,
 						type: 'select_one',
+						level: level, // Track which level this choice belongs to
 						options: options
 					});
 				}
@@ -252,6 +339,7 @@ function ClassFeatures() {
 									id: choiceId,
 									prompt: `${option.name}: ${effect.userChoice.prompt}`,
 									type: 'select_one',
+									level: level, // Track which level this choice belongs to
 									options: options
 								});
 							}
@@ -307,6 +395,7 @@ function ClassFeatures() {
 				prompt: `Choose ${totalTechniques} Technique${totalTechniques > 1 ? 's' : ''}`,
 				type: totalTechniques > 1 ? 'select_multiple' : 'select_one',
 				maxSelections: totalTechniques > 1 ? totalTechniques : undefined,
+				level: 1, // Techniques are general level 1 choices
 				options: techniques.map((technique) => ({
 					value: technique.name,
 					label: technique.name,
@@ -328,6 +417,7 @@ function ClassFeatures() {
 				prompt: `Choose ${spellList.schoolCount} Spell School${spellList.schoolCount > 1 ? 's' : ''}`,
 				type: 'select_multiple',
 				maxSelections: spellList.schoolCount,
+				level: 1, // Spell schools are general level 1 choices
 				options: availableSchools.map((school) => ({
 					value: school,
 					label: school,
@@ -347,6 +437,7 @@ function ClassFeatures() {
 				prompt: `Choose ${spellList.schoolCount} additional Spell School${spellList.schoolCount > 1 ? 's' : ''} (you already have: ${alreadyHaveSchools.join(', ')})`,
 				type: spellList.schoolCount > 1 ? 'select_multiple' : 'select_one',
 				maxSelections: spellList.schoolCount > 1 ? spellList.schoolCount : undefined,
+				level: 1, // Additional spell schools are general level 1 choices
 				options: choosableSchools.map((school) => ({
 					value: school,
 					label: school,
@@ -384,6 +475,7 @@ function ClassFeatures() {
 							id: choiceId,
 							prompt: `${feature.featureName}: Choose a Spell School`,
 							type: 'select_one',
+							level: level, // Track which level this choice belongs to
 							options: availableSchools.map((school) => ({
 								value: school,
 								label: school,
@@ -616,120 +708,39 @@ function ClassFeatures() {
 				</StyledSection>
 			)}
 
-			{/* Class Features - Grouped by Level */}
+			{/* Class Features - Grouped by Level with Choices */}
 			{Object.entries(featuresByLevel)
 				.sort(([a], [b]) => Number(a) - Number(b))
 				.filter(([, features]) => features.length > 0)
-				.map(([level, features]) => (
-					<StyledSection key={level}>
-						<StyledSectionTitle>Level {level} Features</StyledSectionTitle>
-						{features.map((feature, index) => (
-							<StyledCard key={index}>
-								<StyledCardTitle>{feature.featureName}</StyledCardTitle>
-								<StyledCardDescription>{feature.description}</StyledCardDescription>
-								{feature.benefits && (
-									<StyledBenefitsList>
-										{feature.benefits.map((benefit, benefitIndex) => (
-											<StyledBenefit key={benefitIndex}>
-												<StyledBenefitName>{benefit.name}</StyledBenefitName>
-												<StyledBenefitDescription>{benefit.description}</StyledBenefitDescription>
-											</StyledBenefit>
-										))}
-									</StyledBenefitsList>
-								)}
-							</StyledCard>
-						))}
-					</StyledSection>
-				))}
-
-			{featureChoices.length > 0 && (
-				<StyledSection>
-					<StyledSectionTitle>Feature Choices</StyledSectionTitle>
-					{featureChoices.map((choice: any) => (
-						<StyledCard key={choice.id}>
-							<StyledCardTitle>{choice.prompt}</StyledCardTitle>
-							{choice.type === 'select_one' && (
-								<StyledChoiceOptions>
-									{choice.options.map((option: any) => {
-										const detailedDescription = getDetailedClassFeatureDescription(
-											choice.id,
-											option.value
-										);
-										return (
-											<StyledLabel key={option.value}>
-												<StyledRadio
-													type="radio"
-													name={choice.id}
-													value={option.value}
-													checked={selectedFeatureChoices[choice.id] === option.value}
-													onChange={() => handleFeatureChoice(choice.id, option.value)}
-												/>
-												{option.label}
-												{(option.description || detailedDescription) && (
-													<StyledOptionDescription>
-														{option.description || detailedDescription}
-													</StyledOptionDescription>
-												)}
-											</StyledLabel>
-										);
-									})}
-								</StyledChoiceOptions>
-							)}
-							{choice.type === 'select_multiple' && (
-								<StyledChoiceOptions>
-									{choice.options.map((option: any) => {
-										// Handle arrays directly (no legacy JSON string support)
-										const currentValues: string[] = selectedFeatureChoices[choice.id]
-											? Array.isArray(selectedFeatureChoices[choice.id])
-												? (selectedFeatureChoices[choice.id] as unknown as string[])
-												: []
-											: [];
-										const isSelected = currentValues.includes(option.value);
-										const canSelect = currentValues.length < (choice.maxSelections || 999);
-										const isDisabled = !isSelected && !canSelect;
-										const detailedDescription = getDetailedClassFeatureDescription(
-											choice.id,
-											option.value
-										);
-
-										return (
-											<StyledLabel key={option.value} style={{ opacity: isDisabled ? 0.5 : 1 }}>
-												<StyledRadio
-													type="checkbox"
-													name={choice.id}
-													value={option.value}
-													checked={isSelected}
-													disabled={isDisabled}
-													onChange={(e) =>
-														handleMultipleFeatureChoice(choice.id, option.value, e.target.checked)
-													}
-												/>
-												{option.label}
-												{(option.description || detailedDescription) && (
-													<StyledOptionDescription>
-														{option.description || detailedDescription}
-													</StyledOptionDescription>
-												)}
-											</StyledLabel>
-										);
-									})}
-									{choice.maxSelections && (
-										<StyledOptionDescription style={{ marginTop: '8px', fontStyle: 'italic' }}>
-											Select up to {choice.maxSelections} options (
-											{selectedFeatureChoices[choice.id]
-												? Array.isArray(selectedFeatureChoices[choice.id])
-													? (selectedFeatureChoices[choice.id] as unknown as string[]).length
-													: 0
-												: 0}
-											/{choice.maxSelections} selected)
-										</StyledOptionDescription>
+				.map(([levelStr, features]) => {
+					const levelNum = Number(levelStr);
+					const levelChoices = featureChoices.filter((choice) => choice.level === levelNum);
+					
+					return (
+						<StyledSection key={levelStr}>
+							<StyledSectionTitle>Level {levelStr} Features</StyledSectionTitle>
+							{features.map((feature, index) => (
+								<StyledCard key={index}>
+									<StyledCardTitle>{feature.featureName}</StyledCardTitle>
+									<StyledCardDescription>{feature.description}</StyledCardDescription>
+									{feature.benefits && (
+										<StyledBenefitsList>
+											{feature.benefits.map((benefit, benefitIndex) => (
+												<StyledBenefit key={benefitIndex}>
+													<StyledBenefitName>{benefit.name}</StyledBenefitName>
+													<StyledBenefitDescription>{benefit.description}</StyledBenefitDescription>
+												</StyledBenefit>
+											))}
+										</StyledBenefitsList>
 									)}
-								</StyledChoiceOptions>
-							)}
-						</StyledCard>
-					))}
-				</StyledSection>
-			)}
+								</StyledCard>
+							))}
+							
+							{/* Render choices for this level */}
+							{levelChoices.length > 0 && levelChoices.map(renderChoiceCard)}
+						</StyledSection>
+					);
+				})}
 
 			{/* Subclass Selection (Level 3+) */}
 			{needsSubclassChoice && state.classId && (

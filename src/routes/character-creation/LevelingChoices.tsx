@@ -766,46 +766,42 @@ function LevelingChoices() {
 				</Section>
 			)}
 
-			{/* Multiclass Talents - Dynamic rendering based on character level */}
+			{/* Multiclass Talents - Only show tiers that meet level prerequisites */}
 			<Section>
 				<SectionTitle>Multiclass Talents</SectionTitle>
 				
-				{multiclassTiers.map((tier) => {
-					const isAvailable = state.level >= tier.levelRequired;
-					const isSelected = selectedMulticlassOption === tier.id;
-					const isDisabled = !isAvailable || (totalTalentsUsed >= availableTalentPoints && !isSelected);
+				{multiclassTiers
+					.filter(tier => state.level >= tier.levelRequired) // Only show available tiers
+					.map((tier) => {
+						const isSelected = selectedMulticlassOption === tier.id;
+						const isDisabled = totalTalentsUsed >= availableTalentPoints && !isSelected;
 
-					return (
-						<MulticlassOption
-							key={tier.id}
-							$selected={isSelected}
-							$disabled={isDisabled}
-							onClick={() => {
-								if (!isAvailable) return;
-								
-								if (isSelected) {
-									// Deselect
-									setSelectedMulticlassOption(null);
-									setSelectedMulticlassClass('');
-									setSelectedMulticlassFeature('');
-									setMulticlassFeatureDetail(null);
-								} else if (totalTalentsUsed < availableTalentPoints) {
-									// Select this tier
-									setSelectedMulticlassOption(tier.id);
-									setSelectedMulticlassClass('');
-									setSelectedMulticlassFeature('');
-									setMulticlassFeatureDetail(null);
-								}
-							}}
-						>
-							<MulticlassTitle>
-								{tier.name}
-								{!isAvailable && ` (Requires Level ${tier.levelRequired})`}
-							</MulticlassTitle>
-							<MulticlassSubtext>{tier.description}</MulticlassSubtext>
-						</MulticlassOption>
-					);
-				})}
+						return (
+							<MulticlassOption
+								key={tier.id}
+								$selected={isSelected}
+								$disabled={isDisabled}
+								onClick={() => {
+									if (isSelected) {
+										// Deselect
+										setSelectedMulticlassOption(null);
+										setSelectedMulticlassClass('');
+										setSelectedMulticlassFeature('');
+										setMulticlassFeatureDetail(null);
+									} else if (totalTalentsUsed < availableTalentPoints) {
+										// Select this tier
+										setSelectedMulticlassOption(tier.id);
+										setSelectedMulticlassClass('');
+										setSelectedMulticlassFeature('');
+										setMulticlassFeatureDetail(null);
+									}
+								}}
+							>
+								<MulticlassTitle>{tier.name}</MulticlassTitle>
+								<MulticlassSubtext>{tier.description}</MulticlassSubtext>
+							</MulticlassOption>
+						);
+					})}
 
 				{selectedMulticlassOption && (
 					<MulticlassPickerContainer>
@@ -925,34 +921,6 @@ function LevelingChoices() {
 
 			{activeTab === 'talents' ? renderTalentsTab() : renderPathPointsTab()}
 
-			{/* Unlocked Features Section */}
-			{resolvedProgression.unlockedFeatures.length > 0 && (
-				<Section style={{ marginTop: '3rem' }}>
-					<SectionTitle>Unlocked Features (Level {state.level})</SectionTitle>
-					<InfoText style={{ marginBottom: '1rem' }}>
-						These features are automatically granted by your class progression:
-					</InfoText>
-					<TalentGrid>
-						{resolvedProgression.unlockedFeatures.map((feature: ClassFeature, idx: number) => (
-							<FeatureCard key={idx}>
-								<FeatureName>{feature.featureName}</FeatureName>
-								<FeatureLevel>Level {feature.levelGained}</FeatureLevel>
-								<FeatureDescription>{feature.description}</FeatureDescription>
-								{feature.benefits && feature.benefits.length > 0 && (
-									<FeatureBenefits>
-										{feature.benefits.map((benefit: FeatureBenefit, bIdx: number) => (
-											<BenefitItem key={bIdx}>
-												<BenefitName>{benefit.name}:</BenefitName>{' '}
-												<BenefitDescription>{benefit.description}</BenefitDescription>
-											</BenefitItem>
-										))}
-									</FeatureBenefits>
-								)}
-							</FeatureCard>
-						))}
-					</TalentGrid>
-				</Section>
-			)}
 		</Container>
 	);
 }

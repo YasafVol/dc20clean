@@ -680,10 +680,41 @@ function LevelingChoices() {
 		// Filter out path-related features (Martial Path, Spellcaster Path)
 		const PATH_FEATURE_NAMES = ['Martial Path', 'Spellcaster Path', 'Path Points'];
 		
-		return classFeatures.coreFeatures.filter(f => 
+		const coreFeatures = classFeatures.coreFeatures.filter(f => 
 			f.levelGained === targetLevel && 
 			!PATH_FEATURE_NAMES.some(pathName => f.featureName.includes(pathName))
 		);
+
+		// For tiers that support subclass features, add them to the list
+		if (selectedTier.includeSubclass && selectedTier.subclassLevel !== undefined) {
+			// Expert tier: Core OR subclass features
+			// Master/Legendary: Only subclass features
+			const shouldIncludeCore = !selectedTier.subclassOnly;
+			const features = shouldIncludeCore ? [...coreFeatures] : [];
+
+			// Add subclass features at the specified level
+			if (classFeatures.subclasses) {
+				for (const subclass of classFeatures.subclasses) {
+					if (subclass.features) {
+						const subclassFeatures = subclass.features.filter(
+							f => f.levelGained === selectedTier.subclassLevel
+						);
+						
+						for (const feature of subclassFeatures) {
+							features.push({
+								...feature,
+								featureName: `${subclass.subclassName}: ${feature.featureName}`,
+								description: `${subclass.description || ''}\n\n${feature.description}`.trim()
+							});
+						}
+					}
+				}
+			}
+
+			return features;
+		}
+		
+		return coreFeatures;
 	};
 
 	// Handle general talent increment/decrement (count-based)

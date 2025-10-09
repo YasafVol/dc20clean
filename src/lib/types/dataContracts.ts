@@ -149,6 +149,11 @@ export interface SavedCharacter {
 	unlockedFeatureIds?: string[]; // Features gained from leveling
 	selectedSubclass?: string; // Subclass name if chosen
 	pendingSubclassChoice?: boolean; // True if subclass choice is available but not made
+	
+	// MULTICLASS SELECTIONS (M3.17)
+	selectedMulticlassOption?: 'novice' | 'adept' | 'expert' | 'master' | 'grandmaster' | 'legendary' | null; // Multiclass tier
+	selectedMulticlassClass?: string; // Class ID for multiclass feature
+	selectedMulticlassFeature?: string; // Feature name from multiclass
 
 	// Precomputed values for PDF/UI consumption (no calculations in transformers/components)
 	// Optional for backward compatibility; FE should consume if present

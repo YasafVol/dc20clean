@@ -25,9 +25,10 @@ import { resolveClassProgression, resolveSubclassFeatures } from '../rulesdata/c
 import { classesData } from '../rulesdata/loaders/class.loader';
 import { findTalentById } from '../rulesdata/classes-data/talents/talent.loader';
 import { getLevelCaps, MASTERY_TIERS, getMasteryTierByNumber } from '../rulesdata/progression/levelCaps';
+import { MULTICLASS_TIERS } from '../rulesdata/progression/multiclass';
 
 import { BuildStep } from '../types/effectSystem';
-import { getLegacyChoiceId } from '../rulesdata/loaders/class-features.loader';
+import { getLegacyChoiceId, findClassByName } from '../rulesdata/loaders/class-features.loader';
 import { traitsData } from '../rulesdata/ancestries/traits';
 import { ancestriesData } from '../rulesdata/ancestries/ancestries';
 import { barbarianClass } from '../rulesdata/classes-data/features/barbarian_features';
@@ -155,6 +156,11 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 		? contextData.selectedTalents
 		: {},
 	selectedSubclass: contextData.selectedSubclass,
+	
+		// Multiclass selections (M3.17)
+		selectedMulticlassOption: contextData.selectedMulticlassOption,
+		selectedMulticlassClass: contextData.selectedMulticlassClass,
+		selectedMulticlassFeature: contextData.selectedMulticlassFeature,
 
 		// Pass data as native objects, removing the unnecessary stringify step
 		skillsData: contextData.skillsData ?? {},
@@ -346,6 +352,37 @@ function aggregateAttributedEffects(buildData: EnhancedCharacterBuildData): Attr
 								});
 							}
 						}
+					}
+				}
+			}
+		}
+	}
+
+	// Add effects from multiclass feature selection
+	if (buildData.selectedMulticlassFeature && buildData.selectedMulticlassClass) {
+		const multiclassData = classesData.find(c => c.id === buildData.selectedMulticlassClass);
+		if (multiclassData) {
+			const classFeatures = findClassByName(multiclassData.name);
+			if (classFeatures) {
+				// Find the selected feature
+				const feature = classFeatures.coreFeatures.find(
+					f => f.featureName === buildData.selectedMulticlassFeature
+				);
+				
+				if (feature?.effects) {
+					for (const effect of feature.effects) {
+						effects.push({
+							...effect,
+							source: {
+								type: 'multiclass_feature' as any,
+								id: `multiclass_${buildData.selectedMulticlassClass}_${feature.featureName}`,
+								name: feature.featureName,
+								description: feature.description,
+								category: 'Multiclass Feature'
+							},
+							resolved: !effect.userChoice,
+							dependsOnChoice: effect.userChoice ? `multiclass_${feature.featureName}` : undefined
+						});
 					}
 				}
 			}

@@ -136,6 +136,11 @@ export const completeCharacter = async (
 		unlockedFeatureIds: calculationResult.resolvedFeatures?.unlockedFeatures.map(f => f.id || f.featureName) || [],
 		selectedSubclass: characterState.selectedSubclass,
 		pendingSubclassChoice: calculationResult.resolvedFeatures?.availableSubclassChoice && !characterState.selectedSubclass,
+		
+		// Multiclass selections (M3.17)
+		selectedMulticlassOption: characterState.selectedMulticlassOption,
+		selectedMulticlassClass: characterState.selectedMulticlassClass,
+		selectedMulticlassFeature: characterState.selectedMulticlassFeature,
 
 		// New precomputed structures (optional until FE migration)
 		skillTotals: denorm.skillTotals,

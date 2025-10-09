@@ -450,8 +450,9 @@ function LevelingChoices() {
 	const [pathPoints, setPathPoints] = useState(state.pathPointAllocations || { martial: 0, spellcasting: 0 });
 	const [resolvedProgression, setResolvedProgression] = useState<any>(null);
 	
-	// Multiclass state
-	const [selectedMulticlassOption, setSelectedMulticlassOption] = useState<'acquire' | 'adapt' | null>(null);
+	// Multiclass state - now supports all 6 tiers
+	type MulticlassTier = 'novice' | 'adept' | 'expert' | 'master' | 'grandmaster' | 'legendary';
+	const [selectedMulticlassOption, setSelectedMulticlassOption] = useState<MulticlassTier | null>(null);
 	const [selectedMulticlassClass, setSelectedMulticlassClass] = useState<string>('');
 	const [selectedMulticlassFeature, setSelectedMulticlassFeature] = useState<string>('');
 	const [multiclassFeatureDetail, setMulticlassFeatureDetail] = useState<any>(null);
@@ -529,6 +530,63 @@ function LevelingChoices() {
 		&& (!t.prerequisites?.level || state.level >= t.prerequisites.level)
 	);
 
+	// Define multiclass tiers with their requirements and feature levels
+	const multiclassTiers = [
+		{ 
+			id: 'novice' as MulticlassTier, 
+			name: 'Novice Multiclass', 
+			levelRequired: 2, 
+			description: 'You can choose a 1st Level Class Feature from any Class.',
+			targetLevel: 1,
+			includeSubclass: false
+		},
+		{ 
+			id: 'adept' as MulticlassTier, 
+			name: 'Adept Multiclass', 
+			levelRequired: 4, 
+			description: 'You can choose a 2nd Level Class Feature from any Class.',
+			targetLevel: 2,
+			includeSubclass: false
+		},
+		{ 
+			id: 'expert' as MulticlassTier, 
+			name: 'Expert Multiclass', 
+			levelRequired: 7, 
+			description: 'Choose a 5th Level Class Feature OR a 3rd Level Subclass Feature from a class you have at least 1 feature from.',
+			targetLevel: 5,
+			includeSubclass: true,
+			subclassLevel: 3
+		},
+		{ 
+			id: 'master' as MulticlassTier, 
+			name: 'Master Multiclass', 
+			levelRequired: 10, 
+			description: 'Choose a 6th Level Subclass Feature from a subclass you have at least 1 feature from.',
+			targetLevel: 6,
+			includeSubclass: true,
+			subclassLevel: 6,
+			subclassOnly: true
+		},
+		{ 
+			id: 'grandmaster' as MulticlassTier, 
+			name: 'Grandmaster Multiclass', 
+			levelRequired: 13, 
+			description: 'Choose an 8th Level Class Capstone Feature from any Class you have at least 2 Class Features from.',
+			targetLevel: 8,
+			includeSubclass: false
+		},
+		{ 
+			id: 'legendary' as MulticlassTier, 
+			name: 'Legendary Multiclass', 
+			levelRequired: 17, 
+			description: 'Choose a 9th Level Subclass Capstone Feature from any Subclass you have at least 2 Subclass Features from.',
+			targetLevel: 9,
+			includeSubclass: true,
+			subclassLevel: 9,
+			subclassOnly: true
+		},
+	];
+
 	// Handle multiclass class selection
 	const handleMulticlassClassChange = (classId: string) => {
 		setSelectedMulticlassClass(classId);
@@ -556,11 +614,14 @@ function LevelingChoices() {
 		if (selectedClass) {
 			const classFeatures = findClassByName(selectedClass.name);
 			if (classFeatures) {
-				const targetLevel = selectedMulticlassOption === 'acquire' ? 1 : 2;
-				const feature = classFeatures.coreFeatures.find(
-					f => f.levelGained === targetLevel && f.featureName === featureId
-				);
-				setMulticlassFeatureDetail(feature);
+				const selectedTier = multiclassTiers.find(t => t.id === selectedMulticlassOption);
+				if (selectedTier) {
+					const targetLevel = selectedTier.targetLevel;
+					const feature = classFeatures.coreFeatures.find(
+						f => f.levelGained === targetLevel && f.featureName === featureId
+					);
+					setMulticlassFeatureDetail(feature);
+				}
 			}
 		}
 		
@@ -574,7 +635,7 @@ function LevelingChoices() {
 	};
 
 	const getMulticlassFeatures = () => {
-		if (!selectedMulticlassClass) return [];
+		if (!selectedMulticlassClass || !selectedMulticlassOption) return [];
 		
 		const selectedClass = classesData.find(c => c.id === selectedMulticlassClass);
 		if (!selectedClass) return [];
@@ -582,7 +643,10 @@ function LevelingChoices() {
 		const classFeatures = findClassByName(selectedClass.name);
 		if (!classFeatures) return [];
 
-		const targetLevel = selectedMulticlassOption === 'acquire' ? 1 : 2;
+		const selectedTier = multiclassTiers.find(t => t.id === selectedMulticlassOption);
+		if (!selectedTier) return [];
+
+		const targetLevel = selectedTier.targetLevel;
 		return classFeatures.coreFeatures.filter(f => f.levelGained === targetLevel);
 	};
 
@@ -702,53 +766,46 @@ function LevelingChoices() {
 				</Section>
 			)}
 
-			{/* Multiclass Talents */}
+			{/* Multiclass Talents - Dynamic rendering based on character level */}
 			<Section>
 				<SectionTitle>Multiclass Talents</SectionTitle>
 				
-				<MulticlassOption
-					$selected={selectedMulticlassOption === 'acquire'}
-					$disabled={totalTalentsUsed >= availableTalentPoints && selectedMulticlassOption !== 'acquire'}
-					onClick={() => {
-						if (selectedMulticlassOption === 'acquire') {
-							setSelectedMulticlassOption(null);
-							setSelectedMulticlassClass('');
-							setSelectedMulticlassFeature('');
-							setMulticlassFeatureDetail(null);
-						} else if (totalTalentsUsed < availableTalentPoints) {
-							setSelectedMulticlassOption('acquire');
-							setSelectedMulticlassClass('');
-							setSelectedMulticlassFeature('');
-							setMulticlassFeatureDetail(null);
-						}
-					}}
-				>
-					<MulticlassTitle>Acquire Multiclass</MulticlassTitle>
-					<MulticlassSubtext>You can choose a 1st Level Class Feature from any class</MulticlassSubtext>
-				</MulticlassOption>
+				{multiclassTiers.map((tier) => {
+					const isAvailable = state.level >= tier.levelRequired;
+					const isSelected = selectedMulticlassOption === tier.id;
+					const isDisabled = !isAvailable || (totalTalentsUsed >= availableTalentPoints && !isSelected);
 
-				<MulticlassOption
-					$selected={selectedMulticlassOption === 'adapt'}
-					$disabled={state.level < 5 || (totalTalentsUsed >= availableTalentPoints && selectedMulticlassOption !== 'adapt')}
-					onClick={() => {
-						if (state.level >= 5) {
-							if (selectedMulticlassOption === 'adapt') {
-								setSelectedMulticlassOption(null);
-								setSelectedMulticlassClass('');
-								setSelectedMulticlassFeature('');
-								setMulticlassFeatureDetail(null);
-							} else if (totalTalentsUsed < availableTalentPoints) {
-								setSelectedMulticlassOption('adapt');
-								setSelectedMulticlassClass('');
-								setSelectedMulticlassFeature('');
-								setMulticlassFeatureDetail(null);
-							}
-						}
-					}}
-				>
-					<MulticlassTitle>Adapt Multiclass {state.level < 5 && '(Requires Level 5)'}</MulticlassTitle>
-					<MulticlassSubtext>You can choose a 2nd Level Class Feature from any class</MulticlassSubtext>
-				</MulticlassOption>
+					return (
+						<MulticlassOption
+							key={tier.id}
+							$selected={isSelected}
+							$disabled={isDisabled}
+							onClick={() => {
+								if (!isAvailable) return;
+								
+								if (isSelected) {
+									// Deselect
+									setSelectedMulticlassOption(null);
+									setSelectedMulticlassClass('');
+									setSelectedMulticlassFeature('');
+									setMulticlassFeatureDetail(null);
+								} else if (totalTalentsUsed < availableTalentPoints) {
+									// Select this tier
+									setSelectedMulticlassOption(tier.id);
+									setSelectedMulticlassClass('');
+									setSelectedMulticlassFeature('');
+									setMulticlassFeatureDetail(null);
+								}
+							}}
+						>
+							<MulticlassTitle>
+								{tier.name}
+								{!isAvailable && ` (Requires Level ${tier.levelRequired})`}
+							</MulticlassTitle>
+							<MulticlassSubtext>{tier.description}</MulticlassSubtext>
+						</MulticlassOption>
+					);
+				})}
 
 				{selectedMulticlassOption && (
 					<MulticlassPickerContainer>

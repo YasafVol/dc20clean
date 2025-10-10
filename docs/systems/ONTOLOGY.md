@@ -61,6 +61,7 @@ The services layer contains the business logic for character creation and calcul
 - **`dataMapping.ts`**: Maps raw rules data into a format that's easier for the UI to consume.
 - **`enhancedCharacterCalculator.ts`**: A key service that performs complex calculations for derived character stats (e.g., health, mana, skill points) based on the character's attributes, class, ancestry, and other choices.
 - **`spellAssignment.ts`**: Manages the logic for assigning spells to a character.
+- **PDF Export Pipeline**: Client-only modules (`src/lib/pdf/transformers.ts`, `src/lib/pdf/fillPdf.ts`) convert an `EnhancedCalculationResult` into a filled 0.9.5 character sheet PDF. See `docs/systems/PDF_EXPORT_SYSTEM.MD` for the full architecture.
 
 ## 3. Rules Ontology
 

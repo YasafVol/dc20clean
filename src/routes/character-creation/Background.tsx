@@ -216,35 +216,36 @@ const Background: React.FC = () => {
 				Choose your character's background skills, trades, and languages. You have{' '}
 				<span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{background.baseSkillPoints}</span>{' '}
 				skill points{' '}
-				<span style={{ fontSize: '0.9rem', color: '#6b7280' }}>
-					(5 base + {state.attribute_intelligence} Int
-					{background.baseSkillPoints - 5 - state.attribute_intelligence > 0
-						? ` + ${background.baseSkillPoints - 5 - state.attribute_intelligence} bonus`
-						: ''}
-					)
-				</span>
+				{background.breakdown && (
+					<span style={{ fontSize: '0.9rem', color: '#6b7280' }}>
+						({background.breakdown.skillPoints.base} base
+						{background.breakdown.skillPoints.intelligence > 0 && ` + ${background.breakdown.skillPoints.intelligence} Int`}
+						{background.breakdown.skillPoints.progression > 0 && ` + ${background.breakdown.skillPoints.progression} level`}
+						{background.breakdown.skillPoints.talents > 0 && ` + ${background.breakdown.skillPoints.talents} talents`}
+						)
+					</span>
+				)}
 				, <span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{background.baseTradePoints}</span>{' '}
 				trade points
-				{background.baseTradePoints > 3 ? (
+				{background.breakdown && (
 					<span style={{ fontSize: '0.9rem', color: '#6b7280' }}>
 						{' '}
-						(3 base + {background.baseTradePoints - 3} bonus)
+						({background.breakdown.tradePoints.base} base
+						{background.breakdown.tradePoints.progression > 0 && ` + ${background.breakdown.tradePoints.progression} level`}
+						{background.breakdown.tradePoints.talents > 0 && ` + ${background.breakdown.tradePoints.talents} talents`}
+						)
 					</span>
-				) : (
-					''
 				)}
 				, and{' '}
 				<span style={{ fontWeight: 'bold', color: '#3b82f6' }}>
 					{background.baseLanguagePoints}
 				</span>{' '}
 				language points
-				{background.baseLanguagePoints > 2 ? (
+				{background.breakdown && background.breakdown.languagePoints.talents > 0 && (
 					<span style={{ fontSize: '0.9rem', color: '#6b7280' }}>
 						{' '}
-						(2 base + {background.baseLanguagePoints - 2} bonus)
+						({background.breakdown.languagePoints.base} base + {background.breakdown.languagePoints.talents} talents)
 					</span>
-				) : (
-					''
 				)}
 				. <br />
 				<span

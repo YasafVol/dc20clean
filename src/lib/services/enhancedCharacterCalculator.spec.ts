@@ -46,7 +46,9 @@ describe('enhancedCharacterCalculator Mastery Cap Logic', () => {
 	it('should error when Level 1 has two Adept skills without features', () => {
 		const character = createTestCharacter(1, { athletics: 2, stealth: 2 });
 		const { validation } = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
-		expect(validation.errors.some((e) => e.message.includes("mastery limit"))).toBe(true);
+		// Should have errors for exceeding mastery cap
+		expect(validation.errors.some((e) => e.code === 'MASTERY_CAP_EXCEEDED')).toBe(true);
+		expect(validation.errors.some((e) => e.message.includes("Adept level"))).toBe(true);
 	});
 
 	it('should allow Adept skills for a Level 5 character', () => {

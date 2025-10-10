@@ -42,6 +42,15 @@ export interface CharacterInProgressStoreData
 	tradeToSkillConversions?: number;
 	tradeToLanguageConversions?: number;
 	schemaVersion?: number;
+	selectedTalents?: Record<string, number>; // Changed from string[] to count-based
+	pathPointAllocations?: { martial?: number; spellcasting?: number };
+	selectedMulticlassOption?: 'novice' | 'adept' | 'expert' | 'master' | 'grandmaster' | 'legendary' | null;
+	selectedMulticlassClass?: string;
+	selectedMulticlassFeature?: string;
+	selectedSubclass?: string; // Subclass selection (e.g., "Berserker" for Barbarian at Level 3)
+	isLevelUpMode?: boolean; // Indicates character is being leveled up
+	originalLevel?: number; // Store original level for comparison
+	sourceCharacterId?: string; // Track which character is being leveled up
 }
 
 // Initial state for the store
@@ -92,6 +101,7 @@ type CharacterAction =
 	| { type: 'UPDATE_TRADES'; tradesData: Record<string, number> }
 	| { type: 'UPDATE_LANGUAGES'; languagesData: Record<string, { fluency: 'limited' | 'fluent' }> }
 	| { type: 'SET_CLASS'; classId: string | null }
+	| { type: 'SET_LEVEL'; level: number }
 	| { type: 'SET_ANCESTRY'; ancestry1Id: string | null; ancestry2Id: string | null }
 	| { type: 'SET_TRAITS'; selectedTraitIds: string[] }
 	| { type: 'SET_FEATURE_CHOICES'; selectedFeatureChoices: Record<string, any> }
@@ -106,7 +116,12 @@ type CharacterAction =
 	| {
 			type: 'SET_CONVERSIONS';
 			conversions: { skillToTrade?: number; tradeToSkill?: number; tradeToLanguage?: number };
-	  };
+	  }
+	| { type: 'SET_SELECTED_TALENTS'; talents: Record<string, number> }
+	| { type: 'SET_PATH_POINTS'; pathPoints: { martial?: number; spellcasting?: number } }
+	| { type: 'SET_MULTICLASS'; option: 'novice' | 'adept' | 'expert' | 'master' | 'grandmaster' | 'legendary' | null; classId: string; featureId: string }
+	| { type: 'SET_SUBCLASS'; subclass: string | null }
+	| { type: 'ENTER_LEVEL_UP_MODE'; originalLevel: number; characterId: string };
 
 // Reducer function
 function characterReducer(
@@ -124,6 +139,28 @@ function characterReducer(
 			return { ...state, languagesData: action.languagesData };
 		case 'SET_CLASS':
 			return { ...state, classId: action.classId };
+		case 'SET_LEVEL':
+			return { ...state, level: action.level };
+		case 'SET_SELECTED_TALENTS':
+			return { ...state, selectedTalents: action.talents };
+		case 'SET_PATH_POINTS':
+			return { ...state, pathPointAllocations: action.pathPoints };
+		case 'SET_MULTICLASS':
+			return { 
+				...state, 
+				selectedMulticlassOption: action.option,
+				selectedMulticlassClass: action.classId,
+				selectedMulticlassFeature: action.featureId
+			};
+		case 'SET_SUBCLASS':
+			return { ...state, selectedSubclass: action.subclass ?? undefined };
+		case 'ENTER_LEVEL_UP_MODE':
+			return {
+				...state,
+				isLevelUpMode: true,
+				originalLevel: action.originalLevel,
+				sourceCharacterId: action.characterId
+			};
 		case 'SET_ANCESTRY':
 			return { ...state, ancestry1Id: action.ancestry1Id, ancestry2Id: action.ancestry2Id };
 		case 'SET_TRAITS':

@@ -23,6 +23,7 @@ export const sorcererClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
+			id: 'sorcerer_innate_power',
 			featureName: 'Innate Power',
 			levelGained: 1,
 			description:
@@ -95,6 +96,7 @@ export const sorcererClass: ClassDefinition = {
 			],
 		},
 		{
+			id: 'sorcerer_overload_magic',
 			featureName: 'Overload Magic',
 			levelGained: 1,
 			description:
@@ -128,6 +130,7 @@ export const sorcererClass: ClassDefinition = {
 			],
 		},
 		{
+			id: 'sorcerer_sorcery_spell',
 			featureName: 'Sorcery',
 			levelGained: 1,
 			isFlavor: true,
@@ -135,6 +138,7 @@ export const sorcererClass: ClassDefinition = {
 			effects: [{ type: 'GRANT_SPELL', target: 'Sorcery', value: 1 }],
 		},
 		{
+			id: 'sorcerer_meta_magic',
 			featureName: 'Meta Magic',
 			levelGained: 2,
 			description:
@@ -180,6 +184,7 @@ export const sorcererClass: ClassDefinition = {
 			],
 		},
 		{
+			id: 'sorcerer_talent_level_2',
 			featureName: 'Talent',
 			levelGained: 2,
 			description:
@@ -287,16 +292,14 @@ export const sorcererClass: ClassDefinition = {
 								{
 									type: 'GRANT_RESISTANCE',
 									target: 'Physical',
-									value: 1,
-									condition: 'While Overloaded',
+									value: 1
 								},
 								{
 									type: 'GRANT_RESISTANCE',
 									target: 'Draconic Origin Damage Type',
-									value: 1,
-									condition: 'While Overloaded',
-								},
-							],
+									value: 1
+								}
+							]
 						},
 						{
 							name: 'Draconic Transmutation',

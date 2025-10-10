@@ -25,6 +25,7 @@ export const barbarianClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
+			id: 'barbarian_martial_path',
 			featureName: 'Martial Path',
 			levelGained: 1,
 			description: 'You gain combat training and martial prowess.',
@@ -65,20 +66,61 @@ export const barbarianClass: ClassDefinition = {
 				}
 			]
 		},
+	{
+		id: 'barbarian_rage',
+		featureName: 'Rage',
+		levelGained: 1,
+		description:
+			'During Combat, you can spend 1 AP and 1 SP to enter a Rage for 1 minute. While raging, you gain the following benefits:',
+		benefits: [
+			{
+				name: 'Increased Damage',
+				description: 'You deal +1 damage with melee Attacks.',
+				effects: [
+					{
+						type: 'MODIFY_STAT',
+						target: 'melee_damage',
+						value: 1
+					}
+				]
+			},
+			{
+				name: 'Might Advantage',
+				description: 'You have Advantage on Might Saving Throws.',
+				effects: [
+					{
+						type: 'GRANT_ABILITY',
+						target: 'rage_might_advantage',
+						value: 'Advantage on Might Saving Throws while raging.'
+					}
+				]
+			},
+			{
+				name: 'Reduced Defense',
+				description: 'Your Physical Defense is reduced by 5.',
+				effects: [
+					{
+						type: 'MODIFY_STAT',
+						target: 'physical_defense',
+						value: -5
+					}
+				]
+			},
+			{
+				name: 'Damage Resistance',
+				description: 'You have Resistance (Half) to Elemental and Physical damage.',
+				effects: [
+					{
+						type: 'GRANT_ABILITY',
+						target: 'rage_resistance',
+						value: 'Resistance (Half) to Elemental and Physical damage while raging.'
+					}
+				]
+			}
+		]
+	},
 		{
-			featureName: 'Rage',
-			levelGained: 1,
-			description: 'During Combat, you can spend 1 AP and 1 SP to enter a Rage for 1 minute.',
-			effects: [
-				{
-					type: 'GRANT_ABILITY',
-					target: 'rage',
-					value:
-						'Spend 1 AP and 1 SP to Rage for 1 minute: +1 melee damage, ADV on Might Saves, -5 PD, Resistance (Half) to Elemental and Physical damage.'
-				}
-			]
-		},
-		{
+			id: 'barbarian_berserker',
 			featureName: 'Berserker',
 			levelGained: 1,
 			description: 'Your primal savagery grants you the following benefits:',
@@ -116,6 +158,7 @@ export const barbarianClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'barbarian_shattering_force',
 			featureName: 'Shattering Force',
 			levelGained: 1,
 			description:
@@ -129,63 +172,51 @@ export const barbarianClass: ClassDefinition = {
 				}
 			]
 		},
+	{
+		id: 'barbarian_battlecry',
+		featureName: 'Battlecry',
+		levelGained: 2,
+		description:
+			'You can spend 1 AP and 1 SP to release a shout of your choice, affecting allies within 10 Spaces until the start of your next turn. You gain all three shout options:',
+		benefits: [
+			{
+				name: 'Fortitude Shout',
+				description:
+					'Each creature gains Resistance (1) against the next source of Physical or Elemental damage.',
+				effects: [
+					{
+						type: 'GRANT_ABILITY',
+						target: 'fortitude_shout',
+						value: 'Grant allies Resistance (1) against next Physical or Elemental damage.'
+					}
+				]
+			},
+			{
+				name: 'Fury Shout',
+				description: 'Each creature deals +1 damage on their next Attack against 1 target.',
+				effects: [
+					{
+						type: 'GRANT_ABILITY',
+						target: 'fury_shout',
+						value: 'Grant allies +1 damage on their next Attack.'
+					}
+				]
+			},
+			{
+				name: 'Urgent Shout',
+				description: 'Each creature gains +1 Speed until the start of your next turn.',
+				effects: [
+					{
+						type: 'GRANT_ABILITY',
+						target: 'urgent_shout',
+						value: 'Grant allies +1 Speed until start of your next turn.'
+					}
+				]
+			}
+		]
+	},
 		{
-			featureName: 'Battlecry',
-			levelGained: 2,
-			description: 'You can spend 1 AP and 1 SP to release a shout of your choice.',
-			effects: [
-				{
-					type: 'GRANT_ABILITY',
-					target: 'battlecry',
-					value:
-						'Spend 1 AP and 1 SP to release a shout affecting allies within 10 Spaces until start of your next turn.'
-				}
-			],
-			choices: [
-				{
-					id: 'barbarian_battlecry_choice',
-					prompt: 'Choose a shout to learn.',
-					count: 3, // Learn all three shout options
-					options: [
-						{
-							name: 'Fortitude Shout',
-							description:
-								'Each creature gains Resistance (1) against the next source of Physical or Elemental damage.',
-							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'fortitude_shout',
-									value: 'Grant allies Resistance (1) against next Physical or Elemental damage.'
-								}
-							]
-						},
-						{
-							name: 'Fury Shout',
-							description: 'Each creature deals +1 damage on their next Attack against 1 target.',
-							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'fury_shout',
-									value: 'Grant allies +1 damage on their next Attack.'
-								}
-							]
-						},
-						{
-							name: 'Urgent Shout',
-							description: 'Each creature gains +1 Speed until the start of your next turn.',
-							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'urgent_shout',
-									value: 'Grant allies +1 Speed until start of your next turn.'
-								}
-							]
-						}
-					]
-				}
-			]
-		},
-		{
+			id: 'barbarian_level_2_talent',
 			featureName: 'Talent',
 			levelGained: 2,
 			description:
@@ -199,6 +230,7 @@ export const barbarianClass: ClassDefinition = {
 			description: 'Harness the power of the elements in your rage.',
 			features: [
 				{
+					id: 'barbarian_elemental_fury_raging_elements',
 					featureName: 'Raging Elements',
 					levelGained: 3,
 					description: 'You can surround yourself with the elements while raging.',
@@ -320,6 +352,7 @@ export const barbarianClass: ClassDefinition = {
 					]
 				},
 				{
+					id: 'barbarian_elemental_fury_elemental_affinity',
 					featureName: 'Elemental Affinity',
 					levelGained: 3,
 					description: 'You are infused with the power of your Element.',
@@ -339,60 +372,74 @@ export const barbarianClass: ClassDefinition = {
 			subclassName: 'Spirit Guardian',
 			description: 'Call upon ancestral spirits to aid you in battle.',
 			features: [
-				{
-					featureName: 'Ancestral Guardian',
-					levelGained: 3,
-					description: 'Bestowed Protection and Spiritual Aura while Raging.',
-					effects: [
-						{ type: 'GRANT_CHOICE', target: 'guardian_maneuver', value: 1 },
-						{ type: 'GRANT_RESISTANCE', target: 'Mystical', value: 1, optional: 'while raging' },
-						{
-							type: 'GRANT_ABILITY',
-							target: 'spiritual_aura',
-							value:
-								'While Raging: 5 Space Aura allows Shove on any creature, use Parry/Protect/Raise Shield on any creature in Aura.'
-						}
-					],
-					choices: [
-						{
-							id: 'barbarian_guardian_maneuver',
-							prompt: 'Learn 1 of the following Maneuvers (or any Maneuver if you know all 3).',
-							count: 1,
-							options: [
-								{
-									name: 'Parry',
-									description: 'Learn the Parry maneuver.',
-									effects: [{ type: 'GRANT_MANEUVERS', target: 'Parry', value: 1 }]
-								},
-								{
-									name: 'Protect',
-									description: 'Learn the Protect maneuver.',
-									effects: [{ type: 'GRANT_MANEUVERS', target: 'Protect', value: 1 }]
-								},
-								{
-									name: 'Raise Shield',
-									description: 'Learn the Raise Shield maneuver.',
-									effects: [{ type: 'GRANT_MANEUVERS', target: 'Raise Shield', value: 1 }]
-								}
-							]
-						}
-					]
-				},
-				{
-					featureName: 'Ancestral Knowledge',
-					levelGained: 3,
-					description:
-						'You have ADV on Checks to recall information about the history of your Ancestries.',
-					isFlavor: true,
-					effects: [
-						{
-							type: 'GRANT_ABILITY',
-							target: 'ancestral_knowledge',
-							value:
-								"ADV on Checks about your Ancestries' history. Once per Long Rest: ADV on a Trade or Language Check."
-						}
-					]
-				}
+			{
+				id: 'barbarian_spirit_guardian_ancestral_guardian',
+				featureName: 'Ancestral Guardian',
+				levelGained: 3,
+				description: 'You gain mystical protection and the ability to channel ancestral spirits.',
+				benefits: [
+					{
+						name: 'Bestowed Protection',
+						description:
+							'You learn 1 of the following Maneuvers: Parry, Protect, or Raise Shield. If you already know all 3, then you can learn any Maneuver of your choice instead.',
+						effects: [{ type: 'GRANT_CHOICE', target: 'guardian_maneuver', value: 1 }]
+					},
+					{
+						name: 'Spiritual Aura',
+						description:
+							'While Raging, you gain Mystical Resistance (1) and a 5 Space Aura that grants the following benefits:\n\n• You can use the Shove Action on any creature within your Aura (the creature is pushed horizontally in a direction of your choice).\n\n• You can use the Parry, Protect, and Raise Shield Maneuvers on any creature within your Aura, provided you know the Maneuver. Using Raise Shield in this way doesn\'t require you to be wielding a Shield.',
+						effects: [
+							{ type: 'GRANT_RESISTANCE', target: 'Mystical', value: 1, optional: 'while raging' },
+							{
+								type: 'GRANT_ABILITY',
+								target: 'spiritual_aura',
+								value:
+									'While Raging: 5 Space Aura allows Shove on any creature (pushed in your chosen direction), use Parry/Protect/Raise Shield on any creature in Aura (Raise Shield doesn\'t require wielding a Shield).'
+							}
+						]
+					}
+				],
+				choices: [
+					{
+						id: 'barbarian_guardian_maneuver',
+						prompt: 'Learn 1 of the following Maneuvers (or any Maneuver if you know all 3).',
+						count: 1,
+						options: [
+							{
+								name: 'Parry',
+								description: 'Learn the Parry maneuver.',
+								effects: [{ type: 'GRANT_MANEUVERS', target: 'Parry', value: 1 }]
+							},
+							{
+								name: 'Protect',
+								description: 'Learn the Protect maneuver.',
+								effects: [{ type: 'GRANT_MANEUVERS', target: 'Protect', value: 1 }]
+							},
+							{
+								name: 'Raise Shield',
+								description: 'Learn the Raise Shield maneuver.',
+								effects: [{ type: 'GRANT_MANEUVERS', target: 'Raise Shield', value: 1 }]
+							}
+						]
+					}
+				]
+			},
+			{
+				id: 'barbarian_spirit_guardian_ancestral_knowledge',
+				featureName: 'Ancestral Knowledge',
+				levelGained: 3,
+				description:
+					'You have ADV on Checks to recall information about the history of your Ancestries (such as Human, Dwarf, or Elf). Additionally, once per Long Rest when you make a Trade or Language Check, you can choose to gain ADV on the Check as a spirit lends you its experience.',
+				isFlavor: true,
+				effects: [
+					{
+						type: 'GRANT_ABILITY',
+						target: 'ancestral_knowledge',
+						value:
+							"ADV on Checks about your Ancestries' history. Once per Long Rest: ADV on a Trade or Language Check as a spirit lends you its experience."
+					}
+				]
+			}
 			]
 		}
 	]

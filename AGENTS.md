@@ -77,6 +77,7 @@ Tips
 - Spells System: `docs/systems/SPELLS_SYSTEM.MD`
 - Martials System: `docs/systems/MARTIALS_SYSTEM.MD`
 - Character Sheet Overview: `docs/systems/CHARACTER_SHEET.MD`
+- PDF Export System: `docs/systems/PDF_EXPORT_SYSTEM.MD`
 
 ## Agent Brief Template
 

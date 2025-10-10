@@ -28,11 +28,11 @@ export type ValidationCode =
 
 // Source attribution for effects
 export interface EffectSource {
-	type: 'trait' | 'class_feature' | 'choice' | 'base' | 'ancestry_default';
+	type: 'trait' | 'class_feature' | 'choice' | 'base' | 'ancestry_default' | 'talent' | 'subclass_feature_choice';
 	id: string;
 	name: string;
 	description?: string;
-	category?: string; // e.g., "Human Trait", "Barbarian Level 1"
+	category?: string; // e.g., "Human Trait", "Barbarian Level 1", "Talent", "Elemental Fury - Raging Elements"
 }
 
 // Effect with source attribution and resolution status
@@ -247,6 +247,30 @@ export interface EnhancedCalculationResult {
 		ancestryPointsRemaining: number;
 	};
 
+	// Level progression budgets (from class progression)
+	levelBudgets?: {
+		totalTalents: number;
+		totalPathPoints: number;
+		totalAncestryPoints: number;
+		totalSkillPoints: number;
+		totalTradePoints: number;
+		totalAttributePoints: number;
+		totalManeuversKnown: number;
+		totalTechniquesKnown: number;
+		totalCantripsKnown: number;
+		totalSpellsKnown: number;
+		unlockedFeatureIds: string[];
+		pendingSubclassChoices: number;
+	};
+
+	// Resolved class features (from resolver)
+	resolvedFeatures?: {
+		unlockedFeatures: Array<any>; // ClassFeature objects
+		pendingFeatureChoices: Array<any>; // PendingFeatureChoice objects
+		availableSubclassChoice: boolean;
+		subclassChoiceLevel?: number;
+	};
+
 	// Validation results
 	validation: ValidationResult;
 
@@ -289,6 +313,13 @@ export interface EnhancedCharacterBuildData {
 	selectedTraitIds: string[]; // Array of trait IDs
 	selectedTraitChoices: TraitChoiceStorage; // User choices for traits
 	featureChoices: Record<string, any>; // User choices for class features
+	selectedTalents?: Record<string, number>; // Count-based talent selection { talentId: count }
+	selectedSubclass?: string; // Selected subclass name (e.g., "Berserker")
+	
+	// Multiclass selections (M3.17)
+	selectedMulticlassOption?: 'novice' | 'adept' | 'expert' | 'master' | 'grandmaster' | 'legendary' | null;
+	selectedMulticlassClass?: string; // Class ID
+	selectedMulticlassFeature?: string; // Feature name
 
 	// Skills/Trades/Languages
 	skillsData: Record<string, number>;
@@ -309,6 +340,28 @@ export interface EnhancedCharacterBuildData {
 
 	// Timestamps for caching
 	lastModified: number;
+
+	// Path Point Allocations (M3.9)
+	pathPointAllocations?: { 
+		martial?: number; 
+		spellcasting?: number; 
+	};
+
+	// Level-based budgets (populated by aggregateProgressionGains)
+	levelBudgets?: {
+		totalTalents: number;
+		totalPathPoints: number;
+		totalAncestryPoints: number;
+		totalSkillPoints: number;
+		totalTradePoints: number;
+		totalAttributePoints: number;
+		totalManeuversKnown: number;
+		totalTechniquesKnown: number;
+		totalCantripsKnown: number;
+		totalSpellsKnown: number;
+		unlockedFeatureIds: string[];
+		pendingSubclassChoices: number; // Count of subclass features player needs to choose
+	};
 }
 
 // Hook result for character calculation

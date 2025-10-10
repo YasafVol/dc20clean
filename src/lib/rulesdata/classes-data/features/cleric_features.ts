@@ -25,6 +25,7 @@ export const clericClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
+			id: 'cleric_spellcasting_path',
 			featureName: 'Spellcasting Path',
 			levelGained: 1,
 			description: 'You gain the ability to cast spells and use divine magic.',
@@ -34,6 +35,7 @@ export const clericClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'cleric_order',
 			featureName: 'Cleric Order',
 			levelGained: 1,
 			description: 'Your connection to your deity grants you the following benefits: Choose an Elemental or Mystical damage type to become your Divine Damage, and gain the benefits of 2 Divine Domains of your choice.',
@@ -152,12 +154,14 @@ export const clericClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'cleric_divine_damage_expansion',
 			featureName: 'Divine Damage Expansion',
 			levelGained: 1,
 			description: 'When you deal damage with a Spell you can convert the damage to your Divine Damage type. Additionally, you gain Resistance (1) to your Divine Damage type.',
 			effects: []
 		},
 		{
+			id: 'cleric_divine_blessing',
 			featureName: 'Divine Blessing',
 			levelGained: 1,
 			description: "You can spend 1 AP to say a prayer and petition your deity for their divine blessing. Choose 1 of the blessings listed below. Each blessing has a listed MP cost that you must spend to gain the blessing. Once during the next minute, you can apply the blessing to a Spell you cast. If your Spell targets more than 1 creature, the blessing only applies to 1 target of your choice. You can only have 1 blessing at a time. If the blessing ends without granting any benefit, you regain the MP spent.",
@@ -180,12 +184,14 @@ export const clericClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'cleric_divine_omen',
 			featureName: 'Divine Omen (Flavor Feature)',
 			levelGained: 1,
 			description: 'Once per Long Rest, you can spend 10 minutes to commune with your Deity and ask one yes-or-no question.',
 			effects: []
 		},
 		{
+			id: 'cleric_channel_divinity',
 			featureName: 'Channel Divinity',
 			levelGained: 2,
 			description: 'You gain the ability to channel the direct power of your deity. When you use this Feature, choose 1 of the options below. You can use this Feature once per Short Rest.',
@@ -203,6 +209,7 @@ export const clericClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'cleric_talent_level_2',
 			featureName: 'Talent',
 			levelGained: 2,
 			description: 'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',

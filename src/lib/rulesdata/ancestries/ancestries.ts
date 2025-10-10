@@ -60,6 +60,7 @@ export const ancestriesData: Ancestry[] = [
 			'dwarf_minor_tremorsense',
 			'dwarf_stubborn',
 			'dwarf_earthen_knowledge',
+			'dwarf_trade_expertise',
 			'dwarf_charisma_attribute_decrease',
 			'dwarf_short_legged'
 		]
@@ -291,13 +292,11 @@ export const ancestriesData: Ancestry[] = [
 			'beastborn_burrow_speed',
 			// Jumping
 			'beastborn_jumper',
-			'beastborn_strong_jumper',
 			// Flying
 			'beastborn_glide_speed',
 			'beastborn_limited_flight',
 			'beastborn_full_flight',
 			'beastborn_flyby',
-			'beastborn_stealth_feathers',
 			'beastborn_winged_arms',
 			// Body
 			'beastborn_tough',
@@ -309,7 +308,6 @@ export const ancestriesData: Ancestry[] = [
 			'beastborn_hazardous_hide',
 			'beastborn_natural_armor',
 			'beastborn_hard_shell',
-			'beastborn_shell_retreat',
 			'beastborn_camouflage',
 			'beastborn_prowler',
 			'beastborn_cold_resistance',
@@ -329,39 +327,12 @@ export const ancestriesData: Ancestry[] = [
 			'beastborn_fast_reflexes',
 			'beastborn_mimicry',
 			'beastborn_intimidating_shout',
-			'beastborn_toxic_fortitude',
-			'beastborn_shoot_webs'
+			'beastborn_toxic_fortitude'
 		],
 		origin: {
 			prompt: 'Choose a type of Beast you are modeled after:',
 			options: []
 		}
-	},
-	{
-		id: 'penguinborn',
-		name: 'Penguinborn',
-		description:
-			'Penguinborn are adaptable creatures, at home in both frigid waters and bustling crowds.',
-		rulesSource: 'DC20Magazine10',
-		defaultTraitIds: [
-			'penguinborn_slip_and_slide',
-			'penguinborn_swim_speed',
-			'penguinborn_insulated_movement',
-			'penguinborn_unassuming',
-			'penguinborn_arctic_emperor'
-		],
-		expandedTraitIds: [
-			'penguinborn_happy_feet',
-			'penguinborn_smile_and_wave',
-			'penguinborn_torpedo',
-			'penguinborn_natural_weapon',
-			'penguinborn_keen_sense',
-			'penguinborn_pack_tactics',
-			'penguinborn_cold_resistance',
-			'penguinborn_poor_climber',
-			'penguinborn_short_legged',
-			'penguinborn_waddle'
-		]
 	},
 	{
 		id: 'gremlin',

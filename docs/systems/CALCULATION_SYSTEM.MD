@@ -177,7 +177,250 @@ All UI components (Attributes, Background/Skills/Trades tabs) and the calculator
 
 ---
 
-> Last updated: 2025-10-02
+## 9. Calculation Order & Dependency Tree
+
+This section documents the **exact order** of calculations in `enhancedCharacterCalculator.ts` and the dependencies between values. **Parents must be calculated before children.**
+
+### 9.1. Calculation Stages
+
+#### Stage 1: Input Data & Effects Resolution
+```
+Input Data (buildData)
+├── level
+├── classId
+├── ancestry1Id, ancestry2Id
+├── selectedTraitIds
+├── selectedTraitChoices
+├── pathPointAllocations
+├── selectedSubclass
+├── attribute_might, attribute_agility, attribute_charisma, attribute_intelligence
+├── skillsData (ranks)
+├── tradesData (ranks)
+└── languagesData
+
+Effects Aggregation
+├── aggregateAttributedEffects() → rawEffects
+└── resolveEffectChoices() → resolvedEffects
+```
+
+#### Stage 2: Base Values (No Dependencies)
+```
+level → combatMastery = Math.ceil(level / 2)
+```
+
+#### Stage 3: Class Progression Data
+```
+classId + level → progressionGains
+├── totalHP (HP from leveling)
+├── totalSP (SP from leveling)
+├── totalMP (MP from leveling)
+├── totalSkillPoints
+├── totalTradePoints
+├── totalAttributePoints
+├── totalAncestryPoints
+├── totalTalents
+├── totalPathPoints
+├── totalManeuversKnown
+├── totalTechniquesKnown
+├── totalCantripsKnown
+└── totalSpellsKnown
+```
+
+#### Stage 4: Attributes (With Effect Breakdowns)
+```
+buildData attributes + resolvedEffects → finalAttributes
+├── attribute_might → breakdown → finalMight
+├── attribute_agility → breakdown → finalAgility
+├── attribute_charisma → breakdown → finalCharisma
+└── attribute_intelligence → breakdown → finalIntelligence
+```
+
+#### Stage 5: Prime Attribute (Depends on All Attributes)
+```
+Dependencies: finalMight, finalAgility, finalCharisma, finalIntelligence
+
+maxValue = Math.max(finalMight, finalAgility, finalCharisma, finalIntelligence)
+primeAttribute = tie-breaker (might > agility > charisma > intelligence)
+```
+
+#### Stage 6: Initial Resource Values (Before Effect Breakdowns)
+```
+Dependencies: finalMight, progressionGains
+
+⚠️ INITIAL VALUES (will be updated after breakdowns)
+├── finalHPMax_initial = finalMight + progressionGains.totalHP
+├── finalSPMax_initial = progressionGains.totalSP
+└── finalMPMax_initial = progressionGains.totalMP
+```
+
+#### Stage 7: Defense Base Values (Before Effect Breakdowns)
+```
+Dependencies: combatMastery, finalAgility, finalIntelligence, finalMight, finalCharisma
+
+├── basePD = 8 + combatMastery + finalAgility + finalIntelligence
+└── baseAD = 8 + combatMastery + finalMight + finalCharisma
+```
+
+#### Stage 8: Derived Stats (First Pass - Using Initial Values)
+```
+Dependencies: combatMastery, maxValue, finalAttributes, finalCharisma
+
+├── finalGritPoints = max(0, 2 + finalCharisma)
+├── finalSaveDC = 10 + combatMastery + maxValue
+├── finalSaveMight = finalMight + combatMastery
+├── finalSaveAgility = finalAgility + combatMastery
+├── finalSaveCharisma = finalCharisma + combatMastery
+├── finalSaveIntelligence = finalIntelligence + combatMastery
+├── finalDeathThreshold = maxValue + combatMastery
+├── baseMoveSpeed = 5
+├── baseJumpDistance = finalAgility
+└── finalInitiativeBonus = combatMastery + finalAgility
+```
+
+#### Stage 9: Apply Effect Breakdowns to Resources & Stats
+```
+Dependencies: initial values + resolvedEffects
+
+Create breakdowns (applies MODIFY_STAT effects):
+├── breakdowns.hpMax = createStatBreakdown('hpMax', finalHPMax_initial, resolvedEffects)
+├── breakdowns.spMax = createStatBreakdown('spMax', finalSPMax_initial, resolvedEffects)
+├── breakdowns.mpMax = createStatBreakdown('mpMax', finalMPMax_initial, resolvedEffects)
+├── breakdowns.pd = createStatBreakdown('pd', basePD, resolvedEffects)
+├── breakdowns.ad = createStatBreakdown('ad', baseAD, resolvedEffects)
+├── breakdowns.attributePoints = createStatBreakdown('attributePoints', 12 + progressionGains.totalAttributePoints, resolvedEffects)
+├── breakdowns.move_speed = createStatBreakdown('moveSpeed', baseMoveSpeed, resolvedEffects)
+└── breakdowns.jump_distance = createStatBreakdown('jumpDistance', baseJumpDistance, resolvedEffects)
+
+Update to final values (post-effects):
+├── finalHPMax = breakdowns.hpMax.total  ✅ NOW includes trait effects
+├── finalSPMax = breakdowns.spMax.total
+├── finalMPMax = breakdowns.mpMax.total
+├── finalMoveSpeed = breakdowns.move_speed.total
+├── finalJumpDistance = breakdowns.jump_distance.total
+├── finalAttributePoints = breakdowns.attributePoints.total
+└── finalRestPoints = finalHPMax  ✅ CORRECTLY uses post-breakdown HP
+```
+
+#### Stage 10: Combat Stats with Breakdowns
+```
+Dependencies: combatMastery, maxValue, finalSaveDC
+
+├── attackSpellCheckBase = combatMastery + maxValue
+├── breakdowns.attack_spell_check = createStatBreakdown('attackSpellCheck', attackSpellCheckBase, resolvedEffects)
+└── breakdowns.save_dc = createStatBreakdown('saveDC', finalSaveDC, resolvedEffects)
+```
+
+#### Stage 11: Background Points & Conversions
+```
+Dependencies: finalIntelligence, progressionGains, resolvedEffects, buildData
+
+├── baseSkillPoints = 5 + progressionGains.totalSkillPoints + finalIntelligence + skillPointsBonus
+├── baseTradePoints = 3 + progressionGains.totalTradePoints + tradePointsBonus
+├── baseLanguagePoints = 2 + languagePointsBonus
+├── conversions (skillToTrade, tradeToSkill, tradeToLanguage)
+├── availableSkillPoints (after conversions)
+├── availableTradePoints (after conversions)
+└── availableLanguagePoints (after conversions)
+```
+
+#### Stage 12: Ancestry Points
+```
+Dependencies: selectedTraitIds, traitsData, resolvedEffects
+
+├── selectedTraitCosts = sum of trait costs
+├── baseAncestryPoints = 5 + ancestryPointsBonus
+└── ancestryPointsRemaining = baseAncestryPoints - selectedTraitCosts
+```
+
+#### Stage 13: Martial Check
+```
+Dependencies: finalAgility, finalMight, skillsData
+
+├── acrobaticsTotal = finalAgility + (acrobaticsProficiency × 2)
+├── athleticsTotal = finalMight + (athleticsProficiency × 2)
+└── finalMartialCheck = max(acrobaticsTotal, athleticsTotal)
+```
+
+### 9.2. Dependency Graph
+
+```
+level
+  └─→ combatMastery
+        ├─→ basePD (+ finalAgility + finalIntelligence)
+        ├─→ baseAD (+ finalMight + finalCharisma)
+        ├─→ finalSaveDC (+ maxValue)
+        ├─→ finalSaveMight (+ finalMight)
+        ├─→ finalSaveAgility (+ finalAgility)
+        ├─→ finalSaveCharisma (+ finalCharisma)
+        ├─→ finalSaveIntelligence (+ finalIntelligence)
+        ├─→ finalDeathThreshold (+ maxValue)
+        ├─→ finalInitiativeBonus (+ finalAgility)
+        └─→ attackSpellCheckBase (+ maxValue)
+
+buildData.attributes + resolvedEffects
+  └─→ finalAttributes (might, agility, charisma, intelligence)
+        ├─→ maxValue
+        │     ├─→ primeAttribute
+        │     ├─→ finalSaveDC
+        │     ├─→ finalDeathThreshold
+        │     └─→ attackSpellCheckBase
+        ├─→ basePD (combatMastery + finalAgility + finalIntelligence)
+        ├─→ baseAD (combatMastery + finalMight + finalCharisma)
+        ├─→ finalGritPoints (2 + finalCharisma)
+        ├─→ baseSkillPoints (5 + progressionGains + finalIntelligence + bonus)
+        ├─→ finalInitiativeBonus (combatMastery + finalAgility)
+        ├─→ baseJumpDistance (= finalAgility)
+        └─→ finalMartialCheck
+              ├─→ acrobaticsTotal (finalAgility + proficiency × 2)
+              └─→ athleticsTotal (finalMight + proficiency × 2)
+
+progressionGains
+  ├─→ totalHP
+  │     └─→ finalHPMax_initial (finalMight + totalHP)
+  │           └─→ breakdowns.hpMax
+  │                 └─→ finalHPMax (post-effects) ✅
+  │                       └─→ finalRestPoints ✅ CORRECTLY calculated here
+  ├─→ totalSP → finalSPMax
+  ├─→ totalMP → finalMPMax
+  ├─→ totalSkillPoints → baseSkillPoints
+  ├─→ totalTradePoints → baseTradePoints
+  └─→ totalAttributePoints → baseAttributePoints
+```
+
+### 9.3. Issue: Rest Points Calculation Timing ✅ FIXED
+
+**Previous (Incorrect) Order:**
+1. Line 903: `finalHPMax = finalMight + progressionGains.totalHP` (= 18)
+2. Line 944: `finalRestPoints = finalHPMax` (= 18) ❌
+3. Line 950: `breakdowns.hpMax = createStatBreakdown(...)` (applies +1 from trait)
+4. Line 964: `finalHPMax = breakdowns.hpMax.total` (= 19) ✅
+5. **Result**: HP Max = 19, Rest Points = 18 ❌
+
+**Current (Correct) Order:**
+1. Line 903: `finalHPMax = finalMight + progressionGains.totalHP`
+2. Line 949: `breakdowns.hpMax = createStatBreakdown(...)`
+3. Line 963: `finalHPMax = breakdowns.hpMax.total` (= 19)
+4. **Line 971**: `finalRestPoints = finalHPMax` (= 19) ✅
+5. **Result**: HP Max = 19, Rest Points = 19 ✅
+
+### 9.4. Correct Calculation Order
+
+For values that depend on breakdowns, the order must be:
+1. Calculate initial/base value
+2. Create breakdown with effects
+3. Get final value from breakdown.total
+4. **THEN** calculate dependent values
+
+**Examples of correct dependencies:**
+- `finalGritPoints` depends on `finalCharisma` (post-breakdown) ✅
+- `finalInitiativeBonus` depends on `finalAgility` (post-breakdown) ✅
+- `finalMartialCheck` depends on `finalMight`/`finalAgility` (post-breakdown) ✅
+- `finalRestPoints` depends on `finalHPMax` (post-breakdown) ✅
+
+---
+
+> Last updated: 2025-10-10
 > Maintainer: @DC20Clean-Team
+
 
 

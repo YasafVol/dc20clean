@@ -941,7 +941,6 @@ export function calculateCharacterWithBreakdowns(
 	const finalDeathThreshold = maxValue + combatMastery; // Prime + Combat Mastery (usually -4)
 	const baseMoveSpeed = 5;
 	const baseJumpDistance = finalAgility;
-	const finalRestPoints = finalHPMax; // Rest Points = HP
 	const finalGritPoints = Math.max(0, 2 + finalCharisma); // 2 + Charisma (minimum 0)
 	const finalInitiativeBonus = combatMastery + finalAgility; // Combat Mastery + Agility
 	// Attribute points handled via breakdowns to avoid double counting
@@ -967,6 +966,9 @@ export function calculateCharacterWithBreakdowns(
 	const finalMoveSpeed = breakdowns.move_speed.total;
 	const finalJumpDistance = breakdowns.jump_distance.total;
 	const finalAttributePoints = breakdowns.attributePoints.total;
+
+	// Rest Points must be calculated AFTER HP breakdown is applied
+	const finalRestPoints = finalHPMax; // Rest Points = HP Max (post-effects)
 
 	// Combat breakdowns
 	const attackSpellCheckBase = combatMastery + maxValue;

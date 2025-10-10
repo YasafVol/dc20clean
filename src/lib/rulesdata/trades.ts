@@ -146,14 +146,6 @@ export const tradesData: ITradeData[] = [
 		tools: "Mason's Tools"
 	},
 	{
-		id: 'medicine',
-		name: 'Medicine',
-		attributeAssociation: 'intelligence',
-		description:
-			'Medicine is the knowledge and practice of healing injuries and treating diseases. This includes diagnosing ailments, administering treatments, and understanding medical procedures.',
-		tools: "Healer's Kit"
-	},
-	{
 		id: 'music',
 		name: 'Music',
 		attributeAssociation: 'charisma',
@@ -208,14 +200,6 @@ export const tradesData: ITradeData[] = [
 		description:
 			'Smithing is the general knowledge of working with metals. This includes understanding different metals, their properties, and basic metalworking techniques.',
 		tools: "Smith's Tools"
-	},
-	{
-		id: 'survival',
-		name: 'Survival',
-		attributeAssociation: 'intelligence',
-		description:
-			'Survival is the knowledge and skills needed to survive in the wilderness. This includes tracking, foraging, shelter building, and navigating in natural environments.',
-		tools: 'none' // Knowledge trade
 	},
 	{
 		id: 'tailoring',

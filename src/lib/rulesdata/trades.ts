@@ -1,124 +1,75 @@
 import { ITradeData } from './schemas/types';
 
 export const tradesData: ITradeData[] = [
+	// ========================================
+	// ARTISTRY
+	// ========================================
+	{
+		id: 'illustration',
+		name: 'Illustration',
+		attributeAssociation: 'agility',
+		description:
+			'Illustration is the ability to put ink or paint to paper to create beautiful art in drawings, paintings, and calligraphy. This includes creating images by making marks and lines with a pen, creating visually ornate handwritten lettering, or putting paint on a surface with a brush.',
+		tools: "Calligrapher's Supplies"
+	},
+	{
+		id: 'musician',
+		name: 'Musician',
+		attributeAssociation: 'agility', // or Charisma
+		description:
+			'Musicians are skilled in the use of a variety of instruments, which they can use to make impressive performances of sound. This includes bagpipes, drums, flutes, harps, horns, lutes, and pianos.',
+		tools: 'Musical Instrument'
+	},
+	{
+		id: 'theatre',
+		name: 'Theatre',
+		attributeAssociation: 'charisma',
+		description:
+			'Theatre is the art of expressive performance, through acting, dancing, singing, or even juggling or other dazzling displays. This includes embodying characters, making others laugh, moving your body in eye-catching ways, using your voice to create music, and telling vivid stories.',
+		tools: 'none'
+	},
+
+	// ========================================
+	// CRAFTING
+	// ========================================
 	{
 		id: 'alchemy',
 		name: 'Alchemy',
-		attributeAssociation: 'intelligence',
+		attributeAssociation: 'intelligence', // or Agility
 		description:
-			'Alchemy is the practice of creating something by combining or changing other things. This includes creating potions, poisons, and other alchemical substances.',
+			'Alchemy is the practice of creating something by combining or changing other things, such as creating magical potions or changing one element into another. This includes magic potions with versatile effects and transmuting elements like lead into gold or water into wine.',
 		tools: "Alchemist's Supplies"
-	},
-	{
-		id: 'architecture',
-		name: 'Architecture',
-		attributeAssociation: 'intelligence',
-		description:
-			'Architecture is the knowledge of building design, construction, and structural integrity. This includes understanding how buildings are constructed, identifying weak points, and designing structures.',
-		tools: 'none' // Knowledge trade
 	},
 	{
 		id: 'blacksmithing',
 		name: 'Blacksmithing',
 		attributeAssociation: 'might',
 		description:
-			'Blacksmithing is the crafting and repairing of metal objects, including weapons and armor. This includes working with forges, hammers, and other tools to shape metal.',
-		tools: "Smith's Tools"
+			'Blacksmithing is the practice of melting and shaping metal into objects, such as nails, horse shoes, or armor and weapons. This includes creating metal armor like chain, splint, and plate mail, and metal weapons such as axes, daggers, and swords.',
+		tools: "Blacksmith's Tools"
 	},
 	{
-		id: 'brewing',
-		name: 'Brewing',
-		attributeAssociation: 'intelligence',
+		id: 'glassblowing',
+		name: 'Glassblowing',
+		attributeAssociation: 'agility', // or Might
 		description:
-			'Brewing is the art of creating beverages through fermentation, such as beer, wine, and spirits. This includes understanding the process of fermentation and using brewing equipment.',
-		tools: "Brewer's Supplies"
-	},
-	{
-		id: 'calligraphy',
-		name: 'Calligraphy',
-		attributeAssociation: 'agility',
-		description:
-			'Calligraphy is the art of decorative handwriting and lettering. This includes using various pens, inks, and techniques to create visually appealing text.',
-		tools: "Calligrapher's Supplies"
-	},
-	{
-		id: 'carpentry',
-		name: 'Carpentry',
-		attributeAssociation: 'might',
-		description:
-			'Carpentry is the crafting and repairing of wooden objects and structures. This includes working with wood, saws, hammers, and other tools to build and repair.',
-		tools: "Carpenter's Tools"
-	},
-	{
-		id: 'cartography',
-		name: 'Cartography',
-		attributeAssociation: 'intelligence',
-		description:
-			'Cartography is the art and science of mapmaking. This includes creating maps, reading maps, and navigating using maps.',
-		tools: "Cartographer's Tools"
-	},
-	{
-		id: 'cobbling',
-		name: 'Cobbling',
-		attributeAssociation: 'agility',
-		description:
-			'Cobbling is the crafting and repairing of footwear. This includes working with leather, thread, and tools to create and repair shoes and boots.',
-		tools: "Cobbler's Tools"
-	},
-	{
-		id: 'cooking',
-		name: 'Cooking',
-		attributeAssociation: 'intelligence',
-		description:
-			'Cooking is the preparation of food for consumption. This includes understanding ingredients, recipes, and cooking techniques.',
-		tools: "Cook's Utensils"
-	},
-	{
-		id: 'deciphering',
-		name: 'Deciphering',
-		attributeAssociation: 'intelligence',
-		description:
-			'Deciphering is the understanding of coded messages, ancient scripts, or hidden meanings. This includes analyzing patterns, symbols, and languages to uncover hidden information.',
-		tools: 'none' // Knowledge trade
-	},
-	{
-		id: 'disguise',
-		name: 'Disguise',
-		attributeAssociation: 'charisma',
-		description:
-			"Disguise is the altering of one's appearance to resemble someone else or a different type of person. This includes using makeup, costumes, and props to change appearance.",
-		tools: 'Disguise Kit'
-	},
-	{
-		id: 'forgery',
-		name: 'Forgery',
-		attributeAssociation: 'agility',
-		description:
-			'Forgery is the creating of convincing copies of documents, signatures, or objects. This includes replicating details and materials to create fakes.',
-		tools: 'Forgery Kit'
-	},
-	{
-		id: 'gaming',
-		name: 'Gaming',
-		attributeAssociation: 'charisma',
-		description:
-			'Gaming is the proficiency in various games of chance or skill. This includes understanding rules, strategies, and playing games.',
-		tools: 'Gaming Set'
+			'Glassblowing is the practice of blowing molten sand into glass objects, such as cups, bowls, vases, ornaments, lenses, window panes, and other objects.',
+		tools: "Glassblower's Tools"
 	},
 	{
 		id: 'herbalism',
 		name: 'Herbalism',
 		attributeAssociation: 'intelligence',
 		description:
-			'Herbalism is the knowledge of plants, their properties, and uses. This includes identifying plants, preparing herbal remedies, and understanding plant effects.',
-		tools: 'Herbalism Kit'
+			'Herbalism is the practice of combining various mundane plants to create concoctions that can be used to treat afflictions, heal wounds, or poison enemies. This includes brews (teas, tonics, tinctures), ointments (infusions, balms, salves), and bandages (poultices). Medicine and poison are two sides of the same coin in herbalism.',
+		tools: "Herbalist's Supplies"
 	},
 	{
 		id: 'jeweler',
 		name: 'Jeweler',
 		attributeAssociation: 'agility',
 		description:
-			'Jeweler is the crafting and repairing of jewelry. This includes working with precious metals, gems, and tools to create and repair jewelry.',
+			'Jewelers can beautify, identify, and even price various gems, stones, and jewelry, and can identify magical gems or the magical uses of mundane gems.',
 		tools: "Jeweler's Tools"
 	},
 	{
@@ -126,159 +77,172 @@ export const tradesData: ITradeData[] = [
 		name: 'Leatherworking',
 		attributeAssociation: 'agility',
 		description:
-			'Leatherworking is the crafting and repairing of leather goods. This includes working with leather, tools, and techniques to create and repair items.',
+			'Leatherworking is the practice of making leather from animal skins or making leather into useable items, such as clothing, armor, weapons sheathes, and other objects.',
 		tools: "Leatherworker's Tools"
 	},
 	{
-		id: 'linguistics',
-		name: 'Linguistics',
-		attributeAssociation: 'intelligence',
+		id: 'sculpting',
+		name: 'Sculpting',
+		attributeAssociation: 'agility',
 		description:
-			'Linguistics is the study of languages, their structure, and origins. This includes understanding grammar, syntax, and the history of languages.',
-		tools: 'none' // Knowledge trade
+			'Sculpting is the practice of shaping bone, clay, glass, stone, or wood into figures, tools, idols, or simple weapons. This includes containers, statues, simple weapons, and trinkets.',
+		tools: "Sculptor's Tools"
+	},
+	{
+		id: 'tinkering',
+		name: 'Tinkering',
+		attributeAssociation: 'agility', // or Intelligence
+		description:
+			'Tinkering is the practice of making, repairing, or operating mechanisms, such as traps and clockwork devices. This includes setting up and disarming traps, and tuning, modifying, or repairing clockwork devices that operate using gears, springs, and levers.',
+		tools: "Tinkerer's Tools"
+	},
+	{
+		id: 'weaving',
+		name: 'Weaving',
+		attributeAssociation: 'agility',
+		description:
+			'Weaving is the practice of creating material for clothing or using such material to create clothes, curtains, tapestries, and other woven objects.',
+		tools: "Weaver's Tools"
+	},
+
+	// ========================================
+	// SERVICES
+	// ========================================
+	{
+		id: 'brewing',
+		name: 'Brewing',
+		attributeAssociation: 'agility', // or Intelligence or Charisma
+		description:
+			'Brewing is the practice of producing alcohol, especially beer, mead, and wine.',
+		tools: "Brewer's Supplies"
+	},
+	{
+		id: 'carpentry',
+		name: 'Carpentry',
+		attributeAssociation: 'agility', // or Might
+		description:
+			'Carpentry is the practice of measuring, cutting, and installing pieces of wood to create structures that form buildings, bridges, ships, and other large structures.',
+		tools: "Carpenter's Tools"
+	},
+	{
+		id: 'cartography',
+		name: 'Cartography',
+		attributeAssociation: 'intelligence', // or Agility
+		description:
+			'Cartography is the practice of drawing and understanding maps.',
+		tools: "Cartographer's Tools"
+	},
+	{
+		id: 'cooking',
+		name: 'Cooking',
+		attributeAssociation: 'agility', // or Intelligence or Charisma
+		description:
+			'Cooking is the practice of preparing, mixing, and heating edible ingredients to create meals.',
+		tools: "Cook's Utensils"
 	},
 	{
 		id: 'masonry',
 		name: 'Masonry',
 		attributeAssociation: 'might',
 		description:
-			'Masonry is the working with stone to build structures or objects. This includes cutting, shaping, and laying stone to create buildings and other structures.',
+			'Masonry is the practice of working and installing stone into structures that form buildings, bridges, furnaces, and other large structures.',
 		tools: "Mason's Tools"
 	},
 	{
-		id: 'music',
-		name: 'Music',
-		attributeAssociation: 'charisma',
+		id: 'vehicles',
+		name: 'Vehicles',
+		attributeAssociation: 'agility', // or Intelligence or Might
 		description:
-			'Music is the performance of music using instruments or voice. This includes playing instruments, singing, and understanding musical theory.',
-		tools: 'Musical Instrument'
+			'Vehicles covers the practice of managing, operating, and steering vehicles, whether on land, sea, or air. This includes water vehicles (boats, canoes, kayaks, ships), air vehicles (airships, astral jumpers), and land vehicles (clockwork or magical land vehicles).',
+		tools: 'Vehicle (required)'
 	},
+
+	// ========================================
+	// SUBTERFUGE
+	// ========================================
 	{
-		id: 'navigation',
-		name: 'Navigation',
+		id: 'cryptography',
+		name: 'Cryptography',
 		attributeAssociation: 'intelligence',
 		description:
-			"Navigation is the determining of one's position and plotting a course. This includes using maps, compasses, and celestial bodies to navigate.",
-		tools: "Navigator's Tools"
+			'Cryptography is the process of converting messages into secret or disguised words to protect them from being understood. The message must be deciphered to discern its true meaning.',
+		tools: "Cryptographer's Tools"
 	},
 	{
-		id: 'painting',
-		name: 'Painting',
-		attributeAssociation: 'agility',
+		id: 'disguise',
+		name: 'Disguise',
+		attributeAssociation: 'agility', // or Charisma
 		description:
-			'Painting is the creating of art using paints. This includes using various paints, brushes, and techniques to create visual art.',
-		tools: "Painter's Supplies"
+			"The art of disguise is in the ability to alter one's appearance to conceal identity or appear as someone else.",
+		tools: 'Disguise Kit'
 	},
 	{
-		id: 'poisoner',
-		name: 'Poisoner',
-		attributeAssociation: 'intelligence',
+		id: 'gaming',
+		name: 'Gaming',
+		attributeAssociation: 'intelligence', // or Charisma
 		description:
-			'Poisoner is the knowledge and creation of poisons. This includes identifying poisonous substances, preparing poisons, and understanding their effects.',
-		tools: "Poisoner's Kit"
+			'Gaming is the practice of playing games skillfully, for money or for entertainment. This includes dice games, playing cards, and gambling.',
+		tools: 'Gaming Set'
 	},
 	{
-		id: 'pottery',
-		name: 'Pottery',
-		attributeAssociation: 'agility',
+		id: 'lockpicking',
+		name: 'Lockpicking',
+		attributeAssociation: 'agility', // or Intelligence
 		description:
-			'Pottery is the crafting of objects from clay. This includes shaping, firing, and glazing clay to create various objects.',
-		tools: "Potter's Tools"
+			'Lockpicking is the practice of opening devices secured by interworking mechanisms, such as locks and traps. This includes opening locks without the proper key using thin instruments, copying keys, and disarming traps.',
+		tools: 'Lockpicking Tools'
 	},
-	{
-		id: 'sculpting',
-		name: 'Sculpting',
-		attributeAssociation: 'might',
-		description:
-			'Sculpting is the creating of three-dimensional art from various materials. This includes shaping materials like stone, wood, or clay to create sculptures.',
-		tools: "Sculptor's Tools"
-	},
-	{
-		id: 'smithing',
-		name: 'Smithing',
-		attributeAssociation: 'might',
-		description:
-			'Smithing is the general knowledge of working with metals. This includes understanding different metals, their properties, and basic metalworking techniques.',
-		tools: "Smith's Tools"
-	},
-	{
-		id: 'tailoring',
-		name: 'Tailoring',
-		attributeAssociation: 'agility',
-		description:
-			'Tailoring is the crafting and repairing of clothing and textiles. This includes working with fabric, needles, and thread to create and repair garments.',
-		tools: "Weaver's Tools"
-	},
-	{
-		id: 'thieves',
-		name: "Thieves'",
-		attributeAssociation: 'agility',
-		description:
-			"Thieves' is the knowledge and skills related to thievery, including lockpicking and disarming traps. This includes understanding security measures and using specialized tools.",
-		tools: "Thieves' Tools"
-	},
-	{
-		id: 'vehicles_land',
-		name: 'Vehicles (Land)',
-		attributeAssociation: 'agility',
-		description:
-			'Vehicles (Land) is the proficiency in operating land-based vehicles. This includes riding horses, driving carts, and operating other land vehicles.',
-		tools: 'none'
-	},
-	{
-		id: 'vehicles_water',
-		name: 'Vehicles (Water)',
-		attributeAssociation: 'agility',
-		description:
-			'Vehicles (Water) is the proficiency in operating water-based vehicles. This includes sailing boats, piloting ships, and operating other water vehicles.',
-		tools: 'none'
-	},
-	{
-		id: 'woodcarving',
-		name: 'Woodcarving',
-		attributeAssociation: 'agility',
-		description:
-			'Woodcarving is the creating of art or objects from wood. This includes shaping wood using knives, chisels, and other tools.',
-		tools: "Woodcarver's Tools"
-	},
+
+	// ========================================
+	// KNOWLEDGE TRADES
+	// ========================================
 	{
 		id: 'arcana',
 		name: 'Arcana',
 		attributeAssociation: 'intelligence',
 		description:
-			'Arcana is the study of magic, its history, theories, and the planes of existence. This includes recalling information about spells, magical creatures, and magical phenomena.',
-		tools: 'none' // Knowledge trade
+			'Arcane knowledge encompasses the study of arcane magic, the planes of existence, and the underlying principles that govern reality beyond mundane understanding. This includes arcane magic, spells, items, runes, glyphs, symbols, creatures (constructs, monstrosities, oozes), and planes of existence.',
+		tools: 'none'
+	},
+	{
+		id: 'engineering',
+		name: 'Engineering',
+		attributeAssociation: 'intelligence',
+		description:
+			"Engineering represents a character's understanding of mechanics, construction, and the application of scientific principles in a world that blends magic and technology. This includes designing and operating gears, pulleys, mechanical engines, motors, and understanding the architecture of buildings, bridges, tunnels, and fortresses.",
+		tools: 'none'
 	},
 	{
 		id: 'history',
 		name: 'History',
 		attributeAssociation: 'intelligence',
 		description:
-			'History is the study of past events, ancient lore, and how civilizations have shaped the present. This includes recalling information about historical figures, events, and cultures.',
-		tools: 'none' // Knowledge trade
+			'History involves the study of past events, including recorded events, ancient lore, and provides insight into how civilizations, cultures, and legends have shaped the present world. This includes historical events, conflicts, wars, creatures (dragons, giants, humanoids), and lost civilizations.',
+		tools: 'none'
 	},
 	{
 		id: 'nature',
 		name: 'Nature',
 		attributeAssociation: 'intelligence',
 		description:
-			'Nature is the study of the natural world, including plants, animals, weather patterns, and natural phenomena.',
-		tools: 'none' // Knowledge trade
-	},
-	{
-		id: 'religion',
-		name: 'Religion',
-		attributeAssociation: 'intelligence',
-		description:
-			'Religion is the knowledge of deities, religious practices, and holy texts. This includes understanding religious beliefs, rituals, and scriptures.',
-		tools: 'none' // Knowledge trade
+			"Nature represents a character's understanding of the natural world, including the elements, weather patterns, and magical and mundane ecosystems. This includes primal and elemental magic, creatures (beasts, elementals, fey, plants), and natural parts of the world (terrain, weather, seasons, natural disasters).",
+		tools: 'none'
 	},
 	{
 		id: 'occultism',
 		name: 'Occultism',
 		attributeAssociation: 'intelligence',
 		description:
-			'Occultism is the study of hidden mysteries, forbidden lore, and supernatural phenomena beyond normal magical understanding.',
-		tools: 'none' // Knowledge trade
+			"Occultism represents a character's understanding of forbidden magic, secret cults, and the dealings of sinister creatures. This includes unholy magic, knowledge of the forbidden, creatures (aberrations, fiends, undead), and practices of secret cults.",
+		tools: 'none'
+	},
+	{
+		id: 'religion',
+		name: 'Religion',
+		attributeAssociation: 'intelligence',
+		description:
+			"Religion represents a character's understanding of divine magic, deities, and religious organizations. This includes holy magic, relics, auras, symbols, creatures (deities, celestials, angels), and religious rites, prayers, hierarchies, and practices.",
+		tools: 'none'
 	}
 ];
+

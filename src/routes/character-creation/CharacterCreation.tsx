@@ -607,81 +607,29 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 		// Spells & Maneuvers step
 		if (step === spellsStep) {
-				// Spells & Maneuvers step - validate based on class requirements
-				if (!state.classId) return false;
-
-				// Get class data to determine what's required
-				const selectedClass = classesData.find(
-					(c) => c.id.toLowerCase() === state.classId?.toLowerCase()
-				);
-				if (!selectedClass) return false;
-
-				const selectedClassFeatures = findClassByName(selectedClass.name);
-				if (!selectedClassFeatures) return false;
-
-				// Parse current selections
-				let selectedSpells: string[] = [];
-				let selectedManeuvers: string[] = [];
-
-			// Use typed arrays directly
-			selectedSpells = state.selectedSpells || [];
-			selectedManeuvers = state.selectedManeuvers || [];
-
-			// Get spell/maneuver counts from levelBudgets (uses .progression.ts data)
+			// TODO (M4.x): Re-enable spells & maneuvers validation once spell/cantrip 
+			// categorization is properly implemented and cantrip vs spell budgets are tracked separately.
+			// For now, validation is disabled to allow progression through character creation.
+			// Users can select any spells/maneuvers they want without blocking progression.
+			
+			console.warn('⚠️ Spells & Maneuvers validation temporarily disabled');
+			
+			// Log current selections for debugging
+			const selectedSpells = state.selectedSpells || [];
+			const selectedManeuvers = state.selectedManeuvers || [];
 			const budgets = calculationResult?.levelBudgets;
-			const requiredCantripCount = budgets?.totalCantripsKnown || 0;
-			const requiredSpellCount = budgets?.totalSpellsKnown || 0;
-			const requiredManeuverCount = budgets?.totalManeuversKnown || 0;
-
-				// For now, treat all selected spells as regular spells since we don't have easy cantrip lookup here
-				const selectedSpellCount = selectedSpells.length;
-
-				console.log('🔍 Step 5 validation details:', {
-					classId: state.classId,
-					level: state.level,
-					requiredCantripCount,
-					requiredSpellCount,
-					requiredManeuverCount,
-					selectedSpellCount,
-					selectedManeuverCount: selectedManeuvers.length,
-					hasSpellRequirements: requiredCantripCount > 0 || requiredSpellCount > 0,
-					hasManeuverRequirements: requiredManeuverCount > 0
-				});
-
-				// Check spell requirements
-				if (requiredCantripCount > 0 || requiredSpellCount > 0) {
-					// For simplicity, require total spell count to meet combined cantrip + spell requirement
-					const totalRequiredSpells = requiredCantripCount + requiredSpellCount;
-					if (selectedSpellCount < totalRequiredSpells) {
-						console.log('❌ Step 5 validation failed: insufficient spells', {
-							required: totalRequiredSpells,
-							selected: selectedSpellCount
-						});
-						return false;
-					}
-				}
-
-				// Check maneuver requirements
-				if (requiredManeuverCount > 0) {
-					if (selectedManeuvers.length < requiredManeuverCount) {
-						console.log('❌ Step 5 validation failed: insufficient maneuvers', {
-							required: requiredManeuverCount,
-							selected: selectedManeuvers.length
-						});
-						return false;
-					}
-				}
-
-				// If no requirements, step is complete
-				const hasRequirements =
-					requiredCantripCount > 0 || requiredSpellCount > 0 || requiredManeuverCount > 0;
-				if (!hasRequirements) {
-					return true;
-				}
-
-			// Step is complete if we reach here (all required selections are made)
-			console.log('✅ Spells validation passed');
-			return true;
+			
+			console.log('📊 Spells & Maneuvers selections (validation disabled):', {
+				classId: state.classId,
+				level: state.level,
+				requiredCantrips: budgets?.totalCantripsKnown || 0,
+				requiredSpells: budgets?.totalSpellsKnown || 0,
+				requiredManeuvers: budgets?.totalManeuversKnown || 0,
+				selectedSpells: selectedSpells.length,
+				selectedManeuvers: selectedManeuvers.length
+			});
+			
+			return true; // Always allow progression
 		}
 
 		// Character Name step

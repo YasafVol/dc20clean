@@ -287,10 +287,11 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 		const b = lm.B || { name: '', limited: false, fluent: false };
 		const c = lm.C || { name: '', limited: false, fluent: false };
 		const d = lm.D || { name: '', limited: false, fluent: false };
-		mastery.LanguageA = { Limited: a.limited, Fluent: a.fluent };
-		mastery.LanguageB = { Limited: b.limited, Fluent: b.fluent };
-		mastery.LanguageC = { Limited: c.limited, Fluent: c.fluent };
-		mastery.LanguageD = { Limited: d.limited, Fluent: d.fluent };
+		// Rule: If Fluent is true, Limited must also be true
+		mastery.LanguageA = { Limited: a.limited || a.fluent, Fluent: a.fluent };
+		mastery.LanguageB = { Limited: b.limited || b.fluent, Fluent: b.fluent };
+		mastery.LanguageC = { Limited: c.limited || c.fluent, Fluent: c.fluent };
+		mastery.LanguageD = { Limited: d.limited || d.fluent, Fluent: d.fluent };
 		languages = [a, b, c, d];
 	} else {
 		const langMap = (character as any).languagesData || {};
@@ -299,7 +300,7 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 			const name = langKeys[i] || '';
 			const fluency = (langMap?.[name]?.fluency as string) || (name ? 'fluent' : '');
 			const fluent = fluency === 'fluent';
-			const limited = fluency === 'limited';
+			const limited = fluency === 'limited' || fluent; // Rule: Fluent includes Limited
 			if (i === 0) mastery.LanguageA = { Limited: limited, Fluent: fluent };
 			if (i === 1) mastery.LanguageB = { Limited: limited, Fluent: fluent };
 			if (i === 2) mastery.LanguageC = { Limited: limited, Fluent: fluent };
@@ -512,10 +513,11 @@ export function transformCalculatedCharacterToPdfData(
     TradeB: pickLadder(1) || makeFive(),
     TradeC: pickLadder(2) || makeFive(),
     TradeD: pickLadder(3) || makeFive(),
-    LanguageA: { Limited: !!denorm.languageMastery.A?.limited, Fluent: !!denorm.languageMastery.A?.fluent },
-    LanguageB: { Limited: !!denorm.languageMastery.B?.limited, Fluent: !!denorm.languageMastery.B?.fluent },
-    LanguageC: { Limited: !!denorm.languageMastery.C?.limited, Fluent: !!denorm.languageMastery.C?.fluent },
-    LanguageD: { Limited: !!denorm.languageMastery.D?.limited, Fluent: !!denorm.languageMastery.D?.fluent }
+    // Rule: If Fluent is true, Limited must also be true
+    LanguageA: { Limited: !!denorm.languageMastery.A?.limited || !!denorm.languageMastery.A?.fluent, Fluent: !!denorm.languageMastery.A?.fluent },
+    LanguageB: { Limited: !!denorm.languageMastery.B?.limited || !!denorm.languageMastery.B?.fluent, Fluent: !!denorm.languageMastery.B?.fluent },
+    LanguageC: { Limited: !!denorm.languageMastery.C?.limited || !!denorm.languageMastery.C?.fluent, Fluent: !!denorm.languageMastery.C?.fluent },
+    LanguageD: { Limited: !!denorm.languageMastery.D?.limited || !!denorm.languageMastery.D?.fluent, Fluent: !!denorm.languageMastery.D?.fluent }
   } as any;
 
   // Proficiency checkboxes (not tracked yet)

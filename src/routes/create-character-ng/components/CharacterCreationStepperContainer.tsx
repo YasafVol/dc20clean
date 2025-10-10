@@ -56,8 +56,15 @@ const CharacterCreationStepperContainer: React.FC<CharacterCreationStepperContai
 	const handleBack = () => {
 		if (currentStep > 0) {
 			const newStep = currentStep - 1;
-			setCurrentStep(newStep);
 			const stepId = steps[newStep]?.id || '';
+
+			console.log('🪓 [STEP NAVIGATION - BACK]', {
+				from: { step: currentStep, id: steps[currentStep]?.id },
+				to: { step: newStep, id: stepId },
+				characterState
+			});
+
+			setCurrentStep(newStep);
 			onStepChange?.(newStep, stepId);
 		}
 	};
@@ -70,12 +77,25 @@ const CharacterCreationStepperContainer: React.FC<CharacterCreationStepperContai
 
 			if (isCurrentStepValid === false) {
 				// Don't allow navigation if current step is invalid
+				console.log('🪓 [STEP NAVIGATION - BLOCKED]', {
+					reason: 'Current step invalid',
+					step: currentStep,
+					id: currentStepId,
+					characterState
+				});
 				return;
 			}
 
 			const newStep = currentStep + 1;
-			setCurrentStep(newStep);
 			const stepId = steps[newStep]?.id || '';
+
+			console.log('🪓 [STEP NAVIGATION - NEXT]', {
+				from: { step: currentStep, id: steps[currentStep]?.id },
+				to: { step: newStep, id: stepId },
+				characterState
+			});
+
+			setCurrentStep(newStep);
 			onStepChange?.(newStep, stepId);
 		}
 	};

@@ -8,6 +8,10 @@ import {
 	calculatePointsSpent,
 	MAX_ANCESTRY_POINTS
 } from '../../../lib/services/ancestry.service';
+import {
+	areAllAttributesValid,
+	areAllAttributePointsSpent
+} from '../../../lib/services/attributes.service';
 
 // Step validation functions for character creation
 // Returns true if the step is valid, false if invalid
@@ -100,8 +104,17 @@ export const validateAncestry = (character: CharacterInProgressStoreData): boole
 };
 
 export const validateAttributes = (character: CharacterInProgressStoreData): boolean => {
-	// Mock validation: Attributes step fails
-	return false;
+	// Check if all attributes are within valid range (-2 to +3)
+	if (!areAllAttributesValid(character)) {
+		return false;
+	}
+
+	// Check if all attribute points have been spent (full budget usage required)
+	if (!areAllAttributePointsSpent(character)) {
+		return false;
+	}
+
+	return true;
 };
 
 export const validateBackground = (character: CharacterInProgressStoreData): boolean => {

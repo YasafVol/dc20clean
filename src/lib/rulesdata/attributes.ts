@@ -1,6 +1,18 @@
 // src/lib/rulesdata/attributes.ts
 
 import { IAttributeData } from './schemas/types';
+
+/**
+ * Attribute rules and constraints (from DC20 Beta 0.9.5)
+ */
+export const attributeRules = {
+	baseValue: -2, // All attributes start at -2
+	minValue: -2, // Cannot go below baseline
+	maxValue: 3, // Level 1 attribute cap
+	basePoints: 12, // Base attribute points at level 1
+	costPerIncrement: 1 // Each +1 costs 2 points
+};
+
 // To be placed in: src/lib/rulesdata/attributes.ts
 export const attributesData: IAttributeData[] = [
 	// TODO: Replace bracketed placeholders with accurate information from the DC20 Beta 0.9.5 rulebook.

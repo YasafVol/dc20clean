@@ -60,7 +60,9 @@ const Ancestry: React.FC = () => {
 					const formattedData = getFormattedAncestryData(ancestry);
 
 					// Create ancestry-specific canSelectTrait callback
+					// If ancestry is not selected, traits cannot be selected
 					const canSelectTraitCallback = (traitId: string) => {
+						if (!isSelected) return false;
 						return canSelectTrait(traitId, selectedTraitIds, ancestry);
 					};
 
@@ -94,9 +96,9 @@ const Ancestry: React.FC = () => {
 											canSelectTrait={canSelectTraitCallback}
 										/>
 									</StyledSection>
-								)}{' '}
+								)}
 								{/* Expanded Traits Section */}
-								{formattedData.expandedTraits.length > 0 && isSelected && (
+								{formattedData.expandedTraits.length > 0 && (
 									<StyledSection>
 										<StyledSectionTitle>Expanded Traits</StyledSectionTitle>
 										<AncestryTraitSelector

@@ -53,6 +53,14 @@ export const CollapsibleSection: React.FC<Props> = ({
 				aria-expanded={isExpanded}
 				aria-label={ariaLabel ?? 'Toggle section'}
 				$expanded={isExpanded}
+				role="button"
+				tabIndex={0}
+				onKeyDown={(e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						e.preventDefault();
+						toggle();
+					}
+				}}
 			>
 				<Title $selected={selected} $expanded={isExpanded}>
 					{title}

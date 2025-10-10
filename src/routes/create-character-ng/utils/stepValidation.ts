@@ -1,6 +1,13 @@
 import type { CharacterInProgressStoreData } from '../../../lib/stores/characterContext';
 import { classesData } from '../../../lib/rulesdata/loaders/class.loader';
+import { ancestriesData } from '../../../lib/rulesdata/ancestries/ancestries';
 import { getStep2FeatureChoices } from '../../../lib/services/classFeatures.service';
+import {
+	isWithinBudget,
+	countZeroCostTraits,
+	calculatePointsSpent,
+	MAX_ANCESTRY_POINTS
+} from '../../../lib/services/ancestry.service';
 
 // Step validation functions for character creation
 // Returns true if the step is valid, false if invalid
@@ -56,7 +63,39 @@ export const validateFeatures = (character: CharacterInProgressStoreData): boole
 };
 
 export const validateAncestry = (character: CharacterInProgressStoreData): boolean => {
-	// Mock validation: Ancestry step succeeds
+	// Check if ancestry is selected
+	if (!character.ancestry1Id) {
+		return false;
+	}
+
+	// Get the selected ancestry
+	const selectedAncestry = ancestriesData.find((a) => a.id === character.ancestry1Id);
+	if (!selectedAncestry) {
+		return false;
+	}
+
+	// Check if points are within budget (0 to 5 points spent)
+	const selectedTraits = character.selectedTraitIds || [];
+	if (!isWithinBudget(selectedTraits)) {
+		return false;
+	}
+
+	// Check if ALL 5 points have been spent (must use full budget)
+	const pointsSpent = calculatePointsSpent(selectedTraits);
+	if (pointsSpent !== MAX_ANCESTRY_POINTS) {
+		return false;
+	}
+
+	// Check zero-cost trait limit (default max: 1)
+	const maxZeroCost = selectedAncestry.selectionRules?.maxZeroCostTraits ?? 1;
+	const zeroCostCount = countZeroCostTraits(selectedTraits);
+	if (zeroCostCount > maxZeroCost) {
+		return false;
+	}
+
+	// Default traits are NOT mandatory - user can select any combination within budget
+	// No need to check hasAllDefaultTraits
+
 	return true;
 };
 

@@ -181,6 +181,13 @@ export interface Ancestry {
 		options: string[];
 	};
 	variantTraits?: Trait[];
+	/** Rules governing trait selection for this ancestry. */
+	selectionRules?: {
+		/** Maximum ancestry points that can be spent (default: 5) */
+		maxPoints?: number;
+		/** Maximum number of 0-cost traits that can be selected (default: 1) */
+		maxZeroCostTraits?: number;
+	};
 }
 
 // ================================================================= //

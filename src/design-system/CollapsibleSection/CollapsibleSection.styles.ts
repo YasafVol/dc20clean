@@ -15,7 +15,7 @@ export const SectionWrapper = styled.div<{ $selected?: boolean }>`
   `}
 `;
 
-export const Header = styled.button<{ $expanded: boolean }>`
+export const Header = styled.div<{ $expanded: boolean }>`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;

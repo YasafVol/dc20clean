@@ -1,104 +1,171 @@
 # TODO Tracker
 
-## 1. Flesh out Unit Tests for Core Logic
+## ✅ COMPLETED ITEMS
 
-- **current gap**:
-  - Placeholder test files were created to satisfy architectural rule 8, but they lack actual test logic.
-  - Core utilities and hooks do not have meaningful test coverage, increasing regression risk.
+### 0. Epic: Persist mastery/totals on character ✅ **COMPLETE**
 
-- **acceptance criteria**:
-  - Implement comprehensive unit tests for the following files:
-    - `src/lib/utils/defenseNotes.spec.ts`
-    - `src/lib/services/spellAssignment.spec.ts`
-    - `src/lib/hooks/useEnhancedCharacterCalculation.spec.ts`
-  - Tests should cover primary functions, edge cases, and invalid inputs.
-  - `npm run test:unit` passes with increased coverage for these files.
+**Status:** Fully implemented
 
-- **tasks**:
-  - [ ] Write tests for `defenseNotes.ts` utilities.
-  - [ ] Write tests for `spellAssignment.ts` service.
-  - [ ] Write tests for `useEnhancedCharacterCalculation.ts` hook (requires mocking context).
+**Deliverables:** All complete
+- ✅ `denormalizeMastery.ts` service created
+- ✅ Types defined in `dataContracts.ts`
+- ✅ Integration in `characterCompletion.ts`
+- ✅ PDF transformer uses denormalized fields
+- ✅ For each skill and trade: governingAttributes, baseAttributeValues, masteryLevel, masteryLadder, finalValue
+- ✅ Knowledge trades: ladder/finalValue with Intelligence attributes
+- ✅ Practical trades A-D: { label, ladder, finalValue }
+- ✅ Languages: `languageMastery` A-D = { name, limited, fluent }
 
-- **references**:
-  - Vitest Documentation
-  - React Testing Library (for hooks)
+**Evidence:**
+- File: `src/lib/services/denormalizeMastery.ts` (205 lines)
+- File: `src/lib/services/denormalizeMastery.spec.ts` (73 lines of tests)
+- Integration: `characterCompletion.ts` lines 14, 67, 146-150
+- PDF: `transformers.ts` consumes denormalized fields
 
----
-
-## 2. Low-Priority System Docs (nice to have)
-
-- Weapons & Items System — items schema, weapon damage derivation, UI interactions.
-- Currency System — model, validation, persistence, UI mapping.
-- Status & Exhaustion System — levels, effects, modal behavior.
-- Persistence & API — save/load mapping, Prisma schema, API contract.
-
-These are tracked for future work; current focus is on the newly added Spells, Martials, Calculation, Effect docs, and Character Sheet overview.
+**Acceptance:**
+- ✅ Local export PDF matches UI for skills/trades/languages
+- ✅ No regressions in Character Sheet rendering
 
 ---
 
-## 3. PDF Export and Calculation Follow-ups
+### 3. PDF Export and Calculation Follow-ups ✅ **COMPLETE**
 
-- [ ] bug: Rest Points cap should equal final HP Max (after bonuses)
-- [ ] feat: Extend character schema with `heavyAD`, `heavyPD`, `brutalAD`, `brutalPD`
-  - heavy = AD/PD + 5, brutal = AD/PD + 10
-  - pass these fields through to PDF export DTO/schema
-- [ ] bug: Attribute save values should be `attribute + combat mastery`
+#### ✅ Rest Points Cap
+- **Status:** Implemented
+- Rest points equal final HP Max (verified in calculator)
 
----
+#### ✅ Character Schema Extension
+- **Status:** Schema extended in `dataContracts.ts` (lines 125-132)
+- Fields added:
+  - `finalPDHeavyThreshold`, `finalPDBrutalThreshold`
+  - `finalADHeavyThreshold`, `finalADBrutalThreshold`
+  - `bloodiedValue`, `wellBloodiedValue`
+- **Note:** Thresholds are computed in `characterCompletion.ts` as needed
 
-## 4. FE Ticket: Move UI calculations to character data
-
-- **Goal**: Remove all derived-calculation logic from UI components and `pdf` transformers; consume precomputed values on `SavedCharacter` instead.
-- **Context (implemented in Task 0)**:
-  - `SavedCharacter` now persists denormalized background data:
-    - `skillTotals`, `skillMastery`, `knowledgeTradeMastery`
-    - `masteryLadders.skills`, `masteryLadders.knowledgeTrades`, `masteryLadders.practicalTrades` (A–D with `{ label, ladder, finalValue }`)
-    - `languageMastery` (A–D with `{ name, limited, fluent }`)
-    - `bloodiedValue`, `wellBloodiedValue`, `finalPD/AD` heavy/brutal thresholds
-  - The PDF transformer already prefers these fields and falls back only if absent.
-- **Scope for FE migration**:
-  - Skills: read `skillTotals` (and `skillMastery` if needed for tooltips) instead of recomputing from `skillsData`.
-  - Mastery ladders: render from `masteryLadders.skills`, `masteryLadders.knowledgeTrades`, `masteryLadders.practicalTrades`.
-  - Trades labels: use `masteryLadders.practicalTrades.{A..D}.label`.
-  - Languages: use `languageMastery` A–D for Limited/Fluent, keep `languagesData` as source of truth.
-  - Defenses/bloodied: display `finalPD/AD` thresholds and `bloodiedValue`/`wellBloodiedValue` directly.
-- **Acceptance**:
-  - No UI behavior changes; rendered values equal before/after migration for existing characters.
-  - `pdf` transformer contains zero math (only mapping from `SavedCharacter`).
-  - Unit tests cover consumption of the new fields and fall back gracefully when absent.
+#### ✅ Attribute Save Values
+- **Status:** Verified correct
+- Formula: `attribute + combat mastery` (implemented in calculator)
 
 ---
 
-## 0. Epic: Persist mastery/totals on character (skills, trades, languages)
+## 🚧 REMAINING ITEMS
 
-- **Problem**:
-  - `SavedCharacter` stores ranks (`skillsData`, `tradesData`) and languages fluency only.
-  - Character Sheet re-derives mastery levels and totals at render; PDF transformer mirrors that logic, risking drift.
+### 1. Flesh out Unit Tests for Core Logic ❌ **NOT STARTED**
 
-- **Goal**:
-  - Persist ready-to-use fields on `SavedCharacter` so UI and PDF export consume without recomputing.
-  - Keep existing UI fields/flows untouched; fields are additive and optional during rollout.
+**Current gap:**
+- Placeholder test files exist but contain only `expect(true).toBe(true)`
+- Core utilities and hooks lack meaningful test coverage
 
-- **Deliverables**:
-  - For each skill and trade:
-    - governingAttributes: string[]
-    - baseAttributeValues: Record<'might'|'agility'|'charisma'|'intelligence', number>
-    - masteryLevel: number (rank×2)
-    - masteryLadder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }
-    - finalValue: number = max(baseAttributeValues[allowed]) + masteryLevel
-  - Knowledge trades: same ladder/finalValue, allowed attributes from spec (typically Intelligence).
-  - Practical trades A–D: { label, ladder, finalValue } chosen from non-knowledge trades with highest values.
-  - Languages: fixed `languageMastery` A–D = { name, limited, fluent } derived from `languagesData`.
-  - Keep `languagesData` as source of truth; `languageMastery` is denormalized for UI/PDF.
+**Files needing real tests:**
+- `src/lib/utils/defenseNotes.spec.ts` - Currently 7 lines, needs ~50-100 lines
+- `src/lib/services/spellAssignment.spec.ts` - Currently 7 lines, needs ~100-150 lines
+- `src/lib/hooks/useEnhancedCharacterCalculation.spec.ts` - Currently 7 lines, needs ~80-120 lines
 
-- **Plan**:
-  1) Compute fields in `characterCompletion.ts` using final attributes + ranks; write to new optional fields on `SavedCharacter` (already typed).
-  2) Update PDF transformer to read only from these new fields; remove inline math.
-  3) Open FE ticket (Section 4) to migrate UI to consume new fields; keep current UI in place until merged.
+**Acceptance criteria:**
+- Tests cover primary functions, edge cases, and invalid inputs
+- `npm run test:unit` passes with meaningful coverage increase
 
-- **Non-Goals**:
-  - No change to existing UI components now; no schema migrations for stored saves (fields are optional).
+**Tasks:**
+- [ ] Write tests for `defenseNotes.ts` utilities (get, add, update, delete notes)
+- [ ] Write tests for `spellAssignment.ts` service (class spell assignment logic)
+- [ ] Write tests for `useEnhancedCharacterCalculation.ts` hook (requires mocking context)
 
-- **Acceptance**:
-  - Local export PDF matches UI for skills/trades/languages on multiple samples.
-  - No regressions in Character Sheet rendering.
+**Estimated effort:** 4-6 hours
+
+---
+
+### 2. Low-Priority System Docs ⏸️ **DEFERRED**
+
+**Tracked for future work:**
+- Weapons & Items System — items schema, weapon damage derivation, UI interactions
+- Currency System — model, validation, persistence, UI mapping
+- Status & Exhaustion System — levels, effects, modal behavior
+- Persistence & API — save/load mapping, Prisma schema, API contract
+
+**Note:** Current focus is on the newly added Spells, Martials, Calculation, Effect docs, and Character Sheet overview.
+
+---
+
+### 4. FE Ticket: Move UI calculations to character data ❌ **NOT STARTED**
+
+**Goal:** Remove all derived-calculation logic from UI components; consume precomputed values on `SavedCharacter` instead.
+
+**Context (backend COMPLETE):**
+- ✅ `SavedCharacter` persists denormalized background data
+- ✅ PDF transformer already uses these fields
+- ❌ Frontend UI still recomputes values from raw data
+
+**Scope for FE migration:**
+- [ ] Skills: Read `skillTotals` (and `skillMastery` for tooltips) instead of recomputing from `skillsData`
+- [ ] Mastery ladders: Render from `masteryLadders.skills`, `masteryLadders.knowledgeTrades`, `masteryLadders.practicalTrades`
+- [ ] Trade labels: Use `masteryLadders.practicalTrades.{A..D}.label`
+- [ ] Languages: Use `languageMastery` A-D for Limited/Fluent display
+- [ ] Defenses/bloodied: Display `finalPD/AD` thresholds and `bloodiedValue`/`wellBloodiedValue` directly
+- [ ] Remove character sheet recalculation on load (trust stored data)
+
+**Files to update:**
+- `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx` - Remove `calculateCharacterWithBreakdowns` on load
+- All character sheet components that display skills/trades/languages
+- Defense display components
+
+**Acceptance:**
+- [ ] No UI behavior changes; rendered values equal before/after migration
+- [ ] `CharacterSheetProvider.tsx` does NOT recalculate on load
+- [ ] PDF transformer contains zero math (only mapping from `SavedCharacter`)
+- [ ] Unit tests cover consumption of new fields and graceful fallback
+
+**Estimated effort:** 8-12 hours
+
+---
+
+## 📋 ADDITIONAL TASKS (from analysis)
+
+### 5. Extract useAttributeCalculation Hook 🟡 **OPTIONAL IMPROVEMENT**
+
+**Current state:**
+- Attribute calculation logic is inline in `Attributes.tsx`
+- Works correctly but not following original architectural plan
+
+**Proposed:**
+- Extract to `src/lib/hooks/useAttributeCalculation.ts`
+- Improves testability and reusability
+- Matches DATA_FLOW_REFACTOR architectural design
+
+**Priority:** Low (current implementation works)
+**Estimated effort:** 2-3 hours
+
+---
+
+## 📊 Progress Summary
+
+| Section | Status | Completion |
+|---------|--------|------------|
+| 0. Mastery Epic | ✅ Complete | 100% |
+| 1. Unit Tests | ❌ Not Started | 0% |
+| 2. System Docs | ⏸️ Deferred | N/A |
+| 3. PDF/Calculation | ✅ Complete | 100% |
+| 4. FE Migration | ❌ Not Started | 0% |
+| 5. Extract Hook | 🟡 Optional | N/A |
+
+**Overall: 2 of 4 active tasks complete (50%)**
+
+---
+
+## 🎯 Recommended Priority Order
+
+1. **HIGH:** FE Migration (Section 4) - Biggest architectural impact, removes duplicate logic
+2. **MEDIUM:** Unit Tests (Section 1) - Protects against regressions
+3. **LOW:** Extract Hook (Section 5) - Nice to have, current code works
+
+---
+
+## 📚 References
+
+- **Vitest Documentation** - For unit testing
+- **React Testing Library** - For hook testing
+- **Status Analysis:** See `docs/TODO_AND_REFACTOR_STATUS.md` for detailed findings
+- **Archived Plans:** See `docs/archive/` for historical refactor plans
+
+---
+
+**Last Updated:** October 10, 2025

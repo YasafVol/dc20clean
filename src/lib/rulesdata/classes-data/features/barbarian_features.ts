@@ -66,20 +66,59 @@ export const barbarianClass: ClassDefinition = {
 				}
 			]
 		},
-		{
-			id: 'barbarian_rage',
-			featureName: 'Rage',
-			levelGained: 1,
-			description: 'During Combat, you can spend 1 AP and 1 SP to enter a Rage for 1 minute.',
-			effects: [
-				{
-					type: 'GRANT_ABILITY',
-					target: 'rage',
-					value:
-						'Spend 1 AP and 1 SP to Rage for 1 minute: +1 melee damage, ADV on Might Saves, -5 PD, Resistance (Half) to Elemental and Physical damage.'
-				}
-			]
-		},
+	{
+		id: 'barbarian_rage',
+		featureName: 'Rage',
+		levelGained: 1,
+		description:
+			'During Combat, you can spend 1 AP and 1 SP to enter a Rage for 1 minute. While raging, you gain the following benefits:',
+		benefits: [
+			{
+				name: 'Increased Damage',
+				description: 'You deal +1 damage with melee Attacks.',
+				effects: [
+					{
+						type: 'MODIFY_STAT',
+						target: 'melee_damage',
+						value: 1
+					}
+				]
+			},
+			{
+				name: 'Might Advantage',
+				description: 'You have Advantage on Might Saving Throws.',
+				effects: [
+					{
+						type: 'GRANT_ABILITY',
+						target: 'rage_might_advantage',
+						value: 'Advantage on Might Saving Throws while raging.'
+					}
+				]
+			},
+			{
+				name: 'Reduced Defense',
+				description: 'Your Physical Defense is reduced by 5.',
+				effects: [
+					{
+						type: 'MODIFY_STAT',
+						target: 'physical_defense',
+						value: -5
+					}
+				]
+			},
+			{
+				name: 'Damage Resistance',
+				description: 'You have Resistance (Half) to Elemental and Physical damage.',
+				effects: [
+					{
+						type: 'GRANT_ABILITY',
+						target: 'rage_resistance',
+						value: 'Resistance (Half) to Elemental and Physical damage while raging.'
+					}
+				]
+			}
+		]
+	},
 		{
 			id: 'barbarian_berserker',
 			featureName: 'Berserker',

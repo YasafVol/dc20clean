@@ -90,6 +90,33 @@ const hybridPathSchema = z
 	})
 	.optional();
 
+// Schema for LevelGains - structured progression data per level
+const levelGainsSchema = z.object({
+	talents: z.number().optional(),
+	pathPoints: z.number().optional(),
+	ancestryPoints: z.number().optional(),
+	classFeatures: z.array(z.string()).optional(),
+	subclassFeatureChoice: z.boolean().optional(),
+	epicBoon: z.boolean().optional()
+}).optional().nullable();
+
+// Schema for ClassLevel - complete level progression entry
+const classLevelSchema = z.object({
+	level: z.number(),
+	healthPoints: z.number(),
+	attributePoints: z.number(),
+	skillPoints: z.number(),
+	tradePoints: z.number(),
+	staminaPoints: z.number(),
+	maneuversKnown: z.number(),
+	techniquesKnown: z.number(),
+	manaPoints: z.number(),
+	cantripsKnown: z.number(),
+	spellsKnown: z.number(),
+	features: z.string(),
+	gains: levelGainsSchema
+});
+
 // Schema for IClassDefinition
 export const classSchema = z.object({
 	id: z.string(),
@@ -108,22 +135,7 @@ export const classSchema = z.object({
 		spellsKnown: z.number()
 	}),
 
-	levelProgression: z.array(
-		z.object({
-			level: z.number(),
-			healthPoints: z.number(),
-			attributePoints: z.number(),
-			skillPoints: z.number(),
-			tradePoints: z.number(),
-			staminaPoints: z.number(),
-			maneuversKnown: z.number(),
-			techniquesKnown: z.number(),
-			manaPoints: z.number(),
-			cantripsKnown: z.number(),
-			spellsKnown: z.number(),
-			features: z.string()
-		})
-	),
+	levelProgression: z.array(classLevelSchema),
 
 	martialPath: martialPathSchema,
 	spellcasterPath: spellcasterPathSchema,
@@ -136,5 +148,7 @@ export const classSchema = z.object({
 // Schema for an array of class definitions
 export const classesDataSchema = z.array(classSchema);
 
-// Infer the TypeScript type from the schema
+// Infer TypeScript types from the schemas
+export type LevelGains = z.infer<typeof levelGainsSchema>;
+export type ClassLevel = z.infer<typeof classLevelSchema>;
 export type IClassDefinition = z.infer<typeof classSchema>;

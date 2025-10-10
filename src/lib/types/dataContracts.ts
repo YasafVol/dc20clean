@@ -143,6 +143,18 @@ export interface SavedCharacter {
 	// Languages can be either a list of names or a map of name -> { fluency }
 	languagesData: any;
 
+	// LEVEL PROGRESSION DATA (M2.7)
+	selectedTalents?: string[]; // IDs of talents chosen
+	pathPointAllocations?: { martial?: number; spellcasting?: number }; // Path point distribution
+	unlockedFeatureIds?: string[]; // Features gained from leveling
+	selectedSubclass?: string; // Subclass name if chosen
+	pendingSubclassChoice?: boolean; // True if subclass choice is available but not made
+	
+	// MULTICLASS SELECTIONS (M3.17)
+	selectedMulticlassOption?: 'novice' | 'adept' | 'expert' | 'master' | 'grandmaster' | 'legendary' | null; // Multiclass tier
+	selectedMulticlassClass?: string; // Class ID for multiclass feature
+	selectedMulticlassFeature?: string; // Feature name from multiclass
+
 	// Precomputed values for PDF/UI consumption (no calculations in transformers/components)
 	// Optional for backward compatibility; FE should consume if present
 	// Totals per skill (finalValue)

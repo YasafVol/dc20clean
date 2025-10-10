@@ -21,9 +21,14 @@ import {
 	type ModifyMasteryCapEffect,
 	type IncreaseMasteryCapEffect
 } from '../rulesdata/schemas/character.schema';
+import { resolveClassProgression, resolveSubclassFeatures } from '../rulesdata/classes-data/classProgressionResolver';
+import { classesData } from '../rulesdata/loaders/class.loader';
+import { findTalentById } from '../rulesdata/classes-data/talents/talent.loader';
+import { getLevelCaps, MASTERY_TIERS, getMasteryTierByNumber } from '../rulesdata/progression/levelCaps';
+import { MULTICLASS_TIERS } from '../rulesdata/progression/multiclass';
 
 import { BuildStep } from '../types/effectSystem';
-import { getLegacyChoiceId } from '../rulesdata/loaders/class-features.loader';
+import { getLegacyChoiceId, findClassByName } from '../rulesdata/loaders/class-features.loader';
 import { traitsData } from '../rulesdata/ancestries/traits';
 import { ancestriesData } from '../rulesdata/ancestries/ancestries';
 import { barbarianClass } from '../rulesdata/classes-data/features/barbarian_features';
@@ -59,6 +64,64 @@ import { attributesData } from '../rulesdata/attributes';
 import { skillsData } from '../rulesdata/skills';
 import { tradesData } from '../rulesdata/trades';
 import type { ClassDefinition } from '../rulesdata/schemas/character.schema';
+import { CHARACTER_PATHS } from '../rulesdata/progression/paths/paths.data';
+
+/**
+ * Helper to aggregate path point benefits based on allocations
+ * @param pathPointAllocations - How many points allocated to each path
+ * @returns Aggregated benefits from all allocated path levels
+ */
+function aggregatePathBenefits(pathPointAllocations?: { martial?: number; spellcasting?: number }): {
+	totalSP: number;
+	totalMP: number;
+	totalManeuversKnown: number;
+	totalTechniquesKnown: number;
+	totalCantripsKnown: number;
+	totalSpellsKnown: number;
+} {
+	let totalSP = 0;
+	let totalMP = 0;
+	let totalManeuversKnown = 0;
+	let totalTechniquesKnown = 0;
+	let totalCantripsKnown = 0;
+	let totalSpellsKnown = 0;
+
+	if (!pathPointAllocations) {
+		return { totalSP, totalMP, totalManeuversKnown, totalTechniquesKnown, totalCantripsKnown, totalSpellsKnown };
+	}
+
+	// Martial Path bonuses
+	if (pathPointAllocations.martial) {
+		const martialPath = CHARACTER_PATHS.find(p => p.id === 'martial_path');
+		if (martialPath) {
+			for (let level = 1; level <= pathPointAllocations.martial; level++) {
+				const levelData = martialPath.progression.find(p => p.pathLevel === level);
+				if (levelData?.benefits) {
+					totalSP += levelData.benefits.staminaPoints || 0;
+					totalManeuversKnown += levelData.benefits.maneuversLearned || 0;
+					totalTechniquesKnown += levelData.benefits.techniquesLearned || 0;
+				}
+			}
+		}
+	}
+
+	// Spellcaster Path bonuses
+	if (pathPointAllocations.spellcasting) {
+		const spellcasterPath = CHARACTER_PATHS.find(p => p.id === 'spellcaster_path');
+		if (spellcasterPath) {
+			for (let level = 1; level <= pathPointAllocations.spellcasting; level++) {
+				const levelData = spellcasterPath.progression.find(p => p.pathLevel === level);
+				if (levelData?.benefits) {
+					totalMP += levelData.benefits.manaPoints || 0;
+					totalCantripsKnown += levelData.benefits.cantripsLearned || 0;
+					totalSpellsKnown += levelData.benefits.spellsLearned || 0;
+				}
+			}
+		}
+	}
+
+	return { totalSP, totalMP, totalManeuversKnown, totalTechniquesKnown, totalCantripsKnown, totalSpellsKnown };
+}
 
 /**
  * Convert character context data to enhanced build data
@@ -77,17 +140,27 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 		attribute_intelligence:
 			contextData.finalIntelligence ?? contextData.attribute_intelligence ?? 0,
 
-		combatMastery: contextData.combatMastery || 1,
+		// combatMastery is calculated in calculateCharacterWithBreakdowns, not stored
+		combatMastery: 0, // Will be overridden by calculation
 
 		classId: contextData.classId || '',
 		ancestry1Id: contextData.ancestry1Id || undefined,
 		ancestry2Id: contextData.ancestry2Id || undefined,
 
-		selectedTraitIds: Array.isArray(contextData.selectedTraitIds)
-			? contextData.selectedTraitIds
-			: [],
-		selectedTraitChoices: contextData.selectedTraitChoices ?? {},
-		featureChoices: contextData.selectedFeatureChoices ?? {},
+	selectedTraitIds: Array.isArray(contextData.selectedTraitIds)
+		? contextData.selectedTraitIds
+		: [],
+	selectedTraitChoices: contextData.selectedTraitChoices ?? {},
+	featureChoices: contextData.selectedFeatureChoices ?? {},
+	selectedTalents: contextData.selectedTalents && typeof contextData.selectedTalents === 'object'
+		? contextData.selectedTalents
+		: {},
+	selectedSubclass: contextData.selectedSubclass,
+	
+		// Multiclass selections (M3.17)
+		selectedMulticlassOption: contextData.selectedMulticlassOption,
+		selectedMulticlassClass: contextData.selectedMulticlassClass,
+		selectedMulticlassFeature: contextData.selectedMulticlassFeature,
 
 		// Pass data as native objects, removing the unnecessary stringify step
 		skillsData: contextData.skillsData ?? {},
@@ -107,6 +180,9 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 			tradeToLanguage: contextData.tradeToLanguageConversions ?? 0
 		},
 
+		// Path Point Allocations (M3.9)
+		pathPointAllocations: contextData.pathPointAllocations,
+
 		lastModified: Date.now()
 	};
 }
@@ -115,6 +191,13 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
  * Get class level progression data by ID
  */
 function getClassProgressionData(classId: string): any | null {
+	// Use the new classesData which includes the gains field
+	const classData = classesData.find(c => c.id === classId);
+	if (classData) {
+		return classData;
+	}
+	
+	// Fallback to old table data (should not be needed)
 	switch (classId) {
 		case 'barbarian':
 			return barbarianTable;
@@ -210,6 +293,98 @@ function aggregateAttributedEffects(buildData: EnhancedCharacterBuildData): Attr
 					resolved: !effect.userChoice,
 					dependsOnChoice: effect.userChoice ? `${traitId}-${effectIndex}` : undefined
 				});
+			}
+		}
+	}
+
+	// Add effects from selected talents (count-based: apply effects multiple times)
+	const selectedTalents = buildData.selectedTalents || {};
+	for (const [talentId, count] of Object.entries(selectedTalents)) {
+		const talent = findTalentById(talentId);
+		if (talent?.effects && count > 0) {
+			// Apply talent effects 'count' times (e.g., if selected twice, add effects twice)
+			for (let i = 0; i < count; i++) {
+				for (const effect of talent.effects) {
+					effects.push({
+						...effect,
+						source: {
+							type: 'talent' as const,
+							id: talentId,
+							name: talent.name,
+							description: talent.description,
+							category: 'Talent'
+						},
+						resolved: true
+					});
+				}
+			}
+		}
+	}
+
+	// Add effects from subclass feature choices
+	if (buildData.selectedSubclass && buildData.selectedFeatureChoices) {
+		const subclassFeatures = resolveSubclassFeatures(
+			buildData.classId,
+			buildData.selectedSubclass,
+			buildData.level
+		);
+
+		for (const feature of subclassFeatures) {
+			if (feature.choices) {
+				for (const choice of feature.choices) {
+					const choiceKey = `${buildData.classId}_${buildData.selectedSubclass}_${choice.id}`;
+					const selections = buildData.selectedFeatureChoices[choiceKey] || [];
+
+					for (const selectedOptionName of selections) {
+						const option = choice.options?.find((opt) => opt.name === selectedOptionName);
+						if (option?.effects) {
+							for (const effect of option.effects) {
+								effects.push({
+									...effect,
+									source: {
+										type: 'subclass_feature_choice' as any,
+										id: choice.id,
+										name: selectedOptionName,
+										description: option.description,
+										category: `${buildData.selectedSubclass} - ${feature.featureName}`
+									},
+									resolved: true
+								});
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Add effects from multiclass feature selection
+	if (buildData.selectedMulticlassFeature && buildData.selectedMulticlassClass) {
+		const multiclassData = classesData.find(c => c.id === buildData.selectedMulticlassClass);
+		if (multiclassData) {
+			const classFeatures = findClassByName(multiclassData.name);
+			if (classFeatures) {
+				// Find the selected feature
+				const feature = classFeatures.coreFeatures.find(
+					f => f.featureName === buildData.selectedMulticlassFeature
+				);
+				
+				if (feature?.effects) {
+					for (const effect of feature.effects) {
+						effects.push({
+							...effect,
+							source: {
+								type: 'multiclass_feature' as any,
+								id: `multiclass_${buildData.selectedMulticlassClass}_${feature.featureName}`,
+								name: feature.featureName,
+								description: feature.description,
+								category: 'Multiclass Feature'
+							},
+							resolved: !effect.userChoice,
+							dependsOnChoice: effect.userChoice ? `multiclass_${feature.featureName}` : undefined
+						});
+					}
+				}
 			}
 		}
 	}
@@ -399,6 +574,7 @@ function validateAttributeLimits(
 	effects: AttributedEffect[]
 ): Record<string, AttributeLimit> {
 	const limits: Record<string, AttributeLimit> = {};
+	const levelCaps = getLevelCaps(buildData.level);
 
 	for (const attr of attributesData) {
 		const baseValue = (buildData as any)[`attribute_${attr.id}`] || 0;
@@ -410,7 +586,7 @@ function validateAttributeLimits(
 			.reduce((sum, effect) => sum + (effect.value as number), 0);
 
 		const current = baseValue + traitBonuses;
-		const max = 3; // Level 1 limit
+		const max = levelCaps.maxAttributeValue;
 
 		limits[attr.id] = {
 			current,
@@ -488,6 +664,192 @@ function getOptionsForEffect(effect: AttributedEffect): ChoiceOption[] {
 }
 
 /**
+ * Aggregate all progression gains from level 1 to target level
+ */
+function aggregateProgressionGains(
+	classProgressionData: any,
+	targetLevel: number,
+	pathPointAllocations?: { martial?: number; spellcasting?: number },
+	selectedSubclass?: string
+): {
+	totalHP: number;
+	totalSP: number;
+	totalMP: number;
+	totalSkillPoints: number;
+	totalTradePoints: number;
+	totalAttributePoints: number;
+	totalManeuversKnown: number;
+	totalTechniquesKnown: number;
+	totalCantripsKnown: number;
+	totalSpellsKnown: number;
+	totalTalents: number;
+	totalPathPoints: number;
+	totalAncestryPoints: number;
+	unlockedFeatureIds: string[];
+	pendingSubclassChoices: number;
+} {
+	let totalHP = 0;
+	let totalSP = 0;
+	let totalMP = 0;
+	let totalSkillPoints = 0;
+	let totalTradePoints = 0;
+	let totalAttributePoints = 0;
+	let totalManeuversKnown = 0;
+	let totalTechniquesKnown = 0;
+	let totalCantripsKnown = 0;
+	let totalSpellsKnown = 0;
+	let totalTalents = 0;
+	let totalPathPoints = 0;
+	let totalAncestryPoints = 0;
+	const unlockedFeatureIds: string[] = [];
+	let pendingSubclassChoices = 0;
+
+	if (!classProgressionData?.levelProgression) {
+		return {
+			totalHP,
+			totalSP,
+			totalMP,
+			totalSkillPoints,
+			totalTradePoints,
+			totalAttributePoints,
+			totalManeuversKnown,
+			totalTechniquesKnown,
+			totalCantripsKnown,
+			totalSpellsKnown,
+			totalTalents,
+			totalPathPoints,
+			totalAncestryPoints,
+			unlockedFeatureIds,
+			pendingSubclassChoices
+		};
+	}
+
+	console.log('🔍 AGGREGATION START:', {
+		classId: classProgressionData?.id,
+		targetLevel,
+		hasProgression: !!classProgressionData?.levelProgression,
+		progressionLength: classProgressionData?.levelProgression?.length
+	});
+
+	for (let level = 1; level <= targetLevel; level++) {
+		const levelData = classProgressionData.levelProgression.find((lp: any) => lp.level === level);
+		if (!levelData) {
+			console.warn(`⚠️ Level ${level} not found in progression!`);
+			continue;
+		}
+
+		console.log(`📊 Level ${level} data:`, {
+			hasGains: !!levelData.gains,
+			gains: JSON.stringify(levelData.gains),
+			talents: levelData.gains?.talents,
+			pathPoints: levelData.gains?.pathPoints
+		});
+
+		// Aggregate numeric stats from progression files (gained* fields)
+		totalHP += levelData.gainedHealth || levelData.healthPoints || 0;
+		totalSP += levelData.gainedStaminaPoints || levelData.staminaPoints || 0;
+		totalMP += levelData.gainedManaPoints || levelData.manaPoints || 0;
+		totalSkillPoints += levelData.gainedSkillPoints || levelData.skillPoints || 0;
+		totalTradePoints += levelData.gainedTradePoints || levelData.tradePoints || 0;
+		totalAttributePoints += levelData.gainedAttributePoints || levelData.attributePoints || 0;
+		totalManeuversKnown += levelData.gainedManeuversKnown || levelData.maneuversKnown || 0;
+		totalTechniquesKnown += levelData.gainedTechniquesKnown || levelData.techniquesKnown || 0;
+		totalCantripsKnown += levelData.gainedCantripsKnown || levelData.cantripsKnown || 0;
+		totalSpellsKnown += levelData.gainedSpellsKnown || levelData.spellsKnown || 0;
+
+		// Aggregate new structured gains (if present)
+		if (levelData.gains) {
+			totalTalents += levelData.gains.talents || 0;
+			totalPathPoints += levelData.gains.pathPoints || 0;
+			totalAncestryPoints += levelData.gains.ancestryPoints || 0;
+
+			if (levelData.gains.classFeatures) {
+				unlockedFeatureIds.push(...levelData.gains.classFeatures);
+			}
+
+			if (levelData.gains.subclassFeatureChoice) {
+				pendingSubclassChoices++;
+			}
+		}
+	}
+
+	console.log('✅ AGGREGATION COMPLETE (before path bonuses):', {
+		totalTalents,
+		totalPathPoints,
+		totalSkillPoints,
+		totalTradePoints,
+		unlockedFeatureIds: unlockedFeatureIds.length,
+		totalSP,
+		totalMP,
+		totalManeuversKnown,
+		totalTechniquesKnown
+	});
+
+	// Add path bonuses to progression totals
+	const pathBonuses = aggregatePathBenefits(pathPointAllocations);
+	totalSP += pathBonuses.totalSP;
+	totalMP += pathBonuses.totalMP;
+	totalManeuversKnown += pathBonuses.totalManeuversKnown;
+	totalTechniquesKnown += pathBonuses.totalTechniquesKnown;
+	totalCantripsKnown += pathBonuses.totalCantripsKnown;
+	totalSpellsKnown += pathBonuses.totalSpellsKnown;
+
+	console.log('✅ PATH BONUSES APPLIED:', {
+		pathAllocations: pathPointAllocations,
+		bonuses: pathBonuses,
+		finalSP: totalSP,
+		finalMP: totalMP,
+		finalManeuvers: totalManeuversKnown,
+		finalTechniques: totalTechniquesKnown
+	});
+
+	// Apply subclass features (M3.10c)
+	if (selectedSubclass && classProgressionData?.id) {
+		try {
+			const subclassFeatures = resolveSubclassFeatures(
+				classProgressionData.id,
+				selectedSubclass,
+				targetLevel
+			);
+
+			console.log('🎭 SUBCLASS FEATURES APPLIED:', {
+				subclass: selectedSubclass,
+				featuresCount: subclassFeatures.length,
+				featureIds: subclassFeatures.map((f) => f.id || f.featureName)
+			});
+
+			// Add subclass feature IDs to unlocked features
+			subclassFeatures.forEach((feature) => {
+				const featureId = feature.id || feature.featureName;
+				if (featureId) {
+					unlockedFeatureIds.push(featureId);
+				}
+			});
+		} catch (error) {
+			console.error('Failed to resolve subclass features:', error);
+		}
+	}
+
+	return {
+		totalHP,
+		totalSP,
+		totalMP,
+		totalSkillPoints,
+		totalTradePoints,
+		totalAttributePoints,
+		totalManeuversKnown,
+		totalTechniquesKnown,
+		totalCantripsKnown,
+		totalSpellsKnown,
+		totalTalents,
+		totalPathPoints,
+		totalAncestryPoints,
+		unlockedFeatureIds,
+		pendingSubclassChoices
+	};
+}
+
+/**
  * Main calculation function with detailed breakdowns
  */
 export function calculateCharacterWithBreakdowns(
@@ -499,11 +861,25 @@ export function calculateCharacterWithBreakdowns(
 	// 2. Resolve user choices
 	const resolvedEffects = resolveEffectChoices(rawEffects, buildData.selectedTraitChoices);
 
-	// 3. Calculate base stats
+	// 3. Resolve class progression (budgets + features) - only if class is selected
+	let resolvedProgression = null;
+	if (buildData.classId) {
+		try {
+			resolvedProgression = resolveClassProgression(buildData.classId, buildData.level);
+		} catch (error) {
+			// If class progression fails, continue without it (will use defaults)
+			console.warn(`Failed to resolve progression for class ${buildData.classId}:`, error);
+		}
+	}
+	
+	// 4. Get legacy class progression data for mana/cantrips/spells (still from tables)
 	const classProgressionData = getClassProgressionData(buildData.classId);
-	const baseHP = 0; // Will calculate from level progression
-	const baseSP = 0; // Will calculate from level progression
-	const baseMP = 0; // Will calculate from level progression
+	const progressionGains = aggregateProgressionGains(
+		classProgressionData, 
+		buildData.level,
+		buildData.pathPointAllocations,
+		buildData.selectedSubclass
+	);
 
 	// 4. Create detailed breakdowns
 	const breakdowns: Record<string, EnhancedStatBreakdown> = {};
@@ -520,30 +896,13 @@ export function calculateCharacterWithBreakdowns(
 	const finalCharisma = breakdowns.attribute_charisma.total;
 	const finalIntelligence = breakdowns.attribute_intelligence.total;
 
-	// Derived stats
-	const combatMastery = buildData.combatMastery;
+	// Derived stats - Combat Mastery calculated from level
+	const combatMastery = Math.ceil(buildData.level / 2);
 
-	// Health & Resources - sum from level progression + modifiers
-	let finalHPMax = finalMight; // Base from Might
-	let finalSPMax = 0;
-	let finalMPMax = 0;
-
-	// Calculate from level progression if available
-	if (classProgressionData?.levelProgression) {
-		for (let level = 1; level <= buildData.level; level++) {
-			const levelData = classProgressionData.levelProgression.find((lp: any) => lp.level === level);
-			if (levelData) {
-				finalHPMax += levelData.healthPoints || 0;
-				finalSPMax += levelData.staminaPoints || 0;
-				finalMPMax += levelData.manaPoints || 0;
-			}
-		}
-	} else {
-		// Fallback to base calculation
-		finalHPMax += baseHP + (buildData.level - 1);
-		finalSPMax = baseSP + finalAgility;
-		finalMPMax = baseMP + finalIntelligence;
-	}
+	// Health & Resources - use aggregated progression gains
+	let finalHPMax = finalMight + progressionGains.totalHP;
+	let finalSPMax = progressionGains.totalSP;
+	let finalMPMax = progressionGains.totalMP;
 
 	// Do not apply effect modifiers here; breakdowns will add modifiers to base values
 
@@ -594,7 +953,8 @@ export function calculateCharacterWithBreakdowns(
 	breakdowns.pd = createStatBreakdown('pd', basePD, resolvedEffects);
 	breakdowns.ad = createStatBreakdown('ad', baseAD, resolvedEffects);
 
-	breakdowns.attributePoints = createStatBreakdown('attributePoints', 12, resolvedEffects);
+	// Base 12 + any attribute points gained from leveling
+	breakdowns.attributePoints = createStatBreakdown('attributePoints', 12 + progressionGains.totalAttributePoints, resolvedEffects);
 
 	// Movement breakdowns
 	breakdowns.move_speed = createStatBreakdown('moveSpeed', baseMoveSpeed, resolvedEffects);
@@ -655,9 +1015,11 @@ export function calculateCharacterWithBreakdowns(
 			.filter((e) => e.type === 'MODIFY_STAT' && e.target === target)
 			.reduce((s, e) => s + Number(e.value || 0), 0);
 
-	const baseSkillPoints = 5 + finalIntelligence + bonus('skillPoints');
-	const baseTradePoints = 3 + bonus('tradePoints');
-	const baseLanguagePoints = 2 + bonus('languagePoints');
+	// Use aggregated skill/trade points from progression gains + bonuses from effects
+	// Base values: 5 skill points, 3 trade points, 2 language points at level 1
+	const baseSkillPoints = 5 + progressionGains.totalSkillPoints + finalIntelligence + bonus('skillPoints');
+	const baseTradePoints = 3 + progressionGains.totalTradePoints + bonus('tradePoints');
+	const baseLanguagePoints = 2 + bonus('languagePoints'); // Languages stay at 2 (not level-dependent)
 
 	const {
 		skillToTrade = 0,
@@ -679,7 +1041,7 @@ export function calculateCharacterWithBreakdowns(
 	const ancestryPointsUsed = selectedTraitCosts;
 	const ancestryPointsRemaining = baseAncestryPoints - ancestryPointsUsed;
 
-	// Background section for UI consumption
+	// Background section for UI consumption with detailed breakdown
 	const background = {
 		baseSkillPoints,
 		baseTradePoints,
@@ -690,7 +1052,28 @@ export function calculateCharacterWithBreakdowns(
 		skillPointsUsed,
 		tradePointsUsed,
 		languagePointsUsed,
-		conversions: { skillToTrade, tradeToSkill, tradeToLanguage }
+		conversions: { skillToTrade, tradeToSkill, tradeToLanguage },
+		// Breakdown for UI display
+		breakdown: {
+			skillPoints: {
+				base: 5,
+				intelligence: finalIntelligence,
+				progression: progressionGains.totalSkillPoints,
+				talents: bonus('skillPoints'),
+				total: baseSkillPoints
+			},
+			tradePoints: {
+				base: 3,
+				progression: progressionGains.totalTradePoints,
+				talents: bonus('tradePoints'),
+				total: baseTradePoints
+			},
+			languagePoints: {
+				base: 2,
+				talents: bonus('languagePoints'),
+				total: baseLanguagePoints
+			}
+		}
 	};
 
 	// Ancestry section for UI consumption
@@ -772,34 +1155,20 @@ export function calculateCharacterWithBreakdowns(
 	const attributeLimits = validateAttributeLimits(buildData, resolvedEffects);
 
 	// --- START MASTERY CAP CALCULATION ---
-	const masteryTiers: Record<string, number> = {
-		Novice: 1,
-		Adept: 2,
-		Expert: 3,
-		Master: 4,
-		Grandmaster: 5
-	};
-
-	// Helper to convert level to a numeric mastery tier
-	const getMasteryTierFromLevel = (level: number): number => {
-		if (level >= 20) return masteryTiers.Grandmaster;
-		if (level >= 15) return masteryTiers.Master;
-		if (level >= 10) return masteryTiers.Expert;
-		if (level >= 5) return masteryTiers.Adept;
-		return masteryTiers.Novice;
-	};
+	// Get caps from canonical source
+	const levelCaps = getLevelCaps(buildData.level);
 
 	// Helper to convert skill points to a numeric mastery tier (2+=Adept)
 	const getMasteryTierFromPoints = (points: number): number => {
-		if (points >= 5) return masteryTiers.Grandmaster;
-		if (points >= 4) return masteryTiers.Master;
-		if (points >= 3) return masteryTiers.Expert;
-		if (points >= 2) return masteryTiers.Adept;
-		return masteryTiers.Novice;
+		if (points >= 5) return 5; // Grandmaster
+		if (points >= 4) return 4; // Master
+		if (points >= 3) return 3; // Expert
+		if (points >= 2) return 2; // Adept
+		return 1; // Novice
 	};
 
-	const baseSkillMasteryTier = getMasteryTierFromLevel(buildData.level);
-	const baseTradeMasteryTier = getMasteryTierFromLevel(buildData.level); // Assuming same progression
+	const baseSkillMasteryTier = levelCaps.maxSkillMasteryTier;
+	const baseTradeMasteryTier = levelCaps.maxTradeMasteryTier;
 
 	const skillMasteryCapEffects = resolvedEffects.filter(
 		(e): e is ModifyMasteryCapEffect | IncreaseMasteryCapEffect =>
@@ -822,39 +1191,64 @@ export function calculateCharacterWithBreakdowns(
 		totalCapExceptionsBudget += effect.count;
 	}
 
-	// 3. Calculate total allowed Adept skills (Level 1 has 1 base slot)
-	const baseAdeptSlotsForValidation = buildData.level === 1 ? 1 : 0;
-	const totalAllowedAdeptSkills = baseAdeptSlotsForValidation + totalCapExceptionsBudget;
-
-	// Validate that over-level skills don't exceed total budget (including Level 1 default)
-	if (skillsOverLevelCap.length > totalAllowedAdeptSkills) {
-		errors.push({
-			step: BuildStep.Background,
-			field: 'skills',
-			code: 'MASTERY_CAP_EXCEEDED',
-			message: `You have raised ${
-				skillsOverLevelCap.length
-			} skills above your level's mastery limit, but you can only have ${totalAllowedAdeptSkills} Adept skills (${totalCapExceptionsBudget} from features).`
+	// 3. Validate skills that exceed the level's natural mastery cap
+	// If level naturally allows tier 2+, those tiers are unlimited (like Novice at level 1)
+	// Only enforce slot limits when trying to exceed the natural cap
+	const levelAllowsUnlimitedMastery = baseSkillMasteryTier >= 2;
+	
+	if (levelAllowsUnlimitedMastery) {
+		// Level 5+: All tiers up to natural cap are unlimited
+		// Only validate skills that exceed the natural cap
+		// E.g., L5: Adept unlimited, Expert needs exception
+		//       L10: Expert unlimited, Master needs exception
+		const skillsAboveNaturalCap = skillsOverLevelCap.filter(skillId => {
+			const points = buildData.skillsData?.[skillId] || 0;
+			return getMasteryTierFromPoints(points) > baseSkillMasteryTier;
 		});
-	}
-
-	// 4. Validate specific skill coverage, allowing base Adept slots to cover any skill
-	let freeBaseSlots = baseAdeptSlotsForValidation;
-	for (const skillId of skillsOverLevelCap) {
-		const isCoveredByFeature = skillMasteryCapEffects.some(
-			(effect) => !effect.options || effect.options.includes(skillId)
-		);
-		if (isCoveredByFeature) continue;
-		if (freeBaseSlots > 0) {
-			freeBaseSlots -= 1;
-			continue;
+		
+		// Only feature exceptions can grant mastery above natural cap
+		if (skillsAboveNaturalCap.length > totalCapExceptionsBudget) {
+			errors.push({
+				step: BuildStep.Background,
+				field: 'skills',
+				code: 'MASTERY_CAP_EXCEEDED',
+				message: `You have raised ${skillsAboveNaturalCap.length} skills above your level's natural mastery cap (tier ${baseSkillMasteryTier}), but you only have ${totalCapExceptionsBudget} exception slots from features.`
+			});
 		}
-		errors.push({
-			step: BuildStep.Background,
-			field: skillId,
-			code: 'INVALID_MASTERY_GRANT',
-			message: `The ${skillId} skill has been raised to Adept level, but is not permitted by your features or base allowances.`
-		});
+	} else {
+		// Level 1-4: Natural cap is Novice (tier 1), so Adept requires exception slots
+		// Level 1 gets 1 base Adept slot, higher levels need feature exceptions
+		const baseAdeptSlotsForValidation = buildData.level === 1 ? 1 : 0;
+		const totalAllowedAdeptSkills = baseAdeptSlotsForValidation + totalCapExceptionsBudget;
+
+		// Validate that over-level skills don't exceed total budget
+		if (skillsOverLevelCap.length > totalAllowedAdeptSkills) {
+			errors.push({
+				step: BuildStep.Background,
+				field: 'skills',
+				code: 'MASTERY_CAP_EXCEEDED',
+				message: `You have raised ${skillsOverLevelCap.length} skills to Adept level, but you can only have ${totalAllowedAdeptSkills} Adept skills (${baseAdeptSlotsForValidation} base + ${totalCapExceptionsBudget} from features).`
+			});
+		}
+
+		// Validate specific skill coverage
+		let freeBaseSlots = baseAdeptSlotsForValidation;
+		for (const skillId of skillsOverLevelCap) {
+			const isCoveredByFeature = skillMasteryCapEffects.some(
+				(effect) => !effect.options || effect.options.includes(skillId)
+			);
+			if (isCoveredByFeature) continue;
+			if (freeBaseSlots > 0) {
+				freeBaseSlots -= 1;
+				continue;
+			}
+			errors.push({
+				step: BuildStep.Background,
+				field: skillId,
+				code: 'INVALID_MASTERY_GRANT',
+				message: `The ${skillId} skill has been raised to Adept level, but is not permitted by your features or base allowances.`
+			});
+		}
 	}
 	// --- END MASTERY CAP CALCULATION ---
 
@@ -867,17 +1261,27 @@ export function calculateCharacterWithBreakdowns(
 		: 0;
 	const totalCurrentAdeptCount = currentSkillAdeptCount + currentTradeAdeptCount;
 
-	// Baseline: Level 1 has 1 base Adept slot
-	const baseAdeptSlots = buildData.level === 1 ? 1 : 0;
-	const bonusAdeptSlots = skillMasteryCapEffects.reduce((total, effect) => total + effect.count, 0);
-	const maxAdeptCount = baseAdeptSlots + bonusAdeptSlots;
+	// Calculate mastery limits for UI display
+	// If level naturally allows tier 2+, all tiers up to cap are unlimited (like Novice at level 1)
+	// Only use slot system for levels below the natural cap (levels 1-4 trying to reach Adept)
+	let maxAdeptCount: number;
+	let canSelectAdept: boolean;
+	
+	if (levelAllowsUnlimitedMastery) {
+		// Level 5+: All tiers up to natural cap are unlimited
+		maxAdeptCount = 999; // Effectively unlimited for UI
+		canSelectAdept = true; // Always can select up to natural cap
+	} else {
+		// Level 1-4: Use slot system (1 base slot at level 1, 0 at levels 2-4)
+		const baseAdeptSlots = buildData.level === 1 ? 1 : 0;
+		const bonusAdeptSlots = skillMasteryCapEffects.reduce((total, effect) => total + effect.count, 0);
+		maxAdeptCount = baseAdeptSlots + bonusAdeptSlots;
+		canSelectAdept = totalCurrentAdeptCount < maxAdeptCount;
+	}
 
-	// Max mastery accounts for level + available Adept slots
-	// If character has Adept slots available, they can reach Adept level (2)
-	const maxSkillMastery =
-		maxAdeptCount > 0 ? Math.max(2, baseSkillMasteryTier) : Math.max(1, baseSkillMasteryTier);
-	const maxTradeMastery =
-		maxAdeptCount > 0 ? Math.max(2, baseTradeMasteryTier) : Math.max(1, baseTradeMasteryTier);
+	// Max mastery tier for UI dropdowns
+	const maxSkillMastery = baseSkillMasteryTier;
+	const maxTradeMastery = baseTradeMasteryTier;
 
 	const validation: ValidationResult = {
 		isValid: errors.length === 0 && !Object.values(attributeLimits).some((limit) => limit.exceeded),
@@ -889,7 +1293,7 @@ export function calculateCharacterWithBreakdowns(
 			maxTradeMastery,
 			currentAdeptCount: totalCurrentAdeptCount,
 			maxAdeptCount,
-			canSelectAdept: totalCurrentAdeptCount < maxAdeptCount
+			canSelectAdept
 		}
 	};
 
@@ -967,6 +1371,31 @@ export function calculateCharacterWithBreakdowns(
 		movements: [],
 		background,
 		ancestry,
+		levelBudgets: {
+			totalTalents: progressionGains.totalTalents,
+			totalPathPoints: progressionGains.totalPathPoints,
+			totalAncestryPoints: progressionGains.totalAncestryPoints,
+			totalSkillPoints: progressionGains.totalSkillPoints,
+			totalTradePoints: progressionGains.totalTradePoints,
+			totalAttributePoints: progressionGains.totalAttributePoints,
+			totalManeuversKnown: progressionGains.totalManeuversKnown,
+			totalTechniquesKnown: progressionGains.totalTechniquesKnown,
+			totalCantripsKnown: progressionGains.totalCantripsKnown,
+			totalSpellsKnown: progressionGains.totalSpellsKnown,
+			unlockedFeatureIds: progressionGains.unlockedFeatureIds,
+			pendingSubclassChoices: progressionGains.pendingSubclassChoices
+		},
+		resolvedFeatures: resolvedProgression ? {
+			unlockedFeatures: resolvedProgression.unlockedFeatures,
+			pendingFeatureChoices: resolvedProgression.pendingFeatureChoices,
+			availableSubclassChoice: resolvedProgression.availableSubclassChoice,
+			subclassChoiceLevel: resolvedProgression.subclassChoiceLevel
+		} : {
+			unlockedFeatures: [],
+			pendingFeatureChoices: [],
+			availableSubclassChoice: false,
+			subclassChoiceLevel: undefined
+		},
 		validation,
 		unresolvedChoices,
 		cacheTimestamp: Date.now(),

@@ -30,6 +30,7 @@ export const championClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
+			id: 'champion_martial_path',
 			featureName: 'Martial Path',
 			levelGained: 1,
 			description: 'You gain extensive combat training.',
@@ -50,6 +51,7 @@ export const championClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'champion_master_at_arms',
 			featureName: 'Master-at-Arms',
 			levelGained: 1,
 			description: 'Your training in warfare has granted you extensive weapon mastery.',
@@ -87,6 +89,7 @@ export const championClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'champion_fighting_spirit',
 			featureName: 'Fighting Spirit',
 			levelGained: 1,
 			description: 'You stand ready for Combat at any moment.',
@@ -98,7 +101,7 @@ export const championClass: ClassDefinition = {
 					effects: [
 						{
 							type: 'GRANT_ABILITY',
-							target: 'combat_readiness',
+							target: 'combat_readiness_brace',
 							value:
 								'First turn in Combat: choose Brace (Dodge + ADV on Save) or Advance (Move + ADV on Physical Check).'
 						}
@@ -119,6 +122,7 @@ export const championClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'champion_know_your_enemy',
 			featureName: 'Know Your Enemy',
 			levelGained: 1,
 			description:
@@ -134,19 +138,114 @@ export const championClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'champion_adaptive_tactics',
 			featureName: 'Adaptive Tactics',
 			levelGained: 2,
 			description:
-				"When you roll for Initiative, and at the end of each of your turns, you gain a d8 Tactical Die if you don't already have one.",
+				"When you roll for Initiative, and at the end of each of your turns, you gain a d8 Tactical Die if you don't already have one. You can spend a Tactical Die to gain one of the following Tactics: Assault or Deflect.",
 			effects: [
 				{
 					type: 'GRANT_ABILITY',
 					target: 'adaptive_tactics',
 					value:
-						'Gain d8 Tactical Die at Initiative and end of turns. Spend for: Assault (+die to Attack), Defense (+die to PD/AD), or Mobility (+die to Move/Jump).'
+						'Gain d8 Tactical Die at Initiative and end of turns. Spend for: Assault (+die to Attack) or Deflect (-die from Attack against you).'
 				}
 			]
 		}
 	],
-	subclasses: []
+	subclasses: [
+		{
+			subclassName: 'Hero',
+			description: 'Your warrior spirit refuses to yield in battle.',
+			features: [
+				{
+					id: 'hero_resolve',
+					featureName: "Hero's Resolve",
+					levelGained: 3,
+					description: 'You gain several benefits that enhance your combat prowess.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'adrenaline_boost',
+							value:
+								'When you use Second Wind, gain a +5 bonus to Attack Checks until the end of your turn.'
+						},
+						{
+							type: 'GRANT_ABILITY',
+							target: 'cut_through',
+							value:
+								"Your Martial Attacks that score Heavy Hits ignore the target's Physical damage Resistances."
+						},
+						{
+							type: 'GRANT_ABILITY',
+							target: 'unyielding_spirit',
+							value: 'While Bloodied, you gain 1 Temp HP at the start of each of your turns.'
+						}
+					]
+				},
+				{
+					id: 'adventuring_hero',
+					featureName: 'Adventuring Hero',
+					levelGained: 3,
+					description:
+						'You ignore the penalties of Forced March and being Encumbered (but not Heavily Encumbered).',
+					isFlavor: true,
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'adventuring_hero',
+							value: 'Ignore penalties from Forced March and being Encumbered.'
+						}
+					]
+				}
+			]
+		},
+		{
+			subclassName: 'Sentinel',
+			description: 'You are a stalwart protector of your allies.',
+			features: [
+				{
+					id: 'stalwart_protector',
+					featureName: 'Stalwart Protector',
+					levelGained: 3,
+					description: 'You gain benefits that allow you to defend your allies more effectively.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'steadfast_defender',
+							value:
+								'You can use your Deflect Tactic against any Attack that targets a creature within your Melee Range.'
+						},
+						{
+							type: 'GRANT_ABILITY',
+							target: 'defensive_bash',
+							value:
+								"When you use a Defensive Maneuver as a Reaction to an Attack from a creature within 1 Space, the attacker must make a Physical Save against your Attack Check. Failure: The target is pushed 1 Space away or Taunted by you (your choice)."
+						},
+						{
+							type: 'GRANT_ABILITY',
+							target: 'not_on_my_watch',
+							value: 'Creatures Taunted by you deal 1 less damage to targets within 1 Space of you.'
+						}
+					]
+				},
+				{
+					id: 'vigilant_watcher',
+					featureName: 'Vigilant Watcher',
+					levelGained: 3,
+					description:
+						"During a Long Rest, if you spend both 4 hour periods doing Light Activity, you have ADV on the Might Save you make to avoid gaining Exhaustion. Additionally, the Save DC doesn't increase on a Failure.",
+					isFlavor: true,
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'vigilant_watcher',
+							value:
+								'During a Long Rest with only Light Activity, gain ADV on the Might Save to avoid Exhaustion.'
+						}
+					]
+				}
+			]
+		}
+	]
 };

@@ -14,7 +14,7 @@ export const hunterClass: ClassDefinition = {
 			shields: ['Light_Shields']
 		},
 		maneuvers: {
-			learnsAllAttack: false,
+			learnsAllAttack: true,
 			additionalKnown: 'Maneuvers Known column of the Hunter Class Table'
 		},
 		techniques: {
@@ -25,11 +25,12 @@ export const hunterClass: ClassDefinition = {
 		},
 		staminaRegen: {
 			description:
-				'Once per round, you can regain up to half your maximum SP when you score a Heavy or Critical Hit.'
+				'Once per round, you can regain up to half your maximum SP when you Hit your Marked target, it dies, or you succeed on a check to recall info or locate an Unseen creature.'
 		}
 	},
 	coreFeatures: [
 		{
+			id: 'hunter_martial_path',
 			featureName: 'Martial Path',
 			levelGained: 1,
 			description: 'You gain training in martial combat.',
@@ -45,6 +46,7 @@ export const hunterClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'hunter_mark',
 			featureName: "Hunter's Mark",
 			levelGained: 1,
 			description:
@@ -59,6 +61,7 @@ export const hunterClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'hunter_favored_terrain',
 			featureName: 'Favored Terrain',
 			levelGained: 1,
 			description:
@@ -224,32 +227,233 @@ export const hunterClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'hunter_bestiary',
+			featureName: 'Bestiary',
+			levelGained: 1,
+			description:
+				"You have developed a trove of knowledge hunting creatures which you've recorded in your Bestiary. You have ADV on Checks made to learn or recall information about any creature recorded in your Bestiary.",
+			isFlavor: true,
+			choices: [
+				{
+					id: 'hunter_bestiary_0',
+					prompt: 'Choose a Creature Type for your starting entries',
+					count: 1,
+					options: [
+						{ name: 'Aberration', description: 'Twisted creatures of unnatural origin.', effects: [] },
+						{ name: 'Beast', description: 'Natural animals and creatures.', effects: [] },
+						{ name: 'Celestial', description: 'Divine and holy beings.', effects: [] },
+						{ name: 'Construct', description: 'Artificial and animated creations.', effects: [] },
+						{ name: 'Dragon', description: 'Ancient reptilian beings of immense power.', effects: [] },
+						{ name: 'Elemental', description: 'Living manifestations of natural forces.', effects: [] },
+						{ name: 'Fey', description: 'Magical beings from the Feywild.', effects: [] },
+						{ name: 'Fiend', description: 'Evil entities from lower planes.', effects: [] },
+						{ name: 'Giant', description: 'Massive humanoid creatures.', effects: [] },
+						{ name: 'Humanoid', description: 'Bipedal civilized species.', effects: [] },
+						{ name: 'Monstrosity', description: 'Frightening creatures of legend.', effects: [] },
+						{ name: 'Ooze', description: 'Amorphous and corrosive beings.', effects: [] },
+						{ name: 'Plant', description: 'Botanical and fungal creatures.', effects: [] },
+						{ name: 'Undead', description: 'Reanimated dead and spirits.', effects: [] }
+					]
+				}
+			]
+		},
+		{
+			id: 'hunter_strike',
 			featureName: "Hunter's Strike",
 			levelGained: 2,
 			description:
-				"When you make a Martial Attack against the target of your Hunter's Mark, you can spend 1 SP to deal +1d8 damage of the Weapon's damage type. If the Attack was a Heavy Hit, the damage becomes +2d8. If the Attack was a Critical Hit, the damage becomes +3d8.",
+				'You can spend 1 SP as part of a Weapon Attack to add one of the following effects: Piercing, Snare, Acid, Toxin, Flash Bang, or Fire Oil.',
 			effects: [
 				{
 					type: 'GRANT_ABILITY',
 					target: 'hunters_strike',
 					value:
-						"Against Hunter's Mark target: spend 1 SP for +1d8 damage (+2d8 Heavy Hit, +3d8 Critical Hit)."
+						"Spend 1 SP on a Weapon Attack to add one of several effects (e.g., Piercing for Bleeding, Snare for Immobilized, etc.)."
+				}
+			]
+		}
+		// Note: Level 2 Talent is granted via progression table, not hardcoded here
+	],
+	subclasses: [
+		{
+			subclassName: 'Monster Slayer',
+			description:
+				'You hunt down your targets with the aid of Concoctions you have learned to create by hunting monsters.',
+			features: [
+				{
+					id: 'monster_slayer_concoctions',
+					featureName: 'Monstrous Concoctions',
+					levelGained: 3,
+					description: 'You learn to create potent concoctions from monster parts.',
+					choices: [
+						{
+							id: 'monster_slayer_concoctions_0',
+							prompt: 'Choose 3 Concoction Recipes',
+							count: 3,
+							options: [
+								{
+									name: 'Elemental Infusion',
+									description:
+										'Choose an Elemental damage type. Attacks against your Marked target deal +1 damage of that type. You gain Resistance (1) to that type.',
+									effects: [
+										{
+											type: 'GRANT_CHOICE',
+											target: 'elemental_infusion_type',
+											value: 1,
+											userChoice: {
+												prompt: 'Choose an elemental damage type',
+												options: ['Fire', 'Cold', 'Lightning', 'Poison', 'Corrosion']
+											}
+										}
+									]
+								},
+								{
+									name: "Hydra's Blood",
+									description:
+										'When you Heavy Hit your Marked target, you regain 1 HP. You have Poisoned Resistance and attackers take 1 Poison damage.',
+									effects: [
+										{
+											type: 'GRANT_ABILITY',
+											target: 'hydras_blood',
+											value:
+												'Regain 1 HP on Heavy Hits vs Marked target. Gain Poisoned Resistance. Melee attackers take 1 Poison damage.'
+										}
+									]
+								},
+								{
+									name: 'Basilisk Eye',
+									description:
+										'You gain Tremorsense 20 Spaces for your Marked target. You gain Physical Resistance (1).',
+									effects: [
+										{
+											type: 'GRANT_ABILITY',
+											target: 'basilisk_eye',
+											value: 'Gain Tremorsense 20 for Marked target. Gain Physical Resistance (1).'
+										}
+									]
+								},
+								{
+									name: 'Ooze Gel',
+									description:
+										"When you Heavy Hit your Marked Target, it's Hindered. You can climb difficult surfaces and squeeze through small gaps.",
+									effects: [
+										{
+											type: 'GRANT_ABILITY',
+											target: 'ooze_gel',
+											value:
+												'Heavy Hits vs Marked target cause Hindered. Gain amorphous body properties.'
+										}
+									]
+								},
+								{
+									name: 'Aberrant Tumor',
+									description:
+										'While within 20 Spaces of your Marked target, you have ADV on Analyze Creature checks and Mental Saves. You gain Psychic Resistance (1).',
+									effects: [
+										{
+											type: 'GRANT_ABILITY',
+											target: 'aberrant_tumor',
+											value:
+												'ADV on Analyze Creature and Mental Saves vs Marked target. Gain Psychic Resistance (1).'
+										}
+									]
+								},
+								{
+									name: 'Deathweed',
+									description:
+										'Heavy Hits against a Marked target bypass Physical Resistances and prevent HP regain. You gain Umbral Resistance (Half), immunity to Doomed, and ADV on Death Saves.',
+									effects: [
+										{
+											type: 'GRANT_ABILITY',
+											target: 'deathweed',
+											value:
+												'Heavy Hits vs Marked target bypass Physical Resistances and stop healing. Gain death-related resistances.'
+										}
+									]
+								},
+								{
+									name: 'Plant Fibers',
+									description:
+										"If your Marked Target fails a Save you force, they can't move. You become Immune to Bleeding and gain 1 Temp HP at the end of each turn.",
+									effects: [
+										{
+											type: 'GRANT_ABILITY',
+											target: 'plant_fibers',
+											value:
+												"Failed saves vs you stop Marked target's movement. Gain Bleeding immunity and 1 Temp HP per turn."
+										}
+									]
+								},
+								{
+									name: 'Divine Water',
+									description:
+										'Heavy Hits against your Marked target also make it Exposed. You gain Radiant Resistance (Half) and radiate Bright Light in a 5 Space Radius.',
+									effects: [
+										{
+											type: 'GRANT_ABILITY',
+											target: 'divine_water',
+											value:
+												'Heavy Hits vs Marked target cause Exposed. Gain Radiant Resistance (Half) and emit light.'
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					id: 'monster_hunter',
+					featureName: 'Monster Hunter',
+					levelGained: 3,
+					description:
+						'If you have 3 entries of creatures with the same Creature Type in your Bestiary, you can add the entire Creature Type as an entry.',
+					isFlavor: true,
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'monster_hunter',
+							value:
+								'After recording 3 creatures of the same type, gain a Bestiary entry for the entire type.'
+						}
+					]
 				}
 			]
 		},
 		{
-			featureName: 'Bestiary',
-			levelGained: 3,
-			description: 'Your knowledge of creatures grants you tactical advantages when facing them.',
-			effects: [
+			subclassName: 'Trapper',
+			description: 'You are able to use a variety of supplies to craft traps.',
+			features: [
 				{
-					type: 'GRANT_ABILITY',
-					target: 'bestiary',
-					value:
-						'You have extensive knowledge of creature weaknesses and behaviors for tactical advantage.'
+					id: 'dynamic_traps',
+					featureName: 'Dynamic Traps',
+					levelGained: 3,
+					description:
+						"You can create, set, and trigger a number of traps equal to your Prime Modifier. Setting a trap allows you to add the damage and effect of one of your Hunter's Strike options to it.",
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'dynamic_traps',
+							value:
+								"Create and Set traps (max = Prime Modifier). Can spend 1 SP to add a Hunter's Strike effect to a trap upon setting it."
+						}
+					]
+				},
+				{
+					id: 'discerning_eye',
+					featureName: 'Discerning Eye',
+					levelGained: 3,
+					description:
+						'You have ADV on Awareness Checks to discover Hidden Traps and on Investigation Checks to discern how to disarm them.',
+					isFlavor: true,
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'discerning_eye',
+							value: 'Gain ADV on checks to find and disarm traps.'
+						}
+					]
 				}
 			]
 		}
-	],
-	subclasses: []
+	]
 };

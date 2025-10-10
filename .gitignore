@@ -37,3 +37,6 @@ e2e/screenshots/
 
 *storybook.log
 storybook-static
+
+# DC20 source materials
+docs/assets/DC20 0.95 full.md

@@ -638,31 +638,7 @@ export const traitsData: Trait[] = [
 			{
 				type: 'INCREASE_TRADE_MASTERY_CAP',
 				count: 1,
-				value: 1,
-				options: [
-					'alchemy',
-					'blacksmithing',
-					'brewing',
-					'calligraphy',
-					'carpentry',
-					'cartography',
-					'cobbling',
-					'cooking',
-					'disguise',
-					'forgery',
-					'herbalism',
-					'jeweler',
-					'leatherworking',
-					'masonry',
-					'painting',
-					'poisoner',
-					'pottery',
-					'sculpting',
-					'smithing',
-					'tailoring',
-					'thieves',
-					'woodcarving'
-				]
+				value: 1
 			}
 		]
 	},
@@ -760,79 +736,15 @@ export const traitsData: Trait[] = [
 
 	// Giantborn Traits (p. 112)
 	{
-		id: 'giantborn_giant_blood',
-		name: 'Giant Blood',
-		description: 'Your Size is considered Large.',
-		cost: 2,
-		effects: [
-			{ type: 'GRANT_ABILITY', target: 'large_size', value: 'Your Size is considered Large.' }
-		]
-	},
-	{
 		id: 'giantborn_tough',
 		name: 'Tough',
 		description: 'Your HP maximum increases by 1.',
 		cost: 1,
 		effects: [{ type: 'MODIFY_STAT', target: 'hpMax', value: 1 }]
 	},
-	{
-		id: 'giantborn_throw_ally',
-		name: 'Throw Ally',
-		description: 'You can throw willing allies as a Combat Action.',
-		cost: 1,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'throw_ally',
-				value: 'You can throw willing allies as a Combat Action.'
-			}
-		]
-	},
-	{
-		id: 'giantborn_clumsy',
-		name: 'Clumsy',
-		description: 'Your PD decreases by 1.',
-		cost: -1,
-		isNegative: true,
-		effects: [{ type: 'MODIFY_STAT', target: 'pd', value: -1 }]
-	},
 
 	// Angelborn Traits (p. 113)
-	{
-		id: 'angelborn_divine_resistance',
-		name: 'Divine Resistance',
-		description: 'You have Holy Resistance (Half).',
-		cost: 1,
-		effects: [{ type: 'GRANT_RESISTANCE', target: 'Holy', value: 'half' }]
-	},
-	{
-		id: 'angelborn_healing_hands',
-		name: 'Healing Hands',
-		description:
-			'Once per Long Rest, you can touch a creature to heal them for 1d4 + your Prime Modifier HP.',
-		cost: 2,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'healing_hands',
-				value: 'Once per Long Rest: heal 1d4 + Prime Modifier HP by touch.'
-			}
-		]
-	},
-	{
-		id: 'angelborn_light_sensitivity',
-		name: 'Light Sensitivity',
-		description: 'While in bright light, you have DisADV on Attack Checks.',
-		cost: -1,
-		isNegative: true,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'light_sensitivity',
-				value: 'DisADV on Attack Checks in bright light.'
-			}
-		]
-	},
+	// Note: Angelborn traits are defined in another section of this file
 
 	// Fiendborn Traits (p. 114)
 	{
@@ -842,49 +754,8 @@ export const traitsData: Trait[] = [
 		cost: 1,
 		effects: [{ type: 'GRANT_SENSE', target: 'darkvision', value: 10 }]
 	},
-	{
-		id: 'fiendborn_hellish_resistance',
-		name: 'Hellish Resistance',
-		description: 'You have Fire Resistance (Half).',
-		cost: 1,
-		effects: [{ type: 'GRANT_RESISTANCE', target: 'Fire', value: 'half' }]
-	},
-	{
-		id: 'fiendborn_infernal_legacy',
-		name: 'Infernal Legacy',
-		description: 'You know one Cantrip from the Fiendborn Ancestry Spells.',
-		cost: 1,
-		effects: [
-			{
-				type: 'GRANT_SPELL',
-				target: 'fiendborn_cantrip',
-				value: 'One Cantrip from Fiendborn Ancestry Spells.'
-			}
-		]
-	},
-	{
-		id: 'fiendborn_holy_vulnerability',
-		name: 'Holy Vulnerability',
-		description: 'You have Holy Vulnerability (1).',
-		cost: -2,
-		isNegative: true,
-		effects: [{ type: 'GRANT_VULNERABILITY', target: 'Holy', value: 1 }]
-	},
 
 	// Beastborn Traits (p. 115)
-	{
-		id: 'beastborn_keen_senses',
-		name: 'Keen Senses',
-		description: 'You have ADV on Awareness Checks that rely on hearing or smell.',
-		cost: 1,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'keen_senses',
-				value: 'ADV on Awareness Checks using hearing or smell.'
-			}
-		]
-	},
 	{
 		id: 'beastborn_natural_weapon',
 		name: 'Natural Weapon',
@@ -897,23 +768,6 @@ export const traitsData: Trait[] = [
 				target: 'natural_weapon',
 				value: '2 Natural Weapons for Unarmed Strikes (1 damage, chosen type).'
 			}
-		]
-	},
-	{
-		id: 'beastborn_thick_hide',
-		name: 'Thick Hide',
-		description: "While you aren't wearing Armor, you gain +1 AD.",
-		cost: 1,
-		effects: [{ type: 'MODIFY_STAT', target: 'ad', value: 1, condition: 'not_wearing_armor' }]
-	},
-	{
-		id: 'beastborn_wild_mind',
-		name: 'Wild Mind',
-		description: 'You have DisADV on Intelligence-based Checks.',
-		cost: -1,
-		isNegative: true,
-		effects: [
-			{ type: 'GRANT_ABILITY', target: 'wild_mind', value: 'DisADV on Intelligence-based Checks.' }
 		]
 	},
 
@@ -1070,31 +924,7 @@ export const traitsData: Trait[] = [
 			{
 				type: 'INCREASE_TRADE_MASTERY_CAP',
 				count: 1,
-				value: 1,
-				options: [
-					'alchemy',
-					'blacksmithing',
-					'brewing',
-					'calligraphy',
-					'carpentry',
-					'cartography',
-					'cobbling',
-					'cooking',
-					'herbalism',
-					'jeweler',
-					'leatherworking',
-					'masonry',
-					'painting',
-					'pottery',
-					'sculpting',
-					'smithing',
-					'tailoring',
-					'woodcarving',
-					'music',
-					'navigation',
-					'vehicles_land',
-					'vehicles_water'
-				]
+				value: 1
 			}
 		]
 	},
@@ -1724,20 +1554,6 @@ export const traitsData: Trait[] = [
 				type: 'GRANT_ABILITY',
 				target: 'echolocation',
 				value: '1 AP: Blindsight 10 Spaces until next turn (100 Spaces audible).'
-			}
-		]
-	},
-	{
-		id: 'beastborn_natural_weapon',
-		name: 'Natural Weapon',
-		description:
-			'You have up to 2 Natural Weapons (claws, horns, fangs, tail, etc.) which you can use to make Unarmed Strikes that deal 1 Bludgeoning, Piercing, or Slashing damage (your choice upon gaining this Trait). You can perform Attack Maneuvers with your Natural Weapons.',
-		cost: 1,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'natural_weapon',
-				value: '2 Natural Weapons for Unarmed Strikes (1 damage, chosen type).'
 			}
 		]
 	},
@@ -2486,31 +2302,7 @@ export const traitsData: Trait[] = [
 			{
 				type: 'INCREASE_TRADE_MASTERY_CAP',
 				count: 1,
-				value: 1,
-				options: [
-					'alchemy',
-					'blacksmithing',
-					'brewing',
-					'calligraphy',
-					'carpentry',
-					'cartography',
-					'cobbling',
-					'cooking',
-					'disguise',
-					'forgery',
-					'herbalism',
-					'jeweler',
-					'leatherworking',
-					'masonry',
-					'painting',
-					'poisoner',
-					'pottery',
-					'sculpting',
-					'smithing',
-					'tailoring',
-					'thieves',
-					'woodcarving'
-				]
+				value: 1
 			}
 		]
 	},

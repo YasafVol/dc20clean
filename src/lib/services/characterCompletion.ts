@@ -12,6 +12,7 @@ import { getInitializedCharacterState } from '../utils/storageUtils';
 import { getAllSavedCharacters, saveAllCharacters } from '../utils/storageUtils';
 import type { SavedCharacter } from '../types/dataContracts';
 import { denormalizeMastery } from './denormalizeMastery';
+import { CURRENT_SCHEMA_VERSION } from '../types/schemaVersion';
 
 export interface CharacterCompletionCallbacks {
 	onShowSnackbar: (message: string) => void;
@@ -31,7 +32,7 @@ export const completeCharacter = async (
 			attribute_charisma: characterState.attribute_charisma,
 			attribute_intelligence: characterState.attribute_intelligence,
 			level: characterState.level || 1,
-			combatMastery: characterState.combatMastery || 1,
+			// combatMastery is calculated by the calculator, not passed as input
 			classId: characterState.classId,
 			ancestry1Id: characterState.ancestry1Id,
 			ancestry2Id: characterState.ancestry2Id,
@@ -122,21 +123,33 @@ export const completeCharacter = async (
 			finalAttackSpellCheck: calculationResult.stats.finalAttackSpellCheck,
 			finalMartialCheck: calculationResult.stats.finalMartialCheck,
 
-			// Store typed data directly (no more JSON strings)
-			selectedTraitIds: characterState.selectedTraitIds || [],
-			selectedFeatureChoices: characterState.selectedFeatureChoices || {},
-			skillsData: characterState.skillsData || {},
-			tradesData: characterState.tradesData || {},
-			languagesData: characterState.languagesData || { common: { fluency: 'fluent' } },
+		// Store typed data directly (no more JSON strings)
+		selectedTraitIds: characterState.selectedTraitIds || [],
+		selectedFeatureChoices: characterState.selectedFeatureChoices || {},
+		skillsData: characterState.skillsData || {},
+		tradesData: characterState.tradesData || {},
+		languagesData: characterState.languagesData || { common: { fluency: 'fluent' } },
 
-			// New precomputed structures (optional until FE migration)
-			skillTotals: denorm.skillTotals,
-			skillMastery: denorm.skillMastery,
-			knowledgeTradeMastery: denorm.knowledgeTradeMastery,
-			masteryLadders: denorm.masteryLadders,
-			languageMastery: denorm.languageMastery,
-			spells: [], // Will be populated below
-			maneuvers: [], // Will be populated below
+		// Level progression data (M2.7)
+		selectedTalents: characterState.selectedTalents || [],
+		pathPointAllocations: characterState.pathPointAllocations || {},
+		unlockedFeatureIds: calculationResult.resolvedFeatures?.unlockedFeatures.map(f => f.id || f.featureName) || [],
+		selectedSubclass: characterState.selectedSubclass,
+		pendingSubclassChoice: calculationResult.resolvedFeatures?.availableSubclassChoice && !characterState.selectedSubclass,
+		
+		// Multiclass selections (M3.17)
+		selectedMulticlassOption: characterState.selectedMulticlassOption,
+		selectedMulticlassClass: characterState.selectedMulticlassClass,
+		selectedMulticlassFeature: characterState.selectedMulticlassFeature,
+
+		// New precomputed structures (optional until FE migration)
+		skillTotals: denorm.skillTotals,
+		skillMastery: denorm.skillMastery,
+		knowledgeTradeMastery: denorm.knowledgeTradeMastery,
+		masteryLadders: denorm.masteryLadders,
+		languageMastery: denorm.languageMastery,
+		spells: [], // Will be populated below
+		maneuvers: [], // Will be populated below
 
 			// CRITICAL: Store conversions for character editing
 			skillToTradeConversions: characterState.skillToTradeConversions || 0,
@@ -155,11 +168,11 @@ export const completeCharacter = async (
 				finalRestPoints: calculationResult.stats.finalRestPoints
 			}),
 
-			// Metadata
-			createdAt: new Date().toISOString(),
-			lastModified: new Date().toISOString(),
-			completedAt: new Date().toISOString(),
-			schemaVersion: '2.0.0'
+		// Metadata
+		createdAt: new Date().toISOString(),
+		lastModified: new Date().toISOString(),
+		completedAt: new Date().toISOString(),
+		schemaVersion: CURRENT_SCHEMA_VERSION
 		};
 
 		console.log('Character stats calculated:', completedCharacter);

@@ -218,6 +218,7 @@ export interface FeatureChoice {
 
 /** A single class feature, either core or from a subclass. */
 export interface ClassFeature {
+	id?: string;
 	featureName: string;
 	levelGained: number;
 	description: string;
@@ -240,6 +241,13 @@ export interface Subclass {
 /** The complete, robust definition for a single class. */
 export interface ClassDefinition {
 	className: string;
+	startingEquipment?: {
+		weaponsOrShields?: string | string[];
+		rangedWeapons?: string | string[];
+		armor?: string | string[];
+		packs?: string | string[];
+		[key: string]: unknown;
+	};
 	// Path objects define the class's progression mechanics
 	martialPath?: {
 		combatTraining?: {

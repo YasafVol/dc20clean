@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import {
@@ -8,6 +9,11 @@ import {
 import { SpellSchool } from '../../lib/rulesdata/schemas/spell.schema';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
 import { techniques } from '../../lib/rulesdata/martials/techniques';
+import {
+	calculateCharacterWithBreakdowns,
+	convertToEnhancedBuildData
+} from '../../lib/services/enhancedCharacterCalculator';
+import { SubclassSelector } from './SubclassSelector';
 import {
 	StyledContainer,
 	StyledTitle,
@@ -30,12 +36,112 @@ import {
 function ClassFeatures() {
 	const { state, dispatch } = useCharacter();
 
+	// Helper function to render a single choice card
+	const renderChoiceCard = (choice: any) => (
+		<StyledCard key={choice.id}>
+			<StyledCardTitle>{choice.prompt}</StyledCardTitle>
+			{choice.type === 'select_one' && (
+				<StyledChoiceOptions>
+					{choice.options.map((option: any) => {
+						const detailedDescription = getDetailedClassFeatureDescription(
+							choice.id,
+							option.value
+						);
+						return (
+							<StyledLabel key={option.value}>
+								<StyledRadio
+									type="radio"
+									name={choice.id}
+									value={option.value}
+									checked={selectedFeatureChoices[choice.id] === option.value}
+									onChange={() => handleFeatureChoice(choice.id, option.value)}
+								/>
+								{option.label}
+								{(option.description || detailedDescription) && (
+									<StyledOptionDescription>
+										{option.description || detailedDescription}
+									</StyledOptionDescription>
+								)}
+							</StyledLabel>
+						);
+					})}
+				</StyledChoiceOptions>
+			)}
+			{choice.type === 'select_multiple' && (
+				<StyledChoiceOptions>
+					{choice.options.map((option: any) => {
+						// Handle arrays directly (no legacy JSON string support)
+						const currentValues: string[] = selectedFeatureChoices[choice.id]
+							? Array.isArray(selectedFeatureChoices[choice.id])
+								? (selectedFeatureChoices[choice.id] as unknown as string[])
+								: []
+							: [];
+						const isSelected = currentValues.includes(option.value);
+						const canSelect = currentValues.length < (choice.maxSelections || 999);
+						const isDisabled = !isSelected && !canSelect;
+						const detailedDescription = getDetailedClassFeatureDescription(
+							choice.id,
+							option.value
+						);
+
+						return (
+							<StyledLabel key={option.value} style={{ opacity: isDisabled ? 0.5 : 1 }}>
+								<StyledRadio
+									type="checkbox"
+									name={choice.id}
+									value={option.value}
+									checked={isSelected}
+									disabled={isDisabled}
+									onChange={(e) =>
+										handleMultipleFeatureChoice(choice.id, option.value, e.target.checked)
+									}
+								/>
+								{option.label}
+								{(option.description || detailedDescription) && (
+									<StyledOptionDescription>
+										{option.description || detailedDescription}
+									</StyledOptionDescription>
+								)}
+							</StyledLabel>
+						);
+					})}
+					{choice.maxSelections && (
+						<StyledOptionDescription style={{ marginTop: '8px', fontStyle: 'italic' }}>
+							Select up to {choice.maxSelections} options (
+							{selectedFeatureChoices[choice.id]
+								? Array.isArray(selectedFeatureChoices[choice.id])
+									? (selectedFeatureChoices[choice.id] as unknown as string[]).length
+									: 0
+								: 0}
+							/{choice.maxSelections} selected)
+						</StyledOptionDescription>
+					)}
+				</StyledChoiceOptions>
+			)}
+		</StyledCard>
+	);
+
 	const selectedClass = classesData.find(
 		(c) => c.id.toLowerCase() === state.classId?.toLowerCase()
 	);
 	const selectedClassFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
 	// NEW: Use typed data instead of JSON parsing
 	const selectedFeatureChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
+
+	// Calculate character to check for subclass choice requirement
+	const calculationResult = useMemo(() => {
+		if (!state.classId) return null;
+		try {
+			const enhancedData = convertToEnhancedBuildData(state);
+			return calculateCharacterWithBreakdowns(enhancedData);
+		} catch (error) {
+			console.error('Failed to calculate character:', error);
+			return null;
+		}
+	}, [state]);
+
+	const needsSubclassChoice = calculationResult?.resolvedFeatures?.availableSubclassChoice;
+	const subclassChoiceLevel = calculationResult?.resolvedFeatures?.subclassChoiceLevel;
 
 	function handleFeatureChoice(choiceId: string, value: string) {
 		const currentChoices: Record<string, any> = { ...selectedFeatureChoices };
@@ -119,15 +225,20 @@ function ClassFeatures() {
 		return null; // Don't render anything when no class is selected
 	}
 
-	// Get level 1 features
-	const level1Features = selectedClassFeatures.coreFeatures.filter(
-		(feature) => feature.levelGained === 1
-	);
+	// Get features up to current level, grouped by level
+	const featuresByLevel: Record<number, typeof selectedClassFeatures.coreFeatures> = {};
+	for (let level = 1; level <= state.level; level++) {
+		featuresByLevel[level] = selectedClassFeatures.coreFeatures.filter(
+			(feature) => feature.levelGained === level
+		);
+	}
 
-	// Get all feature choices from level 1 features (excluding in-game tactical choices)
+	// Get all feature choices from all features up to current level (excluding in-game tactical choices)
 	const inGameChoices = ['Divine Blessing', "Commander's Call", 'Debilitating Strike'];
 	const featureChoices: any[] = [];
-	level1Features.forEach((feature) => {
+	for (let level = 1; level <= state.level; level++) {
+		const levelFeatures = featuresByLevel[level] || [];
+		levelFeatures.forEach((feature) => {
 		// Skip features that are in-game tactical choices, not character creation choices
 		if (feature.choices && !inGameChoices.includes(feature.featureName)) {
 			feature.choices.forEach((choice, choiceIndex) => {
@@ -141,6 +252,7 @@ function ClassFeatures() {
 					prompt: choice.prompt,
 					type: choice.count > 1 ? 'select_multiple' : 'select_one',
 					maxSelections: choice.count > 1 ? choice.count : undefined,
+					level: level, // Track which level this choice belongs to
 					options:
 						choice.options?.map((option) => ({
 							value: option.name,
@@ -175,6 +287,7 @@ function ClassFeatures() {
 						id: choiceId,
 						prompt: effect.userChoice.prompt,
 						type: 'select_one',
+						level: level, // Track which level this choice belongs to
 						options: options
 					});
 				}
@@ -226,6 +339,7 @@ function ClassFeatures() {
 									id: choiceId,
 									prompt: `${option.name}: ${effect.userChoice.prompt}`,
 									type: 'select_one',
+									level: level, // Track which level this choice belongs to
 									options: options
 								});
 							}
@@ -234,7 +348,8 @@ function ClassFeatures() {
 				});
 			});
 		}
-	});
+		});
+	}
 
 	// Add martial choices based on class table and features
 	const level1Data = selectedClass.levelProgression?.[0]; // Level 1 data from table
@@ -245,9 +360,10 @@ function ClassFeatures() {
 		// Add class-specific feature bonuses for techniques only
 		let featureTechniques = 0;
 
-		// Parse feature descriptions to extract technique bonuses
-		selectedClassFeatures.coreFeatures.forEach((feature) => {
-			if (feature.levelGained === 1) {
+		// Parse feature descriptions to extract technique bonuses from all features up to current level
+		for (let level = 1; level <= state.level; level++) {
+			const levelFeatures = featuresByLevel[level] || [];
+			levelFeatures.forEach((feature) => {
 				// Check main feature description
 				const description = feature.description.toLowerCase();
 
@@ -267,8 +383,8 @@ function ClassFeatures() {
 						featureTechniques += parseInt(benefitTechniqueMatch[1]);
 					}
 				});
-			}
-		});
+			});
+		}
 
 		const totalTechniques = tableTechniques + featureTechniques;
 
@@ -279,6 +395,7 @@ function ClassFeatures() {
 				prompt: `Choose ${totalTechniques} Technique${totalTechniques > 1 ? 's' : ''}`,
 				type: totalTechniques > 1 ? 'select_multiple' : 'select_one',
 				maxSelections: totalTechniques > 1 ? totalTechniques : undefined,
+				level: 1, // Techniques are general level 1 choices
 				options: techniques.map((technique) => ({
 					value: technique.name,
 					label: technique.name,
@@ -300,6 +417,7 @@ function ClassFeatures() {
 				prompt: `Choose ${spellList.schoolCount} Spell School${spellList.schoolCount > 1 ? 's' : ''}`,
 				type: 'select_multiple',
 				maxSelections: spellList.schoolCount,
+				level: 1, // Spell schools are general level 1 choices
 				options: availableSchools.map((school) => ({
 					value: school,
 					label: school,
@@ -319,6 +437,7 @@ function ClassFeatures() {
 				prompt: `Choose ${spellList.schoolCount} additional Spell School${spellList.schoolCount > 1 ? 's' : ''} (you already have: ${alreadyHaveSchools.join(', ')})`,
 				type: spellList.schoolCount > 1 ? 'select_multiple' : 'select_one',
 				maxSelections: spellList.schoolCount > 1 ? spellList.schoolCount : undefined,
+				level: 1, // Additional spell schools are general level 1 choices
 				options: choosableSchools.map((school) => ({
 					value: school,
 					label: school,
@@ -327,42 +446,46 @@ function ClassFeatures() {
 			});
 		}
 
-		// Check for level 1 features that require spell school choices (like Wizard's Spell School Initiate)
-		level1Features.forEach((feature) => {
-			const description = feature.description.toLowerCase();
-			// Only include features that are character creation choices, not in-game tactical choices
-			const isCharacterCreationChoice =
-				(description.includes('choose a spell school') ||
-					description.includes('choose 1 spell school')) &&
-				// Exclude in-game features like Arcane Sigil
-				!description.includes('when you create') &&
-				!description.includes('when you cast') &&
-				!description.includes('you can spend') &&
-				// Include features that are clearly character creation (like training/specialization)
-				(description.includes('training') ||
-					description.includes('specialize') ||
-					description.includes('initiate') ||
-					description.includes('you gain the following benefits'));
+		// Check for features at all levels that require spell school choices (like Wizard's Spell School Initiate)
+		for (let level = 1; level <= state.level; level++) {
+			const levelFeatures = featuresByLevel[level] || [];
+			levelFeatures.forEach((feature) => {
+				const description = feature.description.toLowerCase();
+				// Only include features that are character creation choices, not in-game tactical choices
+				const isCharacterCreationChoice =
+					(description.includes('choose a spell school') ||
+						description.includes('choose 1 spell school')) &&
+					// Exclude in-game features like Arcane Sigil
+					!description.includes('when you create') &&
+					!description.includes('when you cast') &&
+					!description.includes('you can spend') &&
+					// Include features that are clearly character creation (like training/specialization)
+					(description.includes('training') ||
+						description.includes('specialize') ||
+						description.includes('initiate') ||
+						description.includes('you gain the following benefits'));
 
-			if (isCharacterCreationChoice) {
-				const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_school`;
+				if (isCharacterCreationChoice) {
+					const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_school`;
 
-				// Only add if not already added
-				if (!featureChoices.some((choice) => choice.id === choiceId)) {
-					const availableSchools = Object.values(SpellSchool);
-					featureChoices.push({
-						id: choiceId,
-						prompt: `${feature.featureName}: Choose a Spell School`,
-						type: 'select_one',
-						options: availableSchools.map((school) => ({
-							value: school,
-							label: school,
-							description: `Specialize in the ${school} school of magic`
-						}))
-					});
+					// Only add if not already added
+					if (!featureChoices.some((choice) => choice.id === choiceId)) {
+						const availableSchools = Object.values(SpellSchool);
+						featureChoices.push({
+							id: choiceId,
+							prompt: `${feature.featureName}: Choose a Spell School`,
+							type: 'select_one',
+							level: level, // Track which level this choice belongs to
+							options: availableSchools.map((school) => ({
+								value: school,
+								label: school,
+								description: `Specialize in the ${school} school of magic`
+							}))
+						});
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	return (
@@ -585,113 +708,58 @@ function ClassFeatures() {
 				</StyledSection>
 			)}
 
-			<StyledSection>
-				<StyledSectionTitle>Level 1 Features</StyledSectionTitle>
-				{level1Features.map((feature, index) => (
-					<StyledCard key={index}>
-						<StyledCardTitle>{feature.featureName}</StyledCardTitle>
-						<StyledCardDescription>{feature.description}</StyledCardDescription>
-						{feature.benefits && (
-							<StyledBenefitsList>
-								{feature.benefits.map((benefit, benefitIndex) => (
-									<StyledBenefit key={benefitIndex}>
-										<StyledBenefitName>{benefit.name}</StyledBenefitName>
-										<StyledBenefitDescription>{benefit.description}</StyledBenefitDescription>
-									</StyledBenefit>
-								))}
-							</StyledBenefitsList>
-						)}
-					</StyledCard>
-				))}
-			</StyledSection>
-
-			{featureChoices.length > 0 && (
-				<StyledSection>
-					<StyledSectionTitle>Feature Choices</StyledSectionTitle>
-					{featureChoices.map((choice: any) => (
-						<StyledCard key={choice.id}>
-							<StyledCardTitle>{choice.prompt}</StyledCardTitle>
-							{choice.type === 'select_one' && (
-								<StyledChoiceOptions>
-									{choice.options.map((option: any) => {
-										const detailedDescription = getDetailedClassFeatureDescription(
-											choice.id,
-											option.value
-										);
-										return (
-											<StyledLabel key={option.value}>
-												<StyledRadio
-													type="radio"
-													name={choice.id}
-													value={option.value}
-													checked={selectedFeatureChoices[choice.id] === option.value}
-													onChange={() => handleFeatureChoice(choice.id, option.value)}
-												/>
-												{option.label}
-												{(option.description || detailedDescription) && (
-													<StyledOptionDescription>
-														{option.description || detailedDescription}
-													</StyledOptionDescription>
-												)}
-											</StyledLabel>
-										);
-									})}
-								</StyledChoiceOptions>
-							)}
-							{choice.type === 'select_multiple' && (
-								<StyledChoiceOptions>
-									{choice.options.map((option: any) => {
-										// Handle arrays directly (no legacy JSON string support)
-										const currentValues: string[] = selectedFeatureChoices[choice.id]
-											? Array.isArray(selectedFeatureChoices[choice.id])
-												? (selectedFeatureChoices[choice.id] as unknown as string[])
-												: []
-											: [];
-										const isSelected = currentValues.includes(option.value);
-										const canSelect = currentValues.length < (choice.maxSelections || 999);
-										const isDisabled = !isSelected && !canSelect;
-										const detailedDescription = getDetailedClassFeatureDescription(
-											choice.id,
-											option.value
-										);
-
-										return (
-											<StyledLabel key={option.value} style={{ opacity: isDisabled ? 0.5 : 1 }}>
-												<StyledRadio
-													type="checkbox"
-													name={choice.id}
-													value={option.value}
-													checked={isSelected}
-													disabled={isDisabled}
-													onChange={(e) =>
-														handleMultipleFeatureChoice(choice.id, option.value, e.target.checked)
-													}
-												/>
-												{option.label}
-												{(option.description || detailedDescription) && (
-													<StyledOptionDescription>
-														{option.description || detailedDescription}
-													</StyledOptionDescription>
-												)}
-											</StyledLabel>
-										);
-									})}
-									{choice.maxSelections && (
-										<StyledOptionDescription style={{ marginTop: '8px', fontStyle: 'italic' }}>
-											Select up to {choice.maxSelections} options (
-											{selectedFeatureChoices[choice.id]
-												? Array.isArray(selectedFeatureChoices[choice.id])
-													? (selectedFeatureChoices[choice.id] as unknown as string[]).length
-													: 0
-												: 0}
-											/{choice.maxSelections} selected)
-										</StyledOptionDescription>
+			{/* Class Features - Grouped by Level with Choices */}
+			{Object.entries(featuresByLevel)
+				.sort(([a], [b]) => Number(a) - Number(b))
+				.filter(([, features]) => features.length > 0)
+				.map(([levelStr, features]) => {
+					const levelNum = Number(levelStr);
+					const levelChoices = featureChoices.filter((choice) => choice.level === levelNum);
+					
+					return (
+						<StyledSection key={levelStr}>
+							<StyledSectionTitle>Level {levelStr} Features</StyledSectionTitle>
+							{features.map((feature, index) => (
+								<StyledCard key={index}>
+									<StyledCardTitle>{feature.featureName}</StyledCardTitle>
+									<StyledCardDescription>{feature.description}</StyledCardDescription>
+									{feature.benefits && (
+										<StyledBenefitsList>
+											{feature.benefits.map((benefit, benefitIndex) => (
+												<StyledBenefit key={benefitIndex}>
+													<StyledBenefitName>{benefit.name}</StyledBenefitName>
+													<StyledBenefitDescription>{benefit.description}</StyledBenefitDescription>
+												</StyledBenefit>
+											))}
+										</StyledBenefitsList>
 									)}
-								</StyledChoiceOptions>
-							)}
-						</StyledCard>
-					))}
-				</StyledSection>
+								</StyledCard>
+							))}
+							
+							{/* Render choices for this level */}
+							{levelChoices.length > 0 && levelChoices.map(renderChoiceCard)}
+						</StyledSection>
+					);
+				})}
+
+			{/* Subclass Selection (Level 3+) */}
+			{needsSubclassChoice && state.classId && (
+			<SubclassSelector
+				classId={state.classId}
+				choiceLevel={subclassChoiceLevel}
+				selectedSubclass={state.selectedSubclass}
+				selectedFeatureChoices={state.selectedFeatureChoices}
+				onSelect={(subclass) => dispatch({ type: 'SET_SUBCLASS', subclass })}
+				onChoiceChange={(choiceKey, selections) => {
+					dispatch({
+						type: 'SET_FEATURE_CHOICES',
+						selectedFeatureChoices: {
+							...state.selectedFeatureChoices,
+							[choiceKey]: selections
+						}
+					});
+				}}
+			/>
 			)}
 		</StyledContainer>
 	);

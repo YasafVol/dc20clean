@@ -24,12 +24,14 @@ export const druidClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
+			id: 'druid_spellcasting_path',
 			featureName: 'Spellcasting Path',
 			levelGained: 1,
 			description: 'You gain the ability to cast primal spells.',
 			effects: [{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }]
 		},
 		{
+			id: 'druid_domain',
 			featureName: 'Druid Domain',
 			levelGained: 1,
 			description:
@@ -95,6 +97,7 @@ export const druidClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'druid_wild_form',
 			featureName: 'Wild Form',
 			levelGained: 1,
 			description: 'You can spend 1 AP and 1 MP to transform into a Wild Form of your choice.',
@@ -137,6 +140,7 @@ export const druidClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'druid_wild_speech',
 			featureName: 'Wild Speech',
 			levelGained: 1,
 			description: 'You learn the Druidcraft Cantrip and can communicate with nature.',
@@ -155,6 +159,7 @@ export const druidClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'druid_natures_torrent',
 			featureName: "Nature's Torrent",
 			levelGained: 2,
 			description:
@@ -169,6 +174,7 @@ export const druidClass: ClassDefinition = {
 			]
 		},
 		{
+			id: 'druid_talent_level_2',
 			featureName: 'Talent',
 			levelGained: 2,
 			description:

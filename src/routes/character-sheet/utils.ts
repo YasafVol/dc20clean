@@ -1,4 +1,5 @@
 import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
+import { tradesData } from '../../lib/rulesdata/trades';
 import type {
 	CharacterSheetData,
 	AttackData,
@@ -13,8 +14,7 @@ import type {
 	SkillData
 } from '../../types';
 import type { Spell } from '../../lib/rulesdata/schemas/spell.schema';
-import type { Maneuver } from '../../lib/rulesdata/maneuvers';
-
+import type { Maneuver } from '../../lib/rulesdata/martials/maneuvers';
 interface CalculatedDefenses {
 	calculatedPD: number;
 	calculatedAD: number;
@@ -24,6 +24,85 @@ interface CalculatedDefenses {
 interface SkillsByAttribute {
 	[attribute: string]: SkillData[];
 }
+
+type AttributeKey = 'might' | 'agility' | 'charisma' | 'intelligence';
+
+interface PrintableTradeData extends TradeData {
+	bonusDisplay: string;
+}
+
+const ATTRIBUTE_ABBREVIATIONS: Record<AttributeKey, string> = {
+	might: 'M',
+	agility: 'A',
+	charisma: 'C',
+	intelligence: 'I'
+};
+
+const getAttributeModifier = (characterData: CharacterSheetData, attribute: AttributeKey): number => {
+	switch (attribute) {
+		case 'might':
+			return characterData.finalMight || 0;
+		case 'agility':
+			return characterData.finalAgility || 0;
+		case 'charisma':
+			return characterData.finalCharisma || 0;
+		case 'intelligence':
+			return characterData.finalIntelligence || 0;
+		default:
+			return 0;
+	}
+};
+
+const formatBonusValue = (value: number): string => `${value >= 0 ? '+' : ''}${value}`;
+
+const buildPrintableTrades = (characterData: CharacterSheetData): PrintableTradeData[] => {
+	const characterTrades: Record<string, number> = (characterData as any)?.tradesData || {};
+
+	return tradesData
+		.filter((trade) => characterTrades[trade.id] && characterTrades[trade.id] > 0)
+		.map((trade) => {
+			const proficiency = characterTrades[trade.id] || 0;
+			const masteryBonus = proficiency * 2;
+			const attributeAssociations: AttributeKey[] =
+				(Array.isArray((trade as any).attributeAssociations) && (trade as any).attributeAssociations.length > 0
+					? (trade as any).attributeAssociations
+					: (trade as any).attributeAssociation
+					? [(trade as any).attributeAssociation]
+					: []) as AttributeKey[];
+
+			const attributeTotals = attributeAssociations
+				.map((attribute) => ({
+					attribute,
+					total: masteryBonus + getAttributeModifier(characterData, attribute)
+				}))
+				.sort((a, b) => {
+					if (b.total === a.total) {
+						return a.attribute.localeCompare(b.attribute);
+					}
+					return b.total - a.total;
+				});
+
+			const isKnowledgeTrade = (trade.tools || '').toLowerCase() === 'none';
+			const primaryTotal = attributeTotals[0]?.total ?? masteryBonus;
+			let bonusDisplay: string;
+
+			if (attributeTotals.length <= 1 || isKnowledgeTrade) {
+				bonusDisplay = formatBonusValue(primaryTotal);
+			} else {
+				bonusDisplay = attributeTotals
+					.map((entry) => `${formatBonusValue(entry.total)}(${ATTRIBUTE_ABBREVIATIONS[entry.attribute]})`)
+					.join('/');
+			}
+
+			return {
+				id: trade.id,
+				name: trade.name,
+				proficiency,
+				bonus: primaryTotal,
+				bonusDisplay
+			};
+		});
+};
 
 export const handlePrintCharacterSheet = (
 	characterData: CharacterSheetData,
@@ -75,6 +154,8 @@ export const handlePrintCharacterSheet = (
 			characterState?.spells?.current
 		);
 		console.log('Print function - currentManeuvers:', currentManeuvers);
+
+		const printableTrades = buildPrintableTrades(characterData);
 
 		// Create print-friendly HTML
 		const printHTML = `
@@ -406,16 +487,16 @@ export const handlePrintCharacterSheet = (
                 
                 <div class="section">
                     <div class="section-title">Trades</div>
-                    ${trades
-											.map(
-												(trade) => `
+                    ${printableTrades
+                      .map(
+                        (trade) => `
                         <div class="skill-row">
                             <span class="skill-name">${trade.name}</span>
-                            <span class="skill-bonus">+${trade.bonus}</span>
+                            <span class="skill-bonus">${trade.bonusDisplay}</span>
                         </div>
                     `
-											)
-											.join('')}
+                      )
+                      .join('')}
                 </div>
             </div>
         </div>

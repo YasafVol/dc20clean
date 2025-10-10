@@ -22,6 +22,10 @@
 		"forceConsistentCasingInFileNames": true,
 		"sourceMap": true
 	},
+	"ts-node": {
+		"esm": true,
+		"experimentalSpecifierResolution": "node"
+	},
 	"include": ["src", "pdf-service"],
 	"references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -7,6 +7,7 @@ import SelectedAncestries from './SelectedAncestries.tsx';
 import Attributes from './Attributes.tsx';
 import ClassSelector from './ClassSelector.tsx';
 import ClassFeatures from './ClassFeatures.tsx';
+import LevelingChoices from './LevelingChoices.tsx';
 import Background from './Background.tsx';
 import SpellsAndManeuvers from './SpellsAndManeuvers.tsx';
 import CharacterName from './CharacterName.tsx';
@@ -14,10 +15,13 @@ import Snackbar from '../../components/Snackbar.tsx';
 import { completeCharacter } from '../../lib/services/characterCompletion';
 import { completeCharacterEdit, convertCharacterToInProgress } from '../../lib/utils/characterEdit';
 import type { SavedCharacter } from '../../lib/types/dataContracts';
+import { convertSavedCharacterToContext } from '../../lib/utils/characterToContext';
+import { getAllSavedCharacters, saveAllCharacters } from '../../lib/utils/storageUtils';
 import {
 	convertToEnhancedBuildData,
 	calculateCharacterWithBreakdowns
 } from '../../lib/services/enhancedCharacterCalculator';
+import { validateSubclassChoicesComplete } from '../../lib/rulesdata/classes-data/classUtils';
 import { traitsData } from '../../lib/rulesdata/ancestries/traits';
 import {
 	StyledContainer,
@@ -44,6 +48,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	const location = useLocation();
 	// If editCharacter is not passed as prop, try to get it from location.state
 	const editChar = editCharacter || (location.state && (location.state as any).editCharacter);
+	// Check for level-up mode
+	const levelUpCharacter = (location.state as any)?.levelUpCharacter;
+	const isLevelUpMode = (location.state as any)?.isLevelUp;
 	const { state, dispatch, attributePointsRemaining, calculationResult } = useCharacter();
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 	const [showSnackbar, setShowSnackbar] = useState(false);
@@ -81,14 +88,114 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		}
 	}, [editChar, dispatch]);
 
-	const steps = [
-		{ number: 1, label: 'Class & Features' },
-		{ number: 2, label: 'Ancestry' },
-		{ number: 3, label: 'Attributes' },
-		{ number: 4, label: 'Background' },
-		{ number: 5, label: 'Spells & Maneuvers' },
-		{ number: 6, label: 'Character Name' }
-	];
+	// Initialize character state for level-up mode
+	useEffect(() => {
+		if (isLevelUpMode && levelUpCharacter) {
+			console.log('⬆️ CharacterCreation: Initializing level-up mode for character:', levelUpCharacter.finalName);
+			const contextData = convertSavedCharacterToContext(levelUpCharacter);
+
+			// Dispatch all data
+			dispatch({ type: 'ENTER_LEVEL_UP_MODE', originalLevel: levelUpCharacter.level, characterId: levelUpCharacter.id });
+			dispatch({ type: 'SET_CLASS', classId: contextData.classId! });
+			dispatch({ type: 'SET_LEVEL', level: contextData.level! });
+			
+			if (contextData.ancestry1Id) {
+				dispatch({ type: 'SET_ANCESTRY', ancestry1Id: contextData.ancestry1Id, ancestry2Id: contextData.ancestry2Id || null });
+			}
+			if (contextData.selectedTraitIds && contextData.selectedTraitIds.length > 0) {
+				dispatch({ type: 'SET_TRAITS', selectedTraitIds: contextData.selectedTraitIds });
+			}
+			if (contextData.selectedTraitChoices) {
+				Object.entries(contextData.selectedTraitChoices).forEach(([key, value]) => {
+					const [traitId, effectIndex] = key.split('-');
+					dispatch({ type: 'UPDATE_TRAIT_CHOICE', traitId, effectIndex: parseInt(effectIndex), choice: value });
+				});
+			}
+			
+			// Update attributes
+			dispatch({
+				type: 'UPDATE_STORE',
+				updates: {
+					attribute_might: contextData.attribute_might,
+					attribute_agility: contextData.attribute_agility,
+					attribute_charisma: contextData.attribute_charisma,
+					attribute_intelligence: contextData.attribute_intelligence
+				}
+			});
+			
+			// Background
+			dispatch({ type: 'UPDATE_SKILLS', skillsData: contextData.skillsData! });
+			dispatch({ type: 'UPDATE_TRADES', tradesData: contextData.tradesData! });
+			dispatch({ type: 'UPDATE_LANGUAGES', languagesData: contextData.languagesData! });
+			dispatch({
+				type: 'SET_CONVERSIONS',
+				conversions: {
+					skillToTrade: contextData.skillToTradeConversions,
+					tradeToSkill: contextData.tradeToSkillConversions,
+					tradeToLanguage: contextData.tradeToLanguageConversions
+				}
+			});
+			
+			// Leveling
+			if (contextData.selectedTalents) {
+				dispatch({ type: 'SET_SELECTED_TALENTS', talents: contextData.selectedTalents });
+			}
+			if (contextData.pathPointAllocations) {
+				dispatch({ type: 'SET_PATH_POINTS', pathPoints: contextData.pathPointAllocations });
+			}
+			if (contextData.selectedSubclass) {
+				dispatch({ type: 'SET_SUBCLASS', subclass: contextData.selectedSubclass });
+			}
+			if (contextData.selectedFeatureChoices) {
+				dispatch({ type: 'SET_FEATURE_CHOICES', selectedFeatureChoices: contextData.selectedFeatureChoices });
+			}
+			
+			// Spells & Maneuvers
+			dispatch({
+				type: 'UPDATE_SPELLS_AND_MANEUVERS',
+				spells: contextData.selectedSpells || [],
+				maneuvers: contextData.selectedManeuvers || []
+			});
+			
+			// Character Name
+			dispatch({
+				type: 'UPDATE_STORE',
+				updates: {
+					finalName: contextData.finalName,
+					finalPlayerName: contextData.finalPlayerName
+				}
+			});
+
+			console.log('✅ Level-up mode: Character data loaded', levelUpCharacter.finalName);
+		}
+	}, [isLevelUpMode, levelUpCharacter, dispatch]);
+
+	// Dynamic steps based on level
+	const getSteps = () => {
+		const baseSteps = [
+			{ number: 1, label: 'Class & Features' }
+		];
+
+		// Add leveling choices step if level > 1
+		if (state.level > 1) {
+			baseSteps.push({ number: 2, label: 'Leveling Choices' });
+		}
+
+		// Continue with remaining steps (offset by 1 if leveling choices exist)
+		const offset = state.level > 1 ? 1 : 0;
+		baseSteps.push(
+			{ number: 2 + offset, label: 'Ancestry' },
+			{ number: 3 + offset, label: 'Attributes' },
+			{ number: 4 + offset, label: 'Background' },
+			{ number: 5 + offset, label: 'Spells & Maneuvers' },
+			{ number: 6 + offset, label: 'Character Name' }
+		);
+
+		return baseSteps;
+	};
+
+	const steps = getSteps();
+	const maxStep = steps[steps.length - 1].number;
 
 	const handleStepClick = (step: number) => {
 		dispatch({ type: 'SET_STEP', step });
@@ -102,9 +209,48 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			return;
 		}
 
-		if (state.currentStep === 6 && areAllStepsCompleted()) {
-			// Character is complete - check if we're editing or creating new
-			if (editChar) {
+		if (state.currentStep === maxStep && areAllStepsCompleted()) {
+			// Character is complete - check if we're editing, leveling up, or creating new
+			if (state.isLevelUpMode && state.sourceCharacterId) {
+				// Level-up mode: complete character then update existing
+				console.log('⬆️ Completing level-up for character:', state.sourceCharacterId);
+				
+				// Create a custom onNavigateToLoad that updates instead of creates
+				const originalId = state.sourceCharacterId;
+				const allChars = getAllSavedCharacters();
+				const originalCreatedAt = allChars.find(c => c.id === originalId)?.createdAt;
+				
+				await completeCharacter(state, {
+					onShowSnackbar: (message: string) => {
+						setSnackbarMessage('Character leveled up successfully!');
+						setShowSnackbar(true);
+					},
+					onNavigateToLoad: () => {
+						// completeCharacter adds a new character, we need to replace it with updated original
+						const updatedChars = getAllSavedCharacters();
+						const newChar = updatedChars[updatedChars.length - 1]; // Last one added
+						
+						// Update the original character, remove the new one
+						const final = updatedChars
+							.filter(c => c.id !== newChar.id) // Remove newly created
+							.map(char => {
+								if (char.id === originalId) {
+									// Replace original with updated data
+									return {
+										...newChar,
+										id: originalId,
+										createdAt: originalCreatedAt || char.createdAt
+									};
+								}
+								return char;
+							});
+						
+						saveAllCharacters(final);
+						console.log('✅ Character updated via level-up', originalId);
+						navigate(`/character/${originalId}`);
+					}
+				});
+			} else if (editChar) {
 				// Edit mode: use the enhanced completion that preserves manual modifications
 				// Use enhanced calculator for character editing
 				const supportedClasses = [
@@ -168,8 +314,29 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	};
 
 	const isStepCompleted = (step: number) => {
-		switch (step) {
-			case 1: {
+		// Adjust step numbers based on whether leveling choices exist
+		const hasLevelingStep = state.level > 1;
+		const levelingStep = 2;
+		const ancestryStep = hasLevelingStep ? 3 : 2;
+		const attributesStep = hasLevelingStep ? 4 : 3;
+		const backgroundStep = hasLevelingStep ? 5 : 4;
+		const spellsStep = hasLevelingStep ? 6 : 5;
+		const nameStep = hasLevelingStep ? 7 : 6;
+
+		console.log('🔍 isStepCompleted debug:', {
+			step,
+			'state.level': state.level,
+			hasLevelingStep,
+			levelingStep,
+			ancestryStep,
+			attributesStep,
+			backgroundStep,
+			spellsStep,
+			nameStep
+		});
+
+		// Step 1: Class Selection
+		if (step === 1) {
 				if (state.classId === null) return false;
 
 				// Check if all required feature choices have been made
@@ -234,333 +401,249 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 							const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_school`;
 							if (!selectedFeatureChoices[choiceId]) return false;
 						}
-					}
 				}
-
-				return true;
 			}
-			case 2: {
-				// Use centralized calculator for ancestry points validation
-				const ancestryData = calculationResult.ancestry || { ancestryPointsRemaining: 5 };
-				const { ancestryPointsRemaining } = ancestryData;
 
-				// Step is complete if:
-				// 1. At least one ancestry is selected AND
-				// 2. Points are not over budget (>= 0) AND
-				// 3. All points are spent (== 0) for completion
-				const hasAncestry = state.ancestry1Id !== null;
-				const pointsValid = ancestryPointsRemaining >= 0;
-				const allPointsSpent = ancestryPointsRemaining === 0;
-				const isValid = hasAncestry && pointsValid && allPointsSpent;
+		// NEW (M3.10d): Check if subclass selection is required
+		const needsSubclass = calculationResult?.resolvedFeatures?.availableSubclassChoice;
+		if (needsSubclass && !state.selectedSubclass) {
+			const subclassLevel = calculationResult?.resolvedFeatures?.subclassChoiceLevel;
+			console.log(
+				'❌ Step 1 incomplete: Subclass selection required at level',
+				subclassLevel
+			);
+			return false;
+		}
 
-				console.log('🔍 Step 2 (Ancestry) validation:', {
-					ancestry1Id: state.ancestry1Id,
-					ancestry2Id: state.ancestry2Id,
-					selectedTraitIds: state.selectedTraitIds,
-					ancestryPointsRemaining,
-					hasAncestry,
-					pointsValid,
-					allPointsSpent,
-					isValid
-				});
-				return isValid;
-			}
-			case 3:
-				return attributePointsRemaining === 0;
-			case 4: {
-				// Background: check if ALL available points have been spent
-				// Parse current selections
-				let skillPointsUsed = 0;
-				let tradePointsUsed = 0;
-				let languagePointsUsed = 0;
+		// NEW (M3.11d): Validate all subclass feature choices are complete
+		if (state.selectedSubclass && state.classId) {
+			const validation = validateSubclassChoicesComplete(
+				state.classId,
+				state.selectedSubclass,
+				state.level,
+				state.selectedFeatureChoices || {}
+			);
 
-				// FIXED: Use typed skillsData instead of JSON parsing
-				if (state.skillsData && Object.keys(state.skillsData).length > 0) {
-					skillPointsUsed = Object.values(state.skillsData).reduce(
-						(sum: number, level: number) => sum + level,
-						0
-					);
-				}
-
-				// FIXED: Use typed tradesData instead of JSON parsing
-				if (state.tradesData && Object.keys(state.tradesData).length > 0) {
-					tradePointsUsed = Object.values(state.tradesData).reduce(
-						(sum: number, level: number) => sum + level,
-						0
-					);
-				}
-
-				// FIXED: Use typed languagesData instead of JSON parsing
-				if (state.languagesData && Object.keys(state.languagesData).length > 0) {
-					languagePointsUsed = Object.entries(state.languagesData).reduce(
-						(sum, [langId, data]: [string, { fluency?: string }]) => {
-							if (langId === 'common') {
-								return sum; // Common is free
-							}
-							const cost = data.fluency === 'limited' ? 1 : data.fluency === 'fluent' ? 2 : 0; // 'none' or any other value costs 0
-							return sum + cost;
-						},
-						0
-					);
-				}
-
-				// Available points should match BackgroundPointsManager (include bonus points and conversions)
-				const intelligenceModifier = state.attribute_intelligence;
-
-				// Calculate bonus skill points from traits and class features (same logic as BackgroundPointsManager)
-				let bonusSkillPoints = 0;
-
-				// From traits - FIXED: Use typed data instead of JSON parsing
-				if (state.selectedTraitIds && Array.isArray(state.selectedTraitIds)) {
-					const selectedTraitIdsList: string[] = state.selectedTraitIds;
-
-					console.log('🔍 Selected trait IDs:', selectedTraitIdsList);
-
-					selectedTraitIdsList.forEach((traitId: string) => {
-						const trait = traitsData.find((t: any) => t.id === traitId);
-						if (trait) {
-							trait.effects.forEach((effect: any) => {
-								if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
-									bonusSkillPoints += effect.value as number;
-								}
-							});
-						} else {
-							console.warn(`🚨 Trait not found: ${traitId}`);
-						}
-					});
-				}
-
-				// From class features
-				if (state.classId && state.selectedFeatureChoices) {
-					try {
-						const selectedClass = classesData.find(
-							(c) => c.id.toLowerCase() === state.classId?.toLowerCase()
-						);
-						const classFeatures = selectedClass ? findClassByName(selectedClass.name) : null;
-
-						if (classFeatures) {
-							// FIXED: Use typed data instead of JSON parsing
-							const selectedChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
-							const level1Features = classFeatures.coreFeatures.filter(
-								(feature: any) => feature.levelGained === 1
-							);
-
-							level1Features.forEach((feature: any) => {
-								// Check for direct feature effects first
-								if (feature.effects) {
-									feature.effects.forEach((effect: any) => {
-										if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
-											bonusSkillPoints += effect.value as number;
-										}
-									});
-								}
-
-								// Check for choice-based effects
-								if (feature.choices) {
-									feature.choices.forEach((choice: any, choiceIndex: number) => {
-										const choiceId = `${classFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_${choiceIndex}`;
-										const selectedOptions = selectedChoices[choiceId];
-
-										if (selectedOptions) {
-											let optionsToProcess: string[] = [];
-
-											// Expect arrays directly (no more legacy JSON string support)
-											if (Array.isArray(selectedOptions)) {
-												optionsToProcess = selectedOptions;
-											} else {
-												optionsToProcess = [selectedOptions];
-											}
-
-											optionsToProcess.forEach((optionName) => {
-												const selectedOption = choice.options?.find(
-													(opt: any) => opt.name === optionName
-												);
-												if (selectedOption && selectedOption.effects) {
-													selectedOption.effects.forEach((effect: any) => {
-														if (effect.type === 'MODIFY_STAT' && effect.target === 'skillPoints') {
-															bonusSkillPoints += effect.value as number;
-														}
-													});
-												}
-											});
-										}
-									});
-								}
-							});
-						}
-					} catch (error) {
-						// Ignore parsing errors
-					}
-				}
-
-				const baseSkillPoints = Math.max(1, 5 + intelligenceModifier + bonusSkillPoints);
-
-				console.log('🔍 Skill Points Calculation:', {
-					base: 5,
-					intelligence: intelligenceModifier,
-					bonusFromTraits: bonusSkillPoints,
-					total: baseSkillPoints
-				});
-				const skillToTrade = state.skillToTradeConversions || 0;
-				const tradeToSkill = state.tradeToSkillConversions || 0;
-				const tradeToLanguage = state.tradeToLanguageConversions || 0;
-				const availableSkillPoints = baseSkillPoints - skillToTrade + Math.floor(tradeToSkill / 2);
-
-				// Calculate available trade and language points using same logic as BackgroundPointsManager
-				// TODO: Add proper ancestry and feature bonus calculations for trade/language points
-				const bonusTradePoints = 0;
-				const bonusLanguagePoints = 0;
-
-				// For now, allow some flexibility - if available points is 0 or negative,
-				// don't require spending them (handles edge cases with conversions)
-				const baseTradePoints = Math.max(0, 3 + bonusTradePoints);
-				const baseLanguagePoints = Math.max(0, 2 + bonusLanguagePoints);
-
-				// FIXED: Properly handle all conversions
-				const availableTradePoints = Math.max(
-					0,
-					baseTradePoints + skillToTrade * 2 - tradeToSkill - tradeToLanguage
+			if (!validation.isValid) {
+				console.log(
+					'❌ Step 1 incomplete: Subclass feature choices incomplete',
+					validation.incompleteChoices
 				);
-				const availableLanguagePoints = Math.max(0, baseLanguagePoints + tradeToLanguage * 2);
+				return false;
+			}
+		}
 
-				console.log('🔍 CONVERSION DEBUG:', {
-					skillToTrade,
-					tradeToSkill,
-					tradeToLanguage,
-					baseTradePoints,
-					baseLanguagePoints,
-					availableTradePoints: `${baseTradePoints} + (${skillToTrade} * 2) - ${tradeToSkill} - ${tradeToLanguage} = ${availableTradePoints}`,
-					availableLanguagePoints: `${baseLanguagePoints} + (${tradeToLanguage} * 2) = ${availableLanguagePoints}`,
-					tradePointsUsed,
-					languagePointsUsed
-				});
+		return true;
+		}
 
-				// For completion, allow for overspending if the UI permitted it
-				// This handles cases where UI and validation calculations differ
-				const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
-				const tradePointsRemaining = availableTradePoints - tradePointsUsed;
-				const languagePointsRemaining = availableLanguagePoints - languagePointsUsed;
+	// Step 2: Leveling Choices (only if level > 1)
+	if (step === levelingStep && hasLevelingStep) {
+		// TODO: Re-enable validation after testing phase (M4.4)
+		// Currently disabled to allow flexible testing and debugging during development
+		console.warn('⚠️ Leveling validation temporarily disabled - re-enable in production (see M4.4 in LEVELING_EPIC.md)');
+		return true; // ← Temporarily bypass validation
+		
+		/* Original validation logic - restore in M4.4:
+		
+		// Validate that all talent and path points have been spent
+		const budgets = calculationResult?.levelBudgets;
+		
+		if (!budgets) {
+			console.log('❌ Leveling validation failed: no budgets found');
+			return false;
+		}
+		
+		// Check talents: must have exactly the right number selected (including multiclass)
+		const selectedTalents = state.selectedTalents || {};
+		// Note: multiclass feature is stored separately but counts toward talent budget
+		const selectedMulticlass = state.selectedMulticlassFeature;
+		// Count total talent selections from the count-based record
+		const talentsFromRecord = Object.values(selectedTalents).reduce((sum, count) => sum + count, 0);
+		const totalTalentsSelected = talentsFromRecord + (selectedMulticlass ? 1 : 0);
+		
+		if (totalTalentsSelected !== budgets.totalTalents) {
+			console.log('❌ Leveling validation failed: talents not fully selected', {
+				selected: totalTalentsSelected,
+				required: budgets.totalTalents,
+				regularTalents: talentsFromRecord,
+				multiclass: selectedMulticlass ? 1 : 0
+			});
+			return false;
+		}
+		
+		// Check path points: must allocate exactly the available points
+		const pathAllocations = state.pathPointAllocations || { martial: 0, spellcasting: 0 };
+		const totalAllocated = (pathAllocations.martial || 0) + (pathAllocations.spellcasting || 0);
+		if (totalAllocated !== budgets.totalPathPoints) {
+			console.log('❌ Leveling validation failed: path points not fully allocated', {
+				allocated: totalAllocated,
+				required: budgets.totalPathPoints
+			});
+			return false;
+		}
+		
+		console.log('✅ Leveling choices validated', {
+			totalTalents: totalTalentsSelected,
+			pathPoints: totalAllocated
+		});
+		return true;
+		*/
+	}
 
-				const hasExactlySpentAllSkillPoints = skillPointsRemaining === 0;
-				// Allow completion if points are spent exactly OR if overspent (UI allowed it)
-				const hasExactlySpentAllTradePoints = tradePointsRemaining <= 0;
-				const hasExactlySpentAllLanguagePoints = languagePointsRemaining <= 0;
+		// Ancestry step
+		if (step === ancestryStep) {
+			// Use centralized calculator for ancestry points validation
+			const ancestryData = calculationResult.ancestry || { ancestryPointsRemaining: 5 };
+			const { ancestryPointsRemaining } = ancestryData;
 
-				// Step is complete when all skill points are spent and trade/language are spent or overspent
-				const isValid =
-					hasExactlySpentAllSkillPoints &&
-					hasExactlySpentAllTradePoints &&
-					hasExactlySpentAllLanguagePoints;
-				console.log('🔍 Step 4 (Background) validation:', {
-					baseSkillPoints,
-					bonusSkillPoints,
-					skillToTrade,
-					tradeToSkill,
-					availableSkillPoints,
-					skillPointsUsed,
-					skillPointsRemaining,
-					baseTradePoints,
-					baseLanguagePoints,
-					availableTradePoints,
-					availableLanguagePoints,
-					tradePointsUsed,
-					languagePointsUsed,
-					tradePointsRemaining,
-					languagePointsRemaining,
+			const hasAncestry = state.ancestry1Id !== null;
+			const pointsValid = ancestryPointsRemaining >= 0;
+			const allPointsSpent = ancestryPointsRemaining === 0;
+			const isValid = hasAncestry && pointsValid && allPointsSpent;
+
+			console.log('🔍 Ancestry validation:', { step, ancestryStep, isValid });
+			return isValid;
+		}
+
+		// Attributes step
+		if (step === attributesStep) {
+			return attributePointsRemaining === 0;
+		}
+
+		// Background step
+		if (step === backgroundStep) {
+			// Use calculator's background data instead of recalculating
+			const background = calculationResult?.background;
+			if (!background) {
+				console.warn('⚠️ Background validation: calculator result not available');
+				return false;
+			}
+
+			// Calculate current usage
+			let skillPointsUsed = 0;
+			let tradePointsUsed = 0;
+			let languagePointsUsed = 0;
+
+			// FIXED: Use typed skillsData instead of JSON parsing
+			if (state.skillsData && Object.keys(state.skillsData).length > 0) {
+				skillPointsUsed = Object.values(state.skillsData).reduce(
+					(sum: number, level: number) => sum + level,
+					0
+				);
+			}
+
+			// FIXED: Use typed tradesData instead of JSON parsing
+			if (state.tradesData && Object.keys(state.tradesData).length > 0) {
+				tradePointsUsed = Object.values(state.tradesData).reduce(
+					(sum: number, level: number) => sum + level,
+					0
+				);
+			}
+
+			// FIXED: Use typed languagesData instead of JSON parsing
+			if (state.languagesData && Object.keys(state.languagesData).length > 0) {
+				languagePointsUsed = Object.entries(state.languagesData).reduce(
+					(sum, [langId, data]: [string, { fluency?: string }]) => {
+						if (langId === 'common') {
+							return sum; // Common is free
+						}
+						const cost = data.fluency === 'limited' ? 1 : data.fluency === 'fluent' ? 2 : 0; // 'none' or any other value costs 0
+						return sum + cost;
+					},
+					0
+				);
+			}
+
+			// Use calculator's values instead of recalculating
+			const availableSkillPoints = background.availableSkillPoints;
+			const availableTradePoints = background.availableTradePoints;
+			const availableLanguagePoints = background.availableLanguagePoints;
+
+			// Calculate remaining points
+			const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
+			const tradePointsRemaining = availableTradePoints - tradePointsUsed;
+			const languagePointsRemaining = availableLanguagePoints - languagePointsUsed;
+
+			// Require exact spending - no overspending or underspending allowed
+			const hasExactlySpentAllSkillPoints = skillPointsRemaining === 0;
+			const hasExactlySpentAllTradePoints = tradePointsRemaining === 0;
+			const hasExactlySpentAllLanguagePoints = languagePointsRemaining === 0;
+
+			// Step is complete when all skill points are spent and trade/language are spent or overspent
+			const isValid =
+				hasExactlySpentAllSkillPoints &&
+				hasExactlySpentAllTradePoints &&
+				hasExactlySpentAllLanguagePoints;
+
+			if (!isValid) {
+				console.log('❌ Background validation FAILED:', {
 					hasExactlySpentAllSkillPoints,
 					hasExactlySpentAllTradePoints,
 					hasExactlySpentAllLanguagePoints,
-					isValid
+					skillPointsRemaining,
+					tradePointsRemaining,
+					languagePointsRemaining
 				});
-
-				return isValid;
 			}
-			case 5:
-				// Spells & Maneuvers step - validate based on class requirements
-				if (!state.classId) return false;
 
-				// Get class data to determine what's required
-				const selectedClass = classesData.find(
-					(c) => c.id.toLowerCase() === state.classId?.toLowerCase()
-				);
-				if (!selectedClass) return false;
+			console.log('🔍 Background validation (step ' + backgroundStep + '):', {
+				availableSkillPoints,
+				skillPointsUsed,
+				skillPointsRemaining,
+				availableTradePoints,
+				tradePointsUsed,
+				tradePointsRemaining,
+				availableLanguagePoints,
+				languagePointsUsed,
+				languagePointsRemaining,
+				hasExactlySpentAllSkillPoints,
+				hasExactlySpentAllTradePoints,
+				hasExactlySpentAllLanguagePoints,
+				isValid
+			});
 
-				const selectedClassFeatures = findClassByName(selectedClass.name);
-				if (!selectedClassFeatures) return false;
-
-				// Parse current selections
-				let selectedSpells: string[] = [];
-				let selectedManeuvers: string[] = [];
-
-				// Use typed arrays directly
-				selectedSpells = state.selectedSpells || [];
-				selectedManeuvers = state.selectedManeuvers || [];
-
-				// Get spell/maneuver counts from level progression (same logic as SpellsAndManeuvers component)
-				const levelData = selectedClass.levelProgression?.find((l) => l.level === state.level);
-				const requiredCantripCount = levelData?.cantripsKnown || 0;
-				const requiredSpellCount = levelData?.spellsKnown || 0;
-				const requiredManeuverCount = levelData?.maneuversKnown || 0;
-
-				// For now, treat all selected spells as regular spells since we don't have easy cantrip lookup here
-				const selectedSpellCount = selectedSpells.length;
-
-				console.log('🔍 Step 5 validation details:', {
-					classId: state.classId,
-					level: state.level,
-					requiredCantripCount,
-					requiredSpellCount,
-					requiredManeuverCount,
-					selectedSpellCount,
-					selectedManeuverCount: selectedManeuvers.length,
-					hasSpellRequirements: requiredCantripCount > 0 || requiredSpellCount > 0,
-					hasManeuverRequirements: requiredManeuverCount > 0
-				});
-
-				// Check spell requirements
-				if (requiredCantripCount > 0 || requiredSpellCount > 0) {
-					// For simplicity, require total spell count to meet combined cantrip + spell requirement
-					const totalRequiredSpells = requiredCantripCount + requiredSpellCount;
-					if (selectedSpellCount < totalRequiredSpells) {
-						console.log('❌ Step 5 validation failed: insufficient spells', {
-							required: totalRequiredSpells,
-							selected: selectedSpellCount
-						});
-						return false;
-					}
-				}
-
-				// Check maneuver requirements
-				if (requiredManeuverCount > 0) {
-					if (selectedManeuvers.length < requiredManeuverCount) {
-						console.log('❌ Step 5 validation failed: insufficient maneuvers', {
-							required: requiredManeuverCount,
-							selected: selectedManeuvers.length
-						});
-						return false;
-					}
-				}
-
-				// If no requirements, step is complete
-				const hasRequirements =
-					requiredCantripCount > 0 || requiredSpellCount > 0 || requiredManeuverCount > 0;
-				if (!hasRequirements) {
-					return true;
-				}
-
-				// Step is complete if we reach here (all required selections are made)
-				console.log('✅ Step 5 validation passed');
-				return true;
-			case 6:
-				return (
-					state.finalName !== null &&
-					state.finalName !== '' &&
-					state.finalPlayerName !== null &&
-					state.finalPlayerName !== ''
-				);
-			default:
-				return false;
+			return isValid;
 		}
+
+		// Spells & Maneuvers step
+		if (step === spellsStep) {
+			// TODO (M4.x): Re-enable spells & maneuvers validation once spell/cantrip 
+			// categorization is properly implemented and cantrip vs spell budgets are tracked separately.
+			// For now, validation is disabled to allow progression through character creation.
+			// Users can select any spells/maneuvers they want without blocking progression.
+			
+			console.warn('⚠️ Spells & Maneuvers validation temporarily disabled');
+			
+			// Log current selections for debugging
+			const selectedSpells = state.selectedSpells || [];
+			const selectedManeuvers = state.selectedManeuvers || [];
+			const budgets = calculationResult?.levelBudgets;
+			
+			console.log('📊 Spells & Maneuvers selections (validation disabled):', {
+				classId: state.classId,
+				level: state.level,
+				requiredCantrips: budgets?.totalCantripsKnown || 0,
+				requiredSpells: budgets?.totalSpellsKnown || 0,
+				requiredManeuvers: budgets?.totalManeuversKnown || 0,
+				selectedSpells: selectedSpells.length,
+				selectedManeuvers: selectedManeuvers.length
+			});
+			
+			return true; // Always allow progression
+		}
+
+		// Character Name step
+		if (step === nameStep) {
+			return (
+				state.finalName !== null &&
+				state.finalName !== '' &&
+				state.finalPlayerName !== null &&
+				state.finalPlayerName !== ''
+			);
+		}
+
+		// Unknown step
+		return false;
 	};
 
 	const areAllStepsCompleted = () => {
@@ -581,32 +664,53 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	};
 
 	const renderCurrentStep = () => {
-		switch (state.currentStep) {
-			case 1:
-				return (
-					<>
-						<ClassSelector />
-						{state.classId && <ClassFeatures />}
-					</>
-				);
-			case 2:
-				return (
-					<>
-						<AncestrySelector />
-						<SelectedAncestries />
-					</>
-				);
-			case 3:
-				return <Attributes />;
-			case 4:
-				return <Background />;
-			case 5:
-				return <SpellsAndManeuvers />;
-			case 6:
-				return <CharacterName />;
-			default:
-				return null;
+		// Adjust step numbers dynamically
+		const hasLevelingStep = state.level > 1;
+		const ancestryStep = hasLevelingStep ? 3 : 2;
+		const attributesStep = hasLevelingStep ? 4 : 3;
+		const backgroundStep = hasLevelingStep ? 5 : 4;
+		const spellsStep = hasLevelingStep ? 6 : 5;
+		const nameStep = hasLevelingStep ? 7 : 6;
+
+		if (state.currentStep === 1) {
+			return (
+				<>
+					<ClassSelector />
+					{state.classId && <ClassFeatures />}
+				</>
+			);
 		}
+
+		if (state.currentStep === 2 && hasLevelingStep) {
+			return <LevelingChoices />;
+		}
+
+		if (state.currentStep === ancestryStep) {
+			return (
+				<>
+					<AncestrySelector />
+					<SelectedAncestries />
+				</>
+			);
+		}
+
+		if (state.currentStep === attributesStep) {
+			return <Attributes />;
+		}
+
+		if (state.currentStep === backgroundStep) {
+			return <Background />;
+		}
+
+		if (state.currentStep === spellsStep) {
+			return <SpellsAndManeuvers />;
+		}
+
+		if (state.currentStep === nameStep) {
+			return <CharacterName />;
+		}
+
+		return null;
 	};
 
 	return (

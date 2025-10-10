@@ -142,12 +142,92 @@ When a new type is created:
 
 ---
 
-## 6 Future Evolution
+## 6 Testing 🧪
 
-- Effect Processor unification may centralize trait effect resolution across ancestries and classes.
-- Schema-driven editors may auto-render trait forms from `Trait` and `Effect` metadata.
+### 6.1 Test Suite
+
+**Location**: `src/lib/rulesdata/ancestries/ancestries.test.ts`
+
+**Coverage**: 34 comprehensive tests validating all trait data.
+
+#### Test Categories
+
+**Trait Data Structure**
+- ✅ Trait data loads successfully (239 traits)
+- ✅ Required fields present (`id`, `name`, `description`, `cost`, `effects`)
+- ✅ Unique trait IDs (no duplicates)
+- ✅ Valid cost values (numeric)
+- ✅ Non-empty effects arrays
+
+**ID Format & Naming**
+- ✅ `ancestry_trait` naming convention followed
+- ✅ Trait ID prefixes match ancestry IDs (e.g., `human_*`, `elf_*`)
+
+**Trait-to-Ancestry Relationships**
+- ✅ Zero orphaned traits (all traits referenced by at least one ancestry)
+- ✅ All trait references resolve to existing traits
+- ✅ No duplicates in trait lists
+
+**Effect Validation**
+- ✅ Only valid effect types used (see `EFFECT_SYSTEM.MD`)
+- ✅ Valid target values for `MODIFY_STAT` effects
+- ✅ Numeric values for numeric effect types
+- ✅ Proper `userChoice` structure for choice-based effects
+- ✅ **All effects have required `target` field** (not `count` or `options`)
+
+**Cost & Budget**
+- ✅ Valid costs for negative traits (negative values, `isNegative: true`)
+- ✅ Consistent cost structure across all traits
+- ✅ Default trait costs sum correctly for each ancestry
+
+**Statistics**
+- 17 ancestries defined
+- 239 traits defined
+- Effect type distribution tracked
+- Cost distribution tracked
+
+### 6.2 Running Tests
+
+```bash
+# Run ancestry & trait tests
+npm run test:unit -- ancestries.test.ts
+
+# With detailed output
+npm run test:unit -- ancestries.test.ts --reporter=verbose
+
+# Watch mode (for development)
+npm run test:unit -- ancestries.test.ts --watch
+```
+
+### 6.3 Test-Driven Data Quality
+
+The test suite enforces strict data quality:
+
+- **No orphaned traits**: Every trait must be used by at least one ancestry
+- **Strict schema**: All effects must have `type`, `target`, and `value`
+- **Naming conventions**: Trait IDs must follow `ancestry_trait` pattern
+- **Required fields**: Missing `id`, `name`, `cost`, or `effects` fails tests
+- **Valid references**: All trait IDs in ancestry lists must exist
+
+### 6.4 When Tests Fail
+
+| Test Failure | Fix |
+|-------------|-----|
+| "should have unique trait IDs" | Remove duplicate trait definition |
+| "should reference only existing traits" | Fix typo in trait ID or create missing trait |
+| "should not have orphaned traits" | Add trait to an ancestry's trait list or remove unused trait |
+| "should have valid effect structure" | Add `target` field to effect (not `count` or inline `options`) |
+| "should follow ancestry_trait naming" | Rename trait ID to match `ancestry_trait` pattern |
 
 ---
 
-> Last updated: 2025-08-20  
+## 7 Future Evolution
+
+- Effect Processor unification may centralize trait effect resolution across ancestries and classes.
+- Schema-driven editors may auto-render trait forms from `Trait` and `Effect` metadata.
+- Integration tests may validate that trait effects correctly modify character stats in the calculator.
+
+---
+
+> Last updated: 2025-10-08  
 > Maintainer: @DC20Clean-Team

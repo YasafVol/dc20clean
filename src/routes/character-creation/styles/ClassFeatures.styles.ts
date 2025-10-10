@@ -106,29 +106,10 @@ export const StyledNoSelection = styled.p`
 	font-size: 1.1rem;
 `;
 
-export const StyledBenefitsList = styled.div`
-	margin-top: 1rem;
-	padding-left: 0.5rem;
-`;
-
-export const StyledBenefit = styled.div`
-	margin-bottom: 0.75rem;
-	padding: 0.5rem;
-	border-left: 3px solid #fbbf24;
-	background: rgba(255, 255, 255, 0.05);
-	border-radius: 0 5px 5px 0;
-`;
-
-export const StyledBenefitName = styled.h5`
-	margin: 0 0 0.25rem 0;
-	color: #fbbf24;
-	font-size: 1rem;
-	font-weight: bold;
-`;
-
-export const StyledBenefitDescription = styled.p`
-	margin: 0;
-	color: #e5e7eb;
-	font-size: 0.9rem;
-	line-height: 1.4;
-`;
+// Import shared components and re-export with "Styled" prefix for backwards compatibility
+export {
+	BenefitsList as StyledBenefitsList,
+	BenefitItem as StyledBenefit,
+	BenefitName as StyledBenefitName,
+	BenefitDescription as StyledBenefitDescription
+} from './shared/FeatureDisplay.styles';

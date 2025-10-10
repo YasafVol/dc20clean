@@ -42,7 +42,7 @@ function arraysEqual<T>(a: T[], b: T[]): boolean {
 
 const SpellsAndManeuvers: React.FC = () => {
 	console.log('🚀 SpellsAndManeuvers component is rendering!');
-	const { state, dispatch } = useCharacter();
+	const { state, dispatch, calculationResult } = useCharacter();
 	const [activeTab, setActiveTab] = useState<'spells' | 'maneuvers'>('spells');
 	const [selectedSpells, setSelectedSpells] = useState<string[]>([]);
 	const [selectedManeuvers, setSelectedManeuvers] = useState<string[]>([]);
@@ -247,31 +247,25 @@ const SpellsAndManeuvers: React.FC = () => {
 		return allManeuvers;
 	}, [classData]);
 
-	// Get spell/maneuver counts for current level
+	// Get spell/maneuver counts from levelBudgets (uses .progression.ts data)
 	const spellCounts = React.useMemo(() => {
-		if (!classData || !state.level) return { cantrips: 0, spells: 0 };
+		const budgets = calculationResult?.levelBudgets;
+		if (!budgets) return { cantrips: 0, spells: 0 };
 
-		const levelData = classData.levelProgression?.find((l) => l.level === state.level);
 		return {
-			cantrips: levelData?.cantripsKnown || 0,
-			spells: levelData?.spellsKnown || 0
+			cantrips: budgets.totalCantripsKnown || 0,
+			spells: budgets.totalSpellsKnown || 0
 		};
-	}, [classData, state.level]);
+	}, [calculationResult]);
 
 	const maneuverCount = React.useMemo(() => {
-		console.log('🔍 maneuverCount calculation:', {
-			classData: !!classData,
-			level: state.level,
-			levelProgression: classData?.levelProgression?.length
-		});
-		if (!classData || !state.level) return 0;
+		const budgets = calculationResult?.levelBudgets;
+		if (!budgets) return 0;
 
-		const levelData = classData.levelProgression?.find((l) => l.level === state.level);
-		console.log('🔍 Level data found:', levelData);
-		const count = levelData?.maneuversKnown || 0;
-		console.log('🔍 maneuverCount result:', count);
+		const count = budgets.totalManeuversKnown || 0;
+		console.log('🔍 maneuverCount from levelBudgets:', count);
 		return count;
-	}, [classData, state.level]);
+	}, [calculationResult]);
 
 	// Filter spells and maneuvers based on active filters
 	const filteredSpells = React.useMemo(() => {

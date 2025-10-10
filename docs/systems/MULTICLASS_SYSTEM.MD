@@ -339,7 +339,7 @@ npm run test:unit -- multiclass.test.ts
 
 ## 9. References
 
-- **Milestone:** M3.17 in `docs/plannedSpecs/LEVELING_EPIC.md`
+- **Milestone:** M3.17 in `docs/archive/LEVELING_EPIC.md`
 - **Commits:** `a28e057`, `3c9deed`, `2764c1f`, `e017d8d`, `37916de`, `ddcfe11`, `5b6da20`, `6f0de71`
 - **Tests:** `src/lib/rulesdata/progression/multiclass.test.ts` (31 tests)
 

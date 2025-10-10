@@ -1,28 +1,19 @@
 # Testing Coverage Report
 
 **Generated:** October 9, 2025  
-**Last Updated:** October 10, 2025  
 **Repository:** DC20 Character Builder
 
 ## Executive Summary
 
-The codebase has **moderate test coverage** with focus on critical systems:
-- **~12%** unit test coverage for `src/lib/` (21 test files for ~160 source files)
-- **~5%** component test coverage for `src/routes/` (4 test files for ~95 component files)
+The codebase has **limited test coverage** with approximately:
+- **10.8%** unit test coverage for `src/lib/` (18 test files for 149 source files)
+- **4.2%** component test coverage for `src/routes/` (4 test files for 95 component files)
 - **10 E2E test suites** covering critical user flows
 
 ### Recent Additions ✨
-- **Leveling System**: Comprehensive implementation complete with 54+ tests passing
 - **ClassFeatures Component**: 29 comprehensive tests (14 logic + 15 component) validating progressive feature display
 - **Ancestry & Trait System**: 34 comprehensive tests validating all 17 ancestries and 239 traits
 - **Multiclass System**: 31 comprehensive tests validating all 6 tiers, prerequisites, and helpers
-- **Path Bonuses**: 4 tests validating martial and spellcaster path allocations
-
-### Leveling System Status 🆕
-- ✅ **Implementation:** Complete (M1-M3, 19 milestones)
-- ✅ **Human Testing:** Complete (HR-1 through HR-3)
-- 🔄 **Unit Testing:** In progress (M4.1 - 180+ tests planned)
-- ⏳ **E2E Testing:** Pending (M4.2)
 
 ### Test Infrastructure
 - **Unit Testing:** Vitest with browser and node test projects
@@ -513,52 +504,5 @@ e2e/hunter-beastborn.e2e.spec.ts
 
 **Report prepared by:** AI Code Review Assistant  
 **Date:** October 8, 2025  
-**Last Updated:** October 10, 2025  
 **Format:** Markdown
-
----
-
-## 10. Leveling System Update (October 10, 2025)
-
-### 10.1 Implementation Complete ✅
-
-The leveling system (levels 1-5) has completed all implementation milestones and human testing:
-
-**Completed Milestones:**
-- M1.1-M1.6: Data migration (13 class progressions to TypeScript)
-- M2.1-M2.7: Calculation engine (aggregation, resolver, persistence)
-- M3.1-M3.17: UI implementation (leveling choices, subclass, multiclass)
-
-**Human Testing Passed:**
-- HR-1: Data migration validation ✅
-- HR-2: Engine logic validation ✅
-- HR-2.5: UI/UX walkthrough ✅
-- HR-3: End-to-end flow validation ✅
-
-**Test Coverage:**
-- 54 unit tests passing (progression, paths, multiclass, monk features)
-- 180+ additional tests planned (M4.1)
-- E2E tests planned (M4.2)
-
-**Documentation:**
-- See `docs/LEVELING_SYSTEM_TEST_REPORT.md` for comprehensive report
-- See `docs/archive/2025-10-10-leveling-system-completion.md` for summary
-- See `docs/archive/LEVELING_EPIC.md` for complete milestone tracker
-
-### 10.2 Next Steps
-
-**M4.1 - Unit Test Suite (In Progress):**
-- 6 new test files to create
-- ~180-220 test cases planned
-- Coverage goal: 90%+ for leveling modules
-
-**M4.2 - E2E Tests (Pending):**
-- `levelup-wizard.e2e.spec.ts` - Level 3 Wizard with subclass
-- `levelup-multiclass.e2e.spec.ts` - Level 4+ with multiclass
-- Level-up flow automation
-
-**M4.3 - Documentation (In Progress):**
-- Testing reports updated ✅
-- System docs updated ✅
-- Test execution guide pending
 

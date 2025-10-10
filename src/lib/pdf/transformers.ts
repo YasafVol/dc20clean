@@ -3,6 +3,41 @@ import type { PdfExportData } from '../types/pdfExport';
 import type { EnhancedCalculationResult } from '../types/effectSystem';
 import type { DenormalizeOutput } from '../services/denormalizeMastery';
 
+/**
+ * Helper function to process GRANT_MOVEMENT effects into PDF movement checkboxes.
+ * Compares movement speed to ground speed and sets half/full checkboxes accordingly.
+ */
+function processMovements(
+	movements: Array<{ type: string; speed: string; source: any }>,
+	groundSpeed: number
+): PdfExportData['movement'] {
+	const movement: PdfExportData['movement'] = {
+		burrow: { half: false, full: false },
+		swim: { half: false, full: false },
+		fly: { half: false, full: false },
+		climb: { half: false, full: false },
+		glide: { half: false, full: false }
+	};
+
+	for (const m of movements) {
+		const type = m.type as keyof typeof movement;
+		if (!movement[type]) continue; // Skip unknown movement types
+
+		const speedValue = parseInt(m.speed, 10);
+		if (isNaN(speedValue)) continue; // Skip if speed is not a number
+
+		// Determine if movement is half or full speed
+		const halfSpeed = Math.floor(groundSpeed / 2);
+		if (speedValue >= groundSpeed) {
+			movement[type].full = true;
+		} else if (speedValue >= halfSpeed) {
+			movement[type].half = true;
+		}
+	}
+
+	return movement;
+}
+
 export function transformSavedCharacterToPdfData(character: SavedCharacter): PdfExportData {
 	// Identity
 	const characterName = character.finalName || '';
@@ -228,7 +263,7 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 
 	// Movement & misc
 	const moveSpeed = character.finalMoveSpeed ?? 0;
-	const movement = {
+	const movement = character.movement || {
 		burrow: { half: false, full: false },
 		swim: { half: false, full: false },
 		fly: { half: false, full: false },
@@ -236,7 +271,7 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 		glide: { half: false, full: false }
 	};
 	const jumpDistance = character.finalJumpDistance ?? 0;
-	const holdBreath = 0;
+	const holdBreath = character.holdBreath ?? 0;
 
 	// Exhaustion
 	const exLevel = character.characterState?.resources?.current?.exhaustionLevel ?? 0;
@@ -545,15 +580,9 @@ export function transformCalculatedCharacterToPdfData(
 
   // Movement & misc
   const moveSpeed = stats.finalMoveSpeed ?? 0;
-  const movement = {
-    burrow: { half: false, full: false },
-    swim: { half: false, full: false },
-    fly: { half: false, full: false },
-    climb: { half: false, full: false },
-    glide: { half: false, full: false }
-  };
+  const movement = saved.movement || processMovements(result.movements || [], moveSpeed);
   const jumpDistance = stats.finalJumpDistance ?? 0;
-  const holdBreath = 0;
+  const holdBreath = saved.holdBreath ?? stats.finalMight ?? 0;
 
   // Exhaustion
   const exLevel = saved.characterState?.resources?.current?.exhaustionLevel ?? 0;

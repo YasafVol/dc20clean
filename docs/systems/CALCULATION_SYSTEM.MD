@@ -387,7 +387,39 @@ progressionGains
   └─→ totalAttributePoints → baseAttributePoints
 ```
 
-### 9.3. Issue: Rest Points Calculation Timing ✅ FIXED
+### 9.3. Movement Processing
+
+**Location**: `enhancedCharacterCalculator.ts:1314-1334`
+
+After all stats are finalized (including `finalMoveSpeed`), `GRANT_MOVEMENT` effects are processed:
+
+```typescript
+const movements = resolvedEffects
+  .filter((effect) => effect.resolved && effect.type === 'GRANT_MOVEMENT')
+  .map((effect) => {
+    let speed: string;
+    if (effect.value === 'equal_to_speed') {
+      speed = `${finalMoveSpeed}`;  // Uses finalized ground speed
+    } else if (typeof effect.value === 'number') {
+      speed = `${effect.value}`;
+    } else {
+      speed = effect.value as string;
+    }
+    return { type: effect.target, speed, source: effect.source };
+  });
+```
+
+**Key Points:**
+- Movement processing occurs AFTER `finalMoveSpeed` is calculated
+- `equal_to_speed` converts to numeric value of ground speed
+- Result is array of `{ type, speed, source }` objects
+- Consumed by PDF export to populate movement checkboxes
+
+**See**: `docs/systems/EFFECT_SYSTEM.MD#2.1` for full GRANT_MOVEMENT documentation
+
+---
+
+### 9.4. Issue: Rest Points Calculation Timing ✅ FIXED
 
 **Previous (Incorrect) Order:**
 1. Line 903: `finalHPMax = finalMight + progressionGains.totalHP` (= 18)
@@ -403,7 +435,7 @@ progressionGains
 4. **Line 971**: `finalRestPoints = finalHPMax` (= 19) ✅
 5. **Result**: HP Max = 19, Rest Points = 19 ✅
 
-### 9.4. Correct Calculation Order
+### 9.5. Correct Calculation Order
 
 For values that depend on breakdowns, the order must be:
 1. Calculate initial/base value
@@ -416,6 +448,24 @@ For values that depend on breakdowns, the order must be:
 - `finalInitiativeBonus` depends on `finalAgility` (post-breakdown) ✅
 - `finalMartialCheck` depends on `finalMight`/`finalAgility` (post-breakdown) ✅
 - `finalRestPoints` depends on `finalHPMax` (post-breakdown) ✅
+
+---
+
+## Summary of Recent Updates (2025-10-10)
+
+### Movement System Implementation
+- Added `GRANT_MOVEMENT` effect processing in calculator (section 9.3)
+- Movement speeds now convert string formulas (`equal_to_speed`, `half_speed`, `double_speed`) to numeric values
+- Movement data saved to `SavedCharacter.movement` structure
+- PDF export fully integrated with movement checkboxes
+
+### Rest Points Timing Fix
+- Fixed calculation order bug where `finalRestPoints` was assigned before `finalHPMax` had all effects applied (section 9.4)
+- Rest Points now correctly equals HP Max after all modifiers
+
+### Data Fixes
+- Fixed `terraborn_slow_moving` trait: -5 → -1 (consistent with other Short-Legged traits)
+- Fixed `beastborn_jumper` trait: Added missing `MODIFY_STAT` effect for +2 jump distance
 
 ---
 

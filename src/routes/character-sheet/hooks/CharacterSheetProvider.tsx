@@ -20,6 +20,46 @@ import {
 } from '../../../lib/rulesdata/loaders/class-features.loader';
 import { getDetailedClassFeatureDescription } from '../../../lib/utils/classFeatureDescriptions';
 
+/**
+ * Converts the movements array from calculator into the movement structure for SavedCharacter
+ */
+function processMovementsToStructure(
+	movements: Array<{ type: string; speed: string; source: any }>,
+	groundSpeed: number
+): {
+	burrow: { half: boolean; full: boolean };
+	swim: { half: boolean; full: boolean };
+	fly: { half: boolean; full: boolean };
+	climb: { half: boolean; full: boolean };
+	glide: { half: boolean; full: boolean };
+} {
+	const movement = {
+		burrow: { half: false, full: false },
+		swim: { half: false, full: false },
+		fly: { half: false, full: false },
+		climb: { half: false, full: false },
+		glide: { half: false, full: false }
+	};
+
+	for (const m of movements) {
+		const type = m.type as keyof typeof movement;
+		if (!movement[type]) continue; // Skip unknown movement types
+
+		const speedValue = parseInt(m.speed, 10);
+		if (isNaN(speedValue)) continue; // Skip if speed is not a number
+
+		// Determine if movement is half or full speed
+		const halfSpeed = Math.floor(groundSpeed / 2);
+		if (speedValue >= groundSpeed) {
+			movement[type].full = true;
+		} else if (speedValue >= halfSpeed) {
+			movement[type].half = true;
+		}
+	}
+
+	return movement;
+}
+
 // Simple debounce utility
 function useDebounce<T extends (...args: any[]) => any>(
 	callback: T,
@@ -125,23 +165,28 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 			const calculationData = convertToEnhancedBuildData(character);
 			const calculationResult = calculateCharacterWithBreakdowns(calculationData);
 
-			// Update character with calculated values and original resource maxes
-			const updatedCharacter: SavedCharacter = {
-				...character,
-				characterState: {
-					...character.characterState,
-					resources: {
-						...character.characterState.resources,
-						original: {
-							maxHP: calculationResult.stats.finalHPMax || 0,
-							maxSP: calculationResult.stats.finalSPMax || 0,
-							maxMP: calculationResult.stats.finalMPMax || 0,
-							maxGritPoints: calculationResult.stats.finalGritPoints || 0,
-							maxRestPoints: calculationResult.stats.finalRestPoints || 0
-						}
+		// Update character with calculated values and original resource maxes
+		const updatedCharacter: SavedCharacter = {
+			...character,
+			movement: processMovementsToStructure(
+				calculationResult.movements || [],
+				calculationResult.stats.finalMoveSpeed
+			),
+			holdBreath: calculationResult.stats.finalMight,
+			characterState: {
+				...character.characterState,
+				resources: {
+					...character.characterState.resources,
+					original: {
+						maxHP: calculationResult.stats.finalHPMax || 0,
+						maxSP: calculationResult.stats.finalSPMax || 0,
+						maxMP: calculationResult.stats.finalMPMax || 0,
+						maxGritPoints: calculationResult.stats.finalGritPoints || 0,
+						maxRestPoints: calculationResult.stats.finalRestPoints || 0
 					}
 				}
-			};
+			}
+		};
 
 			// Save the entire character (includes spells, maneuvers, etc.)
 			await saveCharacter(updatedCharacter);

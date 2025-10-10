@@ -23,6 +23,47 @@ import {
 } from '../../lib/services/enhancedCharacterCalculator';
 import { validateSubclassChoicesComplete } from '../../lib/rulesdata/classes-data/classUtils';
 import { traitsData } from '../../lib/rulesdata/ancestries/traits';
+
+/**
+ * Converts the movements array from calculator into the movement structure for SavedCharacter
+ */
+function processMovementsToStructure(
+	movements: Array<{ type: string; speed: string; source: any }>,
+	groundSpeed: number
+): {
+	burrow: { half: boolean; full: boolean };
+	swim: { half: boolean; full: boolean };
+	fly: { half: boolean; full: boolean };
+	climb: { half: boolean; full: boolean };
+	glide: { half: boolean; full: boolean };
+} {
+	const movement = {
+		burrow: { half: false, full: false },
+		swim: { half: false, full: false },
+		fly: { half: false, full: false },
+		climb: { half: false, full: false },
+		glide: { half: false, full: false }
+	};
+
+	for (const m of movements) {
+		const type = m.type as keyof typeof movement;
+		if (!movement[type]) continue; // Skip unknown movement types
+
+		const speedValue = parseInt(m.speed, 10);
+		if (isNaN(speedValue)) continue; // Skip if speed is not a number
+
+		// Determine if movement is half or full speed
+		const halfSpeed = Math.floor(groundSpeed / 2);
+		if (speedValue >= groundSpeed) {
+			movement[type].full = true;
+		} else if (speedValue >= halfSpeed) {
+			movement[type].half = true;
+		}
+	}
+
+	return movement;
+}
+
 import {
 	StyledContainer,
 	StyledTitle,
@@ -276,7 +317,12 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 						...enhancedResult.stats,
 						grantedAbilities: enhancedResult.grantedAbilities,
 						conditionalModifiers: enhancedResult.conditionalModifiers,
-						breakdowns: enhancedResult.breakdowns
+						breakdowns: enhancedResult.breakdowns,
+						movement: processMovementsToStructure(
+							enhancedResult.movements || [],
+							enhancedResult.stats.finalMoveSpeed
+						),
+						holdBreath: enhancedResult.stats.finalMight
 					});
 					await completeCharacterEdit(editChar.id, state, enhancedCalculatorFn);
 					// Force reload of saved characters in LoadCharacter

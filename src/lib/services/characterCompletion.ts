@@ -14,6 +14,46 @@ import type { SavedCharacter } from '../types/dataContracts';
 import { denormalizeMastery } from './denormalizeMastery';
 import { CURRENT_SCHEMA_VERSION } from '../types/schemaVersion';
 
+/**
+ * Converts the movements array from calculator into the movement structure for SavedCharacter
+ */
+function processMovementsToStructure(
+	movements: Array<{ type: string; speed: string; source: any }>,
+	groundSpeed: number
+): {
+	burrow: { half: boolean; full: boolean };
+	swim: { half: boolean; full: boolean };
+	fly: { half: boolean; full: boolean };
+	climb: { half: boolean; full: boolean };
+	glide: { half: boolean; full: boolean };
+} {
+	const movement = {
+		burrow: { half: false, full: false },
+		swim: { half: false, full: false },
+		fly: { half: false, full: false },
+		climb: { half: false, full: false },
+		glide: { half: false, full: false }
+	};
+
+	for (const m of movements) {
+		const type = m.type as keyof typeof movement;
+		if (!movement[type]) continue; // Skip unknown movement types
+
+		const speedValue = parseInt(m.speed, 10);
+		if (isNaN(speedValue)) continue; // Skip if speed is not a number
+
+		// Determine if movement is half or full speed
+		const halfSpeed = Math.floor(groundSpeed / 2);
+		if (speedValue >= groundSpeed) {
+			movement[type].full = true;
+		} else if (speedValue >= halfSpeed) {
+			movement[type].half = true;
+		}
+	}
+
+	return movement;
+}
+
 export interface CharacterCompletionCallbacks {
 	onShowSnackbar: (message: string) => void;
 	onNavigateToLoad: () => void;
@@ -108,10 +148,18 @@ export const completeCharacter = async (
 			finalDeathThreshold: calculationResult.stats.finalDeathThreshold,
 			finalMoveSpeed: calculationResult.stats.finalMoveSpeed,
 			finalJumpDistance: calculationResult.stats.finalJumpDistance,
-			finalRestPoints: calculationResult.stats.finalRestPoints,
-			finalGritPoints: calculationResult.stats.finalGritPoints,
-			finalInitiativeBonus: calculationResult.stats.finalInitiativeBonus,
-			// Derived thresholds and bloodied values
+		finalRestPoints: calculationResult.stats.finalRestPoints,
+		finalGritPoints: calculationResult.stats.finalGritPoints,
+		finalInitiativeBonus: calculationResult.stats.finalInitiativeBonus,
+
+		// Movement types (process GRANT_MOVEMENT effects into structure)
+		movement: processMovementsToStructure(
+			calculationResult.movements || [],
+			calculationResult.stats.finalMoveSpeed
+		),
+		holdBreath: calculationResult.stats.finalMight,
+
+		// Derived thresholds and bloodied values
 			finalPDHeavyThreshold: calculationResult.stats.finalPD + 5,
 			finalPDBrutalThreshold: calculationResult.stats.finalPD + 10,
 			finalADHeavyThreshold: calculationResult.stats.finalAD + 5,

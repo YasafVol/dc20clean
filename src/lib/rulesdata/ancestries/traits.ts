@@ -1741,7 +1741,7 @@ export const traitsData: Trait[] = [
 			'Your Jump Distance increases by 2, and you can take the Jump Action as a Minor Action.',
 		cost: 1,
 		effects: [
-			{ type: 'GRANT_ABILITY', target: 'increased_jump', value: 'Jump Distance +2.' },
+			{ type: 'MODIFY_STAT', target: 'jumpDistance', value: 2 },
 			{ type: 'GRANT_ABILITY', target: 'jump_minor_action', value: 'Jump Action as Minor Action.' }
 		]
 	},
@@ -2446,7 +2446,7 @@ export const traitsData: Trait[] = [
 		description: 'Your Speed decreases by 1 Space',
 		cost: -1,
 		isNegative: true,
-		effects: [{ type: 'MODIFY_STAT', target: 'moveSpeed', value: -5 }]
+		effects: [{ type: 'MODIFY_STAT', target: 'moveSpeed', value: -1 }]
 	},
 	// --- Shadowborn Traits ---
 	{

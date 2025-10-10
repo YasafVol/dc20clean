@@ -121,6 +121,16 @@ export interface SavedCharacter {
 	finalGritPoints: number;
 	finalInitiativeBonus: number;
 
+	// Movement types (derived from GRANT_MOVEMENT effects)
+	movement?: {
+		burrow: { half: boolean; full: boolean };
+		swim: { half: boolean; full: boolean };
+		fly: { half: boolean; full: boolean };
+		climb: { half: boolean; full: boolean };
+		glide: { half: boolean; full: boolean };
+	};
+	holdBreath?: number; // Equals Might attribute
+
 	// Derived thresholds
 	finalPDHeavyThreshold?: number;
 	finalPDBrutalThreshold?: number;

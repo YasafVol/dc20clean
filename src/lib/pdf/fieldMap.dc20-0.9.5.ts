@@ -169,7 +169,20 @@ export const fieldMap_dc20_095: FieldMapItem[] = [
 	// Movement & misc
 	{ path: 'moveSpeed', field: 'Move Speed', type: 'text' },
 	{ path: 'jumpDistance', field: 'Jump Distance', type: 'text' },
+	{ path: 'holdBreath', field: 'Hold Breath', type: 'text' },
 	{ path: 'deathThreshold', field: 'Death Threshold', type: 'text' },
+
+	// Movement types (checkboxes for half/full speed)
+	{ path: 'movement.burrow.half', field: 'Burrow-Half', type: 'checkbox' },
+	{ path: 'movement.burrow.full', field: 'Burrow-Full', type: 'checkbox' },
+	{ path: 'movement.swim.half', field: 'Swim-Half', type: 'checkbox' },
+	{ path: 'movement.swim.full', field: 'Swim-Full', type: 'checkbox' },
+	{ path: 'movement.fly.half', field: 'Fly-Half', type: 'checkbox' },
+	{ path: 'movement.fly.full', field: 'Fly-Full', type: 'checkbox' },
+	{ path: 'movement.climb.half', field: 'Climb-Half', type: 'checkbox' },
+	{ path: 'movement.climb.full', field: 'Climb-Full', type: 'checkbox' },
+	{ path: 'movement.glide.half', field: 'Glide-Half', type: 'checkbox' },
+	{ path: 'movement.glide.full', field: 'Glide-Full', type: 'checkbox' },
 
 	// Languages (names)
 	{ path: 'languages[0].name', field: 'Language A', type: 'text' },

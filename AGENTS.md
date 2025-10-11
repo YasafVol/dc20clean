@@ -3,16 +3,14 @@
 ## Project Structure & Module Organization
 - `src/` – React + TypeScript app (routes, components, styles, types). Unit tests live beside code as `*.test.ts[x]`.
 - `e2e/` – Playwright end‑to‑end tests.
-- `prisma/` – Prisma schema and client generation.
 - `dist/` – Build output (do not edit).
 - `static/`, `assets/` – Static files and images.
 - Config: `vite.config.ts`, `vitest.config.ts`, `playwright.config.ts`, `eslint.config.js`, `.prettierrc`.
 
 ## Quick Start
-- `cp .env.example .env` – Configure `DATABASE_URL`.
+- (no .env required) – localStorage only; no database
 - `npm i` – Install dependencies.
-- `npm run db:start` – Start local Postgres (Docker).
-- `npm run prepare` – Generate Prisma client.
+- (removed) database and Prisma steps
 - `npm run dev` – Start Vite dev server.
 
 ## Build, Test, and Development Commands
@@ -24,8 +22,7 @@
 - `npm run test:unit` – Run Vitest (browser + node projects).
 - `npm run test` – Unit tests (run mode) then Playwright E2E.
 - `npm run test:e2e[:ui|:headed|:debug]` – E2E variants. Example: `npm run test:e2e:ui`.
-- `npm run db:start` – Start local Postgres via Docker Compose.
-- Prisma: `npm run prepare` (or `npx prisma generate`) to generate the client.
+- (removed) DB start and Prisma generate; not used
 
 Tips
 - Run a single unit test: `npx vitest -t "should ..."` or by file path.
@@ -59,8 +56,7 @@ Tips
 - PRs should include: clear description, linked issues, test plan (commands + results), and screenshots/GIFs for UI changes. Update docs when behavior changes. For stacks, ensure each PR is reviewable and passes CI independently.
 
 ## Security & Configuration Tips
-- Copy `.env.example` to `.env` and set `DATABASE_URL`. Do not commit secrets.
-- Use `docker compose up` for local DB; verify Prisma client generation after schema changes.
+- No DATABASE_URL or Docker required; app is client-only persistence
 
 ## Architecture References
 - See `docs/systems` for system specs and overviews.

@@ -80,7 +80,7 @@
 - Weapons & Items System — items schema, weapon damage derivation, UI interactions
 - Currency System — model, validation, persistence, UI mapping
 - Status & Exhaustion System — levels, effects, modal behavior
-- Persistence & API — save/load mapping, Prisma schema, API contract
+- Persistence — save/load mapping (localStorage only); remove Prisma schema/API references
 
 **Note:** Current focus is on the newly added Spells, Martials, Calculation, Effect docs, and Character Sheet overview.
 

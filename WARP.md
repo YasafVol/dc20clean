@@ -4,28 +4,18 @@ This file provides guidance to WARP (warp.dev) when working with code in this re
 
 ## Project Overview
 
-DC20 Clean is a comprehensive character creation and management system for the DC20 tabletop RPG system, built with **React 19**, **TypeScript**, **Vite**, and **Prisma** with PostgreSQL. The application features a multi-step character creation wizard and a character sheet interface with real-time calculations and validation.
+DC20 Clean is a comprehensive character creation and management system for the DC20 tabletop RPG system, built with **React 19**, **TypeScript**, and **Vite**. The application features a multi-step character creation wizard and a character sheet interface with real-time calculations and validation.
 
 ## Development Setup
 
 ### Prerequisites
 - Node.js 20 (use `nvm use 20` to switch if needed)
-- Docker for local PostgreSQL database
 - pnpm or npm for package management
 
 ### Quick Start Commands
 ```bash
-# Copy environment configuration
-cp .env.example .env
-
 # Install dependencies
 npm install
-
-# Start local PostgreSQL database
-npm run db:start
-
-# Generate Prisma client
-npm run prepare
 
 # Start development server
 npm run dev
@@ -59,9 +49,7 @@ npm run dev
 - `E2E_WORKERS=4 npm run test:e2e` - Run with parallel workers
 
 **Database:**
-- `npm run db:start` - Start local PostgreSQL via Docker Compose
-- `npx prisma generate` - Generate Prisma client after schema changes
-- `npx prisma studio` - Open Prisma Studio for database inspection
+None – app uses browser localStorage only
 
 **Special Scripts:**
 - `npm run export:list-fields` - List PDF form fields
@@ -103,10 +91,8 @@ npm run dev
 - Loader system for dynamic data access
 - Effect system for modular stat modifications
 
-**Database Layer (`prisma/`)**
-- PostgreSQL with Prisma ORM
-- Character progression tracking
-- Final character sheet data storage
+**Persistence**
+- Browser localStorage for character save/load
 
 ### Key Data Flow
 

@@ -45,15 +45,14 @@ Based on the `repomix` file you provided and our previous discussions, I have re
 
 ### 3. Technical Architecture & Data Model Changes
 
-**3.1. Refactor: Level Progression Data (In Progress)**
+**3.1. Refactor: Level Progression Data (Complete)**
 
-*   **Action:** All `..._table.json` files have been converted into type-safe TypeScript modules in `src/lib/rulesdata/classes-data/progressions/`.
-*   **Schema Change (Planned):** As soon as loaders consume the new TypeScript progressions, we will update `class.schema.ts` to replace the ambiguous `features: string` property with a structured `gains: LevelGains` object. Until that migration lands, the schema continues to describe the legacy JSON shape.
-*   **`LevelGains` Interface (`class.schema.ts` – upcoming):**
-*   **Migration Plan:**
-    1.  Finalize feature ID audit (M1.2/M1.5).
-    2.  Switch `class.loader.ts` to source data from `classes-data/progressions/*.progression.ts` (M1.3) while keeping compatibility shims for existing consumers.
-    3.  Update `class.schema.ts` to the `LevelGains` structure and remove JSON tables once tests pass.
+*   **Action:** ✅ All `..._table.json` files have been removed. Data is now sourced exclusively from type-safe TypeScript modules in `src/lib/rulesdata/classes-data/progressions/`.
+*   **Schema:** `class.schema.ts` now includes the `gains: LevelGains` structure alongside legacy `features: string` for backward compatibility.
+*   **Migration Completed:**
+    1.  ✅ Feature ID audit completed (M1.2/M1.5).
+    2.  ✅ `class.loader.ts` now sources data exclusively from `classes-data/progressions/*.progression.ts`.
+    3.  ✅ JSON tables removed, all tests passing.
 
     ```typescript
     interface LevelGains {

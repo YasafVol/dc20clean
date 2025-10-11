@@ -45,21 +45,6 @@ import { bardClass } from '../rulesdata/classes-data/features/bard_features';
 import { druidClass } from '../rulesdata/classes-data/features/druid_features';
 import { commanderClass } from '../rulesdata/classes-data/features/commander_features';
 import { psionClass } from '../rulesdata/classes-data/features/psion_features';
-
-import barbarianTable from '../rulesdata/classes-data/tables/barbarian_table.json';
-import clericTable from '../rulesdata/classes-data/tables/cleric_table.json';
-import hunterTable from '../rulesdata/classes-data/tables/hunter_table.json';
-import championTable from '../rulesdata/classes-data/tables/champion_table.json';
-import wizardTable from '../rulesdata/classes-data/tables/wizard_table.json';
-import monkTable from '../rulesdata/classes-data/tables/monk_table.json';
-import rogueTable from '../rulesdata/classes-data/tables/rogue_table.json';
-import sorcererTable from '../rulesdata/classes-data/tables/sorcerer_table.json';
-import spellbladeTable from '../rulesdata/classes-data/tables/spellblade_table.json';
-import warlockTable from '../rulesdata/classes-data/tables/warlock_table.json';
-import bardTable from '../rulesdata/classes-data/tables/bard_table.json';
-import druidTable from '../rulesdata/classes-data/tables/druid_table.json';
-import commanderTable from '../rulesdata/classes-data/tables/commander_table.json';
-import psionTable from '../rulesdata/classes-data/tables/psion_table.json';
 import { attributesData } from '../rulesdata/attributes';
 import { skillsData } from '../rulesdata/skills';
 import { tradesData } from '../rulesdata/trades';
@@ -191,45 +176,8 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
  * Get class level progression data by ID
  */
 function getClassProgressionData(classId: string): any | null {
-	// Use the new classesData which includes the gains field
 	const classData = classesData.find(c => c.id === classId);
-	if (classData) {
-		return classData;
-	}
-	
-	// Fallback to old table data (should not be needed)
-	switch (classId) {
-		case 'barbarian':
-			return barbarianTable;
-		case 'cleric':
-			return clericTable;
-		case 'hunter':
-			return hunterTable;
-		case 'champion':
-			return championTable;
-		case 'wizard':
-			return wizardTable;
-		case 'monk':
-			return monkTable;
-		case 'rogue':
-			return rogueTable;
-		case 'sorcerer':
-			return sorcererTable;
-		case 'spellblade':
-			return spellbladeTable;
-		case 'warlock':
-			return warlockTable;
-		case 'bard':
-			return bardTable;
-		case 'druid':
-			return druidTable;
-		case 'commander':
-			return commanderTable;
-		case 'psion':
-			return psionTable;
-		default:
-			return null;
-	}
+	return classData ?? null;
 }
 
 /**

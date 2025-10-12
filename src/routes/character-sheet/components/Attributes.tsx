@@ -44,7 +44,6 @@ const Attributes: React.FC<AttributesProps> = ({
 	const { state } = useCharacterSheet();
 
 	// Get prime modifier directly from character data
-	const primeAttribute = state.character?.finalPrimeModifierAttribute || 'might';
 	const primeValue = state.character?.finalPrimeModifierValue || 0;
 
 	const renderSkills = (skills: SkillData[]) => {
@@ -88,9 +87,7 @@ const Attributes: React.FC<AttributesProps> = ({
 			{/* Prime Modifier & Awareness */}
 			<PrimeSection $isMobile={isMobile}>
 				<PrimeLabel $isMobile={isMobile}>Prime</PrimeLabel>
-				<PrimeValue $isMobile={isMobile}>
-					{primeAttribute} + {primeValue}
-				</PrimeValue>
+				<PrimeValue $isMobile={isMobile}>+{primeValue}</PrimeValue>
 			</PrimeSection>
 
 			{/* Awareness (Prime skill) */}

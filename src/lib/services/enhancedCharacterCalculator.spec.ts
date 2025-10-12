@@ -17,7 +17,7 @@ const createTestCharacter = (
 	finalName: 'Test Character',
 	playerId: 'test',
 	ancestry1Id: 'human',
-	classId: 'fighter',
+	classId: '',
 	attribute_might: 0,
 	attribute_agility: 0,
 	attribute_intelligence: 0,
@@ -78,5 +78,34 @@ describe('enhancedCharacterCalculator Mastery Cap Logic', () => {
 		const { validation } = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
 		console.log('Test 5 - Rogue + Human Expertise validation errors:', validation.errors);
 		expect(validation.errors.length).toBe(0);
+	});
+});
+
+describe('enhancedCharacterCalculator Prime Modifier', () => {
+	it('sets prime modifier to the level cap at low levels', () => {
+		const character = createTestCharacter(1, {});
+		const result = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
+
+		expect(result.stats.finalPrimeModifierValue).toBe(3); // Level 1 cap
+		expect(result.stats.finalPrimeModifierAttribute).toBe('prime');
+	});
+
+	it('escalates prime modifier as level caps increase', () => {
+		const character = createTestCharacter(12, {});
+		const result = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
+
+		expect(result.stats.finalPrimeModifierValue).toBe(5); // Level 12 cap per table
+	});
+
+	it('ignores attribute totals when determining prime modifier', () => {
+		const character = createTestCharacter(18, {});
+		character.attribute_might = -2;
+		character.attribute_agility = -2;
+		character.attribute_charisma = -2;
+		character.attribute_intelligence = -2;
+
+		const result = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
+
+		expect(result.stats.finalPrimeModifierValue).toBe(6); // Level 18 cap per table
 	});
 });

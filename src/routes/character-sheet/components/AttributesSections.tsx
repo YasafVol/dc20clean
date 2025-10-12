@@ -58,9 +58,7 @@ const AttributesSections: React.FC<AttributesSectionsProps> = ({
 			<StyledPrimeSection>
 				<StyledPrimeBox>
 					<StyledPrimeLabel>Prime</StyledPrimeLabel>
-					<StyledPrimeValue>
-						{characterData.finalPrimeModifierAttribute} +{characterData.finalPrimeModifierValue}
-					</StyledPrimeValue>
+					<StyledPrimeValue>+{characterData.finalPrimeModifierValue}</StyledPrimeValue>
 				</StyledPrimeBox>
 
 				{/* Awareness (Prime skill) */}

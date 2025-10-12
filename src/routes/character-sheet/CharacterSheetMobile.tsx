@@ -112,7 +112,7 @@ ATTRIBUTES:
 • Agility: ${characterData.finalAgility} 
 • Charisma: ${characterData.finalCharisma}
 • Intelligence: ${characterData.finalIntelligence}
-• Prime: ${characterData.finalPrimeModifierAttribute.toUpperCase()} (+${characterData.finalPrimeModifierValue})
+• Prime: +${characterData.finalPrimeModifierValue}
 
 CORE STATS:
 • HP Max: ${characterData.finalHPMax}
@@ -391,8 +391,7 @@ ${characterData.characterState?.notes?.playerNotes || 'No notes'}`;
 										}}
 									>
 										<strong>Prime:</strong>{' '}
-										{characterData.finalPrimeModifierAttribute.toUpperCase()} (+
-										{characterData.finalPrimeModifierValue})
+										+{characterData.finalPrimeModifierValue}
 									</div>
 								</div>
 							</MobileResourceBox>

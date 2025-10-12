@@ -867,26 +867,16 @@ export function calculateCharacterWithBreakdowns(
 	const finalAD = buildData.manualAD ?? baseAD + adModifiers;
 	const finalPDR = buildData.manualPDR ?? 0;
 
-	// Calculate prime attribute first
-	const maxValue = Math.max(finalMight, finalAgility, finalCharisma, finalIntelligence);
+	// Prime modifier is driven purely by the level-based attribute cap table
+	const primeModifier = getLevelCaps(buildData.level).maxAttributeValue;
 
-	// Get all attributes that have the max value for tie-breaking
-	const attributesAtMax: string[] = [];
-	if (finalMight === maxValue) attributesAtMax.push('might');
-	if (finalAgility === maxValue) attributesAtMax.push('agility');
-	if (finalCharisma === maxValue) attributesAtMax.push('charisma');
-	if (finalIntelligence === maxValue) attributesAtMax.push('intelligence');
-
-	// For tie-breaking, use the priority order: might > agility > charisma > intelligence
-	const primeAttribute = attributesAtMax[0] || 'might';
-
-    // Calculate other derived stats first (DC20 sheet: 10 + Combat Mastery + Prime)
-    const finalSaveDC = 10 + combatMastery + maxValue;
+	    // Calculate other derived stats first (DC20 sheet: 10 + Combat Mastery + Prime)
+	    const finalSaveDC = 10 + combatMastery + primeModifier;
 	const finalSaveMight = finalMight + combatMastery;
 	const finalSaveAgility = finalAgility + combatMastery;
 	const finalSaveCharisma = finalCharisma + combatMastery;
 	const finalSaveIntelligence = finalIntelligence + combatMastery;
-	const finalDeathThreshold = maxValue + combatMastery; // Prime + Combat Mastery (usually -4)
+	const finalDeathThreshold = primeModifier + combatMastery; // Prime + Combat Mastery (usually -4)
 	const baseMoveSpeed = 5;
 	const baseJumpDistance = finalAgility;
 	const finalGritPoints = Math.max(0, 2 + finalCharisma); // 2 + Charisma (minimum 0)
@@ -919,7 +909,7 @@ export function calculateCharacterWithBreakdowns(
 	const finalRestPoints = finalHPMax; // Rest Points = HP Max (post-effects)
 
 	// Combat breakdowns
-	const attackSpellCheckBase = combatMastery + maxValue;
+	const attackSpellCheckBase = combatMastery + primeModifier;
 	breakdowns.attack_spell_check = createStatBreakdown(
 		'attackSpellCheck',
 		attackSpellCheckBase,
@@ -1325,8 +1315,8 @@ export function calculateCharacterWithBreakdowns(
 			finalGritPoints,
 
 			// Prime modifier and combat mastery (needed for UI compatibility)
-			finalPrimeModifierValue: maxValue,
-			finalPrimeModifierAttribute: primeAttribute,
+			finalPrimeModifierValue: primeModifier,
+			finalPrimeModifierAttribute: 'prime',
 			finalCombatMastery: combatMastery,
 			finalAttributePoints,
 

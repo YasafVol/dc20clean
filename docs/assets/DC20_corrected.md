@@ -146,16 +146,19 @@ Skills are representative of a creature's ability to perform certain activities.
 
 ### Skill List
 
-#### Might
+### Might
 
-- Athletics
-- Intimidation
+#### Athletics
 
-#### Agility
+#### Intimidation
 
-- Acrobatics
-- Trickery
-- Stealth
+### Agility
+
+#### Acrobatics
+
+#### Trickery
+
+#### Stealth
 
 #### Charisma
 
@@ -163,11 +166,13 @@ Skills are representative of a creature's ability to perform certain activities.
 - Insight
 - Influence
 
-#### Intelligence
+### Intelligence
 
-- Investigation
-- Medicine
-- Survival
+#### Investigation
+
+#### Medicine
+
+#### Survival
 
 #### Prime
 
@@ -771,7 +776,7 @@ There are many dialects of the Human language based on the distance and developm
 
 **Typical Speakers:** Devils & Demons
 
-#### Outer Languages
+### Outer Languages
 
 #### Deep Speech
 
@@ -785,7 +790,7 @@ There are many dialects of the Human language based on the distance and developm
 
 Mastery represents your level of competency within different categories. When you have Mastery with something (such as a Skill, Trade, or Language), you gain certain bonuses to actions that use that Mastery. Conversely, when you lack Mastery with something you may suffer certain penalties (such as adding no bonuses to those rolls).
 
-## Mastery Types
+### Mastery Types
 
 There are several types of Mastery:
 
@@ -794,15 +799,15 @@ There are several types of Mastery:
 - **Language Mastery:** Your fluency with certain Languages. This Mastery is used to govern how well you can read, write, speak, and understand different Languages.
 - **Combat Mastery:** Your prowess on the battlefield, such as Attacks, Defenses, and Saves. This Mastery represents your general ability to fight and survive against other creatures.
 
-## Gaining Mastery
+### Gaining Mastery
 
 You can gain Mastery from your Class, Class Features, Subclass Features, Ancestry Traits, or Talents. You'll have opportunities at character creation and when your PC levels up to select a variety of options to gain any of the above Mastery Types.
 
-## Skill Mastery
+### Skill Mastery
 
 Skill Mastery represents your proficiency with a Skill. There are several Skill Mastery Levels, ranging from Novice to Grandmaster. Each increasing Level of Skill Mastery grants greater bonuses to the Skill Checks in which you have Mastery (see Skills for more information on the different Skills).
 
-## Skill Mastery Levels & Limits
+#### Skill Mastery Levels & Limits
 
 There are 5 Skill Mastery Levels. Each Skill Mastery Level grants you a +2 bonus on the respective Skill Checks. Your Skill Mastery Limit starts at Novice and increases based on your Character Level as shown in the table below.
 
@@ -818,18 +823,18 @@ There are 5 Skill Mastery Levels. Each Skill Mastery Level grants you a +2 bonus
 
 **Example 2:** If a PC has a Skill Mastery Limit of Adept, they can allocate up to 2 Skill Points into a single Skill, such as the Awareness Skill. If that PC has additional Skill Points to allocate, they can't allocate them into the Awareness Skill until their Skill Mastery Limit increases to Expert or higher.
 
-## Gaining Skill Mastery
+#### Gaining Skill Mastery
 
 You can increase your Skill Mastery Level from Skill Points or from certain Traits, Features, or Talents.
 
-## Skill Mastery Level Increases
+#### Skill Mastery Level Increases
 
 You can gain Skill Mastery directly through Ancestry Traits, Class Features, and Talents.
 
 - **Class Skills:** Some Classes (such as Hunter) grant Skill Mastery based on chosen Feature options.
 - **Ancestry Skills:** Some Ancestries (such as Humans) grant Skill Mastery.
 
-## Skill Points
+#### Skill Points
 
 You can spend Skill Points to increase your Skill Mastery Level in a given Skill, up to your Skill Mastery Limit. You gain Skill Points from your Background, Class, Intelligence, and possibly from Talents you choose.
 
@@ -840,7 +845,7 @@ You can spend Skill Points to increase your Skill Mastery Level in a given Skill
 
 
 
-## Increasing your Skill Mastery Limit
+#### Increasing your Skill Mastery Limit
 
 Some Ancestry Traits, Class Features, and Talents can increase your Skill Mastery Limit. A Skill can only benefit from 1 bonus to its Skill Mastery Limit at a time. When your Skill Mastery Limit increases at the normal level, it continues to be benefit from the bonus to its Skill Mastery Limit.
 
@@ -848,23 +853,23 @@ Some Ancestry Traits, Class Features, and Talents can increase your Skill Master
 
 **Example 2:** A Level 1 PC has a Skill Mastery Limit of Novice. If it gains a bonus to its Skill Mastery Limit (such as through the Roguish Finesse Feature), it's Skill Mastery Limit increases to Adept. When its Skill Mastery Increases normally at Level 5, its Skill Mastery Limit increases to Expert.
 
-## Skill Points to Increase Skill Mastery Limit
+#### Skill Points to Increase Skill Mastery Limit
 
 You can increase your Skill Mastery using Skill Points. Choose a Skill. You can spend 1 Skill Point to increase its Skill Mastery Limit by 1. You must still spend another Skill Point to increase its Skill Mastery Level to meet the new Limit.
 
 **Example:** A Bard spends 1 Skill Point to get Novice Skill Mastery in the Influence Skill. Then they spend 1 Skill Point to increase their Skill Mastery Limit in Influence from Novice to Adept and an additional Skill Point to increase their Skill Mastery Level in Influence also to Adept. In total, they spent 3 Skill Points to raise their Skill Mastery Level with the Influence Skill from having no Skill Mastery to now having Adept Skill Mastery.
 
-## Lacking Skill Mastery
+#### Lacking Skill Mastery
 
 When you make a Skill Check using a Skill in which you lack Mastery, you don't gain a Skill Mastery bonus on the Check.
 
 **DC Tip:** Certain abilities might require a certain level of Mastery to perform, or other passive abilities might be granted to those of different Mastery Levels. There are a lot of possibilities here.
 
-## Trade Mastery
+### Trade Mastery
 
 Trade Mastery represents your proficiency with a Trade. There are several Trade Mastery Levels, ranging from Novice to Grandmaster. Each increasing Level of Trade Mastery grants greater bonuses to the Trade Checks in which you have Mastery (see Trades for more information on the different Trades).
 
-## Trade Mastery Levels & Limits
+#### Trade Mastery Levels & Limits
 
 There are 5 Trade Mastery Levels. Each Trade Mastery Level grants you a +2 bonus on the respective Skill Checks. Your Trade Mastery Limit starts at Novice and increases based on your Character Level as shown in the table below.
 
@@ -880,7 +885,7 @@ There are 5 Trade Mastery Levels. Each Trade Mastery Level grants you a +2 bonus
 
 **Example 2:** If a PC has a Trade Mastery Limit of Adept, they can allocate up to 2 Trade Points into a single Trade, such as the Cartography Trade. If that PC has additional Trade Points to allocate, they can't allocate them into the Cartography Trade until their Trade Mastery Limit increases to Expert or higher.
 
-## Gaining Trade Mastery
+#### Gaining Trade Mastery
 
 You can increase your Trade Mastery Level from Trade Points or from certain Traits, Features, or Talents.
 
@@ -896,7 +901,7 @@ You can gain Trade Mastery directly through Ancestry Traits, Class Features, and
 
 
 
-## Trade Points
+#### Trade Points
 
 You can spend Trade Points to increase your Trade Mastery Level in a given Trade, up to your Trade Mastery Limit. You gain Trade Points from your Background, and possibly from your Ancestry, Class, and Talents you choose.
 
@@ -904,11 +909,11 @@ You can spend Trade Points to increase your Trade Mastery Level in a given Trade
 - **Class Trades:** All Classes grant additional Trade Points based on your Level.
 - **Talent Trades:** Some Talents (such as Trade Increase) grant additional Trade Points.
 
-## Converting Skill Points to Trade Points
+#### Converting Skill Points to Trade Points
 
 You can convert 1 Skill Point into 2 Trade Points (but not the other way around).
 
-## Increasing your Trade Mastery Limit
+#### Increasing your Trade Mastery Limit
 
 Some Ancestry Traits, Class Features, and Talents can increase your Trade Mastery Limit. A Trade can only benefit from 1 bonus to its Trade Mastery Limit at a time. When your Trade Mastery Limit increases at the normal level, it continues to be benefit from the bonus to its Trade Mastery Limit.
 
@@ -916,23 +921,23 @@ Some Ancestry Traits, Class Features, and Talents can increase your Trade Master
 
 **Example 2:** A Level 1 PC has a Trade Mastery Limit of Novice. If it gains a bonus to its Trade Mastery Limit (such as through the Trade Expertise Ancestry Trait), it's Trade Mastery Limit increases to Adept. When its Trade Mastery Increases normally at Level 5, its Trade Mastery Limit increases to Expert.
 
-## Trade Points to Increase Trade Mastery Limit
+#### Trade Points to Increase Trade Mastery Limit
 
 You can increase your Trade Mastery using Trade Points. Choose a Trade you do not have Mastery in, you can spend 1 Trade Point to increase its Trade Mastery Limit by 1. You must still spend another Trade Point to increase its Trade Mastery Level to meet the new Limit.
 
 **Example:** A Champion spends 1 Trade Point to get Novice Trade Mastery in the Blacksmithing Trade. Then they spend 1 Trade Point to increase their Trade Mastery Limit in Blacksmithing to Adept and an additional Trade Point to increase their Trade Mastery Level in Blacksmithing also to Adept. In total, they spent 3 Trade Points to raise their Trade Mastery Level with the Blacksmithing Trade from having no Trade Mastery to Adept Trade Mastery.
 
-## Lacking Trade Mastery
+#### Lacking Trade Mastery
 
 When you make a Trade Check using a Trade in which you lack Mastery, you don't gain a Trade Mastery bonus on the Check. Some Trade Checks might be harder to perform or not possible at all if you don't have the tools needed or if you're using some kind of improvised tools.
 
 **DC Tip:** Certain abilities might require a certain level of Mastery to perform, or other passive abilities might be granted to those of different Mastery Levels. There are a lot of possibilities here.
 
-## Language Mastery
+### Language Mastery
 
 Language Mastery represents your fluency with a Language. There are only 2 Language Mastery Levels: Limited and Fluent. See Languages for more information on the different Languages.
 
-## Language Mastery Levels
+#### Language Mastery Levels
 
 You can spend Trade Points (see Trade Mastery above) to increase your Language Mastery Level in a given Language, up to the maximum Language Mastery Level of 2 (Fluent).
 
@@ -948,32 +953,32 @@ You can spend Trade Points (see Trade Mastery above) to increase your Language M
 
 **DC Tip:** In this system, there's more of a progression to learning a language and there are more subtle interactions that happen both from a roleplay standpoint and a mechanics standpoint.
 
-## Language Mastery Limit
+#### Language Mastery Limit
 
 There's no Mastery Limit for Languages. You can use Language Points to increase your Language Mastery in as many Languages as there are available to you.
 
-## Gaining Language Mastery
+#### Gaining Language Mastery
 
 You are Fluent in Common. You can gain additional Language Mastery using Language Points.
 
-## Language Points
+#### Language Points
 
 You gain Language Points from your Background, and possibly from Talents you choose.
 
 - **Background Languages:** Your Background grants you Common Fluency and 2 Language Points.
 - **Talent Languages:** Some Talents (such as Trade Increase) grant additional Trade Points, which you can convert to Language Points (see below).
 
-## Converting Trade Points to Language Points
+#### Converting Trade Points to Language Points
 
 You can convert 1 Trade Point into 2 Language Points (but not the other way around).
 
 **DC Tip:** Because 1 Skill Point can be converted into 2 Trades Points, this means that 1 Skill Point can effectively be turned into 4 Language Points.
 
-## Lacking Language Mastery
+#### Lacking Language Mastery
 
 If you don't have Language Mastery with a Language, you can't read, write, speak or understand it.
 
-## Combat Mastery
+### Combat Mastery
 
 Combat Mastery represents your experience in dealing with dangers and overcoming adversaries in Combat. You have Combat Mastery with the following:
 
@@ -983,21 +988,21 @@ Combat Mastery represents your experience in dealing with dangers and overcoming
 
 **DC Tip:** You don't have Combat Mastery with Death Saves, so those Saves don't add your CM.
 
-## Combat Mastery Formula
+#### Combat Mastery Formula
 
 1/2 your Character's Level (rounded up)
 
-## Combat Training
+### Combat Training
 
 Combat Training represents your proficiency with using equipment effectively in Combat. You can gain Combat Training with the following types of equipment: Weapons, Armor, and Shields.
 
-## Gaining Combat Training
+#### Gaining Combat Training
 
 Martial Classes grant Weapon Training.
 
 All Classes grant you Armor Training. Some Classes (such as the Champion), Ancestry Traits (such as Natural Combatant), or Talents (such as Martial Expansion) grant you Weapon or Shield Training.
 
-## Lacking Combat Training
+#### Lacking Combat Training
 
 You suffer the following penalties while wearing or wielding the following equipment that you lack Training with:
 
@@ -1021,7 +1026,7 @@ Whenever an attempt is made by a creature to perform an action that has a chance
 
 **Willing Creatures:** Any creature can choose to fail a Check or Save. When they do, treat the result of their Check or Save as a 0 for the purposes of degrees of success or failure (see 'Check & Save Outcomes' on page 29), but the creature doesn't suffer the effects of a Critical Failure unless they choose to do so.
 
-## Types of Checks
+### Types of Checks
 
 There are several types of Checks a GM might ask a creature to make, such as an Attack Check when attacking with a Weapon, a Spell Check when casting a Spell, a specific Skill Check when performing a test of skill, a specific Trade Check when performing a test of professional expertise, or a specific Flat Attribute Check performing a test of aptitude that doesn't benefit from skill or expertise.
 
@@ -1037,7 +1042,7 @@ There are several types of Checks a GM might ask a creature to make, such as an 
 
 **Language Checks:** These are used to see how well you can read, write, or speak using a language you have Limited Language Mastery in. You add your Charisma or Intelligence (your choice) to these Checks.
 
-## Types of Saves
+### Types of Saves
 
 A creature can make a Save to resist an effect imposed against it by another creature, a trap, or an environmental hazard. The type of effect will determine which type of Save the creature makes: Might, Agility, Charisma, or Intelligence.
 
@@ -1051,9 +1056,9 @@ A creature can make a Save to resist an effect imposed against it by another cre
 
 
 
-## Checks
+### Checks
 
-## Flat Attribute Checks
+#### Flat Attribute Checks
 
 When a creature performs a task that doesn't benefit from Mastery, it makes a Flat Attribute Check (Might, Agility, Charisma, or Intelligence). To make a Flat Attribute Check, roll a d20 and add the associated Attribute to the result.
 
@@ -1063,7 +1068,7 @@ d20 + Attribute
 
 **Example:** A GM might ask a PC to make a Flat Agility Check to see how flexible they are or a Flat Charisma Check to determine the first impression they make upon entering a room. If the PC's Charisma is 4, they roll a d20 and add 4 to the result.
 
-## Attack Checks
+#### Attack Checks
 
 A creature can make an Attack Check when it takes the Attack Action or uses a Feature that calls for one. A creature must be wielding a Weapon or be capable of an Unarmed Strike to make an Attack Check. When a creature makes an Attack Check, it rolls a d20 then adds its Prime Modifier and Combat Mastery to determine the result.
 
@@ -1075,7 +1080,7 @@ d20 + Prime Modifier + Combat Mastery
 
 **DC Tip:** Attack Checks are most often used when making Martial Attacks (see 'Attacks & Defenses' on page 31 for more information).
 
-## Spell Checks
+#### Spell Checks
 
 A creature can make a Spell Check when it takes the Spell Action to cast a Spell or uses a Feature that calls for one. When a creature makes a Spell Check, it rolls a d20, then adds its Prime Modifier and Combat Mastery to determine the result.
 
@@ -1087,7 +1092,7 @@ d20 + Prime Modifier + Combat Mastery
 
 **DC Tip:** Spell Checks are most often used when Casting a Spell ( see 'Spellcasting' on page 54 for more information). Spell Checks are made against Defenses (Spell Attacks), Spell DCs, and Saves.
 
-## Skill Checks
+#### Skill Checks
 
 When a creature attempts a test of skill, the GM might have them make a Skill Check to determine whether they succeed or fail. The GM will choose the Skill to use with the Check based on the activity attempted.
 
@@ -1107,7 +1112,7 @@ d20 + Attribute + Skill Mastery
 
 
 
-## Trade Checks
+#### Trade Checks
 
 When a creature attempts a test of professional expertise, the GM might have them make a Trade Check to determine whether they succeed or fail. The GM will choose the Trade to use with the Check based on the activity attempted.
 
@@ -1125,7 +1130,7 @@ d20 + Attribute + Trade Mastery
 
 A creature must use the specified Trade Tools when attempting a Trade Check (see 'Trades' on page 14 for more information on Trade Tools). If a creature attempts a Trade Check using tools not designed for the task (such as using a hair pin instead of Lockpicking Tools to pick a lock), they have Disadvantage on the Trade Check.
 
-## Language Checks
+#### Language Checks
 
 When you are trying to read, write, or speak in a language you have Limited Language Mastery in, you can make a Language Check to do so. Roll a d20 and add your Charisma or Intelligence (your choice).
 
@@ -1137,15 +1142,15 @@ d20 + (Intelligence or Charisma)
 
 **DC Tip:** The GM will set a DC based on how hard it would be to read, write, or speak that language. The Halfling language would be easier to understand than Deep Speech for example.
 
-## Special Checks
+### Special Checks
 
-## Check Contests
+#### Check Contests
 
 When a creature makes a Check against an opposing creature's Check (or Save), they are engaged in a Contest. The creature with the highest Check result is the winner of the Contest. If a Contest results in a tie, then the situation remains unchanged.
 
 **Example:** A Barbarian attempts to push a Rogue. If the Barbarian's Check is higher than the Rogue's Check, then the Rogue is pushed. If the Barbarian's Check is lower than the Rogue's Check, then the Rogue is not pushed. If the Barbarian's Check is equal to the Rogue's Check, then the Rogue is not pushed.
 
-## Check Categories
+#### Check Categories
 
 Checks are organized into categories, such as: Attribute Checks, Physical Checks, Mental Checks, and Martial Checks. Some Checks fall within multiple Check Categories.
 
@@ -1173,29 +1178,29 @@ A Mental Check includes any Check that requires a creature's focus to perform, s
 
 When a creature performs a task that can benefit from either an Acrobatics or Athletics Check, the GM might call for a Martial Check instead. When a creature makes a Martial Check, it can choose to make an Acrobatics Check or an Athletics Check.
 
-## Passive Skills
+### Passive Skills
 
 Sometimes a GM might not ask a PC to roll any dice to determine the success of a Check. Instead, the GM would use the PC's average result for that type of Check. Every Skill has a Passive value, such as Passive Awareness, Passive Insight, and Passive Athletics. The value of a Passive Skill is equal to 10 + all bonuses normally applied to its Check.
 
 **DC Tip:** These Passive Skills are used when the PC is not actively performing this action or it's being done over a longer period of time. This number represents their 'Average' ability at each Check.
 
-## Passive Skill Formula
+#### Passive Skill Formula
 
 10 + All Bonuses
 
 **Example:** A Level 1 Champion has 2 Levels of Mastery (+4 bonus) in Awareness, and its highest Attribute is 3 (Prime Attribute). Normally it would make an Awareness Check by rolling a d20 and adding 7 (4+3) to the Check, however its Passive Awareness would instead by 17 (10+7). If a Rogue attempts to sneak by the Champion (while they aren't actively looking), the Rogue would have to succeed a DC 17 Stealth Check to avoid being detected.
 
-## Permanent ADV and DisADV
+#### Permanent ADV and DisADV
 
 If you have an effect that grants you a permanent ADV or DisADV to a Skill Check, then you add (ADV) or subtract (DisADV) 2 to your Passive Skill for each instance of ADV or DisADV.
 
 **Example:** The Commander has Heavy Armor and has DisADV on all Stealth Checks they make. Since this is a permanent effect (as long as they're wearing that armor), you would also subtract 2 from the Commander's Passive Stealth Skill.
 
-## Saves
+### Saves
 
 Many Saves in DC20 target one of a creature's 4 Attributes Saves (Might, Agility, Charisma, or Intelligence).
 
-## Attribute Saves
+#### Attribute Saves
 
 When a creature is subjected to an effect, they make the an Attribute Save to determine whether or not they're able to resist the effect. The Attribute used to make the Save is determined by the effect (or the GM).
 
@@ -1219,13 +1224,13 @@ d20 + Attribute + Combat Mastery
 
 
 
-## Special Saves
+### Special Saves
 
-## Death Saves
+#### Death Saves
 
 When a creature makes a Death Save, it rolls a d20. If the result is 10 or higher it succeeds on its Death Save. See 'Death's Door' on page 33 for more information on Death Saves.
 
-## Save Categories
+#### Save Categories
 
 Some Saves are organized into categories, such as Physical Saves, Mental Saves, and Death Saves.
 
@@ -1237,11 +1242,11 @@ Some Saves are organized into categories, such as Physical Saves, Mental Saves, 
 
 **Example:** A creature that attempts to resist being teleported against its will would make a Mental Save to remain in the same location.
 
-## Save DC
+### Save DC
 
 Your Save DC represents the difficulty a creature would have to resist your static effects (such as Traps) and ongoing effects (such as Spells). Every creature has a Save DC, which is equal to 10 + its Prime Modifier + its Combat Mastery.
 
-## Save DC Formula
+#### Save DC Formula
 
 10 + Prime Modifier + Combat Mastery
 
@@ -1249,13 +1254,13 @@ Your Save DC represents the difficulty a creature would have to resist your stat
 
 **Example:** A Giant Snake targets a Barbarian with a Melee Attack that causes the target to become Restrained. The Giant Snake makes an Attack Check that's Contested by the Barbarian's Physical Save. If the Barbarian fails its Save against the effect it becomes Restrained. However, the Barbarian can repeat its Save at the end of each of its turns to free itself from being Restrained. When it repeats its Save it does so against the Giant Snake's Save DC.
 
-## Dynamic Attack Saves
+### Dynamic Attack Saves
 
 Some game features (such as a Maneuvers, Techniques, Spells, etc.) both deal damage and impose an effect on its target. This triggers what is called a Dynamic Attack Save.
 
 The provoking creature makes an Attack Check (or Spell Check) at the same time that the target makes its Save. The provoking creature's Check is compared against the target's Defense to determine if the target takes damage, and the target's Save is compared against the provoking creature's Save DC to determine if the target is subjected to the effect.
 
-## Dynamic Attack Save Outcomes
+#### Dynamic Attack Save Outcomes
 
 A Dynamic Attack Save can result in 1 of 4 outcomes:
 
@@ -1272,13 +1277,13 @@ When a creature has Advantage (ADV) on a Check or Save, it rolls two d20 and tak
 
 **Example:** A creature has ADV on a Check. Normally it would roll a single d20 when making the Check, but because it has ADV it rolls two d20 instead and takes the highest number rolled.
 
-## Gaining Advantage
+### Gaining Advantage
 
 When a creature makes a Check or Save, it can spend 1 or more AP to gain ADV on its Check or Save per AP spent (see 'Action Points' on page 39 for more information).
 
 **Example:** A Barbarian chooses to make an Attack with a Greatmaul against a creature. The Barbarian can spend 1 AP to grant themselves ADV on their Attack Check.
 
-## Stacking ADV or DisADV
+### Stacking ADV or DisADV
 
 Sometimes a creature might have multiple sources of ADV (or DisADV) on a single Check or Save.
 
@@ -1292,7 +1297,7 @@ Sometimes a creature might have multiple sources of ADV (or DisADV) on a single 
 
 **DC Tip:** ADV 1 and DisADV 1 is the same thing as 'regular' ADV and DisADV. When rolling a d20 to make a Check or Save, the 1 just represents the 1 additional d20 you're rolling, which is what happens with regular ADV and DisADV. Most of the time they'll simply be referred to as ADV and DisADV.
 
-## Combining ADV & DisADV
+### Combining ADV & DisADV
 
 If a creature has both ADV and DisADV at the same time, each instance cancels out. If they all cancel out, the creature makes a standard d20 roll as usual. If there are any remaining ADV or DisADV, then it makes the roll with whatever ADV (or DisADV) is left over.
 
@@ -1302,7 +1307,7 @@ If a creature has both ADV and DisADV at the same time, each instance cancels ou
 
 **DC Tip:** Basically just subtract any ADV or DisADV from each other and see what you are left with, and if the answer is ever 0, then you just make a standard d20 roll.
 
-## Variable ADV & DisADV
+### Variable ADV & DisADV
 
 Gaining ADV and DisADV on Checks made against other creatures is very common. Sometimes you might have to make a Check against a group of creatures where you have ADV or DisADV on the Check against some of the targets but not all of them. When that happens, follow these steps below:
 
@@ -1333,11 +1338,11 @@ During Combat, each time a creature makes the same Check before the end of its t
 
 ## Check & Save Outcomes
 
-## Critical Success & Failure
+### Critical Success & Failure
 
 When a creature rolls a 20 on a d20, the Check or Save gains a Critical Success. When a creature rolls a 1 on a d20, the Check or Save suffers a Critical Failure. A Critical Success or Critical Failure can affect the outcome in different ways, as determined by the type of Check or Save being made.
 
-## Attack Checks & Spell Checks
+### Attack Checks & Spell Checks
 
 ## Critical Success
 
@@ -1355,7 +1360,7 @@ When a creature rolls a 20 on a d20, the Check or Save gains a Critical Success.
 
 
 
-## Saves, Skill Checks, & Trade Checks
+### Saves, Skill Checks, & Trade Checks
 
 ## Critical Success
 
@@ -1371,9 +1376,9 @@ When a creature suffers a Critical Failure on a Save, Skill Check, or Trade Chec
 
 When multiple creatures gain a Critical Success in a contest (or all creatures suffer a Critical Failure), the creature with the highest total result wins the contest.
 
-## Degrees of Success & Failure
+### Degrees of Success & Failure
 
-## Degrees of Success
+#### Degrees of Success
 
 If a creature succeeds on a Check or Save by 5 or more, they may gain additional benefits beyond those of a normal success. The Check or Save will include a success statement, such as **Success**, **Success (5)**, **Success (10)**, or **Success (each 5)**.
 
@@ -1393,7 +1398,7 @@ If a success statement says **Success (5)** then the creature gains the listed b
 
 **Example:** A Spell increases a creature's Speed by 1 on a successful Spell Check, but has the following success statements: '**Success (5):** Ignore Difficult Terrain,' and '**Success (10):** Immune to Slowed.' That means that the creature's Speed is increased by 1 and ignores Difficult Terrain if its Spell Check is 5 above the Spell's DC, and the creature is also immune to the Slowed Condition if its Spell Check is 10 above the Spell's DC.
 
-## Degrees of Failure
+#### Degrees of Failure
 
 If a creature fails on a Check or Save by 5 or more, they may suffer additional penalties beyond those of a normal failure. The Check or Save will include a failure statement, such as **Failure**, **Failure (5)**, **Failure (10)**, or **Failure (each 5)**.
 
@@ -1419,15 +1424,15 @@ If a failure statement says **Failure (5)** then the creature suffers the listed
 
 ## Attacks & Defenses
 
-## Attacks
+### Attacks
 
 When a creature makes an Attack, it can do so by choosing a target within the Attack's Range (Melee or Ranged) and by making a Check (Attack or Spell). How the Attack is resolved is determined by its Type and its Range.
 
-## Attack Types
+#### Attack Types
 
 There are 2 types of Attacks: **Martial** and **Spell**.
 
-## Martial Attacks
+#### Martial Attacks
 
 A creature makes a Martial Attack when they make an Attack Check using a Weapon or Unarmed Strike against a target's Defense.
 
@@ -1435,25 +1440,25 @@ A creature makes a Martial Attack when they make an Attack Check using a Weapon 
 
 **Weapon Attack:** A Martial Attack made using a Weapon, such as an Axe, Sword, or Bow. You can draw a Weapon as part of an Attack made using it.
 
-## Spell Attacks
+#### Spell Attacks
 
 A creature makes a Spell Attack when they make a Spell Check against a target's Defense. See 'Spell Check vs Defense' on page 56 for more information.
 
-## Attack Ranges
+#### Attack Ranges
 
 There are 2 types of Attack Ranges: **Melee** and **Ranged**.
 
-## Melee Attack
+#### Melee Attack
 
 When a creature makes a Melee Attack they can do so against a target within its Melee Range. A creature's Melee Range is 1 Space, unless otherwise stated.
 
-## Ranged Attack
+#### Ranged Attack
 
 When a creature makes a Ranged Attack they can do so against a target within its Range. The Range is determined by the type of Weapon it's Attacking with or by consulting the Feature or Spell its using to make the Ranged Attack.
 
 **Close Quarters:** Ranged Attacks have Disadvantage if an enemy is within 1 Space of you, provided the enemy isn't Incapacitated.
 
-## Weapon Ranges
+#### Weapon Ranges
 
 A Weapon that can be used to make a Ranged Attack has a Range shown in parentheses after its Ammo, Toss, or Thrown property (see 'Weapons' on page 75).
 
@@ -1465,7 +1470,7 @@ You can't make attacks against targets beyond your Weapon's long range.
 
 **Example:** A Short Bow with a range of (15/45) means that it can be used to make attacks against targets between 1 and 15 Spaces, attacks with Disadvantage against targets between 16 and 45 Spaces, and can't attack targets that are 46 Spaces or farther away.
 
-## Determining if an Attack Hits
+#### Determining if an Attack Hits
 
 When a creature makes an Attack, the result of the Attack Check or Spell Check is compared to the target's Defense to determine whether or not the Attack Hits the target. The Attack Hits if the result of the Attack Check is equal to or greater than the target's Defense.
 
@@ -1473,43 +1478,43 @@ When a creature makes an Attack, the result of the Attack Check or Spell Check i
 
 
 
-## Defenses
+### Defenses
 
 When a creature makes an Attack (see the 'Combat Actions Sidebar' on page 39) to attempt to deal damage to a target, the creature's Check is compared against the value of one of the target's Defenses (Precision Defense or Area Defense) to determine if the Attack hits.
 
-## Precision Defense
+#### Precision Defense
 
 Precision Defense (PD) measures a creature's ability to avoid attacks that can be dodged, such as a precise strike or a ranged projectile. It reflects a combination of reflexes and tactical foresight, making it a crucial defense against single-target assaults.
 
-## PD Calculation
+##### PD Calculation
 
 Your PD is equal to 8 plus your Combat Mastery, Agility, and Intelligence. If you are wearing Armor or wielding a Shield (see 'Equipment' on page 75), you also add their respective bonuses to your PD.
 
 - **Agility:** Represents your reaction speed and physical swiftness, allowing you to evade incoming attacks.
 - **Intelligence:** Reflects your ability to anticipate danger and position yourself wisely, giving you the time needed to react.
 
-## PD Formula
+##### PD Formula
 
 8 + Combat Mastery + Agility + Intelligence + Bonuses
 
-## Area Defense
+#### Area Defense
 
 Area Defense (AD) measures a creature's ability to withstand attacks that can't be avoided, such as explosions, shockwaves, or other widespread effects. Instead of relying on dodging, Area Defense reflects raw endurance, resilience, and sheer force of will to endure the assault.
 
-## AD Calculation
+##### AD Calculation
 
 Your AD is equal to 8 plus your Combat Mastery, Might, and Charisma. If you are wearing Armor or wielding a Shield (see 'Equipment' on page 75), you also add their respective bonuses to your AD.
 
 - **Might:** Represents your physical toughness and endurance, allowing you to absorb and resist bodily harm.
 - **Charisma:** Reflects your inner resolve and commanding presence, reinforcing your ability to withstand mental and supernatural assaults.
 
-## AD Formula
+##### AD Formula
 
 8 + Combat Mastery + Might + Charisma + Bonuses
 
-## Health Points & Death's Door
+### Health Points & Death's Door
 
-## Health Points
+#### Health Points
 
 Health Points (HP) are a game statistic representing a creature's ability to sustain damage. The stronger the creature the more HP it generally has, signifying the greater difficulty in defeating it.
 
@@ -1517,7 +1522,7 @@ Health Points (HP) are a game statistic representing a creature's ability to sus
 
 **DC Tip:** Most damage a creature takes is nonlethal-it just 'wears them down' until they get closer and closer to Death's Door. Lighter hits might graze you, while bigger hits knock you off your feet. The description and roleplay of how damage is taken can change depending on its source and the situation, but Health Points represent how much of a beating you can take before you die.
 
-## Health Points at 1st Level
+#### Health Points at 1st Level
 
 A PC has a number of Health Points equal to Class HP + Might. A PC might also gain additional HP from its Ancestry, such the Dwarf Trait Tough (+1 HP) or the Elf Trait Frail (-2 HP).
 
@@ -1527,7 +1532,7 @@ Class HP + Might + Ancestry HP (if any)
 
 **Example:** A PC picks the Champion Class at Level 1 and starts with a Might of 3 (the highest possible at Level 1). The Champion Class grants a base of 9 HP. The PC then adds +3 HP from their Might to get a total of 12 HP (9 + 3). If any of their Ancestry Traits increase or decrease their HP, they would add those to the total to determine their starting HP.
 
-## Temporary Health Points
+#### Temporary Health Points
 
 Temporary Health Points (Temp HP) are additional Health Points that persist for a limited duration. When you take damage, your Temp HP is reduced first, and then any remaining damage carries over to reduce your HP.
 
@@ -1539,7 +1544,7 @@ Temporary Health Points (Temp HP) are additional Health Points that persist for 
 
 
 
-## Health Thresholds
+#### Health Thresholds
 
 Certain game mechanics affect creatures while their current HP is within certain thresholds. These HP thresholds are determined before any temporary changes to your HP maximum, such as from the Doomed Condition or the Aid Spell.
 
@@ -1553,11 +1558,11 @@ A creature's Death Threshold is equal to 0 HP minus its Prime Modifier and its C
 
 **Example:** A creature with a maximum HP of 8 is considered Bloodied when its HP is 4 or lower, Well-Bloodied when its HP is 2 or lower, and on Death's Door when its HP is 0 or lower. If its Prime Modifier is 3 and its Combat Mastery is 1, the creature's Death Threshold is -4 HP. That creature dies if its HP is ever reduced to -4 HP or lower.
 
-## Death's Door
+#### Death's Door
 
 When a PC is reduced to 0 HP they're on 'Death's Door' and fighting for their life. This is represented in whatever way the player wants to describe this state looks like for their character. They are NOT unconscious, they are in a heavily weakened state about to die if something is not done SOON! They could be prone crawling on the ground, holding themselves up with their sword, or spitting out blood as they hold on for dear life.
 
-## Entering Death's Door
+##### Entering Death's Door
 
 When you're reduced to 0 HP or lower, you gain Exhaustion 1. Until you are restored to 1 HP or higher, you suffer the following effects:
 
@@ -1566,7 +1571,7 @@ When you're reduced to 0 HP or lower, you gain Exhaustion 1. Until you are resto
 
 **DC Tip:** You basically can only spend 1 AP per round of Combat, either on your turn or as a Reaction. This usually happens while on Death's Door.
 
-## Death Saves
+##### Death Saves
 
 When a creature makes a Death Save, it rolls a d20 to determine if it Succeeds or Fails the Save.
 
@@ -1584,7 +1589,7 @@ When a creature makes a Death Save, it rolls a d20 to determine if it Succeeds o
 
 **DC Tip:** If you are on Death's Door outside of Combat, you repeat the Death Save every 12 seconds instead (5 times per minute).
 
-## Death's Door Sidebar
+##### Death's Door Sidebar
 
 ## Bleeding X (Condition)
 
@@ -1606,23 +1611,23 @@ Monsters and NPCs normally die when they're reduced to 0 HP, however the Game Ma
 
 
 
-## Damage
+### Damage
 
-## Degrees of Damage
+#### Degrees of Damage
 
 Each Attack has a base amount of damage that's dealt on a Hit. This value is listed alongside the Weapon (see 'Equipment' on page 75) or in the Spell's description (see 'Spellcasting' on page 54). If the Check beats the targets Defense by 5 or more, the target takes extra damage and may suffer additional effects (see 'Check & Save Outcomes' on page 29 for more information).
 
-## Hit & Miss
+#### Hit & Miss
 
 When you make a Check against a target's Defense, the Check is considered a **Miss** if the result is below the target's Defense and it's considered a **Hit** if the result is equal to or above the target's Defense.
 
-## Hit Success (each 5)
+#### Hit Success (each 5)
 
 An Attack deals +1 additional damage for every 5 the result of the Check is above the target's Defense. If the result of the Check is 5 or more above the target's Defense, it is considered a **Heavy Hit**. If the result of the Check is 10 or more above the target's Defense, it is considered a **Brutal Hit**. Brutal Hits are considered Heavy Hits for purposes of effects that trigger on a Heavy Hit.
 
 **DC Tip:** Heavy Hits are 5 over, Brutal Hits are 10 over, but if a Character ever manages to get 15 over a target's Defense I call this Beyond Brutal. Then I count by 5s to see how many instances of +1 bonus damage they get.
 
-## Degrees of Damage Table
+#### Degrees of Damage Table
 
 The table below shows how the damage of an Attack can change as determined by the result of the Check.
 
@@ -1633,13 +1638,13 @@ The table below shows how the damage of an Attack can change as determined by th
 | +5 or greater | Heavy Hit | Base Damage + 1 |
 | +10 or greater | Brutal Hit | Base Damage + 2 |
 
-## Critical Hits
+#### Critical Hits
 
 When you roll a 20 on a d20 for an Attack, it's considered a Critical Hit. A Critical Hit automatically Hits the target, bypasses Damage Reduction, and deals an additional +2 damage.
 
 **DC Tip:** An Attack can score a Critical Hit without the result of the Check being 5 or more above the target's Defense. When that happens, the Check is considered a Critical Hit and the target simply takes the base damage +2, however, this scenario is rare. A Critical Hit will normally result in a Check that's 5 or even 10 above the target's Defense, causing the target to take +2 damage from the Critical Hit plus +1 additional damage for every 5 the result is higher than its Defense.
 
-## Damage Calculation Sidebar
+#### Damage Calculation Sidebar
 
 This is a way for both Players and Game Masters to add up their damage in a way that's simple and quick. Once you Hit with an Attack, the GM will tell you if the Attack was a Heavy Hit or higher. This helps you determine how much additional damage your Attack deals (see the process shown below). The GM will apply any applicable Resistances or Vulnerabilities to determine the total amount of damage the target takes (see 'Damage Modifications' on page 36 for more on the target reducing damage).
 
@@ -1660,7 +1665,7 @@ Add up the damage totals in the following order:
 
 
 
-## Damage Types
+### Damage Types
 
 There are 13 different damage types in the game, as seen in the list below. Each damage type represents a different method for harming a creature.
 
@@ -1690,7 +1695,7 @@ There are 13 different damage types in the game, as seen in the list below. Each
 
 **True Damage:** A special type of damage that can't be reduced by any means.
 
-## Damage Type Categories
+#### Damage Type Categories
 
 Damage types (except True damage) are organized into the following categories: Physical, Elemental, and Mystical.
 
@@ -1700,11 +1705,11 @@ Damage types (except True damage) are organized into the following categories: P
 
 **Mystical Damage:** Includes Psychic, Radiant, and Umbral.
 
-## Damage Vulnerability, Resistance, & Immunity
+### Damage Vulnerability, Resistance, & Immunity
 
 Resistance is a way for creatures to reduce the damage they take, while Vulnerability increases damage taken. The source of what gives them this ability could come from a natural ability they have, a Class Feature, Magic Items, etc. Here are the different ways that these different effects work:
 
-## Damage Resistance
+#### Damage Resistance
 
 **Resistance (X):** Damage taken of the specified type is reduced by X each time the creature takes damage of that type.
 
@@ -1716,13 +1721,13 @@ Resistance is a way for creatures to reduce the damage they take, while Vulnerab
 
 **Example 2:** If you had Radiant Resistance and took 1 Radiant damage, the damage would be halved to 0.5 and rounded back up to 1 damage taken. However, since Resistance reduces damage by a minimum of 1, the damage would be reduced to 0.
 
-## Damage Immunity
+#### Damage Immunity
 
 Damage taken of the specified type is reduced to 0.
 
 **Example:** If you had Cold Immunity and were dealt 7 Cold damage, you would take 0 damage instead.
 
-## Damage Vulnerability
+#### Damage Vulnerability
 
 **Vulnerability (X):** Increase damage taken by X each time the creature takes damage of that type.
 
@@ -1734,7 +1739,7 @@ Damage taken of the specified type is reduced to 0.
 
 
 
-## Damage Reduction
+### Damage Reduction
 
 Damage Reduction (DR) grants Damage Resistance (Half) against Attacks, except against Critical Hits and Heavy Hits (or higher). There are 3 types of Damage Reduction:
 
@@ -1748,7 +1753,7 @@ Damage Reduction (DR) grants Damage Resistance (Half) against Attacks, except ag
 
 **Example:** A creature makes an Attack to hit a target with an PD of 10. The result of their Check is 12, which hits the target and deals 4 Bludgeoning damage. The target has a PDR, which provides Bludgeoning Resistance against this Attack, and halves the damage to 2 (4 / 2 = 2). Alternatively, if the result of the Check was 15, it would be 5 over the target's PD of 10, making it a Heavy Hit. In this scenario, the PDR is bypassed, the damage isn't reduced, and the target takes the full 4 damage plus 1 damage for the Heavy Hit.
 
-## Stacking Damage Vulnerabilities, Resistances, & Immunities
+### Stacking Damage Vulnerabilities, Resistances, & Immunities
 
 **Example:** If you had Fire Resistance (1) from an Ancestry Trait and Fire Resistance (1) from a Class Feature, these Resistances would be replaced by Fire Resistance (Half) instead. So if you took 4 Fire damage from an Attack, the damage would be reduced by half down to 2 damage (4 / 2 = 2).
 
@@ -1762,7 +1767,7 @@ Multiple sources of Damage Resistance (Half) or Damage Vulnerability (Double) do
 
 **Example:** If you had Lightning Resistance (Half) from a Class Feature and Elemental Resistance (which includes Lightning Resistance) from the EDR granted by your Armor, you would still only take half damage when you take Lightning damage (not a quarter of the damage, because they don't stack).
 
-## Damage Modifications
+### Damage Modifications
 
 Total damage is determined after all damage modifications are taken into account. When a creature takes damage, the total damage taken is determined by following the steps below:
 
@@ -1785,9 +1790,9 @@ If a creature has the same type and amount of Resistance and Vulnerability, they
 
 
 
-## Managing Damage Multiples
+### Managing Damage Multiples
 
-## Multiple Damage Types
+#### Multiple Damage Types
 
 **Resistances:** When you take multiple types of damage that you have Resistances to, you apply your Resistances to each damage type individually.
 
@@ -1797,11 +1802,11 @@ If a creature has the same type and amount of Resistance and Vulnerability, they
 
 **Example:** A Barbarian Hits a target with an Attack using a magical Hammer that deals 2 Bludgeoning damage and 2 Lightning damage. If the Barbarian is Raging at the time, they deal +1 damage from their Rage Feature. The Barbarian can choose to apply their Rage damage to the Bludgeoning or Lightning damage.
 
-## Bonus Damage Against Multiple Targets
+#### Bonus Damage Against Multiple Targets
 
 If you add bonus damage to an Attack that targets multiple targets, the bonus damage only applies to one target of your choice. The Attack still benefits from Critical Hits, Heavy Hits, and beyond against each target.
 
-## Shared Damage
+#### Shared Damage
 
 When 2 or more creatures share damage, divide the damage by the number of creatures (rounding up), and distribute the damage equally among the creatures. If the creatures are sharing damage of multiple types, you calculate the shared damager for each type taken (see example 3)
 
@@ -1815,7 +1820,7 @@ When 2 or more creatures share damage, divide the damage by the number of creatu
 
 
 
-## CHAPTER 2: Combat Rules
+# CHAPTER 2: Combat Rules
 
 
 
@@ -1825,7 +1830,7 @@ When 2 or more creatures share damage, divide the damage by the number of creatu
 
 ## Combat Resources
 
-## Action Points
+### Action Points
 
 You have Actions Points (AP) which you can spend in Combat. You can spend AP on Actions, Reactions, or Features, such as Maneuvers, Cantrip Enhancements, Class Features, and Ancestry Features. You are considered to be taking an action when you spend Action Points. Your Action Point maximum is 4.
 
@@ -1835,7 +1840,7 @@ You have Actions Points (AP) which you can spend in Combat. You can spend AP on 
 
 **DC Tip:** Remember, you get all of your AP back at the end of your turn, so make sure you spend all of your AP before your turn ends.
 
-## AP Outside of Combat
+#### AP Outside of Combat
 
 Action Points can't be spent outside of Combat. Instead, a creature declares what Action it will take and performs that Action. A creature can't take an Action that has an AP cost higher than the creature's AP maximum.
 
@@ -1861,7 +1866,7 @@ Keep in mind that casting Spells outside of Combat is already accounted for, in 
 
 **DC Tip:** To those that find these explanations, both narrative and mechanical, unsatisfactory, I offer the following simple adjustment: any Check made during Combat has its DC increased by 5. This is still the Beta and this concept of the game will continue to be monitored and polished, but I hope this empowers our GMs to run the game smoothly.
 
-## Mana Points
+### Mana Points
 
 Spellcasting PCs have Mana Points (MP) which can be spent on Spells, Spell Enhancements, Class Features, and Ancestry Traits.
 
@@ -1869,13 +1874,13 @@ Spellcasting PCs have Mana Points (MP) which can be spent on Spells, Spell Enhan
 
 **Regaining MP:** You regain all MP when you finish a Long Rest.
 
-## MP Outside of Combat
+#### MP Outside of Combat
 
 When you spend MP outside of Combat, the cost is reduced by 1 (minimum of 1). The total MP cost before this reduction can't be greater than your Mana Spend Limit.
 
 **DC Tip:** If you were to run 1 mile to a neighbor's house, there's not much stress there... but if you were to run 1 mile away from a tiger that was chasing you... that's FAR more difficult and exhausting. This concept holds true for Spellcasting too.
 
-## Stamina Points
+### Stamina Points
 
 Martial PCs have Stamina Points (SP) which can be spent on Techniques and Class Features, and are also used in place of Action Points when performing Martial Maneuvers.
 
@@ -1889,7 +1894,7 @@ Martial PCs have Stamina Points (SP) which can be spent on Techniques and Class 
 
 **Mana to Stamina:** Once on each of your turns, you can spend 1 or more MP to regain 1 SP per MP spent.
 
-## SP Outside of Combat
+#### SP Outside of Combat
 
 You can perform any Action outside of Combat that uses Stamina without spending any SP, however the SP cost can't be higher than your SP maximum.
 
@@ -1899,7 +1904,7 @@ You can perform any Action outside of Combat that uses Stamina without spending 
 
 This isn't game breaking because Stamina Points aren't like Mana Points. Features that use Stamina don't provide magical benefits, they provide physical benefits such as being able to jump farther, shove things, or smash things. These things usually don't provide many advantages outside of combat. It's also intended that if a PC can spend SP to jump farther, then they should be able to use that outside of Combat to jump farther for free.
 
-## Grit Points
+### Grit Points
 
 Characters with a high Charisma Attribute have a strong force of will. Grit Points represent a Character being able to push through and go beyond their limits in difficult situations.
 
@@ -1909,7 +1914,7 @@ You gain a number of Git Points equal to 2 + your Charisma. If your Charisma is 
 
 **Regaining Grit Points:** You regain all spent Grit Points when you complete a Long Rest.
 
-## Spending Grit Points
+#### Spending Grit Points
 
 **Bearing Damage:** When you're Hit by an Attack, you can spend 1 or more Grit Points to reduce the damage you take by 1 per Grit Point spent.
 
@@ -1921,7 +1926,7 @@ You gain a number of Git Points equal to 2 + your Charisma. If your Charisma is 
 
 Anything that you spend Action Points on is considered an Action.
 
-## Taking an Action
+### Taking an Action
 
 A creature can take an Action on its turn by spending Action Points (AP). The AP cost of taking an Action is listed in the Action's description.
 
@@ -1936,11 +1941,11 @@ Once per turn, you can perform up to 2 of the following tasks without spending A
 
 **Additional Minor Actions:** You can spend 1 AP to perform a Minor Action again during the same turn.
 
-## Types of Actions
+### Types of Actions
 
 A creature can take the following Actions on its turn: Attack, Move, Disengage, Dodge, Grapple, Help, Hide, Object, Shove, and Spell Action.
 
-## Offensive Actions
+### Offensive Actions
 
 ## Attack
 
@@ -1980,7 +1985,7 @@ If you move at least 2 Spaces in a straight line, you can spend 1 AP to attempt 
 
 
 
-## Defensive Actions
+### Defensive Actions
 
 ## Disengage
 
@@ -2002,7 +2007,7 @@ See 'Hidden Creatures' on page 74 for more on hiding.
 
 **DC Tip:** When you take the Hide Action and beat an enemy's Passive Awareness, you only become Hidden from that creature because it can't see or hear you (you are both Unseen and Unheard). However, if your Stealth Check beats one enemy's Awareness Score but not another's, then you are Hidden from the first enemy, but you're not Hidden from the second enemy.
 
-## Utility Actions
+### Utility Actions
 
 ## Move
 
@@ -2042,7 +2047,7 @@ You can spend 1 or more AP to cast a Spell that you know. If the Spell has a Man
 
 
 
-## Skill Based Actions
+### Skill Based Actions
 
 A creature can take the following Skill Actions on its turn: Analyze Creature, Calm Animal, Combat Insight, Conceal, Feint, Intimidate, Investigate, Jump, Medicine, Mounted Defense, Pass Through, or Search.
 
@@ -2140,9 +2145,9 @@ You can spend 1 AP to attempt to locate 1 or more Hidden creatures and concealed
 
 
 
-## Advanced Actions
+### Advanced Actions
 
-## Held Actions
+#### Held Actions
 
 Sometimes the circumstances aren't exactly right for the action you want to take. When that happens, you can choose to wait until just the right moment by Holding your Action. To Hold your Action, you must declare an Action you want to take and state a Trigger. Once you do so, you can't change the Action or Trigger.
 
@@ -2162,7 +2167,7 @@ Sometimes the circumstances aren't exactly right for the action you want to take
 
 Reactions are Actions that a creature can take during another creature's turn. A creature can't take a Reaction on their own turn, unless the Reaction allows them to do so in response to another creature's Reaction. Reactions are not affected by the Multiple Check Penalty.
 
-## Taking a Reaction
+### Taking a Reaction
 
 A creature can take a Reaction on another creature's turn provided it meets the requirements to do so. The requirements to take a Reaction are listed in the Reaction's Prerequisite and Trigger statements. You can only take 1 Reaction per Trigger.
 
@@ -2170,13 +2175,13 @@ A creature can take a Reaction on another creature's turn provided it meets the 
 
 **Example 2:** When an Attack is made within 1 Space of a Martial PC, the PC could take the Parry Maneuver against the Attack (1st trigger). If the Attack still Hits (2nd trigger), the PC could take the Protection Maneuver to share the damage with the target.
 
-## Reaction Requirements
+### Reaction Requirements
 
 **Prerequisite:** A prerequisite states the Feature (Martial Feature, Spellcasting Feature, or a different Feature) required to gain access to the Reaction.
 
 **Trigger:** A trigger states the conditions that must be met in order for a creature to take the Reaction.
 
-## Spending Resources
+### Spending Resources
 
 If a Reaction has a resource cost (Action Points, Mana Points, Stamina Points, etc.), a creature must spend those resources to take the Reaction.
 
@@ -2188,9 +2193,9 @@ If a Reaction has a resource cost (Action Points, Mana Points, Stamina Points, e
 
 **Multiple Reactions:** A creature can spend Action Points to take multiple Reactions provided they meet all the conditions and can spend enough resources to do so.
 
-## Types of Reactions
+### Types of Reactions
 
-## Opportunity Attack
+#### Opportunity Attack
 
 **Prerequisite:** Martial Mastery
 
@@ -2200,7 +2205,7 @@ If a Reaction has a resource cost (Action Points, Mana Points, Stamina Points, e
 
 **DC Tip:** You can spend additional AP to gain ADV or to perform Maneuvers with the Attack.
 
-## Spell Duel
+#### Spell Duel
 
 **Prerequisite:** Spellcasting Mastery
 
@@ -2214,7 +2219,7 @@ If a Reaction has a resource cost (Action Points, Mana Points, Stamina Points, e
 
 **Multiple Participants:** Additional creatures can choose to participate in helping the Spell take effect or participate in stopping the Spell from taking effect. If multiple creatures choose to participate in the Spell Duel, the participants are sorted into Initiators (those trying to help the Spell take effect) and Challengers (those trying to prevent the Spell from taking effect). During the Contest (see further below) every participant makes their Spell Check, and the highest Initiator result is compared against the highest Challenger result to determine the outcome.
 
-## Choosing a Spell
+##### Choosing a Spell
 
 You declare which Spell you are using to challenge the opposing Spell and then describe how you do so using your Spell. The GM decides if that makes sense.
 
@@ -2226,7 +2231,7 @@ You declare which Spell you are using to challenge the opposing Spell and then d
 
 **Success & Failure:** The success and failure statements of your Spell are replaced by the success and failure statements in the Contest section below.
 
-## Contest
+##### Contest
 
 The Spell Check the opposing creature makes to cast its Spell is Contested by the Spell Check you make to cast your Spell. When comparing the Spell Checks for the purpose of determining the winner of the Contest, each creature gains a bonus to its Check equal to the MP it spent on its Spell.
 
@@ -2254,7 +2259,7 @@ Whatever the result, each creature still spends all AP, MP, or other resources t
 
 **Creative Example 4:** Enemy casts Fireball at an area. You choose your Calm Emotions Spell and are in range of the enemy caster. You describe attempting to changing their emotions to be chill and relaxed... they don't want to hurt anyone anymore. Your GM says that makes no sense and you now have to pick some other Spell or the enemy's Spell goes off as intended.
 
-## Wild Magic Table
+##### Wild Magic Table
 
 ## D20 Wild Surge Outcome
 
@@ -2295,29 +2300,29 @@ You can spend AP to perform one or multiple Maneuvers, which allow PCs with Mart
 
 **Defense:** Defense Maneuvers enable you to avoid or mitigate taking damage by blocking, deflecting, or dodging Attacks.
 
-## Multiple Maneuvers
+### Multiple Maneuvers
 
 You can't perform the same Maneuver more than once per Attack or Trigger, unless otherwise stated.
 
-## Maneuver Damage
+### Maneuver Damage
 
 If a Maneuver deals damage, it deals the same type of damage as the Weapon or Unarmed Strike you're using to perform the Maneuver, unless stated otherwise.
 
-## Save Effects
+### Save Effects
 
 Some Maneuvers force the target to make a Save against your Save DC or suffer a chosen effect. If you force a creature to Save against the effects of multiple Maneuvers that are a part of the same Attack, the target only makes 1 Save against all Physical Save effects.
 
-## Contest Effects
+### Contest Effects
 
 Some Maneuver force a Contest between you and the target creature. If you initiate a Contest with a creature against the effects of multiple Maneuvers, you and the target participate in 1 Contest for all effects.
 
-## Spending Stamina
+### Spending Stamina
 
 You can spend SP in place of Action Points when performing a Martial Maneuver.
 
 **Example:** If you wanted to add +1 damage to an Attack (a Power Attack Maneuver), instead of spending 1 AP you could spend 1 SP. You can do this for any Martial Maneuver.
 
-## Attack Maneuvers
+### Attack Maneuvers
 
 When you make a Martial Attack, you can spend additional AP to perform an Attack Maneuver as part of the Attack. You must choose to do so before you make the Attack Check.
 
@@ -2325,87 +2330,87 @@ When you make a Martial Attack, you can spend additional AP to perform an Attack
 
 **DC Tip:** Don't forget anyone can spend an additional 1 AP to gain ADV on their Attack Check.
 
-## Extend Attack
+#### Extend Attack
 
 **Maneuver:** (1 AP) Your Melee Attack Range is increased by 1 Space (or your Ranged Attack Range is increased by 5 Spaces) for the Attack.
 
-## Power Attack
+#### Power Attack
 
 **Maneuver:** (1 AP) You deal +1 damage with the Attack. You can use this Maneuver multiple times.
 
-## Sweep Attack
+#### Sweep Attack
 
 **Maneuver:** (1 AP) Choose 1 additional target within 1 Space of the original target that's within your Attack Range. Make 1 Attack Check against all targets. **Attack Hit:** The original target takes your Attack's damage, and each additional target Hit takes 1 damage of the same type. You can use this Maneuver multiple times.
 
 
 
-## Save Maneuvers
+### Save Maneuvers
 
 When you make a Martial Attack, you can spend additional AP to perform a Save Maneuver with the Attack. When you do, the target makes a Physical Save against your Save DC. **Save Failure:** The target suffers the effects of your Maneuver.
 
 **Example:** You spend 3 AP on an Attack Check against an enemy creature. 1 AP to take the Attack Action (make 1 Attack Check), 1 AP to use Trip (knock Prone), and 1 AP to use Knockback (pushed 1 Space away, possibly more).
 
-## Bleed
+#### Bleed
 
 **Maneuver:** (1 AP) The target begins Bleeding (1 True damage at the start of their turn).
 
-## Daze
+#### Daze
 
 **Maneuver:** (1 AP) The target becomes Dazed (DisADV on Mental Checks) on the next Mental Check it makes before the end of your next turn.
 
-## Expose
+#### Expose
 
 **Maneuver:** (1 AP) The target becomes Exposed (Attacks against it have ADV) against the next Attack made against it before the end of your next turn.
 
-## Hamstring
+#### Hamstring
 
 **Maneuver:** (1 AP) The target becomes Slowed (every 1 Space you move costs an extra 1 Space of movement) until the end of your next turn.
 
-## Hinder
+#### Hinder
 
 **Maneuver:** (1 AP) The target becomes Hindered (DisADV on Attacks) on the next Attack it makes before the end of your next turn.
 
-## Impair
+#### Impair
 
 **Maneuver:** (1 AP) The target becomes Impaired (DisADV on Physical Checks) on the next Physical Check it makes before the end of your next turn.
 
-## Knockback
+#### Knockback
 
 **Maneuver:** (1 AP) The target is pushed 1 Space away + up to 1 additional Space for every 5 it fails its Save by.
 
-## Trip
+#### Trip
 
 **Maneuver:** (1 AP) The target falls Prone.
 
 
 
-## Grapple Maneuvers
+### Grapple Maneuvers
 
 When you attempt to Grapple a creature, you can spend additional AP to perform a Grapple Maneuver as part of the Grapple attempt. You must choose to do so before you make the Grapple Check. **Grapple Success:** The target is Grappled and suffers the damage or effects of your Maneuver.
 
 You can also perform Grapple Maneuvers on creatures you have Grappled. When you perform a Grapple Maneuver against a creature you have Grappled, you make an Athletics Check Contested by the target's Martial Check. **Contest Success:** The target suffers the damage or effects of your maneuver. **Contest Failure:** The target suffers no additional effects but remains Grappled by you.
 
-## Body Block
+#### Body Block
 
 **Trigger:** You are targeted by an Attack.
 
 **Reaction (Maneuver):** (1 AP) You reposition a creature Grappled by you to shield yourself from damage. You and the Grappled creature take half the damage dealt by the attack and you can move the Grappled creature to any space adjacent to you immediately afterwards.
 
-## Restrain
+#### Restrain
 
 **Maneuver:** (1 AP) The target is Restrained until the Grapple ends. On its turn it can spend 1 AP to end being Restrained, but it remains Grappled until the Condition ends.
 
 **DC Tip:** Restrained makes the target Exposed (ADV on Attacks against them) and Hindered (Target has DisADV on their Attacks).
 
-## Slam
+#### Slam
 
 **Maneuver:** (1 AP) The target takes 1 Bludgeoning damage. **Success (each 5):** +1 damage.
 
-## Takedown
+#### Takedown
 
 **Maneuver:** (1 AP) The target falls Prone. You don't fall Prone unless you choose to do so.
 
-## Throw
+#### Throw
 
 **Requires:** The Grappled creature is your Size or smaller. **Maneuver:** (1 AP) The target is thrown up to a number of Spaces away from you equal to 1/2 of your Might (ending the Grappled Condition) + up to 1 additional Space for every 5 they fail the Contest by (see 'Throwing Creatures' on page 72 for more information).
 
@@ -2413,25 +2418,25 @@ You can also perform Grapple Maneuvers on creatures you have Grappled. When you 
 
 
 
-## Defense Maneuvers
+### Defense Maneuvers
 
 The Defense Maneuvers are taken to protect your allies or in Reaction to a trigger (an Attack Check, Spell Check, or Contest).
 
 **Reaction Maneuvers:** Some Maneuvers allow you to use a Reaction when a creature is targeted by an Attack (such as Parry, Raise Shield, and Side Step). For such Maneuvers, you can wait until after the Check is made, but you must decide to use the Maneuver before the GM says the result of the Check.
 
-## Parry
+#### Parry
 
 **Trigger:** When a creature you can see within 1 Space (including yourself) is targeted by an Attack against its PD.
 
 **Reaction (Maneuver):** (1 AP) You grant the target a +5 bonus to PD against this Attack.
 
-## Protect
+#### Protect
 
 **Trigger:** A creature you can see within 1 Space is Hit by an Attack.
 
 **Reaction (Maneuver):** (1 AP) The target takes half of the damage and you take the other half. The damage you take bypasses any Damage Reduction.
 
-## Raise Shield
+#### Raise Shield
 
 **Requires:** You're wielding a Shield.
 
@@ -2439,17 +2444,17 @@ The Defense Maneuvers are taken to protect your allies or in Reaction to a trigg
 
 **Reaction (Maneuver):** (1 AP) You grant the target a +5 bonus to AD against this Attack.
 
-## Side Step
+#### Side Step
 
 **Trigger:** You're targeted by an Attack against your PD.
 
 **Reaction (Maneuver):** (1 AP) You move 1 Space to a Space that's still within the Attack's range. When you do, the Attack has DisADV against you. If you move behind Cover, you don't gain the benefit of that Cover against the Attack.
 
-## Swap
+#### Swap
 
 **Maneuver:** (1 AP) You switch Spaces with a willing creature within 1 Space. If this movement would provoke an Opportunity Attack against you or the target creature, any Opportunity Attacks are made against you.
 
-## Taunt
+#### Taunt
 
 **Maneuver:** (1 AP) Choose an enemy creature that can see or hear you within 5 Spaces. Make an Attack Check, Influence Check, or Intimidation Check (your choice) contested by the target's Mental Save. **Contest Success:** The target is Taunted (DisADV on Attacks against creatures other than you) by you on their next Attack.
 
@@ -2457,15 +2462,15 @@ The Defense Maneuvers are taken to protect your allies or in Reaction to a trigg
 
 ## Techniques
 
-## Learning Techniques
+### Learning Techniques
 
 Martial Classes learn new Techniques at certain levels from the Techniques Known column in their Class Table.
 
-## Techniques List
+### Techniques List
 
 **BETA RULE:** There is only 1 Technique List (for now) that ALL Martial and Hybrid Classes have access to. There's potential to change this to be Class specific lists, grouped lists (like how Spell Lists work), etc. or it might just stay the same.
 
-## Technique Attack Checks
+### Technique Attack Checks
 
 **Maneuvers:** When you make an Attack Check as part of a Technique, you can spend additional AP to perform Attack or Save Maneuvers as part of that Attack Check. When you do, the Maneuvers only apply to 1 target of the Attack.
 
@@ -2475,7 +2480,7 @@ Martial Classes learn new Techniques at certain levels from the Techniques Known
 
 
 
-## Technique Enhancements
+### Technique Enhancements
 
 Technique Enhancements allow a Martial character to increase the potency of their Techniques by spending additional SP on the Technique. Technique Enhancements are specific to each Technique and are included in a Technique's description. Many Technique Enhancements increase a Technique's damage (if applicable), its duration, its range, its number of targets, or its Area of Effect (if applicable).
 
@@ -2483,9 +2488,9 @@ Technique Enhancements allow a Martial character to increase the potency of thei
 
 **DC Tip:** Remember that you can use AP to perform a Maneuver to add to the Attack Check of the Technique as well.
 
-## Techniques
+### Techniques
 
-## Forbearance
+#### Forbearance
 
 When a creature you can see within 1 Space is targeted by an Attack, you can spend 1 AP and 1 SP as a Reaction to become the new target of the Check, and choose to switch places with the original target (if it's willing). If the Check is accompanied by a Save (as with a 'Dynamic Attack Saves' on page 27), you make the Save instead of the original target.
 
@@ -2497,7 +2502,7 @@ When a creature you can see within 1 Space is targeted by an Attack, you can spe
 
 
 
-## Heroic Bash
+#### Heroic Bash
 
 Using a Melee Weapon (or Unarmed Strike) you can spend 1 AP and 1 SP to attempt to send an enemy hurling through the air. Make an Attack Check against the PD of a target within 1 Space of you, and it makes a Physical Save against your Save DC. **Attack Hit:** It takes your Weapons(or Unarmed Strike) damage. **Save Failure:** It gets knockback horizontally up to 3 Spaces + 1 additional Space for every 5 it fails the Save by.
 
@@ -2513,7 +2518,7 @@ Using a Melee Weapon (or Unarmed Strike) you can spend 1 AP and 1 SP to attempt 
 
 **Bash & Smash:** You can spend an additional 1 AP and 1 SP to change the Target from one creature to every creature's PD within 1 Space.
 
-## Heroic Leap
+#### Heroic Leap
 
 Using a Melee Weapon (or Unarmed Strike), you can spend 1 AP and 1 SP to perform an exceptional leap and assault a creature. You gain up to your Speed in Spaces and increase your Jump Distance by 1 on the next Long or Vertical Jump you make. You leap into the air and make an Attack Check against the PD of a target within 1 Space of where you land, and it makes a Physical Save against your Save DC. **Attack Hit:** It takes your Weapon (or Unarmed Strike) damage. **Save Failure:** The target falls Prone.
 
@@ -2527,7 +2532,7 @@ Using a Melee Weapon (or Unarmed Strike), you can spend 1 AP and 1 SP to perform
 
 
 
-## Heroic Parry
+#### Heroic Parry
 
 **Trigger:** You or a creature you can see within 1 Space are targeted by an Attack against its PD.
 
@@ -2537,7 +2542,7 @@ Using a Melee Weapon (or Unarmed Strike), you can spend 1 AP and 1 SP to perform
 
 **Heroic Disengage:** You can spend 1 SP to allow the target to Disengage and move up to half its Speed after the Attack.
 
-## Heroic Taunt
+#### Heroic Taunt
 
 You can spend 1 AP and 1 SP to attempt to Taunt all enemies within 5 Spaces. Make an Attack Check or Intimidation Check (your choice) contested by each target's Mental Save. **Contest Success:** Each creature you beat is Taunted (DisADV on Attack and Spell Checks against creatures other than you) by you until the end of your next turn.
 
@@ -2545,7 +2550,7 @@ You can spend 1 AP and 1 SP to attempt to Taunt all enemies within 5 Spaces. Mak
 
 **Legendary Taunt:** You can spend 2 SP to have any damage deal by Taunted enemies to be halved against any creatures other than you.
 
-## Slip Away
+#### Slip Away
 
 **Trigger:** A Creature misses you with an Attack.
 
@@ -2555,11 +2560,11 @@ You can spend 1 AP and 1 SP to attempt to Taunt all enemies within 5 Spaces. Mak
 
 **Diving Attack:** You can spend 1 SP to make an Attack Check against a creature within 1 Space of you as part of Slip Away (you make this attack before the creature makes theirs).
 
-## Sunder Armor
+#### Sunder Armor
 
 You can spend 1 AP and 1 SP to make a Martial Attack against a creature's PD. **Hit:** Until the start of your next turn, the target gains Vulnerability (1) to a damage type dealt by the Attack.
 
-## Tumble and Dive
+#### Tumble and Dive
 
 **Trigger:** You are the target of an Attack.
 
@@ -2571,7 +2576,7 @@ Additional Opportunity Attacks are still able to be made against you when you Tu
 
 **Heroic Dive:** You can spend 2 SP to bring a willing creature within 1 Space along with you as part of Tumble and Dive. They move the same amount of Spaces as you and must also end their movement within 1 Space of you.
 
-## Volley
+#### Volley
 
 **Requires:** Ranged Weapon
 
@@ -2587,7 +2592,7 @@ You can spend 2 AP and 1 SP to launch a volley of projectiles. Choose a point wi
 
 
 
-## Whirlwind
+#### Whirlwind
 
 Using a Melee Weapon (or Unarmed Strike), you can spend 2 AP and 1 SP to make a single Attack Check against the AD of all creatures of your choice within 1 Space of you. **Attack Hit:** You deal your Weapon (or Unarmed Strike) damage to each creature.
 
@@ -2605,7 +2610,7 @@ Using a Melee Weapon (or Unarmed Strike), you can spend 2 AP and 1 SP to make a 
 
 In order to cast a Spell, you must know the Spell and spend the required amount of Resources (Action Points and Mana Points). The maximum number of Mana Points you can spend on a single Spell must be equal to or lower than your Mana Spend Limit (see below).
 
-## Spells Known
+### Spells Known
 
 Spellcaster Classes know a number of Spells as shown in the Spells Known column of their Class Tables. The number of Spells they know increases with level to reflect their growing knowledge of magic as they gain experience. When a PC learns a new Spell, the Spell must be included in their Spell List and possess any required Spell Tags. If a PC has access to multiple Spellcasting Features, they can learn new Spells by following the rules of either Feature.
 
@@ -2613,23 +2618,23 @@ Spellcaster Classes know a number of Spells as shown in the Spells Known column 
 
 Spellcasters increase their Spells Known as they gain levels or through certain Class Features, Subclass Features, Talents, or Ancestry Traits.
 
-## Spell Lists
+### Spell Lists
 
 There are 3 Spell Lists: **Arcane**, **Divine**, and **Primal**. A Spell List represents the domains of magic accessible to a Spellcaster using a certain source of magic. The Arcane Spell List includes all manner of Spells that can be cast using Arcane magic. The same is true of other Spell Lists; the Divine Spell list includes Spells that can be cast using Divine Magic, and the Primal Spell list includes Spells that can be cast using Primal Magic.
 
-## Arcane
+#### Arcane
 
 Arcane magic draws power from unrefined, raw, chaotic magical sources. This type of magic is used by mortal beings, covers a wide variety of unique Spells, and can be cast using incantations, rituals, runes, and other forms of organization that transforms raw magic into structured forms. Wizards, Warlocks, and Bards are the primary practitioners of this type of magic.
 
-## Divine
+#### Divine
 
 Divine magic draws power from divine beings, such as deities (greater and lesser gods), their followers (angels, archons, etc.), or the manifestations of abstract universal concepts (order, love, peace, war, etc.).
 
-## Primal
+#### Primal
 
 Primal magic draws power from the physical embodiment of the universe (the land, air, rivers, and fires) and the natural creatures that abide within it (plants, animals, and nature spirits). Druids use Primal magic through their supernatural relationship with nature itself, while Shamans use powerful totems of nature to manifest aspects of its power (bear fortitude, bull strength, wolf smell, eagle sight, etc.).
 
-## Gaining a Spell List
+#### Gaining a Spell List
 
 You can gain access to a Spell List through your Class's Spellcasting Feature (if it has one) or by selecting one from another Class using a Multiclassing Talent. When you learn a new Spell, you can select that Spell from any Spell List to which you currently have access.
 
@@ -2639,15 +2644,15 @@ You can gain access to a Spell List through your Class's Spellcasting Feature (i
 
 
 
-## Spell Resources
+### Spell Resources
 
 Each Spell has a minimum number of Action Points (AP) that must be spent to cast the Spell. Many Spells also include a minimum number of Mana Points (MP) that must also be spent to cast the Spell. This is known as the Base Mana Cost of a Spell.
 
-## Action Points
+#### Action Points
 
 All Spells require you to spend AP to cast them, with 2 AP as the standard cost for most Spells. Some Spells cost 1 AP (such as Cantrips) and usually have a lower base damage with modest effects. More powerful Spells have a higher AP cost (3 AP or higher) and deal greater damage or produce greater effects. These Spells may require a single Spellcaster to spend multiple turns to cast, or multiple Spellcasters working together (see 'Combo Spellcasting' on page 60 below).
 
-## Mana Points
+#### Mana Points
 
 Each Spell has an MP cost that you must spend to cast it. There are different ways to spend additional MP on Spells, and the MP is spent when the Spell goes off successfully.
 
@@ -2662,7 +2667,7 @@ You Regain all of your Mana Points when you complete a Long Rest
 
 **DC Tip:** See 'Combat Resources' on page 39 for more information on Action Points and Mana Points.
 
-## Spellcasting Without Mana Points
+#### Spellcasting Without Mana Points
 
 Certain Spells can be cast without spending MP. These Spells include special Spell Tags, such as the Cantrip and Ritual Spell Tags.
 
@@ -2674,53 +2679,53 @@ Spells with the Cantrip Spell Tag don't have an MP cost, but can be empowered wi
 
 By performing a 10 minute ritual immediately before casting a Spell with the Ritual Spell Tag, the Spell can be cast without spending MP even if it normally has an MP cost.
 
-## Spell Enhancements
+### Spell Enhancements
 
 Spell Enhancements allow a Spellcaster to increase the potency of their Spells by spending additional MP on the Spell (or AP for Cantrips). Spell Enhancements are specific to each Spell and are included in a Spell's description. Many Spell Enhancements increase a Spell's damage (if applicable), its duration, its range, its number of targets, or its Area of Effect (if applicable).
 
 **Performing a Spell Enhancement:** When you cast a Spell, you can spend additional AP or MP (stated in the Spell's description) to perform a Spell Enhancement with your Spell. If the Spell requires a Spell Check, you must choose to do so before you make the Check. You can perform the same Spell Enhancement multiple times per Spell, unless it's stated otherwise.
 
-## Mana Spend Limit
+### Mana Spend Limit
 
 You can spend a maximum number of Mana Points to cast a Spell equal to your Combat Mastery. This limitation includes MP spent on Spell Enhancements and other Features that require MP. This is called your Mana Spend Limit.
 
 **Example:** A level 6 Sorcerer (Combat Mastery of 3) can spend up to 3 MP on any Spell they cast. They could cast a Spell with a base cost of 3 MP, or they could cast a Spell with a base cost of 2 MP and spend 1 MP on Spell Enhancements. Alternatively, they could cast a Spell without an MP cost, such as a Cantrip, and spend 3 MP on Spell Enhancements.
 
-## MP Effects
+### MP Effects
 
 These are abilities and effects (usually coming from Class Features) that cost MP and are very similar to what types of effects a Spell could cause. You can use an MP Effect (such as the Bard's Bardic Performance Feature) in place of a Spell for the purposes of a Spell Duel or Combo Spellcasting.
 
-## Casting a Spell
+### Casting a Spell
 
 When you cast a Spell, you must make a Spell Check to determine the Spell's degree of success or failure. Your Spell Check is compared against the target's Defense, the Spell's DC, or the target's Contested Check.
 
-## Spell Check Vs Defense
+#### Spell Check Vs Defense
 
 These Spell Checks are compared against the target's Defense to determine whether or not the Attack hits the target. This type of Spell Check is called a Spell Attack. The Spell's description will state whether the Spell Check is made against the target's PD or AD (see Defense). If the result of the Spell Check is equal to or greater than the target's Defense, then the Attack hits.
 
-## Spell Check Vs Spell DC
+#### Spell Check Vs Spell DC
 
 These Spell Checks are compared against the Spell's own DC. Some Spells have a Spell DC in order to fully cast the Spell as intended. The Spell is still cast on a failure (except for a Critical Failure) but at a reduced effect. Depending on the Spell's DC Success statements, exceeding the Spell DC by 5 or more may yield additional benefits.
 
-## Spell Check Vs Save
+#### Spell Check Vs Save
 
 These Spells impose an effect on its target (such as a Condition). The Spell Check is Contested against the target's Save. If the result of the Spell Check is greater than the target's Save, the target becomes subjected to the Spell's effect. Depending on the Spell's Save Failure statements, failing the Save by 5 or more may impose additional penalties on the target.
 
-## Dynamic Attack Save
+#### Dynamic Attack Save
 
 When a Spell you cast initiates a Dynamic Attack Save against the target, you make a Spell Check against the target's Defense (as shown above) and the target makes a Save against your Save DC. Your Spell Check determines if the Spell deals damage to the target. The target's Save determines if they're subjected to the effects of the Spell.
 
-## Natural 1's
+#### Natural 1's
 
 When you make a Spell Check and get a Natural 1 on the d20 the Spell does not go off and it fizzles. You still spend the AP for the attempt, but you don't spend any MP or other resources. This Spell Check still counts as a Spell Check towards the Multiple Check Penalty.
 
-## Targeting Multiple Creatures
+#### Targeting Multiple Creatures
 
 If a Spell you cast targets more than 1 creature, or includes more than 1 in an Area of Effect (such as an Arc, Cone, Cylinder, Line, or Sphere), then you make 1 Spell Check against all creatures. Any Features you use to add extra damage only affect 1 target of your choice (not all of them).
 
 **Example:** If a Wizard casts Fireball that covers an area that includes 4 creatures, the Wizard would make 1 Spell Check and compare it to the AD of each creature. If it's Spell Check is equal to or higher than a target's AD, it deals full damage against that target. If the Spell Check is lower than a target's AD, it deals half damage instead.
 
-## Structure of Spellcasting Mechanics
+#### Structure of Spellcasting Mechanics
 
 When you cast a spell, you'll always make a Spell Check. Your result will be contested by one of 3 values depending on what the Spell does, and may also force the target to make a Save.
 
@@ -2734,9 +2739,9 @@ When you cast a spell, you'll always make a Spell Check. Your result will be con
 
 
 
-## Spell Characteristics
+### Spell Characteristics
 
-## Components
+#### Components
 
 There are 3 types of Components that a Spell could have. Some Spells require all 3 while some only require 1. In order to cast any Spell you must satisfy its Components outlined below.
 
@@ -2780,7 +2785,7 @@ These are objects, items, ingredients, and other physical items needed to cast t
 
 **DC Tip:** From a roleplay perspective, the PC could weave the Spell Components into their description of them casting a Spell. Players that want to add flavor to their spellcasting can create their own Material Components for a Spell (like slime from a frog to cast the Grease Spell). But these 'flavor' Components should not be held against them by the GM, unless the Player wants to track how many Spell Components they have.
 
-## Duration
+#### Duration
 
 Spells can either be instantaneous or continuous in their duration, and some Spells require you to Sustain them in order to keep them going (see the Sustain Action below for more information).
 
@@ -2794,21 +2799,21 @@ These Spells last a specific amount of time. They can often end early when the a
 
 
 
-## Sustain Action
+#### Sustain Action
 
 Some effects require you to Sustain them or they end. You must spend 1 AP at the start of each of your turns to Sustain an effect until the start of your next turn. You can't Sustain an effect while Dazed. When you become Dazed, any effect you're Sustaining immediately ends.
 
 **Outside of Combat:** You can only Sustain 1 effect at a time outside of Combat. If you attempt to Sustain a 2nd effect while already Sustaining a first, the first effect immediately ends.
 
-## Targets
+#### Targets
 
 Spells will declare a certain number of targets (one or multiple). A creature has to be inside of the Spell's Range or Area of Effect to be chosen as a target.
 
-## Range
+#### Range
 
 How far away can a target can be for the Spell to still be cast.
 
-## Areas of Effect
+#### Areas of Effect
 
 The amount of area that the Spell takes up. This is represented in a zone of some kind in one of the following patterns below:
 
@@ -2854,9 +2859,9 @@ A wall is a series of 1 Space squares connected to each other with at least one 
 
 
 
-## Categorizing Spells
+### Categorizing Spells
 
-## Schools of Magic
+#### Schools of Magic
 
 ## Astromancy
 
@@ -2902,7 +2907,7 @@ Restoration is the magic of healing, life, and resurrection. Spells that mend wo
 
 Transmutation is the magic of transforming one thing into another. Spells that turn creatures into other creatures (or objects into other objects or creatures) fall into the School of Transmutation.
 
-## Spell Tags
+#### Spell Tags
 
 Spell Tags represent a Spell's various properties. Spells can be organized into groups using these Spell Tags.
 
@@ -2910,9 +2915,9 @@ Spell Tags represent a Spell's various properties. Spells can be organized into 
 
 
 
-## Advanced Spellcasting
+### Advanced Spellcasting
 
-## Combo Spellcasting
+#### Combo Spellcasting
 
 If you and 1 or more creatures know the same Spell, you can join your resources together to cast the Spell as a team. This is called Combo Spellcasting.
 
@@ -2935,7 +2940,7 @@ You must meet the following requirements to participate in a Combo Spell:
 
 **Highest Check & DC:** Every participant makes their Spell Check to cast the Spell. The highest Spell Check and the highest Save DC among them is used to determine the outcome.
 
-## Stacking Magical Effects
+#### Stacking Magical Effects
 
 A target can only be affected by a single magical effect of the same name (a single creature can only be mind controlled by 1 person). If there's a magical effect on a creature and you cast a Spell with the same effect, both casters must perform a Contested Spell Check to determine which Spell effect prevails over the target.
 
@@ -2945,15 +2950,15 @@ The Spellcaster who already has the effect on the creature doesn't have to spend
 
 ## Starting Combat
 
-## Combat Encounters
+### Combat Encounters
 
 Combat Encounters serve to slow the flow of time, allowing for precise resolution of actions during the chaos of battle. Combat consists of a Player Character (PC) Team and an opposing Enemy team. During Combat, time is divided into **Rounds**, which are further divided into **Turns**. The order each creature takes its turn in Combat is determined by the **Initiative Order**.
 
-## Encounter DC
+### Encounter DC
 
 The Encounter DC represents the overall challenge of a battle, determining who reacts quickest and resolving uncertain outcomes. The Game Master sets a single Encounter DC, which serves as a baseline for the difficulty of various actions, environmental hazards, or other obstacles adventurers may face. The GM can refer to the Encounter DC Table below for example Easy, Normal, and Hard difficulty values for PC Levels 1 to 20.
 
-## Encounter DC Table
+#### Encounter DC Table
 
 | Level | Easy | Normal | Hard |
 |---|---|---|---|
@@ -2978,21 +2983,21 @@ The Encounter DC represents the overall challenge of a battle, determining who r
 | 19 | 22 | 24 | 26 |
 | 20 | 22 | 24 | 26 |
 
-## Pre-Combat Aggression
+### Pre-Combat Aggression
 
 
 
 The moment a Combat Encounter begins is not always a matter of strict timing. The GM may determine that a PC's action (such as drawing steel, loosing an arrow, or invoking a spell) triggers the clash, allowing them to carry out that action before Initiative is rolled. However, if the enemy is already on high alert or poised for battle, the GM may rule that combat begins before the action can be completed, requiring the character to take their aggressive move on their first turn instead.
 
-## Initiative
+### Initiative
 
 Before Combat begins, the GM will call for Initiative, which determines the order in which each creature acts. The PC Team competes against the Enemy Team to determine which team takes the first Turn of Combat.
 
-## Rolling for Initiative
+#### Rolling for Initiative
 
 When the GM calls for Initiative, each PC must make an **Initiative Check** against the **Encounter DC**.
 
-## Making an Initiative Check
+#### Making an Initiative Check
 
 Roll a d20 and add your Combat Mastery and Agility to the result. Bonuses and Penalties to Agility Checks don't effect Initiative Checks, unless otherwise stated.
 
@@ -3002,7 +3007,7 @@ Roll a d20 and add your Combat Mastery and Agility to the result. Bonuses and Pe
 |---|
 | **DC Tip:** Initiative Checks aren't considered Agility Checks for the purposes of DisADV due to Heavy Armor with the Rigid Property or other things that specifically affect Agility Checks. |
 
-## Individual Outcomes
+#### Individual Outcomes
 
 Use the following Success and Failure Statements to determine the outcome of your Initiative Check:
 
@@ -3010,14 +3015,14 @@ Use the following Success and Failure Statements to determine the outcome of you
 - **Critical Success:** You gain ADV on 1 Check or Save of your choice during the first Round of Combat.
 - **Critical Failure:** The first Attack made against you during the first Round of Combat has ADV.
 
-## Party Outcomes
+#### Party Outcomes
 
 Use the following Success and Failure Statements to determine who will take the first turn in Combat.
 
 - **Success:** If at least 1/2 the PCs beat the Encounter DC, the PC Team wins the first Initiative Turn of the Combat.
 - **Failure:** If less than 1/2 the PCs beat the Encounter DC, the Enemy Team wins the first Initiative Turn of the Combat.
 
-## Initiative Turns
+### Initiative Turns
 
 An Initiative Turn is a creature's opportunity to act during Combat, allowing them to move, attack, cast spells, or take other available actions. There are 2 types of Initiative Turns: **PC Turns** and **Enemy Turns**. PC Turns belong to members of the PC Team, while Enemy Turns belong to members of the Enemy Team. The number of PC Turns and Enemy Turns is equal to the number of PCs, ensuring both Teams have an equal number of Turns.
 
@@ -3025,7 +3030,7 @@ An Initiative Turn is a creature's opportunity to act during Combat, allowing th
 
 **Example:** If there are 3 PCs in Combat, there will be 3 PC Turns and 3 Enemy Turns, for a total of 6 Initiative Turns in the Combat.
 
-## Alternating Initiative Turns
+#### Alternating Initiative Turns
 
 Initiative Turns are arranged so that each Team takes one Turn at a time, so when a member of one Team takes a Turn, they're followed by a member of the other Team taking a Turn. This continues back and forth until each member of each Team has taken a Turn.
 
@@ -3035,7 +3040,7 @@ Initiative Turns are arranged so that each Team takes one Turn at a time, so whe
 
 
 
-## Choosing PC Turns
+#### Choosing PC Turns
 
 At the start of each PC Turn during the first Round of Combat, the PC Team will decide which PC will take that Turn. If multiple PCs want to take the same Turn, the PC among them with the highest Initiative Check result takes the Turn.
 
@@ -3043,7 +3048,7 @@ At the start of each PC Turn during the first Round of Combat, the PC Team will 
 
 **Example:** The Barbarian and Champion are going at the same time. They both spend 1 AP to charge in together and Flank an enemy. The Champion trips the enemy target Prone, and the Barbarian then makes an Attack Check with ADV (target is Prone) and +2 bonus to Hit (target is Flanked). They slay the enemy and charge off again together with their remaining Action Points.
 
-## Choosing Enemy Turns
+#### Choosing Enemy Turns
 
 Enemies can each be assigned to their own Enemy Turns, grouped together into a single Enemy Turn, or divided into multiple Enemy Turns in any combination the GM chooses.
 
@@ -3051,7 +3056,7 @@ Enemies can each be assigned to their own Enemy Turns, grouped together into a s
 
 **Assigning Enemies:** The GM can choose to assign enemies to the Enemy Turns all at the same time or one at a time as the Round unfolds. Enemies can be placed strategically to heighten the difficulty of the encounter, introduced into empty Enemy Turns later in the Initiative Order to bring forth hidden threats, or positioned immediately after a PC who has recently engaged or targeted them, allowing for a response driven by the narrative.
 
-## Delayed Initiative
+#### Delayed Initiative
 
 At anytime during your Turn, you can choose to permanently move your Turn to a PC Turn of your choice later in the Initiative Order. Alternatively, you can choose to delay your Turn until after an enemy that you can see. If that enemy occupies the last Initiative Turn in the Initiative Order, then you create a new PC Turn to act after them.
 
@@ -3063,35 +3068,35 @@ At anytime during your Turn, you can choose to permanently move your Turn to a P
 
 
 
-## Game Master Initiative Sidebar
+### Game Master Initiative Sidebar
 
 Here are some bonus Tips for GMs to handle Initiative in some unique situations.
 
-## Enemy Groupings
+#### Enemy Groupings
 
 The GM may find it simple to group similar enemies together, rather than spacing them throughout the Initiative Order.
 
 **Example:** If there are 4 Goblins with 2 Hobgoblins in a Combat Encounter with 4 PCs. The GM might add 2 Goblins to Enemy Turn 1, 2 Hobgoblins to Enemy Turn 2, and 2 Goblins to Enemy Turn 3.
 
-## Unequal Number of Enemies
+#### Unequal Number of Enemies
 
 If there are fewer enemies than there are Enemy Turns, then the GM chooses which Enemy Turns they occupy in the Initiative Order.
 
-## Shared Enemy Turns
+#### Shared Enemy Turns
 
 When 2 or more PCs share a PC Turn, the GM can combine enemies from the next 2 Enemy Turns into 1 Enemy Turn, preserving the alternating flow of combat between the PC Team and the Enemy Team.
 
 
 
-## Empty Enemy Turns
+#### Empty Enemy Turns
 
 When an Enemy Turn becomes empty (whether because there's too few enemies to fill all Enemy Turns or all enemies in an Enemy Turn have been defeated), that Enemy Turn remains in the Initiative Order but is skipped. If new enemies enter the Combat, the GM may assign them to any empty or occupied Enemy Turns, allowing for their inclusion in the Initiative Order without disrupting the flow of battle.
 
-## Multiple Enemy Teams
+#### Multiple Enemy Teams
 
 If there are two or more Enemy Teams, each Enemy Team will have their own Enemy Turns within the Initiative Order. These Initiative Turns will alternate so the PC Team, Enemy Team 1, and Enemy Team 2 will alternative Initiative Turns. To determine which of the Enemy Teams receives the first Initiative Turns, the GM can either use a Fate Check or simply choose based on strategy or narrative.
 
-## NPC Team
+#### NPC Team
 
 Any NPCs that aren't hostile to the PC Team are considered their own NPC Team (such as civilians trying to escape a battle). The NPC Team has their own Initiative Turns separate from the PC Team and Enemy Team. These Initiative Turns will alternate so the PC Team, Enemy Team, and NPC Team will alternative Initiative Turns. The GM can assign NPCs to NPC Turns in the same way they assign enemies to Enemy Turns (see Choosing Enemy Turns earlier in this chapter).
 
@@ -3101,15 +3106,15 @@ Any NPCs that aren't hostile to the PC Team are considered their own NPC Team (s
 
 
 
-## Initiative Order
+### Initiative Order
 
 The chosen Initiative Turns become the Initiative Order, which governs when each creature takes their respective Turns in each subsequent Round of Combat. Once the first Initiative Turn is assigned, Combat begins, all creatures gain access to their Action Points, the first Round of Combat begins.
 
-## Rounds of Combat
+### Rounds of Combat
 
 During Combat, creatures take Turns maneuvering around the battlefield, attacking their enemies, or supporting their allies. Once each creature has taken their first Turn in Combat, the first Round of Combat is completed, and the next Round can begin. Combat progresses, Round by Round, until the PCs or their enemies prove victorious, and the GM declares that Combat has ended.
 
-## Time in Combat
+### Time in Combat
 
 A Round of Combat lasts 12 in-game seconds, so 5 Rounds equals 1 minute of in-game time. You can imagine each creature's Turn happening near simultaneously to each other with some creatures acting split-seconds before others.
 
@@ -3118,7 +3123,7 @@ A Round of Combat lasts 12 in-game seconds, so 5 Rounds equals 1 minute of in-ga
 - **1 round of Combat = 12 seconds**
 - **5 rounds of Combat = 1 minute**
 
-## Duration in Rounds
+### Duration in Rounds
 
 The duration of some effects are measured in Rounds. The duration of these effects are measured from the start of the creature's Turn they're produced until the start of that same creature's Turn the specified number of Rounds later.
 
@@ -3126,7 +3131,7 @@ The duration of some effects are measured in Rounds. The duration of these effec
 
 **DC Tip:** Referring to the first Round of Combat means the first 12 seconds, where each creature will have 1 Turn. But if a PC uses an ability that lasts for 1 Round, that effect still lasts 12 seconds (which means each creature will have 1 Turn since the use of that ability), and it would last until the start of that creature's next Turn.
 
-## Surprise in Combat
+### Surprise in Combat
 
 Not all combatants are prepared for battle, and some may find themselves caught off guard at the start of a Combat Encounter. To successfully ambush an opposing Team, your side must be able to see them while remaining unseen in return. If this condition is met and the GM calls for Initiative, any creature unaware of the impending fight gains the Surprised Condition until the end of their first Turn in Combat, leaving them unable to act as battle erupts.
 
@@ -3142,7 +3147,7 @@ Your current and maximum AP are reduced by 2.
 
 
 
-## CHAPTER 3: General Rules
+# CHAPTER 3: General Rules
 
 
 
@@ -3150,7 +3155,7 @@ Your current and maximum AP are reduced by 2.
 
 ## Environment
 
-## Spaces & Distance
+### Spaces & Distance
 
 Distance is measured using Spaces, like the Spaces on a Grid Map. A Space can be measured in feet or meters, where 1 Space is equal to 5 feet or 1.5 meters.
 
@@ -3164,19 +3169,19 @@ When tracking distance across long distances, such as from one town to another, 
 
 **DC Tip:** Using Spaces to track distance in Combat makes things easier for determining how far a creature can move or the range of an effect. If something has a range of 10 Spaces, then that's 10 Spaces on the Grid Map.
 
-## Difficult Terrain
+### Difficult Terrain
 
 Some terrain is more difficult to move through due to obstacles in the way (such as plants, rocks, fallen debris, other creatures, etc.). This type of terrain is more difficult to traverse than normal.
 
 While moving through Difficult Terrain, you are Slowed (every 1 Space moved costs 2 Spaces of movement).
 
-## Jumping
+### Jumping
 
 Jumping is a form of movement. A creature must have means of gaining movement in order to perform a jump. If a creature does not have enough movement to jump the maximum distance possible, its jump distance is shortened to the maximum movement available.
 
 There are two types of jumps: a **Long Jump** and a **High Jump**. A Long Jump represents the distance a creature can move while jumping horizontally, and a High jump represents the distance a creature's feet can reach above the ground when jumping vertically.
 
-## Jump Distance
+#### Jump Distance
 
 A creature's Jump Distance is equal to its Agility (minimum of 1).
 
@@ -3204,7 +3209,7 @@ The maximum height a creature can reach with its arms is equal to 1.5 times its 
 
 
 
-## Falling
+### Falling
 
 When a creature begins falling, it immediately falls up to 100 Spaces.
 
@@ -3214,11 +3219,11 @@ When a creature begins falling, it immediately falls up to 100 Spaces.
 
 **Example:** If a PC has an Agility of 2 and falls from a height of 2 Spaces, they can make a DC 12 (10 + a 2 Space Fall) Acrobatics Check, and on a Success they take 0 damage (2 Space Fall-2 Agility = 0 damage). If that same PC falls from a height of 3 Spaces, they can make a DC 13 Acrobatics Check, and on a Success they take 1 True damage (3 Space Fall-2 Agility = 1 damage).
 
-## Controlled Falling
+#### Controlled Falling
 
 If you are falling intentionally and are in control of your body and movement, it is considered a Controlled Fall. There are no additional penalties to falling in this way.
 
-## Uncontrolled Falling
+#### Uncontrolled Falling
 
 If you are thrown off a ledge, knocked back from an explosion, unable to react, or restrained in some way, it is considered an Uncontrolled Fall (GM discretion).
 
@@ -3226,15 +3231,15 @@ If you are thrown off a ledge, knocked back from an explosion, unable to react, 
 
 **Example:** If a PC has an Agility of 3 and has a Controlled Fall from a height of 3 Spaces, they can make a DC 13 Acrobatics Check, and on a Success they take 0 damage (3 Space Fall-3 Agility = 0 damage). If that same PC has an Uncontrolled Fall from a height of 3 Spaces, they would make a DC 18 (DC 13 + 5) Acrobatics Check instead.
 
-## Continuous Falling
+#### Continuous Falling
 
 If you are still falling at the end of your turn, you immediately fall another 100 Spaces.
 
-## Falling While Flying
+#### Falling While Flying
 
 If you are knocked Prone while flying, you immediately fall up to 100 Spaces unless you are magically held aloft. If you are still falling at the start of your turn, you can spend 2 Spaces of movement to end the Prone Condition on yourself (as if standing up in mid air).
 
-## Climbing
+### Climbing
 
 Creatures that lack a Climb Speed are Slowed 1 while climbing. A creature can climb a ladder, a knotted rope, or along a pocketed wall without requiring a Climbing Check (Athletics). Climbing a slick rope or wall may require a Climbing Check. Creatures with a Climb Speed have ADV on Climbing Checks. The table below provides guidance on setting the DC for challenging climbs. **Failure:** The creature immediately falls.
 
@@ -3247,7 +3252,7 @@ Creatures that lack a Climb Speed are Slowed 1 while climbing. A creature can cl
 
 **DC Tip:** Climbing great distances can be challenging, so the GM may ask a PC to make a DC 10 Climbing Check for every additional 4 Spaces they climb beyond the first 4 Spaces, even if the rope or surface is normally easy to climb short distances. Creatures with Climbing Speeds wouldn't need to make these Checks.
 
-## Swimming
+### Swimming
 
 Creatures that lack a Swim Speed are Slowed 1 while swimming. A creature can swim for 20 Spaces (100ft / 30m) in still waters without requiring a Swimming Check (Athletics). Swimming in a turbulent body of water without a Swim Speed requires a Swimming Check. The table below provides guidance on setting the DC for challenging swims. **Failure:** The creature fails to move and sinks 2 Spaces into the body of water.
 
@@ -3262,19 +3267,19 @@ Creatures that lack a Swim Speed are Slowed 1 while swimming. A creature can swi
 
 
 
-## Holding Your Breath
+### Holding Your Breath
 
 Creatures that require air to breathe can hold their breath to avoid breathing in toxic air, drowning underwater, or suffocating in an airless vacuum. A creature that can no longer hold its breath begins **Suffocating**. The amount of time a creature can hold its breath depends on the type of stress they are exposed to and energy they're exerting.
 
 There are two types of measures to hold your breath: a **Calm Hold** and a **Stressed Hold**. A Calm Hold represents the duration a creature can hold its breath while in a low stress environment while doing little to no activity, and a Stressed Hold represents the time a creature can hold its breath while in a high stress environment while doing lots of activity.
 
-## Breath Duration
+#### Breath Duration
 
 A creature's Breath Duration is equal to its Might (minimum of 1).
 
 Breath Duration = Might
 
-## Calm Hold
+#### Calm Hold
 
 Calm Hold = Breath Duration (in minutes)
 
@@ -3286,7 +3291,7 @@ A creature that is performing No Activity or Light Activity in a calm environmen
 
 **Light Activity:** Non-strenuous activity that requires little effort, such as reading, bandaging wounds, and standing watch.
 
-## Stressed Hold
+#### Stressed Hold
 
 Stressed Hold = Breath Duration (in rounds)
 
@@ -3300,7 +3305,7 @@ A creature that is performing Strenuous Activity or Dangerous Activity can hold 
 
 **DC Tip:** Remember, 1 Round in Combat is 12 seconds. That means that 1 minute is equal to 5 Rounds of Combat.
 
-## Losing Your Breath
+#### Losing Your Breath
 
 **Speaking:** Creatures that attempt to speak while holding their breath, such as to satisfy the Verbal Component required to cast a Spell, reduce their Breath Duration by 1.
 
@@ -3308,7 +3313,7 @@ A creature that is performing Strenuous Activity or Dangerous Activity can hold 
 
 **DC Tip:** Certain effects and abilities can cause a creature to begin Suffocating immediately, usually by knocking the air out of a creature or by constricting it.
 
-## Suffocating
+#### Suffocating
 
 At the start of each of your turns, you suffer the following effects while you're Suffocating:
 
@@ -3321,13 +3326,13 @@ These effects can't be reversed by any means until you regain the ability to bre
 
 ## Vision
 
-## Line of Sight
+### Line of Sight
 
 Line of Sight refers to a creature being able to see something within their field of view. If a PC watches a creature run behind a castle wall, that creature is no longer in the PC's Line of Sight.
 
 On a grid map, this would mean that you can draw a straight line from any one corner of the Space that you're on to any one corner of a Space that the other creature is on. If you can see a creature but they're partially behind something (a wall, another creature, etc.), then they have Cover (see below).
 
-## Cover
+### Cover
 
 **1/2 Cover:** Creatures have a -2 penalty on Attack Checks and Spell Checks against a target's PD or AD while the target is behind 1/2 Cover.
 
@@ -3347,13 +3352,13 @@ A creature benefits from Full Cover when it's completely behind an object that i
 
 
 
-## Concealment
+### Concealment
 
 **Partially Concealed:** A creature is Partially Concealed while within an area of thin fog, moderate foliage, or Dim Light. Creatures have DisADV on Awareness Checks made to see things that are Partially Concealed.
 
 **Fully Concealed:** A creature is Fully Concealed while in an area that blocks vision entirely, such as Darkness, thick fog, or dense foliage. Creatures are considered Blinded for the purposes of seeing things that are Fully Concealed.
 
-## Illumination
+### Illumination
 
 The illumination of an area can effect a creature's ability to see. There are 3 levels of illumination: **Bright Light**, **Dim Light**, and **Darkness**. Unless otherwise stated, this book assumes all creatures are in an area of Bright Light.
 
@@ -3361,13 +3366,13 @@ Anytime a source of light produces Bright Light with a listed radius, then that 
 
 **Example:** If a campfire produces Bright Light with a 5 Space radius, then it also produces Dim Light with a 5 Space radius. The result is that the campfire produces 5 Spaces of Bright Light followed by another 5 Spaces of Dim Light in all directions.
 
-## Bright Light
+#### Bright Light
 
 Bright Light fully illuminates everything within its area, allowing creatures to see normally. Most sources of mundane fire produces an area of Bright Light, such as torches, lanterns, or campfires.
 
 **Sunlight:** Sunlight is a special form of Bright Light that illuminates the land while the sun is present in the sky. Some creatures, such as Vampires, suffer penalties while in an area of Sunlight.
 
-## Dim Light
+#### Dim Light
 
 Dim Light only partially illuminates an area, allowing creatures to see with difficulty. Dim Light fills the area between the boundaries of Bright Light and Darkness. The area covered by a shadow, the light of a full moon, and the light produced by dusk and dawn are all examples of Dim Light.
 
@@ -3377,7 +3382,7 @@ Dim Light only partially illuminates an area, allowing creatures to see with dif
 
 
 
-## Darkness
+#### Darkness
 
 Darkness is an area that lacks any form of illumination, making it impossible for creatures to see. Nighttime between dusk and dawn, an unlit room, or an underground tunnel are examples of Darkness.
 
@@ -3389,27 +3394,27 @@ Darkness is an area that lacks any form of illumination, making it impossible fo
 
 There are also sources of Magical Light and Magical Darkness coming out in the Beta.
 
-## Vision
+### Vision
 
-## Darkvision
+#### Darkvision
 
 Creatures with Darkvision have the ability see in Dim Light and Darkness out to a specified range. A creature with Darkvision can see areas of Dim Light within the specified range as if it were Bright Light, and see areas of Darkness within the specified range as if it were Dim Light. A creature can't discern color using their Darkvision, only shades of grey.
 
 **Example:** A creature with Darkvision 10 can see up to 10 Spaces in Dim Light as if it were Bright Light, and up to 10 Spaces in Darkness as if it were Dim Light.
 
-## Tremorsense
+#### Tremorsense
 
 Creatures with Tremorsense can sense vibrations in the ground within a specified range, allowing them to automatically pinpoint the location of anything that is in contact with the same surface, including through Cover and Concealment.
 
 Creatures with Tremorsense and a Swim Speed can also pinpoint the location of creatures moving through water within the specified range.
 
-## Blindsight
+#### Blindsight
 
 Creatures with Blindsight have the ability to see things within a specified range without the use of eyes. Creatures without eyes or that can see using echolocation are able to see things using Blindsight. A creature with Blindsight is immune to being Blinded, can see things that are Invisible, and can see unimpeded by Concealment. Blindsight doesn't grant a creature the ability to see behind Cover.
 
 **Example:** A creature with Blindsight 5 can see up to 5 Spaces in any direction as if they could see normally. This includes Invisible creatures within range and creatures that are Partially or Fully Concealed within range that aren't behind Cover.
 
-## Truesight
+#### Truesight
 
 Creatures with Truesight have the ability to see things that are normally imperceptible out to a specified range. They can see through normal and magical Darkness, see into the Ethereal Plane from the Material Plane (and vice versa), see things that are Invisible, automatically see through illusions, and can perceive the true form of a Shapechanger or creature that is transformed by magic.
 
@@ -3421,9 +3426,9 @@ Creatures with Truesight have the ability to see things that are normally imperc
 
 ## Creatures & Combat
 
-## Creatures
+### Creatures
 
-## Creature Sizes
+#### Creature Sizes
 
 Creatures come in many different shapes and sizes ranging from a miniscule bug to a primordial titan and beyond. The number of Spaces a creature occupies determines its size for the purposes of rules that govern the interactions between creatures and their environment. The table below shows the 9 different creatures sizes with examples for each and the number of Spaces they occupy.
 
@@ -3441,7 +3446,7 @@ Creatures come in many different shapes and sizes ranging from a miniscule bug t
 
 **Micro Creatures:** Exceptionally small creatures, such as ants, can share their Space with other creatures. They can end their turn in a Space occupied by other creatures (and vice versa).
 
-## Moving & Grappling Creatures
+#### Moving & Grappling Creatures
 
 Creatures of different sizes have bonuses or penalties when attempting to Grapple, push, move, and knock other creatures Prone by mundane means.
 
@@ -3475,7 +3480,7 @@ A creature that's Grappled by more than 1 creature only suffers the effects of b
 
 
 
-## Moving Through Creatures
+#### Moving Through Creatures
 
 While moving in Combat, there will be times when you'll want or need to move through another creature's Space. Whether the creature is friendly or hostile to you will determine if you can freely move through their Space.
 
@@ -3485,7 +3490,7 @@ While moving in Combat, there will be times when you'll want or need to move thr
 
 **Ending Your Movement:** You can't end your turn in a Space that's occupied by another creature.
 
-## Collision
+#### Collision
 
 When a creature is thrown or knocked back and collides with an immovable object (such as a wall) or another creature, it takes damage upon impact.8
 
@@ -3499,7 +3504,7 @@ When a creature is thrown or knocked back and collides with an immovable object 
 
 **DC Tip:** In order to hit a target creature with a thrown creature there's usually an Attack Check, Athletics Check, or Contest that needs to be made. Otherwise this would just be 'automatic' damage to the target creature.
 
-## Falling Attacks
+#### Falling Attacks
 
 If you want to put more force into an Attack Check, you can purposefully fall onto a target as part of your Attack Check.
 
@@ -3507,9 +3512,9 @@ To do this, you first need to move into a position to fall onto the target. Usin
 
 **Example:** If you jumped from 4 Spaces up, and your Attack Check deals 3 damage, then the creature would take 5 damage (3 from Attack and 2 from fall) and you would take 2 damage (from the fall).
 
-## Throwing
+### Throwing
 
-## Throwing Creatures
+#### Throwing Creatures
 
 You can spend 1 AP to throw a creature that's Grappled by you that's the same size as you or smaller. Make an Athletics Check Contested by the target's Martial Check. **Success:** You throw the creature up to a number of Spaces away from you equal to 1/2 of your Might (ending the Grappled Condition) + up to 1 additional Space for every 5 they fail the Contest by.
 
@@ -3527,7 +3532,7 @@ You can spend 1 AP to throw a creature that's Grappled by you that's the same si
 
 
 
-## Throwing Objects
+#### Throwing Objects
 
 You can throw an object a number of Spaces depending on your Might and the object's size. For the purposes of throwing objects, your minimum Might is 1. The table below shows how far you can throw each size of object:
 
@@ -3540,13 +3545,13 @@ You can throw an object a number of Spaces depending on your Might and the objec
 
 **Example:** A Medium sized creature with a Might of 0 (minimum Might of 1) could throw a Tiny object up to 5 Spaces, a Small object 1 Space, and Medium object 1 Space (rounded up from 0.5). Conversely, if that creature had a Might of 6, they could throw a Tiny object 30 Spaces, a Small object 6 Spaces, and a Medium object 3 Spaces.
 
-## Throwing Melee Weapons
+#### Throwing Melee Weapons
 
 When you throw a Melee Weapon that lacks the Thrown property as part of an Attack Check, the Weapon deals 1/2 its normal damage. The range of a Melee Weapon that lacks the Thrown property is 1/5. See 'Equipment' on page 75 for more information on Weapon properties.
 
 **DC Tip:** Basically ALL Weapons have a default range of 1/5 (unless otherwise stated). This means within 1 Space you can make an Attack Check with no penalties and deal full damage with the weapon, but between 2 and 5 Spaces away your Attack now has DisADV and the total damage that it deals is cut in half.
 
-## Improvised Weapons
+### Improvised Weapons
 
 Unless otherwise stated by the GM, an Improvised Weapons deals 1 damage of a type determined by the GM. When making an Attack Check with an Improvised Weapon you only add your Prime Modifier to your d20 roll, you don't add your Combat Mastery.
 
@@ -3554,13 +3559,13 @@ Unless otherwise stated by the GM, an Improvised Weapons deals 1 damage of a typ
 
 **DC Tip:** If an Improvised Weapon is similar enough to an actual weapon, the GM might decide that it could gain certain Weapon Properties or even a Weapon Style.
 
-## Unarmed Strikes
+### Unarmed Strikes
 
 Unarmed Strikes deal 0 Bludgeoning damage. An Unarmed Strike is a Melee Attack made using any part of a creature's own body, such as a Punch, Elbow, Kick, Knee, or Headbutt.
 
 **DC Tip:** Attacks that deal 0 base damage can still benefit from bonus damage, such as Heavy Hits, Power Attack Maneuvers, Class Features, etc.
 
-## Natural Weapons
+### Natural Weapons
 
 A Natural Weapon is a part of a creature's body that counts as a Weapon (such as a Claws, Fangs, and Horns). When you Attack with a Natural Weapon it's considered both a Weapon Attack and an Unarmed Strike.
 
@@ -3568,23 +3573,23 @@ A Natural Weapon is a part of a creature's body that counts as a Weapon (such as
 
 **Example:** A Beastborn with claws is considered to be wielding the claws in their hands, qualifying these Natural Weapons for Dual Wielding and similar mechanics.
 
-## Non-Lethal Attacks
+### Non-Lethal Attacks
 
 When you make a Melee Attack with a Weapon or Unarmed Strike, you can declare the Attack to be Non-Lethal. If a creature is reduced to 0 HP or lower by a Non-Lethal Attack, they are knocked Unconscious instead and are considered Stable for the purposes of Death's Door.
 
 If a creature is knocked Unconscious in this way, another creature can spend 1 AP to shake them awake. When the creature awakens, they are on Death's Door at 0 HP, regardless of how much damage was dealt by the Non-Lethal Attack.
 
-## Dual Wielding
+### Dual Wielding
 
 You're considered to be Dual Wielding when you're wielding a separate Weapon in each hand. When you make an Attack with one of the Weapons you're Dual Wielding, your next Attack on this turn with the other Weapon ignores the Multiple Check Penalty (and doesn't advance that penalty), provided you're still Dual Wielding those Weapons. You can only do this once on each of your turns.
 
 **DC Tip:** If one of your hands is a Natural Weapon (such as a Claw or the Monk's Iron Palm benefit), it counts as a Weapon you are wielding in that hand for the purposes of Dual Wielding.
 
-## Flanking
+### Flanking
 
 You gain an additional +2 to your Melee Attack if the target is Flanked. A creature is Flanked when it has 2 or more enemies within 1 Space of it that are not adjacent to each other, provided they aren't Incapacitated or Prone. You're considered to be Flanking a creature if you are one of the creatures causing it to be Flanked.
 
-## Prone
+### Prone
 
 While Prone, you're subjected to the following effects:
 
@@ -3597,11 +3602,11 @@ While Prone, you're subjected to the following effects:
 
 When you become Prone, you immediately enter an Uncontrolled Fall unless you're supported by a solid surface (see the Falling section for more information).
 
-## Hidden Creatures
+### Hidden Creatures
 
 Creatures that are Unseen or Unheard are more difficult to discover.
 
-## Unseen
+### Unseen
 
 You are Unseen by a creature while you're imperceivable to its visual senses, such as when you're Fully Concealed, you're Invisible, or it's Blinded. While Unseen, you're subjected to the following effects:
 
@@ -3610,7 +3615,7 @@ You are Unseen by a creature while you're imperceivable to its visual senses, su
 
 **DC Tip:** If you are Unseen because you're behind Full Cover, effected by the Invisibility Spell, and your target is Blinded, you don't gain the benefits of being Unseen multiple times. You are either Unseen or not.
 
-## Unheard
+### Unheard
 
 You are Unheard while you remain silent, talk no louder than a whisper, or are within an area effected by the Silence Spell or a similar effect. While Unheard, you're subjected to the following effects:
 
@@ -3618,13 +3623,13 @@ You are Unheard while you remain silent, talk no louder than a whisper, or are w
 
 **DC Tip:** If you're Unheard because you're remaining silent or within an area effected by the Silence Spell, you don't gain the benefits of being Unheard multiple times. You're either Unheard or not.
 
-## Hidden
+### Hidden
 
 You are Hidden from a creature while you are both Unseen and Unheard by it. Your location is unknown to creatures you're Hidden from.
 
 **DC Tip:** If you become Hidden to a creature that's aware of you, it only knows your last location known to it before you became Hidden. Creatures that can detect your presence, even through magical means such as divination, are not considered to know your location, to see you, or to hear you unless the Feature says otherwise.
 
-## Underwater Combat
+### Underwater Combat
 
 While underwater, creatures are subjected to the following conditions:
 
@@ -3640,11 +3645,11 @@ While underwater, creatures are subjected to the following conditions:
 
 ## Equipment
 
-## Weapons
+### Weapons
 
 Every Weapon has a Weapon Type (Melee or Ranged), a Weapon Style (Axe, Sword, Hammer, etc.), and Weapon Properties (Reach, Thrown, Two-Handed, etc.).
 
-## Weapon Types
+#### Weapon Types
 
 There are 2 types of Weapons: **Melee Weapons** and **Ranged Weapons**.
 
@@ -3664,7 +3669,7 @@ Ranged Weapons have a Range of 15/45 (see 'Ranged Attack' on page 31).
 
 A Weapon requires 1 hand when you Attack with it, unless it has the **Two-Handed** Property (requires 2 hands to Attack).
 
-## Weapon Styles
+#### Weapon Styles
 
 While a PC with Weapon Mastery is wielding a Weapon, they can use that Weapon to benefit from its Weapon Style passive effect.
 
@@ -3682,7 +3687,7 @@ While a PC with Weapon Mastery is wielding a Weapon, they can use that Weapon to
 
 **Example:** A PC is wielding both an Axe and a Hammer. When they Hit a Bleeding creature with the Axe, they deal +1 damage against the target. They don't deal this bonus damage when they Hit the Bleeding creature with the Hammer.
 
-## Weapon Properties
+#### Weapon Properties
 
 Weapons have certain properties that grant them different benefits or drawbacks.
 
@@ -3711,7 +3716,7 @@ Weapons have certain properties that grant them different benefits or drawbacks.
 
 - **Versatile:** This Weapon can be wielded with 1 or 2 hands. When you wield the Weapon with 2 hands, you gain a +2 bonus to Hit using it.
 
-## Special Weapon Properties
+#### Special Weapon Properties
 
 - **Returning:** When you Miss a Ranged Attack with the Weapon, it returns to your hand.
 - **Capture:** When you Attack with this Weapon, you instead make a Martial Check contested by the target's Physical Save. **Success:** The target is Grappled by the weapon until it's freed. Forced movement doesn't end the Grapple, but teleportation does. **Success (10):** The target is also Restrained until it's freed. A creature can spend 1 AP to make a DC 10 Might Check. **Success:** It can free itself or another creature within its reach. Dealing 1 Slashing damage to the Weapon (PD 10, AD 10) ends the effect and breaks it, freeing the creature without harming it. A Weapon with this property deals 1 less damage. This Property has no effect on creatures that are formless, smaller than Small, or bigger than Large.
@@ -3720,7 +3725,7 @@ Weapons have certain properties that grant them different benefits or drawbacks.
 
 
 
-## Weapon Examples
+#### Weapon Examples
 
 | Styles | Type | Damage | Properties |
 |---|---|---|---|
@@ -3779,11 +3784,11 @@ Weapons have certain properties that grant them different benefits or drawbacks.
 
 **DC Tip:** Attacks that deal 0 base damage can still benefit from bonus damage, such as Heavy Hits, Power Attack Maneuvers, Class Features, etc.
 
-## Lacking Weapon Training
+#### Lacking Weapon Training
 
 While wielding a Weapon you lack Training with, you do not benefit from its Weapon Style.
 
-## Customized Weapons
+#### Customized Weapons
 
 You can create your own unique Weapons by following a 3 step process:
 
@@ -3898,11 +3903,11 @@ Ultimately the Style and Properties of a Weapon you create are purely mechanical
 
 
 
-## Armor
+### Armor
 
 Wearing Armor can improve your Defense and provide Damage Reduction. Creatures that aren't wearing Armor are considered **Unarmored**.
 
-## Armor Type
+#### Armor Type
 
 There are 2 types of Armor: **Light Armor** and **Heavy Armor**.
 
@@ -3920,19 +3925,19 @@ Heavy Armor is designed with greater attention in protecting the wearer in tradi
 
 **Impactful Unarmed Strikes:** Your Unarmed Strikes deal +1 damage on a Heavy Hits while wearing Heavy Armor.
 
-## Wearing Armor
+#### Wearing Armor
 
 It takes 1 minute to don or doff Light Armor, or 10 minutes to do the same with Heavy Armor. You gain the benefits of Armor while wearing it.
 
-## Lacking Armor Training
+#### Lacking Armor Training
 
 While wearing Armor that you lack Training in, you have DisADV on Attack Checks and Spell Checks.
 
-## Damage Reduction
+#### Damage Reduction
 
 Some types of Armor grant Physical or Elemental Damage Reduction (see Damage Reduction for more information).
 
-## Armor Examples
+#### Armor Examples
 
 | Type | PD | AD | PDR | Speed | Agility Checks |
 |---|---|---|---|---|---|
@@ -3946,7 +3951,7 @@ Some types of Armor grant Physical or Elemental Damage Reduction (see Damage Red
 | Fortified | | 2 | Half | -1 | DisADV |
 | Highly Defensive | 2 | 2 | | -1 | DisADV |
 
-## Customized Armor
+#### Customized Armor
 
 When you pick your Armor during Character Creation (or craft one later), you choose for it to be Light or Heavy Armor can grant it 2 points worth of Armor Properties available to that Armor type. You can't grant Armor the same Property more than once, unless otherwise stated.
 
@@ -3973,9 +3978,9 @@ These Armor Properties are available to Heavy Armor.
 
 
 
-## Shields
+### Shields
 
-## Shield Type
+#### Shield Type
 
 There are 2 types of Shields: **Light Shields** and **Heavy Shields**.
 
@@ -3987,26 +3992,26 @@ Light Shields are simple and easy to wield. A Buckler is a type of Light Shield.
 
 Heavy Shields are designed for warfare. A Tower Shield is a type of Heavy Shield.
 
-## Wielding a Shield
+#### Wielding a Shield
 
 You can spend 1 AP to equip or stow a Shield. A Shield occupies the hand that's wielding it. You gain the benefits of a Shield while wielding it.
 
-## Lacking Shield Training
+#### Lacking Shield Training
 
 While wielding a Shield that you lack Training in, you have DisADV on Attack Checks and Spell Checks.
 
-## Attacking With Shields
+#### Attacking With Shields
 
 You can make an Attack with a Shield you have Training in, dealing 1 Bludgeoning damage on a Hit.
 
-## Wielding Two Shields
+#### Wielding Two Shields
 
 While wielding multiple Shields, you are subjected to the following:
 
 - You only gain the bonuses of one Shield at a time (your choice). You can spend a Minor Action to change which wielded Shield to benefit from.
 - You are immune to Flanking.
 
-## Shield Properties
+#### Shield Properties
 
 Shields have certain properties that grant them different benefits.
 
@@ -4014,7 +4019,7 @@ Shields have certain properties that grant them different benefits.
 - **Mounted:** The Shield's Bonus also applies to your Mount's Defense.
 - **Toss:** You can throw the Shield to make a Ranged Martial Attack (5/10).
 
-## Shield Table
+#### Shield Table
 
 | Type | PD | AD | Speed | Agility Checks | Properties |
 |---|---|---|---|---|---|
@@ -4026,7 +4031,7 @@ Shields have certain properties that grant them different benefits.
 | Kite Shield | 1 | 2 | -1 | DisADV | Mounted |
 | Tower Shield | 2 | 2 | -1 | DisADV | |
 
-## Customized Shields
+#### Customized Shields
 
 When you pick your Shield during Character Creation (or craft one later), you choose for it to be a Light or Heavy Shield and can grant it 2 points worth of Shield Properties available to that Shield type. You can't grant a Shield the same Property more than once, unless otherwise stated.
 
@@ -4053,15 +4058,15 @@ These Shield Properties are available to Heavy Shields.
 
 
 
-## Adventuring Supplies
+### Adventuring Supplies
 
-## Gauntlet
+#### Gauntlet
 
 You can purchase Gauntlets from a Blacksmith (or they come automatically with Heavy Armor). Wearing a Gauntlet gives your Unarmed Strikes with that hand the Impact Weapon Property (+1 damage on Heavy Hits).
 
 **Beta Note:** Prices are not set for things like Gauntlets, so a simple 5g should be a good price for now.
 
-## Healing Potions
+#### Healing Potions
 
 Healing Potions are crafted to magically heal wounds when consumed. These are small (usually red) vials of liquid that are small doses but potent in healing.
 
@@ -4080,7 +4085,7 @@ Healing Potions have levels to them that increase in potency and cost.
 | 4th | 8 HP | 60 |
 | 5th | 10 HP | 100 |
 
-## First Aid Kit
+#### First Aid Kit
 
 A First Aid Kit is full of supplies and tools such as ointments, tinctures, bandages, and other medicinal reagents. A fully stocked kit contains 5 charges, which can be spent to treat a creatures wounds or cure an ailment by taking the Object Action.
 
@@ -4100,7 +4105,7 @@ The reagents and bandages contained within the kit can be found in most towns an
 
 ## Conditions
 
-## Conditions List
+### Conditions List
 
 ## Bleeding X
 
@@ -4296,7 +4301,7 @@ You have DisADV X on Physical Saves.
 
 
 
-## Condition Resistance, Immunity, & Vulnerability
+### Condition Resistance, Immunity, & Vulnerability
 
 Condition Resistance represents a creature's ability to resist being subjected to Conditions, while Condition Vulnerability represents a creature's weakness against them. Where as Immunity prevents a creature from being affected by it at all. The source of a creature's Condition Resistance, Immunity or Vulnerability can be attained from a Class Feature, Ancestry Trait, Magic Item, Spell, etc.
 
@@ -4318,7 +4323,7 @@ Condition Resistance represents a creature's ability to resist being subjected t
 
 **Example:** If you had Taunted Vulnerability, you would have DisADV on Checks or Saves against being Taunted.
 
-## Condition Stacking & Overlapping
+### Condition Stacking & Overlapping
 
 Certain Conditions can stack multiple times, increasing the potency of the Condition's effects on the target. Other Conditions overlap, keeping the same potency but becoming more restrictive.
 
@@ -4384,7 +4389,7 @@ The following Conditions don't stack or overlap in any way: Blinded, Deafened, I
 
 This happens during Exploration but are specific moments when PCs stop to rest and recover their resources, spend Rest Points, and perform specific Rest Actions. This could be 10 minutes, 1 hour, or 8 hours depending on the type of Rest being taken. These moments can include roleplay and descriptions of what happens, but they're primarily mechanical in nature.
 
-## Rest Terms
+### Rest Terms
 
 **Rest Points:** You have a number of Rest Points equal to your HP maximum.
 
@@ -4396,21 +4401,21 @@ This happens during Exploration but are specific moments when PCs stop to rest a
 
 **Dangerous Activity:** Any activity that causes extreme injury or stress, such as engaging in combat with a hostile creature.
 
-## Types of Rest
+### Types of Rest
 
-## Quick Rest
+#### Quick Rest
 
 A period of No Activity or Light Activity that is at least 10 minutes long. You can only gain the benefits of 2 Quick Rests per 24 hour period.
 
 **Quick Rest Benefits:** You can spend 1 or more Rest Points, up to your maximum, at the end of a Quick Rest. When you do, you regain 1 HP per Rest Point spent.
 
-## Short Rest
+#### Short Rest
 
 A period of No Activity or Light Activity that is at least 1 hour long. You can only gain the benefits of 2 Short Rests per 24 hour period.
 
 **Short Rest Benefits:** At any point during a Short Rest, you can spend Rest Points to regain HP following the same rules as a Quick Rest. Some Features regain expended uses when you complete a Short Rest (as listed in the Feature's description).
 
-## Long Rest
+#### Long Rest
 
 A period of 4 hours of Light Activity and 4 hours of No Activity, taken in either order, for a total of 8 hours of resting. If one of the 4 hour periods is interrupted by any amount of Strenuous Activity or Dangerous Activity, you must begin that 4 hour period again. You can only gain the benefits of 1 Long Rest per 24 hour period.
 
@@ -4434,7 +4439,7 @@ When you complete a Long Rest, you lose all stacks of the Doomed Condition.
 
 For each 4 hour period doing No Activity, you decrease your Exhaustion by 1. If you spend both 4 hour periods doing Light Activity, you must make a DC 10 Might Save. **Failure:** You gain Exhaustion 1 and the DC of this Save now increases by 5 until you complete a Full Rest.
 
-## Full Rest
+#### Full Rest
 
 A 24 hour or longer period (determined by the GM) that is spent in an area of safety, such as a town, where you can eat well, rest, and recover. If the Full Rest is interrupted by any amount of Dangerous Activity you must begin it again.
 
@@ -4449,13 +4454,13 @@ A 24 hour or longer period (determined by the GM) that is spent in an area of sa
 
 ## DCs in DC20
 
-## Difficulty Class (DC)
+### Difficulty Class (DC)
 
 Difficulty Class (DC) is the number that a Game Master sets as the level of difficulty required to be able to succeed in a given situation. Lockpicking a door, climbing a steep mountain, trying to persuade someone to give you something, or even trying to resist a Spell's effect over you all have a DC that needs to be met or exceeded in order to succeed.
 
 You always roll a D20 and add whatever relevant modifiers there are based on what the Game Master asks for. Usually (unless you are attacking something) this is going to be a Check or a Save.
 
-## Setting a DC 'by 5's'
+### Setting a DC "by 5's"
 
 Checks (in general) work on a 'by 5's' system. This helps to stay consistent and fair in a GM's ruling of how difficult something is to accomplish. Below is a chart with a quick reference, and examples are listed below that. These are meant to give Game Masters a foundation to use and players a general expectation to understand. If you want to get more specific, you can set any number you want as the DC.
 
@@ -4485,7 +4490,7 @@ Most DCs that you'll ask for will either be 10, 15, or 20. Once PCs reach higher
 
 
 
-## Great Success and Failure
+### Great Success and Failure
 
 With 5 point increments you can dial things up or down based on if they beat the Check by 5 or fail the Check by 5. If the DC for climbing a castle wall is 15, a 15 would exactly succeed, but if they beat it by 5 and got a 20 or higher, maybe something cool happens like the guard at the top doesn't see them at all and they have a moment of surprise! On the other hand, if they got a 10 or lower on that same check (failing it by 5), maybe as they're climbing the wall they take too long and the guards spot them!
 
@@ -4500,19 +4505,19 @@ This 'by 5's' system also connects to the core of DC20's Combat system. In Comba
 
 **DC Tip:** You can also do the same for Checks that succeed or fail by 10 or more! I try not to make this be too game altering or punishing, but it's nice to add some flavor to those extreme rolls.
 
-## Complications
+### Complications
 
 Going 'by 5's' is also simple when it comes to figuring out complications to a situation. Let's say there's a scenario where a PC is trying to walk across a simple rickety wooden bridge, the DC for this could be 10 (depending on how rickety it is). Now let's say it started to rain, or a strong breeze picked up, so you can just dial the DC up by one 'notch' to a DC 15! Simple! Then, if you want to add in that the PC is being chased by bandits and needs to hurry across as arrows and people chase them, now it's a DC 20!
 
 It's very simple to step the DC up or down depending on extra things that happen around the situation at hand.
 
-## Advantages and Disadvantages
+### Advantages and Disadvantages
 
 For things that happen in the world, I adjust the DC up or down by 5, or even get it to a specific number as previously stated. However, when the PCs describe something they do, Game Masters can award Advantage (ADV) or Disadvantage (DisADV) to their roll based on their actions. If they're talking to a city guard and let it slip that they stole something, the GM can give them DisADV on their Check. If a PC comes up with a clever way to use an item or lever to lift something heavy, the GM could give them ADV on their Check.
 
 **DC Tip:** Don't be afraid to award ADV and DisADV for players' interactions with the world. This lets them know if they're 'on the right track' with their thinking or not.
 
-## Failing Forward
+### Failing Forward
 
 When someone fails a Check of some kind, it doesn't always mean they literally didn't do what they were trying to. If someone tries to break open a door and they fail the Might Check for it, that doesn't have to mean that the door didn't break. It could break but make such a loud noise that the guards are alerted, or maybe they're unlucky and there's a guard directly on the other side of the door. You could even have them smashing the door in this way lower the DC for the next person to attempt something.
 
@@ -4522,7 +4527,7 @@ It can feel really bad and take forever if you gate progress of the story behind
 
 ## Game Master Guide
 
-## Variable Attribute Skill Checks
+### Variable Attribute Skill Checks
 
 Each Skill has a Base Attribute that is its 'home' on the Character Sheet. This is the default Attribute you would add to each Skill unless the GM calls for something else. In most scenarios, you will find yourself using the Skill's Base Attribute.
 
@@ -4530,7 +4535,7 @@ Each Skill has a Base Attribute that is its 'home' on the Character Sheet. This 
 
 This keeps the game moving quickly and avoids confusion on which Attribute you add to a given Check. If you're interested in a more customizable and creative approach to Skills, then here is how the 'Variable Attribute Rule' works.
 
-## Variable Attribute Rule
+#### Variable Attribute Rule
 
 Which Attribute you use for a given Skill Check depends on how you're using the Skill. This is a much more open approach to Skill Checks, and can be used to create any possible Check.
 
@@ -4544,7 +4549,7 @@ Determining the default Check can be straightforward, but what if the PC wants t
 
 **DC Tip:** The GM should ideally choose a Variable Check that is well suited for the PC. If the Variable Check is worse off for the PC, they can always just choose to use the 'default' Skill Check instead.
 
-## Variable Check Examples
+#### Variable Check Examples
 
 Here are some examples of Variable Attributes being applied to scenarios for some great Skill Check results. I challenge you to think of how you could combine each of the 4 Attributes to each of the 13 General Skills. The format for describing these Checks is 'Skill (Attribute) Check' with the Skill being the first word and the Attribute being used inside of the parentheses.
 
@@ -4574,7 +4579,7 @@ Here are some examples of Variable Attributes being applied to scenarios for som
 
 
 
-## CHAPTER 4: Character Creation Rules
+# CHAPTER 4: Character Creation Rules
 
 
 
@@ -4590,7 +4595,7 @@ During Player Character Creation you will get to customize your PC in the follow
 
 ## Player Character Creation
 
-## Step 1: Attributes & Prime Modifier
+### Step 1: Attributes & Prime Modifier
 
 You get your PC Attributes from one of the following methods and then assign the values to each of the 4 Attributes.
 
@@ -4618,11 +4623,11 @@ Your Prime Modifier is equal to your PC's highest Attribute.
 
 **DC Tip:** You really want a PC to have a 3 in one of their Attributes so they can have a 3 for their Prime Modifier at level 1. Your Prime Modifier is added to a lot of the things you do in Combat and is very important.
 
-## Step 2: Save Masteries
+### Step 2: Save Masteries
 
 You add your Attribute bonus and your Combat Mastery together. The result is your Save bonus for each Attribute.
 
-## Step 3: Background (Skills, Trades, & Languages)
+### Step 3: Background (Skills, Trades, & Languages)
 
 This represents how your were raised, what type of culture you were around, and what you have done since birth. You gain 'Traits' from your Background at 1st level that grant you some flavorful or mechanical benefits.
 
@@ -4652,7 +4657,7 @@ Your Background gives you Fluency in the Common Language and 2 Language Points t
 
 Coming Soon. You get a list of starting equipment based on your Background. You could instead choose to receive a flat amount of gold or even roll for your gold.
 
-## Step 4: Health Points
+### Step 4: Health Points
 
 Fill in your Character's HP. You may potentially add more if you choose an Ancestry or Class that grants bonus HP at Level 1.
 
@@ -4660,11 +4665,11 @@ Fill in your Character's HP. You may potentially add more if you choose an Ances
 
 **Example:** A PC picks the Champion Class at Level 1 and starts with a Might of 3 (the highest possible at Level 1). The Champion Class grants a base of 9 HP. The PC then adds +3 HP from their Might to get a total of 12 HP (9 + 3). If any of their Ancestry Traits increase or decrease their HP, they would add those to the total to determine their starting HP.
 
-## Step 5: Stamina & Mana Points
+### Step 5: Stamina & Mana Points
 
 Fill in your Character's SP and MP. Martial Characters have 1 Stamina Point (SP), Spellcasters have 6 Mana Points (MP), and Hybrid Characters (such as a Spellblade) have 1 Stamina Point (SP) and 3 Mana Points (MP).
 
-## Step 6: Defense
+### Step 6: Defense
 
 Fill in your Character's Precision and Area Defense.
 
@@ -4686,7 +4691,7 @@ Fill in each section's Damage Reduction.
 
 **Mystical Damage Reduction:** This most likely doesn't apply to your character (unless you have a feature that grants it).
 
-## Step 7: Combat Modifiers
+### Step 7: Combat Modifiers
 
 Fill out the rest of the blanks on your Character Sheet.
 
@@ -4708,7 +4713,7 @@ Fill out the rest of the blanks on your Character Sheet.
 
 
 
-## Step 8: Ancestry
+### Step 8: Ancestry
 
 Choose an Ancestry. This represents your biology and how you've grown and developed since birth. You gain Ancestry Traits from your chosen Ancestry at 1st, 4th, and 7th level.
 
@@ -4720,7 +4725,7 @@ You choose 1 or 2 Ancestries to gain access to. You also get 5 Ancestry points t
 
 **DC Tip:** Some of these Traits might affect things you've already added to your Character Sheet (such as HP, Speed, etc.).
 
-## Step 9: Class
+### Step 9: Class
 
 Choose a Class. This represents how well trained you are in martial combat, spellcasting, or both. You gain Class Features at Level 1, 2, 5, and 8.
 
@@ -4740,7 +4745,7 @@ You gain a number of Class Features at Level 1 based on which Class you chose (s
 
 **Skill Points:** If your background already gave you one or more of these Skills, you can replace those Skills from this list with any Skill of your choice.
 
-## Step 10: Weapons & Inventory
+### Step 10: Weapons & Inventory
 
 Choose what starting equipment you want. You gain some from your Class and the rest from your Background.
 
@@ -4756,7 +4761,7 @@ Characters get stronger as they increases in Level. This chart shows what you ge
 
 **DC Tip:** This table is a general representation of what the 'standard' is for all classes, but make sure to check your Class specifically just in case.
 
-## Player Character Progression Table
+### Player Character Progression Table
 
 | Char Level | Combat Mastery | Attribute Cap | Skill Mastery Level Cap | Attribute Points | Skill Points | Trade Points | Features, Talents, & Traits |
 |---|---|---|---|---|---|---|---|
@@ -4771,7 +4776,7 @@ Characters get stronger as they increases in Level. This chart shows what you ge
 | 9 | 5 | | | | | | Subclass Capstone Features |
 | 10 | 5 | 5 | Expert (3) | +1 | +2 | +1 | Epic Boon, Talent + 1 Path Point |
 
-## Leveling Up
+### Leveling Up
 
 When a Character levels up these are the updates you need to make.
 
@@ -4820,29 +4825,29 @@ These are the categories that you could gain HP in:
 
 PCs gain Talents at specific Levels (as shown in their Class Tables) to improve their statistics or to gain new abilities.
 
-## Talent Requirements
+### Talent Requirements
 
 If a Talent has a requirement (such as a Level requirement), you must meet that requirement to choose that Talent. A Talent may be taken multiple times, unless otherwise stated.
 
 **DC Tip:** The GM might also award Talents at key story moments or as rewards. Keep in mind that these can be quite powerful, especially at early levels.
 
-## General Talents
+### General Talents
 
 General Talents allow you to improve in a variety of ways, unrelated to Class.
 
-## Attribute Increase
+#### Attribute Increase
 
 **General Talent**
 
 You gain 1 Attribute Point to put into any Attribute of your choice.
 
-## Skill or Trade Increase
+#### Skill or Trade Increase
 
 **General Talent**
 
 You gain 3 Skill or Trade Points to put into any Skill or Trade of your choice.
 
-## Martial Expansion
+#### Martial Expansion
 
 **General Talent**
 
@@ -4854,7 +4859,7 @@ You gain the following benefits:
 - You learn 2 additional Maneuvers.
 - You learn 1 additional Technique.
 
-## Spellcasting Expansion
+#### Spellcasting Expansion
 
 **General Talent**
 
@@ -4866,11 +4871,11 @@ You gain the following benefits:
 - You gain access to your choice of any Spell List.
 - You learn 1 additional Spell (from Spell Lists that you have access to).
 
-## Class Talents
+### Class Talents
 
 Class Talents allow you to gain access to abilities that either expand on Class Features from that Class or provide new abilities related to a Class's identity. To take a Class Talent from a class you must have at least 1 Feature from that Class, as well as meet any requirements listed in the Talent.
 
-## Barbarian
+#### Barbarian
 
 ## Unfathomable Strength
 
@@ -4888,7 +4893,7 @@ Class Talents allow you to gain access to abilities that either expand on Class 
 
 **Unstoppable Charge:** The movement granted by your Charge ignores Difficult Terrain and doesn't provoke Opportunity Attacks.
 
-## Bard
+#### Bard
 
 ## Expanded Repertoire
 
@@ -4912,7 +4917,7 @@ Once per Round, when you take the Help Action, you can grant a bonus d8 Help Die
 
 
 
-## Champion
+#### Champion
 
 ## Champion's Resolve
 
@@ -4929,7 +4934,7 @@ When you use a **Tactical Die**, you gain the following benefit:
 
 Once on each of your turns, you can spend 1 SP to gain the benefit of **Combat Readiness**. Additionally, you can use **Second Wind** without being Bloodied.
 
-## Cleric
+#### Cleric
 
 ## Expanded Order
 
@@ -4955,7 +4960,7 @@ You gain the following benefits:
 
 **DC Tip:** Some Curses can only be removed by specific means, which are listed in the Curse's description (such as performing a specific ritual, completing a quest, or being subjected to the Wish Spell).
 
-## Commander
+#### Commander
 
 ## Seize Momentum
 
@@ -4969,7 +4974,7 @@ When an ally within your **Commanding Aura** scores a Heavy Hit, you can use you
 
 Once per Round, when you use your **Commander's Call**, you can spend 1 additional SP to target a second creature within range (including yourself), they also gain the benefits of the chosen command. You choose who acts first between the targeted creatures.
 
-## Druid
+#### Druid
 
 ## Wild Form Expansion
 
@@ -4992,7 +4997,7 @@ You gain the following benefits:
 
 
 
-## Hunter
+#### Hunter
 
 ## Expanded Terrains
 
@@ -5016,7 +5021,7 @@ You gain additional benefits against Marked targets that are Large or larger:
 - You have ADV on Saves they force you to make.
 - You have ADV on Checks you make as part of the Analyze Creature Action.
 
-## Monk
+#### Monk
 
 ## Expanded Stances
 
@@ -5041,7 +5046,7 @@ Your Unarmed Strikes deal 2 damage but no longer have the Impact Property.
 
 Once on each of your turns, when you make a Melee Martial Attack, you can spend 1 SP to immediately make an Unarmed Strike against a creature within range. This Unarmed Strike isn't subjected to the Multiple Check Penalty and doesn't advance that penalty.
 
-## Rogue
+#### Rogue
 
 ## Unseen Ambusher
 
@@ -5062,7 +5067,7 @@ Your **Cheap Shot** deals +1 damage for each additional Condition on the target.
 
 
 
-## Sorcerer
+#### Sorcerer
 
 ## Expanded Meta Magic
 
@@ -5092,7 +5097,7 @@ Your magical vitality grants you the following benefits:
 - You can spend 2 Rest Points in place of 1 MP on **Meta Magic**.
 - You regain 1 Rest Point when you roll for Initiative.
 
-## Spellblade
+#### Spellblade
 
 ## Expanded Disciplines
 
@@ -5123,7 +5128,7 @@ You are able to adapt your Bound Weapon to match the situation. You gain the fol
 
 **Example:** A Spellblade is fighting several Fire Elementals. When a Fire Elemental hits the Spellblade with an Attack that deals Fire damage, the Spellblade can change its Bound Damage to Fire after the Attack is resolved. The Spellblade then has Fire Resistance against the next Attack against them.
 
-## Warlock
+#### Warlock
 
 ## Expanded Boon
 
@@ -5155,7 +5160,7 @@ You can spend 1 minute to create a Warlock Subcontract with a willing creature w
 
 
 
-## Wizard
+#### Wizard
 
 ## Expanded Spell School
 
@@ -5192,13 +5197,13 @@ Multiclass Talents allow you to gain Features from other Classes, except Flavor 
 
 **Example:** The Cleric Feature: Channel Divinity has an option (Censure Divine) that deals “Divine Damage” to nearby creatures of your choice. The Cleric normally choose their type of Divine Damage at level 1 when they gain the Cleric Order Feature. If a Champion uses a Multiclassing Talent to gain the Channel Divinity Feature, they would need to choose a type of Divine Damage listed in the Cleric Order Feature.
 
-## Novice Multiclass
+#### Novice Multiclass
 
 **Multiclass Talent**
 
 You can choose a 1st Level Class Feature from any Class.
 
-## Adept Multiclass
+#### Adept Multiclass
 
 **Multiclass Talent**
 
@@ -5206,7 +5211,7 @@ You can choose a 1st Level Class Feature from any Class.
 
 You can choose a 2nd Level Class Feature from any Class.
 
-## Expert Multiclass
+#### Expert Multiclass
 
 **Multiclass Talent**
 
@@ -5221,7 +5226,7 @@ You can choose 1 of the following options:
 
 
 
-## Master Multiclass
+#### Master Multiclass
 
 **Multiclass Talent**
 
@@ -5229,7 +5234,7 @@ You can choose 1 of the following options:
 
 You can choose a 6th Level Subclass Feature from a Subclass you have at least 1 Subclass Feature from.
 
-## Grandmaster Multiclass
+#### Grandmaster Multiclass
 
 **Multiclass Talent**
 
@@ -5237,7 +5242,7 @@ You can choose a 6th Level Subclass Feature from a Subclass you have at least 1 
 
 You can choose an 8th Level Class Capstone Feature from any Class you have at least 2 Class Features from.
 
-## Legendary Multiclass
+#### Legendary Multiclass
 
 **Multiclass Talent**
 
@@ -5251,7 +5256,7 @@ When you choose a Talent, you gain additional benefits from a Talent Path: **Mar
 
 **Example:** If a Champion chooses the Martial Path at level 2, they gain +1 SP, +1 Maneuver, and +1 Technique. If that Champion chose Spellcaster Path instead, they would gain +2 MP, +1 Cantrip, and +1 Spell.
 
-## Martial Path
+### Martial Path
 
 **Combat Training:** Weapons
 
@@ -5261,7 +5266,7 @@ When you choose a Talent, you gain additional benefits from a Talent Path: **Mar
 
 **Stamina Points:** Your maximum number of Stamina Points increases as shown in the Stamina Points column of the Martial Path Table.
 
-## Martial Path Table
+#### Martial Path Table
 
 | Path Level | Stamina Points | Maneuvers Learned | Techniques Learned |
 |---|---|---|---|
@@ -5270,7 +5275,7 @@ When you choose a Talent, you gain additional benefits from a Talent Path: **Mar
 | 3 | +1 | +1 | +1 |
 | 4 | | +1 | |
 
-## Spellcasters With Stamina
+#### Spellcasters With Stamina
 
 A Spellcaster gains the Spellcaster Stamina benefit listed below when they spend 2 Path Points on the Martial Path.
 
@@ -5278,7 +5283,7 @@ A Spellcaster gains the Spellcaster Stamina benefit listed below when they spend
 
 Once per round, you regain up to half your maximum SP when you use a Spell Enhancement.
 
-## Spellcaster Path
+### Spellcaster Path
 
 **Spell List:** If you don't already have a Spell List, then choose a Spell List from any Class. When you learn a new Spell, you can choose any Spell on the chosen Spell List.
 
@@ -5288,7 +5293,7 @@ Once per round, you regain up to half your maximum SP when you use a Spell Enhan
 
 **Mana Points:** Your maximum number of Mana Points increases as shown in the Mana Points column of the Spellcaster Path Table.
 
-## Spellcaster Path Table
+#### Spellcaster Path Table
 
 | Path Level | Mana Points | Cantrips Learned | Spells Learned |
 |---|---|---|---|
@@ -5303,7 +5308,7 @@ Once per round, you regain up to half your maximum SP when you use a Spell Enhan
 
 At Level 3, instead of choosing a Subclass from your Class, you can take the Paragon Subclass.
 
-## Level 3 Subclass Feature
+### Level 3 Subclass Feature
 
 ## Novice Paragon
 
@@ -5313,13 +5318,13 @@ You gain a Class Talent of your choice from your Class. This does not progress y
 
 You gain 1 Trade Point.
 
-## Level 6 Subclass Feature
+### Level 6 Subclass Feature
 
 ## Adept Paragon
 
 You gain a Class Talent of your choice from your Class. This does not progress your Martial or Spellcasting Path.
 
-## Level 9 Subclass Feature
+### Level 9 Subclass Feature
 
 ## Expert Paragon
 
@@ -5331,7 +5336,7 @@ You gain a Class Talent of your choice from your Class. This does not progress y
 
 
 
-## CHAPTER 5: Ancestries
+# CHAPTER 5: Ancestries
 
 
 
@@ -5341,19 +5346,19 @@ You gain a Class Talent of your choice from your Class. This does not progress y
 
 During character creation you must choose your character's **Ancestry**, which represents the physical form your character takes in the world, such as Human, Elf, Dwarf, Halfling and Gnome. Each Ancestry has a list of **Ancestry Traits**, which you can gain by spending **Ancestry Points**.
 
-## Ancestry Traits
+### Ancestry Traits
 
 Ancestry Traits give your character physiological properties or abilities based on your Ancestry. You can choose various combinations of Ancestry Traits to customize your character to express the type of fantasy race you want to play.
 
-## Ancestry Points
+### Ancestry Points
 
 Ancestry Points can be spent to gain Ancestry Traits. Most Traits cost between 1 and 3 Points, however, some Traits have a Point value of 0 or lower: **Minor Traits** and **Negative Traits**.
 
-## Gaining Ancestry Points
+### Gaining Ancestry Points
 
 When first creating your character, you have 5 Ancestry Points. You gain 2 additional Ancestry Points when you reach Level 4, and again when you reach Level 7.
 
-## Types of Ancestry Traits
+### Types of Ancestry Traits
 
 Each Ancestry has 4 kinds of Ancestry Traits.
 
@@ -5381,7 +5386,7 @@ These are optional Ancestry Traits that you can choose from to customize your Ch
 
 ## Ancestry Origins
 
-## Ancestry Flavor vs Mechanics
+### Ancestry Flavor vs Mechanics
 
 Player Characters are unique in this aspect, and with so many options you're able to create a wide variety of Ancestry Origins. You can customize them and make them your own, either for mechanical reasons or flavor/lore reasons.
 
@@ -5420,17 +5425,17 @@ Each Ancestry has unique biological and cultural pieces that can combine with Ba
 
 This will be available at the release of the full game. The Beta is focused on the mechanics of the game, so the flavor and lore will be revealed in the future.
 
-## Ancestry Creation
+### Ancestry Creation
 
 Every character starts with the Base Ancestry Traits below, and their Ancestry gives them a list of additional Traits they can spend their 5 Ancestry Points on.
 
-## Base Ancestry Traits
+#### Base Ancestry Traits
 
 - **Size:** Your Size is Medium.
 - **Speed:** You have a Speed of 5 Spaces.
 - **Creature Type:** Your Creature Type is Humanoid.
 
-## Choose Your Ancestry
+#### Choose Your Ancestry
 
 Pick 1 or 2 Ancestries to show where your character comes from, what they look like, or how they perform mechanically. This usually represents what Ancestry your character's parents were. When you select an Ancestry, you gain access to its Ancestry Traits List (Default and Expanded).
 
@@ -5446,23 +5451,23 @@ You gain access to both Ancestry Lists of each chosen Ancestry.
 
 **DC Tip:** This gives you more options during character creation, but somewhat less flexibility at higher levels when you gain additional Ancestry Points.
 
-## Spend Your Ancestry Points
+#### Spend Your Ancestry Points
 
 You have 5 Ancestry Points to spend on any Ancestry Traits from among your Ancestry Trait Lists. Your Ancestry needs to have a total of 5 Ancestry Points worth of Traits (including negative Traits). You can choose multiple Negative Traits, but you can only choose 1 Minor Trait. You must spend all your Ancestry points during character creation (you can't save them for later).
 
-## Gaining & Losing Negative Traits
+#### Gaining & Losing Negative Traits
 
 You can't gain more than 2 Ancestry Points total from your Negative Ancestry Traits. You can remove Negative Ancestry Traits at higher Levels by spending 1 Ancestry Point if their cost is (-1) or 2 Ancestry Points if their cost is (-2).
 
 
 
-## Duplicate Ancestry Traits
+### Duplicate Ancestry Traits
 
 You can't choose a Trait of the same name multiple times, unless it says otherwise.
 
 **Example:** A PC chooses Dwarf and Giantborn as their 2 Ancestries. The Tough Ancestry Trait is available to both Ancestries. The PC could only choose the Tough Ancestry Trait once, even though it's available to both Ancestries.
 
-## Ancestry Trait Requirements
+### Ancestry Trait Requirements
 
 If an Ancestry Trait has a requirement, such as a Level requirement, then you must meet that requirement to choose that Ancestry Trait.
 
@@ -5472,7 +5477,7 @@ If an Ancestry Trait has a requirement, such as a Level requirement, then you mu
 
 Certain Ancestry Traits grant increases to Attributes, Skills, and Trades. These Ancestry Traits can't exceed the Attribute Limit, Skill Mastery Limit, or Trade Mastery Limit, unless they say otherwise.
 
-## Refunding Ancestry Traits
+### Refunding Ancestry Traits
 
 If you gain a Talent or Feature that grants you a benefit that's identical to (or a better version of) an Ancestry Trait you have, you can choose to immediately replace that Ancestry Trait with 1 or more other Ancestry Traits available to you that are worth the same amount of Ancestry Points.
 
@@ -5484,17 +5489,17 @@ If you gain a Talent or Feature that grants you a benefit that's identical to (o
 
 ## Variant Rules
 
-## Custom Ancestries
+### Custom Ancestries
 
 If you want to give your PC a personalized Ancestry or you want to combine 3 or more Ancestries together, you can create a Custom Ancestry. This gives Characters access to ALL Ancestry Lists at once but only gets 4 points to spend instead of 5. All other Ancestry Creation Rules still apply. When you gain Ancestry Points, you can spend them on any Ancestry List of your choice.
 
 **DC Tip:** You could also choose to let PCs get the full 5 Ancestry Points for their Custom Ancestry, but keep in mind that this would be VERY strong and the default option for most everyone at the table (for both min-maxing and roleplay reasons). If you're ok with this, then let them have the full 5 Points instead of 4.
 
-## Variable Negativity
+### Variable Negativity
 
 This Variant Rule allows you to gain Negative Ancestry Traits when you gain Ancestry Points after Character Creation. You still can't gain more than 2 Ancestry Points total from your Negative Ancestry Traits at a time.
 
-## Stronger or Weaker Ancestries
+### Stronger or Weaker Ancestries
 
 Game Masters can choose to start the game off with higher or lower Ancestry Point totals (instead of 5).
 
@@ -5504,7 +5509,7 @@ Game Masters can choose to start the game off with higher or lower Ancestry Poin
 
 **DC Tip:** I would be very careful with this. The game is balanced around PCs getting 5 points, so there could be some very powerful combinations players could take advantage of.
 
-## Ancestry Adoption
+### Ancestry Adoption
 
 This option allows you to select one Ancestry Trait from any Ancestry available, then follow the rules as written for spending the rest of your Ancestry Points.
 
@@ -5514,7 +5519,7 @@ This option allows you to select one Ancestry Trait from any Ancestry available,
 
 
 
-## Ancestry 'Magic Items'
+### Ancestry "Magic Items"
 
 This option allows you to 'think outside the box' on why your PC can do what they can do and where they got their 'powers' from. With this rule, you can choose from any of the Ancestry Traits and give yourself a 'magic item' that represents that power. You can do this multiple times for multiple points worth of traits. You can tie all these points into a single item or into multiple items.
 
@@ -5530,14 +5535,14 @@ Keep in mind that this 'feature' is now being represented by an object that's no
 
 ## Human
 
-## Default Traits
+### Default Traits
 
 - **(2) Attribute Increase:** Choose an Attribute. The chosen Attribute increases by 1 (up to the Attribute Limit).
 - **(2) Skill Expertise:** Choose a Skill. Your Mastery Cap and Mastery Level in the chosen Skill both increase by 1. You can only benefit from 1 Feature that increases your Skill Mastery Limit at a time.
 - **(1) Human Resolve:** Your Death's Door Threshold value is expanded by 1.
 - **(0) Undying:** You have ADV on Saves against the Doomed Condition.
 
-## Expanded Traits
+### Expanded Traits
 
 - **(1) Trade Expertise:** Choose a Trade. Your Mastery Cap and Mastery Level in the chosen Trade both increase by 1. You can only benefit from 1 Feature that increases your Trade Mastery Limit at a time.
 - **(1) Human Determination:** Once per Combat, you can give yourself ADV on an Attack Check or Spell Check while Bloodied.
@@ -5548,14 +5553,14 @@ Keep in mind that this 'feature' is now being represented by an object that's no
 
 ## Elf
 
-## Default Traits
+### Default Traits
 
 - **(1) Elven Will:** You have ADV on Checks and Saves against being Charmed and put to Sleep.
 - **(2) Nimble:** When you take the Dodge Action, you instead gain the benefits of the Full Dodge Action.
 - **(2) Agile Explorer:** You're not affected by Difficult Terrain.
 - **(0) Discerning Sight:** You have ADV on Checks and Saves made to discern through visual illusions.
 
-## Expanded Traits
+### Expanded Traits
 
 - **(1) Quick Reactions:** While you aren't wearing Armor, you gain +1 PD.
 - **(1) Peerless Sight:** You don't have DisADV as a result of making an Attack with a Weapon at Long Range
@@ -5573,14 +5578,14 @@ Keep in mind that this 'feature' is now being represented by an object that's no
 
 ## Dwarf
 
-## Default Traits
+### Default Traits
 
 - **(1) Tough:** Your HP maximum increases by 1.
 - **(2) Toxic Fortitude:** You have Poison Resistance (Half) and ADV on Saves against being Poisoned.
 - **(2) Physically Sturdy:** You have ADV on Saves against being Impaired, Deafened, or Petrified.
 - **(0) Iron Stomach:** You have ADV on Saves against effects that come from consuming food or liquids.
 
-## Expanded Traits
+### Expanded Traits
 
 - **(1) Thick-Skinned:** While you aren't wearing Armor, you gain +1 AD.
 - **(1) Natural Combatant:** You gain Combat Training with Heavy Armor and All Shields.
@@ -5594,7 +5599,7 @@ Keep in mind that this 'feature' is now being represented by an object that's no
 
 ## Halfling
 
-## Default Traits
+### Default Traits
 
 - **(-1) Small-Sized:** Your Size is considered Small.
 - **(2) Elusive:** When you take the Disengage Action, you instead gain the benefits of the Full Disengage Action.
@@ -5603,7 +5608,7 @@ Keep in mind that this 'feature' is now being represented by an object that's no
 - **(1) Deft Footwork:** You can move through the space of a hostile creature 1 size larger than you as if it were Difficult Terrain.
 - **(0) Beast Whisperer:** You can speak to Beasts in a limited manner. They can understand the meanings of simple words, concepts, or states of emotion. You don't have a special ability to understand them in return.
 
-## Expanded Traits
+### Expanded Traits
 
 - **(1) Beast Insight:** You can understand Beasts in a limited manner. You can understand the meaning of their noises and behaviors, though they have no special ability to understand you in return.
 - **(1) Burst of Bravery:** Once per Combat, you can end the Intimidated, Rattled, or Frightened Condition on yourself for free at any time.
@@ -5618,7 +5623,8 @@ Keep in mind that this 'feature' is now being represented by an object that's no
 
 
 ## Gnome
-## Default Traits
+
+### Default Traits
 
 - **(-1) Small-Sized:** Your Size is considered Small.
 - **(2) Escape Artist:** You have ADV on Checks and Saves to avoid or escape being Grappled or Restrained.
@@ -5627,7 +5633,7 @@ Keep in mind that this 'feature' is now being represented by an object that's no
 - **(1) Strong-Minded:** You gain Psychic Resistance (1).
 - **(0) Predict Weather:** You can naturally tell what the weather is going to be in the next hour in the area within 1 mile of you. You don't have DisADV on Checks or Saves as a result of naturally occurring weather.
 
-## Expanded Traits
+### Expanded Traits
 
 - **(1) Mana Increase:** Your MP maximum increases by 1.
 - **(1) Trapper:** You have ADV on Investigation Checks to spot Traps and on Trickery Checks to Hide Traps.
@@ -5637,9 +5643,9 @@ Keep in mind that this 'feature' is now being represented by an object that's no
 - **(-1) Agility Attribute Decrease:** You decrease your Agility by 1 (to a minimum of -2).
 - **(-1) Short-Legged:** Your Speed decreases by 1 Space.
   
-  ## Orc
+## Orc
 
-## Default Traits
+### Default Traits
 
 - **(-1) Cursed Mind:** You gain Psychic Vulnerability (1).
 - **(2) Orc Rush:** Once per Combat when you willingly move toward an enemy, you can spend 1 AP to gain Temp HP equal to your Prime Modifier.
@@ -5648,7 +5654,7 @@ Keep in mind that this 'feature' is now being represented by an object that's no
 - **(1) Orcish Resolve:** You gain 1 additional AP while on Death's Door.
 - **(0) Already Cursed:** You have ADV on Saves against Curses.
 
-## Expanded Traits
+### Expanded Traits
 
 - **(2) Intimidating Shout:** Once per Combat, you can spend 1 AP to let out an Intimidating Shout. All creatures within 5 Spaces that can hear you must make a Charisma Save contested by your Attack Check. **Failure:** A target is Hindered on the next Attack Check or Spell Attack it makes before the start of your next turn.
 - **(1) Orc Dash:** Once per Combat you can use your Minor Action to move, as long as that movement is towards an enemy.
@@ -5663,14 +5669,14 @@ Keep in mind that this 'feature' is now being represented by an object that's no
 
 ## Dragonborn
 
-## Draconic Origin
+### Draconic Origin
 
 Choose a Draconic Origin from the list below. All future choices within this Ancestry must use the chosen Draconic Origin. The type of damage associated with your Draconic Origin is your Draconic damage.
 
 - **Elemental Origin:** Cold, Corrosion, Fire, Lightning, or Poison.
 - **Mystic Origin:** Psychic, Radiant, Sonic, or Umbral.
 
-## Default Traits
+### Default Traits
 
 **(1) Darkvision:** You have Darkvision 10 Spaces.
 
@@ -5685,7 +5691,7 @@ Before you make your Spell Check, you can spend 1 or more SP, MP, or a combinati
 
 **(0) Reptilian Superiority:** You have ADV on Intimidation Checks against reptilian creatures of Medium Size and smaller (not including other Dragonborn).
 
-## Expanded Traits
+### Expanded Traits
 
 - **(1) Mana Increase:** Your MP maximum increases by 1.
 - **(1) Thick-Skinned:** While you aren't wearing Armor, you gain +1 AD.
@@ -5711,7 +5717,7 @@ Before you make your Spell Check, you can spend 1 or more SP, MP, or a combinati
 
 ## Giantborn
 
-## Default Traits
+### Default Traits
 
 - **(1) Tough:** Your HP maximum increases by 1.
 - **(2) Powerful Build:** You increase by 1 Size, but you occupy the Space of a creature 1 Size smaller.
@@ -5719,7 +5725,7 @@ Before you make your Spell Check, you can spend 1 or more SP, MP, or a combinati
 - **(1) Giant's Resolve:** While on Death's Door, you reduce all damage taken by 1.
 - **(0) Unyielding Movement:** You're immune to being Slowed 2 (or higher).
 
-## Expanded Traits
+### Expanded Traits
 
 **(2) Giant's Fortitude:** (requires Giant's Resolve) You also gain the benefits of your Giant's Resolve Trait while Well-Bloodied.
 
@@ -5738,7 +5744,7 @@ Before you make your Spell Check, you can spend 1 or more SP, MP, or a combinati
 
 ## Angelborn
 
-## Fallen Angelborn
+### Fallen Angelborn
 
 If you choose to play an Angelborn and go down a darker path, you can choose to be a Fallen Angelborn. This can happen at character creation from evil acts done from your backstory, or this can happen mid-campaign after a large change in your character.
 
@@ -5748,7 +5754,7 @@ You gain the following Ancestry Trait:
 
 **DC Tip:** You aren't considered to be a Fiendborn, you just gain access to its Traits. You can only have one '0 Point' Ancestry Trait when creating your character, so if you want to start the game with this feature you can't also take Divine Glow.
 
-## Default Traits
+### Default Traits
 
 **(1) Radiant Resistance:** You have Resistance (Half) to Radiant damage.
 
@@ -5758,7 +5764,7 @@ You gain the following Ancestry Trait:
 
 **(0) Divine Glow:** Your body can emit a Bright Light in a 5 Space radius around you at will.
 
-## Expanded Traits
+### Expanded Traits
 
 **(1) Mana Increase:** Your MP maximum increases by 1.
 
@@ -5784,11 +5790,11 @@ You gain the following Ancestry Trait:
 
 ## Fiendborn
 
-## Fiendish Origin
+### Fiendish Origin
 
 Choose a Fiendish Origin from the following list: Cold, Corrosion, Fire, Poison, and Umbral. All future choices within this Ancestry must use the chosen Fiendish Origin. The type of damage associated with your Fiendish Origin is your Fiendish damage.
 
-## Fiendborn Redemption
+### Fiendborn Redemption
 
 If you choose to play a Fiendborn and go down a path of redemption, you can choose to be a Redeemed Fiendborn. This can happen at character creation from good acts done from your backstory, or this can happen mid-campaign after a large change in your character.
 
@@ -5798,7 +5804,7 @@ You gain the following Ancestry Trait:
 
 **DC Tip:** You aren't considered to be an Angelborn, you just gain access to its Traits. You can only have one '0 Point' Ancestry Trait when creating your character, so if you want to start the game with this feature you can't take Light's Bane.
 
-## Default Traits
+### Default Traits
 
 **(2) Fiendish Resistance:** You gain Resistance (Half) to your Fiendish damage type.
 
@@ -5806,7 +5812,7 @@ You gain the following Ancestry Trait:
 - **(1) Darkvision:** You have a Darkvision of 10 Spaces.
 - **(0) Light's Bane:** You can spend 1 AP to snuff out a mundane light source within 5 Spaces of you.
 
-## Expanded Traits
+### Expanded Traits
 
 - **(1) Mana Increase:** Your MP maximum increases by 1.
 - **(1) Silver-Tongued:** Once per Long Rest you can grant yourself ADV on an Influence Check when trying to deceive someone.
@@ -5830,7 +5836,7 @@ You gain the following Ancestry Trait:
 
 This is a unique Ancestry in that it doesn't have Default Traits. Instead, Beastborn get access to categories of Expanded Traits called **Beast Traits**. You can spend your Ancestry Points on any of the Beast Traits below.
 
-## Beastborn Origin
+### Beastborn Origin
 
 Choose a type of Beast you're modeled after, such as a frog, elephant, lion, spider, rabbit, dog, or something else. You're a Humanoid creature with an appearance based on the chosen Beast.
 
@@ -5840,11 +5846,11 @@ You gain the following Ancestry Trait:
 
 **DC Tip:** It's up to the GM how far the category of the beast you choose can be applied. Turtle for example might reference ONLY turtles, or might also include other reptiles. If you choose to be a 'hybrid creature' of sorts, you'd have to choose just 1 type of Beast unless your GM makes an exception for you.
 
-## Beast Traits
+### Beast Traits
 
 Below is a list of Beast Traits. You can only choose a Beast Trait once unless it says otherwise.
 
-## Senses
+#### Senses
 
 **(1) Darkvision:** You have Darkvision 10 Spaces.
 
@@ -5854,7 +5860,7 @@ Below is a list of Beast Traits. You can only choose a Beast Trait once unless i
 
 **(-2) Sunlight Sensitivity:** While you or your target is in sunlight, you have DisADV on Attacks and Awareness Checks that rely on sight.
 
-## Mobility
+#### Mobility
 
 **(1) Quick Reactions:** While you aren't wearing Armor, you gain +1 PD.
 
@@ -5876,13 +5882,13 @@ Below is a list of Beast Traits. You can only choose a Beast Trait once unless i
 
 **(2) Burrow Speed:** You gain a Burrow Speed equal to half your Movement Speed.
 
-## Jumping
+#### Jumping
 
 **(1) Jumper:** Your Jump Distance increases by 2, and you can take the Jump Action as a Minor Action.
 
 **(1) Strong Jumper:** You no longer need to move 2 Spaces before performing a Running Jump, and you take 0 damage from Controlled Falling 5 Spaces or less.
 
-## Flying
+#### Flying
 
 **(2) Glide Speed:** You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren't Incapacitated, you gain the following benefits while in the air:
 
@@ -5903,7 +5909,7 @@ Below is a list of Beast Traits. You can only choose a Beast Trait once unless i
 
 **(-1) Winged Arms:** (requires any Flying Beast Trait) Your arms are also your wings. Anytime you use a Glide Speed or Flying Speed, you can't hold anything in your hands.
 
-## Body
+#### Body
 
 
 
@@ -5934,7 +5940,7 @@ Below is a list of Beast Traits. You can only choose a Beast Trait once unless i
 - **(-1) Small-Sized:** Your Size is considered Small.
 - **(-1) Reckless:** Your PD decreases by 1.
 
-## Natural Weapons
+#### Natural Weapons
 
 **(1) Natural Weapon:** You have up to 2 Natural Weapons (claws, horns, fangs, tail, etc.) which you can use to make Unarmed Strikes that deal 1 Bludgeoning, Piercing, or Slashing damage (your choice upon gaining this Trait). You can perform Attack Maneuvers with your Natural Weapons.
 
@@ -5947,7 +5953,7 @@ The following Traits require the Natural Weapon Trait:
 - **(1) Retractable Natural Weapon:** Your Natural Weapon is able to be concealed or retracted and gains the Concealable Property (gain ADV on the first Attack Check you make in Combat).
 - **(1) Venomous Natural Weapon:** When you Hit a creature with your Natural Weapon, they make a Physical Save against your Save DC. **Failure:** The target becomes Impaired until the start of your next turn.
 
-## Miscellaneous
+#### Miscellaneous
 
 **(2) Fast Reflexes:** You gain ADV on Initiative Checks and on the first Attack Check you make in Combat.
 
@@ -5963,7 +5969,7 @@ The following Traits require the Natural Weapon Trait:
 
 
 
-## CHAPTER 6: Classes
+# CHAPTER 6: Classes
 
 
 
@@ -5975,7 +5981,7 @@ Barbarians charge into battle with reckless abandon, ignoring their own safety a
 
 **DC Tip:** Or of course an ANGRY Barbarian might want to smash everything in sight!
 
-## Starting Equipment
+### Starting Equipment
 
 - 2 Weapons or Shields
 - 1 Ranged Weapon with 20 Ammo OR 3 Weapons with the Toss or Thrown Property
@@ -5997,7 +6003,7 @@ Barbarians charge into battle with reckless abandon, ignoring their own safety a
 | 9 | +3 | | | | +1 | | | Subclass Capstone Feature |
 | 10 | +3 | +1 | +2 | +1 | | | | Epic Boon, Talent + 1 Path Point |
 
-## Barbarian Martial Path
+### Barbarian Martial Path
 
 **Combat Training:** Weapons, All Armor, All Shields
 
@@ -6119,7 +6125,7 @@ Bards utilize artistic expression through various forms to connect with the emot
 
 **Bard Flavor:** Bards compile a repertoire of artistic expressions that they manifest as Spells. Musician Bards utilize specific songs or instruments to cast Spells, while dancer Bards perform particular dance moves that represent different Spells. Storyteller Bards initiate combat by narrating tales of wonder and adventure, seamlessly weaving Spells into key points of the story. Painter Bards fluidly and freely paint images, each triggering a specific Spell.
 
-## Bard Class Table
+### Barbarian Class Table
 
 | Char Level | Health Points | Attribute Points | Skill Points | Trade Points | Mana Points | Cantrips Known | Spells Known | Features |
 |---|---|---|---|---|---|---|---|---|
@@ -6161,9 +6167,9 @@ Bards utilize artistic expression through various forms to connect with the emot
 
 
 
-## Bard Class Features
+### Barbarian Class Features
 
-## Level 1 Class Features
+#### Level 1 Class Features
 
 ## Font of Inspiration
 
@@ -6193,7 +6199,7 @@ When you spend at least 5 minutes performing an Artistry Trade for one or more p
 
 **DC Tip:** If the performance is in front of a lot of people, the GM might decide to roll for ALL 'commoners' in one single Save. For example, a group of commoners' Charisma Save would probably only be a +1 or so. If there were also important NPCs within the crowd, then they could roll for those individually.
 
-## Level 2 Class Features
+#### Level 2 Class Features
 
 ## Bardic Performance
 
@@ -6208,7 +6214,7 @@ You can spend 1 AP and 1 MP to start a performance that grants you a 10 Space Au
 
 **Ending Early:** The performance ends early if you become Incapacitated, you die, or choose to end it for free.
 
-## Talent
+##### Talent
 
 You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.
 
@@ -6216,7 +6222,7 @@ You gain 1 Talent of your choice. If the Talent has any prerequisites, you must 
 
 
 
-## Subclasses
+### Subclasses
 
 ## Eloquence
 
@@ -6664,7 +6670,7 @@ You can spend 1 AP and 1 SP to command a willing creature that you can see withi
 - **Dodge:** The creature takes the Full Dodge Action.
 - **Move:** The creature moves up to their Speed without provoking Opportunity Attacks.
 
-## Natural Leader (Flavor Feature)
+##### Ancestral Knowledge (Flavor Feature)
 
 You have ADV on Checks made to convince creatures that you are an authority figure. Additionally, you have ADV on the first Charisma Check made to interact with non-hostile members of military groups (such as soldiers, guards, etc.).
 
@@ -6746,13 +6752,13 @@ Druids tap into the power of nature, drawing upon the energies that flow through
 | 9 | +2 | | | | +2 | | +1 | Subclass Capstone Feature |
 | 10 | +2 | +1 | +2 | +1 | | | | Epic Boon, Talent + 1 Path Point |
 
-## Starting Equipment
+### Starting Equipment
 
 - 1 Weapon
 - 1 set of Light Armor
 - X or Y 'Packs' (Adventuring Packs Coming Soon)
 
-## Druid Spellcasting Path
+### Bard Spellcasting Path
 
 **Combat Training:** Light Armor
 
@@ -6774,9 +6780,9 @@ Druids tap into the power of nature, drawing upon the energies that flow through
 
 
 
-## Druid Class Features
+### Bard Class Features
 
-## Level 1 Class Features
+#### Level 1 Class Features
 
 ## Druid Domain
 
@@ -6907,7 +6913,7 @@ There are a ton of options you can use to make your Wild Form unique, here's som
 
 **(1) Skillful:** Your Skill Mastery in Stealth and Awareness both increase by 1, up to your Skill Mastery Cap.
 
-## Level 2 Class Features
+#### Level 2 Class Features
 
 ## Nature's Torrent
 
@@ -6915,7 +6921,7 @@ When a creature within 10 spaces of you takes Elemental damage, you can spend 1 
 
 **Ending Early:** The torrent ends early if you use this Feature again, become Incapacitated, die, or choose to end it for free at anytime.
 
-## Talent
+##### Talent
 
 You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.
 
@@ -6943,7 +6949,7 @@ Below is a list of repeatable and unique Wild Form Traits. You can choose repeat
 
 
 
-## Subclasses
+### Subclasses
 
 ## Phoenix
 
@@ -7320,7 +7326,7 @@ While not wearing Heavy Armor you gain the following benefits:
 
 
 
-## Meditation (Flavor Feature)
+##### Comedian (Flavor Feature)
 
 You can enter a state of meditation during a Short Rest (1 hour) or longer. Choose 1 Charisma or Intelligence Skill. When you complete the Rest, your Skill Mastery level increases by 1 (up to your Skill Mastery Cap) for the chosen Skill until you complete another Short or longer Rest. While meditating, you remain alert to danger.
 
@@ -7399,7 +7405,7 @@ Rogues are skilled, evasive, and cunning. They impose conditions onto enemies, t
 
 **Source of Power:** Rogues can pinpoint and take advantage of the weaknesses of their enemies and use their nimbleness and cunning to get what they want, in combat and out. They could learn this from being a petty thief, a former noble, or an assassin in training.
 
-## Starting Equipment
+### Starting Equipment
 
 - 2 Weapons or Light Shields
 - 1 Ranged Weapon with 20 Ammo OR 3 Weapons with the Toss or Thrown Property
@@ -7444,7 +7450,7 @@ Rogues are skilled, evasive, and cunning. They impose conditions onto enemies, t
 
 ## Rogue Class Features
 
-## Level 1 Class Features
+#### Level 1 Class Features
 
 ## Debilitating Strike
 
@@ -7464,7 +7470,7 @@ You become Fluent in a Mortal Language of your choice. Additionally, you underst
 
 **DC Tip:** This could be anything from the slang of the slums, to the fancy language of the upper classes. It could even be more specific as some kind of bizarre double speak between twin siblings or between the political elite. If the Player doesn't know what to choose for this, they can always defer to a generic thieves guild option.
 
-## Level 2 Class Features
+#### Level 2 Class Features
 
 ## Cheap Shot
 
@@ -7474,13 +7480,13 @@ You deal +1 damage on Martial Attacks against a creature that fulfills at least 
 - It has any Condition other than Invisibile.
 - You're Hidden from it.
 
-## Talent
+##### Talent
 
 You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.
 
 
 
-## Subclasses
+### Subclasses
 
 ## Long Death
 
@@ -7535,13 +7541,13 @@ Sorcerers tap into the raw magic in their own bodies as a conduit to harness, ma
 
 
 
-## Starting Equipment
+### Starting Equipment
 
 - 1 Weapon
 - 1 set of Light Armor
 - X or Y 'Packs' (Adventuring Packs Coming Soon)
 
-## Sorcerer Spellcasting Path
+### Cleric Spellcasting Path
 
 **Combat Training:** Light Armor
 
@@ -7557,9 +7563,9 @@ Sorcerers tap into the raw magic in their own bodies as a conduit to harness, ma
 
 
 
-## Sorcerer Class Features
+### Cleric Class Features
 
-## Level 1 Class Features
+#### Level 1 Class Features
 
 ## Innate Power
 
@@ -7613,7 +7619,7 @@ You learn the Sorcery Spell.
 
 
 
-## Level 2 Class Features
+#### Level 2 Class Features
 
 ## Meta Magic
 
@@ -7639,13 +7645,13 @@ When you cast a Spell, you can spend 1 MP to cast it without any Somatic or Verb
 
 When you cast a Spell that deals a type of damage from the following list, you can spend 1 MP to change that damage type to one of the other listed types: Cold, Corrosion, Fire, Lightning, Poison, or Sonic.
 
-## Talent
+##### Talent
 
 You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.
 
 
 
-## Subclasses
+### Subclasses
 
 ## Angelic
 
@@ -8767,7 +8773,7 @@ Choose 3 creatures that you can see within range. Make a Spell Check contested b
 **Targets:** (1 MP) You increase the number of targets by 1.
 **Dread:** (2 MP) Targets subtract a d6 instead of a d4 from their Attack Checks and Saves.
 
-## Command
+## Commander
 
 **Enchantment**
 
@@ -9422,7 +9428,8 @@ If using an old Character sheet and you would like to update it with the new cha
 
 - Wild Form changed from “Physical Defense or Mystical Defense” to “Precision Defense or Area Defense”.
 - Wild Form Templates added
-- **Hunter**
+
+## Hunter
 - -Favored Terrain's Forest had it's Nature changed to Medicine and Urban had it's History changed to Intimidation.
 - Hunter's Strike: Snare is changed from grappled to Immobilized.
 

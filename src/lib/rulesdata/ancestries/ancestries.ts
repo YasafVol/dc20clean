@@ -452,15 +452,6 @@ export const ancestriesData: Ancestry[] = [
 			'psyborn_iron_mind',
 			'psyborn_frail'
 		]
-	},
-	// Test Ancestry
-	{
-		id: 'test',
-		name: 'Test',
-		description: 'An ancestry used for testing game mechanics.',
-		rulesSource: 'Test',
-		defaultTraitIds: ['test_test_hp'],
-		expandedTraitIds: []
 	}
 ];
 

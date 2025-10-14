@@ -1741,7 +1741,7 @@ export const traitsData: Trait[] = [
 			'Your Jump Distance increases by 2, and you can take the Jump Action as a Minor Action.',
 		cost: 1,
 		effects: [
-			{ type: 'GRANT_ABILITY', target: 'increased_jump', value: 'Jump Distance +2.' },
+			{ type: 'MODIFY_STAT', target: 'jumpDistance', value: 2 },
 			{ type: 'GRANT_ABILITY', target: 'jump_minor_action', value: 'Jump Action as Minor Action.' }
 		]
 	},
@@ -2006,37 +2006,6 @@ export const traitsData: Trait[] = [
 		cost: -1,
 		isNegative: true,
 		effects: [{ type: 'MODIFY_STAT', target: 'moveSpeed', value: -1 }]
-	},
-	// Test Traits
-	{
-		id: 'test_test_hp',
-		name: 'Tasty HP',
-		description:
-			'A powerful test trait that modifies an attribute, all stats, and grants an ability.',
-		cost: 5,
-		effects: [
-			{
-				type: 'MODIFY_ATTRIBUTE',
-				target: 'any_attribute',
-				value: 3,
-				userChoice: { prompt: 'Choose an attribute to increase by 3' }
-			},
-			{ type: 'MODIFY_STAT', target: 'hpMax', value: 10 },
-			{ type: 'MODIFY_STAT', target: 'spMax', value: 10 },
-			{ type: 'MODIFY_STAT', target: 'mpMax', value: 10 },
-			{ type: 'MODIFY_STAT', target: 'pd', value: 10 },
-			{ type: 'MODIFY_STAT', target: 'ad', value: 10 },
-			{ type: 'MODIFY_STAT', target: 'moveSpeed', value: 10 },
-			{ type: 'MODIFY_STAT', target: 'jumpDistance', value: 10 },
-			{ type: 'MODIFY_STAT', target: 'skillPoints', value: 10 },
-			{ type: 'MODIFY_STAT', target: 'tradePoints', value: 10 },
-			{ type: 'MODIFY_STAT', target: 'languagePoints', value: 10 },
-			{
-				type: 'GRANT_ABILITY',
-				target: 'Test',
-				value: 'You are a test subject never meant to be in the wild.'
-			}
-		]
 	},
 	// --- Gremlin Traits ---
 	{
@@ -2477,7 +2446,7 @@ export const traitsData: Trait[] = [
 		description: 'Your Speed decreases by 1 Space',
 		cost: -1,
 		isNegative: true,
-		effects: [{ type: 'MODIFY_STAT', target: 'moveSpeed', value: -5 }]
+		effects: [{ type: 'MODIFY_STAT', target: 'moveSpeed', value: -1 }]
 	},
 	// --- Shadowborn Traits ---
 	{

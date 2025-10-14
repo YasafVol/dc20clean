@@ -104,7 +104,7 @@ E2E_WORKERS=4 npm run test:e2e
 - **Build Tool**: Vite 6
 - **Styling**: Material-UI (MUI) + Emotion + Tailwind CSS 4
 - **State Management**: React Context API
-- **Storage**: Browser localStorage (client-side only)
+- **Persistence**: Browser localStorage (client-side only)
 - **Testing**: 
   - Unit: Vitest (browser + node environments)
   - E2E: Playwright

@@ -80,7 +80,7 @@
 - Weapons & Items System — items schema, weapon damage derivation, UI interactions
 - Currency System — model, validation, persistence, UI mapping
 - Status & Exhaustion System — levels, effects, modal behavior
-- Persistence & API — save/load mapping, Prisma schema, API contract
+- Persistence — save/load mapping (localStorage only); remove Prisma schema/API references
 
 **Note:** Current focus is on the newly added Spells, Martials, Calculation, Effect docs, and Character Sheet overview.
 
@@ -118,6 +118,53 @@
 
 ---
 
+### 6. Expand Multiclass Talent Selection ❌ **NOT STARTED**
+
+**Goal:** Allow selecting the same multiclass talent tier multiple times for different classes (e.g., Novice Multiclass twice to get Level 1 features from two different classes).
+
+**Current limitation:**
+- Multiclass talents are stored as single-select in `selectedTalents: Record<string, number>`
+- Each tier (Novice, Adept, Expert, etc.) can only be taken once
+- Cannot multiclass into multiple classes at the same tier level
+
+**Proposed solution:**
+- Change multiclass talent storage from count-based to instance-based
+- New structure: `multiclassSelections: Array<{ tierId: string, classId: string, featureId: string }>`
+- Each selection stores: which tier, which class, which feature
+- Allow multiple instances of same tier pointing to different classes
+
+**Example use case:**
+- Level 4 character with 2 talent points
+- Take "Novice Multiclass" → select Barbarian → get "Rage" (Level 1)
+- Take "Novice Multiclass" again → select Wizard → get "Spell School Initiate" (Level 1)
+- Result: Character has features from 2 different multiclass sources
+
+**Implementation tasks:**
+- [ ] Update `multiclassSelections` type in `characterContext.tsx` and `effectSystem.ts`
+- [ ] Modify `LevelingChoices.tsx` multiclass UI to support multiple instances per tier
+- [ ] Update calculator to process array of multiclass selections (not just single tier flags)
+- [ ] Add validation: same tier + class combo cannot be selected twice
+- [ ] Update persistence in `characterCompletion.ts` and `dataContracts.ts`
+- [ ] Update talent budget counting to handle multiclass instances correctly
+- [ ] Add unit tests for multiple multiclass selection scenarios
+- [ ] Update LEVELING_SYSTEM.MD with multiclass instance rules
+
+**Acceptance criteria:**
+- [ ] Can select same multiclass tier multiple times if pointing to different classes
+- [ ] Each selection correctly applies effects from chosen feature
+- [ ] Talent budget properly decrements for each multiclass selection
+- [ ] Cannot select same tier + class combination twice
+- [ ] Multiclass selections persist correctly on save/load
+- [ ] UI clearly shows which classes have been multiclassed at which tiers
+
+**Dependencies:**
+- M3.17 (Complete Multiclass Talent System) ✅ Done
+- Current multiclass system fully implemented
+
+**Estimated effort:** 6-8 hours
+
+---
+
 ## 📋 ADDITIONAL TASKS (from analysis)
 
 ### 5. Extract useAttributeCalculation Hook 🟡 **OPTIONAL IMPROVEMENT**
@@ -146,16 +193,18 @@
 | 3. PDF/Calculation | ✅ Complete | 100% |
 | 4. FE Migration | ❌ Not Started | 0% |
 | 5. Extract Hook | 🟡 Optional | N/A |
+| 6. Multiclass Expansion | ❌ Not Started | 0% |
 
-**Overall: 2 of 4 active tasks complete (50%)**
+**Overall: 2 of 5 active tasks complete (40%)**
 
 ---
 
 ## 🎯 Recommended Priority Order
 
 1. **HIGH:** FE Migration (Section 4) - Biggest architectural impact, removes duplicate logic
-2. **MEDIUM:** Unit Tests (Section 1) - Protects against regressions
-3. **LOW:** Extract Hook (Section 5) - Nice to have, current code works
+2. **MEDIUM:** Multiclass Expansion (Section 6) - Extends leveling system flexibility, builds on M3.17
+3. **MEDIUM:** Unit Tests (Section 1) - Protects against regressions
+4. **LOW:** Extract Hook (Section 5) - Nice to have, current code works
 
 ---
 
@@ -168,4 +217,4 @@
 
 ---
 
-**Last Updated:** October 10, 2025
+**Last Updated:** October 10, 2025 (Multiclass expansion task added)

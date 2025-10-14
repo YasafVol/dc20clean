@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useMemo, ReactNode } from 'react';
-import type { CharacterInProgress } from '@prisma/client';
+import type { CharacterInProgress } from '../types/characterProgress.types';
 
 import {
 	calculateCharacterWithBreakdowns,

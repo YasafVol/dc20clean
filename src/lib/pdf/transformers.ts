@@ -3,6 +3,41 @@ import type { PdfExportData } from '../types/pdfExport';
 import type { EnhancedCalculationResult } from '../types/effectSystem';
 import type { DenormalizeOutput } from '../services/denormalizeMastery';
 
+/**
+ * Helper function to process GRANT_MOVEMENT effects into PDF movement checkboxes.
+ * Compares movement speed to ground speed and sets half/full checkboxes accordingly.
+ */
+function processMovements(
+	movements: Array<{ type: string; speed: string; source: any }>,
+	groundSpeed: number
+): PdfExportData['movement'] {
+	const movement: PdfExportData['movement'] = {
+		burrow: { half: false, full: false },
+		swim: { half: false, full: false },
+		fly: { half: false, full: false },
+		climb: { half: false, full: false },
+		glide: { half: false, full: false }
+	};
+
+	for (const m of movements) {
+		const type = m.type as keyof typeof movement;
+		if (!movement[type]) continue; // Skip unknown movement types
+
+		const speedValue = parseInt(m.speed, 10);
+		if (isNaN(speedValue)) continue; // Skip if speed is not a number
+
+		// Determine if movement is half or full speed
+		const halfSpeed = Math.floor(groundSpeed / 2);
+		if (speedValue >= groundSpeed) {
+			movement[type].full = true;
+		} else if (speedValue >= halfSpeed) {
+			movement[type].half = true;
+		}
+	}
+
+	return movement;
+}
+
 export function transformSavedCharacterToPdfData(character: SavedCharacter): PdfExportData {
 	// Identity
 	const characterName = character.finalName || '';
@@ -228,7 +263,7 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 
 	// Movement & misc
 	const moveSpeed = character.finalMoveSpeed ?? 0;
-	const movement = {
+	const movement = character.movement || {
 		burrow: { half: false, full: false },
 		swim: { half: false, full: false },
 		fly: { half: false, full: false },
@@ -236,7 +271,7 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 		glide: { half: false, full: false }
 	};
 	const jumpDistance = character.finalJumpDistance ?? 0;
-	const holdBreath = 0;
+	const holdBreath = character.holdBreath ?? 0;
 
 	// Exhaustion
 	const exLevel = character.characterState?.resources?.current?.exhaustionLevel ?? 0;
@@ -252,10 +287,11 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 		const b = lm.B || { name: '', limited: false, fluent: false };
 		const c = lm.C || { name: '', limited: false, fluent: false };
 		const d = lm.D || { name: '', limited: false, fluent: false };
-		mastery.LanguageA = { Limited: a.limited, Fluent: a.fluent };
-		mastery.LanguageB = { Limited: b.limited, Fluent: b.fluent };
-		mastery.LanguageC = { Limited: c.limited, Fluent: c.fluent };
-		mastery.LanguageD = { Limited: d.limited, Fluent: d.fluent };
+		// Rule: If Fluent is true, Limited must also be true
+		mastery.LanguageA = { Limited: a.limited || a.fluent, Fluent: a.fluent };
+		mastery.LanguageB = { Limited: b.limited || b.fluent, Fluent: b.fluent };
+		mastery.LanguageC = { Limited: c.limited || c.fluent, Fluent: c.fluent };
+		mastery.LanguageD = { Limited: d.limited || d.fluent, Fluent: d.fluent };
 		languages = [a, b, c, d];
 	} else {
 		const langMap = (character as any).languagesData || {};
@@ -264,7 +300,7 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 			const name = langKeys[i] || '';
 			const fluency = (langMap?.[name]?.fluency as string) || (name ? 'fluent' : '');
 			const fluent = fluency === 'fluent';
-			const limited = fluency === 'limited';
+			const limited = fluency === 'limited' || fluent; // Rule: Fluent includes Limited
 			if (i === 0) mastery.LanguageA = { Limited: limited, Fluent: fluent };
 			if (i === 1) mastery.LanguageB = { Limited: limited, Fluent: fluent };
 			if (i === 2) mastery.LanguageC = { Limited: limited, Fluent: fluent };
@@ -477,10 +513,11 @@ export function transformCalculatedCharacterToPdfData(
     TradeB: pickLadder(1) || makeFive(),
     TradeC: pickLadder(2) || makeFive(),
     TradeD: pickLadder(3) || makeFive(),
-    LanguageA: { Limited: !!denorm.languageMastery.A?.limited, Fluent: !!denorm.languageMastery.A?.fluent },
-    LanguageB: { Limited: !!denorm.languageMastery.B?.limited, Fluent: !!denorm.languageMastery.B?.fluent },
-    LanguageC: { Limited: !!denorm.languageMastery.C?.limited, Fluent: !!denorm.languageMastery.C?.fluent },
-    LanguageD: { Limited: !!denorm.languageMastery.D?.limited, Fluent: !!denorm.languageMastery.D?.fluent }
+    // Rule: If Fluent is true, Limited must also be true
+    LanguageA: { Limited: !!denorm.languageMastery.A?.limited || !!denorm.languageMastery.A?.fluent, Fluent: !!denorm.languageMastery.A?.fluent },
+    LanguageB: { Limited: !!denorm.languageMastery.B?.limited || !!denorm.languageMastery.B?.fluent, Fluent: !!denorm.languageMastery.B?.fluent },
+    LanguageC: { Limited: !!denorm.languageMastery.C?.limited || !!denorm.languageMastery.C?.fluent, Fluent: !!denorm.languageMastery.C?.fluent },
+    LanguageD: { Limited: !!denorm.languageMastery.D?.limited || !!denorm.languageMastery.D?.fluent, Fluent: !!denorm.languageMastery.D?.fluent }
   } as any;
 
   // Proficiency checkboxes (not tracked yet)
@@ -545,15 +582,9 @@ export function transformCalculatedCharacterToPdfData(
 
   // Movement & misc
   const moveSpeed = stats.finalMoveSpeed ?? 0;
-  const movement = {
-    burrow: { half: false, full: false },
-    swim: { half: false, full: false },
-    fly: { half: false, full: false },
-    climb: { half: false, full: false },
-    glide: { half: false, full: false }
-  };
+  const movement = saved.movement || processMovements(result.movements || [], moveSpeed);
   const jumpDistance = stats.finalJumpDistance ?? 0;
-  const holdBreath = 0;
+  const holdBreath = saved.holdBreath ?? stats.finalMight ?? 0;
 
   // Exhaustion
   const exLevel = saved.characterState?.resources?.current?.exhaustionLevel ?? 0;

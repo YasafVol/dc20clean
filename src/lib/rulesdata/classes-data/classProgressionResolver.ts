@@ -116,6 +116,11 @@ export function resolveClassProgression(
 	classId: string,
 	targetLevel: number
 ): ResolvedProgression {
+	// Validate inputs
+	if (targetLevel < 1 || targetLevel > 10) {
+		throw new Error(`Invalid level: ${targetLevel}. Level must be between 1 and 10.`);
+	}
+
 	// Get class progression data
 	const classProgression = classesData.find((c) => c.id === classId);
 	const classFeatures = CLASS_FEATURES_MAP[classId];
@@ -174,14 +179,16 @@ export function resolveClassProgression(
 				for (const featureId of levelData.gains.classFeatures) {
 					const feature = getFeatureById(classId, featureId);
 					if (feature) {
-						unlockedFeatures.push(feature);
+						// Add feature with levelGained set to current level
+						const featureWithLevel = { ...feature, levelGained: level };
+						unlockedFeatures.push(featureWithLevel);
 
 						// Check for pending choices
 						if (feature.choices) {
 							for (const choice of feature.choices) {
 								pendingFeatureChoices.push({
 									featureId: feature.id || featureId,
-									feature,
+									feature: featureWithLevel,
 									choiceId: choice.id,
 									choice
 								});

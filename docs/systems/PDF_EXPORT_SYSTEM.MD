@@ -34,6 +34,14 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 - Mirrors the JSON shape in `src/lib/pdf/095/sheet.json`, capturing sections, repeated rows, checkbox state, and derived text.
 - Acts as the API between the transformer and filler; any changes must update both the type and field map.
 
+**Key Data Sections:**
+- **Identity & Attributes**: Character name, level, class, ancestry, core attributes
+- **Skills & Trades**: Mastery levels, proficiency bonuses, knowledge/practical trades
+- **Combat**: Attack/Save DC, initiative, HP/SP/MP/Grit/Rest Points, defenses
+- **Movement**: Ground speed, jump distance, hold breath, movement types (burrow, swim, fly, climb, glide) with half/full speed indicators
+- **Languages**: Up to 4 languages with limited/fluent mastery
+- **Equipment & Inventory**: Attacks, equipped items, attunement, carried items
+
 ### 3.2 PDF Field Manifest
 
 - Script `scripts/listPdfFields.ts` enumerates form fields in `src/lib/pdf/095/DC20_Beta_0_9_5_(fillable)_Character_Sheet.pdf` using `pdf-lib`.
@@ -99,7 +107,37 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 
 ---
 
-> Last updated: 2025-09-27
+## 9. Movement System Integration
+
+**Added: 2025-10-10**
+
+Movement types are now fully integrated with PDF export:
+
+### Character Data Storage
+- `movement` object with 5 movement types (burrow, swim, fly, climb, glide)
+- Each type has `half` and `full` boolean flags
+- `holdBreath` stored as numeric value (equals Might attribute)
+
+### PDF Field Mapping
+Movement checkboxes in `fieldMap.dc20-0.9.5.ts`:
+- `Burrow-Half` / `Burrow-Full`
+- `Swim-Half` / `Swim-Full`
+- `Fly-Half` / `Fly-Full`
+- `Climb-Half` / `Climb-Full`
+- `Glide-Half` / `Glide-Full`
+- `Hold Breath` (text field)
+
+### Processing Flow
+1. **Calculator** (`enhancedCharacterCalculator.ts`) processes `GRANT_MOVEMENT` effects
+2. **Transformer** (`transformers.ts`) converts to movement structure via `processMovementsToStructure()`
+3. **Character Completion** (`characterCompletion.ts`) saves movement data to `SavedCharacter`
+4. **PDF Export** reads saved movement data and maps to form fields
+
+**See**: `docs/systems/EFFECT_SYSTEM.MD#2.1` for GRANT_MOVEMENT effect documentation
+
+---
+
+> Last updated: 2025-10-10
 > Maintainer: @DC20Clean-Team
 
 

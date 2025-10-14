@@ -941,7 +941,6 @@ export function calculateCharacterWithBreakdowns(
 	const finalDeathThreshold = maxValue + combatMastery; // Prime + Combat Mastery (usually -4)
 	const baseMoveSpeed = 5;
 	const baseJumpDistance = finalAgility;
-	const finalRestPoints = finalHPMax; // Rest Points = HP
 	const finalGritPoints = Math.max(0, 2 + finalCharisma); // 2 + Charisma (minimum 0)
 	const finalInitiativeBonus = combatMastery + finalAgility; // Combat Mastery + Agility
 	// Attribute points handled via breakdowns to avoid double counting
@@ -967,6 +966,9 @@ export function calculateCharacterWithBreakdowns(
 	const finalMoveSpeed = breakdowns.move_speed.total;
 	const finalJumpDistance = breakdowns.jump_distance.total;
 	const finalAttributePoints = breakdowns.attributePoints.total;
+
+	// Rest Points must be calculated AFTER HP breakdown is applied
+	const finalRestPoints = finalHPMax; // Rest Points = HP Max (post-effects)
 
 	// Combat breakdowns
 	const attackSpellCheckBase = combatMastery + maxValue;
@@ -1309,6 +1311,34 @@ export function calculateCharacterWithBreakdowns(
 			condition: effect.condition
 		}));
 
+	// 6b. Process GRANT_MOVEMENT effects
+	const movements = resolvedEffects
+		.filter((effect) => effect.resolved && effect.type === 'GRANT_MOVEMENT')
+		.map((effect) => {
+			let speed: string;
+			if (effect.value === 'equal_to_speed') {
+				// Movement speed equals ground speed
+				speed = `${finalMoveSpeed}`;
+			} else if (effect.value === 'half_speed') {
+				// Movement speed equals half ground speed
+				speed = `${Math.floor(finalMoveSpeed / 2)}`;
+			} else if (effect.value === 'double_speed') {
+				// Movement speed equals double ground speed
+				speed = `${finalMoveSpeed * 2}`;
+			} else if (typeof effect.value === 'number') {
+				// Explicit speed value
+				speed = `${effect.value}`;
+			} else {
+				// Handle other string values (e.g., "wings" for glide)
+				speed = effect.value as string;
+			}
+			return {
+				type: effect.target, // e.g., 'climb', 'swim', 'fly', 'burrow', 'glide'
+				speed,
+				source: effect.source
+			};
+		});
+
 	// 7. Conditional modifiers
 	const conditionalModifiers = resolvedEffects
 		.filter((effect) => effect.resolved && effect.condition)
@@ -1368,7 +1398,7 @@ export function calculateCharacterWithBreakdowns(
 		resistances: [],
 		vulnerabilities: [],
 		senses: [],
-		movements: [],
+		movements,
 		background,
 		ancestry,
 		levelBudgets: {

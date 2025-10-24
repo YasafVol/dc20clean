@@ -195,6 +195,7 @@ vi.mock('../../lib/services/enhancedCharacterCalculator', () => ({
 			finalIntelligence: 0,
 			finalPrimeModifierValue: 0,
 			finalPrimeModifierAttribute: 'might',
+			usePrimeCapRule: false,
 			finalCombatMastery: 1,
 			finalHPMax: 10,
 			finalSPMax: 2,
@@ -438,4 +439,3 @@ describe('ClassFeatures Component - Progressive Display', () => {
 		});
 	});
 });
-

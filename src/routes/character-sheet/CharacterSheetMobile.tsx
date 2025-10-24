@@ -67,6 +67,17 @@ const CharacterSheetMobile: React.FC = () => {
 	const { state } = useCharacterSheet();
 	const characterData = state.character;
 
+	const primeValue = characterData?.finalPrimeModifierValue ?? 0;
+	const primeAttributeRaw = characterData?.finalPrimeModifierAttribute ?? 'prime';
+	const usePrimeCapRule = characterData?.usePrimeCapRule ?? primeAttributeRaw === 'prime';
+	const primeAttributeLabel =
+		typeof primeAttributeRaw === 'string' && primeAttributeRaw !== 'prime'
+			? primeAttributeRaw.toUpperCase()
+			: 'PRIME';
+	const primeDisplay = usePrimeCapRule
+		? `+${primeValue}`
+		: `${primeAttributeLabel} (+${primeValue})`;
+
 	// State management for mobile navigation
 	const [activeTab, setActiveTab] = useState<string>('skills');
 
@@ -112,7 +123,7 @@ ATTRIBUTES:
 • Agility: ${characterData.finalAgility} 
 • Charisma: ${characterData.finalCharisma}
 • Intelligence: ${characterData.finalIntelligence}
-• Prime: ${characterData.finalPrimeModifierAttribute.toUpperCase()} (+${characterData.finalPrimeModifierValue})
+• Prime: ${primeDisplay}
 
 CORE STATS:
 • HP Max: ${characterData.finalHPMax}
@@ -391,8 +402,11 @@ ${characterData.characterState?.notes?.playerNotes || 'No notes'}`;
 										}}
 									>
 										<strong>Prime:</strong>{' '}
-										{characterData.finalPrimeModifierAttribute.toUpperCase()} (+
-										{characterData.finalPrimeModifierValue})
+										{usePrimeCapRule
+											?
+												`+${characterData.finalPrimeModifierValue}`
+											:
+												`${primeAttributeLabel} (+${characterData.finalPrimeModifierValue})`}
 									</div>
 								</div>
 							</MobileResourceBox>

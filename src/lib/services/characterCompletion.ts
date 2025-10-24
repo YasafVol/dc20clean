@@ -83,6 +83,7 @@ export const completeCharacter = async (
 			skillsData: characterState.skillsData || {},
 			tradesData: characterState.tradesData || {},
 			languagesData: characterState.languagesData || { common: { fluency: 'fluent' } },
+			usePrimeCapRule: !!characterState.usePrimeCapRule,
 			// CRITICAL: Include conversions for proper background validation
 			skillToTradeConversions: characterState.skillToTradeConversions || 0,
 			tradeToSkillConversions: characterState.tradeToSkillConversions || 0,
@@ -131,6 +132,7 @@ export const completeCharacter = async (
 			finalIntelligence: calculationResult.stats.finalIntelligence,
 			finalPrimeModifierValue: calculationResult.stats.finalPrimeModifierValue,
 			finalPrimeModifierAttribute: calculationResult.stats.finalPrimeModifierAttribute,
+			usePrimeCapRule: !!characterState.usePrimeCapRule,
 			finalCombatMastery: calculationResult.stats.finalCombatMastery,
 			// Saves = attribute + Combat Mastery
 			finalSaveMight: calculationResult.stats.finalMight + calculationResult.stats.finalCombatMastery,

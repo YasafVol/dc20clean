@@ -45,21 +45,6 @@ import { bardClass } from '../rulesdata/classes-data/features/bard_features';
 import { druidClass } from '../rulesdata/classes-data/features/druid_features';
 import { commanderClass } from '../rulesdata/classes-data/features/commander_features';
 import { psionClass } from '../rulesdata/classes-data/features/psion_features';
-
-import barbarianTable from '../rulesdata/classes-data/tables/barbarian_table.json';
-import clericTable from '../rulesdata/classes-data/tables/cleric_table.json';
-import hunterTable from '../rulesdata/classes-data/tables/hunter_table.json';
-import championTable from '../rulesdata/classes-data/tables/champion_table.json';
-import wizardTable from '../rulesdata/classes-data/tables/wizard_table.json';
-import monkTable from '../rulesdata/classes-data/tables/monk_table.json';
-import rogueTable from '../rulesdata/classes-data/tables/rogue_table.json';
-import sorcererTable from '../rulesdata/classes-data/tables/sorcerer_table.json';
-import spellbladeTable from '../rulesdata/classes-data/tables/spellblade_table.json';
-import warlockTable from '../rulesdata/classes-data/tables/warlock_table.json';
-import bardTable from '../rulesdata/classes-data/tables/bard_table.json';
-import druidTable from '../rulesdata/classes-data/tables/druid_table.json';
-import commanderTable from '../rulesdata/classes-data/tables/commander_table.json';
-import psionTable from '../rulesdata/classes-data/tables/psion_table.json';
 import { attributesData } from '../rulesdata/attributes';
 import { skillsData } from '../rulesdata/skills';
 import { tradesData } from '../rulesdata/trades';
@@ -132,6 +117,7 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 		finalName: contextData.finalName || '',
 		finalPlayerName: contextData.finalPlayerName,
 		level: contextData.level || 1,
+		usePrimeCapRule: !!contextData.usePrimeCapRule,
 
 		// Use final* if present, else attribute_* (for character creation)
 		attribute_might: contextData.finalMight ?? contextData.attribute_might ?? 0,
@@ -191,45 +177,8 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
  * Get class level progression data by ID
  */
 function getClassProgressionData(classId: string): any | null {
-	// Use the new classesData which includes the gains field
 	const classData = classesData.find(c => c.id === classId);
-	if (classData) {
-		return classData;
-	}
-	
-	// Fallback to old table data (should not be needed)
-	switch (classId) {
-		case 'barbarian':
-			return barbarianTable;
-		case 'cleric':
-			return clericTable;
-		case 'hunter':
-			return hunterTable;
-		case 'champion':
-			return championTable;
-		case 'wizard':
-			return wizardTable;
-		case 'monk':
-			return monkTable;
-		case 'rogue':
-			return rogueTable;
-		case 'sorcerer':
-			return sorcererTable;
-		case 'spellblade':
-			return spellbladeTable;
-		case 'warlock':
-			return warlockTable;
-		case 'bard':
-			return bardTable;
-		case 'druid':
-			return druidTable;
-		case 'commander':
-			return commanderTable;
-		case 'psion':
-			return psionTable;
-		default:
-			return null;
-	}
+	return classData ?? null;
 }
 
 /**
@@ -898,6 +847,7 @@ export function calculateCharacterWithBreakdowns(
 
 	// Derived stats - Combat Mastery calculated from level
 	const combatMastery = Math.ceil(buildData.level / 2);
+	const levelCapsForPrime = getLevelCaps(buildData.level);
 
 	// Health & Resources - use aggregated progression gains
 	let finalHPMax = finalMight + progressionGains.totalHP;
@@ -919,26 +869,26 @@ export function calculateCharacterWithBreakdowns(
 	const finalAD = buildData.manualAD ?? baseAD + adModifiers;
 	const finalPDR = buildData.manualPDR ?? 0;
 
-	// Calculate prime attribute first
-	const maxValue = Math.max(finalMight, finalAgility, finalCharisma, finalIntelligence);
+	// Determine attribute-driven prime values for legacy behavior
+	const maxAttributeValue = Math.max(finalMight, finalAgility, finalCharisma, finalIntelligence);
+	const attributesAtMax: Array<'might' | 'agility' | 'charisma' | 'intelligence'> = [];
+	if (finalMight === maxAttributeValue) attributesAtMax.push('might');
+	if (finalAgility === maxAttributeValue) attributesAtMax.push('agility');
+	if (finalCharisma === maxAttributeValue) attributesAtMax.push('charisma');
+	if (finalIntelligence === maxAttributeValue) attributesAtMax.push('intelligence');
+	const attributePrime = attributesAtMax[0] || 'might';
 
-	// Get all attributes that have the max value for tie-breaking
-	const attributesAtMax: string[] = [];
-	if (finalMight === maxValue) attributesAtMax.push('might');
-	if (finalAgility === maxValue) attributesAtMax.push('agility');
-	if (finalCharisma === maxValue) attributesAtMax.push('charisma');
-	if (finalIntelligence === maxValue) attributesAtMax.push('intelligence');
+	const usePrimeCapRule = !!buildData.usePrimeCapRule;
+	const primeModifier = usePrimeCapRule ? levelCapsForPrime.maxAttributeValue : maxAttributeValue;
+	const primeAttribute = usePrimeCapRule ? 'prime' : attributePrime;
 
-	// For tie-breaking, use the priority order: might > agility > charisma > intelligence
-	const primeAttribute = attributesAtMax[0] || 'might';
-
-    // Calculate other derived stats first (DC20 sheet: 10 + Combat Mastery + Prime)
-    const finalSaveDC = 10 + combatMastery + maxValue;
+	// Calculate other derived stats first (DC20 sheet: 10 + Combat Mastery + Prime)
+	const finalSaveDC = 10 + combatMastery + primeModifier;
 	const finalSaveMight = finalMight + combatMastery;
 	const finalSaveAgility = finalAgility + combatMastery;
 	const finalSaveCharisma = finalCharisma + combatMastery;
 	const finalSaveIntelligence = finalIntelligence + combatMastery;
-	const finalDeathThreshold = maxValue + combatMastery; // Prime + Combat Mastery (usually -4)
+	const finalDeathThreshold = primeModifier + combatMastery; // Prime + Combat Mastery (usually -4)
 	const baseMoveSpeed = 5;
 	const baseJumpDistance = finalAgility;
 	const finalGritPoints = Math.max(0, 2 + finalCharisma); // 2 + Charisma (minimum 0)
@@ -971,7 +921,7 @@ export function calculateCharacterWithBreakdowns(
 	const finalRestPoints = finalHPMax; // Rest Points = HP Max (post-effects)
 
 	// Combat breakdowns
-	const attackSpellCheckBase = combatMastery + maxValue;
+	const attackSpellCheckBase = combatMastery + primeModifier;
 	breakdowns.attack_spell_check = createStatBreakdown(
 		'attackSpellCheck',
 		attackSpellCheckBase,
@@ -1158,7 +1108,7 @@ export function calculateCharacterWithBreakdowns(
 
 	// --- START MASTERY CAP CALCULATION ---
 	// Get caps from canonical source
-	const levelCaps = getLevelCaps(buildData.level);
+	const levelCaps = levelCapsForPrime;
 
 	// Helper to convert skill points to a numeric mastery tier (2+=Adept)
 	const getMasteryTierFromPoints = (points: number): number => {
@@ -1377,8 +1327,9 @@ export function calculateCharacterWithBreakdowns(
 			finalGritPoints,
 
 			// Prime modifier and combat mastery (needed for UI compatibility)
-			finalPrimeModifierValue: maxValue,
+			finalPrimeModifierValue: primeModifier,
 			finalPrimeModifierAttribute: primeAttribute,
+			usePrimeCapRule,
 			finalCombatMastery: combatMastery,
 			finalAttributePoints,
 

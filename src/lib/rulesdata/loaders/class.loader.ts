@@ -24,6 +24,9 @@ interface ProgressionLevel {
 	gainedStaminaPoints?: number;
 	gainedManeuversKnown?: number;
 	gainedTechniquesKnown?: number;
+	gainedManaPoints?: number;
+	gainedCantripsKnown?: number;
+	gainedSpellsKnown?: number;
 	gains?: {
 		classFeatures?: string[];
 		talents?: number;
@@ -34,34 +37,66 @@ interface ProgressionLevel {
 	};
 }
 
-const classDescriptions: Record<string, string> = {
-	Barbarian:
-		'A fierce warrior who channels primal rage to gain strength and resist harm in combat.',
-	Bard: 'A charismatic performer whose songs and stories inspire allies and manipulate enemies through magic.',
-	Champion:
-		'A martial master focused on critical strikes, resilience, and battlefield leadership.',
-	Cleric:
-		'A divine spellcaster empowered by a god to heal, protect, and smite enemies with holy might.',
-	Commander:
-		'A tactical leader who inspires and directs allies with strategic maneuvers and commanding presence.',
-	Druid:
-		'A nature-bound spellcaster who wields primal magic and transforms into beasts to protect the wilds.',
-	Hunter:
-		'A skilled tracker and marksman who specializes in slaying monsters and surviving the wilderness.',
-	Monk: 'A disciplined martial artist who channels inner energy for rapid strikes and supernatural movement.',
-	Rogue:
-		'A stealthy and cunning adventurer who excels in ambushes, trickery, and precise strikes.',
-	Sorcerer:
-		'A natural-born spellcaster who harnesses raw arcane or elemental power from an innate source.',
-	Spellblade:
-		'A warrior-mage hybrid who combines martial prowess with arcane magic to enchant weapons and defend.',
-	Warlock:
-		'A spellcaster who draws power from a pact with a mysterious or dark patron, gaining unique abilities.',
-	Wizard:
-		'A scholarly arcane caster who learns spells through study and masters a broad range of magical effects.'
+// Class metadata - names and descriptions
+const CLASS_METADATA: Record<string, { name: string; description: string }> = {
+	barbarian: {
+		name: 'Barbarian',
+		description: 'A fierce warrior who channels primal rage to gain strength and resist harm in combat.'
+	},
+	bard: {
+		name: 'Bard',
+		description: 'A charismatic performer whose songs and stories inspire allies and manipulate enemies through magic.'
+	},
+	champion: {
+		name: 'Champion',
+		description: 'A martial master focused on critical strikes, resilience, and battlefield leadership.'
+	},
+	cleric: {
+		name: 'Cleric',
+		description: 'A divine spellcaster empowered by a god to heal, protect, and smite enemies with holy might.'
+	},
+	commander: {
+		name: 'Commander',
+		description: 'A tactical leader who inspires and directs allies with strategic maneuvers and commanding presence.'
+	},
+	druid: {
+		name: 'Druid',
+		description: 'A nature-bound spellcaster who wields primal magic and transforms into beasts to protect the wilds.'
+	},
+	hunter: {
+		name: 'Hunter',
+		description: 'A skilled tracker and marksman who specializes in slaying monsters and surviving the wilderness.'
+	},
+	monk: {
+		name: 'Monk',
+		description: 'A disciplined martial artist who channels inner energy for rapid strikes and supernatural movement.'
+	},
+	psion: {
+		name: 'Psion',
+		description: 'A psionic master who wields mental powers to manipulate minds and reality itself.'
+	},
+	rogue: {
+		name: 'Rogue',
+		description: 'A stealthy and cunning adventurer who excels in ambushes, trickery, and precise strikes.'
+	},
+	sorcerer: {
+		name: 'Sorcerer',
+		description: 'A natural-born spellcaster who harnesses raw arcane or elemental power from an innate source.'
+	},
+	spellblade: {
+		name: 'Spellblade',
+		description: 'A warrior-mage hybrid who combines martial prowess with arcane magic to enchant weapons and defend.'
+	},
+	warlock: {
+		name: 'Warlock',
+		description: 'A spellcaster who draws power from a pact with a mysterious or dark patron, gaining unique abilities.'
+	},
+	wizard: {
+		name: 'Wizard',
+		description: 'A scholarly arcane caster who learns spells through study and masters a broad range of magical effects.'
+	}
 };
 
-const tableModules = import.meta.glob('../classes-data/tables/*_table.json', { eager: true });
 const progressionModules = import.meta.glob('../classes-data/progressions/*.progression.ts', { eager: true });
 
 const progressionDataByKey: Record<string, ProgressionLevel[]> = {};
@@ -74,16 +109,6 @@ for (const [filePath, module] of Object.entries(progressionModules)) {
 	const key = match[1];
 	const exportName = `${key}Progression`;
 	const progression = (module as Record<string, unknown>)[exportName];
-	
-	if (key === 'barbarian') {
-		console.log('🔍 Loading barbarian progression:', {
-			key,
-			exportName,
-			hasProgression: !!progression,
-			isArray: Array.isArray(progression),
-			level2: Array.isArray(progression) ? progression[1] : null
-		});
-	}
 	
 	if (Array.isArray(progression)) {
 		progressionDataByKey[key] = progression as ProgressionLevel[];
@@ -118,47 +143,41 @@ function formatGains(gains?: ProgressionLevel['gains'], legacy?: string): string
 	return parts.join(', ');
 }
 
-const tableData = Object.values(tableModules).map((module: any) => module.default);
+// Build class data from progression files
+const compatibleData = Object.entries(progressionDataByKey).map(([classKey, progression]) => {
+	const metadata = CLASS_METADATA[classKey];
+	if (!metadata) {
+		console.warn(`Missing metadata for class: ${classKey}`);
+		return null;
+	}
 
-const compatibleData = tableData.map((classTable: any) => {
-	const className: string = classTable.className;
-	const classKey = className?.toLowerCase() ?? '';
-	const progression = progressionDataByKey[classKey] ?? [];
-
-	const buildLevelEntry = (legacyLevel: LegacyLevelEntry) => {
-		const newLevel = progression.find((p) => p.level === legacyLevel.level);
-		const gains = newLevel?.gains;
-		
-		console.log(`🔧 Building level ${legacyLevel.level}:`, {
-			foundNewLevel: !!newLevel,
-			hasGains: !!gains,
-			gainsValue: JSON.stringify(gains)
-		});
+	const buildLevelEntry = (progressionLevel: ProgressionLevel) => {
+		const gains = progressionLevel.gains;
 		
 		return {
-			level: legacyLevel.level,
-			healthPoints: newLevel?.gainedHealth ?? legacyLevel.healthPoints ?? 0,
-			attributePoints: newLevel?.gainedAttributePoints ?? legacyLevel.attributePoints ?? 0,
-			skillPoints: newLevel?.gainedSkillPoints ?? legacyLevel.skillPoints ?? 0,
-			tradePoints: newLevel?.gainedTradePoints ?? legacyLevel.tradePoints ?? 0,
-			staminaPoints: newLevel?.gainedStaminaPoints ?? legacyLevel.staminaPoints ?? 0,
-			maneuversKnown: newLevel?.gainedManeuversKnown ?? legacyLevel.maneuversKnown ?? 0,
-			techniquesKnown: newLevel?.gainedTechniquesKnown ?? legacyLevel.techniquesKnown ?? 0,
-			manaPoints: legacyLevel.manaPoints ?? 0,
-			cantripsKnown: legacyLevel.cantripsKnown ?? 0,
-			spellsKnown: legacyLevel.spellsKnown ?? 0,
-			features: formatGains(gains, legacyLevel.features),
+			level: progressionLevel.level,
+			healthPoints: progressionLevel.gainedHealth ?? 0,
+			attributePoints: progressionLevel.gainedAttributePoints ?? 0,
+			skillPoints: progressionLevel.gainedSkillPoints ?? 0,
+			tradePoints: progressionLevel.gainedTradePoints ?? 0,
+			staminaPoints: progressionLevel.gainedStaminaPoints ?? 0,
+			maneuversKnown: progressionLevel.gainedManeuversKnown ?? 0,
+			techniquesKnown: progressionLevel.gainedTechniquesKnown ?? 0,
+			manaPoints: progressionLevel.gainedManaPoints ?? 0,
+			cantripsKnown: progressionLevel.gainedCantripsKnown ?? 0,
+			spellsKnown: progressionLevel.gainedSpellsKnown ?? 0,
+			features: formatGains(gains),
 			gains // Include structured gains for new calculator
 		};
 	};
 
-	const levelProgression = (classTable.levelProgression as LegacyLevelEntry[]).map(buildLevelEntry);
+	const levelProgression = progression.map(buildLevelEntry);
 	const level1 = levelProgression[0];
 
 	return {
 		id: classKey,
-		name: className,
-		description: classDescriptions[className] || `${className} class progression table`,
+		name: metadata.name,
+		description: metadata.description,
 
 		level1Stats: {
 			healthPoints: level1?.healthPoints ?? 0,
@@ -176,16 +195,8 @@ const compatibleData = tableData.map((classTable: any) => {
 		level1Features: [],
 		featureChoicesLvl1: []
 	};
-});
-
-console.log('🔍 BEFORE ZOD PARSE - Sample Barbarian Level 2:', 
-	compatibleData.find((c: any) => c.id === 'barbarian')?.levelProgression?.find((l: any) => l.level === 2)
-);
+}).filter(Boolean); // Remove any null entries
 
 const validatedData = classesDataSchema.parse(compatibleData);
-
-console.log('🔍 AFTER ZOD PARSE - Sample Barbarian Level 2:', 
-	validatedData.find((c: any) => c.id === 'barbarian')?.levelProgression?.find((l: any) => l.level === 2)
-);
 
 export const classesData: IClassDefinition[] = validatedData;

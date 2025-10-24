@@ -13,6 +13,9 @@ export const clericProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 6,
+    "gainedCantripsKnown": 2,
+    "gainedSpellsKnown": 3,
     "gains": {
       "classFeatures": [
         "cleric_spellcasting_path",
@@ -32,6 +35,9 @@ export const clericProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "talents": 1,
       "pathPoints": 1,
@@ -50,6 +56,9 @@ export const clericProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 2,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 1,
     "gains": {
       "subclassFeatureChoice": true
     }
@@ -63,6 +72,9 @@ export const clericProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "talents": 1,
       "pathPoints": 1,
@@ -78,6 +90,9 @@ export const clericProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 2,
+    "gainedCantripsKnown": 1,
+    "gainedSpellsKnown": 0,
     "gains": {
       "classFeatures": [
         "placeholder_class_feature"
@@ -93,6 +108,9 @@ export const clericProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 2,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 1,
     "gains": {
       "subclassFeatureChoice": true
     }
@@ -106,6 +124,9 @@ export const clericProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "talents": 1,
       "pathPoints": 1,
@@ -121,6 +142,9 @@ export const clericProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 2,
+    "gainedCantripsKnown": 1,
+    "gainedSpellsKnown": 0,
     "gains": {
       "classFeatures": [
         "placeholder_class_capstone"
@@ -136,6 +160,9 @@ export const clericProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 2,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 1,
     "gains": {
       "subclassFeatureChoice": true
     }
@@ -149,6 +176,9 @@ export const clericProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "talents": 1,
       "pathPoints": 1,

@@ -125,6 +125,20 @@ const EffectiveValue = styled.span<{ $different: boolean }>`
 	color: ${(props) => (props.$different ? '#10b981' : '#e5e7eb')};
 `;
 
+const OptionalRuleToggle = styled.label`
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin: 1rem 0;
+	font-size: 0.875rem;
+`;
+
+const OptionalRuleDetails = styled.span`
+	display: block;
+	color: #9ca3af;
+	font-size: 0.75rem;
+`;
+
 // Removed PointBreakdownSummary: duplicate small points frame was creating a second
 // "Points Remaining" display in the middle of the page. The main counter is
 
@@ -151,6 +165,11 @@ function Attributes() {
 		useEnhancedCharacterCalculation();
 
 	const typedState = state as unknown as AttributeState;
+	const usePrimeCapRule = !!state.usePrimeCapRule;
+
+	const handlePrimeRuleToggle = () => {
+		dispatch({ type: 'TOGGLE_PRIME_CAP_RULE' });
+	};
 
 	// Simple replacement for useAttributeCalculation using context values
 	const calculation = {
@@ -197,6 +216,20 @@ function Attributes() {
 		<StyledContainer>
 			<StyledTitle>Attributes</StyledTitle>
 			<AttributePointsCounter totalAttributePoints={totalAttributePoints} />
+			<OptionalRuleToggle>
+				<input
+					type="checkbox"
+					checked={usePrimeCapRule}
+					onChange={handlePrimeRuleToggle}
+				/>
+				<div>
+					<span>Use Prime = Attribute Cap (Optional Rule)</span>
+					<OptionalRuleDetails>
+						When enabled, the prime modifier equals your level-based attribute cap
+						instead of the highest attribute.
+					</OptionalRuleDetails>
+				</div>
+			</OptionalRuleToggle>
 
 			{/* The enhanced breakdown summary was removed to avoid duplicating the
 			{/* NEW: Forced adjustments warning */}

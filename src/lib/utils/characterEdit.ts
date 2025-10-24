@@ -38,6 +38,7 @@ export const convertCharacterToInProgress = (
 				? savedCharacter.selectedFeatureChoices
 				: {},
 		selectedTraitChoices: {},
+		usePrimeCapRule: savedCharacter.usePrimeCapRule ?? false,
 		saveMasteryMight: false,
 		saveMasteryAgility: false,
 		saveMasteryCharisma: false,
@@ -152,7 +153,8 @@ export const completeCharacterEdit = async (
 			selectedManeuvers: Array.isArray(newCharacterState.selectedManeuvers)
 				? newCharacterState.selectedManeuvers
 				: [],
-			// CRITICAL: Include conversions for proper background validation during editing
+		usePrimeCapRule: !!newCharacterState.usePrimeCapRule,
+		// CRITICAL: Include conversions for proper background validation during editing
 			skillToTradeConversions: newCharacterState.skillToTradeConversions || 0,
 			tradeToSkillConversions: newCharacterState.tradeToSkillConversions || 0,
 			tradeToLanguageConversions: newCharacterState.tradeToLanguageConversions || 0,
@@ -181,6 +183,7 @@ export const completeCharacterEdit = async (
 				skillToTradeConversions: newCharacterState.skillToTradeConversions || 0,
 				tradeToSkillConversions: newCharacterState.tradeToSkillConversions || 0,
 				tradeToLanguageConversions: newCharacterState.tradeToLanguageConversions || 0,
+				usePrimeCapRule: !!newCharacterState.usePrimeCapRule,
 				// ensure we carry over latest breakdowns if provided by calculator
 				breakdowns:
 					(newCalculatedCharacter as any).breakdowns || savedCharacters[characterIndex].breakdowns,

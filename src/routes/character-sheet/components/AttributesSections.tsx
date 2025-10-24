@@ -52,15 +52,23 @@ const AttributesSections: React.FC<AttributesSectionsProps> = ({
 	trades,
 	languages
 }) => {
+	const primeAttributeRaw = characterData.finalPrimeModifierAttribute || 'prime';
+	const usePrimeCapRule = characterData.usePrimeCapRule ?? primeAttributeRaw === 'prime';
+	const primeAttributeLabel =
+		typeof primeAttributeRaw === 'string' && primeAttributeRaw !== 'prime'
+			? primeAttributeRaw.toUpperCase()
+			: 'PRIME';
+	const primeDisplay = usePrimeCapRule
+		? `+${characterData.finalPrimeModifierValue}`
+		: `${primeAttributeLabel} +${characterData.finalPrimeModifierValue}`;
+
 	return (
 		<StyledAttributesSectionsContainer>
 			{/* Prime Modifier & Awareness */}
 			<StyledPrimeSection>
 				<StyledPrimeBox>
 					<StyledPrimeLabel>Prime</StyledPrimeLabel>
-					<StyledPrimeValue>
-						{characterData.finalPrimeModifierAttribute} +{characterData.finalPrimeModifierValue}
-					</StyledPrimeValue>
+					<StyledPrimeValue>{primeDisplay}</StyledPrimeValue>
 				</StyledPrimeBox>
 
 				{/* Awareness (Prime skill) */}

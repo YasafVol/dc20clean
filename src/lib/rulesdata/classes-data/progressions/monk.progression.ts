@@ -13,6 +13,9 @@ export const monkProgression: any[] = [
     "gainedStaminaPoints": 1,
     "gainedManeuversKnown": 4,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "classFeatures": [
         "monk_training",
@@ -29,6 +32,9 @@ export const monkProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "talents": 1,
       "pathPoints": 1,
@@ -46,6 +52,9 @@ export const monkProgression: any[] = [
     "gainedStaminaPoints": 1,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 1,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "subclassFeatureChoice": true
     }
@@ -59,6 +68,9 @@ export const monkProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "talents": 1,
       "pathPoints": 1,
@@ -74,6 +86,9 @@ export const monkProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 1,
     "gainedTechniquesKnown": 1,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "classFeatures": [
         "placeholder_class_feature"
@@ -89,6 +104,9 @@ export const monkProgression: any[] = [
     "gainedStaminaPoints": 1,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "subclassFeatureChoice": true
     }
@@ -102,6 +120,9 @@ export const monkProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "talents": 1,
       "pathPoints": 1,
@@ -117,6 +138,9 @@ export const monkProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 1,
     "gainedTechniquesKnown": 1,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "classFeatures": [
         "placeholder_class_capstone"
@@ -132,6 +156,9 @@ export const monkProgression: any[] = [
     "gainedStaminaPoints": 1,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "subclassFeatureChoice": true
     }
@@ -145,6 +172,9 @@ export const monkProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "talents": 1,
       "pathPoints": 1,

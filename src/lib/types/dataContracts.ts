@@ -102,6 +102,7 @@ export interface SavedCharacter {
 	// All calculated stats
 	finalPrimeModifierValue: number;
 	finalPrimeModifierAttribute: string;
+	usePrimeCapRule?: boolean;
 	finalCombatMastery: number;
 	finalSaveMight: number;
 	finalSaveAgility: number;

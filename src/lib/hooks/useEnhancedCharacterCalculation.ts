@@ -49,7 +49,8 @@ const generateCacheKey = (data: EnhancedCharacterBuildData): string => {
 	const features = JSON.stringify(data.featureChoices || {});
 	const traitChoices = JSON.stringify(data.selectedTraitChoices || {});
 
-	return `${id}-${level}-${attribute_might}-${attribute_agility}-${attribute_charisma}-${attribute_intelligence}-${traits}-${features}-${traitChoices}`;
+	const primeRule = data.usePrimeCapRule ? 'cap' : 'attr';
+	return `${id}-${level}-${attribute_might}-${attribute_agility}-${attribute_charisma}-${attribute_intelligence}-${primeRule}-${traits}-${features}-${traitChoices}`;
 };
 
 /**

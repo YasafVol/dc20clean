@@ -160,6 +160,7 @@ export interface EnhancedCalculationResult {
 		// Prime modifier and combat mastery (needed for UI compatibility)
 		finalPrimeModifierValue: number;
 		finalPrimeModifierAttribute: string;
+		usePrimeCapRule: boolean;
 		finalCombatMastery: number;
 		finalAttributePoints: number;
 
@@ -300,6 +301,7 @@ export interface EnhancedCharacterBuildData {
 	attribute_agility: number;
 	attribute_charisma: number;
 	attribute_intelligence: number;
+	usePrimeCapRule?: boolean;
 
 	// Progression
 	combatMastery: number;

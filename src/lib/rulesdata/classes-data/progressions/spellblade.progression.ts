@@ -13,6 +13,9 @@ export const spellbladeProgression: any[] = [
     "gainedStaminaPoints": 1,
     "gainedManeuversKnown": 2,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 3,
+    "gainedCantripsKnown": 1,
+    "gainedSpellsKnown": 1,
     "gains": {
       "classFeatures": [
         "spellblade_bound_weapon",
@@ -30,6 +33,9 @@ export const spellbladeProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "talents": 1,
       "pathPoints": 1,
@@ -48,6 +54,9 @@ export const spellbladeProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 1,
     "gainedTechniquesKnown": 1,
+    "gainedManaPoints": 1,
+    "gainedCantripsKnown": 1,
+    "gainedSpellsKnown": 0,
     "gains": {
       "subclassFeatureChoice": true
     }
@@ -61,6 +70,9 @@ export const spellbladeProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "talents": 1,
       "pathPoints": 1,
@@ -76,6 +88,9 @@ export const spellbladeProgression: any[] = [
     "gainedStaminaPoints": 1,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 1,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 1,
     "gains": {
       "classFeatures": [
         "placeholder_class_feature"
@@ -91,6 +106,9 @@ export const spellbladeProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 1,
+    "gainedCantripsKnown": 1,
+    "gainedSpellsKnown": 0,
     "gains": {
       "subclassFeatureChoice": true
     }
@@ -104,6 +122,9 @@ export const spellbladeProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "talents": 1,
       "pathPoints": 1,
@@ -119,6 +140,9 @@ export const spellbladeProgression: any[] = [
     "gainedStaminaPoints": 1,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 1,
+    "gainedManaPoints": 1,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 1,
     "gains": {
       "classFeatures": [
         "placeholder_class_capstone"
@@ -134,6 +158,9 @@ export const spellbladeProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 1,
+    "gainedSpellsKnown": 0,
     "gains": {
       "subclassFeatureChoice": true
     }
@@ -147,6 +174,9 @@ export const spellbladeProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "talents": 1,
       "pathPoints": 1,

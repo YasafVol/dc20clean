@@ -235,13 +235,20 @@ buildData attributes + resolvedEffects → finalAttributes
 └── attribute_intelligence → breakdown → finalIntelligence
 ```
 
-#### Stage 5: Prime Attribute (Depends on All Attributes)
+#### Stage 5: Prime Modifier (Optional Rule)
 ```
-Dependencies: finalMight, finalAgility, finalCharisma, finalIntelligence
+Dependencies: buildData.level, finalMight, finalAgility, finalCharisma, finalIntelligence, usePrimeCapRule
 
-maxValue = Math.max(finalMight, finalAgility, finalCharisma, finalIntelligence)
-primeAttribute = tie-breaker (might > agility > charisma > intelligence)
+if usePrimeCapRule:
+	primeModifier = getLevelCaps(level).maxAttributeValue
+	primeAttribute = 'prime'
+else:
+	maxValue = Math.max(finalMight, finalAgility, finalCharisma, finalIntelligence)
+	primeAttribute = tie-breaker (might > agility > charisma > intelligence)
+	primeModifier = maxValue
 ```
+
+UI Toggle: the Attributes stage of character creation exposes a "Use Prime = Attribute Cap (Optional Rule)" checkbox. When unchecked, the calculator follows the legacy highest-attribute prime.
 
 #### Stage 6: Initial Resource Values (Before Effect Breakdowns)
 ```
@@ -263,15 +270,15 @@ Dependencies: combatMastery, finalAgility, finalIntelligence, finalMight, finalC
 
 #### Stage 8: Derived Stats (First Pass - Using Initial Values)
 ```
-Dependencies: combatMastery, maxValue, finalAttributes, finalCharisma
+Dependencies: combatMastery, primeModifier, finalAttributes, finalCharisma
 
 ├── finalGritPoints = max(0, 2 + finalCharisma)
-├── finalSaveDC = 10 + combatMastery + maxValue
+├── finalSaveDC = 10 + combatMastery + primeModifier
 ├── finalSaveMight = finalMight + combatMastery
 ├── finalSaveAgility = finalAgility + combatMastery
 ├── finalSaveCharisma = finalCharisma + combatMastery
 ├── finalSaveIntelligence = finalIntelligence + combatMastery
-├── finalDeathThreshold = maxValue + combatMastery
+├── finalDeathThreshold = primeModifier + combatMastery
 ├── baseMoveSpeed = 5
 ├── baseJumpDistance = finalAgility
 └── finalInitiativeBonus = combatMastery + finalAgility
@@ -303,9 +310,9 @@ Update to final values (post-effects):
 
 #### Stage 10: Combat Stats with Breakdowns
 ```
-Dependencies: combatMastery, maxValue, finalSaveDC
+Dependencies: combatMastery, primeModifier, finalSaveDC
 
-├── attackSpellCheckBase = combatMastery + maxValue
+├── attackSpellCheckBase = combatMastery + primeModifier
 ├── breakdowns.attack_spell_check = createStatBreakdown('attackSpellCheck', attackSpellCheckBase, resolvedEffects)
 └── breakdowns.save_dc = createStatBreakdown('saveDC', finalSaveDC, resolvedEffects)
 ```
@@ -345,25 +352,19 @@ Dependencies: finalAgility, finalMight, skillsData
 
 ```
 level
-  └─→ combatMastery
-        ├─→ basePD (+ finalAgility + finalIntelligence)
-        ├─→ baseAD (+ finalMight + finalCharisma)
-        ├─→ finalSaveDC (+ maxValue)
-        ├─→ finalSaveMight (+ finalMight)
-        ├─→ finalSaveAgility (+ finalAgility)
-        ├─→ finalSaveCharisma (+ finalCharisma)
-        ├─→ finalSaveIntelligence (+ finalIntelligence)
-        ├─→ finalDeathThreshold (+ maxValue)
-        ├─→ finalInitiativeBonus (+ finalAgility)
-        └─→ attackSpellCheckBase (+ maxValue)
+  ├─→ combatMastery
+  │     ├─→ basePD (+ finalAgility + finalIntelligence)
+  │     ├─→ baseAD (+ finalMight + finalCharisma)
+  │     ├─→ finalSaveMight (+ finalMight)
+  │     ├─→ finalSaveAgility (+ finalAgility)
+  │     ├─→ finalSaveCharisma (+ finalCharisma)
+  │     ├─→ finalSaveIntelligence (+ finalIntelligence)
+  │     └─→ finalInitiativeBonus (+ finalAgility)
+  └─→ primeCapValue = getLevelCaps(level).maxAttributeValue
 
 buildData.attributes + resolvedEffects
   └─→ finalAttributes (might, agility, charisma, intelligence)
-        ├─→ maxValue
-        │     ├─→ primeAttribute
-        │     ├─→ finalSaveDC
-        │     ├─→ finalDeathThreshold
-        │     └─→ attackSpellCheckBase
+        ├─→ attributePrimeCandidate (max value + tie-breaker)
         ├─→ basePD (combatMastery + finalAgility + finalIntelligence)
         ├─→ baseAD (combatMastery + finalMight + finalCharisma)
         ├─→ finalGritPoints (2 + finalCharisma)
@@ -373,6 +374,15 @@ buildData.attributes + resolvedEffects
         └─→ finalMartialCheck
               ├─→ acrobaticsTotal (finalAgility + proficiency × 2)
               └─→ athleticsTotal (finalMight + proficiency × 2)
+
+usePrimeCapRule
+  ├─→ primeModifier (primeCapValue if true else attributePrimeCandidate.value)
+  └─→ primeAttribute ('prime' if true else attributePrimeCandidate.name)
+
+primeModifier
+  ├─→ finalSaveDC (10 + combatMastery + primeModifier)
+  ├─→ finalDeathThreshold (primeModifier + combatMastery)
+  └─→ attackSpellCheckBase (combatMastery + primeModifier)
 
 progressionGains
   ├─→ totalHP
@@ -471,6 +481,3 @@ For values that depend on breakdowns, the order must be:
 
 > Last updated: 2025-10-10
 > Maintainer: @DC20Clean-Team
-
-
-

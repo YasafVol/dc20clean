@@ -31,6 +31,7 @@ export interface CharacterInProgressStoreData
 	skillsData: Record<string, number>;
 	tradesData: Record<string, number>;
 	languagesData: Record<string, { fluency: 'limited' | 'fluent' }>;
+	usePrimeCapRule?: boolean;
 	cachedEffectResults?: EnhancedCalculationResult;
 	cacheTimestamp?: number;
 	selectedSpells: string[];
@@ -62,6 +63,7 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
 	attribute_agility: -2,
 	attribute_charisma: -2,
 	attribute_intelligence: -2,
+	usePrimeCapRule: false,
 	pointsSpent: 0,
 	level: 1,
 	combatMastery: 1,
@@ -119,6 +121,7 @@ type CharacterAction =
 	| { type: 'NEXT_STEP' }
 	| { type: 'PREVIOUS_STEP' }
 	| { type: 'SET_STEP'; step: number }
+	| { type: 'TOGGLE_PRIME_CAP_RULE'; value?: boolean }
 	| {
 			type: 'SET_CONVERSIONS';
 			conversions: { skillToTrade?: number; tradeToSkill?: number; tradeToLanguage?: number };
@@ -212,6 +215,11 @@ function characterReducer(
 				tradeToLanguageConversions:
 					action.conversions.tradeToLanguage ?? state.tradeToLanguageConversions ?? 0
 			};
+		case 'TOGGLE_PRIME_CAP_RULE':
+			return {
+				...state,
+				usePrimeCapRule: action.value ?? !state.usePrimeCapRule
+			};
 		default:
 			return state;
 	}
@@ -224,6 +232,7 @@ interface CharacterContextType {
 	// New centralized calculation result only
 	calculationResult: EnhancedCalculationResult;
 	attributePointsRemaining: number;
+	totalAttributePoints: number;
 }
 
 const CharacterContext = createContext<CharacterContextType | undefined>(undefined);

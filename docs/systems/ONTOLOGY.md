@@ -72,7 +72,7 @@ This section describes the data structures and concepts that define the game's r
 - **Classes**: The character's primary archetype (e.g., Cleric, Wizard).
   - **Location**: `src/lib/rulesdata/classes-data/`
   - **Available Classes**: Barbarian, Bard, Champion, Cleric, Commander, Druid, Hunter, Monk, Psion, Rogue, Sorcerer, Spellblade, Warlock, Wizard.
-  - **Structure**: Each class has a set of features (`*_features.ts`) and progression tables (`*_table.json`).
+  - **Structure**: Each class has a set of features (`*_features.ts`) and progression tables (`*.progression.ts`).
   - **Loaders**: `class.loader.ts` and `class-features.loader.ts` are used to load this data.
 
 - **Ancestries**: The character's heritage (e.g., Human, Elf).

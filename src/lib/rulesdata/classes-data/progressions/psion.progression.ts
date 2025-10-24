@@ -13,6 +13,9 @@ export const psionProgression: any[] = [
     "gainedStaminaPoints": 1,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 4,
+    "gainedCantripsKnown": 2,
+    "gainedSpellsKnown": 3,
     "gains": {
       "classFeatures": [
         "psion_spellcasting_path",
@@ -33,6 +36,9 @@ export const psionProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "talents": 1,
       "pathPoints": 1,
@@ -53,6 +59,9 @@ export const psionProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 2,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 1,
     "gains": {
       "subclassFeatureChoice": true
     }
@@ -66,6 +75,9 @@ export const psionProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "talents": 1,
       "pathPoints": 1,
@@ -81,6 +93,9 @@ export const psionProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 2,
+    "gainedCantripsKnown": 1,
+    "gainedSpellsKnown": 0,
     "gains": {
       "classFeatures": [
         "placeholder_class_feature"
@@ -96,6 +111,9 @@ export const psionProgression: any[] = [
     "gainedStaminaPoints": 1,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 2,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 1,
     "gains": {
       "subclassFeatureChoice": true
     }
@@ -109,6 +127,9 @@ export const psionProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "talents": 1,
       "pathPoints": 1,
@@ -124,6 +145,9 @@ export const psionProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 2,
+    "gainedCantripsKnown": 1,
+    "gainedSpellsKnown": 0,
     "gains": {
       "classFeatures": [
         "placeholder_class_capstone"
@@ -139,6 +163,9 @@ export const psionProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 2,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 1,
     "gains": {
       "subclassFeatureChoice": true
     }
@@ -152,6 +179,9 @@ export const psionProgression: any[] = [
     "gainedStaminaPoints": 0,
     "gainedManeuversKnown": 0,
     "gainedTechniquesKnown": 0,
+    "gainedManaPoints": 0,
+    "gainedCantripsKnown": 0,
+    "gainedSpellsKnown": 0,
     "gains": {
       "talents": 1,
       "pathPoints": 1,

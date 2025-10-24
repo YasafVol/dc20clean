@@ -14,6 +14,7 @@
   "finalIntelligence": 3,
   "finalPrimeModifierValue": 3,
   "finalPrimeModifierAttribute": "intelligence",
+  "usePrimeCapRule": false,
   "finalCombatMastery": 1,
   "finalSaveMight": 1,
   "finalSaveAgility": 2,

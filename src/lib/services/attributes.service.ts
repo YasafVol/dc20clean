@@ -1,11 +1,13 @@
 import type { CharacterInProgressStoreData } from '../stores/characterContext';
 import { traitsData } from '../rulesdata/ancestries/traits';
 import { attributeRules } from '../rulesdata/attributes';
+import { getLevelCaps } from '../rulesdata/progression/levelCaps';
+import { classesData } from '../rulesdata/loaders/class.loader';
 
 /**
  * Service for handling attribute-related business logic
  * NO business logic should be in the frontend components!
- * All rules come from attributeRules data - NO hardcoded values!
+ * All rules come from attributeRules data and LEVEL_CAPS_TABLE - NO hardcoded values!
  */
 
 /**
@@ -15,13 +17,52 @@ export const ATTRIBUTE_IDS = ['might', 'agility', 'charisma', 'intelligence'] as
 export type AttributeId = (typeof ATTRIBUTE_IDS)[number];
 
 /**
+ * Get max attribute value for a character's level
+ * Pulls from LEVEL_CAPS_TABLE
+ */
+export const getMaxAttributeValue = (character: CharacterInProgressStoreData): number => {
+	const levelCaps = getLevelCaps(character.level);
+	return levelCaps.maxAttributeValue;
+};
+
+/**
+ * Calculate base attribute points from class level progression
+ * Accumulates gainedAttributePoints from level 1 up to current level
+ */
+const calculateBaseAttributePointsFromProgression = (
+	character: CharacterInProgressStoreData
+): number => {
+	if (!character.classId) {
+		// No class selected, use base 12 for level 1 character creation
+		return 12;
+	}
+
+	const characterClass = classesData.find((c) => c.id === character.classId);
+	if (!characterClass) {
+		return 12; // Fallback if class not found
+	}
+
+	// Accumulate attribute points from level 1 up to current level
+	let totalPoints = 12; // Base starting points at level 1
+
+	characterClass.levelProgression.forEach((levelEntry) => {
+		if (levelEntry.level <= character.level && levelEntry.level > 1) {
+			totalPoints += levelEntry.attributePoints ?? 0;
+		}
+	});
+
+	return totalPoints;
+};
+
+/**
  * Calculate total available attribute points for a character
- * Base points + any bonuses from traits/features
+ * Base points from level progression + any bonuses from traits/features
  */
 export const calculateAvailableAttributePoints = (
 	character: CharacterInProgressStoreData
 ): number => {
-	let totalPoints = attributeRules.basePoints;
+	// Get base points from class progression
+	let totalPoints = calculateBaseAttributePointsFromProgression(character);
 
 	// Add bonus points from selected traits
 	const selectedTraits = character.selectedTraitIds || [];
@@ -75,16 +116,17 @@ export const calculateAttributePointsRemaining = (
 
 /**
  * Check if an attribute can be increased
- * Must be: below max value AND have points remaining
+ * Must be: below max value (from level caps) AND have points remaining
  */
 export const canIncreaseAttribute = (
 	character: CharacterInProgressStoreData,
 	attributeId: AttributeId
 ): boolean => {
 	const currentValue = character[`attribute_${attributeId}`] ?? attributeRules.baseValue;
+	const maxValue = getMaxAttributeValue(character);
 
-	// Check if at max
-	if (currentValue >= attributeRules.maxValue) {
+	// Check if at max for this level
+	if (currentValue >= maxValue) {
 		return false;
 	}
 
@@ -107,11 +149,14 @@ export const canDecreaseAttribute = (
 
 /**
  * Validate that all attributes are within valid range
+ * Min is always -2, Max depends on character level
  */
 export const areAllAttributesValid = (character: CharacterInProgressStoreData): boolean => {
+	const maxValue = getMaxAttributeValue(character);
+
 	return ATTRIBUTE_IDS.every((attrId) => {
 		const value = character[`attribute_${attrId}`] ?? attributeRules.baseValue;
-		return value >= attributeRules.minValue && value <= attributeRules.maxValue;
+		return value >= attributeRules.minValue && value <= maxValue;
 	});
 };
 

@@ -4,13 +4,19 @@ import { IAttributeData } from './schemas/types';
 
 /**
  * Attribute rules and constraints (from DC20 Beta 0.9.5)
+ *
+ * NOTE: maxValue is level-dependent and should be fetched from LEVEL_CAPS_TABLE
+ * in progression/levelCaps.ts using getLevelCaps(level).maxAttributeValue
+ *
+ * basePoints (starting attribute points) is also level-dependent but typically
+ * comes from character creation (level 1) or level progression
  */
 export const attributeRules = {
 	baseValue: -2, // All attributes start at -2
 	minValue: -2, // Cannot go below baseline
-	maxValue: 3, // Level 1 attribute cap
-	basePoints: 12, // Base attribute points at level 1
-	costPerIncrement: 1 // Each +1 costs 2 points
+	costPerIncrement: 1 // Each +1 costs 1 point (changed from original 2)
+	// maxValue: Use getLevelCaps(level).maxAttributeValue instead
+	// basePoints: Use character's calculated attributePoints stat instead
 };
 
 // To be placed in: src/lib/rulesdata/attributes.ts

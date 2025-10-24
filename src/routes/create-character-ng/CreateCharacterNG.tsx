@@ -5,6 +5,7 @@ import Class from './steps/class/Class';
 import Features from './steps/features/Features';
 import Ancestry from './steps/ancestry/Ancestry';
 import Attributes from './steps/attributes/Attributes';
+import { Proficiencies } from './steps/proficiencies/Proficiencies';
 import Background from './steps/background/Background';
 import Spells from './steps/spells/Spells';
 import Finish from './steps/finish/Finish';
@@ -23,6 +24,7 @@ const stepComponents = {
 	features: Features,
 	ancestry: Ancestry,
 	attributes: Attributes,
+	proficiencies: Proficiencies,
 	background: Background,
 	spells: Spells,
 	finish: Finish

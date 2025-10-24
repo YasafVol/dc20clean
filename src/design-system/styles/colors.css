@@ -1,63 +1,67 @@
 /* CSS Color Variables - Named like proper colors should be! */
 
 :root {
-  /* Golden hues */
-  --cornflower: #fbbf24;
-  --marigold: #f59e0b;
-  
-  /* Pure and light */
-  --alabaster: #ffffff;
-  --pearl: #e5e7eb;
-  --pewter: #9ca3af;
-  --midnight: #1e1b4b;
-  
-  /* Nature's finest */
-  --emerald: #10b981;
-  --forest: #059669;
-  --crimson: #ef4444;
-  --burgundy: #dc2626;
-  --amber: #fbbf24;
-  
-  /* Foundation stones */
-  --slate: #6b7280;
-  --silver: #9ca3af;
-  --obsidian: #000000;
-  --charcoal: #1f2937;
-  --shadow: rgba(0, 0, 0, 0.9);
-  
-  /* Mystical touches */
-  --lavender: #B0B1D8;
-  --onyx: #1E1E1E;
-  
-  /* Ancient legacy colors */
-  --coal: #0C0C0C;
-  --russet: #823434;
-  --iron: #1E1E1E;
-  --copper: #AD393B;
-  --mist: #D9D9D9;
+	/* Golden hues */
+	--cornflower: #fbbf24;
+	--marigold: #f59e0b;
+
+	/* Pure and light */
+	--alabaster: #ffffff;
+	--pearl: #e5e7eb;
+	--pewter: #9ca3af;
+	--midnight: #1e1b4b;
+
+	/* Nature's finest */
+	--emerald: #10b981;
+	--forest: #059669;
+	--crimson: #ef4444;
+	--burgundy: #dc2626;
+	--amber: #fbbf24;
+
+	/* Foundation stones */
+	--slate: #6b7280;
+	--silver: #9ca3af;
+	--obsidian: #000000;
+	--charcoal: #1f2937;
+	--shadow: rgba(0, 0, 0, 0.9);
+
+	/* Mystical touches */
+	--lavender: #b0b1d8;
+	--onyx: #1e1e1e;
+
+	/* Ancient legacy colors */
+	--coal: #0c0c0c;
+	--russet: #823434;
+	--iron: #1e1e1e;
+	--copper: #ad393b;
+	--mist: #d9d9d9;
+
+	/* Conversion button colors */
+	--cornflower-blue: #44759b;
+	--pearl-text: #dbdbdb;
 }
 
 /* Global scrollbar styling using our new color names */
 * {
-  scrollbar-width: thin;
-  scrollbar-color: var(--lavender) transparent;
+	scrollbar-width: thin;
+	scrollbar-color: var(--lavender) transparent;
 }
 
 *::-webkit-scrollbar {
-  width: 12px;
+	width: 12px;
 }
 
 *::-webkit-scrollbar-track {
-  background: transparent;
+	background: transparent;
 }
 
 *::-webkit-scrollbar-thumb {
-  background: var(--lavender);
-  border: 2px solid var(--onyx);
-  border-radius: 6px;
+	background: var(--lavender);
+	border: 2px solid var(--onyx);
+	border-radius: 6px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: var(--lavender);
-  opacity: 0.8;
+	background: var(--lavender);
+	opacity: 0.8;
 }

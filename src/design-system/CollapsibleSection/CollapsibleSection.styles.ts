@@ -50,6 +50,8 @@ export const Content = styled.div<{ $expanded: boolean }>`
 	padding: ${(props) => (props.$expanded ? '16px' : '0')};
 	overflow: hidden;
 	transition: all 0.2s ease-in-out;
+	background: transparent;
+	color: var(--iron);
 `;
 
 export const ActionContainer = styled.div`

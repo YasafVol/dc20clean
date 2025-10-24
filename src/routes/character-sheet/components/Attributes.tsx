@@ -45,6 +45,12 @@ const Attributes: React.FC<AttributesProps> = ({
 
 	// Get prime modifier directly from character data
 	const primeValue = state.character?.finalPrimeModifierValue || 0;
+	const primeAttributeRaw = state.character?.finalPrimeModifierAttribute || 'prime';
+	const usePrimeCapRule = state.character?.usePrimeCapRule ?? primeAttributeRaw === 'prime';
+	const primeAttributeLabel =
+		typeof primeAttributeRaw === 'string' && primeAttributeRaw !== 'prime'
+			? primeAttributeRaw.toUpperCase()
+			: 'PRIME';
 
 	const renderSkills = (skills: SkillData[]) => {
 		return skills.map((skill) => (
@@ -87,7 +93,9 @@ const Attributes: React.FC<AttributesProps> = ({
 			{/* Prime Modifier & Awareness */}
 			<PrimeSection $isMobile={isMobile}>
 				<PrimeLabel $isMobile={isMobile}>Prime</PrimeLabel>
-				<PrimeValue $isMobile={isMobile}>+{primeValue}</PrimeValue>
+				<PrimeValue $isMobile={isMobile}>
+					{usePrimeCapRule ? `+${primeValue}` : `${primeAttributeLabel} +${primeValue}`}
+				</PrimeValue>
 			</PrimeSection>
 
 			{/* Awareness (Prime skill) */}

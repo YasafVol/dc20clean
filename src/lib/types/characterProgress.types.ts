@@ -11,6 +11,7 @@ export interface CharacterInProgress {
   attribute_agility: number;
   attribute_charisma: number;
   attribute_intelligence: number;
+  usePrimeCapRule?: boolean;
   pointsSpent: number;
   currentStep: number;
 
@@ -42,4 +43,3 @@ export interface CharacterInProgress {
   createdAt: Date;
   updatedAt: Date;
 }
-

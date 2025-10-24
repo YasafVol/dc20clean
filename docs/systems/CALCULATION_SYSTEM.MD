@@ -235,13 +235,20 @@ buildData attributes + resolvedEffects → finalAttributes
 └── attribute_intelligence → breakdown → finalIntelligence
 ```
 
-#### Stage 5: Prime Modifier (Level Cap Driven)
+#### Stage 5: Prime Modifier (Optional Rule)
 ```
-Dependencies: buildData.level
+Dependencies: buildData.level, finalMight, finalAgility, finalCharisma, finalIntelligence, usePrimeCapRule
 
-primeModifier = getLevelCaps(level).maxAttributeValue
-// finalPrimeModifierAttribute is reported as "prime" for UI compatibility
+if usePrimeCapRule:
+	primeModifier = getLevelCaps(level).maxAttributeValue
+	primeAttribute = 'prime'
+else:
+	maxValue = Math.max(finalMight, finalAgility, finalCharisma, finalIntelligence)
+	primeAttribute = tie-breaker (might > agility > charisma > intelligence)
+	primeModifier = maxValue
 ```
+
+UI Toggle: the Attributes stage of character creation exposes a "Use Prime = Attribute Cap (Optional Rule)" checkbox. When unchecked, the calculator follows the legacy highest-attribute prime.
 
 #### Stage 6: Initial Resource Values (Before Effect Breakdowns)
 ```
@@ -353,13 +360,11 @@ level
   │     ├─→ finalSaveCharisma (+ finalCharisma)
   │     ├─→ finalSaveIntelligence (+ finalIntelligence)
   │     └─→ finalInitiativeBonus (+ finalAgility)
-  └─→ primeModifier (getLevelCaps(level).maxAttributeValue)
-        ├─→ finalSaveDC (10 + combatMastery + primeModifier)
-        ├─→ finalDeathThreshold (+ combatMastery)
-        └─→ attackSpellCheckBase (+ combatMastery)
+  └─→ primeCapValue = getLevelCaps(level).maxAttributeValue
 
 buildData.attributes + resolvedEffects
   └─→ finalAttributes (might, agility, charisma, intelligence)
+        ├─→ attributePrimeCandidate (max value + tie-breaker)
         ├─→ basePD (combatMastery + finalAgility + finalIntelligence)
         ├─→ baseAD (combatMastery + finalMight + finalCharisma)
         ├─→ finalGritPoints (2 + finalCharisma)
@@ -369,6 +374,15 @@ buildData.attributes + resolvedEffects
         └─→ finalMartialCheck
               ├─→ acrobaticsTotal (finalAgility + proficiency × 2)
               └─→ athleticsTotal (finalMight + proficiency × 2)
+
+usePrimeCapRule
+  ├─→ primeModifier (primeCapValue if true else attributePrimeCandidate.value)
+  └─→ primeAttribute ('prime' if true else attributePrimeCandidate.name)
+
+primeModifier
+  ├─→ finalSaveDC (10 + combatMastery + primeModifier)
+  ├─→ finalDeathThreshold (primeModifier + combatMastery)
+  └─→ attackSpellCheckBase (combatMastery + primeModifier)
 
 progressionGains
   ├─→ totalHP

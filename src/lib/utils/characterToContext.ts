@@ -32,6 +32,7 @@ export function convertSavedCharacterToContext(
 		skillsData: character.skillsData || {},
 		tradesData: character.tradesData || {},
 		languagesData: character.languagesData || { common: { fluency: 'fluent' } },
+		usePrimeCapRule: character.usePrimeCapRule ?? false,
 		skillToTradeConversions: character.skillToTradeConversions || 0,
 		tradeToSkillConversions: character.tradeToSkillConversions || 0,
 		tradeToLanguageConversions: character.tradeToLanguageConversions || 0,
@@ -51,4 +52,3 @@ export function convertSavedCharacterToContext(
 		finalPlayerName: character.finalPlayerName || null
 	};
 }
-

@@ -117,6 +117,7 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 		finalName: contextData.finalName || '',
 		finalPlayerName: contextData.finalPlayerName,
 		level: contextData.level || 1,
+		usePrimeCapRule: !!contextData.usePrimeCapRule,
 
 		// Use final* if present, else attribute_* (for character creation)
 		attribute_might: contextData.finalMight ?? contextData.attribute_might ?? 0,
@@ -846,6 +847,7 @@ export function calculateCharacterWithBreakdowns(
 
 	// Derived stats - Combat Mastery calculated from level
 	const combatMastery = Math.ceil(buildData.level / 2);
+	const levelCapsForPrime = getLevelCaps(buildData.level);
 
 	// Health & Resources - use aggregated progression gains
 	let finalHPMax = finalMight + progressionGains.totalHP;
@@ -867,11 +869,21 @@ export function calculateCharacterWithBreakdowns(
 	const finalAD = buildData.manualAD ?? baseAD + adModifiers;
 	const finalPDR = buildData.manualPDR ?? 0;
 
-	// Prime modifier is driven purely by the level-based attribute cap table
-	const primeModifier = getLevelCaps(buildData.level).maxAttributeValue;
+	// Determine attribute-driven prime values for legacy behavior
+	const maxAttributeValue = Math.max(finalMight, finalAgility, finalCharisma, finalIntelligence);
+	const attributesAtMax: Array<'might' | 'agility' | 'charisma' | 'intelligence'> = [];
+	if (finalMight === maxAttributeValue) attributesAtMax.push('might');
+	if (finalAgility === maxAttributeValue) attributesAtMax.push('agility');
+	if (finalCharisma === maxAttributeValue) attributesAtMax.push('charisma');
+	if (finalIntelligence === maxAttributeValue) attributesAtMax.push('intelligence');
+	const attributePrime = attributesAtMax[0] || 'might';
 
-	    // Calculate other derived stats first (DC20 sheet: 10 + Combat Mastery + Prime)
-	    const finalSaveDC = 10 + combatMastery + primeModifier;
+	const usePrimeCapRule = !!buildData.usePrimeCapRule;
+	const primeModifier = usePrimeCapRule ? levelCapsForPrime.maxAttributeValue : maxAttributeValue;
+	const primeAttribute = usePrimeCapRule ? 'prime' : attributePrime;
+
+	// Calculate other derived stats first (DC20 sheet: 10 + Combat Mastery + Prime)
+	const finalSaveDC = 10 + combatMastery + primeModifier;
 	const finalSaveMight = finalMight + combatMastery;
 	const finalSaveAgility = finalAgility + combatMastery;
 	const finalSaveCharisma = finalCharisma + combatMastery;
@@ -1096,7 +1108,7 @@ export function calculateCharacterWithBreakdowns(
 
 	// --- START MASTERY CAP CALCULATION ---
 	// Get caps from canonical source
-	const levelCaps = getLevelCaps(buildData.level);
+	const levelCaps = levelCapsForPrime;
 
 	// Helper to convert skill points to a numeric mastery tier (2+=Adept)
 	const getMasteryTierFromPoints = (points: number): number => {
@@ -1316,7 +1328,8 @@ export function calculateCharacterWithBreakdowns(
 
 			// Prime modifier and combat mastery (needed for UI compatibility)
 			finalPrimeModifierValue: primeModifier,
-			finalPrimeModifierAttribute: 'prime',
+			finalPrimeModifierAttribute: primeAttribute,
+			usePrimeCapRule,
 			finalCombatMastery: combatMastery,
 			finalAttributePoints,
 

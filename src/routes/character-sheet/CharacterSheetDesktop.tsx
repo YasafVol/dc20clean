@@ -198,6 +198,14 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 	const loading = state.loading;
 	const error = state.error;
 	const characterData = state.character;
+	const primeValue = characterData?.finalPrimeModifierValue ?? 0;
+	const primeAttributeRaw = characterData?.finalPrimeModifierAttribute ?? 'prime';
+	const usePrimeCapRule = characterData?.usePrimeCapRule ?? primeAttributeRaw === 'prime';
+	const primeAttributeLabel =
+		typeof primeAttributeRaw === 'string' && primeAttributeRaw !== 'prime'
+			? primeAttributeRaw.toUpperCase()
+			: 'PRIME';
+	const primeDisplay = usePrimeCapRule ? `+${primeValue}` : `${primeAttributeLabel} +${primeValue}`;
 
 	// Loading state
 	if (loading) {
@@ -346,7 +354,7 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 					</StyledAttributeCard>
 					<StyledAttributeCard>
 						<StyledAttributeLabel>Prime</StyledAttributeLabel>
-						<StyledAttributeValue>{characterData.finalPrimeModifierValue}</StyledAttributeValue>
+						<StyledAttributeValue>{primeDisplay}</StyledAttributeValue>
 					</StyledAttributeCard>
 				</StyledAttributesGrid>
 

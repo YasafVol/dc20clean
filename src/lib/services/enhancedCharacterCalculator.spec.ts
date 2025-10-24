@@ -82,30 +82,64 @@ describe('enhancedCharacterCalculator Mastery Cap Logic', () => {
 });
 
 describe('enhancedCharacterCalculator Prime Modifier', () => {
-	it('sets prime modifier to the level cap at low levels', () => {
+	describe('Prime modifier modes', () => {
+		it('defaults to the highest attribute when the optional rule is disabled', () => {
+			const character = createTestCharacter(4, {});
+			character.attribute_might = 3;
+			character.attribute_agility = 1;
+
+			const result = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
+
+			expect(result.stats.usePrimeCapRule).toBe(false);
+			expect(result.stats.finalPrimeModifierValue).toBe(3);
+			expect(result.stats.finalPrimeModifierAttribute).toBe('might');
+		});
+
+		it('respects tie-breaking order when multiple attributes share the max value', () => {
+			const character = createTestCharacter(1, {});
+			character.attribute_might = 2;
+			character.attribute_agility = 2;
+			character.attribute_charisma = 2;
+
+			const result = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
+
+			expect(result.stats.finalPrimeModifierValue).toBe(2);
+			expect(result.stats.finalPrimeModifierAttribute).toBe('might'); // priority order
+		});
+	});
+
+	it('sets prime modifier to the level cap when the optional rule is enabled', () => {
 		const character = createTestCharacter(1, {});
+		(character as any).usePrimeCapRule = true;
+
 		const result = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
 
+		expect(result.stats.usePrimeCapRule).toBe(true);
 		expect(result.stats.finalPrimeModifierValue).toBe(3); // Level 1 cap
 		expect(result.stats.finalPrimeModifierAttribute).toBe('prime');
 	});
 
-	it('escalates prime modifier as level caps increase', () => {
+	it('escalates prime modifier with level caps when the rule is enabled', () => {
 		const character = createTestCharacter(12, {});
+		(character as any).usePrimeCapRule = true;
+
 		const result = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
 
 		expect(result.stats.finalPrimeModifierValue).toBe(5); // Level 12 cap per table
+		expect(result.stats.finalPrimeModifierAttribute).toBe('prime');
 	});
 
-	it('ignores attribute totals when determining prime modifier', () => {
+	it('ignores attribute totals in cap mode even if attributes are negative', () => {
 		const character = createTestCharacter(18, {});
 		character.attribute_might = -2;
 		character.attribute_agility = -2;
 		character.attribute_charisma = -2;
 		character.attribute_intelligence = -2;
+		(character as any).usePrimeCapRule = true;
 
 		const result = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
 
 		expect(result.stats.finalPrimeModifierValue).toBe(6); // Level 18 cap per table
+		expect(result.stats.finalPrimeModifierAttribute).toBe('prime');
 	});
 });

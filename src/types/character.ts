@@ -37,6 +37,7 @@ export interface CharacterSheetData {
 	// Calculated Stats
 	finalPrimeModifierValue: number;
 	finalPrimeModifierAttribute: string;
+	usePrimeCapRule?: boolean;
 	finalCombatMastery: number;
 
 	// Saves (Attribute + Combat Mastery)

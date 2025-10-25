@@ -12,6 +12,8 @@ import { CollapsibleSection } from '../../../../design-system';
 import { Button } from '../../../../design-system';
 import { classesData } from '../../../../lib/rulesdata/loaders/class.loader';
 import { useCharacter } from '../../../../lib/stores/characterContext';
+import { useAtom } from 'jotai';
+import { stepperCurrentStepAtom } from '../../../../atoms/stepperAtom';
 import { getFormattedClassData } from '../../../../lib/services/classFeatures.service';
 import ClassFeatureDisplay from './components/ClassFeatureDisplay';
 
@@ -118,8 +120,18 @@ const Class: React.FC = () => {
 				classId,
 				characterState: { ...state, classId }
 			});
+
+			// Auto-advance to next step (features)
+			try {
+				setCurrentStep((s) => Math.min(s + 1, 6));
+			} catch (e) {
+				// ignore
+			}
 		}
 	};
+
+	// stepper control for auto-advance
+	const [, setCurrentStep] = useAtom(stepperCurrentStepAtom);
 
 	return (
 		<StyledContainer>

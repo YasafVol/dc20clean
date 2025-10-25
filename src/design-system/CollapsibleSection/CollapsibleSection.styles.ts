@@ -7,12 +7,9 @@ export const SectionWrapper = styled.div<{ $selected?: boolean }>`
 	background: transparent; // Made transparent as requested
 	margin-bottom: 0.5rem;
 
-	${({ $selected }) =>
-		$selected &&
-		`
-    border-color: var(--cornflower);
-    box-shadow: 0 0 0 1px var(--cornflower);
-  `}
+	/* Remove the prominent border/box-shadow when selected to avoid layout shifts
+		 and visual jumping. Keep the border width consistent so selection doesn't
+		 change box model. */
 `;
 
 export const Header = styled.div<{ $expanded: boolean }>`

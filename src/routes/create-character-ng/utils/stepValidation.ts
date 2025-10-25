@@ -12,6 +12,13 @@ import {
 	areAllAttributesValid,
 	areAllAttributePointsSpent
 } from '../../../lib/services/attributes.service';
+import {
+	calculateAvailablePointsWithConversions,
+	calculateSkillPointsSpent,
+	calculateTradePointsSpent,
+	calculateLanguagePointsSpent,
+	areAllProficienciesValid
+} from '../../../lib/services/proficiencies.service';
 
 // Step validation functions for character creation
 // Returns true if the step is valid, false if invalid
@@ -117,17 +124,54 @@ export const validateAttributes = (character: CharacterInProgressStoreData): boo
 	return true;
 };
 
-export const validateBackground = (character: CharacterInProgressStoreData): boolean => {
-	// Mock validation: Background step succeeds
+export const validateProficiencies = (_character: CharacterInProgressStoreData): boolean => {
+	const character = _character;
+
+	// First, ensure basic rules (no overspend, mastery caps, adept limits)
+	if (!areAllProficienciesValid(character)) {
+		return false;
+	}
+
+	// Then require that all available points have been allocated for each category.
+	// This enforces that users spend their skill/trade/language points before advancing.
+	const pointsData = calculateAvailablePointsWithConversions(character);
+	const skillsSpent = calculateSkillPointsSpent(character);
+	const tradesSpent = calculateTradePointsSpent(character);
+	const languagesSpent = calculateLanguagePointsSpent(character);
+
+	// Require exact allocation: spent must equal available for each category.
+	if (skillsSpent !== pointsData.availableSkillPoints) {
+		return false;
+	}
+
+	if (tradesSpent !== pointsData.availableTradePoints) {
+		return false;
+	}
+
+	if (languagesSpent !== pointsData.availableLanguagePoints) {
+		return false;
+	}
+
+	// Additionally, if any category has >0 available points, ensure at least one selection exists
+	const hasAnySkill = Object.values(character.skillsData || {}).some((v) => v > 0);
+	const hasAnyTrade = Object.values(character.tradesData || {}).some((v) => v > 0);
+	const hasAnyLanguage = Object.entries(character.languagesData || {}).some(
+		([langId, data]) => langId !== 'common' && !!data && !!data.fluency
+	);
+
+	if (pointsData.availableSkillPoints > 0 && !hasAnySkill) return false;
+	if (pointsData.availableTradePoints > 0 && !hasAnyTrade) return false;
+	if (pointsData.availableLanguagePoints > 0 && !hasAnyLanguage) return false;
+
 	return true;
 };
 
-export const validateSpells = (character: CharacterInProgressStoreData): boolean => {
+export const validateSpells = (_character: CharacterInProgressStoreData): boolean => {
 	// Mock validation: Spells step succeeds (default)
 	return true;
 };
 
-export const validateFinish = (character: CharacterInProgressStoreData): boolean => {
+export const validateFinish = (_character: CharacterInProgressStoreData): boolean => {
 	// Mock validation: Finish step succeeds (default)
 	return true;
 };
@@ -138,7 +182,7 @@ export const stepValidationMap = {
 	features: validateFeatures,
 	ancestry: validateAncestry,
 	attributes: validateAttributes,
-	background: validateBackground,
+	proficiencies: validateProficiencies,
 	spells: validateSpells,
 	finish: validateFinish
 };

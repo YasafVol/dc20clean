@@ -13,6 +13,12 @@ export const StyledTabsContainer = styled.div`
 	gap: 12px;
 	padding: 16px;
 	background: transparent;
+
+	/* Ensure tab buttons don't change width when counts update to avoid header jumps */
+	button {
+		min-width: 180px;
+		white-space: nowrap;
+	}
 `;
 
 export const StyledConversionButtonsContainer = styled.div`

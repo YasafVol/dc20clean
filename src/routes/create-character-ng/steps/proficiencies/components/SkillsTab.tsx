@@ -8,13 +8,13 @@ import {
 } from '../../../../../lib/rulesdata/proficiencies';
 import {
 	StyledMasteryDots,
-	StyledMasteryDot,
 	StyledSkillTitle,
 	StyledSkillAttribute,
 	StyledSkillDescription,
 	StyledSkillRow,
 	StyledCollapsibleWrapper
 } from './SkillsTab.styles';
+import { RadioButton } from '../../../../../design-system/RadioButton/RadioButton';
 
 interface MasteryLimits {
 	maxSkillMastery: number;
@@ -66,17 +66,7 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
 		return true;
 	};
 
-	const handleDotClick = (skillId: string, targetLevel: number) => {
-		const currentLevel = currentSkills[skillId] || 0;
-
-		if (targetLevel === currentLevel) {
-			// Clicking same level - decrease to previous
-			onSkillChange(skillId, Math.max(0, currentLevel - 1));
-		} else if (canSelectLevel(skillId, targetLevel)) {
-			// Increase to target level
-			onSkillChange(skillId, targetLevel);
-		}
-	};
+	// We will use RadioButton's onChange to set explicit levels.
 
 	const getMasteryLabel = (level: number): string => {
 		if (level === 0) return 'Untrained';
@@ -92,19 +82,23 @@ export const SkillsTab: React.FC<SkillsTabProps> = ({
 
 				// Build the mastery dots component (OUTSIDE CollapsibleSection)
 				const masteryDots = (
-					<StyledMasteryDots>
-						{[1, 2, 3, 4, 5].map((level) => {
-							const available = canSelectLevel(skill.id, level);
-							const filled = currentLevel >= level;
+					<StyledMasteryDots role="radiogroup" aria-label={`Mastery for ${skill.name}`}>
+						{[0, 1, 2, 3, 4, 5].map((level) => {
+							// 0 represents Untrained (no mastery)
+							const available = level === 0 ? true : canSelectLevel(skill.id, level);
+							const checked = currentLevel === level;
 
 							return (
-								<StyledMasteryDot
+								<RadioButton
 									key={level}
-									$filled={filled}
-									$available={available || filled}
-									onClick={() => handleDotClick(skill.id, level)}
-									disabled={!available && !filled}
-									title={getMasteryLabel(level)}
+									name={`skill-${skill.id}-mastery`}
+									value={String(level)}
+									checked={checked}
+									disabled={!available}
+									onChange={(isChecked) => {
+										if (isChecked) onSkillChange(skill.id, level);
+									}}
+									label={level === 0 ? 'Untrained' : getMasteryLabel(level)}
 								/>
 							);
 						})}

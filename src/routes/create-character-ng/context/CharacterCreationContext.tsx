@@ -15,7 +15,7 @@ export const characterCreationSteps: Step[] = [
 	{ id: 'class', label: 'CLASS &\nFEATURES' },
 	{ id: 'ancestry', label: 'ANCESTRY' },
 	{ id: 'attributes', label: 'ATTRIBUTES' },
-	{ id: 'background', label: 'BACKGROUND' },
+	{ id: 'proficiencies', label: 'PROFICIENCIES' },
 	{ id: 'spells', label: 'SPELLS &\nMANEUVERS' },
 	{ id: 'finish', label: 'FINISH' }
 ];

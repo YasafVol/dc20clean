@@ -18,7 +18,7 @@ export const StyledPointsText = styled.span`
 	font-family: 'Urbanist', sans-serif;
 	font-weight: 600;
 	font-size: 16px;
-	color: var(--pearl);
+	color: var(--cornflower);
 	letter-spacing: 0.5px;
 `;
 

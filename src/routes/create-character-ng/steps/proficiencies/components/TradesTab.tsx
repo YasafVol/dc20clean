@@ -8,14 +8,14 @@ import {
 } from '../../../../../lib/rulesdata/proficiencies';
 import {
 	StyledMasteryDots,
-	StyledMasteryDot,
-	StyledInfoBox,
 	StyledSkillTitle,
 	StyledSkillAttribute,
 	StyledSkillDescription,
 	StyledSkillRow,
-	StyledCollapsibleWrapper
+	StyledCollapsibleWrapper,
+	StyledInfoBox
 } from './SkillsTab.styles';
+import { RadioButton } from '../../../../../design-system/RadioButton/RadioButton';
 
 interface MasteryLimits {
 	maxSkillMastery: number;
@@ -108,19 +108,22 @@ export const TradesTab: React.FC<TradesTabProps> = ({
 
 				// Build the mastery dots component (OUTSIDE CollapsibleSection)
 				const masteryDots = (
-					<StyledMasteryDots>
-						{[1, 2, 3, 4, 5].map((level) => {
-							const available = canSelectLevel(trade.id, level);
-							const filled = currentLevel >= level;
+					<StyledMasteryDots role="radiogroup" aria-label={`Mastery for ${trade.name}`}>
+						{[0, 1, 2, 3, 4, 5].map((level) => {
+							const available = level === 0 ? true : canSelectLevel(trade.id, level);
+							const checked = currentLevel === level;
 
 							return (
-								<StyledMasteryDot
+								<RadioButton
 									key={level}
-									$filled={filled}
-									$available={available || filled}
-									onClick={() => handleDotClick(trade.id, level)}
-									disabled={!available && !filled}
-									title={getMasteryLabel(level)}
+									name={`trade-${trade.id}-mastery`}
+									value={String(level)}
+									checked={checked}
+									disabled={!available}
+									onChange={(isChecked) => {
+										if (isChecked) handleDotClick(trade.id, level);
+									}}
+									label={level === 0 ? 'Untrained' : getMasteryLabel(level)}
 								/>
 							);
 						})}

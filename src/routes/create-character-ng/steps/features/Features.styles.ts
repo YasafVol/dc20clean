@@ -8,7 +8,7 @@ export const StyledContainer = styled.div`
 
 export const StyledTitle = styled.h2`
 	margin: 0 0 1rem 0;
-	color: var(--cornflower);
+	color: var(--iron);
 	font-size: 2rem;
 	font-weight: bold;
 	text-align: center;
@@ -35,5 +35,11 @@ export const StyledInstruction = styled.p`
 export const StyledNote = styled.p`
 	margin-top: 1rem;
 	font-size: 0.9rem;
+	color: var(--iron);
+`;
+
+export const StyledEmptyMessage = styled.p`
+	margin: 0;
+	font-size: 1.1rem;
 	color: var(--iron);
 `;

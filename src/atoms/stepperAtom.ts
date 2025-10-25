@@ -22,7 +22,6 @@ export const characterCreationStepsAtom = atom<
 	{ id: 'ancestry', label: 'ANCESTRY' },
 	{ id: 'attributes', label: 'ATTRIBUTES' },
 	{ id: 'proficiencies', label: 'SKILLS &\nTRADES' },
-	{ id: 'background', label: 'BACKGROUND' },
 	{ id: 'spells', label: 'SPELLS &\nMANEUVERS' },
 	{ id: 'finish', label: 'FINISH' }
 ]);

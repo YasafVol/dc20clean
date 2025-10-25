@@ -47,23 +47,24 @@ export const StyledMasteryDots = styled.div`
 `;
 
 export const StyledMasteryDot = styled.button<{ $filled: boolean; $available: boolean }>`
-	width: 32px;
-	height: 32px;
+	/* Match design-system RadioButton visual: smaller control and accent color */
+	width: 20px;
+	height: 20px;
 	border-radius: 50%;
 	border: 2px solid var(--iron);
 	background: ${(props) => (props.$filled ? 'var(--russet)' : 'transparent')};
 	cursor: ${(props) => (props.$available ? 'pointer' : 'not-allowed')};
 	opacity: ${(props) => (props.$available ? 1 : 0.5)};
-	transition: all 0.2s;
+	transition: all 0.12s;
 
 	&:hover {
-		transform: ${(props) => (props.$available ? 'scale(1.1)' : 'none')};
+		transform: ${(props) => (props.$available ? 'scale(1.05)' : 'none')};
 		border-color: ${(props) => (props.$available ? 'var(--russet)' : 'var(--iron)')};
 	}
 
 	&:focus {
-		outline: 2px solid var(--russet);
-		outline-offset: 2px;
+		box-shadow: 0 0 0 3px rgba(183, 64, 64, 0.12);
+		outline: none;
 	}
 `;
 

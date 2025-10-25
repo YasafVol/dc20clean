@@ -51,10 +51,11 @@ export const StyledMainContent = styled.div`
 // Middle content frame with framebackground2.png
 export const StyledContentFrame = styled.div`
 	width: 100%;
-	max-width: 1100px;
-	height: 600px; // Fixed height to match frame
+	max-width: 1400px; /* widened to take more horizontal space on large screens */
+	height: 640px; /* slightly taller to keep pleasing proportions */
 	background: url(${frameBackground2}) center center no-repeat;
-	background-size: contain;
+	/* use cover so the decorative edges expand horizontally while preserving aspect */
+	background-size: cover;
 	position: relative;
 	display: flex;
 	flex-direction: column;
@@ -74,7 +75,8 @@ export const StyledContentFrame = styled.div`
 // Inner scrollable content wrapper
 export const StyledScrollableWrapper = styled.div`
 	width: 100%;
-	max-width: 746px;
+	/* use more of the widened frame so artwork is visible in wider screens */
+	max-width: 1000px;
 	height: 100%;
 	overflow-y: auto;
 	overflow-x: hidden;

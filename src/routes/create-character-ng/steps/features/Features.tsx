@@ -4,7 +4,8 @@ import {
 	StyledTitle,
 	StyledContent,
 	StyledInstruction,
-	StyledNote
+	StyledNote,
+	StyledEmptyMessage
 } from './Features.styles';
 import { useCharacter } from '../../../../lib/stores/characterContext';
 import { classesData } from '../../../../lib/rulesdata/loaders/class.loader';
@@ -81,7 +82,9 @@ const Features: React.FC = () => {
 			<StyledContainer>
 				<StyledTitle>Class Features - {selectedClass.name}</StyledTitle>
 				<StyledContent>
-					<p>No feature choices available for this class at level 1.</p>
+					<StyledEmptyMessage>
+						No feature choices available for this class at level 1.
+					</StyledEmptyMessage>
 					<StyledNote>(Spell and maneuver choices will be handled in later steps)</StyledNote>
 				</StyledContent>
 			</StyledContainer>

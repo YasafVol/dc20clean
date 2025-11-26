@@ -15,6 +15,13 @@ import { skillsData } from '../../../lib/rulesdata/skills';
 import { tradesData } from '../../../lib/rulesdata/trades';
 import type { ITrait, ITraitEffect } from '../../../lib/rulesdata/types';
 
+const ATTRIBUTE_LABELS: Record<'might' | 'agility' | 'charisma' | 'intelligence', string> = {
+	might: 'Might',
+	agility: 'Agility',
+	charisma: 'Charisma',
+	intelligence: 'Intelligence'
+};
+
 // Styled components
 const ChoiceContainer = styled.div`
 	margin-top: 1rem;
@@ -239,11 +246,20 @@ const TraitChoiceSelector: React.FC<TraitChoiceSelectorProps> = ({
 				}));
 
 			case 'GRANT_TRADE_EXPERTISE':
-				return tradesData.map((trade) => ({
+			return tradesData.map((trade) => {
+				const associations = trade.attributeAssociations.length
+					? trade.attributeAssociations
+					: [trade.primaryAttribute];
+				const formattedAttributes = associations
+					.map((attribute) => ATTRIBUTE_LABELS[attribute])
+					.join('/');
+
+				return {
 					value: trade.id,
 					displayName: trade.name,
-					description: `${trade.attributeAssociation.toUpperCase()} - ${trade.description}`
-				}));
+					description: `${formattedAttributes} - ${trade.description}`
+				};
+			});
 
 			default:
 				return [];

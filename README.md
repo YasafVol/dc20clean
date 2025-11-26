@@ -18,6 +18,7 @@ A comprehensive character creation and management system for the DC20 tabletop R
 - **Mastery System**: Level-based skill and trade proficiency with automatic limits
 - **Effect System**: Modular stat modifications with source attribution
 - **Point Conversion**: Skills ↔ Trades, Trades → Languages with validation
+- **Multi-Attribute Trades**: flexible attribute associations for trades (e.g. Athletics uses Might or Agility)
 
 ### Character Management
 - **Character Sheet**: Responsive design for desktop and mobile

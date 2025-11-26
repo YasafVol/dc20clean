@@ -119,7 +119,9 @@ export function denormalizeMastery(input: DenormalizeInput): DenormalizeOutput {
 		if (!KNOWLEDGE_TRADE_IDS.has(trade.id)) continue;
 		const rank = Number(tradesRanks?.[trade.id] ?? 0);
 		const masteryLevel = Math.max(0, rank * 2);
-		const governing = [trade.attributeAssociation];
+		const governing = (trade.attributeAssociations.length
+			? trade.attributeAssociations
+			: [trade.primaryAttribute]) as ('might' | 'agility' | 'charisma' | 'intelligence')[];
 		const baseAttributeValues = {
 			might: finalAttributes.might,
 			agility: finalAttributes.agility,
@@ -147,7 +149,9 @@ export function denormalizeMastery(input: DenormalizeInput): DenormalizeOutput {
 		const rank = Number(tradesRanks?.[trade.id] ?? 0);
 		const masteryLevel = Math.max(0, rank * 2);
 		if (masteryLevel === 0) continue;
-		const governing = [trade.attributeAssociation];
+		const governing = (trade.attributeAssociations.length
+			? trade.attributeAssociations
+			: [trade.primaryAttribute]) as ('might' | 'agility' | 'charisma' | 'intelligence')[];
 		const finalValue = computeFinalValue(governing as any, finalAttributes, masteryLevel);
 		practicalPool.push({ id: trade.id, name: trade.name, finalValue, ladder: buildLadder(masteryLevel) });
 	}

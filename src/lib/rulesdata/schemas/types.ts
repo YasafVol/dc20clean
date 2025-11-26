@@ -119,7 +119,8 @@ export interface ISkillData {
 export interface ITradeData {
 	id: string;
 	name: string;
-	attributeAssociation: 'might' | 'agility' | 'charisma' | 'intelligence'; // Associated attribute
+	primaryAttribute: 'might' | 'agility' | 'charisma' | 'intelligence';
+	attributeAssociations: Array<'might' | 'agility' | 'charisma' | 'intelligence'>;
 	description: string;
 	tools?: string; // Required tools for the trade
 }

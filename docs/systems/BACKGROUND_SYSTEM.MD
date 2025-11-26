@@ -56,7 +56,7 @@ flowchart LR
 ## 3 Data Shapes
 
 - Skills: `ISkillData { id, name, attributeAssociation, description }`
-- Trades: `ITradeData { id, name, attributeAssociations[], description, tools? }`
+- Trades: `ITradeData { id, name, primaryAttribute, attributeAssociations[], description, tools? }`
   - For multi-attribute trades, see `docs/systems/TRADES_MULTI_ATTRIBUTE_SPEC.md` (canonical field: `attributeAssociations: string[]`).
 - Languages: `ILanguageData { id, name, type: 'standard'|'exotic', description }`
 

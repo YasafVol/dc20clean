@@ -11,29 +11,28 @@ export type PathId = 'martial_path' | 'spellcaster_path';
  * All properties are optional because a level might only grant one or two things.
  */
 export interface PathBenefits {
-  staminaPoints?: number;
-  maneuversLearned?: number;
-  techniquesLearned?: number;
-  manaPoints?: number;
-  cantripsLearned?: number;
-  spellsLearned?: number;
+	staminaPoints?: number;
+	maneuversLearned?: number;
+	manaPoints?: number;
+	cantripsLearned?: number;
+	spellsLearned?: number;
 }
 
 /**
  * Represents a single tier in a path's progression table.
  */
 export interface PathLevel {
-  pathLevel: number; // The number of Path Points spent to unlock this tier
-  benefits: PathBenefits;
+	pathLevel: number; // The number of Path Points spent to unlock this tier
+	benefits: PathBenefits;
 }
 
 /**
  * The complete data structure for a single Character Path.
  */
 export interface CharacterPath {
-  id: PathId;
-  name: string;
-  description: string;
-  progression: PathLevel[];
-  specialRules?: string[];
+	id: PathId;
+	name: string;
+	description: string;
+	progression: PathLevel[];
+	specialRules?: string[];
 }

@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
 // Import Provider hooks
-import { useCharacterSheet, useCharacterResources } from './hooks/CharacterSheetProvider';
+import {
+	useCharacterSheet,
+	useCharacterResources,
+	useCharacterConditions
+} from './hooks/CharacterSheetProvider';
 
 // Import types
 import type {
@@ -35,6 +39,7 @@ import Features from './components/Features';
 import Movement from './components/Movement';
 import RightColumnResources from './components/RightColumnResources';
 import DeathExhaustion from './components/DeathExhaustion';
+import Conditions from './components/Conditions';
 
 import PlayerNotes from './components/PlayerNotes';
 import DiceRoller from './components/DiceRoller';
@@ -92,7 +97,7 @@ import {
 	StyledFeaturePopupDescription
 } from './styles/FeaturePopup';
 
-import { allSpells } from '../../lib/rulesdata/spells-data/spells';
+import { ALL_SPELLS as allSpells } from '../../lib/rulesdata/spells-data';
 import { allManeuvers } from '../../lib/rulesdata/martials/maneuvers';
 
 import { handlePrintCharacterSheet } from './utils';
@@ -161,6 +166,7 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 		updateCurrency
 	} = useCharacterSheet();
 	const resources = useCharacterResources();
+	const conditionStatuses = useCharacterConditions();
 
 	// Get data from Provider instead of local state
 	const loading = state.loading;
@@ -873,13 +879,25 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 	// Normalize class definition spell path naming: some class data files use the
 	// legacy `spellcasterPath` key while the code expects `spellcastingPath`.
 	const resolvedClassDef = characterData ? findClassByName(characterData.className) : null;
-	const knownSpellcasters = ['wizard', 'sorcerer', 'cleric', 'druid', 'warlock', 'bard', 'psion', 'spellblade'];
+	const knownSpellcasters = [
+		'wizard',
+		'sorcerer',
+		'cleric',
+		'druid',
+		'warlock',
+		'bard',
+		'psion',
+		'spellblade'
+	];
 	const hasSpellcastingPath = !!(
 		resolvedClassDef?.spellcastingPath ||
 		(resolvedClassDef as any)?.spellcasterPath ||
 		(characterData?.className && knownSpellcasters.includes(characterData.className.toLowerCase()))
 	);
-	console.log('DEBUG: resolvedClassDef for', characterData?.className, { hasSpellcastingPath, resolvedClassDef });
+	console.log('DEBUG: resolvedClassDef for', characterData?.className, {
+		hasSpellcastingPath,
+		resolvedClassDef
+	});
 
 	if (loading) {
 		return (
@@ -927,7 +945,18 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 
 	return (
 		<StyledContainer style={{ position: 'relative' }}>
-			<div data-testid="debug-has-spellcasting" style={{ position: 'absolute', top: 8, right: 8, zIndex: 9999, background: 'yellow', padding: '4px', fontSize: '0.7rem' }}>
+			<div
+				data-testid="debug-has-spellcasting"
+				style={{
+					position: 'absolute',
+					top: 8,
+					right: 8,
+					zIndex: 9999,
+					background: 'yellow',
+					padding: '4px',
+					fontSize: '0.7rem'
+				}}
+			>
 				HAS_SPELLCASTING: {hasSpellcastingPath ? 'true' : 'false'}
 			</div>
 			<CharacterSheetGlobalStyle />
@@ -1149,6 +1178,9 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 							{/* Features */}
 							<Features onFeatureClick={openFeaturePopup} />
 
+							{/* Conditions */}
+							<Conditions conditionStatuses={conditionStatuses} />
+
 							{/* Currency Section */}
 							<Currency isMobile={false} />
 						</StyledRightColumn>
@@ -1156,7 +1188,7 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 				)}
 
 				{/* Spells Section - Full width, after main content */}
-				{(characterData.className) || (characterData.spells && characterData.spells.length > 0) ? (
+				{characterData.className || (characterData.spells && characterData.spells.length > 0) ? (
 					<div
 						style={{
 							marginTop: '2rem',
@@ -1225,6 +1257,7 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 									onTradeInfoClick={handleTradeInfoClick}
 								/>
 								<Features onFeatureClick={openFeaturePopup} />
+								<Conditions conditionStatuses={conditionStatuses} isMobile={true} />
 							</div>
 						)}
 
@@ -1237,7 +1270,9 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 								<DeathExhaustion />
 								<Spells onSpellClick={openSpellPopup} />
 								<Attacks onAttackClick={openAttackPopup} />
-								{characterData.className && <Spells onSpellClick={openSpellPopup} readOnly={true} />}
+								{characterData.className && (
+									<Spells onSpellClick={openSpellPopup} readOnly={true} />
+								)}
 								{characterData.className &&
 									(() => {
 										// Check if character should have maneuvers by looking at their class progression

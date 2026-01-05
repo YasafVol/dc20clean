@@ -99,7 +99,10 @@ const ATTRIBUTE_TIEBREAKER_INDEX: Record<AttributeKey, number> = {
 	intelligence: 3
 };
 
-function getAttributeModifier(character: SavedCharacter | null | undefined, attribute: AttributeKey): number {
+function getAttributeModifier(
+	character: SavedCharacter | null | undefined,
+	attribute: AttributeKey
+): number {
 	if (!character) {
 		return 0;
 	}
@@ -206,28 +209,28 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 			const calculationData = convertToEnhancedBuildData(character);
 			const calculationResult = calculateCharacterWithBreakdowns(calculationData);
 
-		// Update character with calculated values and original resource maxes
-		const updatedCharacter: SavedCharacter = {
-			...character,
-			movement: processMovementsToStructure(
-				calculationResult.movements || [],
-				calculationResult.stats.finalMoveSpeed
-			),
-			holdBreath: calculationResult.stats.finalMight,
-			characterState: {
-				...character.characterState,
-				resources: {
-					...character.characterState.resources,
-					original: {
-						maxHP: calculationResult.stats.finalHPMax || 0,
-						maxSP: calculationResult.stats.finalSPMax || 0,
-						maxMP: calculationResult.stats.finalMPMax || 0,
-						maxGritPoints: calculationResult.stats.finalGritPoints || 0,
-						maxRestPoints: calculationResult.stats.finalRestPoints || 0
+			// Update character with calculated values and original resource maxes
+			const updatedCharacter: SavedCharacter = {
+				...character,
+				movement: processMovementsToStructure(
+					calculationResult.movements || [],
+					calculationResult.stats.finalMoveSpeed
+				),
+				holdBreath: calculationResult.stats.finalMight,
+				characterState: {
+					...character.characterState,
+					resources: {
+						...character.characterState.resources,
+						original: {
+							maxHP: calculationResult.stats.finalHPMax || 0,
+							maxSP: calculationResult.stats.finalSPMax || 0,
+							maxMP: calculationResult.stats.finalMPMax || 0,
+							maxGritPoints: calculationResult.stats.finalGritPoints || 0,
+							maxRestPoints: calculationResult.stats.finalRestPoints || 0
+						}
 					}
 				}
-			}
-		};
+			};
 
 			// Save the entire character (includes spells, maneuvers, etc.)
 			await saveCharacter(updatedCharacter);
@@ -812,4 +815,89 @@ export function useCharacterLanguages() {
 			return [];
 		}
 	}, [state.character?.languagesData]);
+}
+
+// Hook for character condition interactions
+export function useCharacterConditions() {
+	const { state } = useCharacterSheet();
+
+	return useMemo(() => {
+		if (!state.character) return [];
+
+		const character = state.character;
+
+		// Import condition aggregator dynamically to avoid circular deps
+		const { calculateCharacterConditions } = require('../../../lib/services/conditionAggregator');
+
+		// Build input for condition aggregator
+		const input = {
+			selectedTraits: [] as Array<{ id: string; name: string; effects?: any[] }>,
+			className: character.className,
+			classFeatures: [] as Array<{
+				id: string;
+				featureName: string;
+				effects?: any[];
+				levelGained?: number;
+			}>,
+			subclassName: character.subclassName,
+			subclassFeatures: [] as Array<{
+				id: string;
+				featureName: string;
+				effects?: any[];
+				levelGained?: number;
+			}>,
+			selectedTalents: [] as Array<{ id: string; name: string; effects?: any[] }>,
+			level: character.level
+		};
+
+		// Gather ancestry traits
+		if (character.selectedTraitIds) {
+			character.selectedTraitIds.forEach((traitId: string) => {
+				const trait = traitsData.find((t) => t.id === traitId);
+				if (trait) {
+					input.selectedTraits.push({
+						id: trait.id,
+						name: trait.name,
+						effects: trait.effects
+					});
+				}
+			});
+		}
+
+		// Gather class features
+		if (character.className) {
+			const classDef = findClassByName(character.className);
+			if (classDef?.coreFeatures) {
+				classDef.coreFeatures.forEach((feature) => {
+					if (feature.levelGained <= character.level) {
+						input.classFeatures.push({
+							id: feature.id,
+							featureName: feature.featureName,
+							effects: feature.effects,
+							levelGained: feature.levelGained
+						});
+					}
+				});
+			}
+
+			// Gather subclass features
+			if (character.subclassId && classDef?.subclasses) {
+				const subclass = classDef.subclasses.find((s) => s.id === character.subclassId);
+				if (subclass?.features) {
+					subclass.features.forEach((feature) => {
+						if (feature.levelGained <= character.level) {
+							input.subclassFeatures.push({
+								id: feature.id,
+								featureName: feature.featureName,
+								effects: feature.effects,
+								levelGained: feature.levelGained
+							});
+						}
+					});
+				}
+			}
+		}
+
+		return calculateCharacterConditions(input);
+	}, [state.character]);
 }

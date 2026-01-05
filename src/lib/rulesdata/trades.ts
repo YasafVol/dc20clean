@@ -125,8 +125,7 @@ export const tradesData: ITradeData[] = [
 		name: 'Brewing',
 		primaryAttribute: 'agility',
 		attributeAssociations: ['agility', 'intelligence', 'charisma'],
-		description:
-			'Brewing is the practice of producing alcohol, especially beer, mead, and wine.',
+		description: 'Brewing is the practice of producing alcohol, especially beer, mead, and wine.',
 		tools: "Brewer's Supplies"
 	},
 	{
@@ -143,8 +142,7 @@ export const tradesData: ITradeData[] = [
 		name: 'Cartography',
 		primaryAttribute: 'intelligence',
 		attributeAssociations: ['intelligence', 'agility'],
-		description:
-			'Cartography is the practice of drawing and understanding maps.',
+		description: 'Cartography is the practice of drawing and understanding maps.',
 		tools: "Cartographer's Tools"
 	},
 	{
@@ -273,4 +271,3 @@ export const tradesData: ITradeData[] = [
 		tools: 'none'
 	}
 ];
-

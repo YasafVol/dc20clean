@@ -18,9 +18,6 @@ export const rogueClass: ClassDefinition = {
 			learnsAllAttack: true,
 			additionalKnown: 'Maneuvers Known column of the Rogue Class Table'
 		},
-		techniques: {
-			additionalKnown: 'Techniques Known column of the Rogue Class Table'
-		},
 		staminaPoints: {
 			maximumIncreasesBy: 'Stamina Points column of the Rogue Class Table'
 		},
@@ -43,7 +40,7 @@ export const rogueClass: ClassDefinition = {
 			featureName: 'Debilitating Strike',
 			levelGained: 1,
 			description:
-				"When you hit with a weapon attack you may spend 1 SP. The target makes a Physical Save vs your Save DC; on failure, choose Deafened, Exposed, Hindered, or Slowed 2. The effect lasts until the start of your next turn and different choices may stack but not duplicates."
+				'When you hit with a weapon attack you may spend 1 SP. The target makes a Physical Save vs your Save DC; on failure, choose Deafened, Exposed, Hindered, or Slowed 2. The effect lasts until the start of your next turn and different choices may stack but not duplicates.'
 		},
 		{
 			id: 'rogue_roguish_finesse',
@@ -66,7 +63,8 @@ export const rogueClass: ClassDefinition = {
 				},
 				{
 					name: 'Skill Expertise',
-					description: 'Increase one Skill Mastery Limit by 1, up to Grandmaster (+10); only one increase per skill.',
+					description:
+						'Increase one Skill Mastery Limit by 1, up to Grandmaster (+10); only one increase per skill.',
 					effects: [
 						{
 							type: 'INCREASE_SKILL_MASTERY_CAP',
@@ -78,9 +76,7 @@ export const rogueClass: ClassDefinition = {
 				{
 					name: 'Multi-Skilled',
 					description: 'Gain 1 Skill Point.',
-					effects: [
-						{ type: 'MODIFY_STAT', target: 'skillPoints', value: 1 }
-					]
+					effects: [{ type: 'MODIFY_STAT', target: 'skillPoints', value: 1 }]
 				}
 			]
 		},
@@ -103,7 +99,8 @@ export const rogueClass: ClassDefinition = {
 			id: 'rogue_talent_level_2',
 			featureName: 'Talent',
 			levelGained: 2,
-			description: 'You gain 1 Talent of your choice. You must meet any prerequisites to select it.',
+			description:
+				'You gain 1 Talent of your choice. You must meet any prerequisites to select it.',
 			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
 		}
 	],
@@ -145,8 +142,7 @@ export const rogueClass: ClassDefinition = {
 					id: 'rogue_renegade_duelist',
 					featureName: 'Renegade Duelist',
 					levelGained: 3,
-					description:
-						'Expand Cunning Action, taunt foes, and counterattack when they falter.',
+					description: 'Expand Cunning Action, taunt foes, and counterattack when they falter.',
 					benefits: [
 						{
 							name: 'Flourishes',
@@ -162,7 +158,8 @@ export const rogueClass: ClassDefinition = {
 						},
 						{
 							name: 'Taunting Shot',
-							description: 'Once per turn when attacking a conditioned foe, forgo Cheap Shot damage to force a Charisma Save or Taunt the target until your next turn ends.',
+							description:
+								'Once per turn when attacking a conditioned foe, forgo Cheap Shot damage to force a Charisma Save or Taunt the target until your next turn ends.',
 							effects: [
 								{
 									type: 'GRANT_ABILITY',
@@ -174,12 +171,14 @@ export const rogueClass: ClassDefinition = {
 						},
 						{
 							name: 'Riposte',
-							description: 'Creatures that miss you with melee attacks provoke an Opportunity Attack.',
+							description:
+								'Creatures that miss you with melee attacks provoke an Opportunity Attack.',
 							effects: [
 								{
 									type: 'GRANT_ABILITY',
 									target: 'rogue_riposte',
-									value: 'When a creature within your melee range misses you with an attack, it provokes an Opportunity Attack from you.'
+									value:
+										'When a creature within your melee range misses you with an attack, it provokes an Opportunity Attack from you.'
 								}
 							]
 						}

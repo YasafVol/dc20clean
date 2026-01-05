@@ -217,16 +217,12 @@ function Attributes() {
 			<StyledTitle>Attributes</StyledTitle>
 			<AttributePointsCounter totalAttributePoints={totalAttributePoints} />
 			<OptionalRuleToggle>
-				<input
-					type="checkbox"
-					checked={usePrimeCapRule}
-					onChange={handlePrimeRuleToggle}
-				/>
+				<input type="checkbox" checked={usePrimeCapRule} onChange={handlePrimeRuleToggle} />
 				<div>
 					<span>Use Prime = Attribute Cap (Optional Rule)</span>
 					<OptionalRuleDetails>
-						When enabled, the prime modifier equals your level-based attribute cap
-						instead of the highest attribute.
+						When enabled, the prime modifier equals your level-based attribute cap instead of the
+						highest attribute.
 					</OptionalRuleDetails>
 				</div>
 			</OptionalRuleToggle>

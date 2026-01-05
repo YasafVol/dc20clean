@@ -1,6 +1,6 @@
 /**
  * M4.1b - Level Aggregation Logic Tests
- * 
+ *
  * Tests budget accumulation across levels for:
  * - Talent points
  * - Path points
@@ -98,7 +98,10 @@ describe('Level Aggregation Logic (M4.1b)', () => {
 			const classes = ['barbarian', 'wizard', 'cleric', 'rogue'];
 			for (const classId of classes) {
 				const result = resolveClassProgression(classId, 1);
-				expect(result.budgets.totalAncestryPoints, `${classId} L1 should have 0 ancestry points`).toBe(0);
+				expect(
+					result.budgets.totalAncestryPoints,
+					`${classId} L1 should have 0 ancestry points`
+				).toBe(0);
 			}
 		});
 
@@ -106,7 +109,10 @@ describe('Level Aggregation Logic (M4.1b)', () => {
 			const classes = ['barbarian', 'wizard', 'cleric'];
 			for (const classId of classes) {
 				const result = resolveClassProgression(classId, 3);
-				expect(result.budgets.totalAncestryPoints, `${classId} L3 should have 0 ancestry points`).toBe(0);
+				expect(
+					result.budgets.totalAncestryPoints,
+					`${classId} L3 should have 0 ancestry points`
+				).toBe(0);
 			}
 		});
 	});
@@ -130,7 +136,10 @@ describe('Level Aggregation Logic (M4.1b)', () => {
 			const classes = ['barbarian', 'wizard', 'cleric'];
 			for (const classId of classes) {
 				const result = resolveClassProgression(classId, 1);
-				expect(result.budgets.totalAttributePoints, `${classId} L1 should have 0 attribute points`).toBe(0);
+				expect(
+					result.budgets.totalAttributePoints,
+					`${classId} L1 should have 0 attribute points`
+				).toBe(0);
 			}
 		});
 
@@ -138,7 +147,10 @@ describe('Level Aggregation Logic (M4.1b)', () => {
 			const classes = ['barbarian', 'wizard', 'cleric'];
 			for (const classId of classes) {
 				const result = resolveClassProgression(classId, 3);
-				expect(result.budgets.totalAttributePoints, `${classId} L3 should have 1 attribute point`).toBe(1);
+				expect(
+					result.budgets.totalAttributePoints,
+					`${classId} L3 should have 1 attribute point`
+				).toBe(1);
 			}
 		});
 	});
@@ -146,44 +158,44 @@ describe('Level Aggregation Logic (M4.1b)', () => {
 	describe('Feature Unlocking', () => {
 		it('should unlock all features up to target level', () => {
 			const result5 = resolveClassProgression('barbarian', 5);
-			
+
 			// Should have features from L1, L2 (L3 only has subclass choice, L4 only has budgets)
 			// L5 has placeholder_class_feature which doesn't exist, so we don't expect it
-			const levels = result5.unlockedFeatures.map(f => f.levelGained);
+			const levels = result5.unlockedFeatures.map((f) => f.levelGained);
 			expect(levels).toContain(1);
 			expect(levels).toContain(2);
-			
+
 			// All level values should be <= 5
-			expect(levels.every(level => level <= 5)).toBe(true);
+			expect(levels.every((level) => level <= 5)).toBe(true);
 		});
 
 		it('should not unlock features above target level', () => {
 			const result2 = resolveClassProgression('barbarian', 2);
-			
+
 			// Should not have L3 features
-			const hasLevel3 = result2.unlockedFeatures.some(f => f.levelGained === 3);
+			const hasLevel3 = result2.unlockedFeatures.some((f) => f.levelGained === 3);
 			expect(hasLevel3).toBe(false);
 		});
 
 		it('should include Level 1 features at all levels', () => {
 			const result5 = resolveClassProgression('wizard', 5);
-			
+
 			// Should still have L1 features
-			const hasLevel1 = result5.unlockedFeatures.some(f => f.levelGained === 1);
+			const hasLevel1 = result5.unlockedFeatures.some((f) => f.levelGained === 1);
 			expect(hasLevel1).toBe(true);
 		});
 
 		it('should handle multiple features per level', () => {
 			const result1 = resolveClassProgression('wizard', 1);
-			
+
 			// Wizard L1 has multiple features (Spellcasting, Spell School choice, etc.)
-			const level1Features = result1.unlockedFeatures.filter(f => f.levelGained === 1);
+			const level1Features = result1.unlockedFeatures.filter((f) => f.levelGained === 1);
 			expect(level1Features.length).toBeGreaterThanOrEqual(2);
 		});
 
 		it('should unlock features in correct order', () => {
 			const result3 = resolveClassProgression('barbarian', 3);
-			
+
 			// Features should be in ascending level order
 			for (let i = 1; i < result3.unlockedFeatures.length; i++) {
 				const currentLevel = result3.unlockedFeatures[i].levelGained;
@@ -214,7 +226,9 @@ describe('Level Aggregation Logic (M4.1b)', () => {
 			const classes = ['barbarian', 'wizard', 'cleric', 'rogue', 'monk'];
 			for (const classId of classes) {
 				const result = resolveClassProgression(classId, 3);
-				expect(result.availableSubclassChoice, `${classId} L3 should have subclass choice`).toBe(true);
+				expect(result.availableSubclassChoice, `${classId} L3 should have subclass choice`).toBe(
+					true
+				);
 			}
 		});
 
@@ -227,7 +241,7 @@ describe('Level Aggregation Logic (M4.1b)', () => {
 	describe('Edge Cases', () => {
 		it('should handle level 1 correctly (baseline)', () => {
 			const result = resolveClassProgression('barbarian', 1);
-			
+
 			expect(result.level).toBe(1);
 			expect(result.budgets.totalTalents).toBe(0);
 			expect(result.budgets.totalPathPoints).toBe(0);
@@ -238,7 +252,7 @@ describe('Level Aggregation Logic (M4.1b)', () => {
 
 		it('should handle level 5 correctly', () => {
 			const result = resolveClassProgression('wizard', 5);
-			
+
 			expect(result.level).toBe(5);
 			expect(result.budgets.totalTalents).toBe(2); // L2: +1, L4: +1
 			expect(result.budgets.totalPathPoints).toBe(2); // L2: +1, L4: +1
@@ -260,7 +274,7 @@ describe('Level Aggregation Logic (M4.1b)', () => {
 		it('should return consistent results for same inputs', () => {
 			const result1 = resolveClassProgression('wizard', 3);
 			const result2 = resolveClassProgression('wizard', 3);
-			
+
 			expect(result1.budgets.totalTalents).toBe(result2.budgets.totalTalents);
 			expect(result1.budgets.totalPathPoints).toBe(result2.budgets.totalPathPoints);
 			expect(result1.unlockedFeatures.length).toBe(result2.unlockedFeatures.length);
@@ -271,7 +285,7 @@ describe('Level Aggregation Logic (M4.1b)', () => {
 		it('should accumulate HP correctly for martial class', () => {
 			const result1 = resolveClassProgression('barbarian', 1);
 			const result3 = resolveClassProgression('barbarian', 3);
-			
+
 			expect(result3.budgets.totalHP).toBeGreaterThan(result1.budgets.totalHP);
 		});
 
@@ -321,10 +335,14 @@ describe('Level Aggregation Logic (M4.1b)', () => {
 		it('all classes should have same ancestry and attribute totals at same level', () => {
 			const level = 3;
 			const classes = ['barbarian', 'wizard', 'cleric', 'rogue'];
-			
-			const ancestryPoints = classes.map(c => resolveClassProgression(c, level).budgets.totalAncestryPoints);
-			const attributePoints = classes.map(c => resolveClassProgression(c, level).budgets.totalAttributePoints);
-			
+
+			const ancestryPoints = classes.map(
+				(c) => resolveClassProgression(c, level).budgets.totalAncestryPoints
+			);
+			const attributePoints = classes.map(
+				(c) => resolveClassProgression(c, level).budgets.totalAttributePoints
+			);
+
 			// All should be same
 			expect(new Set(ancestryPoints).size).toBe(1);
 			expect(new Set(attributePoints).size).toBe(1);
@@ -333,14 +351,17 @@ describe('Level Aggregation Logic (M4.1b)', () => {
 		it('all classes should have same talent and path totals at same level', () => {
 			const level = 3;
 			const classes = ['barbarian', 'wizard', 'cleric', 'rogue'];
-			
-			const talentPoints = classes.map(c => resolveClassProgression(c, level).budgets.totalTalents);
-			const pathPoints = classes.map(c => resolveClassProgression(c, level).budgets.totalPathPoints);
-			
+
+			const talentPoints = classes.map(
+				(c) => resolveClassProgression(c, level).budgets.totalTalents
+			);
+			const pathPoints = classes.map(
+				(c) => resolveClassProgression(c, level).budgets.totalPathPoints
+			);
+
 			// All should be same
 			expect(new Set(talentPoints).size).toBe(1);
 			expect(new Set(pathPoints).size).toBe(1);
 		});
 	});
 });
-

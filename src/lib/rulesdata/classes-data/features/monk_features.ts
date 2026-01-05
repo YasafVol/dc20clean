@@ -16,15 +16,12 @@ export const monkClass: ClassDefinition = {
 			learnsAllAttack: true,
 			additionalKnown: 'Maneuvers Known column of the Monk Class Table'
 		},
-		techniques: {
-			additionalKnown: 'Techniques Known column of the Monk Class Table'
-		},
 		staminaPoints: {
 			maximumIncreasesBy: 'Stamina Points column of the Monk Class Table'
 		},
 		staminaRegen: {
 			description:
-				'Once per round, you can regain up to half your maximum SP when you succeed on an Attack Check, Athletics Check, or Acrobatics Check.'
+				'Once per round, you can regain up to half your maximum SP when you succeed on an Athletics Check, Acrobatics Check, or Hit on a Martial Attack.'
 		}
 	},
 	coreFeatures: [
@@ -44,12 +41,14 @@ export const monkClass: ClassDefinition = {
 			benefits: [
 				{
 					name: 'Iron Palm',
-					description: 'Your limbs are Natural Weapons with the Impact Property that deal 1 Bludgeoning damage.',
+					description:
+						'Choose a Melee Weapon Style. Your limbs are Natural Weapons that deal 2 Bludgeoning damage and can perform the Weapon Enhancement of the chosen Weapon Style.',
 					effects: [
 						{
 							type: 'GRANT_ABILITY',
 							target: 'monk_iron_palm',
-							value: 'Limbs are Natural Weapons (Impact, 1 Bludgeoning damage).'
+							value:
+								'Limbs are Natural Weapons (2 Bludgeoning damage, chosen Weapon Style Enhancement).'
 						}
 					]
 				},
@@ -67,19 +66,18 @@ export const monkClass: ClassDefinition = {
 				},
 				{
 					name: 'Step of the Wind',
-					description: 'Harness your Ki to enhance speed, mobility, and resilience while unarmored.',
+					description:
+						'You gain +1 Speed and Jump Distance. You can move along vertical surfaces and across liquids without falling during your move. Use Prime Modifier instead of Agility for Jump Distance and Falling damage.',
 					effects: [
 						{
 							type: 'MODIFY_STAT',
 							target: 'moveSpeed',
-							value: 1,
-							condition: 'not_wearing_armor'
+							value: 1
 						},
 						{
 							type: 'MODIFY_STAT',
 							target: 'jumpDistance',
-							value: 1,
-							condition: 'not_wearing_armor'
+							value: 1
 						},
 						{
 							type: 'GRANT_ABILITY',
@@ -90,7 +88,8 @@ export const monkClass: ClassDefinition = {
 						{
 							type: 'GRANT_ABILITY',
 							target: 'monk_step_of_the_wind_prime_modifier',
-							value: 'Use your Prime Modifier instead of Agility for jump distance and falling damage calculations.'
+							value:
+								'Use your Prime Modifier instead of Agility for Jump Distance and Falling damage.'
 						}
 					]
 				}
@@ -169,11 +168,13 @@ export const monkClass: ClassDefinition = {
 			id: 'monk_spiritual_balance',
 			featureName: 'Spiritual Balance',
 			levelGained: 2,
-			description: 'Harness your inner spirit to balance your physical energy, unlocking Ki Points and Ki Actions.',
+			description:
+				'Harness your inner spirit to balance your physical energy, unlocking Ki Points and Ki Actions.',
 			benefits: [
 				{
 					name: 'Ki Points',
-					description: 'You have Ki Points equal to your Stamina Points; spent Ki replenishes when combat ends or instantly outside combat.',
+					description:
+						'You have Ki Points equal to your Stamina Points; spent Ki replenishes when combat ends or instantly outside combat.',
 					effects: [
 						{
 							type: 'GRANT_ABILITY',
@@ -191,17 +192,18 @@ export const monkClass: ClassDefinition = {
 							type: 'GRANT_ABILITY',
 							target: 'monk_deflect_attack',
 							value:
-								"When a creature misses you with a Ranged PD attack using a physical projectile, catch it if you have a free hand and redirect it at a creature within 5 spaces (Attack Check vs PD; Hit: deal the projectile's damage)."
+								'When a creature misses you with a Ranged Martial Attack targeting PD, spend 1+ Ki. Redirect at a creature within 5 Spaces (Attack Check vs PD). Hit: deal Ki spent as damage (same type as triggering Attack).'
 						},
 						{
 							type: 'GRANT_ABILITY',
 							target: 'monk_slow_fall',
-							value: 'Reduce fall damage you take by an amount equal to your level.'
+							value: 'Spend 1+ Ki when taking fall damage. Reduce damage by Ki spent.'
 						},
 						{
 							type: 'GRANT_ABILITY',
 							target: 'monk_uncanny_dodge',
-							value: 'When a creature attacks you, spend 1 Ki to impose DisADV on the attack.'
+							value:
+								'When a creature makes an Attack against you, spend 2 Ki to impose DisADV on the attack.'
 						}
 					]
 				}
@@ -211,7 +213,8 @@ export const monkClass: ClassDefinition = {
 			id: 'monk_talent_level_2',
 			featureName: 'Talent',
 			levelGained: 2,
-			description: 'You gain 1 Talent of your choice. You must meet any prerequisites to select it.',
+			description:
+				'You gain 1 Talent of your choice. You must meet any prerequisites to select it.',
 			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
 		}
 	],
@@ -243,7 +246,8 @@ export const monkClass: ClassDefinition = {
 						},
 						{
 							name: 'Astral Deflection',
-							description: 'Deflect Attack now applies to Ranged Attacks that miss any target within 2 spaces of you.',
+							description:
+								'Deflect Attack now applies to Ranged Attacks that miss any target within 2 spaces of you.',
 							effects: [
 								{
 									type: 'GRANT_ABILITY',
@@ -273,7 +277,8 @@ export const monkClass: ClassDefinition = {
 					id: 'monk_ebb_and_flow',
 					featureName: 'Ebb and Flow',
 					levelGained: 3,
-					description: 'Gain movement, counterattack opportunities, and enhanced deflection based on your Ki reactions.',
+					description:
+						'Gain movement, counterattack opportunities, and enhanced deflection based on your Ki reactions.',
 					benefits: [
 						{
 							name: 'Ebb',
@@ -288,7 +293,8 @@ export const monkClass: ClassDefinition = {
 						},
 						{
 							name: 'Flow',
-							description: 'When you use Uncanny Dodge against a Melee Attack, spend 1 AP to make an Opportunity Attack against the attacker.',
+							description:
+								'When you use Uncanny Dodge against a Melee Attack, spend 1 AP to make an Opportunity Attack against the attacker.',
 							effects: [
 								{
 									type: 'GRANT_ABILITY',

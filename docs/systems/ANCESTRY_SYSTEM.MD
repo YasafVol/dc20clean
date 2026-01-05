@@ -132,6 +132,7 @@ Note: Class features can modify ancestry budgets via effects (e.g., Cleric “An
 **Coverage**: 34 comprehensive tests validating:
 
 #### Data Structure & Schema Compliance
+
 - ✅ Ancestry data loads successfully
 - ✅ All required fields present (`id`, `name`, `description`, `rulesSource`, `defaultTraitIds`, `expandedTraitIds`)
 - ✅ Unique ancestry IDs and names
@@ -144,11 +145,13 @@ Note: Class features can modify ancestry budgets via effects (e.g., Cleric “An
 - ✅ Non-empty effects arrays
 
 #### ID Format & Naming Conventions
+
 - ✅ `ancestry_trait` naming convention followed
 - ✅ `snake_case` for ancestry IDs
 - ✅ Trait ID prefixes match ancestry IDs
 
 #### Trait-to-Ancestry Relationships
+
 - ✅ All referenced traits exist in `defaultTraitIds`
 - ✅ All referenced traits exist in `expandedTraitIds`
 - ✅ No duplicates between default and expanded
@@ -156,6 +159,7 @@ Note: Class features can modify ancestry budgets via effects (e.g., Cleric “An
 - ✅ **Zero orphaned traits** (all traits referenced by at least one ancestry)
 
 #### Effect System Validation
+
 - ✅ Only valid effect types used
 - ✅ Valid target values for `MODIFY_STAT` effects
 - ✅ Numeric values for numeric effect types
@@ -163,15 +167,18 @@ Note: Class features can modify ancestry budgets via effects (e.g., Cleric “An
 - ✅ **All effects have required `target` field**
 
 #### Cost & Budget Validation
+
 - ✅ Default trait costs calculate correctly (should equal 5 for most ancestries)
 - ✅ Valid costs for negative traits (negative values, `isNegative: true`)
 - ✅ Consistent cost structure across all traits
 
 #### Schema Compliance
+
 - ✅ Valid optional fields when present
 - ✅ Valid effect structure for all effects
 
 #### Data Coverage Statistics
+
 - ✅ Reports total ancestry count (17)
 - ✅ Reports total trait count (239)
 - ✅ Reports trait distribution per ancestry
@@ -203,13 +210,13 @@ The test suite enforces strict data quality rules:
 
 ### 6.4 When Tests Fail
 
-| Test Failure | Common Causes | Fix |
-|-------------|---------------|-----|
-| "should have non-empty trait lists" | Added ancestry with empty trait arrays | Add traits or remove placeholder ancestry |
-| "should reference only existing traits" | Typo in trait ID, or trait not defined | Fix ID or create the missing trait |
-| "should not have orphaned traits" | Trait defined but not referenced by any ancestry | Add to an ancestry's trait list or remove trait |
-| "should have valid effect structure" | Missing `target` field in effect | Add `target` field (not `count` or `options`) |
-| "should follow ancestry_trait naming" | Trait ID doesn't match `ancestry_trait` pattern | Rename trait ID to match pattern |
+| Test Failure                            | Common Causes                                    | Fix                                             |
+| --------------------------------------- | ------------------------------------------------ | ----------------------------------------------- |
+| "should have non-empty trait lists"     | Added ancestry with empty trait arrays           | Add traits or remove placeholder ancestry       |
+| "should reference only existing traits" | Typo in trait ID, or trait not defined           | Fix ID or create the missing trait              |
+| "should not have orphaned traits"       | Trait defined but not referenced by any ancestry | Add to an ancestry's trait list or remove trait |
+| "should have valid effect structure"    | Missing `target` field in effect                 | Add `target` field (not `count` or `options`)   |
+| "should follow ancestry_trait naming"   | Trait ID doesn't match `ancestry_trait` pattern  | Rename trait ID to match pattern                |
 
 ---
 

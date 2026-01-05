@@ -18,7 +18,7 @@ test.describe('Human Cleric E2E', () => {
 
 		// Step 2: Ancestry (Human) - Use data-testid
 		await page.getByTestId('ancestry-card-human').click();
-		
+
 		// Assert that the class bonus was applied correctly (5 base + 2 from Ancestral Domain = 7)
 		await expect(page.getByText(/REMAINING: \d+\/7/i)).toBeVisible();
 		// Capture screenshot of ancestry points at this stage
@@ -262,7 +262,11 @@ test.describe('Human Cleric E2E', () => {
 				moveVisible = true;
 			} catch (e) {
 				// last fallback: try some label variants briefly
-				const moveCandidates = [page.getByText(/MOVE SPEED/i).first(), page.getByText(/MOVEMENT/i).first(), page.getByText(/MOVE/i).first()];
+				const moveCandidates = [
+					page.getByText(/MOVE SPEED/i).first(),
+					page.getByText(/MOVEMENT/i).first(),
+					page.getByText(/MOVE/i).first()
+				];
 				for (const cand of moveCandidates) {
 					try {
 						await expect(cand).toBeVisible({ timeout: 1000 });
@@ -274,7 +278,10 @@ test.describe('Human Cleric E2E', () => {
 				}
 			}
 		}
-		if (!moveVisible) console.log('Move speed not found on sheet - continuing because saved object asserts move speed');
+		if (!moveVisible)
+			console.log(
+				'Move speed not found on sheet - continuing because saved object asserts move speed'
+			);
 
 		// Jump distance: try explicit testid, otherwise look for label variants or number
 		let jumpVisible = false;
@@ -282,7 +289,10 @@ test.describe('Human Cleric E2E', () => {
 			if (await page.getByTestId('jump-distance').first().isVisible()) jumpVisible = true;
 		} catch (e) {}
 		if (!jumpVisible) {
-			const jumpCandidates = [page.getByText(/JUMP DISTANCE/i).first(), page.getByText(/JUMP/i).first()];
+			const jumpCandidates = [
+				page.getByText(/JUMP DISTANCE/i).first(),
+				page.getByText(/JUMP/i).first()
+			];
 			for (const cand of jumpCandidates) {
 				try {
 					await expect(cand).toBeVisible({ timeout: 1000 });

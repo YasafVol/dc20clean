@@ -5,10 +5,10 @@ import type { Ancestry, Trait, Effect } from '../schemas/character.schema';
 
 /**
  * Ancestry & Trait System Test Suite
- * 
+ *
  * Purpose: Validate the Ancestry & Trait system against the specification in
  * docs/systems/ANCESTRY_SYSTEM.MD and docs/systems/TRAITS_SYSTEM.MD
- * 
+ *
  * Test Coverage:
  * 1. Data Structure Validation (required fields, types)
  * 2. ID Format & Naming Conventions
@@ -56,30 +56,38 @@ describe('Ancestry & Trait System', () => {
 		});
 
 		it('should have unique ancestry IDs', () => {
-			const ids = ancestriesData.map(a => a.id);
+			const ids = ancestriesData.map((a) => a.id);
 			const uniqueIds = new Set(ids);
 			expect(uniqueIds.size).toBe(ids.length);
 		});
 
 		it('should have unique ancestry names', () => {
-			const names = ancestriesData.map(a => a.name);
+			const names = ancestriesData.map((a) => a.name);
 			const uniqueNames = new Set(names);
 			expect(uniqueNames.size).toBe(names.length);
 		});
 
-	it('should have non-empty trait lists', () => {
-		ancestriesData.forEach((ancestry: Ancestry) => {
-			const totalTraits = ancestry.defaultTraitIds.length + ancestry.expandedTraitIds.length;
-			if (totalTraits === 0) {
-				console.error(`❌ ${ancestry.name} has NO traits defined`);
-			}
-			// Every ancestry must have at least one trait (default or expanded)
-			expect(totalTraits).toBeGreaterThan(0);
+		it('should have non-empty trait lists', () => {
+			ancestriesData.forEach((ancestry: Ancestry) => {
+				const totalTraits = ancestry.defaultTraitIds.length + ancestry.expandedTraitIds.length;
+				if (totalTraits === 0) {
+					console.error(`❌ ${ancestry.name} has NO traits defined`);
+				}
+				// Every ancestry must have at least one trait (default or expanded)
+				expect(totalTraits).toBeGreaterThan(0);
+			});
 		});
-	});
 
 		it('should have valid rulesSource values', () => {
-			const validSources = ['DC20Beta0.95', 'DC20Beta0.9', 'Custom', 'Homebrew'];
+			const validSources = [
+				'DC20Beta0.10',
+				'DC20Beta0.95',
+				'DC20Beta0.9',
+				'Custom',
+				'Homebrew',
+				'DC20Magazine14',
+				'DC20Magazine01'
+			];
 			ancestriesData.forEach((ancestry: Ancestry) => {
 				// Should at least have a non-empty string
 				expect(ancestry.rulesSource.length).toBeGreaterThan(0);
@@ -117,7 +125,7 @@ describe('Ancestry & Trait System', () => {
 		});
 
 		it('should have unique trait IDs', () => {
-			const ids = traitsData.map(t => t.id);
+			const ids = traitsData.map((t) => t.id);
 			const uniqueIds = new Set(ids);
 			expect(uniqueIds.size).toBe(ids.length);
 		});
@@ -146,7 +154,7 @@ describe('Ancestry & Trait System', () => {
 			traitsData.forEach((trait: Trait) => {
 				// Should contain at least one underscore
 				expect(trait.id).toMatch(/_/);
-				
+
 				// Should be snake_case (lowercase with underscores)
 				expect(trait.id).toMatch(/^[a-z][a-z0-9_]*$/);
 			});
@@ -159,8 +167,8 @@ describe('Ancestry & Trait System', () => {
 		});
 
 		it('should match trait ID prefixes to ancestry IDs', () => {
-			const ancestryIds = new Set(ancestriesData.map(a => a.id));
-			
+			const ancestryIds = new Set(ancestriesData.map((a) => a.id));
+
 			traitsData.forEach((trait: Trait) => {
 				const prefix = trait.id.split('_')[0];
 				// Most traits should have an ancestry prefix
@@ -179,12 +187,14 @@ describe('Ancestry & Trait System', () => {
 
 	describe('Trait-to-Ancestry Relationships', () => {
 		it('should reference only existing traits in defaultTraitIds', () => {
-			const traitIds = new Set(traitsData.map(t => t.id));
-			
+			const traitIds = new Set(traitsData.map((t) => t.id));
+
 			ancestriesData.forEach((ancestry: Ancestry) => {
 				ancestry.defaultTraitIds.forEach((traitId: string) => {
 					if (!traitIds.has(traitId)) {
-						console.error(`❌ ${ancestry.name} defaultTraitIds references missing trait: ${traitId}`);
+						console.error(
+							`❌ ${ancestry.name} defaultTraitIds references missing trait: ${traitId}`
+						);
 					}
 					expect(traitIds.has(traitId)).toBe(true);
 				});
@@ -192,12 +202,14 @@ describe('Ancestry & Trait System', () => {
 		});
 
 		it('should reference only existing traits in expandedTraitIds', () => {
-			const traitIds = new Set(traitsData.map(t => t.id));
-			
+			const traitIds = new Set(traitsData.map((t) => t.id));
+
 			ancestriesData.forEach((ancestry: Ancestry) => {
 				ancestry.expandedTraitIds.forEach((traitId: string) => {
 					if (!traitIds.has(traitId)) {
-						console.error(`❌ ${ancestry.name} expandedTraitIds references missing trait: ${traitId}`);
+						console.error(
+							`❌ ${ancestry.name} expandedTraitIds references missing trait: ${traitId}`
+						);
 					}
 					expect(traitIds.has(traitId)).toBe(true);
 				});
@@ -208,8 +220,8 @@ describe('Ancestry & Trait System', () => {
 			ancestriesData.forEach((ancestry: Ancestry) => {
 				const defaultSet = new Set(ancestry.defaultTraitIds);
 				const expandedSet = new Set(ancestry.expandedTraitIds);
-				
-				const intersection = ancestry.defaultTraitIds.filter(id => expandedSet.has(id));
+
+				const intersection = ancestry.defaultTraitIds.filter((id) => expandedSet.has(id));
 				expect(intersection.length).toBe(0);
 			});
 		});
@@ -232,20 +244,22 @@ describe('Ancestry & Trait System', () => {
 
 		it('should have traits that are referenced by at least one ancestry', () => {
 			const referencedTraitIds = new Set<string>();
-			
+
 			ancestriesData.forEach((ancestry: Ancestry) => {
-				ancestry.defaultTraitIds.forEach(id => referencedTraitIds.add(id));
-				ancestry.expandedTraitIds.forEach(id => referencedTraitIds.add(id));
+				ancestry.defaultTraitIds.forEach((id) => referencedTraitIds.add(id));
+				ancestry.expandedTraitIds.forEach((id) => referencedTraitIds.add(id));
 			});
 
 			// Check for orphaned traits
-			const orphanedTraits = traitsData.filter(t => !referencedTraitIds.has(t.id));
-			
+			const orphanedTraits = traitsData.filter((t) => !referencedTraitIds.has(t.id));
+
 			if (orphanedTraits.length > 0) {
-				console.warn(`Warning: ${orphanedTraits.length} traits are not referenced by any ancestry:`, 
-					orphanedTraits.map(t => t.id));
+				console.warn(
+					`Warning: ${orphanedTraits.length} traits are not referenced by any ancestry:`,
+					orphanedTraits.map((t) => t.id)
+				);
 			}
-			
+
 			// We don't fail on this, as there might be universal traits
 			// but we do want to know about them
 		});
@@ -293,17 +307,28 @@ describe('Ancestry & Trait System', () => {
 			// Per TRAITS_SYSTEM.MD notes: use hpMax, spMax, mpMax for maximums
 			const validStatTargets = [
 				// Attributes
-				'might', 'agility', 'charisma', 'intelligence',
+				'might',
+				'agility',
+				'charisma',
+				'intelligence',
 				// Defenses
-				'pd', 'ad',
+				'pd',
+				'ad',
 				// Resource maximums
-				'hpMax', 'spMax', 'mpMax',
+				'hpMax',
+				'spMax',
+				'mpMax',
 				// Movement
-				'moveSpeed', 'jumpDistance',
+				'moveSpeed',
+				'jumpDistance',
 				// Points & budgets
-				'attributePoints', 'skillPoints', 'tradePoints', 'languagePoints',
+				'attributePoints',
+				'skillPoints',
+				'tradePoints',
+				'languagePoints',
 				// Other stats
-				'deathThresholdModifier', 'initiative'
+				'deathThresholdModifier',
+				'initiative'
 			];
 
 			traitsData.forEach((trait: Trait) => {
@@ -320,7 +345,7 @@ describe('Ancestry & Trait System', () => {
 
 		it('should have numeric values for numeric effect types', () => {
 			const numericEffectTypes = ['MODIFY_ATTRIBUTE', 'MODIFY_STAT', 'SET_VALUE'];
-			
+
 			traitsData.forEach((trait: Trait) => {
 				trait.effects.forEach((effect: Effect) => {
 					if (numericEffectTypes.includes(effect.type)) {
@@ -358,7 +383,7 @@ describe('Ancestry & Trait System', () => {
 		it('should calculate default trait costs correctly', () => {
 			ancestriesData.forEach((ancestry: Ancestry) => {
 				const defaultCost = ancestry.defaultTraitIds.reduce((sum, traitId) => {
-					const trait = traitsData.find(t => t.id === traitId);
+					const trait = traitsData.find((t) => t.id === traitId);
 					return sum + (trait?.cost || 0);
 				}, 0);
 
@@ -369,8 +394,8 @@ describe('Ancestry & Trait System', () => {
 		});
 
 		it('should have valid costs for negative traits', () => {
-			const negativeTraits = traitsData.filter(t => t.cost < 0);
-			
+			const negativeTraits = traitsData.filter((t) => t.cost < 0);
+
 			negativeTraits.forEach((trait: Trait) => {
 				// Negative traits should be marked as such
 				if (trait.cost < 0) {
@@ -436,7 +461,9 @@ describe('Ancestry & Trait System', () => {
 					} else {
 						// All other effects must have a target
 						if (!effect.target) {
-							console.error(`❌ Trait "${trait.name}" (${trait.id}) has effect type "${effect.type}" without target`);
+							console.error(
+								`❌ Trait "${trait.name}" (${trait.id}) has effect type "${effect.type}" without target`
+							);
 						}
 						expect(effect.target).toBeDefined();
 						expect(typeof effect.target).toBe('string');
@@ -466,7 +493,7 @@ describe('Ancestry & Trait System', () => {
 
 		it('should report trait distribution', () => {
 			const traitsByAncestry = new Map<string, number>();
-			
+
 			ancestriesData.forEach((ancestry: Ancestry) => {
 				const totalTraits = ancestry.defaultTraitIds.length + ancestry.expandedTraitIds.length;
 				traitsByAncestry.set(ancestry.name, totalTraits);
@@ -480,7 +507,7 @@ describe('Ancestry & Trait System', () => {
 
 		it('should report effect type distribution', () => {
 			const effectTypeCounts = new Map<string, number>();
-			
+
 			traitsData.forEach((trait: Trait) => {
 				trait.effects.forEach((effect: Effect) => {
 					const count = effectTypeCounts.get(effect.type) || 0;
@@ -497,7 +524,7 @@ describe('Ancestry & Trait System', () => {
 
 		it('should report cost distribution', () => {
 			const costCounts = new Map<number, number>();
-			
+
 			traitsData.forEach((trait: Trait) => {
 				const count = costCounts.get(trait.cost) || 0;
 				costCounts.set(trait.cost, count + 1);
@@ -511,4 +538,3 @@ describe('Ancestry & Trait System', () => {
 		});
 	});
 });
-

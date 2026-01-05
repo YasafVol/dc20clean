@@ -24,10 +24,12 @@ describe('denormalizeMastery', () => {
 			finalAttributes: { might: 0, agility: 0, charisma: 0, intelligence: 0, prime: 0 },
 			skillsRanks: {},
 			tradesRanks: {},
-			languagesData: { common: { fluency: 'fluent' }, elvish: { fluency: 'limited' }, dwarvish: { fluency: 'fluent' } }
+			languagesData: {
+				common: { fluency: 'fluent' },
+				elvish: { fluency: 'limited' },
+				dwarvish: { fluency: 'fluent' }
+			}
 		});
 		expect(out.languageMastery.A).toBeDefined();
 	});
 });
-
-

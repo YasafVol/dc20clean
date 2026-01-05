@@ -1,0 +1,1252 @@
+{
+	"totalSpells": 125,
+	"schools": [
+		{
+			"name": "astromancy",
+			"count": 10,
+			"spells": [
+				{
+					"name": "Arcane Bolt",
+					"id": "arcane-bolt",
+					"sources": ["Arcane"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Arcane Wave",
+					"id": "arcane-wave",
+					"sources": ["Arcane"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Banish",
+					"id": "banish",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 2
+					}
+				},
+				{
+					"name": "Fly",
+					"id": "fly",
+					"sources": ["Arcane"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 3
+					}
+				},
+				{
+					"name": "Gravity Sink Hole",
+					"id": "gravity-sink-hole",
+					"sources": ["Arcane"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Haste",
+					"id": "haste",
+					"sources": ["Arcane"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Slow Time",
+					"id": "slow-time",
+					"sources": ["Arcane"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Telekinesis",
+					"id": "telekinesis",
+					"sources": ["Arcane"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Teleport",
+					"id": "teleport",
+					"sources": ["Arcane"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Translocation",
+					"id": "translocation",
+					"sources": ["Arcane"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				}
+			]
+		},
+		{
+			"name": "conjuration",
+			"count": 14,
+			"spells": [
+				{
+					"name": "Arcane Barrier",
+					"id": "arcane-barrier",
+					"sources": ["Arcane"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Bind",
+					"id": "bind",
+					"sources": ["Arcane", "Divine", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Chaos Bomb",
+					"id": "chaos-bomb",
+					"sources": ["Arcane"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Disguise Self",
+					"id": "disguise-self",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Entangle",
+					"id": "entangle",
+					"sources": ["Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Force Dome",
+					"id": "force-dome",
+					"sources": ["Arcane"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Illusory Image",
+					"id": "illusory-image",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Mage Armor",
+					"id": "mage-armor",
+					"sources": ["Arcane"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Oil Slick",
+					"id": "oil-slick",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Summon Familiar",
+					"id": "summon-familiar",
+					"sources": ["Arcane", "Divine", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Tendrils from Beyond",
+					"id": "tendrils-from-beyond",
+					"sources": ["Arcane"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Unholy Aura",
+					"id": "unholy-aura",
+					"sources": ["Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 2
+					}
+				},
+				{
+					"name": "Wall of Fire",
+					"id": "wall-of-fire",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Wall of Force",
+					"id": "wall-of-force",
+					"sources": ["Arcane"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				}
+			]
+		},
+		{
+			"name": "divination",
+			"count": 2,
+			"spells": [
+				{
+					"name": "Bless",
+					"id": "bless",
+					"sources": ["Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Empowered Sight",
+					"id": "empowered-sight",
+					"sources": ["Arcane", "Primal", "Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				}
+			]
+		},
+		{
+			"name": "elemental",
+			"count": 41,
+			"spells": [
+				{
+					"name": "Absorb Elements",
+					"id": "absorb-elements",
+					"sources": ["Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Acid Rain",
+					"id": "acid-rain",
+					"sources": ["Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Acid Stream",
+					"id": "acid-stream",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Air Slash",
+					"id": "air-slash",
+					"sources": ["Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Blight Bomb",
+					"id": "blight-bomb",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Cloud Cover",
+					"id": "cloud-cover",
+					"sources": ["Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Cold Wave",
+					"id": "cold-wave",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Cone of Cold",
+					"id": "cone-of-cold",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Corrosive Bolt",
+					"id": "corrosive-bolt",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Corrosive Cascade",
+					"id": "corrosive-cascade",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Corrosive Wave",
+					"id": "corrosive-wave",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Elemental Shield",
+					"id": "elemental-shield",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Eruption",
+					"id": "eruption",
+					"sources": ["Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Fire Blast",
+					"id": "fire-blast",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Fire Bolt",
+					"id": "fire-bolt",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Fire Torrent",
+					"id": "fire-torrent",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Fireball",
+					"id": "fireball",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Freeze",
+					"id": "freeze",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Frost Bolt",
+					"id": "frost-bolt",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Frost Storm",
+					"id": "frost-storm",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Gust",
+					"id": "gust",
+					"sources": ["Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Hydro Lance",
+					"id": "hydro-lance",
+					"sources": ["Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Inflict Poison",
+					"id": "inflict-poison",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Lightning Blast",
+					"id": "lightning-blast",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Lightning Bolt",
+					"id": "lightning-bolt",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Lightning Cloud",
+					"id": "lightning-cloud",
+					"sources": ["Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Lightning Storm",
+					"id": "lightning-storm",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Lightning Torrent",
+					"id": "lightning-torrent",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Living Bomb",
+					"id": "living-bomb",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Maelstrom",
+					"id": "maelstrom",
+					"sources": ["Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Poison Bolt",
+					"id": "poison-bolt",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Poison Cloud",
+					"id": "poison-cloud",
+					"sources": ["Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Spike Bolt",
+					"id": "spike-bolt",
+					"sources": ["Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Spike Surge",
+					"id": "spike-surge",
+					"sources": ["Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Tornado",
+					"id": "tornado",
+					"sources": ["Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Toxic Aura",
+					"id": "toxic-aura",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Wall of Water",
+					"id": "wall-of-water",
+					"sources": ["Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Water Bolt",
+					"id": "water-bolt",
+					"sources": ["Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Wind Blade",
+					"id": "wind-blade",
+					"sources": ["Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Wind Burst",
+					"id": "wind-burst",
+					"sources": ["Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Wind Tunnel",
+					"id": "wind-tunnel",
+					"sources": ["Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				}
+			]
+		},
+		{
+			"name": "enchantment",
+			"count": 12,
+			"spells": [
+				{
+					"name": "Charm",
+					"id": "charm",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Command",
+					"id": "command",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Fear",
+					"id": "fear",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Hex",
+					"id": "hex",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Message",
+					"id": "message",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Mind Blast",
+					"id": "mind-blast",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Planar Protection",
+					"id": "planar-protection",
+					"sources": ["Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Psi Bolt",
+					"id": "psi-bolt",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Psychic Wave",
+					"id": "psychic-wave",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Shatter Reality",
+					"id": "shatter-reality",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Slumber",
+					"id": "slumber",
+					"sources": ["Arcane"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Vicious Mockery",
+					"id": "vicious-mockery",
+					"sources": ["Arcane"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				}
+			]
+		},
+		{
+			"name": "invocation",
+			"count": 14,
+			"spells": [
+				{
+					"name": "Cleanse",
+					"id": "cleanse",
+					"sources": ["Divine", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Close Wounds",
+					"id": "close-wounds",
+					"sources": ["Arcane", "Divine", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Death Ward",
+					"id": "death-ward",
+					"sources": ["Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Heal",
+					"id": "heal",
+					"sources": ["Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Life Transfer",
+					"id": "life-transfer",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Light",
+					"id": "light",
+					"sources": ["Arcane", "Divine", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Luminous Burst",
+					"id": "luminous-burst",
+					"sources": ["Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Mass Heal",
+					"id": "mass-heal",
+					"sources": ["Divine", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Radiant Beam",
+					"id": "radiant-beam",
+					"sources": ["Divine", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Radiant Bolt",
+					"id": "radiant-bolt",
+					"sources": ["Divine"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Regenerate",
+					"id": "regenerate",
+					"sources": ["Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Solar Beam",
+					"id": "solar-beam",
+					"sources": ["Divine", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Spirit Link",
+					"id": "spirit-link",
+					"sources": ["Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Sunburst",
+					"id": "sunburst",
+					"sources": ["Divine"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				}
+			]
+		},
+		{
+			"name": "nullification",
+			"count": 16,
+			"spells": [
+				{
+					"name": "Arcane Shield",
+					"id": "arcane-shield",
+					"sources": ["Arcane"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Bane",
+					"id": "bane",
+					"sources": ["Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Corpse Explosion",
+					"id": "corpse-explosion",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Darkness",
+					"id": "darkness",
+					"sources": ["Arcane", "Divine", "Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Death",
+					"id": "death",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Death Bolt",
+					"id": "death-bolt",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Disintegrate",
+					"id": "disintegrate",
+					"sources": ["Arcane"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 2
+					}
+				},
+				{
+					"name": "Disintegrating Beam",
+					"id": "disintegrating-beam",
+					"sources": ["Arcane"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 2
+					}
+				},
+				{
+					"name": "Muffle",
+					"id": "muffle",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Sanctuary",
+					"id": "sanctuary",
+					"sources": ["Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Sphere of Death",
+					"id": "sphere-of-death",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Umbral Burst",
+					"id": "umbral-burst",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Umbral Wave",
+					"id": "umbral-wave",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 2
+					}
+				},
+				{
+					"name": "Vampiric Touch",
+					"id": "vampiric-touch",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Wild Guard",
+					"id": "wild-guard",
+					"sources": ["Primal"],
+					"isCantrip": true,
+					"cost": {
+						"ap": 1
+					}
+				},
+				{
+					"name": "Zone of Peace",
+					"id": "zone-of-peace",
+					"sources": ["Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				}
+			]
+		},
+		{
+			"name": "transmutation",
+			"count": 16,
+			"spells": [
+				{
+					"name": "Acid Imbued",
+					"id": "acid-imbued",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Alter Size",
+					"id": "alter-size",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Chaos Bolt",
+					"id": "chaos-bolt",
+					"sources": ["Arcane"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Chaos Torrent",
+					"id": "chaos-torrent",
+					"sources": ["Arcane"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Cold Imbued",
+					"id": "cold-imbued",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Earth Blessing",
+					"id": "earth-blessing",
+					"sources": ["Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Fire Imbued",
+					"id": "fire-imbued",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Invisibility",
+					"id": "invisibility",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Lightning Imbued",
+					"id": "lightning-imbued",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Poison Imbued",
+					"id": "poison-imbued",
+					"sources": ["Arcane", "Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Primal Hide",
+					"id": "primal-hide",
+					"sources": ["Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Psychic Imbued",
+					"id": "psychic-imbued",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Quicksand",
+					"id": "quicksand",
+					"sources": ["Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 2,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Radiant Imbued",
+					"id": "radiant-imbued",
+					"sources": ["Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Umbral Imbued",
+					"id": "umbral-imbued",
+					"sources": ["Arcane", "Divine"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				},
+				{
+					"name": "Wind Blessing",
+					"id": "wind-blessing",
+					"sources": ["Primal"],
+					"isCantrip": false,
+					"cost": {
+						"ap": 1,
+						"mp": 1
+					}
+				}
+			]
+		}
+	]
+}

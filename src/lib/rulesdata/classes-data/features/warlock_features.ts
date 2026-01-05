@@ -5,9 +5,9 @@ export const warlockClass: ClassDefinition = {
 	spellcasterPath: {
 		spellList: {
 			type: 'all_schools',
-			schoolCount: 4,
+			schoolCount: 3,
 			description:
-				'You choose 4 Spell Schools. When you learn a new Spell, you can choose any Spell from the chosen Spell Schools.'
+				'Choose 3 Spell Schools. When you learn a new Spell, you can choose any Spell from the chosen Spell Schools.'
 		},
 		cantrips: {
 			description: 'Cantrips Known column of the Warlock Class Table'
@@ -109,15 +109,15 @@ export const warlockClass: ClassDefinition = {
 							]
 						},
 						{
-							name: 'Pact Cantrip',
+							name: 'Pact Spell',
 							description:
-								'Choose a Spell you know with the Cantrip Spell Tag. It becomes your Pact Cantrip, gaining special benefits.',
+								'Choose a Spell you know. The chosen Spell becomes your Pact Spell with special benefits.',
 							effects: [
 								{
 									type: 'GRANT_ABILITY',
-									target: 'pact_cantrip',
+									target: 'pact_spell',
 									value:
-										'Chosen cantrip deals +1 damage to Bloodied targets, its range increases, and you can grant yourself ADV on its Spell Check once per round.'
+										"Death's Toll: +1 damage to Bloodied targets. Range Increase: +1 (if 1 Space) or +5 (if greater). Patron's Favor: Once per Round, ADV on your Pact Spell's Check."
 								}
 							]
 						},

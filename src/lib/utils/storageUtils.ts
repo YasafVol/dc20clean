@@ -48,16 +48,16 @@ export const deserializeCharacterFromStorage = (jsonString: string): SavedCharac
 			characterState: {
 				...(data.characterState || getDefaultCharacterState()),
 				// Normalize attacks from object to array format for backward compatibility
-				attacks: Array.isArray(data.characterState?.attacks) 
-					? data.characterState.attacks 
+				attacks: Array.isArray(data.characterState?.attacks)
+					? data.characterState.attacks
 					: Object.values(data.characterState?.attacks || {}),
 				// Normalize spells to array if not already
-				spells: Array.isArray(data.characterState?.spells) 
-					? data.characterState.spells 
+				spells: Array.isArray(data.characterState?.spells)
+					? data.characterState.spells
 					: data.spells || [],
 				// Normalize maneuvers to array if not already
-				maneuvers: Array.isArray(data.characterState?.maneuvers) 
-					? data.characterState.maneuvers 
+				maneuvers: Array.isArray(data.characterState?.maneuvers)
+					? data.characterState.maneuvers
 					: data.maneuvers || []
 			},
 			schemaVersion: CURRENT_SCHEMA_VERSION // Always update to current version
@@ -204,7 +204,12 @@ export const getCharacterById = (characterId: string): SavedCharacter | null => 
 		const rawIndex = rawCharacters.findIndex((c) => c && c.id === characterId);
 		if (rawIndex === -1) {
 			console.warn(`Character ${characterId} not found`);
-			console.log(`Available character IDs: ${rawCharacters.map((c) => c && c.id).filter(Boolean).join(', ')}`);
+			console.log(
+				`Available character IDs: ${rawCharacters
+					.map((c) => c && c.id)
+					.filter(Boolean)
+					.join(', ')}`
+			);
 			return null;
 		}
 
@@ -221,7 +226,9 @@ export const getCharacterById = (characterId: string): SavedCharacter | null => 
 		try {
 			const attacksRaw = rawChar?.characterState?.attacks;
 			if (attacksRaw && !Array.isArray(attacksRaw) && typeof attacksRaw === 'object') {
-				console.log(`Detected legacy attacks map for character ${characterId}, migrating single character`);
+				console.log(
+					`Detected legacy attacks map for character ${characterId}, migrating single character`
+				);
 				// Backup before mutating stored data
 				backupCharacterData();
 				// Convert to array and persist the raw characters array

@@ -44,8 +44,8 @@ const BudgetSummary = styled.div`
 `;
 
 const BudgetTab = styled.button<{ $active: boolean }>`
-	background: ${props => props.$active ? 'rgba(212, 175, 55, 0.3)' : 'transparent'};
-	border: 2px solid ${props => props.$active ? '#d4af37' : 'rgba(212, 175, 55, 0.3)'};
+	background: ${(props) => (props.$active ? 'rgba(212, 175, 55, 0.3)' : 'transparent')};
+	border: 2px solid ${(props) => (props.$active ? '#d4af37' : 'rgba(212, 175, 55, 0.3)')};
 	border-radius: 8px;
 	padding: 1rem 2rem;
 	cursor: pointer;
@@ -95,8 +95,8 @@ const TalentGrid = styled.div`
 
 // General talent card with counter UI
 const GeneralTalentCard = styled.div<{ $hasCount: boolean }>`
-	background: ${props => props.$hasCount ? 'rgba(212, 175, 55, 0.2)' : 'rgba(0, 0, 0, 0.4)'};
-	border: 2px solid ${props => props.$hasCount ? '#d4af37' : 'rgba(255, 255, 255, 0.1)'};
+	background: ${(props) => (props.$hasCount ? 'rgba(212, 175, 55, 0.2)' : 'rgba(0, 0, 0, 0.4)')};
+	border: 2px solid ${(props) => (props.$hasCount ? '#d4af37' : 'rgba(255, 255, 255, 0.1)')};
 	border-radius: 8px;
 	padding: 1rem;
 	text-align: left;
@@ -161,13 +161,13 @@ const TalentButton = styled.button`
 
 // Class/multiclass talent card (toggle behavior)
 const TalentCard = styled.button<{ $selected: boolean; $disabled: boolean }>`
-	background: ${props => props.$selected ? 'rgba(212, 175, 55, 0.2)' : 'rgba(0, 0, 0, 0.4)'};
-	border: 2px solid ${props => props.$selected ? '#d4af37' : 'rgba(255, 255, 255, 0.1)'};
+	background: ${(props) => (props.$selected ? 'rgba(212, 175, 55, 0.2)' : 'rgba(0, 0, 0, 0.4)')};
+	border: 2px solid ${(props) => (props.$selected ? '#d4af37' : 'rgba(255, 255, 255, 0.1)')};
 	border-radius: 8px;
 	padding: 1rem;
 	text-align: left;
-	cursor: ${props => props.$disabled ? 'not-allowed' : 'pointer'};
-	opacity: ${props => props.$disabled ? 0.5 : 1};
+	cursor: ${(props) => (props.$disabled ? 'not-allowed' : 'pointer')};
+	opacity: ${(props) => (props.$disabled ? 0.5 : 1)};
 	transition: all 0.2s;
 
 	&:hover:not(:disabled) {
@@ -200,13 +200,14 @@ const TalentDescription = styled.div`
 `;
 
 const MulticlassOption = styled.button<{ $selected: boolean; $disabled: boolean }>`
-	background: ${props => props.$selected ? 'rgba(212, 175, 55, 0.4)' : 'rgba(212, 175, 55, 0.1)'};
+	background: ${(props) =>
+		props.$selected ? 'rgba(212, 175, 55, 0.4)' : 'rgba(212, 175, 55, 0.1)'};
 	border: 2px solid #d4af37;
 	border-radius: 8px;
 	padding: 1.5rem;
 	text-align: left;
-	cursor: ${props => props.$disabled ? 'not-allowed' : 'pointer'};
-	opacity: ${props => props.$disabled ? 0.5 : 1};
+	cursor: ${(props) => (props.$disabled ? 'not-allowed' : 'pointer')};
+	opacity: ${(props) => (props.$disabled ? 0.5 : 1)};
 	transition: all 0.2s;
 	width: 100%;
 	margin-bottom: 1rem;
@@ -268,8 +269,8 @@ const FeatureCardContainer = styled.div`
 `;
 
 const MulticlassFeatureCard = styled.div<{ $selected: boolean }>`
-	background: ${props => props.$selected ? 'rgba(212, 175, 55, 0.2)' : 'rgba(0, 0, 0, 0.3)'};
-	border: 2px solid ${props => props.$selected ? '#d4af37' : 'rgba(212, 175, 55, 0.3)'};
+	background: ${(props) => (props.$selected ? 'rgba(212, 175, 55, 0.2)' : 'rgba(0, 0, 0, 0.3)')};
+	border: 2px solid ${(props) => (props.$selected ? '#d4af37' : 'rgba(212, 175, 55, 0.3)')};
 	border-radius: 8px;
 	padding: 1.25rem;
 	cursor: pointer;
@@ -402,17 +403,17 @@ const PathLevelRow = styled.div<{ $active: boolean }>`
 	align-items: center;
 	gap: 1rem;
 	padding: 0.75rem;
-	background: ${props => props.$active ? 'rgba(76, 175, 80, 0.2)' : 'rgba(0, 0, 0, 0.2)'};
+	background: ${(props) => (props.$active ? 'rgba(76, 175, 80, 0.2)' : 'rgba(0, 0, 0, 0.2)')};
 	border-radius: 4px;
-	border-left: 3px solid ${props => props.$active ? '#4CAF50' : 'rgba(255, 255, 255, 0.2)'};
+	border-left: 3px solid ${(props) => (props.$active ? '#4CAF50' : 'rgba(255, 255, 255, 0.2)')};
 `;
 
 const PathLevelIndicator = styled.div<{ $completed: boolean }>`
 	width: 24px;
 	height: 24px;
 	border-radius: 50%;
-	background: ${props => props.$completed ? '#4CAF50' : 'transparent'};
-	border: 2px solid ${props => props.$completed ? '#4CAF50' : 'rgba(255, 255, 255, 0.3)'};
+	background: ${(props) => (props.$completed ? '#4CAF50' : 'transparent')};
+	border: 2px solid ${(props) => (props.$completed ? '#4CAF50' : 'rgba(255, 255, 255, 0.3)')};
 	flex-shrink: 0;
 `;
 
@@ -461,12 +462,18 @@ type ActiveTab = 'talents' | 'pathPoints';
 function LevelingChoices() {
 	const { state, dispatch } = useCharacter();
 	const [activeTab, setActiveTab] = useState<ActiveTab>('talents');
-	const [selectedTalents, setSelectedTalents] = useState<Record<string, number>>(state.selectedTalents || {});
-	const [pathPoints, setPathPoints] = useState(state.pathPointAllocations || { martial: 0, spellcasting: 0 });
+	const [selectedTalents, setSelectedTalents] = useState<Record<string, number>>(
+		state.selectedTalents || {}
+	);
+	const [pathPoints, setPathPoints] = useState(
+		state.pathPointAllocations || { martial: 0, spellcasting: 0 }
+	);
 	const [resolvedProgression, setResolvedProgression] = useState<any>(null);
-	
+
 	// Multiclass state - now supports all 6 tiers (type imported from multiclass.ts)
-	const [selectedMulticlassOption, setSelectedMulticlassOption] = useState<MulticlassTier | null>(null);
+	const [selectedMulticlassOption, setSelectedMulticlassOption] = useState<MulticlassTier | null>(
+		null
+	);
 	const [selectedMulticlassClass, setSelectedMulticlassClass] = useState<string>('');
 	const [selectedMulticlassFeature, setSelectedMulticlassFeature] = useState<string>('');
 
@@ -485,9 +492,7 @@ function LevelingChoices() {
 	if (!state.classId || state.level === 1) {
 		return (
 			<Container>
-				<EmptyState>
-					Select a class and level greater than 1 to see leveling choices.
-				</EmptyState>
+				<EmptyState>Select a class and level greater than 1 to see leveling choices.</EmptyState>
 			</Container>
 		);
 	}
@@ -504,11 +509,14 @@ function LevelingChoices() {
 	const availableTalentPoints = budgets.totalTalents;
 	const availablePathPoints = budgets.totalPathPoints;
 	const usedPathPoints = (pathPoints.martial || 0) + (pathPoints.spellcasting || 0);
-	
+
 	// Count multiclass selection as a talent
 	const multiclassTalentUsed = selectedMulticlassOption && selectedMulticlassFeature ? 1 : 0;
 	// Count total talent selections from the count-based record
-	const totalTalentsFromRecord = Object.values(selectedTalents).reduce((sum, count) => sum + count, 0);
+	const totalTalentsFromRecord = Object.values(selectedTalents).reduce(
+		(sum, count) => sum + count,
+		0
+	);
 	const totalTalentsUsed = totalTalentsFromRecord + multiclassTalentUsed;
 
 	// Define General Talents - use IDs that match talents.data.ts so effects work
@@ -538,22 +546,23 @@ function LevelingChoices() {
 
 	// Filter class talents for the current class AND level requirement
 	const classTalents = allTalents.filter(
-		t => t.category === 'Class' 
-		&& t.prerequisites?.classId === state.classId
-		&& (!t.prerequisites?.level || state.level >= t.prerequisites.level)
+		(t) =>
+			t.category === 'Class' &&
+			t.prerequisites?.classId === state.classId &&
+			(!t.prerequisites?.level || state.level >= t.prerequisites.level)
 	);
 
 	// Helper: Count class features owned per class (for multiclass prerequisites)
 	// This counts features from the character's main class progression
 	const getOwnedClassFeatures = (targetClassId: string): number => {
 		if (!state.classId || !state.level) return 0;
-		
+
 		// If target class is the character's main class, count features from progression
 		if (targetClassId === state.classId && resolvedProgression) {
 			// Features unlocked from level 1 to current level
 			return resolvedProgression.unlockedFeatureIds?.length || 0;
 		}
-		
+
 		// TODO: Count multiclass features from other classes (stored in character state)
 		// For now, return 0 for other classes (will implement when multiclass effects are applied)
 		return 0;
@@ -562,7 +571,7 @@ function LevelingChoices() {
 	// Helper: Count subclass features owned per subclass
 	const getOwnedSubclassFeatures = (targetClassId: string): number => {
 		if (!state.classId || !state.level) return 0;
-		
+
 		// If target class is the character's main class and they have a subclass
 		if (targetClassId === state.classId && state.selectedSubclass && resolvedProgression) {
 			// Count subclass features from progression
@@ -570,17 +579,17 @@ function LevelingChoices() {
 			if (state.level >= 3) {
 				// Rough estimate: subclass features at levels 3, 6, 9, etc.
 				// TODO: Get exact count from resolved subclass features
-				const subclassLevels = [3, 6, 9, 12, 15, 18].filter(lvl => lvl <= state.level);
+				const subclassLevels = [3, 6, 9, 12, 15, 18].filter((lvl) => lvl <= state.level);
 				return subclassLevels.length;
 			}
 		}
-		
+
 		// TODO: Count multiclass subclass features (will implement when multiclass effects are applied)
 		return 0;
 	};
 
 	// Helper: Check if character meets prerequisites for a multiclass tier
-	const meetsMulticlassPrerequisites = (tier: typeof multiclassTiers[0]): boolean => {
+	const meetsMulticlassPrerequisites = (tier: (typeof multiclassTiers)[0]): boolean => {
 		// Level requirement (already checked in filter, but include for completeness)
 		if (state.level < tier.levelRequired) return false;
 
@@ -592,7 +601,7 @@ function LevelingChoices() {
 			// Check if character has enough features from their main class OR any multiclass
 			const mainClassFeatures = getOwnedClassFeatures(state.classId || '');
 			if (mainClassFeatures >= tier.minClassFeatures) return true;
-			
+
 			// TODO: Check multiclass feature counts when implemented
 			return false;
 		}
@@ -602,7 +611,7 @@ function LevelingChoices() {
 			// Check if character has enough subclass features
 			const mainSubclassFeatures = getOwnedSubclassFeatures(state.classId || '');
 			if (mainSubclassFeatures >= tier.minSubclassFeatures) return true;
-			
+
 			// TODO: Check multiclass subclass feature counts when implemented
 			return false;
 		}
@@ -616,8 +625,8 @@ function LevelingChoices() {
 	// Helper: Get classes that meet prerequisites for the selected tier
 	const getEligibleClasses = (): typeof classesData => {
 		if (!selectedMulticlassOption) return classesData;
-		
-		const selectedTier = multiclassTiers.find(t => t.id === selectedMulticlassOption);
+
+		const selectedTier = multiclassTiers.find((t) => t.id === selectedMulticlassOption);
 		if (!selectedTier) return classesData;
 
 		// Novice and Adept: All classes available
@@ -627,7 +636,7 @@ function LevelingChoices() {
 
 		// Expert/Grandmaster: Filter to classes where character has N+ class features
 		if (selectedTier.minClassFeatures > 0) {
-			return classesData.filter(cls => {
+			return classesData.filter((cls) => {
 				const featuresOwned = getOwnedClassFeatures(cls.id);
 				return featuresOwned >= selectedTier.minClassFeatures;
 			});
@@ -635,7 +644,7 @@ function LevelingChoices() {
 
 		// Master/Legendary: Filter to classes where character has N+ subclass features
 		if (selectedTier.minSubclassFeatures > 0) {
-			return classesData.filter(cls => {
+			return classesData.filter((cls) => {
 				const subclassFeaturesOwned = getOwnedSubclassFeatures(cls.id);
 				return subclassFeaturesOwned >= selectedTier.minSubclassFeatures;
 			});
@@ -653,36 +662,37 @@ function LevelingChoices() {
 	// Handle multiclass feature selection
 	const handleMulticlassFeatureChange = (featureId: string) => {
 		setSelectedMulticlassFeature(featureId);
-		
+
 		// Sync to store
-		dispatch({ 
-			type: 'SET_MULTICLASS', 
-			option: selectedMulticlassOption, 
-			classId: selectedMulticlassClass, 
-			featureId 
+		dispatch({
+			type: 'SET_MULTICLASS',
+			option: selectedMulticlassOption,
+			classId: selectedMulticlassClass,
+			featureId
 		});
 	};
 
 	const getMulticlassFeatures = () => {
 		if (!selectedMulticlassClass || !selectedMulticlassOption) return [];
-		
-		const selectedClass = classesData.find(c => c.id === selectedMulticlassClass);
+
+		const selectedClass = classesData.find((c) => c.id === selectedMulticlassClass);
 		if (!selectedClass) return [];
 
 		const classFeatures = findClassByName(selectedClass.name);
 		if (!classFeatures) return [];
 
-		const selectedTier = multiclassTiers.find(t => t.id === selectedMulticlassOption);
+		const selectedTier = multiclassTiers.find((t) => t.id === selectedMulticlassOption);
 		if (!selectedTier) return [];
 
 		const targetLevel = selectedTier.targetLevel;
-		
+
 		// Filter out path-related features (Martial Path, Spellcaster Path)
 		const PATH_FEATURE_NAMES = ['Martial Path', 'Spellcaster Path', 'Path Points'];
-		
-		const coreFeatures = classFeatures.coreFeatures.filter(f => 
-			f.levelGained === targetLevel && 
-			!PATH_FEATURE_NAMES.some(pathName => f.featureName.includes(pathName))
+
+		const coreFeatures = classFeatures.coreFeatures.filter(
+			(f) =>
+				f.levelGained === targetLevel &&
+				!PATH_FEATURE_NAMES.some((pathName) => f.featureName.includes(pathName))
 		);
 
 		// For tiers that support subclass features, add them to the list
@@ -697,9 +707,9 @@ function LevelingChoices() {
 				for (const subclass of classFeatures.subclasses) {
 					if (subclass.features) {
 						const subclassFeatures = subclass.features.filter(
-							f => f.levelGained === selectedTier.subclassLevel
+							(f) => f.levelGained === selectedTier.subclassLevel
 						);
-						
+
 						for (const feature of subclassFeatures) {
 							features.push({
 								...feature,
@@ -713,14 +723,14 @@ function LevelingChoices() {
 
 			return features;
 		}
-		
+
 		return coreFeatures;
 	};
 
 	// Handle general talent increment/decrement (count-based)
 	const handleGeneralTalentIncrement = (talentId: string) => {
 		if (totalTalentsUsed >= availableTalentPoints) return;
-		
+
 		const newTalents = { ...selectedTalents };
 		newTalents[talentId] = (newTalents[talentId] || 0) + 1;
 		setSelectedTalents(newTalents);
@@ -730,7 +740,7 @@ function LevelingChoices() {
 	const handleGeneralTalentDecrement = (talentId: string) => {
 		const currentCount = selectedTalents[talentId] || 0;
 		if (currentCount === 0) return;
-		
+
 		const newTalents = { ...selectedTalents };
 		if (currentCount === 1) {
 			// Remove key if count reaches 0
@@ -782,7 +792,7 @@ function LevelingChoices() {
 			<Section>
 				<SectionTitle>General Talents</SectionTitle>
 				<TalentGrid>
-					{generalTalents.map(talent => {
+					{generalTalents.map((talent) => {
 						const count = selectedTalents[talent.id] || 0;
 						return (
 							<GeneralTalentCard key={talent.id} $hasCount={count > 0}>
@@ -817,7 +827,7 @@ function LevelingChoices() {
 				<Section>
 					<SectionTitle>Class Talents</SectionTitle>
 					<TalentGrid>
-						{classTalents.map(talent => (
+						{classTalents.map((talent) => (
 							<TalentCard
 								key={talent.id}
 								$selected={!!selectedTalents[talent.id]}
@@ -825,7 +835,9 @@ function LevelingChoices() {
 								onClick={() => handleClassTalentToggle(talent.id)}
 							>
 								<TalentName>{talent.name}</TalentName>
-								<TalentCategory>{talent.category} - {resolvedProgression.className}</TalentCategory>
+								<TalentCategory>
+									{talent.category} - {resolvedProgression.className}
+								</TalentCategory>
 								<TalentDescription>{talent.description}</TalentDescription>
 							</TalentCard>
 						))}
@@ -836,9 +848,9 @@ function LevelingChoices() {
 			{/* Multiclass Talents - Only show tiers that meet all prerequisites */}
 			<Section>
 				<SectionTitle>Multiclass Talents</SectionTitle>
-				
+
 				{multiclassTiers
-					.filter(tier => state.level >= tier.levelRequired && meetsMulticlassPrerequisites(tier))
+					.filter((tier) => state.level >= tier.levelRequired && meetsMulticlassPrerequisites(tier))
 					.map((tier) => {
 						const isSelected = selectedMulticlassOption === tier.id;
 						const isDisabled = totalTalentsUsed >= availableTalentPoints && !isSelected;
@@ -875,14 +887,16 @@ function LevelingChoices() {
 							onChange={(e) => handleMulticlassClassChange(e.target.value)}
 						>
 							<option value="">Choose a class...</option>
-							{getEligibleClasses().map(cls => (
-								<option key={cls.id} value={cls.id}>{cls.name}</option>
+							{getEligibleClasses().map((cls) => (
+								<option key={cls.id} value={cls.id}>
+									{cls.name}
+								</option>
 							))}
 						</Dropdown>
 
 						{selectedMulticlassClass && getMulticlassFeatures().length > 0 && (
 							<FeatureCardContainer>
-								{getMulticlassFeatures().map(feature => (
+								{getMulticlassFeatures().map((feature) => (
 									<MulticlassFeatureCard
 										key={feature.featureName}
 										$selected={selectedMulticlassFeature === feature.featureName}
@@ -914,23 +928,28 @@ function LevelingChoices() {
 
 	const renderPathPointsTab = () => (
 		<PathContainer>
-			{CHARACTER_PATHS.map(path => {
-				const currentLevel = path.id === 'martial_path' ? (pathPoints.martial || 0) : (pathPoints.spellcasting || 0);
-				
+			{CHARACTER_PATHS.map((path) => {
+				const currentLevel =
+					path.id === 'martial_path' ? pathPoints.martial || 0 : pathPoints.spellcasting || 0;
+
 				return (
 					<PathCard key={path.id}>
 						<PathHeader>
 							<PathTitle>{path.name}</PathTitle>
 							<PathControls>
-								<PathButton 
-									onClick={() => handlePathPointRemove(path.id === 'martial_path' ? 'martial' : 'spellcasting')}
+								<PathButton
+									onClick={() =>
+										handlePathPointRemove(path.id === 'martial_path' ? 'martial' : 'spellcasting')
+									}
 									disabled={currentLevel === 0}
 								>
 									−
 								</PathButton>
 								<PathCurrentValue>{currentLevel}</PathCurrentValue>
-								<PathButton 
-									onClick={() => handlePathPointAdd(path.id === 'martial_path' ? 'martial' : 'spellcasting')}
+								<PathButton
+									onClick={() =>
+										handlePathPointAdd(path.id === 'martial_path' ? 'martial' : 'spellcasting')
+									}
 									disabled={usedPathPoints >= availablePathPoints}
 								>
 									+
@@ -941,12 +960,15 @@ function LevelingChoices() {
 						<PathProgressionTable>
 							{path.progression.map((level) => {
 								const benefits = [];
-								if (level.benefits.staminaPoints) benefits.push(`+${level.benefits.staminaPoints} SP`);
+								if (level.benefits.staminaPoints)
+									benefits.push(`+${level.benefits.staminaPoints} SP`);
 								if (level.benefits.manaPoints) benefits.push(`+${level.benefits.manaPoints} MP`);
-								if (level.benefits.maneuversLearned) benefits.push(`+${level.benefits.maneuversLearned} Maneuvers`);
-								if (level.benefits.techniquesLearned) benefits.push(`+${level.benefits.techniquesLearned} Techniques`);
-								if (level.benefits.cantripsLearned) benefits.push(`+${level.benefits.cantripsLearned} Cantrips`);
-								if (level.benefits.spellsLearned) benefits.push(`+${level.benefits.spellsLearned} Spells`);
+								if (level.benefits.maneuversLearned)
+									benefits.push(`+${level.benefits.maneuversLearned} Maneuvers`);
+								if (level.benefits.cantripsLearned)
+									benefits.push(`+${level.benefits.cantripsLearned} Cantrips`);
+								if (level.benefits.spellsLearned)
+									benefits.push(`+${level.benefits.spellsLearned} Spells`);
 
 								return (
 									<PathLevelRow key={level.pathLevel} $active={currentLevel >= level.pathLevel}>
@@ -981,18 +1003,21 @@ function LevelingChoices() {
 			</Subtitle>
 
 			<BudgetSummary>
-		<BudgetTab $active={activeTab === 'talents'} onClick={() => setActiveTab('talents')}>
-				<BudgetLabel>Talents</BudgetLabel>
-				<BudgetValue>{totalTalentsUsed} / {availableTalentPoints}</BudgetValue>
-			</BudgetTab>
+				<BudgetTab $active={activeTab === 'talents'} onClick={() => setActiveTab('talents')}>
+					<BudgetLabel>Talents</BudgetLabel>
+					<BudgetValue>
+						{totalTalentsUsed} / {availableTalentPoints}
+					</BudgetValue>
+				</BudgetTab>
 				<BudgetTab $active={activeTab === 'pathPoints'} onClick={() => setActiveTab('pathPoints')}>
 					<BudgetLabel>Path Points</BudgetLabel>
-					<BudgetValue>{usedPathPoints} / {availablePathPoints}</BudgetValue>
+					<BudgetValue>
+						{usedPathPoints} / {availablePathPoints}
+					</BudgetValue>
 				</BudgetTab>
 			</BudgetSummary>
 
 			{activeTab === 'talents' ? renderTalentsTab() : renderPathPointsTab()}
-
 		</Container>
 	);
 }

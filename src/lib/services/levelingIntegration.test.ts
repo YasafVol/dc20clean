@@ -1,6 +1,6 @@
 /**
  * M4.1f - Leveling System Integration Tests
- * 
+ *
  * Tests the complete character creation flow for levels 2-3 including:
  * - Talent + path + subclass selections
  * - Final calculated stats matching expected values
@@ -8,7 +8,10 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from './enhancedCharacterCalculator';
+import {
+	convertToEnhancedBuildData,
+	calculateCharacterWithBreakdowns
+} from './enhancedCharacterCalculator';
 
 describe('Leveling System Integration (M4.1f)', () => {
 	describe('Level 2 Character Creation', () => {
@@ -67,7 +70,7 @@ describe('Leveling System Integration (M4.1f)', () => {
 				selectedTraitIds: [],
 				selectedTraitChoices: {},
 				selectedFeatureChoices: {},
-				selectedTalents: { 'general_skill_increase': 1 }, // Spend talent on skill increase
+				selectedTalents: { general_skill_increase: 1 }, // Spend talent on skill increase
 				pathPointAllocations: { martial: 1 },
 				skillsData: {},
 				tradesData: {},
@@ -110,11 +113,15 @@ describe('Leveling System Integration (M4.1f)', () => {
 			};
 
 			const resultWith = calculateCharacterWithBreakdowns(convertToEnhancedBuildData(withPath));
-			const resultWithout = calculateCharacterWithBreakdowns(convertToEnhancedBuildData(withoutPath));
+			const resultWithout = calculateCharacterWithBreakdowns(
+				convertToEnhancedBuildData(withoutPath)
+			);
 
 			// With path should have more resources
 			expect(resultWith.stats.finalSPMax).toBeGreaterThan(resultWithout.stats.finalSPMax);
-			expect(resultWith.levelBudgets.totalManeuversKnown).toBeGreaterThan(resultWithout.levelBudgets.totalManeuversKnown);
+			expect(resultWith.levelBudgets.totalManeuversKnown).toBeGreaterThan(
+				resultWithout.levelBudgets.totalManeuversKnown
+			);
 		});
 
 		it('should have correct budgets at Level 2', () => {
@@ -162,7 +169,7 @@ describe('Leveling System Integration (M4.1f)', () => {
 				selectedTraitIds: [],
 				selectedTraitChoices: {},
 				selectedFeatureChoices: {},
-				selectedTalents: { 'general_skill_increase': 1, 'wizard_spell_mastery': 1 },
+				selectedTalents: { general_skill_increase: 1, wizard_spell_mastery: 1 },
 				pathPointAllocations: { spellcasting: 2 },
 				skillsData: {},
 				tradesData: {},
@@ -183,8 +190,10 @@ describe('Leveling System Integration (M4.1f)', () => {
 			expect(result.stats.finalMPMax).toBeGreaterThan(12); // Base + path bonuses
 
 			// Verify subclass features present
-			const featureIds = result.unlockedFeatures.map(f => f.id || f.featureName.toLowerCase().replace(/\s+/g, '_'));
-			expect(featureIds.some(id => id.includes('evocation'))).toBe(true);
+			const featureIds = result.unlockedFeatures.map(
+				(f) => f.id || f.featureName.toLowerCase().replace(/\s+/g, '_')
+			);
+			expect(featureIds.some((id) => id.includes('evocation'))).toBe(true);
 		});
 
 		it('should require subclass selection at Level 3', () => {
@@ -239,8 +248,8 @@ describe('Leveling System Integration (M4.1f)', () => {
 			const result = calculateCharacterWithBreakdowns(enhanced);
 
 			// Should have subclass features
-			const hasSubclassFeature = result.unlockedFeatures.some(f => 
-				(f.subclass || '').toLowerCase() === 'berserker'
+			const hasSubclassFeature = result.unlockedFeatures.some(
+				(f) => (f.subclass || '').toLowerCase() === 'berserker'
 			);
 			expect(hasSubclassFeature).toBe(true);
 		});
@@ -260,8 +269,8 @@ describe('Leveling System Integration (M4.1f)', () => {
 				selectedTraitIds: [],
 				selectedTraitChoices: {},
 				selectedFeatureChoices: {
-					'barbarian_elemental_fury_barbarian_elemental_rage_damage_type': ['Fire'],
-					'barbarian_elemental_fury_barbarian_elemental_rage_aura_type': ['Slowing Aura']
+					barbarian_elemental_fury_barbarian_elemental_rage_damage_type: ['Fire'],
+					barbarian_elemental_fury_barbarian_elemental_rage_aura_type: ['Slowing Aura']
 				},
 				skillsData: {},
 				tradesData: {},
@@ -322,7 +331,7 @@ describe('Leveling System Integration (M4.1f)', () => {
 				selectedTraitIds: [],
 				selectedTraitChoices: {},
 				selectedFeatureChoices: {},
-				selectedTalents: { 'general_skill_increase': 1 },
+				selectedTalents: { general_skill_increase: 1 },
 				selectedMulticlassOption: 'novice' as const,
 				selectedMulticlassClass: 'barbarian',
 				selectedMulticlassFeature: 'Rage',
@@ -337,7 +346,7 @@ describe('Leveling System Integration (M4.1f)', () => {
 
 			// Verify talent count (1 general + multiclass selection)
 			expect(result.levelBudgets.talentsUsed).toBeGreaterThanOrEqual(1);
-			
+
 			// Verify calculation successful
 			expect(result).toBeDefined();
 			expect(result.stats.finalCombatMastery).toBe(2); // Math.ceil(4/2)
@@ -401,10 +410,10 @@ describe('Leveling System Integration (M4.1f)', () => {
 
 			// Should calculate successfully
 			expect(result).toBeDefined();
-			
+
 			// Check if multiclass effects are present
 			const effects = result.attributedEffects || [];
-			const multiclassEffects = effects.filter(e => e.source.type === 'multiclass_feature');
+			const multiclassEffects = effects.filter((e) => e.source.type === 'multiclass_feature');
 			console.log(`Found ${multiclassEffects.length} multiclass effects`);
 		});
 	});
@@ -426,8 +435,8 @@ describe('Leveling System Integration (M4.1f)', () => {
 				selectedTraitChoices: {},
 				selectedFeatureChoices: {},
 				selectedTalents: {
-					'general_skill_increase': 2, // Take twice
-					'general_attribute_increase': 1
+					general_skill_increase: 2, // Take twice
+					general_attribute_increase: 1
 				},
 				pathPointAllocations: { martial: 3 },
 				skillsData: {},
@@ -459,8 +468,8 @@ describe('Leveling System Integration (M4.1f)', () => {
 				selectedTraitChoices: {},
 				selectedFeatureChoices: {},
 				selectedTalents: {
-					'general_skill_increase': 1,
-					'rogue_cunning_action': 1
+					general_skill_increase: 1,
+					rogue_cunning_action: 1
 				},
 				pathPointAllocations: { martial: 2 },
 				skillsData: {},
@@ -555,7 +564,7 @@ describe('Leveling System Integration (M4.1f)', () => {
 				selectedTraitIds: [],
 				selectedTraitChoices: {},
 				selectedFeatureChoices: {},
-				selectedTalents: { 'general_skill_increase': 2 },
+				selectedTalents: { general_skill_increase: 2 },
 				pathPointAllocations: {}, // No paths spent
 				skillsData: {},
 				tradesData: {},
@@ -615,23 +624,29 @@ describe('Leveling System Integration (M4.1f)', () => {
 				languagesData: { common: { fluency: 'fluent' as const } }
 			};
 
-			const level1 = calculateCharacterWithBreakdowns(convertToEnhancedBuildData({
-				...baseCharacter,
-				id: 'cross-level-1',
-				level: 1
-			}));
+			const level1 = calculateCharacterWithBreakdowns(
+				convertToEnhancedBuildData({
+					...baseCharacter,
+					id: 'cross-level-1',
+					level: 1
+				})
+			);
 
-			const level3 = calculateCharacterWithBreakdowns(convertToEnhancedBuildData({
-				...baseCharacter,
-				id: 'cross-level-3',
-				level: 3,
-				selectedSubclass: 'school_of_evocation'
-			}));
+			const level3 = calculateCharacterWithBreakdowns(
+				convertToEnhancedBuildData({
+					...baseCharacter,
+					id: 'cross-level-3',
+					level: 3,
+					selectedSubclass: 'school_of_evocation'
+				})
+			);
 
 			// Level 3 should have more of everything
 			expect(level3.levelBudgets.totalHP).toBeGreaterThan(level1.levelBudgets.totalHP);
 			expect(level3.levelBudgets.totalTalents).toBeGreaterThan(level1.levelBudgets.totalTalents);
-			expect(level3.levelBudgets.totalPathPoints).toBeGreaterThan(level1.levelBudgets.totalPathPoints);
+			expect(level3.levelBudgets.totalPathPoints).toBeGreaterThan(
+				level1.levelBudgets.totalPathPoints
+			);
 			expect(level3.unlockedFeatures.length).toBeGreaterThan(level1.unlockedFeatures.length);
 		});
 
@@ -652,32 +667,37 @@ describe('Leveling System Integration (M4.1f)', () => {
 				languagesData: { common: { fluency: 'fluent' as const } }
 			};
 
-			const level1 = calculateCharacterWithBreakdowns(convertToEnhancedBuildData({
-				...baseCharacter,
-				id: 'consistency-1',
-				level: 1
-			}));
+			const level1 = calculateCharacterWithBreakdowns(
+				convertToEnhancedBuildData({
+					...baseCharacter,
+					id: 'consistency-1',
+					level: 1
+				})
+			);
 
-			const level2 = calculateCharacterWithBreakdowns(convertToEnhancedBuildData({
-				...baseCharacter,
-				id: 'consistency-2',
-				level: 2
-			}));
+			const level2 = calculateCharacterWithBreakdowns(
+				convertToEnhancedBuildData({
+					...baseCharacter,
+					id: 'consistency-2',
+					level: 2
+				})
+			);
 
-			const level3 = calculateCharacterWithBreakdowns(convertToEnhancedBuildData({
-				...baseCharacter,
-				id: 'consistency-3',
-				level: 3,
-				selectedSubclass: 'berserker'
-			}));
+			const level3 = calculateCharacterWithBreakdowns(
+				convertToEnhancedBuildData({
+					...baseCharacter,
+					id: 'consistency-3',
+					level: 3,
+					selectedSubclass: 'berserker'
+				})
+			);
 
 			// Each level should add 1 talent and 1 path point
 			expect(level2.levelBudgets.totalTalents - level1.levelBudgets.totalTalents).toBe(1);
 			expect(level3.levelBudgets.totalTalents - level2.levelBudgets.totalTalents).toBe(1);
-			
+
 			expect(level2.levelBudgets.totalPathPoints - level1.levelBudgets.totalPathPoints).toBe(1);
 			expect(level3.levelBudgets.totalPathPoints - level2.levelBudgets.totalPathPoints).toBe(1);
 		});
 	});
 });
-

@@ -1,6 +1,6 @@
 /**
  * M4.1c - Talent Effect Application Tests
- * 
+ *
  * Tests that talent effects are:
  * - Properly integrated into character calculations
  * - Applied N times for count-based selection
@@ -9,16 +9,19 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from './enhancedCharacterCalculator';
+import {
+	convertToEnhancedBuildData,
+	calculateCharacterWithBreakdowns
+} from './enhancedCharacterCalculator';
 import { allTalents } from '../rulesdata/classes-data/talents/talent.loader';
 
 describe('Talent Effect Application (M4.1c)', () => {
 	describe('Single Selection - General Talents', () => {
 		it('should apply "Skill Point Increase" talent effects', () => {
-			const skillIncreaseTalent = allTalents.find(t => 
-				t.id.includes('skill') && t.category === 'general'
+			const skillIncreaseTalent = allTalents.find(
+				(t) => t.id.includes('skill') && t.category === 'general'
 			);
-			
+
 			if (!skillIncreaseTalent) {
 				console.warn('Skill increase talent not found, skipping test');
 				return;
@@ -62,10 +65,10 @@ describe('Talent Effect Application (M4.1c)', () => {
 		});
 
 		it('should apply "Attribute Increase" talent effects', () => {
-			const attributeTalent = allTalents.find(t => 
-				t.id.includes('attribute') && t.category === 'general'
+			const attributeTalent = allTalents.find(
+				(t) => t.id.includes('attribute') && t.category === 'general'
 			);
-			
+
 			if (!attributeTalent) {
 				console.warn('Attribute increase talent not found, skipping test');
 				return;
@@ -106,10 +109,10 @@ describe('Talent Effect Application (M4.1c)', () => {
 
 	describe('Multiple Selection (Count-Based)', () => {
 		it('should apply "Skill Point Increase" talent twice', () => {
-			const skillTalent = allTalents.find(t => 
-				t.id.includes('skill') && t.category === 'general'
+			const skillTalent = allTalents.find(
+				(t) => t.id.includes('skill') && t.category === 'general'
 			);
-			
+
 			if (!skillTalent) {
 				console.warn('Skill talent not found, skipping test');
 				return;
@@ -152,10 +155,10 @@ describe('Talent Effect Application (M4.1c)', () => {
 		});
 
 		it('should correctly count talent budget with multiple selections', () => {
-			const skillTalent = allTalents.find(t => 
-				t.id.includes('skill') && t.category === 'general'
+			const skillTalent = allTalents.find(
+				(t) => t.id.includes('skill') && t.category === 'general'
 			);
-			
+
 			if (!skillTalent) return;
 
 			const character = {
@@ -186,10 +189,10 @@ describe('Talent Effect Application (M4.1c)', () => {
 		});
 
 		it('should apply same general talent up to 3 times', () => {
-			const skillTalent = allTalents.find(t => 
-				t.id.includes('skill') && t.category === 'general'
+			const skillTalent = allTalents.find(
+				(t) => t.id.includes('skill') && t.category === 'general'
 			);
-			
+
 			if (!skillTalent) return;
 
 			const character = {
@@ -222,10 +225,10 @@ describe('Talent Effect Application (M4.1c)', () => {
 
 	describe('Class Talent Effects', () => {
 		it('should apply class talent effects', () => {
-			const barbarianTalent = allTalents.find(t => 
-				t.id.includes('barbarian') && t.category === 'class'
+			const barbarianTalent = allTalents.find(
+				(t) => t.id.includes('barbarian') && t.category === 'class'
 			);
-			
+
 			if (!barbarianTalent) {
 				console.warn('Barbarian talent not found, skipping test');
 				return;
@@ -259,10 +262,10 @@ describe('Talent Effect Application (M4.1c)', () => {
 		});
 
 		it('should only allow class talents once (not count-based)', () => {
-			const wizardTalent = allTalents.find(t => 
-				t.id.includes('wizard') && t.category === 'class'
+			const wizardTalent = allTalents.find(
+				(t) => t.id.includes('wizard') && t.category === 'class'
 			);
-			
+
 			if (!wizardTalent) return;
 
 			const character = {
@@ -321,13 +324,11 @@ describe('Talent Effect Application (M4.1c)', () => {
 
 			// Should have multiclass feature in unlocked features
 			expect(result).toBeDefined();
-			
+
 			// Check if Rage effects are present (if the feature has effects)
 			const effects = result.attributedEffects || [];
-			const multiclassEffects = effects.filter(e => 
-				e.source.type === 'multiclass_feature'
-			);
-			
+			const multiclassEffects = effects.filter((e) => e.source.type === 'multiclass_feature');
+
 			// May or may not have effects depending on feature data
 			console.log(`Multiclass effects found: ${multiclassEffects.length}`);
 		});
@@ -364,10 +365,10 @@ describe('Talent Effect Application (M4.1c)', () => {
 
 	describe('Effect Source Attribution', () => {
 		it('should attribute effects to talent source', () => {
-			const skillTalent = allTalents.find(t => 
-				t.id.includes('skill') && t.category === 'general'
+			const skillTalent = allTalents.find(
+				(t) => t.id.includes('skill') && t.category === 'general'
 			);
-			
+
 			if (!skillTalent || !skillTalent.effects) return;
 
 			const character = {
@@ -394,8 +395,8 @@ describe('Talent Effect Application (M4.1c)', () => {
 
 			// Check for talent effects in attributed effects
 			const effects = result.attributedEffects || [];
-			const talentEffects = effects.filter(e => e.source.type === 'talent');
-			
+			const talentEffects = effects.filter((e) => e.source.type === 'talent');
+
 			expect(talentEffects.length).toBeGreaterThanOrEqual(0); // May or may not have effects
 		});
 
@@ -451,9 +452,9 @@ describe('Talent Effect Application (M4.1c)', () => {
 
 			// Should be able to filter effects by source type
 			const effects = result.attributedEffects || [];
-			const talentEffects = effects.filter(e => e.source.type === 'talent');
-			const classEffects = effects.filter(e => e.source.type === 'class_feature');
-			
+			const talentEffects = effects.filter((e) => e.source.type === 'talent');
+			const classEffects = effects.filter((e) => e.source.type === 'class_feature');
+
 			expect(Array.isArray(talentEffects)).toBe(true);
 			expect(Array.isArray(classEffects)).toBe(true);
 		});
@@ -461,10 +462,10 @@ describe('Talent Effect Application (M4.1c)', () => {
 
 	describe('Stat Impact Verification', () => {
 		it('talent effects should modify final character stats', () => {
-			const skillTalent = allTalents.find(t => 
-				t.id.includes('skill') && t.category === 'general'
+			const skillTalent = allTalents.find(
+				(t) => t.id.includes('skill') && t.category === 'general'
 			);
-			
+
 			if (!skillTalent) return;
 
 			const withoutTalent = {
@@ -492,21 +493,25 @@ describe('Talent Effect Application (M4.1c)', () => {
 				selectedTalents: { [skillTalent.id]: 1 }
 			};
 
-			const resultWithout = calculateCharacterWithBreakdowns(convertToEnhancedBuildData(withoutTalent));
+			const resultWithout = calculateCharacterWithBreakdowns(
+				convertToEnhancedBuildData(withoutTalent)
+			);
 			const resultWith = calculateCharacterWithBreakdowns(convertToEnhancedBuildData(withTalent));
 
 			// Stats should be different
-			expect(resultWith.levelBudgets.totalSkillPoints).not.toBe(resultWithout.levelBudgets.totalSkillPoints);
+			expect(resultWith.levelBudgets.totalSkillPoints).not.toBe(
+				resultWithout.levelBudgets.totalSkillPoints
+			);
 		});
 
 		it('should have cumulative effects with multiple talents', () => {
-			const skillTalent = allTalents.find(t => 
-				t.id.includes('skill') && t.category === 'general'
+			const skillTalent = allTalents.find(
+				(t) => t.id.includes('skill') && t.category === 'general'
 			);
-			const attributeTalent = allTalents.find(t => 
-				t.id.includes('attribute') && t.category === 'general'
+			const attributeTalent = allTalents.find(
+				(t) => t.id.includes('attribute') && t.category === 'general'
 			);
-			
+
 			if (!skillTalent || !attributeTalent) return;
 
 			const character = {
@@ -581,14 +586,14 @@ describe('Talent Effect Application (M4.1c)', () => {
 				selectedTraitIds: [],
 				selectedTraitChoices: {},
 				selectedFeatureChoices: {},
-				selectedTalents: { 'invalid_talent_id': 1 },
+				selectedTalents: { invalid_talent_id: 1 },
 				skillsData: {},
 				tradesData: {},
 				languagesData: { common: { fluency: 'fluent' as const } }
 			};
 
 			const enhanced = convertToEnhancedBuildData(character);
-			
+
 			// Should not crash
 			expect(() => {
 				calculateCharacterWithBreakdowns(enhanced);
@@ -596,8 +601,8 @@ describe('Talent Effect Application (M4.1c)', () => {
 		});
 
 		it('should handle talent without effects', () => {
-			const talentNoEffects = allTalents.find(t => !t.effects || t.effects.length === 0);
-			
+			const talentNoEffects = allTalents.find((t) => !t.effects || t.effects.length === 0);
+
 			if (!talentNoEffects) {
 				console.log('All talents have effects, skipping test');
 				return;
@@ -630,4 +635,3 @@ describe('Talent Effect Application (M4.1c)', () => {
 		});
 	});
 });
-

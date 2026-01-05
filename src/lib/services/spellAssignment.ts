@@ -1,4 +1,4 @@
-import { allSpells } from '../rulesdata/spells-data/spells';
+import { ALL_SPELLS as allSpells } from '../rulesdata/spells-data';
 import { SpellSchool } from '../rulesdata/schemas/spell.schema';
 import type { SpellData } from '../../types/character';
 import { findClassByName } from '../rulesdata/loaders/class-features.loader';

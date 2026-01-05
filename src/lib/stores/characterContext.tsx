@@ -45,7 +45,14 @@ export interface CharacterInProgressStoreData
 	schemaVersion?: number;
 	selectedTalents?: Record<string, number>; // Changed from string[] to count-based
 	pathPointAllocations?: { martial?: number; spellcasting?: number };
-	selectedMulticlassOption?: 'novice' | 'adept' | 'expert' | 'master' | 'grandmaster' | 'legendary' | null;
+	selectedMulticlassOption?:
+		| 'novice'
+		| 'adept'
+		| 'expert'
+		| 'master'
+		| 'grandmaster'
+		| 'legendary'
+		| null;
 	selectedMulticlassClass?: string;
 	selectedMulticlassFeature?: string;
 	selectedSubclass?: string; // Subclass selection (e.g., "Berserker" for Barbarian at Level 3)
@@ -122,7 +129,12 @@ type CharacterAction =
 	  }
 	| { type: 'SET_SELECTED_TALENTS'; talents: Record<string, number> }
 	| { type: 'SET_PATH_POINTS'; pathPoints: { martial?: number; spellcasting?: number } }
-	| { type: 'SET_MULTICLASS'; option: 'novice' | 'adept' | 'expert' | 'master' | 'grandmaster' | 'legendary' | null; classId: string; featureId: string }
+	| {
+			type: 'SET_MULTICLASS';
+			option: 'novice' | 'adept' | 'expert' | 'master' | 'grandmaster' | 'legendary' | null;
+			classId: string;
+			featureId: string;
+	  }
 	| { type: 'SET_SUBCLASS'; subclass: string | null }
 	| { type: 'ENTER_LEVEL_UP_MODE'; originalLevel: number; characterId: string };
 
@@ -149,8 +161,8 @@ function characterReducer(
 		case 'SET_PATH_POINTS':
 			return { ...state, pathPointAllocations: action.pathPoints };
 		case 'SET_MULTICLASS':
-			return { 
-				...state, 
+			return {
+				...state,
 				selectedMulticlassOption: action.option,
 				selectedMulticlassClass: action.classId,
 				selectedMulticlassFeature: action.featureId

@@ -7,12 +7,14 @@ A comprehensive character creation and management system for the DC20 tabletop R
 ## ✨ Features
 
 ### Character Creation Wizard
+
 - **Multi-level support**: Create characters from level 1 through 5+
 - **Step-by-step flow**: Class & Features → Leveling Choices → Ancestry → Attributes → Background → Spells & Maneuvers → Finalization
 - **Real-time validation**: Instant feedback on choices with detailed error messages
 - **Character preview**: Live stat calculations as you build
 
 ### Core Systems
+
 - **Leveling System**: Talent selection and path point allocation for higher-level characters
 - **Multiclass Support**: Choose multiclass options with proper progression
 - **Mastery System**: Level-based skill and trade proficiency with automatic limits
@@ -21,6 +23,7 @@ A comprehensive character creation and management system for the DC20 tabletop R
 - **Multi-Attribute Trades**: flexible attribute associations for trades (e.g. Athletics uses Might or Agility)
 
 ### Character Management
+
 - **Character Sheet**: Responsive design for desktop and mobile
 - **Browser Storage**: Save/load characters to localStorage
 - **Import/Export**: JSON-based character data portability
@@ -28,6 +31,7 @@ A comprehensive character creation and management system for the DC20 tabletop R
 - **PDF Export**: Export characters to official DC20 character sheet PDF
 
 ### Rules Implementation
+
 - **11 Classes**: Barbarian, Bard, Cleric, Druid, Hunter, Martial Artist, Paladin, Rogue, Sorcerer, Warlock, Warrior
 - **12 Ancestries**: Human, Elf, Dwarf, Halfling, Orc, Dragonborn, Beastborn, Construct, Cursed, Faeborn, Primordial, Shade
 - **Backgrounds**: 20+ backgrounds with skills, trades, and languages
@@ -39,6 +43,7 @@ A comprehensive character creation and management system for the DC20 tabletop R
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - **Node.js** 20 or higher
 - **npm** or **pnpm** for package management
 
@@ -65,15 +70,18 @@ The application will be available at `http://localhost:5173`
 ### Available Scripts
 
 **Development & Build:**
+
 - `npm run dev` – Start Vite dev server (hot reload enabled)
 - `npm run build` – Production build to `dist/`
 - `npm run preview` – Preview production build on port 4173
 
 **Code Quality:**
+
 - `npm run lint` – Run Prettier check + ESLint
 - `npm run format` – Auto-format with Prettier (includes Tailwind class sorting)
 
 **Testing:**
+
 - `npm run test:unit` – Run Vitest unit tests
 - `npm run test:e2e` – Run Playwright E2E tests
 - `npm run test:e2e:ui` – Run E2E tests with interactive UI
@@ -82,6 +90,7 @@ The application will be available at `http://localhost:5173`
 - `npm run test` – Run unit tests (run mode) then E2E tests
 
 **Single Test Execution:**
+
 ```bash
 # Run specific unit test by name
 npx vitest -t "should calculate health correctly"
@@ -91,6 +100,7 @@ npx vitest src/lib/services/enhancedCharacterCalculator.test.ts
 ```
 
 **E2E Test Optimization:**
+
 ```bash
 # Skip build, reuse existing dist/
 PLAYWRIGHT_SKIP_BUILD=1 npm run test:e2e
@@ -106,7 +116,7 @@ E2E_WORKERS=4 npm run test:e2e
 - **Styling**: Material-UI (MUI) + Emotion + Tailwind CSS 4
 - **State Management**: React Context API
 - **Persistence**: Browser localStorage (client-side only)
-- **Testing**: 
+- **Testing**:
   - Unit: Vitest (browser + node environments)
   - E2E: Playwright
 - **Code Quality**: ESLint + Prettier
@@ -139,6 +149,7 @@ docs/systems/                  # System documentation
 Comprehensive system documentation is available in the `docs/systems/` directory:
 
 ### Core Systems
+
 - **[Leveling System](docs/systems/LEVELING_SYSTEM.MD)** – Character leveling (1-5+), talents, and path progression
 - **[Class System](docs/systems/CLASS_SYSTEM.MD)** – Class features, subclasses, and progressions
 - **[Ancestry System](docs/systems/ANCESTRY_SYSTEM.MD)** – Ancestries, traits, and mixed ancestry
@@ -146,21 +157,25 @@ Comprehensive system documentation is available in the `docs/systems/` directory
 - **[Traits System](docs/systems/TRAITS_SYSTEM.MD)** – Trait selection and ancestry points
 
 ### Calculation & Effects
+
 - **[Calculation System](docs/systems/CALCULATION_SYSTEM.MD)** – Derived stats, formulas, and validation
 - **[Effect System](docs/systems/EFFECT_SYSTEM.MD)** – Effect types, targets, and resolution
 - **[Trades Multi-Attribute](docs/systems/TRADES_MULTI_ATTRIBUTE_SPEC.md)** – Trade attribute calculation rules
 
 ### Combat & Abilities
+
 - **[Spells System](docs/systems/SPELLS_SYSTEM.MD)** – Spell selection and management
 - **[Martials System](docs/systems/MARTIALS_SYSTEM.MD)** – Maneuvers and martial techniques
 
 ### Additional Systems
+
 - **[Multiclass System](docs/systems/MULTICLASS_SYSTEM.MD)** – Multiclass rules and progression
 - **[Character Sheet](docs/systems/CHARACTER_SHEET.MD)** – Character sheet layout and features
 - **[PDF Export System](docs/systems/PDF_EXPORT_SYSTEM.MD)** – PDF generation and form filling
 - **[Ontology](docs/systems/ONTOLOGY.md)** – Core concepts and architecture overview
 
 ### Development Guides
+
 - **[AGENTS.md](AGENTS.md)** – Repository guidelines and contributor documentation
 - **[Character Creation Flow](docs/systems/CHARACTER_CREATION_FLOW.MD)** – Step-by-step creation process
 - **[Feature ID Naming Convention](docs/systems/FEATURE_ID_NAMING_CONVENTION.md)** – ID naming standards
@@ -229,6 +244,7 @@ For detailed guidelines, see **[AGENTS.md](AGENTS.md)**
 ## 🎯 Project Status
 
 ### Current Features
+
 - ✅ Character creation wizard (all stages)
 - ✅ Leveling system (1-5+)
 - ✅ Multiclass support
@@ -243,6 +259,7 @@ For detailed guidelines, see **[AGENTS.md](AGENTS.md)**
 ### Planned Features
 
 See `docs/plannedSpecs/` for detailed specifications:
+
 - **[Leveling Epic](docs/plannedSpecs/LEVELING_EPIC.md)** – Extended leveling beyond level 5
 - **[Conditions System](docs/plannedSpecs/CONDITIONS_SPEC.md)** – Status effects and conditions
 - **[Encounter Builder](docs/plannedSpecs/ENCOUNTR_BUILDER.md)** – Combat encounter management
@@ -252,6 +269,7 @@ See `docs/plannedSpecs/` for detailed specifications:
 ## 🆘 Support
 
 For questions, issues, or feature requests:
+
 1. Check the documentation in `docs/systems/`
 2. Review existing issues
 3. Create a new issue with detailed description and reproduction steps

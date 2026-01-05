@@ -298,32 +298,39 @@ function LoadCharacter() {
 			});
 			const calcResult = calc.calculateCharacterWithBreakdowns(buildData);
 			// Use existing denorm if present; otherwise compute now to avoid PDF-only math
-			const denorm = character.masteryLadders && character.skillTotals && character.knowledgeTradeMastery && character.languageMastery
-				? ({
-					masteryLadders: character.masteryLadders,
-					skillTotals: (character as any).skillTotals,
-					knowledgeTradeMastery: (character as any).knowledgeTradeMastery,
-					languageMastery: (character as any).languageMastery
-				  } as any)
-				: denormMod.denormalizeMastery({
-					finalAttributes: {
-						might: calcResult.stats.finalMight,
-						agility: calcResult.stats.finalAgility,
-						charisma: calcResult.stats.finalCharisma,
-						intelligence: calcResult.stats.finalIntelligence,
-						prime: calcResult.stats.finalPrimeModifierValue
-					},
-					skillsRanks: character.skillsData || {},
-					tradesRanks: character.tradesData || {},
-					languagesData: character.languagesData || { common: { fluency: 'fluent' } }
-				});
-			const pdfData = pdf.transformCalculatedCharacterToPdfData(calcResult, { saved: character, denorm });
-			const blob = await fillPdfFromData(pdfData, { flatten: false });
+			const denorm =
+				character.masteryLadders &&
+				character.skillTotals &&
+				character.knowledgeTradeMastery &&
+				character.languageMastery
+					? ({
+							masteryLadders: character.masteryLadders,
+							skillTotals: (character as any).skillTotals,
+							knowledgeTradeMastery: (character as any).knowledgeTradeMastery,
+							languageMastery: (character as any).languageMastery
+						} as any)
+					: denormMod.denormalizeMastery({
+							finalAttributes: {
+								might: calcResult.stats.finalMight,
+								agility: calcResult.stats.finalAgility,
+								charisma: calcResult.stats.finalCharisma,
+								intelligence: calcResult.stats.finalIntelligence,
+								prime: calcResult.stats.finalPrimeModifierValue
+							},
+							skillsRanks: character.skillsData || {},
+							tradesRanks: character.tradesData || {},
+							languagesData: character.languagesData || { common: { fluency: 'fluent' } }
+						});
+			const pdfData = pdf.transformCalculatedCharacterToPdfData(calcResult, {
+				saved: character,
+				denorm
+			});
+			const blob = await fillPdfFromData(pdfData, { flatten: false, version: '0.10' });
 			const safeName = (character.finalName || character.id || 'Character')
 				.replace(/[^A-Za-z0-9]+/g, '_')
 				.replace(/^_+|_+$/g, '')
 				.slice(0, 60);
-			const fileName = `${safeName}_vDC20-0.9.5.pdf`;
+			const fileName = `${safeName}_vDC20-0.10.pdf`;
 			const url = URL.createObjectURL(blob);
 			const a = document.createElement('a');
 			a.href = url;
@@ -415,12 +422,12 @@ function LoadCharacter() {
 								>
 									Edit
 								</StyledActionButton>
-							<StyledActionButton
-								variant="secondary"
-								onClick={(e) => handleLevelUp(character, e)}
-							>
-								Level Up
-							</StyledActionButton>
+								<StyledActionButton
+									variant="secondary"
+									onClick={(e) => handleLevelUp(character, e)}
+								>
+									Level Up
+								</StyledActionButton>
 								<StyledActionButton
 									variant="danger"
 									onClick={(e) => handleDeleteClick(character, e)}

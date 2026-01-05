@@ -1,9 +1,9 @@
 /**
  * Class Progression Resolver
- * 
+ *
  * Resolves all progression data for a character up to a target level.
  * Returns budgets, unlocked features (with full objects), and pending choices.
- * 
+ *
  * This is the single source of truth for:
  * - What features a character has at level N
  * - What budgets (talents, path points, etc.) they have available
@@ -57,7 +57,6 @@ export interface ProgressionBudgets {
 	totalTradePoints: number;
 	totalAttributePoints: number;
 	totalManeuversKnown: number;
-	totalTechniquesKnown: number;
 	totalCantripsKnown: number;
 	totalSpellsKnown: number;
 	totalTalents: number;
@@ -112,10 +111,7 @@ function getFeatureById(classId: string, featureId: string): ClassFeature | unde
 /**
  * Resolve class progression for a character up to target level
  */
-export function resolveClassProgression(
-	classId: string,
-	targetLevel: number
-): ResolvedProgression {
+export function resolveClassProgression(classId: string, targetLevel: number): ResolvedProgression {
 	// Validate inputs
 	if (targetLevel < 1 || targetLevel > 10) {
 		throw new Error(`Invalid level: ${targetLevel}. Level must be between 1 and 10.`);
@@ -138,7 +134,6 @@ export function resolveClassProgression(
 		totalTradePoints: 0,
 		totalAttributePoints: 0,
 		totalManeuversKnown: 0,
-		totalTechniquesKnown: 0,
 		totalCantripsKnown: 0,
 		totalSpellsKnown: 0,
 		totalTalents: 0,
@@ -164,7 +159,6 @@ export function resolveClassProgression(
 		budgets.totalTradePoints += levelData.tradePoints || 0;
 		budgets.totalAttributePoints += levelData.attributePoints || 0;
 		budgets.totalManeuversKnown += levelData.maneuversKnown || 0;
-		budgets.totalTechniquesKnown += levelData.techniquesKnown || 0;
 		budgets.totalCantripsKnown += levelData.cantripsKnown || 0;
 		budgets.totalSpellsKnown += levelData.spellsKnown || 0;
 
@@ -221,7 +215,9 @@ export function resolveClassProgression(
 /**
  * Get available subclasses for a class
  */
-export function getAvailableSubclasses(classId: string): Array<{ name: string; description?: string }> {
+export function getAvailableSubclasses(
+	classId: string
+): Array<{ name: string; description?: string }> {
 	const classFeatures = CLASS_FEATURES_MAP[classId];
 	if (!classFeatures?.subclasses) return [];
 

@@ -152,7 +152,11 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 									</option>
 								))}
 							</StyledManeuverTypeFilter>
-							<StyledAddManeuverButton data-testid="add-maneuver" $isMobile={effectiveIsMobile} onClick={addManeuverSlot}>
+							<StyledAddManeuverButton
+								data-testid="add-maneuver"
+								$isMobile={effectiveIsMobile}
+								onClick={addManeuverSlot}
+							>
 								+ Add Maneuver
 							</StyledAddManeuverButton>
 						</>
@@ -197,7 +201,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 							<React.Fragment key={maneuver.id}>
 								<StyledManeuverRow $isMobile={effectiveIsMobile}>
 									{/* Remove Button - only show in edit mode */}
-									{ !readOnly && (
+									{!readOnly && (
 										<StyledManeuverRemoveButton
 											data-testid={`remove-maneuver-${maneuver.id}`}
 											$isMobile={effectiveIsMobile}
@@ -205,7 +209,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 										>
 											×
 										</StyledManeuverRemoveButton>
-									) }
+									)}
 
 									{/* Maneuver Name - show as text in read-only mode, dropdown in edit mode */}
 									{readOnly ? (

@@ -66,7 +66,6 @@ const martialPathSchema = z
 		maneuvers: z
 			.object({ learnsAllAttack: z.boolean().optional(), additionalKnown: z.string().optional() })
 			.optional(),
-		techniques: z.object({ additionalKnown: z.string().optional() }).optional(),
 		staminaPoints: z.object({ maximumIncreasesBy: z.string().optional() }).optional(),
 		staminaRegen: z
 			.object({ description: z.string().optional(), conditions: z.array(z.string()).optional() })
@@ -91,14 +90,17 @@ const hybridPathSchema = z
 	.optional();
 
 // Schema for LevelGains - structured progression data per level
-const levelGainsSchema = z.object({
-	talents: z.number().optional(),
-	pathPoints: z.number().optional(),
-	ancestryPoints: z.number().optional(),
-	classFeatures: z.array(z.string()).optional(),
-	subclassFeatureChoice: z.boolean().optional(),
-	epicBoon: z.boolean().optional()
-}).optional().nullable();
+const levelGainsSchema = z
+	.object({
+		talents: z.number().optional(),
+		pathPoints: z.number().optional(),
+		ancestryPoints: z.number().optional(),
+		classFeatures: z.array(z.string()).optional(),
+		subclassFeatureChoice: z.boolean().optional(),
+		epicBoon: z.boolean().optional()
+	})
+	.optional()
+	.nullable();
 
 // Schema for ClassLevel - complete level progression entry
 const classLevelSchema = z.object({
@@ -109,7 +111,6 @@ const classLevelSchema = z.object({
 	tradePoints: z.number(),
 	staminaPoints: z.number(),
 	maneuversKnown: z.number(),
-	techniquesKnown: z.number(),
 	manaPoints: z.number(),
 	cantripsKnown: z.number(),
 	spellsKnown: z.number(),
@@ -130,7 +131,6 @@ export const classSchema = z.object({
 		skillPoints: z.number(),
 		tradePoints: z.number(),
 		maneuversKnown: z.number(),
-		techniquesKnown: z.number(),
 		cantripsKnown: z.number(),
 		spellsKnown: z.number()
 	}),

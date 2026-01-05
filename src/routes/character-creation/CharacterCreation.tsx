@@ -132,16 +132,27 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	// Initialize character state for level-up mode
 	useEffect(() => {
 		if (isLevelUpMode && levelUpCharacter) {
-			console.log('⬆️ CharacterCreation: Initializing level-up mode for character:', levelUpCharacter.finalName);
+			console.log(
+				'⬆️ CharacterCreation: Initializing level-up mode for character:',
+				levelUpCharacter.finalName
+			);
 			const contextData = convertSavedCharacterToContext(levelUpCharacter);
 
 			// Dispatch all data
-			dispatch({ type: 'ENTER_LEVEL_UP_MODE', originalLevel: levelUpCharacter.level, characterId: levelUpCharacter.id });
+			dispatch({
+				type: 'ENTER_LEVEL_UP_MODE',
+				originalLevel: levelUpCharacter.level,
+				characterId: levelUpCharacter.id
+			});
 			dispatch({ type: 'SET_CLASS', classId: contextData.classId! });
 			dispatch({ type: 'SET_LEVEL', level: contextData.level! });
-			
+
 			if (contextData.ancestry1Id) {
-				dispatch({ type: 'SET_ANCESTRY', ancestry1Id: contextData.ancestry1Id, ancestry2Id: contextData.ancestry2Id || null });
+				dispatch({
+					type: 'SET_ANCESTRY',
+					ancestry1Id: contextData.ancestry1Id,
+					ancestry2Id: contextData.ancestry2Id || null
+				});
 			}
 			if (contextData.selectedTraitIds && contextData.selectedTraitIds.length > 0) {
 				dispatch({ type: 'SET_TRAITS', selectedTraitIds: contextData.selectedTraitIds });
@@ -149,10 +160,15 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			if (contextData.selectedTraitChoices) {
 				Object.entries(contextData.selectedTraitChoices).forEach(([key, value]) => {
 					const [traitId, effectIndex] = key.split('-');
-					dispatch({ type: 'UPDATE_TRAIT_CHOICE', traitId, effectIndex: parseInt(effectIndex), choice: value });
+					dispatch({
+						type: 'UPDATE_TRAIT_CHOICE',
+						traitId,
+						effectIndex: parseInt(effectIndex),
+						choice: value
+					});
 				});
 			}
-			
+
 			// Update attributes
 			dispatch({
 				type: 'UPDATE_STORE',
@@ -163,7 +179,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					attribute_intelligence: contextData.attribute_intelligence
 				}
 			});
-			
+
 			// Background
 			dispatch({ type: 'UPDATE_SKILLS', skillsData: contextData.skillsData! });
 			dispatch({ type: 'UPDATE_TRADES', tradesData: contextData.tradesData! });
@@ -176,7 +192,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					tradeToLanguage: contextData.tradeToLanguageConversions
 				}
 			});
-			
+
 			// Leveling
 			if (contextData.selectedTalents) {
 				dispatch({ type: 'SET_SELECTED_TALENTS', talents: contextData.selectedTalents });
@@ -188,16 +204,19 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				dispatch({ type: 'SET_SUBCLASS', subclass: contextData.selectedSubclass });
 			}
 			if (contextData.selectedFeatureChoices) {
-				dispatch({ type: 'SET_FEATURE_CHOICES', selectedFeatureChoices: contextData.selectedFeatureChoices });
+				dispatch({
+					type: 'SET_FEATURE_CHOICES',
+					selectedFeatureChoices: contextData.selectedFeatureChoices
+				});
 			}
-			
+
 			// Spells & Maneuvers
 			dispatch({
 				type: 'UPDATE_SPELLS_AND_MANEUVERS',
 				spells: contextData.selectedSpells || [],
 				maneuvers: contextData.selectedManeuvers || []
 			});
-			
+
 			// Character Name
 			dispatch({
 				type: 'UPDATE_STORE',
@@ -213,9 +232,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 	// Dynamic steps based on level
 	const getSteps = () => {
-		const baseSteps = [
-			{ number: 1, label: 'Class & Features' }
-		];
+		const baseSteps = [{ number: 1, label: 'Class & Features' }];
 
 		// Add leveling choices step if level > 1
 		if (state.level > 1) {
@@ -255,12 +272,12 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			if (state.isLevelUpMode && state.sourceCharacterId) {
 				// Level-up mode: complete character then update existing
 				console.log('⬆️ Completing level-up for character:', state.sourceCharacterId);
-				
+
 				// Create a custom onNavigateToLoad that updates instead of creates
 				const originalId = state.sourceCharacterId;
 				const allChars = getAllSavedCharacters();
-				const originalCreatedAt = allChars.find(c => c.id === originalId)?.createdAt;
-				
+				const originalCreatedAt = allChars.find((c) => c.id === originalId)?.createdAt;
+
 				await completeCharacter(state, {
 					onShowSnackbar: (message: string) => {
 						setSnackbarMessage('Character leveled up successfully!');
@@ -270,11 +287,11 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 						// completeCharacter adds a new character, we need to replace it with updated original
 						const updatedChars = getAllSavedCharacters();
 						const newChar = updatedChars[updatedChars.length - 1]; // Last one added
-						
+
 						// Update the original character, remove the new one
 						const final = updatedChars
-							.filter(c => c.id !== newChar.id) // Remove newly created
-							.map(char => {
+							.filter((c) => c.id !== newChar.id) // Remove newly created
+							.map((char) => {
 								if (char.id === originalId) {
 									// Replace original with updated data
 									return {
@@ -285,7 +302,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 								}
 								return char;
 							});
-						
+
 						saveAllCharacters(final);
 						console.log('✅ Character updated via level-up', originalId);
 						navigate(`/character/${originalId}`);
@@ -383,113 +400,111 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 		// Step 1: Class Selection
 		if (step === 1) {
-				if (state.classId === null) return false;
+			if (state.classId === null) return false;
 
-				// Check if all required feature choices have been made
-				const selectedClass = classesData.find(
-					(c) => c.id.toLowerCase() === state.classId?.toLowerCase()
-				);
-				if (!selectedClass) return false;
+			// Check if all required feature choices have been made
+			const selectedClass = classesData.find(
+				(c) => c.id.toLowerCase() === state.classId?.toLowerCase()
+			);
+			if (!selectedClass) return false;
 
-				// Check if all required feature choices have been made
-				const selectedClassFeatures = findClassByName(selectedClass.name);
-				if (!selectedClassFeatures) return false;
+			// Check if all required feature choices have been made
+			const selectedClassFeatures = findClassByName(selectedClass.name);
+			if (!selectedClassFeatures) return false;
 
-				// FIXED: Use typed data instead of JSON parsing
-				const selectedFeatureChoices: { [key: string]: string } =
-					state.selectedFeatureChoices || {};
+			// FIXED: Use typed data instead of JSON parsing
+			const selectedFeatureChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
 
-				// Check if spell school choices are required and have been made
-				const spellList = selectedClassFeatures.spellcastingPath?.spellList;
-				if (spellList) {
-					// Check Warlock-style spell school selection
-					if (spellList.type === 'all_schools' && spellList.schoolCount) {
-						const choiceId = `${selectedClassFeatures.className.toLowerCase()}_spell_schools`;
-						const choice = selectedFeatureChoices[choiceId];
-						if (!choice) return false;
-						// Expect arrays directly (no more legacy JSON string support)
+			// Check if spell school choices are required and have been made
+			const spellList = selectedClassFeatures.spellcastingPath?.spellList;
+			if (spellList) {
+				// Check Warlock-style spell school selection
+				if (spellList.type === 'all_schools' && spellList.schoolCount) {
+					const choiceId = `${selectedClassFeatures.className.toLowerCase()}_spell_schools`;
+					const choice = selectedFeatureChoices[choiceId];
+					if (!choice) return false;
+					// Expect arrays directly (no more legacy JSON string support)
+					const selectedSchools = Array.isArray(choice) ? choice : [choice];
+					if (selectedSchools.length !== spellList.schoolCount) return false;
+				}
+
+				// Check Spellblade-style additional school selection
+				if (spellList.type === 'schools' && spellList.schoolCount && spellList.schoolCount > 0) {
+					const choiceId = `${selectedClassFeatures.className.toLowerCase()}_additional_spell_schools`;
+					const choice = selectedFeatureChoices[choiceId];
+					if (!choice) return false;
+					if (spellList.schoolCount > 1) {
 						const selectedSchools = Array.isArray(choice) ? choice : [choice];
 						if (selectedSchools.length !== spellList.schoolCount) return false;
 					}
+				}
 
-					// Check Spellblade-style additional school selection
-					if (spellList.type === 'schools' && spellList.schoolCount && spellList.schoolCount > 0) {
-						const choiceId = `${selectedClassFeatures.className.toLowerCase()}_additional_spell_schools`;
-						const choice = selectedFeatureChoices[choiceId];
-						if (!choice) return false;
-						if (spellList.schoolCount > 1) {
-							const selectedSchools = Array.isArray(choice) ? choice : [choice];
-							if (selectedSchools.length !== spellList.schoolCount) return false;
-						}
+				// Check Wizard-style feature-based spell school choices
+				const level1Features = selectedClassFeatures.coreFeatures.filter(
+					(feature) => feature.levelGained === 1
+				);
+				for (const feature of level1Features) {
+					const description = feature.description.toLowerCase();
+					// Only include features that are character creation choices, not in-game tactical choices
+					const isCharacterCreationChoice =
+						(description.includes('choose a spell school') ||
+							description.includes('choose 1 spell school')) &&
+						// Exclude in-game features like Arcane Sigil
+						!description.includes('when you create') &&
+						!description.includes('when you cast') &&
+						!description.includes('you can spend') &&
+						// Include features that are clearly character creation (like training/specialization)
+						(description.includes('training') ||
+							description.includes('specialize') ||
+							description.includes('initiate') ||
+							description.includes('you gain the following benefits'));
+
+					if (isCharacterCreationChoice) {
+						const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_school`;
+						if (!selectedFeatureChoices[choiceId]) return false;
 					}
-
-					// Check Wizard-style feature-based spell school choices
-					const level1Features = selectedClassFeatures.coreFeatures.filter(
-						(feature) => feature.levelGained === 1
-					);
-					for (const feature of level1Features) {
-						const description = feature.description.toLowerCase();
-						// Only include features that are character creation choices, not in-game tactical choices
-						const isCharacterCreationChoice =
-							(description.includes('choose a spell school') ||
-								description.includes('choose 1 spell school')) &&
-							// Exclude in-game features like Arcane Sigil
-							!description.includes('when you create') &&
-							!description.includes('when you cast') &&
-							!description.includes('you can spend') &&
-							// Include features that are clearly character creation (like training/specialization)
-							(description.includes('training') ||
-								description.includes('specialize') ||
-								description.includes('initiate') ||
-								description.includes('you gain the following benefits'));
-
-						if (isCharacterCreationChoice) {
-							const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_school`;
-							if (!selectedFeatureChoices[choiceId]) return false;
-						}
 				}
 			}
 
-		// NEW (M3.10d): Check if subclass selection is required
-		const needsSubclass = calculationResult?.resolvedFeatures?.availableSubclassChoice;
-		if (needsSubclass && !state.selectedSubclass) {
-			const subclassLevel = calculationResult?.resolvedFeatures?.subclassChoiceLevel;
-			console.log(
-				'❌ Step 1 incomplete: Subclass selection required at level',
-				subclassLevel
-			);
-			return false;
-		}
-
-		// NEW (M3.11d): Validate all subclass feature choices are complete
-		if (state.selectedSubclass && state.classId) {
-			const validation = validateSubclassChoicesComplete(
-				state.classId,
-				state.selectedSubclass,
-				state.level,
-				state.selectedFeatureChoices || {}
-			);
-
-			if (!validation.isValid) {
-				console.log(
-					'❌ Step 1 incomplete: Subclass feature choices incomplete',
-					validation.incompleteChoices
-				);
+			// NEW (M3.10d): Check if subclass selection is required
+			const needsSubclass = calculationResult?.resolvedFeatures?.availableSubclassChoice;
+			if (needsSubclass && !state.selectedSubclass) {
+				const subclassLevel = calculationResult?.resolvedFeatures?.subclassChoiceLevel;
+				console.log('❌ Step 1 incomplete: Subclass selection required at level', subclassLevel);
 				return false;
 			}
+
+			// NEW (M3.11d): Validate all subclass feature choices are complete
+			if (state.selectedSubclass && state.classId) {
+				const validation = validateSubclassChoicesComplete(
+					state.classId,
+					state.selectedSubclass,
+					state.level,
+					state.selectedFeatureChoices || {}
+				);
+
+				if (!validation.isValid) {
+					console.log(
+						'❌ Step 1 incomplete: Subclass feature choices incomplete',
+						validation.incompleteChoices
+					);
+					return false;
+				}
+			}
+
+			return true;
 		}
 
-		return true;
-		}
+		// Step 2: Leveling Choices (only if level > 1)
+		if (step === levelingStep && hasLevelingStep) {
+			// TODO: Re-enable validation after testing phase (M4.4)
+			// Currently disabled to allow flexible testing and debugging during development
+			console.warn(
+				'⚠️ Leveling validation temporarily disabled - re-enable in production (see M4.4 in LEVELING_EPIC.md)'
+			);
+			return true; // ← Temporarily bypass validation
 
-	// Step 2: Leveling Choices (only if level > 1)
-	if (step === levelingStep && hasLevelingStep) {
-		// TODO: Re-enable validation after testing phase (M4.4)
-		// Currently disabled to allow flexible testing and debugging during development
-		console.warn('⚠️ Leveling validation temporarily disabled - re-enable in production (see M4.4 in LEVELING_EPIC.md)');
-		return true; // ← Temporarily bypass validation
-		
-		/* Original validation logic - restore in M4.4:
+			/* Original validation logic - restore in M4.4:
 		
 		// Validate that all talent and path points have been spent
 		const budgets = calculationResult?.levelBudgets;
@@ -534,7 +549,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		});
 		return true;
 		*/
-	}
+		}
 
 		// Ancestry step
 		if (step === ancestryStep) {
@@ -653,18 +668,18 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 		// Spells & Maneuvers step
 		if (step === spellsStep) {
-			// TODO (M4.x): Re-enable spells & maneuvers validation once spell/cantrip 
+			// TODO (M4.x): Re-enable spells & maneuvers validation once spell/cantrip
 			// categorization is properly implemented and cantrip vs spell budgets are tracked separately.
 			// For now, validation is disabled to allow progression through character creation.
 			// Users can select any spells/maneuvers they want without blocking progression.
-			
+
 			console.warn('⚠️ Spells & Maneuvers validation temporarily disabled');
-			
+
 			// Log current selections for debugging
 			const selectedSpells = state.selectedSpells || [];
 			const selectedManeuvers = state.selectedManeuvers || [];
 			const budgets = calculationResult?.levelBudgets;
-			
+
 			console.log('📊 Spells & Maneuvers selections (validation disabled):', {
 				classId: state.classId,
 				level: state.level,
@@ -674,7 +689,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				selectedSpells: selectedSpells.length,
 				selectedManeuvers: selectedManeuvers.length
 			});
-			
+
 			return true; // Always allow progression
 		}
 

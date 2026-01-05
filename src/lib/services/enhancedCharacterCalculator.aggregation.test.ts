@@ -1,6 +1,6 @@
 /**
  * Unit tests for level progression aggregation in enhancedCharacterCalculator
- * 
+ *
  * Tests the aggregateProgressionGains function and integration with calculator
  */
 
@@ -9,7 +9,11 @@ import { calculateCharacterWithBreakdowns } from './enhancedCharacterCalculator'
 import type { EnhancedCharacterBuildData } from '../types/effectSystem';
 
 describe('Level Progression Aggregation (UT-1)', () => {
-	const createTestCharacter = (classId: string, level: number, attributes: any = {}): EnhancedCharacterBuildData => ({
+	const createTestCharacter = (
+		classId: string,
+		level: number,
+		attributes: any = {}
+	): EnhancedCharacterBuildData => ({
 		id: `test-${classId}-${level}`,
 		finalName: `Test ${classId} L${level}`,
 		level,
@@ -81,7 +85,7 @@ describe('Level Progression Aggregation (UT-1)', () => {
 
 			// Should have spellcasting path feature
 			const hasSpellcastingPath = result.resolvedFeatures?.unlockedFeatures.some(
-				f => f.id === 'wizard_spellcasting_path' || f.featureName.includes('Spellcasting')
+				(f) => f.id === 'wizard_spellcasting_path' || f.featureName.includes('Spellcasting')
 			);
 			expect(hasSpellcastingPath).toBe(true);
 		});
@@ -99,9 +103,15 @@ describe('Level Progression Aggregation (UT-1)', () => {
 
 	describe('Multi-Level Accumulation', () => {
 		it('should accumulate HP/SP/MP progressively', () => {
-			const l1 = calculateCharacterWithBreakdowns(createTestCharacter('barbarian', 1, { might: 3 }));
-			const l2 = calculateCharacterWithBreakdowns(createTestCharacter('barbarian', 2, { might: 3 }));
-			const l3 = calculateCharacterWithBreakdowns(createTestCharacter('barbarian', 3, { might: 3 }));
+			const l1 = calculateCharacterWithBreakdowns(
+				createTestCharacter('barbarian', 1, { might: 3 })
+			);
+			const l2 = calculateCharacterWithBreakdowns(
+				createTestCharacter('barbarian', 2, { might: 3 })
+			);
+			const l3 = calculateCharacterWithBreakdowns(
+				createTestCharacter('barbarian', 3, { might: 3 })
+			);
 
 			// HP should increase each level
 			expect(l2.stats.finalHPMax).toBeGreaterThan(l1.stats.finalHPMax);
@@ -111,7 +121,7 @@ describe('Level Progression Aggregation (UT-1)', () => {
 			const l1Features = l1.resolvedFeatures?.unlockedFeatures.length || 0;
 			const l2Features = l2.resolvedFeatures?.unlockedFeatures.length || 0;
 			const l3Features = l3.resolvedFeatures?.unlockedFeatures.length || 0;
-			
+
 			expect(l2Features).toBeGreaterThan(l1Features);
 			expect(l3Features).toBeGreaterThanOrEqual(l2Features); // L3 might not add features if only subclass choice
 		});
@@ -121,17 +131,23 @@ describe('Level Progression Aggregation (UT-1)', () => {
 			const l3 = calculateCharacterWithBreakdowns(createTestCharacter('barbarian', 3));
 
 			// L3 should have more skill/trade points than L1
-			const l1Total = (l1.levelBudgets?.totalSkillPoints || 0) + (l1.levelBudgets?.totalTradePoints || 0);
-			const l3Total = (l3.levelBudgets?.totalSkillPoints || 0) + (l3.levelBudgets?.totalTradePoints || 0);
-			
+			const l1Total =
+				(l1.levelBudgets?.totalSkillPoints || 0) + (l1.levelBudgets?.totalTradePoints || 0);
+			const l3Total =
+				(l3.levelBudgets?.totalSkillPoints || 0) + (l3.levelBudgets?.totalTradePoints || 0);
+
 			expect(l3Total).toBeGreaterThanOrEqual(l1Total);
 		});
 	});
 
 	describe('Attribute Impact on Resources', () => {
 		it('should add Might to HP total', () => {
-			const lowMight = calculateCharacterWithBreakdowns(createTestCharacter('barbarian', 1, { might: 1 }));
-			const highMight = calculateCharacterWithBreakdowns(createTestCharacter('barbarian', 1, { might: 5 }));
+			const lowMight = calculateCharacterWithBreakdowns(
+				createTestCharacter('barbarian', 1, { might: 1 })
+			);
+			const highMight = calculateCharacterWithBreakdowns(
+				createTestCharacter('barbarian', 1, { might: 5 })
+			);
 
 			// Same progression HP, but different attribute bonus
 			expect(highMight.stats.finalHPMax - lowMight.stats.finalHPMax).toBe(4); // 5 - 1
@@ -141,7 +157,7 @@ describe('Level Progression Aggregation (UT-1)', () => {
 	describe('Edge Cases', () => {
 		it('should handle invalid class gracefully', () => {
 			const char = createTestCharacter('nonexistent_class', 1);
-			
+
 			// Should not crash, should return minimal character
 			expect(() => calculateCharacterWithBreakdowns(char)).toThrow();
 		});
@@ -180,7 +196,7 @@ describe('Level Progression Aggregation (UT-1)', () => {
 
 			const features = result.resolvedFeatures?.unlockedFeatures || [];
 			expect(features.length).toBeGreaterThan(0);
-			
+
 			// Check that we have actual feature objects
 			const firstFeature = features[0];
 			expect(firstFeature).toHaveProperty('featureName');

@@ -8,12 +8,16 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 export const bardClass: ClassDefinition = {
 	className: 'Bard',
 	spellcasterPath: {
-		spellList: {
-			description: 'You learn any 2 Spells of your choice from any Spell List.',
-			type: 'any'
+		combatTraining: {
+			armor: ['Light_Armor'],
+			shields: ['Light_Shields']
 		},
-		cantrips: {
-			description: 'Cantrips Known column of the Bard Class Table'
+		spellList: {
+			description:
+				'When you learn a new Spell, you can choose any Spell from the Enchantment Spell School or with the following Spell Tags: Embolden, Enfeeble, Healing, Illusion, or Sound.',
+			type: 'schools',
+			specificSchools: ['Enchantment'],
+			spellTags: ['Embolden', 'Enfeeble', 'Healing', 'Illusion', 'Sound']
 		},
 		spells: {
 			description: 'Spells Known column of the Bard Class Table'
@@ -27,8 +31,10 @@ export const bardClass: ClassDefinition = {
 			id: 'bard_spellcasting_path',
 			featureName: 'Spellcasting Path',
 			levelGained: 1,
-			description: 'You gain the ability to cast spells from multiple schools.',
+			description:
+				'You gain spellcasting abilities. You can choose Spells from the Enchantment School or with Embolden, Enfeeble, Healing, Illusion, or Sound tags.',
 			effects: [
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Spell_Focuses', value: true },
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true },
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Shields', value: true }
 			]
@@ -129,13 +135,12 @@ export const bardClass: ClassDefinition = {
 						{
 							name: 'Battle Ballad',
 							description:
-								'The chosen creatures deal +1 damage against 1 target of their choice on an Attack they make once on each of their turns.',
+								'The chosen creatures gain a d4 bonus to the first Attack Check they make on each of their turns.',
 							effects: [
 								{
 									type: 'GRANT_ABILITY',
 									target: 'battle_ballad',
-									value:
-										'Allies in aura deal +1 damage on first attack per turn against chosen target.'
+									value: 'Allies in aura gain d4 bonus to first Attack Check each turn.'
 								}
 							]
 						},
@@ -165,12 +170,13 @@ export const bardClass: ClassDefinition = {
 						{
 							name: 'Emotional',
 							description:
-								'Choose 1 of the following Conditions: Charmed, Frightened, Intimidated, or Taunted. The chosen creatures have Resistance against the chosen Condition.',
+								'Choose 1 of the following Conditions: Charmed, Frightened, Intimidated, or Taunted. The chosen creatures have Resistance against the chosen Condition. If a target is affected by the chosen Condition at the start of its turn, it can immediately attempt to end the Condition on itself by Repeating its Save.',
 							effects: [
 								{
 									type: 'GRANT_ABILITY',
 									target: 'emotional_performance',
-									value: 'Allies in aura gain Resistance to chosen condition and can repeat saves.'
+									value:
+										'Allies in aura gain Resistance to chosen condition and can repeat saves at start of turn.'
 								}
 							]
 						}
@@ -200,13 +206,13 @@ export const bardClass: ClassDefinition = {
 						{
 							name: 'Enthrall',
 							description:
-								"You learn the Befriend Spell, and it doesn't end as a result of the target taking damage.",
+								"You learn the Charm Spell, and it doesn't end as a result of the target taking damage. If you already know it, you instead learn another spell with the Charmed Tag.",
 							effects: [
-								{ type: 'GRANT_SPELL', target: 'befriend', value: 1 },
+								{ type: 'GRANT_SPELL', target: 'charm', value: 1 },
 								{
 									type: 'GRANT_ABILITY',
-									target: 'enhanced_befriend',
-									value: "Befriend spell doesn't end from target taking damage."
+									target: 'enhanced_charm',
+									value: "Charm spell doesn't end from target taking damage."
 								}
 							]
 						},
@@ -276,12 +282,13 @@ export const bardClass: ClassDefinition = {
 						{
 							name: 'Distraction',
 							description:
-								'When a hostile creature within 10 Spaces makes an Attack, you can impose DisADV.',
+								"When a hostile creature within 10 Spaces of you makes an Attack, you can spend 1 AP as a Reaction to roll a Help Die and subtract the result from the target's Check.",
 							effects: [
 								{
 									type: 'GRANT_ABILITY',
 									target: 'distraction',
-									value: 'Spend 1 AP as Reaction to impose DisADV on nearby attacks.'
+									value:
+										"Spend 1 AP as Reaction to subtract Help Die from attacker's Check within 10 Spaces."
 								}
 							]
 						},

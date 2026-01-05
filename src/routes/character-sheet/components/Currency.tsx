@@ -34,7 +34,11 @@ const Currency: React.FC<CurrencyProps> = ({ isMobile = false }) => {
 	// Type guard for legacy/canonical currency - handle undefined currency
 	const canonicalCurrency = {
 		goldPieces:
-			currency && 'goldPieces' in currency ? currency.goldPieces : currency && 'gold' in currency ? currency.gold : 0,
+			currency && 'goldPieces' in currency
+				? currency.goldPieces
+				: currency && 'gold' in currency
+					? currency.gold
+					: 0,
 		silverPieces:
 			currency && 'silverPieces' in currency
 				? currency.silverPieces
@@ -108,7 +112,11 @@ const Currency: React.FC<CurrencyProps> = ({ isMobile = false }) => {
 							handleInputChange(key, e.target.value)
 						}
 						data-testid={
-							key === 'goldPieces' ? 'currency-gp' : key === 'silverPieces' ? 'currency-sp' : 'currency-cp'
+							key === 'goldPieces'
+								? 'currency-gp'
+								: key === 'silverPieces'
+									? 'currency-sp'
+									: 'currency-cp'
 						}
 					/>
 				</CurrencyRow>

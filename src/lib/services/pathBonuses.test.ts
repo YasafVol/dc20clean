@@ -1,11 +1,14 @@
 /**
  * Test for Path Point Bonus Integration (M3.9)
- * 
+ *
  * Tests that path point allocations correctly add bonuses to character stats
  */
 
 import { describe, it, expect } from 'vitest';
-import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from './enhancedCharacterCalculator';
+import {
+	convertToEnhancedBuildData,
+	calculateCharacterWithBreakdowns
+} from './enhancedCharacterCalculator';
 
 describe('Path Point Bonuses (M3.9)', () => {
 	it('Level 5 Barbarian with 2 martial path points should have correct stats', () => {
@@ -312,44 +315,64 @@ describe('Path Point Bonuses (M3.9)', () => {
 			};
 
 			// Test each tier increment
-			const tier0 = calculateCharacterWithBreakdowns(convertToEnhancedBuildData({
-				...baseCharacter,
-				id: 'tier-0',
-				pathPointAllocations: {}
-			}));
+			const tier0 = calculateCharacterWithBreakdowns(
+				convertToEnhancedBuildData({
+					...baseCharacter,
+					id: 'tier-0',
+					pathPointAllocations: {}
+				})
+			);
 
-			const tier1 = calculateCharacterWithBreakdowns(convertToEnhancedBuildData({
-				...baseCharacter,
-				id: 'tier-1',
-				pathPointAllocations: { martial: 1 }
-			}));
+			const tier1 = calculateCharacterWithBreakdowns(
+				convertToEnhancedBuildData({
+					...baseCharacter,
+					id: 'tier-1',
+					pathPointAllocations: { martial: 1 }
+				})
+			);
 
-			const tier2 = calculateCharacterWithBreakdowns(convertToEnhancedBuildData({
-				...baseCharacter,
-				id: 'tier-2',
-				pathPointAllocations: { martial: 2 }
-			}));
+			const tier2 = calculateCharacterWithBreakdowns(
+				convertToEnhancedBuildData({
+					...baseCharacter,
+					id: 'tier-2',
+					pathPointAllocations: { martial: 2 }
+				})
+			);
 
-			const tier3 = calculateCharacterWithBreakdowns(convertToEnhancedBuildData({
-				...baseCharacter,
-				id: 'tier-3',
-				pathPointAllocations: { martial: 3 }
-			}));
+			const tier3 = calculateCharacterWithBreakdowns(
+				convertToEnhancedBuildData({
+					...baseCharacter,
+					id: 'tier-3',
+					pathPointAllocations: { martial: 3 }
+				})
+			);
 
 			// Tier 1 bonuses: +1 SP, +1 maneuver, +1 technique
 			expect(tier1.stats.finalSPMax - tier0.stats.finalSPMax).toBe(1);
-			expect(tier1.levelBudgets.totalManeuversKnown - tier0.levelBudgets.totalManeuversKnown).toBe(1);
-			expect(tier1.levelBudgets.totalTechniquesKnown - tier0.levelBudgets.totalTechniquesKnown).toBe(1);
+			expect(tier1.levelBudgets.totalManeuversKnown - tier0.levelBudgets.totalManeuversKnown).toBe(
+				1
+			);
+			expect(
+				tier1.levelBudgets.totalTechniquesKnown - tier0.levelBudgets.totalTechniquesKnown
+			).toBe(1);
 
 			// Tier 2 bonuses: +1 maneuver only
 			expect(tier2.stats.finalSPMax - tier1.stats.finalSPMax).toBe(0);
-			expect(tier2.levelBudgets.totalManeuversKnown - tier1.levelBudgets.totalManeuversKnown).toBe(1);
-			expect(tier2.levelBudgets.totalTechniquesKnown - tier1.levelBudgets.totalTechniquesKnown).toBe(0);
+			expect(tier2.levelBudgets.totalManeuversKnown - tier1.levelBudgets.totalManeuversKnown).toBe(
+				1
+			);
+			expect(
+				tier2.levelBudgets.totalTechniquesKnown - tier1.levelBudgets.totalTechniquesKnown
+			).toBe(0);
 
 			// Tier 3 bonuses: +1 SP, +1 maneuver, +1 technique
 			expect(tier3.stats.finalSPMax - tier2.stats.finalSPMax).toBe(1);
-			expect(tier3.levelBudgets.totalManeuversKnown - tier2.levelBudgets.totalManeuversKnown).toBe(1);
-			expect(tier3.levelBudgets.totalTechniquesKnown - tier2.levelBudgets.totalTechniquesKnown).toBe(1);
+			expect(tier3.levelBudgets.totalManeuversKnown - tier2.levelBudgets.totalManeuversKnown).toBe(
+				1
+			);
+			expect(
+				tier3.levelBudgets.totalTechniquesKnown - tier2.levelBudgets.totalTechniquesKnown
+			).toBe(1);
 		});
 
 		it('should grant correct bonuses at each spellcaster tier', () => {
@@ -371,23 +394,29 @@ describe('Path Point Bonuses (M3.9)', () => {
 				languagesData: { common: { fluency: 'fluent' as const } }
 			};
 
-			const tier0 = calculateCharacterWithBreakdowns(convertToEnhancedBuildData({
-				...baseCharacter,
-				id: 'spell-tier-0',
-				pathPointAllocations: {}
-			}));
+			const tier0 = calculateCharacterWithBreakdowns(
+				convertToEnhancedBuildData({
+					...baseCharacter,
+					id: 'spell-tier-0',
+					pathPointAllocations: {}
+				})
+			);
 
-			const tier1 = calculateCharacterWithBreakdowns(convertToEnhancedBuildData({
-				...baseCharacter,
-				id: 'spell-tier-1',
-				pathPointAllocations: { spellcasting: 1 }
-			}));
+			const tier1 = calculateCharacterWithBreakdowns(
+				convertToEnhancedBuildData({
+					...baseCharacter,
+					id: 'spell-tier-1',
+					pathPointAllocations: { spellcasting: 1 }
+				})
+			);
 
-			const tier2 = calculateCharacterWithBreakdowns(convertToEnhancedBuildData({
-				...baseCharacter,
-				id: 'spell-tier-2',
-				pathPointAllocations: { spellcasting: 2 }
-			}));
+			const tier2 = calculateCharacterWithBreakdowns(
+				convertToEnhancedBuildData({
+					...baseCharacter,
+					id: 'spell-tier-2',
+					pathPointAllocations: { spellcasting: 2 }
+				})
+			);
 
 			// Tier 1 bonuses: +2 MP, +1 cantrip, +1 spell
 			expect(tier1.stats.finalMPMax - tier0.stats.finalMPMax).toBe(2);
@@ -536,7 +565,7 @@ describe('Path Point Bonuses (M3.9)', () => {
 				};
 
 				const enhanced = convertToEnhancedBuildData(character);
-				
+
 				// Should handle gracefully (treat as 0 or throw error)
 				expect(() => {
 					calculateCharacterWithBreakdowns(enhanced);
@@ -545,4 +574,3 @@ describe('Path Point Bonuses (M3.9)', () => {
 		});
 	});
 });
-

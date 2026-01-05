@@ -45,7 +45,10 @@ const ATTRIBUTE_TIEBREAKER_INDEX: Record<AttributeKey, number> = {
 	intelligence: 3
 };
 
-const getAttributeModifier = (characterData: CharacterSheetData, attribute: AttributeKey): number => {
+const getAttributeModifier = (
+	characterData: CharacterSheetData,
+	attribute: AttributeKey
+): number => {
 	switch (attribute) {
 		case 'might':
 			return characterData.finalMight || 0;
@@ -81,7 +84,9 @@ const buildPrintableTrades = (characterData: CharacterSheetData): PrintableTrade
 				}))
 				.sort((a, b) => {
 					if (b.total === a.total) {
-						return ATTRIBUTE_TIEBREAKER_INDEX[a.attribute] - ATTRIBUTE_TIEBREAKER_INDEX[b.attribute];
+						return (
+							ATTRIBUTE_TIEBREAKER_INDEX[a.attribute] - ATTRIBUTE_TIEBREAKER_INDEX[b.attribute]
+						);
 					}
 					return b.total - a.total;
 				});
@@ -94,7 +99,10 @@ const buildPrintableTrades = (characterData: CharacterSheetData): PrintableTrade
 				bonusDisplay = formatBonusValue(primaryTotal);
 			} else {
 				bonusDisplay = attributeTotals
-					.map((entry) => `${formatBonusValue(entry.total)}(${ATTRIBUTE_ABBREVIATIONS[entry.attribute]})`)
+					.map(
+						(entry) =>
+							`${formatBonusValue(entry.total)}(${ATTRIBUTE_ABBREVIATIONS[entry.attribute]})`
+					)
 					.join('/');
 			}
 
@@ -494,15 +502,15 @@ export const handlePrintCharacterSheet = (
                 <div class="section">
                     <div class="section-title">Trades</div>
                     ${printableTrades
-                      .map(
-                        (trade) => `
+											.map(
+												(trade) => `
                         <div class="skill-row">
                             <span class="skill-name">${trade.name}</span>
                             <span class="skill-bonus">${trade.bonusDisplay}</span>
                         </div>
                     `
-                      )
-                      .join('')}
+											)
+											.join('')}
                 </div>
             </div>
         </div>

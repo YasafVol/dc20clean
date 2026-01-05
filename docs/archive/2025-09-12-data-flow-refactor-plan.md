@@ -1039,10 +1039,9 @@ if (backup) {
 
 ### Leftover Tasks (prioritized)
 
-1) Eliminate sheet-side recalculation (read from `SavedCharacter`, recalc only on edits)
-2) Add `useAttributeCalculation` and gate trait/attribute UI
-3) Migrate legacy string fields to typed (`skillsJson/tradesJson/languagesJson/selectedTraitIds`)
-4) Purge residual JSON usage outside `storageUtils`
-5) Align `languagesData` canonical shape and migrate
-6) Tests for migration/attribute hook/sheet no-recalc; trim storage logging
-
+1. Eliminate sheet-side recalculation (read from `SavedCharacter`, recalc only on edits)
+2. Add `useAttributeCalculation` and gate trait/attribute UI
+3. Migrate legacy string fields to typed (`skillsJson/tradesJson/languagesJson/selectedTraitIds`)
+4. Purge residual JSON usage outside `storageUtils`
+5. Align `languagesData` canonical shape and migrate
+6. Tests for migration/attribute hook/sheet no-recalc; trim storage logging

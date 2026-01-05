@@ -1,6 +1,6 @@
 /**
  * Schema Versioning System
- * 
+ *
  * Semantic versioning for character data schema:
  * - Major: Breaking changes (incompatible data structure)
  * - Minor: New features (backwards compatible)
@@ -81,4 +81,3 @@ export function checkSchemaCompatibility(
 		message: 'Schema version is compatible.'
 	};
 }
-

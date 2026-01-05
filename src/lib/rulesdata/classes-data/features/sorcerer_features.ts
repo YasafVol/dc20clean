@@ -5,21 +5,21 @@ export const sorcererClass: ClassDefinition = {
 	startingEquipment: {
 		weaponsOrShields: ['1 Weapon'],
 		armor: '1 set of Light Armor',
-		packs: 'X or Y "Packs" (Adventuring Packs Coming Soon)',
+		packs: 'X or Y "Packs" (Adventuring Packs Coming Soon)'
 	},
 	spellcasterPath: {
 		spellList: ['Arcane', 'Divine', 'Primal'],
 		cantrips: {
 			description:
-				'The number of Cantrips you know increases as shown in the Cantrips Known column of the Sorcerer Class Table.',
+				'The number of Cantrips you know increases as shown in the Cantrips Known column of the Sorcerer Class Table.'
 		},
 		spells: {
 			description:
-				'The number of Spells you know increases as shown in the Spells Known column of the Sorcerer Class Table.',
+				'The number of Spells you know increases as shown in the Spells Known column of the Sorcerer Class Table.'
 		},
 		manaPoints: {
-			maximumIncreasesBy: 'as shown in the Mana Points column of the Sorcerer Class Table.',
-		},
+			maximumIncreasesBy: 'as shown in the Mana Points column of the Sorcerer Class Table.'
+		}
 	},
 	coreFeatures: [
 		{
@@ -32,20 +32,20 @@ export const sorcererClass: ClassDefinition = {
 				{
 					name: 'Increased Maximum MP',
 					description: 'Your maximum MP increases by 1.',
-					effects: [{ type: 'MODIFY_STAT', target: 'mpMax', value: 1 }],
+					effects: [{ type: 'MODIFY_STAT', target: 'mpMax', value: 1 }]
 				},
 				{
-					name: 'Free Spell Enhancement',
+					name: 'Focus Property',
 					description:
-						'Once per Long Rest, you can use a 1 MP Spell Enhancement without spending any MP (up to your Mana Spend Limit). You regain the ability to use this benefit when you roll for Initiative.',
+						'You gain the benefit of a 1 point Focus Property of your choice. You can change the Property when you complete a Long Rest.',
 					effects: [
 						{
 							type: 'GRANT_ABILITY',
-							target: 'free_spell_enhancement',
-							value: 'Once per Long Rest, use a 1 MP Spell Enhancement for free.',
-						},
-					],
-				},
+							target: 'focus_property_sorcerer',
+							value: 'Gain a 1 point Focus Property (changeable on Long Rest).'
+						}
+					]
+				}
 			],
 			choices: [
 				{
@@ -55,28 +55,22 @@ export const sorcererClass: ClassDefinition = {
 					options: [
 						{
 							name: 'Intuitive Magic',
-							description:
-								'Learn an additional Spell and Cantrip from your Sorcerer Spell List.',
+							description: 'You learn 2 Spells of your choice from your Spell List.',
 							effects: [
 								{
 									type: 'GRANT_SPELL',
 									target: 'sorcerer_spell_list',
-									value: 1,
+									value: 2,
 									userChoice: {
-										prompt: 'Choose an additional spell from the sorcerer list',
-									},
-								},
-								{
-									type: 'GRANT_CANTRIP',
-									target: 'sorcerer_spell_list',
-									value: 1,
-								},
-							],
+										prompt: 'Choose 2 additional spells from the sorcerer list'
+									}
+								}
+							]
 						},
 						{
 							name: 'Resilient Magic',
 							description: 'You gain Dazed Resistance.',
-							effects: [{ type: 'GRANT_RESISTANCE', target: 'Dazed', value: true }],
+							effects: [{ type: 'GRANT_RESISTANCE', target: 'Dazed', value: true }]
 						},
 						{
 							name: 'Unstable Magic',
@@ -87,32 +81,32 @@ export const sorcererClass: ClassDefinition = {
 									type: 'GRANT_ABILITY',
 									target: 'unstable_magic',
 									value:
-										'When you Critically Succeed or Fail on a Spell Check, roll on the Wild Magic Table.',
-								},
-							],
-						},
-					],
-				},
-			],
+										'When you Critically Succeed or Fail on a Spell Check, roll on the Wild Magic Table.'
+								}
+							]
+						}
+					]
+				}
+			]
 		},
 		{
 			id: 'sorcerer_overload_magic',
 			featureName: 'Overload Magic',
 			levelGained: 1,
 			description:
-				'You can spend 2 AP in Combat to channel raw magical energy for 1 minute, or until you become Incapacitated, die, or choose to end it early at any time for free.',
+				'You can spend 1 AP + 1 MP in Combat to channel raw magical energy for 1 minute, or until you become Incapacitated, die, or choose to end it early at any time for free.',
 			benefits: [
 				{
 					name: 'Spell Check Bonus',
-					description: 'You gain +5 to all Spell Checks you make.',
+					description: 'You gain +5 to all Spell Attacks and Spell Checks you make.',
 					effects: [
 						{
 							type: 'MODIFY_STAT',
 							target: 'spellCheck',
 							value: 5,
-							condition: 'While Overload Magic is active',
-						},
-					],
+							condition: 'While Overload Magic is active'
+						}
+					]
 				},
 				{
 					name: 'Overload Strain',
@@ -123,11 +117,11 @@ export const sorcererClass: ClassDefinition = {
 							type: 'GRANT_ABILITY',
 							target: 'overload_strain',
 							value:
-								'Must save vs Exhaustion when using Overload Magic and at the start of each turn.',
-						},
-					],
-				},
-			],
+								'Must save vs Exhaustion when using Overload Magic and at the start of each turn.'
+						}
+					]
+				}
+			]
 		},
 		{
 			id: 'sorcerer_sorcery_spell',
@@ -135,7 +129,7 @@ export const sorcererClass: ClassDefinition = {
 			levelGained: 1,
 			isFlavor: true,
 			description: 'You learn the Sorcery Spell.',
-			effects: [{ type: 'GRANT_SPELL', target: 'Sorcery', value: 1 }],
+			effects: [{ type: 'GRANT_SPELL', target: 'Sorcery', value: 1 }]
 		},
 		{
 			id: 'sorcerer_meta_magic',
@@ -152,36 +146,41 @@ export const sorcererClass: ClassDefinition = {
 						{
 							name: 'Careful Spell',
 							description:
-								"When you Cast a Spell that targets an Area of Effect, you can choose to protect some of the creatures from the Spell's full force. Spend 1 MP and choose a number of creatures up to your Prime Modifier. All chosen creatures are immune to the Spell's damage and effects.",
-							effects: [],
+								"(1 MP) When you Cast a Spell that targets an area, choose to exclude creatures of your choice from the Spell's damage and effects.",
+							effects: []
 						},
 						{
-							name: 'Heightened Spell',
+							name: 'Distant Spell',
 							description:
-								'When you Cast a Spell that forces a creature to make a Save to resist its effects, you can spend 1 MP to give 1 target DisADV on its first Save against the Spell.',
-							effects: [],
+								"(1 MP) Increase a Spell's range by 2 Spaces (if 1 Space) or 10 Spaces (if greater).",
+							effects: []
 						},
 						{
 							name: 'Quickened Spell',
-							description:
-								'You can spend 1 MP to reduce the AP cost of a Spell by 1 (minimum of 1 AP).',
-							effects: [],
+							description: '(1 MP) Reduce the AP cost of a Spell by 1 (minimum of 1 AP).',
+							effects: []
 						},
 						{
 							name: 'Subtle Spell',
 							description:
-								'When you cast a Spell, you can spend 1 MP to cast it without any Somatic or Verbal Components.',
-							effects: [],
+								'(1 MP) Cast the Spell without requiring any Somatic and Verbal Components.',
+							effects: []
 						},
 						{
 							name: 'Transmuted Spell',
 							description:
-								'When you cast a Spell that deals a type of damage from the following list, you can spend 1 MP to change that damage type to one of the other listed types: Cold, Corrosion, Fire, Lightning, Poison, or Sonic.',
-							effects: [],
+								"(1 MP) Change a Spell's damage type to any other damage type (except True damage).",
+							effects: []
 						},
-					],
-				},
-			],
+						{
+							name: 'Vicious Spell',
+							description:
+								'(1 MP) When casting a Spell that forces a Save, 1 target of your choice has DisADV on its first Save against the Spell.',
+							effects: []
+						}
+					]
+				}
+			]
 		},
 		{
 			id: 'sorcerer_talent_level_2',
@@ -194,10 +193,10 @@ export const sorcererClass: ClassDefinition = {
 					type: 'GRANT_CHOICE',
 					target: 'talent',
 					value: 1,
-					userChoice: { prompt: 'Choose 1 Talent' },
-				},
-			],
-		},
+					userChoice: { prompt: 'Choose 1 Talent' }
+				}
+			]
+		}
 	],
 	subclasses: [
 		{
@@ -216,9 +215,9 @@ export const sorcererClass: ClassDefinition = {
 								{
 									type: 'GRANT_ABILITY',
 									target: 'celestial_origin',
-									value: 'Gain 2 Ancestry Points for Angelborn Traits.',
-								},
-							],
+									value: 'Gain 2 Ancestry Points for Angelborn Traits.'
+								}
+							]
 						},
 						{
 							name: 'Celestial Protection',
@@ -228,9 +227,9 @@ export const sorcererClass: ClassDefinition = {
 								{
 									type: 'GRANT_ABILITY',
 									target: 'careful_spell',
-									value: 'Learn Careful Spell. It costs 0 MP.',
-								},
-							],
+									value: 'Learn Careful Spell. It costs 0 MP.'
+								}
+							]
 						},
 						{
 							name: 'Celestial Overload',
@@ -240,11 +239,11 @@ export const sorcererClass: ClassDefinition = {
 								{
 									type: 'GRANT_ABILITY',
 									target: 'celestial_overload',
-									value: 'Spend 1 AP while overloaded for AoE heal/damage.',
-								},
-							],
-						},
-					],
+									value: 'Spend 1 AP while overloaded for AoE heal/damage.'
+								}
+							]
+						}
+					]
 				},
 				{
 					featureName: 'Celestial Appearance (Flavor Feature)',
@@ -257,11 +256,11 @@ export const sorcererClass: ClassDefinition = {
 							type: 'GRANT_ABILITY',
 							target: 'celestial_appearance',
 							value:
-								'Gain angelic features. If already fluent in Celestial, gain 1 Language Mastery.',
-						},
-					],
-				},
-			],
+								'Gain angelic features. If already fluent in Celestial, gain 1 Language Mastery.'
+						}
+					]
+				}
+			]
 		},
 		{
 			subclassName: 'Draconic',
@@ -279,10 +278,9 @@ export const sorcererClass: ClassDefinition = {
 								{
 									type: 'GRANT_ABILITY',
 									target: 'draconic_origin',
-									value:
-										'Gain 2 Ancestry Points for Dragonborn Traits & choose a Draconic Origin.',
-								},
-							],
+									value: 'Gain 2 Ancestry Points for Dragonborn Traits & choose a Draconic Origin.'
+								}
+							]
 						},
 						{
 							name: 'Draconic Overload',
@@ -310,11 +308,11 @@ export const sorcererClass: ClassDefinition = {
 									type: 'GRANT_ABILITY',
 									target: 'draconic_transmutation',
 									value:
-										'Gain Transmuted Spell. Cost is 0 MP if changing to Draconic Origin damage type.',
-								},
-							],
-						},
-					],
+										'Gain Transmuted Spell. Cost is 0 MP if changing to Draconic Origin damage type.'
+								}
+							]
+						}
+					]
 				},
 				{
 					featureName: 'Draconic Appearance (Flavor Feature)',
@@ -327,11 +325,11 @@ export const sorcererClass: ClassDefinition = {
 							type: 'GRANT_ABILITY',
 							target: 'draconic_appearance',
 							value:
-								'Gain draconic features and 1 level of Language Mastery in Draconic (or another language if already fluent).',
-						},
-					],
-				},
-			],
-		},
-	],
+								'Gain draconic features and 1 level of Language Mastery in Draconic (or another language if already fluent).'
+						}
+					]
+				}
+			]
+		}
+	]
 };

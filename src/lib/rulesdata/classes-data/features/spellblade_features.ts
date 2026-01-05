@@ -7,10 +7,7 @@ export const spellbladeClass: ClassDefinition = {
 			'2 Weapons or Light Shields',
 			'Heavy Shields (if you learn the Warrior Discipline)'
 		],
-		rangedWeapons: [
-			'Ranged Weapon with 20 Ammo',
-			'3 Weapons with the Toss or Thrown Property'
-		],
+		rangedWeapons: ['Ranged Weapon with 20 Ammo', '3 Weapons with the Toss or Thrown Property'],
 		armor: ['Light Armor', 'Heavy Armor (if you learn the Warrior Discipline)'],
 		packs: 'X or Y Packs (Adventuring Packs Coming Soon)'
 	},
@@ -24,9 +21,6 @@ export const spellbladeClass: ClassDefinition = {
 			learnsAllAttack: true,
 			additionalKnown: 'Maneuvers Known column of the Spellblade Class Table'
 		},
-		techniques: {
-			additionalKnown: 'Techniques Known column of the Spellblade Class Table'
-		},
 		staminaPoints: {
 			maximumIncreasesBy: 'Stamina Points column of the Spellblade Class Table'
 		},
@@ -38,7 +32,10 @@ export const spellbladeClass: ClassDefinition = {
 	spellcasterPath: {
 		spellList: {
 			description:
-				'Choose spells from Destruction, Protection, and one additional School of your choice when you learn new spells.'
+				'Choose 2 Spell Schools. When you learn a new Spell, you can choose any Spell from the chosen Spell Schools or that have the Weapon or Ward Spell Tags.',
+			type: 'schools',
+			schoolCount: 2,
+			tags: ['Weapon', 'Ward']
 		},
 		cantrips: {
 			description: 'Cantrips Known column of the Spellblade Class Table'
@@ -69,24 +66,26 @@ export const spellbladeClass: ClassDefinition = {
 				{
 					name: 'Smite',
 					description:
-						'Spend 1 or more SP to deal +2 Bound Damage per SP and gain the benefits of one Attack Maneuver of your choice for free.',
+						'Spend 1 or more SP to deal +1 Bound Damage per SP spent. Also gain the benefits of 1 Martial Enhancement of your choice for free.',
 					effects: [
 						{
 							type: 'GRANT_ABILITY',
 							target: 'spellblade_bound_weapon_smite',
 							value:
-								'Spend 1+ SP while making a martial attack with the bonded weapon to deal +2 Bound Damage per SP and gain the benefits of one Attack Maneuver for free.'
+								'Spend 1+ SP on a Martial Attack with bound weapon: +1 Bound Damage per SP, and gain 1 Martial Enhancement free.'
 						}
 					]
 				},
 				{
 					name: 'Illuminate',
-					description: 'Emit or adjust bright/dim light in a 5-space radius from the bonded weapon at will.',
+					description:
+						'Emit or adjust bright/dim light in a 5-space radius from the bonded weapon at will.',
 					effects: [
 						{
 							type: 'GRANT_ABILITY',
 							target: 'spellblade_bound_weapon_illuminate',
-							value: 'Produce, extinguish, or adjust bright/dim light in a 5-space radius from the bonded weapon for free.'
+							value:
+								'Produce, extinguish, or adjust bright/dim light in a 5-space radius from the bonded weapon for free.'
 						}
 					]
 				},
@@ -108,7 +107,8 @@ export const spellbladeClass: ClassDefinition = {
 			id: 'spellblade_disciplines',
 			featureName: 'Spellblade Disciplines',
 			levelGained: 1,
-			description: 'Learn two Spellblade disciplines to tailor your blend of martial and arcane prowess.',
+			description:
+				'Learn two Spellblade disciplines to tailor your blend of martial and arcane prowess.',
 			choices: [
 				{
 					id: 'spellblade_disciplines_choice',
@@ -250,7 +250,8 @@ export const spellbladeClass: ClassDefinition = {
 								{
 									type: 'GRANT_ABILITY',
 									target: 'spellblade_paladin_divine_strike',
-									value: 'When you deal damage with Spellstrike, you may convert the spell’s damage to Radiant or Umbral (chosen when you gain this feature).'
+									value:
+										'When you deal damage with Spellstrike, you may convert the spell’s damage to Radiant or Umbral (chosen when you gain this feature).'
 								}
 							]
 						},
@@ -351,7 +352,8 @@ export const spellbladeClass: ClassDefinition = {
 								},
 								{
 									name: 'Lightning Rune',
-									description: 'Stun enemies with crackling power and move with electric swiftness.',
+									description:
+										'Stun enemies with crackling power and move with electric swiftness.',
 									effects: [
 										{
 											type: 'GRANT_ABILITY',
@@ -390,7 +392,8 @@ export const spellbladeClass: ClassDefinition = {
 										{
 											type: 'GRANT_ABILITY',
 											target: 'spellblade_rune_weapon_hurricane',
-											value: 'When you Smite a creature, it must make a Physical Save or be pushed 1 space in a direction you choose.'
+											value:
+												'When you Smite a creature, it must make a Physical Save or be pushed 1 space in a direction you choose.'
 										},
 										{
 											type: 'MODIFY_STAT',
@@ -408,7 +411,8 @@ export const spellbladeClass: ClassDefinition = {
 					featureName: 'Rune Expert',
 					levelGained: 3,
 					isFlavor: true,
-					description: 'You have ADV on checks to interpret or understand magical runes you can see.'
+					description:
+						'You have ADV on checks to interpret or understand magical runes you can see.'
 				},
 				{
 					id: 'spellblade_rune_names',
@@ -416,7 +420,7 @@ export const spellbladeClass: ClassDefinition = {
 					levelGained: 3,
 					isFlavor: true,
 					description:
-						"Common rune names include: Earth (Uruz/Terra), Flame (Ild/Ignis), Frost (Isaz/Frigus), Lightning (Thurisaz/Fulmen), Water (Laquz/Aqua), Wind (Ansuz/Ventus)."
+						'Common rune names include: Earth (Uruz/Terra), Flame (Ild/Ignis), Frost (Isaz/Frigus), Lightning (Thurisaz/Fulmen), Water (Laquz/Aqua), Wind (Ansuz/Ventus).'
 				}
 			]
 		}

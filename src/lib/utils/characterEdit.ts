@@ -153,8 +153,8 @@ export const completeCharacterEdit = async (
 			selectedManeuvers: Array.isArray(newCharacterState.selectedManeuvers)
 				? newCharacterState.selectedManeuvers
 				: [],
-		usePrimeCapRule: !!newCharacterState.usePrimeCapRule,
-		// CRITICAL: Include conversions for proper background validation during editing
+			usePrimeCapRule: !!newCharacterState.usePrimeCapRule,
+			// CRITICAL: Include conversions for proper background validation during editing
 			skillToTradeConversions: newCharacterState.skillToTradeConversions || 0,
 			tradeToSkillConversions: newCharacterState.tradeToSkillConversions || 0,
 			tradeToLanguageConversions: newCharacterState.tradeToLanguageConversions || 0,

@@ -1,11 +1,11 @@
 /**
  * Unit tests for Class Progression Resolver (UT-2)
- * 
+ *
  * Tests the resolveClassProgression function and helper functions
  */
 
 import { describe, it, expect } from 'vitest';
-import { 
+import {
 	resolveClassProgression,
 	getAvailableSubclasses,
 	resolveSubclassFeatures
@@ -19,7 +19,7 @@ describe('Class Progression Resolver (UT-2)', () => {
 			expect(result.level).toBe(1);
 			expect(result.classId).toBe('barbarian');
 			expect(result.className).toBe('Barbarian');
-			
+
 			// Should have budgets
 			expect(result.budgets).toBeDefined();
 			expect(result.budgets.totalHP).toBe(9); // Level 1 HP
@@ -28,9 +28,9 @@ describe('Class Progression Resolver (UT-2)', () => {
 
 			// Should have unlocked features
 			expect(result.unlockedFeatures.length).toBeGreaterThan(0);
-			
+
 			// Check for expected features
-			const featureIds = result.unlockedFeatures.map(f => f.id || f.featureName);
+			const featureIds = result.unlockedFeatures.map((f) => f.id || f.featureName);
 			expect(featureIds).toContain('barbarian_martial_path');
 			expect(featureIds).toContain('barbarian_rage');
 		});
@@ -39,16 +39,16 @@ describe('Class Progression Resolver (UT-2)', () => {
 			const result = resolveClassProgression('barbarian', 2);
 
 			expect(result.level).toBe(2);
-			
+
 			// Budgets should accumulate
 			expect(result.budgets.totalHP).toBe(12); // 9 + 3
 			expect(result.budgets.totalSP).toBe(1); // 1 + 0
 
 			// Should have features from both levels
 			expect(result.unlockedFeatures.length).toBeGreaterThan(4);
-			
+
 			// Check for L2 features
-			const featureNames = result.unlockedFeatures.map(f => f.featureName);
+			const featureNames = result.unlockedFeatures.map((f) => f.featureName);
 			expect(featureNames).toContain('Battlecry');
 			expect(featureNames).toContain('Talent');
 		});
@@ -58,7 +58,7 @@ describe('Class Progression Resolver (UT-2)', () => {
 
 			expect(result.level).toBe(3);
 			expect(result.budgets.totalHP).toBe(15); // 9 + 3 + 3
-			
+
 			// Subclass choice should be available
 			expect(result.availableSubclassChoice).toBe(true);
 			expect(result.subclassChoiceLevel).toBe(3);
@@ -70,9 +70,9 @@ describe('Class Progression Resolver (UT-2)', () => {
 			const result = resolveClassProgression('barbarian', 1);
 
 			expect(result.unlockedFeatures.length).toBeGreaterThan(0);
-			
+
 			const firstFeature = result.unlockedFeatures[0];
-			
+
 			// Check feature structure
 			expect(firstFeature).toHaveProperty('featureName');
 			expect(firstFeature).toHaveProperty('levelGained');
@@ -86,7 +86,7 @@ describe('Class Progression Resolver (UT-2)', () => {
 
 			// Find a feature with effects (Martial Path has combat training effects)
 			const martialPath = result.unlockedFeatures.find(
-				f => f.id === 'barbarian_martial_path' || f.featureName === 'Martial Path'
+				(f) => f.id === 'barbarian_martial_path' || f.featureName === 'Martial Path'
 			);
 
 			expect(martialPath).toBeDefined();
@@ -109,10 +109,10 @@ describe('Class Progression Resolver (UT-2)', () => {
 			expect(result.budgets.totalMP).toBeGreaterThan(0);
 			expect(result.budgets.totalCantripsKnown).toBeGreaterThan(0);
 			expect(result.budgets.totalSpellsKnown).toBeGreaterThan(0);
-			
+
 			// Should have spellcasting path
 			const hasSpellcasting = result.unlockedFeatures.some(
-				f => f.id === 'wizard_spellcasting_path' || f.featureName.includes('Spellcasting')
+				(f) => f.id === 'wizard_spellcasting_path' || f.featureName.includes('Spellcasting')
 			);
 			expect(hasSpellcasting).toBe(true);
 		});
@@ -166,13 +166,13 @@ describe('Class Progression Resolver (UT-2)', () => {
 		it('should return subclass features up to level', () => {
 			const subclasses = getAvailableSubclasses('barbarian');
 			expect(subclasses.length).toBeGreaterThan(0);
-			
+
 			const subclassName = subclasses[0].name;
 			const features = resolveSubclassFeatures('barbarian', subclassName, 3);
 
 			expect(features.length).toBeGreaterThan(0);
 			// All features should be level 3 or below
-			features.forEach(f => {
+			features.forEach((f) => {
 				expect(f.levelGained).toBeLessThanOrEqual(3);
 			});
 		});
@@ -184,15 +184,9 @@ describe('Class Progression Resolver (UT-2)', () => {
 	});
 
 	describe('resolveClassProgression - Multiple Classes', () => {
-		const classesToTest = [
-			'barbarian', 
-			'cleric', 
-			'wizard', 
-			'rogue', 
-			'monk'
-		];
+		const classesToTest = ['barbarian', 'cleric', 'wizard', 'rogue', 'monk'];
 
-		classesToTest.forEach(classId => {
+		classesToTest.forEach((classId) => {
 			it(`should resolve ${classId} without errors`, () => {
 				expect(() => resolveClassProgression(classId, 1)).not.toThrow();
 				expect(() => resolveClassProgression(classId, 2)).not.toThrow();
@@ -208,7 +202,7 @@ describe('Class Progression Resolver (UT-2)', () => {
 
 		it('should handle level 0 gracefully', () => {
 			const result = resolveClassProgression('barbarian', 0);
-			
+
 			// Should return empty budgets
 			expect(result.budgets.totalHP).toBe(0);
 			expect(result.unlockedFeatures.length).toBe(0);
@@ -216,7 +210,7 @@ describe('Class Progression Resolver (UT-2)', () => {
 
 		it('should handle extremely high levels', () => {
 			const result = resolveClassProgression('barbarian', 100);
-			
+
 			// Should accumulate all available levels without crashing
 			expect(result.budgets.totalHP).toBeGreaterThan(0);
 			expect(result.level).toBe(100);
@@ -228,7 +222,7 @@ describe('Class Progression Resolver (UT-2)', () => {
 			const result = resolveClassProgression('barbarian', 1);
 
 			// All L1 features should have levelGained === 1
-			result.unlockedFeatures.forEach(feature => {
+			result.unlockedFeatures.forEach((feature) => {
 				expect(feature.levelGained).toBe(1);
 			});
 		});
@@ -236,9 +230,9 @@ describe('Class Progression Resolver (UT-2)', () => {
 		it('should accumulate features without duplicates', () => {
 			const result = resolveClassProgression('barbarian', 3);
 
-			const featureIds = result.unlockedFeatures.map(f => f.id || f.featureName);
+			const featureIds = result.unlockedFeatures.map((f) => f.id || f.featureName);
 			const uniqueIds = new Set(featureIds);
-			
+
 			// No duplicates
 			expect(featureIds.length).toBe(uniqueIds.size);
 		});

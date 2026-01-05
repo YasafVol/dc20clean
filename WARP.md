@@ -9,10 +9,12 @@ DC20 Clean is a comprehensive character creation and management system for the D
 ## Development Setup
 
 ### Prerequisites
+
 - Node.js 20 (use `nvm use 20` to switch if needed)
 - pnpm or npm for package management
 
 ### Quick Start Commands
+
 ```bash
 # Install dependencies
 npm install
@@ -24,15 +26,18 @@ npm run dev
 ### Development Commands
 
 **Build & Development:**
+
 - `npm run dev` - Start Vite development server
 - `npm run build` - Production build to `dist/`
 - `npm run preview` - Preview built app on port 4173
 
 **Code Quality:**
+
 - `npm run lint` - Run Prettier check + ESLint
 - `npm run format` - Auto-format with Prettier (includes Tailwind class sorting)
 
 **Testing:**
+
 - `npm run test:unit` - Run Vitest (browser + node environments)
 - `npm run test` - Run unit tests then E2E tests
 - `npm run test:e2e` - Run Playwright E2E tests
@@ -41,10 +46,12 @@ npm run dev
 - `npm run test:e2e:debug` - Run E2E tests in debug mode
 
 **Single Test Execution:**
+
 - `npx vitest -t "should ..."` - Run specific unit test by name
 - `npx vitest path/to/file.test.ts` - Run specific unit test file
 
 **E2E Test Optimization:**
+
 - `PLAYWRIGHT_SKIP_BUILD=1 npm run test:e2e` - Skip build, reuse existing dist/
 - `E2E_WORKERS=4 npm run test:e2e` - Run with parallel workers
 
@@ -52,6 +59,7 @@ npm run dev
 None – app uses browser localStorage only
 
 **Special Scripts:**
+
 - `npm run export:list-fields` - List PDF form fields
 - `npm run export:local` - Local export functionality
 
@@ -67,12 +75,14 @@ None – app uses browser localStorage only
 ### Major Architectural Components
 
 **Character Creation Flow (`src/routes/character-creation/`)**
+
 - Multi-step wizard: Class → Ancestry → Attributes → Background → Spells/Maneuvers → Name
 - Each step has dedicated components with validation
 - Real-time character preview and calculation
 - State managed through React Context (`characterContext`)
 
 **Character Calculation Engine (`src/lib/services/enhancedCharacterCalculator.ts`)**
+
 - Central calculation engine for all derived stats
 - Effect aggregation system with source attribution
 - Handles HP/SP/MP, defenses, skill/trade masteries, and all derived values
@@ -80,18 +90,21 @@ None – app uses browser localStorage only
 - Mastery cap validation system with exception grants
 
 **Character Sheet (`src/routes/character-sheet/`)**
+
 - Responsive design (desktop/mobile variants)
 - Live stat updates from calculation engine
 - Manual override support for certain values
 - Attack system, inventory management, spell tracking
 
 **Rules Data System (`src/lib/rulesdata/`)**
+
 - Structured data for classes, ancestries, traits, spells, etc.
 - JSON schemas for type safety
 - Loader system for dynamic data access
 - Effect system for modular stat modifications
 
 **Persistence**
+
 - Browser localStorage for character save/load
 
 ### Key Data Flow
@@ -103,6 +116,7 @@ None – app uses browser localStorage only
 ### Effect System Architecture
 
 The effect system is the core of character calculations:
+
 - **Effect Types**: Modify attributes, resources, masteries, defenses, etc.
 - **Source Attribution**: Every effect tracks its origin (trait, class feature, choice)
 - **User Choice Resolution**: Effects can depend on user selections
@@ -112,12 +126,14 @@ The effect system is the core of character calculations:
 ### Testing Architecture
 
 **Unit Tests (Vitest)**
+
 - Browser environment for React components
 - Node environment for services/utilities
 - Tests co-located with source files (`*.test.ts[x]`)
 - Enhanced calculator has comprehensive test coverage
 
 **E2E Tests (Playwright)**
+
 - Full character creation workflows
 - Character sheet functionality
 - Mobile and desktop variants
@@ -126,12 +142,14 @@ The effect system is the core of character calculations:
 ## Important File Patterns
 
 ### Naming Conventions
+
 - **Components**: `PascalCase.tsx` (e.g., `CharacterCreation.tsx`)
 - **Utilities/Services**: `camelCase.ts` (e.g., `enhancedCharacterCalculator.ts`)
 - **Tests**: `*.test.ts[x]` co-located with source
 - **Styles**: Separate `.styles.ts` files for styled components
 
 ### Directory Structure
+
 ```
 src/
 ├── routes/              # Main application routes
@@ -150,6 +168,7 @@ src/
 ## Development Rules & Constraints
 
 ### Code Quality Rules
+
 - TypeScript with strict type checking
 - No JSON.parse/stringify in character state management (except `storageUtils.ts`)
 - Prefer pure functions and immutable patterns
@@ -157,12 +176,14 @@ src/
 - Styled components must be in separate `.styles.ts` files
 
 ### Testing Rules
+
 - **Never modify tests without explicit approval**
 - Do not change unit or E2E tests without written user approval
 - No snapshot updates (`-u`) without prior approval
 - If a test seems incorrect, propose changes in comments rather than modifying directly
 
 ### Character System Constraints
+
 - Level 1 characters can only have ONE Adept mastery (skills or trades)
 - Mastery caps are enforced based on character level
 - All calculations must go through `enhancedCharacterCalculator`
@@ -184,6 +205,7 @@ From the architectural documentation, these principles must be followed:
 ## System References
 
 Key system documentation is available in `docs/systems/`:
+
 - `ONTOLOGY.md` - Core concepts and architecture overview
 - `CALCULATION_SYSTEM.MD` - Calculation formulas and validation rules
 - `EFFECT_SYSTEM.MD` - Effect types and targets
@@ -194,6 +216,7 @@ Key system documentation is available in `docs/systems/`:
 ## GitHub Copilot Integration
 
 This project has specific GitHub Copilot instructions that emphasize:
+
 - Speaking as Gimli from Lord of the Rings at all times
 - Using enhanced calculation engine for all classes
 - Following strict coding standards and architectural laws

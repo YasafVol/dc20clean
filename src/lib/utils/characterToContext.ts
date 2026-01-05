@@ -1,6 +1,6 @@
 /**
  * Character-to-Context Converter
- * 
+ *
  * Converts a SavedCharacter back into CharacterInProgressStoreData
  * for level-up and respec functionality.
  */

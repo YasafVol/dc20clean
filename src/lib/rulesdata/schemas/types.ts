@@ -91,7 +91,6 @@ export interface IClassDefinition {
 	tradePointGrantLvl1?: number; // Additional trade points granted at Lvl 1 (beyond Int mod)
 	combatTraining?: string[]; // Array of combat training proficiencies (e.g., 'Weapons', 'All Armor')
 	maneuversKnownLvl1?: string | number; // Maneuvers known at Level 1 (can be 'All Attack' or a number)
-	techniquesKnownLvl1?: number; // Techniques known at Level 1
 	saveDCBase: number;
 	deathThresholdBase: number;
 	moveSpeedBase: number;

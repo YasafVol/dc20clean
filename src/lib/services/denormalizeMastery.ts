@@ -20,10 +20,16 @@ export interface DenormalizeInput {
 export interface DenormalizeOutput {
 	skillTotals: Record<string, number>;
 	skillMastery: Record<string, DenormalizedMasteryEntry>;
-	knowledgeTradeMastery: Record<'arcana' | 'history' | 'nature' | 'occultism' | 'religion', DenormalizedMasteryEntry>;
+	knowledgeTradeMastery: Record<
+		'arcana' | 'history' | 'nature' | 'occultism' | 'religion',
+		DenormalizedMasteryEntry
+	>;
 	masteryLadders: {
 		skills: Record<string, MasteryLadder>;
-		knowledgeTrades: Record<'arcana' | 'history' | 'nature' | 'occultism' | 'religion', MasteryLadder>;
+		knowledgeTrades: Record<
+			'arcana' | 'history' | 'nature' | 'occultism' | 'religion',
+			MasteryLadder
+		>;
 		practicalTrades: {
 			A?: { label: string; ladder: MasteryLadder; finalValue: number };
 			B?: { label: string; ladder: MasteryLadder; finalValue: number };
@@ -52,14 +58,14 @@ function buildLadder(masteryLevel: number): MasteryLadder {
 }
 
 function computeFinalValue(
-	governingAttributes: string[] |
-		('might' | 'agility' | 'charisma' | 'intelligence' | 'prime')[],
+	governingAttributes: string[] | ('might' | 'agility' | 'charisma' | 'intelligence' | 'prime')[],
 	baseAttributeValues: FinalAttributes,
 	masteryLevel: number
 ): number {
 	let best = Number.NEGATIVE_INFINITY;
 	for (const attr of governingAttributes) {
-		const v = attr === 'prime' ? baseAttributeValues.prime : (baseAttributeValues as any)[attr] ?? 0;
+		const v =
+			attr === 'prime' ? baseAttributeValues.prime : ((baseAttributeValues as any)[attr] ?? 0);
 		if (v > best) best = v;
 	}
 	if (!isFinite(best)) best = 0;
@@ -119,9 +125,9 @@ export function denormalizeMastery(input: DenormalizeInput): DenormalizeOutput {
 		if (!KNOWLEDGE_TRADE_IDS.has(trade.id)) continue;
 		const rank = Number(tradesRanks?.[trade.id] ?? 0);
 		const masteryLevel = Math.max(0, rank * 2);
-		const governing = (trade.attributeAssociations.length
-			? trade.attributeAssociations
-			: [trade.primaryAttribute]) as ('might' | 'agility' | 'charisma' | 'intelligence')[];
+		const governing = (
+			trade.attributeAssociations.length ? trade.attributeAssociations : [trade.primaryAttribute]
+		) as ('might' | 'agility' | 'charisma' | 'intelligence')[];
 		const baseAttributeValues = {
 			might: finalAttributes.might,
 			agility: finalAttributes.agility,
@@ -149,14 +155,19 @@ export function denormalizeMastery(input: DenormalizeInput): DenormalizeOutput {
 		const rank = Number(tradesRanks?.[trade.id] ?? 0);
 		const masteryLevel = Math.max(0, rank * 2);
 		if (masteryLevel === 0) continue;
-		const governing = (trade.attributeAssociations.length
-			? trade.attributeAssociations
-			: [trade.primaryAttribute]) as ('might' | 'agility' | 'charisma' | 'intelligence')[];
+		const governing = (
+			trade.attributeAssociations.length ? trade.attributeAssociations : [trade.primaryAttribute]
+		) as ('might' | 'agility' | 'charisma' | 'intelligence')[];
 		const finalValue = computeFinalValue(governing as any, finalAttributes, masteryLevel);
-		practicalPool.push({ id: trade.id, name: trade.name, finalValue, ladder: buildLadder(masteryLevel) });
+		practicalPool.push({
+			id: trade.id,
+			name: trade.name,
+			finalValue,
+			ladder: buildLadder(masteryLevel)
+		});
 	}
 	// Deterministic selection: sort desc by finalValue, then by id asc
-	practicalPool.sort((a, b) => (b.finalValue - a.finalValue) || a.id.localeCompare(b.id));
+	practicalPool.sort((a, b) => b.finalValue - a.finalValue || a.id.localeCompare(b.id));
 	const practicalLadders: DenormalizeOutput['masteryLadders']['practicalTrades'] = {};
 	const picks = practicalPool.slice(0, 4);
 	const slotLabels = ['A', 'B', 'C', 'D'] as const;
@@ -204,5 +215,3 @@ export function denormalizeMastery(input: DenormalizeInput): DenormalizeOutput {
 		languageMastery
 	};
 }
-
-

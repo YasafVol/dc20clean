@@ -1,6 +1,6 @@
 /**
  * Unit Tests for ClassFeatures Component
- * 
+ *
  * Tests progressive feature display, level-based grouping, and choice ordering.
  */
 
@@ -12,7 +12,7 @@ import ClassFeatures from './ClassFeatures';
 const TestWrapper = ({ children, characterState }: any) => {
 	// Mock useCharacter hook
 	const mockDispatch = vi.fn();
-	
+
 	// Override useCharacter for this test
 	vi.mock('../../lib/stores/characterContext', () => ({
 		useCharacter: () => ({
@@ -20,7 +20,7 @@ const TestWrapper = ({ children, characterState }: any) => {
 			dispatch: mockDispatch
 		})
 	}));
-	
+
 	return <div>{children}</div>;
 };
 
@@ -61,9 +61,7 @@ vi.mock('../../lib/rulesdata/loaders/class.loader', () => ({
 		{
 			id: 'monk',
 			name: 'Monk',
-			levelProgression: [
-				{ level: 1, techniquesKnown: 1 }
-			]
+			levelProgression: [{ level: 1, techniquesKnown: 1 }]
 		}
 	]
 }));
@@ -164,16 +162,14 @@ vi.mock('../../lib/rulesdata/loaders/class-features.loader', () => ({
 		}
 		return null;
 	},
-	getLegacyChoiceId: (className: string, featureName: string, index: number) => 
+	getLegacyChoiceId: (className: string, featureName: string, index: number) =>
 		`${className.toLowerCase()}_${featureName.toLowerCase().replace(/\s+/g, '_')}_choice_${index}`,
 	getAvailableSpellSchools: () => []
 }));
 
 // Mock techniques
 vi.mock('../../lib/rulesdata/martials/techniques', () => ({
-	techniques: [
-		{ name: 'Defensive Stance', description: 'Increase defense', cost: { ap: 1 } }
-	]
+	techniques: [{ name: 'Defensive Stance', description: 'Increase defense', cost: { ap: 1 } }]
 }));
 
 // Mock spell schema
@@ -255,7 +251,7 @@ describe('ClassFeatures Component - Progressive Display', () => {
 	describe('Level-Based Feature Grouping', () => {
 		it('should display Level 1 Features section', () => {
 			mockState.level = 1;
-			
+
 			render(<ClassFeatures />);
 
 			// Should have Level 1 Features section
@@ -264,9 +260,9 @@ describe('ClassFeatures Component - Progressive Display', () => {
 
 		it('should display level 1 feature names', () => {
 			mockState.level = 1;
-			
+
 			render(<ClassFeatures />);
-			
+
 			// Should show level 1 features
 			expect(screen.getByText('Source of Power')).toBeInTheDocument();
 			expect(screen.getByText('Monk Training')).toBeInTheDocument();
@@ -276,19 +272,19 @@ describe('ClassFeatures Component - Progressive Display', () => {
 
 		it('should NOT show level 2 features for level 1 character', () => {
 			mockState.level = 1;
-			
+
 			render(<ClassFeatures />);
-			
+
 			// Should NOT have Level 2 Features section
 			expect(screen.queryByText('Level 2 Features')).not.toBeInTheDocument();
-			
+
 			// Should NOT show level 2 features
 			expect(screen.queryByText('Spiritual Balance')).not.toBeInTheDocument();
 		});
 
 		it('should display both Level 1 and Level 2 sections for level 2 character', () => {
 			mockState.level = 2;
-			
+
 			render(<ClassFeatures />);
 
 			// Should have both sections
@@ -298,9 +294,9 @@ describe('ClassFeatures Component - Progressive Display', () => {
 
 		it('should display level 2 features for level 2 character', () => {
 			mockState.level = 2;
-			
+
 			render(<ClassFeatures />);
-			
+
 			// Should show level 2 features
 			expect(screen.getByText('Spiritual Balance')).toBeInTheDocument();
 			expect(screen.getByText('Talent')).toBeInTheDocument();
@@ -308,14 +304,14 @@ describe('ClassFeatures Component - Progressive Display', () => {
 
 		it('should display features from all levels up to current level', () => {
 			mockState.level = 3;
-			
+
 			render(<ClassFeatures />);
 
 			// Should have all three sections
 			expect(screen.getByText('Level 1 Features')).toBeInTheDocument();
 			expect(screen.getByText('Level 2 Features')).toBeInTheDocument();
 			expect(screen.getByText('Level 3 Features')).toBeInTheDocument();
-			
+
 			// Should show features from all levels
 			expect(screen.getByText('Source of Power')).toBeInTheDocument();
 			expect(screen.getByText('Spiritual Balance')).toBeInTheDocument();
@@ -326,7 +322,7 @@ describe('ClassFeatures Component - Progressive Display', () => {
 	describe('Feature Choice Ordering', () => {
 		it('should display stance choice within Level 1 section', () => {
 			mockState.level = 1;
-			
+
 			render(<ClassFeatures />);
 
 			// Stance choice should be present
@@ -336,14 +332,14 @@ describe('ClassFeatures Component - Progressive Display', () => {
 
 		it('should NOT display separate "Feature Choices" section', () => {
 			mockState.level = 2;
-			
+
 			render(<ClassFeatures />);
 
 			// The old "Feature Choices" header should not exist
 			// (All choices are now integrated within level sections)
 			const allText = document.body.textContent || '';
 			const featureChoicesMatches = allText.match(/Feature Choices/g) || [];
-			
+
 			// Should not have a standalone "Feature Choices" section title
 			// (May have "Level X Features" but not "Feature Choices")
 			expect(featureChoicesMatches.length).toBe(0);
@@ -353,7 +349,7 @@ describe('ClassFeatures Component - Progressive Display', () => {
 	describe('Feature Benefits Display', () => {
 		it('should display feature benefits when present', () => {
 			mockState.level = 1;
-			
+
 			render(<ClassFeatures />);
 
 			// Check for benefit display
@@ -363,26 +359,28 @@ describe('ClassFeatures Component - Progressive Display', () => {
 
 		it('should display benefits for level 2 features', () => {
 			mockState.level = 2;
-			
+
 			render(<ClassFeatures />);
 
 			// Check for Level 2 feature benefits
 			expect(screen.getByText('Ki Points')).toBeInTheDocument();
-			expect(screen.getByText('You have Ki Points equal to your Stamina Points.')).toBeInTheDocument();
+			expect(
+				screen.getByText('You have Ki Points equal to your Stamina Points.')
+			).toBeInTheDocument();
 		});
 	});
 
 	describe('Choice Options Display', () => {
 		it('should display all stance options', () => {
 			mockState.level = 1;
-			
+
 			render(<ClassFeatures />);
 
 			// Check for stance options
 			expect(screen.getByText('Bear Stance')).toBeInTheDocument();
 			expect(screen.getByText('Cobra Stance')).toBeInTheDocument();
 			expect(screen.getByText('Turtle Stance')).toBeInTheDocument();
-			
+
 			// Check for descriptions
 			expect(screen.getByText('Big Hits')).toBeInTheDocument();
 			expect(screen.getByText('Counter')).toBeInTheDocument();
@@ -393,7 +391,7 @@ describe('ClassFeatures Component - Progressive Display', () => {
 	describe('Starting Equipment Section', () => {
 		it('should display starting equipment section', () => {
 			mockState.level = 1;
-			
+
 			render(<ClassFeatures />);
 
 			expect(screen.getByText('Starting Equipment')).toBeInTheDocument();
@@ -404,7 +402,7 @@ describe('ClassFeatures Component - Progressive Display', () => {
 	describe('Martial Training Section', () => {
 		it('should display martial training section', () => {
 			mockState.level = 1;
-			
+
 			render(<ClassFeatures />);
 
 			expect(screen.getByText('Martial Training')).toBeInTheDocument();
@@ -416,14 +414,14 @@ describe('ClassFeatures Component - Progressive Display', () => {
 	describe('Edge Cases', () => {
 		it('should not show empty level sections', () => {
 			mockState.level = 5; // Level 5 (no features defined past 3)
-			
+
 			render(<ClassFeatures />);
 
 			// Should show levels 1-3 that have features
 			expect(screen.getByText('Level 1 Features')).toBeInTheDocument();
 			expect(screen.getByText('Level 2 Features')).toBeInTheDocument();
 			expect(screen.getByText('Level 3 Features')).toBeInTheDocument();
-			
+
 			// Should NOT show Level 4 or 5 sections (no features at those levels)
 			expect(screen.queryByText('Level 4 Features')).not.toBeInTheDocument();
 			expect(screen.queryByText('Level 5 Features')).not.toBeInTheDocument();
@@ -431,7 +429,7 @@ describe('ClassFeatures Component - Progressive Display', () => {
 
 		it('should render null when no class is selected', () => {
 			mockState.classId = ''; // No class selected
-			
+
 			const { container } = render(<ClassFeatures />);
 
 			// Component should render empty (return null)

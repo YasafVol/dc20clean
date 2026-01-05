@@ -104,49 +104,49 @@ const KnowledgeTrades: React.FC<KnowledgeTradesProps> = ({
 										/>
 									))}
 								</StyledProficiencyDots>
-							{(() => {
-								const leadingTotal =
-									trade.bonuses && trade.bonuses.length > 0
-										? trade.bonuses[0].total
-										: trade.bonus;
-								const bonusDisplay =
-									trade.bonuses && trade.bonuses.length > 0
-										? trade.bonuses
-											.map((entry) => {
-												const prefix = entry.total >= 0 ? '+' : '';
-												return `${prefix}${entry.total}(${ATTRIBUTE_ABBREVIATIONS[entry.attribute]})`;
-											})
-											.join('/')
-										: leadingTotal !== undefined
-										? `${leadingTotal >= 0 ? '+' : ''}${leadingTotal}`
-										: null;
+								{(() => {
+									const leadingTotal =
+										trade.bonuses && trade.bonuses.length > 0
+											? trade.bonuses[0].total
+											: trade.bonus;
+									const bonusDisplay =
+										trade.bonuses && trade.bonuses.length > 0
+											? trade.bonuses
+													.map((entry) => {
+														const prefix = entry.total >= 0 ? '+' : '';
+														return `${prefix}${entry.total}(${ATTRIBUTE_ABBREVIATIONS[entry.attribute]})`;
+													})
+													.join('/')
+											: leadingTotal !== undefined
+												? `${leadingTotal >= 0 ? '+' : ''}${leadingTotal}`
+												: null;
 
-								if (bonusDisplay === null) {
-									return null;
-								}
+									if (bonusDisplay === null) {
+										return null;
+									}
 
-								const isPositive = (leadingTotal ?? 0) >= 0;
+									const isPositive = (leadingTotal ?? 0) >= 0;
 
-								return (
-									<span
-										style={{
-											fontSize: '0.875rem',
-											fontWeight: '600',
-											color: isPositive
-												? isMobile
-													? '#22c55e'
-													: '#059669'
-												: isMobile
-													? '#ef4444'
-													: '#dc2626',
-											textAlign: 'center',
-											whiteSpace: 'nowrap'
-										}}
-									>
-										{bonusDisplay}
-									</span>
-								);
-							})()}
+									return (
+										<span
+											style={{
+												fontSize: '0.875rem',
+												fontWeight: '600',
+												color: isPositive
+													? isMobile
+														? '#22c55e'
+														: '#059669'
+													: isMobile
+														? '#ef4444'
+														: '#dc2626',
+												textAlign: 'center',
+												whiteSpace: 'nowrap'
+											}}
+										>
+											{bonusDisplay}
+										</span>
+									);
+								})()}
 								<StyledInfoButton
 									$isMobile={isMobile}
 									onClick={() => onTradeInfoClick?.(trade.name)}

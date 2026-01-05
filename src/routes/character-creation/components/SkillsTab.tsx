@@ -1,6 +1,9 @@
 import React from 'react';
 import { skillsData } from '../../../lib/rulesdata/skills';
-import { MASTERY_TIERS, type MasteryTierDefinition } from '../../../lib/rulesdata/progression/levelCaps';
+import {
+	MASTERY_TIERS,
+	type MasteryTierDefinition
+} from '../../../lib/rulesdata/progression/levelCaps';
 // Types moved from deleted BackgroundPointsManager
 interface BackgroundPointsData {
 	skillPointsUsed: number;

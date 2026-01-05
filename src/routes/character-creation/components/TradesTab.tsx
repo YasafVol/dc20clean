@@ -1,6 +1,9 @@
 import React from 'react';
 import { tradesData } from '../../../lib/rulesdata/trades';
-import { MASTERY_TIERS, type MasteryTierDefinition } from '../../../lib/rulesdata/progression/levelCaps';
+import {
+	MASTERY_TIERS,
+	type MasteryTierDefinition
+} from '../../../lib/rulesdata/progression/levelCaps';
 // Types moved from deleted BackgroundPointsManager
 interface BackgroundPointsData {
 	skillPointsUsed: number;
@@ -302,19 +305,19 @@ const TradesTab: React.FC<TradesTabProps> = ({
 				{allTradesAndKnowledge.map((trade) => {
 					const currentLevel = currentTrades[trade.id] || 0;
 					const masteryInfo = getMasteryInfo(currentLevel, masteryLimits.maxTradeMastery);
-				const associations = trade.attributeAssociations.length
-					? trade.attributeAssociations
-					: [trade.primaryAttribute];
-				const attributeList = associations
-					.map((attribute) => ATTRIBUTE_LABELS[attribute])
-					.join('/');
+					const associations = trade.attributeAssociations.length
+						? trade.attributeAssociations
+						: [trade.primaryAttribute];
+					const attributeList = associations
+						.map((attribute) => ATTRIBUTE_LABELS[attribute])
+						.join('/');
 
 					return (
 						<StyledSelectionItem key={trade.id} data-testid={`trade-item-${trade.id}`}>
 							<StyledSelectionHeader>
 								<StyledSelectionName>{trade.name}</StyledSelectionName>
 								<div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
-								{masteryInfo.name} (+{masteryInfo.bonus}) • {attributeList}
+									{masteryInfo.name} (+{masteryInfo.bonus}) • {attributeList}
 								</div>
 							</StyledSelectionHeader>
 							<div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>

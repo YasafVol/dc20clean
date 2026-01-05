@@ -14,11 +14,7 @@ export const championClass: ClassDefinition = {
 			shields: ['All_Shields']
 		},
 		maneuvers: {
-			learnsAllAttack: true,
 			additionalKnown: 'Maneuvers Known column of the Champion Class Table'
-		},
-		techniques: {
-			additionalKnown: 'Techniques Known column of the Champion Class Table'
 		},
 		staminaPoints: {
 			maximumIncreasesBy: 'Stamina Points column of the Champion Class Table'
@@ -38,11 +34,6 @@ export const championClass: ClassDefinition = {
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Armors', value: true },
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Shields', value: true },
-				{
-					type: 'GRANT_ABILITY',
-					target: 'learns_all_attack_maneuvers',
-					value: 'You learn all Attack Maneuvers.'
-				},
 				{
 					type: 'GRANT_ABILITY',
 					target: 'stamina_regen',
@@ -70,19 +61,14 @@ export const championClass: ClassDefinition = {
 				},
 				{
 					name: 'Maneuver Master',
-					description: 'You learn 2 Maneuvers of your choice.',
-					effects: [{ type: 'GRANT_CHOICE', target: 'maneuver', value: 2 }]
-				},
-				{
-					name: 'Technique Master',
 					description:
-						'You learn 1 Technique of your choice. Once per Combat, when you perform a Technique you can reduce its SP cost by 1.',
+						'You learn 1 Maneuver of your choice. Once per Round when you perform a Maneuver, you can reduce its SP cost by 1.',
 					effects: [
-						{ type: 'GRANT_CHOICE', target: 'technique', value: 1 },
+						{ type: 'GRANT_CHOICE', target: 'maneuver', value: 1 },
 						{
 							type: 'GRANT_ABILITY',
-							target: 'technique_master',
-							value: "Once per Combat: reduce a Technique's SP cost by 1."
+							target: 'maneuver_master',
+							value: 'Once per Round when you perform a Maneuver, reduce its SP cost by 1.'
 						}
 					]
 				}
@@ -110,12 +96,12 @@ export const championClass: ClassDefinition = {
 				{
 					name: 'Second Wind',
 					description:
-						'Once per Combat when you start your turn Bloodied, you can regain 2 HP and 1 SP.',
+						'Once per Combat when you start your turn Bloodied, you can regain 2 HP and 2 SP.',
 					effects: [
 						{
 							type: 'GRANT_ABILITY',
 							target: 'second_wind',
-							value: 'Once per Combat when Bloodied at turn start: regain 2 HP and 1 SP.'
+							value: 'Once per Combat when Bloodied at turn start: regain 2 HP and 2 SP.'
 						}
 					]
 				}
@@ -168,7 +154,7 @@ export const championClass: ClassDefinition = {
 							type: 'GRANT_ABILITY',
 							target: 'adrenaline_boost',
 							value:
-								'When you use Second Wind, gain a +5 bonus to Attack Checks until the end of your turn.'
+								'When you use Second Wind, gain a +5 bonus to Martial Attacks and Martial Checks until the end of your turn.'
 						},
 						{
 							type: 'GRANT_ABILITY',
@@ -220,7 +206,7 @@ export const championClass: ClassDefinition = {
 							type: 'GRANT_ABILITY',
 							target: 'defensive_bash',
 							value:
-								"When you use a Defensive Maneuver as a Reaction to an Attack from a creature within 1 Space, the attacker must make a Physical Save against your Attack Check. Failure: The target is pushed 1 Space away or Taunted by you (your choice)."
+								'When you use a Defensive Maneuver as a Reaction to an Attack from a creature within 1 Space, the attacker must make a Physical Save against your Attack Check. Failure: The target is pushed 1 Space away or Taunted by you (your choice).'
 						},
 						{
 							type: 'GRANT_ABILITY',

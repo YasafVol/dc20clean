@@ -7,6 +7,7 @@
 **Status:** Fully implemented
 
 **Deliverables:** All complete
+
 - ✅ `denormalizeMastery.ts` service created
 - ✅ Types defined in `dataContracts.ts`
 - ✅ Integration in `characterCompletion.ts`
@@ -17,12 +18,14 @@
 - ✅ Languages: `languageMastery` A-D = { name, limited, fluent }
 
 **Evidence:**
+
 - File: `src/lib/services/denormalizeMastery.ts` (205 lines)
 - File: `src/lib/services/denormalizeMastery.spec.ts` (73 lines of tests)
 - Integration: `characterCompletion.ts` lines 14, 67, 146-150
 - PDF: `transformers.ts` consumes denormalized fields
 
 **Acceptance:**
+
 - ✅ Local export PDF matches UI for skills/trades/languages
 - ✅ No regressions in Character Sheet rendering
 
@@ -31,10 +34,12 @@
 ### 3. PDF Export and Calculation Follow-ups ✅ **COMPLETE**
 
 #### ✅ Rest Points Cap
+
 - **Status:** Implemented
 - Rest points equal final HP Max (verified in calculator)
 
 #### ✅ Character Schema Extension
+
 - **Status:** Schema extended in `dataContracts.ts` (lines 125-132)
 - Fields added:
   - `finalPDHeavyThreshold`, `finalPDBrutalThreshold`
@@ -43,6 +48,7 @@
 - **Note:** Thresholds are computed in `characterCompletion.ts` as needed
 
 #### ✅ Attribute Save Values
+
 - **Status:** Verified correct
 - Formula: `attribute + combat mastery` (implemented in calculator)
 
@@ -53,19 +59,23 @@
 ### 1. Flesh out Unit Tests for Core Logic ❌ **NOT STARTED**
 
 **Current gap:**
+
 - Placeholder test files exist but contain only `expect(true).toBe(true)`
 - Core utilities and hooks lack meaningful test coverage
 
 **Files needing real tests:**
+
 - `src/lib/utils/defenseNotes.spec.ts` - Currently 7 lines, needs ~50-100 lines
 - `src/lib/services/spellAssignment.spec.ts` - Currently 7 lines, needs ~100-150 lines
 - `src/lib/hooks/useEnhancedCharacterCalculation.spec.ts` - Currently 7 lines, needs ~80-120 lines
 
 **Acceptance criteria:**
+
 - Tests cover primary functions, edge cases, and invalid inputs
 - `npm run test:unit` passes with meaningful coverage increase
 
 **Tasks:**
+
 - [ ] Write tests for `defenseNotes.ts` utilities (get, add, update, delete notes)
 - [ ] Write tests for `spellAssignment.ts` service (class spell assignment logic)
 - [ ] Write tests for `useEnhancedCharacterCalculation.ts` hook (requires mocking context)
@@ -77,6 +87,7 @@
 ### 2. Low-Priority System Docs ⏸️ **DEFERRED**
 
 **Tracked for future work:**
+
 - Weapons & Items System — items schema, weapon damage derivation, UI interactions
 - Currency System — model, validation, persistence, UI mapping
 - Status & Exhaustion System — levels, effects, modal behavior
@@ -91,11 +102,13 @@
 **Goal:** Remove all derived-calculation logic from UI components; consume precomputed values on `SavedCharacter` instead.
 
 **Context (backend COMPLETE):**
+
 - ✅ `SavedCharacter` persists denormalized background data
 - ✅ PDF transformer already uses these fields
 - ❌ Frontend UI still recomputes values from raw data
 
 **Scope for FE migration:**
+
 - [ ] Skills: Read `skillTotals` (and `skillMastery` for tooltips) instead of recomputing from `skillsData`
 - [ ] Mastery ladders: Render from `masteryLadders.skills`, `masteryLadders.knowledgeTrades`, `masteryLadders.practicalTrades`
 - [ ] Trade labels: Use `masteryLadders.practicalTrades.{A..D}.label`
@@ -104,11 +117,13 @@
 - [ ] Remove character sheet recalculation on load (trust stored data)
 
 **Files to update:**
+
 - `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx` - Remove `calculateCharacterWithBreakdowns` on load
 - All character sheet components that display skills/trades/languages
 - Defense display components
 
 **Acceptance:**
+
 - [ ] No UI behavior changes; rendered values equal before/after migration
 - [ ] `CharacterSheetProvider.tsx` does NOT recalculate on load
 - [ ] PDF transformer contains zero math (only mapping from `SavedCharacter`)
@@ -123,23 +138,27 @@
 **Goal:** Allow selecting the same multiclass talent tier multiple times for different classes (e.g., Novice Multiclass twice to get Level 1 features from two different classes).
 
 **Current limitation:**
+
 - Multiclass talents are stored as single-select in `selectedTalents: Record<string, number>`
 - Each tier (Novice, Adept, Expert, etc.) can only be taken once
 - Cannot multiclass into multiple classes at the same tier level
 
 **Proposed solution:**
+
 - Change multiclass talent storage from count-based to instance-based
 - New structure: `multiclassSelections: Array<{ tierId: string, classId: string, featureId: string }>`
 - Each selection stores: which tier, which class, which feature
 - Allow multiple instances of same tier pointing to different classes
 
 **Example use case:**
+
 - Level 4 character with 2 talent points
 - Take "Novice Multiclass" → select Barbarian → get "Rage" (Level 1)
 - Take "Novice Multiclass" again → select Wizard → get "Spell School Initiate" (Level 1)
 - Result: Character has features from 2 different multiclass sources
 
 **Implementation tasks:**
+
 - [ ] Update `multiclassSelections` type in `characterContext.tsx` and `effectSystem.ts`
 - [ ] Modify `LevelingChoices.tsx` multiclass UI to support multiple instances per tier
 - [ ] Update calculator to process array of multiclass selections (not just single tier flags)
@@ -150,6 +169,7 @@
 - [ ] Update LEVELING_SYSTEM.MD with multiclass instance rules
 
 **Acceptance criteria:**
+
 - [ ] Can select same multiclass tier multiple times if pointing to different classes
 - [ ] Each selection correctly applies effects from chosen feature
 - [ ] Talent budget properly decrements for each multiclass selection
@@ -158,6 +178,7 @@
 - [ ] UI clearly shows which classes have been multiclassed at which tiers
 
 **Dependencies:**
+
 - M3.17 (Complete Multiclass Talent System) ✅ Done
 - Current multiclass system fully implemented
 
@@ -170,10 +191,12 @@
 ### 5. Extract useAttributeCalculation Hook 🟡 **OPTIONAL IMPROVEMENT**
 
 **Current state:**
+
 - Attribute calculation logic is inline in `Attributes.tsx`
 - Works correctly but not following original architectural plan
 
 **Proposed:**
+
 - Extract to `src/lib/hooks/useAttributeCalculation.ts`
 - Improves testability and reusability
 - Matches DATA_FLOW_REFACTOR architectural design
@@ -185,15 +208,15 @@
 
 ## 📊 Progress Summary
 
-| Section | Status | Completion |
-|---------|--------|------------|
-| 0. Mastery Epic | ✅ Complete | 100% |
-| 1. Unit Tests | ❌ Not Started | 0% |
-| 2. System Docs | ⏸️ Deferred | N/A |
-| 3. PDF/Calculation | ✅ Complete | 100% |
-| 4. FE Migration | ❌ Not Started | 0% |
-| 5. Extract Hook | 🟡 Optional | N/A |
-| 6. Multiclass Expansion | ❌ Not Started | 0% |
+| Section                 | Status         | Completion |
+| ----------------------- | -------------- | ---------- |
+| 0. Mastery Epic         | ✅ Complete    | 100%       |
+| 1. Unit Tests           | ❌ Not Started | 0%         |
+| 2. System Docs          | ⏸️ Deferred    | N/A        |
+| 3. PDF/Calculation      | ✅ Complete    | 100%       |
+| 4. FE Migration         | ❌ Not Started | 0%         |
+| 5. Extract Hook         | 🟡 Optional    | N/A        |
+| 6. Multiclass Expansion | ❌ Not Started | 0%         |
 
 **Overall: 2 of 5 active tasks complete (40%)**
 

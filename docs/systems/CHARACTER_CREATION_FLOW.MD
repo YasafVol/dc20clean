@@ -1,11 +1,13 @@
 ### Character Creation Flow System Spec
 
 #### Purpose
+
 - Establish a canonical reference for the multi-stage character creation wizard so future specs (e.g., Level-Up) reuse the same structure and terminology
 - Capture inputs, outputs, and validation rules per stage based on the React components in `src/routes/character-creation`
 - Highlight data contracts with `characterContext` and `enhancedCharacterCalculator.ts`
 
 #### Stage Contract
+
 - Ordering is fixed: 1) Class & Features → 2) Ancestry → 3) Attributes → 4) Background → 5) Spells & Maneuvers → 6) Character Name
 - State lives in `characterContext.tsx`; each stage must read/write through the reducer actions (`SET_CLASS`, `SET_TRAITS`, `UPDATE_SKILLS`, etc.)
 - Validation gating: `CharacterCreation.tsx` calls `isStepCompleted(stepNumber)` before allowing navigation; each stage enforces completion via calculator outputs (ancestry/background budgets, attribute points remaining, spell counts)
@@ -14,6 +16,7 @@
   - `validation.errors` drive blocking messages (POINTS_OVERBUDGET, MASTERY_CAP_EXCEEDED)
 
 #### Stage Details
+
 - **Stage 1 – Class & Features** (`ClassSelector.tsx`, `ClassFeatures.tsx`)
   - Inputs: `classesData` (from `class.loader.ts`), `selectedFeatureChoices`, resolver-derived feature options
   - Completion rule: class selected AND all required feature choices resolved (per `findClassByName` metadata)
@@ -48,6 +51,7 @@
   - Outputs: final naming data for persistence
 
 #### Level-Up WIP Stage (Planned)
+
 - Activation: insert after Stage 1 when `state.level > 1`
 - Inputs: resolver outputs (`talentBudget`, `pathBudget`, `pendingSubclassChoices`, unlocked feature list) exposed via `classProgressionResolver`
 - Completion rule: all progress pools reduced to zero and every pending choice resolved; blockers surfaced via calculator validation (POINTS_OVERBUDGET for talents/path, unresolved choice prompts)
@@ -56,6 +60,7 @@
 - Testing: add unit coverage for resolver budgets at level 2+ and integration tests that simulate completing Leveling Choices before entering Ancestry
 
 #### Level-Up Stage UX Flow
+
 - **Stage header**
   - Step rail marks the conditional “Level Up” slot; hover copy clarifies the stage appears when level > 1.
   - Two pill counters track budgets: `Talent selections X/Y`, `Path points X/Y`, toggling to warning colors when unspent.
@@ -75,6 +80,7 @@
   - Error state: counters turn amber, unresolved sections stay expanded with helper text (“Spend your remaining Path Point”).
 
 #### Level-Up Stage Data Contract
+
 - Calculator/resolver fields consumed:
   - `resolver.availableFeatures`: array of feature objects unlocked up to current level
   - `resolver.pendingChoices`: structured list of outstanding class/subclass/multiclass decisions with option payloads
@@ -88,31 +94,35 @@
 - Navigation gating relies on calculator validation; failure to resolve choices keeps the step marked incomplete.
 
 #### State Extension Schema
-| Store Field | Type | Source Stage | Description | Downstream Consumers |
-|-------------|------|--------------|-------------|-----------------------|
-| `level` | number | Class & Features | User-selected target level (default 1) | Calculator, Leveling Choices, Spells/Maneuvers |
-| `talentSelections` | `Record<string, string[]>` | Leveling Choices | Tracks chosen talents per tier/class | Background (for bonuses), final sheet |
-| `pathInvestments` | `Record<'martial_path' \| 'spellcaster_path', number>` | Leveling Choices | Points allocated per path | Calculator path benefits, sheet display |
-| `multiclassSelections` | `string[]` | Leveling Choices | Feature IDs chosen via multiclass talents | Calculator effects, features list |
-| `resolvedFeatureIds` | `string[]` | Leveling Choices | Feature IDs unlocked after resolution | ClassFeatures recap, character sheet |
-| `pendingFeatureChoices` | `Record<string, ChoiceState>` | Leveling Choices | Captures unresolved choices with option state | Leveling stage UI (until cleared) |
-| `availableFeatures` | `FeatureSummary[]` | Resolver (read-only cache) | Snapshot of all features unlocked at level | Sheet, export, future UI |
+
+| Store Field             | Type                                                   | Source Stage               | Description                                   | Downstream Consumers                           |
+| ----------------------- | ------------------------------------------------------ | -------------------------- | --------------------------------------------- | ---------------------------------------------- |
+| `level`                 | number                                                 | Class & Features           | User-selected target level (default 1)        | Calculator, Leveling Choices, Spells/Maneuvers |
+| `talentSelections`      | `Record<string, string[]>`                             | Leveling Choices           | Tracks chosen talents per tier/class          | Background (for bonuses), final sheet          |
+| `pathInvestments`       | `Record<'martial_path' \| 'spellcaster_path', number>` | Leveling Choices           | Points allocated per path                     | Calculator path benefits, sheet display        |
+| `multiclassSelections`  | `string[]`                                             | Leveling Choices           | Feature IDs chosen via multiclass talents     | Calculator effects, features list              |
+| `resolvedFeatureIds`    | `string[]`                                             | Leveling Choices           | Feature IDs unlocked after resolution         | ClassFeatures recap, character sheet           |
+| `pendingFeatureChoices` | `Record<string, ChoiceState>`                          | Leveling Choices           | Captures unresolved choices with option state | Leveling stage UI (until cleared)              |
+| `availableFeatures`     | `FeatureSummary[]`                                     | Resolver (read-only cache) | Snapshot of all features unlocked at level    | Sheet, export, future UI                       |
 
 > `ChoiceState` / `FeatureSummary` mirror resolver output types; define them in `characterContext.tsx` to keep serialization stable.
 
 #### Validation Feedback Patterns
+
 - Snackbar messaging: surface human-readable summaries (`"Spend remaining 1 Talent point"`, `"Choose a subclass feature"`)
 - Step indicator: flag Leveling Choices as error when validation errors exist, matching current stage error styling
 - Inline cues: counters turn warning state when > 0; unresolved choice cards stay expanded with instructional text
 - Calculator error codes extend `validation.errors`; Stage 2+ read the same object so the experience is consistent across steps
 
 #### Scaling Considerations
+
 - Anticipate additional talent/path categories at higher levels; provide search/filter UI within accordions
 - Support grouping by source (general vs class talents, subclass tiers) and allow collapsing completed sections to reduce cognitive load
 - Employ progressive disclosure for large option sets (e.g., load more, lazy search) to keep DOM/render manageable
 - Ensure state shape (`talentSelections`, `multiclassSelections`) accepts multiple entries per level to accommodate future rule changes
 
 #### Validation & Testing Notes
+
 - Unit tests exist for `characterContext` reducer; new tests should verify stage completion helpers under multi-level inputs
 - Ensure calculated budgets (ancestry/background) align with UI assumptions to avoid false negatives in completion gating
 - Future specs should reference this document when altering stage order, adding steps, or modifying completion rules

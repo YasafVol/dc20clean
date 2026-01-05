@@ -1,6 +1,6 @@
 /**
  * M4.1e - Level Cap Enforcement Tests
- * 
+ *
  * Tests the level cap system for:
  * - Cap table data integrity
  * - Mastery tier definitions
@@ -21,10 +21,10 @@ describe('Level Cap System (M4.1e)', () => {
 	describe('Level Caps Table Integrity', () => {
 		it('should have entries for all levels 1-20', () => {
 			expect(LEVEL_CAPS_TABLE).toHaveLength(20);
-			
+
 			// Check each level is present
 			for (let level = 1; level <= 20; level++) {
-				const entry = LEVEL_CAPS_TABLE.find(e => e.level === level);
+				const entry = LEVEL_CAPS_TABLE.find((e) => e.level === level);
 				expect(entry, `Level ${level} should exist in caps table`).toBeDefined();
 			}
 		});
@@ -33,7 +33,10 @@ describe('Level Cap System (M4.1e)', () => {
 			for (let i = 1; i < LEVEL_CAPS_TABLE.length; i++) {
 				const currentCap = LEVEL_CAPS_TABLE[i].maxAttributeValue;
 				const previousCap = LEVEL_CAPS_TABLE[i - 1].maxAttributeValue;
-				expect(currentCap, `Level ${i + 1} attribute cap should be >= level ${i}`).toBeGreaterThanOrEqual(previousCap);
+				expect(
+					currentCap,
+					`Level ${i + 1} attribute cap should be >= level ${i}`
+				).toBeGreaterThanOrEqual(previousCap);
 			}
 		});
 
@@ -41,7 +44,10 @@ describe('Level Cap System (M4.1e)', () => {
 			for (let i = 1; i < LEVEL_CAPS_TABLE.length; i++) {
 				const currentTier = LEVEL_CAPS_TABLE[i].maxSkillMasteryTier;
 				const previousTier = LEVEL_CAPS_TABLE[i - 1].maxSkillMasteryTier;
-				expect(currentTier, `Level ${i + 1} mastery tier should be >= level ${i}`).toBeGreaterThanOrEqual(previousTier);
+				expect(
+					currentTier,
+					`Level ${i + 1} mastery tier should be >= level ${i}`
+				).toBeGreaterThanOrEqual(previousTier);
 			}
 		});
 
@@ -84,7 +90,7 @@ describe('Level Cap System (M4.1e)', () => {
 		});
 
 		it('should have unique tier numbers', () => {
-			const tierNumbers = MASTERY_TIERS.map(t => t.tier);
+			const tierNumbers = MASTERY_TIERS.map((t) => t.tier);
 			const uniqueTiers = new Set(tierNumbers);
 			expect(uniqueTiers.size).toBe(tierNumbers.length);
 		});
@@ -374,7 +380,7 @@ describe('Level Cap System (M4.1e)', () => {
 			const level10Cap = getLevelCaps(10).maxAttributeValue;
 			const level15Cap = getLevelCaps(15).maxAttributeValue;
 			const level20Cap = getLevelCaps(20).maxAttributeValue;
-			
+
 			expect(level5Cap).toBe(level1Cap + 1);
 			expect(level10Cap).toBe(level5Cap + 1);
 			expect(level15Cap).toBe(level10Cap + 1);
@@ -388,7 +394,7 @@ describe('Level Cap System (M4.1e)', () => {
 			const level10Tier = getLevelCaps(10).maxSkillMasteryTier;
 			const level15Tier = getLevelCaps(15).maxSkillMasteryTier;
 			const level20Tier = getLevelCaps(20).maxSkillMasteryTier;
-			
+
 			expect(level5Tier).toBe(level1Tier + 1);
 			expect(level10Tier).toBe(level5Tier + 1);
 			expect(level15Tier).toBe(level10Tier + 1);
@@ -400,7 +406,7 @@ describe('Level Cap System (M4.1e)', () => {
 		it('should report cap distribution', () => {
 			const attributeCapCounts = new Map<number, number>();
 			const masteryTierCounts = new Map<number, number>();
-			
+
 			for (const entry of LEVEL_CAPS_TABLE) {
 				attributeCapCounts.set(
 					entry.maxAttributeValue,
@@ -411,14 +417,23 @@ describe('Level Cap System (M4.1e)', () => {
 					(masteryTierCounts.get(entry.maxSkillMasteryTier) || 0) + 1
 				);
 			}
-			
+
 			console.log('📊 Level Caps Distribution:');
-			console.log('   Attribute Caps:', Array.from(attributeCapCounts.entries()).map(([cap, count]) => `+${cap}(${count})`).join(', '));
-			console.log('   Mastery Tiers:', Array.from(masteryTierCounts.entries()).map(([tier, count]) => `T${tier}(${count})`).join(', '));
-			
+			console.log(
+				'   Attribute Caps:',
+				Array.from(attributeCapCounts.entries())
+					.map(([cap, count]) => `+${cap}(${count})`)
+					.join(', ')
+			);
+			console.log(
+				'   Mastery Tiers:',
+				Array.from(masteryTierCounts.entries())
+					.map(([tier, count]) => `T${tier}(${count})`)
+					.join(', ')
+			);
+
 			expect(attributeCapCounts.size).toBeGreaterThanOrEqual(3);
 			expect(masteryTierCounts.size).toBeGreaterThanOrEqual(3);
 		});
 	});
 });
-

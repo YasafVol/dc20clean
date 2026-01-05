@@ -403,10 +403,8 @@ ${characterData.characterState?.notes?.playerNotes || 'No notes'}`;
 									>
 										<strong>Prime:</strong>{' '}
 										{usePrimeCapRule
-											?
-												`+${characterData.finalPrimeModifierValue}`
-											:
-												`${primeAttributeLabel} (+${characterData.finalPrimeModifierValue})`}
+											? `+${characterData.finalPrimeModifierValue}`
+											: `${primeAttributeLabel} (+${characterData.finalPrimeModifierValue})`}
 									</div>
 								</div>
 							</MobileResourceBox>

@@ -7,17 +7,20 @@
 ## Executive Summary
 
 The codebase has **improved test coverage** with:
+
 - **~16%** unit test coverage for `src/lib/` (24 test files for 149 source files)
 - **4.2%** component test coverage for `src/routes/` (4 test files for 95 component files)
 - **10 E2E test suites** covering critical user flows
 
 ### Recent Additions ✨
+
 - **Leveling System**: 240+ comprehensive tests covering talents, level aggregation, effects, caps, and integration (October 2025)
 - **ClassFeatures Component**: 29 comprehensive tests (14 logic + 15 component) validating progressive feature display
 - **Ancestry & Trait System**: 34 comprehensive tests validating all 17 ancestries and 239 traits
 - **Multiclass System**: 31 comprehensive tests validating all 6 tiers, prerequisites, and helpers
 
 ### Test Infrastructure
+
 - **Unit Testing:** Vitest with browser and node test projects
 - **E2E Testing:** Playwright with desktop and mobile configurations
 - **Test Commands:** `npm run test:unit`, `npm run test:e2e`, `npm run test`
@@ -29,12 +32,14 @@ The codebase has **improved test coverage** with:
 ### 1.1 Well-Tested Areas ✅
 
 #### Core Calculation Engine
+
 - ✅ **`enhancedCharacterCalculator.spec.ts`** - Mastery cap logic, skill expertise, effect aggregation
 - ✅ **`enhancedCharacterCalculator.aggregation.test.ts`** - Additional aggregation tests
 - ✅ **`pathBonuses.test.ts`** - Path point allocation and bonuses (M3.9)
 - ✅ **`denormalizeMastery.spec.ts`** - Mastery denormalization logic
 
 #### Class System
+
 - ✅ **`classProgressionResolver.test.ts`** - Comprehensive class progression tests
   - Basic functionality (levels 1-10)
   - Feature objects and effects
@@ -48,6 +53,7 @@ The codebase has **improved test coverage** with:
 - ✅ **`multiclass.test.ts`** - Multiclass talent system validation (31 tests)
 
 #### Data & Services
+
 - ✅ **`trades.spec.ts`** - Trades and knowledge trades validation
 - ✅ **`spellAssignment.spec.ts`** - Spell assignment logic
 - ✅ **`storageUtils.spec.ts`** - Local storage utilities
@@ -56,6 +62,7 @@ The codebase has **improved test coverage** with:
 - ✅ **`ancestries.test.ts`** - Comprehensive ancestry & trait system validation (34 tests)
 
 #### Leveling System (NEW - October 2025) 🆕
+
 - ✅ **`talents.test.ts`** - Talent system data integrity (~40 tests)
   - General talent validation (structure, effects, repeatability)
   - Class talent validation (all 14 classes)
@@ -89,11 +96,13 @@ The codebase has **improved test coverage** with:
   - Error handling and stability
 
 #### State Management
+
 - ✅ **`characterContext.reducer.spec.ts`** - Character reducer actions
 - ✅ **`useCharacterSheetReducer.test.ts`** - Character sheet reducer hook
 - ✅ **`useEnhancedCharacterCalculation.spec.ts`** - Enhanced calculation hook
 
 #### Components
+
 - ✅ **`CharacterCreation.spec.ts`** - Character creation flow
 - ✅ **`ClassFeatures.test.tsx`** - Class features component rendering (15 tests)
 - ✅ **`ClassFeatures.logic.test.ts`** - Class features logic and algorithms (14 tests)
@@ -103,7 +112,9 @@ The codebase has **improved test coverage** with:
 ### 1.2 Untested Areas ❌
 
 #### Class Features (Critical Gap)
+
 **0 of 14 class feature files have tests:**
+
 - ❌ `barbarian_features.ts`
 - ❌ `bard_features.ts`
 - ❌ `champion_features.ts`
@@ -119,12 +130,14 @@ The codebase has **improved test coverage** with:
 - ❌ `wizard_features.ts`
 
 **Impact:** Class features define core game mechanics. Missing tests mean:
+
 - Feature effects not validated
 - Choices not tested
 - Level progression not verified
 - Breaking changes may go undetected
 
 #### Ancestry & Trait System ✅ **COMPLETE**
+
 - ✅ **`ancestries.test.ts`** (34 comprehensive tests)
   - Data structure validation (ancestry & trait loading, required fields)
   - ID format & naming conventions
@@ -137,6 +150,7 @@ The codebase has **improved test coverage** with:
 **Coverage:** 100% of ancestry/trait data integrity validated
 
 #### Talent System ✅ **COMPLETE**
+
 - ✅ **`talents.test.ts`** (~40 comprehensive tests)
   - Data structure validation (general, class, multiclass talents)
   - ID uniqueness across all talent categories
@@ -148,6 +162,7 @@ The codebase has **improved test coverage** with:
 **Coverage:** 100% of talent data integrity validated
 
 #### Services (Business Logic)
+
 - ❌ `characterCompletion.ts` - Character finalization logic
 - ❌ `dataMapping.ts` - Data transformation logic
 - ❌ Path service (`paths/path.service.ts`)
@@ -155,6 +170,7 @@ The codebase has **improved test coverage** with:
 **Impact:** Critical business logic may have bugs in production
 
 #### Combat & Derived Stats
+
 - ❌ Attack calculations
 - ❌ Defense calculations (only notes tested)
 - ❌ Movement calculations
@@ -164,6 +180,7 @@ The codebase has **improved test coverage** with:
 **Impact:** Core combat mechanics not validated
 
 #### Spell & Martial Systems
+
 - ❌ Individual spell definitions (60+ files)
 - ❌ Maneuver definitions
 - ❌ Technique definitions
@@ -172,6 +189,7 @@ The codebase has **improved test coverage** with:
 **Impact:** Game content not validated
 
 #### PDF Export
+
 - ❌ `pdf/fillPdf.ts` - PDF generation logic
 - ❌ Field mapping
 - ❌ Export validation
@@ -179,6 +197,7 @@ The codebase has **improved test coverage** with:
 **Impact:** PDF export may fail or produce incorrect output
 
 #### Progression & Leveling ✅ **SUBSTANTIALLY COMPLETE**
+
 - ✅ **`levelCaps.test.ts`** - Level cap logic and validation (~45 tests)
 - ✅ **`levelAggregation.test.ts`** - Budget accumulation and feature unlocking (~50 tests)
 - ✅ **`levelingIntegration.test.ts`** - End-to-end leveling flows (~40 tests)
@@ -187,6 +206,7 @@ The codebase has **improved test coverage** with:
 - ⏳ Level-up UI flow (pending E2E tests)
 
 #### Data Schemas
+
 - ❌ `schemas/character.schema.ts` - Character schema validation
 - ❌ `schemas/class.schema.ts` - Class schema validation
 - ❌ `schemas/spell.schema.ts` - Spell schema validation
@@ -196,6 +216,7 @@ The codebase has **improved test coverage** with:
 ### 1.3 Component Testing Gaps
 
 **Untested Character Creation Components:**
+
 - ❌ `AncestrySelector.tsx`
 - ❌ `AttributePointsCounter.tsx`
 - ❌ `Attributes.tsx`
@@ -216,6 +237,7 @@ The codebase has **improved test coverage** with:
 - ❌ Background tabs (Skills, Trades, Languages)
 
 **Untested Character Sheet Components:**
+
 - ❌ All character sheet components (desktop & mobile)
 - ❌ `CharacterSheetDesktop.tsx`
 - ❌ `CharacterSheetMobile.tsx`
@@ -231,6 +253,7 @@ The codebase has **improved test coverage** with:
 ### 2.1 Covered E2E Flows ✅
 
 **Character Creation:**
+
 - ✅ `human-cleric.e2e.spec.ts` - Full human cleric creation flow
   - Class selection with divine domains
   - Ancestry with trait selection
@@ -244,6 +267,7 @@ The codebase has **improved test coverage** with:
 - ✅ `hunter-beastborn.e2e.spec.ts` - Hunter beastborn character flow
 
 **Character Sheet Interactions:**
+
 - ✅ `01-import.e2e.spec.ts` - Import fixture and open sheet (smoke test)
 - ✅ `02-resources.e2e.spec.ts` - HP, SP, MP, precision tracking
 - ✅ `07-weapons.e2e.spec.ts` - Add/update/remove weapons
@@ -256,6 +280,7 @@ The codebase has **improved test coverage** with:
 ### 2.2 E2E Gaps ❌
 
 **Character Creation Flows:**
+
 - ❌ Other ancestry combinations
 - ❌ All class creation flows (only cleric and hunter tested)
 - ❌ Subclass selection flow
@@ -266,6 +291,7 @@ The codebase has **improved test coverage** with:
 - ❌ Mobile character creation
 
 **Character Sheet Interactions:**
+
 - ❌ Edit character attributes/skills
 - ❌ Defense changes (partial - modal exists but not fully tested)
 - ❌ Death saving throws
@@ -277,6 +303,7 @@ The codebase has **improved test coverage** with:
 - ❌ Comprehensive mobile interactions
 
 **Data Validation:**
+
 - ❌ Multi-attribute trades validation (Brewing example from spec)
 - ❌ Effect stacking
 - ❌ Mastery cap enforcement
@@ -288,6 +315,7 @@ The codebase has **improved test coverage** with:
 ## 3. Test Quality Assessment
 
 ### 3.1 Strengths ✅
+
 1. **Core calculation engine** well tested with multiple scenarios
 2. **Class progression resolver** has comprehensive coverage
 3. **E2E tests** cover critical happy paths
@@ -296,6 +324,7 @@ The codebase has **improved test coverage** with:
 6. **Good E2E documentation** (E2E_TEST_SUMMARY.md)
 
 ### 3.2 Weaknesses ❌
+
 1. **Very low overall coverage** (~10% unit, ~2% component)
 2. **No integration tests** between systems
 3. **No property-based testing** for complex calculations
@@ -411,6 +440,7 @@ The codebase has **improved test coverage** with:
 ## 6. Test Execution Results
 
 ### Current Status
+
 ```bash
 # Unit Tests
 npm run test:unit
@@ -422,6 +452,7 @@ npm run test:e2e
 ```
 
 ### Known Issues
+
 - ❌ Unit tests may have failures (exit code 1 observed)
 - ⚠️ Feature info popups missing (noted in E2E screenshots)
 - ⚠️ Precision stat missing in some views
@@ -432,6 +463,7 @@ npm run test:e2e
 ## 7. Testing Best Practices Checklist
 
 ### Current State
+
 - ✅ Tests beside source code (`*.test.ts`, `*.spec.ts`)
 - ✅ Separate E2E directory
 - ✅ Test helpers (`e2e/helpers.ts`)
@@ -444,6 +476,7 @@ npm run test:e2e
 - ❌ No test data generators
 
 ### Recommendations
+
 1. Add coverage reporting (e.g., `vitest --coverage`)
 2. Add test documentation in key areas
 3. Create test data builders/factories
@@ -454,23 +487,23 @@ npm run test:e2e
 
 ## 8. Estimated Test Coverage by System
 
-| System | Files | Tested | Coverage | Priority |
-|--------|-------|--------|----------|----------|
-| **Core Calculation** | 5 | 4 | 80% | ✅ Good |
-| **Class System** | 30 | 3 | 10% | 🔴 Critical |
-| **Ancestry/Traits** | 2 | 1 | 50% | ✅ Good |
-| **Talents** | 15 | 1 | 100%* | ✅ Excellent |
-| **Leveling System** | 8 | 6 | 90%+ | ✅ Excellent |
-| **Skills/Trades** | 2 | 1 | 50% | 🟢 Good |
-| **Spells** | 60+ | 1 | <5% | 🟡 Medium |
-| **Martials** | 3 | 0 | 0% | 🟡 Medium |
-| **Services** | 8 | 6 | 75% | ✅ Good |
-| **State Management** | 3 | 2 | 67% | 🟢 Good |
-| **UI Components** | 95 | 4 | 4.2% | 🟡 Improving |
-| **PDF Export** | 2 | 0 | 0% | 🟡 Medium |
-| **E2E Flows** | - | 10 | - | 🟢 Good |
+| System               | Files | Tested | Coverage | Priority     |
+| -------------------- | ----- | ------ | -------- | ------------ |
+| **Core Calculation** | 5     | 4      | 80%      | ✅ Good      |
+| **Class System**     | 30    | 3      | 10%      | 🔴 Critical  |
+| **Ancestry/Traits**  | 2     | 1      | 50%      | ✅ Good      |
+| **Talents**          | 15    | 1      | 100%\*   | ✅ Excellent |
+| **Leveling System**  | 8     | 6      | 90%+     | ✅ Excellent |
+| **Skills/Trades**    | 2     | 1      | 50%      | 🟢 Good      |
+| **Spells**           | 60+   | 1      | <5%      | 🟡 Medium    |
+| **Martials**         | 3     | 0      | 0%       | 🟡 Medium    |
+| **Services**         | 8     | 6      | 75%      | ✅ Good      |
+| **State Management** | 3     | 2      | 67%      | 🟢 Good      |
+| **UI Components**    | 95    | 4      | 4.2%     | 🟡 Improving |
+| **PDF Export**       | 2     | 0      | 0%       | 🟡 Medium    |
+| **E2E Flows**        | -     | 10     | -        | 🟢 Good      |
 
-*Data integrity and loader fully tested; individual talent effects validated
+\*Data integrity and loader fully tested; individual talent effects validated
 
 ---
 
@@ -479,17 +512,20 @@ npm run test:e2e
 The DC20 Character Builder has **significantly improved testing** with comprehensive coverage for the leveling system and good E2E coverage for critical user flows. **Major progress** has been made with 240+ new tests added in October 2025.
 
 ### Strengths ✅
+
 1. **Leveling System**: Comprehensive coverage (90%+) with 240+ tests
 2. **Core Calculation Engine**: Well tested with multiple scenarios
 3. **Data Integrity**: Talents, ancestries, traits, multiclass all validated
 4. **E2E Tests**: Cover critical user flows
 
 ### Remaining Gaps
+
 1. **Class features and effects** (the heart of the game system)
 2. **UI components** (character creation and sheet)
 3. **Content data** (spells, maneuvers)
 
 ### Key Metrics (Updated October 11, 2025)
+
 - **Unit Test Coverage:** ~16% (up from 10.8%)
 - **Total Unit Tests:** 24 files, 500+ test cases
 - **Component Test Coverage:** ~4%
@@ -497,6 +533,7 @@ The DC20 Character Builder has **significantly improved testing** with comprehen
 - **Overall Risk:** Medium (improved from Medium-High)
 
 ### Next Steps
+
 1. **Add E2E tests for leveling flow** (level 2-3 character creation)
 2. **Prioritize class feature tests** (highest remaining risk)
 3. **Expand E2E coverage** to all classes
@@ -508,6 +545,7 @@ The DC20 Character Builder has **significantly improved testing** with comprehen
 ## Appendix: Test File Inventory
 
 ### Unit Tests (24 files)
+
 ```
 src/lib/hooks/useEnhancedCharacterCalculation.spec.ts
 src/lib/rulesdata/ancestries/ancestries.test.ts
@@ -538,6 +576,7 @@ src/routes/character-creation/ClassFeatures.test.tsx
 ⭐ **6 new test files added October 2025** (~240 new test cases)
 
 ### Component Tests (4 files)
+
 ```
 src/routes/character-creation/CharacterCreation.spec.ts
 src/routes/character-creation/ClassFeatures.logic.test.ts
@@ -546,6 +585,7 @@ src/routes/character-sheet/hooks/useCharacterSheetReducer.test.ts
 ```
 
 ### E2E Tests (10 files)
+
 ```
 e2e/01-import.e2e.spec.ts
 e2e/02-resources.e2e.spec.ts
@@ -565,4 +605,3 @@ e2e/hunter-beastborn.e2e.spec.ts
 **Original Date:** October 8, 2025  
 **Last Updated:** October 11, 2025  
 **Format:** Markdown
-

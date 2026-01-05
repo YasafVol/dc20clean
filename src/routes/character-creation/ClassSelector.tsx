@@ -129,11 +129,11 @@ const LevelSelect = styled.select`
 	border-radius: 4px;
 	cursor: pointer;
 	min-width: 100px;
-	
+
 	&:hover {
 		background: rgba(212, 175, 55, 0.1);
 	}
-	
+
 	&:focus {
 		outline: none;
 		border-color: #ffd700;
@@ -158,7 +158,7 @@ function ClassSelector() {
 	function handleSelectClass(classId: string) {
 		// In level-up mode, can't change class
 		if (isLevelUpMode) return;
-		
+
 		if (state.classId?.toLowerCase() === classId.toLowerCase()) {
 			dispatch({ type: 'SET_CLASS', classId: null }); // Deselect if already selected
 		} else {
@@ -172,28 +172,31 @@ function ClassSelector() {
 	}
 
 	// In level-up mode, show levels from originalLevel + 1 to 5
-	const availableLevels = isLevelUpMode && originalLevel
-		? Array.from({ length: 5 - originalLevel }, (_, i) => originalLevel + i + 1)
-		: Array.from({ length: 5 }, (_, i) => i + 1);
+	const availableLevels =
+		isLevelUpMode && originalLevel
+			? Array.from({ length: 5 - originalLevel }, (_, i) => originalLevel + i + 1)
+			: Array.from({ length: 5 }, (_, i) => i + 1);
 
 	return (
 		<StyledContainer>
 			<StyledTitle>Choose Your Class</StyledTitle>
-			
+
 			{isLevelUpMode && originalLevel && (
-				<div style={{
-					background: '#6366f1',
-					color: 'white',
-					padding: '0.75rem',
-					borderRadius: '6px',
-					marginBottom: '1rem',
-					textAlign: 'center',
-					fontWeight: 500
-				}}>
+				<div
+					style={{
+						background: '#6366f1',
+						color: 'white',
+						padding: '0.75rem',
+						borderRadius: '6px',
+						marginBottom: '1rem',
+						textAlign: 'center',
+						fontWeight: 500
+					}}
+				>
 					⬆️ Leveling up from Level {originalLevel} to Level {selectedLevel}
 				</div>
 			)}
-			
+
 			<LevelSelectorContainer>
 				<LevelLabel htmlFor="character-level">
 					{isLevelUpMode ? 'New Level:' : 'Starting Level:'}

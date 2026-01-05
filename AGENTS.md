@@ -1,6 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
+
 - `src/` – React + TypeScript app (routes, components, styles, types). Unit tests live beside code as `*.test.ts[x]`.
 - `e2e/` – Playwright end‑to‑end tests.
 - `dist/` – Build output (do not edit).
@@ -8,12 +9,14 @@
 - Config: `vite.config.ts`, `vitest.config.ts`, `playwright.config.ts`, `eslint.config.js`, `.prettierrc`.
 
 ## Quick Start
+
 - (no .env required) – localStorage only; no database
 - `npm i` – Install dependencies.
 - (removed) database and Prisma steps
 - `npm run dev` – Start Vite dev server.
 
 ## Build, Test, and Development Commands
+
 - `npm run dev` – Start Vite dev server.
 - `npm run build` – Production build to `dist/`.
 - `npm run preview` – Preview built app on port 4173.
@@ -25,10 +28,12 @@
 - (removed) DB start and Prisma generate; not used
 
 Tips
+
 - Run a single unit test: `npx vitest -t "should ..."` or by file path.
 - E2E speedups: `PLAYWRIGHT_SKIP_BUILD=1` to reuse `dist/`; `E2E_WORKERS=4` for parallel runs.
 
 ## Coding Style & Naming Conventions
+
 - TypeScript, React 19, Vite.
 - Prettier: tabs, single quotes, width 100; Tailwind class sorting.
 - ESLint: TS + React recommended. JSON parse/stringify is restricted except in `**/storageUtils.ts`.
@@ -37,6 +42,7 @@ Tips
 - Example: wrong `genYmdStr`; right `generateDateString`.
 
 ## Testing Guidelines
+
 - Unit: Vitest. Place tests near source: `src/**/Foo.test.tsx`.
 - E2E: Playwright in `e2e/`. Config runs a web server on `http://localhost:4173`.
 - Useful envs: `PLAYWRIGHT_SKIP_BUILD=1`, `E2E_SCREENSHOTS=1`, `E2E_TRACES=1`.
@@ -45,6 +51,7 @@ Tips
 - Do not update snapshots or golden files (e.g., `-u`) without prior approval.
 
 ## Graphite (Stacked PRs)
+
 - Install: `brew install withgraphite/tap/graphite` (or see graphite.dev).
 - Auth and init: `gt auth` → `gt init`.
 - Flow: `gt start feature/short-id` → commit as usual → `gt up` to push stack → `gt submit` to open PRs.
@@ -52,13 +59,16 @@ Tips
 - Land: merge via GitHub, then `gt land` to clean up local branches.
 
 ## Commit & Pull Request Guidelines
+
 - Prefer Conventional Commits: `feat(scope): ...`, `fix: ...`, `chore(e2e): ...`, `docs: ...`, `ci: ...`.
 - PRs should include: clear description, linked issues, test plan (commands + results), and screenshots/GIFs for UI changes. Update docs when behavior changes. For stacks, ensure each PR is reviewable and passes CI independently.
 
 ## Security & Configuration Tips
+
 - No DATABASE_URL or Docker required; app is client-only persistence
 
 ## Architecture References
+
 - See `docs/systems` for system specs and overviews.
 
 ## Systems Index (start here)
@@ -92,4 +102,5 @@ Tips
   - Follow lint rules; keep IDs stable; avoid migrations unless spec says
 
 ## Agent-Specific Notes
+
 - Follow lint rules strictly; avoid unrelated refactors. Keep changes minimal and focused. Update or add tests when modifying behavior.

@@ -1,0 +1,84 @@
+@import 'tailwindcss';
+
+/*
+ * DC20 Character Builder - shadcn/ui Theme Configuration
+ * 
+ * This theme uses a dark fantasy aesthetic inspired by the DC20 TTRPG.
+ * Colors are based on deep purples/indigos with amber/gold accents.
+ */
+
+@theme {
+	/* Background colors - deep indigo/purple tones */
+	--color-background: oklch(0.15 0.03 280);
+	--color-foreground: oklch(0.93 0.01 280);
+
+	/* Card/surface colors */
+	--color-card: oklch(0.18 0.035 280);
+	--color-card-foreground: oklch(0.93 0.01 280);
+
+	/* Popover colors */
+	--color-popover: oklch(0.16 0.03 280);
+	--color-popover-foreground: oklch(0.93 0.01 280);
+
+	/* Primary - amber/gold accent */
+	--color-primary: oklch(0.78 0.15 85);
+	--color-primary-foreground: oklch(0.15 0.03 280);
+
+	/* Secondary - muted purple */
+	--color-secondary: oklch(0.25 0.05 280);
+	--color-secondary-foreground: oklch(0.93 0.01 280);
+
+	/* Muted - subtle backgrounds */
+	--color-muted: oklch(0.22 0.04 280);
+	--color-muted-foreground: oklch(0.65 0.02 280);
+
+	/* Accent - bright gold for highlights */
+	--color-accent: oklch(0.75 0.13 85);
+	--color-accent-foreground: oklch(0.15 0.03 280);
+
+	/* Destructive - red for dangerous actions */
+	--color-destructive: oklch(0.55 0.2 25);
+	--color-destructive-foreground: oklch(0.95 0.01 25);
+
+	/* Border and inputs */
+	--color-border: oklch(0.3 0.04 280);
+	--color-input: oklch(0.25 0.04 280);
+	--color-ring: oklch(0.78 0.15 85);
+
+	/* Chart colors for data visualization */
+	--color-chart-1: oklch(0.78 0.15 85);
+	--color-chart-2: oklch(0.65 0.15 150);
+	--color-chart-3: oklch(0.6 0.15 200);
+	--color-chart-4: oklch(0.55 0.15 280);
+	--color-chart-5: oklch(0.5 0.15 320);
+
+	/* Radius for rounded corners */
+	--radius-sm: 0.25rem;
+	--radius-md: 0.5rem;
+	--radius-lg: 0.75rem;
+	--radius-xl: 1rem;
+
+	/* Sidebar colors (if needed) */
+	--color-sidebar: oklch(0.13 0.025 280);
+	--color-sidebar-foreground: oklch(0.93 0.01 280);
+	--color-sidebar-primary: oklch(0.78 0.15 85);
+	--color-sidebar-primary-foreground: oklch(0.15 0.03 280);
+	--color-sidebar-accent: oklch(0.25 0.05 280);
+	--color-sidebar-accent-foreground: oklch(0.93 0.01 280);
+	--color-sidebar-border: oklch(0.25 0.04 280);
+	--color-sidebar-ring: oklch(0.78 0.15 85);
+}
+
+/*
+ * Base styles
+ */
+@layer base {
+	* {
+		border-color: var(--color-border);
+	}
+
+	body {
+		background-color: var(--color-background);
+		color: var(--color-foreground);
+	}
+}

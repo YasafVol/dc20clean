@@ -17,9 +17,6 @@ export const commanderClass: ClassDefinition = {
 			learnsAllAttack: true,
 			additionalKnown: 'Maneuvers Known column of the Commander Class Table'
 		},
-		techniques: {
-			additionalKnown: 'Techniques Known column of the Commander Class Table'
-		},
 		staminaPoints: {
 			maximumIncreasesBy: 'Stamina Points column of the Commander Class Table'
 		},
@@ -258,7 +255,7 @@ export const commanderClass: ClassDefinition = {
 									type: 'GRANT_ABILITY',
 									target: 'morale_breaker',
 									value:
-										"Commander's Call: Free Intimidate Action against creature within 15 Spaces (once per combat)."
+										"Commander's Call: Free Intimidate Action against creature within 10 Spaces (once per combat)."
 								}
 							]
 						},
@@ -283,7 +280,7 @@ export const commanderClass: ClassDefinition = {
 									type: 'GRANT_ABILITY',
 									target: 'priority_target',
 									value:
-										'Priority Target (1 AP + 1 SP): Allies in aura get ADV on first attack vs chosen target until your next turn.'
+										'Priority Target (1 AP + 1 SP): Choose creature within 10 Spaces. Until your next turn, allies in aura have ADV on first attack on their turns vs that creature.'
 								}
 							]
 						}

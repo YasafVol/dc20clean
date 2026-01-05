@@ -31,7 +31,9 @@ const MobileManeuversSection: React.FC<MobileManeuversSectionProps> = ({
 		<MobileSection>
 			<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 				<MobileSectionTitle>Maneuvers</MobileSectionTitle>
-				<MobileAddButton data-testid="add-maneuver" onClick={handleAddManeuver}>+ Add Maneuver</MobileAddButton>
+				<MobileAddButton data-testid="add-maneuver" onClick={handleAddManeuver}>
+					+ Add Maneuver
+				</MobileAddButton>
 			</div>
 			{maneuvers.length > 0 && (
 				<MobileItemGrid>

@@ -9,6 +9,7 @@
 ## Executive Summary
 
 ### TODO.md Status: 🟡 **PARTIALLY COMPLETE**
+
 - **Section 0 (Epic: Persist mastery/totals):** ✅ **COMPLETE**
 - **Section 1 (Unit Tests):** ❌ **NOT STARTED** (placeholder tests exist)
 - **Section 2 (Low-priority docs):** ⏸️ **DEFERRED** (acknowledged as future work)
@@ -16,6 +17,7 @@
 - **Section 4 (FE migration):** ❌ **NOT STARTED** (backend ready, frontend pending)
 
 ### DATA_FLOW_REFACTOR Status: ✅ **MOSTLY COMPLETE**
+
 - **Phase 1 (Foundation):** ✅ **COMPLETE** (types, storage utils exist)
 - **Phase 2 (Attribute Calculation):** 🟡 **PARTIALLY COMPLETE** (no dedicated hook, inline logic exists)
 - **Phase 3 (Data Cleanup):** ✅ **COMPLETE** (typed data throughout, no JSON strings)
@@ -31,6 +33,7 @@
 **Status:** Fully implemented
 
 **Evidence:**
+
 1. ✅ `denormalizeMastery.ts` exists and implements all required fields
    - Location: `src/lib/services/denormalizeMastery.ts`
    - Implements: `skillTotals`, `skillMastery`, `knowledgeTradeMastery`, `masteryLadders`, `languageMastery`
@@ -61,27 +64,30 @@
 **Evidence:**
 
 1. ❌ `defenseNotes.spec.ts` - Placeholder only
+
    ```typescript
    it('should have tests', () => {
-     expect(true).toBe(true);
+   	expect(true).toBe(true);
    });
    ```
 
 2. ❌ `spellAssignment.spec.ts` - Placeholder only
+
    ```typescript
    it('should have tests', () => {
-     expect(true).toBe(true);
+   	expect(true).toBe(true);
    });
    ```
 
 3. ❌ `useEnhancedCharacterCalculation.spec.ts` - Placeholder only
    ```typescript
    it('should have tests', () => {
-     expect(true).toBe(true);
+   	expect(true).toBe(true);
    });
    ```
 
 **Tasks Remaining:**
+
 - [ ] Write comprehensive tests for `defenseNotes.ts`
 - [ ] Write comprehensive tests for `spellAssignment.ts`
 - [ ] Write comprehensive tests for `useEnhancedCharacterCalculation.ts` hook
@@ -98,6 +104,7 @@ These are placeholder tests created to satisfy architectural rules but provide z
 **Status:** Acknowledged as future work, not blocking
 
 **Listed Docs:**
+
 - Weapons & Items System
 - Currency System
 - Status & Exhaustion System
@@ -146,11 +153,13 @@ These are placeholder tests created to satisfy architectural rules but provide z
 **Status:** Backend complete, frontend migration pending
 
 **Context:**
+
 - ✅ Backend: `SavedCharacter` persists all denormalized data
 - ✅ PDF transformer: Uses denormalized fields
 - ❌ Frontend: Still computes values from raw data
 
 **Scope for FE Migration:**
+
 - [ ] Skills: Read `skillTotals` instead of recomputing from `skillsData`
 - [ ] Mastery ladders: Render from `masteryLadders.skills`, `masteryLadders.knowledgeTrades`, `masteryLadders.practicalTrades`
 - [ ] Trade labels: Use `masteryLadders.practicalTrades.{A..D}.label`
@@ -158,6 +167,7 @@ These are placeholder tests created to satisfy architectural rules but provide z
 - [ ] Defenses/bloodied: Display precomputed thresholds
 
 **Why It Matters:**
+
 - UI still has calculation logic that duplicates backend
 - Risk of drift between UI and PDF export
 - Performance: Unnecessary recomputation on every render
@@ -171,12 +181,14 @@ These are placeholder tests created to satisfy architectural rules but provide z
 #### **Phase 1: Foundation Stabilization** ✅ **COMPLETE**
 
 **Task 1.1: Create Typed Data Contracts** ✅
+
 - File exists: `src/lib/types/dataContracts.ts` (247 lines)
 - Defines: `SavedCharacter`, `CharacterState`, `LegacyCharacter`
 - Includes: `DenormalizedMasteryEntry`, `MasteryLadder` (from TODO Epic 0)
 - Status: ✅ **COMPLETE**
 
 **Task 1.2: Eliminate Redundant Calculations** ❌ **INCOMPLETE**
+
 - Goal: Remove recalculation in character sheet
 - Current: `CharacterSheetProvider.tsx` still imports `calculateCharacterWithBreakdowns`
 - Evidence: `grep` found it in `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx`
@@ -184,6 +196,7 @@ These are placeholder tests created to satisfy architectural rules but provide z
 - Status: ❌ **NOT COMPLETE**
 
 **Task 1.3: Eliminate State Fragmentation** ✅ **MOSTLY COMPLETE**
+
 - Storage utilities exist: `src/lib/utils/storageUtils.ts`
 - Centralized: `serializeCharacterForStorage`, `deserializeCharacterFromStorage`
 - Migration logic: Handles legacy fields
@@ -196,6 +209,7 @@ These are placeholder tests created to satisfy architectural rules but provide z
 #### **Phase 2: Smart Character Creation** 🟡 **PARTIALLY COMPLETE**
 
 **Task 2.1: Intelligent Attribute Point Calculation** 🟡
+
 - Goal: Create `useAttributeCalculation` hook
 - File: `src/routes/character-creation/Attributes.tsx`
 - Evidence: Line 155 has comment "Simple replacement for useAttributeCalculation using context values"
@@ -203,6 +217,7 @@ These are placeholder tests created to satisfy architectural rules but provide z
 - Status: 🟡 **WORKAROUND EXISTS** (not the planned architecture)
 
 **Task 2.2: Real-time UI Feedback** 🟡
+
 - Goal: Validation and feedback in trait/attribute UI
 - Current: Basic validation exists in `Attributes.tsx` (styled components, point counter)
 - Missing: Sophisticated trait selection impact preview described in spec
@@ -215,6 +230,7 @@ These are placeholder tests created to satisfy architectural rules but provide z
 #### **Phase 3: Data Contract Cleanup** ✅ **COMPLETE**
 
 **Task 3.1: Eliminate Legacy JSON Fields** ✅
+
 - Goal: Replace `JSON.parse()` usage with typed data
 - Evidence: `storageUtils.ts` is the ONLY place with JSON.parse/stringify
 - All components use typed data: `skillsData`, `tradesData`, `languagesData`
@@ -222,6 +238,7 @@ These are placeholder tests created to satisfy architectural rules but provide z
 - Status: ✅ **COMPLETE**
 
 **Task 3.2: Update Character Completion Service** ✅
+
 - File: `src/lib/services/characterCompletion.ts`
 - Uses typed `SavedCharacter` interface throughout
 - No JSON string assignments
@@ -234,16 +251,16 @@ These are placeholder tests created to satisfy architectural rules but provide z
 
 ## Summary by Category
 
-| Category | Status | Completion | Details |
-|----------|--------|------------|---------|
-| **TODO Section 0** | ✅ Complete | 100% | Mastery denormalization fully implemented |
-| **TODO Section 1** | ❌ Not Started | 0% | Placeholder tests only |
-| **TODO Section 2** | ⏸️ Deferred | N/A | Intentionally postponed |
-| **TODO Section 3** | 🟡 Partial | 33% | Schema ready, calculations missing |
-| **TODO Section 4** | ❌ Not Started | 0% | Backend ready, FE migration pending |
-| **Refactor Phase 1** | 🟡 Mostly Complete | 67% | Sheet recalculation remains |
-| **Refactor Phase 2** | 🟡 Partial | 50% | Inline logic, no dedicated hooks |
-| **Refactor Phase 3** | ✅ Complete | 100% | Typed data throughout |
+| Category             | Status             | Completion | Details                                   |
+| -------------------- | ------------------ | ---------- | ----------------------------------------- |
+| **TODO Section 0**   | ✅ Complete        | 100%       | Mastery denormalization fully implemented |
+| **TODO Section 1**   | ❌ Not Started     | 0%         | Placeholder tests only                    |
+| **TODO Section 2**   | ⏸️ Deferred        | N/A        | Intentionally postponed                   |
+| **TODO Section 3**   | 🟡 Partial         | 33%        | Schema ready, calculations missing        |
+| **TODO Section 4**   | ❌ Not Started     | 0%         | Backend ready, FE migration pending       |
+| **Refactor Phase 1** | 🟡 Mostly Complete | 67%        | Sheet recalculation remains               |
+| **Refactor Phase 2** | 🟡 Partial         | 50%        | Inline logic, no dedicated hooks          |
+| **Refactor Phase 3** | ✅ Complete        | 100%       | Typed data throughout                     |
 
 ---
 
@@ -367,6 +384,7 @@ These are placeholder tests created to satisfy architectural rules but provide z
 ### Overall Status: 🟡 **70% Complete**
 
 **Major Work Completed:**
+
 - ✅ Typed data contracts throughout codebase
 - ✅ Mastery denormalization backend (Epic 0)
 - ✅ Centralized storage utilities
@@ -374,12 +392,14 @@ These are placeholder tests created to satisfy architectural rules but provide z
 - ✅ Character completion pipeline
 
 **Critical Remaining Work:**
+
 - ⚠️ Character sheet still recalculates (performance issue)
 - ⚠️ Frontend hasn't migrated to denormalized data
 - ⚠️ Heavy/brutal thresholds defined but not computed
 - ⚠️ Three test files are empty placeholders
 
 **Recommendation:**
+
 - **Archive** `DATA_FLOW_REFACTOR_PLAN_PARTIAL.md` - mostly complete
 - **Update** `TODO.md` with current status and remaining tasks
 - **Prioritize** character sheet recalculation removal (biggest impact)
@@ -388,9 +408,9 @@ These are placeholder tests created to satisfy architectural rules but provide z
 ---
 
 **Next Steps:**
+
 1. Review and approve this analysis
 2. Update TODO.md based on findings
 3. Archive DATA_FLOW_REFACTOR_PLAN_PARTIAL.md
 4. Create GitHub issues for high-priority items
 5. Begin work on character sheet recalculation removal
-

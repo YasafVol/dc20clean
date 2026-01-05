@@ -48,7 +48,7 @@ describe('enhancedCharacterCalculator Mastery Cap Logic', () => {
 		const { validation } = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
 		// Should have errors for exceeding mastery cap
 		expect(validation.errors.some((e) => e.code === 'MASTERY_CAP_EXCEEDED')).toBe(true);
-		expect(validation.errors.some((e) => e.message.includes("Adept level"))).toBe(true);
+		expect(validation.errors.some((e) => e.message.includes('Adept level'))).toBe(true);
 	});
 
 	it('should allow Adept skills for a Level 5 character', () => {

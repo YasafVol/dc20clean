@@ -253,7 +253,9 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 						...state.character,
 						characterState: {
 							...state.character.characterState,
-							attacks: arr.map((attack: any) => (attack.id === action.attackId ? action.attack : attack))
+							attacks: arr.map((attack: any) =>
+								attack.id === action.attackId ? action.attack : attack
+							)
 						}
 					}
 				};

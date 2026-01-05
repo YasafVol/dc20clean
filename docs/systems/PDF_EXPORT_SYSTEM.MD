@@ -35,6 +35,7 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 - Acts as the API between the transformer and filler; any changes must update both the type and field map.
 
 **Key Data Sections:**
+
 - **Identity & Attributes**: Character name, level, class, ancestry, core attributes
 - **Skills & Trades**: Mastery levels, proficiency bonuses, knowledge/practical trades
 - **Combat**: Attack/Save DC, initiative, HP/SP/MP/Grit/Rest Points, defenses
@@ -114,12 +115,15 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 Movement types are now fully integrated with PDF export:
 
 ### Character Data Storage
+
 - `movement` object with 5 movement types (burrow, swim, fly, climb, glide)
 - Each type has `half` and `full` boolean flags
 - `holdBreath` stored as numeric value (equals Might attribute)
 
 ### PDF Field Mapping
+
 Movement checkboxes in `fieldMap.dc20-0.9.5.ts`:
+
 - `Burrow-Half` / `Burrow-Full`
 - `Swim-Half` / `Swim-Full`
 - `Fly-Half` / `Fly-Full`
@@ -128,6 +132,7 @@ Movement checkboxes in `fieldMap.dc20-0.9.5.ts`:
 - `Hold Breath` (text field)
 
 ### Processing Flow
+
 1. **Calculator** (`enhancedCharacterCalculator.ts`) processes `GRANT_MOVEMENT` effects
 2. **Transformer** (`transformers.ts`) converts to movement structure via `processMovementsToStructure()`
 3. **Character Completion** (`characterCompletion.ts`) saves movement data to `SavedCharacter`
@@ -139,5 +144,3 @@ Movement checkboxes in `fieldMap.dc20-0.9.5.ts`:
 
 > Last updated: 2025-10-10
 > Maintainer: @DC20Clean-Team
-
-

@@ -246,20 +246,20 @@ const TraitChoiceSelector: React.FC<TraitChoiceSelectorProps> = ({
 				}));
 
 			case 'GRANT_TRADE_EXPERTISE':
-			return tradesData.map((trade) => {
-				const associations = trade.attributeAssociations.length
-					? trade.attributeAssociations
-					: [trade.primaryAttribute];
-				const formattedAttributes = associations
-					.map((attribute) => ATTRIBUTE_LABELS[attribute])
-					.join('/');
+				return tradesData.map((trade) => {
+					const associations = trade.attributeAssociations.length
+						? trade.attributeAssociations
+						: [trade.primaryAttribute];
+					const formattedAttributes = associations
+						.map((attribute) => ATTRIBUTE_LABELS[attribute])
+						.join('/');
 
-				return {
-					value: trade.id,
-					displayName: trade.name,
-					description: `${formattedAttributes} - ${trade.description}`
-				};
-			});
+					return {
+						value: trade.id,
+						displayName: trade.name,
+						description: `${formattedAttributes} - ${trade.description}`
+					};
+				});
 
 			default:
 				return [];

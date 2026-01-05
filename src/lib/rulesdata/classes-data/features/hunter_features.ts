@@ -17,9 +17,6 @@ export const hunterClass: ClassDefinition = {
 			learnsAllAttack: true,
 			additionalKnown: 'Maneuvers Known column of the Hunter Class Table'
 		},
-		techniques: {
-			additionalKnown: 'Techniques Known column of the Hunter Class Table'
-		},
 		staminaPoints: {
 			maximumIncreasesBy: 'Stamina Points column of the Hunter Class Table'
 		},
@@ -239,12 +236,24 @@ export const hunterClass: ClassDefinition = {
 					prompt: 'Choose a Creature Type for your starting entries',
 					count: 1,
 					options: [
-						{ name: 'Aberration', description: 'Twisted creatures of unnatural origin.', effects: [] },
+						{
+							name: 'Aberration',
+							description: 'Twisted creatures of unnatural origin.',
+							effects: []
+						},
 						{ name: 'Beast', description: 'Natural animals and creatures.', effects: [] },
 						{ name: 'Celestial', description: 'Divine and holy beings.', effects: [] },
 						{ name: 'Construct', description: 'Artificial and animated creations.', effects: [] },
-						{ name: 'Dragon', description: 'Ancient reptilian beings of immense power.', effects: [] },
-						{ name: 'Elemental', description: 'Living manifestations of natural forces.', effects: [] },
+						{
+							name: 'Dragon',
+							description: 'Ancient reptilian beings of immense power.',
+							effects: []
+						},
+						{
+							name: 'Elemental',
+							description: 'Living manifestations of natural forces.',
+							effects: []
+						},
 						{ name: 'Fey', description: 'Magical beings from the Feywild.', effects: [] },
 						{ name: 'Fiend', description: 'Evil entities from lower planes.', effects: [] },
 						{ name: 'Giant', description: 'Massive humanoid creatures.', effects: [] },
@@ -262,13 +271,13 @@ export const hunterClass: ClassDefinition = {
 			featureName: "Hunter's Strike",
 			levelGained: 2,
 			description:
-				'You can spend 1 SP as part of a Weapon Attack to add one of the following effects: Piercing, Snare, Acid, Toxin, Flash Bang, or Fire Oil.',
+				'You can spend 1 SP as part of a Weapon Attack to add 1 of the unique Martial Enhancements listed below. You can only use 1 of these Enhancements per Attack. The damage increases by 1 for each SP spent beyond the first. Options: Acid (Corrosion + Hindered), Fire (Fire + Burning), Piercing (Piercing + Bleeding), Snare (Bludgeoning + Immobilized), Toxin (Poison + Impaired).',
 			effects: [
 				{
 					type: 'GRANT_ABILITY',
 					target: 'hunters_strike',
 					value:
-						"Spend 1 SP on a Weapon Attack to add one of several effects (e.g., Piercing for Bleeding, Snare for Immobilized, etc.)."
+						'Spend 1 SP on a Weapon Attack to add: Acid (1 Corrosion, Agility Save for Hindered), Fire (1 Fire, Might Save for Burning), Piercing (1 Piercing, Might Save for Bleeding), Snare (1 Bludgeoning, Agility Save for Immobilized), or Toxin (1 Poison, Might Save for Impaired). +1 damage per additional SP.'
 				}
 			]
 		}

@@ -163,8 +163,8 @@ describe('useCharacterSheetReducer', () => {
 			result.current.dispatch({ type: 'REMOVE_ATTACK', attackId: 'a1' });
 		});
 
-		expect((result.current.state.character!.characterState.attacks as any[])).toHaveLength(1);
-		expect(((result.current.state.character!.characterState.attacks as any[])[0].id)).toBe('a2');
+		expect(result.current.state.character!.characterState.attacks as any[]).toHaveLength(1);
+		expect((result.current.state.character!.characterState.attacks as any[])[0].id).toBe('a2');
 	});
 
 	it('should handle UPDATE_ATTACK action for array attacks', () => {

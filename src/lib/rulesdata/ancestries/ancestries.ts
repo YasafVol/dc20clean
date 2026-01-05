@@ -8,7 +8,7 @@ export const ancestriesData: Ancestry[] = [
 		name: 'Human',
 		description:
 			'Humans are the most common ancestry in the world, known for their adaptability and resilience.',
-		rulesSource: 'DC20Beta0.95',
+		rulesSource: 'DC20Beta0.10',
 		defaultTraitIds: [
 			'human_attribute_increase',
 			'human_skill_expertise',
@@ -26,7 +26,7 @@ export const ancestriesData: Ancestry[] = [
 		id: 'elf',
 		name: 'Elf',
 		description: 'Elves are graceful and long-lived beings with a deep connection to nature.',
-		rulesSource: 'DC20Beta0.95',
+		rulesSource: 'DC20Beta0.10',
 		// INSERTED LINE
 		defaultTraitIds: ['elf_elven_will', 'elf_nimble', 'elf_agile_explorer', 'elf_discerning_sight'],
 		expandedTraitIds: [
@@ -46,7 +46,7 @@ export const ancestriesData: Ancestry[] = [
 		name: 'Dwarf',
 		description:
 			'Dwarves are a stout and resilient folk, known for their craftsmanship and deep connection to the earth.',
-		rulesSource: 'DC20Beta0.95',
+		rulesSource: 'DC20Beta0.10',
 		defaultTraitIds: [
 			'dwarf_tough',
 			'dwarf_toxic_fortitude',
@@ -70,7 +70,7 @@ export const ancestriesData: Ancestry[] = [
 		name: 'Halfling',
 		description:
 			'Halflings are a small and nimble folk, known for their bravery and love of comfort.',
-		rulesSource: 'DC20Beta0.95',
+		rulesSource: 'DC20Beta0.10',
 		defaultTraitIds: [
 			'halfling_small_sized',
 			'halfling_elusive',
@@ -94,7 +94,7 @@ export const ancestriesData: Ancestry[] = [
 		name: 'Gnome',
 		description:
 			'Gnomes are small and energetic folk, known for their inventiveness and connection to the feywild.',
-		rulesSource: 'DC20Beta0.95',
+		rulesSource: 'DC20Beta0.10',
 		defaultTraitIds: [
 			'gnome_small_sized',
 			'gnome_escape_artist',
@@ -118,7 +118,7 @@ export const ancestriesData: Ancestry[] = [
 		name: 'Orc',
 		description:
 			'Orcs are a strong and fierce folk, known for their martial prowess and intimidating presence.',
-		rulesSource: 'DC20Beta0.95',
+		rulesSource: 'DC20Beta0.10',
 		defaultTraitIds: [
 			'orc_cursed_mind',
 			'orc_rush',
@@ -141,7 +141,7 @@ export const ancestriesData: Ancestry[] = [
 		name: 'Dragonborn',
 		description:
 			'Dragonborn are a proud and powerful folk, who trace their lineage back to dragons.',
-		rulesSource: 'DC20Beta0.95',
+		rulesSource: 'DC20Beta0.10',
 		defaultTraitIds: [
 			'dragonborn_darkvision',
 			'dragonborn_draconic_resistance',
@@ -179,7 +179,7 @@ export const ancestriesData: Ancestry[] = [
 		id: 'giantborn',
 		name: 'Giantborn',
 		description: 'Giantborn are a large and powerful folk, who trace their lineage back to giants.',
-		rulesSource: 'DC20Beta0.95',
+		rulesSource: 'DC20Beta0.10',
 		defaultTraitIds: [
 			'giantborn_tough',
 			'giantborn_powerful_build',
@@ -203,7 +203,7 @@ export const ancestriesData: Ancestry[] = [
 		id: 'angelborn',
 		name: 'Angelborn',
 		description: 'Angelborn are a celestial folk, known for their grace and divine connection.',
-		rulesSource: 'DC20Beta0.95',
+		rulesSource: 'DC20Beta0.10',
 		defaultTraitIds: [
 			'angelborn_radiant_resistance',
 			'angelborn_celestial_magic',
@@ -234,7 +234,7 @@ export const ancestriesData: Ancestry[] = [
 		id: 'fiendborn',
 		name: 'Fiendborn',
 		description: 'Fiendborn are a fiendish folk, known for their cunning and infernal connection.',
-		rulesSource: 'DC20Beta0.95',
+		rulesSource: 'DC20Beta0.10',
 		defaultTraitIds: [
 			'fiendborn_fiendish_resistance',
 			'fiendborn_fiendish_magic',
@@ -271,7 +271,7 @@ export const ancestriesData: Ancestry[] = [
 		id: 'beastborn',
 		name: 'Beastborn',
 		description: 'Beastborn are a diverse folk, who take on the characteristics of various beasts.',
-		rulesSource: 'DC20Beta0.95',
+		rulesSource: 'DC20Beta0.10',
 		defaultTraitIds: [],
 		expandedTraitIds: [
 			// Senses

@@ -8,7 +8,6 @@ import {
 } from '../../lib/rulesdata/loaders/class-features.loader';
 import { SpellSchool } from '../../lib/rulesdata/schemas/spell.schema';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
-import { techniques } from '../../lib/rulesdata/martials/techniques';
 import {
 	calculateCharacterWithBreakdowns,
 	convertToEnhancedBuildData
@@ -43,10 +42,7 @@ function ClassFeatures() {
 			{choice.type === 'select_one' && (
 				<StyledChoiceOptions>
 					{choice.options.map((option: any) => {
-						const detailedDescription = getDetailedClassFeatureDescription(
-							choice.id,
-							option.value
-						);
+						const detailedDescription = getDetailedClassFeatureDescription(choice.id, option.value);
 						return (
 							<StyledLabel key={option.value}>
 								<StyledRadio
@@ -79,10 +75,7 @@ function ClassFeatures() {
 						const isSelected = currentValues.includes(option.value);
 						const canSelect = currentValues.length < (choice.maxSelections || 999);
 						const isDisabled = !isSelected && !canSelect;
-						const detailedDescription = getDetailedClassFeatureDescription(
-							choice.id,
-							option.value
-						);
+						const detailedDescription = getDetailedClassFeatureDescription(choice.id, option.value);
 
 						return (
 							<StyledLabel key={option.value} style={{ opacity: isDisabled ? 0.5 : 1 }}>
@@ -239,170 +232,116 @@ function ClassFeatures() {
 	for (let level = 1; level <= state.level; level++) {
 		const levelFeatures = featuresByLevel[level] || [];
 		levelFeatures.forEach((feature) => {
-		// Skip features that are in-game tactical choices, not character creation choices
-		if (feature.choices && !inGameChoices.includes(feature.featureName)) {
-			feature.choices.forEach((choice, choiceIndex) => {
-				const choiceId = getLegacyChoiceId(
-					selectedClassFeatures.className,
-					feature.featureName,
-					choiceIndex
-				);
-				featureChoices.push({
-					id: choiceId,
-					prompt: choice.prompt,
-					type: choice.count > 1 ? 'select_multiple' : 'select_one',
-					maxSelections: choice.count > 1 ? choice.count : undefined,
-					level: level, // Track which level this choice belongs to
-					options:
-						choice.options?.map((option) => ({
-							value: option.name,
-							label: option.name,
-							description: option.description
-						})) || []
-				});
-			});
-		}
-
-		// NEW: Extract userChoice options from feature effects
-		if (feature.effects) {
-			feature.effects.forEach((effect, effectIndex) => {
-				if (effect.userChoice) {
-					const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_effect_${effectIndex}_user_choice`;
-
-					// Transform the userChoice options into the format expected by the UI
-					const options =
-						effect.userChoice.options?.map((optionValue: string) => {
-							// Create a human-readable label from the option value
-							const label = optionValue
-								.replace(/_/g, ' ')
-								.replace(/\b\w/g, (l: string) => l.toUpperCase());
-							return {
-								value: optionValue,
-								label: label,
-								description: `Choose ${label.toLowerCase()} for this effect.`
-							};
-						}) || [];
-
+			// Skip features that are in-game tactical choices, not character creation choices
+			if (feature.choices && !inGameChoices.includes(feature.featureName)) {
+				feature.choices.forEach((choice, choiceIndex) => {
+					const choiceId = getLegacyChoiceId(
+						selectedClassFeatures.className,
+						feature.featureName,
+						choiceIndex
+					);
 					featureChoices.push({
 						id: choiceId,
-						prompt: effect.userChoice.prompt,
-						type: 'select_one',
+						prompt: choice.prompt,
+						type: choice.count > 1 ? 'select_multiple' : 'select_one',
+						maxSelections: choice.count > 1 ? choice.count : undefined,
 						level: level, // Track which level this choice belongs to
-						options: options
+						options:
+							choice.options?.map((option) => ({
+								value: option.name,
+								label: option.name,
+								description: option.description
+							})) || []
 					});
-				}
-			});
-		}
+				});
+			}
 
-		// Also check userChoice options in choice option effects
-		if (feature.choices && !inGameChoices.includes(feature.featureName)) {
-			feature.choices.forEach((choice, choiceIndex) => {
-				const parentChoiceId = getLegacyChoiceId(
-					selectedClassFeatures.className,
-					feature.featureName,
-					choiceIndex
-				);
+			// NEW: Extract userChoice options from feature effects
+			if (feature.effects) {
+				feature.effects.forEach((effect, effectIndex) => {
+					if (effect.userChoice) {
+						const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_effect_${effectIndex}_user_choice`;
 
-				choice.options?.forEach((option, optionIndex) => {
-					// Only process userChoice effects if this option is actually selected
-					const isOptionSelected = (() => {
-						const selectedValues = selectedFeatureChoices[parentChoiceId];
-						if (choice.count > 1) {
-							// Multiple selection choice - check if option is in array
-							return Array.isArray(selectedValues) && selectedValues.includes(option.name);
-						} else {
-							// Single selection choice - check if option matches
-							return selectedValues === option.name;
-						}
-					})();
+						// Transform the userChoice options into the format expected by the UI
+						const options =
+							effect.userChoice.options?.map((optionValue: string) => {
+								// Create a human-readable label from the option value
+								const label = optionValue
+									.replace(/_/g, ' ')
+									.replace(/\b\w/g, (l: string) => l.toUpperCase());
+								return {
+									value: optionValue,
+									label: label,
+									description: `Choose ${label.toLowerCase()} for this effect.`
+								};
+							}) || [];
 
-					if (isOptionSelected && (option as any).effects) {
-						(option as any).effects.forEach((effect: any, effectIndex: number) => {
-							if (effect.userChoice) {
-								const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_choice_${choiceIndex}_option_${optionIndex}_effect_${effectIndex}_user_choice`;
-
-								// Transform the userChoice options into the format expected by the UI
-								const options =
-									effect.userChoice.options?.map((optionValue: string) => {
-										// Create a human-readable label from the option value
-										const label = optionValue
-											.replace(/_/g, ' ')
-											.replace(/\b\w/g, (l: string) => l.toUpperCase());
-										return {
-											value: optionValue,
-											label: label,
-											description: `Choose ${label.toLowerCase()} for this effect.`
-										};
-									}) || [];
-
-								featureChoices.push({
-									id: choiceId,
-									prompt: `${option.name}: ${effect.userChoice.prompt}`,
-									type: 'select_one',
-									level: level, // Track which level this choice belongs to
-									options: options
-								});
-							}
+						featureChoices.push({
+							id: choiceId,
+							prompt: effect.userChoice.prompt,
+							type: 'select_one',
+							level: level, // Track which level this choice belongs to
+							options: options
 						});
 					}
 				});
-			});
-		}
-		});
-	}
+			}
 
-	// Add martial choices based on class table and features
-	const level1Data = selectedClass.levelProgression?.[0]; // Level 1 data from table
-	if (level1Data) {
-		// Get base techniques from table (maneuvers are handled in Step 5)
-		const tableTechniques = level1Data.techniquesKnown || 0;
+			// Also check userChoice options in choice option effects
+			if (feature.choices && !inGameChoices.includes(feature.featureName)) {
+				feature.choices.forEach((choice, choiceIndex) => {
+					const parentChoiceId = getLegacyChoiceId(
+						selectedClassFeatures.className,
+						feature.featureName,
+						choiceIndex
+					);
 
-		// Add class-specific feature bonuses for techniques only
-		let featureTechniques = 0;
+					choice.options?.forEach((option, optionIndex) => {
+						// Only process userChoice effects if this option is actually selected
+						const isOptionSelected = (() => {
+							const selectedValues = selectedFeatureChoices[parentChoiceId];
+							if (choice.count > 1) {
+								// Multiple selection choice - check if option is in array
+								return Array.isArray(selectedValues) && selectedValues.includes(option.name);
+							} else {
+								// Single selection choice - check if option matches
+								return selectedValues === option.name;
+							}
+						})();
 
-		// Parse feature descriptions to extract technique bonuses from all features up to current level
-		for (let level = 1; level <= state.level; level++) {
-			const levelFeatures = featuresByLevel[level] || [];
-			levelFeatures.forEach((feature) => {
-				// Check main feature description
-				const description = feature.description.toLowerCase();
+						if (isOptionSelected && (option as any).effects) {
+							(option as any).effects.forEach((effect: any, effectIndex: number) => {
+								if (effect.userChoice) {
+									const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_choice_${choiceIndex}_option_${optionIndex}_effect_${effectIndex}_user_choice`;
 
-				// Look for "you learn X techniques" pattern
-				const techniqueMatch = description.match(/you learn (\d+) techniques?/);
-				if (techniqueMatch) {
-					featureTechniques += parseInt(techniqueMatch[1]);
-				}
+									// Transform the userChoice options into the format expected by the UI
+									const options =
+										effect.userChoice.options?.map((optionValue: string) => {
+											// Create a human-readable label from the option value
+											const label = optionValue
+												.replace(/_/g, ' ')
+												.replace(/\b\w/g, (l: string) => l.toUpperCase());
+											return {
+												value: optionValue,
+												label: label,
+												description: `Choose ${label.toLowerCase()} for this effect.`
+											};
+										}) || [];
 
-				// Check benefits for technique learning
-				feature.benefits?.forEach((benefit) => {
-					const benefitDescription = benefit.description.toLowerCase();
-
-					// Look for "you learn X techniques" pattern in benefits
-					const benefitTechniqueMatch = benefitDescription.match(/you learn (\d+) techniques?/);
-					if (benefitTechniqueMatch) {
-						featureTechniques += parseInt(benefitTechniqueMatch[1]);
-					}
+									featureChoices.push({
+										id: choiceId,
+										prompt: `${option.name}: ${effect.userChoice.prompt}`,
+										type: 'select_one',
+										level: level, // Track which level this choice belongs to
+										options: options
+									});
+								}
+							});
+						}
+					});
 				});
-			});
-		}
-
-		const totalTechniques = tableTechniques + featureTechniques;
-
-		// Add technique choices if needed
-		if (totalTechniques > 0) {
-			featureChoices.push({
-				id: `${selectedClassFeatures.className.toLowerCase()}_techniques`,
-				prompt: `Choose ${totalTechniques} Technique${totalTechniques > 1 ? 's' : ''}`,
-				type: totalTechniques > 1 ? 'select_multiple' : 'select_one',
-				maxSelections: totalTechniques > 1 ? totalTechniques : undefined,
-				level: 1, // Techniques are general level 1 choices
-				options: techniques.map((technique) => ({
-					value: technique.name,
-					label: technique.name,
-					description: `${technique.description}${technique.isReaction ? ' (Reaction)' : ''}${technique.requirement ? ` Requirement: ${technique.requirement}` : ''} Cost: ${technique.cost.ap ? `${technique.cost.ap} AP` : ''}${technique.cost.sp ? ` ${technique.cost.sp} SP` : ''}`
-				}))
-			});
-		}
+			}
+		});
 	}
 
 	// Add spell school choices if needed
@@ -715,7 +654,7 @@ function ClassFeatures() {
 				.map(([levelStr, features]) => {
 					const levelNum = Number(levelStr);
 					const levelChoices = featureChoices.filter((choice) => choice.level === levelNum);
-					
+
 					return (
 						<StyledSection key={levelStr}>
 							<StyledSectionTitle>Level {levelStr} Features</StyledSectionTitle>
@@ -735,7 +674,7 @@ function ClassFeatures() {
 									)}
 								</StyledCard>
 							))}
-							
+
 							{/* Render choices for this level */}
 							{levelChoices.length > 0 && levelChoices.map(renderChoiceCard)}
 						</StyledSection>
@@ -744,22 +683,22 @@ function ClassFeatures() {
 
 			{/* Subclass Selection (Level 3+) */}
 			{needsSubclassChoice && state.classId && (
-			<SubclassSelector
-				classId={state.classId}
-				choiceLevel={subclassChoiceLevel}
-				selectedSubclass={state.selectedSubclass}
-				selectedFeatureChoices={state.selectedFeatureChoices}
-				onSelect={(subclass) => dispatch({ type: 'SET_SUBCLASS', subclass })}
-				onChoiceChange={(choiceKey, selections) => {
-					dispatch({
-						type: 'SET_FEATURE_CHOICES',
-						selectedFeatureChoices: {
-							...state.selectedFeatureChoices,
-							[choiceKey]: selections
-						}
-					});
-				}}
-			/>
+				<SubclassSelector
+					classId={state.classId}
+					choiceLevel={subclassChoiceLevel}
+					selectedSubclass={state.selectedSubclass}
+					selectedFeatureChoices={state.selectedFeatureChoices}
+					onSelect={(subclass) => dispatch({ type: 'SET_SUBCLASS', subclass })}
+					onChoiceChange={(choiceKey, selections) => {
+						dispatch({
+							type: 'SET_FEATURE_CHOICES',
+							selectedFeatureChoices: {
+								...state.selectedFeatureChoices,
+								[choiceKey]: selections
+							}
+						});
+					}}
+				/>
 			)}
 		</StyledContainer>
 	);

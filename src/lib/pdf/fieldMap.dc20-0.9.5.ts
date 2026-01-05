@@ -250,5 +250,3 @@ export const fieldMap_dc20_095: FieldMapItem[] = [
 	{ path: 'mastery.TradeD.8', field: 'Mastery-Trade-D-8', type: 'checkbox' },
 	{ path: 'mastery.TradeD.10', field: 'Mastery-Trade-D-10', type: 'checkbox' }
 ];
-
-

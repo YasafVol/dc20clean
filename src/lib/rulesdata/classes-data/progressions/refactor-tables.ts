@@ -14,100 +14,101 @@ const outputDir = path.join(projectRoot, OUTPUT_DIR_RELATIVE);
 
 // (The rest of the script is the same as before)
 interface OldClassLevel {
-    level: number;
-    healthPoints: number;
-    attributePoints: number;
-    skillPoints: number;
-    tradePoints: number;
-    staminaPoints: number;
-    maneuversKnown: number;
-    techniquesKnown: number;
-    manaPoints: number;
-    cantripsKnown: number;
-    spellsKnown: number;
-    features: string;
+	level: number;
+	healthPoints: number;
+	attributePoints: number;
+	skillPoints: number;
+	tradePoints: number;
+	staminaPoints: number;
+	maneuversKnown: number;
+	manaPoints: number;
+	cantripsKnown: number;
+	spellsKnown: number;
+	features: string;
 }
 
 interface LevelGains {
-    talents?: number;
-    pathPoints?: number;
-    ancestryPoints?: number;
-    classFeatures?: string[];
-    subclassFeatureChoice?: boolean;
-    epicBoon?: boolean;
+	talents?: number;
+	pathPoints?: number;
+	ancestryPoints?: number;
+	classFeatures?: string[];
+	subclassFeatureChoice?: boolean;
+	epicBoon?: boolean;
 }
 
 function parseFeaturesStringToGains(featureString: string): LevelGains {
-    const gains: LevelGains = {};
+	const gains: LevelGains = {};
 
-    if (featureString.includes('Talent')) {
-        gains.talents = 1;
-    }
-    if (featureString.includes('Path Point')) {
-        gains.pathPoints = 1;
-    }
-    const ancestryMatch = featureString.match(/(\d+)\s*Ancestry\s*Points/);
-    if (ancestryMatch) {
-        gains.ancestryPoints = parseInt(ancestryMatch[1], 10);
-    }
+	if (featureString.includes('Talent')) {
+		gains.talents = 1;
+	}
+	if (featureString.includes('Path Point')) {
+		gains.pathPoints = 1;
+	}
+	const ancestryMatch = featureString.match(/(\d+)\s*Ancestry\s*Points/);
+	if (ancestryMatch) {
+		gains.ancestryPoints = parseInt(ancestryMatch[1], 10);
+	}
 
-    if (featureString.includes('Class Features')) {
-        gains.classFeatures = ['placeholder_lvl_1_features'];
-    } else if (featureString.includes('Class Capstone Feature')) {
-        gains.classFeatures = ['placeholder_class_capstone'];
-    } else if (featureString.includes('Class Feature')) {
-        gains.classFeatures = ['placeholder_class_feature'];
-    }
+	if (featureString.includes('Class Features')) {
+		gains.classFeatures = ['placeholder_lvl_1_features'];
+	} else if (featureString.includes('Class Capstone Feature')) {
+		gains.classFeatures = ['placeholder_class_capstone'];
+	} else if (featureString.includes('Class Feature')) {
+		gains.classFeatures = ['placeholder_class_feature'];
+	}
 
-    if (featureString.includes('Subclass Feature') || featureString.includes('Subclass Capstone Feature')) {
-        gains.subclassFeatureChoice = true;
-    }
+	if (
+		featureString.includes('Subclass Feature') ||
+		featureString.includes('Subclass Capstone Feature')
+	) {
+		gains.subclassFeatureChoice = true;
+	}
 
-    if (featureString.includes('Epic Boon')) {
-        gains.epicBoon = true;
-    }
+	if (featureString.includes('Epic Boon')) {
+		gains.epicBoon = true;
+	}
 
-    return gains;
+	return gains;
 }
 
 function main() {
-    console.log('Starting conversion of class progression tables...');
+	console.log('Starting conversion of class progression tables...');
 
-    if (!fs.existsSync(outputDir)) {
-        fs.mkdirSync(outputDir, { recursive: true });
-        console.log(`Created output directory: ${outputDir}`);
-    }
+	if (!fs.existsSync(outputDir)) {
+		fs.mkdirSync(outputDir, { recursive: true });
+		console.log(`Created output directory: ${outputDir}`);
+	}
 
-    const files = fs.readdirSync(sourceDir).filter(file => file.endsWith('_table.json'));
-    
-    if (files.length === 0) {
-        console.warn(`No JSON files found in ${sourceDir}. Aborting.`);
-        return;
-    }
+	const files = fs.readdirSync(sourceDir).filter((file) => file.endsWith('_table.json'));
 
-    console.log(`Found ${files.length} class tables to convert.`);
+	if (files.length === 0) {
+		console.warn(`No JSON files found in ${sourceDir}. Aborting.`);
+		return;
+	}
 
-    for (const file of files) {
-        const filePath = path.join(sourceDir, file);
-        const fileContent = fs.readFileSync(filePath, 'utf-8');
-        const jsonData = JSON.parse(fileContent);
-        const className = jsonData.className;
+	console.log(`Found ${files.length} class tables to convert.`);
 
-        const newProgressionData = jsonData.levelProgression.map((level: OldClassLevel) => {
-            return {
-                level: level.level,
-                gainedHealth: level.healthPoints,
-                gainedAttributePoints: level.attributePoints,
-                gainedSkillPoints: level.skillPoints,
-                gainedTradePoints: level.tradePoints,
-                gainedStaminaPoints: level.staminaPoints,
-                gainedManeuversKnown: level.maneuversKnown,
-                gainedTechniquesKnown: level.techniquesKnown,
-                gains: parseFeaturesStringToGains(level.features)
-            };
-        });
+	for (const file of files) {
+		const filePath = path.join(sourceDir, file);
+		const fileContent = fs.readFileSync(filePath, 'utf-8');
+		const jsonData = JSON.parse(fileContent);
+		const className = jsonData.className;
 
-        const tsContent = `
+		const newProgressionData = jsonData.levelProgression.map((level: OldClassLevel) => {
+			return {
+				level: level.level,
+				gainedHealth: level.healthPoints,
+				gainedAttributePoints: level.attributePoints,
+				gainedSkillPoints: level.skillPoints,
+				gainedTradePoints: level.tradePoints,
+				gainedStaminaPoints: level.staminaPoints,
+				gainedManeuversKnown: level.maneuversKnown,
+				gains: parseFeaturesStringToGains(level.features)
+			};
+		});
+
+		const tsContent = `
 // This file was automatically generated by a script.
 // **Manually review and update the 'classFeatures' array with correct feature IDs.**
 // import { ClassLevel } from '../../schemas/class.schema'; // Adjust path as needed
@@ -116,13 +117,13 @@ function main() {
 export const ${className.toLowerCase()}Progression: any[] = ${JSON.stringify(newProgressionData, null, 2)};
 `;
 
-        const outputFileName = `${className.toLowerCase()}.progression.ts`;
-        const outputFilePath = path.join(outputDir, outputFileName);
-        fs.writeFileSync(outputFilePath, tsContent.trim());
-        console.log(`✅ Converted ${file} -> ${outputFileName}`);
-    }
+		const outputFileName = `${className.toLowerCase()}.progression.ts`;
+		const outputFilePath = path.join(outputDir, outputFileName);
+		fs.writeFileSync(outputFilePath, tsContent.trim());
+		console.log(`✅ Converted ${file} -> ${outputFileName}`);
+	}
 
-    console.log('\nConversion complete! 🎉');
+	console.log('\nConversion complete! 🎉');
 }
 
 main();

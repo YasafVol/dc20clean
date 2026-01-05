@@ -29,6 +29,7 @@ When a GM calls for a save against Frightened, the player immediately knows they
 ### 2.1. Existing Foundation
 
 **Current Files:**
+
 - `src/lib/rulesdata/conditions/conditions.types.ts` – Type definitions for conditions ✅
 - `src/lib/rulesdata/conditions/conditions.data.ts` – Complete list of 27 DC20 conditions ✅
 
@@ -43,15 +44,15 @@ type ConditionInteractionType = 'immunity' | 'resistance' | 'vulnerability';
 
 // Character's interaction with a specific condition
 interface ConditionInteraction {
-  type: ConditionInteractionType;
-  source: string; // e.g., "Barbarian: Iron Mind (Level 7)"
-  details?: string; // e.g., "Only while Raging"
+	type: ConditionInteractionType;
+	source: string; // e.g., "Barbarian: Iron Mind (Level 7)"
+	details?: string; // e.g., "Only while Raging"
 }
 
 // Character's complete status for one condition
 interface CharacterConditionStatus {
-  conditionId: string; // References ConditionDefinition.id
-  interactions: ConditionInteraction[]; // Can have multiple sources
+	conditionId: string; // References ConditionDefinition.id
+	interactions: ConditionInteraction[]; // Can have multiple sources
 }
 ```
 
@@ -84,6 +85,7 @@ interface CharacterConditionStatus {
 ```
 
 **Mapping DC20 Rules to System:**
+
 - **Condition Immunity** → `GRANT_CONDITION_IMMUNITY` (can't be subjected to condition)
 - **Condition Resistance** → `GRANT_CONDITION_RESISTANCE` (ADV on checks/saves against condition)
 - **Condition Vulnerability** → `GRANT_CONDITION_VULNERABILITY` (DisADV on checks/saves against condition)
@@ -97,6 +99,7 @@ interface CharacterConditionStatus {
 **Goal:** Identify and catalog every feature across the codebase that provides condition interactions.
 
 **Data Sources to Scan:**
+
 1. `src/lib/rulesdata/ancestries/traits.ts` – Ancestry traits
 2. `src/lib/rulesdata/classes-data/features/*_features.ts` – Class & subclass features
 3. `src/lib/rulesdata/classes-data/talents/*.talents.ts` – Class talents
@@ -104,12 +107,12 @@ interface CharacterConditionStatus {
 
 **Example Mappings:**
 
-| Source | Feature | Condition Interaction | Effect Representation |
-|--------|---------|----------------------|----------------------|
-| Human Trait | Undying | Resistance to Doomed | `{ type: 'GRANT_CONDITION_RESISTANCE', target: 'doomed-x', value: 'ADV' }` |
-| Barbarian Level 1 | Rage | ADV on Might Saves (relates to multiple conditions) | Requires breakdown: affects Weakened-X, Restrained, Paralyzed saves |
-| Paladin Subclass | Divine Presence | Immunity to Frightened | `{ type: 'GRANT_CONDITION_IMMUNITY', target: 'frightened', value: true }` |
-| Elf Trait | Fey Ancestry | Resistance to Charmed | `{ type: 'GRANT_CONDITION_RESISTANCE', target: 'charmed', value: 'ADV' }` |
+| Source            | Feature         | Condition Interaction                               | Effect Representation                                                      |
+| ----------------- | --------------- | --------------------------------------------------- | -------------------------------------------------------------------------- |
+| Human Trait       | Undying         | Resistance to Doomed                                | `{ type: 'GRANT_CONDITION_RESISTANCE', target: 'doomed-x', value: 'ADV' }` |
+| Barbarian Level 1 | Rage            | ADV on Might Saves (relates to multiple conditions) | Requires breakdown: affects Weakened-X, Restrained, Paralyzed saves        |
+| Paladin Subclass  | Divine Presence | Immunity to Frightened                              | `{ type: 'GRANT_CONDITION_IMMUNITY', target: 'frightened', value: true }`  |
+| Elf Trait         | Fey Ancestry    | Resistance to Charmed                               | `{ type: 'GRANT_CONDITION_RESISTANCE', target: 'charmed', value: 'ADV' }`  |
 
 **Special Cases:**
 
@@ -128,6 +131,7 @@ interface CharacterConditionStatus {
 Update features that currently use text-only descriptions to include structured condition effects.
 
 **Before:**
+
 ```typescript
 {
   id: 'human_undying',
@@ -139,6 +143,7 @@ Update features that currently use text-only descriptions to include structured 
 ```
 
 **After:**
+
 ```typescript
 {
   id: 'human_undying',
@@ -156,13 +161,14 @@ Update features that currently use text-only descriptions to include structured 
 Expand save-based advantages to explicit condition lists.
 
 **Before:**
+
 ```typescript
 {
   id: 'barbarian_rage',
   featureName: 'Rage',
   description: 'ADV on Might Saves...',
   effects: [
-    { 
+    {
       type: 'GRANT_ABILITY',
       target: 'rage',
       value: 'ADV on Might Saves, ...'
@@ -172,6 +178,7 @@ Expand save-based advantages to explicit condition lists.
 ```
 
 **After (expanded):**
+
 ```typescript
 {
   id: 'barbarian_rage',
@@ -197,84 +204,84 @@ Expand save-based advantages to explicit condition lists.
 **File:** `src/lib/services/conditionAggregator.ts`
 
 **Primary Function:**
+
 ```typescript
 /**
  * Aggregates all condition interactions for a character
  * @param character - The character data with selected features
  * @returns Array of condition statuses covering all 27 DC20 conditions
  */
-export function calculateCharacterConditions(
-  character: CharacterData
-): CharacterConditionStatus[] {
-  const interactions = new Map<string, ConditionInteraction[]>();
-  
-  // 1. Start with all conditions (empty interactions)
-  ALL_CONDITIONS.forEach(condition => {
-    interactions.set(condition.id, []);
-  });
-  
-  // 2. Scan ancestry traits
-  character.selectedTraits?.forEach(trait => {
-    processConditionEffects(trait.effects, trait.name, 'Ancestry', interactions);
-  });
-  
-  // 3. Scan class features (up to character level)
-  const classFeatures = getClassFeaturesUpToLevel(character.className, character.level);
-  classFeatures.forEach(feature => {
-    processConditionEffects(feature.effects, feature.featureName, 'Class', interactions);
-  });
-  
-  // 4. Scan subclass features
-  if (character.subclass) {
-    const subclassFeatures = getSubclassFeaturesUpToLevel(
-      character.className,
-      character.subclass,
-      character.level
-    );
-    subclassFeatures.forEach(feature => {
-      processConditionEffects(feature.effects, feature.featureName, 'Subclass', interactions);
-    });
-  }
-  
-  // 5. Scan selected talents
-  character.selectedTalents?.forEach(talent => {
-    processConditionEffects(talent.effects, talent.name, 'Talent', interactions);
-  });
-  
-  // 6. Convert map to CharacterConditionStatus array
-  return Array.from(interactions.entries()).map(([conditionId, interactionList]) => ({
-    conditionId,
-    interactions: interactionList
-  }));
+export function calculateCharacterConditions(character: CharacterData): CharacterConditionStatus[] {
+	const interactions = new Map<string, ConditionInteraction[]>();
+
+	// 1. Start with all conditions (empty interactions)
+	ALL_CONDITIONS.forEach((condition) => {
+		interactions.set(condition.id, []);
+	});
+
+	// 2. Scan ancestry traits
+	character.selectedTraits?.forEach((trait) => {
+		processConditionEffects(trait.effects, trait.name, 'Ancestry', interactions);
+	});
+
+	// 3. Scan class features (up to character level)
+	const classFeatures = getClassFeaturesUpToLevel(character.className, character.level);
+	classFeatures.forEach((feature) => {
+		processConditionEffects(feature.effects, feature.featureName, 'Class', interactions);
+	});
+
+	// 4. Scan subclass features
+	if (character.subclass) {
+		const subclassFeatures = getSubclassFeaturesUpToLevel(
+			character.className,
+			character.subclass,
+			character.level
+		);
+		subclassFeatures.forEach((feature) => {
+			processConditionEffects(feature.effects, feature.featureName, 'Subclass', interactions);
+		});
+	}
+
+	// 5. Scan selected talents
+	character.selectedTalents?.forEach((talent) => {
+		processConditionEffects(talent.effects, talent.name, 'Talent', interactions);
+	});
+
+	// 6. Convert map to CharacterConditionStatus array
+	return Array.from(interactions.entries()).map(([conditionId, interactionList]) => ({
+		conditionId,
+		interactions: interactionList
+	}));
 }
 ```
 
 **Helper Function:**
+
 ```typescript
 function processConditionEffects(
-  effects: Effect[],
-  sourceName: string,
-  sourceCategory: string,
-  interactions: Map<string, ConditionInteraction[]>
+	effects: Effect[],
+	sourceName: string,
+	sourceCategory: string,
+	interactions: Map<string, ConditionInteraction[]>
 ): void {
-  effects.forEach(effect => {
-    if (
-      effect.type === 'GRANT_CONDITION_IMMUNITY' ||
-      effect.type === 'GRANT_CONDITION_RESISTANCE' ||
-      effect.type === 'GRANT_CONDITION_VULNERABILITY'
-    ) {
-      const conditionId = effect.target;
-      const existingInteractions = interactions.get(conditionId) || [];
-      
-      existingInteractions.push({
-        type: effect.type.replace('GRANT_CONDITION_', '').toLowerCase() as ConditionInteractionType,
-        source: `${sourceCategory}: ${sourceName}`,
-        details: effect.details
-      });
-      
-      interactions.set(conditionId, existingInteractions);
-    }
-  });
+	effects.forEach((effect) => {
+		if (
+			effect.type === 'GRANT_CONDITION_IMMUNITY' ||
+			effect.type === 'GRANT_CONDITION_RESISTANCE' ||
+			effect.type === 'GRANT_CONDITION_VULNERABILITY'
+		) {
+			const conditionId = effect.target;
+			const existingInteractions = interactions.get(conditionId) || [];
+
+			existingInteractions.push({
+				type: effect.type.replace('GRANT_CONDITION_', '').toLowerCase() as ConditionInteractionType,
+				source: `${sourceCategory}: ${sourceName}`,
+				details: effect.details
+			});
+
+			interactions.set(conditionId, existingInteractions);
+		}
+	});
 }
 ```
 
@@ -286,21 +293,21 @@ function processConditionEffects(
 
 ```typescript
 export interface EnhancedCalculationResult {
-  // ... existing fields
-  conditions: CharacterConditionStatus[]; // NEW
+	// ... existing fields
+	conditions: CharacterConditionStatus[]; // NEW
 }
 
 export function calculateCharacterWithBreakdowns(
-  character: CharacterData
+	character: CharacterData
 ): EnhancedCalculationResult {
-  // ... existing calculation logic
-  
-  const conditions = calculateCharacterConditions(character);
-  
-  return {
-    // ... existing fields
-    conditions
-  };
+	// ... existing calculation logic
+
+	const conditions = calculateCharacterConditions(character);
+
+	return {
+		// ... existing fields
+		conditions
+	};
 }
 ```
 
@@ -355,6 +362,7 @@ export function calculateCharacterWithBreakdowns(
 ```
 
 **Key Features:**
+
 1. **Grouped by interaction type** – Immunities, Resistances, Vulnerabilities displayed prominently
 2. **Source attribution** – Every interaction shows which feature grants it
 3. **Contextual details** – Conditional interactions (e.g., "While Raging") clearly marked
@@ -366,32 +374,30 @@ export function calculateCharacterWithBreakdowns(
 
 ```typescript
 interface ConditionsProps {
-  conditionStatuses: CharacterConditionStatus[];
-  isMobile?: boolean;
+	conditionStatuses: CharacterConditionStatus[];
+	isMobile?: boolean;
 }
 
 const Conditions: React.FC<ConditionsProps> = ({ conditionStatuses, isMobile }) => {
-  const [expandedView, setExpandedView] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  
-  // Separate conditions by interaction type
-  const immunities = conditionStatuses.filter(cs => 
-    cs.interactions.some(i => i.type === 'immunity')
-  );
-  
-  const resistances = conditionStatuses.filter(cs =>
-    cs.interactions.some(i => i.type === 'resistance')
-  );
-  
-  const vulnerabilities = conditionStatuses.filter(cs =>
-    cs.interactions.some(i => i.type === 'vulnerability')
-  );
-  
-  const noInteractions = conditionStatuses.filter(cs =>
-    cs.interactions.length === 0
-  );
-  
-  // ... rendering logic
+	const [expandedView, setExpandedView] = useState(false);
+	const [searchTerm, setSearchTerm] = useState('');
+
+	// Separate conditions by interaction type
+	const immunities = conditionStatuses.filter((cs) =>
+		cs.interactions.some((i) => i.type === 'immunity')
+	);
+
+	const resistances = conditionStatuses.filter((cs) =>
+		cs.interactions.some((i) => i.type === 'resistance')
+	);
+
+	const vulnerabilities = conditionStatuses.filter((cs) =>
+		cs.interactions.some((i) => i.type === 'vulnerability')
+	);
+
+	const noInteractions = conditionStatuses.filter((cs) => cs.interactions.length === 0);
+
+	// ... rendering logic
 };
 ```
 
@@ -416,13 +422,15 @@ const Conditions: React.FC<ConditionsProps> = ({ conditionStatuses, isMobile }) 
 ### Phase 2: Feature Audit & Refactoring
 
 **M2.1: Scan & Catalog**
+
 - [ ] Create script `scripts/audit-condition-features.ts`
 - [ ] Scan all ancestry traits for condition interactions
-- [ ] Scan all class features for condition interactions  
+- [ ] Scan all class features for condition interactions
 - [ ] Scan all talents for condition interactions
 - [ ] Generate report: `CONDITION_FEATURES_AUDIT.md`
 
 **M2.2: Create Mapping Helpers**
+
 - [ ] Implement `getConditionsAffectedByAttribute(attribute: string): string[]`
 - [ ] Document attribute → condition mappings
   - Might Saves → [weakened-x, restrained, paralyzed, petrified, ...]
@@ -431,6 +439,7 @@ const Conditions: React.FC<ConditionsProps> = ({ conditionStatuses, isMobile }) 
   - Intelligence Saves → [dazed-x, disoriented-x, ...]
 
 **M2.3: Update Feature Definitions**
+
 - [ ] Refactor ancestry traits with explicit condition effects
 - [ ] Refactor class features with explicit condition effects
 - [ ] Refactor subclass features with explicit condition effects
@@ -442,12 +451,14 @@ const Conditions: React.FC<ConditionsProps> = ({ conditionStatuses, isMobile }) 
 ### Phase 3: Calculation Engine
 
 **M3.1: Condition Aggregator Service**
+
 - [ ] Create `src/lib/services/conditionAggregator.ts`
 - [ ] Implement `calculateCharacterConditions()`
 - [ ] Implement `processConditionEffects()` helper
 - [ ] Write unit tests for aggregation logic
 
 **M3.2: Calculator Integration**
+
 - [ ] Add `conditions: CharacterConditionStatus[]` to `EnhancedCalculationResult`
 - [ ] Integrate `calculateCharacterConditions()` into main calculator flow
 - [ ] Update `characterContext.tsx` to expose conditions
@@ -458,6 +469,7 @@ const Conditions: React.FC<ConditionsProps> = ({ conditionStatuses, isMobile }) 
 ### Phase 4: UI Implementation
 
 **M4.1: Conditions Component**
+
 - [ ] Create `src/routes/character-sheet/components/Conditions.tsx`
 - [ ] Implement grouped display (immunities/resistances/vulnerabilities)
 - [ ] Implement search/filter functionality
@@ -465,12 +477,14 @@ const Conditions: React.FC<ConditionsProps> = ({ conditionStatuses, isMobile }) 
 - [ ] Style component to match existing character sheet design
 
 **M4.2: Character Sheet Integration**
+
 - [ ] Add Conditions section to desktop layout (`CharacterSheetClean.tsx`)
 - [ ] Add Conditions to mobile "Info" tab (`CharacterSheetMobile.tsx`)
 - [ ] Ensure responsive behavior
 - [ ] Add E2E test coverage
 
 **M4.3: Polish & Accessibility**
+
 - [ ] Add loading states
 - [ ] Implement keyboard navigation
 - [ ] Add ARIA labels for screen readers
@@ -481,12 +495,14 @@ const Conditions: React.FC<ConditionsProps> = ({ conditionStatuses, isMobile }) 
 ### Phase 5: Documentation & Testing
 
 **M5.1: Documentation**
+
 - [ ] Update `docs/systems/CALCULATION_SYSTEM.MD` with condition aggregation flow
 - [ ] Update `docs/systems/CHARACTER_SHEET.MD` with Conditions section details
 - [ ] Create `docs/systems/CONDITIONS_SYSTEM.MD` (move this spec into systems)
 - [ ] Add inline JSDoc comments to all condition-related functions
 
 **M5.2: E2E Testing**
+
 - [ ] Create `e2e/13-conditions.e2e.spec.ts`
 - [ ] Test condition display for character with multiple interactions
 - [ ] Test search/filter functionality
@@ -494,6 +510,7 @@ const Conditions: React.FC<ConditionsProps> = ({ conditionStatuses, isMobile }) 
 - [ ] Test mobile responsive behavior
 
 **M5.3: Edge Cases**
+
 - [ ] Character with 0 condition interactions
 - [ ] Character with 10+ sources for same condition (stacking display)
 - [ ] Conditional interactions (verify "While Raging" displays correctly)
@@ -504,6 +521,7 @@ const Conditions: React.FC<ConditionsProps> = ({ conditionStatuses, isMobile }) 
 ## 7. File Touchpoints
 
 ### New Files
+
 - ✅ `src/lib/rulesdata/conditions/conditions.types.ts`
 - ✅ `src/lib/rulesdata/conditions/conditions.data.ts`
 - `src/lib/services/conditionAggregator.ts`
@@ -513,6 +531,7 @@ const Conditions: React.FC<ConditionsProps> = ({ conditionStatuses, isMobile }) 
 - `docs/systems/CONDITIONS_SYSTEM.MD`
 
 ### Modified Files
+
 - `src/lib/rulesdata/schemas/character.schema.ts` – Add condition effect types
 - `src/lib/services/enhancedCharacterCalculator.ts` – Integrate condition aggregation
 - `src/lib/stores/characterContext.tsx` – Expose conditions in context
@@ -529,23 +548,28 @@ const Conditions: React.FC<ConditionsProps> = ({ conditionStatuses, isMobile }) 
 ## 8. Acceptance Criteria
 
 ### AC-1: Data Completeness
+
 - [ ] All 27 DC20 conditions defined in `conditions.data.ts`
 - [ ] Every condition has `id`, `name`, `description`, `type`, `tags`
 - [ ] Condition IDs match DC20 naming (e.g., `bleeding-x`, `frightened`)
 
 ### AC-2: Feature Coverage
+
 - [ ] 100% of condition-granting features identified and cataloged
 - [ ] All ancestry traits with condition interactions use structured effects
 - [ ] All class features with condition interactions use structured effects
 - [ ] All talents with condition interactions use structured effects
 
 ### AC-3: Calculation Accuracy
+
 Given a character with:
+
 - Human Ancestry (Undying trait → Doomed Resistance)
 - Barbarian Level 1 (Rage → ADV on Might Saves)
 - Elf Heritage (Fey Ancestry → Charmed Resistance)
 
 Then `calculationResult.conditions` contains:
+
 - `doomed-x`: 1 resistance interaction (Human: Undying)
 - `charmed`: 1 resistance interaction (Elf: Fey Ancestry)
 - `weakened-x`: 1 resistance interaction (Barbarian: Rage, "While Raging")
@@ -554,6 +578,7 @@ Then `calculationResult.conditions` contains:
 - All other conditions: 0 interactions
 
 ### AC-4: UI Functionality
+
 - [ ] Conditions section visible in character sheet (desktop & mobile)
 - [ ] Conditions grouped by type (immunities/resistances/vulnerabilities)
 - [ ] Source attribution displayed for each interaction
@@ -563,6 +588,7 @@ Then `calculationResult.conditions` contains:
 - [ ] "No special interaction" displayed for unaffected conditions (in expanded view)
 
 ### AC-5: E2E Validation
+
 - [ ] `e2e/13-conditions.e2e.spec.ts` passes
 - [ ] Human Cleric test character shows expected condition interactions
 - [ ] Hunter Beastborn test character shows expected condition interactions
@@ -573,12 +599,14 @@ Then `calculationResult.conditions` contains:
 ## 9. Dependencies & Constraints
 
 ### Dependencies
+
 - **Effect System** (`docs/systems/EFFECT_SYSTEM.MD`) – Must support new condition effect types
 - **Calculation System** (`docs/systems/CALCULATION_SYSTEM.MD`) – Must integrate condition aggregation
 - **Class System** (`docs/systems/CLASS_SYSTEM.MD`) – Features must use structured effects
 - **Ancestry System** (`docs/systems/ANCESTRY_SYSTEM.MD`) – Traits must use structured effects
 
 ### Constraints
+
 - **No Schema Migrations** – Use existing `Effect` type union, extend with new types
 - **Backward Compatibility** – Existing characters without condition data default to empty interactions
 - **Performance** – Condition calculation must not exceed 50ms for character with 20 features
@@ -605,6 +633,7 @@ Then `calculationResult.conditions` contains:
 ### Q: What if multiple sources grant the same condition interaction?
 
 **A:** Store all sources in the `interactions[]` array. UI displays as:
+
 ```
 Frightened
 ├─ Immunity - Paladin: Aura of Courage (Level 7)
@@ -616,6 +645,7 @@ Mechanically, one immunity is sufficient, but showing all sources helps players 
 ### Q: How do we handle conditional interactions (e.g., "Only while Raging")?
 
 **A:** Use the `details` field in `ConditionInteraction`:
+
 ```typescript
 {
   type: 'resistance',
@@ -649,4 +679,3 @@ For AI agents implementing this spec:
 > **Status:** Draft - Pending Phase 1 completion (Effect type additions)  
 > **Maintainer:** @DC20Clean-Team  
 > **Related Specs:** `EFFECT_SYSTEM.MD`, `CLASS_SYSTEM.MD`, `TRAITS_SYSTEM.MD`, `CALCULATION_SYSTEM.MD`
-

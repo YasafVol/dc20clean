@@ -1,6 +1,6 @@
 /**
  * M4.1a - Talent System Data Integrity Tests
- * 
+ *
  * Tests the talent system data for:
  * - Data integrity (all required fields)
  * - ID uniqueness
@@ -47,7 +47,7 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 		});
 
 		it('should have unique IDs', () => {
-			const ids = generalTalents.map(t => t.id);
+			const ids = generalTalents.map((t) => t.id);
 			const uniqueIds = new Set(ids);
 			expect(uniqueIds.size).toBe(ids.length);
 		});
@@ -70,7 +70,7 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 
 		it('should mark repeatable talents correctly', () => {
 			// Talents like "Skill Point Increase" should be repeatable
-			const skillIncrease = generalTalents.find(t => t.id.includes('skill'));
+			const skillIncrease = generalTalents.find((t) => t.id.includes('skill'));
 			if (skillIncrease) {
 				// Repeatable talents should not have a restriction or explicitly allow multiple
 				expect(skillIncrease).toBeDefined();
@@ -114,7 +114,7 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 
 		it('should have unique IDs within each class', () => {
 			for (const { name, talents } of allClassTalents) {
-				const ids = talents.map(t => t.id);
+				const ids = talents.map((t) => t.id);
 				const uniqueIds = new Set(ids);
 				expect(uniqueIds.size, `${name} should have unique talent IDs`).toBe(ids.length);
 			}
@@ -123,7 +123,9 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 		it('should have correct category for class talents', () => {
 			for (const { name, talents } of allClassTalents) {
 				for (const talent of talents) {
-					expect(talent.category, `${name} - ${talent.name} should have 'class' category`).toBe('class');
+					expect(talent.category, `${name} - ${talent.name} should have 'class' category`).toBe(
+						'class'
+					);
 				}
 			}
 		});
@@ -144,7 +146,10 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 				for (const talent of talents) {
 					expect(talent.id, `${name} - ${talent.name} should have id`).toBeDefined();
 					expect(talent.name, `${name} - ${talent.name} should have name`).toBeDefined();
-					expect(talent.description, `${name} - ${talent.name} should have description`).toBeDefined();
+					expect(
+						talent.description,
+						`${name} - ${talent.name} should have description`
+					).toBeDefined();
 					expect(talent.category, `${name} - ${talent.name} should have category`).toBeDefined();
 				}
 			}
@@ -171,11 +176,11 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 		});
 
 		it('should reference valid multiclass tiers', () => {
-			const validTierIds = MULTICLASS_TIERS.map(t => t.id);
-			
+			const validTierIds = MULTICLASS_TIERS.map((t) => t.id);
+
 			for (const talent of multiclassTalents) {
 				expect(talent.id).toMatch(/^multiclass_/);
-				
+
 				// Extract tier from ID (e.g., "multiclass_novice" -> "novice")
 				const tierId = talent.id.replace('multiclass_', '');
 				expect(validTierIds, `Talent ${talent.id} should reference valid tier`).toContain(tierId);
@@ -185,19 +190,21 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 		it('should have correct level requirements', () => {
 			for (const talent of multiclassTalents) {
 				const tierId = talent.id.replace('multiclass_', '');
-				const tier = MULTICLASS_TIERS.find(t => t.id === tierId);
-				
+				const tier = MULTICLASS_TIERS.find((t) => t.id === tierId);
+
 				if (tier && talent.levelRequired !== undefined) {
-					expect(talent.levelRequired, `${talent.name} level requirement should match tier`).toBe(tier.levelRequired);
+					expect(talent.levelRequired, `${talent.name} level requirement should match tier`).toBe(
+						tier.levelRequired
+					);
 				}
 			}
 		});
 
 		it('should match tier definitions from multiclass.ts', () => {
 			for (const tier of MULTICLASS_TIERS) {
-				const talent = multiclassTalents.find(t => t.id === `multiclass_${tier.id}`);
+				const talent = multiclassTalents.find((t) => t.id === `multiclass_${tier.id}`);
 				expect(talent, `Should have talent for ${tier.name}`).toBeDefined();
-				
+
 				if (talent) {
 					expect(talent.name).toBe(tier.name);
 					expect(talent.description).toContain('Level'); // Should mention level
@@ -212,17 +219,17 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 		});
 
 		it('should have unique IDs', () => {
-			const ids = multiclassTalents.map(t => t.id);
+			const ids = multiclassTalents.map((t) => t.id);
 			const uniqueIds = new Set(ids);
 			expect(uniqueIds.size).toBe(ids.length);
 		});
 
 		it('should have ascending level requirements', () => {
 			const levels = multiclassTalents
-				.map(t => t.levelRequired)
+				.map((t) => t.levelRequired)
 				.filter((l): l is number => l !== undefined)
 				.sort((a, b) => a - b);
-			
+
 			for (let i = 1; i < levels.length; i++) {
 				expect(levels[i]).toBeGreaterThanOrEqual(levels[i - 1]);
 			}
@@ -235,17 +242,17 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 		});
 
 		it('should aggregate talents correctly', () => {
-			const generalCount = allTalents.filter(t => t.category === 'general').length;
-			const classCount = allTalents.filter(t => t.category === 'class').length;
-			const multiclassCount = allTalents.filter(t => t.category === 'multiclass').length;
-			
+			const generalCount = allTalents.filter((t) => t.category === 'general').length;
+			const classCount = allTalents.filter((t) => t.category === 'class').length;
+			const multiclassCount = allTalents.filter((t) => t.category === 'multiclass').length;
+
 			expect(generalCount).toBe(generalTalents.length);
 			expect(multiclassCount).toBe(multiclassTalents.length);
 			expect(classCount).toBeGreaterThan(30); // At least a few per class
 		});
 
 		it('should have no duplicate IDs across all talents', () => {
-			const ids = allTalents.map(t => t.id);
+			const ids = allTalents.map((t) => t.id);
 			const uniqueIds = new Set(ids);
 			expect(uniqueIds.size).toBe(ids.length);
 		});
@@ -270,7 +277,7 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 	describe('Talent Effects Validation', () => {
 		it('should have valid effect types', () => {
 			const validTypes = ['stat', 'skill', 'ability', 'resource', 'other'];
-			
+
 			for (const talent of allTalents) {
 				if (talent.effects) {
 					for (const effect of talent.effects) {
@@ -285,8 +292,14 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 				if (talent.effects) {
 					for (const effect of talent.effects) {
 						if (effect.type === 'stat') {
-							expect(effect.target, `Talent ${talent.name} stat effect should have target`).toBeDefined();
-							expect(effect.value, `Talent ${talent.name} stat effect should have value`).toBeDefined();
+							expect(
+								effect.target,
+								`Talent ${talent.name} stat effect should have target`
+							).toBeDefined();
+							expect(
+								effect.value,
+								`Talent ${talent.name} stat effect should have value`
+							).toBeDefined();
 						}
 					}
 				}
@@ -309,29 +322,28 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 	describe('Data Coverage Statistics', () => {
 		it('should report talent counts by category', () => {
 			const stats = {
-				general: allTalents.filter(t => t.category === 'general').length,
-				class: allTalents.filter(t => t.category === 'class').length,
-				multiclass: allTalents.filter(t => t.category === 'multiclass').length,
+				general: allTalents.filter((t) => t.category === 'general').length,
+				class: allTalents.filter((t) => t.category === 'class').length,
+				multiclass: allTalents.filter((t) => t.category === 'multiclass').length,
 				total: allTalents.length
 			};
-			
+
 			console.log('📊 Talent System Coverage:');
 			console.log(`   General: ${stats.general}`);
 			console.log(`   Class: ${stats.class}`);
 			console.log(`   Multiclass: ${stats.multiclass}`);
 			console.log(`   Total: ${stats.total}`);
-			
+
 			expect(stats.total).toBeGreaterThan(50);
 		});
 
 		it('should report talents with effects', () => {
-			const withEffects = allTalents.filter(t => t.effects && t.effects.length > 0).length;
+			const withEffects = allTalents.filter((t) => t.effects && t.effects.length > 0).length;
 			const percentage = Math.round((withEffects / allTalents.length) * 100);
-			
+
 			console.log(`📊 Talents with effects: ${withEffects}/${allTalents.length} (${percentage}%)`);
-			
+
 			expect(withEffects).toBeGreaterThan(0);
 		});
 	});
 });
-

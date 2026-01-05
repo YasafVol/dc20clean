@@ -28,7 +28,14 @@ export type ValidationCode =
 
 // Source attribution for effects
 export interface EffectSource {
-	type: 'trait' | 'class_feature' | 'choice' | 'base' | 'ancestry_default' | 'talent' | 'subclass_feature_choice';
+	type:
+		| 'trait'
+		| 'class_feature'
+		| 'choice'
+		| 'base'
+		| 'ancestry_default'
+		| 'talent'
+		| 'subclass_feature_choice';
 	id: string;
 	name: string;
 	description?: string;
@@ -257,7 +264,6 @@ export interface EnhancedCalculationResult {
 		totalTradePoints: number;
 		totalAttributePoints: number;
 		totalManeuversKnown: number;
-		totalTechniquesKnown: number;
 		totalCantripsKnown: number;
 		totalSpellsKnown: number;
 		unlockedFeatureIds: string[];
@@ -317,9 +323,16 @@ export interface EnhancedCharacterBuildData {
 	featureChoices: Record<string, any>; // User choices for class features
 	selectedTalents?: Record<string, number>; // Count-based talent selection { talentId: count }
 	selectedSubclass?: string; // Selected subclass name (e.g., "Berserker")
-	
+
 	// Multiclass selections (M3.17)
-	selectedMulticlassOption?: 'novice' | 'adept' | 'expert' | 'master' | 'grandmaster' | 'legendary' | null;
+	selectedMulticlassOption?:
+		| 'novice'
+		| 'adept'
+		| 'expert'
+		| 'master'
+		| 'grandmaster'
+		| 'legendary'
+		| null;
 	selectedMulticlassClass?: string; // Class ID
 	selectedMulticlassFeature?: string; // Feature name
 
@@ -344,9 +357,9 @@ export interface EnhancedCharacterBuildData {
 	lastModified: number;
 
 	// Path Point Allocations (M3.9)
-	pathPointAllocations?: { 
-		martial?: number; 
-		spellcasting?: number; 
+	pathPointAllocations?: {
+		martial?: number;
+		spellcasting?: number;
 	};
 
 	// Level-based budgets (populated by aggregateProgressionGains)
@@ -358,7 +371,6 @@ export interface EnhancedCharacterBuildData {
 		totalTradePoints: number;
 		totalAttributePoints: number;
 		totalManeuversKnown: number;
-		totalTechniquesKnown: number;
 		totalCantripsKnown: number;
 		totalSpellsKnown: number;
 		unlockedFeatureIds: string[];

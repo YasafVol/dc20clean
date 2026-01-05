@@ -163,13 +163,13 @@ export const druidClass: ClassDefinition = {
 			featureName: "Nature's Torrent",
 			levelGained: 2,
 			description:
-				'When a creature within 10 spaces takes Elemental damage, you can summon a torrent of nature.',
+				'When a creature within 10 spaces takes Elemental damage, you can spend 1 AP as a Reaction to summon a torrent of nature (3 Space Diameter Sphere) for 1 minute. Creatures in the area have Vulnerability (1) to the triggering damage type and DisADV on Checks and Saves to resist being moved or knocked Prone.',
 			effects: [
 				{
 					type: 'GRANT_ABILITY',
 					target: 'natures_torrent',
 					value:
-						'Reaction: Create 1 Space Radius Sphere. Creatures have Vulnerability (1) to triggering damage type and DisADV on movement saves.'
+						'Reaction (1 AP): Create 3 Space Diameter Sphere for 1 minute. Creatures have Vulnerability (1) to triggering Elemental damage and DisADV on movement/Prone resistance saves.'
 				}
 			]
 		},

@@ -21,12 +21,12 @@ const FeaturePopup: React.FC<FeaturePopupProps> = ({ feature, onClose }) => {
 	return (
 		<StyledFeaturePopupOverlay onClick={onClose}>
 			<StyledFeaturePopupContent onClick={(e) => e.stopPropagation()}>
-					<StyledFeaturePopupHeader>
-						<StyledFeaturePopupTitle>{feature.name}</StyledFeaturePopupTitle>
-						<StyledFeaturePopupClose data-testid="feat-popup-close" onClick={onClose}>
-							×
-						</StyledFeaturePopupClose>
-					</StyledFeaturePopupHeader>
+				<StyledFeaturePopupHeader>
+					<StyledFeaturePopupTitle>{feature.name}</StyledFeaturePopupTitle>
+					<StyledFeaturePopupClose data-testid="feat-popup-close" onClick={onClose}>
+						×
+					</StyledFeaturePopupClose>
+				</StyledFeaturePopupHeader>
 				<StyledFeaturePopupDescription>{feature.description}</StyledFeaturePopupDescription>
 				{feature.sourceDetail && (
 					<StyledFeaturePopupSourceInfo>

@@ -27,7 +27,11 @@ export type Effect =
 	| GrantCantripEffect
 	| GrantManeuverEffect
 	| ModifyMasteryCapEffect
-	| IncreaseMasteryCapEffect;
+	| IncreaseMasteryCapEffect
+	// Condition interaction effects (from CONDITIONS_SPEC.md)
+	| GrantConditionImmunityEffect
+	| GrantConditionResistanceEffect
+	| GrantConditionVulnerabilityEffect;
 
 // --- Effect Type Interfaces ---
 
@@ -135,7 +139,7 @@ export interface GrantCantripEffect {
 }
 
 export interface GrantManeuverEffect {
-	type: 'GRANT_MANEUVERS' | 'GRANT_TECHNIQUES';
+	type: 'GRANT_MANEUVERS';
 	target: string;
 	value: number;
 }
@@ -152,6 +156,48 @@ export interface IncreaseMasteryCapEffect {
 	count: number;
 	value: number;
 	options?: string[];
+}
+
+// --- Condition Interaction Effect Interfaces (CONDITIONS_SPEC.md) ---
+
+/**
+ * Grants complete immunity to a specific condition.
+ * The character cannot be affected by this condition at all.
+ */
+export interface GrantConditionImmunityEffect {
+	type: 'GRANT_CONDITION_IMMUNITY';
+	/** The condition ID (e.g., 'charmed', 'frightened', 'poisoned') */
+	target: string;
+	/** Optional source description for UI display */
+	source?: string;
+}
+
+/**
+ * Grants resistance to a specific condition.
+ * May grant ADV on saves, reduce duration/stacks, or provide other mitigation.
+ */
+export interface GrantConditionResistanceEffect {
+	type: 'GRANT_CONDITION_RESISTANCE';
+	/** The condition ID (e.g., 'charmed', 'frightened', 'exhaustion-x') */
+	target: string;
+	/** The type of resistance: 'advantage' for ADV on saves, 'reduction' for stack reduction */
+	value: 'advantage' | 'reduction' | 'half';
+	/** Optional source description for UI display */
+	source?: string;
+}
+
+/**
+ * Grants vulnerability to a specific condition.
+ * May impose DisADV on saves or increase duration/stacks.
+ */
+export interface GrantConditionVulnerabilityEffect {
+	type: 'GRANT_CONDITION_VULNERABILITY';
+	/** The condition ID (e.g., 'psychic-damage', 'taunted') */
+	target: string;
+	/** The severity of vulnerability: 'disadvantage' for DisADV on saves, 'double' for double stacks */
+	value: 'disadvantage' | 'double';
+	/** Optional source description for UI display */
+	source?: string;
 }
 
 // ================================================================= //
@@ -252,9 +298,6 @@ export interface ClassDefinition {
 			learnsAllAttack?: boolean;
 			additionalKnown?: string;
 		};
-		techniques?: {
-			additionalKnown?: string;
-		};
 		staminaPoints?: {
 			maximumIncreasesBy?: string;
 		};
@@ -284,9 +327,6 @@ export interface ClassDefinition {
 			};
 			maneuvers?: {
 				learnsAllAttack?: boolean;
-				additionalKnown?: string;
-			};
-			techniques?: {
 				additionalKnown?: string;
 			};
 			staminaPoints?: {
@@ -352,7 +392,6 @@ export interface StatModifiers {
 
 	// Learning Stats
 	maneuversKnown: number;
-	techniquesKnown: number;
 	cantripsKnown: number;
 	spellsKnown: number;
 	skillMasteryLimit: number;

@@ -87,4 +87,3 @@ export const FeatureLevel = styled.div`
 	color: rgba(255, 255, 255, 0.6);
 	margin-bottom: 0.5rem;
 `;
-

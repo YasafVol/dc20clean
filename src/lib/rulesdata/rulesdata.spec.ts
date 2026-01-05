@@ -3,9 +3,8 @@ import { classesDataSchema } from './schemas/class.schema';
 import { classesData } from './loaders/class.loader';
 import { traitsData as newTraitsData } from './ancestries/traits';
 import { ancestriesData as newAncestriesData } from './ancestries/ancestries';
-import { allSpells } from './spells-data/spells';
+import { ALL_SPELLS as allSpells } from './spells-data';
 import { allManeuvers } from './martials/maneuvers';
-import { allTechniques } from './martials/techniques';
 import { allItems } from './inventoryItems';
 
 describe('Rules Data Validation', () => {
@@ -52,15 +51,6 @@ describe('Rules Data Validation', () => {
 			expect(maneuver).toHaveProperty('type');
 			expect(maneuver).toHaveProperty('cost');
 			expect(maneuver).toHaveProperty('description');
-		});
-	});
-
-	it('should ensure all techniques have required properties', () => {
-		expect(allTechniques.length).toBeGreaterThan(0);
-		allTechniques.forEach((technique) => {
-			expect(technique).toHaveProperty('name');
-			expect(technique).toHaveProperty('cost');
-			expect(technique).toHaveProperty('description');
 		});
 	});
 

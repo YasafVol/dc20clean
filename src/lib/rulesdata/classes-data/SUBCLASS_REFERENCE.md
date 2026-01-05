@@ -12,31 +12,31 @@ This document provides a complete reference for all subclasses available in DC20
 
 ### Classes with 2 Subclasses
 
-| Class | Subclass 1 | Subclass 2 |
-|-------|-----------|-----------|
-| **Barbarian** | Elemental Fury | Spirit Guardian |
-| **Bard** | Eloquence | Jester |
-| **Cleric** | Inquisitor | Priest |
-| **Commander** | Crusader | Warlord |
-| **Druid** | Phoenix | Rampant Growth |
-| **Monk** | Astral Self | Shifting Tide |
-| **Rogue** | Long Death | Swashbuckler |
-| **Sorcerer** | Angelic | Draconic |
-| **Spellblade** | Paladin | Rune Knight |
-| **Warlock** | Eldritch | Fey |
+| Class          | Subclass 1     | Subclass 2      |
+| -------------- | -------------- | --------------- |
+| **Barbarian**  | Elemental Fury | Spirit Guardian |
+| **Bard**       | Eloquence      | Jester          |
+| **Cleric**     | Inquisitor     | Priest          |
+| **Commander**  | Crusader       | Warlord         |
+| **Druid**      | Phoenix        | Rampant Growth  |
+| **Monk**       | Astral Self    | Shifting Tide   |
+| **Rogue**      | Long Death     | Swashbuckler    |
+| **Sorcerer**   | Angelic        | Draconic        |
+| **Spellblade** | Paladin        | Rune Knight     |
+| **Warlock**    | Eldritch       | Fey             |
 
 ### Classes with 1 Subclass
 
-| Class | Subclass |
-|-------|----------|
+| Class      | Subclass    |
+| ---------- | ----------- |
 | **Wizard** | Portal Mage |
 
 ### Classes with 0 Subclasses (Pending Implementation)
 
-| Class | Status |
-|-------|--------|
+| Class        | Status                |
+| ------------ | --------------------- |
 | **Champion** | No subclasses defined |
-| **Hunter** | No subclasses defined |
+| **Hunter**   | No subclasses defined |
 
 ---
 
@@ -45,6 +45,7 @@ This document provides a complete reference for all subclasses available in DC20
 ### File Structure
 
 Each class's subclasses are defined in:
+
 ```
 src/lib/rulesdata/classes-data/features/{class}_features.ts
 ```
@@ -53,10 +54,10 @@ src/lib/rulesdata/classes-data/features/{class}_features.ts
 
 ```typescript
 interface Subclass {
-  subclassName: string;
-  description?: string; // Optional - some subclasses may not have descriptions
-  features: ClassFeature[];
-  levelGained?: number; // Default: undefined (available from start)
+	subclassName: string;
+	description?: string; // Optional - some subclasses may not have descriptions
+	features: ClassFeature[];
+	levelGained?: number; // Default: undefined (available from start)
 }
 ```
 
@@ -73,11 +74,13 @@ interface Subclass {
 ### Barbarian
 
 #### Elemental Fury
+
 - **File:** `barbarian_features.ts` (line 204)
 - **Description:** Harness primal elemental forces
 - **Features:** Multiple elemental-themed abilities
 
 #### Spirit Guardian
+
 - **File:** `barbarian_features.ts` (line 347)
 - **Description:** Channel ancestral spirits
 - **Features:** Spirit-based protective and offensive abilities
@@ -85,11 +88,13 @@ interface Subclass {
 ### Bard
 
 #### Eloquence
+
 - **File:** `bard_features.ts` (line 192)
 - **Description:** Master of persuasion and inspiration
 - **Features:** Enhanced charisma-based abilities
 
 #### Jester
+
 - **File:** `bard_features.ts` (line 256)
 - **Description:** Trickster and entertainer
 - **Features:** Deceptive and unpredictable abilities
@@ -97,11 +102,13 @@ interface Subclass {
 ### Cleric
 
 #### Inquisitor
+
 - **File:** `cleric_features.ts` (line 221)
 - **Description:** Agent of divine justice
 - **Features:** Investigation and holy retribution abilities
 
 #### Priest
+
 - **File:** `cleric_features.ts` (line 239)
 - **Description:** Traditional healer and spiritual guide
 - **Features:** Enhanced healing and support magic
@@ -109,11 +116,13 @@ interface Subclass {
 ### Commander
 
 #### Crusader
+
 - **File:** `commander_features.ts` (line 189)
 - **Description:** Holy warrior leading the faithful
 - **Features:** Divine combat leadership abilities
 
 #### Warlord
+
 - **File:** `commander_features.ts` (line 244)
 - **Description:** Tactical battlefield commander
 - **Features:** Strategic positioning and command abilities
@@ -121,11 +130,13 @@ interface Subclass {
 ### Druid
 
 #### Phoenix
+
 - **File:** `druid_features.ts` (line 187)
 - **Description:** Master of rebirth and fire
 - **Features:** Fire-based regeneration abilities
 
 #### Rampant Growth
+
 - **File:** `druid_features.ts` (line 249)
 - **Description:** Champion of untamed nature
 - **Features:** Plant and growth manipulation
@@ -133,11 +144,13 @@ interface Subclass {
 ### Monk
 
 #### Astral Self
+
 - **File:** `monk_features.ts` (line 221)
 - **Description:** Channel cosmic energy
 - **Features:** Astral projection and spiritual combat
 
 #### Shifting Tide
+
 - **File:** `monk_features.ts` (line 270)
 - **Description:** Flow like water
 - **Features:** Adaptive and fluid combat style
@@ -145,11 +158,13 @@ interface Subclass {
 ### Rogue
 
 #### Long Death
+
 - **File:** `rogue_features.ts` (line 112)
 - **Description:** Master of assassination
 - **Features:** Death-dealing precision strikes
 
 #### Swashbuckler
+
 - **File:** `rogue_features.ts` (line 141)
 - **Description:** Dashing duelist
 - **Features:** Flashy and mobile combat style
@@ -157,12 +172,14 @@ interface Subclass {
 ### Sorcerer
 
 #### Angelic
+
 - **File:** `sorcerer_features.ts` (line 204)
 - **Description:** None (features define the subclass)
 - **Features:** Celestial Spark, radiant abilities
 - **Note:** No subclass-level description
 
 #### Draconic
+
 - **File:** `sorcerer_features.ts` (line 267)
 - **Description:** None (features define the subclass)
 - **Features:** Draconic heritage and elemental powers
@@ -171,11 +188,13 @@ interface Subclass {
 ### Spellblade
 
 #### Paladin
+
 - **File:** `spellblade_features.ts` (line 225)
 - **Description:** Holy warrior blending magic and martial prowess
 - **Features:** Divine smite-style abilities
 
 #### Rune Knight
+
 - **File:** `spellblade_features.ts` (line 283)
 - **Description:** Arcane warrior using runic magic
 - **Features:** Rune-enhanced combat abilities
@@ -183,11 +202,13 @@ interface Subclass {
 ### Warlock
 
 #### Eldritch
+
 - **File:** `warlock_features.ts` (line 173)
 - **Description:** Pact with alien entities
 - **Features:** Eldritch blast enhancements and otherworldly powers
 
 #### Fey
+
 - **File:** `warlock_features.ts` (line 238)
 - **Description:** Pact with fey creatures
 - **Features:** Charm, illusion, and nature-themed abilities
@@ -195,6 +216,7 @@ interface Subclass {
 ### Wizard
 
 #### Portal Mage
+
 - **File:** `wizard_features.ts` (line 161)
 - **Description:** Master of teleportation and dimensional magic
 - **Features:** Portal creation and spatial manipulation
@@ -208,6 +230,7 @@ Comprehensive unit tests verify subclass availability:
 **Test File:** `src/lib/rulesdata/classes-data/features/subclasses.test.ts`
 
 **Test Coverage:**
+
 - ✅ 73 tests passing (as of October 7, 2025)
 - Verifies subclass array exists for all classes
 - Confirms correct subclass counts
@@ -216,6 +239,7 @@ Comprehensive unit tests verify subclass availability:
 - Ensures all subclasses have at least one feature
 
 **Run Tests:**
+
 ```bash
 npm run test:unit -- subclasses.test.ts
 ```
@@ -225,9 +249,11 @@ npm run test:unit -- subclasses.test.ts
 ## Future Additions
 
 ### Champion Subclasses (Planned)
+
 - TBD - awaiting game design specifications
 
 ### Hunter Subclasses (Planned)
+
 - TBD - awaiting game design specifications
 
 ---
@@ -261,4 +287,3 @@ npm run test:unit -- subclasses.test.ts
 - **Leveling Epic:** `docs/plannedSpecs/LEVELING_EPIC.md`
 - **Character Schema:** `src/lib/rulesdata/schemas/character.schema.ts`
 - **Class Utils:** `src/lib/rulesdata/classes-data/classUtils.ts`
-

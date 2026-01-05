@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import type { SpellData } from '../../../types';
 import type { Spell } from '../../../lib/rulesdata/schemas/spell.schema';
-import { allSpells } from '../../../lib/rulesdata/spells-data/spells';
+import { ALL_SPELLS as allSpells } from '../../../lib/rulesdata/spells-data';
 import { SpellSchool } from '../../../lib/rulesdata/schemas/spell.schema';
 import { useCharacterSpells, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
@@ -268,10 +268,10 @@ const Spells: React.FC<SpellsProps> = ({
 												})
 												.map((spellOption) => (
 													<option key={spellOption.name} value={spellOption.name}>
-													{spellOption.name}
+														{spellOption.name}
 													</option>
 												))}
-											</StyledSpellSelect>
+										</StyledSpellSelect>
 									)}
 
 									{/* School */}

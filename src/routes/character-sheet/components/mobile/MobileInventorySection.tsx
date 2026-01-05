@@ -34,7 +34,9 @@ const MobileInventorySection: React.FC<MobileInventorySectionProps> = ({
 		<MobileSection>
 			<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 				<MobileSectionTitle>Inventory</MobileSectionTitle>
-				<MobileAddButton onClick={handleAddInventoryItem} data-testid="add-item">+ Add Item</MobileAddButton>
+				<MobileAddButton onClick={handleAddInventoryItem} data-testid="add-item">
+					+ Add Item
+				</MobileAddButton>
 			</div>
 			{items.length > 0 && (
 				<MobileItemGrid>

@@ -160,9 +160,16 @@ export interface SavedCharacter {
 	unlockedFeatureIds?: string[]; // Features gained from leveling
 	selectedSubclass?: string; // Subclass name if chosen
 	pendingSubclassChoice?: boolean; // True if subclass choice is available but not made
-	
+
 	// MULTICLASS SELECTIONS (M3.17)
-	selectedMulticlassOption?: 'novice' | 'adept' | 'expert' | 'master' | 'grandmaster' | 'legendary' | null; // Multiclass tier
+	selectedMulticlassOption?:
+		| 'novice'
+		| 'adept'
+		| 'expert'
+		| 'master'
+		| 'grandmaster'
+		| 'legendary'
+		| null; // Multiclass tier
 	selectedMulticlassClass?: string; // Class ID for multiclass feature
 	selectedMulticlassFeature?: string; // Feature name from multiclass
 
@@ -178,16 +185,35 @@ export interface SavedCharacter {
 	>;
 	// Lightweight ladders for easy consumption
 	masteryLadders?: {
-		skills?: Record<string, { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }>;
+		skills?: Record<
+			string,
+			{ '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }
+		>;
 		knowledgeTrades?: Record<
 			'arcana' | 'history' | 'nature' | 'occultism' | 'religion',
 			{ '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }
 		>;
 		practicalTrades?: {
-			A?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }; finalValue: number };
-			B?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }; finalValue: number };
-			C?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }; finalValue: number };
-			D?: { label: string; ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean }; finalValue: number };
+			A?: {
+				label: string;
+				ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean };
+				finalValue: number;
+			};
+			B?: {
+				label: string;
+				ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean };
+				finalValue: number;
+			};
+			C?: {
+				label: string;
+				ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean };
+				finalValue: number;
+			};
+			D?: {
+				label: string;
+				ladder: { '2': boolean; '4': boolean; '6': boolean; '8': boolean; '10': boolean };
+				finalValue: number;
+			};
 		};
 	};
 	// Fixed language mastery A–D derived from languagesData

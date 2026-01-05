@@ -1,6 +1,6 @@
 /**
  * M4.1g - Leveling System Regression Tests
- * 
+ *
  * Tests to ensure leveling system doesn't break existing functionality:
  * - Level 1 creation unchanged
  * - Saved character loading backwards compatible
@@ -9,7 +9,10 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { convertToEnhancedBuildData, calculateCharacterWithBreakdowns } from './enhancedCharacterCalculator';
+import {
+	convertToEnhancedBuildData,
+	calculateCharacterWithBreakdowns
+} from './enhancedCharacterCalculator';
 
 describe('Leveling System Regression Tests (M4.1g)', () => {
 	describe('Level 1 Compatibility', () => {
@@ -194,7 +197,7 @@ describe('Leveling System Regression Tests (M4.1g)', () => {
 				selectedTraitIds: [],
 				selectedTraitChoices: {},
 				selectedFeatureChoices: {},
-				selectedTalents: { 'general_skill_increase': 1 },
+				selectedTalents: { general_skill_increase: 1 },
 				pathPointAllocations: { spellcasting: 1 },
 				skillsData: {},
 				tradesData: {},
@@ -207,7 +210,7 @@ describe('Leveling System Regression Tests (M4.1g)', () => {
 
 			// Should load all V2 fields
 			expect(result).toBeDefined();
-			expect(enhanced.selectedTalents).toEqual({ 'general_skill_increase': 1 });
+			expect(enhanced.selectedTalents).toEqual({ general_skill_increase: 1 });
 			expect(enhanced.pathPointAllocations).toEqual({ spellcasting: 1 });
 		});
 
@@ -322,10 +325,13 @@ describe('Leveling System Regression Tests (M4.1g)', () => {
 				ancestry2Id: 'orc',
 				selectedTraitIds: ['human_adaptable'],
 				selectedTraitChoices: {},
-				selectedFeatureChoices: { 'test_choice': 'test_value' },
+				selectedFeatureChoices: { test_choice: 'test_value' },
 				skillsData: { athletics: 2 },
 				tradesData: { brewing: 1 },
-				languagesData: { common: { fluency: 'fluent' as const }, orcish: { fluency: 'limited' as const } }
+				languagesData: {
+					common: { fluency: 'fluent' as const },
+					orcish: { fluency: 'limited' as const }
+				}
 			};
 
 			const migratedCharacter = {
@@ -443,14 +449,14 @@ describe('Leveling System Regression Tests (M4.1g)', () => {
 				selectedTraitIds: [],
 				selectedTraitChoices: {},
 				selectedFeatureChoices: {},
-				selectedTalents: { 'invalid_id': 999 }, // Invalid talent ID
+				selectedTalents: { invalid_id: 999 }, // Invalid talent ID
 				skillsData: {},
 				tradesData: {},
 				languagesData: { common: { fluency: 'fluent' as const } }
 			};
 
 			const enhanced = convertToEnhancedBuildData(character);
-			
+
 			// Should not crash, might just ignore invalid data
 			expect(() => {
 				calculateCharacterWithBreakdowns(enhanced);
@@ -532,7 +538,7 @@ describe('Leveling System Regression Tests (M4.1g)', () => {
 			};
 
 			const enhanced = convertToEnhancedBuildData(oldFormatCharacter);
-			
+
 			// Should handle gracefully (convert or use default)
 			expect(enhanced.selectedTalents).toBeDefined();
 		});
@@ -583,7 +589,7 @@ describe('Leveling System Regression Tests (M4.1g)', () => {
 			};
 
 			const enhanced = convertToEnhancedBuildData(character);
-			
+
 			// Should handle null ancestry
 			expect(() => {
 				calculateCharacterWithBreakdowns(enhanced);
@@ -607,7 +613,7 @@ describe('Leveling System Regression Tests (M4.1g)', () => {
 				selectedTraitIds: [],
 				selectedTraitChoices: {},
 				selectedFeatureChoices: {},
-				selectedTalents: { 'general_skill_increase': 2 },
+				selectedTalents: { general_skill_increase: 2 },
 				pathPointAllocations: { spellcasting: 2 },
 				skillsData: {},
 				tradesData: {},
@@ -615,7 +621,7 @@ describe('Leveling System Regression Tests (M4.1g)', () => {
 			};
 
 			const enhanced = convertToEnhancedBuildData(character);
-			
+
 			// Calculate multiple times
 			const result1 = calculateCharacterWithBreakdowns(enhanced);
 			const result2 = calculateCharacterWithBreakdowns(enhanced);
@@ -655,4 +661,3 @@ describe('Leveling System Regression Tests (M4.1g)', () => {
 		});
 	});
 });
-

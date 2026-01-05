@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import type { Subclass, ClassFeature } from '../../lib/rulesdata/schemas/character.schema';
-import { getSubclassByName, getFeatureChoiceKey } from '../../lib/rulesdata/classes-data/classUtils';
+import {
+	getSubclassByName,
+	getFeatureChoiceKey
+} from '../../lib/rulesdata/classes-data/classUtils';
 import { barbarianClass } from '../../lib/rulesdata/classes-data/features/barbarian_features';
 import { clericClass } from '../../lib/rulesdata/classes-data/features/cleric_features';
 import { druidClass } from '../../lib/rulesdata/classes-data/features/druid_features';
@@ -92,8 +95,7 @@ const SubclassCard = styled.div<{ selected: boolean }>`
 		props.selected
 			? 'linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(139, 69, 19, 0.15) 100%)'
 			: 'rgba(0, 0, 0, 0.3)'};
-	border: 2px solid
-		${(props) => (props.selected ? '#d4af37' : 'rgba(139, 69, 19, 0.4)')};
+	border: 2px solid ${(props) => (props.selected ? '#d4af37' : 'rgba(139, 69, 19, 0.4)')};
 	border-radius: 8px;
 	padding: 1rem;
 	cursor: pointer;
@@ -286,8 +288,8 @@ export function SubclassSelector({
 				{choiceLevel && <LevelBadge>Level {choiceLevel}</LevelBadge>}
 			</Header>
 			<Description>
-				Select a subclass to specialize your character's abilities and playstyle. This choice
-				is permanent and shapes your character's identity.
+				Select a subclass to specialize your character's abilities and playstyle. This choice is
+				permanent and shapes your character's identity.
 			</Description>
 
 			<SubclassGrid>
@@ -334,63 +336,72 @@ export function SubclassSelector({
 											)}
 
 											{/* Show Choices only when this subclass is selected */}
-											{isSelected && feature.choices && feature.choices.length > 0 && onChoiceChange && (
-												<ChoicesContainer>
-													{feature.choices.map((choice) => {
-														const choiceKey = getFeatureChoiceKey(classId, subclass.subclassName, choice.id);
-														const currentSelections = selectedFeatureChoices[choiceKey] || [];
-														const isComplete = currentSelections.length === choice.count;
+											{isSelected &&
+												feature.choices &&
+												feature.choices.length > 0 &&
+												onChoiceChange && (
+													<ChoicesContainer>
+														{feature.choices.map((choice) => {
+															const choiceKey = getFeatureChoiceKey(
+																classId,
+																subclass.subclassName,
+																choice.id
+															);
+															const currentSelections = selectedFeatureChoices[choiceKey] || [];
+															const isComplete = currentSelections.length === choice.count;
 
-														const handleOptionClick = (optionName: string) => {
-															if (choice.count === 1) {
-																// Radio behavior: replace selection
-																onChoiceChange(choiceKey, [optionName]);
-															} else {
-																// Checkbox behavior: toggle in array
-																const newSelections = currentSelections.includes(optionName)
-																	? currentSelections.filter((s) => s !== optionName)
-																	: [...currentSelections, optionName].slice(0, choice.count);
-																onChoiceChange(choiceKey, newSelections);
-															}
-														};
+															const handleOptionClick = (optionName: string) => {
+																if (choice.count === 1) {
+																	// Radio behavior: replace selection
+																	onChoiceChange(choiceKey, [optionName]);
+																} else {
+																	// Checkbox behavior: toggle in array
+																	const newSelections = currentSelections.includes(optionName)
+																		? currentSelections.filter((s) => s !== optionName)
+																		: [...currentSelections, optionName].slice(0, choice.count);
+																	onChoiceChange(choiceKey, newSelections);
+																}
+															};
 
-														return (
-															<ChoiceSection key={choice.id}>
-																<ChoiceHeader>
-																	<ChoicePrompt>{choice.prompt}</ChoicePrompt>
-																	<ChoiceStatus complete={isComplete}>
-																		{isComplete
-																			? '✅'
-																			: `⚠️ ${currentSelections.length}/${choice.count}`}
-																	</ChoiceStatus>
-																</ChoiceHeader>
-																<ChoiceHint>Select {choice.count} option(s)</ChoiceHint>
+															return (
+																<ChoiceSection key={choice.id}>
+																	<ChoiceHeader>
+																		<ChoicePrompt>{choice.prompt}</ChoicePrompt>
+																		<ChoiceStatus complete={isComplete}>
+																			{isComplete
+																				? '✅'
+																				: `⚠️ ${currentSelections.length}/${choice.count}`}
+																		</ChoiceStatus>
+																	</ChoiceHeader>
+																	<ChoiceHint>Select {choice.count} option(s)</ChoiceHint>
 
-																<ChoiceOptions>
-																	{choice.options?.map((option) => {
-																		const isSelected = currentSelections.includes(option.name);
+																	<ChoiceOptions>
+																		{choice.options?.map((option) => {
+																			const isSelected = currentSelections.includes(option.name);
 
-																		return (
-																			<ChoiceOptionCard
-																				key={option.name}
-																				selected={isSelected}
-																				onClick={(e) => {
-																					e.stopPropagation(); // Prevent subclass card click
-																					handleOptionClick(option.name);
-																				}}
-																			>
-																				<OptionName>{option.name}</OptionName>
-																				<OptionDescription>{option.description}</OptionDescription>
-																				{isSelected && <SelectedIcon>✓</SelectedIcon>}
-																			</ChoiceOptionCard>
-																		);
-																	})}
-																</ChoiceOptions>
-															</ChoiceSection>
-														);
-													})}
-												</ChoicesContainer>
-											)}
+																			return (
+																				<ChoiceOptionCard
+																					key={option.name}
+																					selected={isSelected}
+																					onClick={(e) => {
+																						e.stopPropagation(); // Prevent subclass card click
+																						handleOptionClick(option.name);
+																					}}
+																				>
+																					<OptionName>{option.name}</OptionName>
+																					<OptionDescription>
+																						{option.description}
+																					</OptionDescription>
+																					{isSelected && <SelectedIcon>✓</SelectedIcon>}
+																				</ChoiceOptionCard>
+																			);
+																		})}
+																	</ChoiceOptions>
+																</ChoiceSection>
+															);
+														})}
+													</ChoicesContainer>
+												)}
 										</FeatureCard>
 									))}
 								</SubclassFeaturesList>
@@ -402,4 +413,3 @@ export function SubclassSelector({
 		</Container>
 	);
 }
-

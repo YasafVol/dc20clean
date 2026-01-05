@@ -42,58 +42,106 @@ export const wizardClass: ClassDefinition = {
 					count: 1,
 					options: [
 						{
-							name: 'Fire & Flames',
-							description: 'Specialize in fire magic and flame manipulation.',
+							name: 'Astromancy',
+							description: 'Specialize in time, space, and gravity magic.',
 							effects: [
-								{ type: 'GRANT_CANTRIP', target: 'fire_flames_school', value: 1 },
-								{ type: 'GRANT_SPELL', target: 'fire_flames_school', value: 1 },
+								{ type: 'GRANT_SPELL', target: 'astromancy_school', value: 2 },
 								{
 									type: 'GRANT_ABILITY',
-									target: 'signature_school_fire',
+									target: 'signature_school_astromancy',
 									value:
-										'Reduce MP cost by 1 for Fire & Flames spells (once per Long Rest, regain on Initiative).'
+										'Reduce MP cost by 1 for Astromancy spells (once per Long Rest, regain on Initiative).'
 								}
 							]
 						},
 						{
-							name: 'Ice & Illusions',
-							description: 'Specialize in ice magic and illusion spells.',
+							name: 'Conjuration',
+							description: 'Specialize in creating physical material from nothing.',
 							effects: [
-								{ type: 'GRANT_CANTRIP', target: 'ice_illusions_school', value: 1 },
-								{ type: 'GRANT_SPELL', target: 'ice_illusions_school', value: 1 },
+								{ type: 'GRANT_SPELL', target: 'conjuration_school', value: 2 },
 								{
 									type: 'GRANT_ABILITY',
-									target: 'signature_school_ice',
+									target: 'signature_school_conjuration',
 									value:
-										'Reduce MP cost by 1 for Ice & Illusions spells (once per Long Rest, regain on Initiative).'
+										'Reduce MP cost by 1 for Conjuration spells (once per Long Rest, regain on Initiative).'
 								}
 							]
 						},
 						{
-							name: 'Lightning & Teleportation',
-							description: 'Specialize in lightning magic and teleportation spells.',
+							name: 'Divination',
+							description: 'Specialize in gaining information through magic.',
 							effects: [
-								{ type: 'GRANT_CANTRIP', target: 'lightning_teleportation_school', value: 1 },
-								{ type: 'GRANT_SPELL', target: 'lightning_teleportation_school', value: 1 },
+								{ type: 'GRANT_SPELL', target: 'divination_school', value: 2 },
 								{
 									type: 'GRANT_ABILITY',
-									target: 'signature_school_lightning',
+									target: 'signature_school_divination',
 									value:
-										'Reduce MP cost by 1 for Lightning & Teleportation spells (once per Long Rest, regain on Initiative).'
+										'Reduce MP cost by 1 for Divination spells (once per Long Rest, regain on Initiative).'
 								}
 							]
 						},
 						{
-							name: 'Psychic & Enchantment',
-							description: 'Specialize in psychic magic and enchantment spells.',
+							name: 'Elemental',
+							description: 'Specialize in manipulating the elements.',
 							effects: [
-								{ type: 'GRANT_CANTRIP', target: 'psychic_enchantment_school', value: 1 },
-								{ type: 'GRANT_SPELL', target: 'psychic_enchantment_school', value: 1 },
+								{ type: 'GRANT_SPELL', target: 'elemental_school', value: 2 },
 								{
 									type: 'GRANT_ABILITY',
-									target: 'signature_school_psychic',
+									target: 'signature_school_elemental',
 									value:
-										'Reduce MP cost by 1 for Psychic & Enchantment spells (once per Long Rest, regain on Initiative).'
+										'Reduce MP cost by 1 for Elemental spells (once per Long Rest, regain on Initiative).'
+								}
+							]
+						},
+						{
+							name: 'Enchantment',
+							description: 'Specialize in mental alteration (buff & debuff).',
+							effects: [
+								{ type: 'GRANT_SPELL', target: 'enchantment_school', value: 2 },
+								{
+									type: 'GRANT_ABILITY',
+									target: 'signature_school_enchantment',
+									value:
+										'Reduce MP cost by 1 for Enchantment spells (once per Long Rest, regain on Initiative).'
+								}
+							]
+						},
+						{
+							name: 'Invocation',
+							description: 'Specialize in positive energy (life and spirit).',
+							effects: [
+								{ type: 'GRANT_SPELL', target: 'invocation_school', value: 2 },
+								{
+									type: 'GRANT_ABILITY',
+									target: 'signature_school_invocation',
+									value:
+										'Reduce MP cost by 1 for Invocation spells (once per Long Rest, regain on Initiative).'
+								}
+							]
+						},
+						{
+							name: 'Nullification',
+							description: 'Specialize in negative energy (destroy matter or spirit).',
+							effects: [
+								{ type: 'GRANT_SPELL', target: 'nullification_school', value: 2 },
+								{
+									type: 'GRANT_ABILITY',
+									target: 'signature_school_nullification',
+									value:
+										'Reduce MP cost by 1 for Nullification spells (once per Long Rest, regain on Initiative).'
+								}
+							]
+						},
+						{
+							name: 'Transmutation',
+							description: 'Specialize in physical alteration (change form, shape, or matter).',
+							effects: [
+								{ type: 'GRANT_SPELL', target: 'transmutation_school', value: 2 },
+								{
+									type: 'GRANT_ABILITY',
+									target: 'signature_school_transmutation',
+									value:
+										'Reduce MP cost by 1 for Transmutation spells (once per Long Rest, regain on Initiative).'
 								}
 							]
 						}
@@ -256,7 +304,7 @@ export const wizardClass: ClassDefinition = {
 										{
 											type: 'GRANT_ABILITY',
 											target: 'hex_vermin',
-											value: "1 MP: Target is silenced and shrinks over time."
+											value: '1 MP: Target is silenced and shrinks over time.'
 										}
 									]
 								}

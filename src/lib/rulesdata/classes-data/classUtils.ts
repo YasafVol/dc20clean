@@ -44,9 +44,7 @@ export function getSubclassByName(classId: string, subclassName: string): Subcla
 	const classData = CLASS_FEATURES_MAP[classId];
 	if (!classData) return undefined;
 
-	return classData.subclasses?.find(
-		(s: Subclass) => s.subclassName === subclassName
-	);
+	return classData.subclasses?.find((s: Subclass) => s.subclassName === subclassName);
 }
 
 /**
@@ -102,4 +100,3 @@ export function validateSubclassChoicesComplete(
 		incompleteChoices: incomplete
 	};
 }
-

@@ -118,13 +118,13 @@ flowchart LR
 
 ## 5 Troubleshooting FAQ 🤖
 
-| Symptom                               | Likely Cause                                                            | Fix                                              |
-| ------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------ |
-| **Vite import error** for class files | File path typo (`classes-data/...`)                                     | Check `import ... classFeaturesData` paths       |
+| Symptom                               | Likely Cause                                                                | Fix                                                |
+| ------------------------------------- | --------------------------------------------------------------------------- | -------------------------------------------------- |
+| **Vite import error** for class files | File path typo (`classes-data/...`)                                         | Check `import ... classFeaturesData` paths         |
 | New class not visible in UI           | Missing `_features.ts` or `.progression.ts` file, or missing CLASS_METADATA | Verify file names, exported constant, and metadata |
-| Unit test `rulesdata.spec.ts` fails   | Schema violation (missing field / wrong effect)                         | Inspect test output & update data                |
-| Stats not updating for new effect     | Effect type not handled in calculator                                   | Add case to `createStatBreakdown`                |
-| Feature choice dropdown empty         | `choices` array missing `options`                                       | Populate `options` with `label` & `value` fields |
+| Unit test `rulesdata.spec.ts` fails   | Schema violation (missing field / wrong effect)                             | Inspect test output & update data                  |
+| Stats not updating for new effect     | Effect type not handled in calculator                                       | Add case to `createStatBreakdown`                  |
+| Feature choice dropdown empty         | `choices` array missing `options`                                           | Populate `options` with `label` & `value` fields   |
 
 ---
 

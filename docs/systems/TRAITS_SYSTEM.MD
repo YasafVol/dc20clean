@@ -153,6 +153,7 @@ When a new type is created:
 #### Test Categories
 
 **Trait Data Structure**
+
 - ✅ Trait data loads successfully (239 traits)
 - ✅ Required fields present (`id`, `name`, `description`, `cost`, `effects`)
 - ✅ Unique trait IDs (no duplicates)
@@ -160,15 +161,18 @@ When a new type is created:
 - ✅ Non-empty effects arrays
 
 **ID Format & Naming**
+
 - ✅ `ancestry_trait` naming convention followed
 - ✅ Trait ID prefixes match ancestry IDs (e.g., `human_*`, `elf_*`)
 
 **Trait-to-Ancestry Relationships**
+
 - ✅ Zero orphaned traits (all traits referenced by at least one ancestry)
 - ✅ All trait references resolve to existing traits
 - ✅ No duplicates in trait lists
 
 **Effect Validation**
+
 - ✅ Only valid effect types used (see `EFFECT_SYSTEM.MD`)
 - ✅ Valid target values for `MODIFY_STAT` effects
 - ✅ Numeric values for numeric effect types
@@ -176,11 +180,13 @@ When a new type is created:
 - ✅ **All effects have required `target` field** (not `count` or `options`)
 
 **Cost & Budget**
+
 - ✅ Valid costs for negative traits (negative values, `isNegative: true`)
 - ✅ Consistent cost structure across all traits
 - ✅ Default trait costs sum correctly for each ancestry
 
 **Statistics**
+
 - 17 ancestries defined
 - 239 traits defined
 - Effect type distribution tracked
@@ -211,13 +217,13 @@ The test suite enforces strict data quality:
 
 ### 6.4 When Tests Fail
 
-| Test Failure | Fix |
-|-------------|-----|
-| "should have unique trait IDs" | Remove duplicate trait definition |
-| "should reference only existing traits" | Fix typo in trait ID or create missing trait |
-| "should not have orphaned traits" | Add trait to an ancestry's trait list or remove unused trait |
-| "should have valid effect structure" | Add `target` field to effect (not `count` or inline `options`) |
-| "should follow ancestry_trait naming" | Rename trait ID to match `ancestry_trait` pattern |
+| Test Failure                            | Fix                                                            |
+| --------------------------------------- | -------------------------------------------------------------- |
+| "should have unique trait IDs"          | Remove duplicate trait definition                              |
+| "should reference only existing traits" | Fix typo in trait ID or create missing trait                   |
+| "should not have orphaned traits"       | Add trait to an ancestry's trait list or remove unused trait   |
+| "should have valid effect structure"    | Add `target` field to effect (not `count` or inline `options`) |
+| "should follow ancestry_trait naming"   | Rename trait ID to match `ancestry_trait` pattern              |
 
 ---
 

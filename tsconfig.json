@@ -20,7 +20,11 @@
 		"checkJs": true,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
-		"sourceMap": true
+		"sourceMap": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./src/*"]
+		}
 	},
 	"ts-node": {
 		"esm": true,

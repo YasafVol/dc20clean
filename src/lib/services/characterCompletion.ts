@@ -2,7 +2,7 @@
 // Handles the completion flow with proper stat calculation, snackbar, and navigation
 
 import { assignSpellsToCharacter } from './spellAssignment';
-import { allSpells } from '../rulesdata/spells-data/spells';
+import { ALL_SPELLS as allSpells } from '../rulesdata/spells-data';
 import { allManeuvers } from '../rulesdata/martials/maneuvers';
 import {
 	convertToEnhancedBuildData,
@@ -135,9 +135,12 @@ export const completeCharacter = async (
 			usePrimeCapRule: !!characterState.usePrimeCapRule,
 			finalCombatMastery: calculationResult.stats.finalCombatMastery,
 			// Saves = attribute + Combat Mastery
-			finalSaveMight: calculationResult.stats.finalMight + calculationResult.stats.finalCombatMastery,
-			finalSaveAgility: calculationResult.stats.finalAgility + calculationResult.stats.finalCombatMastery,
-			finalSaveCharisma: calculationResult.stats.finalCharisma + calculationResult.stats.finalCombatMastery,
+			finalSaveMight:
+				calculationResult.stats.finalMight + calculationResult.stats.finalCombatMastery,
+			finalSaveAgility:
+				calculationResult.stats.finalAgility + calculationResult.stats.finalCombatMastery,
+			finalSaveCharisma:
+				calculationResult.stats.finalCharisma + calculationResult.stats.finalCombatMastery,
 			finalSaveIntelligence:
 				calculationResult.stats.finalIntelligence + calculationResult.stats.finalCombatMastery,
 			finalHPMax: calculationResult.stats.finalHPMax,
@@ -150,18 +153,18 @@ export const completeCharacter = async (
 			finalDeathThreshold: calculationResult.stats.finalDeathThreshold,
 			finalMoveSpeed: calculationResult.stats.finalMoveSpeed,
 			finalJumpDistance: calculationResult.stats.finalJumpDistance,
-		finalRestPoints: calculationResult.stats.finalRestPoints,
-		finalGritPoints: calculationResult.stats.finalGritPoints,
-		finalInitiativeBonus: calculationResult.stats.finalInitiativeBonus,
+			finalRestPoints: calculationResult.stats.finalRestPoints,
+			finalGritPoints: calculationResult.stats.finalGritPoints,
+			finalInitiativeBonus: calculationResult.stats.finalInitiativeBonus,
 
-		// Movement types (process GRANT_MOVEMENT effects into structure)
-		movement: processMovementsToStructure(
-			calculationResult.movements || [],
-			calculationResult.stats.finalMoveSpeed
-		),
-		holdBreath: calculationResult.stats.finalMight,
+			// Movement types (process GRANT_MOVEMENT effects into structure)
+			movement: processMovementsToStructure(
+				calculationResult.movements || [],
+				calculationResult.stats.finalMoveSpeed
+			),
+			holdBreath: calculationResult.stats.finalMight,
 
-		// Derived thresholds and bloodied values
+			// Derived thresholds and bloodied values
 			finalPDHeavyThreshold: calculationResult.stats.finalPD + 5,
 			finalPDBrutalThreshold: calculationResult.stats.finalPD + 10,
 			finalADHeavyThreshold: calculationResult.stats.finalAD + 5,
@@ -173,33 +176,37 @@ export const completeCharacter = async (
 			finalAttackSpellCheck: calculationResult.stats.finalAttackSpellCheck,
 			finalMartialCheck: calculationResult.stats.finalMartialCheck,
 
-		// Store typed data directly (no more JSON strings)
-		selectedTraitIds: characterState.selectedTraitIds || [],
-		selectedFeatureChoices: characterState.selectedFeatureChoices || {},
-		skillsData: characterState.skillsData || {},
-		tradesData: characterState.tradesData || {},
-		languagesData: characterState.languagesData || { common: { fluency: 'fluent' } },
+			// Store typed data directly (no more JSON strings)
+			selectedTraitIds: characterState.selectedTraitIds || [],
+			selectedFeatureChoices: characterState.selectedFeatureChoices || {},
+			skillsData: characterState.skillsData || {},
+			tradesData: characterState.tradesData || {},
+			languagesData: characterState.languagesData || { common: { fluency: 'fluent' } },
 
-		// Level progression data (M2.7)
-		selectedTalents: characterState.selectedTalents || [],
-		pathPointAllocations: characterState.pathPointAllocations || {},
-		unlockedFeatureIds: calculationResult.resolvedFeatures?.unlockedFeatures.map(f => f.id || f.featureName) || [],
-		selectedSubclass: characterState.selectedSubclass,
-		pendingSubclassChoice: calculationResult.resolvedFeatures?.availableSubclassChoice && !characterState.selectedSubclass,
-		
-		// Multiclass selections (M3.17)
-		selectedMulticlassOption: characterState.selectedMulticlassOption,
-		selectedMulticlassClass: characterState.selectedMulticlassClass,
-		selectedMulticlassFeature: characterState.selectedMulticlassFeature,
+			// Level progression data (M2.7)
+			selectedTalents: characterState.selectedTalents || [],
+			pathPointAllocations: characterState.pathPointAllocations || {},
+			unlockedFeatureIds:
+				calculationResult.resolvedFeatures?.unlockedFeatures.map((f) => f.id || f.featureName) ||
+				[],
+			selectedSubclass: characterState.selectedSubclass,
+			pendingSubclassChoice:
+				calculationResult.resolvedFeatures?.availableSubclassChoice &&
+				!characterState.selectedSubclass,
 
-		// New precomputed structures (optional until FE migration)
-		skillTotals: denorm.skillTotals,
-		skillMastery: denorm.skillMastery,
-		knowledgeTradeMastery: denorm.knowledgeTradeMastery,
-		masteryLadders: denorm.masteryLadders,
-		languageMastery: denorm.languageMastery,
-		spells: [], // Will be populated below
-		maneuvers: [], // Will be populated below
+			// Multiclass selections (M3.17)
+			selectedMulticlassOption: characterState.selectedMulticlassOption,
+			selectedMulticlassClass: characterState.selectedMulticlassClass,
+			selectedMulticlassFeature: characterState.selectedMulticlassFeature,
+
+			// New precomputed structures (optional until FE migration)
+			skillTotals: denorm.skillTotals,
+			skillMastery: denorm.skillMastery,
+			knowledgeTradeMastery: denorm.knowledgeTradeMastery,
+			masteryLadders: denorm.masteryLadders,
+			languageMastery: denorm.languageMastery,
+			spells: [], // Will be populated below
+			maneuvers: [], // Will be populated below
 
 			// CRITICAL: Store conversions for character editing
 			skillToTradeConversions: characterState.skillToTradeConversions || 0,
@@ -218,11 +225,11 @@ export const completeCharacter = async (
 				finalRestPoints: calculationResult.stats.finalRestPoints
 			}),
 
-		// Metadata
-		createdAt: new Date().toISOString(),
-		lastModified: new Date().toISOString(),
-		completedAt: new Date().toISOString(),
-		schemaVersion: CURRENT_SCHEMA_VERSION
+			// Metadata
+			createdAt: new Date().toISOString(),
+			lastModified: new Date().toISOString(),
+			completedAt: new Date().toISOString(),
+			schemaVersion: CURRENT_SCHEMA_VERSION
 		};
 
 		console.log('Character stats calculated:', completedCharacter);

@@ -1,6 +1,6 @@
 /**
  * Multiclass System
- * 
+ *
  * Defines all multiclass talent tiers, their prerequisites, and validation logic.
  * Multiclassing allows characters to gain features from other classes at specific levels.
  */
@@ -33,7 +33,7 @@ export const MULTICLASS_TIERS: MulticlassTierDefinition[] = [
 		targetLevel: 1,
 		includeSubclass: false,
 		minClassFeatures: 0, // No prerequisite
-		minSubclassFeatures: 0,
+		minSubclassFeatures: 0
 	},
 	{
 		id: 'adept',
@@ -43,7 +43,7 @@ export const MULTICLASS_TIERS: MulticlassTierDefinition[] = [
 		targetLevel: 2,
 		includeSubclass: false,
 		minClassFeatures: 0, // No prerequisite
-		minSubclassFeatures: 0,
+		minSubclassFeatures: 0
 	},
 	{
 		id: 'expert',
@@ -55,7 +55,7 @@ export const MULTICLASS_TIERS: MulticlassTierDefinition[] = [
 		includeSubclass: true,
 		subclassLevel: 3,
 		minClassFeatures: 1, // Must have 1+ class features from target class
-		minSubclassFeatures: 0,
+		minSubclassFeatures: 0
 	},
 	{
 		id: 'master',
@@ -68,7 +68,7 @@ export const MULTICLASS_TIERS: MulticlassTierDefinition[] = [
 		subclassLevel: 6,
 		subclassOnly: true,
 		minClassFeatures: 0,
-		minSubclassFeatures: 1, // Must have 1+ subclass features from target subclass
+		minSubclassFeatures: 1 // Must have 1+ subclass features from target subclass
 	},
 	{
 		id: 'grandmaster',
@@ -79,7 +79,7 @@ export const MULTICLASS_TIERS: MulticlassTierDefinition[] = [
 		targetLevel: 8,
 		includeSubclass: false,
 		minClassFeatures: 2, // Must have 2+ class features from target class
-		minSubclassFeatures: 0,
+		minSubclassFeatures: 0
 	},
 	{
 		id: 'legendary',
@@ -92,8 +92,8 @@ export const MULTICLASS_TIERS: MulticlassTierDefinition[] = [
 		subclassLevel: 9,
 		subclassOnly: true,
 		minClassFeatures: 0,
-		minSubclassFeatures: 2, // Must have 2+ subclass features from target subclass
-	},
+		minSubclassFeatures: 2 // Must have 2+ subclass features from target subclass
+	}
 ];
 
 /**
@@ -109,4 +109,3 @@ export function getMulticlassTier(tierId: MulticlassTier): MulticlassTierDefinit
 export function getAvailableMulticlassTiers(characterLevel: number): MulticlassTierDefinition[] {
 	return MULTICLASS_TIERS.filter((tier) => characterLevel >= tier.levelRequired);
 }
-

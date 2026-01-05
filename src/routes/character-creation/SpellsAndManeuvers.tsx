@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
-import { allSpells } from '../../lib/rulesdata/spells-data/spells';
+import { ALL_SPELLS as allSpells } from '../../lib/rulesdata/spells-data';
 import { allManeuvers, ManeuverType } from '../../lib/rulesdata/martials/maneuvers';
 import { SpellSchool, type ClassName } from '../../lib/rulesdata/schemas/spell.schema';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';

@@ -1,6 +1,6 @@
 /**
  * Schema Migration Helper
- * 
+ *
  * Handles automatic migration of character data between schema versions.
  */
 
@@ -45,4 +45,3 @@ export function migrateCharacterSchema(character: SavedCharacter): SavedCharacte
 
 	return migrated;
 }
-

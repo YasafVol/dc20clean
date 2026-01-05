@@ -40,16 +40,16 @@ flowchart LR
 
 ## 2 Key Files & Their Roles
 
-| Layer                 | File / Dir                                              | Responsibility                                                       |
-| --------------------- | ------------------------------------------------------- | -------------------------------------------------------------------- |
-| Rule Data (canonical) | `src/lib/rulesdata/skills.ts`                           | Declarative `skillsData` array                                       |
+| Layer                 | File / Dir                                              | Responsibility                                                                          |
+| --------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Rule Data (canonical) | `src/lib/rulesdata/skills.ts`                           | Declarative `skillsData` array                                                          |
 |                       | `src/lib/rulesdata/trades.ts`                           | Declarative `tradesData` array (see also `docs/systems/TRADES_MULTI_ATTRIBUTE_SPEC.md`) |
-|                       | `src/lib/rulesdata/languages.ts`                        | Declarative `languagesData` array                                    |
-| Type Contracts        | `src/lib/rulesdata/schemas/types.ts`                    | `ISkillData`, `ITradeData`, `ILanguageData`                          |
-| Runtime Engine        | `src/lib/services/enhancedCharacterCalculator.ts`       | Computes base budgets, applies trait bonuses, conversions, and usage |
-| State Layer           | `src/lib/stores/characterContext.tsx`                   | Stores background point allocations and conversion counts            |
-| Hook                  | `src/lib/hooks/useCharacterBuilder.ts`                  | Runs calculator and returns `calculationResult.background`           |
-| UI                    | `src/routes/character-creation/Background.tsx` and tabs | Renders editors for skills/trades/languages                          |
+|                       | `src/lib/rulesdata/languages.ts`                        | Declarative `languagesData` array                                                       |
+| Type Contracts        | `src/lib/rulesdata/schemas/types.ts`                    | `ISkillData`, `ITradeData`, `ILanguageData`                                             |
+| Runtime Engine        | `src/lib/services/enhancedCharacterCalculator.ts`       | Computes base budgets, applies trait bonuses, conversions, and usage                    |
+| State Layer           | `src/lib/stores/characterContext.tsx`                   | Stores background point allocations and conversion counts                               |
+| Hook                  | `src/lib/hooks/useCharacterBuilder.ts`                  | Runs calculator and returns `calculationResult.background`                              |
+| UI                    | `src/routes/character-creation/Background.tsx` and tabs | Renders editors for skills/trades/languages                                             |
 
 ---
 
@@ -73,7 +73,6 @@ Background allocations in store:
 
 - Conversions follow documented formulas; over-budget states disable submit and surface errors.
 - Mastery cap validation emits `MASTERY_CAP_EXCEEDED` unless exceptions are granted.
-
 
 ## 4 Calculation Model
 
@@ -111,6 +110,7 @@ The calculator exposes a `background` block with:
 `{ baseSkillPoints, baseTradePoints, baseLanguagePoints, availableSkillPoints, availableTradePoints, availableLanguagePoints, skillPointsUsed, tradePointsUsed, languagePointsUsed, conversions }`.
 
 Denormalized outputs persisted on `SavedCharacter` (for UI/PDF consumption) — additive/optional fields introduced by Task 0:
+
 - `skillTotals: Record<skillId, number>`
 - `skillMastery: Record<skillId, { governingAttributes, baseAttributeValues, masteryLevel, masteryLadder, finalValue }>`
 - `knowledgeTradeMastery: Record<'arcana'|'history'|'nature'|'occultism'|'religion', ...>`

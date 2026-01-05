@@ -68,9 +68,6 @@ export interface ClassDefinition {
 			learnsAllAttack?: boolean;
 			additionalKnown?: string;
 		};
-		techniques?: {
-			additionalKnown?: string;
-		};
 		staminaPoints?: {
 			maximumIncreasesBy?: string;
 		};

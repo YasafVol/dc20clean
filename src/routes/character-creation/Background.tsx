@@ -219,9 +219,12 @@ const Background: React.FC = () => {
 				{background.breakdown && (
 					<span style={{ fontSize: '0.9rem', color: '#6b7280' }}>
 						({background.breakdown.skillPoints.base} base
-						{background.breakdown.skillPoints.intelligence > 0 && ` + ${background.breakdown.skillPoints.intelligence} Int`}
-						{background.breakdown.skillPoints.progression > 0 && ` + ${background.breakdown.skillPoints.progression} level`}
-						{background.breakdown.skillPoints.talents > 0 && ` + ${background.breakdown.skillPoints.talents} talents`}
+						{background.breakdown.skillPoints.intelligence > 0 &&
+							` + ${background.breakdown.skillPoints.intelligence} Int`}
+						{background.breakdown.skillPoints.progression > 0 &&
+							` + ${background.breakdown.skillPoints.progression} level`}
+						{background.breakdown.skillPoints.talents > 0 &&
+							` + ${background.breakdown.skillPoints.talents} talents`}
 						)
 					</span>
 				)}
@@ -231,8 +234,10 @@ const Background: React.FC = () => {
 					<span style={{ fontSize: '0.9rem', color: '#6b7280' }}>
 						{' '}
 						({background.breakdown.tradePoints.base} base
-						{background.breakdown.tradePoints.progression > 0 && ` + ${background.breakdown.tradePoints.progression} level`}
-						{background.breakdown.tradePoints.talents > 0 && ` + ${background.breakdown.tradePoints.talents} talents`}
+						{background.breakdown.tradePoints.progression > 0 &&
+							` + ${background.breakdown.tradePoints.progression} level`}
+						{background.breakdown.tradePoints.talents > 0 &&
+							` + ${background.breakdown.tradePoints.talents} talents`}
 						)
 					</span>
 				)}
@@ -244,7 +249,8 @@ const Background: React.FC = () => {
 				{background.breakdown && background.breakdown.languagePoints.talents > 0 && (
 					<span style={{ fontSize: '0.9rem', color: '#6b7280' }}>
 						{' '}
-						({background.breakdown.languagePoints.base} base + {background.breakdown.languagePoints.talents} talents)
+						({background.breakdown.languagePoints.base} base +{' '}
+						{background.breakdown.languagePoints.talents} talents)
 					</span>
 				)}
 				. <br />

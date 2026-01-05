@@ -137,5 +137,22 @@ flowchart LR
 
 ---
 
-> _Last updated: 2025-08-18_  
+## 7 DC20 v0.10 Notes
+
+**Level Cap**: DC20 v0.10 is a level 1-10 system (not 1-20). All class progressions have 10 levels.
+
+**Classes Available** (13 total):
+- Martial: Barbarian, Champion, Commander, Hunter, Monk, Rogue
+- Caster: Bard, Cleric, Druid, Sorcerer, Warlock, Wizard
+- Hybrid: Spellblade
+
+**Key Changes from v0.9.5**:
+- Techniques have been removed entirely from the game
+- Spell schools reorganized to 8 schools (Astromancy, Conjuration, Divination, Elemental, Enchantment, Invocation, Nullification, Transmutation)
+- Spell lists removed; spells are accessed by source (Arcane/Divine/Primal) and school
+- Class features updated with new effects and descriptions
+
+---
+
+> _Last updated: 2026-01-05_  
 > Maintainer: @DC20Clean-Team

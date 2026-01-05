@@ -66,7 +66,6 @@
 ### Progression Gains (from Class + Path)
 
 - **Maneuvers Known** = `sum(progressionGains.totalManeuversKnown) + sum(pathBonuses.maneuvers)`
-- **Techniques Known** = `sum(progressionGains.totalTechniquesKnown) + sum(pathBonuses.techniques)`
 - **Cantrips Known** = `sum(progressionGains.totalCantripsKnown) + sum(pathBonuses.cantrips)`
 - **Spells Known** = `sum(progressionGains.totalSpellsKnown) + sum(pathBonuses.spells)`
 - **Talents** = `sum(progressionGains.totalTalents)`
@@ -74,13 +73,15 @@
 - **Ancestry Points** = `5 + sum(progressionGains.totalAncestryPoints) + sum(effects.ancestryPoints)`
 - **Attribute Points** = `12 + sum(progressionGains.totalAttributePoints) + sum(effects.attributePoints)`
 
+**Note**: Techniques have been removed in DC20 v0.10.
+
 ### Path Bonuses (M3.9)
 
 **Martial Path:**
 
-- Level 1: +1 SP, +1 maneuver, +1 technique
+- Level 1: +1 SP, +1 maneuver
 - Level 2: +1 maneuver
-- Level 3: +1 SP, +1 maneuver, +1 technique
+- Level 3: +1 SP, +1 maneuver
 - Level 4: +1 maneuver
 
 **Spellcaster Path:**
@@ -227,7 +228,6 @@ classId + level → progressionGains
 ├── totalTalents
 ├── totalPathPoints
 ├── totalManeuversKnown
-├── totalTechniquesKnown
 ├── totalCantripsKnown
 └── totalSpellsKnown
 ```
@@ -503,5 +503,5 @@ For values that depend on breakdowns, the order must be:
 
 ---
 
-> Last updated: 2025-10-10
+> Last updated: 2026-01-05 (Updated for DC20 v0.10 - techniques removed)
 > Maintainer: @DC20Clean-Team

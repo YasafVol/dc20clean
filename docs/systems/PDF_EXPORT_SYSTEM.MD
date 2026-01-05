@@ -2,13 +2,14 @@
 
 > Purpose
 >
-> Capture the architecture, scope, and acceptance criteria for exporting a calculated character sheet to the official DC20 0.9.5 fillable PDF. This document translates the planning spec in `docs/plannedSpecs/EXPORT_PDF.md` into a system overview aligned with existing docs.
+> Capture the architecture, scope, and acceptance criteria for exporting a calculated character sheet to the official DC20 fillable PDF. This document translates the planning spec in `docs/plannedSpecs/EXPORT_PDF.md` into a system overview aligned with existing docs.
 
 ---
 
 ## 1. Goal & Scope
 
-- Deliver an entirely client-side export flow that produces an editable PDF mirroring the 0.9.5 template.
+- Deliver an entirely client-side export flow that produces an editable PDF.
+- **Default version: DC20 v0.10** (with v0.9.5 fallback available)
 - Keep the PDF field mapping and DTO definitions versioned so we can evolve the sheet without breaking prior exports.
 - Minimize bundle impact through lazy loading and on-demand work.
 
@@ -19,10 +20,15 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 ## 2. Systems & Touchpoints
 
 - **Character Calculation** — `src/lib/services/enhancedCharacterCalculator.ts` outputs `EnhancedCalculationResult`; this is the canonical source for values exported to the PDF.
-- **Transformation Layer** — new module `src/lib/pdf/transformers.ts` will map calculation results into a structured DTO that matches the PDF field list.
-- **PDF Field Map** — `src/lib/pdf/fieldMap.dc20-0.9.5.ts` maps DTO paths to PDF form field identifiers and checkbox on-values.
-- **PDF Filler** — `src/lib/pdf/fillPdf.ts` loads the template, applies the field map with `pdf-lib`, and returns a Blob (optionally flattened).
-- **UI Integration** — `src/routes/character-sheet/CharacterSheetClean.tsx` provides the primary entry point via an “Export PDF” CTA.
+- **Transformation Layer** — `src/lib/pdf/transformers.ts` maps calculation results into a structured DTO that matches the PDF field list.
+- **PDF Field Maps** — Versioned field maps for different PDF versions:
+  - `src/lib/pdf/fieldMap.dc20-0.10.ts` — Default v0.10 field map
+  - `src/lib/pdf/fieldMap.dc20-0.9.5.ts` — Legacy v0.9.5 field map
+- **PDF Filler** — `src/lib/pdf/fillPdf.ts` loads the template, applies the field map with `pdf-lib`, and returns a Blob (optionally flattened). Supports version selection.
+- **PDF Templates**:
+  - `src/lib/pdf/010/DC20 Beta 0.10 (fillable) Character Sheet.pdf`
+  - `src/lib/pdf/095/DC20_Beta_0_9_5_(fillable)_Character_Sheet.pdf`
+- **UI Integration** — `src/routes/character-creation/LoadCharacter.tsx` provides the primary entry point via an "Export PDF" CTA.
 
 ---
 
@@ -45,8 +51,10 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 
 ### 3.2 PDF Field Manifest
 
-- Script `scripts/listPdfFields.ts` enumerates form fields in `src/lib/pdf/095/DC20_Beta_0_9_5_(fillable)_Character_Sheet.pdf` using `pdf-lib`.
-- Output lives in `docs/systems/pdf-form-fields-v0.9.5.json` and is the authority for field names/on-values.
+- Script `scripts/listPdfFields.ts` enumerates form fields in the PDF template using `pdf-lib`.
+- Field maps are versioned:
+  - `fieldMap.dc20-0.10.ts` — Maps for v0.10 PDF template
+  - `fieldMap.dc20-0.9.5.ts` — Maps for v0.9.5 PDF template (legacy)
 
 ---
 
@@ -56,7 +64,7 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 2. **Preparation** — UI gathers the current editable character, normalizes it with `convertToEnhancedBuildData`, and runs `calculateCharacterWithBreakdowns`.
 3. **Transformation** — `transformCalculatedCharacterToPdfData(characterResult)` produces a validated `PdfExportData` object.
 4. **Lazy Load** — UI dynamically imports `fillPdfFromData` (and `pdf-lib`) to avoid upfront bundle cost.
-5. **Fill & Save** — `fillPdfFromData` loads the template via `?url`, fills fields based on the map, optionally flattens, and returns a Blob for download.
+5. **Fill & Save** — `fillPdfFromData` loads the template via `?url`, fills fields based on the versioned map (default: v0.10), optionally flattens, and returns a Blob for download.
 6. **Download** — UI uses `URL.createObjectURL` (or `file-saver`) to prompt the user with a sanitized filename (e.g., `Aela_Level_6_Ranger.pdf`).
 7. **Feedback** — UI surfaces success or error notifications, resetting loading state accordingly.
 
@@ -103,7 +111,7 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 
 - **Flattened Toggle** — add UI control to call `fillPdfFromData` with `{ flatten: true }`.
 - **Performance Telemetry** — log timing metrics around load → fill → save for monitoring.
-- **Template Versioning** — support multiple template versions via namespaced field maps and DTOs.
+- **Template Versioning** — ✅ Implemented: v0.10 (default) and v0.9.5 (legacy) supported.
 - **Server-Side Rendering** — consider Node-based rendering if browser constraints arise.
 
 ---
@@ -142,5 +150,5 @@ Movement checkboxes in `fieldMap.dc20-0.9.5.ts`:
 
 ---
 
-> Last updated: 2025-10-10
+> Last updated: 2026-01-05 (Updated for DC20 v0.10 default export)
 > Maintainer: @DC20Clean-Team

@@ -18,6 +18,7 @@
 - Numeric modifiers: `MODIFY_STAT`, resource maxima `hpMax|spMax|mpMax`, defenses `pd|ad`, attributes, background pools
 - Grants: `GRANT_ABILITY`, senses, movements, resistances, proficiencies
 - Mastery caps: `MODIFY_SKILL_MASTERY_CAP`, `INCREASE_SKILL_MASTERY_CAP`, and trade analogs
+- **Condition interactions (v0.10)**: `GRANT_CONDITION_IMMUNITY`, `GRANT_CONDITION_RESISTANCE`, `GRANT_CONDITION_VULNERABILITY`
 
 Stacking: Numeric effects sum; grants de-duplicate by `id/name`.
 
@@ -133,6 +134,63 @@ Movement effects can be verified by:
 
 ---
 
+## 2.2. Condition Interaction Effects (v0.10)
+
+### Purpose
+
+Condition interaction effects allow features to grant immunities, resistances, or vulnerabilities to specific conditions.
+
+### Effect Types
+
+```typescript
+interface GrantConditionImmunityEffect {
+  type: 'GRANT_CONDITION_IMMUNITY';
+  target: string;  // Condition ID
+  value: boolean;
+}
+
+interface GrantConditionResistanceEffect {
+  type: 'GRANT_CONDITION_RESISTANCE';
+  target: string;  // Condition ID
+  value: number;   // e.g., 1 for Resistance (1)
+}
+
+interface GrantConditionVulnerabilityEffect {
+  type: 'GRANT_CONDITION_VULNERABILITY';
+  target: string;  // Condition ID
+  value: number;   // e.g., 1 for Vulnerability (1)
+}
+```
+
+### Processing Flow
+
+1. **Aggregation** (`conditionAggregator.ts`):
+   - Scans ancestry traits, class features, subclass features, and talents
+   - Collects all condition-related effects with source attribution
+   - Groups interactions by condition ID
+
+2. **UI Display** (`Conditions.tsx`):
+   - Shows immunities, resistances, and vulnerabilities separately
+   - Allows searching all conditions
+   - Displays source of each interaction
+
+### Condition IDs (from `conditions.data.ts`)
+
+`bleeding`, `blinded`, `burning`, `charmed`, `dazed-x`, `deafened`, `disoriented-x`, `exhaustion`, `frightened`, `grappled`, `hidden`, `immobilized`, `impaired-x`, `incapacitated`, `intimidated`, `invisible`, `paralyzed`, `petrified`, `poisoned-x`, `prone`, `restrained`, `slowed-x`, `stunned-x`, `surprised`, `taunted`, `terrified`, `unconscious`, `weakened-x`
+
+### Example Usage
+
+```typescript
+// Dwarf trait: Dwarven Resilience
+{
+  type: 'GRANT_CONDITION_RESISTANCE',
+  target: 'poisoned-x',
+  value: 1
+}
+```
+
+---
+
 ## 3. Choice Resolution
 
 - Effects may declare a choice target:
@@ -168,5 +226,5 @@ Movement effects can be verified by:
 
 ---
 
-> Last updated: 2025-10-10 (Movement system implementation)
+> Last updated: 2026-01-05 (Added condition interaction effects for v0.10)
 > Maintainer: @DC20Clean-Team

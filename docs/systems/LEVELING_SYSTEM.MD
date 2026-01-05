@@ -4,7 +4,7 @@
 # DC20Clean – Leveling System
 
 > **Purpose**  
-> This document is the single authoritative reference for the character leveling system. It outlines the data flow, calculation logic, and UI interactions required to create a character at any level from 1 to 5.
+> This document is the single authoritative reference for the character leveling system. It outlines the data flow, calculation logic, and UI interactions required to create a character at any level from 1 to 10 (DC20 v0.10 max level).
 >
 > **Status:** ✅ **Complete** - All core leveling functionality implemented and human-tested. Unit test coverage in progress.
 > **Last Updated:** October 10, 2025
@@ -18,7 +18,7 @@ The leveling system integrates directly into the character creation flow. It is 
 ```mermaid
 flowchart TD
     subgraph "Input"
-        A["User selects Class and Level (1-5)"]
+        A["User selects Class and Level (1-10)"]
     end
 
     subgraph "Engine"
@@ -68,8 +68,9 @@ flowchart TD
 
 ### 3.1. Level Selection
 
-- A dropdown will be added to **Stage 1: Class & Features** allowing the user to select a starting level from 1 to 5.
+- A dropdown will be added to **Stage 1: Class & Features** allowing the user to select a starting level from 1 to 10.
 - This selection is stored in the `characterContext` and is a primary input for the `enhancedCharacterCalculator`.
+- **Note**: DC20 v0.10 is a level 1-10 system (not 1-20).
 
 ### 3.2. Aggregation Engine
 
@@ -153,7 +154,7 @@ Path points grant immediate bonuses to character resources based on allocation:
 
 ---
 
-> _Last updated: October 2, 2025_  
+> _Last updated: January 5, 2026_  
 > _Maintainer: @DC20Clean-Team_
 
 ---
@@ -218,8 +219,8 @@ The multiclass talent system allows characters to gain features from other class
 
 The leveling system is now a comprehensive, data-driven pipeline that handles:
 
-1. ✅ **Class Selection** - All 14 classes with progression tables
-2. ✅ **Level Selection** - Characters from level 1 to 5 (expandable to 20)
+1. ✅ **Class Selection** - All 13 classes with progression tables (v0.10)
+2. ✅ **Level Selection** - Characters from level 1 to 10 (DC20 v0.10 max)
 3. ✅ **Attribute Caps** - Dynamic caps based on level from `levelCaps.ts`
 4. ✅ **Mastery Caps** - Level-based skill/trade mastery limits
 5. ✅ **Talent System** - General, class, and multiclass talents

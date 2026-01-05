@@ -235,5 +235,5 @@ The test suite enforces strict data quality:
 
 ---
 
-> Last updated: 2025-10-08  
+> Last updated: 2026-01-05 (DC20 v0.10 - rulesSource updated)
 > Maintainer: @DC20Clean-Team

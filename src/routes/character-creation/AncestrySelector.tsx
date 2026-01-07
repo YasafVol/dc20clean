@@ -1,18 +1,10 @@
+import React from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { ancestriesData } from '../../lib/rulesdata/ancestries/ancestries';
 import type { IAncestry } from '../../lib/rulesdata/types';
-import {
-	StyledContainer,
-	StyledTitle,
-	StyledGrid,
-	StyledCard,
-	StyledCardHeader,
-	StyledAncestryIcon,
-	StyledCardTitle,
-	StyledCardDescription,
-	StyledNewClassQuote
-} from './styles/AncestrySelector.styles';
-import { StyledNoSelection } from './styles/ClassFeatures.styles';
+import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
+import { cn } from '../../lib/utils';
+import { Check } from 'lucide-react';
 
 // Ancestry-specific icons using Unicode symbols and emojis
 const ancestryIcons: { [key: string]: string } = {
@@ -94,36 +86,69 @@ function AncestrySelector() {
 	}
 
 	return (
-		<StyledContainer>
-			<StyledTitle>Choose Your Ancestry</StyledTitle>
-			<StyledNoSelection
-				style={{
-					margin: '-1.25rem 0 1.5rem',
-					fontSize: '1.1rem',
-					textAlign: 'center',
-					width: '100%'
-				}}
-			>
-				Select up to 2 ancestries for your character.
-			</StyledNoSelection>
-			<StyledGrid>
-				{ancestriesData.map((ancestry: IAncestry) => (
-					<StyledCard
-						key={ancestry.id}
-						$selected={selectedAncestries.includes(ancestry.id)}
-						onClick={() => handleSelectAncestry(ancestry.id)}
-						data-testid={`ancestry-card-${ancestry.id}`}
-					>
-						<StyledCardHeader>
-							<StyledAncestryIcon>{getAncestryIcon(ancestry.id)}</StyledAncestryIcon>
-							<StyledCardTitle>{ancestry.name}</StyledCardTitle>
-						</StyledCardHeader>
-						<StyledNewClassQuote>{getAncestryQuote(ancestry.id)}</StyledNewClassQuote>
-						<StyledCardDescription>{ancestry.description}</StyledCardDescription>
-					</StyledCard>
-				))}
-			</StyledGrid>
-		</StyledContainer>
+		<div className="space-y-8">
+			<div className="space-y-2 text-center">
+				<h2 className="font-cinzel text-primary text-3xl font-bold">Choose Your Ancestry</h2>
+				<p className="text-muted-foreground text-lg">
+					Select up to 2 ancestries for your character.
+				</p>
+			</div>
+
+			<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+				{ancestriesData.map((ancestry: IAncestry) => {
+					const isSelected = selectedAncestries.includes(ancestry.id);
+
+					return (
+						<Card
+							key={ancestry.id}
+							className={cn(
+								'group relative cursor-pointer overflow-hidden border-2 transition-all duration-200',
+								isSelected
+									? 'border-primary bg-primary/10 ring-primary shadow-[0_0_15px_rgba(212,175,55,0.2)] ring-1'
+									: 'border-border hover:border-primary/50 bg-card/50 hover:bg-card hover:shadow-lg'
+							)}
+							onClick={() => handleSelectAncestry(ancestry.id)}
+							data-testid={`ancestry-card-${ancestry.id}`}
+						>
+							<CardHeader className="pb-2">
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-3">
+										<div
+											className={cn(
+												'flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/40 text-2xl transition-colors',
+												isSelected
+													? 'border-primary bg-primary/20'
+													: 'group-hover:border-primary/30'
+											)}
+										>
+											{getAncestryIcon(ancestry.id)}
+										</div>
+										<CardTitle className="font-cinzel text-primary group-hover:text-primary-foreground/90 text-lg transition-colors">
+											{ancestry.name}
+										</CardTitle>
+									</div>
+									{isSelected && (
+										<div className="bg-primary text-primary-foreground rounded-full p-1">
+											<Check className="h-4 w-4" />
+										</div>
+									)}
+								</div>
+							</CardHeader>
+							<CardContent>
+								<div className="border-primary/30 group-hover:border-primary/60 mb-3 border-l-2 pl-3 transition-colors">
+									<p className="text-primary/80 text-xs font-medium italic">
+										"{getAncestryQuote(ancestry.id)}"
+									</p>
+								</div>
+								<p className="text-muted-foreground group-hover:text-muted-foreground/90 line-clamp-3 text-sm leading-relaxed">
+									{ancestry.description}
+								</p>
+							</CardContent>
+						</Card>
+					);
+				})}
+			</div>
+		</div>
 	);
 }
 

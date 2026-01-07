@@ -24,42 +24,42 @@
 
 ```typescript
 interface Spell {
-  id: string;
-  name: string;
-  sources: SpellSource[]; // Arcane, Divine, Primal
-  school: SpellSchool;    // 8 schools
-  tags: SpellTag[];       // Burning, Cold, Healing, etc.
-  isCantrip: boolean;
-  isRitual?: boolean;
-  cost: SpellCost;        // { ap: number; mp?: number }
-  range: string;
-  duration: string;
-  effects: SpellEffect[];
-  cantripPassive?: string;
-  enhancements: SpellEnhancement[];
+	id: string;
+	name: string;
+	sources: SpellSource[]; // Arcane, Divine, Primal
+	school: SpellSchool; // 8 schools
+	tags: SpellTag[]; // Burning, Cold, Healing, etc.
+	isCantrip: boolean;
+	isRitual?: boolean;
+	cost: SpellCost; // { ap: number; mp?: number }
+	range: string;
+	duration: string;
+	effects: SpellEffect[];
+	cantripPassive?: string;
+	enhancements: SpellEnhancement[];
 }
 ```
 
 ### Spell Sources (3)
 
-| Source  | Description                          |
-|---------|--------------------------------------|
-| Arcane  | Academic/learned magic               |
-| Divine  | Granted by deities/higher powers     |
-| Primal  | Nature-based magic                   |
+| Source | Description                      |
+| ------ | -------------------------------- |
+| Arcane | Academic/learned magic           |
+| Divine | Granted by deities/higher powers |
+| Primal | Nature-based magic               |
 
 ### Spell Schools (8)
 
-| School        | Focus                                |
-|---------------|--------------------------------------|
-| Astromancy    | Space, gravity, celestial magic      |
-| Conjuration   | Summoning, teleportation             |
-| Divination    | Knowledge, detection, foresight      |
-| Elemental     | Fire, cold, lightning, acid          |
-| Enchantment   | Mind control, charm, fear            |
-| Invocation    | Healing, radiant, restoration        |
-| Nullification | Dispelling, anti-magic, death        |
-| Transmutation | Transformation, enhancement          |
+| School        | Focus                           |
+| ------------- | ------------------------------- |
+| Astromancy    | Space, gravity, celestial magic |
+| Conjuration   | Summoning, teleportation        |
+| Divination    | Knowledge, detection, foresight |
+| Elemental     | Fire, cold, lightning, acid     |
+| Enchantment   | Mind control, charm, fear       |
+| Invocation    | Healing, radiant, restoration   |
+| Nullification | Dispelling, anti-magic, death   |
+| Transmutation | Transformation, enhancement     |
 
 ### Spell Tags (Examples)
 
@@ -99,6 +99,7 @@ getNonCantrips(): Spell[]
 ## 3. v0.10 Changes from v0.9.5
 
 **Major Changes:**
+
 - **Spell Lists Removed**: No more predefined lists (Fire & Flames, Holy, etc.)
 - **Schools Reorganized**: 8 new schools replace previous categorization
 - **Sources Added**: Arcane/Divine/Primal determine class access
@@ -107,6 +108,7 @@ getNonCantrips(): Spell[]
 - **125 Spells**: Complete extraction from v0.10 rules
 
 **Class Access Changes:**
+
 - Classes now access spells by Source + School/Tag combinations
 - Example: Bard gets Enchantment school + Embolden/Enfeeble/Healing/Illusion/Sound tags
 - Example: Wizard gets Arcane source with full school access

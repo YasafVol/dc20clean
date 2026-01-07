@@ -23,40 +23,40 @@
 
 ```typescript
 interface Maneuver {
-  id: string;
-  name: string;
-  type: ManeuverType; // 'Attack' | 'Defense' | 'Grapple' | 'Utility'
-  cost: ManeuverCost; // { ap?: number; sp?: number }
-  range: string;
-  description: string;
-  isReaction: boolean;
-  trigger?: string; // For reactions
-  requirement?: string;
-  enhancements: ManeuverEnhancement[];
+	id: string;
+	name: string;
+	type: ManeuverType; // 'Attack' | 'Defense' | 'Grapple' | 'Utility'
+	cost: ManeuverCost; // { ap?: number; sp?: number }
+	range: string;
+	description: string;
+	isReaction: boolean;
+	trigger?: string; // For reactions
+	requirement?: string;
+	enhancements: ManeuverEnhancement[];
 }
 
 interface ManeuverEnhancement {
-  name: string;
-  costString: string; // e.g., "1 SP, Repeatable"
-  ap?: number;
-  sp?: number;
-  repeatable?: boolean;
-  variable?: boolean;
-  description: string;
+	name: string;
+	costString: string; // e.g., "1 SP, Repeatable"
+	ap?: number;
+	sp?: number;
+	repeatable?: boolean;
+	variable?: boolean;
+	description: string;
 }
 
 enum ManeuverType {
-  Attack = 'Attack',
-  Defense = 'Defense',
-  Grapple = 'Grapple',
-  Utility = 'Utility'
+	Attack = 'Attack',
+	Defense = 'Defense',
+	Grapple = 'Grapple',
+	Utility = 'Utility'
 }
 ```
 
 ### Maneuvers by Type (28 total)
 
 | Type    | Count | Examples                                    |
-|---------|-------|---------------------------------------------|
+| ------- | ----- | ------------------------------------------- |
 | Attack  | 8     | Heroic Bash, Sweeping Strike, Targeted Blow |
 | Defense | 8     | Deflect, Dodge, Parry, Shield Block         |
 | Grapple | 6     | Break Grapple, Grab, Throw, Pin             |

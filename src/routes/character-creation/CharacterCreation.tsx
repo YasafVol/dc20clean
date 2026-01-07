@@ -22,7 +22,10 @@ import {
 	calculateCharacterWithBreakdowns
 } from '../../lib/services/enhancedCharacterCalculator';
 import { validateSubclassChoicesComplete } from '../../lib/rulesdata/classes-data/classUtils';
-import { traitsData } from '../../lib/rulesdata/ancestries/traits';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Button } from '../../components/ui/button';
+import { cn } from '../../lib/utils';
+import { Check, ChevronRight } from 'lucide-react';
 
 /**
  * Converts the movements array from calculator into the movement structure for SavedCharacter
@@ -63,22 +66,6 @@ function processMovementsToStructure(
 
 	return movement;
 }
-
-import {
-	StyledContainer,
-	StyledTitle,
-	StyledStepIndicator,
-	StyledStepsContainer,
-	StyledStep,
-	StyledStepNumber,
-	StyledStepLabel,
-	StyledNavigationButtons,
-	StyledButton
-} from './styles/CharacterCreation.styles';
-import { CharacterCreationBG } from './styles/CharacterCreationBG.styles';
-import { StyledStepsHeaderBG } from './styles/StepsHeaderBG.styles';
-
-import { useNavigate, useLocation } from 'react-router-dom';
 
 interface CharacterCreationProps {
 	editCharacter?: SavedCharacter;
@@ -498,57 +485,10 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		// Step 2: Leveling Choices (only if level > 1)
 		if (step === levelingStep && hasLevelingStep) {
 			// TODO: Re-enable validation after testing phase (M4.4)
-			// Currently disabled to allow flexible testing and debugging during development
 			console.warn(
 				'⚠️ Leveling validation temporarily disabled - re-enable in production (see M4.4 in LEVELING_EPIC.md)'
 			);
 			return true; // ← Temporarily bypass validation
-
-			/* Original validation logic - restore in M4.4:
-		
-		// Validate that all talent and path points have been spent
-		const budgets = calculationResult?.levelBudgets;
-		
-		if (!budgets) {
-			console.log('❌ Leveling validation failed: no budgets found');
-			return false;
-		}
-		
-		// Check talents: must have exactly the right number selected (including multiclass)
-		const selectedTalents = state.selectedTalents || {};
-		// Note: multiclass feature is stored separately but counts toward talent budget
-		const selectedMulticlass = state.selectedMulticlassFeature;
-		// Count total talent selections from the count-based record
-		const talentsFromRecord = Object.values(selectedTalents).reduce((sum, count) => sum + count, 0);
-		const totalTalentsSelected = talentsFromRecord + (selectedMulticlass ? 1 : 0);
-		
-		if (totalTalentsSelected !== budgets.totalTalents) {
-			console.log('❌ Leveling validation failed: talents not fully selected', {
-				selected: totalTalentsSelected,
-				required: budgets.totalTalents,
-				regularTalents: talentsFromRecord,
-				multiclass: selectedMulticlass ? 1 : 0
-			});
-			return false;
-		}
-		
-		// Check path points: must allocate exactly the available points
-		const pathAllocations = state.pathPointAllocations || { martial: 0, spellcasting: 0 };
-		const totalAllocated = (pathAllocations.martial || 0) + (pathAllocations.spellcasting || 0);
-		if (totalAllocated !== budgets.totalPathPoints) {
-			console.log('❌ Leveling validation failed: path points not fully allocated', {
-				allocated: totalAllocated,
-				required: budgets.totalPathPoints
-			});
-			return false;
-		}
-		
-		console.log('✅ Leveling choices validated', {
-			totalTalents: totalTalentsSelected,
-			pathPoints: totalAllocated
-		});
-		return true;
-		*/
 		}
 
 		// Ancestry step
@@ -647,49 +587,12 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				});
 			}
 
-			console.log('🔍 Background validation (step ' + backgroundStep + '):', {
-				availableSkillPoints,
-				skillPointsUsed,
-				skillPointsRemaining,
-				availableTradePoints,
-				tradePointsUsed,
-				tradePointsRemaining,
-				availableLanguagePoints,
-				languagePointsUsed,
-				languagePointsRemaining,
-				hasExactlySpentAllSkillPoints,
-				hasExactlySpentAllTradePoints,
-				hasExactlySpentAllLanguagePoints,
-				isValid
-			});
-
 			return isValid;
 		}
 
 		// Spells & Maneuvers step
 		if (step === spellsStep) {
-			// TODO (M4.x): Re-enable spells & maneuvers validation once spell/cantrip
-			// categorization is properly implemented and cantrip vs spell budgets are tracked separately.
-			// For now, validation is disabled to allow progression through character creation.
-			// Users can select any spells/maneuvers they want without blocking progression.
-
 			console.warn('⚠️ Spells & Maneuvers validation temporarily disabled');
-
-			// Log current selections for debugging
-			const selectedSpells = state.selectedSpells || [];
-			const selectedManeuvers = state.selectedManeuvers || [];
-			const budgets = calculationResult?.levelBudgets;
-
-			console.log('📊 Spells & Maneuvers selections (validation disabled):', {
-				classId: state.classId,
-				level: state.level,
-				requiredCantrips: budgets?.totalCantripsKnown || 0,
-				requiredSpells: budgets?.totalSpellsKnown || 0,
-				requiredManeuvers: budgets?.totalManeuversKnown || 0,
-				selectedSpells: selectedSpells.length,
-				selectedManeuvers: selectedManeuvers.length
-			});
-
 			return true; // Always allow progression
 		}
 
@@ -775,56 +678,77 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	};
 
 	return (
-		<div style={{ position: 'relative', zIndex: 1 }}>
-			<CharacterCreationBG />
-			<StyledTitle>
-				{editChar ? `Edit Character: ${editChar.finalName}` : 'Character Creation'}
-			</StyledTitle>
+		<div className="bg-background text-foreground flex min-h-screen flex-col font-sans">
+			{/* Header with Navigation and Stepper */}
+			<header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
+				<div className="container flex h-auto flex-col items-center justify-between gap-4 px-4 py-2 md:h-16 md:flex-row md:py-0">
+					<div className="flex w-full items-center justify-between gap-4 md:w-auto md:justify-start">
+						<Button variant="ghost" onClick={handlePrevious}>
+							← Previous
+						</Button>
+						<span className="text-primary text-lg font-bold md:hidden">
+							{editChar ? 'Edit' : 'Create'} Character
+						</span>
+						<Button variant="default" onClick={handleNext}>
+							{state.currentStep === maxStep ? 'Complete' : 'Next →'}
+						</Button>
+					</div>
 
-			<StyledStepIndicator>
-				<StyledNavigationButtons>
-					<StyledButton $variant="secondary" onClick={handlePrevious}>
-						← Previous
-					</StyledButton>
-				</StyledNavigationButtons>
-				<StyledStepsContainer>
-					{steps.map(({ number, label }) => {
-						const $active = state.currentStep === number;
-						const $completed = isStepCompleted(number);
-						const $error = !$active && !$completed && number < state.currentStep;
-						return (
-							<StyledStep
-								key={number}
-								$active={$active}
-								$completed={$completed}
-								$error={$error}
-								onClick={() => handleStepClick(number)}
-							>
-								<StyledStepNumber $active={$active} $completed={$completed} $error={$error}>
-									{number}
-								</StyledStepNumber>
-								<StyledStepLabel $active={$active} $completed={$completed} $error={$error}>
-									{label}
-								</StyledStepLabel>
-							</StyledStep>
-						);
-					})}
-				</StyledStepsContainer>
-				<StyledNavigationButtons>
-					<StyledButton
-						$variant="primary"
-						onClick={handleNext}
-						// Temporarily remove the disabled check to ensure the button is clickable
-						// disabled={state.currentStep === 6 && !areAllStepsCompleted()}
-					>
-						{state.currentStep === 6 ? 'Complete' : 'Next →'}
-					</StyledButton>
-				</StyledNavigationButtons>
-			</StyledStepIndicator>
+					{/* Desktop Stepper */}
+					<div className="no-scrollbar hidden max-w-2xl items-center gap-2 overflow-x-auto md:flex">
+						{steps.map(({ number, label }) => {
+							const isActive = state.currentStep === number;
+							const isCompleted = isStepCompleted(number);
 
-			<StyledStepsHeaderBG>
-				<StyledContainer>{renderCurrentStep()}</StyledContainer>
-			</StyledStepsHeaderBG>
+							return (
+								<div
+									key={number}
+									className={cn(
+										'flex cursor-pointer items-center gap-2 rounded-full px-3 py-1.5 whitespace-nowrap transition-colors',
+										isActive
+											? 'bg-primary text-primary-foreground'
+											: isCompleted
+												? 'bg-muted text-foreground'
+												: 'text-muted-foreground hover:bg-muted/50'
+									)}
+									onClick={() => handleStepClick(number)}
+								>
+									<div
+										className={cn(
+											'flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold',
+											isActive
+												? 'bg-background text-primary'
+												: isCompleted
+													? 'bg-primary/20 text-primary'
+													: 'bg-muted-foreground/20'
+										)}
+									>
+										{isCompleted && !isActive ? <Check className="h-3 w-3" /> : number}
+									</div>
+									<span className="text-sm font-medium">{label}</span>
+									{number < maxStep && <ChevronRight className="ml-1 h-4 w-4 opacity-50" />}
+								</div>
+							);
+						})}
+					</div>
+				</div>
+
+				{/* Mobile Stepper Progress Bar */}
+				<div className="bg-muted h-1 w-full md:hidden">
+					<div
+						className="bg-primary h-full transition-all duration-300"
+						style={{ width: `${(state.currentStep / maxStep) * 100}%` }}
+					/>
+				</div>
+			</header>
+
+			<main className="container mx-auto max-w-7xl flex-1 px-4 py-8">
+				<h1 className="text-primary font-cinzel mb-8 text-center text-3xl font-bold md:text-4xl">
+					{editChar ? `Edit Character: ${editChar.finalName}` : 'Character Creation'}
+				</h1>
+
+				{renderCurrentStep()}
+			</main>
 
 			<Snackbar
 				message={snackbarMessage}

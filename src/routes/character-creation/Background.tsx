@@ -5,13 +5,9 @@ import TradesTab from './components/TradesTab';
 import LanguagesTab from './components/LanguagesTab';
 import { InlineError } from './components/ValidationFeedback';
 import { BuildStep } from '../../lib/types/effectSystem';
-import {
-	StyledContainer,
-	StyledSubheading,
-	StyledDescription,
-	StyledTabContainer,
-	StyledTab
-} from './styles/Background.styles.ts';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
+import { Card, CardContent } from '../../components/ui/card';
+import { cn } from '../../lib/utils';
 
 type TabType = 'skills' | 'trades' | 'languages';
 
@@ -25,10 +21,12 @@ const Background: React.FC = () => {
 	// Early return if background data is not available
 	if (!background) {
 		return (
-			<StyledContainer>
-				<StyledSubheading>Background (Skills, Trades & Languages)</StyledSubheading>
+			<div className="space-y-4 text-center">
+				<h2 className="font-cinzel text-primary text-3xl font-bold">
+					Background (Skills, Trades & Languages)
+				</h2>
 				<div>Loading background data...</div>
-			</StyledContainer>
+			</div>
 		);
 	}
 
@@ -156,10 +154,71 @@ const Background: React.FC = () => {
 		});
 	};
 
-	const renderCurrentTab = () => {
-		switch (activeTab) {
-			case 'skills':
-				return (
+	const skillPointsRemaining = background.availableSkillPoints - background.skillPointsUsed;
+	const tradePointsRemaining = background.availableTradePoints - background.tradePointsUsed;
+	const languagePointsRemaining =
+		background.availableLanguagePoints - background.languagePointsUsed;
+
+	return (
+		<div className="mx-auto max-w-7xl space-y-8">
+			<div className="space-y-4 text-center">
+				<h2 className="font-cinzel text-primary text-3xl font-bold">Background</h2>
+				<p className="text-muted-foreground mx-auto max-w-3xl text-lg leading-relaxed">
+					Choose your character's background skills, trades, and languages. You have{' '}
+					<span className="text-primary font-bold">{background.baseSkillPoints}</span> skill points,{' '}
+					<span className="text-primary font-bold">{background.baseTradePoints}</span> trade points,
+					and <span className="text-primary font-bold">{background.baseLanguagePoints}</span>{' '}
+					language points.
+				</p>
+
+				<div className="bg-muted/50 text-muted-foreground border-border inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm">
+					<span>💡 Conversions: 1 skill ↔ 2 trade • 1 trade → 2 language</span>
+				</div>
+
+				<div className="text-muted-foreground text-sm italic">
+					All characters start fluent in Common for free.
+				</div>
+			</div>
+
+			<InlineError errors={validation.errors} currentStep={BuildStep.Background} />
+
+			<Tabs
+				defaultValue="skills"
+				value={activeTab}
+				onValueChange={(v) => setActiveTab(v as TabType)}
+				className="w-full"
+			>
+				<TabsList className="border-border mx-auto mb-8 grid w-full max-w-2xl grid-cols-3 border bg-black/40">
+					<TabsTrigger
+						value="skills"
+						className={cn(
+							'font-cinzel py-3 text-base transition-colors',
+							skillPointsRemaining < 0 && 'text-destructive'
+						)}
+					>
+						Skills ({skillPointsRemaining} left)
+					</TabsTrigger>
+					<TabsTrigger
+						value="trades"
+						className={cn(
+							'font-cinzel py-3 text-base transition-colors',
+							tradePointsRemaining < 0 && 'text-destructive'
+						)}
+					>
+						Trades ({tradePointsRemaining} left)
+					</TabsTrigger>
+					<TabsTrigger
+						value="languages"
+						className={cn(
+							'font-cinzel py-3 text-base transition-colors',
+							languagePointsRemaining < 0 && 'text-destructive'
+						)}
+					>
+						Languages ({languagePointsRemaining} left)
+					</TabsTrigger>
+				</TabsList>
+
+				<TabsContent value="skills" className="focus-visible:outline-none">
 					<SkillsTab
 						currentSkills={currentSkills}
 						currentTrades={currentTrades}
@@ -173,9 +232,9 @@ const Background: React.FC = () => {
 						masteryLimits={masteryLimits}
 						onSkillChange={handleSkillChange}
 					/>
-				);
-			case 'trades':
-				return (
+				</TabsContent>
+
+				<TabsContent value="trades" className="focus-visible:outline-none">
 					<TradesTab
 						currentTrades={currentTrades}
 						pointsData={background}
@@ -188,9 +247,9 @@ const Background: React.FC = () => {
 						masteryLimits={masteryLimits}
 						onTradeChange={handleTradeChange}
 					/>
-				);
-			case 'languages':
-				return (
+				</TabsContent>
+
+				<TabsContent value="languages" className="focus-visible:outline-none">
 					<LanguagesTab
 						currentLanguages={currentLanguages}
 						pointsData={background}
@@ -202,101 +261,9 @@ const Background: React.FC = () => {
 						actions={actions}
 						onLanguageChange={handleLanguageChange}
 					/>
-				);
-			default:
-				return null;
-		}
-	};
-
-	return (
-		<StyledContainer>
-			<StyledSubheading>Background (Skills, Trades & Languages)</StyledSubheading>
-			<InlineError errors={validation.errors} currentStep={BuildStep.Background} />
-			<StyledDescription>
-				Choose your character's background skills, trades, and languages. You have{' '}
-				<span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{background.baseSkillPoints}</span>{' '}
-				skill points{' '}
-				{background.breakdown && (
-					<span style={{ fontSize: '0.9rem', color: '#6b7280' }}>
-						({background.breakdown.skillPoints.base} base
-						{background.breakdown.skillPoints.intelligence > 0 &&
-							` + ${background.breakdown.skillPoints.intelligence} Int`}
-						{background.breakdown.skillPoints.progression > 0 &&
-							` + ${background.breakdown.skillPoints.progression} level`}
-						{background.breakdown.skillPoints.talents > 0 &&
-							` + ${background.breakdown.skillPoints.talents} talents`}
-						)
-					</span>
-				)}
-				, <span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{background.baseTradePoints}</span>{' '}
-				trade points
-				{background.breakdown && (
-					<span style={{ fontSize: '0.9rem', color: '#6b7280' }}>
-						{' '}
-						({background.breakdown.tradePoints.base} base
-						{background.breakdown.tradePoints.progression > 0 &&
-							` + ${background.breakdown.tradePoints.progression} level`}
-						{background.breakdown.tradePoints.talents > 0 &&
-							` + ${background.breakdown.tradePoints.talents} talents`}
-						)
-					</span>
-				)}
-				, and{' '}
-				<span style={{ fontWeight: 'bold', color: '#3b82f6' }}>
-					{background.baseLanguagePoints}
-				</span>{' '}
-				language points
-				{background.breakdown && background.breakdown.languagePoints.talents > 0 && (
-					<span style={{ fontSize: '0.9rem', color: '#6b7280' }}>
-						{' '}
-						({background.breakdown.languagePoints.base} base +{' '}
-						{background.breakdown.languagePoints.talents} talents)
-					</span>
-				)}
-				. <br />
-				<span
-					style={{
-						marginTop: '0.5rem',
-						display: 'inline-block',
-						padding: '0.25rem 0.5rem',
-						backgroundColor: '#f3f4f6',
-						borderRadius: '4px',
-						fontSize: '0.9rem',
-						color: '#374151'
-					}}
-				>
-					💡 Conversions: 1 skill ↔ 2 trade • 1 trade → 2 language
-				</span>
-				<br />
-				All characters start fluent in Common for free.
-			</StyledDescription>
-
-			<StyledTabContainer>
-				<StyledTab
-					$active={activeTab === 'skills'}
-					onClick={() => setActiveTab('skills')}
-					data-testid="skills-tab"
-				>
-					Skills ({background.availableSkillPoints - background.skillPointsUsed} left)
-				</StyledTab>
-				<StyledTab
-					$active={activeTab === 'trades'}
-					onClick={() => setActiveTab('trades')}
-					data-testid="trades-tab"
-				>
-					Trades ({background.availableTradePoints - background.tradePointsUsed} left)
-				</StyledTab>
-				<StyledTab
-					$active={activeTab === 'languages'}
-					onClick={() => setActiveTab('languages')}
-					data-testid="languages-tab"
-				>
-					Languages ({background.availableLanguagePoints - background.languagePointsUsed} left)
-				</StyledTab>
-			</StyledTabContainer>
-
-			{renderCurrentTab()}
-		</StyledContainer>
+				</TabsContent>
+			</Tabs>
+		</div>
 	);
 };
 

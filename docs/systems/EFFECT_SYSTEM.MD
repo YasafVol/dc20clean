@@ -144,21 +144,21 @@ Condition interaction effects allow features to grant immunities, resistances, o
 
 ```typescript
 interface GrantConditionImmunityEffect {
-  type: 'GRANT_CONDITION_IMMUNITY';
-  target: string;  // Condition ID
-  value: boolean;
+	type: 'GRANT_CONDITION_IMMUNITY';
+	target: string; // Condition ID
+	value: boolean;
 }
 
 interface GrantConditionResistanceEffect {
-  type: 'GRANT_CONDITION_RESISTANCE';
-  target: string;  // Condition ID
-  value: number;   // e.g., 1 for Resistance (1)
+	type: 'GRANT_CONDITION_RESISTANCE';
+	target: string; // Condition ID
+	value: number; // e.g., 1 for Resistance (1)
 }
 
 interface GrantConditionVulnerabilityEffect {
-  type: 'GRANT_CONDITION_VULNERABILITY';
-  target: string;  // Condition ID
-  value: number;   // e.g., 1 for Vulnerability (1)
+	type: 'GRANT_CONDITION_VULNERABILITY';
+	target: string; // Condition ID
+	value: number; // e.g., 1 for Vulnerability (1)
 }
 ```
 

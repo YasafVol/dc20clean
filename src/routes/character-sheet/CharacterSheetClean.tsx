@@ -97,6 +97,47 @@ import { allManeuvers } from '../../lib/rulesdata/martials/maneuvers';
 
 import { handlePrintCharacterSheet } from './utils';
 
+type AttributeKey = 'might' | 'agility' | 'charisma' | 'intelligence';
+
+const ATTRIBUTE_TIEBREAKER_INDEX: Record<AttributeKey, number> = {
+	agility: 0,
+	might: 1,
+	charisma: 2,
+	intelligence: 3
+};
+
+interface TradeAttributeTotal {
+	attribute: AttributeKey;
+	total: number;
+}
+
+const getAttributeModifier = (character: any, attribute: AttributeKey): number => {
+	if (!character) {
+		return 0;
+	}
+
+	switch (attribute) {
+		case 'might':
+			return character.finalMight ?? 0;
+		case 'agility':
+			return character.finalAgility ?? 0;
+		case 'charisma':
+			return character.finalCharisma ?? 0;
+		case 'intelligence':
+			return character.finalIntelligence ?? 0;
+		default:
+			return 0;
+	}
+};
+
+const sortTradeAttributeTotals = (a: TradeAttributeTotal, b: TradeAttributeTotal): number => {
+	if (b.total !== a.total) {
+		return b.total - a.total;
+	}
+
+	return ATTRIBUTE_TIEBREAKER_INDEX[a.attribute] - ATTRIBUTE_TIEBREAKER_INDEX[b.attribute];
+};
+
 // Define component props
 interface CharacterSheetCleanProps {
 	characterId: string;
@@ -299,33 +340,24 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 			.map((trade) => {
 				const proficiency = characterTrades[trade.id] || 0;
 				const masteryBonus = proficiency * 2;
-
-				// Get attribute modifier based on trade's attribute association
-				let attributeModifier = 0;
-				switch (trade.attributeAssociation.toLowerCase()) {
-					case 'might':
-						attributeModifier = characterData?.finalMight || 0;
-						break;
-					case 'agility':
-						attributeModifier = characterData?.finalAgility || 0;
-						break;
-					case 'charisma':
-						attributeModifier = characterData?.finalCharisma || 0;
-						break;
-					case 'intelligence':
-						attributeModifier = characterData?.finalIntelligence || 0;
-						break;
-					default:
-						attributeModifier = 0;
-				}
-
-				const totalBonus = attributeModifier + masteryBonus;
+				const associations = trade.attributeAssociations.length
+					? trade.attributeAssociations
+					: [trade.primaryAttribute];
+				const attributeTotals = associations
+					.map<TradeAttributeTotal>((attribute) => ({
+						attribute,
+						total: masteryBonus + getAttributeModifier(characterData, attribute)
+					}))
+					.sort(sortTradeAttributeTotals);
+				const highestTotal = attributeTotals[0]?.total ?? masteryBonus;
 
 				return {
 					id: trade.id,
 					name: trade.name,
 					proficiency,
-					bonus: totalBonus
+					primaryAttribute: trade.primaryAttribute,
+					bonus: highestTotal,
+					bonuses: attributeTotals
 				};
 			});
 	};
@@ -345,31 +377,14 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 				const proficiency = characterTrades[knowledge.id] || 0;
 				const masteryBonus = proficiency * 2;
 
-				// Get attribute modifier based on knowledge's attribute association
-				let attributeModifier = 0;
-				switch (knowledge.attributeAssociation.toLowerCase()) {
-					case 'might':
-						attributeModifier = characterData?.finalMight || 0;
-						break;
-					case 'agility':
-						attributeModifier = characterData?.finalAgility || 0;
-						break;
-					case 'charisma':
-						attributeModifier = characterData?.finalCharisma || 0;
-						break;
-					case 'intelligence':
-						attributeModifier = characterData?.finalIntelligence || 0;
-						break;
-					default:
-						attributeModifier = 0;
-				}
-
+				const attributeModifier = getAttributeModifier(characterData, knowledge.primaryAttribute);
 				const totalBonus = attributeModifier + masteryBonus;
 
 				return {
 					id: knowledge.id,
 					name: knowledge.name,
 					proficiency,
+					primaryAttribute: knowledge.primaryAttribute,
 					bonus: totalBonus
 				};
 			});

@@ -36,8 +36,9 @@ dev.log
 e2e/screenshots/
 
 # DC20 source materials
-docs/assets/DC20 0.95 full.md
+docs/assets/*
 
 # Repomix outputs
 repomix-*.md
 
+test_output.txt

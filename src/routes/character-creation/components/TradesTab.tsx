@@ -65,6 +65,13 @@ import {
 // Combine trades and knowledge for selection
 const allTradesAndKnowledge = tradesData;
 
+const ATTRIBUTE_LABELS: Record<'might' | 'agility' | 'charisma' | 'intelligence', string> = {
+	might: 'Might',
+	agility: 'Agility',
+	charisma: 'Charisma',
+	intelligence: 'Intelligence'
+};
+
 interface TradesTabProps {
 	currentTrades: Record<string, number>;
 	pointsData: BackgroundPointsData;
@@ -295,13 +302,19 @@ const TradesTab: React.FC<TradesTabProps> = ({
 				{allTradesAndKnowledge.map((trade) => {
 					const currentLevel = currentTrades[trade.id] || 0;
 					const masteryInfo = getMasteryInfo(currentLevel, masteryLimits.maxTradeMastery);
+				const associations = trade.attributeAssociations.length
+					? trade.attributeAssociations
+					: [trade.primaryAttribute];
+				const attributeList = associations
+					.map((attribute) => ATTRIBUTE_LABELS[attribute])
+					.join('/');
 
 					return (
 						<StyledSelectionItem key={trade.id} data-testid={`trade-item-${trade.id}`}>
 							<StyledSelectionHeader>
 								<StyledSelectionName>{trade.name}</StyledSelectionName>
 								<div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
-									{masteryInfo.name} (+{masteryInfo.bonus}) • {trade.attributeAssociation}
+								{masteryInfo.name} (+{masteryInfo.bonus}) • {attributeList}
 								</div>
 							</StyledSelectionHeader>
 							<div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>

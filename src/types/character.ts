@@ -111,7 +111,12 @@ export interface TradeData {
 	id: string;
 	name: string;
 	proficiency: number; // 0-5
-	bonus?: number; // Calculated bonus: Attribute + Mastery*2
+	primaryAttribute: 'might' | 'agility' | 'charisma' | 'intelligence';
+	bonus?: number; // Calculated bonus: Attribute + Mastery*2 (knowledge trades)
+	bonuses?: Array<{
+		attribute: 'might' | 'agility' | 'charisma' | 'intelligence';
+		total: number;
+	}>;
 }
 
 export interface LanguageData {

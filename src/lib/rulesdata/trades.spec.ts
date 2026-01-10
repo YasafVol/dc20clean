@@ -62,4 +62,23 @@ describe('tradesData', () => {
 		const tradesWithUndefinedTools = tradesData.filter((t) => t.tools === undefined);
 		expect(tradesWithUndefinedTools).toHaveLength(0);
 	});
+
+	it('should include primaryAttribute within attributeAssociations for every trade', () => {
+		tradesData.forEach((trade) => {
+			expect(trade.attributeAssociations.length).toBeGreaterThan(0);
+			expect(trade.attributeAssociations).toContain(trade.primaryAttribute);
+		});
+	});
+
+	it('should configure multi-attribute trades as specified', () => {
+		const brewing = tradesData.find((trade) => trade.id === 'brewing');
+		expect(brewing?.attributeAssociations).toEqual(['agility', 'intelligence', 'charisma']);
+
+		const cooking = tradesData.find((trade) => trade.id === 'cooking');
+		expect(cooking?.attributeAssociations).toEqual(['agility', 'intelligence', 'charisma']);
+
+		const vehicles = tradesData.find((trade) => trade.id === 'vehicles');
+		expect(vehicles?.attributeAssociations).toEqual(['agility', 'intelligence', 'might']);
+		expect(vehicles?.tools).toBe('Vehicle');
+	});
 });

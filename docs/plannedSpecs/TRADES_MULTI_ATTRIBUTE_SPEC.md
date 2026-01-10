@@ -28,6 +28,7 @@
 - Old
   - attributeAssociation: 'might' | 'agility' | 'charisma' | 'intelligence'
 - New
+  - primaryAttribute: 'might' | 'agility' | 'charisma' | 'intelligence'
   - attributeAssociations: Array<'might' | 'agility' | 'charisma' | 'intelligence'>
   - tools: string (unchanged; "none" denotes Knowledge Trades)
 
@@ -43,6 +44,7 @@ Notes
 
 #### Normalization rules (authoritative)
 - Data field name is `attributeAssociations: string[]` everywhere in code.
+  - Each trade maintains a `primaryAttribute` alongside the array; it must also appear in `attributeAssociations`.
   - If Section 12 shows `attributeAssociation` as an array, treat it as `attributeAssociations` when implementing.
 - Knowledge trades must use `tools: 'none'` (lowercase) for consistency with current code.
 - Attribute abbreviations for UI formatting: A=Agility, M=Might, C=Charisma, I=Intelligence.

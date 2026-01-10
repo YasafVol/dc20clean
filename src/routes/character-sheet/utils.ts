@@ -38,6 +38,13 @@ const ATTRIBUTE_ABBREVIATIONS: Record<AttributeKey, string> = {
 	intelligence: 'I'
 };
 
+const ATTRIBUTE_TIEBREAKER_INDEX: Record<AttributeKey, number> = {
+	agility: 0,
+	might: 1,
+	charisma: 2,
+	intelligence: 3
+};
+
 const getAttributeModifier = (characterData: CharacterSheetData, attribute: AttributeKey): number => {
 	switch (attribute) {
 		case 'might':
@@ -63,21 +70,18 @@ const buildPrintableTrades = (characterData: CharacterSheetData): PrintableTrade
 		.map((trade) => {
 			const proficiency = characterTrades[trade.id] || 0;
 			const masteryBonus = proficiency * 2;
-			const attributeAssociations: AttributeKey[] =
-				(Array.isArray((trade as any).attributeAssociations) && (trade as any).attributeAssociations.length > 0
-					? (trade as any).attributeAssociations
-					: (trade as any).attributeAssociation
-					? [(trade as any).attributeAssociation]
-					: []) as AttributeKey[];
+			const associations = trade.attributeAssociations.length
+				? trade.attributeAssociations
+				: [trade.primaryAttribute];
 
-			const attributeTotals = attributeAssociations
+			const attributeTotals = associations
 				.map((attribute) => ({
 					attribute,
 					total: masteryBonus + getAttributeModifier(characterData, attribute)
 				}))
 				.sort((a, b) => {
 					if (b.total === a.total) {
-						return a.attribute.localeCompare(b.attribute);
+						return ATTRIBUTE_TIEBREAKER_INDEX[a.attribute] - ATTRIBUTE_TIEBREAKER_INDEX[b.attribute];
 					}
 					return b.total - a.total;
 				});
@@ -98,7 +102,9 @@ const buildPrintableTrades = (characterData: CharacterSheetData): PrintableTrade
 				id: trade.id,
 				name: trade.name,
 				proficiency,
+				primaryAttribute: trade.primaryAttribute,
 				bonus: primaryTotal,
+				bonuses: attributeTotals,
 				bonusDisplay
 			};
 		});

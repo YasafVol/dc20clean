@@ -44,7 +44,6 @@ import { warlockClass } from '../rulesdata/classes-data/features/warlock_feature
 import { bardClass } from '../rulesdata/classes-data/features/bard_features';
 import { druidClass } from '../rulesdata/classes-data/features/druid_features';
 import { commanderClass } from '../rulesdata/classes-data/features/commander_features';
-import { psionClass } from '../rulesdata/classes-data/features/psion_features';
 import { attributesData } from '../rulesdata/attributes';
 import { skillsData } from '../rulesdata/skills';
 import { tradesData } from '../rulesdata/trades';
@@ -212,8 +211,6 @@ function getClassFeatures(classId: string): ClassDefinition | null {
 			return druidClass;
 		case 'commander':
 			return commanderClass;
-		case 'psion':
-			return psionClass;
 		default:
 			return null;
 	}

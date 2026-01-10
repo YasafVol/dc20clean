@@ -873,7 +873,7 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 	// Normalize class definition spell path naming: some class data files use the
 	// legacy `spellcasterPath` key while the code expects `spellcastingPath`.
 	const resolvedClassDef = characterData ? findClassByName(characterData.className) : null;
-	const knownSpellcasters = ['wizard', 'sorcerer', 'cleric', 'druid', 'warlock', 'bard', 'psion', 'spellblade'];
+	const knownSpellcasters = ['wizard', 'sorcerer', 'cleric', 'druid', 'warlock', 'bard', 'spellblade'];
 	const hasSpellcastingPath = !!(
 		resolvedClassDef?.spellcastingPath ||
 		(resolvedClassDef as any)?.spellcasterPath ||

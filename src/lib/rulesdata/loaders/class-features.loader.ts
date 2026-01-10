@@ -123,7 +123,6 @@ import { warlockClass } from '../classes-data/features/warlock_features';
 import { bardClass } from '../classes-data/features/bard_features';
 import { druidClass } from '../classes-data/features/druid_features';
 import { commanderClass } from '../classes-data/features/commander_features';
-import { psionClass } from '../classes-data/features/psion_features';
 
 // Use the new schema class definitions
 const rawClassFeatures = [
@@ -139,8 +138,7 @@ const rawClassFeatures = [
 	warlockClass,
 	bardClass,
 	druidClass,
-	commanderClass,
-	psionClass
+	commanderClass
 ];
 
 // Debug logging

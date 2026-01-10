@@ -71,10 +71,6 @@ const CLASS_METADATA: Record<string, { name: string; description: string }> = {
 		name: 'Monk',
 		description: 'A disciplined martial artist who channels inner energy for rapid strikes and supernatural movement.'
 	},
-	psion: {
-		name: 'Psion',
-		description: 'A psionic master who wields mental powers to manipulate minds and reality itself.'
-	},
 	rogue: {
 		name: 'Rogue',
 		description: 'A stealthy and cunning adventurer who excels in ambushes, trickery, and precise strikes.'

@@ -17,7 +17,6 @@ import { warlockClass } from './features/warlock_features';
 import { bardClass } from './features/bard_features';
 import { commanderClass } from './features/commander_features';
 import { monkClass } from './features/monk_features';
-import { psionClass } from './features/psion_features';
 
 // Map of class IDs to their feature definitions
 const CLASS_FEATURES_MAP: Record<string, any> = {
@@ -33,8 +32,7 @@ const CLASS_FEATURES_MAP: Record<string, any> = {
 	warlock: warlockClass,
 	bard: bardClass,
 	commander: commanderClass,
-	monk: monkClass,
-	psion: psionClass
+	monk: monkClass
 };
 
 /**

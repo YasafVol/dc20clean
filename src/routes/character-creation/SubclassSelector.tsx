@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React from 'react';
 import type { Subclass, ClassFeature } from '../../lib/rulesdata/schemas/character.schema';
 import {
 	getSubclassByName,
@@ -19,15 +18,7 @@ import { bardClass } from '../../lib/rulesdata/classes-data/features/bard_featur
 import { commanderClass } from '../../lib/rulesdata/classes-data/features/commander_features';
 import { monkClass } from '../../lib/rulesdata/classes-data/features/monk_features';
 import { psionClass } from '../../lib/rulesdata/classes-data/features/psion_features';
-import {
-	FeatureCard,
-	FeatureTitle,
-	FeatureDescription,
-	BenefitsList,
-	BenefitItem,
-	BenefitName,
-	BenefitDescription
-} from './styles/shared/FeatureDisplay.styles';
+import { cn } from '../../lib/utils';
 
 // Map of class IDs to their feature definitions
 const CLASS_FEATURES_MAP: Record<string, any> = {
@@ -46,210 +37,6 @@ const CLASS_FEATURES_MAP: Record<string, any> = {
 	monk: monkClass,
 	psion: psionClass
 };
-
-const Container = styled.div`
-	margin-top: 2rem;
-	padding: 1.5rem;
-	background: linear-gradient(135deg, rgba(139, 69, 19, 0.1) 0%, rgba(101, 67, 33, 0.05) 100%);
-	border: 2px solid rgba(139, 69, 19, 0.3);
-	border-radius: 8px;
-`;
-
-const Header = styled.h3`
-	font-family: 'Cinzel', serif;
-	font-size: 1.5rem;
-	color: #d4af37;
-	margin: 0 0 0.5rem 0;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-`;
-
-const LevelBadge = styled.span`
-	display: inline-block;
-	background: rgba(212, 175, 55, 0.2);
-	color: #d4af37;
-	padding: 0.25rem 0.75rem;
-	border-radius: 4px;
-	font-size: 0.9rem;
-	margin-left: 0.5rem;
-	font-family: 'Urbanist', sans-serif;
-	font-weight: 600;
-`;
-
-const Description = styled.p`
-	font-family: 'Urbanist', sans-serif;
-	font-size: 1rem;
-	color: rgba(255, 255, 255, 0.7);
-	margin: 0 0 1.5rem 0;
-	line-height: 1.5;
-`;
-
-const SubclassGrid = styled.div`
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-	gap: 1rem;
-`;
-
-const SubclassCard = styled.div<{ selected: boolean }>`
-	background: ${(props) =>
-		props.selected
-			? 'linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(139, 69, 19, 0.15) 100%)'
-			: 'rgba(0, 0, 0, 0.3)'};
-	border: 2px solid ${(props) => (props.selected ? '#d4af37' : 'rgba(139, 69, 19, 0.4)')};
-	border-radius: 8px;
-	padding: 1rem;
-	cursor: pointer;
-	transition: all 0.2s ease;
-
-	&:hover {
-		border-color: ${(props) => (props.selected ? '#d4af37' : 'rgba(212, 175, 55, 0.6)')};
-		transform: translateY(-2px);
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-	}
-`;
-
-const SubclassName = styled.h4`
-	font-family: 'Cinzel', serif;
-	font-size: 1.1rem;
-	color: #d4af37;
-	margin: 0 0 0.5rem 0;
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
-`;
-
-const SubclassDescription = styled.p`
-	font-family: 'Urbanist', sans-serif;
-	font-size: 0.9rem;
-	color: rgba(255, 255, 255, 0.7);
-	margin: 0;
-	line-height: 1.4;
-`;
-
-const RadioIndicator = styled.div<{ selected: boolean }>`
-	width: 20px;
-	height: 20px;
-	border-radius: 50%;
-	border: 2px solid ${(props) => (props.selected ? '#d4af37' : 'rgba(255, 255, 255, 0.3)')};
-	background: ${(props) => (props.selected ? '#d4af37' : 'transparent')};
-	display: inline-block;
-	margin-right: 0.75rem;
-	transition: all 0.2s ease;
-	position: relative;
-
-	${(props) =>
-		props.selected &&
-		`
-		&::after {
-			content: '';
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			width: 8px;
-			height: 8px;
-			border-radius: 50%;
-			background: #1a1a1a;
-		}
-	`}
-`;
-
-const SubclassHeader = styled.div`
-	display: flex;
-	align-items: center;
-	margin-bottom: 0.5rem;
-`;
-
-const SubclassFeaturesList = styled.div`
-	margin-top: 1rem;
-	padding-top: 1rem;
-	border-top: 1px solid rgba(212, 175, 55, 0.3);
-`;
-
-// Choice UI Styled Components
-const ChoicesContainer = styled.div`
-	margin-top: 1.5rem;
-	padding-top: 1rem;
-	border-top: 1px solid rgba(212, 175, 55, 0.3);
-`;
-
-const ChoiceSection = styled.div`
-	margin-bottom: 2rem;
-
-	&:last-child {
-		margin-bottom: 0;
-	}
-`;
-
-const ChoiceHeader = styled.div`
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 0.5rem;
-`;
-
-const ChoicePrompt = styled.h5`
-	color: #d4af37;
-	font-size: 0.95rem;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
-	margin: 0;
-`;
-
-const ChoiceStatus = styled.span<{ complete: boolean }>`
-	font-size: 0.9rem;
-	color: ${(props) => (props.complete ? '#4caf50' : '#ff9800')};
-	font-weight: 600;
-`;
-
-const ChoiceHint = styled.p`
-	font-size: 0.85rem;
-	color: rgba(255, 255, 255, 0.6);
-	margin: 0 0 1rem 0;
-`;
-
-const ChoiceOptions = styled.div`
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-	gap: 1rem;
-`;
-
-const ChoiceOptionCard = styled.div<{ selected: boolean }>`
-	padding: 1rem;
-	background: rgba(0, 0, 0, 0.3);
-	border: 2px solid ${(props) => (props.selected ? '#d4af37' : 'rgba(212, 175, 55, 0.3)')};
-	border-radius: 8px;
-	cursor: pointer;
-	transition: all 0.2s;
-	position: relative;
-
-	&:hover {
-		border-color: ${(props) => (props.selected ? '#d4af37' : 'rgba(212, 175, 55, 0.6)')};
-		transform: translateY(-2px);
-	}
-`;
-
-const OptionName = styled.h6`
-	color: #d4af37;
-	font-size: 0.9rem;
-	font-weight: 600;
-	margin: 0 0 0.5rem 0;
-`;
-
-const OptionDescription = styled.p`
-	font-size: 0.85rem;
-	color: rgba(255, 255, 255, 0.8);
-	line-height: 1.4;
-	margin: 0;
-`;
-
-const SelectedIcon = styled.span`
-	position: absolute;
-	top: 0.5rem;
-	right: 0.5rem;
-	color: #d4af37;
-	font-size: 1.2rem;
-`;
 
 interface SubclassSelectorProps {
 	classId: string;
@@ -282,57 +69,87 @@ export function SubclassSelector({
 	};
 
 	return (
-		<Container>
-			<Header>
+		<div className="mt-8 rounded-lg border-2 border-amber-900/30 bg-gradient-to-br from-amber-900/10 to-amber-800/5 p-6">
+			<h3 className="font-cinzel text-primary mb-2 text-2xl font-bold tracking-wide uppercase">
 				Choose Your Subclass
-				{choiceLevel && <LevelBadge>Level {choiceLevel}</LevelBadge>}
-			</Header>
-			<Description>
+				{choiceLevel && (
+					<span className="bg-primary/20 text-primary ml-2 inline-block rounded px-3 py-1 text-sm font-semibold">
+						Level {choiceLevel}
+					</span>
+				)}
+			</h3>
+			<p className="text-foreground/70 mb-6 leading-relaxed">
 				Select a subclass to specialize your character's abilities and playstyle. This choice is
 				permanent and shapes your character's identity.
-			</Description>
+			</p>
 
-			<SubclassGrid>
+			<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 				{subclasses.map((subclass) => {
 					const isSelected = selectedSubclass === subclass.subclassName;
 					const features = getFeaturesByLevel(subclass);
 
 					return (
-						<SubclassCard
+						<div
 							key={subclass.subclassName}
-							selected={isSelected}
 							onClick={() => onSelect(subclass.subclassName)}
+							className={cn(
+								'cursor-pointer rounded-lg border-2 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg',
+								isSelected
+									? 'border-primary from-primary/20 bg-gradient-to-br to-amber-900/15'
+									: 'hover:border-primary/60 border-amber-900/40 bg-black/30'
+							)}
 						>
-							<SubclassHeader>
-								<RadioIndicator selected={isSelected} />
-								<SubclassName>{subclass.subclassName}</SubclassName>
-							</SubclassHeader>
+							<div className="mb-2 flex items-center">
+								<div
+									className={cn(
+										'relative mr-3 h-5 w-5 rounded-full border-2 transition-all',
+										isSelected ? 'border-primary bg-primary' : 'border-white/30 bg-transparent'
+									)}
+								>
+									{isSelected && (
+										<div className="bg-background absolute top-1/2 left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full" />
+									)}
+								</div>
+								<h4 className="font-cinzel text-primary text-lg font-bold tracking-wide uppercase">
+									{subclass.subclassName}
+								</h4>
+							</div>
 							{subclass.description && (
-								<SubclassDescription>{subclass.description}</SubclassDescription>
+								<p className="text-foreground/70 text-sm leading-relaxed">{subclass.description}</p>
 							)}
 
 							{/* Show features for all subclasses */}
 							{features.length > 0 && (
-								<SubclassFeaturesList>
+								<div className="border-primary/30 mt-4 border-t pt-4">
 									{features.map((feature, idx) => (
-										<FeatureCard key={feature.id || `${feature.featureName}-${idx}`}>
-											<FeatureTitle>{feature.featureName}</FeatureTitle>
+										<div
+											key={feature.id || `${feature.featureName}-${idx}`}
+											className="border-primary/30 mb-3 rounded border bg-black/30 p-3 last:mb-0"
+										>
+											<h5 className="font-cinzel text-primary mb-1 text-sm font-bold tracking-wide uppercase">
+												{feature.featureName}
+											</h5>
 											{feature.description && (
-												<FeatureDescription>{feature.description}</FeatureDescription>
+												<p className="text-foreground/80 mb-2 text-sm leading-relaxed">
+													{feature.description}
+												</p>
 											)}
 
 											{/* Show Benefits */}
 											{feature.benefits && feature.benefits.length > 0 && (
-												<BenefitsList>
+												<div className="mt-2 border-t border-white/10 pt-2">
 													{feature.benefits.map((benefit, benefitIdx) => (
-														<BenefitItem key={benefit.name || benefitIdx}>
-															<BenefitName>{benefit.name}</BenefitName>
+														<div
+															key={benefit.name || benefitIdx}
+															className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2 last:mb-0"
+														>
+															<h6 className="text-primary text-xs font-semibold">{benefit.name}</h6>
 															{benefit.description && (
-																<BenefitDescription>{benefit.description}</BenefitDescription>
+																<p className="text-foreground/70 text-xs">{benefit.description}</p>
 															)}
-														</BenefitItem>
+														</div>
 													))}
-												</BenefitsList>
+												</div>
 											)}
 
 											{/* Show Choices only when this subclass is selected */}
@@ -340,7 +157,7 @@ export function SubclassSelector({
 												feature.choices &&
 												feature.choices.length > 0 &&
 												onChoiceChange && (
-													<ChoicesContainer>
+													<div className="border-primary/30 mt-4 border-t pt-4">
 														{feature.choices.map((choice) => {
 															const choiceKey = getFeatureChoiceKey(
 																classId,
@@ -364,52 +181,74 @@ export function SubclassSelector({
 															};
 
 															return (
-																<ChoiceSection key={choice.id}>
-																	<ChoiceHeader>
-																		<ChoicePrompt>{choice.prompt}</ChoicePrompt>
-																		<ChoiceStatus complete={isComplete}>
+																<div key={choice.id} className="mb-6 last:mb-0">
+																	<div className="mb-2 flex items-center justify-between">
+																		<h5 className="text-primary text-sm font-semibold tracking-wide uppercase">
+																			{choice.prompt}
+																		</h5>
+																		<span
+																			className={cn(
+																				'text-sm font-semibold',
+																				isComplete ? 'text-emerald-500' : 'text-amber-500'
+																			)}
+																		>
 																			{isComplete
 																				? '✅'
 																				: `⚠️ ${currentSelections.length}/${choice.count}`}
-																		</ChoiceStatus>
-																	</ChoiceHeader>
-																	<ChoiceHint>Select {choice.count} option(s)</ChoiceHint>
+																		</span>
+																	</div>
+																	<p className="text-foreground/60 mb-3 text-xs">
+																		Select {choice.count} option(s)
+																	</p>
 
-																	<ChoiceOptions>
+																	<div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
 																		{choice.options?.map((option) => {
-																			const isSelected = currentSelections.includes(option.name);
+																			const isOptionSelected = currentSelections.includes(
+																				option.name
+																			);
 
 																			return (
-																				<ChoiceOptionCard
+																				<div
 																					key={option.name}
-																					selected={isSelected}
 																					onClick={(e) => {
 																						e.stopPropagation(); // Prevent subclass card click
 																						handleOptionClick(option.name);
 																					}}
+																					className={cn(
+																						'relative cursor-pointer rounded-lg border-2 p-3 transition-all hover:-translate-y-0.5',
+																						isOptionSelected
+																							? 'border-primary'
+																							: 'border-primary/30 hover:border-primary/60'
+																					)}
 																				>
-																					<OptionName>{option.name}</OptionName>
-																					<OptionDescription>
+																					<h6 className="text-primary text-sm font-semibold">
+																						{option.name}
+																					</h6>
+																					<p className="text-foreground/80 text-xs leading-relaxed">
 																						{option.description}
-																					</OptionDescription>
-																					{isSelected && <SelectedIcon>✓</SelectedIcon>}
-																				</ChoiceOptionCard>
+																					</p>
+																					{isOptionSelected && (
+																						<span className="text-primary absolute top-2 right-2 text-lg">
+																							✓
+																						</span>
+																					)}
+																				</div>
 																			);
 																		})}
-																	</ChoiceOptions>
-																</ChoiceSection>
+																	</div>
+																</div>
 															);
 														})}
-													</ChoicesContainer>
+													</div>
 												)}
-										</FeatureCard>
+										</div>
 									))}
-								</SubclassFeaturesList>
+								</div>
 							)}
-						</SubclassCard>
+						</div>
 					);
 				})}
-			</SubclassGrid>
-		</Container>
+			</div>
+		</div>
 	);
 }

@@ -1,6 +1,8 @@
 import React from 'react';
 import { languagesData } from '../../../lib/rulesdata/languages';
-// Types moved from deleted BackgroundPointsManager
+import { cn } from '../../../lib/utils';
+import { Button } from '../../../components/ui/button';
+
 interface BackgroundPointsData {
 	skillPointsUsed: number;
 	tradePointsUsed: number;
@@ -25,17 +27,6 @@ interface ConversionActions {
 	convertTradeToLanguage: () => void;
 	resetConversions: () => void;
 }
-import {
-	StyledTabContent,
-	StyledSelectionGrid,
-	StyledSelectionItem,
-	StyledSelectionHeader,
-	StyledSelectionName,
-	StyledProficiencyButton,
-	StyledLanguageFluency,
-	StyledPointsRemaining,
-	StyledActionButton
-} from '../styles/Background.styles';
 
 interface LanguagesTabProps {
 	currentLanguages: Record<string, { fluency: 'limited' | 'fluent' }>;
@@ -56,88 +47,87 @@ const LanguagesTab: React.FC<LanguagesTabProps> = ({
 		return fluency === 'limited' ? 1 : 2;
 	};
 
-	// Helper function for consistent button styling
 	const hasConversions =
 		conversions.skillToTradeConversions > 0 ||
 		conversions.tradeToSkillConversions > 0 ||
 		conversions.tradeToLanguageConversions > 0;
 
+	const languagePointsRemaining =
+		pointsData.availableLanguagePoints - pointsData.languagePointsUsed;
+	const canConvertTradeToLanguage =
+		pointsData.availableTradePoints - pointsData.tradePointsUsed >= 1;
+
 	return (
-		<StyledTabContent>
-			<StyledPointsRemaining>
-				Language Points: {pointsData.availableLanguagePoints - pointsData.languagePointsUsed} /{' '}
-				{pointsData.availableLanguagePoints} remaining
+		<div className="mx-auto">
+			{/* Points Remaining */}
+			<div className="text-destructive mb-6 text-center text-lg font-bold">
+				Language Points: {languagePointsRemaining} / {pointsData.availableLanguagePoints} remaining
 				{conversions.tradeToLanguageConversions > 0 && (
-					<div
-						style={{
-							fontSize: '0.9rem',
-							color: '#6366f1',
-							marginTop: '0.5rem',
-							padding: '0.25rem 0.5rem',
-							backgroundColor: '#6366f11a',
-							borderRadius: '4px',
-							border: '1px solid #6366f133'
-						}}
-					>
+					<div className="bg-primary/10 border-primary/20 text-primary mt-2 rounded border px-2 py-1 text-sm">
 						Active conversions: {conversions.tradeToLanguageConversions} trade →{' '}
 						{conversions.tradeToLanguageConversions * 2} language
 					</div>
 				)}
-				<div
-					style={{
-						marginTop: '0.75rem',
-						display: 'flex',
-						gap: '0.5rem',
-						flexWrap: 'wrap'
-					}}
-				>
-					<StyledActionButton
+				<div className="mt-3 flex flex-wrap justify-center gap-2">
+					<Button
+						variant="outline"
+						size="sm"
 						onClick={actions.convertTradeToLanguage}
-						disabled={pointsData.availableTradePoints - pointsData.tradePointsUsed < 1}
-						$enabled={pointsData.availableTradePoints - pointsData.tradePointsUsed >= 1}
+						disabled={!canConvertTradeToLanguage}
+						className="border-white/50 bg-transparent"
 					>
 						Convert 1 Trade → 2 Language Points
-					</StyledActionButton>
-					<StyledActionButton
+					</Button>
+					<Button
+						variant="outline"
+						size="sm"
 						onClick={actions.resetConversions}
 						disabled={!hasConversions}
-						$enabled={hasConversions}
+						className={cn(
+							'border-white/50 bg-transparent',
+							hasConversions && 'hover:border-destructive hover:text-destructive'
+						)}
 					>
 						Reset Conversions
-					</StyledActionButton>
+					</Button>
 				</div>
-			</StyledPointsRemaining>
-			<StyledSelectionGrid>
+			</div>
+
+			{/* Selection Grid */}
+			<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 				{languagesData.map((language) => {
 					const currentFluency = currentLanguages[language.id]?.fluency || null;
 					const isCommon = language.id === 'common';
 
 					return (
-						<StyledSelectionItem key={language.id} data-testid={`language-item-${language.id}`}>
-							<StyledSelectionHeader>
-								<StyledSelectionName>
+						<div
+							key={language.id}
+							data-testid={`language-item-${language.id}`}
+							className="hover:border-primary rounded-lg border border-white/50 bg-transparent p-4 transition-colors"
+						>
+							<div className="mb-2 flex items-center justify-between">
+								<h4 className="text-primary text-lg font-semibold tracking-wide uppercase">
 									{language.name}
 									{isCommon && (
-										<span style={{ color: '#10b981', fontSize: '0.8rem', marginLeft: '0.5rem' }}>
-											(Free)
-										</span>
+										<span className="ml-2 text-xs font-normal text-emerald-500">(Free)</span>
 									)}
-								</StyledSelectionName>
-								<div style={{ fontSize: '0.8rem', color: '#e2e8f0', textTransform: 'uppercase' }}>
-									{(language as any).type}
-								</div>
-							</StyledSelectionHeader>
-							<div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>
-								{language.description}
+								</h4>
+								<span className="text-foreground text-xs uppercase">{(language as any).type}</span>
 							</div>
-							<StyledLanguageFluency>
+							<p className="text-muted-foreground mb-3 text-sm">{language.description}</p>
+							<div className="flex flex-wrap gap-2">
 								{!isCommon && (
-									<StyledProficiencyButton
-										$active={currentFluency === null}
+									<button
 										onClick={() => onLanguageChange(language.id, null)}
+										className={cn(
+											'rounded-md border px-3 py-1.5 text-sm font-semibold transition-colors',
+											currentFluency === null
+												? 'border-primary bg-primary text-primary-foreground'
+												: 'hover:border-primary text-foreground border-white/50 bg-transparent'
+										)}
 									>
 										None
-									</StyledProficiencyButton>
+									</button>
 								)}
 								{(['limited', 'fluent'] as const).map((fluency) => {
 									const cost = getLanguageCost(fluency);
@@ -145,29 +135,37 @@ const LanguagesTab: React.FC<LanguagesTabProps> = ({
 										isCommon ||
 										currentFluency === fluency ||
 										pointsData.languagePointsUsed + cost <= pointsData.availableLanguagePoints;
+									const isActive = currentFluency === fluency;
+									const isDisabled = !canAfford && !isCommon;
 
 									return (
-										<StyledProficiencyButton
+										<button
 											key={fluency}
-											$active={currentFluency === fluency}
-											$disabled={!canAfford && !isCommon}
 											onClick={() => {
 												if (isCommon || canAfford) {
 													onLanguageChange(language.id, fluency);
 												}
 											}}
+											className={cn(
+												'rounded-md border px-3 py-1.5 text-sm font-semibold transition-colors',
+												isActive
+													? 'border-primary bg-primary text-primary-foreground'
+													: 'text-foreground border-white/50 bg-transparent',
+												isDisabled && 'cursor-not-allowed opacity-50',
+												!isDisabled && !isActive && 'hover:border-primary'
+											)}
 										>
 											{fluency.charAt(0).toUpperCase() + fluency.slice(1)}{' '}
 											{!isCommon && `(${cost})`}
-										</StyledProficiencyButton>
+										</button>
 									);
 								})}
-							</StyledLanguageFluency>
-						</StyledSelectionItem>
+							</div>
+						</div>
 					);
 				})}
-			</StyledSelectionGrid>
-		</StyledTabContent>
+			</div>
+		</div>
 	);
 };
 

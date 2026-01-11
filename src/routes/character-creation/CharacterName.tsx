@@ -1,19 +1,10 @@
 import { useState } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { nameByRace } from 'fantasy-name-generator';
-import {
-	StyledContainer,
-	StyledTitle,
-	StyledInputGroup,
-	StyledLabel,
-	StyledInput,
-	StyledSuggestionGrid,
-	StyledSuggestionButton,
-	StyledGenerateButton,
-	StyledCharacterInfo,
-	StyledCharacterDetails,
-	StyledCharacterNameContainer
-} from './styles/CharacterName.styles';
+import { Card, CardContent } from '../../components/ui/card';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 
 // Name generation using fantasy-name-generator npm package
 const generateNamesFromNPM = (race: string): string[] => {
@@ -156,72 +147,97 @@ function CharacterName() {
 	};
 
 	return (
-		<StyledContainer>
-			<StyledTitle>Name Your Character</StyledTitle>
+		<Card className="mx-auto mt-8 max-w-[600px] border-white/50 bg-transparent">
+			<CardContent className="space-y-6 p-8">
+				<h2 className="font-cinzel text-primary mb-8 text-center text-3xl font-bold tracking-wide">
+					Name Your Character
+				</h2>
 
-			<StyledCharacterInfo>
-				<StyledCharacterDetails>Creating: {getCharacterDescription()}</StyledCharacterDetails>
-			</StyledCharacterInfo>
+				{/* Character Info */}
+				<div className="mb-6 rounded-lg border border-white/50 bg-transparent p-4 text-center">
+					<p className="text-foreground">Creating: {getCharacterDescription()}</p>
+				</div>
 
-			<StyledCharacterNameContainer>
-				<StyledInputGroup>
-					<StyledLabel htmlFor="characterName">Character Name</StyledLabel>
-					<StyledInput
-						id="characterName"
+				{/* Character Name and Suggestions Row */}
+				<div className="flex flex-col gap-4 md:flex-row">
+					{/* Character Name Input */}
+					<div className="flex-1 space-y-2">
+						<Label htmlFor="characterName" className="text-primary font-bold">
+							Character Name
+						</Label>
+						<Input
+							id="characterName"
+							type="text"
+							value={characterName}
+							onChange={(e) => {
+								const value = e.target.value;
+								setCharacterName(value);
+								dispatch({
+									type: 'UPDATE_STORE',
+									updates: {
+										finalName: value.trim() || null
+									}
+								});
+							}}
+							placeholder="Enter your character's name"
+							className="border-white/50 bg-transparent"
+						/>
+					</div>
+
+					{/* Name Suggestions */}
+					<div className="flex-1 space-y-2">
+						<Label className="text-primary font-bold">Name Suggestion</Label>
+						{suggestions.length > 0 && (
+							<div className="mb-3 grid max-h-[200px] grid-cols-2 gap-2 overflow-y-auto">
+								{suggestions.map((name, index) => (
+									<Button
+										key={index}
+										variant="outline"
+										size="sm"
+										onClick={() => selectSuggestion(name)}
+										className="hover:border-primary border-white/50 bg-transparent"
+									>
+										{name}
+									</Button>
+								))}
+							</div>
+						)}
+						<Button
+							variant="outline"
+							onClick={generateNames}
+							disabled={isGenerating}
+							className="hover:border-primary w-full border-white/50 bg-transparent font-bold"
+						>
+							{isGenerating ? 'Generating...' : 'Generate Names'}
+						</Button>
+					</div>
+				</div>
+
+				{/* Player Name Input */}
+				<div className="space-y-2">
+					<Label htmlFor="playerName" className="text-primary font-bold">
+						Player Name
+					</Label>
+					<Input
+						id="playerName"
 						type="text"
-						value={characterName}
+						value={playerName}
 						onChange={(e) => {
 							const value = e.target.value;
-							setCharacterName(value);
-							// Update the context immediately
+							setPlayerName(value);
 							dispatch({
 								type: 'UPDATE_STORE',
 								updates: {
-									finalName: value.trim() || null
+									finalPlayerName: value.trim() || null
 								}
 							});
 						}}
-						placeholder="Enter your character's name"
+						placeholder="Enter your name"
+						className="border-white/50 bg-transparent"
 					/>
-				</StyledInputGroup>
-				<StyledInputGroup>
-					<StyledLabel htmlFor="characterName">Name Suggestion</StyledLabel>
-					{suggestions.length > 0 && (
-						<StyledSuggestionGrid>
-							{suggestions.map((name, index) => (
-								<StyledSuggestionButton key={index} onClick={() => selectSuggestion(name)}>
-									{name}
-								</StyledSuggestionButton>
-							))}
-						</StyledSuggestionGrid>
-					)}
-					<StyledGenerateButton onClick={generateNames} disabled={isGenerating}>
-						{isGenerating ? 'Generating...' : 'Generate Names'}
-					</StyledGenerateButton>
-				</StyledInputGroup>
-			</StyledCharacterNameContainer>
-
-			<StyledInputGroup>
-				<StyledLabel htmlFor="playerName">Player Name</StyledLabel>
-				<StyledInput
-					id="playerName"
-					type="text"
-					value={playerName}
-					onChange={(e) => {
-						const value = e.target.value;
-						setPlayerName(value);
-						// Update the context immediately
-						dispatch({
-							type: 'UPDATE_STORE',
-							updates: {
-								finalPlayerName: value.trim() || null
-							}
-						});
-					}}
-					placeholder="Enter your name"
-				/>
-			</StyledInputGroup>
-		</StyledContainer>
+				</div>
+			</CardContent>
+		</Card>
 	);
 }
 

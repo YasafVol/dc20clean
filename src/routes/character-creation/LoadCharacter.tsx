@@ -7,41 +7,18 @@ import {
 } from '../../lib/utils/storageUtils';
 import { checkSchemaCompatibility } from '../../lib/types/schemaVersion';
 import { migrateCharacterSchema } from '../../lib/utils/schemaMigration';
-import {
-	StyledContainer,
-	StyledTitle,
-	StyledCharacterGrid,
-	StyledCharacterCard,
-	StyledCardActions,
-	StyledActionButton,
-	StyledCharacterName,
-	StyledPlayerName,
-	StyledCharacterDetails,
-	StyledDetailItem,
-	StyledDetailLabel,
-	StyledDetailValue,
-	StyledCompletedDate,
-	StyledEmptyState,
-	StyledEmptyTitle,
-	StyledEmptyText,
-	StyledBackButton,
-	StyledModalOverlay,
-	StyledModalContent,
-	StyledModalTitle,
-	StyledModalMessage,
-	StyledModalActions,
-	StyledModalButton,
-	StyledImportButton,
-	StyledImportModalContent,
-	StyledImportModalTitle,
-	StyledImportTextarea,
-	StyledImportActions,
-	StyledImportButton2,
-	StyledImportMessage,
-	StyledButtonRow
-} from './styles/LoadCharacter.styles';
-
 import { useNavigate } from 'react-router-dom';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent } from '../../components/ui/card';
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogDescription,
+	DialogFooter
+} from '../../components/ui/dialog';
+import { cn } from '../../lib/utils';
 
 function LoadCharacter() {
 	const navigate = useNavigate();
@@ -346,160 +323,205 @@ function LoadCharacter() {
 	};
 
 	return (
-		<StyledContainer>
-			<StyledButtonRow>
-				<StyledBackButton onClick={() => navigate('/menu')}>← Back to Menu</StyledBackButton>
-				<StyledImportButton onClick={handleImportClick}>📥 Import from JSON</StyledImportButton>
-			</StyledButtonRow>
+		<div className="bg-background min-h-screen bg-[url('/src/assets/BlackBG.jpg')] bg-cover bg-center p-8">
+			{/* Button Row */}
+			<div className="mb-8 flex gap-4">
+				<Button variant="secondary" onClick={() => navigate('/menu')} className="font-bold">
+					← Back to Menu
+				</Button>
+				<Button
+					variant="outline"
+					onClick={handleImportClick}
+					className="border-emerald-500 font-bold text-emerald-500 hover:bg-emerald-500 hover:text-white"
+				>
+					📥 Import from JSON
+				</Button>
+			</div>
 
-			<StyledTitle>Load Character</StyledTitle>
+			{/* Title */}
+			<h1 className="font-cinzel text-primary mb-8 text-center text-3xl font-bold tracking-wide drop-shadow-lg">
+				Load Character
+			</h1>
 
 			{savedCharacters.length === 0 ? (
-				<StyledEmptyState>
-					<StyledEmptyTitle>No Saved Characters</StyledEmptyTitle>
-					<StyledEmptyText>
+				<div className="text-muted-foreground py-16 text-center">
+					<h2 className="text-primary mb-4 text-2xl">No Saved Characters</h2>
+					<p className="text-base leading-relaxed">
 						You haven't created any characters yet.
 						<br />
 						Go back to the menu and create your first character!
-					</StyledEmptyText>
-				</StyledEmptyState>
+					</p>
+				</div>
 			) : (
-				<StyledCharacterGrid>
+				<div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 					{savedCharacters.map((character) => (
-						<StyledCharacterCard key={character.id}>
-							<StyledCharacterName>
-								{character.finalName || 'Unnamed Character'}
-							</StyledCharacterName>
+						<Card
+							key={character.id}
+							className="hover:border-primary border-purple-500 bg-gradient-to-br from-indigo-950 to-indigo-900 shadow-lg shadow-purple-500/30 transition-all hover:-translate-y-1 hover:shadow-xl"
+						>
+							<CardContent className="p-6">
+								<h2 className="text-primary mb-4 text-center text-xl font-bold">
+									{character.finalName || 'Unnamed Character'}
+								</h2>
 
-							<StyledPlayerName>Player: {character.finalPlayerName || 'Unknown'}</StyledPlayerName>
+								<p className="text-foreground/80 mb-4 text-center">
+									Player: {character.finalPlayerName || 'Unknown'}
+								</p>
 
-							<StyledCharacterDetails>
-								<StyledDetailItem>
-									<StyledDetailLabel>Race</StyledDetailLabel>
-									<StyledDetailValue>
-										{formatAncestry(
-											character.ancestry1Name || character.ancestry1Id || 'Unknown',
-											character.ancestry2Name || character.ancestry2Id
+								<div className="mb-4 flex items-center justify-between">
+									<div className="text-center">
+										<div className="text-xs font-bold tracking-wide text-purple-400 uppercase">
+											Race
+										</div>
+										<div className="text-foreground mt-1 font-bold">
+											{formatAncestry(
+												character.ancestry1Name || character.ancestry1Id || 'Unknown',
+												character.ancestry2Name || character.ancestry2Id
+											)}
+										</div>
+									</div>
+
+									<div className="text-center">
+										<div className="text-xs font-bold tracking-wide text-purple-400 uppercase">
+											Class
+										</div>
+										<div className="text-foreground mt-1 font-bold">
+											{character.className || character.classId || 'Unknown'}
+										</div>
+									</div>
+								</div>
+
+								<p className="text-muted-foreground mb-4 text-center text-sm italic">
+									Created: {formatDate(character.createdAt || character.completedAt)}
+									{character.lastModified &&
+										character.lastModified !== character.createdAt &&
+										character.lastModified !== character.completedAt && (
+											<span className="block">
+												Last Modified: {formatDate(character.lastModified)}
+											</span>
 										)}
-									</StyledDetailValue>
-								</StyledDetailItem>
+								</p>
 
-								<StyledDetailItem>
-									<StyledDetailLabel>Class</StyledDetailLabel>
-									<StyledDetailValue>
-										{character.className || character.classId || 'Unknown'}
-									</StyledDetailValue>
-								</StyledDetailItem>
-							</StyledCharacterDetails>
-
-							<StyledCompletedDate>
-								Created: {formatDate(character.createdAt || character.completedAt)}
-								{character.lastModified &&
-									character.lastModified !== character.createdAt &&
-									character.lastModified !== character.completedAt && (
-										<div>Last Modified: {formatDate(character.lastModified)}</div>
-									)}
-							</StyledCompletedDate>
-
-							<StyledCardActions>
-								<StyledActionButton
-									variant="primary"
-									onClick={(e) => handleViewCharacterSheet(character, e)}
-								>
-									View Sheet
-								</StyledActionButton>
-								<StyledActionButton
-									variant="secondary"
-									onClick={(e) => handleExportPdf(character, e)}
-									title="Export this character to a fillable PDF"
-									disabled={false}
-								>
-									Export PDF
-								</StyledActionButton>
-								<StyledActionButton
-									variant="secondary"
-									onClick={() => handleCharacterClick(character)}
-								>
-									Edit
-								</StyledActionButton>
-								<StyledActionButton
-									variant="secondary"
-									onClick={(e) => handleLevelUp(character, e)}
-								>
-									Level Up
-								</StyledActionButton>
-								<StyledActionButton
-									variant="danger"
-									onClick={(e) => handleDeleteClick(character, e)}
-								>
-									Delete
-								</StyledActionButton>
-							</StyledCardActions>
-						</StyledCharacterCard>
+								<div className="mt-4 grid grid-cols-2 gap-2">
+									<Button
+										variant="default"
+										size="sm"
+										onClick={(e) => handleViewCharacterSheet(character, e)}
+										className="font-bold"
+									>
+										View Sheet
+									</Button>
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={(e) => handleExportPdf(character, e)}
+										title="Export this character to a fillable PDF"
+										className="border-purple-500 font-bold text-purple-400 hover:bg-purple-500 hover:text-white"
+									>
+										Export PDF
+									</Button>
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={() => handleCharacterClick(character)}
+										className="border-purple-500 font-bold text-purple-400 hover:bg-purple-500 hover:text-white"
+									>
+										Edit
+									</Button>
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={(e) => handleLevelUp(character, e)}
+										className="border-purple-500 font-bold text-purple-400 hover:bg-purple-500 hover:text-white"
+									>
+										Level Up
+									</Button>
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={(e) => handleDeleteClick(character, e)}
+										className="col-span-2 border-red-500 font-bold text-red-500 hover:bg-red-500 hover:text-white"
+									>
+										Delete
+									</Button>
+								</div>
+							</CardContent>
+						</Card>
 					))}
-				</StyledCharacterGrid>
+				</div>
 			)}
 
 			{/* Import Character Modal */}
-			{importModalOpen && (
-				<StyledModalOverlay>
-					<StyledImportModalContent>
-						<StyledImportModalTitle>Import Character from JSON</StyledImportModalTitle>
-						<p style={{ color: '#e5e7eb', marginBottom: '1rem' }}>
+			<Dialog open={importModalOpen} onOpenChange={setImportModalOpen}>
+				<DialogContent className="max-w-xl border-emerald-500">
+					<DialogHeader>
+						<DialogTitle className="text-center text-emerald-500">
+							Import Character from JSON
+						</DialogTitle>
+						<DialogDescription className="text-foreground/80">
 							Paste the character JSON data from the clipboard (exported from character sheet):
+						</DialogDescription>
+					</DialogHeader>
+
+					<textarea
+						value={importJsonText}
+						onChange={(e) => setImportJsonText(e.target.value)}
+						placeholder="Paste character JSON data here..."
+						className="border-border text-foreground placeholder:text-muted-foreground min-h-[300px] w-full resize-y rounded-lg border-2 bg-black/30 p-4 font-mono text-sm focus:border-emerald-500 focus:outline-none"
+					/>
+
+					{importMessage && (
+						<p
+							className={cn(
+								'rounded-md border p-3 text-sm',
+								importMessage.type === 'error' && 'border-red-500 bg-red-500/10 text-red-500',
+								importMessage.type === 'success' &&
+									'border-emerald-500 bg-emerald-500/10 text-emerald-500',
+								importMessage.type === 'info' && 'border-blue-500 bg-blue-500/10 text-blue-500'
+							)}
+						>
+							{importMessage.text}
 						</p>
+					)}
 
-						<StyledImportTextarea
-							value={importJsonText}
-							onChange={(e) => setImportJsonText(e.target.value)}
-							placeholder="Paste character JSON data here..."
-						/>
-
-						{importMessage && (
-							<StyledImportMessage type={importMessage.type}>
-								{importMessage.text}
-							</StyledImportMessage>
-						)}
-
-						<StyledImportActions>
-							<StyledImportButton2 variant="cancel" onClick={handleImportCancel}>
-								Cancel
-							</StyledImportButton2>
-							<StyledImportButton2
-								variant="import"
-								onClick={handleImportCharacter}
-								disabled={isImporting || !importJsonText.trim()}
-							>
-								{isImporting ? 'Importing...' : 'Import Character'}
-							</StyledImportButton2>
-						</StyledImportActions>
-					</StyledImportModalContent>
-				</StyledModalOverlay>
-			)}
+					<DialogFooter className="flex justify-center gap-4">
+						<Button variant="outline" onClick={handleImportCancel}>
+							Cancel
+						</Button>
+						<Button
+							onClick={handleImportCharacter}
+							disabled={isImporting || !importJsonText.trim()}
+							className="bg-emerald-500 text-white hover:bg-emerald-600"
+						>
+							{isImporting ? 'Importing...' : 'Import Character'}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 
 			{/* Delete Confirmation Modal */}
-			{deleteModalOpen && characterToDelete && (
-				<StyledModalOverlay>
-					<StyledModalContent>
-						<StyledModalTitle>Delete Character</StyledModalTitle>
-						<StyledModalMessage>
-							Are you sure you want to delete "{characterToDelete.finalName || 'Unnamed Character'}
+			<Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+				<DialogContent className="max-w-md border-red-500">
+					<DialogHeader>
+						<DialogTitle className="text-center text-red-500">Delete Character</DialogTitle>
+						<DialogDescription className="text-foreground text-center leading-relaxed">
+							Are you sure you want to delete "{characterToDelete?.finalName || 'Unnamed Character'}
 							"?
 							<br />
 							This action cannot be undone.
-						</StyledModalMessage>
-						<StyledModalActions>
-							<StyledModalButton variant="cancel" onClick={handleCancelDelete}>
-								Cancel
-							</StyledModalButton>
-							<StyledModalButton variant="delete" onClick={handleConfirmDelete}>
-								Delete
-							</StyledModalButton>
-						</StyledModalActions>
-					</StyledModalContent>
-				</StyledModalOverlay>
-			)}
-		</StyledContainer>
+						</DialogDescription>
+					</DialogHeader>
+					<DialogFooter className="flex justify-center gap-4">
+						<Button variant="outline" onClick={handleCancelDelete}>
+							Cancel
+						</Button>
+						<Button variant="destructive" onClick={handleConfirmDelete}>
+							Delete
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+		</div>
 	);
 }
 

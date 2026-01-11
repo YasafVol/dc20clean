@@ -3,18 +3,8 @@ import { ancestriesData } from '../../lib/rulesdata/ancestries/ancestries';
 import { traitsData } from '../../lib/rulesdata/ancestries/traits';
 import TraitChoiceSelector from './components/TraitChoiceSelector';
 import type { IAncestry, ITrait, ITraitEffect } from '../../lib/rulesdata/types';
-import {
-	StyledOuterContainer,
-	StyledMainTitle,
-	StyledContainer,
-	StyledAncestryDetails,
-	StyledTitle,
-	StyledSubtitle,
-	StyledList,
-	StyledListItem,
-	StyledLabel,
-	StyledCheckbox
-} from './styles/SelectedAncestries.styles';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { cn } from '../../lib/utils';
 
 function SelectedAncestries() {
 	const { state, dispatch, calculationResult } = useCharacter();
@@ -63,124 +53,105 @@ function SelectedAncestries() {
 		dispatch({ type: 'SET_TRAITS', selectedTraitIds: currentTraits });
 	}
 
+	function renderTraitItem(traitId: string) {
+		const trait = getTrait(traitId);
+		if (!trait) return null;
+		const isSelected = selectedTraits.includes(traitId);
+		const wouldExceedBudget = !isSelected && ancestryPointsSpent + trait.cost > totalAncestryPoints;
+
+		return (
+			<li key={traitId} className="border-primary mb-3 rounded border-l bg-white/5 p-2">
+				<label
+					className={cn(
+						'text-foreground hover:text-primary flex cursor-pointer items-start gap-3 text-sm leading-relaxed',
+						wouldExceedBudget && 'opacity-50'
+					)}
+				>
+					<input
+						type="checkbox"
+						checked={isSelected}
+						disabled={wouldExceedBudget}
+						onChange={() => handleToggleTrait(traitId)}
+						className="accent-primary mt-1 h-[18px] w-[18px] shrink-0 cursor-pointer"
+					/>
+					<span>
+						{trait.name} ({trait.cost} pts) - {trait.description}
+						{wouldExceedBudget && <span className="text-destructive"> (Not enough points)</span>}
+					</span>
+				</label>
+
+				{/* Render choice selectors if trait is selected and has user choices */}
+				{isSelected &&
+					trait.effects?.map((effect: ITraitEffect, effectIndex: number) => {
+						if (effect.userChoiceRequired) {
+							return (
+								<TraitChoiceSelector
+									key={`${traitId}-${effectIndex}`}
+									trait={trait}
+									effect={effect}
+									effectIndex={effectIndex}
+								/>
+							);
+						}
+						return null;
+					})}
+			</li>
+		);
+	}
+
 	function renderAncestryTraits(ancestry: IAncestry) {
 		return (
-			<StyledAncestryDetails>
-				<StyledTitle>{ancestry.name}</StyledTitle>
+			<Card key={ancestry.id} className="border-white/50 bg-transparent">
+				<CardHeader className="pb-2">
+					<CardTitle className="text-primary text-center text-xl tracking-wide uppercase">
+						{ancestry.name}
+					</CardTitle>
+				</CardHeader>
+				<CardContent className="space-y-4">
+					<div>
+						<h3 className="text-primary border-b border-white/50 pb-1 text-lg font-bold">
+							Default Traits
+						</h3>
+						<ul className="mt-3 list-none p-0">
+							{(ancestry.defaultTraitIds || []).map((traitId) => renderTraitItem(traitId))}
+						</ul>
+					</div>
 
-				<StyledSubtitle>Default Traits</StyledSubtitle>
-				<StyledList>
-					{(ancestry.defaultTraitIds || []).map((traitId) => {
-						const trait = getTrait(traitId);
-						if (!trait) return null;
-						const isSelected = selectedTraits.includes(traitId);
-						const wouldExceedBudget =
-							!isSelected && ancestryPointsSpent + trait.cost > totalAncestryPoints;
-
-						return (
-							<StyledListItem key={traitId}>
-								<StyledLabel style={{ opacity: wouldExceedBudget ? 0.5 : 1 }}>
-									<StyledCheckbox
-										type="checkbox"
-										checked={isSelected}
-										disabled={wouldExceedBudget}
-										onChange={() => handleToggleTrait(traitId)}
-									/>
-									{trait.name} ({trait.cost} pts) - {trait.description}
-									{wouldExceedBudget && (
-										<span style={{ color: '#ff4444' }}> (Not enough points)</span>
-									)}
-								</StyledLabel>
-
-								{/* NEW: Render choice selectors if trait is selected and has user choices */}
-								{isSelected &&
-									trait.effects?.map((effect: ITraitEffect, effectIndex: number) => {
-										if (effect.userChoiceRequired) {
-											return (
-												<TraitChoiceSelector
-													key={`${traitId}-${effectIndex}`}
-													trait={trait}
-													effect={effect}
-													effectIndex={effectIndex}
-												/>
-											);
-										}
-										return null;
-									})}
-							</StyledListItem>
-						);
-					})}
-				</StyledList>
-
-				<StyledSubtitle>Expanded Traits</StyledSubtitle>
-				<StyledList>
-					{(ancestry.expandedTraitIds || []).map((traitId) => {
-						const trait = getTrait(traitId);
-						if (!trait) return null;
-						const isSelected = selectedTraits.includes(traitId);
-						const wouldExceedBudget =
-							!isSelected && ancestryPointsSpent + trait.cost > totalAncestryPoints;
-
-						return (
-							<StyledListItem key={traitId}>
-								<StyledLabel style={{ opacity: wouldExceedBudget ? 0.5 : 1 }}>
-									<StyledCheckbox
-										type="checkbox"
-										checked={isSelected}
-										disabled={wouldExceedBudget}
-										onChange={() => handleToggleTrait(traitId)}
-									/>
-									{trait.name} ({trait.cost} pts) - {trait.description}
-									{wouldExceedBudget && (
-										<span style={{ color: '#ff4444' }}> (Not enough points)</span>
-									)}
-								</StyledLabel>
-
-								{/* NEW: Render choice selectors if trait is selected and has user choices */}
-								{isSelected &&
-									trait.effects?.map((effect: ITraitEffect, effectIndex: number) => {
-										if (effect.userChoiceRequired) {
-											return (
-												<TraitChoiceSelector
-													key={`${traitId}-${effectIndex}`}
-													trait={trait}
-													effect={effect}
-													effectIndex={effectIndex}
-												/>
-											);
-										}
-										return null;
-									})}
-							</StyledListItem>
-						);
-					})}
-				</StyledList>
-			</StyledAncestryDetails>
+					<div>
+						<h3 className="text-primary border-b border-white/50 pb-1 text-lg font-bold">
+							Expanded Traits
+						</h3>
+						<ul className="mt-3 list-none p-0">
+							{(ancestry.expandedTraitIds || []).map((traitId) => renderTraitItem(traitId))}
+						</ul>
+					</div>
+				</CardContent>
+			</Card>
 		);
 	}
 
 	return (
-		<StyledOuterContainer>
-			<StyledMainTitle>
-				Ancestry Traits
+		<Card className="mt-8 border-white/50 bg-transparent">
+			<CardHeader>
+				<CardTitle className="text-primary font-cinzel text-center text-3xl font-bold tracking-wide">
+					Ancestry Traits
+				</CardTitle>
 				<div
-					style={{
-						fontSize: '0.9rem',
-						fontWeight: 'normal',
-						marginTop: '0.5rem',
-						color: ancestryPointsRemaining < 0 ? '#ff4444' : '#d1d5db'
-					}}
+					className={cn(
+						'mt-2 text-center text-sm',
+						ancestryPointsRemaining < 0 ? 'text-destructive' : 'text-muted-foreground'
+					)}
 				>
 					Spent: {ancestryPointsSpent} | Remaining: {ancestryPointsRemaining}/
 					{ancestryPointsSpent + ancestryPointsRemaining}
-					{ancestryPointsRemaining < 0 && <span style={{ color: '#ff4444' }}> (Over budget!)</span>}
+					{ancestryPointsRemaining < 0 && <span className="text-destructive"> (Over budget!)</span>}
 				</div>
-			</StyledMainTitle>
-			<StyledContainer>
+			</CardHeader>
+			<CardContent className="flex flex-col gap-8">
 				{selectedAncestry1 && renderAncestryTraits(selectedAncestry1)}
 				{selectedAncestry2 && renderAncestryTraits(selectedAncestry2)}
-			</StyledContainer>
-		</StyledOuterContainer>
+			</CardContent>
+		</Card>
 	);
 }
 

@@ -1,6 +1,5 @@
-import React from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
-import { StyledContainer, StyledTitle, StyledDetails } from './styles/AncestryPointsCounter.styles';
+import { cn } from '../../lib/utils';
 
 function AttributePointsCounter({ totalAttributePoints }: { totalAttributePoints: number }) {
 	const { calculationResult } = useCharacter();
@@ -13,15 +12,20 @@ function AttributePointsCounter({ totalAttributePoints }: { totalAttributePoints
 	const isOverBudget = remaining < 0;
 
 	return (
-		<StyledContainer>
-			<StyledTitle style={{ color: isOverBudget ? '#ff4444' : undefined }}>
+		<div className="mb-4 p-4 text-center">
+			<h2
+				className={cn(
+					'font-cinzel m-0 pb-2 text-2xl font-bold tracking-wide uppercase',
+					isOverBudget ? 'text-destructive' : 'text-primary'
+				)}
+			>
 				Attribute Points: {remaining}/{total}
-			</StyledTitle>
-			<StyledDetails>
+			</h2>
+			<div className="text-muted-foreground mt-2 text-sm">
 				Spent: {spent} | Remaining: {remaining}
-				{isOverBudget && <span style={{ color: '#ff4444' }}> (Over budget!)</span>}
-			</StyledDetails>
-		</StyledContainer>
+				{isOverBudget && <span className="text-destructive"> (Over budget!)</span>}
+			</div>
+		</div>
 	);
 }
 

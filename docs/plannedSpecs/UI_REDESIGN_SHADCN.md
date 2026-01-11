@@ -17,18 +17,18 @@ This specification details the migration of the DC20 Character Creator UI from a
 
 The following packages are required:
 
-| Package | Purpose |
-|---------|---------|
-| `tailwindcss` | Utility-first CSS framework |
-| `class-variance-authority` (cva) | Variant management for component styling |
-| `clsx` | Conditional class name construction |
-| `tailwind-merge` | Intelligent Tailwind class merging |
-| `@radix-ui/react-slot` | Polymorphic component support (asChild pattern) |
-| `@radix-ui/react-select` | Accessible select primitive |
-| `@radix-ui/react-scroll-area` | Custom scrollbar primitive |
-| `@radix-ui/react-separator` | Accessible separator primitive |
-| `@radix-ui/react-dialog` | Accessible dialog/modal primitive |
-| `@radix-ui/react-label` | Accessible label primitive |
+| Package                          | Purpose                                         |
+| -------------------------------- | ----------------------------------------------- |
+| `tailwindcss`                    | Utility-first CSS framework                     |
+| `class-variance-authority` (cva) | Variant management for component styling        |
+| `clsx`                           | Conditional class name construction             |
+| `tailwind-merge`                 | Intelligent Tailwind class merging              |
+| `@radix-ui/react-slot`           | Polymorphic component support (asChild pattern) |
+| `@radix-ui/react-select`         | Accessible select primitive                     |
+| `@radix-ui/react-scroll-area`    | Custom scrollbar primitive                      |
+| `@radix-ui/react-separator`      | Accessible separator primitive                  |
+| `@radix-ui/react-dialog`         | Accessible dialog/modal primitive               |
+| `@radix-ui/react-label`          | Accessible label primitive                      |
 
 ## 1.2 Utility Function
 
@@ -39,7 +39,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+	return twMerge(clsx(inputs));
 }
 ```
 
@@ -303,64 +303,65 @@ The theme uses OKLCH color space for perceptually uniform colors. The "dark fant
 @import 'tailwindcss';
 
 @theme {
-  /* Background colors - deep indigo/purple tones */
-  --color-background: oklch(0.15 0.03 280);
-  --color-foreground: oklch(0.93 0.01 280);
+	/* Background colors - deep indigo/purple tones */
+	--color-background: oklch(0.15 0.03 280);
+	--color-foreground: oklch(0.93 0.01 280);
 
-  /* Card/surface colors */
-  --color-card: oklch(0.18 0.035 280);
-  --color-card-foreground: oklch(0.93 0.01 280);
+	/* Card/surface colors */
+	--color-card: oklch(0.18 0.035 280);
+	--color-card-foreground: oklch(0.93 0.01 280);
 
-  /* Popover colors */
-  --color-popover: oklch(0.16 0.03 280);
-  --color-popover-foreground: oklch(0.93 0.01 280);
+	/* Popover colors */
+	--color-popover: oklch(0.16 0.03 280);
+	--color-popover-foreground: oklch(0.93 0.01 280);
 
-  /* Primary - amber/gold accent */
-  --color-primary: oklch(0.78 0.15 85);
-  --color-primary-foreground: oklch(0.15 0.03 280);
+	/* Primary - amber/gold accent */
+	--color-primary: oklch(0.78 0.15 85);
+	--color-primary-foreground: oklch(0.15 0.03 280);
 
-  /* Secondary - muted purple */
-  --color-secondary: oklch(0.25 0.05 280);
-  --color-secondary-foreground: oklch(0.93 0.01 280);
+	/* Secondary - muted purple */
+	--color-secondary: oklch(0.25 0.05 280);
+	--color-secondary-foreground: oklch(0.93 0.01 280);
 
-  /* Muted - subtle backgrounds */
-  --color-muted: oklch(0.22 0.04 280);
-  --color-muted-foreground: oklch(0.65 0.02 280);
+	/* Muted - subtle backgrounds */
+	--color-muted: oklch(0.22 0.04 280);
+	--color-muted-foreground: oklch(0.65 0.02 280);
 
-  /* Accent - bright gold for highlights */
-  --color-accent: oklch(0.75 0.13 85);
-  --color-accent-foreground: oklch(0.15 0.03 280);
+	/* Accent - bright gold for highlights */
+	--color-accent: oklch(0.75 0.13 85);
+	--color-accent-foreground: oklch(0.15 0.03 280);
 
-  /* Destructive - red for dangerous actions */
-  --color-destructive: oklch(0.55 0.2 25);
-  --color-destructive-foreground: oklch(0.95 0.01 25);
+	/* Destructive - red for dangerous actions */
+	--color-destructive: oklch(0.55 0.2 25);
+	--color-destructive-foreground: oklch(0.95 0.01 25);
 
-  /* Border and inputs */
-  --color-border: oklch(0.3 0.04 280);
-  --color-input: oklch(0.25 0.04 280);
-  --color-ring: oklch(0.78 0.15 85);
+	/* Border and inputs */
+	--color-border: oklch(0.3 0.04 280);
+	--color-input: oklch(0.25 0.04 280);
+	--color-ring: oklch(0.78 0.15 85);
 
-  /* Radius tokens */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+	/* Radius tokens */
+	--radius-sm: 0.25rem;
+	--radius-md: 0.5rem;
+	--radius-lg: 0.75rem;
+	--radius-xl: 1rem;
 }
 
 @layer base {
-  * {
-    border-color: var(--color-border);
-  }
-  body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-  }
+	* {
+		border-color: var(--color-border);
+	}
+	body {
+		background-color: var(--color-background);
+		color: var(--color-foreground);
+	}
 }
 ```
 
 ## 6. Execution Steps (Manual Implementation)
 
 ### Phase 1: Foundation ✅
+
 1. Create `src/lib/utils.ts` with `cn()` utility
 2. Create `src/components/ui/*.tsx` primitives:
    - `card.tsx`, `button.tsx`, `badge.tsx`, `tabs.tsx`
@@ -370,6 +371,7 @@ The theme uses OKLCH color space for perceptually uniform colors. The "dark fant
 4. Configure theme in `src/styles/globals.css`
 
 ### Phase 2: Character Creation Migration
+
 1. **Shell**: Rewrite `CharacterCreation.tsx` layout wrapper
 2. **Step Components** (migrate in order):
    - `ClassSelector.tsx` → delete `ClassSelector.styles.ts`
@@ -383,6 +385,7 @@ The theme uses OKLCH color space for perceptually uniform colors. The "dark fant
 3. **Cleanup**: Delete remaining `styles/` directory files
 
 ### Phase 3: Character Sheet Migration
+
 1. **Layout**: Rewrite `CharacterSheetDesktop.tsx` and `CharacterSheetMobile.tsx`
 2. **Components**: Migrate each component in `components/` subdirectory
 3. **Cleanup**: Delete `styles/` directory
@@ -392,6 +395,7 @@ The theme uses OKLCH color space for perceptually uniform colors. The "dark fant
 After migration, the following style files should be deleted:
 
 **Character Creation:**
+
 - `src/routes/character-creation/styles/AncestryPointsCounter.styles.ts`
 - `src/routes/character-creation/styles/AncestrySelector.styles.ts` ✅
 - `src/routes/character-creation/styles/Attributes.styles.ts` ✅
@@ -409,11 +413,13 @@ After migration, the following style files should be deleted:
 - `src/routes/character-creation/styles/shared/FeatureDisplay.styles.ts`
 
 **Character Sheet:**
+
 - All files in `src/routes/character-sheet/styles/`
 
 ## 8. Testing Checklist
 
 After each component migration:
+
 - [ ] Visual regression: Compare against current UI
 - [ ] Responsive: Test mobile/tablet/desktop breakpoints
 - [ ] Accessibility: Keyboard navigation, focus states, screen reader

@@ -13,58 +13,50 @@ import {
 	convertToEnhancedBuildData
 } from '../../lib/services/enhancedCharacterCalculator';
 import { SubclassSelector } from './SubclassSelector';
-import {
-	StyledContainer,
-	StyledTitle,
-	StyledSection,
-	StyledSectionTitle,
-	StyledCard,
-	StyledCardTitle,
-	StyledCardDescription,
-	StyledChoiceOptions,
-	StyledLabel,
-	StyledRadio,
-	StyledOptionDescription,
-	StyledNoSelection, // Keep this for use in ClassSelector
-	StyledBenefitsList,
-	StyledBenefit,
-	StyledBenefitName,
-	StyledBenefitDescription
-} from './styles/ClassFeatures.styles';
+import { cn } from '../../lib/utils';
 
 function ClassFeatures() {
 	const { state, dispatch } = useCharacter();
 
 	// Helper function to render a single choice card
 	const renderChoiceCard = (choice: any) => (
-		<StyledCard key={choice.id}>
-			<StyledCardTitle>{choice.prompt}</StyledCardTitle>
+		<div
+			key={choice.id}
+			className="hover:border-primary mb-4 rounded-lg border border-white/50 bg-transparent p-6 transition-colors"
+		>
+			<h4 className="text-primary mb-2 text-xl font-bold">{choice.prompt}</h4>
 			{choice.type === 'select_one' && (
-				<StyledChoiceOptions>
+				<div className="flex flex-col gap-2">
 					{choice.options.map((option: any) => {
 						const detailedDescription = getDetailedClassFeatureDescription(choice.id, option.value);
 						return (
-							<StyledLabel key={option.value}>
-								<StyledRadio
+							<label
+								key={option.value}
+								className="hover:text-primary text-foreground flex cursor-pointer items-start gap-3 rounded p-2 transition-colors hover:bg-white/5"
+							>
+								<input
 									type="radio"
 									name={choice.id}
 									value={option.value}
 									checked={selectedFeatureChoices[choice.id] === option.value}
 									onChange={() => handleFeatureChoice(choice.id, option.value)}
+									className="accent-primary mt-1 h-[18px] w-[18px] shrink-0 cursor-pointer"
 								/>
-								{option.label}
-								{(option.description || detailedDescription) && (
-									<StyledOptionDescription>
-										{option.description || detailedDescription}
-									</StyledOptionDescription>
-								)}
-							</StyledLabel>
+								<span className="leading-relaxed">
+									{option.label}
+									{(option.description || detailedDescription) && (
+										<span className="text-muted-foreground ml-2 text-sm italic">
+											{option.description || detailedDescription}
+										</span>
+									)}
+								</span>
+							</label>
 						);
 					})}
-				</StyledChoiceOptions>
+				</div>
 			)}
 			{choice.type === 'select_multiple' && (
-				<StyledChoiceOptions>
+				<div className="flex flex-col gap-2">
 					{choice.options.map((option: any) => {
 						// Handle arrays directly (no legacy JSON string support)
 						const currentValues: string[] = selectedFeatureChoices[choice.id]
@@ -78,8 +70,14 @@ function ClassFeatures() {
 						const detailedDescription = getDetailedClassFeatureDescription(choice.id, option.value);
 
 						return (
-							<StyledLabel key={option.value} style={{ opacity: isDisabled ? 0.5 : 1 }}>
-								<StyledRadio
+							<label
+								key={option.value}
+								className={cn(
+									'hover:text-primary text-foreground flex cursor-pointer items-start gap-3 rounded p-2 transition-colors hover:bg-white/5',
+									isDisabled && 'opacity-50'
+								)}
+							>
+								<input
 									type="checkbox"
 									name={choice.id}
 									value={option.value}
@@ -88,18 +86,21 @@ function ClassFeatures() {
 									onChange={(e) =>
 										handleMultipleFeatureChoice(choice.id, option.value, e.target.checked)
 									}
+									className="accent-primary mt-1 h-[18px] w-[18px] shrink-0 cursor-pointer"
 								/>
-								{option.label}
-								{(option.description || detailedDescription) && (
-									<StyledOptionDescription>
-										{option.description || detailedDescription}
-									</StyledOptionDescription>
-								)}
-							</StyledLabel>
+								<span className="leading-relaxed">
+									{option.label}
+									{(option.description || detailedDescription) && (
+										<span className="text-muted-foreground ml-2 text-sm italic">
+											{option.description || detailedDescription}
+										</span>
+									)}
+								</span>
+							</label>
 						);
 					})}
 					{choice.maxSelections && (
-						<StyledOptionDescription style={{ marginTop: '8px', fontStyle: 'italic' }}>
+						<span className="text-muted-foreground mt-2 text-sm italic">
 							Select up to {choice.maxSelections} options (
 							{selectedFeatureChoices[choice.id]
 								? Array.isArray(selectedFeatureChoices[choice.id])
@@ -107,11 +108,11 @@ function ClassFeatures() {
 									: 0
 								: 0}
 							/{choice.maxSelections} selected)
-						</StyledOptionDescription>
+						</span>
 					)}
-				</StyledChoiceOptions>
+				</div>
 			)}
-		</StyledCard>
+		</div>
 	);
 
 	const selectedClass = classesData.find(
@@ -428,223 +429,234 @@ function ClassFeatures() {
 	}
 
 	return (
-		<StyledContainer>
-			<StyledTitle>{selectedClass.name} Features</StyledTitle>
+		<div className="mt-8 rounded-xl border border-white/50 bg-transparent p-6">
+			<h2 className="text-primary border-primary mb-4 border-b-2 pb-2 text-center text-xl font-bold tracking-wide">
+				{selectedClass.name} Features
+			</h2>
 
 			{/* Starting Equipment Section */}
 			{selectedClassFeatures.startingEquipment && (
-				<StyledSection>
-					<StyledSectionTitle>Starting Equipment</StyledSectionTitle>
-					<StyledCard>
-						<StyledCardTitle>Equipment Package</StyledCardTitle>
-						<StyledBenefitsList>
+				<section className="mt-4">
+					<h3 className="text-primary border-primary mb-4 border-b-2 pb-2 text-2xl font-bold">
+						Starting Equipment
+					</h3>
+					<div className="hover:border-primary mb-4 rounded-lg border border-white/50 bg-transparent p-6 transition-colors">
+						<h4 className="text-primary mb-2 text-xl font-bold">Equipment Package</h4>
+						<div className="border-t border-white/10 pt-3">
 							{selectedClassFeatures.startingEquipment.weaponsOrShields && (
-								<StyledBenefit>
-									<StyledBenefitName>Weapons/Shields</StyledBenefitName>
-									<StyledBenefitDescription>
+								<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+									<h6 className="text-primary text-sm font-semibold">Weapons/Shields</h6>
+									<p className="text-foreground/70 text-sm">
 										{selectedClassFeatures.startingEquipment.weaponsOrShields.join(', ')}
-									</StyledBenefitDescription>
-								</StyledBenefit>
+									</p>
+								</div>
 							)}
 							{selectedClassFeatures.startingEquipment.rangedWeapon && (
-								<StyledBenefit>
-									<StyledBenefitName>Ranged Weapon</StyledBenefitName>
-									<StyledBenefitDescription>
+								<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+									<h6 className="text-primary text-sm font-semibold">Ranged Weapon</h6>
+									<p className="text-foreground/70 text-sm">
 										{selectedClassFeatures.startingEquipment.rangedWeapon}
-									</StyledBenefitDescription>
-								</StyledBenefit>
+									</p>
+								</div>
 							)}
 							{selectedClassFeatures.startingEquipment.armor && (
-								<StyledBenefit>
-									<StyledBenefitName>Armor</StyledBenefitName>
-									<StyledBenefitDescription>
+								<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+									<h6 className="text-primary text-sm font-semibold">Armor</h6>
+									<p className="text-foreground/70 text-sm">
 										{selectedClassFeatures.startingEquipment.armor}
-									</StyledBenefitDescription>
-								</StyledBenefit>
+									</p>
+								</div>
 							)}
 							{selectedClassFeatures.startingEquipment.packs && (
-								<StyledBenefit>
-									<StyledBenefitName>Adventure Packs</StyledBenefitName>
-									<StyledBenefitDescription>
+								<div className="border-primary/40 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+									<h6 className="text-primary text-sm font-semibold">Adventure Packs</h6>
+									<p className="text-foreground/70 text-sm">
 										{selectedClassFeatures.startingEquipment.packs}
-									</StyledBenefitDescription>
-								</StyledBenefit>
+									</p>
+								</div>
 							)}
-						</StyledBenefitsList>
-					</StyledCard>
-				</StyledSection>
+						</div>
+					</div>
+				</section>
 			)}
 
 			{/* Martial Path Section */}
 			{selectedClassFeatures.martialPath && (
-				<StyledSection>
-					<StyledSectionTitle>Martial Training</StyledSectionTitle>
-					<StyledCard>
-						<StyledCardTitle>Combat Proficiencies</StyledCardTitle>
-						<StyledBenefitsList>
+				<section className="mt-4">
+					<h3 className="text-primary border-primary mb-4 border-b-2 pb-2 text-2xl font-bold">
+						Martial Training
+					</h3>
+					<div className="hover:border-primary mb-4 rounded-lg border border-white/50 bg-transparent p-6 transition-colors">
+						<h4 className="text-primary mb-2 text-xl font-bold">Combat Proficiencies</h4>
+						<div className="border-t border-white/10 pt-3">
 							{selectedClassFeatures.martialPath.combatTraining?.weapons && (
-								<StyledBenefit>
-									<StyledBenefitName>Weapon Training</StyledBenefitName>
-									<StyledBenefitDescription>
+								<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+									<h6 className="text-primary text-sm font-semibold">Weapon Training</h6>
+									<p className="text-foreground/70 text-sm">
 										{selectedClassFeatures.martialPath.combatTraining.weapons.join(', ')}
-									</StyledBenefitDescription>
-								</StyledBenefit>
+									</p>
+								</div>
 							)}
 							{selectedClassFeatures.martialPath.combatTraining?.armor && (
-								<StyledBenefit>
-									<StyledBenefitName>Armor Training</StyledBenefitName>
-									<StyledBenefitDescription>
+								<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+									<h6 className="text-primary text-sm font-semibold">Armor Training</h6>
+									<p className="text-foreground/70 text-sm">
 										{selectedClassFeatures.martialPath.combatTraining.armor.join(', ')}
-									</StyledBenefitDescription>
-								</StyledBenefit>
+									</p>
+								</div>
 							)}
 							{selectedClassFeatures.martialPath.combatTraining?.shields && (
-								<StyledBenefit>
-									<StyledBenefitName>Shield Training</StyledBenefitName>
-									<StyledBenefitDescription>
+								<div className="border-primary/40 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+									<h6 className="text-primary text-sm font-semibold">Shield Training</h6>
+									<p className="text-foreground/70 text-sm">
 										{selectedClassFeatures.martialPath.combatTraining.shields.join(', ')}
-									</StyledBenefitDescription>
-								</StyledBenefit>
+									</p>
+								</div>
 							)}
-						</StyledBenefitsList>
-					</StyledCard>
+						</div>
+					</div>
 
 					{selectedClassFeatures.martialPath.staminaRegen && (
-						<StyledCard>
-							<StyledCardTitle>Stamina Regeneration</StyledCardTitle>
-							<StyledCardDescription>
+						<div className="hover:border-primary mb-4 rounded-lg border border-white/50 bg-transparent p-6 transition-colors">
+							<h4 className="text-primary mb-2 text-xl font-bold">Stamina Regeneration</h4>
+							<p className="text-foreground leading-relaxed">
 								{selectedClassFeatures.martialPath.staminaRegen.description}
-							</StyledCardDescription>
+							</p>
 							{selectedClassFeatures.martialPath.staminaRegen.conditions && (
-								<StyledBenefitsList>
+								<div className="border-t border-white/10 pt-3">
 									{selectedClassFeatures.martialPath.staminaRegen.conditions.map(
 										(condition, index) => (
-											<StyledBenefit key={index}>
-												<StyledBenefitDescription>• {condition}</StyledBenefitDescription>
-											</StyledBenefit>
+											<div
+												key={index}
+												className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2 last:mb-0"
+											>
+												<p className="text-foreground/70 text-sm">• {condition}</p>
+											</div>
 										)
 									)}
-								</StyledBenefitsList>
+								</div>
 							)}
-						</StyledCard>
+						</div>
 					)}
-				</StyledSection>
+				</section>
 			)}
 
 			{/* Spellcasting Path Section */}
 			{selectedClassFeatures.spellcastingPath && (
-				<StyledSection>
-					<StyledSectionTitle>Spellcasting Training</StyledSectionTitle>
+				<section className="mt-4">
+					<h3 className="text-primary border-primary mb-4 border-b-2 pb-2 text-2xl font-bold">
+						Spellcasting Training
+					</h3>
 
 					{/* Combat Training for Spellcasters */}
 					{(selectedClassFeatures.spellcastingPath.combatTraining?.armor ||
 						selectedClassFeatures.spellcastingPath.combatTraining?.shields) && (
-						<StyledCard>
-							<StyledCardTitle>Combat Proficiencies</StyledCardTitle>
-							<StyledBenefitsList>
+						<div className="hover:border-primary mb-4 rounded-lg border border-white/50 bg-transparent p-6 transition-colors">
+							<h4 className="text-primary mb-2 text-xl font-bold">Combat Proficiencies</h4>
+							<div className="border-t border-white/10 pt-3">
 								{selectedClassFeatures.spellcastingPath.combatTraining?.armor && (
-									<StyledBenefit>
-										<StyledBenefitName>Armor Training</StyledBenefitName>
-										<StyledBenefitDescription>
+									<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+										<h6 className="text-primary text-sm font-semibold">Armor Training</h6>
+										<p className="text-foreground/70 text-sm">
 											{selectedClassFeatures.spellcastingPath.combatTraining.armor.join(', ')}
-										</StyledBenefitDescription>
-									</StyledBenefit>
+										</p>
+									</div>
 								)}
 								{selectedClassFeatures.spellcastingPath.combatTraining?.shields && (
-									<StyledBenefit>
-										<StyledBenefitName>Shield Training</StyledBenefitName>
-										<StyledBenefitDescription>
+									<div className="border-primary/40 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+										<h6 className="text-primary text-sm font-semibold">Shield Training</h6>
+										<p className="text-foreground/70 text-sm">
 											{selectedClassFeatures.spellcastingPath.combatTraining.shields.join(', ')}
-										</StyledBenefitDescription>
-									</StyledBenefit>
+										</p>
+									</div>
 								)}
-							</StyledBenefitsList>
-						</StyledCard>
+							</div>
+						</div>
 					)}
 
 					{/* Spell List Information */}
 					{selectedClassFeatures.spellcastingPath.spellList && (
-						<StyledCard>
-							<StyledCardTitle>Spell List Access</StyledCardTitle>
-							<StyledBenefitsList>
+						<div className="hover:border-primary mb-4 rounded-lg border border-white/50 bg-transparent p-6 transition-colors">
+							<h4 className="text-primary mb-2 text-xl font-bold">Spell List Access</h4>
+							<div className="border-t border-white/10 pt-3">
 								{selectedClassFeatures.spellcastingPath.spellList.listName && (
-									<StyledBenefit>
-										<StyledBenefitName>Spell List</StyledBenefitName>
-										<StyledBenefitDescription>
+									<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+										<h6 className="text-primary text-sm font-semibold">Spell List</h6>
+										<p className="text-foreground/70 text-sm">
 											{selectedClassFeatures.spellcastingPath.spellList.listName}
-										</StyledBenefitDescription>
-									</StyledBenefit>
+										</p>
+									</div>
 								)}
 								{(() => {
 									const availableSchools = getAvailableSpellSchools(selectedClassFeatures);
 									return availableSchools.length > 0 ? (
-										<StyledBenefit>
-											<StyledBenefitName>Available Schools</StyledBenefitName>
-											<StyledBenefitDescription>
+										<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+											<h6 className="text-primary text-sm font-semibold">Available Schools</h6>
+											<p className="text-foreground/70 text-sm">
 												{selectedClassFeatures.spellcastingPath.spellList?.type === 'all_schools'
 													? `Choose ${selectedClassFeatures.spellcastingPath.spellList.schoolCount || 'any'} from: ${availableSchools.join(', ')}`
 													: availableSchools.join(', ')}
-											</StyledBenefitDescription>
-										</StyledBenefit>
+											</p>
+										</div>
 									) : null;
 								})()}
 								{selectedClassFeatures.spellcastingPath.spellList.spellTags && (
-									<StyledBenefit>
-										<StyledBenefitName>Available Spell Tags</StyledBenefitName>
-										<StyledBenefitDescription>
+									<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+										<h6 className="text-primary text-sm font-semibold">Available Spell Tags</h6>
+										<p className="text-foreground/70 text-sm">
 											{selectedClassFeatures.spellcastingPath.spellList.spellTags.join(', ')}
-										</StyledBenefitDescription>
-									</StyledBenefit>
+										</p>
+									</div>
 								)}
 								{selectedClassFeatures.spellcastingPath.spellList.description && (
-									<StyledBenefit>
-										<StyledBenefitName>Selection Method</StyledBenefitName>
-										<StyledBenefitDescription>
+									<div className="border-primary/40 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+										<h6 className="text-primary text-sm font-semibold">Selection Method</h6>
+										<p className="text-foreground/70 text-sm">
 											{selectedClassFeatures.spellcastingPath.spellList.description}
-										</StyledBenefitDescription>
-									</StyledBenefit>
+										</p>
+									</div>
 								)}
-							</StyledBenefitsList>
+							</div>
 							{selectedClassFeatures.spellcastingPath.spellList.betaNote && (
-								<StyledCardDescription>
+								<p className="text-foreground mt-2 leading-relaxed">
 									<strong>Beta Note:</strong>{' '}
 									{selectedClassFeatures.spellcastingPath.spellList.betaNote}
-								</StyledCardDescription>
+								</p>
 							)}
-						</StyledCard>
+						</div>
 					)}
 
 					{/* Spellcasting Progression */}
-					<StyledCard>
-						<StyledCardTitle>Spellcasting Progression</StyledCardTitle>
-						<StyledBenefitsList>
+					<div className="hover:border-primary mb-4 rounded-lg border border-white/50 bg-transparent p-6 transition-colors">
+						<h4 className="text-primary mb-2 text-xl font-bold">Spellcasting Progression</h4>
+						<div className="border-t border-white/10 pt-3">
 							{selectedClassFeatures.spellcastingPath.cantrips && (
-								<StyledBenefit>
-									<StyledBenefitName>Cantrips Known</StyledBenefitName>
-									<StyledBenefitDescription>
+								<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+									<h6 className="text-primary text-sm font-semibold">Cantrips Known</h6>
+									<p className="text-foreground/70 text-sm">
 										{selectedClassFeatures.spellcastingPath.cantrips.knownIncreasesBy}
-									</StyledBenefitDescription>
-								</StyledBenefit>
+									</p>
+								</div>
 							)}
 							{selectedClassFeatures.spellcastingPath.spells && (
-								<StyledBenefit>
-									<StyledBenefitName>Spells Known</StyledBenefitName>
-									<StyledBenefitDescription>
+								<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+									<h6 className="text-primary text-sm font-semibold">Spells Known</h6>
+									<p className="text-foreground/70 text-sm">
 										{selectedClassFeatures.spellcastingPath.spells.knownIncreasesBy}
-									</StyledBenefitDescription>
-								</StyledBenefit>
+									</p>
+								</div>
 							)}
 							{selectedClassFeatures.spellcastingPath.manaPoints && (
-								<StyledBenefit>
-									<StyledBenefitName>Mana Points</StyledBenefitName>
-									<StyledBenefitDescription>
+								<div className="border-primary/40 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+									<h6 className="text-primary text-sm font-semibold">Mana Points</h6>
+									<p className="text-foreground/70 text-sm">
 										{selectedClassFeatures.spellcastingPath.manaPoints.maximumIncreasesBy}
-									</StyledBenefitDescription>
-								</StyledBenefit>
+									</p>
+								</div>
 							)}
-						</StyledBenefitsList>
-					</StyledCard>
-				</StyledSection>
+						</div>
+					</div>
+				</section>
 			)}
 
 			{/* Class Features - Grouped by Level with Choices */}
@@ -656,28 +668,36 @@ function ClassFeatures() {
 					const levelChoices = featureChoices.filter((choice) => choice.level === levelNum);
 
 					return (
-						<StyledSection key={levelStr}>
-							<StyledSectionTitle>Level {levelStr} Features</StyledSectionTitle>
+						<section key={levelStr} className="mt-4">
+							<h3 className="text-primary border-primary mb-4 border-b-2 pb-2 text-2xl font-bold">
+								Level {levelStr} Features
+							</h3>
 							{features.map((feature, index) => (
-								<StyledCard key={index}>
-									<StyledCardTitle>{feature.featureName}</StyledCardTitle>
-									<StyledCardDescription>{feature.description}</StyledCardDescription>
+								<div
+									key={index}
+									className="hover:border-primary mb-4 rounded-lg border border-white/50 bg-transparent p-6 transition-colors"
+								>
+									<h4 className="text-primary mb-2 text-xl font-bold">{feature.featureName}</h4>
+									<p className="text-foreground leading-relaxed">{feature.description}</p>
 									{feature.benefits && (
-										<StyledBenefitsList>
+										<div className="mt-3 border-t border-white/10 pt-3">
 											{feature.benefits.map((benefit, benefitIndex) => (
-												<StyledBenefit key={benefitIndex}>
-													<StyledBenefitName>{benefit.name}</StyledBenefitName>
-													<StyledBenefitDescription>{benefit.description}</StyledBenefitDescription>
-												</StyledBenefit>
+												<div
+													key={benefitIndex}
+													className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2 last:mb-0"
+												>
+													<h6 className="text-primary text-sm font-semibold">{benefit.name}</h6>
+													<p className="text-foreground/70 text-sm">{benefit.description}</p>
+												</div>
 											))}
-										</StyledBenefitsList>
+										</div>
 									)}
-								</StyledCard>
+								</div>
 							))}
 
 							{/* Render choices for this level */}
 							{levelChoices.length > 0 && levelChoices.map(renderChoiceCard)}
-						</StyledSection>
+						</section>
 					);
 				})}
 
@@ -700,7 +720,7 @@ function ClassFeatures() {
 					}}
 				/>
 			)}
-		</StyledContainer>
+		</div>
 	);
 }
 

@@ -1,10 +1,9 @@
 import React from 'react';
 import { tradesData } from '../../../lib/rulesdata/trades';
-import {
-	MASTERY_TIERS,
-	type MasteryTierDefinition
-} from '../../../lib/rulesdata/progression/levelCaps';
-// Types moved from deleted BackgroundPointsManager
+import { MASTERY_TIERS } from '../../../lib/rulesdata/progression/levelCaps';
+import { cn } from '../../../lib/utils';
+import { Button } from '../../../components/ui/button';
+
 interface BackgroundPointsData {
 	skillPointsUsed: number;
 	tradePointsUsed: number;
@@ -54,18 +53,7 @@ const getMasteryInfo = (level: number, maxMastery: number): MasteryInfo => {
 		available: level <= maxMastery
 	};
 };
-import {
-	StyledTabContent,
-	StyledSelectionGrid,
-	StyledSelectionItem,
-	StyledSelectionHeader,
-	StyledSelectionName,
-	StyledProficiencySelector,
-	StyledProficiencyButton,
-	StyledPointsRemaining
-} from '../styles/Background.styles';
 
-// Combine trades and knowledge for selection
 const allTradesAndKnowledge = tradesData;
 
 const ATTRIBUTE_LABELS: Record<'might' | 'agility' | 'charisma' | 'intelligence', string> = {
@@ -100,23 +88,18 @@ const TradesTab: React.FC<TradesTabProps> = ({
 		return pointsUsed + pointCost <= availablePoints;
 	};
 
-	// Enhanced validation including mastery limits
 	const canSelectMastery = (tradeId: string, targetLevel: number): boolean => {
-		// Check mastery limit
 		if (targetLevel > masteryLimits.maxTradeMastery) return false;
 
-		// Check Adept (level 2+) limits using new mastery cap system
 		if (targetLevel >= 2) {
 			const currentLevel = currentTrades[tradeId] || 0;
 			const currentlyAdept = currentLevel >= 2;
 
-			// If this trade isn't currently Adept and we're at the limit, can't select
 			if (!currentlyAdept && masteryLimits.currentAdeptCount >= masteryLimits.maxAdeptCount) {
 				return false;
 			}
 		}
 
-		// Check point availability
 		const pointCost = targetLevel - (currentTrades[tradeId] || 0);
 		return canIncreaseProficiency(
 			pointCost,
@@ -125,86 +108,41 @@ const TradesTab: React.FC<TradesTabProps> = ({
 		);
 	};
 
-	// Helper function for consistent button styling
-	const getButtonStyle = (enabled: boolean, variant: 'primary' | 'danger' = 'primary') => ({
-		padding: '0.5rem 1rem',
-		backgroundColor: enabled ? (variant === 'primary' ? '#3b82f6' : '#ef4444') : '#6b7280',
-		color: 'white',
-		border: 'none',
-		borderRadius: '6px',
-		fontSize: '0.875rem',
-		fontWeight: '500',
-		cursor: enabled ? 'pointer' : 'not-allowed',
-		transition: 'all 0.2s ease',
-		opacity: enabled ? 1 : 0.6,
-		':hover': enabled
-			? {
-					backgroundColor: variant === 'primary' ? '#2563eb' : '#dc2626',
-					transform: 'translateY(-1px)',
-					boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
-				}
-			: {}
-	});
-
 	const hasConversions =
 		conversions.skillToTradeConversions > 0 ||
 		conversions.tradeToSkillConversions > 0 ||
 		conversions.tradeToLanguageConversions > 0;
 
+	const tradePointsRemaining = pointsData.availableTradePoints - pointsData.tradePointsUsed;
+	const canConvertTradeToSkill = tradePointsRemaining >= 2;
+	const canConvertTradeToLanguage = tradePointsRemaining >= 1;
+
 	return (
-		<StyledTabContent>
+		<div className="mx-auto">
 			{/* Adept Limit Warning */}
 			{masteryLimits.currentAdeptCount > masteryLimits.maxAdeptCount && (
-				<div
-					style={{
-						background: '#fee2e2',
-						border: '1px solid #fecaca',
-						color: '#991b1b',
-						padding: '0.75rem',
-						borderRadius: '0.5rem',
-						marginBottom: '1rem'
-					}}
-				>
+				<div className="bg-destructive/10 border-destructive text-destructive mb-4 rounded-lg border p-3">
 					⚠️ You have exceeded your Adept limit. Currently: {masteryLimits.currentAdeptCount}/
 					{masteryLimits.maxAdeptCount} Adept selections.
 				</div>
 			)}
 
 			{/* Mastery Limits Info */}
-			<div
-				style={{
-					background: '#f3f4f6',
-					border: '1px solid #d1d5db',
-					padding: '0.5rem',
-					borderRadius: '0.375rem',
-					marginBottom: '1rem',
-					fontSize: '0.875rem'
-				}}
-			>
+			<div className="bg-muted/30 border-border mb-4 rounded-md border p-3 text-sm">
 				<strong>Mastery Limits:</strong> Max level {masteryLimits.maxTradeMastery} (
 				{MASTERY_TIERS[masteryLimits.maxTradeMastery]?.name})
 				{masteryLimits.maxTradeMastery >= 2 && masteryLimits.maxAdeptCount < 999 && (
-					<div style={{ marginTop: '0.25rem', color: '#6366f1' }}>
+					<div className="text-primary mt-1">
 						Adept slots: {masteryLimits.currentAdeptCount} / {masteryLimits.maxAdeptCount} used
 					</div>
 				)}
 			</div>
 
-			<StyledPointsRemaining>
-				Trade Points: {pointsData.availableTradePoints - pointsData.tradePointsUsed} /{' '}
-				{pointsData.availableTradePoints} remaining
+			{/* Points Remaining */}
+			<div className="text-destructive mb-6 text-center text-lg font-bold">
+				Trade Points: {tradePointsRemaining} / {pointsData.availableTradePoints} remaining
 				{hasConversions && (
-					<div
-						style={{
-							fontSize: '0.9rem',
-							color: '#6366f1',
-							marginTop: '0.5rem',
-							padding: '0.25rem 0.5rem',
-							backgroundColor: '#6366f11a',
-							borderRadius: '4px',
-							border: '1px solid #6366f133'
-						}}
-					>
+					<div className="bg-primary/10 border-primary/20 text-primary mt-2 rounded border px-2 py-1 text-sm">
 						Active conversions:{' '}
 						{conversions.skillToTradeConversions > 0
 							? `${conversions.skillToTradeConversions} skill → ${conversions.skillToTradeConversions * 2} trade`
@@ -224,84 +162,42 @@ const TradesTab: React.FC<TradesTabProps> = ({
 							: ''}
 					</div>
 				)}
-				<div
-					style={{
-						marginTop: '0.75rem',
-						display: 'flex',
-						gap: '0.5rem',
-						flexWrap: 'wrap'
-					}}
-				>
-					<button
+				<div className="mt-3 flex flex-wrap justify-center gap-2">
+					<Button
+						variant="outline"
+						size="sm"
 						onClick={actions.convertTradeToSkill}
-						disabled={pointsData.availableTradePoints - pointsData.tradePointsUsed < 2}
-						style={getButtonStyle(
-							pointsData.availableTradePoints - pointsData.tradePointsUsed >= 2
-						)}
-						onMouseEnter={(e) => {
-							if (pointsData.availableTradePoints - pointsData.tradePointsUsed >= 2) {
-								e.currentTarget.style.backgroundColor = '#2563eb';
-								e.currentTarget.style.transform = 'translateY(-1px)';
-								e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
-							}
-						}}
-						onMouseLeave={(e) => {
-							if (pointsData.availableTradePoints - pointsData.tradePointsUsed >= 2) {
-								e.currentTarget.style.backgroundColor = '#3b82f6';
-								e.currentTarget.style.transform = 'translateY(0)';
-								e.currentTarget.style.boxShadow = 'none';
-							}
-						}}
+						disabled={!canConvertTradeToSkill}
+						className="border-white/50 bg-transparent"
 					>
 						Convert 2 Trade → 1 Skill Point
-					</button>
-					<button
+					</Button>
+					<Button
+						variant="outline"
+						size="sm"
 						onClick={actions.convertTradeToLanguage}
-						disabled={pointsData.availableTradePoints - pointsData.tradePointsUsed < 1}
-						style={getButtonStyle(
-							pointsData.availableTradePoints - pointsData.tradePointsUsed >= 1
-						)}
-						onMouseEnter={(e) => {
-							if (pointsData.availableTradePoints - pointsData.tradePointsUsed >= 1) {
-								e.currentTarget.style.backgroundColor = '#2563eb';
-								e.currentTarget.style.transform = 'translateY(-1px)';
-								e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
-							}
-						}}
-						onMouseLeave={(e) => {
-							if (pointsData.availableTradePoints - pointsData.tradePointsUsed >= 1) {
-								e.currentTarget.style.backgroundColor = '#3b82f6';
-								e.currentTarget.style.transform = 'translateY(0)';
-								e.currentTarget.style.boxShadow = 'none';
-							}
-						}}
+						disabled={!canConvertTradeToLanguage}
+						className="border-white/50 bg-transparent"
 					>
 						Convert 1 Trade → 2 Language Points
-					</button>
-					<button
+					</Button>
+					<Button
+						variant="outline"
+						size="sm"
 						onClick={actions.resetConversions}
 						disabled={!hasConversions}
-						style={getButtonStyle(hasConversions, 'danger')}
-						onMouseEnter={(e) => {
-							if (hasConversions) {
-								e.currentTarget.style.backgroundColor = '#dc2626';
-								e.currentTarget.style.transform = 'translateY(-1px)';
-								e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
-							}
-						}}
-						onMouseLeave={(e) => {
-							if (hasConversions) {
-								e.currentTarget.style.backgroundColor = '#ef4444';
-								e.currentTarget.style.transform = 'translateY(0)';
-								e.currentTarget.style.boxShadow = 'none';
-							}
-						}}
+						className={cn(
+							'border-white/50 bg-transparent',
+							hasConversions && 'hover:border-destructive hover:text-destructive'
+						)}
 					>
 						Reset Conversions
-					</button>
+					</Button>
 				</div>
-			</StyledPointsRemaining>
-			<StyledSelectionGrid>
+			</div>
+
+			{/* Selection Grid */}
+			<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 				{allTradesAndKnowledge.map((trade) => {
 					const currentLevel = currentTrades[trade.id] || 0;
 					const masteryInfo = getMasteryInfo(currentLevel, masteryLimits.maxTradeMastery);
@@ -313,55 +209,58 @@ const TradesTab: React.FC<TradesTabProps> = ({
 						.join('/');
 
 					return (
-						<StyledSelectionItem key={trade.id} data-testid={`trade-item-${trade.id}`}>
-							<StyledSelectionHeader>
-								<StyledSelectionName>{trade.name}</StyledSelectionName>
-								<div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+						<div
+							key={trade.id}
+							data-testid={`trade-item-${trade.id}`}
+							className="hover:border-primary rounded-lg border border-white/50 bg-transparent p-4 transition-colors"
+						>
+							<div className="mb-2 flex items-center justify-between">
+								<h4 className="text-primary text-lg font-semibold tracking-wide uppercase">
+									{trade.name}
+								</h4>
+								<span className="text-muted-foreground text-xs">
 									{masteryInfo.name} (+{masteryInfo.bonus}) • {attributeList}
-								</div>
-							</StyledSelectionHeader>
-							<div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>
-								{trade.description}
+								</span>
 							</div>
+							<p className="text-muted-foreground mb-2 text-sm">{trade.description}</p>
 							{(trade as any).tools && (
-								<div
-									style={{
-										fontSize: '0.8rem',
-										color: '#fbbf24',
-										marginBottom: '0.5rem',
-										fontStyle: 'italic'
-									}}
-								>
-									Tools: {(trade as any).tools}
-								</div>
+								<p className="text-primary mb-2 text-sm italic">Tools: {(trade as any).tools}</p>
 							)}
-							<StyledProficiencySelector>
+							<div className="flex flex-wrap gap-2">
 								{[0, 1, 2, 3, 4, 5].map((level) => {
 									const masteryDisplay = getMasteryInfo(level, masteryLimits.maxTradeMastery);
 									const canSelect = canSelectMastery(trade.id, level);
+									const isActive = currentLevel === level;
+									const isDisabled = !canSelect && !isActive;
 
 									return (
-										<StyledProficiencyButton
+										<button
 											key={level}
-											$active={currentLevel === level}
-											$disabled={!canSelect && level !== currentLevel}
 											title={`${masteryDisplay.name} (+${masteryDisplay.bonus})`}
 											onClick={() => {
-												if (canSelect || level === currentLevel) {
+												if (canSelect || isActive) {
 													onTradeChange(trade.id, level);
 												}
 											}}
+											className={cn(
+												'rounded-md border px-3 py-1.5 text-sm font-semibold transition-colors',
+												isActive
+													? 'border-primary bg-primary text-primary-foreground'
+													: 'text-foreground border-white/50 bg-transparent',
+												isDisabled && 'cursor-not-allowed opacity-50',
+												!isDisabled && !isActive && 'hover:border-primary'
+											)}
 										>
 											{level}
-										</StyledProficiencyButton>
+										</button>
 									);
 								})}
-							</StyledProficiencySelector>
-						</StyledSelectionItem>
+							</div>
+						</div>
 					);
 				})}
-			</StyledSelectionGrid>
-		</StyledTabContent>
+			</div>
+		</div>
 	);
 };
 

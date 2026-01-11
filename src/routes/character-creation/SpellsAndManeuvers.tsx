@@ -5,29 +5,8 @@ import { allManeuvers, ManeuverType } from '../../lib/rulesdata/martials/maneuve
 import { SpellSchool, type ClassName } from '../../lib/rulesdata/schemas/spell.schema';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
-import {
-	StyledContainer,
-	StyledTitle,
-	StyledSection,
-	StyledSectionTitle,
-	StyledGrid,
-	StyledCard,
-	StyledCardHeader,
-	StyledCardTitle,
-	StyledCardDescription,
-	StyledCardCost,
-	StyledCardType,
-	StyledCardActions,
-	StyledButton,
-	StyledTabContainer,
-	StyledTabButton,
-	StyledEmptyState,
-	StyledEmptyTitle,
-	StyledEmptyText,
-	StyledSelectedCount,
-	StyledFilterContainer,
-	StyledFilterButton
-} from './styles/SpellsAndManeuvers.styles';
+import { cn } from '../../lib/utils';
+import { Button } from '../../components/ui/button';
 
 // Simple deep equality helper for arrays to replace JSON.stringify comparison
 function arraysEqual<T>(a: T[], b: T[]): boolean {
@@ -398,75 +377,105 @@ const SpellsAndManeuvers: React.FC = () => {
 
 	if (!state.classId) {
 		return (
-			<StyledContainer>
-				<StyledTitle>Spells & Maneuvers</StyledTitle>
-				<StyledEmptyState>
-					<StyledEmptyTitle>No Class Selected</StyledEmptyTitle>
-					<StyledEmptyText>
+			<div className="min-h-screen p-8">
+				<h1 className="font-cinzel text-primary mb-8 text-center text-3xl font-bold tracking-wide drop-shadow-lg">
+					Spells & Maneuvers
+				</h1>
+				<div className="text-muted-foreground py-16 text-center">
+					<h3 className="mb-4 text-2xl text-purple-400">No Class Selected</h3>
+					<p className="text-base leading-relaxed">
 						Please select a class first to see available spells and maneuvers.
-					</StyledEmptyText>
-				</StyledEmptyState>
-			</StyledContainer>
+					</p>
+				</div>
+			</div>
 		);
 	}
 
 	return (
-		<StyledContainer>
-			<StyledTitle>Spells & Maneuvers</StyledTitle>
+		<div className="min-h-screen p-8">
+			<h1 className="font-cinzel text-primary mb-8 text-center text-3xl font-bold tracking-wide drop-shadow-lg">
+				Spells & Maneuvers
+			</h1>
 
-			<StyledTabContainer>
+			{/* Tab Container */}
+			<div className="mb-8 flex justify-center gap-4">
 				{/* Only show spells tab if there are spells available */}
 				{availableSpells.length > 0 && (
-					<StyledTabButton $active={activeTab === 'spells'} onClick={() => setActiveTab('spells')}>
+					<button
+						onClick={() => setActiveTab('spells')}
+						className={cn(
+							'rounded-lg border-2 px-6 py-3 font-bold transition-all hover:-translate-y-0.5',
+							activeTab === 'spells'
+								? 'border-primary bg-primary text-primary-foreground'
+								: 'border-purple-500 bg-transparent text-purple-500 hover:bg-purple-500 hover:text-white'
+						)}
+					>
 						Spells ({selectedSpells.length}/{spellCounts.cantrips + spellCounts.spells})
-					</StyledTabButton>
+					</button>
 				)}
 				{/* Only show maneuvers tab if there are maneuvers available */}
 				{maneuverCount > 0 && (
-					<StyledTabButton
-						$active={activeTab === 'maneuvers'}
+					<button
 						onClick={() => setActiveTab('maneuvers')}
+						className={cn(
+							'rounded-lg border-2 px-6 py-3 font-bold transition-all hover:-translate-y-0.5',
+							activeTab === 'maneuvers'
+								? 'border-primary bg-primary text-primary-foreground'
+								: 'border-purple-500 bg-transparent text-purple-500 hover:bg-purple-500 hover:text-white'
+						)}
 					>
 						Maneuvers ({selectedManeuvers.length}/{maneuverCount})
-					</StyledTabButton>
+					</button>
 				)}
-			</StyledTabContainer>
+			</div>
 
 			{activeTab === 'spells' && availableSpells.length > 0 && (
-				<StyledSection>
-					<StyledSectionTitle>
+				<section className="mb-8">
+					<h2 className="text-primary mb-4 text-center text-2xl">
 						Spells for {state.classId} (Level {state.level})
-					</StyledSectionTitle>
+					</h2>
 
-					<StyledSelectedCount>
+					{/* Selected Count */}
+					<div className="bg-primary/10 border-primary/30 text-primary mx-auto mb-4 max-w-md rounded-lg border p-2 text-center font-bold">
 						Total Selected: {selectedSpells.length}/{spellCounts.cantrips + spellCounts.spells}
-					</StyledSelectedCount>
+					</div>
 
-					<StyledFilterContainer>
-						<StyledFilterButton
-							$active={spellFilter === 'all'}
+					{/* Filter Buttons */}
+					<div className="mb-6 flex flex-wrap justify-center gap-2">
+						<button
 							onClick={() => setSpellFilter('all')}
+							className={cn(
+								'rounded-md border-2 px-4 py-2 text-sm font-bold transition-all hover:-translate-y-0.5',
+								spellFilter === 'all'
+									? 'border-primary bg-primary text-primary-foreground'
+									: 'text-muted-foreground border-muted-foreground hover:bg-muted-foreground bg-transparent hover:text-white'
+							)}
 						>
 							All Schools
-						</StyledFilterButton>
+						</button>
 						{Object.values(SpellSchool).map((school) => (
-							<StyledFilterButton
+							<button
 								key={school}
-								$active={spellFilter === school}
 								onClick={() => setSpellFilter(school)}
+								className={cn(
+									'rounded-md border-2 px-4 py-2 text-sm font-bold transition-all hover:-translate-y-0.5',
+									spellFilter === school
+										? 'border-primary bg-primary text-primary-foreground'
+										: 'text-muted-foreground border-muted-foreground hover:bg-muted-foreground bg-transparent hover:text-white'
+								)}
 							>
 								{school}
-							</StyledFilterButton>
+							</button>
 						))}
-					</StyledFilterContainer>
+					</div>
 
 					{filteredSpells.length === 0 ? (
-						<StyledEmptyState>
-							<StyledEmptyTitle>No Spells Available</StyledEmptyTitle>
-							<StyledEmptyText>
+						<div className="text-muted-foreground py-16 text-center">
+							<h3 className="mb-4 text-2xl text-purple-400">No Spells Available</h3>
+							<p className="text-base leading-relaxed">
 								No spells are available for your class and level with the current filter.
-							</StyledEmptyText>
-						</StyledEmptyState>
+							</p>
+						</div>
 					) : (
 						<>
 							{/* Cantrips Section */}
@@ -479,48 +488,54 @@ const SpellsAndManeuvers: React.FC = () => {
 								const maxCantrips = spellCounts.cantrips;
 
 								return cantrips.length > 0 ? (
-									<div style={{ marginBottom: '2rem' }}>
-										<h3
-											style={{
-												color: '#fbbf24',
-												marginBottom: '1rem',
-												fontSize: '1.2rem',
-												fontWeight: 'bold'
-											}}
-										>
+									<div className="mb-8">
+										<h3 className="text-primary mb-4 text-xl font-bold">
 											Cantrips ({currentCantrips}/{maxCantrips})
 										</h3>
-										<StyledGrid>
+										<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 											{cantrips.map((spell) => {
 												const isSelected = selectedSpells.includes(spell.name);
 												const canSelect = currentCantrips < maxCantrips || isSelected;
 
 												return (
-													<StyledCard key={spell.name} $selected={isSelected}>
-														<StyledCardHeader>
-															<StyledCardTitle>{spell.name}</StyledCardTitle>
-															<StyledCardType>{spell.school}</StyledCardType>
-															<StyledCardCost>
+													<div
+														key={spell.name}
+														className={cn(
+															'rounded-xl border-2 bg-gradient-to-br from-indigo-950 to-indigo-900 p-6 shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl',
+															isSelected
+																? 'border-primary opacity-100'
+																: 'hover:border-primary border-purple-500 opacity-80 hover:opacity-100'
+														)}
+													>
+														<div className="mb-4 flex flex-wrap items-start justify-between gap-2">
+															<h3 className="text-primary flex-1 text-xl font-bold">
+																{spell.name}
+															</h3>
+															<span className="rounded bg-purple-500/20 px-2 py-1 text-xs font-bold tracking-wide text-purple-400 uppercase">
+																{spell.school}
+															</span>
+															<span className="rounded bg-red-500/20 px-2 py-1 text-sm font-bold text-red-500">
 																{spell.cost.ap} AP
 																{spell.cost.mp && ` + ${spell.cost.mp} MP`}
-															</StyledCardCost>
-														</StyledCardHeader>
-														<StyledCardDescription>
+															</span>
+														</div>
+														<p className="text-foreground mb-4 text-sm leading-relaxed">
 															{spell.effects[0]?.description || 'No description available.'}
-														</StyledCardDescription>
-														<StyledCardActions>
-															<StyledButton
-																$variant={isSelected ? 'danger' : 'primary'}
+														</p>
+														<div className="flex justify-end">
+															<Button
+																variant={isSelected ? 'destructive' : 'default'}
+																size="sm"
 																onClick={() => handleSpellToggle(spell.name)}
 																disabled={!canSelect}
 															>
 																{isSelected ? 'Remove' : 'Add'}
-															</StyledButton>
-														</StyledCardActions>
-													</StyledCard>
+															</Button>
+														</div>
+													</div>
 												);
 											})}
-										</StyledGrid>
+										</div>
 									</div>
 								) : null;
 							})()}
@@ -536,102 +551,134 @@ const SpellsAndManeuvers: React.FC = () => {
 
 								return regularSpells.length > 0 ? (
 									<div>
-										<h3
-											style={{
-												color: '#8b5cf6',
-												marginBottom: '1rem',
-												fontSize: '1.2rem',
-												fontWeight: 'bold'
-											}}
-										>
+										<h3 className="mb-4 text-xl font-bold text-purple-500">
 											Spells ({currentSpells}/{maxSpells})
 										</h3>
-										<StyledGrid>
+										<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 											{regularSpells.map((spell) => {
 												const isSelected = selectedSpells.includes(spell.name);
 												const canSelect = currentSpells < maxSpells || isSelected;
 
 												return (
-													<StyledCard key={spell.name} $selected={isSelected}>
-														<StyledCardHeader>
-															<StyledCardTitle>{spell.name}</StyledCardTitle>
-															<StyledCardType>{spell.school}</StyledCardType>
-															<StyledCardCost>
+													<div
+														key={spell.name}
+														className={cn(
+															'rounded-xl border-2 bg-gradient-to-br from-indigo-950 to-indigo-900 p-6 shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl',
+															isSelected
+																? 'border-primary opacity-100'
+																: 'hover:border-primary border-purple-500 opacity-80 hover:opacity-100'
+														)}
+													>
+														<div className="mb-4 flex flex-wrap items-start justify-between gap-2">
+															<h3 className="text-primary flex-1 text-xl font-bold">
+																{spell.name}
+															</h3>
+															<span className="rounded bg-purple-500/20 px-2 py-1 text-xs font-bold tracking-wide text-purple-400 uppercase">
+																{spell.school}
+															</span>
+															<span className="rounded bg-red-500/20 px-2 py-1 text-sm font-bold text-red-500">
 																{spell.cost.ap} AP
 																{spell.cost.mp && ` + ${spell.cost.mp} MP`}
-															</StyledCardCost>
-														</StyledCardHeader>
-														<StyledCardDescription>
+															</span>
+														</div>
+														<p className="text-foreground mb-4 text-sm leading-relaxed">
 															{spell.effects[0]?.description || 'No description available.'}
-														</StyledCardDescription>
-														<StyledCardActions>
-															<StyledButton
-																$variant={isSelected ? 'danger' : 'primary'}
+														</p>
+														<div className="flex justify-end">
+															<Button
+																variant={isSelected ? 'destructive' : 'default'}
+																size="sm"
 																onClick={() => handleSpellToggle(spell.name)}
 																disabled={!canSelect}
 															>
 																{isSelected ? 'Remove' : 'Add'}
-															</StyledButton>
-														</StyledCardActions>
-													</StyledCard>
+															</Button>
+														</div>
+													</div>
 												);
 											})}
-										</StyledGrid>
+										</div>
 									</div>
 								) : null;
 							})()}
 						</>
 					)}
-				</StyledSection>
+				</section>
 			)}
 
 			{activeTab === 'maneuvers' && maneuverCount > 0 && (
-				<StyledSection>
-					<StyledSectionTitle>
+				<section className="mb-8">
+					<h2 className="text-primary mb-4 text-center text-2xl">
 						Maneuvers for {state.classId} (Level {state.level})
-					</StyledSectionTitle>
+					</h2>
 
-					<StyledSelectedCount>
+					{/* Selected Count */}
+					<div className="bg-primary/10 border-primary/30 text-primary mx-auto mb-4 max-w-md rounded-lg border p-2 text-center font-bold">
 						Selected: {selectedManeuvers.length}/{maneuverCount}
-					</StyledSelectedCount>
+					</div>
 
-					<StyledFilterContainer>
-						<StyledFilterButton
-							$active={maneuverFilter === 'all'}
+					{/* Filter Buttons */}
+					<div className="mb-6 flex flex-wrap justify-center gap-2">
+						<button
 							onClick={() => setManeuverFilter('all')}
+							className={cn(
+								'rounded-md border-2 px-4 py-2 text-sm font-bold transition-all hover:-translate-y-0.5',
+								maneuverFilter === 'all'
+									? 'border-primary bg-primary text-primary-foreground'
+									: 'text-muted-foreground border-muted-foreground hover:bg-muted-foreground bg-transparent hover:text-white'
+							)}
 						>
 							All Types
-						</StyledFilterButton>
+						</button>
 						{Object.values(ManeuverType).map((type) => (
-							<StyledFilterButton
+							<button
 								key={type}
-								$active={maneuverFilter === type}
 								onClick={() => setManeuverFilter(type)}
+								className={cn(
+									'rounded-md border-2 px-4 py-2 text-sm font-bold transition-all hover:-translate-y-0.5',
+									maneuverFilter === type
+										? 'border-primary bg-primary text-primary-foreground'
+										: 'text-muted-foreground border-muted-foreground hover:bg-muted-foreground bg-transparent hover:text-white'
+								)}
 							>
 								{type}
-							</StyledFilterButton>
+							</button>
 						))}
-					</StyledFilterContainer>
+					</div>
 
 					{filteredManeuvers.length === 0 ? (
-						<StyledEmptyState>
-							<StyledEmptyTitle>No Maneuvers Available</StyledEmptyTitle>
-							<StyledEmptyText>No maneuvers are available with the current filter.</StyledEmptyText>
-						</StyledEmptyState>
+						<div className="text-muted-foreground py-16 text-center">
+							<h3 className="mb-4 text-2xl text-purple-400">No Maneuvers Available</h3>
+							<p className="text-base leading-relaxed">
+								No maneuvers are available with the current filter.
+							</p>
+						</div>
 					) : (
-						<StyledGrid>
+						<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 							{filteredManeuvers.map((maneuver) => {
 								const isSelected = selectedManeuvers.includes(maneuver.name);
 								const canSelect = selectedManeuvers.length < maneuverCount || isSelected;
 
 								return (
-									<StyledCard key={maneuver.name} $selected={isSelected}>
-										<StyledCardHeader>
-											<StyledCardTitle>{maneuver.name}</StyledCardTitle>
-											<StyledCardType>{maneuver.type}</StyledCardType>
-											<StyledCardCost>{maneuver.cost.ap} AP</StyledCardCost>
-										</StyledCardHeader>
-										<StyledCardDescription>
+									<div
+										key={maneuver.name}
+										className={cn(
+											'rounded-xl border-2 bg-gradient-to-br from-indigo-950 to-indigo-900 p-6 shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl',
+											isSelected
+												? 'border-primary opacity-100'
+												: 'hover:border-primary border-purple-500 opacity-80 hover:opacity-100'
+										)}
+									>
+										<div className="mb-4 flex flex-wrap items-start justify-between gap-2">
+											<h3 className="text-primary flex-1 text-xl font-bold">{maneuver.name}</h3>
+											<span className="rounded bg-purple-500/20 px-2 py-1 text-xs font-bold tracking-wide text-purple-400 uppercase">
+												{maneuver.type}
+											</span>
+											<span className="rounded bg-red-500/20 px-2 py-1 text-sm font-bold text-red-500">
+												{maneuver.cost.ap} AP
+											</span>
+										</div>
+										<p className="text-foreground mb-4 text-sm leading-relaxed">
 											{maneuver.description}
 											{maneuver.requirement && (
 												<>
@@ -645,24 +692,25 @@ const SpellsAndManeuvers: React.FC = () => {
 													<strong>Trigger:</strong> {maneuver.trigger}
 												</>
 											)}
-										</StyledCardDescription>
-										<StyledCardActions>
-											<StyledButton
-												$variant={isSelected ? 'danger' : 'primary'}
+										</p>
+										<div className="flex justify-end">
+											<Button
+												variant={isSelected ? 'destructive' : 'default'}
+												size="sm"
 												onClick={() => handleManeuverToggle(maneuver.name)}
 												disabled={!canSelect}
 											>
 												{isSelected ? 'Remove' : 'Add'}
-											</StyledButton>
-										</StyledCardActions>
-									</StyledCard>
+											</Button>
+										</div>
+									</div>
 								);
 							})}
-						</StyledGrid>
+						</div>
 					)}
-				</StyledSection>
+				</section>
 			)}
-		</StyledContainer>
+		</div>
 	);
 };
 

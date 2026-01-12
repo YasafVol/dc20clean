@@ -219,11 +219,11 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 	// Dynamic steps based on level
 	const getSteps = () => {
-		const baseSteps = [{ number: 1, label: 'Class & Features' }];
+		const baseSteps = [{ number: 1, label: 'Class' }];
 
 		// Add leveling choices step if level > 1
 		if (state.level > 1) {
-			baseSteps.push({ number: 2, label: 'Leveling Choices' });
+			baseSteps.push({ number: 2, label: 'Leveling' });
 		}
 
 		// Continue with remaining steps (offset by 1 if leveling choices exist)
@@ -232,8 +232,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			{ number: 2 + offset, label: 'Ancestry' },
 			{ number: 3 + offset, label: 'Attributes' },
 			{ number: 4 + offset, label: 'Background' },
-			{ number: 5 + offset, label: 'Spells & Maneuvers' },
-			{ number: 6 + offset, label: 'Character Name' }
+			{ number: 5 + offset, label: 'Spells' },
+			{ number: 6 + offset, label: 'Name' }
 		);
 
 		return baseSteps;
@@ -681,55 +681,72 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		<div className="bg-background text-foreground flex min-h-screen flex-col font-sans">
 			{/* Header with Navigation and Stepper */}
 			<header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
-				<div className="container flex h-auto flex-col items-center justify-between gap-4 px-4 py-2 md:h-16 md:flex-row md:py-0">
-					<div className="flex w-full items-center justify-between gap-4 md:w-auto md:justify-start">
-						<Button variant="ghost" onClick={handlePrevious}>
-							← Previous
-						</Button>
-						<span className="text-primary text-lg font-bold md:hidden">
-							{editChar ? 'Edit' : 'Create'} Character
-						</span>
-						<Button variant="default" onClick={handleNext}>
-							{state.currentStep === maxStep ? 'Complete' : 'Next →'}
+				<div className="container flex min-h-16 items-center justify-between px-4 py-2">
+					{/* Left: Previous Button */}
+					<div className="flex w-[120px] justify-start">
+						<Button variant="ghost" onClick={handlePrevious} className="gap-2">
+							← <span className="hidden sm:inline">Previous</span>
 						</Button>
 					</div>
 
-					{/* Desktop Stepper */}
-					<div className="no-scrollbar hidden max-w-2xl items-center gap-2 overflow-x-auto md:flex">
-						{steps.map(({ number, label }) => {
-							const isActive = state.currentStep === number;
-							const isCompleted = isStepCompleted(number);
+					{/* Center: Stepper (Desktop) or Title (Mobile) */}
+					<div className="flex flex-1 justify-center">
+						{/* Mobile Title */}
+						<span className="text-primary text-lg font-bold md:hidden">
+							{editChar ? 'Edit' : 'Create'} Character
+						</span>
 
-							return (
-								<div
-									key={number}
-									className={cn(
-										'flex cursor-pointer items-center gap-2 rounded-full px-3 py-1.5 whitespace-nowrap transition-colors',
-										isActive
-											? 'bg-primary text-primary-foreground'
-											: isCompleted
-												? 'bg-muted text-foreground'
-												: 'text-muted-foreground hover:bg-muted/50'
-									)}
-									onClick={() => handleStepClick(number)}
-								>
-									<div
-										className={cn(
-											'flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold',
-											isActive
-												? 'bg-background text-primary'
-												: isCompleted
-													? 'bg-primary/20 text-primary'
-													: 'bg-muted-foreground/20'
+						{/* Desktop Stepper */}
+						<div className="hidden flex-1 items-center justify-center gap-1 md:flex md:flex-wrap">
+							{steps.map(({ number, label }, index) => {
+								const isActive = state.currentStep === number;
+								const isCompleted = isStepCompleted(number);
+								const isLast = index === steps.length - 1;
+
+								return (
+									<React.Fragment key={number}>
+										<div
+											className={cn(
+												'group flex cursor-pointer items-center gap-2 rounded-full px-2 py-1.5 whitespace-nowrap transition-all duration-200',
+												isActive
+													? 'bg-primary text-primary-foreground shadow-md'
+													: isCompleted
+														? 'bg-primary/10 text-primary hover:bg-primary/20'
+														: 'text-muted-foreground hover:bg-muted hover:text-foreground'
+											)}
+											onClick={() => handleStepClick(number)}
+										>
+											<div
+												className={cn(
+													'flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold transition-colors',
+													isActive
+														? 'bg-background text-primary'
+														: isCompleted
+															? 'bg-primary text-primary-foreground'
+															: 'bg-muted-foreground/20'
+												)}
+											>
+												{isCompleted && !isActive ? <Check className="h-3.5 w-3.5" /> : number}
+											</div>
+											<span className={cn('text-sm font-medium', isActive && 'font-bold')}>
+												{label}
+											</span>
+										</div>
+										{!isLast && (
+											<ChevronRight className="text-muted-foreground/30 mx-1 h-4 w-4 shrink-0" />
 										)}
-									>
-										{isCompleted && !isActive ? <Check className="h-3 w-3" /> : number}
-									</div>
-									<span className="text-sm font-medium">{label}</span>
-									{number < maxStep && <ChevronRight className="ml-1 h-4 w-4 opacity-50" />}
-								</div>
-							);
-						})}
+									</React.Fragment>
+								);
+							})}
+						</div>
+					</div>
+
+					{/* Right: Next Button */}
+					<div className="flex w-[120px] justify-end">
+						<Button variant="default" onClick={handleNext} className="gap-2">
+							<span className="hidden sm:inline">{state.currentStep === maxStep ? 'Complete' : 'Next'}</span>{' '}
+							→
+						</Button>
 					</div>
 				</div>
 

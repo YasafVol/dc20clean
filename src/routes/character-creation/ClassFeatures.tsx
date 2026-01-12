@@ -14,105 +14,116 @@ import {
 } from '../../lib/services/enhancedCharacterCalculator';
 import { SubclassSelector } from './SubclassSelector';
 import { cn } from '../../lib/utils';
+import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 
 function ClassFeatures() {
 	const { state, dispatch } = useCharacter();
 
 	// Helper function to render a single choice card
 	const renderChoiceCard = (choice: any) => (
-		<div
-			key={choice.id}
-			className="hover:border-primary mb-4 rounded-lg border border-white/50 bg-transparent p-6 transition-colors"
-		>
-			<h4 className="text-primary mb-2 text-xl font-bold">{choice.prompt}</h4>
-			{choice.type === 'select_one' && (
-				<div className="flex flex-col gap-2">
-					{choice.options.map((option: any) => {
-						const detailedDescription = getDetailedClassFeatureDescription(choice.id, option.value);
-						return (
-							<label
-								key={option.value}
-								className="hover:text-primary text-foreground flex cursor-pointer items-start gap-3 rounded p-2 transition-colors hover:bg-white/5"
-							>
-								<input
-									type="radio"
-									name={choice.id}
-									value={option.value}
-									checked={selectedFeatureChoices[choice.id] === option.value}
-									onChange={() => handleFeatureChoice(choice.id, option.value)}
-									className="accent-primary mt-1 h-[18px] w-[18px] shrink-0 cursor-pointer"
-								/>
-								<span className="leading-relaxed">
-									{option.label}
-									{(option.description || detailedDescription) && (
-										<span className="text-muted-foreground ml-2 text-sm italic">
-											{option.description || detailedDescription}
-										</span>
-									)}
-								</span>
-							</label>
-						);
-					})}
-				</div>
-			)}
-			{choice.type === 'select_multiple' && (
-				<div className="flex flex-col gap-2">
-					{choice.options.map((option: any) => {
-						// Handle arrays directly (no legacy JSON string support)
-						const currentValues: string[] = selectedFeatureChoices[choice.id]
+		<Card key={choice.id} className="mb-4 border-2">
+			<CardHeader className="pb-2">
+				<CardTitle className="text-primary text-xl font-bold">{choice.prompt}</CardTitle>
+				{choice.maxSelections && (
+					<p className="text-muted-foreground text-sm italic">
+						Select up to {choice.maxSelections} options (
+						{selectedFeatureChoices[choice.id]
 							? Array.isArray(selectedFeatureChoices[choice.id])
-								? (selectedFeatureChoices[choice.id] as unknown as string[])
-								: []
-							: [];
-						const isSelected = currentValues.includes(option.value);
-						const canSelect = currentValues.length < (choice.maxSelections || 999);
-						const isDisabled = !isSelected && !canSelect;
-						const detailedDescription = getDetailedClassFeatureDescription(choice.id, option.value);
-
-						return (
-							<label
-								key={option.value}
-								className={cn(
-									'hover:text-primary text-foreground flex cursor-pointer items-start gap-3 rounded p-2 transition-colors hover:bg-white/5',
-									isDisabled && 'opacity-50'
-								)}
-							>
-								<input
-									type="checkbox"
-									name={choice.id}
-									value={option.value}
-									checked={isSelected}
-									disabled={isDisabled}
-									onChange={(e) =>
-										handleMultipleFeatureChoice(choice.id, option.value, e.target.checked)
-									}
-									className="accent-primary mt-1 h-[18px] w-[18px] shrink-0 cursor-pointer"
-								/>
-								<span className="leading-relaxed">
-									{option.label}
-									{(option.description || detailedDescription) && (
-										<span className="text-muted-foreground ml-2 text-sm italic">
-											{option.description || detailedDescription}
-										</span>
+								? (selectedFeatureChoices[choice.id] as unknown as string[]).length
+								: 0
+							: 0}
+						/{choice.maxSelections} selected)
+					</p>
+				)}
+			</CardHeader>
+			<CardContent>
+				{choice.type === 'select_one' && (
+					<div className="flex flex-col gap-2">
+						{choice.options.map((option: any) => {
+							const detailedDescription = getDetailedClassFeatureDescription(choice.id, option.value);
+							const isSelected = selectedFeatureChoices[choice.id] === option.value;
+							return (
+								<label
+									key={option.value}
+									className={cn(
+										'hover:border-primary flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-all',
+										isSelected ? 'border-primary bg-primary/10' : 'border-border bg-card/50'
 									)}
-								</span>
-							</label>
-						);
-					})}
-					{choice.maxSelections && (
-						<span className="text-muted-foreground mt-2 text-sm italic">
-							Select up to {choice.maxSelections} options (
-							{selectedFeatureChoices[choice.id]
+								>
+									<input
+										type="radio"
+										name={choice.id}
+										value={option.value}
+										checked={isSelected}
+										onChange={() => handleFeatureChoice(choice.id, option.value)}
+										className="accent-primary mt-1 h-4 w-4 shrink-0 cursor-pointer"
+									/>
+									<div className="flex flex-col gap-1">
+										<span className={cn('font-bold', isSelected ? 'text-primary' : 'text-foreground')}>
+											{option.label}
+										</span>
+										{(option.description || detailedDescription) && (
+											<span className="text-muted-foreground text-sm">
+												{option.description || detailedDescription}
+											</span>
+										)}
+									</div>
+								</label>
+							);
+						})}
+					</div>
+				)}
+				{choice.type === 'select_multiple' && (
+					<div className="flex flex-col gap-2">
+						{choice.options.map((option: any) => {
+							// Handle arrays directly (no legacy JSON string support)
+							const currentValues: string[] = selectedFeatureChoices[choice.id]
 								? Array.isArray(selectedFeatureChoices[choice.id])
-									? (selectedFeatureChoices[choice.id] as unknown as string[]).length
-									: 0
-								: 0}
-							/{choice.maxSelections} selected)
-						</span>
-					)}
-				</div>
-			)}
-		</div>
+									? (selectedFeatureChoices[choice.id] as unknown as string[])
+									: []
+								: [];
+							const isSelected = currentValues.includes(option.value);
+							const canSelect = currentValues.length < (choice.maxSelections || 999);
+							const isDisabled = !isSelected && !canSelect;
+							const detailedDescription = getDetailedClassFeatureDescription(choice.id, option.value);
+
+							return (
+								<label
+									key={option.value}
+									className={cn(
+										'hover:border-primary flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-all',
+										isSelected ? 'border-primary bg-primary/10' : 'border-border bg-card/50',
+										isDisabled && 'cursor-not-allowed opacity-50 hover:border-border'
+									)}
+								>
+									<input
+										type="checkbox"
+										name={choice.id}
+										value={option.value}
+										checked={isSelected}
+										disabled={isDisabled}
+										onChange={(e) =>
+											handleMultipleFeatureChoice(choice.id, option.value, e.target.checked)
+										}
+										className="accent-primary mt-1 h-4 w-4 shrink-0 cursor-pointer"
+									/>
+									<div className="flex flex-col gap-1">
+										<span className={cn('font-bold', isSelected ? 'text-primary' : 'text-foreground')}>
+											{option.label}
+										</span>
+										{(option.description || detailedDescription) && (
+											<span className="text-muted-foreground text-sm">
+												{option.description || detailedDescription}
+											</span>
+										)}
+									</div>
+								</label>
+							);
+						})}
+					</div>
+				)}
+			</CardContent>
+		</Card>
 	);
 
 	const selectedClass = classesData.find(
@@ -159,7 +170,7 @@ function ClassFeatures() {
 					}
 				}
 			}
-		} catch {}
+		} catch { }
 
 		dispatch({
 			type: 'SET_FEATURE_CHOICES',
@@ -207,7 +218,7 @@ function ClassFeatures() {
 					}
 				}
 			}
-		} catch {}
+		} catch { }
 
 		dispatch({
 			type: 'SET_FEATURE_CHOICES',
@@ -447,7 +458,9 @@ function ClassFeatures() {
 								<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
 									<h6 className="text-primary text-sm font-semibold">Weapons/Shields</h6>
 									<p className="text-foreground/70 text-sm">
-										{selectedClassFeatures.startingEquipment.weaponsOrShields.join(', ')}
+										{Array.isArray(selectedClassFeatures.startingEquipment.weaponsOrShields)
+											? selectedClassFeatures.startingEquipment.weaponsOrShields.join(', ')
+											: selectedClassFeatures.startingEquipment.weaponsOrShields}
 									</p>
 								</div>
 							)}
@@ -493,7 +506,9 @@ function ClassFeatures() {
 								<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
 									<h6 className="text-primary text-sm font-semibold">Weapon Training</h6>
 									<p className="text-foreground/70 text-sm">
-										{selectedClassFeatures.martialPath.combatTraining.weapons.join(', ')}
+										{Array.isArray(selectedClassFeatures.martialPath.combatTraining.weapons)
+											? selectedClassFeatures.martialPath.combatTraining.weapons.join(', ')
+											: selectedClassFeatures.martialPath.combatTraining.weapons}
 									</p>
 								</div>
 							)}
@@ -501,7 +516,9 @@ function ClassFeatures() {
 								<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
 									<h6 className="text-primary text-sm font-semibold">Armor Training</h6>
 									<p className="text-foreground/70 text-sm">
-										{selectedClassFeatures.martialPath.combatTraining.armor.join(', ')}
+										{Array.isArray(selectedClassFeatures.martialPath.combatTraining.armor)
+											? selectedClassFeatures.martialPath.combatTraining.armor.join(', ')
+											: selectedClassFeatures.martialPath.combatTraining.armor}
 									</p>
 								</div>
 							)}
@@ -509,7 +526,9 @@ function ClassFeatures() {
 								<div className="border-primary/40 rounded border-l-2 bg-amber-900/10 px-3 py-2">
 									<h6 className="text-primary text-sm font-semibold">Shield Training</h6>
 									<p className="text-foreground/70 text-sm">
-										{selectedClassFeatures.martialPath.combatTraining.shields.join(', ')}
+										{Array.isArray(selectedClassFeatures.martialPath.combatTraining.shields)
+											? selectedClassFeatures.martialPath.combatTraining.shields.join(', ')
+											: selectedClassFeatures.martialPath.combatTraining.shields}
 									</p>
 								</div>
 							)}
@@ -551,28 +570,32 @@ function ClassFeatures() {
 					{/* Combat Training for Spellcasters */}
 					{(selectedClassFeatures.spellcastingPath.combatTraining?.armor ||
 						selectedClassFeatures.spellcastingPath.combatTraining?.shields) && (
-						<div className="hover:border-primary mb-4 rounded-lg border border-white/50 bg-transparent p-6 transition-colors">
-							<h4 className="text-primary mb-2 text-xl font-bold">Combat Proficiencies</h4>
-							<div className="border-t border-white/10 pt-3">
-								{selectedClassFeatures.spellcastingPath.combatTraining?.armor && (
-									<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
-										<h6 className="text-primary text-sm font-semibold">Armor Training</h6>
-										<p className="text-foreground/70 text-sm">
-											{selectedClassFeatures.spellcastingPath.combatTraining.armor.join(', ')}
-										</p>
-									</div>
-								)}
-								{selectedClassFeatures.spellcastingPath.combatTraining?.shields && (
-									<div className="border-primary/40 rounded border-l-2 bg-amber-900/10 px-3 py-2">
-										<h6 className="text-primary text-sm font-semibold">Shield Training</h6>
-										<p className="text-foreground/70 text-sm">
-											{selectedClassFeatures.spellcastingPath.combatTraining.shields.join(', ')}
-										</p>
-									</div>
-								)}
+							<div className="hover:border-primary mb-4 rounded-lg border border-white/50 bg-transparent p-6 transition-colors">
+								<h4 className="text-primary mb-2 text-xl font-bold">Combat Proficiencies</h4>
+								<div className="border-t border-white/10 pt-3">
+									{selectedClassFeatures.spellcastingPath.combatTraining?.armor && (
+										<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+											<h6 className="text-primary text-sm font-semibold">Armor Training</h6>
+											<p className="text-foreground/70 text-sm">
+												{Array.isArray(selectedClassFeatures.spellcastingPath.combatTraining.armor)
+													? selectedClassFeatures.spellcastingPath.combatTraining.armor.join(', ')
+													: selectedClassFeatures.spellcastingPath.combatTraining.armor}
+											</p>
+										</div>
+									)}
+									{selectedClassFeatures.spellcastingPath.combatTraining?.shields && (
+										<div className="border-primary/40 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+											<h6 className="text-primary text-sm font-semibold">Shield Training</h6>
+											<p className="text-foreground/70 text-sm">
+												{Array.isArray(selectedClassFeatures.spellcastingPath.combatTraining.shields)
+													? selectedClassFeatures.spellcastingPath.combatTraining.shields.join(', ')
+													: selectedClassFeatures.spellcastingPath.combatTraining.shields}
+											</p>
+										</div>
+									)}
+								</div>
 							</div>
-						</div>
-					)}
+						)}
 
 					{/* Spell List Information */}
 					{selectedClassFeatures.spellcastingPath.spellList && (
@@ -673,26 +696,27 @@ function ClassFeatures() {
 								Level {levelStr} Features
 							</h3>
 							{features.map((feature, index) => (
-								<div
-									key={index}
-									className="hover:border-primary mb-4 rounded-lg border border-white/50 bg-transparent p-6 transition-colors"
-								>
-									<h4 className="text-primary mb-2 text-xl font-bold">{feature.featureName}</h4>
-									<p className="text-foreground leading-relaxed">{feature.description}</p>
-									{feature.benefits && (
-										<div className="mt-3 border-t border-white/10 pt-3">
-											{feature.benefits.map((benefit, benefitIndex) => (
-												<div
-													key={benefitIndex}
-													className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2 last:mb-0"
-												>
-													<h6 className="text-primary text-sm font-semibold">{benefit.name}</h6>
-													<p className="text-foreground/70 text-sm">{benefit.description}</p>
-												</div>
-											))}
-										</div>
-									)}
-								</div>
+								<Card key={index} className="mb-4 border-2">
+									<CardHeader className="pb-2">
+										<CardTitle className="text-primary text-xl font-bold">{feature.featureName}</CardTitle>
+									</CardHeader>
+									<CardContent>
+										<p className="text-foreground leading-relaxed">{feature.description}</p>
+										{feature.benefits && (
+											<div className="mt-4 space-y-2">
+												{feature.benefits.map((benefit, benefitIndex) => (
+													<div
+														key={benefitIndex}
+														className="bg-muted/50 border-l-primary rounded-r-md border-l-4 p-3"
+													>
+														<h6 className="text-primary text-sm font-bold">{benefit.name}</h6>
+														<p className="text-muted-foreground text-sm">{benefit.description}</p>
+													</div>
+												))}
+											</div>
+										)}
+									</CardContent>
+								</Card>
 							))}
 
 							{/* Render choices for this level */}

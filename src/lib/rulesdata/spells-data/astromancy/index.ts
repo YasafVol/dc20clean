@@ -1,13 +1,13 @@
-export { arcaneBolt } from './arcane-bolt';
-export { arcaneWave } from './arcane-wave';
-export { banish } from './banish';
-export { fly } from './fly';
-export { gravitySinkHole } from './gravity-sink-hole';
-export { haste } from './haste';
-export { slowTime } from './slow-time';
-export { teleport } from './teleport';
-export { telekinesis } from './telekinesis';
-export { translocation } from './translocation';
+import { arcaneBolt } from './arcane-bolt';
+import { arcaneWave } from './arcane-wave';
+import { banish } from './banish';
+import { fly } from './fly';
+import { gravitySinkHole } from './gravity-sink-hole';
+import { haste } from './haste';
+import { slowTime } from './slow-time';
+import { teleport } from './teleport';
+import { telekinesis } from './telekinesis';
+import { translocation } from './translocation';
 
 // All astromancy spells
 export const astromancySpells = [
@@ -22,3 +22,16 @@ export const astromancySpells = [
 	telekinesis,
 	translocation
 ];
+
+export {
+	arcaneBolt,
+	arcaneWave,
+	banish,
+	fly,
+	gravitySinkHole,
+	haste,
+	slowTime,
+	teleport,
+	telekinesis,
+	translocation
+};

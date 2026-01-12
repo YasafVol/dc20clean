@@ -1,15 +1,15 @@
-export { charm } from './charm';
-export { command } from './command';
-export { fear } from './fear';
-export { hex } from './hex';
-export { message } from './message';
-export { mindBlast } from './mind-blast';
-export { planarProtection } from './planar-protection';
-export { psiBolt } from './psi-bolt';
-export { psychicWave } from './psychic-wave';
-export { shatterReality } from './shatter-reality';
-export { slumber } from './slumber';
-export { viciousMockery } from './vicious-mockery';
+import { charm } from './charm';
+import { command } from './command';
+import { fear } from './fear';
+import { hex } from './hex';
+import { message } from './message';
+import { mindBlast } from './mind-blast';
+import { planarProtection } from './planar-protection';
+import { psiBolt } from './psi-bolt';
+import { psychicWave } from './psychic-wave';
+import { shatterReality } from './shatter-reality';
+import { slumber } from './slumber';
+import { viciousMockery } from './vicious-mockery';
 
 // All enchantment spells
 export const enchantmentSpells = [
@@ -26,3 +26,18 @@ export const enchantmentSpells = [
 	slumber,
 	viciousMockery
 ];
+
+export {
+	charm,
+	command,
+	fear,
+	hex,
+	message,
+	mindBlast,
+	planarProtection,
+	psiBolt,
+	psychicWave,
+	shatterReality,
+	slumber,
+	viciousMockery
+};

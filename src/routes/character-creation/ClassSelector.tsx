@@ -104,6 +104,13 @@ function ClassSelector() {
 	const isLevelUpMode = state.isLevelUpMode;
 	const originalLevel = state.originalLevel;
 
+	// Ensure level is set to 1 if not present (e.g. fresh start)
+	React.useEffect(() => {
+		if (!state.level) {
+			dispatch({ type: 'SET_LEVEL', level: 1 });
+		}
+	}, [state.level, dispatch]);
+
 	function handleSelectClass(classId: string) {
 		// In level-up mode, can't change class
 		if (isLevelUpMode) return;
@@ -154,7 +161,7 @@ function ClassSelector() {
 						<SelectContent>
 							{availableLevels.map((level) => (
 								<SelectItem key={level} value={level.toString()}>
-									Level {level}
+									{`Level ${level}`}
 								</SelectItem>
 							))}
 						</SelectContent>

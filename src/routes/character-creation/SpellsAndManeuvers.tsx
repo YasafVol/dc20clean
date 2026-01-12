@@ -2,11 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { ALL_SPELLS as allSpells } from '../../lib/rulesdata/spells-data';
 import { allManeuvers, ManeuverType } from '../../lib/rulesdata/martials/maneuvers';
-import { SpellSchool, type ClassName } from '../../lib/rulesdata/schemas/spell.schema';
+import { SpellSchool, SpellSource } from '../../lib/rulesdata/schemas/spell.schema';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
 import { cn } from '../../lib/utils';
 import { Button } from '../../components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../../components/ui/card';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/tabs';
+import { Badge } from '../../components/ui/badge';
 
 // Simple deep equality helper for arrays to replace JSON.stringify comparison
 function arraysEqual<T>(a: T[], b: T[]): boolean {
@@ -73,143 +76,81 @@ const SpellsAndManeuvers: React.FC = () => {
 	const availableSpells = React.useMemo(() => {
 		console.log('🔍 Starting availableSpells calculation...');
 		if (!state.classId || !classFeatures) {
-			console.log('❌ No classId or classFeatures:', {
-				classId: state.classId,
-				classFeatures: !!classFeatures
-			});
 			return [];
 		}
 
-		console.log('SpellsAndManeuvers Debug:', {
-			classId: state.classId,
-			classFeatures: !!classFeatures,
-			selectedFeatureChoices: state.selectedFeatureChoices
-		});
+		// Map classes to their spell sources
+		// TODO: Move this to a central configuration or class definition
+		const CLASS_SPELL_SOURCES: Record<string, SpellSource[]> = {
+			wizard: [SpellSource.Arcane],
+			sorcerer: [SpellSource.Arcane],
+			bard: [SpellSource.Arcane],
+			warlock: [SpellSource.Arcane],
+			spellblade: [SpellSource.Arcane],
+			cleric: [SpellSource.Divine],
+			druid: [SpellSource.Primal],
+			// Add others as they are implemented
+			paladin: [SpellSource.Divine],
+			ranger: [SpellSource.Primal],
+			hunter: [SpellSource.Primal] // Assuming Hunter is Ranger-like
+		};
+
+		const characterSpellSources = CLASS_SPELL_SOURCES[state.classId.toLowerCase()] || [];
 
 		// Use feature choices directly to determine available spell schools
 		const featureChoices: { [key: string]: any } = state.selectedFeatureChoices || {};
 		let availableSchools: SpellSchool[] = [];
 
-		console.log('Feature choices:', featureChoices);
-
 		// Get available spell schools based on class features
 		if (classFeatures.spellcastingPath?.spellList) {
 			const spellList = classFeatures.spellcastingPath.spellList;
-			console.log('Spellcasting path:', classFeatures.spellcastingPath);
 
 			if (spellList.type === 'all_schools' && spellList.schoolCount) {
 				const choiceId = `${classFeatures.className.toLowerCase()}_spell_schools`;
 				const choice = featureChoices[choiceId];
-				console.log('Looking for choice:', choiceId, 'Found:', choice);
 				if (choice) {
 					const selectedSchools = Array.isArray(choice) ? choice : [choice];
 					availableSchools.push(...selectedSchools);
-					console.log('Selected schools from choice:', selectedSchools);
 				}
 			} else if (spellList.type === 'schools') {
 				if (spellList.specificSchools) {
 					availableSchools.push(...spellList.specificSchools);
-					console.log('Added specific schools:', spellList.specificSchools);
 				}
 
 				if (spellList.schoolCount && spellList.schoolCount > 0) {
 					const choiceId = `${classFeatures.className.toLowerCase()}_additional_spell_schools`;
 					const choice = featureChoices[choiceId];
-					console.log('Looking for additional choice:', choiceId, 'Found:', choice);
 					if (choice) {
 						// Handle additional schools (expect arrays directly)
 						const additionalSchools =
 							spellList.schoolCount > 1 && Array.isArray(choice) ? choice : [choice];
 						availableSchools.push(...additionalSchools);
-						console.log('Added additional schools:', additionalSchools);
 					}
 				}
 			} else if (spellList.type === 'any') {
-				availableSchools.push(SpellSchool.Astromancy);
-				console.log('Added any school (Astromancy)');
+				availableSchools.push(SpellSchool.Astromancy); // Placeholder or default
 			}
 		}
 
 		// If no schools determined, use defaults
 		if (availableSchools.length === 0) {
-			console.log('No schools determined, using defaults for class:', state.classId);
-			switch (state.classId.toLowerCase()) {
-				case 'wizard':
-					availableSchools = [
-						SpellSchool.Astromancy,
-						SpellSchool.Destruction,
-						SpellSchool.Illusion
-					];
-					break;
-				case 'sorcerer':
-					availableSchools = [
-						SpellSchool.Astromancy,
-						SpellSchool.Destruction,
-						SpellSchool.Enchantment
-					];
-					break;
-				case 'cleric':
-					availableSchools = [
-						SpellSchool.Restoration,
-						SpellSchool.Protection,
-						SpellSchool.Divination
-					];
-					break;
-				case 'druid':
-					availableSchools = [
-						SpellSchool.Restoration,
-						SpellSchool.Conjuration,
-						SpellSchool.Transmutation
-					];
-					break;
-				case 'barbarian':
-				case 'fighter':
-				case 'monk':
-				case 'rogue':
-				case 'ranger':
-				case 'paladin':
-					// Martial classes get access to some utility spells
-					availableSchools = [
-						SpellSchool.Protection,
-						SpellSchool.Enchantment,
-						SpellSchool.Transmutation
-					];
-					break;
-				case 'hunter':
-					// Hunter is a pure martial class with no spellcasting
-					availableSchools = [];
-					break;
-				default:
-					// For any other class, show all schools
-					availableSchools = Object.values(SpellSchool);
-			}
+			// Default to all schools if none are specified
+			availableSchools = Object.values(SpellSchool);
 		}
 
-		// Filter spells by class and schools
+		// Filter spells by source and schools
 		const filteredSpells = allSpells.filter((spell) => {
-			// More inclusive class filtering - if no specific class match, show all spells
-			const isAvailableToClass =
-				spell.availableClasses.length === 0 ||
-				spell.availableClasses.includes(state.classId as ClassName) ||
-				spell.availableClasses.some(
-					(className) =>
-						state.classId?.toLowerCase().includes(className.toLowerCase()) ||
-						className.toLowerCase().includes(state.classId?.toLowerCase() || '')
-				);
+			// Filter by Source: Check if the spell's sources overlap with the character's allowed sources
+			// If the character has no spell sources (e.g. Barbarian), they get no spells unless specific features grant them (not handled here yet)
+			const hasMatchingSource = spell.sources.some((source) =>
+				characterSpellSources.includes(source)
+			);
 
-			// If no schools are available, don't show any spells
+			// Filter by School: Check if the spell's school is in the allowed schools
 			const isInAvailableSchool =
 				availableSchools.length > 0 && availableSchools.includes(spell.school);
-			return isAvailableToClass && isInAvailableSchool;
-		});
 
-		// Debug logging
-		console.log('SpellsAndManeuvers Debug:', {
-			classId: state.classId,
-			availableSchools,
-			totalSpells: allSpells.length,
-			filteredSpells: filteredSpells.length,
-			sampleSpells: filteredSpells.slice(0, 5).map((s) => s.name)
+			return hasMatchingSource && isInAvailableSchool;
 		});
 
 		return filteredSpells;
@@ -397,319 +338,358 @@ const SpellsAndManeuvers: React.FC = () => {
 				Spells & Maneuvers
 			</h1>
 
-			{/* Tab Container */}
-			<div className="mb-8 flex justify-center gap-4">
-				{/* Only show spells tab if there are spells available */}
-				{availableSpells.length > 0 && (
-					<button
-						onClick={() => setActiveTab('spells')}
-						className={cn(
-							'rounded-lg border-2 px-6 py-3 font-bold transition-all hover:-translate-y-0.5',
-							activeTab === 'spells'
-								? 'border-primary bg-primary text-primary-foreground'
-								: 'border-purple-500 bg-transparent text-purple-500 hover:bg-purple-500 hover:text-white'
-						)}
+			<Tabs
+				value={activeTab}
+				onValueChange={(v) => setActiveTab(v as 'spells' | 'maneuvers')}
+				className="w-full"
+			>
+				<TabsList className="border-border mx-auto mb-8 grid w-full max-w-md grid-cols-2 border bg-black/40">
+					<TabsTrigger
+						value="spells"
+						disabled={availableSpells.length === 0}
+						className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary font-cinzel text-base"
 					>
 						Spells ({selectedSpells.length}/{spellCounts.cantrips + spellCounts.spells})
-					</button>
-				)}
-				{/* Only show maneuvers tab if there are maneuvers available */}
-				{maneuverCount > 0 && (
-					<button
-						onClick={() => setActiveTab('maneuvers')}
-						className={cn(
-							'rounded-lg border-2 px-6 py-3 font-bold transition-all hover:-translate-y-0.5',
-							activeTab === 'maneuvers'
-								? 'border-primary bg-primary text-primary-foreground'
-								: 'border-purple-500 bg-transparent text-purple-500 hover:bg-purple-500 hover:text-white'
-						)}
+					</TabsTrigger>
+					<TabsTrigger
+						value="maneuvers"
+						disabled={maneuverCount === 0}
+						className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary font-cinzel text-base"
 					>
 						Maneuvers ({selectedManeuvers.length}/{maneuverCount})
-					</button>
-				)}
-			</div>
+					</TabsTrigger>
+				</TabsList>
 
-			{activeTab === 'spells' && availableSpells.length > 0 && (
-				<section className="mb-8">
-					<h2 className="text-primary mb-4 text-center text-2xl">
-						Spells for {state.classId} (Level {state.level})
-					</h2>
+				<TabsContent value="spells" className="space-y-8">
+					{availableSpells.length > 0 && (
+						<section>
+							<h2 className="text-primary mb-4 text-center text-2xl">
+								Spells for {state.classId} (Level {state.level})
+							</h2>
 
-					{/* Selected Count */}
-					<div className="bg-primary/10 border-primary/30 text-primary mx-auto mb-4 max-w-md rounded-lg border p-2 text-center font-bold">
-						Total Selected: {selectedSpells.length}/{spellCounts.cantrips + spellCounts.spells}
-					</div>
+							{/* Selected Count */}
+							<div className="bg-primary/10 border-primary/30 text-primary mx-auto mb-4 max-w-md rounded-lg border p-2 text-center font-bold">
+								Total Selected: {selectedSpells.length}/{spellCounts.cantrips + spellCounts.spells}
+							</div>
 
-					{/* Filter Buttons */}
-					<div className="mb-6 flex flex-wrap justify-center gap-2">
-						<button
-							onClick={() => setSpellFilter('all')}
-							className={cn(
-								'rounded-md border-2 px-4 py-2 text-sm font-bold transition-all hover:-translate-y-0.5',
-								spellFilter === 'all'
-									? 'border-primary bg-primary text-primary-foreground'
-									: 'text-muted-foreground border-muted-foreground hover:bg-muted-foreground bg-transparent hover:text-white'
-							)}
-						>
-							All Schools
-						</button>
-						{Object.values(SpellSchool).map((school) => (
-							<button
-								key={school}
-								onClick={() => setSpellFilter(school)}
-								className={cn(
-									'rounded-md border-2 px-4 py-2 text-sm font-bold transition-all hover:-translate-y-0.5',
-									spellFilter === school
-										? 'border-primary bg-primary text-primary-foreground'
-										: 'text-muted-foreground border-muted-foreground hover:bg-muted-foreground bg-transparent hover:text-white'
-								)}
-							>
-								{school}
-							</button>
-						))}
-					</div>
-
-					{filteredSpells.length === 0 ? (
-						<div className="text-muted-foreground py-16 text-center">
-							<h3 className="mb-4 text-2xl text-purple-400">No Spells Available</h3>
-							<p className="text-base leading-relaxed">
-								No spells are available for your class and level with the current filter.
-							</p>
-						</div>
-					) : (
-						<>
-							{/* Cantrips Section */}
-							{(() => {
-								const cantrips = filteredSpells.filter((spell) => spell.isCantrip);
-								const selectedCantrips = selectedSpells.filter(
-									(name) => availableSpells.find((s) => s.name === name)?.isCantrip
-								);
-								const currentCantrips = selectedCantrips.length;
-								const maxCantrips = spellCounts.cantrips;
-
-								return cantrips.length > 0 ? (
-									<div className="mb-8">
-										<h3 className="text-primary mb-4 text-xl font-bold">
-											Cantrips ({currentCantrips}/{maxCantrips})
-										</h3>
-										<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-											{cantrips.map((spell) => {
-												const isSelected = selectedSpells.includes(spell.name);
-												const canSelect = currentCantrips < maxCantrips || isSelected;
-
-												return (
-													<div
-														key={spell.name}
-														className={cn(
-															'rounded-xl border-2 bg-gradient-to-br from-indigo-950 to-indigo-900 p-6 shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl',
-															isSelected
-																? 'border-primary opacity-100'
-																: 'hover:border-primary border-purple-500 opacity-80 hover:opacity-100'
-														)}
-													>
-														<div className="mb-4 flex flex-wrap items-start justify-between gap-2">
-															<h3 className="text-primary flex-1 text-xl font-bold">
-																{spell.name}
-															</h3>
-															<span className="rounded bg-purple-500/20 px-2 py-1 text-xs font-bold tracking-wide text-purple-400 uppercase">
-																{spell.school}
-															</span>
-															<span className="rounded bg-red-500/20 px-2 py-1 text-sm font-bold text-red-500">
-																{spell.cost.ap} AP
-																{spell.cost.mp && ` + ${spell.cost.mp} MP`}
-															</span>
-														</div>
-														<p className="text-foreground mb-4 text-sm leading-relaxed">
-															{spell.effects[0]?.description || 'No description available.'}
-														</p>
-														<div className="flex justify-end">
-															<Button
-																variant={isSelected ? 'destructive' : 'default'}
-																size="sm"
-																onClick={() => handleSpellToggle(spell.name)}
-																disabled={!canSelect}
-															>
-																{isSelected ? 'Remove' : 'Add'}
-															</Button>
-														</div>
-													</div>
-												);
-											})}
-										</div>
-									</div>
-								) : null;
-							})()}
-
-							{/* Regular Spells Section */}
-							{(() => {
-								const regularSpells = filteredSpells.filter((spell) => !spell.isCantrip);
-								const selectedRegularSpells = selectedSpells.filter(
-									(name) => !availableSpells.find((s) => s.name === name)?.isCantrip
-								);
-								const currentSpells = selectedRegularSpells.length;
-								const maxSpells = spellCounts.spells;
-
-								return regularSpells.length > 0 ? (
-									<div>
-										<h3 className="mb-4 text-xl font-bold text-purple-500">
-											Spells ({currentSpells}/{maxSpells})
-										</h3>
-										<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-											{regularSpells.map((spell) => {
-												const isSelected = selectedSpells.includes(spell.name);
-												const canSelect = currentSpells < maxSpells || isSelected;
-
-												return (
-													<div
-														key={spell.name}
-														className={cn(
-															'rounded-xl border-2 bg-gradient-to-br from-indigo-950 to-indigo-900 p-6 shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl',
-															isSelected
-																? 'border-primary opacity-100'
-																: 'hover:border-primary border-purple-500 opacity-80 hover:opacity-100'
-														)}
-													>
-														<div className="mb-4 flex flex-wrap items-start justify-between gap-2">
-															<h3 className="text-primary flex-1 text-xl font-bold">
-																{spell.name}
-															</h3>
-															<span className="rounded bg-purple-500/20 px-2 py-1 text-xs font-bold tracking-wide text-purple-400 uppercase">
-																{spell.school}
-															</span>
-															<span className="rounded bg-red-500/20 px-2 py-1 text-sm font-bold text-red-500">
-																{spell.cost.ap} AP
-																{spell.cost.mp && ` + ${spell.cost.mp} MP`}
-															</span>
-														</div>
-														<p className="text-foreground mb-4 text-sm leading-relaxed">
-															{spell.effects[0]?.description || 'No description available.'}
-														</p>
-														<div className="flex justify-end">
-															<Button
-																variant={isSelected ? 'destructive' : 'default'}
-																size="sm"
-																onClick={() => handleSpellToggle(spell.name)}
-																disabled={!canSelect}
-															>
-																{isSelected ? 'Remove' : 'Add'}
-															</Button>
-														</div>
-													</div>
-												);
-											})}
-										</div>
-									</div>
-								) : null;
-							})()}
-						</>
-					)}
-				</section>
-			)}
-
-			{activeTab === 'maneuvers' && maneuverCount > 0 && (
-				<section className="mb-8">
-					<h2 className="text-primary mb-4 text-center text-2xl">
-						Maneuvers for {state.classId} (Level {state.level})
-					</h2>
-
-					{/* Selected Count */}
-					<div className="bg-primary/10 border-primary/30 text-primary mx-auto mb-4 max-w-md rounded-lg border p-2 text-center font-bold">
-						Selected: {selectedManeuvers.length}/{maneuverCount}
-					</div>
-
-					{/* Filter Buttons */}
-					<div className="mb-6 flex flex-wrap justify-center gap-2">
-						<button
-							onClick={() => setManeuverFilter('all')}
-							className={cn(
-								'rounded-md border-2 px-4 py-2 text-sm font-bold transition-all hover:-translate-y-0.5',
-								maneuverFilter === 'all'
-									? 'border-primary bg-primary text-primary-foreground'
-									: 'text-muted-foreground border-muted-foreground hover:bg-muted-foreground bg-transparent hover:text-white'
-							)}
-						>
-							All Types
-						</button>
-						{Object.values(ManeuverType).map((type) => (
-							<button
-								key={type}
-								onClick={() => setManeuverFilter(type)}
-								className={cn(
-									'rounded-md border-2 px-4 py-2 text-sm font-bold transition-all hover:-translate-y-0.5',
-									maneuverFilter === type
-										? 'border-primary bg-primary text-primary-foreground'
-										: 'text-muted-foreground border-muted-foreground hover:bg-muted-foreground bg-transparent hover:text-white'
-								)}
-							>
-								{type}
-							</button>
-						))}
-					</div>
-
-					{filteredManeuvers.length === 0 ? (
-						<div className="text-muted-foreground py-16 text-center">
-							<h3 className="mb-4 text-2xl text-purple-400">No Maneuvers Available</h3>
-							<p className="text-base leading-relaxed">
-								No maneuvers are available with the current filter.
-							</p>
-						</div>
-					) : (
-						<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-							{filteredManeuvers.map((maneuver) => {
-								const isSelected = selectedManeuvers.includes(maneuver.name);
-								const canSelect = selectedManeuvers.length < maneuverCount || isSelected;
-
-								return (
-									<div
-										key={maneuver.name}
+							{/* Filter Buttons */}
+							<div className="mb-6 flex flex-wrap justify-center gap-2">
+								<Button
+									variant={spellFilter === 'all' ? 'default' : 'outline'}
+									size="sm"
+									onClick={() => setSpellFilter('all')}
+									className={cn(
+										'transition-all',
+										spellFilter === 'all' ? 'bg-primary text-primary-foreground' : 'bg-transparent'
+									)}
+								>
+									All Schools
+								</Button>
+								{Object.values(SpellSchool).map((school) => (
+									<Button
+										key={school}
+										variant={spellFilter === school ? 'default' : 'outline'}
+										size="sm"
+										onClick={() => setSpellFilter(school)}
 										className={cn(
-											'rounded-xl border-2 bg-gradient-to-br from-indigo-950 to-indigo-900 p-6 shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl',
-											isSelected
-												? 'border-primary opacity-100'
-												: 'hover:border-primary border-purple-500 opacity-80 hover:opacity-100'
+											'transition-all',
+											spellFilter === school ? 'bg-primary text-primary-foreground' : 'bg-transparent'
 										)}
 									>
-										<div className="mb-4 flex flex-wrap items-start justify-between gap-2">
-											<h3 className="text-primary flex-1 text-xl font-bold">{maneuver.name}</h3>
-											<span className="rounded bg-purple-500/20 px-2 py-1 text-xs font-bold tracking-wide text-purple-400 uppercase">
-												{maneuver.type}
-											</span>
-											<span className="rounded bg-red-500/20 px-2 py-1 text-sm font-bold text-red-500">
-												{maneuver.cost.ap} AP
-											</span>
-										</div>
-										<p className="text-foreground mb-4 text-sm leading-relaxed">
-											{maneuver.description}
-											{maneuver.requirement && (
-												<>
-													<br />
-													<strong>Requirement:</strong> {maneuver.requirement}
-												</>
-											)}
-											{maneuver.trigger && (
-												<>
-													<br />
-													<strong>Trigger:</strong> {maneuver.trigger}
-												</>
-											)}
-										</p>
-										<div className="flex justify-end">
-											<Button
-												variant={isSelected ? 'destructive' : 'default'}
-												size="sm"
-												onClick={() => handleManeuverToggle(maneuver.name)}
-												disabled={!canSelect}
-											>
-												{isSelected ? 'Remove' : 'Add'}
-											</Button>
-										</div>
-									</div>
-								);
-							})}
-						</div>
+										{school}
+									</Button>
+								))}
+							</div>
+
+							{filteredSpells.length === 0 ? (
+								<div className="text-muted-foreground py-16 text-center">
+									<h3 className="mb-4 text-2xl text-purple-400">No Spells Available</h3>
+									<p className="text-base leading-relaxed">
+										No spells are available for your class and level with the current filter.
+									</p>
+								</div>
+							) : (
+								<>
+									{/* Cantrips Section */}
+									{(() => {
+										const cantrips = filteredSpells.filter((spell) => spell.isCantrip);
+										const selectedCantrips = selectedSpells.filter(
+											(name) => availableSpells.find((s) => s.name === name)?.isCantrip
+										);
+										const currentCantrips = selectedCantrips.length;
+										const maxCantrips = spellCounts.cantrips;
+
+										return cantrips.length > 0 ? (
+											<div className="mb-8">
+												<h3 className="text-primary mb-4 text-xl font-bold">
+													Cantrips ({currentCantrips}/{maxCantrips})
+												</h3>
+												<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+													{cantrips.map((spell) => {
+														const isSelected = selectedSpells.includes(spell.name);
+														const canSelect = currentCantrips < maxCantrips || isSelected;
+
+														return (
+															<Card
+																key={spell.name}
+																className={cn(
+																	'border-2 transition-all hover:-translate-y-1 hover:shadow-xl',
+																	isSelected
+																		? 'border-primary bg-primary/10'
+																		: 'hover:border-primary/50 border-purple-500/30 bg-card/40'
+																)}
+															>
+																<CardHeader className="pb-2">
+																	<div className="flex items-start justify-between gap-2">
+																		<CardTitle className="text-primary text-xl font-bold">
+																			{spell.name}
+																		</CardTitle>
+																		<Badge
+																			variant="outline"
+																			className="border-purple-500/50 text-purple-400"
+																		>
+																			{spell.school}
+																		</Badge>
+																	</div>
+																	<div className="flex gap-2">
+																		<Badge
+																			variant="secondary"
+																			className="bg-red-500/10 text-red-400 hover:bg-red-500/20"
+																		>
+																			{spell.cost.ap} AP
+																			{spell.cost.mp && ` + ${spell.cost.mp} MP`}
+																		</Badge>
+																	</div>
+																</CardHeader>
+																<CardContent>
+																	<p className="text-muted-foreground text-sm leading-relaxed">
+																		{spell.effects[0]?.description ||
+																			'No description available.'}
+																	</p>
+																</CardContent>
+																<CardFooter className="justify-end pt-0">
+																	<Button
+																		variant={isSelected ? 'destructive' : 'default'}
+																		size="sm"
+																		onClick={() => handleSpellToggle(spell.name)}
+																		disabled={!canSelect}
+																	>
+																		{isSelected ? 'Remove' : 'Add'}
+																	</Button>
+																</CardFooter>
+															</Card>
+														);
+													})}
+												</div>
+											</div>
+										) : null;
+									})()}
+
+									{/* Regular Spells Section */}
+									{(() => {
+										const regularSpells = filteredSpells.filter((spell) => !spell.isCantrip);
+										const selectedRegularSpells = selectedSpells.filter(
+											(name) => !availableSpells.find((s) => s.name === name)?.isCantrip
+										);
+										const currentSpells = selectedRegularSpells.length;
+										const maxSpells = spellCounts.spells;
+
+										return regularSpells.length > 0 ? (
+											<div>
+												<h3 className="mb-4 text-xl font-bold text-purple-500">
+													Spells ({currentSpells}/{maxSpells})
+												</h3>
+												<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+													{regularSpells.map((spell) => {
+														const isSelected = selectedSpells.includes(spell.name);
+														const canSelect = currentSpells < maxSpells || isSelected;
+
+														return (
+															<Card
+																key={spell.name}
+																className={cn(
+																	'border-2 transition-all hover:-translate-y-1 hover:shadow-xl',
+																	isSelected
+																		? 'border-primary bg-primary/10'
+																		: 'hover:border-primary/50 border-purple-500/30 bg-card/40'
+																)}
+															>
+																<CardHeader className="pb-2">
+																	<div className="flex items-start justify-between gap-2">
+																		<CardTitle className="text-primary text-xl font-bold">
+																			{spell.name}
+																		</CardTitle>
+																		<Badge
+																			variant="outline"
+																			className="border-purple-500/50 text-purple-400"
+																		>
+																			{spell.school}
+																		</Badge>
+																	</div>
+																	<div className="flex gap-2">
+																		<Badge
+																			variant="secondary"
+																			className="bg-red-500/10 text-red-400 hover:bg-red-500/20"
+																		>
+																			{spell.cost.ap} AP
+																			{spell.cost.mp && ` + ${spell.cost.mp} MP`}
+																		</Badge>
+																	</div>
+																</CardHeader>
+																<CardContent>
+																	<p className="text-muted-foreground text-sm leading-relaxed">
+																		{spell.effects[0]?.description ||
+																			'No description available.'}
+																	</p>
+																</CardContent>
+																<CardFooter className="justify-end pt-0">
+																	<Button
+																		variant={isSelected ? 'destructive' : 'default'}
+																		size="sm"
+																		onClick={() => handleSpellToggle(spell.name)}
+																		disabled={!canSelect}
+																	>
+																		{isSelected ? 'Remove' : 'Add'}
+																	</Button>
+																</CardFooter>
+															</Card>
+														);
+													})}
+												</div>
+											</div>
+										) : null;
+									})()}
+								</>
+							)}
+						</section>
 					)}
-				</section>
-			)}
+				</TabsContent>
+
+				<TabsContent value="maneuvers" className="space-y-8">
+					{maneuverCount > 0 && (
+						<section>
+							<h2 className="text-primary mb-4 text-center text-2xl">
+								Maneuvers for {state.classId} (Level {state.level})
+							</h2>
+
+							{/* Selected Count */}
+							<div className="bg-primary/10 border-primary/30 text-primary mx-auto mb-4 max-w-md rounded-lg border p-2 text-center font-bold">
+								Selected: {selectedManeuvers.length}/{maneuverCount}
+							</div>
+
+							{/* Filter Buttons */}
+							<div className="mb-6 flex flex-wrap justify-center gap-2">
+								<Button
+									variant={maneuverFilter === 'all' ? 'default' : 'outline'}
+									size="sm"
+									onClick={() => setManeuverFilter('all')}
+									className={cn(
+										'transition-all',
+										maneuverFilter === 'all'
+											? 'bg-primary text-primary-foreground'
+											: 'bg-transparent'
+									)}
+								>
+									All Types
+								</Button>
+								{Object.values(ManeuverType).map((type) => (
+									<Button
+										key={type}
+										variant={maneuverFilter === type ? 'default' : 'outline'}
+										size="sm"
+										onClick={() => setManeuverFilter(type)}
+										className={cn(
+											'transition-all',
+											maneuverFilter === type
+												? 'bg-primary text-primary-foreground'
+												: 'bg-transparent'
+										)}
+									>
+										{type}
+									</Button>
+								))}
+							</div>
+
+							{filteredManeuvers.length === 0 ? (
+								<div className="text-muted-foreground py-16 text-center">
+									<h3 className="mb-4 text-2xl text-purple-400">No Maneuvers Available</h3>
+									<p className="text-base leading-relaxed">
+										No maneuvers are available with the current filter.
+									</p>
+								</div>
+							) : (
+								<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+									{filteredManeuvers.map((maneuver) => {
+										const isSelected = selectedManeuvers.includes(maneuver.name);
+										const canSelect = selectedManeuvers.length < maneuverCount || isSelected;
+
+										return (
+											<Card
+												key={maneuver.name}
+												className={cn(
+													'border-2 transition-all hover:-translate-y-1 hover:shadow-xl',
+													isSelected
+														? 'border-primary bg-primary/10'
+														: 'hover:border-primary/50 border-purple-500/30 bg-card/40'
+												)}
+											>
+												<CardHeader className="pb-2">
+													<div className="flex items-start justify-between gap-2">
+														<CardTitle className="text-primary text-xl font-bold">
+															{maneuver.name}
+														</CardTitle>
+														<Badge
+															variant="outline"
+															className="border-purple-500/50 text-purple-400"
+														>
+															{maneuver.type}
+														</Badge>
+													</div>
+													<div className="flex gap-2">
+														<Badge
+															variant="secondary"
+															className="bg-red-500/10 text-red-400 hover:bg-red-500/20"
+														>
+															{maneuver.cost.ap} AP
+														</Badge>
+													</div>
+												</CardHeader>
+												<CardContent>
+													<p className="text-muted-foreground mb-4 text-sm leading-relaxed">
+														{maneuver.description}
+														{maneuver.requirement && (
+															<>
+																<br />
+																<strong>Requirement:</strong> {maneuver.requirement}
+															</>
+														)}
+														{maneuver.trigger && (
+															<>
+																<br />
+																<strong>Trigger:</strong> {maneuver.trigger}
+															</>
+														)}
+													</p>
+												</CardContent>
+												<CardFooter className="justify-end pt-0">
+													<Button
+														variant={isSelected ? 'destructive' : 'default'}
+														size="sm"
+														onClick={() => handleManeuverToggle(maneuver.name)}
+														disabled={!canSelect}
+													>
+														{isSelected ? 'Remove' : 'Add'}
+													</Button>
+												</CardFooter>
+											</Card>
+										);
+									})}
+								</div>
+							)}
+						</section>
+					)}
+				</TabsContent>
+			</Tabs>
 		</div>
 	);
 };

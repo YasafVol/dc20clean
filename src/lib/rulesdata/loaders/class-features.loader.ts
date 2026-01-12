@@ -15,6 +15,7 @@ import { parseJsonSafe } from '../../utils/storageUtils';
 
 // Define interfaces for the new class features structure
 export interface ClassFeatureChoice {
+	id?: string;
 	prompt: string;
 	count: number;
 	options?: {
@@ -41,6 +42,13 @@ export interface ClassFeature {
 	isFlavor?: boolean;
 	choices?: ClassFeatureChoice[];
 	benefits?: ClassFeatureBenefit[];
+	effects?: {
+		type: string;
+		target?: string;
+		value?: any;
+		userChoice?: any;
+		condition?: string;
+	}[];
 }
 
 export interface ClassSubclass {
@@ -52,11 +60,12 @@ export interface ClassSubclass {
 export interface ClassDefinition {
 	className: string;
 	startingEquipment?: {
-		weaponsOrShields?: string[];
-		rangedWeapon?: string;
-		alternativeWeapons?: string;
-		armor?: string;
-		packs?: string;
+		weaponsOrShields?: string | string[];
+		rangedWeapon?: string | string[];
+		alternativeWeapons?: string | string[];
+		armor?: string | string[];
+		packs?: string | string[];
+		[key: string]: any;
 	};
 	martialPath?: {
 		combatTraining?: {

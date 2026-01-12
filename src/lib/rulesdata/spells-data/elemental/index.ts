@@ -1,44 +1,44 @@
-export { absorbElements } from './absorb-elements';
-export { acidRain } from './acid-rain';
-export { acidStream } from './acid-stream';
-export { airSlash } from './air-slash';
-export { blightBomb } from './blight-bomb';
-export { cloudCover } from './cloud-cover';
-export { coldWave } from './cold-wave';
-export { coneOfCold } from './cone-of-cold';
-export { corrosiveBolt } from './corrosive-bolt';
-export { corrosiveCascade } from './corrosive-cascade';
-export { corrosiveWave } from './corrosive-wave';
-export { elementalShield } from './elemental-shield';
-export { eruption } from './eruption';
-export { fireball } from './fireball';
-export { fireBlast } from './fire-blast';
-export { fireBolt } from './fire-bolt';
-export { fireTorrent } from './fire-torrent';
-export { freeze } from './freeze';
-export { frostBolt } from './frost-bolt';
-export { frostStorm } from './frost-storm';
-export { gust } from './gust';
-export { hydroLance } from './hydro-lance';
-export { inflictPoison } from './inflict-poison';
-export { lightningBlast } from './lightning-blast';
-export { lightningBolt } from './lightning-bolt';
-export { lightningCloud } from './lightning-cloud';
-export { lightningStorm } from './lightning-storm';
-export { lightningTorrent } from './lightning-torrent';
-export { livingBomb } from './living-bomb';
-export { maelstrom } from './maelstrom';
-export { poisonBolt } from './poison-bolt';
-export { poisonCloud } from './poison-cloud';
-export { spikeBolt } from './spike-bolt';
-export { spikeSurge } from './spike-surge';
-export { tornado } from './tornado';
-export { toxicAura } from './toxic-aura';
-export { wallOfWater } from './wall-of-water';
-export { waterBolt } from './water-bolt';
-export { windBlade } from './wind-blade';
-export { windBurst } from './wind-burst';
-export { windTunnel } from './wind-tunnel';
+import { absorbElements } from './absorb-elements';
+import { acidRain } from './acid-rain';
+import { acidStream } from './acid-stream';
+import { airSlash } from './air-slash';
+import { blightBomb } from './blight-bomb';
+import { cloudCover } from './cloud-cover';
+import { coldWave } from './cold-wave';
+import { coneOfCold } from './cone-of-cold';
+import { corrosiveBolt } from './corrosive-bolt';
+import { corrosiveCascade } from './corrosive-cascade';
+import { corrosiveWave } from './corrosive-wave';
+import { elementalShield } from './elemental-shield';
+import { eruption } from './eruption';
+import { fireball } from './fireball';
+import { fireBlast } from './fire-blast';
+import { fireBolt } from './fire-bolt';
+import { fireTorrent } from './fire-torrent';
+import { freeze } from './freeze';
+import { frostBolt } from './frost-bolt';
+import { frostStorm } from './frost-storm';
+import { gust } from './gust';
+import { hydroLance } from './hydro-lance';
+import { inflictPoison } from './inflict-poison';
+import { lightningBlast } from './lightning-blast';
+import { lightningBolt } from './lightning-bolt';
+import { lightningCloud } from './lightning-cloud';
+import { lightningStorm } from './lightning-storm';
+import { lightningTorrent } from './lightning-torrent';
+import { livingBomb } from './living-bomb';
+import { maelstrom } from './maelstrom';
+import { poisonBolt } from './poison-bolt';
+import { poisonCloud } from './poison-cloud';
+import { spikeBolt } from './spike-bolt';
+import { spikeSurge } from './spike-surge';
+import { tornado } from './tornado';
+import { toxicAura } from './toxic-aura';
+import { wallOfWater } from './wall-of-water';
+import { waterBolt } from './water-bolt';
+import { windBlade } from './wind-blade';
+import { windBurst } from './wind-burst';
+import { windTunnel } from './wind-tunnel';
 
 // All elemental spells
 export const elementalSpells = [
@@ -84,3 +84,47 @@ export const elementalSpells = [
 	windBurst,
 	windTunnel
 ];
+
+export {
+	absorbElements,
+	acidRain,
+	acidStream,
+	airSlash,
+	blightBomb,
+	cloudCover,
+	coldWave,
+	coneOfCold,
+	corrosiveBolt,
+	corrosiveCascade,
+	corrosiveWave,
+	elementalShield,
+	eruption,
+	fireball,
+	fireBlast,
+	fireBolt,
+	fireTorrent,
+	freeze,
+	frostBolt,
+	frostStorm,
+	gust,
+	hydroLance,
+	inflictPoison,
+	lightningBlast,
+	lightningBolt,
+	lightningCloud,
+	lightningStorm,
+	lightningTorrent,
+	livingBomb,
+	maelstrom,
+	poisonBolt,
+	poisonCloud,
+	spikeBolt,
+	spikeSurge,
+	tornado,
+	toxicAura,
+	wallOfWater,
+	waterBolt,
+	windBlade,
+	windBurst,
+	windTunnel
+};

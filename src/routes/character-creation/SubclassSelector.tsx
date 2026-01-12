@@ -19,6 +19,8 @@ import { commanderClass } from '../../lib/rulesdata/classes-data/features/comman
 import { monkClass } from '../../lib/rulesdata/classes-data/features/monk_features';
 import { psionClass } from '../../lib/rulesdata/classes-data/features/psion_features';
 import { cn } from '../../lib/utils';
+import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
+import { Badge } from '../../components/ui/badge';
 
 // Map of class IDs to their feature definitions
 const CLASS_FEATURES_MAP: Record<string, any> = {
@@ -73,9 +75,9 @@ export function SubclassSelector({
 			<h3 className="font-cinzel text-primary mb-2 text-2xl font-bold tracking-wide uppercase">
 				Choose Your Subclass
 				{choiceLevel && (
-					<span className="bg-primary/20 text-primary ml-2 inline-block rounded px-3 py-1 text-sm font-semibold">
+					<Badge variant="secondary" className="bg-primary/20 text-primary ml-2">
 						Level {choiceLevel}
-					</span>
+					</Badge>
 				)}
 			</h3>
 			<p className="text-foreground/70 mb-6 leading-relaxed">
@@ -89,163 +91,169 @@ export function SubclassSelector({
 					const features = getFeaturesByLevel(subclass);
 
 					return (
-						<div
+						<Card
 							key={subclass.subclassName}
 							onClick={() => onSelect(subclass.subclassName)}
 							className={cn(
-								'cursor-pointer rounded-lg border-2 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg',
+								'cursor-pointer border-2 transition-all hover:-translate-y-0.5 hover:shadow-lg',
 								isSelected
 									? 'border-primary from-primary/20 bg-gradient-to-br to-amber-900/15'
 									: 'hover:border-primary/60 border-amber-900/40 bg-black/30'
 							)}
 						>
-							<div className="mb-2 flex items-center">
-								<div
-									className={cn(
-										'relative mr-3 h-5 w-5 rounded-full border-2 transition-all',
-										isSelected ? 'border-primary bg-primary' : 'border-white/30 bg-transparent'
-									)}
-								>
-									{isSelected && (
-										<div className="bg-background absolute top-1/2 left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full" />
-									)}
+							<CardHeader className="pb-2">
+								<div className="flex items-center gap-3">
+									<div
+										className={cn(
+											'relative h-5 w-5 rounded-full border-2 transition-all',
+											isSelected ? 'border-primary bg-primary' : 'border-white/30 bg-transparent'
+										)}
+									>
+										{isSelected && (
+											<div className="bg-background absolute top-1/2 left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full" />
+										)}
+									</div>
+									<CardTitle className="font-cinzel text-primary text-lg font-bold tracking-wide uppercase">
+										{subclass.subclassName}
+									</CardTitle>
 								</div>
-								<h4 className="font-cinzel text-primary text-lg font-bold tracking-wide uppercase">
-									{subclass.subclassName}
-								</h4>
-							</div>
-							{subclass.description && (
-								<p className="text-foreground/70 text-sm leading-relaxed">{subclass.description}</p>
-							)}
+							</CardHeader>
+							<CardContent>
+								{subclass.description && (
+									<p className="text-foreground/70 text-sm leading-relaxed">{subclass.description}</p>
+								)}
 
-							{/* Show features for all subclasses */}
-							{features.length > 0 && (
-								<div className="border-primary/30 mt-4 border-t pt-4">
-									{features.map((feature, idx) => (
-										<div
-											key={feature.id || `${feature.featureName}-${idx}`}
-											className="border-primary/30 mb-3 rounded border bg-black/30 p-3 last:mb-0"
-										>
-											<h5 className="font-cinzel text-primary mb-1 text-sm font-bold tracking-wide uppercase">
-												{feature.featureName}
-											</h5>
-											{feature.description && (
-												<p className="text-foreground/80 mb-2 text-sm leading-relaxed">
-													{feature.description}
-												</p>
-											)}
+								{/* Show features for all subclasses */}
+								{features.length > 0 && (
+									<div className="border-primary/30 mt-4 border-t pt-4">
+										{features.map((feature, idx) => (
+											<div
+												key={feature.id || `${feature.featureName}-${idx}`}
+												className="border-primary/30 mb-3 rounded border bg-black/30 p-3 last:mb-0"
+											>
+												<h5 className="font-cinzel text-primary mb-1 text-sm font-bold tracking-wide uppercase">
+													{feature.featureName}
+												</h5>
+												{feature.description && (
+													<p className="text-foreground/80 mb-2 text-sm leading-relaxed">
+														{feature.description}
+													</p>
+												)}
 
-											{/* Show Benefits */}
-											{feature.benefits && feature.benefits.length > 0 && (
-												<div className="mt-2 border-t border-white/10 pt-2">
-													{feature.benefits.map((benefit, benefitIdx) => (
-														<div
-															key={benefit.name || benefitIdx}
-															className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2 last:mb-0"
-														>
-															<h6 className="text-primary text-xs font-semibold">{benefit.name}</h6>
-															{benefit.description && (
-																<p className="text-foreground/70 text-xs">{benefit.description}</p>
-															)}
-														</div>
-													))}
-												</div>
-											)}
-
-											{/* Show Choices only when this subclass is selected */}
-											{isSelected &&
-												feature.choices &&
-												feature.choices.length > 0 &&
-												onChoiceChange && (
-													<div className="border-primary/30 mt-4 border-t pt-4">
-														{feature.choices.map((choice) => {
-															const choiceKey = getFeatureChoiceKey(
-																classId,
-																subclass.subclassName,
-																choice.id
-															);
-															const currentSelections = selectedFeatureChoices[choiceKey] || [];
-															const isComplete = currentSelections.length === choice.count;
-
-															const handleOptionClick = (optionName: string) => {
-																if (choice.count === 1) {
-																	// Radio behavior: replace selection
-																	onChoiceChange(choiceKey, [optionName]);
-																} else {
-																	// Checkbox behavior: toggle in array
-																	const newSelections = currentSelections.includes(optionName)
-																		? currentSelections.filter((s) => s !== optionName)
-																		: [...currentSelections, optionName].slice(0, choice.count);
-																	onChoiceChange(choiceKey, newSelections);
-																}
-															};
-
-															return (
-																<div key={choice.id} className="mb-6 last:mb-0">
-																	<div className="mb-2 flex items-center justify-between">
-																		<h5 className="text-primary text-sm font-semibold tracking-wide uppercase">
-																			{choice.prompt}
-																		</h5>
-																		<span
-																			className={cn(
-																				'text-sm font-semibold',
-																				isComplete ? 'text-emerald-500' : 'text-amber-500'
-																			)}
-																		>
-																			{isComplete
-																				? '✅'
-																				: `⚠️ ${currentSelections.length}/${choice.count}`}
-																		</span>
-																	</div>
-																	<p className="text-foreground/60 mb-3 text-xs">
-																		Select {choice.count} option(s)
-																	</p>
-
-																	<div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-																		{choice.options?.map((option) => {
-																			const isOptionSelected = currentSelections.includes(
-																				option.name
-																			);
-
-																			return (
-																				<div
-																					key={option.name}
-																					onClick={(e) => {
-																						e.stopPropagation(); // Prevent subclass card click
-																						handleOptionClick(option.name);
-																					}}
-																					className={cn(
-																						'relative cursor-pointer rounded-lg border-2 p-3 transition-all hover:-translate-y-0.5',
-																						isOptionSelected
-																							? 'border-primary'
-																							: 'border-primary/30 hover:border-primary/60'
-																					)}
-																				>
-																					<h6 className="text-primary text-sm font-semibold">
-																						{option.name}
-																					</h6>
-																					<p className="text-foreground/80 text-xs leading-relaxed">
-																						{option.description}
-																					</p>
-																					{isOptionSelected && (
-																						<span className="text-primary absolute top-2 right-2 text-lg">
-																							✓
-																						</span>
-																					)}
-																				</div>
-																			);
-																		})}
-																	</div>
-																</div>
-															);
-														})}
+												{/* Show Benefits */}
+												{feature.benefits && feature.benefits.length > 0 && (
+													<div className="mt-2 border-t border-white/10 pt-2">
+														{feature.benefits.map((benefit, benefitIdx) => (
+															<div
+																key={benefit.name || benefitIdx}
+																className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2 last:mb-0"
+															>
+																<h6 className="text-primary text-xs font-semibold">{benefit.name}</h6>
+																{benefit.description && (
+																	<p className="text-foreground/70 text-xs">{benefit.description}</p>
+																)}
+															</div>
+														))}
 													</div>
 												)}
-										</div>
-									))}
-								</div>
-							)}
-						</div>
+
+												{/* Show Choices only when this subclass is selected */}
+												{isSelected &&
+													feature.choices &&
+													feature.choices.length > 0 &&
+													onChoiceChange && (
+														<div className="border-primary/30 mt-4 border-t pt-4">
+															{feature.choices.map((choice) => {
+																const choiceKey = getFeatureChoiceKey(
+																	classId,
+																	subclass.subclassName,
+																	choice.id
+																);
+																const currentSelections = selectedFeatureChoices[choiceKey] || [];
+																const isComplete = currentSelections.length === choice.count;
+
+																const handleOptionClick = (optionName: string) => {
+																	if (choice.count === 1) {
+																		// Radio behavior: replace selection
+																		onChoiceChange(choiceKey, [optionName]);
+																	} else {
+																		// Checkbox behavior: toggle in array
+																		const newSelections = currentSelections.includes(optionName)
+																			? currentSelections.filter((s) => s !== optionName)
+																			: [...currentSelections, optionName].slice(0, choice.count);
+																		onChoiceChange(choiceKey, newSelections);
+																	}
+																};
+
+																return (
+																	<div key={choice.id} className="mb-6 last:mb-0">
+																		<div className="mb-2 flex items-center justify-between">
+																			<h5 className="text-primary text-sm font-semibold tracking-wide uppercase">
+																				{choice.prompt}
+																			</h5>
+																			<Badge
+																				variant={isComplete ? 'default' : 'outline'}
+																				className={cn(
+																					isComplete
+																						? 'bg-emerald-500/20 text-emerald-500 hover:bg-emerald-500/30'
+																						: 'text-amber-500 border-amber-500/50'
+																				)}
+																			>
+																				{isComplete
+																					? 'Complete'
+																					: `${currentSelections.length}/${choice.count}`}
+																			</Badge>
+																		</div>
+																		<p className="text-foreground/60 mb-3 text-xs">
+																			Select {choice.count} option(s)
+																		</p>
+
+																		<div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+																			{choice.options?.map((option) => {
+																				const isOptionSelected = currentSelections.includes(
+																					option.name
+																				);
+
+																				return (
+																					<div
+																						key={option.name}
+																						onClick={(e) => {
+																							e.stopPropagation(); // Prevent subclass card click
+																							handleOptionClick(option.name);
+																						}}
+																						className={cn(
+																							'relative cursor-pointer rounded-lg border-2 p-3 transition-all hover:-translate-y-0.5',
+																							isOptionSelected
+																								? 'border-primary bg-primary/10'
+																								: 'border-primary/30 hover:border-primary/60'
+																						)}
+																					>
+																						<h6 className="text-primary text-sm font-semibold">
+																							{option.name}
+																						</h6>
+																						<p className="text-foreground/80 text-xs leading-relaxed">
+																							{option.description}
+																						</p>
+																						{isOptionSelected && (
+																							<span className="text-primary absolute top-2 right-2 text-lg">
+																								✓
+																							</span>
+																						)}
+																					</div>
+																				);
+																			})}
+																		</div>
+																	</div>
+																);
+															})}
+														</div>
+													)}
+											</div>
+										))}
+									</div>
+								)}
+							</CardContent>
+						</Card>
 					);
 				})}
 			</div>

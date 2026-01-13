@@ -15,8 +15,11 @@ import type {
 	AttributeLimit,
 	UnresolvedChoice,
 	ChoiceOption,
-	TraitChoiceStorage
+	TraitChoiceStorage,
+	GlobalMagicProfile,
+	SpellsKnownSlot
 } from '../types/effectSystem';
+import type { SpellSource, SpellSchool, SpellTag } from '../rulesdata/schemas/spell.schema';
 import {
 	type ModifyMasteryCapEffect,
 	type IncreaseMasteryCapEffect
@@ -51,7 +54,6 @@ import { warlockClass } from '../rulesdata/classes-data/features/warlock_feature
 import { bardClass } from '../rulesdata/classes-data/features/bard_features';
 import { druidClass } from '../rulesdata/classes-data/features/druid_features';
 import { commanderClass } from '../rulesdata/classes-data/features/commander_features';
-import { psionClass } from '../rulesdata/classes-data/features/psion_features';
 import { attributesData } from '../rulesdata/attributes';
 import { skillsData } from '../rulesdata/skills';
 import { tradesData } from '../rulesdata/trades';
@@ -189,6 +191,10 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 		// Path Point Allocations (M3.9)
 		pathPointAllocations: contextData.pathPointAllocations,
 
+		// Selections (M3.20 Slot Based)
+		selectedSpells: contextData.selectedSpells ?? {},
+		selectedManeuvers: contextData.selectedManeuvers ?? [],
+
 		lastModified: Date.now()
 	};
 }
@@ -232,8 +238,7 @@ function getClassFeatures(classId: string): ClassDefinition | null {
 			return druidClass;
 		case 'commander':
 			return commanderClass;
-		case 'psion':
-			return psionClass;
+
 		default:
 			return null;
 	}
@@ -291,7 +296,7 @@ function aggregateAttributedEffects(buildData: EnhancedCharacterBuildData): Attr
 	}
 
 	// Add effects from subclass feature choices
-	if (buildData.selectedSubclass && buildData.selectedFeatureChoices) {
+	if (buildData.selectedSubclass && buildData.featureChoices) {
 		const subclassFeatures = resolveSubclassFeatures(
 			buildData.classId,
 			buildData.selectedSubclass,
@@ -302,7 +307,7 @@ function aggregateAttributedEffects(buildData: EnhancedCharacterBuildData): Attr
 			if (feature.choices) {
 				for (const choice of feature.choices) {
 					const choiceKey = `${buildData.classId}_${buildData.selectedSubclass}_${choice.id}`;
-					const selections = buildData.selectedFeatureChoices[choiceKey] || [];
+					const selections = buildData.featureChoices[choiceKey] || [];
 
 					for (const selectedOptionName of selections) {
 						const option = choice.options?.find((opt) => opt.name === selectedOptionName);
@@ -446,6 +451,158 @@ function aggregateAttributedEffects(buildData: EnhancedCharacterBuildData): Attr
 }
 
 /**
+ * --- Spell System Logic (M3.20) ---
+ */
+
+/**
+ * Aggregates the character's global magic profile by combining class defaults
+ * with expansion effects from features and talents.
+ */
+function calculateGlobalMagicProfile(
+	buildData: EnhancedCharacterBuildData,
+	effects: AttributedEffect[]
+): GlobalMagicProfile {
+	const classData = classesData.find((c) => c.id === buildData.classId);
+	const profile: GlobalMagicProfile = {
+		sources: (classData?.spellRestrictions?.allowedSources as SpellSource[]) || [],
+		schools: (classData?.spellRestrictions?.allowedSchools as SpellSchool[]) || [],
+		tags: (classData?.spellRestrictions?.allowedTags as SpellTag[]) || []
+	};
+
+	// 1. Process Expansion Effects
+	for (const effect of effects) {
+		if (!effect.resolved) continue;
+
+		// Portal Magic Expansion
+		if ((effect as any).target === 'teleportation_expert') {
+			if (!profile.tags.includes('Teleportation' as SpellTag)) {
+				profile.tags.push('Teleportation' as SpellTag);
+			}
+		}
+
+		// Coven's Gift Expansion
+		if ((effect as any).target === 'curse_school_specialization') {
+			if (!profile.tags.includes('Curse' as SpellTag)) {
+				profile.tags.push('Curse' as SpellTag);
+			}
+		}
+
+		// Spellcasting Expansion Talent
+		if ((effect as any).target === 'spell_list_expansion') {
+			// This is a complex choice that would ideally be handled via featureChoices
+			// For now, we'll check if the selection exists in buildData.featureChoices
+			const selection = buildData.featureChoices?.['spell_list_expansion'];
+			if (selection) {
+				// Handle source expansion
+				if (['Arcane', 'Divine', 'Primal'].includes(selection)) {
+					if (!profile.sources.includes(selection as SpellSource)) {
+						profile.sources.push(selection as SpellSource);
+					}
+				}
+				// Handle school expansion (selection might be an array of 3 schools)
+				if (Array.isArray(selection)) {
+					selection.forEach((school) => {
+						if (!profile.schools.includes(school as SpellSchool)) {
+							profile.schools.push(school as SpellSchool);
+						}
+					});
+				}
+			}
+		}
+	}
+
+	return profile;
+}
+
+/**
+ * Generates the array of SpellsKnownSlots for the character.
+ * Processes progression table gains and GRANT_SPELL effects.
+ */
+function generateSpellsKnownSlots(
+	buildData: EnhancedCharacterBuildData,
+	progressionGains: any,
+	globalProfile: GlobalMagicProfile,
+	effects: AttributedEffect[]
+): SpellsKnownSlot[] {
+	const slots: SpellsKnownSlot[] = [];
+	const classFeatures = getClassFeatures(buildData.classId);
+
+	// 1. Generate Global Class Progression Slots
+	// Spells
+	for (let i = 0; i < progressionGains.totalSpellsKnown; i++) {
+		slots.push({
+			id: `global_spell_${i}`,
+			type: 'spell',
+			sourceName: `${classFeatures?.className || 'Class'} Progression`,
+			isGlobal: true
+		});
+	}
+	// Cantrips
+	for (let i = 0; i < progressionGains.totalCantripsKnown; i++) {
+		slots.push({
+			id: `global_cantrip_${i}`,
+			type: 'cantrip',
+			sourceName: `${classFeatures?.className || 'Class'} Progression`,
+			isGlobal: true
+		});
+	}
+
+	// 2. Generate Specialized Slots from GRANT_SPELL effects
+	effects.forEach((effect, index) => {
+		if ((effect as any).type === 'GRANT_SPELL' || (effect as any).type === 'GRANT_CANTRIP') {
+			const count = Number((effect as any).value) || 1;
+			const isCantrip = (effect as any).type === 'GRANT_CANTRIP';
+
+			for (let i = 0; i < count; i++) {
+				const slot: SpellsKnownSlot = {
+					id: `specialized_${effect.source.id}_${index}_${i}`,
+					type: isCantrip ? 'cantrip' : 'spell',
+					sourceName: effect.source.name,
+					isGlobal: false,
+					specificRestrictions: {}
+				};
+
+				// Map common GRANT_SPELL targets to restrictions
+				const target = (effect as any).target;
+				if (target === 'astromancy_school') slot.specificRestrictions!.schools = ['Astromancy' as SpellSchool];
+				if (target === 'conjuration_school') slot.specificRestrictions!.schools = ['Conjuration' as SpellSchool];
+				if (target === 'divination_school') slot.specificRestrictions!.schools = ['Divination' as SpellSchool];
+				if (target === 'elemental_school') slot.specificRestrictions!.schools = ['Elemental' as SpellSchool];
+				if (target === 'enchantment_school') slot.specificRestrictions!.schools = ['Enchantment' as SpellSchool];
+				if (target === 'invocation_school') slot.specificRestrictions!.schools = ['Invocation' as SpellSchool];
+				if (target === 'nullification_school') slot.specificRestrictions!.schools = ['Nullification' as SpellSchool];
+				if (target === 'transmutation_school') slot.specificRestrictions!.schools = ['Transmutation' as SpellSchool];
+				if (target === 'illusion_school') slot.specificRestrictions!.schools = ['Illusion' as SpellSchool]; // Placeholder for Illusion
+
+				if (target === 'Divine_Spell_List') slot.specificRestrictions!.sources = ['Divine' as SpellSource];
+
+				if (target === 'curse_tag') slot.specificRestrictions!.tags = ['Curse' as SpellTag];
+				if (target === 'by_tag' && (effect as any).userChoice) {
+					// Handle user choice for tag-based grant (Cleric Magic Domain)
+					const choiceKey = `${buildData.classId}_Magic_${effect.source.id}`; // Simple mapping
+					const chosenTag = buildData.featureChoices?.[choiceKey];
+					if (chosenTag) slot.specificRestrictions!.tags = [chosenTag as SpellTag];
+				}
+
+				// Surgical grants
+				if (target === 'druidcraft') slot.specificRestrictions!.exactSpellId = 'druidcraft';
+				if (target === 'Sorcery') slot.specificRestrictions!.exactSpellId = 'sorcery';
+				if (target === 'find_familiar') slot.specificRestrictions!.exactSpellId = 'find_familiar';
+
+				// Bard Magical Secrets (Special case: no restrictions)
+				if (target === 'any_source' || effect.source.id === 'bard_magical_secrets') {
+					slot.specificRestrictions = {}; // Truly any
+				}
+
+				slots.push(slot);
+			}
+		}
+	});
+
+	return slots;
+}
+
+/**
  * Resolve user choices in effects
  */
 function resolveEffectChoices(
@@ -494,11 +651,11 @@ function createStatBreakdown(
 		if (!effect.resolved) return false;
 
 		// Map effect types to stat names
-		if (effect.type === 'MODIFY_ATTRIBUTE') {
-			return statName === `attribute_${effect.target}` || statName === effect.target;
+		if ((effect as any).type === 'MODIFY_ATTRIBUTE') {
+			return statName === `attribute_${(effect as any).target}` || statName === (effect as any).target;
 		}
-		if (effect.type === 'MODIFY_STAT') {
-			return statName === effect.target;
+		if ((effect as any).type === 'MODIFY_STAT') {
+			return statName === (effect as any).target;
 		}
 
 		return false;
@@ -918,6 +1075,15 @@ export function calculateCharacterWithBreakdowns(
 	breakdowns.attributePoints = createStatBreakdown(
 		'attributePoints',
 		12 + progressionGains.totalAttributePoints,
+		resolvedEffects
+	);
+
+	// --- Spell System (M3.20) ---
+	const globalMagicProfile = calculateGlobalMagicProfile(buildData, resolvedEffects);
+	const spellsKnownSlots = generateSpellsKnownSlots(
+		buildData,
+		progressionGains,
+		globalMagicProfile,
 		resolvedEffects
 	);
 
@@ -1387,17 +1553,22 @@ export function calculateCharacterWithBreakdowns(
 		},
 		resolvedFeatures: resolvedProgression
 			? {
-					unlockedFeatures: resolvedProgression.unlockedFeatures,
-					pendingFeatureChoices: resolvedProgression.pendingFeatureChoices,
-					availableSubclassChoice: resolvedProgression.availableSubclassChoice,
-					subclassChoiceLevel: resolvedProgression.subclassChoiceLevel
-				}
+				unlockedFeatures: resolvedProgression.unlockedFeatures,
+				pendingFeatureChoices: resolvedProgression.pendingFeatureChoices,
+				availableSubclassChoice: resolvedProgression.availableSubclassChoice,
+				subclassChoiceLevel: resolvedProgression.subclassChoiceLevel
+			}
 			: {
-					unlockedFeatures: [],
-					pendingFeatureChoices: [],
-					availableSubclassChoice: false,
-					subclassChoiceLevel: undefined
-				},
+				unlockedFeatures: [],
+				pendingFeatureChoices: [],
+				availableSubclassChoice: false,
+				subclassChoiceLevel: undefined
+			},
+
+		// --- Spell System (M3.20) ---
+		globalMagicProfile,
+		spellsKnownSlots,
+
 		validation,
 		unresolvedChoices,
 		cacheTimestamp: Date.now(),

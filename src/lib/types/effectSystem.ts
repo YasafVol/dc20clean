@@ -6,6 +6,7 @@
  */
 
 import type { Effect } from '../rulesdata/schemas/character.schema';
+import type { SpellSource, SpellSchool, SpellTag } from '../rulesdata/schemas/spell.schema';
 
 // Build step enumeration for step-aware validation
 export enum BuildStep {
@@ -29,13 +30,13 @@ export type ValidationCode =
 // Source attribution for effects
 export interface EffectSource {
 	type:
-		| 'trait'
-		| 'class_feature'
-		| 'choice'
-		| 'base'
-		| 'ancestry_default'
-		| 'talent'
-		| 'subclass_feature_choice';
+	| 'trait'
+	| 'class_feature'
+	| 'choice'
+	| 'base'
+	| 'ancestry_default'
+	| 'talent'
+	| 'subclass_feature_choice';
 	id: string;
 	name: string;
 	description?: string;
@@ -43,12 +44,12 @@ export interface EffectSource {
 }
 
 // Effect with source attribution and resolution status
-export interface AttributedEffect extends Effect {
+export type AttributedEffect = Effect & {
 	source: EffectSource;
 	resolved: boolean; // Whether user choices are resolved
 	resolvedValue?: any; // Final resolved value after choices
 	dependsOnChoice?: string; // Which choice this effect depends on
-}
+};
 
 // Detailed stat breakdown for tooltips
 export interface EnhancedStatBreakdown {
@@ -278,6 +279,10 @@ export interface EnhancedCalculationResult {
 		subclassChoiceLevel?: number;
 	};
 
+	// --- Spell System (M3.20) ---
+	globalMagicProfile: GlobalMagicProfile;
+	spellsKnownSlots: SpellsKnownSlot[];
+
 	// Validation results
 	validation: ValidationResult;
 
@@ -326,13 +331,13 @@ export interface EnhancedCharacterBuildData {
 
 	// Multiclass selections (M3.17)
 	selectedMulticlassOption?:
-		| 'novice'
-		| 'adept'
-		| 'expert'
-		| 'master'
-		| 'grandmaster'
-		| 'legendary'
-		| null;
+	| 'novice'
+	| 'adept'
+	| 'expert'
+	| 'master'
+	| 'grandmaster'
+	| 'legendary'
+	| null;
 	selectedMulticlassClass?: string; // Class ID
 	selectedMulticlassFeature?: string; // Feature name
 
@@ -352,6 +357,10 @@ export interface EnhancedCharacterBuildData {
 	manualPD?: number;
 	manualAD?: number;
 	manualPDR?: number;
+
+	// Selections (M3.20 Slot Based)
+	selectedSpells: Record<string, string>; // SlotID -> SpellID
+	selectedManeuvers: string[];
 
 	// Timestamps for caching
 	lastModified: number;
@@ -409,4 +418,34 @@ export interface CharacterCalculationHook {
 	// Cache control
 	invalidateCache: () => void;
 	refreshCalculation: () => Promise<void>;
+}
+
+// --- Spell Known Slot Architecture (M3.20) ---
+
+/**
+ * Defines the character's general thematic bounds for spellcasting.
+ * Expansion features (like Portal Magic) append to this profile.
+ */
+export interface GlobalMagicProfile {
+	sources: SpellSource[];
+	schools: SpellSchool[];
+	tags: SpellTag[];
+}
+
+/**
+ * Represents a discrete "pocket" or opportunity to know a spell.
+ * Can be a standard class progression slot or a specific grant from a feature.
+ */
+export interface SpellsKnownSlot {
+	id: string; // Unique ID for state tracking
+	type: 'spell' | 'cantrip';
+	sourceName: string; // UI Label: "Wizard Level 1", "Magical Secrets", etc.
+	isGlobal: boolean; // If true, uses character's GlobalMagicProfile as filter
+	assignedSpellId?: string; // ID of the spell filling this slot
+	specificRestrictions?: {
+		sources?: SpellSource[];
+		schools?: SpellSchool[];
+		tags?: SpellTag[];
+		exactSpellId?: string; // Surgical grant like "Find Familiar"
+	};
 }

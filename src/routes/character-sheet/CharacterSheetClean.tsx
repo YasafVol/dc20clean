@@ -177,24 +177,24 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 	// Calculate max values for current resources
 	const characterMaxValues = characterData
 		? {
-				currentGritPoints: characterData.finalGritPoints,
-				currentRestPoints: characterData.finalRestPoints,
-				currentHP: characterData.finalHPMax,
-				currentSP: characterData.finalSPMax,
-				currentMP: characterData.finalMPMax,
-				tempHP: 0,
-				actionPointsUsed: 0,
-				exhaustionLevel: 0,
-				// Death tracking
-				deathSteps: 0,
-				isDead: false,
-				// Currency
-				goldPieces: 0,
-				silverPieces: 0,
-				copperPieces: 0,
-				electrumPieces: 0,
-				platinumPieces: 0
-			}
+			currentGritPoints: characterData.finalGritPoints,
+			currentRestPoints: characterData.finalRestPoints,
+			currentHP: characterData.finalHPMax,
+			currentSP: characterData.finalSPMax,
+			currentMP: characterData.finalMPMax,
+			tempHP: 0,
+			actionPointsUsed: 0,
+			exhaustionLevel: 0,
+			// Death tracking
+			deathSteps: 0,
+			isDead: false,
+			// Currency
+			goldPieces: 0,
+			silverPieces: 0,
+			copperPieces: 0,
+			electrumPieces: 0,
+			platinumPieces: 0
+		}
 		: {};
 
 	const currentValues = resources?.current || characterMaxValues;
@@ -259,14 +259,14 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 
 		const pdBreakdown = storedBreakdowns.pd?.effects
 			? storedBreakdowns.pd.effects
-					.map((e: any) => `${e.value > 0 ? '+' : ''}${e.value} (${e.source.name || e.source})`)
-					.join(' ') + ` = ${calculatedPD}`
+				.map((e: any) => `${e.value > 0 ? '+' : ''}${e.value} (${e.source.name || e.source})`)
+				.join(' ') + ` = ${calculatedPD}`
 			: `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalAgility} (Agility) + ${characterData.finalIntelligence} (Intelligence) = ${calculatedPD}`;
 
 		const adBreakdown = storedBreakdowns.ad?.effects
 			? storedBreakdowns.ad.effects
-					.map((e: any) => `${e.value > 0 ? '+' : ''}${e.value} (${e.source.name || e.source})`)
-					.join(' ') + ` = ${calculatedAD}`
+				.map((e: any) => `${e.value > 0 ? '+' : ''}${e.value} (${e.source.name || e.source})`)
+				.join(' ') + ` = ${calculatedAD}`
 			: `8 (base) + ${characterData.finalCombatMastery} (Combat Mastery) + ${characterData.finalMight} (Might) + ${characterData.finalCharisma} (Charisma) = ${calculatedAD}`;
 
 		const pdrBreakdown =
@@ -886,7 +886,7 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 		'druid',
 		'warlock',
 		'bard',
-		'psion',
+
 		'spellblade'
 	];
 	const hasSpellcastingPath = !!(

@@ -206,17 +206,8 @@ const CLASS_SPELL_CONFIG: Record<
 	},
 	bard: {
 		allowedSources: ['Arcane'],
-		allowedSchools: [
-			'Enchantment',
-			'Illusion',
-			'Transmutation',
-			'Divination',
-			'Astromancy',
-			'Conjuration',
-			'Elemental',
-			'Invocation',
-			'Nullification'
-		] // Access to all schools but Arcane source
+		allowedSchools: ['Enchantment', 'Illusion', 'Transmutation'],
+		allowedTags: ['Sonic', 'Performance']
 	},
 	cleric: {
 		allowedSources: ['Divine'],
@@ -262,17 +253,7 @@ const CLASS_SPELL_CONFIG: Record<
 	},
 	warlock: {
 		allowedSources: ['Arcane'],
-		allowedSchools: [
-			'Enchantment',
-			'Invocation',
-			'Nullification',
-			'Astromancy',
-			'Conjuration',
-			'Divination',
-			'Elemental',
-			'Illusion',
-			'Transmutation'
-		]
+		allowedSchools: [] // Choose 3 via choices (will be handled by Global Expansion logic)
 	},
 	wizard: {
 		allowedSources: ['Arcane'],
@@ -290,17 +271,8 @@ const CLASS_SPELL_CONFIG: Record<
 	},
 	spellblade: {
 		allowedSources: ['Arcane'],
-		allowedSchools: [
-			'Astromancy',
-			'Conjuration',
-			'Divination',
-			'Elemental',
-			'Enchantment',
-			'Illusion',
-			'Invocation',
-			'Nullification',
-			'Transmutation'
-		]
+		allowedSchools: [], // Choose 2 via choices
+		allowedTags: ['Weapon', 'Ward']
 	},
 	paladin: {
 		allowedSources: ['Divine'],
@@ -332,18 +304,9 @@ const CLASS_SPELL_CONFIG: Record<
 		]
 	},
 	hunter: {
-		allowedSources: ['Primal'], // Assuming hunter is ranger-like for now
-		allowedSchools: [
-			'Conjuration',
-			'Divination',
-			'Transmutation',
-			'Astromancy',
-			'Elemental',
-			'Enchantment',
-			'Illusion',
-			'Invocation',
-			'Nullification'
-		]
+		allowedSources: ['Primal'],
+		allowedSchools: ['Conjuration', 'Divination', 'Transmutation'],
+		allowedTags: []
 	},
 	monk: { allowedSources: [], allowedSchools: [] },
 	rogue: { allowedSources: [], allowedSchools: [] },

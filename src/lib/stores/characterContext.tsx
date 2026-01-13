@@ -1,8 +1,5 @@
 import React, { createContext, useContext, useReducer, useMemo, ReactNode } from 'react';
 import type { CharacterInProgress } from '../types/characterProgress.types';
-import { traitsData } from '../rulesdata/ancestries/traits';
-import { findClassByName } from '../rulesdata/loaders/class-features.loader';
-import { classesData } from '../rulesdata/loaders/class.loader';
 
 import {
 	calculateCharacterWithBreakdowns,
@@ -37,7 +34,7 @@ export interface CharacterInProgressStoreData
 	usePrimeCapRule?: boolean;
 	cachedEffectResults?: EnhancedCalculationResult;
 	cacheTimestamp?: number;
-	selectedSpells: string[];
+	selectedSpells: Record<string, string>; // SlotID -> SpellID
 	selectedManeuvers: string[];
 	skillToTradeConversions?: number;
 	tradeToSkillConversions?: number;
@@ -46,13 +43,13 @@ export interface CharacterInProgressStoreData
 	selectedTalents?: Record<string, number>; // Changed from string[] to count-based
 	pathPointAllocations?: { martial?: number; spellcasting?: number };
 	selectedMulticlassOption?:
-		| 'novice'
-		| 'adept'
-		| 'expert'
-		| 'master'
-		| 'grandmaster'
-		| 'legendary'
-		| null;
+	| 'novice'
+	| 'adept'
+	| 'expert'
+	| 'master'
+	| 'grandmaster'
+	| 'legendary'
+	| null;
 	selectedMulticlassClass?: string;
 	selectedMulticlassFeature?: string;
 	selectedSubclass?: string; // Subclass selection (e.g., "Berserker" for Barbarian at Level 3)
@@ -95,7 +92,7 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
 	selectedTraitChoices: {},
 	cachedEffectResults: undefined,
 	cacheTimestamp: undefined,
-	selectedSpells: [],
+	selectedSpells: {},
 	selectedManeuvers: [],
 	skillToTradeConversions: 0,
 	tradeToSkillConversions: 0,
@@ -116,7 +113,7 @@ type CharacterAction =
 	| { type: 'SET_FEATURE_CHOICES'; selectedFeatureChoices: Record<string, any> }
 	| { type: 'UPDATE_TRAIT_CHOICE'; traitId: string; effectIndex: number; choice: string }
 	| { type: 'INVALIDATE_CACHE' }
-	| { type: 'UPDATE_SPELLS_AND_MANEUVERS'; spells: string[]; maneuvers: string[] }
+	| { type: 'UPDATE_SPELLS_AND_MANEUVERS'; spells: Record<string, string>; maneuvers: string[] }
 	| { type: 'UPDATE_STORE'; updates: Partial<CharacterInProgressStoreData> }
 	| { type: 'INITIALIZE_FROM_SAVED'; character: CharacterInProgressStoreData }
 	| { type: 'NEXT_STEP' }
@@ -124,17 +121,17 @@ type CharacterAction =
 	| { type: 'SET_STEP'; step: number }
 	| { type: 'TOGGLE_PRIME_CAP_RULE'; value?: boolean }
 	| {
-			type: 'SET_CONVERSIONS';
-			conversions: { skillToTrade?: number; tradeToSkill?: number; tradeToLanguage?: number };
-	  }
+		type: 'SET_CONVERSIONS';
+		conversions: { skillToTrade?: number; tradeToSkill?: number; tradeToLanguage?: number };
+	}
 	| { type: 'SET_SELECTED_TALENTS'; talents: Record<string, number> }
 	| { type: 'SET_PATH_POINTS'; pathPoints: { martial?: number; spellcasting?: number } }
 	| {
-			type: 'SET_MULTICLASS';
-			option: 'novice' | 'adept' | 'expert' | 'master' | 'grandmaster' | 'legendary' | null;
-			classId: string;
-			featureId: string;
-	  }
+		type: 'SET_MULTICLASS';
+		option: 'novice' | 'adept' | 'expert' | 'master' | 'grandmaster' | 'legendary' | null;
+		classId: string;
+		featureId: string;
+	}
 	| { type: 'SET_SUBCLASS'; subclass: string | null }
 	| { type: 'ENTER_LEVEL_UP_MODE'; originalLevel: number; characterId: string };
 

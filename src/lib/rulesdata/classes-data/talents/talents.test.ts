@@ -23,7 +23,7 @@ import { commanderTalents } from './commander.talents';
 import { druidTalents } from './druid.talents';
 import { hunterTalents } from './hunter.talents';
 import { monkTalents } from './monk.talents';
-import { psionTalents } from './psion.talents';
+
 import { rogueTalents } from './rogue.talents';
 import { sorcererTalents } from './sorcerer.talents';
 import { spellbladeTalents } from './spellblade.talents';
@@ -94,7 +94,7 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 			{ name: 'Druid', talents: druidTalents },
 			{ name: 'Hunter', talents: hunterTalents },
 			{ name: 'Monk', talents: monkTalents },
-			{ name: 'Psion', talents: psionTalents },
+
 			{ name: 'Rogue', talents: rogueTalents },
 			{ name: 'Sorcerer', talents: sorcererTalents },
 			{ name: 'Spellblade', talents: spellbladeTalents },

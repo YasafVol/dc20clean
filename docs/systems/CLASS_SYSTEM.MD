@@ -54,7 +54,7 @@ flowchart LR
 |                           | `src/lib/rulesdata/classes-data/progressions/*.progression.ts`                            | Level-by-level progression tables (HP, gains, features, etc.)            |
 | **Type Contracts**        | `src/lib/rulesdata/schemas/types.ts`                                                      | TS interfaces `IClassDefinition`, `IClassFeature`, `IClassFeatureChoice` |
 |                           | `src/lib/rulesdata/schemas/class.schema.ts`                                               | Zod schema used for validation & effect typing                           |
-| **Validation Layer**      | `src/lib/rulesdata/loaders/class.loader.ts`                                               | Loads progression files and features, validates against schema           |
+| **Validation Layer**      | `src/lib/rulesdata/loaders/class.loader.ts`                                               | Loads progression, features, and `spellRestrictions`; validates against schema |
 |                           | `src/lib/rulesdata/rulesdata.spec.ts`                                                     | Unit test that asserts every class passes the schema                     |
 | **Runtime Engine**        | `src/lib/services/enhancedCharacterCalculator.ts`                                         | Aggregates class effects, resolves choices, outputs stats                |
 | **State Layer**           | `src/lib/stores/characterContext.tsx`<br>`src/lib/hooks/useCharacterBuilder.ts`           | Provides calculated results to UI                                        |
@@ -153,8 +153,9 @@ flowchart LR
 - Spell schools reorganized to 8 schools (Astromancy, Conjuration, Divination, Elemental, Enchantment, Invocation, Nullification, Transmutation)
 - Spell lists removed; spells are accessed by source (Arcane/Divine/Primal) and school
 - Class features updated with new effects and descriptions
+- **Data-Driven Spell Restrictions**: Classes now define `spellRestrictions` (allowed sources, schools, and tags) to automatically filter available spells in the character creator.
 
 ---
 
-> _Last updated: 2026-01-05_  
+> _Last updated: 2026-01-13_  
 > Maintainer: @DC20Clean-Team

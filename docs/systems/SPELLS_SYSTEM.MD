@@ -34,6 +34,7 @@ interface Spell {
 	cost: SpellCost; // { ap: number; mp?: number }
 	range: string;
 	duration: string;
+	sustained: boolean; // Maintain action each turn
 	effects: SpellEffect[];
 	cantripPassive?: string;
 	enhancements: SpellEnhancement[];
@@ -109,9 +110,9 @@ getNonCantrips(): Spell[]
 
 **Class Access Changes:**
 
-- Classes now access spells by Source + School/Tag combinations
-- Example: Bard gets Enchantment school + Embolden/Enfeeble/Healing/Illusion/Sound tags
-- Example: Wizard gets Arcane source with full school access
+- Classes now access spells by Source + School/Tag combinations via a central `spellRestrictions` config.
+- **Sustained Property**: Added `sustained` flag to all spells (maintain action each turn).
+- **Spellbook App**: New dedicated route for managing character spellbooks.
 
 ---
 
@@ -152,5 +153,5 @@ Acceptance examples:
 
 ---
 
-> Last updated: 2026-01-05
+> Last updated: 2026-01-13
 > Maintainer: @DC20Clean-Team

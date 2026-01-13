@@ -25,8 +25,8 @@ A comprehensive character creation and management system for the DC20 tabletop R
 ### Character Management
 
 - **Character Sheet**: Responsive design for desktop and mobile
-- **Browser Storage**: Save/load characters to localStorage
-- **Import/Export**: JSON-based character data portability
+- **Spellbook App**: Manage and view your character's spellbook in a dedicated interface
+- **Custom Equipment Builder**: Build and save custom weapons, armor, shields, and spell focuses
 - **Live Calculations**: Real-time stat updates with detailed breakdowns
 - **PDF Export**: Export characters to official DC20 character sheet PDF
 
@@ -245,15 +245,15 @@ For detailed guidelines, see **[AGENTS.md](AGENTS.md)**
 
 ### Current Features
 
-- ✅ Character creation wizard (all stages)
+- ✅ Character creation wizard (Premium "Stages" UI)
 - ✅ Leveling system (1-5+)
 - ✅ Multiclass support
-- ✅ All 11 classes with features
+- ✅ All 13 classes with features
 - ✅ All 12 ancestries with traits
 - ✅ Mastery system with validation
-- ✅ Spell and maneuver selection
+- ✅ Spell and maneuver selection (refreshed UI)
 - ✅ Character sheet (desktop & mobile)
-- ✅ Import/export functionality
+- ✅ Spellbook & Custom Equipment mini-apps
 - ✅ PDF export
 
 ### Planned Features

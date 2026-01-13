@@ -142,7 +142,15 @@ export const classSchema = z.object({
 	hybridPath: hybridPathSchema,
 
 	level1Features: z.array(classFeatureSchema).optional(),
-	featureChoicesLvl1: z.array(classFeatureChoiceSchema).optional()
+	featureChoicesLvl1: z.array(classFeatureChoiceSchema).optional(),
+
+	spellRestrictions: z
+		.object({
+			allowedSources: z.array(z.string()).optional(),
+			allowedSchools: z.array(z.string()).optional(),
+			allowedTags: z.array(z.string()).optional()
+		})
+		.optional()
 });
 
 // Schema for an array of class definitions

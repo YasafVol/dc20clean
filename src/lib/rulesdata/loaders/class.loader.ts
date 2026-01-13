@@ -1,18 +1,6 @@
 import { classesDataSchema, type IClassDefinition } from '../schemas/class.schema';
 
-type LegacyLevelEntry = {
-	level: number;
-	healthPoints?: number;
-	attributePoints?: number;
-	skillPoints?: number;
-	tradePoints?: number;
-	staminaPoints?: number;
-	maneuversKnown?: number;
-	manaPoints?: number;
-	cantripsKnown?: number;
-	spellsKnown?: number;
-	features?: string;
-};
+
 
 interface ProgressionLevel {
 	level: number;
@@ -77,10 +65,7 @@ const CLASS_METADATA: Record<string, { name: string; description: string }> = {
 		description:
 			'A disciplined martial artist who channels inner energy for rapid strikes and supernatural movement.'
 	},
-	psion: {
-		name: 'Psion',
-		description: 'A psionic master who wields mental powers to manipulate minds and reality itself.'
-	},
+
 	rogue: {
 		name: 'Rogue',
 		description:
@@ -208,8 +193,179 @@ const compatibleData = Object.entries(progressionDataByKey)
 			featureChoicesLvl1: []
 		};
 	})
-	.filter(Boolean); // Remove any null entries
+	.filter((item): item is NonNullable<typeof item> => Boolean(item)); // Remove any null entries
 
-const validatedData = classesDataSchema.parse(compatibleData);
+// Spell restrictions configuration
+const CLASS_SPELL_CONFIG: Record<
+	string,
+	{ allowedSources?: string[]; allowedSchools?: string[]; allowedTags?: string[] }
+> = {
+	barbarian: {
+		allowedSources: [], // Barbarians don't cast spells by default
+		allowedSchools: []
+	},
+	bard: {
+		allowedSources: ['Arcane'],
+		allowedSchools: [
+			'Enchantment',
+			'Illusion',
+			'Transmutation',
+			'Divination',
+			'Astromancy',
+			'Conjuration',
+			'Elemental',
+			'Invocation',
+			'Nullification'
+		] // Access to all schools but Arcane source
+	},
+	cleric: {
+		allowedSources: ['Divine'],
+		allowedSchools: [
+			'Divination',
+			'Enchantment',
+			'Nullification',
+			'Transmutation',
+			'Astromancy',
+			'Conjuration',
+			'Elemental',
+			'Illusion',
+			'Invocation'
+		]
+	},
+	druid: {
+		allowedSources: ['Primal'],
+		allowedSchools: [
+			'Conjuration',
+			'Elemental',
+			'Transmutation',
+			'Astromancy',
+			'Divination',
+			'Enchantment',
+			'Illusion',
+			'Invocation',
+			'Nullification'
+		]
+	},
+	sorcerer: {
+		allowedSources: ['Arcane'],
+		allowedSchools: [
+			'Elemental',
+			'Invocation',
+			'Transmutation',
+			'Astromancy',
+			'Conjuration',
+			'Divination',
+			'Enchantment',
+			'Illusion',
+			'Nullification'
+		]
+	},
+	warlock: {
+		allowedSources: ['Arcane'],
+		allowedSchools: [
+			'Enchantment',
+			'Invocation',
+			'Nullification',
+			'Astromancy',
+			'Conjuration',
+			'Divination',
+			'Elemental',
+			'Illusion',
+			'Transmutation'
+		]
+	},
+	wizard: {
+		allowedSources: ['Arcane'],
+		allowedSchools: [
+			'Astromancy',
+			'Conjuration',
+			'Divination',
+			'Elemental',
+			'Enchantment',
+			'Illusion',
+			'Invocation',
+			'Nullification',
+			'Transmutation'
+		]
+	},
+	spellblade: {
+		allowedSources: ['Arcane'],
+		allowedSchools: [
+			'Astromancy',
+			'Conjuration',
+			'Divination',
+			'Elemental',
+			'Enchantment',
+			'Illusion',
+			'Invocation',
+			'Nullification',
+			'Transmutation'
+		]
+	},
+	paladin: {
+		allowedSources: ['Divine'],
+		allowedSchools: [
+			'Abjuration', // Mapping old school names if present, or new ones
+			'Divination',
+			'Enchantment',
+			'Nullification',
+			'Transmutation',
+			'Astromancy',
+			'Conjuration',
+			'Elemental',
+			'Illusion',
+			'Invocation'
+		]
+	},
+	ranger: {
+		allowedSources: ['Primal'],
+		allowedSchools: [
+			'Conjuration',
+			'Divination',
+			'Transmutation',
+			'Astromancy',
+			'Elemental',
+			'Enchantment',
+			'Illusion',
+			'Invocation',
+			'Nullification'
+		]
+	},
+	hunter: {
+		allowedSources: ['Primal'], // Assuming hunter is ranger-like for now
+		allowedSchools: [
+			'Conjuration',
+			'Divination',
+			'Transmutation',
+			'Astromancy',
+			'Elemental',
+			'Enchantment',
+			'Illusion',
+			'Invocation',
+			'Nullification'
+		]
+	},
+	monk: { allowedSources: [], allowedSchools: [] },
+	rogue: { allowedSources: [], allowedSchools: [] },
+	fighter: { allowedSources: [], allowedSchools: [] },
+	champion: { allowedSources: [], allowedSchools: [] },
+	commander: { allowedSources: [], allowedSchools: [] }
+};
+
+const finalData = compatibleData.map((data) => {
+	const spellConfig = CLASS_SPELL_CONFIG[data.id.toLowerCase()];
+	return {
+		...data,
+		spellRestrictions: spellConfig
+			? {
+				allowedSources: spellConfig.allowedSources,
+				allowedSchools: spellConfig.allowedSchools,
+				allowedTags: spellConfig.allowedTags
+			}
+			: undefined
+	};
+});
+
+const validatedData = classesDataSchema.parse(finalData);
 
 export const classesData: IClassDefinition[] = validatedData;

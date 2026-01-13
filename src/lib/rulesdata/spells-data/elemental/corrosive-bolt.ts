@@ -11,6 +11,7 @@ export const corrosiveBolt: Spell = {
 	cost: { ap: 1 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',
+	sustained: false,
 	effects: [
 		{
 			title: 'Effect',

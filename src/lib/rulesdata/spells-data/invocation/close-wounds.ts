@@ -11,6 +11,7 @@ export const closeWounds: Spell = {
 	cost: { ap: 1 },
 	range: '5 Spaces',
 	duration: 'Instantaneous',
+	sustained: false,
 	effects: [
 		{
 			title: 'Effect',

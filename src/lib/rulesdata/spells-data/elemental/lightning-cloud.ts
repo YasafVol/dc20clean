@@ -11,6 +11,7 @@ export const lightningCloud: Spell = {
 	cost: { ap: 2 },
 	range: '5 Spaces',
 	duration: '1 Minute (Sustained)',
+	sustained: true,
 	effects: [
 		{
 			title: 'Effect',

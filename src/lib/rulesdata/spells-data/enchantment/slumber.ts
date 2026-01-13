@@ -11,6 +11,7 @@ export const slumber: Spell = {
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',
 	duration: '10 Minutes (Sustained)',
+	sustained: true,
 	effects: [
 		{
 			title: 'Effect',

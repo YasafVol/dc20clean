@@ -11,6 +11,7 @@ export const deathWard: Spell = {
 	cost: { ap: 1, mp: 1 },
 	range: '1 Space',
 	duration: '10 Minutes',
+	sustained: false,
 	effects: [
 		{
 			title: 'Effect',

@@ -20,6 +20,49 @@ export const HeadIcon = () => (
 	</svg>
 );
 
+export const SpellbookIcon = () => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 24 24"
+		width="64"
+		height="64"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth="1.5"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+	>
+		<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+		<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+		<path d="M12 6v4" />
+		<path d="M10 8h4" />
+		<circle cx="12" cy="14" r="2" />
+		<path d="M12 16v2" />
+	</svg>
+);
+
+export const EquipmentIcon = () => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 24 24"
+		width="64"
+		height="64"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth="1.5"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+	>
+		{/* Sword */}
+		<path d="M14.5 17.5L3 6V3h3l11.5 11.5" />
+		<path d="M13 19l6-6" />
+		<path d="M16 16l4 4" />
+		<path d="M19 21l2-2" />
+		{/* Shield accent */}
+		<path d="M7 13l-4 4" />
+	</svg>
+);
+
 export const GroupIcon = () => (
 	<svg
 		id="Layer_1"
@@ -99,6 +142,26 @@ function Menu() {
 					</StyledTextContent>
 					<StyledIcon>
 						<GroupIcon />
+					</StyledIcon>
+				</StyledMenuCard>
+
+				<StyledMenuCard onClick={() => navigate('/spellbook')}>
+					<StyledTextContent>
+						<StyledCardTitle>Spellbook</StyledCardTitle>
+						<StyledCardDescription>Browse all available spells.</StyledCardDescription>
+					</StyledTextContent>
+					<StyledIcon>
+						<SpellbookIcon />
+					</StyledIcon>
+				</StyledMenuCard>
+
+				<StyledMenuCard onClick={() => navigate('/custom-equipment')}>
+					<StyledTextContent>
+						<StyledCardTitle>Custom Equipment</StyledCardTitle>
+						<StyledCardDescription>Create custom weapons, armor, shields & spell focuses.</StyledCardDescription>
+					</StyledTextContent>
+					<StyledIcon>
+						<EquipmentIcon />
 					</StyledIcon>
 				</StyledMenuCard>
 			</StyledMenuGrid>

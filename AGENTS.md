@@ -82,6 +82,7 @@ Tips
 - Calculation & Derived Stats: `docs/systems/CALCULATION_SYSTEM.MD`
 - Spells System: `docs/systems/SPELLS_SYSTEM.MD`
 - Martials System: `docs/systems/MARTIALS_SYSTEM.MD`
+- Equipment System: `docs/systems/EQUIPMENT_SYSTEM.MD`
 - Character Sheet Overview: `docs/systems/CHARACTER_SHEET.MD`
 - PDF Export System: `docs/systems/PDF_EXPORT_SYSTEM.MD`
 

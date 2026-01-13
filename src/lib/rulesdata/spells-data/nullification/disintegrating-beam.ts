@@ -11,6 +11,7 @@ export const disintegratingBeam: Spell = {
 	cost: { ap: 2, mp: 2 },
 	range: 'Self',
 	duration: 'Instantaneous',
+	sustained: false,
 	effects: [
 		{
 			title: 'Effect',

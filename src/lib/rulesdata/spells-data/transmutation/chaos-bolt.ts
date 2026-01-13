@@ -11,6 +11,7 @@ export const chaosBolt: Spell = {
 	cost: { ap: 1, mp: 1 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',
+	sustained: false,
 	effects: [
 		{
 			title: 'Effect',

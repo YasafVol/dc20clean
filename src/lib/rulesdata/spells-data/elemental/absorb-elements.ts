@@ -11,6 +11,7 @@ export const absorbElements: Spell = {
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',
 	duration: 'Instantaneous',
+	sustained: false,
 	effects: [
 		{
 			title: 'Effect',

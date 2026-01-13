@@ -11,6 +11,7 @@ export const regenerate: Spell = {
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',
 	duration: '1 Round',
+	sustained: false,
 	effects: [
 		{
 			title: 'Effect',

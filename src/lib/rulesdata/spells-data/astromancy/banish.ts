@@ -11,6 +11,7 @@ export const banish: Spell = {
 	cost: { ap: 1, mp: 2 },
 	range: '10 Spaces',
 	duration: '1 Minute (Sustained)',
+	sustained: true,
 	effects: [
 		{
 			title: 'Effect',

@@ -11,6 +11,7 @@ export const darkness: Spell = {
 	cost: { ap: 2 },
 	range: '5 Spaces',
 	duration: '10 Minutes (Sustained)',
+	sustained: true,
 	effects: [
 		{
 			title: 'Effect',

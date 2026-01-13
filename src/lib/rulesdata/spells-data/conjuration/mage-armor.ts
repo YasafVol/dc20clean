@@ -11,6 +11,7 @@ export const mageArmor: Spell = {
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',
 	duration: '1 Hour',
+	sustained: false,
 	effects: [
 		{
 			title: 'Effect',

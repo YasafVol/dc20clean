@@ -11,6 +11,7 @@ export const fly: Spell = {
 	cost: { ap: 1, mp: 3 },
 	range: '5 Spaces',
 	duration: '10 Minutes (Sustained)',
+	sustained: true,
 	effects: [
 		{
 			title: 'Effect',

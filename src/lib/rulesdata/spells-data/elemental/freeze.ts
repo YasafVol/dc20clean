@@ -11,6 +11,7 @@ export const freeze: Spell = {
 	cost: { ap: 1, mp: 1 },
 	range: '10 Spaces',
 	duration: '1 Minute',
+	sustained: false,
 	effects: [
 		{
 			title: 'Effect',

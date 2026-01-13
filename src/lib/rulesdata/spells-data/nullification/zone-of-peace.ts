@@ -11,6 +11,7 @@ export const zoneOfPeace: Spell = {
 	cost: { ap: 2, mp: 1 },
 	range: 'Self',
 	duration: '1 Minute (Sustained)',
+	sustained: true,
 	effects: [
 		{
 			title: 'Effect',

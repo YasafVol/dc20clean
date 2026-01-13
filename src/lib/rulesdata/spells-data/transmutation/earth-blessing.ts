@@ -11,6 +11,7 @@ export const earthBlessing: Spell = {
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',
 	duration: '10 Minutes (Sustained)',
+	sustained: true,
 	effects: [
 		{
 			title: 'Effect',

@@ -11,6 +11,7 @@ export const hydroLance: Spell = {
 	cost: { ap: 2 },
 	range: 'Self',
 	duration: 'Instantaneous',
+	sustained: false,
 	effects: [
 		{
 			title: 'Effect',

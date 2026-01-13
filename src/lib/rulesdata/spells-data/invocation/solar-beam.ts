@@ -11,6 +11,7 @@ export const solarBeam: Spell = {
 	cost: { ap: 2 },
 	range: 'Self',
 	duration: '1 Minute (Sustained)',
+	sustained: true,
 	effects: [
 		{
 			title: 'Effect',

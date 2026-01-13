@@ -11,6 +11,7 @@ export const fireImbued: Spell = {
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',
 	duration: '1 Minute (Sustained)',
+	sustained: true,
 	effects: [
 		{
 			title: 'Effect',

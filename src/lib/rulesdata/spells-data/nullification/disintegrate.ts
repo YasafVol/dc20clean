@@ -11,6 +11,7 @@ export const disintegrate: Spell = {
 	cost: { ap: 1, mp: 2 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',
+	sustained: false,
 	effects: [
 		{
 			title: 'Effect',

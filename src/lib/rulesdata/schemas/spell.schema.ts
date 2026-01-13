@@ -146,6 +146,8 @@ export interface Spell {
 	range: string;
 	/** Duration description */
 	duration: string;
+	/** Whether this spell requires sustaining (maintain action each turn) */
+	sustained: boolean;
 	/** Spell effects */
 	effects: SpellEffect[];
 	/** Passive effect for cantrips */

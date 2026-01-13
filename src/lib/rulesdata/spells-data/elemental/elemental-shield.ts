@@ -11,6 +11,7 @@ export const elementalShield: Spell = {
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',
 	duration: '1 Hour',
+	sustained: false,
 	effects: [
 		{
 			title: 'Effect',

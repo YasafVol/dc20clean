@@ -11,6 +11,7 @@ export const gravitySinkHole: Spell = {
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',
 	duration: 'Instantaneous',
+	sustained: false,
 	effects: [
 		{
 			title: 'Effect',

@@ -6,6 +6,7 @@ import LoadCharacter from './routes/character-creation/LoadCharacter.tsx';
 import CharacterSheetRouter from './routes/character-sheet/CharacterSheetRouter';
 import LevelUp from './routes/character-creation/LevelUp';
 import Menu from './components/Menu.tsx';
+import Spellbook from './routes/spellbook/Spellbook.tsx';
 
 import { StyledApp } from './styles/App.styles';
 
@@ -95,6 +96,7 @@ function App() {
 							}
 						/>
 						<Route path="/load-character" element={<LoadCharacter />} />
+						<Route path="/spellbook" element={<Spellbook />} />
 						<Route path="/character/:id" element={<CharacterSheetRouteWrapper />} />
 						<Route
 							path="/character/:id/edit"

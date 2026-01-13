@@ -11,6 +11,7 @@ export const wildGuard: Spell = {
 	cost: { ap: 1 },
 	range: '1 Space',
 	duration: 'Instantaneous',
+	sustained: false,
 	effects: [
 		{
 			title: 'Effect',

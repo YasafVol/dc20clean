@@ -11,6 +11,7 @@ export const spikeBolt: Spell = {
 	cost: { ap: 1 },
 	range: '10 Space',
 	duration: 'Instantaneous',
+	sustained: false,
 	effects: [
 		{
 			title: 'Effect',

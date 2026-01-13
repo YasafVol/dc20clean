@@ -11,6 +11,7 @@ export const fireball: Spell = {
 	cost: { ap: 2 },
 	range: '5 Spaces',
 	duration: 'Instantaneous',
+	sustained: false,
 	effects: [
 		{
 			title: 'Effect',

@@ -11,6 +11,7 @@ export const unholyAura: Spell = {
 	cost: { ap: 2, mp: 2 },
 	range: 'Self',
 	duration: '1 Minute',
+	sustained: false,
 	effects: [
 		{
 			title: 'Effect',

@@ -11,6 +11,7 @@ export const disguiseSelf: Spell = {
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',
 	duration: '10 Minutes (Sustained)',
+	sustained: true,
 	effects: [
 		{
 			title: 'Effect',

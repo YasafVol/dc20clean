@@ -41,6 +41,28 @@ export const SpellbookIcon = () => (
 	</svg>
 );
 
+export const EquipmentIcon = () => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 24 24"
+		width="64"
+		height="64"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth="1.5"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+	>
+		{/* Sword */}
+		<path d="M14.5 17.5L3 6V3h3l11.5 11.5" />
+		<path d="M13 19l6-6" />
+		<path d="M16 16l4 4" />
+		<path d="M19 21l2-2" />
+		{/* Shield accent */}
+		<path d="M7 13l-4 4" />
+	</svg>
+);
+
 export const GroupIcon = () => (
 	<svg
 		id="Layer_1"
@@ -130,6 +152,16 @@ function Menu() {
 					</StyledTextContent>
 					<StyledIcon>
 						<SpellbookIcon />
+					</StyledIcon>
+				</StyledMenuCard>
+
+				<StyledMenuCard onClick={() => navigate('/custom-equipment')}>
+					<StyledTextContent>
+						<StyledCardTitle>Custom Equipment</StyledCardTitle>
+						<StyledCardDescription>Create custom weapons, armor, shields & spell focuses.</StyledCardDescription>
+					</StyledTextContent>
+					<StyledIcon>
+						<EquipmentIcon />
 					</StyledIcon>
 				</StyledMenuCard>
 			</StyledMenuGrid>

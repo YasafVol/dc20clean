@@ -31,13 +31,11 @@ import {
 import { classesData } from '../rulesdata/loaders/class.loader';
 import { findTalentById } from '../rulesdata/classes-data/talents/talent.loader';
 import {
-	getLevelCaps,
-	MASTERY_TIERS,
-	getMasteryTierByNumber
+	getLevelCaps
 } from '../rulesdata/progression/levelCaps';
-import { MULTICLASS_TIERS } from '../rulesdata/progression/multiclass';
 
 import { BuildStep } from '../types/effectSystem';
+import { getSpellById } from '../rulesdata/spells-data';
 import { getLegacyChoiceId, findClassByName } from '../rulesdata/loaders/class-features.loader';
 import { traitsData } from '../rulesdata/ancestries/traits';
 import { ancestriesData } from '../rulesdata/ancestries/ancestries';
@@ -521,7 +519,6 @@ function calculateGlobalMagicProfile(
 function generateSpellsKnownSlots(
 	buildData: EnhancedCharacterBuildData,
 	progressionGains: any,
-	globalProfile: GlobalMagicProfile,
 	effects: AttributedEffect[]
 ): SpellsKnownSlot[] {
 	const slots: SpellsKnownSlot[] = [];
@@ -1083,7 +1080,6 @@ export function calculateCharacterWithBreakdowns(
 	const spellsKnownSlots = generateSpellsKnownSlots(
 		buildData,
 		progressionGains,
-		globalMagicProfile,
 		resolvedEffects
 	);
 
@@ -1420,6 +1416,98 @@ export function calculateCharacterWithBreakdowns(
 	// Max mastery tier for UI dropdowns
 	const maxSkillMastery = baseSkillMasteryTier;
 	const maxTradeMastery = baseTradeMasteryTier;
+
+	// --- START SPELL SLOT VALIDATION (M3.20) ---
+	if (buildData.selectedSpells) {
+		Object.entries(buildData.selectedSpells).forEach(([slotId, spellId]) => {
+			const slot = spellsKnownSlots.find(s => s.id === slotId);
+			const spell = getSpellById(spellId);
+
+			if (!slot) {
+				errors.push({
+					step: BuildStep.SpellsAndManeuvers,
+					field: 'selectedSpells',
+					code: 'INVALID_SLOT',
+					message: `Selected spell is assigned to a non-existent slot: ${slotId}`
+				});
+				return;
+			}
+
+			if (!spell) {
+				errors.push({
+					step: BuildStep.SpellsAndManeuvers,
+					field: slotId,
+					code: 'INVALID_SPELL',
+					message: `Slot ${slot.sourceName} has an invalid spell assigned.`
+				});
+				return;
+			}
+
+			// Validate slot type (Cantrip vs Spell)
+			if (slot.type === 'cantrip' && !spell.isCantrip) {
+				errors.push({
+					step: BuildStep.SpellsAndManeuvers,
+					field: slotId,
+					code: 'TYPE_MISMATCH',
+					message: `${spell.name} is a spell, but ${slot.sourceName} requires a cantrip.`
+				});
+			} else if (slot.type === 'spell' && spell.isCantrip) {
+				errors.push({
+					step: BuildStep.SpellsAndManeuvers,
+					field: slotId,
+					code: 'TYPE_MISMATCH',
+					message: `${spell.name} is a cantrip, but ${slot.sourceName} requires a non-cantrip spell.`
+				});
+			}
+
+			// Validate slot-specific restrictions
+			if (slot.specificRestrictions) {
+				const { schools, tags } = slot.specificRestrictions;
+
+				if (schools && schools.length > 0) {
+					if (!schools.includes(spell.school)) {
+						errors.push({
+							step: BuildStep.SpellsAndManeuvers,
+							field: slotId,
+							code: 'SCHOOL_RESTRICTION',
+							message: `${spell.name} (${spell.school}) does not match allowed schools for ${slot.sourceName}: ${schools.join(', ')}`
+						});
+					}
+				}
+
+				if (tags && tags.length > 0) {
+					const hasValidTag = tags.some((tag: any) => spell.tags?.includes(tag));
+					if (!hasValidTag) {
+						errors.push({
+							step: BuildStep.SpellsAndManeuvers,
+							field: slotId,
+							code: 'TAG_RESTRICTION',
+							message: `${spell.name} does not have any required tags for ${slot.sourceName}: ${tags.join(', ')}`
+						});
+					}
+				}
+			}
+
+			// Validate global magic profile (if not already covered by specific restrictions)
+			if (slot.isGlobal && globalMagicProfile) {
+				const { sources, schools, tags } = globalMagicProfile;
+
+				const matchesSource = sources.some((src: any) => spell.sources.includes(src));
+				const matchesSchool = schools.length === 0 || schools.includes(spell.school);
+				const matchesTags = tags.length === 0 || tags.some((tag: any) => spell.tags?.includes(tag));
+
+				if (!matchesSource || !matchesSchool || !matchesTags) {
+					errors.push({
+						step: BuildStep.SpellsAndManeuvers,
+						field: slotId,
+						code: 'PROFILE_MISMATCH',
+						message: `${spell.name} does not match your character's Global Magic Profile.`
+					});
+				}
+			}
+		});
+	}
+	// --- END SPELL SLOT VALIDATION ---
 
 	const validation: ValidationResult = {
 		isValid: errors.length === 0 && !Object.values(attributeLimits).some((limit) => limit.exceeded),

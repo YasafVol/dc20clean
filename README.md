@@ -18,6 +18,7 @@ A comprehensive character creation and management system for the DC20 tabletop R
 - **Leveling System**: Talent selection and path point allocation for higher-level characters
 - **Multiclass Support**: Choose multiclass options with proper progression
 - **Mastery System**: Level-based skill and trade proficiency with automatic limits
+- **Spell Known System (M3.20)**: Generalized "Global Profile + Specialized Slots" architecture supporting surgical spell grants and global thematic expansions
 - **Effect System**: Modular stat modifications with source attribution
 - **Point Conversion**: Skills ↔ Trades, Trades → Languages with validation
 - **Multi-Attribute Trades**: flexible attribute associations for trades (e.g. Athletics uses Might or Agility)
@@ -251,7 +252,7 @@ For detailed guidelines, see **[AGENTS.md](AGENTS.md)**
 - ✅ All 13 classes with features
 - ✅ All 12 ancestries with traits
 - ✅ Mastery system with validation
-- ✅ Spell and maneuver selection (refreshed UI)
+- ✅ Spell and maneuver selection (Premium slot-based UI with smart filtering)
 - ✅ Character sheet (desktop & mobile)
 - ✅ Spellbook & Custom Equipment mini-apps
 - ✅ PDF export

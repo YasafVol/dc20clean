@@ -111,22 +111,28 @@ getNonCantrips(): Spell[]
 **Class Access Changes:**
 
 - Classes now access spells by Source + School/Tag combinations via a central `spellRestrictions` config.
+- **Tiered Architecture (M3.20)**: Implemented "Global Magic Profile + Specialized Slots" model.
 - **Sustained Property**: Added `sustained` flag to all spells (maintain action each turn).
 - **Spellbook App**: New dedicated route for managing character spellbooks.
+- **Smart Pockets**: UI redesigned with individual spell slots that support specialized filtering.
 
 ---
 
-## 4. Assignment Rules
+### 4.1 Global Magic Profile
+- Defines the character's general spellcasting thematic bounds.
+- Aggregates "Global Expansion" effects (e.g., a Feature that adds "Arcane" to all your spellcasting).
+- Used as a fallback for all spell selection.
 
-- Availability is driven by: class spell access (sources, schools, tags), ancestry/trait grants.
-- MP costs are paid from `finalMpMax`/current MP.
-- Cantrips cost 1 AP and 0 MP by default.
-- Class features can grant additional known spells or school/tag access.
+### 4.2 Spells Known Slots (Pockets)
+- Individual "pockets" that grant a single spell or cantrip.
+- Can have **Specific Restrictions** (e.g., "Must be from the Elemental school").
+- Sources: Class Progression, Subclass Features, Talents (Grant Spell effect).
+- Selection is tracked per-slot: `Record<SlotID, SpellID>`.
 
-Acceptance examples:
-
-- A Wizard can select any Arcane spell from any of the 8 schools.
-- A Bard can select Enchantment school spells OR spells with Healing/Illusion/Sound tags.
+### 4.3 Validation Rules
+- **Type Mismatch**: Cantrips cannot fit into Spell slots and vice-versa.
+- **Restriction Mismatch**: Selected spells must match both the specific slot restrictions AND the Global Magic Profile.
+- **Exhaustion**: All available slots must be validly filled.
 
 ---
 
@@ -153,5 +159,5 @@ Acceptance examples:
 
 ---
 
-> Last updated: 2026-01-13
+> Last updated: 2026-01-14
 > Maintainer: @DC20Clean-Team

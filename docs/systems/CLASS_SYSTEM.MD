@@ -153,9 +153,10 @@ flowchart LR
 - Spell schools reorganized to 8 schools (Astromancy, Conjuration, Divination, Elemental, Enchantment, Invocation, Nullification, Transmutation)
 - Spell lists removed; spells are accessed by source (Arcane/Divine/Primal) and school
 - Class features updated with new effects and descriptions
+- **Slot-Based Spell System (M3.20)**: Classes now define individual spell/cantrip slots ("Pockets"), supporting highly specific restrictions (e.g., expanded schools) alongside broad global magic profiles.
 - **Data-Driven Spell Restrictions**: Classes now define `spellRestrictions` (allowed sources, schools, and tags) to automatically filter available spells in the character creator.
 
 ---
 
-> _Last updated: 2026-01-13_  
+> _Last updated: 2026-01-14_  
 > Maintainer: @DC20Clean-Team

@@ -9,6 +9,7 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const psionClass: ClassDefinition = {
 	className: 'Psion',
+	experimental: true, // Not yet included in DC20 v0.10 rules
 	spellcasterPath: {
 		spellList: {
 			description: 'TBD - Psion not yet released in v0.10',

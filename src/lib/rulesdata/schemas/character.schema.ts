@@ -280,6 +280,8 @@ export interface Subclass {
 /** The complete, robust definition for a single class. */
 export interface ClassDefinition {
 	className: string;
+	/** If true, this class is experimental/unreleased and should be hidden from normal selection */
+	experimental?: boolean;
 	startingEquipment?: {
 		weaponsOrShields?: string | string[];
 		rangedWeapons?: string | string[];

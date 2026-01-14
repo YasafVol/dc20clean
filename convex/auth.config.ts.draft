@@ -1,0 +1,35 @@
+/**
+ * Convex Auth Configuration
+ *
+ * DRAFT FILE - Rename to auth.config.ts after running `npx convex dev`
+ *
+ * Configure authentication providers for the DC20 Character Creator.
+ * Using Convex Auth for simple email/password authentication.
+ */
+
+import { convexAuth } from '@convex-dev/auth/server';
+import { Password } from '@convex-dev/auth/providers/Password';
+
+export const { auth, signIn, signOut, store } = convexAuth({
+	providers: [
+		// Email/Password authentication
+		Password({
+			// Optional: customize password validation
+			// validatePassword: (password) => {
+			//   if (password.length < 8) {
+			//     throw new Error('Password must be at least 8 characters');
+			//   }
+			// },
+		}),
+
+		// TODO: Add OAuth providers if needed
+		// GitHub({
+		//   clientId: process.env.AUTH_GITHUB_ID,
+		//   clientSecret: process.env.AUTH_GITHUB_SECRET,
+		// }),
+		// Google({
+		//   clientId: process.env.AUTH_GOOGLE_ID,
+		//   clientSecret: process.env.AUTH_GOOGLE_SECRET,
+		// }),
+	],
+});

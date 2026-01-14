@@ -117,6 +117,7 @@ E2E_WORKERS=4 npm run test:e2e
 - **Styling**: Material-UI (MUI) + Emotion + Tailwind CSS 4
 - **State Management**: React Context API
 - **Persistence**: Browser localStorage (client-side only)
+  - *Planned: Convex cloud database with authentication (see [Convex Migration Spec](docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md))*
 - **Testing**:
   - Unit: Vitest (browser + node environments)
   - E2E: Playwright
@@ -261,6 +262,7 @@ For detailed guidelines, see **[AGENTS.md](AGENTS.md)**
 
 See `docs/plannedSpecs/` for detailed specifications:
 
+- **[Convex Migration](docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md)** – Cloud storage with user authentication (prep work complete)
 - **[Leveling Epic](docs/plannedSpecs/LEVELING_EPIC.md)** – Extended leveling beyond level 5
 - **[Conditions System](docs/plannedSpecs/CONDITIONS_SPEC.md)** – Status effects and conditions
 - **[Encounter Builder](docs/plannedSpecs/ENCOUNTR_BUILDER.md)** – Combat encounter management

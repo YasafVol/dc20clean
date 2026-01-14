@@ -81,10 +81,20 @@ Status: Prioritized gaps with evidence, impact, and minimal proposals. No code c
 
 ## CH2c — Spells (Entries)
 - Gap: Tag taxonomy alignment
-  - Evidence: Rules list many tags; schema SpellTag union is partial/mismatched.
-  - Impact: P2
-  - Proposal: Audit tags against rules, expand union or use string enum with validator.
-  - Files: `src/lib/rulesdata/schemas/spell.schema.ts` (SpellTag type) vs rules doc tags (CH2b "Spell Tags").
+  - **FIXED**: SpellTag type expanded to include all v0.10 tags (50+ tags across 7 categories).
+  - Evidence: Rules list many tags; schema SpellTag union was partial/mismatched.
+  - Impact: P2 (resolved)
+  - Resolution: Updated `src/lib/rulesdata/schemas/spell.schema.ts` SpellTag union with categorized tags:
+    - Physical Damage: Bludgeoning, Piercing, Slashing
+    - Elemental: Air, Cold, Corrosion, Earth, Fire, Lightning, Water
+    - Energy: Psychic, Radiant, Umbral, True
+    - Conditions: Blinded, Burning, Charmed, Deafened, Exhaustion, Frightened, Paralyzed, Restrained, Stunned
+    - Effect Types: Ailment, Cleansing, Curse, Death, Embolden, Enfeeble, Healing, Metamorphosis, Motion, Resurrection, Strike, Ward
+    - Thematic: Blood, Chaos, Forge, Gravity, Illusion, Knowledge, Light, Madness, Plants, Scent, Sense, Shadow, Sound, Spirit, Thoughts, Time, Trap
+    - Targeting: Communication, Emotions, Planes, Teleportation
+    - Summoning: Summoning, Weapon
+    - Mechanical: Antimagic, Concentration, Ritual
+    - Legacy (backward compat): Thunder, Sonic, Acid, Poison, Necrotic, Force, Detection
 
 - Gap: Repeated save modeling
   - Evidence: Many spells with repeated saves require structured metadata.

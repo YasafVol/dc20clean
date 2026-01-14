@@ -36,42 +36,116 @@ export enum SpellSource {
 }
 
 /**
- * Common spell tags for damage types and effects.
- * Tags help categorize spells by their mechanical effects.
+ * Spell Tags in DC20 v0.10
+ *
+ * Tags describe the characteristics of a spell. Some Tags represent clear in-world
+ * effects (such as manipulating fire), while others exist mainly to support game
+ * mechanics (such as a type of creature the Spell can target). Certain Ancestry
+ * Traits, Class Features, and Talents reference specific Spell Tags, allowing
+ * characters to specialize in particular types of magic.
+ *
+ * Categories:
+ * - Physical Damage: Bludgeoning, Piercing, Slashing
+ * - Elemental: Air, Cold, Corrosion, Earth, Fire, Lightning, Water
+ * - Energy: Psychic, Radiant, Umbral, True (damage type)
+ * - Conditions: Blinded, Burning, Charmed, Deafened, Exhaustion, Frightened,
+ *               Paralyzed, Restrained, Stunned
+ * - Effect Types: Ailment, Cleansing, Curse, Death, Embolden, Enfeeble, Healing,
+ *                 Metamorphosis, Motion, Resurrection, Strike, Ward
+ * - Thematic: Blood, Chaos, Forge, Gravity, Illusion, Knowledge, Light, Madness,
+ *             Plants, Scent, Sense, Shadow, Sound, Spirit, Thoughts, Time, Trap
+ * - Targeting: Communication, Creature Type (meta), Emotions, Planes, Teleportation
+ * - Summoning: Summoning, Weapon
+ * - Mechanical: Antimagic, Concentration, Ritual
+ *
+ * Legacy tags (kept for backward compatibility):
+ * - Thunder → use Sound
+ * - Sonic → use Sound
+ * - Acid → use Corrosion
+ * - Poison → use Ailment (or keep for damage type)
+ * - Necrotic → use Death or Umbral
+ * - Force → use True
+ * - Detection → use Sense
  */
 export type SpellTag =
+	// Physical Damage
 	| 'Bludgeoning'
 	| 'Piercing'
 	| 'Slashing'
-	| 'Fire'
+	// Elemental
+	| 'Air'
 	| 'Cold'
+	| 'Corrosion'
+	| 'Earth'
+	| 'Fire'
 	| 'Lightning'
-	| 'Thunder'
-	| 'Sonic'
-	| 'Acid'
-	| 'Poison'
+	| 'Water'
+	// Energy
 	| 'Psychic'
 	| 'Radiant'
-	| 'Necrotic'
-	| 'Force'
+	| 'Umbral'
 	| 'True'
+	// Conditions (inflicted by spells)
+	| 'Blinded'
 	| 'Burning'
 	| 'Charmed'
-	| 'Frightened'
-	| 'Blinded'
 	| 'Deafened'
+	| 'Exhaustion'
+	| 'Frightened'
 	| 'Paralyzed'
 	| 'Restrained'
 	| 'Stunned'
-	| 'Exhaustion'
+	// Effect Types
+	| 'Ailment'
+	| 'Cleansing'
+	| 'Curse'
+	| 'Death'
+	| 'Embolden'
+	| 'Enfeeble'
+	| 'Healing'
+	| 'Metamorphosis'
+	| 'Motion'
+	| 'Resurrection'
+	| 'Strike'
+	| 'Ward'
+	// Thematic
+	| 'Blood'
+	| 'Chaos'
+	| 'Forge'
+	| 'Gravity'
+	| 'Illusion'
+	| 'Knowledge'
+	| 'Light'
+	| 'Madness'
+	| 'Plants'
+	| 'Scent'
+	| 'Sense'
+	| 'Shadow'
+	| 'Sound'
+	| 'Spirit'
+	| 'Thoughts'
+	| 'Time'
+	| 'Trap'
+	// Targeting
+	| 'Communication'
+	| 'Emotions'
+	| 'Planes'
+	| 'Teleportation'
+	// Summoning
+	| 'Summoning'
+	| 'Weapon'
+	// Mechanical
+	| 'Antimagic'
 	| 'Concentration'
 	| 'Ritual'
-	| 'Chaos'
-	| 'Healing'
-	| 'Teleportation'
-	| 'Summoning'
-	| 'Illusion'
-	| 'Detection';
+	// Legacy (backward compatibility - migrate to v0.10 equivalents)
+	| 'Thunder' // → Sound
+	| 'Sonic' // → Sound
+	| 'Acid' // → Corrosion
+	| 'Poison' // kept for damage type distinction
+	| 'Necrotic' // → Death or Umbral
+	| 'Force' // → True
+	| 'Detection'; // → Sense
 
 /**
  * Classes that can cast spells

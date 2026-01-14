@@ -7,7 +7,7 @@ export const psiBolt: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Enchantment,
 	tags: ['Psychic'],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const psiBolt: Spell = {
 				'You conjure a bolt of vibrant psychic energy that flies towards a target of your choice. Make a Ranged Spell Attack against the PD of a target within range. Hit: The target takes 1 Psychic damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Untraceable: Damage from this Spell leaves no visible trace on any affected creatures or the surrounding environment.',
 	enhancements: [
 		{

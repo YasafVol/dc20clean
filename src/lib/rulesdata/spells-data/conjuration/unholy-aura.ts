@@ -7,7 +7,7 @@ export const unholyAura: Spell = {
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Conjuration,
 	tags: [],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 2 },
 	range: 'Self',
 	duration: '1 Minute',
@@ -19,7 +19,7 @@ export const unholyAura: Spell = {
 				'Umbral energy surrounds you in a 1 Space Aura for the duration. When you cast the Spell, make a Spell Check against the Repeated Charisma Save of each target within the area. Check Success: The target is Doomed for the duration. Doomed Area: When a creature enters the area for the first time on its turn or starts its turn there, it makes a Repeated Charisma Save against your Save DC. Save Failure: The target is Doomed for the duration.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Obscure: Mundane lights produced by tiny or smaller sources stop working while within the Aura.',
 	enhancements: [
 		{

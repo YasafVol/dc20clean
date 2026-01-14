@@ -7,7 +7,7 @@ export const command: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Enchantment,
 	tags: [],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',

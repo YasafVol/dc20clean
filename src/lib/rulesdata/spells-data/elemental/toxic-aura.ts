@@ -7,7 +7,7 @@ export const toxicAura: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Poison'],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 1 },
 	range: 'Self',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const toxicAura: Spell = {
 				'You emit toxic air that envelops a 1 Space Aura. Make an Area Spell Attack against the AD of each target in the area. Hit: They take 1 Poison damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Noxious: Plant life in the area that are not being worn or held wilts or dies, grass blackens, and flowers or vines shrivel where the Spell touches.',
 	enhancements: [
 		{

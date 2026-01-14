@@ -7,7 +7,7 @@ export const gust: Spell = {
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Blinded', 'Deafened'],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',

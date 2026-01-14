@@ -7,7 +7,7 @@ export const wallOfFire: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Conjuration,
 	tags: ['Burning', 'Fire'],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',
 	duration: '1 Minute (Sustained)',
@@ -19,7 +19,7 @@ export const wallOfFire: Spell = {
 				'You conjure persistent flames that fills a 4 Space long, 2 Space tall Wall. When you cast the Spell, make an Area Spell Attack against the AD of each target within the area. Hit: The target takes 1 fire damage. Hazardous Area: When a creature enters the area for the first time on its turn or starts its turn there, it makes a Might Save against your Save DC. Save Failure: The target takes 1 Fire damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		"Ignite: Flammable objects that are not being worn or held in the target's Space catch fire. A creature can spend 1 AP to put out a mundane fire within 1 Space of them.",
 	enhancements: [
 		{

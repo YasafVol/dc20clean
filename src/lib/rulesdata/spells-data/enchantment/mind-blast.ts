@@ -7,7 +7,7 @@ export const mindBlast: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Enchantment,
 	tags: ['Psychic'],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: 'Self',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const mindBlast: Spell = {
 				'You produce a blast of psychic energy that projects in a 2 Space Cone. Make an Area Spell Attack against the AD of every target within the area. Hit: The target takes 1 Psychic damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Untraceable: Damage from this Spell leaves no visible trace on any affected creatures or the surrounding environment.',
 	enhancements: [
 		{

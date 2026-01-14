@@ -7,7 +7,7 @@ export const poisonCloud: Spell = {
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Poison'],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: '5 Spaces',
 	duration: '1 Minute (Sustained)',
@@ -19,7 +19,7 @@ export const poisonCloud: Spell = {
 				'You create a 2 Space diameter Sphere of poison gas within range for the duration. The Sphere spreads around corners. When a creature enters the area for the first time on its turn, or starts its turn there, it makes a Might Save. Save Failure: The creature takes 1 Poison damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		"Noxious: Plant life in the area that's not being worn or held wilts or dies, grass blackens, and flowers or vines shrivel where the Spell touches.",
 	enhancements: [
 		{

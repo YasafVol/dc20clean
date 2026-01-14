@@ -7,7 +7,7 @@ export const corrosiveWave: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: [],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: 'Self',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const corrosiveWave: Spell = {
 				'You conjure a wave of acid that envelops a 1 Space Arc. Make a Spell Attack against the AD of every target within the area. Hit: The target takes 1 Corrosion damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Acidic: Mundane materials in the area (wood, leather, rope, non-magical metals) that are not being worn or held partially erode or decay, weakening structures and gear.',
 	enhancements: [
 		{

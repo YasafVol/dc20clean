@@ -7,7 +7,7 @@ export const planarProtection: Spell = {
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Enchantment,
 	tags: [],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',
 	duration: '1 Hour',

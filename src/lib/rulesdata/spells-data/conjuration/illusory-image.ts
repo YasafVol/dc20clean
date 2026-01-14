@@ -7,7 +7,7 @@ export const illusoryImage: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Conjuration,
 	tags: ['Illusion'],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '10 Spaces',
 	duration: '1 Minute',

@@ -7,7 +7,7 @@ export const sanctuary: Spell = {
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Nullification,
 	tags: [],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',
 	duration: '1 Minute',

@@ -7,7 +7,7 @@ export const deathWard: Spell = {
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Invocation,
 	tags: [],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: '1 Space',
 	duration: '10 Minutes',

@@ -7,7 +7,7 @@ export const disintegrate: Spell = {
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Nullification,
 	tags: ['True'],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 2 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const disintegrate: Spell = {
 				'You conjure a bolt of pure destructive energy. Make a Ranged Spell Attack against the PD of a target within range. Hit: The target takes 3 True Damage. The additional damage from Critical Hits and Heavy Hits or higher is doubled.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Annihilating: Creatures and objects killed or destroyed by this Spell are reduced to a pile of ash.',
 	enhancements: [
 		{

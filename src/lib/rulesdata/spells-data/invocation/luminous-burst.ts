@@ -7,7 +7,7 @@ export const luminousBurst: Spell = {
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Invocation,
 	tags: ['Radiant'],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 1 },
 	range: 'Self',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const luminousBurst: Spell = {
 				'You produce a flash of brilliant light in a 1 Space Aura. Make an Area Spell Attack against the AD of every target within the area. Hit: The target takes 1 Radiant damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Illuminate: The Light level of the area increases by 1 until the end of the turn.',
 	enhancements: [
 		{

@@ -7,7 +7,7 @@ export const waterBolt: Spell = {
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Bludgeoning'],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const waterBolt: Spell = {
 				'You produce a bolt of water that flies towards a target of your choice. Make a Ranged Spell Attack against the PD of a target within range. Hit: The target takes 1 Bludgeoning damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		"Extinguish: Open flames in the target's Space are extinguished, including torches, candles, or small campfires, unless magical or protected.",
 	enhancements: [
 		{

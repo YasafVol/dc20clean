@@ -7,7 +7,7 @@ export const absorbElements: Spell = {
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: [],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',
 	duration: 'Instantaneous',

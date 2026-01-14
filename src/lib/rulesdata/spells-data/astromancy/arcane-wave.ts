@@ -7,7 +7,7 @@ export const arcaneWave: Spell = {
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Astromancy,
 	tags: ['Bludgeoning', 'Deafened', 'Piercing', 'Slashing'],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: 'Self',
 	duration: 'Instantaneous',

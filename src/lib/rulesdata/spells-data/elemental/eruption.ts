@@ -7,7 +7,7 @@ export const eruption: Spell = {
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Bludgeoning'],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: '5 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const eruption: Spell = {
 				'You create a 2 Space diameter Sphere of erupting earth within range. Make an Area Spell Attack against the AD of every target within the area. Hit: The target takes 1 Bludgeoning damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Quake: The ground rumbles and quakes, causing all unsecured small objects to fall and leaving visible cracks and marks across surfaces.',
 	enhancements: [
 		{

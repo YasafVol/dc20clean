@@ -7,7 +7,7 @@ export const chaosBolt: Spell = {
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Transmutation,
 	tags: ['Chaos'],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',

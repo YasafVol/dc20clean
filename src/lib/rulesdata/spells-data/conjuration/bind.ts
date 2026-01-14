@@ -7,7 +7,7 @@ export const bind: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Divine, SpellSource.Primal],
 	school: SpellSchool.Conjuration,
 	tags: ['Restrained', 'True'],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: '10 Spaces',
 	duration: '1 Minute',

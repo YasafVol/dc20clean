@@ -7,7 +7,7 @@ export const lifeTransfer: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Invocation,
 	tags: ['Healing'],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',

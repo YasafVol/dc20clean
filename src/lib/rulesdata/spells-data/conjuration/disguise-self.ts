@@ -7,7 +7,7 @@ export const disguiseSelf: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Conjuration,
 	tags: ['Illusion'],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',
 	duration: '10 Minutes (Sustained)',

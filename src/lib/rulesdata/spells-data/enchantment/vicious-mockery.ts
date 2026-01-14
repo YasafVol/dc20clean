@@ -7,7 +7,7 @@ export const viciousMockery: Spell = {
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Enchantment,
 	tags: ['Psychic'],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const viciousMockery: Spell = {
 				'You attempt to verbally mock a creature that can hear you. Make a Ranged Spell Attack against the AD of a target within range. Hit: The target takes 1 Psychic damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Untraceable: Damage from this Spell leaves no visible trace on any affected creatures or the surrounding environment.',
 	enhancements: [
 		{

@@ -7,7 +7,7 @@ export const lightningBlast: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Lightning'],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 1 },
 	range: 'Self',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const lightningBlast: Spell = {
 				'You conjure a torrent of lightning that a 1 Space Aura. Make an Area Spell Attack against the AD of every target within the area. Hit: The target takes 1 Lightning damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Magnetic: Metal in the area becomes briefly magnetized, causing metal objects to attract or repel each other and disrupting compass-based navigation.',
 	enhancements: [
 		{

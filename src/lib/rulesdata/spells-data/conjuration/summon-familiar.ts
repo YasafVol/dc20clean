@@ -7,7 +7,7 @@ export const summonFamiliar: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Divine, SpellSource.Primal],
 	school: SpellSchool.Conjuration,
 	tags: ['Summoning'],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: '1 Space',
 	duration: 'Instantaneous',

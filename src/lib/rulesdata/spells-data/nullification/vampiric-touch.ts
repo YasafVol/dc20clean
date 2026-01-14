@@ -7,7 +7,7 @@ export const vampiricTouch: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Nullification,
 	tags: ['Healing'],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '1 Space',
 	duration: 'Instantaneous',

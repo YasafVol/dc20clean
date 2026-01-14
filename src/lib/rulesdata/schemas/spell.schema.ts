@@ -136,9 +136,7 @@ export interface Spell {
 	school: SpellSchool;
 	/** Tags for damage types and effects */
 	tags?: SpellTag[];
-	/** Is this a cantrip (0 MP base cost)? */
-	isCantrip: boolean;
-	/** Can be cast as a ritual? */
+	/** Is this a ritual? */
 	isRitual?: boolean;
 	/** Base cost to cast */
 	cost: SpellCost;
@@ -150,8 +148,8 @@ export interface Spell {
 	sustained: boolean;
 	/** Spell effects */
 	effects: SpellEffect[];
-	/** Passive effect for cantrips */
-	cantripPassive?: string;
+	/** Passive effect for the spell */
+	spellPassive?: string;
 	/** Enhancement options */
 	enhancements: SpellEnhancement[];
 	/** Components (defaults to Verbal + Somatic) */

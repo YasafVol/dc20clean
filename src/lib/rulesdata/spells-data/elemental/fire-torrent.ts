@@ -7,7 +7,7 @@ export const fireTorrent: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Burning', 'Fire'],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: 'Self',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const fireTorrent: Spell = {
 				'You produce a torrent of fire that envelops a 2 Space Cone. Make an Area Spell Attack against the AD of every target within the area. Hit: The target takes 1 Fire damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		"Ignite: Flammable objects that are not being worn or held in the target's Space catch fire. A creature can spend 1 AP to put out a mundane fire within 1 Space of them.",
 	enhancements: [
 		{

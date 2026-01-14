@@ -7,7 +7,7 @@ export const spiritLink: Spell = {
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Invocation,
 	tags: [],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',
 	duration: '1 Minute',

@@ -7,7 +7,7 @@ export const lightningBolt: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Lightning', 'Stunned'],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const lightningBolt: Spell = {
 				'You conjure a bolt of lightning that flies towards a target of your choice. Make a Ranged Spell Attack against the PD of a target you can see within range. Hit: The target takes 1 Lightning damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		"Magnetic: Metal in the target's Space becomes briefly magnetized, causing metal objects to attract or repel each other and disrupting compass-based navigation.",
 	enhancements: [
 		{

@@ -7,7 +7,7 @@ export const zoneOfPeace: Spell = {
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Nullification,
 	tags: [],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 1 },
 	range: 'Self',
 	duration: '1 Minute (Sustained)',

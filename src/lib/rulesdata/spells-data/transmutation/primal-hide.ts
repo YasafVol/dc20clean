@@ -7,7 +7,7 @@ export const primalHide: Spell = {
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Transmutation,
 	tags: [],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',
 	duration: '1 Hour',

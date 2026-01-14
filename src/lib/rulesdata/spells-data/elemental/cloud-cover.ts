@@ -7,7 +7,7 @@ export const cloudCover: Spell = {
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Cold', 'Slashing'],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',
 	duration: '10 Minutes (Sustained)',

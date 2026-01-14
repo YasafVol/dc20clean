@@ -7,7 +7,7 @@ export const acidRain: Spell = {
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: [],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',
 	duration: '1 Minute (Sustained)',
@@ -19,7 +19,7 @@ export const acidRain: Spell = {
 				'You create a 6 Space tall, 2 Space diameter Cylinder of acid rain that fills an area within range for the duration. When you cast the Spell, make an Area Spell Attack against the AD of each target within the area. Hit: The target takes 1 Corrosion damage. Hazardous Area: When a creature enters the area for the first time on its turn or starts its turn there, it makes an Agility Save against your Save DC. Save Failure: The target takes 1 Corrosion damage. Moving the Cylinder: When you Sustain this Spell or by spending 1 AP, you can move the Cylinder up to 5 Spaces to another Space within range.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Acidic: Mundane materials (wood, leather, rope, non-magical metals) not being worn or held erode or decay, weakening structures and gear over time.',
 	enhancements: [
 		{

@@ -7,7 +7,7 @@ export const inflictPoison: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Frightened', 'Stunned'],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: '10 Spaces',
 	duration: '1 Minute',

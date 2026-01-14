@@ -7,7 +7,7 @@ export const entangle: Spell = {
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Conjuration,
 	tags: ['Piercing', 'Restrained'],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',
 	duration: '1 Minute',

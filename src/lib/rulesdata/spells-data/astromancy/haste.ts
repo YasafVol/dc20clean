@@ -7,7 +7,7 @@ export const haste: Spell = {
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Astromancy,
 	tags: [],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',
 	duration: '1 Minute',

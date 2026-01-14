@@ -7,7 +7,7 @@ export const sunburst: Spell = {
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Invocation,
 	tags: ['Blinded', 'Radiant'],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: '5 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const sunburst: Spell = {
 				'You produce a flash of brilliant radiance in a 6 Space tall, 2 Space diameter Cylinder within range. Make an Area Spell Attack against the AD of every target within the area. Hit: The target takes 1 Radiant damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Illuminate: The Light level of the area increases by 1 until the end of the turn.',
 	enhancements: [
 		{

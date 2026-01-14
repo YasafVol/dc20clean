@@ -7,7 +7,7 @@ export const spikeBolt: Spell = {
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Piercing'],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '10 Space',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const spikeBolt: Spell = {
 				'You produce a sharp spike of earth or plant matter that flies towards a target of your choice. Make a Ranged Spell Attack against the PD of a target within range. Hit: The target takes 1 Piercing damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Natural Destruction: This Spell leaves debris imbedded in the Space it lands in.',
 	enhancements: [
 		{

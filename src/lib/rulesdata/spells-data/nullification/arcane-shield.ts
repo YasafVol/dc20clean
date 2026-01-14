@@ -7,7 +7,7 @@ export const arcaneShield: Spell = {
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Nullification,
 	tags: [],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '1 Space',
 	duration: 'Instantaneous',

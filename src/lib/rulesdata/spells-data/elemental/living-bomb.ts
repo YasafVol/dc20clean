@@ -7,7 +7,7 @@ export const livingBomb: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Burning', 'Fire'],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',
 	duration: '1 Minute',
@@ -19,7 +19,7 @@ export const livingBomb: Spell = {
 				"You set a target within range ablaze. Make a Spell Check against the target's Repeated Physical Save. Check Success: The target begins Burning. Bomb: When the Burning from this Spell ends, the fire magic detonates in a 1 Space Aura centered on the target. Each target in the area (including the original one) makes a Might Save against your Save DC. Save Failure: The target takes 1 Fire damage."
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		"Ignite: Flammable objects that are not being worn or held in the target's Space catch fire. A creature can spend 1 AP to put out a mundane fire within 1 Space of them.",
 	enhancements: [
 		{

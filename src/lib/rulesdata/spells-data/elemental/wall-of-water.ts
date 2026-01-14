@@ -7,7 +7,7 @@ export const wallOfWater: Spell = {
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: [],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',
 	duration: '1 Minute (Sustained)',
@@ -19,7 +19,7 @@ export const wallOfWater: Spell = {
 				"You create a 2 Space high, 3 Space long Wall of water within range for the duration. Creatures in the area are subjected to the Underwater Combat rules ('Underwater Combat' on page 132 for more information) and begin to Suffocate if they can't hold their breath or breath underwater, and are Slowed when moving through the area. Attacks that deal Physical or Elemental damage have DisADV if made against targets within the area or on the other side of the Wall."
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Extinguish: Open flames in the area are extinguished, including torches, candles, or small campfires, unless magical or protected.',
 	enhancements: [
 		{

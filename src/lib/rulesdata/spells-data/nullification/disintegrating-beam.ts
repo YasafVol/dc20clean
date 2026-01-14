@@ -7,7 +7,7 @@ export const disintegratingBeam: Spell = {
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Nullification,
 	tags: ['True'],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 2 },
 	range: 'Self',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const disintegratingBeam: Spell = {
 				'You create a 4 Space Line of pure destructive energy. Make an Area Spell Attack against the AD of every target within the area. Hit: The target takes 1 True Damage. The additional damage from Critical Hits and Heavy Hits or higher is doubled.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Annihilating: Creatures and objects killed or destroyed by this Spell are reduced to a pile of ash.',
 	enhancements: [
 		{

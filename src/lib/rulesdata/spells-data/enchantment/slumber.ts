@@ -7,7 +7,7 @@ export const slumber: Spell = {
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Enchantment,
 	tags: ['Blinded', 'Deafened'],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',
 	duration: '10 Minutes (Sustained)',

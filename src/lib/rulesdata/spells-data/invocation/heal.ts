@@ -7,7 +7,7 @@ export const heal: Spell = {
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Invocation,
 	tags: ['Healing'],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',
 	duration: 'Instantaneous',

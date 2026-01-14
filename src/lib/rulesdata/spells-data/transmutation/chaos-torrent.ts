@@ -7,7 +7,7 @@ export const chaosTorrent: Spell = {
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Transmutation,
 	tags: ['Chaos'],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 1 },
 	range: 'Self',
 	duration: 'Instantaneous',

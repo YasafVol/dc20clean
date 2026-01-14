@@ -7,7 +7,7 @@ export const massHeal: Spell = {
 	sources: [SpellSource.Divine, SpellSource.Primal],
 	school: SpellSchool.Invocation,
 	tags: ['Healing'],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',
 	duration: 'Instantaneous',

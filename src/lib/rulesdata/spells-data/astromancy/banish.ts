@@ -7,7 +7,7 @@ export const banish: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Astromancy,
 	tags: ['Psychic', 'Teleportation'],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 2 },
 	range: '10 Spaces',
 	duration: '1 Minute (Sustained)',

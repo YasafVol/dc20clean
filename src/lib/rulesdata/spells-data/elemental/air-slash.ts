@@ -7,7 +7,7 @@ export const airSlash: Spell = {
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Slashing'],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const airSlash: Spell = {
 				'You conjure a slash of high velocity wind that flies towards a target of your choice. Make a Ranged Spell Attack against the PD of a target within range. Hit: The target takes 1 Slashing damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		"Wind: Unsecured mundane objects in the target's space are knocked over or blown away, especially light ones (papers, tools, empty crates). Can slam doors, scatter sand/dust and disperse smoke.",
 	enhancements: [
 		{

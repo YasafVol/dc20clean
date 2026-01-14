@@ -7,7 +7,7 @@ export const radiantBolt: Spell = {
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Invocation,
 	tags: ['Blinded', 'Radiant'],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const radiantBolt: Spell = {
 				'You conjure a bolt of light that flies towards a target of your choice. Make a Ranged Spell Attack against the PD of a target within range. Hit: The target takes 1 Radiant damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		"Illuminate: The Light level in the target's Space increases by 1 until the end of the turn.",
 	enhancements: [
 		{

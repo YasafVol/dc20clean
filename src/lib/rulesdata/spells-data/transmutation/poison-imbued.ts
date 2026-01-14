@@ -7,7 +7,7 @@ export const poisonImbued: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Transmutation,
 	tags: ['Poison'],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',
 	duration: '1 Minute (Sustained)',

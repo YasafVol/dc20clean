@@ -7,7 +7,7 @@ export const lightningCloud: Spell = {
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Deafened', 'Lightning', 'Stunned'],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: '5 Spaces',
 	duration: '1 Minute (Sustained)',
@@ -19,7 +19,7 @@ export const lightningCloud: Spell = {
 				'You create a 6 Space high, 2 Space diameter Cylinder of crackling lightning within range for the duration. When a creature enters the area for the first time on its turn or starts its turn there, it makes an Agility Save against your Save DC. Save Failure: The target takes 1 Lightning damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Magnetic: Metal in the area becomes magnetized for the duration, causing metal objects to attract or repel each other and disrupting compass-based navigation.',
 	enhancements: [
 		{

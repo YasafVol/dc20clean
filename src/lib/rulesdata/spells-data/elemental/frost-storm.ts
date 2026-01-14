@@ -7,7 +7,7 @@ export const frostStorm: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Cold'],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: '5 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const frostStorm: Spell = {
 				'The temperature rapidly decreases in a 6 Space tall, 2 Space diameter Cylinder within range. Make an Area Spell Attack against the AD of every target within the area. Hit: The target takes 1 Cold damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Freezing: Liquids and objects not being held or carried in the area frost over, causing them to adhere to nearby surfaces. A creature can use a Minor Action to make a Might Check against your Save DC to dislodge an object.',
 	enhancements: [
 		{

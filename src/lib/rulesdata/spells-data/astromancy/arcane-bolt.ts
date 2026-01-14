@@ -7,7 +7,7 @@ export const arcaneBolt: Spell = {
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Astromancy,
 	tags: ['Bludgeoning', 'Piercing', 'Slashing'],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',

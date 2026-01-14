@@ -7,7 +7,7 @@ export const corrosiveCascade: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: [],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: '5 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const corrosiveCascade: Spell = {
 				'You produce a deluge of acid that envelops a 6 Space tall, 2 Space diameter Cylinder within range. Make an Area Spell Attack against the AD of every target within the area. Hit: The target takes 1 Corrosion damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Acidic: Mundane materials in the area (wood, leather, rope, non-magical metals) that are not being worn or held partially erode or decay, weakening structures and gear.',
 	enhancements: [
 		{

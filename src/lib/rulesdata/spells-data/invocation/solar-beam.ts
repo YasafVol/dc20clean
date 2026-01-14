@@ -7,7 +7,7 @@ export const solarBeam: Spell = {
 	sources: [SpellSource.Divine, SpellSource.Primal],
 	school: SpellSchool.Invocation,
 	tags: ['Blinded', 'Burning', 'Radiant'],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: 'Self',
 	duration: '1 Minute (Sustained)',
@@ -19,7 +19,7 @@ export const solarBeam: Spell = {
 				'You store a radiant power within yourself for the duration. You gain 1 Charge plus another Charge each time you Sustain this Spell (up to a maximum of 4). Sunlight: Once on each of your turns while in an area of Sunlight, you can spend 1 AP to gain a Charge.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Light Beacon: For the duration of the Spell, the Light Level of any Space you occupy increases by 1.',
 	enhancements: [
 		{

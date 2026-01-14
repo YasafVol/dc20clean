@@ -7,7 +7,7 @@ export const radiantBeam: Spell = {
 	sources: [SpellSource.Divine, SpellSource.Primal],
 	school: SpellSchool.Invocation,
 	tags: ['Blinded', 'Burning', 'Radiant'],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',
 	duration: '1 Minute (Sustained)',
@@ -19,7 +19,7 @@ export const radiantBeam: Spell = {
 				'You create a 6 Space Tall, 2 Space Wide Cylinder of celestial light (sun, moon or star light) fills an area within range for the duration. When a creature enters the area for the first time on its turn, or starts its turn there, it makes a Might Save against your Save DC. Save Failure: The target takes 1 Radiant damage.'
 		}
 	],
-	cantripPassive: 'Light: The area is filled with Bright Light for the duration.',
+	spellPassive: 'Light: The area is filled with Bright Light for the duration.',
 	enhancements: [
 		{
 			type: 'AP',

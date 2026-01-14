@@ -7,7 +7,7 @@ export const empoweredSight: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal, SpellSource.Divine],
 	school: SpellSchool.Divination,
 	tags: [],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',
 	duration: '1 Hour',

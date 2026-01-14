@@ -7,7 +7,7 @@ export const windBlade: Spell = {
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Slashing'],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const windBlade: Spell = {
 				'You produce a rush of high velocity wind in a 1 Space Arc. Make an Area Spell Attack against the AD of every target within the area. Hit: The target takes 1 Slashing damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Wind: Unsecured mundane objects in the area are knocked over or blown away, especially light ones (papers, tools, empty crates). Can slam doors, scatter sand/dust and disperse smoke.',
 	enhancements: [
 		{

@@ -7,7 +7,7 @@ export const chaosBomb: Spell = {
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Conjuration,
 	tags: ['Chaos'],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',
 	duration: '1 Minute',
@@ -19,7 +19,7 @@ export const chaosBomb: Spell = {
 				'You conjure a Tiny sized Chaos Bomb in a Space within range. At the end of each of your turns, make a Fate Check. Result of 10 or above: The Chaos Bomb detonates.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Wild Magic Surge: When you Critically Fail or Critically Succeed on a Check made to cast this Spell, you roll on the Wild Magic Table.',
 	enhancements: [
 		{

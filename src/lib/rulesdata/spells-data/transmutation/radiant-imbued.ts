@@ -7,7 +7,7 @@ export const radiantImbued: Spell = {
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Transmutation,
 	tags: ['Radiant'],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',
 	duration: '1 Minute (Sustained)',

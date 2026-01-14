@@ -7,7 +7,7 @@ export const frostBolt: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Cold'],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const frostBolt: Spell = {
 				'You conjure a bolt of condensed freezing air that flies towards a target of your choice. Make a Ranged Spell Attack against the PD of a target within range. Hit: The target takes 1 Cold damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		"Freezing: Liquids and objects not being held or carried in the target's Space frost over, causing them to adhere to nearby surfaces. A creature can use a Minor Action to make a Might Check against your Save DC to dislodge an object.",
 	enhancements: [
 		{

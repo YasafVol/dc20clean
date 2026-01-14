@@ -7,7 +7,7 @@ export const gravitySinkHole: Spell = {
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Astromancy,
 	tags: ['Restrained'],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',
 	duration: 'Instantaneous',

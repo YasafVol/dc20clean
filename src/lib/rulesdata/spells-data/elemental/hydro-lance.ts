@@ -7,7 +7,7 @@ export const hydroLance: Spell = {
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Piercing'],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: 'Self',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const hydroLance: Spell = {
 				'You produce a high pressure jet of water in a 4 Space Line. Make an Area Spell Attack against the AD of every target within the area. Hit: The target takes 1 Piercing damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Extinguish: Open flames in the area are extinguished, including torches, candles, or small campfires, unless magical or protected.',
 	enhancements: [
 		{

@@ -7,7 +7,7 @@ export const fly: Spell = {
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Astromancy,
 	tags: [],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 3 },
 	range: '5 Spaces',
 	duration: '10 Minutes (Sustained)',

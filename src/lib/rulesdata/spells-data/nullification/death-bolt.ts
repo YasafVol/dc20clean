@@ -7,7 +7,7 @@ export const deathBolt: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Nullification,
 	tags: [],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const deathBolt: Spell = {
 				'You conjure a bolt of negative energy that flies towards a target of your choice. Make a Ranged Spell Attack against the PD of a target you can see within range. Hit: The target takes 1 Umbral damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		"Obscure: The Light level in the target's Space decreases by 1 until the end of the turn.",
 	enhancements: [
 		{

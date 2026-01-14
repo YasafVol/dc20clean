@@ -111,8 +111,7 @@ function aggregatePathBenefits(pathPointAllocations?: {
 				const levelData = spellcasterPath.progression.find((p) => p.pathLevel === level);
 				if (levelData?.benefits) {
 					totalMP += levelData.benefits.manaPoints || 0;
-					totalCantripsKnown += levelData.benefits.cantripsLearned || 0;
-					totalSpellsKnown += levelData.benefits.spellsLearned || 0;
+					totalSpellsKnown += (levelData.benefits.spellsLearned || 0) + (levelData.benefits.cantripsLearned || 0);
 				}
 			}
 		}
@@ -122,7 +121,6 @@ function aggregatePathBenefits(pathPointAllocations?: {
 		totalSP,
 		totalMP,
 		totalManeuversKnown,
-		totalCantripsKnown,
 		totalSpellsKnown
 	};
 }
@@ -467,6 +465,11 @@ function calculateGlobalMagicProfile(
 		tags: (classData?.spellRestrictions?.allowedTags as SpellTag[]) || []
 	};
 
+	// Natural is a base fallback for everyone in DC20
+	if (!profile.sources.includes('Natural' as SpellSource)) {
+		profile.sources.push('Natural' as SpellSource);
+	}
+
 	// 1. Process Expansion Effects
 	for (const effect of effects) {
 		if (!effect.resolved) continue;
@@ -534,26 +537,16 @@ function generateSpellsKnownSlots(
 			isGlobal: true
 		});
 	}
-	// Cantrips
-	for (let i = 0; i < progressionGains.totalCantripsKnown; i++) {
-		slots.push({
-			id: `global_cantrip_${i}`,
-			type: 'cantrip',
-			sourceName: `${classFeatures?.className || 'Class'} Progression`,
-			isGlobal: true
-		});
-	}
 
 	// 2. Generate Specialized Slots from GRANT_SPELL effects
 	effects.forEach((effect, index) => {
 		if ((effect as any).type === 'GRANT_SPELL' || (effect as any).type === 'GRANT_CANTRIP') {
 			const count = Number((effect as any).value) || 1;
-			const isCantrip = (effect as any).type === 'GRANT_CANTRIP';
 
 			for (let i = 0; i < count; i++) {
 				const slot: SpellsKnownSlot = {
 					id: `specialized_${effect.source.id}_${index}_${i}`,
-					type: isCantrip ? 'cantrip' : 'spell',
+					type: 'spell',
 					sourceName: effect.source.name,
 					isGlobal: false,
 					specificRestrictions: {}
@@ -834,7 +827,6 @@ function aggregateProgressionGains(
 			totalTradePoints,
 			totalAttributePoints,
 			totalManeuversKnown,
-			totalCantripsKnown,
 			totalSpellsKnown,
 			totalTalents,
 			totalPathPoints,
@@ -873,8 +865,7 @@ function aggregateProgressionGains(
 		totalTradePoints += levelData.gainedTradePoints || levelData.tradePoints || 0;
 		totalAttributePoints += levelData.gainedAttributePoints || levelData.attributePoints || 0;
 		totalManeuversKnown += levelData.gainedManeuversKnown || levelData.maneuversKnown || 0;
-		totalCantripsKnown += levelData.gainedCantripsKnown || levelData.cantripsKnown || 0;
-		totalSpellsKnown += levelData.gainedSpellsKnown || levelData.spellsKnown || 0;
+		totalSpellsKnown += (levelData.gainedSpellsKnown || levelData.spellsKnown || 0) + (levelData.gainedCantripsKnown || levelData.cantripsKnown || 0);
 
 		// Aggregate new structured gains (if present)
 		if (levelData.gains) {
@@ -1443,22 +1434,6 @@ export function calculateCharacterWithBreakdowns(
 				return;
 			}
 
-			// Validate slot type (Cantrip vs Spell)
-			if (slot.type === 'cantrip' && !spell.isCantrip) {
-				errors.push({
-					step: BuildStep.SpellsAndManeuvers,
-					field: slotId,
-					code: 'TYPE_MISMATCH',
-					message: `${spell.name} is a spell, but ${slot.sourceName} requires a cantrip.`
-				});
-			} else if (slot.type === 'spell' && spell.isCantrip) {
-				errors.push({
-					step: BuildStep.SpellsAndManeuvers,
-					field: slotId,
-					code: 'TYPE_MISMATCH',
-					message: `${spell.name} is a cantrip, but ${slot.sourceName} requires a non-cantrip spell.`
-				});
-			}
 
 			// Validate slot-specific restrictions
 			if (slot.specificRestrictions) {

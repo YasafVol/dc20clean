@@ -7,7 +7,7 @@ export const lightningStorm: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Deafened', 'Lightning'],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: '5 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const lightningStorm: Spell = {
 				'You produce a torrent of crackling lightning that envelops a 6 Space tall, 2 Space diameter Cylinder within range. Make an Area Spell Attack against the AD of every target within the area. Hit: The target takes 1 Lightning damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Magnetic: Metal in the area becomes briefly magnetized, causing metal objects to attract or repel each other and disrupting compass-based navigation.',
 	enhancements: [
 		{

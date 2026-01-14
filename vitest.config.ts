@@ -24,7 +24,7 @@ export default defineConfig({
 					name: 'server',
 					environment: 'node',
 					include: ['src/**/*.{test,spec}.{js,ts}'],
-					exclude: ['src/**/*.{test,spec}.{js,ts,jsx,tsx}']
+					exclude: ['src/**/*.{test,spec}.{jsx,tsx}']
 				}
 			}
 		]

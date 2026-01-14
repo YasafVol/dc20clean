@@ -7,7 +7,7 @@ export const poisonBolt: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Poison'],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const poisonBolt: Spell = {
 				'You conjure a bolt of condensed poisonous gas that flies towards a target of your choice. Make a Ranged Spell Attack against the PD of a target within range. Hit: The target takes 1 Poison damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		"Noxious: Plant life in the target's Space that is not being worn or held wilts or dies, grass blackens, and flowers or vines shrivel where the Spell touches.",
 	enhancements: [
 		{

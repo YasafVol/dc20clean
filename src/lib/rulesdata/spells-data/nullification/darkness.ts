@@ -7,7 +7,7 @@ export const darkness: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Divine, SpellSource.Primal],
 	school: SpellSchool.Nullification,
 	tags: [],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: '5 Spaces',
 	duration: '10 Minutes (Sustained)',

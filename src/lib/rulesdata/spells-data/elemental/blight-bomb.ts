@@ -7,7 +7,7 @@ export const blightBomb: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Poison'],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: '5 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const blightBomb: Spell = {
 				'You produce an explosion of Poisonous gas in a 2 Space diameter Sphere within range. Make an Area Spell Attack against the AD of every target within the area. Hit: The target takes 1 Poison damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Noxious: Plant life in the area that are not being worn or held wilts or dies, grass blackens, and flowers or vines shrivel where the Spell touches.',
 	enhancements: [
 		{

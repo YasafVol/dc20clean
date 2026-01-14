@@ -7,7 +7,7 @@ export const spikeSurge: Spell = {
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Piercing'],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: 'Self',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const spikeSurge: Spell = {
 				'You conjure a wave of spikes or thorns that emerge from the ground in a 1 Space Arc. Make an Area Spell Attack against the AD of every target within the area. Hit: The target takes 1 Piercing damage.'
 		}
 	],
-	cantripPassive: 'Natural Destruction: This Spell leaves debris imbedded in objects in the area.',
+	spellPassive: 'Natural Destruction: This Spell leaves debris imbedded in objects in the area.',
 	enhancements: [
 		{
 			type: 'MP',

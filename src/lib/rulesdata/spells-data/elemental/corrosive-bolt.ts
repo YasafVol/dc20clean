@@ -7,7 +7,7 @@ export const corrosiveBolt: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: [],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const corrosiveBolt: Spell = {
 				'You conjure a bolt of acid that flies towards a target of your choice. Make a Ranged Spell Attack against the PD of a target within range. Hit: The target takes 1 Corrosion damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		"Acidic: Mundane materials in the target's Space (wood, leather, rope, non-magical metals) that are not being worn or held partially erode or decay, weakening structures and gear.",
 	enhancements: [
 		{

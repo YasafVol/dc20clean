@@ -7,7 +7,7 @@ export const tendrilsFromBeyond: Spell = {
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Conjuration,
 	tags: ['Bludgeoning', 'Psychic'],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',
 	duration: '1 Minute (Sustained)',

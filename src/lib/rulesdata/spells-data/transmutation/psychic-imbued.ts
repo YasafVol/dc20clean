@@ -7,7 +7,7 @@ export const psychicImbued: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Transmutation,
 	tags: ['Deafened', 'Psychic'],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',
 	duration: '1 Minute (Sustained)',

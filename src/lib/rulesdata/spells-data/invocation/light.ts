@@ -7,7 +7,7 @@ export const light: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Divine, SpellSource.Primal],
 	school: SpellSchool.Invocation,
 	tags: ['Blinded'],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '5 Spaces',
 	duration: '10 Minutes (Sustained)',

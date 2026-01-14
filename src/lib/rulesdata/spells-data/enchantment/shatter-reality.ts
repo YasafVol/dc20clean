@@ -7,7 +7,7 @@ export const shatterReality: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Enchantment,
 	tags: ['Chaos', 'Psychic'],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: '5 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const shatterReality: Spell = {
 				'You violently distort the perception of reality in a 2 Space Sphere within range. Make an Area Spell Attack against the AD of every creature in the area. Hit: The target takes 1 Psychic damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Untraceable: Damage from this Spell leaves no visible trace on any affected creatures or the surrounding environment.',
 	enhancements: [
 		{

@@ -7,7 +7,7 @@ export const psychicWave: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Enchantment,
 	tags: ['Psychic'],
-	isCantrip: true,
+
 	cost: { ap: 2 },
 	range: 'Self',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const psychicWave: Spell = {
 				'You conjure a blast of psychic energy that envelops a 1 Space Arc. Make an Area Spell Attack against the AD of every target within the area. Hit: The target takes 1 Psychic damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		'Untraceable: Damage from this Spell leaves no visible trace on any affected creatures or the surrounding environment.',
 	enhancements: [
 		{

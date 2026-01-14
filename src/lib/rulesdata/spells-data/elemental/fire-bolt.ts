@@ -7,7 +7,7 @@ export const fireBolt: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
 	tags: ['Burning', 'Fire'],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '10 Spaces',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const fireBolt: Spell = {
 				'You conjure a bolt of fire that flies towards a target of your choice. Make a Ranged Spell Attack against the PD of a target within range. Hit: The target takes 1 Fire damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		"Ignite: Flammable objects that are not being worn or held in the target's Space catch fire. A creature can spend 1 AP to put out a mundane fire within 1 Space of them.",
 	enhancements: [
 		{

@@ -7,7 +7,7 @@ export const cleanse: Spell = {
 	sources: [SpellSource.Divine, SpellSource.Primal],
 	school: SpellSchool.Invocation,
 	tags: [],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '5 Spaces',
 	duration: 'Instantaneous',

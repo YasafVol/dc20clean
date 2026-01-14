@@ -7,7 +7,7 @@ export const umbralBurst: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Nullification,
 	tags: [],
-	isCantrip: false,
+
 	cost: { ap: 2, mp: 1 },
 	range: 'Self',
 	duration: 'Instantaneous',
@@ -19,7 +19,7 @@ export const umbralBurst: Spell = {
 				'You conjure a burst of shadow magic that envelops a 1 Space Aura. Make an Area Spell Attack against the AD of every target within the area. Hit: The target takes 1 Umbral damage.'
 		}
 	],
-	cantripPassive:
+	spellPassive:
 		"Obscure: The Light level in the target's Space decreases by 1 until the end of the turn.",
 	enhancements: [
 		{

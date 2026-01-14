@@ -7,7 +7,7 @@ export const lightningImbued: Spell = {
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Transmutation,
 	tags: ['Lightning'],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',
 	duration: '1 Minute (Sustained)',

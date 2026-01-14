@@ -7,7 +7,7 @@ export const wildGuard: Spell = {
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Nullification,
 	tags: [],
-	isCantrip: true,
+
 	cost: { ap: 1 },
 	range: '1 Space',
 	duration: 'Instantaneous',

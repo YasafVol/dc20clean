@@ -7,7 +7,7 @@ export const slowTime: Spell = {
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Astromancy,
 	tags: ['Stunned', 'Paralyzed'],
-	isCantrip: false,
+
 	cost: { ap: 1, mp: 1 },
 	range: '10 Spaces',
 	duration: '1 Minute',

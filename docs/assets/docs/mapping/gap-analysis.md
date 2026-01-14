@@ -1,0 +1,329 @@
+# Gap Analysis (First Pass)
+
+Last updated: 2026-01-14
+
+Status: Prioritized gaps with evidence, impact, and minimal proposals. No code changes yet.
+
+## Priority Legend
+- P1 — correctness/user-facing errors
+- P2 — consistency/UX clarity
+- P3 — maintainability/docs drift
+
+---
+
+## Cross‑Cutting
+- Gap: Save DC baseline mismatch (ONTOLOGY.md 8+ vs rules/calculator 10+)
+  - Evidence: ONTOLOGY Save DC; CALC docs + CH1 use 10 + CM + Prime.
+  - Impact: P3 (docs drift causing confusion)
+  - Proposal: Update ONTOLOGY.md to 10 + CM + Prime; add note about v0.10 change.
+
+- Gap: No normalized effect resolution metadata for spells/maneuvers
+  - Evidence: Rules use Check vs Defense, Save vs Save DC, fixed DC checks, dynamic both; current schemas free‑text.
+  - Impact: P2 (UI inconsistencies, edge cases hard to model)
+  - Proposal: Add per‑effect metadata: rollBy/casterCheck/targetSave/timing. See schema‑gap‑proposals §1.
+  - Files: `src/lib/rulesdata/schemas/spell.schema.ts` (add fields), `src/lib/rulesdata/schemas/maneuver.schema.ts` (mirror for effect‑imposing maneuvers).
+
+---
+
+## CH1 — Core Rules
+- Gap: MCP representation beyond boolean ADV/DisADV
+  - Evidence: ADV X/DisADV X and MCP stacking; UI likely treats as boolean.
+  - Impact: P2 (roll helper fidelity)
+  - Proposal: UI roller to accept arbitrary ADV/DisADV counts; no schema change required.
+
+- Gap: DAS unified rendering
+  - Evidence: Dynamic Attack Saves described; mixed handling likely across features.
+  - Impact: P2
+  - Proposal: Use normalized resolution metadata to present four outcomes consistently.
+  - Files: n/a schema changes (leverage §1); UI renderer.
+
+---
+
+## CH2a — Combat (Pre‑Spellcaster)
+- Gap: Reaction triggers not data‑driven
+  - Evidence: OA, Spell Duel, Combo triggers in prose only.
+  - Impact: P2
+  - Proposal: Add reaction trigger config entries. See schema‑gap‑proposals §4.
+  - Files: `src/lib/rulesdata/config/reactions.ts` (new) or co‑locate with actions; UI reaction prompt uses it.
+
+- Gap: Enforce per‑action spend caps (MSL/SSL) and declare‑before‑roll
+  - Evidence: Rules specify timing and limits; UI must enforce.
+  - Impact: P1 (prevents illegal casts/uses)
+  - Proposal: UI guardrails: block enhancements beyond caps; require pre‑roll declaration; annotate spends for breakdowns.
+
+---
+
+## CH2b — Spellcaster Chapter
+- Gap: Fixed DC handling not modeled
+  - Evidence: Fly uses DC 15 Spell Check.
+  - Impact: P2
+  - Proposal: Add fixedDC flag in effect resolution. See schema‑gap‑proposals §7.
+
+- Gap: Components metadata lacks structure
+  - Evidence: `material` is a string; cannot express consumed/material id.
+  - Impact: P2
+  - Proposal: components.material { id?, consumed? }. See schema‑gap‑proposals §3.
+  - Files: `src/lib/rulesdata/schemas/spell.schema.ts` (add nested material object).
+
+- Gap: Enhancement dependencies not encoded
+  - Evidence: Black Hole requires Lingering.
+  - Impact: P2
+  - Proposal: `requires?: string[]` on enhancements. See schema‑gap‑proposals §2.
+  - Files: `src/lib/rulesdata/schemas/spell.schema.ts` (SpellEnhancement).
+
+- Gap: Shared roll across added targets not encoded
+  - Evidence: Arcane Missiles uses same attack roll across targets.
+  - Impact: P2
+  - Proposal: `singleRollSharedAcrossTargets?: boolean` on effect/spell. See schema‑gap‑proposals §2.
+  - Files: `src/lib/rulesdata/spells-data/*` (data), optional in schema.
+
+---
+
+## CH2c — Spells (Entries)
+- Gap: Tag taxonomy alignment
+  - Evidence: Rules list many tags; schema SpellTag union is partial/mismatched.
+  - Impact: P2
+  - Proposal: Audit tags against rules, expand union or use string enum with validator.
+  - Files: `src/lib/rulesdata/schemas/spell.schema.ts` (SpellTag type) vs rules doc tags (CH2b "Spell Tags").
+
+- Gap: Repeated save modeling
+  - Evidence: Many spells with repeated saves require structured metadata.
+  - Impact: P2
+  - Proposal: `targetSave.repeated?: boolean` (see §1).
+
+---
+
+## CH3 — General Rules
+- Gap: Jump standing‑halved rounding explicit policy
+  - Evidence: Standing jump halves max — rounding not explicit for spaces/feet.
+  - Impact: P3
+  - Proposal: Document rounding (round down for spaces; feet precise) and reflect in UI help.
+
+- Gap: Falling/Collision tooltips
+  - Evidence: Complex rules; UI may not expose aides.
+  - Impact: P3
+  - Proposal: Add helper text and examples in UI.
+  - Files: UI help; no schema change.
+
+---
+
+## CH4 — Character Creation
+- Gap: Initial Save Masteries rules not explicit in UI
+  - Evidence: CH4 references Save Masteries; initialization rules unspecified in current docs.
+  - Impact: P2
+  - Proposal: Document/implement initial allocation or defaults; wire to step gating.
+
+- Gap: Starting equipment selection & training validation in flow
+  - Evidence: Starting equipment in CH4/CH6; validation separate.
+  - Impact: P2
+  - Proposal: Add startingEquipment schema (see §5); integrate into CH4 step with training validation.
+  - Files: `src/lib/rulesdata/schemas/class.schema.ts` (add optional), UI flow stage integration.
+
+---
+
+## CH5 — Ancestries
+- Gap: Trait requirements structure
+  - Evidence: `prerequisites?: any[]` in types; textual in data.
+  - Impact: P2
+  - Proposal: Structured `requirements` block (see §6); update validator.
+  - Files: `src/lib/rulesdata/ancestries/traits.ts` (data), `src/lib/rulesdata/schemas/types.ts` (optionally document field), trait validators.
+
+- Gap: Dual ancestry constraints enforcement
+  - Evidence: Prose rules only.
+  - Impact: P2
+  - Proposal: Enforce via UI validator; add config toggles for variant rules.
+
+---
+
+## CH6 — Classes (Comprehensive Audit)
+
+### Global Class Gaps
+
+#### Gap: Missing Level 5 and Level 8 (Capstone) Features — ALL 13 CLASSES
+- Evidence: All 13 progression files contain `classFeatures: [] // Level 5 class feature to be added` at L5 and `classFeatures: [] // Capstone feature to be added` at L8.
+- Impact: P2 (incomplete progression display, missing features at key levels)
+- Proposal: Add placeholder features to all classes; see `patches/all_classes_placeholders.md`
+- Files affected:
+  - All `*_features.ts` files (add placeholder feature entries)
+  - All `*.progression.ts` files (reference placeholder IDs)
+
+| Class | L5 Gap | L8 Gap |
+|-------|--------|--------|
+| Barbarian | ✅ Missing | ✅ Missing |
+| Bard | ✅ Missing | ✅ Missing |
+| Champion | ✅ Missing | ✅ Missing |
+| Cleric | ✅ Missing | ✅ Missing |
+| Commander | ✅ Missing | ✅ Missing |
+| Druid | ✅ Missing | ✅ Missing |
+| Hunter | ✅ Missing | ✅ Missing |
+| Monk | ✅ Missing | ✅ Missing |
+| Rogue | ✅ Missing | ✅ Missing |
+| Sorcerer | ✅ Missing | ✅ Missing |
+| Spellblade | ✅ Missing | ✅ Missing |
+| Warlock | ✅ Missing | ✅ Missing |
+| Wizard | ✅ Missing | ✅ Missing |
+
+#### Gap: Missing startingEquipment — 9 CLASSES
+- Evidence: Only Monk, Rogue, Sorcerer, Spellblade have `startingEquipment` blocks; remaining 9 classes have none.
+- Impact: P2 (character creation incomplete, no starting gear display)
+- Proposal: Add startingEquipment blocks to all missing classes per CH4/CH6 rules.
+- Files affected:
+  - `barbarian_features.ts` — add startingEquipment
+  - `bard_features.ts` — add startingEquipment
+  - `champion_features.ts` — add startingEquipment
+  - `cleric_features.ts` — add startingEquipment
+  - `commander_features.ts` — add startingEquipment
+  - `druid_features.ts` — add startingEquipment
+  - `hunter_features.ts` — add startingEquipment
+  - `warlock_features.ts` — add startingEquipment
+  - `wizard_features.ts` — add startingEquipment
+
+| Class | Has startingEquipment | Notes |
+|-------|----------------------|-------|
+| Barbarian | ❌ Missing | Add per martial template |
+| Bard | ❌ Missing | Add with spell focus |
+| Champion | ❌ Missing | Add per martial template |
+| Cleric | ❌ Missing | Add with holy symbol |
+| Commander | ❌ Missing | Add per martial template |
+| Druid | ❌ Missing | Add with druidic focus, non-metal armor |
+| Hunter | ❌ Missing | Add per martial template |
+| Monk | ✅ Present | Has placeholder packs |
+| Rogue | ✅ Present | Has placeholder packs |
+| Sorcerer | ✅ Present | Has placeholder packs |
+| Spellblade | ✅ Present | Has placeholder packs |
+| Warlock | ❌ Missing | Add with spell focus |
+| Wizard | ❌ Missing | Add with arcane focus |
+
+#### Gap: Placeholder "Adventuring Packs Coming Soon" text
+- Evidence: 4 classes with startingEquipment have `packs: 'X or Y Packs (Adventuring Packs Coming Soon)'`
+- Impact: P3 (UX/documentation clarity)
+- Proposal: Leave as-is until adventuring packs system is implemented; document as known placeholder.
+
+### Per-Class Specific Gaps
+
+- Gap: Psion class present (not in rules)
+  - Evidence: `features/psion_features.ts`, `progressions/psion.progression.ts` exist; loader ignores due to metadata whitelist.
+  - Impact: P3 (dead code/confusion)
+  - Proposal: Remove or move to `archive/` (or hide behind explicit experimental flag) and add CI validation to flag classes without metadata.
+
+- Gap: spellRestrictions audit vs v0.10 taxonomy
+  - Evidence: New schools/tags; classes must match.
+  - Impact: P2
+  - Proposal: Audit and adjust restrictions; add tests.
+  - Files: `src/lib/rulesdata/classes-data/features/*_features.ts` (restrictions), `src/lib/rulesdata/spells-data/*` (taxonomy), tests.
+
+- Gap: Resolver/Calculator normalization
+  - Evidence: Ensure resolver outputs align with calculator budgets/unlocked IDs and pending choices.
+  - Impact: P2
+  - Proposal: Harmonize DTOs; doc contract in CALC/CLASSES docs.
+  - Files: `src/lib/rulesdata/classes-data/classProgressionResolver.ts`, `src/lib/types/effectSystem.ts` (levelBudgets/resolvedFeatures), CALC/CLASS docs.
+
+---
+
+## Background System
+- Gap: Conversions exposure and overspend prevention
+  - Evidence: Formulas exist; ensure UI/state apply consistently.
+  - Impact: P1
+  - Proposal: Lock submit on overspend; show per‑pool remaining.
+  - Files: `src/lib/services/enhancedCharacterCalculator.ts` (background block), UI Background tabs.
+
+## Trades System
+- Gap: Tool requirement enforcement
+  - Evidence: Prose rules; not always surfaced.
+  - Impact: P2
+  - Proposal: Add tool flags to trade entries; UI applies DisADV when absent.
+  - Files: `src/lib/rulesdata/trades.ts` (tools field), UI check gates.
+
+## Traits System
+- Gap: any_* coverage and new patterns
+  - Evidence: Limited patterns supported.
+  - Impact: P2
+  - Proposal: Extend resolveEffectChoices for future any_* as needed; document.
+  - Files: `src/lib/services/enhancedCharacterCalculator.ts` (resolveEffectChoices), docs update.
+
+## Spells System
+- See CH2b/CH2c gaps.
+
+## Martials System
+- Gap: Effect resolution metadata for maneuvers that impose effects
+  - Impact: P2
+  - Proposal: Mirror spell resolution metadata (see §1).
+  - Files: `src/lib/rulesdata/schemas/maneuver.schema.ts` (optional additions), maneuvers data as needed.
+
+## Equipment System
+- Gap: Property semantics vs CH3 lists
+  - Impact: P2
+  - Proposal: Audit options vs CH3; adjust or annotate properties.
+  - Files: `src/lib/rulesdata/equipment/options/*`, `docs/systems/EQUIPMENT_SYSTEM.MD` vs CH3.
+
+## Calculation System
+- Gap: Prime tie‑break order explicitness
+  - Evidence: Rules list order; verify implementation.
+  - Impact: P2
+  - Proposal: Document and verify; add unit test for ties.
+  - Files: `src/lib/services/enhancedCharacterCalculator.ts`, tests.
+
+## Character Sheet
+- Gap: Info/Tooltips coverage for complex rules (falling/collision, MCP/DAS)
+  - Impact: P3
+  - Proposal: Add help text sections and links to rule references.
+
+## PDF Export
+- Gap: Template field drift risk
+  - Impact: P2
+  - Proposal: Validate field IDs on template updates; maintain manifest.
+
+## Effects System
+- Gap: Condition interaction value mismatch
+  - Evidence: EFFECT_SYSTEM.MD shows numeric values; character.schema.ts uses string union ('advantage'|'reduction'|'half').
+  - Impact: P1 (data mismatch)
+  - Proposal: Align schema to numeric where rules demand; or support both with a discriminant.
+  - Files: `docs/systems/EFFECT_SYSTEM.MD` vs `src/lib/rulesdata/schemas/character.schema.ts`.
+
+- Gap: Legacy vs canonical effect definitions
+  - Evidence: `src/lib/rulesdata/schemas/class.schema.ts` effectSchema (generic) vs canonical Effect union in `character.schema.ts`.
+  - Impact: P2
+  - Proposal: Align class feature effect typing to canonical union; or add mapping between zod/generic and union types.
+
+## Data & Naming
+- Gap: Possible filename typo in conditions data
+  - Evidence: `src/lib/rulesdata/conditions/conditions.dats.ts` (observed listing) — likely intended `conditions.data.ts`.
+  - Impact: P3
+  - Proposal: Rename file to consistent pattern and update imports.
+
+## Leveling/Multiclass
+- Gap: Prereq counts for multiclass tiers
+  - Impact: P2
+  - Proposal: Implement owned feature counts and gating with clear messaging.
+
+## Creation Flow/Feature IDs
+- Gap: Validation script to enforce feature ID uniqueness across features/progressions
+  - Impact: P2
+  - Proposal: Add or document existing script; integrate in CI.
+
+---
+
+## Prioritization Summary
+- P1: Components metadata enforcement (spell materials), MSL/SSL + declare‑before‑roll enforcement, Effects System condition value schema mismatch, Background overspend prevention.
+- P2: Effect resolution normalization, enhancement dependencies/shared roll flags, trait requirements structure, starting equipment schema (9 classes), Level 5/8 features (all 13 classes), spellRestrictions audit, tool gating, resolver alignment, multiclass prereqs gating.
+- P3: Docs drift updates (Save DC baseline), rounding clarifications, tooltip coverage, Psion archival, adventuring packs placeholder.
+
+## Action Items Summary
+
+### Immediate (P1/P2 High Priority)
+1. Add Level 5 and Level 8 placeholder features to all 13 classes
+2. Add startingEquipment to 9 missing classes
+3. Enforce MSL/SSL in UI
+4. Fix Effects System condition value schema mismatch
+
+### Deferred (P2/P3)
+1. Update ONTOLOGY.md Save DC baseline
+2. Archive or flag Psion class
+3. Implement adventuring packs system to replace placeholders
+
+## Next Steps
+1) Approve schema proposals (docs/mapping/schema-gap-proposals.md).
+2) Apply class patches (see patches/all_classes_placeholders.md).
+3) Implement P1 guardrails in UI and adjust schemas (where needed) with non‑breaking additions.
+4) Add targeted unit/UX tests for P1/P2 areas.
+5) Update docs (Ontology, tags taxonomy) to remove drift.

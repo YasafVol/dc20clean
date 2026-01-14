@@ -285,15 +285,16 @@ Status: Prioritized gaps with evidence, impact, and minimal proposals. No code c
 
 ## Effects System
 - Gap: Condition interaction value mismatch
-  - Evidence: EFFECT_SYSTEM.MD shows numeric values; character.schema.ts uses string union ('advantage'|'reduction'|'half').
-  - Impact: P1 (data mismatch)
-  - Proposal: Align schema to numeric where rules demand; or support both with a discriminant.
-  - Files: `docs/systems/EFFECT_SYSTEM.MD` vs `src/lib/rulesdata/schemas/character.schema.ts`.
+  - **FIXED**: Updated EFFECT_SYSTEM.MD to match schema (string union: 'advantage'|'reduction'|'half').
+  - Evidence: EFFECT_SYSTEM.MD previously showed numeric values; character.schema.ts uses string union.
+  - Impact: P1 → P3 (documentation aligned)
+  - Resolution: Updated docs to reflect actual schema types; noted that conditionAggregator doesn't yet process value field.
 
 - Gap: Legacy vs canonical effect definitions
+  - **DOCUMENTED**: Added Schema Alignment Notes section to EFFECT_SYSTEM.MD.
   - Evidence: `src/lib/rulesdata/schemas/class.schema.ts` effectSchema (generic) vs canonical Effect union in `character.schema.ts`.
-  - Impact: P2
-  - Proposal: Align class feature effect typing to canonical union; or add mapping between zod/generic and union types.
+  - Impact: P2 → P3 (documented as intentional decoupling)
+  - Resolution: Documented the relationship; stricter Zod schema is a future consideration.
 
 ## Data & Naming
 - Gap: Possible filename typo in conditions data

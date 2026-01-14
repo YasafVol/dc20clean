@@ -147,20 +147,30 @@ interface GrantConditionImmunityEffect {
 	type: 'GRANT_CONDITION_IMMUNITY';
 	target: string; // Condition ID
 	value: boolean;
+	details?: string; // Optional explanation for UI
 }
 
 interface GrantConditionResistanceEffect {
 	type: 'GRANT_CONDITION_RESISTANCE';
 	target: string; // Condition ID
-	value: number; // e.g., 1 for Resistance (1)
+	value: 'advantage' | 'reduction' | 'half';
+	// - 'advantage': ADV on saves against this condition
+	// - 'reduction': Reduce condition stacks by 1
+	// - 'half': Halve the effect severity
+	source?: string;
 }
 
 interface GrantConditionVulnerabilityEffect {
 	type: 'GRANT_CONDITION_VULNERABILITY';
 	target: string; // Condition ID
-	value: number; // e.g., 1 for Vulnerability (1)
+	value: 'disadvantage' | 'double';
+	// - 'disadvantage': DisADV on saves against this condition
+	// - 'double': Double the condition stacks or effect severity
+	source?: string;
 }
 ```
+
+> **Note:** The `conditionAggregator.ts` currently only checks effect types without processing the `value` field. Future enhancement should use the value to determine the specific kind of resistance/vulnerability.
 
 ### Processing Flow
 
@@ -185,7 +195,14 @@ interface GrantConditionVulnerabilityEffect {
 {
   type: 'GRANT_CONDITION_RESISTANCE',
   target: 'poisoned-x',
-  value: 1
+  value: 'advantage'  // ADV on saves vs Poisoned
+}
+
+// Example: condition vulnerability
+{
+  type: 'GRANT_CONDITION_VULNERABILITY',
+  target: 'frightened',
+  value: 'disadvantage'  // DisADV on saves vs Frightened
 }
 ```
 
@@ -218,7 +235,29 @@ interface GrantConditionVulnerabilityEffect {
 
 ---
 
-## 6. References
+## 6. Schema Alignment Notes
+
+### Generic vs Canonical Effect Schemas
+
+Two effect schema representations exist in the codebase:
+
+1. **Canonical Effect Union** (`character.schema.ts`):
+   - Strongly typed discriminated union with specific effect interfaces
+   - Each effect type has explicit `type`, `target`, and `value` constraints
+   - Example: `GrantConditionResistanceEffect` with `value: 'advantage' | 'reduction' | 'half'`
+
+2. **Generic Zod Schema** (`class.schema.ts`):
+   - Loose validation with `type: z.string()` and `value: z.any()`
+   - Used for runtime validation of class feature data files
+   - Less strict than TypeScript types
+
+**Current State:** These schemas are intentionally decoupled. The Zod schema validates data files flexibly, while the TypeScript union provides IDE support and compile-time safety.
+
+**Future Consideration:** A stricter Zod schema could be generated from the canonical union using `z.discriminatedUnion()`, but would require data migration.
+
+---
+
+## 7. References
 
 - `docs/systems/TRAITS_SYSTEM.MD`
 - `docs/systems/CLASS_SYSTEM.MD`
@@ -226,5 +265,5 @@ interface GrantConditionVulnerabilityEffect {
 
 ---
 
-> Last updated: 2026-01-05 (Added condition interaction effects for v0.10)
+> Last updated: 2026-01-14 (Aligned condition interaction effect types with schema)
 > Maintainer: @DC20Clean-Team

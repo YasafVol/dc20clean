@@ -9,9 +9,10 @@ Replace the current localStorage-based character persistence with Convex cloud d
 ## Goals
 
 1. **Cloud Persistence**: Characters saved to Convex database instead of browser localStorage
-2. **User Authentication**: Email/password authentication via Convex Auth
-3. **Cross-Device Access**: Users can access their characters from any device
-4. **Data Safety**: No risk of losing characters due to browser data clearing
+2. **Social Authentication**: Google and GitHub OAuth via Convex Auth (no email/password)
+3. **Optional Auth**: App fully usable without login - auth only required for cloud save & PDF export
+4. **Cross-Device Access**: Users can access their characters from any device
+5. **Data Safety**: No risk of losing characters due to browser data clearing
 
 ## Architecture
 
@@ -48,7 +49,7 @@ The following scaffolding files have been created and are ready for use once npm
 |------|-------------|
 | `schema.ts.draft` | Complete schema matching `SavedCharacter` type with indexes |
 | `characters.ts.draft` | CRUD mutations and queries with auth checks |
-| `auth.config.ts.draft` | Convex Auth with Password provider |
+| `auth.config.ts.draft` | Convex Auth with Google + GitHub OAuth |
 | `README.md` | Setup instructions |
 
 ### Storage Abstraction (`src/lib/storage/`)
@@ -64,10 +65,9 @@ The following scaffolding files have been created and are ready for use once npm
 
 | File | Description |
 |------|-------------|
-| `SignIn.tsx` | Email/password sign-in form |
-| `SignUp.tsx` | Registration form |
-| `AuthGuard.tsx` | Route protection component |
-| `UserMenu.tsx` | User info and sign-out |
+| `SignIn.tsx` | Social login (Google + GitHub) dialog |
+| `AuthGuard.tsx` | Feature gate component + `FeatureGateButton` |
+| `UserMenu.tsx` | User avatar, info, and sign-out |
 | `index.ts` | Main export |
 
 ## Setup Instructions
@@ -115,22 +115,30 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 );
 ```
 
-### 2. Protect Routes
+### 2. Gate Features (Not Routes)
 
-Wrap protected routes with `AuthGuard`:
+Use `FeatureGateButton` to gate specific features, NOT the whole app:
 
 ```tsx
-import { AuthGuard } from './components/auth';
+import { FeatureGateButton } from './components/auth';
 
-function App() {
-  return (
-    <AuthGuard>
-      <Router>
-        {/* Protected routes */}
-      </Router>
-    </AuthGuard>
-  );
-}
+// In LoadCharacter.tsx - gate PDF export
+<FeatureGateButton
+  feature="pdf-export"
+  onAction={() => handleExportPdf(character)}
+  className="..."
+>
+  Export PDF
+</FeatureGateButton>
+
+// In CharacterCreation.tsx - gate cloud save
+<FeatureGateButton
+  feature="cloud-save"
+  onAction={() => saveToCloud(character)}
+  className="..."
+>
+  Save to Cloud
+</FeatureGateButton>
 ```
 
 ### 3. Update Storage Consumers
@@ -156,13 +164,44 @@ See `convex/schema.ts.draft` for complete field definitions.
 
 ## Authentication
 
-Using Convex Auth with Password provider:
+Using Convex Auth with **social OAuth only** (no email/password):
 
-- Email/password registration and sign-in
+- **Google OAuth** - most users have a Google account
+- **GitHub OAuth** - good for developer users
 - Session management handled by Convex
 - User ID linked to all character records
 
-OAuth providers (GitHub, Google) can be added later.
+### Feature Gates
+
+| Feature | Without Auth | With Auth |
+|---------|--------------|-----------|
+| Create character | ✅ (localStorage) | ✅ (cloud) |
+| Edit character | ✅ | ✅ |
+| View character sheet | ✅ | ✅ |
+| **Export PDF** | ❌ (gated) | ✅ |
+| **Save to cloud** | ❌ (gated) | ✅ |
+| Sync across devices | ❌ | ✅ |
+
+### OAuth Setup
+
+**Google Cloud Console:**
+1. Go to https://console.cloud.google.com/
+2. Create project → APIs & Services → OAuth consent screen
+3. Create credentials → OAuth client ID → Web application
+4. Add redirect URI: `https://<your-convex-url>.convex.site/api/auth/callback/google`
+
+**GitHub:**
+1. Go to https://github.com/settings/developers
+2. New OAuth App
+3. Set callback URL: `https://<your-convex-url>.convex.site/api/auth/callback/github`
+
+**Environment Variables (set in Convex Dashboard):**
+```
+AUTH_GOOGLE_ID=your-google-client-id
+AUTH_GOOGLE_SECRET=your-google-client-secret
+AUTH_GITHUB_ID=your-github-client-id
+AUTH_GITHUB_SECRET=your-github-client-secret
+```
 
 ## Migration Strategy
 
@@ -185,7 +224,7 @@ OAuth providers (GitHub, Google) can be added later.
 | File | Change |
 |------|--------|
 | `src/main.tsx` | Add Convex and Auth providers |
-| `src/App.tsx` | Wrap with AuthGuard |
+| `src/App.tsx` | Add UserMenu to header |
 | `src/routes/character-creation/LoadCharacter.tsx` | Use storage abstraction |
 | `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx` | Use storage abstraction |
 | `src/lib/services/characterCompletion.ts` | Use storage abstraction |

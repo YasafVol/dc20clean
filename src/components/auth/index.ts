@@ -1,11 +1,20 @@
 /**
  * Auth Components - Main Export
  *
- * These components handle authentication UI for the DC20 Character Creator.
- * They are designed to work with Convex Auth once npm packages are installed.
+ * Social authentication (Google + GitHub) for DC20 Character Creator.
+ * Auth is OPTIONAL - only required for:
+ * - Saving characters to cloud
+ * - Exporting PDF
+ *
+ * The app is fully usable without authentication (localStorage).
  */
 
 export { SignIn, type SignInProps } from './SignIn';
-export { SignUp, type SignUpProps } from './SignUp';
-export { AuthGuard, withAuthGuard, type AuthGuardProps } from './AuthGuard';
+export {
+	AuthGuard,
+	FeatureGateButton,
+	useIsAuthenticated,
+	type AuthGuardProps,
+	type FeatureGateButtonProps,
+} from './AuthGuard';
 export { UserMenu, type UserMenuProps } from './UserMenu';

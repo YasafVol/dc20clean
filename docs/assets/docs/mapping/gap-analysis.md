@@ -47,10 +47,13 @@ Status: Prioritized gaps with evidence, impact, and minimal proposals. No code c
 
 ## CH2a — Combat (Pre‑Spellcaster)
 - Gap: Reaction triggers not data‑driven
+  - **CONFIG ADDED**: Created `src/lib/rulesdata/config/reactions.ts`.
   - Evidence: OA, Spell Duel, Combo triggers in prose only.
-  - Impact: P2
-  - Proposal: Add reaction trigger config entries. See schema‑gap‑proposals §4.
-  - Files: `src/lib/rulesdata/config/reactions.ts` (new) or co‑locate with actions; UI reaction prompt uses it.
+  - Impact: P2 → Config ready for UI integration
+  - Implementation:
+    - `ReactionConfig` interface with id, name, description, prerequisite, costs, range, triggers
+    - Configured: Opportunity Attack, Spell Duel, Combo Casting, Combo Maneuver
+    - Helper functions: `getReactionConfig()`, `getAvailableReactions()`
 
 - Gap: Enforce per‑action spend caps (MSL/SSL)
   - Evidence: Rules specify MSL = SSL = Combat Mastery; UI must enforce.

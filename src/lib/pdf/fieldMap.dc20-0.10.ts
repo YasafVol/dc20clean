@@ -47,13 +47,16 @@ export const fieldMap_dc20_010: FieldMapItem[] = [
 	// =========================================================================
 	{ path: 'initiative', field: 'Initiative', type: 'text' },
 	{ path: 'attackCheck', field: 'Attack Check', type: 'text' },
-	{ path: 'spellCheck', field: 'Spell Check', type: 'text' },
 	{ path: 'saveDC', field: 'Save DC', type: 'text' },
 	{ path: 'defense.physical', field: 'Physical Defense', type: 'text' },
-	{ path: 'defense.mental', field: 'Mystical Defense', type: 'text' },
+	{ path: 'defense.physicalHeavyThreshold', field: 'PD Heavy Threshold', type: 'text' },
+	{ path: 'defense.physicalBrutalThreshold', field: 'PD Brutal Threshold', type: 'text' },
+	{ path: 'defense.mental', field: 'Mental Defense', type: 'text' },
+	{ path: 'defense.mentalHeavyThreshold', field: 'MD Heavy Threshold', type: 'text' },
+	{ path: 'defense.mentalBrutalThreshold', field: 'MD Brutal Threshold', type: 'text' },
 	{ path: 'reduction.physical', field: 'Physical-Damage-Reduction', type: 'checkbox' },
 	{ path: 'reduction.elemental', field: 'Elemantal-Damage-Reduction', type: 'checkbox' },
-	{ path: 'reduction.mental', field: 'Mystical-Damage-Reduction', type: 'checkbox' },
+	{ path: 'reduction.mental', field: 'Mental-Damage-Reduction', type: 'checkbox' },
 
 	// =========================================================================
 	// RESOURCES
@@ -62,18 +65,52 @@ export const fieldMap_dc20_010: FieldMapItem[] = [
 	{ path: 'hitPoints.current', field: 'Hit Points Current', type: 'text' },
 	{ path: 'hitPoints.temp', field: 'Hit Points Temp', type: 'text' },
 	{ path: 'bloodiedValue', field: 'Bloodied', type: 'text' },
-	{ path: 'stamina.max', field: 'Stamina Point Cap', type: 'text' },
-	{ path: 'stamina.current', field: 'Stamina Point Current', type: 'text' },
-	{ path: 'mana.max', field: 'Mana Point Cap', type: 'text' },
-	{ path: 'mana.current', field: 'Mana Point Current', type: 'text' },
+	{ path: 'wellBloodiedValue', field: 'Well-Bloodied', type: 'text' },
+	{ path: 'stamina.max', field: 'Stamina Points Max', type: 'text' },
+	{ path: 'stamina.current', field: 'Stamina Points Current', type: 'text' },
+	{ path: 'mana.max', field: 'Mana Points Max', type: 'text' },
+	{ path: 'mana.current', field: 'Mana Points Current', type: 'text' },
 	{ path: 'grit.cap', field: 'Grit Point Cap', type: 'text' },
 	{ path: 'grit.current', field: 'Grit Point Current', type: 'text' },
+	{ path: 'restPoints.cap', field: 'Rest Point Cap', type: 'text' },
+	{ path: 'restPoints.current', field: 'Rest Point Current', type: 'text' },
 	{ path: 'deathThreshold', field: 'Death Threshold', type: 'text' },
+
+	// =========================================================================
+	// CUSTOM RESOURCES (9 slots)
+	// =========================================================================
+	{ path: 'resources.0.label', field: 'Resource A', type: 'text' },
+	{ path: 'resources.0.cap', field: 'Resource A Cap', type: 'text' },
+	{ path: 'resources.0.current', field: 'Resource A Current', type: 'text' },
+	{ path: 'resources.1.label', field: 'Resource B', type: 'text' },
+	{ path: 'resources.1.cap', field: 'Resource B Cap', type: 'text' },
+	{ path: 'resources.1.current', field: 'Resource B Current', type: 'text' },
+	{ path: 'resources.2.label', field: 'Resource C', type: 'text' },
+	{ path: 'resources.2.cap', field: 'Resource C Cap', type: 'text' },
+	{ path: 'resources.2.current', field: 'Resource C Current', type: 'text' },
+	{ path: 'resources.3.label', field: 'Resource D', type: 'text' },
+	{ path: 'resources.3.cap', field: 'Resource D Cap', type: 'text' },
+	{ path: 'resources.3.current', field: 'Resource D Current', type: 'text' },
+	{ path: 'resources.4.label', field: 'Resource E', type: 'text' },
+	{ path: 'resources.4.cap', field: 'Resource E Cap', type: 'text' },
+	{ path: 'resources.4.current', field: 'Resource E Current', type: 'text' },
+	{ path: 'resources.5.label', field: 'Resource F', type: 'text' },
+	{ path: 'resources.5.cap', field: 'Resource F Cap', type: 'text' },
+	{ path: 'resources.5.current', field: 'Resource F Current', type: 'text' },
+	{ path: 'resources.6.label', field: 'Resource G', type: 'text' },
+	{ path: 'resources.6.cap', field: 'Resource G Cap', type: 'text' },
+	{ path: 'resources.6.current', field: 'Resource G Current', type: 'text' },
+	{ path: 'resources.7.label', field: 'Resource H', type: 'text' },
+	{ path: 'resources.7.cap', field: 'Resource H Cap', type: 'text' },
+	{ path: 'resources.7.current', field: 'Resource H Current', type: 'text' },
+	{ path: 'resources.8.label', field: 'Resource I', type: 'text' },
+	{ path: 'resources.8.cap', field: 'Resource I Cap', type: 'text' },
+	{ path: 'resources.8.current', field: 'Resource I Current', type: 'text' },
 
 	// =========================================================================
 	// MOVEMENT
 	// =========================================================================
-	{ path: 'moveSpeed', field: 'Speed', type: 'text' },
+	{ path: 'moveSpeed', field: 'Move Speed', type: 'text' },
 	{ path: 'movement.climb.half', field: 'Climb-Half', type: 'checkbox' },
 	{ path: 'movement.climb.full', field: 'Climb-Full', type: 'checkbox' },
 	{ path: 'movement.swim.half', field: 'Swim-Half', type: 'checkbox' },
@@ -104,17 +141,18 @@ export const fieldMap_dc20_010: FieldMapItem[] = [
 	{ path: 'survival', field: 'Survival', type: 'text' },
 
 	// Skill Proficiency checkboxes
-	{ path: 'skillProficiency.Athletics', field: 'Athletics-Proficiency', type: 'checkbox' },
-	{ path: 'skillProficiency.Intimidation', field: 'Intimidation-Proficiency', type: 'checkbox' },
-	{ path: 'skillProficiency.Acrobatics', field: 'Acrobatics-Proficiency', type: 'checkbox' },
-	{ path: 'skillProficiency.Trickery', field: 'Trickery-Proficiency', type: 'checkbox' },
-	{ path: 'skillProficiency.Stealth', field: 'Stealth-Proficiency', type: 'checkbox' },
-	{ path: 'skillProficiency.Animal', field: 'Animal-Proficiency', type: 'checkbox' },
-	{ path: 'skillProficiency.Influence', field: 'Influence-Proficiency', type: 'checkbox' },
-	{ path: 'skillProficiency.Insight', field: 'Insight-Proficiency', type: 'checkbox' },
-	{ path: 'skillProficiency.Investigation', field: 'Investigation-Proficiency', type: 'checkbox' },
-	{ path: 'skillProficiency.Medicine', field: 'Medicine-Proficiency', type: 'checkbox' },
-	{ path: 'skillProficiency.Survival', field: 'Survival-Proficiency', type: 'checkbox' },
+	{ path: 'proficiency.expertise', field: 'Expertise-Proficiency', type: 'checkbox' },
+	{ path: 'proficiency.athletics', field: 'Athletics-Proficiency', type: 'checkbox' },
+	{ path: 'proficiency.intimidation', field: 'Intimidation-Proficiency', type: 'checkbox' },
+	{ path: 'proficiency.acrobatics', field: 'Acrobatics-Proficiency', type: 'checkbox' },
+	{ path: 'proficiency.trickery', field: 'Trickery-Proficiency', type: 'checkbox' },
+	{ path: 'proficiency.stealth', field: 'Stealth-Proficiency', type: 'checkbox' },
+	{ path: 'proficiency.animal', field: 'Animal-Proficiency', type: 'checkbox' },
+	{ path: 'proficiency.influence', field: 'Influence-Proficiency', type: 'checkbox' },
+	{ path: 'proficiency.insight', field: 'Insight-Proficiency', type: 'checkbox' },
+	{ path: 'proficiency.investigation', field: 'Investigation-Proficiency', type: 'checkbox' },
+	{ path: 'proficiency.medicine', field: 'Medicine-Proficiency', type: 'checkbox' },
+	{ path: 'proficiency.survival', field: 'Survival-Proficiency', type: 'checkbox' },
 
 	// =========================================================================
 	// SKILL MASTERY CHECKBOXES (5 tiers per skill)
@@ -158,7 +196,8 @@ export const fieldMap_dc20_010: FieldMapItem[] = [
 	{ path: 'mastery.Influence.4', field: 'Mastery-Influence-4', type: 'checkbox' },
 	{ path: 'mastery.Influence.6', field: 'Mastery-Influence-6', type: 'checkbox' },
 	{ path: 'mastery.Influence.8', field: 'Mastery-Influence-8', type: 'checkbox' },
-	{ path: 'mastery.Influence.10', field: 'Mastery-Influence-10', type: 'checkbox' },
+	// Note: PDF has typo "Master-Influence-10" instead of "Mastery-Influence-10"
+	{ path: 'mastery.Influence.10', field: 'Master-Influence-10', type: 'checkbox' },
 	{ path: 'mastery.Insight.2', field: 'Mastery-Insight-2', type: 'checkbox' },
 	{ path: 'mastery.Insight.4', field: 'Mastery-Insight-4', type: 'checkbox' },
 	{ path: 'mastery.Insight.6', field: 'Mastery-Insight-6', type: 'checkbox' },
@@ -181,37 +220,103 @@ export const fieldMap_dc20_010: FieldMapItem[] = [
 	{ path: 'mastery.Survival.10', field: 'Mastery-Survival-10', type: 'checkbox' },
 
 	// =========================================================================
-	// KNOWLEDGE TRADES
+	// KNOWLEDGE TRADES - Values and Mastery
 	// =========================================================================
 	{ path: 'arcana', field: 'Arcana', type: 'text' },
 	{ path: 'history', field: 'History', type: 'text' },
 	{ path: 'nature', field: 'Nature', type: 'text' },
 	{ path: 'occultism', field: 'Occultism', type: 'text' },
 	{ path: 'religion', field: 'Religion', type: 'text' },
-	{ path: 'engineering', field: 'Engineering', type: 'text' },
 
 	// Knowledge Trade Proficiency
-	{ path: 'tradeProficiency.Arcana', field: 'Arcana-Proficiency', type: 'checkbox' },
-	{ path: 'tradeProficiency.History', field: 'History-Proficiency', type: 'checkbox' },
-	{ path: 'tradeProficiency.Nature', field: 'Nature-Proficiency', type: 'checkbox' },
-	{ path: 'tradeProficiency.Occultism', field: 'Occultism-Proficiency', type: 'checkbox' },
-	{ path: 'tradeProficiency.Religion', field: 'Religion-Proficiency', type: 'checkbox' },
-	{ path: 'tradeProficiency.Engineering', field: 'Engineering-Proficiency', type: 'checkbox' },
-	{ path: 'tradeProficiency.Expertise', field: 'Expertise-Proficiency', type: 'checkbox' },
+	{ path: 'proficiency.arcana', field: 'Arcana-Proficiency', type: 'checkbox' },
+	{ path: 'proficiency.history', field: 'History-Proficiency', type: 'checkbox' },
+	{ path: 'proficiency.nature', field: 'Nature-Proficiency', type: 'checkbox' },
+	{ path: 'proficiency.occultism', field: 'Occultism-Proficiency', type: 'checkbox' },
+	{ path: 'proficiency.religion', field: 'Religion-Proficiency', type: 'checkbox' },
 
-	// Custom Trades
+	// Knowledge Trade Mastery
+	{ path: 'mastery.Arcana.2', field: 'Mastery-Arcana-2', type: 'checkbox' },
+	{ path: 'mastery.Arcana.4', field: 'Mastery-Arcana-4', type: 'checkbox' },
+	{ path: 'mastery.Arcana.6', field: 'Mastery-Arcana-6', type: 'checkbox' },
+	{ path: 'mastery.Arcana.8', field: 'Mastery-Arcana-8', type: 'checkbox' },
+	{ path: 'mastery.Arcana.10', field: 'Mastery-Arcana-10', type: 'checkbox' },
+	{ path: 'mastery.History.2', field: 'Mastery-History-2', type: 'checkbox' },
+	{ path: 'mastery.History.4', field: 'Mastery-History-4', type: 'checkbox' },
+	{ path: 'mastery.History.6', field: 'Mastery-History-6', type: 'checkbox' },
+	{ path: 'mastery.History.8', field: 'Mastery-History-8', type: 'checkbox' },
+	{ path: 'mastery.History.10', field: 'Mastery-History-10', type: 'checkbox' },
+	{ path: 'mastery.Nature.2', field: 'Mastery-Nature-2', type: 'checkbox' },
+	{ path: 'mastery.Nature.4', field: 'Mastery-Nature-4', type: 'checkbox' },
+	{ path: 'mastery.Nature.6', field: 'Mastery-Nature-6', type: 'checkbox' },
+	{ path: 'mastery.Nature.8', field: 'Mastery-Nature-8', type: 'checkbox' },
+	{ path: 'mastery.Nature.10', field: 'Mastery-Nature-10', type: 'checkbox' },
+	{ path: 'mastery.Occultism.2', field: 'Mastery-Occultism-2', type: 'checkbox' },
+	{ path: 'mastery.Occultism.4', field: 'Mastery-Occultism-4', type: 'checkbox' },
+	{ path: 'mastery.Occultism.6', field: 'Mastery-Occultism-6', type: 'checkbox' },
+	{ path: 'mastery.Occultism.8', field: 'Mastery-Occultism-8', type: 'checkbox' },
+	{ path: 'mastery.Occultism.10', field: 'Mastery-Occultism-10', type: 'checkbox' },
+	{ path: 'mastery.Religion.2', field: 'Mastery-Religion-2', type: 'checkbox' },
+	{ path: 'mastery.Religion.4', field: 'Mastery-Religion-4', type: 'checkbox' },
+	{ path: 'mastery.Religion.6', field: 'Mastery-Religion-6', type: 'checkbox' },
+	{ path: 'mastery.Religion.8', field: 'Mastery-Religion-8', type: 'checkbox' },
+	{ path: 'mastery.Religion.10', field: 'Mastery-Religion-10', type: 'checkbox' },
+
+	// =========================================================================
+	// PRACTICAL TRADES A-D - Labels, Values, Mastery, Proficiency
+	// =========================================================================
+	{ path: 'tradeA', field: 'Trade A', type: 'text' },
+	{ path: 'tradeAModifier', field: 'Trade A', type: 'text' }, // Same field used for modifier
 	{ path: 'customTradeA', field: 'Custom Trade A', type: 'text' },
+	{ path: 'proficiency.tradeA', field: 'Trade-A-Proficiency', type: 'checkbox' },
+	{ path: 'mastery.TradeA.2', field: 'Mastery-Trade-A-2', type: 'checkbox' },
+	{ path: 'mastery.TradeA.4', field: 'Mastery-Trade-A-4', type: 'checkbox' },
+	{ path: 'mastery.TradeA.6', field: 'Mastery-Trade-A-6', type: 'checkbox' },
+	{ path: 'mastery.TradeA.8', field: 'Mastery-Trade-A-8', type: 'checkbox' },
+	{ path: 'mastery.TradeA.10', field: 'Mastery-Trade-A-10', type: 'checkbox' },
+
+	{ path: 'tradeB', field: 'Trade B', type: 'text' },
 	{ path: 'customTradeB', field: 'Custom Trade B', type: 'text' },
+	{ path: 'proficiency.tradeB', field: 'Trade-B-Proficiency', type: 'checkbox' },
+	{ path: 'mastery.TradeB.2', field: 'Mastery-Trade-B-2', type: 'checkbox' },
+	{ path: 'mastery.TradeB.4', field: 'Mastery-Trade-B-4', type: 'checkbox' },
+	{ path: 'mastery.TradeB.6', field: 'Mastery-Trade-B-6', type: 'checkbox' },
+	{ path: 'mastery.TradeB.8', field: 'Mastery-Trade-B-8', type: 'checkbox' },
+	{ path: 'mastery.TradeB.10', field: 'Mastery-Trade-B-10', type: 'checkbox' },
+
+	{ path: 'tradeC', field: 'Trade C', type: 'text' },
 	{ path: 'customTradeC', field: 'Custom Trade C', type: 'text' },
+	{ path: 'proficiency.tradeC', field: 'Trade-C-Proficiency', type: 'checkbox' },
+	{ path: 'mastery.TradeC.2', field: 'Mastery-Trade-C-2', type: 'checkbox' },
+	{ path: 'mastery.TradeC.4', field: 'Mastery-Trade-C-4', type: 'checkbox' },
+	{ path: 'mastery.TradeC.6', field: 'Mastery-Trade-C-6', type: 'checkbox' },
+	{ path: 'mastery.TradeC.8', field: 'Mastery-Trade-C-8', type: 'checkbox' },
+	{ path: 'mastery.TradeC.10', field: 'Mastery-Trade-C-10', type: 'checkbox' },
+
+	{ path: 'tradeD', field: 'Trade D', type: 'text' },
 	{ path: 'customTradeD', field: 'Custom Trade D', type: 'text' },
+	{ path: 'proficiency.tradeD', field: 'Trade-D-Proficiency', type: 'checkbox' },
+	{ path: 'mastery.TradeD.2', field: 'Mastery-Trade-D-2', type: 'checkbox' },
+	{ path: 'mastery.TradeD.4', field: 'Mastery-Trade-D-4', type: 'checkbox' },
+	{ path: 'mastery.TradeD.6', field: 'Mastery-Trade-D-6', type: 'checkbox' },
+	{ path: 'mastery.TradeD.8', field: 'Mastery-Trade-D-8', type: 'checkbox' },
+	{ path: 'mastery.TradeD.10', field: 'Mastery-Trade-D-10', type: 'checkbox' },
 
 	// =========================================================================
 	// LANGUAGES
 	// =========================================================================
 	{ path: 'languages.0.name', field: 'Language A', type: 'text' },
+	{ path: 'mastery.LanguageA.Limited', field: 'Mastery-Language-A-Limited', type: 'checkbox' },
+	{ path: 'mastery.LanguageA.Fluent', field: 'Mastery-Language-A-Fluent', type: 'checkbox' },
 	{ path: 'languages.1.name', field: 'Language B', type: 'text' },
+	{ path: 'mastery.LanguageB.Limited', field: 'Mastery-Language-B-Limited', type: 'checkbox' },
+	{ path: 'mastery.LanguageB.Fluent', field: 'Mastery-Language-B-Fluent', type: 'checkbox' },
 	{ path: 'languages.2.name', field: 'Language C', type: 'text' },
+	{ path: 'mastery.LanguageC.Limited', field: 'Mastery-Language-C-Limited', type: 'checkbox' },
+	{ path: 'mastery.LanguageC.Fluent', field: 'Mastery-Language-C-Fluent', type: 'checkbox' },
 	{ path: 'languages.3.name', field: 'Language D', type: 'text' },
+	{ path: 'mastery.LanguageD.Limited', field: 'Mastery-Language-D-Limited', type: 'checkbox' },
+	{ path: 'mastery.LanguageD.Fluent', field: 'Mastery-Language-D-Fluent', type: 'checkbox' },
 
 	// =========================================================================
 	// ATTACKS
@@ -254,11 +359,12 @@ export const fieldMap_dc20_010: FieldMapItem[] = [
 	{ path: 'attunement.items.2.name', field: 'Attuned C', type: 'text' },
 	{ path: 'attunement.items.3.name', field: 'Attuned D', type: 'text' },
 	{ path: 'attunement.items.4.name', field: 'Attuned E', type: 'text' },
-	{ path: 'attunement.items.0.active', field: 'Attuned Item A', type: 'checkbox' },
-	{ path: 'attunement.items.1.active', field: 'Attuned Item B', type: 'checkbox' },
-	{ path: 'attunement.items.2.active', field: 'Attuned Item C', type: 'checkbox' },
-	{ path: 'attunement.items.3.active', field: 'Attuned Item D', type: 'checkbox' },
-	{ path: 'attunement.items.4.active', field: 'Attuned Item E', type: 'checkbox' },
+	// Note: Attuned Item fields are text fields in manifest, not checkboxes
+	{ path: 'attunement.items.0.name', field: 'Attuned Item A', type: 'text' },
+	{ path: 'attunement.items.1.name', field: 'Attuned Item B', type: 'text' },
+	{ path: 'attunement.items.2.name', field: 'Attuned Item C', type: 'text' },
+	{ path: 'attunement.items.3.name', field: 'Attuned Item D', type: 'text' },
+	{ path: 'attunement.items.4.name', field: 'Attuned Item E', type: 'text' },
 
 	// =========================================================================
 	// INVENTORY / SUPPLIES
@@ -291,9 +397,14 @@ export const fieldMap_dc20_010: FieldMapItem[] = [
 	// =========================================================================
 	// EXHAUSTION TRACK
 	// =========================================================================
-	{ path: 'exhaustion.1', field: 'Exhaustion -1', type: 'checkbox' },
-	{ path: 'exhaustion.2', field: 'Exhaustion -2', type: 'checkbox' },
-	{ path: 'exhaustion.3', field: 'Exhaustion -3', type: 'checkbox' },
-	{ path: 'exhaustion.4', field: 'Exhaustion -4', type: 'checkbox' },
-	{ path: 'exhaustion.5', field: 'Exhaustion -5', type: 'checkbox' }
+	{ path: 'exhaustion.-1', field: 'Exhaustion -1', type: 'checkbox' },
+	{ path: 'exhaustion.-2', field: 'Exhaustion -2', type: 'checkbox' },
+	{ path: 'exhaustion.-3', field: 'Exhaustion -3', type: 'checkbox' },
+	{ path: 'exhaustion.-4', field: 'Exhaustion -4', type: 'checkbox' },
+	{ path: 'exhaustion.-5', field: 'Exhaustion -5', type: 'checkbox' },
+
+	// =========================================================================
+	// MISCELLANEOUS
+	// =========================================================================
+	{ path: 'misc', field: 'Misc', type: 'text' }
 ];

@@ -64,8 +64,18 @@ Status: Prioritized gaps with evidence, impact, and minimal proposals. No code c
 - Gap: Declare‑before‑roll enforcement
   - Evidence: Rules require declaring enhancements before rolling; UI should enforce timing.
   - Impact: P2
-  - **Status:** Requires UI implementation
-  - Proposal: Add roll workflow that locks enhancement selection before dice result is revealed.
+  - **Status:** Requires UI implementation (dice roller not yet built)
+  - **Specification:**
+    - DC20 rules: "You can choose to spend extra resources on your Spells and Maneuvers
+      to get the benefits of Spell Enhancements and Maneuver Enhancements, but this must
+      be declared before you make your Spell Check, Martial Check, or Spell Attack."
+    - Implementation requirements:
+      1. Roll workflow component with phases: Selection → Confirmation → Roll → Result
+      2. Lock enhancement selection after "Confirm" but before dice are rolled
+      3. Show total resource spend (MP/SP) and validate against MSL/SSL before confirmation
+      4. Display all declared enhancements in roll result
+    - Depends on: Dice roller UI component (not yet implemented)
+  - Proposal: Build roll workflow into spellcasting/combat UI when those features are developed.
 
 ---
 

@@ -13,15 +13,21 @@ Status: Prioritized gaps with evidence, impact, and minimal proposals. No code c
 
 ## Cross‑Cutting
 - Gap: Save DC baseline mismatch (ONTOLOGY.md 8+ vs rules/calculator 10+)
+  - **FIXED**: Updated ONTOLOGY.md to 10 + CM + Prime.
   - Evidence: ONTOLOGY Save DC; CALC docs + CH1 use 10 + CM + Prime.
-  - Impact: P3 (docs drift causing confusion)
-  - Proposal: Update ONTOLOGY.md to 10 + CM + Prime; add note about v0.10 change.
+  - Impact: P3 → Resolved
 
 - Gap: No normalized effect resolution metadata for spells/maneuvers
-  - Evidence: Rules use Check vs Defense, Save vs Save DC, fixed DC checks, dynamic both; current schemas free‑text.
-  - Impact: P2 (UI inconsistencies, edge cases hard to model)
-  - Proposal: Add per‑effect metadata: rollBy/casterCheck/targetSave/timing. See schema‑gap‑proposals §1.
-  - Files: `src/lib/rulesdata/schemas/spell.schema.ts` (add fields), `src/lib/rulesdata/schemas/maneuver.schema.ts` (mirror for effect‑imposing maneuvers).
+  - **SCHEMA ADDED**: Added `EffectResolution` interface to `spell.schema.ts`.
+  - Evidence: Rules use Check vs Defense, Save vs Save DC, fixed DC checks, dynamic both.
+  - Impact: P2 → Schema ready for data population
+  - Implementation:
+    - `rollBy`: 'caster' | 'target' | 'both'
+    - `casterCheck`: { kind, vs } for attack/spell/martial checks
+    - `targetSave`: { ability, vs, repeated } for save-based effects
+    - `timing`: 'simultaneous' | 'sequential' for DAS
+    - `singleRollSharedAcrossTargets` on SpellEffect
+  - Files: `spell.schema.ts` updated; maneuver schema can mirror when needed.
 
 ---
 
@@ -81,27 +87,26 @@ Status: Prioritized gaps with evidence, impact, and minimal proposals. No code c
 
 ## CH2b — Spellcaster Chapter
 - Gap: Fixed DC handling not modeled
+  - **SCHEMA ADDED**: `casterCheck.vs` and `targetSave.vs` now support `{ fixedDC: number }`.
   - Evidence: Fly uses DC 15 Spell Check.
-  - Impact: P2
-  - Proposal: Add fixedDC flag in effect resolution. See schema‑gap‑proposals §7.
+  - Impact: P2 → Schema ready
 
 - Gap: Components metadata lacks structure
-  - Evidence: `material` is a string; cannot express consumed/material id.
-  - Impact: P2
-  - Proposal: components.material { id?, consumed? }. See schema‑gap‑proposals §3.
-  - Files: `src/lib/rulesdata/schemas/spell.schema.ts` (add nested material object).
+  - **SCHEMA ADDED**: `material` now supports structured object with `itemId`, `consumed`, `goldCost`.
+  - Evidence: `material` was just a string; cannot express consumed/material id.
+  - Impact: P2 → Schema ready
+  - Implementation: `material?: string | { description, itemId?, consumed?, goldCost? }`
 
 - Gap: Enhancement dependencies not encoded
+  - **SCHEMA ADDED**: `requires?: string[]` added to `SpellEnhancement`.
   - Evidence: Black Hole requires Lingering.
-  - Impact: P2
-  - Proposal: `requires?: string[]` on enhancements. See schema‑gap‑proposals §2.
-  - Files: `src/lib/rulesdata/schemas/spell.schema.ts` (SpellEnhancement).
+  - Impact: P2 → Schema ready
+  - Implementation: Add `id` and `requires` fields to enhancement definitions as needed.
 
 - Gap: Shared roll across added targets not encoded
+  - **SCHEMA ADDED**: `singleRollSharedAcrossTargets?: boolean` added to `SpellEffect`.
   - Evidence: Arcane Missiles uses same attack roll across targets.
-  - Impact: P2
-  - Proposal: `singleRollSharedAcrossTargets?: boolean` on effect/spell. See schema‑gap‑proposals §2.
-  - Files: `src/lib/rulesdata/spells-data/*` (data), optional in schema.
+  - Impact: P2 → Schema ready
 
 ---
 

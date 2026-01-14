@@ -171,17 +171,62 @@ export interface SpellCost {
 }
 
 /**
+ * Effect resolution metadata for spells and maneuvers (v0.10)
+ * Enables consistent UI rendering of different check/save patterns.
+ */
+export interface EffectResolution {
+	/**
+	 * Who makes the roll:
+	 * - 'caster': Caster makes attack/spell check vs defense
+	 * - 'target': Target makes saving throw
+	 * - 'both': Dynamic Attack Save (caster attacks, target can save)
+	 */
+	rollBy?: 'caster' | 'target' | 'both';
+
+	/** Caster's check details (when rollBy includes 'caster' or 'both') */
+	casterCheck?: {
+		/** Type of check made */
+		kind: 'attack' | 'spell' | 'martial';
+		/** What it's rolled against */
+		vs: 'PD' | 'AD' | 'contest' | { fixedDC: number };
+	};
+
+	/** Target's save details (when rollBy includes 'target' or 'both') */
+	targetSave?: {
+		/** Attribute used for the save */
+		ability: 'Might' | 'Agility' | 'Charisma' | 'Intelligence' | 'Physical' | 'Mental';
+		/** What the save is against */
+		vs: 'SaveDC' | { fixedDC: number };
+		/** Does the target repeat the save on subsequent turns? */
+		repeated?: boolean;
+	};
+
+	/**
+	 * Timing of check/save for Dynamic Attack Save:
+	 * - 'simultaneous': Both resolved at once
+	 * - 'sequential': Attack first, then save if hit
+	 */
+	timing?: 'simultaneous' | 'sequential';
+}
+
+/**
  * A discrete effect within a spell
  */
 export interface SpellEffect {
 	title: string;
 	description: string;
+	/** Structured resolution metadata (optional, for UI rendering) */
+	resolution?: EffectResolution;
+	/** Does this effect use same roll across multiple targets? (e.g., Arcane Missiles) */
+	singleRollSharedAcrossTargets?: boolean;
 }
 
 /**
  * Enhancement options for a spell
  */
 export interface SpellEnhancement {
+	/** Unique ID for this enhancement (for dependency tracking) */
+	id?: string;
 	/** Resource type: AP or MP */
 	type: 'AP' | 'MP';
 	/** Cost in that resource */
@@ -194,6 +239,11 @@ export interface SpellEnhancement {
 	repeatable?: boolean;
 	/** Variable cost (X MP)? */
 	variable?: boolean;
+	/**
+	 * IDs of prerequisite enhancements that must be selected first.
+	 * Example: Black Hole requires Lingering enhancement.
+	 */
+	requires?: string[];
 }
 
 /**
@@ -226,11 +276,31 @@ export interface Spell {
 	spellPassive?: string;
 	/** Enhancement options */
 	enhancements: SpellEnhancement[];
-	/** Components (defaults to Verbal + Somatic) */
+	/**
+	 * Components required to cast the spell.
+	 * All spells require Verbal and Somatic unless specified otherwise.
+	 */
 	components?: {
+		/** Verbal component (magical words/incantations). Default: true */
 		verbal?: boolean;
+		/** Somatic component (gestures). Default: true */
 		somatic?: boolean;
-		material?: string;
+		/**
+		 * Material component (if any).
+		 * Can be a string (legacy) or structured object for inventory integration.
+		 */
+		material?:
+			| string
+			| {
+					/** Description of the material */
+					description: string;
+					/** Item ID for inventory integration (optional) */
+					itemId?: string;
+					/** Is the material consumed on cast? */
+					consumed?: boolean;
+					/** Gold cost of the material (if consumed or valued) */
+					goldCost?: number;
+			  };
 	};
 	/** Full description text from rules */
 	fullDescription?: string;

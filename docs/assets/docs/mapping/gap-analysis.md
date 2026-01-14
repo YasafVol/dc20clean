@@ -248,10 +248,17 @@ Status: Prioritized gaps with evidence, impact, and minimal proposals. No code c
 
 ## Background System
 - Gap: Conversions exposure and overspend prevention
-  - Evidence: Formulas exist; ensure UI/state apply consistently.
-  - Impact: P1
-  - Proposal: Lock submit on overspend; show per‑pool remaining.
-  - Files: `src/lib/services/enhancedCharacterCalculator.ts` (background block), UI Background tabs.
+  - **ALREADY IMPLEMENTED**: Full implementation exists.
+  - Evidence: Background.tsx shows per-pool remaining, highlights negative in red, displays validation errors.
+  - Impact: P1 → Resolved
+  - Implementation:
+    1. Calculator outputs `POINTS_OVERBUDGET` validation errors
+    2. Background UI shows remaining per tab: `Skills ({remaining} left)`
+    3. Tabs turn red (`text-destructive`) when remaining < 0
+    4. `<InlineError>` component displays validation errors
+    5. Step progression blocked until exact spend (`hasExactlySpentAllSkillPoints` etc.)
+    6. Conversion buttons check remaining before allowing conversion
+  - Files: `Background.tsx`, `enhancedCharacterCalculator.ts`, `CharacterCreation.tsx`
 
 ## Trades System
 - Gap: Tool requirement enforcement

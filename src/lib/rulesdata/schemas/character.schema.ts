@@ -204,13 +204,45 @@ export interface GrantConditionVulnerabilityEffect {
 // II. ANCESTRY & TRAIT SCHEMAS
 // ================================================================= //
 
+/**
+ * Structured requirements for trait selection (v0.10)
+ * Enables validator to prevent illegal combinations and guide UI.
+ */
+export interface TraitRequirements {
+	/** Required size category/categories (e.g., ['small', 'medium']) */
+	size?: string[];
+	/** Must have one of these traits selected */
+	hasTrait?: string[];
+	/** Cannot be selected with these traits */
+	prohibitsTraits?: string[];
+	/** Must have all of these traits selected */
+	hasAllTraits?: string[];
+	/** Choice requirement (e.g., "pick 2 from these 5") */
+	choices?: Array<{
+		/** Pool of traits to choose from */
+		from: string[];
+		/** Number to select */
+		count: number;
+	}>;
+	/** Minimum level requirement */
+	minLevel?: number;
+	/** Required ancestry/ancestries */
+	ancestry?: string[];
+}
+
 export interface Trait {
 	id: string;
 	name: string;
 	description: string;
 	cost: number;
 	isNegative?: boolean;
+	/** @deprecated Use `requirements` for structured prerequisites */
 	prerequisites?: string[];
+	/**
+	 * Structured requirements for this trait (optional).
+	 * When present, supersedes `prerequisites` for validation.
+	 */
+	requirements?: TraitRequirements;
 	effects: Effect[]; // Every mechanical benefit is now an Effect.
 }
 

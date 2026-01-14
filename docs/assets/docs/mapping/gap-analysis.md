@@ -167,15 +167,19 @@ Status: Prioritized gaps with evidence, impact, and minimal proposals. No code c
 
 ## CH5 — Ancestries
 - Gap: Trait requirements structure
-  - Evidence: `prerequisites?: any[]` in types; textual in data.
-  - Impact: P2
-  - Proposal: Structured `requirements` block (see §6); update validator.
-  - Files: `src/lib/rulesdata/ancestries/traits.ts` (data), `src/lib/rulesdata/schemas/types.ts` (optionally document field), trait validators.
+  - **SCHEMA ADDED**: Added `TraitRequirements` interface to `character.schema.ts`.
+  - Evidence: `prerequisites?: string[]` was unstructured; textual in data.
+  - Impact: P2 → Schema ready for data population
+  - Implementation:
+    - `TraitRequirements` interface with: size, hasTrait, prohibitsTraits, hasAllTraits, choices, minLevel, ancestry
+    - Added optional `requirements?: TraitRequirements` field to `Trait` interface
+    - Marked old `prerequisites` as deprecated for migration
 
 - Gap: Dual ancestry constraints enforcement
   - Evidence: Prose rules only.
   - Impact: P2
   - Proposal: Enforce via UI validator; add config toggles for variant rules.
+  - Note: Can leverage new `TraitRequirements.ancestry` field for validation.
 
 ---
 

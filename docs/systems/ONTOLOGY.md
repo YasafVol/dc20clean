@@ -135,7 +135,7 @@ This section describes the data structures and concepts that define the game's r
     - **Attack/Spell Check**: `Combat Mastery + Prime Attribute Modifier`
     - **Martial Check**: `max(Acrobatics, Athletics)` where `Acrobatics = Agility + (Proficiency * 2)` and `Athletics = Might + (Proficiency * 2)`
   - **Other Combat Stats**
-    - **Save DC**: `8 + Combat Mastery + Prime Attribute Modifier`
+    - **Save DC**: `10 + Combat Mastery + Prime Attribute Modifier`
     - **Initiative**: `Combat Mastery + Agility`
 
 - **Schemas**: Define the data structures for core concepts. See also `docs/systems/EFFECT_SYSTEM.MD` for effect types.

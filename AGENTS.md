@@ -74,7 +74,6 @@ Tips
 ## Systems Index (start here)
 
 - Background System: `docs/systems/BACKGROUND_SYSTEM.MD`
-- Trades Multi-Attribute: `docs/systems/TRADES_MULTI_ATTRIBUTE_SPEC.md`
 - Traits System: `docs/systems/TRAITS_SYSTEM.MD`
 - Classes System: `docs/systems/CLASS_SYSTEM.MD`
 - Ancestries System: `docs/systems/ANCESTRY_SYSTEM.MD`
@@ -85,13 +84,14 @@ Tips
 - Equipment System: `docs/systems/EQUIPMENT_SYSTEM.MD`
 - Character Sheet Overview: `docs/systems/CHARACTER_SHEET.MD`
 - PDF Export System: `docs/systems/PDF_EXPORT_SYSTEM.MD`
+- Database & Storage: `docs/systems/DATABASE_SYSTEM.MD`
 
 ## Agent Brief Template
 
 - Goal: <one-sentence outcome>
 - Relevant systems:
   - Background → `docs/systems/BACKGROUND_SYSTEM.MD#4-calculation-model`
-  - Trades Multi-Attribute → `docs/systems/TRADES_MULTI_ATTRIBUTE_SPEC.md#6-code-touchpoints`
+  - Database/Storage → `docs/systems/DATABASE_SYSTEM.MD`
   - Effect types → `docs/systems/EFFECT_SYSTEM.MD#2-effect-categories`
 - Touchpoints:
   - Data/types: `src/lib/rulesdata/**`, `src/lib/rulesdata/schemas/**`

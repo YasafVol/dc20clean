@@ -217,17 +217,19 @@
 | 4. FE Migration         | ❌ Not Started | 0%         |
 | 5. Extract Hook         | 🟡 Optional    | N/A        |
 | 6. Multiclass Expansion | ❌ Not Started | 0%         |
+| 7. Convex Migration     | 🚧 Prep Done   | 60%        |
 
-**Overall: 2 of 5 active tasks complete (40%)**
+**Overall: 2 of 6 active tasks complete (33%), 1 in progress**
 
 ---
 
 ## 🎯 Recommended Priority Order
 
-1. **HIGH:** FE Migration (Section 4) - Biggest architectural impact, removes duplicate logic
-2. **MEDIUM:** Multiclass Expansion (Section 6) - Extends leveling system flexibility, builds on M3.17
-3. **MEDIUM:** Unit Tests (Section 1) - Protects against regressions
-4. **LOW:** Extract Hook (Section 5) - Nice to have, current code works
+1. **HIGH:** Convex Migration (Section 7) - Complete when npm available, enables cloud features
+2. **HIGH:** FE Migration (Section 4) - Biggest architectural impact, removes duplicate logic
+3. **MEDIUM:** Multiclass Expansion (Section 6) - Extends leveling system flexibility, builds on M3.17
+4. **MEDIUM:** Unit Tests (Section 1) - Protects against regressions
+5. **LOW:** Extract Hook (Section 5) - Nice to have, current code works
 
 ---
 
@@ -240,4 +242,32 @@
 
 ---
 
-**Last Updated:** October 10, 2025 (Multiclass expansion task added)
+**Last Updated:** January 14, 2026
+
+---
+
+## 7. Convex Cloud Storage Migration 🚧 **PREP COMPLETE**
+
+**Goal:** Replace localStorage with Convex cloud database for authenticated users.
+
+**Status:** Prep work complete, npm-dependent work deferred.
+
+**Prep Work Done:**
+- ✅ Convex schema design (`convex/schema.ts.draft`)
+- ✅ Character CRUD mutations/queries (`convex/characters.ts.draft`)
+- ✅ Auth config with Google/GitHub OAuth (`convex/auth.config.ts.draft`)
+- ✅ Storage abstraction layer (`src/lib/storage/`)
+- ✅ Auth UI components (`src/components/auth/`)
+- ✅ Spec document (`docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md`)
+
+**Deferred (requires npm):**
+- [ ] `npm install convex @convex-dev/auth`
+- [ ] `npx convex dev` initialization
+- [ ] Rename `.draft` files
+- [ ] Wire up providers in `main.tsx`
+- [ ] Replace PDF export button with `FeatureGateButton`
+- [ ] Add cloud save functionality
+
+**See:** `docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md` for full TODO checklist.
+
+**Estimated effort:** 4-6 hours (after npm available)

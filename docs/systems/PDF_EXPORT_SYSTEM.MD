@@ -12,6 +12,7 @@
 - **Default version: DC20 v0.10** (with v0.9.5 fallback available)
 - Keep the PDF field mapping and DTO definitions versioned so we can evolve the sheet without breaking prior exports.
 - Minimize bundle impact through lazy loading and on-demand work.
+- **Authentication Required**: PDF export is gated behind user authentication (see Section 10).
 
 Out of scope (tracked as future ideas in Section 8): flattened exports toggle, performance metrics, server-side generation.
 
@@ -150,5 +151,42 @@ Movement checkboxes in `fieldMap.dc20-0.9.5.ts`:
 
 ---
 
-> Last updated: 2026-01-05 (Updated for DC20 v0.10 default export)
+## 10. Authentication Gating
+
+**Added: 2026-01-14**
+
+PDF export requires user authentication. This is implemented using `FeatureGateButton` from the auth system.
+
+### Implementation
+
+```tsx
+import { FeatureGateButton } from '@/components/auth';
+
+// In LoadCharacter.tsx
+<FeatureGateButton
+  feature="pdf-export"
+  onAction={() => handleExportPdf(character)}
+  className="border-purple-500 font-bold text-purple-400 hover:bg-purple-500 hover:text-white"
+>
+  Export PDF
+</FeatureGateButton>
+```
+
+### Behavior
+
+1. **Not Signed In**: Clicking "Export PDF" shows a sign-in dialog (Google/GitHub OAuth)
+2. **After Sign In**: Export proceeds automatically
+3. **Already Signed In**: Export proceeds immediately
+
+### Rationale
+
+- PDF export is a premium feature encouraging account creation
+- Enables future features like export history, cloud PDF storage
+- Reduces anonymous abuse of export functionality
+
+**See**: `docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md` for full authentication system details.
+
+---
+
+> Last updated: 2026-01-14 (Added authentication gating)
 > Maintainer: @DC20Clean-Team

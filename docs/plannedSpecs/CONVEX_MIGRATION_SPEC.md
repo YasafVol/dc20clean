@@ -6,6 +6,41 @@ Replace the current localStorage-based character persistence with Convex cloud d
 
 **Status**: Prep work complete, npm-dependent work deferred
 
+---
+
+## TODO Checklist
+
+### Phase 1: npm & Convex Setup (requires npm access)
+
+- [ ] `npm install convex @convex-dev/auth`
+- [ ] `npx convex dev` (initialize Convex, get deployment URL)
+- [ ] Rename `convex/*.draft` files to `.ts`
+- [ ] Add `VITE_CONVEX_URL` to `.env.local`
+- [ ] Set up Google OAuth credentials (Google Cloud Console)
+- [ ] Set up GitHub OAuth credentials (GitHub Developer Settings)
+- [ ] Add OAuth secrets to Convex Dashboard environment variables
+
+### Phase 2: UI Integration (after Phase 1)
+
+- [ ] **`src/main.tsx`** - Wrap app with `ConvexProvider` and `ConvexAuthProvider`
+- [ ] **`src/components/auth/*.tsx`** - Uncomment Convex imports and replace mock hooks
+- [ ] **`src/lib/storage/convexStorageAdapter.ts`** - Uncomment Convex imports and implement hooks
+- [ ] **`src/routes/character-creation/LoadCharacter.tsx`** - Replace PDF export button with `FeatureGateButton`
+- [ ] **`src/routes/character-creation/LoadCharacter.tsx`** - Add "Save to Cloud" button with `FeatureGateButton`
+- [ ] **`src/components/Menu.tsx`** - Add `UserMenu` component to show logged-in user
+- [ ] **`src/lib/services/characterCompletion.ts`** - Add cloud save option alongside localStorage
+
+### Phase 3: Testing & Polish
+
+- [ ] Test Google sign-in flow
+- [ ] Test GitHub sign-in flow
+- [ ] Test PDF export gate (shows sign-in, then exports)
+- [ ] Test cloud save (shows sign-in, then saves to Convex)
+- [ ] Test localStorage fallback when not signed in
+- [ ] Verify characters sync across devices when signed in
+
+---
+
 ## Goals
 
 1. **Cloud Persistence**: Characters saved to Convex database instead of browser localStorage

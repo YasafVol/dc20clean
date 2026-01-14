@@ -13,7 +13,10 @@ Status legend: [ ] not started · [~] in progress · [x] done · [>] blocked
 - [x] Feature→System mapping drafted
 - [x] Gap analysis completed — see `docs/mapping/gap-analysis.md`
 - [x] Classes audit completed — see `docs/mapping/classes-audit.md`
-- [~] Recommendations drafted and reviewed
+- [x] Recommendations drafted and reviewed
+- [x] Schema proposals implemented (Phase 3A-3E)
+- [x] Quick wins implemented (Phase 4A-4E)
+- [x] All 13 classes patched with L5/L8 placeholders and startingEquipment
 
 ## Process Rules
 - Threaded discovery: use chunk IDs (e.g., `DISC-CH1`, `DISC-CH2b`, `DISC-SYS-SPELLS`) to scope threads and parallelize safely.
@@ -127,12 +130,19 @@ Source: `docs/systems/**`
 - [x] Log missing fields, mismatched types, normalization needs.
 - [x] Flag calculation gaps and cross-system inconsistencies.
 - [x] Comprehensive classes audit (13 classes) — all missing L5/L8 features and startingEquipment documented.
-- [ ] Code hygiene: remove or archive experimental Psion class (not in CH6); add validation to flag classes without CLASS_METADATA.
+- [x] Code hygiene: Psion class marked with `experimental: true` flag; added to ClassDefinition schema.
 
 ### 5) Recommendations
-- [ ] Propose minimal schema/service changes with justifications.
+- [x] Propose minimal schema/service changes with justifications — see `schema-gap-proposals.md`
+- [x] Implement schema extensions:
+  - EffectResolution interface (spell.schema.ts)
+  - Enhancement dependencies (SpellEnhancement.requires)
+  - Material component structure (components.material)
+  - TraitRequirements interface (character.schema.ts)
+  - ReactionConfig (config/reactions.ts)
+- [x] Calculator updates: MSL/SSL spend limits added to output
 - [ ] Outline validation/tests to add (no test edits without approval).
-- [ ] Prioritize changes (impact × effort) and note risks.
+- [ ] Prioritize remaining UI implementation work (MSL enforcement, declare-before-roll).
 
 ## Next Actions (short list)
 - [ ] Create `docs/mapping/insights.md` scaffold to log findings by system.
@@ -148,6 +158,14 @@ Source: `docs/systems/**`
 - 2026-01-14: Use "Agent Brief Template" style for acceptance checks on deliverables.
 - 2026-01-14: Completed comprehensive gap analysis; documented all 13 classes missing L5/L8 features and 9 classes missing startingEquipment.
 - 2026-01-14: Created patches/all_classes_placeholders.md with detailed implementation guide for all class patches.
+- 2026-01-14: Implemented all class patches — L5/L8 placeholder features and startingEquipment for all 13 classes.
+- 2026-01-14: Fixed ONTOLOGY.md Save DC formula (8→10).
+- 2026-01-14: Renamed conditions.dats.ts → conditions.data.ts.
+- 2026-01-14: Expanded SpellTag taxonomy to 50+ tags matching v0.10 rules.
+- 2026-01-14: Added EffectResolution, SpellEnhancement.requires, TraitRequirements interfaces.
+- 2026-01-14: Created config/reactions.ts with reaction trigger configurations.
+- 2026-01-14: Added MSL/SSL (manaSpendLimit/staminaSpendLimit) to calculator output.
+- 2026-01-14: Marked Psion class as experimental via new schema flag.
 
 ## References
 - Rules source: `docs/assets/DC20 0.10 full.md`

@@ -30,13 +30,23 @@ Last updated: 2026-01-14
 - ✅ First-pass discovery complete
 - ✅ Gap analysis complete (13 classes audited)
 - ✅ Schema proposals documented
-- 🔲 Code patches pending approval
+- ✅ **All class patches implemented** (L5/L8 features, startingEquipment)
+- ✅ **Schema extensions implemented** (EffectResolution, TraitRequirements, reactions.ts)
+- ✅ **Quick wins completed** (ONTOLOGY fix, SpellTag expansion, conditions rename, SUBCLASS_REFERENCE update)
 
-## Key Findings
-- All 13 classes missing Level 5 and Level 8 features (26 placeholders needed)
-- 9 classes missing startingEquipment blocks
-- Psion class exists in code but not in DC20 v0.10 rules (experimental)
+## Completed Work (2026-01-14)
+- All 13 classes now have L5/L8 placeholder features
+- All 13 classes now have startingEquipment blocks
+- Psion class marked as `experimental: true`
+- SpellTag type expanded to 50+ tags
+- MSL/SSL spend limits added to calculator output
+- Reaction triggers config created
+
+## Remaining Work
+- UI implementation for MSL/SSL validation
+- UI implementation for declare-before-roll workflow
+- Data population for new schema fields (EffectResolution, TraitRequirements)
 
 ## Notes
 - Do not modify tests without explicit approval.
-- See patches/ folder for proposed code changes.
+- See patches/ folder for reference (now implemented).

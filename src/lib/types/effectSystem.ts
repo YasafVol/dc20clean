@@ -172,6 +172,12 @@ export interface EnhancedCalculationResult {
 		finalCombatMastery: number;
 		finalAttributePoints: number;
 
+		// Resource spend limits (both equal Combat Mastery per v0.10 rules)
+		/** Mana Spend Limit - max MP per spell/MP effect (= Combat Mastery) */
+		manaSpendLimit: number;
+		/** Stamina Spend Limit - max SP per maneuver/SP effect (= Combat Mastery) */
+		staminaSpendLimit: number;
+
 		// Combat stats with breakdowns
 		finalAttackSpellCheck: number;
 		finalMartialCheck: number; // max(Acrobatics, Athletics)

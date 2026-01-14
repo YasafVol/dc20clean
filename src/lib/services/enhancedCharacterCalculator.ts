@@ -1582,6 +1582,10 @@ export function calculateCharacterWithBreakdowns(
 			finalCombatMastery: combatMastery,
 			finalAttributePoints,
 
+			// Resource spend limits (both equal Combat Mastery per v0.10 rules)
+			manaSpendLimit: combatMastery,
+			staminaSpendLimit: combatMastery,
+
 			// Combat stats with breakdowns
 			finalAttackSpellCheck: attackSpellCheckBase,
 			finalMartialCheck: finalMartialCheck,

@@ -46,10 +46,26 @@ Status: Prioritized gaps with evidence, impact, and minimal proposals. No code c
   - Proposal: Add reaction trigger config entries. See schema‑gap‑proposals §4.
   - Files: `src/lib/rulesdata/config/reactions.ts` (new) or co‑locate with actions; UI reaction prompt uses it.
 
-- Gap: Enforce per‑action spend caps (MSL/SSL) and declare‑before‑roll
-  - Evidence: Rules specify timing and limits; UI must enforce.
+- Gap: Enforce per‑action spend caps (MSL/SSL)
+  - Evidence: Rules specify MSL = SSL = Combat Mastery; UI must enforce.
   - Impact: P1 (prevents illegal casts/uses)
-  - Proposal: UI guardrails: block enhancements beyond caps; require pre‑roll declaration; annotate spends for breakdowns.
+  - **Status:** Requires UI implementation
+  - **Specification:**
+    - MSL (Mana Spend Limit) = Combat Mastery — max MP per MP Effect (spell + enhancements)
+    - SSL (Stamina Spend Limit) = Combat Mastery — max SP per SP Effect (maneuver + enhancements)
+    - These limits are separate (can spend MSL + SSL on same action, e.g., Spellstrike)
+  - Implementation needed:
+    1. Calculator: Output `msl` and `ssl` values (both = combatMastery)
+    2. Spell UI: Sum base spell MP + enhancement MP, validate ≤ MSL
+    3. Maneuver UI: Sum base maneuver SP + enhancement SP, validate ≤ SSL
+    4. Block or warn when limits exceeded
+  - Files: `src/lib/services/enhancedCharacterCalculator.ts` (add msl/ssl to output), UI spell/maneuver components.
+
+- Gap: Declare‑before‑roll enforcement
+  - Evidence: Rules require declaring enhancements before rolling; UI should enforce timing.
+  - Impact: P2
+  - **Status:** Requires UI implementation
+  - Proposal: Add roll workflow that locks enhancement selection before dice result is revealed.
 
 ---
 

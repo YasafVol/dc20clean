@@ -1,8 +1,8 @@
 # DC20 Subclass Reference
 
-> **Last Updated:** October 7, 2025  
-> **Schema Version:** 2.1.0  
-> **Status:** Current implementation state (intentional)
+> **Last Updated:** January 14, 2026  
+> **Schema Version:** 2.2.0  
+> **Status:** Current implementation state
 
 ## Overview
 
@@ -10,33 +10,23 @@ This document provides a complete reference for all subclasses available in DC20
 
 ## Subclass Availability by Class
 
-### Classes with 2 Subclasses
+### Classes with 2 Subclasses (All 12 Core Classes)
 
 | Class          | Subclass 1     | Subclass 2      |
 | -------------- | -------------- | --------------- |
 | **Barbarian**  | Elemental Fury | Spirit Guardian |
 | **Bard**       | Eloquence      | Jester          |
+| **Champion**   | Hero           | Sentinel        |
 | **Cleric**     | Inquisitor     | Priest          |
 | **Commander**  | Crusader       | Warlord         |
 | **Druid**      | Phoenix        | Rampant Growth  |
+| **Hunter**     | Monster Slayer | Trapper         |
 | **Monk**       | Astral Self    | Shifting Tide   |
 | **Rogue**      | Long Death     | Swashbuckler    |
 | **Sorcerer**   | Angelic        | Draconic        |
 | **Spellblade** | Paladin        | Rune Knight     |
 | **Warlock**    | Eldritch       | Fey             |
-
-### Classes with 1 Subclass
-
-| Class      | Subclass    |
-| ---------- | ----------- |
-| **Wizard** | Portal Mage |
-
-### Classes with 0 Subclasses (Pending Implementation)
-
-| Class        | Status                |
-| ------------ | --------------------- |
-| **Champion** | No subclasses defined |
-| **Hunter**   | No subclasses defined |
+| **Wizard**     | Portal Mage    | Witch           |
 
 ---
 
@@ -217,9 +207,43 @@ interface Subclass {
 
 #### Portal Mage
 
-- **File:** `wizard_features.ts` (line 161)
+- **File:** `wizard_features.ts` (line 220)
 - **Description:** Master of teleportation and dimensional magic
 - **Features:** Portal creation and spatial manipulation
+
+#### Witch
+
+- **File:** `wizard_features.ts` (line 261)
+- **Description:** Specializes in curses and debilitating hexes
+- **Features:** Hex enhancements and curse magic
+
+### Champion
+
+#### Hero
+
+- **File:** `champion_features.ts` (line 164)
+- **Description:** Warrior spirit that refuses to yield in battle
+- **Features:** Adrenaline Boost, Cut Through, Unyielding Spirit
+
+#### Sentinel
+
+- **File:** `champion_features.ts` (line 210)
+- **Description:** Stalwart protector of allies
+- **Features:** Steadfast Defender, Defensive Bash, Not on My Watch
+
+### Hunter
+
+#### Monster Slayer
+
+- **File:** `hunter_features.ts` (line 308)
+- **Description:** Hunt down targets with monster-derived concoctions
+- **Features:** Monstrous Concoctions, Monster Hunter
+
+#### Trapper
+
+- **File:** `hunter_features.ts` (line 452)
+- **Description:** Craft traps from various supplies
+- **Features:** Dynamic Traps, Discerning Eye
 
 ---
 
@@ -245,16 +269,6 @@ npm run test:unit -- subclasses.test.ts
 ```
 
 ---
-
-## Future Additions
-
-### Champion Subclasses (Planned)
-
-- TBD - awaiting game design specifications
-
-### Hunter Subclasses (Planned)
-
-- TBD - awaiting game design specifications
 
 ---
 

@@ -10,7 +10,7 @@ Create a comprehensive, navigable map of the RPG systems described in `docs/asse
 - Produce actionable recommendations for schema, data flow, and UI/service touchpoints.
 
 ## Scope
-- Source of truth for rules: `docs/assets/DC20 0.10 full.md` plus system docs in `docs/systems/**`.
+- Source of truth for rules: `../DC20 0.10 full.md` plus system docs in `../../systems/**`.
 - Code touchpoints: `src/lib/rulesdata/**`, `src/lib/rulesdata/schemas/**`, `src/lib/services/enhancedCharacterCalculator.ts`, and UI under `src/routes/**` (character creation/sheet).
 - Outputs: systems map, feature→system mapping, schema inventory, gap analysis, and prioritized remediation tasks.
 
@@ -25,7 +25,7 @@ Create a comprehensive, navigable map of the RPG systems described in `docs/asse
 
 ## Threading & Compression Policy
 - Discovery is chunked into small, independent units with stable IDs (e.g., `DISC-CH2b`, `DISC-SYS-SPELLS`). Each thread should reference a specific chunk ID to keep context focused and parallelizable.
-- Resume markers (status, last line number, last heading, notes) are tracked in `docs/mapping/todo.md` per chunk so any thread can pause/resume reliably.
+- Resume markers (status, last line number, last heading, notes) are tracked in `todo.md` per chunk so any thread can pause/resume reliably.
 - Conversation compression: when approaching 95% context usage, condense prior discussion into a rolling summary and append it here under Conversation Compression. Keep only the most recent operational steps uncompressed.
 
 ## Working Definitions

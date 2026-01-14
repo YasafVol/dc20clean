@@ -39,7 +39,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: Classes (HP), Ancestries (HP), Equipment bonuses, Calculation engine
 - Key Files: docs/assets/DC20 0.10 full.md:1; src/lib/rulesdata/attributes.ts
 - Open Questions: Damage order, ADV/DISADV stacking specifics
-- See Also: docs/mapping/insights.md#DISC-CH1, docs/mapping/schemas-by-system.md#attributes--core
+- See Also: insights.md#DISC-CH1, schemas-by-system.md#attributes--core
 - Details (first pass):
    - Core formulas: PD = 8 + CM + Agi + Int; AD = 8 + CM + Mig + Cha; Save DC = 10 + CM + Prime.
    - Checks: Attack/Spell/Martial = d20 + Prime + CM; Skills/Trades = d20 + Attribute + Mastery.
@@ -58,7 +58,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Open Questions: Exact max AP/MP/SP formulas; reaction trigger list
 - Schemas: src/lib/rulesdata/schemas/maneuver.schema.ts
 - Services: src/lib/services/enhancedCharacterCalculator.ts (resource display), UI routes for actions/reactions
- - See Also: docs/mapping/insights.md#DISC-CH2a
+ - See Also: insights.md#DISC-CH2a
  - Details (first pass):
    - Held Actions: declare action + trigger; pay AP now; Reaction occurs if trigger before your next turn; MCP from current turn applies; wasted AP if trigger never happens.
    - Reactions: one per trigger; not on your own turn unless reacting to another reaction; AP spent on reactions reduce next turn’s AP; AP refresh end of your turn.
@@ -78,7 +78,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: CH2a resources; CH1 Save DC; Spells data
 - Key Files: docs/assets/DC20 0.10 full.md:2300; src/lib/rulesdata/schemas/spell.schema.ts
 - Open Questions: Per-class “spells known” progression; material component modeling
-- See Also: docs/mapping/insights.md#DISC-CH2b, docs/mapping/schemas-by-system.md#spells
+- See Also: insights.md#DISC-CH2b, schemas-by-system.md#spells
 - Details (first pass):
    - Enhancement spend: declare before roll; 1 MP can substitute for 2 AP of AP Enhancements.
    - Duel: each side adds +2×MP_spent to contest; Wild Magic on tie.
@@ -94,7 +94,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: Spellcasting chapter; AoE; Conditions; Damage types
 - Key Files: docs/assets/DC20 0.10 full.md:2683; src/lib/rulesdata/spells-data/**
 - Open Questions: Fixed DC vs Save DC normalization; enhancement prerequisites
-- See Also: docs/mapping/insights.md#DISC-CH2c, docs/mapping/schemas-by-system.md#spells
+- See Also: insights.md#DISC-CH2c, schemas-by-system.md#spells
 - Details (first pass):
    - Sampling rule: only first 5 spells enumerated (structure-focused).
    - Entry fields: Source(s), School, Tags, Cost {ap, mp?}, Range, Duration, Sustained?, Enhancements[].
@@ -108,7 +108,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: CH1 defenses/damage; CH2 actions; Equipment; PDF icons
 - Key Files: docs/assets/DC20 0.10 full.md:5502; src/lib/rulesdata/equipment/**; src/lib/rulesdata/conditions/**
 - Open Questions: Numeric formulas for jump/breath; full property lists
-- See Also: docs/mapping/insights.md#DISC-CH3, docs/mapping/schemas-by-system.md#conditions
+- See Also: insights.md#DISC-CH3, schemas-by-system.md#conditions
 - Details (first pass):
    - AoE shapes: Arc, Aura, Cone, Line, Ring, Sphere, Zone; placement rules by spaces.
    - Visibility: Line of sight, cover (1/2, 3/4), concealment, and illumination tiers (bright/dim/darkness).
@@ -127,7 +127,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: Background, Classes, Ancestries, Calculation
 - Key Files: docs/assets/DC20 0.10 full.md:6876; docs/systems/CHARACTER_CREATION_FLOW.MD
 - Open Questions: Save Masteries at creation; progression table specifics
-- See Also: docs/mapping/insights.md#DISC-CH4, docs/mapping/feature-system-map.md#character-creation-wizard
+- See Also: insights.md#DISC-CH4, feature-system-map.md#character-creation-wizard
 - Details (first pass):
    - 10-step outline including attributes, backgrounds, defenses/resources, ancestry, equipment.
    - Leveling Choices stage appears when level > 1 (talents/path/multiclass budgets).
@@ -141,7 +141,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: Traits System; Calculation; Equipment/Conditions
 - Key Files: docs/assets/DC20 0.10 full.md:7390; src/lib/rulesdata/ancestries/**
 - Open Questions: Trait costs/effects inventory; Beast traits schema
- - See Also: docs/mapping/insights.md#DISC-CH5, docs/mapping/schemas-by-system.md#ancestries--traits
+ - See Also: insights.md#DISC-CH5, schemas-by-system.md#ancestries--traits
  - Details (first pass):
    - Trait categories: Minor, Negative, Default, Expanded; points budget with negative offsets.
    - Dual-ancestry rules and constraints; Beastborn modular traits (Senses/Mobility/Body/Natural Weapons/Misc).
@@ -157,7 +157,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: Spells/Martials; Equipment; Talents; Background
 - Key Files: docs/assets/DC20 0.10 full.md:7853; src/lib/rulesdata/classes-data/**
 - Open Questions: Full tables and feature mapping
- - See Also: docs/mapping/insights.md#DISC-CH6, docs/mapping/schemas-by-system.md#classes--features
+ - See Also: insights.md#DISC-CH6, schemas-by-system.md#classes--features
  - Details (first pass):
    - Per-class: table (1–10), features, path availability, starting equipment; subclasses at levels 3/6/9.
    - Hybrid (Spellblade) offers both paths; known spells/maneuvers from tables and path bonuses.
@@ -173,7 +173,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: Effects System; Background; Equipment; UI/hooks; PDF
 - Key Files: docs/systems/CALCULATION_SYSTEM.MD; src/lib/services/enhancedCharacterCalculator.ts; src/lib/types/effectSystem.ts
 - Open Questions: Prime tie-break order confirmation
- - See Also: docs/mapping/insights.md#DISC-SYS-CALC, docs/mapping/schema-inventory.md#core-effect-model
+ - See Also: insights.md#DISC-SYS-CALC, schema-inventory.md#core-effect-model
  - Details (first pass):
    - Order dependency: compute base → apply breakdowns → compute dependents (e.g., Rest Points after HP Max).
    - Caps: `getLevelCaps(level)` drives attribute and mastery caps; CM = ceil(level/2).
@@ -186,7 +186,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: Calculation; Traits/Classes; PDF
 - Key Files: docs/systems/BACKGROUND_SYSTEM.MD; src/lib/rulesdata/{skills,trades,languages}.ts
 - Open Questions: Multi-attribute display rules; language DCs UI
- - See Also: docs/mapping/insights.md#DISC-SYS-BACKGROUND, docs/mapping/schemas-by-system.md#background
+ - See Also: insights.md#DISC-SYS-BACKGROUND, schemas-by-system.md#background
  - Details (first pass):
    - Base budgets at L1: Skills = 5 + INT + bonuses; Trades = 3 + bonuses; Languages = 2 + bonuses.
    - Conversions: Skill↔Trade, Trade→Language per spec; mastery caps validated with exceptions.
@@ -214,7 +214,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: Calculation; Spells/Martials; Effects; UI loaders
 - Key Files: docs/systems/CLASS_SYSTEM.MD; src/lib/rulesdata/classes-data/**
 - Open Questions: Restrictions sync with spells
- - See Also: docs/mapping/insights.md#DISC-SYS-CLASSES, docs/mapping/schemas-by-system.md#classes--features
+ - See Also: insights.md#DISC-SYS-CLASSES, schemas-by-system.md#classes--features
  - Details (first pass):
    - Loaders validate features/progression against Zod schemas; IDs follow naming convention.
    - `spellRestrictions` config filters by sources/schools/tags; slot-based spell knowns (global profile + specialized slots).
@@ -226,7 +226,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: Traits; Calculation; UI
 - Key Files: docs/systems/ANCESTRY_SYSTEM.MD; src/lib/rulesdata/ancestries/**
 - Open Questions: Custom ancestries flow
- - See Also: docs/mapping/insights.md#DISC-SYS-ANCESTRY, docs/mapping/schemas-by-system.md#ancestries--traits
+ - See Also: insights.md#DISC-SYS-ANCESTRY, schemas-by-system.md#ancestries--traits
  - Details (first pass):
    - Tests ensure non-empty trait lists and zero orphan traits; rulesSource tracked; effects applied via calculator aggregation.
 
@@ -237,7 +237,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: Spellcasting rules; Calculation (MP); UI
 - Key Files: docs/systems/SPELLS_SYSTEM.MD; src/lib/rulesdata/spells-data/**; spell schema
 - Open Questions: Restrictions config shape; fixed DC representation
- - See Also: docs/mapping/insights.md#DISC-SYS-SPELLS, docs/mapping/schemas-by-system.md#spells
+ - See Also: insights.md#DISC-SYS-SPELLS, schemas-by-system.md#spells
  - Details (first pass):
    - 125 spells grouped by School; sustained flags; utility functions (lookup, grouping) in spells-data index.
 
@@ -248,7 +248,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: Combat resources; Classes; UI
 - Key Files: docs/systems/MARTIALS_SYSTEM.MD; src/lib/rulesdata/martials/maneuvers.ts
 - Open Questions: Monk stances integration
- - See Also: docs/mapping/insights.md#DISC-SYS-MARTIALS, docs/mapping/schemas-by-system.md#maneuvers-martials
+ - See Also: insights.md#DISC-SYS-MARTIALS, schemas-by-system.md#maneuvers-martials
  - Details (first pass):
    - Four categories (Attack/Defense/Grapple/Utility); AP/SP costs; enhancements with repeatable flags; known counts by level/path.
 
@@ -259,7 +259,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: CH1/CH3 equipment; Character Sheet; PDF
 - Key Files: docs/systems/EQUIPMENT_SYSTEM.MD; src/lib/rulesdata/equipment/**
 - Open Questions: Equip slot sync and training validation
-- See Also: docs/mapping/insights.md#DISC-SYS-EQUIPMENT, docs/mapping/schemas-by-system.md#equipment-custom-builder
+- See Also: insights.md#DISC-SYS-EQUIPMENT, schemas-by-system.md#equipment-custom-builder
 - Details (first pass):
   - Schemas: BaseEquipment/BaseProperty, category-specific (weapon/armor/shield/spell focus).
   - Validation: Points caps, requires/excludes, stacking limits; storage via equipmentStorage.ts.
@@ -271,7 +271,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: All systems; E2E tests
 - Key Files: docs/systems/CHARACTER_SHEET.MD; src/routes/character-sheet/**
 - Open Questions: Legacy 0.9.5 field ID dependencies
- - See Also: docs/mapping/insights.md#DISC-SYS-CHAR-SHEET, docs/mapping/feature-system-map.md#character-sheet-display
+ - See Also: insights.md#DISC-SYS-CHAR-SHEET, feature-system-map.md#character-sheet-display
  - Details (first pass):
    - Acceptance: changing attributes updates PD/AD and derived stats instantly; info buttons pull class/trait data; E2E specs cover resources, spells, maneuvers, currency, exhaustion.
 
@@ -282,7 +282,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: Calculator; transformers; UI CTA
 - Key Files: docs/systems/PDF_EXPORT_SYSTEM.MD; src/lib/pdf/{transformers,fillPdf.ts,fieldMap.*}
 - Open Questions: Pending 0.10 template field changes
- - See Also: docs/mapping/insights.md#DISC-SYS-PDF, docs/mapping/schemas-by-system.md#pdf-export-dto
+ - See Also: insights.md#DISC-SYS-PDF, schemas-by-system.md#pdf-export-dto
  - Details (first pass):
    - Versioned field maps (0.10 default, 0.9.5 legacy); transformer builds DTO; filler lazy-loads pdf-lib; movement checkboxes based on processed speeds; filename sanitization.
 
@@ -293,7 +293,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: character.schema Effect union; Calculator order; PDF movement
 - Key Files: docs/systems/EFFECT_SYSTEM.MD; src/lib/rulesdata/schemas/character.schema.ts
 - Open Questions: Additional condition interaction coverage
- - See Also: docs/mapping/insights.md#DISC-SYS-EFFECTS, docs/mapping/schema-inventory.md#core-effect-model
+ - See Also: insights.md#DISC-SYS-EFFECTS, schema-inventory.md#core-effect-model
  - Details (first pass):
    - Movement grant pipeline (equal_to_speed/half/double) and condition interactions (immunity/resistance/vulnerability) aggregated for UI and PDF.
 
@@ -304,7 +304,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: Class System; Calculator; Creation Flow
 - Key Files: docs/systems/LEVELING_SYSTEM.MD; class progressions; paths data
 - Open Questions: Subclass integration timeline
- - See Also: docs/mapping/insights.md#DISC-SYS-LEVELING, docs/mapping/feature-system-map.md#leveling-choices-level--1
+ - See Also: insights.md#DISC-SYS-LEVELING, feature-system-map.md#leveling-choices-level--1
  - Details (first pass):
    - Aggregates gains from L1→target level; Leveling Choices stage budgets talents/path; path bonuses applied via service.
 
@@ -315,7 +315,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: Class features; Calculator aggregation; Leveling UI
 - Key Files: docs/systems/MULTICLASS_SYSTEM.MD; src/lib/rulesdata/progression/multiclass.ts
 - Open Questions: Counting multiclass-owned features for later tiers
- - See Also: docs/mapping/insights.md#DISC-SYS-MULTICLASS, docs/mapping/feature-system-map.md#leveling-choices-level--1
+ - See Also: insights.md#DISC-SYS-MULTICLASS, feature-system-map.md#leveling-choices-level--1
  - Details (first pass):
    - Six tiers gated by level/prereqs; effects attributed in calculator; selection persisted in SavedCharacter.
 
@@ -326,7 +326,7 @@ Status: Skeleton with inputs, outputs, invariants, dependencies, key files, and 
 - Dependencies: All systems; CharacterCreation routes; Calculator
 - Key Files: docs/systems/CHARACTER_CREATION_FLOW.MD; src/routes/character-creation/**
 - Open Questions: Final level-up stage wiring/resolvers
- - See Also: docs/mapping/insights.md#DISC-SYS-CREATION-FLOW, docs/mapping/feature-system-map.md#character-creation-wizard
+ - See Also: insights.md#DISC-SYS-CREATION-FLOW, feature-system-map.md#character-creation-wizard
  - Details (first pass):
    - Fixed stage order; reducer actions; `isStepCompleted` gating uses calculator budgets/validation; progressive class features display by level.
 

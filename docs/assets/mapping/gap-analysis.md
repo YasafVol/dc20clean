@@ -378,7 +378,7 @@ Status: Prioritized gaps with evidence, impact, and minimal proposals. No code c
 3. Implement adventuring packs system to replace placeholders
 
 ## Next Steps
-1) Approve schema proposals (docs/mapping/schema-gap-proposals.md).
+1) Approve schema proposals (schema-gap-proposals.md).
 2) Apply class patches (see patches/all_classes_placeholders.md).
 3) Implement P1 guardrails in UI and adjust schemas (where needed) with non‑breaking additions.
 4) Add targeted unit/UX tests for P1/P2 areas.

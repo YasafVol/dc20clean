@@ -196,6 +196,20 @@ export const sorcererClass: ClassDefinition = {
 					userChoice: { prompt: 'Choose 1 Talent' }
 				}
 			]
+		},
+		{
+			id: 'sorcerer_level_5_placeholder',
+			featureName: 'Arcane Surge (Placeholder)',
+			levelGained: 5,
+			isFlavor: true,
+			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+		},
+		{
+			id: 'sorcerer_level_8_capstone_placeholder',
+			featureName: 'Reality Shaper (Placeholder)',
+			levelGained: 8,
+			isFlavor: true,
+			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
 		}
 	],
 	subclasses: [

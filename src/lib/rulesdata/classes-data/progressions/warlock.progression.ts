@@ -82,7 +82,7 @@ export const warlockProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 3,
 		gainedSpellsKnown: 1,
 		gains: {
-			classFeatures: [] // Level 5 class feature to be added
+			classFeatures: ['warlock_level_5_placeholder']
 		}
 	},
 	{
@@ -127,7 +127,7 @@ export const warlockProgression: ClassProgressionLevel[] = [
 		gainedSpellsKnown: 0,
 		gains: {
 			pathProgression: true,
-			classFeatures: [] // Capstone feature to be added
+			classFeatures: ['warlock_level_8_capstone_placeholder']
 		}
 	},
 	{

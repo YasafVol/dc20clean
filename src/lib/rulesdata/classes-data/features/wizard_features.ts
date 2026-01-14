@@ -7,6 +7,12 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const wizardClass: ClassDefinition = {
 	className: 'Wizard',
+	startingEquipment: {
+		weaponsOrShields: ['1 Weapon'],
+		armor: ['1 set of Light Armor'],
+		spellFocus: ['1 Spell Focus (Arcane Focus or Spellbook)'],
+		packs: 'Adventuring Pack (Coming Soon)'
+	},
 	spellcasterPath: {
 		spellList: {
 			description: 'Arcane spells from multiple schools of magic',
@@ -194,6 +200,20 @@ export const wizardClass: ClassDefinition = {
 						'Choose 1 Prepared Spell per Long Rest: Mana Limit Break (+1 to Spend Limit once per Long Rest, regain on Initiative) and Rehearsed Casting (opponents have DisADV in Spell Duels).'
 				}
 			]
+		},
+		{
+			id: 'wizard_level_5_placeholder',
+			featureName: 'Arcane Mastery (Placeholder)',
+			levelGained: 5,
+			isFlavor: true,
+			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+		},
+		{
+			id: 'wizard_level_8_capstone_placeholder',
+			featureName: 'Grand Magister (Placeholder)',
+			levelGained: 8,
+			isFlavor: true,
+			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
 		}
 	],
 	subclasses: [

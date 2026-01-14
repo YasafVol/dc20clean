@@ -7,6 +7,12 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const bardClass: ClassDefinition = {
 	className: 'Bard',
+	startingEquipment: {
+		weaponsOrShields: ['1 Weapon or Light Shield'],
+		armor: ['1 set of Light Armor'],
+		spellFocus: ['1 Spell Focus (Musical Instrument)'],
+		packs: 'Adventuring Pack (Coming Soon)'
+	},
 	spellcasterPath: {
 		combatTraining: {
 			armor: ['Light_Armor'],
@@ -191,6 +197,20 @@ export const bardClass: ClassDefinition = {
 			description:
 				'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
 			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
+		},
+		{
+			id: 'bard_level_5_placeholder',
+			featureName: 'Virtuoso (Placeholder)',
+			levelGained: 5,
+			isFlavor: true,
+			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+		},
+		{
+			id: 'bard_level_8_capstone_placeholder',
+			featureName: 'Magnum Opus (Placeholder)',
+			levelGained: 8,
+			isFlavor: true,
+			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
 		}
 	],
 	subclasses: [

@@ -90,7 +90,7 @@ export const barbarianProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			classFeatures: [] // Level 5 class feature to be added
+			classFeatures: ['barbarian_level_5_placeholder']
 		}
 	},
 	{
@@ -135,7 +135,7 @@ export const barbarianProgression: ClassProgressionLevel[] = [
 		gainedSpellsKnown: 0,
 		gains: {
 			pathProgression: true, // Moved from level 10
-			classFeatures: [] // Capstone feature to be added
+			classFeatures: ['barbarian_level_8_capstone_placeholder']
 		}
 	},
 	{

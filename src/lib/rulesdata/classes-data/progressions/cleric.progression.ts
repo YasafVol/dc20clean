@@ -87,7 +87,7 @@ export const clericProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 3,
 		gainedSpellsKnown: 1,
 		gains: {
-			classFeatures: [] // Level 5 class feature to be added
+			classFeatures: ['cleric_level_5_placeholder']
 		}
 	},
 	{
@@ -132,7 +132,7 @@ export const clericProgression: ClassProgressionLevel[] = [
 		gainedSpellsKnown: 0,
 		gains: {
 			pathProgression: true,
-			classFeatures: [] // Capstone feature to be added
+			classFeatures: ['cleric_level_8_capstone_placeholder']
 		}
 	},
 	{

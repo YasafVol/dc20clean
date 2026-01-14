@@ -102,6 +102,20 @@ export const rogueClass: ClassDefinition = {
 			description:
 				'You gain 1 Talent of your choice. You must meet any prerequisites to select it.',
 			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
+		},
+		{
+			id: 'rogue_level_5_placeholder',
+			featureName: 'Shadow Master (Placeholder)',
+			levelGained: 5,
+			isFlavor: true,
+			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+		},
+		{
+			id: 'rogue_level_8_capstone_placeholder',
+			featureName: 'Perfect Crime (Placeholder)',
+			levelGained: 8,
+			isFlavor: true,
+			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
 		}
 	],
 	subclasses: [

@@ -7,6 +7,12 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const hunterClass: ClassDefinition = {
 	className: 'Hunter',
+	startingEquipment: {
+		weaponsOrShields: ['2 Weapons or Light Shields'],
+		rangedWeapons: ['Ranged Weapon with 20 Ammo'],
+		armor: ['1 set of Light Armor'],
+		packs: 'Adventuring Pack (Coming Soon)'
+	},
 	martialPath: {
 		combatTraining: {
 			weapons: ['Weapons'],
@@ -280,6 +286,20 @@ export const hunterClass: ClassDefinition = {
 						'Spend 1 SP on a Weapon Attack to add: Acid (1 Corrosion, Agility Save for Hindered), Fire (1 Fire, Might Save for Burning), Piercing (1 Piercing, Might Save for Bleeding), Snare (1 Bludgeoning, Agility Save for Immobilized), or Toxin (1 Poison, Might Save for Impaired). +1 damage per additional SP.'
 				}
 			]
+		},
+		{
+			id: 'hunter_level_5_placeholder',
+			featureName: 'Apex Predator (Placeholder)',
+			levelGained: 5,
+			isFlavor: true,
+			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+		},
+		{
+			id: 'hunter_level_8_capstone_placeholder',
+			featureName: 'Perfect Hunt (Placeholder)',
+			levelGained: 8,
+			isFlavor: true,
+			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
 		}
 		// Note: Level 2 Talent is granted via progression table, not hardcoded here
 	],

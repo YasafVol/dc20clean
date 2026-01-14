@@ -90,7 +90,7 @@ export const spellbladeProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 1,
 		gainedSpellsKnown: 1,
 		gains: {
-			classFeatures: [] // Level 5 class feature to be added
+			classFeatures: ['spellblade_level_5_placeholder']
 		}
 	},
 	{
@@ -135,7 +135,7 @@ export const spellbladeProgression: ClassProgressionLevel[] = [
 		gainedSpellsKnown: 0,
 		gains: {
 			pathProgression: true,
-			classFeatures: [] // Capstone feature to be added
+			classFeatures: ['spellblade_level_8_capstone_placeholder']
 		}
 	},
 	{

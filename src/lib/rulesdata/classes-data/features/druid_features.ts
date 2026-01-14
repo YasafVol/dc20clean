@@ -7,6 +7,12 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const druidClass: ClassDefinition = {
 	className: 'Druid',
+	startingEquipment: {
+		weaponsOrShields: ['1 Weapon'],
+		armor: ['1 set of Light Armor (non-metal)'],
+		spellFocus: ['1 Spell Focus (Druidic Focus)'],
+		packs: 'Adventuring Pack (Coming Soon)'
+	},
 	spellcasterPath: {
 		spellList: {
 			description: 'Primal spells focused on nature and the elements',
@@ -180,6 +186,20 @@ export const druidClass: ClassDefinition = {
 			description:
 				'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
 			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
+		},
+		{
+			id: 'druid_level_5_placeholder',
+			featureName: "Nature's Champion (Placeholder)",
+			levelGained: 5,
+			isFlavor: true,
+			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+		},
+		{
+			id: 'druid_level_8_capstone_placeholder',
+			featureName: 'Primal Avatar (Placeholder)',
+			levelGained: 8,
+			isFlavor: true,
+			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
 		}
 	],
 	subclasses: [

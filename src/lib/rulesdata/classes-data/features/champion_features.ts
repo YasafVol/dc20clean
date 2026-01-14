@@ -7,6 +7,12 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const championClass: ClassDefinition = {
 	className: 'Champion',
+	startingEquipment: {
+		weaponsOrShields: ['2 Weapons or Shields'],
+		rangedWeapons: ['Ranged Weapon with 20 Ammo', '3 Weapons with Toss or Thrown Property'],
+		armor: ['1 set of any Armor'],
+		packs: 'Adventuring Pack (Coming Soon)'
+	},
 	martialPath: {
 		combatTraining: {
 			weapons: ['Weapons'],
@@ -137,6 +143,20 @@ export const championClass: ClassDefinition = {
 						'Gain d8 Tactical Die at Initiative and end of turns. Spend for: Assault (+die to Attack) or Deflect (-die from Attack against you).'
 				}
 			]
+		},
+		{
+			id: 'champion_level_5_placeholder',
+			featureName: 'Veteran Tactics (Placeholder)',
+			levelGained: 5,
+			isFlavor: true,
+			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+		},
+		{
+			id: 'champion_level_8_capstone_placeholder',
+			featureName: 'Unbreakable (Placeholder)',
+			levelGained: 8,
+			isFlavor: true,
+			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
 		}
 	],
 	subclasses: [

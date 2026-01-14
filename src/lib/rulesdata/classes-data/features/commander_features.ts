@@ -7,6 +7,12 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const commanderClass: ClassDefinition = {
 	className: 'Commander',
+	startingEquipment: {
+		weaponsOrShields: ['2 Weapons or Shields'],
+		rangedWeapons: ['Ranged Weapon with 20 Ammo', '3 Weapons with Toss or Thrown Property'],
+		armor: ['1 set of any Armor'],
+		packs: 'Adventuring Pack (Coming Soon)'
+	},
 	martialPath: {
 		combatTraining: {
 			weapons: ['Weapons'],
@@ -179,6 +185,20 @@ export const commanderClass: ClassDefinition = {
 			description:
 				'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
 			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
+		},
+		{
+			id: 'commander_level_5_placeholder',
+			featureName: 'Tactical Mastery (Placeholder)',
+			levelGained: 5,
+			isFlavor: true,
+			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+		},
+		{
+			id: 'commander_level_8_capstone_placeholder',
+			featureName: 'Supreme Commander (Placeholder)',
+			levelGained: 8,
+			isFlavor: true,
+			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
 		}
 	],
 	subclasses: [

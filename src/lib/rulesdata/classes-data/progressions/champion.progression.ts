@@ -87,7 +87,7 @@ export const championProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			classFeatures: [] // Level 5 class feature to be added
+			classFeatures: ['champion_level_5_placeholder']
 		}
 	},
 	{
@@ -132,7 +132,7 @@ export const championProgression: ClassProgressionLevel[] = [
 		gainedSpellsKnown: 0,
 		gains: {
 			pathProgression: true,
-			classFeatures: [] // Capstone feature to be added
+			classFeatures: ['champion_level_8_capstone_placeholder']
 		}
 	},
 	{

@@ -2,6 +2,12 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const warlockClass: ClassDefinition = {
 	className: 'Warlock',
+	startingEquipment: {
+		weaponsOrShields: ['1 Weapon or Light Shield'],
+		armor: ['1 set of Light Armor'],
+		spellFocus: ['1 Spell Focus'],
+		packs: 'Adventuring Pack (Coming Soon)'
+	},
 	spellcasterPath: {
 		spellList: {
 			type: 'all_schools',
@@ -166,6 +172,20 @@ export const warlockClass: ClassDefinition = {
 					value: 1
 				}
 			]
+		},
+		{
+			id: 'warlock_level_5_placeholder',
+			featureName: 'Dark Pact (Placeholder)',
+			levelGained: 5,
+			isFlavor: true,
+			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+		},
+		{
+			id: 'warlock_level_8_capstone_placeholder',
+			featureName: "Patron's Vessel (Placeholder)",
+			levelGained: 8,
+			isFlavor: true,
+			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
 		}
 	],
 	subclasses: [

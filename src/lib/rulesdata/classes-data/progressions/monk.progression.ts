@@ -82,7 +82,7 @@ export const monkProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			classFeatures: [] // Level 5 class feature to be added
+			classFeatures: ['monk_level_5_placeholder']
 		}
 	},
 	{
@@ -127,7 +127,7 @@ export const monkProgression: ClassProgressionLevel[] = [
 		gainedSpellsKnown: 0,
 		gains: {
 			pathProgression: true,
-			classFeatures: [] // Capstone feature to be added
+			classFeatures: ['monk_level_8_capstone_placeholder']
 		}
 	},
 	{

@@ -2,6 +2,12 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const barbarianClass: ClassDefinition = {
 	className: 'Barbarian',
+	startingEquipment: {
+		weaponsOrShields: ['2 Weapons or Shields'],
+		rangedWeapons: ['Ranged Weapon with 20 Ammo', '3 Weapons with Toss or Thrown Property'],
+		armor: ['1 set of Light Armor or Heavy Armor'],
+		packs: 'Adventuring Pack (Coming Soon)'
+	},
 	martialPath: {
 		combatTraining: {
 			weapons: ['Weapons'],
@@ -217,6 +223,20 @@ export const barbarianClass: ClassDefinition = {
 			description:
 				'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
 			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
+		},
+		{
+			id: 'barbarian_level_5_placeholder',
+			featureName: 'Primal Fury (Placeholder)',
+			levelGained: 5,
+			isFlavor: true,
+			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+		},
+		{
+			id: 'barbarian_level_8_capstone_placeholder',
+			featureName: 'Savage Apex (Placeholder)',
+			levelGained: 8,
+			isFlavor: true,
+			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
 		}
 	],
 	subclasses: [

@@ -277,7 +277,7 @@ New: 1, 0, 0, 0, 1, 0, 0, 0, 1, 0 (Total: 3)
 
 ### Priority 5: Core
 
-- [ ] `src/lib/rulesdata/conditions/conditions.dats.ts` - Remove Poisoned as condition
+- [ ] `src/lib/rulesdata/conditions/conditions.data.ts` - Remove Poisoned as condition
 - [ ] `src/lib/rulesdata/skills.ts` - Verify no changes needed
 - [ ] `src/lib/rulesdata/trades.ts` - Verify no changes needed
 

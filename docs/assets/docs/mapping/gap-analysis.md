@@ -287,7 +287,7 @@ Status: Prioritized gaps with evidence, impact, and minimal proposals. No code c
 
 ## Data & Naming
 - Gap: Possible filename typo in conditions data
-  - Evidence: `src/lib/rulesdata/conditions/conditions.dats.ts` (observed listing) — likely intended `conditions.data.ts`.
+  - **FIXED**: `src/lib/rulesdata/conditions/conditions.data.ts` — filename typo corrected.
   - Impact: P3
   - Proposal: Rename file to consistent pattern and update imports.
 

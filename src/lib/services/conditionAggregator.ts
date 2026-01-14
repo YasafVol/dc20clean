@@ -7,7 +7,7 @@
  * @see docs/plannedSpecs/CONDITIONS_SPEC.md for full specification
  */
 
-import { ALL_CONDITIONS } from '../rulesdata/conditions/conditions.dats';
+import { ALL_CONDITIONS } from '../rulesdata/conditions/conditions.data';
 import type {
 	CharacterConditionStatus,
 	ConditionInteraction,

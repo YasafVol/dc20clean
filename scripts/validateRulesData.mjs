@@ -157,7 +157,7 @@ function validateConditions() {
 	console.log('\n📊 Validating Conditions...\n');
 
 	try {
-		const filePath = 'src/lib/rulesdata/conditions/conditions.dats.ts';
+		const filePath = 'src/lib/rulesdata/conditions/conditions.data.ts';
 		const content = fs.readFileSync(filePath, 'utf-8');
 
 		// Count conditions

@@ -6,6 +6,7 @@
  */
 
 import { SavedCharacter, CharacterState } from '../types/dataContracts';
+import { logger } from './logger';
 
 const CURRENT_SCHEMA_VERSION = 2;
 
@@ -28,10 +29,10 @@ export const deserializeCharacterFromStorage = (jsonString: string): SavedCharac
 	try {
 		const data = JSON.parse(jsonString) as any;
 
-		// TEMPORARY: Allow all characters regardless of schema version for debugging
-		console.log(
-			`Loading character ${data.id || 'unknown'} with schema version: ${data.schemaVersion || 'undefined'}`
-		);
+		logger.debug('storage', 'Deserializing character', {
+			id: data.id || 'unknown',
+			schemaVersion: data.schemaVersion || 'undefined'
+		});
 
 		// Migrate legacy characters automatically
 
@@ -63,10 +64,14 @@ export const deserializeCharacterFromStorage = (jsonString: string): SavedCharac
 			schemaVersion: CURRENT_SCHEMA_VERSION // Always update to current version
 		} as SavedCharacter;
 
-		console.log(`Successfully loaded character ${data.id || 'unknown'}`);
+		logger.debug('storage', 'Successfully deserialized character', {
+			id: data.id || 'unknown'
+		});
 		return migratedCharacter;
 	} catch (error) {
-		console.error('Failed to parse character from storage', error);
+		logger.error('storage', 'Failed to parse character from storage', {
+			error: error instanceof Error ? error.message : String(error)
+		});
 		return null;
 	}
 };
@@ -161,16 +166,22 @@ export const getAllSavedCharacters = (): SavedCharacter[] => {
 	const charactersJson = localStorage.getItem('savedCharacters') || '[]';
 	try {
 		const rawCharacters = JSON.parse(charactersJson);
-		console.log(`Loading ${rawCharacters.length} characters from localStorage`);
+		logger.info('storage', 'Loading characters from localStorage', {
+			count: rawCharacters.length
+		});
 
 		const characters = rawCharacters
 			.map((char: any) => deserializeCharacterFromStorage(JSON.stringify(char)))
 			.filter(Boolean) as SavedCharacter[];
 
-		console.log(`Successfully loaded ${characters.length} characters`);
+		logger.info('storage', 'Successfully loaded characters', {
+			count: characters.length
+		});
 		return characters;
 	} catch (error) {
-		console.error('Failed to load saved characters', error);
+		logger.error('storage', 'Failed to load saved characters', {
+			error: error instanceof Error ? error.message : String(error)
+		});
 		return [];
 	}
 };
@@ -183,12 +194,17 @@ export const saveAllCharacters = (characters: SavedCharacter[]): void => {
 		const serializedCharacters = characters.map((char) =>
 			JSON.parse(serializeCharacterForStorage(char))
 		);
-		console.log('🪓 saveAllCharacters: serializedCharacters:', serializedCharacters);
+		logger.debug('storage', 'Saving characters to localStorage', {
+			count: serializedCharacters.length
+		});
 		localStorage.setItem('savedCharacters', JSON.stringify(serializedCharacters));
-		const afterSave = localStorage.getItem('savedCharacters');
-		console.log('🪓 saveAllCharacters: localStorage after save:', afterSave);
+		logger.info('storage', 'Characters saved to localStorage', {
+			count: characters.length
+		});
 	} catch (error) {
-		console.error('Failed to save characters', error);
+		logger.error('storage', 'Failed to save characters', {
+			error: error instanceof Error ? error.message : String(error)
+		});
 	}
 };
 
@@ -196,20 +212,20 @@ export const saveAllCharacters = (characters: SavedCharacter[]): void => {
  * Get a single character by ID
  */
 export const getCharacterById = (characterId: string): SavedCharacter | null => {
-	console.log(`Looking for character with ID: ${characterId}`);
+	logger.debug('storage', 'Looking up character', { characterId });
 	// Read raw savedCharacters so we can migrate a single character in-place if needed
 	const charactersJson = localStorage.getItem('savedCharacters') || '[]';
 	try {
 		const rawCharacters = JSON.parse(charactersJson) as any[];
 		const rawIndex = rawCharacters.findIndex((c) => c && c.id === characterId);
 		if (rawIndex === -1) {
-			console.warn(`Character ${characterId} not found`);
-			console.log(
-				`Available character IDs: ${rawCharacters
+			logger.warn('storage', 'Character not found', {
+				characterId,
+				availableIds: rawCharacters
 					.map((c) => c && c.id)
 					.filter(Boolean)
-					.join(', ')}`
-			);
+					.join(', ')
+			});
 			return null;
 		}
 
@@ -218,7 +234,7 @@ export const getCharacterById = (characterId: string): SavedCharacter | null => 
 		// Deserialize using the centralized deserializer (this will normalize in-memory)
 		const deserialized = deserializeCharacterFromStorage(JSON.stringify(rawChar));
 		if (!deserialized) {
-			console.warn(`Failed to deserialize character ${characterId}`);
+			logger.warn('storage', 'Failed to deserialize character', { characterId });
 			return null;
 		}
 
@@ -226,9 +242,10 @@ export const getCharacterById = (characterId: string): SavedCharacter | null => 
 		try {
 			const attacksRaw = rawChar?.characterState?.attacks;
 			if (attacksRaw && !Array.isArray(attacksRaw) && typeof attacksRaw === 'object') {
-				console.log(
-					`Detected legacy attacks map for character ${characterId}, migrating single character`
-				);
+				logger.info('migration', 'Migrating legacy attacks format', {
+					characterId,
+					change: 'object to array'
+				});
 				// Backup before mutating stored data
 				backupCharacterData();
 				// Convert to array and persist the raw characters array
@@ -236,16 +253,24 @@ export const getCharacterById = (characterId: string): SavedCharacter | null => 
 				rawChar.characterState.attacks = Object.values(attacksRaw);
 				rawCharacters[rawIndex] = rawChar;
 				localStorage.setItem('savedCharacters', JSON.stringify(rawCharacters));
-				console.log(`Migrated and saved character ${characterId} with attacks as array`);
+				logger.info('migration', 'Migration complete for character', { characterId });
 			}
 		} catch (mErr) {
-			console.warn(`Failed to migrate and persist character ${characterId}`, mErr);
+			logger.warn('migration', 'Failed to migrate character', {
+				characterId,
+				error: mErr instanceof Error ? mErr.message : String(mErr)
+			});
 		}
 
-		console.log(`Found character: ${deserialized.finalName || deserialized.id}`);
+		logger.debug('storage', 'Found character', {
+			characterId,
+			name: deserialized.finalName || deserialized.id
+		});
 		return deserialized;
 	} catch (err) {
-		console.error('Failed to load saved characters for lookup', err);
+		logger.error('storage', 'Failed to load saved characters for lookup', {
+			error: err instanceof Error ? err.message : String(err)
+		});
 		return null;
 	}
 };
@@ -258,7 +283,7 @@ export const saveCharacterState = (characterId: string, state: CharacterState): 
 	const characterIndex = characters.findIndex((char) => char.id === characterId);
 
 	if (characterIndex === -1) {
-		console.warn(`Character ${characterId} not found for state update`);
+		logger.warn('storage', 'Character not found for state update', { characterId });
 		return;
 	}
 
@@ -280,7 +305,7 @@ export const saveCharacter = (character: SavedCharacter): void => {
 	const characterIndex = characters.findIndex((char) => char.id === character.id);
 
 	if (characterIndex === -1) {
-		console.warn(`Character ${character.id} not found for update`);
+		logger.warn('storage', 'Character not found for update', { characterId: character.id });
 		return;
 	}
 
@@ -303,7 +328,9 @@ export const backupCharacterData = (): void => {
 	if (currentData) {
 		localStorage.setItem('savedCharacters_backup', currentData);
 		localStorage.setItem('savedCharacters_backup_timestamp', new Date().toISOString());
-		console.log('Character data backed up successfully');
+		logger.info('storage', 'Character data backed up', {
+			timestamp: new Date().toISOString()
+		});
 	}
 };
 
@@ -314,10 +341,10 @@ export const restoreFromBackup = (): boolean => {
 	const backup = localStorage.getItem('savedCharacters_backup');
 	if (backup) {
 		localStorage.setItem('savedCharacters', backup);
-		console.log('Character data restored from backup');
+		logger.info('storage', 'Character data restored from backup');
 		return true;
 	}
-	console.warn('No backup found to restore from');
+	logger.warn('storage', 'No backup found to restore from');
 	return false;
 };
 
@@ -330,7 +357,7 @@ export const migrateSavedCharactersToArrayAttacks = (): boolean => {
 	try {
 		const raw = localStorage.getItem('savedCharacters');
 		if (!raw) {
-			console.log('No savedCharacters in localStorage, nothing to migrate');
+			logger.info('migration', 'No savedCharacters in localStorage, nothing to migrate');
 			return false;
 		}
 
@@ -351,21 +378,25 @@ export const migrateSavedCharactersToArrayAttacks = (): boolean => {
 				}
 				return { ...char, characterState: cs };
 			} catch (e) {
-				console.warn('Failed to process character during migration', e);
+				logger.warn('migration', 'Failed to process character during migration', {
+					error: e instanceof Error ? e.message : String(e)
+				});
 				return char;
 			}
 		});
 
 		if (didChange) {
 			localStorage.setItem('savedCharacters', JSON.stringify(rewritten));
-			console.log('Migration complete: savedCharacters updated to canonical attacks array shape');
+			logger.info('migration', 'Migration complete: attacks converted to array format');
 		} else {
-			console.log('Migration: no characters needed attacks migration');
+			logger.info('migration', 'No characters needed attacks migration');
 		}
 
 		return didChange;
 	} catch (err) {
-		console.error('Migration failed', err);
+		logger.error('migration', 'Migration failed', {
+			error: err instanceof Error ? err.message : String(err)
+		});
 		return false;
 	}
 };
@@ -379,7 +410,7 @@ export const runMigrationIfRequested = (force = false): boolean => {
 	try {
 		const win: any = typeof window !== 'undefined' ? window : undefined;
 		if (win && win.__MIGRATE_ATTACKS_TO_ARRAY__ === true) {
-			console.log('Migration flag detected on window, running migration');
+			logger.info('migration', 'Migration flag detected on window, running migration');
 			return migrateSavedCharactersToArrayAttacks();
 		}
 	} catch (e) {

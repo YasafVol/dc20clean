@@ -68,6 +68,8 @@
 		"react"
 	],
 	"dependencies": {
+		"@sentry/react": "^8.0.0",
+		"@vercel/analytics": "^1.4.0",
 		"@emotion/react": "^11.14.0",
 		"@emotion/styled": "^11.14.1",
 		"@node-rs/argon2": "^2.0.2",

@@ -13,6 +13,7 @@ import { getAllSavedCharacters, saveAllCharacters } from '../utils/storageUtils'
 import type { SavedCharacter } from '../types/dataContracts';
 import { denormalizeMastery } from './denormalizeMastery';
 import { CURRENT_SCHEMA_VERSION } from '../types/schemaVersion';
+import { logger } from '../utils/logger';
 
 /**
  * Converts the movements array from calculator into the movement structure for SavedCharacter
@@ -92,7 +93,10 @@ export const completeCharacter = async (
 			completedAt: new Date().toISOString()
 		});
 
-		console.log('Calculating stats for character using enhanced calculator');
+		logger.info('calculation', 'Calculating stats for character', {
+			classId: characterState.classId,
+			level: characterState.level || 1
+		});
 
 		// Run the enhanced calculator
 		const calculationResult = calculateCharacterWithBreakdowns(enhancedData);
@@ -232,30 +236,24 @@ export const completeCharacter = async (
 			schemaVersion: CURRENT_SCHEMA_VERSION
 		};
 
-		console.log('Character stats calculated:', completedCharacter);
-		console.log('Class info saved:', {
+		logger.debug('calculation', 'Character stats calculated', {
+			characterId: completedCharacter.id,
 			classId: completedCharacter.classId,
-			className: completedCharacter.className
-		});
-		console.log('Ancestry info saved:', {
+			className: completedCharacter.className,
 			ancestry1Id: completedCharacter.ancestry1Id,
-			ancestry1Name: completedCharacter.ancestry1Name,
-			ancestry2Id: completedCharacter.ancestry2Id,
-			ancestry2Name: completedCharacter.ancestry2Name
+			ancestry1Name: completedCharacter.ancestry1Name
 		});
 
 		// Process user-selected spells from character creation
 		if (completedCharacter.className && characterState.selectedSpells) {
-			console.log('🔄 Processing user-selected spells:', {
-				selectedSpells: characterState.selectedSpells,
+			logger.debug('ui', 'Processing user-selected spells', {
+				spellCount: characterState.selectedSpells?.length || 0,
 				className: completedCharacter.className
 			});
 
 			try {
 				// Use typed arrays directly
 				const selectedSpellNames = characterState.selectedSpells || [];
-
-				console.log('🔄 Parsed spell names:', selectedSpellNames);
 
 				if (Array.isArray(selectedSpellNames) && selectedSpellNames.length > 0) {
 					// Convert selected spell names to SpellData objects
@@ -281,12 +279,12 @@ export const completeCharacter = async (
 
 					// Store typed spells data
 					completedCharacter.spells = userSelectedSpells as any;
-					console.log(
-						'🔄 User selected spells assigned:',
-						userSelectedSpells.map((s: any) => s.spellName)
-					);
+					logger.debug('ui', 'User selected spells assigned', {
+						spellCount: userSelectedSpells.length,
+						spells: userSelectedSpells.map((s: any) => s.spellName)
+					});
 				} else {
-					console.log('🔄 No user spells selected, falling back to auto-assignment');
+					logger.debug('ui', 'No user spells selected, falling back to auto-assignment');
 					// Fallback to auto-assignment if no spells were selected
 					const assignedSpells = assignSpellsToCharacter({
 						className: completedCharacter.className,
@@ -294,13 +292,14 @@ export const completeCharacter = async (
 						selectedFeatureChoices: completedCharacter.selectedFeatureChoices
 					});
 					completedCharacter.spells = assignedSpells as any;
-					console.log(
-						'🔄 Auto-assigned spells (no user selection):',
-						assignedSpells.map((s: any) => s.spellName)
-					);
+					logger.debug('ui', 'Auto-assigned spells', {
+						spellCount: assignedSpells.length
+					});
 				}
 			} catch (e) {
-				console.warn('🔄 Error parsing selected spells, falling back to auto-assignment:', e);
+				logger.warn('ui', 'Error parsing selected spells, falling back to auto-assignment', {
+					error: e instanceof Error ? e.message : String(e)
+				});
 				// Fallback to auto-assignment
 				const assignedSpells = assignSpellsToCharacter({
 					className: completedCharacter.className,
@@ -339,13 +338,14 @@ export const completeCharacter = async (
 
 					// Store typed maneuvers data
 					completedCharacter.maneuvers = userSelectedManeuvers as any;
-					console.log(
-						'🔄 User selected maneuvers assigned:',
-						userSelectedManeuvers.map((m: any) => m.name)
-					);
+					logger.debug('ui', 'User selected maneuvers assigned', {
+						maneuverCount: userSelectedManeuvers.length
+					});
 				}
 			} catch (e) {
-				console.warn('🔄 Error parsing selected maneuvers:', e);
+				logger.warn('ui', 'Error parsing selected maneuvers', {
+					error: e instanceof Error ? e.message : String(e)
+				});
 			}
 		}
 
@@ -354,23 +354,34 @@ export const completeCharacter = async (
 		existingCharacters.push(completedCharacter);
 		saveAllCharacters(existingCharacters);
 
-		console.log(
-			'🚀 OPTIMIZED: Character saved using typed contracts. Total characters:',
-			existingCharacters.length
-		);
+		logger.info('ui', 'Character creation complete', {
+			characterId: completedCharacter.id,
+			characterName: completedCharacter.finalName,
+			className: completedCharacter.className,
+			level: completedCharacter.level,
+			totalCharacters: existingCharacters.length
+		});
+
+		// Track analytics event
+		logger.track('character_creation_completed', {
+			classId: completedCharacter.classId,
+			level: completedCharacter.level,
+			ancestry1Id: completedCharacter.ancestry1Id
+		});
 
 		// Show success snackbar
 		callbacks.onShowSnackbar('Character created successfully!');
 
 		// Navigate to load characters page after a short delay
 		setTimeout(() => {
-			console.log('Navigating to character load page...');
+			logger.debug('ui', 'Navigating to character load page');
 			callbacks.onNavigateToLoad();
 		}, 1500);
-
-		console.log('🚀 Character completed with typed data contracts:', completedCharacter);
 	} catch (error) {
-		console.error('Error completing character:', error);
+		logger.error('ui', 'Error completing character', {
+			error: error instanceof Error ? error.message : String(error),
+			stack: error instanceof Error ? error.stack : undefined
+		});
 		callbacks.onShowSnackbar('Error creating character. Please try again.');
 	}
 };

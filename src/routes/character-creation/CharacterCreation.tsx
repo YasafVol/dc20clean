@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
@@ -16,7 +16,7 @@ import { completeCharacter } from '../../lib/services/characterCompletion';
 import { completeCharacterEdit, convertCharacterToInProgress } from '../../lib/utils/characterEdit';
 import type { SavedCharacter } from '../../lib/types/dataContracts';
 import { convertSavedCharacterToContext } from '../../lib/utils/characterToContext';
-import { getAllSavedCharacters, saveAllCharacters } from '../../lib/utils/storageUtils';
+import { getDefaultStorage } from '../../lib/storage';
 import {
 	convertToEnhancedBuildData,
 	calculateCharacterWithBreakdowns
@@ -24,8 +24,10 @@ import {
 import { validateSubclassChoicesComplete } from '../../lib/rulesdata/classes-data/classUtils';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
+import { Dialog, DialogContent } from '../../components/ui/dialog';
 import { cn } from '../../lib/utils';
 import { Check, ChevronRight } from 'lucide-react';
+import { AuthStatus, SignIn, useIsAuthenticated } from '../../components/auth';
 
 /**
  * Converts the movements array from calculator into the movement structure for SavedCharacter
@@ -82,6 +84,10 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	const { state, dispatch, attributePointsRemaining, calculationResult } = useCharacter();
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 	const [showSnackbar, setShowSnackbar] = useState(false);
+	const [showAuthDialog, setShowAuthDialog] = useState(false);
+	const storage = useMemo(() => getDefaultStorage(), []);
+	const isAuthenticated = useIsAuthenticated();
+	const isUsingConvex = import.meta.env.VITE_USE_CONVEX === 'true';
 
 	// Debug current state on any changes
 	useEffect(() => {
@@ -255,6 +261,12 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		}
 
 		if (state.currentStep === maxStep && areAllStepsCompleted()) {
+			if (isUsingConvex && !isAuthenticated) {
+				setSnackbarMessage('Sign in to save to the cloud.');
+				setShowSnackbar(true);
+				setShowAuthDialog(true);
+				return;
+			}
 			// Character is complete - check if we're editing, leveling up, or creating new
 			if (state.isLevelUpMode && state.sourceCharacterId) {
 				// Level-up mode: complete character then update existing
@@ -262,7 +274,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 				// Create a custom onNavigateToLoad that updates instead of creates
 				const originalId = state.sourceCharacterId;
-				const allChars = getAllSavedCharacters();
+				const allChars = await storage.getAllCharacters();
 				const originalCreatedAt = allChars.find((c) => c.id === originalId)?.createdAt;
 
 				await completeCharacter(state, {
@@ -270,9 +282,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 						setSnackbarMessage('Character leveled up successfully!');
 						setShowSnackbar(true);
 					},
-					onNavigateToLoad: () => {
+					onNavigateToLoad: async () => {
 						// completeCharacter adds a new character, we need to replace it with updated original
-						const updatedChars = getAllSavedCharacters();
+						const updatedChars = await storage.getAllCharacters();
 						const newChar = updatedChars[updatedChars.length - 1]; // Last one added
 
 						// Update the original character, remove the new one
@@ -290,7 +302,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 								return char;
 							});
 
-						saveAllCharacters(final);
+						await storage.saveAllCharacters(final);
 						console.log('✅ Character updated via level-up', originalId);
 						navigate(`/character/${originalId}`);
 					}
@@ -742,7 +754,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					</div>
 
 					{/* Right: Next Button */}
-					<div className="flex w-[120px] justify-end">
+					<div className="flex w-[220px] items-center justify-end gap-3">
+						<AuthStatus />
 						<Button variant="default" onClick={handleNext} className="gap-2">
 							<span className="hidden sm:inline">{state.currentStep === maxStep ? 'Complete' : 'Next'}</span>{' '}
 							→
@@ -773,6 +786,16 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				onClose={() => setShowSnackbar(false)}
 				duration={3000}
 			/>
+
+			<Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
+				<DialogContent className="border-purple-500/50 bg-transparent p-0 shadow-none">
+					<SignIn
+						feature="cloud-save"
+						onSuccess={() => setShowAuthDialog(false)}
+						onCancel={() => setShowAuthDialog(false)}
+					/>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 };

@@ -3,6 +3,7 @@
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite dev",
+		"convex:dev": "convex dev",
 		"build": "vite build",
 		"preview": "vite preview",
 		"format": "prettier --write .",
@@ -68,8 +69,7 @@
 		"react"
 	],
 	"dependencies": {
-		"@sentry/react": "^8.0.0",
-		"@vercel/analytics": "^1.4.0",
+		"@convex-dev/auth": "^0.0.90",
 		"@emotion/react": "^11.14.0",
 		"@emotion/styled": "^11.14.1",
 		"@node-rs/argon2": "^2.0.2",
@@ -81,8 +81,11 @@
 		"@radix-ui/react-select": "^2.2.6",
 		"@radix-ui/react-separator": "^1.1.8",
 		"@radix-ui/react-slot": "^1.1.0",
+		"@sentry/react": "^8.0.0",
+		"@vercel/analytics": "^1.4.0",
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.1.1",
+		"convex": "^1.31.5",
 		"fantasy-name-generator": "^2.0.0",
 		"lucide-react": "^0.469.0",
 		"pdf-lib": "^1.17.1",

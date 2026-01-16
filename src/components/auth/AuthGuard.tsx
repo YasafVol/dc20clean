@@ -10,13 +10,8 @@
 
 import * as React from 'react';
 import { SignIn } from './SignIn';
-import {
-	Dialog,
-	DialogContent,
-} from '../ui/dialog';
-
-// TODO: Uncomment after npm install
-// import { useConvexAuth } from 'convex/react';
+import { Dialog, DialogContent } from '../ui/dialog';
+import { useConvexAuth } from 'convex/react';
 
 export interface AuthGuardProps {
 	/** Content to show when authenticated */
@@ -28,31 +23,19 @@ export interface AuthGuardProps {
 }
 
 /**
- * Hook placeholder for auth state
- * TODO: Replace with useConvexAuth after npm install
- */
-function useMockAuth(): { isLoading: boolean; isAuthenticated: boolean } {
-	// For development without Convex, check environment variable
-	const bypassAuth = import.meta.env.VITE_BYPASS_AUTH === 'true';
-
-	if (bypassAuth) {
-		return { isLoading: false, isAuthenticated: true };
-	}
-
-	// Default: not authenticated (features are gated)
-	return { isLoading: false, isAuthenticated: false };
-}
-
-/**
  * Feature gate that shows sign-in when user tries to access protected feature
  */
 export function AuthGuard({ children, fallback, feature = 'general' }: AuthGuardProps) {
-	// TODO: Replace with actual Convex auth hook
-	// const { isAuthenticated } = useConvexAuth();
-	const { isAuthenticated } = useMockAuth();
+	const { isAuthenticated, isLoading } = useConvexAuth();
+	const bypassAuth = import.meta.env.VITE_BYPASS_AUTH === 'true';
+	const isAllowed = bypassAuth ? true : isAuthenticated;
+
+	if (isLoading) {
+		return null;
+	}
 
 	// Authenticated - show children
-	if (isAuthenticated) {
+	if (isAllowed) {
 		return <>{children}</>;
 	}
 
@@ -65,10 +48,9 @@ export function AuthGuard({ children, fallback, feature = 'general' }: AuthGuard
  * Use this to conditionally show/hide features
  */
 export function useIsAuthenticated(): boolean {
-	// TODO: Replace with actual Convex auth hook
-	// const { isAuthenticated } = useConvexAuth();
-	const { isAuthenticated } = useMockAuth();
-	return isAuthenticated;
+	const { isAuthenticated, isLoading } = useConvexAuth();
+	const bypassAuth = import.meta.env.VITE_BYPASS_AUTH === 'true';
+	return !isLoading && (bypassAuth ? true : isAuthenticated);
 }
 
 /**

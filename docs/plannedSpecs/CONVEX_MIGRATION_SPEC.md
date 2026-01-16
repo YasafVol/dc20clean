@@ -17,8 +17,8 @@ Replace the current localStorage-based character persistence with Convex cloud d
 - [ ] Rename `convex/*.draft` files to `.ts`
 - [ ] Add `VITE_CONVEX_URL` to `.env.local`
 - [ ] Set up Google OAuth credentials (Google Cloud Console)
-- [ ] Set up GitHub OAuth credentials (GitHub Developer Settings)
 - [ ] Add OAuth secrets to Convex Dashboard environment variables
+- [ ] Add `AUTH_SECRET` to Convex Dashboard environment variables
 
 ### Phase 2: UI Integration (after Phase 1)
 
@@ -33,7 +33,6 @@ Replace the current localStorage-based character persistence with Convex cloud d
 ### Phase 3: Testing & Polish
 
 - [ ] Test Google sign-in flow
-- [ ] Test GitHub sign-in flow
 - [ ] Test PDF export gate (shows sign-in, then exports)
 - [ ] Test cloud save (shows sign-in, then saves to Convex)
 - [ ] Test localStorage fallback when not signed in
@@ -44,7 +43,7 @@ Replace the current localStorage-based character persistence with Convex cloud d
 ## Goals
 
 1. **Cloud Persistence**: Characters saved to Convex database instead of browser localStorage
-2. **Social Authentication**: Google and GitHub OAuth via Convex Auth (no email/password)
+2. **Social Authentication**: Google OAuth via Convex Auth (no email/password)
 3. **Optional Auth**: App fully usable without login - auth only required for cloud save & PDF export
 4. **Cross-Device Access**: Users can access their characters from any device
 5. **Data Safety**: No risk of losing characters due to browser data clearing
@@ -84,7 +83,7 @@ The following scaffolding files have been created and are ready for use once npm
 |------|-------------|
 | `schema.ts.draft` | Complete schema matching `SavedCharacter` type with indexes |
 | `characters.ts.draft` | CRUD mutations and queries with auth checks |
-| `auth.config.ts.draft` | Convex Auth with Google + GitHub OAuth |
+| `auth.config.ts.draft` | Convex Auth with Google OAuth |
 | `README.md` | Setup instructions |
 
 ### Storage Abstraction (`src/lib/storage/`)
@@ -100,7 +99,7 @@ The following scaffolding files have been created and are ready for use once npm
 
 | File | Description |
 |------|-------------|
-| `SignIn.tsx` | Social login (Google + GitHub) dialog |
+| `SignIn.tsx` | Social login (Google) dialog |
 | `AuthGuard.tsx` | Feature gate component + `FeatureGateButton` |
 | `UserMenu.tsx` | User avatar, info, and sign-out |
 | `index.ts` | Main export |
@@ -202,7 +201,6 @@ See `convex/schema.ts.draft` for complete field definitions.
 Using Convex Auth with **social OAuth only** (no email/password):
 
 - **Google OAuth** - most users have a Google account
-- **GitHub OAuth** - good for developer users
 - Session management handled by Convex
 - User ID linked to all character records
 
@@ -225,17 +223,13 @@ Using Convex Auth with **social OAuth only** (no email/password):
 3. Create credentials → OAuth client ID → Web application
 4. Add redirect URI: `https://<your-convex-url>.convex.site/api/auth/callback/google`
 
-**GitHub:**
-1. Go to https://github.com/settings/developers
 2. New OAuth App
-3. Set callback URL: `https://<your-convex-url>.convex.site/api/auth/callback/github`
 
 **Environment Variables (set in Convex Dashboard):**
 ```
 AUTH_GOOGLE_ID=your-google-client-id
 AUTH_GOOGLE_SECRET=your-google-client-secret
-AUTH_GITHUB_ID=your-github-client-id
-AUTH_GITHUB_SECRET=your-github-client-secret
+AUTH_SECRET=your-random-secret
 ```
 
 ## Migration Strategy
@@ -275,3 +269,4 @@ AUTH_GITHUB_SECRET=your-github-client-secret
 - [Convex Documentation](https://docs.convex.dev/)
 - [Convex Auth](https://labs.convex.dev/auth)
 - [SavedCharacter Interface](../src/lib/types/dataContracts.ts)
+

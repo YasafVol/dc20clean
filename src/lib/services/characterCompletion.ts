@@ -9,7 +9,7 @@ import {
 	calculateCharacterWithBreakdowns
 } from './enhancedCharacterCalculator';
 import { getInitializedCharacterState } from '../utils/storageUtils';
-import { getAllSavedCharacters, saveAllCharacters } from '../utils/storageUtils';
+import { getDefaultStorage } from '../storage';
 import type { SavedCharacter } from '../types/dataContracts';
 import { denormalizeMastery } from './denormalizeMastery';
 import { CURRENT_SCHEMA_VERSION } from '../types/schemaVersion';
@@ -349,10 +349,11 @@ export const completeCharacter = async (
 			}
 		}
 
-		// OPTIMIZED: Save using new typed storage utilities
-		const existingCharacters = getAllSavedCharacters();
-		existingCharacters.push(completedCharacter);
-		saveAllCharacters(existingCharacters);
+	// OPTIMIZED: Save using new typed storage utilities
+	const storage = getDefaultStorage();
+	const existingCharacters = await storage.getAllCharacters();
+	existingCharacters.push(completedCharacter);
+	await storage.saveAllCharacters(existingCharacters);
 
 		logger.info('ui', 'Character creation complete', {
 			characterId: completedCharacter.id,

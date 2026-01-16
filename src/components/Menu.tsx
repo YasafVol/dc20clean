@@ -112,11 +112,15 @@ import {
 } from './styled';
 
 import { useNavigate } from 'react-router-dom';
+import { AuthStatus } from './auth';
 
 function Menu() {
 	const navigate = useNavigate();
 	return (
 		<StyledContainer>
+			<div className="absolute right-6 top-6">
+				<AuthStatus />
+			</div>
 			<StyledTitle>DC20 Character Creator</StyledTitle>
 			<StyledSubtitle>
 				Welcome to the ultimate DC20 character creation experience.

@@ -733,17 +733,17 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 	) => {
 		if (dataType === 'all') {
 			// Revert all data types
-			revertToOriginal(characterId, 'resources');
-			revertToOriginal(characterId, 'currency');
-			revertToOriginal(characterId, 'attacks');
-			revertToOriginal(characterId, 'spells');
-			revertToOriginal(characterId, 'maneuvers');
-			revertToOriginal(characterId, 'inventory');
+			void revertToOriginal(characterId, 'resources');
+			void revertToOriginal(characterId, 'currency');
+			void revertToOriginal(characterId, 'attacks');
+			void revertToOriginal(characterId, 'spells');
+			void revertToOriginal(characterId, 'maneuvers');
+			void revertToOriginal(characterId, 'inventory');
 
 			// Also clear all manual defense overrides (PDR, PD, AD)
-			clearDefenseNotesForField(characterId, 'manualPD');
-			clearDefenseNotesForField(characterId, 'manualPDR');
-			clearDefenseNotesForField(characterId, 'manualAD');
+			void clearDefenseNotesForField(characterId, 'manualPD');
+			void clearDefenseNotesForField(characterId, 'manualPDR');
+			void clearDefenseNotesForField(characterId, 'manualAD');
 
 			// TODO: Clear the manual defense values in localStorage
 			// saveManualDefense(characterId, 'manualPD', undefined);
@@ -753,7 +753,7 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 			// Reload the page to reflect changes
 			window.location.reload();
 		} else {
-			revertToOriginal(characterId, dataType);
+			void revertToOriginal(characterId, dataType);
 
 			// Update local state based on what was reverted
 			if (dataType === 'resources') {

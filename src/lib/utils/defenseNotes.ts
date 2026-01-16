@@ -1,30 +1,29 @@
 import { DefenseNote } from '../../types/defenseNotes';
-import { getCharacterById, getAllSavedCharacters, saveAllCharacters } from './storageUtils';
+import { getDefaultStorage } from '../storage';
 
 // Get character from storage using centralized utility
-const getCharacterFromStorage = (characterId: string) => {
-	return getCharacterById(characterId);
+const getCharacterFromStorage = async (characterId: string) => {
+	const storage = getDefaultStorage();
+	return storage.getCharacterById(characterId);
 };
 
 // Save character back to storage using centralized utility
-const saveCharacterToStorage = (characterId: string, updates: any) => {
-	const savedCharacters = getAllSavedCharacters();
-	const characterIndex = savedCharacters.findIndex((char: any) => char.id === characterId);
+const saveCharacterToStorage = async (characterId: string, updates: any) => {
+	const storage = getDefaultStorage();
+	const character = await storage.getCharacterById(characterId);
+	if (!character) return;
 
-	if (characterIndex !== -1) {
-		savedCharacters[characterIndex] = {
-			...savedCharacters[characterIndex],
-			...updates,
-			lastModified: new Date().toISOString()
-		};
-		saveAllCharacters(savedCharacters);
-	}
+	await storage.saveCharacter({
+		...character,
+		...updates,
+		lastModified: new Date().toISOString()
+	});
 };
 
 // Get all defense notes for a character
-export const getDefenseNotes = (characterId: string): DefenseNote[] => {
+export const getDefenseNotes = async (characterId: string): Promise<DefenseNote[]> => {
 	try {
-		const character = getCharacterFromStorage(characterId);
+		const character = await getCharacterFromStorage(characterId);
 		if (!character || !character.defenseNotes) return [];
 
 		return character.defenseNotes.map((note: any) => ({
@@ -38,26 +37,26 @@ export const getDefenseNotes = (characterId: string): DefenseNote[] => {
 };
 
 // Get notes for a specific defense field
-export const getDefenseNotesForField = (
+export const getDefenseNotesForField = async (
 	characterId: string,
 	field: 'manualPD' | 'manualPDR' | 'manualAD'
-): DefenseNote[] => {
-	const allNotes = getDefenseNotes(characterId);
+): Promise<DefenseNote[]> => {
+	const allNotes = await getDefenseNotes(characterId);
 	return allNotes
 		.filter((note) => note.field === field)
 		.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 };
 
 // Add a new defense note
-export const addDefenseNote = (
+export const addDefenseNote = async (
 	characterId: string,
 	field: 'manualPD' | 'manualPDR' | 'manualAD',
 	oldValue: number,
 	newValue: number,
 	reason: string
-): void => {
+): Promise<void> => {
 	try {
-		const character = getCharacterFromStorage(characterId);
+		const character = await getCharacterFromStorage(characterId);
 		if (!character) return;
 
 		const newNote: DefenseNote = {
@@ -72,7 +71,7 @@ export const addDefenseNote = (
 		const existingNotes = character.defenseNotes || [];
 		const updatedNotes = [...existingNotes, newNote];
 
-		saveCharacterToStorage(characterId, { defenseNotes: updatedNotes });
+		await saveCharacterToStorage(characterId, { defenseNotes: updatedNotes });
 
 		console.log(`Defense note added for ${characterId} - ${field}: ${reason}`);
 	} catch (error) {
@@ -81,19 +80,19 @@ export const addDefenseNote = (
 };
 
 // Remove all defense notes for a specific field (when reverting to auto)
-export const clearDefenseNotesForField = (
+export const clearDefenseNotesForField = async (
 	characterId: string,
 	field: 'manualPD' | 'manualPDR' | 'manualAD'
-): void => {
+): Promise<void> => {
 	try {
-		const character = getCharacterFromStorage(characterId);
+		const character = await getCharacterFromStorage(characterId);
 		if (!character || !character.defenseNotes) return;
 
 		const filteredNotes = character.defenseNotes.filter(
 			(note: DefenseNote) => note.field !== field
 		);
 
-		saveCharacterToStorage(characterId, { defenseNotes: filteredNotes });
+		await saveCharacterToStorage(characterId, { defenseNotes: filteredNotes });
 
 		console.log(`Defense notes cleared for ${characterId} - ${field}`);
 	} catch (error) {
@@ -102,12 +101,12 @@ export const clearDefenseNotesForField = (
 };
 
 // Get formatted tooltip text for a defense field
-export const getDefenseTooltipWithNotes = (
+export const getDefenseTooltipWithNotes = async (
 	characterId: string,
 	field: 'manualPD' | 'manualPDR' | 'manualAD',
 	baseTooltip: string
-): string => {
-	const notes = getDefenseNotesForField(characterId, field);
+): Promise<string> => {
+	const notes = await getDefenseNotesForField(characterId, field);
 
 	if (notes.length === 0) {
 		return baseTooltip;

@@ -5,7 +5,7 @@ import type { CharacterInProgressStoreData } from '../stores/characterContext';
 import type { SavedCharacter } from '../types/dataContracts';
 import { getCharacterState, updateCharacterState } from './characterState';
 import { traitsData } from '../rulesdata/ancestries/traits';
-import { getAllSavedCharacters, saveAllCharacters } from './storageUtils';
+import { getDefaultStorage } from '../storage';
 
 // Convert a saved character back to character-in-progress format for editing
 export const convertCharacterToInProgress = (
@@ -118,7 +118,7 @@ export const completeCharacterEdit = async (
 			newCharacterState
 		});
 		// Get the existing character state (manual modifications)
-		const existingState = getCharacterState(originalCharacterId);
+		const existingState = await getCharacterState(originalCharacterId);
 
 		// Calculate new stats based on the edited character build
 		const newCalculatedCharacter = await characterCalculationFn({
@@ -167,7 +167,8 @@ export const completeCharacterEdit = async (
 		});
 
 		// Update the saved character in storage with NEW CALCULATED VALUES
-		const savedCharacters = getAllSavedCharacters();
+		const storage = getDefaultStorage();
+		const savedCharacters = await storage.getAllCharacters();
 		console.log('🔄 completeCharacterEdit: savedCharacters before update:', savedCharacters);
 		const characterIndex = savedCharacters.findIndex(
 			(char: any) => char.id === originalCharacterId
@@ -191,7 +192,7 @@ export const completeCharacterEdit = async (
 			};
 
 			console.log('🔄 completeCharacterEdit: savedCharacters after update:', savedCharacters);
-			saveAllCharacters(savedCharacters);
+			await storage.saveAllCharacters(savedCharacters);
 		} else {
 			console.warn(
 				'⚠️ completeCharacterEdit: character not found in savedCharacters:',
@@ -201,7 +202,7 @@ export const completeCharacterEdit = async (
 
 		// Update the character state to reflect new original values while preserving current (manual) values
 		if (existingState) {
-			updateCharacterState(originalCharacterId, {
+			await updateCharacterState(originalCharacterId, {
 				resources: {
 					// Update original values with new calculated maximums
 					original: {

@@ -1,10 +1,8 @@
 /**
  * Convex Adapter for Character Storage
  *
- * DRAFT - This adapter will work once Convex packages are installed.
- *
  * This adapter implements CharacterStorage using Convex mutations and queries.
- * It requires the Convex React hooks to be available in the component tree.
+ * It uses the shared Convex client configured in the app.
  */
 
 import type {
@@ -14,18 +12,24 @@ import type {
 	StorageEvent,
 } from './characterStorage';
 import type { SavedCharacter, CharacterState } from '../types/dataContracts';
+import { api } from '../../../convex/_generated/api';
+import { getConvexClient } from '../convexClient';
 
-// TODO: Uncomment these imports after npm install
-// import { useQuery, useMutation } from 'convex/react';
-// import { api } from '../../../convex/_generated/api';
-// import type { Id } from '../../../convex/_generated/dataModel';
+type StoredCharacterDoc = SavedCharacter & {
+	_id: string;
+	_creationTime: number;
+	userId: string;
+};
 
-/**
- * Convex storage adapter placeholder
- *
- * This will be the actual implementation once Convex is set up.
- * For now, it throws errors to indicate it's not ready.
- */
+function normalizeCharacter(doc: StoredCharacterDoc): SavedCharacter {
+	const { _id, _creationTime, userId, ...rest } = doc;
+	return rest;
+}
+
+function prepareCharacterForSave(character: SavedCharacter): SavedCharacter {
+	return { ...character };
+}
+
 class ConvexStorageAdapter implements CharacterStorageWithEvents {
 	private listeners: Set<StorageEventListener> = new Set();
 
@@ -34,57 +38,57 @@ class ConvexStorageAdapter implements CharacterStorageWithEvents {
 	}
 
 	async getAllCharacters(): Promise<SavedCharacter[]> {
-		throw new Error('Convex storage not configured. Run npm install convex first.');
-		// TODO: Implementation after Convex setup:
-		// return useQuery(api.characters.list) ?? [];
+		const client = getConvexClient();
+		const characters = await client.query(api.characters.list, {});
+		return (characters || []).map((doc: StoredCharacterDoc) => normalizeCharacter(doc));
 	}
 
 	async getCharacterById(id: string): Promise<SavedCharacter | null> {
-		throw new Error('Convex storage not configured. Run npm install convex first.');
-		// TODO: Implementation after Convex setup:
-		// return useQuery(api.characters.getById, { characterId: id as Id<'characters'> });
+		const client = getConvexClient();
+		const character = await client.query(api.characters.getById, { id });
+		return character ? normalizeCharacter(character as StoredCharacterDoc) : null;
 	}
 
 	async saveCharacter(character: SavedCharacter): Promise<void> {
-		throw new Error('Convex storage not configured. Run npm install convex first.');
-		// TODO: Implementation after Convex setup:
-		// const create = useMutation(api.characters.create);
-		// const update = useMutation(api.characters.update);
-		// if (character._id) {
-		//   await update({ characterId: character._id, updates: character });
-		// } else {
-		//   await create({ character });
-		// }
+		const client = getConvexClient();
+		const existing = await client.query(api.characters.getById, { id: character.id });
+		const payload = prepareCharacterForSave(character);
+
+		if (existing) {
+			await client.mutation(api.characters.update, { id: character.id, updates: payload });
+			this.emit({ type: 'update', characterId: character.id, timestamp: new Date() });
+			return;
+		}
+
+		await client.mutation(api.characters.create, { character: payload });
+		this.emit({ type: 'save', characterId: character.id, timestamp: new Date() });
 	}
 
 	async saveAllCharacters(_characters: SavedCharacter[]): Promise<void> {
-		throw new Error('Convex storage not configured. Run npm install convex first.');
-		// Note: Convex doesn't have batch operations by default
-		// Would need to iterate and save each
+		for (const character of _characters) {
+			await this.saveCharacter(character);
+		}
 	}
 
 	async saveCharacterState(characterId: string, state: CharacterState): Promise<void> {
-		throw new Error('Convex storage not configured. Run npm install convex first.');
-		// TODO: Implementation after Convex setup:
-		// const updateState = useMutation(api.characters.updateState);
-		// await updateState({ characterId: characterId as Id<'characters'>, characterState: state });
+		const client = getConvexClient();
+		await client.mutation(api.characters.updateState, { id: characterId, characterState: state });
+		this.emit({ type: 'update', characterId, timestamp: new Date() });
 	}
 
 	async deleteCharacter(id: string): Promise<void> {
-		throw new Error('Convex storage not configured. Run npm install convex first.');
-		// TODO: Implementation after Convex setup:
-		// const remove = useMutation(api.characters.remove);
-		// await remove({ characterId: id as Id<'characters'> });
+		const client = getConvexClient();
+		await client.mutation(api.characters.remove, { id });
+		this.emit({ type: 'delete', characterId: id, timestamp: new Date() });
 	}
 
 	async backup(): Promise<void> {
 		// Cloud storage doesn't need explicit backups
-		console.log('Backup is automatic with Convex cloud storage');
+		return;
 	}
 
 	async restoreFromBackup(): Promise<boolean> {
 		// Cloud storage doesn't need restore functionality
-		console.log('Restore not needed with Convex cloud storage');
 		return false;
 	}
 
@@ -119,73 +123,3 @@ export function getConvexStorageAdapter(): CharacterStorageWithEvents {
 export const convexStorageAdapter = {
 	get: getConvexStorageAdapter,
 };
-
-// ============================================================================
-// REACT HOOKS (to be used after Convex setup)
-// ============================================================================
-
-/**
- * React hook for Convex character storage
- *
- * DRAFT - Uncomment and use after Convex setup
- */
-/*
-export function useConvexCharacterStorage(): CharacterStorage {
-	const characters = useQuery(api.characters.list);
-	const createMutation = useMutation(api.characters.create);
-	const updateMutation = useMutation(api.characters.update);
-	const updateStateMutation = useMutation(api.characters.updateState);
-	const removeMutation = useMutation(api.characters.remove);
-
-	return {
-		getAllCharacters: async () => characters ?? [],
-		
-		getCharacterById: async (id: string) => {
-			const char = characters?.find(c => c._id === id);
-			return char ?? null;
-		},
-		
-		saveCharacter: async (character: SavedCharacter) => {
-			if (character._id) {
-				await updateMutation({ 
-					characterId: character._id as Id<'characters'>, 
-					updates: character 
-				});
-			} else {
-				await createMutation({ character });
-			}
-		},
-		
-		saveAllCharacters: async (chars: SavedCharacter[]) => {
-			// Convex doesn't have batch - iterate
-			for (const char of chars) {
-				if (char._id) {
-					await updateMutation({ 
-						characterId: char._id as Id<'characters'>, 
-						updates: char 
-					});
-				} else {
-					await createMutation({ character: char });
-				}
-			}
-		},
-		
-		saveCharacterState: async (id: string, state: CharacterState) => {
-			await updateStateMutation({ 
-				characterId: id as Id<'characters'>, 
-				characterState: state 
-			});
-		},
-		
-		deleteCharacter: async (id: string) => {
-			await removeMutation({ characterId: id as Id<'characters'> });
-		},
-		
-		backup: async () => {
-			// No-op for cloud storage
-		},
-		
-		restoreFromBackup: async () => false,
-	};
-}
-*/

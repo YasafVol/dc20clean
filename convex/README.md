@@ -13,22 +13,22 @@ npm install convex @convex-dev/auth
 # 2. Initialize Convex (creates _generated/ directory)
 npx convex dev
 
-# 3. Rename draft files
-mv schema.ts.draft schema.ts
-mv characters.ts.draft characters.ts
-mv auth.config.ts.draft auth.config.ts
-
-# 4. Add environment variable to .env.local
+# 3. Add environment variables to .env.local
 echo "VITE_CONVEX_URL=<your-deployment-url>" >> ../.env.local
+echo "VITE_USE_CONVEX=true" >> ../.env.local
 ```
+
+Set `AUTH_SECRET` and the Google OAuth env vars in the Convex dashboard before running
+`npx convex dev`.
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `schema.ts.draft` | Database schema matching SavedCharacter type |
-| `characters.ts.draft` | Character CRUD mutations and queries |
-| `auth.config.ts.draft` | Authentication configuration |
+| `schema.ts` | Database schema matching SavedCharacter type |
+| `characters.ts` | Character CRUD mutations and queries |
+| `auth.ts` | Convex Auth actions (sign-in/out, store) |
+| `auth.config.ts` | Convex auth provider configuration |
 
 ## Schema
 
@@ -43,4 +43,4 @@ Characters are indexed by:
 
 ## Authentication
 
-Using Convex Auth with email/password provider. OAuth providers (GitHub, Google) can be added later.
+Using Convex Auth with Google OAuth.

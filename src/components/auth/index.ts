@@ -1,7 +1,7 @@
 /**
  * Auth Components - Main Export
  *
- * Social authentication (Google + GitHub) for DC20 Character Creator.
+ * Social authentication (Google) for DC20 Character Creator.
  * Auth is OPTIONAL - only required for:
  * - Saving characters to cloud
  * - Exporting PDF
@@ -18,3 +18,5 @@ export {
 	type FeatureGateButtonProps,
 } from './AuthGuard';
 export { UserMenu, type UserMenuProps } from './UserMenu';
+export { AuthStatus, type AuthStatusProps } from './AuthStatus';
+

@@ -1,24 +1,19 @@
 /**
  * Convex Schema for DC20 Character Creator
  *
- * DRAFT FILE - Rename to schema.ts after running `npx convex dev`
+ * Convex schema for character storage.
  *
  * This schema maps the SavedCharacter TypeScript interface to Convex validators.
  * See src/lib/types/dataContracts.ts for the source interface.
  */
 
 import { defineSchema, defineTable } from 'convex/server';
+import { authTables } from '@convex-dev/auth/server';
 import { v } from 'convex/values';
 
 // Reusable validators for nested objects
 
-const masteryLadderValidator = v.object({
-	'2': v.boolean(),
-	'4': v.boolean(),
-	'6': v.boolean(),
-	'8': v.boolean(),
-	'10': v.boolean(),
-});
+const masteryLadderValidator = v.record(v.string(), v.boolean());
 
 const denormalizedMasteryEntryValidator = v.object({
 	governingAttributes: v.array(v.string()),
@@ -65,6 +60,14 @@ const resourcesCurrentValidator = v.object({
 	isDead: v.boolean(),
 });
 
+const resourcesOriginalValidator = v.object({
+	maxHP: v.number(),
+	maxSP: v.number(),
+	maxMP: v.number(),
+	maxGritPoints: v.number(),
+	maxRestPoints: v.number(),
+});
+
 const uiStateValidator = v.object({
 	manualDefenseOverrides: v.object({
 		PD: v.optional(v.number()),
@@ -85,6 +88,7 @@ const notesValidator = v.object({
 const characterStateValidator = v.object({
 	resources: v.object({
 		current: resourcesCurrentValidator,
+		original: v.optional(resourcesOriginalValidator),
 	}),
 	ui: uiStateValidator,
 	inventory: inventoryValidator,
@@ -114,9 +118,10 @@ const pathPointAllocationsValidator = v.object({
 // Main character table schema
 const characterValidator = {
 	// Owner reference (Convex Auth user ID)
-	userId: v.string(),
+	userId: v.id('users'),
 
 	// Core Identity
+	id: v.string(),
 	finalName: v.string(),
 	finalPlayerName: v.optional(v.string()),
 	level: v.number(),
@@ -126,8 +131,8 @@ const characterValidator = {
 	className: v.string(),
 	ancestry1Id: v.optional(v.string()),
 	ancestry1Name: v.optional(v.string()),
-	ancestry2Id: v.optional(v.string()),
-	ancestry2Name: v.optional(v.string()),
+	ancestry2Id: v.optional(v.union(v.string(), v.null())),
+	ancestry2Name: v.optional(v.union(v.string(), v.null())),
 
 	// Attributes
 	finalMight: v.number(),
@@ -255,15 +260,9 @@ const characterValidator = {
 };
 
 export default defineSchema({
-	// Users table (managed by Convex Auth)
-	users: defineTable({
-		email: v.optional(v.string()),
-		name: v.optional(v.string()),
-		tokenIdentifier: v.string(),
-	}).index('by_token', ['tokenIdentifier']),
-
-	// Characters table
+	...authTables,
 	characters: defineTable(characterValidator)
 		.index('by_user', ['userId'])
+		.index('by_user_and_id', ['userId', 'id'])
 		.index('by_user_and_name', ['userId', 'finalName']),
 });

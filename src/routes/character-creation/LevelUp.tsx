@@ -1,19 +1,41 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getCharacterById } from '../../lib/utils/storageUtils';
+import type { SavedCharacter } from '../../lib/types/dataContracts';
+import { getDefaultStorage } from '../../lib/storage';
 
 const LevelUp: React.FC = () => {
 	const { id } = useParams();
-	const character = id ? getCharacterById(id) : null;
+	const storage = useMemo(() => getDefaultStorage(), []);
+	const [character, setCharacter] = useState<SavedCharacter | null>(null);
 
-	const handleLevelUp = () => {
+	useEffect(() => {
+		let isMounted = true;
+		if (!id) {
+			setCharacter(null);
+			return;
+		}
+		storage
+			.getCharacterById(id)
+			.then((loaded) => {
+				if (isMounted) setCharacter(loaded);
+			})
+			.catch((error) => {
+				console.error('Failed to load character for level up', error);
+				if (isMounted) setCharacter(null);
+			});
+		return () => {
+			isMounted = false;
+		};
+	}, [id, storage]);
+
+	const handleLevelUp = async () => {
 		if (!character) return;
 		// For now, just increment the level and call onComplete
 		const updatedCharacter = {
 			...character,
 			level: (character.level || 1) + 1
 		};
-		// TODO: Save updatedCharacter back to storage if needed
+		await storage.saveCharacter(updatedCharacter);
 		// onComplete(updatedCharacter); // Remove or refactor as needed
 	};
 

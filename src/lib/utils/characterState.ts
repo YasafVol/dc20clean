@@ -10,12 +10,15 @@ import type {
 	CurrentValues
 } from '../../types';
 import { assignSpellsToCharacter } from '../services/spellAssignment';
-import { getAllSavedCharacters, saveAllCharacters, getCharacterById } from './storageUtils';
+import { getDefaultStorage } from '../storage';
 
 // Get character state from localStorage - OPTIMIZED: Uses typed storage utility
-export const getCharacterState = (characterId: string): CharacterState | null => {
+export const getCharacterState = async (
+	characterId: string
+): Promise<CharacterState | null> => {
 	try {
-		const character = getCharacterById(characterId);
+		const storage = getDefaultStorage();
+		const character = await storage.getCharacterById(characterId);
 
 		if (!character) return null;
 
@@ -203,25 +206,13 @@ export const initializeCharacterState = (
 };
 
 // Save complete character state to localStorage - OPTIMIZED: No duplicate fields
-export const saveCharacterState = (characterId: string, state: CharacterState): void => {
+export const saveCharacterState = async (
+	characterId: string,
+	state: CharacterState
+): Promise<void> => {
 	try {
-		const characters = getAllSavedCharacters();
-		const characterIndex = characters.findIndex((char) => char.id === characterId);
-
-		if (characterIndex === -1) {
-			console.warn(`Character ${characterId} not found for state update`);
-			return;
-		}
-
-		// Update ONLY the characterState - no duplicates
-		// CharacterState is now the single source of truth
-		characters[characterIndex] = {
-			...characters[characterIndex],
-			characterState: state,
-			lastModified: new Date().toISOString()
-		};
-
-		saveAllCharacters(characters);
+		const storage = getDefaultStorage();
+		await storage.saveCharacterState(characterId, state);
 		console.log('🚀 OPTIMIZED: Character state saved (no duplicate fields)');
 	} catch (error) {
 		console.error('Error saving character state:', error);
@@ -229,18 +220,19 @@ export const saveCharacterState = (characterId: string, state: CharacterState): 
 };
 
 // Update a specific part of character state
-export const updateCharacterState = (
+export const updateCharacterState = async (
 	characterId: string,
 	updates: Partial<CharacterState>
-): void => {
-	let currentState = getCharacterState(characterId);
+): Promise<void> => {
+	let currentState = await getCharacterState(characterId);
 
 	// If no character state exists, try to create a minimal one from character data
 	if (!currentState) {
 		console.log('No character state found for ID:', characterId, '- creating minimal state');
 
 		// Get character data using typed storage utility
-		const character = getCharacterById(characterId);
+		const storage = getDefaultStorage();
+		const character = await storage.getCharacterById(characterId);
 
 		if (!character) {
 			console.error('No character found for ID:', characterId);
@@ -393,15 +385,15 @@ export const updateCharacterState = (
 			: currentState.calculation
 	};
 
-	saveCharacterState(characterId, newState);
+	await saveCharacterState(characterId, newState);
 };
 
 // Revert a specific data type to original values
-export const revertToOriginal = (
+export const revertToOriginal = async (
 	characterId: string,
 	dataType: 'resources' | 'currency' | 'attacks' | 'spells' | 'maneuvers' | 'inventory'
-): void => {
-	const currentState = getCharacterState(characterId);
+): Promise<void> => {
+	const currentState = await getCharacterState(characterId);
 	if (!currentState) {
 		console.log('No character state found for revert operation on ID:', characterId);
 		// Try to initialize the state first, then revert won't be needed since it will be at defaults
@@ -458,7 +450,7 @@ export const revertToOriginal = (
 			break;
 	}
 
-	updateCharacterState(characterId, updates);
+	await updateCharacterState(characterId, updates);
 };
 
 // Convert new CharacterState to legacy CurrentValues format for backwards compatibility
@@ -481,13 +473,13 @@ export const characterStateToCurrentValues = (state: CharacterState): CurrentVal
 };
 
 // Helpers for manual defenses centralized storage
-export const setManualDefense = (
+export const setManualDefense = async (
 	characterId: string,
 	field: 'manualPD' | 'manualPDR' | 'manualAD',
 	value: number | undefined
-): void => {
-	const current = getCharacterState(characterId)?.manualDefenses || {};
-	updateCharacterState(characterId, {
+): Promise<void> => {
+	const current = (await getCharacterState(characterId))?.manualDefenses || {};
+	await updateCharacterState(characterId, {
 		manualDefenses: {
 			...current,
 			[field]: value
@@ -495,9 +487,9 @@ export const setManualDefense = (
 	});
 };
 
-export const getManualDefense = (
+export const getManualDefense = async (
 	characterId: string,
 	field: 'manualPD' | 'manualPDR' | 'manualAD'
-): number | undefined => {
-	return getCharacterState(characterId)?.manualDefenses?.[field];
+): Promise<number | undefined> => {
+	return (await getCharacterState(characterId))?.manualDefenses?.[field];
 };

@@ -188,9 +188,9 @@ function getAvailableSpellsForClass(className: string, schools: SpellSchool[]): 
 	return allSpells.filter((spell) => {
 		// Check if spell is available to this class
 		// Since many spells have empty availableClasses arrays, we'll use a more flexible approach
+		const availableClasses = Array.isArray(spell.availableClasses) ? spell.availableClasses : [];
 		const isAvailableToClass =
-			spell.availableClasses.length === 0 ||
-			spell.availableClasses.includes(className as ClassName);
+			availableClasses.length === 0 || availableClasses.includes(className as ClassName);
 
 		// Check if spell is in one of the available schools
 		const isInAvailableSchool = schools.includes(spell.school);

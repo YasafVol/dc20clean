@@ -3,17 +3,13 @@
  *
  * DRAFT - This component will work once Convex Auth is set up.
  *
- * Shows current user info (from Google/GitHub) and sign out button.
+ * Shows current user info (from Google) and sign out button.
  */
 
 import * as React from 'react';
+import { useConvexAuth } from 'convex/react';
+import { useAuthActions } from '@convex-dev/auth/react';
 import { Button } from '../ui/button';
-
-// TODO: Uncomment after npm install
-// import { useConvexAuth } from 'convex/react';
-// import { useAuthActions } from '@convex-dev/auth/react';
-// import { useQuery } from 'convex/react';
-// import { api } from '../../../convex/_generated/api';
 
 export interface UserMenuProps {
 	/** Additional class names */
@@ -30,48 +26,31 @@ interface MockUser {
 	email?: string;
 	name?: string;
 	image?: string;
-	provider?: 'google' | 'github';
+	provider?: 'google';
 }
 
 function useMockUser(): MockUser | null {
-	// For development without Convex
-	const bypassAuth = import.meta.env.VITE_BYPASS_AUTH === 'true';
-
-	if (bypassAuth) {
-		return {
-			email: 'dev@example.com',
-			name: 'Developer',
-			provider: 'google',
-		};
-	}
-
-	return null;
-}
-
-function useMockAuthState(): { isAuthenticated: boolean } {
-	const bypassAuth = import.meta.env.VITE_BYPASS_AUTH === 'true';
-	return { isAuthenticated: bypassAuth };
+	return {
+		email: 'dev@example.com',
+		name: 'Developer',
+		provider: 'google',
+	};
 }
 
 export function UserMenu({ className, onSignOut }: UserMenuProps) {
 	const [isLoading, setIsLoading] = React.useState(false);
 
-	// TODO: Replace with actual Convex hooks
-	// const { isAuthenticated } = useConvexAuth();
-	// const { signOut } = useAuthActions();
-	// const user = useQuery(api.users.current);
-	const { isAuthenticated } = useMockAuthState();
-	const user = useMockUser();
+	const { isAuthenticated: isConvexAuthenticated, isLoading: isAuthLoading } = useConvexAuth();
+	const { signOut } = useAuthActions();
+	const bypassAuth = import.meta.env.VITE_BYPASS_AUTH === 'true';
+	const isAuthenticated = bypassAuth ? true : isConvexAuthenticated;
+	const user = bypassAuth ? useMockUser() : null;
 
 	const handleSignOut = async () => {
 		setIsLoading(true);
 
 		try {
-			// TODO: Replace with actual Convex Auth call
-			// await signOut();
-
-			// Placeholder - remove after Convex setup
-			console.warn('UserMenu: Convex Auth not configured yet');
+			await signOut();
 
 			onSignOut?.();
 		} catch (err) {
@@ -82,7 +61,7 @@ export function UserMenu({ className, onSignOut }: UserMenuProps) {
 	};
 
 	// Not authenticated - show nothing or sign in prompt
-	if (!isAuthenticated || !user) {
+	if (isAuthLoading || !isAuthenticated) {
 		return null;
 	}
 
@@ -90,7 +69,7 @@ export function UserMenu({ className, onSignOut }: UserMenuProps) {
 		<div className={className}>
 			<div className="flex items-center gap-3">
 				{/* User avatar */}
-				{user.image ? (
+				{user?.image ? (
 					<img
 						src={user.image}
 						alt={user.name || 'User'}
@@ -98,14 +77,15 @@ export function UserMenu({ className, onSignOut }: UserMenuProps) {
 					/>
 				) : (
 					<div className="bg-primary/20 text-primary flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold">
-						{user.name?.[0] || user.email?.[0] || '?'}
+						{user?.name?.[0] || user?.email?.[0] || 'U'}
 					</div>
 				)}
 
 				{/* User info */}
 				<div className="hidden text-right sm:block">
-					{user.name && <p className="text-foreground text-sm font-medium">{user.name}</p>}
-					{user.email && <p className="text-muted-foreground text-xs">{user.email}</p>}
+					{user?.name && <p className="text-foreground text-sm font-medium">{user.name}</p>}
+					{user?.email && <p className="text-muted-foreground text-xs">{user.email}</p>}
+					{!user && <p className="text-foreground text-sm font-medium">Signed in</p>}
 				</div>
 
 				{/* Sign out button */}
@@ -124,3 +104,4 @@ export function UserMenu({ className, onSignOut }: UserMenuProps) {
 }
 
 export default UserMenu;
+

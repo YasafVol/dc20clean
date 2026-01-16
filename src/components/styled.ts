@@ -11,6 +11,7 @@ export const StyledContainer = styled.div`
 	min-height: 100vh;
 	padding: 2rem;
 	background: url('${mainBgImage}') center/cover no-repeat;
+	position: relative;
 `;
 
 export const StyledTitle = styled.h1`

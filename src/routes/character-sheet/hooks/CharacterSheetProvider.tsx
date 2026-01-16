@@ -4,7 +4,7 @@ import {
 	type SheetState,
 	type SheetAction
 } from './useCharacterSheetReducer';
-import { getCharacterById, saveCharacter } from '../../../lib/utils/storageUtils';
+import { getDefaultStorage } from '../../../lib/storage';
 import type { SavedCharacter } from '../../../lib/types/dataContracts';
 import {
 	calculateCharacterWithBreakdowns,
@@ -19,6 +19,7 @@ import {
 	getDisplayLabel
 } from '../../../lib/rulesdata/loaders/class-features.loader';
 import { getDetailedClassFeatureDescription } from '../../../lib/utils/classFeatureDescriptions';
+import { calculateCharacterConditions } from '../../../lib/services/conditionAggregator';
 
 /**
  * Converts the movements array from calculator into the movement structure for SavedCharacter
@@ -197,55 +198,59 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		updateGritPoints,
 		updateRestPoints
 	} = useCharacterSheetReducer();
+	const storage = useMemo(() => getDefaultStorage(), []);
 
 	// Save function that runs enhanced calculator and persists to storage
-	const saveCharacterData = useCallback(async (character: SavedCharacter) => {
-		if (!character) return;
+	const saveCharacterData = useCallback(
+		async (character: SavedCharacter) => {
+			if (!character) return;
 
-		console.log('Saving character data:', character.id);
+			console.log('Saving character data:', character.id);
 
-		try {
-			// Run enhanced calculator to get updated stats
-			const calculationData = convertToEnhancedBuildData(character);
-			const calculationResult = calculateCharacterWithBreakdowns(calculationData);
+			try {
+				// Run enhanced calculator to get updated stats
+				const calculationData = convertToEnhancedBuildData(character);
+				const calculationResult = calculateCharacterWithBreakdowns(calculationData);
 
-			// Update character with calculated values and original resource maxes
-			const updatedCharacter: SavedCharacter = {
-				...character,
-				movement: processMovementsToStructure(
-					calculationResult.movements || [],
-					calculationResult.stats.finalMoveSpeed
-				),
-				holdBreath: calculationResult.stats.finalMight,
-				characterState: {
-					...character.characterState,
-					resources: {
-						...character.characterState.resources,
-						original: {
-							maxHP: calculationResult.stats.finalHPMax || 0,
-							maxSP: calculationResult.stats.finalSPMax || 0,
-							maxMP: calculationResult.stats.finalMPMax || 0,
-							maxGritPoints: calculationResult.stats.finalGritPoints || 0,
-							maxRestPoints: calculationResult.stats.finalRestPoints || 0
+				// Update character with calculated values and original resource maxes
+				const updatedCharacter: SavedCharacter = {
+					...character,
+					movement: processMovementsToStructure(
+						calculationResult.movements || [],
+						calculationResult.stats.finalMoveSpeed
+					),
+					holdBreath: calculationResult.stats.finalMight,
+					characterState: {
+						...character.characterState,
+						resources: {
+							...character.characterState.resources,
+							original: {
+								maxHP: calculationResult.stats.finalHPMax || 0,
+								maxSP: calculationResult.stats.finalSPMax || 0,
+								maxMP: calculationResult.stats.finalMPMax || 0,
+								maxGritPoints: calculationResult.stats.finalGritPoints || 0,
+								maxRestPoints: calculationResult.stats.finalRestPoints || 0
+							}
 						}
 					}
+				};
+
+				// Save the entire character (includes spells, maneuvers, etc.)
+				await storage.saveCharacter(updatedCharacter);
+
+				console.log('Character sheet data saved successfully');
+			} catch (error) {
+				console.warn('Calculator error during save, proceeding with last known values:', error);
+				// Save anyway with existing character data
+				try {
+					await storage.saveCharacter(character);
+				} catch (saveError) {
+					console.error('Failed to save character data:', saveError);
 				}
-			};
-
-			// Save the entire character (includes spells, maneuvers, etc.)
-			await saveCharacter(updatedCharacter);
-
-			console.log('Character sheet data saved successfully');
-		} catch (error) {
-			console.warn('Calculator error during save, proceeding with last known values:', error);
-			// Save anyway with existing character data
-			try {
-				await saveCharacter(character);
-			} catch (saveError) {
-				console.error('Failed to save character data:', saveError);
 			}
-		}
-	}, []);
+		},
+		[storage]
+	);
 
 	// Debounced save function
 	const debouncedSave = useDebounce(saveCharacterData, 2000);
@@ -264,7 +269,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		const loadCharacter = async () => {
 			try {
 				dispatch({ type: 'LOAD_START' });
-				const characterData = await getCharacterById(characterId);
+				const characterData = await storage.getCharacterById(characterId);
 				if (characterData) {
 					dispatch({ type: 'LOAD_SUCCESS', character: characterData });
 				} else {
@@ -279,7 +284,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 			}
 		};
 		loadCharacter();
-	}, [characterId, dispatch]);
+	}, [characterId, dispatch, storage]);
 
 	// Manual save function exposed through context
 	const saveNow = useCallback(async () => {
@@ -825,9 +830,6 @@ export function useCharacterConditions() {
 		if (!state.character) return [];
 
 		const character = state.character;
-
-		// Import condition aggregator dynamically to avoid circular deps
-		const { calculateCharacterConditions } = require('../../../lib/services/conditionAggregator');
 
 		// Build input for condition aggregator
 		const input = {

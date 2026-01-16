@@ -255,7 +255,7 @@
 **Prep Work Done:**
 - ✅ Convex schema design (`convex/schema.ts.draft`)
 - ✅ Character CRUD mutations/queries (`convex/characters.ts.draft`)
-- ✅ Auth config with Google/GitHub OAuth (`convex/auth.config.ts.draft`)
+- ✅ Auth config with Google OAuth (`convex/auth.config.ts.draft`)
 - ✅ Storage abstraction layer (`src/lib/storage/`)
 - ✅ Auth UI components (`src/components/auth/`)
 - ✅ Spec document (`docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md`)

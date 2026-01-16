@@ -179,7 +179,7 @@ const Defenses: React.FC<DefensesProps> = ({ isMobile = false }) => {
 
 	const handleRevert = (field: 'manualPD' | 'manualPDR' | 'manualAD') => {
 		// Clear all notes for this defense field when reverting to auto
-		clearDefenseNotesForField(character.id, field);
+		void clearDefenseNotesForField(character.id, field);
 
 		// Reverts don't need notes as they're returning to auto-calculated values
 		setManualDefense(

@@ -1,10 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import type { SavedCharacter } from '../../lib/types/dataContracts';
-import {
-	getAllSavedCharacters,
-	saveAllCharacters,
-	getInitializedCharacterState
-} from '../../lib/utils/storageUtils';
+import { getInitializedCharacterState } from '../../lib/utils/storageUtils';
+import { getDefaultStorage } from '../../lib/storage';
 import { checkSchemaCompatibility } from '../../lib/types/schemaVersion';
 import { migrateCharacterSchema } from '../../lib/utils/schemaMigration';
 import { useNavigate } from 'react-router-dom';
@@ -34,11 +31,23 @@ function LoadCharacter() {
 		type: 'error' | 'success' | 'info';
 	} | null>(null);
 	const [isImporting, setIsImporting] = useState(false);
+	const storage = useMemo(() => getDefaultStorage(), []);
 
 	useEffect(() => {
-		const characters = getAllSavedCharacters();
-		setSavedCharacters(characters);
-	}, []);
+		let isMounted = true;
+		storage
+			.getAllCharacters()
+			.then((characters) => {
+				if (isMounted) setSavedCharacters(characters);
+			})
+			.catch((error) => {
+				console.error('Failed to load characters', error);
+				if (isMounted) setSavedCharacters([]);
+			});
+		return () => {
+			isMounted = false;
+		};
+	}, [storage]);
 
 	const handleCharacterClick = (character: SavedCharacter) => {
 		// Edit character
@@ -51,7 +60,7 @@ function LoadCharacter() {
 	};
 
 	// Level up handler
-	const handleLevelUp = (character: SavedCharacter, event: React.MouseEvent) => {
+	const handleLevelUp = async (character: SavedCharacter, event: React.MouseEvent) => {
 		event.stopPropagation();
 
 		// Check schema compatibility
@@ -68,13 +77,13 @@ function LoadCharacter() {
 			console.log('📦 Migrating character schema before level-up', compatibility.message);
 			characterToLoad = migrateCharacterSchema(character);
 			// Save migrated version
-			const allChars = getAllSavedCharacters();
+			const allChars = await storage.getAllCharacters();
 			const updated = allChars.map((c) => (c.id === character.id ? characterToLoad : c));
-			saveAllCharacters(updated);
+			await storage.saveAllCharacters(updated);
 		}
 
 		// Navigate to character creation with level-up state
-		navigate('/character-creation', {
+		navigate('/create-character', {
 			state: {
 				levelUpCharacter: characterToLoad,
 				isLevelUp: true
@@ -88,19 +97,18 @@ function LoadCharacter() {
 		setDeleteModalOpen(true);
 	};
 
-	const handleConfirmDelete = () => {
-		if (characterToDelete) {
-			// Remove character from localStorage
-			const characters = getAllSavedCharacters();
-			const updatedCharacters = characters.filter(
+	const handleConfirmDelete = async () => {
+		if (!characterToDelete) return;
+
+		try {
+			await storage.deleteCharacter(characterToDelete.id);
+			const updatedCharacters = savedCharacters.filter(
 				(char: SavedCharacter) => char.id !== characterToDelete.id
 			);
-			saveAllCharacters(updatedCharacters);
-
-			// Update state
 			setSavedCharacters(updatedCharacters);
-
-			// Close modal
+		} catch (error) {
+			console.error('Failed to delete character', error);
+		} finally {
 			setDeleteModalOpen(false);
 			setCharacterToDelete(null);
 		}
@@ -155,7 +163,7 @@ function LoadCharacter() {
 			}
 
 			// Get current characters to check for duplicates
-			const existingCharacters = getAllSavedCharacters();
+			const existingCharacters = await storage.getAllCharacters();
 
 			// Check if character with same ID already exists
 			const existingCharacter = existingCharacters.find((char) => char.id === parsedData.id);
@@ -196,7 +204,7 @@ function LoadCharacter() {
 
 			// Add to characters list and save
 			const updatedCharacters = [...existingCharacters, characterToImport as SavedCharacter];
-			saveAllCharacters(updatedCharacters);
+			await storage.saveAllCharacters(updatedCharacters);
 			setSavedCharacters(updatedCharacters);
 
 			setImportMessage({

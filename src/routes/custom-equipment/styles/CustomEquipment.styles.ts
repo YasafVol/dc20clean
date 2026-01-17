@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 export const PageContainer = styled.div`
 	min-height: 100vh;
-	background: linear-gradient(to bottom, #0f172a, #1e1b4b 50%, #0f172a);
+	background: url('/src/assets/BlackBG.jpg') center/cover no-repeat;
 `;
 
 export const Header = styled.div`
@@ -34,7 +34,14 @@ export const Title = styled.h1`
 
 export const Subtitle = styled.p`
 	color: #9ca3af;
-	margin-top: 0.5rem;
+	margin-top: 0.25rem;
+	font-size: 0.9rem;
+	white-space: nowrap;
+
+	@media (max-width: 768px) {
+		white-space: normal;
+		font-size: 0.85rem;
+	}
 `;
 
 export const MainContent = styled.div`

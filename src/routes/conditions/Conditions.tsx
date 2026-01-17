@@ -13,7 +13,7 @@ import type { ConditionTag } from '../../lib/rulesdata/conditions/conditions.typ
 
 const PageContainer = styled.div`
 	min-height: 100vh;
-	background: linear-gradient(135deg, #1e1b4b 0%, #0f0d24 100%);
+	background: url('/src/assets/BlackBG.jpg') center/cover no-repeat;
 	padding: 2rem;
 `;
 

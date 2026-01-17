@@ -135,7 +135,7 @@ const Spellbook: React.FC = () => {
 		searchQuery.trim() !== '';
 
 	return (
-		<div className="min-h-screen bg-gradient-to-b from-slate-900 via-purple-900/20 to-slate-900">
+		<div className="min-h-screen bg-[url('/src/assets/BlackBG.jpg')] bg-cover bg-center">
 			{/* Header */}
 			<div className="border-b border-border/50 bg-black/30 backdrop-blur-sm">
 				<div className="mx-auto max-w-7xl px-4 py-6">

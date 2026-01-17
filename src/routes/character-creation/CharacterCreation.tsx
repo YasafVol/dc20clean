@@ -690,7 +690,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	};
 
 	return (
-		<div className="bg-background text-foreground flex min-h-screen flex-col font-sans">
+		<div className="text-foreground flex min-h-screen flex-col bg-[url('/src/assets/BlackBG.jpg')] bg-cover bg-center bg-fixed font-sans">
 			{/* Header with Navigation and Stepper */}
 			<header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
 				{/* Mobile Stepper Progress Bar */}

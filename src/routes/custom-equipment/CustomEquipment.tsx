@@ -77,7 +77,7 @@ const CustomEquipment: React.FC = () => {
 				<HeaderContent>
 					<div>
 						<Title>Custom Equipment</Title>
-						<Subtitle>Create and customize your own weapons, armor, shields, and spell focuses</Subtitle>
+						<Subtitle>Build custom weapons, armor, shields & spell focuses</Subtitle>
 					</div>
 					<Button
 						variant="outline"

@@ -10,38 +10,35 @@ export const PageContainer = styled.div`
 `;
 
 export const Header = styled.div`
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	background: rgba(0, 0, 0, 0.3);
-	backdrop-filter: blur(8px);
+	padding: 2rem;
 `;
 
 export const HeaderContent = styled.div`
 	max-width: 80rem;
 	margin: 0 auto;
-	padding: 1.5rem 1rem;
+`;
+
+export const BackButtonRow = styled.div`
+	margin-bottom: 2rem;
 	display: flex;
-	align-items: center;
-	justify-content: space-between;
+	gap: 1rem;
 `;
 
 export const Title = styled.h1`
 	font-family: 'Cinzel', serif;
 	color: #fbbf24;
-	font-size: 2.25rem;
+	font-size: 1.875rem;
 	font-weight: bold;
 	letter-spacing: 0.05em;
+	text-align: center;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+	margin-bottom: 0.5rem;
 `;
 
 export const Subtitle = styled.p`
-	color: #9ca3af;
-	margin-top: 0.25rem;
-	font-size: 0.9rem;
-	white-space: nowrap;
-
-	@media (max-width: 768px) {
-		white-space: normal;
-		font-size: 0.85rem;
-	}
+	color: #e5e7eb;
+	text-align: center;
+	font-size: 1rem;
 `;
 
 export const MainContent = styled.div`
@@ -58,18 +55,18 @@ export const CategoryGrid = styled.div`
 `;
 
 export const CategoryCard = styled.button<{ $selected?: boolean }>`
-	background: ${(props) => (props.$selected ? 'rgba(251, 191, 36, 0.1)' : 'rgba(30, 27, 75, 0.5)')};
-	border: 2px solid ${(props) => (props.$selected ? '#fbbf24' : 'rgba(255, 255, 255, 0.1)')};
+	background: linear-gradient(to bottom right, #1e1b4b, #312e81);
+	border: 2px solid ${(props) => (props.$selected ? '#a855f7' : '#a855f7')};
 	border-radius: 12px;
 	padding: 2rem;
 	text-align: left;
 	cursor: pointer;
+	box-shadow: 0 10px 15px -3px rgba(168, 85, 247, 0.3);
 	transition: all 0.3s ease;
 
 	&:hover {
-		border-color: #fbbf24;
-		background: rgba(251, 191, 36, 0.05);
-		transform: translateY(-2px);
+		transform: translateY(-4px);
+		box-shadow: 0 20px 25px -5px rgba(168, 85, 247, 0.4);
 	}
 `;
 
@@ -103,11 +100,12 @@ export const SectionTitle = styled.h2`
 `;
 
 export const BuilderContainer = styled.div`
-	background: rgba(30, 27, 75, 0.4);
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: linear-gradient(to bottom right, #1e1b4b, #312e81);
+	border: 2px solid #a855f7;
 	border-radius: 12px;
 	padding: 1.5rem;
 	margin-top: 1rem;
+	box-shadow: 0 10px 15px -3px rgba(168, 85, 247, 0.3);
 `;
 
 export const StepIndicator = styled.div`

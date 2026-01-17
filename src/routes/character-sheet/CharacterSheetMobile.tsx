@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import type { SkillData } from '../../types';
+import { debug } from '../../lib/utils/debug';
 
-console.log('📱 CharacterSheetMobile.tsx file loaded!');
-console.log('📱 CharacterSheetMobile.tsx module executing!');
+debug.ui('CharacterSheetMobile.tsx file loaded');
 
 // Hooks
 import { useCharacterSheet } from './hooks/CharacterSheetProvider';
@@ -60,8 +60,7 @@ import InventoryPopup from './components/InventoryPopup';
  * - Maintained all original functionality
  */
 const CharacterSheetMobile: React.FC = () => {
-	console.log('📱📱📱 MOBILE COMPONENT FUNCTION EXECUTING! 📱📱📱');
-	console.log('🧙‍♂️ CharacterSheetMobile component rendering!');
+	debug.ui('CharacterSheetMobile component rendering');
 
 	// Hook to get character data and sheet actions
 	const { state } = useCharacterSheet();
@@ -212,7 +211,7 @@ ${characterData.characterState?.notes?.playerNotes || 'No notes'}`;
 
 	// Render content based on active tab
 	const renderTabContent = () => {
-		console.log(`📱 CharacterSheetMobile activeTab: "${activeTab}"`);
+		debug.ui(`CharacterSheetMobile activeTab: "${activeTab}"`);
 		if (!characterData) return null;
 
 		// Calculate skill data like in original
@@ -221,7 +220,6 @@ ${characterData.characterState?.notes?.playerNotes || 'No notes'}`;
 
 		switch (activeTab) {
 			case 'skills':
-				console.log('📱 CharacterSheetMobile rendering SKILLS tab');
 				return (
 					<div>
 						<LeftColumn
@@ -234,7 +232,6 @@ ${characterData.characterState?.notes?.playerNotes || 'No notes'}`;
 					</div>
 				);
 			case 'combat':
-				console.log('📱 CharacterSheetMobile rendering COMBAT tab');
 				return (
 					<MobileCombatWrapper>
 						<Resources isMobile={true} />
@@ -249,17 +246,13 @@ ${characterData.characterState?.notes?.playerNotes || 'No notes'}`;
 				);
 			case 'inventory':
 			case 'items':
-				console.log('📱 CharacterSheetMobile rendering ITEMS tab with Currency');
-				const testMobile = true;
-				console.log('📱 testMobile variable:', testMobile);
 				return (
 					<div>
 						<Inventory onItemClick={openInventoryPopup} />
-						<Currency isMobile={testMobile} />
+						<Currency isMobile={true} />
 					</div>
 				);
 			case 'info':
-				console.log('📱 CharacterSheetMobile rendering INFO tab');
 				return (
 					<div>
 						{/* Character Summary */}

@@ -11,6 +11,7 @@ import {
 	PageContainer,
 	Header,
 	HeaderContent,
+	BackButtonRow,
 	Title,
 	Subtitle,
 	MainContent,
@@ -75,17 +76,13 @@ const CustomEquipment: React.FC = () => {
 			{/* Header */}
 			<Header>
 				<HeaderContent>
-					<div>
-						<Title>Custom Equipment</Title>
-						<Subtitle>Build custom weapons, armor, shields & spell focuses</Subtitle>
-					</div>
-					<Button
-						variant="outline"
-						onClick={handleBack}
-						className="border-amber-500/50 hover:bg-amber-500/10"
-					>
-						← {selectedCategory ? 'Back to Categories' : 'Back to Menu'}
-					</Button>
+					<BackButtonRow>
+						<Button variant="secondary" onClick={handleBack} className="font-bold">
+							← {selectedCategory ? 'Back to Categories' : 'Back to Menu'}
+						</Button>
+					</BackButtonRow>
+					<Title>Custom Equipment</Title>
+					<Subtitle>Build custom weapons, armor, shields & spell focuses</Subtitle>
 				</HeaderContent>
 			</Header>
 

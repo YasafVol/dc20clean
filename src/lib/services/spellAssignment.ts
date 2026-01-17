@@ -4,6 +4,7 @@ import type { SpellData } from '../../types/character';
 import { findClassByName } from '../rulesdata/loaders/class-features.loader';
 import { classesData } from '../rulesdata/loaders/class.loader';
 import { parseJsonSafe } from '../utils/storageUtils';
+import { debug } from '../utils/debug';
 
 export interface SpellAssignmentOptions {
 	className: string;
@@ -20,14 +21,14 @@ export const assignSpellsToCharacter = (options: SpellAssignmentOptions): SpellD
 	// Get class data
 	const classData = classesData.find((c) => c.name === className);
 	if (!classData) {
-		console.warn(`Class data not found for: ${className}`);
+		debug.warn('Spells', `Class data not found for: ${className}`);
 		return [];
 	}
 
 	// Get class features
 	const classFeatures = findClassByName(className);
 	if (!classFeatures) {
-		console.warn(`Class features not found for: ${className}`);
+		debug.warn('Spells', `Class features not found for: ${className}`);
 		return [];
 	}
 
@@ -40,7 +41,7 @@ export const assignSpellsToCharacter = (options: SpellAssignmentOptions): SpellD
 	// If no schools were determined from feature choices, use default schools
 	if (availableSchools.length === 0) {
 		availableSchools = getDefaultSpellSchools(className);
-		console.log(
+		debug.spells(
 			`No spell schools determined from choices, using defaults for ${className}:`,
 			availableSchools
 		);
@@ -49,14 +50,14 @@ export const assignSpellsToCharacter = (options: SpellAssignmentOptions): SpellD
 	// Get spell counts for this level
 	const levelData = classData.levelProgression?.find((l) => l.level === level);
 	if (!levelData) {
-		console.warn(`Level data not found for ${className} level ${level}`);
+		debug.warn('Spells', `Level data not found for ${className} level ${level}`);
 		return [];
 	}
 
 	const cantripsToAssign = levelData.cantripsKnown || 0;
 	const spellsToAssign = levelData.spellsKnown || 0;
 
-	console.log(`Assigning spells for ${className} level ${level}:`, {
+	debug.spells(`Assigning spells for ${className} level ${level}:`, {
 		cantripsToAssign,
 		spellsToAssign,
 		availableSchools
@@ -65,7 +66,7 @@ export const assignSpellsToCharacter = (options: SpellAssignmentOptions): SpellD
 	// Get available spells for this class and schools
 	const availableSpells = getAvailableSpellsForClass(className, availableSchools);
 
-	console.log(
+	debug.spells(
 		`Found ${availableSpells.length} available spells for ${className} with schools ${availableSchools}:`,
 		availableSpells.map((s) => ({ name: s.name, school: s.school, isCantrip: s.isCantrip }))
 	);
@@ -74,11 +75,11 @@ export const assignSpellsToCharacter = (options: SpellAssignmentOptions): SpellD
 	const availableCantrips = availableSpells.filter((spell) => spell.isCantrip);
 	const availableRegularSpells = availableSpells.filter((spell) => !spell.isCantrip);
 
-	console.log(
+	debug.spells(
 		`Available cantrips: ${availableCantrips.length}`,
 		availableCantrips.map((s) => s.name)
 	);
-	console.log(
+	debug.spells(
 		`Available regular spells: ${availableRegularSpells.length}`,
 		availableRegularSpells.map((s) => s.name)
 	);
@@ -98,7 +99,7 @@ export const assignSpellsToCharacter = (options: SpellAssignmentOptions): SpellD
 		assignedSpells.push(createSpellData(spell));
 	}
 
-	console.log(
+	debug.spells(
 		`Assigned ${assignedSpells.length} spells:`,
 		assignedSpells.map((s) => s.spellName)
 	);

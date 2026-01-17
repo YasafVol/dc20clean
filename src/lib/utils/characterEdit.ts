@@ -6,6 +6,7 @@ import type { SavedCharacter } from '../types/dataContracts';
 import { getCharacterState, updateCharacterState } from './characterState';
 import { traitsData } from '../rulesdata/ancestries/traits';
 import { getDefaultStorage } from '../storage';
+import { debug } from './debug';
 
 // Convert a saved character back to character-in-progress format for editing
 export const convertCharacterToInProgress = (
@@ -113,7 +114,7 @@ export const completeCharacterEdit = async (
 	characterCalculationFn: (data: any) => Promise<any>
 ): Promise<void> => {
 	try {
-		console.log('🔄 completeCharacterEdit: called with', {
+		debug.character('completeCharacterEdit: called with', {
 			originalCharacterId,
 			newCharacterState
 		});
@@ -161,7 +162,7 @@ export const completeCharacterEdit = async (
 			lastModified: new Date().toISOString()
 		});
 
-		console.log('🔄 completeCharacterEdit: Data passed to characterCalculationFn:', {
+		debug.character('completeCharacterEdit: Data passed to characterCalculationFn:', {
 			input: newCharacterState,
 			output: newCalculatedCharacter
 		});
@@ -169,7 +170,7 @@ export const completeCharacterEdit = async (
 		// Update the saved character in storage with NEW CALCULATED VALUES
 		const storage = getDefaultStorage();
 		const savedCharacters = await storage.getAllCharacters();
-		console.log('🔄 completeCharacterEdit: savedCharacters before update:', savedCharacters);
+		debug.storage('completeCharacterEdit: savedCharacters before update:', savedCharacters);
 		const characterIndex = savedCharacters.findIndex(
 			(char: any) => char.id === originalCharacterId
 		);
@@ -191,11 +192,12 @@ export const completeCharacterEdit = async (
 				lastModified: new Date().toISOString()
 			};
 
-			console.log('🔄 completeCharacterEdit: savedCharacters after update:', savedCharacters);
+			debug.storage('completeCharacterEdit: savedCharacters after update:', savedCharacters);
 			await storage.saveAllCharacters(savedCharacters);
 		} else {
-			console.warn(
-				'⚠️ completeCharacterEdit: character not found in savedCharacters:',
+			debug.warn(
+				'Character',
+				'completeCharacterEdit: character not found in savedCharacters:',
 				originalCharacterId
 			);
 		}
@@ -226,7 +228,7 @@ export const completeCharacterEdit = async (
 			});
 		}
 	} catch (error) {
-		console.error('❌ Error completing character edit:', error);
+		debug.error('Character', 'Error completing character edit:', error);
 		throw error;
 	}
 };

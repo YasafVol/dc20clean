@@ -137,31 +137,23 @@ const Spellbook: React.FC = () => {
 	return (
 		<div className="min-h-screen bg-[url('/src/assets/BlackBG.jpg')] bg-cover bg-center">
 			{/* Header */}
-			<div className="border-b border-border/50 bg-black/30 backdrop-blur-sm">
-				<div className="mx-auto max-w-7xl px-4 py-6">
-					<div className="flex items-center justify-between">
-						<div>
-							<h1 className="font-cinzel text-primary text-4xl font-bold tracking-wide">
-								Spellbook
-							</h1>
-							<p className="text-muted-foreground mt-2">
-								Browse all {ALL_SPELLS.length} spells available in DC20
-							</p>
-						</div>
-						<Button
-							variant="outline"
-							onClick={() => navigate('/menu')}
-							className="border-primary/50 hover:bg-primary/10"
-						>
-							← Back to Menu
-						</Button>
-					</div>
+			<div className="p-8">
+				<div className="mb-8 flex gap-4">
+					<Button variant="secondary" onClick={() => navigate('/menu')} className="font-bold">
+						← Back to Menu
+					</Button>
 				</div>
+				<h1 className="font-cinzel text-primary mb-2 text-center text-3xl font-bold tracking-wide drop-shadow-lg">
+					Spellbook
+				</h1>
+				<p className="text-muted-foreground text-center">
+					Browse all {ALL_SPELLS.length} spells available in DC20
+				</p>
 			</div>
 
-			<div className="mx-auto max-w-7xl space-y-6 px-4 py-8">
+			<div className="mx-auto max-w-7xl space-y-6 px-4 pb-8">
 				{/* Filters Card */}
-				<Card className="border-border bg-card/50 backdrop-blur-sm">
+				<Card className="border-purple-500 bg-gradient-to-br from-indigo-950 to-indigo-900 shadow-lg shadow-purple-500/30">
 					<CardHeader className="pb-4">
 						<CardTitle className="text-lg font-medium">Filters</CardTitle>
 					</CardHeader>
@@ -417,8 +409,8 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 	return (
 		<Card
 			className={cn(
-				'border-2 transition-all hover:shadow-lg cursor-pointer',
-				isExpanded ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 bg-card/40'
+				'cursor-pointer border-purple-500 bg-gradient-to-br from-indigo-950 to-indigo-900 shadow-lg shadow-purple-500/30 transition-all hover:-translate-y-1 hover:shadow-xl',
+				isExpanded && 'border-primary ring-1 ring-primary/50'
 			)}
 			onClick={onToggle}
 		>

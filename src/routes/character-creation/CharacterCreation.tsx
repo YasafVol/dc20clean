@@ -28,6 +28,7 @@ import { Dialog, DialogContent } from '../../components/ui/dialog';
 import { cn } from '../../lib/utils';
 import { Check, ChevronRight } from 'lucide-react';
 import { AuthStatus, SignIn, useIsAuthenticated } from '../../components/auth';
+import { debug } from '../../lib/utils/debug';
 
 /**
  * Converts the movements array from calculator into the movement structure for SavedCharacter
@@ -91,7 +92,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 	// Debug current state on any changes
 	useEffect(() => {
-		console.log('🐛 CharacterCreation State Debug:', {
+		debug.state('CharacterCreation State Debug:', {
 			currentStep: state.currentStep,
 			ancestry1Id: state.ancestry1Id,
 			ancestry2Id: state.ancestry2Id,
@@ -110,9 +111,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	// Initialize character state for edit mode
 	useEffect(() => {
 		if (editChar) {
-			console.log('🔄 CharacterCreation: Initializing edit mode for character:', editChar);
+			debug.character('CharacterCreation: Initializing edit mode for character:', editChar);
 			const characterInProgress = convertCharacterToInProgress(editChar);
-			console.log('🔄 CharacterCreation: Converted to in-progress format:', {
+			debug.character('CharacterCreation: Converted to in-progress format:', {
 				selectedSpells: characterInProgress.selectedSpells,
 				selectedManeuvers: characterInProgress.selectedManeuvers
 			});
@@ -125,8 +126,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	// Initialize character state for level-up mode
 	useEffect(() => {
 		if (isLevelUpMode && levelUpCharacter) {
-			console.log(
-				'⬆️ CharacterCreation: Initializing level-up mode for character:',
+			debug.character(
+				'CharacterCreation: Initializing level-up mode for character:',
 				levelUpCharacter.finalName
 			);
 			const contextData = convertSavedCharacterToContext(levelUpCharacter);
@@ -219,7 +220,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				}
 			});
 
-			console.log('✅ Level-up mode: Character data loaded', levelUpCharacter.finalName);
+			debug.character('Level-up mode: Character data loaded', levelUpCharacter.finalName);
 		}
 	}, [isLevelUpMode, levelUpCharacter, dispatch]);
 
@@ -270,7 +271,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			// Character is complete - check if we're editing, leveling up, or creating new
 			if (state.isLevelUpMode && state.sourceCharacterId) {
 				// Level-up mode: complete character then update existing
-				console.log('⬆️ Completing level-up for character:', state.sourceCharacterId);
+				debug.character('Completing level-up for character:', state.sourceCharacterId);
 
 				// Create a custom onNavigateToLoad that updates instead of creates
 				const originalId = state.sourceCharacterId;
@@ -303,7 +304,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 							});
 
 						await storage.saveAllCharacters(final);
-						console.log('✅ Character updated via level-up', originalId);
+						debug.character('Character updated via level-up', originalId);
 						navigate(`/character/${originalId}`);
 					}
 				});
@@ -385,7 +386,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		const spellsStep = hasLevelingStep ? 6 : 5;
 		const nameStep = hasLevelingStep ? 7 : 6;
 
-		console.log('🔍 isStepCompleted debug:', {
+		debug.state('isStepCompleted debug:', {
 			step,
 			'state.level': state.level,
 			hasLevelingStep,
@@ -469,7 +470,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			const needsSubclass = calculationResult?.resolvedFeatures?.availableSubclassChoice;
 			if (needsSubclass && !state.selectedSubclass) {
 				const subclassLevel = calculationResult?.resolvedFeatures?.subclassChoiceLevel;
-				console.log('❌ Step 1 incomplete: Subclass selection required at level', subclassLevel);
+				debug.state('Step 1 incomplete: Subclass selection required at level', subclassLevel);
 				return false;
 			}
 
@@ -483,8 +484,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				);
 
 				if (!validation.isValid) {
-					console.log(
-						'❌ Step 1 incomplete: Subclass feature choices incomplete',
+					debug.state(
+						'Step 1 incomplete: Subclass feature choices incomplete',
 						validation.incompleteChoices
 					);
 					return false;
@@ -514,7 +515,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			const allPointsSpent = ancestryPointsRemaining === 0;
 			const isValid = hasAncestry && pointsValid && allPointsSpent;
 
-			console.log('🔍 Ancestry validation:', { step, ancestryStep, isValid });
+			debug.state('Ancestry validation:', { step, ancestryStep, isValid });
 			return isValid;
 		}
 
@@ -589,7 +590,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				hasExactlySpentAllLanguagePoints;
 
 			if (!isValid) {
-				console.log('❌ Background validation FAILED:', {
+				debug.state('Background validation FAILED:', {
 					hasExactlySpentAllSkillPoints,
 					hasExactlySpentAllTradePoints,
 					hasExactlySpentAllLanguagePoints,
@@ -604,7 +605,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 		// Spells & Maneuvers step
 		if (step === spellsStep) {
-			console.warn('⚠️ Spells & Maneuvers validation temporarily disabled');
+			debug.warn('State', 'Spells & Maneuvers validation temporarily disabled');
 			return true; // Always allow progression
 		}
 
@@ -631,7 +632,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 		const allCompleted = results.every((result) => result.completed);
 
-		console.log('🔍 areAllStepsCompleted check:', {
+		debug.state('areAllStepsCompleted check:', {
 			results,
 			allCompleted
 		});

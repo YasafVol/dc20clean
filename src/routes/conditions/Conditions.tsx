@@ -10,29 +10,17 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { ALL_CONDITIONS } from '../../lib/rulesdata/conditions/conditions.data';
 import type { ConditionTag } from '../../lib/rulesdata/conditions/conditions.types';
+import { Button } from '../../components/ui/button';
 
 const PageContainer = styled.div`
 	min-height: 100vh;
-	background: url('/src/assets/BlackBG.jpg') center/cover no-repeat;
+	background: url('/src/assets/BlackBG.jpg') center/cover no-repeat fixed;
 	padding: 2rem;
 `;
 
-const BackButton = styled.button`
-	background: rgba(251, 191, 36, 0.1);
-	border: 1px solid rgba(251, 191, 36, 0.3);
-	color: #fbbf24;
-	padding: 0.5rem 1rem;
-	border-radius: 0.5rem;
-	cursor: pointer;
-	font-family: 'Cinzel', serif;
-	font-size: 0.875rem;
-	margin-bottom: 1.5rem;
-	transition: all 0.2s;
-
-	&:hover {
-		background: rgba(251, 191, 36, 0.2);
-		border-color: #fbbf24;
-	}
+const BackButtonRow = styled.div`
+	max-width: 900px;
+	margin: 0 auto 2rem;
 `;
 
 const ContentWrapper = styled.div`
@@ -44,14 +32,30 @@ const Title = styled.h1`
 	font-family: 'Cinzel', serif;
 	color: #fbbf24;
 	text-align: center;
+	margin-bottom: 0.5rem;
+	font-size: 1.875rem;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+`;
+
+const Subtitle = styled.p`
+	color: #e5e7eb;
+	text-align: center;
+	margin-bottom: 2rem;
+`;
+
+const FilterCard = styled.div`
+	background: linear-gradient(to bottom right, #1e1b4b, #312e81);
+	border: 2px solid #a855f7;
+	border-radius: 0.75rem;
+	padding: 1.5rem;
 	margin-bottom: 1.5rem;
-	font-size: 2rem;
+	box-shadow: 0 10px 15px -3px rgba(168, 85, 247, 0.3);
 `;
 
 const SearchInput = styled.input`
 	width: 100%;
 	padding: 0.75rem 1rem;
-	border: 1px solid rgba(251, 191, 36, 0.3);
+	border: 1px solid rgba(168, 85, 247, 0.5);
 	border-radius: 0.5rem;
 	font-size: 1rem;
 	color: #fff;
@@ -64,7 +68,8 @@ const SearchInput = styled.input`
 
 	&:focus {
 		outline: none;
-		border-color: #fbbf24;
+		border-color: #a855f7;
+		box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
 	}
 `;
 
@@ -72,7 +77,6 @@ const TagFilters = styled.div`
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.5rem;
-	margin-bottom: 1.5rem;
 `;
 
 const TagButton = styled.button<{ $active: boolean }>`
@@ -81,13 +85,13 @@ const TagButton = styled.button<{ $active: boolean }>`
 	font-size: 0.85rem;
 	cursor: pointer;
 	transition: all 0.15s ease;
-	border: 1px solid ${(props) => (props.$active ? '#fbbf24' : 'rgba(255,255,255,0.2)')};
-	background: ${(props) => (props.$active ? '#fbbf24' : 'transparent')};
-	color: ${(props) => (props.$active ? '#000' : '#ccc')};
+	border: 1px solid ${(props) => (props.$active ? '#a855f7' : 'rgba(255,255,255,0.2)')};
+	background: ${(props) => (props.$active ? '#a855f7' : 'transparent')};
+	color: ${(props) => (props.$active ? '#fff' : '#ccc')};
 
 	&:hover {
-		border-color: #fbbf24;
-		background: ${(props) => (props.$active ? '#fbbf24' : 'rgba(251, 191, 36, 0.1)')};
+		border-color: #a855f7;
+		background: ${(props) => (props.$active ? '#a855f7' : 'rgba(168, 85, 247, 0.2)')};
 	}
 `;
 
@@ -98,14 +102,16 @@ const ConditionsList = styled.div`
 `;
 
 const ConditionCard = styled.div<{ $expanded: boolean }>`
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: 0.5rem;
-	background: rgba(0, 0, 0, 0.3);
+	background: linear-gradient(to bottom right, #1e1b4b, #312e81);
+	border: 2px solid #a855f7;
+	border-radius: 0.75rem;
 	overflow: hidden;
+	box-shadow: 0 10px 15px -3px rgba(168, 85, 247, 0.3);
 	transition: all 0.2s ease;
 
 	&:hover {
-		border-color: rgba(251, 191, 36, 0.5);
+		transform: translateY(-2px);
+		box-shadow: 0 20px 25px -5px rgba(168, 85, 247, 0.4);
 	}
 `;
 
@@ -268,28 +274,35 @@ const Conditions: React.FC = () => {
 
 	return (
 		<PageContainer>
+			<BackButtonRow>
+				<Button variant="secondary" onClick={() => navigate('/menu')} className="font-bold">
+					← Back to Menu
+				</Button>
+			</BackButtonRow>
 			<ContentWrapper>
-				<BackButton onClick={() => navigate('/menu')}>← Back to Menu</BackButton>
-				<Title>📖 Conditions Reference</Title>
+				<Title>Conditions Reference</Title>
+				<Subtitle>Browse all conditions and their effects in DC20</Subtitle>
 
-				<SearchInput
-					type="text"
-					placeholder="Search conditions..."
-					value={searchTerm}
-					onChange={(e) => setSearchTerm(e.target.value)}
-				/>
+				<FilterCard>
+					<SearchInput
+						type="text"
+						placeholder="Search conditions..."
+						value={searchTerm}
+						onChange={(e) => setSearchTerm(e.target.value)}
+					/>
 
-				<TagFilters>
-					{ALL_TAGS.map((tag) => (
-						<TagButton
-							key={tag}
-							$active={activeTagFilters.has(tag)}
-							onClick={() => toggleTagFilter(tag)}
-						>
-							{TAG_LABELS[tag]}
-						</TagButton>
-					))}
-				</TagFilters>
+					<TagFilters>
+						{ALL_TAGS.map((tag) => (
+							<TagButton
+								key={tag}
+								$active={activeTagFilters.has(tag)}
+								onClick={() => toggleTagFilter(tag)}
+							>
+								{TAG_LABELS[tag]}
+							</TagButton>
+						))}
+					</TagFilters>
+				</FilterCard>
 
 				<ConditionsList>
 					{filteredConditions.length === 0 ? (

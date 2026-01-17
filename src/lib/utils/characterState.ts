@@ -11,6 +11,7 @@ import type {
 } from '../../types';
 import { assignSpellsToCharacter } from '../services/spellAssignment';
 import { getDefaultStorage } from '../storage';
+import { debug } from './debug';
 
 // Get character state from localStorage - OPTIMIZED: Uses typed storage utility
 export const getCharacterState = async (
@@ -95,7 +96,7 @@ export const initializeCharacterState = (
 
 	// Use spells from character data if they exist, otherwise auto-assign
 	let originalSpells: SpellData[] = [];
-	console.log('🔍 initializeCharacterState: Processing spells for character:', {
+	debug.spells('initializeCharacterState: Processing spells for character:', {
 		hasSpellsProperty: !!characterData.spells,
 		spellsLength: characterData.spells?.length || 0,
 		className: characterData.className,
@@ -105,14 +106,14 @@ export const initializeCharacterState = (
 	if (characterData.spells && characterData.spells.length > 0) {
 		// Use the spells that were saved with the character
 		originalSpells = characterData.spells;
-		console.log(
-			'🔍 Using saved spells from character data:',
+		debug.spells(
+			'Using saved spells from character data:',
 			originalSpells.map((s) => s.spellName)
 		);
 	} else if (characterData.className) {
 		// Fallback to auto-assignment if no spells were saved
-		console.log(
-			'🔍 No saved spells found, attempting auto-assignment for class:',
+		debug.spells(
+			'No saved spells found, attempting auto-assignment for class:',
 			characterData.className
 		);
 		try {
@@ -121,16 +122,16 @@ export const initializeCharacterState = (
 				level: characterData.level || 1,
 				selectedFeatureChoices: characterData.selectedFeatureChoices || '{}'
 			});
-			console.log(
-				'🔍 Auto-assigned spells (no saved spells):',
+			debug.spells(
+				'Auto-assigned spells (no saved spells):',
 				originalSpells.map((s) => s.spellName)
 			);
 		} catch (error) {
-			console.warn('🔍 Error auto-assigning spells:', error);
+			debug.warn('Spells', 'Error auto-assigning spells:', error);
 			originalSpells = [];
 		}
 	} else {
-		console.log('🔍 No className found, no spells will be assigned');
+		debug.spells('No className found, no spells will be assigned');
 	}
 
 	// Use existing state if available, otherwise initialize with defaults
@@ -195,7 +196,7 @@ export const initializeCharacterState = (
 			: existingState?.calculation
 	};
 
-	console.log('🔍 initializeCharacterState: Final state created:', {
+	debug.character('initializeCharacterState: Final state created:', {
 		spellsOriginal: finalState.spells.original.length,
 		spellsCurrent: finalState.spells.current.length,
 		spellsOriginalNames: finalState.spells.original.map((s) => s.spellName),
@@ -213,9 +214,9 @@ export const saveCharacterState = async (
 	try {
 		const storage = getDefaultStorage();
 		await storage.saveCharacterState(characterId, state);
-		console.log('🚀 OPTIMIZED: Character state saved (no duplicate fields)');
+		debug.storage('Character state saved (no duplicate fields)');
 	} catch (error) {
-		console.error('Error saving character state:', error);
+		debug.error('Storage', 'Error saving character state:', error);
 	}
 };
 
@@ -228,14 +229,14 @@ export const updateCharacterState = async (
 
 	// If no character state exists, try to create a minimal one from character data
 	if (!currentState) {
-		console.log('No character state found for ID:', characterId, '- creating minimal state');
+		debug.character('No character state found for ID:', characterId, '- creating minimal state');
 
 		// Get character data using typed storage utility
 		const storage = getDefaultStorage();
 		const character = await storage.getCharacterById(characterId);
 
 		if (!character) {
-			console.error('No character found for ID:', characterId);
+			debug.error('Character', 'No character found for ID:', characterId);
 			return;
 		}
 
@@ -395,7 +396,7 @@ export const revertToOriginal = async (
 ): Promise<void> => {
 	const currentState = await getCharacterState(characterId);
 	if (!currentState) {
-		console.log('No character state found for revert operation on ID:', characterId);
+		debug.character('No character state found for revert operation on ID:', characterId);
 		// Try to initialize the state first, then revert won't be needed since it will be at defaults
 		return;
 	}

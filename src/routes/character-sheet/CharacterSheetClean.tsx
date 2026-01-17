@@ -40,6 +40,7 @@ import Movement from './components/Movement';
 import RightColumnResources from './components/RightColumnResources';
 import DeathExhaustion from './components/DeathExhaustion';
 import Conditions from './components/Conditions';
+import ConditionsReference from './components/ConditionsReference';
 
 import PlayerNotes from './components/PlayerNotes';
 import DiceRoller from './components/DiceRoller';
@@ -1178,8 +1179,11 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 							{/* Features */}
 							<Features onFeatureClick={openFeaturePopup} />
 
-							{/* Conditions */}
+							{/* Conditions - Character's immunities/resistances/vulnerabilities */}
 							<Conditions conditionStatuses={conditionStatuses} />
+
+							{/* Conditions Reference - Complete list of all conditions */}
+							<ConditionsReference />
 
 							{/* Currency Section */}
 							<Currency isMobile={false} />

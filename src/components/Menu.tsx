@@ -169,6 +169,11 @@ function Menu() {
 					</StyledIcon>
 				</StyledMenuCard>
 			</StyledMenuGrid>
+
+			{/* Rules Version Note */}
+			<div className="absolute bottom-4 right-4 text-xs text-white/50">
+				Rules: DC20 v0.10
+			</div>
 		</StyledContainer>
 	);
 }

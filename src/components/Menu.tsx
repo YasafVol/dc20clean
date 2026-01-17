@@ -63,6 +63,32 @@ export const EquipmentIcon = () => (
 	</svg>
 );
 
+export const ConditionsIcon = () => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 24 24"
+		width="64"
+		height="64"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth="1.5"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+	>
+		{/* Book */}
+		<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+		<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+		{/* Alert/Status symbols */}
+		<path d="M12 7v4" />
+		<circle cx="12" cy="14" r="0.5" fill="currentColor" />
+		{/* Status indicators */}
+		<path d="M8 10h1" />
+		<path d="M15 10h1" />
+		<path d="M8 13h1" />
+		<path d="M15 13h1" />
+	</svg>
+);
+
 export const GroupIcon = () => (
 	<svg
 		id="Layer_1"
@@ -156,6 +182,16 @@ function Menu() {
 					</StyledTextContent>
 					<StyledIcon>
 						<SpellbookIcon />
+					</StyledIcon>
+				</StyledMenuCard>
+
+				<StyledMenuCard onClick={() => navigate('/conditions')}>
+					<StyledTextContent>
+						<StyledCardTitle>Conditions</StyledCardTitle>
+						<StyledCardDescription>Reference guide for all conditions.</StyledCardDescription>
+					</StyledTextContent>
+					<StyledIcon>
+						<ConditionsIcon />
 					</StyledIcon>
 				</StyledMenuCard>
 

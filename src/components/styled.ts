@@ -40,10 +40,40 @@ export const StyledSubtitle = styled.p`
 
 export const StyledMenuGrid = styled.div`
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+	grid-template-columns: repeat(2, 1fr);
 	gap: 1.5rem;
 	max-width: 900px;
 	width: 100%;
+
+	/* First row: 2 items, Second row: 3 items */
+	& > *:nth-child(n + 3) {
+		/* Items 3, 4, 5 go in second row */
+	}
+
+	/* Make 5 items fit: 2 on top, 3 on bottom */
+	@media (min-width: 600px) {
+		grid-template-columns: repeat(6, 1fr);
+
+		& > *:nth-child(1) {
+			grid-column: 1 / 4;
+		}
+		& > *:nth-child(2) {
+			grid-column: 4 / 7;
+		}
+		& > *:nth-child(3) {
+			grid-column: 1 / 3;
+		}
+		& > *:nth-child(4) {
+			grid-column: 3 / 5;
+		}
+		& > *:nth-child(5) {
+			grid-column: 5 / 7;
+		}
+	}
+
+	@media (max-width: 599px) {
+		grid-template-columns: 1fr;
+	}
 `;
 
 export const StyledMenuCard = styled.button`

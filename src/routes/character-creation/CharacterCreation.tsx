@@ -693,23 +693,37 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		<div className="bg-background text-foreground flex min-h-screen flex-col font-sans">
 			{/* Header with Navigation and Stepper */}
 			<header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
-				<div className="container flex min-h-16 items-center justify-between px-4 py-2">
+				{/* Mobile Stepper Progress Bar */}
+				<div className="bg-muted h-1 w-full md:hidden">
+					<div
+						className="bg-primary h-full transition-all duration-300"
+						style={{ width: `${(state.currentStep / maxStep) * 100}%` }}
+					/>
+				</div>
+
+				<div className="container flex min-h-16 items-center justify-between gap-4 px-4 py-2">
 					{/* Left: Previous Button */}
-					<div className="flex w-[120px] justify-start">
-						<Button variant="ghost" onClick={handlePrevious} className="gap-2">
-							← <span className="hidden sm:inline">Previous</span>
+					<div className="flex w-[140px] shrink-0 justify-start">
+						<Button
+							variant="default"
+							onClick={handlePrevious}
+							disabled={state.currentStep === 1}
+							className="gap-2"
+						>
+							←{' '}
+							<span className="hidden sm:inline">Previous</span>
 						</Button>
 					</div>
 
 					{/* Center: Stepper (Desktop) or Title (Mobile) */}
-					<div className="flex flex-1 justify-center">
+					<div className="flex min-w-0 flex-1 justify-center overflow-hidden">
 						{/* Mobile Title */}
-						<span className="text-primary text-lg font-bold md:hidden">
+						<span className="text-primary truncate text-lg font-bold md:hidden">
 							{editChar ? 'Edit' : 'Create'} Character
 						</span>
 
 						{/* Desktop Stepper */}
-						<div className="hidden flex-1 items-center justify-center gap-1 md:flex md:flex-wrap">
+						<div className="hidden items-center justify-center gap-1 md:flex md:flex-wrap">
 							{steps.map(({ number, label }, index) => {
 								const isActive = state.currentStep === number;
 								const isCompleted = isStepCompleted(number);
@@ -753,22 +767,18 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 						</div>
 					</div>
 
-					{/* Right: Next Button */}
-					<div className="flex w-[220px] items-center justify-end gap-3">
-						<AuthStatus />
+					{/* Right: Next Button + Auth */}
+					<div className="flex w-[140px] shrink-0 items-center justify-end gap-3">
+						<div className="hidden lg:block">
+							<AuthStatus />
+						</div>
 						<Button variant="default" onClick={handleNext} className="gap-2">
-							<span className="hidden sm:inline">{state.currentStep === maxStep ? 'Complete' : 'Next'}</span>{' '}
+							<span className="hidden sm:inline">
+								{state.currentStep === maxStep ? 'Complete' : 'Next'}
+							</span>{' '}
 							→
 						</Button>
 					</div>
-				</div>
-
-				{/* Mobile Stepper Progress Bar */}
-				<div className="bg-muted h-1 w-full md:hidden">
-					<div
-						className="bg-primary h-full transition-all duration-300"
-						style={{ width: `${(state.currentStep / maxStep) * 100}%` }}
-					/>
 				</div>
 			</header>
 

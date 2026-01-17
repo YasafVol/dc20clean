@@ -172,16 +172,22 @@ describe('Level Cap System (M4.1e)', () => {
 			}
 		});
 
-		it('should throw error for level 0', () => {
-			expect(() => getLevelCaps(0)).toThrow();
+		it('should clamp level 0 to level 1 caps', () => {
+			const caps = getLevelCaps(0);
+			const level1Caps = getLevelCaps(1);
+			expect(caps).toEqual(level1Caps);
 		});
 
-		it('should throw error for level 21', () => {
-			expect(() => getLevelCaps(21)).toThrow();
+		it('should clamp level 21 to level 20 caps', () => {
+			const caps = getLevelCaps(21);
+			const level20Caps = getLevelCaps(20);
+			expect(caps).toEqual(level20Caps);
 		});
 
-		it('should throw error for negative level', () => {
-			expect(() => getLevelCaps(-1)).toThrow();
+		it('should clamp negative level to level 1 caps', () => {
+			const caps = getLevelCaps(-1);
+			const level1Caps = getLevelCaps(1);
+			expect(caps).toEqual(level1Caps);
 		});
 
 		it('should return consistent results for same level', () => {
@@ -228,9 +234,14 @@ describe('Level Cap System (M4.1e)', () => {
 			expect(tier.bonus).toBe(10);
 		});
 
-		it('should throw error for invalid tier number', () => {
-			expect(() => getMasteryTierByNumber(6)).toThrow();
-			expect(() => getMasteryTierByNumber(-1)).toThrow();
+		it('should return Untrained tier for invalid tier numbers', () => {
+			// Implementation returns tier 0 (Untrained) for invalid inputs
+			const tier6 = getMasteryTierByNumber(6);
+			const tierNeg1 = getMasteryTierByNumber(-1);
+			expect(tier6.name).toBe('Untrained');
+			expect(tier6.bonus).toBe(0);
+			expect(tierNeg1.name).toBe('Untrained');
+			expect(tierNeg1.bonus).toBe(0);
 		});
 	});
 

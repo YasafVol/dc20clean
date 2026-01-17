@@ -23,7 +23,6 @@ import { commanderTalents } from './commander.talents';
 import { druidTalents } from './druid.talents';
 import { hunterTalents } from './hunter.talents';
 import { monkTalents } from './monk.talents';
-
 import { rogueTalents } from './rogue.talents';
 import { sorcererTalents } from './sorcerer.talents';
 import { spellbladeTalents } from './spellblade.talents';
@@ -94,7 +93,6 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 			{ name: 'Druid', talents: druidTalents },
 			{ name: 'Hunter', talents: hunterTalents },
 			{ name: 'Monk', talents: monkTalents },
-
 			{ name: 'Rogue', talents: rogueTalents },
 			{ name: 'Sorcerer', talents: sorcererTalents },
 			{ name: 'Spellblade', talents: spellbladeTalents },
@@ -102,8 +100,8 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 			{ name: 'Wizard', talents: wizardTalents }
 		];
 
-		it('should have talent files for all 14 classes', () => {
-			expect(allClassTalents).toHaveLength(14);
+		it('should have talent files for all 13 classes', () => {
+			expect(allClassTalents).toHaveLength(13);
 		});
 
 		it('should have at least 3 talents per class', () => {

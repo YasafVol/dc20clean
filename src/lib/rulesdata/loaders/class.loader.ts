@@ -62,10 +62,8 @@ const CLASS_METADATA: Record<string, { name: string; description: string }> = {
 	},
 	monk: {
 		name: 'Monk',
-		description:
-			'A disciplined martial artist who channels inner energy for rapid strikes and supernatural movement.'
+		description: 'A disciplined martial artist who channels inner energy for rapid strikes and supernatural movement.'
 	},
-
 	rogue: {
 		name: 'Rogue',
 		description:

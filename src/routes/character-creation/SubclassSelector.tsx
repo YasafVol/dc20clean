@@ -17,9 +17,15 @@ import { warlockClass } from '../../lib/rulesdata/classes-data/features/warlock_
 import { bardClass } from '../../lib/rulesdata/classes-data/features/bard_features';
 import { commanderClass } from '../../lib/rulesdata/classes-data/features/commander_features';
 import { monkClass } from '../../lib/rulesdata/classes-data/features/monk_features';
-import { cn } from '../../lib/utils';
-import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
-import { Badge } from '../../components/ui/badge';
+import {
+	FeatureCard,
+	FeatureTitle,
+	FeatureDescription,
+	BenefitsList,
+	BenefitItem,
+	BenefitName,
+	BenefitDescription
+} from './styles/shared/FeatureDisplay.styles';
 
 // Map of class IDs to their feature definitions
 const CLASS_FEATURES_MAP: Record<string, any> = {

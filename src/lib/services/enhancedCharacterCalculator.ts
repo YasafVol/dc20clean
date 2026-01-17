@@ -234,7 +234,6 @@ function getClassFeatures(classId: string): ClassDefinition | null {
 			return druidClass;
 		case 'commander':
 			return commanderClass;
-
 		default:
 			return null;
 	}

@@ -18,7 +18,6 @@ import { bardClass } from './features/bard_features';
 import { commanderClass } from './features/commander_features';
 import { monkClass } from './features/monk_features';
 
-
 // Map of class IDs to their feature definitions
 const CLASS_FEATURES_MAP: Record<string, any> = {
 	barbarian: barbarianClass,

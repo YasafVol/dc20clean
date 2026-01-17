@@ -98,7 +98,10 @@ const SelectContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
 	({ className, children, ...props }, ref) => {
 		const context = React.useContext(SelectContext);
 
-		if (!context?.open) return null;
+		// Render children hidden when closed so labels get registered via SelectItem useEffect
+		if (!context?.open) {
+			return <div className="hidden">{children}</div>;
+		}
 
 		return (
 			<>

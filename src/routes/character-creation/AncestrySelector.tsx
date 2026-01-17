@@ -6,6 +6,13 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/ca
 import { cn } from '../../lib/utils';
 import { Check } from 'lucide-react';
 
+// Helper to get all trait IDs for an ancestry
+function getAncestryTraitIds(ancestryId: string): string[] {
+	const ancestry = ancestriesData.find((a) => a.id === ancestryId);
+	if (!ancestry) return [];
+	return [...(ancestry.defaultTraitIds || []), ...(ancestry.expandedTraitIds || [])];
+}
+
 // Ancestry-specific icons using Unicode symbols and emojis
 const ancestryIcons: { [key: string]: string } = {
 	human: '👤',
@@ -66,7 +73,28 @@ function AncestrySelector() {
 				newAncestry2Id = null;
 			}
 
+			// Get traits belonging to the deselected ancestry and remove them
+			const traitsToRemove = new Set(getAncestryTraitIds(ancestryId));
+			const currentTraits = state.selectedTraitIds || [];
+			const filteredTraits = currentTraits.filter((traitId) => !traitsToRemove.has(traitId));
+
+			// Also clear any trait choices for the removed traits
+			const currentChoices = { ...state.selectedTraitChoices };
+			for (const traitId of traitsToRemove) {
+				// Remove any choices that start with this trait ID
+				Object.keys(currentChoices).forEach((key) => {
+					if (key.startsWith(`${traitId}-`)) {
+						delete currentChoices[key];
+					}
+				});
+			}
+
 			dispatch({ type: 'SET_ANCESTRY', ancestry1Id: newAncestry1Id, ancestry2Id: newAncestry2Id });
+			dispatch({ type: 'SET_TRAITS', selectedTraitIds: filteredTraits });
+			dispatch({
+				type: 'UPDATE_STORE',
+				updates: { selectedTraitChoices: currentChoices }
+			});
 		} else {
 			// Select
 			if (!state.ancestry1Id) {

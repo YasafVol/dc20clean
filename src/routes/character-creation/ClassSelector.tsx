@@ -127,11 +127,13 @@ function ClassSelector() {
 		dispatch({ type: 'SET_LEVEL', level: newLevel });
 	}
 
-	// In level-up mode, show levels from originalLevel + 1 to 5
+	// In level-up mode, show levels from originalLevel + 1 to 10 (DC20 v0.10 max level)
+	// DC20 v0.10 is a levels 1-10 system
+	const MAX_LEVEL = 10;
 	const availableLevels =
 		isLevelUpMode && originalLevel
-			? Array.from({ length: 5 - originalLevel }, (_, i) => originalLevel + i + 1)
-			: Array.from({ length: 5 }, (_, i) => i + 1);
+			? Array.from({ length: MAX_LEVEL - originalLevel }, (_, i) => originalLevel + i + 1)
+			: Array.from({ length: MAX_LEVEL }, (_, i) => i + 1);
 
 	return (
 		<div className="space-y-8">

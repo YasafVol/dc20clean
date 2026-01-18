@@ -13,9 +13,10 @@ export const spellbladeTalents: Talent[] = [
 		id: 'spellblade_sling_blade',
 		name: 'Sling-Blade',
 		category: 'Class',
+		// DC20 v0.10 p.160: "Requirements: Bound Weapon, Spellstrike, Level 3"
 		description:
-			'The range of your Attacks with Melee Weapons is increased by 2. When you use Spellstrike, the range of the Spell changes to match your Weapon’s range.',
-		prerequisites: { classId: 'spellblade', feature: 'Bound Weapon', level: 3 },
+			'The range of your Attacks with Melee Weapons is increased by 2. When you use Spellstrike, the range of the Spell changes to match your Weapon\'s range.',
+		prerequisites: { classId: 'spellblade', feature: 'Bound Weapon', otherFeature: 'Spellstrike', level: 3 },
 		effects: [
 			{
 				type: 'GRANT_ABILITY',

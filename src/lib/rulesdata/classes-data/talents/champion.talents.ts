@@ -20,14 +20,15 @@ export const championTalents: Talent[] = [
 		id: 'champion_disciplined_combatant',
 		name: 'Disciplined Combatant',
 		category: 'Class',
+		// DC20 v0.10 p.156: "Once on each of your turns, you can spend 2 SP to gain the benefit of Combat Readiness."
 		description:
-			'Once on each of your turns, you can spend 1 SP to gain the benefit of Combat Readiness. Additionally, you can use Second Wind without being Bloodied.',
+			'Once on each of your turns, you can spend 2 SP to gain the benefit of Combat Readiness. Additionally, you can use Second Wind without being Bloodied.',
 		prerequisites: { classId: 'champion', feature: 'Fighting Spirit', level: 3 },
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
 				target: 'disciplined_combatant',
-				value: 'Spend 1 SP for Combat Readiness benefit. Can use Second Wind while not Bloodied.'
+				value: 'Spend 2 SP for Combat Readiness benefit. Can use Second Wind while not Bloodied.'
 			}
 		]
 	}

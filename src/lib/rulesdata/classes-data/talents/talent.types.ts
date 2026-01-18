@@ -6,6 +6,7 @@ export interface TalentPrerequisites {
 	level?: number;
 	classId?: string; // e.g., 'barbarian'
 	feature?: string; // e.g., 'Rage'
+	otherFeature?: string; // Second required feature, e.g., 'Spellstrike' (DC20 v0.10)
 	subclass?: string; // e.g., 'Berserker'
 	other?: string; // For text-based requirements like "1 or more Monk Features"
 }
@@ -17,4 +18,6 @@ export interface Talent {
 	description: string;
 	effects: Effect[];
 	prerequisites?: TalentPrerequisites;
+	/** If false, talent can only be taken once. Defaults to true for General talents. */
+	stackable?: boolean;
 }

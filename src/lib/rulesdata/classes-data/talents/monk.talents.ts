@@ -21,14 +21,15 @@ export const monkTalents: Talent[] = [
 		id: 'monk_internal_damage',
 		name: 'Internal Damage',
 		category: 'Class',
+		// DC20 v0.10 p.158: "they take True damage at the start of each of their turns equal to the SP spent"
 		description:
-			'When you make an Unarmed Strike, you can spend any amount of SP to cause the target to make a Repeated Physical Save. Failure: They become Impaired for 1 minute and take Sonic damage equal to the SP spent at the start of their turns.',
+			'When you make an Unarmed Strike, you can spend SP to cause the target to make a Repeated Physical Save. Failure: They become Impaired for 1 minute and take True damage at the start of each of their turns equal to the SP spent.',
 		prerequisites: { classId: 'monk', other: '1 or more Monk Features', level: 3 },
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
 				target: 'internal_damage',
-				value: 'Spend SP on Unarmed Strike to cause Impaired and ongoing Sonic damage.'
+				value: 'Spend SP on Unarmed Strike to cause Impaired and ongoing True damage.'
 			}
 		]
 	},
@@ -36,15 +37,20 @@ export const monkTalents: Talent[] = [
 		id: 'monk_steel_fist',
 		name: 'Steel Fist',
 		category: 'Class',
+		// DC20 v0.10 p.158: "Your Unarmed Strikes gain the Impact Property."
 		description:
-			'Your Unarmed Strikes deal 2 damage but no longer have the Impact Property. Once on each of your turns, when you make a Melee Martial Attack, you can spend 1 SP to immediately make an Unarmed Strike against a creature within range.',
+			'Your Unarmed Strikes gain the Impact Property. Once on each of your turns, when you make a Melee Martial Attack, you can spend 1 SP to immediately make an Unarmed Strike against a creature within range. This Unarmed Strike is not subjected to the Multiple Check Penalty and does not advance that penalty.',
 		prerequisites: { classId: 'monk', feature: 'Monk Training', level: 3 },
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
-				target: 'steel_fist',
-				value:
-					'Unarmed Strikes deal 2 damage (lose Impact). Spend 1 SP for an extra Unarmed Strike.'
+				target: 'steel_fist_impact',
+				value: 'Unarmed Strikes gain Impact Property.'
+			},
+			{
+				type: 'GRANT_ABILITY',
+				target: 'steel_fist_flurry',
+				value: 'Spend 1 SP for an extra Unarmed Strike without MCP penalty.'
 			}
 		]
 	}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { resolveClassProgression } from '../../lib/rulesdata/classes-data/classProgressionResolver';
 import { allTalents } from '../../lib/rulesdata/classes-data/talents/talent.loader';
+import { generalTalents } from '../../lib/rulesdata/classes-data/talents/talents.data';
 import { CHARACTER_PATHS } from '../../lib/rulesdata/progression/paths/paths.data';
 import { MULTICLASS_TIERS, type MulticlassTier } from '../../lib/rulesdata/progression/multiclass';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
@@ -33,12 +34,16 @@ function LevelingChoices() {
 	);
 	const [resolvedProgression, setResolvedProgression] = useState<any>(null);
 
-	// Multiclass state
+	// Multiclass state - restore from context if available (UI3 fix)
 	const [selectedMulticlassOption, setSelectedMulticlassOption] = useState<MulticlassTier | null>(
-		null
+		state.selectedMulticlassOption || null
 	);
-	const [selectedMulticlassClass, setSelectedMulticlassClass] = useState<string>('');
-	const [selectedMulticlassFeature, setSelectedMulticlassFeature] = useState<string>('');
+	const [selectedMulticlassClass, setSelectedMulticlassClass] = useState<string>(
+		state.selectedMulticlassClass || ''
+	);
+	const [selectedMulticlassFeature, setSelectedMulticlassFeature] = useState<string>(
+		state.selectedMulticlassFeature || ''
+	);
 
 	// Resolve progression when class/level changes
 	useEffect(() => {
@@ -84,30 +89,12 @@ function LevelingChoices() {
 	);
 	const totalTalentsUsed = totalTalentsFromRecord + multiclassTalentUsed;
 
-	// Define General Talents
-	const generalTalents = [
-		{
-			id: 'general_attribute_increase',
-			name: 'Attribute Increase',
-			category: 'General',
-			description: 'You gain 1 Attribute Point to put into any Attribute of your choice.',
-			effects: [{ type: 'MODIFY_STAT', target: 'attributePoints', value: 1 }]
-		},
-		{
-			id: 'general_skill_increase',
-			name: 'Skill Point Increase',
-			category: 'General',
-			description: 'You gain 3 Skill Points to put into any Skill of your choice.',
-			effects: [{ type: 'MODIFY_STAT', target: 'skillPoints', value: 3 }]
-		},
-		{
-			id: 'general_trade_increase',
-			name: 'Trade Point Increase',
-			category: 'General',
-			description: 'You gain 3 Trade Points to put into any Trade of your choice.',
-			effects: [{ type: 'MODIFY_STAT', target: 'tradePoints', value: 3 }]
-		}
-	];
+	// General talents are now imported from canonical source (talents.data.ts)
+	// This ensures DC20 v0.10 correct values: Ancestry +4, Attribute +2, Skill +4
+	console.log('🎯 LevelingChoices: Using canonical generalTalents', {
+		count: generalTalents.length,
+		talents: generalTalents.map((t) => t.name)
+	});
 
 	// Filter class talents
 	const classTalents = allTalents.filter(

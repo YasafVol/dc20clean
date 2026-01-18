@@ -5,13 +5,15 @@ export const generalTalents: Talent[] = [
 		id: 'general_ancestry_increase',
 		name: 'Ancestry Increase',
 		category: 'General',
-		description: 'You gain 2 Ancestry Points.',
-		effects: [{ type: 'MODIFY_STAT', target: 'ancestryPoints', value: 2 }]
+		// DC20 v0.10 p.160: "You gain 4 Ancestry Points."
+		description: 'You gain 4 Ancestry Points.',
+		effects: [{ type: 'MODIFY_STAT', target: 'ancestryPoints', value: 4 }]
 	},
 	{
 		id: 'general_attribute_increase',
 		name: 'Attribute Increase',
 		category: 'General',
+		// DC20 v0.10 p.160: "You gain 2 Attribute Points to put into any Attribute of your choice."
 		description: 'You gain 2 Attribute Points to put into any Attributes of your choice.',
 		effects: [{ type: 'MODIFY_STAT', target: 'attributePoints', value: 2 }]
 	},
@@ -19,6 +21,7 @@ export const generalTalents: Talent[] = [
 		id: 'general_skill_increase',
 		name: 'Skill Increase',
 		category: 'General',
+		// DC20 v0.10 p.160: "You gain 4 Skill Points."
 		description:
 			'You gain 4 Skill Points. You can convert these to Trade or Language Points as normal.',
 		effects: [{ type: 'MODIFY_STAT', target: 'skillPoints', value: 4 }]
@@ -27,12 +30,15 @@ export const generalTalents: Talent[] = [
 		id: 'general_martial_expansion',
 		name: 'Martial Expansion',
 		category: 'General',
+		// DC20 v0.10 p.160: Combat Training (Weapons, Heavy Armors, all Shields), Stamina Regen, 2 Maneuvers
+		// Note: "You can only gain this Talent once."
 		description:
-			'You gain Combat Training with Weapons, Armor, and Shields. You learn 2 additional Maneuvers. You gain the Stamina Regen of a Class of your choice.',
+			'You gain Combat Training with Weapons, Heavy Armors, and all Shields. You learn 2 additional Maneuvers. You gain the Stamina Regen of a Class of your choice.',
+		stackable: false, // Can only gain once
 		effects: [
 			{ type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
-			{ type: 'GRANT_COMBAT_TRAINING', target: 'Armor', value: true },
-			{ type: 'GRANT_COMBAT_TRAINING', target: 'Shields', value: true },
+			{ type: 'GRANT_COMBAT_TRAINING', target: 'Heavy_Armor', value: true },
+			{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Shields', value: true },
 			{ type: 'MODIFY_STAT', target: 'maneuversKnown', value: 2 },
 			{
 				type: 'GRANT_ABILITY',
@@ -45,11 +51,13 @@ export const generalTalents: Talent[] = [
 		id: 'general_spellcasting_expansion',
 		name: 'Spellcasting Expansion',
 		category: 'General',
+		// DC20 v0.10 p.160-161: Combat Training (Spell Focuses), Spell List expansion, 3 Spells
+		// Note: Does NOT grant +2 MP. "You can only gain this Talent once."
 		description:
-			'You gain Combat Training with Spell Focuses. Your Maximum Mana Points increases by 2. Add 1 Spell Source or 3 Spell Schools to your Spell List. You learn 3 additional Spells.',
+			'You gain Combat Training with Spell Focuses. Add 1 Spell Source or 3 Spell Schools to your Spell List. You learn 3 additional Spells.',
+		stackable: false, // Can only gain once
 		effects: [
 			{ type: 'GRANT_COMBAT_TRAINING', target: 'Spell_Focuses', value: true },
-			{ type: 'MODIFY_STAT', target: 'mpMax', value: 2 },
 			{
 				type: 'GRANT_ABILITY',
 				target: 'spell_list_expansion',

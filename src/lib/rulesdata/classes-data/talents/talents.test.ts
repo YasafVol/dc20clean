@@ -58,6 +58,7 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 				'GRANT_COMBAT_TRAINING',
 				'GRANT_CHOICE',
 				'GRANT_SPELL',
+				'GRANT_RESISTANCE',
 				'GRANT_CANTRIP',
 				'GRANT_MANEUVER'
 			];
@@ -89,6 +90,77 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 			for (const talent of generalTalents) {
 				expect(talent.description.length).toBeGreaterThan(10);
 			}
+		});
+	});
+
+	describe('DC20 v0.10 Value Verification', () => {
+		// These tests verify the talents match the DC20 v0.10 rulebook values
+		// See LEVELING_GAPS_SPEC.md for full reference
+
+		it('should have Ancestry Increase granting +4 points (DC20 v0.10 p.160)', () => {
+			const ancestryTalent = generalTalents.find((t) => t.id === 'general_ancestry_increase');
+			expect(ancestryTalent).toBeDefined();
+			const modifyStatEffect = ancestryTalent?.effects.find(
+				(e) => e.type === 'MODIFY_STAT' && e.target === 'ancestryPoints'
+			);
+			expect(modifyStatEffect?.value).toBe(4);
+		});
+
+		it('should have Attribute Increase granting +2 points (DC20 v0.10 p.160)', () => {
+			const attributeTalent = generalTalents.find((t) => t.id === 'general_attribute_increase');
+			expect(attributeTalent).toBeDefined();
+			const modifyStatEffect = attributeTalent?.effects.find(
+				(e) => e.type === 'MODIFY_STAT' && e.target === 'attributePoints'
+			);
+			expect(modifyStatEffect?.value).toBe(2);
+		});
+
+		it('should have Skill Increase granting +4 points (DC20 v0.10 p.160)', () => {
+			const skillTalent = generalTalents.find((t) => t.id === 'general_skill_increase');
+			expect(skillTalent).toBeDefined();
+			const modifyStatEffect = skillTalent?.effects.find(
+				(e) => e.type === 'MODIFY_STAT' && e.target === 'skillPoints'
+			);
+			expect(modifyStatEffect?.value).toBe(4);
+		});
+
+		it('should have Martial Expansion granting 2 maneuvers (DC20 v0.10 p.160)', () => {
+			const martialTalent = generalTalents.find((t) => t.id === 'general_martial_expansion');
+			expect(martialTalent).toBeDefined();
+			const modifyStatEffect = martialTalent?.effects.find(
+				(e) => e.type === 'MODIFY_STAT' && e.target === 'maneuversKnown'
+			);
+			expect(modifyStatEffect?.value).toBe(2);
+		});
+
+		it('should have Spellcasting Expansion granting 3 spells without MP bonus (DC20 v0.10 p.160-161)', () => {
+			const spellcastingTalent = generalTalents.find(
+				(t) => t.id === 'general_spellcasting_expansion'
+			);
+			expect(spellcastingTalent).toBeDefined();
+
+			// Should grant 3 spells
+			const spellsEffect = spellcastingTalent?.effects.find(
+				(e) => e.type === 'MODIFY_STAT' && e.target === 'spellsKnown'
+			);
+			expect(spellsEffect?.value).toBe(3);
+
+			// Should NOT grant MP (this was incorrectly added before)
+			const mpEffect = spellcastingTalent?.effects.find(
+				(e) => e.type === 'MODIFY_STAT' && e.target === 'mpMax'
+			);
+			expect(mpEffect).toBeUndefined();
+		});
+
+		it('should have Martial/Spellcasting Expansion marked as non-stackable (DC20 v0.10)', () => {
+			const martialTalent = generalTalents.find((t) => t.id === 'general_martial_expansion');
+			const spellcastingTalent = generalTalents.find(
+				(t) => t.id === 'general_spellcasting_expansion'
+			);
+
+			// These talents say "You can only gain this Talent once."
+			expect(martialTalent?.stackable).toBe(false);
+			expect(spellcastingTalent?.stackable).toBe(false);
 		});
 	});
 
@@ -299,7 +371,8 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 				'GRANT_CHOICE',
 				'GRANT_SPELL',
 				'GRANT_CANTRIP',
-				'GRANT_MANEUVER'
+				'GRANT_MANEUVER',
+				'GRANT_RESISTANCE'
 			];
 
 			for (const talent of allTalents) {

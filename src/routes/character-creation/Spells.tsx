@@ -112,22 +112,29 @@ const Spells: React.FC = () => {
 		}
 
 		const filtered = allSpells.filter((spell) => {
-			// If no sources defined, allow all sources
+			// Source must always match (if sources are defined)
 			const hasMatchingSource =
 				globalMagicProfile.sources.length === 0 ||
 				spell.sources.some((source) => globalMagicProfile.sources.includes(source));
 
-			// If no schools defined, allow all schools
-			const isInAvailableSchool =
-				globalMagicProfile.schools.length === 0 ||
-				globalMagicProfile.schools.includes(spell.school);
+			// School OR Tag logic: spell qualifies if it matches school OR has a qualifying tag
+			const schoolsEmpty = globalMagicProfile.schools.length === 0;
+			const tagsEmpty = globalMagicProfile.tags.length === 0;
 
-			// If no tags defined, allow all tags (also allow spells with no tags)
-			const hasMatchingTag =
-				globalMagicProfile.tags.length === 0 ||
-				!spell.tags ||
-				spell.tags.length === 0 ||
-				spell.tags.some((tag) => globalMagicProfile.tags.includes(tag));
+			const matchesSchool = globalMagicProfile.schools.includes(spell.school);
+			const matchesTag = spell.tags?.some((tag) => globalMagicProfile.tags.includes(tag)) ?? false;
+
+			// DC20 Logic: Source AND (School OR Tag)
+			// - If both schools and tags are empty, allow all spells from matching source
+			// - If only schools defined, must match school
+			// - If only tags defined, must match tag
+			// - If both defined, can match either (OR logic - tags expand access)
+			const passesSchoolOrTag =
+				(schoolsEmpty && tagsEmpty) || // No restrictions
+				(!schoolsEmpty && matchesSchool) || // Matches allowed school
+				(!tagsEmpty && matchesTag); // Matches allowed tag (expands access)
+
+			const passes = hasMatchingSource && passesSchoolOrTag;
 
 			// Debug first few spells
 			if (allSpells.indexOf(spell) < 3) {
@@ -135,14 +142,17 @@ const Spells: React.FC = () => {
 					spellSources: spell.sources,
 					spellSchool: spell.school,
 					spellTags: spell.tags,
+					profileSchools: globalMagicProfile.schools,
+					profileTags: globalMagicProfile.tags,
 					hasMatchingSource,
-					isInAvailableSchool,
-					hasMatchingTag,
-					passes: hasMatchingSource && isInAvailableSchool && hasMatchingTag
+					matchesSchool,
+					matchesTag,
+					passesSchoolOrTag,
+					passes
 				});
 			}
 
-			return hasMatchingSource && isInAvailableSchool && hasMatchingTag;
+			return passes;
 		});
 
 		debug.spells('Filtered spells result', { count: filtered.length, total: allSpells.length });
@@ -269,8 +279,21 @@ const Spells: React.FC = () => {
 
 	// Handle spell selection with Smart Allocation (M3.20)
 	const handleSpellToggle = (spellId: string) => {
+		console.log('🔮 [Spells] handleSpellToggle called:', { spellId });
+
 		const spell = allSpells.find((s) => s.id === spellId);
-		if (!spell) return;
+		if (!spell) {
+			console.warn('🔮 [Spells] Spell not found:', spellId);
+			return;
+		}
+
+		console.log('🔮 [Spells] Spell found:', {
+			name: spell.name,
+			isCantrip: spell.isCantrip,
+			availableSlots: spellSlots.length,
+			currentSelections: Object.keys(selectedSpells).length,
+			slotTypes: spellSlots.map((s) => ({ id: s.id, type: s.type })).slice(0, 3)
+		});
 
 		setSelectedSpells((prev) => {
 			const newSelected = { ...prev };
@@ -334,24 +357,39 @@ const Spells: React.FC = () => {
 
 				if (fitsRestrictions) {
 					newSelected[slot.id] = spellId;
-					debug.spells('Spell auto-allocated', { spellId, slotId: slot.id, slotType: slot.type });
+					console.log('🔮 [Spells] Spell auto-allocated:', { spellId, slotId: slot.id, slotType: slot.type });
 					return newSelected;
 				}
 			}
 
+			console.warn('🔮 [Spells] No valid slot found for spell:', {
+				spellId,
+				spellName: spell.name,
+				isCantrip: spell.isCantrip,
+				emptySlotCount: emptySlots.length,
+				slotTypes: emptySlots.map((s) => s.type)
+			});
 			return prev; // No valid slot found
 		});
 	};
 
 	// Save selections to character state
 	useEffect(() => {
+		console.log('🔮 [Spells] Save effect triggered:', {
+			isInitialLoad: isInitialLoad.current,
+			hasInitialized: hasInitialized.current,
+			selectedSpellsCount: Object.keys(selectedSpells).length
+		});
+
 		// Skip on initial load to prevent infinite loops
 		if (isInitialLoad.current) {
+			console.log('🔮 [Spells] Skipping - initial load');
 			return;
 		}
 
 		// Skip if we haven't initialized yet
 		if (!hasInitialized.current) {
+			console.log('🔮 [Spells] Skipping - not initialized');
 			return;
 		}
 
@@ -360,10 +398,14 @@ const Spells: React.FC = () => {
 		// For Record comparison, we can use a simple JSON stringify
 		const spellsChanged = JSON.stringify(selectedSpells) !== JSON.stringify(currentStateSpells);
 
+		console.log('🔮 [Spells] Checking for changes:', {
+			spellsChanged,
+			selectedSpells,
+			currentStateSpells
+		});
+
 		if (spellsChanged) {
-			debug.spells('Spells: Dispatching update:', {
-				spells: selectedSpells
-			});
+			console.log('🔮 [Spells] Dispatching update:', { spells: selectedSpells });
 			dispatch({
 				type: 'UPDATE_SPELLS_AND_MANEUVERS',
 				spells: selectedSpells,
@@ -605,77 +647,121 @@ const Spells: React.FC = () => {
 						</div>
 					</div>
 
-					{/* --- Spell Pockets Section (M3.20) --- */}
+					{/* --- Spell Slots Section (M3.20) --- */}
 					<div className="space-y-4">
-						<h3 className="font-cinzel flex items-center gap-2 text-lg font-bold">
-							<Search className="text-primary h-5 w-5" /> Spell Pockets
-						</h3>
-						<ScrollArea className="border-border w-full rounded-xl border bg-black/20 p-4 whitespace-nowrap">
-							<div className="flex gap-4 pb-2">
-								{spellSlots.map((slot) => {
-									const assignedSpellId = selectedSpells[slot.id];
-									const assignedSpell = assignedSpellId
-										? allSpells.find((s) => s.id === assignedSpellId)
-										: null;
-									const isActive = activeSlotId === slot.id;
+						<details className="group" open>
+							<summary className="font-cinzel flex cursor-pointer items-center gap-2 text-lg font-bold list-none">
+								<Wand2 className="text-primary h-5 w-5" />
+								<span>Spell Slots to Fill</span>
+								<Badge variant="outline" className="ml-2 font-mono text-xs">
+									{Object.keys(selectedSpells).length} / {spellSlots.length}
+								</Badge>
+								<span className="text-muted-foreground ml-auto text-sm font-normal group-open:hidden">
+									Click to expand
+								</span>
+								<span className="text-muted-foreground ml-auto text-sm font-normal hidden group-open:inline">
+									Click to collapse
+								</span>
+							</summary>
 
-									return (
-										<Card
-											key={slot.id}
-											className={cn(
-												'min-w-[220px] shrink-0 cursor-pointer border-2 shadow-sm transition-all',
-												isActive
-													? 'border-primary bg-primary/10 ring-primary/20 ring-2'
-													: 'border-border bg-card/60 hover:border-primary/40',
-												assignedSpell ? 'border-primary/40' : 'border-dashed opacity-80'
-											)}
-											onClick={() => setActiveSlotId(isActive ? null : slot.id)}
-										>
-											<CardHeader className="p-3 pb-1">
-												<div className="flex items-center justify-between">
-													<span className="text-muted-foreground line-clamp-1 text-[10px] font-bold tracking-wider uppercase">
-														{slot.sourceName}
-													</span>
-													{slot.isGlobal ? (
-														<Unlock className="text-muted-foreground/30 h-3 w-3" />
-													) : (
-														<Lock className="text-primary/40 h-3 w-3" />
-													)}
-												</div>
-												<CardTitle className="truncate text-sm font-bold">
-													{assignedSpell
-														? assignedSpell.name
-														: `Empty ${slot.type === 'cantrip' ? 'Cantrip' : 'Spell'}`}
-												</CardTitle>
-											</CardHeader>
-											<CardContent className="p-3 pt-1">
-												<div className="flex items-center justify-between gap-1.5">
-													<div className="flex gap-1">
-														<Badge
-															variant="secondary"
-															className="bg-primary/5 h-4 px-1.5 py-0 text-[10px] tracking-tighter uppercase"
+							<div className="mt-4 space-y-3">
+								{/* Cantrip Slots */}
+								{spellSlots.filter((s) => s.type === 'cantrip').length > 0 && (
+									<div className="space-y-2">
+										<h4 className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
+											Cantrips
+										</h4>
+										<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+											{spellSlots
+												.filter((s) => s.type === 'cantrip')
+												.map((slot) => {
+													const assignedSpellId = selectedSpells[slot.id];
+													const assignedSpell = assignedSpellId
+														? allSpells.find((s) => s.id === assignedSpellId)
+														: null;
+													const isActive = activeSlotId === slot.id;
+
+													return (
+														<div
+															key={slot.id}
+															className={cn(
+																'flex cursor-pointer items-center justify-between rounded-lg border-2 px-3 py-2 transition-all',
+																isActive
+																	? 'border-primary bg-primary/10'
+																	: 'border-border bg-card/60 hover:border-primary/40',
+																assignedSpell ? 'border-primary/40' : 'border-dashed opacity-80'
+															)}
+															onClick={() => setActiveSlotId(isActive ? null : slot.id)}
 														>
-															{slot.type === 'cantrip' ? 'Cantrip' : 'Spell'}
-														</Badge>
-														{!slot.isGlobal && (
-															<Badge
-																variant="outline"
-																className="border-primary/20 text-primary/80 h-4 px-1.5 py-0 text-[10px]"
-															>
-																Specialized
-															</Badge>
-														)}
-													</div>
-													{assignedSpell && (
-														<span className="text-muted-foreground text-[10px] italic">Filled</span>
-													)}
-												</div>
-											</CardContent>
-										</Card>
-									);
-								})}
+															<div className="flex items-center gap-2 overflow-hidden">
+																{assignedSpell ? (
+																	<span className="truncate font-medium">{assignedSpell.name}</span>
+																) : (
+																	<span className="text-muted-foreground italic">Empty</span>
+																)}
+															</div>
+															<div className="flex shrink-0 items-center gap-1">
+																<span className="text-muted-foreground/60 text-[10px] uppercase">
+																	{slot.sourceName}
+																</span>
+																{!slot.isGlobal && <Lock className="text-primary/40 h-3 w-3" />}
+															</div>
+														</div>
+													);
+												})}
+										</div>
+									</div>
+								)}
+
+								{/* Spell Slots */}
+								{spellSlots.filter((s) => s.type === 'spell').length > 0 && (
+									<div className="space-y-2">
+										<h4 className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
+											Spells
+										</h4>
+										<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+											{spellSlots
+												.filter((s) => s.type === 'spell')
+												.map((slot) => {
+													const assignedSpellId = selectedSpells[slot.id];
+													const assignedSpell = assignedSpellId
+														? allSpells.find((s) => s.id === assignedSpellId)
+														: null;
+													const isActive = activeSlotId === slot.id;
+
+													return (
+														<div
+															key={slot.id}
+															className={cn(
+																'flex cursor-pointer items-center justify-between rounded-lg border-2 px-3 py-2 transition-all',
+																isActive
+																	? 'border-primary bg-primary/10'
+																	: 'border-border bg-card/60 hover:border-primary/40',
+																assignedSpell ? 'border-primary/40' : 'border-dashed opacity-80'
+															)}
+															onClick={() => setActiveSlotId(isActive ? null : slot.id)}
+														>
+															<div className="flex items-center gap-2 overflow-hidden">
+																{assignedSpell ? (
+																	<span className="truncate font-medium">{assignedSpell.name}</span>
+																) : (
+																	<span className="text-muted-foreground italic">Empty</span>
+																)}
+															</div>
+															<div className="flex shrink-0 items-center gap-1">
+																<span className="text-muted-foreground/60 text-[10px] uppercase">
+																	{slot.sourceName}
+																</span>
+																{!slot.isGlobal && <Lock className="text-primary/40 h-3 w-3" />}
+															</div>
+														</div>
+													);
+												})}
+										</div>
+									</div>
+								)}
 							</div>
-						</ScrollArea>
+						</details>
 					</div>
 
 					{filteredSpells.length === 0 ? (

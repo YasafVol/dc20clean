@@ -307,12 +307,16 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 	const ancestry = character.ancestry1Name || character.ancestry1Id || '';
 	const classAndSubclass = character.className || character.classId || '';
 
-	// Build features field: class features + ancestry traits
+	// Build features field: class features + ancestry traits + talents + spells + maneuvers
 	const featuresParts: string[] = [];
 	const unlockedFeatureIds = (character as any).unlockedFeatureIds || [];
 	const selectedTraitIds = (character as any).selectedTraitIds || [];
 	const selectedSubclass = (character as any).selectedSubclass;
+	const spells = character.spells || [];
+	const maneuvers = character.maneuvers || [];
+	const selectedTalents = (character as any).selectedTalents;
 
+	// Class Features
 	if (unlockedFeatureIds.length > 0 || selectedSubclass) {
 		const classFeatureText = formatClassFeatures(
 			unlockedFeatureIds,
@@ -325,12 +329,29 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 		}
 	}
 
+	// Ancestry Traits
 	if (selectedTraitIds.length > 0) {
 		const traitText = formatAncestryTraits(selectedTraitIds);
 		if (traitText) {
 			featuresParts.push('[Ancestry Traits]');
 			featuresParts.push(traitText);
 		}
+	}
+
+	// Talents
+	const talentText = formatTalents(selectedTalents);
+	if (talentText) {
+		featuresParts.push('[Talents]');
+		featuresParts.push(talentText);
+	}
+
+	// Spells and Maneuvers
+	const spellManeuverText = formatSpellsAndManeuvers(
+		spells as SpellData[],
+		maneuvers as ManeuverData[]
+	);
+	if (spellManeuverText) {
+		featuresParts.push(spellManeuverText);
 	}
 
 	const features = featuresParts.join('\n');
@@ -555,29 +576,28 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 		{ name: '', damage: '', type: '', notes: '' }
 	];
 
-	// Pools & resources
+	// Pools & resources - prioritize calculated values (finalXXX) over characterState
 	const current = character.characterState?.resources?.current || ({} as any);
-	const original = character.characterState?.resources?.original || ({} as any);
 	const hitPoints = {
-		max: original.maxHP ?? character.finalHPMax ?? 0,
-		current: current.currentHP ?? 0,
+		max: character.finalHPMax ?? 0,
+		current: current.currentHP ?? character.finalHPMax ?? 0,
 		temp: current.tempHP ?? 0
 	};
 	const stamina = {
-		max: original.maxSP ?? character.finalSPMax ?? 0,
-		current: current.currentSP ?? 0
+		max: character.finalSPMax ?? 0,
+		current: current.currentSP ?? character.finalSPMax ?? 0
 	};
 	const mana = {
-		max: original.maxMP ?? character.finalMPMax ?? 0,
-		current: current.currentMP ?? 0
+		max: character.finalMPMax ?? 0,
+		current: current.currentMP ?? character.finalMPMax ?? 0
 	};
 	const grit = {
-		cap: original.maxGritPoints ?? character.finalGritPoints ?? 0,
-		current: current.currentGritPoints ?? 0
+		cap: character.finalGritPoints ?? 0,
+		current: current.currentGritPoints ?? character.finalGritPoints ?? 0
 	};
 	const restPoints = {
-		cap: original.maxRestPoints ?? character.finalRestPoints ?? 0,
-		current: current.currentRestPoints ?? 0
+		cap: character.finalRestPoints ?? 0,
+		current: current.currentRestPoints ?? character.finalRestPoints ?? 0
 	};
 	const resources = new Array(9).fill(0).map(() => ({ label: '', cap: 0, current: 0 }));
 
@@ -684,26 +704,8 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 		supplies: new Array(11).fill(0).map(() => ({ label: '', amount: 0 }))
 	};
 
-	// Build misc field: spells + maneuvers + talents
-	const miscParts: string[] = [];
-	const spells = character.spells || [];
-	const maneuvers = character.maneuvers || [];
-	const selectedTalents = (character as any).selectedTalents;
-
-	const spellManeuverText = formatSpellsAndManeuvers(
-		spells as SpellData[],
-		maneuvers as ManeuverData[]
-	);
-	if (spellManeuverText) {
-		miscParts.push(spellManeuverText);
-	}
-
-	const talentText = formatTalents(selectedTalents);
-	if (talentText) {
-		miscParts.push(`[Talents] ${talentText}`);
-	}
-
-	const misc = miscParts.join('\n');
+	// Misc field - content moved to features field
+	const misc = '';
 	const deathThreshold = character.finalDeathThreshold ?? 0;
 	const bloodiedValue =
 		(character as any).bloodiedValue ?? Math.ceil((character.finalHPMax ?? 0) / 2);
@@ -799,12 +801,16 @@ export function transformCalculatedCharacterToPdfData(
 	const ancestry = saved.ancestry1Name || saved.ancestry1Id || '';
 	const classAndSubclass = stats.className || saved.className || saved.classId || '';
 
-	// Build features field: class features + ancestry traits
+	// Build features field: class features + ancestry traits + talents + spells + maneuvers
 	const featuresParts: string[] = [];
 	const unlockedFeatureIds = result.levelProgression?.unlockedFeatureIds || [];
 	const selectedTraitIds = (saved as any).selectedTraitIds || [];
 	const selectedSubclass = (saved as any).selectedSubclass;
+	const spells = saved.spells || [];
+	const maneuvers = saved.maneuvers || [];
+	const selectedTalents = (saved as any).selectedTalents;
 
+	// Class Features
 	if (unlockedFeatureIds.length > 0 || selectedSubclass) {
 		const classFeatureText = formatClassFeatures(
 			unlockedFeatureIds,
@@ -817,12 +823,29 @@ export function transformCalculatedCharacterToPdfData(
 		}
 	}
 
+	// Ancestry Traits
 	if (selectedTraitIds.length > 0) {
 		const traitText = formatAncestryTraits(selectedTraitIds);
 		if (traitText) {
 			featuresParts.push('[Ancestry Traits]');
 			featuresParts.push(traitText);
 		}
+	}
+
+	// Talents
+	const talentText = formatTalents(selectedTalents);
+	if (talentText) {
+		featuresParts.push('[Talents]');
+		featuresParts.push(talentText);
+	}
+
+	// Spells and Maneuvers
+	const spellManeuverText = formatSpellsAndManeuvers(
+		spells as SpellData[],
+		maneuvers as ManeuverData[]
+	);
+	if (spellManeuverText) {
+		featuresParts.push(spellManeuverText);
 	}
 
 	const features = featuresParts.join('\n');
@@ -1057,26 +1080,8 @@ export function transformCalculatedCharacterToPdfData(
 		supplies: new Array(11).fill(0).map(() => ({ label: '', amount: 0 }))
 	};
 
-	// Build misc field: spells + maneuvers + talents
-	const miscParts: string[] = [];
-	const spells = saved.spells || [];
-	const maneuvers = saved.maneuvers || [];
-	const selectedTalents = (saved as any).selectedTalents;
-
-	const spellManeuverText = formatSpellsAndManeuvers(
-		spells as SpellData[],
-		maneuvers as ManeuverData[]
-	);
-	if (spellManeuverText) {
-		miscParts.push(spellManeuverText);
-	}
-
-	const talentText = formatTalents(selectedTalents);
-	if (talentText) {
-		miscParts.push(`[Talents] ${talentText}`);
-	}
-
-	const misc = miscParts.join('\n');
+	// Misc field - content moved to features field
+	const misc = '';
 	const deathThreshold = stats.finalDeathThreshold ?? 0;
 	const bloodiedValue = (saved as any).bloodiedValue ?? Math.ceil((stats.finalHPMax ?? 0) / 2);
 	const wellBloodiedValue =

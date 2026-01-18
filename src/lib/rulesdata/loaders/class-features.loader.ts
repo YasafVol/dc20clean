@@ -36,6 +36,7 @@ export interface ClassFeatureBenefit {
 }
 
 export interface ClassFeature {
+	id?: string;
 	featureName: string;
 	levelGained: number;
 	description: string;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useCharacter } from '../../lib/stores/characterContext';
+import { useCharacter, clearCharacterDraft } from '../../lib/stores/characterContext';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
 import AncestrySelector from './AncestrySelector.tsx';

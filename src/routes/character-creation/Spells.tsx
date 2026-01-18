@@ -55,9 +55,7 @@ const Spells: React.FC = () => {
 
 	// Calculate available spells based on class and level
 	// Note: classId comparison is case-sensitive, so ensure consistent casing
-	const classData = classesData.find(
-		(c) => c.id.toLowerCase() === state.classId?.toLowerCase()
-	);
+	const classData = classesData.find((c) => c.id.toLowerCase() === state.classId?.toLowerCase());
 
 	const spellSlots = calculationResult?.spellsKnownSlots || [];
 	const globalMagicProfile = calculationResult?.globalMagicProfile;
@@ -83,7 +81,7 @@ const Spells: React.FC = () => {
 
 	// Calculate available spells for the character based on Global Profile
 	const availableSpells = useMemo(() => {
-		console.log('🔮 [Spells] Calculating available spells:', {
+		debug.spells('Calculating available spells:', {
 			hasClassData: !!classData,
 			classDataId: classData?.id,
 			hasGlobalMagicProfile: !!globalMagicProfile,
@@ -95,7 +93,7 @@ const Spells: React.FC = () => {
 		});
 
 		if (!classData || !globalMagicProfile) {
-			console.warn('🔮 [Spells] No class data or global magic profile - returning empty', {
+			debug.spells('No class data or global magic profile - returning empty', {
 				stateClassId: state.classId,
 				classData,
 				globalMagicProfile
@@ -105,7 +103,7 @@ const Spells: React.FC = () => {
 
 		// Debug: Log first few spells to see their structure
 		if (allSpells.length > 0) {
-			console.log('🔮 [Spells] Sample spell structure:', {
+			debug.spells('Sample spell structure:', {
 				spell: allSpells[0],
 				sources: allSpells[0].sources,
 				school: allSpells[0].school,
@@ -121,7 +119,8 @@ const Spells: React.FC = () => {
 
 			// If no schools defined, allow all schools
 			const isInAvailableSchool =
-				globalMagicProfile.schools.length === 0 || globalMagicProfile.schools.includes(spell.school);
+				globalMagicProfile.schools.length === 0 ||
+				globalMagicProfile.schools.includes(spell.school);
 
 			// If no tags defined, allow all tags (also allow spells with no tags)
 			const hasMatchingTag =
@@ -146,7 +145,7 @@ const Spells: React.FC = () => {
 			return hasMatchingSource && isInAvailableSchool && hasMatchingTag;
 		});
 
-		console.log('🔮 [Spells] Filtered result:', { count: filtered.length, total: allSpells.length });
+		debug.spells('Filtered spells result', { count: filtered.length, total: allSpells.length });
 		return filtered;
 	}, [classData, globalMagicProfile, calculationResult, state.classId]);
 
@@ -223,9 +222,14 @@ const Spells: React.FC = () => {
 					if (activeSlot.specificRestrictions) {
 						const sr = activeSlot.specificRestrictions;
 						if (sr.exactSpellId && spell.id !== sr.exactSpellId) return false;
-						if (sr.sources && sr.sources.length > 0 && !spell.sources.some((s) => sr.sources!.includes(s)))
+						if (
+							sr.sources &&
+							sr.sources.length > 0 &&
+							!spell.sources.some((s) => sr.sources!.includes(s))
+						)
 							return false;
-						if (sr.schools && sr.schools.length > 0 && !sr.schools.includes(spell.school)) return false;
+						if (sr.schools && sr.schools.length > 0 && !sr.schools.includes(spell.school))
+							return false;
 						if (sr.tags && sr.tags.length > 0 && !spell.tags?.some((t) => sr.tags!.includes(t)))
 							return false;
 					}
@@ -272,7 +276,9 @@ const Spells: React.FC = () => {
 			const newSelected = { ...prev };
 
 			// 1. If spell is already selected, remove it
-			const existingSlotId = Object.keys(newSelected).find((slotId) => newSelected[slotId] === spellId);
+			const existingSlotId = Object.keys(newSelected).find(
+				(slotId) => newSelected[slotId] === spellId
+			);
 			if (existingSlotId) {
 				delete newSelected[existingSlotId];
 				debug.spells('Spell deselected', { spellId, slotId: existingSlotId });
@@ -314,7 +320,11 @@ const Spells: React.FC = () => {
 				if (slot.specificRestrictions) {
 					const sr = slot.specificRestrictions;
 					if (sr.exactSpellId && spell.id !== sr.exactSpellId) fitsRestrictions = false;
-					if (sr.sources && sr.sources.length > 0 && !spell.sources.some((s) => sr.sources!.includes(s)))
+					if (
+						sr.sources &&
+						sr.sources.length > 0 &&
+						!spell.sources.some((s) => sr.sources!.includes(s))
+					)
 						fitsRestrictions = false;
 					if (sr.schools && sr.schools.length > 0 && !sr.schools.includes(spell.school))
 						fitsRestrictions = false;
@@ -388,18 +398,18 @@ const Spells: React.FC = () => {
 	}
 
 	return (
-		<div className="mx-auto max-w-7xl space-y-8 animate-in fade-in duration-500">
+		<div className="animate-in fade-in mx-auto max-w-7xl space-y-8 duration-500">
 			{/* Stage Header */}
-			<div className="relative overflow-hidden rounded-2xl border border-border bg-black/40 p-8 py-12 shadow-2xl">
+			<div className="border-border relative overflow-hidden rounded-2xl border bg-black/40 p-8 py-12 shadow-2xl">
 				<div className="relative z-10 flex flex-col justify-between gap-8 md:flex-row md:items-center">
 					<div className="max-w-2xl space-y-4">
 						<div className="flex items-center gap-3">
-							<div className="rounded-lg bg-primary/20 p-2">
+							<div className="bg-primary/20 rounded-lg p-2">
 								<Wand2 className="text-primary h-6 w-6" />
 							</div>
 							<Badge
 								variant="outline"
-								className="border-primary/30 text-primary px-3 py-1 uppercase tracking-widest"
+								className="border-primary/30 text-primary px-3 py-1 tracking-widest uppercase"
 							>
 								Spells
 							</Badge>
@@ -414,9 +424,9 @@ const Spells: React.FC = () => {
 					</div>
 
 					{/* Selection Summary Card */}
-					<Card className="min-w-[280px] border-primary/20 bg-black/60 backdrop-blur-sm">
+					<Card className="border-primary/20 min-w-[280px] bg-black/60 backdrop-blur-sm">
 						<CardContent className="space-y-4 p-6">
-							<h3 className="font-cinzel flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-primary/80">
+							<h3 className="font-cinzel text-primary/80 flex items-center gap-2 text-sm font-bold tracking-wider uppercase">
 								<Info className="h-4 w-4" /> Selection Summary
 							</h3>
 
@@ -446,11 +456,11 @@ const Spells: React.FC = () => {
 							</div>
 
 							{cantripsRemaining > 0 || spellsRemaining > 0 ? (
-								<p className="border-t border-white/5 pt-2 text-center text-[10px] italic text-muted-foreground">
+								<p className="text-muted-foreground border-t border-white/5 pt-2 text-center text-[10px] italic">
 									You have choices remaining
 								</p>
 							) : (
-								<p className="border-t border-primary/10 pt-2 text-center text-[10px] italic text-primary/60">
+								<p className="border-primary/10 text-primary/60 border-t pt-2 text-center text-[10px] italic">
 									All choices complete
 								</p>
 							)}
@@ -459,21 +469,21 @@ const Spells: React.FC = () => {
 				</div>
 
 				{/* Background Decoration */}
-				<div className="absolute right-0 top-0 -mr-20 -mt-20 h-64 w-64 rounded-full bg-primary/5 blur-[100px]" />
+				<div className="bg-primary/5 absolute top-0 right-0 -mt-20 -mr-20 h-64 w-64 rounded-full blur-[100px]" />
 				<div className="absolute bottom-0 left-0 -mb-20 -ml-20 h-64 w-64 rounded-full bg-purple-500/5 blur-[100px]" />
 			</div>
 
 			{availableSpells.length === 0 ? (
 				<div className="border-border text-muted-foreground rounded-2xl border-2 border-dashed bg-black/10 py-24 text-center">
-					<div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/5">
+					<div className="bg-primary/5 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full">
 						<Wand2 className="text-primary/40 h-8 w-8" />
 					</div>
 					<h3 className="font-cinzel mb-3 text-2xl text-white">No Spells Available</h3>
 					<p className="text-muted-foreground mx-auto max-w-md text-base leading-relaxed">
-						Your class does not have access to any spells in the current spell library, or there may be a configuration issue.
-						Please check your class selection.
+						Your class does not have access to any spells in the current spell library, or there may
+						be a configuration issue. Please check your class selection.
 					</p>
-					<div className="text-muted-foreground/60 mx-auto mt-4 max-w-md space-y-1 text-left text-xs font-mono">
+					<div className="text-muted-foreground/60 mx-auto mt-4 max-w-md space-y-1 text-left font-mono text-xs">
 						<p>State ClassId: {state.classId || 'undefined'}</p>
 						<p>ClassData Found: {classData ? `yes (${classData.id})` : 'no'}</p>
 						<p>GlobalMagicProfile: {globalMagicProfile ? 'yes' : 'no'}</p>
@@ -496,7 +506,7 @@ const Spells: React.FC = () => {
 									<select
 										value={sourceFilter}
 										onChange={(e) => setSourceFilter(e.target.value as SpellSource | 'all')}
-										className="border-border bg-background focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1"
+										className="border-border bg-background focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
 									>
 										<option value="all">All Sources</option>
 										{Object.values(SpellSource).map((source) => (
@@ -513,7 +523,7 @@ const Spells: React.FC = () => {
 									<select
 										value={schoolFilter}
 										onChange={(e) => setSchoolFilter(e.target.value as SpellSchool | 'all')}
-										className="border-border bg-background focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1"
+										className="border-border bg-background focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
 									>
 										<option value="all">All Schools</option>
 										{Object.values(SpellSchool).map((school) => (
@@ -526,13 +536,13 @@ const Spells: React.FC = () => {
 
 								{/* Tag Filter */}
 								<div className="space-y-2">
-									<label className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
+									<label className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
 										Tag
 									</label>
 									<select
 										value={tagFilter}
 										onChange={(e) => setTagFilter(e.target.value as SpellTag | 'all')}
-										className="border-border bg-background focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1"
+										className="border-border bg-background focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
 									>
 										<option value="all">All Tags</option>
 										{availableTags.map((tag) => (
@@ -545,13 +555,13 @@ const Spells: React.FC = () => {
 
 								{/* Cost Filter */}
 								<div className="space-y-2">
-									<label className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
+									<label className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
 										Type/Cost
 									</label>
 									<select
 										value={costFilter}
 										onChange={(e) => setCostFilter(e.target.value as CostFilter)}
-										className="border-border bg-background focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1"
+										className="border-border bg-background focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
 									>
 										<option value="all">Any Cost</option>
 										<option value="cantrip">Cantrip (0 MP)</option>
@@ -563,13 +573,13 @@ const Spells: React.FC = () => {
 
 								{/* Sustained Filter */}
 								<div className="space-y-2">
-									<label className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
+									<label className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
 										Duration
 									</label>
 									<select
 										value={sustainedFilter}
 										onChange={(e) => setSustainedFilter(e.target.value as SustainedFilter)}
-										className="border-border bg-background focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1"
+										className="border-border bg-background focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
 									>
 										<option value="all">Any Duration</option>
 										<option value="yes">Sustained Only</option>
@@ -600,7 +610,7 @@ const Spells: React.FC = () => {
 						<h3 className="font-cinzel flex items-center gap-2 text-lg font-bold">
 							<Search className="text-primary h-5 w-5" /> Spell Pockets
 						</h3>
-						<ScrollArea className="border-border w-full whitespace-nowrap rounded-xl border bg-black/20 p-4">
+						<ScrollArea className="border-border w-full rounded-xl border bg-black/20 p-4 whitespace-nowrap">
 							<div className="flex gap-4 pb-2">
 								{spellSlots.map((slot) => {
 									const assignedSpellId = selectedSpells[slot.id];
@@ -615,7 +625,7 @@ const Spells: React.FC = () => {
 											className={cn(
 												'min-w-[220px] shrink-0 cursor-pointer border-2 shadow-sm transition-all',
 												isActive
-													? 'border-primary bg-primary/10 ring-2 ring-primary/20'
+													? 'border-primary bg-primary/10 ring-primary/20 ring-2'
 													: 'border-border bg-card/60 hover:border-primary/40',
 												assignedSpell ? 'border-primary/40' : 'border-dashed opacity-80'
 											)}
@@ -623,7 +633,7 @@ const Spells: React.FC = () => {
 										>
 											<CardHeader className="p-3 pb-1">
 												<div className="flex items-center justify-between">
-													<span className="text-muted-foreground line-clamp-1 text-[10px] font-bold uppercase tracking-wider">
+													<span className="text-muted-foreground line-clamp-1 text-[10px] font-bold tracking-wider uppercase">
 														{slot.sourceName}
 													</span>
 													{slot.isGlobal ? (
@@ -643,14 +653,14 @@ const Spells: React.FC = () => {
 													<div className="flex gap-1">
 														<Badge
 															variant="secondary"
-															className="h-4 bg-primary/5 px-1.5 py-0 text-[10px] uppercase tracking-tighter"
+															className="bg-primary/5 h-4 px-1.5 py-0 text-[10px] tracking-tighter uppercase"
 														>
 															{slot.type === 'cantrip' ? 'Cantrip' : 'Spell'}
 														</Badge>
 														{!slot.isGlobal && (
 															<Badge
 																variant="outline"
-																className="h-4 border-primary/20 px-1.5 py-0 text-[10px] text-primary/80"
+																className="border-primary/20 text-primary/80 h-4 px-1.5 py-0 text-[10px]"
 															>
 																Specialized
 															</Badge>
@@ -670,7 +680,7 @@ const Spells: React.FC = () => {
 
 					{filteredSpells.length === 0 ? (
 						<div className="border-border text-muted-foreground rounded-2xl border-2 border-dashed bg-black/10 py-24 text-center">
-							<div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/5">
+							<div className="bg-primary/5 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full">
 								<Search className="text-primary/40 h-8 w-8" />
 							</div>
 							<h3 className="font-cinzel mb-3 text-2xl text-white">No Matching Spells</h3>
@@ -706,7 +716,7 @@ const Spells: React.FC = () => {
 										)}
 									>
 										{isSelected && (
-											<div className="absolute right-0 top-0 rounded-bl-lg bg-primary px-3 py-1 text-[10px] font-bold text-primary-foreground">
+											<div className="bg-primary text-primary-foreground absolute top-0 right-0 rounded-bl-lg px-3 py-1 text-[10px] font-bold">
 												KNOWN
 											</div>
 										)}
@@ -717,7 +727,7 @@ const Spells: React.FC = () => {
 												</CardTitle>
 												<Badge
 													variant="outline"
-													className="shrink-0 border-primary/20 text-[10px] uppercase tracking-widest text-primary/70"
+													className="border-primary/20 text-primary/70 shrink-0 text-[10px] tracking-widest uppercase"
 												>
 													{spell.school}
 												</Badge>
@@ -730,7 +740,7 @@ const Spells: React.FC = () => {
 													{spell.range}
 												</Badge>
 												{spell.sustained && (
-													<Badge className="border-amber-500/20 bg-amber-500/10 text-[10px] uppercase tracking-tighter text-amber-500">
+													<Badge className="border-amber-500/20 bg-amber-500/10 text-[10px] tracking-tighter text-amber-500 uppercase">
 														Sustained
 													</Badge>
 												)}
@@ -746,7 +756,7 @@ const Spells: React.FC = () => {
 												{spell.sources.map((source) => (
 													<span
 														key={source}
-														className="text-muted-foreground/60 text-[9px] font-bold uppercase tracking-widest"
+														className="text-muted-foreground/60 text-[9px] font-bold tracking-widest uppercase"
 													>
 														{source}
 													</span>

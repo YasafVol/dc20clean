@@ -2,6 +2,267 @@ import type { SavedCharacter } from '../types/dataContracts';
 import type { PdfExportData } from '../types/pdfExport';
 import type { EnhancedCalculationResult } from '../types/effectSystem';
 import type { DenormalizeOutput } from '../services/denormalizeMastery';
+import type { SpellData, ManeuverData, InventoryItemData } from '../../types/character';
+import { traitsData } from '../rulesdata/ancestries/traits';
+import { findTalentById } from '../rulesdata/classes-data/talents/talent.loader';
+import { findClassByName } from '../rulesdata/loaders/class-features.loader';
+import { logger } from '../utils/logger';
+
+// =========================================================================
+// PDF EXPORT FORMATTERS
+// These functions format character data as names-only lists for PDF text fields.
+// Full descriptions are omitted - players can look up details in the rulebook.
+// =========================================================================
+
+/**
+ * Formats class feature IDs to display names for PDF export.
+ * @param featureIds - Array of feature IDs (e.g., 'barbarian_rage')
+ * @param classId - The class ID to look up features from
+ * @param subclassName - Optional subclass name to include in output
+ * @returns Formatted string of feature names
+ */
+export function formatClassFeatures(
+	featureIds: string[],
+	classId: string,
+	subclassName?: string
+): string {
+	if (!featureIds || featureIds.length === 0) {
+		return '';
+	}
+
+	logger.debug('pdf', 'Formatting class features for PDF export', {
+		featureCount: featureIds.length,
+		classId
+	});
+
+	const classDefinition = classId ? findClassByName(classId) : null;
+	const featureNames: string[] = [];
+
+	for (const featureId of featureIds) {
+		// Try to find the feature in core features
+		let found = false;
+		if (classDefinition?.coreFeatures) {
+			const feature = classDefinition.coreFeatures.find(
+				(f) => f.id === featureId || f.featureName === featureId
+			);
+			if (feature) {
+				featureNames.push(feature.featureName);
+				found = true;
+			}
+		}
+
+		// Try subclass features if not found
+		if (!found && classDefinition?.subclasses) {
+			for (const subclass of classDefinition.subclasses) {
+				const subFeature = subclass.features?.find(
+					(f: any) => f.id === featureId || f.featureName === featureId
+				);
+				if (subFeature) {
+					featureNames.push(subFeature.featureName);
+					found = true;
+					break;
+				}
+			}
+		}
+
+		if (!found) {
+			logger.warn('pdf', `Unknown feature ID skipped: ${featureId}`);
+		}
+	}
+
+	// Build the output
+	const parts: string[] = [];
+	if (subclassName) {
+		parts.push(`[${subclassName}]`);
+	}
+	if (featureNames.length > 0) {
+		parts.push(featureNames.join(', '));
+	}
+
+	return parts.join('\n');
+}
+
+/**
+ * Formats ancestry trait IDs to display names for PDF export.
+ * @param traitIds - Array of trait IDs (e.g., 'human_skill_expertise')
+ * @returns Formatted string of trait names
+ */
+export function formatAncestryTraits(traitIds: string[]): string {
+	if (!traitIds || traitIds.length === 0) {
+		return '';
+	}
+
+	logger.debug('pdf', 'Formatting ancestry traits for PDF export', {
+		traitCount: traitIds.length
+	});
+
+	const traitNames: string[] = [];
+
+	for (const traitId of traitIds) {
+		const trait = traitsData.find((t) => t.id === traitId);
+		if (trait) {
+			traitNames.push(trait.name);
+		} else {
+			logger.warn('pdf', `Unknown trait ID skipped: ${traitId}`);
+		}
+	}
+
+	return traitNames.join(', ');
+}
+
+/**
+ * Formats spells and maneuvers for PDF export, grouping by type.
+ * @param spells - Array of SpellData
+ * @param maneuvers - Array of ManeuverData
+ * @returns Formatted string with sections for spells, cantrips, and maneuvers
+ */
+export function formatSpellsAndManeuvers(
+	spells: SpellData[],
+	maneuvers: ManeuverData[]
+): string {
+	const parts: string[] = [];
+
+	// Process spells
+	if (spells && spells.length > 0) {
+		const cantrips = spells.filter((s) => s.isCantrip);
+		const leveledSpells = spells.filter((s) => !s.isCantrip);
+
+		logger.debug('pdf', 'Formatting spells for PDF export', {
+			cantripCount: cantrips.length,
+			spellCount: leveledSpells.length
+		});
+
+		if (leveledSpells.length > 0) {
+			const spellNames = leveledSpells.map((s) => s.spellName).filter(Boolean);
+			parts.push(`[Spells] ${spellNames.join(', ')}`);
+		}
+
+		if (cantrips.length > 0) {
+			const cantripNames = cantrips.map((s) => s.spellName).filter(Boolean);
+			parts.push(`[Cantrips] ${cantripNames.join(', ')}`);
+		}
+	}
+
+	// Process maneuvers
+	if (maneuvers && maneuvers.length > 0) {
+		logger.debug('pdf', 'Formatting maneuvers for PDF export', {
+			maneuverCount: maneuvers.length
+		});
+
+		const maneuverNames = maneuvers.map((m) => m.name).filter(Boolean);
+		parts.push(`[Maneuvers] ${maneuverNames.join(', ')}`);
+	}
+
+	return parts.join('\n');
+}
+
+/**
+ * Formats selected talents for PDF export.
+ * @param selectedTalents - Record of talent ID to count (how many times taken)
+ * @returns Formatted string of talent names with counts
+ */
+export function formatTalents(selectedTalents: Record<string, number> | undefined): string {
+	if (!selectedTalents || typeof selectedTalents !== 'object') {
+		return '';
+	}
+
+	const entries = Object.entries(selectedTalents).filter(([, count]) => count > 0);
+	if (entries.length === 0) {
+		return '';
+	}
+
+	logger.debug('pdf', 'Formatting talents for PDF export', {
+		talentCount: entries.length
+	});
+
+	const talentStrings: string[] = [];
+
+	for (const [talentId, count] of entries) {
+		const talent = findTalentById(talentId);
+		if (talent) {
+			const name = talent.name;
+			if (count > 1) {
+				talentStrings.push(`${name} (x${count})`);
+			} else {
+				talentStrings.push(name);
+			}
+		} else {
+			logger.warn('pdf', `Unknown talent ID skipped: ${talentId}`);
+		}
+	}
+
+	return talentStrings.join(', ');
+}
+
+/**
+ * Formats inventory items for PDF export.
+ * @param items - Array of InventoryItemData
+ * @returns Formatted string of item names with counts
+ */
+export function formatInventory(items: InventoryItemData[] | undefined): string {
+	if (!items || !Array.isArray(items) || items.length === 0) {
+		return '';
+	}
+
+	logger.debug('pdf', 'Formatting inventory for PDF export', {
+		itemCount: items.length
+	});
+
+	const itemStrings: string[] = [];
+
+	for (const item of items) {
+		if (!item.itemName) continue;
+
+		if (item.count > 1) {
+			itemStrings.push(`${item.itemName} (x${item.count})`);
+		} else {
+			itemStrings.push(item.itemName);
+		}
+	}
+
+	return itemStrings.join(', ');
+}
+
+/**
+ * Formats feature choices for PDF export.
+ * @param choices - Record of choice ID to selected value(s)
+ * @returns Formatted string of choices
+ */
+export function formatFeatureChoices(
+	choices: Record<string, string | string[]> | undefined
+): string {
+	if (!choices || typeof choices !== 'object') {
+		return '';
+	}
+
+	const entries = Object.entries(choices);
+	if (entries.length === 0) {
+		return '';
+	}
+
+	logger.debug('pdf', 'Formatting feature choices for PDF export', {
+		choiceCount: entries.length
+	});
+
+	const choiceStrings: string[] = [];
+
+	for (const [choiceId, value] of entries) {
+		// Format the choice ID to be more readable (remove class prefix, convert underscores)
+		const labelParts = choiceId.split('_');
+		// Try to extract meaningful label (skip class prefix if present)
+		const meaningfulParts = labelParts.slice(labelParts.length > 3 ? 1 : 0);
+		const label = meaningfulParts
+			.map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+			.join(' ');
+
+		// Format the value
+		const displayValue = Array.isArray(value) ? value.join(', ') : value;
+
+		choiceStrings.push(`${label}: ${displayValue}`);
+	}
+
+	return choiceStrings.join('; ');
+}
 
 /**
  * Helper function to process GRANT_MOVEMENT effects into PDF movement checkboxes.
@@ -45,7 +306,34 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 	const level = character.level || 1;
 	const ancestry = character.ancestry1Name || character.ancestry1Id || '';
 	const classAndSubclass = character.className || character.classId || '';
-	const features = '';
+
+	// Build features field: class features + ancestry traits
+	const featuresParts: string[] = [];
+	const unlockedFeatureIds = (character as any).unlockedFeatureIds || [];
+	const selectedTraitIds = (character as any).selectedTraitIds || [];
+	const selectedSubclass = (character as any).selectedSubclass;
+
+	if (unlockedFeatureIds.length > 0 || selectedSubclass) {
+		const classFeatureText = formatClassFeatures(
+			unlockedFeatureIds,
+			character.classId,
+			selectedSubclass
+		);
+		if (classFeatureText) {
+			featuresParts.push('[Class Features]');
+			featuresParts.push(classFeatureText);
+		}
+	}
+
+	if (selectedTraitIds.length > 0) {
+		const traitText = formatAncestryTraits(selectedTraitIds);
+		if (traitText) {
+			featuresParts.push('[Ancestry Traits]');
+			featuresParts.push(traitText);
+		}
+	}
+
+	const features = featuresParts.join('\n');
 
 	// Attributes & core
 	const prime = character.finalPrimeModifierValue || 0;
@@ -381,13 +669,41 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 		slots: 0,
 		items: new Array(5).fill(0).map(() => ({ name: '', active: false }))
 	};
+
+	// Build carried field: inventory items
+	const inventoryItems = character.characterState?.inventory?.items || [];
+	const carried = formatInventory(inventoryItems as InventoryItemData[]);
+
+	// Build stored field: feature choices
+	const selectedFeatureChoices = (character as any).selectedFeatureChoices || {};
+	const stored = formatFeatureChoices(selectedFeatureChoices);
+
 	const inventory = {
-		carried: '',
-		stored: '',
+		carried,
+		stored,
 		supplies: new Array(11).fill(0).map(() => ({ label: '', amount: 0 }))
 	};
 
-	const misc = '';
+	// Build misc field: spells + maneuvers + talents
+	const miscParts: string[] = [];
+	const spells = character.spells || [];
+	const maneuvers = character.maneuvers || [];
+	const selectedTalents = (character as any).selectedTalents;
+
+	const spellManeuverText = formatSpellsAndManeuvers(
+		spells as SpellData[],
+		maneuvers as ManeuverData[]
+	);
+	if (spellManeuverText) {
+		miscParts.push(spellManeuverText);
+	}
+
+	const talentText = formatTalents(selectedTalents);
+	if (talentText) {
+		miscParts.push(`[Talents] ${talentText}`);
+	}
+
+	const misc = miscParts.join('\n');
 	const deathThreshold = character.finalDeathThreshold ?? 0;
 	const bloodiedValue =
 		(character as any).bloodiedValue ?? Math.ceil((character.finalHPMax ?? 0) / 2);
@@ -482,7 +798,34 @@ export function transformCalculatedCharacterToPdfData(
 	const level = saved.level || 1;
 	const ancestry = saved.ancestry1Name || saved.ancestry1Id || '';
 	const classAndSubclass = stats.className || saved.className || saved.classId || '';
-	const features = '';
+
+	// Build features field: class features + ancestry traits
+	const featuresParts: string[] = [];
+	const unlockedFeatureIds = result.levelProgression?.unlockedFeatureIds || [];
+	const selectedTraitIds = (saved as any).selectedTraitIds || [];
+	const selectedSubclass = (saved as any).selectedSubclass;
+
+	if (unlockedFeatureIds.length > 0 || selectedSubclass) {
+		const classFeatureText = formatClassFeatures(
+			unlockedFeatureIds,
+			saved.classId,
+			selectedSubclass
+		);
+		if (classFeatureText) {
+			featuresParts.push('[Class Features]');
+			featuresParts.push(classFeatureText);
+		}
+	}
+
+	if (selectedTraitIds.length > 0) {
+		const traitText = formatAncestryTraits(selectedTraitIds);
+		if (traitText) {
+			featuresParts.push('[Ancestry Traits]');
+			featuresParts.push(traitText);
+		}
+	}
+
+	const features = featuresParts.join('\n');
 
 	// Attributes & core from calculated stats
 	const prime = stats.finalPrimeModifierValue || 0;
@@ -699,13 +1042,41 @@ export function transformCalculatedCharacterToPdfData(
 		slots: 0,
 		items: new Array(5).fill(0).map(() => ({ name: '', active: false }))
 	};
+
+	// Build carried field: inventory items
+	const inventoryItems = saved.characterState?.inventory?.items || [];
+	const carried = formatInventory(inventoryItems as InventoryItemData[]);
+
+	// Build stored field: feature choices
+	const selectedFeatureChoices = (saved as any).selectedFeatureChoices || {};
+	const stored = formatFeatureChoices(selectedFeatureChoices);
+
 	const inventory = {
-		carried: '',
-		stored: '',
+		carried,
+		stored,
 		supplies: new Array(11).fill(0).map(() => ({ label: '', amount: 0 }))
 	};
 
-	const misc = '';
+	// Build misc field: spells + maneuvers + talents
+	const miscParts: string[] = [];
+	const spells = saved.spells || [];
+	const maneuvers = saved.maneuvers || [];
+	const selectedTalents = (saved as any).selectedTalents;
+
+	const spellManeuverText = formatSpellsAndManeuvers(
+		spells as SpellData[],
+		maneuvers as ManeuverData[]
+	);
+	if (spellManeuverText) {
+		miscParts.push(spellManeuverText);
+	}
+
+	const talentText = formatTalents(selectedTalents);
+	if (talentText) {
+		miscParts.push(`[Talents] ${talentText}`);
+	}
+
+	const misc = miscParts.join('\n');
 	const deathThreshold = stats.finalDeathThreshold ?? 0;
 	const bloodiedValue = (saved as any).bloodiedValue ?? Math.ceil((stats.finalHPMax ?? 0) / 2);
 	const wellBloodiedValue =

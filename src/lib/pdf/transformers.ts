@@ -27,8 +27,11 @@ export function formatClassFeatures(
 	subclassName?: string
 ): string {
 	if (!featureIds || featureIds.length === 0) {
+		console.log('📄 formatClassFeatures: no feature IDs provided');
 		return '';
 	}
+
+	console.log('📄 formatClassFeatures input:', { featureIds, classId, subclassName });
 
 	logger.debug('pdf', 'Formatting class features for PDF export', {
 		featureCount: featureIds.length,
@@ -36,6 +39,7 @@ export function formatClassFeatures(
 	});
 
 	const classDefinition = classId ? findClassByName(classId) : null;
+	console.log('📄 findClassByName result:', classDefinition ? classDefinition.className : 'NOT FOUND');
 	const featureNames: string[] = [];
 
 	for (const featureId of featureIds) {
@@ -810,6 +814,17 @@ export function transformCalculatedCharacterToPdfData(
 	const maneuvers = saved.maneuvers || [];
 	const selectedTalents = (saved as any).selectedTalents;
 
+	// Debug: log all input data
+	console.log('📄 PDF Export Debug:', {
+		classId: saved.classId,
+		unlockedFeatureIds,
+		selectedTraitIds,
+		selectedTalents,
+		spellCount: spells.length,
+		maneuverCount: maneuvers.length,
+		selectedSubclass
+	});
+
 	// Class Features
 	if (unlockedFeatureIds.length > 0 || selectedSubclass) {
 		const classFeatureText = formatClassFeatures(
@@ -817,15 +832,19 @@ export function transformCalculatedCharacterToPdfData(
 			saved.classId,
 			selectedSubclass
 		);
+		console.log('📄 Class features result:', classFeatureText || '(empty)');
 		if (classFeatureText) {
 			featuresParts.push('[Class Features]');
 			featuresParts.push(classFeatureText);
 		}
+	} else {
+		console.log('📄 No unlockedFeatureIds or selectedSubclass');
 	}
 
 	// Ancestry Traits
 	if (selectedTraitIds.length > 0) {
 		const traitText = formatAncestryTraits(selectedTraitIds);
+		console.log('📄 Ancestry traits result:', traitText || '(empty)');
 		if (traitText) {
 			featuresParts.push('[Ancestry Traits]');
 			featuresParts.push(traitText);
@@ -834,6 +853,7 @@ export function transformCalculatedCharacterToPdfData(
 
 	// Talents
 	const talentText = formatTalents(selectedTalents);
+	console.log('📄 Talents result:', talentText || '(empty)');
 	if (talentText) {
 		featuresParts.push('[Talents]');
 		featuresParts.push(talentText);
@@ -844,9 +864,12 @@ export function transformCalculatedCharacterToPdfData(
 		spells as SpellData[],
 		maneuvers as ManeuverData[]
 	);
+	console.log('📄 Spells/Maneuvers result:', spellManeuverText || '(empty)');
 	if (spellManeuverText) {
 		featuresParts.push(spellManeuverText);
 	}
+
+	console.log('📄 Final features parts:', featuresParts);
 
 	const features = featuresParts.join('\n');
 

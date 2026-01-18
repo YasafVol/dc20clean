@@ -721,7 +721,7 @@ const Spells: React.FC = () => {
 					) : (
 						<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 							{filteredSpells.map((spell) => {
-								const isSelected = selectedSpellIds.includes(spell.id);
+								const isSelected = Object.values(selectedSpells).includes(spell.id);
 
 								return (
 									<Card

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useCharacter, clearCharacterDraft } from '../../lib/stores/characterContext';
+import { useCharacter } from '../../lib/stores/characterContext';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
 import AncestrySelector from './AncestrySelector.tsx';
@@ -439,7 +439,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				if (!selectedClassFeatures) return false;
 
 				// FIXED: Use typed data instead of JSON parsing
-				const selectedFeatureChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
+				const selectedFeatureChoices: { [key: string]: string } =
+					state.selectedFeatureChoices || {};
 
 				// Check if spell school choices are required and have been made
 				const spellList = selectedClassFeatures.spellcastingPath?.spellList;
@@ -535,7 +536,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					0
 				);
 				const pathPointsUsed =
-					(state.pathPointAllocations?.martial || 0) + (state.pathPointAllocations?.spellcasting || 0);
+					(state.pathPointAllocations?.martial || 0) +
+					(state.pathPointAllocations?.spellcasting || 0);
 
 				// For now, allow progression if any choices are made (basic validation)
 				// Full validation will check against budgets
@@ -752,7 +754,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	};
 
 	return (
-		<div className="text-foreground flex min-h-screen flex-col bg-[url('/src/assets/BlackBG.jpg')] bg-cover bg-center bg-fixed font-sans">
+		<div className="text-foreground flex min-h-screen flex-col bg-[url('/src/assets/BlackBG.jpg')] bg-cover bg-fixed bg-center font-sans">
 			{/* Header with Navigation and Stepper */}
 			<header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
 				{/* Mobile Stepper Progress Bar */}
@@ -772,8 +774,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 							disabled={state.currentStep === 1}
 							className="gap-2"
 						>
-							←{' '}
-							<span className="hidden sm:inline">Previous</span>
+							← <span className="hidden sm:inline">Previous</span>
 						</Button>
 					</div>
 

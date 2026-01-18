@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useMemo, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, useMemo, useEffect, ReactNode } from 'react';
 import type { CharacterInProgress } from '../types/characterProgress.types';
 
 import {
@@ -6,6 +6,9 @@ import {
 	convertToEnhancedBuildData
 } from '../services/enhancedCharacterCalculator';
 import type { EnhancedCalculationResult } from '../types/effectSystem';
+
+// Key for storing character draft in sessionStorage
+const CHARACTER_DRAFT_KEY = 'dc20_character_draft';
 
 // Define the shape of the data stored in the character store
 export interface CharacterInProgressStoreData
@@ -101,6 +104,71 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
 	schemaVersion: 2
 };
 
+/**
+ * Save character draft to sessionStorage (survives page reloads, cleared when tab closes)
+ */
+function saveCharacterDraft(state: CharacterInProgressStoreData): void {
+	try {
+		// Don't save if state is essentially empty (just initialized)
+		const hasSignificantData = state.classId || state.ancestry1Id || state.finalName;
+		if (!hasSignificantData) {
+			return;
+		}
+
+		// Exclude non-serializable/cache fields
+		const draftData = {
+			...state,
+			cachedEffectResults: undefined,
+			cacheTimestamp: undefined,
+			// Convert dates to ISO strings for serialization
+			createdAt: state.createdAt instanceof Date ? state.createdAt.toISOString() : state.createdAt,
+			updatedAt: new Date().toISOString()
+		};
+
+		sessionStorage.setItem(CHARACTER_DRAFT_KEY, JSON.stringify(draftData));
+	} catch (error) {
+		console.warn('Failed to save character draft:', error);
+	}
+}
+
+/**
+ * Load character draft from sessionStorage
+ */
+function loadCharacterDraft(): CharacterInProgressStoreData | null {
+	try {
+		const draftJson = sessionStorage.getItem(CHARACTER_DRAFT_KEY);
+		if (!draftJson) {
+			return null;
+		}
+
+		const draft = JSON.parse(draftJson);
+
+		// Convert date strings back to Date objects
+		return {
+			...draft,
+			createdAt: draft.createdAt ? new Date(draft.createdAt) : new Date(),
+			updatedAt: draft.updatedAt ? new Date(draft.updatedAt) : new Date(),
+			// Ensure cache is cleared
+			cachedEffectResults: undefined,
+			cacheTimestamp: undefined
+		};
+	} catch (error) {
+		console.warn('Failed to load character draft:', error);
+		return null;
+	}
+}
+
+/**
+ * Clear character draft from sessionStorage
+ */
+export function clearCharacterDraft(): void {
+	try {
+		sessionStorage.removeItem(CHARACTER_DRAFT_KEY);
+	} catch (error) {
+		console.warn('Failed to clear character draft:', error);
+	}
+}
+
 // Action types
 type CharacterAction =
 	| { type: 'UPDATE_ATTRIBUTE'; attribute: string; value: number }
@@ -135,7 +203,9 @@ type CharacterAction =
 	}
 	| { type: 'SET_SUBCLASS'; subclass: string | null }
 	| { type: 'SET_CROSS_PATH_SPELL_LIST'; spellList: string }
-	| { type: 'ENTER_LEVEL_UP_MODE'; originalLevel: number; characterId: string };
+	| { type: 'ENTER_LEVEL_UP_MODE'; originalLevel: number; characterId: string }
+	| { type: 'CLEAR_DRAFT' }
+	| { type: 'RESTORE_FROM_DRAFT'; draft: CharacterInProgressStoreData };
 
 // Reducer function
 function characterReducer(
@@ -227,6 +297,11 @@ function characterReducer(
 				...state,
 				usePrimeCapRule: action.value ?? !state.usePrimeCapRule
 			};
+		case 'CLEAR_DRAFT':
+			clearCharacterDraft();
+			return initialCharacterInProgressState;
+		case 'RESTORE_FROM_DRAFT':
+			return { ...action.draft };
 		default:
 			return state;
 	}
@@ -245,7 +320,24 @@ interface CharacterContextType {
 const CharacterContext = createContext<CharacterContextType | undefined>(undefined);
 
 export function CharacterProvider({ children }: { children: ReactNode }) {
-	const [state, dispatch] = useReducer(characterReducer, initialCharacterInProgressState);
+	// Initialize state: check for saved draft first
+	const [state, dispatch] = useReducer(characterReducer, initialCharacterInProgressState, () => {
+		const draft = loadCharacterDraft();
+		if (draft) {
+			console.log('Restored character draft from sessionStorage');
+			return draft;
+		}
+		return initialCharacterInProgressState;
+	});
+
+	// Save draft to sessionStorage whenever state changes (debounced effect)
+	useEffect(() => {
+		// Don't save on initial render if state is empty
+		const hasSignificantData = state.classId || state.ancestry1Id || state.finalName;
+		if (hasSignificantData) {
+			saveCharacterDraft(state);
+		}
+	}, [state]);
 
 	// The new central engine runs on every state change
 	const calculationResult = useMemo(() => {

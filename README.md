@@ -8,7 +8,7 @@ A comprehensive character creation and management system for the DC20 tabletop R
 
 ### Character Creation Wizard
 
-- **Multi-level support**: Create characters from level 1 through 5+
+- **Multi-level support**: Create characters from level 1 through 10 (DC20 v0.10 max)
 - **Step-by-step flow**: Class & Features → Leveling Choices → Ancestry → Attributes → Background → Spells & Maneuvers → Finalization
 - **Real-time validation**: Instant feedback on choices with detailed error messages
 - **Character preview**: Live stat calculations as you build
@@ -248,7 +248,7 @@ For detailed guidelines, see **[AGENTS.md](AGENTS.md)**
 ### Current Features
 
 - ✅ Character creation wizard (Premium "Stages" UI)
-- ✅ Leveling system (1-5+)
+- ✅ Leveling system (1-10, DC20 v0.10 compliant)
 - ✅ Multiclass support
 - ✅ All 13 classes with features
 - ✅ All 12 ancestries with traits
@@ -263,7 +263,7 @@ For detailed guidelines, see **[AGENTS.md](AGENTS.md)**
 See `docs/plannedSpecs/` for detailed specifications:
 
 - **[Convex Migration](docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md)** – Cloud storage with user authentication (prep work complete)
-- **[Leveling Epic](docs/plannedSpecs/LEVELING_EPIC.md)** – Extended leveling beyond level 5
+- **[Leveling Epic](docs/archive/LEVELING_EPIC.md)** – Extended leveling (archived, completed)
 - **[Conditions System](docs/plannedSpecs/CONDITIONS_SPEC.md)** – Status effects and conditions
 - **[Encounter Builder](docs/plannedSpecs/ENCOUNTR_BUILDER.md)** – Combat encounter management
 

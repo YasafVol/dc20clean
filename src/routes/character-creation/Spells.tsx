@@ -85,15 +85,32 @@ const Spells: React.FC = () => {
 	const availableSpells = useMemo(() => {
 		console.log('🔮 [Spells] Calculating available spells:', {
 			hasClassData: !!classData,
+			classDataId: classData?.id,
 			hasGlobalMagicProfile: !!globalMagicProfile,
 			globalSources: globalMagicProfile?.sources,
 			globalSchools: globalMagicProfile?.schools,
-			totalSpellsInLibrary: allSpells.length
+			globalTags: globalMagicProfile?.tags,
+			totalSpellsInLibrary: allSpells.length,
+			calculationResult: !!calculationResult
 		});
 
 		if (!classData || !globalMagicProfile) {
-			console.warn('🔮 [Spells] No class data or global magic profile - returning empty');
+			console.warn('🔮 [Spells] No class data or global magic profile - returning empty', {
+				stateClassId: state.classId,
+				classData,
+				globalMagicProfile
+			});
 			return [];
+		}
+
+		// Debug: Log first few spells to see their structure
+		if (allSpells.length > 0) {
+			console.log('🔮 [Spells] Sample spell structure:', {
+				spell: allSpells[0],
+				sources: allSpells[0].sources,
+				school: allSpells[0].school,
+				tags: allSpells[0].tags
+			});
 		}
 
 		const filtered = allSpells.filter((spell) => {
@@ -106,17 +123,32 @@ const Spells: React.FC = () => {
 			const isInAvailableSchool =
 				globalMagicProfile.schools.length === 0 || globalMagicProfile.schools.includes(spell.school);
 
-			// If no tags defined, allow all tags
+			// If no tags defined, allow all tags (also allow spells with no tags)
 			const hasMatchingTag =
 				globalMagicProfile.tags.length === 0 ||
-				spell.tags?.some((tag) => globalMagicProfile.tags.includes(tag));
+				!spell.tags ||
+				spell.tags.length === 0 ||
+				spell.tags.some((tag) => globalMagicProfile.tags.includes(tag));
+
+			// Debug first few spells
+			if (allSpells.indexOf(spell) < 3) {
+				console.log(`🔮 [Spells] Filtering "${spell.name}":`, {
+					spellSources: spell.sources,
+					spellSchool: spell.school,
+					spellTags: spell.tags,
+					hasMatchingSource,
+					isInAvailableSchool,
+					hasMatchingTag,
+					passes: hasMatchingSource && isInAvailableSchool && hasMatchingTag
+				});
+			}
 
 			return hasMatchingSource && isInAvailableSchool && hasMatchingTag;
 		});
 
-		debug.spells('Filtered spells result', { count: filtered.length });
+		console.log('🔮 [Spells] Filtered result:', { count: filtered.length, total: allSpells.length });
 		return filtered;
-	}, [classData, globalMagicProfile]);
+	}, [classData, globalMagicProfile, calculationResult, state.classId]);
 
 	const spellCounts = useMemo(() => {
 		return {
@@ -441,10 +473,16 @@ const Spells: React.FC = () => {
 						Your class does not have access to any spells in the current spell library, or there may be a configuration issue.
 						Please check your class selection.
 					</p>
-					<p className="text-muted-foreground/60 mx-auto mt-4 max-w-md text-sm">
-						Debug: Class={state.classId}, Sources={globalMagicProfile?.sources?.join(', ') || 'none'},
-						Schools={globalMagicProfile?.schools?.length || 0}, Slots={spellSlots.length}
-					</p>
+					<div className="text-muted-foreground/60 mx-auto mt-4 max-w-md space-y-1 text-left text-xs font-mono">
+						<p>State ClassId: {state.classId || 'undefined'}</p>
+						<p>ClassData Found: {classData ? `yes (${classData.id})` : 'no'}</p>
+						<p>GlobalMagicProfile: {globalMagicProfile ? 'yes' : 'no'}</p>
+						<p>Sources: {globalMagicProfile?.sources?.join(', ') || 'none'}</p>
+						<p>Schools: {globalMagicProfile?.schools?.join(', ') || 'none'}</p>
+						<p>Tags: {globalMagicProfile?.tags?.join(', ') || 'none'}</p>
+						<p>Spell Slots: {spellSlots.length}</p>
+						<p>Total Spells in Library: {allSpells.length}</p>
+					</div>
 				</div>
 			) : (
 				<div className="space-y-6">

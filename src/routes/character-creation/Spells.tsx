@@ -652,7 +652,7 @@ const Spells: React.FC = () => {
 						<details className="group" open>
 							<summary className="font-cinzel flex cursor-pointer items-center gap-2 text-lg font-bold list-none">
 								<Wand2 className="text-primary h-5 w-5" />
-								<span>Spell Slots to Fill</span>
+								<span>Spells Known</span>
 								<Badge variant="outline" className="ml-2 font-mono text-xs">
 									{Object.keys(selectedSpells).length} / {spellSlots.length}
 								</Badge>

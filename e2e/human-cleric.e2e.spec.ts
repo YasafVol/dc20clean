@@ -117,69 +117,31 @@ test.describe('Human Cleric E2E', () => {
 		await expect(page.getByText(/Language Points:\s*0\s*\/\s*\d+/)).toBeVisible();
 		await page.getByRole('button', { name: 'Next →' }).click();
 
-		// Step 5: Spells & Maneuvers - Detailed Testing
-		await page.getByRole('button', { name: /Spells \(/i }).click();
-		await expect(page.getByText(/Total Selected:\s*0\/\d+/i)).toBeVisible();
+		// Step 5: Spells (Cleric gets only Spells step, no Maneuvers)
+		// The new split UI shows "LEARN SPELLS" heading for the dedicated Spells step
+		await expect(page.getByRole('heading', { name: /LEARN.*SPELLS/i })).toBeVisible({ timeout: 5000 });
 
-		// Select the required spells by properly reading each card's title and clicking its Add button
-		console.log('Adding Guidance...');
-		await page
-			.getByRole('heading', { name: 'Guidance', exact: true })
-			.locator('..')
-			.locator('..')
-			.getByRole('button', { name: 'Add' })
-			.click();
-		await page.waitForTimeout(500);
-
-		console.log('Adding Shield...');
-		await page
-			.getByRole('heading', { name: 'Shield', exact: true })
-			.locator('..')
-			.locator('..')
-			.getByRole('button', { name: 'Add' })
-			.click();
-		await page.waitForTimeout(500);
-
-		console.log('Adding Bless...');
-		await page
-			.getByRole('heading', { name: 'Bless', exact: true })
-			.locator('..')
-			.locator('..')
-			.getByRole('button', { name: 'Add' })
-			.click();
-		await page.waitForTimeout(500);
-
-		console.log('Adding Heal...');
-		await page
-			.getByRole('heading', { name: 'Heal', exact: true })
-			.locator('..')
-			.locator('..')
-			.getByRole('button', { name: 'Add' })
-			.click();
-		await page.waitForTimeout(500);
-
-		console.log('Adding Shield of Faith...');
-		await page
-			.getByRole('heading', { name: 'Shield of Faith', exact: true })
-			.locator('..')
-			.locator('..')
-			.getByRole('button', { name: 'Add' })
-			.click();
-		await page.waitForTimeout(1000);
-
-		// Debug: check what the current count shows
-		const currentCount = await page
-			.textContent('[data-testid="spell-counter"], .spell-counter, :has-text("Total Selected")')
-			.catch(() => 'Counter not found');
-		console.log('Current counter text:', currentCount);
-
-		// Verify all 5 spells are selected - try different possible formats
-		try {
-			await expect(page.getByText(/Total Selected:\s*5\/5/i)).toBeVisible({ timeout: 5000 });
-		} catch (e) {
-			console.log('Primary counter format not found, trying alternatives...');
-			await expect(page.getByText(/5\/5/)).toBeVisible({ timeout: 2000 });
+		// Helper function to select a spell by clicking its LEARN button
+		async function selectSpell(spellName: string) {
+			console.log(`Selecting spell: ${spellName}`);
+			const spellCard = page.locator('.card, [class*="card"]', {
+				has: page.getByRole('heading', { name: spellName, exact: true })
+			});
+			await spellCard.getByRole('button', { name: 'LEARN' }).click();
+			await page.waitForTimeout(300);
 		}
+
+		// Select 5 spells to fill all slots
+		await selectSpell('Guidance');
+		await selectSpell('Shield');
+		await selectSpell('Bless');
+		await selectSpell('Heal');
+		await selectSpell('Shield of Faith');
+
+		// Verify all spell slots are filled (check for "All choices complete" or "0 cantrip/spell slots")
+		await expect(page.getByText(/All choices complete|0 cantrip slots.*0 spell slots/i)).toBeVisible({
+			timeout: 5000
+		});
 		await page.getByRole('button', { name: 'Next →' }).click();
 
 		// Step 6: Names

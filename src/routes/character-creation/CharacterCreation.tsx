@@ -9,7 +9,8 @@ import ClassSelector from './ClassSelector.tsx';
 import ClassFeatures from './ClassFeatures.tsx';
 import LevelingChoices from './LevelingChoices.tsx';
 import Background from './Background.tsx';
-import SpellsAndManeuvers from './SpellsAndManeuvers.tsx';
+import Spells from './Spells.tsx';
+import Maneuvers from './Maneuvers.tsx';
 import CharacterName from './CharacterName.tsx';
 import Snackbar from '../../components/Snackbar.tsx';
 import { completeCharacter } from '../../lib/services/characterCompletion';
@@ -224,26 +225,58 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		}
 	}, [isLevelUpMode, levelUpCharacter, dispatch]);
 
-	// Dynamic steps based on level
+	// Dynamic steps based on level and class capabilities
 	const getSteps = () => {
-		const baseSteps = [{ number: 1, label: 'Class' }];
+		// Determine if character has spells or maneuvers based on calculator results
+		const hasSpells = (calculationResult?.spellsKnownSlots?.length ?? 0) > 0;
+		const hasManeuvers = (calculationResult?.levelBudgets?.totalManeuversKnown ?? 0) > 0;
 
-		// Add leveling choices step if level > 1
+		// Log step gating calculation
+		debug.state('Step gating calculated', {
+			hasSpells,
+			hasManeuvers,
+			spellSlots: calculationResult?.spellsKnownSlots?.length ?? 0,
+			maneuversKnown: calculationResult?.levelBudgets?.totalManeuversKnown ?? 0
+		});
+
+		const steps: Array<{ number: number; label: string }> = [];
+		let stepNumber = 0;
+
+		// Step 1: Class (always)
+		stepNumber++;
+		steps.push({ number: stepNumber, label: 'Class' });
+
+		// Step 2: Leveling (if level > 1)
 		if (state.level > 1) {
-			baseSteps.push({ number: 2, label: 'Leveling' });
+			stepNumber++;
+			steps.push({ number: stepNumber, label: 'Leveling' });
 		}
 
-		// Continue with remaining steps (offset by 1 if leveling choices exist)
-		const offset = state.level > 1 ? 1 : 0;
-		baseSteps.push(
-			{ number: 2 + offset, label: 'Ancestry' },
-			{ number: 3 + offset, label: 'Attributes' },
-			{ number: 4 + offset, label: 'Background' },
-			{ number: 5 + offset, label: 'Spells' },
-			{ number: 6 + offset, label: 'Name' }
-		);
+		// Fixed steps: Ancestry, Attributes, Background
+		stepNumber++;
+		steps.push({ number: stepNumber, label: 'Ancestry' });
+		stepNumber++;
+		steps.push({ number: stepNumber, label: 'Attributes' });
+		stepNumber++;
+		steps.push({ number: stepNumber, label: 'Background' });
 
-		return baseSteps;
+		// Conditional: Spells (if character has spell slots)
+		if (hasSpells) {
+			stepNumber++;
+			steps.push({ number: stepNumber, label: 'Spells' });
+		}
+
+		// Conditional: Maneuvers (if character has maneuvers known)
+		if (hasManeuvers) {
+			stepNumber++;
+			steps.push({ number: stepNumber, label: 'Maneuvers' });
+		}
+
+		// Final step: Name (always)
+		stepNumber++;
+		steps.push({ number: stepNumber, label: 'Name' });
+
+		return steps;
 	};
 
 	const steps = getSteps();
@@ -377,275 +410,287 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	};
 
 	const isStepCompleted = (step: number) => {
-		// Adjust step numbers based on whether leveling choices exist
-		const hasLevelingStep = state.level > 1;
-		const levelingStep = 2;
-		const ancestryStep = hasLevelingStep ? 3 : 2;
-		const attributesStep = hasLevelingStep ? 4 : 3;
-		const backgroundStep = hasLevelingStep ? 5 : 4;
-		const spellsStep = hasLevelingStep ? 6 : 5;
-		const nameStep = hasLevelingStep ? 7 : 6;
+		// Build a mapping from step number to step label for dynamic validation
+		const stepMap = new Map<number, string>();
+		for (const s of steps) {
+			stepMap.set(s.number, s.label);
+		}
+
+		const stepLabel = stepMap.get(step);
 
 		debug.state('isStepCompleted debug:', {
 			step,
-			'state.level': state.level,
-			hasLevelingStep,
-			levelingStep,
-			ancestryStep,
-			attributesStep,
-			backgroundStep,
-			spellsStep,
-			nameStep
+			stepLabel,
+			'state.level': state.level
 		});
 
-		// Step 1: Class Selection
-		if (step === 1) {
-			if (state.classId === null) return false;
+		switch (stepLabel) {
+			case 'Class': {
+				if (state.classId === null) return false;
 
-			// Check if all required feature choices have been made
-			const selectedClass = classesData.find(
-				(c) => c.id.toLowerCase() === state.classId?.toLowerCase()
-			);
-			if (!selectedClass) return false;
+				// Check if all required feature choices have been made
+				const selectedClass = classesData.find(
+					(c) => c.id.toLowerCase() === state.classId?.toLowerCase()
+				);
+				if (!selectedClass) return false;
 
-			// Check if all required feature choices have been made
-			const selectedClassFeatures = findClassByName(selectedClass.name);
-			if (!selectedClassFeatures) return false;
+				// Check if all required feature choices have been made
+				const selectedClassFeatures = findClassByName(selectedClass.name);
+				if (!selectedClassFeatures) return false;
 
-			// FIXED: Use typed data instead of JSON parsing
-			const selectedFeatureChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
+				// FIXED: Use typed data instead of JSON parsing
+				const selectedFeatureChoices: { [key: string]: string } = state.selectedFeatureChoices || {};
 
-			// Check if spell school choices are required and have been made
-			const spellList = selectedClassFeatures.spellcastingPath?.spellList;
-			if (spellList) {
-				// Check Warlock-style spell school selection
-				if (spellList.type === 'all_schools' && spellList.schoolCount) {
-					const choiceId = `${selectedClassFeatures.className.toLowerCase()}_spell_schools`;
-					const choice = selectedFeatureChoices[choiceId];
-					if (!choice) return false;
-					// Expect arrays directly (no more legacy JSON string support)
-					const selectedSchools = Array.isArray(choice) ? choice : [choice];
-					if (selectedSchools.length !== spellList.schoolCount) return false;
-				}
-
-				// Check Spellblade-style additional school selection
-				if (spellList.type === 'schools' && spellList.schoolCount && spellList.schoolCount > 0) {
-					const choiceId = `${selectedClassFeatures.className.toLowerCase()}_additional_spell_schools`;
-					const choice = selectedFeatureChoices[choiceId];
-					if (!choice) return false;
-					if (spellList.schoolCount > 1) {
+				// Check if spell school choices are required and have been made
+				const spellList = selectedClassFeatures.spellcastingPath?.spellList;
+				if (spellList) {
+					// Check Warlock-style spell school selection
+					if (spellList.type === 'all_schools' && spellList.schoolCount) {
+						const choiceId = `${selectedClassFeatures.className.toLowerCase()}_spell_schools`;
+						const choice = selectedFeatureChoices[choiceId];
+						if (!choice) return false;
+						// Expect arrays directly (no more legacy JSON string support)
 						const selectedSchools = Array.isArray(choice) ? choice : [choice];
 						if (selectedSchools.length !== spellList.schoolCount) return false;
 					}
-				}
 
-				// Check Wizard-style feature-based spell school choices
-				const level1Features = selectedClassFeatures.coreFeatures.filter(
-					(feature) => feature.levelGained === 1
-				);
-				for (const feature of level1Features) {
-					const description = feature.description.toLowerCase();
-					// Only include features that are character creation choices, not in-game tactical choices
-					const isCharacterCreationChoice =
-						(description.includes('choose a spell school') ||
-							description.includes('choose 1 spell school')) &&
-						// Exclude in-game features like Arcane Sigil
-						!description.includes('when you create') &&
-						!description.includes('when you cast') &&
-						!description.includes('you can spend') &&
-						// Include features that are clearly character creation (like training/specialization)
-						(description.includes('training') ||
-							description.includes('specialize') ||
-							description.includes('initiate') ||
-							description.includes('you gain the following benefits'));
+					// Check Spellblade-style additional school selection
+					if (spellList.type === 'schools' && spellList.schoolCount && spellList.schoolCount > 0) {
+						const choiceId = `${selectedClassFeatures.className.toLowerCase()}_additional_spell_schools`;
+						const choice = selectedFeatureChoices[choiceId];
+						if (!choice) return false;
+						if (spellList.schoolCount > 1) {
+							const selectedSchools = Array.isArray(choice) ? choice : [choice];
+							if (selectedSchools.length !== spellList.schoolCount) return false;
+						}
+					}
 
-					if (isCharacterCreationChoice) {
-						const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_school`;
-						if (!selectedFeatureChoices[choiceId]) return false;
+					// Check Wizard-style feature-based spell school choices
+					const level1Features = selectedClassFeatures.coreFeatures.filter(
+						(feature) => feature.levelGained === 1
+					);
+					for (const feature of level1Features) {
+						const description = feature.description.toLowerCase();
+						// Only include features that are character creation choices, not in-game tactical choices
+						const isCharacterCreationChoice =
+							(description.includes('choose a spell school') ||
+								description.includes('choose 1 spell school')) &&
+							// Exclude in-game features like Arcane Sigil
+							!description.includes('when you create') &&
+							!description.includes('when you cast') &&
+							!description.includes('you can spend') &&
+							// Include features that are clearly character creation (like training/specialization)
+							(description.includes('training') ||
+								description.includes('specialize') ||
+								description.includes('initiate') ||
+								description.includes('you gain the following benefits'));
+
+						if (isCharacterCreationChoice) {
+							const choiceId = `${selectedClassFeatures.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_school`;
+							if (!selectedFeatureChoices[choiceId]) return false;
+						}
 					}
 				}
-			}
 
-			// NEW (M3.10d): Check if subclass selection is required
-			const needsSubclass = calculationResult?.resolvedFeatures?.availableSubclassChoice;
-			if (needsSubclass && !state.selectedSubclass) {
-				const subclassLevel = calculationResult?.resolvedFeatures?.subclassChoiceLevel;
-				debug.state('Step 1 incomplete: Subclass selection required at level', subclassLevel);
-				return false;
-			}
-
-			// NEW (M3.11d): Validate all subclass feature choices are complete
-			if (state.selectedSubclass && state.classId) {
-				const validation = validateSubclassChoicesComplete(
-					state.classId,
-					state.selectedSubclass,
-					state.level,
-					state.selectedFeatureChoices || {}
-				);
-
-				if (!validation.isValid) {
-					debug.state(
-						'Step 1 incomplete: Subclass feature choices incomplete',
-						validation.incompleteChoices
-					);
+				// NEW (M3.10d): Check if subclass selection is required
+				const needsSubclass = calculationResult?.resolvedFeatures?.availableSubclassChoice;
+				if (needsSubclass && !state.selectedSubclass) {
+					const subclassLevel = calculationResult?.resolvedFeatures?.subclassChoiceLevel;
+					debug.state('Class step incomplete: Subclass selection required at level', subclassLevel);
 					return false;
 				}
-			}
 
-			return true;
-		}
+				// NEW (M3.11d): Validate all subclass feature choices are complete
+				if (state.selectedSubclass && state.classId) {
+					const validation = validateSubclassChoicesComplete(
+						state.classId,
+						state.selectedSubclass,
+						state.level,
+						state.selectedFeatureChoices || {}
+					);
 
-		// Step 2: Leveling Choices (only if level > 1)
-		if (step === levelingStep && hasLevelingStep) {
-			// L2: Validation bypass controlled by environment variable
-			const skipLevelingValidation = import.meta.env.VITE_SKIP_LEVELING_VALIDATION === 'true';
-			if (skipLevelingValidation) {
-				console.warn('⚠️ Leveling validation skipped (VITE_SKIP_LEVELING_VALIDATION=true)');
+					if (!validation.isValid) {
+						debug.state(
+							'Class step incomplete: Subclass feature choices incomplete',
+							validation.incompleteChoices
+						);
+						return false;
+					}
+				}
+
 				return true;
 			}
 
-			// Actual validation: check that talents and path points are allocated
-			const selectedTalentsCount = Object.values(state.selectedTalents || {}).reduce(
-				(sum, count) => sum + count,
-				0
-			);
-			const pathPointsUsed =
-				(state.pathPointAllocations?.martial || 0) + (state.pathPointAllocations?.spellcasting || 0);
+			case 'Leveling': {
+				// L2: Validation bypass controlled by environment variable
+				const skipLevelingValidation = import.meta.env.VITE_SKIP_LEVELING_VALIDATION === 'true';
+				if (skipLevelingValidation) {
+					console.warn('⚠️ Leveling validation skipped (VITE_SKIP_LEVELING_VALIDATION=true)');
+					return true;
+				}
 
-			// For now, allow progression if any choices are made (basic validation)
-			// Full validation will check against budgets
-			console.log('📊 Leveling validation:', {
-				selectedTalentsCount,
-				pathPointsUsed,
-				level: state.level
-			});
-
-			// Basic validation: level > 1 requires some progression choices
-			if (state.level > 1 && selectedTalentsCount === 0 && pathPointsUsed === 0) {
-				debug.warn('State', 'No leveling choices made yet');
-				// Allow progression but warn
-			}
-
-			return true;
-		}
-
-		// Ancestry step
-		if (step === ancestryStep) {
-			// Use centralized calculator for ancestry points validation
-			const ancestryData = calculationResult.ancestry || { ancestryPointsRemaining: 5 };
-			const { ancestryPointsRemaining } = ancestryData;
-
-			const hasAncestry = state.ancestry1Id !== null;
-			const pointsValid = ancestryPointsRemaining >= 0;
-			const allPointsSpent = ancestryPointsRemaining === 0;
-			const isValid = hasAncestry && pointsValid && allPointsSpent;
-
-			debug.state('Ancestry validation:', { step, ancestryStep, isValid });
-			return isValid;
-		}
-
-		// Attributes step
-		if (step === attributesStep) {
-			return attributePointsRemaining === 0;
-		}
-
-		// Background step
-		if (step === backgroundStep) {
-			// Use calculator's background data instead of recalculating
-			const background = calculationResult?.background;
-			if (!background) {
-				console.warn('⚠️ Background validation: calculator result not available');
-				return false;
-			}
-
-			// Calculate current usage
-			let skillPointsUsed = 0;
-			let tradePointsUsed = 0;
-			let languagePointsUsed = 0;
-
-			// FIXED: Use typed skillsData instead of JSON parsing
-			if (state.skillsData && Object.keys(state.skillsData).length > 0) {
-				skillPointsUsed = Object.values(state.skillsData).reduce(
-					(sum: number, level: number) => sum + level,
+				// Actual validation: check that talents and path points are allocated
+				const selectedTalentsCount = Object.values(state.selectedTalents || {}).reduce(
+					(sum, count) => sum + count,
 					0
 				);
-			}
+				const pathPointsUsed =
+					(state.pathPointAllocations?.martial || 0) + (state.pathPointAllocations?.spellcasting || 0);
 
-			// FIXED: Use typed tradesData instead of JSON parsing
-			if (state.tradesData && Object.keys(state.tradesData).length > 0) {
-				tradePointsUsed = Object.values(state.tradesData).reduce(
-					(sum: number, level: number) => sum + level,
-					0
-				);
-			}
-
-			// FIXED: Use typed languagesData instead of JSON parsing
-			if (state.languagesData && Object.keys(state.languagesData).length > 0) {
-				languagePointsUsed = Object.entries(state.languagesData).reduce(
-					(sum, [langId, data]: [string, { fluency?: string }]) => {
-						if (langId === 'common') {
-							return sum; // Common is free
-						}
-						const cost = data.fluency === 'limited' ? 1 : data.fluency === 'fluent' ? 2 : 0; // 'none' or any other value costs 0
-						return sum + cost;
-					},
-					0
-				);
-			}
-
-			// Use calculator's values instead of recalculating
-			const availableSkillPoints = background.availableSkillPoints;
-			const availableTradePoints = background.availableTradePoints;
-			const availableLanguagePoints = background.availableLanguagePoints;
-
-			// Calculate remaining points
-			const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
-			const tradePointsRemaining = availableTradePoints - tradePointsUsed;
-			const languagePointsRemaining = availableLanguagePoints - languagePointsUsed;
-
-			// Require exact spending - no overspending or underspending allowed
-			const hasExactlySpentAllSkillPoints = skillPointsRemaining === 0;
-			const hasExactlySpentAllTradePoints = tradePointsRemaining === 0;
-			const hasExactlySpentAllLanguagePoints = languagePointsRemaining === 0;
-
-			// Step is complete when all skill points are spent and trade/language are spent or overspent
-			const isValid =
-				hasExactlySpentAllSkillPoints &&
-				hasExactlySpentAllTradePoints &&
-				hasExactlySpentAllLanguagePoints;
-
-			if (!isValid) {
-				debug.state('Background validation FAILED:', {
-					hasExactlySpentAllSkillPoints,
-					hasExactlySpentAllTradePoints,
-					hasExactlySpentAllLanguagePoints,
-					skillPointsRemaining,
-					tradePointsRemaining,
-					languagePointsRemaining
+				// For now, allow progression if any choices are made (basic validation)
+				// Full validation will check against budgets
+				console.log('📊 Leveling validation:', {
+					selectedTalentsCount,
+					pathPointsUsed,
+					level: state.level
 				});
+
+				// Basic validation: level > 1 requires some progression choices
+				if (state.level > 1 && selectedTalentsCount === 0 && pathPointsUsed === 0) {
+					debug.warn('State', 'No leveling choices made yet');
+					// Allow progression but warn
+				}
+
+				return true;
 			}
 
-			return isValid;
-		}
+			case 'Ancestry': {
+				// Use centralized calculator for ancestry points validation
+				const ancestryData = calculationResult.ancestry || { ancestryPointsRemaining: 5 };
+				const { ancestryPointsRemaining } = ancestryData;
 
-		// Spells & Maneuvers step
-		if (step === spellsStep) {
-			debug.warn('State', 'Spells & Maneuvers validation temporarily disabled');
-			return true; // Always allow progression
-		}
+				const hasAncestry = state.ancestry1Id !== null;
+				const pointsValid = ancestryPointsRemaining >= 0;
+				const allPointsSpent = ancestryPointsRemaining === 0;
+				const isValid = hasAncestry && pointsValid && allPointsSpent;
 
-		// Character Name step
-		if (step === nameStep) {
-			return (
-				state.finalName !== null &&
-				state.finalName !== '' &&
-				state.finalPlayerName !== null &&
-				state.finalPlayerName !== ''
-			);
-		}
+				debug.state('Ancestry validation:', { step, stepLabel, isValid });
+				return isValid;
+			}
 
-		// Unknown step
-		return false;
+			case 'Attributes':
+				return attributePointsRemaining === 0;
+
+			case 'Background': {
+				// Use calculator's background data instead of recalculating
+				const background = calculationResult?.background;
+				if (!background) {
+					console.warn('⚠️ Background validation: calculator result not available');
+					return false;
+				}
+
+				// Calculate current usage
+				let skillPointsUsed = 0;
+				let tradePointsUsed = 0;
+				let languagePointsUsed = 0;
+
+				// FIXED: Use typed skillsData instead of JSON parsing
+				if (state.skillsData && Object.keys(state.skillsData).length > 0) {
+					skillPointsUsed = Object.values(state.skillsData).reduce(
+						(sum: number, level: number) => sum + level,
+						0
+					);
+				}
+
+				// FIXED: Use typed tradesData instead of JSON parsing
+				if (state.tradesData && Object.keys(state.tradesData).length > 0) {
+					tradePointsUsed = Object.values(state.tradesData).reduce(
+						(sum: number, level: number) => sum + level,
+						0
+					);
+				}
+
+				// FIXED: Use typed languagesData instead of JSON parsing
+				if (state.languagesData && Object.keys(state.languagesData).length > 0) {
+					languagePointsUsed = Object.entries(state.languagesData).reduce(
+						(sum, [langId, data]: [string, { fluency?: string }]) => {
+							if (langId === 'common') {
+								return sum; // Common is free
+							}
+							const cost = data.fluency === 'limited' ? 1 : data.fluency === 'fluent' ? 2 : 0; // 'none' or any other value costs 0
+							return sum + cost;
+						},
+						0
+					);
+				}
+
+				// Use calculator's values instead of recalculating
+				const availableSkillPoints = background.availableSkillPoints;
+				const availableTradePoints = background.availableTradePoints;
+				const availableLanguagePoints = background.availableLanguagePoints;
+
+				// Calculate remaining points
+				const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
+				const tradePointsRemaining = availableTradePoints - tradePointsUsed;
+				const languagePointsRemaining = availableLanguagePoints - languagePointsUsed;
+
+				// Require exact spending - no overspending or underspending allowed
+				const hasExactlySpentAllSkillPoints = skillPointsRemaining === 0;
+				const hasExactlySpentAllTradePoints = tradePointsRemaining === 0;
+				const hasExactlySpentAllLanguagePoints = languagePointsRemaining === 0;
+
+				// Step is complete when all skill points are spent and trade/language are spent or overspent
+				const isValid =
+					hasExactlySpentAllSkillPoints &&
+					hasExactlySpentAllTradePoints &&
+					hasExactlySpentAllLanguagePoints;
+
+				if (!isValid) {
+					debug.state('Background validation FAILED:', {
+						hasExactlySpentAllSkillPoints,
+						hasExactlySpentAllTradePoints,
+						hasExactlySpentAllLanguagePoints,
+						skillPointsRemaining,
+						tradePointsRemaining,
+						languagePointsRemaining
+					});
+				}
+
+				return isValid;
+			}
+
+			case 'Spells': {
+				// Validate all spell slots are filled
+				const spellSlots = calculationResult?.spellsKnownSlots || [];
+				const selectedSpells = state.selectedSpells || {};
+				const filledSlots = Object.keys(selectedSpells).length;
+
+				const isValid = filledSlots === spellSlots.length;
+				debug.spells('Spells step validation:', {
+					totalSlots: spellSlots.length,
+					filledSlots,
+					isValid
+				});
+				return isValid;
+			}
+
+			case 'Maneuvers': {
+				// Validate selected maneuvers equals totalManeuversKnown
+				const totalManeuversKnown = calculationResult?.levelBudgets?.totalManeuversKnown || 0;
+				const selectedManeuvers = state.selectedManeuvers || [];
+				const selectedCount = selectedManeuvers.length;
+
+				const isValid = selectedCount === totalManeuversKnown;
+				debug.calculation('Maneuvers step validation:', {
+					totalManeuversKnown,
+					selectedCount,
+					isValid
+				});
+				return isValid;
+			}
+
+			case 'Name':
+				return (
+					state.finalName !== null &&
+					state.finalName !== '' &&
+					state.finalPlayerName !== null &&
+					state.finalPlayerName !== ''
+				);
+
+			default:
+				// Unknown step
+				return false;
+		}
 	};
 
 	const areAllStepsCompleted = () => {
@@ -666,53 +711,44 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	};
 
 	const renderCurrentStep = () => {
-		// Adjust step numbers dynamically
-		const hasLevelingStep = state.level > 1;
-		const ancestryStep = hasLevelingStep ? 3 : 2;
-		const attributesStep = hasLevelingStep ? 4 : 3;
-		const backgroundStep = hasLevelingStep ? 5 : 4;
-		const spellsStep = hasLevelingStep ? 6 : 5;
-		const nameStep = hasLevelingStep ? 7 : 6;
-
-		if (state.currentStep === 1) {
-			return (
-				<>
-					<ClassSelector />
-					{state.classId && <ClassFeatures />}
-				</>
-			);
+		// Build a mapping from step number to step label for dynamic routing
+		const stepMap = new Map<number, string>();
+		for (const step of steps) {
+			stepMap.set(step.number, step.label);
 		}
 
-		if (state.currentStep === 2 && hasLevelingStep) {
-			return <LevelingChoices />;
-		}
+		const currentStepLabel = stepMap.get(state.currentStep);
 
-		if (state.currentStep === ancestryStep) {
-			return (
-				<>
-					<AncestrySelector />
-					<SelectedAncestries />
-				</>
-			);
+		switch (currentStepLabel) {
+			case 'Class':
+				return (
+					<>
+						<ClassSelector />
+						{state.classId && <ClassFeatures />}
+					</>
+				);
+			case 'Leveling':
+				return <LevelingChoices />;
+			case 'Ancestry':
+				return (
+					<>
+						<AncestrySelector />
+						<SelectedAncestries />
+					</>
+				);
+			case 'Attributes':
+				return <Attributes />;
+			case 'Background':
+				return <Background />;
+			case 'Spells':
+				return <Spells />;
+			case 'Maneuvers':
+				return <Maneuvers />;
+			case 'Name':
+				return <CharacterName />;
+			default:
+				return null;
 		}
-
-		if (state.currentStep === attributesStep) {
-			return <Attributes />;
-		}
-
-		if (state.currentStep === backgroundStep) {
-			return <Background />;
-		}
-
-		if (state.currentStep === spellsStep) {
-			return <SpellsAndManeuvers />;
-		}
-
-		if (state.currentStep === nameStep) {
-			return <CharacterName />;
-		}
-
-		return null;
 	};
 
 	return (

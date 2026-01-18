@@ -634,12 +634,13 @@ function calculateGlobalMagicProfile(
 
 /**
  * Generates the array of SpellsKnownSlots for the character.
- * Processes progression table gains and GRANT_SPELL effects.
+ * Processes progression table gains, GRANT_SPELL effects, and talent bonuses.
  */
 function generateSpellsKnownSlots(
 	buildData: EnhancedCharacterBuildData,
 	progressionGains: any,
-	effects: AttributedEffect[]
+	effects: AttributedEffect[],
+	talentSpellBonus: number = 0
 ): SpellsKnownSlot[] {
 	const slots: SpellsKnownSlot[] = [];
 	const classFeatures = getClassFeatures(buildData.classId);
@@ -651,6 +652,16 @@ function generateSpellsKnownSlots(
 			id: `global_spell_${i}`,
 			type: 'spell',
 			sourceName: `${classFeatures?.className || 'Class'} Progression`,
+			isGlobal: true
+		});
+	}
+
+	// 1b. Generate Global Talent Bonus Slots (from MODIFY_STAT spellsKnown)
+	for (let i = 0; i < talentSpellBonus; i++) {
+		slots.push({
+			id: `talent_spell_${i}`,
+			type: 'spell',
+			sourceName: 'Talent Bonus',
 			isGlobal: true
 		});
 	}
@@ -1196,10 +1207,15 @@ export function calculateCharacterWithBreakdowns(
 
 	// --- Spell System (M3.20) ---
 	const globalMagicProfile = calculateGlobalMagicProfile(buildData, resolvedEffects);
+	// Calculate talent spell bonus early for slot generation (C2)
+	const earlySpellBonus = resolvedEffects
+		.filter((e) => e.type === 'MODIFY_STAT' && e.target === 'spellsKnown')
+		.reduce((s, e) => s + Number(e.value || 0), 0);
 	const spellsKnownSlots = generateSpellsKnownSlots(
 		buildData,
 		progressionGains,
-		resolvedEffects
+		resolvedEffects,
+		earlySpellBonus
 	);
 
 	// Movement breakdowns
@@ -1270,6 +1286,31 @@ export function calculateCharacterWithBreakdowns(
 		5 + progressionGains.totalSkillPoints + finalIntelligence + bonus('skillPoints');
 	const baseTradePoints = 3 + progressionGains.totalTradePoints + bonus('tradePoints');
 	const baseLanguagePoints = 2 + bonus('languagePoints'); // Languages stay at 2 (not level-dependent)
+
+	// --- Spells & Maneuvers Step Split (C1, C2, C3) ---
+	// Calculate MODIFY_STAT bonuses for maneuvers and spells from talents
+	const maneuverBonus = bonus('maneuversKnown');
+	const spellBonus = bonus('spellsKnown');
+
+	// Calculate GRANT_MANEUVERS effects from features (e.g., Commander's 4 attack maneuvers)
+	const grantedManeuversCount = resolvedEffects
+		.filter((e) => (e as any).type === 'GRANT_MANEUVERS')
+		.reduce((sum, e) => sum + Number((e as any).value || 0), 0);
+
+	// Log the bonuses for debugging
+	if (maneuverBonus > 0 || grantedManeuversCount > 0) {
+		console.log('🔢 [Calculation] Maneuver bonuses applied:', {
+			fromTalents: maneuverBonus,
+			fromFeatures: grantedManeuversCount,
+			baseFromProgression: progressionGains.totalManeuversKnown
+		});
+	}
+	if (spellBonus > 0) {
+		console.log('✨ [Spells] Spell bonus applied:', {
+			fromTalents: spellBonus,
+			baseFromProgression: progressionGains.totalSpellsKnown
+		});
+	}
 
 	const {
 		skillToTrade = 0,
@@ -1740,9 +1781,11 @@ export function calculateCharacterWithBreakdowns(
 			totalSkillPoints: progressionGains.totalSkillPoints,
 			totalTradePoints: progressionGains.totalTradePoints,
 			totalAttributePoints: progressionGains.totalAttributePoints,
-			totalManeuversKnown: progressionGains.totalManeuversKnown,
+			// Include MODIFY_STAT bonuses and GRANT_MANEUVERS effects (C1, C3)
+			totalManeuversKnown: progressionGains.totalManeuversKnown + maneuverBonus + grantedManeuversCount,
 			totalCantripsKnown: progressionGains.totalCantripsKnown,
-			totalSpellsKnown: progressionGains.totalSpellsKnown,
+			// Include MODIFY_STAT bonuses for spells (C2)
+			totalSpellsKnown: progressionGains.totalSpellsKnown + spellBonus,
 			unlockedFeatureIds: progressionGains.unlockedFeatureIds,
 			pendingSubclassChoices: progressionGains.pendingSubclassChoices
 		},

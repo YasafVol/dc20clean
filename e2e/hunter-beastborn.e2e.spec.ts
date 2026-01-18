@@ -102,15 +102,33 @@ test.describe('Hunter (Beastborn, Urban + Grassland) E2E', () => {
 		}
 		// Spend 2 language points on one Fluent language
 		await setLanguage('Elvish', 'Fluent');
-		await page.getByRole('button', { name: 'Next →' }).click(); // proceed to Spells & Maneuvers
+		await page.getByRole('button', { name: 'Next →' }).click(); // proceed to Maneuvers step
 
-		// Step 5: Maneuvers (Hunter requires 4 at level 1)
-		await page.getByRole('button', { name: /Maneuvers/i }).click();
-		const addButtons = page.locator('button:has-text("Add")');
-		// Add first four maneuvers available
-		for (let i = 0; i < 4; i++) {
-			await addButtons.nth(i).click();
+		// Step 5: Maneuvers (Hunter is a hybrid class - may have both Spells and Maneuvers steps)
+		// First, check if we're on Spells step and skip if so (Hunter may have Spells from path choices)
+		const spellsHeading = page.getByRole('heading', { name: /LEARN.*SPELLS/i });
+		if (await spellsHeading.isVisible().catch(() => false)) {
+			console.log('Spells step detected - skipping to Maneuvers');
+			await page.getByRole('button', { name: 'Next →' }).click();
 		}
+
+		// Now we should be on Maneuvers step
+		await expect(page.getByRole('heading', { name: /LEARN.*MANEUVERS/i })).toBeVisible({
+			timeout: 5000
+		});
+
+		// Select maneuvers by clicking LEARN buttons
+		const learnButtons = page.locator('button:has-text("LEARN")');
+		// Hunter needs maneuvers based on their totalManeuversKnown
+		// Add the first available maneuvers until we have enough
+		const maneuversNeeded = 4; // Based on Hunter's progression
+		for (let i = 0; i < maneuversNeeded; i++) {
+			await learnButtons.first().click();
+			await page.waitForTimeout(200);
+		}
+
+		// Verify all maneuvers are selected (check for "All choices complete")
+		await expect(page.getByText(/All choices complete|0 remaining/i)).toBeVisible({ timeout: 5000 });
 		await page.getByRole('button', { name: 'Next →' }).click(); // proceed to Names
 
 		// Step 6: Names

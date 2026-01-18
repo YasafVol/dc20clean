@@ -4,6 +4,36 @@
 > **Created:** 2026-01-18  
 > **Last Updated:** 2026-01-18
 
+---
+
+## Progress Tracker
+
+| Category | Done | Total | Progress |
+|----------|------|-------|----------|
+| Leveling System (L1-L13) | 6 | 13 | 46% |
+| Talent Data (T1-T12) | 12 | 12 | 100% |
+| UI/Multiclass (UI1-UI4) | 2 | 4 | 50% |
+| **Overall** | **20** | **29** | **69%** |
+
+### Completion Log
+
+| Date | Gaps Completed | Commit |
+|------|----------------|--------|
+| 2026-01-18 | L1, L3, L4, L5, L7, L8, T1-T12, UI1, UI3 | `4f5ee8e` |
+
+---
+
+## Update Rules
+
+> **IMPORTANT:** When completing any gap from this spec, you MUST:
+>
+> 1. Update the gap's status in section 2 from `Pending` to `**Done**`
+> 2. Update the Progress Tracker counts above
+> 3. Add an entry to the Completion Log with date, gaps completed, and commit hash
+> 4. Commit the spec update with message: `docs: update LEVELING_GAPS_SPEC - mark [GAP_IDS] done`
+
+---
+
 ## 1. Overview
 
 This specification documents all identified gaps in the DC20 v0.10 leveling system implementation and provides the implementation plan to fix them. The gaps fall into three categories: data mismatches, calculation logic issues, and UI bugs.

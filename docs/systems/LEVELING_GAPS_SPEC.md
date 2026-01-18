@@ -16,14 +16,14 @@ This specification documents all identified gaps in the DC20 v0.10 leveling syst
 
 | ID | Gap | Priority | Type | Status |
 |----|-----|----------|------|--------|
-| L1 | Level cap hardcoded to 5 (should be 10) | P1 | UI | Pending |
+| L1 | Level cap hardcoded to 5 (should be 10) | P1 | UI | **Done** |
 | L2 | Leveling validation disabled | P2 | UI | Pending |
-| L3 | General talents in LevelingChoices.tsx hardcoded and mismatched | P1 | UI/Data | Pending |
-| L4 | Talent values incorrect (Ancestry +2 vs +4) | P1 | Data | Pending |
-| L5 | Missing general talents in UI (Martial/Spellcasting Expansion) | P2 | UI | Pending |
+| L3 | General talents in LevelingChoices.tsx hardcoded and mismatched | P1 | UI/Data | **Done** |
+| L4 | Talent values incorrect (Ancestry +2 vs +4) | P1 | Data | **Done** |
+| L5 | Missing general talents in UI (Martial/Spellcasting Expansion) | P2 | UI | **Done** |
 | L6 | LEVELING_SYSTEM.MD references removed "Techniques" | P3 | Docs | Pending |
-| L7 | Spellcaster Path gives +2 MP, rules say +3 MP at level 1 | P1 | Data | Pending |
-| L8 | Cross-path rule text incorrect ("2 points" vs "first time") | P2 | Data | Pending |
+| L7 | Spellcaster Path gives +2 MP, rules say +3 MP at level 1 | P1 | Data | **Done** |
+| L8 | Cross-path rule text incorrect ("2 points" vs "first time") | P2 | Data | **Done** |
 | L9 | Cross-path rules not enforced (text-only display) | P2 | Calc/UI | Pending |
 | L10 | Missing class category metadata | P2 | Data | Pending |
 | L11 | Missing "Spellcaster Stamina Regen" grant | P2 | Calc | Pending |
@@ -34,26 +34,26 @@ This specification documents all identified gaps in the DC20 v0.10 leveling syst
 
 | ID | Class | Talent | Issue | Priority | Status |
 |----|-------|--------|-------|----------|--------|
-| T1 | General | Ancestry Increase | Value: +4 (rules) vs +2 (code) | P1 | Pending |
-| T2 | General | Spellcasting Expansion | Has +2 MP not in rules - remove | P1 | Pending |
-| T3 | Champion | Disciplined Combatant | SP cost: 2 (rules) vs 1 (code) | P1 | Pending |
-| T4 | Monk | Internal Damage | Damage type: True (rules) vs Sonic (code) | P1 | Pending |
-| T5 | Monk | Steel Fist | Opposite effect: "gain Impact" (rules) vs "lose Impact" (code) | P1 | Pending |
-| T6 | Sorcerer | Greater Innate Power | Missing "1 point Focus Property" benefit | P2 | Pending |
-| T7 | Sorcerer | Font of Magic | Rest Points: 2 (rules) vs 1 (code) | P1 | Pending |
-| T8 | Spellblade | Sling-Blade | Missing prerequisite: Spellstrike | P2 | Pending |
-| T9 | Commander | Seize Momentum | Missing prerequisite: Commanding Aura | P2 | Pending |
-| T10 | Wizard | Expanded Spell School | "2 Spells" (rules) vs "1 Cantrip + 1 Spell" (code) | P2 | Pending |
-| T11 | Wizard | Crowned Sigil | "any willing creature" (rules) vs "yourself" (code) | P2 | Pending |
-| T12 | Wizard | Overly Prepared Spellcaster | Missing benefits; Dazed Resistance is unconditional | P2 | Pending |
+| T1 | General | Ancestry Increase | Value: +4 (rules) vs +2 (code) | P1 | **Done** |
+| T2 | General | Spellcasting Expansion | Has +2 MP not in rules - remove | P1 | **Done** |
+| T3 | Champion | Disciplined Combatant | SP cost: 2 (rules) vs 1 (code) | P1 | **Done** |
+| T4 | Monk | Internal Damage | Damage type: True (rules) vs Sonic (code) | P1 | **Done** |
+| T5 | Monk | Steel Fist | Opposite effect: "gain Impact" (rules) vs "lose Impact" (code) | P1 | **Done** |
+| T6 | Sorcerer | Greater Innate Power | Missing "1 point Focus Property" benefit | P2 | **Done** |
+| T7 | Sorcerer | Font of Magic | Rest Points: 2 (rules) vs 1 (code) | P1 | **Done** |
+| T8 | Spellblade | Sling-Blade | Missing prerequisite: Spellstrike | P2 | **Done** |
+| T9 | Commander | Seize Momentum | Missing prerequisite: Commanding Aura | P2 | **Done** |
+| T10 | Wizard | Expanded Spell School | "2 Spells" (rules) vs "1 Cantrip + 1 Spell" (code) | P2 | **Done** |
+| T11 | Wizard | Crowned Sigil | "any willing creature" (rules) vs "yourself" (code) | P2 | **Done** |
+| T12 | Wizard | Overly Prepared Spellcaster | Missing benefits; Dazed Resistance is unconditional | P2 | **Done** |
 
 ### 2.3 UI/Multiclass Gaps (UI1-UI4)
 
 | ID | Component | Issue | Priority | Status |
 |----|-----------|-------|----------|--------|
-| UI1 | LevelingChoices.tsx | Hardcoded general talents with wrong values (+1 AP, +3 SP, fake "Trade Increase") | P1 | Pending |
+| UI1 | LevelingChoices.tsx | Hardcoded general talents with wrong values (+1 AP, +3 SP, fake "Trade Increase") | P1 | **Done** |
 | UI2 | LevelingChoices.tsx | `getOwnedClassFeatures()` only counts main class, not multiclass-gained features | P1 | Pending |
-| UI3 | LevelingChoices.tsx | Multiclass state not restored from context when navigating back | P2 | Pending |
+| UI3 | LevelingChoices.tsx | Multiclass state not restored from context when navigating back | P2 | **Done** |
 | UI4 | Calculator | Class Flavor Features not auto-granted when 2+ features from same class | P2 | Pending |
 
 ---

@@ -264,10 +264,11 @@ export const fieldMap_dc20_010: FieldMapItem[] = [
 
 	// =========================================================================
 	// PRACTICAL TRADES A-D - Labels, Values, Mastery, Proficiency
+	// Trade A/B/C/D fields hold the numeric modifier
+	// Custom Trade A/B/C/D fields hold the trade name
 	// =========================================================================
-	{ path: 'tradeA', field: 'Trade A', type: 'text' },
-	{ path: 'tradeAModifier', field: 'Trade A', type: 'text' }, // Same field used for modifier
-	{ path: 'customTradeA', field: 'Custom Trade A', type: 'text' },
+	{ path: 'tradeAModifier', field: 'Trade A', type: 'text' },
+	{ path: 'tradeA', field: 'Custom Trade A', type: 'text' },
 	{ path: 'proficiency.tradeA', field: 'Trade-A-Proficiency', type: 'checkbox' },
 	{ path: 'mastery.TradeA.2', field: 'Mastery-Trade-A-2', type: 'checkbox' },
 	{ path: 'mastery.TradeA.4', field: 'Mastery-Trade-A-4', type: 'checkbox' },
@@ -275,8 +276,8 @@ export const fieldMap_dc20_010: FieldMapItem[] = [
 	{ path: 'mastery.TradeA.8', field: 'Mastery-Trade-A-8', type: 'checkbox' },
 	{ path: 'mastery.TradeA.10', field: 'Mastery-Trade-A-10', type: 'checkbox' },
 
-	{ path: 'tradeB', field: 'Trade B', type: 'text' },
-	{ path: 'customTradeB', field: 'Custom Trade B', type: 'text' },
+	{ path: 'tradeBModifier', field: 'Trade B', type: 'text' },
+	{ path: 'tradeB', field: 'Custom Trade B', type: 'text' },
 	{ path: 'proficiency.tradeB', field: 'Trade-B-Proficiency', type: 'checkbox' },
 	{ path: 'mastery.TradeB.2', field: 'Mastery-Trade-B-2', type: 'checkbox' },
 	{ path: 'mastery.TradeB.4', field: 'Mastery-Trade-B-4', type: 'checkbox' },
@@ -284,8 +285,8 @@ export const fieldMap_dc20_010: FieldMapItem[] = [
 	{ path: 'mastery.TradeB.8', field: 'Mastery-Trade-B-8', type: 'checkbox' },
 	{ path: 'mastery.TradeB.10', field: 'Mastery-Trade-B-10', type: 'checkbox' },
 
-	{ path: 'tradeC', field: 'Trade C', type: 'text' },
-	{ path: 'customTradeC', field: 'Custom Trade C', type: 'text' },
+	{ path: 'tradeCModifier', field: 'Trade C', type: 'text' },
+	{ path: 'tradeC', field: 'Custom Trade C', type: 'text' },
 	{ path: 'proficiency.tradeC', field: 'Trade-C-Proficiency', type: 'checkbox' },
 	{ path: 'mastery.TradeC.2', field: 'Mastery-Trade-C-2', type: 'checkbox' },
 	{ path: 'mastery.TradeC.4', field: 'Mastery-Trade-C-4', type: 'checkbox' },
@@ -293,8 +294,8 @@ export const fieldMap_dc20_010: FieldMapItem[] = [
 	{ path: 'mastery.TradeC.8', field: 'Mastery-Trade-C-8', type: 'checkbox' },
 	{ path: 'mastery.TradeC.10', field: 'Mastery-Trade-C-10', type: 'checkbox' },
 
-	{ path: 'tradeD', field: 'Trade D', type: 'text' },
-	{ path: 'customTradeD', field: 'Custom Trade D', type: 'text' },
+	{ path: 'tradeDModifier', field: 'Trade D', type: 'text' },
+	{ path: 'tradeD', field: 'Custom Trade D', type: 'text' },
 	{ path: 'proficiency.tradeD', field: 'Trade-D-Proficiency', type: 'checkbox' },
 	{ path: 'mastery.TradeD.2', field: 'Mastery-Trade-D-2', type: 'checkbox' },
 	{ path: 'mastery.TradeD.4', field: 'Mastery-Trade-D-4', type: 'checkbox' },

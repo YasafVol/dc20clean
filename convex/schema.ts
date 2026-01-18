@@ -189,9 +189,8 @@ const characterValidator = {
 	languagesData: v.any(), // Complex language map
 
 	// Level progression data
-	// Note: selectedTalents is Record<string, number> (talent_id → count)
-	// Old data may be string[] which is converted by schemaMigration on load
-	selectedTalents: v.optional(v.any()),
+	// Note: App uses Record<string, number> internally but converts to array for storage
+	selectedTalents: v.optional(v.array(v.string())),
 	pathPointAllocations: v.optional(pathPointAllocationsValidator),
 	unlockedFeatureIds: v.optional(v.array(v.string())),
 	selectedSubclass: v.optional(v.string()),

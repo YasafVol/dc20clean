@@ -55,6 +55,24 @@ function processMovementsToStructure(
 	return movement;
 }
 
+/**
+ * Converts count-based talents Record to array format for database storage.
+ * Example: {talent1: 2, talent2: 1} → ['talent1', 'talent1', 'talent2']
+ */
+function convertTalentsToArray(talents: Record<string, number> | string[] | undefined): string[] {
+	if (!talents) return [];
+	// If already an array, return as-is
+	if (Array.isArray(talents)) return talents;
+	// Convert Record<string, number> to array with duplicates
+	const result: string[] = [];
+	for (const [talentId, count] of Object.entries(talents)) {
+		for (let i = 0; i < count; i++) {
+			result.push(talentId);
+		}
+	}
+	return result;
+}
+
 export interface CharacterCompletionCallbacks {
 	onShowSnackbar: (message: string) => void;
 	onNavigateToLoad: () => void;
@@ -188,7 +206,8 @@ export const completeCharacter = async (
 			languagesData: characterState.languagesData || { common: { fluency: 'fluent' } },
 
 			// Level progression data (M2.7)
-			selectedTalents: characterState.selectedTalents || [],
+			// Convert Record<string, number> to string[] for database compatibility
+			selectedTalents: convertTalentsToArray(characterState.selectedTalents),
 			pathPointAllocations: characterState.pathPointAllocations || {},
 			unlockedFeatureIds:
 				calculationResult.resolvedFeatures?.unlockedFeatures.map((f) => f.id || f.featureName) ||

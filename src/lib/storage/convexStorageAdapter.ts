@@ -26,8 +26,30 @@ function normalizeCharacter(doc: StoredCharacterDoc): SavedCharacter {
 	return rest;
 }
 
+/**
+ * Converts count-based talents Record to array format for database storage.
+ * Example: {talent1: 2, talent2: 1} → ['talent1', 'talent1', 'talent2']
+ */
+function convertTalentsToArray(talents: Record<string, number> | string[] | undefined): string[] {
+	if (!talents) return [];
+	// If already an array, return as-is
+	if (Array.isArray(talents)) return talents;
+	// Convert Record<string, number> to array with duplicates
+	const result: string[] = [];
+	for (const [talentId, count] of Object.entries(talents)) {
+		for (let i = 0; i < count; i++) {
+			result.push(talentId);
+		}
+	}
+	return result;
+}
+
 function prepareCharacterForSave(character: SavedCharacter): SavedCharacter {
-	return { ...character };
+	return {
+		...character,
+		// Convert Record<string, number> to string[] for database compatibility
+		selectedTalents: convertTalentsToArray(character.selectedTalents as any),
+	};
 }
 
 class ConvexStorageAdapter implements CharacterStorageWithEvents {

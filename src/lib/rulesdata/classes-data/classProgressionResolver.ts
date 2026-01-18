@@ -163,7 +163,9 @@ export function resolveClassProgression(classId: string, targetLevel: number): R
 		// Accumulate structured gains
 		if (levelData.gains) {
 			budgets.totalTalents += levelData.gains.talents || 0;
-			budgets.totalPathPoints += levelData.gains.pathPoints || 0;
+			// Support both pathPoints (number) and pathProgression (boolean) for backwards compatibility
+			budgets.totalPathPoints +=
+				levelData.gains.pathPoints || (levelData.gains.pathProgression ? 1 : 0);
 			budgets.totalAncestryPoints += levelData.gains.ancestryPoints || 0;
 
 			// Resolve feature objects from IDs

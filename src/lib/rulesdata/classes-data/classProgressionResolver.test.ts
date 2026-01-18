@@ -136,12 +136,11 @@ describe('Class Progression Resolver (UT-2)', () => {
 			expect(result.budgets.totalPathPoints).toBe(0);
 		});
 
-		it('should grant talents at level 2', () => {
+		it('should grant talents and path points at level 2', () => {
 			const result = resolveClassProgression('barbarian', 2);
 			expect(result.budgets.totalTalents).toBe(1);
-			// Note: pathPoints field is not set in progression data (uses pathProgression: true flag)
-			// Path progression is tracked via the pathProgression boolean, not pathPoints number
-			expect(result.budgets.totalPathPoints).toBe(0);
+			// DC20 v0.10: Path progression at levels 2, 4, 6, 8 (1 point each)
+			expect(result.budgets.totalPathPoints).toBe(1);
 		});
 
 		it('should accumulate talents across multiple levels', () => {

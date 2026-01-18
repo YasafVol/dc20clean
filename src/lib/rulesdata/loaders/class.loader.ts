@@ -17,6 +17,8 @@ interface ProgressionLevel {
 		classFeatures?: string[];
 		talents?: number;
 		pathPoints?: number;
+		/** Whether this level grants path progression (boolean flag, equals 1 path point) */
+		pathProgression?: boolean;
 		ancestryPoints?: number;
 		subclassFeatureChoice?: boolean;
 		epicBoon?: boolean;

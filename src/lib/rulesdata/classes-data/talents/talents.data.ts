@@ -68,19 +68,28 @@ export const generalTalents: Talent[] = [
 	}
 ];
 
+/**
+ * Multiclass Talents (DC20 v0.10 p.161)
+ *
+ * These allow gaining Features from other Classes (except Flavor Features).
+ * Class Flavor Features: Once you gain 2 Class Features from the same Class,
+ * you automatically gain that Class's Flavor Feature.
+ */
 export const multiclassTalents: Talent[] = [
 	{
 		id: 'multiclass_novice',
 		name: 'Novice Multiclass',
 		category: 'Multiclass',
-		description: 'You can choose a 1st Level Class Feature from any Class.',
+		description:
+			'You can choose a 1st Level Class Feature from any Class. You cannot gain Flavor Features through Multiclass Talents.',
 		effects: [{ type: 'GRANT_CHOICE', target: 'multiclass_feature_level_1', value: 1 }]
 	},
 	{
 		id: 'multiclass_adept',
 		name: 'Adept Multiclass',
 		category: 'Multiclass',
-		description: 'You can choose a 2nd Level Class Feature from any Class.',
+		description:
+			'You can choose a 2nd Level Class Feature from any Class. You cannot gain Flavor Features through Multiclass Talents.',
 		prerequisites: { level: 4 },
 		effects: [{ type: 'GRANT_CHOICE', target: 'multiclass_feature_level_2', value: 1 }]
 	},
@@ -89,7 +98,7 @@ export const multiclassTalents: Talent[] = [
 		name: 'Expert Multiclass',
 		category: 'Multiclass',
 		description:
-			'Choose a 5th Level Class Feature OR a 3rd Level Subclass Feature from a class you have at least 1 feature from.',
+			'Choose one of the following: (1) A 5th Level Class Feature from any Class you have at least 1 Class Feature from, OR (2) A 3rd Level Subclass Feature from a Class you have at least 1 Class Feature from.',
 		prerequisites: { level: 7 },
 		effects: [
 			{ type: 'GRANT_CHOICE', target: 'multiclass_feature_level_5_or_subclass_3', value: 1 }
@@ -100,7 +109,7 @@ export const multiclassTalents: Talent[] = [
 		name: 'Master Multiclass',
 		category: 'Multiclass',
 		description:
-			'Choose a 6th Level Subclass Feature from a subclass you have at least 1 feature from.',
+			'You can choose a 6th Level Subclass Feature from a Subclass you have at least 1 Subclass Feature from.',
 		prerequisites: { level: 10 },
 		effects: [{ type: 'GRANT_CHOICE', target: 'multiclass_subclass_feature_level_6', value: 1 }]
 	},
@@ -109,7 +118,7 @@ export const multiclassTalents: Talent[] = [
 		name: 'Grandmaster Multiclass',
 		category: 'Multiclass',
 		description:
-			'Choose an 8th Level Class Capstone Feature from any Class you have at least 2 Class Features from.',
+			'You can choose an 8th Level Class Capstone Feature from any Class you have at least 2 Class Features from.',
 		prerequisites: { level: 13 },
 		effects: [{ type: 'GRANT_CHOICE', target: 'multiclass_capstone_feature_level_8', value: 1 }]
 	},
@@ -118,7 +127,7 @@ export const multiclassTalents: Talent[] = [
 		name: 'Legendary Multiclass',
 		category: 'Multiclass',
 		description:
-			'Choose a 9th Level Subclass Capstone Feature from any Subclass you have at least 2 Subclass Features from.',
+			'You can choose a 9th Level Subclass Capstone Feature from any Subclass you have at least 2 Subclass Features from.',
 		prerequisites: { level: 17 },
 		effects: [{ type: 'GRANT_CHOICE', target: 'multiclass_subclass_capstone_level_9', value: 1 }]
 	}

@@ -94,6 +94,8 @@ const levelGainsSchema = z
 	.object({
 		talents: z.number().optional(),
 		pathPoints: z.number().optional(),
+		/** Whether this level grants path progression (boolean flag, equals 1 path point) */
+		pathProgression: z.boolean().optional(),
 		ancestryPoints: z.number().optional(),
 		classFeatures: z.array(z.string()).optional(),
 		subclassFeatureChoice: z.boolean().optional(),

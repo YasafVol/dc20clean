@@ -12,7 +12,7 @@ import { Wand2, Info, Search, Lock, Unlock } from 'lucide-react';
 import { debug } from '../../lib/utils/debug';
 
 // Cost filter options
-type CostFilter = 'all' | 'cantrip' | '1mp' | '2mp' | '3mp+';
+type CostFilter = 'all' | '1mp' | '2mp' | '3mp+';
 
 // Sustained filter options
 type SustainedFilter = 'all' | 'yes' | 'no';
@@ -159,11 +159,8 @@ const Spells: React.FC = () => {
 		return filtered;
 	}, [classData, globalMagicProfile, calculationResult, state.classId]);
 
-	const spellCounts = useMemo(() => {
-		return {
-			cantrips: spellSlots.filter((s) => s.type === 'cantrip').length,
-			spells: spellSlots.filter((s) => s.type === 'spell').length
-		};
+	const spellCount = useMemo(() => {
+		return spellSlots.length;
 	}, [spellSlots]);
 
 	// Get unique tags from available spells for the filter dropdown
@@ -197,17 +194,14 @@ const Spells: React.FC = () => {
 		// Filter by cost
 		if (costFilter !== 'all') {
 			switch (costFilter) {
-				case 'cantrip':
-					spells = spells.filter((spell) => spell.isCantrip);
-					break;
 				case '1mp':
-					spells = spells.filter((spell) => !spell.isCantrip && spell.cost.mp === 1);
+					spells = spells.filter((spell) => spell.cost.mp === 1);
 					break;
 				case '2mp':
-					spells = spells.filter((spell) => !spell.isCantrip && spell.cost.mp === 2);
+					spells = spells.filter((spell) => spell.cost.mp === 2);
 					break;
 				case '3mp+':
-					spells = spells.filter((spell) => !spell.isCantrip && (spell.cost.mp ?? 0) >= 3);
+					spells = spells.filter((spell) => (spell.cost.mp ?? 0) >= 3);
 					break;
 			}
 		}
@@ -224,11 +218,7 @@ const Spells: React.FC = () => {
 			const activeSlot = spellSlots.find((s) => s.id === activeSlotId);
 			if (activeSlot) {
 				spells = spells.filter((spell) => {
-					// 1. Check type (spell/cantrip)
-					if (activeSlot.type === 'cantrip' && !spell.isCantrip) return false;
-					if (activeSlot.type === 'spell' && spell.isCantrip) return false;
-
-					// 2. Check Specific Restrictions
+					// 1. Check Specific Restrictions
 					if (activeSlot.specificRestrictions) {
 						const sr = activeSlot.specificRestrictions;
 						if (sr.exactSpellId && spell.id !== sr.exactSpellId) return false;
@@ -289,10 +279,8 @@ const Spells: React.FC = () => {
 
 		console.log('🔮 [Spells] Spell found:', {
 			name: spell.name,
-			isCantrip: spell.isCantrip,
 			availableSlots: spellSlots.length,
-			currentSelections: Object.keys(selectedSpells).length,
-			slotTypes: spellSlots.map((s) => ({ id: s.id, type: s.type })).slice(0, 3)
+			currentSelections: Object.keys(selectedSpells).length
 		});
 
 		setSelectedSpells((prev) => {
@@ -312,14 +300,10 @@ const Spells: React.FC = () => {
 			if (activeSlotId) {
 				const slot = spellSlots.find((s) => s.id === activeSlotId);
 				if (slot) {
-					// Check if spell fits active slot
-					const fitsType = (slot.type === 'cantrip') === spell.isCantrip;
-					if (fitsType) {
-						newSelected[activeSlotId] = spellId;
-						debug.spells('Spell selected', { spellId, slotId: activeSlotId, slotType: slot.type });
-						setActiveSlotId(null); // Close active slot after selection
-						return newSelected;
-					}
+					newSelected[activeSlotId] = spellId;
+					debug.spells('Spell selected', { spellId, slotId: activeSlotId });
+					setActiveSlotId(null); // Close active slot after selection
+					return newSelected;
 				}
 			}
 
@@ -335,9 +319,6 @@ const Spells: React.FC = () => {
 				});
 
 			for (const slot of emptySlots) {
-				const fitsType = (slot.type === 'cantrip') === spell.isCantrip;
-				if (!fitsType) continue;
-
 				// Restriction check
 				let fitsRestrictions = true;
 				if (slot.specificRestrictions) {
@@ -357,7 +338,7 @@ const Spells: React.FC = () => {
 
 				if (fitsRestrictions) {
 					newSelected[slot.id] = spellId;
-					console.log('🔮 [Spells] Spell auto-allocated:', { spellId, slotId: slot.id, slotType: slot.type });
+					console.log('🔮 [Spells] Spell auto-allocated:', { spellId, slotId: slot.id });
 					return newSelected;
 				}
 			}
@@ -365,9 +346,7 @@ const Spells: React.FC = () => {
 			console.warn('🔮 [Spells] No valid slot found for spell:', {
 				spellId,
 				spellName: spell.name,
-				isCantrip: spell.isCantrip,
-				emptySlotCount: emptySlots.length,
-				slotTypes: emptySlots.map((s) => s.type)
+				emptySlotCount: emptySlots.length
 			});
 			return prev; // No valid slot found
 		});
@@ -415,15 +394,8 @@ const Spells: React.FC = () => {
 	}, [selectedSpells, dispatch, state.selectedSpells, state.selectedManeuvers]);
 
 	// Calculate points remaining for display
-	const selectedSpellIds = Object.values(selectedSpells);
-	const selectedCantripsCount = selectedSpellIds.filter(
-		(id) => allSpells.find((s) => s.id === id)?.isCantrip
-	).length;
-	const selectedSpellsCount = selectedSpellIds.filter(
-		(id) => !allSpells.find((s) => s.id === id)?.isCantrip
-	).length;
-	const cantripsRemaining = spellCounts.cantrips - selectedCantripsCount;
-	const spellsRemaining = spellCounts.spells - selectedSpellsCount;
+	const selectedSpellsCount = Object.keys(selectedSpells).length;
+	const spellsRemaining = spellCount - selectedSpellsCount;
 
 	if (!state.classId) {
 		return (
@@ -472,38 +444,23 @@ const Spells: React.FC = () => {
 								<Info className="h-4 w-4" /> Selection Summary
 							</h3>
 
-							<div className="space-y-3">
-								{spellCounts.cantrips > 0 && (
-									<div className="flex items-center justify-between text-sm">
-										<span className="text-muted-foreground">Cantrips</span>
-										<Badge
-											variant={cantripsRemaining < 0 ? 'destructive' : 'outline'}
-											className="font-mono"
-										>
-											{selectedCantripsCount} / {spellCounts.cantrips}
-										</Badge>
-									</div>
-								)}
-								{spellCounts.spells > 0 && (
-									<div className="flex items-center justify-between text-sm">
-										<span className="text-muted-foreground">Spells</span>
-										<Badge
-											variant={spellsRemaining < 0 ? 'destructive' : 'outline'}
-											className="font-mono"
-										>
-											{selectedSpellsCount} / {spellCounts.spells}
-										</Badge>
-									</div>
-								)}
+							<div className="flex items-center justify-between text-sm">
+								<span className="text-muted-foreground">Spells Known</span>
+								<Badge
+									variant={spellsRemaining < 0 ? 'destructive' : 'outline'}
+									className="font-mono"
+								>
+									{selectedSpellsCount} / {spellCount}
+								</Badge>
 							</div>
 
-							{cantripsRemaining > 0 || spellsRemaining > 0 ? (
+							{spellsRemaining > 0 ? (
 								<p className="text-muted-foreground border-t border-white/5 pt-2 text-center text-[10px] italic">
-									You have choices remaining
+									You have {spellsRemaining} spell{spellsRemaining !== 1 ? 's' : ''} remaining to learn
 								</p>
 							) : (
 								<p className="border-primary/10 text-primary/60 border-t pt-2 text-center text-[10px] italic">
-									All choices complete
+									All spells learned
 								</p>
 							)}
 						</CardContent>
@@ -538,6 +495,47 @@ const Spells: React.FC = () => {
 				</div>
 			) : (
 				<div className="space-y-6">
+					{/* Class Access Info */}
+					{globalMagicProfile && (
+						<div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
+							<div className="flex flex-wrap items-center gap-2 text-sm">
+								<span className="text-muted-foreground font-medium">
+									{classData?.name || 'Your class'} can learn:
+								</span>
+								{globalMagicProfile.sources.length > 0 && (
+									<div className="flex items-center gap-1">
+										<span className="text-muted-foreground">Sources:</span>
+										{globalMagicProfile.sources.map((source) => (
+											<Badge key={source} variant="secondary" className="text-xs">
+												{source}
+											</Badge>
+										))}
+									</div>
+								)}
+								{globalMagicProfile.schools.length > 0 && (
+									<div className="flex items-center gap-1">
+										<span className="text-muted-foreground ml-2">Schools:</span>
+										{globalMagicProfile.schools.map((school) => (
+											<Badge key={school} variant="outline" className="text-xs">
+												{school}
+											</Badge>
+										))}
+									</div>
+								)}
+								{globalMagicProfile.tags.length > 0 && (
+									<div className="flex items-center gap-1">
+										<span className="text-muted-foreground ml-2">+ Tags:</span>
+										{globalMagicProfile.tags.map((tag) => (
+											<Badge key={tag} variant="outline" className="border-amber-500/30 text-amber-500 text-xs">
+												{tag}
+											</Badge>
+										))}
+									</div>
+								)}
+							</div>
+						</div>
+					)}
+
 					{/* Filter Section */}
 					<Card className="border-border bg-card/50">
 						<CardContent className="pt-6">
@@ -606,7 +604,6 @@ const Spells: React.FC = () => {
 										className="border-border bg-background focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
 									>
 										<option value="all">Any Cost</option>
-										<option value="cantrip">Cantrip (0 MP)</option>
 										<option value="1mp">1 MP Spells</option>
 										<option value="2mp">2 MP Spells</option>
 										<option value="3mp+">3+ MP Spells</option>
@@ -637,14 +634,9 @@ const Spells: React.FC = () => {
 						<span>
 							Showing {filteredSpells.length} of {availableSpells.length} available spells
 						</span>
-						<div className="flex gap-4">
-							<span className={cn(cantripsRemaining < 0 && 'text-destructive font-bold')}>
-								{cantripsRemaining} cantrip slots
-							</span>
-							<span className={cn(spellsRemaining < 0 && 'text-destructive font-bold')}>
-								{spellsRemaining} spell slots
-							</span>
-						</div>
+						<span className={cn(spellsRemaining < 0 && 'text-destructive font-bold')}>
+							{spellsRemaining} spells remaining to learn
+						</span>
 					</div>
 
 					{/* --- Spell Slots Section (M3.20) --- */}
@@ -664,102 +656,42 @@ const Spells: React.FC = () => {
 								</span>
 							</summary>
 
-							<div className="mt-4 space-y-3">
-								{/* Cantrip Slots */}
-								{spellSlots.filter((s) => s.type === 'cantrip').length > 0 && (
-									<div className="space-y-2">
-										<h4 className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
-											Cantrips
-										</h4>
-										<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-											{spellSlots
-												.filter((s) => s.type === 'cantrip')
-												.map((slot) => {
-													const assignedSpellId = selectedSpells[slot.id];
-													const assignedSpell = assignedSpellId
-														? allSpells.find((s) => s.id === assignedSpellId)
-														: null;
-													const isActive = activeSlotId === slot.id;
+							<div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+								{spellSlots.map((slot) => {
+									const assignedSpellId = selectedSpells[slot.id];
+									const assignedSpell = assignedSpellId
+										? allSpells.find((s) => s.id === assignedSpellId)
+										: null;
+									const isActive = activeSlotId === slot.id;
 
-													return (
-														<div
-															key={slot.id}
-															className={cn(
-																'flex cursor-pointer items-center justify-between rounded-lg border-2 px-3 py-2 transition-all',
-																isActive
-																	? 'border-primary bg-primary/10'
-																	: 'border-border bg-card/60 hover:border-primary/40',
-																assignedSpell ? 'border-primary/40' : 'border-dashed opacity-80'
-															)}
-															onClick={() => setActiveSlotId(isActive ? null : slot.id)}
-														>
-															<div className="flex items-center gap-2 overflow-hidden">
-																{assignedSpell ? (
-																	<span className="truncate font-medium">{assignedSpell.name}</span>
-																) : (
-																	<span className="text-muted-foreground italic">Empty</span>
-																)}
-															</div>
-															<div className="flex shrink-0 items-center gap-1">
-																<span className="text-muted-foreground/60 text-[10px] uppercase">
-																	{slot.sourceName}
-																</span>
-																{!slot.isGlobal && <Lock className="text-primary/40 h-3 w-3" />}
-															</div>
-														</div>
-													);
-												})}
+									return (
+										<div
+											key={slot.id}
+											className={cn(
+												'flex cursor-pointer items-center justify-between rounded-lg border-2 px-3 py-2 transition-all',
+												isActive
+													? 'border-primary bg-primary/10'
+													: 'border-border bg-card/60 hover:border-primary/40',
+												assignedSpell ? 'border-primary/40' : 'border-dashed opacity-80'
+											)}
+											onClick={() => setActiveSlotId(isActive ? null : slot.id)}
+										>
+											<div className="flex items-center gap-2 overflow-hidden">
+												{assignedSpell ? (
+													<span className="truncate font-medium">{assignedSpell.name}</span>
+												) : (
+													<span className="text-muted-foreground italic">Empty</span>
+												)}
+											</div>
+											<div className="flex shrink-0 items-center gap-1">
+												<span className="text-muted-foreground/60 text-[10px] uppercase">
+													{slot.sourceName}
+												</span>
+												{!slot.isGlobal && <Lock className="text-primary/40 h-3 w-3" />}
+											</div>
 										</div>
-									</div>
-								)}
-
-								{/* Spell Slots */}
-								{spellSlots.filter((s) => s.type === 'spell').length > 0 && (
-									<div className="space-y-2">
-										<h4 className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
-											Spells
-										</h4>
-										<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-											{spellSlots
-												.filter((s) => s.type === 'spell')
-												.map((slot) => {
-													const assignedSpellId = selectedSpells[slot.id];
-													const assignedSpell = assignedSpellId
-														? allSpells.find((s) => s.id === assignedSpellId)
-														: null;
-													const isActive = activeSlotId === slot.id;
-
-													return (
-														<div
-															key={slot.id}
-															className={cn(
-																'flex cursor-pointer items-center justify-between rounded-lg border-2 px-3 py-2 transition-all',
-																isActive
-																	? 'border-primary bg-primary/10'
-																	: 'border-border bg-card/60 hover:border-primary/40',
-																assignedSpell ? 'border-primary/40' : 'border-dashed opacity-80'
-															)}
-															onClick={() => setActiveSlotId(isActive ? null : slot.id)}
-														>
-															<div className="flex items-center gap-2 overflow-hidden">
-																{assignedSpell ? (
-																	<span className="truncate font-medium">{assignedSpell.name}</span>
-																) : (
-																	<span className="text-muted-foreground italic">Empty</span>
-																)}
-															</div>
-															<div className="flex shrink-0 items-center gap-1">
-																<span className="text-muted-foreground/60 text-[10px] uppercase">
-																	{slot.sourceName}
-																</span>
-																{!slot.isGlobal && <Lock className="text-primary/40 h-3 w-3" />}
-															</div>
-														</div>
-													);
-												})}
-										</div>
-									</div>
-								)}
+									);
+								})}
 							</div>
 						</details>
 					</div>

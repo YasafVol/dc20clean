@@ -7,6 +7,7 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const hunterClass: ClassDefinition = {
 	className: 'Hunter',
+	classCategory: 'martial',
 	startingEquipment: {
 		weaponsOrShields: ['2 Weapons or Light Shields'],
 		rangedWeapons: ['Ranged Weapon with 20 Ammo'],

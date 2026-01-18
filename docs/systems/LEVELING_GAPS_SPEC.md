@@ -10,16 +10,17 @@
 
 | Category | Done | Total | Progress |
 |----------|------|-------|----------|
-| Leveling System (L1-L13) | 6 | 13 | 46% |
+| Leveling System (L1-L13) | 13 | 13 | 100% |
 | Talent Data (T1-T12) | 12 | 12 | 100% |
-| UI/Multiclass (UI1-UI4) | 2 | 4 | 50% |
-| **Overall** | **20** | **29** | **69%** |
+| UI/Multiclass (UI1-UI4) | 4 | 4 | 100% |
+| **Overall** | **29** | **29** | **100%** |
 
 ### Completion Log
 
 | Date | Gaps Completed | Commit |
 |------|----------------|--------|
 | 2026-01-18 | L1, L3, L4, L5, L7, L8, T1-T12, UI1, UI3 | `4f5ee8e` |
+| 2026-01-18 | L2, L6, L9, L10, L11, L12, L13, UI2, UI4 | (pending) |
 
 ---
 
@@ -47,18 +48,18 @@ This specification documents all identified gaps in the DC20 v0.10 leveling syst
 | ID | Gap | Priority | Type | Status |
 |----|-----|----------|------|--------|
 | L1 | Level cap hardcoded to 5 (should be 10) | P1 | UI | **Done** |
-| L2 | Leveling validation disabled | P2 | UI | Pending |
+| L2 | Leveling validation disabled | P2 | UI | **Done** |
 | L3 | General talents in LevelingChoices.tsx hardcoded and mismatched | P1 | UI/Data | **Done** |
 | L4 | Talent values incorrect (Ancestry +2 vs +4) | P1 | Data | **Done** |
 | L5 | Missing general talents in UI (Martial/Spellcasting Expansion) | P2 | UI | **Done** |
-| L6 | LEVELING_SYSTEM.MD references removed "Techniques" | P3 | Docs | Pending |
+| L6 | LEVELING_SYSTEM.MD references removed "Techniques" | P3 | Docs | **Done** |
 | L7 | Spellcaster Path gives +2 MP, rules say +3 MP at level 1 | P1 | Data | **Done** |
 | L8 | Cross-path rule text incorrect ("2 points" vs "first time") | P2 | Data | **Done** |
-| L9 | Cross-path rules not enforced (text-only display) | P2 | Calc/UI | Pending |
-| L10 | Missing class category metadata | P2 | Data | Pending |
-| L11 | Missing "Spellcaster Stamina Regen" grant | P2 | Calc | Pending |
-| L12 | Missing spell list choice for martials taking spellcaster | P2 | UI | Pending |
-| L13 | Missing Combat Training grants from path progression | P2 | Calc | Pending |
+| L9 | Cross-path rules not enforced (text-only display) | P2 | Calc/UI | **Done** |
+| L10 | Missing class category metadata | P2 | Data | **Done** |
+| L11 | Missing "Spellcaster Stamina Regen" grant | P2 | Calc | **Done** |
+| L12 | Missing spell list choice for martials taking spellcaster | P2 | UI | **Done** |
+| L13 | Missing Combat Training grants from path progression | P2 | Calc | **Done** |
 
 ### 2.2 Talent Data Gaps (T1-T12)
 
@@ -82,9 +83,9 @@ This specification documents all identified gaps in the DC20 v0.10 leveling syst
 | ID | Component | Issue | Priority | Status |
 |----|-----------|-------|----------|--------|
 | UI1 | LevelingChoices.tsx | Hardcoded general talents with wrong values (+1 AP, +3 SP, fake "Trade Increase") | P1 | **Done** |
-| UI2 | LevelingChoices.tsx | `getOwnedClassFeatures()` only counts main class, not multiclass-gained features | P1 | Pending |
+| UI2 | LevelingChoices.tsx | `getOwnedClassFeatures()` only counts main class, not multiclass-gained features | P1 | **Done** |
 | UI3 | LevelingChoices.tsx | Multiclass state not restored from context when navigating back | P2 | **Done** |
-| UI4 | Calculator | Class Flavor Features not auto-granted when 2+ features from same class | P2 | Pending |
+| UI4 | Calculator | Class Flavor Features not auto-granted when 2+ features from same class | P2 | **Done** |
 
 ---
 

@@ -2,6 +2,7 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const barbarianClass: ClassDefinition = {
 	className: 'Barbarian',
+	classCategory: 'martial',
 	startingEquipment: {
 		weaponsOrShields: ['2 Weapons or Shields'],
 		rangedWeapons: ['Ranged Weapon with 20 Ammo', '3 Weapons with Toss or Thrown Property'],

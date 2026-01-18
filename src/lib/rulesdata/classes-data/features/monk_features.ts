@@ -2,6 +2,7 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const monkClass: ClassDefinition = {
 	className: 'Monk',
+	classCategory: 'martial',
 	startingEquipment: {
 		weaponsOrShields: ['2 Weapons', '3 Weapons with the Toss or Thrown Property'],
 		armor: ['1 set of Light Armor'],

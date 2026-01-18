@@ -277,6 +277,31 @@ export interface EnhancedCalculationResult {
 		pendingSubclassChoices: number;
 	};
 
+	/**
+	 * Cross-path special grants (DC20 v0.10 p.161)
+	 * These are granted when a class invests in the "opposite" path.
+	 */
+	crossPathGrants?: {
+		/** Spellcaster taking Martial Path gets Spellcaster Stamina Regen */
+		grantsSpellcasterStaminaRegen: boolean;
+		/** Martial taking Spellcaster Path must choose a Spell List */
+		requiresSpellListChoice: boolean;
+		/** Selected Spell List (if requiresSpellListChoice is true) */
+		selectedSpellList?: string;
+		/** Combat Training grants from path progression */
+		combatTrainingGrants: string[];
+	};
+
+	/**
+	 * Auto-granted Flavor Features (DC20 v0.10 p.161)
+	 * "Once you gain 2 Class Features from the same Class, you automatically gain that Class's Flavor Feature."
+	 */
+	autoGrantedFlavorFeatures?: Array<{
+		featureId: string;
+		featureName: string;
+		classId: string;
+	}>;
+
 	// Resolved class features (from resolver)
 	resolvedFeatures?: {
 		unlockedFeatures: Array<any>; // ClassFeature objects

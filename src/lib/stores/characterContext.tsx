@@ -53,6 +53,7 @@ export interface CharacterInProgressStoreData
 	selectedMulticlassClass?: string;
 	selectedMulticlassFeature?: string;
 	selectedSubclass?: string; // Subclass selection (e.g., "Berserker" for Barbarian at Level 3)
+	selectedCrossPathSpellList?: string; // Spell list chosen by martial class taking spellcaster path (DC20 v0.10 p.161)
 	isLevelUpMode?: boolean; // Indicates character is being leveled up
 	originalLevel?: number; // Store original level for comparison
 	sourceCharacterId?: string; // Track which character is being leveled up
@@ -133,6 +134,7 @@ type CharacterAction =
 		featureId: string;
 	}
 	| { type: 'SET_SUBCLASS'; subclass: string | null }
+	| { type: 'SET_CROSS_PATH_SPELL_LIST'; spellList: string }
 	| { type: 'ENTER_LEVEL_UP_MODE'; originalLevel: number; characterId: string };
 
 // Reducer function
@@ -166,6 +168,8 @@ function characterReducer(
 			};
 		case 'SET_SUBCLASS':
 			return { ...state, selectedSubclass: action.subclass ?? undefined };
+		case 'SET_CROSS_PATH_SPELL_LIST':
+			return { ...state, selectedCrossPathSpellList: action.spellList };
 		case 'ENTER_LEVEL_UP_MODE':
 			return {
 				...state,

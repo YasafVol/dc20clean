@@ -59,19 +59,36 @@ import type { ClassDefinition } from '../rulesdata/schemas/character.schema';
 import { CHARACTER_PATHS } from '../rulesdata/progression/paths/paths.data';
 
 /**
+ * Cross-path grants returned by aggregatePathBenefits (DC20 v0.10 p.161)
+ */
+interface CrossPathGrants {
+	/** Spellcaster taking Martial Path gets Spellcaster Stamina Regen */
+	grantsSpellcasterStaminaRegen: boolean;
+	/** Martial taking Spellcaster Path must choose a Spell List */
+	requiresSpellListChoice: boolean;
+	/** Combat Training grants from path progression */
+	combatTrainingGrants: string[];
+}
+
+/**
  * Helper to aggregate path point benefits based on allocations
  * @param pathPointAllocations - How many points allocated to each path
- * @returns Aggregated benefits from all allocated path levels
+ * @param classCategory - The class's category (martial/spellcaster/hybrid) for cross-path rules
+ * @returns Aggregated benefits from all allocated path levels, including cross-path grants
  */
-function aggregatePathBenefits(pathPointAllocations?: {
-	martial?: number;
-	spellcasting?: number;
-}): {
+function aggregatePathBenefits(
+	pathPointAllocations?: {
+		martial?: number;
+		spellcasting?: number;
+	},
+	classCategory?: 'martial' | 'spellcaster' | 'hybrid'
+): {
 	totalSP: number;
 	totalMP: number;
 	totalManeuversKnown: number;
 	totalCantripsKnown: number;
 	totalSpellsKnown: number;
+	crossPathGrants: CrossPathGrants;
 } {
 	let totalSP = 0;
 	let totalMP = 0;
@@ -79,18 +96,26 @@ function aggregatePathBenefits(pathPointAllocations?: {
 	let totalCantripsKnown = 0;
 	let totalSpellsKnown = 0;
 
+	// Initialize cross-path grants
+	const crossPathGrants: CrossPathGrants = {
+		grantsSpellcasterStaminaRegen: false,
+		requiresSpellListChoice: false,
+		combatTrainingGrants: []
+	};
+
 	if (!pathPointAllocations) {
 		return {
 			totalSP,
 			totalMP,
 			totalManeuversKnown,
 			totalCantripsKnown,
-			totalSpellsKnown
+			totalSpellsKnown,
+			crossPathGrants
 		};
 	}
 
 	// Martial Path bonuses
-	if (pathPointAllocations.martial) {
+	if (pathPointAllocations.martial && pathPointAllocations.martial > 0) {
 		const martialPath = CHARACTER_PATHS.find((p) => p.id === 'martial_path');
 		if (martialPath) {
 			for (let level = 1; level <= pathPointAllocations.martial; level++) {
@@ -100,19 +125,46 @@ function aggregatePathBenefits(pathPointAllocations?: {
 					totalManeuversKnown += levelData.benefits.maneuversLearned || 0;
 				}
 			}
+
+			// DC20 v0.10 p.161: Grant Combat Training with Weapons from Martial Path
+			crossPathGrants.combatTrainingGrants.push('Weapons');
+
+			// DC20 v0.10 p.161: Spellcaster classes (lacking Stamina Regen) gain
+			// "Spellcaster Stamina Regen" when they first invest in Martial Path
+			if (classCategory === 'spellcaster') {
+				crossPathGrants.grantsSpellcasterStaminaRegen = true;
+				console.log('✨ Cross-path grant: Spellcaster Stamina Regen', {
+					classCategory,
+					martialPoints: pathPointAllocations.martial
+				});
+			}
 		}
 	}
 
 	// Spellcaster Path bonuses
-	if (pathPointAllocations.spellcasting) {
+	if (pathPointAllocations.spellcasting && pathPointAllocations.spellcasting > 0) {
 		const spellcasterPath = CHARACTER_PATHS.find((p) => p.id === 'spellcaster_path');
 		if (spellcasterPath) {
 			for (let level = 1; level <= pathPointAllocations.spellcasting; level++) {
 				const levelData = spellcasterPath.progression.find((p) => p.pathLevel === level);
 				if (levelData?.benefits) {
 					totalMP += levelData.benefits.manaPoints || 0;
-					totalSpellsKnown += (levelData.benefits.spellsLearned || 0) + (levelData.benefits.cantripsLearned || 0);
+					totalCantripsKnown += levelData.benefits.cantripsLearned || 0;
+					totalSpellsKnown += levelData.benefits.spellsLearned || 0;
 				}
+			}
+
+			// DC20 v0.10 p.161: Grant Combat Training with Spell Focuses from Spellcaster Path
+			crossPathGrants.combatTrainingGrants.push('Spell_Focuses');
+
+			// DC20 v0.10 p.161: Martial classes (lacking a Spell List) gain
+			// a Spell List of their choice when they first invest in Spellcaster Path
+			if (classCategory === 'martial') {
+				crossPathGrants.requiresSpellListChoice = true;
+				console.log('✨ Cross-path grant: Requires Spell List choice', {
+					classCategory,
+					spellcastingPoints: pathPointAllocations.spellcasting
+				});
 			}
 		}
 	}
@@ -121,8 +173,74 @@ function aggregatePathBenefits(pathPointAllocations?: {
 		totalSP,
 		totalMP,
 		totalManeuversKnown,
-		totalSpellsKnown
+		totalCantripsKnown,
+		totalSpellsKnown,
+		crossPathGrants
 	};
+}
+
+/**
+ * Check if a class's Flavor Feature should be auto-granted (DC20 v0.10 p.161)
+ * Rule: "Once you gain 2 Class Features from the same Class, you automatically gain that Class's Flavor Feature."
+ *
+ * @param classId - The class to check
+ * @param unlockedFeatureIds - Feature IDs unlocked from main class progression
+ * @param multiclassFeatures - Array of {classId, featureId} from multiclass talents
+ * @returns The flavor feature to auto-grant, or null if criteria not met
+ */
+function checkFlavorFeatureAutoGrant(
+	classId: string,
+	unlockedFeatureIds: string[],
+	multiclassFeatures: Array<{ classId: string; featureId: string }>
+): { featureId: string; featureName: string; classId: string } | null {
+	const classDefinition = findClassByName(classId);
+	if (!classDefinition) return null;
+
+	// Count non-flavor features from this class
+	const classFeatures = classDefinition.coreFeatures.filter((f) => !f.isFlavor);
+
+	// Count features unlocked from main class progression
+	let featureCount = 0;
+	for (const feature of classFeatures) {
+		const featureId = feature.id || feature.featureName;
+		if (unlockedFeatureIds.includes(featureId)) {
+			featureCount++;
+		}
+	}
+
+	// Count features from multiclass (if targeting this class)
+	for (const mc of multiclassFeatures) {
+		if (mc.classId === classId) {
+			// Verify it's not a flavor feature
+			const feature = classFeatures.find(
+				(f) => (f.id || f.featureName) === mc.featureId
+			);
+			if (feature && !feature.isFlavor) {
+				featureCount++;
+			}
+		}
+	}
+
+	console.log('🎭 Flavor Feature check:', {
+		classId,
+		featureCount,
+		threshold: 2,
+		qualifies: featureCount >= 2
+	});
+
+	// If 2+ features, find and return the flavor feature
+	if (featureCount >= 2) {
+		const flavorFeature = classDefinition.coreFeatures.find((f) => f.isFlavor);
+		if (flavorFeature) {
+			return {
+				featureId: flavorFeature.id || flavorFeature.featureName,
+				featureName: flavorFeature.featureName,
+				classId
+			};
+		}
+	}
+
+	return null;
 }
 
 /**
@@ -785,7 +903,8 @@ function aggregateProgressionGains(
 	classProgressionData: any,
 	targetLevel: number,
 	pathPointAllocations?: { martial?: number; spellcasting?: number },
-	selectedSubclass?: string
+	selectedSubclass?: string,
+	classCategory?: 'martial' | 'spellcaster' | 'hybrid'
 ): {
 	totalHP: number;
 	totalSP: number;
@@ -801,6 +920,7 @@ function aggregateProgressionGains(
 	totalAncestryPoints: number;
 	unlockedFeatureIds: string[];
 	pendingSubclassChoices: number;
+	crossPathGrants: CrossPathGrants;
 } {
 	let totalHP = 0;
 	let totalSP = 0;
@@ -893,8 +1013,8 @@ function aggregateProgressionGains(
 		totalManeuversKnown
 	});
 
-	// Add path bonuses to progression totals
-	const pathBonuses = aggregatePathBenefits(pathPointAllocations);
+	// Add path bonuses to progression totals (with cross-path grants)
+	const pathBonuses = aggregatePathBenefits(pathPointAllocations, classCategory);
 	totalSP += pathBonuses.totalSP;
 	totalMP += pathBonuses.totalMP;
 	totalManeuversKnown += pathBonuses.totalManeuversKnown;
@@ -903,7 +1023,9 @@ function aggregateProgressionGains(
 
 	console.log('✅ PATH BONUSES APPLIED:', {
 		pathAllocations: pathPointAllocations,
+		classCategory,
 		bonuses: pathBonuses,
+		crossPathGrants: pathBonuses.crossPathGrants,
 		finalSP: totalSP,
 		finalMP: totalMP,
 		finalManeuvers: totalManeuversKnown
@@ -950,7 +1072,8 @@ function aggregateProgressionGains(
 		totalPathPoints,
 		totalAncestryPoints,
 		unlockedFeatureIds,
-		pendingSubclassChoices
+		pendingSubclassChoices,
+		crossPathGrants: pathBonuses.crossPathGrants
 	};
 }
 
@@ -979,11 +1102,17 @@ export function calculateCharacterWithBreakdowns(
 
 	// 4. Get legacy class progression data for mana/cantrips/spells (still from tables)
 	const classProgressionData = getClassProgressionData(buildData.classId);
+
+	// Get class category for cross-path rules (DC20 v0.10 p.161)
+	const classDefinition = buildData.classId ? findClassByName(buildData.classId) : null;
+	const classCategory = classDefinition?.classCategory;
+
 	const progressionGains = aggregateProgressionGains(
 		classProgressionData,
 		buildData.level,
 		buildData.pathPointAllocations,
-		buildData.selectedSubclass
+		buildData.selectedSubclass,
+		classCategory
 	);
 
 	// 4. Create detailed breakdowns
@@ -1617,6 +1746,47 @@ export function calculateCharacterWithBreakdowns(
 			unlockedFeatureIds: progressionGains.unlockedFeatureIds,
 			pendingSubclassChoices: progressionGains.pendingSubclassChoices
 		},
+		// Cross-path grants (DC20 v0.10 p.161)
+		crossPathGrants: progressionGains.crossPathGrants,
+		// Auto-granted Flavor Features (DC20 v0.10 p.161)
+		autoGrantedFlavorFeatures: (() => {
+			const flavorFeatures: Array<{ featureId: string; featureName: string; classId: string }> = [];
+
+			// Build multiclass features array from current selection
+			const multiclassFeatures: Array<{ classId: string; featureId: string }> = [];
+			if (buildData.selectedMulticlassFeature && buildData.selectedMulticlassClass) {
+				multiclassFeatures.push({
+					classId: buildData.selectedMulticlassClass,
+					featureId: buildData.selectedMulticlassFeature
+				});
+			}
+
+			// Check main class for flavor feature auto-grant
+			if (buildData.classId) {
+				const mainClassFlavor = checkFlavorFeatureAutoGrant(
+					buildData.classId,
+					progressionGains.unlockedFeatureIds,
+					multiclassFeatures
+				);
+				if (mainClassFlavor) {
+					flavorFeatures.push(mainClassFlavor);
+				}
+			}
+
+			// Check multiclass class for flavor feature auto-grant (if applicable)
+			if (buildData.selectedMulticlassClass && buildData.selectedMulticlassClass !== buildData.classId) {
+				const multiclassFlavor = checkFlavorFeatureAutoGrant(
+					buildData.selectedMulticlassClass,
+					[], // No unlocked features from multiclass class progression
+					multiclassFeatures
+				);
+				if (multiclassFlavor) {
+					flavorFeatures.push(multiclassFlavor);
+				}
+			}
+
+			return flavorFeatures.length > 0 ? flavorFeatures : undefined;
+		})(),
 		resolvedFeatures: resolvedProgression
 			? {
 				unlockedFeatures: resolvedProgression.unlockedFeatures,

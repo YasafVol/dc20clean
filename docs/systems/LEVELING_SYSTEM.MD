@@ -91,34 +91,39 @@ flowchart TD
 
 Path points grant immediate bonuses to character resources based on allocation:
 
-**Martial Path Progression:**
-| Path Level | Stamina Points | Maneuvers Learned | Techniques Learned |
-|------------|----------------|-------------------|-------------------|
-| 1 | +1 | +1 | +1 |
-| 2 | — | +1 | — |
-| 3 | +1 | +1 | +1 |
-| 4 | — | +1 | — |
+**Martial Path Progression (DC20 v0.10 p.161):**
+| Path Level | Stamina Points | Maneuvers Learned |
+|------------|----------------|-------------------|
+| 1 | +1 | +1 |
+| 2 | — | +1 |
+| 3 | +1 | +1 |
+| 4 | — | +1 |
 
-**Spellcaster Path Progression:**
+**Spellcaster Path Progression (DC20 v0.10 p.161):**
 | Path Level | Mana Points | Cantrips Learned | Spells Learned |
 |------------|-------------|------------------|----------------|
-| 1 | +2 | +1 | +1 |
+| 1 | +3 | +1 | +1 |
 | 2 | +2 | +1 | — |
 | 3 | +2 | +1 | +1 |
 | 4 | +2 | — | +1 |
 
+**Cross-Path Special Rules (DC20 v0.10 p.161):**
+
+- **Martial classes taking Spellcaster Path:** Gain a Spell List of their choice from any Class when first investing in the path.
+- **Spellcaster classes taking Martial Path:** Gain "Spellcaster Stamina Regen" - Once per round, regain up to half maximum SP when using a Spell Enhancement.
+
 **Implementation:**
 
 - Path bonuses are calculated by `aggregatePathBenefits()` in `enhancedCharacterCalculator.ts`
+- Cross-path grants returned in `crossPathGrants` object
 - Bonuses are added to base progression gains in `aggregateProgressionGains()`
-- Data source: `src/lib/rulesdata/paths/paths.data.ts`
+- Data source: `src/lib/rulesdata/progression/paths/paths.data.ts`
 - Type: `pathPointAllocations?: { martial?: number; spellcasting?: number }` in `EnhancedCharacterBuildData`
 
 **Example (Level 5 Barbarian with 2 martial path points):**
 
 - SP: 1 (L1) + 1 (L3) + 1 (path L1) = **3**
 - Maneuvers: 4 (L1) + 1 (L5) + 1 (path L1) + 1 (path L2) = **7**
-- Techniques: 1 (L3) + 1 (L5) + 1 (path L1) = **3**
 
 ### 3.5. Dynamic Budgeting in Subsequent Stages
 

@@ -8,6 +8,7 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const clericClass: ClassDefinition = {
 	className: 'Cleric',
+	classCategory: 'spellcaster',
 	startingEquipment: {
 		weaponsOrShields: ['1 Weapon or Light Shield'],
 		armor: ['1 set of Light Armor'],

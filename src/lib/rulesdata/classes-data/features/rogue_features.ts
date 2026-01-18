@@ -2,6 +2,7 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const rogueClass: ClassDefinition = {
 	className: 'Rogue',
+	classCategory: 'martial',
 	startingEquipment: {
 		weaponsOrShields: ['2 Weapons or Light Shields'],
 		rangedWeapons: ['Ranged Weapon with 20 Ammo', '3 Weapons with the Toss or Thrown Property'],

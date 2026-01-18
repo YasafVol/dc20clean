@@ -7,6 +7,7 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const wizardClass: ClassDefinition = {
 	className: 'Wizard',
+	classCategory: 'spellcaster',
 	startingEquipment: {
 		weaponsOrShields: ['1 Weapon'],
 		armor: ['1 set of Light Armor'],

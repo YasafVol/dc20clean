@@ -2,6 +2,7 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const sorcererClass: ClassDefinition = {
 	className: 'Sorcerer',
+	classCategory: 'spellcaster',
 	startingEquipment: {
 		weaponsOrShields: ['1 Weapon'],
 		armor: '1 set of Light Armor',

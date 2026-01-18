@@ -7,6 +7,7 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const bardClass: ClassDefinition = {
 	className: 'Bard',
+	classCategory: 'spellcaster',
 	startingEquipment: {
 		weaponsOrShields: ['1 Weapon or Light Shield'],
 		armor: ['1 set of Light Armor'],

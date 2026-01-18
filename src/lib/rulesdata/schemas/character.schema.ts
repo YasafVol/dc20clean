@@ -314,6 +314,14 @@ export interface ClassDefinition {
 	className: string;
 	/** If true, this class is experimental/unreleased and should be hidden from normal selection */
 	experimental?: boolean;
+	/**
+	 * Classification of the class's primary resource type (DC20 v0.10 p.161).
+	 * Used to determine cross-path special rules:
+	 * - martial: Has Stamina Regen, lacks Spell List by default
+	 * - spellcaster: Has Spell List, lacks Stamina Regen by default
+	 * - hybrid: Has both Stamina Regen and Spell List
+	 */
+	classCategory?: 'martial' | 'spellcaster' | 'hybrid';
 	startingEquipment?: {
 		weaponsOrShields?: string | string[];
 		rangedWeapons?: string | string[];

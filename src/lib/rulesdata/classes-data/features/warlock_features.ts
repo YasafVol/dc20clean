@@ -2,6 +2,7 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const warlockClass: ClassDefinition = {
 	className: 'Warlock',
+	classCategory: 'spellcaster',
 	startingEquipment: {
 		weaponsOrShields: ['1 Weapon or Light Shield'],
 		armor: ['1 set of Light Armor'],

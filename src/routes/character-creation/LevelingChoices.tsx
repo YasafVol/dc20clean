@@ -45,6 +45,11 @@ function LevelingChoices() {
 		state.selectedMulticlassFeature || ''
 	);
 
+	// Cross-path spell list selection for martial classes (L12)
+	const [selectedCrossPathSpellList, setSelectedCrossPathSpellList] = useState<string>(
+		state.selectedCrossPathSpellList || ''
+	);
+
 	// Resolve progression when class/level changes
 	useEffect(() => {
 		if (state.classId && state.level) {
@@ -106,10 +111,29 @@ function LevelingChoices() {
 
 	const getOwnedClassFeatures = (targetClassId: string): number => {
 		if (!state.classId || !state.level) return 0;
+
+		let count = 0;
+
+		// Count features from main class progression
 		if (targetClassId === state.classId && resolvedProgression) {
-			return resolvedProgression.unlockedFeatureIds?.length || 0;
+			count += resolvedProgression.unlockedFeatureIds?.length || 0;
 		}
-		return 0;
+
+		// Count multiclass-gained features (UI2 fix)
+		// If we have a multiclass feature selected for this class, add it to the count
+		if (
+			state.selectedMulticlassClass === targetClassId &&
+			state.selectedMulticlassFeature
+		) {
+			count += 1;
+			console.log('🔢 Multiclass feature counted:', {
+				targetClassId,
+				feature: state.selectedMulticlassFeature,
+				totalCount: count
+			});
+		}
+
+		return count;
 	};
 
 	const getOwnedSubclassFeatures = (targetClassId: string): number => {
@@ -550,6 +574,72 @@ function LevelingChoices() {
 				</TabsContent>
 
 				<TabsContent value="pathPoints" className="mt-6">
+					{/* Cross-path Spell List selector for martial classes (L12) */}
+					{(() => {
+						// Get class category to determine cross-path grants
+						const classDefinition = state.classId ? findClassByName(state.classId) : null;
+						const classCategory = classDefinition?.classCategory;
+						const hasSpellcasterPath = (pathPoints.spellcasting || 0) > 0;
+
+						// Show spell list selector if martial class taking spellcaster path
+						if (classCategory === 'martial' && hasSpellcasterPath && !selectedCrossPathSpellList) {
+							const spellLists = ['Arcane', 'Divine', 'Occult', 'Primal'];
+							return (
+								<Card className="border-primary/50 bg-primary/10 mb-8 border">
+									<CardHeader>
+										<CardTitle className="font-cinzel text-primary">
+											Choose Your Spell List
+										</CardTitle>
+										<p className="text-muted-foreground text-sm">
+											As a martial class taking the Spellcaster Path for the first time,
+											you gain a Spell List of your choice from any Class.
+										</p>
+									</CardHeader>
+									<CardContent>
+										<Select
+											value={selectedCrossPathSpellList}
+											onValueChange={(value) => {
+												setSelectedCrossPathSpellList(value);
+												dispatch({ type: 'SET_CROSS_PATH_SPELL_LIST', spellList: value });
+												console.log('✨ Cross-path Spell List selected:', value);
+											}}
+										>
+											<SelectTrigger className="w-full">
+												<SelectValue placeholder="Select a Spell List..." />
+											</SelectTrigger>
+											<SelectContent>
+												{spellLists.map((list) => (
+													<SelectItem key={list} value={list.toLowerCase()}>
+														{list} Spell List
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+									</CardContent>
+								</Card>
+							);
+						}
+
+						// Show notification if spellcaster taking martial path
+						if (classCategory === 'spellcaster' && (pathPoints.martial || 0) > 0) {
+							return (
+								<Card className="border-green-500/50 bg-green-500/10 mb-8 border">
+									<CardHeader>
+										<CardTitle className="font-cinzel text-green-400">
+											Spellcaster Stamina Regen Gained
+										</CardTitle>
+										<p className="text-muted-foreground text-sm">
+											As a spellcaster class taking the Martial Path for the first time,
+											you gain Spellcaster Stamina Regen: Once per round, you regain up to
+											half your maximum SP when you use a Spell Enhancement.
+										</p>
+									</CardHeader>
+								</Card>
+							);
+						}
+
+						return null;
+					})()}
 					<div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
 						{CHARACTER_PATHS.map((path) => {
 							const currentLevel =

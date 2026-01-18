@@ -7,6 +7,15 @@
 export type PathId = 'martial_path' | 'spellcaster_path';
 
 /**
+ * Classification of a class's primary resource type (DC20 v0.10 p.161).
+ * Used to determine cross-path special rules:
+ * - martial: Has Stamina Regen, lacks Spell List by default
+ * - spellcaster: Has Spell List, lacks Stamina Regen by default
+ * - hybrid: Has both Stamina Regen and Spell List
+ */
+export type ClassCategory = 'martial' | 'spellcaster' | 'hybrid';
+
+/**
  * Defines the specific benefits gained at a single level of a path's progression.
  * All properties are optional because a level might only grant one or two things.
  */

@@ -2,6 +2,7 @@ import type { ClassDefinition } from '../../schemas/character.schema';
 
 export const spellbladeClass: ClassDefinition = {
 	className: 'Spellblade',
+	classCategory: 'hybrid',
 	startingEquipment: {
 		weaponsOrShields: [
 			'2 Weapons or Light Shields',

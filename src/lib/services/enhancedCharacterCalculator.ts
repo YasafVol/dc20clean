@@ -575,49 +575,44 @@ function calculateGlobalMagicProfile(
 	buildData: EnhancedCharacterBuildData,
 	effects: AttributedEffect[]
 ): GlobalMagicProfile {
-	const classData = classesData.find((c) => c.id === buildData.classId);
+	// Get spell restrictions from class features (single source of truth)
+	// This replaces the old CLASS_SPELL_CONFIG approach
+	const classFeatures = findClassByName(buildData.classId || '');
+	const spellList = classFeatures?.spellcasterPath?.spellList;
+
 	const profile: GlobalMagicProfile = {
-		sources: (classData?.spellRestrictions?.allowedSources as SpellSource[]) || [],
-		schools: (classData?.spellRestrictions?.allowedSchools as SpellSchool[]) || [],
-		tags: (classData?.spellRestrictions?.allowedTags as SpellTag[]) || []
+		// DC20 v0.10: No source restriction - filtering is by school/tag only
+		// An empty sources array means "allow all sources" in the filtering logic
+		sources: [],
+		// Schools from class features (e.g., Bard: ['Enchantment'])
+		schools: (spellList?.specificSchools as SpellSchool[]) || [],
+		// Tags from class features (e.g., Bard: ['Embolden', 'Enfeeble', 'Healing', 'Illusion', 'Sound'])
+		tags: (spellList?.spellTags as SpellTag[]) || []
 	};
 
-	// Natural is a base fallback for everyone in DC20
-	if (!profile.sources.includes('Natural' as SpellSource)) {
-		profile.sources.push('Natural' as SpellSource);
-	}
-
-	// 1. Process Expansion Effects
+	// Process Expansion Effects (talents/features that expand spell access)
 	for (const effect of effects) {
 		if (!effect.resolved) continue;
 
-		// Portal Magic Expansion
+		// Portal Magic Expansion - adds Teleportation tag
 		if ((effect as any).target === 'teleportation_expert') {
 			if (!profile.tags.includes('Teleportation' as SpellTag)) {
 				profile.tags.push('Teleportation' as SpellTag);
 			}
 		}
 
-		// Coven's Gift Expansion
+		// Coven's Gift Expansion - adds Curse tag
 		if ((effect as any).target === 'curse_school_specialization') {
 			if (!profile.tags.includes('Curse' as SpellTag)) {
 				profile.tags.push('Curse' as SpellTag);
 			}
 		}
 
-		// Spellcasting Expansion Talent
+		// Spellcasting Expansion Talent - adds schools from choice
 		if ((effect as any).target === 'spell_list_expansion') {
-			// This is a complex choice that would ideally be handled via featureChoices
-			// For now, we'll check if the selection exists in buildData.featureChoices
 			const selection = buildData.featureChoices?.['spell_list_expansion'];
 			if (selection) {
-				// Handle source expansion
-				if (['Arcane', 'Divine', 'Primal'].includes(selection)) {
-					if (!profile.sources.includes(selection as SpellSource)) {
-						profile.sources.push(selection as SpellSource);
-					}
-				}
-				// Handle school expansion (selection might be an array of 3 schools)
+				// Handle school expansion (selection is an array of schools)
 				if (Array.isArray(selection)) {
 					selection.forEach((school) => {
 						if (!profile.schools.includes(school as SpellSchool)) {

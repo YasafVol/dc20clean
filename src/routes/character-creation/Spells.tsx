@@ -496,45 +496,43 @@ const Spells: React.FC = () => {
 			) : (
 				<div className="space-y-6">
 					{/* Class Access Info */}
-					{globalMagicProfile && (
-						<div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
-							<div className="flex flex-wrap items-center gap-2 text-sm">
-								<span className="text-muted-foreground font-medium">
-									{classData?.name || 'Your class'} can learn:
-								</span>
-								{globalMagicProfile.sources.length > 0 && (
-									<div className="flex items-center gap-1">
-										<span className="text-muted-foreground">Sources:</span>
-										{globalMagicProfile.sources.map((source) => (
-											<Badge key={source} variant="secondary" className="text-xs">
-												{source}
-											</Badge>
-										))}
-									</div>
-								)}
-								{globalMagicProfile.schools.length > 0 && (
-									<div className="flex items-center gap-1">
-										<span className="text-muted-foreground ml-2">Schools:</span>
-										{globalMagicProfile.schools.map((school) => (
-											<Badge key={school} variant="outline" className="text-xs">
-												{school}
-											</Badge>
-										))}
-									</div>
-								)}
-								{globalMagicProfile.tags.length > 0 && (
-									<div className="flex items-center gap-1">
-										<span className="text-muted-foreground ml-2">+ Tags:</span>
-										{globalMagicProfile.tags.map((tag) => (
-											<Badge key={tag} variant="outline" className="border-amber-500/30 text-amber-500 text-xs">
-												{tag}
-											</Badge>
-										))}
-									</div>
-								)}
+					{globalMagicProfile &&
+						(globalMagicProfile.schools.length > 0 || globalMagicProfile.tags.length > 0) && (
+							<div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
+								<div className="flex flex-wrap items-center gap-2 text-sm">
+									<span className="text-muted-foreground font-medium">
+										{classData?.name || 'Your class'} can learn spells from:
+									</span>
+									{globalMagicProfile.schools.length > 0 && (
+										<div className="flex items-center gap-1">
+											{globalMagicProfile.schools.map((school) => (
+												<Badge key={school} variant="outline" className="text-xs">
+													{school}
+												</Badge>
+											))}
+											<span className="text-muted-foreground">school</span>
+										</div>
+									)}
+									{globalMagicProfile.schools.length > 0 && globalMagicProfile.tags.length > 0 && (
+										<span className="text-muted-foreground">or with</span>
+									)}
+									{globalMagicProfile.tags.length > 0 && (
+										<div className="flex items-center gap-1">
+											{globalMagicProfile.tags.map((tag) => (
+												<Badge
+													key={tag}
+													variant="outline"
+													className="border-amber-500/30 text-xs text-amber-500"
+												>
+													{tag}
+												</Badge>
+											))}
+											<span className="text-muted-foreground">tags</span>
+										</div>
+									)}
+								</div>
 							</div>
-						</div>
-					)}
+						)}
 
 					{/* Filter Section */}
 					<Card className="border-border bg-card/50">

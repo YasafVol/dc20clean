@@ -133,7 +133,6 @@ import {
 	StyledTextContent,
 	StyledMenuCard,
 	StyledCardTitle,
-	StyledCardDescription,
 	StyledIcon
 } from './styled';
 
@@ -158,7 +157,6 @@ function Menu() {
 				<StyledMenuCard onClick={() => navigate('/create-character')}>
 					<StyledTextContent>
 						<StyledCardTitle>Create Character</StyledCardTitle>
-						<StyledCardDescription>Create a new character.</StyledCardDescription>
 					</StyledTextContent>
 					<StyledIcon>
 						<HeadIcon />
@@ -168,7 +166,6 @@ function Menu() {
 				<StyledMenuCard onClick={() => navigate('/load-character')}>
 					<StyledTextContent>
 						<StyledCardTitle>Load Character</StyledCardTitle>
-						<StyledCardDescription>Load an existing character.</StyledCardDescription>
 					</StyledTextContent>
 					<StyledIcon>
 						<GroupIcon />
@@ -178,7 +175,6 @@ function Menu() {
 				<StyledMenuCard onClick={() => navigate('/spellbook')}>
 					<StyledTextContent>
 						<StyledCardTitle>Spellbook</StyledCardTitle>
-						<StyledCardDescription>Browse all available spells.</StyledCardDescription>
 					</StyledTextContent>
 					<StyledIcon>
 						<SpellbookIcon />
@@ -188,7 +184,6 @@ function Menu() {
 				<StyledMenuCard onClick={() => navigate('/conditions')}>
 					<StyledTextContent>
 						<StyledCardTitle>Conditions</StyledCardTitle>
-						<StyledCardDescription>Reference guide for all conditions.</StyledCardDescription>
 					</StyledTextContent>
 					<StyledIcon>
 						<ConditionsIcon />
@@ -198,7 +193,6 @@ function Menu() {
 				<StyledMenuCard onClick={() => navigate('/custom-equipment')}>
 					<StyledTextContent>
 						<StyledCardTitle>Custom Equipment</StyledCardTitle>
-						<StyledCardDescription>Create custom weapons, armor, shields & spell focuses.</StyledCardDescription>
 					</StyledTextContent>
 					<StyledIcon>
 						<EquipmentIcon />
@@ -215,3 +209,5 @@ function Menu() {
 }
 
 export default Menu;
+
+

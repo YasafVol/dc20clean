@@ -1,6 +1,6 @@
 {
 	"name": "dc20clean",
-	"version": "0.0.1",
+	"version": "0.10.0",
 	"scripts": {
 		"dev": "vite dev",
 		"convex:dev": "convex dev",

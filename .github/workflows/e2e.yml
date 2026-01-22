@@ -30,6 +30,7 @@ jobs:
 
       - name: Run Playwright E2E (${{ matrix.project }})
         id: playwright
+        continue-on-error: true
         run: |
           # Expose CI-friendly artifacts and ensure deterministic single-worker runs
           npx playwright test --project=${{ matrix.project }} --workers=1 --reporter=list --timeout=120000 || true

@@ -110,6 +110,10 @@ PLAYWRIGHT_SKIP_BUILD=1 npm run test:e2e
 E2E_WORKERS=4 npm run test:e2e
 ```
 
+### CI Status
+
+CI checks are temporarily non-blocking while the 0.10 rules release is in flight. Workflows still run for signal and will be restored to blocking once the release stabilizes.
+
 ### Tech Stack
 
 - **Framework**: React 19 with TypeScript

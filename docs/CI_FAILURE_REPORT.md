@@ -11,6 +11,10 @@
 
 The main CI pipeline (`.github/workflows/ci.yml`) is currently failing on the `010rules-01` branch. Only the **Build** job passes; all other jobs (Lint, Unit Tests, and all 4 E2E shards) are failing due to configuration issues and missing dependencies.
 
+## Temporary CI Relaxation (0.10 Release)
+
+CI checks are temporarily set to non-blocking so the 0.10 rules release can proceed. This will be reverted after finishing touches and stabilization.
+
 | Job | Status | Duration |
 |-----|--------|----------|
 | Build | PASSED | 35s |

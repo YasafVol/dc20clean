@@ -281,5 +281,4 @@ For questions, issues, or feature requests:
 2. Review existing issues
 3. Create a new issue with detailed description and reproduction steps
 
----
-
+------ - --- 

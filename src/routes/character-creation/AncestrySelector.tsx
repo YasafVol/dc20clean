@@ -151,7 +151,7 @@ function AncestrySelector() {
 										>
 											{getAncestryIcon(ancestry.id)}
 										</div>
-										<CardTitle className="font-cinzel text-primary group-hover:text-primary-foreground/90 text-lg transition-colors">
+										<CardTitle className="font-cinzel text-primary text-lg transition-colors">
 											{ancestry.name}
 										</CardTitle>
 									</div>
@@ -181,3 +181,4 @@ function AncestrySelector() {
 }
 
 export default AncestrySelector;
+

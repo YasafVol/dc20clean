@@ -846,9 +846,6 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			</header>
 
 			<main className="container mx-auto max-w-7xl flex-1 px-4 py-8">
-				<h1 className="text-primary font-cinzel mb-8 text-center text-3xl font-bold md:text-4xl">
-					{editChar ? `Edit Character: ${editChar.finalName}` : 'Character Creation'}
-				</h1>
 
 				{renderCurrentStep()}
 			</main>
@@ -874,3 +871,4 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 };
 
 export default CharacterCreation;
+

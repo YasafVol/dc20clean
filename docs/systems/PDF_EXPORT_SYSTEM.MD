@@ -48,7 +48,7 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 - **Combat**: Attack/Save DC, initiative, HP/SP/MP/Grit/Rest Points, defenses
 - **Movement**: Ground speed, jump distance, hold breath, movement types (burrow, swim, fly, climb, glide) with half/full speed indicators
 - **Languages**: Up to 4 languages with limited/fluent mastery
-- **Equipment & Inventory**: Attacks, equipped items, attunement, carried items
+- **Equipment & Inventory**: Attacks, equipped items, attunement, carried items (carried field also includes feature names)
 
 ### 3.2 PDF Field Manifest
 

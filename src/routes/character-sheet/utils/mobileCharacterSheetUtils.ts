@@ -3,7 +3,7 @@
  * Contains helper functions for mobile character sheet operations
  */
 
-import type { Maneuver } from '../../../lib/rulesdata/maneuvers';
+import type { Maneuver } from '../../../lib/rulesdata/martials/maneuvers';
 import type { InventoryItem } from '../../../lib/rulesdata/inventoryItems';
 
 /**

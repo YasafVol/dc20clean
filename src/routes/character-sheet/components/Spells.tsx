@@ -4,6 +4,7 @@ import type { Spell } from '../../../lib/rulesdata/schemas/spell.schema';
 import { ALL_SPELLS as allSpells } from '../../../lib/rulesdata/spells-data';
 import { SpellSchool } from '../../../lib/rulesdata/schemas/spell.schema';
 import { useCharacterSpells, useCharacterSheet } from '../hooks/CharacterSheetProvider';
+import { logger } from '../../../lib/utils/logger';
 import {
 	StyledSpellsSection,
 	StyledSpellsHeader,
@@ -125,7 +126,7 @@ const Spells: React.FC<SpellsProps> = ({
 					return newSet;
 				});
 			} else {
-				console.warn('Could not find spell in allSpells:', value);
+				logger.warn('ui', 'Could not find spell in allSpells', { value });
 			}
 		} else {
 			updateSpell(spell.id, field, value);

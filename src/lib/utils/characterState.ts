@@ -173,14 +173,8 @@ export const initializeCharacterState = (
 			original: originalAttacks,
 			current: existingState?.attacks?.current || [...originalAttacks] //FIXME this is wrong path!!!
 		},
-		spells: {
-			original: originalSpells,
-			current: originalSpells // Always use the spells from character data, not existing state
-		},
-		maneuvers: {
-			original: characterData.maneuvers || [],
-			current: characterData.maneuvers || [] // Always use maneuvers from character data
-		},
+	spells: originalSpells,
+	maneuvers: characterData.maneuvers || [],
 		inventory: {
 			original: originalInventory,
 			current: existingState?.inventory.current || []
@@ -197,10 +191,8 @@ export const initializeCharacterState = (
 	};
 
 	debug.character('initializeCharacterState: Final state created:', {
-		spellsOriginal: finalState.spells.original.length,
-		spellsCurrent: finalState.spells.current.length,
-		spellsOriginalNames: finalState.spells.original.map((s) => s.spellName),
-		spellsCurrentNames: finalState.spells.current.map((s) => s.spellName)
+		spellsCount: finalState.spells.length,
+		spellsNames: finalState.spells.map((s) => s.spellName)
 	});
 
 	return finalState;
@@ -290,14 +282,8 @@ export const updateCharacterState = async (
 				original: character.attacks || [],
 				current: character.attacks || []
 			},
-			spells: {
-				original: character.spells || [],
-				current: character.spells || []
-			},
-			maneuvers: {
-				original: character.maneuvers || [],
-				current: character.maneuvers || []
-			},
+		spells: character.spells || [],
+		maneuvers: character.maneuvers || [],
 			inventory: {
 				original: character.inventory || [],
 				current: character.inventory || []
@@ -352,18 +338,8 @@ export const updateCharacterState = async (
 					...updates.attacks
 				}
 			: currentState.attacks,
-		spells: updates.spells
-			? {
-					...currentState.spells,
-					...updates.spells
-				}
-			: currentState.spells,
-		maneuvers: updates.maneuvers
-			? {
-					...currentState.maneuvers,
-					...updates.maneuvers
-				}
-			: currentState.maneuvers,
+	spells: updates.spells ? [...updates.spells] : currentState.spells,
+	maneuvers: updates.maneuvers ? [...updates.maneuvers] : currentState.maneuvers,
 		inventory: updates.inventory
 			? {
 					...currentState.inventory,
@@ -432,16 +408,10 @@ export const revertToOriginal = async (
 			};
 			break;
 		case 'spells':
-			updates.spells = {
-				...currentState.spells,
-				current: [...currentState.spells.original]
-			};
+			updates.spells = [...currentState.spells];
 			break;
 		case 'maneuvers':
-			updates.maneuvers = {
-				...currentState.maneuvers,
-				current: [...currentState.maneuvers.original]
-			};
+			updates.maneuvers = [...currentState.maneuvers];
 			break;
 		case 'inventory':
 			updates.inventory = {

@@ -15,6 +15,7 @@ import type {
 } from '../../types';
 import type { Spell } from '../../lib/rulesdata/schemas/spell.schema';
 import type { Maneuver } from '../../lib/rulesdata/martials/maneuvers';
+import { logger } from '../../lib/utils/logger';
 interface CalculatedDefenses {
 	calculatedPD: number;
 	calculatedAD: number;
@@ -156,18 +157,16 @@ export const handlePrintCharacterSheet = (
 
 		// Get current data for printing
 		const currentAttacks = attacks;
-		const currentSpells = spells.length > 0 ? spells : characterState?.spells?.current || [];
-		const currentManeuvers =
-			maneuvers.length > 0 ? maneuvers : characterState?.maneuvers?.current || [];
+		const currentSpells = spells.length > 0 ? spells : characterState?.spells || [];
+		const currentManeuvers = maneuvers.length > 0 ? maneuvers : characterState?.maneuvers || [];
 
 		// Debug logging
-		console.log('Print function - currentSpells:', currentSpells);
-		console.log('Print function - spells state:', spells);
-		console.log(
-			'Print function - characterState?.spells?.current:',
-			characterState?.spells?.current
-		);
-		console.log('Print function - currentManeuvers:', currentManeuvers);
+		logger.debug('ui', 'Print function - currentSpells', { currentSpells });
+		logger.debug('ui', 'Print function - spells state', { spells });
+		logger.debug('ui', 'Print function - characterState.spells', {
+			spells: characterState?.spells
+		});
+		logger.debug('ui', 'Print function - currentManeuvers', { currentManeuvers });
 
 		const printableTrades = buildPrintableTrades(characterData);
 
@@ -780,7 +779,9 @@ export const handlePrintCharacterSheet = (
 			}, 500);
 		};
 	} catch (error) {
-		console.error('Failed to print character sheet:', error);
+		logger.error('ui', 'Failed to print character sheet', {
+			error: error instanceof Error ? error.message : String(error)
+		});
 		alert('Failed to print character sheet');
 	}
 };

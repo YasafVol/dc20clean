@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import type { SkillData } from '../../types';
-import { debug } from '../../lib/utils/debug';
+import { logger } from '../../lib/utils/logger';
 
-debug.ui('CharacterSheetMobile.tsx file loaded');
+logger.debug('ui', 'CharacterSheetMobile.tsx file loaded');
 
 // Hooks
 import { useCharacterSheet } from './hooks/CharacterSheetProvider';
@@ -60,7 +60,7 @@ import InventoryPopup from './components/InventoryPopup';
  * - Maintained all original functionality
  */
 const CharacterSheetMobile: React.FC = () => {
-	debug.ui('CharacterSheetMobile component rendering');
+	logger.debug('ui', 'CharacterSheetMobile component rendering');
 
 	// Hook to get character data and sheet actions
 	const { state } = useCharacterSheet();
@@ -142,7 +142,9 @@ ${characterData.characterState?.notes?.playerNotes || 'No notes'}`;
 			// Show success feedback (you could add a toast notification here)
 			alert('Character summary copied to clipboard!');
 		} catch (err) {
-			console.error('Failed to copy to clipboard:', err);
+			logger.error('ui', 'Failed to copy to clipboard', {
+				error: err instanceof Error ? err.message : String(err)
+			});
 			alert('Failed to copy to clipboard');
 		}
 	};
@@ -211,7 +213,7 @@ ${characterData.characterState?.notes?.playerNotes || 'No notes'}`;
 
 	// Render content based on active tab
 	const renderTabContent = () => {
-		debug.ui(`CharacterSheetMobile activeTab: "${activeTab}"`);
+		logger.debug('ui', 'CharacterSheetMobile activeTab', { activeTab });
 		if (!characterData) return null;
 
 		// Calculate skill data like in original

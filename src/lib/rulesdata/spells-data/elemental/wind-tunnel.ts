@@ -6,7 +6,7 @@ export const windTunnel: Spell = {
 	name: 'Wind Tunnel',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: [],
+	tags: ['Air', 'Motion', 'Slowed'],
 
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',

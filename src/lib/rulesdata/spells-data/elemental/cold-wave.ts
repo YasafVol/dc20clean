@@ -6,7 +6,7 @@ export const coldWave: Spell = {
 	name: 'Cold Wave',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Cold'],
+	tags: ['Cold', 'Slowed', 'Trap'],
 
 	cost: { ap: 2 },
 	range: 'Self',

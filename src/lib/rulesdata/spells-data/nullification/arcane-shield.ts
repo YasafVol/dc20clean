@@ -6,7 +6,7 @@ export const arcaneShield: Spell = {
 	name: 'Arcane Shield',
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Nullification,
-	tags: [],
+	tags: ['Ward'],
 
 	cost: { ap: 1 },
 	range: '1 Space',

@@ -6,7 +6,7 @@ export const tendrilsFromBeyond: Spell = {
 	name: 'Tendrils from Beyond',
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Conjuration,
-	tags: ['Bludgeoning', 'Psychic'],
+	tags: ['Aberration', 'Bludgeoning', 'Madness', 'Psychic'],
 
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',

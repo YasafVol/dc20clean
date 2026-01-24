@@ -6,7 +6,7 @@ export const teleport: Spell = {
 	name: 'Teleport',
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Astromancy,
-	tags: ['Teleportation'],
+	tags: ['Motion', 'Slowed', 'Teleportation'],
 
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',

@@ -6,7 +6,7 @@ export const darkness: Spell = {
 	name: 'Darkness',
 	sources: [SpellSource.Arcane, SpellSource.Divine, SpellSource.Primal],
 	school: SpellSchool.Nullification,
-	tags: [],
+	tags: ['Shadow', 'Slowed'],
 
 	cost: { ap: 2 },
 	range: '5 Spaces',

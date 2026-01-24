@@ -6,7 +6,7 @@ export const gravitySinkHole: Spell = {
 	name: 'Gravity Sink Hole',
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Astromancy,
-	tags: ['Restrained'],
+	tags: ['Gravity', 'Motion', 'Restrained'],
 
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',

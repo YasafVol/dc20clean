@@ -6,7 +6,7 @@ export const lightningTorrent: Spell = {
 	name: 'Lightning Torrent',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Lightning'],
+	tags: ['Dazed', 'Lightning'],
 
 	cost: { ap: 2 },
 	range: 'Self',

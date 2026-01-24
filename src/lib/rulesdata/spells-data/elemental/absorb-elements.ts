@@ -6,7 +6,7 @@ export const absorbElements: Spell = {
 	name: 'Absorb Elements',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: [],
+	tags: ['Embolden', 'Ward'],
 
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',

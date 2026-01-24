@@ -6,7 +6,7 @@ export const hex: Spell = {
 	name: 'Hex',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Enchantment,
-	tags: [],
+	tags: ['Curse', 'Enfeeble'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '10 Spaces',

@@ -6,7 +6,7 @@ export const radiantImbued: Spell = {
 	name: 'Radiant Imbued',
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Transmutation,
-	tags: ['Radiant'],
+	tags: ['Light', 'Radiant', 'Strike', 'Weapon'],
 
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',

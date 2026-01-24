@@ -6,7 +6,7 @@ export const acidRain: Spell = {
 	name: 'Acid Rain',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: [],
+	tags: ['Corrosion', 'Enfeeble', 'Water'],
 
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',

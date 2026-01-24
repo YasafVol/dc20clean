@@ -6,7 +6,7 @@ export const vampiricTouch: Spell = {
 	name: 'Vampiric Touch',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Nullification,
-	tags: ['Healing'],
+	tags: ['Blood', 'Doomed', 'Healing', 'Slowed', 'Umbral'],
 
 	cost: { ap: 1 },
 	range: '1 Space',

@@ -6,7 +6,7 @@ export const hydroLance: Spell = {
 	name: 'Hydro Lance',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Piercing'],
+	tags: ['Bleeding', 'Motion', 'Piercing', 'Water'],
 
 	cost: { ap: 2 },
 	range: 'Self',

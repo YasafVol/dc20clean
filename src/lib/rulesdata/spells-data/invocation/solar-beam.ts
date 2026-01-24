@@ -6,7 +6,7 @@ export const solarBeam: Spell = {
 	name: 'Solar Beam',
 	sources: [SpellSource.Divine, SpellSource.Primal],
 	school: SpellSchool.Invocation,
-	tags: ['Blinded', 'Burning', 'Radiant'],
+	tags: ['Blinded', 'Burning', 'Light', 'Radiant'],
 
 	cost: { ap: 2 },
 	range: 'Self',

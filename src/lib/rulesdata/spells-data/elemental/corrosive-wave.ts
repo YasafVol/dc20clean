@@ -6,7 +6,7 @@ export const corrosiveWave: Spell = {
 	name: 'Corrosive Wave',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: [],
+	tags: ['Corrosion', 'Enfeeble', 'Exposed'],
 
 	cost: { ap: 2 },
 	range: 'Self',

@@ -6,7 +6,7 @@ export const empoweredSight: Spell = {
 	name: 'Empowered Sight',
 	sources: [SpellSource.Arcane, SpellSource.Primal, SpellSource.Divine],
 	school: SpellSchool.Divination,
-	tags: [],
+	tags: ['Embolden', 'Sense'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',

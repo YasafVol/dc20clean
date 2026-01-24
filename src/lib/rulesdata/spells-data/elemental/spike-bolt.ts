@@ -6,7 +6,7 @@ export const spikeBolt: Spell = {
 	name: 'Spike Bolt',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Piercing'],
+	tags: ['Earth', 'Impaired', 'Piercing', 'Plants'],
 
 	cost: { ap: 1 },
 	range: '10 Space',

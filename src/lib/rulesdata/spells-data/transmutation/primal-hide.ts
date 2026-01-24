@@ -6,7 +6,7 @@ export const primalHide: Spell = {
 	name: 'Primal Hide',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Transmutation,
-	tags: [],
+	tags: ['Embolden', 'Ward'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',

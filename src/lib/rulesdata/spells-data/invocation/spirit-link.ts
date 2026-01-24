@@ -6,7 +6,7 @@ export const spiritLink: Spell = {
 	name: 'Spirit Link',
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Invocation,
-	tags: [],
+	tags: ['Blood', 'Curse', 'Spirit', 'Ward'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',

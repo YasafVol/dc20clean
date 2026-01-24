@@ -6,7 +6,7 @@ export const coneOfCold: Spell = {
 	name: 'Cone of Cold',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Cold', 'Stunned'],
+	tags: ['Cold', 'Slowed', 'Stunned'],
 
 	cost: { ap: 2 },
 	range: 'Self',

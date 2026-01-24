@@ -6,7 +6,7 @@ export const toxicAura: Spell = {
 	name: 'Toxic Aura',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Poison'],
+	tags: ['Ailment', 'Enfeeble', 'Poison'],
 
 	cost: { ap: 2, mp: 1 },
 	range: 'Self',

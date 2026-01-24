@@ -6,7 +6,7 @@ export const sphereOfDeath: Spell = {
 	name: 'Sphere of Death',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Nullification,
-	tags: ['Exhaustion'],
+	tags: ['Death', 'Doomed', 'Exhaustion', 'Umbral'],
 
 	cost: { ap: 2 },
 	range: '5 Spaces',

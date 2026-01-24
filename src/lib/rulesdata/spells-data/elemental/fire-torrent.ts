@@ -6,7 +6,7 @@ export const fireTorrent: Spell = {
 	name: 'Fire Torrent',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Burning', 'Fire'],
+	tags: ['Burning', 'Fire', 'Motion'],
 
 	cost: { ap: 2 },
 	range: 'Self',

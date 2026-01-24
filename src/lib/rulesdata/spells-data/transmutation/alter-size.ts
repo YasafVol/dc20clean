@@ -6,7 +6,7 @@ export const alterSize: Spell = {
 	name: 'Alter Size',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Transmutation,
-	tags: [],
+	tags: ['Embolden', 'Enfeeble', 'Metamorphosis'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',

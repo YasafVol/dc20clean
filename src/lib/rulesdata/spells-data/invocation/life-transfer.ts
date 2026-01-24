@@ -6,7 +6,7 @@ export const lifeTransfer: Spell = {
 	name: 'Life Transfer',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Invocation,
-	tags: ['Healing'],
+	tags: ['Blood', 'Cleansing', 'Healing'],
 
 	cost: { ap: 1 },
 	range: '10 Spaces',

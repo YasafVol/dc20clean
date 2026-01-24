@@ -6,7 +6,7 @@ export const coldImbued: Spell = {
 	name: 'Cold Imbued',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Transmutation,
-	tags: ['Cold'],
+	tags: ['Cold', 'Slowed', 'Strike', 'Weapon'],
 
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',

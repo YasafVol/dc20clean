@@ -6,7 +6,7 @@ export const disguiseSelf: Spell = {
 	name: 'Disguise Self',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Conjuration,
-	tags: ['Illusion'],
+	tags: ['Communication', 'Illusion'],
 
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',

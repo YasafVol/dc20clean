@@ -6,7 +6,7 @@ export const sanctuary: Spell = {
 	name: 'Sanctuary',
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Nullification,
-	tags: [],
+	tags: ['Embolden', 'Spirit', 'Ward'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',

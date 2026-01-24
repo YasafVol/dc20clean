@@ -6,7 +6,7 @@ export const deathBolt: Spell = {
 	name: 'Death Bolt',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Nullification,
-	tags: [],
+	tags: ['Curse', 'Doomed', 'Umbral'],
 
 	cost: { ap: 1 },
 	range: '10 Spaces',

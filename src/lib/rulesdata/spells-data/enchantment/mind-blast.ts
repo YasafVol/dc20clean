@@ -6,7 +6,7 @@ export const mindBlast: Spell = {
 	name: 'Mind Blast',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Enchantment,
-	tags: ['Psychic'],
+	tags: ['Dazed', 'Psychic', 'Sense'],
 
 	cost: { ap: 2 },
 	range: 'Self',

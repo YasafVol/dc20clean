@@ -6,7 +6,7 @@ export const mageArmor: Spell = {
 	name: 'Mage Armor',
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Conjuration,
-	tags: [],
+	tags: ['Embolden', 'Ward'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',

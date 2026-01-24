@@ -6,7 +6,7 @@ export const disintegrate: Spell = {
 	name: 'Disintegrate',
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Nullification,
-	tags: ['True'],
+	tags: ['Death', 'Enfeeble', 'True', 'Weakened'],
 
 	cost: { ap: 1, mp: 2 },
 	range: '10 Spaces',

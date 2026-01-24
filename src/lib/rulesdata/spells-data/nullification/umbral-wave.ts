@@ -6,7 +6,7 @@ export const umbralWave: Spell = {
 	name: 'Umbral Wave',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Nullification,
-	tags: [],
+	tags: ['Doomed', 'Umbral', 'Undead'],
 
 	cost: { ap: 2 },
 	range: 'Self',

@@ -6,7 +6,7 @@ export const fear: Spell = {
 	name: 'Fear',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Enchantment,
-	tags: ['Frightened', 'Psychic'],
+	tags: ['Emotions', 'Frightened', 'Motion', 'Psychic', 'Terrified'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '10 Spaces',

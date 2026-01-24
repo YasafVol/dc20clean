@@ -6,7 +6,7 @@ export const muffle: Spell = {
 	name: 'Muffle',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Nullification,
-	tags: ['Deafened'],
+	tags: ['Communication', 'Deafened', 'Disoriented', 'Sound'],
 
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',

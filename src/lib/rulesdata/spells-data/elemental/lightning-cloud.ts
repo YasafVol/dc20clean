@@ -6,7 +6,7 @@ export const lightningCloud: Spell = {
 	name: 'Lightning Cloud',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Deafened', 'Lightning', 'Stunned'],
+	tags: ['Deafened', 'Disoriented', 'Lightning', 'Sound', 'Stunned'],
 
 	cost: { ap: 2 },
 	range: '5 Spaces',

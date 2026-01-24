@@ -6,7 +6,7 @@ export const chaosTorrent: Spell = {
 	name: 'Chaos Torrent',
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Transmutation,
-	tags: ['Chaos'],
+	tags: ['Chaos', 'Enfeeble'],
 
 	cost: { ap: 2, mp: 1 },
 	range: 'Self',

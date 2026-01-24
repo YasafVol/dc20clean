@@ -6,7 +6,7 @@ export const wildGuard: Spell = {
 	name: 'Wild Guard',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Nullification,
-	tags: [],
+	tags: ['Motion', 'Ward'],
 
 	cost: { ap: 1 },
 	range: '1 Space',

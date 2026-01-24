@@ -6,7 +6,7 @@ export const bless: Spell = {
 	name: 'Bless',
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Divination,
-	tags: [],
+	tags: ['Embolden'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',

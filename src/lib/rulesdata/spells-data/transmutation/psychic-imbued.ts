@@ -6,7 +6,7 @@ export const psychicImbued: Spell = {
 	name: 'Psychic Imbued',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Transmutation,
-	tags: ['Deafened', 'Psychic'],
+	tags: ['Dazed', 'Deafened', 'Psychic', 'Strike', 'Weapon'],
 
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',

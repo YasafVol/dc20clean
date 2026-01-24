@@ -6,7 +6,7 @@ export const tornado: Spell = {
 	name: 'Tornado',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Chaos', 'Blinded'],
+	tags: ['Air', 'Blinded', 'Chaos', 'Motion', 'Slowed'],
 
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',

@@ -6,7 +6,7 @@ export const poisonCloud: Spell = {
 	name: 'Poison Cloud',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Poison'],
+	tags: ['Ailment', 'Hindered', 'Impaired', 'Poison'],
 
 	cost: { ap: 2 },
 	range: '5 Spaces',

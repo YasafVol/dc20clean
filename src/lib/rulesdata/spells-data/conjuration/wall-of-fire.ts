@@ -6,7 +6,7 @@ export const wallOfFire: Spell = {
 	name: 'Wall of Fire',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Conjuration,
-	tags: ['Burning', 'Fire'],
+	tags: ['Burning', 'Fire', 'Shadow'],
 
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',

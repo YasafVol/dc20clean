@@ -6,7 +6,7 @@ export const radiantBeam: Spell = {
 	name: 'Radiant Beam',
 	sources: [SpellSource.Divine, SpellSource.Primal],
 	school: SpellSchool.Invocation,
-	tags: ['Blinded', 'Burning', 'Radiant'],
+	tags: ['Blinded', 'Burning', 'Light', 'Radiant'],
 
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',

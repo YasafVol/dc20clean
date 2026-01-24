@@ -6,7 +6,7 @@ export const psychicWave: Spell = {
 	name: 'Psychic Wave',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Enchantment,
-	tags: ['Psychic'],
+	tags: ['Enfeeble', 'Motion', 'Psychic'],
 
 	cost: { ap: 2 },
 	range: 'Self',

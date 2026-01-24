@@ -6,7 +6,7 @@ export const frostBolt: Spell = {
 	name: 'Frost Bolt',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Cold'],
+	tags: ['Cold', 'Slowed'],
 
 	cost: { ap: 1 },
 	range: '10 Spaces',

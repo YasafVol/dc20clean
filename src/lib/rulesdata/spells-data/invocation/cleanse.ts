@@ -6,7 +6,7 @@ export const cleanse: Spell = {
 	name: 'Cleanse',
 	sources: [SpellSource.Divine, SpellSource.Primal],
 	school: SpellSchool.Invocation,
-	tags: [],
+	tags: ['Cleansing'],
 
 	cost: { ap: 1 },
 	range: '5 Spaces',

@@ -6,7 +6,7 @@ export const radiantBolt: Spell = {
 	name: 'Radiant Bolt',
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Invocation,
-	tags: ['Blinded', 'Radiant'],
+	tags: ['Blinded', 'Exposed', 'Light', 'Radiant'],
 
 	cost: { ap: 1 },
 	range: '10 Spaces',

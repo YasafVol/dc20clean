@@ -6,7 +6,7 @@ export const psiBolt: Spell = {
 	name: 'Psi Bolt',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Enchantment,
-	tags: ['Psychic'],
+	tags: ['Dazed', 'Intimidated', 'Psychic', 'Thoughts'],
 
 	cost: { ap: 1 },
 	range: '10 Spaces',

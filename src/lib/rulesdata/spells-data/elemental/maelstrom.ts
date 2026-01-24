@@ -6,7 +6,7 @@ export const maelstrom: Spell = {
 	name: 'Maelstrom',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: [],
+	tags: ['Motion', 'Slowed', 'Water'],
 
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',

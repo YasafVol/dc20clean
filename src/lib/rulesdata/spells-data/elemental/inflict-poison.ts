@@ -6,7 +6,7 @@ export const inflictPoison: Spell = {
 	name: 'Inflict Poison',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Frightened', 'Stunned'],
+	tags: ['Ailment', 'Dazed', 'Frightened', 'Impaired', 'Slowed', 'Stunned'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '10 Spaces',

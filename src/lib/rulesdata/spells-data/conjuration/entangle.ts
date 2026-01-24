@@ -6,7 +6,7 @@ export const entangle: Spell = {
 	name: 'Entangle',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Conjuration,
-	tags: ['Piercing', 'Restrained'],
+	tags: ['Immobilized', 'Piercing', 'Plants', 'Restrained'],
 
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',

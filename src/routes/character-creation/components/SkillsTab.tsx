@@ -3,6 +3,7 @@ import { skillsData } from '../../../lib/rulesdata/skills';
 import { MASTERY_TIERS } from '../../../lib/rulesdata/progression/levelCaps';
 import { cn } from '../../../lib/utils';
 import { Button } from '../../../components/ui/button';
+import type { MasteryLimitElevation } from '../../../lib/types/effectSystem';
 
 interface BackgroundPointsData {
 	skillPointsUsed: number;
@@ -35,6 +36,15 @@ interface MasteryLimits {
 	currentAdeptCount: number;
 	maxAdeptCount: number;
 	canSelectAdept: boolean;
+	// DC20 0.10 mastery cap system fields
+	baselineSkillCap: number;
+	baselineTradeCap: number;
+	skillEffectiveCaps: Record<string, number>;
+	tradeEffectiveCaps: Record<string, number>;
+	skillLimitElevations: Record<string, MasteryLimitElevation>;
+	tradeLimitElevations: Record<string, MasteryLimitElevation>;
+	skillFeatureElevationsAvailable: number;
+	tradeFeatureElevationsAvailable: number;
 }
 
 interface MasteryInfo {
@@ -62,6 +72,9 @@ interface SkillsTabProps {
 	actions: ConversionActions;
 	masteryLimits: MasteryLimits;
 	onSkillChange: (skillId: string, newLevel: number) => void;
+	onSkillLimitElevationChange?: (
+		elevations: Record<string, { source: 'spent_points'; value: number }>
+	) => void;
 }
 
 const SkillsTab: React.FC<SkillsTabProps> = ({
@@ -70,38 +83,103 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 	conversions,
 	actions,
 	masteryLimits,
-	onSkillChange
+	onSkillChange,
+	onSkillLimitElevationChange
 }) => {
-	const canIncreaseProficiency = (
-		pointCost: number,
-		pointsUsed: number,
-		availablePoints: number
-	) => {
-		return pointsUsed + pointCost <= availablePoints;
+	// Get effective cap for a skill (baseline + any elevations)
+	const getEffectiveCap = (skillId: string): number => {
+		return masteryLimits.skillEffectiveCaps?.[skillId] ?? masteryLimits.baselineSkillCap;
+	};
+
+	// Check if skill has elevation from spent points
+	const hasSpentPointsElevation = (skillId: string): boolean => {
+		return masteryLimits.skillLimitElevations?.[skillId]?.source === 'spent_points';
+	};
+
+	// Check if skill can have limit elevated (not already elevated, and can afford)
+	const canElevateLimitWithPoints = (skillId: string): boolean => {
+		if (hasSpentPointsElevation(skillId)) return false;
+		// Check if there's a feature elevation available (can't stack)
+		// For now, assume no feature elevation - validation will catch conflicts
+		const pointsRemaining = pointsData.availableSkillPoints - pointsData.skillPointsUsed;
+		return pointsRemaining >= 1;
+	};
+
+	// Calculate point cost for a mastery level change
+	const calculatePointCost = (skillId: string, targetLevel: number): number => {
+		const currentLevel = currentSkills[skillId] || 0;
+		const baselineCap = masteryLimits.baselineSkillCap;
+		const hasElevation = hasSpentPointsElevation(skillId);
+
+		// If going to level 0, refund all points including any elevation
+		if (targetLevel === 0) {
+			let refund = currentLevel;
+			if (hasElevation) {
+				refund += masteryLimits.skillLimitElevations[skillId].value;
+			}
+			return -refund;
+		}
+
+		// If increasing and target exceeds baseline cap
+		if (targetLevel > baselineCap && !hasElevation) {
+			// Need to pay for elevation (+1) plus the level increase
+			const elevationCost = 1;
+			const levelCost = targetLevel - currentLevel;
+			return elevationCost + levelCost;
+		}
+
+		// Simple level change
+		return targetLevel - currentLevel;
 	};
 
 	const canSelectMastery = (skillId: string, targetLevel: number): boolean => {
-		if (targetLevel > masteryLimits.maxSkillMastery) {
-			return false;
-		}
+		const effectiveCap = getEffectiveCap(skillId);
 
-		if (targetLevel >= 2) {
-			const currentLevel = currentSkills[skillId] || 0;
-			const currentlyAdept = currentLevel >= 2;
+		// Can always select 0 (untrained)
+		if (targetLevel === 0) return true;
 
-			if (!currentlyAdept && masteryLimits.currentAdeptCount >= masteryLimits.maxAdeptCount) {
+		// Check if target exceeds effective cap
+		// But allow selecting if we can afford to elevate the limit
+		if (targetLevel > effectiveCap) {
+			// Can only exceed baseline by 1 tier via spent points
+			if (targetLevel > masteryLimits.baselineSkillCap + 1) {
+				return false;
+			}
+			// Must be able to afford elevation + level
+			if (!canElevateLimitWithPoints(skillId)) {
 				return false;
 			}
 		}
 
-		const pointCost = targetLevel - (currentSkills[skillId] || 0);
-		const canAfford = canIncreaseProficiency(
-			pointCost,
-			pointsData.skillPointsUsed,
-			pointsData.availableSkillPoints
-		);
+		const pointCost = calculatePointCost(skillId, targetLevel);
+		const pointsRemaining = pointsData.availableSkillPoints - pointsData.skillPointsUsed;
 
-		return canAfford;
+		return pointsRemaining >= pointCost;
+	};
+
+	// Handle skill change with automatic elevation
+	const handleSkillChange = (skillId: string, targetLevel: number) => {
+		const currentLevel = currentSkills[skillId] || 0;
+		const baselineCap = masteryLimits.baselineSkillCap;
+		const hasElevation = hasSpentPointsElevation(skillId);
+
+		// If increasing above baseline and no elevation, add one
+		if (targetLevel > baselineCap && !hasElevation && onSkillLimitElevationChange) {
+			const newElevations = {
+				...(masteryLimits.skillLimitElevations || {}),
+				[skillId]: { source: 'spent_points' as const, value: 1 }
+			};
+			onSkillLimitElevationChange(newElevations);
+		}
+
+		// If decreasing to baseline or below and has elevation, remove it
+		if (targetLevel <= baselineCap && hasElevation && onSkillLimitElevationChange) {
+			const newElevations = { ...(masteryLimits.skillLimitElevations || {}) };
+			delete newElevations[skillId];
+			onSkillLimitElevationChange(newElevations);
+		}
+
+		onSkillChange(skillId, targetLevel);
 	};
 
 	const hasConversions =
@@ -116,11 +194,15 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 		<div className="mx-auto">
 			{/* Mastery Limits Info */}
 			<div className="bg-muted/30 border-border mb-4 rounded-md border p-3 text-sm">
-				<strong>Mastery Limits:</strong> Max level {masteryLimits.maxSkillMastery} (
-				{MASTERY_TIERS[masteryLimits.maxSkillMastery]?.name})
-				{masteryLimits.maxSkillMastery >= 2 && masteryLimits.maxAdeptCount < 999 && (
+				<strong>Mastery Limits:</strong> Baseline cap: {masteryLimits.baselineSkillCap} (
+				{MASTERY_TIERS[masteryLimits.baselineSkillCap]?.name})
+				<div className="text-muted-foreground mt-1">
+					You can exceed the baseline cap by spending 1 extra skill point to elevate a skill's
+					limit. Each skill can only have 1 limit elevation (from points OR features).
+				</div>
+				{masteryLimits.skillFeatureElevationsAvailable > 0 && (
 					<div className="text-primary mt-1">
-						Adept slots: {masteryLimits.currentAdeptCount} / {masteryLimits.maxAdeptCount} used
+						Feature mastery grants available: {masteryLimits.skillFeatureElevationsAvailable}
 					</div>
 				)}
 			</div>
@@ -181,13 +263,18 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 				{skillsData.map((skill) => {
 					const currentLevel = currentSkills[skill.id] || 0;
-					const masteryInfo = getMasteryInfo(currentLevel, masteryLimits.maxSkillMastery);
+					const effectiveCap = getEffectiveCap(skill.id);
+					const hasElevation = hasSpentPointsElevation(skill.id);
+					const masteryInfo = getMasteryInfo(currentLevel, effectiveCap);
 
 					return (
 						<div
 							key={skill.id}
 							data-testid={`skill-item-${skill.id}`}
-							className="hover:border-primary rounded-lg border border-white/50 bg-transparent p-4 transition-colors"
+							className={cn(
+								'hover:border-primary rounded-lg border bg-transparent p-4 transition-colors',
+								hasElevation ? 'border-yellow-500/50' : 'border-white/50'
+							)}
 						>
 							<div className="mb-2 flex items-center justify-between">
 								<h4 className="text-primary text-lg font-semibold tracking-wide uppercase">
@@ -197,21 +284,29 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 									{masteryInfo.name} (+{masteryInfo.bonus}) • {skill.attributeAssociation}
 								</span>
 							</div>
+							{hasElevation && (
+								<div className="mb-2 text-xs text-yellow-500">
+									⬆ Limit elevated (cap: {effectiveCap})
+								</div>
+							)}
 							<p className="text-muted-foreground mb-3 text-sm">{skill.description}</p>
 							<div className="flex flex-wrap gap-2">
 								{[0, 1, 2, 3, 4, 5].map((level) => {
-									const masteryDisplay = getMasteryInfo(level, masteryLimits.maxSkillMastery);
+									const masteryDisplay = getMasteryInfo(level, 5);
 									const canSelect = canSelectMastery(skill.id, level);
 									const isActive = currentLevel === level;
 									const isDisabled = !canSelect && !isActive;
+									const exceedsBaseline = level > masteryLimits.baselineSkillCap;
+									const needsElevation = exceedsBaseline && !hasElevation;
+									const pointCost = calculatePointCost(skill.id, level);
 
 									return (
 										<button
 											key={level}
-											title={`${masteryDisplay.name} (+${masteryDisplay.bonus})`}
+											title={`${masteryDisplay.name} (+${masteryDisplay.bonus})${needsElevation ? ' - requires limit elevation (+1 point)' : ''}${pointCost > 0 ? ` - costs ${pointCost} points` : ''}`}
 											onClick={() => {
 												if (canSelect || isActive) {
-													onSkillChange(skill.id, level);
+													handleSkillChange(skill.id, level);
 												}
 											}}
 											className={cn(
@@ -220,10 +315,12 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 													? 'border-primary bg-primary text-primary-foreground'
 													: 'text-foreground border-white/50 bg-transparent',
 												isDisabled && 'cursor-not-allowed opacity-50',
-												!isDisabled && !isActive && 'hover:border-primary'
+												!isDisabled && !isActive && 'hover:border-primary',
+												needsElevation && canSelect && 'border-yellow-500/50 text-yellow-500'
 											)}
 										>
 											{level}
+											{needsElevation && canSelect && <span className="ml-1 text-xs">⬆</span>}
 										</button>
 									);
 								})}

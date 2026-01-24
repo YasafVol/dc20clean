@@ -1,4 +1,6 @@
 import type { Trait } from '../schemas/character.schema';
+// Note: See sharedTraits.ts for centralized trait definitions and the mapping
+// from ancestry-specific trait IDs to shared trait IDs.
 
 export const traitsData: Trait[] = [
 	// Human Traits (p. 108)
@@ -193,10 +195,14 @@ export const traitsData: Trait[] = [
 		cost: 1,
 		effects: [
 			{
-				type: 'GRANT_TRADE_EXPERTISE',
-				target: 'any_trade',
-				value: { capIncrease: 1, levelIncrease: 1 },
-				userChoice: { prompt: 'Choose a Trade for Expertise' }
+				type: 'INCREASE_TRADE_MASTERY_CAP',
+				count: 1,
+				value: 1
+			},
+			{
+				type: 'MODIFY_STAT',
+				target: 'tradePoints',
+				value: 1
 			}
 		]
 	},
@@ -374,9 +380,7 @@ export const traitsData: Trait[] = [
 		description: 'Your Size is considered Small.',
 		cost: -1,
 		isNegative: true,
-		effects: [
-			{ type: 'GRANT_ABILITY', target: 'small_size', value: 'Your Size is considered Small.' }
-		]
+		effects: [{ type: 'SET_VALUE', target: 'size', value: 'small' }]
 	},
 	{
 		id: 'halfling_elusive',
@@ -472,12 +476,17 @@ export const traitsData: Trait[] = [
 		id: 'halfling_trade_expertise',
 		name: 'Trade Expertise',
 		description:
-			'Choose a Trade. Your Mastery Cap and Mastery Level in the chosen Trade both increase by 1.',
+			'Choose a Trade. Your Mastery Cap and Mastery Level in the chosen Trade both increase by 1. You can only benefit from 1 Feature that increases your Trade Mastery Limit at a time.',
 		cost: 1,
 		effects: [
 			{
 				type: 'INCREASE_TRADE_MASTERY_CAP',
 				count: 1,
+				value: 1
+			},
+			{
+				type: 'MODIFY_STAT',
+				target: 'tradePoints',
 				value: 1
 			}
 		]
@@ -528,9 +537,7 @@ export const traitsData: Trait[] = [
 		description: 'Your Size is considered Small.',
 		cost: -1,
 		isNegative: true,
-		effects: [
-			{ type: 'GRANT_ABILITY', target: 'small_size', value: 'Your Size is considered Small.' }
-		]
+		effects: [{ type: 'SET_VALUE', target: 'size', value: 'small' }]
 	},
 	{
 		id: 'gnome_escape_artist',
@@ -539,11 +546,8 @@ export const traitsData: Trait[] = [
 			'You have ADV on Checks and Saves to avoid or escape being Grappled or Restrained.',
 		cost: 2,
 		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'escape_artist',
-				value: 'You have ADV on Checks and Saves to avoid or escape being Grappled or Restrained.'
-			}
+			{ type: 'GRANT_ADV_ON_CHECK', target: 'Avoid_or_Escape_Grapple_Restrained', value: 'ADV' },
+			{ type: 'GRANT_ADV_ON_SAVE', target: 'Avoid_or_Escape_Grapple_Restrained', value: 'ADV' }
 		]
 	},
 	{
@@ -606,12 +610,8 @@ export const traitsData: Trait[] = [
 			'You have ADV on Investigation Checks to spot Traps and on Trickery Checks to Hide Traps.',
 		cost: 1,
 		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'trapper',
-				value:
-					'You have ADV on Investigation Checks to spot Traps and on Trickery Checks to Hide Traps.'
-			}
+			{ type: 'GRANT_ADV_ON_CHECK', target: 'Investigation_to_spot_Traps', value: 'ADV' },
+			{ type: 'GRANT_ADV_ON_CHECK', target: 'Trickery_to_Hide_Traps', value: 'ADV' }
 		]
 	},
 	{
@@ -632,12 +632,18 @@ export const traitsData: Trait[] = [
 		id: 'gnome_trade_expertise',
 		name: 'Trade Expertise',
 		description:
-			'Choose a Crafting or Subterfuge Trade. Your Mastery Cap and Mastery Level in the chosen Trade both increase by 1.',
+			'Choose a Crafting or Subterfuge Trade. Your Mastery Cap and Mastery Level in the chosen Trade both increase by 1. You can only benefit from 1 Feature that increases your Trade Mastery Limit at a time.',
 		cost: 1,
+		// Note: Restricted to Crafting or Subterfuge trades
 		effects: [
 			{
 				type: 'INCREASE_TRADE_MASTERY_CAP',
 				count: 1,
+				value: 1
+			},
+			{
+				type: 'MODIFY_STAT',
+				target: 'tradePoints',
 				value: 1
 			}
 		]
@@ -918,12 +924,18 @@ export const traitsData: Trait[] = [
 		id: 'dwarf_trade_expertise',
 		name: 'Trade Expertise',
 		description:
-			'Choose a Crafting or Services Trade. Your Mastery Cap and Mastery Level in the chosen Trade both increase by 1.',
+			'Choose a Crafting or Services Trade. Your Mastery Cap and Mastery Level in the chosen Trade both increase by 1. You can only benefit from 1 Feature that increases your Trade Mastery Limit at a time.',
 		cost: 1,
+		// Note: Restricted to Crafting or Services trades
 		effects: [
 			{
 				type: 'INCREASE_TRADE_MASTERY_CAP',
 				count: 1,
+				value: 1
+			},
+			{
+				type: 'MODIFY_STAT',
+				target: 'tradePoints',
 				value: 1
 			}
 		]
@@ -1146,7 +1158,7 @@ export const traitsData: Trait[] = [
 		name: 'Mana Increase',
 		description: 'Your MP maximum increases by 1.',
 		cost: 1,
-		effects: [{ type: 'MODIFY_STAT', target: 'mp', value: 1 }]
+		effects: [{ type: 'MODIFY_STAT', target: 'mpMax', value: 1 }]
 	},
 	{
 		id: 'dragonborn_reptilian_superiority',
@@ -1287,7 +1299,7 @@ export const traitsData: Trait[] = [
 		name: 'Mana Increase',
 		description: 'Your MP maximum increases by 1.',
 		cost: 1,
-		effects: [{ type: 'MODIFY_STAT', target: 'mp', value: 1 }]
+		effects: [{ type: 'MODIFY_STAT', target: 'mpMax', value: 1 }]
 	},
 	{
 		id: 'fiendborn_radiant_weakness',
@@ -1606,7 +1618,7 @@ export const traitsData: Trait[] = [
 		description: 'Your Size is considered Small.',
 		cost: -1,
 		isNegative: true,
-		effects: [{ type: 'GRANT_ABILITY', target: 'small_sized', value: 'Size is considered Small.' }]
+		effects: [{ type: 'SET_VALUE', target: 'size', value: 'small' }]
 	},
 	{
 		id: 'beastborn_sunlight_sensitivity',
@@ -1941,7 +1953,7 @@ export const traitsData: Trait[] = [
 		name: 'Tough',
 		description: 'Your HP maximum increases by 2.',
 		cost: 1,
-		effects: [{ type: 'MODIFY_STAT', target: 'hp', value: 2 }]
+		effects: [{ type: 'MODIFY_STAT', target: 'hpMax', value: 2 }]
 	},
 	{
 		id: 'beastborn_toxic_fortitude',
@@ -2014,9 +2026,7 @@ export const traitsData: Trait[] = [
 		description: 'Your Size is considered Small.',
 		cost: -1,
 		isNegative: true,
-		effects: [
-			{ type: 'GRANT_ABILITY', target: 'Small-Sized', value: 'Your Size is considered Small.' }
-		]
+		effects: [{ type: 'SET_VALUE', target: 'size', value: 'small' }]
 	},
 	{
 		id: 'gremlin_sneaky',
@@ -2165,9 +2175,7 @@ export const traitsData: Trait[] = [
 		description: 'Your Size is considered Small.',
 		cost: -1,
 		isNegative: true,
-		effects: [
-			{ type: 'GRANT_ABILITY', target: 'Small-Sized', value: 'Your Size is considered Small.' }
-		]
+		effects: [{ type: 'SET_VALUE', target: 'size', value: 'small' }]
 	},
 	{
 		id: 'goblin_escape_artist',
@@ -2265,12 +2273,18 @@ export const traitsData: Trait[] = [
 		id: 'goblin_trade_expertise',
 		name: 'Trade Expertise',
 		description:
-			'Choose a Crafting or Subterfuge Trade. Your Mastery Cap and Mastery Level in the chosen Trade both increase by 1.',
+			'Choose a Crafting or Subterfuge Trade. Your Mastery Cap and Mastery Level in the chosen Trade both increase by 1. You can only benefit from 1 Feature that increases your Trade Mastery Limit at a time.',
 		cost: 1,
+		// Note: Restricted to Crafting or Subterfuge trades
 		effects: [
 			{
 				type: 'INCREASE_TRADE_MASTERY_CAP',
 				count: 1,
+				value: 1
+			},
+			{
+				type: 'MODIFY_STAT',
+				target: 'tradePoints',
 				value: 1
 			}
 		]

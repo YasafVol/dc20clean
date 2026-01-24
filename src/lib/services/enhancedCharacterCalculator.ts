@@ -1263,8 +1263,45 @@ export function calculateCharacterWithBreakdowns(
 	const trades = buildData.tradesData ?? {};
 	const languages = buildData.languagesData ?? { common: { fluency: 'fluent' } };
 
-	const skillPointsUsed = Object.values(skills).reduce((a, b) => a + (b || 0), 0);
-	const tradePointsUsed = Object.values(trades).reduce((a, b) => a + (b || 0), 0);
+	// Get mastery limit elevations from spent points (not from features)
+	const skillLimitElevations = (buildData as any).skillMasteryLimitElevations ?? {};
+	const tradeLimitElevations = (buildData as any).tradeMasteryLimitElevations ?? {};
+
+	// Get the baseline mastery cap from level
+	const levelCapsForBackground = getLevelCaps(buildData.level);
+	const baselineSkillMasteryTier = levelCapsForBackground.maxSkillMasteryTier;
+	const baselineTradeMasteryTier = levelCapsForBackground.maxTradeMasteryTier;
+
+	// Calculate skill points used with correct cost model:
+	// - 1 point per mastery level up to baseline cap
+	// - For each skill exceeding baseline: +1 point for limit elevation (if not from feature)
+	// DC20 Rule: "1 Skill Point to increase its Skill Mastery Limit by 1"
+	// Plus "another Skill Point to increase its Skill Mastery Level to meet the new Limit"
+	// So: Adept at L1 = 1 (Novice) + 1 (elevate limit) + 1 (Adept level) = 3 points
+	let skillPointsUsed = 0;
+	for (const [skillId, masteryLevel] of Object.entries(skills)) {
+		if (!masteryLevel) continue;
+		// Base cost is mastery level
+		skillPointsUsed += masteryLevel;
+		// If this skill has a spent-points elevation, count that cost too
+		const elevation = skillLimitElevations[skillId];
+		if (elevation?.source === 'spent_points') {
+			skillPointsUsed += elevation.value;
+		}
+	}
+
+	// Same for trades
+	let tradePointsUsed = 0;
+	for (const [tradeId, masteryLevel] of Object.entries(trades)) {
+		if (!masteryLevel) continue;
+		// Base cost is mastery level
+		tradePointsUsed += masteryLevel;
+		// If this trade has a spent-points elevation, count that cost too
+		const elevation = tradeLimitElevations[tradeId];
+		if (elevation?.source === 'spent_points') {
+			tradePointsUsed += elevation.value;
+		}
+	}
 	const languagePointsUsed = Object.entries(languages).reduce(
 		(sum, [id, d]) => (id === 'common' ? sum : sum + (d.fluency === 'limited' ? 1 : 2)),
 		0
@@ -1444,13 +1481,14 @@ export function calculateCharacterWithBreakdowns(
 	// Get caps from canonical source
 	const levelCaps = levelCapsForPrime;
 
-	// Helper to convert skill points to a numeric mastery tier (2+=Adept)
+	// Helper to convert skill points to a numeric mastery tier
 	const getMasteryTierFromPoints = (points: number): number => {
 		if (points >= 5) return 5; // Grandmaster
 		if (points >= 4) return 4; // Master
 		if (points >= 3) return 3; // Expert
 		if (points >= 2) return 2; // Adept
-		return 1; // Novice
+		if (points >= 1) return 1; // Novice
+		return 0; // Untrained
 	};
 
 	const baseSkillMasteryTier = levelCaps.maxSkillMasteryTier;
@@ -1461,81 +1499,236 @@ export function calculateCharacterWithBreakdowns(
 			e.type === 'MODIFY_SKILL_MASTERY_CAP' || e.type === 'INCREASE_SKILL_MASTERY_CAP'
 	);
 
-	// 1. Identify all skills that are "over budget" based on level alone.
-	const skillsOverLevelCap: string[] = [];
+	const tradeMasteryCapEffects = resolvedEffects.filter(
+		(e): e is ModifyMasteryCapEffect | IncreaseMasteryCapEffect =>
+			e.type === 'MODIFY_TRADE_MASTERY_CAP' || e.type === 'INCREASE_TRADE_MASTERY_CAP'
+	);
+
+	// Debug logging for mastery cap system (DC20 0.10)
+	if (Object.keys(skillLimitElevations).length > 0 || skillMasteryCapEffects.length > 0) {
+		console.log('📊 [Mastery Caps] Skill mastery calculation:', {
+			level: buildData.level,
+			baselineCap: baseSkillMasteryTier,
+			elevationsFromPoints: Object.keys(skillLimitElevations).length,
+			elevationsFromFeatures: skillMasteryCapEffects.length,
+			elevatedSkills: Object.keys(skillLimitElevations)
+		});
+	}
+	if (Object.keys(tradeLimitElevations).length > 0 || tradeMasteryCapEffects.length > 0) {
+		console.log('📊 [Mastery Caps] Trade mastery calculation:', {
+			level: buildData.level,
+			baselineCap: baseTradeMasteryTier,
+			elevationsFromPoints: Object.keys(tradeLimitElevations).length,
+			elevationsFromFeatures: tradeMasteryCapEffects.length,
+			elevatedTrades: Object.keys(tradeLimitElevations)
+		});
+	}
+
+	// Helper to calculate effective mastery cap for a specific skill
+	// DC20 Rule: "When your Skill Mastery Limit increases at the normal level,
+	// it continues to benefit from the bonus to its Skill Mastery Limit."
+	// This means elevations are PERSISTENT and COMPOUND with level increases.
+	const getEffectiveSkillCap = (skillId: string): number => {
+		let cap = baseSkillMasteryTier;
+
+		// Add elevation from spent points (if any)
+		const spentElevation = skillLimitElevations[skillId];
+		if (spentElevation?.source === 'spent_points') {
+			cap += spentElevation.value;
+		}
+
+		// Add elevation from features (if any) - only 1 bonus per skill
+		const featureElevation = skillMasteryCapEffects.find(
+			(effect) => !effect.options || effect.options.includes(skillId)
+		);
+		if (featureElevation) {
+			cap += featureElevation.value;
+		}
+
+		// Cap at Grandmaster (5)
+		return Math.min(cap, 5);
+	};
+
+	const getEffectiveTradeCap = (tradeId: string): number => {
+		let cap = baseTradeMasteryTier;
+
+		// Add elevation from spent points (if any)
+		const spentElevation = tradeLimitElevations[tradeId];
+		if (spentElevation?.source === 'spent_points') {
+			cap += spentElevation.value;
+		}
+
+		// Add elevation from features (if any) - only 1 bonus per trade
+		const featureElevation = tradeMasteryCapEffects.find(
+			(effect) => !effect.options || effect.options.includes(tradeId)
+		);
+		if (featureElevation) {
+			cap += featureElevation.value;
+		}
+
+		// Cap at Grandmaster (5)
+		return Math.min(cap, 5);
+	};
+
+	// Tally the total budget of exceptions from features
+	let totalSkillCapExceptionsBudget = 0;
+	for (const effect of skillMasteryCapEffects) {
+		totalSkillCapExceptionsBudget += effect.count;
+	}
+
+	let totalTradeCapExceptionsBudget = 0;
+	for (const effect of tradeMasteryCapEffects) {
+		totalTradeCapExceptionsBudget += effect.count;
+	}
+
+	// Validate each skill's mastery level against its effective cap
 	if (buildData.skillsData) {
-		for (const [skillId, points] of Object.entries(buildData.skillsData)) {
-			if (points > 0 && getMasteryTierFromPoints(points) > baseSkillMasteryTier) {
-				skillsOverLevelCap.push(skillId);
+		for (const [skillId, masteryLevel] of Object.entries(buildData.skillsData)) {
+			if (!masteryLevel) continue;
+
+			const masteryTier = getMasteryTierFromPoints(masteryLevel);
+			const effectiveCap = getEffectiveSkillCap(skillId);
+
+			if (masteryTier > effectiveCap) {
+				errors.push({
+					step: BuildStep.Background,
+					field: skillId,
+					code: 'MASTERY_CAP_EXCEEDED',
+					message: `${skillId} mastery (${masteryTier}) exceeds its cap (${effectiveCap}). Your baseline cap is ${baseSkillMasteryTier}. Spend points to elevate the limit or gain a feature that grants this.`
+				});
+			}
+
+			// Check if skill exceeds baseline but has no elevation source
+			if (masteryTier > baseSkillMasteryTier) {
+				const hasSpentElevation = skillLimitElevations[skillId]?.source === 'spent_points';
+				const hasFeatureElevation = skillMasteryCapEffects.some(
+					(effect) => !effect.options || effect.options.includes(skillId)
+				);
+
+				if (!hasSpentElevation && !hasFeatureElevation) {
+					errors.push({
+						step: BuildStep.Background,
+						field: skillId,
+						code: 'INVALID_MASTERY_GRANT',
+						message: `${skillId} exceeds baseline cap but has no elevation. You must either spend points to elevate the limit or have a feature that grants this.`
+					});
+				}
 			}
 		}
 	}
 
-	// 2. Tally the total budget of exceptions from features.
-	let totalCapExceptionsBudget = 0;
-	for (const effect of skillMasteryCapEffects) {
-		totalCapExceptionsBudget += effect.count;
+	// Count how many skills use feature elevations (not spent points)
+	const skillsUsingFeatureElevation = Object.entries(buildData.skillsData ?? {}).filter(
+		([skillId, level]) => {
+			if (!level || getMasteryTierFromPoints(level) <= baseSkillMasteryTier) return false;
+			const hasSpentElevation = skillLimitElevations[skillId]?.source === 'spent_points';
+			return !hasSpentElevation; // Uses feature elevation
+		}
+	).length;
+
+	if (skillsUsingFeatureElevation > totalSkillCapExceptionsBudget) {
+		errors.push({
+			step: BuildStep.Background,
+			field: 'skills',
+			code: 'MASTERY_CAP_EXCEEDED',
+			message: `${skillsUsingFeatureElevation} skills rely on feature mastery grants, but only ${totalSkillCapExceptionsBudget} grants available from features.`
+		});
 	}
 
-	// 3. Validate skills that exceed the level's natural mastery cap
-	// If level naturally allows tier 2+, those tiers are unlimited (like Novice at level 1)
-	// Only enforce slot limits when trying to exceed the natural cap
-	const levelAllowsUnlimitedMastery = baseSkillMasteryTier >= 2;
+	// Same validation for trades
+	if (buildData.tradesData) {
+		for (const [tradeId, masteryLevel] of Object.entries(buildData.tradesData)) {
+			if (!masteryLevel) continue;
 
-	if (levelAllowsUnlimitedMastery) {
-		// Level 5+: All tiers up to natural cap are unlimited
-		// Only validate skills that exceed the natural cap
-		// E.g., L5: Adept unlimited, Expert needs exception
-		//       L10: Expert unlimited, Master needs exception
-		const skillsAboveNaturalCap = skillsOverLevelCap.filter((skillId) => {
-			const points = buildData.skillsData?.[skillId] || 0;
-			return getMasteryTierFromPoints(points) > baseSkillMasteryTier;
+			const masteryTier = getMasteryTierFromPoints(masteryLevel);
+			const effectiveCap = getEffectiveTradeCap(tradeId);
+
+			if (masteryTier > effectiveCap) {
+				errors.push({
+					step: BuildStep.Background,
+					field: tradeId,
+					code: 'MASTERY_CAP_EXCEEDED',
+					message: `${tradeId} mastery (${masteryTier}) exceeds its cap (${effectiveCap}). Your baseline cap is ${baseTradeMasteryTier}. Spend points to elevate the limit or gain a feature that grants this.`
+				});
+			}
+
+			// Check if trade exceeds baseline but has no elevation source
+			if (masteryTier > baseTradeMasteryTier) {
+				const hasSpentElevation = tradeLimitElevations[tradeId]?.source === 'spent_points';
+				const hasFeatureElevation = tradeMasteryCapEffects.some(
+					(effect) => !effect.options || effect.options.includes(tradeId)
+				);
+
+				if (!hasSpentElevation && !hasFeatureElevation) {
+					errors.push({
+						step: BuildStep.Background,
+						field: tradeId,
+						code: 'INVALID_MASTERY_GRANT',
+						message: `${tradeId} exceeds baseline cap but has no elevation. You must either spend points to elevate the limit or have a feature that grants this.`
+					});
+				}
+			}
+		}
+	}
+
+	const tradesUsingFeatureElevation = Object.entries(buildData.tradesData ?? {}).filter(
+		([tradeId, level]) => {
+			if (!level || getMasteryTierFromPoints(level) <= baseTradeMasteryTier) return false;
+			const hasSpentElevation = tradeLimitElevations[tradeId]?.source === 'spent_points';
+			return !hasSpentElevation; // Uses feature elevation
+		}
+	).length;
+
+	if (tradesUsingFeatureElevation > totalTradeCapExceptionsBudget) {
+		errors.push({
+			step: BuildStep.Background,
+			field: 'trades',
+			code: 'MASTERY_CAP_EXCEEDED',
+			message: `${tradesUsingFeatureElevation} trades rely on feature mastery grants, but only ${totalTradeCapExceptionsBudget} grants available from features.`
 		});
+	}
 
-		// Only feature exceptions can grant mastery above natural cap
-		if (skillsAboveNaturalCap.length > totalCapExceptionsBudget) {
-			errors.push({
-				step: BuildStep.Background,
-				field: 'skills',
-				code: 'MASTERY_CAP_EXCEEDED',
-				message: `You have raised ${skillsAboveNaturalCap.length} skills above your level's natural mastery cap (tier ${baseSkillMasteryTier}), but you only have ${totalCapExceptionsBudget} exception slots from features.`
-			});
-		}
-	} else {
-		// Level 1-4: Natural cap is Novice (tier 1), so Adept requires exception slots
-		// Level 1 gets 1 base Adept slot, higher levels need feature exceptions
-		const baseAdeptSlotsForValidation = buildData.level === 1 ? 1 : 0;
-		const totalAllowedAdeptSkills = baseAdeptSlotsForValidation + totalCapExceptionsBudget;
-
-		// Validate that over-level skills don't exceed total budget
-		if (skillsOverLevelCap.length > totalAllowedAdeptSkills) {
-			errors.push({
-				step: BuildStep.Background,
-				field: 'skills',
-				code: 'MASTERY_CAP_EXCEEDED',
-				message: `You have raised ${skillsOverLevelCap.length} skills to Adept level, but you can only have ${totalAllowedAdeptSkills} Adept skills (${baseAdeptSlotsForValidation} base + ${totalCapExceptionsBudget} from features).`
-			});
-		}
-
-		// Validate specific skill coverage
-		let freeBaseSlots = baseAdeptSlotsForValidation;
-		for (const skillId of skillsOverLevelCap) {
-			const isCoveredByFeature = skillMasteryCapEffects.some(
+	// DC20 Rule: "A Skill can only benefit from 1 bonus to its Skill Mastery Limit at a time."
+	// Validate that no skill has both spent points elevation AND feature elevation
+	if (buildData.skillsData) {
+		for (const skillId of Object.keys(buildData.skillsData)) {
+			const hasSpentElevation = skillLimitElevations[skillId]?.source === 'spent_points';
+			const hasFeatureElevation = skillMasteryCapEffects.some(
 				(effect) => !effect.options || effect.options.includes(skillId)
 			);
-			if (isCoveredByFeature) continue;
-			if (freeBaseSlots > 0) {
-				freeBaseSlots -= 1;
-				continue;
+
+			if (hasSpentElevation && hasFeatureElevation) {
+				errors.push({
+					step: BuildStep.Background,
+					field: skillId,
+					code: 'DUPLICATE_MASTERY_ELEVATION',
+					message: `${skillId} cannot have both a point-based and feature-based mastery limit increase. A skill can only benefit from 1 bonus to its Mastery Limit at a time.`
+				});
 			}
-			errors.push({
-				step: BuildStep.Background,
-				field: skillId,
-				code: 'INVALID_MASTERY_GRANT',
-				message: `The ${skillId} skill has been raised to Adept level, but is not permitted by your features or base allowances.`
-			});
 		}
 	}
+
+	// Same for trades
+	if (buildData.tradesData) {
+		for (const tradeId of Object.keys(buildData.tradesData)) {
+			const hasSpentElevation = tradeLimitElevations[tradeId]?.source === 'spent_points';
+			const hasFeatureElevation = tradeMasteryCapEffects.some(
+				(effect) => !effect.options || effect.options.includes(tradeId)
+			);
+
+			if (hasSpentElevation && hasFeatureElevation) {
+				errors.push({
+					step: BuildStep.Background,
+					field: tradeId,
+					code: 'DUPLICATE_MASTERY_ELEVATION',
+					message: `${tradeId} cannot have both a point-based and feature-based mastery limit increase. A trade can only benefit from 1 bonus to its Mastery Limit at a time.`
+				});
+			}
+		}
+	}
+
+	// For UI: levelAllowsUnlimitedMastery means baseline >= Adept, so no special tracking needed
+	const levelAllowsUnlimitedMastery = baseSkillMasteryTier >= 2;
 	// --- END MASTERY CAP CALCULATION ---
 
 	// Calculate mastery limits in correct interface format
@@ -1558,14 +1751,19 @@ export function calculateCharacterWithBreakdowns(
 		maxAdeptCount = 999; // Effectively unlimited for UI
 		canSelectAdept = true; // Always can select up to natural cap
 	} else {
-		// Level 1-4: Use slot system (1 base slot at level 1, 0 at levels 2-4)
-		const baseAdeptSlots = buildData.level === 1 ? 1 : 0;
+		// Level 1-4: Players can exceed baseline by:
+		// 1. Spending points (1 point to elevate limit + 1 point for level)
+		// 2. Having a feature that grants mastery cap increase
+		// DC20 Rule: No free slots - must pay or have feature
 		const bonusAdeptSlots = skillMasteryCapEffects.reduce(
 			(total, effect) => total + effect.count,
 			0
 		);
-		maxAdeptCount = baseAdeptSlots + bonusAdeptSlots;
-		canSelectAdept = totalCurrentAdeptCount < maxAdeptCount;
+		// Feature slots + unlimited paid elevations (but paid costs skill points)
+		// For UI purposes, show feature slots as the "free" cap, since spending points is always available
+		maxAdeptCount = bonusAdeptSlots;
+		// Can always select Adept if willing to pay the point cost
+		canSelectAdept = true;
 	}
 
 	// Max mastery tier for UI dropdowns
@@ -1648,6 +1846,24 @@ export function calculateCharacterWithBreakdowns(
 	}
 	// --- END SPELL SLOT VALIDATION ---
 
+	// Build per-skill/trade effective caps for UI
+	const skillEffectiveCaps: Record<string, number> = {};
+	const tradeEffectiveCaps: Record<string, number> = {};
+
+	// Calculate effective cap for all skills in the character's data
+	if (buildData.skillsData) {
+		for (const skillId of Object.keys(buildData.skillsData)) {
+			skillEffectiveCaps[skillId] = getEffectiveSkillCap(skillId);
+		}
+	}
+
+	// Calculate effective cap for all trades in the character's data
+	if (buildData.tradesData) {
+		for (const tradeId of Object.keys(buildData.tradesData)) {
+			tradeEffectiveCaps[tradeId] = getEffectiveTradeCap(tradeId);
+		}
+	}
+
 	const validation: ValidationResult = {
 		isValid: errors.length === 0 && !Object.values(attributeLimits).some((limit) => limit.exceeded),
 		errors,
@@ -1658,7 +1874,16 @@ export function calculateCharacterWithBreakdowns(
 			maxTradeMastery,
 			currentAdeptCount: totalCurrentAdeptCount,
 			maxAdeptCount,
-			canSelectAdept
+			canSelectAdept,
+			// New fields for DC20 0.10 mastery cap system
+			baselineSkillCap: baseSkillMasteryTier,
+			baselineTradeCap: baseTradeMasteryTier,
+			skillEffectiveCaps,
+			tradeEffectiveCaps,
+			skillLimitElevations: skillLimitElevations,
+			tradeLimitElevations: tradeLimitElevations,
+			skillFeatureElevationsAvailable: totalSkillCapExceptionsBudget,
+			tradeFeatureElevationsAvailable: totalTradeCapExceptionsBudget
 		}
 	};
 

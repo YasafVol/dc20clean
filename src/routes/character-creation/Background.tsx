@@ -35,13 +35,24 @@ const Background: React.FC = () => {
 	const currentTrades = state.tradesData || {};
 	const currentLanguages = state.languagesData || { common: { fluency: 'fluent' } };
 
-	// Mastery limits from centralized calculator
+	// Mastery limits from centralized calculator (DC20 0.10 system)
 	const masteryLimits = {
 		maxSkillMastery: calculationResult.validation.masteryLimits.maxSkillMastery,
 		maxTradeMastery: calculationResult.validation.masteryLimits.maxTradeMastery,
 		currentAdeptCount: calculationResult.validation.masteryLimits.currentAdeptCount,
 		maxAdeptCount: calculationResult.validation.masteryLimits.maxAdeptCount,
-		canSelectAdept: calculationResult.validation.masteryLimits.canSelectAdept
+		canSelectAdept: calculationResult.validation.masteryLimits.canSelectAdept,
+		// DC20 0.10 mastery cap system fields
+		baselineSkillCap: calculationResult.validation.masteryLimits.baselineSkillCap,
+		baselineTradeCap: calculationResult.validation.masteryLimits.baselineTradeCap,
+		skillEffectiveCaps: calculationResult.validation.masteryLimits.skillEffectiveCaps,
+		tradeEffectiveCaps: calculationResult.validation.masteryLimits.tradeEffectiveCaps,
+		skillLimitElevations: calculationResult.validation.masteryLimits.skillLimitElevations,
+		tradeLimitElevations: calculationResult.validation.masteryLimits.tradeLimitElevations,
+		skillFeatureElevationsAvailable:
+			calculationResult.validation.masteryLimits.skillFeatureElevationsAvailable,
+		tradeFeatureElevationsAvailable:
+			calculationResult.validation.masteryLimits.tradeFeatureElevationsAvailable
 	};
 
 	// Conversion actions with proper logic using calculated values
@@ -154,6 +165,26 @@ const Background: React.FC = () => {
 		});
 	};
 
+	// Handler for skill mastery limit elevations (DC20 0.10)
+	const handleSkillLimitElevationChange = (
+		elevations: Record<string, { source: 'spent_points'; value: number }>
+	) => {
+		dispatch({
+			type: 'UPDATE_SKILL_LIMIT_ELEVATIONS',
+			elevations
+		});
+	};
+
+	// Handler for trade mastery limit elevations (DC20 0.10)
+	const handleTradeLimitElevationChange = (
+		elevations: Record<string, { source: 'spent_points'; value: number }>
+	) => {
+		dispatch({
+			type: 'UPDATE_TRADE_LIMIT_ELEVATIONS',
+			elevations
+		});
+	};
+
 	const skillPointsRemaining = background.availableSkillPoints - background.skillPointsUsed;
 	const tradePointsRemaining = background.availableTradePoints - background.tradePointsUsed;
 	const languagePointsRemaining =
@@ -231,6 +262,7 @@ const Background: React.FC = () => {
 						actions={actions}
 						masteryLimits={masteryLimits}
 						onSkillChange={handleSkillChange}
+						onSkillLimitElevationChange={handleSkillLimitElevationChange}
 					/>
 				</TabsContent>
 
@@ -246,6 +278,7 @@ const Background: React.FC = () => {
 						actions={actions}
 						masteryLimits={masteryLimits}
 						onTradeChange={handleTradeChange}
+						onTradeLimitElevationChange={handleTradeLimitElevationChange}
 					/>
 				</TabsContent>
 

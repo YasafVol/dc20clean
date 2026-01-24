@@ -34,6 +34,10 @@ export interface CharacterInProgressStoreData
 	skillsData: Record<string, number>;
 	tradesData: Record<string, number>;
 	languagesData: Record<string, { fluency: 'limited' | 'fluent' }>;
+	// Track which skills/trades have had their mastery limits elevated by spending points
+	// (Features that elevate limits are tracked via effects, not here)
+	skillMasteryLimitElevations: Record<string, { source: 'spent_points'; value: number }>;
+	tradeMasteryLimitElevations: Record<string, { source: 'spent_points'; value: number }>;
 	usePrimeCapRule?: boolean;
 	cachedEffectResults?: EnhancedCalculationResult;
 	cacheTimestamp?: number;
@@ -93,6 +97,8 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
 	skillsData: {},
 	tradesData: {},
 	languagesData: { common: { fluency: 'fluent' } },
+	skillMasteryLimitElevations: {},
+	tradeMasteryLimitElevations: {},
 	selectedTraitChoices: {},
 	cachedEffectResults: undefined,
 	cacheTimestamp: undefined,
@@ -175,6 +181,14 @@ type CharacterAction =
 	| { type: 'UPDATE_SKILLS'; skillsData: Record<string, number> }
 	| { type: 'UPDATE_TRADES'; tradesData: Record<string, number> }
 	| { type: 'UPDATE_LANGUAGES'; languagesData: Record<string, { fluency: 'limited' | 'fluent' }> }
+	| {
+			type: 'UPDATE_SKILL_LIMIT_ELEVATIONS';
+			elevations: Record<string, { source: 'spent_points'; value: number }>;
+	  }
+	| {
+			type: 'UPDATE_TRADE_LIMIT_ELEVATIONS';
+			elevations: Record<string, { source: 'spent_points'; value: number }>;
+	  }
 	| { type: 'SET_CLASS'; classId: string | null }
 	| { type: 'SET_LEVEL'; level: number }
 	| { type: 'SET_ANCESTRY'; ancestry1Id: string | null; ancestry2Id: string | null }
@@ -221,6 +235,10 @@ function characterReducer(
 			return { ...state, tradesData: action.tradesData };
 		case 'UPDATE_LANGUAGES':
 			return { ...state, languagesData: action.languagesData };
+		case 'UPDATE_SKILL_LIMIT_ELEVATIONS':
+			return { ...state, skillMasteryLimitElevations: action.elevations };
+		case 'UPDATE_TRADE_LIMIT_ELEVATIONS':
+			return { ...state, tradeMasteryLimitElevations: action.elevations };
 		case 'SET_CLASS':
 			return { ...state, classId: action.classId };
 		case 'SET_LEVEL':

@@ -344,13 +344,34 @@ describe('Ancestry & Trait System', () => {
 		});
 
 		it('should have numeric values for numeric effect types', () => {
-			const numericEffectTypes = ['MODIFY_ATTRIBUTE', 'MODIFY_STAT', 'SET_VALUE'];
+			// MODIFY_ATTRIBUTE and MODIFY_STAT always use numeric values
+			// SET_VALUE can use various types (e.g., 'small' for size)
+			const numericEffectTypes = ['MODIFY_ATTRIBUTE', 'MODIFY_STAT'];
 
 			traitsData.forEach((trait: Trait) => {
 				trait.effects.forEach((effect: Effect) => {
 					if (numericEffectTypes.includes(effect.type)) {
 						expect(typeof effect.value).toBe('number');
 						expect(Number.isFinite(effect.value)).toBe(true);
+					}
+				});
+			});
+		});
+
+		it('should have valid SET_VALUE effects', () => {
+			// SET_VALUE can have various value types depending on target
+			// e.g., 'size' target uses strings like 'small', 'medium', 'large'
+			traitsData.forEach((trait: Trait) => {
+				trait.effects.forEach((effect: Effect) => {
+					if (effect.type === 'SET_VALUE') {
+						expect(effect.value).toBeDefined();
+						// Size-related targets use string values
+						if (effect.target === 'size') {
+							expect(typeof effect.value).toBe('string');
+							expect(['tiny', 'small', 'medium', 'large', 'huge', 'gargantuan']).toContain(
+								effect.value
+							);
+						}
 					}
 				});
 			});

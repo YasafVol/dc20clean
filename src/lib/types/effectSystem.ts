@@ -102,12 +102,26 @@ export interface AttributeLimit {
 	canDecrease: boolean;
 }
 
+export interface MasteryLimitElevation {
+	source: 'spent_points';
+	value: number;
+}
+
 export interface MasteryLimitStatus {
 	maxSkillMastery: number;
 	maxTradeMastery: number;
 	currentAdeptCount: number;
 	maxAdeptCount: number;
 	canSelectAdept: boolean;
+	// DC20 0.10 mastery cap system fields
+	baselineSkillCap: number; // The baseline cap from character level
+	baselineTradeCap: number;
+	skillEffectiveCaps: Record<string, number>; // Per-skill effective caps (baseline + elevations)
+	tradeEffectiveCaps: Record<string, number>; // Per-trade effective caps
+	skillLimitElevations: Record<string, MasteryLimitElevation>; // Elevations from spent points
+	tradeLimitElevations: Record<string, MasteryLimitElevation>;
+	skillFeatureElevationsAvailable: number; // How many feature-based elevations available
+	tradeFeatureElevationsAvailable: number;
 }
 
 // Unresolved choice for character creation UI

@@ -6,7 +6,7 @@ export const fireImbued: Spell = {
 	name: 'Fire Imbued',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Transmutation,
-	tags: ['Burning', 'Fire'],
+	tags: ['Burning', 'Fire', 'Strike', 'Weapon'],
 
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',

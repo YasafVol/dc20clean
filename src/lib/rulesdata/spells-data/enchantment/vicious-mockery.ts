@@ -6,7 +6,7 @@ export const viciousMockery: Spell = {
 	name: 'Vicious Mockery',
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Enchantment,
-	tags: ['Psychic'],
+	tags: ['Emotions', 'Enfeeble', 'Psychic', 'Taunted'],
 
 	cost: { ap: 1 },
 	range: '10 Spaces',

@@ -6,7 +6,7 @@ export const cloudCover: Spell = {
 	name: 'Cloud Cover',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Cold', 'Slashing'],
+	tags: ['Cold', 'Shadow', 'Slashing'],
 
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',

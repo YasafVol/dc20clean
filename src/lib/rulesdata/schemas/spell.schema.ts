@@ -48,14 +48,18 @@ export enum SpellSource {
  * - Physical Damage: Bludgeoning, Piercing, Slashing
  * - Elemental: Air, Cold, Corrosion, Earth, Fire, Lightning, Water
  * - Energy: Psychic, Radiant, Umbral, True (damage type)
- * - Conditions: Blinded, Burning, Charmed, Deafened, Exhaustion, Frightened,
- *               Paralyzed, Restrained, Stunned
+ * - Conditions: Blinded, Bleeding, Burning, Charmed, Dazed, Deafened, Disoriented,
+ *               Doomed, Exhaustion, Exposed, Frightened, Hindered, Immobilized,
+ *               Impaired, Incapacitated, Intimidated, Invisible, Paralyzed,
+ *               Restrained, Slowed, Stunned, Taunted, Terrified, Tethered,
+ *               Unconscious, Weakened
  * - Effect Types: Ailment, Cleansing, Curse, Death, Embolden, Enfeeble, Healing,
  *                 Metamorphosis, Motion, Resurrection, Strike, Ward
  * - Thematic: Blood, Chaos, Forge, Gravity, Illusion, Knowledge, Light, Madness,
  *             Plants, Scent, Sense, Shadow, Sound, Spirit, Thoughts, Time, Trap
  * - Targeting: Communication, Creature Type (meta), Emotions, Planes, Teleportation
  * - Summoning: Summoning, Weapon
+ * - Creature Types: Aberration, Undead (and others as needed)
  * - Mechanical: Antimagic, Concentration, Ritual
  *
  * Legacy tags (kept for backward compatibility):
@@ -87,14 +91,31 @@ export type SpellTag =
 	| 'True'
 	// Conditions (inflicted by spells)
 	| 'Blinded'
+	| 'Bleeding'
 	| 'Burning'
 	| 'Charmed'
+	| 'Dazed'
 	| 'Deafened'
+	| 'Disoriented'
+	| 'Doomed'
 	| 'Exhaustion'
+	| 'Exposed'
 	| 'Frightened'
+	| 'Hindered'
+	| 'Immobilized'
+	| 'Impaired'
+	| 'Incapacitated'
+	| 'Intimidated'
+	| 'Invisible'
 	| 'Paralyzed'
 	| 'Restrained'
+	| 'Slowed'
 	| 'Stunned'
+	| 'Taunted'
+	| 'Terrified'
+	| 'Tethered'
+	| 'Unconscious'
+	| 'Weakened'
 	// Effect Types
 	| 'Ailment'
 	| 'Cleansing'
@@ -134,6 +155,9 @@ export type SpellTag =
 	// Summoning
 	| 'Summoning'
 	| 'Weapon'
+	// Creature Types
+	| 'Aberration'
+	| 'Undead'
 	// Mechanical
 	| 'Antimagic'
 	| 'Concentration'

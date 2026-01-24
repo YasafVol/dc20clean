@@ -6,7 +6,7 @@ export const corrosiveCascade: Spell = {
 	name: 'Corrosive Cascade',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: [],
+	tags: ['Corrosion', 'Enfeeble'],
 
 	cost: { ap: 2 },
 	range: '5 Spaces',

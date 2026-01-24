@@ -6,7 +6,7 @@ export const regenerate: Spell = {
 	name: 'Regenerate',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Invocation,
-	tags: ['Healing'],
+	tags: ['Cleansing', 'Healing'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',

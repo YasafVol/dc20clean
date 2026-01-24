@@ -6,7 +6,7 @@ export const planarProtection: Spell = {
 	name: 'Planar Protection',
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Enchantment,
-	tags: [],
+	tags: ['Cleansing', 'Embolden', 'Thoughts', 'Ward'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',

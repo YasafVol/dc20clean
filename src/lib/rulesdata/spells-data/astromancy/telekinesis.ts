@@ -6,7 +6,7 @@ export const telekinesis: Spell = {
 	name: 'Telekinesis',
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Astromancy,
-	tags: ['Restrained'],
+	tags: ['Immobilized', 'Motion', 'Restrained'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',

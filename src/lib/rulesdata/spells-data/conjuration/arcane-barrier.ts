@@ -6,7 +6,7 @@ export const arcaneBarrier: Spell = {
 	name: 'Arcane Barrier',
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Conjuration,
-	tags: [],
+	tags: ['Embolden', 'Ward'],
 
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',

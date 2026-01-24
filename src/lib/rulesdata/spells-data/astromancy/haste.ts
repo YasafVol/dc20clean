@@ -6,7 +6,7 @@ export const haste: Spell = {
 	name: 'Haste',
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Astromancy,
-	tags: [],
+	tags: ['Embolden', 'Motion', 'Time'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',

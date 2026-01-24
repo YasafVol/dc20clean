@@ -6,7 +6,7 @@ export const eruption: Spell = {
 	name: 'Eruption',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Bludgeoning'],
+	tags: ['Bludgeoning', 'Earth', 'Motion'],
 
 	cost: { ap: 2 },
 	range: '5 Spaces',

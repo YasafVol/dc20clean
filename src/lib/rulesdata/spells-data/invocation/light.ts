@@ -6,7 +6,7 @@ export const light: Spell = {
 	name: 'Light',
 	sources: [SpellSource.Arcane, SpellSource.Divine, SpellSource.Primal],
 	school: SpellSchool.Invocation,
-	tags: ['Blinded'],
+	tags: ['Blinded', 'Light'],
 
 	cost: { ap: 1 },
 	range: '5 Spaces',

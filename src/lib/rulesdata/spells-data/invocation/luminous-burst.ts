@@ -6,7 +6,7 @@ export const luminousBurst: Spell = {
 	name: 'Luminous Burst',
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Invocation,
-	tags: ['Radiant'],
+	tags: ['Exposed', 'Light', 'Radiant', 'Tethered'],
 
 	cost: { ap: 2, mp: 1 },
 	range: 'Self',

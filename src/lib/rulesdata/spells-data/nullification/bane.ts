@@ -6,7 +6,7 @@ export const bane: Spell = {
 	name: 'Bane',
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Nullification,
-	tags: [],
+	tags: ['Curse', 'Enfeeble'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '10 Spaces',

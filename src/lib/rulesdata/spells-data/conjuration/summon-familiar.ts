@@ -6,7 +6,7 @@ export const summonFamiliar: Spell = {
 	name: 'Summon Familiar',
 	sources: [SpellSource.Arcane, SpellSource.Divine, SpellSource.Primal],
 	school: SpellSchool.Conjuration,
-	tags: ['Summoning'],
+	tags: ['Communication', 'Sense', 'Summoning'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '1 Space',

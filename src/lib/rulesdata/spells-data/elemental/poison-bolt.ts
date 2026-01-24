@@ -6,7 +6,7 @@ export const poisonBolt: Spell = {
 	name: 'Poison Bolt',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Poison'],
+	tags: ['Ailment', 'Hindered', 'Impaired', 'Poison'],
 
 	cost: { ap: 1 },
 	range: '10 Spaces',

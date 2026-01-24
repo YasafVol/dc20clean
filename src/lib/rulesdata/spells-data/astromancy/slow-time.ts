@@ -6,7 +6,7 @@ export const slowTime: Spell = {
 	name: 'Slow Time',
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Astromancy,
-	tags: ['Stunned', 'Paralyzed'],
+	tags: ['Paralyzed', 'Slowed', 'Stunned', 'Time'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '10 Spaces',

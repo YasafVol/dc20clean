@@ -6,7 +6,7 @@ export const fly: Spell = {
 	name: 'Fly',
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Astromancy,
-	tags: [],
+	tags: ['Air', 'Embolden', 'Gravity', 'Motion'],
 
 	cost: { ap: 1, mp: 3 },
 	range: '5 Spaces',

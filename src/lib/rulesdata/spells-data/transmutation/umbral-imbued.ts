@@ -6,7 +6,7 @@ export const umbralImbued: Spell = {
 	name: 'Umbral Imbued',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Transmutation,
-	tags: ['Healing'],
+	tags: ['Blood', 'Doomed', 'Healing', 'Strike', 'Umbral', 'Weapon'],
 
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',

@@ -6,7 +6,7 @@ export const freeze: Spell = {
 	name: 'Freeze',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Cold', 'Stunned'],
+	tags: ['Cold', 'Enfeeble', 'Slowed', 'Stunned'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '10 Spaces',

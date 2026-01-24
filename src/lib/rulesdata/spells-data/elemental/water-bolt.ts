@@ -6,7 +6,7 @@ export const waterBolt: Spell = {
 	name: 'Water Bolt',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Bludgeoning'],
+	tags: ['Bludgeoning', 'Motion', 'Water'],
 
 	cost: { ap: 1 },
 	range: '10 Spaces',

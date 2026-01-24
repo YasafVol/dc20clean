@@ -6,7 +6,7 @@ export const umbralBurst: Spell = {
 	name: 'Umbral Burst',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Nullification,
-	tags: [],
+	tags: ['Death', 'Doomed', 'Umbral'],
 
 	cost: { ap: 2, mp: 1 },
 	range: 'Self',

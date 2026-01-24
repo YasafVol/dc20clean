@@ -6,7 +6,7 @@ export const acidStream: Spell = {
 	name: 'Acid Stream',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: [],
+	tags: ['Corrosion', 'Enfeeble', 'Hindered'],
 
 	cost: { ap: 2 },
 	range: 'Self',

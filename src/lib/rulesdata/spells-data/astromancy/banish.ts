@@ -6,7 +6,7 @@ export const banish: Spell = {
 	name: 'Banish',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Astromancy,
-	tags: ['Psychic', 'Teleportation'],
+	tags: ['Incapacitated', 'Planes', 'Psychic', 'Teleportation'],
 
 	cost: { ap: 1, mp: 2 },
 	range: '10 Spaces',

@@ -6,7 +6,7 @@ export const message: Spell = {
 	name: 'Message',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Enchantment,
-	tags: [],
+	tags: ['Communication', 'Thoughts'],
 
 	cost: { ap: 1 },
 	range: '10 Spaces',

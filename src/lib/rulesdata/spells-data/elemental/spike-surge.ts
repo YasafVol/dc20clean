@@ -6,7 +6,7 @@ export const spikeSurge: Spell = {
 	name: 'Spike Surge',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Piercing'],
+	tags: ['Earth', 'Impaired', 'Piercing', 'Plants'],
 
 	cost: { ap: 2 },
 	range: 'Self',

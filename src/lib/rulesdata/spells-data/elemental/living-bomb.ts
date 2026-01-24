@@ -6,7 +6,7 @@ export const livingBomb: Spell = {
 	name: 'Living Bomb',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Burning', 'Fire'],
+	tags: ['Burning', 'Fire', 'Trap'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',

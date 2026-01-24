@@ -6,7 +6,7 @@ export const unholyAura: Spell = {
 	name: 'Unholy Aura',
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Conjuration,
-	tags: [],
+	tags: ['Death', 'Doomed', 'Shadow', 'Tethered'],
 
 	cost: { ap: 2, mp: 2 },
 	range: 'Self',

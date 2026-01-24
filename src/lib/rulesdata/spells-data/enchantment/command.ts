@@ -6,7 +6,7 @@ export const command: Spell = {
 	name: 'Command',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Enchantment,
-	tags: [],
+	tags: ['Communication', 'Emotions', 'Motion'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '10 Spaces',

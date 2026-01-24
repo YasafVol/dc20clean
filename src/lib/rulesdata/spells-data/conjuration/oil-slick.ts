@@ -6,7 +6,7 @@ export const oilSlick: Spell = {
 	name: 'Oil Slick',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Conjuration,
-	tags: ['Burning'],
+	tags: ['Burning', 'Trap'],
 
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',

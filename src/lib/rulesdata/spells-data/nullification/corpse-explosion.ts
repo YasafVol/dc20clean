@@ -6,7 +6,7 @@ export const corpseExplosion: Spell = {
 	name: 'Corpse Explosion',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Nullification,
-	tags: [],
+	tags: ['Ailment', 'Death', 'Enfeeble', 'Umbral'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',

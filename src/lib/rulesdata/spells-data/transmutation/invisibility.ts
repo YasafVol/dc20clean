@@ -6,7 +6,7 @@ export const invisibility: Spell = {
 	name: 'Invisibility',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Transmutation,
-	tags: ['Illusion'],
+	tags: ['Illusion', 'Invisible'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',

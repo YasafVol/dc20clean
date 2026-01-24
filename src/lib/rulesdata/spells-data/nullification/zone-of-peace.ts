@@ -6,7 +6,7 @@ export const zoneOfPeace: Spell = {
 	name: 'Zone of Peace',
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Nullification,
-	tags: [],
+	tags: ['Emotions', 'Tethered', 'Ward'],
 
 	cost: { ap: 2, mp: 1 },
 	range: 'Self',

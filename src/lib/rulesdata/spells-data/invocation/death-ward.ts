@@ -6,7 +6,7 @@ export const deathWard: Spell = {
 	name: 'Death Ward',
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Invocation,
-	tags: [],
+	tags: ['Cleansing', 'Death', 'Embolden', 'Ward'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '1 Space',

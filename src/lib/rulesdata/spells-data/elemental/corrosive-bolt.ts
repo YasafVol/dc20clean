@@ -6,7 +6,7 @@ export const corrosiveBolt: Spell = {
 	name: 'Corrosive Bolt',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: [],
+	tags: ['Corrosion', 'Enfeeble', 'Hindered'],
 
 	cost: { ap: 1 },
 	range: '10 Spaces',

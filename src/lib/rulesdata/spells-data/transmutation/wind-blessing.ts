@@ -6,7 +6,7 @@ export const windBlessing: Spell = {
 	name: 'Wind Blessing',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Transmutation,
-	tags: [],
+	tags: ['Air', 'Embolden', 'Motion'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',

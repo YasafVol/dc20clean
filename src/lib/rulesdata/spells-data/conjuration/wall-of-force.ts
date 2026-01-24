@@ -6,7 +6,7 @@ export const wallOfForce: Spell = {
 	name: 'Wall of Force',
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Conjuration,
-	tags: [],
+	tags: ['Ward'],
 
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',

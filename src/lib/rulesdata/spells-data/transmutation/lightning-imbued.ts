@@ -6,7 +6,7 @@ export const lightningImbued: Spell = {
 	name: 'Lightning Imbued',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Transmutation,
-	tags: ['Lightning'],
+	tags: ['Lightning', 'Strike', 'Trap', 'Weapon'],
 
 	cost: { ap: 1, mp: 1 },
 	range: 'Self',

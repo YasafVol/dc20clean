@@ -6,7 +6,7 @@ export const slumber: Spell = {
 	name: 'Slumber',
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Enchantment,
-	tags: ['Blinded', 'Deafened'],
+	tags: ['Blinded', 'Deafened', 'Enfeeble', 'Incapacitated', 'Unconscious'],
 
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',

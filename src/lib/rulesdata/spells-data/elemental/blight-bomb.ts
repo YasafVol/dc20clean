@@ -6,7 +6,7 @@ export const blightBomb: Spell = {
 	name: 'Blight Bomb',
 	sources: [SpellSource.Arcane, SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Poison'],
+	tags: ['Impaired', 'Poison', 'Weakened'],
 
 	cost: { ap: 2 },
 	range: '5 Spaces',

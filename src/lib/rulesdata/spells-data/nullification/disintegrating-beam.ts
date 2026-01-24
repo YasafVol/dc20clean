@@ -6,7 +6,7 @@ export const disintegratingBeam: Spell = {
 	name: 'Disintegrating Beam',
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Nullification,
-	tags: ['True'],
+	tags: ['Death', 'Enfeeble', 'True', 'Weakened'],
 
 	cost: { ap: 2, mp: 2 },
 	range: 'Self',

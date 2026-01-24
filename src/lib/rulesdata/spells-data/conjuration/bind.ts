@@ -6,7 +6,7 @@ export const bind: Spell = {
 	name: 'Bind',
 	sources: [SpellSource.Arcane, SpellSource.Divine, SpellSource.Primal],
 	school: SpellSchool.Conjuration,
-	tags: ['Restrained', 'True'],
+	tags: ['Immobilized', 'Restrained', 'True'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '10 Spaces',

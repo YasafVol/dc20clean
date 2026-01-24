@@ -6,7 +6,7 @@ export const shatterReality: Spell = {
 	name: 'Shatter Reality',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Enchantment,
-	tags: ['Chaos', 'Psychic'],
+	tags: ['Chaos', 'Dazed', 'Madness', 'Psychic'],
 
 	cost: { ap: 2 },
 	range: '5 Spaces',

@@ -6,7 +6,7 @@ export const quicksand: Spell = {
 	name: 'Quicksand',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Transmutation,
-	tags: ['Illusion'],
+	tags: ['Earth', 'Hindered', 'Illusion', 'Motion', 'Slowed', 'Tethered'],
 
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',

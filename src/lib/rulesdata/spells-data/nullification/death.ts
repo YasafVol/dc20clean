@@ -6,7 +6,7 @@ export const death: Spell = {
 	name: 'Death',
 	sources: [SpellSource.Arcane, SpellSource.Divine],
 	school: SpellSchool.Nullification,
-	tags: ['Exhaustion'],
+	tags: ['Curse', 'Death', 'Doomed', 'Exhaustion'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '10 Spaces',

@@ -6,7 +6,7 @@ export const closeWounds: Spell = {
 	name: 'Close Wounds',
 	sources: [SpellSource.Arcane, SpellSource.Divine, SpellSource.Primal],
 	school: SpellSchool.Invocation,
-	tags: ['Healing'],
+	tags: ['Cleansing', 'Healing', 'Time'],
 
 	cost: { ap: 1 },
 	range: '5 Spaces',

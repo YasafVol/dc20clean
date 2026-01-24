@@ -6,7 +6,7 @@ export const windBlade: Spell = {
 	name: 'Wind Blade',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Slashing'],
+	tags: ['Air', 'Bleeding', 'Motion', 'Slashing'],
 
 	cost: { ap: 2 },
 	range: '10 Spaces',

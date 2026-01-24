@@ -6,7 +6,7 @@ export const airSlash: Spell = {
 	name: 'Air Slash',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Elemental,
-	tags: ['Slashing'],
+	tags: ['Air', 'Bleeding', 'Motion', 'Slashing'],
 
 	cost: { ap: 1 },
 	range: '10 Spaces',

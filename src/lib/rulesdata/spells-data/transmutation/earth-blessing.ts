@@ -6,7 +6,7 @@ export const earthBlessing: Spell = {
 	name: 'Earth Blessing',
 	sources: [SpellSource.Primal],
 	school: SpellSchool.Transmutation,
-	tags: [],
+	tags: ['Earth', 'Embolden', 'Sense'],
 
 	cost: { ap: 1, mp: 1 },
 	range: '5 Spaces',

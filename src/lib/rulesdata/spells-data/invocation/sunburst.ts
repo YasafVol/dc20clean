@@ -6,7 +6,7 @@ export const sunburst: Spell = {
 	name: 'Sunburst',
 	sources: [SpellSource.Divine],
 	school: SpellSchool.Invocation,
-	tags: ['Blinded', 'Radiant'],
+	tags: ['Blinded', 'Exposed', 'Light', 'Radiant'],
 
 	cost: { ap: 2 },
 	range: '5 Spaces',

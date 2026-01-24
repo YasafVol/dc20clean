@@ -6,7 +6,7 @@ export const forceDome: Spell = {
 	name: 'Force Dome',
 	sources: [SpellSource.Arcane],
 	school: SpellSchool.Conjuration,
-	tags: [],
+	tags: ['Sound', 'Trap', 'Ward'],
 
 	cost: { ap: 2, mp: 1 },
 	range: '5 Spaces',

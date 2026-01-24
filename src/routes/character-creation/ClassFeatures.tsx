@@ -239,7 +239,7 @@ function ClassFeatures() {
 	}
 
 	// Get all feature choices from all features up to current level (excluding in-game tactical choices)
-	const inGameChoices = ['Divine Blessing', "Commander's Call", 'Debilitating Strike'];
+	const inGameChoices = ['Divine Blessing', "Commander's Call", 'Debilitating Strike', 'Bardic Performance'];
 	const featureChoices: any[] = [];
 	for (let level = 1; level <= state.level; level++) {
 		const levelFeatures = featuresByLevel[level] || [];

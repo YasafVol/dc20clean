@@ -1,27 +1,49 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ALL_SPELLS } from '../../lib/rulesdata/spells-data';
-import { SpellSchool, SpellSource, type SpellTag, type Spell } from '../../lib/rulesdata/schemas/spell.schema';
+import type { ClassDefinition } from '../../lib/rulesdata/schemas/character.schema';
+import {
+	SpellSchool,
+	SpellSource,
+	SpellcasterClass,
+	type SpellTag,
+	type Spell
+} from '../../lib/rulesdata/schemas/spell.schema';
+import { bardClass } from '../../lib/rulesdata/classes-data/features/bard_features';
+import { clericClass } from '../../lib/rulesdata/classes-data/features/cleric_features';
+import { druidClass } from '../../lib/rulesdata/classes-data/features/druid_features';
+import { sorcererClass } from '../../lib/rulesdata/classes-data/features/sorcerer_features';
+import { warlockClass } from '../../lib/rulesdata/classes-data/features/warlock_features';
+import { wizardClass } from '../../lib/rulesdata/classes-data/features/wizard_features';
+import { spellbladeClass } from '../../lib/rulesdata/classes-data/features/spellblade_features';
 import { cn } from '../../lib/utils';
 import { Button } from '../../components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 
-// Cost filter options
-type CostFilter = 'all' | 'cantrip' | '1mp' | '2mp' | '3mp+';
+type MpCostFilter = number | 'none';
 
-// Sustained filter options
-type SustainedFilter = 'all' | 'yes' | 'no';
+const CLASS_DEFINITIONS: Record<SpellcasterClass, ClassDefinition> = {
+	[SpellcasterClass.Bard]: bardClass,
+	[SpellcasterClass.Cleric]: clericClass,
+	[SpellcasterClass.Druid]: druidClass,
+	[SpellcasterClass.Sorcerer]: sorcererClass,
+	[SpellcasterClass.Warlock]: warlockClass,
+	[SpellcasterClass.Wizard]: wizardClass,
+	[SpellcasterClass.Spellblade]: spellbladeClass
+};
 
 const Spellbook: React.FC = () => {
 	const navigate = useNavigate();
 
 	// Filters
-	const [sourceFilter, setSourceFilter] = useState<SpellSource | 'all'>('all');
-	const [schoolFilter, setSchoolFilter] = useState<SpellSchool | 'all'>('all');
-	const [tagFilter, setTagFilter] = useState<SpellTag | 'all'>('all');
-	const [costFilter, setCostFilter] = useState<CostFilter>('all');
-	const [sustainedFilter, setSustainedFilter] = useState<SustainedFilter>('all');
+	const [classFilter, setClassFilter] = useState<SpellcasterClass[]>([]);
+	const [sourceFilter, setSourceFilter] = useState<SpellSource[]>([]);
+	const [schoolFilter, setSchoolFilter] = useState<SpellSchool[]>([]);
+	const [tagFilter, setTagFilter] = useState<SpellTag[]>([]);
+	const [apCostFilter, setApCostFilter] = useState<number[]>([]);
+	const [mpCostFilter, setMpCostFilter] = useState<MpCostFilter[]>([]);
+	const [sustainedOnly, setSustainedOnly] = useState(false);
 	const [searchQuery, setSearchQuery] = useState('');
 
 	// Expanded spell cards
@@ -35,6 +57,147 @@ const Spellbook: React.FC = () => {
 		});
 		return Array.from(tags).sort();
 	}, []);
+
+	const availableApCosts = useMemo(() => {
+		return Array.from(new Set(ALL_SPELLS.map((spell) => spell.cost.ap))).sort((a, b) => a - b);
+	}, []);
+
+	const availableMpCosts = useMemo(() => {
+		const costs = new Set<number>();
+		let hasNone = false;
+		ALL_SPELLS.forEach((spell) => {
+			if (spell.cost.mp === undefined) {
+				hasNone = true;
+			} else {
+				costs.add(spell.cost.mp);
+			}
+		});
+		return {
+			costs: Array.from(costs).sort((a, b) => a - b),
+			hasNone
+		};
+	}, []);
+
+	const classFilterRules = useMemo(() => {
+		const rulesByClass = new Map<
+			SpellcasterClass,
+			{ sources?: SpellSource[]; schools?: SpellSchool[]; tags?: SpellTag[] }
+		>();
+
+		const spellSources = new Set(Object.values(SpellSource));
+		const spellSchools = new Set(Object.values(SpellSchool));
+
+		const parseSpellList = (spellList: any) => {
+			const sources = new Set<SpellSource>();
+			const schools = new Set<SpellSchool>();
+			const tags = new Set<SpellTag>();
+
+			if (Array.isArray(spellList)) {
+				spellList.forEach((source) => {
+					if (spellSources.has(source)) {
+						sources.add(source as SpellSource);
+					}
+				});
+				return { sources, schools, tags };
+			}
+
+			if (!spellList || typeof spellList !== 'object') {
+				return { sources, schools, tags };
+			}
+
+			if (spellList.type === 'arcane') {
+				sources.add(SpellSource.Arcane);
+			} else if (spellList.type === 'divine') {
+				sources.add(SpellSource.Divine);
+			} else if (spellList.type === 'primal') {
+				sources.add(SpellSource.Primal);
+			} else if (spellList.type === 'schools') {
+				const specifiedSchools = spellList.specificSchools ?? [];
+				specifiedSchools.forEach((school: string) => {
+					if (spellSchools.has(school)) {
+						schools.add(school as SpellSchool);
+					}
+				});
+				const specifiedTags = [...(spellList.spellTags ?? []), ...(spellList.tags ?? [])];
+				specifiedTags.forEach((tag: string) => tags.add(tag as SpellTag));
+			} else if (spellList.type === 'all_schools') {
+				Object.values(SpellSchool).forEach((school) => schools.add(school));
+				Object.values(SpellSource).forEach((source) => sources.add(source));
+				return { sources, schools, tags };
+			}
+
+			return { sources, schools, tags };
+		};
+
+		Object.values(SpellcasterClass).forEach((className) => {
+			const classDefinition = CLASS_DEFINITIONS[className];
+			const spellList =
+				classDefinition.spellcasterPath?.spellList ??
+				classDefinition.hybridPath?.spellcastingAspect?.spellList;
+			const parsed = parseSpellList(spellList);
+			rulesByClass.set(className, {
+				sources: parsed.sources.size ? Array.from(parsed.sources) : undefined,
+				schools: parsed.schools.size ? Array.from(parsed.schools) : undefined,
+				tags: parsed.tags.size ? Array.from(parsed.tags) : undefined
+			});
+		});
+
+		return rulesByClass;
+	}, []);
+
+	const classBasedTags = useMemo(() => {
+		const tags = new Set<SpellTag>();
+		classFilter.forEach((className) => {
+			const rules = classFilterRules.get(className);
+			rules?.tags?.forEach((tag) => tags.add(tag));
+		});
+		return Array.from(tags).sort();
+	}, [classFilter, classFilterRules]);
+
+	const displayedTags = useMemo(() => {
+		const tags = new Set<SpellTag>(availableTags);
+		classBasedTags.forEach((tag) => tags.add(tag));
+		return Array.from(tags).sort();
+	}, [availableTags, classBasedTags]);
+
+	const toggleSelection = <T extends string | number>(
+		value: T,
+		selected: T[],
+		setSelected: React.Dispatch<React.SetStateAction<T[]>>
+	) => {
+		setSelected((prev) =>
+			prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
+		);
+	};
+
+	useEffect(() => {
+		if (classFilter.length === 0) {
+			return;
+		}
+
+		const sources = new Set<SpellSource>();
+		const schools = new Set<SpellSchool>();
+		const tags = new Set<SpellTag>();
+
+		classFilter.forEach((className) => {
+			const rules = classFilterRules.get(className);
+			rules?.sources?.forEach((source) => sources.add(source));
+			rules?.schools?.forEach((school) => schools.add(school));
+			rules?.tags?.forEach((tag) => tags.add(tag));
+		});
+
+		setSourceFilter((prev) => Array.from(new Set([...prev, ...sources])));
+		setSchoolFilter((prev) => Array.from(new Set([...prev, ...schools])));
+		setTagFilter((prev) => Array.from(new Set([...prev, ...tags])));
+	}, [classFilter, classFilterRules]);
+
+	const toggleNumberSelection = (
+		value: number,
+		selected: number[],
+		setSelected: React.Dispatch<React.SetStateAction<number[]>>
+	) => {
+		setSelected((prev) => (prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]));
+	};
 
 	// Filter spells
 	const filteredSpells = useMemo(() => {
@@ -51,47 +214,44 @@ const Spellbook: React.FC = () => {
 		}
 
 		// Filter by source
-		if (sourceFilter !== 'all') {
-			spells = spells.filter((spell) => spell.sources.includes(sourceFilter));
-		}
-
-		// Filter by school
-		if (schoolFilter !== 'all') {
-			spells = spells.filter((spell) => spell.school === schoolFilter);
-		}
-
-		// Filter by tag
-		if (tagFilter !== 'all') {
-			spells = spells.filter((spell) => spell.tags?.includes(tagFilter));
-		}
-
-		// Filter by cost
-		if (costFilter !== 'all') {
-			switch (costFilter) {
-				case 'cantrip':
-					spells = spells.filter((spell) => spell.isCantrip);
-					break;
-				case '1mp':
-					spells = spells.filter((spell) => !spell.isCantrip && spell.cost.mp === 1);
-					break;
-				case '2mp':
-					spells = spells.filter((spell) => !spell.isCantrip && spell.cost.mp === 2);
-					break;
-				case '3mp+':
-					spells = spells.filter((spell) => !spell.isCantrip && (spell.cost.mp ?? 0) >= 3);
-					break;
-			}
-		}
-
-		// Filter by sustained
-		if (sustainedFilter !== 'all') {
+		if (sourceFilter.length > 0) {
 			spells = spells.filter((spell) =>
-				sustainedFilter === 'yes' ? spell.sustained : !spell.sustained
+				sourceFilter.some((source) => spell.sources.includes(source))
 			);
 		}
 
+		// Filter by school
+		if (schoolFilter.length > 0) {
+			spells = spells.filter((spell) => schoolFilter.includes(spell.school));
+		}
+
+		// Filter by tag
+		if (tagFilter.length > 0) {
+			spells = spells.filter((spell) => spell.tags?.some((tag) => tagFilter.includes(tag)));
+		}
+
+		// Filter by AP cost
+		if (apCostFilter.length > 0) {
+			spells = spells.filter((spell) => apCostFilter.includes(spell.cost.ap));
+		}
+
+		// Filter by MP cost
+		if (mpCostFilter.length > 0) {
+			spells = spells.filter((spell) => {
+				const mpCost = spell.cost.mp;
+				return mpCostFilter.some((filter) =>
+					filter === 'none' ? mpCost === undefined : mpCost === filter
+				);
+			});
+		}
+
+		// Filter by sustained
+		if (sustainedOnly) {
+			spells = spells.filter((spell) => spell.sustained);
+		}
+
 		return spells;
-	}, [searchQuery, sourceFilter, schoolFilter, tagFilter, costFilter, sustainedFilter]);
+	}, [searchQuery, sourceFilter, schoolFilter, tagFilter, apCostFilter, mpCostFilter, sustainedOnly]);
 
 	// Group spells by school for display
 	const spellsBySchool = useMemo(() => {
@@ -118,20 +278,24 @@ const Spellbook: React.FC = () => {
 	};
 
 	const clearFilters = () => {
-		setSourceFilter('all');
-		setSchoolFilter('all');
-		setTagFilter('all');
-		setCostFilter('all');
-		setSustainedFilter('all');
+		setClassFilter([]);
+		setSourceFilter([]);
+		setSchoolFilter([]);
+		setTagFilter([]);
+		setApCostFilter([]);
+		setMpCostFilter([]);
+		setSustainedOnly(false);
 		setSearchQuery('');
 	};
 
 	const hasActiveFilters =
-		sourceFilter !== 'all' ||
-		schoolFilter !== 'all' ||
-		tagFilter !== 'all' ||
-		costFilter !== 'all' ||
-		sustainedFilter !== 'all' ||
+		classFilter.length > 0 ||
+		sourceFilter.length > 0 ||
+		schoolFilter.length > 0 ||
+		tagFilter.length > 0 ||
+		apCostFilter.length > 0 ||
+		mpCostFilter.length > 0 ||
+		sustainedOnly ||
 		searchQuery.trim() !== '';
 
 	return (
@@ -154,173 +318,318 @@ const Spellbook: React.FC = () => {
 			<div className="mx-auto max-w-7xl space-y-6 px-4 pb-8">
 				{/* Filters Card */}
 				<Card className="border-purple-500 bg-gradient-to-br from-indigo-950 to-indigo-900 shadow-lg shadow-purple-500/30">
-					<CardHeader className="pb-4">
-						<CardTitle className="text-lg font-medium">Filters</CardTitle>
-					</CardHeader>
 					<CardContent className="space-y-4">
 						{/* Search */}
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-muted-foreground">Search</label>
+							<div className="h-6" />
 							<input
 								type="text"
 								value={searchQuery}
 								onChange={(e) => setSearchQuery(e.target.value)}
 								placeholder="Search by spell name or description..."
-								className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+								className="w-full rounded-lg border border-primary/30 bg-black/40 px-4 py-3 text-base text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
 							/>
 						</div>
 
-						{/* Filter Dropdowns */}
-						<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+						{/* Filter Chips */}
+						<div className="space-y-6">
+							{/* Class Filter */}
+							<div className="space-y-3 rounded-lg border border-cyan-400/20 bg-black/30 p-4">
+								<label className="text-base font-semibold text-cyan-200">Class</label>
+								<div className="flex w-full flex-wrap gap-3">
+									{Object.values(SpellcasterClass).map((className) => {
+										const isSelected = classFilter.includes(className);
+										return (
+											<button
+												key={className}
+												type="button"
+												onClick={() =>
+													toggleSelection(className, classFilter, setClassFilter)
+												}
+												aria-pressed={isSelected}
+												className={cn(
+													'rounded-full border px-4 py-2 text-sm font-semibold transition',
+													isSelected
+														? 'border-cyan-400 bg-gradient-to-r from-cyan-500/30 to-sky-500/30 text-cyan-100 shadow-lg shadow-cyan-500/20'
+														: 'border-white/10 bg-black/40 text-muted-foreground hover:border-cyan-400/60 hover:text-foreground'
+												)}
+											>
+												{className}
+											</button>
+										);
+									})}
+								</div>
+							</div>
+
 							{/* Source Filter */}
-							<div className="space-y-2">
-								<label className="text-sm font-medium text-muted-foreground">Source</label>
-								<select
-									value={sourceFilter}
-									onChange={(e) => setSourceFilter(e.target.value as SpellSource | 'all')}
-									className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-								>
-									<option value="all">All Sources</option>
-									{Object.values(SpellSource).map((source) => (
-										<option key={source} value={source}>
-											{source}
-										</option>
-									))}
-								</select>
+							<div className="space-y-3 rounded-lg border border-primary/20 bg-black/30 p-4">
+								<label className="text-base font-semibold text-primary">Source</label>
+								<div className="flex w-full flex-wrap gap-3">
+									{Object.values(SpellSource).map((source) => {
+										const isSelected = sourceFilter.includes(source);
+										return (
+											<button
+												key={source}
+												type="button"
+												onClick={() => toggleSelection(source, sourceFilter, setSourceFilter)}
+												aria-pressed={isSelected}
+												className={cn(
+													'rounded-full border px-4 py-2 text-sm font-semibold uppercase tracking-wide transition',
+													isSelected
+														? 'border-primary bg-gradient-to-r from-indigo-500/30 to-sky-500/30 text-primary shadow-lg shadow-primary/20'
+														: 'border-white/10 bg-black/40 text-muted-foreground hover:border-primary/60 hover:text-foreground'
+												)}
+											>
+												{source}
+											</button>
+										);
+									})}
+								</div>
 							</div>
 
 							{/* School Filter */}
-							<div className="space-y-2">
-								<label className="text-sm font-medium text-muted-foreground">School</label>
-								<select
-									value={schoolFilter}
-									onChange={(e) => setSchoolFilter(e.target.value as SpellSchool | 'all')}
-									className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-								>
-									<option value="all">All Schools</option>
-									{Object.values(SpellSchool).map((school) => (
-										<option key={school} value={school}>
-											{school}
-										</option>
-									))}
-								</select>
+							<div className="space-y-3 rounded-lg border border-purple-400/20 bg-black/30 p-4">
+								<label className="text-base font-semibold text-purple-200">School</label>
+								<div className="flex w-full flex-wrap gap-3">
+									{Object.values(SpellSchool).map((school) => {
+										const isSelected = schoolFilter.includes(school);
+										return (
+											<button
+												key={school}
+												type="button"
+												onClick={() => toggleSelection(school, schoolFilter, setSchoolFilter)}
+												aria-pressed={isSelected}
+												className={cn(
+													'rounded-full border px-4 py-2 text-sm font-semibold transition',
+													isSelected
+														? 'border-purple-400 bg-gradient-to-r from-purple-500/30 to-fuchsia-500/30 text-purple-100 shadow-lg shadow-purple-500/20'
+														: 'border-white/10 bg-black/40 text-muted-foreground hover:border-purple-400/60 hover:text-foreground'
+												)}
+											>
+												{school}
+											</button>
+										);
+									})}
+								</div>
 							</div>
 
 							{/* Tag Filter */}
-							<div className="space-y-2">
-								<label className="text-sm font-medium text-muted-foreground">Tag</label>
-								<select
-									value={tagFilter}
-									onChange={(e) => setTagFilter(e.target.value as SpellTag | 'all')}
-									className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-								>
-									<option value="all">All Tags</option>
-									{availableTags.map((tag) => (
-										<option key={tag} value={tag}>
-											{tag}
-										</option>
-									))}
-								</select>
+							<div className="space-y-3 rounded-lg border border-emerald-400/20 bg-black/30 p-4">
+								<label className="text-base font-semibold text-emerald-200">Tag</label>
+								<div className="flex w-full flex-wrap gap-2">
+									{displayedTags.map((tag) => {
+										const isSelected = tagFilter.includes(tag);
+										return (
+											<button
+												key={tag}
+												type="button"
+												onClick={() => toggleSelection(tag, tagFilter, setTagFilter)}
+												aria-pressed={isSelected}
+												className={cn(
+													'rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition',
+													isSelected
+														? 'border-emerald-400 bg-gradient-to-r from-emerald-500/30 to-teal-500/30 text-emerald-100 shadow-lg shadow-emerald-500/20'
+														: 'border-white/10 bg-black/40 text-muted-foreground hover:border-emerald-400/60 hover:text-foreground'
+												)}
+											>
+												{tag}
+											</button>
+										);
+									})}
+								</div>
 							</div>
 
 							{/* Cost Filter */}
-							<div className="space-y-2">
-								<label className="text-sm font-medium text-muted-foreground">Cost</label>
-								<select
-									value={costFilter}
-									onChange={(e) => setCostFilter(e.target.value as CostFilter)}
-									className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-								>
-									<option value="all">All Costs</option>
-									<option value="cantrip">Cantrips (0 MP)</option>
-									<option value="1mp">1 MP</option>
-									<option value="2mp">2 MP</option>
-									<option value="3mp+">3+ MP</option>
-								</select>
+							<div className="space-y-3 rounded-lg border border-amber-400/20 bg-black/30 p-4">
+								<label className="text-base font-semibold text-amber-200">Cost</label>
+								<div className="flex w-full flex-wrap items-center gap-3">
+									<span className="text-sm font-semibold uppercase tracking-wide text-amber-100/80">
+										AP
+									</span>
+									{availableApCosts.map((cost) => {
+										const isSelected = apCostFilter.includes(cost);
+										return (
+											<button
+												key={`ap-${cost}`}
+												type="button"
+												onClick={() =>
+													toggleNumberSelection(cost, apCostFilter, setApCostFilter)
+												}
+												aria-pressed={isSelected}
+												className={cn(
+													'rounded-full border px-4 py-2 text-sm font-semibold transition',
+													isSelected
+														? 'border-amber-400 bg-gradient-to-r from-amber-500/30 to-orange-500/30 text-amber-100 shadow-lg shadow-amber-500/20'
+														: 'border-white/10 bg-black/40 text-muted-foreground hover:border-amber-400/60 hover:text-foreground'
+												)}
+											>
+												{cost}
+											</button>
+										);
+									})}
+									<span className="ml-2 text-sm font-semibold uppercase tracking-wide text-amber-100/80">
+										MP
+									</span>
+									{availableMpCosts.costs.map((cost) => {
+										const isSelected = mpCostFilter.includes(cost);
+										return (
+											<button
+												key={`mp-${cost}`}
+												type="button"
+												onClick={() => toggleSelection(cost, mpCostFilter, setMpCostFilter)}
+												aria-pressed={isSelected}
+												className={cn(
+													'rounded-full border px-4 py-2 text-sm font-semibold transition',
+													isSelected
+														? 'border-amber-400 bg-gradient-to-r from-amber-500/30 to-orange-500/30 text-amber-100 shadow-lg shadow-amber-500/20'
+														: 'border-white/10 bg-black/40 text-muted-foreground hover:border-amber-400/60 hover:text-foreground'
+												)}
+											>
+												{cost}
+											</button>
+										);
+									})}
+									{availableMpCosts.hasNone && (
+										<button
+											key="mp-none"
+											type="button"
+											onClick={() => toggleSelection('none', mpCostFilter, setMpCostFilter)}
+											aria-pressed={mpCostFilter.includes('none')}
+											className={cn(
+												'rounded-full border px-4 py-2 text-sm font-semibold transition',
+												mpCostFilter.includes('none')
+													? 'border-amber-400 bg-gradient-to-r from-amber-500/30 to-orange-500/30 text-amber-100 shadow-lg shadow-amber-500/20'
+													: 'border-white/10 bg-black/40 text-muted-foreground hover:border-amber-400/60 hover:text-foreground'
+											)}
+										>
+											No MP
+										</button>
+									)}
+								</div>
 							</div>
 
 							{/* Sustained Filter */}
-							<div className="space-y-2">
-								<label className="text-sm font-medium text-muted-foreground">Sustained</label>
-								<select
-									value={sustainedFilter}
-									onChange={(e) => setSustainedFilter(e.target.value as SustainedFilter)}
-									className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+							<div className="flex w-full items-center gap-3 rounded-lg border border-amber-400/20 bg-black/30 px-4 py-4">
+								<input
+									type="checkbox"
+									id="sustained-only"
+									checked={sustainedOnly}
+									onChange={(e) => setSustainedOnly(e.target.checked)}
+									className="h-5 w-5 rounded border-amber-400/60 bg-black/50 text-amber-300 focus:ring-amber-400/40"
+								/>
+								<label
+									htmlFor="sustained-only"
+									className="cursor-pointer text-base font-semibold text-amber-100"
 								>
-									<option value="all">All</option>
-									<option value="yes">Sustained Only</option>
-									<option value="no">Not Sustained</option>
-								</select>
+									Sustained only
+								</label>
 							</div>
 						</div>
 
 						{/* Active Filters Summary */}
 						{hasActiveFilters && (
-							<div className="flex flex-wrap items-center gap-2 pt-2">
-								<span className="text-sm text-muted-foreground">Active filters:</span>
+							<div className="flex flex-wrap items-center gap-3 pt-2">
+								<span className="text-base font-semibold text-muted-foreground">Active filters:</span>
 								{searchQuery.trim() && (
-									<Badge variant="secondary" className="gap-1">
+									<Badge variant="secondary" className="gap-1 text-sm">
 										"{searchQuery}"
 										<button
 											onClick={() => setSearchQuery('')}
 											className="ml-1 hover:text-destructive"
 										>
-											×
+											x
 										</button>
 									</Badge>
 								)}
-								{sourceFilter !== 'all' && (
-									<Badge variant="secondary" className="gap-1">
-										{sourceFilter}
+								{classFilter.map((className) => (
+									<Badge key={`class-${className}`} variant="secondary" className="gap-1 text-sm">
+										{className}
 										<button
-											onClick={() => setSourceFilter('all')}
+											onClick={() =>
+												setClassFilter((prev) => prev.filter((item) => item !== className))
+											}
 											className="ml-1 hover:text-destructive"
 										>
-											×
+											x
 										</button>
 									</Badge>
-								)}
-								{schoolFilter !== 'all' && (
-									<Badge variant="secondary" className="gap-1">
-										{schoolFilter}
+								))}
+								{sourceFilter.map((source) => (
+									<Badge key={"source-" + source} variant="secondary" className="gap-1 text-sm">
+										{source}
 										<button
-											onClick={() => setSchoolFilter('all')}
+											onClick={() =>
+												setSourceFilter((prev) => prev.filter((item) => item !== source))
+											}
 											className="ml-1 hover:text-destructive"
 										>
-											×
+											x
 										</button>
 									</Badge>
-								)}
-								{tagFilter !== 'all' && (
-									<Badge variant="secondary" className="gap-1">
-										{tagFilter}
+								))}
+								{schoolFilter.map((school) => (
+									<Badge key={"school-" + school} variant="secondary" className="gap-1 text-sm">
+										{school}
 										<button
-											onClick={() => setTagFilter('all')}
+											onClick={() =>
+												setSchoolFilter((prev) => prev.filter((item) => item !== school))
+											}
 											className="ml-1 hover:text-destructive"
 										>
-											×
+											x
 										</button>
 									</Badge>
-								)}
-								{costFilter !== 'all' && (
-									<Badge variant="secondary" className="gap-1">
-										{costFilter === 'cantrip' ? 'Cantrips' : costFilter.toUpperCase()}
+								))}
+								{tagFilter.map((tag) => (
+									<Badge key={"tag-" + tag} variant="secondary" className="gap-1 text-sm">
+										{tag}
 										<button
-											onClick={() => setCostFilter('all')}
+											onClick={() =>
+												setTagFilter((prev) => prev.filter((item) => item !== tag))
+											}
 											className="ml-1 hover:text-destructive"
 										>
-											×
+											x
 										</button>
 									</Badge>
-								)}
-								{sustainedFilter !== 'all' && (
-									<Badge variant="secondary" className="gap-1 bg-amber-500/20 text-amber-400">
-										{sustainedFilter === 'yes' ? 'Sustained' : 'Not Sustained'}
+								))}
+								{apCostFilter.map((cost) => (
+									<Badge key={`ap-${cost}`} variant="secondary" className="gap-1 text-sm">
+										{cost} AP
 										<button
-											onClick={() => setSustainedFilter('all')}
+											onClick={() =>
+												setApCostFilter((prev) => prev.filter((item) => item !== cost))
+											}
 											className="ml-1 hover:text-destructive"
 										>
-											×
+											x
+										</button>
+									</Badge>
+								))}
+								{mpCostFilter.map((cost) => (
+									<Badge key={`mp-${cost}`} variant="secondary" className="gap-1 text-sm">
+										{cost === 'none' ? 'No MP' : `${cost} MP`}
+										<button
+											onClick={() =>
+												setMpCostFilter((prev) => prev.filter((item) => item !== cost))
+											}
+											className="ml-1 hover:text-destructive"
+										>
+											x
+										</button>
+									</Badge>
+								))}
+								{sustainedOnly && (
+									<Badge
+										variant="secondary"
+										className="gap-1 bg-amber-500/20 text-amber-400 text-sm"
+									>
+										Sustained
+										<button
+											onClick={() => setSustainedOnly(false)}
+											className="ml-1 hover:text-destructive"
+										>
+											x
 										</button>
 									</Badge>
 								)}
@@ -340,7 +649,7 @@ const Spellbook: React.FC = () => {
 				{/* Results Summary */}
 				<div className="text-center text-sm text-muted-foreground">
 					Showing {filteredSpells.length} of {ALL_SPELLS.length} spells
-					{schoolFilter === 'all' && ` • ${Object.keys(spellsBySchool).length} schools`}
+					{schoolFilter.length === 0 && ` • ${Object.keys(spellsBySchool).length} schools`}
 				</div>
 
 				{/* Spells Display */}
@@ -354,7 +663,7 @@ const Spellbook: React.FC = () => {
 							Clear Filters
 						</Button>
 					</div>
-				) : schoolFilter !== 'all' ? (
+				) : schoolFilter.length === 1 ? (
 					// Single school view - show all spells in a grid
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 						{filteredSpells.map((spell) => (
@@ -430,9 +739,6 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 					</Badge>
 					{spell.sustained && (
 						<Badge className="bg-amber-500/20 text-amber-400 text-xs">Sustained</Badge>
-					)}
-					{spell.isCantrip && (
-						<Badge className="bg-green-500/20 text-green-400 text-xs">Cantrip</Badge>
 					)}
 					{spell.sources.map((source) => (
 						<Badge key={source} variant="outline" className="text-xs opacity-70">

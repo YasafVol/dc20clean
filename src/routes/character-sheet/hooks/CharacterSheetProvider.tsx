@@ -6,6 +6,7 @@ import {
 } from './useCharacterSheetReducer';
 import { getDefaultStorage } from '../../../lib/storage';
 import type { SavedCharacter } from '../../../lib/types/dataContracts';
+import { logger } from '../../../lib/utils/logger';
 import {
 	calculateCharacterWithBreakdowns,
 	convertToEnhancedBuildData
@@ -151,12 +152,16 @@ interface CharacterSheetContextType {
 	addAttack: (attack: any) => void;
 	removeAttack: (attackId: string) => void;
 	updateAttack: (attackId: string, attack: any) => void;
+	resetAttacks: () => void;
 	addSpell: (spell: any) => void;
 	removeSpell: (spellId: string) => void;
 	updateSpell: (spellId: string, field: string, value: any) => void;
+	resetSpells: () => void;
 	addManeuver: (maneuver: any) => void;
 	removeManeuver: (maneuverId: string) => void;
+	resetManeuvers: () => void;
 	updateInventory: (items: any[]) => void;
+	resetInventory: () => void;
 	updateCurrency: (gold?: number, silver?: number, copper?: number) => void;
 	updateNotes: (notes: string) => void;
 	updateGritPoints: (grit: number) => void;
@@ -187,12 +192,16 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		addAttack,
 		removeAttack,
 		updateAttack,
+		resetAttacks,
 		addSpell,
 		removeSpell,
 		updateSpell,
+		resetSpells,
 		addManeuver,
 		removeManeuver,
+		resetManeuvers,
 		updateInventory,
+		resetInventory,
 		updateCurrency,
 		updateNotes,
 		updateGritPoints,
@@ -205,7 +214,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		async (character: SavedCharacter) => {
 			if (!character) return;
 
-			console.log('Saving character data:', character.id);
+			logger.debug('storage', 'Saving character data', { characterId: character.id });
 
 			try {
 				// Run enhanced calculator to get updated stats
@@ -238,14 +247,22 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 				// Save the entire character (includes spells, maneuvers, etc.)
 				await storage.saveCharacter(updatedCharacter);
 
-				console.log('Character sheet data saved successfully');
+				logger.debug('storage', 'Character sheet data saved successfully', {
+					characterId: character.id
+				});
 			} catch (error) {
-				console.warn('Calculator error during save, proceeding with last known values:', error);
+				logger.warn('calculation', 'Calculator error during save, proceeding with last known values', {
+					characterId: character.id,
+					error: error instanceof Error ? error.message : String(error)
+				});
 				// Save anyway with existing character data
 				try {
 					await storage.saveCharacter(character);
 				} catch (saveError) {
-					console.error('Failed to save character data:', saveError);
+					logger.error('storage', 'Failed to save character data', {
+						characterId: character.id,
+						error: saveError instanceof Error ? saveError.message : String(saveError)
+					});
 				}
 			}
 		},
@@ -276,7 +293,10 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 					dispatch({ type: 'LOAD_ERROR', error: 'Character not found' });
 				}
 			} catch (error) {
-				console.error('Error loading character:', error);
+				logger.error('storage', 'Error loading character', {
+					characterId,
+					error: error instanceof Error ? error.message : String(error)
+				});
 				dispatch({
 					type: 'LOAD_ERROR',
 					error: `Failed to load character: ${error instanceof Error ? error.message : 'Unknown error'}`
@@ -309,12 +329,16 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		addAttack,
 		removeAttack,
 		updateAttack,
+		resetAttacks,
 		addSpell,
 		removeSpell,
 		updateSpell,
+		resetSpells,
 		addManeuver,
 		removeManeuver,
+		resetManeuvers,
 		updateInventory,
+		resetInventory,
 		updateCurrency,
 		updateNotes,
 		updateGritPoints,
@@ -512,8 +536,10 @@ export function useCharacterFeatures() {
 					}
 				});
 			} catch (error) {
-				console.error('Error parsing selected traits:', error);
-				console.error('selectedTraitIds value:', character.selectedTraitIds);
+				logger.error('ui', 'Error parsing selected traits', {
+					error: error instanceof Error ? error.message : String(error),
+					selectedTraitIds: character.selectedTraitIds
+				});
 			}
 		}
 
@@ -552,11 +578,12 @@ export function useCharacterFeatures() {
 							selectedChoices = JSON.parse(character.selectedFeatureChoices);
 						} catch (jsonError) {
 							// If JSON parsing fails, it might be legacy comma-separated data
-							console.warn(
-								'Failed to parse selectedFeatureChoices as JSON, attempting legacy format conversion:',
-								character.selectedFeatureChoices
+							logger.warn(
+								'ui',
+								'Failed to parse selectedFeatureChoices as JSON, attempting legacy format conversion',
+								{ selectedFeatureChoices: character.selectedFeatureChoices }
 							);
-							console.warn('Skipping feature choices processing due to legacy data format');
+							logger.warn('ui', 'Skipping feature choices processing due to legacy data format');
 							return features;
 						}
 					}
@@ -590,7 +617,9 @@ export function useCharacterFeatures() {
 												selectedValueArray = selectedOptionValues.split(',').map((v) => v.trim());
 											}
 										} else {
-											console.warn('Unexpected format for choice values:', selectedOptionValues);
+											logger.warn('ui', 'Unexpected format for choice values', {
+												selectedOptionValues
+											});
 											return;
 										}
 
@@ -664,7 +693,9 @@ export function useCharacterFeatures() {
 						}
 					});
 				} catch (error) {
-					console.error('Error processing selected feature choices:', error);
+					logger.error('ui', 'Error processing selected feature choices', {
+						error: error instanceof Error ? error.message : String(error)
+					});
 				}
 			}
 		}
@@ -816,7 +847,9 @@ export function useCharacterLanguages() {
 					fluency: data.fluency as 'limited' | 'fluent'
 				}));
 		} catch (error) {
-			console.error('Error parsing languages JSON:', error);
+			logger.error('ui', 'Error parsing languages JSON', {
+				error: error instanceof Error ? error.message : String(error)
+			});
 			return [];
 		}
 	}, [state.character?.languagesData]);

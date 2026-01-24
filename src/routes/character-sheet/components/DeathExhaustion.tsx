@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCharacterResources, useCharacterSheet } from '../hooks/CharacterSheetProvider';
+import { logger } from '../../../lib/utils/logger';
 import {
 	StyledDeathExhaustionContainer,
 	StyledExhaustionOnlyContainer,
@@ -70,7 +71,7 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 		// Update the death step in state
 		updateDeathStep(step, isDead);
 
-		console.log('Death step changed to:', step, isDead ? '(DEAD)' : '');
+		logger.debug('ui', 'Death step changed', { step, isDead });
 	};
 	// Exhaustion level descriptions (based on DC20 rules)
 	const exhaustionLevels = [

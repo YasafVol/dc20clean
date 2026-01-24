@@ -2,6 +2,7 @@ import React from 'react';
 import type { AttackData } from '../../../types';
 import { weapons, type Weapon } from '../../../lib/rulesdata/inventoryItems';
 import { useCharacterAttacks, useCharacterSheet } from '../hooks/CharacterSheetProvider';
+import { logger } from '../../../lib/utils/logger';
 import {
 	parseDamage,
 	getDamageType,
@@ -68,13 +69,13 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 	};
 
 	const handleWeaponSelect = (attackIndex: number, weaponName: string) => {
-		console.log('Selecting weapon:', weaponName);
+		logger.debug('ui', 'Selecting weapon', { weaponName });
 		const weapon = weapons.find((w) => w.name === weaponName);
 		if (!weapon) {
-			console.error('Weapon not found:', weaponName);
+			logger.error('ui', 'Weapon not found', { weaponName });
 			return;
 		}
-		console.log('Found weapon:', weapon);
+		logger.debug('ui', 'Found weapon', { weaponName: weapon.name });
 
 		const newAttackData = calculateAttackData(weapon);
 

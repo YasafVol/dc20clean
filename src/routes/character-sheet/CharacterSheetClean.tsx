@@ -3,8 +3,13 @@ import React, { useState, useEffect } from 'react';
 // Import Provider hooks
 import {
 	useCharacterSheet,
+	useCharacterAttacks,
+	useCharacterInventory,
+	useCharacterSpells,
+	useCharacterManeuvers,
 	useCharacterResources,
-	useCharacterConditions
+	useCharacterConditions,
+	useCharacterCalculatedData
 } from './hooks/CharacterSheetProvider';
 
 // Import types
@@ -14,13 +19,11 @@ import type {
 	LanguageData,
 	FeatureData,
 	AttackData,
-	SpellData,
 	InventoryItemData
 } from '../../types';
 import type { Spell } from '../../lib/rulesdata/schemas/spell.schema';
 import type { Weapon } from '../../lib/rulesdata/inventoryItems';
 import type { InventoryItem } from '../../lib/rulesdata/inventoryItems';
-import type { ManeuverData } from '../../types';
 import type { Maneuver } from '../../lib/rulesdata/martials/maneuvers';
 
 // Legacy JSON parsing function - removed in favor of typed data contracts
@@ -68,7 +71,6 @@ import {
 	getDisplayLabel
 } from '../../lib/rulesdata/loaders/class-features.loader';
 import { ancestriesData } from '../../lib/rulesdata/ancestries/ancestries';
-import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { getDetailedClassFeatureDescription } from '../../lib/utils/classFeatureDescriptions';
 
 // Import styled components
@@ -102,6 +104,7 @@ import { ALL_SPELLS as allSpells } from '../../lib/rulesdata/spells-data';
 import { allManeuvers } from '../../lib/rulesdata/martials/maneuvers';
 
 import { handlePrintCharacterSheet } from './utils';
+import { logger } from '../../lib/utils/logger';
 
 type AttributeKey = 'might' | 'agility' | 'charisma' | 'intelligence';
 
@@ -154,7 +157,7 @@ interface CharacterSheetCleanProps {
 // LEGACY: saveManualDefense function removed - now handled by CharacterSheetProvider
 
 const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, onBack }) => {
-	console.log('🧙‍♂️ CharacterSheetClean component rendering! characterId:', characterId);
+	logger.debug('ui', 'CharacterSheetClean render', { characterId });
 	// Use Provider hooks for data and update methods
 	const {
 		state,
@@ -164,10 +167,19 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 		updateTempHP,
 		updateActionPoints,
 		updateExhaustion,
-		updateCurrency
+		updateCurrency,
+		resetAttacks,
+		resetInventory,
+		resetSpells,
+		resetManeuvers
 	} = useCharacterSheet();
+	const attacks = useCharacterAttacks();
+	const spells = useCharacterSpells();
+	const maneuvers = useCharacterManeuvers();
+	const inventory = useCharacterInventory();
 	const resources = useCharacterResources();
 	const conditionStatuses = useCharacterConditions();
+	const calculationResult = useCharacterCalculatedData();
 
 	// Get data from Provider instead of local state
 	const loading = state.loading;
@@ -212,10 +224,6 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 		inventoryData: InventoryItemData;
 		item: InventoryItem | null;
 	} | null>(null);
-	const [attacks, setAttacks] = useState<AttackData[]>([]);
-	const [spells, setSpells] = useState<SpellData[]>([]);
-	const [maneuvers, setManeuvers] = useState<ManeuverData[]>([]);
-	const [inventory, setInventory] = useState<InventoryItemData[]>([]);
 
 	// Mobile navigation state
 	type MobileSection = 'character' | 'combat' | 'features' | 'info';
@@ -273,7 +281,7 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 		const pdrBreakdown =
 			calculatedPDR > 0 ? `${calculatedPDR} (from stored calculation)` : '0 (no PDR)';
 
-		console.log('🚀 OPTIMIZED: Using stored defense values (no recalculation needed)');
+		logger.debug('calculation', 'Using stored defense values (no recalculation needed)');
 
 		return {
 			calculatedPD,
@@ -414,7 +422,9 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 					fluency: data.fluency as 'limited' | 'fluent'
 				}));
 		} catch (error) {
-			console.error('Error parsing languages JSON:', error);
+			logger.error('ui', 'Error parsing languages JSON', {
+				error: error instanceof Error ? error.message : String(error)
+			});
 			return [];
 		}
 	};
@@ -481,7 +491,9 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 					}
 				});
 			} catch (error) {
-				console.error('Error parsing selected traits JSON:', error);
+				logger.error('ui', 'Error parsing selected traits JSON', {
+					error: error instanceof Error ? error.message : String(error)
+				});
 			}
 		}
 
@@ -520,14 +532,15 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 							selectedChoices = JSON.parse(characterData.selectedFeatureChoices);
 						} catch (jsonError) {
 							// If JSON parsing fails, it might be legacy comma-separated data
-							console.warn(
-								'Failed to parse selectedFeatureChoices as JSON, attempting legacy format conversion:',
-								characterData.selectedFeatureChoices
+							logger.warn(
+								'ui',
+								'Failed to parse selectedFeatureChoices as JSON, attempting legacy format conversion',
+								{ selectedFeatureChoices: characterData.selectedFeatureChoices }
 							);
 
 							// For legacy data that might be stored as "Magic,Trickery" format
 							// We'll skip processing for now to prevent errors
-							console.warn('Skipping feature choices processing due to legacy data format');
+							logger.warn('ui', 'Skipping feature choices processing due to legacy data format');
 							return features;
 						}
 					}
@@ -566,7 +579,9 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 												}
 											}
 										} else {
-											console.warn('Unexpected format for choice values:', selectedOptionValues);
+											logger.warn('ui', 'Unexpected format for choice values', {
+												selectedOptionValues
+											});
 											return; // Use return instead of continue in forEach
 										}
 
@@ -640,7 +655,9 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 						}
 					});
 				} catch (error) {
-					console.error('Error parsing selected feature choices JSON:', error);
+					logger.error('ui', 'Error parsing selected feature choices JSON', {
+						error: error instanceof Error ? error.message : String(error)
+					});
 				}
 			}
 		}
@@ -736,10 +753,11 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 			// Revert all data types
 			void revertToOriginal(characterId, 'resources');
 			void revertToOriginal(characterId, 'currency');
-			void revertToOriginal(characterId, 'attacks');
-			void revertToOriginal(characterId, 'spells');
-			void revertToOriginal(characterId, 'maneuvers');
 			void revertToOriginal(characterId, 'inventory');
+			resetAttacks();
+			resetSpells();
+			resetManeuvers();
+			resetInventory();
 
 			// Also clear all manual defense overrides (PDR, PD, AD)
 			void clearDefenseNotesForField(characterId, 'manualPD');
@@ -754,6 +772,23 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 			// Reload the page to reflect changes
 			window.location.reload();
 		} else {
+			if (dataType === 'spells') {
+				resetSpells();
+				return;
+			}
+			if (dataType === 'maneuvers') {
+				resetManeuvers();
+				return;
+			}
+			if (dataType === 'attacks') {
+				resetAttacks();
+				return;
+			}
+			if (dataType === 'inventory') {
+				resetInventory();
+				return;
+			}
+
 			void revertToOriginal(characterId, dataType);
 
 			// Update local state based on what was reverted
@@ -768,55 +803,6 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 			} else if (dataType === 'currency') {
 				// Reset currency using Provider method
 				updateCurrency(0, 0, 0);
-			} else if (dataType === 'attacks') {
-				// Reset to default attacks
-				const defaultAttacks: AttackData[] = [
-					{
-						id: '1',
-						weaponName: '',
-						name: '',
-						attackBonus: 0,
-						damage: '',
-						damageType: '',
-						critRange: '',
-						critDamage: '',
-						brutalDamage: '',
-						heavyHitEffect: ''
-					},
-					{
-						id: '2',
-						weaponName: '',
-						name: '',
-						attackBonus: 0,
-						damage: '',
-						damageType: '',
-						critRange: '',
-						critDamage: '',
-						brutalDamage: '',
-						heavyHitEffect: ''
-					},
-					{
-						id: '3',
-						weaponName: '',
-						name: '',
-						attackBonus: 0,
-						damage: '',
-						damageType: '',
-						critRange: '',
-						critDamage: '',
-						brutalDamage: '',
-						heavyHitEffect: ''
-					}
-				];
-				setAttacks(defaultAttacks);
-			} else if (dataType === 'spells') {
-				// Reset spells to empty array
-				setSpells([]);
-			} else if (dataType === 'maneuvers') {
-				// Reset maneuvers to empty array
-				setManeuvers([]);
-			} else if (dataType === 'inventory') {
-				setInventory([]);
 			}
 		}
 	};
@@ -846,7 +832,9 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 			// Show success message
 			alert('Character data copied to clipboard! You can save this as a backup.');
 		} catch (error) {
-			console.error('Failed to copy character data:', error);
+			logger.error('ui', 'Failed to copy character data', {
+				error: error instanceof Error ? error.message : String(error)
+			});
 			alert('Failed to copy character data to clipboard');
 		}
 	};
@@ -886,10 +874,11 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 		(resolvedClassDef as any)?.spellcasterPath ||
 		(characterData?.className && knownSpellcasters.includes(characterData.className.toLowerCase()))
 	);
-	console.log('DEBUG: resolvedClassDef for', characterData?.className, {
-		hasSpellcastingPath,
-		resolvedClassDef
-	});
+logger.debug('ui', 'Resolved class definition for spellcasting', {
+	className: characterData?.className,
+	hasSpellcastingPath,
+	resolvedClassDef
+});
 
 	if (loading) {
 		return (
@@ -934,6 +923,13 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 			allManeuvers
 		);
 	};
+
+	const hasSpells =
+		(calculationResult?.spellsKnownSlots?.length ?? 0) > 0 ||
+		(characterData?.spells?.length ?? 0) > 0;
+	const hasManeuvers =
+		(calculationResult?.levelBudgets?.totalManeuversKnown ?? 0) > 0 ||
+		(characterData?.maneuvers?.length ?? 0) > 0;
 
 	return (
 		<StyledContainer style={{ position: 'relative' }}>
@@ -1183,7 +1179,7 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 				)}
 
 				{/* Spells Section - Full width, after main content */}
-				{characterData.className || (characterData.spells && characterData.spells.length > 0) ? (
+				{hasSpells ? (
 					<div
 						style={{
 							marginTop: '2rem',
@@ -1199,44 +1195,22 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 				) : null}
 
 				{/* Maneuvers Section - Full width, after main content */}
-				{characterData.className &&
-					(() => {
-						// Check if character should have maneuvers by looking at their class progression
-						const selectedClass = classesData.find(
-							(c: any) => c.id.toLowerCase() === characterData.className?.toLowerCase()
-						);
-						if (!selectedClass) return null;
-
-						// Check if this class/level has any maneuvers from level progression
-						const levelData = selectedClass.levelProgression?.find(
-							(l: any) => l.level === characterData.level
-						);
-						const hasManeuvers = (levelData?.maneuversKnown || 0) > 0;
-
-						console.log('🔍 Maneuvers section check:', {
-							className: characterData.className,
-							level: characterData.level,
-							maneuversKnown: levelData?.maneuversKnown,
-							hasManeuvers
-						});
-
-						return hasManeuvers ? (
-							<div
-								style={{
-									marginTop: '2rem',
-									padding: '1rem',
-									background: 'white',
-									borderRadius: '8px',
-									border: '2px solid #e0e0e0'
-								}}
-							>
-								<h2 style={{ color: '#2c3e50', marginBottom: '1rem', textAlign: 'center' }}>
-									Maneuvers
-								</h2>
-								<Maneuvers onManeuverClick={openManeuverPopup} />
-							</div>
-						) : null;
-					})()}
+				{hasManeuvers ? (
+					<div
+						style={{
+							marginTop: '2rem',
+							padding: '1rem',
+							background: 'white',
+							borderRadius: '8px',
+							border: '2px solid #e0e0e0'
+						}}
+					>
+						<h2 style={{ color: '#2c3e50', marginBottom: '1rem', textAlign: 'center' }}>
+							Maneuvers
+						</h2>
+						<Maneuvers onManeuverClick={openManeuverPopup} />
+					</div>
+				) : null}
 
 				{/* Mobile Layout - Only show on mobile */}
 				{isMobile && (
@@ -1263,27 +1237,12 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 								<Defenses isMobile={true} />
 								<Combat />
 								<DeathExhaustion />
-								<Spells onSpellClick={openSpellPopup} />
+								{hasSpells && <Spells onSpellClick={openSpellPopup} />}
 								<Attacks onAttackClick={openAttackPopup} />
-								{characterData.className && (
+								{hasSpells && characterData.className && (
 									<Spells onSpellClick={openSpellPopup} readOnly={true} />
 								)}
-								{characterData.className &&
-									(() => {
-										// Check if character should have maneuvers by looking at their class progression
-										const selectedClass = classesData.find(
-											(c: any) => c.id.toLowerCase() === characterData.className?.toLowerCase()
-										);
-										if (!selectedClass) return null;
-
-										// Check if this class/level has any maneuvers from level progression
-										const levelData = selectedClass.levelProgression?.find(
-											(l: any) => l.level === characterData.level
-										);
-										const hasManeuvers = (levelData?.maneuversKnown || 0) > 0;
-
-										return hasManeuvers ? <Maneuvers onManeuverClick={openManeuverPopup} /> : null;
-									})()}
+								{hasManeuvers ? <Maneuvers onManeuverClick={openManeuverPopup} /> : null}
 								<Movement />
 								<RightColumnResources />
 							</div>
@@ -1503,7 +1462,7 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 			{/* Draconic Dice Roller */}
 			<DiceRoller
 				onRoll={(results, total, rollMode) => {
-					console.log('Dice rolled:', { results, total, rollMode });
+					logger.debug('ui', 'Dice rolled', { results, total, rollMode });
 				}}
 			/>
 		</StyledContainer>
@@ -1511,3 +1470,5 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 };
 
 export default CharacterSheetClean;
+
+

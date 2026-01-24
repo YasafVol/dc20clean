@@ -6,6 +6,7 @@ import type { SpellData, ManeuverData, InventoryItemData } from '../../types/cha
 import { traitsData } from '../rulesdata/ancestries/traits';
 import { findTalentById } from '../rulesdata/classes-data/talents/talent.loader';
 import { findClassByName } from '../rulesdata/loaders/class-features.loader';
+import { ALL_SPELLS } from '../rulesdata/spells-data';
 import { logger } from '../utils/logger';
 
 // =========================================================================
@@ -13,6 +14,59 @@ import { logger } from '../utils/logger';
 // These functions format character data as names-only lists for PDF text fields.
 // Full descriptions are omitted - players can look up details in the rulebook.
 // =========================================================================
+
+const normalizeList = <T>(value: unknown): T[] => {
+	if (Array.isArray(value)) return value as T[];
+	if (value && typeof value === 'object') {
+		const withCurrent = value as { current?: unknown; original?: unknown };
+		if (Array.isArray(withCurrent.current)) return withCurrent.current as T[];
+		if (Array.isArray(withCurrent.original)) return withCurrent.original as T[];
+	}
+	return [];
+};
+
+const pickList = <T>(primary: unknown, fallback: unknown): T[] => {
+	const normalizedPrimary = normalizeList<T>(primary);
+	if (normalizedPrimary.length > 0) return normalizedPrimary;
+	return normalizeList<T>(fallback);
+};
+
+const resolveSpellEntry = (
+	entry: unknown
+): { spellName: string; isCantrip: boolean } | null => {
+	if (!entry) return null;
+	if (typeof entry === 'string') {
+		const byId = ALL_SPELLS.find((spell) => spell.id === entry);
+		if (byId) return { spellName: byId.name, isCantrip: !!byId.isCantrip };
+		const byName = ALL_SPELLS.find(
+			(spell) => spell.name.toLowerCase() === entry.toLowerCase()
+		);
+		if (byName) return { spellName: byName.name, isCantrip: !!byName.isCantrip };
+		return { spellName: entry, isCantrip: false };
+	}
+	if (typeof entry === 'object') {
+		const spellLike = entry as { spellName?: string; name?: string; id?: string; isCantrip?: boolean };
+		if (spellLike.spellName) {
+			return { spellName: spellLike.spellName, isCantrip: !!spellLike.isCantrip };
+		}
+		if (spellLike.name) {
+			return { spellName: spellLike.name, isCantrip: !!spellLike.isCantrip };
+		}
+		if (spellLike.id) {
+			const byId = ALL_SPELLS.find((spell) => spell.id === spellLike.id);
+			if (byId) return { spellName: byId.name, isCantrip: !!byId.isCantrip };
+		}
+	}
+	return null;
+};
+
+const normalizeSpellSelection = (value: unknown): string[] => {
+	if (Array.isArray(value)) return value.filter(Boolean) as string[];
+	if (value && typeof value === 'object') {
+		return Object.values(value as Record<string, string>).filter(Boolean);
+	}
+	return [];
+};
 
 /**
  * Formats class feature IDs to display names for PDF export.
@@ -121,15 +175,18 @@ export function formatAncestryTraits(traitIds: string[]): string {
  * @returns Formatted string with sections for spells, cantrips, and maneuvers
  */
 export function formatSpellsAndManeuvers(
-	spells: SpellData[],
+	spells: Array<SpellData | string | { id?: string; name?: string; spellName?: string; isCantrip?: boolean }>,
 	maneuvers: ManeuverData[]
 ): string {
 	const parts: string[] = [];
 
 	// Process spells
 	if (spells && spells.length > 0) {
-		const cantrips = spells.filter((s) => s.isCantrip);
-		const leveledSpells = spells.filter((s) => !s.isCantrip);
+		const resolvedSpells = spells
+			.map((spell) => resolveSpellEntry(spell))
+			.filter(Boolean) as Array<{ spellName: string; isCantrip: boolean }>;
+		const cantrips = resolvedSpells.filter((s) => s.isCantrip);
+		const leveledSpells = resolvedSpells.filter((s) => !s.isCantrip);
 
 		logger.debug('pdf', 'Formatting spells for PDF export', {
 			cantripCount: cantrips.length,
@@ -316,15 +373,26 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 	const unlockedFeatureIds = (character as any).unlockedFeatureIds || [];
 	const selectedTraitIds = (character as any).selectedTraitIds || [];
 	const selectedSubclass = (character as any).selectedSubclass;
-	const spells = character.spells || [];
-	const maneuvers = character.maneuvers || [];
+	let spells = pickList<SpellData | string>(
+		character.spells,
+		(character as any).characterState?.spells
+	);
+	const selectedSpellFallback = normalizeSpellSelection((character as any).selectedSpells);
+	if (spells.length === 0 && selectedSpellFallback.length > 0) {
+		spells = selectedSpellFallback;
+	}
+	const maneuvers = pickList<ManeuverData>(
+		character.maneuvers,
+		(character as any).characterState?.maneuvers
+	);
 	const selectedTalents = (character as any).selectedTalents;
+	const classIdentifier = character.classId || character.className;
 
 	// Class Features
 	if (unlockedFeatureIds.length > 0 || selectedSubclass) {
 		const classFeatureText = formatClassFeatures(
 			unlockedFeatureIds,
-			character.classId,
+			classIdentifier,
 			selectedSubclass
 		);
 		if (classFeatureText) {
@@ -694,9 +762,10 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 		items: new Array(5).fill(0).map(() => ({ name: '', active: false }))
 	};
 
-	// Build carried field: inventory items
+	// Build carried field: features + inventory items
 	const inventoryItems = character.characterState?.inventory?.items || [];
-	const carried = formatInventory(inventoryItems as InventoryItemData[]);
+	const carriedItems = formatInventory(inventoryItems as InventoryItemData[]);
+	const carried = [features, carriedItems].filter(Boolean).join('\n\n');
 
 	// Build stored field: feature choices
 	const selectedFeatureChoices = (character as any).selectedFeatureChoices || {};
@@ -807,12 +876,21 @@ export function transformCalculatedCharacterToPdfData(
 
 	// Build features field: class features + ancestry traits + talents + spells + maneuvers
 	const featuresParts: string[] = [];
-	const unlockedFeatureIds = result.levelProgression?.unlockedFeatureIds || [];
+	const unlockedFeatureIds =
+		result.levelBudgets?.unlockedFeatureIds || saved.unlockedFeatureIds || [];
 	const selectedTraitIds = (saved as any).selectedTraitIds || [];
 	const selectedSubclass = (saved as any).selectedSubclass;
-	const spells = saved.spells || [];
-	const maneuvers = saved.maneuvers || [];
+	let spells = pickList<SpellData | string>(saved.spells, (saved as any).characterState?.spells);
+	const selectedSpellFallback = normalizeSpellSelection((saved as any).selectedSpells);
+	if (spells.length === 0 && selectedSpellFallback.length > 0) {
+		spells = selectedSpellFallback;
+	}
+	const maneuvers = pickList<ManeuverData>(
+		saved.maneuvers,
+		(saved as any).characterState?.maneuvers
+	);
 	const selectedTalents = (saved as any).selectedTalents;
+	const classIdentifier = saved.classId || saved.className || stats.className;
 
 	// Debug: log all input data
 	console.log('📄 PDF Export Debug:', {
@@ -829,7 +907,7 @@ export function transformCalculatedCharacterToPdfData(
 	if (unlockedFeatureIds.length > 0 || selectedSubclass) {
 		const classFeatureText = formatClassFeatures(
 			unlockedFeatureIds,
-			saved.classId,
+			classIdentifier,
 			selectedSubclass
 		);
 		console.log('📄 Class features result:', classFeatureText || '(empty)');
@@ -1089,9 +1167,10 @@ export function transformCalculatedCharacterToPdfData(
 		items: new Array(5).fill(0).map(() => ({ name: '', active: false }))
 	};
 
-	// Build carried field: inventory items
+	// Build carried field: features + inventory items
 	const inventoryItems = saved.characterState?.inventory?.items || [];
-	const carried = formatInventory(inventoryItems as InventoryItemData[]);
+	const carriedItems = formatInventory(inventoryItems as InventoryItemData[]);
+	const carried = [features, carriedItems].filter(Boolean).join('\n\n');
 
 	// Build stored field: feature choices
 	const selectedFeatureChoices = (saved as any).selectedFeatureChoices || {};

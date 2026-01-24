@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import type { ManeuverData } from '../../../types';
-import type { Maneuver } from '../../../lib/rulesdata/maneuvers';
+import type { Maneuver } from '../../../lib/rulesdata/martials/maneuvers';
 import { maneuvers as allManeuvers } from '../../../lib/rulesdata/martials/maneuvers';
 import { useCharacterManeuvers, useCharacterSheet } from '../hooks/CharacterSheetProvider';
+import { logger } from '../../../lib/utils/logger';
 import {
 	StyledManeuversSection,
 	StyledManeuversHeader,
@@ -44,7 +45,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 		return expanded;
 	});
 
-	console.log('🔍 Maneuvers component received:', {
+	logger.debug('ui', 'Maneuvers component received', {
 		maneuversCount: maneuvers.length,
 		maneuvers: maneuvers.map((m) => ({ id: m.id, name: m.name, type: m.type }))
 	});

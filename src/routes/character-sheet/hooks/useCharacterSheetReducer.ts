@@ -7,6 +7,10 @@ export interface SheetState {
 	character: SavedCharacter | null;
 	loading: boolean;
 	error: string | null;
+	baselineAttacks: any[];
+	baselineInventoryItems: any[];
+	baselineSpells: any[];
+	baselineManeuvers: any[];
 }
 
 // All possible actions for character sheet editing
@@ -25,12 +29,16 @@ export type SheetAction =
 	| { type: 'ADD_ATTACK'; attack: Attack }
 	| { type: 'REMOVE_ATTACK'; attackId: string }
 	| { type: 'UPDATE_ATTACK'; attackId: string; attack: Attack }
+	| { type: 'RESET_ATTACKS' }
 	| { type: 'ADD_SPELL'; spell: any }
 	| { type: 'REMOVE_SPELL'; spellId: string }
 	| { type: 'UPDATE_SPELL'; spellId: string; field: string; value: any }
+	| { type: 'RESET_SPELLS' }
 	| { type: 'ADD_MANEUVER'; maneuver: any }
 	| { type: 'REMOVE_MANEUVER'; maneuverId: string }
+	| { type: 'RESET_MANEUVERS' }
 	| { type: 'UPDATE_INVENTORY'; items: any[] }
+	| { type: 'RESET_INVENTORY' }
 	| { type: 'UPDATE_CURRENCY'; goldPieces?: number; silverPieces?: number; copperPieces?: number }
 	| { type: 'UPDATE_NOTES'; notes: string }
 	| { type: 'UPDATE_CURRENT_GRIT_POINTS'; grit: number }
@@ -39,7 +47,11 @@ export type SheetAction =
 const initialState: SheetState = {
 	character: null,
 	loading: false,
-	error: null
+	error: null,
+	baselineAttacks: [],
+	baselineInventoryItems: [],
+	baselineSpells: [],
+	baselineManeuvers: []
 };
 
 // Reducer function
@@ -51,7 +63,18 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 		case 'LOAD_SUCCESS':
 			// Keep the character as-is. We intentionally do NOT normalize attacks here.
 			// The app will preserve the shape (array or object) supplied at creation.
-			return { ...state, character: action.character, loading: false, error: null };
+			return {
+				...state,
+				character: action.character,
+				loading: false,
+				error: null,
+				baselineAttacks: [...(action.character.characterState?.attacks || [])],
+				baselineInventoryItems: [
+					...(action.character.characterState?.inventory?.items || [])
+				],
+				baselineSpells: [...(action.character.spells || [])],
+				baselineManeuvers: [...(action.character.maneuvers || [])]
+			};
 
 		case 'LOAD_ERROR':
 			return { ...state, loading: false, error: action.error };
@@ -261,6 +284,19 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 				};
 			}
 
+		case 'RESET_ATTACKS':
+			if (!state.character) return state;
+			return {
+				...state,
+				character: {
+					...state.character,
+					characterState: {
+						...state.character.characterState,
+						attacks: [...state.baselineAttacks]
+					}
+				}
+			};
+
 		case 'ADD_SPELL':
 			if (!state.character) return state;
 			const newSpells = [...(state.character.spells || []), action.spell];
@@ -310,13 +346,31 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 				}
 			};
 
+		case 'RESET_SPELLS':
+			if (!state.character) return state;
+			return {
+				...state,
+				character: {
+					...state.character,
+					spells: [...state.baselineSpells],
+					characterState: {
+						...state.character.characterState,
+						spells: [...state.baselineSpells]
+					}
+				}
+			};
+
 		case 'ADD_MANEUVER':
 			if (!state.character) return state;
 			return {
 				...state,
 				character: {
 					...state.character,
-					maneuvers: [...(state.character.maneuvers || []), action.maneuver]
+					maneuvers: [...(state.character.maneuvers || []), action.maneuver],
+					characterState: {
+						...state.character.characterState,
+						maneuvers: [...(state.character.maneuvers || []), action.maneuver]
+					}
 				}
 			};
 
@@ -328,7 +382,27 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 					...state.character,
 					maneuvers: (state.character.maneuvers || []).filter(
 						(m: any) => m.id !== action.maneuverId
-					)
+					),
+					characterState: {
+						...state.character.characterState,
+						maneuvers: (state.character.maneuvers || []).filter(
+							(m: any) => m.id !== action.maneuverId
+						)
+					}
+				}
+			};
+
+		case 'RESET_MANEUVERS':
+			if (!state.character) return state;
+			return {
+				...state,
+				character: {
+					...state.character,
+					maneuvers: [...state.baselineManeuvers],
+					characterState: {
+						...state.character.characterState,
+						maneuvers: [...state.baselineManeuvers]
+					}
 				}
 			};
 
@@ -364,6 +438,22 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 						inventory: {
 							...state.character.characterState.inventory,
 							items: action.items
+						}
+					}
+				}
+			};
+
+		case 'RESET_INVENTORY':
+			if (!state.character) return state;
+			return {
+				...state,
+				character: {
+					...state.character,
+					characterState: {
+						...state.character.characterState,
+						inventory: {
+							...state.character.characterState.inventory,
+							items: [...state.baselineInventoryItems]
 						}
 					}
 				}
@@ -476,6 +566,10 @@ export function useCharacterSheetReducer() {
 		dispatch({ type: 'UPDATE_ATTACK', attackId, attack });
 	}, []);
 
+	const resetAttacks = useCallback(() => {
+		dispatch({ type: 'RESET_ATTACKS' });
+	}, []);
+
 	const addSpell = useCallback((spell: any) => {
 		dispatch({ type: 'ADD_SPELL', spell });
 	}, []);
@@ -488,6 +582,10 @@ export function useCharacterSheetReducer() {
 		dispatch({ type: 'UPDATE_SPELL', spellId, field, value });
 	}, []);
 
+	const resetSpells = useCallback(() => {
+		dispatch({ type: 'RESET_SPELLS' });
+	}, []);
+
 	const addManeuver = useCallback((maneuver: any) => {
 		dispatch({ type: 'ADD_MANEUVER', maneuver });
 	}, []);
@@ -496,8 +594,16 @@ export function useCharacterSheetReducer() {
 		dispatch({ type: 'REMOVE_MANEUVER', maneuverId });
 	}, []);
 
+	const resetManeuvers = useCallback(() => {
+		dispatch({ type: 'RESET_MANEUVERS' });
+	}, []);
+
 	const updateInventory = useCallback((items: any[]) => {
 		dispatch({ type: 'UPDATE_INVENTORY', items });
+	}, []);
+
+	const resetInventory = useCallback(() => {
+		dispatch({ type: 'RESET_INVENTORY' });
 	}, []);
 
 	const updateCurrency = useCallback(
@@ -526,12 +632,16 @@ export function useCharacterSheetReducer() {
 		addAttack,
 		removeAttack,
 		updateAttack,
+		resetAttacks,
 		addSpell,
 		removeSpell,
 		updateSpell,
+		resetSpells,
 		addManeuver,
 		removeManeuver,
+		resetManeuvers,
 		updateInventory,
+		resetInventory,
 		updateCurrency,
 		updateNotes
 	};

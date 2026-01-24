@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import CharacterSheetClean from './CharacterSheetClean';
 import CharacterSheetMobile from './CharacterSheetMobile';
 import { CharacterSheetProvider } from './hooks/CharacterSheetProvider';
+import { logger } from '../../lib/utils/logger';
 
 // Breakpoint for mobile vs desktop (matches the existing project's mobile breakpoint)
 const MOBILE_BREAKPOINT = 768;
@@ -20,7 +21,7 @@ const CharacterSheetRouter: React.FC<CharacterSheetRouterProps> = ({ characterId
 		// Only do this check if window is available (client-side)
 		if (typeof window !== 'undefined') {
 			const mobile = window.innerWidth <= MOBILE_BREAKPOINT;
-			console.log(`🗻 Gimli's Initial Mobile Check: width=${window.innerWidth}, mobile=${mobile}`);
+			logger.debug('ui', "Gimli's Initial Mobile Check", { width: window.innerWidth, mobile });
 			return mobile;
 		}
 		return false;
@@ -30,9 +31,7 @@ const CharacterSheetRouter: React.FC<CharacterSheetRouterProps> = ({ characterId
 		const checkMobile = () => {
 			const width = window.innerWidth;
 			const mobile = width <= MOBILE_BREAKPOINT;
-			console.log(
-				`🗻 Gimli's Responsive Check: width=${width}, mobile=${mobile}, breakpoint=${MOBILE_BREAKPOINT}`
-			);
+			logger.debug('ui', "Gimli's Responsive Check", { width, mobile, breakpoint: MOBILE_BREAKPOINT });
 			setIsMobile(mobile);
 		};
 		checkMobile();
@@ -56,3 +55,5 @@ const CharacterSheetRouter: React.FC<CharacterSheetRouterProps> = ({ characterId
 };
 
 export default CharacterSheetRouter;
+
+

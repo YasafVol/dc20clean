@@ -200,17 +200,11 @@ export interface CharacterState {
 		current: AttackData[];
 	};
 
-	// Spells - original is empty/default, current is user-selected
-	spells: {
-		original: SpellData[];
-		current: SpellData[];
-	};
+	// Spells - canonical arrays (SavedCharacter.spells is source of truth)
+	spells: SpellData[];
 
-	// Maneuvers - original is empty/default, current is user-selected
-	maneuvers: {
-		original: ManeuverData[];
-		current: ManeuverData[];
-	};
+	// Maneuvers - canonical arrays (SavedCharacter.maneuvers is source of truth)
+	maneuvers: ManeuverData[];
 
 	// Inventory - original is empty/default, current is user-modified
 	inventory: {

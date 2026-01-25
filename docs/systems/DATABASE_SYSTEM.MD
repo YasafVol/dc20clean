@@ -1,7 +1,7 @@
 # DC20Clean – Database & Storage System
 
 > Purpose
-> Document the character persistence architecture, covering both localStorage (current) and Convex cloud storage (planned).
+> Document the character persistence architecture, covering both localStorage (current) and Convex cloud storage (available).
 
 ---
 
@@ -12,7 +12,7 @@ The DC20 Character Creator uses a **hybrid storage model**:
 | Storage | Status | Use Case |
 |---------|--------|----------|
 | **localStorage** | Active (default) | Anonymous users, offline-first |
-| **Convex** | Planned | Authenticated users, cloud sync |
+| **Convex** | Available (optional) | Authenticated users, cloud sync |
 
 The storage abstraction layer (`src/lib/storage/`) allows seamless switching between backends.
 
@@ -158,11 +158,11 @@ savedCharacters_backup → Backup copy (for migration safety)
 
 ---
 
-## 5. Convex Implementation (Planned)
+## 5. Convex Implementation (Available)
 
 ### 5.1 Status
 
-**Prep work complete** - See `docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md`
+**Implemented behind flag** - See `docs/archive/CONVEX_MIGRATION.md`
 
 ### 5.2 Schema
 
@@ -180,7 +180,7 @@ characters: defineTable({
 
 ### 5.3 Authentication
 
-- **Google OAuth** and **GitHub OAuth**
+- Convex Auth configuration lives in `convex/auth.config.ts`
 - User ID linked to all character records
 - Characters only visible to their owner
 
@@ -217,8 +217,9 @@ When loading characters, `deserializeCharacterFromStorage()` automatically:
 **Not automatic** - users must:
 
 1. Export characters to JSON (existing feature)
-2. Sign in to Convex
-3. Import characters (existing feature)
+2. Enable Convex (`VITE_USE_CONVEX=true`, `VITE_CONVEX_URL=...`)
+3. Sign in to Convex
+4. Import characters (existing feature)
 
 ---
 
@@ -230,10 +231,10 @@ When loading characters, `deserializeCharacterFromStorage()` automatically:
 | `src/lib/utils/storageUtils.ts` | localStorage CRUD operations |
 | `src/lib/storage/characterStorage.ts` | Storage interface definition |
 | `src/lib/storage/localStorageAdapter.ts` | localStorage adapter |
-| `src/lib/storage/convexStorageAdapter.ts` | Convex adapter (placeholder) |
+| `src/lib/storage/convexStorageAdapter.ts` | Convex adapter |
 | `src/lib/storage/index.ts` | Backend selector |
-| `convex/schema.ts.draft` | Convex schema (pending activation) |
-| `convex/characters.ts.draft` | Convex mutations/queries (pending) |
+| `convex/schema.ts` | Convex schema |
+| `convex/characters.ts` | Convex mutations/queries |
 
 ---
 
@@ -275,9 +276,9 @@ const saveCharacterData = async (character: SavedCharacter) => {
 - **Character Sheet** — `docs/systems/CHARACTER_SHEET.MD`
 - **PDF Export** — `docs/systems/PDF_EXPORT_SYSTEM.MD`
 - **Calculation System** — `docs/systems/CALCULATION_SYSTEM.MD`
-- **Convex Migration** — `docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md`
+- **Convex Migration** — `docs/archive/CONVEX_MIGRATION.md`
 
 ---
 
-> Last updated: 2026-01-14
+> Last updated: 2026-01-25
 > Maintainer: @DC20Clean-Team

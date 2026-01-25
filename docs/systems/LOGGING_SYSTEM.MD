@@ -1,6 +1,6 @@
 # DC20Clean – Logging & Telemetry System
 
-> **Status: WIP** – Implementation pending. See `docs/plannedSpecs/LOGGING_SPEC.md` for full specification.
+> **Status: Partial** – Logger is implemented; analytics and full Sentry setup are not wired in `src/main.tsx`. See `docs/plannedSpecs/LOGGING_SPEC.md` for full specification.
 
 > Purpose  
 > Centralized logging, metrics collection, and error tracking for the DC20 Character Creator.
@@ -13,9 +13,9 @@ The logging system provides:
 
 | Capability | Service | Status |
 |------------|---------|--------|
-| **Structured Logging** | Custom Logger Service | 🔄 WIP |
-| **Usage Metrics** | Vercel Analytics | 🔄 WIP |
-| **Error Tracking** | Sentry | 🔄 WIP |
+| **Structured Logging** | Custom Logger Service | ✅ Implemented |
+| **Usage Metrics** | Vercel Analytics | ⏳ Not wired |
+| **Error Tracking** | Sentry | ⏳ Partial (logger hooks only) |
 | **Server Logs** | Convex (built-in) | ⏳ Pending Convex integration |
 
 ---
@@ -70,7 +70,7 @@ Logs are categorized by context for filtering and analysis:
 
 ## 5. Logger API
 
-**File**: `src/lib/utils/logger.ts` (WIP)
+**File**: `src/lib/utils/logger.ts` (implemented)
 
 ```typescript
 import { logger } from '@/lib/utils/logger';
@@ -180,8 +180,8 @@ logger.track('pdf_export_completed', { characterId, sizeBytes });
 
 | File | Purpose | Status |
 |------|---------|--------|
-| `src/lib/utils/logger.ts` | Logger service | 🔄 WIP |
-| `src/main.tsx` | Sentry & Analytics setup | 🔄 WIP |
+| `src/lib/utils/logger.ts` | Logger service | ✅ Implemented |
+| `src/main.tsx` | Sentry & Analytics setup | ⏳ Not wired |
 | `docs/plannedSpecs/LOGGING_SPEC.md` | Full implementation spec | ✅ Complete |
 
 ---
@@ -192,10 +192,10 @@ logger.track('pdf_export_completed', { characterId, sizeBytes });
 - **PDF Export** — `docs/systems/PDF_EXPORT_SYSTEM.MD`
 - **Character Creation** — `docs/systems/CHARACTER_CREATION_FLOW.MD`
 - **Calculation System** — `docs/systems/CALCULATION_SYSTEM.MD`
-- **Convex Migration** — `docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md`
+- **Convex Migration** — `docs/archive/CONVEX_MIGRATION.md`
 
 ---
 
-> Last updated: 2026-01-15  
+> Last updated: 2026-01-25  
 > Status: WIP  
 > Maintainer: @DC20Clean-Team

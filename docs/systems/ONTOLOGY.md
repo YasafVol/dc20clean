@@ -1,7 +1,7 @@
 # System Ontology
 
 **Creation date**: 05 SPT 2025
-**Update date**: 15 JAN 2025
+**Update date**: 25 JAN 2026
 
 This document outlines the core concepts and components of the character creation system. It's divided into three main sections: UI, Services, and Rules.
 
@@ -61,7 +61,7 @@ The services layer contains the business logic for character creation and calcul
 - **`dataMapping.ts`**: Maps raw rules data into a format that's easier for the UI to consume.
 - **`enhancedCharacterCalculator.ts`**: A key service that performs complex calculations for derived character stats (e.g., health, mana, skill points) based on the character's attributes, class, ancestry, and other choices.
 - **`spellAssignment.ts`**: Manages the logic for assigning spells to a character.
-- **PDF Export Pipeline**: Client-only modules (`src/lib/pdf/transformers.ts`, `src/lib/pdf/fillPdf.ts`) convert an `EnhancedCalculationResult` into a filled 0.9.5 character sheet PDF. See `docs/systems/PDF_EXPORT_SYSTEM.MD` for the full architecture.
+- **PDF Export Pipeline**: Client-only modules (`src/lib/pdf/transformers.ts`, `src/lib/pdf/fillPdf.ts`) convert an `EnhancedCalculationResult` into a filled v0.10 character sheet PDF (v0.9.5 fallback supported). See `docs/systems/PDF_EXPORT_SYSTEM.MD` for the full architecture.
 
 ## 3. Rules Ontology
 
@@ -94,11 +94,10 @@ This section describes the data structures and concepts that define the game's r
 - **Skill & Trade Mastery**: The system for determining a character's maximum proficiency in a given skill or trade.
   - **Mastery Tiers**: Novice, Adept, Expert, Master, Grandmaster. Each tier corresponds to a specific number of points invested (1, 2, 3, 4, 5 respectively).
   - **Baseline Mastery Cap**: A character's level determines the default maximum mastery tier they can achieve in any skill or trade.
-    - Level 1-4: Novice (Cap: 1 point)
-    - Level 5-9: Adept (Cap: 2 points)
-    - Level 10-14: Expert (Cap: 3 points)
-    - Level 15-19: Master (Cap: 4 points)
-    - Level 20: Grandmaster (Cap: 5 points)
+  - Level 1-4: Novice (Cap: 1 point)
+  - Level 5-9: Adept (Cap: 2 points)
+  - Level 10: Expert (Cap: 3 points)
+  - Note: DC20 v0.10 caps at level 10; higher tiers are not reachable in the current ruleset.
   - **Mastery Cap System**: ✅ **IMPLEMENTED** - A comprehensive system where:
     - Character level determines baseline mastery caps for all skills/trades
     - Class features and ancestry traits can grant a budget of exceptions using new effect types
@@ -110,7 +109,6 @@ This section describes the data structures and concepts that define the game's r
 
 - **Martial Abilities**
   - **Maneuvers**: `src/lib/rulesdata/martials/maneuvers.ts`
-  - **Techniques**: `src/lib/rulesdata/martials/techniques.ts`
   - **Stances**: `src/lib/rulesdata/martials/monk-stances.ts` (Monk-specific)
 
 - **Spells**: Magical abilities available to characters.

@@ -43,7 +43,7 @@ flowchart LR
 | Layer                 | File / Dir                                              | Responsibility                                                                          |
 | --------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | Rule Data (canonical) | `src/lib/rulesdata/skills.ts`                           | Declarative `skillsData` array                                                          |
-|                       | `src/lib/rulesdata/trades.ts`                           | Declarative `tradesData` array (see also `docs/systems/TRADES_MULTI_ATTRIBUTE_SPEC.md`) |
+|                       | `src/lib/rulesdata/trades.ts`                           | Declarative `tradesData` array (see also `docs/archive/TRADES_MULTI_ATTRIBUTE_SPEC.md`) |
 |                       | `src/lib/rulesdata/languages.ts`                        | Declarative `languagesData` array                                                       |
 | Type Contracts        | `src/lib/rulesdata/schemas/types.ts`                    | `ISkillData`, `ITradeData`, `ILanguageData`                                             |
 | Runtime Engine        | `src/lib/services/enhancedCharacterCalculator.ts`       | Computes base budgets, applies trait bonuses, conversions, and usage                    |
@@ -57,7 +57,7 @@ flowchart LR
 
 - Skills: `ISkillData { id, name, attributeAssociation, description }`
 - Trades: `ITradeData { id, name, primaryAttribute, attributeAssociations[], description, tools? }`
-  - For multi-attribute trades, see `docs/systems/TRADES_MULTI_ATTRIBUTE_SPEC.md` (canonical field: `attributeAssociations: string[]`).
+  - For multi-attribute trades, see `docs/archive/TRADES_MULTI_ATTRIBUTE_SPEC.md` (canonical field: `attributeAssociations: string[]`).
 - Languages: `ILanguageData { id, name, type: 'standard'|'exotic', description }`
 
 Background allocations in store:
@@ -177,5 +177,5 @@ Validation also exposes a `masteryLimits` block with:
 
 ---
 
-> Last updated: 2025-09-15  
+> Last updated: 2026-01-25  
 > Maintainer: @DC20Clean-Team

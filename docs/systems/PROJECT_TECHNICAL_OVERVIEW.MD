@@ -9,10 +9,11 @@ scripts, testing, project structure, and contribution expectations.
 
 - Framework: React 19 + TypeScript
 - Build Tool: Vite 6
-- Styling: Material-UI (MUI) + Emotion + Tailwind CSS 4
+- Styling: Tailwind CSS 4 + styled-components + Emotion
 - State Management: React Context API
-- Persistence: Browser localStorage (client-only)
-  - Planned: Convex cloud database with authentication (see `docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md`)
+- Persistence: Browser localStorage (default) and Convex cloud storage (optional)
+  - Convex is enabled when `VITE_USE_CONVEX=true` and `VITE_CONVEX_URL` is configured
+  - Migration notes: `docs/archive/CONVEX_MIGRATION.md`
 - Testing: Vitest (browser + node environments), Playwright
 - Code Quality: ESLint + Prettier
 
@@ -43,7 +44,7 @@ Testing:
 Single test execution:
 ```
 npx vitest -t "should calculate health correctly"
-npx vitest src/lib/services/enhancedCharacterCalculator.test.ts
+npx vitest src/lib/services/enhancedCharacterCalculator.spec.ts
 ```
 
 E2E test optimization:
@@ -105,3 +106,7 @@ docs/systems/                  # System documentation
   - `docs: update documentation`
 - PR contents: Include clear description, linked issues, test plan, and screenshots for UI changes
 - Stacked PRs: Optional Graphite workflow supported (see `AGENTS.md` for details)
+
+---
+
+**Last Updated:** January 25, 2026

@@ -1,4 +1,3 @@
-# Claude Code Instructions
 
 ## Rule
 Before planning any feature, identify the relevant system and read its spec from `docs/systems/`.
@@ -19,15 +18,15 @@ Before planning any feature, identify the relevant system and read its spec from
 | `LEVELING_SYSTEM.MD` | Level-up flow and feature gains |
 | `LOGGING_SYSTEM.MD` | Error logging and telemetry |
 | `MARTIALS_SYSTEM.MD` | Maneuvers and martial combat |
-| `MULTICLASS_SYSTEM.MD` | Multiclassing rules |
+| `MULTICLASS_SYSTEM.MD` | Multiclassing rules (consolidated in `LEVELING_SYSTEM.MD` §10) |
 | `ONTOLOGY.md` | Core concepts and relationships |
 | `PDF_EXPORT_SYSTEM.MD` | Character sheet PDF generation |
 | `PROJECT_TECHNICAL_OVERVIEW.MD` | High-level architecture |
 | `SPELLS_SYSTEM.MD` | Spell casting and spell data |
 | `TRAITS_SYSTEM.MD` | Trait system architecture |
-| `CHARACTER_SHEET_SYNC_SPEC.md` | Sheet state synchronization |
+| `docs/archive/2026-01-25-character-sheet-sync-spec.md` | Sheet state synchronization (archived) |
 
 ## Feature Mapping
-For detailed feature→system mapping with code locations, see:
-- `docs/assets/mapping/feature-system-map.md` — Features mapped to systems/code
-- `docs/assets/mapping/README.md` — Mapping index and status
+For detailed feature->system mapping with code locations, see:
+- `docs/assets/mapping/feature-system-map.md` - Features mapped to systems/code
+- `docs/assets/mapping/README.md` - Mapping index and status

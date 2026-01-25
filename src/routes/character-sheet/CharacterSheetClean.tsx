@@ -103,7 +103,6 @@ import {
 import { ALL_SPELLS as allSpells } from '../../lib/rulesdata/spells-data';
 import { allManeuvers } from '../../lib/rulesdata/martials/maneuvers';
 
-import { handlePrintCharacterSheet } from './utils';
 import { logger } from '../../lib/utils/logger';
 
 type AttributeKey = 'might' | 'agility' | 'charisma' | 'intelligence';
@@ -814,14 +813,10 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 				return;
 			}
 
-			const character = getCharacterFromStorage(characterData.id);
-			if (!character) {
-				alert('Character data not found in storage');
-				return;
-			}
-
+			// Use the already-loaded character data from state instead of re-reading from storage
+			// This works with both localStorage and Convex storage adapters
 			const characterBackup = {
-				...character,
+				...characterData,
 				exportedAt: new Date().toISOString(),
 				exportVersion: '1.0'
 			};
@@ -837,12 +832,6 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 			});
 			alert('Failed to copy character data to clipboard');
 		}
-	};
-
-	// Helper function to get character from localStorage
-	const getCharacterFromStorage = (characterId: string) => {
-		const savedCharacters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
-		return savedCharacters.find((char: any) => char.id === characterId);
 	};
 
 	// Group skills by attribute like in the official sheet
@@ -902,26 +891,86 @@ logger.debug('ui', 'Resolved class definition for spellcasting', {
 		);
 	}
 
-	// Wrapper function to call the extracted print function with all required parameters
-	const handlePrint = () => {
+	// Export PDF handler - uses the same approach as LoadCharacter's Export PDF
+	const handlePrint = async () => {
 		if (!characterData) return;
 
-		handlePrintCharacterSheet(
-			characterData,
-			attacks,
-			spells,
-			characterState as any,
-			maneuvers,
-			getCalculatedDefenses,
-			currentValues as any,
-			features,
-			languages,
-			trades,
-			inventory,
-			skillsByAttribute,
-			allSpells,
-			allManeuvers
-		);
+		try {
+			const [pdf, calc, denormMod] = await Promise.all([
+				import('../../lib/pdf/transformers'),
+				import('../../lib/services/enhancedCharacterCalculator'),
+				import('../../lib/services/denormalizeMastery')
+			]);
+			const { fillPdfFromData } = await import('../../lib/pdf/fillPdf');
+
+			// Build enhanced data from saved character and compute fresh stats
+			const buildData = calc.convertToEnhancedBuildData({
+				...characterData,
+				attribute_might: characterData.finalMight,
+				attribute_agility: characterData.finalAgility,
+				attribute_charisma: characterData.finalCharisma,
+				attribute_intelligence: characterData.finalIntelligence,
+				classId: characterData.classId,
+				ancestry1Id: characterData.ancestry1Id,
+				ancestry2Id: characterData.ancestry2Id,
+				selectedTraitIds: characterData.selectedTraitIds || [],
+				selectedTraitChoices: (characterData as any).selectedTraitChoices || {},
+				featureChoices: characterData.selectedFeatureChoices || {},
+				skillsData: characterData.skillsData || {},
+				tradesData: characterData.tradesData || {},
+				languagesData: characterData.languagesData || { common: { fluency: 'fluent' } }
+			});
+			const calcResult = calc.calculateCharacterWithBreakdowns(buildData);
+
+			// Use existing denorm if present; otherwise compute now
+			const denorm =
+				characterData.masteryLadders &&
+				characterData.skillTotals &&
+				characterData.knowledgeTradeMastery &&
+				characterData.languageMastery
+					? ({
+							masteryLadders: characterData.masteryLadders,
+							skillTotals: (characterData as any).skillTotals,
+							knowledgeTradeMastery: (characterData as any).knowledgeTradeMastery,
+							languageMastery: (characterData as any).languageMastery
+						} as any)
+					: denormMod.denormalizeMastery({
+							finalAttributes: {
+								might: calcResult.stats.finalMight,
+								agility: calcResult.stats.finalAgility,
+								charisma: calcResult.stats.finalCharisma,
+								intelligence: calcResult.stats.finalIntelligence,
+								prime: calcResult.stats.finalPrimeModifierValue
+							},
+							skillsRanks: characterData.skillsData || {},
+							tradesRanks: characterData.tradesData || {},
+							languagesData: characterData.languagesData || { common: { fluency: 'fluent' } }
+						});
+
+			const pdfData = pdf.transformCalculatedCharacterToPdfData(calcResult, {
+				saved: characterData,
+				denorm
+			});
+			const blob = await fillPdfFromData(pdfData, { flatten: false, version: '0.10' });
+
+			const safeName = (characterData.finalName || characterData.id || 'Character')
+				.replace(/[^A-Za-z0-9]+/g, '_')
+				.replace(/^_+|_+$/g, '')
+				.slice(0, 60);
+			const fileName = `${safeName}_vDC20-0.10.pdf`;
+
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = fileName;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+		} catch (err) {
+			console.error('Export PDF failed', err);
+			alert('Failed to export PDF: ' + (err instanceof Error ? err.message : String(err)));
+		}
 	};
 
 	const hasSpells =
@@ -963,8 +1012,8 @@ logger.debug('ui', 'Resolved class definition for spellcasting', {
 				>
 					📋 Copy to Clipboard
 				</StyledActionButton>
-				<StyledActionButton onClick={handlePrint} title="Print character sheet as PDF">
-					🖨️ Print PDF
+				<StyledActionButton onClick={handlePrint} title="Export character sheet to a fillable PDF">
+					📄 Export PDF
 				</StyledActionButton>
 			</StyledActionButtons>
 
@@ -1360,12 +1409,6 @@ logger.debug('ui', 'Resolved class definition for spellcasting', {
 							<br />
 							<strong>Duration:</strong> {selectedSpell.duration}
 							<br />
-							{selectedSpell.isCantrip && (
-								<>
-									<strong>Type:</strong> Cantrip
-									<br />
-								</>
-							)}
 							{selectedSpell.isRitual && (
 								<>
 									<strong>Ritual:</strong> Yes
@@ -1382,11 +1425,11 @@ logger.debug('ui', 'Resolved class definition for spellcasting', {
 									{effect.description}
 								</div>
 							)) || 'No description available.'}
-							{selectedSpell.cantripPassive && (
+							{selectedSpell.spellPassive && (
 								<>
 									<br />
 									<br />
-									<strong>Cantrip Passive:</strong> {selectedSpell.cantripPassive}
+									<strong>Spell Passive:</strong> {selectedSpell.spellPassive}
 								</>
 							)}
 							{selectedSpell.enhancements?.length > 0 && (

@@ -40,12 +40,6 @@ const SpellPopup: React.FC<SpellPopupProps> = ({ spell, onClose }) => {
 					<br />
 					<strong>Duration:</strong> {spell.duration}
 					<br />
-					{spell.isCantrip && (
-						<>
-							<strong>Type:</strong> Cantrip
-							<br />
-						</>
-					)}
 					{spell.isRitual && (
 						<>
 							<strong>Ritual:</strong> Yes
@@ -54,11 +48,11 @@ const SpellPopup: React.FC<SpellPopupProps> = ({ spell, onClose }) => {
 					)}
 					<br />
 					{spell.effects?.[0]?.description || 'No description available.'}
-					{spell.cantripPassive && (
+					{spell.spellPassive && (
 						<>
 							<br />
 							<br />
-							<strong>Cantrip Passive:</strong> {spell.cantripPassive}
+							<strong>Spell Passive:</strong> {spell.spellPassive}
 						</>
 					)}
 				</StyledFeaturePopupDescription>

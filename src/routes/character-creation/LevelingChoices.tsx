@@ -694,10 +694,12 @@ function LevelingChoices() {
 													benefits.push(`+${level.benefits.manaPoints} MP`);
 												if (level.benefits.maneuversLearned)
 													benefits.push(`+${level.benefits.maneuversLearned} Maneuvers`);
-												if (level.benefits.cantripsLearned)
-													benefits.push(`+${level.benefits.cantripsLearned} Cantrips`);
-												if (level.benefits.spellsLearned)
-													benefits.push(`+${level.benefits.spellsLearned} Spells`);
+												// Combine cantrips and spells learned (cantrips removed in DC20 v0.10)
+												const totalSpellsLearned =
+													(level.benefits.cantripsLearned || 0) +
+													(level.benefits.spellsLearned || 0);
+												if (totalSpellsLearned > 0)
+													benefits.push(`+${totalSpellsLearned} Spells`);
 
 												return (
 													<div

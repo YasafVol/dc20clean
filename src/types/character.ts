@@ -249,7 +249,7 @@ export interface SpellData {
 	id: string;
 	spellName: string;
 	school: string;
-	isCantrip: boolean;
+	isCantrip?: boolean; // Legacy field - cantrips removed in DC20 v0.10
 	cost: {
 		ap: number;
 		mp?: number;
@@ -267,7 +267,7 @@ export interface SpellData {
 	}>;
 	enhancements?: Array<any>;
 	isRitual?: boolean;
-	cantripPassive?: string;
+	spellPassive?: string;
 }
 
 export interface InventoryItemData {

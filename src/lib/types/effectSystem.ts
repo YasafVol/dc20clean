@@ -402,6 +402,8 @@ export interface EnhancedCharacterBuildData {
 	manualPD?: number;
 	manualAD?: number;
 	manualPDR?: number;
+	// In-game condition toggles (e.g., raging)
+	activeConditions?: string[];
 
 	// Selections (M3.20 Slot Based)
 	selectedSpells: Record<string, string>; // SlotID -> SpellID

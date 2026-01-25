@@ -826,11 +826,11 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 							</div>
 						)}
 
-						{/* Cantrip Passive */}
-						{spell.cantripPassive && (
+						{/* Spell Passive */}
+						{spell.spellPassive && (
 							<div className="rounded-md bg-green-500/10 p-3">
-								<h4 className="text-sm font-medium text-green-400">Cantrip Passive</h4>
-								<p className="mt-1 text-sm text-muted-foreground">{spell.cantripPassive}</p>
+								<h4 className="text-sm font-medium text-green-400">Spell Passive</h4>
+								<p className="mt-1 text-sm text-muted-foreground">{spell.spellPassive}</p>
 							</div>
 						)}
 					</div>

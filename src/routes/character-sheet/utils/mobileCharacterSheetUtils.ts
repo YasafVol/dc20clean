@@ -89,7 +89,7 @@ export const convertSpellToCharacterData = (ruleSpell: any, spellId: string) => 
 	id: spellId,
 	spellName: ruleSpell.name,
 	school: ruleSpell.school,
-	level: ruleSpell.isCantrip ? 0 : ruleSpell.cost?.spellLevel || 1,
+	level: ruleSpell.cost?.mp || 1, // MP cost determines spell "level" in DC20 v0.10
 	castingTime: 'Action',
 	range: ruleSpell.range,
 	duration: ruleSpell.duration,

@@ -548,26 +548,25 @@ export const handlePrintCharacterSheet = (
                     <div class="spell-card" style="border: 2px solid #e0e0e0; border-radius: 10px; padding: 20px; background: #f8f9fa; margin-bottom: 20px;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
                             <div>
-                                <h3 style="margin: 0 0 5px 0; color: #2c3e50; font-size: 1.4rem;">${spell.spellName}</h3>
+                                <h3 style="margin: 0 0 5px 0; color: #2c3e50; font-size: 1.4rem;">${spell.spellName || 'Unknown Spell'}</h3>
                             </div>
                             <div>
-                                <span style="background: #3498db; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase;">${spell.school}</span>
-                                ${spell.isCantrip ? '<span style="background: #e74c3c; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-left: 8px;">Cantrip</span>' : ''}
+                                <span style="background: #3498db; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase;">${spell.school || 'Unknown'}</span>
                             </div>
                         </div>
                         
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;">
                             <div>
                                 <span style="font-weight: bold; color: #7f8c8d; font-size: 0.8rem; text-transform: uppercase;">Cost</span><br>
-                                <span style="color: #2c3e50; font-size: 0.9rem;">${spell.cost.ap} AP${spell.cost.mp ? `, ${spell.cost.mp} MP` : ''}</span>
+                                <span style="color: #2c3e50; font-size: 0.9rem;">${spell.cost?.ap ?? '-'} AP${spell.cost?.mp ? `, ${spell.cost.mp} MP` : ''}</span>
                             </div>
                             <div>
                                 <span style="font-weight: bold; color: #7f8c8d; font-size: 0.8rem; text-transform: uppercase;">Range</span><br>
-                                <span style="color: #2c3e50; font-size: 0.9rem;">${spell.range}</span>
+                                <span style="color: #2c3e50; font-size: 0.9rem;">${spell.range || '-'}</span>
                             </div>
                             <div>
                                 <span style="font-weight: bold; color: #7f8c8d; font-size: 0.8rem; text-transform: uppercase;">Duration</span><br>
-                                <span style="color: #2c3e50; font-size: 0.9rem;">${spell.duration}</span>
+                                <span style="color: #2c3e50; font-size: 0.9rem;">${spell.duration || '-'}</span>
                             </div>
                         </div>
                         
@@ -592,11 +591,11 @@ export const handlePrintCharacterSheet = (
 												}
                         
                         ${
-													fullSpell && fullSpell.cantripPassive
+													fullSpell && fullSpell.spellPassive
 														? `
                             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
-                                <h4 style="color: #2c3e50; margin: 0 0 10px 0; font-size: 1.1rem;">Cantrip Passive</h4>
-                                <p style="color: #34495e; line-height: 1.6; margin: 0; font-size: 0.95rem;">${fullSpell.cantripPassive}</p>
+                                <h4 style="color: #2c3e50; margin: 0 0 10px 0; font-size: 1.1rem;">Spell Passive</h4>
+                                <p style="color: #34495e; line-height: 1.6; margin: 0; font-size: 0.95rem;">${fullSpell.spellPassive}</p>
                             </div>
                         `
 														: ''
@@ -628,7 +627,7 @@ export const handlePrintCharacterSheet = (
 														? `
                             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
                                 <h4 style="color: #2c3e50; margin: 0 0 10px 0; font-size: 1.1rem;">Notes</h4>
-                                <p style="color: #34495e; line-height: 1.6; margin: 0; font-size: 0.95rem;">${spell.notes}</p>
+                                <p style="color: #34495e; line-height: 1.6; margin: 0; font-size: 0.95rem;">${spell.notes || ''}</p>
                             </div>
                         `
 														: ''
@@ -779,9 +778,13 @@ export const handlePrintCharacterSheet = (
 			}, 500);
 		};
 	} catch (error) {
+		const errorMessage = error instanceof Error ? error.message : String(error);
 		logger.error('ui', 'Failed to print character sheet', {
-			error: error instanceof Error ? error.message : String(error)
+			error: errorMessage,
+			stack: error instanceof Error ? error.stack : undefined
 		});
-		alert('Failed to print character sheet');
+		// Log to console for debugging
+		console.error('Print error:', error);
+		alert(`Failed to print character sheet: ${errorMessage}`);
 	}
 };

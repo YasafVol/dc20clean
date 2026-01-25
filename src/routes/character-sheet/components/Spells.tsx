@@ -79,7 +79,6 @@ const Spells: React.FC<SpellsProps> = ({
 			id: `spell_${Date.now()}`,
 			spellName: '',
 			school: '',
-			isCantrip: false,
 			cost: { ap: 0 },
 			range: '',
 			duration: '',
@@ -106,7 +105,6 @@ const Spells: React.FC<SpellsProps> = ({
 			if (selectedSpell) {
 				updateSpell(spell.id, 'spellName', selectedSpell.name);
 				updateSpell(spell.id, 'school', selectedSpell.school);
-				updateSpell(spell.id, 'isCantrip', selectedSpell.isCantrip);
 				updateSpell(spell.id, 'cost', selectedSpell.cost);
 				updateSpell(spell.id, 'range', selectedSpell.range);
 				updateSpell(spell.id, 'duration', selectedSpell.duration);
@@ -116,8 +114,8 @@ const Spells: React.FC<SpellsProps> = ({
 					updateSpell(spell.id, 'enhancements', selectedSpell.enhancements);
 				if (selectedSpell.isRitual !== undefined)
 					updateSpell(spell.id, 'isRitual', selectedSpell.isRitual);
-				if (selectedSpell.cantripPassive)
-					updateSpell(spell.id, 'cantripPassive', selectedSpell.cantripPassive);
+				if (selectedSpell.spellPassive)
+					updateSpell(spell.id, 'spellPassive', selectedSpell.spellPassive);
 
 				// Automatically expand the spell to show description
 				setExpandedSpells((prev) => {
@@ -194,7 +192,7 @@ const Spells: React.FC<SpellsProps> = ({
 					<span></span> {/* Empty column for remove button */}
 					<StyledHeaderColumn $isMobile={effectiveIsMobile}>Spell Name</StyledHeaderColumn>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile}>School</StyledHeaderColumn>
-					<StyledHeaderColumn $isMobile={effectiveIsMobile}>Type</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>Duration</StyledHeaderColumn>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile}>AP Cost</StyledHeaderColumn>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile}>MP Cost</StyledHeaderColumn>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile}>Range</StyledHeaderColumn>
@@ -278,9 +276,9 @@ const Spells: React.FC<SpellsProps> = ({
 									{/* School */}
 									<StyledSpellCell $isMobile={effectiveIsMobile}>{spell.school}</StyledSpellCell>
 
-									{/* Type (Cantrip or Spell) */}
-									<StyledSpellCell $isMobile={effectiveIsMobile}>
-										{spell.isCantrip ? 'Cantrip' : 'Spell'}
+									{/* Duration */}
+									<StyledSpellCell $isMobile={effectiveIsMobile} style={{ fontSize: '0.7rem' }}>
+										{spell.duration || '-'}
 									</StyledSpellCell>
 
 									{/* AP Cost */}
@@ -337,10 +335,10 @@ const Spells: React.FC<SpellsProps> = ({
 												</div>
 											)) || 'No description available.'}
 
-											{selectedSpell.cantripPassive && (
+											{selectedSpell.spellPassive && (
 												<>
 													<br />
-													<strong>Cantrip Passive:</strong> {selectedSpell.cantripPassive}
+													<strong>Spell Passive:</strong> {selectedSpell.spellPassive}
 												</>
 											)}
 

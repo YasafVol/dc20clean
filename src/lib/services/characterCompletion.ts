@@ -266,25 +266,43 @@ export const completeCharacter = async (
 		// Process user-selected spells from character creation
 		if (completedCharacter.className && characterState.selectedSpells) {
 			logger.debug('ui', 'Processing user-selected spells', {
-				spellCount: characterState.selectedSpells?.length || 0,
+				selectedSpells: characterState.selectedSpells,
 				className: completedCharacter.className
 			});
 
 			try {
-				// Use typed arrays directly
-				const selectedSpellNames = characterState.selectedSpells || [];
+				// Handle both formats:
+				// - Record<string, string> (slotId -> spellId) from new spell selection UI
+				// - string[] (spell names) from legacy format
+				let spellIds: string[] = [];
 
-				if (Array.isArray(selectedSpellNames) && selectedSpellNames.length > 0) {
-					// Convert selected spell names to SpellData objects
-					const userSelectedSpells = selectedSpellNames
-						.map((spellName: string) => {
-							const fullSpell = allSpells.find((s) => s.name === spellName);
+				if (
+					typeof characterState.selectedSpells === 'object' &&
+					!Array.isArray(characterState.selectedSpells)
+				) {
+					// New format: Record<string, string> - extract spell IDs from values
+					spellIds = Object.values(characterState.selectedSpells).filter(
+						(id): id is string => typeof id === 'string' && id.length > 0
+					);
+					logger.debug('ui', 'Extracted spell IDs from Record', { spellIds });
+				} else if (Array.isArray(characterState.selectedSpells)) {
+					// Legacy format: array of spell names
+					spellIds = characterState.selectedSpells;
+				}
+
+				if (spellIds.length > 0) {
+					// Convert spell IDs/names to SpellData objects
+					const userSelectedSpells = spellIds
+						.map((spellIdOrName: string) => {
+							// Try to find by ID first, then by name
+							const fullSpell =
+								allSpells.find((s) => s.id === spellIdOrName) ||
+								allSpells.find((s) => s.name === spellIdOrName);
 							if (fullSpell) {
 								return {
 									id: `spell_${Date.now()}_${Math.random()}`,
 									spellName: fullSpell.name,
 									school: fullSpell.school,
-									isCantrip: fullSpell.isCantrip,
 									cost: fullSpell.cost,
 									range: fullSpell.range,
 									duration: fullSpell.duration,
@@ -292,6 +310,7 @@ export const completeCharacter = async (
 									notes: ''
 								};
 							}
+							logger.warn('ui', 'Spell not found', { spellIdOrName });
 							return null;
 						})
 						.filter(Boolean);

@@ -26,6 +26,7 @@ export type SheetAction =
 	| { type: 'UPDATE_DEATH_STEP'; steps: number; isDead?: boolean }
 	| { type: 'UPDATE_ACTION_POINTS_USED'; ap: number }
 	| { type: 'SET_MANUAL_DEFENSE'; pd?: number; ad?: number; pdr?: number }
+	| { type: 'SET_CONDITION_TOGGLE'; conditionId: string; active: boolean }
 	| { type: 'ADD_ATTACK'; attack: AttackData }
 	| { type: 'REMOVE_ATTACK'; attackId: string }
 	| { type: 'UPDATE_ATTACK'; attackId: string; attack: AttackData }
@@ -231,6 +232,25 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 								...(action.pd !== undefined && { PD: action.pd }),
 								...(action.ad !== undefined && { AD: action.ad }),
 								...(action.pdr !== undefined && { PDR: action.pdr })
+							}
+						}
+					}
+				}
+			};
+
+		case 'SET_CONDITION_TOGGLE':
+			if (!state.character) return state;
+			return {
+				...state,
+				character: {
+					...state.character,
+					characterState: {
+						...state.character.characterState,
+						ui: {
+							...state.character.characterState.ui,
+							activeConditions: {
+								...(state.character.characterState.ui?.activeConditions || {}),
+								[action.conditionId]: action.active
 							}
 						}
 					}
@@ -590,6 +610,10 @@ export function useCharacterSheetReducer() {
 		dispatch({ type: 'SET_MANUAL_DEFENSE', pd, ad, pdr });
 	}, []);
 
+	const setConditionToggle = useCallback((conditionId: string, active: boolean) => {
+		dispatch({ type: 'SET_CONDITION_TOGGLE', conditionId, active });
+	}, []);
+
 	const addAttack = useCallback((attack: AttackData) => {
 		dispatch({ type: 'ADD_ATTACK', attack });
 	}, []);
@@ -684,6 +708,7 @@ export function useCharacterSheetReducer() {
 		updateExhaustion,
 		updateDeathStep,
 		setManualDefense,
+		setConditionToggle,
 		addAttack,
 		removeAttack,
 		updateAttack,

@@ -56,6 +56,7 @@ export interface CharacterState {
 			AD?: number;
 			PDR?: number;
 		};
+		activeConditions?: Record<string, boolean>;
 	};
 	inventory: {
 		items: any[]; // Will use proper InventoryItemData once imported

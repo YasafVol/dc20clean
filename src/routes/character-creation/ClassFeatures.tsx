@@ -653,14 +653,6 @@ function ClassFeatures() {
 					<div className="hover:border-primary mb-4 rounded-lg border border-white/50 bg-transparent p-6 transition-colors">
 						<h4 className="text-primary mb-2 text-xl font-bold">Spellcasting Progression</h4>
 						<div className="border-t border-white/10 pt-3">
-							{selectedClassFeatures.spellcastingPath.cantrips && (
-								<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
-									<h6 className="text-primary text-sm font-semibold">Cantrips Known</h6>
-									<p className="text-foreground/70 text-sm">
-										{selectedClassFeatures.spellcastingPath.cantrips.knownIncreasesBy}
-									</p>
-								</div>
-							)}
 							{selectedClassFeatures.spellcastingPath.spells && (
 								<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
 									<h6 className="text-primary text-sm font-semibold">Spells Known</h6>

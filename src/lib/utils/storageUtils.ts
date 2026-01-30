@@ -145,6 +145,14 @@ export const getInitializedCharacterState = (character: any): CharacterState => 
 			// Death tracking defaults
 			deathSteps: 0,
 			isDead: false
+		},
+		// Store original max values for reference (used by CharacterSheetProvider)
+		original: {
+			maxHP: character.finalHPMax || 0,
+			maxSP: character.finalSPMax || 0,
+			maxMP: character.finalMPMax || 0,
+			maxGritPoints: character.finalGritPoints || 0,
+			maxRestPoints: character.finalRestPoints || 0
 		}
 	},
 	ui: {

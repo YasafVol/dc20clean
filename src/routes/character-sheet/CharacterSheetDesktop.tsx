@@ -159,7 +159,6 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 			id: `spell_${Date.now()}_${Math.random()}`,
 			spellName: 'New Spell',
 			school: 'Evocation',
-			isCantrip: false,
 			cost: { ap: 1, mp: 1 },
 			range: '5 Spaces',
 			duration: 'Instant',
@@ -532,7 +531,7 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 													{spell.spellName || 'Unnamed Spell'}
 												</StyledSpellName>
 												<StyledSpellSchool>
-													{spell.school} {spell.isCantrip ? '(Cantrip)' : ''}
+													{spell.school}
 												</StyledSpellSchool>
 											</StyledSpellsTableCell>
 											<StyledSpellsTableCell>

@@ -91,6 +91,35 @@ export type ActionType = (typeof ACTION_TYPES)[number];
 export const TARGET_DEFENSES = ['pd', 'ad'] as const;
 export type TargetDefense = (typeof TARGET_DEFENSES)[number];
 
+// Common action traits
+export const ACTION_TRAITS = [
+	'Brutal',
+	'Deadly',
+	'Finesse',
+	'Heavy',
+	'Light',
+	'Reach',
+	'Thrown',
+	'Versatile',
+	'Ammo',
+	'Loading',
+	'Two-Handed',
+	'Grappling',
+	'Knockback',
+	'Piercing',
+	'Cleave',
+	'Stun',
+	'Bleed',
+	'Poison',
+	'Fire',
+	'Cold',
+	'Lightning',
+	'Necrotic',
+	'Radiant',
+	'Psychic',
+] as const;
+export type ActionTrait = (typeof ACTION_TRAITS)[number];
+
 export interface MonsterAction {
 	id: string; // act_<uuid>
 	name: string;
@@ -101,6 +130,7 @@ export interface MonsterAction {
 	damageType?: string; // slashing, fire, etc.
 	range?: number; // spaces
 	area?: string; // cone, sphere, etc.
+	traits?: ActionTrait[]; // action traits/properties
 	description: string;
 }
 
@@ -114,6 +144,7 @@ export const monsterActionSchema = z.object({
 	damageType: z.string().optional(),
 	range: z.number().int().min(0).optional(),
 	area: z.string().optional(),
+	traits: z.array(z.enum(ACTION_TRAITS)).optional(),
 	description: z.string(),
 });
 

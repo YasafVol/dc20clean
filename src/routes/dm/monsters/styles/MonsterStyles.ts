@@ -283,7 +283,7 @@ export const SectionHeader = styled.div`
 export const SectionTitle = styled.h2`
 	font-family: 'Cinzel', serif;
 	color: #fbbf24;
-	font-size: 0.875rem;
+	font-size: 1rem;
 	font-weight: 600;
 	margin: 0;
 	text-transform: uppercase;
@@ -416,8 +416,12 @@ export const EncounterCostValue = styled.div`
 
 export const RoleGrid = styled.div`
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+	grid-template-columns: repeat(4, 1fr);
 	gap: 0.75rem;
+
+	@media (max-width: 768px) {
+		grid-template-columns: repeat(2, 1fr);
+	}
 `;
 
 export const RoleCard = styled.button<{ $selected?: boolean }>`

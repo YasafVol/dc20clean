@@ -454,8 +454,9 @@ export const RoleName = styled.div<{ $selected?: boolean }>`
 `;
 
 export const RoleModifiers = styled.div`
-	font-size: 0.625rem;
-	color: #71717a;
+	font-size: 0.8125rem;
+	color: #a1a1aa;
+	margin-top: 0.25rem;
 `;
 
 // ============================================================================

@@ -58,8 +58,8 @@ const ACTION_TYPES: { value: ActionType; label: string }[] = [
 ];
 
 const TARGET_DEFENSES: { value: TargetDefense; label: string }[] = [
-	{ value: 'pd', label: 'Physical (PD)' },
-	{ value: 'ad', label: 'Arcane (AD)' },
+	{ value: 'pd', label: 'Precision (PD)' },
+	{ value: 'ad', label: 'Area (AD)' },
 ];
 
 // Stepper component for +/- controls
@@ -103,7 +103,7 @@ const NumberStepper: React.FC<{
 	);
 };
 
-// Trait selector component
+// Trait selector component - opens upward to avoid cutoff
 const TraitSelector: React.FC<{
 	selected: ActionTrait[];
 	onChange: (traits: ActionTrait[]) => void;
@@ -127,30 +127,59 @@ const TraitSelector: React.FC<{
 				className="w-full px-3 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white text-sm text-left focus:outline-none focus:border-purple-500 flex justify-between items-center"
 			>
 				<span className={selected.length ? 'text-white' : 'text-zinc-500'}>
-					{selected.length ? selected.join(', ') : 'Select traits...'}
+					{selected.length ? `${selected.length} selected` : 'Select traits...'}
 				</span>
 				<span className="text-zinc-500">{isOpen ? '▲' : '▼'}</span>
 			</button>
 
 			{isOpen && (
-				<div className="absolute z-10 mt-1 w-full max-h-48 overflow-auto bg-zinc-900 border border-purple-500/40 rounded-lg shadow-lg">
-					<div className="grid grid-cols-2 gap-1 p-2">
-						{ACTION_TRAITS.map((trait) => (
-							<button
-								key={trait}
-								type="button"
-								onClick={() => toggleTrait(trait)}
-								className={`px-2 py-1 text-xs rounded text-left transition-colors ${
-									selected.includes(trait)
-										? 'bg-purple-500/30 text-purple-300 border border-purple-500/50'
-										: 'bg-black/30 text-zinc-400 hover:bg-purple-500/10 hover:text-white'
-								}`}
-							>
-								{trait}
-							</button>
-						))}
+				<>
+					{/* Backdrop to close on click outside */}
+					<div
+						className="fixed inset-0 z-10"
+						onClick={() => setIsOpen(false)}
+					/>
+					{/* Dropdown opens UPWARD */}
+					<div className="absolute z-20 bottom-full mb-1 left-0 right-0 bg-zinc-900 border border-purple-500/40 rounded-lg shadow-xl">
+						<div className="grid grid-cols-3 gap-1 p-2 max-h-64 overflow-y-auto">
+							{ACTION_TRAITS.map((trait) => (
+								<button
+									key={trait}
+									type="button"
+									onClick={() => toggleTrait(trait)}
+									className={`px-2 py-1.5 text-xs rounded text-left transition-colors ${
+										selected.includes(trait)
+											? 'bg-purple-500/30 text-purple-300 border border-purple-500/50'
+											: 'bg-black/30 text-zinc-400 hover:bg-purple-500/10 hover:text-white'
+									}`}
+								>
+									{trait}
+								</button>
+							))}
+						</div>
+						{selected.length > 0 && (
+							<div className="border-t border-purple-500/20 p-2">
+								<div className="flex flex-wrap gap-1">
+									{selected.map((trait) => (
+										<span
+											key={trait}
+											className="px-2 py-0.5 text-xs bg-green-500/20 text-green-400 rounded flex items-center gap-1"
+										>
+											{trait}
+											<button
+												type="button"
+												onClick={() => toggleTrait(trait)}
+												className="hover:text-red-400"
+											>
+												×
+											</button>
+										</span>
+									))}
+								</div>
+							</div>
+						)}
 					</div>
-				</div>
+				</>
 			)}
 		</div>
 	);

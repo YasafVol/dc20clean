@@ -89,6 +89,35 @@ export const ConditionsIcon = () => (
 	</svg>
 );
 
+export const MonsterIcon = () => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 24 24"
+		width="64"
+		height="64"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth="1.5"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+	>
+		{/* Dragon/Monster head */}
+		<path d="M12 2C8 2 5 5 5 9c0 2 1 4 3 5l-1 3h10l-1-3c2-1 3-3 3-5 0-4-3-7-7-7z" />
+		{/* Eyes */}
+		<circle cx="9" cy="8" r="1" fill="currentColor" />
+		<circle cx="15" cy="8" r="1" fill="currentColor" />
+		{/* Horns */}
+		<path d="M7 4L5 2" />
+		<path d="M17 4l2-2" />
+		{/* Teeth */}
+		<path d="M8 14v2" />
+		<path d="M12 14v2" />
+		<path d="M16 14v2" />
+		{/* Body hint */}
+		<path d="M8 17v3c0 1 1 2 4 2s4-1 4-2v-3" />
+	</svg>
+);
+
 export const GroupIcon = () => (
 	<svg
 		id="Layer_1"
@@ -196,6 +225,15 @@ function Menu() {
 					</StyledTextContent>
 					<StyledIcon>
 						<EquipmentIcon />
+					</StyledIcon>
+				</StyledMenuCard>
+
+				<StyledMenuCard onClick={() => navigate('/dm/monsters')}>
+					<StyledTextContent>
+						<StyledCardTitle>DM Tools</StyledCardTitle>
+					</StyledTextContent>
+					<StyledIcon>
+						<MonsterIcon />
 					</StyledIcon>
 				</StyledMenuCard>
 			</StyledMenuGrid>

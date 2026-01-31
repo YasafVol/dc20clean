@@ -9,6 +9,7 @@ import Menu from './components/Menu.tsx';
 import Spellbook from './routes/spellbook/Spellbook.tsx';
 import CustomEquipment from './routes/custom-equipment/CustomEquipment.tsx';
 import Conditions from './routes/conditions/Conditions.tsx';
+import { MonsterList, MonsterDesigner } from './routes/dm/monsters';
 
 import { StyledApp } from './styles/App.styles';
 
@@ -111,6 +112,9 @@ function App() {
 							}
 						/>
 						<Route path="/character/:id/levelup" element={<LevelUp />} />
+						{/* DM Tools */}
+						<Route path="/dm/monsters" element={<MonsterList />} />
+						<Route path="/dm/monsters/:id" element={<MonsterDesigner />} />
 					</Routes>
 				</BrowserRouter>
 			</StyledApp>

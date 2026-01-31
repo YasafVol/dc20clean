@@ -1,10 +1,11 @@
 /**
  * Convex Schema for DC20 Character Creator
  *
- * Convex schema for character storage.
+ * Convex schema for character and DM tools storage.
  *
- * This schema maps the SavedCharacter TypeScript interface to Convex validators.
- * See src/lib/types/dataContracts.ts for the source interface.
+ * This schema maps TypeScript interfaces to Convex validators.
+ * See src/lib/types/dataContracts.ts for character interface.
+ * See src/lib/rulesdata/schemas/monster.schema.ts for monster interface.
  */
 
 import { defineSchema, defineTable } from 'convex/server';
@@ -260,10 +261,199 @@ const characterValidator = {
 	schemaVersion: v.string(),
 };
 
+// ============================================================================
+// DM TOOLS: MONSTER SCHEMA
+// ============================================================================
+
+// Monster action validator
+const monsterActionValidator = v.object({
+	id: v.string(), // act_<uuid>
+	name: v.string(),
+	apCost: v.number(),
+	type: v.union(v.literal('martial'), v.literal('spell'), v.literal('special')),
+	targetDefense: v.union(v.literal('pd'), v.literal('ad')),
+	damage: v.number(),
+	damageType: v.optional(v.string()),
+	range: v.optional(v.number()),
+	area: v.optional(v.string()),
+	description: v.string(),
+});
+
+// Monster attributes validator
+const monsterAttributesValidator = v.object({
+	might: v.number(),
+	agility: v.number(),
+	charisma: v.number(),
+	intelligence: v.number(),
+});
+
+// Fork tracking validator
+const forkedFromValidator = v.object({
+	id: v.string(),
+	type: v.union(v.literal('official'), v.literal('custom'), v.literal('homebrew')),
+	name: v.string(),
+	userId: v.optional(v.string()),
+	forkedAt: v.string(),
+});
+
+const forkStatsValidator = v.object({
+	forkCount: v.number(),
+	lastForkedAt: v.optional(v.string()),
+});
+
+// Main monster table schema
+const monsterValidator = {
+	// Owner reference (Convex Auth user ID)
+	userId: v.id('users'),
+
+	// Identity
+	id: v.string(), // mon_<uuid>
+	name: v.string(),
+	description: v.optional(v.string()),
+	level: v.number(), // -1 to 10
+	tier: v.union(v.literal('standard'), v.literal('apex'), v.literal('legendary')),
+	roleId: v.union(
+		v.literal('artillerist'),
+		v.literal('brute'),
+		v.literal('controller'),
+		v.literal('defender'),
+		v.literal('leader'),
+		v.literal('lurker'),
+		v.literal('skirmisher'),
+		v.literal('support')
+	),
+
+	// Calculated Stats
+	finalHP: v.number(),
+	finalPD: v.number(),
+	finalAD: v.number(),
+	finalAttack: v.number(),
+	finalSaveDC: v.number(),
+	finalBaseDamage: v.number(),
+
+	// Attributes (flavor/roleplay)
+	attributes: monsterAttributesValidator,
+
+	// Features
+	featureIds: v.array(v.string()),
+	featurePointsSpent: v.number(),
+	featurePointsMax: v.number(),
+
+	// Actions
+	actions: v.array(monsterActionValidator),
+
+	// Sharing
+	visibility: v.union(
+		v.literal('private'),
+		v.literal('public_anonymous'),
+		v.literal('public_credited')
+	),
+	approvalStatus: v.union(
+		v.literal('draft'),
+		v.literal('pending_review'),
+		v.literal('approved'),
+		v.literal('rejected')
+	),
+	isHomebrew: v.boolean(),
+	rejectionReason: v.optional(v.string()),
+	submittedAt: v.optional(v.string()),
+	approvedAt: v.optional(v.string()),
+	approvedBy: v.optional(v.string()),
+
+	// Fork Tracking
+	forkedFrom: v.optional(forkedFromValidator),
+	forkStats: v.optional(forkStatsValidator),
+
+	// Soft Delete
+	deletedAt: v.optional(v.string()),
+	deletedBy: v.optional(v.string()),
+	scheduledPurgeAt: v.optional(v.string()),
+
+	// Metadata
+	createdAt: v.string(),
+	lastModified: v.string(),
+	schemaVersion: v.string(),
+
+	// Calculation Breakdowns
+	breakdowns: v.any(), // Record<string, StatBreakdown>
+};
+
+// ============================================================================
+// DM TOOLS: CUSTOM FEATURE SCHEMA
+// ============================================================================
+
+// Feature effect validator
+const featureEffectValidator = v.object({
+	type: v.string(),
+	target: v.optional(v.string()),
+	value: v.optional(v.any()),
+	description: v.optional(v.string()),
+});
+
+// Custom feature table schema
+const customFeatureValidator = {
+	// Owner reference (Convex Auth user ID)
+	userId: v.id('users'),
+
+	// Identity
+	id: v.string(), // feat_<uuid>
+	name: v.string(),
+	description: v.string(),
+	pointCost: v.number(), // 1-5
+	isOfficial: v.boolean(), // Always false for custom
+	effects: v.optional(v.array(featureEffectValidator)),
+
+	// Sharing (same as monster)
+	visibility: v.union(
+		v.literal('private'),
+		v.literal('public_anonymous'),
+		v.literal('public_credited')
+	),
+	approvalStatus: v.union(
+		v.literal('draft'),
+		v.literal('pending_review'),
+		v.literal('approved'),
+		v.literal('rejected')
+	),
+	isHomebrew: v.boolean(),
+	rejectionReason: v.optional(v.string()),
+	submittedAt: v.optional(v.string()),
+	approvedAt: v.optional(v.string()),
+	approvedBy: v.optional(v.string()),
+
+	// Fork Tracking
+	forkedFrom: v.optional(forkedFromValidator),
+	forkStats: v.optional(forkStatsValidator),
+
+	// Soft Delete
+	deletedAt: v.optional(v.string()),
+	deletedBy: v.optional(v.string()),
+	scheduledPurgeAt: v.optional(v.string()),
+
+	// Metadata
+	createdAt: v.string(),
+	lastModified: v.string(),
+	schemaVersion: v.string(),
+};
+
 export default defineSchema({
 	...authTables,
 	characters: defineTable(characterValidator)
 		.index('by_user', ['userId'])
 		.index('by_user_and_id', ['userId', 'id'])
 		.index('by_user_and_name', ['userId', 'finalName']),
+
+	// DM Tools: Monsters
+	monsters: defineTable(monsterValidator)
+		.index('by_user', ['userId'])
+		.index('by_user_and_id', ['userId', 'id'])
+		.index('by_approval_status', ['approvalStatus'])
+		.index('by_user_and_deleted', ['userId', 'deletedAt']),
+
+	// DM Tools: Custom Features
+	customFeatures: defineTable(customFeatureValidator)
+		.index('by_user', ['userId'])
+		.index('by_user_and_id', ['userId', 'id'])
+		.index('by_approval_status', ['approvalStatus'])
+		.index('by_user_and_deleted', ['userId', 'deletedAt']),
 });

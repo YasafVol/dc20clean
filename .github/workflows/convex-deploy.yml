@@ -1,0 +1,38 @@
+# Convex Deployment
+# Automatically deploys Convex functions when convex/ files change
+
+name: Deploy Convex
+
+on:
+  push:
+    branches:
+      - main
+      - dmTools
+    paths:
+      - 'convex/**'
+  workflow_dispatch: # Allow manual trigger
+
+concurrency:
+  group: convex-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy Convex Functions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Deploy to Convex
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: npx convex deploy --cmd 'npm run build'

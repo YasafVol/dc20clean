@@ -4,6 +4,7 @@ import type { Maneuver } from '../../../lib/rulesdata/martials/maneuvers';
 import { maneuvers as allManeuvers } from '../../../lib/rulesdata/martials/maneuvers';
 import { useCharacterManeuvers, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import { logger } from '../../../lib/utils/logger';
+import { theme } from '../styles/theme';
 import {
 	StyledManeuversSection,
 	StyledManeuversHeader,
@@ -19,7 +20,16 @@ import {
 	StyledManeuverTypeFilter,
 	StyledManeuverCell,
 	StyledManeuverNameCell,
-	StyledAddManeuverButton
+	StyledAddManeuverButton,
+	StyledManeuverDescriptionContainer,
+	StyledManeuverDescriptionHeader,
+	StyledManeuverDescriptionLabel,
+	StyledManeuverToggleButton,
+	StyledManeuverDescriptionText,
+	StyledManeuverMetaInfo,
+	StyledManeuverDescriptionCollapsed,
+	StyledClickableNameCell,
+	StyledTimingCell
 } from '../styles/Maneuvers.styles';
 
 export interface ManeuversProps {
@@ -214,15 +224,14 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 
 									{/* Maneuver Name - show as text in read-only mode, dropdown in edit mode */}
 									{readOnly ? (
-										<StyledManeuverNameCell
+										<StyledClickableNameCell
 											$isMobile={effectiveIsMobile}
-											style={{ fontWeight: 'bold', color: '#2c3e50', cursor: 'pointer' }}
 											onClick={() => {
 												if (selectedManeuver) onManeuverClick(selectedManeuver);
 											}}
 										>
 											{maneuver.name || 'Unknown Maneuver'}
-										</StyledManeuverNameCell>
+										</StyledClickableNameCell>
 									) : (
 										<StyledManeuverSelect
 											data-testid="maneuver-name"
@@ -267,100 +276,56 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 									</StyledManeuverCell>
 
 									{/* Range/Reaction */}
-									<StyledManeuverCell $isMobile={effectiveIsMobile} style={{ fontSize: '0.7rem' }}>
+									<StyledTimingCell $isMobile={effectiveIsMobile}>
 										{selectedManeuver?.isReaction ? 'Reaction' : 'Action'}
-									</StyledManeuverCell>
+									</StyledTimingCell>
 								</StyledManeuverRow>
 
 								{/* Expandable Description Section */}
 								{selectedManeuver && expandedManeuvers.has(maneuver.id) && (
-									<div
-										style={{
-											backgroundColor: '#f8f9fa',
-											padding: '15px',
-											border: '1px solid #e9ecef',
-											borderTop: 'none',
-											borderRadius: '0 0 5px 5px',
-											marginBottom: '10px'
-										}}
-									>
-										<div
-											style={{
-												display: 'flex',
-												justifyContent: 'space-between',
-												marginBottom: '10px'
-											}}
-										>
-											<strong style={{ color: '#8b4513' }}>Description:</strong>
-											<button
+									<StyledManeuverDescriptionContainer $isMobile={effectiveIsMobile}>
+										<StyledManeuverDescriptionHeader $isMobile={effectiveIsMobile}>
+											<StyledManeuverDescriptionLabel $isMobile={effectiveIsMobile}>
+												Description:
+											</StyledManeuverDescriptionLabel>
+											<StyledManeuverToggleButton
+												$isMobile={effectiveIsMobile}
 												onClick={() => toggleManeuverExpansion(maneuver.id)}
-												style={{
-													background: 'none',
-													border: '1px solid #8b4513',
-													color: '#8b4513',
-													padding: '2px 8px',
-													borderRadius: '3px',
-													cursor: 'pointer',
-													fontSize: '0.7rem'
-												}}
 											>
 												Hide Description
-											</button>
-										</div>
-
-										{/* Main Description */}
-										<div style={{ marginBottom: '15px', lineHeight: '1.4' }}>
+											</StyledManeuverToggleButton>
+										</StyledManeuverDescriptionHeader>
+										<StyledManeuverDescriptionText $isMobile={effectiveIsMobile}>
 											<strong>{selectedManeuver.name}:</strong>
 											<br />
 											{selectedManeuver.description}
-										</div>
-
+										</StyledManeuverDescriptionText>
 										{/* Requirements */}
 										{selectedManeuver.requirement && (
-											<div style={{ marginBottom: '10px' }}>
-												<strong style={{ color: '#8b4513' }}>Requirements:</strong>{' '}
-												{selectedManeuver.requirement}
-											</div>
+											<StyledManeuverMetaInfo $isMobile={effectiveIsMobile}>
+												<strong>Requirements:</strong> {selectedManeuver.requirement}
+											</StyledManeuverMetaInfo>
 										)}
 
 										{/* Trigger */}
 										{selectedManeuver.trigger && (
-											<div style={{ marginBottom: '10px' }}>
-												<strong style={{ color: '#8b4513' }}>Trigger:</strong>{' '}
-												{selectedManeuver.trigger}
-											</div>
+											<StyledManeuverMetaInfo $isMobile={effectiveIsMobile}>
+												<strong>Trigger:</strong> {selectedManeuver.trigger}
+											</StyledManeuverMetaInfo>
 										)}
-									</div>
+									</StyledManeuverDescriptionContainer>
 								)}
 
 								{/* Show Description Button (when collapsed) */}
 								{selectedManeuver && !expandedManeuvers.has(maneuver.id) && (
-									<div
-										style={{
-											textAlign: 'center',
-											padding: '5px',
-											backgroundColor: '#f8f9fa',
-											border: '1px solid #e9ecef',
-											borderTop: 'none',
-											borderRadius: '0 0 5px 5px',
-											marginBottom: '10px'
-										}}
-									>
-										<button
+									<StyledManeuverDescriptionCollapsed $isMobile={effectiveIsMobile}>
+										<StyledManeuverToggleButton
+											$isMobile={effectiveIsMobile}
 											onClick={() => toggleManeuverExpansion(maneuver.id)}
-											style={{
-												background: 'none',
-												border: '1px solid #8b4513',
-												color: '#8b4513',
-												padding: '2px 8px',
-												borderRadius: '3px',
-												cursor: 'pointer',
-												fontSize: '0.7rem'
-											}}
 										>
 											Show Description
-										</button>
-									</div>
+										</StyledManeuverToggleButton>
+									</StyledManeuverDescriptionCollapsed>
 								)}
 							</React.Fragment>
 						);

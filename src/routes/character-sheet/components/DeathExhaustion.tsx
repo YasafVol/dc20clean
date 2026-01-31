@@ -1,10 +1,14 @@
 import React from 'react';
 import { useCharacterResources, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import { logger } from '../../../lib/utils/logger';
+import { theme } from '../styles/theme';
 import {
 	StyledDeathExhaustionContainer,
 	StyledExhaustionOnlyContainer,
-	StyledExhaustionOnlyTitle
+	StyledExhaustionOnlyTitle,
+	StyledDeathThresholdLabel,
+	StyledExhaustionHeader,
+	StyledExhaustionInfoButton
 } from '../styles/DeathExhaustion.styles';
 
 import {
@@ -113,9 +117,7 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 								</StyledHealthStatus>
 							</StyledHealthStatusTooltip>
 
-							<div style={{ fontSize: '0.8rem', color: '#8b4513', marginBottom: '0.3rem' }}>
-								DEATH THRESHOLD
-							</div>
+							<StyledDeathThresholdLabel>DEATH THRESHOLD</StyledDeathThresholdLabel>
 							<StyledDeathThreshold $isMobile={effectiveIsMobile}>
 								{deathThreshold}
 							</StyledDeathThreshold>
@@ -153,14 +155,14 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 					);
 				})()}
 			</StyledDeathContainer>
-
+			tt
 			<StyledExhaustionOnlyContainer data-testid="exhaustion-btn" $isMobile={effectiveIsMobile}>
-				<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+				<StyledExhaustionHeader>
 					<StyledExhaustionOnlyTitle data-testid="exhaustion-btn" $isMobile={effectiveIsMobile}>
 						EXHAUSTION
 					</StyledExhaustionOnlyTitle>
 					{/* Small hook button for E2E to open/focus exhaustion */}
-					<button
+					<StyledExhaustionInfoButton
 						data-testid="exhaustion-btn"
 						aria-label="Open Exhaustion"
 						onClick={() => {
@@ -172,11 +174,10 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 								/* ignore */
 							}
 						}}
-						style={{ background: 'none', border: 'none', color: '#8b4513', cursor: 'pointer' }}
 					>
 						i
-					</button>
-				</div>
+					</StyledExhaustionInfoButton>
+				</StyledExhaustionHeader>
 				<StyledExhaustionContainer $isMobile={effectiveIsMobile}>
 					{exhaustionLevels.map(({ level, description }) => (
 						<StyledExhaustionLevel

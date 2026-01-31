@@ -15,18 +15,18 @@ export const StyledExhaustionLevel = styled.div<{ filled: boolean; $isMobile?: b
 	position: relative;
 	width: 24px;
 	height: 24px;
-	border: 2px solid ${(props) => (props.$isMobile ? 'rgb(68, 68, 68)' : '#8b4513')};
+	border: 2px solid ${(props) => (props.$isMobile ? 'rgb(68, 68, 68)' : '#414868')};
 	background: ${(props) => {
 		if (props.filled) {
-			return props.$isMobile ? '#f5d020' : '#8b4513';
+			return props.$isMobile ? '#f5d020' : '#E0AF68';
 		}
-		return props.$isMobile ? 'rgb(42, 42, 42)' : 'white';
+		return props.$isMobile ? 'rgb(42, 42, 42)' : '#1A1B26';
 	}};
 	color: ${(props) => {
 		if (props.filled) {
-			return props.$isMobile ? 'rgb(42, 42, 42)' : 'white';
+			return props.$isMobile ? 'rgb(42, 42, 42)' : '#1A1B26';
 		}
-		return props.$isMobile ? '#f5d020' : '#8b4513';
+		return props.$isMobile ? '#f5d020' : '#E0AF68';
 	}};
 	display: flex;
 	align-items: center;
@@ -45,9 +45,9 @@ export const StyledExhaustionLevel = styled.div<{ filled: boolean; $isMobile?: b
 	&:hover {
 		background: ${(props) => {
 			if (props.filled) {
-				return props.$isMobile ? '#d4b01c' : '#654321';
+				return props.$isMobile ? '#d4b01c' : '#C49A53';
 			}
-			return props.$isMobile ? 'rgb(52, 52, 52)' : '#f5f5dc';
+			return props.$isMobile ? 'rgb(52, 52, 52)' : '#24283B';
 		}};
 		transform: scale(1.1);
 	}

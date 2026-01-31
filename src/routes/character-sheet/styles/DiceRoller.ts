@@ -466,3 +466,128 @@ export const StyledDiceHistory = styled.div`
 		letter-spacing: 0.5px;
 	}
 `;
+
+// Mode buttons container
+export const StyledModeButtonsContainer = styled.div`
+	display: flex;
+	gap: 0.25rem;
+	flex-wrap: wrap;
+`;
+
+// Advantage/Disadvantage count controls container
+export const StyledCountControlsContainer = styled.div`
+	margin-top: 0.5rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.8rem;
+	color: #ffd700;
+`;
+
+// Count label span
+export const StyledCountLabel = styled.span`
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+`;
+
+// Count control button (minus/plus)
+export const StyledCountButton = styled.button`
+	width: 20px;
+	height: 20px;
+	background: ${(props) => props.theme.colors.accent.primary};
+	color: ${(props) => props.theme.colors.text.inverse};
+	border: 1px solid ${(props) => props.theme.colors.accent.secondary};
+	border-radius: 3px;
+	cursor: pointer;
+	font-size: 0.8rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s ease;
+
+	&:hover {
+		transform: scale(1.1);
+		background: ${(props) => props.theme.colors.accent.secondary};
+	}
+`;
+
+// Count display span
+export const StyledCountDisplay = styled.span`
+	min-width: 20px;
+	text-align: center;
+	font-weight: bold;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+`;
+
+// Descriptive text for count controls
+export const StyledCountDescription = styled.span`
+	font-size: 0.7rem;
+	color: rgba(255, 255, 255, 0.8);
+	margin-left: 0.25rem;
+`;
+
+// Dice type buttons grid
+export const StyledDiceTypeGrid = styled.div`
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 0.25rem;
+	margin-bottom: 0.5rem;
+`;
+
+// Clear all dice button
+export const StyledClearAllButton = styled.button`
+	font-size: 0.7rem;
+	padding: 0.2rem 0.4rem;
+	background: #d32f2f;
+	color: white;
+	border: none;
+	border-radius: 3px;
+	cursor: pointer;
+	margin-top: 0.25rem;
+	transition: all 0.2s ease;
+
+	&:hover {
+		background: #b71c1c;
+		transform: translateY(-1px);
+	}
+`;
+
+// Roll mode text display
+export const StyledRollModeText = styled.div`
+	font-size: 0.7rem;
+	color: #ffd700;
+	text-align: center;
+	margin-top: 0.25rem;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+`;
+
+// Empty state message for no dice
+export const StyledEmptyStateMessage = styled.div`
+	font-size: 0.8rem;
+	color: #ffd700;
+	text-align: center;
+	padding: 1rem;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+`;
+
+// Additional dice display container
+export const StyledAdditionalDiceContainer = styled.div`
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	margin-top: 0.25rem;
+`;
+
+// Results flex container
+export const StyledResultsFlexContainer = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem;
+	margin-top: 0.5rem;
+`;
+
+// Roll history entry
+export const StyledHistoryEntry = styled.div`
+	font-size: 0.7rem;
+	color: rgba(255, 255, 255, 0.9);
+	margin-bottom: 0.1rem;
+`;

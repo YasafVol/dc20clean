@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { StyledDiceRollerContainer } from '../styles/DiceRoller';
+import { theme } from '../styles/theme';
 import {
 	StyledDiceContainer,
 	StyledDiceIcon,
@@ -15,7 +16,20 @@ import {
 	StyledCollapseButton,
 	StyledDiceList,
 	StyledDiceItem,
-	StyledRemoveDiceButton
+	StyledRemoveDiceButton,
+	StyledModeButtonsContainer,
+	StyledCountControlsContainer,
+	StyledCountLabel,
+	StyledCountButton,
+	StyledCountDisplay,
+	StyledCountDescription,
+	StyledDiceTypeGrid,
+	StyledClearAllButton,
+	StyledRollModeText,
+	StyledEmptyStateMessage,
+	StyledAdditionalDiceContainer,
+	StyledResultsFlexContainer,
+	StyledHistoryEntry
 } from '../styles/DiceRoller';
 
 type DiceType = 'd4' | 'd6' | 'd8' | 'd10' | 'd12' | 'd20';
@@ -219,7 +233,7 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll }) => {
 					{/* Roll Mode Controls */}
 					<StyledDiceControls>
 						<div className="section-label">Roll Mode</div>
-						<div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
+						<StyledModeButtonsContainer>
 							<StyledModeButton
 								$active={rollMode === 'normal'}
 								onClick={() => setRollMode('normal')}
@@ -244,24 +258,15 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll }) => {
 							>
 								No D20
 							</StyledModeButton>
-						</div>
+						</StyledModeButtonsContainer>
 
 						{/* Advantage/Disadvantage Count Controls */}
 						{(rollMode === 'advantage' || rollMode === 'disadvantage') && (
-							<div
-								style={{
-									marginTop: '0.5rem',
-									display: 'flex',
-									alignItems: 'center',
-									gap: '0.5rem',
-									fontSize: '0.8rem',
-									color: '#ffd700'
-								}}
-							>
-								<span style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>
+							<StyledCountControlsContainer>
+								<StyledCountLabel>
 									{rollMode === 'advantage' ? 'Advantage' : 'Disadvantage'} Count:
-								</span>
-								<button
+								</StyledCountLabel>
+								<StyledCountButton
 									onClick={() => {
 										if (rollMode === 'advantage') {
 											setAdvantageCount(Math.max(2, advantageCount - 1));
@@ -269,33 +274,13 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll }) => {
 											setDisadvantageCount(Math.max(2, disadvantageCount - 1));
 										}
 									}}
-									style={{
-										width: '20px',
-										height: '20px',
-										background: '#8b4513',
-										color: 'white',
-										border: '1px solid #654321',
-										borderRadius: '3px',
-										cursor: 'pointer',
-										fontSize: '0.8rem',
-										display: 'flex',
-										alignItems: 'center',
-										justifyContent: 'center'
-									}}
 								>
 									−
-								</button>
-								<span
-									style={{
-										minWidth: '20px',
-										textAlign: 'center',
-										fontWeight: 'bold',
-										textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)'
-									}}
-								>
+								</StyledCountButton>
+								<StyledCountDisplay>
 									{rollMode === 'advantage' ? advantageCount : disadvantageCount}
-								</span>
-								<button
+								</StyledCountDisplay>
+								<StyledCountButton
 									onClick={() => {
 										if (rollMode === 'advantage') {
 											setAdvantageCount(Math.min(4, advantageCount + 1));
@@ -303,53 +288,27 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll }) => {
 											setDisadvantageCount(Math.min(3, disadvantageCount + 1));
 										}
 									}}
-									style={{
-										width: '20px',
-										height: '20px',
-										background: '#8b4513',
-										color: 'white',
-										border: '1px solid #654321',
-										borderRadius: '3px',
-										cursor: 'pointer',
-										fontSize: '0.8rem',
-										display: 'flex',
-										alignItems: 'center',
-										justifyContent: 'center'
-									}}
 								>
 									+
-								</button>
-								<span
-									style={{
-										fontSize: '0.7rem',
-										color: 'rgba(255, 255, 255, 0.8)',
-										marginLeft: '0.25rem'
-									}}
-								>
+								</StyledCountButton>
+								<StyledCountDescription>
 									(Roll {rollMode === 'advantage' ? advantageCount : disadvantageCount} dice, take{' '}
 									{rollMode === 'advantage' ? 'highest' : 'lowest'})
-								</span>
-							</div>
+								</StyledCountDescription>
+							</StyledCountControlsContainer>
 						)}
 					</StyledDiceControls>
 
 					{/* Additional Dice Section */}
 					<StyledAddDiceSection>
 						<div className="section-label">Add Dice</div>
-						<div
-							style={{
-								display: 'grid',
-								gridTemplateColumns: 'repeat(3, 1fr)',
-								gap: '0.25rem',
-								marginBottom: '0.5rem'
-							}}
-						>
+						<StyledDiceTypeGrid>
 							{(['d4', 'd6', 'd8', 'd10', 'd12'] as DiceType[]).map((type) => (
 								<StyledDiceTypeButton key={type} onClick={() => addDice(type)}>
 									{type.toUpperCase()}
 								</StyledDiceTypeButton>
 							))}
-						</div>
+						</StyledDiceTypeGrid>
 					</StyledAddDiceSection>
 
 					{/* Current Dice Display */}
@@ -366,21 +325,7 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll }) => {
 									</StyledRemoveDiceButton>
 								</StyledDiceItem>
 							))}
-							<button
-								onClick={clearDice}
-								style={{
-									fontSize: '0.7rem',
-									padding: '0.2rem 0.4rem',
-									background: '#d32f2f',
-									color: 'white',
-									border: 'none',
-									borderRadius: '3px',
-									cursor: 'pointer',
-									marginTop: '0.25rem'
-								}}
-							>
-								Clear All
-							</button>
+							<StyledClearAllButton onClick={clearDice}>Clear All</StyledClearAllButton>
 						</StyledDiceList>
 					)}
 
@@ -392,50 +337,24 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll }) => {
 									{isRolling ? '🌪️' : '🔥'}
 								</StyledDiceIcon>
 								{rollMode !== 'normal' && (
-									<div
-										style={{
-											fontSize: '0.7rem',
-											color: '#ffd700',
-											textAlign: 'center',
-											marginTop: '0.25rem',
-											textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)'
-										}}
-									>
+									<StyledRollModeText>
 										{rollMode === 'advantage' && `${advantageCount}x ADVANTAGE`}
 										{rollMode === 'disadvantage' && `${disadvantageCount}x DISADVANTAGE`}
-									</div>
+									</StyledRollModeText>
 								)}
 							</>
 						)}
 						{rollMode === 'no-d20' && additionalDice.length === 0 && (
-							<div
-								style={{
-									fontSize: '0.8rem',
-									color: '#ffd700',
-									textAlign: 'center',
-									padding: '1rem',
-									textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)'
-								}}
-							>
-								Add dice to roll!
-							</div>
+							<StyledEmptyStateMessage>Add dice to roll!</StyledEmptyStateMessage>
 						)}
 						{additionalDice.map(({ type, count }) => (
-							<div
-								key={type}
-								style={{
-									display: 'flex',
-									alignItems: 'center',
-									gap: '0.25rem',
-									marginTop: '0.25rem'
-								}}
-							>
+							<StyledAdditionalDiceContainer key={type}>
 								{Array.from({ length: count }).map((_, index) => (
 									<StyledDiceIcon key={index} $isRolling={isRolling} $type={type} $size="small">
 										{isRolling ? '💫' : getDiceIcon(type)}
 									</StyledDiceIcon>
 								))}
-							</div>
+							</StyledAdditionalDiceContainer>
 						))}
 					</StyledDiceContainer>
 
@@ -456,9 +375,7 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll }) => {
 								{lastResults.some((r) => r.isCriticalSuccess && r.isChosen !== false) && ' 🌟'}
 								{lastResults.some((r) => r.isCriticalFail && r.isChosen !== false) && ' 💀'}
 							</StyledTotalResult>
-							<div
-								style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem', marginTop: '0.5rem' }}
-							>
+							<StyledResultsFlexContainer>
 								{lastResults.map((result) => (
 									<StyledDiceResult
 										key={result.id}
@@ -471,7 +388,7 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll }) => {
 										{result.type.toUpperCase()}: {result.value}
 									</StyledDiceResult>
 								))}
-							</div>
+							</StyledResultsFlexContainer>
 						</StyledResultsDisplay>
 					)}
 
@@ -480,16 +397,9 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll }) => {
 						<StyledDiceHistory>
 							<div className="section-label">Recent Rolls</div>
 							{rollHistory.slice(0, 3).map((roll, index) => (
-								<div
-									key={index}
-									style={{
-										fontSize: '0.7rem',
-										color: 'rgba(255, 255, 255, 0.9)',
-										marginBottom: '0.1rem'
-									}}
-								>
+								<StyledHistoryEntry key={index}>
 									{roll.mode !== 'normal' && `${roll.mode} `}Total: {roll.total}
-								</div>
+								</StyledHistoryEntry>
 							))}
 						</StyledDiceHistory>
 					)}

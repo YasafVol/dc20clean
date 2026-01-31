@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { theme } from '../styles/theme';
 
 const ModalOverlay = styled.div`
 	position: fixed;
@@ -15,9 +16,9 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-	background: white;
-	border: 3px solid #8b4513;
-	border-radius: 8px;
+	background: ${theme.colors.bg.secondary};
+	border: 3px solid ${theme.colors.accent.primary};
+	border-radius: ${theme.borderRadius.lg};
 	padding: 2rem;
 	max-width: 500px;
 	width: 90%;
@@ -26,27 +27,27 @@ const ModalContent = styled.div`
 `;
 
 const ModalTitle = styled.h3`
-	color: #8b4513;
-	font-size: 1.25rem;
-	font-weight: bold;
+	color: ${theme.colors.accent.primary};
+	font-size: ${theme.typography.fontSize.xl};
+	font-weight: ${theme.typography.fontWeight.bold};
 	margin: 0 0 1rem 0;
 	text-align: center;
 `;
 
 const ChangeInfo = styled.div`
-	background: #f9f9f9;
-	border: 1px solid #8b4513;
-	border-radius: 4px;
+	background: ${theme.colors.bg.elevated};
+	border: 1px solid ${theme.colors.accent.primary};
+	border-radius: ${theme.borderRadius.sm};
 	padding: 1rem;
 	margin-bottom: 1rem;
-	font-size: 0.9rem;
-	color: #2d2d2d;
+	font-size: ${theme.typography.fontSize.sm};
+	color: ${theme.colors.text.primary};
 `;
 
 const Label = styled.label`
 	display: block;
-	font-weight: bold;
-	color: #8b4513;
+	font-weight: ${theme.typography.fontWeight.bold};
+	color: ${theme.colors.text.primary};
 	margin-bottom: 0.5rem;
 `;
 
@@ -54,17 +55,18 @@ const TextArea = styled.textarea`
 	width: 100%;
 	min-height: 100px;
 	padding: 0.75rem;
-	border: 1px solid #8b4513;
-	border-radius: 4px;
-	font-family: 'Georgia', serif;
-	font-size: 0.9rem;
-	color: #2d2d2d;
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.sm};
+	font-family: ${theme.typography.fontFamily.primary};
+	font-size: ${theme.typography.fontSize.sm};
+	color: ${theme.colors.text.primary};
+	background: ${theme.colors.bg.primary};
 	resize: vertical;
 
 	&:focus {
 		outline: none;
-		border-color: #8b4513;
-		box-shadow: 0 0 0 1px #8b4513;
+		border-color: ${theme.colors.border.focus};
+		box-shadow: 0 0 0 2px rgba(125, 207, 255, 0.2);
 	}
 `;
 
@@ -77,29 +79,30 @@ const ButtonGroup = styled.div`
 
 const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
 	padding: 0.5rem 1rem;
-	border: 1px solid #8b4513;
-	border-radius: 4px;
-	font-weight: bold;
+	border: 1px solid ${theme.colors.accent.primary};
+	border-radius: ${theme.borderRadius.sm};
+	font-weight: ${theme.typography.fontWeight.bold};
 	cursor: pointer;
-	transition: all 0.2s ease;
+	transition: all ${theme.transitions.fast};
 
 	${(props) =>
 		props.variant === 'primary'
 			? `
-		background: #8b4513;
-		color: white;
+		background: ${theme.colors.accent.primary};
+		color: ${theme.colors.text.inverse};
 		
 		&:hover {
-			background-color: #6d3410;
+			background-color: ${theme.colors.accent.secondary};
+			transform: translateY(-1px);
 		}
 	`
 			: `
-		background: #f9f9f9;
-		color: #8b4513;
+		background: ${theme.colors.bg.elevated};
+		color: ${theme.colors.text.primary};
 		
 		&:hover {
-			background: #8b4513;
-			color: white;
+			background: ${theme.colors.accent.primary};
+			color: ${theme.colors.text.inverse};
 		}
 	`}
 
@@ -107,6 +110,19 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
 		opacity: 0.5;
 		cursor: not-allowed;
 	}
+`;
+
+const LabelHint = styled.span`
+	font-size: 0.8rem;
+	font-weight: normal;
+	color: ${theme.colors.text.muted};
+`;
+
+const KeyboardHint = styled.div`
+	font-size: 0.8rem;
+	color: ${theme.colors.text.muted};
+	margin-top: 0.5rem;
+	text-align: center;
 `;
 
 interface DefenseChangeModalProps {
@@ -162,10 +178,10 @@ const DefenseChangeModal: React.FC<DefenseChangeModalProps> = ({
 
 				<Label htmlFor="reason">
 					Why are you changing this defense value?
-					<span style={{ fontSize: '0.8rem', fontWeight: 'normal', color: '#666' }}>
+					<LabelHint>
 						{' '}
 						(e.g., "Equipped +2 Shield", "Cast Shield spell", "Monk stance bonus")
-					</span>
+					</LabelHint>
 				</Label>
 
 				<TextArea
@@ -185,16 +201,7 @@ const DefenseChangeModal: React.FC<DefenseChangeModalProps> = ({
 					</Button>
 				</ButtonGroup>
 
-				<div
-					style={{
-						fontSize: '0.8rem',
-						color: '#666',
-						marginTop: '0.5rem',
-						textAlign: 'center'
-					}}
-				>
-					Press Ctrl+Enter to save, Esc to cancel
-				</div>
+				<KeyboardHint>Press Ctrl+Enter to save, Esc to cancel</KeyboardHint>
 			</ModalContent>
 		</ModalOverlay>
 	);

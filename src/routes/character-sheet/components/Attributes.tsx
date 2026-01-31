@@ -16,6 +16,8 @@ import {
 	AttributeSave,
 	SkillRow,
 	SkillName,
+	SkillBonusContainer,
+	SkillBonus,
 	PrimeSection,
 	PrimeLabel,
 	PrimeValue
@@ -56,34 +58,19 @@ const Attributes: React.FC<AttributesProps> = ({
 		return skills.map((skill) => (
 			<SkillRow key={skill.id} $isMobile={isMobile}>
 				<SkillName $isMobile={isMobile}>{skill.name.toUpperCase()}</SkillName>
-				<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+				<SkillBonusContainer>
 					<StyledProficiencyDots>
 						{[1, 2, 3, 4, 5].map((level) => (
 							<StyledDot key={level} $filled={level <= skill.proficiency} $isMobile={isMobile} />
 						))}
 					</StyledProficiencyDots>
 					{skill.bonus !== undefined && (
-						<span
-							style={{
-								fontSize: '0.875rem',
-								fontWeight: '600',
-								color:
-									skill.bonus >= 0
-										? isMobile
-											? '#22c55e'
-											: '#059669' // Green-500 for mobile, darker green for desktop
-										: isMobile
-											? '#ef4444'
-											: '#dc2626', // Red-500 for mobile, darker red for desktop
-								minWidth: '2rem',
-								textAlign: 'center'
-							}}
-						>
+						<SkillBonus $isPositive={skill.bonus >= 0} $isMobile={isMobile}>
 							{skill.bonus >= 0 ? '+' : ''}
 							{skill.bonus}
-						</span>
+						</SkillBonus>
 					)}
-				</div>
+				</SkillBonusContainer>
 			</SkillRow>
 		));
 	};
@@ -96,6 +83,12 @@ const Attributes: React.FC<AttributesProps> = ({
 				<PrimeValue $isMobile={isMobile}>
 					{usePrimeCapRule ? `+${primeValue}` : `${primeAttributeLabel} +${primeValue}`}
 				</PrimeValue>
+			</PrimeSection>
+
+			{/* Combat Mastery */}
+			<PrimeSection $isMobile={isMobile}>
+				<PrimeLabel $isMobile={isMobile}>Combat Mastery</PrimeLabel>
+				<PrimeValue $isMobile={isMobile}>+{state.character?.combatMastery || 0}</PrimeValue>
 			</PrimeSection>
 
 			{/* Awareness (Prime skill) */}

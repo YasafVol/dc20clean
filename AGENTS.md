@@ -41,6 +41,34 @@ Tips
 - Always use full, descriptive naming for functions, variables, and components.
 - Example: wrong `genYmdStr`; right `generateDateString`.
 
+### Styled-Components (MANDATORY)
+
+**CRITICAL: NO inline styles allowed anywhere in the codebase.** All styling must use styled-components.
+
+- **Zero inline styles**: Never use `style={{...}}` prop. All styles must be defined as styled-components.
+- **Transient props**: Use `$` prefix for props that should not be passed to DOM (e.g., `$isMobile`, `$isPrimary`, `$isActive`).
+  ```typescript
+  const Button = styled.button<{ $variant?: 'primary' | 'secondary' }>`
+  	color: ${(props) => (props.$variant === 'primary' ? '#7DCFFF' : '#9aa5ce')};
+  `;
+  // Usage: <Button $variant="primary">Click Me</Button>
+  ```
+- **Theme usage**: Always import and use `theme` object from `../styles/theme` for colors, spacing, typography.
+- **File organization**: Place styled-components in dedicated `.styles.ts` files (e.g., `Component.styles.ts` or `styles/Component.ts`).
+- **Conditional styling**: Use props and template literals for dynamic styles, not inline styles.
+
+  ```typescript
+  // ✅ CORRECT
+  const Text = styled.span<{ $isPositive: boolean }>`
+    color: ${(props) => props.$isPositive ? '#22c55e' : '#ef4444'};
+  `;
+
+  // ❌ WRONG
+  <span style={{ color: isPositive ? '#22c55e' : '#ef4444' }}>...</span>
+  ```
+
+- **Semantic naming**: Use descriptive names like `SkillBonusContainer`, `ExhaustionInfoButton`, `KeyboardHint`, not generic `Div1`, `Wrapper`.
+
 ## Testing Guidelines
 
 - Unit: Vitest. Place tests near source: `src/**/Foo.test.tsx`.
@@ -105,3 +133,5 @@ Tips
 ## Agent-Specific Notes
 
 - Follow lint rules strictly; avoid unrelated refactors. Keep changes minimal and focused. Update or add tests when modifying behavior.
+- **Styled-Components Policy**: NEVER use inline styles (`style={{...}}`). All styling must use styled-components with transient props (`$propName`). If you encounter inline styles, convert them to styled-components immediately.
+- **Code Quality Standards**: Remove dead code, unused imports, and console.log statements. Use calculated values instead of hardcoded constants. Keep components maintainable and consistent with the established patterns.

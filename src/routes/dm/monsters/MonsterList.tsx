@@ -98,11 +98,14 @@ export const MonsterList: React.FC = () => {
 							<Subtitle>Design and manage your monsters</Subtitle>
 						</div>
 					</HeaderLeft>
-					<HeaderRight>
-						<Button variant="secondary" onClick={handleCreateNew}>
-							+ New Monster
-						</Button>
-					</HeaderRight>
+				<HeaderRight>
+					<Button variant="secondary" onClick={() => navigate('/dm/encounters')}>
+						War Room
+					</Button>
+					<Button variant="secondary" onClick={handleCreateNew}>
+						+ New Monster
+					</Button>
+				</HeaderRight>
 				</HeaderContent>
 			</Header>
 

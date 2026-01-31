@@ -390,6 +390,92 @@ const featureEffectValidator = v.object({
 	description: v.optional(v.string()),
 });
 
+// ============================================================================
+// DM TOOLS: ENCOUNTER SCHEMA
+// ============================================================================
+
+// Party config validator
+const partyConfigValidator = v.object({
+	size: v.number(), // 1-8 players
+	averageLevel: v.number(), // 0-10
+});
+
+// Monster slot validator
+const encounterMonsterSlotValidator = v.object({
+	id: v.string(), // slot_<uuid>
+	monsterId: v.union(v.string(), v.null()),
+	quantity: v.number(),
+	cost: v.number(),
+	notes: v.optional(v.string()),
+});
+
+// Encounter table schema
+const encounterValidator = {
+	// Owner reference (Convex Auth user ID)
+	userId: v.id('users'),
+
+	// Identity
+	id: v.string(), // enc_<uuid>
+	name: v.string(),
+	description: v.optional(v.string()),
+
+	// Party Configuration
+	party: partyConfigValidator,
+	difficulty: v.union(
+		v.literal('trivial'),
+		v.literal('easy'),
+		v.literal('medium'),
+		v.literal('hard'),
+		v.literal('deadly')
+	),
+
+	// Budget (all calculated)
+	baseBudget: v.number(),
+	difficultyModifier: v.number(),
+	adjustedBudget: v.number(),
+	spentBudget: v.number(),
+	remainingBudget: v.number(),
+
+	// Monster Slots
+	monsters: v.array(encounterMonsterSlotValidator),
+
+	// Environment & Notes
+	environment: v.optional(v.string()),
+	gmNotes: v.optional(v.string()),
+
+	// Sharing
+	visibility: v.union(
+		v.literal('private'),
+		v.literal('public_anonymous'),
+		v.literal('public_credited')
+	),
+	approvalStatus: v.union(
+		v.literal('draft'),
+		v.literal('pending_review'),
+		v.literal('approved'),
+		v.literal('rejected')
+	),
+	isHomebrew: v.boolean(),
+	rejectionReason: v.optional(v.string()),
+	submittedAt: v.optional(v.string()),
+	approvedAt: v.optional(v.string()),
+	approvedBy: v.optional(v.string()),
+
+	// Fork Tracking
+	forkedFrom: v.optional(forkedFromValidator),
+	forkStats: v.optional(forkStatsValidator),
+
+	// Soft Delete
+	deletedAt: v.optional(v.string()),
+	deletedBy: v.optional(v.string()),
+	scheduledPurgeAt: v.optional(v.string()),
+
+	// Metadata
+	createdAt: v.string(),
+	lastModified: v.string(),
+	schemaVersion: v.string(),
+};
+
 // Custom feature table schema
 const customFeatureValidator = {
 	// Owner reference (Convex Auth user ID)
@@ -452,6 +538,13 @@ export default defineSchema({
 
 	// DM Tools: Custom Features
 	customFeatures: defineTable(customFeatureValidator)
+		.index('by_user', ['userId'])
+		.index('by_user_and_id', ['userId', 'id'])
+		.index('by_approval_status', ['approvalStatus'])
+		.index('by_user_and_deleted', ['userId', 'deletedAt']),
+
+	// DM Tools: Encounters
+	encounters: defineTable(encounterValidator)
 		.index('by_user', ['userId'])
 		.index('by_user_and_id', ['userId', 'id'])
 		.index('by_approval_status', ['approvalStatus'])

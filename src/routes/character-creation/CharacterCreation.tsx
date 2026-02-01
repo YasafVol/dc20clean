@@ -23,6 +23,7 @@ import {
 	calculateCharacterWithBreakdowns
 } from '../../lib/services/enhancedCharacterCalculator';
 import { validateSubclassChoicesComplete } from '../../lib/rulesdata/classes-data/classUtils';
+import { resolveClassProgression } from '../../lib/rulesdata/classes-data/classProgressionResolver';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { Dialog, DialogContent } from '../../components/ui/dialog';
@@ -87,6 +88,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 	const [showSnackbar, setShowSnackbar] = useState(false);
 	const [showAuthDialog, setShowAuthDialog] = useState(false);
+	const [pendingSave, setPendingSave] = useState(false); // Track if we're waiting for auth to save
 	const storage = useMemo(() => getDefaultStorage(), []);
 	const isAuthenticated = useIsAuthenticated();
 	const isUsingConvex = import.meta.env.VITE_USE_CONVEX === 'true';
@@ -108,6 +110,16 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		state.currentStep,
 		calculationResult?.ancestry
 	]);
+
+	// Auto-save after authentication completes (when user was waiting to save)
+	useEffect(() => {
+		if (pendingSave && isAuthenticated && isUsingConvex) {
+			debug.character('Auth completed, triggering pending save');
+			setPendingSave(false);
+			// Trigger the save by calling handleNext
+			handleNext();
+		}
+	}, [isAuthenticated, pendingSave, isUsingConvex]);
 
 	// Initialize character state for edit mode
 	useEffect(() => {
@@ -296,8 +308,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 		if (state.currentStep === maxStep && areAllStepsCompleted()) {
 			if (isUsingConvex && !isAuthenticated) {
-				setSnackbarMessage('Sign in to save to the cloud.');
+				setSnackbarMessage('Sign in to save your character.');
 				setShowSnackbar(true);
+				setPendingSave(true); // Mark that we want to save after auth
 				setShowAuthDialog(true);
 				return;
 			}
@@ -530,30 +543,55 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					return true;
 				}
 
-				// Actual validation: check that talents and path points are allocated
-				const selectedTalentsCount = Object.values(state.selectedTalents || {}).reduce(
-					(sum, count) => sum + count,
-					0
-				);
-				const pathPointsUsed =
-					(state.pathPointAllocations?.martial || 0) +
-					(state.pathPointAllocations?.spellcasting || 0);
-
-				// For now, allow progression if any choices are made (basic validation)
-				// Full validation will check against budgets
-				console.log('📊 Leveling validation:', {
-					selectedTalentsCount,
-					pathPointsUsed,
-					level: state.level
-				});
-
-				// Basic validation: level > 1 requires some progression choices
-				if (state.level > 1 && selectedTalentsCount === 0 && pathPointsUsed === 0) {
-					debug.warn('State', 'No leveling choices made yet');
-					// Allow progression but warn
+				// Get available budgets from progression resolver
+				if (!state.classId || state.level <= 1) {
+					return true; // No leveling choices needed at level 1
 				}
 
-				return true;
+				try {
+					const progression = resolveClassProgression(state.classId, state.level);
+					const availableTalents = progression.budgets?.totalTalents || 0;
+					const availablePathPoints = progression.budgets?.totalPathPoints || 0;
+
+					// Count multiclass selection as a talent
+					const multiclassTalentUsed =
+						state.selectedMulticlassOption && state.selectedMulticlassFeature ? 1 : 0;
+
+					// Calculate used talents and path points
+					const selectedTalentsCount = Object.values(state.selectedTalents || {}).reduce(
+						(sum, count) => sum + count,
+						0
+					);
+					const totalTalentsUsed = selectedTalentsCount + multiclassTalentUsed;
+					const pathPointsUsed =
+						(state.pathPointAllocations?.martial || 0) +
+						(state.pathPointAllocations?.spellcasting || 0);
+
+					debug.state('Leveling validation:', {
+						availableTalents,
+						totalTalentsUsed,
+						availablePathPoints,
+						pathPointsUsed,
+						level: state.level
+					});
+
+					// Validate talents are fully spent
+					if (availableTalents > 0 && totalTalentsUsed < availableTalents) {
+						debug.warn('State', `Talents not fully allocated: ${totalTalentsUsed}/${availableTalents}`);
+						return false;
+					}
+
+					// Validate path points are fully spent
+					if (availablePathPoints > 0 && pathPointsUsed < availablePathPoints) {
+						debug.warn('State', `Path points not fully allocated: ${pathPointsUsed}/${availablePathPoints}`);
+						return false;
+					}
+
+					return true;
+				} catch (error) {
+					console.error('Failed to resolve progression for validation:', error);
+					return true; // Allow progression if validation fails to avoid blocking
+				}
 			}
 
 			case 'Ancestry': {
@@ -857,12 +895,18 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				duration={3000}
 			/>
 
-			<Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
+			<Dialog open={showAuthDialog} onOpenChange={(open) => {
+					setShowAuthDialog(open);
+					if (!open) setPendingSave(false); // Clear pending save if dialog dismissed
+				}}>
 				<DialogContent className="border-purple-500/50 bg-transparent p-0 shadow-none">
 					<SignIn
 						feature="cloud-save"
 						onSuccess={() => setShowAuthDialog(false)}
-						onCancel={() => setShowAuthDialog(false)}
+						onCancel={() => {
+							setShowAuthDialog(false);
+							setPendingSave(false);
+						}}
 					/>
 				</DialogContent>
 			</Dialog>

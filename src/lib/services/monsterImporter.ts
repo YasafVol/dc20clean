@@ -1,0 +1,408 @@
+/**
+ * Monster Importer
+ *
+ * Transforms raw seed data JSON into SavedMonster format.
+ * Handles field mapping, ID normalization, and stat calculation.
+ */
+
+import { generateContentId } from '../utils/idGenerator';
+import { calculateMonsterStats } from './monsterCalculator';
+import { getOfficialFeatureByName } from '../rulesdata/dm/monsterFeatures';
+import {
+	MONSTER_SCHEMA_VERSION,
+	MONSTER_ROLE_IDS,
+	ACTION_TYPES,
+	TARGET_DEFENSES,
+	MONSTER_SIZES,
+	MONSTER_TYPES,
+	MONSTER_ALIGNMENTS,
+	type SavedMonster,
+	type MonsterAction,
+	type MonsterRoleId,
+	type MonsterTier,
+	type ActionType,
+	type TargetDefense,
+	type MonsterSize,
+	type MonsterType,
+	type MonsterAlignment,
+} from '../rulesdata/schemas/monster.schema';
+
+// ============================================================================
+// RAW SEED DATA TYPES
+// ============================================================================
+
+/** Raw action format from seed JSON */
+export interface RawSeedAction {
+	id: string;
+	name: string;
+	actionType: string; // "Attack" | "Spell" | "Special"
+	targetDefense: string; // "PD" | "AD" | "None"
+	damage: number;
+	damageType: string;
+	range: number;
+	traits?: string[];
+	description: string;
+}
+
+/** Raw feature format from seed JSON */
+export interface RawSeedFeature {
+	name: string;
+	description: string;
+}
+
+/** Raw monster format from seed JSON */
+export interface RawSeedMonster {
+	id: string;
+	name: string;
+	level: number;
+	tier: string;
+	role: string;
+	size?: string;
+	type?: string;
+	alignment?: string;
+	description?: string;
+	actions: RawSeedAction[];
+	features?: RawSeedFeature[];
+	lore?: string;
+	tactics?: string;
+}
+
+/** Import result with validation info */
+export interface MonsterImportResult {
+	success: boolean;
+	monster?: SavedMonster;
+	warnings: string[];
+	errors: string[];
+}
+
+// ============================================================================
+// MAPPING FUNCTIONS
+// ============================================================================
+
+/**
+ * Map raw action type to schema action type
+ */
+function mapActionType(rawType: string): ActionType {
+	const normalized = rawType.toLowerCase();
+	if (normalized === 'attack' || normalized === 'martial') return 'martial';
+	if (normalized === 'spell') return 'spell';
+	return 'special';
+}
+
+/**
+ * Map raw target defense to schema format
+ */
+function mapTargetDefense(rawDefense: string): TargetDefense {
+	const normalized = rawDefense.toUpperCase();
+	if (normalized === 'PD' || normalized === 'PHYSICAL') return 'pd';
+	if (normalized === 'AD' || normalized === 'ARCANE' || normalized === 'AREA') return 'ad';
+	return 'pd'; // Default to PD
+}
+
+/**
+ * Map raw role to schema role ID
+ */
+function mapRoleId(rawRole: string): MonsterRoleId | null {
+	const normalized = rawRole.toLowerCase();
+	if (MONSTER_ROLE_IDS.includes(normalized as MonsterRoleId)) {
+		return normalized as MonsterRoleId;
+	}
+	// Handle common variations
+	const roleMap: Record<string, MonsterRoleId> = {
+		striker: 'skirmisher',
+		caster: 'artillerist',
+		tank: 'defender',
+		healer: 'support',
+		solo: 'brute', // Solo bosses often act as brutes
+	};
+	return roleMap[normalized] ?? null;
+}
+
+/**
+ * Map raw tier to schema tier
+ */
+function mapTier(rawTier: string): MonsterTier {
+	const normalized = rawTier.toLowerCase();
+	if (normalized === 'standard' || normalized === 'minion') return 'standard';
+	if (normalized === 'apex' || normalized === 'elite') return 'apex';
+	if (normalized === 'legendary' || normalized === 'boss' || normalized === 'solo') return 'legendary';
+	return 'standard';
+}
+
+/**
+ * Map raw size to schema size
+ */
+function mapSize(rawSize?: string): MonsterSize | undefined {
+	if (!rawSize) return undefined;
+	const normalized = rawSize.charAt(0).toUpperCase() + rawSize.slice(1).toLowerCase();
+	if (MONSTER_SIZES.includes(normalized as MonsterSize)) {
+		return normalized as MonsterSize;
+	}
+	return undefined;
+}
+
+/**
+ * Map raw type to schema monster type
+ */
+function mapMonsterType(rawType?: string): MonsterType | undefined {
+	if (!rawType) return undefined;
+	const normalized = rawType.charAt(0).toUpperCase() + rawType.slice(1).toLowerCase();
+	if (MONSTER_TYPES.includes(normalized as MonsterType)) {
+		return normalized as MonsterType;
+	}
+	return undefined;
+}
+
+/**
+ * Map raw alignment to schema alignment
+ */
+function mapAlignment(rawAlignment?: string): MonsterAlignment | undefined {
+	if (!rawAlignment) return undefined;
+	// Try exact match first
+	if (MONSTER_ALIGNMENTS.includes(rawAlignment as MonsterAlignment)) {
+		return rawAlignment as MonsterAlignment;
+	}
+	// Try normalized match
+	const normalized = rawAlignment
+		.split(' ')
+		.map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+		.join(' ');
+	if (MONSTER_ALIGNMENTS.includes(normalized as MonsterAlignment)) {
+		return normalized as MonsterAlignment;
+	}
+	return undefined;
+}
+
+/**
+ * Normalize action ID to schema format
+ */
+function normalizeActionId(rawId: string): string {
+	if (rawId.startsWith('act_')) {
+		// Ensure it's a valid UUID format
+		const uuidPart = rawId.slice(4);
+		if (uuidPart.length >= 8) return rawId;
+	}
+	// Generate new ID
+	return generateContentId('action');
+}
+
+/**
+ * Normalize monster ID to schema format
+ */
+function normalizeMonsterId(rawId: string): string {
+	if (rawId.startsWith('mon_')) {
+		const uuidPart = rawId.slice(4);
+		// Check if it looks like a UUID (has dashes in right places)
+		if (uuidPart.includes('-') && uuidPart.length >= 32) return rawId;
+	}
+	return generateContentId('monster');
+}
+
+// ============================================================================
+// IMPORT FUNCTION
+// ============================================================================
+
+/**
+ * Import a raw seed monster into SavedMonster format
+ */
+export function importRawMonster(raw: RawSeedMonster): MonsterImportResult {
+	const warnings: string[] = [];
+	const errors: string[] = [];
+
+	// Validate required fields
+	if (!raw.name) {
+		errors.push('Monster name is required');
+	}
+	if (raw.level === undefined || raw.level === null) {
+		errors.push('Monster level is required');
+	}
+	if (!raw.role) {
+		errors.push('Monster role is required');
+	}
+	if (!raw.actions || raw.actions.length === 0) {
+		errors.push('At least one action is required');
+	}
+
+	// Map role
+	const roleId = mapRoleId(raw.role);
+	if (!roleId) {
+		errors.push(`Unknown role: "${raw.role}". Valid roles: ${MONSTER_ROLE_IDS.join(', ')}`);
+	}
+
+	// Return early if critical errors
+	if (errors.length > 0) {
+		return { success: false, warnings, errors };
+	}
+
+	// Map tier
+	const tier = mapTier(raw.tier);
+	if (raw.tier && tier !== raw.tier.toLowerCase()) {
+		warnings.push(`Tier "${raw.tier}" mapped to "${tier}"`);
+	}
+
+	// Map actions
+	const actions: MonsterAction[] = raw.actions.map((rawAction, index) => {
+		const actionType = mapActionType(rawAction.actionType);
+		if (rawAction.actionType.toLowerCase() !== actionType) {
+			warnings.push(`Action "${rawAction.name}": type "${rawAction.actionType}" mapped to "${actionType}"`);
+		}
+
+		const targetDefense = mapTargetDefense(rawAction.targetDefense);
+
+		return {
+			id: normalizeActionId(rawAction.id),
+			name: rawAction.name,
+			apCost: 2, // Default AP cost
+			type: actionType,
+			targetDefense,
+			damage: rawAction.damage,
+			damageType: rawAction.damageType,
+			range: rawAction.range,
+			// Keep traits as strings for now (flexible)
+			description: rawAction.description,
+		};
+	});
+
+	// Map features to feature IDs
+	const featureIds: string[] = [];
+	if (raw.features) {
+		for (const rawFeature of raw.features) {
+			const officialFeature = getOfficialFeatureByName(rawFeature.name);
+			if (officialFeature) {
+				featureIds.push(officialFeature.id);
+			} else {
+				warnings.push(`Feature "${rawFeature.name}" not found in official features. Will need to create custom feature.`);
+				// Could generate a custom feature ID here if needed
+			}
+		}
+	}
+
+	// Calculate stats
+	const calculatedStats = calculateMonsterStats({
+		level: raw.level,
+		tier,
+		roleId: roleId!,
+	});
+
+	// Build SavedMonster
+	const now = new Date().toISOString();
+	const monster: SavedMonster = {
+		// Identity
+		id: normalizeMonsterId(raw.id),
+		name: raw.name,
+		description: raw.description,
+		level: raw.level,
+		tier,
+		roleId: roleId!,
+
+		// Flavor
+		size: mapSize(raw.size),
+		monsterType: mapMonsterType(raw.type),
+		alignment: mapAlignment(raw.alignment),
+		lore: raw.lore,
+		tactics: raw.tactics,
+
+		// Calculated stats
+		finalHP: calculatedStats.finalHP,
+		finalPD: calculatedStats.finalPD,
+		finalAD: calculatedStats.finalAD,
+		finalAttack: calculatedStats.finalAttack,
+		finalSaveDC: calculatedStats.finalSaveDC,
+		finalBaseDamage: calculatedStats.finalBaseDamage,
+
+		// Attributes (default values, could be derived from role)
+		attributes: {
+			might: 0,
+			agility: 0,
+			charisma: 0,
+			intelligence: 0,
+		},
+
+		// Features
+		featureIds,
+		featurePointsSpent: featureIds.length, // Simplified
+		featurePointsMax: calculatedStats.featurePowerMax,
+
+		// Actions
+		actions,
+
+		// Sharing
+		visibility: 'private',
+		approvalStatus: 'draft',
+		isHomebrew: false,
+
+		// Metadata
+		createdAt: now,
+		lastModified: now,
+		schemaVersion: MONSTER_SCHEMA_VERSION,
+
+		// Breakdowns
+		breakdowns: calculatedStats.breakdowns,
+	};
+
+	return {
+		success: true,
+		monster,
+		warnings,
+		errors,
+	};
+}
+
+/**
+ * Import multiple raw monsters from seed JSON
+ */
+export function importRawMonsters(rawMonsters: RawSeedMonster[]): {
+	successful: SavedMonster[];
+	failed: Array<{ name: string; errors: string[] }>;
+	allWarnings: Array<{ name: string; warnings: string[] }>;
+} {
+	const successful: SavedMonster[] = [];
+	const failed: Array<{ name: string; errors: string[] }> = [];
+	const allWarnings: Array<{ name: string; warnings: string[] }> = [];
+
+	for (const raw of rawMonsters) {
+		const result = importRawMonster(raw);
+
+		if (result.success && result.monster) {
+			successful.push(result.monster);
+		} else {
+			failed.push({ name: raw.name || 'Unknown', errors: result.errors });
+		}
+
+		if (result.warnings.length > 0) {
+			allWarnings.push({ name: raw.name || 'Unknown', warnings: result.warnings });
+		}
+	}
+
+	return { successful, failed, allWarnings };
+}
+
+/**
+ * Parse and import from JSON string
+ */
+export function importMonstersFromJson(jsonString: string): ReturnType<typeof importRawMonsters> & {
+	parseError?: string;
+} {
+	try {
+		const data = JSON.parse(jsonString);
+		const monsters = Array.isArray(data) ? data : data.monsters;
+
+		if (!Array.isArray(monsters)) {
+			return {
+				successful: [],
+				failed: [],
+				allWarnings: [],
+				parseError: 'JSON must contain a "monsters" array or be an array of monsters',
+			};
+		}
+
+		return importRawMonsters(monsters);
+	} catch (e) {
+		return {
+			successful: [],
+			failed: [],
+			allWarnings: [],
+			parseError: `Invalid JSON: ${e instanceof Error ? e.message : 'Unknown error'}`,
+		};
+	}
+}

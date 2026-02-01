@@ -1,0 +1,310 @@
+{
+  "$schema": "Monster seed data for DC20 Monster Forge",
+  "_instructions": "Fill in the monster data below. Each monster needs a unique UUID. You can generate UUIDs at uuidgenerator.net or use 'crypto.randomUUID()' in browser console.",
+  "monsters": [
+    {
+      "id": "mon_REPLACE-WITH-UUID-1",
+      "name": "Goblin Warrior",
+      "level": 1,
+      "tier": "standard",
+      "role": "striker",
+      "size": "Small",
+      "type": "Humanoid",
+      "alignment": "Chaotic Evil",
+      "description": "A small, vicious humanoid with green skin and sharp teeth.",
+      "actions": [
+        {
+          "id": "act_REPLACE-WITH-UUID-1a",
+          "name": "Shortsword",
+          "actionType": "Attack",
+          "targetDefense": "PD",
+          "damage": 2,
+          "damageType": "Physical",
+          "range": 5,
+          "traits": ["Light", "Finesse"],
+          "description": "Melee weapon attack."
+        },
+        {
+          "id": "act_REPLACE-WITH-UUID-1b",
+          "name": "Shortbow",
+          "actionType": "Attack",
+          "targetDefense": "PD",
+          "damage": 2,
+          "damageType": "Physical",
+          "range": 80,
+          "traits": ["Ammo"],
+          "description": "Ranged weapon attack."
+        }
+      ],
+      "features": [],
+      "lore": "Goblins are small, black-hearted humanoids that lair in despoiled dungeons and other dismal settings.",
+      "tactics": "Goblins prefer ambushes and gang tactics, attacking from hiding with ranged weapons before closing to melee."
+    },
+    {
+      "id": "mon_REPLACE-WITH-UUID-2",
+      "name": "Skeleton",
+      "level": 1,
+      "tier": "standard",
+      "role": "striker",
+      "size": "Medium",
+      "type": "Undead",
+      "alignment": "Lawful Evil",
+      "description": "A magically animated pile of bones that obeys its creator's commands.",
+      "actions": [
+        {
+          "id": "act_REPLACE-WITH-UUID-2a",
+          "name": "Rusty Sword",
+          "actionType": "Attack",
+          "targetDefense": "PD",
+          "damage": 2,
+          "damageType": "Physical",
+          "range": 5,
+          "traits": [],
+          "description": "Melee weapon attack."
+        },
+        {
+          "id": "act_REPLACE-WITH-UUID-2b",
+          "name": "Shortbow",
+          "actionType": "Attack",
+          "targetDefense": "PD",
+          "damage": 2,
+          "damageType": "Physical",
+          "range": 80,
+          "traits": ["Ammo"],
+          "description": "Ranged weapon attack."
+        }
+      ],
+      "features": [],
+      "lore": "Skeletons are the animated bones of the dead, raised by dark magic.",
+      "tactics": "Skeletons mindlessly follow orders, fighting until destroyed."
+    },
+    {
+      "id": "mon_REPLACE-WITH-UUID-3",
+      "name": "Wolf",
+      "level": 1,
+      "tier": "standard",
+      "role": "striker",
+      "size": "Medium",
+      "type": "Beast",
+      "alignment": "Unaligned",
+      "description": "A gray-furred predator with keen senses and pack instincts.",
+      "actions": [
+        {
+          "id": "act_REPLACE-WITH-UUID-3a",
+          "name": "Bite",
+          "actionType": "Attack",
+          "targetDefense": "PD",
+          "damage": 2,
+          "damageType": "Physical",
+          "range": 5,
+          "traits": ["Knockback"],
+          "description": "Melee natural attack. Target must succeed on a Save or be knocked prone."
+        }
+      ],
+      "features": [],
+      "lore": "Wolves hunt in packs, using coordinated tactics to bring down prey.",
+      "tactics": "Wolves try to surround prey and knock it prone for advantage."
+    },
+    {
+      "id": "mon_REPLACE-WITH-UUID-4",
+      "name": "Orc Berserker",
+      "level": 2,
+      "tier": "standard",
+      "role": "bruiser",
+      "size": "Medium",
+      "type": "Humanoid",
+      "alignment": "Chaotic Evil",
+      "description": "A savage humanoid warrior consumed by bloodlust.",
+      "actions": [
+        {
+          "id": "act_REPLACE-WITH-UUID-4a",
+          "name": "Greataxe",
+          "actionType": "Attack",
+          "targetDefense": "PD",
+          "damage": 4,
+          "damageType": "Physical",
+          "range": 5,
+          "traits": ["Heavy", "Two-Handed", "Brutal"],
+          "description": "Melee weapon attack. Brutal: Extra damage on critical hits."
+        },
+        {
+          "id": "act_REPLACE-WITH-UUID-4b",
+          "name": "Javelin",
+          "actionType": "Attack",
+          "targetDefense": "PD",
+          "damage": 3,
+          "damageType": "Physical",
+          "range": 30,
+          "traits": ["Thrown"],
+          "description": "Ranged weapon attack."
+        }
+      ],
+      "features": [],
+      "lore": "Orcs are savage raiders who glory in battle and destruction.",
+      "tactics": "Orc berserkers charge directly at the strongest-looking foe."
+    },
+    {
+      "id": "mon_REPLACE-WITH-UUID-5",
+      "name": "Giant Spider",
+      "level": 2,
+      "tier": "standard",
+      "role": "controller",
+      "size": "Large",
+      "type": "Beast",
+      "alignment": "Unaligned",
+      "description": "A massive arachnid with venomous fangs and web-spinning capabilities.",
+      "actions": [
+        {
+          "id": "act_REPLACE-WITH-UUID-5a",
+          "name": "Bite",
+          "actionType": "Attack",
+          "targetDefense": "PD",
+          "damage": 3,
+          "damageType": "Physical",
+          "range": 5,
+          "traits": ["Poison"],
+          "description": "Melee natural attack. Target must Save or take poison damage."
+        },
+        {
+          "id": "act_REPLACE-WITH-UUID-5b",
+          "name": "Web",
+          "actionType": "Special",
+          "targetDefense": "AD",
+          "damage": 0,
+          "damageType": "Physical",
+          "range": 30,
+          "traits": ["Grappling"],
+          "description": "Ranged attack. On hit, target is restrained by webbing."
+        }
+      ],
+      "features": [],
+      "lore": "Giant spiders lurk in dark caves and dense forests.",
+      "tactics": "Giant spiders web targets from afar, then close in for the kill."
+    },
+    {
+      "id": "mon_REPLACE-WITH-UUID-6",
+      "name": "Cultist Fanatic",
+      "level": 2,
+      "tier": "standard",
+      "role": "caster",
+      "size": "Medium",
+      "type": "Humanoid",
+      "alignment": "Chaotic Evil",
+      "description": "A devoted follower of dark powers, capable of minor spellcasting.",
+      "actions": [
+        {
+          "id": "act_REPLACE-WITH-UUID-6a",
+          "name": "Dagger",
+          "actionType": "Attack",
+          "targetDefense": "PD",
+          "damage": 2,
+          "damageType": "Physical",
+          "range": 5,
+          "traits": ["Light", "Finesse", "Thrown"],
+          "description": "Melee or ranged weapon attack."
+        },
+        {
+          "id": "act_REPLACE-WITH-UUID-6b",
+          "name": "Dark Bolt",
+          "actionType": "Spell",
+          "targetDefense": "AD",
+          "damage": 3,
+          "damageType": "Necrotic",
+          "range": 60,
+          "traits": ["Necrotic"],
+          "description": "Ranged spell attack dealing necrotic damage."
+        }
+      ],
+      "features": [],
+      "lore": "Cultists serve dark masters in exchange for forbidden power.",
+      "tactics": "Cultists attack from range, protecting more powerful cult leaders."
+    },
+    {
+      "id": "mon_REPLACE-WITH-UUID-7",
+      "name": "Ogre",
+      "level": 4,
+      "tier": "apex",
+      "role": "bruiser",
+      "size": "Large",
+      "type": "Giant",
+      "alignment": "Chaotic Evil",
+      "description": "A hulking brute of great strength and little intelligence.",
+      "actions": [
+        {
+          "id": "act_REPLACE-WITH-UUID-7a",
+          "name": "Greatclub",
+          "actionType": "Attack",
+          "targetDefense": "PD",
+          "damage": 8,
+          "damageType": "Physical",
+          "range": 10,
+          "traits": ["Heavy", "Two-Handed", "Reach"],
+          "description": "Melee weapon attack with extended reach."
+        },
+        {
+          "id": "act_REPLACE-WITH-UUID-7b",
+          "name": "Rock",
+          "actionType": "Attack",
+          "targetDefense": "AD",
+          "damage": 6,
+          "damageType": "Physical",
+          "range": 60,
+          "traits": ["Heavy", "Thrown"],
+          "description": "Ranged attack hurling a large rock."
+        }
+      ],
+      "features": [],
+      "lore": "Ogres are dim-witted giants that bully smaller creatures.",
+      "tactics": "Ogres charge the nearest enemy and pummel it with their club."
+    },
+    {
+      "id": "mon_REPLACE-WITH-UUID-8",
+      "name": "Young Dragon",
+      "level": 8,
+      "tier": "legendary",
+      "role": "solo",
+      "size": "Large",
+      "type": "Dragon",
+      "alignment": "Varies",
+      "description": "A juvenile dragon, already a fearsome predator with breath weapon.",
+      "actions": [
+        {
+          "id": "act_REPLACE-WITH-UUID-8a",
+          "name": "Bite",
+          "actionType": "Attack",
+          "targetDefense": "PD",
+          "damage": 12,
+          "damageType": "Physical",
+          "range": 10,
+          "traits": ["Reach", "Deadly"],
+          "description": "Melee natural attack."
+        },
+        {
+          "id": "act_REPLACE-WITH-UUID-8b",
+          "name": "Claw",
+          "actionType": "Attack",
+          "targetDefense": "PD",
+          "damage": 8,
+          "damageType": "Physical",
+          "range": 5,
+          "traits": [],
+          "description": "Melee natural attack. Can make two claw attacks."
+        },
+        {
+          "id": "act_REPLACE-WITH-UUID-8c",
+          "name": "Breath Weapon",
+          "actionType": "Special",
+          "targetDefense": "AD",
+          "damage": 16,
+          "damageType": "Fire",
+          "range": 30,
+          "traits": ["Fire", "Cleave"],
+          "description": "30-foot cone. Each creature in area must Save or take full damage. Recharge 5-6."
+        }
+      ],
+      "features": [],
+      "lore": "Dragons are the apex predators of fantasy worlds, hoarding treasure and terrorizing the land.",
+      "tactics": "Young dragons use their breath weapon first, then engage in melee with bite and claws."
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 # DC20Clean – Database & Storage System
 
 > Purpose
-> Document the character persistence architecture, covering both localStorage (current) and Convex cloud storage (planned).
+> Document the persistence architecture for characters and DM Tools, covering localStorage and Convex cloud storage.
 
 ---
 
@@ -12,7 +12,15 @@ The DC20 Character Creator uses a **hybrid storage model**:
 | Storage | Status | Use Case |
 |---------|--------|----------|
 | **localStorage** | Active (default) | Anonymous users, offline-first |
-| **Convex** | Planned | Authenticated users, cloud sync |
+| **Convex** | Active | Authenticated users, cloud sync, DM Tools |
+
+### 1.1 Data Domains
+
+| Domain | Tables | Status |
+|--------|--------|--------|
+| Characters | `characters` | Active (Convex + localStorage) |
+| DM Tools: Monsters | `monsters`, `customFeatures` | Active (Convex) |
+| DM Tools: Encounters | `encounters` | Active (Convex) |
 
 The storage abstraction layer (`src/lib/storage/`) allows seamless switching between backends.
 
@@ -158,38 +166,175 @@ savedCharacters_backup → Backup copy (for migration safety)
 
 ---
 
-## 5. Convex Implementation (Planned)
+## 5. Convex Implementation (Active)
 
 ### 5.1 Status
 
-**Prep work complete** - See `docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md`
+**Active** - Convex is deployed and used for DM Tools and authenticated users.
 
-### 5.2 Schema
+### 5.2 Schema - Characters
 
 ```typescript
 // convex/schema.ts
 characters: defineTable({
-  userId: v.string(),  // Links to authenticated user
+  userId: v.id('users'),
+  id: v.string(),
   finalName: v.string(),
   level: v.number(),
   // ... all SavedCharacter fields
 })
   .index("by_user", ["userId"])
+  .index("by_user_and_id", ["userId", "id"])
   .index("by_user_and_name", ["userId", "finalName"])
 ```
 
-### 5.3 Authentication
+### 5.3 Schema - DM Tools: Monsters
 
-- **Google OAuth** and **GitHub OAuth**
-- User ID linked to all character records
-- Characters only visible to their owner
+```typescript
+monsters: defineTable({
+  userId: v.id('users'),
+  id: v.string(),                    // mon_<uuid>
+  name: v.string(),
+  level: v.number(),                 // -1 to 10
+  tier: v.union(v.literal('standard'), v.literal('apex'), v.literal('legendary')),
+  role: v.string(),
+  // Stats
+  finalHP: v.number(),
+  finalPD: v.number(),
+  finalAD: v.number(),
+  finalAttack: v.number(),
+  finalSaveDC: v.number(),
+  finalBaseDamage: v.number(),
+  // Features & Actions
+  featureIds: v.array(v.string()),
+  actions: v.array(monsterActionValidator),
+  // Sharing & Metadata
+  visibility: v.union(...),
+  approvalStatus: v.union(...),
+  // ...
+})
+  .index("by_user", ["userId"])
+  .index("by_user_and_id", ["userId", "id"])
+  .index("by_approval_status", ["approvalStatus"])
+  .index("by_user_and_deleted", ["userId", "deletedAt"])
 
-### 5.4 Benefits
+customFeatures: defineTable({
+  userId: v.id('users'),
+  id: v.string(),                    // feat_<uuid>
+  name: v.string(),
+  description: v.string(),
+  pointCost: v.number(),             // 1-5
+  // Sharing fields...
+})
+  .index("by_user", ["userId"])
+  .index("by_approval_status", ["approvalStatus"])
+```
+
+### 5.4 Schema - DM Tools: Encounters
+
+```typescript
+encounters: defineTable({
+  userId: v.id('users'),
+  id: v.string(),                    // enc_<uuid>
+  name: v.string(),
+  party: partyConfigValidator,       // { size, averageLevel }
+  difficulty: v.union(v.literal('trivial'), ...),
+  // Budget
+  baseBudget: v.number(),
+  adjustedBudget: v.number(),
+  spentBudget: v.number(),
+  remainingBudget: v.number(),
+  // Monster Slots
+  monsters: v.array(encounterMonsterSlotValidator),
+  // Sharing & Metadata
+  visibility: v.union(...),
+  approvalStatus: v.union(...),
+  // ...
+})
+  .index("by_user", ["userId"])
+  .index("by_user_and_id", ["userId", "id"])
+  .index("by_approval_status", ["approvalStatus"])
+  .index("by_user_and_deleted", ["userId", "deletedAt"])
+```
+
+### 5.5 Authentication
+
+- **Google OAuth** and **GitHub OAuth** via Convex Auth
+- User ID linked to all records
+- Data only visible to owner (except approved homebrew)
+
+### 5.6 Auth UI & Access Control
+
+**Components** (`src/components/auth/`):
+
+| Component | Purpose |
+|-----------|---------|
+| `AuthStatus` | Sign in button / user menu in header |
+| `SignIn` | OAuth sign-in dialog with feature context |
+| `AuthGuard` | Route protection wrapper |
+| `useIsAuthenticated()` | Hook to check auth state |
+
+**Access Control by Feature**:
+
+| Feature | Auth Required | Notes |
+|---------|---------------|-------|
+| Character Creation | No | Saves to localStorage without auth |
+| Character Creation → Save | **Prompted** | Auth dialog when clicking "Complete" |
+| Load Character | No | Loads from localStorage |
+| DM Tools (Laboratory, War Room) | **Yes** | Menu items hidden until signed in |
+| Reference Tools (Spellbook, Conditions, Equipage) | No | Public access |
+
+**Character Creation Auth Flow**:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  User clicks "Complete" on final step                       │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+            ┌─────────▼─────────┐
+            │ Using Convex?     │
+            │ (VITE_USE_CONVEX) │
+            └─────────┬─────────┘
+                      │
+         ┌────────────┴────────────┐
+         │ Yes                     │ No
+         ▼                         ▼
+┌─────────────────┐      ┌─────────────────┐
+│ Authenticated?  │      │ Save to         │
+└────────┬────────┘      │ localStorage    │
+         │               │ immediately     │
+    ┌────┴────┐          └─────────────────┘
+    │ Yes     │ No
+    ▼         ▼
+┌───────┐  ┌────────────────────────┐
+│ Save  │  │ Show auth dialog       │
+│ to    │  │ Set pendingSave=true   │
+│ Convex│  └───────────┬────────────┘
+└───────┘              │
+                       ▼
+              ┌────────────────┐
+              │ User signs in  │
+              └────────┬───────┘
+                       │
+                       ▼
+              ┌────────────────┐
+              │ Auto-save      │
+              │ triggered      │
+              └────────────────┘
+```
+
+Key implementation: `src/routes/character-creation/CharacterCreation.tsx`
+- `pendingSave` state tracks when waiting for auth
+- `useEffect` auto-triggers save when auth completes
+- No duplicate saves or manual re-click needed
+
+### 5.7 Benefits
 
 - **Cloud sync** across devices
 - **Data safety** - server-side backups
 - **Scalability** - no localStorage limits
-- **User accounts** - character ownership
+- **User accounts** - content ownership
+- **Sharing** - homebrew library for community content
 
 ---
 
@@ -224,16 +369,30 @@ When loading characters, `deserializeCharacterFromStorage()` automatically:
 
 ## 7. Key Files
 
+### 7.1 Character Storage
+
 | File | Purpose |
 |------|---------|
 | `src/lib/types/dataContracts.ts` | SavedCharacter, CharacterState types |
 | `src/lib/utils/storageUtils.ts` | localStorage CRUD operations |
 | `src/lib/storage/characterStorage.ts` | Storage interface definition |
 | `src/lib/storage/localStorageAdapter.ts` | localStorage adapter |
-| `src/lib/storage/convexStorageAdapter.ts` | Convex adapter (placeholder) |
 | `src/lib/storage/index.ts` | Backend selector |
-| `convex/schema.ts.draft` | Convex schema (pending activation) |
-| `convex/characters.ts.draft` | Convex mutations/queries (pending) |
+| `convex/schema.ts` | Convex schema (all tables) |
+| `convex/characters.ts` | Character mutations/queries |
+
+### 7.2 DM Tools Storage
+
+| File | Purpose |
+|------|---------|
+| `src/lib/rulesdata/schemas/monster.schema.ts` | SavedMonster, MonsterAction types |
+| `src/lib/rulesdata/schemas/encounter.schema.ts` | SavedEncounter, EncounterMonsterSlot types |
+| `src/lib/utils/idGenerator.ts` | Prefixed UUID generation (mon_, enc_, feat_, slot_, act_) |
+| `convex/monsters.ts` | Monster CRUD, fork, homebrew |
+| `convex/encounters.ts` | Encounter CRUD, slot management |
+| `convex/customFeatures.ts` | Custom feature management |
+| `src/lib/hooks/useMonsters.ts` | React hooks for monsters |
+| `src/lib/hooks/useEncounters.ts` | React hooks for encounters |
 
 ---
 
@@ -275,9 +434,10 @@ const saveCharacterData = async (character: SavedCharacter) => {
 - **Character Sheet** — `docs/systems/CHARACTER_SHEET.MD`
 - **PDF Export** — `docs/systems/PDF_EXPORT_SYSTEM.MD`
 - **Calculation System** — `docs/systems/CALCULATION_SYSTEM.MD`
-- **Convex Migration** — `docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md`
+- **Monster System** — `docs/systems/MONSTER_SYSTEM_SPEC.MD`
+- **Encounter System** — `docs/systems/ENCOUNTER_SYSTEM_SPEC.MD`
 
 ---
 
-> Last updated: 2026-01-14
+> Last updated: 2026-01-31 (auth flow documented)
 > Maintainer: @DC20Clean-Team

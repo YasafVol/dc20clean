@@ -1,7 +1,10 @@
-# DC20Clean – Custom Equipment System (v0.10)
+# DC20Clean – Equipage (Custom Equipment System)
 
-> Purpose
-> Central reference for custom equipment creation, data models, validation rules, storage, and UI flows.
+> **Status:** Complete  
+> **Last Updated:** 2026-01-31  
+> **Menu Entry:** "Equipage" in Reference Tools section
+
+**Purpose:** Central reference for custom equipment creation, data models, validation rules, storage, and UI flows.
 
 ---
 

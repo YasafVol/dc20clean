@@ -32,12 +32,15 @@ export const SpellbookIcon = () => (
 		strokeLinecap="round"
 		strokeLinejoin="round"
 	>
-		<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-		<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-		<path d="M12 6v4" />
-		<path d="M10 8h4" />
-		<circle cx="12" cy="14" r="2" />
-		<path d="M12 16v2" />
+		{/* Open book */}
+		<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+		<path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+		{/* Magical sparkles/stars */}
+		<path d="M12 4l.5 1.5L14 6l-1.5.5L12 8l-.5-1.5L10 6l1.5-.5L12 4z" fill="currentColor" />
+		<circle cx="6" cy="10" r="0.5" fill="currentColor" />
+		<circle cx="18" cy="10" r="0.5" fill="currentColor" />
+		<circle cx="6" cy="14" r="0.5" fill="currentColor" />
+		<circle cx="18" cy="14" r="0.5" fill="currentColor" />
 	</svg>
 );
 
@@ -53,13 +56,19 @@ export const EquipmentIcon = () => (
 		strokeLinecap="round"
 		strokeLinejoin="round"
 	>
-		{/* Sword */}
-		<path d="M14.5 17.5L3 6V3h3l11.5 11.5" />
-		<path d="M13 19l6-6" />
-		<path d="M16 16l4 4" />
-		<path d="M19 21l2-2" />
-		{/* Shield accent */}
-		<path d="M7 13l-4 4" />
+		{/* Anvil */}
+		<path d="M4 18h16" />
+		<path d="M6 18v-4h12v4" />
+		<path d="M8 14v-2a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+		<path d="M5 14h2" />
+		<path d="M17 14h2" />
+		{/* Hammer */}
+		<path d="M10 10V5" />
+		<rect x="8" y="3" width="4" height="3" rx="0.5" />
+		{/* Sparks */}
+		<path d="M15 7l1-1" />
+		<path d="M17 9l1-1" />
+		<circle cx="14" cy="5" r="0.5" fill="currentColor" />
 	</svg>
 );
 

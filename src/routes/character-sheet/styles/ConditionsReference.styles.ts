@@ -1,82 +1,79 @@
 import styled from 'styled-components';
 import type { ConditionType, ConditionTag } from '../../../lib/rulesdata/conditions/conditions.types';
+import { theme } from './theme';
 
 export const StyledConditionsReferenceContainer = styled.div<{ $isMobile?: boolean }>`
-	border: ${(props) => (props.$isMobile ? '1px solid #f5d020' : '2px solid #8b4513')};
-	border-radius: 8px;
-	padding: 1rem;
-	background: ${(props) => (props.$isMobile ? '#2a2a2a' : 'white')};
-	margin-bottom: 1rem;
+	border: 2px solid ${theme.colors.accent.primary};
+	border-radius: ${theme.borderRadius.lg};
+	padding: ${theme.spacing[4]};
+	background: ${theme.colors.bg.secondary};
+	margin-bottom: ${theme.spacing[4]};
 `;
 
 export const StyledConditionsReferenceTitle = styled.div<{ $isMobile?: boolean }>`
-	font-size: 1.1rem;
-	font-weight: bold;
-	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
+	font-size: ${theme.typography.fontSize.xl};
+	font-weight: ${theme.typography.fontWeight.bold};
+	color: ${theme.colors.accent.primary};
 	text-align: center;
-	margin-bottom: 0.75rem;
+	margin-bottom: ${theme.spacing[3]};
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 0.5rem;
+	gap: ${theme.spacing[2]};
+	font-family: 'Cinzel', 'Georgia', serif;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
 `;
 
 export const StyledConditionsHeader = styled.div`
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
-	margin-bottom: 1rem;
+	gap: ${theme.spacing[2]};
+	margin-bottom: ${theme.spacing[3]};
 `;
 
 export const StyledSearchInput = styled.input<{ $isMobile?: boolean }>`
 	width: 100%;
-	padding: 0.5rem 0.75rem;
-	border: ${(props) => (props.$isMobile ? '1px solid #555' : '1px solid #8b4513')};
-	border-radius: 4px;
-	font-size: 0.85rem;
-	color: ${(props) => (props.$isMobile ? '#fff' : '#333')};
-	background: ${(props) => (props.$isMobile ? '#333' : '#fff')};
+	padding: ${theme.spacing[2]} ${theme.spacing[3]};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
+	font-size: ${theme.typography.fontSize.sm};
+	color: ${theme.colors.text.primary};
+	background: ${theme.colors.bg.primary};
+	transition: all ${theme.transitions.fast};
 
 	&::placeholder {
-		color: ${(props) => (props.$isMobile ? '#888' : '#999')};
+		color: ${theme.colors.text.muted};
 	}
 
 	&:focus {
 		outline: none;
-		border-color: ${(props) => (props.$isMobile ? '#f5d020' : '#654321')};
-		box-shadow: 0 0 0 2px
-			${(props) => (props.$isMobile ? 'rgba(245, 208, 32, 0.2)' : 'rgba(139, 69, 19, 0.2)')};
+		border-color: ${theme.colors.border.focus};
+		box-shadow: 0 0 0 2px rgba(125, 207, 255, 0.2);
 	}
 `;
 
 export const StyledTagFilters = styled.div`
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.35rem;
+	gap: ${theme.spacing[1]};
 `;
 
 export const StyledTagButton = styled.button<{ $active: boolean; $isMobile?: boolean }>`
-	padding: 0.2rem 0.5rem;
-	border-radius: 12px;
-	font-size: 0.7rem;
+	padding: ${theme.spacing[1]} ${theme.spacing[2]};
+	border-radius: ${theme.borderRadius.md};
+	font-size: ${theme.typography.fontSize.xs};
 	cursor: pointer;
-	transition: all 0.15s ease;
-	border: 1px solid ${(props) => (props.$active ? '#8b4513' : props.$isMobile ? '#555' : '#ccc')};
-	background: ${(props) =>
-		props.$active ? (props.$isMobile ? '#f5d020' : '#8b4513') : 'transparent'};
-	color: ${(props) =>
-		props.$active ? (props.$isMobile ? '#000' : '#fff') : props.$isMobile ? '#aaa' : '#666'};
+	transition: all ${theme.transitions.fast};
+	border: 1px solid ${(props) => (props.$active ? theme.colors.accent.primary : theme.colors.border.default)};
+	background: ${(props) => (props.$active ? theme.colors.accent.primary : 'transparent')};
+	color: ${(props) => (props.$active ? theme.colors.text.inverse : theme.colors.text.secondary)};
+	font-weight: ${theme.typography.fontWeight.medium};
 
 	&:hover {
-		border-color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
-		background: ${(props) =>
-			props.$active
-				? props.$isMobile
-					? '#f5d020'
-					: '#654321'
-				: props.$isMobile
-					? 'rgba(245, 208, 32, 0.1)'
-					: 'rgba(139, 69, 19, 0.1)'};
+		border-color: ${theme.colors.accent.primary};
+		background: ${(props) => (props.$active ? theme.colors.accent.secondary : theme.colors.bg.tertiary)};
+		color: ${(props) => (props.$active ? theme.colors.text.inverse : theme.colors.accent.primary)};
 	}
 `;
 
@@ -85,39 +82,45 @@ export const StyledConditionsList = styled.div<{ $isMobile?: boolean }>`
 	overflow-y: auto;
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: ${theme.spacing[2]};
 
 	/* Custom scrollbar */
 	&::-webkit-scrollbar {
-		width: 6px;
+		width: 8px;
 	}
 
 	&::-webkit-scrollbar-track {
-		background: ${(props) => (props.$isMobile ? '#333' : '#f1f1f1')};
-		border-radius: 3px;
+		background: ${theme.colors.bg.primary};
+		border-radius: ${theme.borderRadius.sm};
 	}
 
 	&::-webkit-scrollbar-thumb {
-		background: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
-		border-radius: 3px;
+		background: ${theme.colors.accent.primary};
+		border-radius: ${theme.borderRadius.sm};
+		
+		&:hover {
+			background: ${theme.colors.accent.secondary};
+		}
 	}
 `;
 
 export const StyledConditionCard = styled.div<{ $expanded: boolean; $isMobile?: boolean }>`
-	border: 1px solid ${(props) => (props.$isMobile ? '#444' : '#ddd')};
-	border-radius: 6px;
-	background: ${(props) => (props.$isMobile ? '#333' : '#fafafa')};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
+	background: ${theme.colors.bg.elevated};
 	overflow: hidden;
-	transition: all 0.2s ease;
+	transition: all ${theme.transitions.fast};
 
 	&:hover {
-		border-color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
+		border-color: ${theme.colors.accent.primary};
+		transform: translateY(-1px);
+		box-shadow: ${theme.shadows.md};
 	}
 `;
 
 export const StyledConditionHeader = styled.button<{ $isMobile?: boolean }>`
 	width: 100%;
-	padding: 0.6rem 0.75rem;
+	padding: ${theme.spacing[2]} ${theme.spacing[3]};
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -125,110 +128,116 @@ export const StyledConditionHeader = styled.button<{ $isMobile?: boolean }>`
 	border: none;
 	cursor: pointer;
 	text-align: left;
+	transition: all ${theme.transitions.fast};
+	
+	&:hover {
+		background: ${theme.colors.bg.tertiary};
+	}
 `;
 
 export const StyledConditionName = styled.span<{ $isMobile?: boolean }>`
-	font-weight: 600;
-	font-size: 0.9rem;
-	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	font-size: ${theme.typography.fontSize.base};
+	color: ${theme.colors.text.primary};
 `;
 
 export const StyledConditionTypeBadge = styled.span<{ $type: ConditionType; $isMobile?: boolean }>`
-	font-size: 0.65rem;
-	padding: 0.15rem 0.4rem;
-	border-radius: 8px;
-	font-weight: 500;
+	font-size: ${theme.typography.fontSize.xs};
+	padding: ${theme.spacing[1]} ${theme.spacing[2]};
+	border-radius: ${theme.borderRadius.md};
+	font-weight: ${theme.typography.fontWeight.medium};
 	text-transform: uppercase;
 	letter-spacing: 0.03em;
 	background: ${(props) => {
 		switch (props.$type) {
 			case 'stacking':
-				return props.$isMobile ? 'rgba(251, 146, 60, 0.2)' : 'rgba(234, 88, 12, 0.15)';
+				return 'rgba(224, 175, 104, 0.15)';
 			case 'overlapping':
-				return props.$isMobile ? 'rgba(96, 165, 250, 0.2)' : 'rgba(59, 130, 246, 0.15)';
+				return 'rgba(125, 207, 255, 0.15)';
 			case 'absolute':
-				return props.$isMobile ? 'rgba(167, 139, 250, 0.2)' : 'rgba(139, 92, 246, 0.15)';
+				return 'rgba(187, 154, 247, 0.15)';
 		}
 	}};
 	color: ${(props) => {
 		switch (props.$type) {
 			case 'stacking':
-				return props.$isMobile ? '#fb923c' : '#c2410c';
+				return theme.colors.accent.warning;
 			case 'overlapping':
-				return props.$isMobile ? '#60a5fa' : '#1d4ed8';
+				return theme.colors.accent.primary;
 			case 'absolute':
-				return props.$isMobile ? '#a78bfa' : '#6d28d9';
+				return theme.colors.accent.secondary;
 		}
 	}};
 `;
 
 export const StyledConditionDescription = styled.div<{ $isMobile?: boolean }>`
-	padding: 0 0.75rem 0.75rem;
-	font-size: 0.8rem;
-	line-height: 1.5;
-	color: ${(props) => (props.$isMobile ? '#ccc' : '#555')};
-	border-top: 1px solid ${(props) => (props.$isMobile ? '#444' : '#eee')};
-	padding-top: 0.5rem;
+	padding: 0 ${theme.spacing[3]} ${theme.spacing[3]};
+	font-size: ${theme.typography.fontSize.sm};
+	line-height: ${theme.typography.lineHeight.relaxed};
+	color: ${theme.colors.text.secondary};
+	border-top: 1px solid ${theme.colors.border.default};
+	padding-top: ${theme.spacing[2]};
 `;
 
 export const StyledConditionTags = styled.div`
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.25rem;
-	margin-top: 0.4rem;
+	gap: ${theme.spacing[1]};
+	margin-top: ${theme.spacing[2]};
 `;
 
 export const StyledConditionTag = styled.span<{ $tag: ConditionTag; $isMobile?: boolean }>`
-	font-size: 0.6rem;
-	padding: 0.1rem 0.35rem;
-	border-radius: 6px;
+	font-size: ${theme.typography.fontSize.xs};
+	padding: ${theme.spacing[1]} ${theme.spacing[2]};
+	border-radius: ${theme.borderRadius.sm};
 	background: ${(props) => {
 		switch (props.$tag) {
 			case 'physical':
-				return props.$isMobile ? 'rgba(248, 113, 113, 0.2)' : 'rgba(239, 68, 68, 0.1)';
+				return 'rgba(247, 118, 142, 0.15)';
 			case 'mental':
-				return props.$isMobile ? 'rgba(129, 140, 248, 0.2)' : 'rgba(99, 102, 241, 0.1)';
+				return 'rgba(187, 154, 247, 0.15)';
 			case 'sensory':
-				return props.$isMobile ? 'rgba(250, 204, 21, 0.2)' : 'rgba(234, 179, 8, 0.1)';
+				return 'rgba(224, 175, 104, 0.15)';
 			case 'movement':
-				return props.$isMobile ? 'rgba(52, 211, 153, 0.2)' : 'rgba(16, 185, 129, 0.1)';
+				return 'rgba(158, 206, 106, 0.15)';
 			case 'damage':
-				return props.$isMobile ? 'rgba(239, 68, 68, 0.3)' : 'rgba(220, 38, 38, 0.15)';
+				return 'rgba(247, 118, 142, 0.2)';
 		}
 	}};
 	color: ${(props) => {
 		switch (props.$tag) {
 			case 'physical':
-				return props.$isMobile ? '#f87171' : '#b91c1c';
+				return theme.colors.accent.danger;
 			case 'mental':
-				return props.$isMobile ? '#818cf8' : '#4338ca';
+				return theme.colors.accent.secondary;
 			case 'sensory':
-				return props.$isMobile ? '#facc15' : '#a16207';
+				return theme.colors.accent.warning;
 			case 'movement':
-				return props.$isMobile ? '#34d399' : '#047857';
+				return theme.colors.accent.success;
 			case 'damage':
-				return props.$isMobile ? '#ef4444' : '#991b1b';
+				return theme.colors.accent.danger;
 		}
 	}};
+	font-weight: ${theme.typography.fontWeight.medium};
 `;
 
 export const StyledExpandIcon = styled.span<{ $expanded: boolean; $isMobile?: boolean }>`
-	font-size: 0.8rem;
-	color: ${(props) => (props.$isMobile ? '#888' : '#999')};
-	transition: transform 0.2s ease;
+	font-size: ${theme.typography.fontSize.sm};
+	color: ${theme.colors.accent.primary};
+	transition: transform ${theme.transitions.fast};
 	transform: ${(props) => (props.$expanded ? 'rotate(180deg)' : 'rotate(0)')};
 `;
 
 export const StyledEmptyState = styled.div<{ $isMobile?: boolean }>`
 	text-align: center;
-	padding: 1.5rem;
-	color: ${(props) => (props.$isMobile ? '#888' : '#999')};
-	font-size: 0.85rem;
+	padding: ${theme.spacing[6]};
+	color: ${theme.colors.text.muted};
+	font-size: ${theme.typography.fontSize.sm};
 	font-style: italic;
 `;
 
 export const StyledConditionCount = styled.span<{ $isMobile?: boolean }>`
-	font-size: 0.75rem;
-	color: ${(props) => (props.$isMobile ? '#888' : '#999')};
-	font-weight: normal;
+	font-size: ${theme.typography.fontSize.sm};
+	color: ${theme.colors.text.muted};
+	font-weight: ${theme.typography.fontWeight.normal};
 `;

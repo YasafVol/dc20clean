@@ -8,6 +8,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import type { EnhancedCalculationResult } from '../../../lib/types/effectSystem';
+import { theme } from '../styles/theme';
 
 // Styled components
 const FeaturesContainer = styled.div`
@@ -29,17 +30,17 @@ const SectionHeader = styled.h3`
 `;
 
 const FeatureCard = styled.div`
-	background-color: #ffffff;
-	border: 1px solid #e5e7eb;
+	background-color: ${theme.colors.bg.elevated};
+	border: 1px solid ${theme.colors.border.default};
 	border-radius: 8px;
 	padding: 1rem;
 	margin-bottom: 0.75rem;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	box-shadow: ${theme.shadows.sm};
 	transition: all 0.2s ease;
 
 	&:hover {
-		border-color: #d1d5db;
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		border-color: ${theme.colors.accent.primary};
+		box-shadow: ${theme.shadows.md};
 	}
 `;
 
@@ -153,8 +154,8 @@ const SourceBadge = styled.span<{ $sourceType: string }>`
 
 const ConditionalTag = styled.span`
 	padding: 0.125rem 0.375rem;
-	background-color: #fbbf24;
-	color: #78350f;
+	background-color: ${theme.colors.accent.secondary};
+	color: ${theme.colors.text.inverse};
 	border-radius: 4px;
 	font-size: 0.7rem;
 	font-weight: 500;
@@ -164,8 +165,8 @@ const ConditionalTag = styled.span`
 const ConditionalSection = styled.div`
 	margin-top: 1.5rem;
 	padding: 1rem;
-	background-color: #fffbeb;
-	border: 1px solid #fed7aa;
+	background-color: ${theme.colors.bg.tertiary};
+	border: 1px solid ${theme.colors.accent.secondary};
 	border-radius: 8px;
 `;
 
@@ -188,8 +189,8 @@ const ConditionalItem = styled.div`
 	justify-content: between;
 	align-items: center;
 	padding: 0.5rem;
-	background-color: #ffffff;
-	border: 1px solid #fed7aa;
+	background-color: ${theme.colors.bg.elevated};
+	border: 1px solid ${theme.colors.border.default};
 	border-radius: 4px;
 	margin-bottom: 0.5rem;
 	font-size: 0.875rem;
@@ -201,8 +202,8 @@ const ConditionalItem = styled.div`
 
 const ConditionTag = styled.span`
 	padding: 0.25rem 0.5rem;
-	background-color: #f59e0b;
-	color: #ffffff;
+	background-color: ${theme.colors.accent.secondary};
+	color: ${theme.colors.text.inverse};
 	border-radius: 4px;
 	font-size: 0.75rem;
 	font-weight: 500;

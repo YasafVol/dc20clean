@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useConvexAuth } from 'convex/react';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent } from '../ui/dialog';
 import { SignIn } from './SignIn';
@@ -10,8 +9,19 @@ export interface AuthStatusProps {
 	className?: string;
 }
 
+function useConvexAuthSafe() {
+	try {
+		// Dynamic import to avoid breaking if convex is not available
+		const { useConvexAuth } = require('convex/react');
+		return useConvexAuth();
+	} catch {
+		// If Convex is not available, return safe defaults
+		return { isAuthenticated: false, isLoading: false };
+	}
+}
+
 export function AuthStatus({ className }: AuthStatusProps) {
-	const { isAuthenticated, isLoading } = useConvexAuth();
+	const { isAuthenticated, isLoading } = useConvexAuthSafe();
 	const [showSignIn, setShowSignIn] = React.useState(false);
 	const bypassAuth = import.meta.env.VITE_BYPASS_AUTH === 'true';
 	const isAllowed = bypassAuth ? true : isAuthenticated;

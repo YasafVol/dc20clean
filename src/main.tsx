@@ -5,12 +5,20 @@ import App from './App';
 import './styles/globals.css';
 import { getConvexClient } from './lib/convexClient';
 
-const convex = getConvexClient();
+// Check if Convex is enabled via environment variable
+const isConvexEnabled = import.meta.env.VITE_USE_CONVEX === 'true';
+
+// Only initialize Convex client if enabled
+const convex = isConvexEnabled ? getConvexClient() : null;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
-		<ConvexAuthProvider client={convex}>
+		{isConvexEnabled && convex ? (
+			<ConvexAuthProvider client={convex}>
+				<App />
+			</ConvexAuthProvider>
+		) : (
 			<App />
-		</ConvexAuthProvider>
+		)}
 	</React.StrictMode>
 );

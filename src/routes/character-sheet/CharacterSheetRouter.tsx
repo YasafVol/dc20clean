@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import CharacterSheetClean from './CharacterSheetClean';
+import CharacterSheetRedesign from './CharacterSheetRedesign';
 import CharacterSheetMobile from './CharacterSheetMobile';
 import { CharacterSheetProvider } from './hooks/CharacterSheetProvider';
 import { logger } from '../../lib/utils/logger';
@@ -47,7 +47,7 @@ const CharacterSheetRouter: React.FC<CharacterSheetRouterProps> = ({ characterId
 				if (isMobile) {
 					return <CharacterSheetMobile />;
 				} else {
-					return <CharacterSheetClean characterId={characterId} onBack={handleBackToMenu} />;
+					return <CharacterSheetRedesign characterId={characterId} onBack={handleBackToMenu} />;
 				}
 			})()}
 		</CharacterSheetProvider>

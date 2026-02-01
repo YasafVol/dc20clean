@@ -1,15 +1,16 @@
 import styled from 'styled-components';
+import { theme } from './theme';
 
 interface MobileStyledProps {
 	$isMobile?: boolean;
 }
 
 export const StyledMovementContainer = styled.div<MobileStyledProps>`
-	border: 2px solid ${(props) => (props.$isMobile ? 'rgb(68, 68, 68)' : '#8b4513')};
-	border-radius: 8px;
-	padding: 1rem;
-	background: ${(props) => (props.$isMobile ? 'rgb(42, 42, 42)' : 'white')};
-	margin-bottom: 1rem;
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.lg};
+	padding: ${theme.spacing[4]};
+	background: ${theme.colors.bg.secondary};
+	margin-bottom: ${theme.spacing[4]};
 `;
 
 export const StyledMovementGrid = styled.div<MobileStyledProps>`
@@ -28,15 +29,17 @@ export const StyledMovementStat = styled.div<MobileStyledProps>`
 `;
 
 export const StyledMovementLabel = styled.div<MobileStyledProps>`
-	font-size: 0.8rem;
-	font-weight: bold;
-	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.bold};
+	color: ${theme.colors.text.secondary};
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
 `;
 
 export const StyledMovementValue = styled.div<MobileStyledProps>`
-	font-size: 1.5rem;
-	font-weight: bold;
-	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
+	font-size: ${theme.typography.fontSize['2xl']};
+	font-weight: ${theme.typography.fontWeight.bold};
+	color: ${theme.colors.accent.primary};
 	display: flex;
 	align-items: center;
 	justify-content: center;

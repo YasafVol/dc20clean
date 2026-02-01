@@ -32,12 +32,15 @@ export const SpellbookIcon = () => (
 		strokeLinecap="round"
 		strokeLinejoin="round"
 	>
-		<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-		<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-		<path d="M12 6v4" />
-		<path d="M10 8h4" />
-		<circle cx="12" cy="14" r="2" />
-		<path d="M12 16v2" />
+		{/* Open book */}
+		<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+		<path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+		{/* Magical sparkles/stars */}
+		<path d="M12 4l.5 1.5L14 6l-1.5.5L12 8l-.5-1.5L10 6l1.5-.5L12 4z" fill="currentColor" />
+		<circle cx="6" cy="10" r="0.5" fill="currentColor" />
+		<circle cx="18" cy="10" r="0.5" fill="currentColor" />
+		<circle cx="6" cy="14" r="0.5" fill="currentColor" />
+		<circle cx="18" cy="14" r="0.5" fill="currentColor" />
 	</svg>
 );
 
@@ -53,13 +56,19 @@ export const EquipmentIcon = () => (
 		strokeLinecap="round"
 		strokeLinejoin="round"
 	>
-		{/* Sword */}
-		<path d="M14.5 17.5L3 6V3h3l11.5 11.5" />
-		<path d="M13 19l6-6" />
-		<path d="M16 16l4 4" />
-		<path d="M19 21l2-2" />
-		{/* Shield accent */}
-		<path d="M7 13l-4 4" />
+		{/* Anvil */}
+		<path d="M4 18h16" />
+		<path d="M6 18v-4h12v4" />
+		<path d="M8 14v-2a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+		<path d="M5 14h2" />
+		<path d="M17 14h2" />
+		{/* Hammer */}
+		<path d="M10 10V5" />
+		<rect x="8" y="3" width="4" height="3" rx="0.5" />
+		{/* Sparks */}
+		<path d="M15 7l1-1" />
+		<path d="M17 9l1-1" />
+		<circle cx="14" cy="5" r="0.5" fill="currentColor" />
 	</svg>
 );
 
@@ -86,6 +95,35 @@ export const ConditionsIcon = () => (
 		<path d="M15 10h1" />
 		<path d="M8 13h1" />
 		<path d="M15 13h1" />
+	</svg>
+);
+
+export const MonsterIcon = () => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 24 24"
+		width="64"
+		height="64"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth="1.5"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+	>
+		{/* Dragon/Monster head */}
+		<path d="M12 2C8 2 5 5 5 9c0 2 1 4 3 5l-1 3h10l-1-3c2-1 3-3 3-5 0-4-3-7-7-7z" />
+		{/* Eyes */}
+		<circle cx="9" cy="8" r="1" fill="currentColor" />
+		<circle cx="15" cy="8" r="1" fill="currentColor" />
+		{/* Horns */}
+		<path d="M7 4L5 2" />
+		<path d="M17 4l2-2" />
+		{/* Teeth */}
+		<path d="M8 14v2" />
+		<path d="M12 14v2" />
+		<path d="M16 14v2" />
+		{/* Body hint */}
+		<path d="M8 17v3c0 1 1 2 4 2s4-1 4-2v-3" />
 	</svg>
 );
 
@@ -129,7 +167,11 @@ import {
 	StyledContainer,
 	StyledTitle,
 	StyledSubtitle,
-	StyledMenuGrid,
+	StyledMenuSection,
+	StyledSectionTitle,
+	StyledCharacterGrid,
+	StyledDMGrid,
+	StyledToolsGrid,
 	StyledTextContent,
 	StyledMenuCard,
 	StyledCardTitle,
@@ -137,10 +179,39 @@ import {
 } from './styled';
 
 import { useNavigate } from 'react-router-dom';
-import { AuthStatus } from './auth';
+import { AuthStatus, useIsAuthenticated } from './auth';
+
+// Encounter planner icon
+export const EncounterIcon = () => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 24 24"
+		width="64"
+		height="64"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth="1.5"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+	>
+		{/* Crossed swords */}
+		<path d="M14 10l7-7" />
+		<path d="M21 3l-3 1 2 2 1-3z" />
+		<path d="M10 14l-7 7" />
+		<path d="M3 21l3-1-2-2-1 3z" />
+		{/* Shield/target in center */}
+		<circle cx="12" cy="12" r="3" />
+		<circle cx="12" cy="12" r="1" fill="currentColor" />
+		{/* Balance scales hint */}
+		<path d="M8 6l-4 2v2" />
+		<path d="M16 18l4-2v-2" />
+	</svg>
+);
 
 function Menu() {
 	const navigate = useNavigate();
+	const isAuthenticated = useIsAuthenticated();
+
 	return (
 		<StyledContainer>
 			<div className="absolute right-6 top-6">
@@ -153,52 +224,88 @@ function Menu() {
 				Choose your path to begin your adventure.
 			</StyledSubtitle>
 
-			<StyledMenuGrid>
-				<StyledMenuCard onClick={() => navigate('/create-character')}>
-					<StyledTextContent>
-						<StyledCardTitle>Create Character</StyledCardTitle>
-					</StyledTextContent>
-					<StyledIcon>
-						<HeadIcon />
-					</StyledIcon>
-				</StyledMenuCard>
+			{/* Character Creation Section */}
+			<StyledMenuSection>
+				<StyledSectionTitle>Character</StyledSectionTitle>
+				<StyledCharacterGrid>
+					<StyledMenuCard $variant="character" onClick={() => navigate('/create-character')}>
+						<StyledIcon $variant="character">
+							<HeadIcon />
+						</StyledIcon>
+						<StyledTextContent>
+							<StyledCardTitle $variant="character">Create Character</StyledCardTitle>
+						</StyledTextContent>
+					</StyledMenuCard>
 
-				<StyledMenuCard onClick={() => navigate('/load-character')}>
-					<StyledTextContent>
-						<StyledCardTitle>Load Character</StyledCardTitle>
-					</StyledTextContent>
-					<StyledIcon>
-						<GroupIcon />
-					</StyledIcon>
-				</StyledMenuCard>
+					<StyledMenuCard $variant="character" onClick={() => navigate('/load-character')}>
+						<StyledIcon $variant="character">
+							<GroupIcon />
+						</StyledIcon>
+						<StyledTextContent>
+							<StyledCardTitle $variant="character">Load Character</StyledCardTitle>
+						</StyledTextContent>
+					</StyledMenuCard>
+				</StyledCharacterGrid>
+			</StyledMenuSection>
 
-				<StyledMenuCard onClick={() => navigate('/spellbook')}>
-					<StyledTextContent>
-						<StyledCardTitle>Spellbook</StyledCardTitle>
-					</StyledTextContent>
-					<StyledIcon>
-						<SpellbookIcon />
-					</StyledIcon>
-				</StyledMenuCard>
+			{/* DM Tools Section - Only visible when authenticated */}
+			{isAuthenticated && (
+				<StyledMenuSection>
+					<StyledSectionTitle>DM Tools</StyledSectionTitle>
+					<StyledDMGrid>
+						<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/encounters')}>
+							<StyledIcon $variant="dm">
+								<EncounterIcon />
+							</StyledIcon>
+							<StyledTextContent>
+								<StyledCardTitle $variant="dm">Encounter Planner</StyledCardTitle>
+							</StyledTextContent>
+						</StyledMenuCard>
 
-				<StyledMenuCard onClick={() => navigate('/conditions')}>
-					<StyledTextContent>
-						<StyledCardTitle>Conditions</StyledCardTitle>
-					</StyledTextContent>
-					<StyledIcon>
-						<ConditionsIcon />
-					</StyledIcon>
-				</StyledMenuCard>
+						<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/monsters')}>
+							<StyledIcon $variant="dm">
+								<MonsterIcon />
+							</StyledIcon>
+							<StyledTextContent>
+								<StyledCardTitle $variant="dm">Laboratory</StyledCardTitle>
+							</StyledTextContent>
+						</StyledMenuCard>
+					</StyledDMGrid>
+				</StyledMenuSection>
+			)}
 
-				<StyledMenuCard onClick={() => navigate('/custom-equipment')}>
-					<StyledTextContent>
-						<StyledCardTitle>Custom Equipment</StyledCardTitle>
-					</StyledTextContent>
-					<StyledIcon>
-						<EquipmentIcon />
-					</StyledIcon>
-				</StyledMenuCard>
-			</StyledMenuGrid>
+			{/* Tools Section */}
+			<StyledMenuSection>
+				<StyledSectionTitle>Reference Tools</StyledSectionTitle>
+				<StyledToolsGrid>
+					<StyledMenuCard $variant="tools" onClick={() => navigate('/spellbook')}>
+						<StyledIcon $variant="tools">
+							<SpellbookIcon />
+						</StyledIcon>
+						<StyledTextContent>
+							<StyledCardTitle $variant="tools">Spellbook</StyledCardTitle>
+						</StyledTextContent>
+					</StyledMenuCard>
+
+					<StyledMenuCard $variant="tools" onClick={() => navigate('/conditions')}>
+						<StyledIcon $variant="tools">
+							<ConditionsIcon />
+						</StyledIcon>
+						<StyledTextContent>
+							<StyledCardTitle $variant="tools">Conditions</StyledCardTitle>
+						</StyledTextContent>
+					</StyledMenuCard>
+
+					<StyledMenuCard $variant="tools" onClick={() => navigate('/custom-equipment')}>
+						<StyledIcon $variant="tools">
+							<EquipmentIcon />
+						</StyledIcon>
+						<StyledTextContent>
+							<StyledCardTitle $variant="tools">Equipage</StyledCardTitle>
+						</StyledTextContent>
+					</StyledMenuCard>
+				</StyledToolsGrid>
+			</StyledMenuSection>
 
 			{/* Rules Version Note */}
 			<div className="absolute bottom-4 right-4 text-xs text-white/50">

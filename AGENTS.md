@@ -73,18 +73,31 @@ Tips
 
 ## Systems Index (start here)
 
+### Character Creation
 - Background System: `docs/systems/BACKGROUND_SYSTEM.MD`
 - Traits System: `docs/systems/TRAITS_SYSTEM.MD`
 - Classes System: `docs/systems/CLASS_SYSTEM.MD`
 - Ancestries System: `docs/systems/ANCESTRY_SYSTEM.MD`
-- Ontology & Flows: `docs/systems/ONTOLOGY.md`
-- Calculation & Derived Stats: `docs/systems/CALCULATION_SYSTEM.MD`
 - Spells System: `docs/systems/SPELLS_SYSTEM.MD`
 - Martials System: `docs/systems/MARTIALS_SYSTEM.MD`
 - Equipment System: `docs/systems/EQUIPMENT_SYSTEM.MD`
+
+### Character Sheet
 - Character Sheet Overview: `docs/systems/CHARACTER_SHEET.MD`
+- Calculation & Derived Stats: `docs/systems/CALCULATION_SYSTEM.MD`
 - PDF Export System: `docs/systems/PDF_EXPORT_SYSTEM.MD`
+
+### DM Tools
+- Monster System (Laboratory): `docs/systems/MONSTER_SYSTEM_SPEC.MD`
+- Encounter System (War Room): `docs/systems/ENCOUNTER_SYSTEM_SPEC.MD`
+
+### Reference Tools
+- Equipage (Custom Equipment): `docs/systems/EQUIPMENT_SYSTEM.MD`
+- Spellbook: `docs/systems/SPELLS_SYSTEM.MD`
+
+### Infrastructure
 - Database & Storage: `docs/systems/DATABASE_SYSTEM.MD`
+- Ontology & Flows: `docs/systems/ONTOLOGY.md`
 
 ## Agent Brief Template
 

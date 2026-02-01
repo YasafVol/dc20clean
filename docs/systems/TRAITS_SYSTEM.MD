@@ -227,13 +227,79 @@ The test suite enforces strict data quality:
 
 ---
 
-## 7 Future Evolution
+## 7 Trait Prerequisite Chains
+
+Traits with prerequisites require the base trait to be selected before the enhanced trait becomes available. The UI enforces these prerequisites and provides visual feedback when requirements are not met.
+
+### 7.1 Complete Prerequisite Map
+
+| Base Trait | Enhanced Traits (require base) |
+|------------|--------------------------------|
+| **Beastborn** | |
+| Climb Speed | Spider Climb |
+| Glide Speed | Limited Flight |
+| Limited Flight | Flyby, Full Flight |
+| Thick-Skinned | Shell |
+| Natural Weapon | Extended Natural Weapon, Ranged Natural Weapon, Natural Weapon Style, Rending Natural Weapon, Retractable Natural Weapon, Venomous Natural Weapon |
+| Additional Limb | Capable Limb |
+| **Dragonborn** | |
+| Draconic Breath Weapon | Concussive Breath, Death's Breath, Improved Draconic Breath |
+| **Fiendborn** | |
+| Darkvision | Superior Darkvision |
+| **Giantborn** | |
+| Giant's Resolve | Giant's Fortitude |
+| **Terraborn** | |
+| Tremorsense | Superior Tremorsense |
+| **Shadowborn** | |
+| Darkvision | Superior Darkvision |
+| **Psyborn** | |
+| Telepathy | Telepathic Reach, Telepathic Link |
+
+### 7.2 Multi-Level Chains
+
+Some traits form chains of multiple levels:
+
+```
+Glide Speed → Limited Flight → Flyby
+Glide Speed → Limited Flight → Full Flight
+```
+
+### 7.3 UI Behavior
+
+When a prerequisite is not met:
+- Enhanced trait displays "Requires: [Base Trait Name]" in amber text
+- Checkbox is disabled and cursor shows not-allowed
+- Visual styling indicates unavailability (opacity reduced)
+
+When deselecting a base trait:
+- All dependent enhanced traits are automatically deselected (cascade)
+- This prevents orphaned selections
+
+### 7.4 Data Schema
+
+Prerequisites are defined in the trait data using the `prerequisites` field:
+
+```typescript
+{
+  id: 'beastborn_spider_climb',
+  name: 'Spider Climb',
+  description: '...',
+  cost: 1,
+  prerequisites: ['beastborn_climb_speed'], // Array of required trait IDs
+  effects: [...]
+}
+```
+
+---
+
+## 8 Future Evolution
 
 - Effect Processor unification may centralize trait effect resolution across ancestries and classes.
 - Schema-driven editors may auto-render trait forms from `Trait` and `Effect` metadata.
 - Integration tests may validate that trait effects correctly modify character stats in the calculator.
+- Migration from legacy `prerequisites: string[]` to structured `requirements: TraitRequirements` format.
 
 ---
 
-> Last updated: 2026-01-05 (DC20 v0.10 - rulesSource updated)
+> Last updated: 2026-02-01 (DC20 v0.10 - prerequisite validation implemented)
 > Maintainer: @DC20Clean-Team

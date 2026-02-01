@@ -26,6 +26,9 @@ import {
 	BenefitName,
 	BenefitDescription
 } from './styles/shared/FeatureDisplay.styles';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Badge } from '../../components/ui/badge';
+import { cn } from '../../lib/utils';
 
 // Map of class IDs to their feature definitions
 const CLASS_FEATURES_MAP: Record<string, any> = {

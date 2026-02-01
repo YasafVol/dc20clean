@@ -88,6 +88,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 	const [showSnackbar, setShowSnackbar] = useState(false);
 	const [showAuthDialog, setShowAuthDialog] = useState(false);
+	const [pendingSave, setPendingSave] = useState(false); // Track if we're waiting for auth to save
 	const storage = useMemo(() => getDefaultStorage(), []);
 	const isAuthenticated = useIsAuthenticated();
 	const isUsingConvex = import.meta.env.VITE_USE_CONVEX === 'true';
@@ -109,6 +110,16 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		state.currentStep,
 		calculationResult?.ancestry
 	]);
+
+	// Auto-save after authentication completes (when user was waiting to save)
+	useEffect(() => {
+		if (pendingSave && isAuthenticated && isUsingConvex) {
+			debug.character('Auth completed, triggering pending save');
+			setPendingSave(false);
+			// Trigger the save by calling handleNext
+			handleNext();
+		}
+	}, [isAuthenticated, pendingSave, isUsingConvex]);
 
 	// Initialize character state for edit mode
 	useEffect(() => {
@@ -297,8 +308,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 		if (state.currentStep === maxStep && areAllStepsCompleted()) {
 			if (isUsingConvex && !isAuthenticated) {
-				setSnackbarMessage('Sign in to save to the cloud.');
+				setSnackbarMessage('Sign in to save your character.');
 				setShowSnackbar(true);
+				setPendingSave(true); // Mark that we want to save after auth
 				setShowAuthDialog(true);
 				return;
 			}
@@ -883,12 +895,18 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				duration={3000}
 			/>
 
-			<Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
+			<Dialog open={showAuthDialog} onOpenChange={(open) => {
+					setShowAuthDialog(open);
+					if (!open) setPendingSave(false); // Clear pending save if dialog dismissed
+				}}>
 				<DialogContent className="border-purple-500/50 bg-transparent p-0 shadow-none">
 					<SignIn
 						feature="cloud-save"
 						onSuccess={() => setShowAuthDialog(false)}
-						onCancel={() => setShowAuthDialog(false)}
+						onCancel={() => {
+							setShowAuthDialog(false);
+							setPendingSave(false);
+						}}
 					/>
 				</DialogContent>
 			</Dialog>

@@ -68,8 +68,8 @@ export const StyledBackButton = styled.button`
 	}
 
 	&:hover {
-		background: #8b4513;
-		color: #f5f3f0;
+		background: var(--crystal-secondary);
+		color: var(--text-primary);
 	}
 `;
 
@@ -100,7 +100,7 @@ export const StyledInnerBorder = styled.div`
 	height: 100%;
 	width: 100%;
 	margin: auto;
-	background: rgba(26, 27, 38, 0.8);
+	background: var(--bg-primary);
 	border-radius: ${theme.borderRadius.md};
 	box-shadow: ${theme.shadows.lg};
 	padding: 1.5rem;

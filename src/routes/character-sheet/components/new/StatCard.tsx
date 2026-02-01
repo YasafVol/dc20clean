@@ -15,6 +15,7 @@ interface StatCardProps {
 	showProgressBar?: boolean;
 	editable?: boolean;
 	onChange?: (value: number) => void;
+	onTempChange?: (value: number) => void;
 	className?: string;
 }
 
@@ -189,13 +190,16 @@ export const StatCard: React.FC<StatCardProps> = ({
 	showProgressBar = true,
 	editable = true,
 	onChange,
+	onTempChange,
 	className
 }) => {
 	const colorValue = theme.colors.resource[color];
-	const percentage = max ? (current / max) * 100 : 100;
+	// Temp HP increases MAX, not current
+	const effectiveMax = max !== undefined ? max + (temp || 0) : undefined;
+	const percentage = effectiveMax ? (current / effectiveMax) * 100 : (max ? (current / max) * 100 : 100);
 
 	const handleIncrement = () => {
-		if (onChange && max && current < max) {
+		if (onChange && effectiveMax && current < effectiveMax) {
 			onChange(current + 1);
 		}
 	};
@@ -231,12 +235,12 @@ export const StatCard: React.FC<StatCardProps> = ({
 				{max !== undefined && (
 					<>
 						<MaxValue $size={size}>/</MaxValue>
-						<MaxValue $size={size}>{max}</MaxValue>
+						<MaxValue $size={size}>{effectiveMax}</MaxValue>
 					</>
 				)}
-				{temp !== undefined && temp > 0 && (
+				{temp !== undefined && temp !== 0 && (
 					<TempValue $size={size} $color={colorValue}>
-						+{temp}
+						{temp > 0 ? `+${temp}` : temp} temp
 					</TempValue>
 				)}
 			</ValueContainer>
@@ -254,6 +258,7 @@ export const StatCard: React.FC<StatCardProps> = ({
 
 			{editable && onChange && (
 				<Controls>
+					<ControlLabel>Main</ControlLabel>
 					<ControlButton
 						onClick={handleDecrement}
 						whileHover={{ scale: 1.1 }}
@@ -263,6 +268,36 @@ export const StatCard: React.FC<StatCardProps> = ({
 					</ControlButton>
 					<ControlButton
 						onClick={handleIncrement}
+						whileHover={{ scale: 1.1 }}
+						whileTap={{ scale: 0.95 }}
+					>
+						+
+					</ControlButton>
+				</Controls>
+			)}
+
+			{editable && onTempChange && temp !== undefined && (
+				<Controls>
+					<ControlLabel>Temp HP</ControlLabel>
+					<ControlButton
+						onClick={() => {
+							const newTemp = temp - 1;
+							onTempChange(newTemp);
+							// If reducing temp HP causes current to exceed new max, clamp current
+							if (onChange && max !== undefined) {
+								const newEffectiveMax = max + newTemp;
+								if (current > newEffectiveMax) {
+									setTimeout(() => onChange(newEffectiveMax), 0);
+								}
+							}
+						}}
+						whileHover={{ scale: 1.1 }}
+						whileTap={{ scale: 0.95 }}
+					>
+						−
+					</ControlButton>
+					<ControlButton
+						onClick={() => onTempChange(temp + 1)}
 						whileHover={{ scale: 1.1 }}
 						whileTap={{ scale: 0.95 }}
 					>

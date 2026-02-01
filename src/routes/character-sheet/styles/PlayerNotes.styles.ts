@@ -73,7 +73,7 @@ export const StyledNoteInput = styled.textarea`
 	&:focus {
 		outline: none;
 		border-color: ${theme.colors.accent.primary};
-		box-shadow: 0 0 0 2px rgba(125, 207, 255, 0.2);
+		box-shadow: 0 0 0 2px var(--crystal-primary-20);
 	}
 
 	&::placeholder {
@@ -106,9 +106,9 @@ export const StyledAddButton = styled.button`
 export const StyledDeleteButton = styled.button`
 	width: 24px;
 	height: 24px;
-	border: 1px solid #dc2626;
-	background-color: #fee2e2;
-	color: #dc2626;
+	border: 1px solid var(--danger-border);
+	background-color: var(--danger-bg-light);
+	color: var(--danger-border);
 	border-radius: 4px;
 	font-size: 14px;
 	cursor: pointer;
@@ -119,7 +119,7 @@ export const StyledDeleteButton = styled.button`
 	font-weight: bold;
 
 	&:hover {
-		background-color: #fecaca;
+		background-color: var(--danger-bg-hover);
 	}
 
 	&:active {

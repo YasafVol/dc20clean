@@ -15,18 +15,18 @@ export const StyledExhaustionLevel = styled.div<{ filled: boolean; $isMobile?: b
 	position: relative;
 	width: 24px;
 	height: 24px;
-	border: 2px solid ${(props) => (props.$isMobile ? 'rgb(68, 68, 68)' : '#414868')};
+	border: 2px solid ${(props) => (props.$isMobile ? 'var(--mobile-border)' : 'var(--bg-tertiary)')};
 	background: ${(props) => {
 		if (props.filled) {
-			return props.$isMobile ? '#f5d020' : '#E0AF68';
+			return props.$isMobile ? 'var(--mobile-accent)' : 'var(--accent-warning)';
 		}
-		return props.$isMobile ? 'rgb(42, 42, 42)' : '#1A1B26';
+		return props.$isMobile ? 'var(--mobile-bg-primary)' : 'var(--bg-primary)';
 	}};
 	color: ${(props) => {
 		if (props.filled) {
-			return props.$isMobile ? 'rgb(42, 42, 42)' : '#1A1B26';
+			return props.$isMobile ? 'var(--mobile-bg-primary)' : 'var(--bg-primary)';
 		}
-		return props.$isMobile ? '#f5d020' : '#E0AF68';
+		return props.$isMobile ? 'var(--mobile-accent)' : 'var(--accent-warning)';
 	}};
 	display: flex;
 	align-items: center;
@@ -47,7 +47,7 @@ export const StyledExhaustionLevel = styled.div<{ filled: boolean; $isMobile?: b
 			if (props.filled) {
 				return props.$isMobile ? '#d4b01c' : '#C49A53';
 			}
-			return props.$isMobile ? 'rgb(52, 52, 52)' : '#24283B';
+			return props.$isMobile ? 'var(--mobile-bg-tertiary)' : 'var(--bg-secondary)';
 		}};
 		transform: scale(1.1);
 	}
@@ -58,7 +58,7 @@ export const StyledExhaustionTooltip = styled.div`
 	bottom: 100%;
 	left: 50%;
 	transform: translateX(-50%);
-	background: #333;
+	background: var(--bg-tertiary);
 	color: white;
 	padding: 0.5rem 0.75rem;
 	border-radius: 4px;
@@ -66,7 +66,7 @@ export const StyledExhaustionTooltip = styled.div`
 	white-space: nowrap;
 	z-index: 1000;
 	margin-bottom: 5px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 2px 8px var(--black-30);
 	opacity: 0;
 	visibility: hidden;
 	transition:
@@ -80,7 +80,7 @@ export const StyledExhaustionTooltip = styled.div`
 		left: 50%;
 		transform: translateX(-50%);
 		border: 5px solid transparent;
-		border-top-color: #333;
+		border-top-color: var(--bg-tertiary);
 	}
 
 	${StyledExhaustionLevel}:hover & {

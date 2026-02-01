@@ -4,6 +4,9 @@ import { motion } from 'framer-motion';
 import { theme } from '../../styles/theme';
 import { StatCard } from './StatCard';
 import DeathExhaustion from '../DeathExhaustion';
+import type { EnhancedStatBreakdown } from '../../../../lib/types/effectSystem';
+import { createEnhancedTooltip } from '../EnhancedStatTooltips';
+import Tooltip from '../Tooltip';
 
 interface HeroSectionProps {
 	// Resource values

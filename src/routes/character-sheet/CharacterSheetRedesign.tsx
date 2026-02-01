@@ -64,7 +64,7 @@ const Header = styled(motion.header)`
 	top: 0;
 	z-index: ${theme.zIndex.sticky};
 	backdrop-filter: blur(10px);
-	background: rgba(26, 27, 38, 0.95);
+	background: var(--bg-primary);
 `;
 
 const HeaderContent = styled.div`
@@ -241,6 +241,9 @@ const Tab = styled(motion.button)<{ $active: boolean }>`
 	transition: all ${theme.transitions.fast};
 	white-space: nowrap;
 	position: relative;
+	display: flex;
+	align-items: center;
+	gap: ${theme.spacing[2]};
 
 	&:hover {
 		background: ${theme.colors.bg.tertiary};
@@ -260,6 +263,18 @@ const Tab = styled(motion.button)<{ $active: boolean }>`
 			background: ${theme.colors.accent.primary};
 		}
 	`}
+`;
+
+const TabBadge = styled.span`
+	background: ${theme.colors.accent.primary};
+	color: ${theme.colors.text.inverse};
+	border-radius: ${theme.borderRadius.full};
+	padding: 2px 6px;
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.bold};
+	line-height: 1;
+	min-width: 18px;
+	text-align: center;
 `;
 
 const TabContent = styled(motion.div)`
@@ -311,6 +326,12 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	logger.debug('ui', 'CharacterSheetRedesign render', { characterId });
 
 	const [activeTab, setActiveTab] = useState<TabId>('attacks');
+	const [autoRollConfig, setAutoRollConfig] = useState<{
+		trigger: boolean;
+		diceType: 'd4' | 'd6' | 'd8' | 'd10' | 'd12' | 'd20';
+		bonus?: number;
+		mode?: 'normal' | 'advantage' | 'disadvantage' | 'no-d20';
+	}>({ trigger: false, diceType: 'd20' });
 	const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
 
 	// Use Provider hooks
@@ -327,6 +348,14 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	const resources = useCharacterResources();
 	const conditionStatuses = useCharacterConditions();
 	const languages = useCharacterLanguages();
+
+	// Calculate active conditions count (must be before early returns - Rules of Hooks)
+	const activeConditionsCount = React.useMemo(() => {
+		if (!conditionStatuses) return 0;
+		return conditionStatuses.filter(
+			(cs) => cs.interactions && cs.interactions.length > 0
+		).length;
+	}, [conditionStatuses]);
 
 	const characterData = state.character;
 	const loading = state.loading;
@@ -437,13 +466,14 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			}))
 	};
 
-	const tabs: { id: TabId; label: string; emoji: string }[] = [
+
+	const tabs: { id: TabId; label: string; emoji: string; badge?: number }[] = [
 		{ id: 'attacks', label: 'Attacks', emoji: '⚔️' },
 		{ id: 'spells', label: 'Spells', emoji: '📜' },
 		{ id: 'inventory', label: 'Inventory', emoji: '🎒' },
 		{ id: 'maneuvers', label: 'Maneuvers', emoji: '⚡' },
 		{ id: 'features', label: 'Features', emoji: '✨' },
-		{ id: 'conditions', label: 'Conditions', emoji: '🎭' },
+		{ id: 'conditions', label: 'Conditions', emoji: '🎭', badge: activeConditionsCount },
 		{ id: 'resources', label: 'Resources', emoji: '💎' },
 		{ id: 'knowledge', label: 'Knowledge', emoji: '📚' },
 		{ id: 'utility', label: 'Utility', emoji: '🔧' },
@@ -561,8 +591,32 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 									exit={{ opacity: 0, y: -20 }}
 									transition={{ duration: 0.2 }}
 								>
-									{activeTab === 'attacks' && <Attacks onAttackClick={() => {}} />}
-									{activeTab === 'spells' && <Spells onSpellClick={() => {}} />}
+								{activeTab === 'attacks' && (
+									<Attacks
+										onAttackClick={(attack, weapon) => {
+											setAutoRollConfig({
+												trigger: true,
+												diceType: 'd20',
+												bonus: attack.attackBonus,
+												mode: 'normal'
+											});
+											// Reset trigger after roll
+											setTimeout(() => setAutoRollConfig({ trigger: false, diceType: 'd20' }), 200);
+										}}
+									/>
+								)}
+								{activeTab === 'spells' && (
+									<Spells
+										onSpellClick={(spell) => {
+											setAutoRollConfig({
+												trigger: true,
+												diceType: 'd20',
+												mode: 'normal'
+											});
+											setTimeout(() => setAutoRollConfig({ trigger: false, diceType: 'd20' }), 200);
+										}}
+									/>
+								)}
 									{activeTab === 'inventory' && <Inventory onItemClick={() => {}} />}
 									{activeTab === 'maneuvers' && <Maneuvers onManeuverClick={() => {}} />}
 									{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
@@ -615,7 +669,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				</TwoColumnLayout>
 			</MainContent>
 
-			<DiceRoller />
+		<DiceRoller autoRollConfig={autoRollConfig} />
 			<FeaturePopup feature={selectedFeature} onClose={closeFeaturePopup} />
 		</PageContainer>
 	);

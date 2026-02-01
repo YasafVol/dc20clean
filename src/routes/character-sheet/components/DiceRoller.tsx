@@ -303,8 +303,8 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll }) => {
 					<StyledAddDiceSection>
 						<div className="section-label">Add Dice</div>
 						<StyledDiceTypeGrid>
-							{(['d4', 'd6', 'd8', 'd10', 'd12'] as DiceType[]).map((type) => (
-								<StyledDiceTypeButton key={type} onClick={() => addDice(type)}>
+							{(['d20', 'd12', 'd10', 'd8', 'd6', 'd4'] as DiceType[]).map((type) => (
+								<StyledDiceTypeButton key={type} onClick={() => addDice(type)} $diceType={type}>
 									{type.toUpperCase()}
 								</StyledDiceTypeButton>
 							))}

@@ -179,7 +179,7 @@ import {
 } from './styled';
 
 import { useNavigate } from 'react-router-dom';
-import { AuthStatus } from './auth';
+import { AuthStatus, useIsAuthenticated } from './auth';
 
 // Encounter planner icon
 export const EncounterIcon = () => (
@@ -210,6 +210,8 @@ export const EncounterIcon = () => (
 
 function Menu() {
 	const navigate = useNavigate();
+	const isAuthenticated = useIsAuthenticated();
+
 	return (
 		<StyledContainer>
 			<div className="absolute right-6 top-6">
@@ -246,29 +248,31 @@ function Menu() {
 				</StyledCharacterGrid>
 			</StyledMenuSection>
 
-			{/* DM Tools Section */}
-			<StyledMenuSection>
-				<StyledSectionTitle>DM Tools</StyledSectionTitle>
-				<StyledDMGrid>
-					<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/encounters')}>
-						<StyledIcon $variant="dm">
-							<EncounterIcon />
-						</StyledIcon>
-						<StyledTextContent>
-							<StyledCardTitle $variant="dm">Encounter Planner</StyledCardTitle>
-						</StyledTextContent>
-					</StyledMenuCard>
+			{/* DM Tools Section - Only visible when authenticated */}
+			{isAuthenticated && (
+				<StyledMenuSection>
+					<StyledSectionTitle>DM Tools</StyledSectionTitle>
+					<StyledDMGrid>
+						<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/encounters')}>
+							<StyledIcon $variant="dm">
+								<EncounterIcon />
+							</StyledIcon>
+							<StyledTextContent>
+								<StyledCardTitle $variant="dm">Encounter Planner</StyledCardTitle>
+							</StyledTextContent>
+						</StyledMenuCard>
 
-					<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/monsters')}>
-						<StyledIcon $variant="dm">
-							<MonsterIcon />
-						</StyledIcon>
-						<StyledTextContent>
-							<StyledCardTitle $variant="dm">Laboratory</StyledCardTitle>
-						</StyledTextContent>
-					</StyledMenuCard>
-				</StyledDMGrid>
-			</StyledMenuSection>
+						<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/monsters')}>
+							<StyledIcon $variant="dm">
+								<MonsterIcon />
+							</StyledIcon>
+							<StyledTextContent>
+								<StyledCardTitle $variant="dm">Laboratory</StyledCardTitle>
+							</StyledTextContent>
+						</StyledMenuCard>
+					</StyledDMGrid>
+				</StyledMenuSection>
+			)}
 
 			{/* Tools Section */}
 			<StyledMenuSection>

@@ -263,7 +263,72 @@ encounters: defineTable({
 - User ID linked to all records
 - Data only visible to owner (except approved homebrew)
 
-### 5.6 Benefits
+### 5.6 Auth UI & Access Control
+
+**Components** (`src/components/auth/`):
+
+| Component | Purpose |
+|-----------|---------|
+| `AuthStatus` | Sign in button / user menu in header |
+| `SignIn` | OAuth sign-in dialog with feature context |
+| `AuthGuard` | Route protection wrapper |
+| `useIsAuthenticated()` | Hook to check auth state |
+
+**Access Control by Feature**:
+
+| Feature | Auth Required | Notes |
+|---------|---------------|-------|
+| Character Creation | No | Saves to localStorage without auth |
+| Character Creation → Save | **Prompted** | Auth dialog when clicking "Complete" |
+| Load Character | No | Loads from localStorage |
+| DM Tools (Laboratory, War Room) | **Yes** | Menu items hidden until signed in |
+| Reference Tools (Spellbook, Conditions, Equipage) | No | Public access |
+
+**Character Creation Auth Flow**:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  User clicks "Complete" on final step                       │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+            ┌─────────▼─────────┐
+            │ Using Convex?     │
+            │ (VITE_USE_CONVEX) │
+            └─────────┬─────────┘
+                      │
+         ┌────────────┴────────────┐
+         │ Yes                     │ No
+         ▼                         ▼
+┌─────────────────┐      ┌─────────────────┐
+│ Authenticated?  │      │ Save to         │
+└────────┬────────┘      │ localStorage    │
+         │               │ immediately     │
+    ┌────┴────┐          └─────────────────┘
+    │ Yes     │ No
+    ▼         ▼
+┌───────┐  ┌────────────────────────┐
+│ Save  │  │ Show auth dialog       │
+│ to    │  │ Set pendingSave=true   │
+│ Convex│  └───────────┬────────────┘
+└───────┘              │
+                       ▼
+              ┌────────────────┐
+              │ User signs in  │
+              └────────┬───────┘
+                       │
+                       ▼
+              ┌────────────────┐
+              │ Auto-save      │
+              │ triggered      │
+              └────────────────┘
+```
+
+Key implementation: `src/routes/character-creation/CharacterCreation.tsx`
+- `pendingSave` state tracks when waiting for auth
+- `useEffect` auto-triggers save when auth completes
+- No duplicate saves or manual re-click needed
+
+### 5.7 Benefits
 
 - **Cloud sync** across devices
 - **Data safety** - server-side backups
@@ -374,5 +439,5 @@ const saveCharacterData = async (character: SavedCharacter) => {
 
 ---
 
-> Last updated: 2026-01-31
+> Last updated: 2026-01-31 (auth flow documented)
 > Maintainer: @DC20Clean-Team

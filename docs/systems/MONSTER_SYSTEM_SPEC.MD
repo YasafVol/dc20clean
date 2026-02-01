@@ -1,7 +1,7 @@
 # DC20 Monster System (DM Tools)
 
 > **Status:** Implementation Complete  
-> **Last Updated:** 2026-01-31  
+> **Last Updated:** 2026-01-31 (v2: added flavor fields & importer)  
 > **Related:** [ENCOUNTER_SYSTEM_SPEC.MD](./ENCOUNTER_SYSTEM_SPEC.MD)
 
 ---
@@ -208,7 +208,49 @@ Every monster has 4 AP per turn to spend on actions.
 
 ---
 
-## 8. Data Schema
+## 8. Flavor/Lore Fields
+
+Optional fields for thematic richness, not affecting combat math.
+
+### 8.1 Monster Size
+
+| Value | Description |
+|-------|-------------|
+| Tiny | < 2.5 ft |
+| Small | 2.5–4 ft |
+| Medium | 4–8 ft |
+| Large | 8–15 ft |
+| Huge | 15–25 ft |
+| Gargantuan | > 25 ft |
+
+### 8.2 Monster Type
+
+14 creature categories from D&D/DC20 tradition:
+
+`Aberration` | `Beast` | `Celestial` | `Construct` | `Dragon` | `Elemental` | `Fey` | `Fiend` | `Giant` | `Humanoid` | `Monstrosity` | `Ooze` | `Plant` | `Undead`
+
+### 8.3 Monster Alignment
+
+Standard alignment grid plus special values:
+
+| Lawful | Neutral | Chaotic |
+|--------|---------|---------|
+| Lawful Good | Neutral Good | Chaotic Good |
+| Lawful Neutral | True Neutral | Chaotic Neutral |
+| Lawful Evil | Neutral Evil | Chaotic Evil |
+
+Plus: `Unaligned` (mindless creatures), `Varies` (individual choice)
+
+### 8.4 Lore & Tactics
+
+| Field | Max Length | Purpose |
+|-------|------------|---------|
+| `lore` | 2000 chars | Background, habitat, behavior |
+| `tactics` | 1000 chars | Combat strategy notes for DMs |
+
+---
+
+## 9. Data Schema
 
 ### 8.1 ID Format
 
@@ -228,6 +270,13 @@ interface SavedMonster {
   level: number;                 // -1 to 10
   tier: 'standard' | 'apex' | 'legendary';
   roleId: string;
+  
+  // Flavor/Lore (optional)
+  size?: MonsterSize;            // Tiny | Small | Medium | Large | Huge | Gargantuan
+  monsterType?: MonsterType;     // Beast | Humanoid | Undead | Dragon | etc. (14 types)
+  alignment?: MonsterAlignment;  // Lawful Good → Chaotic Evil | Unaligned | Varies
+  lore?: string;                 // Background/flavor text (max 2000 chars)
+  tactics?: string;              // Combat behavior notes (max 1000 chars)
   
   // Calculated Stats
   finalHP: number;
@@ -401,9 +450,75 @@ All phases complete. Implementation files:
 - [x] Menu integration: "Monster Forge" in DM Tools section
 - [x] Vercel + Convex deployment integration
 
-### Phase 9: Export/Import (Future)
-- [ ] Export/import utilities
-- [ ] UI buttons for export/import
+### Phase 9: Import Utility ✅
+- [x] `src/lib/services/monsterImporter.ts` - Raw JSON to SavedMonster transformer
+- [ ] UI buttons for import (pending)
+- [ ] Export utility (future)
 
 ### Seed Data
 - [x] `docs/seed-data/sample-monsters.json` - Template with 8 sample monsters
+
+---
+
+## 14. Import Utility
+
+### 14.1 Overview
+
+The `monsterImporter.ts` service transforms raw seed data JSON into the full `SavedMonster` schema.
+
+### 14.2 API
+
+```typescript
+import { 
+  importRawMonster,
+  importRawMonsters,
+  importMonstersFromJson 
+} from '@/lib/services/monsterImporter';
+
+// Single monster
+const result = importRawMonster(rawMonster);
+// result.success: boolean
+// result.monster?: SavedMonster
+// result.warnings: string[]
+// result.errors: string[]
+
+// Batch import
+const batch = importRawMonsters(rawMonsters);
+// batch.successful: SavedMonster[]
+// batch.failed: { name, errors }[]
+// batch.allWarnings: { name, warnings }[]
+
+// From JSON string
+const parsed = importMonstersFromJson(jsonString);
+// Same as batch, plus parseError?: string
+```
+
+### 14.3 Field Mapping
+
+| Seed Format | → | Schema Format |
+|-------------|---|---------------|
+| `role: "brute"` | → | `roleId: "brute"` |
+| `actionType: "Attack"` | → | `type: "martial"` |
+| `actionType: "Spell"` | → | `type: "spell"` |
+| `targetDefense: "PD"` | → | `targetDefense: "pd"` |
+| `targetDefense: "AD"` | → | `targetDefense: "ad"` |
+| `type: "Beast"` | → | `monsterType: "Beast"` |
+| `tier: "Elite"` | → | `tier: "apex"` |
+| `tier: "Solo"` | → | `tier: "legendary"` |
+| `features: [{name, desc}]` | → | `featureIds: ["feat_..."]` |
+
+### 14.4 Auto-Generated Fields
+
+The importer automatically generates:
+- Missing UUIDs (prefixed with `mon_`, `act_`)
+- Calculated stats (HP, PD, AD, Attack, Save DC, Base Damage)
+- Metadata (`createdAt`, `lastModified`, `schemaVersion`)
+- Default values (`apCost: 2`, `visibility: "private"`, etc.)
+- Stat breakdowns for debugging
+
+### 14.5 Validation & Warnings
+
+The importer reports:
+- **Errors** for missing required fields (name, level, role, actions)
+- **Warnings** for mapped fields (role variations, action types)
+- **Warnings** for features not found in official list (requires custom feature creation)

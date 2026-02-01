@@ -91,7 +91,7 @@
 - Weapons & Items System — items schema, weapon damage derivation, UI interactions
 - Currency System — model, validation, persistence, UI mapping
 - Status & Exhaustion System — levels, effects, modal behavior
-- Persistence — save/load mapping (localStorage only); remove Prisma schema/API references
+- Persistence — document localStorage + Convex data flow (Prisma removal complete)
 
 **Note:** Current focus is on the newly added Spells, Martials, Calculation, Effect docs, and Character Sheet overview.
 
@@ -217,19 +217,18 @@
 | 4. FE Migration         | ❌ Not Started | 0%         |
 | 5. Extract Hook         | 🟡 Optional    | N/A        |
 | 6. Multiclass Expansion | ❌ Not Started | 0%         |
-| 7. Convex Migration     | 🚧 Prep Done   | 60%        |
+| 7. Convex Migration     | ✅ Complete     | 100%       |
 
-**Overall: 2 of 6 active tasks complete (33%), 1 in progress**
+**Overall: 3 of 6 active tasks complete (50%), 0 in progress**
 
 ---
 
 ## 🎯 Recommended Priority Order
 
-1. **HIGH:** Convex Migration (Section 7) - Complete when npm available, enables cloud features
-2. **HIGH:** FE Migration (Section 4) - Biggest architectural impact, removes duplicate logic
-3. **MEDIUM:** Multiclass Expansion (Section 6) - Extends leveling system flexibility, builds on M3.17
-4. **MEDIUM:** Unit Tests (Section 1) - Protects against regressions
-5. **LOW:** Extract Hook (Section 5) - Nice to have, current code works
+1. **HIGH:** FE Migration (Section 4) - Biggest architectural impact, removes duplicate logic
+2. **MEDIUM:** Multiclass Expansion (Section 6) - Extends leveling system flexibility, builds on M3.17
+3. **MEDIUM:** Unit Tests (Section 1) - Protects against regressions
+4. **LOW:** Extract Hook (Section 5) - Nice to have, current code works
 
 ---
 
@@ -242,32 +241,26 @@
 
 ---
 
-**Last Updated:** January 14, 2026
+**Last Updated:** January 25, 2026
 
 ---
 
-## 7. Convex Cloud Storage Migration 🚧 **PREP COMPLETE**
+## 7. Convex Cloud Storage Integration ✅ **IMPLEMENTED**
 
-**Goal:** Replace localStorage with Convex cloud database for authenticated users.
+**Goal:** Provide optional Convex cloud storage for authenticated users (localStorage remains default).
 
-**Status:** Prep work complete, npm-dependent work deferred.
+**Status:** Implemented behind `VITE_USE_CONVEX=true` with `VITE_CONVEX_URL` configured.
 
-**Prep Work Done:**
-- ✅ Convex schema design (`convex/schema.ts.draft`)
-- ✅ Character CRUD mutations/queries (`convex/characters.ts.draft`)
-- ✅ Auth config with Google OAuth (`convex/auth.config.ts.draft`)
+**Implemented:**
+- ✅ Convex schema (`convex/schema.ts`)
+- ✅ Character CRUD mutations/queries (`convex/characters.ts`)
+- ✅ Auth config (`convex/auth.config.ts`)
 - ✅ Storage abstraction layer (`src/lib/storage/`)
-- ✅ Auth UI components (`src/components/auth/`)
-- ✅ Spec document (`docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md`)
+- ✅ App provider wiring (`src/main.tsx`)
+- ✅ Convex packages installed (`convex`, `@convex-dev/auth`)
 
-**Deferred (requires npm):**
-- [ ] `npm install convex @convex-dev/auth`
-- [ ] `npx convex dev` initialization
-- [ ] Rename `.draft` files
-- [ ] Wire up providers in `main.tsx`
-- [ ] Replace PDF export button with `FeatureGateButton`
-- [ ] Add cloud save functionality
+**Operational notes:**
+- Enable Convex by setting `VITE_USE_CONVEX=true` and `VITE_CONVEX_URL`.
+- localStorage remains the default when Convex is disabled.
 
-**See:** `docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md` for full TODO checklist.
-
-**Estimated effort:** 4-6 hours (after npm available)
+**See:** `docs/archive/CONVEX_MIGRATION.md` for the original migration checklist.

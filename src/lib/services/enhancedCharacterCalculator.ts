@@ -294,6 +294,11 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 		manualPD: contextData.manualPD,
 		manualAD: contextData.manualAD,
 		manualPDR: contextData.manualPDR,
+		activeConditions: Object.entries(
+			contextData.characterState?.ui?.activeConditions ?? {}
+		)
+			.filter(([, isActive]) => Boolean(isActive))
+			.map(([conditionId]) => conditionId),
 
 		// Conversions between point pools (for Background step)
 		conversions: {
@@ -758,7 +763,8 @@ function resolveEffectChoices(
 function createStatBreakdown(
 	statName: string,
 	baseValue: number,
-	effects: AttributedEffect[]
+	effects: AttributedEffect[],
+	activeConditions?: Set<string>
 ): EnhancedStatBreakdown {
 	const relevantEffects = effects.filter((effect) => {
 		if (!effect.resolved) return false;
@@ -777,18 +783,21 @@ function createStatBreakdown(
 	const breakdown: EnhancedStatBreakdown = {
 		statName,
 		base: baseValue,
-		effects: relevantEffects.map((effect) => ({
-			source: effect.source,
-			value: effect.value as number,
-			condition: effect.condition,
-			description: `${effect.source.name}: ${effect.value > 0 ? '+' : ''}${effect.value}${effect.condition ? ` (${effect.condition})` : ''}`,
-			isActive: !effect.condition // For now, assume conditional effects are not active
-		})),
+		effects: relevantEffects.map((effect) => {
+			const isActive = !effect.condition || activeConditions?.has(effect.condition);
+			return {
+				source: effect.source,
+				value: effect.value as number,
+				condition: effect.condition,
+				description: `${effect.source.name}: ${effect.value > 0 ? '+' : ''}${effect.value}${effect.condition ? ` (${effect.condition})` : ''}`,
+				isActive
+			};
+		}),
 		total:
 			baseValue +
 			relevantEffects.reduce((sum, effect) => {
-				if (!effect.condition) {
-					// Only count non-conditional effects in total
+				if (!effect.condition || activeConditions?.has(effect.condition)) {
+					// Count active conditional effects in total
 					return sum + (effect.value as number);
 				}
 				return sum;
@@ -1094,6 +1103,7 @@ export function calculateCharacterWithBreakdowns(
 
 	// 2. Resolve user choices
 	const resolvedEffects = resolveEffectChoices(rawEffects, buildData.selectedTraitChoices);
+	const activeConditions = new Set(buildData.activeConditions ?? []);
 
 	// 3. Resolve class progression (budgets + features) - only if class is selected
 	let resolvedProgression = null;
@@ -1127,7 +1137,12 @@ export function calculateCharacterWithBreakdowns(
 	// Attributes
 	for (const attr of attributesData) {
 		const baseValue = (buildData as any)[`attribute_${attr.id}`] || 0;
-		breakdowns[`attribute_${attr.id}`] = createStatBreakdown(attr.id, baseValue, resolvedEffects);
+		breakdowns[`attribute_${attr.id}`] = createStatBreakdown(
+			attr.id,
+			baseValue,
+			resolvedEffects,
+			activeConditions
+		);
 	}
 
 	// Calculate final attribute values
@@ -1151,10 +1166,22 @@ export function calculateCharacterWithBreakdowns(
 	const basePD = 8 + combatMastery + finalAgility + finalIntelligence;
 	const baseAD = 8 + combatMastery + finalMight + finalCharisma;
 	const pdModifiers = resolvedEffects
-		.filter((e) => e.type === 'MODIFY_STAT' && e.target === 'pd')
+		.filter(
+			(e) =>
+				e.resolved &&
+				e.type === 'MODIFY_STAT' &&
+				e.target === 'pd' &&
+				(!e.condition || activeConditions.has(e.condition))
+		)
 		.reduce((sum, e) => sum + (e.value as number), 0);
 	const adModifiers = resolvedEffects
-		.filter((e) => e.type === 'MODIFY_STAT' && e.target === 'ad')
+		.filter(
+			(e) =>
+				e.resolved &&
+				e.type === 'MODIFY_STAT' &&
+				e.target === 'ad' &&
+				(!e.condition || activeConditions.has(e.condition))
+		)
 		.reduce((sum, e) => sum + (e.value as number), 0);
 	const finalPD = buildData.manualPD ?? basePD + pdModifiers;
 	const finalAD = buildData.manualAD ?? baseAD + adModifiers;
@@ -1187,17 +1214,18 @@ export function calculateCharacterWithBreakdowns(
 	// Attribute points handled via breakdowns to avoid double counting
 
 	// Create breakdowns for derived stats
-	breakdowns.hpMax = createStatBreakdown('hpMax', finalHPMax, resolvedEffects);
-	breakdowns.spMax = createStatBreakdown('spMax', finalSPMax, resolvedEffects);
-	breakdowns.mpMax = createStatBreakdown('mpMax', finalMPMax, resolvedEffects);
-	breakdowns.pd = createStatBreakdown('pd', basePD, resolvedEffects);
-	breakdowns.ad = createStatBreakdown('ad', baseAD, resolvedEffects);
+	breakdowns.hpMax = createStatBreakdown('hpMax', finalHPMax, resolvedEffects, activeConditions);
+	breakdowns.spMax = createStatBreakdown('spMax', finalSPMax, resolvedEffects, activeConditions);
+	breakdowns.mpMax = createStatBreakdown('mpMax', finalMPMax, resolvedEffects, activeConditions);
+	breakdowns.pd = createStatBreakdown('pd', basePD, resolvedEffects, activeConditions);
+	breakdowns.ad = createStatBreakdown('ad', baseAD, resolvedEffects, activeConditions);
 
 	// Base 12 + any attribute points gained from leveling
 	breakdowns.attributePoints = createStatBreakdown(
 		'attributePoints',
 		12 + progressionGains.totalAttributePoints,
-		resolvedEffects
+		resolvedEffects,
+		activeConditions
 	);
 
 	// --- Spell System (M3.20) ---
@@ -1214,8 +1242,18 @@ export function calculateCharacterWithBreakdowns(
 	);
 
 	// Movement breakdowns
-	breakdowns.move_speed = createStatBreakdown('moveSpeed', baseMoveSpeed, resolvedEffects);
-	breakdowns.jump_distance = createStatBreakdown('jumpDistance', baseJumpDistance, resolvedEffects);
+	breakdowns.move_speed = createStatBreakdown(
+		'moveSpeed',
+		baseMoveSpeed,
+		resolvedEffects,
+		activeConditions
+	);
+	breakdowns.jump_distance = createStatBreakdown(
+		'jumpDistance',
+		baseJumpDistance,
+		resolvedEffects,
+		activeConditions
+	);
 
 	// Use breakdown totals for final values to avoid double counting
 	finalHPMax = breakdowns.hpMax.total;
@@ -1233,9 +1271,15 @@ export function calculateCharacterWithBreakdowns(
 	breakdowns.attack_spell_check = createStatBreakdown(
 		'attackSpellCheck',
 		attackSpellCheckBase,
-		resolvedEffects
+		resolvedEffects,
+		activeConditions
 	);
-	breakdowns.save_dc = createStatBreakdown('saveDC', finalSaveDC, resolvedEffects);
+	breakdowns.save_dc = createStatBreakdown(
+		'saveDC',
+		finalSaveDC,
+		resolvedEffects,
+		activeConditions
+	);
 
 	// Initiative breakdown - custom breakdown to show Combat Mastery + Agility components
 	breakdowns.initiative = {

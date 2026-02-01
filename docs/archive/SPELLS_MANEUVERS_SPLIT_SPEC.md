@@ -2,7 +2,7 @@
 
 > **Status:** ✅ **COMPLETE**  
 > **Created:** 2026-01-18  
-> **Last Updated:** 2026-01-18
+> **Last Updated:** 2026-01-25
 
 ---
 
@@ -600,9 +600,9 @@ test('Spellblade character creation with both Spells and Maneuvers steps', async
 
 This spec depends on the following completed work:
 
-- [x] LEVELING_GAPS_SPEC.md - Class category metadata (L10)
-- [x] LEVELING_GAPS_SPEC.md - Path progression fixes (L7, L8)
-- [x] LEVELING_GAPS_SPEC.md - General talent fixes (T1, T2)
+- [x] docs/archive/LEVELING_GAPS_SPEC.md - Class category metadata (L10)
+- [x] docs/archive/LEVELING_GAPS_SPEC.md - Path progression fixes (L7, L8)
+- [x] docs/archive/LEVELING_GAPS_SPEC.md - General talent fixes (T1, T2)
 
 ---
 
@@ -611,4 +611,4 @@ This spec depends on the following completed work:
 > - [SPELLS_SYSTEM.MD](./SPELLS_SYSTEM.MD)
 > - [MARTIALS_SYSTEM.MD](./MARTIALS_SYSTEM.MD)
 > - [CALCULATION_SYSTEM.MD](./CALCULATION_SYSTEM.MD)
-> - [LEVELING_GAPS_SPEC.md](./LEVELING_GAPS_SPEC.md)
+> - [docs/archive/LEVELING_GAPS_SPEC.md](../archive/LEVELING_GAPS_SPEC.md)

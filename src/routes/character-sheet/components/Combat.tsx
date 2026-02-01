@@ -9,7 +9,10 @@ import {
 	StyledCombatStatsContainer,
 	StyledCombatStatRow,
 	StyledCombatStatLabel,
-	StyledCombatStatValue
+	StyledCombatStatValue,
+	StyledCombatToggleRow,
+	StyledCombatToggleLabel,
+	StyledCombatToggleButton
 } from '../styles/Combat';
 import Tooltip from './Tooltip';
 import { createEnhancedTooltip } from './EnhancedStatTooltips';
@@ -24,7 +27,7 @@ export interface CombatProps {
 }
 
 const Combat: React.FC<CombatProps> = ({ isMobile }) => {
-	const { state, updateActionPoints } = useCharacterSheet();
+	const { state, updateActionPoints, setConditionToggle } = useCharacterSheet();
 	const resources = useCharacterResources();
 	const calculatedData = useCharacterCalculatedData();
 
@@ -33,6 +36,11 @@ const Combat: React.FC<CombatProps> = ({ isMobile }) => {
 	}
 
 	const currentValues = resources.current;
+	const hasRageFeature =
+		state.character.classId === 'barbarian' ||
+		state.character.selectedMulticlassFeature === 'Rage' ||
+		(state.character.unlockedFeatureIds || []).includes('barbarian_rage');
+	const isRaging = Boolean(state.character.characterState?.ui?.activeConditions?.raging);
 
 	// Get breakdowns from calculated data (Provider pattern)
 	const breakdowns = calculatedData.breakdowns || {};
@@ -77,6 +85,23 @@ const Combat: React.FC<CombatProps> = ({ isMobile }) => {
 					{renderActionPoints()}
 				</StyledActionPoints>
 			</StyledActionPointsContainer>
+
+			{/* Combat Toggles */}
+			{hasRageFeature && (
+				<StyledCombatToggleRow $isMobile={effectiveIsMobile}>
+					<StyledCombatToggleLabel $isMobile={effectiveIsMobile}>
+						RAGE
+					</StyledCombatToggleLabel>
+					<StyledCombatToggleButton
+						type="button"
+						$isActive={isRaging}
+						$isMobile={effectiveIsMobile}
+						onClick={() => setConditionToggle('raging', !isRaging)}
+					>
+						{isRaging ? 'Active' : 'Inactive'}
+					</StyledCombatToggleButton>
+				</StyledCombatToggleRow>
+			)}
 
 			{/* Combat Stats */}
 			<StyledCombatStatsContainer $isMobile={effectiveIsMobile}>

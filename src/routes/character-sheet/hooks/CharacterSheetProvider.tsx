@@ -149,6 +149,7 @@ interface CharacterSheetContextType {
 	updateExhaustion: (level: number) => void;
 	updateDeathStep: (steps: number, isDead?: boolean) => void;
 	setManualDefense: (pd?: number, ad?: number, pdr?: number) => void;
+	setConditionToggle: (conditionId: string, active: boolean) => void;
 	addAttack: (attack: any) => void;
 	removeAttack: (attackId: string) => void;
 	updateAttack: (attackId: string, attack: any) => void;
@@ -189,6 +190,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		updateExhaustion,
 		updateDeathStep,
 		setManualDefense,
+		setConditionToggle,
 		addAttack,
 		removeAttack,
 		updateAttack,
@@ -326,6 +328,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		updateExhaustion,
 		updateDeathStep,
 		setManualDefense,
+		setConditionToggle,
 		addAttack,
 		removeAttack,
 		updateAttack,
@@ -406,6 +409,7 @@ export function useCharacterResources() {
 
 export function useCharacterDefenses() {
 	const { state } = useCharacterSheet();
+	const calculatedData = useCharacterCalculatedData();
 
 	return useMemo(() => {
 		if (!state.character) return null;
@@ -414,11 +418,17 @@ export function useCharacterDefenses() {
 		const manualOverrides = state.character.characterState?.ui?.manualDefenseOverrides || {};
 
 		// Get calculated base values (these would come from character calculation)
-		const baseDefenses = {
-			PD: state.character.finalPD || 0,
-			AD: state.character.finalAD || 0,
-			PDR: state.character.finalPDR || 0
-		};
+		const baseDefenses = calculatedData?.stats
+			? {
+					PD: calculatedData.stats.finalPD || 0,
+					AD: calculatedData.stats.finalAD || 0,
+					PDR: calculatedData.stats.finalPDR || 0
+				}
+			: {
+					PD: state.character.finalPD || 0,
+					AD: state.character.finalAD || 0,
+					PDR: state.character.finalPDR || 0
+				};
 
 		// Return effective values (manual override takes precedence)
 		return {
@@ -427,7 +437,7 @@ export function useCharacterDefenses() {
 			PDR: manualOverrides.PDR ?? baseDefenses.PDR,
 			manualOverrides
 		};
-	}, [state.character]);
+	}, [state.character, calculatedData]);
 }
 
 export function useCharacterAttacks() {

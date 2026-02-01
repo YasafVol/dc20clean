@@ -362,8 +362,9 @@ When loading characters, `deserializeCharacterFromStorage()` automatically:
 **Not automatic** - users must:
 
 1. Export characters to JSON (existing feature)
-2. Sign in to Convex
-3. Import characters (existing feature)
+2. Enable Convex (`VITE_USE_CONVEX=true`, `VITE_CONVEX_URL=...`)
+3. Sign in to Convex
+4. Import characters (existing feature)
 
 ---
 
@@ -377,6 +378,7 @@ When loading characters, `deserializeCharacterFromStorage()` automatically:
 | `src/lib/utils/storageUtils.ts` | localStorage CRUD operations |
 | `src/lib/storage/characterStorage.ts` | Storage interface definition |
 | `src/lib/storage/localStorageAdapter.ts` | localStorage adapter |
+| `src/lib/storage/convexStorageAdapter.ts` | Convex adapter |
 | `src/lib/storage/index.ts` | Backend selector |
 | `convex/schema.ts` | Convex schema (all tables) |
 | `convex/characters.ts` | Character mutations/queries |
@@ -436,6 +438,7 @@ const saveCharacterData = async (character: SavedCharacter) => {
 - **Calculation System** — `docs/systems/CALCULATION_SYSTEM.MD`
 - **Monster System** — `docs/systems/MONSTER_SYSTEM_SPEC.MD`
 - **Encounter System** — `docs/systems/ENCOUNTER_SYSTEM_SPEC.MD`
+- **Convex Migration** — `docs/archive/CONVEX_MIGRATION.md`
 
 ---
 

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(xargs:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\ndocs: add feature mapping references to CLAUDE.md\n\nAdd new Feature Mapping section to CLAUDE.md that references the\ndetailed feature-to-system mapping documentation in docs/assets/mapping/.\n\nAlso reorganizes migration specs:\n- Move CONVEX_MIGRATION_SPEC.md to docs/archive/\n- Rename BUN_MIGRATION_SPEC.md to BUN_MIGRATION.md\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n\\)\")"
+    ]
+  }
+}

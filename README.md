@@ -54,7 +54,7 @@ The application will be available at `http://localhost:5173`.
 
 ## 📖 Documentation
 
-- Release notes: `docs/RELEASE_NOTES_v0.10.md`
+- Release notes: `docs/archive/2026-01-25-release-notes-v0.10.md`
 - System docs index: `docs/systems/`
 - Technical overview (stack, scripts, structure, CI): `docs/systems/PROJECT_TECHNICAL_OVERVIEW.MD`
 - Contributor guidelines: `AGENTS.md`
@@ -107,7 +107,7 @@ For detailed guidelines, see **[AGENTS.md](AGENTS.md)**
 
 See `docs/plannedSpecs/` for detailed specifications:
 
-- **[Convex Migration](docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md)** – Cloud storage with user authentication (prep work complete)
+- **[Convex Migration](docs/archive/CONVEX_MIGRATION.md)** – Cloud storage with user authentication (implemented behind a flag)
 - **[Leveling Epic](docs/archive/LEVELING_EPIC.md)** – Extended leveling (archived, completed)
 - **[Conditions System](docs/plannedSpecs/CONDITIONS_SPEC.md)** – Status effects and conditions
 - **[Encounter Builder](docs/plannedSpecs/ENCOUNTR_BUILDER.md)** – Combat encounter management

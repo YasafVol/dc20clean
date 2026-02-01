@@ -39,6 +39,7 @@ interface HeroSectionProps {
 	onStaminaChange?: (value: number) => void;
 	onRestChange?: (value: number) => void;
 	onGritChange?: (value: number) => void;
+	onSkillClick?: (skillName: string, bonus: number) => void;
 
 	className?: string;
 }
@@ -97,13 +98,14 @@ const DefensesGrid = styled.div<{ $withMarginTop?: boolean }>`
 	}
 `;
 
-const DefenseItem = styled(motion.div)`
+const DefenseItem = styled(motion.div)<{ $clickable?: boolean }>`
 	background: ${theme.colors.bg.secondary};
 	border-radius: ${theme.borderRadius.lg};
 	padding: ${theme.spacing[4]};
 	text-align: center;
 	border: 2px solid transparent;
 	transition: all ${theme.transitions.base};
+	${(props) => props.$clickable && 'cursor: pointer;'}
 
 	&:hover {
 		border-color: ${theme.colors.accent.warning};
@@ -153,6 +155,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 	onStaminaChange,
 	onRestChange,
 	onGritChange,
+	onSkillClick,
 	className
 }) => {
 	return (
@@ -269,15 +272,23 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 						</DefenseItem>
 					</DefensesGrid>
 					<DefensesGrid $withMarginTop>
-						<DefenseItem whileHover={{ scale: 1.05 }}>
-							<DefenseLabel>Attack/Spell</DefenseLabel>
-							<DefenseValue $isPrimary>+{attackBonus}</DefenseValue>
-						</DefenseItem>
-						<DefenseItem whileHover={{ scale: 1.05 }}>
-							<DefenseLabel>Save DC</DefenseLabel>
-							<DefenseValue $isPrimary>{saveDC}</DefenseValue>
-						</DefenseItem>
-						<DefenseItem whileHover={{ scale: 1.05 }}>
+					<DefenseItem
+						whileHover={{ scale: 1.05 }}
+						$clickable
+						onClick={() => onSkillClick?.('Attack', attackBonus)}
+					>
+						<DefenseLabel>Attack/Spell</DefenseLabel>
+						<DefenseValue $isPrimary>+{attackBonus}</DefenseValue>
+					</DefenseItem>
+					<DefenseItem whileHover={{ scale: 1.05 }}>
+						<DefenseLabel>Save DC</DefenseLabel>
+						<DefenseValue $isPrimary>{saveDC}</DefenseValue>
+					</DefenseItem>
+					<DefenseItem
+						whileHover={{ scale: 1.05 }}
+						$clickable
+						onClick={() => onSkillClick?.('Initiative', initiative)}
+					>
 							<DefenseLabel>Initiative</DefenseLabel>
 							<DefenseValue $isPrimary>+{initiative}</DefenseValue>
 						</DefenseItem>

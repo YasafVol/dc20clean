@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -29,7 +29,7 @@ import Conditions from './components/Conditions';
 import ConditionsReference from './components/ConditionsReference';
 import Currency from './components/Currency';
 import PlayerNotes from './components/PlayerNotes';
-import DiceRoller from './components/DiceRoller';
+import DiceRoller, { DiceRollerRef } from './components/DiceRoller';
 import Movement from './components/Movement';
 import RightColumnResources from './components/RightColumnResources';
 import FeaturePopup from './components/FeaturePopup';
@@ -334,6 +334,15 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	}>({ trigger: false, diceType: 'd20' });
 	const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
 
+	// Ref for dice roller auto-population
+	const diceRollerRef = useRef<DiceRollerRef>(null);
+
+	// Handle skill/save clicks to auto-populate dice roller
+	const handleSkillClick = (skillName: string, bonus: number) => {
+		console.log('[GIMLI] Skill clicked:', { skillName, bonus, refExists: !!diceRollerRef.current });
+		diceRollerRef.current?.addRollWithModifier(bonus, skillName);
+	};
+
 	// Use Provider hooks
 	const {
 		state,
@@ -534,6 +543,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 								characterData={characterData}
 								skillsByAttribute={skillsByAttribute}
 								isMobile={false}
+								onSkillClick={handleSkillClick}
 							/>
 						</SectionCard>
 					</LeftColumn>
@@ -565,15 +575,16 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 							onStaminaChange={updateSP}
 							onRestChange={updateRestPoints}
 							onGritChange={updateGritPoints}
-						/>
+						onSkillClick={handleSkillClick}
+					/>
 
-						{/* Tabs Section */}
-						<TabContainer>
-							<TabNav>
-								{tabs.map((tab) => (
-									<Tab
-										key={tab.id}
-										$active={activeTab === tab.id}
+					{/* Tabs Section */}
+					<TabContainer>
+						<TabNav>
+							{tabs.map((tab) => (
+								<Tab
+									key={tab.id}
+									$active={activeTab === tab.id}
 										onClick={() => setActiveTab(tab.id)}
 										whileHover={{ y: -2 }}
 										whileTap={{ scale: 0.98 }}
@@ -669,7 +680,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				</TwoColumnLayout>
 			</MainContent>
 
-		<DiceRoller autoRollConfig={autoRollConfig} />
+		<DiceRoller ref={diceRollerRef} autoRollConfig={autoRollConfig} />
 			<FeaturePopup feature={selectedFeature} onClose={closeFeaturePopup} />
 		</PageContainer>
 	);

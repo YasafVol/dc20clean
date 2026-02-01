@@ -116,6 +116,15 @@ export const AttributeName = styled.div<MobileStyledProps>`
 export const AttributeSave = styled.div<MobileStyledProps>`
 	font-size: 0.9rem;
 	color: ${(props) => (props.$isMobile ? 'var(--mobile-accent)' : 'var(--text-secondary)')};
+	cursor: pointer;
+	transition: all 0.2s ease;
+	padding: 0.25rem;
+	border-radius: 4px;
+
+	&:hover {
+		color: var(--crystal-primary);
+		background: ${(props) => (props.$isMobile ? 'var(--mobile-bg-tertiary)' : 'var(--bg-secondary)')};
+	}
 `;
 
 export const SkillRow = styled.div<MobileStyledProps>`
@@ -127,6 +136,14 @@ export const SkillRow = styled.div<MobileStyledProps>`
 	border-radius: 4px;
 	background: ${(props) => (props.$isMobile ? 'var(--mobile-bg-tertiary)' : 'var(--bg-primary)')};
 	margin-bottom: 0.3rem;
+	cursor: pointer;
+	transition: all 0.2s ease;
+
+	&:hover {
+		background: ${(props) => (props.$isMobile ? 'var(--mobile-bg-secondary)' : 'var(--bg-secondary)')};
+		border-color: var(--crystal-primary);
+		transform: translateX(2px);
+	}
 
 	&:last-child {
 		margin-bottom: 0;

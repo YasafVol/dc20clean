@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useImperativeHandle, forwardRef } from 'react';
 import { StyledDiceRollerContainer } from '../styles/DiceRoller';
 import { theme } from '../styles/theme';
 import {
@@ -55,7 +55,14 @@ interface DiceRollerProps {
 	onRoll?: (results: DiceRollResult[], total: number, rollMode: RollMode) => void;
 }
 
-const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll }) => {
+export interface DiceRollerRef {
+	addRollWithModifier: (modifier: number, label?: string) => void;
+	addDiceType: (type: DiceType, count?: number) => void;
+	clearAllDice: () => void;
+	expand: () => void;
+}
+
+const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) => {
 	const [rollMode, setRollMode] = useState<RollMode>('normal');
 	const [advantageCount, setAdvantageCount] = useState<number>(2);
 	const [disadvantageCount, setDisadvantageCount] = useState<number>(2);
@@ -63,6 +70,8 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll }) => {
 	const [isRolling, setIsRolling] = useState(false);
 	const [lastResults, setLastResults] = useState<DiceRollResult[]>([]);
 	const [total, setTotal] = useState<number | null>(null);
+	const [modifier, setModifier] = useState<number>(0);
+	const [modifierLabel, setModifierLabel] = useState<string>('');
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [rollHistory, setRollHistory] = useState<
 		{ results: DiceRollResult[]; total: number; mode: RollMode; timestamp: Date }[]
@@ -195,7 +204,7 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll }) => {
 			}
 		});
 
-		const totalValue = results.reduce((sum, result) => {
+		const diceTotal = results.reduce((sum, result) => {
 			// For D20s in advantage/disadvantage, only count the chosen one
 			if (result.type === 'd20' && (rollMode === 'advantage' || rollMode === 'disadvantage')) {
 				return sum + (result.isChosen ? result.value : 0);
@@ -203,6 +212,8 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll }) => {
 			// For all other dice, count normally
 			return sum + result.value;
 		}, 0);
+
+		const totalValue = diceTotal + modifier;
 
 		setLastResults(results);
 		setTotal(totalValue);
@@ -220,7 +231,40 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll }) => {
 
 	const clearDice = () => {
 		setAdditionalDice([]);
+		setModifier(0);
+		setModifierLabel('');
 	};
+
+	// Expose methods via ref for external control
+	useImperativeHandle(ref, () => ({
+		addRollWithModifier: async (bonus: number, label?: string) => {
+			console.log('[GIMLI] addRollWithModifier called:', { bonus, label });
+			// Clear any existing dice first
+			setAdditionalDice([]);
+			// Set the modifier
+			setModifier(bonus);
+			setModifierLabel(label || '');
+			// Expand the roller
+			setIsExpanded(true);
+			// Wait a tiny bit for state to update
+			await new Promise((resolve) => setTimeout(resolve, 50));
+			// Trigger the roll automatically
+			console.log('[GIMLI] Triggering auto-roll');
+			handleRoll();
+		},
+		addDiceType: (type: DiceType, count: number = 1) => {
+			for (let i = 0; i < count; i++) {
+				addDice(type);
+			}
+			setIsExpanded(true);
+		},
+		clearAllDice: () => {
+			clearDice();
+		},
+		expand: () => {
+			setIsExpanded(true);
+		}
+	}));
 
 	return (
 		<StyledDiceRollerContainer $isExpanded={isExpanded}>
@@ -371,8 +415,11 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll }) => {
 					{total !== null && !isRolling && (
 						<StyledResultsDisplay>
 							<StyledTotalResult $isHighRoll={total >= 15}>
-								Total: {total}
-								{lastResults.some((r) => r.isCriticalSuccess && r.isChosen !== false) && ' 🌟'}
+								Total: {total}							{modifier !== 0 && (
+								<span style={{ fontSize: '0.85em', opacity: 0.8 }}>
+									{' '}({modifier > 0 ? '+' : ''}{modifier}{modifierLabel ? ` ${modifierLabel}` : ''})
+								</span>
+							)}								{lastResults.some((r) => r.isCriticalSuccess && r.isChosen !== false) && ' 🌟'}
 								{lastResults.some((r) => r.isCriticalFail && r.isChosen !== false) && ' 💀'}
 							</StyledTotalResult>
 							<StyledResultsFlexContainer>
@@ -407,6 +454,8 @@ const DiceRoller: React.FC<DiceRollerProps> = ({ onRoll }) => {
 			)}
 		</StyledDiceRollerContainer>
 	);
-};
+});
+
+DiceRoller.displayName = 'DiceRoller';
 
 export default DiceRoller;

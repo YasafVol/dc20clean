@@ -323,6 +323,53 @@ const monsterValidator = {
 		v.literal('support')
 	),
 
+	// Flavor/Lore
+	size: v.optional(
+		v.union(
+			v.literal('Tiny'),
+			v.literal('Small'),
+			v.literal('Medium'),
+			v.literal('Large'),
+			v.literal('Huge'),
+			v.literal('Gargantuan')
+		)
+	),
+	monsterType: v.optional(
+		v.union(
+			v.literal('Aberration'),
+			v.literal('Beast'),
+			v.literal('Celestial'),
+			v.literal('Construct'),
+			v.literal('Dragon'),
+			v.literal('Elemental'),
+			v.literal('Fey'),
+			v.literal('Fiend'),
+			v.literal('Giant'),
+			v.literal('Humanoid'),
+			v.literal('Monstrosity'),
+			v.literal('Ooze'),
+			v.literal('Plant'),
+			v.literal('Undead')
+		)
+	),
+	alignment: v.optional(
+		v.union(
+			v.literal('Lawful Good'),
+			v.literal('Neutral Good'),
+			v.literal('Chaotic Good'),
+			v.literal('Lawful Neutral'),
+			v.literal('True Neutral'),
+			v.literal('Chaotic Neutral'),
+			v.literal('Lawful Evil'),
+			v.literal('Neutral Evil'),
+			v.literal('Chaotic Evil'),
+			v.literal('Unaligned'),
+			v.literal('Varies')
+		)
+	),
+	lore: v.optional(v.string()),
+	tactics: v.optional(v.string()),
+
 	// Calculated Stats
 	finalHP: v.number(),
 	finalPD: v.number(),

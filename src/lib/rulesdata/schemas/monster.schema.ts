@@ -203,6 +203,50 @@ export const monsterAttributesSchema = z.object({
 });
 
 // ============================================================================
+// MONSTER FLAVOR FIELDS
+// ============================================================================
+
+export const MONSTER_SIZES = ['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan'] as const;
+export type MonsterSize = (typeof MONSTER_SIZES)[number];
+
+export const MONSTER_TYPES = [
+	'Aberration',
+	'Beast',
+	'Celestial',
+	'Construct',
+	'Dragon',
+	'Elemental',
+	'Fey',
+	'Fiend',
+	'Giant',
+	'Humanoid',
+	'Monstrosity',
+	'Ooze',
+	'Plant',
+	'Undead',
+] as const;
+export type MonsterType = (typeof MONSTER_TYPES)[number];
+
+export const MONSTER_ALIGNMENTS = [
+	'Lawful Good',
+	'Neutral Good',
+	'Chaotic Good',
+	'Lawful Neutral',
+	'True Neutral',
+	'Chaotic Neutral',
+	'Lawful Evil',
+	'Neutral Evil',
+	'Chaotic Evil',
+	'Unaligned',
+	'Varies',
+] as const;
+export type MonsterAlignment = (typeof MONSTER_ALIGNMENTS)[number];
+
+export const monsterSizeSchema = z.enum(MONSTER_SIZES);
+export const monsterTypeSchema = z.enum(MONSTER_TYPES);
+export const monsterAlignmentSchema = z.enum(MONSTER_ALIGNMENTS);
+
+// ============================================================================
 // VISIBILITY & APPROVAL
 // ============================================================================
 
@@ -287,6 +331,13 @@ export interface SavedMonster {
 	tier: MonsterTier;
 	roleId: MonsterRoleId;
 
+	// Flavor/Lore
+	size?: MonsterSize;
+	monsterType?: MonsterType;
+	alignment?: MonsterAlignment;
+	lore?: string;
+	tactics?: string;
+
 	// Calculated Stats
 	finalHP: number;
 	finalPD: number;
@@ -341,6 +392,13 @@ export const savedMonsterSchema = z.object({
 	level: z.number().int().min(-1, 'Level must be at least -1 (Novice)').max(10, 'Level must be at most 10'),
 	tier: monsterTierSchema,
 	roleId: monsterRoleIdSchema,
+
+	// Flavor/Lore
+	size: monsterSizeSchema.optional(),
+	monsterType: monsterTypeSchema.optional(),
+	alignment: monsterAlignmentSchema.optional(),
+	lore: z.string().max(2000).optional(),
+	tactics: z.string().max(1000).optional(),
 
 	// Calculated Stats
 	finalHP: z.number().int().min(1),

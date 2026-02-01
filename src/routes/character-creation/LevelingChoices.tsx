@@ -7,6 +7,7 @@ import { CHARACTER_PATHS } from '../../lib/rulesdata/progression/paths/paths.dat
 import { MULTICLASS_TIERS, type MulticlassTier } from '../../lib/rulesdata/progression/multiclass';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
+import { getFeatureChoiceKey } from '../../lib/rulesdata/classes-data/classUtils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
@@ -562,6 +563,117 @@ function LevelingChoices() {
 																	No features available at this level for the selected class.
 																</p>
 															)}
+
+															{/* Render choices for selected multiclass feature */}
+															{(() => {
+																const selectedFeature = getMulticlassFeatures().find(
+																	(f) => f.featureName === selectedMulticlassFeature
+																);
+																if (!selectedFeature?.choices?.length) return null;
+
+																return (
+																	<div className="border-primary/30 mt-4 space-y-4 border-t pt-4">
+																		<h4 className="text-primary text-sm font-bold">
+																			Feature Choices
+																		</h4>
+																		{selectedFeature.choices.map((choice) => {
+																			const choiceKey = getFeatureChoiceKey(
+																				selectedMulticlassClass,
+																				'multiclass',
+																				choice.id
+																			);
+																			const currentSelections =
+																				state.selectedFeatureChoices?.[choiceKey] || [];
+																			const isComplete =
+																				currentSelections.length >= choice.count;
+
+																			const handleOptionClick = (optionName: string) => {
+																				const newChoices = {
+																					...state.selectedFeatureChoices
+																				};
+																				if (choice.count === 1) {
+																					// Radio behavior
+																					newChoices[choiceKey] = [optionName];
+																				} else {
+																					// Checkbox behavior
+																					const current = newChoices[choiceKey] || [];
+																					if (current.includes(optionName)) {
+																						newChoices[choiceKey] = current.filter(
+																							(s: string) => s !== optionName
+																						);
+																					} else if (current.length < choice.count) {
+																						newChoices[choiceKey] = [
+																							...current,
+																							optionName
+																						];
+																					}
+																				}
+																				dispatch({
+																					type: 'SET_FEATURE_CHOICES',
+																					selectedFeatureChoices: newChoices
+																				});
+																			};
+
+																			return (
+																				<div key={choice.id} className="space-y-2">
+																					<div className="flex items-center justify-between">
+																						<span className="text-primary text-sm font-medium">
+																							{choice.prompt}
+																						</span>
+																						<Badge
+																							variant={
+																								isComplete ? 'default' : 'outline'
+																							}
+																							className={cn(
+																								isComplete
+																									? 'bg-emerald-500/20 text-emerald-500'
+																									: 'border-amber-500/50 text-amber-500'
+																							)}
+																						>
+																							{isComplete
+																								? 'Complete'
+																								: `${currentSelections.length}/${choice.count}`}
+																						</Badge>
+																					</div>
+																					<div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+																						{choice.options?.map((option) => {
+																							const isOptionSelected =
+																								currentSelections.includes(option.name);
+																							return (
+																								<div
+																									key={option.name}
+																									onClick={(e) => {
+																										e.stopPropagation();
+																										handleOptionClick(option.name);
+																									}}
+																									className={cn(
+																										'cursor-pointer rounded-lg border-2 p-2 transition-all',
+																										isOptionSelected
+																											? 'border-primary bg-primary/10'
+																											: 'border-primary/30 hover:border-primary/60'
+																									)}
+																								>
+																									<div className="flex items-center justify-between">
+																										<span className="text-primary text-xs font-semibold">
+																											{option.name}
+																										</span>
+																										{isOptionSelected && (
+																											<Check className="text-primary h-3 w-3" />
+																										)}
+																									</div>
+																									<p className="text-foreground/70 mt-1 text-xs">
+																										{option.description}
+																									</p>
+																								</div>
+																							);
+																						})}
+																					</div>
+																				</div>
+																			);
+																		})}
+																	</div>
+																);
+															})()}
 														</div>
 													)}
 												</div>

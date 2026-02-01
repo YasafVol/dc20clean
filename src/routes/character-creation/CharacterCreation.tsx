@@ -23,6 +23,7 @@ import {
 	calculateCharacterWithBreakdowns
 } from '../../lib/services/enhancedCharacterCalculator';
 import { validateSubclassChoicesComplete } from '../../lib/rulesdata/classes-data/classUtils';
+import { resolveClassProgression } from '../../lib/rulesdata/classes-data/classProgressionResolver';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { Dialog, DialogContent } from '../../components/ui/dialog';
@@ -530,30 +531,55 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					return true;
 				}
 
-				// Actual validation: check that talents and path points are allocated
-				const selectedTalentsCount = Object.values(state.selectedTalents || {}).reduce(
-					(sum, count) => sum + count,
-					0
-				);
-				const pathPointsUsed =
-					(state.pathPointAllocations?.martial || 0) +
-					(state.pathPointAllocations?.spellcasting || 0);
-
-				// For now, allow progression if any choices are made (basic validation)
-				// Full validation will check against budgets
-				console.log('📊 Leveling validation:', {
-					selectedTalentsCount,
-					pathPointsUsed,
-					level: state.level
-				});
-
-				// Basic validation: level > 1 requires some progression choices
-				if (state.level > 1 && selectedTalentsCount === 0 && pathPointsUsed === 0) {
-					debug.warn('State', 'No leveling choices made yet');
-					// Allow progression but warn
+				// Get available budgets from progression resolver
+				if (!state.classId || state.level <= 1) {
+					return true; // No leveling choices needed at level 1
 				}
 
-				return true;
+				try {
+					const progression = resolveClassProgression(state.classId, state.level);
+					const availableTalents = progression.budgets?.totalTalents || 0;
+					const availablePathPoints = progression.budgets?.totalPathPoints || 0;
+
+					// Count multiclass selection as a talent
+					const multiclassTalentUsed =
+						state.selectedMulticlassOption && state.selectedMulticlassFeature ? 1 : 0;
+
+					// Calculate used talents and path points
+					const selectedTalentsCount = Object.values(state.selectedTalents || {}).reduce(
+						(sum, count) => sum + count,
+						0
+					);
+					const totalTalentsUsed = selectedTalentsCount + multiclassTalentUsed;
+					const pathPointsUsed =
+						(state.pathPointAllocations?.martial || 0) +
+						(state.pathPointAllocations?.spellcasting || 0);
+
+					debug.state('Leveling validation:', {
+						availableTalents,
+						totalTalentsUsed,
+						availablePathPoints,
+						pathPointsUsed,
+						level: state.level
+					});
+
+					// Validate talents are fully spent
+					if (availableTalents > 0 && totalTalentsUsed < availableTalents) {
+						debug.warn('State', `Talents not fully allocated: ${totalTalentsUsed}/${availableTalents}`);
+						return false;
+					}
+
+					// Validate path points are fully spent
+					if (availablePathPoints > 0 && pathPointsUsed < availablePathPoints) {
+						debug.warn('State', `Path points not fully allocated: ${pathPointsUsed}/${availablePathPoints}`);
+						return false;
+					}
+
+					return true;
+				} catch (error) {
+					console.error('Failed to resolve progression for validation:', error);
+					return true; // Allow progression if validation fails to avoid blocking
+				}
 			}
 
 			case 'Ancestry': {

@@ -1899,16 +1899,31 @@ export const traitsData: Trait[] = [
 		]
 	},
 	{
-		id: 'beastborn_secondary_arms',
-		name: 'Secondary Arms',
+		id: 'beastborn_additional_limb',
+		name: 'Additional Limb',
 		description:
-			"You have 2 slightly smaller secondary arms below your primary pair of arms. They function just like your primary arms, but they can't wield Weapons with the Heavy Property or Shields.",
+			'You have an additional limb (arm, tentacle, tail, etc.) that can hold objects but cannot wield Weapons with the Heavy Property or Shields.',
 		cost: 1,
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
-				target: 'secondary_arms',
-				value: '2 secondary arms (no Heavy weapons or Shields).'
+				target: 'additional_limb',
+				value: 'Additional limb that can hold objects (no Heavy weapons or Shields).'
+			}
+		]
+	},
+	{
+		id: 'beastborn_capable_limb',
+		name: 'Capable Limb',
+		description:
+			'Your Additional Limb is now capable of wielding any weapon or shield, including those with the Heavy Property.',
+		cost: 1,
+		prerequisites: ['beastborn_additional_limb'],
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'capable_limb',
+				value: 'Additional Limb can wield any weapon or shield.'
 			}
 		]
 	},
@@ -2003,6 +2018,7 @@ export const traitsData: Trait[] = [
 			"Your arms are replaced by wings. You can't hold items with your hands while using your wings for flight.",
 		cost: -1,
 		isNegative: true,
+		prerequisites: ['beastborn_limited_flight'],
 		effects: [
 			{
 				type: 'GRANT_ABILITY',

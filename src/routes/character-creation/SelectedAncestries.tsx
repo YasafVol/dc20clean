@@ -30,6 +30,40 @@ function SelectedAncestries() {
 		return traitsData.find((t) => t.id === traitId);
 	}
 
+	// Check if all prerequisites for a trait are met
+	function arePrerequisitesMet(trait: ITrait, currentSelectedTraits: string[]): boolean {
+		if (!trait.prerequisites || trait.prerequisites.length === 0) return true;
+		return trait.prerequisites.every((prereqId) => currentSelectedTraits.includes(prereqId));
+	}
+
+	// Get list of missing prerequisites for display
+	function getMissingPrerequisites(trait: ITrait, currentSelectedTraits: string[]): string[] {
+		if (!trait.prerequisites) return [];
+		return trait.prerequisites.filter((prereqId) => !currentSelectedTraits.includes(prereqId));
+	}
+
+	// Get human-readable names for prerequisite trait IDs
+	function getPrerequisiteNames(prereqIds: string[]): string[] {
+		return prereqIds.map((id) => {
+			const trait = getTrait(id);
+			return trait?.name || id;
+		});
+	}
+
+	// Find all traits that depend on a given trait (for cascade deselection)
+	function getDependentTraits(traitId: string, currentSelectedTraits: string[]): string[] {
+		const dependents: string[] = [];
+		for (const selectedId of currentSelectedTraits) {
+			const trait = getTrait(selectedId);
+			if (trait?.prerequisites?.includes(traitId)) {
+				dependents.push(selectedId);
+				// Recursively find traits that depend on this dependent
+				dependents.push(...getDependentTraits(selectedId, currentSelectedTraits));
+			}
+		}
+		return dependents;
+	}
+
 	function handleToggleTrait(traitId: string) {
 		const trait = getTrait(traitId);
 		if (!trait) return;
@@ -38,10 +72,18 @@ function SelectedAncestries() {
 		const isCurrentlySelected = currentTraits.includes(traitId);
 
 		if (isCurrentlySelected) {
-			// Deselect - always allowed
-			currentTraits = currentTraits.filter((id) => id !== traitId);
+			// Deselect - also deselect any traits that depend on this one (cascade)
+			const dependentTraits = getDependentTraits(traitId, currentTraits);
+			currentTraits = currentTraits.filter(
+				(id) => id !== traitId && !dependentTraits.includes(id)
+			);
 		} else {
-			// Select - check if we have enough points
+			// Select - check prerequisites first
+			if (!arePrerequisitesMet(trait, currentTraits)) {
+				// Prerequisites not met, don't allow selection
+				return;
+			}
+			// Check if we have enough points
 			const newPointsSpent = ancestryPointsSpent + trait.cost;
 			if (newPointsSpent > totalAncestryPoints) {
 				// Would exceed budget, don't allow selection
@@ -59,24 +101,38 @@ function SelectedAncestries() {
 		const isSelected = selectedTraits.includes(traitId);
 		const wouldExceedBudget = !isSelected && ancestryPointsSpent + trait.cost > totalAncestryPoints;
 
+		// Check prerequisites
+		const missingPrereqs = getMissingPrerequisites(trait, selectedTraits);
+		const hasUnmetPrerequisites = missingPrereqs.length > 0;
+		const missingPrereqNames = getPrerequisiteNames(missingPrereqs);
+		const isDisabled = !isSelected && (wouldExceedBudget || hasUnmetPrerequisites);
+
 		return (
 			<li key={traitId} className="border-primary mb-3 rounded border-l bg-white/5 p-2">
 				<label
 					className={cn(
 						'text-foreground hover:text-primary flex cursor-pointer items-start gap-3 text-sm leading-relaxed',
-						wouldExceedBudget && 'opacity-50'
+						isDisabled && 'cursor-not-allowed opacity-50'
 					)}
 				>
 					<input
 						type="checkbox"
 						checked={isSelected}
-						disabled={wouldExceedBudget}
+						disabled={isDisabled}
 						onChange={() => handleToggleTrait(traitId)}
-						className="accent-primary mt-1 h-[18px] w-[18px] shrink-0 cursor-pointer"
+						className="accent-primary mt-1 h-[18px] w-[18px] shrink-0 cursor-pointer disabled:cursor-not-allowed"
 					/>
 					<span>
 						{trait.name} ({trait.cost} pts) - {trait.description}
-						{wouldExceedBudget && <span className="text-destructive"> (Not enough points)</span>}
+						{wouldExceedBudget && !hasUnmetPrerequisites && (
+							<span className="text-destructive"> (Not enough points)</span>
+						)}
+						{hasUnmetPrerequisites && (
+							<span className="text-amber-500">
+								{' '}
+								(Requires: {missingPrereqNames.join(', ')})
+							</span>
+						)}
 					</span>
 				</label>
 

@@ -158,7 +158,11 @@ import {
 	StyledContainer,
 	StyledTitle,
 	StyledSubtitle,
-	StyledMenuGrid,
+	StyledMenuSection,
+	StyledSectionTitle,
+	StyledCharacterGrid,
+	StyledDMGrid,
+	StyledToolsGrid,
 	StyledTextContent,
 	StyledMenuCard,
 	StyledCardTitle,
@@ -167,6 +171,33 @@ import {
 
 import { useNavigate } from 'react-router-dom';
 import { AuthStatus } from './auth';
+
+// Encounter planner icon
+export const EncounterIcon = () => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 24 24"
+		width="64"
+		height="64"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth="1.5"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+	>
+		{/* Crossed swords */}
+		<path d="M14 10l7-7" />
+		<path d="M21 3l-3 1 2 2 1-3z" />
+		<path d="M10 14l-7 7" />
+		<path d="M3 21l3-1-2-2-1 3z" />
+		{/* Shield/target in center */}
+		<circle cx="12" cy="12" r="3" />
+		<circle cx="12" cy="12" r="1" fill="currentColor" />
+		{/* Balance scales hint */}
+		<path d="M8 6l-4 2v2" />
+		<path d="M16 18l4-2v-2" />
+	</svg>
+);
 
 function Menu() {
 	const navigate = useNavigate();
@@ -182,61 +213,86 @@ function Menu() {
 				Choose your path to begin your adventure.
 			</StyledSubtitle>
 
-			<StyledMenuGrid>
-				<StyledMenuCard onClick={() => navigate('/create-character')}>
-					<StyledTextContent>
-						<StyledCardTitle>Create Character</StyledCardTitle>
-					</StyledTextContent>
-					<StyledIcon>
-						<HeadIcon />
-					</StyledIcon>
-				</StyledMenuCard>
+			{/* Character Creation Section */}
+			<StyledMenuSection>
+				<StyledSectionTitle>Character</StyledSectionTitle>
+				<StyledCharacterGrid>
+					<StyledMenuCard $variant="character" onClick={() => navigate('/create-character')}>
+						<StyledIcon $variant="character">
+							<HeadIcon />
+						</StyledIcon>
+						<StyledTextContent>
+							<StyledCardTitle $variant="character">Create Character</StyledCardTitle>
+						</StyledTextContent>
+					</StyledMenuCard>
 
-				<StyledMenuCard onClick={() => navigate('/load-character')}>
-					<StyledTextContent>
-						<StyledCardTitle>Load Character</StyledCardTitle>
-					</StyledTextContent>
-					<StyledIcon>
-						<GroupIcon />
-					</StyledIcon>
-				</StyledMenuCard>
+					<StyledMenuCard $variant="character" onClick={() => navigate('/load-character')}>
+						<StyledIcon $variant="character">
+							<GroupIcon />
+						</StyledIcon>
+						<StyledTextContent>
+							<StyledCardTitle $variant="character">Load Character</StyledCardTitle>
+						</StyledTextContent>
+					</StyledMenuCard>
+				</StyledCharacterGrid>
+			</StyledMenuSection>
 
-				<StyledMenuCard onClick={() => navigate('/spellbook')}>
-					<StyledTextContent>
-						<StyledCardTitle>Spellbook</StyledCardTitle>
-					</StyledTextContent>
-					<StyledIcon>
-						<SpellbookIcon />
-					</StyledIcon>
-				</StyledMenuCard>
+			{/* DM Tools Section */}
+			<StyledMenuSection>
+				<StyledSectionTitle>DM Tools</StyledSectionTitle>
+				<StyledDMGrid>
+					<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/encounters')}>
+						<StyledIcon $variant="dm">
+							<EncounterIcon />
+						</StyledIcon>
+						<StyledTextContent>
+							<StyledCardTitle $variant="dm">Encounter Planner</StyledCardTitle>
+						</StyledTextContent>
+					</StyledMenuCard>
 
-				<StyledMenuCard onClick={() => navigate('/conditions')}>
-					<StyledTextContent>
-						<StyledCardTitle>Conditions</StyledCardTitle>
-					</StyledTextContent>
-					<StyledIcon>
-						<ConditionsIcon />
-					</StyledIcon>
-				</StyledMenuCard>
+					<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/monsters')}>
+						<StyledIcon $variant="dm">
+							<MonsterIcon />
+						</StyledIcon>
+						<StyledTextContent>
+							<StyledCardTitle $variant="dm">Monster Forge</StyledCardTitle>
+						</StyledTextContent>
+					</StyledMenuCard>
+				</StyledDMGrid>
+			</StyledMenuSection>
 
-				<StyledMenuCard onClick={() => navigate('/custom-equipment')}>
-					<StyledTextContent>
-						<StyledCardTitle>Custom Equipment</StyledCardTitle>
-					</StyledTextContent>
-					<StyledIcon>
-						<EquipmentIcon />
-					</StyledIcon>
-				</StyledMenuCard>
+			{/* Tools Section */}
+			<StyledMenuSection>
+				<StyledSectionTitle>Reference Tools</StyledSectionTitle>
+				<StyledToolsGrid>
+					<StyledMenuCard $variant="tools" onClick={() => navigate('/spellbook')}>
+						<StyledIcon $variant="tools">
+							<SpellbookIcon />
+						</StyledIcon>
+						<StyledTextContent>
+							<StyledCardTitle $variant="tools">Spellbook</StyledCardTitle>
+						</StyledTextContent>
+					</StyledMenuCard>
 
-				<StyledMenuCard onClick={() => navigate('/dm/monsters')}>
-					<StyledTextContent>
-						<StyledCardTitle>DM Tools</StyledCardTitle>
-					</StyledTextContent>
-					<StyledIcon>
-						<MonsterIcon />
-					</StyledIcon>
-				</StyledMenuCard>
-			</StyledMenuGrid>
+					<StyledMenuCard $variant="tools" onClick={() => navigate('/conditions')}>
+						<StyledIcon $variant="tools">
+							<ConditionsIcon />
+						</StyledIcon>
+						<StyledTextContent>
+							<StyledCardTitle $variant="tools">Conditions</StyledCardTitle>
+						</StyledTextContent>
+					</StyledMenuCard>
+
+					<StyledMenuCard $variant="tools" onClick={() => navigate('/custom-equipment')}>
+						<StyledIcon $variant="tools">
+							<EquipmentIcon />
+						</StyledIcon>
+						<StyledTextContent>
+							<StyledCardTitle $variant="tools">Custom Equipment</StyledCardTitle>
+						</StyledTextContent>
+					</StyledMenuCard>
+				</StyledToolsGrid>
+			</StyledMenuSection>
 
 			{/* Rules Version Note */}
 			<div className="absolute bottom-4 right-4 text-xs text-white/50">

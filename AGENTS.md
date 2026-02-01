@@ -88,8 +88,12 @@ Tips
 - PDF Export System: `docs/systems/PDF_EXPORT_SYSTEM.MD`
 
 ### DM Tools
-- Monster System: `docs/systems/MONSTER_SYSTEM_SPEC.MD`
-- Encounter System: `docs/systems/ENCOUNTER_SYSTEM_SPEC.MD`
+- Monster System (Laboratory): `docs/systems/MONSTER_SYSTEM_SPEC.MD`
+- Encounter System (War Room): `docs/systems/ENCOUNTER_SYSTEM_SPEC.MD`
+
+### Reference Tools
+- Equipage (Custom Equipment): `docs/systems/EQUIPMENT_SYSTEM.MD`
+- Spellbook: `docs/systems/SPELLS_SYSTEM.MD`
 
 ### Infrastructure
 - Database & Storage: `docs/systems/DATABASE_SYSTEM.MD`

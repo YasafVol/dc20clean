@@ -1,7 +1,7 @@
 # DC20 Monster System (DM Tools)
 
 > **Status:** Implementation Complete  
-> **Last Updated:** 2026-01-31 (v2: added flavor fields & importer)  
+> **Last Updated:** 2026-01-31 (v3: added seed system)  
 > **Related:** [ENCOUNTER_SYSTEM_SPEC.MD](./ENCOUNTER_SYSTEM_SPEC.MD)
 
 ---
@@ -19,9 +19,11 @@
 - Tier system (Standard/Apex/Legendary) scales encounter cost
 
 **Routes:**
-- `/dm/monsters` - Monster list
-- `/dm/monsters/:id` - Monster designer (Laboratory)
+- `/dm/monsters` - Monster Laboratory (list view)
+- `/dm/monsters/:id` - Monster Designer (editor)
 - `/dm/monsters/new` - Create new monster
+
+**Menu Entry:** "Laboratory" in DM Tools section
 
 ---
 
@@ -447,16 +449,32 @@ All phases complete. Implementation files:
 
 ### Phase 8: Integration ✅
 - [x] Routes in `App.tsx`: `/dm/monsters`, `/dm/monsters/:id`
-- [x] Menu integration: "Monster Forge" in DM Tools section
+- [x] Menu integration: "Laboratory" in DM Tools section
 - [x] Vercel + Convex deployment integration
 
-### Phase 9: Import Utility ✅
+### Phase 9: Import & Seed ✅
 - [x] `src/lib/services/monsterImporter.ts` - Raw JSON to SavedMonster transformer
-- [ ] UI buttons for import (pending)
+- [x] `src/lib/rulesdata/dm/sampleMonsters.ts` - 8 pre-built sample monsters
+- [x] `convex/monsters.ts:seedMonsters` - Bulk seed mutation
+- [x] "Seed Sample Monsters" button in MonsterList empty state
 - [ ] Export utility (future)
 
-### Seed Data
-- [x] `docs/seed-data/sample-monsters.json` - Template with 8 sample monsters
+### Sample Monsters (Seed Data)
+
+| Monster | Level | Tier | Role |
+|---------|-------|------|------|
+| Goblin Warrior | 1 | Standard | Skirmisher |
+| Skeleton | 1 | Standard | Skirmisher |
+| Wolf | 1 | Standard | Skirmisher |
+| Orc Berserker | 2 | Standard | Brute |
+| Giant Spider | 2 | Standard | Controller |
+| Cultist Fanatic | 2 | Standard | Artillerist |
+| Ogre | 4 | Apex | Brute |
+| Young Dragon | 8 | Legendary | Brute |
+
+Seed files:
+- `docs/seed-data/sample-monsters.json` - Raw JSON template
+- `src/lib/rulesdata/dm/sampleMonsters.ts` - TypeScript with calculated stats
 
 ---
 

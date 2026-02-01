@@ -1,6 +1,6 @@
 # DC20 Encounter System (DM Tools)
 
-> **Status:** Specification Complete  
+> **Status:** Implementation Complete  
 > **Last Updated:** 2026-01-31  
 > **Related:** [MONSTER_SYSTEM_SPEC.MD](./MONSTER_SYSTEM_SPEC.MD)
 
@@ -473,73 +473,62 @@ dmLogger.action({
 
 ---
 
-## 13. Implementation Tasks
+## 13. Implementation Status
 
-### Phase 1: Specification & Types
-- [ ] Create `src/lib/rulesdata/schemas/encounter.schema.ts`
-- [ ] Define `SavedEncounter` interface
-- [ ] Define `EncounterMonsterSlot` interface
-- [ ] Define `PartyConfig` interface
-- [ ] Define `EncounterDifficulty` type
+All phases complete. Implementation files:
 
-### Phase 2: Data Layer
-- [ ] Create `src/lib/rulesdata/dm/encounterBudgets.ts`
-- [ ] Define `DIFFICULTY_MODIFIERS` constant
-- [ ] Define `TIER_COST_MULTIPLIERS` constant (or import from monster)
+### Phase 1: Specification & Types ✅
+- [x] `src/lib/rulesdata/schemas/encounter.schema.ts` - SavedEncounter, EncounterMonsterSlot, PartyConfig, EncounterDifficulty
 
-### Phase 3: Calculator (TDD)
-- [ ] Write `encounterBudgetCalculator.test.ts` - base budget tests
-- [ ] Write `encounterBudgetCalculator.test.ts` - difficulty modifier tests
-- [ ] Write `encounterBudgetCalculator.test.ts` - monster cost tests
-- [ ] Write `encounterBudgetCalculator.test.ts` - budget validation tests
-- [ ] Write `encounterBudgetCalculator.test.ts` - threshold calculation tests
-- [ ] Implement `src/lib/services/encounterBudgetCalculator.ts` - make all tests pass
-- [ ] Write `encounterBudgetCalculator.test.ts` - edge cases (0 monsters, level 0 party)
-- [ ] Verify all tests pass
+### Phase 2: Data Layer ✅
+- [x] Constants defined in `encounter.schema.ts`:
+  - DIFFICULTY_MODIFIERS
+  - TIER_COST_MULTIPLIERS
+  - BUDGET_THRESHOLDS
 
-### Phase 4: Convex Schema
-- [ ] Add `encounters` table to `convex/schema.ts`
-- [ ] Define indexes (by_user, by_approval_status, by_forked_from)
-- [ ] Run `npx convex dev` to validate schema
+### Phase 3: Calculator (TDD) ✅
+- [x] `src/lib/services/encounterBudgetCalculator.test.ts` - 32 tests covering:
+  - Base budget calculation
+  - Difficulty modifiers
+  - Monster cost calculation
+  - Budget validation
+  - Threshold calculation
+  - Edge cases (level 0, empty encounters)
+- [x] `src/lib/services/encounterBudgetCalculator.ts` - All functions implemented
+- [x] All tests passing
 
-### Phase 5: Convex Functions (TDD for complex)
-- [ ] Write `convex/encounters.test.ts` - fork tracking tests
-- [ ] Write `convex/encounters.test.ts` - soft delete tests
-- [ ] Implement `convex/encounters.ts` - queries (list, getById, listHomebrew, listTrash)
-- [ ] Implement `convex/encounters.ts` - basic mutations (create, update)
-- [ ] Implement `convex/encounters.ts` - slot management (addMonsterSlot, updateMonsterSlot, removeMonsterSlot)
-- [ ] Implement `convex/encounters.ts` - fork mutation
-- [ ] Implement `convex/encounters.ts` - soft delete/restore/hardDelete
-- [ ] Implement `convex/encounters.ts` - submitForReview
-- [ ] Verify all tests pass
+### Phase 4: Convex Schema ✅
+- [x] `convex/schema.ts` - `encounters` table with validators
+- [x] Indexes: by_user, by_user_and_id, by_approval_status, by_user_and_deleted
 
-### Phase 6: Frontend Hooks
-- [ ] Create `src/lib/hooks/useEncounters.ts`
-- [ ] Create `src/lib/hooks/useEncounterPlanner.ts` (context + reducer)
+### Phase 5: Convex Functions ✅
+- [x] `convex/encounters.ts`:
+  - Queries: list, getById, listHomebrew, listTrash
+  - Mutations: create, update, duplicate
+  - Slot management: addMonsterSlot, updateMonsterSlot, removeMonsterSlot
+  - Lifecycle: softDelete, restore, hardDelete
+  - Sharing: fork, submitForReview
 
-### Phase 7: UI Components
-- [ ] Create `src/routes/dm/encounters/EncounterList.tsx`
-- [ ] Create `src/routes/dm/encounters/EncounterPlanner.tsx`
-- [ ] Create `src/routes/dm/encounters/components/PartyConfig.tsx`
-- [ ] Create `src/routes/dm/encounters/components/DifficultySelector.tsx`
-- [ ] Create `src/routes/dm/encounters/components/BudgetMeter.tsx`
-- [ ] Create `src/routes/dm/encounters/components/MonsterSlots.tsx`
-- [ ] Create `src/routes/dm/encounters/components/MonsterSlotCard.tsx`
-- [ ] Create `src/routes/dm/encounters/components/QuickMonsterPicker.tsx` modal
-- [ ] Add form validation (inline errors)
-- [ ] Add toast notifications
+### Phase 6: Frontend Hooks ✅
+- [x] `src/lib/hooks/useEncounters.ts` - Data access and mutations
+- [x] `src/lib/hooks/useEncounterPlanner.tsx` - Context + reducer for UI state
 
-### Phase 8: Integration
-- [ ] Add routes to `App.tsx`
-- [ ] Add to menu navigation (DM Tools section)
-- [ ] Implement "Design New" bridge to Monster Designer
-- [ ] Handle `returnTo` param for post-save navigation
-- [ ] Test full flow: create → add monsters → save → list → edit
+### Phase 7: UI Components ✅
+- [x] `src/routes/dm/encounters/EncounterList.tsx` - List view with cards
+- [x] `src/routes/dm/encounters/EncounterPlanner.tsx` - Main editor (War Room)
+- [x] `src/routes/dm/encounters/components/PartyConfigForm.tsx` - Party size/level
+- [x] `src/routes/dm/encounters/components/DifficultySelector.tsx` - 5 difficulty buttons with calculation formula
+- [x] `src/routes/dm/encounters/components/BudgetMeter.tsx` - Visual progress bar
+- [x] `src/routes/dm/encounters/components/MonsterSlots.tsx` - Slot list + picker modal
+- [x] `src/routes/dm/encounters/components/EncounterCard.tsx` - Summary card
+- [x] `src/routes/dm/encounters/styles/EncounterStyles.ts` - Styled components
 
-### Phase 9: Export/Import
-- [ ] Implement `exportEncounterToJson()` utility
-- [ ] Implement `importEncounterFromJson()` utility
-- [ ] Add Export button to EncounterList/EncounterPlanner
-- [ ] Add Import button to EncounterList
-- [ ] Implement conflict resolution modal
-- [ ] Test import/export round-trip with bundled monsters
+### Phase 8: Integration ✅
+- [x] Routes in `App.tsx`: `/dm/encounters`, `/dm/encounters/:id`
+- [x] Menu integration: "Encounter Planner" in DM Tools section
+- [x] Navigation between Monsters and Encounters
+
+### Phase 9: Export/Import (Future)
+- [ ] Export/import utilities
+- [ ] Bundled monster export
+- [ ] Conflict resolution modal

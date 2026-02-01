@@ -30,6 +30,7 @@ import ConditionsReference from './components/ConditionsReference';
 import Currency from './components/Currency';
 import PlayerNotes from './components/PlayerNotes';
 import DiceRoller, { DiceRollerRef } from './components/DiceRoller';
+import { AutoSaveIndicator } from './components/AutoSaveIndicator';
 import Movement from './components/Movement';
 import RightColumnResources from './components/RightColumnResources';
 import FeaturePopup from './components/FeaturePopup';
@@ -352,8 +353,13 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		updateTempHP,
 		updateActionPoints,
 		updateGritPoints,
-		updateRestPoints
+		updateRestPoints,
+		saveStatus,
+		retryFailedSave
 	} = useCharacterSheet();
+	
+	console.log('[GIMLI] CharacterSheet render - saveStatus:', saveStatus);
+	
 	const resources = useCharacterResources();
 	const conditionStatuses = useCharacterConditions();
 	const languages = useCharacterLanguages();
@@ -681,6 +687,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			</MainContent>
 
 		<DiceRoller ref={diceRollerRef} autoRollConfig={autoRollConfig} />
+			<AutoSaveIndicator status={saveStatus} onRetry={retryFailedSave} />
 			<FeaturePopup feature={selectedFeature} onClose={closeFeaturePopup} />
 		</PageContainer>
 	);

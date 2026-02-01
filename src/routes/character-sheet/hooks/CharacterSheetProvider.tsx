@@ -1,10 +1,12 @@
-import React, { createContext, useContext, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useCallback, useMemo, useRef, useState } from 'react';
 import {
 	useCharacterSheetReducer,
 	type SheetState,
 	type SheetAction
 } from './useCharacterSheetReducer';
 import { getDefaultStorage } from '../../../lib/storage';
+
+export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 import type { SavedCharacter } from '../../../lib/types/dataContracts';
 import { logger } from '../../../lib/utils/logger';
 import {
@@ -168,6 +170,9 @@ interface CharacterSheetContextType {
 	updateRestPoints: (rest: number) => void;
 	// Manual save function
 	saveNow: () => Promise<void>;
+	// Save status
+	saveStatus: SaveStatus;
+	retryFailedSave: () => void;
 }
 
 const CharacterSheetContext = createContext<CharacterSheetContextType | undefined>(undefined);
@@ -208,12 +213,24 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		updateRestPoints
 	} = useCharacterSheetReducer();
 	const storage = useMemo(() => getDefaultStorage(), []);
+	const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
+	const lastSavedHash = useRef<string>('');
+	const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	// Save function that runs enhanced calculator and persists to storage
 	const saveCharacterData = useCallback(
 		async (character: SavedCharacter) => {
 			if (!character) return;
 
+			// Check if data actually changed
+			const currentHash = JSON.stringify(character);
+			if (currentHash === lastSavedHash.current) {
+				logger.debug('storage', 'No changes detected, skipping save');
+				return;
+			}
+
+			console.log('[GIMLI] Setting status to SAVING');
+			setSaveStatus('saving');
 			logger.debug('storage', 'Saving character data', { characterId: character.id });
 
 			try {
@@ -246,11 +263,21 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 
 				// Save the entire character (includes spells, maneuvers, etc.)
 				await storage.saveCharacter(updatedCharacter);
+			
+			console.log('[GIMLI] Save SUCCESS! Setting status to SAVED');
+			lastSavedHash.current = currentHash;
+			setSaveStatus('saved');
 
-				logger.debug('storage', 'Character sheet data saved successfully', {
-					characterId: character.id
-				});
-			} catch (error) {
+			logger.debug('storage', 'Character sheet data saved successfully', {
+				characterId: character.id
+			});
+			
+			// Reset to idle after 2 seconds
+			if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+			saveTimeoutRef.current = setTimeout(() => setSaveStatus('idle'), 2000);
+		} catch (error) {
+			console.log('[GIMLI] Save FAILED! Setting status to ERROR', error);
+			setSaveStatus('error');
 				logger.warn('calculation', 'Calculator error during save, proceeding with last known values', {
 					characterId: character.id,
 					error: error instanceof Error ? error.message : String(error)
@@ -258,7 +285,15 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 				// Save anyway with existing character data
 				try {
 					await storage.saveCharacter(character);
+					
+					lastSavedHash.current = currentHash;
+					setSaveStatus('saved');
+					
+					// Reset to idle after 2 seconds
+					if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+					saveTimeoutRef.current = setTimeout(() => setSaveStatus('idle'), 2000);
 				} catch (saveError) {
+					setSaveStatus('error');
 					logger.error('storage', 'Failed to save character data', {
 						characterId: character.id,
 						error: saveError instanceof Error ? saveError.message : String(saveError)
@@ -274,12 +309,27 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 
 	// Effect to auto-save when state changes
 	useEffect(() => {
+		console.log('[GIMLI] state.character changed:', {
+			exists: !!state.character,
+			id: state.character?.id,
+			hpCurrent: state.character?.characterState?.resources?.current?.currentHP
+		});
 		if (state.character) {
+			console.log('[GIMLI] Auto-save effect triggered - queueing debounced save');
 			debouncedSave(state.character);
 		}
 		// Clean up on unmount
 		return () => debouncedSave.cancel();
 	}, [state.character, debouncedSave]);
+
+	// Cleanup save status timeout on unmount
+	useEffect(() => {
+		return () => {
+			if (saveTimeoutRef.current) {
+				clearTimeout(saveTimeoutRef.current);
+			}
+		};
+	}, []);
 
 	// Effect to load character data on mount
 	useEffect(() => {
@@ -315,6 +365,13 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		}
 	}, [state.character, saveCharacterData, debouncedSave]);
 
+	// Retry failed save function
+	const retryFailedSave = useCallback(() => {
+		if (state.character) {
+			saveCharacterData(state.character);
+		}
+	}, [state.character, saveCharacterData]);
+
 	const contextValue: CharacterSheetContextType = {
 		state,
 		dispatch,
@@ -343,7 +400,9 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		updateNotes,
 		updateGritPoints,
 		updateRestPoints,
-		saveNow
+		saveNow,
+		saveStatus,
+		retryFailedSave
 	};
 
 	return (

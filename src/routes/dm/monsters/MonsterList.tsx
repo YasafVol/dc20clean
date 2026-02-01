@@ -7,10 +7,13 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from 'convex/react';
+import { api } from '../../../../convex/_generated/api';
 import { Button } from '../../../components/ui/button';
 import { useMonsters, useHomebrewMonsters } from '../../../lib/hooks/useMonsters';
 import type { SavedMonster } from '../../../lib/rulesdata/schemas/monster.schema';
 import { MonsterCard } from './components/MonsterCard';
+import { getSampleMonsters } from '../../../lib/rulesdata/dm/sampleMonsters';
 import {
 	PageContainer,
 	Header,
@@ -31,6 +34,8 @@ type TabType = 'my-monsters' | 'homebrew' | 'trash';
 export const MonsterList: React.FC = () => {
 	const navigate = useNavigate();
 	const [activeTab, setActiveTab] = useState<TabType>('my-monsters');
+	const [isSeeding, setIsSeeding] = useState(false);
+	const seedMonstersMutation = useMutation(api.monsters.seedMonsters);
 
 	const {
 		monsters: myMonsters,
@@ -80,6 +85,27 @@ export const MonsterList: React.FC = () => {
 
 	const handleBack = () => {
 		navigate('/menu');
+	};
+
+	const handleSeedMonsters = async () => {
+		if (isSeeding) return;
+		setIsSeeding(true);
+		try {
+			const sampleMonsters = getSampleMonsters();
+			const results = await seedMonstersMutation({ monsters: sampleMonsters });
+			const successCount = results.filter((r) => r.success).length;
+			const failCount = results.filter((r) => !r.success).length;
+			if (failCount > 0) {
+				alert(`Seeded ${successCount} monsters. ${failCount} skipped (already exist).`);
+			} else {
+				alert(`Successfully seeded ${successCount} sample monsters!`);
+			}
+		} catch (error) {
+			console.error('Failed to seed monsters:', error);
+			alert('Failed to seed monsters. Please try again.');
+		} finally {
+			setIsSeeding(false);
+		}
 	};
 
 	const isLoading = activeTab === 'my-monsters' ? isLoadingMy : isLoadingHomebrew;
@@ -152,9 +178,18 @@ export const MonsterList: React.FC = () => {
 								: 'No community monsters have been approved yet.'}
 						</EmptyStateText>
 						{activeTab === 'my-monsters' && (
-							<Button variant="secondary" onClick={handleCreateNew}>
-								Create Monster
-							</Button>
+							<div className="flex gap-3">
+								<Button variant="secondary" onClick={handleCreateNew}>
+									Create Monster
+								</Button>
+								<Button
+									variant="secondary"
+									onClick={handleSeedMonsters}
+									disabled={isSeeding}
+								>
+									{isSeeding ? 'Seeding...' : 'Seed Sample Monsters'}
+								</Button>
+							</div>
 						)}
 					</EmptyState>
 				) : (

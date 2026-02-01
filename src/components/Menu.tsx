@@ -264,7 +264,7 @@ function Menu() {
 							<MonsterIcon />
 						</StyledIcon>
 						<StyledTextContent>
-							<StyledCardTitle $variant="dm">Monster Forge</StyledCardTitle>
+							<StyledCardTitle $variant="dm">Laboratory</StyledCardTitle>
 						</StyledTextContent>
 					</StyledMenuCard>
 				</StyledDMGrid>
@@ -297,7 +297,7 @@ function Menu() {
 							<EquipmentIcon />
 						</StyledIcon>
 						<StyledTextContent>
-							<StyledCardTitle $variant="tools">Custom Equipment</StyledCardTitle>
+							<StyledCardTitle $variant="tools">Equipage</StyledCardTitle>
 						</StyledTextContent>
 					</StyledMenuCard>
 				</StyledToolsGrid>

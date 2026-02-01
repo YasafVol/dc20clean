@@ -465,3 +465,69 @@ export const duplicate = mutation({
 		return { id: newId, _id: newMonsterId };
 	},
 });
+
+/**
+ * Bulk seed monsters (for importing sample data)
+ */
+export const seedMonsters = mutation({
+	args: {
+		monsters: v.array(v.any()), // Array of SavedMonster objects (without userId)
+	},
+	handler: async (ctx, args) => {
+		const userId = await getAuthUserId(ctx);
+		if (!userId) {
+			throw new Error('Not authenticated');
+		}
+
+		const now = new Date().toISOString();
+		const results: Array<{ id: string; name: string; success: boolean; error?: string }> = [];
+
+		for (const monster of args.monsters) {
+			try {
+				// Check if monster with same name already exists for this user
+				const existing = await ctx.db
+					.query('monsters')
+					.withIndex('by_user', (q) => q.eq('userId', userId))
+					.filter((q) =>
+						q.and(
+							q.eq(q.field('name'), monster.name),
+							q.eq(q.field('deletedAt'), undefined)
+						)
+					)
+					.first();
+
+				if (existing) {
+					results.push({
+						id: monster.id,
+						name: monster.name,
+						success: false,
+						error: 'Monster with this name already exists',
+					});
+					continue;
+				}
+
+				await ctx.db.insert('monsters', {
+					...monster,
+					userId,
+					createdAt: now,
+					lastModified: now,
+				});
+
+				results.push({
+					id: monster.id,
+					name: monster.name,
+					success: true,
+				});
+			} catch (err) {
+				results.push({
+					id: monster.id,
+					name: monster.name,
+					success: false,
+					error: err instanceof Error ? err.message : 'Unknown error',
+				});
+			}
+		}
+
+		return results;
+	},
+});

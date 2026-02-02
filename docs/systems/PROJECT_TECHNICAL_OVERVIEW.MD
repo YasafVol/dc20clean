@@ -24,15 +24,18 @@ scripts, testing, project structure, and contribution expectations.
 ## Development Scripts
 
 Development and build:
+
 - `npm run dev` - Start Vite dev server
 - `npm run build` - Production build to `dist/`
 - `npm run preview` - Preview production build on port 4173
 
 Code quality:
+
 - `npm run lint` - Prettier check + ESLint
 - `npm run format` - Auto-format with Prettier (Tailwind plugin enabled)
 
 Testing:
+
 - `npm run test:unit` - Run Vitest unit tests
 - `npm run test:e2e` - Run Playwright E2E tests
 - `npm run test:e2e:ui` - Run E2E tests with interactive UI
@@ -41,12 +44,14 @@ Testing:
 - `npm run test` - Run unit tests (run mode) then E2E tests
 
 Single test execution:
+
 ```
 npx vitest -t "should calculate health correctly"
 npx vitest src/lib/services/enhancedCharacterCalculator.test.ts
 ```
 
 E2E test optimization:
+
 ```
 PLAYWRIGHT_SKIP_BUILD=1 npm run test:e2e
 E2E_WORKERS=4 npm run test:e2e

@@ -123,7 +123,8 @@ export const AttributeSave = styled.div<MobileStyledProps>`
 
 	&:hover {
 		color: var(--crystal-primary);
-		background: ${(props) => (props.$isMobile ? 'var(--mobile-bg-tertiary)' : 'var(--bg-secondary)')};
+		background: ${(props) =>
+			props.$isMobile ? 'var(--mobile-bg-tertiary)' : 'var(--bg-secondary)'};
 	}
 `;
 
@@ -140,7 +141,8 @@ export const SkillRow = styled.div<MobileStyledProps>`
 	transition: all 0.2s ease;
 
 	&:hover {
-		background: ${(props) => (props.$isMobile ? 'var(--mobile-bg-secondary)' : 'var(--bg-secondary)')};
+		background: ${(props) =>
+			props.$isMobile ? 'var(--mobile-bg-secondary)' : 'var(--bg-secondary)'};
 		border-color: var(--crystal-primary);
 		transform: translateX(2px);
 	}
@@ -185,7 +187,8 @@ export const PrimeSection = styled.div<MobileStyledProps>`
 	padding: 0.5rem;
 	border: 2px solid ${(props) => (props.$isMobile ? 'var(--mobile-border)' : 'var(--bg-tertiary)')};
 	border-radius: 8px;
-	background: ${(props) => (props.$isMobile ? 'var(--mobile-bg-secondary)' : 'var(--bg-secondary)')};
+	background: ${(props) =>
+		props.$isMobile ? 'var(--mobile-bg-secondary)' : 'var(--bg-secondary)'};
 	margin-bottom: 0.5rem;
 `;
 

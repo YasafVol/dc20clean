@@ -9,7 +9,7 @@ export const CONTENT_ID_PREFIXES = {
 	feature: 'feat_',
 	action: 'act_',
 	encounter: 'enc_',
-	slot: 'slot_',
+	slot: 'slot_'
 } as const;
 
 export type ContentIdPrefix = (typeof CONTENT_ID_PREFIXES)[keyof typeof CONTENT_ID_PREFIXES];
@@ -27,19 +27,19 @@ export const monsterTierSchema = z.enum(MONSTER_TIERS);
 export const TIER_HP_MULTIPLIERS: Record<MonsterTier, number> = {
 	standard: 1,
 	apex: 2,
-	legendary: 4,
+	legendary: 4
 };
 
 export const TIER_COST_MULTIPLIERS: Record<MonsterTier, number> = {
 	standard: 1,
 	apex: 2,
-	legendary: 4,
+	legendary: 4
 };
 
 export const TIER_INITIATIVE_ENTRIES: Record<MonsterTier, number> = {
 	standard: 1,
 	apex: 2,
-	legendary: 1, // + Legendary AP
+	legendary: 1 // + Legendary AP
 };
 
 // ============================================================================
@@ -54,7 +54,7 @@ export const MONSTER_ROLE_IDS = [
 	'leader',
 	'lurker',
 	'skirmisher',
-	'support',
+	'support'
 ] as const;
 
 export type MonsterRoleId = (typeof MONSTER_ROLE_IDS)[number];
@@ -78,7 +78,7 @@ export const monsterRoleSchema = z.object({
 	pdOffset: z.number(),
 	adOffset: z.number(),
 	primaryAttributes: z.array(z.string()),
-	description: z.string(),
+	description: z.string()
 });
 
 // ============================================================================
@@ -116,7 +116,7 @@ export const ACTION_TRAITS = [
 	'Lightning',
 	'Necrotic',
 	'Radiant',
-	'Psychic',
+	'Psychic'
 ] as const;
 export type ActionTrait = (typeof ACTION_TRAITS)[number];
 
@@ -145,7 +145,7 @@ export const monsterActionSchema = z.object({
 	range: z.number().int().min(0).optional(),
 	area: z.string().optional(),
 	traits: z.array(z.enum(ACTION_TRAITS)).optional(),
-	description: z.string(),
+	description: z.string()
 });
 
 // ============================================================================
@@ -172,16 +172,20 @@ export const monsterFeatureEffectSchema = z.object({
 	type: z.string(),
 	target: z.string().optional(),
 	value: z.unknown().optional(),
-	description: z.string().optional(),
+	description: z.string().optional()
 });
 
 export const monsterFeatureSchema = z.object({
 	id: z.string().regex(/^feat_[a-f0-9-]+$/, 'Feature ID must be in format feat_<uuid>'),
 	name: z.string().min(1, 'Name is required').max(50, 'Name must be 50 characters or less'),
 	description: z.string().min(1, 'Description is required'),
-	pointCost: z.number().int().min(1, 'Point cost must be at least 1').max(5, 'Point cost must be at most 5'),
+	pointCost: z
+		.number()
+		.int()
+		.min(1, 'Point cost must be at least 1')
+		.max(5, 'Point cost must be at most 5'),
 	isOfficial: z.boolean(),
-	effects: z.array(monsterFeatureEffectSchema).optional(),
+	effects: z.array(monsterFeatureEffectSchema).optional()
 });
 
 // ============================================================================
@@ -199,7 +203,7 @@ export const monsterAttributesSchema = z.object({
 	might: z.number().int().min(-5).max(10),
 	agility: z.number().int().min(-5).max(10),
 	charisma: z.number().int().min(-5).max(10),
-	intelligence: z.number().int().min(-5).max(10),
+	intelligence: z.number().int().min(-5).max(10)
 });
 
 // ============================================================================
@@ -223,7 +227,7 @@ export const MONSTER_TYPES = [
 	'Monstrosity',
 	'Ooze',
 	'Plant',
-	'Undead',
+	'Undead'
 ] as const;
 export type MonsterType = (typeof MONSTER_TYPES)[number];
 
@@ -238,7 +242,7 @@ export const MONSTER_ALIGNMENTS = [
 	'Neutral Evil',
 	'Chaotic Evil',
 	'Unaligned',
-	'Varies',
+	'Varies'
 ] as const;
 export type MonsterAlignment = (typeof MONSTER_ALIGNMENTS)[number];
 
@@ -284,12 +288,12 @@ export const forkedFromSchema = z.object({
 	type: z.enum(FORK_SOURCE_TYPES),
 	name: z.string(),
 	userId: z.string().optional(),
-	forkedAt: z.string(),
+	forkedAt: z.string()
 });
 
 export const forkStatsSchema = z.object({
 	forkCount: z.number().int().min(0),
-	lastForkedAt: z.string().optional(),
+	lastForkedAt: z.string().optional()
 });
 
 // ============================================================================
@@ -309,13 +313,13 @@ export interface StatBreakdown {
 
 export const statModifierSchema = z.object({
 	source: z.string(),
-	value: z.number(),
+	value: z.number()
 });
 
 export const statBreakdownSchema = z.object({
 	base: z.number(),
 	modifiers: z.array(statModifierSchema),
-	total: z.number(),
+	total: z.number()
 });
 
 // ============================================================================
@@ -389,7 +393,11 @@ export const savedMonsterSchema = z.object({
 	id: z.string().regex(/^mon_[a-f0-9-]+$/, 'Monster ID must be in format mon_<uuid>'),
 	name: z.string().min(1, 'Name is required').max(50, 'Name must be 50 characters or less'),
 	description: z.string().optional(),
-	level: z.number().int().min(-1, 'Level must be at least -1 (Novice)').max(10, 'Level must be at most 10'),
+	level: z
+		.number()
+		.int()
+		.min(-1, 'Level must be at least -1 (Novice)')
+		.max(10, 'Level must be at most 10'),
 	tier: monsterTierSchema,
 	roleId: monsterRoleIdSchema,
 
@@ -443,7 +451,7 @@ export const savedMonsterSchema = z.object({
 	schemaVersion: z.string(),
 
 	// Calculation Breakdowns
-	breakdowns: z.record(z.string(), statBreakdownSchema),
+	breakdowns: z.record(z.string(), statBreakdownSchema)
 });
 
 // ============================================================================

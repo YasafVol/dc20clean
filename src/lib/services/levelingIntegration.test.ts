@@ -645,7 +645,9 @@ describe('Leveling System Integration (M4.1f)', () => {
 			// Level 3 should have more HP than Level 1
 			expect(level3.stats.finalHPMax).toBeGreaterThan(level1.stats.finalHPMax);
 			// Level 3 should have more talents (L1: 0, L3: 2)
-			expect(level3.levelBudgets?.totalTalents).toBeGreaterThan(level1.levelBudgets?.totalTalents ?? 0);
+			expect(level3.levelBudgets?.totalTalents).toBeGreaterThan(
+				level1.levelBudgets?.totalTalents ?? 0
+			);
 			// Note: pathPoints not tracked numerically (uses boolean flag)
 			expect(level3.resolvedFeatures?.unlockedFeatures?.length ?? 0).toBeGreaterThan(
 				level1.resolvedFeatures?.unlockedFeatures?.length ?? 0
@@ -696,8 +698,12 @@ describe('Leveling System Integration (M4.1f)', () => {
 
 			// DC20 v0.10: Talents gained at L2, L4, L7, L10
 			// L1->L2: +1 talent, L2->L3: +0 talents (subclass level, no talent)
-			expect((level2.levelBudgets?.totalTalents ?? 0) - (level1.levelBudgets?.totalTalents ?? 0)).toBe(1);
-			expect((level3.levelBudgets?.totalTalents ?? 0) - (level2.levelBudgets?.totalTalents ?? 0)).toBe(0);
+			expect(
+				(level2.levelBudgets?.totalTalents ?? 0) - (level1.levelBudgets?.totalTalents ?? 0)
+			).toBe(1);
+			expect(
+				(level3.levelBudgets?.totalTalents ?? 0) - (level2.levelBudgets?.totalTalents ?? 0)
+			).toBe(0);
 
 			// Note: pathPoints not tracked numerically (uses pathProgression: true flag)
 			// All pathPoints values are 0

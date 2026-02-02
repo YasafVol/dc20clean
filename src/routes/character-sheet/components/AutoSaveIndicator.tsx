@@ -10,7 +10,7 @@ interface AutoSaveIndicatorProps {
 
 export function AutoSaveIndicator({ status, onRetry }: AutoSaveIndicatorProps) {
 	console.log('[GIMLI] AutoSaveIndicator render:', { status });
-	
+
 	// Don't render anything when idle
 	if (status === 'idle') return null;
 
@@ -61,10 +61,8 @@ const Content = styled.div<{ $isError?: boolean }>`
 	align-items: center;
 	gap: ${theme.spacing.sm};
 	padding: ${theme.spacing.sm} ${theme.spacing.md};
-	background: ${(props) =>
-		props.$isError ? 'rgba(239, 68, 68, 0.9)' : 'rgba(26, 27, 38, 0.95)'};
-	border: 1px solid
-		${(props) => (props.$isError ? theme.colors.error : theme.colors.borderPrimary)};
+	background: ${(props) => (props.$isError ? 'rgba(239, 68, 68, 0.9)' : 'rgba(26, 27, 38, 0.95)')};
+	border: 1px solid ${(props) => (props.$isError ? theme.colors.error : theme.colors.borderPrimary)};
 	border-radius: ${theme.borderRadius.md};
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 	backdrop-filter: blur(8px);

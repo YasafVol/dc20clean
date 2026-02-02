@@ -15,15 +15,15 @@ The main CI pipeline (`.github/workflows/ci.yml`) is currently failing on the `0
 
 CI checks are temporarily set to non-blocking so the 0.10 rules release can proceed. This will be reverted after finishing touches and stabilization.
 
-| Job | Status | Duration |
-|-----|--------|----------|
-| Build | PASSED | 35s |
-| Lint | FAILED | 39s |
-| Unit Tests | FAILED | 25s |
-| E2E (desktop, shard 1/2) | FAILED | 2m9s |
-| E2E (desktop, shard 2/2) | FAILED | 2m2s |
-| E2E (mobile, shard 1/2) | FAILED | 30s |
-| E2E (mobile, shard 2/2) | FAILED | 31s |
+| Job                      | Status | Duration |
+| ------------------------ | ------ | -------- |
+| Build                    | PASSED | 35s      |
+| Lint                     | FAILED | 39s      |
+| Unit Tests               | FAILED | 25s      |
+| E2E (desktop, shard 1/2) | FAILED | 2m9s     |
+| E2E (desktop, shard 2/2) | FAILED | 2m2s     |
+| E2E (mobile, shard 1/2)  | FAILED | 30s      |
+| E2E (mobile, shard 2/2)  | FAILED | 31s      |
 
 ---
 
@@ -38,11 +38,13 @@ CI checks are temporarily set to non-blocking so the 0.10 rules release can proc
 Prettier formatting check found **94 files** with code style issues.
 
 **Error Message:**
+
 ```
 Code style issues found in 94 files. Run Prettier with --write to fix.
 ```
 
 **Affected Files (partial list):**
+
 - `.superdesign/design_iterations/default_ui_darkmode.css`
 - `CLAUDE.md`
 - `convex/*` (generated files)
@@ -53,6 +55,7 @@ Code style issues found in 94 files. Run Prettier with --write to fix.
 - Various test files
 
 **Fix:**
+
 ```bash
 npm run format
 ```
@@ -68,6 +71,7 @@ npm run format
 Vitest is configured to use browser-based testing with Playwright (`@vitest/browser`), but the CI workflow does not install Playwright browsers before running unit tests.
 
 **Configuration in `vitest.config.ts`:**
+
 ```typescript
 test: {
     name: 'client',
@@ -81,8 +85,9 @@ test: {
 ```
 
 **Error Message:**
+
 ```
-Error: browserType.launch: Executable doesn't exist at 
+Error: browserType.launch: Executable doesn't exist at
 /home/runner/.cache/ms-playwright/chromium_headless_shell-1181/chrome-linux/headless_shell
 
 ╔═════════════════════════════════════════════════════════════════════════╗
@@ -107,6 +112,7 @@ Add Playwright browser installation step before running unit tests in `ci.yml`.
 The mobile project in `playwright.config.ts` uses iPhone 12 device emulation, which requires **WebKit** browser. However, the CI workflow only installs **chromium**.
 
 **Configuration in `playwright.config.ts`:**
+
 ```typescript
 {
     name: 'mobile',
@@ -117,18 +123,21 @@ The mobile project in `playwright.config.ts` uses iPhone 12 device emulation, wh
 ```
 
 **CI Configuration:**
+
 ```yaml
 - name: Install Playwright browsers (chromium only)
   run: npx playwright install chromium
 ```
 
 **Error Message:**
+
 ```
-Error: browserType.launch: Executable doesn't exist at 
+Error: browserType.launch: Executable doesn't exist at
 /home/runner/.cache/ms-playwright/webkit-2191/pw_run.sh
 ```
 
 **Failed Tests:**
+
 - `e2e/01-import.e2e.spec.ts`
 - `e2e/02-resources.e2e.spec.ts`
 - `e2e/07-weapons.e2e.spec.ts`
@@ -142,6 +151,7 @@ Error: browserType.launch: Executable doesn't exist at
 - `e2e/spellblade-hybrid.e2e.spec.ts`
 
 **Fix Options:**
+
 1. **Option A:** Install WebKit in CI: `npx playwright install chromium webkit`
 2. **Option B:** Change mobile project to use chromium with mobile viewport instead of WebKit
 
@@ -156,6 +166,7 @@ Error: browserType.launch: Executable doesn't exist at
 Tests are timing out (30s) waiting for UI elements. The `locator.click` operations fail because elements are not found within the timeout period.
 
 **Error Message:**
+
 ```
 Test timeout of 30000ms exceeded.
 Error: locator.click: Test timeout of 30000ms exceeded.
@@ -173,12 +184,14 @@ Error: locator.click: Test timeout of 30000ms exceeded.
 | `12-exhaustion-info.e2e.spec.ts` | exhaustion and info buttons |
 
 **Possible Causes:**
+
 1. Test fixture file missing (`E2E_FIXTURE: ./test-character-gibble.json`)
 2. Web server not starting properly
 3. App not rendering/hydrating correctly
 4. Actual UI bugs preventing element visibility
 
 **Investigation Needed:**
+
 - Verify `test-character-gibble.json` exists in the repository root
 - Check if web server starts successfully before tests run
 - Review screenshots in test artifacts for visual debugging
@@ -192,6 +205,7 @@ Error: locator.click: Test timeout of 30000ms exceeded.
 **File:** `.github/workflows/ci.yml`
 
 **Current:**
+
 ```yaml
 unit:
   name: Unit Tests
@@ -210,6 +224,7 @@ unit:
 ```
 
 **Proposed:**
+
 ```yaml
 unit:
   name: Unit Tests
@@ -234,12 +249,14 @@ unit:
 **File:** `.github/workflows/ci.yml`
 
 **Current:**
+
 ```yaml
 - name: Install Playwright browsers (chromium only)
   run: npx playwright install chromium
 ```
 
 **Proposed:**
+
 ```yaml
 - name: Install Playwright browsers
   run: npx playwright install chromium webkit

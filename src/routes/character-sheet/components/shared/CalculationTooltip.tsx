@@ -41,7 +41,9 @@ const TooltipOverlay = styled.div<{ $visible: boolean; $x: number; $y: number }>
 	pointer-events: none;
 	opacity: ${(props) => (props.$visible ? 1 : 0)};
 	visibility: ${(props) => (props.$visible ? 'visible' : 'hidden')};
-	transition: opacity ${theme.transitions.fast}, visibility ${theme.transitions.fast};
+	transition:
+		opacity ${theme.transitions.fast},
+		visibility ${theme.transitions.fast};
 	box-shadow: ${theme.shadows.lg};
 `;
 

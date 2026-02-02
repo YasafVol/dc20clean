@@ -253,6 +253,7 @@
 **Status:** Prep work complete, npm-dependent work deferred.
 
 **Prep Work Done:**
+
 - ✅ Convex schema design (`convex/schema.ts.draft`)
 - ✅ Character CRUD mutations/queries (`convex/characters.ts.draft`)
 - ✅ Auth config with Google OAuth (`convex/auth.config.ts.draft`)
@@ -261,6 +262,7 @@
 - ✅ Spec document (`docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md`)
 
 **Deferred (requires npm):**
+
 - [ ] `npm install convex @convex-dev/auth`
 - [ ] `npx convex dev` initialization
 - [ ] Rename `.draft` files

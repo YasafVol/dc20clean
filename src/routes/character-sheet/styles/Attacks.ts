@@ -168,7 +168,8 @@ export const StyledWeaponSelect = styled.select<MobileStyledProps>`
 	text-overflow: ellipsis;
 	transition: all ${theme.transitions.fast};
 
-	&:hover, &:focus {
+	&:hover,
+	&:focus {
 		border-color: ${theme.colors.accent.primary};
 		outline: none;
 	}

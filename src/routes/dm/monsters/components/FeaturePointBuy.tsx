@@ -17,7 +17,7 @@ import {
 	FeatureInfo,
 	FeatureName,
 	FeatureDescription,
-	FeatureCost,
+	FeatureCost
 } from '../styles/MonsterStyles';
 
 export interface FeaturePointBuyProps {
@@ -29,7 +29,7 @@ export interface FeaturePointBuyProps {
 export const FeaturePointBuy: React.FC<FeaturePointBuyProps> = ({
 	selectedIds,
 	maxPoints,
-	onChange,
+	onChange
 }) => {
 	const { allFeatures, isLoading } = useMonsterFeatures();
 	const [expandedCost, setExpandedCost] = useState<number | null>(null);
@@ -68,7 +68,7 @@ export const FeaturePointBuy: React.FC<FeaturePointBuyProps> = ({
 	if (isLoading) {
 		return (
 			<SectionContent>
-				<div className="text-center text-zinc-500 py-4">Loading features...</div>
+				<div className="py-4 text-center text-zinc-500">Loading features...</div>
 			</SectionContent>
 		);
 	}
@@ -93,15 +93,13 @@ export const FeaturePointBuy: React.FC<FeaturePointBuyProps> = ({
 					<div key={cost} className="mb-4">
 						<button
 							type="button"
-							className="w-full flex justify-between items-center py-2 px-3 bg-black/20 rounded-lg hover:bg-black/30 transition-colors mb-2"
+							className="mb-2 flex w-full items-center justify-between rounded-lg bg-black/20 px-3 py-2 transition-colors hover:bg-black/30"
 							onClick={() => setExpandedCost(isExpanded ? null : cost)}
 						>
 							<span className="text-sm font-medium text-amber-400">
 								{cost}-Point Features ({features.length})
 							</span>
-							<span className="text-xs text-zinc-500">
-								{isExpanded ? '▼' : '▶'}
-							</span>
+							<span className="text-xs text-zinc-500">{isExpanded ? '▼' : '▶'}</span>
 						</button>
 
 						{isExpanded && (
@@ -117,16 +115,14 @@ export const FeaturePointBuy: React.FC<FeaturePointBuyProps> = ({
 											onClick={() => canAfford && handleToggleFeature(feature)}
 											style={{
 												opacity: canAfford ? 1 : 0.5,
-												cursor: canAfford ? 'pointer' : 'not-allowed',
+												cursor: canAfford ? 'pointer' : 'not-allowed'
 											}}
 										>
 											<FeatureInfo>
 												<FeatureName $selected={isSelected}>
 													{feature.name}
 													{feature.source !== 'official' && (
-														<span className="text-xs text-zinc-500 ml-2">
-															({feature.source})
-														</span>
+														<span className="ml-2 text-xs text-zinc-500">({feature.source})</span>
 													)}
 												</FeatureName>
 												<FeatureDescription>{feature.description}</FeatureDescription>
@@ -145,15 +141,15 @@ export const FeaturePointBuy: React.FC<FeaturePointBuyProps> = ({
 
 			{/* Selected Features Summary */}
 			{selectedFeatures.length > 0 && (
-				<div className="mt-4 pt-4 border-t border-purple-500/20">
-					<div className="text-xs text-zinc-500 mb-2">Selected Features:</div>
+				<div className="mt-4 border-t border-purple-500/20 pt-4">
+					<div className="mb-2 text-xs text-zinc-500">Selected Features:</div>
 					<div className="flex flex-wrap gap-1">
 						{selectedFeatures.map((feature) => (
 							<button
 								key={feature.id}
 								type="button"
 								onClick={() => handleToggleFeature(feature)}
-								className="text-xs px-2 py-1 bg-green-500/20 text-green-400 rounded border border-green-500/30 hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 transition-colors"
+								className="rounded border border-green-500/30 bg-green-500/20 px-2 py-1 text-xs text-green-400 transition-colors hover:border-red-500/30 hover:bg-red-500/20 hover:text-red-400"
 								title="Click to remove"
 							>
 								{feature.name} ({feature.pointCost})

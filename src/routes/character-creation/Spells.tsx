@@ -456,7 +456,8 @@ const Spells: React.FC = () => {
 
 							{spellsRemaining > 0 ? (
 								<p className="text-muted-foreground border-t border-white/5 pt-2 text-center text-[10px] italic">
-									You have {spellsRemaining} spell{spellsRemaining !== 1 ? 's' : ''} remaining to learn
+									You have {spellsRemaining} spell{spellsRemaining !== 1 ? 's' : ''} remaining to
+									learn
 								</p>
 							) : (
 								<p className="border-primary/10 text-primary/60 border-t pt-2 text-center text-[10px] italic">
@@ -498,7 +499,7 @@ const Spells: React.FC = () => {
 					{/* Class Access Info */}
 					{globalMagicProfile &&
 						(globalMagicProfile.schools.length > 0 || globalMagicProfile.tags.length > 0) && (
-							<div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
+							<div className="border-primary/20 bg-primary/5 rounded-lg border px-4 py-3">
 								<div className="flex flex-wrap items-center gap-2 text-sm">
 									<span className="text-muted-foreground font-medium">
 										{classData?.name || 'Your class'} can learn spells from:
@@ -640,7 +641,7 @@ const Spells: React.FC = () => {
 					{/* --- Spell Slots Section (M3.20) --- */}
 					<div className="space-y-4">
 						<details className="group" open>
-							<summary className="font-cinzel flex cursor-pointer items-center gap-2 text-lg font-bold list-none">
+							<summary className="font-cinzel flex cursor-pointer list-none items-center gap-2 text-lg font-bold">
 								<Wand2 className="text-primary h-5 w-5" />
 								<span>Spells Known</span>
 								<Badge variant="outline" className="ml-2 font-mono text-xs">
@@ -649,7 +650,7 @@ const Spells: React.FC = () => {
 								<span className="text-muted-foreground ml-auto text-sm font-normal group-open:hidden">
 									Click to expand
 								</span>
-								<span className="text-muted-foreground ml-auto text-sm font-normal hidden group-open:inline">
+								<span className="text-muted-foreground ml-auto hidden text-sm font-normal group-open:inline">
 									Click to collapse
 								</span>
 							</summary>

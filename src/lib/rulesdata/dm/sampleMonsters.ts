@@ -14,7 +14,7 @@ import {
 	type MonsterRoleId,
 	type MonsterSize,
 	type MonsterType,
-	type MonsterAlignment,
+	type MonsterAlignment
 } from '../schemas/monster.schema';
 
 interface SampleMonsterInput {
@@ -43,7 +43,7 @@ function createMonster(input: SampleMonsterInput): SavedMonster {
 	const stats = calculateMonsterStats({
 		level: input.level,
 		tier: input.tier,
-		roleId: input.roleId,
+		roleId: input.roleId
 	});
 
 	const now = new Date().toISOString();
@@ -77,7 +77,7 @@ function createMonster(input: SampleMonsterInput): SavedMonster {
 			might: 0,
 			agility: 0,
 			charisma: 0,
-			intelligence: 0,
+			intelligence: 0
 		},
 
 		// Features (none for samples)
@@ -95,7 +95,7 @@ function createMonster(input: SampleMonsterInput): SavedMonster {
 			damage: action.damage,
 			damageType: action.damageType,
 			range: action.range,
-			description: action.description,
+			description: action.description
 		})),
 
 		// Sharing
@@ -109,7 +109,7 @@ function createMonster(input: SampleMonsterInput): SavedMonster {
 		schemaVersion: MONSTER_SCHEMA_VERSION,
 
 		// Breakdowns
-		breakdowns: stats.breakdowns,
+		breakdowns: stats.breakdowns
 	};
 }
 
@@ -124,7 +124,8 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 		alignment: 'Chaotic Evil',
 		description: 'A small, vicious humanoid with green skin and sharp teeth.',
 		lore: 'Goblins are small, black-hearted humanoids that lair in despoiled dungeons and other dismal settings.',
-		tactics: 'Goblins prefer ambushes and gang tactics, attacking from hiding with ranged weapons before closing to melee.',
+		tactics:
+			'Goblins prefer ambushes and gang tactics, attacking from hiding with ranged weapons before closing to melee.',
 		actions: [
 			{
 				name: 'Shortsword',
@@ -133,7 +134,7 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 				damage: 2,
 				damageType: 'Physical',
 				range: 5,
-				description: 'Melee weapon attack.',
+				description: 'Melee weapon attack.'
 			},
 			{
 				name: 'Shortbow',
@@ -142,9 +143,9 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 				damage: 2,
 				damageType: 'Physical',
 				range: 80,
-				description: 'Ranged weapon attack.',
-			},
-		],
+				description: 'Ranged weapon attack.'
+			}
+		]
 	},
 	{
 		name: 'Skeleton',
@@ -154,7 +155,7 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 		size: 'Medium',
 		monsterType: 'Undead',
 		alignment: 'Lawful Evil',
-		description: 'A magically animated pile of bones that obeys its creator\'s commands.',
+		description: "A magically animated pile of bones that obeys its creator's commands.",
 		lore: 'Skeletons are the animated bones of the dead, raised by dark magic.',
 		tactics: 'Skeletons mindlessly follow orders, fighting until destroyed.',
 		actions: [
@@ -165,7 +166,7 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 				damage: 2,
 				damageType: 'Physical',
 				range: 5,
-				description: 'Melee weapon attack.',
+				description: 'Melee weapon attack.'
 			},
 			{
 				name: 'Shortbow',
@@ -174,9 +175,9 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 				damage: 2,
 				damageType: 'Physical',
 				range: 80,
-				description: 'Ranged weapon attack.',
-			},
-		],
+				description: 'Ranged weapon attack.'
+			}
+		]
 	},
 	{
 		name: 'Wolf',
@@ -197,9 +198,9 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 				damage: 2,
 				damageType: 'Physical',
 				range: 5,
-				description: 'Melee natural attack. Target must succeed on a Save or be knocked prone.',
-			},
-		],
+				description: 'Melee natural attack. Target must succeed on a Save or be knocked prone.'
+			}
+		]
 	},
 	{
 		name: 'Orc Berserker',
@@ -220,7 +221,7 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 				damage: 4,
 				damageType: 'Physical',
 				range: 5,
-				description: 'Melee weapon attack. Brutal: Extra damage on critical hits.',
+				description: 'Melee weapon attack. Brutal: Extra damage on critical hits.'
 			},
 			{
 				name: 'Javelin',
@@ -229,9 +230,9 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 				damage: 3,
 				damageType: 'Physical',
 				range: 30,
-				description: 'Ranged weapon attack.',
-			},
-		],
+				description: 'Ranged weapon attack.'
+			}
+		]
 	},
 	{
 		name: 'Giant Spider',
@@ -252,7 +253,7 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 				damage: 3,
 				damageType: 'Physical',
 				range: 5,
-				description: 'Melee natural attack. Target must Save or take poison damage.',
+				description: 'Melee natural attack. Target must Save or take poison damage.'
 			},
 			{
 				name: 'Web',
@@ -261,9 +262,9 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 				damage: 0,
 				damageType: 'Physical',
 				range: 30,
-				description: 'Ranged attack. On hit, target is restrained by webbing.',
-			},
-		],
+				description: 'Ranged attack. On hit, target is restrained by webbing.'
+			}
+		]
 	},
 	{
 		name: 'Cultist Fanatic',
@@ -284,7 +285,7 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 				damage: 2,
 				damageType: 'Physical',
 				range: 5,
-				description: 'Melee or ranged weapon attack.',
+				description: 'Melee or ranged weapon attack.'
 			},
 			{
 				name: 'Dark Bolt',
@@ -293,9 +294,9 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 				damage: 3,
 				damageType: 'Necrotic',
 				range: 60,
-				description: 'Ranged spell attack dealing necrotic damage.',
-			},
-		],
+				description: 'Ranged spell attack dealing necrotic damage.'
+			}
+		]
 	},
 	{
 		name: 'Ogre',
@@ -316,7 +317,7 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 				damage: 8,
 				damageType: 'Physical',
 				range: 10,
-				description: 'Melee weapon attack with extended reach.',
+				description: 'Melee weapon attack with extended reach.'
 			},
 			{
 				name: 'Rock',
@@ -325,9 +326,9 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 				damage: 6,
 				damageType: 'Physical',
 				range: 60,
-				description: 'Ranged attack hurling a large rock.',
-			},
-		],
+				description: 'Ranged attack hurling a large rock.'
+			}
+		]
 	},
 	{
 		name: 'Young Dragon',
@@ -339,7 +340,8 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 		alignment: 'Varies',
 		description: 'A juvenile dragon, already a fearsome predator with breath weapon.',
 		lore: 'Dragons are the apex predators of fantasy worlds, hoarding treasure and terrorizing the land.',
-		tactics: 'Young dragons use their breath weapon first, then engage in melee with bite and claws.',
+		tactics:
+			'Young dragons use their breath weapon first, then engage in melee with bite and claws.',
 		actions: [
 			{
 				name: 'Bite',
@@ -348,7 +350,7 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 				damage: 12,
 				damageType: 'Physical',
 				range: 10,
-				description: 'Melee natural attack.',
+				description: 'Melee natural attack.'
 			},
 			{
 				name: 'Claw',
@@ -357,7 +359,7 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 				damage: 8,
 				damageType: 'Physical',
 				range: 5,
-				description: 'Melee natural attack. Can make two claw attacks.',
+				description: 'Melee natural attack. Can make two claw attacks.'
 			},
 			{
 				name: 'Breath Weapon',
@@ -366,10 +368,11 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 				damage: 16,
 				damageType: 'Fire',
 				range: 30,
-				description: '30-foot cone. Each creature in area must Save or take full damage. Recharge 5-6.',
-			},
-		],
-	},
+				description:
+					'30-foot cone. Each creature in area must Save or take full damage. Recharge 5-6.'
+			}
+		]
+	}
 ];
 
 /**

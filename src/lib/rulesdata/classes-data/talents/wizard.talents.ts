@@ -36,8 +36,13 @@ export const wizardTalents: Talent[] = [
 		category: 'Class',
 		// DC20 v0.10 p.161: Full list of benefits
 		description:
-			'You gain Dazed Resistance. You can change your Prepared Spell when you complete a Quick or Short Rest. When you declare a Spell Duel using your Prepared Spell, you gain ADV on your Spell Check. You can use Signature School on your Prepared Spell, even if it\'s not from the chosen Spell School. When you use Mana Limit Break, you have ADV on the Check made to cast the Spell.',
-		prerequisites: { classId: 'wizard', feature: 'Prepared Spell', otherFeature: 'Spell School Initiate', level: 3 },
+			"You gain Dazed Resistance. You can change your Prepared Spell when you complete a Quick or Short Rest. When you declare a Spell Duel using your Prepared Spell, you gain ADV on your Spell Check. You can use Signature School on your Prepared Spell, even if it's not from the chosen Spell School. When you use Mana Limit Break, you have ADV on the Check made to cast the Spell.",
+		prerequisites: {
+			classId: 'wizard',
+			feature: 'Prepared Spell',
+			otherFeature: 'Spell School Initiate',
+			level: 3
+		},
 		effects: [
 			{
 				type: 'GRANT_RESISTANCE',

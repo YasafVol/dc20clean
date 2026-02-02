@@ -12,7 +12,7 @@ export type {
 	StorageEventType,
 	StorageEvent,
 	StorageEventListener,
-	StorageProvider,
+	StorageProvider
 } from './characterStorage';
 
 export { getStorageProvider } from './characterStorage';

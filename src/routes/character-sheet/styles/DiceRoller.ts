@@ -32,7 +32,9 @@ export const StyledDiceRollerContainer = styled.div<{ $isExpanded: boolean }>`
 	border-radius: 12px;
 	padding: ${(props) => (props.$isExpanded ? '1rem' : '0')};
 	z-index: 1000;
-	box-shadow: 0 8px 32px var(--crystal-primary-20), inset 0 1px 0 var(--white-10);
+	box-shadow:
+		0 8px 32px var(--crystal-primary-20),
+		inset 0 1px 0 var(--white-10);
 	backdrop-filter: blur(12px);
 	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	overflow: hidden;
@@ -44,7 +46,12 @@ export const StyledDiceRollerContainer = styled.div<{ $isExpanded: boolean }>`
 		left: -2px;
 		right: -2px;
 		bottom: -2px;
-		background: linear-gradient(45deg, var(--crystal-primary-10), var(--crystal-tertiary-30), var(--crystal-primary-10));
+		background: linear-gradient(
+			45deg,
+			var(--crystal-primary-10),
+			var(--crystal-tertiary-30),
+			var(--crystal-primary-10)
+		);
 		border-radius: 15px;
 		z-index: -1;
 		opacity: 0.5;
@@ -78,11 +85,15 @@ export const StyledCollapseButton = styled.button<{ $isExpanded: boolean }>`
 	transition: all 0.3s ease;
 	text-shadow: 0 0 8px currentColor;
 	backdrop-filter: blur(8px);
-	box-shadow: 0 2px 12px var(--crystal-primary-40), inset 0 1px 0 var(--white-30);
+	box-shadow:
+		0 2px 12px var(--crystal-primary-40),
+		inset 0 1px 0 var(--white-30);
 
 	&:hover {
 		background: linear-gradient(135deg, var(--crystal-primary-50), var(--crystal-secondary-70));
-		box-shadow: 0 4px 20px var(--crystal-primary-60), inset 0 1px 0 var(--white-50);
+		box-shadow:
+			0 4px 20px var(--crystal-primary-60),
+			inset 0 1px 0 var(--white-50);
 		transform: scale(1.05);
 		animation: ${crystalGlow} 1s infinite;
 	}
@@ -154,37 +165,59 @@ export const StyledDiceTypeButton = styled.button<{ $diceType?: string }>`
 	font-size: 0.7rem;
 	background: ${(props) => {
 		switch (props.$diceType) {
-			case 'd20': return `linear-gradient(135deg, var(--dice-d20-bg), var(--crystal-secondary-50))`;
-			case 'd12': return `linear-gradient(135deg, var(--dice-d12-bg), rgba(90, 130, 215, 0.5))`;
-			case 'd10': return `linear-gradient(135deg, var(--dice-d10-bg), rgba(217, 159, 4, 0.45))`;
-			case 'd8': return `linear-gradient(135deg, var(--dice-d8-bg), rgba(26, 157, 78, 0.45))`;
-			case 'd6': return `linear-gradient(135deg, var(--dice-d6-bg), rgba(207, 36, 36, 0.45))`;
-			case 'd4': return `linear-gradient(135deg, var(--dice-d4-bg), rgba(122, 133, 174, 0.5))`;
-			default: return `linear-gradient(135deg, var(--white-20), rgba(160, 82, 45, 0.5))`;
+			case 'd20':
+				return `linear-gradient(135deg, var(--dice-d20-bg), var(--crystal-secondary-50))`;
+			case 'd12':
+				return `linear-gradient(135deg, var(--dice-d12-bg), rgba(90, 130, 215, 0.5))`;
+			case 'd10':
+				return `linear-gradient(135deg, var(--dice-d10-bg), rgba(217, 159, 4, 0.45))`;
+			case 'd8':
+				return `linear-gradient(135deg, var(--dice-d8-bg), rgba(26, 157, 78, 0.45))`;
+			case 'd6':
+				return `linear-gradient(135deg, var(--dice-d6-bg), rgba(207, 36, 36, 0.45))`;
+			case 'd4':
+				return `linear-gradient(135deg, var(--dice-d4-bg), rgba(122, 133, 174, 0.5))`;
+			default:
+				return `linear-gradient(135deg, var(--white-20), rgba(160, 82, 45, 0.5))`;
 		}
 	}};
 	color: ${(props) => {
 		switch (props.$diceType) {
-			case 'd20': return 'var(--dice-d20-text)';
-			case 'd12': return 'var(--dice-d12-text)';
-			case 'd10': return 'var(--dice-d10-text)';
-			case 'd8': return 'var(--dice-d8-text)';
-			case 'd6': return 'var(--dice-d6-text)';
-			case 'd4': return 'var(--dice-d4-text)';
-			default: return 'var(--text-primary)';
+			case 'd20':
+				return 'var(--dice-d20-text)';
+			case 'd12':
+				return 'var(--dice-d12-text)';
+			case 'd10':
+				return 'var(--dice-d10-text)';
+			case 'd8':
+				return 'var(--dice-d8-text)';
+			case 'd6':
+				return 'var(--dice-d6-text)';
+			case 'd4':
+				return 'var(--dice-d4-text)';
+			default:
+				return 'var(--text-primary)';
 		}
 	}};
-	border: 1px solid ${(props) => {
-		switch (props.$diceType) {
-			case 'd20': return 'var(--crystal-primary-60)';
-			case 'd12': return 'var(--crystal-tertiary-60)';
-			case 'd10': return 'rgba(251, 191, 36, 0.6)';
-			case 'd8': return 'rgba(34, 197, 94, 0.6)';
-			case 'd6': return 'rgba(239, 68, 68, 0.6)';
-			case 'd4': return 'rgba(154, 165, 206, 0.6)';
-			default: return 'var(--white-30)';
-		}
-	}};
+	border: 1px solid
+		${(props) => {
+			switch (props.$diceType) {
+				case 'd20':
+					return 'var(--crystal-primary-60)';
+				case 'd12':
+					return 'var(--crystal-tertiary-60)';
+				case 'd10':
+					return 'rgba(251, 191, 36, 0.6)';
+				case 'd8':
+					return 'rgba(34, 197, 94, 0.6)';
+				case 'd6':
+					return 'rgba(239, 68, 68, 0.6)';
+				case 'd4':
+					return 'rgba(154, 165, 206, 0.6)';
+				default:
+					return 'var(--white-30)';
+			}
+		}};
 	border-radius: 6px;
 	cursor: pointer;
 	transition: all 0.3s ease;
@@ -193,38 +226,59 @@ export const StyledDiceTypeButton = styled.button<{ $diceType?: string }>`
 	backdrop-filter: blur(8px);
 	box-shadow: ${(props) => {
 		switch (props.$diceType) {
-			case 'd20': return `0 2px 12px var(--crystal-primary-40), inset 0 1px 0 var(--white-30)`;
-			case 'd12': return `0 2px 12px var(--crystal-tertiary-30), inset 0 1px 0 var(--white-30)`;
-			case 'd10': return '0 2px 12px rgba(251, 191, 36, 0.4), inset 0 1px 0 var(--white-30)';
-			case 'd8': return '0 2px 12px rgba(34, 197, 94, 0.4), inset 0 1px 0 var(--white-30)';
-			case 'd6': return '0 2px 12px rgba(239, 68, 68, 0.4), inset 0 1px 0 var(--white-30)';
-			case 'd4': return '0 2px 12px rgba(154, 165, 206, 0.4), inset 0 1px 0 var(--white-30)';
-			default: return '0 2px 8px var(--white-20), inset 0 1px 0 var(--white-20)';
+			case 'd20':
+				return `0 2px 12px var(--crystal-primary-40), inset 0 1px 0 var(--white-30)`;
+			case 'd12':
+				return `0 2px 12px var(--crystal-tertiary-30), inset 0 1px 0 var(--white-30)`;
+			case 'd10':
+				return '0 2px 12px rgba(251, 191, 36, 0.4), inset 0 1px 0 var(--white-30)';
+			case 'd8':
+				return '0 2px 12px rgba(34, 197, 94, 0.4), inset 0 1px 0 var(--white-30)';
+			case 'd6':
+				return '0 2px 12px rgba(239, 68, 68, 0.4), inset 0 1px 0 var(--white-30)';
+			case 'd4':
+				return '0 2px 12px rgba(154, 165, 206, 0.4), inset 0 1px 0 var(--white-30)';
+			default:
+				return '0 2px 8px var(--white-20), inset 0 1px 0 var(--white-20)';
 		}
 	}};
 
 	&:hover {
 		background: ${(props) => {
 			switch (props.$diceType) {
-				case 'd20': return `linear-gradient(135deg, var(--crystal-primary-50), var(--crystal-secondary-70))`;
-				case 'd12': return `linear-gradient(135deg, var(--crystal-tertiary-50), rgba(90, 130, 215, 0.7))`;
-				case 'd10': return 'linear-gradient(135deg, rgba(251, 191, 36, 0.45), rgba(217, 159, 4, 0.65))';
-				case 'd8': return 'linear-gradient(135deg, rgba(34, 197, 94, 0.45), rgba(26, 157, 78, 0.65))';
-				case 'd6': return 'linear-gradient(135deg, rgba(239, 68, 68, 0.45), rgba(207, 36, 36, 0.65))';
-				case 'd4': return 'linear-gradient(135deg, rgba(154, 165, 206, 0.5), rgba(122, 133, 174, 0.7))';
-				default: return 'linear-gradient(135deg, var(--white-30), rgba(200, 200, 200, 0.5))';
+				case 'd20':
+					return `linear-gradient(135deg, var(--crystal-primary-50), var(--crystal-secondary-70))`;
+				case 'd12':
+					return `linear-gradient(135deg, var(--crystal-tertiary-50), rgba(90, 130, 215, 0.7))`;
+				case 'd10':
+					return 'linear-gradient(135deg, rgba(251, 191, 36, 0.45), rgba(217, 159, 4, 0.65))';
+				case 'd8':
+					return 'linear-gradient(135deg, rgba(34, 197, 94, 0.45), rgba(26, 157, 78, 0.65))';
+				case 'd6':
+					return 'linear-gradient(135deg, rgba(239, 68, 68, 0.45), rgba(207, 36, 36, 0.65))';
+				case 'd4':
+					return 'linear-gradient(135deg, rgba(154, 165, 206, 0.5), rgba(122, 133, 174, 0.7))';
+				default:
+					return 'linear-gradient(135deg, var(--white-30), rgba(200, 200, 200, 0.5))';
 			}
 		}};
 		transform: translateY(-2px);
 		box-shadow: ${(props) => {
 			switch (props.$diceType) {
-				case 'd20': return `0 4px 20px var(--crystal-primary-60), inset 0 1px 0 var(--white-50)`;
-				case 'd12': return `0 4px 20px var(--crystal-tertiary-60), inset 0 1px 0 var(--white-50)`;
-				case 'd10': return '0 4px 20px rgba(251, 191, 36, 0.6), inset 0 1px 0 var(--white-50)';
-				case 'd8': return '0 4px 20px rgba(34, 197, 94, 0.6), inset 0 1px 0 var(--white-50)';
-				case 'd6': return '0 4px 20px rgba(239, 68, 68, 0.6), inset 0 1px 0 var(--white-50)';
-				case 'd4': return '0 4px 20px rgba(154, 165, 206, 0.6), inset 0 1px 0 var(--white-50)';
-				default: return '0 4px 16px var(--white-30), inset 0 1px 0 var(--white-30)';
+				case 'd20':
+					return `0 4px 20px var(--crystal-primary-60), inset 0 1px 0 var(--white-50)`;
+				case 'd12':
+					return `0 4px 20px var(--crystal-tertiary-60), inset 0 1px 0 var(--white-50)`;
+				case 'd10':
+					return '0 4px 20px rgba(251, 191, 36, 0.6), inset 0 1px 0 var(--white-50)';
+				case 'd8':
+					return '0 4px 20px rgba(34, 197, 94, 0.6), inset 0 1px 0 var(--white-50)';
+				case 'd6':
+					return '0 4px 20px rgba(239, 68, 68, 0.6), inset 0 1px 0 var(--white-50)';
+				case 'd4':
+					return '0 4px 20px rgba(154, 165, 206, 0.6), inset 0 1px 0 var(--white-50)';
+				default:
+					return '0 4px 16px var(--white-30), inset 0 1px 0 var(--white-30)';
 			}
 		}};
 	}
@@ -358,7 +412,12 @@ export const StyledDiceIcon = styled.div<{
 export const StyledDiceValue = styled.div<{ $isMax?: boolean; $isMin?: boolean }>`
 	font-size: 1.2rem;
 	font-weight: bold;
-	color: ${(props) => (props.$isMax ? 'var(--result-max)' : props.$isMin ? 'var(--result-min)' : 'var(--crystal-primary-light)')};
+	color: ${(props) =>
+		props.$isMax
+			? 'var(--result-max)'
+			: props.$isMin
+				? 'var(--result-min)'
+				: 'var(--crystal-primary-light)'};
 	text-shadow: 0 0 8px currentColor;
 	margin-top: 0.5rem;
 `;
@@ -373,7 +432,8 @@ export const StyledRollButton = styled.button<{ $isRolling: boolean }>`
 		props.$isRolling
 			? 'linear-gradient(135deg, rgba(100, 100, 120, 0.5), rgba(120, 120, 140, 0.6))'
 			: 'linear-gradient(135deg, var(--crystal-primary-50), var(--crystal-secondary-70), var(--crystal-tertiary-60))'};
-	color: ${(props) => (props.$isRolling ? 'var(--text-secondary)' : 'var(--crystal-primary-light)')};
+	color: ${(props) =>
+		props.$isRolling ? 'var(--text-secondary)' : 'var(--crystal-primary-light)'};
 	border: 2px solid var(--crystal-primary-60);
 	border-radius: 8px;
 	cursor: ${(props) => (props.$isRolling ? 'not-allowed' : 'pointer')};
@@ -391,9 +451,16 @@ export const StyledRollButton = styled.button<{ $isRolling: boolean }>`
 		!props.$isRolling &&
 		css`
 			&:hover {
-				background: linear-gradient(135deg, var(--crystal-primary-70), var(--crystal-secondary-90), var(--crystal-tertiary-80));
+				background: linear-gradient(
+					135deg,
+					var(--crystal-primary-70),
+					var(--crystal-secondary-90),
+					var(--crystal-tertiary-80)
+				);
 				transform: translateY(-2px);
-				box-shadow: 0 6px 24px var(--crystal-primary-60), inset 0 1px 0 var(--white-50);
+				box-shadow:
+					0 6px 24px var(--crystal-primary-60),
+					inset 0 1px 0 var(--white-50);
 				animation: ${crystalGlow} 1s infinite;
 			}
 		`}
@@ -530,7 +597,8 @@ export const StyledDiceResult = styled.div<{
 export const StyledTotalResult = styled.div<{ $isHighRoll: boolean }>`
 	font-size: 1.2rem;
 	font-weight: bold;
-	color: ${(props) => (props.$isHighRoll ? 'var(--crystal-primary)' : 'var(--crystal-primary-light)')};
+	color: ${(props) =>
+		props.$isHighRoll ? 'var(--crystal-primary)' : 'var(--crystal-primary-light)'};
 	text-align: center;
 	margin-bottom: 0.5rem;
 	text-shadow: ${(props) => (props.$isHighRoll ? '0 0 12px currentColor' : 'none')};

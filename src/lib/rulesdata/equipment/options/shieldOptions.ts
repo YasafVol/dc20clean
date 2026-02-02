@@ -18,8 +18,7 @@ export const SHIELD_TYPES: ShieldTypeDefinition[] = [
 	{
 		id: 'heavy',
 		name: 'Heavy Shield',
-		description:
-			'Heavy Shields are designed for warfare. A Tower Shield is a type of Heavy Shield.'
+		description: 'Heavy Shields are designed for warfare. A Tower Shield is a type of Heavy Shield.'
 	}
 ];
 

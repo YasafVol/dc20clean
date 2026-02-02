@@ -10,7 +10,7 @@ export const theme = {
 			primary: '#1A1B26',
 			secondary: '#24283B',
 			tertiary: '#414868',
-			elevated: '#2C2E3E',
+			elevated: '#2C2E3E'
 		},
 
 		// Accent colors
@@ -19,7 +19,7 @@ export const theme = {
 			secondary: '#BB9AF7',
 			warning: '#E0AF68',
 			danger: '#F7768E',
-			success: '#9ECE6A',
+			success: '#9ECE6A'
 		},
 
 		// Resource colors
@@ -27,7 +27,7 @@ export const theme = {
 			health: '#F7768E',
 			mana: '#7AA2F7',
 			stamina: '#E0AF68',
-			grit: '#9ECE6A',
+			grit: '#9ECE6A'
 		},
 
 		// Text colors
@@ -35,7 +35,7 @@ export const theme = {
 			primary: '#C0CAF5',
 			secondary: '#9AA5CE',
 			muted: '#565F89',
-			inverse: '#1A1B26',
+			inverse: '#1A1B26'
 		},
 
 		// Attribute colors
@@ -43,7 +43,7 @@ export const theme = {
 			might: '#F7768E',
 			agility: '#9ECE6A',
 			charisma: '#E0AF68',
-			intelligence: '#7DCFFF',
+			intelligence: '#7DCFFF'
 		},
 
 		// Crystal/Icy theme colors (for dice roller and effects)
@@ -52,11 +52,11 @@ export const theme = {
 			primary: '#7DCFFF',
 			primaryLight: '#c0e7ff',
 			primaryDark: '#5aa3d9',
-			
+
 			// Secondary crystal colors
 			secondary: '#7aa2f7',
 			tertiary: '#9aa5ce',
-			
+
 			// RGBA variations for transparency effects
 			primaryAlpha: {
 				10: 'rgba(125, 207, 255, 0.1)',
@@ -67,7 +67,7 @@ export const theme = {
 				60: 'rgba(125, 207, 255, 0.6)',
 				70: 'rgba(125, 207, 255, 0.7)',
 				80: 'rgba(125, 207, 255, 0.8)',
-				90: 'rgba(125, 207, 255, 0.9)',
+				90: 'rgba(125, 207, 255, 0.9)'
 			},
 			secondaryAlpha: {
 				30: 'rgba(90, 163, 217, 0.3)',
@@ -76,16 +76,16 @@ export const theme = {
 				70: 'rgba(90, 163, 217, 0.7)',
 				80: 'rgba(90, 163, 217, 0.8)',
 				90: 'rgba(90, 163, 217, 0.9)',
-				100: 'rgba(90, 163, 217, 1)',
+				100: 'rgba(90, 163, 217, 1)'
 			},
 			tertiaryAlpha: {
 				30: 'rgba(122, 162, 247, 0.3)',
 				50: 'rgba(122, 162, 247, 0.5)',
 				60: 'rgba(122, 162, 247, 0.6)',
 				70: 'rgba(122, 162, 247, 0.7)',
-				80: 'rgba(122, 162, 247, 0.8)',
+				80: 'rgba(122, 162, 247, 0.8)'
 			},
-			
+
 			// Dice-specific colors (for visual differentiation)
 			dice: {
 				d20: { bg: 'rgba(125, 207, 255, 0.3)', text: '#c0e7ff' },
@@ -94,9 +94,9 @@ export const theme = {
 				d8: { bg: 'rgba(34, 197, 94, 0.25)', text: '#b3ffcc' },
 				d6: { bg: 'rgba(239, 68, 68, 0.25)', text: '#ffb3b3' },
 				d4: { bg: 'rgba(154, 165, 206, 0.3)', text: '#c8cfed' },
-				default: { bg: 'rgba(139, 69, 19, 0.3)', text: '#ffffff' },
+				default: { bg: 'rgba(139, 69, 19, 0.3)', text: '#ffffff' }
 			},
-			
+
 			// Result state colors
 			result: {
 				critSuccess: '#b3ffcc',
@@ -104,29 +104,29 @@ export const theme = {
 				critFail: '#ffb3b3',
 				critFailBg: 'rgba(239, 68, 68, 0.6)',
 				max: '#b3ffcc',
-				min: '#d4dbff',
+				min: '#d4dbff'
 			},
-			
+
 			// Glow effects
 			glow: {
 				primary: 'rgba(125, 207, 255, 0.6)',
 				secondary: 'rgba(125, 207, 255, 0.8)',
-				ember: 'rgba(125, 207, 255, 0.8)',
-			},
+				ember: 'rgba(125, 207, 255, 0.8)'
+			}
 		},
 
 		// Semantic colors
 		border: {
 			default: '#3B4261',
-			focus: '#7DCFFF',
-		},
+			focus: '#7DCFFF'
+		}
 	},
 
 	// Typography
 	typography: {
 		fontFamily: {
 			primary: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-			mono: "'JetBrains Mono', 'Fira Code', monospace",
+			mono: "'JetBrains Mono', 'Fira Code', monospace"
 		},
 		fontSize: {
 			xs: '0.75rem', // 12px
@@ -136,19 +136,19 @@ export const theme = {
 			xl: '1.25rem', // 20px
 			'2xl': '1.5rem', // 24px
 			'3xl': '1.875rem', // 30px
-			'4xl': '2.25rem', // 36px
+			'4xl': '2.25rem' // 36px
 		},
 		fontWeight: {
 			normal: 400,
 			medium: 500,
 			semibold: 600,
-			bold: 700,
+			bold: 700
 		},
 		lineHeight: {
 			tight: 1.25,
 			normal: 1.5,
-			relaxed: 1.75,
-		},
+			relaxed: 1.75
+		}
 	},
 
 	// Spacing
@@ -161,7 +161,7 @@ export const theme = {
 		6: '1.5rem', // 24px
 		8: '2rem', // 32px
 		10: '2.5rem', // 40px
-		12: '3rem', // 48px
+		12: '3rem' // 48px
 	},
 
 	// Shadows
@@ -169,7 +169,7 @@ export const theme = {
 		sm: '0 1px 2px rgba(0, 0, 0, 0.05)',
 		md: '0 4px 6px rgba(0, 0, 0, 0.1)',
 		lg: '0 10px 15px rgba(0, 0, 0, 0.2)',
-		xl: '0 20px 25px rgba(0, 0, 0, 0.3)',
+		xl: '0 20px 25px rgba(0, 0, 0, 0.3)'
 	},
 
 	// Border radius
@@ -178,14 +178,14 @@ export const theme = {
 		md: '0.5rem',
 		lg: '0.75rem',
 		xl: '1rem',
-		full: '9999px',
+		full: '9999px'
 	},
 
 	// Transitions
 	transitions: {
 		fast: '150ms ease-in-out',
 		base: '200ms ease-in-out',
-		slow: '300ms ease-in-out',
+		slow: '300ms ease-in-out'
 	},
 
 	// Z-index
@@ -197,8 +197,8 @@ export const theme = {
 		modalBackdrop: 1300,
 		modal: 1400,
 		popover: 1500,
-		tooltip: 1600,
-	},
+		tooltip: 1600
+	}
 } as const;
 
 export type Theme = typeof theme;

@@ -30,13 +30,13 @@ export type ValidationCode =
 // Source attribution for effects
 export interface EffectSource {
 	type:
-	| 'trait'
-	| 'class_feature'
-	| 'choice'
-	| 'base'
-	| 'ancestry_default'
-	| 'talent'
-	| 'subclass_feature_choice';
+		| 'trait'
+		| 'class_feature'
+		| 'choice'
+		| 'base'
+		| 'ancestry_default'
+		| 'talent'
+		| 'subclass_feature_choice';
 	id: string;
 	name: string;
 	description?: string;
@@ -376,13 +376,13 @@ export interface EnhancedCharacterBuildData {
 
 	// Multiclass selections (M3.17)
 	selectedMulticlassOption?:
-	| 'novice'
-	| 'adept'
-	| 'expert'
-	| 'master'
-	| 'grandmaster'
-	| 'legendary'
-	| null;
+		| 'novice'
+		| 'adept'
+		| 'expert'
+		| 'master'
+		| 'grandmaster'
+		| 'legendary'
+		| null;
 	selectedMulticlassClass?: string; // Class ID
 	selectedMulticlassFeature?: string; // Feature name
 

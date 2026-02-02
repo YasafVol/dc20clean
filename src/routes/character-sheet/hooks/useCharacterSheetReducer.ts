@@ -42,7 +42,8 @@ export type SheetAction =
 	| { type: 'UPDATE_CURRENCY'; goldPieces?: number; silverPieces?: number; copperPieces?: number }
 	| { type: 'UPDATE_NOTES'; notes: string }
 	| { type: 'UPDATE_CURRENT_GRIT_POINTS'; grit: number }
-	| { type: 'UPDATE_CURRENT_REST_POINTS'; rest: number };
+	| { type: 'UPDATE_CURRENT_REST_POINTS'; rest: number }
+	| { type: 'TOGGLE_ACTIVE_CONDITION'; conditionId: string };
 
 const initialState: SheetState = {
 	character: null,
@@ -69,9 +70,7 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 				loading: false,
 				error: null,
 				baselineAttacks: [...(action.character.characterState?.attacks || [])],
-				baselineInventoryItems: [
-					...(action.character.characterState?.inventory?.items || [])
-				],
+				baselineInventoryItems: [...(action.character.characterState?.inventory?.items || [])],
 				baselineSpells: [...(action.character.spells || [])],
 				baselineManeuvers: [...(action.character.maneuvers || [])]
 			};
@@ -512,6 +511,26 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 				}
 			};
 
+		case 'TOGGLE_ACTIVE_CONDITION':
+			if (!state.character) return state;
+			const currentConditions = state.character.characterState.activeConditions || [];
+			const conditionIndex = currentConditions.indexOf(action.conditionId);
+			const newConditions =
+				conditionIndex >= 0
+					? currentConditions.filter((id) => id !== action.conditionId) // Remove if exists
+					: [...currentConditions, action.conditionId]; // Add if doesn't exist
+
+			return {
+				...state,
+				character: {
+					...state.character,
+					characterState: {
+						...state.character.characterState,
+						activeConditions: newConditions
+					}
+				}
+			};
+
 		default:
 			return state;
 	}
@@ -625,6 +644,10 @@ export function useCharacterSheetReducer() {
 		dispatch({ type: 'UPDATE_CURRENT_REST_POINTS', rest });
 	}, []);
 
+	const toggleActiveCondition = useCallback((conditionId: string) => {
+		dispatch({ type: 'TOGGLE_ACTIVE_CONDITION', conditionId });
+	}, []);
+
 	return {
 		state,
 		dispatch,
@@ -653,6 +676,7 @@ export function useCharacterSheetReducer() {
 		updateCurrency,
 		updateNotes,
 		updateGritPoints,
-		updateRestPoints
+		updateRestPoints,
+		toggleActiveCondition
 	};
 }

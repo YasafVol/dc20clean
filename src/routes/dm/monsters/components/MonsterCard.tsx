@@ -23,7 +23,7 @@ import {
 	StatItem,
 	StatLabel,
 	StatValue,
-	CardFooter,
+	CardFooter
 } from '../styles/MonsterStyles';
 
 export interface MonsterCardProps {
@@ -41,7 +41,7 @@ export const MonsterCard: React.FC<MonsterCardProps> = ({
 	onDuplicate,
 	onDelete,
 	onFork,
-	isOwner = true,
+	isOwner = true
 }) => {
 	const role = MONSTER_ROLES[monster.roleId];
 	const levelDisplay = getLevelDisplayName(monster.level);
@@ -52,9 +52,7 @@ export const MonsterCard: React.FC<MonsterCardProps> = ({
 				<CardTitleRow>
 					<CardName>{monster.name}</CardName>
 					<CardBadges>
-						<TierBadge $tier={monster.tier}>
-							{monster.tier}
-						</TierBadge>
+						<TierBadge $tier={monster.tier}>{monster.tier}</TierBadge>
 						<LevelBadge>{levelDisplay}</LevelBadge>
 					</CardBadges>
 				</CardTitleRow>
@@ -94,20 +92,12 @@ export const MonsterCard: React.FC<MonsterCardProps> = ({
 				{isOwner ? (
 					<>
 						{onEdit && (
-							<Button
-								variant="secondary"
-								size="sm"
-								onClick={() => onEdit(monster)}
-							>
+							<Button variant="secondary" size="sm" onClick={() => onEdit(monster)}>
 								Edit
 							</Button>
 						)}
 						{onDuplicate && (
-							<Button
-								variant="secondary"
-								size="sm"
-								onClick={() => onDuplicate(monster)}
-							>
+							<Button variant="secondary" size="sm" onClick={() => onDuplicate(monster)}>
 								Duplicate
 							</Button>
 						)}
@@ -125,11 +115,7 @@ export const MonsterCard: React.FC<MonsterCardProps> = ({
 				) : (
 					<>
 						{onFork && (
-							<Button
-								variant="secondary"
-								size="sm"
-								onClick={() => onFork(monster)}
-							>
+							<Button variant="secondary" size="sm" onClick={() => onFork(monster)}>
 								Fork
 							</Button>
 						)}

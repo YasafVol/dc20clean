@@ -183,14 +183,14 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 							key={level}
 							filled={level <= currentValues.exhaustionLevel}
 							$isMobile={effectiveIsMobile}
-						onClick={() => {
-							// Toggle: clicking same level clears it, clicking different level sets it
-							if (currentValues.exhaustionLevel === level) {
-								onExhaustionChange(0);
-							} else {
-								onExhaustionChange(level);
-							}
-						}}
+							onClick={() => {
+								// Toggle: clicking same level clears it, clicking different level sets it
+								if (currentValues.exhaustionLevel === level) {
+									onExhaustionChange(0);
+								} else {
+									onExhaustionChange(level);
+								}
+							}}
 							data-testid={`exhaustion-${level}`}
 						>
 							{level}

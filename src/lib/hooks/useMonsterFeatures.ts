@@ -12,7 +12,7 @@ import {
 	OFFICIAL_MONSTER_FEATURES,
 	OFFICIAL_FEATURES_BY_ID,
 	getFeaturesByCost,
-	validateFeatureBudget as validateBudget,
+	validateFeatureBudget as validateBudget
 } from '../rulesdata/dm/monsterFeatures';
 import type { MonsterFeature } from '../rulesdata/schemas/monster.schema';
 import { generateContentId } from '../utils/idGenerator';
@@ -49,8 +49,15 @@ export interface FeatureMutations {
 	deleteFeature: (id: string) => Promise<void>;
 	restoreFeature: (id: string) => Promise<void>;
 	permanentlyDeleteFeature: (id: string) => Promise<void>;
-	forkFeature: (sourceId: string, sourceType: 'official' | 'custom' | 'homebrew', sourceData: MonsterFeature) => Promise<{ id: string }>;
-	submitForReview: (id: string, visibility: 'public_anonymous' | 'public_credited') => Promise<void>;
+	forkFeature: (
+		sourceId: string,
+		sourceType: 'official' | 'custom' | 'homebrew',
+		sourceData: MonsterFeature
+	) => Promise<{ id: string }>;
+	submitForReview: (
+		id: string,
+		visibility: 'public_anonymous' | 'public_credited'
+	) => Promise<void>;
 }
 
 export interface FeatureBudgetValidation {
@@ -77,21 +84,25 @@ export function useMonsterFeatures(): UseFeatureListResult {
 		// Add source to official features
 		const officialWithSource: FeatureWithSource[] = OFFICIAL_MONSTER_FEATURES.map((f) => ({
 			...f,
-			source: 'official' as const,
+			source: 'official' as const
 		}));
 
 		// Add source to custom features
-		const customWithSource: FeatureWithSource[] = ((customFeatures ?? []) as unknown as MonsterFeature[]).map((f) => ({
+		const customWithSource: FeatureWithSource[] = (
+			(customFeatures ?? []) as unknown as MonsterFeature[]
+		).map((f) => ({
 			...f,
-			source: 'custom' as const,
+			source: 'custom' as const
 		}));
 
 		// Add source to homebrew features (filter out user's own to avoid duplicates)
-		const homebrewWithSource: FeatureWithSource[] = ((homebrewFeatures ?? []) as unknown as MonsterFeature[])
+		const homebrewWithSource: FeatureWithSource[] = (
+			(homebrewFeatures ?? []) as unknown as MonsterFeature[]
+		)
 			.filter((h) => !customFeatures?.some((c: { id: string }) => c.id === h.id))
 			.map((f) => ({
 				...f,
-				source: 'homebrew' as const,
+				source: 'homebrew' as const
 			}));
 
 		// Combine all features
@@ -102,7 +113,7 @@ export function useMonsterFeatures(): UseFeatureListResult {
 			officialFeatures: [...OFFICIAL_MONSTER_FEATURES],
 			customFeatures: (customFeatures ?? []) as unknown as MonsterFeature[],
 			homebrewFeatures: (homebrewFeatures ?? []) as unknown as MonsterFeature[],
-			isLoading,
+			isLoading
 		};
 	}, [customFeatures, homebrewFeatures]);
 }
@@ -129,7 +140,7 @@ export function useMonsterFeature(id: string | null): UseFeatureResult {
 		if (officialFeature) {
 			return {
 				feature: { ...officialFeature, source: 'official' as const },
-				isLoading: false,
+				isLoading: false
 			};
 		}
 
@@ -138,13 +149,13 @@ export function useMonsterFeature(id: string | null): UseFeatureResult {
 			const source = (customFeature as { isHomebrew?: boolean }).isHomebrew ? 'homebrew' : 'custom';
 			return {
 				feature: { ...(customFeature as unknown as MonsterFeature), source } as FeatureWithSource,
-				isLoading: false,
+				isLoading: false
 			};
 		}
 
 		return {
 			feature: null,
-			isLoading: customFeature === undefined,
+			isLoading: customFeature === undefined
 		};
 	}, [id, officialFeature, customFeature]);
 }
@@ -161,7 +172,7 @@ export function useFeaturesByCost() {
 			2: [],
 			3: [],
 			4: [],
-			5: [],
+			5: []
 		};
 
 		for (const feature of allFeatures) {
@@ -176,9 +187,9 @@ export function useFeaturesByCost() {
 			officialByCost: {
 				1: getFeaturesByCost(1),
 				2: getFeaturesByCost(2),
-				3: getFeaturesByCost(3),
+				3: getFeaturesByCost(3)
 			},
-			isLoading,
+			isLoading
 		};
 	}, [allFeatures, isLoading]);
 }
@@ -208,8 +219,8 @@ export function useFeatureMutations(): FeatureMutations {
 					name: feature.name,
 					description: feature.description,
 					pointCost: feature.pointCost,
-					effects: feature.effects,
-				},
+					effects: feature.effects
+				}
 			});
 			return id;
 		},
@@ -224,8 +235,8 @@ export function useFeatureMutations(): FeatureMutations {
 					name: updates.name,
 					description: updates.description,
 					pointCost: updates.pointCost,
-					effects: updates.effects,
-				},
+					effects: updates.effects
+				}
 			});
 		},
 		[updateMutation]
@@ -279,7 +290,7 @@ export function useFeatureMutations(): FeatureMutations {
 			restoreFeature,
 			permanentlyDeleteFeature,
 			forkFeature,
-			submitForReview,
+			submitForReview
 		}),
 		[
 			createFeature,
@@ -288,7 +299,7 @@ export function useFeatureMutations(): FeatureMutations {
 			restoreFeature,
 			permanentlyDeleteFeature,
 			forkFeature,
-			submitForReview,
+			submitForReview
 		]
 	);
 }

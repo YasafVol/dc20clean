@@ -61,7 +61,7 @@ export const FluencyBox = styled.div<{ filled: boolean; $isMobile?: boolean }>`
 
 export const FluencyLabel = styled.span`
 	font-size: 0.7rem;
-	color: #7DCFFF;
+	color: #7dcfff;
 	font-weight: bold;
 	margin-right: 0.3rem;
 `;

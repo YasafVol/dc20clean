@@ -185,22 +185,32 @@ const Spells: React.FC<SpellsProps> = ({
 								</option>
 							))}
 						</StyledSchoolFilter>
-<StyledAddSpellButton
-$isMobile={effectiveIsMobile}
-onClick={expandAll}
-style={{ backgroundColor: "#059669", marginRight: "0.5rem", fontSize: "0.85rem", padding: "0.4rem 0.8rem" }}
-aria-label="Expand All"
->
-▼ Expand All
-</StyledAddSpellButton>
-<StyledAddSpellButton
-$isMobile={effectiveIsMobile}
-onClick={collapseAll}
-style={{ backgroundColor: "#dc2626", marginRight: "0.5rem", fontSize: "0.85rem", padding: "0.4rem 0.8rem" }}
-aria-label="Collapse All"
->
-▲ Collapse All
-</StyledAddSpellButton>
+						<StyledAddSpellButton
+							$isMobile={effectiveIsMobile}
+							onClick={expandAll}
+							style={{
+								backgroundColor: '#059669',
+								marginRight: '0.5rem',
+								fontSize: '0.85rem',
+								padding: '0.4rem 0.8rem'
+							}}
+							aria-label="Expand All"
+						>
+							▼ Expand All
+						</StyledAddSpellButton>
+						<StyledAddSpellButton
+							$isMobile={effectiveIsMobile}
+							onClick={collapseAll}
+							style={{
+								backgroundColor: '#dc2626',
+								marginRight: '0.5rem',
+								fontSize: '0.85rem',
+								padding: '0.4rem 0.8rem'
+							}}
+							aria-label="Collapse All"
+						>
+							▲ Collapse All
+						</StyledAddSpellButton>
 
 						<StyledAddSpellButton
 							$isMobile={effectiveIsMobile}

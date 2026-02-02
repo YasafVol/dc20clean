@@ -15,8 +15,7 @@ export {
 	FeatureGateButton,
 	useIsAuthenticated,
 	type AuthGuardProps,
-	type FeatureGateButtonProps,
+	type FeatureGateButtonProps
 } from './AuthGuard';
 export { UserMenu, type UserMenuProps } from './UserMenu';
 export { AuthStatus, type AuthStatusProps } from './AuthStatus';
-

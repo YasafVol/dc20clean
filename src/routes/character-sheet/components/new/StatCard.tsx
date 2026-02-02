@@ -200,7 +200,11 @@ export const StatCard: React.FC<StatCardProps> = ({
 	const colorValue = theme.colors.resource[color];
 	// Temp HP increases MAX, not current
 	const effectiveMax = max !== undefined ? max + (temp || 0) : undefined;
-	const percentage = effectiveMax ? (current / effectiveMax) * 100 : (max ? (current / max) * 100 : 100);
+	const percentage = effectiveMax
+		? (current / effectiveMax) * 100
+		: max
+			? (current / max) * 100
+			: 100;
 
 	const handleIncrement = () => {
 		if (onChange && effectiveMax && current < effectiveMax) {

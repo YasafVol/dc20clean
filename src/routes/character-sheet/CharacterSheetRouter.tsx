@@ -31,7 +31,11 @@ const CharacterSheetRouter: React.FC<CharacterSheetRouterProps> = ({ characterId
 		const checkMobile = () => {
 			const width = window.innerWidth;
 			const mobile = width <= MOBILE_BREAKPOINT;
-			logger.debug('ui', "Gimli's Responsive Check", { width, mobile, breakpoint: MOBILE_BREAKPOINT });
+			logger.debug('ui', "Gimli's Responsive Check", {
+				width,
+				mobile,
+				breakpoint: MOBILE_BREAKPOINT
+			});
 			setIsMobile(mobile);
 		};
 		checkMobile();
@@ -55,5 +59,3 @@ const CharacterSheetRouter: React.FC<CharacterSheetRouterProps> = ({ characterId
 };
 
 export default CharacterSheetRouter;
-
-

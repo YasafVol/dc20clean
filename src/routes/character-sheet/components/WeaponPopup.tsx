@@ -28,18 +28,20 @@ const WeaponPopup: React.FC<WeaponPopupProps> = ({ weapon, onClose }) => {
 					<StyledFeaturePopupTitle>{weapon.name}</StyledFeaturePopupTitle>
 					<StyledFeaturePopupClose onClick={onClose}>×</StyledFeaturePopupClose>
 				</StyledFeaturePopupHeader>
-				
+
 				<StyledFeaturePopupDescription>
-					<strong>Type:</strong> {weapon.type}<br />
-					<strong>Style:</strong> {styleText}<br />
-					<strong>Handedness:</strong> {weapon.handedness}<br />
-					<strong>Damage:</strong> {weapon.damage}<br />
+					<strong>Type:</strong> {weapon.type}
+					<br />
+					<strong>Style:</strong> {styleText}
+					<br />
+					<strong>Handedness:</strong> {weapon.handedness}
+					<br />
+					<strong>Damage:</strong> {weapon.damage}
+					<br />
 					<strong>Properties:</strong> {propertiesText}
 				</StyledFeaturePopupDescription>
 
-				<StyledFeaturePopupSourceInfo>
-					Weapon Database
-				</StyledFeaturePopupSourceInfo>
+				<StyledFeaturePopupSourceInfo>Weapon Database</StyledFeaturePopupSourceInfo>
 			</StyledFeaturePopupContent>
 		</StyledFeaturePopupOverlay>
 	);

@@ -34,7 +34,7 @@ export const list = query({
 			.collect();
 
 		return features;
-	},
+	}
 });
 
 /**
@@ -66,7 +66,7 @@ export const getById = query({
 			.first();
 
 		return feature ?? null;
-	},
+	}
 });
 
 /**
@@ -74,7 +74,7 @@ export const getById = query({
  */
 export const listHomebrew = query({
 	args: {
-		pointCost: v.optional(v.number()),
+		pointCost: v.optional(v.number())
 	},
 	handler: async (ctx, args) => {
 		let query = ctx.db
@@ -88,7 +88,7 @@ export const listHomebrew = query({
 
 		const features = await query.collect();
 		return features;
-	},
+	}
 });
 
 /**
@@ -109,7 +109,7 @@ export const listTrash = query({
 			.collect();
 
 		return features;
-	},
+	}
 });
 
 // ============================================================================
@@ -126,8 +126,8 @@ export const create = mutation({
 			name: v.string(),
 			description: v.string(),
 			pointCost: v.number(),
-			effects: v.optional(v.array(v.any())),
-		}),
+			effects: v.optional(v.array(v.any()))
+		})
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -146,11 +146,11 @@ export const create = mutation({
 			isHomebrew: false,
 			createdAt: now,
 			lastModified: now,
-			schemaVersion: '1.0.0',
+			schemaVersion: '1.0.0'
 		});
 
 		return featureId;
-	},
+	}
 });
 
 /**
@@ -163,8 +163,8 @@ export const update = mutation({
 			name: v.optional(v.string()),
 			description: v.optional(v.string()),
 			pointCost: v.optional(v.number()),
-			effects: v.optional(v.array(v.any())),
-		}),
+			effects: v.optional(v.array(v.any()))
+		})
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -188,11 +188,11 @@ export const update = mutation({
 
 		await ctx.db.patch(existing._id, {
 			...args.updates,
-			lastModified: new Date().toISOString(),
+			lastModified: new Date().toISOString()
 		});
 
 		return existing._id;
-	},
+	}
 });
 
 /**
@@ -223,11 +223,11 @@ export const softDelete = mutation({
 			deletedAt: now,
 			deletedBy: userId,
 			scheduledPurgeAt: purgeDate.toISOString(),
-			lastModified: now,
+			lastModified: now
 		});
 
 		return { success: true };
-	},
+	}
 });
 
 /**
@@ -258,11 +258,11 @@ export const restore = mutation({
 			deletedAt: undefined,
 			deletedBy: undefined,
 			scheduledPurgeAt: undefined,
-			lastModified: new Date().toISOString(),
+			lastModified: new Date().toISOString()
 		});
 
 		return { success: true };
-	},
+	}
 });
 
 /**
@@ -288,7 +288,7 @@ export const hardDelete = mutation({
 		await ctx.db.delete(existing._id);
 
 		return { success: true };
-	},
+	}
 });
 
 /**
@@ -298,7 +298,7 @@ export const fork = mutation({
 	args: {
 		sourceId: v.string(),
 		sourceType: v.union(v.literal('official'), v.literal('custom'), v.literal('homebrew')),
-		sourceData: v.any(), // The feature data to fork
+		sourceData: v.any() // The feature data to fork
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -329,8 +329,8 @@ export const fork = mutation({
 				await ctx.db.patch(dbFeature._id, {
 					forkStats: {
 						forkCount: (dbFeature.forkStats?.forkCount ?? 0) + 1,
-						lastForkedAt: now,
-					},
+						lastForkedAt: now
+					}
 				});
 			}
 		}
@@ -352,17 +352,17 @@ export const fork = mutation({
 				type: args.sourceType,
 				name: sourceName,
 				userId: sourceUserId,
-				forkedAt: now,
+				forkedAt: now
 			},
 			createdAt: now,
 			lastModified: now,
-			schemaVersion: '1.0.0',
+			schemaVersion: '1.0.0'
 		};
 
 		const docId = await ctx.db.insert('customFeatures', forkedFeature);
 
 		return { id: newId, _id: docId };
-	},
+	}
 });
 
 /**
@@ -371,7 +371,7 @@ export const fork = mutation({
 export const submitForReview = mutation({
 	args: {
 		id: v.string(),
-		visibility: v.union(v.literal('public_anonymous'), v.literal('public_credited')),
+		visibility: v.union(v.literal('public_anonymous'), v.literal('public_credited'))
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -404,9 +404,9 @@ export const submitForReview = mutation({
 			isHomebrew: true,
 			submittedAt: now,
 			rejectionReason: undefined,
-			lastModified: now,
+			lastModified: now
 		});
 
 		return { success: true };
-	},
+	}
 });

@@ -33,7 +33,7 @@ function useMockUser(): MockUser | null {
 	return {
 		email: 'dev@example.com',
 		name: 'Developer',
-		provider: 'google',
+		provider: 'google'
 	};
 }
 
@@ -104,4 +104,3 @@ export function UserMenu({ className, onSignOut }: UserMenuProps) {
 }
 
 export default UserMenu;
-

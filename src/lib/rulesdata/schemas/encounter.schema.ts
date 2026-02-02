@@ -6,7 +6,13 @@
  */
 
 import { z } from 'zod';
-import type { MonsterTier, VisibilityOption, ApprovalStatus, ForkedFrom, ForkStats } from './monster.schema';
+import type {
+	MonsterTier,
+	VisibilityOption,
+	ApprovalStatus,
+	ForkedFrom,
+	ForkStats
+} from './monster.schema';
 
 // ============================================================================
 // CONSTANTS
@@ -21,21 +27,21 @@ export const DIFFICULTY_MODIFIERS: Record<EncounterDifficulty, number> = {
 	easy: -1,
 	medium: 0,
 	hard: 1,
-	deadly: 2,
+	deadly: 2
 };
 
 /** Tier cost multipliers for monster cost calculation */
 export const TIER_COST_MULTIPLIERS: Record<MonsterTier, number> = {
 	standard: 1,
 	apex: 2,
-	legendary: 4,
+	legendary: 4
 };
 
 /** Budget status thresholds */
 export const BUDGET_THRESHOLDS = {
 	UNDER: 0.8, // < 80% = under budget
 	ON_TARGET_MAX: 1.0, // 80-100% = on target
-	SLIGHTLY_OVER_MAX: 1.2, // 100-120% = slightly over
+	SLIGHTLY_OVER_MAX: 1.2 // 100-120% = slightly over
 	// > 120% = over budget
 } as const;
 
@@ -51,8 +57,16 @@ export interface PartyConfig {
 }
 
 export const partyConfigSchema = z.object({
-	size: z.number().int().min(1, 'Party size must be at least 1').max(8, 'Party size must be at most 8'),
-	averageLevel: z.number().int().min(0, 'Level must be at least 0').max(10, 'Level must be at most 10'),
+	size: z
+		.number()
+		.int()
+		.min(1, 'Party size must be at least 1')
+		.max(8, 'Party size must be at most 8'),
+	averageLevel: z
+		.number()
+		.int()
+		.min(0, 'Level must be at least 0')
+		.max(10, 'Level must be at most 10')
 });
 
 // ============================================================================
@@ -72,7 +86,7 @@ export const encounterMonsterSlotSchema = z.object({
 	monsterId: z.string().nullable(),
 	quantity: z.number().int().min(1, 'Quantity must be at least 1'),
 	cost: z.number().min(0),
-	notes: z.string().optional(),
+	notes: z.string().optional()
 });
 
 // ============================================================================
@@ -160,13 +174,13 @@ export const savedEncounterSchema = z.object({
 			type: z.enum(['official', 'custom', 'homebrew']),
 			name: z.string(),
 			userId: z.string().optional(),
-			forkedAt: z.string(),
+			forkedAt: z.string()
 		})
 		.optional(),
 	forkStats: z
 		.object({
 			forkCount: z.number().int().min(0),
-			lastForkedAt: z.string().optional(),
+			lastForkedAt: z.string().optional()
 		})
 		.optional(),
 
@@ -176,7 +190,7 @@ export const savedEncounterSchema = z.object({
 
 	createdAt: z.string(),
 	lastModified: z.string(),
-	schemaVersion: z.string(),
+	schemaVersion: z.string()
 });
 
 // ============================================================================

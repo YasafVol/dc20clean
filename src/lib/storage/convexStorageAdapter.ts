@@ -9,7 +9,7 @@ import type {
 	CharacterStorage,
 	CharacterStorageWithEvents,
 	StorageEventListener,
-	StorageEvent,
+	StorageEvent
 } from './characterStorage';
 import type { SavedCharacter, CharacterState } from '../types/dataContracts';
 import { api } from '../../../convex/_generated/api';
@@ -48,7 +48,7 @@ function prepareCharacterForSave(character: SavedCharacter): SavedCharacter {
 	return {
 		...character,
 		// Convert Record<string, number> to string[] for database compatibility
-		selectedTalents: convertTalentsToArray(character.selectedTalents as any),
+		selectedTalents: convertTalentsToArray(character.selectedTalents as any)
 	};
 }
 
@@ -143,5 +143,5 @@ export function getConvexStorageAdapter(): CharacterStorageWithEvents {
  * Export for direct use
  */
 export const convexStorageAdapter = {
-	get: getConvexStorageAdapter,
+	get: getConvexStorageAdapter
 };

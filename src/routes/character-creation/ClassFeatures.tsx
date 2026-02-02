@@ -40,7 +40,10 @@ function ClassFeatures() {
 				{choice.type === 'select_one' && (
 					<div className="flex flex-col gap-2">
 						{choice.options.map((option: any) => {
-							const detailedDescription = getDetailedClassFeatureDescription(choice.id, option.value);
+							const detailedDescription = getDetailedClassFeatureDescription(
+								choice.id,
+								option.value
+							);
 							const isSelected = selectedFeatureChoices[choice.id] === option.value;
 							return (
 								<label
@@ -59,7 +62,9 @@ function ClassFeatures() {
 										className="accent-primary mt-1 h-4 w-4 shrink-0 cursor-pointer"
 									/>
 									<div className="flex flex-col gap-1">
-										<span className={cn('font-bold', isSelected ? 'text-primary' : 'text-foreground')}>
+										<span
+											className={cn('font-bold', isSelected ? 'text-primary' : 'text-foreground')}
+										>
 											{option.label}
 										</span>
 										{(option.description || detailedDescription) && (
@@ -85,7 +90,10 @@ function ClassFeatures() {
 							const isSelected = currentValues.includes(option.value);
 							const canSelect = currentValues.length < (choice.maxSelections || 999);
 							const isDisabled = !isSelected && !canSelect;
-							const detailedDescription = getDetailedClassFeatureDescription(choice.id, option.value);
+							const detailedDescription = getDetailedClassFeatureDescription(
+								choice.id,
+								option.value
+							);
 
 							return (
 								<label
@@ -93,7 +101,7 @@ function ClassFeatures() {
 									className={cn(
 										'hover:border-primary flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-all',
 										isSelected ? 'border-primary bg-primary/10' : 'border-border bg-card/50',
-										isDisabled && 'cursor-not-allowed opacity-50 hover:border-border'
+										isDisabled && 'hover:border-border cursor-not-allowed opacity-50'
 									)}
 								>
 									<input
@@ -108,7 +116,9 @@ function ClassFeatures() {
 										className="accent-primary mt-1 h-4 w-4 shrink-0 cursor-pointer"
 									/>
 									<div className="flex flex-col gap-1">
-										<span className={cn('font-bold', isSelected ? 'text-primary' : 'text-foreground')}>
+										<span
+											className={cn('font-bold', isSelected ? 'text-primary' : 'text-foreground')}
+										>
 											{option.label}
 										</span>
 										{(option.description || detailedDescription) && (
@@ -170,7 +180,7 @@ function ClassFeatures() {
 					}
 				}
 			}
-		} catch { }
+		} catch {}
 
 		dispatch({
 			type: 'SET_FEATURE_CHOICES',
@@ -218,7 +228,7 @@ function ClassFeatures() {
 					}
 				}
 			}
-		} catch { }
+		} catch {}
 
 		dispatch({
 			type: 'SET_FEATURE_CHOICES',
@@ -239,7 +249,12 @@ function ClassFeatures() {
 	}
 
 	// Get all feature choices from all features up to current level (excluding in-game tactical choices)
-	const inGameChoices = ['Divine Blessing', "Commander's Call", 'Debilitating Strike', 'Bardic Performance'];
+	const inGameChoices = [
+		'Divine Blessing',
+		"Commander's Call",
+		'Debilitating Strike',
+		'Bardic Performance'
+	];
 	const featureChoices: any[] = [];
 	for (let level = 1; level <= state.level; level++) {
 		const levelFeatures = featuresByLevel[level] || [];
@@ -570,32 +585,32 @@ function ClassFeatures() {
 					{/* Combat Training for Spellcasters */}
 					{(selectedClassFeatures.spellcastingPath.combatTraining?.armor ||
 						selectedClassFeatures.spellcastingPath.combatTraining?.shields) && (
-							<div className="hover:border-primary mb-4 rounded-lg border border-white/50 bg-transparent p-6 transition-colors">
-								<h4 className="text-primary mb-2 text-xl font-bold">Combat Proficiencies</h4>
-								<div className="border-t border-white/10 pt-3">
-									{selectedClassFeatures.spellcastingPath.combatTraining?.armor && (
-										<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
-											<h6 className="text-primary text-sm font-semibold">Armor Training</h6>
-											<p className="text-foreground/70 text-sm">
-												{Array.isArray(selectedClassFeatures.spellcastingPath.combatTraining.armor)
-													? selectedClassFeatures.spellcastingPath.combatTraining.armor.join(', ')
-													: selectedClassFeatures.spellcastingPath.combatTraining.armor}
-											</p>
-										</div>
-									)}
-									{selectedClassFeatures.spellcastingPath.combatTraining?.shields && (
-										<div className="border-primary/40 rounded border-l-2 bg-amber-900/10 px-3 py-2">
-											<h6 className="text-primary text-sm font-semibold">Shield Training</h6>
-											<p className="text-foreground/70 text-sm">
-												{Array.isArray(selectedClassFeatures.spellcastingPath.combatTraining.shields)
-													? selectedClassFeatures.spellcastingPath.combatTraining.shields.join(', ')
-													: selectedClassFeatures.spellcastingPath.combatTraining.shields}
-											</p>
-										</div>
-									)}
-								</div>
+						<div className="hover:border-primary mb-4 rounded-lg border border-white/50 bg-transparent p-6 transition-colors">
+							<h4 className="text-primary mb-2 text-xl font-bold">Combat Proficiencies</h4>
+							<div className="border-t border-white/10 pt-3">
+								{selectedClassFeatures.spellcastingPath.combatTraining?.armor && (
+									<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+										<h6 className="text-primary text-sm font-semibold">Armor Training</h6>
+										<p className="text-foreground/70 text-sm">
+											{Array.isArray(selectedClassFeatures.spellcastingPath.combatTraining.armor)
+												? selectedClassFeatures.spellcastingPath.combatTraining.armor.join(', ')
+												: selectedClassFeatures.spellcastingPath.combatTraining.armor}
+										</p>
+									</div>
+								)}
+								{selectedClassFeatures.spellcastingPath.combatTraining?.shields && (
+									<div className="border-primary/40 rounded border-l-2 bg-amber-900/10 px-3 py-2">
+										<h6 className="text-primary text-sm font-semibold">Shield Training</h6>
+										<p className="text-foreground/70 text-sm">
+											{Array.isArray(selectedClassFeatures.spellcastingPath.combatTraining.shields)
+												? selectedClassFeatures.spellcastingPath.combatTraining.shields.join(', ')
+												: selectedClassFeatures.spellcastingPath.combatTraining.shields}
+										</p>
+									</div>
+								)}
 							</div>
-						)}
+						</div>
+					)}
 
 					{/* Spell List Information */}
 					{selectedClassFeatures.spellcastingPath.spellList && (
@@ -690,7 +705,9 @@ function ClassFeatures() {
 							{features.map((feature, index) => (
 								<Card key={index} className="mb-4 border-2">
 									<CardHeader className="pb-2">
-										<CardTitle className="text-primary text-xl font-bold">{feature.featureName}</CardTitle>
+										<CardTitle className="text-primary text-xl font-bold">
+											{feature.featureName}
+										</CardTitle>
 									</CardHeader>
 									<CardContent>
 										<p className="text-foreground leading-relaxed">{feature.description}</p>

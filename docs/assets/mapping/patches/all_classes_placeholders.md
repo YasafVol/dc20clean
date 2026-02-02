@@ -3,6 +3,7 @@
 Last updated: 2026-01-14
 
 Context
+
 - Goal: Fill known placeholders in all class progressions (L5 and L8) and add missing startingEquipment.
 - Non-breaking: feature IDs added and referenced from progression; descriptions marked as placeholders; no balance impact.
 - Scope: 13 classes × 2 features = 26 placeholder features + 9 startingEquipment blocks
@@ -57,27 +58,28 @@ Update corresponding `*.progression.ts`:
 
 ### Per-Class Feature Names
 
-| Class | L5 Feature Name | L8 Capstone Name |
-|-------|-----------------|------------------|
-| Barbarian | Primal Fury | Savage Apex |
-| Bard | Virtuoso | Magnum Opus |
-| Champion | Veteran Tactics | Unbreakable |
-| Cleric | Divine Conduit | Avatar of Faith |
-| Commander | Tactical Mastery | Supreme Commander |
-| Druid | Nature's Champion | Primal Avatar |
-| Hunter | Apex Predator | Perfect Hunt |
-| Monk | Inner Harmony | Transcendence |
-| Rogue | Shadow Master | Perfect Crime |
-| Sorcerer | Arcane Surge | Reality Shaper |
-| Spellblade | Martial Arcana | Arcane Apex |
-| Warlock | Dark Pact | Patron's Vessel |
-| Wizard | Arcane Mastery | Grand Magister |
+| Class      | L5 Feature Name   | L8 Capstone Name  |
+| ---------- | ----------------- | ----------------- |
+| Barbarian  | Primal Fury       | Savage Apex       |
+| Bard       | Virtuoso          | Magnum Opus       |
+| Champion   | Veteran Tactics   | Unbreakable       |
+| Cleric     | Divine Conduit    | Avatar of Faith   |
+| Commander  | Tactical Mastery  | Supreme Commander |
+| Druid      | Nature's Champion | Primal Avatar     |
+| Hunter     | Apex Predator     | Perfect Hunt      |
+| Monk       | Inner Harmony     | Transcendence     |
+| Rogue      | Shadow Master     | Perfect Crime     |
+| Sorcerer   | Arcane Surge      | Reality Shaper    |
+| Spellblade | Martial Arcana    | Arcane Apex       |
+| Warlock    | Dark Pact         | Patron's Vessel   |
+| Wizard     | Arcane Mastery    | Grand Magister    |
 
 ---
 
 ## Part 2: Missing startingEquipment (9 classes)
 
 ### Barbarian
+
 ```ts
 startingEquipment: {
   weaponsOrShields: ['2 Weapons or Shields'],
@@ -88,6 +90,7 @@ startingEquipment: {
 ```
 
 ### Bard
+
 ```ts
 startingEquipment: {
   weaponsOrShields: ['1 Weapon or Light Shield'],
@@ -98,6 +101,7 @@ startingEquipment: {
 ```
 
 ### Champion
+
 ```ts
 startingEquipment: {
   weaponsOrShields: ['2 Weapons or Shields'],
@@ -108,6 +112,7 @@ startingEquipment: {
 ```
 
 ### Cleric
+
 ```ts
 startingEquipment: {
   weaponsOrShields: ['1 Weapon or Light Shield'],
@@ -118,6 +123,7 @@ startingEquipment: {
 ```
 
 ### Commander
+
 ```ts
 startingEquipment: {
   weaponsOrShields: ['2 Weapons or Shields'],
@@ -128,6 +134,7 @@ startingEquipment: {
 ```
 
 ### Druid
+
 ```ts
 startingEquipment: {
   weaponsOrShields: ['1 Weapon'],
@@ -138,6 +145,7 @@ startingEquipment: {
 ```
 
 ### Hunter
+
 ```ts
 startingEquipment: {
   weaponsOrShields: ['2 Weapons or Light Shields'],
@@ -148,6 +156,7 @@ startingEquipment: {
 ```
 
 ### Warlock
+
 ```ts
 startingEquipment: {
   weaponsOrShields: ['1 Weapon or Light Shield'],
@@ -158,6 +167,7 @@ startingEquipment: {
 ```
 
 ### Wizard
+
 ```ts
 startingEquipment: {
   weaponsOrShields: ['1 Weapon'],
@@ -176,6 +186,7 @@ startingEquipment: {
 **File: `barbarian_features.ts`**
 
 Add after class declaration opening:
+
 ```ts
 startingEquipment: {
   weaponsOrShields: ['2 Weapons or Shields'],
@@ -186,6 +197,7 @@ startingEquipment: {
 ```
 
 Add to `coreFeatures` array:
+
 ```ts
 {
   id: 'barbarian_level_5_placeholder',
@@ -206,13 +218,15 @@ Add to `coreFeatures` array:
 **File: `barbarian.progression.ts`**
 
 Update Level 5:
+
 ```ts
 gains: {
-  classFeatures: ['barbarian_level_5_placeholder']
+	classFeatures: ['barbarian_level_5_placeholder'];
 }
 ```
 
 Update Level 8:
+
 ```ts
 gains: {
   pathProgression: true,
@@ -227,6 +241,7 @@ gains: {
 **File: `bard_features.ts`**
 
 Add after class declaration opening:
+
 ```ts
 startingEquipment: {
   weaponsOrShields: ['1 Weapon or Light Shield'],
@@ -237,6 +252,7 @@ startingEquipment: {
 ```
 
 Add to `coreFeatures` array:
+
 ```ts
 {
   id: 'bard_level_5_placeholder',
@@ -261,6 +277,7 @@ Add to `coreFeatures` array:
 **File: `champion_features.ts`**
 
 Add after class declaration opening:
+
 ```ts
 startingEquipment: {
   weaponsOrShields: ['2 Weapons or Shields'],
@@ -271,6 +288,7 @@ startingEquipment: {
 ```
 
 Add to `coreFeatures` array:
+
 ```ts
 {
   id: 'champion_level_5_placeholder',
@@ -295,6 +313,7 @@ Add to `coreFeatures` array:
 **File: `cleric_features.ts`**
 
 Add after class declaration opening:
+
 ```ts
 startingEquipment: {
   weaponsOrShields: ['1 Weapon or Light Shield'],
@@ -305,6 +324,7 @@ startingEquipment: {
 ```
 
 Add to `coreFeatures` array:
+
 ```ts
 {
   id: 'cleric_level_5_placeholder',
@@ -329,6 +349,7 @@ Add to `coreFeatures` array:
 **File: `commander_features.ts`**
 
 Add after class declaration opening:
+
 ```ts
 startingEquipment: {
   weaponsOrShields: ['2 Weapons or Shields'],
@@ -339,6 +360,7 @@ startingEquipment: {
 ```
 
 Add to `coreFeatures` array:
+
 ```ts
 {
   id: 'commander_level_5_placeholder',
@@ -363,6 +385,7 @@ Add to `coreFeatures` array:
 **File: `druid_features.ts`**
 
 Add after class declaration opening:
+
 ```ts
 startingEquipment: {
   weaponsOrShields: ['1 Weapon'],
@@ -373,6 +396,7 @@ startingEquipment: {
 ```
 
 Add to `coreFeatures` array:
+
 ```ts
 {
   id: 'druid_level_5_placeholder',
@@ -397,6 +421,7 @@ Add to `coreFeatures` array:
 **File: `hunter_features.ts`**
 
 Add after class declaration opening:
+
 ```ts
 startingEquipment: {
   weaponsOrShields: ['2 Weapons or Light Shields'],
@@ -407,6 +432,7 @@ startingEquipment: {
 ```
 
 Add to `coreFeatures` array:
+
 ```ts
 {
   id: 'hunter_level_5_placeholder',
@@ -431,6 +457,7 @@ Add to `coreFeatures` array:
 **File: `monk_features.ts`** (already has startingEquipment)
 
 Add to `coreFeatures` array:
+
 ```ts
 {
   id: 'monk_level_5_placeholder',
@@ -455,6 +482,7 @@ Add to `coreFeatures` array:
 **File: `rogue_features.ts`** (already has startingEquipment)
 
 Add to `coreFeatures` array:
+
 ```ts
 {
   id: 'rogue_level_5_placeholder',
@@ -479,6 +507,7 @@ Add to `coreFeatures` array:
 **File: `sorcerer_features.ts`** (already has startingEquipment)
 
 Add to `coreFeatures` array:
+
 ```ts
 {
   id: 'sorcerer_level_5_placeholder',
@@ -503,6 +532,7 @@ Add to `coreFeatures` array:
 **File: `spellblade_features.ts`** (already has startingEquipment)
 
 Add to `coreFeatures` array:
+
 ```ts
 {
   id: 'spellblade_level_5_placeholder',
@@ -527,6 +557,7 @@ Add to `coreFeatures` array:
 **File: `warlock_features.ts`**
 
 Add after class declaration opening:
+
 ```ts
 startingEquipment: {
   weaponsOrShields: ['1 Weapon or Light Shield'],
@@ -537,6 +568,7 @@ startingEquipment: {
 ```
 
 Add to `coreFeatures` array:
+
 ```ts
 {
   id: 'warlock_level_5_placeholder',
@@ -561,6 +593,7 @@ Add to `coreFeatures` array:
 **File: `wizard_features.ts`**
 
 Add after class declaration opening:
+
 ```ts
 startingEquipment: {
   weaponsOrShields: ['1 Weapon'],
@@ -571,6 +604,7 @@ startingEquipment: {
 ```
 
 Add to `coreFeatures` array:
+
 ```ts
 {
   id: 'wizard_level_5_placeholder',
@@ -593,31 +627,35 @@ Add to `coreFeatures` array:
 ## Files to Edit Summary
 
 ### Features Files (13 files)
-| File | Add startingEquipment | Add L5/L8 Placeholders |
-|------|----------------------|------------------------|
-| `barbarian_features.ts` | ✅ Yes | ✅ Yes |
-| `bard_features.ts` | ✅ Yes | ✅ Yes |
-| `champion_features.ts` | ✅ Yes | ✅ Yes |
-| `cleric_features.ts` | ✅ Yes | ✅ Yes |
-| `commander_features.ts` | ✅ Yes | ✅ Yes |
-| `druid_features.ts` | ✅ Yes | ✅ Yes |
-| `hunter_features.ts` | ✅ Yes | ✅ Yes |
-| `monk_features.ts` | ❌ No (exists) | ✅ Yes |
-| `rogue_features.ts` | ❌ No (exists) | ✅ Yes |
-| `sorcerer_features.ts` | ❌ No (exists) | ✅ Yes |
-| `spellblade_features.ts` | ❌ No (exists) | ✅ Yes |
-| `warlock_features.ts` | ✅ Yes | ✅ Yes |
-| `wizard_features.ts` | ✅ Yes | ✅ Yes |
+
+| File                     | Add startingEquipment | Add L5/L8 Placeholders |
+| ------------------------ | --------------------- | ---------------------- |
+| `barbarian_features.ts`  | ✅ Yes                | ✅ Yes                 |
+| `bard_features.ts`       | ✅ Yes                | ✅ Yes                 |
+| `champion_features.ts`   | ✅ Yes                | ✅ Yes                 |
+| `cleric_features.ts`     | ✅ Yes                | ✅ Yes                 |
+| `commander_features.ts`  | ✅ Yes                | ✅ Yes                 |
+| `druid_features.ts`      | ✅ Yes                | ✅ Yes                 |
+| `hunter_features.ts`     | ✅ Yes                | ✅ Yes                 |
+| `monk_features.ts`       | ❌ No (exists)        | ✅ Yes                 |
+| `rogue_features.ts`      | ❌ No (exists)        | ✅ Yes                 |
+| `sorcerer_features.ts`   | ❌ No (exists)        | ✅ Yes                 |
+| `spellblade_features.ts` | ❌ No (exists)        | ✅ Yes                 |
+| `warlock_features.ts`    | ✅ Yes                | ✅ Yes                 |
+| `wizard_features.ts`     | ✅ Yes                | ✅ Yes                 |
 
 ### Progression Files (13 files)
+
 All progression files need L5 and L8 `gains.classFeatures` arrays updated.
 
 ---
 
 ## Validation
+
 - Loader and schemas accept these feature IDs; no change needed to class schema.
 - UI will list the placeholders at the proper levels without mechanics.
 
 ## Next Steps
+
 - Replace placeholders with finalized features once CH6 specifics are approved.
 - Implement adventuring packs system to replace "Coming Soon" text.

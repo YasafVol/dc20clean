@@ -344,85 +344,8 @@ export const Conditions: React.FC<ConditionsProps> = ({ conditionStatuses, isMob
 		);
 	};
 
-	// Render condition detail modal
-	const renderModal = () => {
-		if (!selectedConditionId) return null;
-
-		const condition = getConditionById(selectedConditionId);
-		if (!condition) return null;
-
-		return (
-			<ConditionModal onClick={() => setSelectedConditionId(null)}>
-				<ModalContent onClick={(e) => e.stopPropagation()}>
-					<ModalTitle>{condition.name}</ModalTitle>
-					<ModalDescription>{condition.description}</ModalDescription>
-					<ModalMeta>
-						<ModalTag>Type: {condition.type}</ModalTag>
-						{condition.tags.map((tag) => (
-							<ModalTag key={tag}>{tag}</ModalTag>
-						))}
-					</ModalMeta>
-					<CloseButton onClick={() => setSelectedConditionId(null)}>Close</CloseButton>
-				</ModalContent>
-			</ConditionModal>
-		);
-	};
-
 	return (
-		<ConditionsContainer $isMobile={isMobile}>
-			<SectionHeader>
-				<SectionTitle>🛡️ Condition Interactions</SectionTitle>
-				<SearchInput
-					type="text"
-					placeholder="Search..."
-					value={searchTerm}
-					onChange={(e) => setSearchTerm(e.target.value)}
-				/>
-			</SectionHeader>
-
-			{!hasAnyInteractions && !expandedView ? (
-				<EmptyMessage>No special condition interactions</EmptyMessage>
-			) : (
-				<>
-					{renderConditionGroup('IMMUNITIES', '🚫', 'immunity', filteredConditions.immunities)}
-					{renderConditionGroup('RESISTANCES', '✨', 'resistance', filteredConditions.resistances)}
-					{renderConditionGroup(
-						'VULNERABILITIES',
-						'⚠️',
-						'vulnerability',
-						filteredConditions.vulnerabilities
-					)}
-				</>
-			)}
-
-			{expandedView && filteredConditions.noInteractions.length > 0 && (
-				<GroupContainer>
-					<GroupTitle $type="resistance">
-						📋 All Other Conditions ({filteredConditions.noInteractions.length})
-					</GroupTitle>
-					<ConditionsList>
-						{filteredConditions.noInteractions.map((cs) => {
-							const condition = getConditionById(cs.conditionId);
-							return (
-								<ConditionItem key={cs.conditionId}>
-									<ConditionName onClick={() => setSelectedConditionId(cs.conditionId)}>
-										{condition?.name || cs.conditionId}
-									</ConditionName>
-									<ConditionSources>
-										<SourceItem>No special interaction</SourceItem>
-									</ConditionSources>
-								</ConditionItem>
-							);
-						})}
-					</ConditionsList>
-				</GroupContainer>
-			)}
-
-			<ExpandButton onClick={() => setExpandedView(!expandedView)}>
-				{expandedView ? 'Hide All Conditions' : 'Show All Conditions'}
-			</ExpandButton>
-
-			{renderModal()}
+		<ConditionsContainer $isMobile={isMobile}>			
 		</ConditionsContainer>
 	);
 };

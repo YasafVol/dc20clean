@@ -161,7 +161,7 @@ export const AttributeCard: React.FC<AttributeCardProps> = ({
 	skills,
 	isPrime = false,
 	onSkillClick,
-	className,
+	className
 }) => {
 	const [isExpanded, setIsExpanded] = useState(false);
 	const colorValue = theme.colors.attribute[attribute] || theme.colors.accent.primary;
@@ -170,7 +170,7 @@ export const AttributeCard: React.FC<AttributeCardProps> = ({
 		might: 'MIG',
 		agility: 'AGI',
 		charisma: 'CHA',
-		intelligence: 'INT',
+		intelligence: 'INT'
 	};
 
 	const getProficiencyIcon = (proficiency?: string) => {

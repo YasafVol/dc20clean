@@ -315,9 +315,7 @@ const Conditions: React.FC = () => {
 									<ConditionHeader onClick={() => toggleCondition(condition.id)}>
 										<div style={{ display: 'flex', alignItems: 'center' }}>
 											<ConditionName>{condition.name}</ConditionName>
-											<TypeBadge $type={condition.type}>
-												{TYPE_LABELS[condition.type]}
-											</TypeBadge>
+											<TypeBadge $type={condition.type}>{TYPE_LABELS[condition.type]}</TypeBadge>
 										</div>
 										<ExpandIcon $expanded={isExpanded}>▼</ExpandIcon>
 									</ConditionHeader>

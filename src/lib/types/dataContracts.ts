@@ -68,6 +68,8 @@ export interface CharacterState {
 	notes: {
 		playerNotes: string;
 	};
+	// Active conditions (IDs from conditions.data.ts that are currently affecting the character)
+	activeConditions?: string[];
 	// attacks are an array of attack objects. We enforce array-only shape.
 	attacks?: any[];
 	spells?: any[];

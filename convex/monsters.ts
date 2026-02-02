@@ -34,7 +34,7 @@ export const list = query({
 			.collect();
 
 		return monsters;
-	},
+	}
 });
 
 /**
@@ -66,7 +66,7 @@ export const getById = query({
 			.first();
 
 		return monsters ?? null;
-	},
+	}
 });
 
 /**
@@ -75,10 +75,8 @@ export const getById = query({
 export const listHomebrew = query({
 	args: {
 		level: v.optional(v.number()),
-		tier: v.optional(
-			v.union(v.literal('standard'), v.literal('apex'), v.literal('legendary'))
-		),
-		roleId: v.optional(v.string()),
+		tier: v.optional(v.union(v.literal('standard'), v.literal('apex'), v.literal('legendary'))),
+		roleId: v.optional(v.string())
 	},
 	handler: async (ctx, args) => {
 		let query = ctx.db
@@ -98,7 +96,7 @@ export const listHomebrew = query({
 
 		const monsters = await query.collect();
 		return monsters;
-	},
+	}
 });
 
 /**
@@ -119,7 +117,7 @@ export const listTrash = query({
 			.collect();
 
 		return monsters;
-	},
+	}
 });
 
 // ============================================================================
@@ -131,7 +129,7 @@ export const listTrash = query({
  */
 export const create = mutation({
 	args: {
-		monster: v.any(), // Full SavedMonster object (minus userId)
+		monster: v.any() // Full SavedMonster object (minus userId)
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -148,11 +146,11 @@ export const create = mutation({
 			...args.monster,
 			userId,
 			createdAt: now,
-			lastModified: now,
+			lastModified: now
 		});
 
 		return monsterId;
-	},
+	}
 });
 
 /**
@@ -161,7 +159,7 @@ export const create = mutation({
 export const update = mutation({
 	args: {
 		id: v.string(),
-		updates: v.any(), // Partial<SavedMonster>
+		updates: v.any() // Partial<SavedMonster>
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -185,11 +183,11 @@ export const update = mutation({
 
 		await ctx.db.patch(existing._id, {
 			...args.updates,
-			lastModified: new Date().toISOString(),
+			lastModified: new Date().toISOString()
 		});
 
 		return existing._id;
-	},
+	}
 });
 
 /**
@@ -221,11 +219,11 @@ export const softDelete = mutation({
 			deletedAt: now,
 			deletedBy: userId,
 			scheduledPurgeAt: purgeDate.toISOString(),
-			lastModified: now,
+			lastModified: now
 		});
 
 		return { success: true };
-	},
+	}
 });
 
 /**
@@ -256,11 +254,11 @@ export const restore = mutation({
 			deletedAt: undefined,
 			deletedBy: undefined,
 			scheduledPurgeAt: undefined,
-			lastModified: new Date().toISOString(),
+			lastModified: new Date().toISOString()
 		});
 
 		return { success: true };
-	},
+	}
 });
 
 /**
@@ -286,7 +284,7 @@ export const hardDelete = mutation({
 		await ctx.db.delete(existing._id);
 
 		return { success: true };
-	},
+	}
 });
 
 /**
@@ -296,7 +294,7 @@ export const fork = mutation({
 	args: {
 		sourceId: v.string(),
 		sourceType: v.union(v.literal('official'), v.literal('custom'), v.literal('homebrew')),
-		sourceData: v.any(), // The monster data to fork (for official monsters not in DB)
+		sourceData: v.any() // The monster data to fork (for official monsters not in DB)
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -330,8 +328,8 @@ export const fork = mutation({
 				await ctx.db.patch(dbMonster._id, {
 					forkStats: {
 						forkCount: (dbMonster.forkStats?.forkCount ?? 0) + 1,
-						lastForkedAt: now,
-					},
+						lastForkedAt: now
+					}
 				});
 			}
 		}
@@ -350,7 +348,7 @@ export const fork = mutation({
 				type: args.sourceType,
 				name: sourceName,
 				userId: sourceUserId,
-				forkedAt: now,
+				forkedAt: now
 			},
 			forkStats: undefined, // Reset fork stats for new monster
 			deletedAt: undefined,
@@ -361,13 +359,13 @@ export const fork = mutation({
 			approvedAt: undefined,
 			approvedBy: undefined,
 			createdAt: now,
-			lastModified: now,
+			lastModified: now
 		};
 
 		const docId = await ctx.db.insert('monsters', forkedMonster);
 
 		return { id: newId, _id: docId };
-	},
+	}
 });
 
 /**
@@ -376,7 +374,7 @@ export const fork = mutation({
 export const submitForReview = mutation({
 	args: {
 		id: v.string(),
-		visibility: v.union(v.literal('public_anonymous'), v.literal('public_credited')),
+		visibility: v.union(v.literal('public_anonymous'), v.literal('public_credited'))
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -409,11 +407,11 @@ export const submitForReview = mutation({
 			isHomebrew: true,
 			submittedAt: now,
 			rejectionReason: undefined,
-			lastModified: now,
+			lastModified: now
 		});
 
 		return { success: true };
-	},
+	}
 });
 
 /**
@@ -459,11 +457,11 @@ export const duplicate = mutation({
 			approvedAt: undefined,
 			approvedBy: undefined,
 			createdAt: now,
-			lastModified: now,
+			lastModified: now
 		});
 
 		return { id: newId, _id: newMonsterId };
-	},
+	}
 });
 
 /**
@@ -471,7 +469,7 @@ export const duplicate = mutation({
  */
 export const seedMonsters = mutation({
 	args: {
-		monsters: v.array(v.any()), // Array of SavedMonster objects (without userId)
+		monsters: v.array(v.any()) // Array of SavedMonster objects (without userId)
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -489,10 +487,7 @@ export const seedMonsters = mutation({
 					.query('monsters')
 					.withIndex('by_user', (q) => q.eq('userId', userId))
 					.filter((q) =>
-						q.and(
-							q.eq(q.field('name'), monster.name),
-							q.eq(q.field('deletedAt'), undefined)
-						)
+						q.and(q.eq(q.field('name'), monster.name), q.eq(q.field('deletedAt'), undefined))
 					)
 					.first();
 
@@ -501,7 +496,7 @@ export const seedMonsters = mutation({
 						id: monster.id,
 						name: monster.name,
 						success: false,
-						error: 'Monster with this name already exists',
+						error: 'Monster with this name already exists'
 					});
 					continue;
 				}
@@ -510,24 +505,24 @@ export const seedMonsters = mutation({
 					...monster,
 					userId,
 					createdAt: now,
-					lastModified: now,
+					lastModified: now
 				});
 
 				results.push({
 					id: monster.id,
 					name: monster.name,
-					success: true,
+					success: true
 				});
 			} catch (err) {
 				results.push({
 					id: monster.id,
 					name: monster.name,
 					success: false,
-					error: err instanceof Error ? err.message : 'Unknown error',
+					error: err instanceof Error ? err.message : 'Unknown error'
 				});
 			}
 		}
 
 		return results;
-	},
+	}
 });

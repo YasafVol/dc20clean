@@ -25,7 +25,7 @@ export const MONSTER_ROLES: Record<MonsterRoleId, MonsterRole> = {
 		adOffset: -2, // -2 AD
 		primaryAttributes: ['AGI', 'INT'],
 		description:
-			'Ranged attackers that excel at hitting targets from a distance. Higher PD to avoid melee threats, lower AD and HP as trade-off.',
+			'Ranged attackers that excel at hitting targets from a distance. Higher PD to avoid melee threats, lower AD and HP as trade-off.'
 	},
 	brute: {
 		id: 'brute',
@@ -35,7 +35,7 @@ export const MONSTER_ROLES: Record<MonsterRoleId, MonsterRole> = {
 		adOffset: 2, // +2 AD
 		primaryAttributes: ['MIG'],
 		description:
-			'Heavy hitters with massive HP pools. Lower PD makes them vulnerable to physical attacks, but high AD protects against magic.',
+			'Heavy hitters with massive HP pools. Lower PD makes them vulnerable to physical attacks, but high AD protects against magic.'
 	},
 	controller: {
 		id: 'controller',
@@ -45,7 +45,7 @@ export const MONSTER_ROLES: Record<MonsterRoleId, MonsterRole> = {
 		adOffset: 0, // No AD change
 		primaryAttributes: ['INT', 'CHA'],
 		description:
-			'Battlefield manipulators that shape the fight through debuffs, zones, and forced movement. Balanced defensive stats.',
+			'Battlefield manipulators that shape the fight through debuffs, zones, and forced movement. Balanced defensive stats.'
 	},
 	defender: {
 		id: 'defender',
@@ -55,7 +55,7 @@ export const MONSTER_ROLES: Record<MonsterRoleId, MonsterRole> = {
 		adOffset: 2, // +2 AD
 		primaryAttributes: ['MIG', 'AGI'],
 		description:
-			'Stalwart protectors with high defenses across the board. Built to absorb punishment and protect allies.',
+			'Stalwart protectors with high defenses across the board. Built to absorb punishment and protect allies.'
 	},
 	leader: {
 		id: 'leader',
@@ -65,7 +65,7 @@ export const MONSTER_ROLES: Record<MonsterRoleId, MonsterRole> = {
 		adOffset: 0, // No AD change
 		primaryAttributes: ['CHA'],
 		description:
-			'Command creatures that buff allies and coordinate attacks. Balanced stats allow them to survive in various positions.',
+			'Command creatures that buff allies and coordinate attacks. Balanced stats allow them to survive in various positions.'
 	},
 	lurker: {
 		id: 'lurker',
@@ -75,7 +75,7 @@ export const MONSTER_ROLES: Record<MonsterRoleId, MonsterRole> = {
 		adOffset: -3, // -3 AD
 		primaryAttributes: ['AGI'],
 		description:
-			'Ambush predators that strike from hiding. Very high PD but fragile against magic. Low HP requires careful positioning.',
+			'Ambush predators that strike from hiding. Very high PD but fragile against magic. Low HP requires careful positioning.'
 	},
 	skirmisher: {
 		id: 'skirmisher',
@@ -85,7 +85,7 @@ export const MONSTER_ROLES: Record<MonsterRoleId, MonsterRole> = {
 		adOffset: 1, // +1 AD
 		primaryAttributes: ['AGI'],
 		description:
-			'Mobile combatants that excel at hit-and-run tactics. Slightly elevated defenses help survive repositioning.',
+			'Mobile combatants that excel at hit-and-run tactics. Slightly elevated defenses help survive repositioning.'
 	},
 	support: {
 		id: 'support',
@@ -95,8 +95,8 @@ export const MONSTER_ROLES: Record<MonsterRoleId, MonsterRole> = {
 		adOffset: -2, // -2 AD
 		primaryAttributes: ['CHA'],
 		description:
-			'Healers and buffers that keep allies fighting. Lower defenses and HP require protection from frontline threats.',
-	},
+			'Healers and buffers that keep allies fighting. Lower defenses and HP require protection from frontline threats.'
+	}
 } as const;
 
 /**
@@ -118,7 +118,9 @@ export const MONSTER_ROLES_LIST: readonly MonsterRole[] = Object.values(MONSTER_
 export function getMonsterRole(roleId: MonsterRoleId): MonsterRole {
 	const role = MONSTER_ROLES[roleId];
 	if (!role) {
-		throw new Error(`Invalid role ID: ${roleId}. Valid roles: ${Object.keys(MONSTER_ROLES).join(', ')}`);
+		throw new Error(
+			`Invalid role ID: ${roleId}. Valid roles: ${Object.keys(MONSTER_ROLES).join(', ')}`
+		);
 	}
 	return role;
 }

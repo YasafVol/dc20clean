@@ -15,7 +15,8 @@ export const SPELL_FOCUS_RULES = {
 	requiresHand: true,
 	somaticComponent:
 		'Holding a Spell Focus counts as performing Somatic Components but is still considered noticeably casting a Spell.',
-	lackingTraining: 'While wielding a Spell Focus you lack Training with, you do not benefit from its properties.'
+	lackingTraining:
+		'While wielding a Spell Focus you lack Training with, you do not benefit from its properties.'
 };
 
 // ================================================================= //
@@ -33,14 +34,16 @@ export const SPELL_FOCUS_PROPERTIES: SpellFocusProperty[] = [
 	{
 		id: 'close-quarters',
 		name: 'Close Quarters',
-		description: "Your Ranged Spell Attacks don't have DisADV if you're within the Melee Range of enemies.",
+		description:
+			"Your Ranged Spell Attacks don't have DisADV if you're within the Melee Range of enemies.",
 		cost: 1,
 		effect: 'No DisADV on Ranged Spell Attacks in melee'
 	},
 	{
 		id: 'long-ranged-focus',
 		name: 'Long-Ranged',
-		description: 'Spells you cast with a Range greater than 1 have their range increase by 5 Spaces.',
+		description:
+			'Spells you cast with a Range greater than 1 have their range increase by 5 Spaces.',
 		cost: 1,
 		effect: '+5 Spaces range for spells with range > 1'
 	},

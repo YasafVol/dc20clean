@@ -11,12 +11,12 @@
 
 The logging system provides:
 
-| Capability | Service | Status |
-|------------|---------|--------|
-| **Structured Logging** | Custom Logger Service | 🔄 WIP |
-| **Usage Metrics** | Vercel Analytics | 🔄 WIP |
-| **Error Tracking** | Sentry | 🔄 WIP |
-| **Server Logs** | Convex (built-in) | ⏳ Pending Convex integration |
+| Capability             | Service               | Status                        |
+| ---------------------- | --------------------- | ----------------------------- |
+| **Structured Logging** | Custom Logger Service | 🔄 WIP                        |
+| **Usage Metrics**      | Vercel Analytics      | 🔄 WIP                        |
+| **Error Tracking**     | Sentry                | 🔄 WIP                        |
+| **Server Logs**        | Convex (built-in)     | ⏳ Pending Convex integration |
 
 ---
 
@@ -44,12 +44,12 @@ The logging system provides:
 
 ## 3. Log Levels
 
-| Level | Description | Production | Development |
-|-------|-------------|------------|-------------|
-| `debug` | Detailed debugging info | ❌ Suppressed | ✅ Console |
-| `info` | Operational information | ❌ Suppressed | ✅ Console |
-| `warn` | Warning conditions | ✅ Console | ✅ Console |
-| `error` | Error conditions | ✅ Console + Sentry | ✅ Console |
+| Level   | Description             | Production          | Development |
+| ------- | ----------------------- | ------------------- | ----------- |
+| `debug` | Detailed debugging info | ❌ Suppressed       | ✅ Console  |
+| `info`  | Operational information | ❌ Suppressed       | ✅ Console  |
+| `warn`  | Warning conditions      | ✅ Console          | ✅ Console  |
+| `error` | Error conditions        | ✅ Console + Sentry | ✅ Console  |
 
 ---
 
@@ -57,14 +57,14 @@ The logging system provides:
 
 Logs are categorized by context for filtering and analysis:
 
-| Context | Description | Key Events |
-|---------|-------------|------------|
-| `storage` | localStorage/Convex operations | Save, load, backup, migration |
-| `calculation` | Character calculation engine | Calc complete, validation errors |
-| `auth` | Authentication flows | Sign-in, sign-out, session |
-| `pdf` | PDF export operations | Export start, complete, fail |
-| `ui` | UI interactions | Stage changes, navigation |
-| `migration` | Schema migrations | Version upgrades, field changes |
+| Context       | Description                    | Key Events                       |
+| ------------- | ------------------------------ | -------------------------------- |
+| `storage`     | localStorage/Convex operations | Save, load, backup, migration    |
+| `calculation` | Character calculation engine   | Calc complete, validation errors |
+| `auth`        | Authentication flows           | Sign-in, sign-out, session       |
+| `pdf`         | PDF export operations          | Export start, complete, fail     |
+| `ui`          | UI interactions                | Stage changes, navigation        |
+| `migration`   | Schema migrations              | Version upgrades, field changes  |
 
 ---
 
@@ -97,57 +97,57 @@ logger.track('pdf_export_completed', { characterId, sizeBytes });
 
 ### 6.1 Character Creation
 
-| Event | Level | Context | Data |
-|-------|-------|---------|------|
-| Stage entered | info | ui | `{ stage, characterId }` |
-| Validation warning | warn | ui | `{ message, field }` |
-| Creation complete | info | ui | `{ characterId, classId, level }` |
-| Creation abandoned | info | ui | `{ lastStage, duration }` |
+| Event              | Level | Context | Data                              |
+| ------------------ | ----- | ------- | --------------------------------- |
+| Stage entered      | info  | ui      | `{ stage, characterId }`          |
+| Validation warning | warn  | ui      | `{ message, field }`              |
+| Creation complete  | info  | ui      | `{ characterId, classId, level }` |
+| Creation abandoned | info  | ui      | `{ lastStage, duration }`         |
 
 ### 6.2 Character Calculation
 
-| Event | Level | Context | Data |
-|-------|-------|---------|------|
-| Calculation start | debug | calculation | `{ classId, level }` |
-| Calculation complete | debug | calculation | `{ durationMs }` |
-| Validation error | warn | calculation | `{ code, details }` |
-| Calculation crash | error | calculation | `{ error, buildData }` |
+| Event                | Level | Context     | Data                   |
+| -------------------- | ----- | ----------- | ---------------------- |
+| Calculation start    | debug | calculation | `{ classId, level }`   |
+| Calculation complete | debug | calculation | `{ durationMs }`       |
+| Validation error     | warn  | calculation | `{ code, details }`    |
+| Calculation crash    | error | calculation | `{ error, buildData }` |
 
 ### 6.3 Storage Operations
 
-| Event | Level | Context | Data |
-|-------|-------|---------|------|
-| Characters loaded | info | storage | `{ count, source }` |
-| Character saved | info | storage | `{ characterId, name }` |
-| Migration applied | info | storage | `{ from, to, characterId }` |
-| Parse/save failed | error | storage | `{ error, characterId }` |
+| Event             | Level | Context | Data                        |
+| ----------------- | ----- | ------- | --------------------------- |
+| Characters loaded | info  | storage | `{ count, source }`         |
+| Character saved   | info  | storage | `{ characterId, name }`     |
+| Migration applied | info  | storage | `{ from, to, characterId }` |
+| Parse/save failed | error | storage | `{ error, characterId }`    |
 
 ### 6.4 PDF Export
 
-| Event | Level | Context | Data |
-|-------|-------|---------|------|
-| Export started | info | pdf | `{ characterId, version }` |
-| Export complete | info | pdf | `{ characterId, sizeBytes }` |
-| Export failed | error | pdf | `{ characterId, error }` |
+| Event           | Level | Context | Data                         |
+| --------------- | ----- | ------- | ---------------------------- |
+| Export started  | info  | pdf     | `{ characterId, version }`   |
+| Export complete | info  | pdf     | `{ characterId, sizeBytes }` |
+| Export failed   | error | pdf     | `{ characterId, error }`     |
 
 ### 6.5 Authentication
 
-| Event | Level | Context | Data |
-|-------|-------|---------|------|
-| Sign-in started | info | auth | `{ provider }` |
-| Sign-in success | info | auth | `{ provider }` |
-| Sign-in failed | error | auth | `{ provider, error }` |
-| Feature gate hit | info | auth | `{ feature, authenticated }` |
+| Event            | Level | Context | Data                         |
+| ---------------- | ----- | ------- | ---------------------------- |
+| Sign-in started  | info  | auth    | `{ provider }`               |
+| Sign-in success  | info  | auth    | `{ provider }`               |
+| Sign-in failed   | error | auth    | `{ provider, error }`        |
+| Feature gate hit | info  | auth    | `{ feature, authenticated }` |
 
 ---
 
 ## 7. Environment Configuration
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `VITE_LOG_LEVEL` | Minimum log level | `warn` (prod) / `debug` (dev) |
-| `VITE_SENTRY_DSN` | Sentry Data Source Name | (disabled if empty) |
-| `VITE_ENABLE_ANALYTICS` | Enable Vercel Analytics | `true` |
+| Variable                | Description             | Default                       |
+| ----------------------- | ----------------------- | ----------------------------- |
+| `VITE_LOG_LEVEL`        | Minimum log level       | `warn` (prod) / `debug` (dev) |
+| `VITE_SENTRY_DSN`       | Sentry Data Source Name | (disabled if empty)           |
+| `VITE_ENABLE_ANALYTICS` | Enable Vercel Analytics | `true`                        |
 
 ---
 
@@ -178,10 +178,10 @@ logger.track('pdf_export_completed', { characterId, sizeBytes });
 
 ## 9. Key Files
 
-| File | Purpose | Status |
-|------|---------|--------|
-| `src/lib/utils/logger.ts` | Logger service | 🔄 WIP |
-| `src/main.tsx` | Sentry & Analytics setup | 🔄 WIP |
+| File                                | Purpose                  | Status      |
+| ----------------------------------- | ------------------------ | ----------- |
+| `src/lib/utils/logger.ts`           | Logger service           | 🔄 WIP      |
+| `src/main.tsx`                      | Sentry & Analytics setup | 🔄 WIP      |
 | `docs/plannedSpecs/LOGGING_SPEC.md` | Full implementation spec | ✅ Complete |
 
 ---

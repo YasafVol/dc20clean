@@ -26,7 +26,7 @@ export {
 	FormLabel,
 	ValidationList,
 	ValidationItem,
-	ValidationIcon,
+	ValidationIcon
 } from '../../monsters/styles/MonsterStyles';
 
 // ============================================================================
@@ -192,7 +192,9 @@ export const BudgetBar = styled.div<{ $percentage: number; $status?: string }>`
 					? 'linear-gradient(90deg, #60a5fa, #3b82f6)'
 					: 'linear-gradient(90deg, #4ade80, #22c55e)'};
 	border-radius: 6px;
-	transition: width 0.3s ease, background 0.3s ease;
+	transition:
+		width 0.3s ease,
+		background 0.3s ease;
 `;
 
 export const BudgetThresholdMarker = styled.div<{ $position: number }>`
@@ -295,11 +297,9 @@ export const MonsterSlotList = styled.div`
 `;
 
 export const MonsterSlotCard = styled.div<{ $isEmpty?: boolean }>`
-	background: ${(props) =>
-		props.$isEmpty ? 'rgba(0, 0, 0, 0.2)' : 'rgba(30, 27, 75, 0.6)'};
+	background: ${(props) => (props.$isEmpty ? 'rgba(0, 0, 0, 0.2)' : 'rgba(30, 27, 75, 0.6)')};
 	border: 1px dashed
-		${(props) =>
-			props.$isEmpty ? 'rgba(168, 85, 247, 0.3)' : 'rgba(168, 85, 247, 0.4)'};
+		${(props) => (props.$isEmpty ? 'rgba(168, 85, 247, 0.3)' : 'rgba(168, 85, 247, 0.4)')};
 	border-radius: 8px;
 	padding: 1rem;
 	display: flex;

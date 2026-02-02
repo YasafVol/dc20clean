@@ -127,7 +127,9 @@ export function SubclassSelector({
 							</CardHeader>
 							<CardContent>
 								{subclass.description && (
-									<p className="text-foreground/70 text-sm leading-relaxed">{subclass.description}</p>
+									<p className="text-foreground/70 text-sm leading-relaxed">
+										{subclass.description}
+									</p>
 								)}
 
 								{/* Show features for all subclasses */}
@@ -155,9 +157,13 @@ export function SubclassSelector({
 																key={benefit.name || benefitIdx}
 																className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2 last:mb-0"
 															>
-																<h6 className="text-primary text-xs font-semibold">{benefit.name}</h6>
+																<h6 className="text-primary text-xs font-semibold">
+																	{benefit.name}
+																</h6>
 																{benefit.description && (
-																	<p className="text-foreground/70 text-xs">{benefit.description}</p>
+																	<p className="text-foreground/70 text-xs">
+																		{benefit.description}
+																	</p>
 																)}
 															</div>
 														))}
@@ -203,7 +209,7 @@ export function SubclassSelector({
 																				className={cn(
 																					isComplete
 																						? 'bg-emerald-500/20 text-emerald-500 hover:bg-emerald-500/30'
-																						: 'text-amber-500 border-amber-500/50'
+																						: 'border-amber-500/50 text-amber-500'
 																				)}
 																			>
 																				{isComplete

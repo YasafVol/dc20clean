@@ -13,12 +13,14 @@
 **Scope:** DM-facing War Room for encounter planning. Integrates with Monster Designer.
 
 **Key Principles:**
+
 - Budget = Party Size × Average Level
 - Difficulty modifies budget threshold
 - Monster cost = Level × Tier Multiplier
 - Real-time budget tracking
 
 **Routes:**
+
 - `/dm/encounters` - Encounter list
 - `/dm/encounters/:id` - Encounter planner (War Room)
 - `/dm/encounters/new` - Create new encounter
@@ -43,33 +45,33 @@ Base Budget = Party Size × Average Party Level
 
 ### 2.2 Difficulty Modifiers
 
-| Difficulty | Formula | Modifier (for L4 party) |
-|------------|---------|-------------------------|
-| Trivial | Budget - (2 × Level) | -8 |
-| Easy | Budget - (1 × Level) | -4 |
-| Medium | Budget | 0 |
-| Hard | Budget + (1 × Level) | +4 |
-| Deadly | Budget + (2 × Level) | +8 |
+| Difficulty | Formula              | Modifier (for L4 party) |
+| ---------- | -------------------- | ----------------------- |
+| Trivial    | Budget - (2 × Level) | -8                      |
+| Easy       | Budget - (1 × Level) | -4                      |
+| Medium     | Budget               | 0                       |
+| Hard       | Budget + (1 × Level) | +4                      |
+| Deadly     | Budget + (2 × Level) | +8                      |
 
 ### 2.3 Adjusted Budget Examples
 
 For a party of 4 players at level 4 (Base Budget = 16):
 
 | Difficulty | Adjusted Budget |
-|------------|-----------------|
-| Trivial | 8 |
-| Easy | 12 |
-| Medium | 16 |
-| Hard | 20 |
-| Deadly | 24 |
+| ---------- | --------------- |
+| Trivial    | 8               |
+| Easy       | 12              |
+| Medium     | 16              |
+| Hard       | 20              |
+| Deadly     | 24              |
 
 ### 2.4 Monster Cost
 
-| Tier | Cost Multiplier | L1 Monster | L4 Monster | L8 Monster |
-|------|-----------------|------------|------------|------------|
-| Standard | 1× | 1 | 4 | 8 |
-| Apex | 2× | 2 | 8 | 16 |
-| Legendary | 4× | 4 | 16 | 32 |
+| Tier      | Cost Multiplier | L1 Monster | L4 Monster | L8 Monster |
+| --------- | --------------- | ---------- | ---------- | ---------- |
+| Standard  | 1×              | 1          | 4          | 8          |
+| Apex      | 2×              | 2          | 8          | 16         |
+| Legendary | 4×              | 4          | 16         | 32         |
 
 **Total Slot Cost = Monster Cost × Quantity**
 
@@ -79,12 +81,12 @@ For a party of 4 players at level 4 (Base Budget = 16):
 
 ### 3.1 Thresholds
 
-| Condition | Percentage | Status | UI Indicator |
-|-----------|------------|--------|--------------|
-| Spent < 80% | Under | Warning | Yellow bar, "May be too easy" |
-| Spent 80-100% | On target | OK | Green bar |
-| Spent 100-120% | Slightly over | Warning | Orange bar, "Challenging" |
-| Spent > 120% | Over budget | Error | Red bar, "Very difficult" |
+| Condition      | Percentage    | Status  | UI Indicator                  |
+| -------------- | ------------- | ------- | ----------------------------- |
+| Spent < 80%    | Under         | Warning | Yellow bar, "May be too easy" |
+| Spent 80-100%  | On target     | OK      | Green bar                     |
+| Spent 100-120% | Slightly over | Warning | Orange bar, "Challenging"     |
+| Spent > 120%   | Over budget   | Error   | Red bar, "Very difficult"     |
 
 ### 3.2 Visual Budget Meter
 
@@ -139,8 +141,8 @@ Budget: 16 / 20 (Hard)
 
 ```typescript
 interface PartyConfig {
-  size: number;        // 1-8 players
-  averageLevel: number; // 0-10
+	size: number; // 1-8 players
+	averageLevel: number; // 0-10
 }
 ```
 
@@ -148,11 +150,11 @@ interface PartyConfig {
 
 ```typescript
 interface EncounterMonsterSlot {
-  id: string;               // slot_<uuid>
-  monsterId: string | null; // null = empty slot
-  quantity: number;         // 1+
-  cost: number;             // Calculated: monster cost × quantity
-  notes?: string;           // Optional notes for this slot
+	id: string; // slot_<uuid>
+	monsterId: string | null; // null = empty slot
+	quantity: number; // 1+
+	cost: number; // Calculated: monster cost × quantity
+	notes?: string; // Optional notes for this slot
 }
 ```
 
@@ -160,60 +162,60 @@ interface EncounterMonsterSlot {
 
 ```typescript
 interface SavedEncounter {
-  // Identity
-  id: string;                    // enc_<uuid>
-  name: string;
-  description?: string;
-  
-  // Party Configuration
-  party: PartyConfig;
-  difficulty: 'trivial' | 'easy' | 'medium' | 'hard' | 'deadly';
-  
-  // Budget (all calculated)
-  baseBudget: number;            // party.size × party.averageLevel
-  difficultyModifier: number;    // Based on difficulty
-  adjustedBudget: number;        // baseBudget + difficultyModifier
-  spentBudget: number;           // Sum of all slot costs
-  remainingBudget: number;       // adjustedBudget - spentBudget
-  
-  // Monster Slots
-  monsters: EncounterMonsterSlot[];
-  
-  // Environment & Notes
-  environment?: string;          // e.g., "Forest clearing", "Dungeon room"
-  gmNotes?: string;              // Private GM notes
-  
-  // Sharing (same as Monster)
-  visibility: 'private' | 'public_anonymous' | 'public_credited';
-  approvalStatus: 'draft' | 'pending_review' | 'approved' | 'rejected';
-  isHomebrew: boolean;
-  rejectionReason?: string;
-  submittedAt?: string;
-  approvedAt?: string;
-  approvedBy?: string;
-  
-  // Fork Tracking
-  forkedFrom?: {
-    id: string;
-    type: 'official' | 'custom' | 'homebrew';
-    name: string;
-    userId?: string;
-    forkedAt: string;
-  };
-  forkStats?: {
-    forkCount: number;
-    lastForkedAt?: string;
-  };
-  
-  // Soft Delete
-  deletedAt?: string;
-  deletedBy?: string;
-  scheduledPurgeAt?: string;
-  
-  // Metadata
-  createdAt: string;
-  lastModified: string;
-  schemaVersion: string;
+	// Identity
+	id: string; // enc_<uuid>
+	name: string;
+	description?: string;
+
+	// Party Configuration
+	party: PartyConfig;
+	difficulty: 'trivial' | 'easy' | 'medium' | 'hard' | 'deadly';
+
+	// Budget (all calculated)
+	baseBudget: number; // party.size × party.averageLevel
+	difficultyModifier: number; // Based on difficulty
+	adjustedBudget: number; // baseBudget + difficultyModifier
+	spentBudget: number; // Sum of all slot costs
+	remainingBudget: number; // adjustedBudget - spentBudget
+
+	// Monster Slots
+	monsters: EncounterMonsterSlot[];
+
+	// Environment & Notes
+	environment?: string; // e.g., "Forest clearing", "Dungeon room"
+	gmNotes?: string; // Private GM notes
+
+	// Sharing (same as Monster)
+	visibility: 'private' | 'public_anonymous' | 'public_credited';
+	approvalStatus: 'draft' | 'pending_review' | 'approved' | 'rejected';
+	isHomebrew: boolean;
+	rejectionReason?: string;
+	submittedAt?: string;
+	approvedAt?: string;
+	approvedBy?: string;
+
+	// Fork Tracking
+	forkedFrom?: {
+		id: string;
+		type: 'official' | 'custom' | 'homebrew';
+		name: string;
+		userId?: string;
+		forkedAt: string;
+	};
+	forkStats?: {
+		forkCount: number;
+		lastForkedAt?: string;
+	};
+
+	// Soft Delete
+	deletedAt?: string;
+	deletedBy?: string;
+	scheduledPurgeAt?: string;
+
+	// Metadata
+	createdAt: string;
+	lastModified: string;
+	schemaVersion: string;
 }
 ```
 
@@ -225,41 +227,41 @@ interface SavedEncounter {
 
 ```typescript
 interface EncounterCalculationInput {
-  party: PartyConfig;
-  difficulty: EncounterDifficulty;
-  monsters: Array<{
-    monsterId: string;
-    quantity: number;
-    monsterLevel: number;
-    monsterTier: MonsterTier;
-  }>;
+	party: PartyConfig;
+	difficulty: EncounterDifficulty;
+	monsters: Array<{
+		monsterId: string;
+		quantity: number;
+		monsterLevel: number;
+		monsterTier: MonsterTier;
+	}>;
 }
 
 interface EncounterCalculationResult {
-  baseBudget: number;
-  difficultyModifier: number;
-  adjustedBudget: number;
-  spentBudget: number;
-  remainingBudget: number;
-  budgetPercentage: number;
-  
-  // Per-slot breakdown
-  slotCosts: Array<{
-    monsterId: string;
-    unitCost: number;
-    quantity: number;
-    totalCost: number;
-  }>;
-  
-  // All thresholds for display
-  difficultyThresholds: Record<EncounterDifficulty, number>;
-  
-  validation: {
-    isOverBudget: boolean;      // > 120%
-    isUnderBudget: boolean;     // < 80%
-    isOnTarget: boolean;        // 80-100%
-    budgetStatus: 'under' | 'on_target' | 'slightly_over' | 'over';
-  };
+	baseBudget: number;
+	difficultyModifier: number;
+	adjustedBudget: number;
+	spentBudget: number;
+	remainingBudget: number;
+	budgetPercentage: number;
+
+	// Per-slot breakdown
+	slotCosts: Array<{
+		monsterId: string;
+		unitCost: number;
+		quantity: number;
+		totalCost: number;
+	}>;
+
+	// All thresholds for display
+	difficultyThresholds: Record<EncounterDifficulty, number>;
+
+	validation: {
+		isOverBudget: boolean; // > 120%
+		isUnderBudget: boolean; // < 80%
+		isOnTarget: boolean; // 80-100%
+		budgetStatus: 'under' | 'on_target' | 'slightly_over' | 'over';
+	};
 }
 ```
 
@@ -267,17 +269,17 @@ interface EncounterCalculationResult {
 
 ```typescript
 const DIFFICULTY_MODIFIERS: Record<EncounterDifficulty, number> = {
-  trivial: -2,  // × party level
-  easy: -1,
-  medium: 0,
-  hard: 1,
-  deadly: 2,
+	trivial: -2, // × party level
+	easy: -1,
+	medium: 0,
+	hard: 1,
+	deadly: 2
 };
 
 const TIER_COST_MULTIPLIERS: Record<MonsterTier, number> = {
-  standard: 1,
-  apex: 2,
-  legendary: 4,
+	standard: 1,
+	apex: 2,
+	legendary: 4
 };
 ```
 
@@ -288,6 +290,7 @@ const TIER_COST_MULTIPLIERS: Record<MonsterTier, number> = {
 ### 7.1 Adding Monsters to Slots
 
 **Quick Monster Picker Modal:**
+
 1. Opens when clicking empty slot
 2. Shows tabs: "My Monsters" | "Homebrew Library"
 3. Filter by: level range, tier, role, name search
@@ -297,18 +300,21 @@ const TIER_COST_MULTIPLIERS: Record<MonsterTier, number> = {
 ### 7.2 Design Bridge
 
 Empty slot has "Design New" button:
+
 ```typescript
 // Navigation with pre-filled params
 navigate(`/dm/monsters/new?level=${party.averageLevel}&tier=standard&returnTo=${encounterId}`);
 ```
 
 After monster save:
+
 - If `returnTo` param exists, navigate back to encounter
 - New monster automatically added to the slot that triggered "Design"
 
 ### 7.3 Cost Recalculation Triggers
 
 Budget recalculates when:
+
 - `party.size` changes
 - `party.averageLevel` changes
 - `difficulty` changes
@@ -323,40 +329,40 @@ Budget recalculates when:
 
 ### 8.1 Queries
 
-| Query | Args | Returns | Description |
-|-------|------|---------|-------------|
-| `encounters.list` | - | `Encounter[]` | User's encounters + approved homebrew |
-| `encounters.getById` | `id: string` | `Encounter \| null` | Single encounter with populated monster data |
-| `encounters.listHomebrew` | `filters?` | `Encounter[]` | Approved public encounters |
-| `encounters.listTrash` | - | `Encounter[]` | User's deleted encounters |
+| Query                     | Args         | Returns             | Description                                  |
+| ------------------------- | ------------ | ------------------- | -------------------------------------------- |
+| `encounters.list`         | -            | `Encounter[]`       | User's encounters + approved homebrew        |
+| `encounters.getById`      | `id: string` | `Encounter \| null` | Single encounter with populated monster data |
+| `encounters.listHomebrew` | `filters?`   | `Encounter[]`       | Approved public encounters                   |
+| `encounters.listTrash`    | -            | `Encounter[]`       | User's deleted encounters                    |
 
 ### 8.2 Mutations
 
-| Mutation | Args | Returns | Description |
-|----------|------|---------|-------------|
-| `encounters.create` | `encounter` | `id` | Create new encounter |
-| `encounters.update` | `id, updates` | `id` | Update existing |
-| `encounters.addMonsterSlot` | `encounterId, monsterId?, qty` | `slotId` | Add monster slot |
-| `encounters.updateMonsterSlot` | `encounterId, slotId, updates` | `void` | Update slot |
-| `encounters.removeMonsterSlot` | `encounterId, slotId` | `void` | Remove slot |
-| `encounters.softDelete` | `id` | `void` | Move to trash |
-| `encounters.restore` | `id` | `void` | Restore from trash |
-| `encounters.hardDelete` | `id` | `void` | Permanent delete |
-| `encounters.fork` | `sourceId, sourceType, sourceData` | `newId` | Fork encounter |
-| `encounters.submitForReview` | `id, visibility` | `void` | Submit to homebrew |
+| Mutation                       | Args                               | Returns  | Description          |
+| ------------------------------ | ---------------------------------- | -------- | -------------------- |
+| `encounters.create`            | `encounter`                        | `id`     | Create new encounter |
+| `encounters.update`            | `id, updates`                      | `id`     | Update existing      |
+| `encounters.addMonsterSlot`    | `encounterId, monsterId?, qty`     | `slotId` | Add monster slot     |
+| `encounters.updateMonsterSlot` | `encounterId, slotId, updates`     | `void`   | Update slot          |
+| `encounters.removeMonsterSlot` | `encounterId, slotId`              | `void`   | Remove slot          |
+| `encounters.softDelete`        | `id`                               | `void`   | Move to trash        |
+| `encounters.restore`           | `id`                               | `void`   | Restore from trash   |
+| `encounters.hardDelete`        | `id`                               | `void`   | Permanent delete     |
+| `encounters.fork`              | `sourceId, sourceType, sourceData` | `newId`  | Fork encounter       |
+| `encounters.submitForReview`   | `id, visibility`                   | `void`   | Submit to homebrew   |
 
 ---
 
 ## 9. Validation Rules
 
-| Field | Rule | Error Message |
-|-------|------|---------------|
-| name | Required, 1-100 chars | "Name is required" |
-| party.size | 1-8 | "Party size must be 1-8 players" |
-| party.averageLevel | 0-10 | "Level must be between 0 and 10" |
-| monsters | At least 1 slot with monster | "Add at least one monster" |
-| spentBudget | Warning if > 120% | "Encounter is significantly over budget" |
-| spentBudget | Warning if < 80% | "Encounter may be too easy" |
+| Field              | Rule                         | Error Message                            |
+| ------------------ | ---------------------------- | ---------------------------------------- |
+| name               | Required, 1-100 chars        | "Name is required"                       |
+| party.size         | 1-8                          | "Party size must be 1-8 players"         |
+| party.averageLevel | 0-10                         | "Level must be between 0 and 10"         |
+| monsters           | At least 1 slot with monster | "Add at least one monster"               |
+| spentBudget        | Warning if > 120%            | "Encounter is significantly over budget" |
+| spentBudget        | Warning if < 80%             | "Encounter may be too easy"              |
 
 ---
 
@@ -404,6 +410,7 @@ Budget recalculates when:
 ### 10.3 Import Conflict Resolution
 
 If imported monster name already exists:
+
 - Option 1: Rename to "Name (Imported)"
 - Option 2: Use existing monster (match by name)
 - Option 3: Cancel import
@@ -478,15 +485,18 @@ dmLogger.action({
 All phases complete. Implementation files:
 
 ### Phase 1: Specification & Types ✅
+
 - [x] `src/lib/rulesdata/schemas/encounter.schema.ts` - SavedEncounter, EncounterMonsterSlot, PartyConfig, EncounterDifficulty
 
 ### Phase 2: Data Layer ✅
+
 - [x] Constants defined in `encounter.schema.ts`:
   - DIFFICULTY_MODIFIERS
   - TIER_COST_MULTIPLIERS
   - BUDGET_THRESHOLDS
 
 ### Phase 3: Calculator (TDD) ✅
+
 - [x] `src/lib/services/encounterBudgetCalculator.test.ts` - 32 tests covering:
   - Base budget calculation
   - Difficulty modifiers
@@ -498,10 +508,12 @@ All phases complete. Implementation files:
 - [x] All tests passing
 
 ### Phase 4: Convex Schema ✅
+
 - [x] `convex/schema.ts` - `encounters` table with validators
 - [x] Indexes: by_user, by_user_and_id, by_approval_status, by_user_and_deleted
 
 ### Phase 5: Convex Functions ✅
+
 - [x] `convex/encounters.ts`:
   - Queries: list, getById, listHomebrew, listTrash
   - Mutations: create, update, duplicate
@@ -510,10 +522,12 @@ All phases complete. Implementation files:
   - Sharing: fork, submitForReview
 
 ### Phase 6: Frontend Hooks ✅
+
 - [x] `src/lib/hooks/useEncounters.ts` - Data access and mutations
 - [x] `src/lib/hooks/useEncounterPlanner.tsx` - Context + reducer for UI state
 
 ### Phase 7: UI Components ✅
+
 - [x] `src/routes/dm/encounters/EncounterList.tsx` - List view with cards
 - [x] `src/routes/dm/encounters/EncounterPlanner.tsx` - Main editor (War Room)
 - [x] `src/routes/dm/encounters/components/PartyConfigForm.tsx` - Party size/level
@@ -524,11 +538,13 @@ All phases complete. Implementation files:
 - [x] `src/routes/dm/encounters/styles/EncounterStyles.ts` - Styled components
 
 ### Phase 8: Integration ✅
+
 - [x] Routes in `App.tsx`: `/dm/encounters`, `/dm/encounters/:id`
 - [x] Menu integration: "Encounter Planner" in DM Tools section
 - [x] Navigation between Monsters and Encounters
 
 ### Phase 9: Export/Import (Future)
+
 - [ ] Export/import utilities
 - [ ] Bundled monster export
 - [ ] Conflict resolution modal

@@ -8,19 +8,19 @@ import React from 'react';
 import {
 	calculateDifficultyThresholds,
 	calculateBaseBudget,
-	calculateDifficultyModifier,
+	calculateDifficultyModifier
 } from '../../../../lib/services/encounterBudgetCalculator';
 import {
 	ENCOUNTER_DIFFICULTIES,
 	DIFFICULTY_MODIFIERS,
 	type EncounterDifficulty,
-	type PartyConfig,
+	type PartyConfig
 } from '../../../../lib/rulesdata/schemas/encounter.schema';
 import {
 	DifficultyGrid,
 	DifficultyButton,
 	DifficultyName,
-	DifficultyBudget,
+	DifficultyBudget
 } from '../styles/EncounterStyles';
 import styled from 'styled-components';
 
@@ -35,7 +35,7 @@ const DIFFICULTY_LABELS: Record<EncounterDifficulty, string> = {
 	easy: 'Easy',
 	medium: 'Medium',
 	hard: 'Hard',
-	deadly: 'Deadly',
+	deadly: 'Deadly'
 };
 
 const DifficultyCalculation = styled.div`
@@ -48,7 +48,7 @@ const DifficultyCalculation = styled.div`
 export const DifficultySelector: React.FC<DifficultySelectorProps> = ({
 	value,
 	party,
-	onChange,
+	onChange
 }) => {
 	const thresholds = calculateDifficultyThresholds(party);
 	const baseBudget = calculateBaseBudget(party);
@@ -56,11 +56,11 @@ export const DifficultySelector: React.FC<DifficultySelectorProps> = ({
 	const getCalculationString = (difficulty: EncounterDifficulty): string => {
 		const modifier = DIFFICULTY_MODIFIERS[difficulty];
 		const modValue = calculateDifficultyModifier(difficulty, party.averageLevel);
-		
+
 		if (modifier === 0) {
 			return `${baseBudget}`;
 		}
-		
+
 		const sign = modifier > 0 ? '+' : '';
 		return `${baseBudget} ${sign}${modValue}`;
 	};
@@ -79,9 +79,7 @@ export const DifficultySelector: React.FC<DifficultySelectorProps> = ({
 						{DIFFICULTY_LABELS[difficulty]}
 					</DifficultyName>
 					<DifficultyBudget>{thresholds[difficulty]}</DifficultyBudget>
-					<DifficultyCalculation>
-						{getCalculationString(difficulty)}
-					</DifficultyCalculation>
+					<DifficultyCalculation>{getCalculationString(difficulty)}</DifficultyCalculation>
 				</DifficultyButton>
 			))}
 		</DifficultyGrid>

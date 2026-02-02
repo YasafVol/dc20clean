@@ -27,7 +27,7 @@ import {
 	type MonsterAction,
 	type SavedMonster,
 	type StatBreakdown,
-	type MonsterFeature,
+	type MonsterFeature
 } from '../rulesdata/schemas/monster.schema';
 
 // ============================================================================
@@ -159,7 +159,7 @@ export function calculateMonsterStats(input: MonsterCalculationInput): MonsterCa
 		finalBaseDamage,
 		featurePointsMax,
 		encounterCost,
-		breakdowns,
+		breakdowns
 	};
 }
 
@@ -186,7 +186,7 @@ function buildBreakdowns(
 		const roleHPChange = baseStats.hp * (roleHPMultiplier - 1);
 		hpModifiers.push({
 			source: roleName,
-			value: roleHPChange,
+			value: roleHPChange
 		});
 	}
 
@@ -195,7 +195,7 @@ function buildBreakdowns(
 		const tierHPChange = hpAfterRole * (tierHPMultiplier - 1);
 		hpModifiers.push({
 			source: tierName,
-			value: tierHPChange,
+			value: tierHPChange
 		});
 	}
 
@@ -204,7 +204,7 @@ function buildBreakdowns(
 	if (role.pdOffset !== 0) {
 		pdModifiers.push({
 			source: roleName,
-			value: role.pdOffset,
+			value: role.pdOffset
 		});
 	}
 
@@ -213,7 +213,7 @@ function buildBreakdowns(
 	if (role.adOffset !== 0) {
 		adModifiers.push({
 			source: roleName,
-			value: role.adOffset,
+			value: role.adOffset
 		});
 	}
 
@@ -221,18 +221,18 @@ function buildBreakdowns(
 		hp: {
 			base: baseStats.hp,
 			modifiers: hpModifiers,
-			total: finalHP,
+			total: finalHP
 		},
 		pd: {
 			base: baseStats.pd,
 			modifiers: pdModifiers,
-			total: finalPD,
+			total: finalPD
 		},
 		ad: {
 			base: baseStats.ad,
 			modifiers: adModifiers,
-			total: finalAD,
-		},
+			total: finalAD
+		}
 	};
 }
 
@@ -264,7 +264,7 @@ export function validateMonsterActions(
 	// Validate at least one action
 	if (actions.length === 0) {
 		errors.push({
-			message: 'At least one action is required',
+			message: 'At least one action is required'
 		});
 		return { valid: false, errors, warnings, infos };
 	}
@@ -275,12 +275,12 @@ export function validateMonsterActions(
 		if (!action.name || action.name.length === 0) {
 			errors.push({
 				actionId: action.id,
-				message: 'Action name is required',
+				message: 'Action name is required'
 			});
 		} else if (action.name.length > 50) {
 			errors.push({
 				actionId: action.id,
-				message: 'Action name must be 50 characters or less',
+				message: 'Action name must be 50 characters or less'
 			});
 		}
 
@@ -288,7 +288,7 @@ export function validateMonsterActions(
 		if (action.apCost < 1 || action.apCost > 4) {
 			errors.push({
 				actionId: action.id,
-				message: `AP cost must be between 1 and 4 (got ${action.apCost})`,
+				message: `AP cost must be between 1 and 4 (got ${action.apCost})`
 			});
 		}
 
@@ -299,12 +299,12 @@ export function validateMonsterActions(
 		if (action.damage > maxRecommendedDamage) {
 			warnings.push({
 				actionId: action.id,
-				message: `Damage (${action.damage}) exceeds recommended maximum (${maxRecommendedDamage.toFixed(1)})`,
+				message: `Damage (${action.damage}) exceeds recommended maximum (${maxRecommendedDamage.toFixed(1)})`
 			});
 		} else if (action.damage < minRecommendedDamage) {
 			infos.push({
 				actionId: action.id,
-				message: `Damage (${action.damage}) is below recommended minimum (${minRecommendedDamage.toFixed(1)})`,
+				message: `Damage (${action.damage}) is below recommended minimum (${minRecommendedDamage.toFixed(1)})`
 			});
 		}
 	}
@@ -313,7 +313,7 @@ export function validateMonsterActions(
 		valid: errors.length === 0,
 		errors,
 		warnings,
-		infos,
+		infos
 	};
 }
 
@@ -377,7 +377,7 @@ export function createDefaultMonster(overrides?: DefaultMonsterOverrides): Saved
 		type: 'martial',
 		targetDefense: 'pd',
 		damage: stats.finalBaseDamage,
-		description: 'A basic melee attack.',
+		description: 'A basic melee attack.'
 	};
 
 	const now = new Date().toISOString();
@@ -404,7 +404,7 @@ export function createDefaultMonster(overrides?: DefaultMonsterOverrides): Saved
 			might: 0,
 			agility: 0,
 			charisma: 0,
-			intelligence: 0,
+			intelligence: 0
 		},
 
 		// Features
@@ -426,7 +426,7 @@ export function createDefaultMonster(overrides?: DefaultMonsterOverrides): Saved
 		schemaVersion: MONSTER_SCHEMA_VERSION,
 
 		// Breakdowns
-		breakdowns: stats.breakdowns,
+		breakdowns: stats.breakdowns
 	};
 }
 
@@ -440,7 +440,7 @@ export function recalculateMonsterStats(monster: SavedMonster): SavedMonster {
 	const stats = calculateMonsterStats({
 		level: monster.level,
 		tier: monster.tier,
-		roleId: monster.roleId,
+		roleId: monster.roleId
 	});
 
 	return {
@@ -453,6 +453,6 @@ export function recalculateMonsterStats(monster: SavedMonster): SavedMonster {
 		finalBaseDamage: stats.finalBaseDamage,
 		featurePointsMax: stats.featurePointsMax,
 		breakdowns: stats.breakdowns,
-		lastModified: new Date().toISOString(),
+		lastModified: new Date().toISOString()
 	};
 }

@@ -8,14 +8,14 @@ import React, { createContext, useContext, useReducer, useCallback, type ReactNo
 import { generateContentId } from '../utils/idGenerator';
 import {
 	calculateEncounterBudget,
-	createDefaultEncounter,
+	createDefaultEncounter
 } from '../services/encounterBudgetCalculator';
 import type {
 	SavedEncounter,
 	EncounterMonsterSlot,
 	PartyConfig,
 	EncounterDifficulty,
-	BudgetStatus,
+	BudgetStatus
 } from '../rulesdata/schemas/encounter.schema';
 import type { MonsterTier } from '../rulesdata/schemas/monster.schema';
 
@@ -42,15 +42,24 @@ type EncounterPlannerAction =
 	| { type: 'SET_ENVIRONMENT'; payload: string }
 	| { type: 'SET_GM_NOTES'; payload: string }
 	| { type: 'ADD_MONSTER_SLOT'; payload?: EncounterMonsterSlot }
-	| { type: 'UPDATE_MONSTER_SLOT'; payload: { slotId: string; updates: Partial<EncounterMonsterSlot> } }
+	| {
+			type: 'UPDATE_MONSTER_SLOT';
+			payload: { slotId: string; updates: Partial<EncounterMonsterSlot> };
+	  }
 	| { type: 'REMOVE_MONSTER_SLOT'; payload: string }
-	| { type: 'SET_SLOT_MONSTER'; payload: { slotId: string; monsterId: string; level: number; tier: MonsterTier } }
+	| {
+			type: 'SET_SLOT_MONSTER';
+			payload: { slotId: string; monsterId: string; level: number; tier: MonsterTier };
+	  }
 	| { type: 'CLEAR_SLOT_MONSTER'; payload: string }
 	| { type: 'SET_SLOT_QUANTITY'; payload: { slotId: string; quantity: number } }
 	| { type: 'LOAD_ENCOUNTER'; payload: SavedEncounter }
 	| { type: 'RESET' }
 	| { type: 'MARK_SAVED' }
-	| { type: 'RECALCULATE_BUDGET'; payload: Array<{ id: string; level: number; tier: MonsterTier }> };
+	| {
+			type: 'RECALCULATE_BUDGET';
+			payload: Array<{ id: string; level: number; tier: MonsterTier }>;
+	  };
 
 // ============================================================================
 // HELPER FUNCTIONS
@@ -107,14 +116,14 @@ function recalculateBudget(
 				monsterId: slot.monsterId!,
 				quantity: slot.quantity,
 				monsterLevel: level,
-				monsterTier: tier as MonsterTier,
+				monsterTier: tier as MonsterTier
 			};
 		});
 
 	const result = calculateEncounterBudget({
 		party: encounter.party,
 		difficulty: encounter.difficulty,
-		monsters,
+		monsters
 	});
 
 	// Update slot costs
@@ -123,7 +132,7 @@ function recalculateBudget(
 		const slotCost = result.slotCosts.find((c) => c.monsterId === slot.monsterId);
 		return {
 			...slot,
-			cost: slotCost?.totalCost ?? slot.cost,
+			cost: slotCost?.totalCost ?? slot.cost
 		};
 	});
 
@@ -134,7 +143,7 @@ function recalculateBudget(
 		adjustedBudget: result.adjustedBudget,
 		spentBudget: result.spentBudget,
 		remainingBudget: result.remainingBudget,
-		monsters: updatedMonsters,
+		monsters: updatedMonsters
 	};
 }
 
@@ -160,21 +169,21 @@ function encounterPlannerReducer(
 		case 'SET_PARTY_SIZE':
 			newEncounter = recalculateBudget({
 				...state.encounter,
-				party: { ...state.encounter.party, size: action.payload },
+				party: { ...state.encounter.party, size: action.payload }
 			});
 			break;
 
 		case 'SET_PARTY_LEVEL':
 			newEncounter = recalculateBudget({
 				...state.encounter,
-				party: { ...state.encounter.party, averageLevel: action.payload },
+				party: { ...state.encounter.party, averageLevel: action.payload }
 			});
 			break;
 
 		case 'SET_DIFFICULTY':
 			newEncounter = recalculateBudget({
 				...state.encounter,
-				difficulty: action.payload,
+				difficulty: action.payload
 			});
 			break;
 
@@ -191,11 +200,11 @@ function encounterPlannerReducer(
 				id: generateContentId('slot'),
 				monsterId: null,
 				quantity: 1,
-				cost: 0,
+				cost: 0
 			};
 			newEncounter = {
 				...state.encounter,
-				monsters: [...state.encounter.monsters, newSlot],
+				monsters: [...state.encounter.monsters, newSlot]
 			};
 			break;
 		}
@@ -206,7 +215,7 @@ function encounterPlannerReducer(
 			);
 			newEncounter = recalculateBudget({
 				...state.encounter,
-				monsters: updatedMonsters,
+				monsters: updatedMonsters
 			});
 			break;
 		}
@@ -217,23 +226,20 @@ function encounterPlannerReducer(
 			);
 			newEncounter = recalculateBudget({
 				...state.encounter,
-				monsters: filteredMonsters,
+				monsters: filteredMonsters
 			});
 			break;
 		}
 
 		case 'SET_SLOT_MONSTER': {
 			const { slotId, monsterId, level, tier } = action.payload;
-			const cost =
-				level > 0 ? level * (tier === 'legendary' ? 4 : tier === 'apex' ? 2 : 1) : 0;
+			const cost = level > 0 ? level * (tier === 'legendary' ? 4 : tier === 'apex' ? 2 : 1) : 0;
 			const updatedMonsters = state.encounter.monsters.map((slot) =>
-				slot.id === slotId
-					? { ...slot, monsterId, cost: cost * slot.quantity }
-					: slot
+				slot.id === slotId ? { ...slot, monsterId, cost: cost * slot.quantity } : slot
 			);
 			newEncounter = recalculateBudget({
 				...state.encounter,
-				monsters: updatedMonsters,
+				monsters: updatedMonsters
 			});
 			break;
 		}
@@ -244,7 +250,7 @@ function encounterPlannerReducer(
 			);
 			newEncounter = recalculateBudget({
 				...state.encounter,
-				monsters: updatedMonsters,
+				monsters: updatedMonsters
 			});
 			break;
 		}
@@ -262,7 +268,7 @@ function encounterPlannerReducer(
 			);
 			newEncounter = recalculateBudget({
 				...state.encounter,
-				monsters: updatedMonsters,
+				monsters: updatedMonsters
 			});
 			break;
 		}
@@ -289,7 +295,7 @@ function encounterPlannerReducer(
 	// Update timestamp
 	newEncounter = {
 		...newEncounter,
-		lastModified: new Date().toISOString(),
+		lastModified: new Date().toISOString()
 	};
 
 	// Validate
@@ -314,7 +320,7 @@ function encounterPlannerReducer(
 		errors,
 		warnings,
 		budgetStatus,
-		budgetPercentage,
+		budgetPercentage
 	};
 }
 
@@ -354,7 +360,7 @@ interface EncounterPlannerProviderProps {
 
 export function EncounterPlannerProvider({
 	children,
-	initialEncounter,
+	initialEncounter
 }: EncounterPlannerProviderProps) {
 	const defaultEncounter = initialEncounter ?? createDefaultEncounter();
 	const { errors, warnings } = validateEncounter(defaultEncounter);
@@ -366,7 +372,7 @@ export function EncounterPlannerProvider({
 		errors,
 		warnings,
 		budgetStatus: 'on_target',
-		budgetPercentage: 0,
+		budgetPercentage: 0
 	};
 
 	const [state, dispatch] = useReducer(encounterPlannerReducer, initialState);
@@ -446,13 +452,11 @@ export function EncounterPlannerProvider({
 		clearSlotMonster,
 		setSlotQuantity,
 		loadEncounter,
-		reset,
+		reset
 	};
 
 	return (
-		<EncounterPlannerContext.Provider value={value}>
-			{children}
-		</EncounterPlannerContext.Provider>
+		<EncounterPlannerContext.Provider value={value}>{children}</EncounterPlannerContext.Provider>
 	);
 }
 

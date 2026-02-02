@@ -24,7 +24,7 @@ import {
 	type TargetDefense,
 	type MonsterSize,
 	type MonsterType,
-	type MonsterAlignment,
+	type MonsterAlignment
 } from '../rulesdata/schemas/monster.schema';
 
 // ============================================================================
@@ -113,7 +113,7 @@ function mapRoleId(rawRole: string): MonsterRoleId | null {
 		caster: 'artillerist',
 		tank: 'defender',
 		healer: 'support',
-		solo: 'brute', // Solo bosses often act as brutes
+		solo: 'brute' // Solo bosses often act as brutes
 	};
 	return roleMap[normalized] ?? null;
 }
@@ -125,7 +125,8 @@ function mapTier(rawTier: string): MonsterTier {
 	const normalized = rawTier.toLowerCase();
 	if (normalized === 'standard' || normalized === 'minion') return 'standard';
 	if (normalized === 'apex' || normalized === 'elite') return 'apex';
-	if (normalized === 'legendary' || normalized === 'boss' || normalized === 'solo') return 'legendary';
+	if (normalized === 'legendary' || normalized === 'boss' || normalized === 'solo')
+		return 'legendary';
 	return 'standard';
 }
 
@@ -244,7 +245,9 @@ export function importRawMonster(raw: RawSeedMonster): MonsterImportResult {
 	const actions: MonsterAction[] = raw.actions.map((rawAction, index) => {
 		const actionType = mapActionType(rawAction.actionType);
 		if (rawAction.actionType.toLowerCase() !== actionType) {
-			warnings.push(`Action "${rawAction.name}": type "${rawAction.actionType}" mapped to "${actionType}"`);
+			warnings.push(
+				`Action "${rawAction.name}": type "${rawAction.actionType}" mapped to "${actionType}"`
+			);
 		}
 
 		const targetDefense = mapTargetDefense(rawAction.targetDefense);
@@ -259,7 +262,7 @@ export function importRawMonster(raw: RawSeedMonster): MonsterImportResult {
 			damageType: rawAction.damageType,
 			range: rawAction.range,
 			// Keep traits as strings for now (flexible)
-			description: rawAction.description,
+			description: rawAction.description
 		};
 	});
 
@@ -271,7 +274,9 @@ export function importRawMonster(raw: RawSeedMonster): MonsterImportResult {
 			if (officialFeature) {
 				featureIds.push(officialFeature.id);
 			} else {
-				warnings.push(`Feature "${rawFeature.name}" not found in official features. Will need to create custom feature.`);
+				warnings.push(
+					`Feature "${rawFeature.name}" not found in official features. Will need to create custom feature.`
+				);
 				// Could generate a custom feature ID here if needed
 			}
 		}
@@ -281,7 +286,7 @@ export function importRawMonster(raw: RawSeedMonster): MonsterImportResult {
 	const calculatedStats = calculateMonsterStats({
 		level: raw.level,
 		tier,
-		roleId: roleId!,
+		roleId: roleId!
 	});
 
 	// Build SavedMonster
@@ -315,7 +320,7 @@ export function importRawMonster(raw: RawSeedMonster): MonsterImportResult {
 			might: 0,
 			agility: 0,
 			charisma: 0,
-			intelligence: 0,
+			intelligence: 0
 		},
 
 		// Features
@@ -337,14 +342,14 @@ export function importRawMonster(raw: RawSeedMonster): MonsterImportResult {
 		schemaVersion: MONSTER_SCHEMA_VERSION,
 
 		// Breakdowns
-		breakdowns: calculatedStats.breakdowns,
+		breakdowns: calculatedStats.breakdowns
 	};
 
 	return {
 		success: true,
 		monster,
 		warnings,
-		errors,
+		errors
 	};
 }
 
@@ -392,7 +397,7 @@ export function importMonstersFromJson(jsonString: string): ReturnType<typeof im
 				successful: [],
 				failed: [],
 				allWarnings: [],
-				parseError: 'JSON must contain a "monsters" array or be an array of monsters',
+				parseError: 'JSON must contain a "monsters" array or be an array of monsters'
 			};
 		}
 
@@ -402,7 +407,7 @@ export function importMonstersFromJson(jsonString: string): ReturnType<typeof im
 			successful: [],
 			failed: [],
 			allWarnings: [],
-			parseError: `Invalid JSON: ${e instanceof Error ? e.message : 'Unknown error'}`,
+			parseError: `Invalid JSON: ${e instanceof Error ? e.message : 'Unknown error'}`
 		};
 	}
 }

@@ -1,7 +1,5 @@
 import { classesDataSchema, type IClassDefinition } from '../schemas/class.schema';
 
-
-
 interface ProgressionLevel {
 	level: number;
 	gainedHealth?: number;
@@ -64,7 +62,8 @@ const CLASS_METADATA: Record<string, { name: string; description: string }> = {
 	},
 	monk: {
 		name: 'Monk',
-		description: 'A disciplined martial artist who channels inner energy for rapid strikes and supernatural movement.'
+		description:
+			'A disciplined martial artist who channels inner energy for rapid strikes and supernatural movement.'
 	},
 	rogue: {
 		name: 'Rogue',
@@ -196,7 +195,7 @@ const compatibleData = Object.entries(progressionDataByKey)
 	.filter((item): item is NonNullable<typeof item> => Boolean(item)); // Remove any null entries
 
 // Note: Spell restrictions are now read from class feature files (spellcasterPath.spellList)
-// in the enhancedCharacterCalculator.ts via findClassByName(). 
+// in the enhancedCharacterCalculator.ts via findClassByName().
 // This eliminates the duplicate CLASS_SPELL_CONFIG that was previously here.
 
 const finalData = compatibleData;

@@ -18,6 +18,9 @@ import type { Weapon, InventoryItem } from '../../lib/rulesdata/inventoryItems';
 // Import new components
 import { HeroSection } from './components/new/HeroSection';
 
+// Import condition analyzer
+import { getDiceModifierForAction } from '../../lib/services/conditionEffectsAnalyzer';
+
 // Import skills data
 import { skillsData } from '../../lib/rulesdata/skills';
 
@@ -29,6 +32,7 @@ import Inventory from './components/Inventory';
 import Features from './components/Features';
 import Conditions from './components/Conditions';
 import ConditionsReference from './components/ConditionsReference';
+import ActiveConditionsTracker from './components/ActiveConditionsTracker';
 import Currency from './components/Currency';
 import PlayerNotes from './components/PlayerNotes';
 import DiceRoller, { DiceRollerRef } from './components/DiceRoller';
@@ -344,7 +348,17 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	} | null>(null);
 	const [tooltipState, setTooltipState] = useState<{
 		visible: boolean;
-		type: 'hp' | 'mana' | 'stamina' | 'rest' | 'grit' | 'attack' | 'precisionAD' | 'areaAD' | 'precisionDR' | null;
+		type:
+			| 'hp'
+			| 'mana'
+			| 'stamina'
+			| 'rest'
+			| 'grit'
+			| 'attack'
+			| 'precisionAD'
+			| 'areaAD'
+			| 'precisionDR'
+			| null;
 		x: number;
 		y: number;
 	}>({ visible: false, type: null, x: 0, y: 0 });
@@ -357,6 +371,50 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	// Handle skill/save clicks to auto-populate dice roller
 	const handleSkillClick = (skillName: string, bonus: number) => {
 		console.log('[GIMLI] Skill clicked:', { skillName, bonus, refExists: !!diceRollerRef.current });
+
+		// Determine action type based on skill name
+		let actionType:
+			| 'attack'
+			| 'physical-check'
+			| 'mental-check'
+			| 'physical-save'
+			| 'mental-save'
+			| 'agility-save'
+			| null = null;
+
+		if (skillName === 'Attack') {
+			actionType = 'attack';
+		} else if (['Acrobatics', 'Athletics', 'Sleight of Hand', 'Stealth'].includes(skillName)) {
+			actionType = skillName === 'Acrobatics' ? 'agility-save' : 'physical-check';
+		} else if (
+			[
+				'Deception',
+				'History',
+				'Insight',
+				'Intimidation',
+				'Investigation',
+				'Persuasion',
+				'Performance'
+			].includes(skillName)
+		) {
+			actionType = 'mental-check';
+		}
+
+		// Check for active conditions that affect this action
+		const activeConditions = state.character?.characterState?.activeConditions || [];
+		if (actionType && activeConditions.length > 0) {
+			const diceModifier = getDiceModifierForAction(activeConditions, actionType);
+
+			if (diceModifier.mode !== 'normal') {
+				console.log('[GIMLI] Applying condition-based dice modifier:', diceModifier);
+				// Set the roll mode before rolling
+				diceRollerRef.current?.setRollMode(diceModifier.mode);
+			}
+		} else {
+			// Reset to normal if no conditions apply
+			diceRollerRef.current?.setRollMode('normal');
+		}
+
 		diceRollerRef.current?.addRollWithModifier(bonus, skillName);
 	};
 
@@ -370,12 +428,13 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		updateActionPoints,
 		updateGritPoints,
 		updateRestPoints,
+		toggleActiveCondition,
 		saveStatus,
 		retryFailedSave
 	} = useCharacterSheet();
-	
+
 	console.log('[GIMLI] CharacterSheet render - saveStatus:', saveStatus);
-	
+
 	const resources = useCharacterResources();
 	const conditionStatuses = useCharacterConditions();
 	const languages = useCharacterLanguages();
@@ -384,9 +443,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	// Calculate active conditions count (must be before early returns - Rules of Hooks)
 	const activeConditionsCount = React.useMemo(() => {
 		if (!conditionStatuses) return 0;
-		return conditionStatuses.filter(
-			(cs) => cs.interactions && cs.interactions.length > 0
-		).length;
+		return conditionStatuses.filter((cs) => cs.interactions && cs.interactions.length > 0).length;
 	}, [conditionStatuses]);
 
 	// Cleanup tooltip timeout on unmount
@@ -427,7 +484,19 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		setSelectedInventoryItem(null);
 	};
 
-	const handleMouseEnter = (type: 'hp' | 'mana' | 'stamina' | 'rest' | 'grit' | 'attack' | 'precisionAD' | 'areaAD' | 'precisionDR', e: React.MouseEvent) => {
+	const handleMouseEnter = (
+		type:
+			| 'hp'
+			| 'mana'
+			| 'stamina'
+			| 'rest'
+			| 'grit'
+			| 'attack'
+			| 'precisionAD'
+			| 'areaAD'
+			| 'precisionDR',
+		e: React.MouseEvent
+	) => {
 		const rect = e.currentTarget.getBoundingClientRect();
 		// Clear any existing timeout
 		if (tooltipTimeoutRef.current) {
@@ -549,7 +618,6 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			}))
 	};
 
-
 	const tabs: { id: TabId; label: string; emoji: string; badge?: number }[] = [
 		{ id: 'attacks', label: 'Attacks', emoji: '⚔️' },
 		{ id: 'spells', label: 'Spells', emoji: '📜' },
@@ -642,84 +710,92 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 							attackBonus={attackBonus}
 							saveDC={saveDC}
 							initiative={initiative}
+							activeConditions={state.character?.characterState?.activeConditions || []}
 							onHPChange={updateHP}
 							onTempHPChange={updateTempHP}
 							onManaChange={updateMP}
 							onStaminaChange={updateSP}
 							onRestChange={updateRestPoints}
 							onGritChange={updateGritPoints}
-						onSkillClick={handleSkillClick}
-						onHPMouseEnter={(e) => handleMouseEnter('hp', e)}
-						onHPMouseLeave={handleMouseLeave}
-						onManaMouseEnter={(e) => handleMouseEnter('mana', e)}
-						onManaMouseLeave={handleMouseLeave}
-						onStaminaMouseEnter={(e) => handleMouseEnter('stamina', e)}
-						onStaminaMouseLeave={handleMouseLeave}
-						onRestMouseEnter={(e) => handleMouseEnter('rest', e)}
-						onRestMouseLeave={handleMouseLeave}
-						onGritMouseEnter={(e) => handleMouseEnter('grit', e)}
-						onGritMouseLeave={handleMouseLeave}
-						onAttackMouseEnter={(e) => handleMouseEnter('attack', e)}
-						onAttackMouseLeave={handleMouseLeave}
-					onPrecisionADMouseEnter={(e) => handleMouseEnter('precisionAD', e)}
-					onPrecisionADMouseLeave={handleMouseLeave}
-					onAreaADMouseEnter={(e) => handleMouseEnter('areaAD', e)}
-					onAreaADMouseLeave={handleMouseLeave}
-					onPrecisionDRMouseEnter={(e) => handleMouseEnter('precisionDR', e)}
-					onPrecisionDRMouseLeave={handleMouseLeave}
-				/>
+							onSkillClick={handleSkillClick}
+							onHPMouseEnter={(e) => handleMouseEnter('hp', e)}
+							onHPMouseLeave={handleMouseLeave}
+							onManaMouseEnter={(e) => handleMouseEnter('mana', e)}
+							onManaMouseLeave={handleMouseLeave}
+							onStaminaMouseEnter={(e) => handleMouseEnter('stamina', e)}
+							onStaminaMouseLeave={handleMouseLeave}
+							onRestMouseEnter={(e) => handleMouseEnter('rest', e)}
+							onRestMouseLeave={handleMouseLeave}
+							onGritMouseEnter={(e) => handleMouseEnter('grit', e)}
+							onGritMouseLeave={handleMouseLeave}
+							onAttackMouseEnter={(e) => handleMouseEnter('attack', e)}
+							onAttackMouseLeave={handleMouseLeave}
+							onPrecisionADMouseEnter={(e) => handleMouseEnter('precisionAD', e)}
+							onPrecisionADMouseLeave={handleMouseLeave}
+							onAreaADMouseEnter={(e) => handleMouseEnter('areaAD', e)}
+							onAreaADMouseLeave={handleMouseLeave}
+							onPrecisionDRMouseEnter={(e) => handleMouseEnter('precisionDR', e)}
+							onPrecisionDRMouseLeave={handleMouseLeave}
+						/>
 
-				{/* Tabs Section */}
-				<TabContainer>
-					<TabNav>
-						{tabs.map((tab) => (
-							<Tab									key={tab.id}
-									$active={activeTab === tab.id}
-									onClick={() => setActiveTab(tab.id)}
-									whileHover={{ y: -2 }}
-									whileTap={{ scale: 0.98 }}
+						{/* Tabs Section */}
+						<TabContainer>
+							<TabNav>
+								{tabs.map((tab) => (
+									<Tab
+										key={tab.id}
+										$active={activeTab === tab.id}
+										onClick={() => setActiveTab(tab.id)}
+										whileHover={{ y: -2 }}
+										whileTap={{ scale: 0.98 }}
+									>
+										{tab.emoji} {tab.label}
+									</Tab>
+								))}
+							</TabNav>
+
+							<AnimatePresence mode="wait">
+								<TabContent
+									key={activeTab}
+									initial={{ opacity: 0, y: 20 }}
+									animate={{ opacity: 1, y: 0 }}
+									exit={{ opacity: 0, y: -20 }}
+									transition={{ duration: 0.2 }}
 								>
-									{tab.emoji} {tab.label}
-								</Tab>
-							))}
-						</TabNav>
-
-						<AnimatePresence mode="wait">
-							<TabContent
-								key={activeTab}
-								initial={{ opacity: 0, y: 20 }}
-								animate={{ opacity: 1, y: 0 }}
-								exit={{ opacity: 0, y: -20 }}
-								transition={{ duration: 0.2 }}
-							>
-								{activeTab === 'attacks' && (
-									<Attacks
-										onAttackClick={(attack, weapon) => {
-											if (weapon) {
-												openWeaponPopup(weapon);
-											}
-										}}
-									/>
-								)}
-								{activeTab === 'spells' && (
-									<Spells
-										onSpellClick={(spell) => {
-											setAutoRollConfig({
-												trigger: true,
-												diceType: 'd20',
-												mode: 'normal'
-											});
-											setTimeout(() => setAutoRollConfig({ trigger: false, diceType: 'd20' }), 200);
-										}}
-									/>
-								)}
+									{activeTab === 'attacks' && (
+										<Attacks
+											onAttackClick={(attack, weapon) => {
+												if (weapon) {
+													openWeaponPopup(weapon);
+												}
+											}}
+										/>
+									)}
+									{activeTab === 'spells' && (
+										<Spells
+											onSpellClick={(spell) => {
+												setAutoRollConfig({
+													trigger: true,
+													diceType: 'd20',
+													mode: 'normal'
+												});
+												setTimeout(
+													() => setAutoRollConfig({ trigger: false, diceType: 'd20' }),
+													200
+												);
+											}}
+										/>
+									)}
 									{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
 									{activeTab === 'maneuvers' && <Maneuvers onManeuverClick={() => {}} />}
 									{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
 									{activeTab === 'conditions' && (
 										<>
-											<Conditions conditionStatuses={conditionStatuses || []} />
-											<ConditionsReference />
+											<ActiveConditionsTracker
+												activeConditions={state.character?.characterState?.activeConditions || []}
+												onToggleCondition={toggleActiveCondition}
+											/>
+											
 										</>
 									)}
 									{activeTab === 'knowledge' && (

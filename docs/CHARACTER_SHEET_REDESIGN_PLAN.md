@@ -9,6 +9,7 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 ## Comparative Analysis
 
 ### D&D Beyond Strengths ✅
+
 - **Visual Hierarchy**: Most important stats (HP, AC, Initiative) prominently displayed at top
 - **Clean Layout**: Hexagonal ability scores are visually striking and intuitive
 - **Card-Based Design**: Information grouped into clear, digestible cards
@@ -19,6 +20,7 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 - **Icons & Visual Indicators**: Enhance scannability without text overload
 
 ### DC20 Current Weaknesses ❌
+
 - **Information Overload**: Everything visible at once, no progressive disclosure
 - **Poor Visual Hierarchy**: Unclear where to look first - eyes wander aimlessly
 - **Dated Color Scheme**: Beige/tan feels like parchment, not modern software
@@ -93,6 +95,7 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 ## Information Hierarchy
 
 ### 🔴 TOP PRIORITY (Always Visible in Hero Section)
+
 - **HP / Mana / Stamina**: Resource pools with progress bars
 - **Prime Attribute**: Large, clear display
 - **Combat Mastery**: Level progression indicator
@@ -101,6 +104,7 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 - **Combat Stats**: Attack, Save DC, Initiative, Martial Check
 
 ### 🟡 SECONDARY (Main Content Area - No Scroll)
+
 - **Attributes**: Might, Agility, Charisma, Intelligence (card grid)
 - **Core Skills**: Athletics, Acrobatics, Stealth, Animal, Insight, Influence, Investigation, Medicine, Survival
 - **Death Threshold & Health Status**
@@ -109,6 +113,7 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 - **Resources**: Rest Points, Grit Points
 
 ### 🟢 TERTIARY (Tabs/Accordions - Progressive Disclosure)
+
 - **Attacks & Weapons**: Tab view with table
 - **Inventory**: Tab view
 - **Spells**: Tab with filters
@@ -126,52 +131,58 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 ## Color Palette
 
 ### Primary Colors
+
 ```css
---bg-primary: #1A1B26;        /* Deep dark blue-black (main background) */
---bg-secondary: #24283B;      /* Slightly lighter (card backgrounds) */
---bg-tertiary: #414868;       /* Hover/active states */
---bg-elevated: #2C2E3E;       /* Floating cards/modals */
+--bg-primary: #1a1b26; /* Deep dark blue-black (main background) */
+--bg-secondary: #24283b; /* Slightly lighter (card backgrounds) */
+--bg-tertiary: #414868; /* Hover/active states */
+--bg-elevated: #2c2e3e; /* Floating cards/modals */
 ```
 
 ### Accent Colors
+
 ```css
---accent-primary: #7DCFFF;    /* Cyan blue (primary actions, links) */
---accent-secondary: #BB9AF7;  /* Purple (secondary actions) */
---accent-warning: #E0AF68;    /* Warm gold (warnings, important info) */
---accent-danger: #F7768E;     /* Coral red (HP loss, danger) */
---accent-success: #9ECE6A;    /* Green (healing, success) */
+--accent-primary: #7dcfff; /* Cyan blue (primary actions, links) */
+--accent-secondary: #bb9af7; /* Purple (secondary actions) */
+--accent-warning: #e0af68; /* Warm gold (warnings, important info) */
+--accent-danger: #f7768e; /* Coral red (HP loss, danger) */
+--accent-success: #9ece6a; /* Green (healing, success) */
 ```
 
 ### Resource Colors
+
 ```css
---health: #F7768E;            /* HP - Red */
---mana: #7AA2F7;              /* Mana - Blue */
---stamina: #E0AF68;           /* Stamina - Gold/Orange */
---grit: #9ECE6A;              /* Grit - Green */
+--health: #f7768e; /* HP - Red */
+--mana: #7aa2f7; /* Mana - Blue */
+--stamina: #e0af68; /* Stamina - Gold/Orange */
+--grit: #9ece6a; /* Grit - Green */
 ```
 
 ### Text Colors
+
 ```css
---text-primary: #C0CAF5;      /* Primary text (high contrast) */
---text-secondary: #9AA5CE;    /* Secondary text (labels) */
---text-muted: #565F89;        /* Disabled/hint text */
---text-inverse: #1A1B26;      /* Text on light backgrounds */
+--text-primary: #c0caf5; /* Primary text (high contrast) */
+--text-secondary: #9aa5ce; /* Secondary text (labels) */
+--text-muted: #565f89; /* Disabled/hint text */
+--text-inverse: #1a1b26; /* Text on light backgrounds */
 ```
 
 ### Attribute Colors (for differentiation)
+
 ```css
---might: #F7768E;             /* Red - Physical */
---agility: #9ECE6A;           /* Green - Finesse */
---charisma: #E0AF68;          /* Gold - Social */
---intelligence: #7DCFFF;      /* Cyan - Mental */
+--might: #f7768e; /* Red - Physical */
+--agility: #9ece6a; /* Green - Finesse */
+--charisma: #e0af68; /* Gold - Social */
+--intelligence: #7dcfff; /* Cyan - Mental */
 ```
 
 ### Semantic Colors
+
 ```css
---border-default: #3B4261;    /* Default borders */
---border-focus: #7DCFFF;      /* Focused inputs */
---shadow-default: rgba(0, 0, 0, 0.4);  /* Shadows */
---overlay: rgba(0, 0, 0, 0.7);         /* Modals */
+--border-default: #3b4261; /* Default borders */
+--border-focus: #7dcfff; /* Focused inputs */
+--shadow-default: rgba(0, 0, 0, 0.4); /* Shadows */
+--overlay: rgba(0, 0, 0, 0.7); /* Modals */
 ```
 
 **Inspiration**: Tokyo Night color scheme (modern, popular, excellent contrast)
@@ -183,120 +194,136 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 ### Core Components
 
 #### 1. **StatCard** (Reusable)
+
 ```tsx
 <StatCard
-  label="Hit Points"
-  current={6}
-  max={9}
-  temp={1}
-  color="health"
-  size="large"
-  showProgressBar
-  editable
-  onChange={(value) => updateHP(value)}
+	label="Hit Points"
+	current={6}
+	max={9}
+	temp={1}
+	color="health"
+	size="large"
+	showProgressBar
+	editable
+	onChange={(value) => updateHP(value)}
 />
 ```
+
 - Used for: HP, Mana, Stamina, Rest Points, Grit Points
 - Variants: large (hero), small (sidebar), editable, read-only
 - Features: Progress bar, +/- buttons, temp values, manual input
 
 #### 2. **AttributeCard**
+
 ```tsx
 <AttributeCard
-  attribute="charisma"
-  value={3}
-  save={3}
-  skills={['animal', 'insight', 'influence']}
-  isPrime
+	attribute="charisma"
+	value={3}
+	save={3}
+	skills={['animal', 'insight', 'influence']}
+	isPrime
 />
 ```
+
 - Square card with centered attribute abbreviation
 - Save value displayed
 - Click to expand skills list
 - Visual indicator if Prime attribute
 
 #### 3. **SkillRow**
+
 ```tsx
 <SkillRow
-  name="Influence"
-  value={7}
-  proficiency="expertise"  // none | trained | expertise
-  onRoll={() => rollSkill('influence')}
+	name="Influence"
+	value={7}
+	proficiency="expertise" // none | trained | expertise
+	onRoll={() => rollSkill('influence')}
 />
 ```
+
 - Icon for proficiency level
 - Clickable to roll
 - Tooltip for modifiers breakdown
 
 #### 4. **CombatStatCard**
+
 ```tsx
 <CombatStatCard
-  stats={[
-    { label: "Attack/Spell Check", value: 4, prefix: "+" },
-    { label: "Save DC", value: 14 },
-    { label: "Initiative", value: 1, prefix: "+" },
-    { label: "Martial Check", value: 0, prefix: "+" }
-  ]}
+	stats={[
+		{ label: 'Attack/Spell Check', value: 4, prefix: '+' },
+		{ label: 'Save DC', value: 14 },
+		{ label: 'Initiative', value: 1, prefix: '+' },
+		{ label: 'Martial Check', value: 0, prefix: '+' }
+	]}
 />
 ```
+
 - Horizontal card showing all combat stats
 - Icons for each stat type
 - Hover for explanation
 
 #### 5. **ActionPointTracker**
+
 ```tsx
 <ActionPointTracker
-  current={4}
-  max={4}
-  onSpend={(amount) => spendAP(amount)}
-  onReset={() => resetAP()}
+	current={4}
+	max={4}
+	onSpend={(amount) => spendAP(amount)}
+	onReset={() => resetAP()}
 />
 ```
+
 - Visual circles like D&D Beyond Hit Dice
 - Click to spend/reset
 - Shows remaining vs max
 
 #### 6. **WeaponRow** (for Attacks tab)
+
 ```tsx
 <WeaponRow
-  weapon={longpole}
-  damage={{ base: "1 B", heavy: "3 B + Prone/Push", brutal: "4 B" }}
-  onAttack={() => rollAttack(longpole)}
-  onRemove={() => removeWeapon(longpole.id)}
+	weapon={longpole}
+	damage={{ base: '1 B', heavy: '3 B + Prone/Push', brutal: '4 B' }}
+	onAttack={() => rollAttack(longpole)}
+	onRemove={() => removeWeapon(longpole.id)}
 />
 ```
+
 - Expandable row showing all damage types
 - Tooltip for weapon properties
 - Quick attack button
 
 #### 7. **FeatureCard** (for Features tab)
+
 ```tsx
 <FeatureCard
-  title="Human Resolve"
-  description="When you take damage..."
-  source="Ancestry"
-  icon="🛡️"
-  onInfo={() => showFeatureModal('human-resolve')}
+	title="Human Resolve"
+	description="When you take damage..."
+	source="Ancestry"
+	icon="🛡️"
+	onInfo={() => showFeatureModal('human-resolve')}
 />
 ```
+
 - Collapsible sections by source (Ancestry/Class)
 - Icon + title + description preview
 - Click for full modal with details
 
 #### 8. **TabPanel**
+
 ```tsx
 <TabPanel
-  tabs={[
-    { id: 'attacks', label: '⚔️ Attacks', badge: 3 },
-    { id: 'spells', label: '📜 Spells', badge: 1 },
-    { id: 'maneuvers', label: '⚡ Maneuvers', badge: 2 }
-  ]}
-  activeTab={activeTab}
-  onTabChange={setActiveTab}
+	tabs={[
+		{ id: 'attacks', label: '⚔️ Attacks', badge: 3 },
+		{ id: 'spells', label: '📜 Spells', badge: 1 },
+		{ id: 'maneuvers', label: '⚡ Maneuvers', badge: 2 }
+	]}
+	activeTab={activeTab}
+	onTabChange={setActiveTab}
 >
-  {/* Tab content */}
+	{/* Tab content */}
 </TabPanel>
 ```
+
 - Tab navigation with badges (counts)
 - Smooth transitions
 - Keyboard accessible
@@ -306,11 +333,13 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 ## Detailed Section Breakdown
 
 ### Hero Section (Always Visible)
+
 **Purpose**: At-a-glance combat readiness
 
 **Layout**: Horizontal rows of cards
 
 **Contents**:
+
 1. **Resource Cards Row**:
    - HP (large, red accent, +/- controls, temp HP sub-field)
    - Mana (large, blue accent, +/- controls)
@@ -327,7 +356,8 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
    - Action Points (visual bubbles)
    - Attack/Spell Check, Save DC, Initiative, Martial Check (horizontal)
 
-**Visual Style**: 
+**Visual Style**:
+
 - Large text, bold numbers
 - Progress bars for resources
 - Color-coded by type
@@ -339,7 +369,9 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 ### Left Column: Attributes & Skills
 
 **Contents**:
+
 1. **Attributes Grid** (2x2 cards):
+
    ```
    ┌──────┐ ┌──────┐
    │ MIG  │ │ AGI  │
@@ -350,6 +382,7 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
    │  3   │ │  2   │
    └──────┘ └──────┘
    ```
+
    - Click attribute card to expand/collapse skills
    - Attribute abbreviation centered, large
    - Save value below
@@ -359,17 +392,18 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
    - List appears below attribute
    - Skill name + value + proficiency icon
    - Roll button on hover
-   
 3. **Awareness** (special - not tied to attribute):
    - Separate card at top
    - Same style as skills
 
 **Collapsible Sections** (accordions):
+
 - Knowledge Trades
 - Practical Trades
 - Languages
 
 **Visual Style**:
+
 - Cards with rounded corners
 - Subtle shadows
 - Hover: lift effect (transform: translateY(-2px))
@@ -403,6 +437,7 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
    - **Maneuvers Tab**: Maneuver list with type filter
 
 **Visual Style**:
+
 - Tabs with icon + label
 - Badge counts on tabs
 - Table rows with hover states
@@ -438,6 +473,7 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
    - Compact input fields
 
 **Visual Style**:
+
 - Compact cards
 - Vertical stacking
 - Scrollable if needed
@@ -448,11 +484,13 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 ## Responsive Behavior
 
 ### Desktop (1440px+)
+
 - Three-column layout as described
 - Hero section full width
 - All columns visible simultaneously
 
 ### Tablet (768px - 1439px)
+
 - Two-column layout:
   - Left + Center combined
   - Right column sidebar
@@ -460,6 +498,7 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 - Skills collapse by default
 
 ### Mobile (< 768px)
+
 - Single column
 - Hero section stacks vertically
 - Tab-based navigation for main content
@@ -471,24 +510,27 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 ## Typography
 
 ### Font Stack
+
 ```css
 --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 ```
 
 ### Font Sizes
+
 ```css
---text-xs: 0.75rem;    /* 12px - hints, labels */
---text-sm: 0.875rem;   /* 14px - secondary text */
---text-base: 1rem;     /* 16px - body text */
---text-lg: 1.125rem;   /* 18px - emphasized */
---text-xl: 1.25rem;    /* 20px - section headers */
---text-2xl: 1.5rem;    /* 24px - card titles */
---text-3xl: 1.875rem;  /* 30px - hero stats */
---text-4xl: 2.25rem;   /* 36px - character name */
+--text-xs: 0.75rem; /* 12px - hints, labels */
+--text-sm: 0.875rem; /* 14px - secondary text */
+--text-base: 1rem; /* 16px - body text */
+--text-lg: 1.125rem; /* 18px - emphasized */
+--text-xl: 1.25rem; /* 20px - section headers */
+--text-2xl: 1.5rem; /* 24px - card titles */
+--text-3xl: 1.875rem; /* 30px - hero stats */
+--text-4xl: 2.25rem; /* 36px - character name */
 ```
 
 ### Font Weights
+
 ```css
 --font-normal: 400;
 --font-medium: 500;
@@ -497,9 +539,10 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 ```
 
 ### Line Heights
+
 ```css
---leading-tight: 1.25;   /* Headings */
---leading-normal: 1.5;   /* Body */
+--leading-tight: 1.25; /* Headings */
+--leading-normal: 1.5; /* Body */
 --leading-relaxed: 1.75; /* Spacious text */
 ```
 
@@ -508,18 +551,19 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 ## Spacing System
 
 ```css
---spacing-1: 0.25rem;   /* 4px */
---spacing-2: 0.5rem;    /* 8px */
---spacing-3: 0.75rem;   /* 12px */
---spacing-4: 1rem;      /* 16px */
---spacing-5: 1.25rem;   /* 20px */
---spacing-6: 1.5rem;    /* 24px */
---spacing-8: 2rem;      /* 32px */
---spacing-10: 2.5rem;   /* 40px */
---spacing-12: 3rem;     /* 48px */
+--spacing-1: 0.25rem; /* 4px */
+--spacing-2: 0.5rem; /* 8px */
+--spacing-3: 0.75rem; /* 12px */
+--spacing-4: 1rem; /* 16px */
+--spacing-5: 1.25rem; /* 20px */
+--spacing-6: 1.5rem; /* 24px */
+--spacing-8: 2rem; /* 32px */
+--spacing-10: 2.5rem; /* 40px */
+--spacing-12: 3rem; /* 48px */
 ```
 
 **Usage**:
+
 - Card padding: `--spacing-4` to `--spacing-6`
 - Section gaps: `--spacing-6` to `--spacing-8`
 - Button padding: `--spacing-3` horizontal, `--spacing-2` vertical
@@ -537,6 +581,7 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 ```
 
 **Usage**:
+
 - Cards: `--shadow-md`
 - Hover: `--shadow-lg`
 - Modals: `--shadow-xl`
@@ -553,12 +598,14 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 ```
 
 **Usage**:
+
 - Hover states: `--transition-fast`
 - Tab changes: `--transition-base`
 - Accordions: `--transition-slow`
 - Modal open/close: `--transition-slow`
 
 **Animations**:
+
 - Fade in: Opacity 0 → 1
 - Slide in: TranslateY(-10px) → 0
 - Lift on hover: TranslateY(-2px) + shadow increase
@@ -601,6 +648,7 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 ## Implementation Phases
 
 ### Phase 1: Foundation (Week 1)
+
 - [ ] Set up new color tokens in theme
 - [ ] Create base component library:
   - StatCard
@@ -611,6 +659,7 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 - [ ] Apply new typography system
 
 ### Phase 2: Hero Section (Week 1)
+
 - [ ] Resource cards (HP, Mana, Stamina)
 - [ ] Defense cards
 - [ ] Combat stats card
@@ -618,12 +667,14 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 - [ ] Prime attribute display
 
 ### Phase 3: Left Column (Week 2)
+
 - [ ] Attributes grid with expand/collapse
 - [ ] Skills list integration
 - [ ] Awareness card
 - [ ] Knowledge/Trades/Languages accordions
 
 ### Phase 4: Center Column (Week 2)
+
 - [ ] Death & Health status
 - [ ] Exhaustion tracker
 - [ ] Movement card
@@ -631,17 +682,20 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 - [ ] Inventory tab
 
 ### Phase 5: Right Column (Week 3)
+
 - [ ] Resources card (Rest/Grit)
 - [ ] Features tab with ancestry/class sections
 - [ ] Currency card
 
 ### Phase 6: Tabbed Content (Week 3)
+
 - [ ] Spells tab with filters
 - [ ] Maneuvers tab with filters
 - [ ] Conditions tab (moved from main)
 - [ ] Notes tab
 
 ### Phase 7: Polish & Refinement (Week 4)
+
 - [ ] Responsive breakpoints
 - [ ] Animations & transitions
 - [ ] Accessibility audit
@@ -653,6 +707,7 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 ## Success Metrics
 
 **Before** (Current DC20 Sheet):
+
 - Time to find HP: ~2 seconds (scan required)
 - Time to find Attack bonus: ~3 seconds (scrolling)
 - Time to view all combat stats: ~5 seconds (scrolling)
@@ -660,6 +715,7 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 - Overall clutter rating: 8/10 (very cluttered)
 
 **After** (Redesigned Sheet):
+
 - Time to find HP: <1 second (hero section)
 - Time to find Attack bonus: <1 second (hero section)
 - Time to view all combat stats: <1 second (no scrolling)
@@ -667,6 +723,7 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 - Overall clutter rating: 3/10 (clean, organized)
 
 **Qualitative Goals**:
+
 - Feels modern and professional
 - Easy to use during combat
 - Clear what to look at first
@@ -677,7 +734,7 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 
 ## Notes & Considerations
 
-1. **DC20 Uniqueness**: 
+1. **DC20 Uniqueness**:
    - More complex than D&D (Knowledge/Trades, multiple defenses, etc.)
    - Embrace this with better organization, not by hiding it
    - Use progressive disclosure for less-used features
@@ -717,4 +774,4 @@ Complete overhaul of the character sheet UI inspired by D&D Beyond's modern, cle
 
 ---
 
-*"The finest blades are forged with patience and precision. This sheet will be no different."* — Gimli, Son of Glóin
+_"The finest blades are forged with patience and precision. This sheet will be no different."_ — Gimli, Son of Glóin

@@ -5,6 +5,7 @@ Last updated: 2026-01-14
 Status legend: [ ] not started · [~] in progress · [x] done · [>] blocked
 
 ## Milestones
+
 - [x] Context established — see `context.md`
 - [x] TODO tracker created (this file)
 - [x] Systems catalog drafted
@@ -19,6 +20,7 @@ Status legend: [ ] not started · [~] in progress · [x] done · [>] blocked
 - [x] All 13 classes patched with L5/L8 placeholders and startingEquipment
 
 ## Process Rules
+
 - Threaded discovery: use chunk IDs (e.g., `DISC-CH1`, `DISC-CH2b`, `DISC-SYS-SPELLS`) to scope threads and parallelize safely.
 - Resume markers: track status, last processed line, last heading, and notes per chunk in this file.
 - Conversation compression at 95% context: summarize older discussion into `context.md` → Conversation Compression.
@@ -26,6 +28,7 @@ Status legend: [ ] not started · [~] in progress · [x] done · [>] blocked
 ## Workstreams & Tasks
 
 ### 1) Discovery — Systems Catalog
+
 - [x] Generate chapter/top-level heading index for `../DC20 0.10 full.md`.
 - [x] Produce chunk list with line ranges and IDs; add to "Discovery Chunks Index".
 - [x] Cross-reference rules with system specs in `../../systems/**`.
@@ -34,12 +37,14 @@ Status legend: [ ] not started · [~] in progress · [x] done · [>] blocked
 - [x] Spells chapter (DISC-CH2c): focus on categories/structure; record only the first 5 spells as examples.
 
 ### 1b) Deep Dive Pass — After First Pass Complete
+
 - [x] For each chunk, perform a focused deep dive on tricky areas flagged in insights.
 - [x] Validate formulas/examples against cross-referenced sections to ensure consistency.
 - [x] Expand schema/feature touchpoints with precise fields, enums, and calculation steps.
 - [x] Capture testable acceptance checks per system (Agent Brief style).
 
 Deep Dive Notes (completed):
+
 - CH1: Advantage/Disadvantage stacking; Damage modification order; Multiple damage types.
 - CH2a: Resource formulas (AP=4, MSL=CM, SSL=CM); reaction triggers; enhancement spend limits.
 - CH2b: Spell DC normalization; enhancement declaration; MP↔AP substitution enforcement.
@@ -48,6 +53,7 @@ Deep Dive Notes (completed):
 - CH6: Class tables; paths/subclasses; starting equipment; spellRestrictions; Wild Form.
 
 ### CH6 Fine-Grained Deep Dive (future work)
+
 - [ ] Enumerate each class's level table (1–10): HP/SP/MP, Skills/Trades/Attributes, Known counts.
 - [ ] Verify subclass unlock levels and map subclass feature IDs (3/6/9).
 - [ ] Audit starting equipment options and training alignment.
@@ -56,7 +62,9 @@ Deep Dive Notes (completed):
 - [x] ONTOLOGY Save DC discrepancy — fixed to 10 + CM + Prime.
 
 #### Discovery Chunks Index — Rules File
+
 Source: `../DC20 0.10 full.md`
+
 - [x] DISC-CH1 — Core Rules (lines 1–1407)
 - [x] DISC-CH2a — Combat Rules: Pre-Spellcaster (lines 1408–2299)
 - [x] DISC-CH2b — Combat Rules: Spellcaster Chapter (lines 2300–2682)
@@ -67,7 +75,9 @@ Source: `../DC20 0.10 full.md`
 - [x] DISC-CH6 — Classes (lines 7853–10279)
 
 #### Discovery Chunks Index — Systems Docs
+
 Source: `../../systems/**`
+
 - [x] DISC-SYS-BACKGROUND — Background System
 - [x] DISC-SYS-TRADES — Trades (see `../../archive/TRADES_MULTI_ATTRIBUTE_SPEC.md`)
 - [x] DISC-SYS-TRAITS — Traits System
@@ -87,28 +97,32 @@ Source: `../../systems/**`
 - [x] DISC-SYS-FEATURE-IDS — Feature IDs
 
 #### Progress & Resume Markers (Final Status)
-| Chunk | Status | Last Line/Section | Notes |
-|-------|--------|-------------------|-------|
-| DISC-CH1 | ✅ | 1396 / Shared Damage | Key formulas captured |
-| DISC-CH2a | ✅ | 2286 / Heroic Extend Jump | Resource formulas verified |
-| DISC-CH2b | ✅ | 2670 / Combo Spellcasting | Duel/Wild Magic/Combo covered |
-| DISC-CH2c | ✅ | 3028 / Gravity Sink Hole | Structure enumerated |
-| DISC-CH3 | ✅ | 6857 / Variable Check Examples | Jump/breath formulas added |
-| DISC-CH4 | ✅ | 7385 / Level 9 Subclass Feature | Progression table drafted |
-| DISC-CH5 | ✅ | 7847 / Miscellaneous | Trait costs captured |
-| DISC-CH6 | ✅ | 10262 / Misc Changes | Deep dive complete |
+
+| Chunk     | Status | Last Line/Section               | Notes                         |
+| --------- | ------ | ------------------------------- | ----------------------------- |
+| DISC-CH1  | ✅     | 1396 / Shared Damage            | Key formulas captured         |
+| DISC-CH2a | ✅     | 2286 / Heroic Extend Jump       | Resource formulas verified    |
+| DISC-CH2b | ✅     | 2670 / Combo Spellcasting       | Duel/Wild Magic/Combo covered |
+| DISC-CH2c | ✅     | 3028 / Gravity Sink Hole        | Structure enumerated          |
+| DISC-CH3  | ✅     | 6857 / Variable Check Examples  | Jump/breath formulas added    |
+| DISC-CH4  | ✅     | 7385 / Level 9 Subclass Feature | Progression table drafted     |
+| DISC-CH5  | ✅     | 7847 / Miscellaneous            | Trait costs captured          |
+| DISC-CH6  | ✅     | 10262 / Misc Changes            | Deep dive complete            |
 
 ### 2) Schema Inventory
+
 - [x] Locate schemas/types in `src/lib/rulesdata/**` and `src/lib/rulesdata/schemas/**`.
 - [x] Summarize per-system types, IDs, enums, discriminants, and computed fields.
 - [x] Identify calculators/services and their data contracts.
 
 ### 3) Feature → System Mapping
+
 - [x] List features/flows (Character Creation, Sheet, Level Up, etc.).
 - [x] Map each feature to systems, UI routes/components, and services.
 - [x] Record storage touchpoints and edge cases per feature.
 
 ### 4) Gap Analysis
+
 - [x] Compare rules vs. schemas/code per system.
 - [x] Log missing fields, mismatched types, normalization needs.
 - [x] Flag calculation gaps and cross-system inconsistencies.
@@ -116,6 +130,7 @@ Source: `../../systems/**`
 - [x] Code hygiene: Psion class marked with `experimental: true` flag.
 
 ### 5) Recommendations
+
 - [x] Propose minimal schema/service changes — see `schema-gap-proposals.md`
 - [x] Implement schema extensions:
   - EffectResolution interface (spell.schema.ts)
@@ -128,12 +143,14 @@ Source: `../../systems/**`
 - [ ] Prioritize remaining UI implementation work (MSL enforcement, declare-before-roll).
 
 ## Remaining Work
+
 - [ ] UI: MSL/SSL enforcement in spell/maneuver selection
 - [ ] UI: Declare-before-roll workflow for enhancements
 - [ ] Data: Populate EffectResolution fields on spells
 - [ ] Data: Populate TraitRequirements on ancestry traits
 
 ## Decisions Log
+
 - 2026-01-14: Use "Agent Brief Template" style for acceptance checks.
 - 2026-01-14: Completed gap analysis; documented all 13 classes missing L5/L8 features.
 - 2026-01-14: Created patches/all_classes_placeholders.md.
@@ -147,6 +164,7 @@ Source: `../../systems/**`
 - 2026-01-14: Marked Psion class as experimental.
 
 ## References
+
 - Rules source: `../DC20 0.10 full.md`
 - Systems specs: `../../systems/**`
 - Code touchpoints: `src/lib/rulesdata/**`, `src/lib/services/enhancedCharacterCalculator.ts`

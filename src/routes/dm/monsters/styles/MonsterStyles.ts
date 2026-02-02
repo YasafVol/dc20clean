@@ -121,11 +121,7 @@ export const MonsterCardContainer = styled.div<{ $tier?: string }>`
 	&:hover {
 		transform: translateY(-2px);
 		border-color: ${(props) =>
-			props.$tier === 'legendary'
-				? '#facc15'
-				: props.$tier === 'apex'
-					? '#c084fc'
-					: '#a855f7'};
+			props.$tier === 'legendary' ? '#facc15' : props.$tier === 'apex' ? '#c084fc' : '#a855f7'};
 		box-shadow: 0 8px 24px -4px rgba(168, 85, 247, 0.3);
 	}
 `;
@@ -360,8 +356,7 @@ export const PreviewStatGrid = styled.div`
 `;
 
 export const PreviewStatItem = styled.div<{ $highlight?: boolean }>`
-	background: ${(props) =>
-		props.$highlight ? 'rgba(74, 222, 128, 0.1)' : 'rgba(0, 0, 0, 0.3)'};
+	background: ${(props) => (props.$highlight ? 'rgba(74, 222, 128, 0.1)' : 'rgba(0, 0, 0, 0.3)')};
 	border: 1px solid
 		${(props) => (props.$highlight ? 'rgba(74, 222, 128, 0.3)' : 'rgba(168, 85, 247, 0.2)')};
 	border-radius: 8px;
@@ -429,8 +424,7 @@ export const RoleCard = styled.button<{ $selected?: boolean }>`
 		props.$selected
 			? 'linear-gradient(135deg, rgba(168, 85, 247, 0.3) 0%, rgba(139, 92, 246, 0.2) 100%)'
 			: 'rgba(0, 0, 0, 0.3)'};
-	border: 1px solid
-		${(props) => (props.$selected ? '#a855f7' : 'rgba(168, 85, 247, 0.2)')};
+	border: 1px solid ${(props) => (props.$selected ? '#a855f7' : 'rgba(168, 85, 247, 0.2)')};
 	border-radius: 8px;
 	padding: 0.75rem;
 	cursor: pointer;
@@ -495,8 +489,7 @@ export const FeatureItem = styled.div<{ $selected?: boolean }>`
 	justify-content: space-between;
 	align-items: center;
 	padding: 0.75rem;
-	background: ${(props) =>
-		props.$selected ? 'rgba(74, 222, 128, 0.1)' : 'rgba(0, 0, 0, 0.2)'};
+	background: ${(props) => (props.$selected ? 'rgba(74, 222, 128, 0.1)' : 'rgba(0, 0, 0, 0.2)')};
 	border: 1px solid
 		${(props) => (props.$selected ? 'rgba(74, 222, 128, 0.3)' : 'rgba(168, 85, 247, 0.2)')};
 	border-radius: 8px;

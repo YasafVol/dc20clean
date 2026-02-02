@@ -50,13 +50,13 @@ export interface CharacterInProgressStoreData
 	selectedTalents?: Record<string, number>; // Changed from string[] to count-based
 	pathPointAllocations?: { martial?: number; spellcasting?: number };
 	selectedMulticlassOption?:
-	| 'novice'
-	| 'adept'
-	| 'expert'
-	| 'master'
-	| 'grandmaster'
-	| 'legendary'
-	| null;
+		| 'novice'
+		| 'adept'
+		| 'expert'
+		| 'master'
+		| 'grandmaster'
+		| 'legendary'
+		| null;
 	selectedMulticlassClass?: string;
 	selectedMulticlassFeature?: string;
 	selectedSubclass?: string; // Subclass selection (e.g., "Berserker" for Barbarian at Level 3)
@@ -204,17 +204,17 @@ type CharacterAction =
 	| { type: 'SET_STEP'; step: number }
 	| { type: 'TOGGLE_PRIME_CAP_RULE'; value?: boolean }
 	| {
-		type: 'SET_CONVERSIONS';
-		conversions: { skillToTrade?: number; tradeToSkill?: number; tradeToLanguage?: number };
-	}
+			type: 'SET_CONVERSIONS';
+			conversions: { skillToTrade?: number; tradeToSkill?: number; tradeToLanguage?: number };
+	  }
 	| { type: 'SET_SELECTED_TALENTS'; talents: Record<string, number> }
 	| { type: 'SET_PATH_POINTS'; pathPoints: { martial?: number; spellcasting?: number } }
 	| {
-		type: 'SET_MULTICLASS';
-		option: 'novice' | 'adept' | 'expert' | 'master' | 'grandmaster' | 'legendary' | null;
-		classId: string;
-		featureId: string;
-	}
+			type: 'SET_MULTICLASS';
+			option: 'novice' | 'adept' | 'expert' | 'master' | 'grandmaster' | 'legendary' | null;
+			classId: string;
+			featureId: string;
+	  }
 	| { type: 'SET_SUBCLASS'; subclass: string | null }
 	| { type: 'SET_CROSS_PATH_SPELL_LIST'; spellList: string }
 	| { type: 'ENTER_LEVEL_UP_MODE'; originalLevel: number; characterId: string }

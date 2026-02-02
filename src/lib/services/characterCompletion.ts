@@ -387,11 +387,11 @@ export const completeCharacter = async (
 			}
 		}
 
-	// OPTIMIZED: Save using new typed storage utilities
-	const storage = getDefaultStorage();
-	const existingCharacters = await storage.getAllCharacters();
-	existingCharacters.push(completedCharacter);
-	await storage.saveAllCharacters(existingCharacters);
+		// OPTIMIZED: Save using new typed storage utilities
+		const storage = getDefaultStorage();
+		const existingCharacters = await storage.getAllCharacters();
+		existingCharacters.push(completedCharacter);
+		await storage.saveAllCharacters(existingCharacters);
 
 		logger.info('ui', 'Character creation complete', {
 			characterId: completedCharacter.id,

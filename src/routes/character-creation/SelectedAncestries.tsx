@@ -74,9 +74,7 @@ function SelectedAncestries() {
 		if (isCurrentlySelected) {
 			// Deselect - also deselect any traits that depend on this one (cascade)
 			const dependentTraits = getDependentTraits(traitId, currentTraits);
-			currentTraits = currentTraits.filter(
-				(id) => id !== traitId && !dependentTraits.includes(id)
-			);
+			currentTraits = currentTraits.filter((id) => id !== traitId && !dependentTraits.includes(id));
 		} else {
 			// Select - check prerequisites first
 			if (!arePrerequisitesMet(trait, currentTraits)) {
@@ -128,10 +126,7 @@ function SelectedAncestries() {
 							<span className="text-destructive"> (Not enough points)</span>
 						)}
 						{hasUnmetPrerequisites && (
-							<span className="text-amber-500">
-								{' '}
-								(Requires: {missingPrereqNames.join(', ')})
-							</span>
+							<span className="text-amber-500"> (Requires: {missingPrereqNames.join(', ')})</span>
 						)}
 					</span>
 				</label>

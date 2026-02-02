@@ -129,7 +129,9 @@ const SavedEquipmentList: React.FC = () => {
 				<Badge variant="outline">⚔️ Weapon</Badge>
 			</div>
 			<div className="mb-2 flex flex-wrap gap-2 text-xs">
-				<Badge variant="secondary">{weapon.finalDamage} {weapon.damageType}</Badge>
+				<Badge variant="secondary">
+					{weapon.finalDamage} {weapon.damageType}
+				</Badge>
 				<Badge variant="secondary">Range: {weapon.range}</Badge>
 			</div>
 			<div className="mb-3 flex flex-wrap gap-1">
@@ -243,13 +245,21 @@ const SavedEquipmentList: React.FC = () => {
 				<Badge variant="outline">🔮 Focus</Badge>
 			</div>
 			<div className="mb-3 flex flex-wrap gap-2 text-xs">
-				{item.spellCheckBonus > 0 && <Badge variant="secondary">Spell Check +{item.spellCheckBonus}</Badge>}
-				{item.spellAttackBonus > 0 && <Badge variant="secondary">Spell Attack +{item.spellAttackBonus}</Badge>}
-				{item.spellDamageBonus > 0 && <Badge variant="secondary">Spell Damage +{item.spellDamageBonus}</Badge>}
+				{item.spellCheckBonus > 0 && (
+					<Badge variant="secondary">Spell Check +{item.spellCheckBonus}</Badge>
+				)}
+				{item.spellAttackBonus > 0 && (
+					<Badge variant="secondary">Spell Attack +{item.spellAttackBonus}</Badge>
+				)}
+				{item.spellDamageBonus > 0 && (
+					<Badge variant="secondary">Spell Damage +{item.spellDamageBonus}</Badge>
+				)}
 				{item.adBonus > 0 && <Badge variant="secondary">AD +{item.adBonus}</Badge>}
 				{item.hasMdr && <Badge variant="secondary">MDR</Badge>}
 				{item.hasCloseQuarters && <Badge variant="secondary">Close Quarters</Badge>}
-				{item.longRangeBonus > 0 && <Badge variant="secondary">Long Range +{item.longRangeBonus}</Badge>}
+				{item.longRangeBonus > 0 && (
+					<Badge variant="secondary">Long Range +{item.longRangeBonus}</Badge>
+				)}
 			</div>
 			<div className="flex justify-end">
 				<Button
@@ -267,20 +277,13 @@ const SavedEquipmentList: React.FC = () => {
 	return (
 		<div>
 			<div className="mb-6 flex items-center justify-between">
-				<SectionTitle className="mb-0 border-0 pb-0">
-					Saved Equipment ({totalCount})
-				</SectionTitle>
+				<SectionTitle className="mb-0 border-0 pb-0">Saved Equipment ({totalCount})</SectionTitle>
 				<div className="flex gap-2">
 					<Button variant="outline" size="sm" onClick={handleExport} disabled={totalCount === 0}>
 						Export All
 					</Button>
 					<label>
-						<input
-							type="file"
-							accept=".json"
-							onChange={handleImport}
-							className="hidden"
-						/>
+						<input type="file" accept=".json" onChange={handleImport} className="hidden" />
 						<Button variant="outline" size="sm" asChild>
 							<span className="cursor-pointer">Import</span>
 						</Button>

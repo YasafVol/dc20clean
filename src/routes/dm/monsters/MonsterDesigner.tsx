@@ -9,12 +9,12 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '../../../components/ui/button';
 import { useMonster, useMonsterMutations } from '../../../lib/hooks/useMonsters';
-import {
-	MonsterBuilderProvider,
-	useMonsterBuilder,
-} from '../../../lib/hooks/useMonsterBuilder';
+import { MonsterBuilderProvider, useMonsterBuilder } from '../../../lib/hooks/useMonsterBuilder';
 import { MONSTER_TIERS, type MonsterTier } from '../../../lib/rulesdata/schemas/monster.schema';
-import { getAllMonsterLevels, getLevelDisplayName } from '../../../lib/rulesdata/dm/monsterStatistics';
+import {
+	getAllMonsterLevels,
+	getLevelDisplayName
+} from '../../../lib/rulesdata/dm/monsterStatistics';
 import { StatPreview, RoleSelector, FeaturePointBuy, ActionBuilder } from './components';
 import {
 	PageContainer,
@@ -36,7 +36,7 @@ import {
 	FormLabel,
 	ValidationList,
 	ValidationItem,
-	ValidationIcon,
+	ValidationIcon
 } from './styles/MonsterStyles';
 
 const LEVELS = getAllMonsterLevels();
@@ -46,7 +46,9 @@ const MonsterDesignerContent: React.FC = () => {
 	const { id } = useParams<{ id: string }>();
 	const isNew = id === 'new';
 
-	const { monster: existingMonster, isLoading: isLoadingMonster } = useMonster(isNew ? null : id ?? null);
+	const { monster: existingMonster, isLoading: isLoadingMonster } = useMonster(
+		isNew ? null : (id ?? null)
+	);
 	const { createMonster, updateMonster } = useMonsterMutations();
 
 	const {
@@ -62,7 +64,7 @@ const MonsterDesignerContent: React.FC = () => {
 		updateAction,
 		removeAction,
 		loadMonster,
-		dispatch,
+		dispatch
 	} = useMonsterBuilder();
 
 	const [isSaving, setIsSaving] = useState(false);
@@ -148,7 +150,7 @@ const MonsterDesignerContent: React.FC = () => {
 		return (
 			<PageContainer>
 				<MainContent>
-					<div className="text-center text-zinc-500 py-12">Loading monster...</div>
+					<div className="py-12 text-center text-zinc-500">Loading monster...</div>
 				</MainContent>
 			</PageContainer>
 		);
@@ -165,14 +167,8 @@ const MonsterDesignerContent: React.FC = () => {
 						<Title>{isNew ? 'Create Monster' : 'Edit Monster'}</Title>
 					</HeaderLeft>
 					<HeaderRight>
-						{state.isDirty && (
-							<span className="text-xs text-amber-400">Unsaved changes</span>
-						)}
-						<Button
-							variant="secondary"
-							onClick={handleSave}
-							disabled={!state.isValid || isSaving}
-						>
+						{state.isDirty && <span className="text-xs text-amber-400">Unsaved changes</span>}
+						<Button variant="secondary" onClick={handleSave} disabled={!state.isValid || isSaving}>
 							{isSaving ? 'Saving...' : 'Save'}
 						</Button>
 					</HeaderRight>
@@ -196,7 +192,7 @@ const MonsterDesignerContent: React.FC = () => {
 											type="text"
 											value={state.monster.name}
 											onChange={(e) => setName(e.target.value)}
-											className="w-full px-3 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:border-purple-500"
+											className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
 											placeholder="Monster name"
 										/>
 									</FormGroup>
@@ -205,7 +201,7 @@ const MonsterDesignerContent: React.FC = () => {
 										<select
 											value={state.monster.level}
 											onChange={(e) => setLevel(parseInt(e.target.value, 10))}
-											className="w-full px-3 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:border-purple-500"
+											className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
 										>
 											{LEVELS.map((level) => (
 												<option key={level} value={level}>
@@ -219,7 +215,7 @@ const MonsterDesignerContent: React.FC = () => {
 										<select
 											value={state.monster.tier}
 											onChange={(e) => setTier(e.target.value as MonsterTier)}
-											className="w-full px-3 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:border-purple-500"
+											className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
 										>
 											{MONSTER_TIERS.map((tier) => (
 												<option key={tier} value={tier}>
@@ -234,7 +230,7 @@ const MonsterDesignerContent: React.FC = () => {
 									<textarea
 										value={state.monster.description ?? ''}
 										onChange={(e) => setDescription(e.target.value)}
-										className="w-full px-3 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:border-purple-500 resize-none"
+										className="w-full resize-none rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
 										rows={2}
 										placeholder="Describe your monster..."
 									/>
@@ -248,10 +244,7 @@ const MonsterDesignerContent: React.FC = () => {
 								<SectionTitle>Role</SectionTitle>
 							</SectionHeader>
 							<SectionContent>
-								<RoleSelector
-									value={state.monster.roleId}
-									onChange={setRole}
-								/>
+								<RoleSelector value={state.monster.roleId} onChange={setRole} />
 							</SectionContent>
 						</Section>
 

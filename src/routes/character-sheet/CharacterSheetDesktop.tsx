@@ -530,9 +530,7 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 												<StyledSpellName onClick={() => handleSpellClick(spell)}>
 													{spell.spellName || 'Unnamed Spell'}
 												</StyledSpellName>
-												<StyledSpellSchool>
-													{spell.school}
-												</StyledSpellSchool>
+												<StyledSpellSchool>{spell.school}</StyledSpellSchool>
 											</StyledSpellsTableCell>
 											<StyledSpellsTableCell>
 												<StyledSpellCost>

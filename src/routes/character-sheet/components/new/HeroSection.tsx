@@ -7,6 +7,8 @@ import DeathExhaustion from '../DeathExhaustion';
 import type { EnhancedStatBreakdown } from '../../../../lib/types/effectSystem';
 import { createEnhancedTooltip } from '../EnhancedStatTooltips';
 import Tooltip from '../Tooltip';
+import { ConditionBadge } from '../ConditionBadge';
+import { getConditionBadgesForAttribute } from '../../../../lib/services/conditionEffectsAnalyzer';
 
 interface HeroSectionProps {
 	// Resource values
@@ -31,6 +33,9 @@ interface HeroSectionProps {
 	attackBonus: number;
 	saveDC: number;
 	initiative: number;
+
+	// Active conditions
+	activeConditions?: string[];
 
 	// Callbacks
 	onHPChange?: (value: number) => void;
@@ -151,6 +156,14 @@ const DefenseValue = styled.div<{ $isPrimary?: boolean }>`
 	line-height: ${theme.typography.lineHeight.tight};
 `;
 
+const BadgesContainer = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	gap: ${theme.spacing[1]};
+	margin-top: ${theme.spacing[2]};
+	justify-content: center;
+`;
+
 export const HeroSection: React.FC<HeroSectionProps> = ({
 	currentHP,
 	maxHP,
@@ -169,6 +182,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 	attackBonus,
 	saveDC,
 	initiative,
+	activeConditions = [],
 	onHPChange,
 	onTempHPChange,
 	onManaChange,
@@ -196,6 +210,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 	onPrecisionDRMouseLeave,
 	className
 }) => {
+	// Calculate condition badges
+	const attackBadges = getConditionBadgesForAttribute(activeConditions, 'attack');
+
 	return (
 		<Container
 			className={className}
@@ -244,8 +261,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 						showProgressBar
 						editable
 						onChange={onManaChange}
-onMouseEnter={onManaMouseEnter}
-onMouseLeave={onManaMouseLeave}
+						onMouseEnter={onManaMouseEnter}
+						onMouseLeave={onManaMouseLeave}
 					/>
 					<StatCard
 						label="Stamina Points"
@@ -256,9 +273,9 @@ onMouseLeave={onManaMouseLeave}
 						showProgressBar
 						editable
 						onChange={onStaminaChange}
-					onMouseEnter={onStaminaMouseEnter}
-					onMouseLeave={onStaminaMouseLeave}
-				/>
+						onMouseEnter={onStaminaMouseEnter}
+						onMouseLeave={onStaminaMouseLeave}
+					/>
 				</ResourcesGroup>
 			</BoxCard>
 
@@ -306,51 +323,63 @@ onMouseLeave={onManaMouseLeave}
 				<BoxTitle>Combat Stats</BoxTitle>
 				<ResourcesGroup>
 					<DefensesGrid>
-					<DefenseItem
-						whileHover={{ scale: 1.05 }}
-						onMouseEnter={onPrecisionADMouseEnter}
-						onMouseLeave={onPrecisionADMouseLeave}
-					>
-						<DefenseLabel>Precision AD</DefenseLabel>
-						<DefenseValue>{precisionAD}</DefenseValue>
-					</DefenseItem>
-					<DefenseItem
-						whileHover={{ scale: 1.05 }}
-						onMouseEnter={onPrecisionDRMouseEnter}
-						onMouseLeave={onPrecisionDRMouseLeave}
-					>
-						<DefenseLabel>Precision DR</DefenseLabel>
-						<DefenseValue>{precisionDR}</DefenseValue>
-					</DefenseItem>
-					<DefenseItem
-						whileHover={{ scale: 1.05 }}
-						onMouseEnter={onAreaADMouseEnter}
-						onMouseLeave={onAreaADMouseLeave}
-					>
+						<DefenseItem
+							whileHover={{ scale: 1.05 }}
+							onMouseEnter={onPrecisionADMouseEnter}
+							onMouseLeave={onPrecisionADMouseLeave}
+						>
+							<DefenseLabel>Precision AD</DefenseLabel>
+							<DefenseValue>{precisionAD}</DefenseValue>
+						</DefenseItem>
+						<DefenseItem
+							whileHover={{ scale: 1.05 }}
+							onMouseEnter={onPrecisionDRMouseEnter}
+							onMouseLeave={onPrecisionDRMouseLeave}
+						>
+							<DefenseLabel>Precision DR</DefenseLabel>
+							<DefenseValue>{precisionDR}</DefenseValue>
+						</DefenseItem>
+						<DefenseItem
+							whileHover={{ scale: 1.05 }}
+							onMouseEnter={onAreaADMouseEnter}
+							onMouseLeave={onAreaADMouseLeave}
+						>
 							<DefenseLabel>Area AD</DefenseLabel>
 							<DefenseValue>{areaAD}</DefenseValue>
 						</DefenseItem>
 					</DefensesGrid>
 					<DefensesGrid $withMarginTop>
-					<DefenseItem
-						whileHover={{ scale: 1.05 }}
-						$clickable
-						onClick={() => onSkillClick?.('Attack', attackBonus)}
-					onMouseEnter={onAttackMouseEnter}
-					onMouseLeave={onAttackMouseLeave}
-				>
-					<DefenseLabel>Attack/Spell</DefenseLabel>
-						<DefenseValue $isPrimary>+{attackBonus}</DefenseValue>
-					</DefenseItem>
-					<DefenseItem whileHover={{ scale: 1.05 }}>
-						<DefenseLabel>Save DC</DefenseLabel>
-						<DefenseValue $isPrimary>{saveDC}</DefenseValue>
-					</DefenseItem>
-					<DefenseItem
-						whileHover={{ scale: 1.05 }}
-						$clickable
-						onClick={() => onSkillClick?.('Initiative', initiative)}
-					>
+						<DefenseItem
+							whileHover={{ scale: 1.05 }}
+							$clickable
+							onClick={() => onSkillClick?.('Attack', attackBonus)}
+							onMouseEnter={onAttackMouseEnter}
+							onMouseLeave={onAttackMouseLeave}
+						>
+							<DefenseLabel>Attack/Spell</DefenseLabel>
+							<DefenseValue $isPrimary>+{attackBonus}</DefenseValue>
+							{attackBadges.length > 0 && (
+								<BadgesContainer>
+									{attackBadges.map((badge, idx) => (
+										<ConditionBadge
+											key={idx}
+											type={badge.type}
+											value={badge.value}
+											tooltip={badge.tooltip}
+										/>
+									))}
+								</BadgesContainer>
+							)}
+						</DefenseItem>
+						<DefenseItem whileHover={{ scale: 1.05 }}>
+							<DefenseLabel>Save DC</DefenseLabel>
+							<DefenseValue $isPrimary>{saveDC}</DefenseValue>
+						</DefenseItem>
+						<DefenseItem
+							whileHover={{ scale: 1.05 }}
+							$clickable
+							onClick={() => onSkillClick?.('Initiative', initiative)}
+						>
 							<DefenseLabel>Initiative</DefenseLabel>
 							<DefenseValue $isPrimary>+{initiative}</DefenseValue>
 						</DefenseItem>

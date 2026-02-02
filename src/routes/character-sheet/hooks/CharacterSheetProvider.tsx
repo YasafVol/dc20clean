@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useEffect, useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+	createContext,
+	useContext,
+	useEffect,
+	useCallback,
+	useMemo,
+	useRef,
+	useState
+} from 'react';
 import {
 	useCharacterSheetReducer,
 	type SheetState,
@@ -168,6 +176,7 @@ interface CharacterSheetContextType {
 	updateNotes: (notes: string) => void;
 	updateGritPoints: (grit: number) => void;
 	updateRestPoints: (rest: number) => void;
+	toggleActiveCondition: (conditionId: string) => void;
 	// Manual save function
 	saveNow: () => Promise<void>;
 	// Save status
@@ -210,7 +219,8 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		updateCurrency,
 		updateNotes,
 		updateGritPoints,
-		updateRestPoints
+		updateRestPoints,
+		toggleActiveCondition
 	} = useCharacterSheetReducer();
 	const storage = useMemo(() => getDefaultStorage(), []);
 	const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
@@ -263,32 +273,36 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 
 				// Save the entire character (includes spells, maneuvers, etc.)
 				await storage.saveCharacter(updatedCharacter);
-			
-			console.log('[GIMLI] Save SUCCESS! Setting status to SAVED');
-			lastSavedHash.current = currentHash;
-			setSaveStatus('saved');
 
-			logger.debug('storage', 'Character sheet data saved successfully', {
-				characterId: character.id
-			});
-			
-			// Reset to idle after 2 seconds
-			if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-			saveTimeoutRef.current = setTimeout(() => setSaveStatus('idle'), 2000);
-		} catch (error) {
-			console.log('[GIMLI] Save FAILED! Setting status to ERROR', error);
-			setSaveStatus('error');
-				logger.warn('calculation', 'Calculator error during save, proceeding with last known values', {
-					characterId: character.id,
-					error: error instanceof Error ? error.message : String(error)
+				console.log('[GIMLI] Save SUCCESS! Setting status to SAVED');
+				lastSavedHash.current = currentHash;
+				setSaveStatus('saved');
+
+				logger.debug('storage', 'Character sheet data saved successfully', {
+					characterId: character.id
 				});
+
+				// Reset to idle after 2 seconds
+				if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+				saveTimeoutRef.current = setTimeout(() => setSaveStatus('idle'), 2000);
+			} catch (error) {
+				console.log('[GIMLI] Save FAILED! Setting status to ERROR', error);
+				setSaveStatus('error');
+				logger.warn(
+					'calculation',
+					'Calculator error during save, proceeding with last known values',
+					{
+						characterId: character.id,
+						error: error instanceof Error ? error.message : String(error)
+					}
+				);
 				// Save anyway with existing character data
 				try {
 					await storage.saveCharacter(character);
-					
+
 					lastSavedHash.current = currentHash;
 					setSaveStatus('saved');
-					
+
 					// Reset to idle after 2 seconds
 					if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
 					saveTimeoutRef.current = setTimeout(() => setSaveStatus('idle'), 2000);
@@ -400,6 +414,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		updateNotes,
 		updateGritPoints,
 		updateRestPoints,
+		toggleActiveCondition,
 		saveNow,
 		saveStatus,
 		retryFailedSave

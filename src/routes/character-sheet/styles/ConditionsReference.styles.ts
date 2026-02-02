@@ -1,5 +1,8 @@
 import styled from 'styled-components';
-import type { ConditionType, ConditionTag } from '../../../lib/rulesdata/conditions/conditions.types';
+import type {
+	ConditionType,
+	ConditionTag
+} from '../../../lib/rulesdata/conditions/conditions.types';
 import { theme } from './theme';
 
 export const StyledConditionsReferenceContainer = styled.div<{ $isMobile?: boolean }>`
@@ -65,14 +68,16 @@ export const StyledTagButton = styled.button<{ $active: boolean; $isMobile?: boo
 	font-size: ${theme.typography.fontSize.xs};
 	cursor: pointer;
 	transition: all ${theme.transitions.fast};
-	border: 1px solid ${(props) => (props.$active ? theme.colors.accent.primary : theme.colors.border.default)};
+	border: 1px solid
+		${(props) => (props.$active ? theme.colors.accent.primary : theme.colors.border.default)};
 	background: ${(props) => (props.$active ? theme.colors.accent.primary : 'transparent')};
 	color: ${(props) => (props.$active ? theme.colors.text.inverse : theme.colors.text.secondary)};
 	font-weight: ${theme.typography.fontWeight.medium};
 
 	&:hover {
 		border-color: ${theme.colors.accent.primary};
-		background: ${(props) => (props.$active ? theme.colors.accent.secondary : theme.colors.bg.tertiary)};
+		background: ${(props) =>
+			props.$active ? theme.colors.accent.secondary : theme.colors.bg.tertiary};
 		color: ${(props) => (props.$active ? theme.colors.text.inverse : theme.colors.accent.primary)};
 	}
 `;
@@ -97,7 +102,7 @@ export const StyledConditionsList = styled.div<{ $isMobile?: boolean }>`
 	&::-webkit-scrollbar-thumb {
 		background: ${theme.colors.accent.primary};
 		border-radius: ${theme.borderRadius.sm};
-		
+
 		&:hover {
 			background: ${theme.colors.accent.secondary};
 		}
@@ -129,7 +134,7 @@ export const StyledConditionHeader = styled.button<{ $isMobile?: boolean }>`
 	cursor: pointer;
 	text-align: left;
 	transition: all ${theme.transitions.fast};
-	
+
 	&:hover {
 		background: ${theme.colors.bg.tertiary};
 	}

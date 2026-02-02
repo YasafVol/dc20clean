@@ -128,7 +128,9 @@ test.describe('Hunter (Beastborn, Urban + Grassland) E2E', () => {
 		}
 
 		// Verify all maneuvers are selected (check for "All choices complete")
-		await expect(page.getByText(/All choices complete|0 remaining/i)).toBeVisible({ timeout: 5000 });
+		await expect(page.getByText(/All choices complete|0 remaining/i)).toBeVisible({
+			timeout: 5000
+		});
 		await page.getByRole('button', { name: 'Next →' }).click(); // proceed to Names
 
 		// Step 6: Names

@@ -22,7 +22,7 @@ import {
 	EncounterGrid,
 	EmptyState,
 	EmptyStateTitle,
-	EmptyStateText,
+	EmptyStateText
 } from './styles/EncounterStyles';
 
 export const EncounterList: React.FC = () => {
@@ -83,13 +83,11 @@ export const EncounterList: React.FC = () => {
 
 			<MainContent>
 				{isLoading ? (
-					<div className="text-center text-zinc-500 py-12">Loading...</div>
+					<div className="py-12 text-center text-zinc-500">Loading...</div>
 				) : encounters.length === 0 ? (
 					<EmptyState>
 						<EmptyStateTitle>No Encounters Yet</EmptyStateTitle>
-						<EmptyStateText>
-							Create your first encounter to start planning battles!
-						</EmptyStateText>
+						<EmptyStateText>Create your first encounter to start planning battles!</EmptyStateText>
 						<Button variant="secondary" onClick={handleCreateNew}>
 							Create Encounter
 						</Button>

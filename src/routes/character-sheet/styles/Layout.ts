@@ -165,7 +165,12 @@ export const StyledCornerDecoration = styled.div<{
 		width: 100%;
 		height: 100%;
 		background:
-			radial-gradient(circle at 20% 20%, ${theme.colors.accent.primary} 0%, ${theme.colors.accent.primary} 15%, transparent 15%),
+			radial-gradient(
+				circle at 20% 20%,
+				${theme.colors.accent.primary} 0%,
+				${theme.colors.accent.primary} 15%,
+				transparent 15%
+			),
 			linear-gradient(
 				45deg,
 				${theme.colors.accent.primary} 0%,
@@ -302,7 +307,8 @@ export const StyledMobileNavButton = styled.button<{ $isActive: boolean }>`
 	box-sizing: border-box;
 
 	&:hover {
-		background: ${(props) => (props.$isActive ? theme.colors.accent.primary : theme.colors.bg.tertiary)};
+		background: ${(props) =>
+			props.$isActive ? theme.colors.accent.primary : theme.colors.bg.tertiary};
 	}
 
 	&:active {
@@ -327,7 +333,8 @@ export const StyledActionButtons = styled.div`
 export const StyledActionButton = styled.button<{ $variant?: 'danger' | 'primary' }>`
 	padding: 8px 12px;
 	font-size: 0.8rem;
-	background-color: ${(props) => (props.$variant === 'danger' ? theme.colors.accent.danger : theme.colors.accent.primary)};
+	background-color: ${(props) =>
+		props.$variant === 'danger' ? theme.colors.accent.danger : theme.colors.accent.primary};
 	color: ${theme.colors.text.inverse};
 	border: none;
 	border-radius: ${theme.borderRadius.md};
@@ -338,7 +345,8 @@ export const StyledActionButton = styled.button<{ $variant?: 'danger' | 'primary
 	transition: all ${theme.transitions.fast};
 
 	&:hover {
-		background-color: ${(props) => (props.$variant === 'danger' ? theme.colors.accent.danger : theme.colors.accent.secondary)};
+		background-color: ${(props) =>
+			props.$variant === 'danger' ? theme.colors.accent.danger : theme.colors.accent.secondary};
 		transform: translateY(-1px);
 	}
 

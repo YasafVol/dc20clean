@@ -172,22 +172,32 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 									</option>
 								))}
 							</StyledManeuverTypeFilter>
-<StyledAddManeuverButton
-$isMobile={effectiveIsMobile}
-onClick={expandAll}
-style={{ backgroundColor: "#059669", marginRight: "0.5rem", fontSize: "0.85rem", padding: "0.4rem 0.8rem" }}
-aria-label="Expand All"
->
-▼ Expand All
-</StyledAddManeuverButton>
-<StyledAddManeuverButton
-$isMobile={effectiveIsMobile}
-onClick={collapseAll}
-style={{ backgroundColor: "#dc2626", marginRight: "0.5rem", fontSize: "0.85rem", padding: "0.4rem 0.8rem" }}
-aria-label="Collapse All"
->
-▲ Collapse All
-</StyledAddManeuverButton>
+							<StyledAddManeuverButton
+								$isMobile={effectiveIsMobile}
+								onClick={expandAll}
+								style={{
+									backgroundColor: '#059669',
+									marginRight: '0.5rem',
+									fontSize: '0.85rem',
+									padding: '0.4rem 0.8rem'
+								}}
+								aria-label="Expand All"
+							>
+								▼ Expand All
+							</StyledAddManeuverButton>
+							<StyledAddManeuverButton
+								$isMobile={effectiveIsMobile}
+								onClick={collapseAll}
+								style={{
+									backgroundColor: '#dc2626',
+									marginRight: '0.5rem',
+									fontSize: '0.85rem',
+									padding: '0.4rem 0.8rem'
+								}}
+								aria-label="Collapse All"
+							>
+								▲ Collapse All
+							</StyledAddManeuverButton>
 
 							<StyledAddManeuverButton
 								data-testid="add-maneuver"

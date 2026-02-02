@@ -69,38 +69,38 @@
 	--color-sidebar-ring: oklch(0.78 0.15 85);
 
 	/* Tokyo Night Theme Colors */
-	--bg-primary: #1A1B26;
-	--bg-secondary: #24283B;
+	--bg-primary: #1a1b26;
+	--bg-secondary: #24283b;
 	--bg-tertiary: #414868;
-	--bg-elevated: #2C2E3E;
+	--bg-elevated: #2c2e3e;
 
-	--text-primary: #C0CAF5;
-	--text-secondary: #9AA5CE;
-	--text-muted: #565F89;
-	
-	--accent-primary: #7DCFFF;
-	--accent-secondary: #BB9AF7;
-	--accent-warning: #E0AF68;
-	--accent-danger: #F7768E;
-	--accent-success: #9ECE6A;
+	--text-primary: #c0caf5;
+	--text-secondary: #9aa5ce;
+	--text-muted: #565f89;
 
-	--resource-health: #F7768E;
-	--resource-mana: #7AA2F7;
-	--resource-stamina: #E0AF68;
-	--resource-grit: #9ECE6A;
+	--accent-primary: #7dcfff;
+	--accent-secondary: #bb9af7;
+	--accent-warning: #e0af68;
+	--accent-danger: #f7768e;
+	--accent-success: #9ece6a;
 
-	--attribute-might: #F7768E;
-	--attribute-agility: #9ECE6A;
-	--attribute-charisma: #E0AF68;
-	--attribute-intelligence: #7DCFFF;
+	--resource-health: #f7768e;
+	--resource-mana: #7aa2f7;
+	--resource-stamina: #e0af68;
+	--resource-grit: #9ece6a;
+
+	--attribute-might: #f7768e;
+	--attribute-agility: #9ece6a;
+	--attribute-charisma: #e0af68;
+	--attribute-intelligence: #7dcfff;
 
 	/* Crystal/Icy Theme Colors */
-	--crystal-primary: #7DCFFF;
+	--crystal-primary: #7dcfff;
 	--crystal-primary-light: #c0e7ff;
 	--crystal-primary-dark: #5aa3d9;
 	--crystal-secondary: #7aa2f7;
 	--crystal-tertiary: #9aa5ce;
-	
+
 	/* Crystal Alpha Variations */
 	--crystal-primary-10: rgba(125, 207, 255, 0.1);
 	--crystal-primary-20: rgba(125, 207, 255, 0.2);
@@ -111,7 +111,7 @@
 	--crystal-primary-70: rgba(125, 207, 255, 0.7);
 	--crystal-primary-80: rgba(125, 207, 255, 0.8);
 	--crystal-primary-90: rgba(125, 207, 255, 0.9);
-	
+
 	--crystal-secondary-30: rgba(90, 163, 217, 0.3);
 	--crystal-secondary-50: rgba(90, 163, 217, 0.5);
 	--crystal-secondary-60: rgba(90, 163, 217, 0.6);
@@ -119,7 +119,7 @@
 	--crystal-secondary-80: rgba(90, 163, 217, 0.8);
 	--crystal-secondary-90: rgba(90, 163, 217, 0.9);
 	--crystal-secondary-100: rgba(90, 163, 217, 1);
-	
+
 	--crystal-tertiary-30: rgba(122, 162, 247, 0.3);
 	--crystal-tertiary-50: rgba(122, 162, 247, 0.5);
 	--crystal-tertiary-60: rgba(122, 162, 247, 0.6);
@@ -170,7 +170,7 @@
 	--mobile-bg-tertiary: rgb(50, 50, 50);
 	--mobile-border: rgb(68, 68, 68);
 	--mobile-accent: #f5d020;
-	
+
 	/* Attribute modifier colors */
 	--attr-positive: #22c55e;
 	--attr-positive-dark: #059669;

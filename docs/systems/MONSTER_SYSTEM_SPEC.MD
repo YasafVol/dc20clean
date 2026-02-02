@@ -13,12 +13,14 @@
 **Scope:** DM-facing system, completely separate from character creation. Includes monster design, feature point-buy, action building, and community sharing.
 
 **Key Principles:**
+
 - All stats derived from canonical Monster Statistics Table
 - Role modifiers shift defenses, not break the math
 - Feature Power budget enforces balance
 - Tier system (Standard/Apex/Legendary) scales encounter cost
 
 **Routes:**
+
 - `/dm/monsters` - Monster Laboratory (list view)
 - `/dm/monsters/:id` - Monster Designer (editor)
 - `/dm/monsters/new` - Create new monster
@@ -31,45 +33,45 @@
 
 From Bestiary Vol 2, p. 4:
 
-| Level | HP | PD | AD | Base Damage | Attack | Save DC | Feature Power |
-|-------|----|----|----|----|--------|---------|---------------|
-| -1 (Novice) | 5 | 10 | 10 | 1 | +2 | 12 | 0 |
-| 0 | 8 | 11 | 11 | 1 | +3 | 13 | 1 |
-| 1 | 10 | 12 | 12 | 1.5 | +4 | 14 | 1 |
-| 2 | 13 | 12 | 12 | 2 | +4 | 14 | 2 |
-| 3 | 15 | 13 | 13 | 3 | +5 | 15 | 2 |
-| 4 | 18 | 13 | 13 | 3.5 | +5 | 15 | 3 |
-| 5 | 21 | 15 | 15 | 4.5 | +7 | 17 | 3 |
-| 6 | 23 | 15 | 15 | 5 | +7 | 17 | 4 |
-| 7 | 25 | 16 | 16 | 5.5 | +8 | 18 | 4 |
-| 8 | 27 | 16 | 16 | 6.5 | +8 | 18 | 4 |
-| 9 | 29 | 17 | 17 | 7 | +9 | 19 | 5 |
-| 10 | 31 | 18 | 18 | 8 | +10 | 20 | 6 |
+| Level       | HP  | PD  | AD  | Base Damage | Attack | Save DC | Feature Power |
+| ----------- | --- | --- | --- | ----------- | ------ | ------- | ------------- |
+| -1 (Novice) | 5   | 10  | 10  | 1           | +2     | 12      | 0             |
+| 0           | 8   | 11  | 11  | 1           | +3     | 13      | 1             |
+| 1           | 10  | 12  | 12  | 1.5         | +4     | 14      | 1             |
+| 2           | 13  | 12  | 12  | 2           | +4     | 14      | 2             |
+| 3           | 15  | 13  | 13  | 3           | +5     | 15      | 2             |
+| 4           | 18  | 13  | 13  | 3.5         | +5     | 15      | 3             |
+| 5           | 21  | 15  | 15  | 4.5         | +7     | 17      | 3             |
+| 6           | 23  | 15  | 15  | 5           | +7     | 17      | 4             |
+| 7           | 25  | 16  | 16  | 5.5         | +8     | 18      | 4             |
+| 8           | 27  | 16  | 16  | 6.5         | +8     | 18      | 4             |
+| 9           | 29  | 17  | 17  | 7           | +9     | 19      | 5             |
+| 10          | 31  | 18  | 18  | 8           | +10    | 20      | 6             |
 
 ---
 
 ## 3. Role Modifiers
 
-| Role | HP Modifier | PD Offset | AD Offset | Primary Attributes |
-|------|-------------|-----------|-----------|-------------------|
-| Artillerist | -10% | +2 | -2 | AGI, INT |
-| Brute | +25% | -2 | +2 | MIG |
-| Controller | 0% | 0 | 0 | INT, CHA |
-| Defender | +10% | +2 | +2 | MIG, AGI |
-| Leader | 0% | 0 | 0 | CHA |
-| Lurker | -20% | +3 | -3 | AGI |
-| Skirmisher | 0% | +1 | +1 | AGI |
-| Support | -15% | -2 | -2 | CHA |
+| Role        | HP Modifier | PD Offset | AD Offset | Primary Attributes |
+| ----------- | ----------- | --------- | --------- | ------------------ |
+| Artillerist | -10%        | +2        | -2        | AGI, INT           |
+| Brute       | +25%        | -2        | +2        | MIG                |
+| Controller  | 0%          | 0         | 0         | INT, CHA           |
+| Defender    | +10%        | +2        | +2        | MIG, AGI           |
+| Leader      | 0%          | 0         | 0         | CHA                |
+| Lurker      | -20%        | +3        | -3        | AGI                |
+| Skirmisher  | 0%          | +1        | +1        | AGI                |
+| Support     | -15%        | -2        | -2        | CHA                |
 
 ---
 
 ## 4. Tier System
 
-| Tier | HP Multiplier | Encounter Cost | Initiative Entries |
-|------|---------------|----------------|-------------------|
-| Standard | 1× | Level × 1 | 1 |
-| Apex | 2× | Level × 2 | 2 (future: Arena) |
-| Legendary | 4× | Level × 4 | 1 + Legendary AP |
+| Tier      | HP Multiplier | Encounter Cost | Initiative Entries |
+| --------- | ------------- | -------------- | ------------------ |
+| Standard  | 1×            | Level × 1      | 1                  |
+| Apex      | 2×            | Level × 2      | 2 (future: Arena)  |
+| Legendary | 4×            | Level × 4      | 1 + Legendary AP   |
 
 ---
 
@@ -103,6 +105,7 @@ encounterCost = level × tierCostMultiplier
 ### 5.3 Example Calculation
 
 **Level 4 Brute Apex Monster:**
+
 - Base HP: 18, Base PD: 13, Base AD: 13
 - Role (Brute): HP × 1.25, PD - 2, AD + 2
 - Tier (Apex): HP × 2
@@ -157,6 +160,7 @@ Features from Bestiary Vol 1-3. All use prefixed UUIDs.
 ### 6.2 Custom Features
 
 Users can create custom features with:
+
 - Name (required, 1-50 chars)
 - Point cost (1-5)
 - Description (required)
@@ -166,11 +170,11 @@ Custom features stored in Convex `customFeatures` table.
 
 ### 6.3 Feature Data Sources
 
-| Source | Location | Editable | Shareable |
-|--------|----------|----------|-----------|
-| Official | `src/lib/rulesdata/dm/monsterFeatures.ts` | No | N/A |
-| Custom | Convex `customFeatures` table | Yes (owner) | Yes |
-| Homebrew | Convex (approved custom) | Fork to edit | Already shared |
+| Source   | Location                                  | Editable     | Shareable      |
+| -------- | ----------------------------------------- | ------------ | -------------- |
+| Official | `src/lib/rulesdata/dm/monsterFeatures.ts` | No           | N/A            |
+| Custom   | Convex `customFeatures` table             | Yes (owner)  | Yes            |
+| Homebrew | Convex (approved custom)                  | Fork to edit | Already shared |
 
 ---
 
@@ -180,16 +184,16 @@ Custom features stored in Convex `customFeatures` table.
 
 ```typescript
 interface MonsterAction {
-  id: string;              // act_<uuid>
-  name: string;
-  apCost: number;          // 1-4
-  type: 'martial' | 'spell' | 'special';
-  targetDefense: 'pd' | 'ad';
-  damage: number;
-  damageType?: string;     // slashing, fire, etc.
-  range?: number;          // spaces
-  area?: string;           // cone, sphere, etc.
-  description: string;
+	id: string; // act_<uuid>
+	name: string;
+	apCost: number; // 1-4
+	type: 'martial' | 'spell' | 'special';
+	targetDefense: 'pd' | 'ad';
+	damage: number;
+	damageType?: string; // slashing, fire, etc.
+	range?: number; // spaces
+	area?: string; // cone, sphere, etc.
+	description: string;
 }
 ```
 
@@ -216,14 +220,14 @@ Optional fields for thematic richness, not affecting combat math.
 
 ### 8.1 Monster Size
 
-| Value | Description |
-|-------|-------------|
-| Tiny | < 2.5 ft |
-| Small | 2.5–4 ft |
-| Medium | 4–8 ft |
-| Large | 8–15 ft |
-| Huge | 15–25 ft |
-| Gargantuan | > 25 ft |
+| Value      | Description |
+| ---------- | ----------- |
+| Tiny       | < 2.5 ft    |
+| Small      | 2.5–4 ft    |
+| Medium     | 4–8 ft      |
+| Large      | 8–15 ft     |
+| Huge       | 15–25 ft    |
+| Gargantuan | > 25 ft     |
 
 ### 8.2 Monster Type
 
@@ -235,19 +239,19 @@ Optional fields for thematic richness, not affecting combat math.
 
 Standard alignment grid plus special values:
 
-| Lawful | Neutral | Chaotic |
-|--------|---------|---------|
-| Lawful Good | Neutral Good | Chaotic Good |
+| Lawful         | Neutral      | Chaotic         |
+| -------------- | ------------ | --------------- |
+| Lawful Good    | Neutral Good | Chaotic Good    |
 | Lawful Neutral | True Neutral | Chaotic Neutral |
-| Lawful Evil | Neutral Evil | Chaotic Evil |
+| Lawful Evil    | Neutral Evil | Chaotic Evil    |
 
 Plus: `Unaligned` (mindless creatures), `Varies` (individual choice)
 
 ### 8.4 Lore & Tactics
 
-| Field | Max Length | Purpose |
-|-------|------------|---------|
-| `lore` | 2000 chars | Background, habitat, behavior |
+| Field     | Max Length | Purpose                       |
+| --------- | ---------- | ----------------------------- |
+| `lore`    | 2000 chars | Background, habitat, behavior |
 | `tactics` | 1000 chars | Combat strategy notes for DMs |
 
 ---
@@ -257,6 +261,7 @@ Plus: `Unaligned` (mindless creatures), `Varies` (individual choice)
 ### 8.1 ID Format
 
 All content uses prefixed UUIDs:
+
 - Monsters: `mon_<uuid>`
 - Features: `feat_<uuid>`
 - Actions: `act_<uuid>`
@@ -265,83 +270,86 @@ All content uses prefixed UUIDs:
 
 ```typescript
 interface SavedMonster {
-  // Identity
-  id: string;                    // mon_<uuid>
-  name: string;
-  description?: string;
-  level: number;                 // -1 to 10
-  tier: 'standard' | 'apex' | 'legendary';
-  roleId: string;
-  
-  // Flavor/Lore (optional)
-  size?: MonsterSize;            // Tiny | Small | Medium | Large | Huge | Gargantuan
-  monsterType?: MonsterType;     // Beast | Humanoid | Undead | Dragon | etc. (14 types)
-  alignment?: MonsterAlignment;  // Lawful Good → Chaotic Evil | Unaligned | Varies
-  lore?: string;                 // Background/flavor text (max 2000 chars)
-  tactics?: string;              // Combat behavior notes (max 1000 chars)
-  
-  // Calculated Stats
-  finalHP: number;
-  finalPD: number;
-  finalAD: number;
-  finalAttack: number;
-  finalSaveDC: number;
-  finalBaseDamage: number;
-  
-  // Attributes (for flavor/roleplay)
-  attributes: {
-    might: number;
-    agility: number;
-    charisma: number;
-    intelligence: number;
-  };
-  
-  // Features
-  featureIds: string[];
-  featurePointsSpent: number;
-  featurePointsMax: number;
-  
-  // Actions
-  actions: MonsterAction[];
-  
-  // Sharing
-  visibility: 'private' | 'public_anonymous' | 'public_credited';
-  approvalStatus: 'draft' | 'pending_review' | 'approved' | 'rejected';
-  isHomebrew: boolean;
-  rejectionReason?: string;
-  submittedAt?: string;
-  approvedAt?: string;
-  approvedBy?: string;
-  
-  // Fork Tracking
-  forkedFrom?: {
-    id: string;
-    type: 'official' | 'custom' | 'homebrew';
-    name: string;
-    userId?: string;
-    forkedAt: string;
-  };
-  forkStats?: {
-    forkCount: number;
-    lastForkedAt?: string;
-  };
-  
-  // Soft Delete
-  deletedAt?: string;
-  deletedBy?: string;
-  scheduledPurgeAt?: string;
-  
-  // Metadata
-  createdAt: string;
-  lastModified: string;
-  schemaVersion: string;
-  
-  // Calculation Breakdowns
-  breakdowns: Record<string, {
-    base: number;
-    modifiers: Array<{ source: string; value: number }>;
-    total: number;
-  }>;
+	// Identity
+	id: string; // mon_<uuid>
+	name: string;
+	description?: string;
+	level: number; // -1 to 10
+	tier: 'standard' | 'apex' | 'legendary';
+	roleId: string;
+
+	// Flavor/Lore (optional)
+	size?: MonsterSize; // Tiny | Small | Medium | Large | Huge | Gargantuan
+	monsterType?: MonsterType; // Beast | Humanoid | Undead | Dragon | etc. (14 types)
+	alignment?: MonsterAlignment; // Lawful Good → Chaotic Evil | Unaligned | Varies
+	lore?: string; // Background/flavor text (max 2000 chars)
+	tactics?: string; // Combat behavior notes (max 1000 chars)
+
+	// Calculated Stats
+	finalHP: number;
+	finalPD: number;
+	finalAD: number;
+	finalAttack: number;
+	finalSaveDC: number;
+	finalBaseDamage: number;
+
+	// Attributes (for flavor/roleplay)
+	attributes: {
+		might: number;
+		agility: number;
+		charisma: number;
+		intelligence: number;
+	};
+
+	// Features
+	featureIds: string[];
+	featurePointsSpent: number;
+	featurePointsMax: number;
+
+	// Actions
+	actions: MonsterAction[];
+
+	// Sharing
+	visibility: 'private' | 'public_anonymous' | 'public_credited';
+	approvalStatus: 'draft' | 'pending_review' | 'approved' | 'rejected';
+	isHomebrew: boolean;
+	rejectionReason?: string;
+	submittedAt?: string;
+	approvedAt?: string;
+	approvedBy?: string;
+
+	// Fork Tracking
+	forkedFrom?: {
+		id: string;
+		type: 'official' | 'custom' | 'homebrew';
+		name: string;
+		userId?: string;
+		forkedAt: string;
+	};
+	forkStats?: {
+		forkCount: number;
+		lastForkedAt?: string;
+	};
+
+	// Soft Delete
+	deletedAt?: string;
+	deletedBy?: string;
+	scheduledPurgeAt?: string;
+
+	// Metadata
+	createdAt: string;
+	lastModified: string;
+	schemaVersion: string;
+
+	// Calculation Breakdowns
+	breakdowns: Record<
+		string,
+		{
+			base: number;
+			modifiers: Array<{ source: string; value: number }>;
+			total: number;
+		}
+	>;
 }
 ```
 
@@ -351,41 +359,41 @@ interface SavedMonster {
 
 ### 9.1 Queries
 
-| Query | Args | Returns | Description |
-|-------|------|---------|-------------|
-| `monsters.list` | - | `Monster[]` | User's monsters + approved homebrew |
-| `monsters.getById` | `id: string` | `Monster \| null` | Single monster |
-| `monsters.listHomebrew` | `filters?` | `Monster[]` | Approved public monsters |
-| `monsters.listTrash` | - | `Monster[]` | User's deleted monsters |
-| `customFeatures.list` | - | `Feature[]` | User's features + approved homebrew |
+| Query                   | Args         | Returns           | Description                         |
+| ----------------------- | ------------ | ----------------- | ----------------------------------- |
+| `monsters.list`         | -            | `Monster[]`       | User's monsters + approved homebrew |
+| `monsters.getById`      | `id: string` | `Monster \| null` | Single monster                      |
+| `monsters.listHomebrew` | `filters?`   | `Monster[]`       | Approved public monsters            |
+| `monsters.listTrash`    | -            | `Monster[]`       | User's deleted monsters             |
+| `customFeatures.list`   | -            | `Feature[]`       | User's features + approved homebrew |
 
 ### 9.2 Mutations
 
-| Mutation | Args | Returns | Description |
-|----------|------|---------|-------------|
-| `monsters.create` | `monster: SavedMonster` | `id` | Create new monster |
-| `monsters.update` | `id, updates` | `id` | Update existing |
-| `monsters.softDelete` | `id: string` | `void` | Move to trash |
-| `monsters.restore` | `id: string` | `void` | Restore from trash |
-| `monsters.hardDelete` | `id: string` | `void` | Permanent delete |
-| `monsters.fork` | `sourceId, sourceType, sourceData` | `newId` | Fork monster |
-| `monsters.submitForReview` | `id, visibility` | `void` | Submit to homebrew |
-| `customFeatures.create` | `feature` | `id` | Create custom feature |
-| `customFeatures.fork` | `sourceId, sourceType, sourceData` | `newId` | Fork feature |
+| Mutation                   | Args                               | Returns | Description           |
+| -------------------------- | ---------------------------------- | ------- | --------------------- |
+| `monsters.create`          | `monster: SavedMonster`            | `id`    | Create new monster    |
+| `monsters.update`          | `id, updates`                      | `id`    | Update existing       |
+| `monsters.softDelete`      | `id: string`                       | `void`  | Move to trash         |
+| `monsters.restore`         | `id: string`                       | `void`  | Restore from trash    |
+| `monsters.hardDelete`      | `id: string`                       | `void`  | Permanent delete      |
+| `monsters.fork`            | `sourceId, sourceType, sourceData` | `newId` | Fork monster          |
+| `monsters.submitForReview` | `id, visibility`                   | `void`  | Submit to homebrew    |
+| `customFeatures.create`    | `feature`                          | `id`    | Create custom feature |
+| `customFeatures.fork`      | `sourceId, sourceType, sourceData` | `newId` | Fork feature          |
 
 ---
 
 ## 10. Validation Rules
 
-| Field | Rule | Error Message |
-|-------|------|---------------|
-| name | Required, 1-50 chars | "Name is required" / "Name must be 50 characters or less" |
-| level | -1 to 10 | "Level must be between -1 (Novice) and 10" |
-| roleId | Must exist | "Role is required" |
-| featureIds | Points ≤ max | "Feature points exceeded (X/Y)" |
-| actions | At least 1 | "At least one action is required" |
-| action.damage | Warning if > 1.5× base | "Damage exceeds recommended maximum" |
-| action.apCost | 1-4 | "AP cost must be between 1 and 4" |
+| Field         | Rule                   | Error Message                                             |
+| ------------- | ---------------------- | --------------------------------------------------------- |
+| name          | Required, 1-50 chars   | "Name is required" / "Name must be 50 characters or less" |
+| level         | -1 to 10               | "Level must be between -1 (Novice) and 10"                |
+| roleId        | Must exist             | "Role is required"                                        |
+| featureIds    | Points ≤ max           | "Feature points exceeded (X/Y)"                           |
+| actions       | At least 1             | "At least one action is required"                         |
+| action.damage | Warning if > 1.5× base | "Damage exceeds recommended maximum"                      |
+| action.apCost | 1-4                    | "AP cost must be between 1 and 4"                         |
 
 ---
 
@@ -410,34 +418,41 @@ dmLogger.action({
 All phases complete. Implementation files:
 
 ### Phase 1: Specification & Types ✅
+
 - [x] `src/lib/rulesdata/schemas/monster.schema.ts` - SavedMonster, MonsterAction, MonsterTier, MonsterRole
 - [x] `src/lib/utils/idGenerator.ts` - Prefixed UUID generation
 
 ### Phase 2: Data Layer ✅
+
 - [x] `src/lib/rulesdata/dm/monsterStatistics.ts` - Statistics table from Bestiary Vol 2
 - [x] `src/lib/rulesdata/dm/monsterRoles.ts` - 8 role definitions with modifiers
 - [x] `src/lib/rulesdata/dm/monsterFeatures.ts` - Official features with UUIDs
 - [x] `src/lib/rulesdata/dm/index.ts` - Barrel export
 
 ### Phase 3: Calculator (TDD) ✅
+
 - [x] `src/lib/services/monsterCalculator.test.ts` - Comprehensive test suite
 - [x] `src/lib/services/monsterCalculator.ts` - All calculations implemented
 - [x] All tests passing
 
 ### Phase 4: Convex Schema ✅
+
 - [x] `convex/schema.ts` - `monsters` and `customFeatures` tables
 - [x] Indexes: by_user, by_user_and_id, by_approval_status, by_user_and_deleted
 
 ### Phase 5: Convex Functions ✅
+
 - [x] `convex/monsters.ts` - Full CRUD, fork, soft delete, homebrew
 - [x] `convex/customFeatures.ts` - Custom feature management
 
 ### Phase 6: Frontend Hooks ✅
+
 - [x] `src/lib/hooks/useMonsters.ts` - Monster data access
 - [x] `src/lib/hooks/useMonsterFeatures.ts` - Feature management
 - [x] `src/lib/hooks/useMonsterBuilder.tsx` - Context + reducer for UI
 
 ### Phase 7: UI Components ✅
+
 - [x] `src/routes/dm/monsters/MonsterList.tsx` - List view with cards
 - [x] `src/routes/dm/monsters/MonsterDesigner.tsx` - Main editor
 - [x] `src/routes/dm/monsters/components/RoleSelector.tsx` - 4-column role grid
@@ -448,11 +463,13 @@ All phases complete. Implementation files:
 - [x] `src/routes/dm/monsters/styles/MonsterStyles.ts` - Styled components
 
 ### Phase 8: Integration ✅
+
 - [x] Routes in `App.tsx`: `/dm/monsters`, `/dm/monsters/:id`
 - [x] Menu integration: "Laboratory" in DM Tools section
 - [x] Vercel + Convex deployment integration
 
 ### Phase 9: Import & Seed ✅
+
 - [x] `src/lib/services/monsterImporter.ts` - Raw JSON to SavedMonster transformer
 - [x] `src/lib/rulesdata/dm/sampleMonsters.ts` - 8 pre-built sample monsters
 - [x] `convex/monsters.ts:seedMonsters` - Bulk seed mutation
@@ -461,18 +478,19 @@ All phases complete. Implementation files:
 
 ### Sample Monsters (Seed Data)
 
-| Monster | Level | Tier | Role |
-|---------|-------|------|------|
-| Goblin Warrior | 1 | Standard | Skirmisher |
-| Skeleton | 1 | Standard | Skirmisher |
-| Wolf | 1 | Standard | Skirmisher |
-| Orc Berserker | 2 | Standard | Brute |
-| Giant Spider | 2 | Standard | Controller |
-| Cultist Fanatic | 2 | Standard | Artillerist |
-| Ogre | 4 | Apex | Brute |
-| Young Dragon | 8 | Legendary | Brute |
+| Monster         | Level | Tier      | Role        |
+| --------------- | ----- | --------- | ----------- |
+| Goblin Warrior  | 1     | Standard  | Skirmisher  |
+| Skeleton        | 1     | Standard  | Skirmisher  |
+| Wolf            | 1     | Standard  | Skirmisher  |
+| Orc Berserker   | 2     | Standard  | Brute       |
+| Giant Spider    | 2     | Standard  | Controller  |
+| Cultist Fanatic | 2     | Standard  | Artillerist |
+| Ogre            | 4     | Apex      | Brute       |
+| Young Dragon    | 8     | Legendary | Brute       |
 
 Seed files:
+
 - `docs/seed-data/sample-monsters.json` - Raw JSON template
 - `src/lib/rulesdata/dm/sampleMonsters.ts` - TypeScript with calculated stats
 
@@ -487,10 +505,10 @@ The `monsterImporter.ts` service transforms raw seed data JSON into the full `Sa
 ### 14.2 API
 
 ```typescript
-import { 
-  importRawMonster,
-  importRawMonsters,
-  importMonstersFromJson 
+import {
+	importRawMonster,
+	importRawMonsters,
+	importMonstersFromJson
 } from '@/lib/services/monsterImporter';
 
 // Single monster
@@ -513,21 +531,22 @@ const parsed = importMonstersFromJson(jsonString);
 
 ### 14.3 Field Mapping
 
-| Seed Format | → | Schema Format |
-|-------------|---|---------------|
-| `role: "brute"` | → | `roleId: "brute"` |
-| `actionType: "Attack"` | → | `type: "martial"` |
-| `actionType: "Spell"` | → | `type: "spell"` |
-| `targetDefense: "PD"` | → | `targetDefense: "pd"` |
-| `targetDefense: "AD"` | → | `targetDefense: "ad"` |
-| `type: "Beast"` | → | `monsterType: "Beast"` |
-| `tier: "Elite"` | → | `tier: "apex"` |
-| `tier: "Solo"` | → | `tier: "legendary"` |
-| `features: [{name, desc}]` | → | `featureIds: ["feat_..."]` |
+| Seed Format                | →   | Schema Format              |
+| -------------------------- | --- | -------------------------- |
+| `role: "brute"`            | →   | `roleId: "brute"`          |
+| `actionType: "Attack"`     | →   | `type: "martial"`          |
+| `actionType: "Spell"`      | →   | `type: "spell"`            |
+| `targetDefense: "PD"`      | →   | `targetDefense: "pd"`      |
+| `targetDefense: "AD"`      | →   | `targetDefense: "ad"`      |
+| `type: "Beast"`            | →   | `monsterType: "Beast"`     |
+| `tier: "Elite"`            | →   | `tier: "apex"`             |
+| `tier: "Solo"`             | →   | `tier: "legendary"`        |
+| `features: [{name, desc}]` | →   | `featureIds: ["feat_..."]` |
 
 ### 14.4 Auto-Generated Fields
 
 The importer automatically generates:
+
 - Missing UUIDs (prefixed with `mon_`, `act_`)
 - Calculated stats (HP, PD, AD, Attack, Save DC, Base Damage)
 - Metadata (`createdAt`, `lastModified`, `schemaVersion`)
@@ -537,6 +556,7 @@ The importer automatically generates:
 ### 14.5 Validation & Warnings
 
 The importer reports:
+
 - **Errors** for missing required fields (name, level, role, actions)
 - **Warnings** for mapped fields (role variations, action types)
 - **Warnings** for features not found in official list (requires custom feature creation)

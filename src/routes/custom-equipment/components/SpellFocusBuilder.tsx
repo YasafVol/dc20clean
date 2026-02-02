@@ -13,7 +13,10 @@ import {
 } from '../../../lib/rulesdata/equipment/options/spellFocusOptions';
 import { validateSpellFocus } from '../../../lib/rulesdata/equipment/validation/equipmentValidator';
 import { saveCustomSpellFocus } from '../../../lib/rulesdata/equipment/storage/equipmentStorage';
-import type { CustomSpellFocus, SpellFocusHands } from '../../../lib/rulesdata/equipment/schemas/spellFocusSchema';
+import type {
+	CustomSpellFocus,
+	SpellFocusHands
+} from '../../../lib/rulesdata/equipment/schemas/spellFocusSchema';
 import {
 	BuilderContainer,
 	SectionTitle,
@@ -62,7 +65,8 @@ const SpellFocusBuilder: React.FC<SpellFocusBuilderProps> = ({ onBack }) => {
 
 	const validation = useMemo(() => {
 		if (!hands) return { isValid: false, errors: [], warnings: [] };
-		const props = hands === 'two-handed' ? [...selectedProperties, 'two-handed-focus'] : selectedProperties;
+		const props =
+			hands === 'two-handed' ? [...selectedProperties, 'two-handed-focus'] : selectedProperties;
 		return validateSpellFocus({
 			hands,
 			properties: props,
@@ -89,7 +93,8 @@ const SpellFocusBuilder: React.FC<SpellFocusBuilderProps> = ({ onBack }) => {
 	};
 
 	const buildSpellFocus = (): CustomSpellFocus => {
-		const props = hands === 'two-handed' ? [...selectedProperties, 'two-handed-focus'] : selectedProperties;
+		const props =
+			hands === 'two-handed' ? [...selectedProperties, 'two-handed-focus'] : selectedProperties;
 
 		return {
 			id: `custom-focus-${Date.now()}`,
@@ -290,7 +295,7 @@ const SpellFocusBuilder: React.FC<SpellFocusBuilderProps> = ({ onBack }) => {
 							value={name}
 							onChange={(e) => setName(e.target.value)}
 							placeholder="Enter a name for your spell focus..."
-							className="w-full rounded-md border border-gray-700 bg-slate-900 px-3 py-2 text-white focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+							className="w-full rounded-md border border-gray-700 bg-slate-900 px-3 py-2 text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none"
 						/>
 					</div>
 
@@ -308,7 +313,7 @@ const SpellFocusBuilder: React.FC<SpellFocusBuilderProps> = ({ onBack }) => {
 
 						{selectedProperties.length > 0 && (
 							<>
-								<div className="mb-2 mt-4 text-sm font-semibold text-gray-400">Properties</div>
+								<div className="mt-4 mb-2 text-sm font-semibold text-gray-400">Properties</div>
 								{selectedProperties.map((propId) => {
 									const prop = SPELL_FOCUS_PROPERTIES.find((p) => p.id === propId);
 									return (
@@ -324,7 +329,7 @@ const SpellFocusBuilder: React.FC<SpellFocusBuilderProps> = ({ onBack }) => {
 						)}
 
 						{/* Calculated Bonuses */}
-						<div className="mb-2 mt-4 text-sm font-semibold text-gray-400">Final Stats</div>
+						<div className="mt-4 mb-2 text-sm font-semibold text-gray-400">Final Stats</div>
 						{selectedProperties.includes('channeling') && (
 							<SummaryRow>
 								<SummaryLabel>Spell Check Bonus</SummaryLabel>

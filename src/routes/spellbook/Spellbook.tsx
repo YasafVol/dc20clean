@@ -196,7 +196,9 @@ const Spellbook: React.FC = () => {
 		selected: number[],
 		setSelected: React.Dispatch<React.SetStateAction<number[]>>
 	) => {
-		setSelected((prev) => (prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]));
+		setSelected((prev) =>
+			prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
+		);
 	};
 
 	// Filter spells
@@ -251,7 +253,15 @@ const Spellbook: React.FC = () => {
 		}
 
 		return spells;
-	}, [searchQuery, sourceFilter, schoolFilter, tagFilter, apCostFilter, mpCostFilter, sustainedOnly]);
+	}, [
+		searchQuery,
+		sourceFilter,
+		schoolFilter,
+		tagFilter,
+		apCostFilter,
+		mpCostFilter,
+		sustainedOnly
+	]);
 
 	// Group spells by school for display
 	const spellsBySchool = useMemo(() => {
@@ -327,7 +337,7 @@ const Spellbook: React.FC = () => {
 								value={searchQuery}
 								onChange={(e) => setSearchQuery(e.target.value)}
 								placeholder="Search by spell name or description..."
-								className="w-full rounded-lg border border-primary/30 bg-black/40 px-4 py-3 text-base text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+								className="border-primary/30 text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/40 w-full rounded-lg border bg-black/40 px-4 py-3 text-base focus:ring-2 focus:outline-none"
 							/>
 						</div>
 
@@ -343,15 +353,13 @@ const Spellbook: React.FC = () => {
 											<button
 												key={className}
 												type="button"
-												onClick={() =>
-													toggleSelection(className, classFilter, setClassFilter)
-												}
+												onClick={() => toggleSelection(className, classFilter, setClassFilter)}
 												aria-pressed={isSelected}
 												className={cn(
 													'rounded-full border px-4 py-2 text-sm font-semibold transition',
 													isSelected
 														? 'border-cyan-400 bg-gradient-to-r from-cyan-500/30 to-sky-500/30 text-cyan-100 shadow-lg shadow-cyan-500/20'
-														: 'border-white/10 bg-black/40 text-muted-foreground hover:border-cyan-400/60 hover:text-foreground'
+														: 'text-muted-foreground hover:text-foreground border-white/10 bg-black/40 hover:border-cyan-400/60'
 												)}
 											>
 												{className}
@@ -362,8 +370,8 @@ const Spellbook: React.FC = () => {
 							</div>
 
 							{/* Source Filter */}
-							<div className="space-y-3 rounded-lg border border-primary/20 bg-black/30 p-4">
-								<label className="text-base font-semibold text-primary">Source</label>
+							<div className="border-primary/20 space-y-3 rounded-lg border bg-black/30 p-4">
+								<label className="text-primary text-base font-semibold">Source</label>
 								<div className="flex w-full flex-wrap gap-3">
 									{Object.values(SpellSource).map((source) => {
 										const isSelected = sourceFilter.includes(source);
@@ -374,10 +382,10 @@ const Spellbook: React.FC = () => {
 												onClick={() => toggleSelection(source, sourceFilter, setSourceFilter)}
 												aria-pressed={isSelected}
 												className={cn(
-													'rounded-full border px-4 py-2 text-sm font-semibold uppercase tracking-wide transition',
+													'rounded-full border px-4 py-2 text-sm font-semibold tracking-wide uppercase transition',
 													isSelected
-														? 'border-primary bg-gradient-to-r from-indigo-500/30 to-sky-500/30 text-primary shadow-lg shadow-primary/20'
-														: 'border-white/10 bg-black/40 text-muted-foreground hover:border-primary/60 hover:text-foreground'
+														? 'border-primary text-primary shadow-primary/20 bg-gradient-to-r from-indigo-500/30 to-sky-500/30 shadow-lg'
+														: 'text-muted-foreground hover:border-primary/60 hover:text-foreground border-white/10 bg-black/40'
 												)}
 											>
 												{source}
@@ -403,7 +411,7 @@ const Spellbook: React.FC = () => {
 													'rounded-full border px-4 py-2 text-sm font-semibold transition',
 													isSelected
 														? 'border-purple-400 bg-gradient-to-r from-purple-500/30 to-fuchsia-500/30 text-purple-100 shadow-lg shadow-purple-500/20'
-														: 'border-white/10 bg-black/40 text-muted-foreground hover:border-purple-400/60 hover:text-foreground'
+														: 'text-muted-foreground hover:text-foreground border-white/10 bg-black/40 hover:border-purple-400/60'
 												)}
 											>
 												{school}
@@ -426,10 +434,10 @@ const Spellbook: React.FC = () => {
 												onClick={() => toggleSelection(tag, tagFilter, setTagFilter)}
 												aria-pressed={isSelected}
 												className={cn(
-													'rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition',
+													'rounded-full border px-3 py-1.5 text-xs font-semibold tracking-wide uppercase transition',
 													isSelected
 														? 'border-emerald-400 bg-gradient-to-r from-emerald-500/30 to-teal-500/30 text-emerald-100 shadow-lg shadow-emerald-500/20'
-														: 'border-white/10 bg-black/40 text-muted-foreground hover:border-emerald-400/60 hover:text-foreground'
+														: 'text-muted-foreground hover:text-foreground border-white/10 bg-black/40 hover:border-emerald-400/60'
 												)}
 											>
 												{tag}
@@ -443,7 +451,7 @@ const Spellbook: React.FC = () => {
 							<div className="space-y-3 rounded-lg border border-amber-400/20 bg-black/30 p-4">
 								<label className="text-base font-semibold text-amber-200">Cost</label>
 								<div className="flex w-full flex-wrap items-center gap-3">
-									<span className="text-sm font-semibold uppercase tracking-wide text-amber-100/80">
+									<span className="text-sm font-semibold tracking-wide text-amber-100/80 uppercase">
 										AP
 									</span>
 									{availableApCosts.map((cost) => {
@@ -452,22 +460,20 @@ const Spellbook: React.FC = () => {
 											<button
 												key={`ap-${cost}`}
 												type="button"
-												onClick={() =>
-													toggleNumberSelection(cost, apCostFilter, setApCostFilter)
-												}
+												onClick={() => toggleNumberSelection(cost, apCostFilter, setApCostFilter)}
 												aria-pressed={isSelected}
 												className={cn(
 													'rounded-full border px-4 py-2 text-sm font-semibold transition',
 													isSelected
 														? 'border-amber-400 bg-gradient-to-r from-amber-500/30 to-orange-500/30 text-amber-100 shadow-lg shadow-amber-500/20'
-														: 'border-white/10 bg-black/40 text-muted-foreground hover:border-amber-400/60 hover:text-foreground'
+														: 'text-muted-foreground hover:text-foreground border-white/10 bg-black/40 hover:border-amber-400/60'
 												)}
 											>
 												{cost}
 											</button>
 										);
 									})}
-									<span className="ml-2 text-sm font-semibold uppercase tracking-wide text-amber-100/80">
+									<span className="ml-2 text-sm font-semibold tracking-wide text-amber-100/80 uppercase">
 										MP
 									</span>
 									{availableMpCosts.costs.map((cost) => {
@@ -482,7 +488,7 @@ const Spellbook: React.FC = () => {
 													'rounded-full border px-4 py-2 text-sm font-semibold transition',
 													isSelected
 														? 'border-amber-400 bg-gradient-to-r from-amber-500/30 to-orange-500/30 text-amber-100 shadow-lg shadow-amber-500/20'
-														: 'border-white/10 bg-black/40 text-muted-foreground hover:border-amber-400/60 hover:text-foreground'
+														: 'text-muted-foreground hover:text-foreground border-white/10 bg-black/40 hover:border-amber-400/60'
 												)}
 											>
 												{cost}
@@ -499,7 +505,7 @@ const Spellbook: React.FC = () => {
 												'rounded-full border px-4 py-2 text-sm font-semibold transition',
 												mpCostFilter.includes('none')
 													? 'border-amber-400 bg-gradient-to-r from-amber-500/30 to-orange-500/30 text-amber-100 shadow-lg shadow-amber-500/20'
-													: 'border-white/10 bg-black/40 text-muted-foreground hover:border-amber-400/60 hover:text-foreground'
+													: 'text-muted-foreground hover:text-foreground border-white/10 bg-black/40 hover:border-amber-400/60'
 											)}
 										>
 											No MP
@@ -529,13 +535,15 @@ const Spellbook: React.FC = () => {
 						{/* Active Filters Summary */}
 						{hasActiveFilters && (
 							<div className="flex flex-wrap items-center gap-3 pt-2">
-								<span className="text-base font-semibold text-muted-foreground">Active filters:</span>
+								<span className="text-muted-foreground text-base font-semibold">
+									Active filters:
+								</span>
 								{searchQuery.trim() && (
 									<Badge variant="secondary" className="gap-1 text-sm">
 										"{searchQuery}"
 										<button
 											onClick={() => setSearchQuery('')}
-											className="ml-1 hover:text-destructive"
+											className="hover:text-destructive ml-1"
 										>
 											x
 										</button>
@@ -548,46 +556,44 @@ const Spellbook: React.FC = () => {
 											onClick={() =>
 												setClassFilter((prev) => prev.filter((item) => item !== className))
 											}
-											className="ml-1 hover:text-destructive"
+											className="hover:text-destructive ml-1"
 										>
 											x
 										</button>
 									</Badge>
 								))}
 								{sourceFilter.map((source) => (
-									<Badge key={"source-" + source} variant="secondary" className="gap-1 text-sm">
+									<Badge key={'source-' + source} variant="secondary" className="gap-1 text-sm">
 										{source}
 										<button
 											onClick={() =>
 												setSourceFilter((prev) => prev.filter((item) => item !== source))
 											}
-											className="ml-1 hover:text-destructive"
+											className="hover:text-destructive ml-1"
 										>
 											x
 										</button>
 									</Badge>
 								))}
 								{schoolFilter.map((school) => (
-									<Badge key={"school-" + school} variant="secondary" className="gap-1 text-sm">
+									<Badge key={'school-' + school} variant="secondary" className="gap-1 text-sm">
 										{school}
 										<button
 											onClick={() =>
 												setSchoolFilter((prev) => prev.filter((item) => item !== school))
 											}
-											className="ml-1 hover:text-destructive"
+											className="hover:text-destructive ml-1"
 										>
 											x
 										</button>
 									</Badge>
 								))}
 								{tagFilter.map((tag) => (
-									<Badge key={"tag-" + tag} variant="secondary" className="gap-1 text-sm">
+									<Badge key={'tag-' + tag} variant="secondary" className="gap-1 text-sm">
 										{tag}
 										<button
-											onClick={() =>
-												setTagFilter((prev) => prev.filter((item) => item !== tag))
-											}
-											className="ml-1 hover:text-destructive"
+											onClick={() => setTagFilter((prev) => prev.filter((item) => item !== tag))}
+											className="hover:text-destructive ml-1"
 										>
 											x
 										</button>
@@ -600,7 +606,7 @@ const Spellbook: React.FC = () => {
 											onClick={() =>
 												setApCostFilter((prev) => prev.filter((item) => item !== cost))
 											}
-											className="ml-1 hover:text-destructive"
+											className="hover:text-destructive ml-1"
 										>
 											x
 										</button>
@@ -613,7 +619,7 @@ const Spellbook: React.FC = () => {
 											onClick={() =>
 												setMpCostFilter((prev) => prev.filter((item) => item !== cost))
 											}
-											className="ml-1 hover:text-destructive"
+											className="hover:text-destructive ml-1"
 										>
 											x
 										</button>
@@ -622,12 +628,12 @@ const Spellbook: React.FC = () => {
 								{sustainedOnly && (
 									<Badge
 										variant="secondary"
-										className="gap-1 bg-amber-500/20 text-amber-400 text-sm"
+										className="gap-1 bg-amber-500/20 text-sm text-amber-400"
 									>
 										Sustained
 										<button
 											onClick={() => setSustainedOnly(false)}
-											className="ml-1 hover:text-destructive"
+											className="hover:text-destructive ml-1"
 										>
 											x
 										</button>
@@ -637,7 +643,7 @@ const Spellbook: React.FC = () => {
 									variant="ghost"
 									size="sm"
 									onClick={clearFilters}
-									className="text-xs text-muted-foreground hover:text-foreground"
+									className="text-muted-foreground hover:text-foreground text-xs"
 								>
 									Clear all
 								</Button>
@@ -647,7 +653,7 @@ const Spellbook: React.FC = () => {
 				</Card>
 
 				{/* Results Summary */}
-				<div className="text-center text-sm text-muted-foreground">
+				<div className="text-muted-foreground text-center text-sm">
 					Showing {filteredSpells.length} of {ALL_SPELLS.length} spells
 					{schoolFilter.length === 0 && ` • ${Object.keys(spellsBySchool).length} schools`}
 				</div>
@@ -655,10 +661,8 @@ const Spellbook: React.FC = () => {
 				{/* Spells Display */}
 				{filteredSpells.length === 0 ? (
 					<div className="py-16 text-center">
-						<h3 className="mb-4 text-2xl text-muted-foreground">No Spells Found</h3>
-						<p className="text-muted-foreground">
-							Try adjusting your filters to see more spells.
-						</p>
+						<h3 className="text-muted-foreground mb-4 text-2xl">No Spells Found</h3>
+						<p className="text-muted-foreground">Try adjusting your filters to see more spells.</p>
 						<Button variant="outline" onClick={clearFilters} className="mt-4">
 							Clear Filters
 						</Button>
@@ -682,9 +686,9 @@ const Spellbook: React.FC = () => {
 							.sort(([a], [b]) => a.localeCompare(b))
 							.map(([school, spells]) => (
 								<div key={school}>
-									<h2 className="font-cinzel text-primary mb-4 border-b border-primary/30 pb-2 text-2xl font-bold">
+									<h2 className="font-cinzel text-primary border-primary/30 mb-4 border-b pb-2 text-2xl font-bold">
 										{school}
-										<span className="ml-2 text-base font-normal text-muted-foreground">
+										<span className="text-muted-foreground ml-2 text-base font-normal">
 											({spells.length} spells)
 										</span>
 									</h2>
@@ -719,7 +723,7 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 		<Card
 			className={cn(
 				'cursor-pointer border-purple-500 bg-gradient-to-br from-indigo-950 to-indigo-900 shadow-lg shadow-purple-500/30 transition-all hover:-translate-y-1 hover:shadow-xl',
-				isExpanded && 'border-primary ring-1 ring-primary/50'
+				isExpanded && 'border-primary ring-primary/50 ring-1'
 			)}
 			onClick={onToggle}
 		>
@@ -738,7 +742,7 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 						{spell.range}
 					</Badge>
 					{spell.sustained && (
-						<Badge className="bg-amber-500/20 text-amber-400 text-xs">Sustained</Badge>
+						<Badge className="bg-amber-500/20 text-xs text-amber-400">Sustained</Badge>
 					)}
 					{spell.sources.map((source) => (
 						<Badge key={source} variant="outline" className="text-xs opacity-70">
@@ -754,7 +758,7 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 							</Badge>
 						))}
 						{!isExpanded && spell.tags.length > 3 && (
-							<span className="text-xs text-muted-foreground">+{spell.tags.length - 3}</span>
+							<span className="text-muted-foreground text-xs">+{spell.tags.length - 3}</span>
 						)}
 					</div>
 				)}
@@ -773,7 +777,7 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 					<div className="mt-4 space-y-4">
 						{/* Duration */}
 						<div className="text-sm">
-							<span className="font-medium text-foreground">Duration:</span>{' '}
+							<span className="text-foreground font-medium">Duration:</span>{' '}
 							<span className="text-muted-foreground">{spell.duration}</span>
 						</div>
 
@@ -781,9 +785,9 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 						{spell.effects.length > 1 && (
 							<div className="space-y-2">
 								{spell.effects.slice(1).map((effect, index) => (
-									<div key={index} className="rounded-md bg-muted/30 p-3">
-										<h4 className="text-sm font-medium text-foreground">{effect.title}</h4>
-										<p className="mt-1 text-sm text-muted-foreground">{effect.description}</p>
+									<div key={index} className="bg-muted/30 rounded-md p-3">
+										<h4 className="text-foreground text-sm font-medium">{effect.title}</h4>
+										<p className="text-muted-foreground mt-1 text-sm">{effect.description}</p>
 									</div>
 								))}
 							</div>
@@ -792,32 +796,30 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 						{/* Enhancements */}
 						{spell.enhancements.length > 0 && (
 							<div className="space-y-2">
-								<h4 className="text-sm font-medium text-foreground">Enhancements</h4>
+								<h4 className="text-foreground text-sm font-medium">Enhancements</h4>
 								<div className="space-y-2">
 									{spell.enhancements.map((enhancement, index) => (
 										<div
 											key={index}
-											className="rounded-md border border-primary/20 bg-primary/5 p-3"
+											className="border-primary/20 bg-primary/5 rounded-md border p-3"
 										>
 											<div className="flex items-center gap-2">
 												<Badge variant="outline" className="text-xs">
 													{enhancement.cost} {enhancement.type}
 												</Badge>
-												<span className="text-sm font-medium text-foreground">
+												<span className="text-foreground text-sm font-medium">
 													{enhancement.name}
 												</span>
 												{enhancement.repeatable && (
-													<Badge className="bg-blue-500/20 text-blue-400 text-xs">
-														Repeatable
-													</Badge>
+													<Badge className="bg-blue-500/20 text-xs text-blue-400">Repeatable</Badge>
 												)}
 												{enhancement.variable && (
-													<Badge className="bg-purple-500/20 text-purple-400 text-xs">
+													<Badge className="bg-purple-500/20 text-xs text-purple-400">
 														Variable
 													</Badge>
 												)}
 											</div>
-											<p className="mt-1 text-sm text-muted-foreground">
+											<p className="text-muted-foreground mt-1 text-sm">
 												{enhancement.description}
 											</p>
 										</div>
@@ -830,14 +832,14 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 						{spell.spellPassive && (
 							<div className="rounded-md bg-green-500/10 p-3">
 								<h4 className="text-sm font-medium text-green-400">Spell Passive</h4>
-								<p className="mt-1 text-sm text-muted-foreground">{spell.spellPassive}</p>
+								<p className="text-muted-foreground mt-1 text-sm">{spell.spellPassive}</p>
 							</div>
 						)}
 					</div>
 				)}
 
 				{/* Expand/Collapse indicator */}
-				<div className="mt-2 text-center text-xs text-muted-foreground">
+				<div className="text-muted-foreground mt-2 text-center text-xs">
 					{isExpanded ? 'Click to collapse' : 'Click to expand'}
 				</div>
 			</CardContent>

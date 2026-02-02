@@ -60,6 +60,7 @@ export interface DiceRollerRef {
 	addDiceType: (type: DiceType, count?: number) => void;
 	clearAllDice: () => void;
 	expand: () => void;
+	setRollMode: (mode: RollMode) => void;
 }
 
 const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) => {
@@ -261,6 +262,9 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 		clearAllDice: () => {
 			clearDice();
 		},
+		setRollMode: (mode: RollMode) => {
+			setRollMode(mode);
+		},
 		expand: () => {
 			setIsExpanded(true);
 		}
@@ -415,11 +419,16 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 					{total !== null && !isRolling && (
 						<StyledResultsDisplay>
 							<StyledTotalResult $isHighRoll={total >= 15}>
-								Total: {total}							{modifier !== 0 && (
-								<span style={{ fontSize: '0.85em', opacity: 0.8 }}>
-									{' '}({modifier > 0 ? '+' : ''}{modifier}{modifierLabel ? ` ${modifierLabel}` : ''})
-								</span>
-							)}								{lastResults.some((r) => r.isCriticalSuccess && r.isChosen !== false) && ' 🌟'}
+								Total: {total}{' '}
+								{modifier !== 0 && (
+									<span style={{ fontSize: '0.85em', opacity: 0.8 }}>
+										{' '}
+										({modifier > 0 ? '+' : ''}
+										{modifier}
+										{modifierLabel ? ` ${modifierLabel}` : ''})
+									</span>
+								)}{' '}
+								{lastResults.some((r) => r.isCriticalSuccess && r.isChosen !== false) && ' 🌟'}
 								{lastResults.some((r) => r.isCriticalFail && r.isChosen !== false) && ' 💀'}
 							</StyledTotalResult>
 							<StyledResultsFlexContainer>

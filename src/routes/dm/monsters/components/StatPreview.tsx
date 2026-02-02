@@ -22,7 +22,7 @@ import {
 	PreviewDivider,
 	EncounterCost,
 	EncounterCostLabel,
-	EncounterCostValue,
+	EncounterCostValue
 } from '../styles/MonsterStyles';
 
 export interface StatPreviewProps {

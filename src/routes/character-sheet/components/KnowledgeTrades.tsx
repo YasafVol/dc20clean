@@ -42,13 +42,13 @@ const KnowledgeTrades: React.FC<KnowledgeTradesProps> = ({
 					Intelligence-based knowledge trades
 				</SectionDescription>
 				{knowledge.map((knowledgeItem) => (
-				<SkillRow
-					key={knowledgeItem.id}
-					$isMobile={isMobile}
-					onClick={() => onSkillClick?.(knowledgeItem.name, knowledgeItem.bonus || 0)}
-					style={{ cursor: 'pointer' }}
-					title={`Roll ${knowledgeItem.name} check`}
-				>
+					<SkillRow
+						key={knowledgeItem.id}
+						$isMobile={isMobile}
+						onClick={() => onSkillClick?.(knowledgeItem.name, knowledgeItem.bonus || 0)}
+						style={{ cursor: 'pointer' }}
+						title={`Roll ${knowledgeItem.name} check`}
+					>
 						<SkillName $isMobile={isMobile}>{knowledgeItem.name.toUpperCase()}</SkillName>
 						<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
 							<StyledProficiencyDots $isMobile={isMobile}>
@@ -83,7 +83,10 @@ const KnowledgeTrades: React.FC<KnowledgeTradesProps> = ({
 							)}
 							<StyledInfoButton
 								$isMobile={isMobile}
-								onClick={(e) => { e.stopPropagation(); onKnowledgeInfoClick?.(knowledgeItem.name); }}
+								onClick={(e) => {
+									e.stopPropagation();
+									onKnowledgeInfoClick?.(knowledgeItem.name);
+								}}
 							>
 								i
 							</StyledInfoButton>
@@ -100,19 +103,19 @@ const KnowledgeTrades: React.FC<KnowledgeTradesProps> = ({
 				</SectionDescription>
 				{trades.length > 0 ? (
 					trades.map((trade) => (
-					<SkillRow
-						key={trade.id}
-						$isMobile={isMobile}
-						onClick={() => {
-							const leadingBonus =
-								trade.bonuses && trade.bonuses.length > 0
-									? trade.bonuses[0].total
-									: trade.bonus || 0;
-							onSkillClick?.(trade.name, leadingBonus);
-						}}
-						style={{ cursor: 'pointer' }}
-						title={`Roll ${trade.name} check`}
-					>
+						<SkillRow
+							key={trade.id}
+							$isMobile={isMobile}
+							onClick={() => {
+								const leadingBonus =
+									trade.bonuses && trade.bonuses.length > 0
+										? trade.bonuses[0].total
+										: trade.bonus || 0;
+								onSkillClick?.(trade.name, leadingBonus);
+							}}
+							style={{ cursor: 'pointer' }}
+							title={`Roll ${trade.name} check`}
+						>
 							<SkillName $isMobile={isMobile}>{trade.name.toUpperCase()}</SkillName>
 							<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
 								<StyledProficiencyDots $isMobile={isMobile}>
@@ -169,7 +172,10 @@ const KnowledgeTrades: React.FC<KnowledgeTradesProps> = ({
 								})()}
 								<StyledInfoButton
 									$isMobile={isMobile}
-									onClick={(e) => { e.stopPropagation(); onTradeInfoClick?.(trade.name); }}
+									onClick={(e) => {
+										e.stopPropagation();
+										onTradeInfoClick?.(trade.name);
+									}}
 								>
 									i
 								</StyledInfoButton>

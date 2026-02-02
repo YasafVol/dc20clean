@@ -31,38 +31,39 @@ Review code for:
 
 1. **Acquire Context**:
 
-  - Read PR description, linked Jira tickets (ARG-####), user impact
-  - Load full diff (ignore whitespace-only changes)
-  - Understand architectural changes and affected modules
+- Read PR description, linked Jira tickets (ARG-####), user impact
+- Load full diff (ignore whitespace-only changes)
+- Understand architectural changes and affected modules
 
 2. **Quality Gates**:
 
-  - Run build/lint/typecheck for affected modules
-  - Execute targeted unit tests
-  - Expand test scope only if high risk identified
+- Run build/lint/typecheck for affected modules
+- Execute targeted unit tests
+- Expand test scope only if high risk identified
 
 3. **Deep Review** (focus areas in priority order):
 
-  - **Correctness**: Edge cases, null/undefined, error paths, race conditions, timeouts
-  - **Security**: Secrets in code/logs, unsafe eval/HTML, URL handling, auth checks
-  - **Performance**: Unnecessary renders, n+1 calls, memoization, large payloads, memory leaks
-  - **API/Contracts**: Breaking changes, prop validation, defaults, versioning
-  - **UX/Accessibility**: Keyboard nav, focus, ARIA, color contrast, hover-only traps
-  - **i18n**: No hard-coded strings, translation keys present, consistent casing
-  - **Tests**: Happy path + edge cases covered, minimal snapshot noise
-  - **Maintainability**: Naming, dead code, duplication, component size (<250 lines)
+- **Correctness**: Edge cases, null/undefined, error paths, race conditions, timeouts
+- **Security**: Secrets in code/logs, unsafe eval/HTML, URL handling, auth checks
+- **Performance**: Unnecessary renders, n+1 calls, memoization, large payloads, memory leaks
+- **API/Contracts**: Breaking changes, prop validation, defaults, versioning
+- **UX/Accessibility**: Keyboard nav, focus, ARIA, color contrast, hover-only traps
+- **i18n**: No hard-coded strings, translation keys present, consistent casing
+- **Tests**: Happy path + edge cases covered, minimal snapshot noise
+- **Maintainability**: Naming, dead code, duplication, component size (<250 lines)
 
 4. **Classify Issues**:
 
-  - 🚫 **Blocking**: Correctness/security/regression with concrete fix
-  - 💡 **Non-blocking**: Nits/performance/docs improvements
-  - 📋 **Follow-up**: Out-of-scope improvements for future
+- 🚫 **Blocking**: Correctness/security/regression with concrete fix
+- 💡 **Non-blocking**: Nits/performance/docs improvements
+- 📋 **Follow-up**: Out-of-scope improvements for future
 
 5. **Provide Feedback**:
-  - Concise, neutral, impersonal tone
-  - Concrete code suggestions in diff format
-  - Focus on issue + solution (don't restate obvious)
-  - Group similar issues to reduce noise
+
+- Concise, neutral, impersonal tone
+- Concrete code suggestions in diff format
+- Focus on issue + solution (don't restate obvious)
+- Group similar issues to reduce noise
 
 ---
 
@@ -123,10 +124,13 @@ const userName = user?.profile?.name || 'Unknown';
 
 ```javascript
 // ❌ BAD - Recalculates on every render
-const filteredItems = items.filter(item => item.status === filter);
+const filteredItems = items.filter((item) => item.status === filter);
 
 // ✅ GOOD - Memoized calculation
-const filteredItems = useMemo(() => items.filter(item => item.status === filter), [items, filter]);
+const filteredItems = useMemo(
+	() => items.filter((item) => item.status === filter),
+	[items, filter]
+);
 ```
 
 ### API/Contracts
@@ -362,7 +366,7 @@ useEffect(() => {
 Immediately flag these issues:
 
 | Issue                          | Impact          | Action                       |
-|--------------------------------|-----------------|------------------------------|
+| ------------------------------ | --------------- | ---------------------------- |
 | Files >500 lines               | Maintainability | 🚫 Split into modules        |
 | Nested components >3 levels    | Complexity      | 🚫 Flatten structure         |
 | Mixed concerns (API+UI+logic)  | Testability     | 🚫 Separate concerns         |
@@ -405,21 +409,22 @@ Immediately flag these issues:
 
 3. **Post File-Anchored Comments**:
 
-  - Use concrete code suggestions in diff format
-  - Classify as blocking/non-blocking/follow-up
-  - Group similar issues to reduce noise
-  - Avoid duplicate comments across files
+- Use concrete code suggestions in diff format
+- Classify as blocking/non-blocking/follow-up
+- Group similar issues to reduce noise
+- Avoid duplicate comments across files
 
 4. **Handle Failures**:
 
-  - Retry on transient failures (network, API rate limits)
-  - Skip validation if module has no tests configured
-  - Report infrastructure issues separately from code issues
+- Retry on transient failures (network, API rate limits)
+- Skip validation if module has no tests configured
+- Report infrastructure issues separately from code issues
 
 5. **Security**:
-  - Never echo or reference secrets/tokens in comments
-  - Flag any credentials found in code immediately
-  - Verify .gitignore patterns for sensitive files
+
+- Never echo or reference secrets/tokens in comments
+- Flag any credentials found in code immediately
+- Verify .gitignore patterns for sensitive files
 
 ---
 
@@ -428,7 +433,7 @@ Immediately flag these issues:
 ### Comment Classification
 
 | Symbol | Type         | When to Use                         | Examples                                  |
-|--------|--------------|-------------------------------------|-------------------------------------------|
+| ------ | ------------ | ----------------------------------- | ----------------------------------------- |
 | 🚫     | Blocking     | Security, correctness, regression   | Auth missing, null crash, breaking API    |
 | 💡     | Non-blocking | Performance, maintainability, style | Missing memo, long file, naming           |
 | 📋     | Follow-up    | Out-of-scope improvements           | Add skeleton, refactor utils, update docs |
@@ -452,7 +457,7 @@ nx run alerts:lint && nx run alerts:test
 ### File Size Guidelines
 
 | File Type | Ideal         | Maximum   | Action if Exceeded        |
-|-----------|---------------|-----------|---------------------------|
+| --------- | ------------- | --------- | ------------------------- |
 | Component | 100-150 lines | 250 lines | Split into sub-components |
 | Hook      | 50-75 lines   | 150 lines | Extract utilities         |
 | Utility   | 50-100 lines  | 200 lines | Split by domain           |

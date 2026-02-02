@@ -7,12 +7,7 @@
 import React from 'react';
 import { MONSTER_ROLES_LIST } from '../../../../lib/rulesdata/dm/monsterRoles';
 import type { MonsterRoleId } from '../../../../lib/rulesdata/schemas/monster.schema';
-import {
-	RoleGrid,
-	RoleCard,
-	RoleName,
-	RoleModifiers,
-} from '../styles/MonsterStyles';
+import { RoleGrid, RoleCard, RoleName, RoleModifiers } from '../styles/MonsterStyles';
 
 export interface RoleSelectorProps {
 	value: MonsterRoleId;

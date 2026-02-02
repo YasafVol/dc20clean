@@ -176,7 +176,6 @@ export const StyledEmptyInventory = styled.div`
 	color: ${theme.colors.text.muted};
 `;
 
-
 export const StyledInventoryCellCentered = styled.div<MobileStyledProps>`
-text-align: center;
+	text-align: center;
 `;

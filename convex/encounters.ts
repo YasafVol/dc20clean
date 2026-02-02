@@ -28,7 +28,7 @@ export const list = query({
 			.collect();
 
 		return encounters;
-	},
+	}
 });
 
 /**
@@ -46,7 +46,7 @@ export const getById = query({
 			.first();
 
 		return encounter;
-	},
+	}
 });
 
 /**
@@ -64,7 +64,7 @@ export const listHomebrew = query({
 			.collect();
 
 		return encounters;
-	},
+	}
 });
 
 /**
@@ -83,7 +83,7 @@ export const listTrash = query({
 			.collect();
 
 		return encounters;
-	},
+	}
 });
 
 // ============================================================================
@@ -101,7 +101,7 @@ export const create = mutation({
 			description: v.optional(v.string()),
 			party: v.object({
 				size: v.number(),
-				averageLevel: v.number(),
+				averageLevel: v.number()
 			}),
 			difficulty: v.union(
 				v.literal('trivial'),
@@ -121,7 +121,7 @@ export const create = mutation({
 					monsterId: v.union(v.string(), v.null()),
 					quantity: v.number(),
 					cost: v.number(),
-					notes: v.optional(v.string()),
+					notes: v.optional(v.string())
 				})
 			),
 			environment: v.optional(v.string()),
@@ -140,8 +140,8 @@ export const create = mutation({
 			isHomebrew: v.boolean(),
 			createdAt: v.string(),
 			lastModified: v.string(),
-			schemaVersion: v.string(),
-		}),
+			schemaVersion: v.string()
+		})
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -149,11 +149,11 @@ export const create = mutation({
 
 		await ctx.db.insert('encounters', {
 			...args.encounter,
-			userId,
+			userId
 		});
 
 		return { id: args.encounter.id };
-	},
+	}
 });
 
 /**
@@ -168,7 +168,7 @@ export const update = mutation({
 			party: v.optional(
 				v.object({
 					size: v.number(),
-					averageLevel: v.number(),
+					averageLevel: v.number()
 				})
 			),
 			difficulty: v.optional(
@@ -192,20 +192,16 @@ export const update = mutation({
 						monsterId: v.union(v.string(), v.null()),
 						quantity: v.number(),
 						cost: v.number(),
-						notes: v.optional(v.string()),
+						notes: v.optional(v.string())
 					})
 				)
 			),
 			environment: v.optional(v.string()),
 			gmNotes: v.optional(v.string()),
 			visibility: v.optional(
-				v.union(
-					v.literal('private'),
-					v.literal('public_anonymous'),
-					v.literal('public_credited')
-				)
-			),
-		}),
+				v.union(v.literal('private'), v.literal('public_anonymous'), v.literal('public_credited'))
+			)
+		})
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -220,11 +216,11 @@ export const update = mutation({
 
 		await ctx.db.patch(encounter._id, {
 			...args.updates,
-			lastModified: new Date().toISOString(),
+			lastModified: new Date().toISOString()
 		});
 
 		return { id: args.id };
-	},
+	}
 });
 
 /**
@@ -238,8 +234,8 @@ export const addMonsterSlot = mutation({
 			monsterId: v.union(v.string(), v.null()),
 			quantity: v.number(),
 			cost: v.number(),
-			notes: v.optional(v.string()),
-		}),
+			notes: v.optional(v.string())
+		})
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -259,11 +255,11 @@ export const addMonsterSlot = mutation({
 			monsters: updatedMonsters,
 			spentBudget: newSpentBudget,
 			remainingBudget: encounter.adjustedBudget - newSpentBudget,
-			lastModified: new Date().toISOString(),
+			lastModified: new Date().toISOString()
 		});
 
 		return { slotId: args.slot.id };
-	},
+	}
 });
 
 /**
@@ -277,8 +273,8 @@ export const updateMonsterSlot = mutation({
 			monsterId: v.optional(v.union(v.string(), v.null())),
 			quantity: v.optional(v.number()),
 			cost: v.optional(v.number()),
-			notes: v.optional(v.string()),
-		}),
+			notes: v.optional(v.string())
+		})
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -302,9 +298,9 @@ export const updateMonsterSlot = mutation({
 			monsters: updatedMonsters,
 			spentBudget: newSpentBudget,
 			remainingBudget: encounter.adjustedBudget - newSpentBudget,
-			lastModified: new Date().toISOString(),
+			lastModified: new Date().toISOString()
 		});
-	},
+	}
 });
 
 /**
@@ -313,7 +309,7 @@ export const updateMonsterSlot = mutation({
 export const removeMonsterSlot = mutation({
 	args: {
 		encounterId: v.string(),
-		slotId: v.string(),
+		slotId: v.string()
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -333,9 +329,9 @@ export const removeMonsterSlot = mutation({
 			monsters: updatedMonsters,
 			spentBudget: newSpentBudget,
 			remainingBudget: encounter.adjustedBudget - newSpentBudget,
-			lastModified: new Date().toISOString(),
+			lastModified: new Date().toISOString()
 		});
-	},
+	}
 });
 
 /**
@@ -361,9 +357,9 @@ export const softDelete = mutation({
 			deletedAt: now.toISOString(),
 			deletedBy: userId,
 			scheduledPurgeAt: purgeDate.toISOString(),
-			lastModified: now.toISOString(),
+			lastModified: now.toISOString()
 		});
-	},
+	}
 });
 
 /**
@@ -386,9 +382,9 @@ export const restore = mutation({
 			deletedAt: undefined,
 			deletedBy: undefined,
 			scheduledPurgeAt: undefined,
-			lastModified: new Date().toISOString(),
+			lastModified: new Date().toISOString()
 		});
-	},
+	}
 });
 
 /**
@@ -408,7 +404,7 @@ export const hardDelete = mutation({
 		if (!encounter) throw new Error('Encounter not found');
 
 		await ctx.db.delete(encounter._id);
-	},
+	}
 });
 
 /**
@@ -418,7 +414,7 @@ export const fork = mutation({
 	args: {
 		sourceId: v.string(),
 		sourceType: v.union(v.literal('official'), v.literal('custom'), v.literal('homebrew')),
-		sourceData: v.any(),
+		sourceData: v.any()
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -437,16 +433,16 @@ export const fork = mutation({
 				id: args.sourceId,
 				type: args.sourceType,
 				name: args.sourceData.name,
-				forkedAt: now,
+				forkedAt: now
 			},
 			createdAt: now,
-			lastModified: now,
+			lastModified: now
 		};
 
 		await ctx.db.insert('encounters', newEncounter);
 
 		return { id: args.sourceData.id };
-	},
+	}
 });
 
 /**
@@ -455,7 +451,7 @@ export const fork = mutation({
 export const submitForReview = mutation({
 	args: {
 		id: v.string(),
-		visibility: v.union(v.literal('public_anonymous'), v.literal('public_credited')),
+		visibility: v.union(v.literal('public_anonymous'), v.literal('public_credited'))
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -475,9 +471,9 @@ export const submitForReview = mutation({
 			approvalStatus: 'pending_review',
 			isHomebrew: true,
 			submittedAt: now,
-			lastModified: now,
+			lastModified: now
 		});
-	},
+	}
 });
 
 /**
@@ -514,17 +510,17 @@ export const duplicate = mutation({
 			deletedBy: undefined,
 			scheduledPurgeAt: undefined,
 			createdAt: now,
-			lastModified: now,
+			lastModified: now
 		};
 
 		// Generate new slot IDs
 		duplicate.monsters = encounter.monsters.map((slot) => ({
 			...slot,
-			id: `slot_${crypto.randomUUID()}`,
+			id: `slot_${crypto.randomUUID()}`
 		}));
 
 		await ctx.db.insert('encounters', duplicate as any);
 
 		return { id: newId };
-	},
+	}
 });

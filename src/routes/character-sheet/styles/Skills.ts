@@ -5,10 +5,10 @@ interface MobileStyledProps {
 }
 
 export const StyledSkillsSection = styled.div<MobileStyledProps>`
-	border: 2px solid ${(props) => (props.$isMobile ? 'rgb(68,68,68)' : '#414868')};
+	border: 2px solid ${(props) => (props.$isMobile ? 'var(--mobile-border)' : '#414868')};
 	border-radius: 8px;
 	padding: 1rem;
-	background: ${(props) => (props.$isMobile ? 'rgb(42,42,42)' : '#24283B')};
+	background: ${(props) => (props.$isMobile ? 'var(--mobile-bg-primary)' : '#24283B')};
 	flex: 1;
 `;
 
@@ -30,12 +30,12 @@ export const StyledDot = styled.div<{ $filled: boolean; $isMobile?: boolean }>`
 	width: 8px;
 	height: 8px;
 	border-radius: 50%;
-	border: 1px solid ${(props) => (props.$isMobile ? 'rgb(68,68,68)' : '#414868')};
+	border: 1px solid ${(props) => (props.$isMobile ? 'var(--mobile-border)' : '#414868')};
 	background: ${(props) => {
 		if (props.$filled) {
-			return props.$isMobile ? '#f5d020' : '#7DCFFF';
+			return '#7DCFFF'; /* Tokyo Night blue for all breakpoints */
 		} else {
-			return props.$isMobile ? 'rgb(60,60,60)' : '#1A1B26';
+			return props.$isMobile ? 'var(--mobile-bg-secondary)' : '#1A1B26';
 		}
 	}};
 `;

@@ -45,7 +45,7 @@ export const StyledExhaustionLevel = styled.div<{ filled: boolean; $isMobile?: b
 	&:hover {
 		background: ${(props) => {
 			if (props.filled) {
-				return props.$isMobile ? '#d4b01c' : '#C49A53';
+				return props.$isMobile ? '#5a9fcf' : '#5a9fcf';
 			}
 			return props.$isMobile ? 'var(--mobile-bg-tertiary)' : 'var(--bg-secondary)';
 		}};

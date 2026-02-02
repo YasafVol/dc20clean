@@ -13,17 +13,17 @@ export const StyledDeathExhaustionContainer = styled.div<MobileStyledProps>`
 
 export const StyledExhaustionOnlyContainer = styled.div<MobileStyledProps>`
 	flex: 1;
-	border: 2px solid ${(props) => (props.$isMobile ? 'rgb(68, 68, 68)' : '#414868')};
+	border: 2px solid ${(props) => (props.$isMobile ? 'var(--mobile-border)' : '#414868')};
 	border-radius: 8px;
 	padding: 1rem;
-	background: ${(props) => (props.$isMobile ? 'rgb(42, 42, 42)' : '#24283B')};
+	background: ${(props) => (props.$isMobile ? 'var(--mobile-bg-primary)' : '#24283B')};
 	text-align: center;
 `;
 
 export const StyledExhaustionOnlyTitle = styled.div<MobileStyledProps>`
 	font-size: 0.9rem;
 	font-weight: bold;
-	color: ${(props) => (props.$isMobile ? '#f5d020' : '#7DCFFF')};
+	color: #7dcfff;
 	margin-bottom: 0.5rem;
 	font-family: 'Inter', sans-serif;
 `;

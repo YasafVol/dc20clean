@@ -10,6 +10,7 @@ import {
 	useCharacterLanguages,
 	useCharacterCalculatedData
 } from './hooks/CharacterSheetProvider';
+import { useBreakpoint } from './hooks/useBreakpoint';
 
 // Import types
 import type { FeatureData, InventoryItemData } from '../../types';
@@ -46,9 +47,11 @@ import DeathExhaustion from './components/DeathExhaustion';
 import KnowledgeTrades from './components/KnowledgeTrades';
 import Languages from './components/Languages';
 import Attributes from './components/Attributes';
+import MobileBottomNav from './components/shared/MobileBottomNav';
+import HamburgerDrawer from './components/shared/HamburgerDrawer';
 
 // Import theme
-import { theme } from './styles/theme';
+import { theme, media } from './styles/theme';
 import { logger } from '../../lib/utils/logger';
 
 interface CharacterSheetRedesignProps {
@@ -74,6 +77,14 @@ const Header = styled(motion.header)`
 	z-index: ${theme.zIndex.sticky};
 	backdrop-filter: blur(10px);
 	background: var(--bg-primary);
+
+	${media.tablet} {
+		padding: ${theme.spacing[4]} ${theme.spacing[6]};
+	}
+
+	${media.mobile} {
+		padding: ${theme.spacing[3]} ${theme.spacing[4]};
+	}
 `;
 
 const HeaderContent = styled.div`
@@ -97,6 +108,14 @@ const CharacterName = styled.h1`
 	color: ${theme.colors.text.primary};
 	margin: 0;
 	line-height: ${theme.typography.lineHeight.tight};
+
+	${media.tablet} {
+		font-size: ${theme.typography.fontSize['2xl']};
+	}
+
+	${media.mobile} {
+		font-size: ${theme.typography.fontSize.xl};
+	}
 `;
 
 const CharacterMeta = styled.div`
@@ -105,6 +124,12 @@ const CharacterMeta = styled.div`
 	align-items: center;
 	font-size: ${theme.typography.fontSize.base};
 	color: ${theme.colors.text.secondary};
+	flex-wrap: wrap;
+
+	${media.mobile} {
+		font-size: ${theme.typography.fontSize.sm};
+		gap: ${theme.spacing[2]};
+	}
 `;
 
 const MetaItem = styled.span`
@@ -122,6 +147,10 @@ const MetaItem = styled.span`
 const ActionButtons = styled.div`
 	display: flex;
 	gap: ${theme.spacing[3]};
+
+	${media.mobile} {
+		display: none; /* Hide on mobile - use hamburger menu instead */
+	}
 `;
 
 const ActionButton = styled(motion.button)`
@@ -159,10 +188,38 @@ const BackButton = styled(ActionButton)`
 	}
 `;
 
+const MobileMenuButton = styled(motion.button)`
+	display: none;
+
+	${media.mobile} {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: ${theme.colors.bg.tertiary};
+		color: ${theme.colors.text.primary};
+		border: 1px solid ${theme.colors.border.default};
+		border-radius: ${theme.borderRadius.md};
+		padding: ${theme.spacing[2]};
+		width: 40px;
+		height: 40px;
+		font-size: ${theme.typography.fontSize.xl};
+		cursor: pointer;
+	}
+`;
+
 const MainContent = styled.main`
 	max-width: 1600px;
 	margin: 0 auto;
 	padding: ${theme.spacing[8]};
+
+	${media.tablet} {
+		padding: ${theme.spacing[6]};
+	}
+
+	${media.mobile} {
+		padding: ${theme.spacing[4]};
+		padding-bottom: 80px; /* Space for mobile bottom nav */
+	}
 `;
 
 const TwoColumnLayout = styled.div`
@@ -170,8 +227,14 @@ const TwoColumnLayout = styled.div`
 	grid-template-columns: 1fr 2fr;
 	gap: ${theme.spacing[6]};
 
-	@media (max-width: 1100px) {
+	${media.tablet} {
+		grid-template-columns: 280px 1fr;
+		gap: ${theme.spacing[4]};
+	}
+
+	${media.mobile} {
 		grid-template-columns: 1fr;
+		gap: ${theme.spacing[3]};
 	}
 `;
 
@@ -215,6 +278,11 @@ const TabContainer = styled.div`
 	box-shadow: ${theme.shadows.lg};
 	overflow: hidden;
 	border: 1px solid ${theme.colors.border.default};
+
+	${media.mobile} {
+		max-width: 100vw;
+		overflow-x: hidden;
+	}
 `;
 
 const TabNav = styled.div`
@@ -237,6 +305,11 @@ const TabNav = styled.div`
 		background: ${theme.colors.border.default};
 		border-radius: ${theme.borderRadius.full};
 	}
+
+	/* Hide desktop tabs on mobile - use bottom nav instead */
+	${media.mobile} {
+		display: none;
+	}
 `;
 
 const Tab = styled(motion.button)<{ $active: boolean }>`
@@ -254,9 +327,16 @@ const Tab = styled(motion.button)<{ $active: boolean }>`
 	align-items: center;
 	gap: ${theme.spacing[2]};
 
-	&:hover {
-		background: ${theme.colors.bg.tertiary};
-		color: ${theme.colors.text.primary};
+	${media.hover} {
+		&:hover {
+			background: ${theme.colors.bg.tertiary};
+			color: ${theme.colors.text.primary};
+		}
+	}
+
+	${media.tablet} {
+		padding: ${theme.spacing[3]} ${theme.spacing[4]};
+		font-size: ${theme.typography.fontSize.sm};
 	}
 
 	${(props) =>
@@ -288,6 +368,12 @@ const TabBadge = styled.span`
 
 const TabContent = styled(motion.div)`
 	padding: ${theme.spacing[6]};
+	overflow-x: hidden;
+	max-width: 100%;
+
+	${media.mobile} {
+		padding: ${theme.spacing[4]};
+	}
 `;
 
 const SectionCard = styled(motion.div)<{ $withMarginBottom?: boolean }>`
@@ -333,7 +419,12 @@ type TabId =
 const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ characterId, onBack }) => {
 	logger.debug('ui', 'CharacterSheetRedesign render', { characterId });
 
+	// Responsive breakpoint detection (mobile only, tablet treated as desktop)
+	const breakpoint = useBreakpoint();
+	const isMobile = breakpoint === 'mobile';
+
 	const [activeTab, setActiveTab] = useState<TabId>('attacks');
+	const [hamburgerDrawerOpen, setHamburgerDrawerOpen] = useState(false);
 	const [autoRollConfig, setAutoRollConfig] = useState<{
 		trigger: boolean;
 		diceType: 'd4' | 'd6' | 'd8' | 'd10' | 'd12' | 'd20';
@@ -630,6 +721,24 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		{ id: 'notes', label: 'Notes', emoji: '📝' }
 	];
 
+	// Primary tabs for mobile bottom navigation (4 tabs: character stats + 3 core actions)
+	const mobileTabs: { id: string; label: string; emoji: string; badge?: number }[] = [
+		{ id: 'character', label: 'Char', emoji: '👤' },
+		{ id: 'attacks', label: 'Attack', emoji: '⚔️' },
+		{ id: 'spells', label: 'Spell', emoji: '📜' },
+		{ id: 'features', label: 'Feat', emoji: '✨' }
+	];
+
+	// Overflow tabs shown in hamburger menu on mobile (includes inventory)
+	const hamburgerMenuItems: { id: string; label: string; emoji: string; badge?: number }[] = [
+		{ id: 'inventory', label: 'Inventory', emoji: '🎒' },
+		{ id: 'conditions', label: 'Conditions', emoji: '🎭', badge: activeConditionsCount },
+		{ id: 'maneuvers', label: 'Maneuvers', emoji: '⚡' },
+		{ id: 'knowledge', label: 'Knowledge', emoji: '📚' },
+		{ id: 'utility', label: 'Utility', emoji: '🔧' },
+		{ id: 'notes', label: 'Notes', emoji: '📝' }
+	];
+
 	return (
 		<PageContainer>
 			<Header
@@ -652,6 +761,9 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 						</CharacterMeta>
 					</CharacterIdentity>
 
+					{/* Mobile hamburger menu - only visible on mobile */}
+					<MobileMenuButton whileTap={{ scale: 0.95 }}>☰</MobileMenuButton>
+
 					<ActionButtons>
 						{onBack && (
 							<BackButton onClick={onBack} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -672,177 +784,261 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			</Header>
 
 			<MainContent>
-				<TwoColumnLayout>
-					{/* Left Column (1/3) - Attributes with Prime & Awareness */}
-					<LeftColumn>
-						<SectionCard
-							initial={{ opacity: 0, x: -20 }}
-							animate={{ opacity: 1, x: 0 }}
-							transition={{ delay: 0.2 }}
-						>
-							<Attributes
-								characterData={characterData}
-								skillsByAttribute={skillsByAttribute}
-								isMobile={false}
+				{/* On mobile, show TwoColumnLayout ONLY when 'character' tab is active */}
+				{/* On desktop, always show TwoColumnLayout with tabs inside */}
+				{(!isMobile || activeTab === 'character') && (
+					<TwoColumnLayout>
+						{/* Left Column (1/3) - Attributes with Prime & Awareness */}
+						<LeftColumn>
+							<SectionCard
+								initial={{ opacity: 0, x: -20 }}
+								animate={{ opacity: 1, x: 0 }}
+								transition={{ delay: 0.2 }}
+							>
+								<Attributes
+									characterData={characterData}
+									skillsByAttribute={skillsByAttribute}
+									isMobile={isMobile}
+									onSkillClick={handleSkillClick}
+								/>
+							</SectionCard>
+						</LeftColumn>
+
+						{/* Right Column (2/3) - Everything else */}
+						<RightColumn>
+							{/* Hero Section (HP/MP/SP/Rest/Grit, Defenses) */}
+							<HeroSection
+								currentHP={currentHP}
+								maxHP={maxHP}
+								tempHP={tempHP}
+								currentMana={currentMP}
+								maxMana={maxMP}
+								currentStamina={currentSP}
+								maxStamina={maxSP}
+								currentRest={currentRest}
+								maxRest={maxRest}
+								currentGrit={currentGrit}
+								maxGrit={maxGrit}
+								precisionAD={precisionAD}
+								precisionDR={precisionDR}
+								areaAD={areaAD}
+								attackBonus={attackBonus}
+								saveDC={saveDC}
+								initiative={initiative}
+								activeConditions={state.character?.characterState?.activeConditions || []}
+								onHPChange={updateHP}
+								onTempHPChange={updateTempHP}
+								onManaChange={updateMP}
+								onStaminaChange={updateSP}
+								onRestChange={updateRestPoints}
+								onGritChange={updateGritPoints}
 								onSkillClick={handleSkillClick}
+								onHPMouseEnter={(e) => handleMouseEnter('hp', e)}
+								onHPMouseLeave={handleMouseLeave}
+								onManaMouseEnter={(e) => handleMouseEnter('mana', e)}
+								onManaMouseLeave={handleMouseLeave}
+								onStaminaMouseEnter={(e) => handleMouseEnter('stamina', e)}
+								onStaminaMouseLeave={handleMouseLeave}
+								onRestMouseEnter={(e) => handleMouseEnter('rest', e)}
+								onRestMouseLeave={handleMouseLeave}
+								onGritMouseEnter={(e) => handleMouseEnter('grit', e)}
+								onGritMouseLeave={handleMouseLeave}
+								onAttackMouseEnter={(e) => handleMouseEnter('attack', e)}
+								onAttackMouseLeave={handleMouseLeave}
+								onPrecisionADMouseEnter={(e) => handleMouseEnter('precisionAD', e)}
+								onPrecisionADMouseLeave={handleMouseLeave}
+								onAreaADMouseEnter={(e) => handleMouseEnter('areaAD', e)}
+								onAreaADMouseLeave={handleMouseLeave}
+								onPrecisionDRMouseEnter={(e) => handleMouseEnter('precisionDR', e)}
+								onPrecisionDRMouseLeave={handleMouseLeave}
 							/>
-						</SectionCard>
-					</LeftColumn>
 
-					{/* Right Column (2/3) - Everything else */}
-					<RightColumn>
-						{/* Hero Section (HP/MP/SP/Rest/Grit, Defenses) */}
-						<HeroSection
-							currentHP={currentHP}
-							maxHP={maxHP}
-							tempHP={tempHP}
-							currentMana={currentMP}
-							maxMana={maxMP}
-							currentStamina={currentSP}
-							maxStamina={maxSP}
-							currentRest={currentRest}
-							maxRest={maxRest}
-							currentGrit={currentGrit}
-							maxGrit={maxGrit}
-							precisionAD={precisionAD}
-							precisionDR={precisionDR}
-							areaAD={areaAD}
-							attackBonus={attackBonus}
-							saveDC={saveDC}
-							initiative={initiative}
-							activeConditions={state.character?.characterState?.activeConditions || []}
-							onHPChange={updateHP}
-							onTempHPChange={updateTempHP}
-							onManaChange={updateMP}
-							onStaminaChange={updateSP}
-							onRestChange={updateRestPoints}
-							onGritChange={updateGritPoints}
-							onSkillClick={handleSkillClick}
-							onHPMouseEnter={(e) => handleMouseEnter('hp', e)}
-							onHPMouseLeave={handleMouseLeave}
-							onManaMouseEnter={(e) => handleMouseEnter('mana', e)}
-							onManaMouseLeave={handleMouseLeave}
-							onStaminaMouseEnter={(e) => handleMouseEnter('stamina', e)}
-							onStaminaMouseLeave={handleMouseLeave}
-							onRestMouseEnter={(e) => handleMouseEnter('rest', e)}
-							onRestMouseLeave={handleMouseLeave}
-							onGritMouseEnter={(e) => handleMouseEnter('grit', e)}
-							onGritMouseLeave={handleMouseLeave}
-							onAttackMouseEnter={(e) => handleMouseEnter('attack', e)}
-							onAttackMouseLeave={handleMouseLeave}
-							onPrecisionADMouseEnter={(e) => handleMouseEnter('precisionAD', e)}
-							onPrecisionADMouseLeave={handleMouseLeave}
-							onAreaADMouseEnter={(e) => handleMouseEnter('areaAD', e)}
-							onAreaADMouseLeave={handleMouseLeave}
-							onPrecisionDRMouseEnter={(e) => handleMouseEnter('precisionDR', e)}
-							onPrecisionDRMouseLeave={handleMouseLeave}
-						/>
+							{/* Tabs Section - Only visible on desktop */}
+							{!isMobile && (
+								<TabContainer>
+									<TabNav>
+										{tabs.map((tab) => (
+											<Tab
+												key={tab.id}
+												$active={activeTab === tab.id}
+												onClick={() => setActiveTab(tab.id)}
+												whileHover={{ y: -2 }}
+												whileTap={{ scale: 0.98 }}
+											>
+												{tab.emoji} {tab.label}
+											</Tab>
+										))}
+									</TabNav>
 
-						{/* Tabs Section */}
-						<TabContainer>
-							<TabNav>
-								{tabs.map((tab) => (
-									<Tab
-										key={tab.id}
-										$active={activeTab === tab.id}
-										onClick={() => setActiveTab(tab.id)}
-										whileHover={{ y: -2 }}
-										whileTap={{ scale: 0.98 }}
-									>
-										{tab.emoji} {tab.label}
-									</Tab>
-								))}
-							</TabNav>
+									<AnimatePresence mode="wait">
+										<TabContent
+											key={activeTab}
+											initial={{ opacity: 0, y: 20 }}
+											animate={{ opacity: 1, y: 0 }}
+											exit={{ opacity: 0, y: -20 }}
+											transition={{ duration: 0.2 }}
+										>
+											{activeTab === 'attacks' && (
+												<Attacks
+													onAttackClick={(attack, weapon) => {
+														if (weapon) {
+															openWeaponPopup(weapon);
+														}
+													}}
+												/>
+											)}
+											{activeTab === 'spells' && (
+												<Spells
+													onSpellClick={(spell) => {
+														setAutoRollConfig({
+															trigger: true,
+															diceType: 'd20',
+															mode: 'normal'
+														});
+														setTimeout(
+															() => setAutoRollConfig({ trigger: false, diceType: 'd20' }),
+															200
+														);
+													}}
+												/>
+											)}
+											{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
+											{activeTab === 'maneuvers' && <Maneuvers onManeuverClick={() => {}} />}
+											{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
+											{activeTab === 'conditions' && (
+												<>
+													<ActiveConditionsTracker
+														activeConditions={
+															state.character?.characterState?.activeConditions || []
+														}
+														onToggleCondition={toggleActiveCondition}
+													/>
+												</>
+											)}
+											{activeTab === 'knowledge' && (
+												<>
+													<SectionCard
+														initial={{ opacity: 0 }}
+														animate={{ opacity: 1 }}
+														$withMarginBottom
+													>
+														<KnowledgeTrades isMobile={isMobile} onSkillClick={handleSkillClick} />
+													</SectionCard>
+													<SectionCard initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+														<Languages languages={languages || []} isMobile={isMobile} />
+													</SectionCard>
+												</>
+											)}{' '}
+											{activeTab === 'utility' && (
+												<>
+													<SectionCard
+														initial={{ opacity: 0 }}
+														animate={{ opacity: 1 }}
+														$withMarginBottom
+													>
+														<SectionTitle>Movement</SectionTitle>
+														<Movement />
+													</SectionCard>
+													<SectionCard
+														initial={{ opacity: 0 }}
+														animate={{ opacity: 1 }}
+														$withMarginBottom
+													>
+														<SectionTitle>Currency</SectionTitle>
+														<Currency />
+													</SectionCard>
+												</>
+											)}
+											{activeTab === 'notes' && <PlayerNotes />}
+										</TabContent>
+									</AnimatePresence>
+								</TabContainer>
+							)}
+						</RightColumn>
+					</TwoColumnLayout>
+				)}
 
-							<AnimatePresence mode="wait">
-								<TabContent
-									key={activeTab}
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: 1, y: 0 }}
-									exit={{ opacity: 0, y: -20 }}
-									transition={{ duration: 0.2 }}
-								>
-									{activeTab === 'attacks' && (
-										<Attacks
-											onAttackClick={(attack, weapon) => {
-												if (weapon) {
-													openWeaponPopup(weapon);
-												}
-											}}
-										/>
-									)}
-									{activeTab === 'spells' && (
-										<Spells
-											onSpellClick={(spell) => {
-												setAutoRollConfig({
-													trigger: true,
-													diceType: 'd20',
-													mode: 'normal'
-												});
-												setTimeout(
-													() => setAutoRollConfig({ trigger: false, diceType: 'd20' }),
-													200
-												);
-											}}
-										/>
-									)}
-									{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
-									{activeTab === 'maneuvers' && <Maneuvers onManeuverClick={() => {}} />}
-									{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
-									{activeTab === 'conditions' && (
-										<>
-											<ActiveConditionsTracker
-												activeConditions={state.character?.characterState?.activeConditions || []}
-												onToggleCondition={toggleActiveCondition}
-											/>
-											
-										</>
-									)}
-									{activeTab === 'knowledge' && (
-										<>
-											<SectionCard
-												initial={{ opacity: 0 }}
-												animate={{ opacity: 1 }}
-												$withMarginBottom
-											>
-												<KnowledgeTrades isMobile={false} onSkillClick={handleSkillClick} />
-											</SectionCard>
-											<SectionCard initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-												<Languages languages={languages || []} isMobile={false} />
-											</SectionCard>
-										</>
-									)}{' '}
-									{activeTab === 'utility' && (
-										<>
-											<SectionCard
-												initial={{ opacity: 0 }}
-												animate={{ opacity: 1 }}
-												$withMarginBottom
-											>
-												<SectionTitle>Movement</SectionTitle>
-												<Movement />
-											</SectionCard>
-											<SectionCard
-												initial={{ opacity: 0 }}
-												animate={{ opacity: 1 }}
-												$withMarginBottom
-											>
-												<SectionTitle>Currency</SectionTitle>
-												<Currency />
-											</SectionCard>
-										</>
-									)}
-									{activeTab === 'notes' && <PlayerNotes />}
-								</TabContent>
-							</AnimatePresence>
-						</TabContainer>
-					</RightColumn>
-				</TwoColumnLayout>
+				{/* Mobile Tab Content - Only visible when NOT on character tab */}
+				{isMobile && activeTab !== 'character' && (
+					<TabContainer>
+						<AnimatePresence mode="wait">
+							<TabContent
+								key={activeTab}
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+								exit={{ opacity: 0, y: -20 }}
+								transition={{ duration: 0.2 }}
+							>
+								{activeTab === 'attacks' && (
+									<Attacks
+										onAttackClick={(attack, weapon) => {
+											if (weapon) {
+												openWeaponPopup(weapon);
+											}
+										}}
+									/>
+								)}
+								{activeTab === 'spells' && (
+									<Spells
+										onSpellClick={(spell) => {
+											setAutoRollConfig({
+												trigger: true,
+												diceType: 'd20',
+												mode: 'normal'
+											});
+											setTimeout(() => setAutoRollConfig({ trigger: false, diceType: 'd20' }), 200);
+										}}
+									/>
+								)}
+								{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
+								{activeTab === 'maneuvers' && <Maneuvers onManeuverClick={() => {}} />}
+								{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
+								{activeTab === 'conditions' && (
+									<ActiveConditionsTracker
+										activeConditions={state.character?.characterState?.activeConditions || []}
+										onToggleCondition={toggleActiveCondition}
+									/>
+								)}
+								{activeTab === 'knowledge' && (
+									<>
+										<SectionCard
+											initial={{ opacity: 0 }}
+											animate={{ opacity: 1 }}
+											$withMarginBottom
+										>
+											<KnowledgeTrades isMobile={isMobile} onSkillClick={handleSkillClick} />
+										</SectionCard>
+										<SectionCard initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+											<Languages languages={languages || []} isMobile={isMobile} />
+										</SectionCard>
+									</>
+								)}
+								{activeTab === 'utility' && (
+									<>
+										<SectionCard
+											initial={{ opacity: 0 }}
+											animate={{ opacity: 1 }}
+											$withMarginBottom
+										>
+											<SectionTitle>Movement</SectionTitle>
+											<Movement />
+										</SectionCard>
+										<SectionCard
+											initial={{ opacity: 0 }}
+											animate={{ opacity: 1 }}
+											$withMarginBottom
+										>
+											<SectionTitle>Currency</SectionTitle>
+											<Currency />
+										</SectionCard>
+									</>
+								)}
+								{activeTab === 'notes' && <PlayerNotes />}
+							</TabContent>
+						</AnimatePresence>
+					</TabContainer>
+				)}
 			</MainContent>
-
-			<DiceRoller ref={diceRollerRef} autoRollConfig={autoRollConfig} />
-			<AutoSaveIndicator status={saveStatus} onRetry={retryFailedSave} />
-			<FeaturePopup feature={selectedFeature} onClose={closeFeaturePopup} />
 			<WeaponPopup weapon={selectedWeapon} onClose={closeWeaponPopup} />
 			<InventoryPopup selectedInventoryItem={selectedInventoryItem} onClose={closeInventoryPopup} />
 			<CalculationTooltip
@@ -900,6 +1096,23 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				visible={tooltipState.visible}
 				positionX={tooltipState.x}
 				positionY={tooltipState.y}
+			/>
+
+			{/* Mobile Bottom Navigation - Only visible on mobile */}
+			<MobileBottomNav
+				tabs={mobileTabs}
+				activeTab={activeTab}
+				onTabChange={setActiveTab}
+				onMoreClick={() => setHamburgerDrawerOpen(true)}
+			/>
+
+			{/* Hamburger Menu Drawer - Mobile only */}
+			<HamburgerDrawer
+				isOpen={hamburgerDrawerOpen}
+				onClose={() => setHamburgerDrawerOpen(false)}
+				items={hamburgerMenuItems}
+				onItemClick={setActiveTab}
+				activeItemId={activeTab}
 			/>
 		</PageContainer>
 	);

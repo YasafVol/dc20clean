@@ -164,12 +164,12 @@
 	--black-30: rgba(0, 0, 0, 0.3);
 	--black-80: rgba(0, 0, 0, 0.8);
 
-	/* Mobile-specific colors */
-	--mobile-bg-primary: rgb(42, 42, 42);
-	--mobile-bg-secondary: rgb(60, 60, 60);
-	--mobile-bg-tertiary: rgb(50, 50, 50);
-	--mobile-border: rgb(68, 68, 68);
-	--mobile-accent: #f5d020;
+	/* Mobile-specific colors - Tokyo Night theme */
+	--mobile-bg-primary: #1a1b26;
+	--mobile-bg-secondary: #24283b;
+	--mobile-bg-tertiary: #2f3549;
+	--mobile-border: #414868;
+	--mobile-accent: #7dcfff; /* Changed from #f5d020 yellow to Tokyo Night blue */
 
 	/* Attribute modifier colors */
 	--attr-positive: #22c55e;

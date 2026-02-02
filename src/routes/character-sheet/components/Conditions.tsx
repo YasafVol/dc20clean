@@ -344,10 +344,7 @@ export const Conditions: React.FC<ConditionsProps> = ({ conditionStatuses, isMob
 		);
 	};
 
-	return (
-		<ConditionsContainer $isMobile={isMobile}>			
-		</ConditionsContainer>
-	);
+	return <ConditionsContainer $isMobile={isMobile}></ConditionsContainer>;
 };
 
 export default Conditions;

@@ -41,6 +41,26 @@ interface HeroSectionProps {
 	onGritChange?: (value: number) => void;
 	onSkillClick?: (skillName: string, bonus: number) => void;
 
+	// Tooltip handlers
+	onHPMouseEnter?: (e: React.MouseEvent) => void;
+	onHPMouseLeave?: () => void;
+	onManaMouseEnter?: (e: React.MouseEvent) => void;
+	onManaMouseLeave?: () => void;
+	onStaminaMouseEnter?: (e: React.MouseEvent) => void;
+	onStaminaMouseLeave?: () => void;
+	onRestMouseEnter?: (e: React.MouseEvent) => void;
+	onRestMouseLeave?: () => void;
+	onGritMouseEnter?: (e: React.MouseEvent) => void;
+	onGritMouseLeave?: () => void;
+	onAttackMouseEnter?: (e: React.MouseEvent) => void;
+	onAttackMouseLeave?: () => void;
+	onPrecisionADMouseEnter?: (e: React.MouseEvent) => void;
+	onPrecisionADMouseLeave?: () => void;
+	onAreaADMouseEnter?: (e: React.MouseEvent) => void;
+	onAreaADMouseLeave?: () => void;
+	onPrecisionDRMouseEnter?: (e: React.MouseEvent) => void;
+	onPrecisionDRMouseLeave?: () => void;
+
 	className?: string;
 }
 
@@ -156,6 +176,24 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 	onRestChange,
 	onGritChange,
 	onSkillClick,
+	onHPMouseEnter,
+	onHPMouseLeave,
+	onManaMouseEnter,
+	onManaMouseLeave,
+	onStaminaMouseEnter,
+	onStaminaMouseLeave,
+	onRestMouseEnter,
+	onRestMouseLeave,
+	onGritMouseEnter,
+	onGritMouseLeave,
+	onAttackMouseEnter,
+	onAttackMouseLeave,
+	onPrecisionADMouseEnter,
+	onPrecisionADMouseLeave,
+	onAreaADMouseEnter,
+	onAreaADMouseLeave,
+	onPrecisionDRMouseEnter,
+	onPrecisionDRMouseLeave,
 	className
 }) => {
 	return (
@@ -183,6 +221,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 					editable
 					onChange={onHPChange}
 					onTempChange={onTempHPChange}
+					onMouseEnter={onHPMouseEnter}
+					onMouseLeave={onHPMouseLeave}
 				/>
 				<DeathExhaustion isMobile={false} />
 			</BoxCard>
@@ -204,6 +244,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 						showProgressBar
 						editable
 						onChange={onManaChange}
+onMouseEnter={onManaMouseEnter}
+onMouseLeave={onManaMouseLeave}
 					/>
 					<StatCard
 						label="Stamina Points"
@@ -214,7 +256,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 						showProgressBar
 						editable
 						onChange={onStaminaChange}
-					/>
+					onMouseEnter={onStaminaMouseEnter}
+					onMouseLeave={onStaminaMouseLeave}
+				/>
 				</ResourcesGroup>
 			</BoxCard>
 
@@ -235,6 +279,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 						showProgressBar
 						editable
 						onChange={onRestChange}
+						onMouseEnter={onRestMouseEnter}
+						onMouseLeave={onRestMouseLeave}
 					/>
 					<StatCard
 						label="Grit Points"
@@ -245,6 +291,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 						showProgressBar
 						editable
 						onChange={onGritChange}
+						onMouseEnter={onGritMouseEnter}
+						onMouseLeave={onGritMouseLeave}
 					/>
 				</ResourcesGroup>
 			</BoxCard>
@@ -258,15 +306,27 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 				<BoxTitle>Combat Stats</BoxTitle>
 				<ResourcesGroup>
 					<DefensesGrid>
-						<DefenseItem whileHover={{ scale: 1.05 }}>
-							<DefenseLabel>Precision AD</DefenseLabel>
-							<DefenseValue>{precisionAD}</DefenseValue>
-						</DefenseItem>
-						<DefenseItem whileHover={{ scale: 1.05 }}>
-							<DefenseLabel>Precision DR</DefenseLabel>
-							<DefenseValue>{precisionDR}</DefenseValue>
-						</DefenseItem>
-						<DefenseItem whileHover={{ scale: 1.05 }}>
+					<DefenseItem
+						whileHover={{ scale: 1.05 }}
+						onMouseEnter={onPrecisionADMouseEnter}
+						onMouseLeave={onPrecisionADMouseLeave}
+					>
+						<DefenseLabel>Precision AD</DefenseLabel>
+						<DefenseValue>{precisionAD}</DefenseValue>
+					</DefenseItem>
+					<DefenseItem
+						whileHover={{ scale: 1.05 }}
+						onMouseEnter={onPrecisionDRMouseEnter}
+						onMouseLeave={onPrecisionDRMouseLeave}
+					>
+						<DefenseLabel>Precision DR</DefenseLabel>
+						<DefenseValue>{precisionDR}</DefenseValue>
+					</DefenseItem>
+					<DefenseItem
+						whileHover={{ scale: 1.05 }}
+						onMouseEnter={onAreaADMouseEnter}
+						onMouseLeave={onAreaADMouseLeave}
+					>
 							<DefenseLabel>Area AD</DefenseLabel>
 							<DefenseValue>{areaAD}</DefenseValue>
 						</DefenseItem>
@@ -276,8 +336,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 						whileHover={{ scale: 1.05 }}
 						$clickable
 						onClick={() => onSkillClick?.('Attack', attackBonus)}
-					>
-						<DefenseLabel>Attack/Spell</DefenseLabel>
+					onMouseEnter={onAttackMouseEnter}
+					onMouseLeave={onAttackMouseLeave}
+				>
+					<DefenseLabel>Attack/Spell</DefenseLabel>
 						<DefenseValue $isPrimary>+{attackBonus}</DefenseValue>
 					</DefenseItem>
 					<DefenseItem whileHover={{ scale: 1.05 }}>

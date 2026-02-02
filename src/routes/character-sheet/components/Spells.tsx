@@ -5,6 +5,7 @@ import { ALL_SPELLS as allSpells } from '../../../lib/rulesdata/spells-data';
 import { SpellSchool } from '../../../lib/rulesdata/schemas/spell.schema';
 import { useCharacterSpells, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import { logger } from '../../../lib/utils/logger';
+import DeleteButton from './shared/DeleteButton';
 import {
 	StyledSpellsSection,
 	StyledSpellsHeader,
@@ -16,7 +17,6 @@ import {
 	StyledHeaderColumn,
 	StyledEmptyState,
 	StyledSpellRow,
-	StyledRemoveButton,
 	StyledSpellSelect,
 	StyledSchoolFilter,
 	StyledSpellCell,
@@ -156,6 +156,15 @@ const Spells: React.FC<SpellsProps> = ({
 		});
 	};
 
+	const expandAll = () => {
+		const allSpellIds = filteredCharacterSpells.map((spell) => spell.id);
+		setExpandedSpells(new Set(allSpellIds));
+	};
+
+	const collapseAll = () => {
+		setExpandedSpells(new Set());
+	};
+
 	return (
 		<StyledSpellsSection $isMobile={effectiveIsMobile} data-testid="spells-section">
 			<StyledSpellsHeader $isMobile={effectiveIsMobile}>
@@ -176,6 +185,23 @@ const Spells: React.FC<SpellsProps> = ({
 								</option>
 							))}
 						</StyledSchoolFilter>
+<StyledAddSpellButton
+$isMobile={effectiveIsMobile}
+onClick={expandAll}
+style={{ backgroundColor: "#059669", marginRight: "0.5rem", fontSize: "0.85rem", padding: "0.4rem 0.8rem" }}
+aria-label="Expand All"
+>
+▼ Expand All
+</StyledAddSpellButton>
+<StyledAddSpellButton
+$isMobile={effectiveIsMobile}
+onClick={collapseAll}
+style={{ backgroundColor: "#dc2626", marginRight: "0.5rem", fontSize: "0.85rem", padding: "0.4rem 0.8rem" }}
+aria-label="Collapse All"
+>
+▲ Collapse All
+</StyledAddSpellButton>
+
 						<StyledAddSpellButton
 							$isMobile={effectiveIsMobile}
 							onClick={addSpellSlot}
@@ -221,13 +247,10 @@ const Spells: React.FC<SpellsProps> = ({
 								<StyledSpellRow $isMobile={effectiveIsMobile} data-testid={`spell-row-${spell.id}`}>
 									{/* Remove Button - only show in edit mode */}
 									{!readOnly && (
-										<StyledRemoveButton
-											$isMobile={effectiveIsMobile}
+										<DeleteButton
 											onClick={() => removeSpellSlot(originalIndex)}
-											data-testid={`remove-spell-${spell.id}`}
-										>
-											×
-										</StyledRemoveButton>
+											$isMobile={effectiveIsMobile}
+										/>
 									)}
 
 									{/* Spell Name - show as text in read-only mode, dropdown in edit mode */}

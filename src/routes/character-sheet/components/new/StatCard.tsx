@@ -16,6 +16,8 @@ interface StatCardProps {
 	editable?: boolean;
 	onChange?: (value: number) => void;
 	onTempChange?: (value: number) => void;
+	onMouseEnter?: (e: React.MouseEvent) => void;
+	onMouseLeave?: () => void;
 	className?: string;
 }
 
@@ -191,6 +193,8 @@ export const StatCard: React.FC<StatCardProps> = ({
 	editable = true,
 	onChange,
 	onTempChange,
+	onMouseEnter,
+	onMouseLeave,
 	className
 }) => {
 	const colorValue = theme.colors.resource[color];
@@ -218,6 +222,8 @@ export const StatCard: React.FC<StatCardProps> = ({
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.3 }}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
 		>
 			<Label $size={size}>{label}</Label>
 

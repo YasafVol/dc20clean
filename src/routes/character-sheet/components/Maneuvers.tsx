@@ -5,6 +5,7 @@ import { maneuvers as allManeuvers } from '../../../lib/rulesdata/martials/maneu
 import { useCharacterManeuvers, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import { logger } from '../../../lib/utils/logger';
 import { theme } from '../styles/theme';
+import DeleteButton from './shared/DeleteButton';
 import {
 	StyledManeuversSection,
 	StyledManeuversHeader,
@@ -15,7 +16,6 @@ import {
 	StyledManeuverHeaderColumn,
 	StyledManeuverEmptyState,
 	StyledManeuverRow,
-	StyledManeuverRemoveButton,
 	StyledManeuverSelect,
 	StyledManeuverTypeFilter,
 	StyledManeuverCell,
@@ -139,6 +139,15 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 		});
 	};
 
+	const expandAll = () => {
+		const allManeuverIds = filteredCharacterManeuvers.map((m) => m.id);
+		setExpandedManeuvers(new Set(allManeuverIds));
+	};
+
+	const collapseAll = () => {
+		setExpandedManeuvers(new Set());
+	};
+
 	const getUniqueTypes = () => {
 		const types = new Set(allManeuvers.map((maneuver) => maneuver.type));
 		return Array.from(types).sort();
@@ -163,6 +172,23 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 									</option>
 								))}
 							</StyledManeuverTypeFilter>
+<StyledAddManeuverButton
+$isMobile={effectiveIsMobile}
+onClick={expandAll}
+style={{ backgroundColor: "#059669", marginRight: "0.5rem", fontSize: "0.85rem", padding: "0.4rem 0.8rem" }}
+aria-label="Expand All"
+>
+▼ Expand All
+</StyledAddManeuverButton>
+<StyledAddManeuverButton
+$isMobile={effectiveIsMobile}
+onClick={collapseAll}
+style={{ backgroundColor: "#dc2626", marginRight: "0.5rem", fontSize: "0.85rem", padding: "0.4rem 0.8rem" }}
+aria-label="Collapse All"
+>
+▲ Collapse All
+</StyledAddManeuverButton>
+
 							<StyledAddManeuverButton
 								data-testid="add-maneuver"
 								$isMobile={effectiveIsMobile}
@@ -213,13 +239,10 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 								<StyledManeuverRow $isMobile={effectiveIsMobile}>
 									{/* Remove Button - only show in edit mode */}
 									{!readOnly && (
-										<StyledManeuverRemoveButton
-											data-testid={`remove-maneuver-${maneuver.id}`}
-											$isMobile={effectiveIsMobile}
+										<DeleteButton
 											onClick={() => removeManeuverSlot(originalIndex)}
-										>
-											×
-										</StyledManeuverRemoveButton>
+											$isMobile={effectiveIsMobile}
+										/>
 									)}
 
 									{/* Maneuver Name - show as text in read-only mode, dropdown in edit mode */}

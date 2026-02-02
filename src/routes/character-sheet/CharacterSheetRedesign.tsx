@@ -7,11 +7,13 @@ import {
 	useCharacterSheet,
 	useCharacterResources,
 	useCharacterConditions,
-	useCharacterLanguages
+	useCharacterLanguages,
+	useCharacterCalculatedData
 } from './hooks/CharacterSheetProvider';
 
 // Import types
-import type { FeatureData } from '../../types';
+import type { FeatureData, InventoryItemData } from '../../types';
+import type { Weapon, InventoryItem } from '../../lib/rulesdata/inventoryItems';
 
 // Import new components
 import { HeroSection } from './components/new/HeroSection';
@@ -32,8 +34,10 @@ import PlayerNotes from './components/PlayerNotes';
 import DiceRoller, { DiceRollerRef } from './components/DiceRoller';
 import { AutoSaveIndicator } from './components/AutoSaveIndicator';
 import Movement from './components/Movement';
-import RightColumnResources from './components/RightColumnResources';
 import FeaturePopup from './components/FeaturePopup';
+import WeaponPopup from './components/WeaponPopup';
+import InventoryPopup from './components/InventoryPopup';
+import CalculationTooltip from './components/shared/CalculationTooltip';
 import DeathExhaustion from './components/DeathExhaustion';
 import KnowledgeTrades from './components/KnowledgeTrades';
 import Languages from './components/Languages';
@@ -318,7 +322,6 @@ type TabId =
 	| 'maneuvers'
 	| 'features'
 	| 'conditions'
-	| 'resources'
 	| 'knowledge'
 	| 'utility'
 	| 'notes';
@@ -334,9 +337,22 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		mode?: 'normal' | 'advantage' | 'disadvantage' | 'no-d20';
 	}>({ trigger: false, diceType: 'd20' });
 	const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
+	const [selectedWeapon, setSelectedWeapon] = useState<Weapon | null>(null);
+	const [selectedInventoryItem, setSelectedInventoryItem] = useState<{
+		inventoryData: InventoryItemData;
+		item: InventoryItem | null;
+	} | null>(null);
+	const [tooltipState, setTooltipState] = useState<{
+		visible: boolean;
+		type: 'hp' | 'mana' | 'stamina' | 'rest' | 'grit' | 'attack' | 'precisionAD' | 'areaAD' | 'precisionDR' | null;
+		x: number;
+		y: number;
+	}>({ visible: false, type: null, x: 0, y: 0 });
 
 	// Ref for dice roller auto-population
 	const diceRollerRef = useRef<DiceRollerRef>(null);
+	// Ref for tooltip delay timeout
+	const tooltipTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	// Handle skill/save clicks to auto-populate dice roller
 	const handleSkillClick = (skillName: string, bonus: number) => {
@@ -363,6 +379,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	const resources = useCharacterResources();
 	const conditionStatuses = useCharacterConditions();
 	const languages = useCharacterLanguages();
+	const calculatedData = useCharacterCalculatedData();
 
 	// Calculate active conditions count (must be before early returns - Rules of Hooks)
 	const activeConditionsCount = React.useMemo(() => {
@@ -371,6 +388,15 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			(cs) => cs.interactions && cs.interactions.length > 0
 		).length;
 	}, [conditionStatuses]);
+
+	// Cleanup tooltip timeout on unmount
+	React.useEffect(() => {
+		return () => {
+			if (tooltipTimeoutRef.current) {
+				clearTimeout(tooltipTimeoutRef.current);
+			}
+		};
+	}, []);
 
 	const characterData = state.character;
 	const loading = state.loading;
@@ -383,6 +409,48 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 	const closeFeaturePopup = () => {
 		setSelectedFeature(null);
+	};
+
+	const openWeaponPopup = (weapon: Weapon) => {
+		setSelectedWeapon(weapon);
+	};
+
+	const closeWeaponPopup = () => {
+		setSelectedWeapon(null);
+	};
+
+	const openInventoryPopup = (inventoryData: InventoryItemData, item: InventoryItem | null) => {
+		setSelectedInventoryItem({ inventoryData, item });
+	};
+
+	const closeInventoryPopup = () => {
+		setSelectedInventoryItem(null);
+	};
+
+	const handleMouseEnter = (type: 'hp' | 'mana' | 'stamina' | 'rest' | 'grit' | 'attack' | 'precisionAD' | 'areaAD' | 'precisionDR', e: React.MouseEvent) => {
+		const rect = e.currentTarget.getBoundingClientRect();
+		// Clear any existing timeout
+		if (tooltipTimeoutRef.current) {
+			clearTimeout(tooltipTimeoutRef.current);
+		}
+		// Set new timeout to show tooltip after 500ms
+		tooltipTimeoutRef.current = setTimeout(() => {
+			setTooltipState({
+				visible: true,
+				type,
+				x: rect.left + rect.width / 2,
+				y: rect.top
+			});
+		}, 500);
+	};
+
+	const handleMouseLeave = () => {
+		// Clear timeout if user moves away before tooltip shows
+		if (tooltipTimeoutRef.current) {
+			clearTimeout(tooltipTimeoutRef.current);
+			tooltipTimeoutRef.current = null;
+		}
+		setTooltipState({ visible: false, type: null, x: 0, y: 0 });
 	};
 
 	if (loading) {
@@ -489,7 +557,6 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		{ id: 'maneuvers', label: 'Maneuvers', emoji: '⚡' },
 		{ id: 'features', label: 'Features', emoji: '✨' },
 		{ id: 'conditions', label: 'Conditions', emoji: '🎭', badge: activeConditionsCount },
-		{ id: 'resources', label: 'Resources', emoji: '💎' },
 		{ id: 'knowledge', label: 'Knowledge', emoji: '📚' },
 		{ id: 'utility', label: 'Utility', emoji: '🔧' },
 		{ id: 'notes', label: 'Notes', emoji: '📝' }
@@ -582,43 +649,55 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 							onRestChange={updateRestPoints}
 							onGritChange={updateGritPoints}
 						onSkillClick={handleSkillClick}
-					/>
+						onHPMouseEnter={(e) => handleMouseEnter('hp', e)}
+						onHPMouseLeave={handleMouseLeave}
+						onManaMouseEnter={(e) => handleMouseEnter('mana', e)}
+						onManaMouseLeave={handleMouseLeave}
+						onStaminaMouseEnter={(e) => handleMouseEnter('stamina', e)}
+						onStaminaMouseLeave={handleMouseLeave}
+						onRestMouseEnter={(e) => handleMouseEnter('rest', e)}
+						onRestMouseLeave={handleMouseLeave}
+						onGritMouseEnter={(e) => handleMouseEnter('grit', e)}
+						onGritMouseLeave={handleMouseLeave}
+						onAttackMouseEnter={(e) => handleMouseEnter('attack', e)}
+						onAttackMouseLeave={handleMouseLeave}
+					onPrecisionADMouseEnter={(e) => handleMouseEnter('precisionAD', e)}
+					onPrecisionADMouseLeave={handleMouseLeave}
+					onAreaADMouseEnter={(e) => handleMouseEnter('areaAD', e)}
+					onAreaADMouseLeave={handleMouseLeave}
+					onPrecisionDRMouseEnter={(e) => handleMouseEnter('precisionDR', e)}
+					onPrecisionDRMouseLeave={handleMouseLeave}
+				/>
 
-					{/* Tabs Section */}
-					<TabContainer>
-						<TabNav>
-							{tabs.map((tab) => (
-								<Tab
-									key={tab.id}
+				{/* Tabs Section */}
+				<TabContainer>
+					<TabNav>
+						{tabs.map((tab) => (
+							<Tab									key={tab.id}
 									$active={activeTab === tab.id}
-										onClick={() => setActiveTab(tab.id)}
-										whileHover={{ y: -2 }}
-										whileTap={{ scale: 0.98 }}
-									>
-										{tab.emoji} {tab.label}
-									</Tab>
-								))}
-							</TabNav>
-
-							<AnimatePresence mode="wait">
-								<TabContent
-									key={activeTab}
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: 1, y: 0 }}
-									exit={{ opacity: 0, y: -20 }}
-									transition={{ duration: 0.2 }}
+									onClick={() => setActiveTab(tab.id)}
+									whileHover={{ y: -2 }}
+									whileTap={{ scale: 0.98 }}
 								>
+									{tab.emoji} {tab.label}
+								</Tab>
+							))}
+						</TabNav>
+
+						<AnimatePresence mode="wait">
+							<TabContent
+								key={activeTab}
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+								exit={{ opacity: 0, y: -20 }}
+								transition={{ duration: 0.2 }}
+							>
 								{activeTab === 'attacks' && (
 									<Attacks
 										onAttackClick={(attack, weapon) => {
-											setAutoRollConfig({
-												trigger: true,
-												diceType: 'd20',
-												bonus: attack.attackBonus,
-												mode: 'normal'
-											});
-											// Reset trigger after roll
-											setTimeout(() => setAutoRollConfig({ trigger: false, diceType: 'd20' }), 200);
+											if (weapon) {
+												openWeaponPopup(weapon);
+											}
 										}}
 									/>
 								)}
@@ -634,7 +713,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 										}}
 									/>
 								)}
-									{activeTab === 'inventory' && <Inventory onItemClick={() => {}} />}
+									{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
 									{activeTab === 'maneuvers' && <Maneuvers onManeuverClick={() => {}} />}
 									{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
 									{activeTab === 'conditions' && (
@@ -643,7 +722,6 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 											<ConditionsReference />
 										</>
 									)}
-									{activeTab === 'resources' && <RightColumnResources />}{' '}
 									{activeTab === 'knowledge' && (
 										<>
 											<SectionCard
@@ -651,7 +729,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 												animate={{ opacity: 1 }}
 												$withMarginBottom
 											>
-												<KnowledgeTrades isMobile={false} />
+												<KnowledgeTrades isMobile={false} onSkillClick={handleSkillClick} />
 											</SectionCard>
 											<SectionCard initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
 												<Languages languages={languages || []} isMobile={false} />
@@ -686,9 +764,67 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				</TwoColumnLayout>
 			</MainContent>
 
-		<DiceRoller ref={diceRollerRef} autoRollConfig={autoRollConfig} />
+			<DiceRoller ref={diceRollerRef} autoRollConfig={autoRollConfig} />
 			<AutoSaveIndicator status={saveStatus} onRetry={retryFailedSave} />
 			<FeaturePopup feature={selectedFeature} onClose={closeFeaturePopup} />
+			<WeaponPopup weapon={selectedWeapon} onClose={closeWeaponPopup} />
+			<InventoryPopup selectedInventoryItem={selectedInventoryItem} onClose={closeInventoryPopup} />
+			<CalculationTooltip
+				title={
+					tooltipState.type === 'hp'
+						? 'Hit Points Calculation'
+						: tooltipState.type === 'mana'
+							? 'Mana Points Calculation'
+							: tooltipState.type === 'stamina'
+								? 'Stamina Points Calculation'
+								: tooltipState.type === 'rest'
+									? 'Rest Points Calculation'
+									: tooltipState.type === 'grit'
+										? 'Grit Points Calculation'
+										: tooltipState.type === 'attack'
+											? 'Attack/Spell Bonus Calculation'
+											: tooltipState.type === 'precisionAD'
+												? 'Precision AD Calculation'
+												: tooltipState.type === 'areaAD'
+													? 'Area AD Calculation'
+													: 'Precision DR'
+				}
+				breakdown={
+					tooltipState.type === 'hp'
+						? calculatedData?.breakdowns?.hpMax
+						: tooltipState.type === 'mana'
+							? calculatedData?.breakdowns?.mpMax
+							: tooltipState.type === 'stamina'
+								? calculatedData?.breakdowns?.spMax
+								: tooltipState.type === 'rest'
+									? calculatedData?.breakdowns?.hpMax
+									: tooltipState.type === 'grit'
+										? calculatedData?.breakdowns?.gritPoints
+										: tooltipState.type === 'attack'
+											? {
+													base: combatMastery,
+													total: attackBonus,
+													effects: [
+														{
+															name: `Prime Modifier (${primeAttribute})`,
+															value: primeValue
+														}
+													]
+												}
+											: tooltipState.type === 'precisionAD'
+												? calculatedData?.breakdowns?.pd
+												: tooltipState.type === 'areaAD'
+													? calculatedData?.breakdowns?.ad
+													: {
+															base: precisionDR,
+															total: precisionDR,
+															effects: []
+														}
+				}
+				visible={tooltipState.visible}
+				positionX={tooltipState.x}
+				positionY={tooltipState.y}
+			/>
 		</PageContainer>
 	);
 };

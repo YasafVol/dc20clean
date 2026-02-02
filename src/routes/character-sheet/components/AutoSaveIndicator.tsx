@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import styled from 'styled-components';
 import { theme } from '../styles/theme';
 import type { SaveStatus } from '../hooks/CharacterSheetProvider';
+import { logger } from '../../../lib/utils/logger';
 
 interface AutoSaveIndicatorProps {
 	status: SaveStatus;
@@ -9,7 +10,7 @@ interface AutoSaveIndicatorProps {
 }
 
 export function AutoSaveIndicator({ status, onRetry }: AutoSaveIndicatorProps) {
-	console.log('[GIMLI] AutoSaveIndicator render:', { status });
+	logger.debug('ui', 'AutoSaveIndicator render', { status });
 
 	// Don't render anything when idle
 	if (status === 'idle') return null;

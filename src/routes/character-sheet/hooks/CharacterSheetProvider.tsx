@@ -239,10 +239,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 				return;
 			}
 
-			console.log('[GIMLI] Setting status to SAVING');
-			setSaveStatus('saving');
-			logger.debug('storage', 'Saving character data', { characterId: character.id });
-
+		logger.debug('storage', 'Setting save status', { status: 'saving' });
 			try {
 				// Run enhanced calculator to get updated stats
 				const calculationData = convertToEnhancedBuildData(character);
@@ -274,10 +271,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 				// Save the entire character (includes spells, maneuvers, etc.)
 				await storage.saveCharacter(updatedCharacter);
 
-				console.log('[GIMLI] Save SUCCESS! Setting status to SAVED');
-				lastSavedHash.current = currentHash;
-				setSaveStatus('saved');
-
+			logger.debug('storage', 'Character save successful', { characterId: character.id });
 				logger.debug('storage', 'Character sheet data saved successfully', {
 					characterId: character.id
 				});
@@ -323,13 +317,13 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 
 	// Effect to auto-save when state changes
 	useEffect(() => {
-		console.log('[GIMLI] state.character changed:', {
+		logger.debug('storage', 'Character state changed', {
 			exists: !!state.character,
 			id: state.character?.id,
 			hpCurrent: state.character?.characterState?.resources?.current?.currentHP
 		});
 		if (state.character) {
-			console.log('[GIMLI] Auto-save effect triggered - queueing debounced save');
+			logger.debug('storage', 'Auto-save effect triggered - queueing debounced save');
 			debouncedSave(state.character);
 		}
 		// Clean up on unmount

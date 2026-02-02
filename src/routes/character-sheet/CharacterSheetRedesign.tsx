@@ -461,7 +461,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 	// Handle skill/save clicks to auto-populate dice roller
 	const handleSkillClick = (skillName: string, bonus: number) => {
-		console.log('[GIMLI] Skill clicked:', { skillName, bonus, refExists: !!diceRollerRef.current });
+		logger.debug('ui', 'Skill clicked for dice roller', { skillName, bonus, refExists: !!diceRollerRef.current });
 
 		// Determine action type based on skill name
 		let actionType:
@@ -497,7 +497,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			const diceModifier = getDiceModifierForAction(activeConditions, actionType);
 
 			if (diceModifier.mode !== 'normal') {
-				console.log('[GIMLI] Applying condition-based dice modifier:', diceModifier);
+				logger.debug('ui', 'Applying condition-based dice modifier', diceModifier);
 				// Set the roll mode before rolling
 				diceRollerRef.current?.setRollMode(diceModifier.mode);
 			}
@@ -524,7 +524,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		retryFailedSave
 	} = useCharacterSheet();
 
-	console.log('[GIMLI] CharacterSheet render - saveStatus:', saveStatus);
+	logger.debug('ui', 'CharacterSheet render', { saveStatus });
 
 	const resources = useCharacterResources();
 	const conditionStatuses = useCharacterConditions();

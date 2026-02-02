@@ -1,6 +1,11 @@
 {
 	"buildCommand": "npx convex deploy --cmd 'npm run build'",
 	"outputDirectory": "dist",
+	"build": {
+		"env": {
+			"VITE_USE_CONVEX": "true"
+		}
+	},
 	"headers": [
 		{
 			"source": "/assets/(.*)\\.js",

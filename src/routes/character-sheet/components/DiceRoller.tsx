@@ -1,6 +1,7 @@
 import React, { useState, useImperativeHandle, forwardRef } from 'react';
 import { StyledDiceRollerContainer } from '../styles/DiceRoller';
 import { theme } from '../styles/theme';
+import { logger } from '../../../lib/utils/logger';
 import {
 	StyledDiceContainer,
 	StyledDiceIcon,
@@ -239,7 +240,7 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 	// Expose methods via ref for external control
 	useImperativeHandle(ref, () => ({
 		addRollWithModifier: async (bonus: number, label?: string) => {
-			console.log('[GIMLI] addRollWithModifier called:', { bonus, label });
+			logger.debug('ui', 'DiceRoller addRollWithModifier called', { bonus, label });
 			// Clear any existing dice first
 			setAdditionalDice([]);
 			// Set the modifier

@@ -9,7 +9,6 @@ const convex = getConvexClient();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
-		<App />
 		<ConvexAuthProvider client={convex}>
 			<App />
 		</ConvexAuthProvider>

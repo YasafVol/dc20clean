@@ -1,372 +1,837 @@
 /**
  * Sample Monsters for Seeding
  *
- * Pre-built monsters with calculated stats ready for import.
- * Uses the monsterCalculator to ensure proper stat values.
+ * Pre-built monsters from the DC20 Beta Bestiary (Volumes 1-3).
+ * Uses explicit stats from the official books for accuracy.
  */
 
-import { generateContentId } from '../../utils/idGenerator';
-import { calculateMonsterStats } from '../../services/monsterCalculator';
-import {
-	MONSTER_SCHEMA_VERSION,
-	type SavedMonster,
-	type MonsterTier,
-	type MonsterRoleId,
-	type MonsterSize,
-	type MonsterType,
-	type MonsterAlignment,
-} from '../schemas/monster.schema';
+import { importRawMonsters, type RawSeedMonster } from '../../services/monsterImporter';
+import type { SavedMonster } from '../schemas/monster.schema';
 
-interface SampleMonsterInput {
-	name: string;
-	level: number;
-	tier: MonsterTier;
-	roleId: MonsterRoleId;
-	size: MonsterSize;
-	monsterType: MonsterType;
-	alignment: MonsterAlignment;
-	description: string;
-	lore: string;
-	tactics: string;
-	actions: Array<{
-		name: string;
-		type: 'martial' | 'spell' | 'special';
-		targetDefense: 'pd' | 'ad';
-		damage: number;
-		damageType: string;
-		range: number;
-		description: string;
-	}>;
-}
-
-function createMonster(input: SampleMonsterInput): SavedMonster {
-	const stats = calculateMonsterStats({
-		level: input.level,
-		tier: input.tier,
-		roleId: input.roleId,
-	});
-
-	const now = new Date().toISOString();
-	const monsterId = generateContentId('monster');
-
-	return {
-		id: monsterId,
-		name: input.name,
-		description: input.description,
-		level: input.level,
-		tier: input.tier,
-		roleId: input.roleId,
-
-		// Flavor
-		size: input.size,
-		monsterType: input.monsterType,
-		alignment: input.alignment,
-		lore: input.lore,
-		tactics: input.tactics,
-
-		// Stats from calculator
-		finalHP: stats.finalHP,
-		finalPD: stats.finalPD,
-		finalAD: stats.finalAD,
-		finalAttack: stats.finalAttack,
-		finalSaveDC: stats.finalSaveDC,
-		finalBaseDamage: stats.finalBaseDamage,
-
-		// Attributes (default)
-		attributes: {
-			might: 0,
-			agility: 0,
-			charisma: 0,
-			intelligence: 0,
-		},
-
-		// Features (none for samples)
-		featureIds: [],
-		featurePointsSpent: 0,
-		featurePointsMax: stats.featurePowerMax,
-
-		// Actions with generated IDs
-		actions: input.actions.map((action) => ({
-			id: generateContentId('action'),
-			name: action.name,
-			apCost: 2,
-			type: action.type,
-			targetDefense: action.targetDefense,
-			damage: action.damage,
-			damageType: action.damageType,
-			range: action.range,
-			description: action.description,
-		})),
-
-		// Sharing
-		visibility: 'private',
-		approvalStatus: 'draft',
-		isHomebrew: false,
-
-		// Metadata
-		createdAt: now,
-		lastModified: now,
-		schemaVersion: MONSTER_SCHEMA_VERSION,
-
-		// Breakdowns
-		breakdowns: stats.breakdowns,
-	};
-}
-
-const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
+/**
+ * Raw monster data from DC20 Beta Bestiary Volumes 1-3
+ * Stats are taken directly from the official source material
+ */
+const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
+	// ============================================================================
+	// VOLUME 1 & 2: Core Monsters
+	// ============================================================================
 	{
-		name: 'Goblin Warrior',
-		level: 1,
-		tier: 'standard',
-		roleId: 'skirmisher',
-		size: 'Small',
-		monsterType: 'Humanoid',
-		alignment: 'Chaotic Evil',
-		description: 'A small, vicious humanoid with green skin and sharp teeth.',
-		lore: 'Goblins are small, black-hearted humanoids that lair in despoiled dungeons and other dismal settings.',
-		tactics: 'Goblins prefer ambushes and gang tactics, attacking from hiding with ranged weapons before closing to melee.',
-		actions: [
-			{
-				name: 'Shortsword',
-				type: 'martial',
-				targetDefense: 'pd',
-				damage: 2,
-				damageType: 'Physical',
-				range: 5,
-				description: 'Melee weapon attack.',
-			},
-			{
-				name: 'Shortbow',
-				type: 'martial',
-				targetDefense: 'pd',
-				damage: 2,
-				damageType: 'Physical',
-				range: 80,
-				description: 'Ranged weapon attack.',
-			},
-		],
-	},
-	{
-		name: 'Skeleton',
-		level: 1,
-		tier: 'standard',
-		roleId: 'skirmisher',
-		size: 'Medium',
-		monsterType: 'Undead',
-		alignment: 'Lawful Evil',
-		description: 'A magically animated pile of bones that obeys its creator\'s commands.',
-		lore: 'Skeletons are the animated bones of the dead, raised by dark magic.',
-		tactics: 'Skeletons mindlessly follow orders, fighting until destroyed.',
-		actions: [
-			{
-				name: 'Rusty Sword',
-				type: 'martial',
-				targetDefense: 'pd',
-				damage: 2,
-				damageType: 'Physical',
-				range: 5,
-				description: 'Melee weapon attack.',
-			},
-			{
-				name: 'Shortbow',
-				type: 'martial',
-				targetDefense: 'pd',
-				damage: 2,
-				damageType: 'Physical',
-				range: 80,
-				description: 'Ranged weapon attack.',
-			},
-		],
-	},
-	{
-		name: 'Wolf',
-		level: 1,
-		tier: 'standard',
-		roleId: 'skirmisher',
-		size: 'Medium',
-		monsterType: 'Beast',
-		alignment: 'Unaligned',
-		description: 'A gray-furred predator with keen senses and pack instincts.',
-		lore: 'Wolves hunt in packs, using coordinated tactics to bring down prey.',
-		tactics: 'Wolves try to surround prey and knock it prone for advantage.',
-		actions: [
-			{
-				name: 'Bite',
-				type: 'martial',
-				targetDefense: 'pd',
-				damage: 2,
-				damageType: 'Physical',
-				range: 5,
-				description: 'Melee natural attack. Target must succeed on a Save or be knocked prone.',
-			},
-		],
-	},
-	{
-		name: 'Orc Berserker',
-		level: 2,
-		tier: 'standard',
-		roleId: 'brute',
-		size: 'Medium',
-		monsterType: 'Humanoid',
-		alignment: 'Chaotic Evil',
-		description: 'A savage humanoid warrior consumed by bloodlust.',
-		lore: 'Orcs are savage raiders who glory in battle and destruction.',
-		tactics: 'Orc berserkers charge directly at the strongest-looking foe.',
-		actions: [
-			{
-				name: 'Greataxe',
-				type: 'martial',
-				targetDefense: 'pd',
-				damage: 4,
-				damageType: 'Physical',
-				range: 5,
-				description: 'Melee weapon attack. Brutal: Extra damage on critical hits.',
-			},
-			{
-				name: 'Javelin',
-				type: 'martial',
-				targetDefense: 'pd',
-				damage: 3,
-				damageType: 'Physical',
-				range: 30,
-				description: 'Ranged weapon attack.',
-			},
-		],
-	},
-	{
-		name: 'Giant Spider',
-		level: 2,
-		tier: 'standard',
-		roleId: 'controller',
-		size: 'Large',
-		monsterType: 'Beast',
-		alignment: 'Unaligned',
-		description: 'A massive arachnid with venomous fangs and web-spinning capabilities.',
-		lore: 'Giant spiders lurk in dark caves and dense forests.',
-		tactics: 'Giant spiders web targets from afar, then close in for the kill.',
-		actions: [
-			{
-				name: 'Bite',
-				type: 'martial',
-				targetDefense: 'pd',
-				damage: 3,
-				damageType: 'Physical',
-				range: 5,
-				description: 'Melee natural attack. Target must Save or take poison damage.',
-			},
-			{
-				name: 'Web',
-				type: 'special',
-				targetDefense: 'ad',
-				damage: 0,
-				damageType: 'Physical',
-				range: 30,
-				description: 'Ranged attack. On hit, target is restrained by webbing.',
-			},
-		],
-	},
-	{
-		name: 'Cultist Fanatic',
-		level: 2,
-		tier: 'standard',
-		roleId: 'artillerist',
-		size: 'Medium',
-		monsterType: 'Humanoid',
-		alignment: 'Chaotic Evil',
-		description: 'A devoted follower of dark powers, capable of minor spellcasting.',
-		lore: 'Cultists serve dark masters in exchange for forbidden power.',
-		tactics: 'Cultists attack from range, protecting more powerful cult leaders.',
-		actions: [
-			{
-				name: 'Dagger',
-				type: 'martial',
-				targetDefense: 'pd',
-				damage: 2,
-				damageType: 'Physical',
-				range: 5,
-				description: 'Melee or ranged weapon attack.',
-			},
-			{
-				name: 'Dark Bolt',
-				type: 'spell',
-				targetDefense: 'ad',
-				damage: 3,
-				damageType: 'Necrotic',
-				range: 60,
-				description: 'Ranged spell attack dealing necrotic damage.',
-			},
-		],
-	},
-	{
-		name: 'Ogre',
+		id: 'mon_v2_chimera_001',
+		name: 'Arctic Chimera',
 		level: 4,
 		tier: 'apex',
-		roleId: 'brute',
+		role: 'brute',
 		size: 'Large',
-		monsterType: 'Giant',
-		alignment: 'Chaotic Evil',
-		description: 'A hulking brute of great strength and little intelligence.',
-		lore: 'Ogres are dim-witted giants that bully smaller creatures.',
-		tactics: 'Ogres charge the nearest enemy and pummel it with their club.',
+		type: 'Beast',
+		stats: { hp: 80, pd: 11, ad: 15, attack: 6, saveDC: 16 },
+		features: [
+			{ name: 'Keen Smell', description: 'ADV on Awareness Checks using smell.' },
+			{ name: 'Large Lungs', description: 'Can hold breath for up to 1 hour.' },
+		],
 		actions: [
+			{ name: 'Maul', ap: 1, targetDefense: 'PD', damage: 3, traits: ['Heavy Hit (+1)'] },
+			{ name: 'Crash', ap: 1, targetDefense: 'AD', damage: 3, traits: ['2 Space Line'] },
+			{ name: 'Spray', ap: 2, targetDefense: 'AD', damage: 2, traits: ['5 Space Line', 'Knockdown'] },
+		],
+	},
+	{
+		id: 'mon_v2_necro_002',
+		name: 'Necromancer',
+		level: 4,
+		tier: 'apex',
+		role: 'leader',
+		size: 'Medium',
+		type: 'Humanoid',
+		stats: { hp: 40, pd: 13, ad: 15, attack: 6, saveDC: 16 },
+		features: [
+			{ name: 'Spellcaster', description: '+2 bonus to Spell Duels.' },
 			{
-				name: 'Greatclub',
-				type: 'martial',
-				targetDefense: 'pd',
-				damage: 8,
-				damageType: 'Physical',
-				range: 10,
-				description: 'Melee weapon attack with extended reach.',
+				name: 'Reconstitution',
+				description: 'Reaction: Self or Thrall within 15 spaces gains 2 Temp HP on damage.',
+			},
+		],
+		actions: [
+			{ name: 'Umbral Bolt', ap: 1, targetDefense: 'PD', damage: 2, traits: ['Sap Enhancement'] },
+			{
+				name: 'Command Thrall',
+				ap: 2,
+				targetDefense: 'None',
+				description: 'One Thrall moves and attacks with ADV.',
 			},
 			{
-				name: 'Rock',
-				type: 'martial',
-				targetDefense: 'ad',
-				damage: 6,
-				damageType: 'Physical',
-				range: 60,
-				description: 'Ranged attack hurling a large rock.',
+				name: 'Create Undead',
+				ap: 2,
+				targetDefense: 'None',
+				description: 'Summon 1 Thrall within 5 spaces.',
 			},
 		],
 	},
 	{
-		name: 'Young Dragon',
-		level: 8,
+		id: 'mon_v2_collector_003',
+		name: 'Collector Demon',
+		level: 5,
 		tier: 'legendary',
-		roleId: 'brute',
+		role: 'controller',
+		size: 'Huge',
+		type: 'Fiend',
+		stats: { hp: 70, pd: 14, ad: 17, attack: 8, saveDC: 18 },
+		features: [
+			{ name: 'Soul Collector', description: 'Collects souls of those who die within 5 spaces.' },
+			{ name: 'Invisibility', description: 'Invisible while in Dim Light or Darkness.' },
+		],
+		actions: [
+			{ name: 'Dark Claws', ap: 1, targetDefense: 'PD', damage: 3 },
+			{ name: 'Doom Call', ap: 2, targetDefense: 'AD', damage: 1, traits: ['5 Space Aura', 'Doomed'] },
+		],
+	},
+	{
+		id: 'mon_v2_penguin_004',
+		name: 'Emperor Penguin',
+		level: 3,
+		tier: 'legendary',
+		role: 'leader',
 		size: 'Large',
-		monsterType: 'Dragon',
-		alignment: 'Varies',
-		description: 'A juvenile dragon, already a fearsome predator with breath weapon.',
-		lore: 'Dragons are the apex predators of fantasy worlds, hoarding treasure and terrorizing the land.',
-		tactics: 'Young dragons use their breath weapon first, then engage in melee with bite and claws.',
+		type: 'Beast',
+		stats: { hp: 60, pd: 14, ad: 17, attack: 6, saveDC: 16 },
+		actions: [
+			{ name: 'Flipper', ap: 1, targetDefense: 'PD', damage: 2 },
+			{
+				name: 'Icy Stare',
+				ap: 2,
+				targetDefense: 'AD',
+				damage: 2,
+				traits: ['10 Space Line', 'Immobilized'],
+			},
+		],
+	},
+	{
+		id: 'mon_v2_blightq_005',
+		name: 'Blight Queen',
+		level: 1,
+		tier: 'apex',
+		role: 'skirmisher',
+		size: 'Large',
+		type: 'Monstrosity',
+		stats: { hp: 25, pd: 15, ad: 9, attack: 4, saveDC: 14 },
+		actions: [
+			{ name: 'Pincer', ap: 1, targetDefense: 'PD', damage: 2, traits: ['Grapple'] },
+			{
+				name: 'Corrosive Spray',
+				ap: 2,
+				targetDefense: 'AD',
+				damage: 1,
+				traits: ['5 Space Cone', 'Burning'],
+			},
+		],
+	},
+	{
+		id: 'mon_v2_shadow_006',
+		name: 'Shadow',
+		level: 1,
+		tier: 'standard',
+		role: 'lurker',
+		size: 'Medium',
+		type: 'Undead',
+		stats: { hp: 7, pd: 13, ad: 10, attack: 4, saveDC: 14 },
+		features: [
+			{
+				name: 'Shadow Merge',
+				description: 'Become Invisible when taking the Hide action in Dim Light.',
+			},
+		],
+		actions: [
+			{ name: 'Soul Rend', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Doomed'] },
+			{ name: 'Night Stride', ap: 1, description: 'Teleport 5 spaces between shadows.' },
+		],
+	},
+	{
+		id: 'mon_v2_cinder_007',
+		name: 'Cindergeist',
+		level: 3,
+		tier: 'standard',
+		role: 'lurker',
+		size: 'Medium',
+		type: 'Undead',
+		stats: { hp: 11, pd: 14, ad: 11, attack: 5, saveDC: 15 },
+		actions: [
+			{ name: 'Ash Lash', ap: 1, targetDefense: 'PD', damage: 3, traits: ['Fire/Umbral'] },
+			{
+				name: 'Ember Drift',
+				ap: 3,
+				targetDefense: 'AD',
+				description: 'Fly 5 spaces, applying Burning and Blinded.',
+			},
+		],
+	},
+	{
+		id: 'mon_v2_serpent_008',
+		name: 'Flamewrought Serpent',
+		level: 2,
+		tier: 'standard',
+		role: 'skirmisher',
+		size: 'Large',
+		type: 'Elemental',
+		stats: { hp: 13, pd: 12, ad: 12, attack: 4, saveDC: 14 },
+		features: [
+			{ name: 'Fiery Wake', description: 'Leaves a trail of flames that deal 1 Fire damage.' },
+		],
+		actions: [
+			{ name: 'Bite', ap: 1, targetDefense: 'PD', damage: 2, traits: ['Fire'] },
+			{
+				name: 'Blazing Coil',
+				ap: 3,
+				targetDefense: 'AD',
+				damage: 1,
+				traits: ['3 Space Aura', 'Burning'],
+			},
+		],
+	},
+	{
+		id: 'mon_v2_gargoyle_009',
+		name: 'Gargoyle',
+		level: 3,
+		tier: 'standard',
+		role: 'defender',
+		size: 'Medium',
+		type: 'Construct',
+		stats: { hp: 15, pd: 15, ad: 15, attack: 5, saveDC: 15 },
+		actions: [
+			{ name: 'Strike', ap: 1, targetDefense: 'PD', damage: 2 },
+			{
+				name: 'Ram',
+				ap: 2,
+				targetDefense: 'AD',
+				description: 'Move and Strike, pushing target 1 space.',
+			},
+		],
+	},
+	{
+		id: 'mon_v2_lbug_010',
+		name: 'Lightning Bug',
+		level: 2,
+		tier: 'standard',
+		role: 'lurker',
+		size: 'Tiny',
+		type: 'Elemental',
+		stats: { hp: 10, pd: 15, ad: 8, attack: 4, saveDC: 14 },
+		features: [
+			{
+				name: 'Elemental Siphon',
+				description: 'Reaction: Split lightning damage with a nearby creature.',
+			},
+		],
+		actions: [
+			{ name: 'Lightning Bolt', ap: 1, targetDefense: 'PD', damage: 2 },
+			{
+				name: 'Flicker Burst',
+				ap: 2,
+				targetDefense: 'AD',
+				damage: 1,
+				traits: ['3 Space Aura', 'Teleport'],
+			},
+		],
+	},
+	{
+		id: 'mon_v2_phound_011',
+		name: 'Plague Hound',
+		level: 2,
+		tier: 'standard',
+		role: 'skirmisher',
+		size: 'Medium',
+		type: 'Monstrosity',
+		stats: { hp: 12, pd: 11, ad: 8, attack: 4, saveDC: 14 },
+		features: [
+			{ name: 'Plague Body', description: 'Creatures ending turn nearby contract Rot Plague.' },
+		],
+		actions: [
+			{ name: 'Rend', ap: 1, targetDefense: 'PD', damage: 2, traits: ['Poisoned'] },
+			{ name: 'Plague Breath', ap: 3, targetDefense: 'AD', damage: 2, traits: ['3 Space Cone'] },
+		],
+	},
+	{
+		id: 'mon_v2_sentinel_012',
+		name: 'Rime-Sculpted Sentinel',
+		level: 2,
+		tier: 'standard',
+		role: 'controller',
+		size: 'Large',
+		type: 'Construct',
+		stats: { hp: 11, pd: 13, ad: 11, attack: 4, saveDC: 14 },
+		features: [
+			{
+				name: 'Frost Aura',
+				description: 'Regain 1 HP and slow nearby enemies at start of turn.',
+			},
+		],
+		actions: [
+			{ name: 'Frost Slam', ap: 1, targetDefense: 'PD', damage: 2 },
+			{ name: 'Arctic Winds', ap: 3, targetDefense: 'AD', damage: 1, traits: ['Frost Aura Area'] },
+		],
+	},
+	{
+		id: 'mon_v2_rug_013',
+		name: 'Animated Rug',
+		level: 1,
+		tier: 'standard',
+		role: 'controller',
+		size: 'Medium',
+		type: 'Construct',
+		stats: { hp: 10, pd: 11, ad: 13, attack: 4, saveDC: 14 },
+		actions: [
+			{ name: 'Wrap', ap: 1, targetDefense: 'AD', damage: 0, traits: ['Grapple'] },
+			{ name: 'Squeeze', ap: 1, targetDefense: 'AD', damage: 1, traits: ['ADV vs Grappled'] },
+		],
+	},
+	{
+		id: 'mon_v2_wardrobe_014',
+		name: 'Animated Wardrobe',
+		level: 2,
+		tier: 'standard',
+		role: 'defender',
+		size: 'Large',
+		type: 'Construct',
+		stats: { hp: 15, pd: 14, ad: 14, attack: 4, saveDC: 14 },
+		actions: [
+			{ name: 'Door Slam', ap: 1, targetDefense: 'PD', damage: 2, traits: ['Dazed'] },
+			{ name: 'Grasping Clothes', ap: 1, targetDefense: 'None', traits: ['Contest', 'Grapple'] },
+		],
+	},
+	{
+		id: 'mon_v2_twig_015',
+		name: 'Twig Blight',
+		level: 1,
+		tier: 'standard',
+		role: 'controller',
+		size: 'Medium',
+		type: 'Plant',
+		stats: { hp: 8, pd: 13, ad: 11, attack: 4, saveDC: 14 },
+		actions: [
+			{ name: 'Branch Whip', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Grapple'] },
+			{
+				name: 'Entangling Vines',
+				ap: 2,
+				description: 'Creates difficult terrain in a 2-space sphere.',
+			},
+		],
+	},
+	{
+		id: 'mon_v2_cwisp_016',
+		name: 'Cleansed Wisp',
+		level: 1,
+		tier: 'standard',
+		role: 'support',
+		size: 'Tiny',
+		type: 'Fey',
+		stats: { hp: 10, pd: 13, ad: 10, attack: 4, saveDC: 14 },
+		actions: [
+			{ name: 'Discharge', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Exposed'] },
+			{ name: "Nature's Healing", ap: 2, description: 'Target regains 1-2 HP.' },
+		],
+	},
+	{
+		id: 'mon_v2_corwisp_017',
+		name: 'Corrupted Wisp',
+		level: 1,
+		tier: 'standard',
+		role: 'controller',
+		size: 'Tiny',
+		type: 'Fey',
+		stats: { hp: 10, pd: 13, ad: 10, attack: 4, saveDC: 14 },
+		actions: [
+			{ name: 'Corrupted Discharge', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Necrosis'] },
+			{ name: 'Manipulation', ap: 1, description: 'Force target to move or attack.' },
+		],
+	},
+	{
+		id: 'mon_v2_zombie_018',
+		name: 'Zombie',
+		level: 0,
+		tier: 'standard',
+		role: 'brute',
+		size: 'Medium',
+		type: 'Undead',
+		stats: { hp: 10, pd: 9, ad: 13, attack: 3, saveDC: 13 },
+		features: [
+			{
+				name: 'Unrelenting',
+				description: 'Only reduced below 1 HP by Heavy Hits or Radiant damage.',
+			},
+		],
+		actions: [
+			{ name: 'Bite or Slam', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Infect'] },
+			{ name: 'Slam (Grappled)', ap: 1, targetDefense: 'AD', damage: 1 },
+		],
+	},
+	{
+		id: 'mon_v2_goblin_019',
+		name: 'Goblin',
+		level: 0,
+		tier: 'standard',
+		role: 'skirmisher',
+		size: 'Small',
+		type: 'Humanoid',
+		stats: { hp: 8, pd: 11, ad: 11, attack: 3, saveDC: 13 },
+		actions: [
+			{ name: 'Knife', ap: 1, targetDefense: 'PD', damage: 1 },
+			{ name: 'Shortbow', ap: 1, targetDefense: 'PD', damage: 1 },
+		],
+	},
+	{
+		id: 'mon_v2_kobold_020',
+		name: 'Kobold',
+		level: 0,
+		tier: 'standard',
+		role: 'lurker',
+		size: 'Small',
+		type: 'Humanoid',
+		stats: { hp: 6, pd: 12, ad: 9, attack: 3, saveDC: 13 },
+		features: [{ name: 'Troop Tactics', description: 'Help Dice granted start as a d10.' }],
+		actions: [
+			{ name: 'Spear', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Extend Attack'] },
+			{ name: 'Trap', ap: 1, description: 'Set a hidden trap within 5 spaces.' },
+		],
+	},
+	{
+		id: 'mon_v2_dummy_021',
+		name: 'Training Dummy',
+		level: -1,
+		tier: 'standard',
+		role: 'defender',
+		size: 'Medium',
+		type: 'Construct',
+		stats: { hp: 6, pd: 12, ad: 12, attack: 2, saveDC: 12 },
+		actions: [
+			{ name: 'Slam', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Grab'] },
+			{ name: 'Whirlwind', ap: 2, targetDefense: 'AD', damage: 1, traits: ['1 Space Aura'] },
+		],
+	},
+	{
+		id: 'mon_v2_rat_022',
+		name: 'Giant Rat',
+		level: -1,
+		tier: 'standard',
+		role: 'skirmisher',
+		size: 'Small',
+		type: 'Beast',
+		stats: { hp: 5, pd: 10, ad: 10, attack: 2, saveDC: 12 },
+		actions: [
+			{ name: 'Bite', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Impair'] },
+			{ name: 'Dart Around', ap: 1, description: 'Take Disengage and Move actions.' },
+		],
+	},
+	{
+		id: 'mon_v2_hhound_023',
+		name: 'Hunting Hound',
+		level: -1,
+		tier: 'standard',
+		role: 'controller',
+		size: 'Small',
+		type: 'Beast',
+		stats: { hp: 5, pd: 11, ad: 9, attack: 2, saveDC: 12 },
+		actions: [
+			{ name: 'Bite', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Pin'] },
+			{ name: 'Intimidate', ap: 1, description: 'Contest to Intimidate target.' },
+		],
+	},
+	{
+		id: 'mon_v2_thief_024',
+		name: 'Thief',
+		level: -1,
+		tier: 'standard',
+		role: 'lurker',
+		size: 'Medium',
+		type: 'Humanoid',
+		stats: { hp: 4, pd: 12, ad: 8, attack: 2, saveDC: 12 },
+		actions: [
+			{ name: 'Dart', ap: 1, targetDefense: 'PD', damage: 0, traits: ['Hinder'] },
+			{ name: 'Dagger', ap: 1, targetDefense: 'PD', damage: 1 },
+		],
+	},
+	{
+		id: 'mon_v2_thug_025',
+		name: 'Thug',
+		level: 0,
+		tier: 'standard',
+		role: 'skirmisher',
+		size: 'Medium',
+		type: 'Humanoid',
+		stats: { hp: 8, pd: 11, ad: 11, attack: 3, saveDC: 13 },
+		actions: [
+			{ name: 'Fist', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Trip', 'Grapple'] },
+			{ name: 'Slam (Grappled)', ap: 1, targetDefense: 'AD', damage: 1 },
+		],
+	},
+	{
+		id: 'mon_v2_thrall_026',
+		name: 'Thrall',
+		level: 1,
+		tier: 'standard',
+		role: 'support',
+		size: 'Medium',
+		type: 'Undead',
+		stats: { hp: 5, pd: 10, ad: 14, attack: 4, saveDC: 14 },
+		actions: [
+			{ name: 'Attack', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Physical or Umbral'] },
+		],
+	},
+	{
+		id: 'mon_v2_penguin_basic_027',
+		name: 'Penguin',
+		level: 0,
+		tier: 'standard',
+		role: 'skirmisher',
+		size: 'Small',
+		type: 'Beast',
+		stats: { hp: 5, pd: 10, ad: 10, attack: 3, saveDC: 13 },
+		actions: [
+			{ name: 'Beak', ap: 1, targetDefense: 'PD', damage: 1 },
+			{ name: 'Slip and Slide', ap: 2, description: 'Move up to swim speed while prone.' },
+		],
+	},
+	{
+		id: 'mon_v2_mmaker_028',
+		name: 'Mischief Maker',
+		level: 4,
+		tier: 'standard',
+		role: 'controller',
+		size: 'Tiny',
+		type: 'Fey',
+		stats: { hp: 20, pd: 20, ad: 20, attack: 5, saveDC: 15 },
+		features: [
+			{ name: 'Stress', description: 'Loses DR and -5 Defenses at 3 Stress points.' },
+		],
+		actions: [
+			{ name: 'Mocking Joke', ap: 1, description: 'Target is Taunted for 1 minute.' },
+			{
+				name: 'Dispersion',
+				ap: 2,
+				targetDefense: 'AD',
+				damage: 1,
+				traits: ['1 Space Aura', 'Teleport'],
+			},
+		],
+	},
+
+	// ============================================================================
+	// VOLUME 3: Aberrations, Oozes, Plants
+	// ============================================================================
+	{
+		id: 'mon_v3_oculoth_029',
+		name: 'Oculoth',
+		level: 1,
+		tier: 'standard',
+		role: 'lurker',
+		size: 'Small',
+		type: 'Fiend',
+		stats: { hp: 6, pd: 14, ad: 9, attack: 4, saveDC: 14 },
+		features: [
+			{ name: 'Keen Sight', description: 'ADV on Awareness Checks using sight.' },
+			{
+				name: 'Telepathic Link',
+				description: 'Telepathic link with master at any distance on the same plane.',
+			},
+		],
+		actions: [
+			{ name: 'Talons', ap: 1, targetDefense: 'PD', damage: 2, traits: ['Blinded Enhancement'] },
+			{ name: 'Eye Beam', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Fire', 'Heavy Hit (+1)'] },
+			{
+				name: 'Elemental Ray',
+				ap: 2,
+				targetDefense: 'AD',
+				damage: 1,
+				traits: ['10 Space Line', 'Fire'],
+			},
+		],
+	},
+	{
+		id: 'mon_v3_screecher_030',
+		name: 'Screecher Drone',
+		level: 2,
+		tier: 'standard',
+		role: 'controller',
+		size: 'Small',
+		type: 'Beast',
+		stats: { hp: 10, pd: 12, ad: 12, attack: 4, saveDC: 15 },
+		features: [
+			{
+				name: 'Drawn to Sound',
+				description:
+					'Taunted by high-pitched sounds (music, screams, verbal components) within 10 spaces.',
+			},
+		],
+		actions: [
+			{ name: 'Claw', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Bleed', 'Grab'] },
+			{
+				name: 'Bloodsucking Bite',
+				ap: 1,
+				targetDefense: 'AD',
+				damage: 1,
+				traits: ['Requires Grappled', 'Doomed 1'],
+			},
+			{
+				name: 'Sonic Screech',
+				ap: 2,
+				targetDefense: 'AD',
+				damage: 1,
+				traits: ['5 Space Cone', 'Dazed'],
+			},
+		],
+	},
+	{
+		id: 'mon_v3_mawworm_031',
+		name: 'Mawworm',
+		level: 3,
+		tier: 'standard',
+		role: 'brute',
+		size: 'Small',
+		type: 'Aberration',
+		stats: { hp: 17, pd: 11, ad: 13, attack: 5, saveDC: 15 },
+		features: [
+			{
+				name: 'Dimensional Disruption',
+				description: 'Radiant damage prevents Engulf until next turn.',
+			},
+			{ name: 'Tunneler', description: 'Burrow through solid stone leaving a 1-space tunnel.' },
+		],
+		actions: [
+			{ name: 'Bite', ap: 1, targetDefense: 'PD', damage: 2, traits: ['Grapple'] },
+			{ name: 'Sweep', ap: 2, targetDefense: 'AD', damage: 1, traits: ['1 Space Arc', 'Prone'] },
+			{
+				name: 'Engulf',
+				ap: 2,
+				description:
+					'Target Grappled must make Might Save or be Swallowed into interdimensional space.',
+			},
+		],
+	},
+	{
+		id: 'mon_v3_mreaper_032',
+		name: 'Marrow Reaper Spider',
+		level: 5,
+		tier: 'standard',
+		role: 'lurker',
+		size: 'Medium',
+		type: 'Beast',
+		stats: { hp: 15, pd: 15, ad: 14, attack: 7, saveDC: 18 },
+		features: [
+			{ name: 'Spider Climb', description: 'Walk on ceilings/vertical surfaces normally.' },
+			{
+				name: 'Web Walk',
+				description: 'Walk through webs unimpeded; sense creatures on same web.',
+			},
+		],
 		actions: [
 			{
 				name: 'Bite',
-				type: 'martial',
-				targetDefense: 'pd',
-				damage: 12,
-				damageType: 'Physical',
-				range: 10,
-				description: 'Melee natural attack.',
+				ap: 1,
+				targetDefense: 'PD',
+				damage: 2,
+				traits: ['Corrosion', 'Poisoned (Limb Effects)'],
+			},
+			{ name: 'Leg Spear', ap: 1, targetDefense: 'PD', damage: 3, traits: ['3 Space Range', 'Pull'] },
+			{
+				name: 'Marrow Drain',
+				ap: 2,
+				targetDefense: 'PD',
+				damage: 3,
+				traits: ['Requires Poisoned', 'Heal'],
+			},
+		],
+	},
+	{
+		id: 'mon_v3_psymanta_033',
+		name: 'Psymanta',
+		level: 3,
+		tier: 'standard',
+		role: 'skirmisher',
+		size: 'Large',
+		type: 'Aberration',
+		stats: { hp: 13, pd: 13, ad: 13, attack: 5, saveDC: 15 },
+		features: [
+			{
+				name: 'Telepathic Lure',
+				description: '10 Space Aura: Humanoids must Save or be Taunted by familiar voices.',
+			},
+		],
+		actions: [
+			{
+				name: 'Mind Leech Tendril',
+				ap: 1,
+				targetDefense: 'PD',
+				damage: 2,
+				traits: ['Psychic', 'Dazed'],
 			},
 			{
-				name: 'Claw',
-				type: 'martial',
-				targetDefense: 'pd',
-				damage: 8,
-				damageType: 'Physical',
-				range: 5,
-				description: 'Melee natural attack. Can make two claw attacks.',
+				name: 'Psychic Pulse',
+				ap: 2,
+				targetDefense: 'AD',
+				damage: 1,
+				traits: ['2 Space Aura', 'Force Movement'],
+			},
+		],
+	},
+	{
+		id: 'mon_v3_aooze_034',
+		name: 'Aqua Ooze',
+		level: 4,
+		tier: 'standard',
+		role: 'defender',
+		size: 'Large',
+		type: 'Ooze',
+		stats: { hp: 15, pd: 15, ad: 15, attack: 5, saveDC: 15 },
+		features: [
+			{
+				name: 'Water Body',
+				description:
+					'Occupy same space as others. Creatures inside take 2 Corrosion and are Slowed.',
 			},
 			{
-				name: 'Breath Weapon',
-				type: 'special',
-				targetDefense: 'ad',
-				damage: 16,
-				damageType: 'Fire',
-				range: 30,
-				description: '30-foot cone. Each creature in area must Save or take full damage. Recharge 5-6.',
+				name: 'False Appearance',
+				description: 'Indistinguishable from regular water while motionless.',
+			},
+		],
+		actions: [
+			{
+				name: 'Pressure Lash',
+				ap: 1,
+				targetDefense: 'PD',
+				damage: 1,
+				traits: ['3 Space Range', 'Pull'],
+			},
+			{
+				name: 'Drown',
+				ap: 1,
+				targetDefense: 'AD',
+				damage: 1,
+				traits: ['Targets in Space', 'Suffocating'],
+			},
+		],
+	},
+	{
+		id: 'mon_v3_tslime_035',
+		name: 'Toxic Slime',
+		level: 5,
+		tier: 'standard',
+		role: 'brute',
+		size: 'Large',
+		type: 'Ooze',
+		stats: { hp: 28, pd: 12, ad: 16, attack: 7, saveDC: 17 },
+		features: [
+			{
+				name: 'Toxic Growth',
+				description: 'Gain Toxic Mass stacks from Corrosion/Poison damage; +1 to Attacks per stack.',
+			},
+		],
+		actions: [
+			{ name: 'Toxic Limb', ap: 1, targetDefense: 'PD', damage: 4, traits: ['Corrosion'] },
+			{ name: 'Spit Slime', ap: 1, targetDefense: 'PD', damage: 2, traits: ['Summon Mini Slime'] },
+			{ name: 'Decay', ap: 2, targetDefense: 'AD', damage: 2, traits: ['2 Space Aura', 'Poisoned'] },
+		],
+	},
+	{
+		id: 'mon_v3_cooze_036',
+		name: 'Crimson Ooze',
+		level: 4,
+		tier: 'standard',
+		role: 'skirmisher',
+		size: 'Medium',
+		type: 'Ooze',
+		stats: { hp: 15, pd: 10, ad: 15, attack: 7, saveDC: 17 },
+		actions: [
+			{
+				name: 'Blood Leech',
+				ap: 1,
+				targetDefense: 'PD',
+				damage: 3,
+				traits: ['Umbral', 'Heal if target Bleeding'],
+			},
+			{
+				name: 'Sanguine Split',
+				ap: 1,
+				description: 'Spend 7 HP to create an exact copy of self with 7 HP.',
+			},
+			{
+				name: 'Blood Pulse',
+				ap: 2,
+				targetDefense: 'AD',
+				damage: 1,
+				traits: ['2 Space Aura', 'Bleeding'],
+			},
+		],
+	},
+	{
+		id: 'mon_v3_pshambler_037',
+		name: 'Plant Shambler',
+		level: 5,
+		tier: 'standard',
+		role: 'controller',
+		size: 'Large',
+		type: 'Plant',
+		stats: { hp: 20, pd: 17, ad: 14, attack: 7, saveDC: 17 },
+		features: [
+			{
+				name: 'Toxic Vines',
+				description: 'Creatures with conditions from you take 1 Poison damage at start of turn.',
+			},
+		],
+		actions: [
+			{ name: 'Slam', ap: 1, targetDefense: 'PD', damage: 3, traits: ['Knockback'] },
+			{ name: 'Vine', ap: 1, targetDefense: 'PD', damage: 2, traits: ['10 Space Range', 'Tethered'] },
+			{
+				name: 'Entangling Terrain',
+				ap: 2,
+				description: '5 Space Sphere: Targets make Save or are Restrained.',
+			},
+		],
+	},
+	{
+		id: 'mon_v3_cbloom_038',
+		name: 'Carnivorous Bloom',
+		level: 2,
+		tier: 'standard',
+		role: 'support',
+		size: 'Medium',
+		type: 'Plant',
+		stats: { hp: 10, pd: 14, ad: 14, attack: 4, saveDC: 14 },
+		features: [
+			{ name: 'Sweet Scent', description: '5 Space Aura: Allies gain +1 to Attacks.' },
+			{
+				name: 'Wrangling Vines',
+				description: 'Can Grapple up to 4 different creatures at once.',
+			},
+		],
+		actions: [
+			{ name: 'Bite', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Grapple'] },
+			{
+				name: 'Swallow',
+				ap: 1,
+				description: 'Grappled target makes Save or is Swallowed; takes Corrosion damage.',
+			},
+			{ name: 'Empowering Sap', ap: 1, description: 'Ally gains 2 Temp HP and ADV on next attack.' },
+		],
+	},
+	{
+		id: 'mon_v3_sporebloom_039',
+		name: 'Sporebloom Trap',
+		level: 1,
+		tier: 'standard',
+		role: 'lurker',
+		size: 'Tiny',
+		type: 'Plant',
+		stats: { hp: 9, pd: 10, ad: 10, attack: 5, saveDC: 15 },
+		actions: [
+			{
+				name: 'Spore Puff',
+				ap: 1,
+				targetDefense: 'AD',
+				damage: 2,
+				traits: ['2 Space Aura', 'Poison', 'Stunned'],
+			},
+			{
+				name: 'Spore Cloud',
+				ap: 2,
+				description: 'Create 5 Space Aura of spores; area is Heavily Obscured.',
 			},
 		],
 	},
@@ -374,7 +839,27 @@ const SAMPLE_MONSTER_INPUTS: SampleMonsterInput[] = [
 
 /**
  * Get sample monsters ready for seeding into Convex
+ * Transforms raw Bestiary data through the importer for proper schema compliance
  */
 export function getSampleMonsters(): SavedMonster[] {
-	return SAMPLE_MONSTER_INPUTS.map(createMonster);
+	const result = importRawMonsters(RAW_BESTIARY_MONSTERS);
+
+	// Log any import warnings (for debugging)
+	if (result.allWarnings.length > 0) {
+		console.debug('[SampleMonsters] Import warnings:', result.allWarnings);
+	}
+
+	// Log any failures (should not happen with curated data)
+	if (result.failed.length > 0) {
+		console.error('[SampleMonsters] Import failures:', result.failed);
+	}
+
+	return result.successful;
+}
+
+/**
+ * Get the count of available sample monsters
+ */
+export function getSampleMonsterCount(): number {
+	return RAW_BESTIARY_MONSTERS.length;
 }

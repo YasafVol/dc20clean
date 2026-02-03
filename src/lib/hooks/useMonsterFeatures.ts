@@ -2,7 +2,8 @@
  * Monster Features Hooks for DM Tools
  *
  * React hooks for working with monster features.
- * Combines official (static) features with custom (Convex) features.
+ * All features (official + custom + homebrew) are stored in Convex.
+ * Official features have isOfficial: true flag.
  */
 
 import { useQuery, useMutation } from 'convex/react';
@@ -68,8 +69,8 @@ export interface FeatureBudgetValidation {
  * Hook for getting all available features (official + custom + homebrew)
  */
 export function useMonsterFeatures(): UseFeatureListResult {
-	const customFeatures = useQuery(api.customFeatures.list);
-	const homebrewFeatures = useQuery(api.customFeatures.listHomebrew, {});
+	const customFeatures = useQuery(api.features.list);
+	const homebrewFeatures = useQuery(api.features.listHomebrew, {});
 
 	return useMemo(() => {
 		const isLoading = customFeatures === undefined || homebrewFeatures === undefined;
@@ -116,7 +117,7 @@ export function useMonsterFeature(id: string | null): UseFeatureResult {
 
 	// Query custom/homebrew if not official
 	const customFeature = useQuery(
-		api.customFeatures.getById,
+		api.features.getById,
 		id && !officialFeature ? { id } : 'skip'
 	);
 
@@ -191,13 +192,13 @@ export function useFeaturesByCost() {
  * Hook providing all feature mutations
  */
 export function useFeatureMutations(): FeatureMutations {
-	const createMutation = useMutation(api.customFeatures.create);
-	const updateMutation = useMutation(api.customFeatures.update);
-	const softDeleteMutation = useMutation(api.customFeatures.softDelete);
-	const restoreMutation = useMutation(api.customFeatures.restore);
-	const hardDeleteMutation = useMutation(api.customFeatures.hardDelete);
-	const forkMutation = useMutation(api.customFeatures.fork);
-	const submitMutation = useMutation(api.customFeatures.submitForReview);
+	const createMutation = useMutation(api.features.create);
+	const updateMutation = useMutation(api.features.update);
+	const softDeleteMutation = useMutation(api.features.softDelete);
+	const restoreMutation = useMutation(api.features.restore);
+	const hardDeleteMutation = useMutation(api.features.hardDelete);
+	const forkMutation = useMutation(api.features.fork);
+	const submitMutation = useMutation(api.features.submitForReview);
 
 	const createFeature = useCallback(
 		async (feature: Omit<MonsterFeature, 'id' | 'isOfficial'>): Promise<string> => {

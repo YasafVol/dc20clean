@@ -17,35 +17,96 @@ import { getAuthUserId } from '@convex-dev/auth/server';
 // ============================================================================
 
 /**
- * List all monsters for the authenticated user (excluding deleted)
+ * List all monsters for the authenticated user (excluding deleted) + official monsters
  */
 export const list = query({
 	args: {},
 	handler: async (ctx) => {
 		const userId = await getAuthUserId(ctx);
-		if (!userId) {
-			return [];
-		}
 
-		const monsters = await ctx.db
+		// Always include official monsters (available to everyone)
+		const officialMonsters = await ctx.db
 			.query('monsters')
-			.withIndex('by_user', (q) => q.eq('userId', userId))
+			.withIndex('by_official', (q) => q.eq('isOfficial', true))
 			.filter((q) => q.eq(q.field('deletedAt'), undefined))
 			.collect();
 
-		return monsters;
+		// If authenticated, also include user's own monsters
+		let userMonsters: typeof officialMonsters = [];
+		if (userId) {
+			userMonsters = await ctx.db
+				.query('monsters')
+				.withIndex('by_user', (q) => q.eq('userId', userId))
+				.filter((q) =>
+					q.and(
+						q.eq(q.field('deletedAt'), undefined),
+						q.neq(q.field('isOfficial'), true) // Don't double-count official
+					)
+				)
+				.collect();
+		}
+
+		return [...officialMonsters, ...userMonsters];
 	},
 });
 
 /**
- * Get a single monster by ID (must belong to authenticated user or be approved homebrew)
+ * List only official monsters (Bestiary)
+ */
+export const listOfficial = query({
+	args: {
+		level: v.optional(v.number()),
+		tier: v.optional(
+			v.union(v.literal('standard'), v.literal('apex'), v.literal('legendary'))
+		),
+		roleId: v.optional(v.string()),
+		monsterType: v.optional(v.string()),
+	},
+	handler: async (ctx, args) => {
+		let query = ctx.db
+			.query('monsters')
+			.withIndex('by_official', (q) => q.eq('isOfficial', true))
+			.filter((q) => q.eq(q.field('deletedAt'), undefined));
+
+		// Apply filters
+		if (args.level !== undefined) {
+			query = query.filter((q) => q.eq(q.field('level'), args.level));
+		}
+		if (args.tier !== undefined) {
+			query = query.filter((q) => q.eq(q.field('tier'), args.tier));
+		}
+		if (args.roleId !== undefined) {
+			query = query.filter((q) => q.eq(q.field('roleId'), args.roleId));
+		}
+		if (args.monsterType !== undefined) {
+			query = query.filter((q) => q.eq(q.field('monsterType'), args.monsterType));
+		}
+
+		return await query.collect();
+	},
+});
+
+/**
+ * Get a single monster by ID (official, user's own, or approved homebrew)
  */
 export const getById = query({
 	args: { id: v.string() },
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
 
-		// First try to find user's own monster
+		// Check for official monster first (available to everyone)
+		const officialMonster = await ctx.db
+			.query('monsters')
+			.filter((q) =>
+				q.and(q.eq(q.field('id'), args.id), q.eq(q.field('isOfficial'), true))
+			)
+			.first();
+
+		if (officialMonster) {
+			return officialMonster;
+		}
+
+		// Try to find user's own monster
 		if (userId) {
 			const ownMonster = await ctx.db
 				.query('monsters')
@@ -291,12 +352,13 @@ export const hardDelete = mutation({
 
 /**
  * Fork a monster (create a copy with fork tracking)
+ * Works for official monsters, user monsters, and homebrew
  */
 export const fork = mutation({
 	args: {
 		sourceId: v.string(),
 		sourceType: v.union(v.literal('official'), v.literal('custom'), v.literal('homebrew')),
-		sourceData: v.any(), // The monster data to fork (for official monsters not in DB)
+		sourceData: v.optional(v.any()), // Optional - will fetch from DB if not provided
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -305,28 +367,26 @@ export const fork = mutation({
 		}
 
 		const now = new Date().toISOString();
-
-		// Generate new ID for the fork
 		const newId = `mon_${crypto.randomUUID()}`;
 
-		// Get source monster data
+		// Get source monster data (from DB or provided data)
 		let sourceMonster = args.sourceData;
 		let sourceName = sourceMonster?.name ?? 'Unknown';
 		let sourceUserId: string | undefined;
 
-		// If forking from DB, get the source
-		if (args.sourceType !== 'official') {
-			const dbMonster = await ctx.db
-				.query('monsters')
-				.filter((q) => q.eq(q.field('id'), args.sourceId))
-				.first();
+		// Try to get from DB (works for official, custom, and homebrew)
+		const dbMonster = await ctx.db
+			.query('monsters')
+			.filter((q) => q.eq(q.field('id'), args.sourceId))
+			.first();
 
-			if (dbMonster) {
-				sourceMonster = dbMonster;
-				sourceName = dbMonster.name;
-				sourceUserId = dbMonster.userId;
+		if (dbMonster) {
+			sourceMonster = dbMonster;
+			sourceName = dbMonster.name;
+			sourceUserId = dbMonster.userId ?? undefined;
 
-				// Update fork stats on source
+			// Update fork stats on source (only for non-official)
+			if (!dbMonster.isOfficial) {
 				await ctx.db.patch(dbMonster._id, {
 					forkStats: {
 						forkCount: (dbMonster.forkStats?.forkCount ?? 0) + 1,
@@ -336,11 +396,18 @@ export const fork = mutation({
 			}
 		}
 
-		// Create the forked monster
+		if (!sourceMonster) {
+			throw new Error('Source monster not found');
+		}
+
+		// Create the forked monster (remove isOfficial flag!)
+		const { _id, _creationTime, isOfficial, ...monsterData } = sourceMonster;
+
 		const forkedMonster = {
-			...sourceMonster,
+			...monsterData,
 			id: newId,
 			userId,
+			isOfficial: false, // Forked monsters are never official
 			name: `${sourceName} (Fork)`,
 			visibility: 'private',
 			approvalStatus: 'draft',
@@ -352,7 +419,7 @@ export const fork = mutation({
 				userId: sourceUserId,
 				forkedAt: now,
 			},
-			forkStats: undefined, // Reset fork stats for new monster
+			forkStats: undefined,
 			deletedAt: undefined,
 			deletedBy: undefined,
 			scheduledPurgeAt: undefined,
@@ -467,7 +534,7 @@ export const duplicate = mutation({
 });
 
 /**
- * Bulk seed monsters (for importing sample data)
+ * Bulk seed monsters for a user (for importing sample data to user's collection)
  */
 export const seedMonsters = mutation({
 	args: {
@@ -509,6 +576,7 @@ export const seedMonsters = mutation({
 				await ctx.db.insert('monsters', {
 					...monster,
 					userId,
+					isOfficial: false, // User-seeded monsters are not official
 					createdAt: now,
 					lastModified: now,
 				});
@@ -529,5 +597,99 @@ export const seedMonsters = mutation({
 		}
 
 		return results;
+	},
+});
+
+/**
+ * Seed official Bestiary monsters (admin function)
+ * These monsters are available to all users and cannot be edited directly
+ */
+export const seedOfficialMonsters = mutation({
+	args: {
+		monsters: v.array(v.any()), // Array of SavedMonster objects
+	},
+	handler: async (ctx, args) => {
+		// Note: In production, add admin role check here
+		const now = new Date().toISOString();
+		const results: Array<{ id: string; name: string; success: boolean; error?: string }> = [];
+
+		for (const monster of args.monsters) {
+			try {
+				// Check if official monster with same ID already exists
+				const existing = await ctx.db
+					.query('monsters')
+					.filter((q) =>
+						q.and(
+							q.eq(q.field('id'), monster.id),
+							q.eq(q.field('isOfficial'), true)
+						)
+					)
+					.first();
+
+				if (existing) {
+					// Update existing official monster
+					await ctx.db.patch(existing._id, {
+						...monster,
+						isOfficial: true,
+						userId: undefined, // No owner for official content
+						lastModified: now,
+					});
+					results.push({
+						id: monster.id,
+						name: monster.name,
+						success: true,
+						error: 'Updated existing',
+					});
+					continue;
+				}
+
+				// Create new official monster
+				await ctx.db.insert('monsters', {
+					...monster,
+					isOfficial: true,
+					userId: undefined, // No owner for official content
+					visibility: 'private', // Official monsters don't use visibility
+					approvalStatus: 'approved', // Official = auto-approved
+					isHomebrew: false,
+					createdAt: now,
+					lastModified: now,
+				});
+
+				results.push({
+					id: monster.id,
+					name: monster.name,
+					success: true,
+				});
+			} catch (err) {
+				results.push({
+					id: monster.id,
+					name: monster.name,
+					success: false,
+					error: err instanceof Error ? err.message : 'Unknown error',
+				});
+			}
+		}
+
+		return results;
+	},
+});
+
+/**
+ * Clear all official monsters (admin function for re-seeding)
+ */
+export const clearOfficialMonsters = mutation({
+	args: {},
+	handler: async (ctx) => {
+		// Note: In production, add admin role check here
+		const officialMonsters = await ctx.db
+			.query('monsters')
+			.withIndex('by_official', (q) => q.eq('isOfficial', true))
+			.collect();
+
+		for (const monster of officialMonsters) {
+			await ctx.db.delete(monster._id);
+		}
+
+		return { deleted: officialMonsters.length };
 	},
 });

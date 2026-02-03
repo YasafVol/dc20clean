@@ -240,8 +240,8 @@ const characterValidator = {
 	),
 
 	// Spells and maneuvers at root level
-	spells: v.array(v.any()), // SpellData[]
-	maneuvers: v.array(v.any()), // ManeuverData[]
+	spells: v.optional(v.array(v.any())), // SpellData[]
+	maneuvers: v.optional(v.array(v.any())), // ManeuverData[]
 
 	// Background point conversions
 	skillToTradeConversions: v.optional(v.number()),

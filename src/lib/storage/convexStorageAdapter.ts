@@ -48,7 +48,10 @@ function prepareCharacterForSave(character: SavedCharacter): SavedCharacter {
 	return {
 		...character,
 		// Convert Record<string, number> to string[] for database compatibility
-		selectedTalents: convertTalentsToArray(character.selectedTalents as any)
+		selectedTalents: convertTalentsToArray(character.selectedTalents as any),
+		// Ensure required arrays exist (schema requires them)
+		spells: character.spells || [],
+		maneuvers: character.maneuvers || []
 	};
 }
 
@@ -84,18 +87,50 @@ class ConvexStorageAdapter implements CharacterStorageWithEvents {
 	}
 
 	async saveCharacter(character: SavedCharacter): Promise<void> {
+		console.log('[GIMLI DEBUG] 💾 ConvexStorageAdapter.saveCharacter() called', {
+			characterId: character.id,
+			name: character.finalName,
+			hasSpells: !!character.spells,
+			spellsCount: character.spells?.length,
+			hasManeuvers: !!character.maneuvers,
+			maneuversCount: character.maneuvers?.length,
+			hasCharacterState: !!character.characterState
+		});
+		
 		const client = getConvexClient();
 		const existing = await client.query(api.characters.getById, { id: character.id });
 		const payload = prepareCharacterForSave(character);
 
-		if (existing) {
-			await client.mutation(api.characters.update, { id: character.id, updates: payload });
-			this.emit({ type: 'update', characterId: character.id, timestamp: new Date() });
-			return;
-		}
+		console.log('[GIMLI DEBUG] 📦 Character payload prepared:', {
+			hasId: !!payload.id,
+			hasSpells: !!payload.spells,
+			hasManeuvers: !!payload.maneuvers,
+			hasCharacterState: !!payload.characterState,
+			keys: Object.keys(payload).slice(0, 20)
+		});
 
-		await client.mutation(api.characters.create, { character: payload });
-		this.emit({ type: 'save', characterId: character.id, timestamp: new Date() });
+		try {
+			if (existing) {
+				console.log('[GIMLI DEBUG] 🔄 Updating existing character');
+				await client.mutation(api.characters.update, { id: character.id, updates: payload });
+				this.emit({ type: 'update', characterId: character.id, timestamp: new Date() });
+				console.log('[GIMLI DEBUG] ✅ Character updated successfully');
+				return;
+			}
+
+			console.log('[GIMLI DEBUG] ➕ Creating new character');
+			await client.mutation(api.characters.create, { character: payload });
+			this.emit({ type: 'save', characterId: character.id, timestamp: new Date() });
+			console.log('[GIMLI DEBUG] ✅ Character created successfully');
+		} catch (error) {
+			console.error('[GIMLI DEBUG] ❌ SaveCharacter ERROR:', {
+				error,
+				errorMessage: error instanceof Error ? error.message : String(error),
+				characterId: character.id,
+				payloadKeys: Object.keys(payload)
+			});
+			throw error;
+		}
 	}
 
 	async saveAllCharacters(_characters: SavedCharacter[]): Promise<void> {

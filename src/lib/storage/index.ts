@@ -35,10 +35,16 @@ export function getStorageAdapter(): CharacterStorageWithEvents {
 
 	console.log('[GIMLI DEBUG] 🎯 Getting Storage Adapter:', { provider });
 
+	console.log('[GIMLI DEBUG] 🎯 Getting Storage Adapter:', { provider });
+
 	switch (provider) {
 		case 'convex':
 			console.log('[GIMLI DEBUG] ✅ Using Convex Storage Adapter');
 			return getConvexStorageAdapter();
+		case 'localStorage':
+		default:
+			console.log('[GIMLI DEBUG] ⚠️ Using LocalStorage Adapter');
+rn getConvexStorageAdapter();
 		case 'localStorage':
 		default:
 			console.log('[GIMLI DEBUG] ⚠️ Using LocalStorage Adapter');

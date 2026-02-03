@@ -38,6 +38,10 @@ function LoadCharacter() {
 			storageType: storage.constructor.name
 		});
 		
+		console.log('[GIMLI DEBUG] 🎬 LoadCharacter: Fetching characters...', {
+			storageType: storage.constructor.name
+		});
+		
 		let isMounted = true;
 		storage
 			.getAllCharacters()
@@ -45,6 +49,12 @@ function LoadCharacter() {
 				console.log('[GIMLI DEBUG] ✅ LoadCharacter: Characters fetched:', {
 					count: characters.length,
 					characters: characters.map(c => ({ id: c.id, name: c.finalName }))
+				});
+				if (isMounted) setSavedCharacters(characters);
+			})
+			.catch((error) => {
+				console.error('[GIMLI DEBUG] ❌ LoadCharacter: Failed to load characters', error);
+c => ({ id: c.id, name: c.finalName }))
 				});
 				if (isMounted) setSavedCharacters(characters);
 			})

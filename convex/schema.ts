@@ -94,6 +94,7 @@ const characterStateValidator = v.object({
 	ui: uiStateValidator,
 	inventory: inventoryValidator,
 	notes: notesValidator,
+	activeConditions: v.optional(v.array(v.string())),
 	attacks: v.optional(v.array(v.any())),
 	spells: v.optional(v.array(v.any())),
 	maneuvers: v.optional(v.array(v.any()))
@@ -596,4 +597,5 @@ export default defineSchema({
 		.index('by_user_and_id', ['userId', 'id'])
 		.index('by_approval_status', ['approvalStatus'])
 		.index('by_user_and_deleted', ['userId', 'deletedAt'])
+userId', 'deletedAt'])
 });

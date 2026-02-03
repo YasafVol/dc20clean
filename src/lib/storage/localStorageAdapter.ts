@@ -34,7 +34,13 @@ class LocalStorageAdapter implements CharacterStorageWithEvents {
 	}
 
 	async getAllCharacters(): Promise<SavedCharacter[]> {
-		return legacyGetAll();
+		console.log('[GIMLI DEBUG] 🗂️ LocalStorageAdapter.getAllCharacters() called');
+		const characters = legacyGetAll();
+		console.log('[GIMLI DEBUG] 📋 LocalStorage characters:', {
+			characterCount: characters.length,
+			characters: characters.map(c => ({ id: c.id, name: c.finalName }))
+		});
+		return characters;
 	}
 
 	async getCharacterById(id: string): Promise<SavedCharacter | null> {

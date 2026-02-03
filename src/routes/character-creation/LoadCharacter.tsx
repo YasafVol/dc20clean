@@ -34,14 +34,22 @@ function LoadCharacter() {
 	const storage = useMemo(() => getDefaultStorage(), []);
 
 	useEffect(() => {
+		console.log('[GIMLI DEBUG] 🎬 LoadCharacter: Fetching characters...', {
+			storageType: storage.constructor.name
+		});
+		
 		let isMounted = true;
 		storage
 			.getAllCharacters()
 			.then((characters) => {
+				console.log('[GIMLI DEBUG] ✅ LoadCharacter: Characters fetched:', {
+					count: characters.length,
+					characters: characters.map(c => ({ id: c.id, name: c.finalName }))
+				});
 				if (isMounted) setSavedCharacters(characters);
 			})
 			.catch((error) => {
-				console.error('Failed to load characters', error);
+				console.error('[GIMLI DEBUG] ❌ LoadCharacter: Failed to load characters', error);
 				if (isMounted) setSavedCharacters([]);
 			});
 		return () => {

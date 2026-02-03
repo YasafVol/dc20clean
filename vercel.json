@@ -3,6 +3,7 @@
 	"outputDirectory": "dist",
 	"build": {
 		"env": {
+			"VITE_CONVEX_URL": "https://giant-horse-540.convex.cloud",
 			"VITE_USE_CONVEX": "true"
 		}
 	},

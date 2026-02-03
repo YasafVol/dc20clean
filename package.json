@@ -4,6 +4,9 @@
 	"scripts": {
 		"dev": "vite dev",
 		"convex:dev": "convex dev",
+		"seed": "npx convex run seed:seedAllOfficialData",
+		"seed:monsters": "npx convex run seed:seedOfficialMonsters",
+		"seed:features": "npx convex run seed:seedOfficialFeatures",
 		"build": "vite build",
 		"preview": "vite preview",
 		"format": "prettier --write .",

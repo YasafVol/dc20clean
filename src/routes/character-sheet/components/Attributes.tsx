@@ -95,7 +95,7 @@ const Attributes: React.FC<AttributesProps> = ({
 			{/* Combat Mastery */}
 			<PrimeSection $isMobile={isMobile}>
 				<PrimeLabel $isMobile={isMobile}>Combat Mastery</PrimeLabel>
-				<PrimeValue $isMobile={isMobile}>+{state.character?.combatMastery || 0}</PrimeValue>
+				<PrimeValue $isMobile={isMobile}>+{state.character?.finalCombatMastery || 0}</PrimeValue>
 			</PrimeSection>
 
 			{/* Awareness (Prime skill) */}

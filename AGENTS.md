@@ -6,6 +6,11 @@
 
 Before planning or implementing any feature, identify the relevant system(s) and read the matching spec(s) in `docs/systems/`.
 
+After completing any feature fix/implementation that changes behavior, data flow, or architecture:
+- Update the relevant `docs/systems/*.MD` spec(s) in the same change.
+- Add/refresh a `Last Updated: YYYY-MM-DD` timestamp in each updated system doc.
+- Do not leave system docs stale relative to shipped code.
+
 ## Storage and Environment Truth
 
 - Storage is hybrid:

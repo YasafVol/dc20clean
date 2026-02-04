@@ -739,6 +739,86 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		{ id: 'notes', label: 'Notes', emoji: '📝' }
 	];
 
+	// Export PDF handler - mirrors CharacterSheetClean behavior and exports current sheet state.
+	const handleExportPdf = async () => {
+		if (!characterData) return;
+
+		try {
+			const [pdf, calc, denormMod] = await Promise.all([
+				import('../../lib/pdf/transformers'),
+				import('../../lib/services/enhancedCharacterCalculator'),
+				import('../../lib/services/denormalizeMastery')
+			]);
+			const { fillPdfFromData } = await import('../../lib/pdf/fillPdf');
+
+			const buildData = calc.convertToEnhancedBuildData({
+				...characterData,
+				attribute_might: characterData.finalMight,
+				attribute_agility: characterData.finalAgility,
+				attribute_charisma: characterData.finalCharisma,
+				attribute_intelligence: characterData.finalIntelligence,
+				classId: characterData.classId,
+				ancestry1Id: characterData.ancestry1Id,
+				ancestry2Id: characterData.ancestry2Id,
+				selectedTraitIds: characterData.selectedTraitIds || [],
+				selectedTraitChoices: (characterData as any).selectedTraitChoices || {},
+				featureChoices: characterData.selectedFeatureChoices || {},
+				skillsData: characterData.skillsData || {},
+				tradesData: characterData.tradesData || {},
+				languagesData: characterData.languagesData || { common: { fluency: 'fluent' } }
+			});
+			const calcResult = calc.calculateCharacterWithBreakdowns(buildData);
+
+			const denorm =
+				characterData.masteryLadders &&
+				characterData.skillTotals &&
+				characterData.knowledgeTradeMastery &&
+				characterData.languageMastery
+					? ({
+							masteryLadders: characterData.masteryLadders,
+							skillTotals: (characterData as any).skillTotals,
+							knowledgeTradeMastery: (characterData as any).knowledgeTradeMastery,
+							languageMastery: (characterData as any).languageMastery
+						} as any)
+					: denormMod.denormalizeMastery({
+							finalAttributes: {
+								might: calcResult.stats.finalMight,
+								agility: calcResult.stats.finalAgility,
+								charisma: calcResult.stats.finalCharisma,
+								intelligence: calcResult.stats.finalIntelligence,
+								prime: calcResult.stats.finalPrimeModifierValue
+							},
+							skillsRanks: characterData.skillsData || {},
+							tradesRanks: characterData.tradesData || {},
+							languagesData: characterData.languagesData || { common: { fluency: 'fluent' } }
+						});
+
+			const pdfData = pdf.transformCalculatedCharacterToPdfData(calcResult, {
+				saved: characterData,
+				denorm
+			});
+			const blob = await fillPdfFromData(pdfData, { flatten: false, version: '0.10' });
+
+			const safeName = (characterData.finalName || characterData.id || 'Character')
+				.replace(/[^A-Za-z0-9]+/g, '_')
+				.replace(/^_+|_+$/g, '')
+				.slice(0, 60);
+			const fileName = `${safeName}_vDC20-0.10.pdf`;
+
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = fileName;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+		} catch (err) {
+			console.error('Export PDF failed', err);
+			alert('Failed to export PDF: ' + (err instanceof Error ? err.message : String(err)));
+		}
+	};
+
 	return (
 		<PageContainer>
 			<Header
@@ -776,7 +856,11 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 						<ActionButton whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
 							📋 Copy
 						</ActionButton>
-						<ActionButton whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+						<ActionButton
+							onClick={handleExportPdf}
+							whileHover={{ scale: 1.05 }}
+							whileTap={{ scale: 0.95 }}
+						>
 							📄 Export PDF
 						</ActionButton>
 					</ActionButtons>
@@ -1119,3 +1203,4 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 };
 
 export default CharacterSheetRedesign;
+

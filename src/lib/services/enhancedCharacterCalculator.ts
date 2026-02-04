@@ -476,6 +476,11 @@ function aggregateAttributedEffects(buildData: EnhancedCharacterBuildData): Attr
 	const classFeatures = getClassFeatures(buildData.classId);
 	if (classFeatures) {
 		for (const feature of classFeatures.coreFeatures) {
+			// Only apply features the character has unlocked by current level.
+			if ((feature.levelGained || 0) > buildData.level) {
+				continue;
+			}
+
 			// Direct feature effects
 			if (feature.effects) {
 				for (const effect of feature.effects) {
@@ -1005,7 +1010,8 @@ function aggregateProgressionGains(
 		// Aggregate new structured gains (if present)
 		if (levelData.gains) {
 			totalTalents += levelData.gains.talents || 0;
-			totalPathPoints += levelData.gains.pathPoints || 0;
+			// Support both pathPoints (number) and pathProgression (boolean).
+			totalPathPoints += levelData.gains.pathPoints || (levelData.gains.pathProgression ? 1 : 0);
 			totalAncestryPoints += levelData.gains.ancestryPoints || 0;
 
 			if (levelData.gains.classFeatures) {
@@ -1336,7 +1342,13 @@ export function calculateCharacterWithBreakdowns(
 
 	// Calculate GRANT_MANEUVERS effects from features (e.g., Commander's 4 attack maneuvers)
 	const grantedManeuversCount = resolvedEffects
-		.filter((e) => (e as any).type === 'GRANT_MANEUVERS')
+		.filter((e) => {
+			if ((e as any).type !== 'GRANT_MANEUVERS') return false;
+
+			// "all_attack" is an access grant, not a numeric "maneuvers known" budget increase.
+			const target = String((e as any).target || '').toLowerCase();
+			return target !== 'all_attack';
+		})
 		.reduce((sum, e) => sum + Number((e as any).value || 0), 0);
 
 	// Log the bonuses for debugging

@@ -72,6 +72,7 @@ interface CharacterState {
 		currency: { gold: number; silver: number; copper: number };
 	};
 	notes: { playerNotes: string };
+	activeConditions?: string[];
 	attacks?: AttackData[];
 	spells?: SpellData[];
 	maneuvers?: ManeuverData[];
@@ -366,6 +367,14 @@ When loading characters, `deserializeCharacterFromStorage()` automatically:
 2. Sign in to Convex
 3. Import characters (existing feature)
 
+### 6.4 Convex Schema Update Workflow
+
+When validators or table definitions change in `convex/`:
+
+1. Run `npx convex dev --once`
+2. Commit schema/function changes together with `convex/_generated/*`
+3. Roll out frontend code that consumes the updated generated API
+
 ---
 
 ## 7. Key Files
@@ -440,5 +449,5 @@ const saveCharacterData = async (character: SavedCharacter) => {
 
 ---
 
-> Last updated: 2026-01-31 (auth flow documented)
+> Last updated: 2026-02-04 (characterState.activeConditions + schema deploy workflow)
 > Maintainer: @DC20Clean-Team

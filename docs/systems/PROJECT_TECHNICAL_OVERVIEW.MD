@@ -1,5 +1,7 @@
 # Project Technical Overview
 
+> Last updated: 2026-02-04
+
 ## Scope
 
 This document centralizes the technical details for the DC20Clean codebase: stack,
@@ -11,8 +13,9 @@ scripts, testing, project structure, and contribution expectations.
 - Build Tool: Vite 6
 - Styling: Material-UI (MUI) + Emotion + Tailwind CSS 4
 - State Management: React Context API
-- Persistence: Browser localStorage (client-only)
-  - Planned: Convex cloud database with authentication (see `docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md`)
+- Persistence: Hybrid storage
+  - localStorage is active by default (anonymous/offline-first)
+  - Convex cloud storage is active when `VITE_USE_CONVEX=true` and `VITE_CONVEX_URL` is set
 - Testing: Vitest (browser + node environments), Playwright
 - Code Quality: ESLint + Prettier
 
@@ -28,6 +31,7 @@ Development and build:
 - `npm run dev` - Start Vite dev server
 - `npm run build` - Production build to `dist/`
 - `npm run preview` - Preview production build on port 4173
+- `npx convex dev --once` - Validate/deploy Convex functions and regenerate client types
 
 Code quality:
 

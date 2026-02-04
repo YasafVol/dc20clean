@@ -1,155 +1,72 @@
 # Repository Guidelines
 
-## Project Structure & Module Organization
+> Last updated: 2026-02-04
 
-- `src/` – React + TypeScript app (routes, components, styles, types). Unit tests live beside code as `*.test.ts[x]`.
-- `e2e/` – Playwright end‑to‑end tests.
-- `dist/` – Build output (do not edit).
-- `static/`, `assets/` – Static files and images.
-- Config: `vite.config.ts`, `vitest.config.ts`, `playwright.config.ts`, `eslint.config.js`, `.prettierrc`.
+## Rule
+
+Before planning or implementing any feature, identify the relevant system(s) and read the matching spec(s) in `docs/systems/`.
+
+## Storage and Environment Truth
+
+- Storage is hybrid:
+  - `localStorage` is active and default.
+  - Convex cloud storage is active when `VITE_USE_CONVEX=true` and `VITE_CONVEX_URL` is configured.
+- `.env.local` is intentionally untracked and must be created per machine.
 
 ## Quick Start
 
-- (no .env required) – localStorage only; no database
-- `npm i` – Install dependencies.
-- (removed) database and Prisma steps
-- `npm run dev` – Start Vite dev server.
+```bash
+npm install
+npm run dev
+```
 
-## Build, Test, and Development Commands
+Optional Convex setup for cloud storage/auth:
 
-- `npm run dev` – Start Vite dev server.
-- `npm run build` – Production build to `dist/`.
-- `npm run preview` – Preview built app on port 4173.
-- `npm run lint` – Prettier check + ESLint.
-- `npm run format` – Auto‑format with Prettier (Tailwind plugin enabled).
-- `npm run test:unit` – Run Vitest (browser + node projects).
-- `npm run test` – Unit tests (run mode) then Playwright E2E.
-- `npm run test:e2e[:ui|:headed|:debug]` – E2E variants. Example: `npm run test:e2e:ui`.
-- (removed) DB start and Prisma generate; not used
+```bash
+npx convex dev --once
+```
 
-Tips
+## System Docs Index
 
-- Run a single unit test: `npx vitest -t "should ..."` or by file path.
-- E2E speedups: `PLAYWRIGHT_SKIP_BUILD=1` to reuse `dist/`; `E2E_WORKERS=4` for parallel runs.
+Use this table as the starting point for feature planning and impact checks.
 
-## Coding Style & Naming Conventions
+| Doc | Purpose |
+| --- | --- |
+| `docs/systems/ANCESTRY_SYSTEM.MD` | Ancestry selection and trait grants |
+| `docs/systems/BACKGROUND_SYSTEM.MD` | Background points, conversions, validation |
+| `docs/systems/CALCULATION_SYSTEM.MD` | Derived stats and effect-driven calculations |
+| `docs/systems/CHARACTER_CREATION_FLOW.MD` | End-to-end character creation workflow |
+| `docs/systems/CHARACTER_SHEET.MD` | Character sheet architecture and behavior |
+| `docs/systems/CHARACTER_SHEET_SYNC_SPEC.md` | Spells/maneuvers sync behavior on sheet |
+| `docs/systems/CLASS_SYSTEM.MD` | Class selection, features, subclass rules |
+| `docs/systems/DATABASE_SYSTEM.MD` | Persistence architecture and storage adapters |
+| `docs/systems/EFFECT_SYSTEM.MD` | Effect taxonomy and application model |
+| `docs/systems/ENCOUNTER_SYSTEM_SPEC.MD` | DM encounter planner and budget system |
+| `docs/systems/EQUIPMENT_SYSTEM.MD` | Equipment models, validation, custom builder |
+| `docs/systems/FEATURE_ID_NAMING_CONVENTION.md` | Stable ID naming constraints |
+| `docs/systems/HUMAN_CLERIC_E2E_SPEC.md` | Human Cleric end-to-end scenario spec |
+| `docs/systems/LEVELING_GAPS_SPEC.md` | Archived leveling closure checklist |
+| `docs/systems/LEVELING_SYSTEM.MD` | Level-up flow, talents, multiclass integration |
+| `docs/systems/LOGGING_SYSTEM.MD` | Logging and telemetry plan/status |
+| `docs/systems/MARTIALS_SYSTEM.MD` | Maneuvers and martial progression |
+| `docs/systems/MONSTER_SYSTEM_SPEC.MD` | DM monster lab and homebrew lifecycle |
+| `docs/systems/MULTICLASS_SYSTEM.MD` | Legacy multiclass summary (see LEVELING_SYSTEM §10) |
+| `docs/systems/ONTOLOGY.md` | Domain concepts and cross-system relationships |
+| `docs/systems/PDF_EXPORT_SYSTEM.MD` | PDF generation pipeline and templates |
+| `docs/systems/PROJECT_TECHNICAL_OVERVIEW.MD` | Stack, scripts, CI, architecture baseline |
+| `docs/systems/SPELLS_MANEUVERS_SPLIT_SPEC.md` | Historical split implementation record |
+| `docs/systems/SPELLS_SYSTEM.MD` | Spell rules, data model, and UI integration |
+| `docs/systems/TRAITS_SYSTEM.MD` | Trait catalog and prerequisite validation |
+| `docs/systems/project_summary.md` | Cross-system summary and representation matrix |
 
-- TypeScript, React 19, Vite.
-- Prettier: tabs, single quotes, width 100; Tailwind class sorting.
-- ESLint: TS + React recommended. JSON parse/stringify is restricted except in `**/storageUtils.ts`.
-- File names: `PascalCase` for components, `camelCase` for modules/hooks, tests as `*.test.ts[x]`.
-- Always use full, descriptive naming for functions, variables, and components.
-- Example: wrong `genYmdStr`; right `generateDateString`.
+## Feature Mapping Assets
 
-### Styled-Components (MANDATORY)
+- `docs/assets/mapping/feature-system-map.md` - feature to system/code mapping
+- `docs/assets/mapping/README.md` - mapping index and workflow
 
-**CRITICAL: NO inline styles allowed anywhere in the codebase.** All styling must use styled-components.
+## Coding and Review Expectations
 
-- **Zero inline styles**: Never use `style={{...}}` prop. All styles must be defined as styled-components.
-- **Transient props**: Use `$` prefix for props that should not be passed to DOM (e.g., `$isMobile`, `$isPrimary`, `$isActive`).
-  ```typescript
-  const Button = styled.button<{ $variant?: 'primary' | 'secondary' }>`
-  	color: ${(props) => (props.$variant === 'primary' ? '#7DCFFF' : '#9aa5ce')};
-  `;
-  // Usage: <Button $variant="primary">Click Me</Button>
-  ```
-- **Theme usage**: Always import and use `theme` object from `../styles/theme` for colors, spacing, typography.
-- **File organization**: Place styled-components in dedicated `.styles.ts` files (e.g., `Component.styles.ts` or `styles/Component.ts`).
-- **Conditional styling**: Use props and template literals for dynamic styles, not inline styles.
-
-  ```typescript
-  // ✅ CORRECT
-  const Text = styled.span<{ $isPositive: boolean }>`
-    color: ${(props) => props.$isPositive ? '#22c55e' : '#ef4444'};
-  `;
-
-  // ❌ WRONG
-  <span style={{ color: isPositive ? '#22c55e' : '#ef4444' }}>...</span>
-  ```
-
-- **Semantic naming**: Use descriptive names like `SkillBonusContainer`, `ExhaustionInfoButton`, `KeyboardHint`, not generic `Div1`, `Wrapper`.
-
-## Testing Guidelines
-
-- Unit: Vitest. Place tests near source: `src/**/Foo.test.tsx`.
-- E2E: Playwright in `e2e/`. Config runs a web server on `http://localhost:4173`.
-- Useful envs: `PLAYWRIGHT_SKIP_BUILD=1`, `E2E_SCREENSHOTS=1`, `E2E_TRACES=1`.
-- Never modify unit or E2E tests without explicit written user approval.
-- If a test appears incorrect, do not change it. Instead, share the rationale and a proposed diff in a comment/PR description and proceed only after explicit approval.
-- Do not update snapshots or golden files (e.g., `-u`) without prior approval.
-
-## Graphite (Stacked PRs)
-
-- Install: `brew install withgraphite/tap/graphite` (or see graphite.dev).
-- Auth and init: `gt auth` → `gt init`.
-- Flow: `gt start feature/short-id` → commit as usual → `gt up` to push stack → `gt submit` to open PRs.
-- Update stack: continue committing, then `gt up`; rebase with `gt repo sync`.
-- Land: merge via GitHub, then `gt land` to clean up local branches.
-
-## Commit & Pull Request Guidelines
-
-- Prefer Conventional Commits: `feat(scope): ...`, `fix: ...`, `chore(e2e): ...`, `docs: ...`, `ci: ...`.
-- PRs should include: clear description, linked issues, test plan (commands + results), and screenshots/GIFs for UI changes. Update docs when behavior changes. For stacks, ensure each PR is reviewable and passes CI independently.
-
-## Security & Configuration Tips
-
-- No DATABASE_URL or Docker required; app is client-only persistence
-
-## Architecture References
-
-- See `docs/systems` for system specs and overviews.
-
-## Systems Index (start here)
-
-### Character Creation
-
-- Background System: `docs/systems/BACKGROUND_SYSTEM.MD`
-- Traits System: `docs/systems/TRAITS_SYSTEM.MD`
-- Classes System: `docs/systems/CLASS_SYSTEM.MD`
-- Ancestries System: `docs/systems/ANCESTRY_SYSTEM.MD`
-- Spells System: `docs/systems/SPELLS_SYSTEM.MD`
-- Martials System: `docs/systems/MARTIALS_SYSTEM.MD`
-- Equipment System: `docs/systems/EQUIPMENT_SYSTEM.MD`
-
-### Character Sheet
-
-- Character Sheet Overview: `docs/systems/CHARACTER_SHEET.MD`
-- Calculation & Derived Stats: `docs/systems/CALCULATION_SYSTEM.MD`
-- PDF Export System: `docs/systems/PDF_EXPORT_SYSTEM.MD`
-
-### DM Tools
-
-- Monster System (Laboratory): `docs/systems/MONSTER_SYSTEM_SPEC.MD`
-- Encounter System (War Room): `docs/systems/ENCOUNTER_SYSTEM_SPEC.MD`
-
-### Reference Tools
-
-- Equipage (Custom Equipment): `docs/systems/EQUIPMENT_SYSTEM.MD`
-- Spellbook: `docs/systems/SPELLS_SYSTEM.MD`
-
-### Infrastructure
-
-- Database & Storage: `docs/systems/DATABASE_SYSTEM.MD`
-- Ontology & Flows: `docs/systems/ONTOLOGY.md`
-
-## Agent Brief Template
-
-- Goal: <one-sentence outcome>
-- Relevant systems:
-  - Background → `docs/systems/BACKGROUND_SYSTEM.MD#4-calculation-model`
-  - Database/Storage → `docs/systems/DATABASE_SYSTEM.MD`
-  - Effect types → `docs/systems/EFFECT_SYSTEM.MD#2-effect-categories`
-- Touchpoints:
-  - Data/types: `src/lib/rulesdata/**`, `src/lib/rulesdata/schemas/**`
-  - Services: `src/lib/services/enhancedCharacterCalculator.ts`
-  - UI: `src/routes/character-creation/**`, `src/routes/character-sheet/**`
-- Acceptance:
-  - Enumerate 2–4 checks (e.g., Brewing example in Trades spec §4)
-- Constraints:
-  - Follow lint rules; keep IDs stable; avoid migrations unless spec says
-
-## Agent-Specific Notes
-
-- Follow lint rules strictly; avoid unrelated refactors. Keep changes minimal and focused. Update or add tests when modifying behavior.
-- **Styled-Components Policy**: NEVER use inline styles (`style={{...}}`). All styling must use styled-components with transient props (`$propName`). If you encounter inline styles, convert them to styled-components immediately.
-- **Code Quality Standards**: Remove dead code, unused imports, and console.log statements. Use calculated values instead of hardcoded constants. Keep components maintainable and consistent with the established patterns.
+- Use Conventional Commits.
+- Keep changes focused and avoid unrelated refactors.
+- Update relevant docs when behavior or architecture changes.
+- Never commit secrets from `.env`, `.env.local`, or similar files.

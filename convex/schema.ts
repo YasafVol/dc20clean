@@ -597,5 +597,4 @@ export default defineSchema({
 		.index('by_user_and_id', ['userId', 'id'])
 		.index('by_approval_status', ['approvalStatus'])
 		.index('by_user_and_deleted', ['userId', 'deletedAt'])
-userId', 'deletedAt'])
 });

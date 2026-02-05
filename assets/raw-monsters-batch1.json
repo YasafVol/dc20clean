@@ -1,609 +1,435 @@
 {
-	"$schema": "Monster seed data for DC20 Master Architect",
-	"version": "1.0",
-	"monsters": [
-		{
-			"id": "mon_v2_chimera_001",
-			"name": "Arctic Chimera",
-			"level": 4,
-			"tier": "apex",
-			"role": "brute",
-			"size": "Large",
-			"type": "Beast",
-			"stats": { "hp": 80, "pd": 11, "ad": 15, "attack": 6, "saveDC": 16 },
-			"features": [
-				{ "name": "Keen Smell", "description": "ADV on Awareness Checks using smell." },
-				{ "name": "Large Lungs", "description": "Can hold breath for up to 1 hour." }
-			],
-			"actions": [
-				{
-					"name": "Maul",
-					"ap": 1,
-					"targetDefense": "PD",
-					"damage": 3,
-					"traits": ["Heavy Hit (+1)"]
-				},
-				{
-					"name": "Crash",
-					"ap": 1,
-					"targetDefense": "AD",
-					"damage": 3,
-					"traits": ["2 Space Line"]
-				},
-				{
-					"name": "Spray",
-					"ap": 2,
-					"targetDefense": "AD",
-					"damage": 2,
-					"traits": ["5 Space Line", "Knockdown"]
-				}
-			]
-		},
-		{
-			"id": "mon_v2_necro_002",
-			"name": "Necromancer",
-			"level": 4,
-			"tier": "apex",
-			"role": "leader",
-			"size": "Medium",
-			"type": "Humanoid",
-			"stats": { "hp": 40, "pd": 13, "ad": 15, "attack": 6, "saveDC": 16 },
-			"features": [
-				{ "name": "Spellcaster", "description": "+2 bonus to Spell Duels." },
-				{
-					"name": "Reconstitution",
-					"description": "Reaction: Self or Thrall within 15 spaces gains 2 Temp HP on damage."
-				}
-			],
-			"actions": [
-				{
-					"name": "Umbral Bolt",
-					"ap": 1,
-					"targetDefense": "PD",
-					"damage": 2,
-					"traits": ["Sap Enhancement"]
-				},
-				{
-					"name": "Command Thrall",
-					"ap": 2,
-					"targetDefense": "None",
-					"description": "One Thrall moves and attacks with ADV."
-				},
-				{
-					"name": "Create Undead",
-					"ap": 2,
-					"targetDefense": "None",
-					"description": "Summon 1 Thrall within 5 spaces."
-				}
-			]
-		},
-		{
-			"id": "mon_v2_collector_003",
-			"name": "Collector Demon",
-			"level": 5,
-			"tier": "legendary",
-			"role": "controller",
-			"size": "Huge",
-			"type": "Fiend",
-			"stats": { "hp": 70, "pd": 14, "ad": 17, "attack": 8, "saveDC": 18 },
-			"features": [
-				{
-					"name": "Soul Collector",
-					"description": "Collects souls of those who die within 5 spaces."
-				},
-				{ "name": "Invisibility", "description": "Invisible while in Dim Light or Darkness." }
-			],
-			"actions": [
-				{ "name": "Dark Claws", "ap": 1, "targetDefense": "PD", "damage": 3 },
-				{
-					"name": "Doom Call",
-					"ap": 2,
-					"targetDefense": "AD",
-					"damage": 1,
-					"traits": ["5 Space Aura", "Doomed"]
-				}
-			]
-		},
-		{
-			"id": "mon_v2_penguin_004",
-			"name": "Emperor Penguin",
-			"level": 3,
-			"tier": "legendary",
-			"role": "leader",
-			"size": "Large",
-			"type": "Beast",
-			"stats": { "hp": 60, "pd": 14, "ad": 17, "attack": 6, "saveDC": 16 },
-			"actions": [
-				{ "name": "Flipper", "ap": 1, "targetDefense": "PD", "damage": 2 },
-				{
-					"name": "Icy Stare",
-					"ap": 2,
-					"targetDefense": "AD",
-					"damage": 2,
-					"traits": ["10 Space Line", "Immobilized"]
-				}
-			]
-		},
-		{
-			"id": "mon_v2_blightq_005",
-			"name": "Blight Queen",
-			"level": 1,
-			"tier": "apex",
-			"role": "skirmisher",
-			"size": "Large",
-			"type": "Monstrosity",
-			"stats": { "hp": 25, "pd": 15, "ad": 9, "attack": 4, "saveDC": 14 },
-			"actions": [
-				{ "name": "Pincer", "ap": 1, "targetDefense": "PD", "damage": 2, "traits": ["Grapple"] },
-				{
-					"name": "Corrosive Spray",
-					"ap": 2,
-					"targetDefense": "AD",
-					"damage": 1,
-					"traits": ["5 Space Cone", "Burning"]
-				}
-			]
-		},
-		{
-			"id": "mon_v2_shadow_006",
-			"name": "Shadow",
-			"level": 1,
-			"tier": "standard",
-			"role": "lurker",
-			"size": "Medium",
-			"type": "Undead",
-			"stats": { "hp": 7, "pd": 13, "ad": 10, "attack": 4, "saveDC": 14 },
-			"features": [
-				{
-					"name": "Shadow Merge",
-					"description": "Become Invisible when taking the Hide action in Dim Light."
-				}
-			],
-			"actions": [
-				{ "name": "Soul Rend", "ap": 1, "targetDefense": "PD", "damage": 1, "traits": ["Doomed"] },
-				{ "name": "Night Stride", "ap": 1, "description": "Teleport 5 spaces between shadows." }
-			]
-		},
-		{
-			"id": "mon_v2_cinder_007",
-			"name": "Cindergeist",
-			"level": 3,
-			"tier": "standard",
-			"role": "lurker",
-			"size": "Medium",
-			"type": "Undead",
-			"stats": { "hp": 11, "pd": 14, "ad": 11, "attack": 5, "saveDC": 15 },
-			"actions": [
-				{
-					"name": "Ash Lash",
-					"ap": 1,
-					"targetDefense": "PD",
-					"damage": 3,
-					"traits": ["Fire/Umbral"]
-				},
-				{
-					"name": "Ember Drift",
-					"ap": 3,
-					"targetDefense": "AD",
-					"description": "Fly 5 spaces, applying Burning and Blinded."
-				}
-			]
-		},
-		{
-			"id": "mon_v2_serpent_008",
-			"name": "Flamewrought Serpent",
-			"level": 2,
-			"tier": "standard",
-			"role": "skirmisher",
-			"size": "Large",
-			"type": "Elemental",
-			"stats": { "hp": 13, "pd": 12, "ad": 12, "attack": 4, "saveDC": 14 },
-			"features": [
-				{ "name": "Fiery Wake", "description": "Leaves a trail of flames that deal 1 Fire damage." }
-			],
-			"actions": [
-				{ "name": "Bite", "ap": 1, "targetDefense": "PD", "damage": 2, "traits": ["Fire"] },
-				{
-					"name": "Blazing Coil",
-					"ap": 3,
-					"targetDefense": "AD",
-					"damage": 1,
-					"traits": ["3 Space Aura", "Burning"]
-				}
-			]
-		},
-		{
-			"id": "mon_v2_gargoyle_009",
-			"name": "Gargoyle",
-			"level": 3,
-			"tier": "standard",
-			"role": "defender",
-			"size": "Medium",
-			"type": "Construct",
-			"stats": { "hp": 15, "pd": 15, "ad": 15, "attack": 5, "saveDC": 15 },
-			"actions": [
-				{ "name": "Strike", "ap": 1, "targetDefense": "PD", "damage": 2 },
-				{
-					"name": "Ram",
-					"ap": 2,
-					"targetDefense": "AD",
-					"description": "Move and Strike, pushing target 1 space."
-				}
-			]
-		},
-		{
-			"id": "mon_v2_lbug_010",
-			"name": "Lightning Bug",
-			"level": 2,
-			"tier": "standard",
-			"role": "lurker",
-			"size": "Tiny",
-			"type": "Elemental",
-			"stats": { "hp": 10, "pd": 15, "ad": 8, "attack": 4, "saveDC": 14 },
-			"features": [
-				{
-					"name": "Elemental Siphon",
-					"description": "Reaction: Split lightning damage with a nearby creature."
-				}
-			],
-			"actions": [
-				{ "name": "Lightning Bolt", "ap": 1, "targetDefense": "PD", "damage": 2 },
-				{
-					"name": "Flicker Burst",
-					"ap": 2,
-					"targetDefense": "AD",
-					"damage": 1,
-					"traits": ["3 Space Aura", "Teleport"]
-				}
-			]
-		},
-		{
-			"id": "mon_v2_phound_011",
-			"name": "Plague Hound",
-			"level": 2,
-			"tier": "standard",
-			"role": "skirmisher",
-			"size": "Medium",
-			"type": "Monstrosity",
-			"stats": { "hp": 12, "pd": 11, "ad": 8, "attack": 4, "saveDC": 14 },
-			"features": [
-				{
-					"name": "Plague Body",
-					"description": "Creatures ending turn nearby contract Rot Plague."
-				}
-			],
-			"actions": [
-				{ "name": "Rend", "ap": 1, "targetDefense": "PD", "damage": 2, "traits": ["Poisoned"] },
-				{
-					"name": "Plague Breath",
-					"ap": 3,
-					"targetDefense": "AD",
-					"damage": 2,
-					"traits": ["3 Space Cone"]
-				}
-			]
-		},
-		{
-			"id": "mon_v2_sentinel_012",
-			"name": "Rime-Sculpted Sentinel",
-			"level": 2,
-			"tier": "standard",
-			"role": "controller",
-			"size": "Large",
-			"type": "Construct",
-			"stats": { "hp": 11, "pd": 13, "ad": 11, "attack": 4, "saveDC": 14 },
-			"features": [
-				{
-					"name": "Frost Aura",
-					"description": "Regain 1 HP and slow nearby enemies at start of turn."
-				}
-			],
-			"actions": [
-				{ "name": "Frost Slam", "ap": 1, "targetDefense": "PD", "damage": 2 },
-				{
-					"name": "Arctic Winds",
-					"ap": 3,
-					"targetDefense": "AD",
-					"damage": 1,
-					"traits": ["Frost Aura Area"]
-				}
-			]
-		},
-		{
-			"id": "mon_v2_rug_013",
-			"name": "Animated Rug",
-			"level": 1,
-			"tier": "standard",
-			"role": "controller",
-			"size": "Medium",
-			"type": "Construct",
-			"stats": { "hp": 10, "pd": 11, "ad": 13, "attack": 4, "saveDC": 14 },
-			"actions": [
-				{ "name": "Wrap", "ap": 1, "targetDefense": "AD", "damage": 0, "traits": ["Grapple"] },
-				{
-					"name": "Squeeze",
-					"ap": 1,
-					"targetDefense": "AD",
-					"damage": 1,
-					"traits": ["ADV vs Grappled"]
-				}
-			]
-		},
-		{
-			"id": "mon_v2_wardrobe_014",
-			"name": "Animated Wardrobe",
-			"level": 2,
-			"tier": "standard",
-			"role": "defender",
-			"size": "Large",
-			"type": "Construct",
-			"stats": { "hp": 15, "pd": 14, "ad": 14, "attack": 4, "saveDC": 14 },
-			"actions": [
-				{ "name": "Door Slam", "ap": 1, "targetDefense": "PD", "damage": 2, "traits": ["Dazed"] },
-				{
-					"name": "Grasping Clothes",
-					"ap": 1,
-					"targetDefense": "None",
-					"traits": ["Contest", "Grapple"]
-				}
-			]
-		},
-		{
-			"id": "mon_v2_twig_015",
-			"name": "Twig Blight",
-			"level": 1,
-			"tier": "standard",
-			"role": "controller",
-			"size": "Medium",
-			"type": "Plant",
-			"stats": { "hp": 8, "pd": 13, "ad": 11, "attack": 4, "saveDC": 14 },
-			"actions": [
-				{
-					"name": "Branch Whip",
-					"ap": 1,
-					"targetDefense": "PD",
-					"damage": 1,
-					"traits": ["Grapple"]
-				},
-				{
-					"name": "Entangling Vines",
-					"ap": 2,
-					"description": "Creates difficult terrain in a 2-space sphere."
-				}
-			]
-		},
-		{
-			"id": "mon_v2_cwisp_016",
-			"name": "Cleansed Wisp",
-			"level": 1,
-			"tier": "standard",
-			"role": "support",
-			"size": "Tiny",
-			"type": "Fey",
-			"stats": { "hp": 10, "pd": 13, "ad": 10, "attack": 4, "saveDC": 14 },
-			"actions": [
-				{ "name": "Discharge", "ap": 1, "targetDefense": "PD", "damage": 1, "traits": ["Exposed"] },
-				{ "name": "Nature's Healing", "ap": 2, "description": "Target regains 1-2 HP." }
-			]
-		},
-		{
-			"id": "mon_v2_corwisp_017",
-			"name": "Corrupted Wisp",
-			"level": 1,
-			"tier": "standard",
-			"role": "controller",
-			"size": "Tiny",
-			"type": "Fey",
-			"stats": { "hp": 10, "pd": 13, "ad": 10, "attack": 4, "saveDC": 14 },
-			"actions": [
-				{
-					"name": "Corrupted Discharge",
-					"ap": 1,
-					"targetDefense": "PD",
-					"damage": 1,
-					"traits": ["Necrosis"]
-				},
-				{ "name": "Manipulation", "ap": 1, "description": "Force target to move or attack." }
-			]
-		},
-		{
-			"id": "mon_v2_zombie_018",
-			"name": "Zombie",
-			"level": 0,
-			"tier": "standard",
-			"role": "brute",
-			"size": "Medium",
-			"type": "Undead",
-			"stats": { "hp": 10, "pd": 9, "ad": 13, "attack": 3, "saveDC": 13 },
-			"features": [
-				{
-					"name": "Unrelenting",
-					"description": "Only reduced below 1 HP by Heavy Hits or Radiant damage."
-				}
-			],
-			"actions": [
-				{
-					"name": "Bite or Slam",
-					"ap": 1,
-					"targetDefense": "PD",
-					"damage": 1,
-					"traits": ["Infect"]
-				},
-				{ "name": "Slam (Grappled)", "ap": 1, "targetDefense": "AD", "damage": 1 }
-			]
-		},
-		{
-			"id": "mon_v2_goblin_019",
-			"name": "Goblin",
-			"level": 0,
-			"tier": "standard",
-			"role": "skirmisher",
-			"size": "Small",
-			"type": "Humanoid",
-			"stats": { "hp": 8, "pd": 11, "ad": 11, "attack": 3, "saveDC": 13 },
-			"actions": [
-				{ "name": "Knife", "ap": 1, "targetDefense": "PD", "damage": 1 },
-				{ "name": "Shortbow", "ap": 1, "targetDefense": "PD", "damage": 1 }
-			]
-		},
-		{
-			"id": "mon_v2_kobold_020",
-			"name": "Kobold",
-			"level": 0,
-			"tier": "standard",
-			"role": "lurker",
-			"size": "Small",
-			"type": "Humanoid",
-			"stats": { "hp": 6, "pd": 12, "ad": 9, "attack": 3, "saveDC": 13 },
-			"features": [{ "name": "Troop Tactics", "description": "Help Dice granted start as a d10." }],
-			"actions": [
-				{
-					"name": "Spear",
-					"ap": 1,
-					"targetDefense": "PD",
-					"damage": 1,
-					"traits": ["Extend Attack"]
-				},
-				{ "name": "Trap", "ap": 1, "description": "Set a hidden trap within 5 spaces." }
-			]
-		},
-		{
-			"id": "mon_v2_dummy_021",
-			"name": "Training Dummy",
-			"level": -1,
-			"tier": "standard",
-			"role": "defender",
-			"size": "Medium",
-			"type": "Construct",
-			"stats": { "hp": 6, "pd": 12, "ad": 12, "attack": 2, "saveDC": 12 },
-			"actions": [
-				{ "name": "Slam", "ap": 1, "targetDefense": "PD", "damage": 1, "traits": ["Grab"] },
-				{
-					"name": "Whirlwind",
-					"ap": 2,
-					"targetDefense": "AD",
-					"damage": 1,
-					"traits": ["1 Space Aura"]
-				}
-			]
-		},
-		{
-			"id": "mon_v2_rat_022",
-			"name": "Giant Rat",
-			"level": -1,
-			"tier": "standard",
-			"role": "skirmisher",
-			"size": "Small",
-			"type": "Beast",
-			"stats": { "hp": 5, "pd": 10, "ad": 10, "attack": 2, "saveDC": 12 },
-			"actions": [
-				{ "name": "Bite", "ap": 1, "targetDefense": "PD", "damage": 1, "traits": ["Impair"] },
-				{ "name": "Dart Around", "ap": 1, "description": "Take Disengage and Move actions." }
-			]
-		},
-		{
-			"id": "mon_v2_hhound_023",
-			"name": "Hunting Hound",
-			"level": -1,
-			"tier": "standard",
-			"role": "controller",
-			"size": "Small",
-			"type": "Beast",
-			"stats": { "hp": 5, "pd": 11, "ad": 9, "attack": 2, "saveDC": 12 },
-			"actions": [
-				{ "name": "Bite", "ap": 1, "targetDefense": "PD", "damage": 1, "traits": ["Pin"] },
-				{ "name": "Intimidate", "ap": 1, "description": "Contest to Intimidate target." }
-			]
-		},
-		{
-			"id": "mon_v2_thief_024",
-			"name": "Thief",
-			"level": -1,
-			"tier": "standard",
-			"role": "lurker",
-			"size": "Medium",
-			"type": "Humanoid",
-			"stats": { "hp": 4, "pd": 12, "ad": 8, "attack": 2, "saveDC": 12 },
-			"actions": [
-				{ "name": "Dart", "ap": 1, "targetDefense": "PD", "damage": 0, "traits": ["Hinder"] },
-				{ "name": "Dagger", "ap": 1, "targetDefense": "PD", "damage": 1 }
-			]
-		},
-		{
-			"id": "mon_v2_thug_025",
-			"name": "Thug",
-			"level": 0,
-			"tier": "standard",
-			"role": "skirmisher",
-			"size": "Medium",
-			"type": "Humanoid",
-			"stats": { "hp": 8, "pd": 11, "ad": 11, "attack": 3, "saveDC": 13 },
-			"actions": [
-				{
-					"name": "Fist",
-					"ap": 1,
-					"targetDefense": "PD",
-					"damage": 1,
-					"traits": ["Trip", "Grapple"]
-				},
-				{ "name": "Slam (Grappled)", "ap": 1, "targetDefense": "AD", "damage": 1 }
-			]
-		},
-		{
-			"id": "mon_v2_thrall_026",
-			"name": "Thrall",
-			"level": 1,
-			"tier": "standard",
-			"role": "support",
-			"size": "Medium",
-			"type": "Undead",
-			"stats": { "hp": 5, "pd": 10, "ad": 14, "attack": 4, "saveDC": 14 },
-			"actions": [
-				{
-					"name": "Attack",
-					"ap": 1,
-					"targetDefense": "PD",
-					"damage": 1,
-					"traits": ["Physical or Umbral"]
-				}
-			]
-		},
-		{
-			"id": "mon_v2_penguin_basic_027",
-			"name": "Penguin",
-			"level": 0,
-			"tier": "standard",
-			"role": "skirmisher",
-			"size": "Small",
-			"type": "Beast",
-			"stats": { "hp": 5, "pd": 10, "ad": 10, "attack": 3, "saveDC": 13 },
-			"actions": [
-				{ "name": "Beak", "ap": 1, "targetDefense": "PD", "damage": 1 },
-				{ "name": "Slip and Slide", "ap": 2, "description": "Move up to swim speed while prone." }
-			]
-		},
-		{
-			"id": "mon_v2_mmaker_028",
-			"name": "Mischief Maker",
-			"level": 4,
-			"tier": "standard",
-			"role": "controller",
-			"size": "Tiny",
-			"type": "Fey",
-			"stats": { "hp": 20, "pd": 20, "ad": 20, "attack": 5, "saveDC": 15 },
-			"features": [
-				{ "name": "Stress", "description": "Loses DR and -5 Defenses at 3 Stress points." }
-			],
-			"actions": [
-				{ "name": "Mocking Joke", "ap": 1, "description": "Target is Taunted for 1 minute." },
-				{
-					"name": "Dispersion",
-					"ap": 2,
-					"targetDefense": "AD",
-					"damage": 1,
-					"traits": ["1 Space Aura", "Teleport"]
-				}
-			]
-		}
-	]
+  "$schema": "Monster seed data for DC20 Master Architect",
+  "version": "1.0",
+  "monsters": [
+    {
+      "id": "mon_v2_chimera_001",
+      "name": "Arctic Chimera",
+      "level": 4,
+      "tier": "apex",
+      "role": "brute",
+      "size": "Large",
+      "type": "Beast",
+      "stats": { "hp": 80, "pd": 11, "ad": 15, "attack": 6, "saveDC": 16 },
+      "features": [
+        { "name": "Keen Smell", "description": "ADV on Awareness Checks using smell." },
+        { "name": "Large Lungs", "description": "Can hold breath for up to 1 hour." }
+      ],
+      "actions": [
+        { "name": "Maul", "ap": 1, "targetDefense": "PD", "damage": 3, "traits": ["Heavy Hit (+1)"] },
+        { "name": "Crash", "ap": 1, "targetDefense": "AD", "damage": 3, "traits": ["2 Space Line"] },
+        { "name": "Spray", "ap": 2, "targetDefense": "AD", "damage": 2, "traits": ["5 Space Line", "Knockdown"] }
+      ]
+    },
+    {
+      "id": "mon_v2_necro_002",
+      "name": "Necromancer",
+      "level": 4,
+      "tier": "apex",
+      "role": "leader",
+      "size": "Medium",
+      "type": "Humanoid",
+      "stats": { "hp": 40, "pd": 13, "ad": 15, "attack": 6, "saveDC": 16 },
+      "features": [
+        { "name": "Spellcaster", "description": "+2 bonus to Spell Duels." },
+        { "name": "Reconstitution", "description": "Reaction: Self or Thrall within 15 spaces gains 2 Temp HP on damage." }
+      ],
+      "actions": [
+        { "name": "Umbral Bolt", "ap": 1, "targetDefense": "PD", "damage": 2, "traits": ["Sap Enhancement"] },
+        { "name": "Command Thrall", "ap": 2, "targetDefense": "None", "description": "One Thrall moves and attacks with ADV." },
+        { "name": "Create Undead", "ap": 2, "targetDefense": "None", "description": "Summon 1 Thrall within 5 spaces." }
+      ]
+    },
+    {
+      "id": "mon_v2_collector_003",
+      "name": "Collector Demon",
+      "level": 5,
+      "tier": "legendary",
+      "role": "controller",
+      "size": "Huge",
+      "type": "Fiend",
+      "stats": { "hp": 70, "pd": 14, "ad": 17, "attack": 8, "saveDC": 18 },
+      "features": [
+        { "name": "Soul Collector", "description": "Collects souls of those who die within 5 spaces." },
+        { "name": "Invisibility", "description": "Invisible while in Dim Light or Darkness." }
+      ],
+      "actions": [
+        { "name": "Dark Claws", "ap": 1, "targetDefense": "PD", "damage": 3 },
+        { "name": "Doom Call", "ap": 2, "targetDefense": "AD", "damage": 1, "traits": ["5 Space Aura", "Doomed"] }
+      ]
+    },
+    {
+      "id": "mon_v2_penguin_004",
+      "name": "Emperor Penguin",
+      "level": 3,
+      "tier": "legendary",
+      "role": "leader",
+      "size": "Large",
+      "type": "Beast",
+      "stats": { "hp": 60, "pd": 14, "ad": 17, "attack": 6, "saveDC": 16 },
+      "actions": [
+        { "name": "Flipper", "ap": 1, "targetDefense": "PD", "damage": 2 },
+        { "name": "Icy Stare", "ap": 2, "targetDefense": "AD", "damage": 2, "traits": ["10 Space Line", "Immobilized"] }
+      ]
+    },
+    {
+      "id": "mon_v2_blightq_005",
+      "name": "Blight Queen",
+      "level": 1,
+      "tier": "apex",
+      "role": "skirmisher",
+      "size": "Large",
+      "type": "Monstrosity",
+      "stats": { "hp": 25, "pd": 15, "ad": 9, "attack": 4, "saveDC": 14 },
+      "actions": [
+        { "name": "Pincer", "ap": 1, "targetDefense": "PD", "damage": 2, "traits": ["Grapple"] },
+        { "name": "Corrosive Spray", "ap": 2, "targetDefense": "AD", "damage": 1, "traits": ["5 Space Cone", "Burning"] }
+      ]
+    },
+    {
+      "id": "mon_v2_shadow_006",
+      "name": "Shadow",
+      "level": 1,
+      "tier": "standard",
+      "role": "lurker",
+      "size": "Medium",
+      "type": "Undead",
+      "stats": { "hp": 7, "pd": 13, "ad": 10, "attack": 4, "saveDC": 14 },
+      "features": [
+        { "name": "Shadow Merge", "description": "Become Invisible when taking the Hide action in Dim Light." }
+      ],
+      "actions": [
+        { "name": "Soul Rend", "ap": 1, "targetDefense": "PD", "damage": 1, "traits": ["Doomed"] },
+        { "name": "Night Stride", "ap": 1, "description": "Teleport 5 spaces between shadows." }
+      ]
+    },
+    {
+      "id": "mon_v2_cinder_007",
+      "name": "Cindergeist",
+      "level": 3,
+      "tier": "standard",
+      "role": "lurker",
+      "size": "Medium",
+      "type": "Undead",
+      "stats": { "hp": 11, "pd": 14, "ad": 11, "attack": 5, "saveDC": 15 },
+      "actions": [
+        { "name": "Ash Lash", "ap": 1, "targetDefense": "PD", "damage": 3, "traits": ["Fire/Umbral"] },
+        { "name": "Ember Drift", "ap": 3, "targetDefense": "AD", "description": "Fly 5 spaces, applying Burning and Blinded." }
+      ]
+    },
+    {
+      "id": "mon_v2_serpent_008",
+      "name": "Flamewrought Serpent",
+      "level": 2,
+      "tier": "standard",
+      "role": "skirmisher",
+      "size": "Large",
+      "type": "Elemental",
+      "stats": { "hp": 13, "pd": 12, "ad": 12, "attack": 4, "saveDC": 14 },
+      "features": [
+        { "name": "Fiery Wake", "description": "Leaves a trail of flames that deal 1 Fire damage." }
+      ],
+      "actions": [
+        { "name": "Bite", "ap": 1, "targetDefense": "PD", "damage": 2, "traits": ["Fire"] },
+        { "name": "Blazing Coil", "ap": 3, "targetDefense": "AD", "damage": 1, "traits": ["3 Space Aura", "Burning"] }
+      ]
+    },
+    {
+      "id": "mon_v2_gargoyle_009",
+      "name": "Gargoyle",
+      "level": 3,
+      "tier": "standard",
+      "role": "defender",
+      "size": "Medium",
+      "type": "Construct",
+      "stats": { "hp": 15, "pd": 15, "ad": 15, "attack": 5, "saveDC": 15 },
+      "actions": [
+        { "name": "Strike", "ap": 1, "targetDefense": "PD", "damage": 2 },
+        { "name": "Ram", "ap": 2, "targetDefense": "AD", "description": "Move and Strike, pushing target 1 space." }
+      ]
+    },
+    {
+      "id": "mon_v2_lbug_010",
+      "name": "Lightning Bug",
+      "level": 2,
+      "tier": "standard",
+      "role": "lurker",
+      "size": "Tiny",
+      "type": "Elemental",
+      "stats": { "hp": 10, "pd": 15, "ad": 8, "attack": 4, "saveDC": 14 },
+      "features": [
+        { "name": "Elemental Siphon", "description": "Reaction: Split lightning damage with a nearby creature." }
+      ],
+      "actions": [
+        { "name": "Lightning Bolt", "ap": 1, "targetDefense": "PD", "damage": 2 },
+        { "name": "Flicker Burst", "ap": 2, "targetDefense": "AD", "damage": 1, "traits": ["3 Space Aura", "Teleport"] }
+      ]
+    },
+    {
+      "id": "mon_v2_phound_011",
+      "name": "Plague Hound",
+      "level": 2,
+      "tier": "standard",
+      "role": "skirmisher",
+      "size": "Medium",
+      "type": "Monstrosity",
+      "stats": { "hp": 12, "pd": 11, "ad": 8, "attack": 4, "saveDC": 14 },
+      "features": [
+        { "name": "Plague Body", "description": "Creatures ending turn nearby contract Rot Plague." }
+      ],
+      "actions": [
+        { "name": "Rend", "ap": 1, "targetDefense": "PD", "damage": 2, "traits": ["Poisoned"] },
+        { "name": "Plague Breath", "ap": 3, "targetDefense": "AD", "damage": 2, "traits": ["3 Space Cone"] }
+      ]
+    },
+    {
+      "id": "mon_v2_sentinel_012",
+      "name": "Rime-Sculpted Sentinel",
+      "level": 2,
+      "tier": "standard",
+      "role": "controller",
+      "size": "Large",
+      "type": "Construct",
+      "stats": { "hp": 11, "pd": 13, "ad": 11, "attack": 4, "saveDC": 14 },
+      "features": [
+        { "name": "Frost Aura", "description": "Regain 1 HP and slow nearby enemies at start of turn." }
+      ],
+      "actions": [
+        { "name": "Frost Slam", "ap": 1, "targetDefense": "PD", "damage": 2 },
+        { "name": "Arctic Winds", "ap": 3, "targetDefense": "AD", "damage": 1, "traits": ["Frost Aura Area"] }
+      ]
+    },
+    {
+      "id": "mon_v2_rug_013",
+      "name": "Animated Rug",
+      "level": 1,
+      "tier": "standard",
+      "role": "controller",
+      "size": "Medium",
+      "type": "Construct",
+      "stats": { "hp": 10, "pd": 11, "ad": 13, "attack": 4, "saveDC": 14 },
+      "actions": [
+        { "name": "Wrap", "ap": 1, "targetDefense": "AD", "damage": 0, "traits": ["Grapple"] },
+        { "name": "Squeeze", "ap": 1, "targetDefense": "AD", "damage": 1, "traits": ["ADV vs Grappled"] }
+      ]
+    },
+    {
+      "id": "mon_v2_wardrobe_014",
+      "name": "Animated Wardrobe",
+      "level": 2,
+      "tier": "standard",
+      "role": "defender",
+      "size": "Large",
+      "type": "Construct",
+      "stats": { "hp": 15, "pd": 14, "ad": 14, "attack": 4, "saveDC": 14 },
+      "actions": [
+        { "name": "Door Slam", "ap": 1, "targetDefense": "PD", "damage": 2, "traits": ["Dazed"] },
+        { "name": "Grasping Clothes", "ap": 1, "targetDefense": "None", "traits": ["Contest", "Grapple"] }
+      ]
+    },
+    {
+      "id": "mon_v2_twig_015",
+      "name": "Twig Blight",
+      "level": 1,
+      "tier": "standard",
+      "role": "controller",
+      "size": "Medium",
+      "type": "Plant",
+      "stats": { "hp": 8, "pd": 13, "ad": 11, "attack": 4, "saveDC": 14 },
+      "actions": [
+        { "name": "Branch Whip", "ap": 1, "targetDefense": "PD", "damage": 1, "traits": ["Grapple"] },
+        { "name": "Entangling Vines", "ap": 2, "description": "Creates difficult terrain in a 2-space sphere." }
+      ]
+    },
+    {
+      "id": "mon_v2_cwisp_016",
+      "name": "Cleansed Wisp",
+      "level": 1,
+      "tier": "standard",
+      "role": "support",
+      "size": "Tiny",
+      "type": "Fey",
+      "stats": { "hp": 10, "pd": 13, "ad": 10, "attack": 4, "saveDC": 14 },
+      "actions": [
+        { "name": "Discharge", "ap": 1, "targetDefense": "PD", "damage": 1, "traits": ["Exposed"] },
+        { "name": "Nature's Healing", "ap": 2, "description": "Target regains 1-2 HP." }
+      ]
+    },
+    {
+      "id": "mon_v2_corwisp_017",
+      "name": "Corrupted Wisp",
+      "level": 1,
+      "tier": "standard",
+      "role": "controller",
+      "size": "Tiny",
+      "type": "Fey",
+      "stats": { "hp": 10, "pd": 13, "ad": 10, "attack": 4, "saveDC": 14 },
+      "actions": [
+        { "name": "Corrupted Discharge", "ap": 1, "targetDefense": "PD", "damage": 1, "traits": ["Necrosis"] },
+        { "name": "Manipulation", "ap": 1, "description": "Force target to move or attack." }
+      ]
+    },
+    {
+      "id": "mon_v2_zombie_018",
+      "name": "Zombie",
+      "level": 0,
+      "tier": "standard",
+      "role": "brute",
+      "size": "Medium",
+      "type": "Undead",
+      "stats": { "hp": 10, "pd": 9, "ad": 13, "attack": 3, "saveDC": 13 },
+      "features": [
+        { "name": "Unrelenting", "description": "Only reduced below 1 HP by Heavy Hits or Radiant damage." }
+      ],
+      "actions": [
+        { "name": "Bite or Slam", "ap": 1, "targetDefense": "PD", "damage": 1, "traits": ["Infect"] },
+        { "name": "Slam (Grappled)", "ap": 1, "targetDefense": "AD", "damage": 1 }
+      ]
+    },
+    {
+      "id": "mon_v2_goblin_019",
+      "name": "Goblin",
+      "level": 0,
+      "tier": "standard",
+      "role": "skirmisher",
+      "size": "Small",
+      "type": "Humanoid",
+      "stats": { "hp": 8, "pd": 11, "ad": 11, "attack": 3, "saveDC": 13 },
+      "actions": [
+        { "name": "Knife", "ap": 1, "targetDefense": "PD", "damage": 1 },
+        { "name": "Shortbow", "ap": 1, "targetDefense": "PD", "damage": 1 }
+      ]
+    },
+    {
+      "id": "mon_v2_kobold_020",
+      "name": "Kobold",
+      "level": 0,
+      "tier": "standard",
+      "role": "lurker",
+      "size": "Small",
+      "type": "Humanoid",
+      "stats": { "hp": 6, "pd": 12, "ad": 9, "attack": 3, "saveDC": 13 },
+      "features": [
+        { "name": "Troop Tactics", "description": "Help Dice granted start as a d10." }
+      ],
+      "actions": [
+        { "name": "Spear", "ap": 1, "targetDefense": "PD", "damage": 1, "traits": ["Extend Attack"] },
+        { "name": "Trap", "ap": 1, "description": "Set a hidden trap within 5 spaces." }
+      ]
+    },
+    {
+      "id": "mon_v2_dummy_021",
+      "name": "Training Dummy",
+      "level": -1,
+      "tier": "standard",
+      "role": "defender",
+      "size": "Medium",
+      "type": "Construct",
+      "stats": { "hp": 6, "pd": 12, "ad": 12, "attack": 2, "saveDC": 12 },
+      "actions": [
+        { "name": "Slam", "ap": 1, "targetDefense": "PD", "damage": 1, "traits": ["Grab"] },
+        { "name": "Whirlwind", "ap": 2, "targetDefense": "AD", "damage": 1, "traits": ["1 Space Aura"] }
+      ]
+    },
+    {
+      "id": "mon_v2_rat_022",
+      "name": "Giant Rat",
+      "level": -1,
+      "tier": "standard",
+      "role": "skirmisher",
+      "size": "Small",
+      "type": "Beast",
+      "stats": { "hp": 5, "pd": 10, "ad": 10, "attack": 2, "saveDC": 12 },
+      "actions": [
+        { "name": "Bite", "ap": 1, "targetDefense": "PD", "damage": 1, "traits": ["Impair"] },
+        { "name": "Dart Around", "ap": 1, "description": "Take Disengage and Move actions." }
+      ]
+    },
+    {
+      "id": "mon_v2_hhound_023",
+      "name": "Hunting Hound",
+      "level": -1,
+      "tier": "standard",
+      "role": "controller",
+      "size": "Small",
+      "type": "Beast",
+      "stats": { "hp": 5, "pd": 11, "ad": 9, "attack": 2, "saveDC": 12 },
+      "actions": [
+        { "name": "Bite", "ap": 1, "targetDefense": "PD", "damage": 1, "traits": ["Pin"] },
+        { "name": "Intimidate", "ap": 1, "description": "Contest to Intimidate target." }
+      ]
+    },
+    {
+      "id": "mon_v2_thief_024",
+      "name": "Thief",
+      "level": -1,
+      "tier": "standard",
+      "role": "lurker",
+      "size": "Medium",
+      "type": "Humanoid",
+      "stats": { "hp": 4, "pd": 12, "ad": 8, "attack": 2, "saveDC": 12 },
+      "actions": [
+        { "name": "Dart", "ap": 1, "targetDefense": "PD", "damage": 0, "traits": ["Hinder"] },
+        { "name": "Dagger", "ap": 1, "targetDefense": "PD", "damage": 1 }
+      ]
+    },
+    {
+      "id": "mon_v2_thug_025",
+      "name": "Thug",
+      "level": 0,
+      "tier": "standard",
+      "role": "skirmisher",
+      "size": "Medium",
+      "type": "Humanoid",
+      "stats": { "hp": 8, "pd": 11, "ad": 11, "attack": 3, "saveDC": 13 },
+      "actions": [
+        { "name": "Fist", "ap": 1, "targetDefense": "PD", "damage": 1, "traits": ["Trip", "Grapple"] },
+        { "name": "Slam (Grappled)", "ap": 1, "targetDefense": "AD", "damage": 1 }
+      ]
+    },
+    {
+      "id": "mon_v2_thrall_026",
+      "name": "Thrall",
+      "level": 1,
+      "tier": "standard",
+      "role": "support",
+      "size": "Medium",
+      "type": "Undead",
+      "stats": { "hp": 5, "pd": 10, "ad": 14, "attack": 4, "saveDC": 14 },
+      "actions": [
+        { "name": "Attack", "ap": 1, "targetDefense": "PD", "damage": 1, "traits": ["Physical or Umbral"] }
+      ]
+    },
+    {
+      "id": "mon_v2_penguin_basic_027",
+      "name": "Penguin",
+      "level": 0,
+      "tier": "standard",
+      "role": "skirmisher",
+      "size": "Small",
+      "type": "Beast",
+      "stats": { "hp": 5, "pd": 10, "ad": 10, "attack": 3, "saveDC": 13 },
+      "actions": [
+        { "name": "Beak", "ap": 1, "targetDefense": "PD", "damage": 1 },
+        { "name": "Slip and Slide", "ap": 2, "description": "Move up to swim speed while prone." }
+      ]
+    },
+    {
+      "id": "mon_v2_mmaker_028",
+      "name": "Mischief Maker",
+      "level": 4,
+      "tier": "standard",
+      "role": "controller",
+      "size": "Tiny",
+      "type": "Fey",
+      "stats": { "hp": 20, "pd": 20, "ad": 20, "attack": 5, "saveDC": 15 },
+      "features": [
+        { "name": "Stress", "description": "Loses DR and -5 Defenses at 3 Stress points." }
+      ],
+      "actions": [
+        { "name": "Mocking Joke", "ap": 1, "description": "Target is Taunted for 1 minute." },
+        { "name": "Dispersion", "ap": 2, "targetDefense": "AD", "damage": 1, "traits": ["1 Space Aura", "Teleport"] }
+      ]
+    }
+  ]
 }

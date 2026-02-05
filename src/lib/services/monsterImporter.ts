@@ -3,6 +3,10 @@
  *
  * Transforms raw seed data JSON into SavedMonster format.
  * Handles field mapping, ID normalization, and stat calculation.
+ *
+ * Supports two formats:
+ * 1. Legacy format: actionType, damageType, range as separate fields
+ * 2. Bestiary format: ap cost, explicit stats object, traits contain damage type info
  */
 
 import { generateContentId } from '../utils/idGenerator';
@@ -24,24 +28,35 @@ import {
 	type TargetDefense,
 	type MonsterSize,
 	type MonsterType,
-	type MonsterAlignment
+	type MonsterAlignment,
 } from '../rulesdata/schemas/monster.schema';
 
 // ============================================================================
 // RAW SEED DATA TYPES
 // ============================================================================
 
-/** Raw action format from seed JSON */
+/** Explicit stats from Bestiary (optional - overrides calculated) */
+export interface RawSeedStats {
+	hp: number;
+	pd: number;
+	ad: number;
+	attack: number;
+	saveDC: number;
+}
+
+/** Raw action format from seed JSON (supports both legacy and Bestiary formats) */
 export interface RawSeedAction {
-	id: string;
+	id?: string; // Optional - auto-generated if missing
 	name: string;
-	actionType: string; // "Attack" | "Spell" | "Special"
-	targetDefense: string; // "PD" | "AD" | "None"
-	damage: number;
-	damageType: string;
-	range: number;
+	actionType?: string; // "Attack" | "Spell" | "Special" (optional - inferred from targetDefense)
+	ap?: number; // Bestiary format: AP cost (1-4)
+	apCost?: number; // Legacy format alias
+	targetDefense?: string; // "PD" | "AD" | "None"
+	damage?: number; // Optional for utility actions
+	damageType?: string; // Optional - can be inferred from traits
+	range?: number; // Optional - can be in traits like "10 Space Line"
 	traits?: string[];
-	description: string;
+	description?: string; // Optional
 }
 
 /** Raw feature format from seed JSON */
@@ -50,17 +65,18 @@ export interface RawSeedFeature {
 	description: string;
 }
 
-/** Raw monster format from seed JSON */
+/** Raw monster format from seed JSON (supports both legacy and Bestiary formats) */
 export interface RawSeedMonster {
-	id: string;
+	id?: string; // Optional - auto-generated if missing
 	name: string;
 	level: number;
 	tier: string;
 	role: string;
 	size?: string;
-	type?: string;
+	type?: string; // Monster type (Beast, Undead, etc.)
 	alignment?: string;
 	description?: string;
+	stats?: RawSeedStats; // Bestiary format: explicit stats override
 	actions: RawSeedAction[];
 	features?: RawSeedFeature[];
 	lore?: string;
@@ -81,12 +97,24 @@ export interface MonsterImportResult {
 
 /**
  * Map raw action type to schema action type
+ * If no actionType provided, infers from targetDefense:
+ * - PD typically = martial attacks
+ * - AD typically = special/area abilities
  */
-function mapActionType(rawType: string): ActionType {
-	const normalized = rawType.toLowerCase();
-	if (normalized === 'attack' || normalized === 'martial') return 'martial';
-	if (normalized === 'spell') return 'spell';
-	return 'special';
+function mapActionType(rawType?: string, targetDefense?: string): ActionType {
+	if (rawType) {
+		const normalized = rawType.toLowerCase();
+		if (normalized === 'attack' || normalized === 'martial') return 'martial';
+		if (normalized === 'spell') return 'spell';
+		if (normalized === 'special') return 'special';
+	}
+	// Infer from targetDefense if actionType not provided
+	if (targetDefense) {
+		const defense = targetDefense.toUpperCase();
+		if (defense === 'PD' || defense === 'PHYSICAL') return 'martial';
+		if (defense === 'AD' || defense === 'ARCANE') return 'special';
+	}
+	return 'special'; // Default for utility actions
 }
 
 /**
@@ -113,7 +141,7 @@ function mapRoleId(rawRole: string): MonsterRoleId | null {
 		caster: 'artillerist',
 		tank: 'defender',
 		healer: 'support',
-		solo: 'brute' // Solo bosses often act as brutes
+		solo: 'brute', // Solo bosses often act as brutes
 	};
 	return roleMap[normalized] ?? null;
 }
@@ -125,8 +153,7 @@ function mapTier(rawTier: string): MonsterTier {
 	const normalized = rawTier.toLowerCase();
 	if (normalized === 'standard' || normalized === 'minion') return 'standard';
 	if (normalized === 'apex' || normalized === 'elite') return 'apex';
-	if (normalized === 'legendary' || normalized === 'boss' || normalized === 'solo')
-		return 'legendary';
+	if (normalized === 'legendary' || normalized === 'boss' || normalized === 'solo') return 'legendary';
 	return 'standard';
 }
 
@@ -177,25 +204,26 @@ function mapAlignment(rawAlignment?: string): MonsterAlignment | undefined {
 /**
  * Normalize action ID to schema format
  */
-function normalizeActionId(rawId: string): string {
-	if (rawId.startsWith('act_')) {
-		// Ensure it's a valid UUID format
+function normalizeActionId(rawId?: string): string {
+	if (rawId && rawId.startsWith('act_')) {
+		// Ensure it's a valid format (at least 8 chars after prefix)
 		const uuidPart = rawId.slice(4);
 		if (uuidPart.length >= 8) return rawId;
 	}
-	// Generate new ID
+	// Generate new ID if missing or invalid
 	return generateContentId('action');
 }
 
 /**
  * Normalize monster ID to schema format
  */
-function normalizeMonsterId(rawId: string): string {
-	if (rawId.startsWith('mon_')) {
+function normalizeMonsterId(rawId?: string): string {
+	if (rawId && rawId.startsWith('mon_')) {
 		const uuidPart = rawId.slice(4);
-		// Check if it looks like a UUID (has dashes in right places)
-		if (uuidPart.includes('-') && uuidPart.length >= 32) return rawId;
+		// Accept any reasonable ID format (Bestiary uses mon_v2_name_001 style)
+		if (uuidPart.length >= 4) return rawId;
 	}
+	// Generate new ID if missing or invalid
 	return generateContentId('monster');
 }
 
@@ -205,6 +233,7 @@ function normalizeMonsterId(rawId: string): string {
 
 /**
  * Import a raw seed monster into SavedMonster format
+ * Supports both legacy format and Bestiary format with explicit stats
  */
 export function importRawMonster(raw: RawSeedMonster): MonsterImportResult {
 	const warnings: string[] = [];
@@ -241,28 +270,43 @@ export function importRawMonster(raw: RawSeedMonster): MonsterImportResult {
 		warnings.push(`Tier "${raw.tier}" mapped to "${tier}"`);
 	}
 
-	// Map actions
+	// Map actions (supports both legacy and Bestiary formats)
 	const actions: MonsterAction[] = raw.actions.map((rawAction, index) => {
-		const actionType = mapActionType(rawAction.actionType);
-		if (rawAction.actionType.toLowerCase() !== actionType) {
-			warnings.push(
-				`Action "${rawAction.name}": type "${rawAction.actionType}" mapped to "${actionType}"`
-			);
-		}
+		// Infer action type from actionType field or targetDefense
+		const actionType = mapActionType(rawAction.actionType, rawAction.targetDefense);
 
-		const targetDefense = mapTargetDefense(rawAction.targetDefense);
+		// Map target defense (default to 'pd' if not specified)
+		const targetDefense = rawAction.targetDefense
+			? mapTargetDefense(rawAction.targetDefense)
+			: 'pd';
+
+		// Get AP cost: prefer 'ap' (Bestiary), fall back to 'apCost' (legacy), default to 2
+		const apCost = rawAction.ap ?? rawAction.apCost ?? 2;
+
+		// Infer damage type from traits if not explicitly provided
+		let damageType = rawAction.damageType;
+		if (!damageType && rawAction.traits) {
+			// Common damage types that might appear in traits
+			const damageTypes = ['Fire', 'Cold', 'Lightning', 'Poison', 'Necrotic', 'Radiant', 'Psychic', 'Physical', 'Umbral', 'Corrosion'];
+			for (const trait of rawAction.traits) {
+				const found = damageTypes.find((dt) => trait.toLowerCase().includes(dt.toLowerCase()));
+				if (found) {
+					damageType = found;
+					break;
+				}
+			}
+		}
 
 		return {
 			id: normalizeActionId(rawAction.id),
 			name: rawAction.name,
-			apCost: 2, // Default AP cost
+			apCost,
 			type: actionType,
 			targetDefense,
-			damage: rawAction.damage,
-			damageType: rawAction.damageType,
+			damage: rawAction.damage ?? 0,
+			damageType,
 			range: rawAction.range,
-			// Keep traits as strings for now (flexible)
-			description: rawAction.description
+			description: rawAction.description ?? '',
 		};
 	});
 
@@ -274,20 +318,29 @@ export function importRawMonster(raw: RawSeedMonster): MonsterImportResult {
 			if (officialFeature) {
 				featureIds.push(officialFeature.id);
 			} else {
-				warnings.push(
-					`Feature "${rawFeature.name}" not found in official features. Will need to create custom feature.`
-				);
-				// Could generate a custom feature ID here if needed
+				warnings.push(`Feature "${rawFeature.name}" not found in official features. Custom feature needed.`);
 			}
 		}
 	}
 
-	// Calculate stats
+	// Calculate stats (used for breakdowns and as fallback)
 	const calculatedStats = calculateMonsterStats({
 		level: raw.level,
 		tier,
-		roleId: roleId!
+		roleId: roleId!,
 	});
+
+	// Use explicit stats from Bestiary if provided, otherwise use calculated
+	const hasExplicitStats = raw.stats && typeof raw.stats.hp === 'number';
+	if (hasExplicitStats) {
+		warnings.push('Using explicit Bestiary stats (overriding calculated values)');
+	}
+
+	const finalHP = hasExplicitStats ? raw.stats!.hp : calculatedStats.finalHP;
+	const finalPD = hasExplicitStats ? raw.stats!.pd : calculatedStats.finalPD;
+	const finalAD = hasExplicitStats ? raw.stats!.ad : calculatedStats.finalAD;
+	const finalAttack = hasExplicitStats ? raw.stats!.attack : calculatedStats.finalAttack;
+	const finalSaveDC = hasExplicitStats ? raw.stats!.saveDC : calculatedStats.finalSaveDC;
 
 	// Build SavedMonster
 	const now = new Date().toISOString();
@@ -307,26 +360,26 @@ export function importRawMonster(raw: RawSeedMonster): MonsterImportResult {
 		lore: raw.lore,
 		tactics: raw.tactics,
 
-		// Calculated stats
-		finalHP: calculatedStats.finalHP,
-		finalPD: calculatedStats.finalPD,
-		finalAD: calculatedStats.finalAD,
-		finalAttack: calculatedStats.finalAttack,
-		finalSaveDC: calculatedStats.finalSaveDC,
+		// Stats (explicit from Bestiary or calculated)
+		finalHP,
+		finalPD,
+		finalAD,
+		finalAttack,
+		finalSaveDC,
 		finalBaseDamage: calculatedStats.finalBaseDamage,
 
-		// Attributes (default values, could be derived from role)
+		// Attributes (default values)
 		attributes: {
 			might: 0,
 			agility: 0,
 			charisma: 0,
-			intelligence: 0
+			intelligence: 0,
 		},
 
 		// Features
 		featureIds,
-		featurePointsSpent: featureIds.length, // Simplified
-		featurePointsMax: calculatedStats.featurePowerMax,
+		featurePointsSpent: featureIds.length,
+		featurePointsMax: calculatedStats.featurePointsMax,
 
 		// Actions
 		actions,
@@ -341,15 +394,15 @@ export function importRawMonster(raw: RawSeedMonster): MonsterImportResult {
 		lastModified: now,
 		schemaVersion: MONSTER_SCHEMA_VERSION,
 
-		// Breakdowns
-		breakdowns: calculatedStats.breakdowns
+		// Breakdowns (always from calculator for reference)
+		breakdowns: calculatedStats.breakdowns,
 	};
 
 	return {
 		success: true,
 		monster,
 		warnings,
-		errors
+		errors,
 	};
 }
 
@@ -397,7 +450,7 @@ export function importMonstersFromJson(jsonString: string): ReturnType<typeof im
 				successful: [],
 				failed: [],
 				allWarnings: [],
-				parseError: 'JSON must contain a "monsters" array or be an array of monsters'
+				parseError: 'JSON must contain a "monsters" array or be an array of monsters',
 			};
 		}
 
@@ -407,7 +460,7 @@ export function importMonstersFromJson(jsonString: string): ReturnType<typeof im
 			successful: [],
 			failed: [],
 			allWarnings: [],
-			parseError: `Invalid JSON: ${e instanceof Error ? e.message : 'Unknown error'}`
+			parseError: `Invalid JSON: ${e instanceof Error ? e.message : 'Unknown error'}`,
 		};
 	}
 }

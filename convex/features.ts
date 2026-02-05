@@ -31,7 +31,6 @@ export const list = query({
 			.filter((q) => q.eq(q.field('deletedAt'), undefined))
 			.collect();
 
-<<<<<<<< HEAD:convex/features.ts
 		// If authenticated, also include user's custom features
 		let userFeatures: typeof officialFeatures = [];
 		if (userId) {
@@ -49,10 +48,6 @@ export const list = query({
 
 		return [...officialFeatures, ...userFeatures];
 	},
-========
-		return features;
-	}
->>>>>>>> main:convex/customFeatures.ts
 });
 
 /**
@@ -137,14 +132,8 @@ export const listHomebrew = query({
 			query = query.filter((q) => q.eq(q.field('pointCost'), args.pointCost));
 		}
 
-<<<<<<<< HEAD:convex/features.ts
 		return await query.collect();
 	},
-========
-		const features = await query.collect();
-		return features;
-	}
->>>>>>>> main:convex/customFeatures.ts
 });
 
 /**
@@ -368,11 +357,7 @@ export const fork = mutation({
 	args: {
 		sourceId: v.string(),
 		sourceType: v.union(v.literal('official'), v.literal('custom'), v.literal('homebrew')),
-<<<<<<<< HEAD:convex/features.ts
 		sourceData: v.optional(v.any()),
-========
-		sourceData: v.any() // The feature data to fork
->>>>>>>> main:convex/customFeatures.ts
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -383,62 +368,46 @@ export const fork = mutation({
 		const now = new Date().toISOString();
 		const newId = `feat_${crypto.randomUUID()}`;
 
-		// Get source feature from DB
+		// Get source feature data (from DB or provided data)
+		let sourceFeature = args.sourceData;
+		let sourceName = sourceFeature?.name ?? 'Unknown';
+		let sourceUserId: string | undefined;
+
+		// Try to get from DB (works for official, custom, and homebrew)
 		const dbFeature = await ctx.db
 			.query('features')
 			.filter((q) => q.eq(q.field('id'), args.sourceId))
 			.first();
 
-<<<<<<<< HEAD:convex/features.ts
-		let sourceFeature = dbFeature ?? args.sourceData;
-		if (!sourceFeature) {
-			throw new Error('Source feature not found');
-========
-		// If forking from DB, get the source and update fork stats
-		if (args.sourceType !== 'official') {
-			const dbFeature = await ctx.db
-				.query('customFeatures')
-				.filter((q) => q.eq(q.field('id'), args.sourceId))
-				.first();
+		if (dbFeature) {
+			sourceFeature = dbFeature;
+			sourceName = dbFeature.name;
+			sourceUserId = dbFeature.userId ?? undefined;
 
-			if (dbFeature) {
-				sourceFeature = dbFeature;
-				sourceName = dbFeature.name;
-				sourceUserId = dbFeature.userId;
-
-				// Update fork stats on source
+			// Update fork stats on source (only for non-official)
+			if (!dbFeature.isOfficial) {
 				await ctx.db.patch(dbFeature._id, {
 					forkStats: {
 						forkCount: (dbFeature.forkStats?.forkCount ?? 0) + 1,
-						lastForkedAt: now
-					}
+						lastForkedAt: now,
+					},
 				});
 			}
->>>>>>>> main:convex/customFeatures.ts
 		}
 
-		const sourceName = sourceFeature.name ?? 'Unknown';
-		const sourceUserId = dbFeature?.userId ?? undefined;
-
-		// Update fork stats on source (only for non-official)
-		if (dbFeature && !dbFeature.isOfficial) {
-			await ctx.db.patch(dbFeature._id, {
-				forkStats: {
-					forkCount: (dbFeature.forkStats?.forkCount ?? 0) + 1,
-					lastForkedAt: now,
-				},
-			});
+		if (!sourceFeature) {
+			throw new Error('Source feature not found');
 		}
 
 		// Create the forked feature (remove isOfficial flag!)
+		const { _id, _creationTime, isOfficial, ...featureData } = sourceFeature;
+
 		const forkedFeature = {
+			...featureData,
 			id: newId,
 			userId,
-			name: `${sourceName} (Fork)`,
-			description: sourceFeature.description ?? '',
-			pointCost: sourceFeature.pointCost ?? 1,
-			effects: sourceFeature.effects,
 			isOfficial: false, // Forked features are never official
+			name: `${sourceName} (Fork)`,
 			visibility: 'private' as const,
 			approvalStatus: 'draft' as const,
 			isHomebrew: false,
@@ -447,17 +416,25 @@ export const fork = mutation({
 				type: args.sourceType,
 				name: sourceName,
 				userId: sourceUserId,
-				forkedAt: now
+				forkedAt: now,
 			},
+			forkStats: undefined,
+			deletedAt: undefined,
+			deletedBy: undefined,
+			scheduledPurgeAt: undefined,
+			rejectionReason: undefined,
+			submittedAt: undefined,
+			approvedAt: undefined,
+			approvedBy: undefined,
 			createdAt: now,
 			lastModified: now,
-			schemaVersion: '1.0.0'
+			schemaVersion: '1.0.0',
 		};
 
 		const docId = await ctx.db.insert('features', forkedFeature);
 
 		return { id: newId, _id: docId };
-	}
+	},
 });
 
 /**

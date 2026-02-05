@@ -277,6 +277,7 @@ const monsterActionValidator = v.object({
 	damageType: v.optional(v.string()),
 	range: v.optional(v.number()),
 	area: v.optional(v.string()),
+	traits: v.optional(v.array(v.string())),
 	description: v.string()
 });
 

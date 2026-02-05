@@ -136,30 +136,19 @@ const ConditionsReference: React.FC<ConditionsReferenceProps> = ({ isMobile = fa
 
 			<StyledConditionsList $isMobile={isMobile}>
 				{filteredConditions.length === 0 ? (
-					<StyledEmptyState $isMobile={isMobile}>
-						No conditions match your search
-					</StyledEmptyState>
+					<StyledEmptyState $isMobile={isMobile}>No conditions match your search</StyledEmptyState>
 				) : (
 					filteredConditions.map((condition) => {
 						const isExpanded = expandedConditions.has(condition.id);
 						return (
-							<StyledConditionCard
-								key={condition.id}
-								$expanded={isExpanded}
-								$isMobile={isMobile}
-							>
+							<StyledConditionCard key={condition.id} $expanded={isExpanded} $isMobile={isMobile}>
 								<StyledConditionHeader
 									$isMobile={isMobile}
 									onClick={() => toggleCondition(condition.id)}
 								>
 									<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-										<StyledConditionName $isMobile={isMobile}>
-											{condition.name}
-										</StyledConditionName>
-										<StyledConditionTypeBadge
-											$type={condition.type}
-											$isMobile={isMobile}
-										>
+										<StyledConditionName $isMobile={isMobile}>{condition.name}</StyledConditionName>
+										<StyledConditionTypeBadge $type={condition.type} $isMobile={isMobile}>
 											{TYPE_LABELS[condition.type]}
 										</StyledConditionTypeBadge>
 									</div>
@@ -173,11 +162,7 @@ const ConditionsReference: React.FC<ConditionsReferenceProps> = ({ isMobile = fa
 										{condition.description}
 										<StyledConditionTags>
 											{condition.tags.map((tag) => (
-												<StyledConditionTag
-													key={tag}
-													$tag={tag}
-													$isMobile={isMobile}
-												>
+												<StyledConditionTag key={tag} $tag={tag} $isMobile={isMobile}>
 													{tag}
 												</StyledConditionTag>
 											))}

@@ -22,16 +22,16 @@ const denormalizedMasteryEntryValidator = v.object({
 		might: v.number(),
 		agility: v.number(),
 		charisma: v.number(),
-		intelligence: v.number(),
+		intelligence: v.number()
 	}),
 	masteryLevel: v.number(),
 	masteryLadder: masteryLadderValidator,
-	finalValue: v.number(),
+	finalValue: v.number()
 });
 
 const movementTypeValidator = v.object({
 	half: v.boolean(),
-	full: v.boolean(),
+	full: v.boolean()
 });
 
 const movementValidator = v.object({
@@ -39,13 +39,13 @@ const movementValidator = v.object({
 	swim: movementTypeValidator,
 	fly: movementTypeValidator,
 	climb: movementTypeValidator,
-	glide: movementTypeValidator,
+	glide: movementTypeValidator
 });
 
 const currencyValidator = v.object({
 	gold: v.number(),
 	silver: v.number(),
-	copper: v.number(),
+	copper: v.number()
 });
 
 const resourcesCurrentValidator = v.object({
@@ -58,7 +58,7 @@ const resourcesCurrentValidator = v.object({
 	actionPointsUsed: v.number(),
 	exhaustionLevel: v.number(),
 	deathSteps: v.number(),
-	isDead: v.boolean(),
+	isDead: v.boolean()
 });
 
 const resourcesOriginalValidator = v.object({
@@ -66,54 +66,55 @@ const resourcesOriginalValidator = v.object({
 	maxSP: v.number(),
 	maxMP: v.number(),
 	maxGritPoints: v.number(),
-	maxRestPoints: v.number(),
+	maxRestPoints: v.number()
 });
 
 const uiStateValidator = v.object({
 	manualDefenseOverrides: v.object({
 		PD: v.optional(v.number()),
 		AD: v.optional(v.number()),
-		PDR: v.optional(v.number()),
-	}),
+		PDR: v.optional(v.number())
+	})
 });
 
 const inventoryValidator = v.object({
 	items: v.array(v.any()), // InventoryItemData - flexible for now
-	currency: currencyValidator,
+	currency: currencyValidator
 });
 
 const notesValidator = v.object({
-	playerNotes: v.string(),
+	playerNotes: v.string()
 });
 
 const characterStateValidator = v.object({
 	resources: v.object({
 		current: resourcesCurrentValidator,
-		original: v.optional(resourcesOriginalValidator),
+		original: v.optional(resourcesOriginalValidator)
 	}),
 	ui: uiStateValidator,
 	inventory: inventoryValidator,
 	notes: notesValidator,
+	activeConditions: v.optional(v.array(v.string())),
 	attacks: v.optional(v.array(v.any())),
 	spells: v.optional(v.array(v.any())),
-	maneuvers: v.optional(v.array(v.any())),
+	maneuvers: v.optional(v.array(v.any()))
 });
 
 const practicalTradeEntryValidator = v.object({
 	label: v.string(),
 	ladder: masteryLadderValidator,
-	finalValue: v.number(),
+	finalValue: v.number()
 });
 
 const languageMasteryEntryValidator = v.object({
 	name: v.string(),
 	limited: v.boolean(),
-	fluent: v.boolean(),
+	fluent: v.boolean()
 });
 
 const pathPointAllocationsValidator = v.object({
 	martial: v.optional(v.number()),
-	spellcasting: v.optional(v.number()),
+	spellcasting: v.optional(v.number())
 });
 
 // Main character table schema
@@ -225,9 +226,9 @@ const characterValidator = {
 					A: v.optional(practicalTradeEntryValidator),
 					B: v.optional(practicalTradeEntryValidator),
 					C: v.optional(practicalTradeEntryValidator),
-					D: v.optional(practicalTradeEntryValidator),
+					D: v.optional(practicalTradeEntryValidator)
 				})
-			),
+			)
 		})
 	),
 	languageMastery: v.optional(
@@ -235,7 +236,7 @@ const characterValidator = {
 			A: v.optional(languageMasteryEntryValidator),
 			B: v.optional(languageMasteryEntryValidator),
 			C: v.optional(languageMasteryEntryValidator),
-			D: v.optional(languageMasteryEntryValidator),
+			D: v.optional(languageMasteryEntryValidator)
 		})
 	),
 
@@ -258,7 +259,7 @@ const characterValidator = {
 	createdAt: v.string(),
 	lastModified: v.string(),
 	completedAt: v.string(),
-	schemaVersion: v.string(),
+	schemaVersion: v.string()
 };
 
 // ============================================================================
@@ -276,7 +277,7 @@ const monsterActionValidator = v.object({
 	damageType: v.optional(v.string()),
 	range: v.optional(v.number()),
 	area: v.optional(v.string()),
-	description: v.string(),
+	description: v.string()
 });
 
 // Monster attributes validator
@@ -284,7 +285,7 @@ const monsterAttributesValidator = v.object({
 	might: v.number(),
 	agility: v.number(),
 	charisma: v.number(),
-	intelligence: v.number(),
+	intelligence: v.number()
 });
 
 // Fork tracking validator
@@ -293,12 +294,12 @@ const forkedFromValidator = v.object({
 	type: v.union(v.literal('official'), v.literal('custom'), v.literal('homebrew')),
 	name: v.string(),
 	userId: v.optional(v.string()),
-	forkedAt: v.string(),
+	forkedAt: v.string()
 });
 
 const forkStatsValidator = v.object({
 	forkCount: v.number(),
-	lastForkedAt: v.optional(v.string()),
+	lastForkedAt: v.optional(v.string())
 });
 
 // Main monster table schema
@@ -425,7 +426,7 @@ const monsterValidator = {
 	schemaVersion: v.string(),
 
 	// Calculation Breakdowns
-	breakdowns: v.any(), // Record<string, StatBreakdown>
+	breakdowns: v.any() // Record<string, StatBreakdown>
 };
 
 // ============================================================================
@@ -437,7 +438,7 @@ const featureEffectValidator = v.object({
 	type: v.string(),
 	target: v.optional(v.string()),
 	value: v.optional(v.any()),
-	description: v.optional(v.string()),
+	description: v.optional(v.string())
 });
 
 // ============================================================================
@@ -447,7 +448,7 @@ const featureEffectValidator = v.object({
 // Party config validator
 const partyConfigValidator = v.object({
 	size: v.number(), // 1-8 players
-	averageLevel: v.number(), // 0-10
+	averageLevel: v.number() // 0-10
 });
 
 // Monster slot validator
@@ -456,7 +457,7 @@ const encounterMonsterSlotValidator = v.object({
 	monsterId: v.union(v.string(), v.null()),
 	quantity: v.number(),
 	cost: v.number(),
-	notes: v.optional(v.string()),
+	notes: v.optional(v.string())
 });
 
 // Encounter table schema
@@ -523,7 +524,7 @@ const encounterValidator = {
 	// Metadata
 	createdAt: v.string(),
 	lastModified: v.string(),
-	schemaVersion: v.string(),
+	schemaVersion: v.string()
 };
 
 // Feature table schema (official + custom)
@@ -569,7 +570,7 @@ const featureValidator = {
 	// Metadata
 	createdAt: v.string(),
 	lastModified: v.string(),
-	schemaVersion: v.string(),
+	schemaVersion: v.string()
 };
 
 export default defineSchema({
@@ -600,5 +601,5 @@ export default defineSchema({
 		.index('by_user', ['userId'])
 		.index('by_user_and_id', ['userId', 'id'])
 		.index('by_approval_status', ['approvalStatus'])
-		.index('by_user_and_deleted', ['userId', 'deletedAt']),
+		.index('by_user_and_deleted', ['userId', 'deletedAt'])
 });

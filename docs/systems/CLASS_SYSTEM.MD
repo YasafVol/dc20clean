@@ -48,17 +48,17 @@ flowchart LR
 
 ## 2 Key Files & Their Roles
 
-| Layer                     | File / Dir                                                                                | Responsibility                                                           |
-| ------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| **Rule Data (canonical)** | `src/lib/rulesdata/classes-data/features/*_features.ts`                                   | Declarative definition of each class's core & subclass features          |
-|                           | `src/lib/rulesdata/classes-data/progressions/*.progression.ts`                            | Level-by-level progression tables (HP, gains, features, etc.)            |
-| **Type Contracts**        | `src/lib/rulesdata/schemas/types.ts`                                                      | TS interfaces `IClassDefinition`, `IClassFeature`, `IClassFeatureChoice` |
-|                           | `src/lib/rulesdata/schemas/class.schema.ts`                                               | Zod schema used for validation & effect typing                           |
+| Layer                     | File / Dir                                                                                | Responsibility                                                                 |
+| ------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| **Rule Data (canonical)** | `src/lib/rulesdata/classes-data/features/*_features.ts`                                   | Declarative definition of each class's core & subclass features                |
+|                           | `src/lib/rulesdata/classes-data/progressions/*.progression.ts`                            | Level-by-level progression tables (HP, gains, features, etc.)                  |
+| **Type Contracts**        | `src/lib/rulesdata/schemas/types.ts`                                                      | TS interfaces `IClassDefinition`, `IClassFeature`, `IClassFeatureChoice`       |
+|                           | `src/lib/rulesdata/schemas/class.schema.ts`                                               | Zod schema used for validation & effect typing                                 |
 | **Validation Layer**      | `src/lib/rulesdata/loaders/class.loader.ts`                                               | Loads progression, features, and `spellRestrictions`; validates against schema |
-|                           | `src/lib/rulesdata/rulesdata.spec.ts`                                                     | Unit test that asserts every class passes the schema                     |
-| **Runtime Engine**        | `src/lib/services/enhancedCharacterCalculator.ts`                                         | Aggregates class effects, resolves choices, outputs stats                |
-| **State Layer**           | `src/lib/stores/characterContext.tsx`<br>`src/lib/hooks/useCharacterBuilder.ts`           | Provides calculated results to UI                                        |
-| **UI**                    | `src/routes/character-creation/*` (selection)<br>`src/routes/character-sheet/*` (display) | Import `classesData` / `classFeaturesData` directly                      |
+|                           | `src/lib/rulesdata/rulesdata.spec.ts`                                                     | Unit test that asserts every class passes the schema                           |
+| **Runtime Engine**        | `src/lib/services/enhancedCharacterCalculator.ts`                                         | Aggregates class effects, resolves choices, outputs stats                      |
+| **State Layer**           | `src/lib/stores/characterContext.tsx`<br>`src/lib/hooks/useCharacterBuilder.ts`           | Provides calculated results to UI                                              |
+| **UI**                    | `src/routes/character-creation/*` (selection)<br>`src/routes/character-sheet/*` (display) | Import `classesData` / `classFeaturesData` directly                            |
 
 ---
 

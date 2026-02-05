@@ -44,10 +44,10 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
 			}
 
 			return normalizedSiteUrl;
-		},
+		}
 	},
 	providers: [
 		// Google OAuth - most users have a Google account
-		Google(),
-	],
+		Google()
+	]
 });

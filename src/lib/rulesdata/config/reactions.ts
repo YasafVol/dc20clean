@@ -63,8 +63,7 @@ export const REACTION_CONFIGS: ReactionConfig[] = [
 	{
 		id: 'spell_duel',
 		name: 'Spell Duel',
-		description:
-			'You attempt to stop an MP Effect being cast by making a contested Spell Check.',
+		description: 'You attempt to stop an MP Effect being cast by making a contested Spell Check.',
 		prerequisite: 'spellcasting_path',
 		apCost: 1, // Matches base AP cost of spell being countered
 		resourceCost: {
@@ -92,15 +91,14 @@ export const REACTION_CONFIGS: ReactionConfig[] = [
 		range: 5,
 		triggers: ['ally_casts_known_spell'],
 		notes:
-			'Must know the same spell. MP spent adds to total (limited to primary caster\'s MSL). Range 5 spaces.'
+			"Must know the same spell. MP spent adds to total (limited to primary caster's MSL). Range 5 spaces."
 	},
 
 	// Combo Maneuver (Martial Path)
 	{
 		id: 'combo_maneuver',
 		name: 'Combo Maneuver',
-		description:
-			"You assist another martial's maneuver, adding a +2 bonus to their Martial Check.",
+		description: "You assist another martial's maneuver, adding a +2 bonus to their Martial Check.",
 		prerequisite: 'martial_path',
 		apCost: 1, // Matches base AP cost of assisted maneuver
 		resourceCost: {
@@ -109,8 +107,7 @@ export const REACTION_CONFIGS: ReactionConfig[] = [
 		},
 		range: null, // 2 spaces (melee adjacent)
 		triggers: ['ally_performs_maneuver'],
-		notes:
-			'Must be within 2 spaces. Both martials can spend up to their SSL (combined total).'
+		notes: 'Must be within 2 spaces. Both martials can spend up to their SSL (combined total).'
 	}
 ];
 

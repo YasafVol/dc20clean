@@ -1,5 +1,6 @@
 import styled, { createGlobalStyle } from 'styled-components';
 import backgroundImage from '../../../assets/Desktop1920.jpg';
+import { theme } from './theme';
 
 // Global style to override body background for character sheet
 export const CharacterSheetGlobalStyle = createGlobalStyle`
@@ -14,7 +15,7 @@ export const StyledContainer = styled.div`
 	min-height: 100vh;
 	padding: 1rem;
 	font-family: 'Inter', sans-serif;
-	color: #2d2d2d;
+	color: ${theme.colors.text.primary};
 	position: relative;
 
 	@media (max-width: 768px) {
@@ -27,10 +28,10 @@ export const StyledBackButton = styled.button`
 	top: 1rem;
 	left: 1rem;
 	padding: 0.5rem 1rem;
-	border: 2px solid #8b4513;
-	border-radius: 4px;
-	background: #f5f3f0;
-	color: #8b4513;
+	border: 2px solid ${theme.colors.accent.primary};
+	border-radius: ${theme.borderRadius.md};
+	background: ${theme.colors.bg.elevated};
+	color: ${theme.colors.accent.primary};
 	cursor: pointer;
 	font-weight: bold;
 	z-index: 100;
@@ -67,8 +68,8 @@ export const StyledBackButton = styled.button`
 	}
 
 	&:hover {
-		background: #8b4513;
-		color: #f5f3f0;
+		background: var(--crystal-secondary);
+		color: var(--text-primary);
 	}
 `;
 
@@ -77,7 +78,7 @@ export const StyledCharacterSheet = styled.div`
 	margin: 0 auto;
 	position: relative;
 	/* Outer border */
-	border: 2px solid #8b4513;
+	border: 2px solid ${theme.colors.accent.primary};
 	height: auto;
 	width: 98%;
 	padding: 6px;
@@ -85,7 +86,7 @@ export const StyledCharacterSheet = styled.div`
 
 export const StyledMidBorder = styled.div`
 	/* Mid border */
-	border: 6px solid #8b4513;
+	border: 6px solid ${theme.colors.accent.primary};
 	height: 100%;
 	width: 100%;
 	padding: 6px;
@@ -95,13 +96,13 @@ export const StyledMidBorder = styled.div`
 export const StyledInnerBorder = styled.div`
 	/* Inner border with content */
 	position: relative;
-	border: 2px solid #8b4513;
+	border: 2px solid ${theme.colors.accent.primary};
 	height: 100%;
 	width: 100%;
 	margin: auto;
-	background: rgba(255, 255, 255, 0.4);
-	border-radius: 4px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	background: var(--bg-primary);
+	border-radius: ${theme.borderRadius.md};
+	box-shadow: ${theme.shadows.lg};
 	padding: 1.5rem;
 	display: flex;
 	justify-content: center;
@@ -164,28 +165,33 @@ export const StyledCornerDecoration = styled.div<{
 		width: 100%;
 		height: 100%;
 		background:
-			radial-gradient(circle at 20% 20%, #8b4513 0%, #8b4513 15%, transparent 15%),
+			radial-gradient(
+				circle at 20% 20%,
+				${theme.colors.accent.primary} 0%,
+				${theme.colors.accent.primary} 15%,
+				transparent 15%
+			),
 			linear-gradient(
 				45deg,
-				#8b4513 0%,
-				#8b4513 6px,
+				${theme.colors.accent.primary} 0%,
+				${theme.colors.accent.primary} 6px,
 				transparent 6px,
 				transparent 12px,
-				#8b4513 12px,
-				#8b4513 18px,
+				${theme.colors.accent.primary} 12px,
+				${theme.colors.accent.primary} 18px,
 				transparent 18px
 			),
 			linear-gradient(
 				-45deg,
-				#8b4513 0%,
-				#8b4513 6px,
+				${theme.colors.accent.primary} 0%,
+				${theme.colors.accent.primary} 6px,
 				transparent 6px,
 				transparent 12px,
-				#8b4513 12px,
-				#8b4513 18px,
+				${theme.colors.accent.primary} 12px,
+				${theme.colors.accent.primary} 18px,
 				transparent 18px
 			);
-		border-radius: 4px;
+		border-radius: ${theme.borderRadius.sm};
 	}
 
 	${(props) =>
@@ -267,10 +273,10 @@ export const StyledRightColumn = styled.div`
 // Mobile Navigation
 export const StyledMobileNav = styled.div`
 	display: flex;
-	background: #8b4513;
-	border-radius: 8px;
+	background: ${theme.colors.bg.elevated};
+	border-radius: ${theme.borderRadius.lg};
 	overflow: hidden;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	box-shadow: ${theme.shadows.lg};
 	position: fixed !important;
 	top: auto !important;
 	bottom: 0 !important;
@@ -289,8 +295,8 @@ export const StyledMobileNavButton = styled.button<{ $isActive: boolean }>`
 	max-width: 25vw;
 	padding: 0.75rem 0.25rem;
 	border: none;
-	background: ${(props) => (props.$isActive ? '#f5f3f0' : 'transparent')};
-	color: ${(props) => (props.$isActive ? '#8b4513' : '#f5f3f0')};
+	background: ${(props) => (props.$isActive ? theme.colors.accent.primary : 'transparent')};
+	color: ${(props) => (props.$isActive ? theme.colors.text.inverse : theme.colors.text.primary)};
 	font-weight: bold;
 	font-size: 0.7rem;
 	cursor: pointer;
@@ -301,7 +307,8 @@ export const StyledMobileNavButton = styled.button<{ $isActive: boolean }>`
 	box-sizing: border-box;
 
 	&:hover {
-		background: ${(props) => (props.$isActive ? '#f5f3f0' : 'rgba(245, 243, 240, 0.1)')};
+		background: ${(props) =>
+			props.$isActive ? theme.colors.accent.primary : theme.colors.bg.tertiary};
 	}
 
 	&:active {
@@ -326,18 +333,20 @@ export const StyledActionButtons = styled.div`
 export const StyledActionButton = styled.button<{ $variant?: 'danger' | 'primary' }>`
 	padding: 8px 12px;
 	font-size: 0.8rem;
-	background-color: ${(props) => (props.$variant === 'danger' ? '#c53030' : '#8b4513')};
-	color: white;
+	background-color: ${(props) =>
+		props.$variant === 'danger' ? theme.colors.accent.danger : theme.colors.accent.primary};
+	color: ${theme.colors.text.inverse};
 	border: none;
-	border-radius: 6px;
+	border-radius: ${theme.borderRadius.md};
 	cursor: pointer;
 	white-space: nowrap;
 	font-weight: bold;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-	transition: all 0.2s ease;
+	box-shadow: ${theme.shadows.md};
+	transition: all ${theme.transitions.fast};
 
 	&:hover {
-		background-color: ${(props) => (props.$variant === 'danger' ? '#b32c2c' : '#7a3e11')};
+		background-color: ${(props) =>
+			props.$variant === 'danger' ? theme.colors.accent.danger : theme.colors.accent.secondary};
 		transform: translateY(-1px);
 	}
 

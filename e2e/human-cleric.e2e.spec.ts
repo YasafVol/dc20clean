@@ -119,7 +119,9 @@ test.describe('Human Cleric E2E', () => {
 
 		// Step 5: Spells (Cleric gets only Spells step, no Maneuvers)
 		// The new split UI shows "LEARN SPELLS" heading for the dedicated Spells step
-		await expect(page.getByRole('heading', { name: /LEARN.*SPELLS/i })).toBeVisible({ timeout: 5000 });
+		await expect(page.getByRole('heading', { name: /LEARN.*SPELLS/i })).toBeVisible({
+			timeout: 5000
+		});
 
 		// Helper function to select a spell by clicking its LEARN button
 		async function selectSpell(spellName: string) {
@@ -139,7 +141,9 @@ test.describe('Human Cleric E2E', () => {
 		await selectSpell('Shield of Faith');
 
 		// Verify all spell slots are filled (check for "All choices complete" or "0 cantrip/spell slots")
-		await expect(page.getByText(/All choices complete|0 cantrip slots.*0 spell slots/i)).toBeVisible({
+		await expect(
+			page.getByText(/All choices complete|0 cantrip slots.*0 spell slots/i)
+		).toBeVisible({
 			timeout: 5000
 		});
 		await page.getByRole('button', { name: 'Next →' }).click();

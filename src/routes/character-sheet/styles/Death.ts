@@ -6,17 +6,17 @@ interface MobileStyledProps {
 
 export const StyledDeathContainer = styled.div<MobileStyledProps>`
 	flex: 1;
-	border: 2px solid ${(props) => (props.$isMobile ? 'rgb(68, 68, 68)' : '#8b4513')};
+	border: 2px solid ${(props) => (props.$isMobile ? 'var(--mobile-border)' : '#414868')};
 	border-radius: 8px;
 	padding: 1rem;
-	background: ${(props) => (props.$isMobile ? 'rgb(42, 42, 42)' : 'white')};
+	background: ${(props) => (props.$isMobile ? 'var(--mobile-bg-primary)' : '#24283B')};
 	text-align: center;
 `;
 
 export const StyledDeathTitle = styled.div<MobileStyledProps>`
 	font-size: 0.9rem;
 	font-weight: bold;
-	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
+	color: #7dcfff;
 	margin-bottom: 0.5rem;
 	font-family: 'Inter', sans-serif;
 `;
@@ -32,31 +32,31 @@ export const StyledHealthStatus = styled.div<{
 	color: ${(props) => {
 		switch (props.status) {
 			case 'healthy':
-				return '#22c55e';
+				return '#9ECE6A';
 			case 'bloodied':
-				return '#f59e0b';
+				return '#E0AF68';
 			case 'well-bloodied':
-				return '#f97316';
+				return '#FF9E64';
 			case 'deaths-door':
-				return '#dc2626';
+				return '#F7768E';
 			case 'dead':
-				return '#7f1d1d';
+				return '#c0caf5';
 			default:
-				return '#8b4513';
+				return '#7DCFFF';
 		}
 	}};
 	background: ${(props) => {
 		switch (props.status) {
 			case 'healthy':
-				return '#dcfce7';
+				return 'rgba(158, 206, 106, 0.15)';
 			case 'bloodied':
-				return '#fef3c7';
+				return 'rgba(224, 175, 104, 0.15)';
 			case 'well-bloodied':
-				return '#fed7aa';
+				return 'rgba(255, 158, 100, 0.15)';
 			case 'deaths-door':
-				return '#fecaca';
+				return 'rgba(247, 118, 142, 0.15)';
 			case 'dead':
-				return '#fca5a5';
+				return 'rgba(192, 202, 245, 0.15)';
 			default:
 				return 'transparent';
 		}
@@ -66,7 +66,7 @@ export const StyledHealthStatus = styled.div<{
 export const StyledDeathThreshold = styled.div<MobileStyledProps>`
 	font-size: 1.5rem;
 	font-weight: bold;
-	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
+	color: #c0caf5;
 	margin-bottom: 0.5rem;
 `;
 
@@ -96,11 +96,11 @@ export const StyledDeathStep = styled.div<{ filled: boolean; isDead: boolean }>`
 	border: 2px solid ${(props) => (props.isDead ? '#7f1d1d' : '#dc2626')};
 	background: ${(props) => {
 		if (props.isDead) return '#7f1d1d';
-		return props.filled ? '#dc2626' : 'white';
+		return props.filled ? '#dc2626' : '#1A1B26';
 	}};
 	color: ${(props) => {
-		if (props.isDead) return 'white';
-		return props.filled ? 'white' : '#dc2626';
+		if (props.isDead) return '#c0caf5';
+		return props.filled ? '#c0caf5' : '#dc2626';
 	}};
 	display: flex;
 	align-items: center;
@@ -119,7 +119,7 @@ export const StyledDeathStep = styled.div<{ filled: boolean; isDead: boolean }>`
 	&:hover {
 		background: ${(props) => {
 			if (props.isDead) return '#991b1b';
-			return props.filled ? '#b91c1c' : '#fecaca';
+			return props.filled ? '#b91c1c' : '#24283B';
 		}};
 		transform: scale(1.1);
 	}

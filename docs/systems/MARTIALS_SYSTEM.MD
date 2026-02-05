@@ -1,112 +1,62 @@
-# DC20Clean – Martials System (Maneuvers)
+# DC20Clean - Martials System (Maneuvers)
 
 > Purpose
-> Central reference for martial abilities data, selection limits, prerequisites, and UI wiring.
+> Canonical reference for maneuver data, maneuver budget calculation, and creation/sheet integration.
+
+> Last Updated: 2026-02-04
 
 ---
 
-## 1. Key Files & Roles
+## 1) Key Files
 
-- `src/lib/rulesdata/martials/maneuvers.ts` — 28 maneuvers from DC20 v0.10
-- `src/lib/rulesdata/schemas/maneuver.schema.ts` — Maneuver type definitions
-- `src/lib/rulesdata/martials/monk-stances.ts` — Monk-specific stances (placeholder)
-- `src/lib/services/enhancedCharacterCalculator.ts` — aggregates grants/limits from classes/traits
-- UI: `src/routes/character-creation/*`, `src/routes/character-sheet/*`
-
-**Note**: Techniques have been entirely removed in DC20 v0.10.
+- Maneuver catalog: `src/lib/rulesdata/martials/maneuvers.ts`
+- Maneuver schema: `src/lib/rulesdata/schemas/maneuver.schema.ts`
+- Progression + budgets: `src/lib/services/enhancedCharacterCalculator.ts`
+- Creation UI: `src/routes/character-creation/Maneuvers.tsx`
 
 ---
 
-## 2. Data Shapes (v0.10)
+## 2) Data Model
 
-### Maneuver Schema
-
-```typescript
-interface Maneuver {
-	id: string;
-	name: string;
-	type: ManeuverType; // 'Attack' | 'Defense' | 'Grapple' | 'Utility'
-	cost: ManeuverCost; // { ap?: number; sp?: number }
-	range: string;
-	description: string;
-	isReaction: boolean;
-	trigger?: string; // For reactions
-	requirement?: string;
-	enhancements: ManeuverEnhancement[];
-}
-
-interface ManeuverEnhancement {
-	name: string;
-	costString: string; // e.g., "1 SP, Repeatable"
-	ap?: number;
-	sp?: number;
-	repeatable?: boolean;
-	variable?: boolean;
-	description: string;
-}
-
-enum ManeuverType {
-	Attack = 'Attack',
-	Defense = 'Defense',
-	Grapple = 'Grapple',
-	Utility = 'Utility'
-}
-```
-
-### Maneuvers by Type (28 total)
-
-| Type    | Count | Examples                                    |
-| ------- | ----- | ------------------------------------------- |
-| Attack  | 8     | Heroic Bash, Sweeping Strike, Targeted Blow |
-| Defense | 8     | Deflect, Dodge, Parry, Shield Block         |
-| Grapple | 6     | Break Grapple, Grab, Throw, Pin             |
-| Utility | 6     | Disarm, Distraction, Feint, Push the Limits |
+- Maneuvers are typed as `Attack | Defense | Grapple | Utility`.
+- Maneuvers use AP/SP cost model and optional enhancements.
+- Techniques are removed in v0.10.
 
 ---
 
-## 3. Selection & Validation
+## 3) Maneuvers Known Budget
 
-- Eligibility: class level and feature grants determine what is selectable.
-- Limits: number known per level or feature; enforced in provider/calculator-backed state.
-- **Maneuvers Known** is tracked via class progression and path point allocation.
+`levelBudgets.totalManeuversKnown` is derived from:
 
-Acceptance examples:
+1. Class progression maneuver gains (`gainedManeuversKnown`)
+2. Martial path maneuver bonuses (`paths.data.ts`)
+3. Talent effects (`MODIFY_STAT target: maneuversKnown`)
+4. Explicit granted known maneuvers (`GRANT_MANEUVERS`, excluding access-only grants)
 
-- If the current class lacks martial access, the section is hidden or marked N/A.
-- Deleting a maneuver reduces the known count and re-enables selection elsewhere.
+### Access grants vs count grants
 
----
-
-## 4. UI Flows
-
-- Creation: render lists and selection controls gated by eligibility; show counts remaining.
-- Sheet: display known maneuvers with their costs, ranges, and enhancements.
+- `GRANT_MANEUVERS target: "all_attack"` is treated as an access grant and is **not** added to numeric known-count budgets.
+- Specific grants (for example, granting a named maneuver choice) are counted when resolved.
 
 ---
 
-## 5. E2E Links
+## 4) Validation/UX Behavior
 
-- `e2e/10-maneuvers.e2e.spec.ts` — Adds and deletes maneuvers; conditionally skips when not applicable.
-- `e2e/12-exhaustion-info.e2e.spec.ts` — Info buttons validate cross-references with feature details.
-
----
-
-## 6. v0.10 Changes from v0.9.5
-
-- **Techniques Removed**: The entire technique system has been removed from DC20 v0.10.
-- **Maneuver Categories**: Now 4 types (Attack, Defense, Grapple, Utility) instead of previous categorization.
-- **Cost Structure**: Costs now use AP (Action Points) and SP (Stamina Points).
-- **Enhancements**: Maneuvers have enhancement options with additional costs.
-- **28 Maneuvers**: Complete set from v0.10 rules.
+- Creation stage enforces exact selected count = `totalManeuversKnown`.
+- Remaining count and filter UI are displayed in `Maneuvers.tsx`.
+- If no maneuver budget exists, maneuvers stage is hidden by step gating.
 
 ---
 
-## 7. Troubleshooting
+## 5) Rule Alignment Notes (v0.10)
 
-- Items not showing: ensure exported lists are imported by the UI/provider and that class grants are aggregated.
-- Cost display issues: verify `costString` and parsed `ap`/`sp` values match.
+- Class-table maneuver gains remain level-driven in progression files.
+- Path points increase maneuver budgets through path progression tiers.
+- No maneuver budget should be inflated by duplicating equivalent grants in both a parent feature and its nested benefit entries.
 
 ---
 
-> Last updated: 2026-01-05
-> Maintainer: @DC20Clean-Team
+## 6) Related Specs
+
+- `docs/systems/LEVELING_SYSTEM.MD`
+- `docs/systems/CLASS_SYSTEM.MD`

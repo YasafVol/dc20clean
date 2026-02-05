@@ -13,7 +13,7 @@ import {
 	BudgetValue,
 	BudgetBarContainer,
 	BudgetBar,
-	BudgetStatusText,
+	BudgetStatusText
 } from '../styles/EncounterStyles';
 
 export interface BudgetMeterProps {
@@ -27,15 +27,10 @@ const STATUS_MESSAGES: Record<BudgetStatus, string> = {
 	under: 'Under budget — may be too easy',
 	on_target: 'On target — balanced encounter',
 	slightly_over: 'Slightly over — challenging',
-	over: 'Over budget — very difficult!',
+	over: 'Over budget — very difficult!'
 };
 
-export const BudgetMeter: React.FC<BudgetMeterProps> = ({
-	spent,
-	budget,
-	status,
-	percentage,
-}) => {
+export const BudgetMeter: React.FC<BudgetMeterProps> = ({ spent, budget, status, percentage }) => {
 	return (
 		<BudgetContainer>
 			<BudgetHeader>

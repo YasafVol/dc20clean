@@ -2,6 +2,7 @@ import React from 'react';
 import type { InventoryItemData } from '../../../types';
 import { allItems, type InventoryItem } from '../../../lib/rulesdata/inventoryItems';
 import { useCharacterInventory, useCharacterSheet } from '../hooks/CharacterSheetProvider';
+import DeleteButton from './shared/DeleteButton';
 import {
 	StyledInventorySection,
 	StyledInventoryTitle,
@@ -10,7 +11,6 @@ import {
 	StyledInventoryHeaderRow,
 	StyledInventoryHeaderColumn,
 	StyledInventoryRow,
-	StyledRemoveItemButton,
 	StyledInventorySelect,
 	StyledInventoryInput,
 	StyledInventoryInfoIcon,
@@ -147,13 +147,11 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 						return (
 							<StyledInventoryRow key={item.id}>
 								{/* Remove Button */}
-								<StyledRemoveItemButton
+								<DeleteButton
 									onClick={() => removeInventorySlot(index)}
 									title="Remove item"
-									aria-label={`Remove item ${index + 1}`}
-								>
-									×
-								</StyledRemoveItemButton>
+									$isMobile={isMobile}
+								/>
 
 								{/* Item Type */}
 								<StyledInventorySelect

@@ -23,12 +23,12 @@ Set `AUTH_SECRET` and the Google OAuth env vars in the Convex dashboard before r
 
 ## Files
 
-| File | Purpose |
-|------|---------|
-| `schema.ts` | Database schema matching SavedCharacter type |
-| `characters.ts` | Character CRUD mutations and queries |
-| `auth.ts` | Convex Auth actions (sign-in/out, store) |
-| `auth.config.ts` | Convex auth provider configuration |
+| File             | Purpose                                      |
+| ---------------- | -------------------------------------------- |
+| `schema.ts`      | Database schema matching SavedCharacter type |
+| `characters.ts`  | Character CRUD mutations and queries         |
+| `auth.ts`        | Convex Auth actions (sign-in/out, store)     |
+| `auth.config.ts` | Convex auth provider configuration           |
 
 ## Schema
 
@@ -38,6 +38,7 @@ The schema defines:
 - **characters** - Character data with full SavedCharacter structure
 
 Characters are indexed by:
+
 - `by_user` - Find all characters for a user
 - `by_user_and_name` - Find character by name for a user
 

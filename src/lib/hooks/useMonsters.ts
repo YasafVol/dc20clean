@@ -37,8 +37,15 @@ export interface MonsterMutations {
 	restoreMonster: (id: string) => Promise<void>;
 	permanentlyDeleteMonster: (id: string) => Promise<void>;
 	duplicateMonster: (id: string) => Promise<{ id: string }>;
-	forkMonster: (sourceId: string, sourceType: 'official' | 'custom' | 'homebrew', sourceData: SavedMonster) => Promise<{ id: string }>;
-	submitForReview: (id: string, visibility: 'public_anonymous' | 'public_credited') => Promise<void>;
+	forkMonster: (
+		sourceId: string,
+		sourceType: 'official' | 'custom' | 'homebrew',
+		sourceData: SavedMonster
+	) => Promise<{ id: string }>;
+	submitForReview: (
+		id: string,
+		visibility: 'public_anonymous' | 'public_credited'
+	) => Promise<void>;
 }
 
 // ============================================================================
@@ -54,7 +61,7 @@ export function useMonsterList(): UseMonsterListResult {
 	return useMemo(
 		() => ({
 			monsters: (monsters ?? []) as unknown as SavedMonster[],
-			isLoading: monsters === undefined,
+			isLoading: monsters === undefined
 		}),
 		[monsters]
 	);
@@ -69,7 +76,7 @@ export function useMonster(id: string | null): UseMonsterResult {
 	return useMemo(
 		() => ({
 			monster: (monster ?? null) as SavedMonster | null,
-			isLoading: id !== null && monster === undefined,
+			isLoading: id !== null && monster === undefined
 		}),
 		[monster, id]
 	);
@@ -84,7 +91,7 @@ export function useHomebrewMonsters(filters?: MonsterFilters): UseMonsterListRes
 	return useMemo(
 		() => ({
 			monsters: (monsters ?? []) as unknown as SavedMonster[],
-			isLoading: monsters === undefined,
+			isLoading: monsters === undefined
 		}),
 		[monsters]
 	);
@@ -99,7 +106,7 @@ export function useTrashMonsters(): UseMonsterListResult {
 	return useMemo(
 		() => ({
 			monsters: (monsters ?? []) as unknown as SavedMonster[],
-			isLoading: monsters === undefined,
+			isLoading: monsters === undefined
 		}),
 		[monsters]
 	);
@@ -194,7 +201,7 @@ export function useMonsterMutations(): MonsterMutations {
 			permanentlyDeleteMonster,
 			duplicateMonster,
 			forkMonster,
-			submitForReview,
+			submitForReview
 		}),
 		[
 			createMonster,
@@ -204,7 +211,7 @@ export function useMonsterMutations(): MonsterMutations {
 			permanentlyDeleteMonster,
 			duplicateMonster,
 			forkMonster,
-			submitForReview,
+			submitForReview
 		]
 	);
 }
@@ -224,7 +231,7 @@ export function useMonsters() {
 		() => ({
 			monsters,
 			isLoading,
-			...mutations,
+			...mutations
 		}),
 		[monsters, isLoading, mutations]
 	);

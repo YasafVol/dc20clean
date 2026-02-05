@@ -5,6 +5,7 @@ import { ALL_SPELLS as allSpells } from '../../../lib/rulesdata/spells-data';
 import { SpellSchool } from '../../../lib/rulesdata/schemas/spell.schema';
 import { useCharacterSpells, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import { logger } from '../../../lib/utils/logger';
+import DeleteButton from './shared/DeleteButton';
 import {
 	StyledSpellsSection,
 	StyledSpellsHeader,
@@ -16,10 +17,18 @@ import {
 	StyledHeaderColumn,
 	StyledEmptyState,
 	StyledSpellRow,
-	StyledRemoveButton,
 	StyledSpellSelect,
 	StyledSchoolFilter,
-	StyledSpellCell
+	StyledSpellCell,
+	StyledBoldSpellCell,
+	StyledFilterLabel,
+	StyledSpellDescriptionContainer,
+	StyledSpellDescriptionHeader,
+	StyledSpellDescriptionContent,
+	StyledSpellEffect,
+	StyledSpellEnhancement,
+	StyledSpellToggleContainer,
+	StyledSpellToggleButton
 } from '../styles/Spells';
 
 export interface SpellsProps {
@@ -147,21 +156,22 @@ const Spells: React.FC<SpellsProps> = ({
 		});
 	};
 
+	const expandAll = () => {
+		const allSpellIds = filteredCharacterSpells.map((spell) => spell.id);
+		setExpandedSpells(new Set(allSpellIds));
+	};
+
+	const collapseAll = () => {
+		setExpandedSpells(new Set());
+	};
+
 	return (
 		<StyledSpellsSection $isMobile={effectiveIsMobile} data-testid="spells-section">
 			<StyledSpellsHeader $isMobile={effectiveIsMobile}>
 				<StyledSpellsTitle $isMobile={effectiveIsMobile}>Spells</StyledSpellsTitle>
 				{!readOnly && (
 					<StyledSpellsControls $isMobile={effectiveIsMobile} data-testid="spells-controls">
-						<label
-							style={{
-								fontSize: '0.8rem',
-								color: effectiveIsMobile ? '#f5d020' : '#8b4513',
-								marginRight: '0.3rem'
-							}}
-						>
-							Filter by School:
-						</label>
+						<StyledFilterLabel $isMobile={effectiveIsMobile}>Filter by School:</StyledFilterLabel>
 						<StyledSchoolFilter
 							$isMobile={effectiveIsMobile}
 							value={schoolFilter}
@@ -175,6 +185,33 @@ const Spells: React.FC<SpellsProps> = ({
 								</option>
 							))}
 						</StyledSchoolFilter>
+						<StyledAddSpellButton
+							$isMobile={effectiveIsMobile}
+							onClick={expandAll}
+							style={{
+								backgroundColor: '#059669',
+								marginRight: '0.5rem',
+								fontSize: '0.85rem',
+								padding: '0.4rem 0.8rem'
+							}}
+							aria-label="Expand All"
+						>
+							▼ Expand All
+						</StyledAddSpellButton>
+						<StyledAddSpellButton
+							$isMobile={effectiveIsMobile}
+							onClick={collapseAll}
+							style={{
+								backgroundColor: '#dc2626',
+								marginRight: '0.5rem',
+								fontSize: '0.85rem',
+								padding: '0.4rem 0.8rem'
+							}}
+							aria-label="Collapse All"
+						>
+							▲ Collapse All
+						</StyledAddSpellButton>
+
 						<StyledAddSpellButton
 							$isMobile={effectiveIsMobile}
 							onClick={addSpellSlot}
@@ -220,26 +257,17 @@ const Spells: React.FC<SpellsProps> = ({
 								<StyledSpellRow $isMobile={effectiveIsMobile} data-testid={`spell-row-${spell.id}`}>
 									{/* Remove Button - only show in edit mode */}
 									{!readOnly && (
-										<StyledRemoveButton
-											$isMobile={effectiveIsMobile}
+										<DeleteButton
 											onClick={() => removeSpellSlot(originalIndex)}
-											data-testid={`remove-spell-${spell.id}`}
-										>
-											×
-										</StyledRemoveButton>
+											$isMobile={effectiveIsMobile}
+										/>
 									)}
 
 									{/* Spell Name - show as text in read-only mode, dropdown in edit mode */}
 									{readOnly ? (
-										<StyledSpellCell
-											$isMobile={effectiveIsMobile}
-											style={{
-												fontWeight: 'bold',
-												color: effectiveIsMobile ? '#f5d020' : '#2c3e50'
-											}}
-										>
+										<StyledBoldSpellCell $isMobile={effectiveIsMobile} $boldMobile={true}>
 											{spell.spellName || 'Unknown Spell'}
-										</StyledSpellCell>
+										</StyledBoldSpellCell>
 									) : (
 										<StyledSpellSelect
 											$isMobile={effectiveIsMobile}
@@ -277,7 +305,7 @@ const Spells: React.FC<SpellsProps> = ({
 									<StyledSpellCell $isMobile={effectiveIsMobile}>{spell.school}</StyledSpellCell>
 
 									{/* Duration */}
-									<StyledSpellCell $isMobile={effectiveIsMobile} style={{ fontSize: '0.7rem' }}>
+									<StyledSpellCell $isMobile={effectiveIsMobile}>
 										{spell.duration || '-'}
 									</StyledSpellCell>
 
@@ -292,47 +320,26 @@ const Spells: React.FC<SpellsProps> = ({
 									</StyledSpellCell>
 
 									{/* Range */}
-									<StyledSpellCell $isMobile={effectiveIsMobile} style={{ fontSize: '0.7rem' }}>
-										{spell.range || '-'}
-									</StyledSpellCell>
+									<StyledSpellCell $isMobile={effectiveIsMobile}></StyledSpellCell>
 								</StyledSpellRow>
 
 								{/* Expandable Description Section */}
 								{selectedSpell && expandedSpells.has(spell.id) && (
-									<div
-										style={{
-											color: '#333',
-											padding: '10px',
-											backgroundColor: '#f9f9f9',
-											border: '1px solid #ddd',
-											borderTop: 'none',
-											borderRadius: '0 0 4px 4px',
-											marginTop: '-0.5rem'
-										}}
-									>
+									<StyledSpellDescriptionContainer $isMobile={effectiveIsMobile}>
 										{/* Spell Name Header */}
-										<div
-											style={{
-												fontSize: '1rem',
-												fontWeight: 'bold',
-												color: '#8b4513',
-												marginBottom: '0.5rem',
-												borderBottom: '1px solid #ddd',
-												paddingBottom: '0.3rem'
-											}}
-										>
+										<StyledSpellDescriptionHeader $isMobile={effectiveIsMobile}>
 											{selectedSpell.name}
-										</div>
+										</StyledSpellDescriptionHeader>
 
-										<div style={{ fontSize: '0.8rem' }}>
+										<StyledSpellDescriptionContent $isMobile={effectiveIsMobile}>
 											<strong>Description:</strong>
 											<br />
 											{selectedSpell.effects?.map((effect, effectIndex) => (
-												<div key={effectIndex} style={{ marginBottom: '0.5rem' }}>
+												<StyledSpellEffect key={effectIndex} $isMobile={effectiveIsMobile}>
 													{effect.title && <strong>{effect.title}:</strong>}
 													<br />
 													{effect.description}
-												</div>
+												</StyledSpellEffect>
 											)) || 'No description available.'}
 
 											{selectedSpell.spellPassive && (
@@ -348,54 +355,29 @@ const Spells: React.FC<SpellsProps> = ({
 													<br />
 													<strong>Enhancements:</strong>
 													{selectedSpell.enhancements.map((enhancement, enhancementIndex) => (
-														<div
-															key={enhancementIndex}
-															style={{
-																marginTop: '0.5rem',
-																padding: '0.5rem',
-																backgroundColor: '#f0f0f0',
-																borderRadius: '4px'
-															}}
-														>
+														<StyledSpellEnhancement key={enhancementIndex}>
 															<strong>{enhancement.name}</strong> ({enhancement.type}{' '}
 															{enhancement.cost})
 															<br />
 															{enhancement.description}
-														</div>
+														</StyledSpellEnhancement>
 													))}
 												</>
 											)}
-										</div>
-									</div>
+										</StyledSpellDescriptionContent>
+									</StyledSpellDescriptionContainer>
 								)}
 
 								{/* Toggle Description Button */}
 								{selectedSpell && (
-									<div
-										style={{
-											padding: '5px',
-											textAlign: 'center',
-											borderTop: '1px solid #eee',
-											backgroundColor: '#fafafa',
-											borderRadius: '0 0 4px 4px'
-										}}
-									>
-										<button
+									<StyledSpellToggleContainer>
+										<StyledSpellToggleButton
 											onClick={() => toggleSpellExpansion(spell.id)}
 											data-testid={`toggle-spell-desc-${spell.id}`}
-											style={{
-												background: 'none',
-												border: '1px solid #ccc',
-												borderRadius: '4px',
-												padding: '2px 8px',
-												fontSize: '0.7rem',
-												cursor: 'pointer',
-												color: '#666'
-											}}
 										>
 											{expandedSpells.has(spell.id) ? 'Hide Description' : 'Show Description'}
-										</button>
-									</div>
+										</StyledSpellToggleButton>
+									</StyledSpellToggleContainer>
 								)}
 							</React.Fragment>
 						);

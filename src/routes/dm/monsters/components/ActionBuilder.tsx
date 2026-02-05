@@ -12,7 +12,7 @@ import {
 	type MonsterAction,
 	type ActionType,
 	type TargetDefense,
-	type ActionTrait,
+	type ActionTrait
 } from '../../../../lib/rulesdata/schemas/monster.schema';
 import {
 	SectionContent,
@@ -28,7 +28,7 @@ import {
 	ActionFooter,
 	FormRow,
 	FormGroup,
-	FormLabel,
+	FormLabel
 } from '../styles/MonsterStyles';
 
 export interface ActionBuilderProps {
@@ -54,12 +54,12 @@ interface EditingAction {
 const ACTION_TYPES: { value: ActionType; label: string }[] = [
 	{ value: 'martial', label: 'Martial' },
 	{ value: 'spell', label: 'Spell' },
-	{ value: 'special', label: 'Special' },
+	{ value: 'special', label: 'Special' }
 ];
 
 const TARGET_DEFENSES: { value: TargetDefense; label: string }[] = [
 	{ value: 'pd', label: 'Precision (PD)' },
-	{ value: 'ad', label: 'Area (AD)' },
+	{ value: 'ad', label: 'Area (AD)' }
 ];
 
 // Stepper component for +/- controls
@@ -83,18 +83,18 @@ const NumberStepper: React.FC<{
 					type="button"
 					onClick={decrease}
 					disabled={value <= min}
-					className="w-8 h-8 flex items-center justify-center bg-black/40 border border-purple-500/30 rounded text-white hover:bg-purple-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+					className="flex h-8 w-8 items-center justify-center rounded border border-purple-500/30 bg-black/40 text-white transition-colors hover:bg-purple-500/20 disabled:cursor-not-allowed disabled:opacity-30"
 				>
 					−
 				</button>
-				<div className="w-16 h-8 flex items-center justify-center bg-black/30 border border-purple-500/30 rounded text-white font-medium text-sm">
+				<div className="flex h-8 w-16 items-center justify-center rounded border border-purple-500/30 bg-black/30 text-sm font-medium text-white">
 					{showValue ? showValue(value) : value}
 				</div>
 				<button
 					type="button"
 					onClick={increase}
 					disabled={value >= max}
-					className="w-8 h-8 flex items-center justify-center bg-black/40 border border-purple-500/30 rounded text-white hover:bg-purple-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+					className="flex h-8 w-8 items-center justify-center rounded border border-purple-500/30 bg-black/40 text-white transition-colors hover:bg-purple-500/20 disabled:cursor-not-allowed disabled:opacity-30"
 				>
 					+
 				</button>
@@ -120,11 +120,11 @@ const TraitSelector: React.FC<{
 
 	return (
 		<div className="relative">
-			<span className="text-xs text-zinc-400 block mb-1">Traits</span>
+			<span className="mb-1 block text-xs text-zinc-400">Traits</span>
 			<button
 				type="button"
 				onClick={() => setIsOpen(!isOpen)}
-				className="w-full px-3 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white text-sm text-left focus:outline-none focus:border-purple-500 flex justify-between items-center"
+				className="flex w-full items-center justify-between rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-left text-sm text-white focus:border-purple-500 focus:outline-none"
 			>
 				<span className={selected.length ? 'text-white' : 'text-zinc-500'}>
 					{selected.length ? `${selected.length} selected` : 'Select traits...'}
@@ -135,21 +135,18 @@ const TraitSelector: React.FC<{
 			{isOpen && (
 				<>
 					{/* Backdrop to close on click outside */}
-					<div
-						className="fixed inset-0 z-10"
-						onClick={() => setIsOpen(false)}
-					/>
+					<div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
 					{/* Dropdown opens UPWARD */}
-					<div className="absolute z-20 bottom-full mb-1 left-0 right-0 bg-zinc-900 border border-purple-500/40 rounded-lg shadow-xl">
-						<div className="grid grid-cols-3 gap-1 p-2 max-h-64 overflow-y-auto">
+					<div className="absolute right-0 bottom-full left-0 z-20 mb-1 rounded-lg border border-purple-500/40 bg-zinc-900 shadow-xl">
+						<div className="grid max-h-64 grid-cols-3 gap-1 overflow-y-auto p-2">
 							{ACTION_TRAITS.map((trait) => (
 								<button
 									key={trait}
 									type="button"
 									onClick={() => toggleTrait(trait)}
-									className={`px-2 py-1.5 text-xs rounded text-left transition-colors ${
+									className={`rounded px-2 py-1.5 text-left text-xs transition-colors ${
 										selected.includes(trait)
-											? 'bg-purple-500/30 text-purple-300 border border-purple-500/50'
+											? 'border border-purple-500/50 bg-purple-500/30 text-purple-300'
 											: 'bg-black/30 text-zinc-400 hover:bg-purple-500/10 hover:text-white'
 									}`}
 								>
@@ -163,7 +160,7 @@ const TraitSelector: React.FC<{
 									{selected.map((trait) => (
 										<span
 											key={trait}
-											className="px-2 py-0.5 text-xs bg-green-500/20 text-green-400 rounded flex items-center gap-1"
+											className="flex items-center gap-1 rounded bg-green-500/20 px-2 py-0.5 text-xs text-green-400"
 										>
 											{trait}
 											<button
@@ -185,11 +182,7 @@ const TraitSelector: React.FC<{
 	);
 };
 
-export const ActionBuilder: React.FC<ActionBuilderProps> = ({
-	actions,
-	baseDamage,
-	onChange,
-}) => {
+export const ActionBuilder: React.FC<ActionBuilderProps> = ({ actions, baseDamage, onChange }) => {
 	const [editingId, setEditingId] = useState<string | null>(null);
 	const [editingAction, setEditingAction] = useState<EditingAction | null>(null);
 
@@ -202,7 +195,7 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({
 			targetDefense: 'pd',
 			damage: baseDamage,
 			traits: [],
-			description: '',
+			description: ''
 		};
 		onChange([...actions, newAction]);
 		startEditing(newAction);
@@ -221,7 +214,7 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({
 			range: action.range ?? 0,
 			area: action.area ?? '',
 			traits: action.traits ?? [],
-			description: action.description,
+			description: action.description
 		});
 	};
 
@@ -246,7 +239,7 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({
 				range: editingAction.range > 0 ? editingAction.range : undefined,
 				area: editingAction.area || undefined,
 				traits: editingAction.traits.length > 0 ? editingAction.traits : undefined,
-				description: editingAction.description,
+				description: editingAction.description
 			};
 		});
 
@@ -265,7 +258,10 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({
 		}
 	};
 
-	const handleInputChange = (field: keyof EditingAction, value: string | number | ActionTrait[]) => {
+	const handleInputChange = (
+		field: keyof EditingAction,
+		value: string | number | ActionTrait[]
+	) => {
 		if (!editingAction) return;
 		setEditingAction({ ...editingAction, [field]: value });
 	};
@@ -290,7 +286,7 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({
 												type="text"
 												value={editingAction.name}
 												onChange={(e) => handleInputChange('name', e.target.value)}
-												className="w-full px-3 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500"
+												className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none"
 												placeholder="Action name"
 											/>
 										</FormGroup>
@@ -299,10 +295,12 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({
 											<select
 												value={editingAction.apCost}
 												onChange={(e) => handleInputChange('apCost', parseInt(e.target.value, 10))}
-												className="w-full px-3 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500"
+												className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none"
 											>
 												{[1, 2, 3, 4].map((n) => (
-													<option key={n} value={n}>{n} AP</option>
+													<option key={n} value={n}>
+														{n} AP
+													</option>
 												))}
 											</select>
 										</FormGroup>
@@ -314,10 +312,12 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({
 											<select
 												value={editingAction.type}
 												onChange={(e) => handleInputChange('type', e.target.value as ActionType)}
-												className="w-full px-3 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500"
+												className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none"
 											>
 												{ACTION_TYPES.map((t) => (
-													<option key={t.value} value={t.value}>{t.label}</option>
+													<option key={t.value} value={t.value}>
+														{t.label}
+													</option>
 												))}
 											</select>
 										</FormGroup>
@@ -325,18 +325,22 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({
 											<FormLabel>Target</FormLabel>
 											<select
 												value={editingAction.targetDefense}
-												onChange={(e) => handleInputChange('targetDefense', e.target.value as TargetDefense)}
-												className="w-full px-3 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500"
+												onChange={(e) =>
+													handleInputChange('targetDefense', e.target.value as TargetDefense)
+												}
+												className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none"
 											>
 												{TARGET_DEFENSES.map((t) => (
-													<option key={t.value} value={t.value}>{t.label}</option>
+													<option key={t.value} value={t.value}>
+														{t.label}
+													</option>
 												))}
 											</select>
 										</FormGroup>
 									</FormRow>
 
 									{/* Damage and Range with steppers */}
-									<div className="flex gap-4 mb-4">
+									<div className="mb-4 flex gap-4">
 										<NumberStepper
 											label="Damage"
 											value={editingAction.damage}
@@ -352,7 +356,7 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({
 											min={0}
 											max={30}
 											step={1}
-											showValue={(v) => v === 0 ? 'Melee' : `${v}`}
+											showValue={(v) => (v === 0 ? 'Melee' : `${v}`)}
 										/>
 										<FormGroup $flex={1}>
 											<FormLabel>Damage Type</FormLabel>
@@ -360,7 +364,7 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({
 												type="text"
 												value={editingAction.damageType}
 												onChange={(e) => handleInputChange('damageType', e.target.value)}
-												className="w-full px-3 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500"
+												className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none"
 												placeholder="slashing, fire..."
 											/>
 										</FormGroup>
@@ -373,7 +377,7 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({
 												type="text"
 												value={editingAction.area}
 												onChange={(e) => handleInputChange('area', e.target.value)}
-												className="w-full px-3 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500"
+												className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none"
 												placeholder="cone, sphere, line..."
 											/>
 										</FormGroup>
@@ -390,7 +394,7 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({
 										<textarea
 											value={editingAction.description}
 											onChange={(e) => handleInputChange('description', e.target.value)}
-											className="w-full px-3 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500 resize-none"
+											className="w-full resize-none rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none"
 											rows={2}
 											placeholder="Describe the action..."
 										/>
@@ -425,8 +429,16 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({
 									<ActionStat>
 										Target: <span>{action.targetDefense.toUpperCase()}</span>
 									</ActionStat>
-									<ActionStat style={{ color: isDamageHigh ? '#fbbf24' : isDamageLow ? '#60a5fa' : undefined }}>
-										Damage: <span>{action.damage}{action.damageType ? ` ${action.damageType}` : ''}</span>
+									<ActionStat
+										style={{
+											color: isDamageHigh ? '#fbbf24' : isDamageLow ? '#60a5fa' : undefined
+										}}
+									>
+										Damage:{' '}
+										<span>
+											{action.damage}
+											{action.damageType ? ` ${action.damageType}` : ''}
+										</span>
 										{isDamageHigh && ' ⚠️'}
 									</ActionStat>
 									<ActionStat>
@@ -439,20 +451,18 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({
 									)}
 								</ActionStats>
 								{action.traits && action.traits.length > 0 && (
-									<div className="flex flex-wrap gap-1 mt-2">
+									<div className="mt-2 flex flex-wrap gap-1">
 										{action.traits.map((trait) => (
 											<span
 												key={trait}
-												className="px-2 py-0.5 text-xs bg-purple-500/20 text-purple-300 rounded border border-purple-500/30"
+												className="rounded border border-purple-500/30 bg-purple-500/20 px-2 py-0.5 text-xs text-purple-300"
 											>
 												{trait}
 											</span>
 										))}
 									</div>
 								)}
-								{action.description && (
-									<ActionDescription>{action.description}</ActionDescription>
-								)}
+								{action.description && <ActionDescription>{action.description}</ActionDescription>}
 							</ActionBody>
 							<ActionFooter>
 								<Button variant="secondary" size="sm" onClick={() => startEditing(action)}>

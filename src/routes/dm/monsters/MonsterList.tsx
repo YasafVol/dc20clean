@@ -26,7 +26,7 @@ import {
 	MonsterGrid,
 	EmptyState,
 	EmptyStateTitle,
-	EmptyStateText,
+	EmptyStateText
 } from './styles/MonsterStyles';
 
 type TabType = 'my-monsters' | 'homebrew' | 'trash';
@@ -42,7 +42,7 @@ export const MonsterList: React.FC = () => {
 		isLoading: isLoadingMy,
 		deleteMonster,
 		duplicateMonster,
-		forkMonster,
+		forkMonster
 	} = useMonsters();
 
 	const { monsters: homebrewMonsters, isLoading: isLoadingHomebrew } = useHomebrewMonsters();
@@ -124,23 +124,23 @@ export const MonsterList: React.FC = () => {
 							<Subtitle>Design and manage your monsters</Subtitle>
 						</div>
 					</HeaderLeft>
-				<HeaderRight>
-					<Button variant="secondary" onClick={() => navigate('/dm/encounters')}>
-						War Room
-					</Button>
-					<Button variant="secondary" onClick={handleCreateNew}>
-						+ New Monster
-					</Button>
-				</HeaderRight>
+					<HeaderRight>
+						<Button variant="secondary" onClick={() => navigate('/dm/encounters')}>
+							War Room
+						</Button>
+						<Button variant="secondary" onClick={handleCreateNew}>
+							+ New Monster
+						</Button>
+					</HeaderRight>
 				</HeaderContent>
 			</Header>
 
 			<MainContent>
 				{/* Tabs */}
-				<div className="flex gap-2 mb-6">
+				<div className="mb-6 flex gap-2">
 					<button
 						type="button"
-						className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+						className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
 							activeTab === 'my-monsters'
 								? 'bg-purple-600 text-white'
 								: 'bg-black/30 text-zinc-400 hover:text-white'
@@ -151,7 +151,7 @@ export const MonsterList: React.FC = () => {
 					</button>
 					<button
 						type="button"
-						className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+						className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
 							activeTab === 'homebrew'
 								? 'bg-purple-600 text-white'
 								: 'bg-black/30 text-zinc-400 hover:text-white'
@@ -164,13 +164,11 @@ export const MonsterList: React.FC = () => {
 
 				{/* Content */}
 				{isLoading ? (
-					<div className="text-center text-zinc-500 py-12">Loading...</div>
+					<div className="py-12 text-center text-zinc-500">Loading...</div>
 				) : monsters.length === 0 ? (
 					<EmptyState>
 						<EmptyStateTitle>
-							{activeTab === 'my-monsters'
-								? 'No Monsters Yet'
-								: 'No Homebrew Monsters'}
+							{activeTab === 'my-monsters' ? 'No Monsters Yet' : 'No Homebrew Monsters'}
 						</EmptyStateTitle>
 						<EmptyStateText>
 							{activeTab === 'my-monsters'
@@ -182,11 +180,7 @@ export const MonsterList: React.FC = () => {
 								<Button variant="secondary" onClick={handleCreateNew}>
 									Create Monster
 								</Button>
-								<Button
-									variant="secondary"
-									onClick={handleSeedMonsters}
-									disabled={isSeeding}
-								>
+								<Button variant="secondary" onClick={handleSeedMonsters} disabled={isSeeding}>
 									{isSeeding ? 'Seeding...' : 'Seed Sample Monsters'}
 								</Button>
 							</div>

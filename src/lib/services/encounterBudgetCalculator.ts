@@ -16,7 +16,7 @@ import {
 	type EncounterCalculationResult,
 	type DifficultyThresholds,
 	type BudgetStatus,
-	type SavedEncounter,
+	type SavedEncounter
 } from '../rulesdata/schemas/encounter.schema';
 import type { MonsterTier } from '../rulesdata/schemas/monster.schema';
 
@@ -115,7 +115,7 @@ export function calculateEncounterBudget(
 			monsterId: m.monsterId,
 			unitCost,
 			quantity: m.quantity,
-			totalCost: unitCost * m.quantity,
+			totalCost: unitCost * m.quantity
 		};
 	});
 
@@ -134,7 +134,7 @@ export function calculateEncounterBudget(
 		isOverBudget: budgetStatus === 'over',
 		isUnderBudget: budgetStatus === 'under',
 		isOnTarget: budgetStatus === 'on_target',
-		budgetStatus,
+		budgetStatus
 	};
 
 	// Calculate all thresholds
@@ -149,7 +149,7 @@ export function calculateEncounterBudget(
 		budgetPercentage,
 		slotCosts,
 		difficultyThresholds,
-		validation,
+		validation
 	};
 }
 
@@ -172,14 +172,14 @@ export function recalculateEncounterBudget(
 				monsterId: slot.monsterId!,
 				quantity: slot.quantity,
 				monsterLevel: monster?.level ?? 0,
-				monsterTier: monster?.tier ?? 'standard',
+				monsterTier: monster?.tier ?? 'standard'
 			};
 		});
 
 	const result = calculateEncounterBudget({
 		party: encounter.party,
 		difficulty: encounter.difficulty,
-		monsters,
+		monsters
 	});
 
 	return {
@@ -187,16 +187,14 @@ export function recalculateEncounterBudget(
 		difficultyModifier: result.difficultyModifier,
 		adjustedBudget: result.adjustedBudget,
 		spentBudget: result.spentBudget,
-		remainingBudget: result.remainingBudget,
+		remainingBudget: result.remainingBudget
 	};
 }
 
 /**
  * Create a default encounter
  */
-export function createDefaultEncounter(
-	overrides?: Partial<SavedEncounter>
-): SavedEncounter {
+export function createDefaultEncounter(overrides?: Partial<SavedEncounter>): SavedEncounter {
 	const now = new Date().toISOString();
 	const party = overrides?.party ?? { size: 4, averageLevel: 1 };
 	const difficulty = overrides?.difficulty ?? 'medium';
@@ -204,7 +202,7 @@ export function createDefaultEncounter(
 	const budgetResult = calculateEncounterBudget({
 		party,
 		difficulty,
-		monsters: [],
+		monsters: []
 	});
 
 	return {
@@ -234,6 +232,6 @@ export function createDefaultEncounter(
 		lastModified: now,
 		schemaVersion: '1.0',
 
-		...overrides,
+		...overrides
 	};
 }

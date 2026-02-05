@@ -1,19 +1,22 @@
 import styled from 'styled-components';
+import { theme } from './theme';
 
 export const StyledPlayerNotesContainer = styled.div`
-	border: 2px solid #8b4513;
-	border-radius: 8px;
-	padding: 1rem;
-	background: white;
-	margin-bottom: 1rem;
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.lg};
+	padding: ${theme.spacing[4]};
+	background: ${theme.colors.bg.secondary};
+	margin-bottom: ${theme.spacing[4]};
 `;
 
 export const StyledPlayerNotesTitle = styled.div`
-	font-size: 1.1rem;
-	font-weight: bold;
-	color: #8b4513;
+	font-size: ${theme.typography.fontSize.xl};
+	font-weight: ${theme.typography.fontWeight.bold};
+	color: ${theme.colors.text.primary};
 	text-align: center;
-	margin-bottom: 1rem;
+	margin-bottom: ${theme.spacing[4]};
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
 `;
 
 export const StyledNotesContent = styled.div`
@@ -29,22 +32,22 @@ export const StyledNotesList = styled.div`
 `;
 
 export const StyledNoteItem = styled.div`
-	border: 1px solid #8b4513;
-	border-radius: 4px;
-	padding: 0.75rem;
-	background: #f9f9f9;
-	transition: all 0.2s ease;
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
+	padding: ${theme.spacing[3]};
+	background: ${theme.colors.bg.tertiary};
+	transition: all ${theme.transitions.fast};
 
 	&:hover {
-		background: #f5f5f5;
+		background: ${theme.colors.bg.elevated};
 	}
 `;
 
 export const StyledNoteText = styled.p`
-	color: #2d2d2d;
-	font-size: 0.9rem;
-	line-height: 1.4;
-	margin: 0 0 0.5rem 0;
+	color: ${theme.colors.text.primary};
+	font-size: ${theme.typography.fontSize.sm};
+	line-height: ${theme.typography.lineHeight.relaxed};
+	margin: 0 0 ${theme.spacing[2]} 0;
 	word-wrap: break-word;
 `;
 
@@ -55,41 +58,44 @@ export const StyledNoteActions = styled.div`
 `;
 
 export const StyledNoteInput = styled.textarea`
-	background: white;
-	border: 1px solid #8b4513;
-	border-radius: 4px;
-	color: #2d2d2d;
-	font-size: 0.9rem;
-	padding: 0.5rem;
+	background: ${theme.colors.bg.primary};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
+	color: ${theme.colors.text.primary};
+	font-size: ${theme.typography.fontSize.sm};
+	padding: ${theme.spacing[3]};
 	width: 100%;
 	min-height: 60px;
 	resize: vertical;
 	font-family: 'Georgia', serif;
+	transition: all ${theme.transitions.fast};
 
 	&:focus {
 		outline: none;
-		border-color: #8b4513;
-		box-shadow: 0 0 0 1px #8b4513;
+		border-color: ${theme.colors.accent.primary};
+		box-shadow: 0 0 0 2px var(--crystal-primary-20);
 	}
 
 	&::placeholder {
-		color: #999;
+		color: ${theme.colors.text.muted};
 	}
 `;
 
 export const StyledAddButton = styled.button`
-	background: #8b4513;
-	border: 1px solid #8b4513;
-	border-radius: 4px;
-	color: white;
-	font-size: 0.85rem;
-	font-weight: bold;
-	padding: 0.5rem 0.75rem;
+	background: ${theme.colors.bg.tertiary};
+	border: 1px solid ${theme.colors.accent.primary};
+	border-radius: ${theme.borderRadius.md};
+	color: ${theme.colors.accent.primary};
+	font-size: ${theme.typography.fontSize.sm};
+	font-weight: ${theme.typography.fontWeight.bold};
+	padding: ${theme.spacing[2]} ${theme.spacing[3]};
 	cursor: pointer;
-	transition: all 0.2s ease;
+	transition: all ${theme.transitions.fast};
 
 	&:hover {
-		background-color: #6d3410;
+		background-color: ${theme.colors.accent.primary};
+		color: ${theme.colors.text.inverse};
+		transform: translateY(-1px);
 	}
 
 	&:active {
@@ -100,9 +106,9 @@ export const StyledAddButton = styled.button`
 export const StyledDeleteButton = styled.button`
 	width: 24px;
 	height: 24px;
-	border: 1px solid #dc2626;
-	background-color: #fee2e2;
-	color: #dc2626;
+	border: 1px solid var(--danger-border);
+	background-color: var(--danger-bg-light);
+	color: var(--danger-border);
 	border-radius: 4px;
 	font-size: 14px;
 	cursor: pointer;
@@ -113,7 +119,7 @@ export const StyledDeleteButton = styled.button`
 	font-weight: bold;
 
 	&:hover {
-		background-color: #fecaca;
+		background-color: var(--danger-bg-hover);
 	}
 
 	&:active {
@@ -122,13 +128,13 @@ export const StyledDeleteButton = styled.button`
 `;
 
 export const StyledEditButton = styled.button`
-	background: #f9f9f9;
-	border: 1px solid #8b4513;
-	border-radius: 4px;
-	color: #8b4513;
+	background: ${theme.colors.bg.tertiary};
+	border: 1px solid ${theme.colors.accent.primary};
+	border-radius: ${theme.borderRadius.sm};
+	color: ${theme.colors.accent.primary};
 	font-size: 1rem;
 	cursor: pointer;
-	transition: all 0.2s ease;
+	transition: all ${theme.transitions.fast};
 	width: 24px;
 	height: 24px;
 	display: flex;
@@ -137,8 +143,8 @@ export const StyledEditButton = styled.button`
 	padding: 0;
 
 	&:hover {
-		background: #8b4513;
-		color: white;
+		background: ${theme.colors.accent.primary};
+		color: ${theme.colors.text.inverse};
 	}
 
 	&:active {
@@ -147,19 +153,19 @@ export const StyledEditButton = styled.button`
 `;
 
 export const StyledSaveButton = styled.button`
-	background: #f9f9f9;
-	border: 1px solid #8b4513;
-	border-radius: 4px;
-	color: #8b4513;
-	font-size: 0.85rem;
-	font-weight: bold;
-	padding: 0.4rem 0.6rem;
+	background: ${theme.colors.bg.tertiary};
+	border: 1px solid ${theme.colors.accent.primary};
+	border-radius: ${theme.borderRadius.sm};
+	color: ${theme.colors.accent.primary};
+	font-size: ${theme.typography.fontSize.sm};
+	font-weight: ${theme.typography.fontWeight.bold};
+	padding: ${theme.spacing[1]} ${theme.spacing[2]};
 	cursor: pointer;
-	transition: all 0.2s ease;
+	transition: all ${theme.transitions.fast};
 
 	&:hover {
-		background: #8b4513;
-		color: white;
+		background: ${theme.colors.accent.primary};
+		color: ${theme.colors.text.inverse};
 	}
 
 	&:active {
@@ -168,19 +174,19 @@ export const StyledSaveButton = styled.button`
 `;
 
 export const StyledCancelButton = styled.button`
-	background: #f9f9f9;
-	border: 1px solid #8b4513;
-	border-radius: 4px;
-	color: #8b4513;
-	font-size: 0.85rem;
-	font-weight: bold;
-	padding: 0.4rem 0.6rem;
+	background: ${theme.colors.bg.tertiary};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.sm};
+	color: ${theme.colors.text.secondary};
+	font-size: ${theme.typography.fontSize.sm};
+	font-weight: ${theme.typography.fontWeight.bold};
+	padding: ${theme.spacing[1]} ${theme.spacing[2]};
 	cursor: pointer;
-	transition: all 0.2s ease;
+	transition: all ${theme.transitions.fast};
 
 	&:hover {
-		background: #8b4513;
-		color: white;
+		background: ${theme.colors.bg.elevated};
+		color: ${theme.colors.text.primary};
 	}
 
 	&:active {
@@ -189,17 +195,17 @@ export const StyledCancelButton = styled.button`
 `;
 
 export const StyledAddNoteSection = styled.div`
-	border-top: 1px solid #8b4513;
-	padding-top: 0.75rem;
+	border-top: 1px solid ${theme.colors.border.default};
+	padding-top: ${theme.spacing[3]};
 `;
 
 export const StyledEmptyNotesMessage = styled.div`
-	color: #8b4513;
+	color: ${theme.colors.text.muted};
 	font-style: italic;
 	text-align: center;
-	padding: 1.5rem 1rem;
-	border: 1px dashed #8b4513;
-	border-radius: 4px;
-	background: #f9f9f9;
-	font-size: 0.9rem;
+	padding: ${theme.spacing[6]} ${theme.spacing[4]};
+	border: 1px dashed ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
+	background: ${theme.colors.bg.tertiary};
+	font-size: ${theme.typography.fontSize.sm};
 `;

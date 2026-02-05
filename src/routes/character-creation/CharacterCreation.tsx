@@ -577,13 +577,19 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 					// Validate talents are fully spent
 					if (availableTalents > 0 && totalTalentsUsed < availableTalents) {
-						debug.warn('State', `Talents not fully allocated: ${totalTalentsUsed}/${availableTalents}`);
+						debug.warn(
+							'State',
+							`Talents not fully allocated: ${totalTalentsUsed}/${availableTalents}`
+						);
 						return false;
 					}
 
 					// Validate path points are fully spent
 					if (availablePathPoints > 0 && pathPointsUsed < availablePathPoints) {
-						debug.warn('State', `Path points not fully allocated: ${pathPointsUsed}/${availablePathPoints}`);
+						debug.warn(
+							'State',
+							`Path points not fully allocated: ${pathPointsUsed}/${availablePathPoints}`
+						);
 						return false;
 					}
 
@@ -883,10 +889,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				</div>
 			</header>
 
-			<main className="container mx-auto max-w-7xl flex-1 px-4 py-8">
-
-				{renderCurrentStep()}
-			</main>
+			<main className="container mx-auto max-w-7xl flex-1 px-4 py-8">{renderCurrentStep()}</main>
 
 			<Snackbar
 				message={snackbarMessage}
@@ -895,10 +898,13 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				duration={3000}
 			/>
 
-			<Dialog open={showAuthDialog} onOpenChange={(open) => {
+			<Dialog
+				open={showAuthDialog}
+				onOpenChange={(open) => {
 					setShowAuthDialog(open);
 					if (!open) setPendingSave(false); // Clear pending save if dialog dismissed
-				}}>
+				}}
+			>
 				<DialogContent className="border-purple-500/50 bg-transparent p-0 shadow-none">
 					<SignIn
 						feature="cloud-save"
@@ -915,4 +921,3 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 };
 
 export default CharacterCreation;
-

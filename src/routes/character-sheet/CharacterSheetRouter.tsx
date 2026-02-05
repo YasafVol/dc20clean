@@ -1,59 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import CharacterSheetClean from './CharacterSheetClean';
-import CharacterSheetMobile from './CharacterSheetMobile';
+import CharacterSheetRedesign from './CharacterSheetRedesign';
 import { CharacterSheetProvider } from './hooks/CharacterSheetProvider';
-import { logger } from '../../lib/utils/logger';
-
-// Breakpoint for mobile vs desktop (matches the existing project's mobile breakpoint)
-const MOBILE_BREAKPOINT = 768;
 
 interface CharacterSheetRouterProps {
 	characterId: string;
 	onBack?: () => void;
 }
 
+/**
+ * Character Sheet Router
+ *
+ * Provides CharacterSheetProvider context and renders the responsive CharacterSheetRedesign.
+ * CharacterSheetRedesign now handles mobile/tablet/desktop layouts internally via CSS media queries.
+ */
 const CharacterSheetRouter: React.FC<CharacterSheetRouterProps> = ({ characterId }) => {
 	const navigate = useNavigate();
-
-	// Initialize isMobile with immediate detection to prevent double rendering
-	const [isMobile, setIsMobile] = useState(() => {
-		// Only do this check if window is available (client-side)
-		if (typeof window !== 'undefined') {
-			const mobile = window.innerWidth <= MOBILE_BREAKPOINT;
-			logger.debug('ui', "Gimli's Initial Mobile Check", { width: window.innerWidth, mobile });
-			return mobile;
-		}
-		return false;
-	});
-
-	useEffect(() => {
-		const checkMobile = () => {
-			const width = window.innerWidth;
-			const mobile = width <= MOBILE_BREAKPOINT;
-			logger.debug('ui', "Gimli's Responsive Check", { width, mobile, breakpoint: MOBILE_BREAKPOINT });
-			setIsMobile(mobile);
-		};
-		checkMobile();
-		window.addEventListener('resize', checkMobile);
-		return () => window.removeEventListener('resize', checkMobile);
-	}, []);
-
 	const handleBackToMenu = () => navigate('/menu');
 
 	return (
 		<CharacterSheetProvider characterId={characterId}>
-			{(() => {
-				if (isMobile) {
-					return <CharacterSheetMobile />;
-				} else {
-					return <CharacterSheetClean characterId={characterId} onBack={handleBackToMenu} />;
-				}
-			})()}
+			<CharacterSheetRedesign characterId={characterId} onBack={handleBackToMenu} />
 		</CharacterSheetProvider>
 	);
 };
 
 export default CharacterSheetRouter;
-
-

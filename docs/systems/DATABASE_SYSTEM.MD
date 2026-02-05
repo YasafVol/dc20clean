@@ -9,18 +9,18 @@
 
 The DC20 Character Creator uses a **hybrid storage model**:
 
-| Storage | Status | Use Case |
-|---------|--------|----------|
-| **localStorage** | Active (default) | Anonymous users, offline-first |
-| **Convex** | Active | Authenticated users, cloud sync, DM Tools |
+| Storage          | Status           | Use Case                                  |
+| ---------------- | ---------------- | ----------------------------------------- |
+| **localStorage** | Active (default) | Anonymous users, offline-first            |
+| **Convex**       | Active           | Authenticated users, cloud sync, DM Tools |
 
 ### 1.1 Data Domains
 
-| Domain | Tables | Status |
-|--------|--------|--------|
-| Characters | `characters` | Active (Convex + localStorage) |
-| DM Tools: Monsters | `monsters`, `customFeatures` | Active (Convex) |
-| DM Tools: Encounters | `encounters` | Active (Convex) |
+| Domain               | Tables                       | Status                         |
+| -------------------- | ---------------------------- | ------------------------------ |
+| Characters           | `characters`                 | Active (Convex + localStorage) |
+| DM Tools: Monsters   | `monsters`, `customFeatures` | Active (Convex)                |
+| DM Tools: Encounters | `encounters`                 | Active (Convex)                |
 
 The storage abstraction layer (`src/lib/storage/`) allows seamless switching between backends.
 
@@ -34,15 +34,15 @@ The primary data structure for character persistence. Defined in `src/lib/types/
 
 **Key sections:**
 
-| Section | Fields | Description |
-|---------|--------|-------------|
-| Identity | `id`, `finalName`, `finalPlayerName`, `level` | Core character info |
-| Class/Ancestry | `classId`, `className`, `ancestry1Id`, `ancestry1Name`, etc. | Build choices |
-| Attributes | `finalMight`, `finalAgility`, `finalCharisma`, `finalIntelligence` | Core stats |
-| Derived Stats | `finalHPMax`, `finalSPMax`, `finalMPMax`, `finalPD`, `finalAD`, etc. | Calculated values |
-| Selections | `selectedTraitIds`, `selectedFeatureChoices`, `skillsData`, `tradesData` | User choices |
-| Game State | `characterState` | Current HP, inventory, notes, etc. |
-| Metadata | `createdAt`, `lastModified`, `schemaVersion` | Timestamps and version |
+| Section        | Fields                                                                   | Description                        |
+| -------------- | ------------------------------------------------------------------------ | ---------------------------------- |
+| Identity       | `id`, `finalName`, `finalPlayerName`, `level`                            | Core character info                |
+| Class/Ancestry | `classId`, `className`, `ancestry1Id`, `ancestry1Name`, etc.             | Build choices                      |
+| Attributes     | `finalMight`, `finalAgility`, `finalCharisma`, `finalIntelligence`       | Core stats                         |
+| Derived Stats  | `finalHPMax`, `finalSPMax`, `finalMPMax`, `finalPD`, `finalAD`, etc.     | Calculated values                  |
+| Selections     | `selectedTraitIds`, `selectedFeatureChoices`, `skillsData`, `tradesData` | User choices                       |
+| Game State     | `characterState`                                                         | Current HP, inventory, notes, etc. |
+| Metadata       | `createdAt`, `lastModified`, `schemaVersion`                             | Timestamps and version             |
 
 ### 2.2 CharacterState
 
@@ -50,31 +50,32 @@ Runtime state stored within `SavedCharacter.characterState`:
 
 ```typescript
 interface CharacterState {
-  resources: {
-    current: {
-      currentHP: number;
-      currentSP: number;
-      currentMP: number;
-      currentGritPoints: number;
-      currentRestPoints: number;
-      tempHP: number;
-      actionPointsUsed: number;
-      exhaustionLevel: number;
-      deathSteps: number;
-      isDead: boolean;
-    };
-  };
-  ui: {
-    manualDefenseOverrides: { PD?: number; AD?: number; PDR?: number };
-  };
-  inventory: {
-    items: InventoryItemData[];
-    currency: { gold: number; silver: number; copper: number };
-  };
-  notes: { playerNotes: string };
-  attacks?: AttackData[];
-  spells?: SpellData[];
-  maneuvers?: ManeuverData[];
+	resources: {
+		current: {
+			currentHP: number;
+			currentSP: number;
+			currentMP: number;
+			currentGritPoints: number;
+			currentRestPoints: number;
+			tempHP: number;
+			actionPointsUsed: number;
+			exhaustionLevel: number;
+			deathSteps: number;
+			isDead: boolean;
+		};
+	};
+	ui: {
+		manualDefenseOverrides: { PD?: number; AD?: number; PDR?: number };
+	};
+	inventory: {
+		items: InventoryItemData[];
+		currency: { gold: number; silver: number; copper: number };
+	};
+	notes: { playerNotes: string };
+	activeConditions?: string[];
+	attacks?: AttackData[];
+	spells?: SpellData[];
+	maneuvers?: ManeuverData[];
 }
 ```
 
@@ -109,14 +110,14 @@ interface CharacterState {
 ```typescript
 // src/lib/storage/characterStorage.ts
 interface CharacterStorage {
-  getAllCharacters(): Promise<SavedCharacter[]>;
-  getCharacterById(id: string): Promise<SavedCharacter | null>;
-  saveCharacter(character: SavedCharacter): Promise<void>;
-  saveAllCharacters(characters: SavedCharacter[]): Promise<void>;
-  saveCharacterState(characterId: string, state: CharacterState): Promise<void>;
-  deleteCharacter(id: string): Promise<void>;
-  backup(): Promise<void>;
-  restoreFromBackup(): Promise<boolean>;
+	getAllCharacters(): Promise<SavedCharacter[]>;
+	getCharacterById(id: string): Promise<SavedCharacter | null>;
+	saveCharacter(character: SavedCharacter): Promise<void>;
+	saveAllCharacters(characters: SavedCharacter[]): Promise<void>;
+	saveCharacterState(characterId: string, state: CharacterState): Promise<void>;
+	deleteCharacter(id: string): Promise<void>;
+	backup(): Promise<void>;
+	restoreFromBackup(): Promise<boolean>;
 }
 ```
 
@@ -143,13 +144,13 @@ savedCharacters_backup → Backup copy (for migration safety)
 
 ### 4.2 Key Functions
 
-| Function | File | Purpose |
-|----------|------|---------|
-| `getAllSavedCharacters()` | `storageUtils.ts` | Load all characters |
-| `saveAllCharacters()` | `storageUtils.ts` | Save all characters |
-| `getCharacterById()` | `storageUtils.ts` | Load single character |
-| `saveCharacter()` | `storageUtils.ts` | Save/update single character |
-| `saveCharacterState()` | `storageUtils.ts` | Update only game state |
+| Function                  | File              | Purpose                      |
+| ------------------------- | ----------------- | ---------------------------- |
+| `getAllSavedCharacters()` | `storageUtils.ts` | Load all characters          |
+| `saveAllCharacters()`     | `storageUtils.ts` | Save all characters          |
+| `getCharacterById()`      | `storageUtils.ts` | Load single character        |
+| `saveCharacter()`         | `storageUtils.ts` | Save/update single character |
+| `saveCharacterState()`    | `storageUtils.ts` | Update only game state       |
 
 ### 4.3 Serialization
 
@@ -177,15 +178,15 @@ savedCharacters_backup → Backup copy (for migration safety)
 ```typescript
 // convex/schema.ts
 characters: defineTable({
-  userId: v.id('users'),
-  id: v.string(),
-  finalName: v.string(),
-  level: v.number(),
-  // ... all SavedCharacter fields
+	userId: v.id('users'),
+	id: v.string(),
+	finalName: v.string(),
+	level: v.number()
+	// ... all SavedCharacter fields
 })
-  .index("by_user", ["userId"])
-  .index("by_user_and_id", ["userId", "id"])
-  .index("by_user_and_name", ["userId", "finalName"])
+	.index('by_user', ['userId'])
+	.index('by_user_and_id', ['userId', 'id'])
+	.index('by_user_and_name', ['userId', 'finalName']);
 ```
 
 ### 5.3 Schema - DM Tools: Monsters
@@ -267,22 +268,22 @@ encounters: defineTable({
 
 **Components** (`src/components/auth/`):
 
-| Component | Purpose |
-|-----------|---------|
-| `AuthStatus` | Sign in button / user menu in header |
-| `SignIn` | OAuth sign-in dialog with feature context |
-| `AuthGuard` | Route protection wrapper |
-| `useIsAuthenticated()` | Hook to check auth state |
+| Component              | Purpose                                   |
+| ---------------------- | ----------------------------------------- |
+| `AuthStatus`           | Sign in button / user menu in header      |
+| `SignIn`               | OAuth sign-in dialog with feature context |
+| `AuthGuard`            | Route protection wrapper                  |
+| `useIsAuthenticated()` | Hook to check auth state                  |
 
 **Access Control by Feature**:
 
-| Feature | Auth Required | Notes |
-|---------|---------------|-------|
-| Character Creation | No | Saves to localStorage without auth |
-| Character Creation → Save | **Prompted** | Auth dialog when clicking "Complete" |
-| Load Character | No | Loads from localStorage |
-| DM Tools (Laboratory, War Room) | **Yes** | Menu items hidden until signed in |
-| Reference Tools (Spellbook, Conditions, Equipage) | No | Public access |
+| Feature                                           | Auth Required | Notes                                |
+| ------------------------------------------------- | ------------- | ------------------------------------ |
+| Character Creation                                | No            | Saves to localStorage without auth   |
+| Character Creation → Save                         | **Prompted**  | Auth dialog when clicking "Complete" |
+| Load Character                                    | No            | Loads from localStorage              |
+| DM Tools (Laboratory, War Room)                   | **Yes**       | Menu items hidden until signed in    |
+| Reference Tools (Spellbook, Conditions, Equipage) | No            | Public access                        |
 
 **Character Creation Auth Flow**:
 
@@ -324,6 +325,7 @@ encounters: defineTable({
 ```
 
 Key implementation: `src/routes/character-creation/CharacterCreation.tsx`
+
 - `pendingSave` state tracks when waiting for auth
 - `useEffect` auto-triggers save when auth completes
 - No duplicate saves or manual re-click needed
@@ -362,9 +364,16 @@ When loading characters, `deserializeCharacterFromStorage()` automatically:
 **Not automatic** - users must:
 
 1. Export characters to JSON (existing feature)
-2. Enable Convex (`VITE_USE_CONVEX=true`, `VITE_CONVEX_URL=...`)
-3. Sign in to Convex
-4. Import characters (existing feature)
+2. Sign in to Convex
+3. Import characters (existing feature)
+
+### 6.4 Convex Schema Update Workflow
+
+When validators or table definitions change in `convex/`:
+
+1. Run `npx convex dev --once`
+2. Commit schema/function changes together with `convex/_generated/*`
+3. Roll out frontend code that consumes the updated generated API
 
 ---
 
@@ -372,29 +381,28 @@ When loading characters, `deserializeCharacterFromStorage()` automatically:
 
 ### 7.1 Character Storage
 
-| File | Purpose |
-|------|---------|
-| `src/lib/types/dataContracts.ts` | SavedCharacter, CharacterState types |
-| `src/lib/utils/storageUtils.ts` | localStorage CRUD operations |
-| `src/lib/storage/characterStorage.ts` | Storage interface definition |
-| `src/lib/storage/localStorageAdapter.ts` | localStorage adapter |
-| `src/lib/storage/convexStorageAdapter.ts` | Convex adapter |
-| `src/lib/storage/index.ts` | Backend selector |
-| `convex/schema.ts` | Convex schema (all tables) |
-| `convex/characters.ts` | Character mutations/queries |
+| File                                     | Purpose                              |
+| ---------------------------------------- | ------------------------------------ |
+| `src/lib/types/dataContracts.ts`         | SavedCharacter, CharacterState types |
+| `src/lib/utils/storageUtils.ts`          | localStorage CRUD operations         |
+| `src/lib/storage/characterStorage.ts`    | Storage interface definition         |
+| `src/lib/storage/localStorageAdapter.ts` | localStorage adapter                 |
+| `src/lib/storage/index.ts`               | Backend selector                     |
+| `convex/schema.ts`                       | Convex schema (all tables)           |
+| `convex/characters.ts`                   | Character mutations/queries          |
 
 ### 7.2 DM Tools Storage
 
-| File | Purpose |
-|------|---------|
-| `src/lib/rulesdata/schemas/monster.schema.ts` | SavedMonster, MonsterAction types |
-| `src/lib/rulesdata/schemas/encounter.schema.ts` | SavedEncounter, EncounterMonsterSlot types |
-| `src/lib/utils/idGenerator.ts` | Prefixed UUID generation (mon_, enc_, feat_, slot_, act_) |
-| `convex/monsters.ts` | Monster CRUD, fork, homebrew |
-| `convex/encounters.ts` | Encounter CRUD, slot management |
-| `convex/customFeatures.ts` | Custom feature management |
-| `src/lib/hooks/useMonsters.ts` | React hooks for monsters |
-| `src/lib/hooks/useEncounters.ts` | React hooks for encounters |
+| File                                            | Purpose                                                    |
+| ----------------------------------------------- | ---------------------------------------------------------- |
+| `src/lib/rulesdata/schemas/monster.schema.ts`   | SavedMonster, MonsterAction types                          |
+| `src/lib/rulesdata/schemas/encounter.schema.ts` | SavedEncounter, EncounterMonsterSlot types                 |
+| `src/lib/utils/idGenerator.ts`                  | Prefixed UUID generation (mon*, enc*, feat*, slot*, act\_) |
+| `convex/monsters.ts`                            | Monster CRUD, fork, homebrew                               |
+| `convex/encounters.ts`                          | Encounter CRUD, slot management                            |
+| `convex/customFeatures.ts`                      | Custom feature management                                  |
+| `src/lib/hooks/useMonsters.ts`                  | React hooks for monsters                                   |
+| `src/lib/hooks/useEncounters.ts`                | React hooks for encounters                                 |
 
 ---
 
@@ -425,7 +433,7 @@ const characters = await storage.getAllCharacters();
 import { saveCharacter } from '@/lib/utils/storageUtils';
 
 const saveCharacterData = async (character: SavedCharacter) => {
-  await saveCharacter(updatedCharacter);
+	await saveCharacter(updatedCharacter);
 };
 ```
 
@@ -438,9 +446,8 @@ const saveCharacterData = async (character: SavedCharacter) => {
 - **Calculation System** — `docs/systems/CALCULATION_SYSTEM.MD`
 - **Monster System** — `docs/systems/MONSTER_SYSTEM_SPEC.MD`
 - **Encounter System** — `docs/systems/ENCOUNTER_SYSTEM_SPEC.MD`
-- **Convex Migration** — `docs/archive/CONVEX_MIGRATION.md`
 
 ---
 
-> Last updated: 2026-01-31 (auth flow documented)
+> Last updated: 2026-02-04 (characterState.activeConditions + schema deploy workflow)
 > Maintainer: @DC20Clean-Team

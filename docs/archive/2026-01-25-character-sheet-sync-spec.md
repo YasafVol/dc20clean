@@ -29,6 +29,7 @@ state paths so add/remove/reset flows are reliable and persist correctly.
 - Wrong import paths for Maneuver types in a couple of files.
 
 Primary affected files:
+
 - `src/routes/character-sheet/hooks/useCharacterSheetReducer.ts`
 - `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx`
 - `src/lib/utils/characterState.ts`
@@ -44,10 +45,12 @@ Primary affected files:
 Pick one canonical store for spells/maneuvers and align all consumers:
 
 Option A (recommended):
+
 - Canonical: top-level `SavedCharacter.spells` / `SavedCharacter.maneuvers` arrays.
 - `characterState.spells` / `characterState.maneuvers` are removed or ignored for sheet UI.
 
 Option B:
+
 - Canonical: `characterState.spells.current` / `characterState.maneuvers.current`.
 - Top-level arrays are derived when saving or migrating.
 
@@ -58,17 +61,20 @@ Decision: Option A confirmed (2026-01-23).
 ## 4. Plan (detailed)
 
 ### 4.1 Data model alignment
+
 - Update `CharacterState` typing to avoid spells/maneuvers dual shape.
 - Remove or normalize any `{ original, current }` assumptions for spells/maneuvers.
 - Ensure `revertToOriginal` uses the canonical store (and original snapshot if needed).
 
 ### 4.2 Reducer + Provider sync
+
 - Update reducer actions so add/remove/update for spells and maneuvers update the
   canonical store only once.
 - Add explicit reset actions for spells/maneuvers and use them from the sheet UI.
 - Ensure save flow (`CharacterSheetProvider`) persists the canonical arrays.
 
 ### 4.3 Sheet visibility rules
+
 - Spells section: show when `calculationResult.spellsKnownSlots.length > 0` or
   when saved spells exist.
 - Maneuvers section: show when `calculationResult.levelBudgets.totalManeuversKnown > 0`
@@ -76,17 +82,20 @@ Decision: Option A confirmed (2026-01-23).
 - Remove class-progression-only checks for maneuver presence.
 
 ### 4.4 UI flows
+
 - Ensure add/remove works for both mobile and desktop without relying on local state.
 - Ensure reset/revert triggers reducer reset and updates UI immediately.
 - Fix maneuver type imports to the correct path.
 
 ### 4.5 Logging compliance
+
 - Replace direct `console.log` usage in character sheet flows with the logger
   utilities once available, or align with `debug` context helpers if logger is not
   ready.
 - Ensure log context and level match `docs/systems/LOGGING_SYSTEM.MD`.
 
 ### 4.6 Tests alignment (no edits without approval)
+
 - Validate e2e test selectors still match updated UI.
 - Document any test mismatches and request approval before changing tests.
 
@@ -113,6 +122,7 @@ the new source-of-truth and visibility rules.
 ## 6. Test and Logging Verification (current)
 
 ### 6.1 E2E tests
+
 - `e2e/09-spells.e2e.spec.ts` expects:
   - `data-testid="add-spell"` and per-row `select[data-testid^="spell-name-"]`
   - Filter input or `data-testid="spell-filter"` (current UI uses a select with
@@ -127,6 +137,7 @@ the new source-of-truth and visibility rules.
 No test changes should be made without explicit approval.
 
 ### 6.2 Logging system alignment
+
 - `docs/systems/LOGGING_SYSTEM.MD` defines contexted logger usage.
 - Character sheet logging now uses `logger` for UI/storage/calculation contexts.
 - Logging system is marked WIP; continue using `logger` and avoid direct `console.*`

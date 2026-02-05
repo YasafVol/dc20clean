@@ -11,6 +11,7 @@ import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { groupConditionsByType, getConditionById } from '../../../lib/services/conditionAggregator';
 import type { CharacterConditionStatus } from '../../../lib/rulesdata/conditions/conditions.types';
+import { theme } from '../styles/theme';
 
 interface ConditionsProps {
 	conditionStatuses: CharacterConditionStatus[];
@@ -19,53 +20,61 @@ interface ConditionsProps {
 
 // Styled components for the Conditions section
 const ConditionsContainer = styled.section<{ $isMobile?: boolean }>`
-	background: linear-gradient(135deg, rgba(30, 27, 75, 0.95) 0%, rgba(45, 40, 85, 0.9) 100%);
-	border: 1px solid #fbbf24;
-	border-radius: 8px;
-	padding: ${(props) => (props.$isMobile ? '12px' : '16px')};
-	margin: ${(props) => (props.$isMobile ? '8px 0' : '0')};
+	background: ${theme.colors.bg.secondary};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.lg};
+	padding: ${(props) => (props.$isMobile ? theme.spacing[3] : theme.spacing[4])};
+	margin: ${(props) => (props.$isMobile ? `${theme.spacing[2]} 0` : '0')};
 `;
 
 const SectionHeader = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 12px;
-	border-bottom: 1px solid rgba(251, 191, 36, 0.3);
-	padding-bottom: 8px;
+	margin-bottom: ${theme.spacing[3]};
+	border-bottom: 1px solid ${theme.colors.border.default};
+	padding-bottom: ${theme.spacing[2]};
 `;
 
 const SectionTitle = styled.h3`
 	font-family: 'Cinzel', 'Georgia', serif;
-	color: #fbbf24;
+	color: ${theme.colors.text.primary};
 	margin: 0;
-	font-size: 1.1rem;
+	font-size: ${theme.typography.fontSize.xl};
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: ${theme.spacing[2]};
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
 `;
 
 const SearchInput = styled.input`
-	background: rgba(0, 0, 0, 0.3);
-	border: 1px solid rgba(251, 191, 36, 0.3);
-	border-radius: 4px;
-	padding: 4px 8px;
-	color: #e5e7eb;
-	font-size: 0.85rem;
+	background: ${theme.colors.bg.primary};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
+	padding: ${theme.spacing[1]} ${theme.spacing[2]};
+	color: ${theme.colors.text.primary};
+	font-size: ${theme.typography.fontSize.sm};
 	width: 150px;
+	transition: all ${theme.transitions.fast};
 
 	&:focus {
 		outline: none;
-		border-color: #fbbf24;
+		border-color: ${theme.colors.accent.primary};
+		box-shadow: 0 0 0 2px rgba(125, 207, 255, 0.2);
 	}
 
 	&::placeholder {
-		color: rgba(229, 231, 235, 0.5);
+		color: ${theme.colors.text.muted};
 	}
 `;
 
 const GroupContainer = styled.div`
-	margin-bottom: 16px;
+	margin-bottom: ${theme.spacing[4]};
+	padding: ${theme.spacing[3]};
+	background: ${theme.colors.bg.primary};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
 
 	&:last-child {
 		margin-bottom: 0;
@@ -74,12 +83,12 @@ const GroupContainer = styled.div`
 
 const GroupTitle = styled.h4<{ $type: 'immunity' | 'resistance' | 'vulnerability' }>`
 	font-family: 'Urbanist', sans-serif;
-	font-size: 0.9rem;
-	font-weight: 600;
-	margin: 0 0 8px 0;
+	font-size: ${theme.typography.fontSize.base};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	margin: 0 0 ${theme.spacing[2]} 0;
 	display: flex;
 	align-items: center;
-	gap: 6px;
+	gap: ${theme.spacing[2]};
 	color: ${(props) => {
 		switch (props.$type) {
 			case 'immunity':
@@ -99,28 +108,37 @@ const ConditionsList = styled.ul`
 `;
 
 const ConditionItem = styled.li`
-	background: rgba(0, 0, 0, 0.2);
-	border-radius: 4px;
-	padding: 8px 12px;
-	margin-bottom: 6px;
+	background: ${theme.colors.bg.elevated};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
+	padding: ${theme.spacing[2]} ${theme.spacing[3]};
+	margin-bottom: ${theme.spacing[2]};
+	transition: all ${theme.transitions.fast};
 
 	&:last-child {
 		margin-bottom: 0;
+	}
+
+	&:hover {
+		background: ${theme.colors.bg.tertiary};
+		border-color: ${theme.colors.accent.primary};
+		transform: translateY(-1px);
 	}
 `;
 
 const ConditionName = styled.button`
 	background: none;
 	border: none;
-	color: #e5e7eb;
-	font-weight: 600;
-	font-size: 0.9rem;
+	color: ${theme.colors.text.primary};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	font-size: ${theme.typography.fontSize.sm};
 	padding: 0;
 	cursor: pointer;
 	text-align: left;
+	transition: all ${theme.transitions.fast};
 
 	&:hover {
-		color: #fbbf24;
+		color: ${theme.colors.accent.primary};
 		text-decoration: underline;
 	}
 `;
@@ -128,49 +146,55 @@ const ConditionName = styled.button`
 const ConditionSources = styled.ul`
 	list-style: none;
 	padding: 0;
-	margin: 4px 0 0 0;
+	margin: ${theme.spacing[1]} 0 0 0;
 `;
 
 const SourceItem = styled.li`
-	font-size: 0.8rem;
-	color: rgba(229, 231, 235, 0.8);
-	padding-left: 16px;
+	font-size: ${theme.typography.fontSize.xs};
+	color: ${theme.colors.text.secondary};
+	padding-left: ${theme.spacing[4]};
 	position: relative;
 
 	&::before {
 		content: '└─';
 		position: absolute;
 		left: 0;
-		color: rgba(251, 191, 36, 0.5);
+		color: ${theme.colors.accent.primary};
+		opacity: 0.5;
 	}
 `;
 
 const SourceDetails = styled.span`
-	color: rgba(251, 191, 36, 0.8);
+	color: ${theme.colors.accent.primary};
 	font-style: italic;
 `;
 
 const EmptyMessage = styled.p`
-	color: rgba(229, 231, 235, 0.6);
+	color: ${theme.colors.text.muted};
 	font-style: italic;
-	font-size: 0.85rem;
+	font-size: ${theme.typography.fontSize.sm};
 	text-align: center;
-	margin: 16px 0;
+	margin: ${theme.spacing[4]} 0;
 `;
 
 const ExpandButton = styled.button`
-	background: none;
-	border: 1px solid rgba(251, 191, 36, 0.3);
-	border-radius: 4px;
-	color: rgba(229, 231, 235, 0.8);
-	padding: 4px 8px;
-	font-size: 0.8rem;
+	background: ${theme.colors.bg.elevated};
+	border: 1px solid ${theme.colors.accent.primary};
+	border-radius: ${theme.borderRadius.md};
+	color: ${theme.colors.accent.primary};
+	padding: ${theme.spacing[2]} ${theme.spacing[3]};
+	font-size: ${theme.typography.fontSize.sm};
+	font-weight: ${theme.typography.fontWeight.semibold};
 	cursor: pointer;
-	margin-top: 8px;
+	margin-top: ${theme.spacing[3]};
+	transition: all ${theme.transitions.fast};
+	display: block;
+	width: 100%;
 
 	&:hover {
-		border-color: #fbbf24;
-		color: #fbbf24;
+		background: ${theme.colors.accent.primary};
+		color: ${theme.colors.text.inverse};
+		transform: translateY(-1px);
 	}
 `;
 
@@ -188,10 +212,10 @@ const ConditionModal = styled.div`
 `;
 
 const ModalContent = styled.div`
-	background: linear-gradient(135deg, rgba(30, 27, 75, 0.98) 0%, rgba(45, 40, 85, 0.98) 100%);
-	border: 2px solid #fbbf24;
-	border-radius: 12px;
-	padding: 24px;
+	background: ${theme.colors.bg.secondary};
+	border: 2px solid ${theme.colors.accent.primary};
+	border-radius: ${theme.borderRadius.lg};
+	padding: ${theme.spacing[6]};
 	max-width: 500px;
 	width: 90%;
 	max-height: 80vh;
@@ -200,41 +224,42 @@ const ModalContent = styled.div`
 
 const ModalTitle = styled.h3`
 	font-family: 'Cinzel', 'Georgia', serif;
-	color: #fbbf24;
-	margin: 0 0 16px 0;
+	color: ${theme.colors.accent.primary};
+	margin: 0 0 ${theme.spacing[4]} 0;
 `;
 
 const ModalDescription = styled.p`
-	color: #e5e7eb;
-	line-height: 1.6;
-	margin: 0 0 16px 0;
+	color: ${theme.colors.text.primary};
+	line-height: ${theme.typography.lineHeight.relaxed};
+	margin: 0 0 ${theme.spacing[4]} 0;
 `;
 
 const ModalMeta = styled.div`
 	display: flex;
-	gap: 12px;
-	font-size: 0.85rem;
-	color: rgba(229, 231, 235, 0.7);
+	gap: ${theme.spacing[3]};
+	font-size: ${theme.typography.fontSize.sm};
+	color: ${theme.colors.text.secondary};
 `;
 
 const ModalTag = styled.span`
-	background: rgba(251, 191, 36, 0.2);
-	padding: 2px 8px;
-	border-radius: 4px;
+	background: ${theme.colors.bg.tertiary};
+	padding: ${theme.spacing[1]} ${theme.spacing[2]};
+	border-radius: ${theme.borderRadius.sm};
 `;
 
 const CloseButton = styled.button`
-	background: #fbbf24;
+	background: ${theme.colors.accent.primary};
 	border: none;
-	border-radius: 4px;
-	color: #1e1b4b;
-	padding: 8px 16px;
-	font-weight: 600;
+	border-radius: ${theme.borderRadius.md};
+	color: ${theme.colors.text.inverse};
+	padding: ${theme.spacing[2]} ${theme.spacing[4]};
+	font-weight: ${theme.typography.fontWeight.semibold};
 	cursor: pointer;
-	margin-top: 16px;
+	margin-top: ${theme.spacing[4]};
+	transition: all ${theme.transitions.fast};
 
 	&:hover {
-		background: #f1bf3e;
+		background: ${theme.colors.accent.secondary};
 	}
 `;
 
@@ -268,11 +293,11 @@ export const Conditions: React.FC<ConditionsProps> = ({ conditionStatuses, isMob
 		};
 	}, [grouped, searchTerm]);
 
-	// Check if there are any interactions
+	// Check if there are any interactions (use FILTERED data)
 	const hasAnyInteractions =
-		grouped.immunities.length > 0 ||
-		grouped.resistances.length > 0 ||
-		grouped.vulnerabilities.length > 0;
+		filteredConditions.immunities.length > 0 ||
+		filteredConditions.resistances.length > 0 ||
+		filteredConditions.vulnerabilities.length > 0;
 
 	// Render a group of conditions
 	const renderConditionGroup = (
@@ -319,87 +344,7 @@ export const Conditions: React.FC<ConditionsProps> = ({ conditionStatuses, isMob
 		);
 	};
 
-	// Render condition detail modal
-	const renderModal = () => {
-		if (!selectedConditionId) return null;
-
-		const condition = getConditionById(selectedConditionId);
-		if (!condition) return null;
-
-		return (
-			<ConditionModal onClick={() => setSelectedConditionId(null)}>
-				<ModalContent onClick={(e) => e.stopPropagation()}>
-					<ModalTitle>{condition.name}</ModalTitle>
-					<ModalDescription>{condition.description}</ModalDescription>
-					<ModalMeta>
-						<ModalTag>Type: {condition.type}</ModalTag>
-						{condition.tags.map((tag) => (
-							<ModalTag key={tag}>{tag}</ModalTag>
-						))}
-					</ModalMeta>
-					<CloseButton onClick={() => setSelectedConditionId(null)}>Close</CloseButton>
-				</ModalContent>
-			</ConditionModal>
-		);
-	};
-
-	return (
-		<ConditionsContainer $isMobile={isMobile}>
-			<SectionHeader>
-				<SectionTitle>🛡️ Condition Interactions</SectionTitle>
-				<SearchInput
-					type="text"
-					placeholder="Search..."
-					value={searchTerm}
-					onChange={(e) => setSearchTerm(e.target.value)}
-				/>
-			</SectionHeader>
-
-			{!hasAnyInteractions && !expandedView ? (
-				<EmptyMessage>No special condition interactions</EmptyMessage>
-			) : (
-				<>
-					{renderConditionGroup('IMMUNITIES', '🚫', 'immunity', filteredConditions.immunities)}
-					{renderConditionGroup('RESISTANCES', '✨', 'resistance', filteredConditions.resistances)}
-					{renderConditionGroup(
-						'VULNERABILITIES',
-						'⚠️',
-						'vulnerability',
-						filteredConditions.vulnerabilities
-					)}
-				</>
-			)}
-
-			{expandedView && filteredConditions.noInteractions.length > 0 && (
-				<GroupContainer>
-					<GroupTitle $type="resistance" style={{ color: 'rgba(229, 231, 235, 0.6)' }}>
-						📋 All Other Conditions ({filteredConditions.noInteractions.length})
-					</GroupTitle>
-					<ConditionsList>
-						{filteredConditions.noInteractions.map((cs) => {
-							const condition = getConditionById(cs.conditionId);
-							return (
-								<ConditionItem key={cs.conditionId}>
-									<ConditionName onClick={() => setSelectedConditionId(cs.conditionId)}>
-										{condition?.name || cs.conditionId}
-									</ConditionName>
-									<ConditionSources>
-										<SourceItem>No special interaction</SourceItem>
-									</ConditionSources>
-								</ConditionItem>
-							);
-						})}
-					</ConditionsList>
-				</GroupContainer>
-			)}
-
-			<ExpandButton onClick={() => setExpandedView(!expandedView)}>
-				{expandedView ? 'Hide All Conditions' : 'Show All Conditions'}
-			</ExpandButton>
-
-			{renderModal()}
-		</ConditionsContainer>
-	);
+	return <ConditionsContainer $isMobile={isMobile}></ConditionsContainer>;
 };
 
 export default Conditions;

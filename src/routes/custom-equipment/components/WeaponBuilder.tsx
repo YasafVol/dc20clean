@@ -169,9 +169,10 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 			style: style!,
 			secondaryStyle: hasMultiFaceted ? secondaryStyle || undefined : undefined,
 			damageType: damageType || styleData?.defaultDamageType || 'slashing',
-			secondaryDamageType: hasMultiFaceted && secondaryStyle
-				? WEAPON_STYLES.find((s) => s.id === secondaryStyle)?.defaultDamageType
-				: undefined,
+			secondaryDamageType:
+				hasMultiFaceted && secondaryStyle
+					? WEAPON_STYLES.find((s) => s.id === secondaryStyle)?.defaultDamageType
+					: undefined,
 			baseDamage: 1,
 			finalDamage: calculateDamage(),
 			range: calculateRange(),
@@ -192,7 +193,9 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 	};
 
 	const styleData = style ? WEAPON_STYLES.find((s) => s.id === style) : null;
-	const secondaryStyleData = secondaryStyle ? WEAPON_STYLES.find((s) => s.id === secondaryStyle) : null;
+	const secondaryStyleData = secondaryStyle
+		? WEAPON_STYLES.find((s) => s.id === secondaryStyle)
+		: null;
 
 	return (
 		<BuilderContainer>
@@ -276,7 +279,9 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 												</Badge>
 											))}
 											{preset.properties.length > 3 && (
-												<span className="text-xs text-gray-500">+{preset.properties.length - 3}</span>
+												<span className="text-xs text-gray-500">
+													+{preset.properties.length - 3}
+												</span>
 											)}
 										</div>
 									</OptionCard>
@@ -337,7 +342,9 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 									<div className="text-xs text-gray-400">{styleOption.enhancement.effect}</div>
 								</div>
 								{styleOption.specialNotes && (
-									<div className="mt-2 text-xs italic text-gray-500">{styleOption.specialNotes}</div>
+									<div className="mt-2 text-xs text-gray-500 italic">
+										{styleOption.specialNotes}
+									</div>
 								)}
 							</OptionCard>
 						))}
@@ -406,7 +413,8 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 								property.excludes.some((exc) => selectedProperties.includes(exc));
 
 							const isDisabled =
-								(wouldExceedPoints && !isSelected) || (!isSelected && (!requirementsMet || hasExcluded));
+								(wouldExceedPoints && !isSelected) ||
+								(!isSelected && (!requirementsMet || hasExcluded));
 
 							return (
 								<OptionCard
@@ -418,7 +426,11 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 									<div className="mb-1 flex items-center justify-between">
 										<OptionTitle>{property.name}</OptionTitle>
 										<PropertyTag $cost={property.cost}>
-											{property.cost > 0 ? `+${property.cost}` : property.cost === 0 ? 'Free' : property.cost}
+											{property.cost > 0
+												? `+${property.cost}`
+												: property.cost === 0
+													? 'Free'
+													: property.cost}
 										</PropertyTag>
 									</div>
 									<OptionDescription>{property.description}</OptionDescription>
@@ -498,14 +510,16 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 							value={name}
 							onChange={(e) => setName(e.target.value)}
 							placeholder="Enter a name for your weapon..."
-							className="w-full rounded-md border border-gray-700 bg-slate-900 px-3 py-2 text-white focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+							className="w-full rounded-md border border-gray-700 bg-slate-900 px-3 py-2 text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none"
 						/>
 					</div>
 
 					<SummaryCard>
 						<SummaryRow>
 							<SummaryLabel>Type</SummaryLabel>
-							<SummaryValue>{weaponType === 'ranged' ? 'Ranged Weapon' : 'Melee Weapon'}</SummaryValue>
+							<SummaryValue>
+								{weaponType === 'ranged' ? 'Ranged Weapon' : 'Melee Weapon'}
+							</SummaryValue>
 						</SummaryRow>
 						<SummaryRow>
 							<SummaryLabel>Style</SummaryLabel>
@@ -528,7 +542,7 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 							</SummaryValue>
 						</SummaryRow>
 
-						<div className="mb-2 mt-4 text-sm font-semibold text-gray-400">Final Stats</div>
+						<div className="mt-4 mb-2 text-sm font-semibold text-gray-400">Final Stats</div>
 						<SummaryRow>
 							<SummaryLabel>Damage</SummaryLabel>
 							<SummaryValue>{calculateDamage()}</SummaryValue>
@@ -541,7 +555,9 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 						{/* Enhancement */}
 						{styleData && (
 							<>
-								<div className="mb-2 mt-4 text-sm font-semibold text-gray-400">Weapon Enhancement</div>
+								<div className="mt-4 mb-2 text-sm font-semibold text-gray-400">
+									Weapon Enhancement
+								</div>
 								<div className="rounded bg-slate-800/50 p-3">
 									<div className="font-semibold text-amber-400">{styleData.enhancement.name}</div>
 									<div className="text-sm text-gray-400">{styleData.enhancement.effect}</div>
@@ -554,7 +570,9 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 
 						{secondaryStyleData && (
 							<div className="mt-2 rounded bg-slate-800/50 p-3">
-								<div className="font-semibold text-amber-400">{secondaryStyleData.enhancement.name}</div>
+								<div className="font-semibold text-amber-400">
+									{secondaryStyleData.enhancement.name}
+								</div>
 								<div className="text-sm text-gray-400">{secondaryStyleData.enhancement.effect}</div>
 							</div>
 						)}
@@ -562,7 +580,7 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 						{/* Properties */}
 						{selectedProperties.length > 0 && (
 							<>
-								<div className="mb-2 mt-4 text-sm font-semibold text-gray-400">Properties</div>
+								<div className="mt-4 mb-2 text-sm font-semibold text-gray-400">Properties</div>
 								<div className="flex flex-wrap gap-2">
 									{selectedProperties.map((propId) => {
 										const prop = ALL_WEAPON_PROPERTIES.find((p) => p.id === propId);

@@ -122,6 +122,7 @@ export const getDefaultCharacterState = (): CharacterState => ({
 		currency: { gold: 0, silver: 0, copper: 0 }
 	},
 	notes: { playerNotes: '' },
+	activeConditions: [],
 	attacks: [],
 	spells: [],
 	maneuvers: []
@@ -164,7 +165,8 @@ export const getInitializedCharacterState = (character: any): CharacterState => 
 	},
 	notes: {
 		playerNotes: ''
-	}
+	},
+	activeConditions: []
 });
 
 /**

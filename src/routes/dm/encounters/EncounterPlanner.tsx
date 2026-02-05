@@ -10,14 +10,9 @@ import { Button } from '../../../components/ui/button';
 import { useEncounter, useEncounterMutations } from '../../../lib/hooks/useEncounters';
 import {
 	EncounterPlannerProvider,
-	useEncounterPlanner,
+	useEncounterPlanner
 } from '../../../lib/hooks/useEncounterPlanner';
-import {
-	BudgetMeter,
-	DifficultySelector,
-	PartyConfigForm,
-	MonsterSlots,
-} from './components';
+import { BudgetMeter, DifficultySelector, PartyConfigForm, MonsterSlots } from './components';
 import {
 	PageContainer,
 	Header,
@@ -37,7 +32,7 @@ import {
 	FormLabel,
 	ValidationList,
 	ValidationItem,
-	ValidationIcon,
+	ValidationIcon
 } from './styles/EncounterStyles';
 
 const EncounterPlannerContent: React.FC = () => {
@@ -46,7 +41,7 @@ const EncounterPlannerContent: React.FC = () => {
 	const isNew = id === 'new';
 
 	const { encounter: existingEncounter, isLoading: isLoadingEncounter } = useEncounter(
-		isNew ? null : id ?? null
+		isNew ? null : (id ?? null)
 	);
 	const { createEncounter, updateEncounter } = useEncounterMutations();
 
@@ -71,7 +66,7 @@ const EncounterPlannerContent: React.FC = () => {
 		clearSlotMonster,
 		setSlotQuantity,
 		loadEncounter,
-		dispatch,
+		dispatch
 	} = useEncounterPlanner();
 
 	const [isSaving, setIsSaving] = useState(false);
@@ -117,7 +112,7 @@ const EncounterPlannerContent: React.FC = () => {
 		return (
 			<PageContainer>
 				<MainContent>
-					<div className="text-center text-zinc-500 py-12">Loading encounter...</div>
+					<div className="py-12 text-center text-zinc-500">Loading encounter...</div>
 				</MainContent>
 			</PageContainer>
 		);
@@ -134,9 +129,7 @@ const EncounterPlannerContent: React.FC = () => {
 						<Title>{isNew ? 'New Encounter' : 'Edit Encounter'}</Title>
 					</HeaderLeft>
 					<HeaderRight>
-						{isDirty && (
-							<span className="text-xs text-amber-400">Unsaved changes</span>
-						)}
+						{isDirty && <span className="text-xs text-amber-400">Unsaved changes</span>}
 						<Button
 							variant="secondary"
 							onClick={handleSave}
@@ -164,7 +157,7 @@ const EncounterPlannerContent: React.FC = () => {
 										type="text"
 										value={encounter.name}
 										onChange={(e) => setName(e.target.value)}
-										className="w-full px-3 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:border-purple-500"
+										className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
 										placeholder="Encounter name"
 									/>
 								</FormGroup>
@@ -173,7 +166,7 @@ const EncounterPlannerContent: React.FC = () => {
 									<textarea
 										value={encounter.description ?? ''}
 										onChange={(e) => setDescription(e.target.value)}
-										className="w-full px-3 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:border-purple-500 resize-none"
+										className="w-full resize-none rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
 										rows={2}
 										placeholder="Describe the encounter..."
 									/>
@@ -239,7 +232,7 @@ const EncounterPlannerContent: React.FC = () => {
 										type="text"
 										value={encounter.environment ?? ''}
 										onChange={(e) => setEnvironment(e.target.value)}
-										className="w-full px-3 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:border-purple-500"
+										className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
 										placeholder="Forest clearing, dungeon room, etc."
 									/>
 								</FormGroup>
@@ -248,7 +241,7 @@ const EncounterPlannerContent: React.FC = () => {
 									<textarea
 										value={encounter.gmNotes ?? ''}
 										onChange={(e) => setGmNotes(e.target.value)}
-										className="w-full px-3 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:border-purple-500 resize-none"
+										className="w-full resize-none rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
 										rows={4}
 										placeholder="Tactics, traps, environmental hazards..."
 									/>

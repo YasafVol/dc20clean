@@ -31,7 +31,7 @@ export const list = query({
 			.collect();
 
 		return characters;
-	},
+	}
 });
 
 /**
@@ -51,7 +51,7 @@ export const getById = query({
 			.first();
 
 		return character ?? null;
-	},
+	}
 });
 
 /**
@@ -71,7 +71,7 @@ export const getByName = query({
 			.first();
 
 		return character;
-	},
+	}
 });
 
 // ============================================================================
@@ -83,7 +83,7 @@ export const getByName = query({
  */
 export const create = mutation({
 	args: {
-		character: v.any(), // Full SavedCharacter object (minus ID and userId)
+		character: v.any() // Full SavedCharacter object (minus ID and userId)
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -100,11 +100,11 @@ export const create = mutation({
 			...args.character,
 			userId,
 			createdAt: now,
-			lastModified: now,
+			lastModified: now
 		});
 
 		return characterId;
-	},
+	}
 });
 
 /**
@@ -113,7 +113,7 @@ export const create = mutation({
 export const update = mutation({
 	args: {
 		id: v.string(),
-		updates: v.any(), // Partial<SavedCharacter>
+		updates: v.any() // Partial<SavedCharacter>
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -131,11 +131,11 @@ export const update = mutation({
 
 		await ctx.db.patch(existing._id, {
 			...args.updates,
-			lastModified: new Date().toISOString(),
+			lastModified: new Date().toISOString()
 		});
 
 		return existing._id;
-	},
+	}
 });
 
 /**
@@ -144,7 +144,7 @@ export const update = mutation({
 export const updateState = mutation({
 	args: {
 		id: v.string(),
-		characterState: v.any(), // CharacterState object
+		characterState: v.any() // CharacterState object
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -162,11 +162,11 @@ export const updateState = mutation({
 
 		await ctx.db.patch(existing._id, {
 			characterState: args.characterState,
-			lastModified: new Date().toISOString(),
+			lastModified: new Date().toISOString()
 		});
 
 		return existing._id;
-	},
+	}
 });
 
 /**
@@ -191,7 +191,7 @@ export const remove = mutation({
 		await ctx.db.delete(existing._id);
 
 		return { success: true };
-	},
+	}
 });
 
 /**
@@ -222,9 +222,9 @@ export const duplicate = mutation({
 			id: `${existing.id}_copy_${Date.now()}`,
 			finalName: `${existing.finalName} (Copy)`,
 			createdAt: now,
-			lastModified: now,
+			lastModified: now
 		});
 
 		return newCharacterId;
-	},
+	}
 });

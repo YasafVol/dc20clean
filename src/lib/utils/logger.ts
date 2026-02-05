@@ -56,7 +56,7 @@ const LOG_LEVEL_PRIORITY: Record<LogLevel, number> = {
 	debug: 0,
 	info: 1,
 	warn: 2,
-	error: 3,
+	error: 3
 };
 
 /**
@@ -137,7 +137,7 @@ function log(level: LogLevel, context: LogContext, message: string, data?: objec
 		message,
 		data: data as Record<string, unknown>,
 		timestamp: new Date().toISOString(),
-		sessionId: getSessionId(),
+		sessionId: getSessionId()
 	};
 
 	// Console output
@@ -176,9 +176,9 @@ function sendToSentry(entry: LogEntry): void {
 				level: 'error',
 				tags: {
 					context: entry.context,
-					sessionId: entry.sessionId,
+					sessionId: entry.sessionId
 				},
-				extra: entry.data,
+				extra: entry.data
 			});
 		})
 		.catch(() => {
@@ -322,9 +322,9 @@ export const logger = {
 		return {
 			minLevel: MIN_LOG_LEVEL,
 			isDev: IS_DEV,
-			sessionId: getSessionId(),
+			sessionId: getSessionId()
 		};
-	},
+	}
 };
 
 // Default export for convenience

@@ -119,17 +119,20 @@ getNonCantrips(): Spell[]
 ---
 
 ### 4.1 Global Magic Profile
+
 - Defines the character's general spellcasting thematic bounds.
 - Aggregates "Global Expansion" effects (e.g., a Feature that adds "Arcane" to all your spellcasting).
 - Used as a fallback for all spell selection.
 
 ### 4.2 Spells Known Slots (Pockets)
+
 - Individual "pockets" that grant a single spell or cantrip.
 - Can have **Specific Restrictions** (e.g., "Must be from the Elemental school").
 - Sources: Class Progression, Subclass Features, Talents (Grant Spell effect).
 - Selection is tracked per-slot: `Record<SlotID, SpellID>`.
 
 ### 4.3 Validation Rules
+
 - **Type Mismatch**: Cantrips cannot fit into Spell slots and vice-versa.
 - **Restriction Mismatch**: Selected spells must match both the specific slot restrictions AND the Global Magic Profile.
 - **Exhaustion**: All available slots must be validly filled.

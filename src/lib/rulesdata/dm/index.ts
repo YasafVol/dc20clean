@@ -13,7 +13,7 @@ export {
 	getLevelDisplayName,
 	isValidMonsterLevel,
 	getAllMonsterLevels,
-	type MonsterBaseStats,
+	type MonsterBaseStats
 } from './monsterStatistics';
 
 // Monster Roles
@@ -23,7 +23,7 @@ export {
 	getMonsterRole,
 	isValidMonsterRoleId,
 	getAllMonsterRoleIds,
-	getRoleHPMultiplier,
+	getRoleHPMultiplier
 } from './monsterRoles';
 
 // Monster Features
@@ -35,5 +35,5 @@ export {
 	getFeaturesByCost,
 	calculateFeaturePointCost,
 	validateFeatureBudget,
-	isOfficialFeature,
+	isOfficialFeature
 } from './monsterFeatures';

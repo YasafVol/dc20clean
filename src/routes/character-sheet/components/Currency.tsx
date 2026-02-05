@@ -6,9 +6,11 @@ import {
 	CurrencyIconContainer,
 	CurrencyIcon,
 	CurrencyLabel,
-	CurrencyInput
+	CurrencyInput,
+	CurrencyLoadingState
 } from '../styles/Currency';
 import { useCharacterInventory, useCharacterSheet } from '../hooks/CharacterSheetProvider';
+import { theme } from '../styles/theme';
 
 interface CurrencyProps {
 	isMobile?: boolean;
@@ -23,9 +25,9 @@ const Currency: React.FC<CurrencyProps> = ({ isMobile = false }) => {
 
 	if (!inventory) {
 		return (
-			<div style={{ padding: '1rem', color: '#666', textAlign: 'center' }}>
+			<CurrencyLoadingState>
 				<p>Loading currency...</p>
-			</div>
+			</CurrencyLoadingState>
 		);
 	}
 
@@ -88,7 +90,7 @@ const Currency: React.FC<CurrencyProps> = ({ isMobile = false }) => {
 			key: 'copperPieces',
 			label: 'Copper',
 			color: '#b87333',
-			borderColor: '#8b4513',
+			borderColor: theme.colors.accent.primary,
 			value: canonicalCurrency.copperPieces
 		}
 	];

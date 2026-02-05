@@ -6,7 +6,12 @@
  * while providing the abstraction layer for future Convex integration.
  */
 
-import type { CharacterStorage, CharacterStorageWithEvents, StorageEventListener, StorageEvent } from './characterStorage';
+import type {
+	CharacterStorage,
+	CharacterStorageWithEvents,
+	StorageEventListener,
+	StorageEvent
+} from './characterStorage';
 import type { SavedCharacter, CharacterState } from '../types/dataContracts';
 import {
 	getAllSavedCharacters as legacyGetAll,
@@ -15,7 +20,7 @@ import {
 	saveCharacter as legacySave,
 	saveCharacterState as legacySaveState,
 	backupCharacterData,
-	restoreFromBackup as legacyRestore,
+	restoreFromBackup as legacyRestore
 } from '../utils/storageUtils';
 
 /**
@@ -29,7 +34,13 @@ class LocalStorageAdapter implements CharacterStorageWithEvents {
 	}
 
 	async getAllCharacters(): Promise<SavedCharacter[]> {
-		return legacyGetAll();
+		console.log('[GIMLI DEBUG] 🗂️ LocalStorageAdapter.getAllCharacters() called');
+		const characters = legacyGetAll();
+		console.log('[GIMLI DEBUG] 📋 LocalStorage characters:', {
+			characterCount: characters.length,
+			characters: characters.map(c => ({ id: c.id, name: c.finalName }))
+		});
+		return characters;
 	}
 
 	async getCharacterById(id: string): Promise<SavedCharacter | null> {
@@ -41,7 +52,7 @@ class LocalStorageAdapter implements CharacterStorageWithEvents {
 		this.emit({
 			type: 'save',
 			characterId: character.id,
-			timestamp: new Date(),
+			timestamp: new Date()
 		});
 	}
 
@@ -49,7 +60,7 @@ class LocalStorageAdapter implements CharacterStorageWithEvents {
 		legacySaveAll(characters);
 		this.emit({
 			type: 'save',
-			timestamp: new Date(),
+			timestamp: new Date()
 		});
 	}
 
@@ -58,7 +69,7 @@ class LocalStorageAdapter implements CharacterStorageWithEvents {
 		this.emit({
 			type: 'update',
 			characterId,
-			timestamp: new Date(),
+			timestamp: new Date()
 		});
 	}
 
@@ -69,7 +80,7 @@ class LocalStorageAdapter implements CharacterStorageWithEvents {
 		this.emit({
 			type: 'delete',
 			characterId: id,
-			timestamp: new Date(),
+			timestamp: new Date()
 		});
 	}
 
@@ -77,7 +88,7 @@ class LocalStorageAdapter implements CharacterStorageWithEvents {
 		backupCharacterData();
 		this.emit({
 			type: 'backup',
-			timestamp: new Date(),
+			timestamp: new Date()
 		});
 	}
 
@@ -86,7 +97,7 @@ class LocalStorageAdapter implements CharacterStorageWithEvents {
 		if (success) {
 			this.emit({
 				type: 'restore',
-				timestamp: new Date(),
+				timestamp: new Date()
 			});
 		}
 		return success;
@@ -119,5 +130,5 @@ export function getLocalStorageAdapter(): CharacterStorageWithEvents {
  * Export for direct use
  */
 export const localStorageAdapter = {
-	get: getLocalStorageAdapter,
+	get: getLocalStorageAdapter
 };

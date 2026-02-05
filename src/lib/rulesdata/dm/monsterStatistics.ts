@@ -30,7 +30,17 @@ export interface MonsterBaseStats {
  * Levels 0-10 are standard progression.
  */
 export const MONSTER_STATISTICS_TABLE: readonly MonsterBaseStats[] = [
-	{ level: -1, levelName: 'Novice', hp: 5, pd: 10, ad: 10, baseDamage: 1, attack: 2, saveDC: 12, featurePower: 0 },
+	{
+		level: -1,
+		levelName: 'Novice',
+		hp: 5,
+		pd: 10,
+		ad: 10,
+		baseDamage: 1,
+		attack: 2,
+		saveDC: 12,
+		featurePower: 0
+	},
 	{ level: 0, hp: 8, pd: 11, ad: 11, baseDamage: 1, attack: 3, saveDC: 13, featurePower: 1 },
 	{ level: 1, hp: 10, pd: 12, ad: 12, baseDamage: 1.5, attack: 4, saveDC: 14, featurePower: 1 },
 	{ level: 2, hp: 13, pd: 12, ad: 12, baseDamage: 2, attack: 4, saveDC: 14, featurePower: 2 },
@@ -41,7 +51,7 @@ export const MONSTER_STATISTICS_TABLE: readonly MonsterBaseStats[] = [
 	{ level: 7, hp: 25, pd: 16, ad: 16, baseDamage: 5.5, attack: 8, saveDC: 18, featurePower: 4 },
 	{ level: 8, hp: 27, pd: 16, ad: 16, baseDamage: 6.5, attack: 8, saveDC: 18, featurePower: 4 },
 	{ level: 9, hp: 29, pd: 17, ad: 17, baseDamage: 7, attack: 9, saveDC: 19, featurePower: 5 },
-	{ level: 10, hp: 31, pd: 18, ad: 18, baseDamage: 8, attack: 10, saveDC: 20, featurePower: 6 },
+	{ level: 10, hp: 31, pd: 18, ad: 18, baseDamage: 8, attack: 10, saveDC: 20, featurePower: 6 }
 ] as const;
 
 /**

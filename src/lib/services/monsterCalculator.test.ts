@@ -21,11 +21,15 @@ import {
 	validateFeatureBudget,
 	createDefaultMonster,
 	type MonsterCalculationInput,
-	type MonsterCalculationResult,
+	type MonsterCalculationResult
 } from './monsterCalculator';
 import { MONSTER_STATISTICS_TABLE } from '../rulesdata/dm/monsterStatistics';
 import { MONSTER_ROLES } from '../rulesdata/dm/monsterRoles';
-import type { MonsterAction, MonsterTier, MonsterRoleId } from '../rulesdata/schemas/monster.schema';
+import type {
+	MonsterAction,
+	MonsterTier,
+	MonsterRoleId
+} from '../rulesdata/schemas/monster.schema';
 
 describe('Monster Calculator', () => {
 	// ========================================================================
@@ -36,7 +40,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 0,
 				tier: 'standard',
-				roleId: 'controller', // No modifiers
+				roleId: 'controller' // No modifiers
 			};
 
 			const result = calculateMonsterStats(input);
@@ -54,7 +58,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'standard',
-				roleId: 'controller',
+				roleId: 'controller'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -72,7 +76,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 10,
 				tier: 'standard',
-				roleId: 'controller',
+				roleId: 'controller'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -90,7 +94,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: -1,
 				tier: 'standard',
-				roleId: 'controller',
+				roleId: 'controller'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -108,7 +112,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: -2,
 				tier: 'standard',
-				roleId: 'controller',
+				roleId: 'controller'
 			};
 
 			expect(() => calculateMonsterStats(input)).toThrow();
@@ -118,7 +122,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 11,
 				tier: 'standard',
-				roleId: 'controller',
+				roleId: 'controller'
 			};
 
 			expect(() => calculateMonsterStats(input)).toThrow();
@@ -129,7 +133,7 @@ describe('Monster Calculator', () => {
 				const input: MonsterCalculationInput = {
 					level: stats.level,
 					tier: 'standard',
-					roleId: 'controller', // No modifiers
+					roleId: 'controller' // No modifiers
 				};
 
 				const result = calculateMonsterStats(input);
@@ -153,7 +157,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'standard',
-				roleId: 'brute',
+				roleId: 'brute'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -166,7 +170,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'standard',
-				roleId: 'brute',
+				roleId: 'brute'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -180,7 +184,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'standard',
-				roleId: 'lurker',
+				roleId: 'lurker'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -193,7 +197,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'standard',
-				roleId: 'lurker',
+				roleId: 'lurker'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -207,7 +211,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'standard',
-				roleId: 'defender',
+				roleId: 'defender'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -223,7 +227,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'standard',
-				roleId: 'support',
+				roleId: 'support'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -239,7 +243,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'standard',
-				roleId: 'artillerist',
+				roleId: 'artillerist'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -255,7 +259,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'standard',
-				roleId: 'skirmisher',
+				roleId: 'skirmisher'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -268,13 +272,22 @@ describe('Monster Calculator', () => {
 		});
 
 		it('should not modify Attack, Save DC, or Base Damage for any role', () => {
-			const roles: MonsterRoleId[] = ['brute', 'lurker', 'defender', 'support', 'artillerist', 'skirmisher', 'controller', 'leader'];
+			const roles: MonsterRoleId[] = [
+				'brute',
+				'lurker',
+				'defender',
+				'support',
+				'artillerist',
+				'skirmisher',
+				'controller',
+				'leader'
+			];
 
 			for (const roleId of roles) {
 				const input: MonsterCalculationInput = {
 					level: 4,
 					tier: 'standard',
-					roleId,
+					roleId
 				};
 
 				const result = calculateMonsterStats(input);
@@ -289,7 +302,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'standard',
-				roleId: 'brute',
+				roleId: 'brute'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -308,7 +321,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'standard',
-				roleId: 'controller',
+				roleId: 'controller'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -320,7 +333,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'apex',
-				roleId: 'controller',
+				roleId: 'controller'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -333,7 +346,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'legendary',
-				roleId: 'controller',
+				roleId: 'controller'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -347,7 +360,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'apex',
-				roleId: 'brute',
+				roleId: 'brute'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -366,7 +379,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'standard',
-				roleId: 'controller',
+				roleId: 'controller'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -379,7 +392,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'apex',
-				roleId: 'controller',
+				roleId: 'controller'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -392,7 +405,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'legendary',
-				roleId: 'controller',
+				roleId: 'controller'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -408,7 +421,7 @@ describe('Monster Calculator', () => {
 				const input: MonsterCalculationInput = {
 					level: 4,
 					tier,
-					roleId: 'controller',
+					roleId: 'controller'
 				};
 
 				const result = calculateMonsterStats(input);
@@ -423,7 +436,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'apex',
-				roleId: 'controller',
+				roleId: 'controller'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -454,7 +467,7 @@ describe('Monster Calculator', () => {
 			const result = validateFeatureBudget(
 				[
 					'feat_d4e5f678-1234-4abc-9def-012345678901', // 1-point
-					'feat_c9d0e1f2-def0-4678-9abc-345678cdefab', // 2-point
+					'feat_c9d0e1f2-def0-4678-9abc-345678cdefab' // 2-point
 				],
 				3
 			);
@@ -468,7 +481,7 @@ describe('Monster Calculator', () => {
 			const result = validateFeatureBudget(
 				[
 					'feat_f8a9b0c1-6789-4f01-2345-234567fabcde', // 3-point (Spellcaster)
-					'feat_c9d0e1f2-def0-4678-9abc-345678cdefab', // 2-point
+					'feat_c9d0e1f2-def0-4678-9abc-345678cdefab' // 2-point
 				],
 				3
 			);
@@ -494,10 +507,7 @@ describe('Monster Calculator', () => {
 		});
 
 		it('should warn for unknown feature IDs but not count them', () => {
-			const result = validateFeatureBudget(
-				['feat_unknown-uuid-here-0000-000000000000'],
-				3
-			);
+			const result = validateFeatureBudget(['feat_unknown-uuid-here-0000-000000000000'], 3);
 
 			expect(result.valid).toBe(true);
 			expect(result.spent).toBe(0);
@@ -516,7 +526,7 @@ describe('Monster Calculator', () => {
 			targetDefense: 'pd',
 			damage: 4,
 			description: 'A slashing claw attack.',
-			...overrides,
+			...overrides
 		});
 
 		it('should validate action with normal damage', () => {
@@ -535,7 +545,7 @@ describe('Monster Calculator', () => {
 			expect(result.warnings).toContainEqual(
 				expect.objectContaining({
 					actionId: action.id,
-					message: expect.stringContaining('exceeds recommended maximum'),
+					message: expect.stringContaining('exceeds recommended maximum')
 				})
 			);
 		});
@@ -548,14 +558,14 @@ describe('Monster Calculator', () => {
 			expect(result.infos).toContainEqual(
 				expect.objectContaining({
 					actionId: action.id,
-					message: expect.stringContaining('below recommended minimum'),
+					message: expect.stringContaining('below recommended minimum')
 				})
 			);
 		});
 
 		it('should validate AP cost between 1 and 4', () => {
 			const validActions = [1, 2, 3, 4].map((apCost) => createValidAction({ apCost }));
-			
+
 			for (const action of validActions) {
 				const result = validateMonsterActions([action], 3.5);
 				expect(result.valid).toBe(true);
@@ -570,7 +580,7 @@ describe('Monster Calculator', () => {
 			expect(result.errors).toContainEqual(
 				expect.objectContaining({
 					actionId: action.id,
-					message: expect.stringContaining('AP cost'),
+					message: expect.stringContaining('AP cost')
 				})
 			);
 		});
@@ -582,7 +592,7 @@ describe('Monster Calculator', () => {
 			expect(result.errors).toContainEqual(
 				expect.objectContaining({
 					actionId: action.id,
-					message: expect.stringContaining('AP cost'),
+					message: expect.stringContaining('AP cost')
 				})
 			);
 		});
@@ -593,7 +603,7 @@ describe('Monster Calculator', () => {
 			expect(result.valid).toBe(false);
 			expect(result.errors).toContainEqual(
 				expect.objectContaining({
-					message: expect.stringContaining('least one action'),
+					message: expect.stringContaining('least one action')
 				})
 			);
 		});
@@ -601,7 +611,7 @@ describe('Monster Calculator', () => {
 		it('should validate multiple actions independently', () => {
 			const actions = [
 				createValidAction({ id: 'act_11111111-1111-4111-8111-111111111111', damage: 3 }),
-				createValidAction({ id: 'act_22222222-2222-4222-8222-222222222222', damage: 6 }), // High damage
+				createValidAction({ id: 'act_22222222-2222-4222-8222-222222222222', damage: 6 }) // High damage
 			];
 
 			const result = validateMonsterActions(actions, 3.5);
@@ -618,7 +628,7 @@ describe('Monster Calculator', () => {
 			expect(result.errors).toContainEqual(
 				expect.objectContaining({
 					actionId: action.id,
-					message: expect.stringContaining('name'),
+					message: expect.stringContaining('name')
 				})
 			);
 		});
@@ -630,7 +640,7 @@ describe('Monster Calculator', () => {
 			expect(result.errors).toContainEqual(
 				expect.objectContaining({
 					actionId: action.id,
-					message: expect.stringContaining('50 characters'),
+					message: expect.stringContaining('50 characters')
 				})
 			);
 		});
@@ -644,7 +654,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'apex',
-				roleId: 'brute',
+				roleId: 'brute'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -658,7 +668,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'standard',
-				roleId: 'lurker',
+				roleId: 'lurker'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -674,7 +684,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 4,
 				tier: 'standard',
-				roleId: 'lurker',
+				roleId: 'lurker'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -710,7 +720,7 @@ describe('Monster Calculator', () => {
 				name: 'Goblin',
 				level: 2,
 				tier: 'apex',
-				roleId: 'lurker',
+				roleId: 'lurker'
 			});
 
 			expect(monster.name).toBe('Goblin');
@@ -737,7 +747,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: -1,
 				tier: 'standard',
-				roleId: 'lurker', // -20% HP
+				roleId: 'lurker' // -20% HP
 			};
 
 			const result = calculateMonsterStats(input);
@@ -752,7 +762,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 10,
 				tier: 'legendary',
-				roleId: 'defender',
+				roleId: 'defender'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -771,7 +781,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 1,
 				tier: 'standard',
-				roleId: 'support',
+				roleId: 'support'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -783,7 +793,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: 0,
 				tier: 'standard',
-				roleId: 'controller',
+				roleId: 'controller'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -797,7 +807,7 @@ describe('Monster Calculator', () => {
 			const input: MonsterCalculationInput = {
 				level: -1,
 				tier: 'standard',
-				roleId: 'controller',
+				roleId: 'controller'
 			};
 
 			const result = calculateMonsterStats(input);
@@ -808,7 +818,16 @@ describe('Monster Calculator', () => {
 		});
 
 		it('should handle all role + tier combinations without error', () => {
-			const roles: MonsterRoleId[] = ['artillerist', 'brute', 'controller', 'defender', 'leader', 'lurker', 'skirmisher', 'support'];
+			const roles: MonsterRoleId[] = [
+				'artillerist',
+				'brute',
+				'controller',
+				'defender',
+				'leader',
+				'lurker',
+				'skirmisher',
+				'support'
+			];
 			const tiers: MonsterTier[] = ['standard', 'apex', 'legendary'];
 			const levels = [-1, 0, 1, 5, 10];
 

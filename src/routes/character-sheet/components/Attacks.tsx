@@ -3,6 +3,7 @@ import type { AttackData } from '../../../types';
 import { weapons, type Weapon } from '../../../lib/rulesdata/inventoryItems';
 import { useCharacterAttacks, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import { logger } from '../../../lib/utils/logger';
+import DeleteButton from './shared/DeleteButton';
 import {
 	parseDamage,
 	getDamageType,
@@ -21,7 +22,6 @@ import {
 	StyledHeaderColumn,
 	StyledEmptyState,
 	StyledAttackRow,
-	StyledRemoveButton,
 	StyledWeaponSelect,
 	StyledDamageCell,
 	StyledInfoIcon,
@@ -179,14 +179,11 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 						return (
 							<StyledAttackRow $isMobile={effectiveIsMobile} key={attack.id}>
 								{/* Remove Button */}
-								<StyledRemoveButton
-									$isMobile={effectiveIsMobile}
+								<DeleteButton
 									onClick={() => removeWeaponSlot(index)}
 									title="Remove weapon"
-									aria-label={`Remove weapon ${index + 1}`}
-								>
-									×
-								</StyledRemoveButton>
+									$isMobile={effectiveIsMobile}
+								/>
 
 								{/* Weapon Selection */}
 								<StyledWeaponSelect

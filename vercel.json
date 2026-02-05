@@ -1,12 +1,16 @@
 {
 	"buildCommand": "npx convex deploy --cmd 'npm run build'",
 	"outputDirectory": "dist",
+	"build": {
+		"env": {
+			"VITE_CONVEX_URL": "https://giant-horse-540.convex.cloud",
+			"VITE_USE_CONVEX": "true"
+		}
+	},
 	"headers": [
 		{
 			"source": "/assets/(.*)\\.js",
-			"headers": [
-				{ "key": "Content-Type", "value": "application/javascript; charset=utf-8" }
-			]
+			"headers": [{ "key": "Content-Type", "value": "application/javascript; charset=utf-8" }]
 		}
 	],
 	"rewrites": [

@@ -78,7 +78,7 @@ export function FeatureGateButton({
 	feature,
 	children,
 	className,
-	disabled,
+	disabled
 }: FeatureGateButtonProps) {
 	const [showSignIn, setShowSignIn] = React.useState(false);
 	const isAuthenticated = useIsAuthenticated();
@@ -93,12 +93,7 @@ export function FeatureGateButton({
 
 	return (
 		<>
-			<button
-				type="button"
-				onClick={handleClick}
-				className={className}
-				disabled={disabled}
-			>
+			<button type="button" onClick={handleClick} className={className} disabled={disabled}>
 				{children}
 			</button>
 

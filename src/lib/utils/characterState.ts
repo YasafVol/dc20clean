@@ -14,9 +14,7 @@ import { getDefaultStorage } from '../storage';
 import { debug } from './debug';
 
 // Get character state from localStorage - OPTIMIZED: Uses typed storage utility
-export const getCharacterState = async (
-	characterId: string
-): Promise<CharacterState | null> => {
+export const getCharacterState = async (characterId: string): Promise<CharacterState | null> => {
 	try {
 		const storage = getDefaultStorage();
 		const character = await storage.getCharacterById(characterId);
@@ -173,8 +171,8 @@ export const initializeCharacterState = (
 			original: originalAttacks,
 			current: existingState?.attacks?.current || [...originalAttacks] //FIXME this is wrong path!!!
 		},
-	spells: originalSpells,
-	maneuvers: characterData.maneuvers || [],
+		spells: originalSpells,
+		maneuvers: characterData.maneuvers || [],
 		inventory: {
 			original: originalInventory,
 			current: existingState?.inventory.current || []
@@ -282,8 +280,8 @@ export const updateCharacterState = async (
 				original: character.attacks || [],
 				current: character.attacks || []
 			},
-		spells: character.spells || [],
-		maneuvers: character.maneuvers || [],
+			spells: character.spells || [],
+			maneuvers: character.maneuvers || [],
 			inventory: {
 				original: character.inventory || [],
 				current: character.inventory || []
@@ -338,8 +336,8 @@ export const updateCharacterState = async (
 					...updates.attacks
 				}
 			: currentState.attacks,
-	spells: updates.spells ? [...updates.spells] : currentState.spells,
-	maneuvers: updates.maneuvers ? [...updates.maneuvers] : currentState.maneuvers,
+		spells: updates.spells ? [...updates.spells] : currentState.spells,
+		maneuvers: updates.maneuvers ? [...updates.maneuvers] : currentState.maneuvers,
 		inventory: updates.inventory
 			? {
 					...currentState.inventory,

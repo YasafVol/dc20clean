@@ -233,27 +233,27 @@ Traits with prerequisites require the base trait to be selected before the enhan
 
 ### 7.1 Complete Prerequisite Map
 
-| Base Trait | Enhanced Traits (require base) |
-|------------|--------------------------------|
-| **Beastborn** | |
-| Climb Speed | Spider Climb |
-| Glide Speed | Limited Flight |
-| Limited Flight | Flyby, Full Flight |
-| Thick-Skinned | Shell |
-| Natural Weapon | Extended Natural Weapon, Ranged Natural Weapon, Natural Weapon Style, Rending Natural Weapon, Retractable Natural Weapon, Venomous Natural Weapon |
-| Additional Limb | Capable Limb |
-| **Dragonborn** | |
-| Draconic Breath Weapon | Concussive Breath, Death's Breath, Improved Draconic Breath |
-| **Fiendborn** | |
-| Darkvision | Superior Darkvision |
-| **Giantborn** | |
-| Giant's Resolve | Giant's Fortitude |
-| **Terraborn** | |
-| Tremorsense | Superior Tremorsense |
-| **Shadowborn** | |
-| Darkvision | Superior Darkvision |
-| **Psyborn** | |
-| Telepathy | Telepathic Reach, Telepathic Link |
+| Base Trait             | Enhanced Traits (require base)                                                                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Beastborn**          |                                                                                                                                                   |
+| Climb Speed            | Spider Climb                                                                                                                                      |
+| Glide Speed            | Limited Flight                                                                                                                                    |
+| Limited Flight         | Flyby, Full Flight                                                                                                                                |
+| Thick-Skinned          | Shell                                                                                                                                             |
+| Natural Weapon         | Extended Natural Weapon, Ranged Natural Weapon, Natural Weapon Style, Rending Natural Weapon, Retractable Natural Weapon, Venomous Natural Weapon |
+| Additional Limb        | Capable Limb                                                                                                                                      |
+| **Dragonborn**         |                                                                                                                                                   |
+| Draconic Breath Weapon | Concussive Breath, Death's Breath, Improved Draconic Breath                                                                                       |
+| **Fiendborn**          |                                                                                                                                                   |
+| Darkvision             | Superior Darkvision                                                                                                                               |
+| **Giantborn**          |                                                                                                                                                   |
+| Giant's Resolve        | Giant's Fortitude                                                                                                                                 |
+| **Terraborn**          |                                                                                                                                                   |
+| Tremorsense            | Superior Tremorsense                                                                                                                              |
+| **Shadowborn**         |                                                                                                                                                   |
+| Darkvision             | Superior Darkvision                                                                                                                               |
+| **Psyborn**            |                                                                                                                                                   |
+| Telepathy              | Telepathic Reach, Telepathic Link                                                                                                                 |
 
 ### 7.2 Multi-Level Chains
 
@@ -267,11 +267,13 @@ Glide Speed → Limited Flight → Full Flight
 ### 7.3 UI Behavior
 
 When a prerequisite is not met:
+
 - Enhanced trait displays "Requires: [Base Trait Name]" in amber text
 - Checkbox is disabled and cursor shows not-allowed
 - Visual styling indicates unavailability (opacity reduced)
 
 When deselecting a base trait:
+
 - All dependent enhanced traits are automatically deselected (cascade)
 - This prevents orphaned selections
 

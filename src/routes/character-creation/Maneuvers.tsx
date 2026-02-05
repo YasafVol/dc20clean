@@ -85,12 +85,18 @@ const Maneuvers: React.FC = () => {
 	const handleManeuverToggle = (maneuverName: string) => {
 		setSelectedManeuvers((prev) => {
 			if (prev.includes(maneuverName)) {
-				debug.calculation('Maneuver deselected', { maneuverName, remaining: maneuverCount - prev.length + 1 });
+				debug.calculation('Maneuver deselected', {
+					maneuverName,
+					remaining: maneuverCount - prev.length + 1
+				});
 				return prev.filter((name) => name !== maneuverName);
 			} else {
 				// Check limits
 				if (prev.length >= maneuverCount) return prev;
-				debug.calculation('Maneuver selected', { maneuverName, remaining: maneuverCount - prev.length - 1 });
+				debug.calculation('Maneuver selected', {
+					maneuverName,
+					remaining: maneuverCount - prev.length - 1
+				});
 				return [...prev, maneuverName];
 			}
 		});
@@ -142,9 +148,9 @@ const Maneuvers: React.FC = () => {
 	}
 
 	return (
-		<div className="mx-auto max-w-7xl space-y-8 animate-in fade-in duration-500">
+		<div className="animate-in fade-in mx-auto max-w-7xl space-y-8 duration-500">
 			{/* Stage Header */}
-			<div className="relative overflow-hidden rounded-2xl border border-border bg-black/40 p-8 py-12 shadow-2xl">
+			<div className="border-border relative overflow-hidden rounded-2xl border bg-black/40 p-8 py-12 shadow-2xl">
 				<div className="relative z-10 flex flex-col justify-between gap-8 md:flex-row md:items-center">
 					<div className="max-w-2xl space-y-4">
 						<div className="flex items-center gap-3">
@@ -153,7 +159,7 @@ const Maneuvers: React.FC = () => {
 							</div>
 							<Badge
 								variant="outline"
-								className="border-purple-500/30 px-3 py-1 uppercase tracking-widest text-purple-400"
+								className="border-purple-500/30 px-3 py-1 tracking-widest text-purple-400 uppercase"
 							>
 								Maneuvers
 							</Badge>
@@ -170,7 +176,7 @@ const Maneuvers: React.FC = () => {
 					{/* Selection Summary Card */}
 					<Card className="min-w-[280px] border-purple-500/20 bg-black/60 backdrop-blur-sm">
 						<CardContent className="space-y-4 p-6">
-							<h3 className="font-cinzel flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-purple-400/80">
+							<h3 className="font-cinzel flex items-center gap-2 text-sm font-bold tracking-wider text-purple-400/80 uppercase">
 								<Info className="h-4 w-4" /> Selection Summary
 							</h3>
 
@@ -189,11 +195,12 @@ const Maneuvers: React.FC = () => {
 							</div>
 
 							{maneuversRemaining > 0 ? (
-								<p className="border-t border-white/5 pt-2 text-center text-[10px] italic text-muted-foreground">
-									You have {maneuversRemaining} choice{maneuversRemaining !== 1 ? 's' : ''} remaining
+								<p className="text-muted-foreground border-t border-white/5 pt-2 text-center text-[10px] italic">
+									You have {maneuversRemaining} choice{maneuversRemaining !== 1 ? 's' : ''}{' '}
+									remaining
 								</p>
 							) : (
-								<p className="border-t border-purple-500/10 pt-2 text-center text-[10px] italic text-purple-400/60">
+								<p className="border-t border-purple-500/10 pt-2 text-center text-[10px] text-purple-400/60 italic">
 									All choices complete
 								</p>
 							)}
@@ -202,7 +209,7 @@ const Maneuvers: React.FC = () => {
 				</div>
 
 				{/* Background Decoration */}
-				<div className="absolute right-0 top-0 -mr-20 -mt-20 h-64 w-64 rounded-full bg-purple-500/5 blur-[100px]" />
+				<div className="absolute top-0 right-0 -mt-20 -mr-20 h-64 w-64 rounded-full bg-purple-500/5 blur-[100px]" />
 				<div className="absolute bottom-0 left-0 -mb-20 -ml-20 h-64 w-64 rounded-full bg-red-500/5 blur-[100px]" />
 			</div>
 
@@ -212,13 +219,13 @@ const Maneuvers: React.FC = () => {
 					<Card className="border-border bg-black/20 backdrop-blur-sm">
 						<CardContent className="pt-6">
 							<div className="space-y-2">
-								<label className="text-muted-foreground flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
+								<label className="text-muted-foreground flex items-center gap-2 text-xs font-bold tracking-wider uppercase">
 									<Filter className="h-3 w-3" /> Maneuver Type
 								</label>
 								<select
 									value={maneuverFilter}
 									onChange={(e) => setManeuverFilter(e.target.value as ManeuverType | 'all')}
-									className="border-border bg-background focus:border-primary focus:ring-primary w-full max-w-xs rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1"
+									className="border-border bg-background focus:border-primary focus:ring-primary w-full max-w-xs rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
 								>
 									<option value="all">All Types</option>
 									{Object.values(ManeuverType).map((type) => (
@@ -265,7 +272,7 @@ const Maneuvers: React.FC = () => {
 											'group border-2 transition-all hover:-translate-y-1 hover:shadow-xl',
 											isSelected
 												? 'border-purple-500 bg-purple-500/10'
-												: 'border-purple-500/30 bg-card/40 hover:border-purple-500/50'
+												: 'bg-card/40 border-purple-500/30 hover:border-purple-500/50'
 										)}
 									>
 										<CardHeader className="pb-3">
@@ -275,7 +282,7 @@ const Maneuvers: React.FC = () => {
 												</CardTitle>
 												<Badge
 													variant="outline"
-													className="border-purple-500/50 text-[10px] uppercase tracking-widest text-purple-400"
+													className="border-purple-500/50 text-[10px] tracking-widest text-purple-400 uppercase"
 												>
 													{maneuver.type}
 												</Badge>

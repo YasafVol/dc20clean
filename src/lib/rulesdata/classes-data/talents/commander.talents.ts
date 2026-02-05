@@ -7,13 +7,18 @@ export const commanderTalents: Talent[] = [
 		category: 'Class',
 		// DC20 v0.10 p.157: "Requirements: Commander's Call, Commanding Aura, Level 3"
 		description:
-			'When an ally within your Commanding Aura scores a Heavy Hit, you can use your Commander\'s Call as a Reaction.',
-		prerequisites: { classId: 'commander', feature: 'Commander\'s Call', otherFeature: 'Commanding Aura', level: 3 },
+			"When an ally within your Commanding Aura scores a Heavy Hit, you can use your Commander's Call as a Reaction.",
+		prerequisites: {
+			classId: 'commander',
+			feature: "Commander's Call",
+			otherFeature: 'Commanding Aura',
+			level: 3
+		},
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
 				target: 'seize_momentum',
-				value: 'Use Commander\'s Call as a Reaction when an ally scores a Heavy Hit.'
+				value: "Use Commander's Call as a Reaction when an ally scores a Heavy Hit."
 			}
 		]
 	},
@@ -22,13 +27,13 @@ export const commanderTalents: Talent[] = [
 		name: 'Coordinated Command',
 		category: 'Class',
 		description:
-			'Once per Round, when you use your Commander\'s Call, you can spend 1 additional SP to target a second creature within range (including yourself).',
-		prerequisites: { classId: 'commander', feature: 'Commander\'s Call', level: 3 },
+			"Once per Round, when you use your Commander's Call, you can spend 1 additional SP to target a second creature within range (including yourself).",
+		prerequisites: { classId: 'commander', feature: "Commander's Call", level: 3 },
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
 				target: 'coordinated_command',
-				value: 'Spend 1 SP with Commander\'s Call to target a second creature.'
+				value: "Spend 1 SP with Commander's Call to target a second creature."
 			}
 		]
 	}

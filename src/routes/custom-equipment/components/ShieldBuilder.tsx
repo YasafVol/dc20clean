@@ -13,7 +13,10 @@ import {
 } from '../../../lib/rulesdata/equipment/options/shieldOptions';
 import { validateShield } from '../../../lib/rulesdata/equipment/validation/equipmentValidator';
 import { saveCustomShield } from '../../../lib/rulesdata/equipment/storage/equipmentStorage';
-import type { CustomShield, ShieldType } from '../../../lib/rulesdata/equipment/schemas/shieldSchema';
+import type {
+	CustomShield,
+	ShieldType
+} from '../../../lib/rulesdata/equipment/schemas/shieldSchema';
 import {
 	BuilderContainer,
 	SectionTitle,
@@ -295,7 +298,9 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 								<OptionCard
 									key={property.id}
 									$selected={isSelected}
-									onClick={() => (isSelected ? toggleProperty(property.id) : addProperty(property.id))}
+									onClick={() =>
+										isSelected ? toggleProperty(property.id) : addProperty(property.id)
+									}
 									disabled={!canAddMore && !isSelected}
 								>
 									<div className="mb-1 flex items-center justify-between">
@@ -311,7 +316,9 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 									</div>
 									<OptionDescription>{property.description}</OptionDescription>
 									{maxStacks > 1 && (
-										<div className="mt-2 text-xs text-gray-500">Can be taken up to {maxStacks}x</div>
+										<div className="mt-2 text-xs text-gray-500">
+											Can be taken up to {maxStacks}x
+										</div>
 									)}
 									{isSelected && canAddMore && (
 										<Button
@@ -364,14 +371,16 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 							value={name}
 							onChange={(e) => setName(e.target.value)}
 							placeholder="Enter a name for your shield..."
-							className="w-full rounded-md border border-gray-700 bg-slate-900 px-3 py-2 text-white focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+							className="w-full rounded-md border border-gray-700 bg-slate-900 px-3 py-2 text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none"
 						/>
 					</div>
 
 					<SummaryCard>
 						<SummaryRow>
 							<SummaryLabel>Type</SummaryLabel>
-							<SummaryValue>{shieldType === 'heavy' ? 'Heavy Shield' : 'Light Shield'}</SummaryValue>
+							<SummaryValue>
+								{shieldType === 'heavy' ? 'Heavy Shield' : 'Light Shield'}
+							</SummaryValue>
 						</SummaryRow>
 						<SummaryRow>
 							<SummaryLabel>Points Spent</SummaryLabel>
@@ -380,7 +389,7 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 							</SummaryValue>
 						</SummaryRow>
 
-						<div className="mb-2 mt-4 text-sm font-semibold text-gray-400">Final Stats</div>
+						<div className="mt-4 mb-2 text-sm font-semibold text-gray-400">Final Stats</div>
 						<SummaryRow>
 							<SummaryLabel>Physical Defense (PD)</SummaryLabel>
 							<SummaryValue>+{stats.pdBonus}</SummaryValue>
@@ -428,7 +437,9 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 						{stats.hasToss && (
 							<SummaryRow>
 								<SummaryLabel>Toss</SummaryLabel>
-								<SummaryValue className="text-sm text-gray-400">Range 5/10 when thrown</SummaryValue>
+								<SummaryValue className="text-sm text-gray-400">
+									Range 5/10 when thrown
+								</SummaryValue>
 							</SummaryRow>
 						)}
 						{stats.hasMounted && (

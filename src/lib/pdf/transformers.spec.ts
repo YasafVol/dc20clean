@@ -39,10 +39,7 @@ describe('PDF Export Formatters', () => {
 		});
 
 		it('returns comma-separated feature names for multiple features', () => {
-			const result = formatClassFeatures(
-				['barbarian_rage', 'barbarian_battlecry'],
-				'barbarian'
-			);
+			const result = formatClassFeatures(['barbarian_rage', 'barbarian_battlecry'], 'barbarian');
 			// Should contain both feature names
 			expect(result).toMatch(/Rage/);
 			expect(result).toMatch(/Battlecry/);
@@ -65,11 +62,7 @@ describe('PDF Export Formatters', () => {
 		});
 
 		it('includes subclass name if provided', () => {
-			const result = formatClassFeatures(
-				['barbarian_rage'],
-				'barbarian',
-				'Berserker'
-			);
+			const result = formatClassFeatures(['barbarian_rage'], 'barbarian', 'Berserker');
 			expect(result).toContain('Berserker');
 		});
 	});
@@ -89,29 +82,19 @@ describe('PDF Export Formatters', () => {
 		});
 
 		it('returns comma-separated names for multiple traits', () => {
-			const result = formatAncestryTraits([
-				'human_skill_expertise',
-				'human_resolve'
-			]);
+			const result = formatAncestryTraits(['human_skill_expertise', 'human_resolve']);
 			expect(result).toContain('Skill Expertise');
 			expect(result).toContain('Human Resolve');
 		});
 
 		it('skips unknown trait IDs gracefully', () => {
-			const result = formatAncestryTraits([
-				'human_skill_expertise',
-				'nonexistent_trait_xyz'
-			]);
+			const result = formatAncestryTraits(['human_skill_expertise', 'nonexistent_trait_xyz']);
 			expect(result).toContain('Skill Expertise');
 			expect(result).not.toContain('nonexistent_trait_xyz');
 		});
 
 		it('handles mixed valid and invalid trait IDs', () => {
-			const result = formatAncestryTraits([
-				'invalid_1',
-				'human_resolve',
-				'invalid_2'
-			]);
+			const result = formatAncestryTraits(['invalid_1', 'human_resolve', 'invalid_2']);
 			expect(result).toContain('Human Resolve');
 		});
 	});
@@ -138,7 +121,12 @@ describe('PDF Export Formatters', () => {
 		it('groups cantrips separately from leveled spells', () => {
 			const spells = [
 				{ id: 'fireball', spellName: 'Fireball', school: 'Evocation', isCantrip: false },
-				{ id: 'prestidigitation', spellName: 'Prestidigitation', school: 'Illusion', isCantrip: true }
+				{
+					id: 'prestidigitation',
+					spellName: 'Prestidigitation',
+					school: 'Illusion',
+					isCantrip: true
+				}
 			];
 			const result = formatSpellsAndManeuvers(spells as any, []);
 			expect(result).toContain('[Spells]');
@@ -158,9 +146,7 @@ describe('PDF Export Formatters', () => {
 		});
 
 		it('includes maneuver section header', () => {
-			const maneuvers = [
-				{ id: 'power_attack', name: 'Power Attack', type: 'Attack' }
-			];
+			const maneuvers = [{ id: 'power_attack', name: 'Power Attack', type: 'Attack' }];
 			const result = formatSpellsAndManeuvers([], maneuvers as any);
 			expect(result).toContain('[Maneuvers]');
 		});
@@ -169,9 +155,7 @@ describe('PDF Export Formatters', () => {
 			const spells = [
 				{ id: 'fireball', spellName: 'Fireball', school: 'Evocation', isCantrip: false }
 			];
-			const maneuvers = [
-				{ id: 'power_attack', name: 'Power Attack', type: 'Attack' }
-			];
+			const maneuvers = [{ id: 'power_attack', name: 'Power Attack', type: 'Attack' }];
 			const result = formatSpellsAndManeuvers(spells as any, maneuvers as any);
 			expect(result).toContain('Fireball');
 			expect(result).toContain('Power Attack');
@@ -262,9 +246,7 @@ describe('PDF Export Formatters', () => {
 		});
 
 		it('groups duplicate items with count', () => {
-			const items = [
-				{ id: '1', itemName: 'Healing Potion', itemType: 'Potion', count: 3 }
-			];
+			const items = [{ id: '1', itemName: 'Healing Potion', itemType: 'Potion', count: 3 }];
 			const result = formatInventory(items as any);
 			expect(result).toMatch(/Healing Potion.*x3|Healing Potion \(x3\)/);
 		});

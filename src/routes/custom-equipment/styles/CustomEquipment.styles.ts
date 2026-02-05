@@ -126,8 +126,7 @@ export const Step = styled.div<{ $active?: boolean; $completed?: boolean }>`
 	font-size: 0.875rem;
 	background: ${(props) =>
 		props.$completed ? '#22c55e' : props.$active ? '#fbbf24' : 'rgba(255, 255, 255, 0.1)'};
-	color: ${(props) =>
-		props.$completed || props.$active ? '#0f172a' : 'rgba(255, 255, 255, 0.5)'};
+	color: ${(props) => (props.$completed || props.$active ? '#0f172a' : 'rgba(255, 255, 255, 0.5)')};
 	transition: all 0.3s ease;
 `;
 
@@ -145,7 +144,8 @@ export const OptionGrid = styled.div`
 `;
 
 export const OptionCard = styled.button<{ $selected?: boolean }>`
-	background: ${(props) => (props.$selected ? 'rgba(251, 191, 36, 0.15)' : 'rgba(15, 23, 42, 0.5)')};
+	background: ${(props) =>
+		props.$selected ? 'rgba(251, 191, 36, 0.15)' : 'rgba(15, 23, 42, 0.5)'};
 	border: 2px solid ${(props) => (props.$selected ? '#fbbf24' : 'rgba(255, 255, 255, 0.1)')};
 	border-radius: 8px;
 	padding: 1rem;
@@ -193,7 +193,11 @@ export const PropertyTag = styled.span<{ $cost?: number }>`
 				? 'rgba(239, 68, 68, 0.2)'
 				: 'rgba(251, 191, 36, 0.2)'};
 	color: ${(props) =>
-		props.$cost && props.$cost < 0 ? '#4ade80' : props.$cost && props.$cost > 1 ? '#f87171' : '#fbbf24'};
+		props.$cost && props.$cost < 0
+			? '#4ade80'
+			: props.$cost && props.$cost > 1
+				? '#f87171'
+				: '#fbbf24'};
 `;
 
 export const PointsDisplay = styled.div`

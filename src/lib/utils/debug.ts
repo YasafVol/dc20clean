@@ -40,7 +40,7 @@ const CATEGORY_PREFIXES: Record<DebugCategory, string> = {
 	State: '🔄',
 	PDF: '📄',
 	UI: '🖥️',
-	General: '📋',
+	General: '📋'
 };
 
 // Check if we're in development mode
@@ -121,7 +121,7 @@ export const debug = {
 	loader: (...args: unknown[]) => debug.log('Loader', ...args),
 	state: (...args: unknown[]) => debug.log('State', ...args),
 	pdf: (...args: unknown[]) => debug.log('PDF', ...args),
-	ui: (...args: unknown[]) => debug.log('UI', ...args),
+	ui: (...args: unknown[]) => debug.log('UI', ...args)
 };
 
 /**
@@ -194,7 +194,7 @@ export const debugConfig = {
 		} catch {
 			console.log('  - Disabled categories: none');
 		}
-	},
+	}
 };
 
 // Expose debugConfig to window for easy access in browser console

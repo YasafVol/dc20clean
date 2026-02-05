@@ -9,7 +9,10 @@ import { test, expect } from '@playwright/test';
  * - Both steps should be properly validated
  */
 test.describe('Spellblade Hybrid Class E2E (T5)', () => {
-	test('should show both Spells and Maneuvers steps for hybrid class', async ({ page, context }) => {
+	test('should show both Spells and Maneuvers steps for hybrid class', async ({
+		page,
+		context
+	}) => {
 		await context.addInitScript(() => localStorage.clear());
 
 		await page.goto('/');

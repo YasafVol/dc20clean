@@ -1,22 +1,25 @@
 import styled from 'styled-components';
+import { theme } from './theme';
 
 export const CurrencyContainer = styled.div.withConfig({
 	shouldForwardProp: (prop) => prop !== 'isMobile'
 })<{ isMobile?: boolean }>`
-	border: 2px solid ${(props) => (props.isMobile ? 'rgb(68,68,68)' : '#8b4513')};
-	border-radius: 8px;
-	padding: 1rem;
-	background: ${(props) => (props.isMobile ? 'rgb(42,42,42)' : 'white')};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.lg};
+	padding: ${theme.spacing[4]};
+	background: ${theme.colors.bg.secondary};
 `;
 
 export const CurrencyTitle = styled.div.withConfig({
 	shouldForwardProp: (prop) => prop !== 'isMobile'
 })<{ isMobile?: boolean }>`
-	font-size: 1.1rem;
-	font-weight: bold;
-	color: ${(props) => (props.isMobile ? '#f5d020' : '#8b4513')};
-	margin-bottom: 1rem;
+	font-size: ${theme.typography.fontSize.xl};
+	font-weight: ${theme.typography.fontWeight.bold};
+	color: ${theme.colors.text.primary};
+	margin-bottom: ${theme.spacing[4]};
 	text-align: center;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
 `;
 
 export const CurrencyRow = styled.div.withConfig({
@@ -53,27 +56,34 @@ export const CurrencyIcon = styled.div.withConfig({
 export const CurrencyLabel = styled.span.withConfig({
 	shouldForwardProp: (prop) => prop !== 'isMobile'
 })<{ isMobile?: boolean }>`
-	font-size: 0.9rem;
-	color: ${(props) => (props.isMobile ? 'white' : '#8b4513')};
-	font-weight: bold;
+	font-size: ${theme.typography.fontSize.sm};
+	color: ${theme.colors.text.primary};
+	font-weight: ${theme.typography.fontWeight.semibold};
 `;
 
 export const CurrencyInput = styled.input.withConfig({
 	shouldForwardProp: (prop) => prop !== 'isMobile'
 })<{ isMobile?: boolean }>`
 	width: 60px;
-	padding: 0.2rem;
-	border: 1px solid ${(props) => (props.isMobile ? 'rgb(68,68,68)' : '#8b4513')};
-	border-radius: 4px;
+	padding: ${theme.spacing[2]};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
 	text-align: center;
-	font-size: 0.8rem;
-	background-color: ${(props) => (props.isMobile ? 'rgb(42,42,42)' : 'white')};
-	color: ${(props) => (props.isMobile ? 'white' : 'black')};
+	font-size: ${theme.typography.fontSize.sm};
+	font-weight: ${theme.typography.fontWeight.bold};
+	background-color: ${theme.colors.bg.primary};
+	color: ${theme.colors.text.primary};
+	transition: all ${theme.transitions.fast};
 
 	&:focus {
 		outline: none;
-		border-color: ${(props) => (props.isMobile ? '#f5d020' : '#6d3410')};
-		box-shadow: 0 0 0 2px
-			${(props) => (props.isMobile ? 'rgba(245, 208, 32, 0.2)' : 'rgba(139, 69, 19, 0.2)')};
+		border-color: ${theme.colors.accent.primary};
+		box-shadow: 0 0 0 2px rgba(125, 207, 255, 0.2);
 	}
+`;
+
+export const CurrencyLoadingState = styled.div`
+	padding: 1rem;
+	color: ${theme.colors.text.muted};
+	text-align: center;
 `;

@@ -165,9 +165,7 @@ export function validateArmor(armor: Partial<CustomArmor>): ValidationResult {
 	}
 
 	// Get available properties for this armor type
-	const availableProperties = armor.armorType
-		? getPropertiesForArmorType(armor.armorType)
-		: [];
+	const availableProperties = armor.armorType ? getPropertiesForArmorType(armor.armorType) : [];
 	const propertyMap = new Map(availableProperties.map((p) => [p.id, p]));
 
 	// Calculate points spent

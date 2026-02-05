@@ -16,6 +16,8 @@ import {
 	AttributeSave,
 	SkillRow,
 	SkillName,
+	SkillBonusContainer,
+	SkillBonus,
 	PrimeSection,
 	PrimeLabel,
 	PrimeValue
@@ -33,13 +35,15 @@ interface AttributesProps {
 	};
 	breakdowns?: Record<string, EnhancedStatBreakdown>;
 	isMobile?: boolean;
+	onSkillClick?: (skillName: string, bonus: number) => void;
 }
 
 const Attributes: React.FC<AttributesProps> = ({
 	characterData,
 	skillsByAttribute,
 	breakdowns,
-	isMobile = false
+	isMobile = false,
+	onSkillClick
 }) => {
 	const { state } = useCharacterSheet();
 
@@ -54,36 +58,26 @@ const Attributes: React.FC<AttributesProps> = ({
 
 	const renderSkills = (skills: SkillData[]) => {
 		return skills.map((skill) => (
-			<SkillRow key={skill.id} $isMobile={isMobile}>
+			<SkillRow
+				key={skill.id}
+				$isMobile={isMobile}
+				onClick={() => onSkillClick?.(skill.name, skill.bonus || 0)}
+				style={{ cursor: onSkillClick ? 'pointer' : 'default' }}
+			>
 				<SkillName $isMobile={isMobile}>{skill.name.toUpperCase()}</SkillName>
-				<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+				<SkillBonusContainer>
 					<StyledProficiencyDots>
 						{[1, 2, 3, 4, 5].map((level) => (
 							<StyledDot key={level} $filled={level <= skill.proficiency} $isMobile={isMobile} />
 						))}
 					</StyledProficiencyDots>
 					{skill.bonus !== undefined && (
-						<span
-							style={{
-								fontSize: '0.875rem',
-								fontWeight: '600',
-								color:
-									skill.bonus >= 0
-										? isMobile
-											? '#22c55e'
-											: '#059669' // Green-500 for mobile, darker green for desktop
-										: isMobile
-											? '#ef4444'
-											: '#dc2626', // Red-500 for mobile, darker red for desktop
-								minWidth: '2rem',
-								textAlign: 'center'
-							}}
-						>
+						<SkillBonus $isPositive={skill.bonus >= 0} $isMobile={isMobile}>
 							{skill.bonus >= 0 ? '+' : ''}
 							{skill.bonus}
-						</span>
+						</SkillBonus>
 					)}
-				</div>
+				</SkillBonusContainer>
 			</SkillRow>
 		));
 	};
@@ -96,6 +90,12 @@ const Attributes: React.FC<AttributesProps> = ({
 				<PrimeValue $isMobile={isMobile}>
 					{usePrimeCapRule ? `+${primeValue}` : `${primeAttributeLabel} +${primeValue}`}
 				</PrimeValue>
+			</PrimeSection>
+
+			{/* Combat Mastery */}
+			<PrimeSection $isMobile={isMobile}>
+				<PrimeLabel $isMobile={isMobile}>Combat Mastery</PrimeLabel>
+				<PrimeValue $isMobile={isMobile}>+{state.character?.finalCombatMastery || 0}</PrimeValue>
 			</PrimeSection>
 
 			{/* Awareness (Prime skill) */}
@@ -119,7 +119,13 @@ const Attributes: React.FC<AttributesProps> = ({
 					</AttributeBox>
 					<AttributeInfo $isMobile={isMobile}>
 						<AttributeName $isMobile={isMobile}>MIGHT</AttributeName>
-						<AttributeSave $isMobile={isMobile}>SAVE +{characterData.finalSaveMight}</AttributeSave>
+						<AttributeSave
+							$isMobile={isMobile}
+							onClick={() => onSkillClick?.('Might Save', characterData.finalSaveMight)}
+							style={{ cursor: onSkillClick ? 'pointer' : 'default' }}
+						>
+							SAVE +{characterData.finalSaveMight}
+						</AttributeSave>
 					</AttributeInfo>
 				</AttributeHeader>
 
@@ -144,7 +150,11 @@ const Attributes: React.FC<AttributesProps> = ({
 					</AttributeBox>
 					<AttributeInfo $isMobile={isMobile}>
 						<AttributeName $isMobile={isMobile}>AGILITY</AttributeName>
-						<AttributeSave $isMobile={isMobile}>
+						<AttributeSave
+							$isMobile={isMobile}
+							onClick={() => onSkillClick?.('Agility Save', characterData.finalSaveAgility)}
+							style={{ cursor: onSkillClick ? 'pointer' : 'default' }}
+						>
 							SAVE +{characterData.finalSaveAgility}
 						</AttributeSave>
 					</AttributeInfo>
@@ -171,7 +181,11 @@ const Attributes: React.FC<AttributesProps> = ({
 					</AttributeBox>
 					<AttributeInfo $isMobile={isMobile}>
 						<AttributeName $isMobile={isMobile}>CHARISMA</AttributeName>
-						<AttributeSave $isMobile={isMobile}>
+						<AttributeSave
+							$isMobile={isMobile}
+							onClick={() => onSkillClick?.('Charisma Save', characterData.finalSaveCharisma)}
+							style={{ cursor: onSkillClick ? 'pointer' : 'default' }}
+						>
 							SAVE +{characterData.finalSaveCharisma}
 						</AttributeSave>
 					</AttributeInfo>
@@ -200,7 +214,13 @@ const Attributes: React.FC<AttributesProps> = ({
 					</AttributeBox>
 					<AttributeInfo $isMobile={isMobile}>
 						<AttributeName $isMobile={isMobile}>INTELLIGENCE</AttributeName>
-						<AttributeSave $isMobile={isMobile}>
+						<AttributeSave
+							$isMobile={isMobile}
+							onClick={() =>
+								onSkillClick?.('Intelligence Save', characterData.finalSaveIntelligence)
+							}
+							style={{ cursor: onSkillClick ? 'pointer' : 'default' }}
+						>
 							SAVE +{characterData.finalSaveIntelligence}
 						</AttributeSave>
 					</AttributeInfo>

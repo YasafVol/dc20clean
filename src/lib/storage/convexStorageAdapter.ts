@@ -9,7 +9,7 @@ import type {
 	CharacterStorage,
 	CharacterStorageWithEvents,
 	StorageEventListener,
-	StorageEvent,
+	StorageEvent
 } from './characterStorage';
 import type { SavedCharacter, CharacterState } from '../types/dataContracts';
 import { api } from '../../../convex/_generated/api';
@@ -48,7 +48,7 @@ function prepareCharacterForSave(character: SavedCharacter): SavedCharacter {
 	return {
 		...character,
 		// Convert Record<string, number> to string[] for database compatibility
-		selectedTalents: convertTalentsToArray(character.selectedTalents as any),
+		selectedTalents: convertTalentsToArray(character.selectedTalents as any)
 	};
 }
 
@@ -60,9 +60,21 @@ class ConvexStorageAdapter implements CharacterStorageWithEvents {
 	}
 
 	async getAllCharacters(): Promise<SavedCharacter[]> {
+		console.log('[GIMLI DEBUG] 🔍 ConvexStorageAdapter.getAllCharacters() called');
 		const client = getConvexClient();
-		const characters = await client.query(api.characters.list, {});
-		return (characters || []).map((doc: StoredCharacterDoc) => normalizeCharacter(doc));
+		console.log('[GIMLI DEBUG] 📡 Calling Convex query: api.characters.list');
+		
+		try {
+			const characters = await client.query(api.characters.list, {});
+			console.log('[GIMLI DEBUG] ✅ Convex query response:', {
+				characterCount: characters?.length || 0,
+				characters: characters?.map((c: any) => ({ id: c.id, name: c.finalName }))
+			});
+			return (characters || []).map((doc: StoredCharacterDoc) => normalizeCharacter(doc));
+		} catch (error) {
+			console.error('[GIMLI DEBUG] ❌ Convex query ERROR:', error);
+			throw error;
+		}
 	}
 
 	async getCharacterById(id: string): Promise<SavedCharacter | null> {
@@ -143,5 +155,5 @@ export function getConvexStorageAdapter(): CharacterStorageWithEvents {
  * Export for direct use
  */
 export const convexStorageAdapter = {
-	get: getConvexStorageAdapter,
+	get: getConvexStorageAdapter
 };

@@ -3,10 +3,12 @@
 Last updated: 2026-01-14
 
 Context
+
 - Goal: fill known placeholders in Spellblade progression (L5 and L8) with minimal, non‑mechanical feature stubs so the class table has no TODOs.
 - Non-breaking: feature IDs added and referenced from progression; descriptions marked as placeholders; no balance impact.
 
 Files to edit
+
 - src/lib/rulesdata/classes-data/features/spellblade_features.ts
 - src/lib/rulesdata/classes-data/progressions/spellblade.progression.ts
 
@@ -32,6 +34,7 @@ Insert the following entries into `coreFeatures` (anywhere appropriate, e.g., af
 ```
 
 Notes
+
 - These are deliberately flavor-only to avoid introducing unapproved mechanics.
 
 ## 2) Reference placeholders from progression
@@ -85,9 +88,11 @@ Update `spellblade.progression.ts`:
 ```
 
 ## 3) Validation
+
 - Loader and schemas accept these feature IDs; no change needed to class schema.
 - UI will list the placeholders at the proper levels without mechanics.
 
 ## 4) Next
+
 - Replace placeholders with finalized features once CH6 specifics are approved.
 - Leave packs text as-is per “ignore packs” rule.

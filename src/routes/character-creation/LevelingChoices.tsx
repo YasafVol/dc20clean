@@ -122,10 +122,7 @@ function LevelingChoices() {
 
 		// Count multiclass-gained features (UI2 fix)
 		// If we have a multiclass feature selected for this class, add it to the count
-		if (
-			state.selectedMulticlassClass === targetClassId &&
-			state.selectedMulticlassFeature
-		) {
+		if (state.selectedMulticlassClass === targetClassId && state.selectedMulticlassFeature) {
 			count += 1;
 			console.log('🔢 Multiclass feature counted:', {
 				targetClassId,
@@ -584,8 +581,7 @@ function LevelingChoices() {
 																			);
 																			const currentSelections =
 																				state.selectedFeatureChoices?.[choiceKey] || [];
-																			const isComplete =
-																				currentSelections.length >= choice.count;
+																			const isComplete = currentSelections.length >= choice.count;
 
 																			const handleOptionClick = (optionName: string) => {
 																				const newChoices = {
@@ -602,10 +598,7 @@ function LevelingChoices() {
 																							(s: string) => s !== optionName
 																						);
 																					} else if (current.length < choice.count) {
-																						newChoices[choiceKey] = [
-																							...current,
-																							optionName
-																						];
+																						newChoices[choiceKey] = [...current, optionName];
 																					}
 																				}
 																				dispatch({
@@ -621,9 +614,7 @@ function LevelingChoices() {
 																							{choice.prompt}
 																						</span>
 																						<Badge
-																							variant={
-																								isComplete ? 'default' : 'outline'
-																							}
+																							variant={isComplete ? 'default' : 'outline'}
 																							className={cn(
 																								isComplete
 																									? 'bg-emerald-500/20 text-emerald-500'
@@ -637,8 +628,9 @@ function LevelingChoices() {
 																					</div>
 																					<div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
 																						{choice.options?.map((option) => {
-																							const isOptionSelected =
-																								currentSelections.includes(option.name);
+																							const isOptionSelected = currentSelections.includes(
+																								option.name
+																							);
 																							return (
 																								<div
 																									key={option.name}
@@ -703,8 +695,8 @@ function LevelingChoices() {
 											Choose Your Spell List
 										</CardTitle>
 										<p className="text-muted-foreground text-sm">
-											As a martial class taking the Spellcaster Path for the first time,
-											you gain a Spell List of your choice from any Class.
+											As a martial class taking the Spellcaster Path for the first time, you gain a
+											Spell List of your choice from any Class.
 										</p>
 									</CardHeader>
 									<CardContent>
@@ -735,15 +727,15 @@ function LevelingChoices() {
 						// Show notification if spellcaster taking martial path
 						if (classCategory === 'spellcaster' && (pathPoints.martial || 0) > 0) {
 							return (
-								<Card className="border-green-500/50 bg-green-500/10 mb-8 border">
+								<Card className="mb-8 border border-green-500/50 bg-green-500/10">
 									<CardHeader>
 										<CardTitle className="font-cinzel text-green-400">
 											Spellcaster Stamina Regen Gained
 										</CardTitle>
 										<p className="text-muted-foreground text-sm">
-											As a spellcaster class taking the Martial Path for the first time,
-											you gain Spellcaster Stamina Regen: Once per round, you regain up to
-											half your maximum SP when you use a Spell Enhancement.
+											As a spellcaster class taking the Martial Path for the first time, you gain
+											Spellcaster Stamina Regen: Once per round, you regain up to half your maximum
+											SP when you use a Spell Enhancement.
 										</p>
 									</CardHeader>
 								</Card>
@@ -810,8 +802,7 @@ function LevelingChoices() {
 												const totalSpellsLearned =
 													(level.benefits.cantripsLearned || 0) +
 													(level.benefits.spellsLearned || 0);
-												if (totalSpellsLearned > 0)
-													benefits.push(`+${totalSpellsLearned} Spells`);
+												if (totalSpellsLearned > 0) benefits.push(`+${totalSpellsLearned} Spells`);
 
 												return (
 													<div

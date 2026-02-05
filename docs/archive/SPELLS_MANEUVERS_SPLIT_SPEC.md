@@ -8,18 +8,18 @@
 
 ## Progress Tracker
 
-| Category | Done | Total | Progress |
-|----------|------|-------|----------|
-| Calculator Fixes (C1-C3) | 3 | 3 | 100% |
-| Component Creation (P1-P2) | 2 | 2 | 100% |
-| Wizard Updates (W1-W4) | 4 | 4 | 100% |
-| Testing (T1-T5) | 5 | 5 | 100% |
-| **Overall** | **14** | **14** | **100%** |
+| Category                   | Done   | Total  | Progress |
+| -------------------------- | ------ | ------ | -------- |
+| Calculator Fixes (C1-C3)   | 3      | 3      | 100%     |
+| Component Creation (P1-P2) | 2      | 2      | 100%     |
+| Wizard Updates (W1-W4)     | 4      | 4      | 100%     |
+| Testing (T1-T5)            | 5      | 5      | 100%     |
+| **Overall**                | **14** | **14** | **100%** |
 
 ### Completion Log
 
-| Date | Tasks Completed | Commit |
-|------|-----------------|--------|
+| Date       | Tasks Completed                                        | Commit  |
+| ---------- | ------------------------------------------------------ | ------- |
 | 2026-01-18 | C1, C2, C3, P1, P2, W1, W2, W3, W4, T1, T2, T3, T4, T5 | pending |
 
 ---
@@ -52,7 +52,7 @@ The current implementation in `SpellsAndManeuvers.tsx` combines both spell and m
 Character Creation Flow:
 
 Level 1 Wizard:      Class → Ancestry → Attributes → Background → [Spells] → Name
-Level 1 Barbarian:   Class → Ancestry → Attributes → Background → [Maneuvers] → Name  
+Level 1 Barbarian:   Class → Ancestry → Attributes → Background → [Maneuvers] → Name
 Level 1 Spellblade:  Class → Ancestry → Attributes → Background → [Spells] → [Maneuvers] → Name
 Level 5 Barbarian:   Class → Leveling → Ancestry → Attributes → Background → [Maneuvers] → Name
 ```
@@ -63,37 +63,37 @@ Level 5 Barbarian:   Class → Leveling → Ancestry → Attributes → Backgrou
 
 ### 2.1 Calculator Fixes (C1-C3)
 
-| ID | Task | Priority | Type | Status |
-|----|------|----------|------|--------|
-| C1 | Add `bonus('maneuversKnown')` to `totalManeuversKnown` | P1 | Calculator | **Done** |
-| C2 | Add `bonus('spellsKnown')` to `totalSpellsKnown` | P1 | Calculator | **Done** |
-| C3 | Process `GRANT_MANEUVERS` effects into maneuver count | P1 | Calculator | **Done** |
+| ID  | Task                                                   | Priority | Type       | Status   |
+| --- | ------------------------------------------------------ | -------- | ---------- | -------- |
+| C1  | Add `bonus('maneuversKnown')` to `totalManeuversKnown` | P1       | Calculator | **Done** |
+| C2  | Add `bonus('spellsKnown')` to `totalSpellsKnown`       | P1       | Calculator | **Done** |
+| C3  | Process `GRANT_MANEUVERS` effects into maneuver count  | P1       | Calculator | **Done** |
 
 ### 2.2 Component Creation (P1-P2)
 
-| ID | Task | Priority | Type | Status |
-|----|------|----------|------|--------|
-| P1 | Create `Spells.tsx` component from `SpellsAndManeuvers.tsx` | P1 | Component | **Done** |
-| P2 | Create `Maneuvers.tsx` component from `SpellsAndManeuvers.tsx` | P1 | Component | **Done** |
+| ID  | Task                                                           | Priority | Type      | Status   |
+| --- | -------------------------------------------------------------- | -------- | --------- | -------- |
+| P1  | Create `Spells.tsx` component from `SpellsAndManeuvers.tsx`    | P1       | Component | **Done** |
+| P2  | Create `Maneuvers.tsx` component from `SpellsAndManeuvers.tsx` | P1       | Component | **Done** |
 
 ### 2.3 Wizard Updates (W1-W4)
 
-| ID | Task | Priority | Type | Status |
-|----|------|----------|------|--------|
-| W1 | Update `getSteps()` with conditional Spells/Maneuvers steps | P1 | UI | **Done** |
-| W2 | Update `renderCurrentStep()` with dynamic step routing | P1 | UI | **Done** |
-| W3 | Update `isStepCompleted()` with validation for both steps | P1 | UI | **Done** |
-| W4 | Remove/deprecate `SpellsAndManeuvers.tsx` | P2 | Cleanup | **Done** |
+| ID  | Task                                                        | Priority | Type    | Status   |
+| --- | ----------------------------------------------------------- | -------- | ------- | -------- |
+| W1  | Update `getSteps()` with conditional Spells/Maneuvers steps | P1       | UI      | **Done** |
+| W2  | Update `renderCurrentStep()` with dynamic step routing      | P1       | UI      | **Done** |
+| W3  | Update `isStepCompleted()` with validation for both steps   | P1       | UI      | **Done** |
+| W4  | Remove/deprecate `SpellsAndManeuvers.tsx`                   | P2       | Cleanup | **Done** |
 
 ### 2.4 Testing (T1-T5)
 
-| ID | Task | Priority | Type | Status |
-|----|------|----------|------|--------|
-| T1 | Unit tests for calculator maneuver/spell counting | P1 | Test | **Done** |
-| T2 | Unit tests for step gating logic | P2 | Test | **Done** |
-| T3 | Update `e2e/human-cleric.e2e.spec.ts` for Spells step | P2 | E2E | **Done** |
-| T4 | Update `e2e/hunter-beastborn.e2e.spec.ts` for Maneuvers step | P2 | E2E | **Done** |
-| T5 | Add E2E test for hybrid class (Spellblade) with both steps | P3 | E2E | **Done** |
+| ID  | Task                                                         | Priority | Type | Status   |
+| --- | ------------------------------------------------------------ | -------- | ---- | -------- |
+| T1  | Unit tests for calculator maneuver/spell counting            | P1       | Test | **Done** |
+| T2  | Unit tests for step gating logic                             | P2       | Test | **Done** |
+| T3  | Update `e2e/human-cleric.e2e.spec.ts` for Spells step        | P2       | E2E  | **Done** |
+| T4  | Update `e2e/hunter-beastborn.e2e.spec.ts` for Maneuvers step | P2       | E2E  | **Done** |
+| T5  | Add E2E test for hybrid class (Spellblade) with both steps   | P3       | E2E  | **Done** |
 
 ---
 
@@ -103,24 +103,24 @@ The gating logic must consider ALL sources:
 
 ### 3.1 Spell Sources
 
-| Source | Effect Type | Example | Currently Handled |
-|--------|-------------|---------|-------------------|
-| Class Progression | Table gains | Wizard spells per level | ✅ Yes |
-| Spellcasting Path | Path benefits | +1 spell at levels 1, 3, 4 | ✅ Yes |
-| General Talents | `MODIFY_STAT` | "Spellcasting Expansion" +3 spells | ❌ No (C2) |
-| Class Talents | `MODIFY_STAT` | Bard "Expanded Repertoire" +2 spells | ❌ No (C2) |
-| Class Features | `GRANT_SPELL` | Wizard "Arcane Initiate" school spells | ✅ Yes |
-| Ancestry Traits | `GRANT_SPELL` | "Celestial Heritage" Divine spell | ✅ Yes |
+| Source            | Effect Type   | Example                                | Currently Handled |
+| ----------------- | ------------- | -------------------------------------- | ----------------- |
+| Class Progression | Table gains   | Wizard spells per level                | ✅ Yes            |
+| Spellcasting Path | Path benefits | +1 spell at levels 1, 3, 4             | ✅ Yes            |
+| General Talents   | `MODIFY_STAT` | "Spellcasting Expansion" +3 spells     | ❌ No (C2)        |
+| Class Talents     | `MODIFY_STAT` | Bard "Expanded Repertoire" +2 spells   | ❌ No (C2)        |
+| Class Features    | `GRANT_SPELL` | Wizard "Arcane Initiate" school spells | ✅ Yes            |
+| Ancestry Traits   | `GRANT_SPELL` | "Celestial Heritage" Divine spell      | ✅ Yes            |
 
 ### 3.2 Maneuver Sources
 
-| Source | Effect Type | Example | Currently Handled |
-|--------|-------------|---------|-------------------|
-| Class Progression | Table gains | Barbarian maneuvers per level | ✅ Yes |
-| Martial Path | Path benefits | +1 maneuver per path level | ✅ Yes |
-| General Talents | `MODIFY_STAT` | "Martial Expansion" +2 maneuvers | ❌ No (C1) |
-| Class Features | `GRANT_MANEUVERS` | Commander +4 attack maneuvers | ❌ No (C3) |
-| Subclass Features | `GRANT_MANEUVERS` | Spellblade Warrior +2 maneuvers | ❌ No (C3) |
+| Source            | Effect Type       | Example                          | Currently Handled |
+| ----------------- | ----------------- | -------------------------------- | ----------------- |
+| Class Progression | Table gains       | Barbarian maneuvers per level    | ✅ Yes            |
+| Martial Path      | Path benefits     | +1 maneuver per path level       | ✅ Yes            |
+| General Talents   | `MODIFY_STAT`     | "Martial Expansion" +2 maneuvers | ❌ No (C1)        |
+| Class Features    | `GRANT_MANEUVERS` | Commander +4 attack maneuvers    | ❌ No (C3)        |
+| Subclass Features | `GRANT_MANEUVERS` | Spellblade Warrior +2 maneuvers  | ❌ No (C3)        |
 
 ---
 
@@ -158,8 +158,8 @@ Add a new aggregation for `GRANT_MANEUVERS`:
 ```typescript
 // Count maneuvers from GRANT_MANEUVERS effects
 const grantedManeuversCount = resolvedEffects
-  .filter((e) => (e as any).type === 'GRANT_MANEUVERS')
-  .reduce((sum, e) => sum + Number((e as any).value || 0), 0);
+	.filter((e) => (e as any).type === 'GRANT_MANEUVERS')
+	.reduce((sum, e) => sum + Number((e as any).value || 0), 0);
 ```
 
 ### 4.2 Component Creation
@@ -167,6 +167,7 @@ const grantedManeuversCount = resolvedEffects
 #### P1: Spells.tsx
 
 Extract from `SpellsAndManeuvers.tsx`:
+
 - Lines 1-31: Imports and helpers
 - Lines 70-76: Spell filter state
 - Lines 78-129: Spell availability calculation
@@ -176,25 +177,26 @@ Extract from `SpellsAndManeuvers.tsx`:
 - Lines 395-761: Spells tab UI
 
 New component structure:
+
 ```typescript
 // src/routes/character-creation/Spells.tsx
 const Spells: React.FC = () => {
   // State and context
   const { state, dispatch, calculationResult } = useCharacter();
-  
+
   // Spell slots from calculator
   const spellSlots = calculationResult?.spellsKnownSlots || [];
   const globalMagicProfile = calculationResult?.globalMagicProfile;
-  
+
   // ... spell selection logic ...
-  
+
   // Dispatch only spell updates
   dispatch({
     type: 'UPDATE_SPELLS_AND_MANEUVERS',
     spells: selectedSpells,
     maneuvers: state.selectedManeuvers // Preserve existing maneuvers
   });
-  
+
   return (
     // Stage header + spell pockets + spell grid
   );
@@ -204,6 +206,7 @@ const Spells: React.FC = () => {
 #### P2: Maneuvers.tsx
 
 Extract from `SpellsAndManeuvers.tsx`:
+
 - Lines 76: Maneuver filter state
 - Lines 101-104, 113-120: Maneuver availability calculation
 - Lines 214-225: Maneuver filtering logic
@@ -212,23 +215,24 @@ Extract from `SpellsAndManeuvers.tsx`:
 - Lines 764-866: Maneuvers tab UI
 
 New component structure:
+
 ```typescript
 // src/routes/character-creation/Maneuvers.tsx
 const Maneuvers: React.FC = () => {
   const { state, dispatch, calculationResult } = useCharacter();
-  
+
   // Maneuver count from calculator
   const maneuverCount = calculationResult?.levelBudgets?.totalManeuversKnown || 0;
-  
+
   // ... maneuver selection logic ...
-  
+
   // Dispatch only maneuver updates
   dispatch({
     type: 'UPDATE_SPELLS_AND_MANEUVERS',
     spells: state.selectedSpells, // Preserve existing spells
     maneuvers: selectedManeuvers
   });
-  
+
   return (
     // Stage header + maneuver filters + maneuver grid
   );
@@ -243,48 +247,48 @@ const Maneuvers: React.FC = () => {
 
 ```typescript
 const getSteps = () => {
-  // Get gating flags from calculator
-  const hasSpells = (calculationResult?.spellsKnownSlots?.length ?? 0) > 0;
-  const hasManeuvers = (calculationResult?.levelBudgets?.totalManeuversKnown ?? 0) > 0;
-  
-  const steps: Array<{ number: number; label: string }> = [];
-  let stepNumber = 0;
+	// Get gating flags from calculator
+	const hasSpells = (calculationResult?.spellsKnownSlots?.length ?? 0) > 0;
+	const hasManeuvers = (calculationResult?.levelBudgets?.totalManeuversKnown ?? 0) > 0;
 
-  // Step 1: Class (always)
-  stepNumber++;
-  steps.push({ number: stepNumber, label: 'Class' });
+	const steps: Array<{ number: number; label: string }> = [];
+	let stepNumber = 0;
 
-  // Step 2: Leveling (if level > 1)
-  if (state.level > 1) {
-    stepNumber++;
-    steps.push({ number: stepNumber, label: 'Leveling' });
-  }
+	// Step 1: Class (always)
+	stepNumber++;
+	steps.push({ number: stepNumber, label: 'Class' });
 
-  // Fixed steps: Ancestry, Attributes, Background
-  stepNumber++;
-  steps.push({ number: stepNumber, label: 'Ancestry' });
-  stepNumber++;
-  steps.push({ number: stepNumber, label: 'Attributes' });
-  stepNumber++;
-  steps.push({ number: stepNumber, label: 'Background' });
+	// Step 2: Leveling (if level > 1)
+	if (state.level > 1) {
+		stepNumber++;
+		steps.push({ number: stepNumber, label: 'Leveling' });
+	}
 
-  // Conditional: Spells (if character has spell slots)
-  if (hasSpells) {
-    stepNumber++;
-    steps.push({ number: stepNumber, label: 'Spells' });
-  }
+	// Fixed steps: Ancestry, Attributes, Background
+	stepNumber++;
+	steps.push({ number: stepNumber, label: 'Ancestry' });
+	stepNumber++;
+	steps.push({ number: stepNumber, label: 'Attributes' });
+	stepNumber++;
+	steps.push({ number: stepNumber, label: 'Background' });
 
-  // Conditional: Maneuvers (if character has maneuvers known)
-  if (hasManeuvers) {
-    stepNumber++;
-    steps.push({ number: stepNumber, label: 'Maneuvers' });
-  }
+	// Conditional: Spells (if character has spell slots)
+	if (hasSpells) {
+		stepNumber++;
+		steps.push({ number: stepNumber, label: 'Spells' });
+	}
 
-  // Final step: Name (always)
-  stepNumber++;
-  steps.push({ number: stepNumber, label: 'Name' });
+	// Conditional: Maneuvers (if character has maneuvers known)
+	if (hasManeuvers) {
+		stepNumber++;
+		steps.push({ number: stepNumber, label: 'Maneuvers' });
+	}
 
-  return steps;
+	// Final step: Name (always)
+	stepNumber++;
+	steps.push({ number: stepNumber, label: 'Name' });
+
+	return steps;
 };
 ```
 
@@ -294,7 +298,7 @@ const getSteps = () => {
 const renderCurrentStep = () => {
   const steps = getSteps();
   const stepByLabel = Object.fromEntries(steps.map(s => [s.label, s.number]));
-  
+
   switch (state.currentStep) {
     case stepByLabel['Class']:
       return <><ClassSelector />{state.classId && <ClassFeatures />}</>;
@@ -325,18 +329,18 @@ const renderCurrentStep = () => {
 
 // Spells step validation
 if (step === stepByLabel['Spells']) {
-  const slots = calculationResult?.spellsKnownSlots ?? [];
-  const selectedSpells = state.selectedSpells ?? {};
-  // All slots must be filled
-  return slots.length > 0 && slots.every(slot => selectedSpells[slot.id]);
+	const slots = calculationResult?.spellsKnownSlots ?? [];
+	const selectedSpells = state.selectedSpells ?? {};
+	// All slots must be filled
+	return slots.length > 0 && slots.every((slot) => selectedSpells[slot.id]);
 }
 
-// Maneuvers step validation  
+// Maneuvers step validation
 if (step === stepByLabel['Maneuvers']) {
-  const required = calculationResult?.levelBudgets?.totalManeuversKnown ?? 0;
-  const selected = state.selectedManeuvers?.length ?? 0;
-  // Selected count must equal required count
-  return required > 0 && selected === required;
+	const required = calculationResult?.levelBudgets?.totalManeuversKnown ?? 0;
+	const selected = state.selectedManeuvers?.length ?? 0;
+	// Selected count must equal required count
+	return required > 0 && selected === required;
 }
 ```
 
@@ -346,44 +350,44 @@ if (step === stepByLabel['Maneuvers']) {
 
 Following `src/lib/utils/debug.ts` conventions:
 
-| Event | Level | Category | Emoji | Data |
-|-------|-------|----------|-------|------|
-| Spell step rendered | debug | Spells | ✨ | `{ slotCount, selectedCount }` |
-| Maneuver step rendered | debug | Calculation | 🔢 | `{ maneuverCount, selectedCount }` |
-| Step gating calculated | debug | State | 🔄 | `{ hasSpells, hasManeuvers, classCategory }` |
-| Spell selected | debug | Spells | ✨ | `{ slotId, spellId, slotType }` |
-| Maneuver selected | debug | Calculation | 🔢 | `{ maneuverName, remaining }` |
-| MODIFY_STAT bonus applied | debug | Calculation | 🔢 | `{ target, bonus, source }` |
-| GRANT_MANEUVERS processed | debug | Calculation | 🔢 | `{ count, sourceFeature }` |
-| Step validation | debug | State | 🔄 | `{ step, isComplete, reason }` |
+| Event                     | Level | Category    | Emoji | Data                                         |
+| ------------------------- | ----- | ----------- | ----- | -------------------------------------------- |
+| Spell step rendered       | debug | Spells      | ✨    | `{ slotCount, selectedCount }`               |
+| Maneuver step rendered    | debug | Calculation | 🔢    | `{ maneuverCount, selectedCount }`           |
+| Step gating calculated    | debug | State       | 🔄    | `{ hasSpells, hasManeuvers, classCategory }` |
+| Spell selected            | debug | Spells      | ✨    | `{ slotId, spellId, slotType }`              |
+| Maneuver selected         | debug | Calculation | 🔢    | `{ maneuverName, remaining }`                |
+| MODIFY_STAT bonus applied | debug | Calculation | 🔢    | `{ target, bonus, source }`                  |
+| GRANT_MANEUVERS processed | debug | Calculation | 🔢    | `{ count, sourceFeature }`                   |
+| Step validation           | debug | State       | 🔄    | `{ step, isComplete, reason }`               |
 
 ### Logging Implementation
 
 ```typescript
 // In Spells.tsx
-debug.spells('Spell step rendered', { 
-  slotCount: spellSlots.length, 
-  selectedCount: Object.keys(selectedSpells).length 
+debug.spells('Spell step rendered', {
+	slotCount: spellSlots.length,
+	selectedCount: Object.keys(selectedSpells).length
 });
 
 // In Maneuvers.tsx
 debug.calculation('Maneuver step rendered', {
-  maneuverCount,
-  selectedCount: selectedManeuvers.length
+	maneuverCount,
+	selectedCount: selectedManeuvers.length
 });
 
 // In CharacterCreation.tsx getSteps()
 debug.state('Step gating calculated', {
-  hasSpells,
-  hasManeuvers,
-  classCategory: classDefinition?.classCategory
+	hasSpells,
+	hasManeuvers,
+	classCategory: classDefinition?.classCategory
 });
 
 // In enhancedCharacterCalculator.ts
 debug.calculation('MODIFY_STAT bonus applied', {
-  target: 'maneuversKnown',
-  bonus: maneuverBonus,
-  source: 'talents'
+	target: 'maneuversKnown',
+	bonus: maneuverBonus,
+	source: 'talents'
 });
 ```
 
@@ -399,48 +403,48 @@ debug.calculation('MODIFY_STAT bonus applied', {
 
 ```typescript
 describe('MODIFY_STAT effect aggregation', () => {
-  it('should include Martial Expansion talent maneuvers in totalManeuversKnown', () => {
-    const testCharacter = {
-      classId: 'wizard', // Caster class
-      level: 5,
-      selectedTalents: { 'general_martial_expansion': 1 },
-      // ... other fields
-    };
-    
-    const result = calculateCharacterWithBreakdowns(convertToEnhancedBuildData(testCharacter));
-    
-    // Should have 2 maneuvers from Martial Expansion talent
-    expect(result.levelBudgets?.totalManeuversKnown).toBeGreaterThanOrEqual(2);
-  });
-  
-  it('should include Spellcasting Expansion talent spells in totalSpellsKnown', () => {
-    const testCharacter = {
-      classId: 'barbarian', // Martial class
-      level: 5,
-      selectedTalents: { 'general_spellcasting_expansion': 1 },
-      // ... other fields
-    };
-    
-    const result = calculateCharacterWithBreakdowns(convertToEnhancedBuildData(testCharacter));
-    
-    // Should have 3 spells from Spellcasting Expansion + spell slots generated
-    expect(result.spellsKnownSlots.length).toBeGreaterThanOrEqual(3);
-  });
+	it('should include Martial Expansion talent maneuvers in totalManeuversKnown', () => {
+		const testCharacter = {
+			classId: 'wizard', // Caster class
+			level: 5,
+			selectedTalents: { general_martial_expansion: 1 }
+			// ... other fields
+		};
+
+		const result = calculateCharacterWithBreakdowns(convertToEnhancedBuildData(testCharacter));
+
+		// Should have 2 maneuvers from Martial Expansion talent
+		expect(result.levelBudgets?.totalManeuversKnown).toBeGreaterThanOrEqual(2);
+	});
+
+	it('should include Spellcasting Expansion talent spells in totalSpellsKnown', () => {
+		const testCharacter = {
+			classId: 'barbarian', // Martial class
+			level: 5,
+			selectedTalents: { general_spellcasting_expansion: 1 }
+			// ... other fields
+		};
+
+		const result = calculateCharacterWithBreakdowns(convertToEnhancedBuildData(testCharacter));
+
+		// Should have 3 spells from Spellcasting Expansion + spell slots generated
+		expect(result.spellsKnownSlots.length).toBeGreaterThanOrEqual(3);
+	});
 });
 
 describe('GRANT_MANEUVERS effect aggregation', () => {
-  it('should include Commander martial path maneuvers', () => {
-    const testCharacter = {
-      classId: 'commander',
-      level: 1,
-      // ... other fields
-    };
-    
-    const result = calculateCharacterWithBreakdowns(convertToEnhancedBuildData(testCharacter));
-    
-    // Commander L1 feature grants 4 attack maneuvers
-    expect(result.levelBudgets?.totalManeuversKnown).toBeGreaterThanOrEqual(4);
-  });
+	it('should include Commander martial path maneuvers', () => {
+		const testCharacter = {
+			classId: 'commander',
+			level: 1
+			// ... other fields
+		};
+
+		const result = calculateCharacterWithBreakdowns(convertToEnhancedBuildData(testCharacter));
+
+		// Commander L1 feature grants 4 attack maneuvers
+		expect(result.levelBudgets?.totalManeuversKnown).toBeGreaterThanOrEqual(4);
+	});
 });
 ```
 
@@ -450,42 +454,42 @@ describe('GRANT_MANEUVERS effect aggregation', () => {
 
 ```typescript
 describe('Step gating logic', () => {
-  it('should show only Spells step for pure caster (Wizard)', () => {
-    // Mock calculationResult with spells but no maneuvers
-    const mockResult = {
-      spellsKnownSlots: [{ id: 'slot1', type: 'spell' }],
-      levelBudgets: { totalManeuversKnown: 0 }
-    };
-    
-    const steps = getSteps(mockResult, { level: 1 });
-    
-    expect(steps.some(s => s.label === 'Spells')).toBe(true);
-    expect(steps.some(s => s.label === 'Maneuvers')).toBe(false);
-  });
-  
-  it('should show only Maneuvers step for pure martial (Barbarian)', () => {
-    const mockResult = {
-      spellsKnownSlots: [],
-      levelBudgets: { totalManeuversKnown: 4 }
-    };
-    
-    const steps = getSteps(mockResult, { level: 1 });
-    
-    expect(steps.some(s => s.label === 'Spells')).toBe(false);
-    expect(steps.some(s => s.label === 'Maneuvers')).toBe(true);
-  });
-  
-  it('should show both steps for hybrid (Spellblade)', () => {
-    const mockResult = {
-      spellsKnownSlots: [{ id: 'slot1', type: 'spell' }],
-      levelBudgets: { totalManeuversKnown: 2 }
-    };
-    
-    const steps = getSteps(mockResult, { level: 1 });
-    
-    expect(steps.some(s => s.label === 'Spells')).toBe(true);
-    expect(steps.some(s => s.label === 'Maneuvers')).toBe(true);
-  });
+	it('should show only Spells step for pure caster (Wizard)', () => {
+		// Mock calculationResult with spells but no maneuvers
+		const mockResult = {
+			spellsKnownSlots: [{ id: 'slot1', type: 'spell' }],
+			levelBudgets: { totalManeuversKnown: 0 }
+		};
+
+		const steps = getSteps(mockResult, { level: 1 });
+
+		expect(steps.some((s) => s.label === 'Spells')).toBe(true);
+		expect(steps.some((s) => s.label === 'Maneuvers')).toBe(false);
+	});
+
+	it('should show only Maneuvers step for pure martial (Barbarian)', () => {
+		const mockResult = {
+			spellsKnownSlots: [],
+			levelBudgets: { totalManeuversKnown: 4 }
+		};
+
+		const steps = getSteps(mockResult, { level: 1 });
+
+		expect(steps.some((s) => s.label === 'Spells')).toBe(false);
+		expect(steps.some((s) => s.label === 'Maneuvers')).toBe(true);
+	});
+
+	it('should show both steps for hybrid (Spellblade)', () => {
+		const mockResult = {
+			spellsKnownSlots: [{ id: 'slot1', type: 'spell' }],
+			levelBudgets: { totalManeuversKnown: 2 }
+		};
+
+		const steps = getSteps(mockResult, { level: 1 });
+
+		expect(steps.some((s) => s.label === 'Spells')).toBe(true);
+		expect(steps.some((s) => s.label === 'Maneuvers')).toBe(true);
+	});
 });
 ```
 
@@ -519,30 +523,30 @@ await expect(page.getByRole('heading', { name: /Maneuvers/i })).toBeVisible();
 
 ```typescript
 test('Spellblade character creation with both Spells and Maneuvers steps', async ({ page }) => {
-  // ... setup ...
-  
-  // Select Spellblade class
-  await page.getByRole('button', { name: /Spellblade/i }).click();
-  
-  // ... complete other steps ...
-  
-  // Verify both steps appear in stepper
-  await expect(page.getByRole('button', { name: /Spells/i })).toBeVisible();
-  await expect(page.getByRole('button', { name: /Maneuvers/i })).toBeVisible();
-  
-  // Complete Spells step
-  await page.getByRole('button', { name: 'Next →' }).click();
-  await expect(page.getByRole('heading', { name: /Spells/i })).toBeVisible();
-  // ... select spells ...
-  
-  // Complete Maneuvers step
-  await page.getByRole('button', { name: 'Next →' }).click();
-  await expect(page.getByRole('heading', { name: /Maneuvers/i })).toBeVisible();
-  // ... select maneuvers ...
-  
-  // Proceed to Name step
-  await page.getByRole('button', { name: 'Next →' }).click();
-  await expect(page.getByRole('heading', { name: /Name/i })).toBeVisible();
+	// ... setup ...
+
+	// Select Spellblade class
+	await page.getByRole('button', { name: /Spellblade/i }).click();
+
+	// ... complete other steps ...
+
+	// Verify both steps appear in stepper
+	await expect(page.getByRole('button', { name: /Spells/i })).toBeVisible();
+	await expect(page.getByRole('button', { name: /Maneuvers/i })).toBeVisible();
+
+	// Complete Spells step
+	await page.getByRole('button', { name: 'Next →' }).click();
+	await expect(page.getByRole('heading', { name: /Spells/i })).toBeVisible();
+	// ... select spells ...
+
+	// Complete Maneuvers step
+	await page.getByRole('button', { name: 'Next →' }).click();
+	await expect(page.getByRole('heading', { name: /Maneuvers/i })).toBeVisible();
+	// ... select maneuvers ...
+
+	// Proceed to Name step
+	await page.getByRole('button', { name: 'Next →' }).click();
+	await expect(page.getByRole('heading', { name: /Name/i })).toBeVisible();
 });
 ```
 
@@ -550,32 +554,32 @@ test('Spellblade character creation with both Spells and Maneuvers steps', async
 
 ## 7. Edge Cases
 
-| Scenario | hasSpells | hasManeuvers | Steps Shown |
-|----------|-----------|--------------|-------------|
-| Wizard L1 | true | false | Spells only |
-| Barbarian L1 | false | true | Maneuvers only |
-| Spellblade L1 | true | true | Both steps |
-| Wizard + Martial Expansion talent | true | true | Both steps |
-| Barbarian + Spellcasting Expansion talent | true | true | Both steps |
-| Cleric L5 + 2 Martial Path points | true | true | Both steps |
-| Wizard L1 (no class selected yet) | false | false | Neither step |
+| Scenario                                  | hasSpells | hasManeuvers | Steps Shown    |
+| ----------------------------------------- | --------- | ------------ | -------------- |
+| Wizard L1                                 | true      | false        | Spells only    |
+| Barbarian L1                              | false     | true         | Maneuvers only |
+| Spellblade L1                             | true      | true         | Both steps     |
+| Wizard + Martial Expansion talent         | true      | true         | Both steps     |
+| Barbarian + Spellcasting Expansion talent | true      | true         | Both steps     |
+| Cleric L5 + 2 Martial Path points         | true      | true         | Both steps     |
+| Wizard L1 (no class selected yet)         | false     | false        | Neither step   |
 
 ---
 
 ## 8. Key Files
 
-| File | Action |
-|------|--------|
-| `src/lib/services/enhancedCharacterCalculator.ts` | Modify - Add maneuver/spell bonuses (C1, C2, C3) |
-| `src/routes/character-creation/Spells.tsx` | Create - Extract from SpellsAndManeuvers (P1) |
-| `src/routes/character-creation/Maneuvers.tsx` | Create - Extract from SpellsAndManeuvers (P2) |
-| `src/routes/character-creation/CharacterCreation.tsx` | Modify - Dynamic steps (W1, W2, W3) |
-| `src/routes/character-creation/SpellsAndManeuvers.tsx` | Delete or deprecate (W4) |
-| `src/lib/services/enhancedCharacterCalculator.aggregation.test.ts` | Modify - Add tests (T1) |
-| `src/routes/character-creation/CharacterCreation.test.tsx` | Create - Step gating tests (T2) |
-| `e2e/human-cleric.e2e.spec.ts` | Modify - Update for Spells step (T3) |
-| `e2e/hunter-beastborn.e2e.spec.ts` | Modify - Update for Maneuvers step (T4) |
-| `e2e/spellblade-hybrid.e2e.spec.ts` | Create - Hybrid class test (T5) |
+| File                                                               | Action                                           |
+| ------------------------------------------------------------------ | ------------------------------------------------ |
+| `src/lib/services/enhancedCharacterCalculator.ts`                  | Modify - Add maneuver/spell bonuses (C1, C2, C3) |
+| `src/routes/character-creation/Spells.tsx`                         | Create - Extract from SpellsAndManeuvers (P1)    |
+| `src/routes/character-creation/Maneuvers.tsx`                      | Create - Extract from SpellsAndManeuvers (P2)    |
+| `src/routes/character-creation/CharacterCreation.tsx`              | Modify - Dynamic steps (W1, W2, W3)              |
+| `src/routes/character-creation/SpellsAndManeuvers.tsx`             | Delete or deprecate (W4)                         |
+| `src/lib/services/enhancedCharacterCalculator.aggregation.test.ts` | Modify - Add tests (T1)                          |
+| `src/routes/character-creation/CharacterCreation.test.tsx`         | Create - Step gating tests (T2)                  |
+| `e2e/human-cleric.e2e.spec.ts`                                     | Modify - Update for Spells step (T3)             |
+| `e2e/hunter-beastborn.e2e.spec.ts`                                 | Modify - Update for Maneuvers step (T4)          |
+| `e2e/spellblade-hybrid.e2e.spec.ts`                                | Create - Hybrid class test (T5)                  |
 
 ---
 
@@ -607,6 +611,7 @@ This spec depends on the following completed work:
 ---
 
 > **Related Systems:**
+>
 > - [CHARACTER_CREATION_FLOW.MD](./CHARACTER_CREATION_FLOW.MD)
 > - [SPELLS_SYSTEM.MD](./SPELLS_SYSTEM.MD)
 > - [MARTIALS_SYSTEM.MD](./MARTIALS_SYSTEM.MD)

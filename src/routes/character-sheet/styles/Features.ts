@@ -1,58 +1,70 @@
 import styled from 'styled-components';
+import { theme } from './theme';
 
 export const StyledFeatureGrid = styled.div`
 	display: flex;
 	flex-direction: column;
-	gap: 0.3rem;
-	margin-bottom: 1rem;
+	gap: ${theme.spacing[2]};
+	margin-bottom: ${theme.spacing[4]};
 `;
 
 export const StyledFeatureItem = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 0.4rem 0.5rem;
-	border: 1px solid #e5e5e5;
-	border-radius: 4px;
-	background: #f9f9f9;
+	padding: ${theme.spacing[3]} ${theme.spacing[4]};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
+	background: ${theme.colors.bg.tertiary};
 	min-height: 36px;
+	transition: all ${theme.transitions.fast};
+
+	&:hover {
+		background: ${theme.colors.bg.elevated};
+		border-color: ${theme.colors.accent.primary};
+	}
 `;
 
 export const StyledFeatureName = styled.span`
-	font-size: 0.9rem;
-	color: #8b4513;
-	font-weight: 500;
+	font-size: ${theme.typography.fontSize.sm};
+	color: ${theme.colors.text.primary};
+	font-weight: ${theme.typography.fontWeight.medium};
 	flex: 1;
-	line-height: 1.2;
-	margin-right: 0.5rem;
+	line-height: ${theme.typography.lineHeight.tight};
+	margin-right: ${theme.spacing[3]};
 `;
 
 export const StyledFeatureReadMore = styled.button`
-	background: #8b4513;
-	color: white;
+	background: ${theme.colors.accent.primary};
+	color: ${theme.colors.text.inverse};
 	border: none;
-	border-radius: 3px;
-	padding: 0.2rem 0.4rem;
-	font-size: 0.75rem;
+	border-radius: ${theme.borderRadius.sm};
+	padding: ${theme.spacing[1]} ${theme.spacing[3]};
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.semibold};
 	cursor: pointer;
-	margin-left: 0.5rem;
+	margin-left: ${theme.spacing[3]};
 	white-space: nowrap;
 	flex-shrink: 0;
+	transition: all ${theme.transitions.fast};
 
 	&:hover {
-		background: #654321;
+		background: ${theme.colors.accent.secondary};
+		transform: scale(1.05);
 	}
 `;
 
 export const StyledFeatureCategory = styled.div`
-	margin-bottom: 1rem;
+	margin-bottom: ${theme.spacing[6]};
 `;
 
 export const StyledFeatureCategoryTitle = styled.h4`
-	margin: 0 0 0.5rem 0;
-	color: #8b4513;
-	font-size: 1rem;
-	font-weight: bold;
-	border-bottom: 1px solid #8b4513;
-	padding-bottom: 0.2rem;
+	margin: 0 0 ${theme.spacing[3]} 0;
+	color: ${theme.colors.accent.primary};
+	font-size: ${theme.typography.fontSize.lg};
+	font-weight: ${theme.typography.fontWeight.bold};
+	border-bottom: 1px solid ${theme.colors.border.default};
+	padding-bottom: ${theme.spacing[2]};
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
 `;

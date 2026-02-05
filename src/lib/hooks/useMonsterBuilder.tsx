@@ -12,13 +12,13 @@ import {
 	useCallback,
 	useMemo,
 	type ReactNode,
-	type Dispatch,
+	type Dispatch
 } from 'react';
 import {
 	calculateMonsterStats,
 	createDefaultMonster,
 	validateMonsterActions,
-	validateFeatureBudget,
+	validateFeatureBudget
 } from '../services/monsterCalculator';
 import { generateContentId } from '../utils/idGenerator';
 import type {
@@ -26,7 +26,7 @@ import type {
 	MonsterAction,
 	MonsterTier,
 	MonsterRoleId,
-	MonsterAttributes,
+	MonsterAttributes
 } from '../rulesdata/schemas/monster.schema';
 
 // ============================================================================
@@ -77,7 +77,7 @@ function recalculateMonster(monster: SavedMonster): SavedMonster {
 	const stats = calculateMonsterStats({
 		level: monster.level,
 		tier: monster.tier,
-		roleId: monster.roleId,
+		roleId: monster.roleId
 	});
 
 	return {
@@ -90,7 +90,7 @@ function recalculateMonster(monster: SavedMonster): SavedMonster {
 		finalBaseDamage: stats.finalBaseDamage,
 		featurePointsMax: stats.featurePointsMax,
 		breakdowns: stats.breakdowns,
-		lastModified: new Date().toISOString(),
+		lastModified: new Date().toISOString()
 	};
 }
 
@@ -149,7 +149,7 @@ function monsterBuilderReducer(
 				isDirty: false,
 				isValid: errors.length === 0,
 				errors,
-				warnings,
+				warnings
 			};
 		}
 
@@ -163,7 +163,7 @@ function monsterBuilderReducer(
 				isDirty: false,
 				isValid: errors.length === 0,
 				errors,
-				warnings,
+				warnings
 			};
 		}
 
@@ -176,7 +176,7 @@ function monsterBuilderReducer(
 				isDirty: true,
 				isValid: errors.length === 0,
 				errors,
-				warnings,
+				warnings
 			};
 		}
 
@@ -185,7 +185,7 @@ function monsterBuilderReducer(
 			return {
 				...state,
 				monster,
-				isDirty: true,
+				isDirty: true
 			};
 		}
 
@@ -198,7 +198,7 @@ function monsterBuilderReducer(
 				isDirty: true,
 				isValid: errors.length === 0,
 				errors,
-				warnings,
+				warnings
 			};
 		}
 
@@ -211,7 +211,7 @@ function monsterBuilderReducer(
 				isDirty: true,
 				isValid: errors.length === 0,
 				errors,
-				warnings,
+				warnings
 			};
 		}
 
@@ -224,7 +224,7 @@ function monsterBuilderReducer(
 				isDirty: true,
 				isValid: errors.length === 0,
 				errors,
-				warnings,
+				warnings
 			};
 		}
 
@@ -234,7 +234,7 @@ function monsterBuilderReducer(
 			return {
 				...state,
 				monster,
-				isDirty: true,
+				isDirty: true
 			};
 		}
 
@@ -249,7 +249,7 @@ function monsterBuilderReducer(
 				isDirty: true,
 				isValid: errors.length === 0,
 				errors,
-				warnings,
+				warnings
 			};
 		}
 
@@ -264,7 +264,7 @@ function monsterBuilderReducer(
 				isDirty: true,
 				isValid: errors.length === 0,
 				errors,
-				warnings,
+				warnings
 			};
 		}
 
@@ -279,7 +279,7 @@ function monsterBuilderReducer(
 				isDirty: true,
 				isValid: errors.length === 0,
 				errors,
-				warnings,
+				warnings
 			};
 		}
 
@@ -292,7 +292,7 @@ function monsterBuilderReducer(
 				targetDefense: 'pd',
 				damage: state.monster.finalBaseDamage,
 				description: '',
-				...action.payload,
+				...action.payload
 			};
 			const actions = [...state.monster.actions, newAction];
 			const monster = { ...state.monster, actions };
@@ -303,7 +303,7 @@ function monsterBuilderReducer(
 				isDirty: true,
 				isValid: errors.length === 0,
 				errors,
-				warnings,
+				warnings
 			};
 		}
 
@@ -319,7 +319,7 @@ function monsterBuilderReducer(
 				isDirty: true,
 				isValid: errors.length === 0,
 				errors,
-				warnings,
+				warnings
 			};
 		}
 
@@ -333,7 +333,7 @@ function monsterBuilderReducer(
 				isDirty: true,
 				isValid: errors.length === 0,
 				errors,
-				warnings,
+				warnings
 			};
 		}
 
@@ -346,14 +346,14 @@ function monsterBuilderReducer(
 			return {
 				...state,
 				monster,
-				isDirty: true,
+				isDirty: true
 			};
 		}
 
 		case 'SET_SAVING': {
 			return {
 				...state,
-				isSaving: action.payload,
+				isSaving: action.payload
 			};
 		}
 
@@ -362,7 +362,7 @@ function monsterBuilderReducer(
 				...state,
 				isDirty: false,
 				isSaving: false,
-				originalMonster: state.monster,
+				originalMonster: state.monster
 			};
 		}
 
@@ -416,7 +416,7 @@ export function MonsterBuilderProvider({ children, initialMonster }: MonsterBuil
 		isValid: errors.length === 0,
 		errors,
 		warnings,
-		isSaving: false,
+		isSaving: false
 	});
 
 	// Convenience action creators
@@ -488,7 +488,7 @@ export function MonsterBuilderProvider({ children, initialMonster }: MonsterBuil
 			updateAction,
 			removeAction,
 			reset,
-			loadMonster,
+			loadMonster
 		}),
 		[
 			state,
@@ -504,13 +504,11 @@ export function MonsterBuilderProvider({ children, initialMonster }: MonsterBuil
 			updateAction,
 			removeAction,
 			reset,
-			loadMonster,
+			loadMonster
 		]
 	);
 
-	return (
-		<MonsterBuilderContext.Provider value={value}>{children}</MonsterBuilderContext.Provider>
-	);
+	return <MonsterBuilderContext.Provider value={value}>{children}</MonsterBuilderContext.Provider>;
 }
 
 // ============================================================================

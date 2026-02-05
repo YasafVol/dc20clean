@@ -292,7 +292,8 @@ export const MELEE_WEAPON_PROPERTIES: WeaponProperty[] = [
 	{
 		id: 'unwieldy',
 		name: 'Unwieldy',
-		description: 'You have DisADV on Attacks made with the Weapon against targets within 1 Space of you.',
+		description:
+			'You have DisADV on Attacks made with the Weapon against targets within 1 Space of you.',
 		cost: -1,
 		effect: 'DisADV on attacks within 1 Space'
 	},
@@ -332,7 +333,8 @@ export const RANGED_WEAPON_PROPERTIES: WeaponProperty[] = [
 	{
 		id: 'deft',
 		name: 'Deft',
-		description: "Ranged Attacks with this Weapon don't have DisADV as a result of you being Prone.",
+		description:
+			"Ranged Attacks with this Weapon don't have DisADV as a result of you being Prone.",
 		cost: 1,
 		rangedOnly: true
 	},
@@ -399,9 +401,7 @@ export const RANGED_WEAPON_PROPERTIES: WeaponProperty[] = [
 
 export const ALL_WEAPON_PROPERTIES: WeaponProperty[] = [
 	...MELEE_WEAPON_PROPERTIES,
-	...RANGED_WEAPON_PROPERTIES.filter(
-		(rp) => !MELEE_WEAPON_PROPERTIES.some((mp) => mp.id === rp.id)
-	)
+	...RANGED_WEAPON_PROPERTIES.filter((rp) => !MELEE_WEAPON_PROPERTIES.some((mp) => mp.id === rp.id))
 ];
 
 // ================================================================= //

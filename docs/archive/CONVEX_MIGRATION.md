@@ -79,30 +79,30 @@ The following scaffolding files have been created and are ready for use once npm
 
 ### Convex Backend (`convex/`)
 
-| File | Description |
-|------|-------------|
-| `schema.ts.draft` | Complete schema matching `SavedCharacter` type with indexes |
-| `characters.ts.draft` | CRUD mutations and queries with auth checks |
-| `auth.config.ts.draft` | Convex Auth with Google OAuth |
-| `README.md` | Setup instructions |
+| File                   | Description                                                 |
+| ---------------------- | ----------------------------------------------------------- |
+| `schema.ts.draft`      | Complete schema matching `SavedCharacter` type with indexes |
+| `characters.ts.draft`  | CRUD mutations and queries with auth checks                 |
+| `auth.config.ts.draft` | Convex Auth with Google OAuth                               |
+| `README.md`            | Setup instructions                                          |
 
 ### Storage Abstraction (`src/lib/storage/`)
 
-| File | Description |
-|------|-------------|
-| `characterStorage.ts` | Storage interface definition |
-| `localStorageAdapter.ts` | localStorage implementation (current) |
-| `convexStorageAdapter.ts` | Convex implementation (placeholder) |
-| `index.ts` | Auto-selector based on environment |
+| File                      | Description                           |
+| ------------------------- | ------------------------------------- |
+| `characterStorage.ts`     | Storage interface definition          |
+| `localStorageAdapter.ts`  | localStorage implementation (current) |
+| `convexStorageAdapter.ts` | Convex implementation (placeholder)   |
+| `index.ts`                | Auto-selector based on environment    |
 
 ### Auth Components (`src/components/auth/`)
 
-| File | Description |
-|------|-------------|
-| `SignIn.tsx` | Social login (Google) dialog |
+| File            | Description                                  |
+| --------------- | -------------------------------------------- |
+| `SignIn.tsx`    | Social login (Google) dialog                 |
 | `AuthGuard.tsx` | Feature gate component + `FeatureGateButton` |
-| `UserMenu.tsx` | User avatar, info, and sign-out |
-| `index.ts` | Main export |
+| `UserMenu.tsx`  | User avatar, info, and sign-out              |
+| `index.ts`      | Main export                                  |
 
 ## Setup Instructions
 
@@ -139,13 +139,13 @@ import { ConvexAuthProvider } from '@convex-dev/auth/react';
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <ConvexProvider client={convex}>
-      <ConvexAuthProvider>
-        <App />
-      </ConvexAuthProvider>
-    </ConvexProvider>
-  </React.StrictMode>
+	<React.StrictMode>
+		<ConvexProvider client={convex}>
+			<ConvexAuthProvider>
+				<App />
+			</ConvexAuthProvider>
+		</ConvexProvider>
+	</React.StrictMode>
 );
 ```
 
@@ -206,26 +206,28 @@ Using Convex Auth with **social OAuth only** (no email/password):
 
 ### Feature Gates
 
-| Feature | Without Auth | With Auth |
-|---------|--------------|-----------|
-| Create character | ✅ (localStorage) | ✅ (cloud) |
-| Edit character | ✅ | ✅ |
-| View character sheet | ✅ | ✅ |
-| **Export PDF** | ❌ (gated) | ✅ |
-| **Save to cloud** | ❌ (gated) | ✅ |
-| Sync across devices | ❌ | ✅ |
+| Feature              | Without Auth      | With Auth  |
+| -------------------- | ----------------- | ---------- |
+| Create character     | ✅ (localStorage) | ✅ (cloud) |
+| Edit character       | ✅                | ✅         |
+| View character sheet | ✅                | ✅         |
+| **Export PDF**       | ❌ (gated)        | ✅         |
+| **Save to cloud**    | ❌ (gated)        | ✅         |
+| Sync across devices  | ❌                | ✅         |
 
 ### OAuth Setup
 
 **Google Cloud Console:**
+
 1. Go to https://console.cloud.google.com/
 2. Create project → APIs & Services → OAuth consent screen
 3. Create credentials → OAuth client ID → Web application
 4. Add redirect URI: `https://<your-convex-url>.convex.site/api/auth/callback/google`
 
-2. New OAuth App
+5. New OAuth App
 
 **Environment Variables (set in Convex Dashboard):**
+
 ```
 AUTH_GOOGLE_ID=your-google-client-id
 AUTH_GOOGLE_SECRET=your-google-client-secret
@@ -242,21 +244,21 @@ AUTH_SECRET=your-random-secret
 
 ## Environment Variables
 
-| Variable | Description |
-|----------|-------------|
-| `VITE_CONVEX_URL` | Convex deployment URL |
-| `VITE_USE_CONVEX` | Set to `true` to enable Convex storage |
+| Variable           | Description                                |
+| ------------------ | ------------------------------------------ |
+| `VITE_CONVEX_URL`  | Convex deployment URL                      |
+| `VITE_USE_CONVEX`  | Set to `true` to enable Convex storage     |
 | `VITE_BYPASS_AUTH` | Set to `true` for development without auth |
 
 ## Files Modified (When Integrating)
 
-| File | Change |
-|------|--------|
-| `src/main.tsx` | Add Convex and Auth providers |
-| `src/App.tsx` | Add UserMenu to header |
-| `src/routes/character-creation/LoadCharacter.tsx` | Use storage abstraction |
-| `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx` | Use storage abstraction |
-| `src/lib/services/characterCompletion.ts` | Use storage abstraction |
+| File                                                          | Change                        |
+| ------------------------------------------------------------- | ----------------------------- |
+| `src/main.tsx`                                                | Add Convex and Auth providers |
+| `src/App.tsx`                                                 | Add UserMenu to header        |
+| `src/routes/character-creation/LoadCharacter.tsx`             | Use storage abstraction       |
+| `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx` | Use storage abstraction       |
+| `src/lib/services/characterCompletion.ts`                     | Use storage abstraction       |
 
 ## Testing
 
@@ -269,4 +271,3 @@ AUTH_SECRET=your-random-secret
 - [Convex Documentation](https://docs.convex.dev/)
 - [Convex Auth](https://labs.convex.dev/auth)
 - [SavedCharacter Interface](../src/lib/types/dataContracts.ts)
-

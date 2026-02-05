@@ -1,5 +1,7 @@
 # Project Technical Overview
 
+> Last updated: 2026-02-04
+
 ## Scope
 
 This document centralizes the technical details for the DC20Clean codebase: stack,
@@ -9,11 +11,11 @@ scripts, testing, project structure, and contribution expectations.
 
 - Framework: React 19 + TypeScript
 - Build Tool: Vite 6
-- Styling: Tailwind CSS 4 + styled-components + Emotion
+- Styling: Material-UI (MUI) + Emotion + Tailwind CSS 4
 - State Management: React Context API
-- Persistence: Browser localStorage (default) and Convex cloud storage (optional)
-  - Convex is enabled when `VITE_USE_CONVEX=true` and `VITE_CONVEX_URL` is configured
-  - Migration notes: `docs/archive/CONVEX_MIGRATION.md`
+- Persistence: Hybrid storage
+  - localStorage is active by default (anonymous/offline-first)
+  - Convex cloud storage is active when `VITE_USE_CONVEX=true` and `VITE_CONVEX_URL` is set
 - Testing: Vitest (browser + node environments), Playwright
 - Code Quality: ESLint + Prettier
 
@@ -25,15 +27,19 @@ scripts, testing, project structure, and contribution expectations.
 ## Development Scripts
 
 Development and build:
+
 - `npm run dev` - Start Vite dev server
 - `npm run build` - Production build to `dist/`
 - `npm run preview` - Preview production build on port 4173
+- `npx convex dev --once` - Validate/deploy Convex functions and regenerate client types
 
 Code quality:
+
 - `npm run lint` - Prettier check + ESLint
 - `npm run format` - Auto-format with Prettier (Tailwind plugin enabled)
 
 Testing:
+
 - `npm run test:unit` - Run Vitest unit tests
 - `npm run test:e2e` - Run Playwright E2E tests
 - `npm run test:e2e:ui` - Run E2E tests with interactive UI
@@ -42,12 +48,14 @@ Testing:
 - `npm run test` - Run unit tests (run mode) then E2E tests
 
 Single test execution:
+
 ```
 npx vitest -t "should calculate health correctly"
-npx vitest src/lib/services/enhancedCharacterCalculator.spec.ts
+npx vitest src/lib/services/enhancedCharacterCalculator.test.ts
 ```
 
 E2E test optimization:
+
 ```
 PLAYWRIGHT_SKIP_BUILD=1 npm run test:e2e
 E2E_WORKERS=4 npm run test:e2e
@@ -106,7 +114,3 @@ docs/systems/                  # System documentation
   - `docs: update documentation`
 - PR contents: Include clear description, linked issues, test plan, and screenshots for UI changes
 - Stacked PRs: Optional Graphite workflow supported (see `AGENTS.md` for details)
-
----
-
-**Last Updated:** January 25, 2026

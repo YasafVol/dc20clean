@@ -67,6 +67,123 @@
 	--color-sidebar-accent-foreground: oklch(0.93 0.01 280);
 	--color-sidebar-border: oklch(0.25 0.04 280);
 	--color-sidebar-ring: oklch(0.78 0.15 85);
+
+	/* Tokyo Night Theme Colors */
+	--bg-primary: #1a1b26;
+	--bg-secondary: #24283b;
+	--bg-tertiary: #414868;
+	--bg-elevated: #2c2e3e;
+
+	--text-primary: #c0caf5;
+	--text-secondary: #9aa5ce;
+	--text-muted: #565f89;
+
+	--accent-primary: #7dcfff;
+	--accent-secondary: #bb9af7;
+	--accent-warning: #e0af68;
+	--accent-danger: #f7768e;
+	--accent-success: #9ece6a;
+
+	--resource-health: #f7768e;
+	--resource-mana: #7aa2f7;
+	--resource-stamina: #e0af68;
+	--resource-grit: #9ece6a;
+
+	--attribute-might: #f7768e;
+	--attribute-agility: #9ece6a;
+	--attribute-charisma: #e0af68;
+	--attribute-intelligence: #7dcfff;
+
+	/* Crystal/Icy Theme Colors */
+	--crystal-primary: #7dcfff;
+	--crystal-primary-light: #c0e7ff;
+	--crystal-primary-dark: #5aa3d9;
+	--crystal-secondary: #7aa2f7;
+	--crystal-tertiary: #9aa5ce;
+
+	/* Crystal Alpha Variations */
+	--crystal-primary-10: rgba(125, 207, 255, 0.1);
+	--crystal-primary-20: rgba(125, 207, 255, 0.2);
+	--crystal-primary-30: rgba(125, 207, 255, 0.3);
+	--crystal-primary-40: rgba(125, 207, 255, 0.4);
+	--crystal-primary-50: rgba(125, 207, 255, 0.5);
+	--crystal-primary-60: rgba(125, 207, 255, 0.6);
+	--crystal-primary-70: rgba(125, 207, 255, 0.7);
+	--crystal-primary-80: rgba(125, 207, 255, 0.8);
+	--crystal-primary-90: rgba(125, 207, 255, 0.9);
+
+	--crystal-secondary-30: rgba(90, 163, 217, 0.3);
+	--crystal-secondary-50: rgba(90, 163, 217, 0.5);
+	--crystal-secondary-60: rgba(90, 163, 217, 0.6);
+	--crystal-secondary-70: rgba(90, 163, 217, 0.7);
+	--crystal-secondary-80: rgba(90, 163, 217, 0.8);
+	--crystal-secondary-90: rgba(90, 163, 217, 0.9);
+	--crystal-secondary-100: rgba(90, 163, 217, 1);
+
+	--crystal-tertiary-30: rgba(122, 162, 247, 0.3);
+	--crystal-tertiary-50: rgba(122, 162, 247, 0.5);
+	--crystal-tertiary-60: rgba(122, 162, 247, 0.6);
+	--crystal-tertiary-70: rgba(122, 162, 247, 0.7);
+	--crystal-tertiary-80: rgba(122, 162, 247, 0.8);
+
+	/* Dice Colors */
+	--dice-d20-bg: rgba(125, 207, 255, 0.3);
+	--dice-d20-text: #c0e7ff;
+	--dice-d12-bg: rgba(122, 162, 247, 0.3);
+	--dice-d12-text: #b8d0ff;
+	--dice-d10-bg: rgba(251, 191, 36, 0.25);
+	--dice-d10-text: #ffe8a3;
+	--dice-d8-bg: rgba(34, 197, 94, 0.25);
+	--dice-d8-text: #b3ffcc;
+	--dice-d6-bg: rgba(239, 68, 68, 0.25);
+	--dice-d6-text: #ffb3b3;
+	--dice-d4-bg: rgba(154, 165, 206, 0.3);
+	--dice-d4-text: #c8cfed;
+
+	/* Result State Colors */
+	--result-crit-success: #b3ffcc;
+	--result-crit-success-bg: rgba(125, 207, 255, 0.8);
+	--result-crit-fail: #ffb3b3;
+	--result-crit-fail-bg: rgba(239, 68, 68, 0.6);
+	--result-max: #b3ffcc;
+	--result-min: #d4dbff;
+
+	/* Glow Effects */
+	--glow-primary: rgba(125, 207, 255, 0.6);
+	--glow-secondary: rgba(125, 207, 255, 0.8);
+	--glow-ember: rgba(125, 207, 255, 0.8);
+
+	/* Common RGBA values */
+	--white-10: rgba(255, 255, 255, 0.1);
+	--white-20: rgba(255, 255, 255, 0.2);
+	--white-30: rgba(255, 255, 255, 0.3);
+	--white-50: rgba(255, 255, 255, 0.5);
+	--black-05: rgba(0, 0, 0, 0.05);
+	--black-10: rgba(0, 0, 0, 0.1);
+	--black-20: rgba(0, 0, 0, 0.2);
+	--black-30: rgba(0, 0, 0, 0.3);
+	--black-80: rgba(0, 0, 0, 0.8);
+
+	/* Mobile-specific colors - Tokyo Night theme */
+	--mobile-bg-primary: #1a1b26;
+	--mobile-bg-secondary: #24283b;
+	--mobile-bg-tertiary: #2f3549;
+	--mobile-border: #414868;
+	--mobile-accent: #7dcfff; /* Changed from #f5d020 yellow to Tokyo Night blue */
+
+	/* Attribute modifier colors */
+	--attr-positive: #22c55e;
+	--attr-positive-dark: #059669;
+	--attr-negative: #ef4444;
+	--attr-negative-dark: #dc2626;
+
+	/* Misc colors from styled-components */
+	--danger-border: #dc2626;
+	--danger-bg-light: #fee2e2;
+	--danger-bg-hover: #fecaca;
+	--gray-dark: #888;
+	--gray-light: #ccc;
+	--gray-very-light: #e0e0e0;
 }
 
 /*

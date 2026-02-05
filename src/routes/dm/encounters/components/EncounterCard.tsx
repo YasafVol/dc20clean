@@ -14,7 +14,7 @@ import {
 	CardMeta,
 	MetaBadge,
 	CardBody,
-	CardFooter,
+	CardFooter
 } from '../styles/EncounterStyles';
 import { BudgetMeter } from './BudgetMeter';
 import type { BudgetStatus } from '../../../../lib/rulesdata/schemas/encounter.schema';
@@ -32,7 +32,7 @@ const DIFFICULTY_COLORS: Record<string, string> = {
 	easy: 'green',
 	medium: 'purple',
 	hard: 'yellow',
-	deadly: 'red',
+	deadly: 'red'
 };
 
 export const EncounterCard: React.FC<EncounterCardProps> = ({
@@ -40,14 +40,16 @@ export const EncounterCard: React.FC<EncounterCardProps> = ({
 	onEdit,
 	onDuplicate,
 	onDelete,
-	isOwner = true,
+	isOwner = true
 }) => {
 	const monsterCount = encounter.monsters.filter((m) => m.monsterId).length;
-	const totalMonsters = encounter.monsters.reduce((sum, m) => sum + (m.monsterId ? m.quantity : 0), 0);
+	const totalMonsters = encounter.monsters.reduce(
+		(sum, m) => sum + (m.monsterId ? m.quantity : 0),
+		0
+	);
 
-	const percentage = encounter.adjustedBudget > 0
-		? (encounter.spentBudget / encounter.adjustedBudget) * 100
-		: 0;
+	const percentage =
+		encounter.adjustedBudget > 0 ? (encounter.spentBudget / encounter.adjustedBudget) * 100 : 0;
 
 	let status: BudgetStatus = 'on_target';
 	if (percentage < 80) status = 'under';
@@ -67,7 +69,8 @@ export const EncounterCard: React.FC<EncounterCardProps> = ({
 						{encounter.party.size}P × L{encounter.party.averageLevel}
 					</MetaBadge>
 					<MetaBadge>
-						{totalMonsters} Monster{totalMonsters !== 1 ? 's' : ''} ({monsterCount} type{monsterCount !== 1 ? 's' : ''})
+						{totalMonsters} Monster{totalMonsters !== 1 ? 's' : ''} ({monsterCount} type
+						{monsterCount !== 1 ? 's' : ''})
 					</MetaBadge>
 				</CardMeta>
 			</CardHeader>

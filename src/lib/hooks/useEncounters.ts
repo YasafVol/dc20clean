@@ -15,7 +15,7 @@ export function useEncounterList() {
 	const encounters = useQuery(api.encounters.list);
 	return {
 		encounters: (encounters ?? []) as SavedEncounter[],
-		isLoading: encounters === undefined,
+		isLoading: encounters === undefined
 	};
 }
 
@@ -26,7 +26,7 @@ export function useEncounter(id: string | null) {
 	const encounter = useQuery(api.encounters.getById, id ? { id } : 'skip');
 	return {
 		encounter: encounter as SavedEncounter | null | undefined,
-		isLoading: encounter === undefined,
+		isLoading: encounter === undefined
 	};
 }
 
@@ -37,7 +37,7 @@ export function useHomebrewEncounters() {
 	const encounters = useQuery(api.encounters.listHomebrew);
 	return {
 		encounters: (encounters ?? []) as SavedEncounter[],
-		isLoading: encounters === undefined,
+		isLoading: encounters === undefined
 	};
 }
 
@@ -48,7 +48,7 @@ export function useTrashEncounters() {
 	const encounters = useQuery(api.encounters.listTrash);
 	return {
 		encounters: (encounters ?? []) as SavedEncounter[],
-		isLoading: encounters === undefined,
+		isLoading: encounters === undefined
 	};
 }
 
@@ -113,16 +113,13 @@ export function useEncounterMutations() {
 			return forkMutation({ sourceId, sourceType, sourceData });
 		},
 
-		submitForReview: async (
-			id: string,
-			visibility: 'public_anonymous' | 'public_credited'
-		) => {
+		submitForReview: async (id: string, visibility: 'public_anonymous' | 'public_credited') => {
 			return submitMutation({ id, visibility });
 		},
 
 		duplicateEncounter: async (id: string) => {
 			return duplicateMutation({ id });
-		},
+		}
 	};
 }
 
@@ -136,6 +133,6 @@ export function useEncounters() {
 	return {
 		encounters,
 		isLoading,
-		...mutations,
+		...mutations
 	};
 }

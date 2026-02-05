@@ -12,7 +12,7 @@
 import {
 	CONTENT_ID_PREFIXES,
 	type ContentIdPrefix,
-	type ContentIdType,
+	type ContentIdType
 } from '../rulesdata/schemas/monster.schema';
 
 // Re-export for convenience
@@ -63,7 +63,9 @@ export interface ParsedContentId {
 export function generateContentId(type: ContentIdType): string {
 	const prefix = CONTENT_ID_PREFIXES[type];
 	if (!prefix) {
-		throw new Error(`Invalid content type: ${type}. Valid types: ${Object.keys(CONTENT_ID_PREFIXES).join(', ')}`);
+		throw new Error(
+			`Invalid content type: ${type}. Valid types: ${Object.keys(CONTENT_ID_PREFIXES).join(', ')}`
+		);
 	}
 	return `${prefix}${generateUUID()}`;
 }
@@ -87,7 +89,10 @@ export function parseContentId(id: string): ParsedContentId | null {
 	}
 
 	// Find matching prefix
-	for (const [type, prefix] of Object.entries(CONTENT_ID_PREFIXES) as [ContentIdType, ContentIdPrefix][]) {
+	for (const [type, prefix] of Object.entries(CONTENT_ID_PREFIXES) as [
+		ContentIdType,
+		ContentIdPrefix
+	][]) {
 		if (id.startsWith(prefix)) {
 			const uuid = id.slice(prefix.length);
 			if (UUID_PATTERN.test(uuid)) {

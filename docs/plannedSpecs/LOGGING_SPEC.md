@@ -47,6 +47,7 @@ This specification details the implementation of a centralized logging system fo
 ## Logger Service API
 
 ### File Location
+
 `src/lib/utils/logger.ts`
 
 ### Type Definitions
@@ -64,24 +65,24 @@ type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 /**
  * Log context categories for filtering and grouping
  */
-type LogContext = 
-  | 'storage'      // localStorage/Convex operations
-  | 'calculation'  // Character calculation engine
-  | 'auth'         // Authentication flows
-  | 'pdf'          // PDF export operations
-  | 'ui'           // UI interactions and navigation
-  | 'migration';   // Schema migration operations
+type LogContext =
+	| 'storage' // localStorage/Convex operations
+	| 'calculation' // Character calculation engine
+	| 'auth' // Authentication flows
+	| 'pdf' // PDF export operations
+	| 'ui' // UI interactions and navigation
+	| 'migration'; // Schema migration operations
 
 /**
  * Structured log entry
  */
 interface LogEntry {
-  level: LogLevel;
-  context: LogContext;
-  message: string;
-  data?: Record<string, unknown>;
-  timestamp: string;
-  sessionId: string;
+	level: LogLevel;
+	context: LogContext;
+	message: string;
+	data?: Record<string, unknown>;
+	timestamp: string;
+	sessionId: string;
 }
 ```
 
@@ -141,6 +142,7 @@ export const logger = {
 **Cost**: Free (included with Vercel hosting)
 
 **Setup** (`src/main.tsx`):
+
 ```typescript
 import { Analytics } from '@vercel/analytics/react';
 
@@ -166,33 +168,35 @@ import { Analytics } from '@vercel/analytics/react';
 **Cost**: Free tier (5,000 errors/month)
 
 **Setup** (`src/main.tsx`):
+
 ```typescript
 import * as Sentry from '@sentry/react';
 
 Sentry.init({
-  dsn: import.meta.env.VITE_SENTRY_DSN,
-  environment: import.meta.env.MODE,
-  enabled: import.meta.env.PROD,
-  integrations: [
-    Sentry.browserTracingIntegration(),
-    Sentry.replayIntegration({
-      maskAllText: false,
-      blockAllMedia: false,
-    }),
-  ],
-  tracesSampleRate: 0.1, // 10% of transactions
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1.0,
+	dsn: import.meta.env.VITE_SENTRY_DSN,
+	environment: import.meta.env.MODE,
+	enabled: import.meta.env.PROD,
+	integrations: [
+		Sentry.browserTracingIntegration(),
+		Sentry.replayIntegration({
+			maskAllText: false,
+			blockAllMedia: false
+		})
+	],
+	tracesSampleRate: 0.1, // 10% of transactions
+	replaysSessionSampleRate: 0.1,
+	replaysOnErrorSampleRate: 1.0
 });
 ```
 
 **Error Context**:
+
 ```typescript
 Sentry.setTag('feature', 'pdf-export');
 Sentry.setContext('character', {
-  id: characterId,
-  class: className,
-  level: level,
+	id: characterId,
+	class: className,
+	level: level
 });
 ```
 
@@ -201,40 +205,42 @@ Sentry.setContext('character', {
 When Convex is integrated, add a logs table:
 
 **Schema** (`convex/schema.ts`):
+
 ```typescript
 logs: defineTable({
-  level: v.string(),
-  context: v.string(),
-  message: v.string(),
-  data: v.optional(v.any()),
-  userId: v.optional(v.string()),
-  sessionId: v.string(),
-  timestamp: v.number(),
+	level: v.string(),
+	context: v.string(),
+	message: v.string(),
+	data: v.optional(v.any()),
+	userId: v.optional(v.string()),
+	sessionId: v.string(),
+	timestamp: v.number()
 })
-  .index('by_level', ['level'])
-  .index('by_user', ['userId'])
-  .index('by_session', ['sessionId'])
-  .index('by_timestamp', ['timestamp'])
+	.index('by_level', ['level'])
+	.index('by_user', ['userId'])
+	.index('by_session', ['sessionId'])
+	.index('by_timestamp', ['timestamp']);
 ```
 
 **Mutation** (`convex/logs.ts`):
+
 ```typescript
 export const write = mutation({
-  args: {
-    level: v.string(),
-    context: v.string(),
-    message: v.string(),
-    data: v.optional(v.any()),
-    sessionId: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    await ctx.db.insert('logs', {
-      ...args,
-      userId: identity?.subject,
-      timestamp: Date.now(),
-    });
-  },
+	args: {
+		level: v.string(),
+		context: v.string(),
+		message: v.string(),
+		data: v.optional(v.any()),
+		sessionId: v.string()
+	},
+	handler: async (ctx, args) => {
+		const identity = await ctx.auth.getUserIdentity();
+		await ctx.db.insert('logs', {
+			...args,
+			userId: identity?.subject,
+			timestamp: Date.now()
+		});
+	}
 });
 ```
 
@@ -244,20 +250,20 @@ export const write = mutation({
 
 ### Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `VITE_LOG_LEVEL` | Minimum log level to output | `warn` (prod), `debug` (dev) |
-| `VITE_SENTRY_DSN` | Sentry Data Source Name | (none - disabled) |
-| `VITE_ENABLE_ANALYTICS` | Enable Vercel Analytics | `true` |
-| `VITE_LOG_TO_CONVEX` | Send logs to Convex (future) | `false` |
+| Variable                | Description                  | Default                      |
+| ----------------------- | ---------------------------- | ---------------------------- |
+| `VITE_LOG_LEVEL`        | Minimum log level to output  | `warn` (prod), `debug` (dev) |
+| `VITE_SENTRY_DSN`       | Sentry Data Source Name      | (none - disabled)            |
+| `VITE_ENABLE_ANALYTICS` | Enable Vercel Analytics      | `true`                       |
+| `VITE_LOG_TO_CONVEX`    | Send logs to Convex (future) | `false`                      |
 
 ### Log Level Filtering
 
-| Environment | debug | info | warn | error |
-|-------------|-------|------|------|-------|
-| Development | ✅ | ✅ | ✅ | ✅ |
-| Production | ❌ | ❌ | ✅ | ✅ |
-| Production + Sentry | ❌ | ❌ | ✅ | ✅ + Sentry |
+| Environment         | debug | info | warn | error       |
+| ------------------- | ----- | ---- | ---- | ----------- |
+| Development         | ✅    | ✅   | ✅   | ✅          |
+| Production          | ❌    | ❌   | ✅   | ✅          |
+| Production + Sentry | ❌    | ❌   | ✅   | ✅ + Sentry |
 
 ---
 
@@ -297,21 +303,21 @@ logger.warn('storage', 'No backup found to restore');
 const startTime = performance.now();
 // ... calculation ...
 logger.debug('calculation', 'Calculation complete', {
-  classId,
-  level,
-  durationMs: performance.now() - startTime,
+	classId,
+	level,
+	durationMs: performance.now() - startTime
 });
 
 // Validation errors
 logger.warn('calculation', 'Validation error', {
-  code: 'MASTERY_CAP_EXCEEDED',
-  details: error,
+	code: 'MASTERY_CAP_EXCEEDED',
+	details: error
 });
 
 // Calculation failure
 logger.error('calculation', 'Calculation failed', {
-  classId,
-  error: err.message,
+	classId,
+	error: err.message
 });
 ```
 
@@ -367,6 +373,7 @@ logger.track('character_creation_abandoned', { lastStage, durationMs });
 ## Migration Checklist
 
 ### Phase 1: Setup
+
 - [ ] Create `src/lib/utils/logger.ts`
 - [ ] Install `@vercel/analytics`
 - [ ] Install `@sentry/react`
@@ -375,18 +382,21 @@ logger.track('character_creation_abandoned', { lastStage, durationMs });
 - [ ] Add Vercel Analytics to `src/main.tsx`
 
 ### Phase 2: Instrument Core Services
+
 - [ ] `src/lib/utils/storageUtils.ts` (29 console calls)
 - [ ] `src/lib/services/characterCompletion.ts` (16 console calls)
 - [ ] `src/lib/services/enhancedCharacterCalculator.ts` (8 console calls)
 - [ ] `src/lib/services/spellAssignment.ts` (9 console calls)
 
 ### Phase 3: Instrument UI
+
 - [ ] `src/routes/character-creation/CharacterCreation.tsx`
 - [ ] `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx`
 - [ ] `src/components/auth/*.tsx`
 - [ ] `src/lib/pdf/fillPdf.ts`
 
 ### Phase 4: Cleanup
+
 - [ ] Search and replace remaining `console.log` calls
 - [ ] Search and replace remaining `console.warn` calls
 - [ ] Search and replace remaining `console.error` calls
@@ -394,6 +404,7 @@ logger.track('character_creation_abandoned', { lastStage, durationMs });
 - [ ] Remove emoji prefixes from log messages
 
 ### Phase 5: Verification
+
 - [ ] Verify no console output in production build
 - [ ] Verify Vercel Analytics receiving events
 - [ ] Verify Sentry receiving errors (test with intentional error)
@@ -434,12 +445,14 @@ Add to `eslint.config.js` after migration:
 ## Testing
 
 ### Unit Tests
+
 - Logger correctly filters by log level
 - Logger includes session ID in all entries
 - Sentry integration captures errors with context
 - Analytics events have correct properties
 
 ### Manual Testing
+
 1. Set `VITE_LOG_LEVEL=debug` and verify all logs appear
 2. Set `VITE_LOG_LEVEL=error` and verify only errors appear
 3. Trigger an error and verify it appears in Sentry

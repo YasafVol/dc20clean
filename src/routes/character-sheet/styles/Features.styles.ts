@@ -1,95 +1,105 @@
 import styled from 'styled-components';
+import { theme } from './theme';
 
 interface MobileStyledProps {
 	$isMobile?: boolean;
 }
 
 export const StyledFeaturesContainer = styled.div<MobileStyledProps>`
-	border: 2px solid ${(props) => (props.$isMobile ? 'rgb(68,68,68)' : '#8b4513')};
-	border-radius: 8px;
-	padding: 1rem;
-	background: ${(props) => (props.$isMobile ? 'rgb(42,42,42)' : 'white')};
-	margin-bottom: 1rem;
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.lg};
+	padding: ${theme.spacing[4]};
+	background: ${theme.colors.bg.secondary};
+	margin-bottom: ${theme.spacing[4]};
 	height: 762px;
 	overflow-y: auto;
 `;
 
 export const StyledFeaturesTitle = styled.div<MobileStyledProps>`
-	font-size: 1.1rem;
-	font-weight: bold;
-	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
+	font-size: ${theme.typography.fontSize.xl};
+	font-weight: ${theme.typography.fontWeight.bold};
+	color: ${theme.colors.text.primary};
 	text-align: center;
-	margin-bottom: 1rem;
-	font-family: 'Inter', sans-serif;
+	margin-bottom: ${theme.spacing[4]};
+	font-family: 'Cinzel', 'Georgia', serif;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
 `;
 
 export const StyledFeatureCategory = styled.div<MobileStyledProps>`
-	margin-bottom: 1rem;
+	margin-bottom: ${theme.spacing[4]};
 `;
 
 export const StyledFeatureCategoryTitle = styled.div<MobileStyledProps>`
-	font-size: 0.9rem;
-	font-weight: bold;
-	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
-	margin-bottom: 0.5rem;
-	padding-bottom: 0.3rem;
-	border-bottom: 1px solid ${(props) => (props.$isMobile ? 'rgb(68,68,68)' : '#8b4513')};
-	font-family: 'Inter', sans-serif;
+	font-size: ${theme.typography.fontSize.base};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	color: ${theme.colors.accent.primary};
+	margin-bottom: ${theme.spacing[2]};
+	padding-bottom: ${theme.spacing[2]};
+	border-bottom: 1px solid ${theme.colors.border.default};
+	font-family: 'Urbanist', sans-serif;
 `;
 
 export const StyledFeatureGrid = styled.div<MobileStyledProps>`
 	display: flex;
 	flex-direction: column;
-	gap: 0.3rem;
+	gap: ${theme.spacing[2]};
 `;
 
 export const StyledFeatureItem = styled.div<MobileStyledProps>`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 0.5rem;
-	border: 1px solid ${(props) => (props.$isMobile ? 'rgb(68,68,68)' : '#8b4513')};
-	border-radius: 4px;
-	background: ${(props) => (props.$isMobile ? 'rgb(50,50,50)' : '#f9f9f9')};
+	padding: ${theme.spacing[3]};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
+	background: ${theme.colors.bg.tertiary};
+	transition: all ${theme.transitions.fast};
+
+	&:hover {
+		background: ${theme.colors.bg.elevated};
+		border-color: ${theme.colors.accent.primary};
+	}
 `;
 
 export const StyledFeatureName = styled.span<MobileStyledProps>`
-	font-size: 0.85rem;
-	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
-	font-weight: 500;
+	font-size: ${theme.typography.fontSize.sm};
+	color: ${theme.colors.text.primary};
+	font-weight: ${theme.typography.fontWeight.medium};
 	flex: 1;
 `;
 
 export const StyledFeatureReadMore = styled.button<MobileStyledProps>`
 	background: transparent;
-	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
-	border: 1px solid ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
+	color: ${theme.colors.accent.primary};
+	border: 1px solid ${theme.colors.accent.primary};
 	border-radius: 50%;
-	width: 20px;
-	height: 20px;
+	width: 24px;
+	height: 24px;
 	cursor: pointer;
 	font-style: italic;
-	font-size: 0.8rem;
-	font-weight: bold;
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.bold};
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
+	transition: all ${theme.transitions.fast};
 
 	&:hover {
-		background: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
-		color: ${(props) => (props.$isMobile ? 'rgb(42,42,42)' : 'white')};
+		background: ${theme.colors.accent.primary};
+		color: ${theme.colors.bg.primary};
 	}
 `;
 
 export const StyledNoFeaturesMessage = styled.div<MobileStyledProps>`
 	text-align: center;
 	font-style: italic;
-	padding: 1rem;
-	color: ${(props) => (props.$isMobile ? '#f5d020' : '#666')};
+	padding: ${theme.spacing[4]};
+	color: ${theme.colors.text.muted};
 `;
 
 export const StyledFeaturesContent = styled.div<MobileStyledProps>`
-	font-size: 0.9rem;
-	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
+	font-size: ${theme.typography.fontSize.base};
+	color: ${theme.colors.text.primary};
 `;

@@ -214,7 +214,7 @@ function Menu() {
 
 	return (
 		<StyledContainer>
-			<div className="absolute right-6 top-6">
+			<div className="absolute top-6 right-6">
 				<AuthStatus />
 			</div>
 			<StyledTitle>DC20 Character Creator</StyledTitle>
@@ -308,15 +308,9 @@ function Menu() {
 			</StyledMenuSection>
 
 			{/* Rules Version Note */}
-			<div className="absolute bottom-4 right-4 text-xs text-white/50">
-				Rules: DC20 v0.10
-			</div>
+			<div className="absolute right-4 bottom-4 text-xs text-white/50">Rules: DC20 v0.10</div>
 		</StyledContainer>
 	);
 }
 
 export default Menu;
-
-
-
-

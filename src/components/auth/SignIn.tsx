@@ -28,16 +28,16 @@ export interface SignInProps {
 const featureMessages: Record<string, { title: string; description: string }> = {
 	'cloud-save': {
 		title: 'Save to Cloud',
-		description: 'Sign in to save your characters to the cloud and access them from any device.',
+		description: 'Sign in to save your characters to the cloud and access them from any device.'
 	},
 	'pdf-export': {
 		title: 'Export to PDF',
-		description: 'Sign in to export your character sheet as a PDF.',
+		description: 'Sign in to export your character sheet as a PDF.'
 	},
 	general: {
 		title: 'Sign In',
-		description: 'Sign in to unlock cloud saves and PDF exports.',
-	},
+		description: 'Sign in to unlock cloud saves and PDF exports.'
+	}
 };
 
 export function SignIn({ onSuccess, onCancel, feature = 'general', className }: SignInProps) {
@@ -153,4 +153,3 @@ function GoogleIcon({ className }: { className?: string }) {
 }
 
 export default SignIn;
-

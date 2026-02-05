@@ -164,12 +164,12 @@ import { FeatureGateButton } from '@/components/auth';
 
 // In LoadCharacter.tsx
 <FeatureGateButton
-  feature="pdf-export"
-  onAction={() => handleExportPdf(character)}
-  className="border-purple-500 font-bold text-purple-400 hover:bg-purple-500 hover:text-white"
+	feature="pdf-export"
+	onAction={() => handleExportPdf(character)}
+	className="border-purple-500 font-bold text-purple-400 hover:bg-purple-500 hover:text-white"
 >
-  Export PDF
-</FeatureGateButton>
+	Export PDF
+</FeatureGateButton>;
 ```
 
 ### Behavior

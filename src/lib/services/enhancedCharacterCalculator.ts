@@ -30,9 +30,7 @@ import {
 } from '../rulesdata/classes-data/classProgressionResolver';
 import { classesData } from '../rulesdata/loaders/class.loader';
 import { findTalentById } from '../rulesdata/classes-data/talents/talent.loader';
-import {
-	getLevelCaps
-} from '../rulesdata/progression/levelCaps';
+import { getLevelCaps } from '../rulesdata/progression/levelCaps';
 
 import { BuildStep } from '../types/effectSystem';
 import { getSpellById } from '../rulesdata/spells-data';
@@ -212,9 +210,7 @@ function checkFlavorFeatureAutoGrant(
 	for (const mc of multiclassFeatures) {
 		if (mc.classId === classId) {
 			// Verify it's not a flavor feature
-			const feature = classFeatures.find(
-				(f) => (f.id || f.featureName) === mc.featureId
-			);
+			const feature = classFeatures.find((f) => (f.id || f.featureName) === mc.featureId);
 			if (feature && !feature.isFlavor) {
 				featureCount++;
 			}
@@ -485,6 +481,11 @@ function aggregateAttributedEffects(buildData: EnhancedCharacterBuildData): Attr
 	const classFeatures = getClassFeatures(buildData.classId);
 	if (classFeatures) {
 		for (const feature of classFeatures.coreFeatures) {
+			// Only apply features the character has unlocked by current level.
+			if ((feature.levelGained || 0) > buildData.level) {
+				continue;
+			}
+
 			// Direct feature effects
 			if (feature.effects) {
 				for (const effect of feature.effects) {
@@ -682,17 +683,27 @@ function generateSpellsKnownSlots(
 
 				// Map common GRANT_SPELL targets to restrictions
 				const target = (effect as any).target;
-				if (target === 'astromancy_school') slot.specificRestrictions!.schools = ['Astromancy' as SpellSchool];
-				if (target === 'conjuration_school') slot.specificRestrictions!.schools = ['Conjuration' as SpellSchool];
-				if (target === 'divination_school') slot.specificRestrictions!.schools = ['Divination' as SpellSchool];
-				if (target === 'elemental_school') slot.specificRestrictions!.schools = ['Elemental' as SpellSchool];
-				if (target === 'enchantment_school') slot.specificRestrictions!.schools = ['Enchantment' as SpellSchool];
-				if (target === 'invocation_school') slot.specificRestrictions!.schools = ['Invocation' as SpellSchool];
-				if (target === 'nullification_school') slot.specificRestrictions!.schools = ['Nullification' as SpellSchool];
-				if (target === 'transmutation_school') slot.specificRestrictions!.schools = ['Transmutation' as SpellSchool];
-				if (target === 'illusion_school') slot.specificRestrictions!.schools = ['Illusion' as SpellSchool]; // Placeholder for Illusion
+				if (target === 'astromancy_school')
+					slot.specificRestrictions!.schools = ['Astromancy' as SpellSchool];
+				if (target === 'conjuration_school')
+					slot.specificRestrictions!.schools = ['Conjuration' as SpellSchool];
+				if (target === 'divination_school')
+					slot.specificRestrictions!.schools = ['Divination' as SpellSchool];
+				if (target === 'elemental_school')
+					slot.specificRestrictions!.schools = ['Elemental' as SpellSchool];
+				if (target === 'enchantment_school')
+					slot.specificRestrictions!.schools = ['Enchantment' as SpellSchool];
+				if (target === 'invocation_school')
+					slot.specificRestrictions!.schools = ['Invocation' as SpellSchool];
+				if (target === 'nullification_school')
+					slot.specificRestrictions!.schools = ['Nullification' as SpellSchool];
+				if (target === 'transmutation_school')
+					slot.specificRestrictions!.schools = ['Transmutation' as SpellSchool];
+				if (target === 'illusion_school')
+					slot.specificRestrictions!.schools = ['Illusion' as SpellSchool]; // Placeholder for Illusion
 
-				if (target === 'Divine_Spell_List') slot.specificRestrictions!.sources = ['Divine' as SpellSource];
+				if (target === 'Divine_Spell_List')
+					slot.specificRestrictions!.sources = ['Divine' as SpellSource];
 
 				if (target === 'curse_tag') slot.specificRestrictions!.tags = ['Curse' as SpellTag];
 				if (target === 'by_tag' && (effect as any).userChoice) {
@@ -771,7 +782,9 @@ function createStatBreakdown(
 
 		// Map effect types to stat names
 		if ((effect as any).type === 'MODIFY_ATTRIBUTE') {
-			return statName === `attribute_${(effect as any).target}` || statName === (effect as any).target;
+			return (
+				statName === `attribute_${(effect as any).target}` || statName === (effect as any).target
+			);
 		}
 		if ((effect as any).type === 'MODIFY_STAT') {
 			return statName === (effect as any).target;
@@ -999,12 +1012,15 @@ function aggregateProgressionGains(
 		totalTradePoints += levelData.gainedTradePoints || levelData.tradePoints || 0;
 		totalAttributePoints += levelData.gainedAttributePoints || levelData.attributePoints || 0;
 		totalManeuversKnown += levelData.gainedManeuversKnown || levelData.maneuversKnown || 0;
-		totalSpellsKnown += (levelData.gainedSpellsKnown || levelData.spellsKnown || 0) + (levelData.gainedCantripsKnown || levelData.cantripsKnown || 0);
+		totalSpellsKnown +=
+			(levelData.gainedSpellsKnown || levelData.spellsKnown || 0) +
+			(levelData.gainedCantripsKnown || levelData.cantripsKnown || 0);
 
 		// Aggregate new structured gains (if present)
 		if (levelData.gains) {
 			totalTalents += levelData.gains.talents || 0;
-			totalPathPoints += levelData.gains.pathPoints || 0;
+			// Support both pathPoints (number) and pathProgression (boolean).
+			totalPathPoints += levelData.gains.pathPoints || (levelData.gains.pathProgression ? 1 : 0);
 			totalAncestryPoints += levelData.gains.ancestryPoints || 0;
 
 			if (levelData.gains.classFeatures) {
@@ -1370,7 +1386,13 @@ export function calculateCharacterWithBreakdowns(
 
 	// Calculate GRANT_MANEUVERS effects from features (e.g., Commander's 4 attack maneuvers)
 	const grantedManeuversCount = resolvedEffects
-		.filter((e) => (e as any).type === 'GRANT_MANEUVERS')
+		.filter((e) => {
+			if ((e as any).type !== 'GRANT_MANEUVERS') return false;
+
+			// "all_attack" is an access grant, not a numeric "maneuvers known" budget increase.
+			const target = String((e as any).target || '').toLowerCase();
+			return target !== 'all_attack';
+		})
 		.reduce((sum, e) => sum + Number((e as any).value || 0), 0);
 
 	// Log the bonuses for debugging
@@ -1817,7 +1839,7 @@ export function calculateCharacterWithBreakdowns(
 	// --- START SPELL SLOT VALIDATION (M3.20) ---
 	if (buildData.selectedSpells) {
 		Object.entries(buildData.selectedSpells).forEach(([slotId, spellId]) => {
-			const slot = spellsKnownSlots.find(s => s.id === slotId);
+			const slot = spellsKnownSlots.find((s) => s.id === slotId);
 			const spell = getSpellById(spellId);
 
 			if (!slot) {
@@ -1839,7 +1861,6 @@ export function calculateCharacterWithBreakdowns(
 				});
 				return;
 			}
-
 
 			// Validate slot-specific restrictions
 			if (slot.specificRestrictions) {
@@ -2046,7 +2067,8 @@ export function calculateCharacterWithBreakdowns(
 			totalTradePoints: progressionGains.totalTradePoints,
 			totalAttributePoints: progressionGains.totalAttributePoints,
 			// Include MODIFY_STAT bonuses and GRANT_MANEUVERS effects (C1, C3)
-			totalManeuversKnown: progressionGains.totalManeuversKnown + maneuverBonus + grantedManeuversCount,
+			totalManeuversKnown:
+				progressionGains.totalManeuversKnown + maneuverBonus + grantedManeuversCount,
 			totalCantripsKnown: progressionGains.totalCantripsKnown,
 			// Include MODIFY_STAT bonuses for spells (C2)
 			totalSpellsKnown: progressionGains.totalSpellsKnown + spellBonus,
@@ -2081,7 +2103,10 @@ export function calculateCharacterWithBreakdowns(
 			}
 
 			// Check multiclass class for flavor feature auto-grant (if applicable)
-			if (buildData.selectedMulticlassClass && buildData.selectedMulticlassClass !== buildData.classId) {
+			if (
+				buildData.selectedMulticlassClass &&
+				buildData.selectedMulticlassClass !== buildData.classId
+			) {
 				const multiclassFlavor = checkFlavorFeatureAutoGrant(
 					buildData.selectedMulticlassClass,
 					[], // No unlocked features from multiclass class progression
@@ -2096,17 +2121,17 @@ export function calculateCharacterWithBreakdowns(
 		})(),
 		resolvedFeatures: resolvedProgression
 			? {
-				unlockedFeatures: resolvedProgression.unlockedFeatures,
-				pendingFeatureChoices: resolvedProgression.pendingFeatureChoices,
-				availableSubclassChoice: resolvedProgression.availableSubclassChoice,
-				subclassChoiceLevel: resolvedProgression.subclassChoiceLevel
-			}
+					unlockedFeatures: resolvedProgression.unlockedFeatures,
+					pendingFeatureChoices: resolvedProgression.pendingFeatureChoices,
+					availableSubclassChoice: resolvedProgression.availableSubclassChoice,
+					subclassChoiceLevel: resolvedProgression.subclassChoiceLevel
+				}
 			: {
-				unlockedFeatures: [],
-				pendingFeatureChoices: [],
-				availableSubclassChoice: false,
-				subclassChoiceLevel: undefined
-			},
+					unlockedFeatures: [],
+					pendingFeatureChoices: [],
+					availableSubclassChoice: false,
+					subclassChoiceLevel: undefined
+				},
 
 		// --- Spell System (M3.20) ---
 		globalMagicProfile,

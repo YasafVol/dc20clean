@@ -11,7 +11,7 @@ import {
 	calculateEncounterBudget,
 	calculateDifficultyThresholds,
 	getBudgetStatus,
-	createDefaultEncounter,
+	createDefaultEncounter
 } from './encounterBudgetCalculator';
 
 describe('Encounter Budget Calculator', () => {
@@ -53,11 +53,11 @@ describe('Encounter Budget Calculator', () => {
 			expect(calculateDifficultyModifier('deadly', 1)).toBe(2);
 		});
 
-	it('should handle level 0 (modifiers are 0)', () => {
-		// Note: -2 × 0 = -0 in JavaScript, use loose equality
-		expect(calculateDifficultyModifier('trivial', 0) === 0).toBe(true);
-		expect(calculateDifficultyModifier('deadly', 0) === 0).toBe(true);
-	});
+		it('should handle level 0 (modifiers are 0)', () => {
+			// Note: -2 × 0 = -0 in JavaScript, use loose equality
+			expect(calculateDifficultyModifier('trivial', 0) === 0).toBe(true);
+			expect(calculateDifficultyModifier('deadly', 0) === 0).toBe(true);
+		});
 	});
 
 	describe('Adjusted Budget', () => {
@@ -162,8 +162,8 @@ describe('Encounter Budget Calculator', () => {
 				difficulty: 'medium',
 				monsters: [
 					{ monsterId: 'mon_1', quantity: 4, monsterLevel: 1, monsterTier: 'standard' },
-					{ monsterId: 'mon_2', quantity: 1, monsterLevel: 2, monsterTier: 'standard' },
-				],
+					{ monsterId: 'mon_2', quantity: 1, monsterLevel: 2, monsterTier: 'standard' }
+				]
 			});
 
 			expect(result.baseBudget).toBe(16);
@@ -181,8 +181,8 @@ describe('Encounter Budget Calculator', () => {
 				difficulty: 'hard',
 				monsters: [
 					{ monsterId: 'mon_1', quantity: 1, monsterLevel: 4, monsterTier: 'apex' },
-					{ monsterId: 'mon_2', quantity: 4, monsterLevel: 2, monsterTier: 'standard' },
-				],
+					{ monsterId: 'mon_2', quantity: 4, monsterLevel: 2, monsterTier: 'standard' }
+				]
 			});
 
 			expect(result.adjustedBudget).toBe(20); // 16 + 4
@@ -194,7 +194,7 @@ describe('Encounter Budget Calculator', () => {
 			const result = calculateEncounterBudget({
 				party: { size: 4, averageLevel: 4 },
 				difficulty: 'medium',
-				monsters: [],
+				monsters: []
 			});
 
 			expect(result.spentBudget).toBe(0);
@@ -206,9 +206,7 @@ describe('Encounter Budget Calculator', () => {
 			const result = calculateEncounterBudget({
 				party: { size: 4, averageLevel: 4 },
 				difficulty: 'medium',
-				monsters: [
-					{ monsterId: 'mon_1', quantity: 3, monsterLevel: 2, monsterTier: 'standard' },
-				],
+				monsters: [{ monsterId: 'mon_1', quantity: 3, monsterLevel: 2, monsterTier: 'standard' }]
 			});
 
 			expect(result.slotCosts).toHaveLength(1);
@@ -216,7 +214,7 @@ describe('Encounter Budget Calculator', () => {
 				monsterId: 'mon_1',
 				unitCost: 2,
 				quantity: 3,
-				totalCost: 6,
+				totalCost: 6
 			});
 		});
 
@@ -224,7 +222,7 @@ describe('Encounter Budget Calculator', () => {
 			const result = calculateEncounterBudget({
 				party: { size: 4, averageLevel: 4 },
 				difficulty: 'medium',
-				monsters: [],
+				monsters: []
 			});
 
 			expect(result.difficultyThresholds).toEqual({
@@ -232,7 +230,7 @@ describe('Encounter Budget Calculator', () => {
 				easy: 12,
 				medium: 16,
 				hard: 20,
-				deadly: 24,
+				deadly: 24
 			});
 		});
 	});
@@ -242,7 +240,7 @@ describe('Encounter Budget Calculator', () => {
 			const result = calculateEncounterBudget({
 				party: { size: 4, averageLevel: 4 },
 				difficulty: 'medium',
-				monsters: [{ monsterId: 'mon_1', quantity: 1, monsterLevel: 2, monsterTier: 'standard' }],
+				monsters: [{ monsterId: 'mon_1', quantity: 1, monsterLevel: 2, monsterTier: 'standard' }]
 			});
 
 			expect(result.validation.isUnderBudget).toBe(true);
@@ -254,7 +252,7 @@ describe('Encounter Budget Calculator', () => {
 			const result = calculateEncounterBudget({
 				party: { size: 4, averageLevel: 4 },
 				difficulty: 'medium',
-				monsters: [{ monsterId: 'mon_1', quantity: 14, monsterLevel: 1, monsterTier: 'standard' }],
+				monsters: [{ monsterId: 'mon_1', quantity: 14, monsterLevel: 1, monsterTier: 'standard' }]
 			});
 
 			expect(result.validation.isUnderBudget).toBe(false);
@@ -266,7 +264,7 @@ describe('Encounter Budget Calculator', () => {
 			const result = calculateEncounterBudget({
 				party: { size: 4, averageLevel: 4 },
 				difficulty: 'medium',
-				monsters: [{ monsterId: 'mon_1', quantity: 1, monsterLevel: 8, monsterTier: 'legendary' }],
+				monsters: [{ monsterId: 'mon_1', quantity: 1, monsterLevel: 8, monsterTier: 'legendary' }]
 			});
 
 			expect(result.validation.isUnderBudget).toBe(false);
@@ -294,7 +292,7 @@ describe('Encounter Budget Calculator', () => {
 			const encounter = createDefaultEncounter({
 				name: 'Goblin Ambush',
 				party: { size: 5, averageLevel: 3 },
-				difficulty: 'hard',
+				difficulty: 'hard'
 			});
 
 			expect(encounter.name).toBe('Goblin Ambush');
@@ -305,7 +303,7 @@ describe('Encounter Budget Calculator', () => {
 		it('should calculate budget values', () => {
 			const encounter = createDefaultEncounter({
 				party: { size: 4, averageLevel: 4 },
-				difficulty: 'hard',
+				difficulty: 'hard'
 			});
 
 			expect(encounter.baseBudget).toBe(16);

@@ -52,7 +52,7 @@ export const barbarianClass: ClassDefinition = {
 					name: 'Maneuver Knowledge',
 					description:
 						'You learn all Attack maneuvers plus additional maneuvers as shown on the Barbarian Class Table.',
-					effects: [{ type: 'GRANT_MANEUVERS', target: 'all_attack', value: 4 }]
+					effects: []
 				},
 				{
 					name: 'Stamina Regeneration',

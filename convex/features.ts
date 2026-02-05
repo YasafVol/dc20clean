@@ -31,6 +31,7 @@ export const list = query({
 			.filter((q) => q.eq(q.field('deletedAt'), undefined))
 			.collect();
 
+<<<<<<<< HEAD:convex/features.ts
 		// If authenticated, also include user's custom features
 		let userFeatures: typeof officialFeatures = [];
 		if (userId) {
@@ -48,6 +49,10 @@ export const list = query({
 
 		return [...officialFeatures, ...userFeatures];
 	},
+========
+		return features;
+	}
+>>>>>>>> main:convex/customFeatures.ts
 });
 
 /**
@@ -112,7 +117,7 @@ export const getById = query({
 			.first();
 
 		return feature ?? null;
-	},
+	}
 });
 
 /**
@@ -120,7 +125,7 @@ export const getById = query({
  */
 export const listHomebrew = query({
 	args: {
-		pointCost: v.optional(v.number()),
+		pointCost: v.optional(v.number())
 	},
 	handler: async (ctx, args) => {
 		let query = ctx.db
@@ -132,8 +137,14 @@ export const listHomebrew = query({
 			query = query.filter((q) => q.eq(q.field('pointCost'), args.pointCost));
 		}
 
+<<<<<<<< HEAD:convex/features.ts
 		return await query.collect();
 	},
+========
+		const features = await query.collect();
+		return features;
+	}
+>>>>>>>> main:convex/customFeatures.ts
 });
 
 /**
@@ -154,7 +165,7 @@ export const listTrash = query({
 			.collect();
 
 		return features;
-	},
+	}
 });
 
 // ============================================================================
@@ -171,8 +182,8 @@ export const create = mutation({
 			name: v.string(),
 			description: v.string(),
 			pointCost: v.number(),
-			effects: v.optional(v.array(v.any())),
-		}),
+			effects: v.optional(v.array(v.any()))
+		})
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -191,11 +202,11 @@ export const create = mutation({
 			isHomebrew: false,
 			createdAt: now,
 			lastModified: now,
-			schemaVersion: '1.0.0',
+			schemaVersion: '1.0.0'
 		});
 
 		return featureId;
-	},
+	}
 });
 
 /**
@@ -208,8 +219,8 @@ export const update = mutation({
 			name: v.optional(v.string()),
 			description: v.optional(v.string()),
 			pointCost: v.optional(v.number()),
-			effects: v.optional(v.array(v.any())),
-		}),
+			effects: v.optional(v.array(v.any()))
+		})
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -238,11 +249,11 @@ export const update = mutation({
 
 		await ctx.db.patch(existing._id, {
 			...args.updates,
-			lastModified: new Date().toISOString(),
+			lastModified: new Date().toISOString()
 		});
 
 		return existing._id;
-	},
+	}
 });
 
 /**
@@ -277,11 +288,11 @@ export const softDelete = mutation({
 			deletedAt: now,
 			deletedBy: userId,
 			scheduledPurgeAt: purgeDate.toISOString(),
-			lastModified: now,
+			lastModified: now
 		});
 
 		return { success: true };
-	},
+	}
 });
 
 /**
@@ -312,11 +323,11 @@ export const restore = mutation({
 			deletedAt: undefined,
 			deletedBy: undefined,
 			scheduledPurgeAt: undefined,
-			lastModified: new Date().toISOString(),
+			lastModified: new Date().toISOString()
 		});
 
 		return { success: true };
-	},
+	}
 });
 
 /**
@@ -346,7 +357,7 @@ export const hardDelete = mutation({
 		await ctx.db.delete(existing._id);
 
 		return { success: true };
-	},
+	}
 });
 
 /**
@@ -357,7 +368,11 @@ export const fork = mutation({
 	args: {
 		sourceId: v.string(),
 		sourceType: v.union(v.literal('official'), v.literal('custom'), v.literal('homebrew')),
+<<<<<<<< HEAD:convex/features.ts
 		sourceData: v.optional(v.any()),
+========
+		sourceData: v.any() // The feature data to fork
+>>>>>>>> main:convex/customFeatures.ts
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -374,9 +389,32 @@ export const fork = mutation({
 			.filter((q) => q.eq(q.field('id'), args.sourceId))
 			.first();
 
+<<<<<<<< HEAD:convex/features.ts
 		let sourceFeature = dbFeature ?? args.sourceData;
 		if (!sourceFeature) {
 			throw new Error('Source feature not found');
+========
+		// If forking from DB, get the source and update fork stats
+		if (args.sourceType !== 'official') {
+			const dbFeature = await ctx.db
+				.query('customFeatures')
+				.filter((q) => q.eq(q.field('id'), args.sourceId))
+				.first();
+
+			if (dbFeature) {
+				sourceFeature = dbFeature;
+				sourceName = dbFeature.name;
+				sourceUserId = dbFeature.userId;
+
+				// Update fork stats on source
+				await ctx.db.patch(dbFeature._id, {
+					forkStats: {
+						forkCount: (dbFeature.forkStats?.forkCount ?? 0) + 1,
+						lastForkedAt: now
+					}
+				});
+			}
+>>>>>>>> main:convex/customFeatures.ts
 		}
 
 		const sourceName = sourceFeature.name ?? 'Unknown';
@@ -409,17 +447,17 @@ export const fork = mutation({
 				type: args.sourceType,
 				name: sourceName,
 				userId: sourceUserId,
-				forkedAt: now,
+				forkedAt: now
 			},
 			createdAt: now,
 			lastModified: now,
-			schemaVersion: '1.0.0',
+			schemaVersion: '1.0.0'
 		};
 
 		const docId = await ctx.db.insert('features', forkedFeature);
 
 		return { id: newId, _id: docId };
-	},
+	}
 });
 
 /**
@@ -428,7 +466,7 @@ export const fork = mutation({
 export const submitForReview = mutation({
 	args: {
 		id: v.string(),
-		visibility: v.union(v.literal('public_anonymous'), v.literal('public_credited')),
+		visibility: v.union(v.literal('public_anonymous'), v.literal('public_credited'))
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -465,11 +503,11 @@ export const submitForReview = mutation({
 			isHomebrew: true,
 			submittedAt: now,
 			rejectionReason: undefined,
-			lastModified: now,
+			lastModified: now
 		});
 
 		return { success: true };
-	},
+	}
 });
 
 /**

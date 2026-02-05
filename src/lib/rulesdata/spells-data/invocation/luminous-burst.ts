@@ -19,8 +19,7 @@ export const luminousBurst: Spell = {
 				'You produce a flash of brilliant light in a 1 Space Aura. Make an Area Spell Attack against the AD of every target within the area. Hit: The target takes 1 Radiant damage.'
 		}
 	],
-	spellPassive:
-		'Illuminate: The Light level of the area increases by 1 until the end of the turn.',
+	spellPassive: 'Illuminate: The Light level of the area increases by 1 until the end of the turn.',
 	enhancements: [
 		{
 			type: 'MP',

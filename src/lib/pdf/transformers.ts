@@ -31,21 +31,22 @@ const pickList = <T>(primary: unknown, fallback: unknown): T[] => {
 	return normalizeList<T>(fallback);
 };
 
-const resolveSpellEntry = (
-	entry: unknown
-): { spellName: string; isCantrip: boolean } | null => {
+const resolveSpellEntry = (entry: unknown): { spellName: string; isCantrip: boolean } | null => {
 	if (!entry) return null;
 	if (typeof entry === 'string') {
 		const byId = ALL_SPELLS.find((spell) => spell.id === entry);
 		if (byId) return { spellName: byId.name, isCantrip: !!byId.isCantrip };
-		const byName = ALL_SPELLS.find(
-			(spell) => spell.name.toLowerCase() === entry.toLowerCase()
-		);
+		const byName = ALL_SPELLS.find((spell) => spell.name.toLowerCase() === entry.toLowerCase());
 		if (byName) return { spellName: byName.name, isCantrip: !!byName.isCantrip };
 		return { spellName: entry, isCantrip: false };
 	}
 	if (typeof entry === 'object') {
-		const spellLike = entry as { spellName?: string; name?: string; id?: string; isCantrip?: boolean };
+		const spellLike = entry as {
+			spellName?: string;
+			name?: string;
+			id?: string;
+			isCantrip?: boolean;
+		};
 		if (spellLike.spellName) {
 			return { spellName: spellLike.spellName, isCantrip: !!spellLike.isCantrip };
 		}
@@ -93,7 +94,10 @@ export function formatClassFeatures(
 	});
 
 	const classDefinition = classId ? findClassByName(classId) : null;
-	console.log('📄 findClassByName result:', classDefinition ? classDefinition.className : 'NOT FOUND');
+	console.log(
+		'📄 findClassByName result:',
+		classDefinition ? classDefinition.className : 'NOT FOUND'
+	);
 	const featureNames: string[] = [];
 
 	for (const featureId of featureIds) {
@@ -175,7 +179,9 @@ export function formatAncestryTraits(traitIds: string[]): string {
  * @returns Formatted string with sections for spells, cantrips, and maneuvers
  */
 export function formatSpellsAndManeuvers(
-	spells: Array<SpellData | string | { id?: string; name?: string; spellName?: string; isCantrip?: boolean }>,
+	spells: Array<
+		SpellData | string | { id?: string; name?: string; spellName?: string; isCantrip?: boolean }
+	>,
 	maneuvers: ManeuverData[]
 ): string {
 	const parts: string[] = [];
@@ -312,9 +318,7 @@ export function formatFeatureChoices(
 		const labelParts = choiceId.split('_');
 		// Try to extract meaningful label (skip class prefix if present)
 		const meaningfulParts = labelParts.slice(labelParts.length > 3 ? 1 : 0);
-		const label = meaningfulParts
-			.map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-			.join(' ');
+		const label = meaningfulParts.map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
 
 		// Format the value
 		const displayValue = Array.isArray(value) ? value.join(', ') : value;

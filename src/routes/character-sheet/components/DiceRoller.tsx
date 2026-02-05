@@ -97,15 +97,15 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 
 	const getDiceIcon = (type: DiceType): string => {
 		// Using dice symbols
-		const iconMap: Record<DiceType, string> = {
-			d4: '⚃',
-			d6: '⚅',
-			d8: '🎲',
-			d10: '🎯',
-			d12: '⭐',
-			d20: '🔥'
-		};
-		return iconMap[type];
+		// const iconMap: Record<DiceType, string> = {
+		// 	d4: '⚃',
+		// 	d6: '⚅',
+		// 	d8: '🎲',
+		// 	d10: '🎯',
+		// 	d12: '⭐',
+		// 	d20: '❄️'
+		// };
+		return '❄️';
 	};
 
 	const addDice = (type: DiceType) => {
@@ -383,7 +383,7 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 						{rollMode !== 'no-d20' && (
 							<>
 								<StyledDiceIcon $isRolling={isRolling} $type="d20">
-									{isRolling ? '🌪️' : '🔥'}
+									❄️
 								</StyledDiceIcon>
 								{rollMode !== 'normal' && (
 									<StyledRollModeText>

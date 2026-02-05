@@ -425,12 +425,6 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 	const [activeTab, setActiveTab] = useState<TabId>('attacks');
 	const [hamburgerDrawerOpen, setHamburgerDrawerOpen] = useState(false);
-	const [autoRollConfig, setAutoRollConfig] = useState<{
-		trigger: boolean;
-		diceType: 'd4' | 'd6' | 'd8' | 'd10' | 'd12' | 'd20';
-		bonus?: number;
-		mode?: 'normal' | 'advantage' | 'disadvantage' | 'no-d20';
-	}>({ trigger: false, diceType: 'd20' });
 	const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
 	const [selectedWeapon, setSelectedWeapon] = useState<Weapon | null>(null);
 	const [selectedInventoryItem, setSelectedInventoryItem] = useState<{
@@ -971,21 +965,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 													}}
 												/>
 											)}
-											{activeTab === 'spells' && (
-												<Spells
-													onSpellClick={(spell) => {
-														setAutoRollConfig({
-															trigger: true,
-															diceType: 'd20',
-															mode: 'normal'
-														});
-														setTimeout(
-															() => setAutoRollConfig({ trigger: false, diceType: 'd20' }),
-															200
-														);
-													}}
-												/>
-											)}
+											{activeTab === 'spells' && <Spells onSpellClick={() => {}} />}
 											{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
 											{activeTab === 'maneuvers' && <Maneuvers onManeuverClick={() => {}} />}
 											{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
@@ -1062,18 +1042,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 										}}
 									/>
 								)}
-								{activeTab === 'spells' && (
-									<Spells
-										onSpellClick={(spell) => {
-											setAutoRollConfig({
-												trigger: true,
-												diceType: 'd20',
-												mode: 'normal'
-											});
-											setTimeout(() => setAutoRollConfig({ trigger: false, diceType: 'd20' }), 200);
-										}}
-									/>
-								)}
+								{activeTab === 'spells' && <Spells onSpellClick={() => {}} />}
 								{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
 								{activeTab === 'maneuvers' && <Maneuvers onManeuverClick={() => {}} />}
 								{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
@@ -1198,6 +1167,15 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				onItemClick={setActiveTab}
 				activeItemId={activeTab}
 			/>
+
+			{/* Dice Roller Component */}
+			<DiceRoller ref={diceRollerRef} />
+
+			{/* Auto-save Status Indicator */}
+			<AutoSaveIndicator status={saveStatus} onRetry={retryFailedSave} />
+
+			{/* Feature Details Popup */}
+			<FeaturePopup feature={selectedFeature} onClose={closeFeaturePopup} />
 		</PageContainer>
 	);
 };

@@ -9,6 +9,7 @@
 
 - Attributes & Core Stats — from `CharacterSheetProvider` ? `calculateCharacterWithBreakdowns()`
 - Resources (HP/SP/MP) — from calculator breakdowns and class tables (persisted in `characterState.resources`)
+- Rage toggle (when Rage feature exists) — temporary in-combat toggle near HP; while active: Resistance (Half) to Elemental/Physical damage note is shown and PD/Heavy/Brutal thresholds are reduced by 5/5/5 accordingly.
 - Background (Skills/Trades/Languages) — see Background System; enforces mastery caps
 - Spells — `SavedCharacter.spells` (canonical) + Spells System data for filtering/details
 - Martials — `SavedCharacter.maneuvers` (canonical) + Martials System data for filtering/details
@@ -46,5 +47,6 @@
 
 ---
 
-> Last updated: 2026-01-23
+> Last updated: 2026-02-05
 > Maintainer: @DC20Clean-Team
+

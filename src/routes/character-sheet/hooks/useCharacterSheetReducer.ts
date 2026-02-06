@@ -48,7 +48,8 @@ export type SheetAction =
 	| {
 			type: 'UPDATE_DEFENSE_OVERRIDES';
 			overrides: { precisionAD?: number; areaAD?: number; precisionDR?: number };
-	  };
+	  }
+	| { type: 'SET_RAGE_ACTIVE'; isRaging: boolean };
 
 const initialState: SheetState = {
 	character: null,
@@ -568,6 +569,25 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 				}
 			};
 
+		case 'SET_RAGE_ACTIVE':
+			if (!state.character) return state;
+			return {
+				...state,
+				character: {
+					...state.character,
+					characterState: {
+						...state.character.characterState,
+						ui: {
+							...(state.character.characterState.ui || { manualDefenseOverrides: {} }),
+							combatToggles: {
+								...state.character.characterState.ui?.combatToggles,
+								isRaging: action.isRaging
+							}
+						}
+					}
+				}
+			};
+
 		default:
 			return state;
 	}
@@ -696,6 +716,10 @@ export function useCharacterSheetReducer() {
 		[]
 	);
 
+	const setRageActive = useCallback((isRaging: boolean) => {
+		dispatch({ type: 'SET_RAGE_ACTIVE', isRaging });
+	}, []);
+
 	return {
 		state,
 		dispatch,
@@ -727,6 +751,8 @@ export function useCharacterSheetReducer() {
 		updateGritPoints,
 		updateRestPoints,
 		toggleActiveCondition,
-		updateDefenseOverrides
+		updateDefenseOverrides,
+		setRageActive
 	};
 }
+

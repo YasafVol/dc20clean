@@ -59,7 +59,13 @@ export const deserializeCharacterFromStorage = (jsonString: string): SavedCharac
 				// Normalize maneuvers to array if not already
 				maneuvers: Array.isArray(data.characterState?.maneuvers)
 					? data.characterState.maneuvers
-					: data.maneuvers || []
+					: data.maneuvers || [],
+				ui: {
+					manualDefenseOverrides: data.characterState?.ui?.manualDefenseOverrides || {},
+					combatToggles: {
+						isRaging: data.characterState?.ui?.combatToggles?.isRaging ?? false
+					}
+				}
 			},
 			schemaVersion: CURRENT_SCHEMA_VERSION // Always update to current version
 		} as SavedCharacter;
@@ -116,7 +122,7 @@ export const getDefaultCharacterState = (): CharacterState => ({
 			isDead: false
 		}
 	},
-	ui: { manualDefenseOverrides: {} },
+	ui: { manualDefenseOverrides: {}, combatToggles: { isRaging: false } },
 	inventory: {
 		items: [],
 		currency: { gold: 0, silver: 0, copper: 0 }
@@ -157,7 +163,8 @@ export const getInitializedCharacterState = (character: any): CharacterState => 
 		}
 	},
 	ui: {
-		manualDefenseOverrides: {}
+		manualDefenseOverrides: {},
+		combatToggles: { isRaging: false }
 	},
 	inventory: {
 		items: [],
@@ -428,3 +435,5 @@ export const runMigrationIfRequested = (force = false): boolean => {
 	}
 	return false;
 };
+
+

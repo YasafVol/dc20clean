@@ -57,6 +57,9 @@ export interface CharacterState {
 			PDR?: number;
 		};
 		activeConditions?: Record<string, boolean>;
+		combatToggles?: {
+			isRaging?: boolean;
+		};
 	};
 	inventory: {
 		items: any[]; // Will use proper InventoryItemData once imported
@@ -290,3 +293,5 @@ export interface LegacyCharacter {
 	// All other fields from SavedCharacter
 	[key: string]: any;
 }
+
+

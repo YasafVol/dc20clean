@@ -47,6 +47,24 @@ describe('Level Progression Aggregation (UT-1)', () => {
 			expect(result.resolvedFeatures?.unlockedFeatures).toBeDefined();
 		});
 
+		it('should not apply Rage PD penalty as a permanent modifier', () => {
+			const char = createTestCharacter('barbarian', 1, { might: 3, agility: 2, intelligence: 0 });
+			const result = calculateCharacterWithBreakdowns(char);
+
+			// Base PD: 8 + Combat Mastery (1) + Agility (2) + Intelligence (0)
+			expect(result.stats.finalPD).toBe(11);
+		});
+
+		it('should expose Rage PD penalty as a conditional modifier', () => {
+			const char = createTestCharacter('barbarian', 1, { might: 3, agility: 2, intelligence: 0 });
+			const result = calculateCharacterWithBreakdowns(char);
+
+			const ragePdModifier = result.conditionalModifiers.find(
+				(modifier) => (modifier.effect as any).target === 'pd' && modifier.condition === 'while_raging'
+			);
+
+			expect(ragePdModifier).toBeDefined();
+		});
 		it('should aggregate Level 2 stats correctly', () => {
 			const char = createTestCharacter('barbarian', 2, { might: 3 });
 			const result = calculateCharacterWithBreakdowns(char);
@@ -385,3 +403,5 @@ describe('Spells & Maneuvers Step Gating (T1)', () => {
 		});
 	});
 });
+
+

@@ -183,6 +183,7 @@ interface CharacterSheetContextType {
 		areaAD?: number;
 		precisionDR?: number;
 	}) => void;
+	setRageActive: (isRaging: boolean) => void;
 	// Manual save function
 	saveNow: () => Promise<void>;
 	// Save status
@@ -228,7 +229,8 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		updateGritPoints,
 		updateRestPoints,
 		toggleActiveCondition,
-		updateDefenseOverrides
+		updateDefenseOverrides,
+		setRageActive
 	} = useCharacterSheetReducer();
 	const storage = useMemo(() => getDefaultStorage(), []);
 	const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
@@ -419,6 +421,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		updateRestPoints,
 		toggleActiveCondition,
 		updateDefenseOverrides,
+		setRageActive,
 		saveNow,
 		saveStatus,
 		retryFailedSave
@@ -1021,3 +1024,4 @@ export function useCharacterConditions() {
 		return calculateCharacterConditions(input);
 	}, [state.character]);
 }
+

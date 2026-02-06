@@ -377,7 +377,7 @@ export const spellbladeClass: ClassDefinition = {
 											type: 'GRANT_ABILITY',
 											target: 'spellblade_rune_weapon_frostbite',
 											value:
-												'When you Smite a creature, it must make a Physical Save or be Grappled by ice until the end of your next turn; it may spend 1 AP to attempt an Athletics Check against your Save DC to break free.'
+												'When you Smite a creature, it must make a Physical Save or be Immobilized for 1 Round.'
 										},
 										{
 											type: 'GRANT_ABILITY',
@@ -412,7 +412,7 @@ export const spellbladeClass: ClassDefinition = {
 											type: 'GRANT_ABILITY',
 											target: 'spellblade_rune_weapon_wave',
 											value:
-												'When you Smite a creature, you may spend 1 AP to force a Physical Save; on failure, the target is knocked Prone.'
+												'When you Smite a creature, it must make a Physical Save or be knocked Prone.'
 										},
 										{
 											type: 'GRANT_ABILITY',

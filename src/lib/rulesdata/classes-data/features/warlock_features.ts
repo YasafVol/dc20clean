@@ -229,16 +229,16 @@ export const warlockClass: ClassDefinition = {
 							]
 						},
 						{
-							name: 'Forbidden Knowledge',
-							description:
-								'When you complete a Short or Long Rest, you temporarily learn any Spell of your choice. When you cast that Spell, its MP cost is reduced by 1 (minimum of 0). You forget the Spell immediately after you cast it.',
-							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'forbidden_knowledge',
-									value: 'Temporarily learn any spell after a rest with a 1 MP cost reduction.'
-								}
-							]
+					name: 'Forbidden Knowledge',
+						description:
+							'When you complete a Short or Long Rest, you temporarily learn any Spell of your choice. When you cast that Spell, its MP cost is reduced by 2 (minimum of 0). You forget the Spell immediately after you cast it.',
+						effects: [
+							{
+								type: 'GRANT_ABILITY',
+								target: 'forbidden_knowledge',
+								value: 'Temporarily learn any spell after a rest with a 2 MP cost reduction.'
+							}
+						]
 						},
 						{
 							name: 'Eldritch Bargain',
@@ -338,6 +338,13 @@ export const warlockClass: ClassDefinition = {
 							]
 						}
 					]
+				},
+				{
+					featureName: 'Dream Walker',
+					levelGained: 3,
+					isFlavor: true,
+					description:
+						'You can enter and interact with the dreams of sleeping creatures you can see within 5 Spaces. You have ADV on Checks to influence or navigate dreams.'
 				}
 			]
 		}

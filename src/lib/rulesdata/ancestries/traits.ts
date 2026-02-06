@@ -211,7 +211,7 @@ export const traitsData: Trait[] = [
 		name: 'Plant Knowledge',
 		description:
 			'While within forests, jungles, and swamps, you have ADV on Survival Checks. Additionally, you have ADV on Nature Checks made to recall information about plants.',
-		cost: 0,
+		cost: 1,
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
@@ -345,14 +345,14 @@ export const traitsData: Trait[] = [
 		id: 'dwarf_earthen_knowledge',
 		name: 'Earthen Knowledge',
 		description:
-			'While underground, you have ADV on Survival Checks. Additionally, you have ADV on Nature Checks made to recall information about stones, gems, and metals.',
-		cost: 0,
+			'While within mountainous and subterranean environments, you have ADV on Survival Checks. Additionally, you have ADV on Nature Checks made to recall information about stones, gems, and metals.',
+		cost: 1,
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
 				target: 'earthen_knowledge',
 				value:
-					'You have ADV on Survival Checks while underground and ADV on Nature Checks about stones, gems, and metals.'
+					'You have ADV on Survival Checks in mountainous and subterranean environments and ADV on Nature Checks about stones, gems, and metals.'
 			}
 		]
 	},
@@ -400,11 +400,11 @@ export const traitsData: Trait[] = [
 	{
 		id: 'halfling_bravery',
 		name: 'Halfling Bravery',
-		description: 'You have ADV on Saves against being Intimidated, Rattled, or Frightened',
+		description: 'You have ADV on Saves against being Intimidated, Terrified, or Frightened',
 		cost: 2,
 		effects: [
 			{ type: 'GRANT_ADV_ON_SAVE', target: 'Intimidated', value: 'ADV' },
-			{ type: 'GRANT_ADV_ON_SAVE', target: 'Rattled', value: 'ADV' },
+			{ type: 'GRANT_ADV_ON_SAVE', target: 'Terrified', value: 'ADV' },
 			{ type: 'GRANT_ADV_ON_SAVE', target: 'Frightened', value: 'ADV' }
 		]
 	},
@@ -462,13 +462,13 @@ export const traitsData: Trait[] = [
 		id: 'halfling_burst_of_bravery',
 		name: 'Burst of Bravery',
 		description:
-			'Once per Combat, you can end the Intimidated, Rattled, or Frightened Condition on yourself for free at any time.',
+			'Once per Combat, you can end the Intimidated, Terrified, or Frightened Condition on yourself for free at any time.',
 		cost: 1,
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
 				target: 'burst_of_bravery',
-				value: 'Once per Combat: end Intimidated, Rattled, or Frightened on yourself for free.'
+				value: 'Once per Combat: end Intimidated, Terrified, or Frightened on yourself for free.'
 			}
 		]
 	},
@@ -804,13 +804,13 @@ export const traitsData: Trait[] = [
 		id: 'angelborn_healing_touch',
 		name: 'Healing Touch',
 		description:
-			'Once per Combat, you can spend 1 AP to touch a creature and Heal it. Make a DC 10 Spell Check. Success: You can restore up to 2 HP to the target. Success (each 5): +1 HP. Failure: You only restore 2 HP.',
+			'Once per Combat, you can spend 1 AP to touch a creature and Heal it. Make a DC 10 Spell Check. Success: You can restore up to 2 HP to the target. Success (each 5): +1 HP. Failure: You only restore 1 HP.',
 		cost: 2,
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
 				target: 'healing_touch',
-				value: 'Once per Combat, 1 AP: Touch heal (DC 10 Spell Check), 2+ HP restored.'
+				value: 'Once per Combat, 1 AP: Touch heal (DC 10 Spell Check), 2+ HP on success, 1 HP on failure.'
 			}
 		]
 	},
@@ -1175,7 +1175,7 @@ export const traitsData: Trait[] = [
 		name: 'Second Breath',
 		description:
 			'You can now use your Draconic Breath Weapon twice per Combat. Additionally, whenever you use your Draconic Breath Weapon, you can spend 2 uses to increase the damage by 2 if its an Area, or by 4 if its Focused.',
-		cost: 1,
+		cost: 2,
 		prerequisites: ['dragonborn_draconic_breath_weapon'],
 		effects: [
 			{
@@ -1966,9 +1966,9 @@ export const traitsData: Trait[] = [
 	{
 		id: 'beastborn_tough',
 		name: 'Tough',
-		description: 'Your HP maximum increases by 2.',
+		description: 'Your HP maximum increases by 1.',
 		cost: 1,
-		effects: [{ type: 'MODIFY_STAT', target: 'hpMax', value: 2 }]
+		effects: [{ type: 'MODIFY_STAT', target: 'hpMax', value: 1 }]
 	},
 	{
 		id: 'beastborn_toxic_fortitude',
@@ -1984,14 +1984,14 @@ export const traitsData: Trait[] = [
 		id: 'beastborn_venomous_natural_weapon',
 		name: 'Venomous Natural Weapon',
 		description:
-			'You can spend 1 AP when making an Attack Check with your Natural Weapon to force the target to make a Physical Save. Failure: Target becomes Poisoned for 1 minute.',
+			'You can spend 1 AP when making an Attack Check with your Natural Weapon to force the target to make a Physical Save. Failure: Target becomes Impaired for 1 minute.',
 		cost: 1,
 		prerequisites: ['beastborn_natural_weapon'],
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
 				target: 'venomous_weapon',
-				value: '1 AP: Natural Weapon causes Poisoned (Physical Save, 1 minute).'
+				value: '1 AP: Natural Weapon causes Impaired (Physical Save, 1 minute).'
 			}
 		]
 	},
@@ -2006,7 +2006,7 @@ export const traitsData: Trait[] = [
 		id: 'beastborn_web_walk',
 		name: 'Web Walk',
 		description: 'You ignore movement restrictions caused by webs.',
-		cost: 0,
+		cost: 1,
 		effects: [
 			{ type: 'GRANT_ABILITY', target: 'web_walk', value: 'Ignore web movement restrictions.' }
 		]

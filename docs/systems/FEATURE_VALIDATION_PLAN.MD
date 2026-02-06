@@ -20,7 +20,7 @@
 | Phase | Description | Status |
 |-------|-------------|--------|
 | 1 | Fix 12 broken progression feature ID references + 4 Sorcerer subclass levelGained values | Complete |
-| 2 | Fix incorrect values — Warlock MP, Halfling conditions, trait costs | Pending |
+| 2 | Fix incorrect values — Warlock MP, Halfling conditions, trait costs | Complete |
 | 3a | Add missing subclass feature IDs to Commander, Bard, Cleric (12 features) | Pending |
 | 3b | Add 5 missing Beastborn traits + wire Winged Arms to requirements.hasTrait + update validation | Pending |
 | 3c | Fix starting equipment across all 13 classes (arsenal count + trade tools) | Pending |

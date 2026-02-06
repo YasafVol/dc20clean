@@ -6,7 +6,6 @@ import LanguagesTab from './components/LanguagesTab';
 import { InlineError } from './components/ValidationFeedback';
 import { BuildStep } from '../../lib/types/effectSystem';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { Card, CardContent } from '../../components/ui/card';
 import { cn } from '../../lib/utils';
 
 type TabType = 'skills' | 'trades' | 'languages';

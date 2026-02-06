@@ -13,7 +13,6 @@ import {
 import type {
 	SavedEncounter,
 	EncounterMonsterSlot,
-	PartyConfig,
 	EncounterDifficulty,
 	BudgetStatus
 } from '../rulesdata/schemas/encounter.schema';

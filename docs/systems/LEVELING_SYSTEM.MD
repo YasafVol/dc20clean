@@ -44,12 +44,14 @@
 ### 3.3 Path allocation bonuses
 
 Martial path (`paths.data.ts`):
+
 - Path 1: +1 SP, +1 maneuver
 - Path 2: +1 maneuver
 - Path 3: +1 SP, +1 maneuver
 - Path 4: +1 maneuver
 
 Spellcaster path (`paths.data.ts`):
+
 - Path 1: +3 MP, +1 cantrip, +1 spell
 - Path 2: +2 MP, +1 cantrip
 - Path 3: +2 MP, +1 cantrip, +1 spell

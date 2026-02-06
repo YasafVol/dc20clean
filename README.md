@@ -5,6 +5,7 @@
 DC20 character creation and sheet app.
 
 Core product features:
+
 - Character creation wizard
 - Character sheet (desktop + mobile)
 - DM tools (monsters + encounters)

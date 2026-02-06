@@ -31,8 +31,6 @@ import Maneuvers from './components/Maneuvers';
 import Attacks from './components/Attacks';
 import Inventory from './components/Inventory';
 import Features from './components/Features';
-import Conditions from './components/Conditions';
-import ConditionsReference from './components/ConditionsReference';
 import ActiveConditionsTracker from './components/ActiveConditionsTracker';
 import Currency from './components/Currency';
 import PlayerNotes from './components/PlayerNotes';
@@ -43,12 +41,12 @@ import FeaturePopup from './components/FeaturePopup';
 import WeaponPopup from './components/WeaponPopup';
 import InventoryPopup from './components/InventoryPopup';
 import CalculationTooltip from './components/shared/CalculationTooltip';
-import DeathExhaustion from './components/DeathExhaustion';
 import KnowledgeTrades from './components/KnowledgeTrades';
 import Languages from './components/Languages';
 import Attributes from './components/Attributes';
 import MobileBottomNav from './components/shared/MobileBottomNav';
 import HamburgerDrawer from './components/shared/HamburgerDrawer';
+import Snackbar from '../../components/Snackbar';
 
 // Import theme
 import { theme, media } from './styles/theme';
@@ -250,28 +248,6 @@ const RightColumn = styled.div`
 	gap: ${theme.spacing[6]};
 `;
 
-const ThreeColumnLayout = styled.div`
-	display: grid;
-	grid-template-columns: 280px 1fr 300px;
-	gap: ${theme.spacing[6]};
-	margin-top: ${theme.spacing[6]};
-
-	@media (max-width: 1400px) {
-		grid-template-columns: 260px 1fr 280px;
-		gap: ${theme.spacing[4]};
-	}
-
-	@media (max-width: 1200px) {
-		grid-template-columns: 1fr;
-	}
-`;
-
-const Column = styled.div`
-	display: flex;
-	flex-direction: column;
-	gap: ${theme.spacing[6]};
-`;
-
 const TabContainer = styled.div`
 	background: ${theme.colors.bg.elevated};
 	border-radius: ${theme.borderRadius.xl};
@@ -354,18 +330,6 @@ const Tab = styled(motion.button)<{ $active: boolean }>`
 	`}
 `;
 
-const TabBadge = styled.span`
-	background: ${theme.colors.accent.primary};
-	color: ${theme.colors.text.inverse};
-	border-radius: ${theme.borderRadius.full};
-	padding: 2px 6px;
-	font-size: ${theme.typography.fontSize.xs};
-	font-weight: ${theme.typography.fontWeight.bold};
-	line-height: 1;
-	min-width: 18px;
-	text-align: center;
-`;
-
 const TabContent = styled(motion.div)`
 	padding: ${theme.spacing[6]};
 	overflow-x: hidden;
@@ -425,6 +389,10 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 	const [activeTab, setActiveTab] = useState<TabId>('attacks');
 	const [hamburgerDrawerOpen, setHamburgerDrawerOpen] = useState(false);
+	const [snackbarMessage, setSnackbarMessage] = useState('');
+	const [snackbarVariant, setSnackbarVariant] = useState<'success' | 'error' | 'info'>('success');
+	const [showSnackbar, setShowSnackbar] = useState(false);
+	const [snackbarKey, setSnackbarKey] = useState(0);
 	const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
 	const [selectedWeapon, setSelectedWeapon] = useState<Weapon | null>(null);
 	const [selectedInventoryItem, setSelectedInventoryItem] = useState<{
@@ -453,9 +421,33 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	// Ref for tooltip delay timeout
 	const tooltipTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+	// Helper to show snackbar with proper state reset
+	const showSnackbarWithMessage = (message: string, variant: 'success' | 'error' | 'info') => {
+		// Hide existing snackbar first to ensure clean slate
+		setShowSnackbar(false);
+		// Use setTimeout to ensure state updates complete before showing new message
+		setTimeout(() => {
+			setSnackbarMessage(message);
+			setSnackbarVariant(variant);
+			setSnackbarKey((prev) => prev + 1);
+			setShowSnackbar(true);
+		}, 50);
+	};
+
+	// Defense overrides - track manual modifications
+	const [defenseOverrides, setDefenseOverrides] = useState<{
+		precisionAD?: number;
+		areaAD?: number;
+		precisionDR?: number;
+	}>({});
+
 	// Handle skill/save clicks to auto-populate dice roller
 	const handleSkillClick = (skillName: string, bonus: number) => {
-		logger.debug('ui', 'Skill clicked for dice roller', { skillName, bonus, refExists: !!diceRollerRef.current });
+		logger.debug('ui', 'Skill clicked for dice roller', {
+			skillName,
+			bonus,
+			refExists: !!diceRollerRef.current
+		});
 
 		// Determine action type based on skill name
 		let actionType:
@@ -510,7 +502,6 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		updateMP,
 		updateSP,
 		updateTempHP,
-		updateActionPoints,
 		updateGritPoints,
 		updateRestPoints,
 		toggleActiveCondition,
@@ -646,10 +637,14 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	const primeValue = characterData.finalPrimeModifierValue || 0;
 	const combatMastery = characterData.finalCombatMastery || 0;
 
-	// Get defenses and combat stats from character data
-	const precisionAD = characterData.finalPD ?? 10;
-	const areaAD = characterData.finalAD ?? 10;
-	const precisionDR = characterData.finalPDR ?? 0;
+	// Get defenses and combat stats from character data (with manual overrides if set)
+	const basePrecisionAD = characterData.finalPD ?? 10;
+	const baseAreaAD = characterData.finalAD ?? 10;
+	const basePrecisionDR = characterData.finalPDR ?? 0;
+
+	const precisionAD = defenseOverrides.precisionAD ?? basePrecisionAD;
+	const areaAD = defenseOverrides.areaAD ?? baseAreaAD;
+	const precisionDR = defenseOverrides.precisionDR ?? basePrecisionDR;
 
 	// Combat stats - these would typically come from calculations
 	const attackBonus = primeValue; // Simplified for now
@@ -809,9 +804,56 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			URL.revokeObjectURL(url);
 		} catch (err) {
 			console.error('Export PDF failed', err);
-			alert('Failed to export PDF: ' + (err instanceof Error ? err.message : String(err)));
+			setSnackbarMessage(
+				'Failed to export PDF: ' + (err instanceof Error ? err.message : String(err))
+			);
+			setShowSnackbar(true);
 		}
 	};
+
+	// Copy character summary to clipboard
+	const copyCharacterToClipboard = async () => {
+		if (!state.character) return;
+
+		try {
+			// Export full character as JSON for reimporting
+			const characterJson = JSON.stringify(state.character, null, 2);
+			await navigator.clipboard.writeText(characterJson);
+			showSnackbarWithMessage('Character JSON copied to clipboard!', 'success');
+		} catch (err) {
+			logger.error('ui', 'Failed to copy to clipboard', {
+				error: err instanceof Error ? err.message : String(err)
+			});
+			showSnackbarWithMessage('Failed to copy to clipboard', 'error');
+		}
+	};
+
+	// Handle defense value updates
+	const updateDefense = (type: 'precisionAD' | 'areaAD' | 'precisionDR', value: number) => {
+		setDefenseOverrides((prev) => ({ ...prev, [type]: value }));
+		const label =
+			type === 'precisionAD' ? 'Precision AD' : type === 'areaAD' ? 'Area AD' : 'Precision DR';
+		showSnackbarWithMessage(`${label} updated to ${value}`, 'info');
+	};
+
+	// Check if Combat Stats box has any overrides that differ from base values
+	const hasCombatStatsOverride =
+		(defenseOverrides.precisionAD !== undefined &&
+			defenseOverrides.precisionAD !== basePrecisionAD) ||
+		(defenseOverrides.areaAD !== undefined && defenseOverrides.areaAD !== baseAreaAD) ||
+		(defenseOverrides.precisionDR !== undefined &&
+			defenseOverrides.precisionDR !== basePrecisionDR);
+
+	// Reset Combat Stats to calculated values
+	const resetCombatStats = () => {
+		setDefenseOverrides({});
+		showSnackbarWithMessage('Combat stats reset to calculated values', 'info');
+	};
+
+	// Other boxes don't have override tracking (HP/MP/SP/Rest/Grit are gameplay values)
+	const hasHealthOverride = false;
+	const hasResourcesOverride = false;
+	const hasRecoveryOverride = false;
 
 	return (
 		<PageContainer>
@@ -847,7 +889,11 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 						<ActionButton whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
 							🔄 Revert All
 						</ActionButton>
-						<ActionButton whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+						<ActionButton
+							onClick={copyCharacterToClipboard}
+							whileHover={{ scale: 1.05 }}
+							whileTap={{ scale: 0.95 }}
+						>
 							📋 Copy
 						</ActionButton>
 						<ActionButton
@@ -904,12 +950,20 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 								saveDC={saveDC}
 								initiative={initiative}
 								activeConditions={state.character?.characterState?.activeConditions || []}
+								hasHealthOverride={hasHealthOverride}
+								hasResourcesOverride={hasResourcesOverride}
+								hasRecoveryOverride={hasRecoveryOverride}
+								hasCombatStatsOverride={hasCombatStatsOverride}
 								onHPChange={updateHP}
 								onTempHPChange={updateTempHP}
 								onManaChange={updateMP}
 								onStaminaChange={updateSP}
 								onRestChange={updateRestPoints}
 								onGritChange={updateGritPoints}
+								onPrecisionADChange={(value) => updateDefense('precisionAD', value)}
+								onAreaADChange={(value) => updateDefense('areaAD', value)}
+								onPrecisionDRChange={(value) => updateDefense('precisionDR', value)}
+								onCombatStatsReset={resetCombatStats}
 								onSkillClick={handleSkillClick}
 								onHPMouseEnter={(e) => handleMouseEnter('hp', e)}
 								onHPMouseLeave={handleMouseLeave}
@@ -1176,9 +1230,18 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 			{/* Feature Details Popup */}
 			<FeaturePopup feature={selectedFeature} onClose={closeFeaturePopup} />
+
+			{/* Snackbar for notifications */}
+			<Snackbar
+				key={snackbarKey}
+				message={snackbarMessage}
+				isVisible={showSnackbar}
+				onClose={() => setShowSnackbar(false)}
+				duration={3000}
+				variant={snackbarVariant}
+			/>
 		</PageContainer>
 	);
 };
 
 export default CharacterSheetRedesign;
-

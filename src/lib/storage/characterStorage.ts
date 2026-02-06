@@ -69,13 +69,13 @@ export function getStorageProvider(): StorageProvider {
 	// Check environment variable or feature flag
 	const useConvex = import.meta.env.VITE_USE_CONVEX === 'true';
 	const provider = useConvex ? 'convex' : 'localStorage';
-	
+
 	console.log('[GIMLI DEBUG] 📦 Storage Provider Selection:', {
 		VITE_USE_CONVEX: import.meta.env.VITE_USE_CONVEX,
 		useConvex,
 		selectedProvider: provider
 	});
-	
+
 	return provider;
 }
 

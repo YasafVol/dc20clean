@@ -239,7 +239,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 				return;
 			}
 
-		logger.debug('storage', 'Setting save status', { status: 'saving' });
+			logger.debug('storage', 'Setting save status', { status: 'saving' });
 			try {
 				// Run enhanced calculator to get updated stats
 				const calculationData = convertToEnhancedBuildData(character);
@@ -271,7 +271,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 				// Save the entire character (includes spells, maneuvers, etc.)
 				await storage.saveCharacter(updatedCharacter);
 
-			logger.debug('storage', 'Character save successful', { characterId: character.id });
+				logger.debug('storage', 'Character save successful', { characterId: character.id });
 				logger.debug('storage', 'Character sheet data saved successfully', {
 					characterId: character.id
 				});

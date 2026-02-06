@@ -11,7 +11,7 @@ export function migrateCharacterSchema(character: SavedCharacter): SavedCharacte
 	const version = character.schemaVersion || '2.0.0';
 	const parsed = parseSchemaVersion(version);
 
-	let migrated = { ...character };
+	const migrated = { ...character };
 
 	// Migration from 2.0.x to 2.1.x
 	if (parsed.major === 2 && parsed.minor === 0) {

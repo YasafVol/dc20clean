@@ -4,9 +4,6 @@ import { motion } from 'framer-motion';
 import { theme } from '../../styles/theme';
 import { StatCard } from './StatCard';
 import DeathExhaustion from '../DeathExhaustion';
-import type { EnhancedStatBreakdown } from '../../../../lib/types/effectSystem';
-import { createEnhancedTooltip } from '../EnhancedStatTooltips';
-import Tooltip from '../Tooltip';
 import { ConditionBadge } from '../ConditionBadge';
 import { getConditionBadgesForAttribute } from '../../../../lib/services/conditionEffectsAnalyzer';
 
@@ -37,6 +34,12 @@ interface HeroSectionProps {
 	// Active conditions
 	activeConditions?: string[];
 
+	// Box-level override tracking
+	hasHealthOverride?: boolean;
+	hasResourcesOverride?: boolean;
+	hasRecoveryOverride?: boolean;
+	hasCombatStatsOverride?: boolean;
+
 	// Callbacks
 	onHPChange?: (value: number) => void;
 	onTempHPChange?: (value: number) => void;
@@ -44,6 +47,13 @@ interface HeroSectionProps {
 	onStaminaChange?: (value: number) => void;
 	onRestChange?: (value: number) => void;
 	onGritChange?: (value: number) => void;
+	onPrecisionADChange?: (value: number) => void;
+	onAreaADChange?: (value: number) => void;
+	onPrecisionDRChange?: (value: number) => void;
+	onHealthReset?: () => void;
+	onResourcesReset?: () => void;
+	onRecoveryReset?: () => void;
+	onCombatStatsReset?: () => void;
 	onSkillClick?: (skillName: string, bonus: number) => void;
 
 	// Tooltip handlers
@@ -104,6 +114,9 @@ const BoxTitle = styled.h3`
 	margin: 0 0 ${theme.spacing[2]} 0;
 	padding-bottom: ${theme.spacing[2]};
 	border-bottom: 2px solid ${theme.colors.border.default};
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 `;
 
 const ResourcesGroup = styled.div`
@@ -148,12 +161,67 @@ const DefenseLabel = styled.div`
 	margin-bottom: ${theme.spacing[2]};
 `;
 
+const BoxResetButton = styled(motion.button)<{ disabled?: boolean }>`
+	background: linear-gradient(145deg, #ef4444 0%, #dc2626 100%);
+	color: white;
+	border: none;
+	border-radius: ${theme.borderRadius.md};
+	padding: ${theme.spacing[1]} ${theme.spacing[3]};
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	cursor: pointer;
+	transition: all ${theme.transitions.fast};
+	box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+	opacity: ${(props) => (props.disabled ? 0.4 : 1)};
+	pointer-events: ${(props) => (props.disabled ? 'none' : 'auto')};
+
+	&:hover {
+		background: linear-gradient(145deg, #dc2626 0%, #b91c1c 100%);
+		box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+		transform: translateY(-1px);
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+`;
+
 const DefenseValue = styled.div<{ $isPrimary?: boolean }>`
 	color: ${(props) =>
 		props.$isPrimary ? theme.colors.accent.primary : theme.colors.accent.warning};
 	font-size: ${theme.typography.fontSize['2xl']};
 	font-weight: ${theme.typography.fontWeight.bold};
 	line-height: ${theme.typography.lineHeight.tight};
+`;
+
+const EditableDefenseValue = styled.input<{ disabled?: boolean }>`
+	color: ${theme.colors.accent.warning};
+	font-size: ${theme.typography.fontSize['2xl']};
+	font-weight: ${theme.typography.fontWeight.bold};
+	line-height: ${theme.typography.lineHeight.tight};
+	background: ${(props) => (props.disabled ? 'transparent' : theme.colors.bg.secondary)};
+	border: ${(props) => (props.disabled ? 'none' : `1px solid ${theme.colors.border.default}`)};
+	border-radius: ${theme.borderRadius.sm};
+	padding: ${theme.spacing[1]} ${theme.spacing[2]};
+	text-align: center;
+	width: 80px;
+	cursor: ${(props) => (props.disabled ? 'default' : 'pointer')};
+
+	&:hover {
+		border-color: ${(props) => !props.disabled && theme.colors.accent.warning};
+	}
+
+	&:focus {
+		outline: none;
+		border-color: ${theme.colors.accent.primary};
+		background: ${theme.colors.bg.primary};
+	}
+
+	&::-webkit-inner-spin-button,
+	&::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
 `;
 
 const BadgesContainer = styled.div`
@@ -183,12 +251,23 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 	saveDC,
 	initiative,
 	activeConditions = [],
+	hasHealthOverride = false,
+	hasResourcesOverride = false,
+	hasRecoveryOverride = false,
+	hasCombatStatsOverride = false,
 	onHPChange,
 	onTempHPChange,
 	onManaChange,
 	onStaminaChange,
 	onRestChange,
 	onGritChange,
+	onPrecisionADChange,
+	onAreaADChange,
+	onPrecisionDRChange,
+	onHealthReset,
+	onResourcesReset,
+	onRecoveryReset,
+	onCombatStatsReset,
 	onSkillClick,
 	onHPMouseEnter,
 	onHPMouseLeave,
@@ -226,7 +305,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 				animate={{ opacity: 1, x: 0 }}
 				transition={{ delay: 0.1 }}
 			>
-				<BoxTitle>Health</BoxTitle>
+				<BoxTitle>
+					<span>Health</span>
+					{hasHealthOverride && onHealthReset && (
+						<BoxResetButton
+							onClick={onHealthReset}
+							whileHover={{ scale: 1.05 }}
+							whileTap={{ scale: 0.95 }}
+						>
+							↺ Reset
+						</BoxResetButton>
+					)}
+				</BoxTitle>
 				<StatCard
 					label="Hit Points"
 					current={currentHP}
@@ -250,7 +340,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ delay: 0.2 }}
 			>
-				<BoxTitle>Resources</BoxTitle>
+				<BoxTitle>
+					<span>Resources</span>
+					{hasResourcesOverride && onResourcesReset && (
+						<BoxResetButton
+							onClick={onResourcesReset}
+							whileHover={{ scale: 1.05 }}
+							whileTap={{ scale: 0.95 }}
+						>
+							↺ Reset
+						</BoxResetButton>
+					)}
+				</BoxTitle>
 				<ResourcesGroup>
 					<StatCard
 						label="Mana Points"
@@ -285,7 +386,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ delay: 0.3 }}
 			>
-				<BoxTitle>Recovery</BoxTitle>
+				<BoxTitle>
+					<span>Recovery</span>
+					{hasRecoveryOverride && onRecoveryReset && (
+						<BoxResetButton
+							onClick={onRecoveryReset}
+							whileHover={{ scale: 1.05 }}
+							whileTap={{ scale: 0.95 }}
+						>
+							↺ Reset
+						</BoxResetButton>
+					)}
+				</BoxTitle>
 				<ResourcesGroup>
 					<StatCard
 						label="Rest Points"
@@ -320,7 +432,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 				animate={{ opacity: 1, x: 0 }}
 				transition={{ delay: 0.4 }}
 			>
-				<BoxTitle>Combat Stats</BoxTitle>
+				<BoxTitle>
+					<span>Combat Stats</span>
+					{hasCombatStatsOverride && onCombatStatsReset && (
+						<BoxResetButton
+							onClick={onCombatStatsReset}
+							whileHover={{ scale: 1.05 }}
+							whileTap={{ scale: 0.95 }}
+						>
+							↺ Reset
+						</BoxResetButton>
+					)}
+				</BoxTitle>
 				<ResourcesGroup>
 					<DefensesGrid>
 						<DefenseItem
@@ -329,7 +452,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							onMouseLeave={onPrecisionADMouseLeave}
 						>
 							<DefenseLabel>Precision AD</DefenseLabel>
-							<DefenseValue>{precisionAD}</DefenseValue>
+							<EditableDefenseValue
+								value={precisionAD}
+								onChange={(e) => onPrecisionADChange?.(Number(e.target.value))}
+								disabled={!onPrecisionADChange}
+							/>
 						</DefenseItem>
 						<DefenseItem
 							whileHover={{ scale: 1.05 }}
@@ -337,7 +464,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							onMouseLeave={onPrecisionDRMouseLeave}
 						>
 							<DefenseLabel>Precision DR</DefenseLabel>
-							<DefenseValue>{precisionDR}</DefenseValue>
+							<EditableDefenseValue
+								value={precisionDR}
+								onChange={(e) => onPrecisionDRChange?.(Number(e.target.value))}
+								disabled={!onPrecisionDRChange}
+							/>
 						</DefenseItem>
 						<DefenseItem
 							whileHover={{ scale: 1.05 }}
@@ -345,7 +476,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							onMouseLeave={onAreaADMouseLeave}
 						>
 							<DefenseLabel>Area AD</DefenseLabel>
-							<DefenseValue>{areaAD}</DefenseValue>
+							<EditableDefenseValue
+								value={areaAD}
+								onChange={(e) => onAreaADChange?.(Number(e.target.value))}
+								disabled={!onAreaADChange}
+							/>
 						</DefenseItem>
 					</DefensesGrid>
 					<DefensesGrid $withMarginTop>

@@ -5,7 +5,7 @@
  * for tooltips, validation, and effect previews.
  */
 
-import { useMemo, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useCharacter } from '../stores/characterContext';
 import {
 	calculateCharacterWithBreakdowns,
@@ -125,9 +125,9 @@ export function useEnhancedCharacterCalculation(): CharacterCalculationHook {
 	};
 
 	const getEffectPreview = (
-		traitId: string,
-		effectIndex: number,
-		choice: string
+		_traitId: string,
+		_effectIndex: number,
+		_choice: string
 	): EffectPreview | undefined => {
 		// This requires a more complex implementation that can re-run a partial
 		// calculation with the hypothetical choice. For now, this is a placeholder.
@@ -137,9 +137,9 @@ export function useEnhancedCharacterCalculation(): CharacterCalculationHook {
 
 	// --- Validation Helpers ---
 	const validateTraitChoice = (
-		traitId: string,
-		effectIndex: number,
-		choice: string
+		_traitId: string,
+		_effectIndex: number,
+		_choice: string
 	): { isValid: boolean; message?: string } => {
 		// Placeholder for more complex validation (e.g., preventing duplicate skill choices)
 		return { isValid: true };
@@ -150,7 +150,6 @@ export function useEnhancedCharacterCalculation(): CharacterCalculationHook {
 		newValue: number
 	): { isValid: boolean; message?: string } => {
 		const limit = getAttributeLimit(attributeId);
-		const currentTotal = limit.base + limit.traitBonuses;
 		const newTotal = newValue + limit.traitBonuses;
 
 		if (newValue < -2) {

@@ -165,7 +165,7 @@ export function getDiceModifierForAction(
 ): DiceModifier {
 	const effects = analyzeConditionEffects(activeConditionIds);
 
-	let advantageStacks = 0;
+	const advantageStacks = 0;
 	let disadvantageStacks = 0;
 
 	// Aggregate effects based on action type

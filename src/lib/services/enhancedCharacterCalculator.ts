@@ -9,7 +9,6 @@ import type {
 	EnhancedCalculationResult,
 	EnhancedCharacterBuildData,
 	AttributedEffect,
-	EnhancedStatBreakdown,
 	ValidationResult,
 	ValidationError,
 	AttributeLimit,
@@ -58,11 +57,8 @@ import {
 	collectMovements,
 	collectConditionalModifiers
 } from './calculatorModules/abilityCollection';
-import {
-	createStatBreakdown,
-	createInitiativeBreakdown,
-	createMartialCheckBreakdown
-} from './calculatorModules/breakdownGeneration';
+// createStatBreakdown, createInitiativeBreakdown, createMartialCheckBreakdown
+// now imported by calculatorModules/statCalculation.ts
 import {
 	calculateGlobalMagicProfile,
 	generateSpellsKnownSlots
@@ -76,6 +72,7 @@ import {
 	checkFlavorFeatureAutoGrant
 } from './calculatorModules/progressionAggregation';
 import { calculateBudgets } from './calculatorModules/budgetCalculation';
+import { calculateDerivedStats } from './calculatorModules/statCalculation';
 
 // CrossPathGrants, aggregatePathBenefits, checkFlavorFeatureAutoGrant moved to calculatorModules/progressionAggregation.ts
 
@@ -340,109 +337,27 @@ export function calculateCharacterWithBreakdowns(
 		classCategory
 	);
 
-	// 4. Create detailed breakdowns
-	const breakdowns: Record<string, EnhancedStatBreakdown> = {};
+	// 4. Calculate all derived stats and breakdowns (via statCalculation module)
+	const derivedStats = calculateDerivedStats(buildData, resolvedEffects, activeConditions, progressionGains);
+	const {
+		finalMight, finalAgility, finalCharisma, finalIntelligence,
+		combatMastery, primeModifier, primeAttribute, usePrimeCapRule,
+		finalPD, finalAD, finalPDR,
+		finalSaveDC, finalSaveMight, finalSaveAgility, finalSaveCharisma, finalSaveIntelligence,
+		finalDeathThreshold, finalGritPoints, finalInitiativeBonus,
+		attackSpellCheckBase, breakdowns,
+		finalHPMax, finalSPMax, finalMPMax, finalMoveSpeed, finalJumpDistance,
+		finalAttributePoints, finalRestPoints, finalMartialCheck
+	} = derivedStats;
 
-	// Attributes
-	for (const attr of attributesData) {
-		const baseValue = (buildData as any)[`attribute_${attr.id}`] || 0;
-		breakdowns[`attribute_${attr.id}`] = createStatBreakdown(
-			attr.id,
-			baseValue,
-			resolvedEffects,
-			activeConditions
-		);
-	}
-
-	// Calculate final attribute values
-	const finalMight = breakdowns.attribute_might.total;
-	const finalAgility = breakdowns.attribute_agility.total;
-	const finalCharisma = breakdowns.attribute_charisma.total;
-	const finalIntelligence = breakdowns.attribute_intelligence.total;
-
-	// Derived stats - Combat Mastery calculated from level
-	const combatMastery = Math.ceil(buildData.level / 2);
+	// Re-derive level caps for validation (needed by mastery cap section)
 	const levelCapsForPrime = getLevelCaps(buildData.level);
-
-	// Health & Resources - use aggregated progression gains
-	let finalHPMax = finalMight + progressionGains.totalHP;
-	let finalSPMax = progressionGains.totalSP;
-	let finalMPMax = progressionGains.totalMP;
-
-	// Do not apply effect modifiers here; breakdowns will add modifiers to base values
-
-	// Defenses with modifiers
-	const basePD = 8 + combatMastery + finalAgility + finalIntelligence;
-	const baseAD = 8 + combatMastery + finalMight + finalCharisma;
-	const pdModifiers = resolvedEffects
-		.filter(
-			(e) =>
-				e.resolved &&
-				e.type === 'MODIFY_STAT' &&
-				e.target === 'pd' &&
-				(!e.condition || activeConditions.has(e.condition))
-		)
-		.reduce((sum, e) => sum + (e.value as number), 0);
-	const adModifiers = resolvedEffects
-		.filter(
-			(e) =>
-				e.resolved &&
-				e.type === 'MODIFY_STAT' &&
-				e.target === 'ad' &&
-				(!e.condition || activeConditions.has(e.condition))
-		)
-		.reduce((sum, e) => sum + (e.value as number), 0);
-	const finalPD = buildData.manualPD ?? basePD + pdModifiers;
-	const finalAD = buildData.manualAD ?? baseAD + adModifiers;
-	const finalPDR = buildData.manualPDR ?? 0;
-
-	// Determine attribute-driven prime values for legacy behavior
-	const maxAttributeValue = Math.max(finalMight, finalAgility, finalCharisma, finalIntelligence);
-	const attributesAtMax: Array<'might' | 'agility' | 'charisma' | 'intelligence'> = [];
-	if (finalMight === maxAttributeValue) attributesAtMax.push('might');
-	if (finalAgility === maxAttributeValue) attributesAtMax.push('agility');
-	if (finalCharisma === maxAttributeValue) attributesAtMax.push('charisma');
-	if (finalIntelligence === maxAttributeValue) attributesAtMax.push('intelligence');
-	const attributePrime = attributesAtMax[0] || 'might';
-
-	const usePrimeCapRule = !!buildData.usePrimeCapRule;
-	const primeModifier = usePrimeCapRule ? levelCapsForPrime.maxAttributeValue : maxAttributeValue;
-	const primeAttribute = usePrimeCapRule ? 'prime' : attributePrime;
-
-	// Calculate other derived stats first (DC20 sheet: 10 + Combat Mastery + Prime)
-	const finalSaveDC = 10 + combatMastery + primeModifier;
-	const finalSaveMight = finalMight + combatMastery;
-	const finalSaveAgility = finalAgility + combatMastery;
-	const finalSaveCharisma = finalCharisma + combatMastery;
-	const finalSaveIntelligence = finalIntelligence + combatMastery;
-	const finalDeathThreshold = primeModifier + combatMastery; // Prime + Combat Mastery (usually -4)
-	const baseMoveSpeed = 5;
-	const baseJumpDistance = finalAgility;
-	const finalGritPoints = Math.max(0, 2 + finalCharisma); // 2 + Charisma (minimum 0)
-	const finalInitiativeBonus = combatMastery + finalAgility; // Combat Mastery + Agility
-	// Attribute points handled via breakdowns to avoid double counting
-
-	// Create breakdowns for derived stats
-	breakdowns.hpMax = createStatBreakdown('hpMax', finalHPMax, resolvedEffects, activeConditions);
-	breakdowns.spMax = createStatBreakdown('spMax', finalSPMax, resolvedEffects, activeConditions);
-	breakdowns.mpMax = createStatBreakdown('mpMax', finalMPMax, resolvedEffects, activeConditions);
-	breakdowns.pd = createStatBreakdown('pd', basePD, resolvedEffects, activeConditions);
-	breakdowns.ad = createStatBreakdown('ad', baseAD, resolvedEffects, activeConditions);
-
-	// Base 12 + any attribute points gained from leveling
-	breakdowns.attributePoints = createStatBreakdown(
-		'attributePoints',
-		12 + progressionGains.totalAttributePoints,
-		resolvedEffects,
-		activeConditions
-	);
 
 	// --- Spell System (M3.20) ---
 	const globalMagicProfile = calculateGlobalMagicProfile(buildData, resolvedEffects);
-	// Calculate talent spell bonus early for slot generation (C2)
 	const earlySpellBonus = resolvedEffects
-		.filter((e) => e.type === 'MODIFY_STAT' && e.target === 'spellsKnown')
-		.reduce((s, e) => s + Number(e.value || 0), 0);
+		.filter((e) => (e as any).type === 'MODIFY_STAT' && (e as any).target === 'spellsKnown')
+		.reduce((s, e) => s + Number((e as any).value || 0), 0);
 	const spellsKnownSlots = generateSpellsKnownSlots(
 		buildData,
 		progressionGains,
@@ -450,49 +365,6 @@ export function calculateCharacterWithBreakdowns(
 		earlySpellBonus,
 		getClassFeatures(buildData.classId)
 	);
-
-	// Movement breakdowns
-	breakdowns.move_speed = createStatBreakdown(
-		'moveSpeed',
-		baseMoveSpeed,
-		resolvedEffects,
-		activeConditions
-	);
-	breakdowns.jump_distance = createStatBreakdown(
-		'jumpDistance',
-		baseJumpDistance,
-		resolvedEffects,
-		activeConditions
-	);
-
-	// Use breakdown totals for final values to avoid double counting
-	finalHPMax = breakdowns.hpMax.total;
-	finalSPMax = breakdowns.spMax.total;
-	finalMPMax = breakdowns.mpMax.total;
-	const finalMoveSpeed = breakdowns.move_speed.total;
-	const finalJumpDistance = breakdowns.jump_distance.total;
-	const finalAttributePoints = breakdowns.attributePoints.total;
-
-	// Rest Points must be calculated AFTER HP breakdown is applied
-	const finalRestPoints = finalHPMax; // Rest Points = HP Max (post-effects)
-
-	// Combat breakdowns
-	const attackSpellCheckBase = combatMastery + primeModifier;
-	breakdowns.attack_spell_check = createStatBreakdown(
-		'attackSpellCheck',
-		attackSpellCheckBase,
-		resolvedEffects,
-		activeConditions
-	);
-	breakdowns.save_dc = createStatBreakdown(
-		'saveDC',
-		finalSaveDC,
-		resolvedEffects,
-		activeConditions
-	);
-
-	// Initiative breakdown (via breakdownGeneration module)
-	breakdowns.initiative = createInitiativeBreakdown(combatMastery, finalAgility, finalInitiativeBonus);
 
 	// 4.5. Compute background and ancestry budgets (via budgetCalculation module)
 	const budgets = calculateBudgets(buildData, resolvedEffects, progressionGains, finalIntelligence);
@@ -505,24 +377,6 @@ export function calculateCharacterWithBreakdowns(
 	const languages = buildData.languagesData ?? { common: { fluency: 'fluent' } };
 	const skillLimitElevations = (buildData as any).skillMasteryLimitElevations ?? {};
 	const tradeLimitElevations = (buildData as any).tradeMasteryLimitElevations ?? {};
-
-	// Calculate martial check as max(Acrobatics, Athletics) using EXISTING skill calculations
-	// Instead of recalculating, we should access the pre-computed skill totals
-	// For now, calculate here but TODO: get from character sheet's getSkillsData()
-	const acrobaticsProficiency = skills['acrobatics'] || 0;
-	const athleticsProficiency = skills['athletics'] || 0;
-	const acrobaticsTotal = finalAgility + acrobaticsProficiency * 2; // Agility + (Proficiency × 2)
-	const athleticsTotal = finalMight + athleticsProficiency * 2; // Might + (Proficiency × 2)
-	const finalMartialCheck = Math.max(acrobaticsTotal, athleticsTotal);
-
-	// Martial check breakdown (via breakdownGeneration module)
-	breakdowns.martial_check = createMartialCheckBreakdown(
-		finalAgility,
-		finalMight,
-		acrobaticsProficiency,
-		athleticsProficiency,
-		finalMartialCheck
-	);
 
 	// 5. Validation with step-aware errors
 	const errors: ValidationError[] = [];

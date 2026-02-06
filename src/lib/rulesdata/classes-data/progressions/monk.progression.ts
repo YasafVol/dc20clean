@@ -22,7 +22,7 @@ export const monkProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			classFeatures: ['monk_martial_path', 'monk_training', 'monk_stance', 'monk_inner_peace']
+			classFeatures: ['monk_martial_path', 'monk_training', 'monk_stance', 'monk_meditation']
 		}
 	},
 	{
@@ -38,7 +38,7 @@ export const monkProgression: ClassProgressionLevel[] = [
 		gains: {
 			talents: 1,
 			pathProgression: true,
-			classFeatures: ['monk_martial_arts']
+			classFeatures: ['monk_spiritual_balance']
 		}
 	},
 	{

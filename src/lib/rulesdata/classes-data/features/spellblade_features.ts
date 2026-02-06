@@ -50,6 +50,27 @@ export const spellbladeClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
+			id: 'spellblade_martial_path',
+			featureName: 'Martial Path',
+			levelGained: 1,
+			description:
+				'You gain combat training in weapons, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.',
+			effects: [
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Shields', value: true },
+				{ type: 'GRANT_MANEUVERS', target: 'all_attack', value: 4 }
+			]
+		},
+		{
+			id: 'spellblade_spellcasting_path',
+			featureName: 'Spellcasting Path',
+			levelGained: 1,
+			description:
+				'You gain the ability to cast spells. Choose 2 Spell Schools; you can learn spells from those Schools or with Weapon/Ward tags.',
+			effects: []
+		},
+		{
 			id: 'spellblade_source_of_power',
 			featureName: 'Source of Power',
 			levelGained: 1,

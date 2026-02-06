@@ -28,6 +28,22 @@ export const warlockClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
+			id: 'warlock_spellcasting_path',
+			featureName: 'Spellcasting Path',
+			levelGained: 1,
+			description:
+				'You gain the ability to cast spells. Choose 3 Spell Schools; when you learn a new Spell, you can choose any Spell from those Schools.',
+			effects: [{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }]
+		},
+		{
+			id: 'warlock_beseech_patron',
+			featureName: 'Beseech Patron',
+			levelGained: 1,
+			isFlavor: true,
+			description:
+				'You can beseech your Patron for aid when you are in need. Your Patron may or may not answer, and may demand something in return. The nature of this interaction is determined by your relationship with your Patron and is at the discretion of the GM.'
+		},
+		{
 			id: 'warlock_contract',
 			featureName: 'Warlock Contract',
 			levelGained: 1,

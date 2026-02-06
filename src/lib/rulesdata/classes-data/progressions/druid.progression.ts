@@ -26,7 +26,7 @@ export const druidProgression: ClassProgressionLevel[] = [
 				'druid_spellcasting_path',
 				'druid_domain',
 				'druid_wild_form',
-				'druid_animal_whisperer'
+				'druid_wild_speech'
 			]
 		}
 	},

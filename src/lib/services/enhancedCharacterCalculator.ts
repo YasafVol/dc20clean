@@ -366,6 +366,32 @@ export function calculateCharacterWithBreakdowns(
 	const senses = collectSenses(resolvedEffects);
 	const combatTraining = collectCombatTraining(resolvedEffects);
 
+	// 6b. Structured logging for new collectors (Phase 8a)
+	if (resistances.length > 0) {
+		console.debug('[calc] Collected resistances:', { count: resistances.length, resistances });
+	}
+	if (vulnerabilities.length > 0) {
+		console.debug('[calc] Collected vulnerabilities:', {
+			count: vulnerabilities.length,
+			vulnerabilities
+		});
+	}
+	if (senses.length > 0) {
+		console.debug('[calc] Collected senses:', { count: senses.length, senses });
+	}
+	if (combatTraining.length > 0) {
+		console.debug('[calc] Collected combatTraining:', {
+			count: combatTraining.length,
+			combatTraining
+		});
+	}
+	if (movements.length > rawMovements.length) {
+		console.debug('[calc] Injected default movements:', {
+			granted: rawMovements.length,
+			total: movements.length
+		});
+	}
+
 	// 8. Get unresolved choices
 	const unresolvedChoices = getUnresolvedChoices(resolvedEffects);
 

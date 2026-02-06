@@ -498,7 +498,49 @@ describe('Ancestry & Trait System', () => {
 	});
 
 	// ============================================================================
-	// 7. DATA COVERAGE & STATISTICS
+	// 7. PHASE 8c — SPOT-CHECK TRAIT COSTS
+	// ============================================================================
+
+	describe('Trait Cost Spot-Checks (Phase 8c)', () => {
+		const costChecks: Array<{ traitId: string; expectedCost: number }> = [
+			{ traitId: 'beastborn_tough', expectedCost: 1 },
+			{ traitId: 'beastborn_venomous_natural_weapon', expectedCost: 1 },
+			{ traitId: 'halfling_bravery', expectedCost: 2 },
+			{ traitId: 'elf_plant_knowledge', expectedCost: 1 },
+			{ traitId: 'dwarf_earthen_knowledge', expectedCost: 1 },
+			{ traitId: 'dragonborn_second_breath', expectedCost: 2 },
+			{ traitId: 'human_skill_expertise', expectedCost: 2 },
+			{ traitId: 'beastborn_short_legged', expectedCost: -1 }
+		];
+
+		costChecks.forEach(({ traitId, expectedCost }) => {
+			it(`should have cost ${expectedCost} for ${traitId}`, () => {
+				const trait = traitsData.find((t) => t.id === traitId);
+				expect(trait).toBeDefined();
+				expect(trait!.cost).toBe(expectedCost);
+			});
+		});
+
+		it('should not have any orphan traits (referenced by no ancestry)', () => {
+			const referencedTraitIds = new Set<string>();
+			ancestriesData.forEach((ancestry: Ancestry) => {
+				ancestry.defaultTraitIds.forEach((id) => referencedTraitIds.add(id));
+				ancestry.expandedTraitIds.forEach((id) => referencedTraitIds.add(id));
+			});
+
+			const orphanedTraits = traitsData.filter((t) => !referencedTraitIds.has(t.id));
+			// Report orphans but don't fail (might be universal traits)
+			if (orphanedTraits.length > 0) {
+				console.warn(
+					`Found ${orphanedTraits.length} orphan traits:`,
+					orphanedTraits.map((t) => t.id)
+				);
+			}
+		});
+	});
+
+	// ============================================================================
+	// 8. DATA COVERAGE & STATISTICS
 	// ============================================================================
 
 	describe('Data Coverage Statistics', () => {

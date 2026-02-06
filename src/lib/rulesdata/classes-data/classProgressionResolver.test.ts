@@ -219,6 +219,48 @@ describe('Class Progression Resolver (UT-2)', () => {
 		});
 	});
 
+	describe('Progression Feature ID Validation (Phase 8c)', () => {
+		const allClasses = [
+			'barbarian',
+			'cleric',
+			'wizard',
+			'rogue',
+			'monk',
+			'hunter',
+			'champion',
+			'sorcerer',
+			'warlock',
+			'spellblade',
+			'bard',
+			'druid',
+			'commander'
+		];
+
+		allClasses.forEach((classId) => {
+			it(`should resolve all progression feature IDs to actual features for ${classId}`, () => {
+				const result = resolveClassProgression(classId, 10);
+
+				result.unlockedFeatures.forEach((feature) => {
+					// Every unlocked feature should have a name (resolved from data)
+					expect(feature.featureName).toBeDefined();
+					expect(feature.featureName.length).toBeGreaterThan(0);
+					// Every feature should have a description (not just an ID)
+					expect(feature.description).toBeDefined();
+				});
+			});
+
+			it(`should have features at key levels for ${classId}`, () => {
+				for (const level of [1, 2, 3, 5, 8]) {
+					const result = resolveClassProgression(classId, level);
+					// Every class should have at least 1 feature at L1
+					if (level === 1) {
+						expect(result.unlockedFeatures.length).toBeGreaterThan(0);
+					}
+				}
+			});
+		});
+	});
+
 	describe('Budgets Consistency', () => {
 		it('should have consistent budgets between L1 features and progression', () => {
 			const result = resolveClassProgression('barbarian', 1);

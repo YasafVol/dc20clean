@@ -15,7 +15,6 @@ import type {
 	AttributeLimit,
 	UnresolvedChoice,
 	ChoiceOption,
-	TraitChoiceStorage,
 	GlobalMagicProfile,
 	SpellsKnownSlot
 } from '../types/effectSystem';
@@ -29,12 +28,12 @@ import {
 	resolveSubclassFeatures
 } from '../rulesdata/classes-data/classProgressionResolver';
 import { classesData } from '../rulesdata/loaders/class.loader';
-import { findTalentById } from '../rulesdata/classes-data/talents/talent.loader';
+// findTalentById moved to calculatorModules/effectCollection.ts
 import { getLevelCaps } from '../rulesdata/progression/levelCaps';
 
 import { BuildStep } from '../types/effectSystem';
 import { getSpellById } from '../rulesdata/spells-data';
-import { getLegacyChoiceId, findClassByName } from '../rulesdata/loaders/class-features.loader';
+import { findClassByName } from '../rulesdata/loaders/class-features.loader';
 import { traitsData } from '../rulesdata/ancestries/traits';
 import { ancestriesData } from '../rulesdata/ancestries/ancestries';
 import { barbarianClass } from '../rulesdata/classes-data/features/barbarian_features';
@@ -69,6 +68,10 @@ import {
 	calculateGlobalMagicProfile,
 	generateSpellsKnownSlots
 } from './calculatorModules/spellSystem';
+import {
+	aggregateAttributedEffects,
+	resolveEffectChoices
+} from './calculatorModules/effectCollection';
 
 /**
  * Cross-path grants returned by aggregatePathBenefits (DC20 v0.10 p.161)
@@ -372,255 +375,7 @@ function getClassFeatures(classId: string): ClassDefinition | null {
 	}
 }
 
-/**
- * Aggregate all effects with source attribution
- */
-function aggregateAttributedEffects(buildData: EnhancedCharacterBuildData): AttributedEffect[] {
-	const effects: AttributedEffect[] = [];
-
-	// Add effects from selected traits
-	for (const traitId of buildData.selectedTraitIds) {
-		const trait = traitsData.find((t) => t.id === traitId);
-		if (trait?.effects) {
-			for (const [effectIndex, effect] of trait.effects.entries()) {
-				effects.push({
-					...effect,
-					source: {
-						type: 'trait',
-						id: traitId,
-						name: trait.name,
-						description: trait.description,
-						category: 'Selected Trait'
-					},
-					resolved: !effect.userChoice,
-					dependsOnChoice: effect.userChoice ? `${traitId}-${effectIndex}` : undefined
-				});
-			}
-		}
-	}
-
-	// Add effects from selected talents (count-based: apply effects multiple times)
-	const selectedTalents = buildData.selectedTalents || {};
-	for (const [talentId, count] of Object.entries(selectedTalents)) {
-		const talent = findTalentById(talentId);
-		if (talent?.effects && count > 0) {
-			// Apply talent effects 'count' times (e.g., if selected twice, add effects twice)
-			for (let i = 0; i < count; i++) {
-				for (const effect of talent.effects) {
-					effects.push({
-						...effect,
-						source: {
-							type: 'talent' as const,
-							id: talentId,
-							name: talent.name,
-							description: talent.description,
-							category: 'Talent'
-						},
-						resolved: true
-					});
-				}
-			}
-		}
-	}
-
-	// Add effects from subclass feature choices
-	if (buildData.selectedSubclass && buildData.featureChoices) {
-		const subclassFeatures = resolveSubclassFeatures(
-			buildData.classId,
-			buildData.selectedSubclass,
-			buildData.level
-		);
-
-		for (const feature of subclassFeatures) {
-			if (feature.choices) {
-				for (const choice of feature.choices) {
-					const choiceKey = `${buildData.classId}_${buildData.selectedSubclass}_${choice.id}`;
-					const selections = buildData.featureChoices[choiceKey] || [];
-
-					for (const selectedOptionName of selections) {
-						const option = choice.options?.find((opt) => opt.name === selectedOptionName);
-						if (option?.effects) {
-							for (const effect of option.effects) {
-								effects.push({
-									...effect,
-									source: {
-										type: 'subclass_feature_choice' as any,
-										id: choice.id,
-										name: selectedOptionName,
-										description: option.description,
-										category: `${buildData.selectedSubclass} - ${feature.featureName}`
-									},
-									resolved: true
-								});
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	// Add effects from multiclass feature selection
-	if (buildData.selectedMulticlassFeature && buildData.selectedMulticlassClass) {
-		const multiclassData = classesData.find((c) => c.id === buildData.selectedMulticlassClass);
-		if (multiclassData) {
-			const classFeatures = findClassByName(multiclassData.name);
-			if (classFeatures) {
-				// Find the selected feature
-				const feature = classFeatures.coreFeatures.find(
-					(f) => f.featureName === buildData.selectedMulticlassFeature
-				);
-
-				if (feature?.effects) {
-					for (const effect of feature.effects) {
-						effects.push({
-							...effect,
-							source: {
-								type: 'multiclass_feature' as any,
-								id: `multiclass_${buildData.selectedMulticlassClass}_${feature.featureName}`,
-								name: feature.featureName,
-								description: feature.description,
-								category: 'Multiclass Feature'
-							},
-							resolved: !effect.userChoice,
-							dependsOnChoice: effect.userChoice ? `multiclass_${feature.featureName}` : undefined
-						});
-					}
-				}
-			}
-		}
-	}
-
-	// Add effects from class features
-	const classFeatures = getClassFeatures(buildData.classId);
-	if (classFeatures) {
-		for (const feature of classFeatures.coreFeatures) {
-			// Only apply features the character has unlocked by current level.
-			if ((feature.levelGained || 0) > buildData.level) {
-				continue;
-			}
-
-			// Direct feature effects
-			if (feature.effects) {
-				for (const effect of feature.effects) {
-					effects.push({
-						...effect,
-						source: {
-							type: 'class_feature',
-							id: feature.featureName,
-							name: feature.featureName,
-							description: feature.description,
-							category: `${classFeatures.className} Level ${feature.levelGained}`
-						},
-						resolved: true
-					});
-				}
-			}
-
-			// Benefits within features
-			if (feature.benefits) {
-				for (const benefit of feature.benefits) {
-					if (benefit.effects) {
-						for (const effect of benefit.effects) {
-							effects.push({
-								...effect,
-								source: {
-									type: 'class_feature',
-									id: `${feature.featureName}_${benefit.name}`,
-									name: benefit.name,
-									description: benefit.description,
-									category: `${classFeatures.className} Level ${feature.levelGained}`
-								},
-								resolved: true
-							});
-						}
-					}
-				}
-			}
-
-			// Chosen options from feature choices
-			if (feature.choices) {
-				for (let choiceIndex = 0; choiceIndex < feature.choices.length; choiceIndex++) {
-					const choice = feature.choices[choiceIndex];
-					// Prefer canonical choice.id, but accept legacy UI key as fallback
-					const legacyKey = getLegacyChoiceId(
-						classFeatures.className,
-						feature.featureName,
-						choiceIndex
-					);
-					const userChoice =
-						(buildData as any).featureChoices?.[choice.id] ??
-						(buildData as any).featureChoices?.[legacyKey];
-					if (userChoice) {
-						for (const option of choice.options) {
-							const isSelected =
-								userChoice === option.name ||
-								(Array.isArray(userChoice) && userChoice.includes(option.name));
-							if (isSelected) {
-								if (option.effects) {
-									for (const effect of option.effects) {
-										effects.push({
-											...effect,
-											source: {
-												type: 'choice',
-												id: `${choice.id}_${option.name}`,
-												name: option.name,
-												description: option.description,
-												category: `${classFeatures.className} Choice`
-											},
-											resolved: true
-										});
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	return effects;
-}
-
-// calculateGlobalMagicProfile and generateSpellsKnownSlots moved to calculatorModules/spellSystem.ts
-
-/**
- * Resolve user choices in effects
- */
-function resolveEffectChoices(
-	effects: AttributedEffect[],
-	choices: TraitChoiceStorage
-): AttributedEffect[] {
-	return effects.map((effect) => {
-		if (!effect.userChoice || !effect.dependsOnChoice) {
-			return effect;
-		}
-
-		const chosenValue = choices[effect.dependsOnChoice];
-		if (!chosenValue) {
-			return effect; // Unresolved
-		}
-
-		// Resolve the choice
-		const resolvedEffect = { ...effect };
-		if (effect.target === 'any_attribute' && effect.type === 'MODIFY_ATTRIBUTE') {
-			resolvedEffect.target = chosenValue;
-			resolvedEffect.resolved = true;
-			resolvedEffect.resolvedValue = chosenValue;
-		} else if (effect.target === 'any_skill' && effect.type === 'GRANT_SKILL_EXPERTISE') {
-			resolvedEffect.target = chosenValue;
-			resolvedEffect.resolved = true;
-			resolvedEffect.resolvedValue = chosenValue;
-		} else if (effect.target === 'any_trade' && effect.type === 'GRANT_TRADE_EXPERTISE') {
-			resolvedEffect.target = chosenValue;
-			resolvedEffect.resolved = true;
-			resolvedEffect.resolvedValue = chosenValue;
-		}
-
-		return resolvedEffect;
-	});
-}
+// aggregateAttributedEffects, resolveEffectChoices moved to calculatorModules/effectCollection.ts
 
 // createStatBreakdown moved to calculatorModules/breakdownGeneration.ts
 
@@ -912,7 +667,7 @@ export function calculateCharacterWithBreakdowns(
 	buildData: EnhancedCharacterBuildData
 ): EnhancedCalculationResult {
 	// 1. Aggregate all effects with source attribution
-	const rawEffects = aggregateAttributedEffects(buildData);
+	const rawEffects = aggregateAttributedEffects(buildData, getClassFeatures);
 
 	// 2. Resolve user choices
 	const resolvedEffects = resolveEffectChoices(rawEffects, buildData.selectedTraitChoices);

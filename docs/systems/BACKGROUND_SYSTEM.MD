@@ -1,9 +1,8 @@
 # DC20Clean – Background System (Skills, Trades, Languages)
 
-> Purpose  
-> This document is the single authoritative reference ("bible") for everything related to Background: Skill/Trade/Language data, point budgets, conversions, validation, and UI wiring.
-> • Humans can follow the numbered guides & check-lists.  
-> • AI agents can parse the File Maps and Mermaid graphs to discover dependencies.
+> Purpose: Single reference for Background system: Skill/Trade/Language data, point budgets, conversions, validation, and UI wiring.
+> Status: Active
+> Last Updated: 2026-02-06
 
 ---
 
@@ -65,7 +64,7 @@ Background allocations in store:
 - `skillsData: Record<string, number>` – mastery levels per skill
 - `tradesData: Record<string, number>` – mastery levels per trade
 - `languagesData: Record<string, { fluency: 'limited' | 'fluent' }>` – per-language fluency
-- Conversions: `{ skillToTrade, tradeToSkill, tradeToLanguage }` numbers on the store
+- Conversions: `{ skillToTradeConversions, tradeToSkillConversions, tradeToLanguageConversions }` numbers on the store
 
 ---
 
@@ -78,10 +77,10 @@ Background allocations in store:
 
 Within `calculateCharacterWithBreakdowns`:
 
-- Base budgets (Level 1 defaults):
-  - Skill Points = `5 + Intelligence + bonus('skillPoints')`
-  - Trade Points = `3 + bonus('tradePoints')`
-  - Language Points = `2 + bonus('languagePoints')`
+- Base budgets:
+  - Skill Points = `5 + progressionGains.totalSkillPoints + Intelligence + bonus('skillPoints')`
+  - Trade Points = `3 + progressionGains.totalTradePoints + bonus('tradePoints')`
+  - Language Points = `2 + bonus('languagePoints')` (does NOT scale with level)
 - Conversions applied:
   - `availableSkillPoints = baseSkillPoints - skillToTrade + floor(tradeToSkill/2)`
   - `availableTradePoints = baseTradePoints - tradeToSkill + skillToTrade*2 - tradeToLanguage`
@@ -177,5 +176,5 @@ Validation also exposes a `masteryLimits` block with:
 
 ---
 
-> Last updated: 2026-01-25  
+> Last updated: 2026-02-06  
 > Maintainer: @DC20Clean-Team

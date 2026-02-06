@@ -1,21 +1,32 @@
-### Character Creation Flow System Spec
+# DC20Clean – Character Creation Flow
 
-#### Purpose
+> Purpose: Canonical reference for the multi-stage character creation wizard: stage ordering, state contracts, validation rules, and data flow.
+> Status: Active
+> Last Updated: 2026-02-06
 
-- Establish a canonical reference for the multi-stage character creation wizard so future specs (e.g., Level-Up) reuse the same structure and terminology
-- Capture inputs, outputs, and validation rules per stage based on the React components in `src/routes/character-creation`
-- Highlight data contracts with `characterContext` and `enhancedCharacterCalculator.ts`
+---
 
-#### Stage Contract
+## Stage Contract
 
-- Ordering is fixed: 1) Class & Features → 2) Leveling (conditional when level > 1) → 3) Ancestry → 4) Attributes → 5) Background → 6) Spells & Maneuvers → 7) Character Name
-- State lives in `characterContext.tsx`; each stage must read/write through the reducer actions (`SET_CLASS`, `SET_TRAITS`, `UPDATE_SKILLS`, etc.)
-- Validation gating: `CharacterCreation.tsx` calls `isStepCompleted(stepNumber)` before allowing navigation; each stage enforces completion via calculator outputs (ancestry/background budgets, attribute points remaining, spell counts)
+- Ordering is **dynamic**: stages are built at runtime in `CharacterCreation.tsx` via `getSteps()`. The base flow is:
+  1. Class & Features (always)
+  2. Leveling (conditional: only when `state.level > 1`)
+  3. Ancestry (always)
+  4. Attributes (always)
+  5. Background (always)
+  6. Spells (conditional: only when calculator reports `spellsKnownSlots.length > 0`)
+  7. Maneuvers (conditional: only when calculator reports `levelBudgets.totalManeuversKnown > 0`)
+  8. Name (always)
+- Spells and Maneuvers are **separate stages** rendered by `Spells.tsx` and `Maneuvers.tsx` respectively. They appear only when the selected class grants them.
+- State lives in `characterContext.tsx`; each stage reads/writes through reducer actions (`SET_CLASS`, `SET_TRAITS`, `UPDATE_SKILLS`, etc.)
+- Validation gating: `CharacterCreation.tsx` calls `isStepCompleted(stepNumber)` before allowing navigation; each stage enforces completion via calculator outputs (ancestry/background budgets, attribute points remaining, spell/maneuver counts)
 - Calculator contract: `calculateCharacterWithBreakdowns(convertToEnhancedBuildData(state))` runs on every state change and returns:
-  - `stats.finalAttributePoints`, `background`, `ancestry`, `breakdowns`, `validation`
+  - `stats.finalAttributePoints`, `background`, `ancestry`, `breakdowns`, `validation`, `spellsKnownSlots`, `levelBudgets`
   - `validation.errors` drive blocking messages (POINTS_OVERBUDGET, MASTERY_CAP_EXCEEDED)
+- **Level-up mode**: When loading an existing character for level-up (`isLevelUpMode`), state is pre-populated from the saved character and the wizard starts at the appropriate stage.
+- **Edit mode**: Characters can be loaded for editing via `LoadCharacter.tsx`, which populates state and allows re-navigation through all stages.
 
-#### Stage Details
+## Stage Details
 
 - **Stage 1 – Class & Features** (`ClassSelector.tsx`, `ClassFeatures.tsx`)
   - Inputs: `classesData` (from `class.loader.ts`), `selectedFeatureChoices`, resolver-derived feature options
@@ -45,17 +56,22 @@
   - Completion rule: skill points spent exactly, trade/language points <= remaining (UI allows overspend but completion requires <= 0 remaining)
   - Outputs: skills/trades/languages plus conversion values (`SET_CONVERSIONS`)
 
-- **Stage 6 – Spells & Maneuvers** (`SpellsAndManeuvers.tsx`)
-  - Inputs: `allSpells`, `allManeuvers`, class level progression (JSON today → resolver later), `state.selectedSpells`, `state.selectedManeuvers`
-  - Completion rule: selected counts meet per-level requirements (cantrips + spells, maneuvers)
-  - Outputs: `state.selectedSpells`, `state.selectedManeuvers`
+- **Stage 6 – Spells** (`Spells.tsx`) — conditional, only if class has spell slots
+  - Inputs: `allSpells`, calculator `spellsKnownSlots` and `globalMagicProfile`, `state.selectedSpells`
+  - Completion rule: all spell slots filled with valid spells matching slot restrictions and global magic profile
+  - Outputs: `state.selectedSpells` (stored as `Record<SlotID, SpellID>`)
 
-- **Stage 7 – Character Name** (`CharacterName.tsx`)
+- **Stage 7 – Maneuvers** (`Maneuvers.tsx`) — conditional, only if class has maneuvers known
+  - Inputs: `allManeuvers`, calculator `levelBudgets.totalManeuversKnown`, `state.selectedManeuvers`
+  - Completion rule: selected maneuver count matches budget
+  - Outputs: `state.selectedManeuvers`
+
+- **Stage 8 – Character Name** (`CharacterName.tsx`)
   - Inputs: `state.finalName`, `state.finalPlayerName`
   - Completion rule: both fields non-empty
   - Outputs: final naming data for persistence
 
-#### Leveling Stage (Implemented)
+## Leveling Stage
 
 - Activation: inserted after Stage 1 when `state.level > 1`
 - Inputs: calculator `resolvedFeatures` (budgets, subclass choice level) and `validation`, plus leveling selections stored in `characterContext`
@@ -63,7 +79,7 @@
 - Outputs: `selectedTalents`, `pathPointAllocations`, `selectedMulticlass*`, `selectedSubclass`, `selectedCrossPathSpellList`
 - Reference: `docs/systems/LEVELING_SYSTEM.MD`
 
-#### Leveling Stage UX Flow (Design Notes / Future Enhancements)
+## Leveling Stage UX Flow (Design Notes)
 
 - **Stage header**
   - Step rail marks the conditional “Level Up” slot; hover copy clarifies the stage appears when level > 1.
@@ -83,7 +99,7 @@
   - When no budgets remain, the accordion sections collapse and the stage shows a success banner.
   - Error state: counters turn amber, unresolved sections stay expanded with helper text (“Spend your remaining Path Point”).
 
-#### Leveling Stage Data Contract (Current)
+## Leveling Stage Data Contract
 
 - Calculator fields consumed:
   - `resolvedFeatures` and `validation.errors` from `calculateCharacterWithBreakdowns`
@@ -97,7 +113,7 @@
   - `SET_CROSS_PATH_SPELL_LIST` records `selectedCrossPathSpellList`
 - Navigation gating relies on calculator validation; failure to resolve choices keeps the step marked incomplete.
 
-#### State Extension Schema
+## State Extension Schema
 
 | Store Field                  | Type                                                                 | Source Stage     | Description                                                  | Downstream Consumers                           |
 | ---------------------------- | -------------------------------------------------------------------- | ---------------- | ------------------------------------------------------------ | ---------------------------------------------- |
@@ -112,21 +128,21 @@
 
 > Leveling selections are stored directly in `characterContext.tsx` and reused by the calculator and character sheet.
 
-#### Validation Feedback Patterns
+## Validation Feedback Patterns
 
 - Snackbar messaging: surface human-readable summaries (`"Spend remaining 1 Talent point"`, `"Choose a subclass feature"`)
 - Step indicator: flag Leveling Choices as error when validation errors exist, matching current stage error styling
 - Inline cues: counters turn warning state when > 0; unresolved choice cards stay expanded with instructional text
 - Calculator error codes extend `validation.errors`; Stage 2+ read the same object so the experience is consistent across steps
 
-#### Scaling Considerations
+## Scaling Considerations
 
 - Anticipate additional talent/path categories at higher levels; provide search/filter UI within accordions
 - Support grouping by source (general vs class talents, subclass tiers) and allow collapsing completed sections to reduce cognitive load
 - Employ progressive disclosure for large option sets (e.g., load more, lazy search) to keep DOM/render manageable
 - Ensure state shape (`selectedTalents`, `selectedMulticlassOption`) can accommodate future rule changes (e.g., multiple selections per level)
 
-#### Validation & Testing Notes
+## Validation and Testing Notes
 
 - Unit tests exist for `characterContext` reducer; new tests should verify stage completion helpers under multi-level inputs
 - Ensure calculated budgets (ancestry/background) align with UI assumptions to avoid false negatives in completion gating

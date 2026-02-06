@@ -1,8 +1,8 @@
 # DC20Clean – PDF Export System
 
-> Purpose
->
-> Capture the architecture, scope, and acceptance criteria for exporting a calculated character sheet to the official DC20 fillable PDF. This document is the system overview aligned with existing docs (no separate planning spec is currently tracked in-repo).
+> Purpose: Architecture and acceptance criteria for exporting calculated character sheets to the official DC20 fillable PDF.
+> Status: Active
+> Last Updated: 2026-02-06
 
 ---
 
@@ -21,7 +21,16 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 ## 2. Systems & Touchpoints
 
 - **Character Calculation** — `src/lib/services/enhancedCharacterCalculator.ts` outputs `EnhancedCalculationResult`; this is the canonical source for values exported to the PDF.
-- **Transformation Layer** — `src/lib/pdf/transformers.ts` maps calculation results into a structured DTO that matches the PDF field list.
+- **Transformation Layer** — `src/lib/pdf/transformers.ts` maps calculation results into a structured DTO that matches the PDF field list. Key functions:
+  - `transformCalculatedCharacterToPdfData()` — main entry point (live calculator result)
+  - `transformSavedCharacterToPdfData()` — transforms from persisted `SavedCharacter`
+  - `formatClassFeatures()` — formats class features for text fields
+  - `formatAncestryTraits()` — formats selected trait names
+  - `formatSpellsAndManeuvers()` — formats spell/maneuver lists
+  - `formatTalents()` — formats selected talents
+  - `formatInventory()` — formats inventory items
+  - `formatFeatureChoices()` — formats feature choice descriptions
+  - `processMovements()` — converts movement array to PDF checkbox structure
 - **PDF Field Maps** — Versioned field maps for different PDF versions:
   - `src/lib/pdf/fieldMap.dc20-0.10.ts` — Default v0.10 field map
   - `src/lib/pdf/fieldMap.dc20-0.9.5.ts` — Legacy v0.9.5 field map
@@ -188,5 +197,5 @@ import { FeatureGateButton } from '@/components/auth';
 
 ---
 
-> Last updated: 2026-01-25 (Added authentication gating)
+> Last updated: 2026-02-06
 > Maintainer: @DC20Clean-Team

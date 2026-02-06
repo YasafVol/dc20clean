@@ -1,7 +1,8 @@
 # DC20Clean – Database & Storage System
 
-> Purpose
-> Document the persistence architecture for characters and DM Tools, covering localStorage and Convex cloud storage.
+> Purpose: Persistence architecture for characters and DM Tools: hybrid localStorage/Convex storage, schemas, auth, migrations.
+> Status: Active
+> Last Updated: 2026-02-06
 
 ---
 
@@ -450,6 +451,6 @@ const saveCharacterData = async (character: SavedCharacter) => {
 
 ---
 
-> Last updated: 2026-02-06 (characterState.ui.combatToggles optional in Convex schema)
+> Last updated: 2026-02-06
 > Maintainer: @DC20Clean-Team
 

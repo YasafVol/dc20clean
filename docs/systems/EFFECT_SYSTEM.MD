@@ -1,7 +1,8 @@
 # DC20Clean – Effect System
 
-> Purpose
-> Canonical catalog of `Effect.type` semantics, targets, choice resolution, and stacking rules used across Traits and Class Features.
+> Purpose: Canonical catalog of `Effect.type` semantics, targets, choice resolution, and stacking rules used across Traits and Class Features.
+> Status: Active
+> Last Updated: 2026-02-06
 
 ---
 
@@ -13,14 +14,68 @@
 
 ---
 
-## 2. Effect Categories (examples, not exhaustive)
+## 2. Complete Effect Type Reference
 
-- Numeric modifiers: `MODIFY_STAT`, resource maxima `hpMax|spMax|mpMax`, defenses `pd|ad`, attributes, background pools
-- Grants: `GRANT_ABILITY`, senses, movements, resistances, proficiencies
-- Mastery caps: `MODIFY_SKILL_MASTERY_CAP`, `INCREASE_SKILL_MASTERY_CAP`, and trade analogs
-- **Condition interactions (v0.10)**: `GRANT_CONDITION_IMMUNITY`, `GRANT_CONDITION_RESISTANCE`, `GRANT_CONDITION_VULNERABILITY`
+All effect types are defined in `character.schema.ts` as a discriminated union. There are 22 types total.
 
-Stacking: Numeric effects sum; grants de-duplicate by `id/name`.
+### Numeric Modifiers
+
+| Type | Target | Value | Special Fields | Stacking |
+| --- | --- | --- | --- | --- |
+| `MODIFY_STAT` | stat name (`hpMax`, `spMax`, `mpMax`, `pd`, `ad`, `skillPoints`, `tradePoints`, `languagePoints`, `moveSpeed`, `jumpDistance`, `attackSpellCheck`, `saveDC`, `maneuversKnown`, `ancestryPoints`, `attributePoints`) | `number` | `condition?: string` (e.g., `while_raging`, `not_wearing_armor`) | Sums |
+| `MODIFY_ATTRIBUTE` | attribute name (`might`, `agility`, `charisma`, `intelligence`) | `number` | `userChoice?: { prompt, options? }` for `any_attribute` | Sums |
+| `SET_VALUE` | stat name | `string \| number` | -- | Overwrites |
+
+### Grants
+
+| Type | Target | Value | Special Fields | Stacking |
+| --- | --- | --- | --- | --- |
+| `GRANT_ABILITY` | ability name | `string` (description) | -- | De-duplicates |
+| `GRANT_RESISTANCE` | damage type | `string \| number \| boolean` | `optional?: string` | De-duplicates |
+| `GRANT_VULNERABILITY` | damage type | `number` | -- | De-duplicates |
+| `GRANT_ADV_ON_SAVE` | save type | `string \| boolean` | -- | De-duplicates |
+| `GRANT_ADV_ON_CHECK` | check type | `string \| boolean` | -- | De-duplicates |
+| `GRANT_COMBAT_TRAINING` | training type (e.g., `Weapons`, `Spell_Focuses`) | `boolean` | -- | De-duplicates |
+| `GRANT_SENSE` | sense type (e.g., `darkvision`) | `number` (range) | -- | De-duplicates |
+| `GRANT_MOVEMENT` | movement type (`climb`, `swim`, `fly`, `burrow`, `glide`) | `string \| number` (`equal_to_speed`, `half_speed`, numeric) | -- | De-duplicates |
+| `GRANT_CHOICE` | choice category | `number` | `userChoice?: { prompt, options? }` | Per-choice |
+| `GRANT_SKILL_EXPERTISE` | skill name | `{ capIncrease, levelIncrease }` | `userChoice?: { prompt, count? }` | Per-skill |
+| `GRANT_TRADE_EXPERTISE` | trade name | `{ capIncrease, levelIncrease }` | `userChoice?: { prompt }` | Per-trade |
+
+### Spell and Maneuver Grants
+
+| Type | Target | Value | Special Fields | Stacking |
+| --- | --- | --- | --- | --- |
+| `GRANT_SPELL` | spell restriction or specific spell | `number \| string` | `userChoice?: { prompt, options? }` | Per-slot |
+| `GRANT_CANTRIP` | cantrip restriction | `number` | -- | Per-slot |
+| `GRANT_MANEUVERS` | maneuver type or `all_attack` (access grant) | `number` | -- | Access grants don't add to budget; specific grants do |
+
+### Mastery Cap Effects
+
+| Type | Fields | Purpose |
+| --- | --- | --- |
+| `MODIFY_SKILL_MASTERY_CAP` | `tier` (`Adept` \| `Expert` \| `Master` \| `Grandmaster`), `count`, `options?` | Grant N skill slots at specified tier |
+| `MODIFY_TRADE_MASTERY_CAP` | `tier`, `count`, `options?` | Grant N trade slots at specified tier |
+| `INCREASE_SKILL_MASTERY_CAP` | `value` (number), `count`, `options?` | Increase mastery cap by value for N skills |
+| `INCREASE_TRADE_MASTERY_CAP` | `value`, `count`, `options?` | Increase mastery cap by value for N trades |
+
+### Condition Interaction Effects (v0.10)
+
+| Type | Target | Value | Purpose |
+| --- | --- | --- | --- |
+| `GRANT_CONDITION_IMMUNITY` | condition ID | -- | Full immunity to condition |
+| `GRANT_CONDITION_RESISTANCE` | condition ID | `advantage` \| `reduction` \| `half` | Partial resistance |
+| `GRANT_CONDITION_VULNERABILITY` | condition ID | `disadvantage` \| `double` | Increased susceptibility |
+
+### Effect Processing Pipeline
+
+1. **Aggregation** (`aggregateAttributedEffects()`): Collects effects from ancestry traits, class features, subclass features, talents, and feature choices. Each effect is tagged with its source.
+2. **Choice Resolution** (`resolveEffectChoices()`): Resolves effects with `userChoice` metadata (e.g., `any_attribute` → specific attribute based on user selection).
+3. **Stat Application** (`createStatBreakdown()`): Applies `MODIFY_STAT` and `MODIFY_ATTRIBUTE` effects to base values, producing breakdowns with per-source attribution.
+4. **Grant Collection**: Grants (`GRANT_ABILITY`, `GRANT_MOVEMENT`, etc.) are collected and passed through to the calculation result.
+5. **Condition Aggregation** (`conditionAggregator.ts`): Scans all effects for condition interactions and groups them by condition ID.
+
+Stacking rules: Numeric effects (`MODIFY_STAT`, `MODIFY_ATTRIBUTE`) sum. Grants de-duplicate by target. Mastery cap effects accumulate slots.
 
 ---
 
@@ -50,7 +105,7 @@ The `GRANT_MOVEMENT` effect grants characters special movement types beyond stan
 
 ### Processing Flow
 
-1. **Effect Resolution** (`enhancedCharacterCalculator.ts`, line ~1315):
+1. **Effect Resolution** (in `enhancedCharacterCalculator.ts`, movement processing block):
    - Filters resolved effects for `type === 'GRANT_MOVEMENT'`
    - Converts string formulas to numeric speeds:
      - `'equal_to_speed'` → ground speed
@@ -62,7 +117,7 @@ The `GRANT_MOVEMENT` effect grants characters special movement types beyond stan
    - Populates `movements` array in `EnhancedCalculationResult`
    - Each entry: `{ type: string, speed: string, source: EffectSource }`
 
-3. **PDF Export** (`transformers.ts`, line ~10):
+3. **PDF Export** (`transformers.ts`, `processMovements()`):
    - Helper function `processMovements()` converts movement array to PDF checkboxes
    - Compares movement speed to ground speed:
      - Full speed: `speed >= groundSpeed` → sets `full: true`
@@ -265,5 +320,5 @@ Two effect schema representations exist in the codebase:
 
 ---
 
-> Last updated: 2026-01-14 (Aligned condition interaction effect types with schema)
+> Last updated: 2026-02-06
 > Maintainer: @DC20Clean-Team

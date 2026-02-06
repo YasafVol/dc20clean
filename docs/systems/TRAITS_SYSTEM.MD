@@ -1,9 +1,8 @@
-# DC20Clean – Traits System (Vertical Slice)
+# DC20Clean – Traits System
 
-> Purpose  
-> This document is the single authoritative reference ("bible") for everything related to Traits: their data shape, effect typing, validation, runtime processing, and UI usage.
-> • Humans can follow the numbered guides & check-lists.  
-> • AI agents can parse the File Maps and Mermaid graphs to discover dependencies.
+> Purpose: Single reference for Traits: data shape, effect typing, validation, runtime processing, and UI usage.
+> Status: Active
+> Last Updated: 2026-02-06
 
 ---
 
@@ -303,5 +302,5 @@ Prerequisites are defined in the trait data using the `prerequisites` field:
 
 ---
 
-> Last updated: 2026-02-01 (DC20 v0.10 - prerequisite validation implemented)
+> Last updated: 2026-02-06
 > Maintainer: @DC20Clean-Team

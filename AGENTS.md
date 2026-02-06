@@ -62,7 +62,7 @@ The wizard flow and every subsystem that feeds into it.
 
 | Doc | What it covers | Key code |
 | --- | --- | --- |
-| `docs/systems/CHARACTER_SHEET.MD` | Section-to-data-source map (Attributes, Resources, Background, Spells, Maneuvers, etc.), interactions, acceptance checks | `src/routes/character-sheet/*` |
+| `docs/systems/CHARACTER_SHEET.MD` | Full component architecture (50+ components), context provider data flow, responsive layouts (desktop/mobile), section-to-data-source map, popups, auto-save | `src/routes/character-sheet/*` (hooks/, components/, styles/) |
 
 ### DM Tools
 

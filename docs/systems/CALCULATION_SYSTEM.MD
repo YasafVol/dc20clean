@@ -1,7 +1,8 @@
 # DC20Clean – Calculation & Derived Stats System
 
-> Purpose
-> Definitive guide to derived stat formulas, effect application order, mastery cap validation, and breakdown output.
+> Purpose: Definitive guide to derived stat formulas, effect application order, mastery cap validation, and breakdown output.
+> Status: Active
+> Last Updated: 2026-02-06
 
 ---
 
@@ -87,7 +88,7 @@
 
 **Spellcaster Path:**
 
-- Level 1: +2 MP, +1 cantrip, +1 spell
+- Level 1: +3 MP, +1 cantrip, +1 spell
 - Level 2: +2 MP, +1 cantrip
 - Level 3: +2 MP, +1 cantrip, +1 spell
 - Level 4: +2 MP, +1 spell
@@ -155,7 +156,7 @@ All cap logic now references `src/lib/rulesdata/progression/levelCaps.ts`:
 
 - Increasing a trait that grants `+1 mpMax` increases MP Max and appears in the breakdown with correct source label.
 - Attempting to exceed mastery cap without exceptions yields `MASTERY_CAP_EXCEEDED` and disables submit.
-- Save DC formula matches `8 + Combat Mastery + Prime` for casters.
+- Save DC formula matches `10 + Combat Mastery + Prime Attribute`.
 
 ---
 
@@ -416,7 +417,7 @@ progressionGains
 
 ### 9.3. Movement Processing
 
-**Location**: `enhancedCharacterCalculator.ts:1314-1334`
+**Location**: `enhancedCharacterCalculator.ts`, in the movement processing block after all stats are finalized
 
 After all stats are finalized (including `finalMoveSpeed`), `GRANT_MOVEMENT` effects are processed:
 
@@ -451,19 +452,19 @@ const movements = resolvedEffects
 
 **Previous (Incorrect) Order:**
 
-1. Line 903: `finalHPMax = finalMight + progressionGains.totalHP` (= 18)
-2. Line 944: `finalRestPoints = finalHPMax` (= 18) ❌
-3. Line 950: `breakdowns.hpMax = createStatBreakdown(...)` (applies +1 from trait)
-4. Line 964: `finalHPMax = breakdowns.hpMax.total` (= 19) ✅
-5. **Result**: HP Max = 19, Rest Points = 18 ❌
+1. `finalHPMax = finalMight + progressionGains.totalHP` (= 18)
+2. `finalRestPoints = finalHPMax` (= 18) -- assigned too early
+3. `breakdowns.hpMax = createStatBreakdown(...)` (applies +1 from trait)
+4. `finalHPMax = breakdowns.hpMax.total` (= 19)
+5. **Result**: HP Max = 19, Rest Points = 18 -- mismatch
 
 **Current (Correct) Order:**
 
-1. Line 903: `finalHPMax = finalMight + progressionGains.totalHP`
-2. Line 949: `breakdowns.hpMax = createStatBreakdown(...)`
-3. Line 963: `finalHPMax = breakdowns.hpMax.total` (= 19)
-4. **Line 971**: `finalRestPoints = finalHPMax` (= 19) ✅
-5. **Result**: HP Max = 19, Rest Points = 19 ✅
+1. `finalHPMax = finalMight + progressionGains.totalHP`
+2. `breakdowns.hpMax = createStatBreakdown(...)`
+3. `finalHPMax = breakdowns.hpMax.total` (= 19)
+4. `finalRestPoints = finalHPMax` (= 19) -- assigned after breakdown
+5. **Result**: HP Max = 19, Rest Points = 19 -- correct
 
 ### 9.5. Correct Calculation Order
 
@@ -504,7 +505,7 @@ For values that depend on breakdowns, the order must be:
 
 ---
 
-> Last updated: 2026-02-05 (Conditional defense modifiers documented)
+> Last updated: 2026-02-06
 > Maintainer: @DC20Clean-Team
 
 

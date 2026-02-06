@@ -1,7 +1,8 @@
 # DC20Clean – Spells System (v0.10)
 
-> Purpose
-> Single reference for spell data model, assignment rules, UI flows, and validation.
+> Purpose: Single reference for spell data model, assignment rules, UI flows, and validation.
+> Status: Active
+> Last Updated: 2026-02-06
 
 ---
 
@@ -70,14 +71,14 @@ interface Spell {
 
 ```
 src/lib/rulesdata/spells-data/
-├── astromancy/          # 9 spells
-├── conjuration/         # 15 spells
-├── divination/          # 12 spells
-├── elemental/           # 28 spells
-├── enchantment/         # 19 spells
-├── invocation/          # 17 spells
-├── nullification/       # 11 spells
-├── transmutation/       # 14 spells
+├── astromancy/          # 10 spells
+├── conjuration/         # 14 spells
+├── divination/          # 2 spells
+├── elemental/           # 41 spells
+├── enchantment/         # 12 spells
+├── invocation/          # 14 spells
+├── nullification/       # 16 spells
+├── transmutation/       # 16 spells
 └── index.ts             # Main export + utilities
 ```
 
@@ -106,7 +107,7 @@ getNonCantrips(): Spell[]
 - **Sources Added**: Arcane/Divine/Primal determine class access
 - **Tags System**: Flexible tagging for filtering and class access
 - **Enhancement System**: Spells have enhancement options with AP/MP costs
-- **125 Spells**: Complete extraction from v0.10 rules
+- **125 Spells**: Complete extraction from v0.10 rules (counts per school updated 2026-02-06)
 
 **Class Access Changes:**
 
@@ -141,9 +142,31 @@ getNonCantrips(): Spell[]
 
 ## 5. UI Flows
 
-- Creation: If class supports spells at level, render picker(s) filtered by class access.
-- Sheet: Display known spells; provide filters by school, source, and tags.
-- Mobile fallbacks: Ensure list and removal actions are accessible.
+### Creation (`Spells.tsx`)
+
+- The Spells stage appears conditionally only when the calculator reports `spellsKnownSlots.length > 0`.
+- Each slot is an individual spell picker that respects:
+  - Slot-level restrictions (specific school, source, or tag requirements)
+  - Global Magic Profile (character's general spellcasting bounds)
+  - Type matching (cantrip slots only accept cantrips, spell slots only accept spells)
+- Spell selection is tracked as `Record<SlotID, SpellID>` in `characterContext.tsx`.
+
+### Sheet (`character-sheet/components/Spells.tsx`)
+
+- Displays known spells with filtering by school, source, and tags
+- Shows spell details via `SpellPopup` modal
+- Visibility: shown when `spellsKnownSlots.length > 0` or saved spells exist
+
+### Spellbook (`routes/spellbook/Spellbook.tsx`)
+
+- Dedicated route for browsing all spells
+- Filterable by school, source, tags, and cantrip/spell type
+
+### Cross-Path Spell List
+
+- Martial classes taking the Spellcaster Path must choose a spell list (`selectedCrossPathSpellList` in `characterContext.tsx`)
+- UI for this choice is in `LevelingChoices.tsx`
+- See `LEVELING_SYSTEM.MD` for cross-path grant details
 
 ---
 
@@ -162,5 +185,5 @@ getNonCantrips(): Spell[]
 
 ---
 
-> Last updated: 2026-01-14
+> Last updated: 2026-02-06
 > Maintainer: @DC20Clean-Team

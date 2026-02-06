@@ -1,10 +1,8 @@
 # DC20Clean - Leveling System
 
-> Purpose
-> Canonical reference for level-based budgets and progression aggregation in character creation (DC20 v0.10, levels 1-10).
-
+> Purpose: Canonical reference for level-based budgets and progression aggregation in character creation (DC20 v0.10, levels 1-10).
 > Status: Active
-> Last Updated: 2026-02-04
+> Last Updated: 2026-02-06
 
 ---
 
@@ -99,7 +97,27 @@ Spellcaster path (`paths.data.ts`):
 
 ---
 
-## 8) Multiclass
+## 8) Cross-Path Grants
+
+When a character invests path points in the opposite path (martial class taking spellcaster path, or vice versa), special grants are triggered. This is handled by `aggregatePathBenefits()` in `enhancedCharacterCalculator.ts`.
+
+### Grant Types
+
+| Grant | Condition | Effect | Reference |
+| --- | --- | --- | --- |
+| Spellcaster Stamina Regen | `classCategory === 'spellcaster'` AND `pathPointAllocations.martial > 0` | Grants "Spellcaster Stamina Regen" ability | DC20 v0.10 p.161 |
+| Spell List Choice | `classCategory === 'martial'` AND `pathPointAllocations.spellcasting > 0` | Martial must choose a spell list; stored as `selectedCrossPathSpellList` | DC20 v0.10 p.161 |
+| Combat Training: Weapons | `pathPointAllocations.martial > 0` | Grants `GRANT_COMBAT_TRAINING` for Weapons | DC20 v0.10 p.161 |
+| Combat Training: Spell Focuses | `pathPointAllocations.spellcasting > 0` | Grants `GRANT_COMBAT_TRAINING` for Spell_Focuses | DC20 v0.10 p.161 |
+
+### Persistence
+
+- `selectedCrossPathSpellList` is stored in `characterContext.tsx` and persisted with the character
+- UI for spell list selection is in `LevelingChoices.tsx`
+
+---
+
+## 9) Multiclass
 
 Multiclass details are part of the leveling flow. Quick pointers:
 
@@ -110,7 +128,7 @@ Multiclass details are part of the leveling flow. Quick pointers:
 
 ---
 
-## 9) Related Specs
+## 10) Related Specs
 
 - `docs/systems/CLASS_SYSTEM.MD`
 - `docs/systems/MARTIALS_SYSTEM.MD`

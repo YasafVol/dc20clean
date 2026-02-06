@@ -1,8 +1,9 @@
 # DC20 Monster System (DM Tools)
 
-> **Status:** Implementation Complete  
-> **Last Updated:** 2026-01-31 (v3: added seed system)  
-> **Related:** [ENCOUNTER_SYSTEM_SPEC.MD](./ENCOUNTER_SYSTEM_SPEC.MD)
+> Purpose: Monster designer using DC20's point-buy framework: Statistics Table, role modifiers, tier system, feature point-buy, action builder, seed data, community sharing.
+> Status: Active
+> Last Updated: 2026-02-06
+> Related: [ENCOUNTER_SYSTEM_SPEC.MD](./ENCOUNTER_SYSTEM_SPEC.MD)
 
 ---
 
@@ -26,6 +27,12 @@
 - `/dm/monsters/new` - Create new monster
 
 **Menu Entry:** "Laboratory" in DM Tools section
+
+**Key Services:**
+
+- `src/lib/services/monsterCalculator.ts` — `calculateMonsterStats()`, `validateMonsterActions()`, `validateFeatureBudget()`, `createDefaultMonster()`, `recalculateMonsterStats()`
+- `src/lib/services/monsterImporter.ts` — transforms raw seed JSON into `SavedMonster` schema
+- `src/lib/hooks/useMonsterBuilder.tsx` — React hook for monster editor state
 
 ---
 
@@ -363,6 +370,7 @@ interface SavedMonster {
 | ----------------------- | ------------ | ----------------- | ----------------------------------- |
 | `monsters.list`         | -            | `Monster[]`       | User's monsters + approved homebrew |
 | `monsters.getById`      | `id: string` | `Monster \| null` | Single monster                      |
+| `monsters.listOfficial` | `filters?`   | `Monster[]`       | Official monsters (Bestiary)        |
 | `monsters.listHomebrew` | `filters?`   | `Monster[]`       | Approved public monsters            |
 | `monsters.listTrash`    | -            | `Monster[]`       | User's deleted monsters             |
 | `customFeatures.list`   | -            | `Feature[]`       | User's features + approved homebrew |

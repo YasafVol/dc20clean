@@ -33,7 +33,7 @@ import { getLevelCaps } from '../rulesdata/progression/levelCaps';
 import { BuildStep } from '../types/effectSystem';
 import { getSpellById } from '../rulesdata/spells-data';
 import { findClassByName } from '../rulesdata/loaders/class-features.loader';
-import { traitsData } from '../rulesdata/ancestries/traits';
+// traitsData moved to calculatorModules/budgetCalculation.ts and effectCollection.ts
 import { ancestriesData } from '../rulesdata/ancestries/ancestries';
 import { barbarianClass } from '../rulesdata/classes-data/features/barbarian_features';
 import { clericClass } from '../rulesdata/classes-data/features/cleric_features';
@@ -75,6 +75,7 @@ import {
 	aggregateProgressionGains,
 	checkFlavorFeatureAutoGrant
 } from './calculatorModules/progressionAggregation';
+import { calculateBudgets } from './calculatorModules/budgetCalculation';
 
 // CrossPathGrants, aggregatePathBenefits, checkFlavorFeatureAutoGrant moved to calculatorModules/progressionAggregation.ts
 
@@ -493,159 +494,17 @@ export function calculateCharacterWithBreakdowns(
 	// Initiative breakdown (via breakdownGeneration module)
 	breakdowns.initiative = createInitiativeBreakdown(combatMastery, finalAgility, finalInitiativeBonus);
 
-	// 4.5. Compute background points (ported from useBackgroundPoints)
+	// 4.5. Compute background and ancestry budgets (via budgetCalculation module)
+	const budgets = calculateBudgets(buildData, resolvedEffects, progressionGains, finalIntelligence);
+	const { background, ancestry, maneuverBonus, spellBonus, grantedManeuversCount } = budgets;
+	const { skillPointsUsed, tradePointsUsed, languagePointsUsed } = background;
+	const { availableSkillPoints, availableTradePoints, availableLanguagePoints } = background;
+	const { baseAncestryPoints, ancestryPointsUsed } = ancestry;
 	const skills = buildData.skillsData ?? {};
 	const trades = buildData.tradesData ?? {};
 	const languages = buildData.languagesData ?? { common: { fluency: 'fluent' } };
-
-	// Get mastery limit elevations from spent points (not from features)
 	const skillLimitElevations = (buildData as any).skillMasteryLimitElevations ?? {};
 	const tradeLimitElevations = (buildData as any).tradeMasteryLimitElevations ?? {};
-
-	// Get the baseline mastery cap from level
-	const levelCapsForBackground = getLevelCaps(buildData.level);
-	const baselineSkillMasteryTier = levelCapsForBackground.maxSkillMasteryTier;
-	const baselineTradeMasteryTier = levelCapsForBackground.maxTradeMasteryTier;
-
-	// Calculate skill points used with correct cost model:
-	// - 1 point per mastery level up to baseline cap
-	// - For each skill exceeding baseline: +1 point for limit elevation (if not from feature)
-	// DC20 Rule: "1 Skill Point to increase its Skill Mastery Limit by 1"
-	// Plus "another Skill Point to increase its Skill Mastery Level to meet the new Limit"
-	// So: Adept at L1 = 1 (Novice) + 1 (elevate limit) + 1 (Adept level) = 3 points
-	let skillPointsUsed = 0;
-	for (const [skillId, masteryLevel] of Object.entries(skills)) {
-		if (!masteryLevel) continue;
-		// Base cost is mastery level
-		skillPointsUsed += masteryLevel;
-		// If this skill has a spent-points elevation, count that cost too
-		const elevation = skillLimitElevations[skillId];
-		if (elevation?.source === 'spent_points') {
-			skillPointsUsed += elevation.value;
-		}
-	}
-
-	// Same for trades
-	let tradePointsUsed = 0;
-	for (const [tradeId, masteryLevel] of Object.entries(trades)) {
-		if (!masteryLevel) continue;
-		// Base cost is mastery level
-		tradePointsUsed += masteryLevel;
-		// If this trade has a spent-points elevation, count that cost too
-		const elevation = tradeLimitElevations[tradeId];
-		if (elevation?.source === 'spent_points') {
-			tradePointsUsed += elevation.value;
-		}
-	}
-	const languagePointsUsed = Object.entries(languages).reduce(
-		(sum, [id, d]) => (id === 'common' ? sum : sum + (d.fluency === 'limited' ? 1 : 2)),
-		0
-	);
-
-	const bonus = (target: string) =>
-		resolvedEffects
-			.filter((e) => e.type === 'MODIFY_STAT' && e.target === target)
-			.reduce((s, e) => s + Number(e.value || 0), 0);
-
-	// Use aggregated skill/trade points from progression gains + bonuses from effects
-	// Base values: 5 skill points, 3 trade points, 2 language points at level 1
-	const baseSkillPoints =
-		5 + progressionGains.totalSkillPoints + finalIntelligence + bonus('skillPoints');
-	const baseTradePoints = 3 + progressionGains.totalTradePoints + bonus('tradePoints');
-	const baseLanguagePoints = 2 + bonus('languagePoints'); // Languages stay at 2 (not level-dependent)
-
-	// --- Spells & Maneuvers Step Split (C1, C2, C3) ---
-	// Calculate MODIFY_STAT bonuses for maneuvers and spells from talents
-	const maneuverBonus = bonus('maneuversKnown');
-	const spellBonus = bonus('spellsKnown');
-
-	// Calculate GRANT_MANEUVERS effects from features (e.g., Commander's 4 attack maneuvers)
-	const grantedManeuversCount = resolvedEffects
-		.filter((e) => {
-			if ((e as any).type !== 'GRANT_MANEUVERS') return false;
-
-			// "all_attack" is an access grant, not a numeric "maneuvers known" budget increase.
-			const target = String((e as any).target || '').toLowerCase();
-			return target !== 'all_attack';
-		})
-		.reduce((sum, e) => sum + Number((e as any).value || 0), 0);
-
-	// Log the bonuses for debugging
-	if (maneuverBonus > 0 || grantedManeuversCount > 0) {
-		console.log('🔢 [Calculation] Maneuver bonuses applied:', {
-			fromTalents: maneuverBonus,
-			fromFeatures: grantedManeuversCount,
-			baseFromProgression: progressionGains.totalManeuversKnown
-		});
-	}
-	if (spellBonus > 0) {
-		console.log('✨ [Spells] Spell bonus applied:', {
-			fromTalents: spellBonus,
-			baseFromProgression: progressionGains.totalSpellsKnown
-		});
-	}
-
-	const {
-		skillToTrade = 0,
-		tradeToSkill = 0,
-		tradeToLanguage = 0
-	} = (buildData as any).conversions || {};
-
-	const availableSkillPoints = baseSkillPoints - skillToTrade + Math.floor(tradeToSkill / 2);
-	const availableTradePoints = baseTradePoints - tradeToSkill + skillToTrade * 2 - tradeToLanguage;
-	const availableLanguagePoints = baseLanguagePoints + tradeToLanguage * 2;
-
-	// Calculate ancestry points
-	const selectedTraitCosts = buildData.selectedTraitIds.reduce((total, traitId) => {
-		const trait = traitsData.find((t) => t.id === traitId);
-		return total + (trait?.cost || 0);
-	}, 0);
-
-	const baseAncestryPoints = 5 + bonus('ancestryPoints'); // Base 5 + any bonuses from effects
-	const ancestryPointsUsed = selectedTraitCosts;
-	const ancestryPointsRemaining = baseAncestryPoints - ancestryPointsUsed;
-
-	// Background section for UI consumption with detailed breakdown
-	const background = {
-		baseSkillPoints,
-		baseTradePoints,
-		baseLanguagePoints,
-		availableSkillPoints,
-		availableTradePoints,
-		availableLanguagePoints,
-		skillPointsUsed,
-		tradePointsUsed,
-		languagePointsUsed,
-		conversions: { skillToTrade, tradeToSkill, tradeToLanguage },
-		// Breakdown for UI display
-		breakdown: {
-			skillPoints: {
-				base: 5,
-				intelligence: finalIntelligence,
-				progression: progressionGains.totalSkillPoints,
-				talents: bonus('skillPoints'),
-				total: baseSkillPoints
-			},
-			tradePoints: {
-				base: 3,
-				progression: progressionGains.totalTradePoints,
-				talents: bonus('tradePoints'),
-				total: baseTradePoints
-			},
-			languagePoints: {
-				base: 2,
-				talents: bonus('languagePoints'),
-				total: baseLanguagePoints
-			}
-		}
-	};
-
-	// Ancestry section for UI consumption
-	const ancestry = {
-		baseAncestryPoints,
-		ancestryPointsUsed,
-		ancestryPointsRemaining
-	};
 
 	// Calculate martial check as max(Acrobatics, Athletics) using EXISTING skill calculations
 	// Instead of recalculating, we should access the pre-computed skill totals

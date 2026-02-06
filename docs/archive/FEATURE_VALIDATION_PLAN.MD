@@ -1,6 +1,6 @@
 # DC20 Feature Validation — Implementation Plan
 
-> **Status**: Pending  
+> **Status**: Completed — Archived 2026-02-06  
 > **Created**: 2026-02-06  
 > **Last Updated**: 2026-02-06  
 > **Archive**: When all phases are complete, move this file to `docs/archive/FEATURE_VALIDATION_PLAN.MD` and update this header to `Status: Completed — Archived YYYY-MM-DD`.
@@ -31,7 +31,7 @@
 | 6 | Character sheet — Movements panel, Senses, Resistances, Combat Training, Conditions, Features grouping | Complete |
 | 7 | Update PDF features field to include Resistances, Senses, Combat Training sections | Complete |
 | 8 | Add tests — snapshot, data validation, calculator collection, PDF formatting, E2E | Complete |
-| 9 | Update system docs — 8 specs affected | Pending |
+| 9 | Update system docs — 8 specs affected | Complete |
 
 ## Architecture Overview
 

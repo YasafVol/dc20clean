@@ -36,6 +36,31 @@ export function migrateCharacterSchema(character: SavedCharacter): SavedCharacte
 		migrated.schemaVersion = '2.1.0';
 	}
 
+	// Migration from 2.1.x to 2.2.x
+	if (parsed.major === 2 && parsed.minor <= 1) {
+		console.log(`Migrating character ${migrated.id} from ${migrated.schemaVersion} to 2.2.0`);
+
+		// Default-populate new calculated display arrays
+		if (!migrated.resistances) {
+			migrated.resistances = [];
+			console.log('  - Added empty resistances array');
+		}
+		if (!migrated.vulnerabilities) {
+			migrated.vulnerabilities = [];
+			console.log('  - Added empty vulnerabilities array');
+		}
+		if (!migrated.senses) {
+			migrated.senses = [];
+			console.log('  - Added empty senses array');
+		}
+		if (!migrated.combatTraining) {
+			migrated.combatTraining = [];
+			console.log('  - Added empty combatTraining array');
+		}
+
+		migrated.schemaVersion = '2.2.0';
+	}
+
 	// Update to current version
 	if (migrated.schemaVersion !== CURRENT_SCHEMA_VERSION) {
 		migrated.schemaVersion = CURRENT_SCHEMA_VERSION;

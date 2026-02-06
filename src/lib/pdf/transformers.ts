@@ -414,6 +414,42 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 		}
 	}
 
+	// Resistances (Phase 7 — from SavedCharacter optional fields)
+	if (character.resistances && character.resistances.length > 0) {
+		const resistanceLines = character.resistances.map(
+			(r) => `${r.type} Resistance (${r.value}) [${r.source}]`
+		);
+		featuresParts.push('[Resistances]');
+		featuresParts.push(resistanceLines.join(', '));
+	}
+
+	// Vulnerabilities (Phase 7)
+	if (character.vulnerabilities && character.vulnerabilities.length > 0) {
+		const vulnLines = character.vulnerabilities.map(
+			(v) => `${v.type} Vulnerability (${v.value}) [${v.source}]`
+		);
+		featuresParts.push('[Vulnerabilities]');
+		featuresParts.push(vulnLines.join(', '));
+	}
+
+	// Senses (Phase 7)
+	if (character.senses && character.senses.length > 0) {
+		const senseLines = character.senses.map(
+			(s) => `${s.type} ${s.range} Spaces [${s.source}]`
+		);
+		featuresParts.push('[Senses]');
+		featuresParts.push(senseLines.join(', '));
+	}
+
+	// Combat Training (Phase 7)
+	if (character.combatTraining && character.combatTraining.length > 0) {
+		const trainingLines = character.combatTraining.map(
+			(t) => `${t.type} [${t.source}]`
+		);
+		featuresParts.push('[Combat Training]');
+		featuresParts.push(trainingLines.join(', '));
+	}
+
 	// Talents
 	const talentText = formatTalents(selectedTalents);
 	if (talentText) {
@@ -931,6 +967,42 @@ export function transformCalculatedCharacterToPdfData(
 			featuresParts.push('[Ancestry Traits]');
 			featuresParts.push(traitText);
 		}
+	}
+
+	// Resistances (Phase 7)
+	if (result.resistances && result.resistances.length > 0) {
+		const resistanceLines = result.resistances.map(
+			(r) => `${r.type} Resistance (${r.value}) [${r.source.name}]`
+		);
+		featuresParts.push('[Resistances]');
+		featuresParts.push(resistanceLines.join(', '));
+	}
+
+	// Vulnerabilities (Phase 7)
+	if (result.vulnerabilities && result.vulnerabilities.length > 0) {
+		const vulnLines = result.vulnerabilities.map(
+			(v) => `${v.type} Vulnerability (${v.value}) [${v.source.name}]`
+		);
+		featuresParts.push('[Vulnerabilities]');
+		featuresParts.push(vulnLines.join(', '));
+	}
+
+	// Senses (Phase 7)
+	if (result.senses && result.senses.length > 0) {
+		const senseLines = result.senses.map(
+			(s) => `${s.type} ${s.range} Spaces [${s.source.name}]`
+		);
+		featuresParts.push('[Senses]');
+		featuresParts.push(senseLines.join(', '));
+	}
+
+	// Combat Training (Phase 7)
+	if (result.combatTraining && result.combatTraining.length > 0) {
+		const trainingLines = result.combatTraining.map(
+			(t) => `${t.type} [${t.source.name}]`
+		);
+		featuresParts.push('[Combat Training]');
+		featuresParts.push(trainingLines.join(', '));
 	}
 
 	// Talents

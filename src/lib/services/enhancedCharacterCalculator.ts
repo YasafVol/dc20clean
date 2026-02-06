@@ -9,28 +9,21 @@ import type {
 	EnhancedCalculationResult,
 	EnhancedCharacterBuildData,
 	AttributedEffect,
-	ValidationResult,
-	ValidationError,
-	AttributeLimit,
 	UnresolvedChoice,
 	ChoiceOption,
 	GlobalMagicProfile,
 	SpellsKnownSlot
 } from '../types/effectSystem';
 // SpellSource, SpellSchool, SpellTag moved to calculatorModules/spellSystem.ts
-import {
-	type ModifyMasteryCapEffect,
-	type IncreaseMasteryCapEffect
-} from '../rulesdata/schemas/character.schema';
+// ModifyMasteryCapEffect, IncreaseMasteryCapEffect moved to calculatorModules/validation.ts
 import {
 	resolveClassProgression
 } from '../rulesdata/classes-data/classProgressionResolver';
 import { classesData } from '../rulesdata/loaders/class.loader';
 // findTalentById moved to calculatorModules/effectCollection.ts
-import { getLevelCaps } from '../rulesdata/progression/levelCaps';
+// getLevelCaps moved to calculatorModules/validation.ts and statCalculation.ts
 
-import { BuildStep } from '../types/effectSystem';
-import { getSpellById } from '../rulesdata/spells-data';
+// BuildStep, getSpellById moved to calculatorModules/validation.ts
 import { findClassByName } from '../rulesdata/loaders/class-features.loader';
 // traitsData moved to calculatorModules/budgetCalculation.ts and effectCollection.ts
 import { ancestriesData } from '../rulesdata/ancestries/ancestries';
@@ -73,6 +66,7 @@ import {
 } from './calculatorModules/progressionAggregation';
 import { calculateBudgets } from './calculatorModules/budgetCalculation';
 import { calculateDerivedStats } from './calculatorModules/statCalculation';
+import { runValidation } from './calculatorModules/validation';
 
 // CrossPathGrants, aggregatePathBenefits, checkFlavorFeatureAutoGrant moved to calculatorModules/progressionAggregation.ts
 
@@ -199,41 +193,7 @@ function getClassFeatures(classId: string): ClassDefinition | null {
 
 // createStatBreakdown moved to calculatorModules/breakdownGeneration.ts
 
-/**
- * Validate attribute limits
- */
-function validateAttributeLimits(
-	buildData: EnhancedCharacterBuildData,
-	effects: AttributedEffect[]
-): Record<string, AttributeLimit> {
-	const limits: Record<string, AttributeLimit> = {};
-	const levelCaps = getLevelCaps(buildData.level);
-
-	for (const attr of attributesData) {
-		const baseValue = (buildData as any)[`attribute_${attr.id}`] || 0;
-		const traitBonuses = effects
-			.filter(
-				(effect) =>
-					effect.resolved && effect.type === 'MODIFY_ATTRIBUTE' && effect.target === attr.id
-			)
-			.reduce((sum, effect) => sum + (effect.value as number), 0);
-
-		const current = baseValue + traitBonuses;
-		const max = levelCaps.maxAttributeValue;
-
-		limits[attr.id] = {
-			current,
-			base: baseValue,
-			traitBonuses,
-			max,
-			exceeded: current > max,
-			canIncrease: baseValue + traitBonuses + 1 <= max, // Fixed: Check if base can be increased without total exceeding max
-			canDecrease: baseValue > -2
-		};
-	}
-
-	return limits;
-}
+// validateAttributeLimits moved to calculatorModules/validation.ts
 
 /**
  * Get unresolved choices for character creation UI
@@ -350,9 +310,6 @@ export function calculateCharacterWithBreakdowns(
 		finalAttributePoints, finalRestPoints, finalMartialCheck
 	} = derivedStats;
 
-	// Re-derive level caps for validation (needed by mastery cap section)
-	const levelCapsForPrime = getLevelCaps(buildData.level);
-
 	// --- Spell System (M3.20) ---
 	const globalMagicProfile = calculateGlobalMagicProfile(buildData, resolvedEffects);
 	const earlySpellBonus = resolvedEffects
@@ -378,455 +335,23 @@ export function calculateCharacterWithBreakdowns(
 	const skillLimitElevations = (buildData as any).skillMasteryLimitElevations ?? {};
 	const tradeLimitElevations = (buildData as any).tradeMasteryLimitElevations ?? {};
 
-	// 5. Validation with step-aware errors
-	const errors: ValidationError[] = [];
-
-	// Ancestry point validation
-	if (ancestryPointsUsed > baseAncestryPoints) {
-		errors.push({
-			step: BuildStep.Ancestry,
-			field: 'ancestryPoints',
-			code: 'POINTS_OVERBUDGET',
-			message: `You are ${ancestryPointsUsed - baseAncestryPoints} ancestry point(s) over budget.`
-		});
-	}
-
-	// Background point validation
-	if (skillPointsUsed > availableSkillPoints) {
-		errors.push({
-			step: BuildStep.Background,
-			field: 'skillPoints',
-			code: 'POINTS_OVERBUDGET',
-			message: `You are ${skillPointsUsed - availableSkillPoints} skill point(s) over budget.`
-		});
-	}
-	if (tradePointsUsed > availableTradePoints) {
-		errors.push({
-			step: BuildStep.Background,
-			field: 'tradePoints',
-			code: 'POINTS_OVERBUDGET',
-			message: `You are ${tradePointsUsed - availableTradePoints} trade point(s) over budget.`
-		});
-	}
-	if (languagePointsUsed > availableLanguagePoints) {
-		errors.push({
-			step: BuildStep.Background,
-			field: 'languagePoints',
-			code: 'POINTS_OVERBUDGET',
-			message: `You are ${languagePointsUsed - availableLanguagePoints} language point(s) over budget.`
-		});
-	}
-
-	const attributeLimits = validateAttributeLimits(buildData, resolvedEffects);
-
-	// --- START MASTERY CAP CALCULATION ---
-	// Get caps from canonical source
-	const levelCaps = levelCapsForPrime;
-
-	// Helper to convert skill points to a numeric mastery tier
-	const getMasteryTierFromPoints = (points: number): number => {
-		if (points >= 5) return 5; // Grandmaster
-		if (points >= 4) return 4; // Master
-		if (points >= 3) return 3; // Expert
-		if (points >= 2) return 2; // Adept
-		if (points >= 1) return 1; // Novice
-		return 0; // Untrained
-	};
-
-	const baseSkillMasteryTier = levelCaps.maxSkillMasteryTier;
-	const baseTradeMasteryTier = levelCaps.maxTradeMasteryTier;
-
-	const skillMasteryCapEffects = resolvedEffects.filter(
-		(e): e is ModifyMasteryCapEffect | IncreaseMasteryCapEffect =>
-			e.type === 'MODIFY_SKILL_MASTERY_CAP' || e.type === 'INCREASE_SKILL_MASTERY_CAP'
-	);
-
-	const tradeMasteryCapEffects = resolvedEffects.filter(
-		(e): e is ModifyMasteryCapEffect | IncreaseMasteryCapEffect =>
-			e.type === 'MODIFY_TRADE_MASTERY_CAP' || e.type === 'INCREASE_TRADE_MASTERY_CAP'
-	);
-
-	// Debug logging for mastery cap system (DC20 0.10)
-	if (Object.keys(skillLimitElevations).length > 0 || skillMasteryCapEffects.length > 0) {
-		console.log('📊 [Mastery Caps] Skill mastery calculation:', {
-			level: buildData.level,
-			baselineCap: baseSkillMasteryTier,
-			elevationsFromPoints: Object.keys(skillLimitElevations).length,
-			elevationsFromFeatures: skillMasteryCapEffects.length,
-			elevatedSkills: Object.keys(skillLimitElevations)
-		});
-	}
-	if (Object.keys(tradeLimitElevations).length > 0 || tradeMasteryCapEffects.length > 0) {
-		console.log('📊 [Mastery Caps] Trade mastery calculation:', {
-			level: buildData.level,
-			baselineCap: baseTradeMasteryTier,
-			elevationsFromPoints: Object.keys(tradeLimitElevations).length,
-			elevationsFromFeatures: tradeMasteryCapEffects.length,
-			elevatedTrades: Object.keys(tradeLimitElevations)
-		});
-	}
-
-	// Helper to calculate effective mastery cap for a specific skill
-	// DC20 Rule: "When your Skill Mastery Limit increases at the normal level,
-	// it continues to benefit from the bonus to its Skill Mastery Limit."
-	// This means elevations are PERSISTENT and COMPOUND with level increases.
-	const getEffectiveSkillCap = (skillId: string): number => {
-		let cap = baseSkillMasteryTier;
-
-		// Add elevation from spent points (if any)
-		const spentElevation = skillLimitElevations[skillId];
-		if (spentElevation?.source === 'spent_points') {
-			cap += spentElevation.value;
-		}
-
-		// Add elevation from features (if any) - only 1 bonus per skill
-		const featureElevation = skillMasteryCapEffects.find(
-			(effect) => !effect.options || effect.options.includes(skillId)
-		);
-		if (featureElevation) {
-			cap += featureElevation.value;
-		}
-
-		// Cap at Grandmaster (5)
-		return Math.min(cap, 5);
-	};
-
-	const getEffectiveTradeCap = (tradeId: string): number => {
-		let cap = baseTradeMasteryTier;
-
-		// Add elevation from spent points (if any)
-		const spentElevation = tradeLimitElevations[tradeId];
-		if (spentElevation?.source === 'spent_points') {
-			cap += spentElevation.value;
-		}
-
-		// Add elevation from features (if any) - only 1 bonus per trade
-		const featureElevation = tradeMasteryCapEffects.find(
-			(effect) => !effect.options || effect.options.includes(tradeId)
-		);
-		if (featureElevation) {
-			cap += featureElevation.value;
-		}
-
-		// Cap at Grandmaster (5)
-		return Math.min(cap, 5);
-	};
-
-	// Tally the total budget of exceptions from features
-	let totalSkillCapExceptionsBudget = 0;
-	for (const effect of skillMasteryCapEffects) {
-		totalSkillCapExceptionsBudget += effect.count;
-	}
-
-	let totalTradeCapExceptionsBudget = 0;
-	for (const effect of tradeMasteryCapEffects) {
-		totalTradeCapExceptionsBudget += effect.count;
-	}
-
-	// Validate each skill's mastery level against its effective cap
-	if (buildData.skillsData) {
-		for (const [skillId, masteryLevel] of Object.entries(buildData.skillsData)) {
-			if (!masteryLevel) continue;
-
-			const masteryTier = getMasteryTierFromPoints(masteryLevel);
-			const effectiveCap = getEffectiveSkillCap(skillId);
-
-			if (masteryTier > effectiveCap) {
-				errors.push({
-					step: BuildStep.Background,
-					field: skillId,
-					code: 'MASTERY_CAP_EXCEEDED',
-					message: `${skillId} mastery (${masteryTier}) exceeds its cap (${effectiveCap}). Your baseline cap is ${baseSkillMasteryTier}. Spend points to elevate the limit or gain a feature that grants this.`
-				});
-			}
-
-			// Check if skill exceeds baseline but has no elevation source
-			if (masteryTier > baseSkillMasteryTier) {
-				const hasSpentElevation = skillLimitElevations[skillId]?.source === 'spent_points';
-				const hasFeatureElevation = skillMasteryCapEffects.some(
-					(effect) => !effect.options || effect.options.includes(skillId)
-				);
-
-				if (!hasSpentElevation && !hasFeatureElevation) {
-					errors.push({
-						step: BuildStep.Background,
-						field: skillId,
-						code: 'INVALID_MASTERY_GRANT',
-						message: `${skillId} exceeds baseline cap but has no elevation. You must either spend points to elevate the limit or have a feature that grants this.`
-					});
-				}
-			}
-		}
-	}
-
-	// Count how many skills use feature elevations (not spent points)
-	const skillsUsingFeatureElevation = Object.entries(buildData.skillsData ?? {}).filter(
-		([skillId, level]) => {
-			if (!level || getMasteryTierFromPoints(level) <= baseSkillMasteryTier) return false;
-			const hasSpentElevation = skillLimitElevations[skillId]?.source === 'spent_points';
-			return !hasSpentElevation; // Uses feature elevation
-		}
-	).length;
-
-	if (skillsUsingFeatureElevation > totalSkillCapExceptionsBudget) {
-		errors.push({
-			step: BuildStep.Background,
-			field: 'skills',
-			code: 'MASTERY_CAP_EXCEEDED',
-			message: `${skillsUsingFeatureElevation} skills rely on feature mastery grants, but only ${totalSkillCapExceptionsBudget} grants available from features.`
-		});
-	}
-
-	// Same validation for trades
-	if (buildData.tradesData) {
-		for (const [tradeId, masteryLevel] of Object.entries(buildData.tradesData)) {
-			if (!masteryLevel) continue;
-
-			const masteryTier = getMasteryTierFromPoints(masteryLevel);
-			const effectiveCap = getEffectiveTradeCap(tradeId);
-
-			if (masteryTier > effectiveCap) {
-				errors.push({
-					step: BuildStep.Background,
-					field: tradeId,
-					code: 'MASTERY_CAP_EXCEEDED',
-					message: `${tradeId} mastery (${masteryTier}) exceeds its cap (${effectiveCap}). Your baseline cap is ${baseTradeMasteryTier}. Spend points to elevate the limit or gain a feature that grants this.`
-				});
-			}
-
-			// Check if trade exceeds baseline but has no elevation source
-			if (masteryTier > baseTradeMasteryTier) {
-				const hasSpentElevation = tradeLimitElevations[tradeId]?.source === 'spent_points';
-				const hasFeatureElevation = tradeMasteryCapEffects.some(
-					(effect) => !effect.options || effect.options.includes(tradeId)
-				);
-
-				if (!hasSpentElevation && !hasFeatureElevation) {
-					errors.push({
-						step: BuildStep.Background,
-						field: tradeId,
-						code: 'INVALID_MASTERY_GRANT',
-						message: `${tradeId} exceeds baseline cap but has no elevation. You must either spend points to elevate the limit or have a feature that grants this.`
-					});
-				}
-			}
-		}
-	}
-
-	const tradesUsingFeatureElevation = Object.entries(buildData.tradesData ?? {}).filter(
-		([tradeId, level]) => {
-			if (!level || getMasteryTierFromPoints(level) <= baseTradeMasteryTier) return false;
-			const hasSpentElevation = tradeLimitElevations[tradeId]?.source === 'spent_points';
-			return !hasSpentElevation; // Uses feature elevation
-		}
-	).length;
-
-	if (tradesUsingFeatureElevation > totalTradeCapExceptionsBudget) {
-		errors.push({
-			step: BuildStep.Background,
-			field: 'trades',
-			code: 'MASTERY_CAP_EXCEEDED',
-			message: `${tradesUsingFeatureElevation} trades rely on feature mastery grants, but only ${totalTradeCapExceptionsBudget} grants available from features.`
-		});
-	}
-
-	// DC20 Rule: "A Skill can only benefit from 1 bonus to its Skill Mastery Limit at a time."
-	// Validate that no skill has both spent points elevation AND feature elevation
-	if (buildData.skillsData) {
-		for (const skillId of Object.keys(buildData.skillsData)) {
-			const hasSpentElevation = skillLimitElevations[skillId]?.source === 'spent_points';
-			const hasFeatureElevation = skillMasteryCapEffects.some(
-				(effect) => !effect.options || effect.options.includes(skillId)
-			);
-
-			if (hasSpentElevation && hasFeatureElevation) {
-				errors.push({
-					step: BuildStep.Background,
-					field: skillId,
-					code: 'DUPLICATE_MASTERY_ELEVATION',
-					message: `${skillId} cannot have both a point-based and feature-based mastery limit increase. A skill can only benefit from 1 bonus to its Mastery Limit at a time.`
-				});
-			}
-		}
-	}
-
-	// Same for trades
-	if (buildData.tradesData) {
-		for (const tradeId of Object.keys(buildData.tradesData)) {
-			const hasSpentElevation = tradeLimitElevations[tradeId]?.source === 'spent_points';
-			const hasFeatureElevation = tradeMasteryCapEffects.some(
-				(effect) => !effect.options || effect.options.includes(tradeId)
-			);
-
-			if (hasSpentElevation && hasFeatureElevation) {
-				errors.push({
-					step: BuildStep.Background,
-					field: tradeId,
-					code: 'DUPLICATE_MASTERY_ELEVATION',
-					message: `${tradeId} cannot have both a point-based and feature-based mastery limit increase. A trade can only benefit from 1 bonus to its Mastery Limit at a time.`
-				});
-			}
-		}
-	}
-
-	// For UI: levelAllowsUnlimitedMastery means baseline >= Adept, so no special tracking needed
-	const levelAllowsUnlimitedMastery = baseSkillMasteryTier >= 2;
-	// --- END MASTERY CAP CALCULATION ---
-
-	// Calculate mastery limits in correct interface format
-	const currentSkillAdeptCount = buildData.skillsData
-		? Object.values(buildData.skillsData).filter((points) => points >= 2).length
-		: 0;
-	const currentTradeAdeptCount = buildData.tradesData
-		? Object.values(buildData.tradesData).filter((points) => points >= 2).length
-		: 0;
-	const totalCurrentAdeptCount = currentSkillAdeptCount + currentTradeAdeptCount;
-
-	// Calculate mastery limits for UI display
-	// If level naturally allows tier 2+, all tiers up to cap are unlimited (like Novice at level 1)
-	// Only use slot system for levels below the natural cap (levels 1-4 trying to reach Adept)
-	let maxAdeptCount: number;
-	let canSelectAdept: boolean;
-
-	if (levelAllowsUnlimitedMastery) {
-		// Level 5+: All tiers up to natural cap are unlimited
-		maxAdeptCount = 999; // Effectively unlimited for UI
-		canSelectAdept = true; // Always can select up to natural cap
-	} else {
-		// Level 1-4: Players can exceed baseline by:
-		// 1. Spending points (1 point to elevate limit + 1 point for level)
-		// 2. Having a feature that grants mastery cap increase
-		// DC20 Rule: No free slots - must pay or have feature
-		const bonusAdeptSlots = skillMasteryCapEffects.reduce(
-			(total, effect) => total + effect.count,
-			0
-		);
-		// Feature slots + unlimited paid elevations (but paid costs skill points)
-		// For UI purposes, show feature slots as the "free" cap, since spending points is always available
-		maxAdeptCount = bonusAdeptSlots;
-		// Can always select Adept if willing to pay the point cost
-		canSelectAdept = true;
-	}
-
-	// Max mastery tier for UI dropdowns
-	const maxSkillMastery = baseSkillMasteryTier;
-	const maxTradeMastery = baseTradeMasteryTier;
-
-	// --- START SPELL SLOT VALIDATION (M3.20) ---
-	if (buildData.selectedSpells) {
-		Object.entries(buildData.selectedSpells).forEach(([slotId, spellId]) => {
-			const slot = spellsKnownSlots.find((s) => s.id === slotId);
-			const spell = getSpellById(spellId);
-
-			if (!slot) {
-				errors.push({
-					step: BuildStep.SpellsAndManeuvers,
-					field: 'selectedSpells',
-					code: 'INVALID_SLOT',
-					message: `Selected spell is assigned to a non-existent slot: ${slotId}`
-				});
-				return;
-			}
-
-			if (!spell) {
-				errors.push({
-					step: BuildStep.SpellsAndManeuvers,
-					field: slotId,
-					code: 'INVALID_SPELL',
-					message: `Slot ${slot.sourceName} has an invalid spell assigned.`
-				});
-				return;
-			}
-
-			// Validate slot-specific restrictions
-			if (slot.specificRestrictions) {
-				const { schools, tags } = slot.specificRestrictions;
-
-				if (schools && schools.length > 0) {
-					if (!schools.includes(spell.school)) {
-						errors.push({
-							step: BuildStep.SpellsAndManeuvers,
-							field: slotId,
-							code: 'SCHOOL_RESTRICTION',
-							message: `${spell.name} (${spell.school}) does not match allowed schools for ${slot.sourceName}: ${schools.join(', ')}`
-						});
-					}
-				}
-
-				if (tags && tags.length > 0) {
-					const hasValidTag = tags.some((tag: any) => spell.tags?.includes(tag));
-					if (!hasValidTag) {
-						errors.push({
-							step: BuildStep.SpellsAndManeuvers,
-							field: slotId,
-							code: 'TAG_RESTRICTION',
-							message: `${spell.name} does not have any required tags for ${slot.sourceName}: ${tags.join(', ')}`
-						});
-					}
-				}
-			}
-
-			// Validate global magic profile (if not already covered by specific restrictions)
-			if (slot.isGlobal && globalMagicProfile) {
-				const { sources, schools, tags } = globalMagicProfile;
-
-				const matchesSource = sources.some((src: any) => spell.sources.includes(src));
-				const matchesSchool = schools.length === 0 || schools.includes(spell.school);
-				const matchesTags = tags.length === 0 || tags.some((tag: any) => spell.tags?.includes(tag));
-
-				if (!matchesSource || !matchesSchool || !matchesTags) {
-					errors.push({
-						step: BuildStep.SpellsAndManeuvers,
-						field: slotId,
-						code: 'PROFILE_MISMATCH',
-						message: `${spell.name} does not match your character's Global Magic Profile.`
-					});
-				}
-			}
-		});
-	}
-	// --- END SPELL SLOT VALIDATION ---
-
-	// Build per-skill/trade effective caps for UI
-	const skillEffectiveCaps: Record<string, number> = {};
-	const tradeEffectiveCaps: Record<string, number> = {};
-
-	// Calculate effective cap for all skills in the character's data
-	if (buildData.skillsData) {
-		for (const skillId of Object.keys(buildData.skillsData)) {
-			skillEffectiveCaps[skillId] = getEffectiveSkillCap(skillId);
-		}
-	}
-
-	// Calculate effective cap for all trades in the character's data
-	if (buildData.tradesData) {
-		for (const tradeId of Object.keys(buildData.tradesData)) {
-			tradeEffectiveCaps[tradeId] = getEffectiveTradeCap(tradeId);
-		}
-	}
-
-	const validation: ValidationResult = {
-		isValid: errors.length === 0 && !Object.values(attributeLimits).some((limit) => limit.exceeded),
-		errors,
-		warnings: [],
-		attributeLimits,
-		masteryLimits: {
-			maxSkillMastery,
-			maxTradeMastery,
-			currentAdeptCount: totalCurrentAdeptCount,
-			maxAdeptCount,
-			canSelectAdept,
-			// New fields for DC20 0.10 mastery cap system
-			baselineSkillCap: baseSkillMasteryTier,
-			baselineTradeCap: baseTradeMasteryTier,
-			skillEffectiveCaps,
-			tradeEffectiveCaps,
-			skillLimitElevations: skillLimitElevations,
-			tradeLimitElevations: tradeLimitElevations,
-			skillFeatureElevationsAvailable: totalSkillCapExceptionsBudget,
-			tradeFeatureElevationsAvailable: totalTradeCapExceptionsBudget
-		}
-	};
+	// 5. Validation (via validation module)
+	const validation = runValidation({
+		buildData,
+		resolvedEffects,
+		skillPointsUsed,
+		tradePointsUsed,
+		languagePointsUsed,
+		availableSkillPoints,
+		availableTradePoints,
+		availableLanguagePoints,
+		baseAncestryPoints,
+		ancestryPointsUsed,
+		skillLimitElevations,
+		tradeLimitElevations,
+		spellsKnownSlots,
+		globalMagicProfile
+	});
 
 	// 6. Collect abilities, movements, and conditional modifiers (via abilityCollection module)
 	const grantedAbilities = collectGrantedAbilities(resolvedEffects);

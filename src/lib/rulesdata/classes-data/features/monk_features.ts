@@ -4,8 +4,9 @@ export const monkClass: ClassDefinition = {
 	className: 'Monk',
 	classCategory: 'martial',
 	startingEquipment: {
-		weaponsOrShields: ['2 Weapons', '3 Weapons with the Toss or Thrown Property'],
+		weaponsOrShields: ['3 Weapons', '3 Weapons with the Toss or Thrown Property'],
 		armor: ['1 set of Light Armor'],
+		tradeTools: ['1 set of Trade Tools'],
 		packs: ['X or Y Packs (Adventuring Packs Coming Soon)']
 	},
 	martialPath: {
@@ -100,8 +101,8 @@ export const monkClass: ClassDefinition = {
 			id: 'monk_stance',
 			featureName: 'Monk Stance',
 			levelGained: 1,
-			description:
-				'You learn 2 Monk Stances. Start of turn: freely enter or swap stances. Spend 1 SP on your turn to change stance; only one stance active at a time.',
+		description:
+			'You learn 2 Monk Stances. Start of turn: freely enter or swap stances. Spend 1 AP or 1 SP on your turn to change stance; only one stance active at a time.',
 			choices: [
 				{
 					id: 'initial_stances',

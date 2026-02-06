@@ -6,6 +6,7 @@ export const sorcererClass: ClassDefinition = {
 	startingEquipment: {
 		weaponsOrShields: ['1 Weapon'],
 		armor: '1 set of Light Armor',
+		tradeTools: ['1 set of Trade Tools'],
 		packs: 'X or Y "Packs" (Adventuring Packs Coming Soon)'
 	},
 	spellcasterPath: {

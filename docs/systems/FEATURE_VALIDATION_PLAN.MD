@@ -21,10 +21,10 @@
 |-------|-------------|--------|
 | 1 | Fix 12 broken progression feature ID references + 4 Sorcerer subclass levelGained values | Complete |
 | 2 | Fix incorrect values — Warlock MP, Halfling conditions, trait costs | Complete |
-| 3a | Add missing subclass feature IDs to Commander, Bard, Cleric (12 features) | Pending |
-| 3b | Add 5 missing Beastborn traits + wire Winged Arms to requirements.hasTrait + update validation | Pending |
-| 3c | Fix starting equipment across all 13 classes (arsenal count + trade tools) | Pending |
-| 3d | Fix description drift (Monk stance, Rogue duration/round, Spellblade runes, Dwarf description) | Pending |
+| 3a | Add missing subclass feature IDs to Commander, Bard, Cleric (12 features) | Complete |
+| 3b | Add 5 missing Beastborn traits + wire Winged Arms to requirements.hasTrait + update validation | Complete |
+| 3c | Fix starting equipment across all 13 classes (arsenal count + trade tools) | Complete |
+| 3d | Fix description drift (Monk stance, Rogue duration/round, Spellblade runes, Dwarf description) | Complete |
 | 4a | Refactor calculator into 8 discrete modules | Pending |
 | 4b | Wire calculator to collect GRANT_RESISTANCE, GRANT_VULNERABILITY, GRANT_SENSE, GRANT_COMBAT_TRAINING + default Climb/Swim | Pending |
 | 5 | Add optional fields to SavedCharacter + Convex schema, bump version to 2.2.0, add migration defaults | Pending |

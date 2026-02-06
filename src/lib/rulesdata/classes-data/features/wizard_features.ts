@@ -12,6 +12,7 @@ export const wizardClass: ClassDefinition = {
 		weaponsOrShields: ['1 Weapon'],
 		armor: ['1 set of Light Armor'],
 		spellFocus: ['1 Spell Focus (Arcane Focus or Spellbook)'],
+		tradeTools: ['1 set of Trade Tools'],
 		packs: 'Adventuring Pack (Coming Soon)'
 	},
 	spellcasterPath: {

@@ -12,6 +12,7 @@ export const bardClass: ClassDefinition = {
 		weaponsOrShields: ['1 Weapon or Light Shield'],
 		armor: ['1 set of Light Armor'],
 		spellFocus: ['1 Spell Focus (Musical Instrument)'],
+		tradeTools: ['1 set of Trade Tools'],
 		packs: 'Adventuring Pack (Coming Soon)'
 	},
 	spellcasterPath: {
@@ -219,9 +220,10 @@ export const bardClass: ClassDefinition = {
 			subclassName: 'Eloquence',
 			description: 'Masters of persuasion and charm magic.',
 			features: [
-				{
-					featureName: 'Beguiling Presence',
-					levelGained: 3,
+			{
+				id: 'bard_eloquence_beguiling_presence',
+				featureName: 'Beguiling Presence',
+				levelGained: 3,
 					description: 'You gain enhanced charm abilities and magical persuasion.',
 					benefits: [
 						{
@@ -263,9 +265,10 @@ export const bardClass: ClassDefinition = {
 						}
 					]
 				},
-				{
-					featureName: 'Eloquent Orator',
-					levelGained: 3,
+			{
+				id: 'bard_eloquence_eloquent_orator',
+				featureName: 'Eloquent Orator',
+				levelGained: 3,
 					description:
 						'Your speech is magically enchanted. Creatures can always understand the words you speak, provided they speak at least 1 Language.',
 					isFlavor: true,
@@ -283,9 +286,10 @@ export const bardClass: ClassDefinition = {
 			subclassName: 'Jester',
 			description: 'Comedic performers who use humor and chaos in battle.',
 			features: [
-				{
-					featureName: 'Antagonizing Act',
-					levelGained: 3,
+			{
+				id: 'bard_jester_antagonizing_act',
+				featureName: 'Antagonizing Act',
+				levelGained: 3,
 					description: 'You gain abilities that frustrate and distract enemies.',
 					benefits: [
 						{
@@ -326,9 +330,10 @@ export const bardClass: ClassDefinition = {
 						}
 					]
 				},
-				{
-					featureName: 'Comedian',
-					levelGained: 3,
+			{
+				id: 'bard_jester_comedian',
+				featureName: 'Comedian',
+				levelGained: 3,
 					description: 'You have ADV on Checks to make other creatures laugh.',
 					isFlavor: true,
 					effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'comedy', value: 'ADV' }]

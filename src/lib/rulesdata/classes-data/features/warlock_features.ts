@@ -7,6 +7,7 @@ export const warlockClass: ClassDefinition = {
 		weaponsOrShields: ['1 Weapon or Light Shield'],
 		armor: ['1 set of Light Armor'],
 		spellFocus: ['1 Spell Focus'],
+		tradeTools: ['1 set of Trade Tools'],
 		packs: 'Adventuring Pack (Coming Soon)'
 	},
 	spellcasterPath: {

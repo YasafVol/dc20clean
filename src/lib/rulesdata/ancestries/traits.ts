@@ -2018,12 +2018,92 @@ export const traitsData: Trait[] = [
 			"Your arms are replaced by wings. You can't hold items with your hands while using your wings for flight.",
 		cost: -1,
 		isNegative: true,
-		prerequisites: ['beastborn_limited_flight'],
+		requirements: {
+			hasTrait: [
+				'beastborn_glide_speed',
+				'beastborn_limited_flight',
+				'beastborn_full_flight',
+				'beastborn_flyby'
+			]
+		},
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
 				target: 'winged_arms',
 				value: "Arms are wings (can't hold items while flying)."
+			}
+		]
+	},
+	{
+		id: 'beastborn_beastkind',
+		name: 'Beastkind',
+		description:
+			'You are a creature of bestial origin, bearing physical traits of a chosen beast type.',
+		cost: 0,
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'beastkind',
+				value: 'You bear physical traits of your chosen beast type.'
+			}
+		]
+	},
+	{
+		id: 'beastborn_strong_jumper',
+		name: 'Strong Jumper',
+		description:
+			'Your Jump Distance increases by 2, and you can take the Jump Action as a Minor Action.',
+		cost: 1,
+		effects: [
+			{ type: 'MODIFY_STAT', target: 'jumpDistance', value: 2 },
+			{
+				type: 'GRANT_ABILITY',
+				target: 'strong_jumper',
+				value: 'Jump Action as Minor Action.'
+			}
+		]
+	},
+	{
+		id: 'beastborn_stealth_feathers',
+		name: 'Stealth Feathers',
+		description:
+			'Your wings are covered in soft feathers that muffle your flight. You have ADV on Stealth Checks while flying.',
+		cost: 2,
+		prerequisites: ['beastborn_limited_flight'],
+		effects: [
+			{
+				type: 'GRANT_ADV_ON_CHECK',
+				target: 'Stealth',
+				value: 'while_flying'
+			}
+		]
+	},
+	{
+		id: 'beastborn_shell_retreat',
+		name: 'Shell Retreat',
+		description:
+			'You can retreat into your shell as a Minor Action. While retreated, you gain +2 AD but your Speed becomes 0 and you cannot take Actions that require hands. You can emerge as a Minor Action.',
+		cost: 1,
+		prerequisites: ['beastborn_hard_shell'],
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'shell_retreat',
+				value: 'Retreat into shell (Minor Action): +2 AD, Speed 0, no hand Actions. Emerge as Minor Action.'
+			}
+		]
+	},
+	{
+		id: 'beastborn_shoot_webs',
+		name: 'Shoot Webs',
+		description:
+			'You can spend 1 AP to shoot a web at a creature within 5 Spaces. Make an Attack Check vs the target\'s PD. Hit: The target is Restrained until it uses 1 AP to make an Athletics Check against your Save DC to break free.',
+		cost: 2,
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'shoot_webs',
+				value: '1 AP: Web attack (5 Spaces, Attack vs PD). Hit: Restrained (Athletics Check to break free).'
 			}
 		]
 	},

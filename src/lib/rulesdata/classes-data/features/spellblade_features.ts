@@ -5,11 +5,12 @@ export const spellbladeClass: ClassDefinition = {
 	classCategory: 'hybrid',
 	startingEquipment: {
 		weaponsOrShields: [
-			'2 Weapons or Light Shields',
+			'3 Weapons or Light Shields',
 			'Heavy Shields (if you learn the Warrior Discipline)'
 		],
 		rangedWeapons: ['Ranged Weapon with 20 Ammo', '3 Weapons with the Toss or Thrown Property'],
 		armor: ['Light Armor', 'Heavy Armor (if you learn the Warrior Discipline)'],
+		tradeTools: ['1 set of Trade Tools'],
 		packs: 'X or Y Packs (Adventuring Packs Coming Soon)'
 	},
 	martialPath: {

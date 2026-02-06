@@ -9,9 +9,10 @@ export const championClass: ClassDefinition = {
 	className: 'Champion',
 	classCategory: 'martial',
 	startingEquipment: {
-		weaponsOrShields: ['2 Weapons or Shields'],
+		weaponsOrShields: ['3 Weapons or Shields'],
 		rangedWeapons: ['Ranged Weapon with 20 Ammo', '3 Weapons with Toss or Thrown Property'],
 		armor: ['1 set of any Armor'],
+		tradeTools: ['1 set of Trade Tools'],
 		packs: 'Adventuring Pack (Coming Soon)'
 	},
 	martialPath: {

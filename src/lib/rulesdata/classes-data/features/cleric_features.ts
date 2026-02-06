@@ -13,6 +13,7 @@ export const clericClass: ClassDefinition = {
 		weaponsOrShields: ['1 Weapon or Light Shield'],
 		armor: ['1 set of Light Armor'],
 		spellFocus: ['1 Spell Focus (Holy Symbol)'],
+		tradeTools: ['1 set of Trade Tools'],
 		packs: 'Adventuring Pack (Coming Soon)'
 	},
 	spellcasterPath: {
@@ -295,16 +296,18 @@ export const clericClass: ClassDefinition = {
 			subclassName: 'Inquisitor',
 			description: 'You are an agent of divine justice, rooting out heresy and deception.',
 			features: [
-				{
-					featureName: 'Vanquish Heresy',
-					levelGained: 3,
+			{
+				id: 'cleric_inquisitor_vanquish_heresy',
+				featureName: 'Vanquish Heresy',
+				levelGained: 3,
 					description:
 						'You gain Resistance to Charmed, Intimidated, and Taunted. Creatures Intimidated by your Divine Rebuke don\'t stop being Intimidated if they take damage. You also gain the "Chastise" Divine Blessing option.',
 					effects: []
 				},
-				{
-					featureName: 'Divine Interrogator (Flavor Feature)',
-					levelGained: 3,
+			{
+				id: 'cleric_inquisitor_divine_interrogator',
+				featureName: 'Divine Interrogator (Flavor Feature)',
+				levelGained: 3,
 					description:
 						"Once per Long Rest, you can interrogate a creature by asking it a Yes or No question. It makes a Charisma Save against your Save DC. Failure: It can't tell a lie to the question that you asked it.",
 					effects: []
@@ -315,16 +318,18 @@ export const clericClass: ClassDefinition = {
 			subclassName: 'Priest',
 			description: 'You are a beacon of faith, healing the wounded and protecting the innocent.',
 			features: [
-				{
-					featureName: 'Sanctification',
-					levelGained: 3,
+			{
+				id: 'cleric_priest_sanctification',
+				featureName: 'Sanctification',
+				levelGained: 3,
 					description:
 						"When you spend MP to heal a creature beyond their HP maximum, they gain an amount of Temp HP equal to the remaining healing. When you spend MP to heal a creature on Death's Door, the HP restored is increased by an amount equal to your Prime Modifier. You also gain the 'Hand of Salvation' Channel Divinity option.",
 					effects: []
 				},
-				{
-					featureName: 'All That Ails (Flavor Feature)',
-					levelGained: 3,
+			{
+				id: 'cleric_priest_all_that_ails',
+				featureName: 'All That Ails (Flavor Feature)',
+				levelGained: 3,
 					description:
 						'You have ADV on Checks made to identify or determine the effects of a Disease, Poison, or Curse affecting a creature.',
 					effects: []

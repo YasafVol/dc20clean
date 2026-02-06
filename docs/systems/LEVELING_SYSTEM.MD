@@ -99,7 +99,18 @@ Spellcaster path (`paths.data.ts`):
 
 ---
 
-## 8) Related Specs
+## 8) Multiclass
+
+Multiclass details are part of the leveling flow. Quick pointers:
+
+- **Data/logic:** `src/lib/rulesdata/progression/multiclass.ts`
+- **UI:** `src/routes/character-creation/LevelingChoices.tsx`
+- **Persistence fields:** `selectedMulticlassOption`, `selectedMulticlassClass`, `selectedMulticlassFeature`
+- **Epic reference:** `docs/archive/LEVELING_EPIC.md` section 5.18
+
+---
+
+## 9) Related Specs
 
 - `docs/systems/CLASS_SYSTEM.MD`
 - `docs/systems/MARTIALS_SYSTEM.MD`

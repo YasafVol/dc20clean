@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { allManeuvers, ManeuverType } from '../../lib/rulesdata/martials/maneuvers';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
-import { Sword, Info, Filter } from 'lucide-react';
+import { Sword, Filter } from 'lucide-react';
 import { debug } from '../../lib/utils/debug';
 import { theme } from '../character-sheet/styles/theme';
 import {

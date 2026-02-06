@@ -1,0 +1,2871 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Barbarian L1 1`] = `
+{
+  "ancestry": {
+    "ancestryPointsRemaining": 5,
+    "ancestryPointsUsed": 0,
+    "baseAncestryPoints": 5,
+  },
+  "autoGrantedFlavorFeatures": [
+    {
+      "classId": "barbarian",
+      "featureId": "barbarian_shattering_force",
+      "featureName": "Shattering Force",
+    },
+  ],
+  "background": {
+    "availableLanguagePoints": 2,
+    "availableSkillPoints": 5,
+    "availableTradePoints": 3,
+    "baseLanguagePoints": 2,
+    "baseSkillPoints": 5,
+    "baseTradePoints": 3,
+    "breakdown": {
+      "languagePoints": {
+        "base": 2,
+        "talents": 0,
+        "total": 2,
+      },
+      "skillPoints": {
+        "base": 5,
+        "intelligence": 0,
+        "progression": 0,
+        "talents": 0,
+        "total": 5,
+      },
+      "tradePoints": {
+        "base": 3,
+        "progression": 0,
+        "talents": 0,
+        "total": 3,
+      },
+    },
+    "conversions": {
+      "skillToTrade": 0,
+      "tradeToLanguage": 0,
+      "tradeToSkill": 0,
+    },
+    "languagePointsUsed": 0,
+    "skillPointsUsed": 0,
+    "tradePointsUsed": 0,
+  },
+  "breakdowns": {
+    "ad": {
+      "base": 12,
+      "conditionalTotal": 14,
+      "effects": [
+        {
+          "condition": "not_wearing_armor",
+          "description": "Berserker Defense: +2 (not_wearing_armor)",
+          "isActive": false,
+          "source": {
+            "category": "Barbarian Level 1",
+            "description": "While you aren't wearing Armor you gain +2 AD.",
+            "id": "Berserker_Berserker Defense",
+            "name": "Berserker Defense",
+            "type": "class_feature",
+          },
+          "value": 2,
+        },
+      ],
+      "statName": "ad",
+      "total": 12,
+    },
+    "attack_spell_check": {
+      "base": 4,
+      "conditionalTotal": 4,
+      "effects": [],
+      "statName": "attackSpellCheck",
+      "total": 4,
+    },
+    "attributePoints": {
+      "base": 12,
+      "conditionalTotal": 12,
+      "effects": [],
+      "statName": "attributePoints",
+      "total": 12,
+    },
+    "attribute_agility": {
+      "base": 2,
+      "conditionalTotal": 2,
+      "effects": [],
+      "statName": "agility",
+      "total": 2,
+    },
+    "attribute_charisma": {
+      "base": 0,
+      "conditionalTotal": 0,
+      "effects": [],
+      "statName": "charisma",
+      "total": 0,
+    },
+    "attribute_intelligence": {
+      "base": 0,
+      "conditionalTotal": 0,
+      "effects": [],
+      "statName": "intelligence",
+      "total": 0,
+    },
+    "attribute_might": {
+      "base": 3,
+      "conditionalTotal": 3,
+      "effects": [],
+      "statName": "might",
+      "total": 3,
+    },
+    "hpMax": {
+      "base": 11,
+      "conditionalTotal": 11,
+      "effects": [],
+      "statName": "hpMax",
+      "total": 11,
+    },
+    "initiative": {
+      "base": 0,
+      "effects": [
+        {
+          "description": "Combat Mastery: 1",
+          "isActive": true,
+          "source": {
+            "id": "combatMastery",
+            "name": "Combat Mastery",
+            "type": "base",
+          },
+          "value": 1,
+        },
+        {
+          "description": "Agility Modifier: 2",
+          "isActive": true,
+          "source": {
+            "id": "agility",
+            "name": "Agility Modifier",
+            "type": "base",
+          },
+          "value": 2,
+        },
+      ],
+      "statName": "Initiative",
+      "total": 3,
+    },
+    "jump_distance": {
+      "base": 2,
+      "conditionalTotal": 2,
+      "effects": [],
+      "statName": "jumpDistance",
+      "total": 2,
+    },
+    "martial_check": {
+      "base": 3,
+      "effects": [
+        {
+          "description": "Agility (2) + Proficiency ×2 (0) = 2",
+          "isActive": true,
+          "source": {
+            "id": "acrobatics",
+            "name": "Acrobatics Option",
+            "type": "base",
+          },
+          "value": 2,
+        },
+        {
+          "description": "Might (3) + Proficiency ×2 (0) = 3",
+          "isActive": true,
+          "source": {
+            "id": "athletics",
+            "name": "Athletics Option",
+            "type": "base",
+          },
+          "value": 3,
+        },
+      ],
+      "statName": "Martial Check",
+      "total": 3,
+    },
+    "move_speed": {
+      "base": 5,
+      "conditionalTotal": 6,
+      "effects": [
+        {
+          "description": "Fast Movement: +1",
+          "isActive": true,
+          "source": {
+            "category": "Barbarian Level 1",
+            "description": "You gain +1 Speed.",
+            "id": "Berserker_Fast Movement",
+            "name": "Fast Movement",
+            "type": "class_feature",
+          },
+          "value": 1,
+        },
+      ],
+      "statName": "moveSpeed",
+      "total": 6,
+    },
+    "mpMax": {
+      "base": 0,
+      "conditionalTotal": 0,
+      "effects": [],
+      "statName": "mpMax",
+      "total": 0,
+    },
+    "pd": {
+      "base": 11,
+      "conditionalTotal": 6,
+      "effects": [
+        {
+          "condition": "raging",
+          "description": "Reduced Defense: -5 (raging)",
+          "isActive": false,
+          "source": {
+            "category": "Barbarian Level 1",
+            "description": "Your PD decreases by 5.",
+            "id": "Rage_Reduced Defense",
+            "name": "Reduced Defense",
+            "type": "class_feature",
+          },
+          "value": -5,
+        },
+      ],
+      "statName": "pd",
+      "total": 11,
+    },
+    "save_dc": {
+      "base": 14,
+      "conditionalTotal": 14,
+      "effects": [],
+      "statName": "saveDC",
+      "total": 14,
+    },
+    "spMax": {
+      "base": 2,
+      "conditionalTotal": 2,
+      "effects": [],
+      "statName": "spMax",
+      "total": 2,
+    },
+  },
+  "combatTraining": [],
+  "conditionalModifiers": [
+    {
+      "affectedStats": [
+        "martial_melee_damage",
+      ],
+      "condition": "while_raging",
+      "description": "Increased Damage: +1 martial_melee_damage while while_raging",
+      "effect": {
+        "condition": "while_raging",
+        "resolved": true,
+        "source": {
+          "category": "Barbarian Level 1",
+          "description": "You deal +1 damage on Martial Attacks made using Unarmed Strikes or Melee Weapons.",
+          "id": "Rage_Increased Damage",
+          "name": "Increased Damage",
+          "type": "class_feature",
+        },
+        "target": "martial_melee_damage",
+        "type": "MODIFY_STAT",
+        "value": 1,
+      },
+    },
+    {
+      "affectedStats": [
+        "pd",
+      ],
+      "condition": "raging",
+      "description": "Reduced Defense: -5 pd while raging",
+      "effect": {
+        "condition": "raging",
+        "resolved": true,
+        "source": {
+          "category": "Barbarian Level 1",
+          "description": "Your PD decreases by 5.",
+          "id": "Rage_Reduced Defense",
+          "name": "Reduced Defense",
+          "type": "class_feature",
+        },
+        "target": "pd",
+        "type": "MODIFY_STAT",
+        "value": -5,
+      },
+    },
+    {
+      "affectedStats": [
+        "ad",
+      ],
+      "condition": "not_wearing_armor",
+      "description": "Berserker Defense: +2 ad while not_wearing_armor",
+      "effect": {
+        "condition": "not_wearing_armor",
+        "resolved": true,
+        "source": {
+          "category": "Barbarian Level 1",
+          "description": "While you aren't wearing Armor you gain +2 AD.",
+          "id": "Berserker_Berserker Defense",
+          "name": "Berserker Defense",
+          "type": "class_feature",
+        },
+        "target": "ad",
+        "type": "MODIFY_STAT",
+        "value": 2,
+      },
+    },
+  ],
+  "crossPathGrants": {
+    "combatTrainingGrants": [],
+    "grantsSpellcasterStaminaRegen": false,
+    "requiresSpellListChoice": false,
+  },
+  "globalMagicProfile": {
+    "schools": [],
+    "sources": [],
+    "tags": [],
+  },
+  "grantedAbilities": [
+    {
+      "description": "Once per round, regain up to half maximum SP when you score or take a Heavy/Critical Hit.",
+      "isConditional": false,
+      "name": "stamina_regen",
+      "source": {
+        "category": "Barbarian Level 1",
+        "description": "Once per round, you can regain up to half your maximum SP when you score a Heavy or Critical Hit against a creature, or when a Heavy or Critical Hit is scored against you.",
+        "id": "Martial Path_Stamina Regeneration",
+        "name": "Stamina Regeneration",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+    {
+      "description": "ADV on Might Saves while Raging.",
+      "isConditional": false,
+      "name": "rage_might_advantage",
+      "source": {
+        "category": "Barbarian Level 1",
+        "description": "You have ADV on Might Saves.",
+        "id": "Rage_Might Advantage",
+        "name": "Might Advantage",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+    {
+      "description": "Resistance (Half) to Elemental and Physical damage while Raging.",
+      "isConditional": false,
+      "name": "rage_resistance",
+      "source": {
+        "category": "Barbarian Level 1",
+        "description": "You gain Resistance (Half) to Elemental and Physical damage.",
+        "id": "Rage_Damage Resistance",
+        "name": "Damage Resistance",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+    {
+      "description": "Move up to 2 Spaces before making a Melee Martial Attack on your turn.",
+      "isConditional": false,
+      "name": "charge",
+      "source": {
+        "category": "Barbarian Level 1",
+        "description": "When you make a Melee Martial Attack on your turn, you can move up to 2 Spaces immediately before making the Attack.",
+        "id": "Berserker_Charge",
+        "name": "Charge",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+    {
+      "description": "Melee Attacks against structures and mundane objects are Critical Hits.",
+      "isConditional": false,
+      "name": "shattering_force",
+      "source": {
+        "category": "Barbarian Level 1",
+        "description": "When you Hit a structure or mundane object with a Melee Attack, it's considered a Critical Hit.",
+        "id": "Shattering Force",
+        "name": "Shattering Force",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+  ],
+  "levelBudgets": {
+    "pendingSubclassChoices": 0,
+    "totalAncestryPoints": 0,
+    "totalAttributePoints": 0,
+    "totalCantripsKnown": 0,
+    "totalManeuversKnown": 2,
+    "totalPathPoints": 0,
+    "totalSkillPoints": 0,
+    "totalSpellsKnown": 0,
+    "totalTalents": 0,
+    "totalTradePoints": 0,
+    "unlockedFeatureIds": [
+      "barbarian_martial_path",
+      "barbarian_rage",
+      "barbarian_berserker",
+      "barbarian_shattering_force",
+    ],
+  },
+  "movements": [],
+  "resistances": [],
+  "resolvedFeatures": {
+    "availableSubclassChoice": false,
+    "pendingFeatureChoices": [],
+    "unlockedFeatures": [
+      {
+        "benefits": [
+          {
+            "description": "You gain proficiency with Weapons, All Armor, and All Shields.",
+            "effects": [
+              {
+                "target": "Weapons",
+                "type": "GRANT_COMBAT_TRAINING",
+                "value": true,
+              },
+              {
+                "target": "All_Armor",
+                "type": "GRANT_COMBAT_TRAINING",
+                "value": true,
+              },
+              {
+                "target": "All_Shields",
+                "type": "GRANT_COMBAT_TRAINING",
+                "value": true,
+              },
+            ],
+            "name": "Combat Training",
+          },
+          {
+            "description": "You learn all Attack maneuvers plus additional maneuvers as shown on the Barbarian Class Table.",
+            "effects": [],
+            "name": "Maneuver Knowledge",
+          },
+          {
+            "description": "Once per round, you can regain up to half your maximum SP when you score a Heavy or Critical Hit against a creature, or when a Heavy or Critical Hit is scored against you.",
+            "effects": [
+              {
+                "target": "stamina_regen",
+                "type": "GRANT_ABILITY",
+                "value": "Once per round, regain up to half maximum SP when you score or take a Heavy/Critical Hit.",
+              },
+            ],
+            "name": "Stamina Regeneration",
+          },
+        ],
+        "description": "You gain combat training and martial prowess.",
+        "effects": [
+          {
+            "target": "Weapons",
+            "type": "GRANT_COMBAT_TRAINING",
+            "value": true,
+          },
+          {
+            "target": "All_Armor",
+            "type": "GRANT_COMBAT_TRAINING",
+            "value": true,
+          },
+          {
+            "target": "All_Shields",
+            "type": "GRANT_COMBAT_TRAINING",
+            "value": true,
+          },
+          {
+            "target": "all_attack",
+            "type": "GRANT_MANEUVERS",
+            "value": 4,
+          },
+        ],
+        "featureName": "Martial Path",
+        "id": "barbarian_martial_path",
+        "levelGained": 1,
+      },
+      {
+        "benefits": [
+          {
+            "description": "You deal +1 damage on Martial Attacks made using Unarmed Strikes or Melee Weapons.",
+            "effects": [
+              {
+                "condition": "while_raging",
+                "target": "martial_melee_damage",
+                "type": "MODIFY_STAT",
+                "value": 1,
+              },
+            ],
+            "name": "Increased Damage",
+          },
+          {
+            "description": "You have ADV on Might Saves.",
+            "effects": [
+              {
+                "target": "rage_might_advantage",
+                "type": "GRANT_ABILITY",
+                "value": "ADV on Might Saves while Raging.",
+              },
+            ],
+            "name": "Might Advantage",
+          },
+          {
+            "description": "Your PD decreases by 5.",
+            "effects": [
+              {
+                "condition": "raging",
+                "target": "pd",
+                "type": "MODIFY_STAT",
+                "value": -5,
+              },
+            ],
+            "name": "Reduced Defense",
+          },
+          {
+            "description": "You gain Resistance (Half) to Elemental and Physical damage.",
+            "effects": [
+              {
+                "target": "rage_resistance",
+                "type": "GRANT_ABILITY",
+                "value": "Resistance (Half) to Elemental and Physical damage while Raging.",
+              },
+            ],
+            "name": "Damage Resistance",
+          },
+        ],
+        "description": "You can spend 1 AP and 1 SP to enter a Rage for 1 minute. For the duration, you are subjected to the following effects:",
+        "featureName": "Rage",
+        "id": "barbarian_rage",
+        "levelGained": 1,
+      },
+      {
+        "benefits": [
+          {
+            "description": "When you make a Melee Martial Attack on your turn, you can move up to 2 Spaces immediately before making the Attack.",
+            "effects": [
+              {
+                "target": "charge",
+                "type": "GRANT_ABILITY",
+                "value": "Move up to 2 Spaces before making a Melee Martial Attack on your turn.",
+              },
+            ],
+            "name": "Charge",
+          },
+          {
+            "description": "While you aren't wearing Armor you gain +2 AD.",
+            "effects": [
+              {
+                "condition": "not_wearing_armor",
+                "target": "ad",
+                "type": "MODIFY_STAT",
+                "value": 2,
+              },
+            ],
+            "name": "Berserker Defense",
+          },
+          {
+            "description": "You gain +1 Speed.",
+            "effects": [
+              {
+                "target": "moveSpeed",
+                "type": "MODIFY_STAT",
+                "value": 1,
+              },
+            ],
+            "name": "Fast Movement",
+          },
+          {
+            "description": "You can use your Might instead of Agility to determine your Jump Distance and the damage you take from Falling.",
+            "effects": [
+              {
+                "target": "jumpCalculationAttribute",
+                "type": "SET_VALUE",
+                "value": "might",
+              },
+            ],
+            "name": "Mighty Leap",
+          },
+        ],
+        "description": "Your primal savagery grants you the following benefits:",
+        "featureName": "Berserker",
+        "id": "barbarian_berserker",
+        "levelGained": 1,
+      },
+      {
+        "description": "When you Hit a structure or mundane object with a Melee Attack, it's considered a Critical Hit.",
+        "effects": [
+          {
+            "target": "shattering_force",
+            "type": "GRANT_ABILITY",
+            "value": "Melee Attacks against structures and mundane objects are Critical Hits.",
+          },
+        ],
+        "featureName": "Shattering Force",
+        "id": "barbarian_shattering_force",
+        "isFlavor": true,
+        "levelGained": 1,
+      },
+    ],
+  },
+  "senses": [],
+  "spellsKnownSlots": [],
+  "stats": {
+    "className": "Barbarian",
+    "finalAD": 12,
+    "finalAgility": 2,
+    "finalAttackSpellCheck": 4,
+    "finalAttributePoints": 12,
+    "finalCharisma": 0,
+    "finalCombatMastery": 1,
+    "finalDeathThreshold": 4,
+    "finalGritPoints": 2,
+    "finalHPMax": 11,
+    "finalInitiativeBonus": 3,
+    "finalIntelligence": 0,
+    "finalJumpDistance": 2,
+    "finalMPMax": 0,
+    "finalMartialCheck": 3,
+    "finalMight": 3,
+    "finalMoveSpeed": 6,
+    "finalPD": 11,
+    "finalPDR": 0,
+    "finalPrimeModifierAttribute": "might",
+    "finalPrimeModifierValue": 3,
+    "finalRestPoints": 11,
+    "finalSPMax": 2,
+    "finalSaveAgility": 3,
+    "finalSaveCharisma": 1,
+    "finalSaveDC": 14,
+    "finalSaveIntelligence": 1,
+    "finalSaveMight": 4,
+    "manaSpendLimit": 1,
+    "staminaSpendLimit": 1,
+    "usePrimeCapRule": false,
+  },
+  "unresolvedChoices": [],
+  "validation": {
+    "attributeLimits": {
+      "agility": {
+        "base": 2,
+        "canDecrease": true,
+        "canIncrease": true,
+        "current": 2,
+        "exceeded": false,
+        "max": 3,
+        "traitBonuses": 0,
+      },
+      "charisma": {
+        "base": 0,
+        "canDecrease": true,
+        "canIncrease": true,
+        "current": 0,
+        "exceeded": false,
+        "max": 3,
+        "traitBonuses": 0,
+      },
+      "intelligence": {
+        "base": 0,
+        "canDecrease": true,
+        "canIncrease": true,
+        "current": 0,
+        "exceeded": false,
+        "max": 3,
+        "traitBonuses": 0,
+      },
+      "might": {
+        "base": 3,
+        "canDecrease": true,
+        "canIncrease": false,
+        "current": 3,
+        "exceeded": false,
+        "max": 3,
+        "traitBonuses": 0,
+      },
+    },
+    "errors": [],
+    "isValid": true,
+    "masteryLimits": {
+      "baselineSkillCap": 1,
+      "baselineTradeCap": 1,
+      "canSelectAdept": true,
+      "currentAdeptCount": 0,
+      "maxAdeptCount": 0,
+      "maxSkillMastery": 1,
+      "maxTradeMastery": 1,
+      "skillEffectiveCaps": {},
+      "skillFeatureElevationsAvailable": 0,
+      "skillLimitElevations": {},
+      "tradeEffectiveCaps": {},
+      "tradeFeatureElevationsAvailable": 0,
+      "tradeLimitElevations": {},
+    },
+    "warnings": [],
+  },
+  "vulnerabilities": [],
+}
+`;
+
+exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Dwarf Rogue L2 with traits 1`] = `
+{
+  "ancestry": {
+    "ancestryPointsRemaining": 4,
+    "ancestryPointsUsed": 1,
+    "baseAncestryPoints": 5,
+  },
+  "autoGrantedFlavorFeatures": [
+    {
+      "classId": "rogue",
+      "featureId": "rogue_source_of_power",
+      "featureName": "Source of Power",
+    },
+  ],
+  "background": {
+    "availableLanguagePoints": 2,
+    "availableSkillPoints": 6,
+    "availableTradePoints": 3,
+    "baseLanguagePoints": 2,
+    "baseSkillPoints": 6,
+    "baseTradePoints": 3,
+    "breakdown": {
+      "languagePoints": {
+        "base": 2,
+        "talents": 0,
+        "total": 2,
+      },
+      "skillPoints": {
+        "base": 5,
+        "intelligence": 0,
+        "progression": 0,
+        "talents": 1,
+        "total": 6,
+      },
+      "tradePoints": {
+        "base": 3,
+        "progression": 0,
+        "talents": 0,
+        "total": 3,
+      },
+    },
+    "conversions": {
+      "skillToTrade": 0,
+      "tradeToLanguage": 0,
+      "tradeToSkill": 0,
+    },
+    "languagePointsUsed": 0,
+    "skillPointsUsed": 0,
+    "tradePointsUsed": 0,
+  },
+  "breakdowns": {
+    "ad": {
+      "base": 11,
+      "conditionalTotal": 11,
+      "effects": [],
+      "statName": "ad",
+      "total": 11,
+    },
+    "attack_spell_check": {
+      "base": 4,
+      "conditionalTotal": 4,
+      "effects": [],
+      "statName": "attackSpellCheck",
+      "total": 4,
+    },
+    "attributePoints": {
+      "base": 12,
+      "conditionalTotal": 12,
+      "effects": [],
+      "statName": "attributePoints",
+      "total": 12,
+    },
+    "attribute_agility": {
+      "base": 3,
+      "conditionalTotal": 3,
+      "effects": [],
+      "statName": "agility",
+      "total": 3,
+    },
+    "attribute_charisma": {
+      "base": 1,
+      "conditionalTotal": 1,
+      "effects": [],
+      "statName": "charisma",
+      "total": 1,
+    },
+    "attribute_intelligence": {
+      "base": 0,
+      "conditionalTotal": 0,
+      "effects": [],
+      "statName": "intelligence",
+      "total": 0,
+    },
+    "attribute_might": {
+      "base": 1,
+      "conditionalTotal": 1,
+      "effects": [],
+      "statName": "might",
+      "total": 1,
+    },
+    "hpMax": {
+      "base": 10,
+      "conditionalTotal": 10,
+      "effects": [],
+      "statName": "hpMax",
+      "total": 10,
+    },
+    "initiative": {
+      "base": 0,
+      "effects": [
+        {
+          "description": "Combat Mastery: 1",
+          "isActive": true,
+          "source": {
+            "id": "combatMastery",
+            "name": "Combat Mastery",
+            "type": "base",
+          },
+          "value": 1,
+        },
+        {
+          "description": "Agility Modifier: 3",
+          "isActive": true,
+          "source": {
+            "id": "agility",
+            "name": "Agility Modifier",
+            "type": "base",
+          },
+          "value": 3,
+        },
+      ],
+      "statName": "Initiative",
+      "total": 4,
+    },
+    "jump_distance": {
+      "base": 3,
+      "conditionalTotal": 3,
+      "effects": [],
+      "statName": "jumpDistance",
+      "total": 3,
+    },
+    "martial_check": {
+      "base": 3,
+      "effects": [
+        {
+          "description": "Agility (3) + Proficiency ×2 (0) = 3",
+          "isActive": true,
+          "source": {
+            "id": "acrobatics",
+            "name": "Acrobatics Option",
+            "type": "base",
+          },
+          "value": 3,
+        },
+        {
+          "description": "Might (1) + Proficiency ×2 (0) = 1",
+          "isActive": true,
+          "source": {
+            "id": "athletics",
+            "name": "Athletics Option",
+            "type": "base",
+          },
+          "value": 1,
+        },
+      ],
+      "statName": "Martial Check",
+      "total": 3,
+    },
+    "move_speed": {
+      "base": 5,
+      "conditionalTotal": 5,
+      "effects": [],
+      "statName": "moveSpeed",
+      "total": 5,
+    },
+    "mpMax": {
+      "base": 0,
+      "conditionalTotal": 0,
+      "effects": [],
+      "statName": "mpMax",
+      "total": 0,
+    },
+    "pd": {
+      "base": 12,
+      "conditionalTotal": 12,
+      "effects": [],
+      "statName": "pd",
+      "total": 12,
+    },
+    "save_dc": {
+      "base": 14,
+      "conditionalTotal": 14,
+      "effects": [],
+      "statName": "saveDC",
+      "total": 14,
+    },
+    "spMax": {
+      "base": 2,
+      "conditionalTotal": 2,
+      "effects": [],
+      "statName": "spMax",
+      "total": 2,
+    },
+  },
+  "combatTraining": [],
+  "conditionalModifiers": [],
+  "crossPathGrants": {
+    "combatTrainingGrants": [],
+    "grantsSpellcasterStaminaRegen": false,
+    "requiresSpellListChoice": false,
+  },
+  "globalMagicProfile": {
+    "schools": [],
+    "sources": [],
+    "tags": [],
+  },
+  "grantedAbilities": [
+    {
+      "description": "You have ADV on Survival Checks in mountainous and subterranean environments and ADV on Nature Checks about stones, gems, and metals.",
+      "isConditional": false,
+      "name": "earthen_knowledge",
+      "source": {
+        "category": "Selected Trait",
+        "description": "While within mountainous and subterranean environments, you have ADV on Survival Checks. Additionally, you have ADV on Nature Checks made to recall information about stones, gems, and metals.",
+        "id": "dwarf_earthen_knowledge",
+        "name": "Earthen Knowledge",
+        "type": "trait",
+      },
+      "type": "active",
+    },
+    {
+      "description": "Gain movement equal to half Speed when taking Disengage, Feint, or Hide; movement occurs immediately before or after the action.",
+      "isConditional": false,
+      "name": "rogue_cunning_action",
+      "source": {
+        "category": "Rogue Level 1",
+        "description": "When you take the Disengage, Feint, or Hide actions, gain free movement equal to half your Speed immediately before or after the action.",
+        "id": "Roguish Finesse_Cunning Action",
+        "name": "Cunning Action",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+  ],
+  "levelBudgets": {
+    "pendingSubclassChoices": 0,
+    "totalAncestryPoints": 0,
+    "totalAttributePoints": 0,
+    "totalCantripsKnown": 0,
+    "totalManeuversKnown": 2,
+    "totalPathPoints": 1,
+    "totalSkillPoints": 0,
+    "totalSpellsKnown": 0,
+    "totalTalents": 1,
+    "totalTradePoints": 0,
+    "unlockedFeatureIds": [
+      "rogue_martial_path",
+      "rogue_debilitating_strike",
+      "rogue_roguish_finesse",
+      "rogue_cypher_speech",
+      "rogue_cheap_shot",
+    ],
+  },
+  "movements": [],
+  "resistances": [],
+  "resolvedFeatures": {
+    "availableSubclassChoice": false,
+    "pendingFeatureChoices": [],
+    "unlockedFeatures": [
+      {
+        "description": "When you hit with a weapon attack you may spend 1 SP. The target makes a Physical Save vs your Save DC; on failure, choose Deafened, Exposed, Hindered, or Slowed 2. The effect lasts for 1 Round and different choices may stack but not duplicates.",
+        "featureName": "Debilitating Strike",
+        "id": "rogue_debilitating_strike",
+        "levelGained": 1,
+      },
+      {
+        "benefits": [
+          {
+            "description": "When you take the Disengage, Feint, or Hide actions, gain free movement equal to half your Speed immediately before or after the action.",
+            "effects": [
+              {
+                "target": "rogue_cunning_action",
+                "type": "GRANT_ABILITY",
+                "value": "Gain movement equal to half Speed when taking Disengage, Feint, or Hide; movement occurs immediately before or after the action.",
+              },
+            ],
+            "name": "Cunning Action",
+          },
+          {
+            "description": "Increase one Skill Mastery Limit by 1, up to Grandmaster (+10); only one increase per skill.",
+            "effects": [
+              {
+                "count": 1,
+                "type": "INCREASE_SKILL_MASTERY_CAP",
+                "value": 1,
+              },
+            ],
+            "name": "Skill Expertise",
+          },
+          {
+            "description": "Gain 1 Skill Point.",
+            "effects": [
+              {
+                "target": "skillPoints",
+                "type": "MODIFY_STAT",
+                "value": 1,
+              },
+            ],
+            "name": "Multi-Skilled",
+          },
+        ],
+        "description": "Blend agility, expertise, and opportunism in combat and exploration.",
+        "featureName": "Roguish Finesse",
+        "id": "rogue_roguish_finesse",
+        "levelGained": 1,
+      },
+      {
+        "description": "Become fluent in a Mortal language and craft hidden messages for a demographic of your choice, embedding simple directives in speech or writing.",
+        "featureName": "Cypher Speech",
+        "id": "rogue_cypher_speech",
+        "isFlavor": true,
+        "levelGained": 1,
+      },
+      {
+        "description": "You deal +1 damage on Martial Attacks against targets that are Flanked, Prone, conditioned (except Invisible), or unaware of you due to being Hidden.",
+        "featureName": "Cheap Shot",
+        "id": "rogue_cheap_shot",
+        "levelGained": 2,
+      },
+    ],
+  },
+  "senses": [],
+  "spellsKnownSlots": [],
+  "stats": {
+    "ancestry1Name": "Dwarf",
+    "className": "Rogue",
+    "finalAD": 11,
+    "finalAgility": 3,
+    "finalAttackSpellCheck": 4,
+    "finalAttributePoints": 12,
+    "finalCharisma": 1,
+    "finalCombatMastery": 1,
+    "finalDeathThreshold": 4,
+    "finalGritPoints": 3,
+    "finalHPMax": 10,
+    "finalInitiativeBonus": 4,
+    "finalIntelligence": 0,
+    "finalJumpDistance": 3,
+    "finalMPMax": 0,
+    "finalMartialCheck": 3,
+    "finalMight": 1,
+    "finalMoveSpeed": 5,
+    "finalPD": 12,
+    "finalPDR": 0,
+    "finalPrimeModifierAttribute": "agility",
+    "finalPrimeModifierValue": 3,
+    "finalRestPoints": 10,
+    "finalSPMax": 2,
+    "finalSaveAgility": 4,
+    "finalSaveCharisma": 2,
+    "finalSaveDC": 14,
+    "finalSaveIntelligence": 1,
+    "finalSaveMight": 2,
+    "manaSpendLimit": 1,
+    "staminaSpendLimit": 1,
+    "usePrimeCapRule": false,
+  },
+  "unresolvedChoices": [],
+  "validation": {
+    "attributeLimits": {
+      "agility": {
+        "base": 3,
+        "canDecrease": true,
+        "canIncrease": false,
+        "current": 3,
+        "exceeded": false,
+        "max": 3,
+        "traitBonuses": 0,
+      },
+      "charisma": {
+        "base": 1,
+        "canDecrease": true,
+        "canIncrease": true,
+        "current": 1,
+        "exceeded": false,
+        "max": 3,
+        "traitBonuses": 0,
+      },
+      "intelligence": {
+        "base": 0,
+        "canDecrease": true,
+        "canIncrease": true,
+        "current": 0,
+        "exceeded": false,
+        "max": 3,
+        "traitBonuses": 0,
+      },
+      "might": {
+        "base": 1,
+        "canDecrease": true,
+        "canIncrease": true,
+        "current": 1,
+        "exceeded": false,
+        "max": 3,
+        "traitBonuses": 0,
+      },
+    },
+    "errors": [],
+    "isValid": true,
+    "masteryLimits": {
+      "baselineSkillCap": 1,
+      "baselineTradeCap": 1,
+      "canSelectAdept": true,
+      "currentAdeptCount": 0,
+      "maxAdeptCount": 1,
+      "maxSkillMastery": 1,
+      "maxTradeMastery": 1,
+      "skillEffectiveCaps": {},
+      "skillFeatureElevationsAvailable": 1,
+      "skillLimitElevations": {},
+      "tradeEffectiveCaps": {},
+      "tradeFeatureElevationsAvailable": 0,
+      "tradeLimitElevations": {},
+    },
+    "warnings": [],
+  },
+  "vulnerabilities": [],
+}
+`;
+
+exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spellblade L3 multipath 1`] = `
+{
+  "ancestry": {
+    "ancestryPointsRemaining": 5,
+    "ancestryPointsUsed": 0,
+    "baseAncestryPoints": 5,
+  },
+  "autoGrantedFlavorFeatures": [
+    {
+      "classId": "spellblade",
+      "featureId": "spellblade_source_of_power",
+      "featureName": "Source of Power",
+    },
+  ],
+  "background": {
+    "availableLanguagePoints": 2,
+    "availableSkillPoints": 8,
+    "availableTradePoints": 4,
+    "baseLanguagePoints": 2,
+    "baseSkillPoints": 8,
+    "baseTradePoints": 4,
+    "breakdown": {
+      "languagePoints": {
+        "base": 2,
+        "talents": 0,
+        "total": 2,
+      },
+      "skillPoints": {
+        "base": 5,
+        "intelligence": 2,
+        "progression": 1,
+        "talents": 0,
+        "total": 8,
+      },
+      "tradePoints": {
+        "base": 3,
+        "progression": 1,
+        "talents": 0,
+        "total": 4,
+      },
+    },
+    "conversions": {
+      "skillToTrade": 0,
+      "tradeToLanguage": 0,
+      "tradeToSkill": 0,
+    },
+    "languagePointsUsed": 0,
+    "skillPointsUsed": 0,
+    "tradePointsUsed": 0,
+  },
+  "breakdowns": {
+    "ad": {
+      "base": 12,
+      "conditionalTotal": 12,
+      "effects": [],
+      "statName": "ad",
+      "total": 12,
+    },
+    "attack_spell_check": {
+      "base": 4,
+      "conditionalTotal": 4,
+      "effects": [],
+      "statName": "attackSpellCheck",
+      "total": 4,
+    },
+    "attributePoints": {
+      "base": 13,
+      "conditionalTotal": 13,
+      "effects": [],
+      "statName": "attributePoints",
+      "total": 13,
+    },
+    "attribute_agility": {
+      "base": 1,
+      "conditionalTotal": 1,
+      "effects": [],
+      "statName": "agility",
+      "total": 1,
+    },
+    "attribute_charisma": {
+      "base": 0,
+      "conditionalTotal": 0,
+      "effects": [],
+      "statName": "charisma",
+      "total": 0,
+    },
+    "attribute_intelligence": {
+      "base": 2,
+      "conditionalTotal": 2,
+      "effects": [],
+      "statName": "intelligence",
+      "total": 2,
+    },
+    "attribute_might": {
+      "base": 2,
+      "conditionalTotal": 2,
+      "effects": [],
+      "statName": "might",
+      "total": 2,
+    },
+    "hpMax": {
+      "base": 13,
+      "conditionalTotal": 13,
+      "effects": [],
+      "statName": "hpMax",
+      "total": 13,
+    },
+    "initiative": {
+      "base": 0,
+      "effects": [
+        {
+          "description": "Combat Mastery: 2",
+          "isActive": true,
+          "source": {
+            "id": "combatMastery",
+            "name": "Combat Mastery",
+            "type": "base",
+          },
+          "value": 2,
+        },
+        {
+          "description": "Agility Modifier: 1",
+          "isActive": true,
+          "source": {
+            "id": "agility",
+            "name": "Agility Modifier",
+            "type": "base",
+          },
+          "value": 1,
+        },
+      ],
+      "statName": "Initiative",
+      "total": 3,
+    },
+    "jump_distance": {
+      "base": 1,
+      "conditionalTotal": 1,
+      "effects": [],
+      "statName": "jumpDistance",
+      "total": 1,
+    },
+    "martial_check": {
+      "base": 2,
+      "effects": [
+        {
+          "description": "Agility (1) + Proficiency ×2 (0) = 1",
+          "isActive": true,
+          "source": {
+            "id": "acrobatics",
+            "name": "Acrobatics Option",
+            "type": "base",
+          },
+          "value": 1,
+        },
+        {
+          "description": "Might (2) + Proficiency ×2 (0) = 2",
+          "isActive": true,
+          "source": {
+            "id": "athletics",
+            "name": "Athletics Option",
+            "type": "base",
+          },
+          "value": 2,
+        },
+      ],
+      "statName": "Martial Check",
+      "total": 2,
+    },
+    "move_speed": {
+      "base": 5,
+      "conditionalTotal": 5,
+      "effects": [],
+      "statName": "moveSpeed",
+      "total": 5,
+    },
+    "mpMax": {
+      "base": 7,
+      "conditionalTotal": 7,
+      "effects": [],
+      "statName": "mpMax",
+      "total": 7,
+    },
+    "pd": {
+      "base": 13,
+      "conditionalTotal": 13,
+      "effects": [],
+      "statName": "pd",
+      "total": 13,
+    },
+    "save_dc": {
+      "base": 14,
+      "conditionalTotal": 14,
+      "effects": [],
+      "statName": "saveDC",
+      "total": 14,
+    },
+    "spMax": {
+      "base": 2,
+      "conditionalTotal": 2,
+      "effects": [],
+      "statName": "spMax",
+      "total": 2,
+    },
+  },
+  "combatTraining": [],
+  "conditionalModifiers": [],
+  "crossPathGrants": {
+    "combatTrainingGrants": [
+      "Weapons",
+      "Spell_Focuses",
+    ],
+    "grantsSpellcasterStaminaRegen": false,
+    "requiresSpellListChoice": false,
+  },
+  "globalMagicProfile": {
+    "schools": [],
+    "sources": [],
+    "tags": [],
+  },
+  "grantedAbilities": [
+    {
+      "description": "Spend 1+ SP on a Martial Attack with bound weapon: +1 Bound Damage per SP, and gain 1 Martial Enhancement free.",
+      "isConditional": false,
+      "name": "spellblade_bound_weapon_smite",
+      "source": {
+        "category": "Spellblade Level 1",
+        "description": "Spend 1 or more SP to deal +1 Bound Damage per SP spent. Also gain the benefits of 1 Martial Enhancement of your choice for free.",
+        "id": "Bound Weapon_Smite",
+        "name": "Smite",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+    {
+      "description": "Produce, extinguish, or adjust bright/dim light in a 5-space radius from the bonded weapon for free.",
+      "isConditional": false,
+      "name": "spellblade_bound_weapon_illuminate",
+      "source": {
+        "category": "Spellblade Level 1",
+        "description": "Emit or adjust bright/dim light in a 5-space radius from the bonded weapon at will.",
+        "id": "Bound Weapon_Illuminate",
+        "name": "Illuminate",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+    {
+      "description": "When the bonded weapon is within 20 spaces and unsecured, call it to your hand for free; if you lack a free hand, it lands at your feet.",
+      "isConditional": false,
+      "name": "spellblade_bound_weapon_recall",
+      "source": {
+        "category": "Spellblade Level 1",
+        "description": "Summon the bonded weapon from up to 20 spaces away if it is unattended.",
+        "id": "Bound Weapon_Recall",
+        "name": "Recall",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+  ],
+  "levelBudgets": {
+    "pendingSubclassChoices": 1,
+    "totalAncestryPoints": 0,
+    "totalAttributePoints": 1,
+    "totalCantripsKnown": 1,
+    "totalManeuversKnown": 4,
+    "totalPathPoints": 1,
+    "totalSkillPoints": 1,
+    "totalSpellsKnown": 3,
+    "totalTalents": 1,
+    "totalTradePoints": 1,
+    "unlockedFeatureIds": [
+      "spellblade_martial_path",
+      "spellblade_spellcasting_path",
+      "spellblade_bound_weapon",
+      "spellblade_disciplines",
+      "spellblade_sense_magic",
+      "spellblade_spellstrike",
+    ],
+  },
+  "movements": [],
+  "resistances": [],
+  "resolvedFeatures": {
+    "availableSubclassChoice": true,
+    "pendingFeatureChoices": [
+      {
+        "choice": {
+          "count": 2,
+          "id": "spellblade_disciplines_choice",
+          "options": [
+            {
+              "description": "Your magic deepens through increased MP and an additional spell.",
+              "effects": [
+                {
+                  "target": "mpMax",
+                  "type": "MODIFY_STAT",
+                  "value": 1,
+                },
+                {
+                  "target": "spellblade_magus_spell",
+                  "type": "GRANT_SPELL",
+                  "value": 1,
+                },
+              ],
+              "name": "Magus",
+            },
+            {
+              "description": "Gain heavy armor and shield training and additional maneuvers.",
+              "effects": [
+                {
+                  "target": "Heavy_Armor",
+                  "type": "GRANT_COMBAT_TRAINING",
+                  "value": true,
+                },
+                {
+                  "target": "Heavy_Shields",
+                  "type": "GRANT_COMBAT_TRAINING",
+                  "value": true,
+                },
+                {
+                  "target": "spellblade_warrior_maneuvers",
+                  "type": "GRANT_MANEUVERS",
+                  "value": 2,
+                },
+              ],
+              "name": "Warrior",
+            },
+            {
+              "description": "Channel restorative magic for healing and curing ailments.",
+              "effects": [
+                {
+                  "target": "spellblade_acolyte",
+                  "type": "GRANT_ABILITY",
+                  "value": "Spend 1 AP and 1 MP to heal or cure: Heal – DC 10 Spell Check restores up to 3 HP (2 HP on failure, +1 HP per 5 over). Cure – Spell Check vs disease/poison DC to end it on a creature within 1 space.",
+                },
+              ],
+              "name": "Acolyte",
+            },
+            {
+              "description": "Afflict foes with debilitating curses.",
+              "effects": [
+                {
+                  "target": "spellblade_hex_warrior",
+                  "type": "GRANT_ABILITY",
+                  "value": "Spend 1 AP and 1 MP to curse a creature within 10 spaces for 1 minute; Spell Check vs Repeated Physical Save. Failure: target is Dazed or Impaired (your choice), takes 1 Umbral damage each turn, and cannot regain HP.",
+                },
+              ],
+              "name": "Hex Warrior",
+            },
+            {
+              "description": "Duel spell attacks with martial skill.",
+              "effects": [
+                {
+                  "target": "spellblade_spell_breaker",
+                  "type": "GRANT_ABILITY",
+                  "value": "Spend 2 AP to initiate a Spell Duel using your weapon against a spell attack within range. Make an Attack Check, adding SP and MP spent (up to your mana spend limit) as a bonus; gain ADV if within 1 space of the spell’s initiator.",
+                },
+              ],
+              "name": "Spell Breaker",
+            },
+            {
+              "description": "Temporarily ward yourself against the damage you unleash.",
+              "effects": [
+                {
+                  "target": "spellblade_spell_warder",
+                  "type": "GRANT_ABILITY",
+                  "value": "When you deal Elemental or Mystical damage with an attack, gain Resistance (1) to that damage type until the start of your next turn; replace or maintain the resistance on subsequent triggers.",
+                },
+              ],
+              "name": "Spell Warder",
+            },
+            {
+              "description": "Teleport a short distance as part of your attacks.",
+              "effects": [
+                {
+                  "target": "spellblade_blink_blade",
+                  "type": "GRANT_ABILITY",
+                  "value": "Once per turn, immediately before or after making an attack, teleport to a space you can see within 1 space of your original position.",
+                },
+              ],
+              "name": "Blink Blade",
+            },
+          ],
+          "prompt": "Choose 2 Spellblade Disciplines",
+        },
+        "choiceId": "spellblade_disciplines_choice",
+        "feature": {
+          "choices": [
+            {
+              "count": 2,
+              "id": "spellblade_disciplines_choice",
+              "options": [
+                {
+                  "description": "Your magic deepens through increased MP and an additional spell.",
+                  "effects": [
+                    {
+                      "target": "mpMax",
+                      "type": "MODIFY_STAT",
+                      "value": 1,
+                    },
+                    {
+                      "target": "spellblade_magus_spell",
+                      "type": "GRANT_SPELL",
+                      "value": 1,
+                    },
+                  ],
+                  "name": "Magus",
+                },
+                {
+                  "description": "Gain heavy armor and shield training and additional maneuvers.",
+                  "effects": [
+                    {
+                      "target": "Heavy_Armor",
+                      "type": "GRANT_COMBAT_TRAINING",
+                      "value": true,
+                    },
+                    {
+                      "target": "Heavy_Shields",
+                      "type": "GRANT_COMBAT_TRAINING",
+                      "value": true,
+                    },
+                    {
+                      "target": "spellblade_warrior_maneuvers",
+                      "type": "GRANT_MANEUVERS",
+                      "value": 2,
+                    },
+                  ],
+                  "name": "Warrior",
+                },
+                {
+                  "description": "Channel restorative magic for healing and curing ailments.",
+                  "effects": [
+                    {
+                      "target": "spellblade_acolyte",
+                      "type": "GRANT_ABILITY",
+                      "value": "Spend 1 AP and 1 MP to heal or cure: Heal – DC 10 Spell Check restores up to 3 HP (2 HP on failure, +1 HP per 5 over). Cure – Spell Check vs disease/poison DC to end it on a creature within 1 space.",
+                    },
+                  ],
+                  "name": "Acolyte",
+                },
+                {
+                  "description": "Afflict foes with debilitating curses.",
+                  "effects": [
+                    {
+                      "target": "spellblade_hex_warrior",
+                      "type": "GRANT_ABILITY",
+                      "value": "Spend 1 AP and 1 MP to curse a creature within 10 spaces for 1 minute; Spell Check vs Repeated Physical Save. Failure: target is Dazed or Impaired (your choice), takes 1 Umbral damage each turn, and cannot regain HP.",
+                    },
+                  ],
+                  "name": "Hex Warrior",
+                },
+                {
+                  "description": "Duel spell attacks with martial skill.",
+                  "effects": [
+                    {
+                      "target": "spellblade_spell_breaker",
+                      "type": "GRANT_ABILITY",
+                      "value": "Spend 2 AP to initiate a Spell Duel using your weapon against a spell attack within range. Make an Attack Check, adding SP and MP spent (up to your mana spend limit) as a bonus; gain ADV if within 1 space of the spell’s initiator.",
+                    },
+                  ],
+                  "name": "Spell Breaker",
+                },
+                {
+                  "description": "Temporarily ward yourself against the damage you unleash.",
+                  "effects": [
+                    {
+                      "target": "spellblade_spell_warder",
+                      "type": "GRANT_ABILITY",
+                      "value": "When you deal Elemental or Mystical damage with an attack, gain Resistance (1) to that damage type until the start of your next turn; replace or maintain the resistance on subsequent triggers.",
+                    },
+                  ],
+                  "name": "Spell Warder",
+                },
+                {
+                  "description": "Teleport a short distance as part of your attacks.",
+                  "effects": [
+                    {
+                      "target": "spellblade_blink_blade",
+                      "type": "GRANT_ABILITY",
+                      "value": "Once per turn, immediately before or after making an attack, teleport to a space you can see within 1 space of your original position.",
+                    },
+                  ],
+                  "name": "Blink Blade",
+                },
+              ],
+              "prompt": "Choose 2 Spellblade Disciplines",
+            },
+          ],
+          "description": "Learn two Spellblade disciplines to tailor your blend of martial and arcane prowess.",
+          "featureName": "Spellblade Disciplines",
+          "id": "spellblade_disciplines",
+          "levelGained": 1,
+        },
+        "featureId": "spellblade_disciplines",
+      },
+    ],
+    "subclassChoiceLevel": 3,
+    "unlockedFeatures": [
+      {
+        "description": "You gain combat training in weapons, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.",
+        "effects": [
+          {
+            "target": "Weapons",
+            "type": "GRANT_COMBAT_TRAINING",
+            "value": true,
+          },
+          {
+            "target": "Light_Armor",
+            "type": "GRANT_COMBAT_TRAINING",
+            "value": true,
+          },
+          {
+            "target": "Light_Shields",
+            "type": "GRANT_COMBAT_TRAINING",
+            "value": true,
+          },
+          {
+            "target": "all_attack",
+            "type": "GRANT_MANEUVERS",
+            "value": 4,
+          },
+        ],
+        "featureName": "Martial Path",
+        "id": "spellblade_martial_path",
+        "levelGained": 1,
+      },
+      {
+        "description": "You gain the ability to cast spells. Choose 2 Spell Schools; you can learn spells from those Schools or with Weapon/Ward tags.",
+        "effects": [],
+        "featureName": "Spellcasting Path",
+        "id": "spellblade_spellcasting_path",
+        "levelGained": 1,
+      },
+      {
+        "benefits": [
+          {
+            "description": "Spend 1 or more SP to deal +1 Bound Damage per SP spent. Also gain the benefits of 1 Martial Enhancement of your choice for free.",
+            "effects": [
+              {
+                "target": "spellblade_bound_weapon_smite",
+                "type": "GRANT_ABILITY",
+                "value": "Spend 1+ SP on a Martial Attack with bound weapon: +1 Bound Damage per SP, and gain 1 Martial Enhancement free.",
+              },
+            ],
+            "name": "Smite",
+          },
+          {
+            "description": "Emit or adjust bright/dim light in a 5-space radius from the bonded weapon at will.",
+            "effects": [
+              {
+                "target": "spellblade_bound_weapon_illuminate",
+                "type": "GRANT_ABILITY",
+                "value": "Produce, extinguish, or adjust bright/dim light in a 5-space radius from the bonded weapon for free.",
+              },
+            ],
+            "name": "Illuminate",
+          },
+          {
+            "description": "Summon the bonded weapon from up to 20 spaces away if it is unattended.",
+            "effects": [
+              {
+                "target": "spellblade_bound_weapon_recall",
+                "type": "GRANT_ABILITY",
+                "value": "When the bonded weapon is within 20 spaces and unsecured, call it to your hand for free; if you lack a free hand, it lands at your feet.",
+              },
+            ],
+            "name": "Recall",
+          },
+        ],
+        "description": "Magically bond with a weapon during a Quick Rest, imbuing it with elemental or mystical power until you end the bond.",
+        "featureName": "Bound Weapon",
+        "id": "spellblade_bound_weapon",
+        "levelGained": 1,
+      },
+      {
+        "choices": [
+          {
+            "count": 2,
+            "id": "spellblade_disciplines_choice",
+            "options": [
+              {
+                "description": "Your magic deepens through increased MP and an additional spell.",
+                "effects": [
+                  {
+                    "target": "mpMax",
+                    "type": "MODIFY_STAT",
+                    "value": 1,
+                  },
+                  {
+                    "target": "spellblade_magus_spell",
+                    "type": "GRANT_SPELL",
+                    "value": 1,
+                  },
+                ],
+                "name": "Magus",
+              },
+              {
+                "description": "Gain heavy armor and shield training and additional maneuvers.",
+                "effects": [
+                  {
+                    "target": "Heavy_Armor",
+                    "type": "GRANT_COMBAT_TRAINING",
+                    "value": true,
+                  },
+                  {
+                    "target": "Heavy_Shields",
+                    "type": "GRANT_COMBAT_TRAINING",
+                    "value": true,
+                  },
+                  {
+                    "target": "spellblade_warrior_maneuvers",
+                    "type": "GRANT_MANEUVERS",
+                    "value": 2,
+                  },
+                ],
+                "name": "Warrior",
+              },
+              {
+                "description": "Channel restorative magic for healing and curing ailments.",
+                "effects": [
+                  {
+                    "target": "spellblade_acolyte",
+                    "type": "GRANT_ABILITY",
+                    "value": "Spend 1 AP and 1 MP to heal or cure: Heal – DC 10 Spell Check restores up to 3 HP (2 HP on failure, +1 HP per 5 over). Cure – Spell Check vs disease/poison DC to end it on a creature within 1 space.",
+                  },
+                ],
+                "name": "Acolyte",
+              },
+              {
+                "description": "Afflict foes with debilitating curses.",
+                "effects": [
+                  {
+                    "target": "spellblade_hex_warrior",
+                    "type": "GRANT_ABILITY",
+                    "value": "Spend 1 AP and 1 MP to curse a creature within 10 spaces for 1 minute; Spell Check vs Repeated Physical Save. Failure: target is Dazed or Impaired (your choice), takes 1 Umbral damage each turn, and cannot regain HP.",
+                  },
+                ],
+                "name": "Hex Warrior",
+              },
+              {
+                "description": "Duel spell attacks with martial skill.",
+                "effects": [
+                  {
+                    "target": "spellblade_spell_breaker",
+                    "type": "GRANT_ABILITY",
+                    "value": "Spend 2 AP to initiate a Spell Duel using your weapon against a spell attack within range. Make an Attack Check, adding SP and MP spent (up to your mana spend limit) as a bonus; gain ADV if within 1 space of the spell’s initiator.",
+                  },
+                ],
+                "name": "Spell Breaker",
+              },
+              {
+                "description": "Temporarily ward yourself against the damage you unleash.",
+                "effects": [
+                  {
+                    "target": "spellblade_spell_warder",
+                    "type": "GRANT_ABILITY",
+                    "value": "When you deal Elemental or Mystical damage with an attack, gain Resistance (1) to that damage type until the start of your next turn; replace or maintain the resistance on subsequent triggers.",
+                  },
+                ],
+                "name": "Spell Warder",
+              },
+              {
+                "description": "Teleport a short distance as part of your attacks.",
+                "effects": [
+                  {
+                    "target": "spellblade_blink_blade",
+                    "type": "GRANT_ABILITY",
+                    "value": "Once per turn, immediately before or after making an attack, teleport to a space you can see within 1 space of your original position.",
+                  },
+                ],
+                "name": "Blink Blade",
+              },
+            ],
+            "prompt": "Choose 2 Spellblade Disciplines",
+          },
+        ],
+        "description": "Learn two Spellblade disciplines to tailor your blend of martial and arcane prowess.",
+        "featureName": "Spellblade Disciplines",
+        "id": "spellblade_disciplines",
+        "levelGained": 1,
+      },
+      {
+        "description": "Focus for 1 minute to detect certain creature types within 20 spaces; Spell Checks reveal their nature and location until the end of your next turn.",
+        "featureName": "Sense Magic",
+        "id": "spellblade_sense_magic",
+        "isFlavor": true,
+        "levelGained": 1,
+      },
+      {
+        "description": "Once per turn, combine a Martial Attack with a spell, reducing the spell’s AP cost and resolving them as one harmonic strike.",
+        "featureName": "Spellstrike",
+        "id": "spellblade_spellstrike",
+        "levelGained": 2,
+      },
+    ],
+  },
+  "senses": [],
+  "spellsKnownSlots": [
+    {
+      "id": "global_spell_0",
+      "isGlobal": true,
+      "sourceName": "Spellblade Progression",
+      "type": "spell",
+    },
+    {
+      "id": "global_spell_1",
+      "isGlobal": true,
+      "sourceName": "Spellblade Progression",
+      "type": "spell",
+    },
+    {
+      "id": "global_spell_2",
+      "isGlobal": true,
+      "sourceName": "Spellblade Progression",
+      "type": "spell",
+    },
+  ],
+  "stats": {
+    "className": "Spellblade",
+    "finalAD": 12,
+    "finalAgility": 1,
+    "finalAttackSpellCheck": 4,
+    "finalAttributePoints": 13,
+    "finalCharisma": 0,
+    "finalCombatMastery": 2,
+    "finalDeathThreshold": 4,
+    "finalGritPoints": 2,
+    "finalHPMax": 13,
+    "finalInitiativeBonus": 3,
+    "finalIntelligence": 2,
+    "finalJumpDistance": 1,
+    "finalMPMax": 7,
+    "finalMartialCheck": 2,
+    "finalMight": 2,
+    "finalMoveSpeed": 5,
+    "finalPD": 13,
+    "finalPDR": 0,
+    "finalPrimeModifierAttribute": "might",
+    "finalPrimeModifierValue": 2,
+    "finalRestPoints": 13,
+    "finalSPMax": 2,
+    "finalSaveAgility": 3,
+    "finalSaveCharisma": 2,
+    "finalSaveDC": 14,
+    "finalSaveIntelligence": 4,
+    "finalSaveMight": 4,
+    "manaSpendLimit": 2,
+    "staminaSpendLimit": 2,
+    "usePrimeCapRule": false,
+  },
+  "unresolvedChoices": [],
+  "validation": {
+    "attributeLimits": {
+      "agility": {
+        "base": 1,
+        "canDecrease": true,
+        "canIncrease": true,
+        "current": 1,
+        "exceeded": false,
+        "max": 3,
+        "traitBonuses": 0,
+      },
+      "charisma": {
+        "base": 0,
+        "canDecrease": true,
+        "canIncrease": true,
+        "current": 0,
+        "exceeded": false,
+        "max": 3,
+        "traitBonuses": 0,
+      },
+      "intelligence": {
+        "base": 2,
+        "canDecrease": true,
+        "canIncrease": true,
+        "current": 2,
+        "exceeded": false,
+        "max": 3,
+        "traitBonuses": 0,
+      },
+      "might": {
+        "base": 2,
+        "canDecrease": true,
+        "canIncrease": true,
+        "current": 2,
+        "exceeded": false,
+        "max": 3,
+        "traitBonuses": 0,
+      },
+    },
+    "errors": [],
+    "isValid": true,
+    "masteryLimits": {
+      "baselineSkillCap": 1,
+      "baselineTradeCap": 1,
+      "canSelectAdept": true,
+      "currentAdeptCount": 0,
+      "maxAdeptCount": 0,
+      "maxSkillMastery": 1,
+      "maxTradeMastery": 1,
+      "skillEffectiveCaps": {},
+      "skillFeatureElevationsAvailable": 0,
+      "skillLimitElevations": {},
+      "tradeEffectiveCaps": {},
+      "tradeFeatureElevationsAvailable": 0,
+      "tradeLimitElevations": {},
+    },
+    "warnings": [],
+  },
+  "vulnerabilities": [],
+}
+`;
+
+exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Wizard L5 with subclass 1`] = `
+{
+  "ancestry": {
+    "ancestryPointsRemaining": 5,
+    "ancestryPointsUsed": 0,
+    "baseAncestryPoints": 5,
+  },
+  "autoGrantedFlavorFeatures": [
+    {
+      "classId": "wizard",
+      "featureId": "wizard_ritual_caster",
+      "featureName": "Ritual Caster",
+    },
+  ],
+  "background": {
+    "availableLanguagePoints": 2,
+    "availableSkillPoints": 12,
+    "availableTradePoints": 5,
+    "baseLanguagePoints": 2,
+    "baseSkillPoints": 12,
+    "baseTradePoints": 5,
+    "breakdown": {
+      "languagePoints": {
+        "base": 2,
+        "talents": 0,
+        "total": 2,
+      },
+      "skillPoints": {
+        "base": 5,
+        "intelligence": 4,
+        "progression": 3,
+        "talents": 0,
+        "total": 12,
+      },
+      "tradePoints": {
+        "base": 3,
+        "progression": 2,
+        "talents": 0,
+        "total": 5,
+      },
+    },
+    "conversions": {
+      "skillToTrade": 0,
+      "tradeToLanguage": 0,
+      "tradeToSkill": 0,
+    },
+    "languagePointsUsed": 0,
+    "skillPointsUsed": 0,
+    "tradePointsUsed": 0,
+  },
+  "breakdowns": {
+    "ad": {
+      "base": 11,
+      "conditionalTotal": 11,
+      "effects": [],
+      "statName": "ad",
+      "total": 11,
+    },
+    "attack_spell_check": {
+      "base": 7,
+      "conditionalTotal": 7,
+      "effects": [],
+      "statName": "attackSpellCheck",
+      "total": 7,
+    },
+    "attributePoints": {
+      "base": 14,
+      "conditionalTotal": 14,
+      "effects": [],
+      "statName": "attributePoints",
+      "total": 14,
+    },
+    "attribute_agility": {
+      "base": 0,
+      "conditionalTotal": 0,
+      "effects": [],
+      "statName": "agility",
+      "total": 0,
+    },
+    "attribute_charisma": {
+      "base": 1,
+      "conditionalTotal": 1,
+      "effects": [],
+      "statName": "charisma",
+      "total": 1,
+    },
+    "attribute_intelligence": {
+      "base": 4,
+      "conditionalTotal": 4,
+      "effects": [],
+      "statName": "intelligence",
+      "total": 4,
+    },
+    "attribute_might": {
+      "base": -1,
+      "conditionalTotal": -1,
+      "effects": [],
+      "statName": "might",
+      "total": -1,
+    },
+    "hpMax": {
+      "base": 10,
+      "conditionalTotal": 10,
+      "effects": [],
+      "statName": "hpMax",
+      "total": 10,
+    },
+    "initiative": {
+      "base": 0,
+      "effects": [
+        {
+          "description": "Combat Mastery: 3",
+          "isActive": true,
+          "source": {
+            "id": "combatMastery",
+            "name": "Combat Mastery",
+            "type": "base",
+          },
+          "value": 3,
+        },
+        {
+          "description": "Agility Modifier: 0",
+          "isActive": true,
+          "source": {
+            "id": "agility",
+            "name": "Agility Modifier",
+            "type": "base",
+          },
+          "value": 0,
+        },
+      ],
+      "statName": "Initiative",
+      "total": 3,
+    },
+    "jump_distance": {
+      "base": 0,
+      "conditionalTotal": 0,
+      "effects": [],
+      "statName": "jumpDistance",
+      "total": 0,
+    },
+    "martial_check": {
+      "base": 0,
+      "effects": [
+        {
+          "description": "Agility (0) + Proficiency ×2 (0) = 0",
+          "isActive": true,
+          "source": {
+            "id": "acrobatics",
+            "name": "Acrobatics Option",
+            "type": "base",
+          },
+          "value": 0,
+        },
+        {
+          "description": "Might (-1) + Proficiency ×2 (0) = -1",
+          "isActive": true,
+          "source": {
+            "id": "athletics",
+            "name": "Athletics Option",
+            "type": "base",
+          },
+          "value": -1,
+        },
+      ],
+      "statName": "Martial Check",
+      "total": 0,
+    },
+    "move_speed": {
+      "base": 5,
+      "conditionalTotal": 5,
+      "effects": [],
+      "statName": "moveSpeed",
+      "total": 5,
+    },
+    "mpMax": {
+      "base": 20,
+      "conditionalTotal": 20,
+      "effects": [],
+      "statName": "mpMax",
+      "total": 20,
+    },
+    "pd": {
+      "base": 15,
+      "conditionalTotal": 15,
+      "effects": [],
+      "statName": "pd",
+      "total": 15,
+    },
+    "save_dc": {
+      "base": 17,
+      "conditionalTotal": 17,
+      "effects": [],
+      "statName": "saveDC",
+      "total": 17,
+    },
+    "spMax": {
+      "base": 0,
+      "conditionalTotal": 0,
+      "effects": [],
+      "statName": "spMax",
+      "total": 0,
+    },
+  },
+  "combatTraining": [],
+  "conditionalModifiers": [],
+  "crossPathGrants": {
+    "combatTrainingGrants": [
+      "Spell_Focuses",
+    ],
+    "grantsSpellcasterStaminaRegen": false,
+    "requiresSpellListChoice": false,
+  },
+  "globalMagicProfile": {
+    "schools": [],
+    "sources": [],
+    "tags": [],
+  },
+  "grantedAbilities": [
+    {
+      "description": "Create Arcane Sigil (1 AP + 1 MP): 1 Space area, choose School/Tag, creatures within have ADV on Spell Checks for that type. Can teleport sigil 1 AP within 10 spaces.",
+      "isConditional": false,
+      "name": "arcane_sigil",
+      "source": {
+        "category": "Wizard Level 1",
+        "description": "You can spend 1 AP and 1 MP to create a 1 Space diameter Arcane Sigil on the ground beneath you that lasts for 1 minute.",
+        "id": "Arcane Sigil",
+        "name": "Arcane Sigil",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+    {
+      "description": "Learn 1 Ritual Spell per Wizard level. Can study and learn Ritual Spells from external sources (hours = MP cost).",
+      "isConditional": false,
+      "name": "ritual_caster",
+      "source": {
+        "category": "Wizard Level 1",
+        "description": "You learn Arcane Spells with the Ritual Spell Tag and can cast them as rituals.",
+        "id": "Ritual Caster",
+        "name": "Ritual Caster",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+    {
+      "description": "Choose 1 Prepared Spell per Long Rest: Mana Limit Break (+1 to Spend Limit once per Long Rest, regain on Initiative) and Rehearsed Casting (opponents have DisADV in Spell Duels).",
+      "isConditional": false,
+      "name": "prepared_spell",
+      "source": {
+        "category": "Wizard Level 2",
+        "description": "When you complete a Long Rest, choose 1 Spell you know to become your Prepared Spell.",
+        "id": "Prepared Spell",
+        "name": "Prepared Spell",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+  ],
+  "levelBudgets": {
+    "pendingSubclassChoices": 1,
+    "totalAncestryPoints": 2,
+    "totalAttributePoints": 2,
+    "totalCantripsKnown": 3,
+    "totalManeuversKnown": 0,
+    "totalPathPoints": 2,
+    "totalSkillPoints": 3,
+    "totalSpellsKnown": 9,
+    "totalTalents": 2,
+    "totalTradePoints": 2,
+    "unlockedFeatureIds": [
+      "wizard_spellcasting_path",
+      "wizard_spell_school_initiate",
+      "wizard_arcane_sigil",
+      "wizard_ritual_caster",
+      "wizard_prepared_spell",
+      "wizard_level_5_placeholder",
+    ],
+  },
+  "movements": [],
+  "resistances": [],
+  "resolvedFeatures": {
+    "availableSubclassChoice": true,
+    "pendingFeatureChoices": [
+      {
+        "choice": {
+          "count": 1,
+          "id": "wizard_spell_school_initiate_0",
+          "options": [
+            {
+              "description": "Specialize in time, space, and gravity magic.",
+              "effects": [
+                {
+                  "target": "astromancy_school",
+                  "type": "GRANT_SPELL",
+                  "value": 2,
+                },
+                {
+                  "target": "signature_school_astromancy",
+                  "type": "GRANT_ABILITY",
+                  "value": "Reduce MP cost by 1 for Astromancy spells (once per Long Rest, regain on Initiative).",
+                },
+              ],
+              "name": "Astromancy",
+            },
+            {
+              "description": "Specialize in creating physical material from nothing.",
+              "effects": [
+                {
+                  "target": "conjuration_school",
+                  "type": "GRANT_SPELL",
+                  "value": 2,
+                },
+                {
+                  "target": "signature_school_conjuration",
+                  "type": "GRANT_ABILITY",
+                  "value": "Reduce MP cost by 1 for Conjuration spells (once per Long Rest, regain on Initiative).",
+                },
+              ],
+              "name": "Conjuration",
+            },
+            {
+              "description": "Specialize in gaining information through magic.",
+              "effects": [
+                {
+                  "target": "divination_school",
+                  "type": "GRANT_SPELL",
+                  "value": 2,
+                },
+                {
+                  "target": "signature_school_divination",
+                  "type": "GRANT_ABILITY",
+                  "value": "Reduce MP cost by 1 for Divination spells (once per Long Rest, regain on Initiative).",
+                },
+              ],
+              "name": "Divination",
+            },
+            {
+              "description": "Specialize in manipulating the elements.",
+              "effects": [
+                {
+                  "target": "elemental_school",
+                  "type": "GRANT_SPELL",
+                  "value": 2,
+                },
+                {
+                  "target": "signature_school_elemental",
+                  "type": "GRANT_ABILITY",
+                  "value": "Reduce MP cost by 1 for Elemental spells (once per Long Rest, regain on Initiative).",
+                },
+              ],
+              "name": "Elemental",
+            },
+            {
+              "description": "Specialize in mental alteration (buff & debuff).",
+              "effects": [
+                {
+                  "target": "enchantment_school",
+                  "type": "GRANT_SPELL",
+                  "value": 2,
+                },
+                {
+                  "target": "signature_school_enchantment",
+                  "type": "GRANT_ABILITY",
+                  "value": "Reduce MP cost by 1 for Enchantment spells (once per Long Rest, regain on Initiative).",
+                },
+              ],
+              "name": "Enchantment",
+            },
+            {
+              "description": "Specialize in positive energy (life and spirit).",
+              "effects": [
+                {
+                  "target": "invocation_school",
+                  "type": "GRANT_SPELL",
+                  "value": 2,
+                },
+                {
+                  "target": "signature_school_invocation",
+                  "type": "GRANT_ABILITY",
+                  "value": "Reduce MP cost by 1 for Invocation spells (once per Long Rest, regain on Initiative).",
+                },
+              ],
+              "name": "Invocation",
+            },
+            {
+              "description": "Specialize in negative energy (destroy matter or spirit).",
+              "effects": [
+                {
+                  "target": "nullification_school",
+                  "type": "GRANT_SPELL",
+                  "value": 2,
+                },
+                {
+                  "target": "signature_school_nullification",
+                  "type": "GRANT_ABILITY",
+                  "value": "Reduce MP cost by 1 for Nullification spells (once per Long Rest, regain on Initiative).",
+                },
+              ],
+              "name": "Nullification",
+            },
+            {
+              "description": "Specialize in physical alteration (change form, shape, or matter).",
+              "effects": [
+                {
+                  "target": "transmutation_school",
+                  "type": "GRANT_SPELL",
+                  "value": 2,
+                },
+                {
+                  "target": "signature_school_transmutation",
+                  "type": "GRANT_ABILITY",
+                  "value": "Reduce MP cost by 1 for Transmutation spells (once per Long Rest, regain on Initiative).",
+                },
+              ],
+              "name": "Transmutation",
+            },
+          ],
+          "prompt": "Choose your specialized Spell School",
+        },
+        "choiceId": "wizard_spell_school_initiate_0",
+        "feature": {
+          "choices": [
+            {
+              "count": 1,
+              "id": "wizard_spell_school_initiate_0",
+              "options": [
+                {
+                  "description": "Specialize in time, space, and gravity magic.",
+                  "effects": [
+                    {
+                      "target": "astromancy_school",
+                      "type": "GRANT_SPELL",
+                      "value": 2,
+                    },
+                    {
+                      "target": "signature_school_astromancy",
+                      "type": "GRANT_ABILITY",
+                      "value": "Reduce MP cost by 1 for Astromancy spells (once per Long Rest, regain on Initiative).",
+                    },
+                  ],
+                  "name": "Astromancy",
+                },
+                {
+                  "description": "Specialize in creating physical material from nothing.",
+                  "effects": [
+                    {
+                      "target": "conjuration_school",
+                      "type": "GRANT_SPELL",
+                      "value": 2,
+                    },
+                    {
+                      "target": "signature_school_conjuration",
+                      "type": "GRANT_ABILITY",
+                      "value": "Reduce MP cost by 1 for Conjuration spells (once per Long Rest, regain on Initiative).",
+                    },
+                  ],
+                  "name": "Conjuration",
+                },
+                {
+                  "description": "Specialize in gaining information through magic.",
+                  "effects": [
+                    {
+                      "target": "divination_school",
+                      "type": "GRANT_SPELL",
+                      "value": 2,
+                    },
+                    {
+                      "target": "signature_school_divination",
+                      "type": "GRANT_ABILITY",
+                      "value": "Reduce MP cost by 1 for Divination spells (once per Long Rest, regain on Initiative).",
+                    },
+                  ],
+                  "name": "Divination",
+                },
+                {
+                  "description": "Specialize in manipulating the elements.",
+                  "effects": [
+                    {
+                      "target": "elemental_school",
+                      "type": "GRANT_SPELL",
+                      "value": 2,
+                    },
+                    {
+                      "target": "signature_school_elemental",
+                      "type": "GRANT_ABILITY",
+                      "value": "Reduce MP cost by 1 for Elemental spells (once per Long Rest, regain on Initiative).",
+                    },
+                  ],
+                  "name": "Elemental",
+                },
+                {
+                  "description": "Specialize in mental alteration (buff & debuff).",
+                  "effects": [
+                    {
+                      "target": "enchantment_school",
+                      "type": "GRANT_SPELL",
+                      "value": 2,
+                    },
+                    {
+                      "target": "signature_school_enchantment",
+                      "type": "GRANT_ABILITY",
+                      "value": "Reduce MP cost by 1 for Enchantment spells (once per Long Rest, regain on Initiative).",
+                    },
+                  ],
+                  "name": "Enchantment",
+                },
+                {
+                  "description": "Specialize in positive energy (life and spirit).",
+                  "effects": [
+                    {
+                      "target": "invocation_school",
+                      "type": "GRANT_SPELL",
+                      "value": 2,
+                    },
+                    {
+                      "target": "signature_school_invocation",
+                      "type": "GRANT_ABILITY",
+                      "value": "Reduce MP cost by 1 for Invocation spells (once per Long Rest, regain on Initiative).",
+                    },
+                  ],
+                  "name": "Invocation",
+                },
+                {
+                  "description": "Specialize in negative energy (destroy matter or spirit).",
+                  "effects": [
+                    {
+                      "target": "nullification_school",
+                      "type": "GRANT_SPELL",
+                      "value": 2,
+                    },
+                    {
+                      "target": "signature_school_nullification",
+                      "type": "GRANT_ABILITY",
+                      "value": "Reduce MP cost by 1 for Nullification spells (once per Long Rest, regain on Initiative).",
+                    },
+                  ],
+                  "name": "Nullification",
+                },
+                {
+                  "description": "Specialize in physical alteration (change form, shape, or matter).",
+                  "effects": [
+                    {
+                      "target": "transmutation_school",
+                      "type": "GRANT_SPELL",
+                      "value": 2,
+                    },
+                    {
+                      "target": "signature_school_transmutation",
+                      "type": "GRANT_ABILITY",
+                      "value": "Reduce MP cost by 1 for Transmutation spells (once per Long Rest, regain on Initiative).",
+                    },
+                  ],
+                  "name": "Transmutation",
+                },
+              ],
+              "prompt": "Choose your specialized Spell School",
+            },
+          ],
+          "description": "You have completed training in a specialized School of Magic.",
+          "featureName": "Spell School Initiate",
+          "id": "wizard_spell_school_initiate",
+          "levelGained": 1,
+        },
+        "featureId": "wizard_spell_school_initiate",
+      },
+    ],
+    "subclassChoiceLevel": 3,
+    "unlockedFeatures": [
+      {
+        "description": "You gain the ability to cast arcane spells.",
+        "effects": [
+          {
+            "target": "Light_Armor",
+            "type": "GRANT_COMBAT_TRAINING",
+            "value": true,
+          },
+        ],
+        "featureName": "Spellcasting Path",
+        "id": "wizard_spellcasting_path",
+        "levelGained": 1,
+      },
+      {
+        "choices": [
+          {
+            "count": 1,
+            "id": "wizard_spell_school_initiate_0",
+            "options": [
+              {
+                "description": "Specialize in time, space, and gravity magic.",
+                "effects": [
+                  {
+                    "target": "astromancy_school",
+                    "type": "GRANT_SPELL",
+                    "value": 2,
+                  },
+                  {
+                    "target": "signature_school_astromancy",
+                    "type": "GRANT_ABILITY",
+                    "value": "Reduce MP cost by 1 for Astromancy spells (once per Long Rest, regain on Initiative).",
+                  },
+                ],
+                "name": "Astromancy",
+              },
+              {
+                "description": "Specialize in creating physical material from nothing.",
+                "effects": [
+                  {
+                    "target": "conjuration_school",
+                    "type": "GRANT_SPELL",
+                    "value": 2,
+                  },
+                  {
+                    "target": "signature_school_conjuration",
+                    "type": "GRANT_ABILITY",
+                    "value": "Reduce MP cost by 1 for Conjuration spells (once per Long Rest, regain on Initiative).",
+                  },
+                ],
+                "name": "Conjuration",
+              },
+              {
+                "description": "Specialize in gaining information through magic.",
+                "effects": [
+                  {
+                    "target": "divination_school",
+                    "type": "GRANT_SPELL",
+                    "value": 2,
+                  },
+                  {
+                    "target": "signature_school_divination",
+                    "type": "GRANT_ABILITY",
+                    "value": "Reduce MP cost by 1 for Divination spells (once per Long Rest, regain on Initiative).",
+                  },
+                ],
+                "name": "Divination",
+              },
+              {
+                "description": "Specialize in manipulating the elements.",
+                "effects": [
+                  {
+                    "target": "elemental_school",
+                    "type": "GRANT_SPELL",
+                    "value": 2,
+                  },
+                  {
+                    "target": "signature_school_elemental",
+                    "type": "GRANT_ABILITY",
+                    "value": "Reduce MP cost by 1 for Elemental spells (once per Long Rest, regain on Initiative).",
+                  },
+                ],
+                "name": "Elemental",
+              },
+              {
+                "description": "Specialize in mental alteration (buff & debuff).",
+                "effects": [
+                  {
+                    "target": "enchantment_school",
+                    "type": "GRANT_SPELL",
+                    "value": 2,
+                  },
+                  {
+                    "target": "signature_school_enchantment",
+                    "type": "GRANT_ABILITY",
+                    "value": "Reduce MP cost by 1 for Enchantment spells (once per Long Rest, regain on Initiative).",
+                  },
+                ],
+                "name": "Enchantment",
+              },
+              {
+                "description": "Specialize in positive energy (life and spirit).",
+                "effects": [
+                  {
+                    "target": "invocation_school",
+                    "type": "GRANT_SPELL",
+                    "value": 2,
+                  },
+                  {
+                    "target": "signature_school_invocation",
+                    "type": "GRANT_ABILITY",
+                    "value": "Reduce MP cost by 1 for Invocation spells (once per Long Rest, regain on Initiative).",
+                  },
+                ],
+                "name": "Invocation",
+              },
+              {
+                "description": "Specialize in negative energy (destroy matter or spirit).",
+                "effects": [
+                  {
+                    "target": "nullification_school",
+                    "type": "GRANT_SPELL",
+                    "value": 2,
+                  },
+                  {
+                    "target": "signature_school_nullification",
+                    "type": "GRANT_ABILITY",
+                    "value": "Reduce MP cost by 1 for Nullification spells (once per Long Rest, regain on Initiative).",
+                  },
+                ],
+                "name": "Nullification",
+              },
+              {
+                "description": "Specialize in physical alteration (change form, shape, or matter).",
+                "effects": [
+                  {
+                    "target": "transmutation_school",
+                    "type": "GRANT_SPELL",
+                    "value": 2,
+                  },
+                  {
+                    "target": "signature_school_transmutation",
+                    "type": "GRANT_ABILITY",
+                    "value": "Reduce MP cost by 1 for Transmutation spells (once per Long Rest, regain on Initiative).",
+                  },
+                ],
+                "name": "Transmutation",
+              },
+            ],
+            "prompt": "Choose your specialized Spell School",
+          },
+        ],
+        "description": "You have completed training in a specialized School of Magic.",
+        "featureName": "Spell School Initiate",
+        "id": "wizard_spell_school_initiate",
+        "levelGained": 1,
+      },
+      {
+        "description": "You can spend 1 AP and 1 MP to create a 1 Space diameter Arcane Sigil on the ground beneath you that lasts for 1 minute.",
+        "effects": [
+          {
+            "target": "arcane_sigil",
+            "type": "GRANT_ABILITY",
+            "value": "Create Arcane Sigil (1 AP + 1 MP): 1 Space area, choose School/Tag, creatures within have ADV on Spell Checks for that type. Can teleport sigil 1 AP within 10 spaces.",
+          },
+        ],
+        "featureName": "Arcane Sigil",
+        "id": "wizard_arcane_sigil",
+        "levelGained": 1,
+      },
+      {
+        "description": "You learn Arcane Spells with the Ritual Spell Tag and can cast them as rituals.",
+        "effects": [
+          {
+            "target": "ritual_caster",
+            "type": "GRANT_ABILITY",
+            "value": "Learn 1 Ritual Spell per Wizard level. Can study and learn Ritual Spells from external sources (hours = MP cost).",
+          },
+        ],
+        "featureName": "Ritual Caster",
+        "id": "wizard_ritual_caster",
+        "isFlavor": true,
+        "levelGained": 1,
+      },
+      {
+        "description": "When you complete a Long Rest, choose 1 Spell you know to become your Prepared Spell.",
+        "effects": [
+          {
+            "target": "prepared_spell",
+            "type": "GRANT_ABILITY",
+            "value": "Choose 1 Prepared Spell per Long Rest: Mana Limit Break (+1 to Spend Limit once per Long Rest, regain on Initiative) and Rehearsed Casting (opponents have DisADV in Spell Duels).",
+          },
+        ],
+        "featureName": "Prepared Spell",
+        "id": "wizard_prepared_spell",
+        "levelGained": 2,
+      },
+      {
+        "description": "Placeholder feature for Level 5. See CH6 for final design.",
+        "featureName": "Arcane Mastery (Placeholder)",
+        "id": "wizard_level_5_placeholder",
+        "isFlavor": true,
+        "levelGained": 5,
+      },
+    ],
+  },
+  "senses": [],
+  "spellsKnownSlots": [
+    {
+      "id": "global_spell_0",
+      "isGlobal": true,
+      "sourceName": "Wizard Progression",
+      "type": "spell",
+    },
+    {
+      "id": "global_spell_1",
+      "isGlobal": true,
+      "sourceName": "Wizard Progression",
+      "type": "spell",
+    },
+    {
+      "id": "global_spell_2",
+      "isGlobal": true,
+      "sourceName": "Wizard Progression",
+      "type": "spell",
+    },
+    {
+      "id": "global_spell_3",
+      "isGlobal": true,
+      "sourceName": "Wizard Progression",
+      "type": "spell",
+    },
+    {
+      "id": "global_spell_4",
+      "isGlobal": true,
+      "sourceName": "Wizard Progression",
+      "type": "spell",
+    },
+    {
+      "id": "global_spell_5",
+      "isGlobal": true,
+      "sourceName": "Wizard Progression",
+      "type": "spell",
+    },
+    {
+      "id": "global_spell_6",
+      "isGlobal": true,
+      "sourceName": "Wizard Progression",
+      "type": "spell",
+    },
+    {
+      "id": "global_spell_7",
+      "isGlobal": true,
+      "sourceName": "Wizard Progression",
+      "type": "spell",
+    },
+    {
+      "id": "global_spell_8",
+      "isGlobal": true,
+      "sourceName": "Wizard Progression",
+      "type": "spell",
+    },
+  ],
+  "stats": {
+    "className": "Wizard",
+    "finalAD": 11,
+    "finalAgility": 0,
+    "finalAttackSpellCheck": 7,
+    "finalAttributePoints": 14,
+    "finalCharisma": 1,
+    "finalCombatMastery": 3,
+    "finalDeathThreshold": 7,
+    "finalGritPoints": 3,
+    "finalHPMax": 10,
+    "finalInitiativeBonus": 3,
+    "finalIntelligence": 4,
+    "finalJumpDistance": 0,
+    "finalMPMax": 20,
+    "finalMartialCheck": 0,
+    "finalMight": -1,
+    "finalMoveSpeed": 5,
+    "finalPD": 15,
+    "finalPDR": 0,
+    "finalPrimeModifierAttribute": "intelligence",
+    "finalPrimeModifierValue": 4,
+    "finalRestPoints": 10,
+    "finalSPMax": 0,
+    "finalSaveAgility": 3,
+    "finalSaveCharisma": 4,
+    "finalSaveDC": 17,
+    "finalSaveIntelligence": 7,
+    "finalSaveMight": 2,
+    "manaSpendLimit": 3,
+    "staminaSpendLimit": 3,
+    "usePrimeCapRule": false,
+  },
+  "unresolvedChoices": [],
+  "validation": {
+    "attributeLimits": {
+      "agility": {
+        "base": 0,
+        "canDecrease": true,
+        "canIncrease": true,
+        "current": 0,
+        "exceeded": false,
+        "max": 4,
+        "traitBonuses": 0,
+      },
+      "charisma": {
+        "base": 1,
+        "canDecrease": true,
+        "canIncrease": true,
+        "current": 1,
+        "exceeded": false,
+        "max": 4,
+        "traitBonuses": 0,
+      },
+      "intelligence": {
+        "base": 4,
+        "canDecrease": true,
+        "canIncrease": false,
+        "current": 4,
+        "exceeded": false,
+        "max": 4,
+        "traitBonuses": 0,
+      },
+      "might": {
+        "base": -1,
+        "canDecrease": true,
+        "canIncrease": true,
+        "current": -1,
+        "exceeded": false,
+        "max": 4,
+        "traitBonuses": 0,
+      },
+    },
+    "errors": [],
+    "isValid": true,
+    "masteryLimits": {
+      "baselineSkillCap": 2,
+      "baselineTradeCap": 2,
+      "canSelectAdept": true,
+      "currentAdeptCount": 0,
+      "maxAdeptCount": 999,
+      "maxSkillMastery": 2,
+      "maxTradeMastery": 2,
+      "skillEffectiveCaps": {},
+      "skillFeatureElevationsAvailable": 0,
+      "skillLimitElevations": {},
+      "tradeEffectiveCaps": {},
+      "tradeFeatureElevationsAvailable": 0,
+      "tradeLimitElevations": {},
+    },
+    "warnings": [],
+  },
+  "vulnerabilities": [],
+}
+`;

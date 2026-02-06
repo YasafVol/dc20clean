@@ -325,7 +325,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				const originalCreatedAt = allChars.find((c) => c.id === originalId)?.createdAt;
 
 				await completeCharacter(state, {
-					onShowSnackbar: (message: string) => {
+				onShowSnackbar: (_message: string) => {
 						setSnackbarMessage('Character leveled up successfully!');
 						setShowSnackbar(true);
 					},

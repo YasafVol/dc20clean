@@ -1,9 +1,6 @@
 import React from 'react';
 import type { Subclass, ClassFeature } from '../../lib/rulesdata/schemas/character.schema';
-import {
-	getSubclassByName,
-	getFeatureChoiceKey
-} from '../../lib/rulesdata/classes-data/classUtils';
+import { getFeatureChoiceKey } from '../../lib/rulesdata/classes-data/classUtils';
 import { barbarianClass } from '../../lib/rulesdata/classes-data/features/barbarian_features';
 import { clericClass } from '../../lib/rulesdata/classes-data/features/cleric_features';
 import { druidClass } from '../../lib/rulesdata/classes-data/features/druid_features';
@@ -17,15 +14,6 @@ import { warlockClass } from '../../lib/rulesdata/classes-data/features/warlock_
 import { bardClass } from '../../lib/rulesdata/classes-data/features/bard_features';
 import { commanderClass } from '../../lib/rulesdata/classes-data/features/commander_features';
 import { monkClass } from '../../lib/rulesdata/classes-data/features/monk_features';
-import {
-	FeatureCard,
-	FeatureTitle,
-	FeatureDescription,
-	BenefitsList,
-	BenefitItem,
-	BenefitName,
-	BenefitDescription
-} from './styles/shared/FeatureDisplay.styles';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { cn } from '../../lib/utils';

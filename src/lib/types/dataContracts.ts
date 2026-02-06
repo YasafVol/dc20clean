@@ -70,6 +70,12 @@ export interface CharacterState {
 	};
 	// Active conditions (IDs from conditions.data.ts that are currently affecting the character)
 	activeConditions?: string[];
+	// Defense overrides from manual edits (new system)
+	defenseOverrides?: {
+		precisionAD?: number;
+		areaAD?: number;
+		precisionDR?: number;
+	};
 	// attacks are an array of attack objects. We enforce array-only shape.
 	attacks?: any[];
 	spells?: any[];

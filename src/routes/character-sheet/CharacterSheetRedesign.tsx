@@ -1,6 +1,32 @@
 import React, { useState, useRef } from 'react';
-import styled from 'styled-components';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
+
+// Import styled components
+import {
+	PageContainer,
+	Header,
+	HeaderContent,
+	CharacterIdentity,
+	CharacterName,
+	CharacterMeta,
+	MetaItem,
+	ActionButtons,
+	ActionButton,
+	BackButton,
+	MobileMenuButton,
+	MainContent,
+	TwoColumnLayout,
+	LeftColumn,
+	RightColumn,
+	TabContainer,
+	TabNav,
+	Tab,
+	TabContent,
+	SectionCard,
+	SectionTitle,
+	LoadingContainer,
+	ErrorContainer
+} from './CharacterSheetRedesign.styled';
 
 // Use Provider hooks
 import {
@@ -31,8 +57,6 @@ import Maneuvers from './components/Maneuvers';
 import Attacks from './components/Attacks';
 import Inventory from './components/Inventory';
 import Features from './components/Features';
-import Conditions from './components/Conditions';
-import ConditionsReference from './components/ConditionsReference';
 import ActiveConditionsTracker from './components/ActiveConditionsTracker';
 import Currency from './components/Currency';
 import PlayerNotes from './components/PlayerNotes';
@@ -43,367 +67,20 @@ import FeaturePopup from './components/FeaturePopup';
 import WeaponPopup from './components/WeaponPopup';
 import InventoryPopup from './components/InventoryPopup';
 import CalculationTooltip from './components/shared/CalculationTooltip';
-import DeathExhaustion from './components/DeathExhaustion';
 import KnowledgeTrades from './components/KnowledgeTrades';
 import Languages from './components/Languages';
 import Attributes from './components/Attributes';
 import MobileBottomNav from './components/shared/MobileBottomNav';
 import HamburgerDrawer from './components/shared/HamburgerDrawer';
+import Snackbar from '../../components/Snackbar';
 
 // Import theme
-import { theme, media } from './styles/theme';
 import { logger } from '../../lib/utils/logger';
 
 interface CharacterSheetRedesignProps {
 	characterId: string;
 	onBack?: () => void;
 }
-
-// Styled components with new theme
-const PageContainer = styled.div`
-	min-height: 100vh;
-	background: ${theme.colors.bg.primary};
-	color: ${theme.colors.text.primary};
-	font-family: ${theme.typography.fontFamily.primary};
-`;
-
-const Header = styled(motion.header)`
-	background: ${theme.colors.bg.elevated};
-	border-bottom: 1px solid ${theme.colors.border.default};
-	padding: ${theme.spacing[6]} ${theme.spacing[8]};
-	box-shadow: ${theme.shadows.md};
-	position: sticky;
-	top: 0;
-	z-index: ${theme.zIndex.sticky};
-	backdrop-filter: blur(10px);
-	background: var(--bg-primary);
-
-	${media.tablet} {
-		padding: ${theme.spacing[4]} ${theme.spacing[6]};
-	}
-
-	${media.mobile} {
-		padding: ${theme.spacing[3]} ${theme.spacing[4]};
-	}
-`;
-
-const HeaderContent = styled.div`
-	max-width: 1600px;
-	margin: 0 auto;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	gap: ${theme.spacing[6]};
-`;
-
-const CharacterIdentity = styled.div`
-	display: flex;
-	flex-direction: column;
-	gap: ${theme.spacing[2]};
-`;
-
-const CharacterName = styled.h1`
-	font-size: ${theme.typography.fontSize['4xl']};
-	font-weight: ${theme.typography.fontWeight.bold};
-	color: ${theme.colors.text.primary};
-	margin: 0;
-	line-height: ${theme.typography.lineHeight.tight};
-
-	${media.tablet} {
-		font-size: ${theme.typography.fontSize['2xl']};
-	}
-
-	${media.mobile} {
-		font-size: ${theme.typography.fontSize.xl};
-	}
-`;
-
-const CharacterMeta = styled.div`
-	display: flex;
-	gap: ${theme.spacing[4]};
-	align-items: center;
-	font-size: ${theme.typography.fontSize.base};
-	color: ${theme.colors.text.secondary};
-	flex-wrap: wrap;
-
-	${media.mobile} {
-		font-size: ${theme.typography.fontSize.sm};
-		gap: ${theme.spacing[2]};
-	}
-`;
-
-const MetaItem = styled.span`
-	display: flex;
-	align-items: center;
-	gap: ${theme.spacing[2]};
-
-	&:not(:last-child)::after {
-		content: '•';
-		margin-left: ${theme.spacing[4]};
-		color: ${theme.colors.text.muted};
-	}
-`;
-
-const ActionButtons = styled.div`
-	display: flex;
-	gap: ${theme.spacing[3]};
-
-	${media.mobile} {
-		display: none; /* Hide on mobile - use hamburger menu instead */
-	}
-`;
-
-const ActionButton = styled(motion.button)`
-	background: ${theme.colors.bg.tertiary};
-	color: ${theme.colors.text.primary};
-	border: 1px solid ${theme.colors.border.default};
-	border-radius: ${theme.borderRadius.md};
-	padding: ${theme.spacing[3]} ${theme.spacing[4]};
-	font-size: ${theme.typography.fontSize.sm};
-	font-weight: ${theme.typography.fontWeight.medium};
-	cursor: pointer;
-	transition: all ${theme.transitions.fast};
-	display: flex;
-	align-items: center;
-	gap: ${theme.spacing[2]};
-
-	&:hover {
-		background: ${theme.colors.accent.primary};
-		color: ${theme.colors.text.inverse};
-		border-color: ${theme.colors.accent.primary};
-		box-shadow: ${theme.shadows.md};
-	}
-
-	&:active {
-		transform: scale(0.98);
-	}
-`;
-
-const BackButton = styled(ActionButton)`
-	background: transparent;
-
-	&:hover {
-		background: ${theme.colors.bg.tertiary};
-		color: ${theme.colors.text.primary};
-	}
-`;
-
-const MobileMenuButton = styled(motion.button)`
-	display: none;
-
-	${media.mobile} {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: ${theme.colors.bg.tertiary};
-		color: ${theme.colors.text.primary};
-		border: 1px solid ${theme.colors.border.default};
-		border-radius: ${theme.borderRadius.md};
-		padding: ${theme.spacing[2]};
-		width: 40px;
-		height: 40px;
-		font-size: ${theme.typography.fontSize.xl};
-		cursor: pointer;
-	}
-`;
-
-const MainContent = styled.main`
-	max-width: 1600px;
-	margin: 0 auto;
-	padding: ${theme.spacing[8]};
-
-	${media.tablet} {
-		padding: ${theme.spacing[6]};
-	}
-
-	${media.mobile} {
-		padding: ${theme.spacing[4]};
-		padding-bottom: 80px; /* Space for mobile bottom nav */
-	}
-`;
-
-const TwoColumnLayout = styled.div`
-	display: grid;
-	grid-template-columns: 1fr 2fr;
-	gap: ${theme.spacing[6]};
-
-	${media.tablet} {
-		grid-template-columns: 280px 1fr;
-		gap: ${theme.spacing[4]};
-	}
-
-	${media.mobile} {
-		grid-template-columns: 1fr;
-		gap: ${theme.spacing[3]};
-	}
-`;
-
-const LeftColumn = styled.div`
-	display: flex;
-	flex-direction: column;
-	gap: ${theme.spacing[6]};
-`;
-
-const RightColumn = styled.div`
-	display: flex;
-	flex-direction: column;
-	gap: ${theme.spacing[6]};
-`;
-
-const ThreeColumnLayout = styled.div`
-	display: grid;
-	grid-template-columns: 280px 1fr 300px;
-	gap: ${theme.spacing[6]};
-	margin-top: ${theme.spacing[6]};
-
-	@media (max-width: 1400px) {
-		grid-template-columns: 260px 1fr 280px;
-		gap: ${theme.spacing[4]};
-	}
-
-	@media (max-width: 1200px) {
-		grid-template-columns: 1fr;
-	}
-`;
-
-const Column = styled.div`
-	display: flex;
-	flex-direction: column;
-	gap: ${theme.spacing[6]};
-`;
-
-const TabContainer = styled.div`
-	background: ${theme.colors.bg.elevated};
-	border-radius: ${theme.borderRadius.xl};
-	box-shadow: ${theme.shadows.lg};
-	overflow: hidden;
-	border: 1px solid ${theme.colors.border.default};
-
-	${media.mobile} {
-		max-width: 100vw;
-		overflow-x: hidden;
-	}
-`;
-
-const TabNav = styled.div`
-	display: flex;
-	border-bottom: 1px solid ${theme.colors.border.default};
-	background: ${theme.colors.bg.secondary};
-	overflow-x: auto;
-	scrollbar-width: thin;
-	scrollbar-color: ${theme.colors.border.default} transparent;
-
-	&::-webkit-scrollbar {
-		height: 4px;
-	}
-
-	&::-webkit-scrollbar-track {
-		background: transparent;
-	}
-
-	&::-webkit-scrollbar-thumb {
-		background: ${theme.colors.border.default};
-		border-radius: ${theme.borderRadius.full};
-	}
-
-	/* Hide desktop tabs on mobile - use bottom nav instead */
-	${media.mobile} {
-		display: none;
-	}
-`;
-
-const Tab = styled(motion.button)<{ $active: boolean }>`
-	background: ${(props) => (props.$active ? theme.colors.bg.elevated : 'transparent')};
-	color: ${(props) => (props.$active ? theme.colors.accent.primary : theme.colors.text.secondary)};
-	border: none;
-	padding: ${theme.spacing[4]} ${theme.spacing[6]};
-	font-size: ${theme.typography.fontSize.base};
-	font-weight: ${theme.typography.fontWeight.medium};
-	cursor: pointer;
-	transition: all ${theme.transitions.fast};
-	white-space: nowrap;
-	position: relative;
-	display: flex;
-	align-items: center;
-	gap: ${theme.spacing[2]};
-
-	${media.hover} {
-		&:hover {
-			background: ${theme.colors.bg.tertiary};
-			color: ${theme.colors.text.primary};
-		}
-	}
-
-	${media.tablet} {
-		padding: ${theme.spacing[3]} ${theme.spacing[4]};
-		font-size: ${theme.typography.fontSize.sm};
-	}
-
-	${(props) =>
-		props.$active &&
-		`
-		&::after {
-			content: '';
-			position: absolute;
-			bottom: 0;
-			left: 0;
-			right: 0;
-			height: 2px;
-			background: ${theme.colors.accent.primary};
-		}
-	`}
-`;
-
-const TabBadge = styled.span`
-	background: ${theme.colors.accent.primary};
-	color: ${theme.colors.text.inverse};
-	border-radius: ${theme.borderRadius.full};
-	padding: 2px 6px;
-	font-size: ${theme.typography.fontSize.xs};
-	font-weight: ${theme.typography.fontWeight.bold};
-	line-height: 1;
-	min-width: 18px;
-	text-align: center;
-`;
-
-const TabContent = styled(motion.div)`
-	padding: ${theme.spacing[6]};
-	overflow-x: hidden;
-	max-width: 100%;
-
-	${media.mobile} {
-		padding: ${theme.spacing[4]};
-	}
-`;
-
-const SectionCard = styled(motion.div)<{ $withMarginBottom?: boolean }>`
-	background: ${theme.colors.bg.secondary};
-	border-radius: ${theme.borderRadius.lg};
-	padding: ${theme.spacing[6]};
-	box-shadow: ${theme.shadows.md};
-	border: 1px solid ${theme.colors.border.default};
-	${(props) => props.$withMarginBottom && `margin-bottom: ${theme.spacing[4]};`}
-`;
-
-const SectionTitle = styled.h2`
-	font-size: ${theme.typography.fontSize.xl};
-	font-weight: ${theme.typography.fontWeight.bold};
-	color: ${theme.colors.text.primary};
-	margin: 0 0 ${theme.spacing[4]} 0;
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
-`;
-
-const LoadingContainer = styled(motion.div)`
-	padding: ${theme.spacing[8]};
-	text-align: center;
-`;
-
-const ErrorContainer = styled(motion.div)`
-	padding: ${theme.spacing[8]};
-	text-align: center;
-	color: ${theme.colors.accent.danger};
-`;
 
 type TabId =
 	| 'attacks'
@@ -425,12 +102,10 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 	const [activeTab, setActiveTab] = useState<TabId>('attacks');
 	const [hamburgerDrawerOpen, setHamburgerDrawerOpen] = useState(false);
-	const [autoRollConfig, setAutoRollConfig] = useState<{
-		trigger: boolean;
-		diceType: 'd4' | 'd6' | 'd8' | 'd10' | 'd12' | 'd20';
-		bonus?: number;
-		mode?: 'normal' | 'advantage' | 'disadvantage' | 'no-d20';
-	}>({ trigger: false, diceType: 'd20' });
+	const [snackbarMessage, setSnackbarMessage] = useState('');
+	const [snackbarVariant, setSnackbarVariant] = useState<'success' | 'error' | 'info'>('success');
+	const [showSnackbar, setShowSnackbar] = useState(false);
+	const [snackbarKey, setSnackbarKey] = useState(0);
 	const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
 	const [selectedWeapon, setSelectedWeapon] = useState<Weapon | null>(null);
 	const [selectedInventoryItem, setSelectedInventoryItem] = useState<{
@@ -459,9 +134,33 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	// Ref for tooltip delay timeout
 	const tooltipTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+	// Helper to show snackbar with proper state reset
+	const showSnackbarWithMessage = (message: string, variant: 'success' | 'error' | 'info') => {
+		// Hide existing snackbar first to ensure clean slate
+		setShowSnackbar(false);
+		// Use setTimeout to ensure state updates complete before showing new message
+		setTimeout(() => {
+			setSnackbarMessage(message);
+			setSnackbarVariant(variant);
+			setSnackbarKey((prev) => prev + 1);
+			setShowSnackbar(true);
+		}, 50);
+	};
+
+	// Defense overrides - track manual modifications
+	const [defenseOverrides, setDefenseOverrides] = useState<{
+		precisionAD?: number;
+		areaAD?: number;
+		precisionDR?: number;
+	}>({});
+
 	// Handle skill/save clicks to auto-populate dice roller
 	const handleSkillClick = (skillName: string, bonus: number) => {
-		logger.debug('ui', 'Skill clicked for dice roller', { skillName, bonus, refExists: !!diceRollerRef.current });
+		logger.debug('ui', 'Skill clicked for dice roller', {
+			skillName,
+			bonus,
+			refExists: !!diceRollerRef.current
+		});
 
 		// Determine action type based on skill name
 		let actionType:
@@ -493,20 +192,16 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 		// Check for active conditions that affect this action
 		const activeConditions = state.character?.characterState?.activeConditions || [];
+		let rollMode: 'normal' | 'advantage' | 'disadvantage' | 'no-d20' = 'normal';
+
 		if (actionType && activeConditions.length > 0) {
 			const diceModifier = getDiceModifierForAction(activeConditions, actionType);
-
-			if (diceModifier.mode !== 'normal') {
-				logger.debug('ui', 'Applying condition-based dice modifier', diceModifier);
-				// Set the roll mode before rolling
-				diceRollerRef.current?.setRollMode(diceModifier.mode);
-			}
-		} else {
-			// Reset to normal if no conditions apply
-			diceRollerRef.current?.setRollMode('normal');
+			rollMode = diceModifier.mode;
+			logger.debug('ui', 'Applying condition-based dice modifier', { actionType, diceModifier });
 		}
 
-		diceRollerRef.current?.addRollWithModifier(bonus, skillName);
+		// Always pass mode to addRollWithModifier to prevent race conditions and mode persistence
+		diceRollerRef.current?.addRollWithModifier(bonus, skillName, rollMode);
 	};
 
 	// Use Provider hooks
@@ -516,10 +211,10 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		updateMP,
 		updateSP,
 		updateTempHP,
-		updateActionPoints,
 		updateGritPoints,
 		updateRestPoints,
 		toggleActiveCondition,
+		updateDefenseOverrides: updateDefenseOverridesContext,
 		saveStatus,
 		retryFailedSave
 	} = useCharacterSheet();
@@ -545,6 +240,13 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			}
 		};
 	}, []);
+
+	// Load defense overrides from character state on mount
+	React.useEffect(() => {
+		if (state.character?.characterState?.defenseOverrides) {
+			setDefenseOverrides(state.character.characterState.defenseOverrides);
+		}
+	}, [state.character?.id]); // Only re-run when character changes
 
 	const characterData = state.character;
 	const loading = state.loading;
@@ -635,31 +337,35 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 	// Extract character data
 	const currentHP = resources?.current?.currentHP ?? 0;
-	const maxHP = characterData.finalHPMax ?? 0;
+	const maxHP = calculatedData?.breakdowns?.hpMax?.total ?? characterData.finalHPMax ?? 0;
 	const tempHP = resources?.current?.tempHP ?? 0;
 	const currentMP = resources?.current?.currentMP ?? 0;
-	const maxMP = characterData.finalMPMax ?? 0;
+	const maxMP = calculatedData?.breakdowns?.mpMax?.total ?? characterData.finalMPMax ?? 0;
 	const currentSP = resources?.current?.currentSP ?? 0;
-	const maxSP = characterData.finalSPMax ?? 0;
+	const maxSP = calculatedData?.breakdowns?.spMax?.total ?? characterData.finalSPMax ?? 0;
 
 	// Rest and Grit values
 	const currentRest = resources?.current?.currentRestPoints ?? 0;
-	const maxRest = characterData.finalRestPoints ?? 0;
+	const maxRest = calculatedData?.breakdowns?.restPoints?.total ?? characterData.finalRestPoints ?? 0;
 	const currentGrit = resources?.current?.currentGritPoints ?? 0;
-	const maxGrit = characterData.finalGritPoints ?? 0;
+	const maxGrit = calculatedData?.breakdowns?.gritPoints?.total ?? characterData.finalGritPoints ?? 0;
 
 	const primeAttribute = characterData.finalPrimeModifierAttribute || 'charisma';
 	const primeValue = characterData.finalPrimeModifierValue || 0;
 	const combatMastery = characterData.finalCombatMastery || 0;
 
-	// Get defenses and combat stats from character data
-	const precisionAD = characterData.finalPD ?? 10;
-	const areaAD = characterData.finalAD ?? 10;
-	const precisionDR = characterData.finalPDR ?? 0;
+	// Get defenses and combat stats from character data (with manual overrides if set)
+	const basePrecisionAD = characterData.finalPD ?? 10;
+	const baseAreaAD = characterData.finalAD ?? 10;
+	const basePrecisionDR = characterData.finalPDR ?? 0;
 
-	// Combat stats - these would typically come from calculations
-	const attackBonus = primeValue; // Simplified for now
-	const saveDC = 10 + primeValue; // Simplified for now
+	const precisionAD = defenseOverrides.precisionAD ?? basePrecisionAD;
+	const areaAD = defenseOverrides.areaAD ?? baseAreaAD;
+	const precisionDR = defenseOverrides.precisionDR ?? basePrecisionDR;
+
+	// Combat stats - use manual calculation since breakdowns may be incorrect
+	const attackBonus = (combatMastery ?? 0) + primeValue;
+	const saveDC = 10 + (combatMastery ?? 0) + primeValue;
 	const initiative = characterData.finalAgility || 0; // Simplified for now
 
 	// Get attribute values for AttributeCards
@@ -815,9 +521,119 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			URL.revokeObjectURL(url);
 		} catch (err) {
 			console.error('Export PDF failed', err);
-			alert('Failed to export PDF: ' + (err instanceof Error ? err.message : String(err)));
+			setSnackbarMessage(
+				'Failed to export PDF: ' + (err instanceof Error ? err.message : String(err))
+			);
+			setShowSnackbar(true);
 		}
 	};
+
+	// Copy character summary to clipboard
+	const copyCharacterToClipboard = async () => {
+		if (!state.character) return;
+
+		try {
+			// Export full character as JSON for reimporting
+			const characterJson = JSON.stringify(state.character, null, 2);
+			await navigator.clipboard.writeText(characterJson);
+			showSnackbarWithMessage('Character JSON copied to clipboard!', 'success');
+		} catch (err) {
+			logger.error('ui', 'Failed to copy to clipboard', {
+				error: err instanceof Error ? err.message : String(err)
+			});
+			showSnackbarWithMessage('Failed to copy to clipboard', 'error');
+		}
+	};
+
+	// Handle defense value updates
+	const updateDefense = (type: 'precisionAD' | 'areaAD' | 'precisionDR', value: number) => {
+		const newOverrides = { ...defenseOverrides, [type]: value };
+		setDefenseOverrides(newOverrides);
+		updateDefenseOverridesContext(newOverrides); // Persist to character state
+	};
+
+	// Check if Combat Stats box has any overrides that differ from base values
+	const hasCombatStatsOverride =
+		(defenseOverrides.precisionAD !== undefined &&
+			defenseOverrides.precisionAD !== basePrecisionAD) ||
+		(defenseOverrides.areaAD !== undefined && defenseOverrides.areaAD !== baseAreaAD) ||
+		(defenseOverrides.precisionDR !== undefined &&
+			defenseOverrides.precisionDR !== basePrecisionDR);
+
+	// Reset Combat Stats to calculated values
+	const resetCombatStats = () => {
+		setDefenseOverrides({});
+		updateDefenseOverridesContext({}); // Clear from character state
+		showSnackbarWithMessage('Combat stats reset to calculated values', 'info');
+	};
+
+	// Other boxes don't have override tracking (HP/MP/SP/Rest/Grit are gameplay values)
+	const hasHealthOverride = false;
+	const hasResourcesOverride = false;
+	const hasRecoveryOverride = false;
+
+	// Get tooltip data based on type
+	const getTooltipData = () => {
+		switch (tooltipState.type) {
+			case 'hp':
+				return {
+					title: 'Hit Points Calculation',
+					breakdown: calculatedData?.breakdowns?.hpMax
+				};
+			case 'mana':
+				return {
+					title: 'Mana Points Calculation',
+					breakdown: calculatedData?.breakdowns?.mpMax
+				};
+			case 'stamina':
+				return {
+					title: 'Stamina Points Calculation',
+					breakdown: calculatedData?.breakdowns?.spMax
+				};
+			case 'rest':
+				return {
+					title: 'Rest Points Calculation',
+					breakdown: calculatedData?.breakdowns?.restPoints
+				};
+			case 'grit':
+				return {
+					title: 'Grit Points Calculation',
+					breakdown: calculatedData?.breakdowns?.gritPoints
+				};
+			case 'attack':
+				return {
+					title: 'Attack/Spell Bonus Calculation',
+					breakdown: calculatedData?.breakdowns?.attackSpellCheck || {
+						base: combatMastery,
+						total: (combatMastery ?? 0) + primeValue,
+						effects: [{ name: `Prime Modifier (${primeAttribute})`, value: primeValue }]
+					}
+				};
+			case 'precisionAD':
+				return {
+					title: 'Precision AD Calculation',
+					breakdown: calculatedData?.breakdowns?.pd
+				};
+			case 'areaAD':
+				return {
+					title: 'Area AD Calculation',
+					breakdown: calculatedData?.breakdowns?.ad
+				};
+			case 'precisionDR':
+				return {
+					title: 'Precision DR Calculation',
+					breakdown: calculatedData?.breakdowns?.pdr || {
+						base: precisionDR,
+						total: precisionDR,
+						effects: []
+					}
+				};
+			default:
+				return { title: '', breakdown: null };
+		}
+	};
+
+	const tooltipData = getTooltipData();
 
 	return (
 		<PageContainer>
@@ -853,7 +669,11 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 						<ActionButton whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
 							🔄 Revert All
 						</ActionButton>
-						<ActionButton whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+						<ActionButton
+							onClick={copyCharacterToClipboard}
+							whileHover={{ scale: 1.05 }}
+							whileTap={{ scale: 0.95 }}
+						>
 							📋 Copy
 						</ActionButton>
 						<ActionButton
@@ -910,12 +730,20 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 								saveDC={saveDC}
 								initiative={initiative}
 								activeConditions={state.character?.characterState?.activeConditions || []}
+								hasHealthOverride={hasHealthOverride}
+								hasResourcesOverride={hasResourcesOverride}
+								hasRecoveryOverride={hasRecoveryOverride}
+								hasCombatStatsOverride={hasCombatStatsOverride}
 								onHPChange={updateHP}
 								onTempHPChange={updateTempHP}
 								onManaChange={updateMP}
 								onStaminaChange={updateSP}
 								onRestChange={updateRestPoints}
 								onGritChange={updateGritPoints}
+								onPrecisionADChange={(value) => updateDefense('precisionAD', value)}
+								onAreaADChange={(value) => updateDefense('areaAD', value)}
+								onPrecisionDRChange={(value) => updateDefense('precisionDR', value)}
+								onCombatStatsReset={resetCombatStats}
 								onSkillClick={handleSkillClick}
 								onHPMouseEnter={(e) => handleMouseEnter('hp', e)}
 								onHPMouseLeave={handleMouseLeave}
@@ -971,21 +799,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 													}}
 												/>
 											)}
-											{activeTab === 'spells' && (
-												<Spells
-													onSpellClick={(spell) => {
-														setAutoRollConfig({
-															trigger: true,
-															diceType: 'd20',
-															mode: 'normal'
-														});
-														setTimeout(
-															() => setAutoRollConfig({ trigger: false, diceType: 'd20' }),
-															200
-														);
-													}}
-												/>
-											)}
+											{activeTab === 'spells' && <Spells onSpellClick={() => {}} />}
 											{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
 											{activeTab === 'maneuvers' && <Maneuvers onManeuverClick={() => {}} />}
 											{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
@@ -1062,18 +876,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 										}}
 									/>
 								)}
-								{activeTab === 'spells' && (
-									<Spells
-										onSpellClick={(spell) => {
-											setAutoRollConfig({
-												trigger: true,
-												diceType: 'd20',
-												mode: 'normal'
-											});
-											setTimeout(() => setAutoRollConfig({ trigger: false, diceType: 'd20' }), 200);
-										}}
-									/>
-								)}
+								{activeTab === 'spells' && <Spells onSpellClick={() => {}} />}
 								{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
 								{activeTab === 'maneuvers' && <Maneuvers onManeuverClick={() => {}} />}
 								{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
@@ -1126,57 +929,8 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			<WeaponPopup weapon={selectedWeapon} onClose={closeWeaponPopup} />
 			<InventoryPopup selectedInventoryItem={selectedInventoryItem} onClose={closeInventoryPopup} />
 			<CalculationTooltip
-				title={
-					tooltipState.type === 'hp'
-						? 'Hit Points Calculation'
-						: tooltipState.type === 'mana'
-							? 'Mana Points Calculation'
-							: tooltipState.type === 'stamina'
-								? 'Stamina Points Calculation'
-								: tooltipState.type === 'rest'
-									? 'Rest Points Calculation'
-									: tooltipState.type === 'grit'
-										? 'Grit Points Calculation'
-										: tooltipState.type === 'attack'
-											? 'Attack/Spell Bonus Calculation'
-											: tooltipState.type === 'precisionAD'
-												? 'Precision AD Calculation'
-												: tooltipState.type === 'areaAD'
-													? 'Area AD Calculation'
-													: 'Precision DR'
-				}
-				breakdown={
-					tooltipState.type === 'hp'
-						? calculatedData?.breakdowns?.hpMax
-						: tooltipState.type === 'mana'
-							? calculatedData?.breakdowns?.mpMax
-							: tooltipState.type === 'stamina'
-								? calculatedData?.breakdowns?.spMax
-								: tooltipState.type === 'rest'
-									? calculatedData?.breakdowns?.hpMax
-									: tooltipState.type === 'grit'
-										? calculatedData?.breakdowns?.gritPoints
-										: tooltipState.type === 'attack'
-											? {
-													base: combatMastery,
-													total: attackBonus,
-													effects: [
-														{
-															name: `Prime Modifier (${primeAttribute})`,
-															value: primeValue
-														}
-													]
-												}
-											: tooltipState.type === 'precisionAD'
-												? calculatedData?.breakdowns?.pd
-												: tooltipState.type === 'areaAD'
-													? calculatedData?.breakdowns?.ad
-													: {
-															base: precisionDR,
-															total: precisionDR,
-															effects: []
-														}
-				}
+				title={tooltipData.title}
+				breakdown={tooltipData.breakdown}
 				visible={tooltipState.visible}
 				positionX={tooltipState.x}
 				positionY={tooltipState.y}
@@ -1198,9 +952,27 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				onItemClick={setActiveTab}
 				activeItemId={activeTab}
 			/>
+
+			{/* Dice Roller Component */}
+			<DiceRoller ref={diceRollerRef} />
+
+			{/* Auto-save Status Indicator */}
+			<AutoSaveIndicator status={saveStatus} onRetry={retryFailedSave} />
+
+			{/* Feature Details Popup */}
+			<FeaturePopup feature={selectedFeature} onClose={closeFeaturePopup} />
+
+			{/* Snackbar for notifications */}
+			<Snackbar
+				key={snackbarKey}
+				message={snackbarMessage}
+				isVisible={showSnackbar}
+				onClose={() => setShowSnackbar(false)}
+				duration={3000}
+				variant={snackbarVariant}
+			/>
 		</PageContainer>
 	);
 };
 
 export default CharacterSheetRedesign;
-

@@ -7,8 +7,7 @@ import { cn } from '../../lib/utils';
 import { Button } from '../../components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
-import { ScrollArea } from '../../components/ui/scroll-area';
-import { Wand2, Info, Search, Lock, Unlock } from 'lucide-react';
+import { Wand2, Info, Search, Lock } from 'lucide-react';
 import { debug } from '../../lib/utils/debug';
 
 // Cost filter options

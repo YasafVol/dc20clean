@@ -23,7 +23,7 @@ export default ts.config(
 			// Discourage console.* usage - use logger service instead
 			// Set to 'warn' during migration; change to 'error' when migration is complete
 			// See: docs/systems/LOGGING_SYSTEM.MD
-			'no-console': ['warn', { allow: [] }],
+			'no-console': 'warn',
 			// Prevent JSON.parse/stringify in character state management (except in storageUtils.ts)
 			'no-restricted-syntax': [
 				'error',
@@ -44,6 +44,20 @@ export default ts.config(
 		files: ['**/storageUtils.ts'],
 		rules: {
 			// Allow JSON methods only in storage utilities
+			'no-restricted-syntax': 'off'
+		}
+	},
+	{
+		// Allow JSON methods in scripts (data processing, file generation)
+		files: ['scripts/**/*.ts', 'scripts/**/*.mjs', 'scripts/**/*.js'],
+		rules: {
+			'no-restricted-syntax': 'off'
+		}
+	},
+	{
+		// Allow JSON methods in e2e tests (test data serialization)
+		files: ['e2e/**/*.ts', '**/*.e2e.spec.ts'],
+		rules: {
 			'no-restricted-syntax': 'off'
 		}
 	},

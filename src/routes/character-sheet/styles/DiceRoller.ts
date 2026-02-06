@@ -358,9 +358,9 @@ export const StyledDiceContainer = styled.div`
 	align-items: center;
 	margin: 1rem 0;
 	padding: 1rem;
-	background: radial-gradient(circle, rgba(255, 69, 0, 0.1) 0%, rgba(139, 69, 19, 0.1) 100%);
+	background: linear-gradient(135deg, var(--crystal-primary-10), var(--crystal-tertiary-30));
 	border-radius: 8px;
-	border: 1px solid rgba(255, 69, 0, 0.3);
+	border: 1px solid var(--crystal-primary-30);
 `;
 
 // Individual dice icons

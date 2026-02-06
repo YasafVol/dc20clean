@@ -192,20 +192,16 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 		// Check for active conditions that affect this action
 		const activeConditions = state.character?.characterState?.activeConditions || [];
+		let rollMode: 'normal' | 'advantage' | 'disadvantage' | 'no-d20' = 'normal';
+
 		if (actionType && activeConditions.length > 0) {
 			const diceModifier = getDiceModifierForAction(activeConditions, actionType);
-
-			if (diceModifier.mode !== 'normal') {
-				logger.debug('ui', 'Applying condition-based dice modifier', diceModifier);
-				// Set the roll mode before rolling
-				diceRollerRef.current?.setRollMode(diceModifier.mode);
-			}
-		} else {
-			// Reset to normal if no conditions apply
-			diceRollerRef.current?.setRollMode('normal');
+			rollMode = diceModifier.mode;
+			logger.debug('ui', 'Applying condition-based dice modifier', { actionType, diceModifier });
 		}
 
-		diceRollerRef.current?.addRollWithModifier(bonus, skillName);
+		// Always pass mode to addRollWithModifier to prevent race conditions and mode persistence
+		diceRollerRef.current?.addRollWithModifier(bonus, skillName, rollMode);
 	};
 
 	// Use Provider hooks

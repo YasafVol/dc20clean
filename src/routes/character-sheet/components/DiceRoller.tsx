@@ -57,7 +57,7 @@ interface DiceRollerProps {
 }
 
 export interface DiceRollerRef {
-	addRollWithModifier: (modifier: number, label?: string) => void;
+	addRollWithModifier: (modifier: number, label?: string, mode?: RollMode) => void;
 	addDiceType: (type: DiceType, count?: number) => void;
 	clearAllDice: () => void;
 	expand: () => void;
@@ -130,8 +130,11 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 		});
 	};
 
-	const handleRoll = async () => {
+	const handleRoll = async (effectiveMode?: RollMode) => {
 		if (isRolling) return;
+
+		// Use provided mode or fall back to state
+		const mode = effectiveMode ?? rollMode;
 
 		setIsRolling(true);
 
@@ -141,15 +144,15 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 		const results: DiceRollResult[] = [];
 
 		// Only roll D20 if not in 'no-d20' mode
-		if (rollMode !== 'no-d20') {
+		if (mode !== 'no-d20') {
 			// Roll main d20(s)
 			const d20Results: number[] = [];
 			let rollCount = 1;
 
 			// Determine how many D20s to roll based on mode
-			if (rollMode === 'advantage') {
+			if (mode === 'advantage') {
 				rollCount = advantageCount;
-			} else if (rollMode === 'disadvantage') {
+			} else if (mode === 'disadvantage') {
 				rollCount = disadvantageCount;
 			}
 
@@ -157,7 +160,7 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 				d20Results.push(rollDice(20));
 			}
 
-			if (rollMode === 'normal') {
+			if (mode === 'normal') {
 				// Single D20 roll
 				const value = d20Results[0];
 				results.push({
@@ -173,7 +176,7 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 			} else {
 				// Advantage/Disadvantage - show all dice, choose best/worst
 				const chosenValue =
-					rollMode === 'advantage' ? Math.max(...d20Results) : Math.min(...d20Results);
+					mode === 'advantage' ? Math.max(...d20Results) : Math.min(...d20Results);
 
 				d20Results.forEach((value, index) => {
 					const isChosen = value === chosenValue && index === d20Results.indexOf(chosenValue);
@@ -185,7 +188,7 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 						isCriticalSuccess: value === 20 && isChosen,
 						isCriticalFail: value === 1 && isChosen,
 						isChosen,
-						id: `d20-${rollMode}-${index}-${Date.now()}`
+						id: `d20-${mode}-${index}-${Date.now()}`
 					});
 				});
 			}
@@ -208,7 +211,7 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 
 		const diceTotal = results.reduce((sum, result) => {
 			// For D20s in advantage/disadvantage, only count the chosen one
-			if (result.type === 'd20' && (rollMode === 'advantage' || rollMode === 'disadvantage')) {
+			if (result.type === 'd20' && (mode === 'advantage' || mode === 'disadvantage')) {
 				return sum + (result.isChosen ? result.value : 0);
 			}
 			// For all other dice, count normally
@@ -223,12 +226,12 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 
 		// Add to history
 		setRollHistory((prev) => [
-			{ results, total: totalValue, mode: rollMode, timestamp: new Date() },
+			{ results, total: totalValue, mode, timestamp: new Date() },
 			...prev.slice(0, 9) // Keep last 10 rolls
 		]);
 
 		// Call callback if provided
-		onRoll?.(results, totalValue, rollMode);
+		onRoll?.(results, totalValue, mode);
 	};
 
 	const clearDice = () => {
@@ -239,8 +242,12 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 
 	// Expose methods via ref for external control
 	useImperativeHandle(ref, () => ({
-		addRollWithModifier: async (bonus: number, label?: string) => {
-			logger.debug('ui', 'DiceRoller addRollWithModifier called', { bonus, label });
+		addRollWithModifier: async (bonus: number, label?: string, mode?: RollMode) => {
+			logger.debug('ui', 'DiceRoller addRollWithModifier called', { bonus, label, mode });
+			// Set roll mode if provided (prevents race condition)
+			if (mode !== undefined) {
+				setRollMode(mode);
+			}
 			// Clear any existing dice first
 			setAdditionalDice([]);
 			// Set the modifier
@@ -248,11 +255,11 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 			setModifierLabel(label || '');
 			// Expand the roller
 			setIsExpanded(true);
-			// Wait a tiny bit for state to update
-			await new Promise((resolve) => setTimeout(resolve, 50));
-			// Trigger the roll automatically
-			console.log('[GIMLI] Triggering auto-roll');
-			handleRoll();
+			// Wait longer for state to update (increased from 50ms)
+			await new Promise((resolve) => setTimeout(resolve, 100));
+			// Trigger the roll automatically with explicit mode to prevent race condition
+			console.log('[GIMLI] Triggering auto-roll with mode:', mode);
+			handleRoll(mode);
 		},
 		addDiceType: (type: DiceType, count: number = 1) => {
 			for (let i = 0; i < count; i++) {

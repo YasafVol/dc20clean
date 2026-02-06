@@ -30,7 +30,7 @@
 | 5 | Add optional fields to SavedCharacter + Convex schema, bump version to 2.2.0, add migration defaults | Complete |
 | 6 | Character sheet — Movements panel, Senses, Resistances, Combat Training, Conditions, Features grouping | Complete |
 | 7 | Update PDF features field to include Resistances, Senses, Combat Training sections | Complete |
-| 8 | Add tests — snapshot, data validation, calculator collection, PDF formatting, E2E | Pending |
+| 8 | Add tests — snapshot, data validation, calculator collection, PDF formatting, E2E | Complete |
 | 9 | Update system docs — 8 specs affected | Pending |
 
 ## Architecture Overview

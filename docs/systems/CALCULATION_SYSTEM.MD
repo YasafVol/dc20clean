@@ -8,11 +8,40 @@
 
 ## 1. Key Files & Roles
 
-- `src/lib/services/enhancedCharacterCalculator.ts` — core engine
+- `src/lib/services/enhancedCharacterCalculator.ts` — orchestrator (~500 lines) calling modules in sequence
+- `src/lib/services/calculatorModules/` — 8 specialized calculation modules:
+  - `abilityCollection.ts` — collects granted abilities, movements, resistances, senses, combat training, conditional modifiers
+  - `breakdownGeneration.ts` — creates stat breakdowns for tooltips
+  - `spellSystem.ts` — global magic profile and spell slot generation
+  - `effectCollection.ts` — aggregates attributed effects and resolves choices
+  - `progressionAggregation.ts` — aggregates progression gains and path benefits
+  - `budgetCalculation.ts` — skill/trade/language/ancestry point budgets
+  - `statCalculation.ts` — derived stats (attributes, defenses, resources, saves, movement)
+  - `validation.ts` — attribute limits, mastery cap, spell slot validation
 - `src/lib/hooks/useCharacterBuilder.ts` — exposes calculation results to UI
 - `src/lib/rulesdata/schemas/character.schema.ts` — canonical `Effect` union
 - `src/lib/rulesdata/attributes.ts` — base attributes and modifiers
 - `src/lib/rulesdata/progression/levelCaps.ts` — **single source of truth** for attribute/mastery caps by level
+
+  ***
+
+## 1.1. Calculator Architecture
+
+The calculator was refactored into 8 specialized modules plus an orchestrator:
+
+**Orchestrator**: `enhancedCharacterCalculator.ts` (~500 lines) coordinates the calculation pipeline by calling modules in sequence.
+
+**Modules** (in `src/lib/services/calculatorModules/`):
+- `abilityCollection.ts` — collects granted abilities, movements, resistances, senses, combat training, conditional modifiers
+- `breakdownGeneration.ts` — creates stat breakdowns for tooltips
+- `spellSystem.ts` — global magic profile and spell slot generation
+- `effectCollection.ts` — aggregates attributed effects and resolves choices
+- `progressionAggregation.ts` — aggregates progression gains and path benefits
+- `budgetCalculation.ts` — skill/trade/language/ancestry point budgets
+- `statCalculation.ts` — derived stats (attributes, defenses, resources, saves, movement)
+- `validation.ts` — attribute limits, mastery cap, spell slot validation
+
+This modular structure improves maintainability and makes the calculation pipeline easier to understand and test.
 
   ***
 
@@ -205,9 +234,18 @@ Input Data (buildData)
 ├── tradesData (ranks)
 └── languagesData
 
-Effects Aggregation
+Effects Aggregation (effectCollection.ts)
 ├── aggregateAttributedEffects() → rawEffects
 └── resolveEffectChoices() → resolvedEffects
+
+Effect Collection (abilityCollection.ts)
+├── collectGrantedAbilities() → abilities (GRANT_ABILITY)
+├── collectMovements() → movements (GRANT_MOVEMENT)
+├── collectResistances() → resistances (GRANT_RESISTANCE)
+├── collectVulnerabilities() → vulnerabilities (GRANT_VULNERABILITY)
+├── collectSenses() → senses (GRANT_SENSE)
+├── collectCombatTraining() → combatTraining (GRANT_COMBAT_TRAINING)
+└── collectConditionalModifiers() → conditionalModifiers
 ```
 
 #### Stage 2: Base Values (No Dependencies)
@@ -417,7 +455,7 @@ progressionGains
 
 ### 9.3. Movement Processing
 
-**Location**: `enhancedCharacterCalculator.ts`, in the movement processing block after all stats are finalized
+**Location**: `calculatorModules/abilityCollection.ts`, called after all stats are finalized
 
 After all stats are finalized (including `finalMoveSpeed`), `GRANT_MOVEMENT` effects are processed:
 
@@ -437,11 +475,20 @@ const movements = resolvedEffects
 	});
 ```
 
+**Default Climb/Swim Injection:**
+
+Characters without Climb or Swim speed automatically receive half ground speed for these movement types, per DC20 CH3 Slowed 1 rule. The `injectDefaultMovements()` function adds these defaults with `isDefault: true` flag:
+
+- If no Climb speed exists: adds Climb at `floor(groundSpeed / 2)` with `isDefault: true`
+- If no Swim speed exists: adds Swim at `floor(groundSpeed / 2)` with `isDefault: true`
+- Fly/Burrow/Glide are not auto-granted (require explicit `GRANT_MOVEMENT` effects)
+
 **Key Points:**
 
 - Movement processing occurs AFTER `finalMoveSpeed` is calculated
 - `equal_to_speed` converts to numeric value of ground speed
-- Result is array of `{ type, speed, source }` objects
+- Default Climb/Swim speeds are injected if not already granted
+- Result is array of `{ type, speed, source, isDefault? }` objects
 - Consumed by PDF export to populate movement checkboxes
 
 **See**: `docs/systems/EFFECT_SYSTEM.MD#2.1` for full GRANT_MOVEMENT documentation

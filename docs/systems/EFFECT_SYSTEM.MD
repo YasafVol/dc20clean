@@ -8,8 +8,10 @@
 
 ## 1. Key Files & Roles
 
-- `src/lib/rulesdata/schemas/character.schema.ts` — authoritative `Effect` union
-- `src/lib/services/enhancedCharacterCalculator.ts` — effect aggregation and application
+- `src/lib/rulesdata/schemas/character.schema.ts` — authoritative `Effect` union, `TraitRequirements` interface
+- `src/lib/services/enhancedCharacterCalculator.ts` — orchestrator calling effect collection modules
+- `src/lib/services/calculatorModules/effectCollection.ts` — effect aggregation and choice resolution
+- `src/lib/services/calculatorModules/abilityCollection.ts` — collects grants (abilities, movements, resistances, vulnerabilities, senses, combat training)
 - Producers: Traits (`ancestries/traits.ts`), Class Features (`classes-data/features/*`)
 
 ---
@@ -31,12 +33,12 @@ All effect types are defined in `character.schema.ts` as a discriminated union. 
 | Type | Target | Value | Special Fields | Stacking |
 | --- | --- | --- | --- | --- |
 | `GRANT_ABILITY` | ability name | `string` (description) | -- | De-duplicates |
-| `GRANT_RESISTANCE` | damage type | `string \| number \| boolean` | `optional?: string` | De-duplicates |
-| `GRANT_VULNERABILITY` | damage type | `number` | -- | De-duplicates |
+| `GRANT_RESISTANCE` | damage type | `string \| number \| boolean` | `optional?: string` | De-duplicates; **collected by `abilityCollection.ts`** |
+| `GRANT_VULNERABILITY` | damage type | `number` | -- | De-duplicates; **collected by `abilityCollection.ts`** |
 | `GRANT_ADV_ON_SAVE` | save type | `string \| boolean` | -- | De-duplicates |
 | `GRANT_ADV_ON_CHECK` | check type | `string \| boolean` | -- | De-duplicates |
-| `GRANT_COMBAT_TRAINING` | training type (e.g., `Weapons`, `Spell_Focuses`) | `boolean` | -- | De-duplicates |
-| `GRANT_SENSE` | sense type (e.g., `darkvision`) | `number` (range) | -- | De-duplicates |
+| `GRANT_COMBAT_TRAINING` | training type (e.g., `Weapons`, `Spell_Focuses`) | `boolean` | -- | De-duplicates; **collected by `abilityCollection.ts`** |
+| `GRANT_SENSE` | sense type (e.g., `darkvision`) | `number` (range) | -- | De-duplicates; **collected by `abilityCollection.ts`** |
 | `GRANT_MOVEMENT` | movement type (`climb`, `swim`, `fly`, `burrow`, `glide`) | `string \| number` (`equal_to_speed`, `half_speed`, numeric) | -- | De-duplicates |
 | `GRANT_CHOICE` | choice category | `number` | `userChoice?: { prompt, options? }` | Per-choice |
 | `GRANT_SKILL_EXPERTISE` | skill name | `{ capIncrease, levelIncrease }` | `userChoice?: { prompt, count? }` | Per-skill |
@@ -69,10 +71,17 @@ All effect types are defined in `character.schema.ts` as a discriminated union. 
 
 ### Effect Processing Pipeline
 
-1. **Aggregation** (`aggregateAttributedEffects()`): Collects effects from ancestry traits, class features, subclass features, talents, and feature choices. Each effect is tagged with its source.
-2. **Choice Resolution** (`resolveEffectChoices()`): Resolves effects with `userChoice` metadata (e.g., `any_attribute` → specific attribute based on user selection).
-3. **Stat Application** (`createStatBreakdown()`): Applies `MODIFY_STAT` and `MODIFY_ATTRIBUTE` effects to base values, producing breakdowns with per-source attribution.
-4. **Grant Collection**: Grants (`GRANT_ABILITY`, `GRANT_MOVEMENT`, etc.) are collected and passed through to the calculation result.
+1. **Aggregation** (`effectCollection.ts::aggregateAttributedEffects()`): Collects effects from ancestry traits, class features, subclass features, talents, and feature choices. Each effect is tagged with its source.
+2. **Choice Resolution** (`effectCollection.ts::resolveEffectChoices()`): Resolves effects with `userChoice` metadata (e.g., `any_attribute` → specific attribute based on user selection).
+3. **Stat Application** (`statCalculation.ts::createStatBreakdown()`): Applies `MODIFY_STAT` and `MODIFY_ATTRIBUTE` effects to base values, producing breakdowns with per-source attribution.
+4. **Grant Collection** (`abilityCollection.ts`): Collects all grant-type effects:
+   - `collectGrantedAbilities()` — `GRANT_ABILITY` effects
+   - `collectMovements()` — `GRANT_MOVEMENT` effects (with default Climb/Swim injection)
+   - `collectResistances()` — `GRANT_RESISTANCE` effects (previously hardcoded empty)
+   - `collectVulnerabilities()` — `GRANT_VULNERABILITY` effects (previously hardcoded empty)
+   - `collectSenses()` — `GRANT_SENSE` effects (previously hardcoded empty)
+   - `collectCombatTraining()` — `GRANT_COMBAT_TRAINING` effects (previously hardcoded empty)
+   - `collectConditionalModifiers()` — conditional modifiers from `MODIFY_STAT` effects
 5. **Condition Aggregation** (`conditionAggregator.ts`): Scans all effects for condition interactions and groups them by condition ID.
 
 Stacking rules: Numeric effects (`MODIFY_STAT`, `MODIFY_ATTRIBUTE`) sum. Grants de-duplicate by target. Mastery cap effects accumulate slots.

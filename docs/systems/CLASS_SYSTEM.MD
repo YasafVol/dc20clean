@@ -209,6 +209,13 @@ Each class has a `<class>.talents.ts` file (13 files) plus shared data in `talen
 - **Slot-Based Spell System (M3.20)**: Classes now define individual spell/cantrip slots ("Pockets"), supporting highly specific restrictions (e.g., expanded schools) alongside broad global magic profiles.
 - **Data-Driven Spell Restrictions**: Classes now define `spellRestrictions` (allowed sources, schools, and tags) to automatically filter available spells in the character creator.
 
+**Recent Updates (2026-02-06)**:
+
+- **Starting Equipment**: Arsenal changed from "Choose 2" to "Choose 3" for martial classes. Trade Tools selection added to all classes.
+- **Progression Feature IDs**: Fixed 12 broken feature ID references across Commander, Monk, Sorcerer, Warlock, Druid, Hunter, and Spellblade progressions.
+- **Subclass Features**: Added missing subclass feature IDs to Commander, Bard, and Cleric.
+- **Sorcerer Subclasses**: Corrected 4 subclass feature `levelGained` values from level 1 to level 3 (Celestial Spark, Celestial Appearance, Draconic Spark, Draconic Appearance).
+
 ---
 
 > _Last updated: 2026-02-06_  

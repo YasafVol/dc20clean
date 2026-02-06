@@ -180,7 +180,7 @@ Note: Class features can modify ancestry budgets via effects (e.g., Cleric “An
 #### Data Coverage Statistics
 
 - ✅ Reports total ancestry count (16)
-- ✅ Reports total trait count (239)
+- ✅ Reports total trait count (244)
 - ✅ Reports trait distribution per ancestry
 - ✅ Reports effect type usage distribution
 - ✅ Reports cost distribution
@@ -220,7 +220,35 @@ The test suite enforces strict data quality rules:
 
 ---
 
-## 7 Variant Traits
+## 7 Beastborn Traits
+
+The Beastborn ancestry includes a diverse set of traits representing various animal adaptations. Recent additions include:
+
+- `beastborn_web_walk` — Walk on webs and similar surfaces
+- `beastborn_prehensile_tail` — Use tail as an additional limb
+- `beastborn_camouflage` — Blend into natural environments
+- `beastborn_echolocation` — Navigate using sound waves
+- `beastborn_pack_tactics` — Gain advantage when fighting alongside allies
+
+### 7.1 Prerequisite Patterns: `requirements.hasTrait`
+
+Some traits use the `requirements.hasTrait` pattern for "any-of" prerequisites (OR logic), which supersedes the simple `prerequisites` array. This allows a trait to require any one of multiple possible traits:
+
+```typescript
+{
+  id: 'beastborn_enhanced_flight',
+  name: 'Enhanced Flight',
+  prerequisites: ['beastborn_winged_arms'], // Legacy: requires this specific trait
+  // OR
+  requirements: {
+    hasTrait: ['beastborn_winged_arms', 'beastborn_webbed_hands'] // Requires ANY of these traits
+  }
+}
+```
+
+When `requirements.hasTrait` is present, the trait requires any ONE of the listed traits to be selected (OR logic), making it more flexible than the single-trait `prerequisites` array.
+
+## 8 Variant Traits
 
 Some ancestries have `variantTraits` arrays containing alternative trait sets. These are not separate ancestries but optional trait replacements:
 
@@ -231,7 +259,7 @@ Variant traits follow the same schema as regular traits and are available for se
 
 ---
 
-## 8 Future Evolution
+## 9 Future Evolution
 
 - **Effect Processor** integration will further centralise logic—update §3 Step 4 when landed.
 - **Schema-driven forms** may auto-render trait editors using this document's file maps.

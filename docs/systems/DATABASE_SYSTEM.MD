@@ -43,9 +43,21 @@ The primary data structure for character persistence. Defined in `src/lib/types/
 | Derived Stats  | `finalHPMax`, `finalSPMax`, `finalMPMax`, `finalPD`, `finalAD`, etc.     | Calculated values                  |
 | Selections     | `selectedTraitIds`, `selectedFeatureChoices`, `skillsData`, `tradesData` | User choices                       |
 | Game State     | `characterState`                                                         | Current HP, inventory, notes, etc. |
+| Display Arrays | `resistances?`, `vulnerabilities?`, `senses?`, `combatTraining?`         | Calculated display data (v2.2.0+)  |
 | Metadata       | `createdAt`, `lastModified`, `schemaVersion`                             | Timestamps and version             |
 
-### 2.2 CharacterState
+### 2.2 Display Arrays (v2.2.0+)
+
+Optional calculated display arrays populated by the calculator for character sheet display:
+
+- **`resistances?`**: `Array<{ type: string; value: number | 'half'; source: string }>` — Damage resistances (e.g., "Fire", "Cold")
+- **`vulnerabilities?`**: `Array<{ type: string; value: number | 'half'; source: string }>` — Damage vulnerabilities
+- **`senses?`**: `Array<{ type: string; range: number; source: string }>` — Special senses (e.g., "Darkvision", "Tremorsense")
+- **`combatTraining?`**: `Array<{ type: string; source: string }>` — Combat training grants (weapons, armor, shields)
+
+These fields are auto-populated from effect system grants (`GRANT_RESISTANCE`, `GRANT_VULNERABILITY`, `GRANT_SENSE`, `GRANT_COMBAT_TRAINING`) and default to empty arrays if missing (migrated automatically).
+
+### 2.3 CharacterState
 
 Runtime state stored within `SavedCharacter.characterState`:
 
@@ -347,19 +359,28 @@ Key implementation: `src/routes/character-creation/CharacterCreation.tsx`
 ### 6.1 Schema Versioning
 
 ```typescript
-const CURRENT_SCHEMA_VERSION = 2;
+const CURRENT_SCHEMA_VERSION = '2.2.0';
 
 // Each character stores its version
 character.schemaVersion = CURRENT_SCHEMA_VERSION;
 ```
 
+**Current Version**: `2.2.0` (as of 2026-02-06)
+
+**Version History**:
+- `2.0.0`: Initial schema
+- `2.1.0`: Added `selectedFeatureChoices`, migrated `selectedTalents` from array to count-based record
+- `2.2.0`: Added optional display arrays (`resistances`, `vulnerabilities`, `senses`, `combatTraining`)
+
 ### 6.2 Auto-Migration
 
-When loading characters, `deserializeCharacterFromStorage()` automatically:
+When loading characters, `migrateCharacterSchema()` automatically:
 
 1. Adds missing fields with defaults
 2. Converts legacy formats (object → array)
 3. Updates schema version
+
+**Migration to v2.2.0**: Characters migrating from v2.1.0 or earlier automatically receive empty arrays for the new display fields (`resistances`, `vulnerabilities`, `senses`, `combatTraining`). No user action required — migration happens transparently on load.
 
 ### 6.3 localStorage → Convex Migration
 

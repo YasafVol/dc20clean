@@ -50,7 +50,7 @@ The character sheet uses a **context provider pattern** with a reducer for state
 | --- | --- | --- |
 | `components/Combat.tsx` | Calculator combat stats | Action points, combat stats, condition toggles |
 | `components/Attacks.tsx` | Persisted `characterState.attacks` | Weapon attack management |
-| `components/Movement.tsx` | Calculator `movements` array | Movement speeds (ground, fly, swim, climb, burrow) |
+| `components/Movement.tsx` | Calculator `movements`, `senses`, `resistances`, `vulnerabilities`, `combatTraining` arrays | Movement speeds (ground, fly, swim, climb, burrow), alternative movements, senses, resistances/vulnerabilities, combat training badges |
 | `components/DiceRoller.tsx` | User input | Dice rolling with modifiers |
 
 ### Abilities
@@ -78,7 +78,7 @@ The character sheet uses a **context provider pattern** with a reducer for state
 ### Conditions
 | Component | Data Source | Description |
 | --- | --- | --- |
-| `components/Conditions.tsx` | `conditionAggregator` output | Condition immunities/resistances/vulnerabilities |
+| `components/Conditions.tsx` | `conditionAggregator` output | Condition immunities/resistances/vulnerabilities (wired up, displays grouped condition interactions) |
 | `components/ActiveConditionsTracker.tsx` | Local state | Active condition toggle tracker |
 | `components/ConditionsReference.tsx` | `conditions.data.ts` | Complete conditions reference guide |
 | `components/ConditionBadge.tsx` | Effect data | ADV/DisADV condition badges |
@@ -112,7 +112,40 @@ Mobile components mirror desktop sections with touch-optimized layouts:
 
 ---
 
-## 4. Visibility Rules
+## 4. Movement Component Panels
+
+The `Movement.tsx` component displays multiple panels with combat-relevant information:
+
+### Alternative Movements
+- **Climb and Swim**: Always displayed (even if default/slowed), with "(Slowed)" label for default values
+- **Fly, Burrow, Glide**: Only shown when granted (non-default)
+- Each movement shows speed in Spaces with source attribution via tooltip
+- Data source: `calculation.movements[]` array
+
+### Senses
+- Lists all granted senses (Darkvision, Tremorsense, etc.) with range in Spaces
+- Each sense shows source attribution via tooltip
+- Data source: `calculation.senses[]` array
+- Only displayed when `senses.length > 0`
+
+### Resistances/Vulnerabilities
+- Lists damage resistances and vulnerabilities with source attribution
+- Resistances shown in blue, vulnerabilities in red
+- Format: "Fire Resistance (Half)" or "Radiant Vulnerability (1)"
+- Each entry shows source via tooltip
+- Data sources: `calculation.resistances[]` and `calculation.vulnerabilities[]` arrays
+- Only displayed when at least one resistance or vulnerability exists
+
+### Combat Training
+- Shows weapon/armor/shield training as badges
+- Displays training types (e.g., "Weapons", "Heavy Armor", "All Shields")
+- Each badge shows source attribution via tooltip
+- Data source: `calculation.combatTraining[]` array
+- Only displayed when `combatTraining.length > 0`
+
+---
+
+## 5. Visibility Rules
 
 - **Spells** shown when `calculationResult.spellsKnownSlots.length > 0` or saved spells exist
 - **Maneuvers** shown when `calculationResult.levelBudgets.totalManeuversKnown > 0` or saved maneuvers exist
@@ -120,7 +153,7 @@ Mobile components mirror desktop sections with touch-optimized layouts:
 
 ---
 
-## 5. Acceptance Checks
+## 6. Acceptance Checks
 
 - Changing an attribute updates PD/AD/derived stats instantly
 - Adding/removing a trade updates its displayed bonuses without refresh
@@ -130,7 +163,7 @@ Mobile components mirror desktop sections with touch-optimized layouts:
 
 ---
 
-## 6. E2E Links
+## 7. E2E Links
 
 - `e2e/02-resources.e2e.spec.ts` ? resources and precision notes
 - `e2e/09-spells.e2e.spec.ts` ? spells list operations
@@ -140,7 +173,7 @@ Mobile components mirror desktop sections with touch-optimized layouts:
 
 ---
 
-## 7. Related Docs
+## 8. Related Docs
 
 - `docs/systems/CALCULATION_SYSTEM.MD` ? how stats are computed
 - `docs/systems/SPELLS_SYSTEM.MD` ? spell data and assignment

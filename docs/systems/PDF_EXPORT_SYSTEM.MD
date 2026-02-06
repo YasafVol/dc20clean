@@ -58,6 +58,7 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 - **Movement**: Ground speed, jump distance, hold breath, movement types (burrow, swim, fly, climb, glide) with half/full speed indicators
 - **Languages**: Up to 4 languages with limited/fluent mastery
 - **Equipment & Inventory**: Attacks, equipped items, attunement, carried items (carried field also includes feature names)
+- **Features Field**: Multi-section text field containing class features, ancestry traits, resistances, vulnerabilities, senses, combat training, talents, spells, and maneuvers (see Section 3.3)
 
 ### 3.2 PDF Field Manifest
 
@@ -65,6 +66,31 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 - Field maps are versioned:
   - `fieldMap.dc20-0.10.ts` — Maps for v0.10 PDF template
   - `fieldMap.dc20-0.9.5.ts` — Maps for v0.9.5 PDF template (legacy)
+
+### 3.3 Features Field Format
+
+The `features` text field in the PDF contains multiple sections, formatted by `transformCalculatedCharacterToPdfData()` and `transformSavedCharacterToPdfData()` in `src/lib/pdf/transformers.ts`. Sections are joined with newlines and appear in this order:
+
+1. **[Class Features]** — Formatted via `formatClassFeatures()`, includes subclass name if applicable
+2. **[Ancestry Traits]** — Formatted via `formatAncestryTraits()`
+3. **[Resistances]** — Damage resistances with source attribution
+   - Format: `"Fire Resistance (Half) [Rage], Poison Resistance (Half) [Toxic Fortitude]"`
+   - Value can be "Half" or a numeric value
+   - Data source: `result.resistances[]` or `character.resistances[]`
+4. **[Vulnerabilities]** — Damage vulnerabilities with source attribution
+   - Format: `"Radiant Vulnerability (1) [Umbral Weakness]"`
+   - Value can be "Half" or a numeric value
+   - Data source: `result.vulnerabilities[]` or `character.vulnerabilities[]`
+5. **[Senses]** — Granted senses with range and source
+   - Format: `"Darkvision 10 Spaces [Dragonborn], Tremorsense 3 Spaces [Minor Tremorsense]"`
+   - Data source: `result.senses[]` or `character.senses[]`
+6. **[Combat Training]** — Weapon/armor/shield training with source
+   - Format: `"Weapons, Heavy Armor [Martial Path]"`
+   - Data source: `result.combatTraining[]` or `character.combatTraining[]`
+7. **[Talents]** — Formatted via `formatTalents()`
+8. **[Spells]** and **[Maneuvers]** — Formatted via `formatSpellsAndManeuvers()`
+
+Sections are only included if they have content. The transformer functions handle empty arrays by omitting the section header.
 
 ---
 

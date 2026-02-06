@@ -1,6 +1,32 @@
 import React, { useState, useRef } from 'react';
-import styled from 'styled-components';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
+
+// Import styled components
+import {
+	PageContainer,
+	Header,
+	HeaderContent,
+	CharacterIdentity,
+	CharacterName,
+	CharacterMeta,
+	MetaItem,
+	ActionButtons,
+	ActionButton,
+	BackButton,
+	MobileMenuButton,
+	MainContent,
+	TwoColumnLayout,
+	LeftColumn,
+	RightColumn,
+	TabContainer,
+	TabNav,
+	Tab,
+	TabContent,
+	SectionCard,
+	SectionTitle,
+	LoadingContainer,
+	ErrorContainer
+} from './CharacterSheetRedesign.styled';
 
 // Use Provider hooks
 import {
@@ -49,325 +75,12 @@ import HamburgerDrawer from './components/shared/HamburgerDrawer';
 import Snackbar from '../../components/Snackbar';
 
 // Import theme
-import { theme, media } from './styles/theme';
 import { logger } from '../../lib/utils/logger';
 
 interface CharacterSheetRedesignProps {
 	characterId: string;
 	onBack?: () => void;
 }
-
-// Styled components with new theme
-const PageContainer = styled.div`
-	min-height: 100vh;
-	background: ${theme.colors.bg.primary};
-	color: ${theme.colors.text.primary};
-	font-family: ${theme.typography.fontFamily.primary};
-`;
-
-const Header = styled(motion.header)`
-	background: ${theme.colors.bg.elevated};
-	border-bottom: 1px solid ${theme.colors.border.default};
-	padding: ${theme.spacing[6]} ${theme.spacing[8]};
-	box-shadow: ${theme.shadows.md};
-	position: sticky;
-	top: 0;
-	z-index: ${theme.zIndex.sticky};
-	backdrop-filter: blur(10px);
-	background: var(--bg-primary);
-
-	${media.tablet} {
-		padding: ${theme.spacing[4]} ${theme.spacing[6]};
-	}
-
-	${media.mobile} {
-		padding: ${theme.spacing[3]} ${theme.spacing[4]};
-	}
-`;
-
-const HeaderContent = styled.div`
-	max-width: 1600px;
-	margin: 0 auto;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	gap: ${theme.spacing[6]};
-`;
-
-const CharacterIdentity = styled.div`
-	display: flex;
-	flex-direction: column;
-	gap: ${theme.spacing[2]};
-`;
-
-const CharacterName = styled.h1`
-	font-size: ${theme.typography.fontSize['4xl']};
-	font-weight: ${theme.typography.fontWeight.bold};
-	color: ${theme.colors.text.primary};
-	margin: 0;
-	line-height: ${theme.typography.lineHeight.tight};
-
-	${media.tablet} {
-		font-size: ${theme.typography.fontSize['2xl']};
-	}
-
-	${media.mobile} {
-		font-size: ${theme.typography.fontSize.xl};
-	}
-`;
-
-const CharacterMeta = styled.div`
-	display: flex;
-	gap: ${theme.spacing[4]};
-	align-items: center;
-	font-size: ${theme.typography.fontSize.base};
-	color: ${theme.colors.text.secondary};
-	flex-wrap: wrap;
-
-	${media.mobile} {
-		font-size: ${theme.typography.fontSize.sm};
-		gap: ${theme.spacing[2]};
-	}
-`;
-
-const MetaItem = styled.span`
-	display: flex;
-	align-items: center;
-	gap: ${theme.spacing[2]};
-
-	&:not(:last-child)::after {
-		content: '•';
-		margin-left: ${theme.spacing[4]};
-		color: ${theme.colors.text.muted};
-	}
-`;
-
-const ActionButtons = styled.div`
-	display: flex;
-	gap: ${theme.spacing[3]};
-
-	${media.mobile} {
-		display: none; /* Hide on mobile - use hamburger menu instead */
-	}
-`;
-
-const ActionButton = styled(motion.button)`
-	background: ${theme.colors.bg.tertiary};
-	color: ${theme.colors.text.primary};
-	border: 1px solid ${theme.colors.border.default};
-	border-radius: ${theme.borderRadius.md};
-	padding: ${theme.spacing[3]} ${theme.spacing[4]};
-	font-size: ${theme.typography.fontSize.sm};
-	font-weight: ${theme.typography.fontWeight.medium};
-	cursor: pointer;
-	transition: all ${theme.transitions.fast};
-	display: flex;
-	align-items: center;
-	gap: ${theme.spacing[2]};
-
-	&:hover {
-		background: ${theme.colors.accent.primary};
-		color: ${theme.colors.text.inverse};
-		border-color: ${theme.colors.accent.primary};
-		box-shadow: ${theme.shadows.md};
-	}
-
-	&:active {
-		transform: scale(0.98);
-	}
-`;
-
-const BackButton = styled(ActionButton)`
-	background: transparent;
-
-	&:hover {
-		background: ${theme.colors.bg.tertiary};
-		color: ${theme.colors.text.primary};
-	}
-`;
-
-const MobileMenuButton = styled(motion.button)`
-	display: none;
-
-	${media.mobile} {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: ${theme.colors.bg.tertiary};
-		color: ${theme.colors.text.primary};
-		border: 1px solid ${theme.colors.border.default};
-		border-radius: ${theme.borderRadius.md};
-		padding: ${theme.spacing[2]};
-		width: 40px;
-		height: 40px;
-		font-size: ${theme.typography.fontSize.xl};
-		cursor: pointer;
-	}
-`;
-
-const MainContent = styled.main`
-	max-width: 1600px;
-	margin: 0 auto;
-	padding: ${theme.spacing[8]};
-
-	${media.tablet} {
-		padding: ${theme.spacing[6]};
-	}
-
-	${media.mobile} {
-		padding: ${theme.spacing[4]};
-		padding-bottom: 80px; /* Space for mobile bottom nav */
-	}
-`;
-
-const TwoColumnLayout = styled.div`
-	display: grid;
-	grid-template-columns: 1fr 2fr;
-	gap: ${theme.spacing[6]};
-
-	${media.tablet} {
-		grid-template-columns: 280px 1fr;
-		gap: ${theme.spacing[4]};
-	}
-
-	${media.mobile} {
-		grid-template-columns: 1fr;
-		gap: ${theme.spacing[3]};
-	}
-`;
-
-const LeftColumn = styled.div`
-	display: flex;
-	flex-direction: column;
-	gap: ${theme.spacing[6]};
-`;
-
-const RightColumn = styled.div`
-	display: flex;
-	flex-direction: column;
-	gap: ${theme.spacing[6]};
-`;
-
-const TabContainer = styled.div`
-	background: ${theme.colors.bg.elevated};
-	border-radius: ${theme.borderRadius.xl};
-	box-shadow: ${theme.shadows.lg};
-	overflow: hidden;
-	border: 1px solid ${theme.colors.border.default};
-
-	${media.mobile} {
-		max-width: 100vw;
-		overflow-x: hidden;
-	}
-`;
-
-const TabNav = styled.div`
-	display: flex;
-	border-bottom: 1px solid ${theme.colors.border.default};
-	background: ${theme.colors.bg.secondary};
-	overflow-x: auto;
-	scrollbar-width: thin;
-	scrollbar-color: ${theme.colors.border.default} transparent;
-
-	&::-webkit-scrollbar {
-		height: 4px;
-	}
-
-	&::-webkit-scrollbar-track {
-		background: transparent;
-	}
-
-	&::-webkit-scrollbar-thumb {
-		background: ${theme.colors.border.default};
-		border-radius: ${theme.borderRadius.full};
-	}
-
-	/* Hide desktop tabs on mobile - use bottom nav instead */
-	${media.mobile} {
-		display: none;
-	}
-`;
-
-const Tab = styled(motion.button)<{ $active: boolean }>`
-	background: ${(props) => (props.$active ? theme.colors.bg.elevated : 'transparent')};
-	color: ${(props) => (props.$active ? theme.colors.accent.primary : theme.colors.text.secondary)};
-	border: none;
-	padding: ${theme.spacing[4]} ${theme.spacing[6]};
-	font-size: ${theme.typography.fontSize.base};
-	font-weight: ${theme.typography.fontWeight.medium};
-	cursor: pointer;
-	transition: all ${theme.transitions.fast};
-	white-space: nowrap;
-	position: relative;
-	display: flex;
-	align-items: center;
-	gap: ${theme.spacing[2]};
-
-	${media.hover} {
-		&:hover {
-			background: ${theme.colors.bg.tertiary};
-			color: ${theme.colors.text.primary};
-		}
-	}
-
-	${media.tablet} {
-		padding: ${theme.spacing[3]} ${theme.spacing[4]};
-		font-size: ${theme.typography.fontSize.sm};
-	}
-
-	${(props) =>
-		props.$active &&
-		`
-		&::after {
-			content: '';
-			position: absolute;
-			bottom: 0;
-			left: 0;
-			right: 0;
-			height: 2px;
-			background: ${theme.colors.accent.primary};
-		}
-	`}
-`;
-
-const TabContent = styled(motion.div)`
-	padding: ${theme.spacing[6]};
-	overflow-x: hidden;
-	max-width: 100%;
-
-	${media.mobile} {
-		padding: ${theme.spacing[4]};
-	}
-`;
-
-const SectionCard = styled(motion.div)<{ $withMarginBottom?: boolean }>`
-	background: ${theme.colors.bg.secondary};
-	border-radius: ${theme.borderRadius.lg};
-	padding: ${theme.spacing[6]};
-	box-shadow: ${theme.shadows.md};
-	border: 1px solid ${theme.colors.border.default};
-	${(props) => props.$withMarginBottom && `margin-bottom: ${theme.spacing[4]};`}
-`;
-
-const SectionTitle = styled.h2`
-	font-size: ${theme.typography.fontSize.xl};
-	font-weight: ${theme.typography.fontWeight.bold};
-	color: ${theme.colors.text.primary};
-	margin: 0 0 ${theme.spacing[4]} 0;
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
-`;
-
-const LoadingContainer = styled(motion.div)`
-	padding: ${theme.spacing[8]};
-	text-align: center;
-`;
-
-const ErrorContainer = styled(motion.div)`
-	padding: ${theme.spacing[8]};
-	text-align: center;
-	color: ${theme.colors.accent.danger};
-`;
 
 type TabId =
 	| 'attacks'
@@ -505,6 +218,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		updateGritPoints,
 		updateRestPoints,
 		toggleActiveCondition,
+		updateDefenseOverrides: updateDefenseOverridesContext,
 		saveStatus,
 		retryFailedSave
 	} = useCharacterSheet();
@@ -530,6 +244,13 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			}
 		};
 	}, []);
+
+	// Load defense overrides from character state on mount
+	React.useEffect(() => {
+		if (state.character?.characterState?.defenseOverrides) {
+			setDefenseOverrides(state.character.characterState.defenseOverrides);
+		}
+	}, [state.character?.id]); // Only re-run when character changes
 
 	const characterData = state.character;
 	const loading = state.loading;
@@ -620,18 +341,18 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 	// Extract character data
 	const currentHP = resources?.current?.currentHP ?? 0;
-	const maxHP = characterData.finalHPMax ?? 0;
+	const maxHP = calculatedData?.breakdowns?.hpMax?.total ?? characterData.finalHPMax ?? 0;
 	const tempHP = resources?.current?.tempHP ?? 0;
 	const currentMP = resources?.current?.currentMP ?? 0;
-	const maxMP = characterData.finalMPMax ?? 0;
+	const maxMP = calculatedData?.breakdowns?.mpMax?.total ?? characterData.finalMPMax ?? 0;
 	const currentSP = resources?.current?.currentSP ?? 0;
-	const maxSP = characterData.finalSPMax ?? 0;
+	const maxSP = calculatedData?.breakdowns?.spMax?.total ?? characterData.finalSPMax ?? 0;
 
 	// Rest and Grit values
 	const currentRest = resources?.current?.currentRestPoints ?? 0;
-	const maxRest = characterData.finalRestPoints ?? 0;
+	const maxRest = calculatedData?.breakdowns?.restPoints?.total ?? characterData.finalRestPoints ?? 0;
 	const currentGrit = resources?.current?.currentGritPoints ?? 0;
-	const maxGrit = characterData.finalGritPoints ?? 0;
+	const maxGrit = calculatedData?.breakdowns?.gritPoints?.total ?? characterData.finalGritPoints ?? 0;
 
 	const primeAttribute = characterData.finalPrimeModifierAttribute || 'charisma';
 	const primeValue = characterData.finalPrimeModifierValue || 0;
@@ -646,9 +367,9 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	const areaAD = defenseOverrides.areaAD ?? baseAreaAD;
 	const precisionDR = defenseOverrides.precisionDR ?? basePrecisionDR;
 
-	// Combat stats - these would typically come from calculations
-	const attackBonus = primeValue; // Simplified for now
-	const saveDC = 10 + primeValue; // Simplified for now
+	// Combat stats - use manual calculation since breakdowns may be incorrect
+	const attackBonus = (combatMastery ?? 0) + primeValue;
+	const saveDC = 10 + (combatMastery ?? 0) + primeValue;
 	const initiative = characterData.finalAgility || 0; // Simplified for now
 
 	// Get attribute values for AttributeCards
@@ -830,10 +551,9 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 	// Handle defense value updates
 	const updateDefense = (type: 'precisionAD' | 'areaAD' | 'precisionDR', value: number) => {
-		setDefenseOverrides((prev) => ({ ...prev, [type]: value }));
-		const label =
-			type === 'precisionAD' ? 'Precision AD' : type === 'areaAD' ? 'Area AD' : 'Precision DR';
-		showSnackbarWithMessage(`${label} updated to ${value}`, 'info');
+		const newOverrides = { ...defenseOverrides, [type]: value };
+		setDefenseOverrides(newOverrides);
+		updateDefenseOverridesContext(newOverrides); // Persist to character state
 	};
 
 	// Check if Combat Stats box has any overrides that differ from base values
@@ -847,6 +567,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	// Reset Combat Stats to calculated values
 	const resetCombatStats = () => {
 		setDefenseOverrides({});
+		updateDefenseOverridesContext({}); // Clear from character state
 		showSnackbarWithMessage('Combat stats reset to calculated values', 'info');
 	};
 
@@ -854,6 +575,69 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	const hasHealthOverride = false;
 	const hasResourcesOverride = false;
 	const hasRecoveryOverride = false;
+
+	// Get tooltip data based on type
+	const getTooltipData = () => {
+		switch (tooltipState.type) {
+			case 'hp':
+				return {
+					title: 'Hit Points Calculation',
+					breakdown: calculatedData?.breakdowns?.hpMax
+				};
+			case 'mana':
+				return {
+					title: 'Mana Points Calculation',
+					breakdown: calculatedData?.breakdowns?.mpMax
+				};
+			case 'stamina':
+				return {
+					title: 'Stamina Points Calculation',
+					breakdown: calculatedData?.breakdowns?.spMax
+				};
+			case 'rest':
+				return {
+					title: 'Rest Points Calculation',
+					breakdown: calculatedData?.breakdowns?.restPoints
+				};
+			case 'grit':
+				return {
+					title: 'Grit Points Calculation',
+					breakdown: calculatedData?.breakdowns?.gritPoints
+				};
+			case 'attack':
+				return {
+					title: 'Attack/Spell Bonus Calculation',
+					breakdown: calculatedData?.breakdowns?.attackSpellCheck || {
+						base: combatMastery,
+						total: (combatMastery ?? 0) + primeValue,
+						effects: [{ name: `Prime Modifier (${primeAttribute})`, value: primeValue }]
+					}
+				};
+			case 'precisionAD':
+				return {
+					title: 'Precision AD Calculation',
+					breakdown: calculatedData?.breakdowns?.pd
+				};
+			case 'areaAD':
+				return {
+					title: 'Area AD Calculation',
+					breakdown: calculatedData?.breakdowns?.ad
+				};
+			case 'precisionDR':
+				return {
+					title: 'Precision DR Calculation',
+					breakdown: calculatedData?.breakdowns?.pdr || {
+						base: precisionDR,
+						total: precisionDR,
+						effects: []
+					}
+				};
+			default:
+				return { title: '', breakdown: null };
+		}
+	};
+
+	const tooltipData = getTooltipData();
 
 	return (
 		<PageContainer>
@@ -1149,57 +933,8 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			<WeaponPopup weapon={selectedWeapon} onClose={closeWeaponPopup} />
 			<InventoryPopup selectedInventoryItem={selectedInventoryItem} onClose={closeInventoryPopup} />
 			<CalculationTooltip
-				title={
-					tooltipState.type === 'hp'
-						? 'Hit Points Calculation'
-						: tooltipState.type === 'mana'
-							? 'Mana Points Calculation'
-							: tooltipState.type === 'stamina'
-								? 'Stamina Points Calculation'
-								: tooltipState.type === 'rest'
-									? 'Rest Points Calculation'
-									: tooltipState.type === 'grit'
-										? 'Grit Points Calculation'
-										: tooltipState.type === 'attack'
-											? 'Attack/Spell Bonus Calculation'
-											: tooltipState.type === 'precisionAD'
-												? 'Precision AD Calculation'
-												: tooltipState.type === 'areaAD'
-													? 'Area AD Calculation'
-													: 'Precision DR'
-				}
-				breakdown={
-					tooltipState.type === 'hp'
-						? calculatedData?.breakdowns?.hpMax
-						: tooltipState.type === 'mana'
-							? calculatedData?.breakdowns?.mpMax
-							: tooltipState.type === 'stamina'
-								? calculatedData?.breakdowns?.spMax
-								: tooltipState.type === 'rest'
-									? calculatedData?.breakdowns?.hpMax
-									: tooltipState.type === 'grit'
-										? calculatedData?.breakdowns?.gritPoints
-										: tooltipState.type === 'attack'
-											? {
-													base: combatMastery,
-													total: attackBonus,
-													effects: [
-														{
-															name: `Prime Modifier (${primeAttribute})`,
-															value: primeValue
-														}
-													]
-												}
-											: tooltipState.type === 'precisionAD'
-												? calculatedData?.breakdowns?.pd
-												: tooltipState.type === 'areaAD'
-													? calculatedData?.breakdowns?.ad
-													: {
-															base: precisionDR,
-															total: precisionDR,
-															effects: []
-														}
-				}
+				title={tooltipData.title}
+				breakdown={tooltipData.breakdown}
 				visible={tooltipState.visible}
 				positionX={tooltipState.x}
 				positionY={tooltipState.y}

@@ -127,7 +127,7 @@ const ResourcesGroup = styled.div`
 
 const DefensesGrid = styled.div<{ $withMarginTop?: boolean }>`
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-columns: repeat(3, 1fr);
 	gap: ${theme.spacing[3]};
 	${(props) => props.$withMarginTop && `margin-top: ${theme.spacing[3]};`}
 
@@ -159,6 +159,7 @@ const DefenseLabel = styled.div`
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 	margin-bottom: ${theme.spacing[2]};
+	height: 35px;
 `;
 
 const BoxResetButton = styled(motion.button)<{ disabled?: boolean }>`
@@ -205,17 +206,6 @@ const EditableDefenseValue = styled.input<{ disabled?: boolean }>`
 	padding: ${theme.spacing[1]} ${theme.spacing[2]};
 	text-align: center;
 	width: 80px;
-	cursor: ${(props) => (props.disabled ? 'default' : 'pointer')};
-
-	&:hover {
-		border-color: ${(props) => !props.disabled && theme.colors.accent.warning};
-	}
-
-	&:focus {
-		outline: none;
-		border-color: ${theme.colors.accent.primary};
-		background: ${theme.colors.bg.primary};
-	}
 
 	&::-webkit-inner-spin-button,
 	&::-webkit-outer-spin-button {

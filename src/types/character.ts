@@ -226,6 +226,16 @@ export interface CharacterState {
 		manualAD?: number;
 	};
 
+	// Defense overrides from manual edits (new system)
+	defenseOverrides?: {
+		precisionAD?: number;
+		areaAD?: number;
+		precisionDR?: number;
+	};
+
+	// Active conditions affecting the character
+	activeConditions?: string[];
+
 	// Persisted calculation breakdowns for drill-down tooltips
 	calculation?: {
 		breakdowns: Record<string, EnhancedStatBreakdown>;

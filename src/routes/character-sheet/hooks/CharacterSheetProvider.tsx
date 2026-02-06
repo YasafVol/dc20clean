@@ -177,6 +177,11 @@ interface CharacterSheetContextType {
 	updateGritPoints: (grit: number) => void;
 	updateRestPoints: (rest: number) => void;
 	toggleActiveCondition: (conditionId: string) => void;
+	updateDefenseOverrides: (overrides: {
+		precisionAD?: number;
+		areaAD?: number;
+		precisionDR?: number;
+	}) => void;
 	// Manual save function
 	saveNow: () => Promise<void>;
 	// Save status
@@ -220,7 +225,8 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		updateNotes,
 		updateGritPoints,
 		updateRestPoints,
-		toggleActiveCondition
+		toggleActiveCondition,
+		updateDefenseOverrides
 	} = useCharacterSheetReducer();
 	const storage = useMemo(() => getDefaultStorage(), []);
 	const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
@@ -409,6 +415,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		updateGritPoints,
 		updateRestPoints,
 		toggleActiveCondition,
+		updateDefenseOverrides,
 		saveNow,
 		saveStatus,
 		retryFailedSave

@@ -66,6 +66,7 @@ interface CharacterState {
 	};
 	ui: {
 		manualDefenseOverrides: { PD?: number; AD?: number; PDR?: number };
+		combatToggles?: { isRaging?: boolean };
 	};
 	inventory: {
 		items: InventoryItemData[];
@@ -449,5 +450,6 @@ const saveCharacterData = async (character: SavedCharacter) => {
 
 ---
 
-> Last updated: 2026-02-04 (characterState.activeConditions + schema deploy workflow)
+> Last updated: 2026-02-06 (characterState.ui.combatToggles optional in Convex schema)
 > Maintainer: @DC20Clean-Team
+

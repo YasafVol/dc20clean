@@ -2,7 +2,7 @@
 
 > Purpose
 >
-> Capture the architecture, scope, and acceptance criteria for exporting a calculated character sheet to the official DC20 fillable PDF. This document translates the planning spec in `docs/plannedSpecs/EXPORT_PDF.md` into a system overview aligned with existing docs.
+> Capture the architecture, scope, and acceptance criteria for exporting a calculated character sheet to the official DC20 fillable PDF. This document is the system overview aligned with existing docs (no separate planning spec is currently tracked in-repo).
 
 ---
 
@@ -92,8 +92,8 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
   - Add “Export PDF” button to `CharacterSheetClean.tsx` with loading state.
   - Implement `handleExportClick` wiring calculator → transformer → filler → download.
   - Provide success/error messaging and dynamic filename.
-- **Milestone 3 – Testing**
-  - Add Playwright spec `e2e/export.e2e.spec.ts` validating download and smoke-checking field values.
+- **Milestone 3 – Testing (Planned)**
+  - Add Playwright spec for export/download validation (no export E2E spec in repo yet).
   - Consider unit tests for `transformCalculatedCharacterToPdfData` covering key sections.
 
 ---
@@ -184,9 +184,9 @@ import { FeatureGateButton } from '@/components/auth';
 - Enables future features like export history, cloud PDF storage
 - Reduces anonymous abuse of export functionality
 
-**See**: `docs/plannedSpecs/CONVEX_MIGRATION_SPEC.md` for full authentication system details.
+**See**: `docs/archive/CONVEX_MIGRATION.md` for full authentication system details.
 
 ---
 
-> Last updated: 2026-01-14 (Added authentication gating)
+> Last updated: 2026-01-25 (Added authentication gating)
 > Maintainer: @DC20Clean-Team

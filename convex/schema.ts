@@ -74,7 +74,12 @@ const uiStateValidator = v.object({
 		PD: v.optional(v.number()),
 		AD: v.optional(v.number()),
 		PDR: v.optional(v.number())
-	})
+	}),
+	combatToggles: v.optional(
+		v.object({
+			isRaging: v.optional(v.boolean())
+		})
+	)
 });
 
 const inventoryValidator = v.object({
@@ -277,6 +282,7 @@ const monsterActionValidator = v.object({
 	damageType: v.optional(v.string()),
 	range: v.optional(v.number()),
 	area: v.optional(v.string()),
+	traits: v.optional(v.array(v.string())),
 	description: v.string()
 });
 
@@ -304,8 +310,11 @@ const forkStatsValidator = v.object({
 
 // Main monster table schema
 const monsterValidator = {
-	// Owner reference (Convex Auth user ID)
-	userId: v.id('users'),
+	// Owner reference (Convex Auth user ID) - optional for official monsters
+	userId: v.optional(v.id('users')),
+
+	// Official flag - true for Bestiary monsters, false for user-created
+	isOfficial: v.optional(v.boolean()),
 
 	// Identity
 	id: v.string(), // mon_<uuid>
@@ -524,17 +533,17 @@ const encounterValidator = {
 	schemaVersion: v.string()
 };
 
-// Custom feature table schema
-const customFeatureValidator = {
-	// Owner reference (Convex Auth user ID)
-	userId: v.id('users'),
+// Feature table schema (official + custom)
+const featureValidator = {
+	// Owner reference (Convex Auth user ID) - optional for official features
+	userId: v.optional(v.id('users')),
 
 	// Identity
 	id: v.string(), // feat_<uuid>
 	name: v.string(),
 	description: v.string(),
 	pointCost: v.number(), // 1-5
-	isOfficial: v.boolean(), // Always false for custom
+	isOfficial: v.optional(v.boolean()), // true for Bestiary features
 	effects: v.optional(v.array(featureEffectValidator)),
 
 	// Sharing (same as monster)
@@ -577,19 +586,21 @@ export default defineSchema({
 		.index('by_user_and_id', ['userId', 'id'])
 		.index('by_user_and_name', ['userId', 'finalName']),
 
-	// DM Tools: Monsters
+	// DM Tools: Monsters (official + user-created)
 	monsters: defineTable(monsterValidator)
 		.index('by_user', ['userId'])
 		.index('by_user_and_id', ['userId', 'id'])
 		.index('by_approval_status', ['approvalStatus'])
-		.index('by_user_and_deleted', ['userId', 'deletedAt']),
+		.index('by_user_and_deleted', ['userId', 'deletedAt'])
+		.index('by_official', ['isOfficial']),
 
-	// DM Tools: Custom Features
-	customFeatures: defineTable(customFeatureValidator)
+	// DM Tools: Features (official + user-created)
+	features: defineTable(featureValidator)
 		.index('by_user', ['userId'])
 		.index('by_user_and_id', ['userId', 'id'])
 		.index('by_approval_status', ['approvalStatus'])
-		.index('by_user_and_deleted', ['userId', 'deletedAt']),
+		.index('by_user_and_deleted', ['userId', 'deletedAt'])
+		.index('by_official', ['isOfficial']),
 
 	// DM Tools: Encounters
 	encounters: defineTable(encounterValidator)
@@ -598,3 +609,4 @@ export default defineSchema({
 		.index('by_approval_status', ['approvalStatus'])
 		.index('by_user_and_deleted', ['userId', 'deletedAt'])
 });
+

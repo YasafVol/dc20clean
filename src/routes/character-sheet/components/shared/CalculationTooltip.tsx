@@ -2,8 +2,17 @@ import React from 'react';
 import styled from 'styled-components';
 import { theme } from '../../styles/theme';
 
+type EffectSourceLike =
+	| string
+	| {
+			name?: string;
+			category?: string;
+			type?: string;
+			id?: string;
+	  };
+
 interface BreakdownEffect {
-	source: string;
+	source: EffectSourceLike;
 	value: number;
 	condition?: string;
 	description: string;
@@ -67,7 +76,7 @@ const TooltipRow = styled.div`
 	justify-content: space-between;
 	align-items: center;
 	padding: ${theme.spacing[1]} 0;
-	border-bottom: 1px solid ${theme.colors.border.subtle};
+	border-bottom: 1px solid ${theme.colors.border.default};
 
 	&:last-child {
 		border-bottom: none;
@@ -96,6 +105,16 @@ const TooltipTotal = styled(TooltipRow)`
 	font-size: ${theme.typography.fontSize.sm};
 `;
 
+function getSourceLabel(source: EffectSourceLike): string {
+	if (typeof source === 'string') {
+		return source;
+	}
+	if (!source || typeof source !== 'object') {
+		return 'Effect';
+	}
+	return source.name || source.category || source.type || source.id || 'Effect';
+}
+
 const CalculationTooltip: React.FC<CalculationTooltipProps> = ({
 	title,
 	breakdown,
@@ -120,7 +139,7 @@ const CalculationTooltip: React.FC<CalculationTooltipProps> = ({
 						{breakdown.effects.map((effect, index) => (
 							<TooltipRow key={index}>
 								<TooltipLabel>
-									{effect.source}
+									{getSourceLabel(effect.source)}
 									{effect.condition && ` (${effect.condition})`}
 								</TooltipLabel>
 								<TooltipValue $isPositive={effect.value > 0}>

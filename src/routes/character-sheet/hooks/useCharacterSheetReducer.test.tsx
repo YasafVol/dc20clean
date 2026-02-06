@@ -220,6 +220,26 @@ describe('useCharacterSheetReducer', () => {
 		expect(result.current.state.character?.characterState.ui.manualDefenseOverrides.AD).toBe(12);
 	});
 
+	it('should handle SET_RAGE_ACTIVE action', () => {
+		const { result } = renderHook(() => useCharacterSheetReducer());
+
+		const mockCharacter = {
+			id: 'test-id',
+			characterState: {
+				ui: { manualDefenseOverrides: {}, combatToggles: { isRaging: false } }
+			}
+		} as any;
+
+		act(() => {
+			result.current.dispatch({ type: 'LOAD_SUCCESS', character: mockCharacter });
+		});
+
+		act(() => {
+			result.current.dispatch({ type: 'SET_RAGE_ACTIVE', isRaging: true });
+		});
+
+		expect(result.current.state.character?.characterState.ui.combatToggles?.isRaging).toBe(true);
+	});
 	it('should provide helper functions', () => {
 		const { result } = renderHook(() => useCharacterSheetReducer());
 
@@ -231,6 +251,7 @@ describe('useCharacterSheetReducer', () => {
 		expect(typeof result.current.removeAttack).toBe('function');
 		expect(typeof result.current.updateCurrency).toBe('function');
 		expect(typeof result.current.updateNotes).toBe('function');
+		expect(typeof result.current.setRageActive).toBe('function');
 	});
 
 	it('should handle UPDATE_TEMP_HP action', () => {
@@ -322,3 +343,4 @@ describe('useCharacterSheetReducer', () => {
 		expect(typeof result.current.updateInventory).toBe('function');
 	});
 });
+

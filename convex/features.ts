@@ -112,7 +112,7 @@ export const getById = query({
 			.first();
 
 		return feature ?? null;
-	},
+	}
 });
 
 /**
@@ -120,7 +120,7 @@ export const getById = query({
  */
 export const listHomebrew = query({
 	args: {
-		pointCost: v.optional(v.number()),
+		pointCost: v.optional(v.number())
 	},
 	handler: async (ctx, args) => {
 		let query = ctx.db
@@ -154,7 +154,7 @@ export const listTrash = query({
 			.collect();
 
 		return features;
-	},
+	}
 });
 
 // ============================================================================
@@ -171,8 +171,8 @@ export const create = mutation({
 			name: v.string(),
 			description: v.string(),
 			pointCost: v.number(),
-			effects: v.optional(v.array(v.any())),
-		}),
+			effects: v.optional(v.array(v.any()))
+		})
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -191,11 +191,11 @@ export const create = mutation({
 			isHomebrew: false,
 			createdAt: now,
 			lastModified: now,
-			schemaVersion: '1.0.0',
+			schemaVersion: '1.0.0'
 		});
 
 		return featureId;
-	},
+	}
 });
 
 /**
@@ -208,8 +208,8 @@ export const update = mutation({
 			name: v.optional(v.string()),
 			description: v.optional(v.string()),
 			pointCost: v.optional(v.number()),
-			effects: v.optional(v.array(v.any())),
-		}),
+			effects: v.optional(v.array(v.any()))
+		})
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -238,11 +238,11 @@ export const update = mutation({
 
 		await ctx.db.patch(existing._id, {
 			...args.updates,
-			lastModified: new Date().toISOString(),
+			lastModified: new Date().toISOString()
 		});
 
 		return existing._id;
-	},
+	}
 });
 
 /**
@@ -277,11 +277,11 @@ export const softDelete = mutation({
 			deletedAt: now,
 			deletedBy: userId,
 			scheduledPurgeAt: purgeDate.toISOString(),
-			lastModified: now,
+			lastModified: now
 		});
 
 		return { success: true };
-	},
+	}
 });
 
 /**
@@ -312,11 +312,11 @@ export const restore = mutation({
 			deletedAt: undefined,
 			deletedBy: undefined,
 			scheduledPurgeAt: undefined,
-			lastModified: new Date().toISOString(),
+			lastModified: new Date().toISOString()
 		});
 
 		return { success: true };
-	},
+	}
 });
 
 /**
@@ -346,7 +346,7 @@ export const hardDelete = mutation({
 		await ctx.db.delete(existing._id);
 
 		return { success: true };
-	},
+	}
 });
 
 /**
@@ -368,39 +368,46 @@ export const fork = mutation({
 		const now = new Date().toISOString();
 		const newId = `feat_${crypto.randomUUID()}`;
 
-		// Get source feature from DB
+		// Get source feature data (from DB or provided data)
+		let sourceFeature = args.sourceData;
+		let sourceName = sourceFeature?.name ?? 'Unknown';
+		let sourceUserId: string | undefined;
+
+		// Try to get from DB (works for official, custom, and homebrew)
 		const dbFeature = await ctx.db
 			.query('features')
 			.filter((q) => q.eq(q.field('id'), args.sourceId))
 			.first();
 
-		let sourceFeature = dbFeature ?? args.sourceData;
+		if (dbFeature) {
+			sourceFeature = dbFeature;
+			sourceName = dbFeature.name;
+			sourceUserId = dbFeature.userId ?? undefined;
+
+			// Update fork stats on source (only for non-official)
+			if (!dbFeature.isOfficial) {
+				await ctx.db.patch(dbFeature._id, {
+					forkStats: {
+						forkCount: (dbFeature.forkStats?.forkCount ?? 0) + 1,
+						lastForkedAt: now,
+					},
+				});
+			}
+		}
+
 		if (!sourceFeature) {
 			throw new Error('Source feature not found');
 		}
 
-		const sourceName = sourceFeature.name ?? 'Unknown';
-		const sourceUserId = dbFeature?.userId ?? undefined;
-
-		// Update fork stats on source (only for non-official)
-		if (dbFeature && !dbFeature.isOfficial) {
-			await ctx.db.patch(dbFeature._id, {
-				forkStats: {
-					forkCount: (dbFeature.forkStats?.forkCount ?? 0) + 1,
-					lastForkedAt: now,
-				},
-			});
-		}
-
 		// Create the forked feature (remove isOfficial flag!)
+		const { _id, _creationTime, isOfficial, ...featureData } = sourceFeature;
+
 		const forkedFeature = {
+			...featureData,
 			id: newId,
 			userId,
-			name: `${sourceName} (Fork)`,
-			description: sourceFeature.description ?? '',
-			pointCost: sourceFeature.pointCost ?? 1,
-			effects: sourceFeature.effects,
 			isOfficial: false, // Forked features are never official
+			name: `${sourceName} (Fork)`,
 			visibility: 'private' as const,
 			approvalStatus: 'draft' as const,
 			isHomebrew: false,
@@ -411,6 +418,14 @@ export const fork = mutation({
 				userId: sourceUserId,
 				forkedAt: now,
 			},
+			forkStats: undefined,
+			deletedAt: undefined,
+			deletedBy: undefined,
+			scheduledPurgeAt: undefined,
+			rejectionReason: undefined,
+			submittedAt: undefined,
+			approvedAt: undefined,
+			approvedBy: undefined,
 			createdAt: now,
 			lastModified: now,
 			schemaVersion: '1.0.0',
@@ -428,7 +443,7 @@ export const fork = mutation({
 export const submitForReview = mutation({
 	args: {
 		id: v.string(),
-		visibility: v.union(v.literal('public_anonymous'), v.literal('public_credited')),
+		visibility: v.union(v.literal('public_anonymous'), v.literal('public_credited'))
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -465,11 +480,11 @@ export const submitForReview = mutation({
 			isHomebrew: true,
 			submittedAt: now,
 			rejectionReason: undefined,
-			lastModified: now,
+			lastModified: now
 		});
 
 		return { success: true };
-	},
+	}
 });
 
 /**

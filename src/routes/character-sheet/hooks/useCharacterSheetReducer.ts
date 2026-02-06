@@ -27,6 +27,8 @@ export type SheetAction =
 	| { type: 'UPDATE_ACTION_POINTS_USED'; ap: number }
 	| { type: 'SET_MANUAL_DEFENSE'; pd?: number; ad?: number; pdr?: number }
 	| { type: 'ADD_ATTACK'; attack: AttackData }
+	| { type: 'SET_CONDITION_TOGGLE'; conditionId: string; active: boolean }
+	| { type: 'ADD_ATTACK'; attack: AttackData }
 	| { type: 'REMOVE_ATTACK'; attackId: string }
 	| { type: 'UPDATE_ATTACK'; attackId: string; attack: AttackData }
 	| { type: 'RESET_ATTACKS' }
@@ -47,7 +49,8 @@ export type SheetAction =
 	| {
 			type: 'UPDATE_DEFENSE_OVERRIDES';
 			overrides: { precisionAD?: number; areaAD?: number; precisionDR?: number };
-	  };
+	  }
+	| { type: 'SET_RAGE_ACTIVE'; isRaging: boolean };
 
 const initialState: SheetState = {
 	character: null,
@@ -231,6 +234,25 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 								...(action.pd !== undefined && { PD: action.pd }),
 								...(action.ad !== undefined && { AD: action.ad }),
 								...(action.pdr !== undefined && { PDR: action.pdr })
+							}
+						}
+					}
+				}
+			};
+
+		case 'SET_CONDITION_TOGGLE':
+			if (!state.character) return state;
+			return {
+				...state,
+				character: {
+					...state.character,
+					characterState: {
+						...state.character.characterState,
+						ui: {
+							...state.character.characterState.ui,
+							activeConditions: {
+								...(state.character.characterState.ui?.activeConditions || {}),
+								[action.conditionId]: action.active
 							}
 						}
 					}
@@ -535,18 +557,37 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 				}
 			};
 
-		case 'UPDATE_DEFENSE_OVERRIDES':
-			if (!state.character) return state;
-			return {
-				...state,
-				character: {
-					...state.character,
-					characterState: {
-						...state.character.characterState,
-						defenseOverrides: action.overrides
+			case 'UPDATE_DEFENSE_OVERRIDES':
+				if (!state.character) return state;
+				return {
+					...state,
+					character: {
+						...state.character,
+						characterState: {
+							...state.character.characterState,
+							defenseOverrides: action.overrides
+						}
 					}
-				}
-			};
+				};
+
+			case 'SET_RAGE_ACTIVE':
+				if (!state.character) return state;
+				return {
+					...state,
+					character: {
+						...state.character,
+						characterState: {
+							...state.character.characterState,
+							ui: {
+								...(state.character.characterState.ui || { manualDefenseOverrides: {} }),
+								combatToggles: {
+									...state.character.characterState.ui?.combatToggles,
+									isRaging: action.isRaging
+								}
+							}
+						}
+					}
+				};
 
 		default:
 			return state;
@@ -592,6 +633,10 @@ export function useCharacterSheetReducer() {
 
 	const addAttack = useCallback((attack: AttackData) => {
 		dispatch({ type: 'ADD_ATTACK', attack });
+	}, []);
+
+	const setConditionToggle = useCallback((conditionId: string, active: boolean) => {
+		dispatch({ type: 'SET_CONDITION_TOGGLE', conditionId, active });
 	}, []);
 
 	const removeAttack = useCallback((attackId: string) => {
@@ -672,6 +717,10 @@ export function useCharacterSheetReducer() {
 		[]
 	);
 
+	const setRageActive = useCallback((isRaging: boolean) => {
+		dispatch({ type: 'SET_RAGE_ACTIVE', isRaging });
+	}, []);
+
 	return {
 		state,
 		dispatch,
@@ -684,6 +733,7 @@ export function useCharacterSheetReducer() {
 		updateExhaustion,
 		updateDeathStep,
 		setManualDefense,
+		setConditionToggle,
 		addAttack,
 		removeAttack,
 		updateAttack,
@@ -702,6 +752,7 @@ export function useCharacterSheetReducer() {
 		updateGritPoints,
 		updateRestPoints,
 		toggleActiveCondition,
-		updateDefenseOverrides
+		updateDefenseOverrides,
+		setRageActive
 	};
 }

@@ -60,6 +60,60 @@ export const StyledCombatStatValue = styled.span`
 	font-weight: bold;
 `;
 
+export const StyledCombatToggleRow = styled.div<MobileStyledProps>`
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.5rem 0.75rem;
+	margin-bottom: 1rem;
+	border: 1px solid ${(props) => (props.$isMobile ? 'rgb(68, 68, 68)' : '#d7b89a')};
+	border-radius: 6px;
+	background: ${(props) => (props.$isMobile ? 'rgb(36, 36, 36)' : '#fff8ef')};
+`;
+
+export const StyledCombatToggleLabel = styled.span<MobileStyledProps>`
+	font-size: 0.85rem;
+	font-weight: bold;
+	letter-spacing: 0.04em;
+	color: ${(props) => (props.$isMobile ? '#f5d020' : '#8b4513')};
+	font-family: 'Inter', sans-serif;
+`;
+
+export const StyledCombatToggleButton = styled.button<{
+	$isActive: boolean;
+	$isMobile?: boolean;
+}>`
+	border: 1px solid ${(props) => (props.$isMobile ? 'rgb(68, 68, 68)' : '#8b4513')};
+	border-radius: 999px;
+	padding: 0.35rem 0.8rem;
+	font-size: 0.8rem;
+	font-weight: bold;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	cursor: pointer;
+	background: ${(props) => {
+		if (props.$isActive) {
+			return props.$isMobile ? '#f5d020' : '#8b4513';
+		}
+		return props.$isMobile ? 'rgb(42, 42, 42)' : 'white';
+	}};
+	color: ${(props) => {
+		if (props.$isActive) {
+			return props.$isMobile ? 'rgb(42, 42, 42)' : 'white';
+		}
+		return props.$isMobile ? '#f5d020' : '#8b4513';
+	}};
+
+	&:hover {
+		background: ${(props) => {
+			if (props.$isActive) {
+				return props.$isMobile ? '#d4b01c' : '#6b3410';
+			}
+			return props.$isMobile ? 'rgb(52, 52, 52)' : '#f0f0f0';
+		}};
+	}
+`;
+
 export const StyledInfoIcon = styled.span`
 	background: transparent;
 	color: #8b4513;

@@ -23,6 +23,8 @@ interface HeroSectionProps {
 
 	// Defenses
 	precisionAD: number;
+	precisionADHeavyThreshold?: number;
+	precisionADBrutalThreshold?: number;
 	precisionDR: number;
 	areaAD: number;
 
@@ -75,6 +77,9 @@ interface HeroSectionProps {
 	onAreaADMouseLeave?: () => void;
 	onPrecisionDRMouseEnter?: (e: React.MouseEvent) => void;
 	onPrecisionDRMouseLeave?: () => void;
+	showRageToggle?: boolean;
+	isRaging?: boolean;
+	onRageToggle?: (isRaging: boolean) => void;
 
 	className?: string;
 }
@@ -222,6 +227,51 @@ const BadgesContainer = styled.div`
 	justify-content: center;
 `;
 
+const RageControls = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: ${theme.spacing[3]};
+	padding: ${theme.spacing[2]} ${theme.spacing[3]};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
+	background: ${theme.colors.bg.secondary};
+`;
+
+const RageLabel = styled.span`
+	font-size: ${theme.typography.fontSize.sm};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	color: ${theme.colors.text.primary};
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+`;
+
+const RageToggleButton = styled.button<{ $active: boolean }>`
+	border: 1px solid ${(props) =>
+		props.$active ? theme.colors.accent.danger : theme.colors.border.default};
+	background: ${(props) => (props.$active ? theme.colors.accent.danger : theme.colors.bg.tertiary)};
+	color: ${theme.colors.text.primary};
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.bold};
+	border-radius: ${theme.borderRadius.sm};
+	padding: ${theme.spacing[1]} ${theme.spacing[2]};
+	cursor: pointer;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+`;
+
+const RageNote = styled.div`
+	font-size: ${theme.typography.fontSize.xs};
+	color: ${theme.colors.accent.warning};
+	font-weight: ${theme.typography.fontWeight.medium};
+`;
+
+const DefenseSubtext = styled.div`
+	margin-top: ${theme.spacing[1]};
+	font-size: ${theme.typography.fontSize.xs};
+	color: ${theme.colors.text.secondary};
+`;
+
 export const HeroSection: React.FC<HeroSectionProps> = ({
 	currentHP,
 	maxHP,
@@ -235,6 +285,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 	currentGrit,
 	maxGrit,
 	precisionAD,
+	precisionADHeavyThreshold,
+	precisionADBrutalThreshold,
 	precisionDR,
 	areaAD,
 	attackBonus,
@@ -277,6 +329,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 	onAreaADMouseLeave,
 	onPrecisionDRMouseEnter,
 	onPrecisionDRMouseLeave,
+	showRageToggle = false,
+	isRaging = false,
+	onRageToggle,
 	className
 }) => {
 	// Calculate condition badges
@@ -321,6 +376,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 					onMouseEnter={onHPMouseEnter}
 					onMouseLeave={onHPMouseLeave}
 				/>
+				{showRageToggle && (
+					<>
+						<RageControls>
+							<RageLabel>Rage</RageLabel>
+							<RageToggleButton $active={isRaging} onClick={() => onRageToggle?.(!isRaging)}>
+								{isRaging ? 'Active' : 'Inactive'}
+							</RageToggleButton>
+						</RageControls>
+						{isRaging && (
+							<RageNote>Rage: Resistance (Half) to Elemental and Physical damage.</RageNote>
+						)}
+					</>
+				)}
 				<DeathExhaustion isMobile={false} />
 			</BoxCard>
 
@@ -447,6 +515,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 								onChange={(e) => onPrecisionADChange?.(Number(e.target.value))}
 								disabled={!onPrecisionADChange}
 							/>
+							<DefenseSubtext>
+								Heavy {precisionADHeavyThreshold ?? precisionAD + 5} | Brutal {precisionADBrutalThreshold ?? precisionAD + 10}
+							</DefenseSubtext>
 						</DefenseItem>
 						<DefenseItem
 							whileHover={{ scale: 1.05 }}
@@ -514,3 +585,4 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 		</Container>
 	);
 };
+

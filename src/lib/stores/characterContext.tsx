@@ -64,6 +64,7 @@ export interface CharacterInProgressStoreData
 	isLevelUpMode?: boolean; // Indicates character is being leveled up
 	originalLevel?: number; // Store original level for comparison
 	sourceCharacterId?: string; // Track which character is being leveled up
+	flowType?: 'create' | 'levelup'; // Track which flow this draft belongs to
 }
 
 // Initial state for the store
@@ -99,6 +100,7 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
 	languagesData: { common: { fluency: 'fluent' } },
 	skillMasteryLimitElevations: {},
 	tradeMasteryLimitElevations: {},
+	flowType: 'create',
 	selectedTraitChoices: {},
 	cachedEffectResults: undefined,
 	cacheTimestamp: undefined,
@@ -263,7 +265,8 @@ function characterReducer(
 				...state,
 				isLevelUpMode: true,
 				originalLevel: action.originalLevel,
-				sourceCharacterId: action.characterId
+				sourceCharacterId: action.characterId,
+				flowType: 'levelup'
 			};
 		case 'SET_ANCESTRY':
 			return { ...state, ancestry1Id: action.ancestry1Id, ancestry2Id: action.ancestry2Id };
@@ -338,14 +341,38 @@ interface CharacterContextType {
 const CharacterContext = createContext<CharacterContextType | undefined>(undefined);
 
 export function CharacterProvider({ children }: { children: ReactNode }) {
+	// Determine the current flow type from URL or state
+	const getCurrentFlowType = (): 'create' | 'levelup' => {
+		// Check if we're in level-up mode by looking at window.location
+		const isLevelUpPath =
+			window.location.pathname.includes('level-up') ||
+			window.location.search.includes('levelup');
+		return isLevelUpPath ? 'levelup' : 'create';
+	};
+
 	// Initialize state: check for saved draft first
 	const [state, dispatch] = useReducer(characterReducer, initialCharacterInProgressState, () => {
+		const currentFlowType = getCurrentFlowType();
 		const draft = loadCharacterDraft();
 		if (draft) {
-			console.log('Restored character draft from sessionStorage');
-			return draft;
+			// Validate that the draft matches the current flow
+			if (draft.flowType === currentFlowType || !draft.flowType) {
+				// If flowType is missing, assume it's compatible (backward compatibility)
+				console.log('Restored character draft from sessionStorage for', currentFlowType, 'flow');
+				return { ...draft, flowType: currentFlowType }; // Update flowType to current
+			} else {
+				console.log(
+					'Flow mismatch detected: draft is',
+					draft.flowType,
+					'but current flow is',
+					currentFlowType,
+					'- clearing draft'
+				);
+				clearCharacterDraft();
+				return { ...initialCharacterInProgressState, flowType: currentFlowType };
+			}
 		}
-		return initialCharacterInProgressState;
+		return { ...initialCharacterInProgressState, flowType: currentFlowType };
 	});
 
 	// Save draft to sessionStorage whenever state changes (debounced effect)

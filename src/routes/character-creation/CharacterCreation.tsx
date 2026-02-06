@@ -13,6 +13,7 @@ import Spells from './Spells.tsx';
 import Maneuvers from './Maneuvers.tsx';
 import CharacterName from './CharacterName.tsx';
 import Snackbar from '../../components/Snackbar.tsx';
+import ConfirmationModal from '../../components/ConfirmationModal.tsx';
 import { completeCharacter } from '../../lib/services/characterCompletion';
 import { completeCharacterEdit, convertCharacterToInProgress } from '../../lib/utils/characterEdit';
 import type { SavedCharacter } from '../../lib/types/dataContracts';
@@ -27,7 +28,6 @@ import { resolveClassProgression } from '../../lib/rulesdata/classes-data/classP
 import { useNavigate, useLocation } from 'react-router-dom';
 import { SecondaryButton, PrimaryButton } from '../../components/styled/index';
 import { Dialog, DialogContent } from '../../components/ui/dialog';
-import { cn } from '../../lib/utils';
 import { Check, ChevronRight } from 'lucide-react';
 import { SignIn, useIsAuthenticated } from '../../components/auth';
 import { debug } from '../../lib/utils/debug';
@@ -44,7 +44,8 @@ import {
 	StepNumber,
 	StepLabel,
 	StepSeparator,
-	MainContent
+	MainContent,
+	RestartButton
 } from './CharacterCreation.styled';
 
 /**
@@ -104,6 +105,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	const [showSnackbar, setShowSnackbar] = useState(false);
 	const [showAuthDialog, setShowAuthDialog] = useState(false);
 	const [pendingSave, setPendingSave] = useState(false); // Track if we're waiting for auth to save
+	const [showRestartModal, setShowRestartModal] = useState(false);
 	const storage = useMemo(() => getDefaultStorage(), []);
 	const isAuthenticated = useIsAuthenticated();
 	const isUsingConvex = import.meta.env.VITE_USE_CONVEX === 'true';
@@ -136,11 +138,17 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		}
 	}, [isAuthenticated, pendingSave, isUsingConvex]);
 
-	// Clear draft when creating NEW character (not editing or leveling up)
+	// NOTE: Draft clearing and flow validation is now handled in characterContext.tsx
+	// via getCurrentFlowType() and smart initialization logic. We no longer need
+	// to manually clear drafts here - the context will automatically clear mismatched
+	// flows and preserve drafts within the same flow.
+	
+	// Only set flowType to 'create' on mount for new characters (not editing/leveling)
 	useEffect(() => {
 		if (!editChar && !isLevelUpMode && !levelUpCharacter) {
-			debug.character('CharacterCreation: Creating NEW character - clearing any existing draft/level-up state');
-			dispatch({ type: 'CLEAR_DRAFT' });
+			// Ensure flowType is set to 'create' for new character flow
+			// But don't clear the draft - let the context handle that
+			dispatch({ type: 'UPDATE_STORE', updates: { flowType: 'create' } });
 		}
 	}, [editChar, isLevelUpMode, levelUpCharacter, dispatch]);
 
@@ -443,6 +451,19 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		} else {
 			dispatch({ type: 'PREVIOUS_STEP' });
 		}
+	};
+
+	const handleRestart = () => {
+		setShowRestartModal(true);
+	};
+
+	const confirmRestart = () => {
+		debug.character('Restarting character creation - clearing all data');
+		dispatch({ type: 'CLEAR_DRAFT' });
+		dispatch({ type: 'SET_STEP', step: 1 });
+		setSnackbarMessage('Character creation restarted');
+		setShowSnackbar(true);
+		setShowRestartModal(false);
 	};
 
 	const isStepCompleted = (step: number) => {
@@ -830,20 +851,23 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				</MobileProgressBar>
 
 				<HeaderContent>
-					{/* Left: Previous Button */}
-					<NavSection $align="start">
-						<SecondaryButton onClick={handlePrevious} disabled={state.currentStep === 1}>
-							← <span style={{ marginLeft: '8px' }}>Previous</span>
-						</SecondaryButton>
-					</NavSection>
+				{/* Left: Previous Button and Restart */}
+				<NavSection $align="start">
+					<SecondaryButton onClick={handlePrevious} disabled={state.currentStep === 1}>
+						← <span style={{ marginLeft: '8px' }}>Previous</span>
+					</SecondaryButton>
+				<RestartButton onClick={handleRestart} title="Clear all progress and start over">
+					Restart
+				</RestartButton>
+		</NavSection>
 
-					{/* Center: Stepper (Desktop) or Title (Mobile) */}
-					<NavSection $align="center" style={{ flex: 1, minWidth: 0 }}>
-						{/* Mobile Title */}
-						<MobileTitle>{editChar ? 'Edit' : 'Create'} Character</MobileTitle>
+		{/* Center: Stepper (Desktop) or Title (Mobile) */}
+		<NavSection $align="center" style={{ flex: 1, minWidth: 0 }}>
+					{/* Mobile Title */}
+					<MobileTitle>{editChar ? 'Edit' : 'Create'} Character</MobileTitle>
 
-						{/* Desktop Stepper */}
-						<StepperContainer>
+					{/* Desktop Stepper */}
+					<StepperContainer>
 							{steps.map(({ number, label }, index) => {
 								const isActive = state.currentStep === number;
 								const isCompleted = isStepCompleted(number);
@@ -872,10 +896,10 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 								);
 							})}
 						</StepperContainer>
-					</NavSection>
+				</NavSection>
 
-					{/* Right: Next Button */}
-					<NavSection $align="end">
+				{/* Right: Next Button */}
+				<NavSection $align="end">
 						<PrimaryButton onClick={handleNext}>
 							<span>{state.currentStep === maxStep ? 'Complete' : 'Next'}</span> →
 						</PrimaryButton>
@@ -890,6 +914,17 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				isVisible={showSnackbar}
 				onClose={() => setShowSnackbar(false)}
 				duration={3000}
+			/>
+
+			<ConfirmationModal
+				isOpen={showRestartModal}
+				title="Restart Character Creation?"
+				message="Are you sure you want to restart? All your current progress will be lost."
+				confirmText="Yes, Restart"
+				cancelText="Cancel"
+				variant="danger"
+				onConfirm={confirmRestart}
+				onCancel={() => setShowRestartModal(false)}
 			/>
 
 			<Dialog

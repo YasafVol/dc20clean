@@ -73,6 +73,15 @@ export const NavSection = styled.div<{ $align?: 'start' | 'center' | 'end' }>`
   flex-shrink: 0;
   justify-content: ${(props) => props.$align || 'start'};
   gap: ${theme.spacing[3]};
+  position: relative;
+  z-index: 10;
+  overflow: visible; /* Ensure buttons aren't clipped */
+
+  /* Center section should not overflow and block other sections */
+  ${(props) => props.$align === 'center' && `
+    overflow: hidden;
+    z-index: 5; /* Lower than left/right sections */
+  `}
 
   ${media.mobile} {
     width: auto;
@@ -217,3 +226,29 @@ export const AuthWrapper = styled.div`
     display: block;
   }
 `;
+
+// Restart button - minimal transparent style
+export const RestartButton = styled.button`
+  background: transparent;
+  border: none;
+  color: ${theme.colors.text.muted};
+  cursor: pointer;
+  font-size: ${theme.typography.fontSize.sm};
+  padding: ${theme.spacing[2]};
+  text-decoration: underline;
+  margin-left: ${theme.spacing[2]};
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 100; /* Ensure it's above stepper */
+  pointer-events: auto; /* Ensure it catches clicks */
+
+  &:hover {
+    color: ${theme.colors.text.secondary};
+    text-decoration: none;
+  }
+
+  &:active {
+    color: ${theme.colors.accent.danger};
+  }
+`;
+

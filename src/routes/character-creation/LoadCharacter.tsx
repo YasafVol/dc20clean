@@ -5,17 +5,43 @@ import { getDefaultStorage } from '../../lib/storage';
 import { checkSchemaCompatibility } from '../../lib/types/schemaVersion';
 import { migrateCharacterSchema } from '../../lib/utils/schemaMigration';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../../components/ui/button';
-import { Card, CardContent } from '../../components/ui/card';
+import { AnimatePresence } from 'framer-motion';
+// Shared UI components
 import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogDescription,
-	DialogFooter
-} from '../../components/ui/dialog';
-import { cn } from '../../lib/utils';
+	PageContainer,
+	Header,
+	ButtonRow,
+	PageTitle,
+	EmptyState,
+	EmptyStateTitle,
+	EmptyStateText,
+	ModalOverlay,
+	Modal,
+	ModalHeader,
+	ModalTitle,
+	ModalDescription,
+	ModalContent,
+	ModalFooter,
+	TextArea,
+	Message,
+	SecondaryButton,
+	SuccessButton
+} from '../../components/styled/index';
+// Page-specific components
+import {
+	CharacterGrid,
+	CharacterCard,
+	CharacterName,
+	PlayerName,
+	CharacterStats,
+	StatBlock,
+	StatLabel,
+	StatValue,
+	CharacterDates,
+	ButtonGrid,
+	CardButton,
+	FullWidthButton
+} from './LoadCharacter.styled';
 
 function LoadCharacter() {
 	const navigate = useNavigate();
@@ -339,205 +365,256 @@ function LoadCharacter() {
 	};
 
 	return (
-		<div className="bg-background min-h-screen bg-[url('/src/assets/BlackBG.jpg')] bg-cover bg-center p-8">
-			{/* Button Row */}
-			<div className="mb-8 flex gap-4">
-				<Button variant="secondary" onClick={() => navigate('/menu')} className="font-bold">
-					← Back to Menu
-				</Button>
-				<Button
-					variant="outline"
-					onClick={handleImportClick}
-					className="border-emerald-500 font-bold text-emerald-500 hover:bg-emerald-500 hover:text-white"
-				>
-					📥 Import from JSON
-				</Button>
-			</div>
+		<PageContainer>
+			<Header
+				initial={{ opacity: 0, y: -20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.5 }}
+			>
+				<ButtonRow>
+					<SecondaryButton
+						onClick={() => navigate('/menu')}
+						whileHover={{ scale: 1.05 }}
+						whileTap={{ scale: 0.95 }}
+					>
+						← Back to Menu
+					</SecondaryButton>
+					<SuccessButton
+						onClick={handleImportClick}
+						whileHover={{ scale: 1.05 }}
+						whileTap={{ scale: 0.95 }}
+					>
+						📥 Import from JSON
+					</SuccessButton>
+				</ButtonRow>
+			</Header>
 
-			{/* Title */}
-			<h1 className="font-cinzel text-primary mb-8 text-center text-3xl font-bold tracking-wide drop-shadow-lg">
+			<PageTitle
+				initial={{ opacity: 0, scale: 0.9 }}
+				animate={{ opacity: 1, scale: 1 }}
+				transition={{ duration: 0.5, delay: 0.2 }}
+			>
 				Load Character
-			</h1>
+			</PageTitle>
 
 			{savedCharacters.length === 0 ? (
-				<div className="text-muted-foreground py-16 text-center">
-					<h2 className="text-primary mb-4 text-2xl">No Saved Characters</h2>
-					<p className="text-base leading-relaxed">
+				<EmptyState
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.5, delay: 0.3 }}
+				>
+					<EmptyStateTitle>No Saved Characters</EmptyStateTitle>
+					<EmptyStateText>
 						You haven't created any characters yet.
 						<br />
 						Go back to the menu and create your first character!
-					</p>
-				</div>
+					</EmptyStateText>
+				</EmptyState>
 			) : (
-				<div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-					{savedCharacters.map((character) => (
-						<Card
+				<CharacterGrid>
+					{savedCharacters.map((character, index) => (
+						<CharacterCard
 							key={character.id}
-							className="hover:border-primary border-purple-500 bg-gradient-to-br from-indigo-950 to-indigo-900 shadow-lg shadow-purple-500/30 transition-all hover:-translate-y-1 hover:shadow-xl"
+							onClick={() => handleCharacterClick(character)}
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.5, delay: 0.1 * index }}
+							whileHover={{ scale: 1.02 }}
+							whileTap={{ scale: 0.98 }}
 						>
-							<CardContent className="p-6">
-								<h2 className="text-primary mb-4 text-center text-xl font-bold">
-									{character.finalName || 'Unnamed Character'}
-								</h2>
+							<CharacterName>{character.finalName || 'Unnamed Character'}</CharacterName>
 
-								<p className="text-foreground/80 mb-4 text-center">
-									Player: {character.finalPlayerName || 'Unknown'}
-								</p>
+							<PlayerName>Player: {character.finalPlayerName || 'Unknown'}</PlayerName>
 
-								<div className="mb-4 flex items-center justify-between">
-									<div className="text-center">
-										<div className="text-xs font-bold tracking-wide text-purple-400 uppercase">
-											Race
-										</div>
-										<div className="text-foreground mt-1 font-bold">
-											{formatAncestry(
-												character.ancestry1Name || character.ancestry1Id || 'Unknown',
-												character.ancestry2Name || character.ancestry2Id
-											)}
-										</div>
-									</div>
-
-									<div className="text-center">
-										<div className="text-xs font-bold tracking-wide text-purple-400 uppercase">
-											Class
-										</div>
-										<div className="text-foreground mt-1 font-bold">
-											{character.className || character.classId || 'Unknown'}
-										</div>
-									</div>
-								</div>
-
-								<p className="text-muted-foreground mb-4 text-center text-sm italic">
-									Created: {formatDate(character.createdAt || character.completedAt)}
-									{character.lastModified &&
-										character.lastModified !== character.createdAt &&
-										character.lastModified !== character.completedAt && (
-											<span className="block">
-												Last Modified: {formatDate(character.lastModified)}
-											</span>
+							<CharacterStats>
+								<StatBlock>
+									<StatLabel>Race</StatLabel>
+									<StatValue>
+										{formatAncestry(
+											character.ancestry1Name || character.ancestry1Id || 'Unknown',
+											character.ancestry2Name || character.ancestry2Id
 										)}
-								</p>
+									</StatValue>
+								</StatBlock>
 
-								<div className="mt-4 grid grid-cols-2 gap-2">
-									<Button
-										variant="default"
-										size="sm"
-										onClick={(e) => handleViewCharacterSheet(character, e)}
-										className="font-bold"
-									>
-										View Sheet
-									</Button>
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={(e) => handleExportPdf(character, e)}
-										title="Export this character to a fillable PDF"
-										className="border-purple-500 font-bold text-purple-400 hover:bg-purple-500 hover:text-white"
-									>
-										Export PDF
-									</Button>
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={() => handleCharacterClick(character)}
-										className="border-purple-500 font-bold text-purple-400 hover:bg-purple-500 hover:text-white"
-									>
-										Edit
-									</Button>
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={(e) => handleLevelUp(character, e)}
-										className="border-purple-500 font-bold text-purple-400 hover:bg-purple-500 hover:text-white"
-									>
-										Level Up
-									</Button>
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={(e) => handleDeleteClick(character, e)}
-										className="col-span-2 border-red-500 font-bold text-red-500 hover:bg-red-500 hover:text-white"
-									>
-										Delete
-									</Button>
-								</div>
-							</CardContent>
-						</Card>
+								<StatBlock>
+									<StatLabel>Class</StatLabel>
+									<StatValue>{character.className || character.classId || 'Unknown'}</StatValue>
+								</StatBlock>
+
+								<StatBlock>
+									<StatLabel>Level</StatLabel>
+									<StatValue>{character.level || 1}</StatValue>
+								</StatBlock>
+							</CharacterStats>
+
+							<CharacterDates>
+								Created: {formatDate(character.createdAt || character.completedAt)}
+								{character.lastModified &&
+									character.lastModified !== character.createdAt &&
+									character.lastModified !== character.completedAt && (
+										<span>Modified: {formatDate(character.lastModified)}</span>
+									)}
+							</CharacterDates>
+
+							<ButtonGrid>
+								<CardButton
+									$variant="primary"
+									onClick={(e) => handleViewCharacterSheet(character, e)}
+									whileHover={{ scale: 1.05 }}
+									whileTap={{ scale: 0.95 }}
+								>
+									View Sheet
+								</CardButton>
+								<CardButton
+									onClick={(e) => handleExportPdf(character, e)}
+									whileHover={{ scale: 1.05 }}
+									whileTap={{ scale: 0.95 }}
+								>
+									Export PDF
+								</CardButton>
+								<CardButton
+									onClick={(e) => {
+										e.stopPropagation();
+										handleCharacterClick(character);
+									}}
+									whileHover={{ scale: 1.05 }}
+									whileTap={{ scale: 0.95 }}
+								>
+									Edit
+								</CardButton>
+								<CardButton
+									onClick={(e) => handleLevelUp(character, e)}
+									whileHover={{ scale: 1.05 }}
+									whileTap={{ scale: 0.95 }}
+								>
+									Level Up
+								</CardButton>
+								<FullWidthButton
+									$variant="danger"
+									onClick={(e) => handleDeleteClick(character, e)}
+									whileHover={{ scale: 1.02 }}
+									whileTap={{ scale: 0.98 }}
+								>
+									Delete
+								</FullWidthButton>
+							</ButtonGrid>
+						</CharacterCard>
 					))}
-				</div>
+				</CharacterGrid>
 			)}
 
 			{/* Import Character Modal */}
-			<Dialog open={importModalOpen} onOpenChange={setImportModalOpen}>
-				<DialogContent className="max-w-xl border-emerald-500">
-					<DialogHeader>
-						<DialogTitle className="text-center text-emerald-500">
-							Import Character from JSON
-						</DialogTitle>
-						<DialogDescription className="text-foreground/80">
-							Paste the character JSON data from the clipboard (exported from character sheet):
-						</DialogDescription>
-					</DialogHeader>
-
-					<textarea
-						value={importJsonText}
-						onChange={(e) => setImportJsonText(e.target.value)}
-						placeholder="Paste character JSON data here..."
-						className="border-border text-foreground placeholder:text-muted-foreground min-h-[300px] w-full resize-y rounded-lg border-2 bg-black/30 p-4 font-mono text-sm focus:border-emerald-500 focus:outline-none"
-					/>
-
-					{importMessage && (
-						<p
-							className={cn(
-								'rounded-md border p-3 text-sm',
-								importMessage.type === 'error' && 'border-red-500 bg-red-500/10 text-red-500',
-								importMessage.type === 'success' &&
-									'border-emerald-500 bg-emerald-500/10 text-emerald-500',
-								importMessage.type === 'info' && 'border-blue-500 bg-blue-500/10 text-blue-500'
-							)}
+			<AnimatePresence>
+				{importModalOpen && (
+					<ModalOverlay
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						onClick={handleImportCancel}
+					>
+						<Modal
+							$variant="success"
+							initial={{ scale: 0.9, opacity: 0 }}
+							animate={{ scale: 1, opacity: 1 }}
+							exit={{ scale: 0.9, opacity: 0 }}
+							onClick={(e) => e.stopPropagation()}
 						>
-							{importMessage.text}
-						</p>
-					)}
+							<ModalHeader>
+								<ModalTitle $variant="success">Import Character from JSON</ModalTitle>
+								<ModalDescription>
+									Paste the character JSON data from the clipboard (exported from character sheet):
+								</ModalDescription>
+							</ModalHeader>
 
-					<DialogFooter className="flex justify-center gap-4">
-						<Button variant="outline" onClick={handleImportCancel}>
-							Cancel
-						</Button>
-						<Button
-							onClick={handleImportCharacter}
-							disabled={isImporting || !importJsonText.trim()}
-							className="bg-emerald-500 text-white hover:bg-emerald-600"
-						>
-							{isImporting ? 'Importing...' : 'Import Character'}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+							<ModalContent>
+								<TextArea
+									value={importJsonText}
+									onChange={(e) => setImportJsonText(e.target.value)}
+									placeholder="Paste character JSON data here..."
+								/>
+
+								{importMessage && (
+									<Message
+										$type={importMessage.type}
+										initial={{ opacity: 0, y: -10 }}
+										animate={{ opacity: 1, y: 0 }}
+									>
+										{importMessage.text}
+									</Message>
+								)}
+							</ModalContent>
+
+							<ModalFooter>
+								<SecondaryButton
+									onClick={handleImportCancel}
+									whileHover={{ scale: 1.05 }}
+									whileTap={{ scale: 0.95 }}
+								>
+									Cancel
+								</SecondaryButton>
+								<SuccessButton
+									onClick={handleImportCharacter}
+									disabled={isImporting || !importJsonText.trim()}
+									whileHover={{ scale: 1.05 }}
+									whileTap={{ scale: 0.95 }}
+								>
+									{isImporting ? 'Importing...' : 'Import Character'}
+								</SuccessButton>
+							</ModalFooter>
+						</Modal>
+					</ModalOverlay>
+				)}
+			</AnimatePresence>
 
 			{/* Delete Confirmation Modal */}
-			<Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
-				<DialogContent className="max-w-md border-red-500">
-					<DialogHeader>
-						<DialogTitle className="text-center text-red-500">Delete Character</DialogTitle>
-						<DialogDescription className="text-foreground text-center leading-relaxed">
-							Are you sure you want to delete "{characterToDelete?.finalName || 'Unnamed Character'}
-							"?
-							<br />
-							This action cannot be undone.
-						</DialogDescription>
-					</DialogHeader>
-					<DialogFooter className="flex justify-center gap-4">
-						<Button variant="outline" onClick={handleCancelDelete}>
-							Cancel
-						</Button>
-						<Button variant="destructive" onClick={handleConfirmDelete}>
-							Delete
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
-		</div>
+			<AnimatePresence>
+				{deleteModalOpen && (
+					<ModalOverlay
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						onClick={handleCancelDelete}
+					>
+						<Modal
+							$variant="danger"
+							initial={{ scale: 0.9, opacity: 0 }}
+							animate={{ scale: 1, opacity: 1 }}
+							exit={{ scale: 0.9, opacity: 0 }}
+							onClick={(e) => e.stopPropagation()}
+						>
+							<ModalHeader>
+								<ModalTitle $variant="danger">Delete Character</ModalTitle>
+								<ModalDescription>
+									Are you sure you want to delete "{characterToDelete?.finalName || 'Unnamed Character'}
+									"?
+									<br />
+									This action cannot be undone.
+								</ModalDescription>
+							</ModalHeader>
+
+							<ModalFooter>
+								<SecondaryButton
+									onClick={handleCancelDelete}
+									whileHover={{ scale: 1.05 }}
+									whileTap={{ scale: 0.95 }}
+								>
+									Cancel
+								</SecondaryButton>
+								<CardButton
+									$variant="danger"
+									onClick={handleConfirmDelete}
+									whileHover={{ scale: 1.05 }}
+									whileTap={{ scale: 0.95 }}
+								>
+									Delete
+								</CardButton>
+							</ModalFooter>
+						</Modal>
+					</ModalOverlay>
+				)}
+			</AnimatePresence>
+		</PageContainer>
 	);
 }
 

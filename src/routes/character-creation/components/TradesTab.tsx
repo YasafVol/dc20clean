@@ -1,8 +1,8 @@
 import React from 'react';
 import { tradesData } from '../../../lib/rulesdata/trades';
 import { MASTERY_TIERS } from '../../../lib/rulesdata/progression/levelCaps';
-import { cn } from '../../../lib/utils';
 import { Button } from '../../../components/ui/button';
+import { MasteryButton, ElevationIndicator } from './Background.styled';
 import type { MasteryLimitElevation } from '../../../lib/types/effectSystem';
 
 interface BackgroundPointsData {
@@ -260,10 +260,7 @@ const TradesTab: React.FC<TradesTabProps> = ({
 						size="sm"
 						onClick={actions.resetConversions}
 						disabled={!hasConversions}
-						className={cn(
-							'border-white/50 bg-transparent',
-							hasConversions && 'hover:border-destructive hover:text-destructive'
-						)}
+						className={`border-white/50 bg-transparent ${hasConversions ? 'hover:border-destructive hover:text-destructive' : ''}`}
 					>
 						Reset Conversions
 					</Button>
@@ -288,10 +285,7 @@ const TradesTab: React.FC<TradesTabProps> = ({
 						<div
 							key={trade.id}
 							data-testid={`trade-item-${trade.id}`}
-							className={cn(
-								'hover:border-primary rounded-lg border bg-transparent p-4 transition-colors',
-								hasElevation ? 'border-yellow-500/50' : 'border-white/50'
-							)}
+							className={`hover:border-primary rounded-lg border bg-transparent p-4 transition-colors ${hasElevation ? 'border-[#7DCFFF]/50' : 'border-white/50'}`}
 						>
 							<div className="mb-2 flex items-center justify-between">
 								<h4 className="text-primary text-lg font-semibold tracking-wide uppercase">
@@ -302,7 +296,7 @@ const TradesTab: React.FC<TradesTabProps> = ({
 								</span>
 							</div>
 							{hasElevation && (
-								<div className="mb-2 text-xs text-yellow-500">
+								<div className="mb-2 text-xs text-[#7DCFFF]">
 									⬆ Limit elevated (cap: {effectiveCap})
 								</div>
 							)}
@@ -321,7 +315,7 @@ const TradesTab: React.FC<TradesTabProps> = ({
 									const pointCost = calculatePointCost(trade.id, level);
 
 									return (
-										<button
+										<MasteryButton
 											key={level}
 											title={`${masteryDisplay.name} (+${masteryDisplay.bonus})${needsElevation ? ' - requires limit elevation (+1 point)' : ''}${pointCost > 0 ? ` - costs ${pointCost} points` : ''}`}
 											onClick={() => {
@@ -329,19 +323,13 @@ const TradesTab: React.FC<TradesTabProps> = ({
 													handleTradeChange(trade.id, level);
 												}
 											}}
-											className={cn(
-												'rounded-md border px-3 py-1.5 text-sm font-semibold transition-colors',
-												isActive
-													? 'border-primary bg-primary text-primary-foreground'
-													: 'text-foreground border-white/50 bg-transparent',
-												isDisabled && 'cursor-not-allowed opacity-50',
-												!isDisabled && !isActive && 'hover:border-primary',
-												needsElevation && canSelect && 'border-yellow-500/50 text-yellow-500'
-											)}
+											$isActive={isActive}
+											$isDisabled={isDisabled}
+											$needsElevation={needsElevation && canSelect}
 										>
 											{level}
-											{needsElevation && canSelect && <span className="ml-1 text-xs">⬆</span>}
-										</button>
+											{needsElevation && canSelect && <ElevationIndicator>⬆</ElevationIndicator>}
+										</MasteryButton>
 									);
 								})}
 							</div>

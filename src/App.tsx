@@ -12,7 +12,8 @@ import Conditions from './routes/conditions/Conditions.tsx';
 import { MonsterList, MonsterDesigner } from './routes/dm/monsters';
 import { EncounterList, EncounterPlanner } from './routes/dm/encounters';
 
-import { StyledApp } from './styles/App.styles';
+import { StyledApp, FixedAuthStatus } from './styles/App.styles';
+import { AuthStatus } from './components/auth';
 
 // Import fonts for GlobalStyle
 
@@ -87,6 +88,10 @@ function App() {
 		<>
 			<GlobalStyle />
 			<StyledApp>
+				{/* Fixed top-right auth status on all pages */}
+				<FixedAuthStatus>
+					<AuthStatus />
+				</FixedAuthStatus>
 				<BrowserRouter>
 					<Routes>
 						<Route path="/" element={<Navigate to="/menu" replace />} />

@@ -1,9 +1,9 @@
 import React from 'react';
 import { skillsData } from '../../../lib/rulesdata/skills';
 import { MASTERY_TIERS } from '../../../lib/rulesdata/progression/levelCaps';
-import { cn } from '../../../lib/utils';
 import { Button } from '../../../components/ui/button';
 import type { MasteryLimitElevation } from '../../../lib/types/effectSystem';
+import { MasteryButton, ElevationIndicator } from './Background.styled';
 
 interface BackgroundPointsData {
 	skillPointsUsed: number;
@@ -249,10 +249,7 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 						size="sm"
 						onClick={actions.resetConversions}
 						disabled={!hasConversions}
-						className={cn(
-							'border-white/50 bg-transparent',
-							hasConversions && 'hover:border-destructive hover:text-destructive'
-						)}
+						className={`border-white/50 bg-transparent ${hasConversions ? 'hover:border-destructive hover:text-destructive' : ''}`}
 					>
 						Reset Conversions
 					</Button>
@@ -271,10 +268,7 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 						<div
 							key={skill.id}
 							data-testid={`skill-item-${skill.id}`}
-							className={cn(
-								'hover:border-primary rounded-lg border bg-transparent p-4 transition-colors',
-								hasElevation ? 'border-yellow-500/50' : 'border-white/50'
-							)}
+							className={`hover:border-primary rounded-lg border bg-transparent p-4 transition-colors ${hasElevation ? 'border-[#7DCFFF]/50' : 'border-white/50'}`}
 						>
 							<div className="mb-2 flex items-center justify-between">
 								<h4 className="text-primary text-lg font-semibold tracking-wide uppercase">
@@ -285,7 +279,7 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 								</span>
 							</div>
 							{hasElevation && (
-								<div className="mb-2 text-xs text-yellow-500">
+								<div className="mb-2 text-xs text-[#7DCFFF]">
 									⬆ Limit elevated (cap: {effectiveCap})
 								</div>
 							)}
@@ -301,7 +295,7 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 									const pointCost = calculatePointCost(skill.id, level);
 
 									return (
-										<button
+										<MasteryButton
 											key={level}
 											title={`${masteryDisplay.name} (+${masteryDisplay.bonus})${needsElevation ? ' - requires limit elevation (+1 point)' : ''}${pointCost > 0 ? ` - costs ${pointCost} points` : ''}`}
 											onClick={() => {
@@ -309,19 +303,13 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 													handleSkillChange(skill.id, level);
 												}
 											}}
-											className={cn(
-												'rounded-md border px-3 py-1.5 text-sm font-semibold transition-colors',
-												isActive
-													? 'border-primary bg-primary text-primary-foreground'
-													: 'text-foreground border-white/50 bg-transparent',
-												isDisabled && 'cursor-not-allowed opacity-50',
-												!isDisabled && !isActive && 'hover:border-primary',
-												needsElevation && canSelect && 'border-yellow-500/50 text-yellow-500'
-											)}
+$isActive={isActive}
+$isDisabled={isDisabled}
+$needsElevation={needsElevation && canSelect}
 										>
 											{level}
-											{needsElevation && canSelect && <span className="ml-1 text-xs">⬆</span>}
-										</button>
+											{needsElevation && canSelect && <ElevationIndicator>⬆</ElevationIndicator>}
+										</MasteryButton>
 									);
 								})}
 							</div>

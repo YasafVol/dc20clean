@@ -6,7 +6,12 @@ import LanguagesTab from './components/LanguagesTab';
 import { InlineError } from './components/ValidationFeedback';
 import { BuildStep } from '../../lib/types/effectSystem';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { cn } from '../../lib/utils';
+import {
+	Container,
+	Header,
+	Title,
+	TabsContainer
+} from './Background.styled';
 
 type TabType = 'skills' | 'trades' | 'languages';
 
@@ -20,12 +25,12 @@ const Background: React.FC = () => {
 	// Early return if background data is not available
 	if (!background) {
 		return (
-			<div className="space-y-4 text-center">
-				<h2 className="font-cinzel text-primary text-3xl font-bold">
-					Background (Skills, Trades & Languages)
-				</h2>
-				<div>Loading background data...</div>
-			</div>
+			<Container>
+				<Header>
+					<Title>Background (Skills, Trades & Languages)</Title>
+					<div>Loading background data...</div>
+				</Header>
+			</Container>
 		);
 	}
 
@@ -190,112 +195,145 @@ const Background: React.FC = () => {
 		background.availableLanguagePoints - background.languagePointsUsed;
 
 	return (
-		<div className="mx-auto max-w-7xl space-y-8">
-			<div className="space-y-4 text-center">
-				<h2 className="font-cinzel text-primary text-3xl font-bold">Background</h2>
-				<p className="text-muted-foreground mx-auto max-w-3xl text-lg leading-relaxed">
+		<Container>
+			<Header>
+				<Title>Background</Title>
+				<p
+					style={{
+						color: 'rgba(169, 177, 214, 0.7)',
+						fontSize: '1.125rem',
+						lineHeight: '1.75',
+						maxWidth: '48rem',
+						margin: '0 auto 1rem'
+					}}
+				>
 					Choose your character's background skills, trades, and languages. You have{' '}
-					<span className="text-primary font-bold">{background.baseSkillPoints}</span> skill points,{' '}
-					<span className="text-primary font-bold">{background.baseTradePoints}</span> trade points,
-					and <span className="text-primary font-bold">{background.baseLanguagePoints}</span>{' '}
+					<span style={{ color: '#7DCFFF', fontWeight: 'bold' }}>
+						{background.baseSkillPoints}
+					</span>{' '}
+					skill points,{' '}
+					<span style={{ color: '#7DCFFF', fontWeight: 'bold' }}>
+						{background.baseTradePoints}
+					</span>{' '}
+					trade points, and{' '}
+					<span style={{ color: '#7DCFFF', fontWeight: 'bold' }}>
+						{background.baseLanguagePoints}
+					</span>{' '}
 					language points.
 				</p>
 
-				<div className="bg-muted/50 text-muted-foreground border-border inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm">
+				<div
+					style={{
+						background: 'rgba(169, 177, 214, 0.05)',
+						color: 'rgba(169, 177, 214, 0.7)',
+						border: '1px solid rgba(169, 177, 214, 0.1)',
+						display: 'inline-flex',
+						alignItems: 'center',
+						gap: '0.5rem',
+						borderRadius: '0.5rem',
+						padding: '0.5rem 1rem',
+						fontSize: '0.875rem',
+						marginBottom: '0.5rem'
+					}}
+				>
 					<span>💡 Conversions: 1 skill ↔ 2 trade • 1 trade → 2 language</span>
 				</div>
 
-				<div className="text-muted-foreground text-sm italic">
+				<div
+					style={{
+						color: 'rgba(169, 177, 214, 0.7)',
+						fontSize: '0.875rem',
+						fontStyle: 'italic'
+					}}
+				>
 					All characters start fluent in Common for free.
 				</div>
-			</div>
+			</Header>
 
 			<InlineError errors={validation.errors} currentStep={BuildStep.Background} />
 
-			<Tabs
-				defaultValue="skills"
-				value={activeTab}
-				onValueChange={(v) => setActiveTab(v as TabType)}
-				className="w-full"
-			>
-				<TabsList className="border-border mx-auto mb-8 grid w-full max-w-2xl grid-cols-3 border bg-black/40">
-					<TabsTrigger
-						value="skills"
-						className={cn(
-							'font-cinzel py-3 text-base transition-colors',
-							skillPointsRemaining < 0 && 'text-destructive'
-						)}
-					>
-						Skills ({skillPointsRemaining} left)
-					</TabsTrigger>
-					<TabsTrigger
-						value="trades"
-						className={cn(
-							'font-cinzel py-3 text-base transition-colors',
-							tradePointsRemaining < 0 && 'text-destructive'
-						)}
-					>
-						Trades ({tradePointsRemaining} left)
-					</TabsTrigger>
-					<TabsTrigger
-						value="languages"
-						className={cn(
-							'font-cinzel py-3 text-base transition-colors',
-							languagePointsRemaining < 0 && 'text-destructive'
-						)}
-					>
-						Languages ({languagePointsRemaining} left)
-					</TabsTrigger>
-				</TabsList>
+			<TabsContainer>
+				<Tabs
+					defaultValue="skills"
+					value={activeTab}
+					onValueChange={(v) => setActiveTab(v as TabType)}
+				>
+					<TabsList>
+						<TabsTrigger
+							value="skills"
+							style={{
+								color: skillPointsRemaining < 0 ? '#F7768E' : undefined
+							}}
+						>
+							Skills ({skillPointsRemaining} left)
+						</TabsTrigger>
+						<TabsTrigger
+							value="trades"
+							style={{
+								color: tradePointsRemaining < 0 ? '#F7768E' : undefined
+							}}
+						>
+							Trades ({tradePointsRemaining} left)
+						</TabsTrigger>
+						<TabsTrigger
+							value="languages"
+							style={{
+								color: languagePointsRemaining < 0 ? '#F7768E' : undefined
+							}}
+						>
+							Languages ({languagePointsRemaining} left)
+						</TabsTrigger>
+					</TabsList>
 
-				<TabsContent value="skills" className="focus-visible:outline-none">
-					<SkillsTab
-						currentSkills={currentSkills}
-						currentTrades={currentTrades}
-						pointsData={background}
-						conversions={{
-							skillToTradeConversions: background.conversions.skillToTrade,
-							tradeToSkillConversions: background.conversions.tradeToSkill,
-							tradeToLanguageConversions: background.conversions.tradeToLanguage
-						}}
-						actions={actions}
-						masteryLimits={masteryLimits}
-						onSkillChange={handleSkillChange}
-						onSkillLimitElevationChange={handleSkillLimitElevationChange}
-					/>
-				</TabsContent>
+					<TabsContent value="skills">
+						<SkillsTab
+							currentSkills={currentSkills}
+							currentTrades={currentTrades}
+							pointsData={background}
+							conversions={{
+								skillToTradeConversions: background.conversions.skillToTrade,
+								tradeToSkillConversions: background.conversions.tradeToSkill,
+								tradeToLanguageConversions: background.conversions.tradeToLanguage
+							}}
+							actions={actions}
+							masteryLimits={masteryLimits}
+							onSkillChange={handleSkillChange}
+							onSkillLimitElevationChange={handleSkillLimitElevationChange}
+						/>
+					</TabsContent>
 
-				<TabsContent value="trades" className="focus-visible:outline-none">
-					<TradesTab
-						currentTrades={currentTrades}
-						pointsData={background}
-						conversions={{
-							skillToTradeConversions: background.conversions.skillToTrade,
-							tradeToSkillConversions: background.conversions.tradeToSkill,
-							tradeToLanguageConversions: background.conversions.tradeToLanguage
-						}}
-						actions={actions}
-						masteryLimits={masteryLimits}
-						onTradeChange={handleTradeChange}
-						onTradeLimitElevationChange={handleTradeLimitElevationChange}
-					/>
-				</TabsContent>
+					<TabsContent value="trades">
+						<TradesTab
+							currentTrades={currentTrades}
+							pointsData={background}
+							conversions={{
+								skillToTradeConversions: background.conversions.skillToTrade,
+								tradeToSkillConversions: background.conversions.tradeToSkill,
+								tradeToLanguageConversions: background.conversions.tradeToLanguage
+							}}
+							actions={actions}
+							masteryLimits={masteryLimits}
+							onTradeChange={handleTradeChange}
+							onTradeLimitElevationChange={handleTradeLimitElevationChange}
+						/>
+					</TabsContent>
 
-				<TabsContent value="languages" className="focus-visible:outline-none">
-					<LanguagesTab
-						currentLanguages={currentLanguages}
-						pointsData={background}
-						conversions={{
-							skillToTradeConversions: background.conversions.skillToTrade,
-							tradeToSkillConversions: background.conversions.tradeToSkill,
-							tradeToLanguageConversions: background.conversions.tradeToLanguage
-						}}
-						actions={actions}
-						onLanguageChange={handleLanguageChange}
-					/>
-				</TabsContent>
-			</Tabs>
-		</div>
+					<TabsContent value="languages">
+						<LanguagesTab
+							currentLanguages={currentLanguages}
+							pointsData={background}
+							conversions={{
+								skillToTradeConversions: background.conversions.skillToTrade,
+								tradeToSkillConversions: background.conversions.tradeToSkill,
+								tradeToLanguageConversions: background.conversions.tradeToLanguage
+							}}
+							actions={actions}
+							onLanguageChange={handleLanguageChange}
+						/>
+					</TabsContent>
+				</Tabs>
+			</TabsContainer>
+		</Container>
 	);
 };
 

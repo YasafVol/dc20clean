@@ -20,8 +20,8 @@
 	--color-popover: oklch(0.16 0.03 280);
 	--color-popover-foreground: oklch(0.93 0.01 280);
 
-	/* Primary - amber/gold accent */
-	--color-primary: oklch(0.78 0.15 85);
+	/* Primary - crystal blue accent (Tokyo Night) */
+	--color-primary: oklch(0.78 0.1 220);
 	--color-primary-foreground: oklch(0.15 0.03 280);
 
 	/* Secondary - muted purple */
@@ -32,8 +32,8 @@
 	--color-muted: oklch(0.22 0.04 280);
 	--color-muted-foreground: oklch(0.65 0.02 280);
 
-	/* Accent - bright gold for highlights */
-	--color-accent: oklch(0.75 0.13 85);
+	/* Accent - crystal blue for highlights (Tokyo Night) */
+	--color-accent: oklch(0.75 0.1 220);
 	--color-accent-foreground: oklch(0.15 0.03 280);
 
 	/* Destructive - red for dangerous actions */
@@ -43,10 +43,10 @@
 	/* Border and inputs */
 	--color-border: oklch(0.3 0.04 280);
 	--color-input: oklch(0.25 0.04 280);
-	--color-ring: oklch(0.78 0.15 85);
+	--color-ring: oklch(0.78 0.1 220);
 
 	/* Chart colors for data visualization */
-	--color-chart-1: oklch(0.78 0.15 85);
+	--color-chart-1: oklch(0.78 0.1 220);
 	--color-chart-2: oklch(0.65 0.15 150);
 	--color-chart-3: oklch(0.6 0.15 200);
 	--color-chart-4: oklch(0.55 0.15 280);
@@ -61,12 +61,12 @@
 	/* Sidebar colors (if needed) */
 	--color-sidebar: oklch(0.13 0.025 280);
 	--color-sidebar-foreground: oklch(0.93 0.01 280);
-	--color-sidebar-primary: oklch(0.78 0.15 85);
+	--color-sidebar-primary: oklch(0.78 0.1 220);
 	--color-sidebar-primary-foreground: oklch(0.15 0.03 280);
 	--color-sidebar-accent: oklch(0.25 0.05 280);
 	--color-sidebar-accent-foreground: oklch(0.93 0.01 280);
 	--color-sidebar-border: oklch(0.25 0.04 280);
-	--color-sidebar-ring: oklch(0.78 0.15 85);
+	--color-sidebar-ring: oklch(0.78 0.1 220);
 
 	/* Tokyo Night Theme Colors */
 	--bg-primary: #1a1b26;

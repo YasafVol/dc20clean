@@ -55,6 +55,11 @@ import { skillsData } from '../rulesdata/skills';
 import { tradesData } from '../rulesdata/trades';
 import type { ClassDefinition } from '../rulesdata/schemas/character.schema';
 import { CHARACTER_PATHS } from '../rulesdata/progression/paths/paths.data';
+import {
+	collectGrantedAbilities,
+	collectMovements,
+	collectConditionalModifiers
+} from './calculatorModules/abilityCollection';
 
 /**
  * Cross-path grants returned by aggregatePathBenefits (DC20 v0.10 p.161)
@@ -1952,55 +1957,10 @@ export function calculateCharacterWithBreakdowns(
 		}
 	};
 
-	// 6. Collect abilities and features
-	const grantedAbilities = resolvedEffects
-		.filter((effect) => effect.resolved && effect.type === 'GRANT_ABILITY')
-		.map((effect) => ({
-			name: effect.target,
-			description: effect.value as string,
-			source: effect.source,
-			type: 'active' as const,
-			isConditional: !!effect.condition,
-			condition: effect.condition
-		}));
-
-	// 6b. Process GRANT_MOVEMENT effects
-	const movements = resolvedEffects
-		.filter((effect) => effect.resolved && effect.type === 'GRANT_MOVEMENT')
-		.map((effect) => {
-			let speed: string;
-			if (effect.value === 'equal_to_speed') {
-				// Movement speed equals ground speed
-				speed = `${finalMoveSpeed}`;
-			} else if (effect.value === 'half_speed') {
-				// Movement speed equals half ground speed
-				speed = `${Math.floor(finalMoveSpeed / 2)}`;
-			} else if (effect.value === 'double_speed') {
-				// Movement speed equals double ground speed
-				speed = `${finalMoveSpeed * 2}`;
-			} else if (typeof effect.value === 'number') {
-				// Explicit speed value
-				speed = `${effect.value}`;
-			} else {
-				// Handle other string values (e.g., "wings" for glide)
-				speed = effect.value as string;
-			}
-			return {
-				type: effect.target, // e.g., 'climb', 'swim', 'fly', 'burrow', 'glide'
-				speed,
-				source: effect.source
-			};
-		});
-
-	// 7. Conditional modifiers
-	const conditionalModifiers = resolvedEffects
-		.filter((effect) => effect.resolved && effect.condition)
-		.map((effect) => ({
-			effect,
-			condition: effect.condition!,
-			description: `${effect.source.name}: ${effect.value > 0 ? '+' : ''}${effect.value} ${effect.target} while ${effect.condition}`,
-			affectedStats: [effect.target]
-		}));
+	// 6. Collect abilities, movements, and conditional modifiers (via abilityCollection module)
+	const grantedAbilities = collectGrantedAbilities(resolvedEffects);
+	const movements = collectMovements(resolvedEffects, finalMoveSpeed);
+	const conditionalModifiers = collectConditionalModifiers(resolvedEffects);
 
 	// 8. Get unresolved choices
 	const unresolvedChoices = getUnresolvedChoices(resolvedEffects);

@@ -9,7 +9,7 @@ import type { AttributedEffect } from '../../types/effectSystem';
 
 export interface GrantedAbility {
 	name: string;
-	description: string | number;
+	description: string;
 	source: AttributedEffect['source'];
 	type: 'active';
 	isConditional: boolean;
@@ -34,14 +34,14 @@ export interface ConditionalModifier {
  */
 export function collectGrantedAbilities(resolvedEffects: AttributedEffect[]): GrantedAbility[] {
 	return resolvedEffects
-		.filter((effect) => effect.resolved && effect.type === 'GRANT_ABILITY')
+		.filter((effect) => effect.resolved && (effect as any).type === 'GRANT_ABILITY')
 		.map((effect) => ({
-			name: effect.target,
-			description: effect.value as string,
+			name: (effect as any).target,
+			description: (effect as any).value as string,
 			source: effect.source,
 			type: 'active' as const,
-			isConditional: !!effect.condition,
-			condition: effect.condition
+			isConditional: !!(effect as any).condition,
+			condition: (effect as any).condition
 		}));
 }
 
@@ -54,22 +54,23 @@ export function collectMovements(
 	finalMoveSpeed: number
 ): Movement[] {
 	return resolvedEffects
-		.filter((effect) => effect.resolved && effect.type === 'GRANT_MOVEMENT')
+		.filter((effect) => effect.resolved && (effect as any).type === 'GRANT_MOVEMENT')
 		.map((effect) => {
+			const value = (effect as any).value;
 			let speed: string;
-			if (effect.value === 'equal_to_speed') {
+			if (value === 'equal_to_speed') {
 				speed = `${finalMoveSpeed}`;
-			} else if (effect.value === 'half_speed') {
+			} else if (value === 'half_speed') {
 				speed = `${Math.floor(finalMoveSpeed / 2)}`;
-			} else if (effect.value === 'double_speed') {
+			} else if (value === 'double_speed') {
 				speed = `${finalMoveSpeed * 2}`;
-			} else if (typeof effect.value === 'number') {
-				speed = `${effect.value}`;
+			} else if (typeof value === 'number') {
+				speed = `${value}`;
 			} else {
-				speed = effect.value as string;
+				speed = value as string;
 			}
 			return {
-				type: effect.target,
+				type: (effect as any).target,
 				speed,
 				source: effect.source
 			};
@@ -83,11 +84,14 @@ export function collectConditionalModifiers(
 	resolvedEffects: AttributedEffect[]
 ): ConditionalModifier[] {
 	return resolvedEffects
-		.filter((effect) => effect.resolved && effect.condition)
-		.map((effect) => ({
-			effect,
-			condition: effect.condition!,
-			description: `${effect.source.name}: ${effect.value > 0 ? '+' : ''}${effect.value} ${effect.target} while ${effect.condition}`,
-			affectedStats: [effect.target]
-		}));
+		.filter((effect) => effect.resolved && (effect as any).condition)
+		.map((effect) => {
+			const e = effect as any;
+			return {
+				effect,
+				condition: e.condition!,
+				description: `${effect.source.name}: ${e.value > 0 ? '+' : ''}${e.value} ${e.target} while ${e.condition}`,
+				affectedStats: [e.target]
+			};
+		});
 }

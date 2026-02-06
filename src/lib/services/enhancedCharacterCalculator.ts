@@ -60,6 +60,11 @@ import {
 	collectMovements,
 	collectConditionalModifiers
 } from './calculatorModules/abilityCollection';
+import {
+	createStatBreakdown,
+	createInitiativeBreakdown,
+	createMartialCheckBreakdown
+} from './calculatorModules/breakdownGeneration';
 
 /**
  * Cross-path grants returned by aggregatePathBenefits (DC20 v0.10 p.161)
@@ -773,64 +778,7 @@ function resolveEffectChoices(
 	});
 }
 
-/**
- * Create detailed stat breakdown
- */
-function createStatBreakdown(
-	statName: string,
-	baseValue: number,
-	effects: AttributedEffect[],
-	activeConditions?: Set<string>
-): EnhancedStatBreakdown {
-	const relevantEffects = effects.filter((effect) => {
-		if (!effect.resolved) return false;
-
-		// Map effect types to stat names
-		if ((effect as any).type === 'MODIFY_ATTRIBUTE') {
-			return (
-				statName === `attribute_${(effect as any).target}` || statName === (effect as any).target
-			);
-		}
-		if ((effect as any).type === 'MODIFY_STAT') {
-			return statName === (effect as any).target;
-		}
-
-		return false;
-	});
-
-	const breakdown: EnhancedStatBreakdown = {
-		statName,
-		base: baseValue,
-		effects: relevantEffects.map((effect) => {
-			const isActive = !effect.condition || activeConditions?.has(effect.condition);
-			return {
-				source: effect.source,
-				value: effect.value as number,
-				condition: effect.condition,
-				description: `${effect.source.name}: ${effect.value > 0 ? '+' : ''}${effect.value}${effect.condition ? ` (${effect.condition})` : ''}`,
-				isActive
-			};
-		}),
-		total:
-			baseValue +
-			relevantEffects.reduce((sum, effect) => {
-				if (!effect.condition || activeConditions?.has(effect.condition)) {
-					// Count active conditional effects in total
-					return sum + (effect.value as number);
-				}
-				return sum;
-			}, 0)
-	};
-
-	// Calculate conditional total
-	breakdown.conditionalTotal =
-		baseValue +
-		relevantEffects.reduce((sum, effect) => {
-			return sum + (effect.value as number);
-		}, 0);
-
-	return breakdown;
-}
+// createStatBreakdown moved to calculatorModules/breakdownGeneration.ts
 
 /**
  * Validate attribute limits
@@ -1302,26 +1250,8 @@ export function calculateCharacterWithBreakdowns(
 		activeConditions
 	);
 
-	// Initiative breakdown - custom breakdown to show Combat Mastery + Agility components
-	breakdowns.initiative = {
-		statName: 'Initiative',
-		base: 0, // No base, it's a pure calculation
-		effects: [
-			{
-				source: { name: 'Combat Mastery', id: 'combatMastery', type: 'base' },
-				value: combatMastery,
-				description: `Combat Mastery: ${combatMastery}`,
-				isActive: true
-			},
-			{
-				source: { name: 'Agility Modifier', id: 'agility', type: 'base' },
-				value: finalAgility,
-				description: `Agility Modifier: ${finalAgility}`,
-				isActive: true
-			}
-		],
-		total: finalInitiativeBonus
-	};
+	// Initiative breakdown (via breakdownGeneration module)
+	breakdowns.initiative = createInitiativeBreakdown(combatMastery, finalAgility, finalInitiativeBonus);
 
 	// 4.5. Compute background points (ported from useBackgroundPoints)
 	const skills = buildData.skillsData ?? {};
@@ -1486,26 +1416,14 @@ export function calculateCharacterWithBreakdowns(
 	const athleticsTotal = finalMight + athleticsProficiency * 2; // Might + (Proficiency × 2)
 	const finalMartialCheck = Math.max(acrobaticsTotal, athleticsTotal);
 
-	// Create martial check breakdown for tooltip
-	breakdowns.martial_check = {
-		statName: 'Martial Check',
-		base: Math.max(finalAgility, finalMight), // Base attribute (higher one)
-		effects: [
-			{
-				source: { name: 'Acrobatics Option', id: 'acrobatics', type: 'base' },
-				value: acrobaticsTotal,
-				description: `Agility (${finalAgility}) + Proficiency ×2 (${acrobaticsProficiency * 2}) = ${acrobaticsTotal}`,
-				isActive: true
-			},
-			{
-				source: { name: 'Athletics Option', id: 'athletics', type: 'base' },
-				value: athleticsTotal,
-				description: `Might (${finalMight}) + Proficiency ×2 (${athleticsProficiency * 2}) = ${athleticsTotal}`,
-				isActive: true
-			}
-		],
-		total: finalMartialCheck
-	};
+	// Martial check breakdown (via breakdownGeneration module)
+	breakdowns.martial_check = createMartialCheckBreakdown(
+		finalAgility,
+		finalMight,
+		acrobaticsProficiency,
+		athleticsProficiency,
+		finalMartialCheck
+	);
 
 	// 5. Validation with step-aware errors
 	const errors: ValidationError[] = [];

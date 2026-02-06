@@ -177,6 +177,11 @@ interface CharacterSheetContextType {
 	updateGritPoints: (grit: number) => void;
 	updateRestPoints: (rest: number) => void;
 	toggleActiveCondition: (conditionId: string) => void;
+	updateDefenseOverrides: (overrides: {
+		precisionAD?: number;
+		areaAD?: number;
+		precisionDR?: number;
+	}) => void;
 	// Manual save function
 	saveNow: () => Promise<void>;
 	// Save status
@@ -220,7 +225,8 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		updateNotes,
 		updateGritPoints,
 		updateRestPoints,
-		toggleActiveCondition
+		toggleActiveCondition,
+		updateDefenseOverrides
 	} = useCharacterSheetReducer();
 	const storage = useMemo(() => getDefaultStorage(), []);
 	const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
@@ -239,7 +245,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 				return;
 			}
 
-		logger.debug('storage', 'Setting save status', { status: 'saving' });
+			logger.debug('storage', 'Setting save status', { status: 'saving' });
 			try {
 				// Run enhanced calculator to get updated stats
 				const calculationData = convertToEnhancedBuildData(character);
@@ -271,7 +277,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 				// Save the entire character (includes spells, maneuvers, etc.)
 				await storage.saveCharacter(updatedCharacter);
 
-			logger.debug('storage', 'Character save successful', { characterId: character.id });
+				logger.debug('storage', 'Character save successful', { characterId: character.id });
 				logger.debug('storage', 'Character sheet data saved successfully', {
 					characterId: character.id
 				});
@@ -409,6 +415,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		updateGritPoints,
 		updateRestPoints,
 		toggleActiveCondition,
+		updateDefenseOverrides,
 		saveNow,
 		saveStatus,
 		retryFailedSave

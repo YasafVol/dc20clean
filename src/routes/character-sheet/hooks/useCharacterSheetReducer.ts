@@ -1,6 +1,6 @@
 import { useReducer, useCallback } from 'react';
 import type { SavedCharacter } from '../../../lib/types/dataContracts';
-import type { Attack } from '../../../lib/types/dataContracts';
+import type { AttackData } from '../../../types/character';
 
 // Sheet state - wraps the SavedCharacter
 export interface SheetState {
@@ -26,9 +26,9 @@ export type SheetAction =
 	| { type: 'UPDATE_DEATH_STEP'; steps: number; isDead?: boolean }
 	| { type: 'UPDATE_ACTION_POINTS_USED'; ap: number }
 	| { type: 'SET_MANUAL_DEFENSE'; pd?: number; ad?: number; pdr?: number }
-	| { type: 'ADD_ATTACK'; attack: Attack }
+	| { type: 'ADD_ATTACK'; attack: AttackData }
 	| { type: 'REMOVE_ATTACK'; attackId: string }
-	| { type: 'UPDATE_ATTACK'; attackId: string; attack: Attack }
+	| { type: 'UPDATE_ATTACK'; attackId: string; attack: AttackData }
 	| { type: 'RESET_ATTACKS' }
 	| { type: 'ADD_SPELL'; spell: any }
 	| { type: 'REMOVE_SPELL'; spellId: string }
@@ -43,7 +43,11 @@ export type SheetAction =
 	| { type: 'UPDATE_NOTES'; notes: string }
 	| { type: 'UPDATE_CURRENT_GRIT_POINTS'; grit: number }
 	| { type: 'UPDATE_CURRENT_REST_POINTS'; rest: number }
-	| { type: 'TOGGLE_ACTIVE_CONDITION'; conditionId: string };
+	| { type: 'TOGGLE_ACTIVE_CONDITION'; conditionId: string }
+	| {
+			type: 'UPDATE_DEFENSE_OVERRIDES';
+			overrides: { precisionAD?: number; areaAD?: number; precisionDR?: number };
+	  };
 
 const initialState: SheetState = {
 	character: null,
@@ -531,6 +535,19 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 				}
 			};
 
+		case 'UPDATE_DEFENSE_OVERRIDES':
+			if (!state.character) return state;
+			return {
+				...state,
+				character: {
+					...state.character,
+					characterState: {
+						...state.character.characterState,
+						defenseOverrides: action.overrides
+					}
+				}
+			};
+
 		default:
 			return state;
 	}
@@ -573,7 +590,7 @@ export function useCharacterSheetReducer() {
 		dispatch({ type: 'SET_MANUAL_DEFENSE', pd, ad, pdr });
 	}, []);
 
-	const addAttack = useCallback((attack: Attack) => {
+	const addAttack = useCallback((attack: AttackData) => {
 		dispatch({ type: 'ADD_ATTACK', attack });
 	}, []);
 
@@ -581,7 +598,7 @@ export function useCharacterSheetReducer() {
 		dispatch({ type: 'REMOVE_ATTACK', attackId });
 	}, []);
 
-	const updateAttack = useCallback((attackId: string, attack: Attack) => {
+	const updateAttack = useCallback((attackId: string, attack: AttackData) => {
 		dispatch({ type: 'UPDATE_ATTACK', attackId, attack });
 	}, []);
 
@@ -648,6 +665,13 @@ export function useCharacterSheetReducer() {
 		dispatch({ type: 'TOGGLE_ACTIVE_CONDITION', conditionId });
 	}, []);
 
+	const updateDefenseOverrides = useCallback(
+		(overrides: { precisionAD?: number; areaAD?: number; precisionDR?: number }) => {
+			dispatch({ type: 'UPDATE_DEFENSE_OVERRIDES', overrides });
+		},
+		[]
+	);
+
 	return {
 		state,
 		dispatch,
@@ -677,6 +701,7 @@ export function useCharacterSheetReducer() {
 		updateNotes,
 		updateGritPoints,
 		updateRestPoints,
-		toggleActiveCondition
+		toggleActiveCondition,
+		updateDefenseOverrides
 	};
 }

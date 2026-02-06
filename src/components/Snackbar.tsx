@@ -65,7 +65,7 @@ const StyledSnackbar = styled.div<{
 	border-radius: 8px;
 	font-weight: bold;
 	font-size: 0.9rem;
-	z-index: 1000;
+	z-index: 10000;
 	min-width: 300px;
 	max-width: 450px;
 	animation: ${(props) => (props.$isExiting ? slideOut : slideIn)} 0.3s ease-out;
@@ -119,6 +119,13 @@ const Snackbar: React.FC<SnackbarProps> = ({
 	variant = 'success'
 }) => {
 	const [isExiting, setIsExiting] = useState(false);
+
+	// Reset isExiting when visibility changes to true
+	useEffect(() => {
+		if (isVisible) {
+			setIsExiting(false);
+		}
+	}, [isVisible]);
 
 	useEffect(() => {
 		if (isVisible && duration > 0) {

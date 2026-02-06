@@ -37,14 +37,14 @@ function LoadCharacter() {
 		console.log('[GIMLI DEBUG] 🎬 LoadCharacter: Fetching characters...', {
 			storageType: storage.constructor.name
 		});
-		
+
 		let isMounted = true;
 		storage
 			.getAllCharacters()
 			.then((characters) => {
 				console.log('[GIMLI DEBUG] ✅ LoadCharacter: Characters fetched:', {
 					count: characters.length,
-					characters: characters.map(c => ({ id: c.id, name: c.finalName }))
+					characters: characters.map((c) => ({ id: c.id, name: c.finalName }))
 				});
 				if (isMounted) setSavedCharacters(characters);
 			})
@@ -250,7 +250,7 @@ function LoadCharacter() {
 				hour: '2-digit',
 				minute: '2-digit'
 			});
-		} catch (error) {
+		} catch {
 			return 'Unknown Date';
 		}
 	};

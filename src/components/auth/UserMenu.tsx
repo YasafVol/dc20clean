@@ -10,6 +10,7 @@ import * as React from 'react';
 import { useConvexAuth } from 'convex/react';
 import { useAuthActions } from '@convex-dev/auth/react';
 import { Button } from '../ui/button';
+import { logger } from '../../lib/utils/logger';
 
 export interface UserMenuProps {
 	/** Additional class names */
@@ -54,7 +55,7 @@ export function UserMenu({ className, onSignOut }: UserMenuProps) {
 
 			onSignOut?.();
 		} catch (err) {
-			console.error('Failed to sign out:', err);
+			logger.error('auth', 'Failed to sign out', { error: err });
 		} finally {
 			setIsLoading(false);
 		}

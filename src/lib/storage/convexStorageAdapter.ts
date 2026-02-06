@@ -63,7 +63,7 @@ class ConvexStorageAdapter implements CharacterStorageWithEvents {
 		console.log('[GIMLI DEBUG] 🔍 ConvexStorageAdapter.getAllCharacters() called');
 		const client = getConvexClient();
 		console.log('[GIMLI DEBUG] 📡 Calling Convex query: api.characters.list');
-		
+
 		try {
 			const characters = await client.query(api.characters.list, {});
 			console.log('[GIMLI DEBUG] ✅ Convex query response:', {

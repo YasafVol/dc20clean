@@ -245,7 +245,68 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Bar
       "total": 2,
     },
   },
-  "combatTraining": [],
+  "combatTraining": [
+    {
+      "source": {
+        "category": "Barbarian Level 1",
+        "description": "You gain combat training and martial prowess.",
+        "id": "Martial Path",
+        "name": "Martial Path",
+        "type": "class_feature",
+      },
+      "type": "Weapons",
+    },
+    {
+      "source": {
+        "category": "Barbarian Level 1",
+        "description": "You gain combat training and martial prowess.",
+        "id": "Martial Path",
+        "name": "Martial Path",
+        "type": "class_feature",
+      },
+      "type": "All_Armor",
+    },
+    {
+      "source": {
+        "category": "Barbarian Level 1",
+        "description": "You gain combat training and martial prowess.",
+        "id": "Martial Path",
+        "name": "Martial Path",
+        "type": "class_feature",
+      },
+      "type": "All_Shields",
+    },
+    {
+      "source": {
+        "category": "Barbarian Level 1",
+        "description": "You gain proficiency with Weapons, All Armor, and All Shields.",
+        "id": "Martial Path_Combat Training",
+        "name": "Combat Training",
+        "type": "class_feature",
+      },
+      "type": "Weapons",
+    },
+    {
+      "source": {
+        "category": "Barbarian Level 1",
+        "description": "You gain proficiency with Weapons, All Armor, and All Shields.",
+        "id": "Martial Path_Combat Training",
+        "name": "Combat Training",
+        "type": "class_feature",
+      },
+      "type": "All_Armor",
+    },
+    {
+      "source": {
+        "category": "Barbarian Level 1",
+        "description": "You gain proficiency with Weapons, All Armor, and All Shields.",
+        "id": "Martial Path_Combat Training",
+        "name": "Combat Training",
+        "type": "class_feature",
+      },
+      "type": "All_Shields",
+    },
+  ],
   "conditionalModifiers": [
     {
       "affectedStats": [
@@ -406,7 +467,28 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Bar
       "barbarian_shattering_force",
     ],
   },
-  "movements": [],
+  "movements": [
+    {
+      "isDefault": true,
+      "source": {
+        "id": "default_movement",
+        "name": "Default (Slowed 1)",
+        "type": "base",
+      },
+      "speed": "3",
+      "type": "climb",
+    },
+    {
+      "isDefault": true,
+      "source": {
+        "id": "default_movement",
+        "name": "Default (Slowed 1)",
+        "type": "base",
+      },
+      "speed": "3",
+      "type": "swim",
+    },
+  ],
   "resistances": [],
   "resolvedFeatures": {
     "availableSubclassChoice": false,
@@ -963,7 +1045,28 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Dwa
       "rogue_cheap_shot",
     ],
   },
-  "movements": [],
+  "movements": [
+    {
+      "isDefault": true,
+      "source": {
+        "id": "default_movement",
+        "name": "Default (Slowed 1)",
+        "type": "base",
+      },
+      "speed": "2",
+      "type": "climb",
+    },
+    {
+      "isDefault": true,
+      "source": {
+        "id": "default_movement",
+        "name": "Default (Slowed 1)",
+        "type": "base",
+      },
+      "speed": "2",
+      "type": "swim",
+    },
+  ],
   "resistances": [],
   "resolvedFeatures": {
     "availableSubclassChoice": false,
@@ -1334,7 +1437,38 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
       "total": 2,
     },
   },
-  "combatTraining": [],
+  "combatTraining": [
+    {
+      "source": {
+        "category": "Spellblade Level 1",
+        "description": "You gain combat training in weapons, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.",
+        "id": "Martial Path",
+        "name": "Martial Path",
+        "type": "class_feature",
+      },
+      "type": "Weapons",
+    },
+    {
+      "source": {
+        "category": "Spellblade Level 1",
+        "description": "You gain combat training in weapons, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.",
+        "id": "Martial Path",
+        "name": "Martial Path",
+        "type": "class_feature",
+      },
+      "type": "Light_Armor",
+    },
+    {
+      "source": {
+        "category": "Spellblade Level 1",
+        "description": "You gain combat training in weapons, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.",
+        "id": "Martial Path",
+        "name": "Martial Path",
+        "type": "class_feature",
+      },
+      "type": "Light_Shields",
+    },
+  ],
   "conditionalModifiers": [],
   "crossPathGrants": {
     "combatTrainingGrants": [
@@ -1410,7 +1544,28 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
       "spellblade_spellstrike",
     ],
   },
-  "movements": [],
+  "movements": [
+    {
+      "isDefault": true,
+      "source": {
+        "id": "default_movement",
+        "name": "Default (Slowed 1)",
+        "type": "base",
+      },
+      "speed": "2",
+      "type": "climb",
+    },
+    {
+      "isDefault": true,
+      "source": {
+        "id": "default_movement",
+        "name": "Default (Slowed 1)",
+        "type": "base",
+      },
+      "speed": "2",
+      "type": "swim",
+    },
+  ],
   "resistances": [],
   "resolvedFeatures": {
     "availableSubclassChoice": true,
@@ -2147,7 +2302,18 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Wiz
       "total": 0,
     },
   },
-  "combatTraining": [],
+  "combatTraining": [
+    {
+      "source": {
+        "category": "Wizard Level 1",
+        "description": "You gain the ability to cast arcane spells.",
+        "id": "Spellcasting Path",
+        "name": "Spellcasting Path",
+        "type": "class_feature",
+      },
+      "type": "Light_Armor",
+    },
+  ],
   "conditionalModifiers": [],
   "crossPathGrants": {
     "combatTrainingGrants": [
@@ -2222,7 +2388,28 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Wiz
       "wizard_level_5_placeholder",
     ],
   },
-  "movements": [],
+  "movements": [
+    {
+      "isDefault": true,
+      "source": {
+        "id": "default_movement",
+        "name": "Default (Slowed 1)",
+        "type": "base",
+      },
+      "speed": "2",
+      "type": "climb",
+    },
+    {
+      "isDefault": true,
+      "source": {
+        "id": "default_movement",
+        "name": "Default (Slowed 1)",
+        "type": "base",
+      },
+      "speed": "2",
+      "type": "swim",
+    },
+  ],
   "resistances": [],
   "resolvedFeatures": {
     "availableSubclassChoice": true,

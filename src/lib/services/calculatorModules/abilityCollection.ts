@@ -5,7 +5,7 @@
  * combat training, and conditional modifiers from resolved effects.
  */
 
-import type { AttributedEffect } from '../../types/effectSystem';
+import type { AttributedEffect, EffectSource } from '../../types/effectSystem';
 
 export interface GrantedAbility {
 	name: string;
@@ -20,6 +20,30 @@ export interface Movement {
 	type: string;
 	speed: string;
 	source: AttributedEffect['source'];
+	isDefault?: boolean;
+}
+
+export interface Resistance {
+	type: string;
+	value: string;
+	source: EffectSource;
+}
+
+export interface Vulnerability {
+	type: string;
+	value: string;
+	source: EffectSource;
+}
+
+export interface Sense {
+	type: string;
+	range: number;
+	source: EffectSource;
+}
+
+export interface CombatTrainingGrant {
+	type: string;
+	source: EffectSource;
 }
 
 export interface ConditionalModifier {
@@ -94,4 +118,84 @@ export function collectConditionalModifiers(
 				affectedStats: [e.target]
 			};
 		});
+}
+
+/**
+ * Collect resistances from GRANT_RESISTANCE effects
+ */
+export function collectResistances(resolvedEffects: AttributedEffect[]): Resistance[] {
+	return resolvedEffects
+		.filter((effect) => effect.resolved && (effect as any).type === 'GRANT_RESISTANCE')
+		.map((effect) => ({
+			type: (effect as any).target as string,
+			value: String((effect as any).value ?? ''),
+			source: effect.source
+		}));
+}
+
+/**
+ * Collect vulnerabilities from GRANT_VULNERABILITY effects
+ */
+export function collectVulnerabilities(resolvedEffects: AttributedEffect[]): Vulnerability[] {
+	return resolvedEffects
+		.filter((effect) => effect.resolved && (effect as any).type === 'GRANT_VULNERABILITY')
+		.map((effect) => ({
+			type: (effect as any).target as string,
+			value: String((effect as any).value ?? ''),
+			source: effect.source
+		}));
+}
+
+/**
+ * Collect senses from GRANT_SENSE effects
+ */
+export function collectSenses(resolvedEffects: AttributedEffect[]): Sense[] {
+	return resolvedEffects
+		.filter((effect) => effect.resolved && (effect as any).type === 'GRANT_SENSE')
+		.map((effect) => ({
+			type: (effect as any).target as string,
+			range: Number((effect as any).value) || 0,
+			source: effect.source
+		}));
+}
+
+/**
+ * Collect combat training from GRANT_COMBAT_TRAINING effects
+ */
+export function collectCombatTraining(resolvedEffects: AttributedEffect[]): CombatTrainingGrant[] {
+	return resolvedEffects
+		.filter((effect) => effect.resolved && (effect as any).type === 'GRANT_COMBAT_TRAINING')
+		.map((effect) => ({
+			type: (effect as any).target as string,
+			source: effect.source
+		}));
+}
+
+/**
+ * Inject default Climb and Swim movements if not already granted.
+ * Per DC20 rules (CH3):
+ * - Climb without Climb Speed = Slowed 1 (half ground speed)
+ * - Swim without Swim Speed = Slowed 1 (half ground speed)
+ * - Fly/Burrow/Glide without speed = not available
+ */
+export function injectDefaultMovements(movements: Movement[], groundSpeed: number): Movement[] {
+	const result = [...movements];
+	const defaultSource: EffectSource = { type: 'base', id: 'default_movement', name: 'Default (Slowed 1)' };
+	if (!result.some((m) => m.type.toLowerCase() === 'climb')) {
+		result.push({
+			type: 'climb',
+			speed: `${Math.floor(groundSpeed / 2)}`,
+			source: defaultSource,
+			isDefault: true
+		});
+	}
+	if (!result.some((m) => m.type.toLowerCase() === 'swim')) {
+		result.push({
+			type: 'swim',
+			speed: `${Math.floor(groundSpeed / 2)}`,
+			source: defaultSource,
+			isDefault: true
+		});
+	}
+	return result;
 }

@@ -25,7 +25,7 @@
 | 3b | Add 5 missing Beastborn traits + wire Winged Arms to requirements.hasTrait + update validation | Complete |
 | 3c | Fix starting equipment across all 13 classes (arsenal count + trade tools) | Complete |
 | 3d | Fix description drift (Monk stance, Rogue duration/round, Spellblade runes, Dwarf description) | Complete |
-| 4a | Refactor calculator into 8 discrete modules | Pending |
+| 4a | Refactor calculator into 8 discrete modules | Complete |
 | 4b | Wire calculator to collect GRANT_RESISTANCE, GRANT_VULNERABILITY, GRANT_SENSE, GRANT_COMBAT_TRAINING + default Climb/Swim | Pending |
 | 5 | Add optional fields to SavedCharacter + Convex schema, bump version to 2.2.0, add migration defaults | Pending |
 | 6 | Character sheet — Movements panel, Senses, Resistances, Combat Training, Conditions, Features grouping | Pending |

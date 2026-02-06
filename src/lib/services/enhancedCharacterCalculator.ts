@@ -10,9 +10,7 @@ import type {
 	EnhancedCharacterBuildData,
 	AttributedEffect,
 	UnresolvedChoice,
-	ChoiceOption,
-	GlobalMagicProfile,
-	SpellsKnownSlot
+	ChoiceOption
 } from '../types/effectSystem';
 // SpellSource, SpellSchool, SpellTag moved to calculatorModules/spellSystem.ts
 // ModifyMasteryCapEffect, IncreaseMasteryCapEffect moved to calculatorModules/validation.ts
@@ -48,7 +46,12 @@ import type { ClassDefinition } from '../rulesdata/schemas/character.schema';
 import {
 	collectGrantedAbilities,
 	collectMovements,
-	collectConditionalModifiers
+	collectConditionalModifiers,
+	collectResistances,
+	collectVulnerabilities,
+	collectSenses,
+	collectCombatTraining,
+	injectDefaultMovements
 } from './calculatorModules/abilityCollection';
 // createStatBreakdown, createInitiativeBreakdown, createMartialCheckBreakdown
 // now imported by calculatorModules/statCalculation.ts
@@ -353,10 +356,15 @@ export function calculateCharacterWithBreakdowns(
 		globalMagicProfile
 	});
 
-	// 6. Collect abilities, movements, and conditional modifiers (via abilityCollection module)
+	// 6. Collect abilities, movements, resistances, senses, combat training, and conditional modifiers
 	const grantedAbilities = collectGrantedAbilities(resolvedEffects);
-	const movements = collectMovements(resolvedEffects, finalMoveSpeed);
+	const rawMovements = collectMovements(resolvedEffects, finalMoveSpeed);
+	const movements = injectDefaultMovements(rawMovements, finalMoveSpeed);
 	const conditionalModifiers = collectConditionalModifiers(resolvedEffects);
+	const resistances = collectResistances(resolvedEffects);
+	const vulnerabilities = collectVulnerabilities(resolvedEffects);
+	const senses = collectSenses(resolvedEffects);
+	const combatTraining = collectCombatTraining(resolvedEffects);
 
 	// 8. Get unresolved choices
 	const unresolvedChoices = getUnresolvedChoices(resolvedEffects);
@@ -408,10 +416,10 @@ export function calculateCharacterWithBreakdowns(
 		breakdowns,
 		grantedAbilities,
 		conditionalModifiers,
-		combatTraining: [],
-		resistances: [],
-		vulnerabilities: [],
-		senses: [],
+		combatTraining,
+		resistances,
+		vulnerabilities,
+		senses,
 		movements,
 		background,
 		ancestry,

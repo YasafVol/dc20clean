@@ -3,11 +3,29 @@ import { useCharacter } from '../../lib/stores/characterContext';
 import { useEnhancedCharacterCalculation } from '../../lib/hooks/useEnhancedCharacterCalculation';
 import { attributesData } from '../../lib/rulesdata/attributes';
 import AttributePointsCounter from './AttributePointsCounter';
-import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
-import { Button } from '../../components/ui/button';
-import { Badge } from '../../components/ui/badge';
-import { cn } from '../../lib/utils';
 import { Plus, Minus, AlertTriangle } from 'lucide-react';
+import { theme } from '../character-sheet/styles/theme';
+import {
+	Container,
+	Header,
+	Title,
+	PrimeRuleToggle,
+	Checkbox,
+	CheckboxLabel,
+	AttributesGrid,
+	AttributeCard,
+	AttributeName,
+	AttributeValue,
+	ButtonGroup,
+	IconButton,
+	InfoSection,
+	InfoBadge,
+	EffectsList,
+	EffectItem,
+	WarningBox,
+	WarningHeader,
+	ErrorBox
+} from './Attributes.styled';
 
 type AttributeState = Record<string, number>;
 
@@ -65,57 +83,57 @@ function Attributes() {
 	}
 
 	return (
-		<div className="mx-auto max-w-4xl space-y-8">
-			<div className="space-y-4 text-center">
-				<h2 className="font-cinzel text-primary text-3xl font-bold">Attributes</h2>
-				<div className="flex justify-center">
-					<AttributePointsCounter totalAttributePoints={totalAttributePoints} />
-				</div>
+		<Container>
+			<Header>
+				<Title>Attributes</Title>
+				<AttributePointsCounter totalAttributePoints={totalAttributePoints} />
 
-				<div className="mx-auto flex max-w-md items-center justify-center gap-2 rounded-lg border border-white/10 bg-black/30 p-2">
-					<input
+				<PrimeRuleToggle>
+					<Checkbox
 						type="checkbox"
 						id="prime-cap-rule"
 						checked={usePrimeCapRule}
 						onChange={handlePrimeRuleToggle}
-						className="border-primary text-primary focus:ring-primary rounded bg-black/50"
 					/>
-					<div className="text-left">
-						<label
-							htmlFor="prime-cap-rule"
-							className="text-foreground block cursor-pointer text-sm font-medium"
-						>
+					<div style={{ textAlign: 'left' }}>
+						<CheckboxLabel htmlFor="prime-cap-rule">
 							Use Prime = Attribute Cap (Optional Rule)
-						</label>
-						<span className="text-muted-foreground block text-xs">
+						</CheckboxLabel>
+						<span
+							style={{
+								display: 'block',
+								fontSize: theme.typography.fontSize.xs,
+								color: theme.colors.text.secondary,
+							}}
+						>
 							Prime modifier equals level-based cap instead of highest attribute.
 						</span>
 					</div>
-				</div>
-			</div>
+				</PrimeRuleToggle>
+			</Header>
 
 			{calculation.forcedAdjustments.length > 0 && (
-				<div className="rounded-md border border-yellow-500/50 bg-yellow-500/10 p-4 text-sm text-yellow-500">
-					<div className="mb-2 flex items-center gap-2 font-bold">
-						<AlertTriangle className="h-4 w-4" />
+				<WarningBox>
+					<WarningHeader>
+						<AlertTriangle size={16} />
 						Forced Adjustments
-					</div>
+					</WarningHeader>
 					{calculation.forcedAdjustments.map((adj, index) => (
 						<div key={index}>
 							• {adj.attribute.charAt(0).toUpperCase() + adj.attribute.slice(1)}:{' '}
 							{adj.originalValue} → {adj.effectiveValue} (costs {adj.pointsCost} points)
 						</div>
 					))}
-				</div>
+				</WarningBox>
 			)}
 
 			{!calculation.isValid && (
-				<div className="bg-destructive/10 border-destructive/50 text-destructive rounded-md border p-4 text-center font-bold">
+				<ErrorBox>
 					Invalid build: {Math.abs(calculation.pointsRemaining)} points over budget
-				</div>
+				</ErrorBox>
 			)}
 
-			<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+			<AttributesGrid>
 				{attributesData.map((attribute) => {
 					const attributeKey = `attribute_${attribute.id}`;
 					const currentValue = typedState[attributeKey] || 0;
@@ -133,121 +151,146 @@ function Attributes() {
 					const canDecrease = currentValue > -2;
 
 					return (
-						<Card key={attribute.id} className="border-border overflow-hidden bg-black/40">
-							<CardHeader className="border-b border-white/5 bg-black/20 pb-3">
-								<div className="flex items-center justify-between">
-									<CardTitle className="font-cinzel text-primary text-xl">
-										{attribute.name}
-									</CardTitle>
-									<Badge
-										variant={limit.exceeded ? 'destructive' : 'secondary'}
-										className={cn(
-											'font-mono text-sm',
-											limit.exceeded ? '' : 'bg-primary/20 text-primary hover:bg-primary/30'
-										)}
-									>
-										Final: {limit.current} / {limit.max}
-									</Badge>
-								</div>
-							</CardHeader>
+						<AttributeCard key={attribute.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+							<AttributeName>{attribute.name}</AttributeName>
 
-							<CardContent className="space-y-4 pt-4">
-								<p className="text-muted-foreground min-h-[3rem] text-sm">
-									{attribute.description}
-								</p>
+							<p
+								style={{
+									color: 'rgba(169, 177, 214, 0.7)',
+									fontSize: '0.875rem',
+									minHeight: '3rem',
+									marginBottom: '1rem',
+								}}
+							>
+								{attribute.description}
+							</p>
 
-								<div className="flex items-center justify-between rounded-lg border border-white/5 bg-black/40 p-3">
-									<Button
-										variant="outline"
-										size="icon"
-										onClick={() => decreaseAttribute(attributeKey)}
-										disabled={!canDecrease}
-										className="border-primary/30 hover:border-primary hover:bg-primary/10 h-10 w-10"
-										title={!canDecrease ? 'Cannot decrease below -2' : ''}
-									>
-										<Minus className="h-5 w-5" />
-									</Button>
+							<ButtonGroup>
+								<IconButton
+									$disabled={!canDecrease}
+									onClick={() => canDecrease && decreaseAttribute(attributeKey)}
+									title={!canDecrease ? 'Cannot decrease below -2' : ''}
+								>
+									<Minus size={20} />
+								</IconButton>
 
-									<span
-										className={cn(
-											'w-16 text-center font-mono text-3xl font-bold',
-											currentValue < 0 ? 'text-destructive' : 'text-foreground'
-										)}
-									>
-										{currentValue > 0 ? `+${currentValue}` : currentValue}
+								<AttributeValue style={{ color: currentValue < 0 ? '#F7768E' : '#FFFFFF' }}>
+									{currentValue > 0 ? `+${currentValue}` : currentValue}
+								</AttributeValue>
+
+								<IconButton
+									$disabled={!canIncrease}
+									onClick={() => canIncrease && increaseAttribute(attributeKey)}
+									title={
+										!canIncrease
+											? attributePointsRemaining <= 0
+												? 'No points remaining'
+												: realTimeValidation.message || 'Cannot increase'
+											: ''
+									}
+								>
+									<Plus size={20} />
+								</IconButton>
+							</ButtonGroup>
+
+							<InfoSection>
+								<InfoBadge $type={limit.exceeded ? 'limit' : 'cap'}>
+									Final: {limit.current} / {limit.max}
+								</InfoBadge>
+							</InfoSection>
+
+							{hasTraitEffect && (
+								<div
+									style={{
+										background: 'rgba(125, 207, 255, 0.05)',
+										border: '1px solid rgba(125, 207, 255, 0.2)',
+										borderRadius: '0.375rem',
+										padding: '0.5rem',
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'space-between',
+										marginTop: '0.75rem',
+									}}
+								>
+									<span style={{ color: 'rgba(169, 177, 214, 0.7)' }}>Base: {currentValue}</span>
+									<span style={{ color: '#7DCFFF', fontWeight: 'bold' }}>
+										Effective: {effectiveValue}
 									</span>
+								</div>
+							)}
 
-									<Button
-										variant="outline"
-										size="icon"
-										onClick={() => increaseAttribute(attributeKey)}
-										disabled={!canIncrease}
-										className="border-primary/30 hover:border-primary hover:bg-primary/10 h-10 w-10"
-										title={
-											!canIncrease
-												? attributePointsRemaining <= 0
-													? 'No points remaining'
-													: realTimeValidation.message || 'Cannot increase'
-												: ''
-										}
+							{(limit.traitBonuses > 0 || breakdown) && (
+								<EffectsList>
+									<EffectItem>Base Points: {currentValue}</EffectItem>
+									{limit.traitBonuses > 0 && (
+										<EffectItem style={{ color: '#7DCFFF' }}>
+											Trait Bonuses: +{limit.traitBonuses}
+										</EffectItem>
+									)}
+									<EffectItem
+										style={{
+											borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+											paddingTop: '0.25rem',
+											fontWeight: 'bold',
+										}}
 									>
-										<Plus className="h-5 w-5" />
-									</Button>
+										Total: {limit.current}
+									</EffectItem>
+								</EffectsList>
+							)}
+
+							{forcedAdjustment && (
+								<div
+									style={{
+										marginTop: '0.5rem',
+										display: 'flex',
+										alignItems: 'flex-start',
+										gap: '0.5rem',
+										borderRadius: '0.375rem',
+										border: '1px solid rgba(224, 175, 104, 0.2)',
+										background: 'rgba(224, 175, 104, 0.1)',
+										padding: '0.5rem',
+										color: '#E0AF68',
+									}}
+								>
+									<AlertTriangle size={12} style={{ marginTop: '0.125rem', flexShrink: 0 }} />
+									<span style={{ fontSize: '0.75rem' }}>
+										Forced to minimum (-2), cost: {forcedAdjustment.pointsCost} pts
+									</span>
 								</div>
+							)}
 
-								{/* Info Section */}
-								<div className="space-y-2 text-xs">
-									{hasTraitEffect && (
-										<div className="bg-primary/5 border-primary/20 flex items-center justify-between rounded border p-2">
-											<span className="text-muted-foreground">Base: {currentValue}</span>
-											<span className="text-primary font-bold">Effective: {effectiveValue}</span>
-										</div>
-									)}
-
-									{(limit.traitBonuses > 0 || breakdown) && (
-										<div className="space-y-1 border-t border-white/10 pt-2">
-											<div className="text-muted-foreground flex justify-between">
-												<span>Base Points:</span>
-												<span>{currentValue}</span>
-											</div>
-											{limit.traitBonuses > 0 && (
-												<div className="text-primary flex justify-between">
-													<span>Trait Bonuses:</span>
-													<span>+{limit.traitBonuses}</span>
-												</div>
-											)}
-											<div className="mt-1 flex justify-between border-t border-white/5 pt-1 font-bold">
-												<span>Total:</span>
-												<span>{limit.current}</span>
-											</div>
-										</div>
-									)}
-
-									{forcedAdjustment && (
-										<div className="mt-2 flex items-start gap-2 rounded border border-yellow-500/20 bg-yellow-500/10 p-2 text-yellow-500">
-											<AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
-											<span>Forced to minimum (-2), cost: {forcedAdjustment.pointsCost} pts</span>
-										</div>
-									)}
-
-									{/* Validation Errors */}
-									{limit.exceeded && (
-										<div className="text-destructive animate-pulse text-center font-bold">
-											Exceeds maximum limit of +{limit.max}
-										</div>
-									)}
-									{!limit.exceeded && !canIncrease && attributePointsRemaining > 0 && (
-										<div className="text-center text-yellow-500">
-											Cannot increase further due to trait bonuses
-										</div>
-									)}
+							{limit.exceeded && (
+								<div
+									style={{
+										color: '#F7768E',
+										textAlign: 'center',
+										fontWeight: 'bold',
+										marginTop: '0.5rem',
+										animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+									}}
+								>
+									Exceeds maximum limit of +{limit.max}
 								</div>
-							</CardContent>
-						</Card>
+							)}
+
+							{!limit.exceeded && !canIncrease && attributePointsRemaining > 0 && (
+								<div
+									style={{
+										textAlign: 'center',
+										color: '#E0AF68',
+										marginTop: '0.5rem',
+										fontSize: '0.875rem',
+									}}
+								>
+									Cannot increase further due to trait bonuses
+								</div>
+							)}
+						</AttributeCard>
 					);
 				})}
-			</div>
-		</div>
+			</AttributesGrid>
+		</Container>
 	);
 }
 

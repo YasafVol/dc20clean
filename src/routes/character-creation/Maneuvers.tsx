@@ -2,12 +2,37 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { allManeuvers, ManeuverType } from '../../lib/rulesdata/martials/maneuvers';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
-import { cn } from '../../lib/utils';
-import { Button } from '../../components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../../components/ui/card';
-import { Badge } from '../../components/ui/badge';
 import { Sword, Info, Filter } from 'lucide-react';
 import { debug } from '../../lib/utils/debug';
+import { theme } from '../character-sheet/styles/theme';
+import {
+	Container,
+	Header,
+	Title,
+	Subtitle,
+	ProgressSection,
+	ProgressText,
+	FilterSection,
+	FilterLabel,
+	ManeuverGrid,
+	ManeuverCard,
+	CardContent,
+	CardHeader,
+	ManeuverName,
+	TypeBadge,
+	ManeuverDescription,
+	EmptyState,
+	EmptyStateIcon,
+	EmptyStateTitle,
+	EmptyStateText,
+	SelectedBadge,
+	CostBadgesContainer,
+	CostBadge,
+	ButtonFooter,
+	FilterText,
+	FilterTextRemaining,
+	ManeuverButton
+} from './Maneuvers.styled';
 
 // Simple deep equality helper for arrays
 function arraysEqual<T>(a: T[], b: T[]): boolean {
@@ -134,203 +159,124 @@ const Maneuvers: React.FC = () => {
 
 	if (!state.classId) {
 		return (
-			<div className="flex flex-col items-center justify-center space-y-4 py-12 text-center">
-				<div className="rounded-full bg-purple-500/10 p-4">
-					<Sword className="h-12 w-12 text-purple-400" />
-				</div>
-				<h2 className="font-cinzel text-2xl font-bold">Select a Class First</h2>
-				<p className="text-muted-foreground max-w-md">
+			<Container style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+				<EmptyStateIcon>
+					<Sword size={48} color="#A855F7" />
+				</EmptyStateIcon>
+				<EmptyStateTitle>Select a Class First</EmptyStateTitle>
+				<EmptyStateText>
 					Maneuvers are determined by your class. Please choose a class in the first stage to
 					continue.
-				</p>
-			</div>
+				</EmptyStateText>
+			</Container>
 		);
 	}
 
 	return (
-		<div className="animate-in fade-in mx-auto max-w-7xl space-y-8 duration-500">
-			{/* Stage Header */}
-			<div className="border-border relative overflow-hidden rounded-2xl border bg-black/40 p-8 py-12 shadow-2xl">
-				<div className="relative z-10 flex flex-col justify-between gap-8 md:flex-row md:items-center">
-					<div className="max-w-2xl space-y-4">
-						<div className="flex items-center gap-3">
-							<div className="rounded-lg bg-purple-500/20 p-2">
-								<Sword className="h-6 w-6 text-purple-400" />
-							</div>
-							<Badge
-								variant="outline"
-								className="border-purple-500/30 px-3 py-1 tracking-widest text-purple-400 uppercase"
-							>
-								Maneuvers
-							</Badge>
-						</div>
-						<h1 className="font-cinzel text-4xl font-black tracking-tight text-white md:text-5xl">
-							LEARN <span className="text-purple-400">MANEUVERS</span>
-						</h1>
-						<p className="text-muted-foreground text-lg leading-relaxed">
-							Master martial techniques. Choose the maneuvers that will define your character's
-							combat prowess.
-						</p>
-					</div>
+		<Container>
+			<Header>
+				<Title>Learn Maneuvers</Title>
+				<Subtitle>
+					Master martial techniques. Choose the maneuvers that will define your character's
+					combat prowess.
+				</Subtitle>
+			</Header>
 
-					{/* Selection Summary Card */}
-					<Card className="min-w-[280px] border-purple-500/20 bg-black/60 backdrop-blur-sm">
-						<CardContent className="space-y-4 p-6">
-							<h3 className="font-cinzel flex items-center gap-2 text-sm font-bold tracking-wider text-purple-400/80 uppercase">
-								<Info className="h-4 w-4" /> Selection Summary
-							</h3>
-
-							<div className="space-y-3">
-								<div className="flex items-center justify-between text-sm">
-									<span className="text-muted-foreground flex items-center gap-1">
-										<Sword className="h-3 w-3" /> Maneuvers
-									</span>
-									<Badge
-										variant={maneuversRemaining < 0 ? 'destructive' : 'outline'}
-										className="font-mono"
-									>
-										{selectedManeuvers.length} / {maneuverCount}
-									</Badge>
-								</div>
-							</div>
-
-							{maneuversRemaining > 0 ? (
-								<p className="text-muted-foreground border-t border-white/5 pt-2 text-center text-[10px] italic">
-									You have {maneuversRemaining} choice{maneuversRemaining !== 1 ? 's' : ''}{' '}
-									remaining
-								</p>
-							) : (
-								<p className="border-t border-purple-500/10 pt-2 text-center text-[10px] text-purple-400/60 italic">
-									All choices complete
-								</p>
-							)}
-						</CardContent>
-					</Card>
-				</div>
-
-				{/* Background Decoration */}
-				<div className="absolute top-0 right-0 -mt-20 -mr-20 h-64 w-64 rounded-full bg-purple-500/5 blur-[100px]" />
-				<div className="absolute bottom-0 left-0 -mb-20 -ml-20 h-64 w-64 rounded-full bg-red-500/5 blur-[100px]" />
-			</div>
+			<ProgressSection>
+				<ProgressText>
+					Maneuvers: {selectedManeuvers.length} / {maneuverCount}
+					{maneuversRemaining > 0
+						? ` • ${maneuversRemaining} remaining`
+						: ' • All choices complete'}
+				</ProgressText>
+			</ProgressSection>
 
 			{maneuverCount > 0 && (
-				<div className="space-y-6">
-					{/* Filter Section */}
-					<Card className="border-border bg-black/20 backdrop-blur-sm">
-						<CardContent className="pt-6">
-							<div className="space-y-2">
-								<label className="text-muted-foreground flex items-center gap-2 text-xs font-bold tracking-wider uppercase">
-									<Filter className="h-3 w-3" /> Maneuver Type
-								</label>
-								<select
-									value={maneuverFilter}
-									onChange={(e) => setManeuverFilter(e.target.value as ManeuverType | 'all')}
-									className="border-border bg-background focus:border-primary focus:ring-primary w-full max-w-xs rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
-								>
-									<option value="all">All Types</option>
-									{Object.values(ManeuverType).map((type) => (
-										<option key={type} value={type}>
-											{type}
-										</option>
-									))}
-								</select>
-							</div>
-						</CardContent>
-					</Card>
+				<>
+					<FilterSection>
+						<FilterLabel>
+							<Filter size={12} /> Maneuver Type
+						</FilterLabel>
+						<select
+							value={maneuverFilter}
+							onChange={(e) => setManeuverFilter(e.target.value as ManeuverType | 'all')}
+							style={{
+								width: '100%',
+								maxWidth: '20rem',
+								padding: '0.5rem 0.75rem',
+								background: theme.colors.bg.primary,
+								border: `1px solid ${theme.colors.bg.elevated}`,
+								borderRadius: '0.375rem',
+								color: theme.colors.text.primary,
+								fontSize: '0.875rem'
+							}}
+						>
+							<option value="all">All Types</option>
+							{Object.values(ManeuverType).map((type) => (
+								<option key={type} value={type}>
+									{type}
+								</option>
+							))}
+						</select>
+					</FilterSection>
 
-					{/* Results Summary */}
-					<div className="text-muted-foreground text-center text-sm">
+					<FilterText>
 						Showing {filteredManeuvers.length} of {availableManeuvers.length} available maneuvers
 						{' • '}
-						<span
-							className={cn(
-								'font-medium',
-								maneuversRemaining < 0 ? 'text-destructive' : 'text-purple-400'
-							)}
-						>
+						<FilterTextRemaining $isOverLimit={maneuversRemaining < 0}>
 							{maneuversRemaining} remaining
-						</span>
-					</div>
+						</FilterTextRemaining>
+					</FilterText>
 
 					{filteredManeuvers.length === 0 ? (
-						<div className="border-border text-muted-foreground rounded-2xl border-2 border-dashed bg-black/10 py-24 text-center">
-							<h3 className="font-cinzel mb-4 text-2xl text-purple-400">No Maneuvers Match</h3>
-							<p className="mx-auto max-w-sm text-base leading-relaxed">
-								Adjust your filters to discover different martial techniques.
-							</p>
-						</div>
+						<EmptyState>
+							<EmptyStateTitle>No Maneuvers Match</EmptyStateTitle>
+							<p>Adjust your filters to discover different martial techniques.</p>
+						</EmptyState>
 					) : (
-						<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+						<ManeuverGrid>
 							{filteredManeuvers.map((maneuver) => {
 								const isSelected = selectedManeuvers.includes(maneuver.name);
 								const canSelect = selectedManeuvers.length < maneuverCount || isSelected;
 
 								return (
-									<Card
+									<ManeuverCard
 										key={maneuver.name}
-										className={cn(
-											'group border-2 transition-all hover:-translate-y-1 hover:shadow-xl',
-											isSelected
-												? 'border-purple-500 bg-purple-500/10'
-												: 'bg-card/40 border-purple-500/30 hover:border-purple-500/50'
-										)}
+										$isSelected={isSelected}
+										whileHover={{ y: -4 }}
+										whileTap={{ scale: 0.98 }}
 									>
-										<CardHeader className="pb-3">
-											<div className="flex items-start justify-between gap-2">
-												<CardTitle className="text-xl font-bold tracking-tight text-purple-400">
-													{maneuver.name}
-												</CardTitle>
-												<Badge
-													variant="outline"
-													className="border-purple-500/50 text-[10px] tracking-widest text-purple-400 uppercase"
-												>
-													{maneuver.type}
-												</Badge>
-											</div>
-											<div className="mt-1 flex gap-2">
-												<Badge
-													variant="secondary"
-													className="bg-red-500/10 text-[10px] text-red-400 hover:bg-red-500/20"
-												>
-													{maneuver.cost.ap} AP
-												</Badge>
+										<CardContent>
+											<CardHeader>
+												<ManeuverName $isSelected={isSelected}>{maneuver.name}</ManeuverName>
+												<TypeBadge $type={maneuver.type.toLowerCase()}>{maneuver.type}</TypeBadge>
+											</CardHeader>
+											<CostBadgesContainer>
+												<CostBadge $variant="ap">{maneuver.cost.ap} AP</CostBadge>
 												{maneuver.cost.sp && maneuver.cost.sp > 0 && (
-													<Badge
-														variant="secondary"
-														className="bg-yellow-500/10 text-[10px] text-yellow-400 hover:bg-yellow-500/20"
-													>
-														{maneuver.cost.sp} SP
-													</Badge>
+													<CostBadge $variant="sp">{maneuver.cost.sp} SP</CostBadge>
 												)}
-											</div>
-										</CardHeader>
-										<CardContent className="pb-6">
-											<p className="text-muted-foreground line-clamp-3 h-[60px] text-sm leading-relaxed">
-												{maneuver.description}
-											</p>
+											</CostBadgesContainer>
+											<ManeuverDescription>{maneuver.description}</ManeuverDescription>
 										</CardContent>
-										<CardFooter className="justify-end border-t border-white/5 bg-black/20 p-4 pt-4">
-											<Button
-												variant={isSelected ? 'destructive' : 'default'}
-												size="sm"
-												className={cn(
-													'h-8 font-bold',
-													!isSelected && 'bg-purple-600 hover:bg-purple-700'
-												)}
+										<ButtonFooter>
+											<ManeuverButton
+												$variant={isSelected ? 'forget' : 'learn'}
 												onClick={() => handleManeuverToggle(maneuver.name)}
-												disabled={!canSelect}
+												disabled={!isSelected && !canSelect}
 											>
 												{isSelected ? 'FORGET' : 'LEARN'}
-											</Button>
-										</CardFooter>
-									</Card>
+											</ManeuverButton>
+										</ButtonFooter>
+										{isSelected && <SelectedBadge>✔</SelectedBadge>}
+									</ManeuverCard>
 								);
 							})}
-						</div>
+						</ManeuverGrid>
 					)}
-				</div>
+				</>
 			)}
-		</div>
+		</Container>
 	);
 };
 

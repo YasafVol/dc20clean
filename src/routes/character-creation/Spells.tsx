@@ -3,11 +3,35 @@ import { useCharacter } from '../../lib/stores/characterContext';
 import { ALL_SPELLS as allSpells } from '../../lib/rulesdata/spells-data';
 import { SpellSchool, SpellSource, type SpellTag } from '../../lib/rulesdata/schemas/spell.schema';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
+import { theme } from '../character-sheet/styles/theme';
+import { SecondaryButton } from '../../components/styled/index';
+import {
+	Container,
+	Header,
+	Title,
+	Subtitle,
+	ProgressSection,
+	ProgressText,
+	FilterSection,
+	FilterGrid,
+	FilterGroup,
+	FilterLabel,
+	SpellGrid,
+	SpellCard,
+	CardHeader as StyledCardHeader,
+	SpellName,
+	SpellBadges,
+	SpellDescription,
+	Badge,
+	SpellCardFooter,
+	SourcesList,
+	SourceTag,
+	SpellButton,
+	KnownBadge
+} from './Spells.styled';
+import { Badge as ShadcnBadge } from '../../components/ui/badge';
 import { cn } from '../../lib/utils';
-import { Button } from '../../components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../../components/ui/card';
-import { Badge } from '../../components/ui/badge';
-import { Wand2, Info, Search, Lock } from 'lucide-react';
+import { Wand2, Search, Lock } from 'lucide-react';
 import { debug } from '../../lib/utils/debug';
 
 // Cost filter options
@@ -398,79 +422,50 @@ const Spells: React.FC = () => {
 
 	if (!state.classId) {
 		return (
-			<div className="flex flex-col items-center justify-center space-y-4 py-12 text-center">
-				<div className="bg-primary/10 rounded-full p-4">
-					<Wand2 className="text-primary h-12 w-12" />
+			<Container style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+				<div
+					style={{
+						background: 'rgba(125, 207, 255, 0.1)',
+						borderRadius: '50%',
+						padding: '1rem',
+						display: 'inline-flex',
+						marginBottom: '1rem'
+					}}
+				>
+					<Wand2 size={48} color="#7DCFFF" />
 				</div>
-				<h2 className="font-cinzel text-2xl font-bold">Select a Class First</h2>
-				<p className="text-muted-foreground max-w-md">
+				<h2
+					style={{
+						fontFamily: 'Cinzel, serif',
+						fontSize: '1.5rem',
+						fontWeight: 'bold',
+						marginBottom: '1rem'
+					}}
+				>
+					Select a Class First
+				</h2>
+				<p style={{ color: 'rgba(169, 177, 214, 0.7)', maxWidth: '28rem', margin: '0 auto' }}>
 					Spells are determined by your class. Please choose a class in the first stage to continue.
 				</p>
-			</div>
+			</Container>
 		);
 	}
 
 	return (
-		<div className="animate-in fade-in mx-auto max-w-7xl space-y-8 duration-500">
-			{/* Stage Header */}
-			<div className="border-border relative overflow-hidden rounded-2xl border bg-black/40 p-8 py-12 shadow-2xl">
-				<div className="relative z-10 flex flex-col justify-between gap-8 md:flex-row md:items-center">
-					<div className="max-w-2xl space-y-4">
-						<div className="flex items-center gap-3">
-							<div className="bg-primary/20 rounded-lg p-2">
-								<Wand2 className="text-primary h-6 w-6" />
-							</div>
-							<Badge
-								variant="outline"
-								className="border-primary/30 text-primary px-3 py-1 tracking-widest uppercase"
-							>
-								Spells
-							</Badge>
-						</div>
-						<h1 className="font-cinzel text-4xl font-black tracking-tight text-white md:text-5xl">
-							LEARN <span className="text-primary">SPELLS</span>
-						</h1>
-						<p className="text-muted-foreground text-lg leading-relaxed">
-							Master the arcane arts. Choose the spells that will define your character's magical
-							abilities.
-						</p>
-					</div>
+		<Container>
+			<Header>
+				<Title>Learn Spells</Title>
+				<Subtitle>
+					Harness arcane power. Choose the spells that will shape your magical destiny.
+				</Subtitle>
+			</Header>
 
-					{/* Selection Summary Card */}
-					<Card className="border-primary/20 min-w-[280px] bg-black/60 backdrop-blur-sm">
-						<CardContent className="space-y-4 p-6">
-							<h3 className="font-cinzel text-primary/80 flex items-center gap-2 text-sm font-bold tracking-wider uppercase">
-								<Info className="h-4 w-4" /> Selection Summary
-							</h3>
-
-							<div className="flex items-center justify-between text-sm">
-								<span className="text-muted-foreground">Spells Known</span>
-								<Badge
-									variant={spellsRemaining < 0 ? 'destructive' : 'outline'}
-									className="font-mono"
-								>
-									{selectedSpellsCount} / {spellCount}
-								</Badge>
-							</div>
-
-							{spellsRemaining > 0 ? (
-								<p className="text-muted-foreground border-t border-white/5 pt-2 text-center text-[10px] italic">
-									You have {spellsRemaining} spell{spellsRemaining !== 1 ? 's' : ''} remaining to
-									learn
-								</p>
-							) : (
-								<p className="border-primary/10 text-primary/60 border-t pt-2 text-center text-[10px] italic">
-									All spells learned
-								</p>
-							)}
-						</CardContent>
-					</Card>
-				</div>
-
-				{/* Background Decoration */}
-				<div className="bg-primary/5 absolute top-0 right-0 -mt-20 -mr-20 h-64 w-64 rounded-full blur-[100px]" />
-				<div className="absolute bottom-0 left-0 -mb-20 -ml-20 h-64 w-64 rounded-full bg-purple-500/5 blur-[100px]" />
-			</div>
+			<ProgressSection>
+				<ProgressText>
+					Spells: {selectedSpellsCount} / {spellCount}
+					{spellsRemaining > 0 ? ` • ${spellsRemaining} remaining` : ' • All slots filled'}
+				</ProgressText>
+			</ProgressSection>
 
 			{availableSpells.length === 0 ? (
 				<div className="border-border text-muted-foreground rounded-2xl border-2 border-dashed bg-black/10 py-24 text-center">
@@ -494,40 +489,71 @@ const Spells: React.FC = () => {
 					</div>
 				</div>
 			) : (
-				<div className="space-y-6">
+				<div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 					{/* Class Access Info */}
 					{globalMagicProfile &&
 						(globalMagicProfile.schools.length > 0 || globalMagicProfile.tags.length > 0) && (
-							<div className="border-primary/20 bg-primary/5 rounded-lg border px-4 py-3">
-								<div className="flex flex-wrap items-center gap-2 text-sm">
-									<span className="text-muted-foreground font-medium">
+							<div
+								style={{
+									background: 'rgba(125, 207, 255, 0.05)',
+									border: '1px solid rgba(125, 207, 255, 0.2)',
+									borderRadius: '0.5rem',
+									padding: '0.75rem 1rem'
+								}}
+							>
+								<div
+									style={{
+										display: 'flex',
+										flexWrap: 'wrap',
+										alignItems: 'center',
+										gap: '0.5rem',
+										fontSize: '0.875rem'
+									}}
+								>
+									<span style={{ color: 'rgba(169, 177, 214, 0.7)', fontWeight: '500' }}>
 										{classData?.name || 'Your class'} can learn spells from:
 									</span>
 									{globalMagicProfile.schools.length > 0 && (
-										<div className="flex items-center gap-1">
+										<div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
 											{globalMagicProfile.schools.map((school) => (
-												<Badge key={school} variant="outline" className="text-xs">
+												<span
+													key={school}
+													style={{
+														background: 'rgba(125, 207, 255, 0.1)',
+														color: '#7DCFFF',
+														border: '1px solid rgba(125, 207, 255, 0.3)',
+														padding: '0.125rem 0.5rem',
+														borderRadius: '0.25rem',
+														fontSize: '0.75rem'
+													}}
+												>
 													{school}
-												</Badge>
+												</span>
 											))}
-											<span className="text-muted-foreground">school</span>
+											<span style={{ color: 'rgba(169, 177, 214, 0.7)' }}>school</span>
 										</div>
 									)}
 									{globalMagicProfile.schools.length > 0 && globalMagicProfile.tags.length > 0 && (
-										<span className="text-muted-foreground">or with</span>
+										<span style={{ color: 'rgba(169, 177, 214, 0.7)' }}>or with</span>
 									)}
 									{globalMagicProfile.tags.length > 0 && (
-										<div className="flex items-center gap-1">
+										<div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
 											{globalMagicProfile.tags.map((tag) => (
-												<Badge
+												<span
 													key={tag}
-													variant="outline"
-													className="border-amber-500/30 text-xs text-amber-500"
+													style={{
+														background: 'rgba(224, 175, 104, 0.1)',
+														color: '#E0AF68',
+														border: '1px solid rgba(224, 175, 104, 0.3)',
+														padding: '0.125rem 0.5rem',
+														borderRadius: '0.25rem',
+														fontSize: '0.75rem'
+													}}
 												>
 													{tag}
-												</Badge>
+												</span>
 											))}
-											<span className="text-muted-foreground">tags</span>
+											<span style={{ color: 'rgba(169, 177, 214, 0.7)' }}>tags</span>
 										</div>
 									)}
 								</div>
@@ -535,16 +561,23 @@ const Spells: React.FC = () => {
 						)}
 
 					{/* Filter Section */}
-					<Card className="border-border bg-card/50">
-						<CardContent className="pt-6">
-							<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+					<FilterSection>
+						<FilterGrid>
 								{/* Source Filter */}
-								<div className="space-y-2">
-									<label className="text-muted-foreground text-sm font-medium">Source</label>
+								<FilterGroup>
+									<FilterLabel>Source</FilterLabel>
 									<select
 										value={sourceFilter}
 										onChange={(e) => setSourceFilter(e.target.value as SpellSource | 'all')}
-										className="border-border bg-background focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
+										style={{
+											width: '100%',
+											padding: '0.5rem 0.75rem',
+											background: theme.colors.bg.primary,
+											border: `1px solid ${theme.colors.bg.elevated}`,
+											borderRadius: '0.375rem',
+											color: theme.colors.text.primary,
+											fontSize: '0.875rem'
+										}}
 									>
 										<option value="all">All Sources</option>
 										{Object.values(SpellSource).map((source) => (
@@ -553,15 +586,23 @@ const Spells: React.FC = () => {
 											</option>
 										))}
 									</select>
-								</div>
+								</FilterGroup>
 
 								{/* School Filter */}
-								<div className="space-y-2">
-									<label className="text-muted-foreground text-sm font-medium">School</label>
+								<FilterGroup>
+									<FilterLabel>School</FilterLabel>
 									<select
 										value={schoolFilter}
 										onChange={(e) => setSchoolFilter(e.target.value as SpellSchool | 'all')}
-										className="border-border bg-background focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
+										style={{
+											width: '100%',
+											padding: '0.5rem 0.75rem',
+											background: theme.colors.bg.primary,
+											border: `1px solid ${theme.colors.bg.elevated}`,
+											borderRadius: '0.375rem',
+											color: theme.colors.text.primary,
+											fontSize: '0.875rem'
+										}}
 									>
 										<option value="all">All Schools</option>
 										{Object.values(SpellSchool).map((school) => (
@@ -570,17 +611,23 @@ const Spells: React.FC = () => {
 											</option>
 										))}
 									</select>
-								</div>
+								</FilterGroup>
 
 								{/* Tag Filter */}
-								<div className="space-y-2">
-									<label className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-										Tag
-									</label>
+								<FilterGroup>
+									<FilterLabel>Tag</FilterLabel>
 									<select
 										value={tagFilter}
 										onChange={(e) => setTagFilter(e.target.value as SpellTag | 'all')}
-										className="border-border bg-background focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
+										style={{
+											width: '100%',
+											padding: '0.5rem 0.75rem',
+											background: theme.colors.bg.primary,
+											border: `1px solid ${theme.colors.bg.elevated}`,
+											borderRadius: '0.375rem',
+											color: theme.colors.text.primary,
+											fontSize: '0.875rem'
+										}}
 									>
 										<option value="all">All Tags</option>
 										{availableTags.map((tag) => (
@@ -589,50 +636,75 @@ const Spells: React.FC = () => {
 											</option>
 										))}
 									</select>
-								</div>
+								</FilterGroup>
 
 								{/* Cost Filter */}
-								<div className="space-y-2">
-									<label className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-										Type/Cost
-									</label>
+								<FilterGroup>
+									<FilterLabel>Type/Cost</FilterLabel>
 									<select
 										value={costFilter}
 										onChange={(e) => setCostFilter(e.target.value as CostFilter)}
-										className="border-border bg-background focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
+										style={{
+											width: '100%',
+											padding: '0.5rem 0.75rem',
+											background: theme.colors.bg.primary,
+											border: `1px solid ${theme.colors.bg.elevated}`,
+											borderRadius: '0.375rem',
+											color: theme.colors.text.primary,
+											fontSize: '0.875rem'
+										}}
 									>
 										<option value="all">Any Cost</option>
 										<option value="1mp">1 MP Spells</option>
 										<option value="2mp">2 MP Spells</option>
 										<option value="3mp+">3+ MP Spells</option>
 									</select>
-								</div>
+								</FilterGroup>
 
 								{/* Sustained Filter */}
-								<div className="space-y-2">
-									<label className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-										Duration
-									</label>
+								<FilterGroup>
+									<FilterLabel>Duration</FilterLabel>
 									<select
 										value={sustainedFilter}
 										onChange={(e) => setSustainedFilter(e.target.value as SustainedFilter)}
-										className="border-border bg-background focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
+										style={{
+											width: '100%',
+											padding: '0.5rem 0.75rem',
+											background: theme.colors.bg.primary,
+											border: `1px solid ${theme.colors.bg.elevated}`,
+											borderRadius: '0.375rem',
+											color: theme.colors.text.primary,
+											fontSize: '0.875rem'
+										}}
 									>
 										<option value="all">Any Duration</option>
 										<option value="yes">Sustained Only</option>
 										<option value="no">Instant Only</option>
 									</select>
-								</div>
-							</div>
-						</CardContent>
-					</Card>
+								</FilterGroup>
+							</FilterGrid>
+						</FilterSection>
 
 					{/* Results Summary */}
-					<div className="text-muted-foreground flex items-center justify-between px-1 text-sm">
+					<div
+						style={{
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'space-between',
+							padding: '0 0.25rem',
+							fontSize: '0.875rem',
+							color: 'rgba(169, 177, 214, 0.7)'
+						}}
+					>
 						<span>
 							Showing {filteredSpells.length} of {availableSpells.length} available spells
 						</span>
-						<span className={cn(spellsRemaining < 0 && 'text-destructive font-bold')}>
+						<span
+							style={{
+								color: spellsRemaining < 0 ? '#F7768E' : undefined,
+								fontWeight: spellsRemaining < 0 ? 'bold' : undefined
+							}}
+						>
 							{spellsRemaining} spells remaining to learn
 						</span>
 					</div>
@@ -643,9 +715,9 @@ const Spells: React.FC = () => {
 							<summary className="font-cinzel flex cursor-pointer list-none items-center gap-2 text-lg font-bold">
 								<Wand2 className="text-primary h-5 w-5" />
 								<span>Spells Known</span>
-								<Badge variant="outline" className="ml-2 font-mono text-xs">
+								<ShadcnBadge variant="outline" className="ml-2 font-mono text-xs">
 									{Object.keys(selectedSpells).length} / {spellSlots.length}
-								</Badge>
+								</ShadcnBadge>
 								<span className="text-muted-foreground ml-auto text-sm font-normal group-open:hidden">
 									Click to expand
 								</span>
@@ -706,98 +778,64 @@ const Spells: React.FC = () => {
 									: 'None of your available spells match the active filters.'}
 							</p>
 							{activeSlotId && (
-								<Button
-									variant="outline"
-									size="sm"
-									className="font-cinzel mt-6"
+								<SecondaryButton
+									style={{
+										fontFamily: 'Cinzel, serif',
+										marginTop: theme.spacing[6]
+									}}
 									onClick={() => setActiveSlotId(null)}
 								>
 									Browse All Class Spells
-								</Button>
+								</SecondaryButton>
 							)}
 						</div>
 					) : (
-						<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+						<SpellGrid>
 							{filteredSpells.map((spell) => {
 								const isSelected = Object.values(selectedSpells).includes(spell.id);
 
 								return (
-									<Card
-										key={spell.id}
-										className={cn(
-											'group relative overflow-hidden border-2 transition-all hover:-translate-y-1 hover:shadow-xl',
-											isSelected
-												? 'border-primary bg-primary/10'
-												: 'border-border bg-card/40 hover:border-primary/50'
-										)}
-									>
-										{isSelected && (
-											<div className="bg-primary text-primary-foreground absolute top-0 right-0 rounded-bl-lg px-3 py-1 text-[10px] font-bold">
-												KNOWN
-											</div>
-										)}
-										<CardHeader className="pb-3">
-											<div className="flex items-start justify-between gap-2">
-												<CardTitle className="text-primary text-xl font-bold tracking-tight">
-													{spell.name}
-												</CardTitle>
-												<Badge
-													variant="outline"
-													className="border-primary/20 text-primary/70 shrink-0 text-[10px] tracking-widest uppercase"
-												>
-													{spell.school}
-												</Badge>
-											</div>
-											<div className="mt-1 flex flex-wrap gap-1.5">
-												<Badge variant="secondary" className="bg-primary/5 font-mono text-[10px]">
-													{spell.cost.ap} AP{spell.cost.mp ? ` + ${spell.cost.mp} MP` : ''}
-												</Badge>
-												<Badge variant="outline" className="text-[10px]">
-													{spell.range}
-												</Badge>
-												{spell.sustained && (
-													<Badge className="border-amber-500/20 bg-amber-500/10 text-[10px] tracking-tighter text-amber-500 uppercase">
-														Sustained
-													</Badge>
-												)}
-											</div>
-										</CardHeader>
-										<CardContent className="pb-6">
-											<p className="text-muted-foreground line-clamp-3 h-[60px] text-sm leading-relaxed">
-												{spell.effects[0]?.description || 'No description available.'}
-											</p>
-										</CardContent>
-										<CardFooter className="justify-between border-t border-white/5 bg-black/20 p-4 pt-0">
-											<div className="flex flex-wrap gap-2">
+									<SpellCard key={spell.id} $isSelected={isSelected}>
+										{isSelected && <KnownBadge>KNOWN</KnownBadge>}
+										
+										<StyledCardHeader>
+											<SpellName $isSelected={isSelected}>{spell.name}</SpellName>
+											<Badge $variant="school">{spell.school}</Badge>
+										</StyledCardHeader>
+
+										<SpellBadges>
+											<Badge $variant="cost">
+												{spell.cost.ap} AP{spell.cost.mp ? ` + ${spell.cost.mp} MP` : ''}
+											</Badge>
+											<Badge $variant="range">{spell.range}</Badge>
+											{spell.sustained && <Badge $variant="sustained">Sustained</Badge>}
+										</SpellBadges>
+
+										<SpellDescription>
+											{spell.effects[0]?.description || 'No description available.'}
+										</SpellDescription>
+
+										<SpellCardFooter>
+											<SourcesList>
 												{spell.sources.map((source) => (
-													<span
-														key={source}
-														className="text-muted-foreground/60 text-[9px] font-bold tracking-widest uppercase"
-													>
-														{source}
-													</span>
+													<SourceTag key={source}>{source}</SourceTag>
 												))}
-											</div>
-											<Button
-												variant={isSelected ? 'destructive' : 'default'}
-												size="sm"
-												className={cn(
-													'h-8 px-4 font-bold transition-all',
-													!isSelected && 'bg-primary hover:bg-primary/90'
-												)}
+											</SourcesList>
+											<SpellButton
+												$variant={isSelected ? 'forget' : 'learn'}
 												onClick={() => handleSpellToggle(spell.id)}
 											>
 												{isSelected ? 'FORGET' : 'LEARN'}
-											</Button>
-										</CardFooter>
-									</Card>
+											</SpellButton>
+										</SpellCardFooter>
+									</SpellCard>
 								);
 							})}
-						</div>
+						</SpellGrid>
 					)}
 				</div>
 			)}
-		</div>
+		</Container>
 	);
 };
 

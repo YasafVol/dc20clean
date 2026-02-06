@@ -3,8 +3,23 @@ import { ancestriesData } from '../../lib/rulesdata/ancestries/ancestries';
 import { traitsData } from '../../lib/rulesdata/ancestries/traits';
 import TraitChoiceSelector from './components/TraitChoiceSelector';
 import type { IAncestry, ITrait, ITraitEffect } from '../../lib/rulesdata/types';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
-import { cn } from '../../lib/utils';
+import {
+	Container,
+	Header,
+	Title,
+	PointsDisplay,
+	AncestrySection,
+	SectionHeader,
+	AncestryName,
+	TraitGrid,
+	TraitCard,
+	TraitHeader,
+	TraitName,
+	TraitCost,
+	TraitDescription,
+	PrerequisiteWarning,
+	EmptyState
+} from './SelectedAncestries.styled';
 
 function SelectedAncestries() {
 	const { state, dispatch, calculationResult } = useCharacter();
@@ -106,32 +121,28 @@ function SelectedAncestries() {
 		const isDisabled = !isSelected && (wouldExceedBudget || hasUnmetPrerequisites);
 
 		return (
-			<li key={traitId} className="border-primary mb-3 rounded border-l bg-white/5 p-2">
-				<label
-					className={cn(
-						'text-foreground hover:text-primary flex cursor-pointer items-start gap-3 text-sm leading-relaxed',
-						isDisabled && 'cursor-not-allowed opacity-50'
-					)}
-				>
-					<input
-						type="checkbox"
-						checked={isSelected}
-						disabled={isDisabled}
-						onChange={() => handleToggleTrait(traitId)}
-						className="accent-primary mt-1 h-[18px] w-[18px] shrink-0 cursor-pointer disabled:cursor-not-allowed"
-					/>
-					<span>
-						{trait.name} ({trait.cost} pts) - {trait.description}
-						{wouldExceedBudget && !hasUnmetPrerequisites && (
-							<span className="text-destructive"> (Not enough points)</span>
-						)}
-						{hasUnmetPrerequisites && (
-							<span className="text-amber-500"> (Requires: {missingPrereqNames.join(', ')})</span>
-						)}
-					</span>
-				</label>
-
-				{/* Render choice selectors if trait is selected and has user choices */}
+			<TraitCard
+				key={traitId}
+				$isSelected={isSelected}
+				$disabled={isDisabled}
+				$cost={trait.cost}
+				onClick={() => !isDisabled && handleToggleTrait(traitId)}
+				whileHover={{ scale: isDisabled ? 1 : 1.01 }}
+				whileTap={{ scale: isDisabled ? 1 : 0.99 }}
+			>
+				<TraitHeader>
+					<TraitName $isSelected={isSelected}>{trait.name}</TraitName>
+					<TraitCost $cost={trait.cost}>{trait.cost} pts</TraitCost>
+				</TraitHeader>
+				<TraitDescription>{trait.description}</TraitDescription>
+				{wouldExceedBudget && !hasUnmetPrerequisites && (
+					<PrerequisiteWarning>(Not enough points)</PrerequisiteWarning>
+				)}
+				{hasUnmetPrerequisites && (
+					<PrerequisiteWarning>
+						Requires: {missingPrereqNames.join(', ')}
+					</PrerequisiteWarning>
+				)}
 				{isSelected &&
 					trait.effects?.map((effect: ITraitEffect, effectIndex: number) => {
 						if (effect.userChoiceRequired) {
@@ -146,63 +157,69 @@ function SelectedAncestries() {
 						}
 						return null;
 					})}
-			</li>
+			</TraitCard>
 		);
 	}
 
 	function renderAncestryTraits(ancestry: IAncestry) {
 		return (
-			<Card key={ancestry.id} className="border-white/50 bg-transparent">
-				<CardHeader className="pb-2">
-					<CardTitle className="text-primary text-center text-xl tracking-wide uppercase">
-						{ancestry.name}
-					</CardTitle>
-				</CardHeader>
-				<CardContent className="space-y-4">
-					<div>
-						<h3 className="text-primary border-b border-white/50 pb-1 text-lg font-bold">
-							Default Traits
-						</h3>
-						<ul className="mt-3 list-none p-0">
-							{(ancestry.defaultTraitIds || []).map((traitId) => renderTraitItem(traitId))}
-						</ul>
-					</div>
-
-					<div>
-						<h3 className="text-primary border-b border-white/50 pb-1 text-lg font-bold">
-							Expanded Traits
-						</h3>
-						<ul className="mt-3 list-none p-0">
-							{(ancestry.expandedTraitIds || []).map((traitId) => renderTraitItem(traitId))}
-						</ul>
-					</div>
-				</CardContent>
-			</Card>
+			<AncestrySection key={ancestry.id}>
+				<SectionHeader>
+					<AncestryName>{ancestry.name}</AncestryName>
+				</SectionHeader>
+				<div style={{ marginBottom: '2rem' }}>
+					<h3
+						style={{
+							color: '#7DCFFF',
+							borderBottom: '1px solid rgba(169, 177, 214, 0.2)',
+							paddingBottom: '0.5rem',
+							fontSize: '1.125rem',
+							fontWeight: 'bold'
+						}}
+					>
+						Default Traits
+					</h3>
+					<TraitGrid>
+						{(ancestry.defaultTraitIds || []).map((traitId) => renderTraitItem(traitId))}
+					</TraitGrid>
+				</div>
+				<div>
+					<h3
+						style={{
+							color: '#7DCFFF',
+							borderBottom: '1px solid rgba(169, 177, 214, 0.2)',
+							paddingBottom: '0.5rem',
+							fontSize: '1.125rem',
+							fontWeight: 'bold'
+						}}
+					>
+						Expanded Traits
+					</h3>
+					<TraitGrid>
+						{(ancestry.expandedTraitIds || []).map((traitId) => renderTraitItem(traitId))}
+					</TraitGrid>
+				</div>
+			</AncestrySection>
 		);
 	}
 
 	return (
-		<Card className="mt-8 border-white/50 bg-transparent">
-			<CardHeader>
-				<CardTitle className="text-primary font-cinzel text-center text-3xl font-bold tracking-wide">
-					Ancestry Traits
-				</CardTitle>
-				<div
-					className={cn(
-						'mt-2 text-center text-sm',
-						ancestryPointsRemaining < 0 ? 'text-destructive' : 'text-muted-foreground'
-					)}
+		<Container>
+			<Header>
+				<Title>Ancestry Traits</Title>
+				<PointsDisplay
+					style={{
+						color: ancestryPointsRemaining < 0 ? '#F7768E' : '#A9B1D6'
+					}}
 				>
 					Spent: {ancestryPointsSpent} | Remaining: {ancestryPointsRemaining}/
 					{ancestryPointsSpent + ancestryPointsRemaining}
-					{ancestryPointsRemaining < 0 && <span className="text-destructive"> (Over budget!)</span>}
-				</div>
-			</CardHeader>
-			<CardContent className="flex flex-col gap-8">
-				{selectedAncestry1 && renderAncestryTraits(selectedAncestry1)}
-				{selectedAncestry2 && renderAncestryTraits(selectedAncestry2)}
-			</CardContent>
-		</Card>
+					{ancestryPointsRemaining < 0 && <span> (Over budget!)</span>}
+				</PointsDisplay>
+			</Header>
+			{selectedAncestry1 && renderAncestryTraits(selectedAncestry1)}
+			{selectedAncestry2 && renderAncestryTraits(selectedAncestry2)}
+		</Container>
 	);
 }
 

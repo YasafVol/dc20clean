@@ -179,7 +179,7 @@ import {
 } from './styled';
 
 import { useNavigate } from 'react-router-dom';
-import { AuthStatus, useIsAuthenticated } from './auth';
+import { useIsAuthenticated } from './auth';
 
 // Encounter planner icon
 export const EncounterIcon = () => (
@@ -214,9 +214,6 @@ function Menu() {
 
 	return (
 		<StyledContainer>
-			<div className="absolute top-6 right-6">
-				<AuthStatus />
-			</div>
 			<StyledTitle>DC20 Character Creator</StyledTitle>
 			<StyledSubtitle>
 				Welcome to the ultimate DC20 character creation experience.

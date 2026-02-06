@@ -25,12 +25,27 @@ import {
 import { validateSubclassChoicesComplete } from '../../lib/rulesdata/classes-data/classUtils';
 import { resolveClassProgression } from '../../lib/rulesdata/classes-data/classProgressionResolver';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Button } from '../../components/ui/button';
+import { SecondaryButton, PrimaryButton } from '../../components/styled/index';
 import { Dialog, DialogContent } from '../../components/ui/dialog';
 import { cn } from '../../lib/utils';
 import { Check, ChevronRight } from 'lucide-react';
-import { AuthStatus, SignIn, useIsAuthenticated } from '../../components/auth';
+import { SignIn, useIsAuthenticated } from '../../components/auth';
 import { debug } from '../../lib/utils/debug';
+import {
+	PageContainer,
+	StepperHeader,
+	MobileProgressBar,
+	ProgressFill,
+	HeaderContent,
+	NavSection,
+	MobileTitle,
+	StepperContainer,
+	StepItem,
+	StepNumber,
+	StepLabel,
+	StepSeparator,
+	MainContent
+} from './CharacterCreation.styled';
 
 /**
  * Converts the movements array from calculator into the movement structure for SavedCharacter
@@ -120,6 +135,14 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			handleNext();
 		}
 	}, [isAuthenticated, pendingSave, isUsingConvex]);
+
+	// Clear draft when creating NEW character (not editing or leveling up)
+	useEffect(() => {
+		if (!editChar && !isLevelUpMode && !levelUpCharacter) {
+			debug.character('CharacterCreation: Creating NEW character - clearing any existing draft/level-up state');
+			dispatch({ type: 'CLEAR_DRAFT' });
+		}
+	}, [editChar, isLevelUpMode, levelUpCharacter, dispatch]);
 
 	// Initialize character state for edit mode
 	useEffect(() => {
@@ -798,39 +821,29 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	};
 
 	return (
-		<div className="text-foreground flex min-h-screen flex-col bg-[url('/src/assets/BlackBG.jpg')] bg-cover bg-fixed bg-center font-sans">
+		<PageContainer>
 			{/* Header with Navigation and Stepper */}
-			<header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
+			<StepperHeader>
 				{/* Mobile Stepper Progress Bar */}
-				<div className="bg-muted h-1 w-full md:hidden">
-					<div
-						className="bg-primary h-full transition-all duration-300"
-						style={{ width: `${(state.currentStep / maxStep) * 100}%` }}
-					/>
-				</div>
+				<MobileProgressBar>
+					<ProgressFill $progress={(state.currentStep / maxStep) * 100} />
+				</MobileProgressBar>
 
-				<div className="container flex min-h-16 items-center justify-between gap-4 px-4 py-2">
+				<HeaderContent>
 					{/* Left: Previous Button */}
-					<div className="flex w-[140px] shrink-0 justify-start">
-						<Button
-							variant="default"
-							onClick={handlePrevious}
-							disabled={state.currentStep === 1}
-							className="gap-2"
-						>
-							← <span className="hidden sm:inline">Previous</span>
-						</Button>
-					</div>
+					<NavSection $align="start">
+						<SecondaryButton onClick={handlePrevious} disabled={state.currentStep === 1}>
+							← <span style={{ marginLeft: '8px' }}>Previous</span>
+						</SecondaryButton>
+					</NavSection>
 
 					{/* Center: Stepper (Desktop) or Title (Mobile) */}
-					<div className="flex min-w-0 flex-1 justify-center overflow-hidden">
+					<NavSection $align="center" style={{ flex: 1, minWidth: 0 }}>
 						{/* Mobile Title */}
-						<span className="text-primary truncate text-lg font-bold md:hidden">
-							{editChar ? 'Edit' : 'Create'} Character
-						</span>
+						<MobileTitle>{editChar ? 'Edit' : 'Create'} Character</MobileTitle>
 
 						{/* Desktop Stepper */}
-						<div className="hidden items-center justify-center gap-1 md:flex md:flex-wrap">
+						<StepperContainer>
 							{steps.map(({ number, label }, index) => {
 								const isActive = state.currentStep === number;
 								const isCompleted = isStepCompleted(number);
@@ -838,58 +851,39 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 								return (
 									<React.Fragment key={number}>
-										<div
-											className={cn(
-												'group flex cursor-pointer items-center gap-2 rounded-full px-2 py-1.5 whitespace-nowrap transition-all duration-200',
-												isActive
-													? 'bg-primary text-primary-foreground shadow-md'
-													: isCompleted
-														? 'bg-primary/10 text-primary hover:bg-primary/20'
-														: 'text-muted-foreground hover:bg-muted hover:text-foreground'
-											)}
+										<StepItem
+											$isActive={isActive}
+											$isCompleted={isCompleted}
 											onClick={() => handleStepClick(number)}
+											whileHover={{ scale: 1.02 }}
+											whileTap={{ scale: 0.98 }}
 										>
-											<div
-												className={cn(
-													'flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold transition-colors',
-													isActive
-														? 'bg-background text-primary'
-														: isCompleted
-															? 'bg-primary text-primary-foreground'
-															: 'bg-muted-foreground/20'
-												)}
-											>
-												{isCompleted && !isActive ? <Check className="h-3.5 w-3.5" /> : number}
-											</div>
-											<span className={cn('text-sm font-medium', isActive && 'font-bold')}>
-												{label}
-											</span>
-										</div>
+											<StepNumber $isActive={isActive} $isCompleted={isCompleted}>
+												{isCompleted && !isActive ? <Check size={14} /> : number}
+											</StepNumber>
+											<StepLabel $isActive={isActive}>{label}</StepLabel>
+										</StepItem>
 										{!isLast && (
-											<ChevronRight className="text-muted-foreground/30 mx-1 h-4 w-4 shrink-0" />
+											<StepSeparator>
+												<ChevronRight size={16} />
+											</StepSeparator>
 										)}
 									</React.Fragment>
 								);
 							})}
-						</div>
-					</div>
+						</StepperContainer>
+					</NavSection>
 
-					{/* Right: Next Button + Auth */}
-					<div className="flex w-[140px] shrink-0 items-center justify-end gap-3">
-						<div className="hidden lg:block">
-							<AuthStatus />
-						</div>
-						<Button variant="default" onClick={handleNext} className="gap-2">
-							<span className="hidden sm:inline">
-								{state.currentStep === maxStep ? 'Complete' : 'Next'}
-							</span>{' '}
-							→
-						</Button>
-					</div>
-				</div>
-			</header>
+					{/* Right: Next Button */}
+					<NavSection $align="end">
+						<PrimaryButton onClick={handleNext}>
+							<span>{state.currentStep === maxStep ? 'Complete' : 'Next'}</span> →
+						</PrimaryButton>
+					</NavSection>
+				</HeaderContent>
+			</StepperHeader>
 
-			<main className="container mx-auto max-w-7xl flex-1 px-4 py-8">{renderCurrentStep()}</main>
+			<MainContent>{renderCurrentStep()}</MainContent>
 
 			<Snackbar
 				message={snackbarMessage}
@@ -916,7 +910,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					/>
 				</DialogContent>
 			</Dialog>
-		</div>
+		</PageContainer>
 	);
 };
 

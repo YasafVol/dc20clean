@@ -56,3 +56,16 @@ export const StyledFooter = styled.footer`
 	border-top: none;
 	background: transparent;
 `;
+
+export const FixedAuthStatus = styled.div`
+	position: fixed;
+	top: 1rem;
+	right: 1rem;
+	z-index: 9999;
+	padding: 0.5rem;
+	background: rgba(26, 27, 38, 0.9);
+	border-radius: 8px;
+	border: 1px solid rgba(125, 207, 255, 0.2);
+	backdrop-filter: blur(8px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+`;

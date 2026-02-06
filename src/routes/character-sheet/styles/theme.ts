@@ -19,16 +19,30 @@ export const theme = {
 			secondary: '#BB9AF7',
 			warning: '#E0AF68',
 			danger: '#F7768E',
-			success: '#9ECE6A'
-		},
+		success: '#9ECE6A',
+		info: '#7AA2F7',
 
-		// Resource colors
-		resource: {
-			health: '#F7768E',
-			mana: '#7AA2F7',
-			stamina: '#E0AF68',
-			grit: '#9ECE6A'
-		},
+		// Alpha variants for accent colors
+		dangerAlpha10: 'rgba(247, 118, 142, 0.1)',
+		dangerAlpha20: 'rgba(247, 118, 142, 0.2)',
+		dangerAlpha30: 'rgba(247, 118, 142, 0.3)',
+		dangerAlpha40: 'rgba(247, 118, 142, 0.4)',
+
+		warningAlpha10: 'rgba(224, 175, 104, 0.1)',
+		warningAlpha20: 'rgba(224, 175, 104, 0.2)',
+		warningAlpha30: 'rgba(224, 175, 104, 0.3)',
+		warningAlpha40: 'rgba(224, 175, 104, 0.4)',
+
+		infoAlpha20: 'rgba(122, 162, 247, 0.2)'
+	},
+
+	// Resource colors
+	resource: {
+		health: '#F7768E',
+		mana: '#7AA2F7',
+		stamina: '#E0AF68',
+		grit: '#9ECE6A'
+	},
 
 		// Text colors
 		text: {
@@ -57,34 +71,30 @@ export const theme = {
 			secondary: '#7aa2f7',
 			tertiary: '#9aa5ce',
 
-			// RGBA variations for transparency effects
-			primaryAlpha: {
-				10: 'rgba(125, 207, 255, 0.1)',
-				20: 'rgba(125, 207, 255, 0.2)',
-				30: 'rgba(125, 207, 255, 0.3)',
-				40: 'rgba(125, 207, 255, 0.4)',
-				50: 'rgba(125, 207, 255, 0.5)',
-				60: 'rgba(125, 207, 255, 0.6)',
-				70: 'rgba(125, 207, 255, 0.7)',
-				80: 'rgba(125, 207, 255, 0.8)',
-				90: 'rgba(125, 207, 255, 0.9)'
-			},
-			secondaryAlpha: {
-				30: 'rgba(90, 163, 217, 0.3)',
-				50: 'rgba(90, 163, 217, 0.5)',
-				60: 'rgba(90, 163, 217, 0.6)',
-				70: 'rgba(90, 163, 217, 0.7)',
-				80: 'rgba(90, 163, 217, 0.8)',
-				90: 'rgba(90, 163, 217, 0.9)',
-				100: 'rgba(90, 163, 217, 1)'
-			},
-			tertiaryAlpha: {
-				30: 'rgba(122, 162, 247, 0.3)',
-				50: 'rgba(122, 162, 247, 0.5)',
-				60: 'rgba(122, 162, 247, 0.6)',
-				70: 'rgba(122, 162, 247, 0.7)',
-				80: 'rgba(122, 162, 247, 0.8)'
-			},
+// RGBA variations for transparency effects - flattened for dot notation access
+		primaryAlpha10: 'rgba(125, 207, 255, 0.1)',
+		primaryAlpha20: 'rgba(125, 207, 255, 0.2)',
+		primaryAlpha30: 'rgba(125, 207, 255, 0.3)',
+		primaryAlpha40: 'rgba(125, 207, 255, 0.4)',
+		primaryAlpha50: 'rgba(125, 207, 255, 0.5)',
+		primaryAlpha60: 'rgba(125, 207, 255, 0.6)',
+		primaryAlpha70: 'rgba(125, 207, 255, 0.7)',
+		primaryAlpha80: 'rgba(125, 207, 255, 0.8)',
+		primaryAlpha90: 'rgba(125, 207, 255, 0.9)',
+
+		secondaryAlpha30: 'rgba(90, 163, 217, 0.3)',
+		secondaryAlpha50: 'rgba(90, 163, 217, 0.5)',
+		secondaryAlpha60: 'rgba(90, 163, 217, 0.6)',
+		secondaryAlpha70: 'rgba(90, 163, 217, 0.7)',
+		secondaryAlpha80: 'rgba(90, 163, 217, 0.8)',
+		secondaryAlpha90: 'rgba(90, 163, 217, 0.9)',
+		secondaryAlpha100: 'rgba(90, 163, 217, 1)',
+
+		tertiaryAlpha30: 'rgba(122, 162, 247, 0.3)',
+		tertiaryAlpha50: 'rgba(122, 162, 247, 0.5)',
+		tertiaryAlpha60: 'rgba(122, 162, 247, 0.6)',
+		tertiaryAlpha70: 'rgba(122, 162, 247, 0.7)',
+		tertiaryAlpha80: 'rgba(122, 162, 247, 0.8)',
 
 			// Dice-specific colors (for visual differentiation)
 			dice: {

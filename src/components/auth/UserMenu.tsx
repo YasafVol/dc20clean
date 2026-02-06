@@ -86,7 +86,6 @@ export function UserMenu({ className, onSignOut }: UserMenuProps) {
 				<div className="hidden text-right sm:block">
 					{user?.name && <p className="text-foreground text-sm font-medium">{user.name}</p>}
 					{user?.email && <p className="text-muted-foreground text-xs">{user.email}</p>}
-					{!user && <p className="text-foreground text-sm font-medium">Signed in</p>}
 				</div>
 
 				{/* Sign out button */}

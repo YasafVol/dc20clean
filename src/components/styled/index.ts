@@ -7,7 +7,7 @@ export {
 	WarningButton,
 	SmallButton,
 	IconButton
-} from './Button.tsx';
+} from './Button';
 
 // Modal system
 export {
@@ -18,7 +18,7 @@ export {
 	ModalDescription,
 	ModalContent,
 	ModalFooter
-} from './Modal.tsx';
+} from './Modal';
 
 // Containers
 export {
@@ -32,7 +32,7 @@ export {
 	EmptyState,
 	EmptyStateTitle,
 	EmptyStateText
-} from './Container.tsx';
+} from './Container';
 
 // Form elements
-export { Input, TextArea, Label, FormGroup, Message, Select, Checkbox, Radio } from './Form.tsx';
+export { Input, TextArea, Label, FormGroup, Message, Select, Checkbox, Radio } from './Form';

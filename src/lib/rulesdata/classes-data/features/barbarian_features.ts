@@ -84,7 +84,8 @@ export const barbarianClass: ClassDefinition = {
 						{
 							type: 'MODIFY_STAT',
 							target: 'martial_melee_damage',
-							value: 1
+							value: 1,
+							condition: 'while_raging'
 						}
 					]
 				},
@@ -466,3 +467,7 @@ export const barbarianClass: ClassDefinition = {
 		}
 	]
 };
+
+
+
+

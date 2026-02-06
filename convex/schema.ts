@@ -74,7 +74,12 @@ const uiStateValidator = v.object({
 		PD: v.optional(v.number()),
 		AD: v.optional(v.number()),
 		PDR: v.optional(v.number())
-	})
+	}),
+	combatToggles: v.optional(
+		v.object({
+			isRaging: v.optional(v.boolean())
+		})
+	)
 });
 
 const inventoryValidator = v.object({
@@ -604,3 +609,4 @@ export default defineSchema({
 		.index('by_approval_status', ['approvalStatus'])
 		.index('by_user_and_deleted', ['userId', 'deletedAt'])
 });
+

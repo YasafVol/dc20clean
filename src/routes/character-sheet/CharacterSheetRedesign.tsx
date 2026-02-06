@@ -520,6 +520,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		updateGritPoints,
 		updateRestPoints,
 		toggleActiveCondition,
+		setRageActive,
 		saveStatus,
 		retryFailedSave
 	} = useCharacterSheet();
@@ -652,10 +653,22 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	const primeValue = characterData.finalPrimeModifierValue || 0;
 	const combatMastery = characterData.finalCombatMastery || 0;
 
+	// Rage state (temporary in-combat toggle)
+	const hasRageFeature =
+		characterData.classId === 'barbarian' ||
+		(characterData.unlockedFeatureIds || []).includes('barbarian_rage') ||
+		String(characterData.selectedMulticlassFeature || '').toLowerCase() === 'rage';
+	const isRaging = !!characterData.characterState?.ui?.combatToggles?.isRaging;
+
 	// Get defenses and combat stats from character data
-	const precisionAD = characterData.finalPD ?? 10;
+	const basePrecisionAD = characterData.finalPD ?? 10;
+	const ragePdPenalty = hasRageFeature && isRaging ? 5 : 0;
+	const precisionAD = Math.max(0, basePrecisionAD - ragePdPenalty);
+	const precisionADHeavyThreshold = precisionAD + 5;
+	const precisionADBrutalThreshold = precisionAD + 10;
 	const areaAD = characterData.finalAD ?? 10;
 	const precisionDR = characterData.finalPDR ?? 0;
+
 
 	// Combat stats - these would typically come from calculations
 	const attackBonus = primeValue; // Simplified for now
@@ -904,6 +917,8 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 								currentGrit={currentGrit}
 								maxGrit={maxGrit}
 								precisionAD={precisionAD}
+								precisionADHeavyThreshold={precisionADHeavyThreshold}
+								precisionADBrutalThreshold={precisionADBrutalThreshold}
 								precisionDR={precisionDR}
 								areaAD={areaAD}
 								attackBonus={attackBonus}
@@ -935,6 +950,9 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 								onAreaADMouseLeave={handleMouseLeave}
 								onPrecisionDRMouseEnter={(e) => handleMouseEnter('precisionDR', e)}
 								onPrecisionDRMouseLeave={handleMouseLeave}
+								showRageToggle={hasRageFeature}
+								isRaging={isRaging}
+								onRageToggle={setRageActive}
 							/>
 
 							{/* Tabs Section - Only visible on desktop */}
@@ -1203,4 +1221,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 };
 
 export default CharacterSheetRedesign;
+
+
+
 

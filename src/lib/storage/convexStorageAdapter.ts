@@ -44,11 +44,26 @@ function convertTalentsToArray(talents: Record<string, number> | string[] | unde
 	return result;
 }
 
+function sanitizeCharacterStateForConvex(state: CharacterState | undefined): CharacterState | undefined {
+	if (!state) return state;
+
+	return {
+		...state,
+		ui: {
+			manualDefenseOverrides: state.ui?.manualDefenseOverrides ?? {},
+			combatToggles: {
+				isRaging: state.ui?.combatToggles?.isRaging ?? false
+			}
+		}
+	};
+}
+
 function prepareCharacterForSave(character: SavedCharacter): SavedCharacter {
 	return {
 		...character,
 		// Convert Record<string, number> to string[] for database compatibility
-		selectedTalents: convertTalentsToArray(character.selectedTalents as any)
+		selectedTalents: convertTalentsToArray(character.selectedTalents as any),
+		characterState: sanitizeCharacterStateForConvex(character.characterState) as CharacterState
 	};
 }
 
@@ -106,7 +121,10 @@ class ConvexStorageAdapter implements CharacterStorageWithEvents {
 
 	async saveCharacterState(characterId: string, state: CharacterState): Promise<void> {
 		const client = getConvexClient();
-		await client.mutation(api.characters.updateState, { id: characterId, characterState: state });
+		await client.mutation(api.characters.updateState, {
+			id: characterId,
+			characterState: sanitizeCharacterStateForConvex(state)
+		});
 		this.emit({ type: 'update', characterId, timestamp: new Date() });
 	}
 
@@ -157,3 +175,4 @@ export function getConvexStorageAdapter(): CharacterStorageWithEvents {
 export const convexStorageAdapter = {
 	get: getConvexStorageAdapter
 };
+

@@ -35,8 +35,9 @@
 
 ### Defenses & Combat
 
-- **PD** = `8 + Combat Mastery + Agility + Intelligence + sum(effects.pd)`
-- **AD** = `8 + Combat Mastery + Might + Charisma + sum(effects.ad)`
+- **PD** = `8 + Combat Mastery + Agility + Intelligence + sum(always-on effects.pd)`
+- **AD** = `8 + Combat Mastery + Might + Charisma + sum(always-on effects.ad)`
+- Conditional modifiers (for example `while_raging` or `not_wearing_armor`) are surfaced under `conditionalModifiers` and are not applied to always-on totals.
 - **Save DC** = `10 + Combat Mastery + Prime Attribute`
 - **Death Threshold** = `Prime Attribute + Combat Mastery`
 - **Initiative** = `Combat Mastery + Agility`
@@ -503,5 +504,7 @@ For values that depend on breakdowns, the order must be:
 
 ---
 
-> Last updated: 2026-01-05 (Updated for DC20 v0.10 - techniques removed)
+> Last updated: 2026-02-05 (Conditional defense modifiers documented)
 > Maintainer: @DC20Clean-Team
+
+

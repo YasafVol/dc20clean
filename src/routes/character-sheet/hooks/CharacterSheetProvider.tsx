@@ -178,6 +178,7 @@ interface CharacterSheetContextType {
 	updateGritPoints: (grit: number) => void;
 	updateRestPoints: (rest: number) => void;
 	toggleActiveCondition: (conditionId: string) => void;
+	setRageActive: (isRaging: boolean) => void;
 	// Manual save function
 	saveNow: () => Promise<void>;
 	// Save status
@@ -222,7 +223,8 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		updateNotes,
 		updateGritPoints,
 		updateRestPoints,
-		toggleActiveCondition
+		toggleActiveCondition,
+		setRageActive
 	} = useCharacterSheetReducer();
 	const storage = useMemo(() => getDefaultStorage(), []);
 	const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
@@ -412,6 +414,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		updateGritPoints,
 		updateRestPoints,
 		toggleActiveCondition,
+		setRageActive,
 		saveNow,
 		saveStatus,
 		retryFailedSave
@@ -1014,3 +1017,4 @@ export function useCharacterConditions() {
 		return calculateCharacterConditions(input);
 	}, [state.character]);
 }
+

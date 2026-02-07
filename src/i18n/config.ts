@@ -5,7 +5,8 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import en from './locales/en.json';
 import es from './locales/es.json';
 
-i18n
+// Initialize i18n and export both the instance and the promise
+const i18nPromise = i18n
 	.use(LanguageDetector)
 	.use(initReactI18next)
 	.init({
@@ -20,4 +21,5 @@ i18n
 		}
 	});
 
+export { i18nPromise };
 export default i18n;

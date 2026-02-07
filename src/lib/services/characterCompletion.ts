@@ -107,6 +107,13 @@ export const completeCharacter = async (
 			skillToTradeConversions: characterState.skillToTradeConversions || 0,
 			tradeToSkillConversions: characterState.tradeToSkillConversions || 0,
 			tradeToLanguageConversions: characterState.tradeToLanguageConversions || 0,
+			// CRITICAL: Include leveling choices so initial resource values (currentMP, etc.) are correct
+			pathPointAllocations: characterState.pathPointAllocations || {},
+			selectedTalents: characterState.selectedTalents || {},
+			selectedSubclass: characterState.selectedSubclass,
+			selectedMulticlassOption: characterState.selectedMulticlassOption,
+			selectedMulticlassClass: characterState.selectedMulticlassClass,
+			selectedMulticlassFeature: characterState.selectedMulticlassFeature,
 			createdAt: new Date(),
 			completedAt: new Date().toISOString()
 		});

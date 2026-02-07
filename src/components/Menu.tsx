@@ -180,6 +180,7 @@ import {
 
 import { useNavigate } from 'react-router-dom';
 import { useIsAuthenticated } from './auth';
+import { useTranslation } from 'react-i18next';
 
 // Encounter planner icon
 export const EncounterIcon = () => (
@@ -211,26 +212,27 @@ export const EncounterIcon = () => (
 function Menu() {
 	const navigate = useNavigate();
 	const isAuthenticated = useIsAuthenticated();
+	const { t } = useTranslation();
 
 	return (
 		<StyledContainer>
-			<StyledTitle>DC20 Character Creator</StyledTitle>
+			<StyledTitle>{t('menu.title')}</StyledTitle>
 			<StyledSubtitle>
-				Welcome to the ultimate DC20 character creation experience.
+				{t('menu.subtitle')}
 				<br />
-				Choose your path to begin your adventure.
+				{t('menu.subtitleCta')}
 			</StyledSubtitle>
 
 			{/* Character Creation Section */}
 			<StyledMenuSection>
-				<StyledSectionTitle>Character</StyledSectionTitle>
+				<StyledSectionTitle>{t('menu.characterSection')}</StyledSectionTitle>
 				<StyledCharacterGrid>
 					<StyledMenuCard $variant="character" onClick={() => navigate('/create-character')}>
 						<StyledIcon $variant="character">
 							<HeadIcon />
 						</StyledIcon>
 						<StyledTextContent>
-							<StyledCardTitle $variant="character">Create Character</StyledCardTitle>
+							<StyledCardTitle $variant="character">{t('menu.createCharacter')}</StyledCardTitle>
 						</StyledTextContent>
 					</StyledMenuCard>
 
@@ -239,7 +241,7 @@ function Menu() {
 							<GroupIcon />
 						</StyledIcon>
 						<StyledTextContent>
-							<StyledCardTitle $variant="character">Load Character</StyledCardTitle>
+							<StyledCardTitle $variant="character">{t('menu.loadCharacter')}</StyledCardTitle>
 						</StyledTextContent>
 					</StyledMenuCard>
 				</StyledCharacterGrid>
@@ -248,14 +250,14 @@ function Menu() {
 			{/* DM Tools Section - Only visible when authenticated */}
 			{isAuthenticated && (
 				<StyledMenuSection>
-					<StyledSectionTitle>DM Tools</StyledSectionTitle>
+					<StyledSectionTitle>{t('menu.dmToolsSection')}</StyledSectionTitle>
 					<StyledDMGrid>
 						<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/encounters')}>
 							<StyledIcon $variant="dm">
 								<EncounterIcon />
 							</StyledIcon>
 							<StyledTextContent>
-								<StyledCardTitle $variant="dm">Encounter Planner</StyledCardTitle>
+								<StyledCardTitle $variant="dm">{t('menu.encounterPlanner')}</StyledCardTitle>
 							</StyledTextContent>
 						</StyledMenuCard>
 
@@ -264,7 +266,7 @@ function Menu() {
 								<MonsterIcon />
 							</StyledIcon>
 							<StyledTextContent>
-								<StyledCardTitle $variant="dm">Laboratory</StyledCardTitle>
+								<StyledCardTitle $variant="dm">{t('menu.laboratory')}</StyledCardTitle>
 							</StyledTextContent>
 						</StyledMenuCard>
 					</StyledDMGrid>
@@ -273,14 +275,14 @@ function Menu() {
 
 			{/* Tools Section */}
 			<StyledMenuSection>
-				<StyledSectionTitle>Reference Tools</StyledSectionTitle>
+				<StyledSectionTitle>{t('menu.referenceToolsSection')}</StyledSectionTitle>
 				<StyledToolsGrid>
 					<StyledMenuCard $variant="tools" onClick={() => navigate('/spellbook')}>
 						<StyledIcon $variant="tools">
 							<SpellbookIcon />
 						</StyledIcon>
 						<StyledTextContent>
-							<StyledCardTitle $variant="tools">Spellbook</StyledCardTitle>
+							<StyledCardTitle $variant="tools">{t('menu.spellbook')}</StyledCardTitle>
 						</StyledTextContent>
 					</StyledMenuCard>
 
@@ -289,7 +291,7 @@ function Menu() {
 							<ConditionsIcon />
 						</StyledIcon>
 						<StyledTextContent>
-							<StyledCardTitle $variant="tools">Conditions</StyledCardTitle>
+							<StyledCardTitle $variant="tools">{t('menu.conditions')}</StyledCardTitle>
 						</StyledTextContent>
 					</StyledMenuCard>
 
@@ -298,14 +300,14 @@ function Menu() {
 							<EquipmentIcon />
 						</StyledIcon>
 						<StyledTextContent>
-							<StyledCardTitle $variant="tools">Equipage</StyledCardTitle>
+							<StyledCardTitle $variant="tools">{t('menu.equipage')}</StyledCardTitle>
 						</StyledTextContent>
 					</StyledMenuCard>
 				</StyledToolsGrid>
 			</StyledMenuSection>
 
 			{/* Rules Version Note */}
-			<div className="absolute right-4 bottom-4 text-xs text-white/50">Rules: DC20 v0.10</div>
+			<div className="absolute right-4 bottom-4 text-xs text-white/50">{t('menu.rulesVersion')}</div>
 		</StyledContainer>
 	);
 }

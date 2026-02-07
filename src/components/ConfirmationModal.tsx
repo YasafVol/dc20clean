@@ -1,5 +1,6 @@
 import React from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
 	ModalOverlay,
 	Modal,
@@ -31,12 +32,15 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 	isOpen,
 	title,
 	message,
-	confirmText = 'Confirm',
-	cancelText = 'Cancel',
+	confirmText,
+	cancelText,
 	variant = 'default',
 	onConfirm,
 	onCancel
 }) => {
+	const { t } = useTranslation();
+	const finalConfirmText = confirmText || t('common.confirm');
+	const finalCancelText = cancelText || t('common.cancel');
 	return (
 		<AnimatePresence>
 			{isOpen && (
@@ -59,8 +63,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 						</ModalHeader>
 
 						<ModalFooter>
-							<SecondaryButton onClick={onCancel}>{cancelText}</SecondaryButton>
-							<PrimaryButton onClick={onConfirm}>{confirmText}</PrimaryButton>
+						<SecondaryButton onClick={onCancel}>{finalCancelText}</SecondaryButton>
+						<PrimaryButton onClick={onConfirm}>{finalConfirmText}</PrimaryButton>
 						</ModalFooter>
 					</Modal>
 				</ModalOverlay>

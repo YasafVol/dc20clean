@@ -6,6 +6,7 @@ import LanguagesTab from './components/LanguagesTab';
 import { InlineError } from './components/ValidationFeedback';
 import { BuildStep } from '../../lib/types/effectSystem';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
+import { useTranslation } from 'react-i18next';
 import {
 	Container,
 	Header,
@@ -17,6 +18,7 @@ type TabType = 'skills' | 'trades' | 'languages';
 
 const Background: React.FC = () => {
 	const { state, dispatch, calculationResult } = useCharacter();
+	const { t } = useTranslation();
 	const [activeTab, setActiveTab] = React.useState<TabType>('skills');
 
 	// Get background data from the centralized calculator
@@ -27,8 +29,8 @@ const Background: React.FC = () => {
 		return (
 			<Container>
 				<Header>
-					<Title>Background (Skills, Trades & Languages)</Title>
-					<div>Loading background data...</div>
+					<Title>{t('characterCreation.background')}</Title>
+					<div>{t('characterCreation.loadingBackgroundData')}</div>
 				</Header>
 			</Container>
 		);
@@ -197,7 +199,7 @@ const Background: React.FC = () => {
 	return (
 		<Container>
 			<Header>
-				<Title>Background</Title>
+				<Title>{t('characterCreation.background')}</Title>
 				<p
 					style={{
 						color: 'rgba(169, 177, 214, 0.7)',
@@ -207,19 +209,11 @@ const Background: React.FC = () => {
 						margin: '0 auto 1rem'
 					}}
 				>
-					Choose your character's background skills, trades, and languages. You have{' '}
-					<span style={{ color: '#7DCFFF', fontWeight: 'bold' }}>
-						{background.baseSkillPoints}
-					</span>{' '}
-					skill points,{' '}
-					<span style={{ color: '#7DCFFF', fontWeight: 'bold' }}>
-						{background.baseTradePoints}
-					</span>{' '}
-					trade points, and{' '}
-					<span style={{ color: '#7DCFFF', fontWeight: 'bold' }}>
-						{background.baseLanguagePoints}
-					</span>{' '}
-					language points.
+					{t('characterCreation.backgroundDescription', {
+						skillPoints: background.baseSkillPoints,
+						tradePoints: background.baseTradePoints,
+						languagePoints: background.baseLanguagePoints
+					})}
 				</p>
 
 				<div
@@ -236,7 +230,7 @@ const Background: React.FC = () => {
 						marginBottom: '0.5rem'
 					}}
 				>
-					<span>💡 Conversions: 1 skill ↔ 2 trade • 1 trade → 2 language</span>
+					<span>{t('characterCreation.conversionsInfo')}</span>
 				</div>
 
 				<div
@@ -246,7 +240,7 @@ const Background: React.FC = () => {
 						fontStyle: 'italic'
 					}}
 				>
-					All characters start fluent in Common for free.
+					{t('characterCreation.allStartFluentInCommon')}
 				</div>
 			</Header>
 
@@ -265,42 +259,41 @@ const Background: React.FC = () => {
 								color: skillPointsRemaining < 0 ? '#F7768E' : undefined
 							}}
 						>
-							Skills ({skillPointsRemaining} left)
-						</TabsTrigger>
-						<TabsTrigger
-							value="trades"
-							style={{
-								color: tradePointsRemaining < 0 ? '#F7768E' : undefined
-							}}
-						>
-							Trades ({tradePointsRemaining} left)
-						</TabsTrigger>
-						<TabsTrigger
-							value="languages"
-							style={{
-								color: languagePointsRemaining < 0 ? '#F7768E' : undefined
-							}}
-						>
-							Languages ({languagePointsRemaining} left)
-						</TabsTrigger>
-					</TabsList>
+						{t('characterCreation.skills')} ({skillPointsRemaining} {t('characterCreation.left')})
+					</TabsTrigger>
+					<TabsTrigger
+						value="trades"
+						style={{
+							color: tradePointsRemaining < 0 ? '#F7768E' : undefined
+						}}
+					>
+						{t('characterCreation.trades')} ({tradePointsRemaining} {t('characterCreation.left')})
+					</TabsTrigger>
+					<TabsTrigger
+						value="languages"
+						style={{
+							color: languagePointsRemaining < 0 ? '#F7768E' : undefined
+						}}
+					>
+						{t('characterCreation.languages')} ({languagePointsRemaining} {t('characterCreation.left')})
+					</TabsTrigger>
+				</TabsList>
 
-					<TabsContent value="skills">
-						<SkillsTab
-							currentSkills={currentSkills}
-							currentTrades={currentTrades}
-							pointsData={background}
-							conversions={{
-								skillToTradeConversions: background.conversions.skillToTrade,
-								tradeToSkillConversions: background.conversions.tradeToSkill,
-								tradeToLanguageConversions: background.conversions.tradeToLanguage
-							}}
-							actions={actions}
-							masteryLimits={masteryLimits}
-							onSkillChange={handleSkillChange}
-							onSkillLimitElevationChange={handleSkillLimitElevationChange}
-						/>
-					</TabsContent>
+				<TabsContent value="skills">
+					<SkillsTab
+						currentSkills={currentSkills}
+						pointsData={background}
+						conversions={{
+							skillToTradeConversions: background.conversions.skillToTrade,
+							tradeToSkillConversions: background.conversions.tradeToSkill,
+							tradeToLanguageConversions: background.conversions.tradeToLanguage
+						}}
+						actions={actions}
+						masteryLimits={masteryLimits}
+						onSkillChange={handleSkillChange}
+						onSkillLimitElevationChange={handleSkillLimitElevationChange}
+					/>
+				</TabsContent>
 
 					<TabsContent value="trades">
 						<TradesTab

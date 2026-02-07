@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { ManeuverData } from '../../../types';
 import type { Maneuver } from '../../../lib/rulesdata/martials/maneuvers';
 import { maneuvers as allManeuvers } from '../../../lib/rulesdata/martials/maneuvers';
@@ -39,11 +40,12 @@ export interface ManeuversProps {
 }
 
 const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false, isMobile }) => {
+	const { t } = useTranslation();
 	const { addManeuver, removeManeuver, state } = useCharacterSheet();
 	const maneuvers = useCharacterManeuvers();
 
 	if (!state.character) {
-		return <div>Loading maneuvers...</div>;
+		return <div>{t('characterSheet.maneuversLoading')}</div>;
 	}
 
 	// Mobile detection logic
@@ -204,7 +206,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 								$isMobile={effectiveIsMobile}
 								onClick={addManeuverSlot}
 							>
-								+ Add Maneuver
+								+ {t('characterSheet.maneuversAddManeuver')}
 							</StyledAddManeuverButton>
 						</>
 					)}
@@ -215,26 +217,29 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 				<StyledManeuversHeaderRow $isMobile={effectiveIsMobile}>
 					<span></span> {/* Empty column for remove button */}
 					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
-						Maneuver
-					</StyledManeuverHeaderColumn>
-					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
-						Type
-					</StyledManeuverHeaderColumn>
-					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
-						Cost
-					</StyledManeuverHeaderColumn>
-					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
-						Timing
-					</StyledManeuverHeaderColumn>
-				</StyledManeuversHeaderRow>
+					{t('characterSheet.maneuversColumnName')}
+				</StyledManeuverHeaderColumn>
+				<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
+					{t('characterSheet.maneuversColumnType')}
+				</StyledManeuverHeaderColumn>
+				<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
+					{t('characterSheet.maneuversColumnCost')}
+				</StyledManeuverHeaderColumn>
+				<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
+					{t('characterSheet.maneuversColumnTiming')}
+				</StyledManeuverHeaderColumn>
+			</StyledManeuversHeaderRow>
 
-				{filteredCharacterManeuvers.length === 0 ? (
+			{filteredCharacterManeuvers.length === 0 ? (
 					<StyledManeuverEmptyState $isMobile={effectiveIsMobile}>
 						{typeFilter !== 'all'
-							? `No ${typeFilter} maneuvers found. ${readOnly ? '' : 'Click "Add Maneuver" to add maneuvers to your character.'}`
-							: readOnly
-								? 'No maneuvers selected'
-								: 'No maneuvers added yet. Click "Add Maneuver" to get started.'}
+						? t('characterSheet.maneuversNoManeuversFilter', { 
+								type: typeFilter, 
+								action: readOnly ? '' : t('characterSheet.maneuversClickToAdd') 
+							})
+						: readOnly
+							? ''
+							: t('characterSheet.maneuversNoManeuvers')}
 					</StyledManeuverEmptyState>
 				) : (
 					filteredCharacterManeuvers.map((maneuver) => {
@@ -263,7 +268,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 												if (selectedManeuver) onManeuverClick(selectedManeuver);
 											}}
 										>
-											{maneuver.name || 'Unknown Maneuver'}
+											{maneuver.name || t('characterSheet.maneuversUnknownManeuver')}
 										</StyledClickableNameCell>
 									) : (
 										<StyledManeuverSelect
@@ -272,7 +277,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 											value={maneuver.name || ''}
 											onChange={(e: any) => updateManeuver(originalIndex, 'name', e.target.value)}
 										>
-											<option value="">Select Maneuver...</option>
+											<option value="">{t('characterSheet.maneuversSelectManeuver')}</option>
 											{/* Always include the currently selected maneuver, even if it doesn't match filter */}
 											{maneuver.name &&
 												!filteredManeuvers.find((m) => m.name === maneuver.name) && (
@@ -310,7 +315,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 
 									{/* Range/Reaction */}
 									<StyledTimingCell $isMobile={effectiveIsMobile}>
-										{selectedManeuver?.isReaction ? 'Reaction' : 'Action'}
+									{selectedManeuver?.isReaction ? t('characterSheet.maneuversReaction') : t('characterSheet.maneuversAction')}
 									</StyledTimingCell>
 								</StyledManeuverRow>
 
@@ -319,13 +324,13 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 									<StyledManeuverDescriptionContainer $isMobile={effectiveIsMobile}>
 										<StyledManeuverDescriptionHeader $isMobile={effectiveIsMobile}>
 											<StyledManeuverDescriptionLabel $isMobile={effectiveIsMobile}>
-												Description:
-											</StyledManeuverDescriptionLabel>
-											<StyledManeuverToggleButton
-												$isMobile={effectiveIsMobile}
-												onClick={() => toggleManeuverExpansion(maneuver.id)}
-											>
-												Hide Description
+											{t('characterSheet.maneuversDescription')}
+										</StyledManeuverDescriptionLabel>
+										<StyledManeuverToggleButton
+											$isMobile={effectiveIsMobile}
+											onClick={() => toggleManeuverExpansion(maneuver.id)}
+										>
+											{t('characterSheet.maneuversHideDescription')}
 											</StyledManeuverToggleButton>
 										</StyledManeuverDescriptionHeader>
 										<StyledManeuverDescriptionText $isMobile={effectiveIsMobile}>
@@ -336,14 +341,14 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 										{/* Requirements */}
 										{selectedManeuver.requirement && (
 											<StyledManeuverMetaInfo $isMobile={effectiveIsMobile}>
-												<strong>Requirements:</strong> {selectedManeuver.requirement}
-											</StyledManeuverMetaInfo>
-										)}
+											<strong>{t('characterSheet.maneuversRequirements')}</strong> {selectedManeuver.requirement}
+										</StyledManeuverMetaInfo>
+									)}
 
-										{/* Trigger */}
-										{selectedManeuver.trigger && (
-											<StyledManeuverMetaInfo $isMobile={effectiveIsMobile}>
-												<strong>Trigger:</strong> {selectedManeuver.trigger}
+									{/* Trigger */}
+									{selectedManeuver.trigger && (
+										<StyledManeuverMetaInfo $isMobile={effectiveIsMobile}>
+											<strong>{t('characterSheet.maneuversTrigger')}</strong> {selectedManeuver.trigger}
 											</StyledManeuverMetaInfo>
 										)}
 									</StyledManeuverDescriptionContainer>

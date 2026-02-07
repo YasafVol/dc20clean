@@ -5,6 +5,7 @@ import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { Sword, Filter } from 'lucide-react';
 import { debug } from '../../lib/utils/debug';
 import { theme } from '../character-sheet/styles/theme';
+import { useTranslation } from 'react-i18next';
 import {
 	Container,
 	Header,
@@ -47,6 +48,7 @@ function arraysEqual<T>(a: T[], b: T[]): boolean {
 
 const Maneuvers: React.FC = () => {
 	const { state, dispatch, calculationResult } = useCharacter();
+	const { t } = useTranslation();
 	const [selectedManeuvers, setSelectedManeuvers] = useState<string[]>([]);
 	const [maneuverFilter, setManeuverFilter] = useState<ManeuverType | 'all'>('all');
 	const isInitialLoad = useRef(true);

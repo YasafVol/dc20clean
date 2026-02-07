@@ -3,6 +3,7 @@ import { useCharacter } from '../../lib/stores/characterContext';
 import { ancestriesData } from '../../lib/rulesdata/ancestries/ancestries';
 import type { IAncestry } from '../../lib/rulesdata/types';
 import { Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
 	Container,
 	Header,
@@ -65,6 +66,7 @@ const ancestryQuotes: { [key: string]: string } = {
 
 function AncestrySelector() {
 	const { state, dispatch } = useCharacter();
+	const { t } = useTranslation();
 
 	const selectedAncestries: string[] = [];
 	if (state.ancestry1Id) selectedAncestries.push(state.ancestry1Id);
@@ -127,8 +129,8 @@ function AncestrySelector() {
 	return (
 		<Container>
 			<Header>
-				<Title>Choose Your Ancestry</Title>
-				<Subtitle>Select up to 2 ancestries for your character.</Subtitle>
+				<Title>{t('characterCreation.chooseYourAncestry')}</Title>
+				<Subtitle>{t('characterCreation.selectUpToAncestries')}</Subtitle>
 			</Header>
 
 			<AncestryGrid>

@@ -20,6 +20,7 @@ import { cn } from '../../lib/utils';
 import { Button } from '../../components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
+import { useTranslation } from 'react-i18next';
 
 type MpCostFilter = number | 'none';
 
@@ -35,6 +36,7 @@ const CLASS_DEFINITIONS: Record<SpellcasterClass, ClassDefinition> = {
 
 const Spellbook: React.FC = () => {
 	const navigate = useNavigate();
+	const { t } = useTranslation();
 
 	// Filters
 	const [classFilter, setClassFilter] = useState<SpellcasterClass[]>([]);
@@ -314,14 +316,14 @@ const Spellbook: React.FC = () => {
 			<div className="p-8">
 				<div className="mb-8 flex gap-4">
 					<Button variant="secondary" onClick={() => navigate('/menu')} className="font-bold">
-						← Back to Menu
-					</Button>
-				</div>
-				<h1 className="font-cinzel text-primary mb-2 text-center text-3xl font-bold tracking-wide drop-shadow-lg">
-					Spellbook
-				</h1>
-				<p className="text-muted-foreground text-center">
-					Browse all {ALL_SPELLS.length} spells available in DC20
+							← {t('spellbook.backToMenu')}
+						</Button>
+					</div>
+					<h1 className="font-cinzel text-primary mb-2 text-center text-3xl font-bold tracking-wide drop-shadow-lg">
+						{t('spellbook.title')}
+					</h1>
+					<p className="text-muted-foreground text-center">
+						{t('spellbook.subtitle')} ({ALL_SPELLS.length} {t('spellbook.spells')})
 				</p>
 			</div>
 
@@ -336,7 +338,7 @@ const Spellbook: React.FC = () => {
 								type="text"
 								value={searchQuery}
 								onChange={(e) => setSearchQuery(e.target.value)}
-								placeholder="Search by spell name or description..."
+								placeholder={t('spellbook.searchPlaceholder')}
 								className="border-primary/30 text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/40 w-full rounded-lg border bg-black/40 px-4 py-3 text-base focus:ring-2 focus:outline-none"
 							/>
 						</div>
@@ -345,7 +347,7 @@ const Spellbook: React.FC = () => {
 						<div className="space-y-6">
 							{/* Class Filter */}
 							<div className="space-y-3 rounded-lg border border-cyan-400/20 bg-black/30 p-4">
-								<label className="text-base font-semibold text-cyan-200">Class</label>
+								<label className="text-base font-semibold text-cyan-200">{t('spellbook.class')}</label>
 								<div className="flex w-full flex-wrap gap-3">
 									{Object.values(SpellcasterClass).map((className) => {
 										const isSelected = classFilter.includes(className);
@@ -371,7 +373,7 @@ const Spellbook: React.FC = () => {
 
 							{/* Source Filter */}
 							<div className="border-primary/20 space-y-3 rounded-lg border bg-black/30 p-4">
-								<label className="text-primary text-base font-semibold">Source</label>
+								<label className="text-primary text-base font-semibold">{t('spellbook.source')}</label>
 								<div className="flex w-full flex-wrap gap-3">
 									{Object.values(SpellSource).map((source) => {
 										const isSelected = sourceFilter.includes(source);
@@ -397,7 +399,7 @@ const Spellbook: React.FC = () => {
 
 							{/* School Filter */}
 							<div className="space-y-3 rounded-lg border border-purple-400/20 bg-black/30 p-4">
-								<label className="text-base font-semibold text-purple-200">School</label>
+								<label className="text-base font-semibold text-purple-200">{t('spellbook.school')}</label>
 								<div className="flex w-full flex-wrap gap-3">
 									{Object.values(SpellSchool).map((school) => {
 										const isSelected = schoolFilter.includes(school);
@@ -423,7 +425,7 @@ const Spellbook: React.FC = () => {
 
 							{/* Tag Filter */}
 							<div className="space-y-3 rounded-lg border border-emerald-400/20 bg-black/30 p-4">
-								<label className="text-base font-semibold text-emerald-200">Tag</label>
+								<label className="text-base font-semibold text-emerald-200">{t('spellbook.tag')}</label>
 								<div className="flex w-full flex-wrap gap-2">
 									{displayedTags.map((tag) => {
 										const isSelected = tagFilter.includes(tag);
@@ -449,10 +451,10 @@ const Spellbook: React.FC = () => {
 
 							{/* Cost Filter */}
 							<div className="space-y-3 rounded-lg border border-amber-400/20 bg-black/30 p-4">
-								<label className="text-base font-semibold text-amber-200">Cost</label>
+								<label className="text-base font-semibold text-amber-200">{t('spellbook.cost')}</label>
 								<div className="flex w-full flex-wrap items-center gap-3">
 									<span className="text-sm font-semibold tracking-wide text-amber-100/80 uppercase">
-										AP
+										{t('spellbook.apLabel')}
 									</span>
 									{availableApCosts.map((cost) => {
 										const isSelected = apCostFilter.includes(cost);
@@ -508,7 +510,7 @@ const Spellbook: React.FC = () => {
 													: 'text-muted-foreground hover:text-foreground border-white/10 bg-black/40 hover:border-amber-400/60'
 											)}
 										>
-											No MP
+										{t('spellbook.noMp')}
 										</button>
 									)}
 								</div>
@@ -527,7 +529,7 @@ const Spellbook: React.FC = () => {
 									htmlFor="sustained-only"
 									className="cursor-pointer text-base font-semibold text-amber-100"
 								>
-									Sustained only
+									{t('spellbook.sustainedOnly')}
 								</label>
 							</div>
 						</div>
@@ -536,7 +538,7 @@ const Spellbook: React.FC = () => {
 						{hasActiveFilters && (
 							<div className="flex flex-wrap items-center gap-3 pt-2">
 								<span className="text-muted-foreground text-base font-semibold">
-									Active filters:
+									{t('spellbook.activeFilters')}
 								</span>
 								{searchQuery.trim() && (
 									<Badge variant="secondary" className="gap-1 text-sm">
@@ -614,7 +616,7 @@ const Spellbook: React.FC = () => {
 								))}
 								{mpCostFilter.map((cost) => (
 									<Badge key={`mp-${cost}`} variant="secondary" className="gap-1 text-sm">
-										{cost === 'none' ? 'No MP' : `${cost} MP`}
+										{cost === 'none' ? t('spellbook.noMp') : `${cost} ${t('spellbook.mpLabel')}`}
 										<button
 											onClick={() =>
 												setMpCostFilter((prev) => prev.filter((item) => item !== cost))
@@ -630,7 +632,7 @@ const Spellbook: React.FC = () => {
 										variant="secondary"
 										className="gap-1 bg-amber-500/20 text-sm text-amber-400"
 									>
-										Sustained
+										{t('spellbook.sustained')}
 										<button
 											onClick={() => setSustainedOnly(false)}
 											className="hover:text-destructive ml-1"
@@ -645,7 +647,7 @@ const Spellbook: React.FC = () => {
 									onClick={clearFilters}
 									className="text-muted-foreground hover:text-foreground text-xs"
 								>
-									Clear all
+									{t('spellbook.clearAll')}
 								</Button>
 							</div>
 						)}
@@ -654,17 +656,17 @@ const Spellbook: React.FC = () => {
 
 				{/* Results Summary */}
 				<div className="text-muted-foreground text-center text-sm">
-					Showing {filteredSpells.length} of {ALL_SPELLS.length} spells
-					{schoolFilter.length === 0 && ` • ${Object.keys(spellsBySchool).length} schools`}
+					{t('spellbook.showing')} {filteredSpells.length} {t('spellbook.of')} {ALL_SPELLS.length} {t('spellbook.spells')}
+					{schoolFilter.length === 0 && ` • ${Object.keys(spellsBySchool).length} ${t('spellbook.schools')}`}
 				</div>
 
 				{/* Spells Display */}
 				{filteredSpells.length === 0 ? (
 					<div className="py-16 text-center">
-						<h3 className="text-muted-foreground mb-4 text-2xl">No Spells Found</h3>
-						<p className="text-muted-foreground">Try adjusting your filters to see more spells.</p>
+						<h3 className="text-muted-foreground mb-4 text-2xl">{t('spellbook.noSpellsFound')}</h3>
+						<p className="text-muted-foreground">{t('spellbook.adjustFilters')}</p>
 						<Button variant="outline" onClick={clearFilters} className="mt-4">
-							Clear Filters
+							{t('spellbook.clearFilters')}
 						</Button>
 					</div>
 				) : schoolFilter.length === 1 ? (
@@ -689,7 +691,7 @@ const Spellbook: React.FC = () => {
 									<h2 className="font-cinzel text-primary border-primary/30 mb-4 border-b pb-2 text-2xl font-bold">
 										{school}
 										<span className="text-muted-foreground ml-2 text-base font-normal">
-											({spells.length} spells)
+										({spells.length} {t('spellbook.spells')})
 										</span>
 									</h2>
 									<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -736,13 +738,13 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 				</div>
 				<div className="flex flex-wrap gap-1.5">
 					<Badge variant="secondary" className="text-xs">
-						{spell.cost.ap} AP{spell.cost.mp ? ` + ${spell.cost.mp} MP` : ''}
+						{spell.cost.ap} {t('spellbook.apLabel')}{spell.cost.mp ? ` + ${spell.cost.mp} ${t('spellbook.mpLabel')}` : ''}
 					</Badge>
 					<Badge variant="outline" className="text-xs">
 						{spell.range}
 					</Badge>
 					{spell.sustained && (
-						<Badge className="bg-amber-500/20 text-xs text-amber-400">Sustained</Badge>
+						<Badge className="bg-amber-500/20 text-xs text-amber-400">{t('spellbook.sustained')}</Badge>
 					)}
 					{spell.sources.map((source) => (
 						<Badge key={source} variant="outline" className="text-xs opacity-70">
@@ -770,14 +772,14 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 						!isExpanded && 'line-clamp-3'
 					)}
 				>
-					{spell.effects[0]?.description || 'No description available.'}
+					{spell.effects[0]?.description || t('spellbook.noDescription')}
 				</p>
 
 				{isExpanded && (
 					<div className="mt-4 space-y-4">
 						{/* Duration */}
 						<div className="text-sm">
-							<span className="text-foreground font-medium">Duration:</span>{' '}
+							<span className="text-foreground font-medium">{t('spellbook.duration')}</span>{' '}
 							<span className="text-muted-foreground">{spell.duration}</span>
 						</div>
 

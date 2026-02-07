@@ -5,6 +5,7 @@ import { attributesData } from '../../lib/rulesdata/attributes';
 import AttributePointsCounter from './AttributePointsCounter';
 import { Plus, Minus, AlertTriangle } from 'lucide-react';
 import { theme } from '../character-sheet/styles/theme';
+import { useTranslation } from 'react-i18next';
 import {
 	Container,
 	Header,
@@ -31,6 +32,7 @@ type AttributeState = Record<string, number>;
 
 function Attributes() {
 	const { state, dispatch, attributePointsRemaining, totalAttributePoints } = useCharacter();
+	const { t } = useTranslation();
 	const { getAttributeLimit, validateAttributeChange, getStatBreakdown } =
 		useEnhancedCharacterCalculation();
 
@@ -85,7 +87,7 @@ function Attributes() {
 	return (
 		<Container>
 			<Header>
-				<Title>Attributes</Title>
+				<Title>{t('characterCreation.attributes')}</Title>
 				<AttributePointsCounter totalAttributePoints={totalAttributePoints} />
 
 				<PrimeRuleToggle>
@@ -97,7 +99,7 @@ function Attributes() {
 					/>
 					<div style={{ textAlign: 'left' }}>
 						<CheckboxLabel htmlFor="prime-cap-rule">
-							Use Prime = Attribute Cap (Optional Rule)
+							{t('characterCreation.usePrimeCapRule')}
 						</CheckboxLabel>
 						<span
 							style={{
@@ -106,7 +108,7 @@ function Attributes() {
 								color: theme.colors.text.secondary,
 							}}
 						>
-							Prime modifier equals level-based cap instead of highest attribute.
+							{t('characterCreation.primeCapRuleDescription')}
 						</span>
 					</div>
 				</PrimeRuleToggle>
@@ -116,7 +118,7 @@ function Attributes() {
 				<WarningBox>
 					<WarningHeader>
 						<AlertTriangle size={16} />
-						Forced Adjustments
+						{t('characterCreation.forcedAdjustments')}
 					</WarningHeader>
 					{calculation.forcedAdjustments.map((adj, index) => (
 						<div key={index}>
@@ -129,7 +131,7 @@ function Attributes() {
 
 			{!calculation.isValid && (
 				<ErrorBox>
-					Invalid build: {Math.abs(calculation.pointsRemaining)} points over budget
+					{t('characterCreation.invalidBuild')}: {Math.abs(calculation.pointsRemaining)} {t('characterCreation.pointsOverBudget')}
 				</ErrorBox>
 			)}
 
@@ -169,7 +171,7 @@ function Attributes() {
 								<IconButton
 									$disabled={!canDecrease}
 									onClick={() => canDecrease && decreaseAttribute(attributeKey)}
-									title={!canDecrease ? 'Cannot decrease below -2' : ''}
+									title={!canDecrease ? t('characterCreation.cannotDecreaseBelow') : ''}
 								>
 									<Minus size={20} />
 								</IconButton>
@@ -184,8 +186,8 @@ function Attributes() {
 									title={
 										!canIncrease
 											? attributePointsRemaining <= 0
-												? 'No points remaining'
-												: realTimeValidation.message || 'Cannot increase'
+												? t('characterCreation.noPointsRemaining')
+												: realTimeValidation.message || t('characterCreation.cannotIncrease')
 											: ''
 									}
 								>
@@ -195,7 +197,7 @@ function Attributes() {
 
 							<InfoSection>
 								<InfoBadge $type={limit.exceeded ? 'limit' : 'cap'}>
-									Final: {limit.current} / {limit.max}
+									{t('characterCreation.final')}: {limit.current} / {limit.max}
 								</InfoBadge>
 							</InfoSection>
 
@@ -212,19 +214,19 @@ function Attributes() {
 										marginTop: '0.75rem',
 									}}
 								>
-									<span style={{ color: 'rgba(169, 177, 214, 0.7)' }}>Base: {currentValue}</span>
+									<span style={{ color: 'rgba(169, 177, 214, 0.7)' }}>{t('characterCreation.base')}: {currentValue}</span>
 									<span style={{ color: '#7DCFFF', fontWeight: 'bold' }}>
-										Effective: {effectiveValue}
+										{t('characterCreation.effective')}: {effectiveValue}
 									</span>
 								</div>
 							)}
 
 							{(limit.traitBonuses > 0 || breakdown) && (
 								<EffectsList>
-									<EffectItem>Base Points: {currentValue}</EffectItem>
+									<EffectItem>{t('characterCreation.basePoints')}: {currentValue}</EffectItem>
 									{limit.traitBonuses > 0 && (
 										<EffectItem style={{ color: '#7DCFFF' }}>
-											Trait Bonuses: +{limit.traitBonuses}
+											{t('characterCreation.traitBonuses')}: +{limit.traitBonuses}
 										</EffectItem>
 									)}
 									<EffectItem
@@ -234,7 +236,7 @@ function Attributes() {
 											fontWeight: 'bold',
 										}}
 									>
-										Total: {limit.current}
+										{t('characterCreation.total')}: {limit.current}
 									</EffectItem>
 								</EffectsList>
 							)}
@@ -255,7 +257,7 @@ function Attributes() {
 								>
 									<AlertTriangle size={12} style={{ marginTop: '0.125rem', flexShrink: 0 }} />
 									<span style={{ fontSize: '0.75rem' }}>
-										Forced to minimum (-2), cost: {forcedAdjustment.pointsCost} pts
+										{t('characterCreation.forcedToMinimum')}: {forcedAdjustment.pointsCost} {t('characterCreation.pts')}
 									</span>
 								</div>
 							)}
@@ -270,7 +272,7 @@ function Attributes() {
 										animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
 									}}
 								>
-									Exceeds maximum limit of +{limit.max}
+									{t('characterCreation.exceedsMaximumLimit')} +{limit.max}
 								</div>
 							)}
 
@@ -283,7 +285,7 @@ function Attributes() {
 										fontSize: '0.875rem',
 									}}
 								>
-									Cannot increase further due to trait bonuses
+									{t('characterCreation.cannotIncreaseFurtherDueToTraits')}
 								</div>
 							)}
 						</AttributeCard>

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { SpellData } from '../../../types';
 import type { Spell } from '../../../lib/rulesdata/schemas/spell.schema';
 import { ALL_SPELLS as allSpells } from '../../../lib/rulesdata/spells-data';
@@ -42,11 +43,12 @@ const Spells: React.FC<SpellsProps> = ({
 	readOnly = false,
 	isMobile
 }) => {
+	const { t } = useTranslation();
 	const { addSpell, removeSpell, updateSpell, state } = useCharacterSheet();
 	const spells = useCharacterSpells();
 
 	if (!state.character) {
-		return <div>Loading spells...</div>;
+		return <div>{t('characterSheet.spellsLoading')}</div>;
 	}
 
 	// Mobile detection logic
@@ -227,21 +229,24 @@ const Spells: React.FC<SpellsProps> = ({
 			<StyledSpellsContainer $isMobile={effectiveIsMobile} data-testid="spells-container">
 				<StyledSpellsHeaderRow $isMobile={effectiveIsMobile}>
 					<span></span> {/* Empty column for remove button */}
-					<StyledHeaderColumn $isMobile={effectiveIsMobile}>Spell Name</StyledHeaderColumn>
-					<StyledHeaderColumn $isMobile={effectiveIsMobile}>School</StyledHeaderColumn>
-					<StyledHeaderColumn $isMobile={effectiveIsMobile}>Duration</StyledHeaderColumn>
-					<StyledHeaderColumn $isMobile={effectiveIsMobile}>AP Cost</StyledHeaderColumn>
-					<StyledHeaderColumn $isMobile={effectiveIsMobile}>MP Cost</StyledHeaderColumn>
-					<StyledHeaderColumn $isMobile={effectiveIsMobile}>Range</StyledHeaderColumn>
+			<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.spellsColumnName')}</StyledHeaderColumn>
+			<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.spellsColumnSchool')}</StyledHeaderColumn>
+			<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.spellsColumnDuration')}</StyledHeaderColumn>
+			<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.spellsColumnAP')}</StyledHeaderColumn>
+			<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.spellsColumnMP')}</StyledHeaderColumn>
+			<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.spellsColumnRange')}</StyledHeaderColumn>
 				</StyledSpellsHeaderRow>
 
 				{filteredCharacterSpells.length === 0 ? (
 					<StyledEmptyState $isMobile={effectiveIsMobile}>
 						{schoolFilter !== 'all'
-							? `No ${schoolFilter} spells found. ${readOnly ? '' : 'Click "Add Spell" to add spells to your character.'}`
-							: readOnly
-								? 'No spells known.'
-								: 'No spells selected. Click "Add Spell" to add spells to your character.'}
+						? t('characterSheet.spellsNoSpellsFilter', { 
+								school: schoolFilter, 
+								action: readOnly ? '' : t('characterSheet.spellsClickToAdd') 
+							})
+						: readOnly
+							? t('characterSheet.spellsNoSpellsKnown')
+							: t('characterSheet.spellsNoSpellsSelected')}
 					</StyledEmptyState>
 				) : (
 					filteredCharacterSpells.map((spell) => {
@@ -275,7 +280,7 @@ const Spells: React.FC<SpellsProps> = ({
 											onChange={(e) => updateSpellField(originalIndex, 'spellName', e.target.value)}
 											data-testid={`spell-name-${spell.id}`}
 										>
-											<option value="">Select Spell...</option>
+											<option value="">{t('characterSheet.spellsSelectSpell')}</option>
 											{/* Always include the currently selected spell, even if it doesn't match filter */}
 											{spell.spellName &&
 												!filteredSpells.find((s) => s.name === spell.spellName) && (

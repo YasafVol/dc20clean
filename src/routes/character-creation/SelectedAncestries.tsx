@@ -3,6 +3,7 @@ import { ancestriesData } from '../../lib/rulesdata/ancestries/ancestries';
 import { traitsData } from '../../lib/rulesdata/ancestries/traits';
 import TraitChoiceSelector from './components/TraitChoiceSelector';
 import type { IAncestry, ITrait, ITraitEffect } from '../../lib/rulesdata/types';
+import { useTranslation } from 'react-i18next';
 import {
 	Container,
 	Header,
@@ -23,6 +24,7 @@ import {
 
 function SelectedAncestries() {
 	const { state, dispatch, calculationResult } = useCharacter();
+	const { t } = useTranslation();
 
 	// Use centralized calculator for ancestry points (includes Cleric domain bonuses, etc.)
 	const ancestryData = calculationResult.ancestry || {
@@ -132,15 +134,15 @@ function SelectedAncestries() {
 			>
 				<TraitHeader>
 					<TraitName $isSelected={isSelected}>{trait.name}</TraitName>
-					<TraitCost $cost={trait.cost}>{trait.cost} pts</TraitCost>
+					<TraitCost $cost={trait.cost}>{trait.cost} {t('characterCreation.pts')}</TraitCost>
 				</TraitHeader>
 				<TraitDescription>{trait.description}</TraitDescription>
 				{wouldExceedBudget && !hasUnmetPrerequisites && (
-					<PrerequisiteWarning>(Not enough points)</PrerequisiteWarning>
+					<PrerequisiteWarning>({t('characterCreation.notEnoughPoints')})</PrerequisiteWarning>
 				)}
 				{hasUnmetPrerequisites && (
 					<PrerequisiteWarning>
-						Requires: {missingPrereqNames.join(', ')}
+						{t('characterCreation.requires')}: {missingPrereqNames.join(', ')}
 					</PrerequisiteWarning>
 				)}
 				{isSelected &&
@@ -206,15 +208,15 @@ function SelectedAncestries() {
 	return (
 		<Container>
 			<Header>
-				<Title>Ancestry Traits</Title>
+				<Title>{t('characterCreation.ancestryTraits')}</Title>
 				<PointsDisplay
 					style={{
 						color: ancestryPointsRemaining < 0 ? '#F7768E' : '#A9B1D6'
 					}}
 				>
-					Spent: {ancestryPointsSpent} | Remaining: {ancestryPointsRemaining}/
+					{t('characterCreation.spent')}: {ancestryPointsSpent} | {t('characterCreation.remaining')}: {ancestryPointsRemaining}/
 					{ancestryPointsSpent + ancestryPointsRemaining}
-					{ancestryPointsRemaining < 0 && <span> (Over budget!)</span>}
+					{ancestryPointsRemaining < 0 && <span> {t('characterCreation.overBudget')}</span>}
 				</PointsDisplay>
 			</Header>
 			{selectedAncestry1 && renderAncestryTraits(selectedAncestry1)}

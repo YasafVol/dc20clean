@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled, { keyframes, css } from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 export type SnackbarVariant = 'success' | 'warning' | 'error' | 'info';
 
@@ -119,6 +120,7 @@ const Snackbar: React.FC<SnackbarProps> = ({
 	variant = 'success'
 }) => {
 	const [isExiting, setIsExiting] = useState(false);
+	const { t } = useTranslation();
 
 	// Reset isExiting when visibility changes to true
 	useEffect(() => {
@@ -153,7 +155,7 @@ const Snackbar: React.FC<SnackbarProps> = ({
 		<StyledSnackbar $isVisible={isVisible} $isExiting={isExiting} $variant={variant}>
 			<IconWrapper>{variantIcons[variant]}</IconWrapper>
 			<MessageText>{message}</MessageText>
-			<CloseButton onClick={handleClose} aria-label="Close">
+			<CloseButton onClick={handleClose} aria-label={t('snackbar.closeAriaLabel')}>
 				×
 			</CloseButton>
 		</StyledSnackbar>

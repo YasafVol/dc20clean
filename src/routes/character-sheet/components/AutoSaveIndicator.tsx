@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import { theme } from '../styles/theme';
 import type { SaveStatus } from '../hooks/CharacterSheetProvider';
 import { logger } from '../../../lib/utils/logger';
@@ -10,6 +11,7 @@ interface AutoSaveIndicatorProps {
 }
 
 export function AutoSaveIndicator({ status, onRetry }: AutoSaveIndicatorProps) {
+	const { t } = useTranslation();
 	logger.debug('ui', 'AutoSaveIndicator render', { status });
 
 	// Don't render anything when idle
@@ -26,22 +28,22 @@ export function AutoSaveIndicator({ status, onRetry }: AutoSaveIndicatorProps) {
 				{status === 'saving' && (
 					<Content>
 						<Spinner />
-						<Text>Saving...</Text>
+						<Text>{t('characterSheet.autoSaving')}</Text>
 					</Content>
 				)}
 
 				{status === 'saved' && (
 					<Content>
 						<CheckIcon>✓</CheckIcon>
-						<Text>Saved</Text>
+						<Text>{t('characterSheet.autoSaved')}</Text>
 					</Content>
 				)}
 
 				{status === 'error' && (
 					<Content $isError>
 						<ErrorIcon>⚠</ErrorIcon>
-						<Text>Save failed</Text>
-						<RetryButton onClick={onRetry}>Retry</RetryButton>
+						<Text>{t('characterSheet.autoSaveFailed')}</Text>
+						<RetryButton onClick={onRetry}>{t('characterSheet.autoSaveRetry')}</RetryButton>
 					</Content>
 				)}
 			</Container>

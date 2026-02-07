@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 // Import styled components
 import {
@@ -95,6 +96,7 @@ type TabId =
 
 const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ characterId, onBack }) => {
 	logger.debug('ui', 'CharacterSheetRedesign render', { characterId });
+	const { t } = useTranslation();
 
 	// Responsive breakpoint detection (mobile only, tablet treated as desktop)
 	const breakpoint = useBreakpoint();
@@ -319,7 +321,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		return (
 			<PageContainer>
 				<LoadingContainer initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-					Loading character...
+					{t('characterSheet.loading')}
 				</LoadingContainer>
 			</PageContainer>
 		);
@@ -329,7 +331,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		return (
 			<PageContainer>
 				<ErrorContainer initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-					{error || 'Character not found'}
+					{error || t('characterSheet.notFound')}
 				</ErrorContainer>
 			</PageContainer>
 		);
@@ -416,33 +418,33 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	};
 
 	const tabs: { id: TabId; label: string; emoji: string; badge?: number }[] = [
-		{ id: 'attacks', label: 'Attacks', emoji: '⚔️' },
-		{ id: 'spells', label: 'Spells', emoji: '📜' },
-		{ id: 'inventory', label: 'Inventory', emoji: '🎒' },
-		{ id: 'maneuvers', label: 'Maneuvers', emoji: '⚡' },
-		{ id: 'features', label: 'Features', emoji: '✨' },
-		{ id: 'conditions', label: 'Conditions', emoji: '🎭', badge: activeConditionsCount },
-		{ id: 'knowledge', label: 'Knowledge', emoji: '📚' },
-		{ id: 'utility', label: 'Utility', emoji: '🔧' },
-		{ id: 'notes', label: 'Notes', emoji: '📝' }
+		{ id: 'attacks', label: t('characterSheet.tabAttacks'), emoji: '⚔️' },
+		{ id: 'spells', label: t('characterSheet.tabSpells'), emoji: '📜' },
+		{ id: 'inventory', label: t('characterSheet.tabInventory'), emoji: '🎒' },
+		{ id: 'maneuvers', label: t('characterSheet.tabManeuvers'), emoji: '⚡' },
+		{ id: 'features', label: t('characterSheet.tabFeatures'), emoji: '✨' },
+		{ id: 'conditions', label: t('characterSheet.tabConditions'), emoji: '🎭', badge: activeConditionsCount },
+		{ id: 'knowledge', label: t('characterSheet.tabKnowledge'), emoji: '📚' },
+		{ id: 'utility', label: t('characterSheet.tabUtility'), emoji: '🔧' },
+		{ id: 'notes', label: t('characterSheet.tabNotes'), emoji: '📝' }
 	];
 
 	// Primary tabs for mobile bottom navigation (4 tabs: character stats + 3 core actions)
 	const mobileTabs: { id: string; label: string; emoji: string; badge?: number }[] = [
-		{ id: 'character', label: 'Char', emoji: '👤' },
-		{ id: 'attacks', label: 'Attack', emoji: '⚔️' },
-		{ id: 'spells', label: 'Spell', emoji: '📜' },
-		{ id: 'features', label: 'Feat', emoji: '✨' }
+		{ id: 'character', label: t('characterSheet.mobileChar'), emoji: '👤' },
+		{ id: 'attacks', label: t('characterSheet.mobileAttack'), emoji: '⚔️' },
+		{ id: 'spells', label: t('characterSheet.mobileSpell'), emoji: '📜' },
+		{ id: 'features', label: t('characterSheet.mobileFeat'), emoji: '✨' }
 	];
 
 	// Overflow tabs shown in hamburger menu on mobile (includes inventory)
 	const hamburgerMenuItems: { id: string; label: string; emoji: string; badge?: number }[] = [
-		{ id: 'inventory', label: 'Inventory', emoji: '🎒' },
-		{ id: 'conditions', label: 'Conditions', emoji: '🎭', badge: activeConditionsCount },
-		{ id: 'maneuvers', label: 'Maneuvers', emoji: '⚡' },
-		{ id: 'knowledge', label: 'Knowledge', emoji: '📚' },
-		{ id: 'utility', label: 'Utility', emoji: '🔧' },
-		{ id: 'notes', label: 'Notes', emoji: '📝' }
+		{ id: 'inventory', label: t('characterSheet.tabInventory'), emoji: '🎒' },
+		{ id: 'conditions', label: t('characterSheet.tabConditions'), emoji: '🎭', badge: activeConditionsCount },
+		{ id: 'maneuvers', label: t('characterSheet.tabManeuvers'), emoji: '⚡' },
+		{ id: 'knowledge', label: t('characterSheet.tabKnowledge'), emoji: '📚' },
+		{ id: 'utility', label: t('characterSheet.tabUtility'), emoji: '🔧' },
+		{ id: 'notes', label: t('characterSheet.tabNotes'), emoji: '📝' }
 	];
 
 	// Export PDF handler - mirrors CharacterSheetClean behavior and exports current sheet state.
@@ -564,7 +566,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	const resetCombatStats = () => {
 		setDefenseOverrides({});
 		updateDefenseOverridesContext({}); // Clear from character state
-		showSnackbarWithMessage('Combat stats reset to calculated values', 'info');
+		showSnackbarWithMessage(t('characterSheet.combatStatsReset'), 'info');
 	};
 
 	// Other boxes don't have override tracking (HP/MP/SP/Rest/Grit are gameplay values)
@@ -577,32 +579,32 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		switch (tooltipState.type) {
 			case 'hp':
 				return {
-					title: 'Hit Points Calculation',
+					title: t('characterSheet.tooltipHP'),
 					breakdown: calculatedData?.breakdowns?.hpMax
 				};
 			case 'mana':
 				return {
-					title: 'Mana Points Calculation',
+					title: t('characterSheet.tooltipMana'),
 					breakdown: calculatedData?.breakdowns?.mpMax
 				};
 			case 'stamina':
 				return {
-					title: 'Stamina Points Calculation',
+					title: t('characterSheet.tooltipStamina'),
 					breakdown: calculatedData?.breakdowns?.spMax
 				};
 			case 'rest':
 				return {
-					title: 'Rest Points Calculation',
+					title: t('characterSheet.tooltipRest'),
 					breakdown: calculatedData?.breakdowns?.restPoints
 				};
 			case 'grit':
 				return {
-					title: 'Grit Points Calculation',
+					title: t('characterSheet.tooltipGrit'),
 					breakdown: calculatedData?.breakdowns?.gritPoints
 				};
 			case 'attack':
 				return {
-					title: 'Attack/Spell Bonus Calculation',
+					title: t('characterSheet.tooltipAttack'),
 					breakdown: calculatedData?.breakdowns?.attackSpellCheck || {
 						base: combatMastery,
 						total: (combatMastery ?? 0) + primeValue,
@@ -611,17 +613,17 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				};
 			case 'precisionAD':
 				return {
-					title: 'Precision AD Calculation',
+					title: t('characterSheet.tooltipPrecisionAD'),
 					breakdown: calculatedData?.breakdowns?.pd
 				};
 			case 'areaAD':
 				return {
-					title: 'Area AD Calculation',
+					title: t('characterSheet.tooltipAreaAD'),
 					breakdown: calculatedData?.breakdowns?.ad
 				};
 			case 'precisionDR':
 				return {
-					title: 'Precision DR Calculation',
+					title: t('characterSheet.tooltipPrecisionDR'),
 					breakdown: calculatedData?.breakdowns?.pdr || {
 						base: precisionDR,
 						total: precisionDR,
@@ -644,14 +646,14 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			>
 				<HeaderContent>
 					<CharacterIdentity>
-						<CharacterName>{characterData.finalName || 'Unnamed Character'}</CharacterName>
+						<CharacterName>{characterData.finalName || t('characterSheet.unnamedCharacter')}</CharacterName>
 						<CharacterMeta>
-							<MetaItem>{characterData.finalPlayerName || 'Player'}</MetaItem>
+							<MetaItem>{characterData.finalPlayerName || t('characterSheet.player')}</MetaItem>
 							<MetaItem>
-								Level {characterData.level || 1} {characterData.className || 'Adventurer'}
+								{t('characterSheet.level')} {characterData.level || 1} {characterData.className || t('characterSheet.adventurer')}
 							</MetaItem>
 							<MetaItem>
-								{characterData.ancestry1Name || 'Unknown'}{' '}
+								{characterData.ancestry1Name || t('characterSheet.unknown')}{' '}
 								{characterData.ancestry2Name ? `/ ${characterData.ancestry2Name}` : ''}
 							</MetaItem>
 						</CharacterMeta>
@@ -663,25 +665,25 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 					<ActionButtons>
 						{onBack && (
 							<BackButton onClick={onBack} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-								← Back
+								← {t('characterSheet.back')}
 							</BackButton>
 						)}
 						<ActionButton whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-							🔄 Revert All
+							🔄 {t('characterSheet.revertAll')}
 						</ActionButton>
 						<ActionButton
 							onClick={copyCharacterToClipboard}
 							whileHover={{ scale: 1.05 }}
 							whileTap={{ scale: 0.95 }}
 						>
-							📋 Copy
+							📋 {t('characterSheet.copy')}
 						</ActionButton>
 						<ActionButton
 							onClick={handleExportPdf}
 							whileHover={{ scale: 1.05 }}
 							whileTap={{ scale: 0.95 }}
 						>
-							📄 Export PDF
+							📄 {t('characterSheet.exportPdf')}
 						</ActionButton>
 					</ActionButtons>
 				</HeaderContent>
@@ -834,7 +836,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 														animate={{ opacity: 1 }}
 														$withMarginBottom
 													>
-														<SectionTitle>Movement</SectionTitle>
+														<SectionTitle>{t('characterSheet.movement')}</SectionTitle>
 														<Movement />
 													</SectionCard>
 													<SectionCard
@@ -842,7 +844,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 														animate={{ opacity: 1 }}
 														$withMarginBottom
 													>
-														<SectionTitle>Currency</SectionTitle>
+														<SectionTitle>{t('characterSheet.currency')}</SectionTitle>
 														<Currency />
 													</SectionCard>
 												</>
@@ -907,7 +909,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 											animate={{ opacity: 1 }}
 											$withMarginBottom
 										>
-											<SectionTitle>Movement</SectionTitle>
+											<SectionTitle>{t('characterSheet.movement')}</SectionTitle>
 											<Movement />
 										</SectionCard>
 										<SectionCard
@@ -915,7 +917,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 											animate={{ opacity: 1 }}
 											$withMarginBottom
 										>
-											<SectionTitle>Currency</SectionTitle>
+											<SectionTitle>{t('characterSheet.currency')}</SectionTitle>
 											<Currency />
 										</SectionCard>
 									</>

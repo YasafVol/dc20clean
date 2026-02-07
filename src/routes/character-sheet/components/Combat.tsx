@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	StyledCombatSection,
 	StyledActionPoints,
@@ -24,12 +25,13 @@ export interface CombatProps {
 }
 
 const Combat: React.FC<CombatProps> = ({ isMobile }) => {
+	const { t } = useTranslation();
 	const { state, updateActionPoints } = useCharacterSheet();
 	const resources = useCharacterResources();
 	const calculatedData = useCharacterCalculatedData();
 
 	if (!state.character || !resources || !calculatedData) {
-		return <div>Loading combat...</div>;
+		return <div>{t('characterSheet.combatLoading')}</div>;
 	}
 
 	const currentValues = resources.current;
@@ -66,12 +68,12 @@ const Combat: React.FC<CombatProps> = ({ isMobile }) => {
 
 	return (
 		<StyledCombatSection $isMobile={effectiveIsMobile}>
-			<StyledCombatTitle $isMobile={effectiveIsMobile}>COMBAT</StyledCombatTitle>
+			<StyledCombatTitle $isMobile={effectiveIsMobile}>{t('characterSheet.combatTitle')}</StyledCombatTitle>
 
 			{/* Action Points */}
 			<StyledActionPointsContainer $isMobile={effectiveIsMobile}>
 				<StyledActionPointsTitle $isMobile={effectiveIsMobile}>
-					ACTION POINTS
+					{t('characterSheet.combatActionPoints')}
 				</StyledActionPointsTitle>
 				<StyledActionPoints $isMobile={effectiveIsMobile}>
 					{renderActionPoints()}
@@ -90,7 +92,7 @@ const Combat: React.FC<CombatProps> = ({ isMobile }) => {
 							}
 							position="top"
 						>
-							<span>ATTACK / SPELL CHECK</span>
+							<span>{t('characterSheet.combatAttackSpellCheck')}</span>
 						</Tooltip>
 					</StyledCombatStatLabel>
 					<StyledCombatStatValue>
@@ -108,7 +110,7 @@ const Combat: React.FC<CombatProps> = ({ isMobile }) => {
 							}
 							position="top"
 						>
-							<span>SAVE DC</span>
+							<span>{t('characterSheet.combatSaveDC')}</span>
 						</Tooltip>
 					</StyledCombatStatLabel>
 					<StyledCombatStatValue>{calculatedData.stats.finalSaveDC}</StyledCombatStatValue>
@@ -124,7 +126,7 @@ const Combat: React.FC<CombatProps> = ({ isMobile }) => {
 							}
 							position="top"
 						>
-							<span>INITIATIVE</span>
+							<span>{t('characterSheet.combatInitiative')}</span>
 						</Tooltip>
 					</StyledCombatStatLabel>
 					<StyledCombatStatValue>
@@ -142,7 +144,7 @@ const Combat: React.FC<CombatProps> = ({ isMobile }) => {
 							}
 							position="top"
 						>
-							<span>MARTIAL CHECK</span>
+							<span>{t('characterSheet.combatMartialCheck')}</span>
 						</Tooltip>
 					</StyledCombatStatLabel>
 					<StyledCombatStatValue>

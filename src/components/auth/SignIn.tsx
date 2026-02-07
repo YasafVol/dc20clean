@@ -1,18 +1,10 @@
-/**
- * Sign In Component - Social Login
- *
- * DRAFT - This component will work once Convex Auth is set up.
- *
- * Provides Google OAuth sign-in button.
- * Used when user wants to save to cloud or export PDF.
- */
-
 import * as React from 'react';
 import { useState } from 'react';
 import { Button } from '../ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card';
 import { cn } from '../../lib/utils';
 import { useAuthActions } from '@convex-dev/auth/react';
+import { useTranslation } from 'react-i18next';
 
 export interface SignInProps {
 	/** Called when user successfully signs in */
@@ -25,24 +17,10 @@ export interface SignInProps {
 	className?: string;
 }
 
-const featureMessages: Record<string, { title: string; description: string }> = {
-	'cloud-save': {
-		title: 'Save to Cloud',
-		description: 'Sign in to save your characters to the cloud and access them from any device.'
-	},
-	'pdf-export': {
-		title: 'Export to PDF',
-		description: 'Sign in to export your character sheet as a PDF.'
-	},
-	general: {
-		title: 'Sign In',
-		description: 'Sign in to unlock cloud saves and PDF exports.'
-	}
-};
-
 export function SignIn({ onSuccess, onCancel, feature = 'general', className }: SignInProps) {
 	const [isLoading, setIsLoading] = useState<'google' | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const { t } = useTranslation();
 
 	const { signIn } = useAuthActions();
 
@@ -66,7 +44,28 @@ export function SignIn({ onSuccess, onCancel, feature = 'general', className }: 
 		}
 	};
 
-	const { title, description } = featureMessages[feature];
+	// Get title and description based on feature
+	const getFeatureMessage = () => {
+		switch (feature) {
+			case 'cloud-save':
+				return {
+					title: t('auth.cloudSaveTitle'),
+					description: t('auth.cloudSaveDescription')
+				};
+			case 'pdf-export':
+				return {
+					title: t('auth.pdfExportTitle'),
+					description: t('auth.pdfExportDescription')
+				};
+			default:
+				return {
+					title: t('auth.generalSignInTitle'),
+					description: t('auth.generalSignInDescription')
+				};
+		}
+	};
+
+	const { title, description } = getFeatureMessage();
 
 	return (
 		<Card
@@ -96,11 +95,11 @@ export function SignIn({ onSuccess, onCancel, feature = 'general', className }: 
 					disabled={isLoading !== null}
 				>
 					{isLoading === 'google' ? (
-						'Signing in...'
+						t('auth.signingIn')
 					) : (
 						<>
 							<GoogleIcon className="mr-2 h-5 w-5" />
-							Continue with Google
+							{t('auth.continueWithGoogle')}
 						</>
 					)}
 				</Button>
@@ -114,14 +113,14 @@ export function SignIn({ onSuccess, onCancel, feature = 'general', className }: 
 						onClick={onCancel}
 						disabled={isLoading !== null}
 					>
-						Cancel
+						{t('common.cancel')}
 					</Button>
 				)}
 
 				<p className="text-muted-foreground text-center text-xs">
-					Your characters are saved locally until you sign in.
+					{t('auth.localStorageInfo')}
 					<br />
-					Sign in to sync them to the cloud.
+					{t('auth.cloudSyncInfo')}
 				</p>
 			</CardContent>
 		</Card>

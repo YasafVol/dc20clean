@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { EQUIPMENT_CATEGORIES, type EquipmentCategory } from '../../lib/rulesdata/equipment';
+import { useTranslation } from 'react-i18next';
 import {
 	PageContainer,
 	Header,
@@ -41,6 +42,7 @@ type TabType = 'create' | 'saved';
 
 const CustomEquipment: React.FC = () => {
 	const navigate = useNavigate();
+	const { t } = useTranslation();
 	const [activeTab, setActiveTab] = useState<TabType>('create');
 	const [selectedCategory, setSelectedCategory] = useState<EquipmentCategory | null>(null);
 
@@ -78,11 +80,11 @@ const CustomEquipment: React.FC = () => {
 				<HeaderContent>
 					<BackButtonRow>
 						<Button variant="secondary" onClick={handleBack} className="font-bold">
-							← {selectedCategory ? 'Back to Categories' : 'Back to Menu'}
+							← {selectedCategory ? t('customEquipment.backToCategories') : t('customEquipment.backToMenu')}
 						</Button>
 					</BackButtonRow>
-					<Title>Custom Equipment</Title>
-					<Subtitle>Build custom weapons, armor, shields & spell focuses</Subtitle>
+					<Title>{t('customEquipment.title')}</Title>
+					<Subtitle>{t('customEquipment.subtitle')}</Subtitle>
 				</HeaderContent>
 			</Header>
 
@@ -91,10 +93,10 @@ const CustomEquipment: React.FC = () => {
 				{!selectedCategory && (
 					<TabContainer>
 						<Tab $active={activeTab === 'create'} onClick={() => setActiveTab('create')}>
-							Create New
+							{t('customEquipment.createNew')}
 						</Tab>
 						<Tab $active={activeTab === 'saved'} onClick={() => setActiveTab('saved')}>
-							Saved Equipment
+							{t('customEquipment.savedEquipment')}
 						</Tab>
 					</TabContainer>
 				)}
@@ -103,8 +105,7 @@ const CustomEquipment: React.FC = () => {
 				{activeTab === 'create' && !selectedCategory && (
 					<>
 						<p className="mb-6 text-gray-400">
-							Select an equipment category to start building. Each type has its own customization
-							rules based on DC20 0.10.
+							{t('customEquipment.selectCategory')}
 						</p>
 						<CategoryGrid>
 							{EQUIPMENT_CATEGORIES.map((category) => (

@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { theme, media } from '../../styles/theme';
@@ -156,6 +157,7 @@ export const HamburgerDrawer: React.FC<HamburgerDrawerProps> = ({
 	onItemClick,
 	activeItemId
 }) => {
+	const { t } = useTranslation();
 	const handleItemClick = (itemId: string) => {
 		onItemClick(itemId);
 		onClose(); // Close drawer after selection
@@ -181,7 +183,7 @@ export const HamburgerDrawer: React.FC<HamburgerDrawerProps> = ({
 						transition={{ type: 'spring', damping: 30, stiffness: 300 }}
 					>
 						<DrawerHeader>
-							<DrawerTitle>More Options</DrawerTitle>
+							<DrawerTitle>{t('characterSheet.hamburgerTitle')}</DrawerTitle>
 							<CloseButton onClick={onClose} whileTap={{ scale: 0.9 }}>
 								×
 							</CloseButton>

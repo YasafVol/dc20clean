@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useCharacterResources, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import { logger } from '../../../lib/utils/logger';
 import { theme } from '../styles/theme';
@@ -43,11 +44,12 @@ interface DeathExhaustionProps {
 }
 
 const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
+	const { t } = useTranslation();
 	const { state, updateExhaustion, updateDeathStep } = useCharacterSheet();
 	const resources = useCharacterResources();
 
 	if (!state.character || !resources) {
-		return <div>Loading...</div>;
+		return <div>{t('characterSheet.deathLoading')}</div>;
 	}
 
 	const characterData = state.character;
@@ -79,17 +81,17 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 	};
 	// Exhaustion level descriptions (based on DC20 rules)
 	const exhaustionLevels = [
-		{ level: 1, description: 'Fatigued: -1 to all Checks and Saves' },
-		{ level: 2, description: 'Exhausted: -2 to all Checks and Saves' },
-		{ level: 3, description: 'Debilitated: -3 to all Checks and Saves, Speed halved' },
-		{ level: 4, description: 'Incapacitated: -4 to all Checks and Saves, Speed quartered' },
-		{ level: 5, description: 'Unconscious: Helpless, cannot take actions' }
+		{ level: 1, description: t('characterSheet.exhaustion1') },
+		{ level: 2, description: t('characterSheet.exhaustion2') },
+		{ level: 3, description: t('characterSheet.exhaustion3') },
+		{ level: 4, description: t('characterSheet.exhaustion4') },
+		{ level: 5, description: t('characterSheet.exhaustion5') }
 	];
 
 	return (
 		<StyledDeathExhaustionContainer $isMobile={effectiveIsMobile}>
 			<StyledDeathContainer $isMobile={effectiveIsMobile}>
-				<StyledDeathTitle $isMobile={effectiveIsMobile}>DEATH & HEALTH STATUS</StyledDeathTitle>
+				<StyledDeathTitle $isMobile={effectiveIsMobile}>{t('characterSheet.deathHealthStatus')}</StyledDeathTitle>
 
 				{/* Health Status */}
 				{(() => {
@@ -117,7 +119,7 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 								</StyledHealthStatus>
 							</StyledHealthStatusTooltip>
 
-							<StyledDeathThresholdLabel>DEATH THRESHOLD</StyledDeathThresholdLabel>
+							<StyledDeathThresholdLabel>{t('characterSheet.deathThreshold')}</StyledDeathThresholdLabel>
 							<StyledDeathThreshold $isMobile={effectiveIsMobile}>
 								{deathThreshold}
 							</StyledDeathThreshold>
@@ -126,7 +128,7 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 							{healthStatus.status === 'deaths-door' && (
 								<StyledDeathStepsContainer $isMobile={effectiveIsMobile}>
 									<StyledDeathStepsTitle $isMobile={effectiveIsMobile}>
-										DEATH STEPS ({actualCurrentStep}/{deathSteps.maxSteps})
+								{t('characterSheet.deathSteps')} ({actualCurrentStep}/{deathSteps.maxSteps})
 									</StyledDeathStepsTitle>
 									<StyledDeathStepsGrid $isMobile={effectiveIsMobile}>
 										{Array.from({ length: deathSteps.maxSteps }, (_, index) => {
@@ -143,7 +145,7 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 												>
 													{!isDead && step}
 													<StyledDeathStepTooltip>
-														{isDead ? 'Dead' : `${step} HP below 0`}
+													{isDead ? t('characterSheet.deathDead') : t('characterSheet.deathHPBelow', { step })}
 													</StyledDeathStepTooltip>
 												</StyledDeathStep>
 											);
@@ -158,24 +160,8 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 			<StyledExhaustionOnlyContainer data-testid="exhaustion-btn" $isMobile={effectiveIsMobile}>
 				<StyledExhaustionHeader>
 					<StyledExhaustionOnlyTitle data-testid="exhaustion-btn" $isMobile={effectiveIsMobile}>
-						EXHAUSTION
+						{t('characterSheet.exhaustionTitle')}
 					</StyledExhaustionOnlyTitle>
-					{/* Small hook button for E2E to open/focus exhaustion */}
-					<StyledExhaustionInfoButton
-						data-testid="exhaustion-btn"
-						aria-label="Open Exhaustion"
-						onClick={() => {
-							try {
-								// scroll the exhaustion container into view for test interactions
-								const el = document.querySelector('[data-testid="exhaustion-btn"]');
-								if (el) (el as HTMLElement).scrollIntoView({ behavior: 'auto', block: 'center' });
-							} catch (e) {
-								/* ignore */
-							}
-						}}
-					>
-						i
-					</StyledExhaustionInfoButton>
 				</StyledExhaustionHeader>
 				<StyledExhaustionContainer $isMobile={effectiveIsMobile}>
 					{exhaustionLevels.map(({ level, description }) => (

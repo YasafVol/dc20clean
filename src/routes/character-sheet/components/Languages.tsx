@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import type { LanguageData } from '../../../types';
 import { SectionTitle, SectionDescription } from '../styles/KnowledgeTrades';
 import {
@@ -19,24 +20,25 @@ interface LanguagesProps {
 }
 
 const Languages: React.FC<LanguagesProps> = ({ languages, isMobile }) => {
+	const { t } = useTranslation();
 	// Mobile detection logic
 	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
 
 	return (
 		<LanguagesSection $isMobile={effectiveIsMobile}>
-			<SectionTitle $isMobile={effectiveIsMobile}>LANGUAGES</SectionTitle>
+			<SectionTitle $isMobile={effectiveIsMobile}>{t('characterSheet.languagesTitle')}</SectionTitle>
 			<SectionDescription $isMobile={effectiveIsMobile}>
-				LANGUAGE CHECK = d20 + Intelligence or Charisma
+				{t('characterSheet.languagesDescription')}
 			</SectionDescription>
 
 			{/* Header with L and F labels */}
 			<FluencyHeader $isMobile={effectiveIsMobile}>
-				<LanguageNameHeader $isMobile={effectiveIsMobile}>LANGUAGE</LanguageNameHeader>
+				<LanguageNameHeader $isMobile={effectiveIsMobile}>{t('characterSheet.languagesLanguage')}</LanguageNameHeader>
 				<FluencyHeaderContainer $isMobile={effectiveIsMobile}>
-					<FluencyHeaderLabel $isMobile={effectiveIsMobile} title="Limited">
+					<FluencyHeaderLabel $isMobile={effectiveIsMobile} title={t('characterSheet.languagesLimited')}>
 						L
 					</FluencyHeaderLabel>
-					<FluencyHeaderLabel $isMobile={effectiveIsMobile} title="Fluent">
+					<FluencyHeaderLabel $isMobile={effectiveIsMobile} title={t('characterSheet.languagesFluent')}>
 						F
 					</FluencyHeaderLabel>
 				</FluencyHeaderContainer>

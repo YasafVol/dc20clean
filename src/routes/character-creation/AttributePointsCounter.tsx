@@ -1,7 +1,9 @@
 import { useCharacter } from '../../lib/stores/characterContext';
 import { cn } from '../../lib/utils';
+import { useTranslation } from 'react-i18next';
 
 function AttributePointsCounter({ totalAttributePoints }: { totalAttributePoints: number }) {
+	const { t } = useTranslation();
 	const { calculationResult } = useCharacter();
 	const limits = calculationResult.validation.attributeLimits;
 	const total = totalAttributePoints;
@@ -19,11 +21,11 @@ function AttributePointsCounter({ totalAttributePoints }: { totalAttributePoints
 					isOverBudget ? 'text-destructive' : 'text-primary'
 				)}
 			>
-				Attribute Points: {remaining}/{total}
+				{t('characterCreation.attributePoints')}: {remaining}/{total}
 			</h2>
 			<div className="text-muted-foreground mt-2 text-sm">
-				Spent: {spent} | Remaining: {remaining}
-				{isOverBudget && <span className="text-destructive"> (Over budget!)</span>}
+				{t('characterCreation.spent')}: {spent} | {t('characterCreation.remaining')}: {remaining}
+				{isOverBudget && <span className="text-destructive"> {t('characterCreation.overBudget')}</span>}
 			</div>
 		</div>
 	);

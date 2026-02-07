@@ -4,6 +4,7 @@ import { Button } from '../ui/button';
 import { Dialog, DialogContent } from '../ui/dialog';
 import { SignIn } from './SignIn';
 import { UserMenu } from './UserMenu';
+import { useTranslation } from 'react-i18next';
 
 export interface AuthStatusProps {
 	/** Additional class names */
@@ -15,6 +16,7 @@ export function AuthStatus({ className }: AuthStatusProps) {
 	const [showSignIn, setShowSignIn] = React.useState(false);
 	const bypassAuth = import.meta.env.VITE_BYPASS_AUTH === 'true';
 	const isAllowed = bypassAuth ? true : isAuthenticated;
+	const { t } = useTranslation();
 
 	if (isLoading) {
 		return null;
@@ -33,7 +35,7 @@ export function AuthStatus({ className }: AuthStatusProps) {
 				className="border-purple-500/50 text-purple-200 hover:bg-purple-500/10"
 				onClick={() => setShowSignIn(true)}
 			>
-				Sign In
+				{t('auth.signIn')}
 			</Button>
 
 			<Dialog open={showSignIn} onOpenChange={setShowSignIn}>

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useConvexAuth } from 'convex/react';
 import { useAuthActions } from '@convex-dev/auth/react';
-import { Button } from '../ui/button';
+import styled from 'styled-components';
+import { theme } from '../../routes/character-sheet/styles/theme';
 import { logger } from '../../lib/utils/logger';
 import { useTranslation } from 'react-i18next';
 
@@ -11,6 +12,78 @@ export interface UserMenuProps {
 	/** Called after successful sign out */
 	onSignOut?: () => void;
 }
+
+const Container = styled.div`
+	display: flex;
+	align-items: center;
+	gap: ${theme.spacing[3]};
+`;
+
+const Avatar = styled.img`
+	height: 2rem;
+	width: 2rem;
+	border-radius: ${theme.borderRadius.full};
+	border: 1px solid ${theme.colors.accent.secondary};
+`;
+
+const AvatarPlaceholder = styled.div`
+	height: 2rem;
+	width: 2rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: ${theme.borderRadius.full};
+	background: ${theme.colors.accent.secondaryAlpha30};
+	color: ${theme.colors.accent.secondary};
+	font-size: ${theme.typography.fontSize.sm};
+	font-weight: ${theme.typography.fontWeight.bold};
+`;
+
+const UserInfo = styled.div`
+	display: none;
+	text-align: right;
+
+	@media (min-width: 640px) {
+		display: block;
+	}
+`;
+
+const UserName = styled.p`
+	color: ${theme.colors.text.primary};
+	font-size: ${theme.typography.fontSize.sm};
+	font-weight: ${theme.typography.fontWeight.medium};
+	margin: 0;
+`;
+
+const UserEmail = styled.p`
+	color: ${theme.colors.text.secondary};
+	font-size: ${theme.typography.fontSize.xs};
+	margin: 0;
+`;
+
+const SignOutButton = styled.button<{ $disabled?: boolean }>`
+	padding: ${theme.spacing[2]} ${theme.spacing[4]};
+	background: rgba(168, 85, 247, 0.05);
+	border: 1px solid rgba(168, 85, 247, 0.4);
+	border-radius: 8px;
+	color: #e0e7ff;
+	font-size: ${theme.typography.fontSize.sm};
+	font-weight: ${theme.typography.fontWeight.medium};
+	cursor: ${(props) => (props.$disabled ? 'not-allowed' : 'pointer')};
+	opacity: ${(props) => (props.$disabled ? 0.5 : 1)};
+	transition: all 0.3s ease;
+	backdrop-filter: blur(4px);
+
+	&:hover:not(:disabled) {
+		background: rgba(168, 85, 247, 0.15);
+		border-color: #a855f7;
+		transform: translateY(-2px);
+	}
+
+	&:active:not(:disabled) {
+		transform: scale(0.98);
+	}
+`;
 
 /**
  * Mock user data for development
@@ -61,39 +134,25 @@ export function UserMenu({ className, onSignOut }: UserMenuProps) {
 	}
 
 	return (
-		<div className={className}>
-			<div className="flex items-center gap-3">
-				{/* User avatar */}
-				{user?.image ? (
-					<img
-						src={user.image}
-						alt={user.name || t('auth.userAltText')}
-						className="h-8 w-8 rounded-full border border-purple-500/50"
-					/>
-				) : (
-					<div className="bg-primary/20 text-primary flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold">
-						{user?.name?.[0] || user?.email?.[0] || 'U'}
-					</div>
-				)}
+		<Container className={className}>
+			{/* User avatar */}
+			{user?.image ? (
+				<Avatar src={user.image} alt={user.name || t('auth.userAltText')} />
+			) : (
+				<AvatarPlaceholder>{user?.name?.[0] || user?.email?.[0] || 'U'}</AvatarPlaceholder>
+			)}
 
-				{/* User info */}
-				<div className="hidden text-right sm:block">
-					{user?.name && <p className="text-foreground text-sm font-medium">{user.name}</p>}
-					{user?.email && <p className="text-muted-foreground text-xs">{user.email}</p>}
-				</div>
+			{/* User info */}
+			<UserInfo>
+				{user?.name && <UserName>{user.name}</UserName>}
+				{user?.email && <UserEmail>{user.email}</UserEmail>}
+			</UserInfo>
 
-				{/* Sign out button */}
-				<Button
-					variant="outline"
-					size="sm"
-					onClick={handleSignOut}
-					disabled={isLoading}
-					className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
-				>
-					{isLoading ? '...' : t('auth.signOut')}
-				</Button>
-			</div>
-		</div>
+			{/* Sign out button */}
+			<SignOutButton onClick={handleSignOut} $disabled={isLoading} disabled={isLoading}>
+				{isLoading ? '...' : t('auth.signOut')}
+			</SignOutButton>
+		</Container>
 	);
 }
 

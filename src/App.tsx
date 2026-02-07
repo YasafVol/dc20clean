@@ -14,7 +14,7 @@ import { EncounterList, EncounterPlanner } from './routes/dm/encounters';
 
 import { StyledApp, FixedAuthStatus } from './styles/App.styles';
 import { AuthStatus } from './components/auth';
-import LanguageSwitcher from './components/LanguageSwitcher.tsx';
+import TopLeftToolbar from './components/TopLeftToolbar.tsx';
 
 // Import fonts for GlobalStyle
 
@@ -89,13 +89,13 @@ function App() {
 		<>
 			<GlobalStyle />
 			<StyledApp>
-				{/* Fixed top-left language switcher on all pages */}
-				<LanguageSwitcher />
 				{/* Fixed top-right auth status on all pages */}
 				<FixedAuthStatus>
 					<AuthStatus />
 				</FixedAuthStatus>
 				<BrowserRouter>
+					{/* Fixed top-left toolbar with language switcher and back button */}
+					<TopLeftToolbar />
 					<Routes>
 						<Route path="/" element={<Navigate to="/menu" replace />} />
 						<Route path="/menu" element={<Menu />} />

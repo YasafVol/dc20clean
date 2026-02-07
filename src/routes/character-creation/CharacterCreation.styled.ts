@@ -58,11 +58,15 @@ export const HeaderContent = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: ${theme.spacing[4]};
-  padding: ${theme.spacing[2]} ${theme.spacing[4]};
+  padding: ${theme.spacing[2]} 13rem ${theme.spacing[2]} ${theme.spacing[4]};
   min-height: 80px;
   max-width: 1460px;
   margin: 0 auto;
   width: 100%;
+
+  ${media.mobile} {
+    padding: ${theme.spacing[2]} ${theme.spacing[4]};
+  }
 `;
 
 // Navigation sections

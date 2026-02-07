@@ -1,7 +1,9 @@
 import { useCharacter } from '../../lib/stores/characterContext';
 import { cn } from '../../lib/utils';
+import { useTranslation } from 'react-i18next';
 
 function AncestryPointsCounter() {
+	const { t } = useTranslation();
 	const { calculationResult } = useCharacter();
 
 	// Use centralized calculator for ancestry points (includes Cleric domain bonuses, etc.)
@@ -22,11 +24,11 @@ function AncestryPointsCounter() {
 					isOverBudget ? 'text-destructive' : 'text-primary'
 				)}
 			>
-				Ancestry Points: {ancestryPointsRemaining}/{ancestryPointsSpent + ancestryPointsRemaining}
+				{t('characterCreation.ancestryPoints')}: {ancestryPointsRemaining}/{ancestryPointsSpent + ancestryPointsRemaining}
 			</h2>
 			<div className="text-muted-foreground mt-2 text-sm">
-				Spent: {ancestryPointsSpent} | Remaining: {ancestryPointsRemaining}
-				{isOverBudget && <span className="text-destructive"> (Over budget!)</span>}
+				{t('characterCreation.spent')}: {ancestryPointsSpent} | {t('characterCreation.remaining')}: {ancestryPointsRemaining}
+				{isOverBudget && <span className="text-destructive"> {t('characterCreation.overBudget')}</span>}
 			</div>
 		</div>
 	);

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 import { theme } from '../styles/theme';
 
@@ -142,6 +143,7 @@ const DefenseChangeModal: React.FC<DefenseChangeModalProps> = ({
 	onConfirm,
 	onCancel
 }) => {
+	const { t } = useTranslation();
 	const [reason, setReason] = useState('');
 
 	if (!isOpen) return null;
@@ -169,39 +171,39 @@ const DefenseChangeModal: React.FC<DefenseChangeModalProps> = ({
 	return (
 		<ModalOverlay onClick={handleCancel} onKeyDown={handleKeyDown}>
 			<ModalContent onClick={(e) => e.stopPropagation()}>
-				<ModalTitle>Defense Change Reason</ModalTitle>
+				<ModalTitle>{t('characterSheet.defenseModalTitle')}</ModalTitle>
 
 				<ChangeInfo>
-					<strong>{defenseType}</strong> changed from <strong>{oldValue}</strong> to{' '}
-					<strong>{newValue}</strong>
+					<Trans
+						i18nKey="characterSheet.defenseModalChanged"
+						values={{ defenseType, oldValue, newValue }}
+						components={{ strong: <strong /> }}
+					/>
 				</ChangeInfo>
 
 				<Label htmlFor="reason">
-					Why are you changing this defense value?
-					<LabelHint>
-						{' '}
-						(e.g., "Equipped +2 Shield", "Cast Shield spell", "Monk stance bonus")
-					</LabelHint>
+					{t('characterSheet.defenseModalPrompt')}
+					<LabelHint> {t('characterSheet.defenseModalHint')}</LabelHint>
 				</Label>
 
 				<TextArea
 					id="reason"
 					value={reason}
 					onChange={(e) => setReason(e.target.value)}
-					placeholder="Enter the reason for this defense change..."
+					placeholder={t('characterSheet.defenseModalPlaceholder')}
 					autoFocus
 				/>
 
 				<ButtonGroup>
 					<Button variant="secondary" onClick={handleCancel}>
-						Cancel
+						{t('characterSheet.defenseModalCancel')}
 					</Button>
 					<Button variant="primary" onClick={handleSubmit} disabled={!reason.trim()}>
-						Save Change
+						{t('characterSheet.defenseModalSave')}
 					</Button>
 				</ButtonGroup>
 
-				<KeyboardHint>Press Ctrl+Enter to save, Esc to cancel</KeyboardHint>
+				<KeyboardHint>{t('characterSheet.defenseModalKeyboardHint')}</KeyboardHint>
 			</ModalContent>
 		</ModalOverlay>
 	);

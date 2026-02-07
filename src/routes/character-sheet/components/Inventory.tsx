@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import type { InventoryItemData } from '../../../types';
 import { allItems, type InventoryItem } from '../../../lib/rulesdata/inventoryItems';
 import { useCharacterInventory, useCharacterSheet } from '../hooks/CharacterSheetProvider';
@@ -24,6 +25,7 @@ export interface InventoryProps {
 }
 
 const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) => {
+	const { t } = useTranslation();
 	const { updateInventory } = useCharacterSheet();
 	const inventoryData = useCharacterInventory();
 	const inventory = inventoryData.items;
@@ -115,28 +117,28 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 
 	return (
 		<StyledInventorySection $isMobile={isMobile}>
-			<StyledInventoryTitle $isMobile={isMobile}>INVENTORY</StyledInventoryTitle>
+			<StyledInventoryTitle $isMobile={isMobile}>{t('characterSheet.inventoryTitle')}</StyledInventoryTitle>
 
 			{/* Add Item Button */}
 			<StyledAddItemButton $isMobile={isMobile} onClick={addInventorySlot} data-testid="add-item">
-				+ Add Item
+				+ {t('characterSheet.inventoryAddItem')}
 			</StyledAddItemButton>
 
 			<StyledInventoryContainer $isMobile={isMobile}>
 				<StyledInventoryHeaderRow>
 					<span></span> {/* Empty column for remove button */}
-					<StyledInventoryHeaderColumn>Type</StyledInventoryHeaderColumn>
-					<StyledInventoryHeaderColumn>Item</StyledInventoryHeaderColumn>
-					<StyledInventoryHeaderColumn align="center">Count</StyledInventoryHeaderColumn>
+					<StyledInventoryHeaderColumn>{t('characterSheet.inventoryColumnType')}</StyledInventoryHeaderColumn>
+					<StyledInventoryHeaderColumn>{t('characterSheet.inventoryColumnItem')}</StyledInventoryHeaderColumn>
+					<StyledInventoryHeaderColumn align="center">{t('characterSheet.inventoryColumnCount')}</StyledInventoryHeaderColumn>
 					<StyledInventoryHeaderColumn align="center">
 						<StyledInventoryInfoIcon>i</StyledInventoryInfoIcon>
 					</StyledInventoryHeaderColumn>
-					<StyledInventoryHeaderColumn align="center">Cost</StyledInventoryHeaderColumn>
+					<StyledInventoryHeaderColumn align="center">{t('characterSheet.inventoryColumnCost')}</StyledInventoryHeaderColumn>
 				</StyledInventoryHeaderRow>
 
 				{inventory.length === 0 ? (
 					<StyledEmptyInventory>
-						No items added. Click "Add Item" to add your first item.
+						{t('characterSheet.inventoryNoItems')}
 					</StyledEmptyInventory>
 				) : (
 					inventory.map((item, index) => {
@@ -149,7 +151,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 								{/* Remove Button */}
 								<DeleteButton
 									onClick={() => removeInventorySlot(index)}
-									title="Remove item"
+									title={t('characterSheet.inventoryRemoveItem')}
 									$isMobile={isMobile}
 								/>
 
@@ -159,7 +161,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 									value={item.itemType}
 									onChange={(e) => handleInventoryItemSelect(index, e.target.value, false)}
 								>
-									<option value="">Select Type</option>
+									<option value="">{t('characterSheet.inventorySelectType')}</option>
 									<option value="Weapon">Weapon</option>
 									<option value="Armor">Armor</option>
 									<option value="Shield">Shield</option>
@@ -175,7 +177,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 									disabled={!item.itemType}
 									data-testid="item-name"
 								>
-									<option value="">Select Item</option>
+									<option value="">{t('characterSheet.inventorySelectItem')}</option>
 									{item.itemType &&
 										allItems
 											.filter((i) => i.itemType === item.itemType)

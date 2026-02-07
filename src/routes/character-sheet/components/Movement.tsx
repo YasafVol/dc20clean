@@ -15,11 +15,12 @@ interface MovementProps {
 }
 
 const Movement: React.FC<MovementProps> = ({ isMobile }) => {
+	const { t } = useTranslation();
 	const { state } = useCharacterSheet();
 	const calculation = useCharacterCalculatedData();
 
 	if (!state.character || !calculation) {
-		return <div>Loading movement...</div>;
+		return <div>{t('characterSheet.movementLoading')}</div>;
 	}
 
 	const breakdowns = calculation.breakdowns;
@@ -34,7 +35,7 @@ const Movement: React.FC<MovementProps> = ({ isMobile }) => {
 		<StyledMovementContainer $isMobile={effectiveIsMobile}>
 			<StyledMovementGrid $isMobile={effectiveIsMobile}>
 				<StyledMovementStat $isMobile={effectiveIsMobile}>
-					<StyledMovementLabel $isMobile={effectiveIsMobile}>MOVE SPEED</StyledMovementLabel>
+					<StyledMovementLabel $isMobile={effectiveIsMobile}>{t('characterSheet.movementMoveSpeed')}</StyledMovementLabel>
 					<Tooltip
 						content={
 							breakdowns?.move_speed
@@ -47,7 +48,7 @@ const Movement: React.FC<MovementProps> = ({ isMobile }) => {
 					</Tooltip>
 				</StyledMovementStat>
 				<StyledMovementStat $isMobile={effectiveIsMobile}>
-					<StyledMovementLabel $isMobile={effectiveIsMobile}>JUMP DISTANCE</StyledMovementLabel>
+					<StyledMovementLabel $isMobile={effectiveIsMobile}>{t('characterSheet.movementJumpDistance')}</StyledMovementLabel>
 					<Tooltip
 						content={
 							breakdowns?.jump_distance

@@ -7,6 +7,7 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { theme, media } from '../../styles/theme';
@@ -107,6 +108,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
 	onTabChange,
 	onMoreClick
 }) => {
+	const { t } = useTranslation();
 	return (
 		<Container>
 			{tabs.map((tab) => {
@@ -133,7 +135,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
 			{onMoreClick && (
 				<TabButton $active={false} onClick={onMoreClick} whileTap={{ scale: 0.95 }}>
 					<TabEmoji $active={false}>☰</TabEmoji>
-					<TabLabel>More</TabLabel>
+					<TabLabel>{t('characterSheet.mobileMore')}</TabLabel>
 				</TabButton>
 			)}
 		</Container>

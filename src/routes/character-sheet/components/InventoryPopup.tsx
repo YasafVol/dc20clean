@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import type { InventoryItemData } from '../../../types';
 import type { InventoryItem } from '../../../lib/rulesdata/inventoryItems';
 import {
@@ -20,6 +21,7 @@ interface InventoryPopupProps {
 }
 
 const InventoryPopup: React.FC<InventoryPopupProps> = ({ selectedInventoryItem, onClose }) => {
+	const { t } = useTranslation();
 	if (!selectedInventoryItem) return null;
 
 	const infoList = getInventoryItemInfo(
@@ -34,7 +36,7 @@ const InventoryPopup: React.FC<InventoryPopupProps> = ({ selectedInventoryItem, 
 					<StyledFeaturePopupTitle>
 						{selectedInventoryItem.item?.name ||
 							selectedInventoryItem.inventoryData.itemName ||
-							'Unknown Item'}
+						t('characterSheet.inventoryUnknownItem')}
 					</StyledFeaturePopupTitle>
 					<StyledFeaturePopupClose onClick={onClose}>×</StyledFeaturePopupClose>
 				</StyledFeaturePopupHeader>

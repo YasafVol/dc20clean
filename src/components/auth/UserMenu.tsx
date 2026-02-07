@@ -1,16 +1,9 @@
-/**
- * User Menu Component - Social Auth
- *
- * DRAFT - This component will work once Convex Auth is set up.
- *
- * Shows current user info (from Google) and sign out button.
- */
-
 import * as React from 'react';
 import { useConvexAuth } from 'convex/react';
 import { useAuthActions } from '@convex-dev/auth/react';
 import { Button } from '../ui/button';
 import { logger } from '../../lib/utils/logger';
+import { useTranslation } from 'react-i18next';
 
 export interface UserMenuProps {
 	/** Additional class names */
@@ -40,6 +33,7 @@ function useMockUser(): MockUser | null {
 
 export function UserMenu({ className, onSignOut }: UserMenuProps) {
 	const [isLoading, setIsLoading] = React.useState(false);
+	const { t } = useTranslation();
 
 	const { isAuthenticated: isConvexAuthenticated, isLoading: isAuthLoading } = useConvexAuth();
 	const { signOut } = useAuthActions();
@@ -73,7 +67,7 @@ export function UserMenu({ className, onSignOut }: UserMenuProps) {
 				{user?.image ? (
 					<img
 						src={user.image}
-						alt={user.name || 'User'}
+						alt={user.name || t('auth.userAltText')}
 						className="h-8 w-8 rounded-full border border-purple-500/50"
 					/>
 				) : (
@@ -96,7 +90,7 @@ export function UserMenu({ className, onSignOut }: UserMenuProps) {
 					disabled={isLoading}
 					className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
 				>
-					{isLoading ? '...' : 'Sign Out'}
+					{isLoading ? '...' : t('auth.signOut')}
 				</Button>
 			</div>
 		</div>

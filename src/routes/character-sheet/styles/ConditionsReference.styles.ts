@@ -95,16 +95,16 @@ export const StyledConditionsList = styled.div<{ $isMobile?: boolean }>`
 	}
 
 	&::-webkit-scrollbar-track {
-		background: ${theme.colors.bg.primary};
+		background: #16161e;
 		border-radius: ${theme.borderRadius.sm};
 	}
 
 	&::-webkit-scrollbar-thumb {
-		background: ${theme.colors.accent.primary};
+		background: #7aa2f7;
 		border-radius: ${theme.borderRadius.sm};
 
 		&:hover {
-			background: ${theme.colors.accent.secondary};
+			background: #7dcfff;
 		}
 	}
 `;

@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import { ALL_CONDITIONS } from '../../lib/rulesdata/conditions/conditions.data';
 import type { ConditionTag } from '../../lib/rulesdata/conditions/conditions.types';
 import { Button } from '../../components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 const PageContainer = styled.div`
 	min-height: 100vh;
@@ -223,6 +224,7 @@ const TYPE_LABELS: Record<string, string> = {
 
 const Conditions: React.FC = () => {
 	const navigate = useNavigate();
+	const { t } = useTranslation();
 	const [searchTerm, setSearchTerm] = useState('');
 	const [activeTagFilters, setActiveTagFilters] = useState<Set<ConditionTag>>(new Set());
 	const [expandedConditions, setExpandedConditions] = useState<Set<string>>(new Set());
@@ -276,17 +278,17 @@ const Conditions: React.FC = () => {
 		<PageContainer>
 			<BackButtonRow>
 				<Button variant="secondary" onClick={() => navigate('/menu')} className="font-bold">
-					← Back to Menu
+					← {t('conditions.backToMenu')}
 				</Button>
 			</BackButtonRow>
 			<ContentWrapper>
-				<Title>Conditions Reference</Title>
-				<Subtitle>Browse all conditions and their effects in DC20</Subtitle>
+				<Title>{t('conditions.title')}</Title>
+				<Subtitle>{t('conditions.subtitle')}</Subtitle>
 
 				<FilterCard>
 					<SearchInput
 						type="text"
-						placeholder="Search conditions..."
+						placeholder={t('conditions.searchPlaceholder')}
 						value={searchTerm}
 						onChange={(e) => setSearchTerm(e.target.value)}
 					/>
@@ -306,7 +308,7 @@ const Conditions: React.FC = () => {
 
 				<ConditionsList>
 					{filteredConditions.length === 0 ? (
-						<EmptyState>No conditions match your search</EmptyState>
+						<EmptyState>{t('conditions.noConditionsFound')}</EmptyState>
 					) : (
 						filteredConditions.map((condition) => {
 							const isExpanded = expandedConditions.has(condition.id);

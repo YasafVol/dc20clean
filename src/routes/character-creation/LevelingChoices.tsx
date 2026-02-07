@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/ta
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
+import { useTranslation } from 'react-i18next';
 import {
 	Select,
 	SelectContent,
@@ -26,6 +27,7 @@ type ActiveTab = 'talents' | 'pathPoints';
 
 function LevelingChoices() {
 	const { state, dispatch } = useCharacter();
+	const { t } = useTranslation();
 	const [activeTab, setActiveTab] = useState<ActiveTab>('talents');
 	const [selectedTalents, setSelectedTalents] = useState<Record<string, number>>(
 		state.selectedTalents || {}
@@ -67,7 +69,7 @@ function LevelingChoices() {
 		return (
 			<div className="mx-auto max-w-4xl p-8 text-center">
 				<p className="text-muted-foreground text-lg italic">
-					Select a class and level greater than 1 to see leveling choices.
+					{t('characterCreation.selectClassLevel')}
 				</p>
 			</div>
 		);
@@ -76,7 +78,7 @@ function LevelingChoices() {
 	if (!resolvedProgression) {
 		return (
 			<div className="mx-auto max-w-4xl p-8 text-center">
-				<p className="text-muted-foreground text-lg italic">Loading leveling options...</p>
+				<p className="text-muted-foreground text-lg italic">{t('characterCreation.loadingLevelingOptions')}</p>
 			</div>
 		);
 	}

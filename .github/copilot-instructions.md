@@ -15,6 +15,7 @@ You must always adhere to all the sections in this instructions file. `Instructi
 - Check for `SESSION_CONTEXT.md` document, this is a structured markdown file with condence helpful information about the codebase structure, flows and nuances. Don't generate
   the file if it's missing.
 - if node version is incorrect, run 'nvm use 20' command to switch to node 20.
+- **EVERY new component that contains user-facing text MUST use the i18n translation mechanism.** Import `useTranslation` from 'react-i18next', use the `t()` function for all strings, and add translation keys to both `/src/i18n/locales/en.json` and `/src/i18n/locales/es.json`. Never hardcode user-facing text.
 
 ## Coding Standards
 

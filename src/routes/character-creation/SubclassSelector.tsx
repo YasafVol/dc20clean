@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Subclass, ClassFeature } from '../../lib/rulesdata/schemas/character.schema';
 import { getFeatureChoiceKey } from '../../lib/rulesdata/classes-data/classUtils';
+import { useTranslation } from 'react-i18next';
 import { barbarianClass } from '../../lib/rulesdata/classes-data/features/barbarian_features';
 import { clericClass } from '../../lib/rulesdata/classes-data/features/cleric_features';
 import { druidClass } from '../../lib/rulesdata/classes-data/features/druid_features';
@@ -52,6 +53,7 @@ export function SubclassSelector({
 	onSelect,
 	onChoiceChange
 }: SubclassSelectorProps) {
+	const { t } = useTranslation();
 	// Get full subclass data from class features
 	const classFeatures = CLASS_FEATURES_MAP[classId];
 	const subclasses: Subclass[] = classFeatures?.subclasses || [];
@@ -68,16 +70,15 @@ export function SubclassSelector({
 	return (
 		<div className="mt-8 rounded-lg border-2 border-amber-900/30 bg-gradient-to-br from-amber-900/10 to-amber-800/5 p-6">
 			<h3 className="font-cinzel text-primary mb-2 text-2xl font-bold tracking-wide uppercase">
-				Choose Your Subclass
+				{t('characterCreation.chooseYourSubclass')}
 				{choiceLevel && (
 					<Badge variant="secondary" className="bg-primary/20 text-primary ml-2">
-						Level {choiceLevel}
+						{t('characterCreation.level')} {choiceLevel}
 					</Badge>
 				)}
 			</h3>
 			<p className="text-foreground/70 mb-6 leading-relaxed">
-				Select a subclass to specialize your character's abilities and playstyle. This choice is
-				permanent and shapes your character's identity.
+				{t('characterCreation.subclassDescription')}
 			</p>
 
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -201,63 +202,60 @@ export function SubclassSelector({
 																				)}
 																			>
 																				{isComplete
-																					? 'Complete'
-																					: `${currentSelections.length}/${choice.count}`}
-																			</Badge>
-																		</div>
-																		<p className="text-foreground/60 mb-3 text-xs">
-																			Select {choice.count} option(s)
-																		</p>
+																? t('characterCreation.complete')
+																: `${currentSelections.length}/${choice.count}`}
+														</Badge>
+													</div>
+													<p className="text-foreground/60 mb-3 text-xs">
+														{t('characterCreation.selectOptions', { count: choice.count })}
+													</p>
 
-																		<div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-																			{choice.options?.map((option) => {
-																				const isOptionSelected = currentSelections.includes(
-																					option.name
-																				);
-
-																				return (
-																					<div
-																						key={option.name}
-																						onClick={(e) => {
-																							e.stopPropagation(); // Prevent subclass card click
-																							handleOptionClick(option.name);
-																						}}
-																						className={cn(
-																							'relative cursor-pointer rounded-lg border-2 p-3 transition-all hover:-translate-y-0.5',
-																							isOptionSelected
-																								? 'border-primary bg-primary/10'
-																								: 'border-primary/30 hover:border-primary/60'
-																						)}
-																					>
-																						<h6 className="text-primary text-sm font-semibold">
-																							{option.name}
-																						</h6>
-																						<p className="text-foreground/80 text-xs leading-relaxed">
-																							{option.description}
-																						</p>
-																						{isOptionSelected && (
-																							<span className="text-primary absolute top-2 right-2 text-lg">
-																								✓
-																							</span>
-																						)}
-																					</div>
-																				);
-																			})}
-																		</div>
-																	</div>
-																);
-															})}
-														</div>
-													)}
-											</div>
-										))}
+													<div className="mt-3 space-y-2">
+														{choice.options.map((option) => {
+															const isOptionSelected = currentSelections.includes(option.name);
+															return (
+																<div
+																	key={option.name}
+																	onClick={(e) => {
+																		e.stopPropagation(); // Prevent subclass click
+																		handleOptionClick(option.name);
+																	}}
+																	className={cn(
+																		'relative cursor-pointer rounded-lg border-2 p-3 transition-all hover:-translate-y-0.5',
+																		isOptionSelected
+																			? 'border-primary bg-primary/10'
+																			: 'border-primary/30 hover:border-primary/60'
+																	)}
+																>
+																	<h6 className="text-primary text-sm font-semibold">
+																		{option.name}
+																	</h6>
+																	<p className="text-foreground/80 text-xs leading-relaxed">
+																		{option.description}
+																	</p>
+																	{isOptionSelected && (
+																		<span className="text-primary absolute top-2 right-2 text-lg">
+																			✓
+																		</span>
+																	)}
+																</div>
+															);
+														})}
+													</div>
+												</div>
+											);
+										})}
 									</div>
 								)}
-							</CardContent>
-						</Card>
-					);
-				})}
-			</div>
-		</div>
+						</div>
+					))}
+				</div>
+			)}
+		</CardContent>
+	</Card>
+);
+})}
+</div>
+</div>
 	);
 }

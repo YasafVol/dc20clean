@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { nameByRace } from 'fantasy-name-generator';
 import { PrimaryButton } from '../../components/styled/index';
+import { useTranslation } from 'react-i18next';
 import {
 	Container,
 	Header,
@@ -47,6 +48,7 @@ const generateNamesFromNPM = (race: string): string[] => {
 
 function CharacterName() {
 	const { state, dispatch } = useCharacter();
+	const { t } = useTranslation();
 	const [characterName, setCharacterName] = useState(state.finalName || '');
 	const [playerName, setPlayerName] = useState(state.finalPlayerName || '');
 	const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -143,7 +145,7 @@ function CharacterName() {
 		const ancestry2 = state.ancestry2Id;
 		const classId = state.classId;
 
-		let ancestryDescription = 'Your Character';
+		let ancestryDescription = t('characterCreation.yourCharacter');
 
 		if (ancestry1 && ancestry2) {
 			// Both ancestries exist
@@ -163,14 +165,14 @@ function CharacterName() {
 	return (
 		<Container>
 			<Header>
-				<Title>Name Your Character</Title>
-				<Subtitle>Creating: {getCharacterDescription()}</Subtitle>
+				<Title>{t('characterCreation.nameYourCharacter')}</Title>
+				<Subtitle>{t('characterCreation.creating')}: {getCharacterDescription()}</Subtitle>
 			</Header>
 
 			<FormCard>
 				<FormGrid>
 					<FormGroup>
-						<Label htmlFor="characterName">Character Name</Label>
+						<Label htmlFor="characterName">{t('characterCreation.characterNameLabel')}</Label>
 						<Input
 							id="characterName"
 							type="text"
@@ -185,12 +187,12 @@ function CharacterName() {
 									}
 								});
 							}}
-							placeholder="Enter your character's name"
+							placeholder={t('characterCreation.enterCharacterName')}
 						/>
 					</FormGroup>
 
 					<FormGroup>
-						<Label htmlFor="playerName">Player Name</Label>
+						<Label htmlFor="playerName">{t('characterCreation.playerNameLabel')}</Label>
 						<Input
 							id="playerName"
 							type="text"
@@ -205,17 +207,17 @@ function CharacterName() {
 									}
 								});
 							}}
-							placeholder="Enter your name"
+							placeholder={t('characterCreation.enterYourName')}
 						/>
 					</FormGroup>
 
 					<GeneratorSection>
-						<GeneratorTitle>Name Generator</GeneratorTitle>
+						<GeneratorTitle>{t('characterCreation.nameGenerator')}</GeneratorTitle>
 						<GeneratorText>
-							Generate names based on your character's ancestry
+							{t('characterCreation.nameGeneratorDescription')}
 						</GeneratorText>
 						<PrimaryButton onClick={generateNames} disabled={isGenerating}>
-							{isGenerating ? 'Generating...' : 'Generate Names'}
+							{isGenerating ? t('characterCreation.generating') : t('characterCreation.generateNames')}
 						</PrimaryButton>
 
 						{suggestions.length > 0 ? (

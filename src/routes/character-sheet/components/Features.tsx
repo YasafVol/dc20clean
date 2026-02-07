@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import type { FeatureData } from '../../../types';
 import { useCharacterSheet, useCharacterFeatures } from '../hooks/CharacterSheetProvider';
 import {
@@ -20,11 +21,12 @@ interface FeaturesProps {
 }
 
 const Features: React.FC<FeaturesProps> = ({ onFeatureClick, isMobile }) => {
+	const { t } = useTranslation();
 	const { state } = useCharacterSheet();
 	const features = useCharacterFeatures(); // Use our enhanced hook!
 
 	if (!state.character) {
-		return <div>Loading features...</div>;
+		return <div>{t('characterSheet.featuresLoading')}</div>;
 	}
 
 	// Mobile detection logic
@@ -36,14 +38,14 @@ const Features: React.FC<FeaturesProps> = ({ onFeatureClick, isMobile }) => {
 
 	return (
 		<StyledFeaturesContainer $isMobile={effectiveIsMobile}>
-			<StyledFeaturesTitle $isMobile={effectiveIsMobile}>FEATURES</StyledFeaturesTitle>
+			<StyledFeaturesTitle $isMobile={effectiveIsMobile}>{t('characterSheet.featuresTitle')}</StyledFeaturesTitle>
 
 			<StyledFeaturesContent $isMobile={effectiveIsMobile}>
 				{/* Ancestry Traits */}
 				{ancestryFeatures.length > 0 && (
 					<StyledFeatureCategory $isMobile={effectiveIsMobile}>
 						<StyledFeatureCategoryTitle $isMobile={effectiveIsMobile}>
-							Ancestry Traits
+							{t('characterSheet.featuresAncestryTraits')}
 						</StyledFeatureCategoryTitle>
 						<StyledFeatureGrid $isMobile={effectiveIsMobile}>
 							{ancestryFeatures.map((feature) => (
@@ -67,7 +69,7 @@ const Features: React.FC<FeaturesProps> = ({ onFeatureClick, isMobile }) => {
 				{classFeatures.length > 0 && (
 					<StyledFeatureCategory $isMobile={effectiveIsMobile}>
 						<StyledFeatureCategoryTitle $isMobile={effectiveIsMobile}>
-							Class Features
+							{t('characterSheet.featuresClassFeatures')}
 						</StyledFeatureCategoryTitle>
 						<StyledFeatureGrid $isMobile={effectiveIsMobile}>
 							{classFeatures.map((feature) => (
@@ -91,7 +93,7 @@ const Features: React.FC<FeaturesProps> = ({ onFeatureClick, isMobile }) => {
 				{choiceFeatures.length > 0 && (
 					<StyledFeatureCategory $isMobile={effectiveIsMobile}>
 						<StyledFeatureCategoryTitle $isMobile={effectiveIsMobile}>
-							Selected Features
+							{t('characterSheet.featuresSelectedFeatures')}
 						</StyledFeatureCategoryTitle>
 						<StyledFeatureGrid $isMobile={effectiveIsMobile}>
 							{choiceFeatures.map((feature) => (
@@ -114,7 +116,7 @@ const Features: React.FC<FeaturesProps> = ({ onFeatureClick, isMobile }) => {
 				{/* No features message */}
 				{features.length === 0 && (
 					<StyledNoFeaturesMessage $isMobile={effectiveIsMobile}>
-						No features available
+						{t('characterSheet.featuresNoFeatures')}
 					</StyledNoFeaturesMessage>
 				)}
 			</StyledFeaturesContent>

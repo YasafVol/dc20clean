@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { ConvexAuthProvider } from '@convex-dev/auth/react';
 import App from './App';
 import './styles/globals.css';
+import './i18n/config';
 import { getConvexClient } from './lib/convexClient';
 
 console.log('[GIMLI DEBUG] 🔧 App Initialization:', {

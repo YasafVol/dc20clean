@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
+import { useTranslation } from 'react-i18next';
 import {
 	Select,
 	SelectContent,
@@ -117,6 +118,7 @@ const classData = {
 
 function ClassSelector() {
 	const { state, dispatch } = useCharacter();
+	const { t } = useTranslation();
 	const selectedClassId = state.classId;
 	const selectedLevel = state.level || 1;
 	const isLevelUpMode = state.isLevelUpMode;
@@ -156,19 +158,19 @@ function ClassSelector() {
 	return (
 		<>
 			<Header>
-				<Title>Choose Your Class</Title>
-				<Subtitle>Select a class to begin your journey.</Subtitle>
+				<Title>{t('characterCreation.chooseYourClass')}</Title>
+				<Subtitle>{t('characterCreation.selectClassToBegin')}</Subtitle>
 			</Header>
 
 			{isLevelUpMode && originalLevel && (
 				<LevelUpBanner>
-					⬆️ Leveling up from Level {originalLevel} to Level {selectedLevel}
+					⬆️ {t('characterCreation.levelingUpFrom')} {originalLevel} {t('characterCreation.to')} {t('characterCreation.level')} {selectedLevel}
 				</LevelUpBanner>
 			)}
 
 			<LevelSelector>
 				<LevelLabel htmlFor="level-select">
-					{isLevelUpMode ? 'New Level:' : 'Starting Level:'}
+					{isLevelUpMode ? t('characterCreation.newLevel') : t('characterCreation.startingLevel')}
 				</LevelLabel>
 				<LevelSelectWrapper>
 					<Select value={selectedLevel.toString()} onValueChange={handleLevelChange}>
@@ -176,19 +178,19 @@ function ClassSelector() {
 							id="level-select"
 							className="bg-background/50 border-primary/50 text-foreground"
 						>
-							<SelectValue placeholder="Select Level" />
+							<SelectValue placeholder={t('characterCreation.selectLevel')} />
 						</SelectTrigger>
 						<SelectContent>
 							{availableLevels.map((level) => (
 								<SelectItem key={level} value={level.toString()}>
-									{`Level ${level}`}
+									{`${t('characterCreation.level')} ${level}`}
 								</SelectItem>
 							))}
 						</SelectContent>
 					</Select>
 				</LevelSelectWrapper>
 				{selectedLevel > 1 && !isLevelUpMode && (
-					<LevelHint>You'll choose talents & features next.</LevelHint>
+					<LevelHint>{t('characterCreation.youllChooseTalents')}</LevelHint>
 				)}
 			</LevelSelector>
 

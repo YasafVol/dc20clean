@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import type { FeatureData } from '../../../types';
 import {
 	StyledFeaturePopupOverlay,
@@ -16,6 +17,7 @@ interface FeaturePopupProps {
 }
 
 const FeaturePopup: React.FC<FeaturePopupProps> = ({ feature, onClose }) => {
+	const { t } = useTranslation();
 	if (!feature) return null;
 
 	return (
@@ -30,7 +32,7 @@ const FeaturePopup: React.FC<FeaturePopupProps> = ({ feature, onClose }) => {
 				<StyledFeaturePopupDescription>{feature.description}</StyledFeaturePopupDescription>
 				{feature.sourceDetail && (
 					<StyledFeaturePopupSourceInfo>
-						Source: {feature.sourceDetail}
+					{t('characterSheet.featureSource')} {feature.sourceDetail}
 					</StyledFeaturePopupSourceInfo>
 				)}
 			</StyledFeaturePopupContent>

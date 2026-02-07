@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { theme } from '../../styles/theme';
@@ -279,6 +280,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 	onPrecisionDRMouseLeave,
 	className
 }) => {
+	const { t } = useTranslation();
 	// Calculate condition badges
 	const attackBadges = getConditionBadgesForAttribute(activeConditions, 'attack');
 
@@ -303,12 +305,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							whileHover={{ scale: 1.05 }}
 							whileTap={{ scale: 0.95 }}
 						>
-							↺ Reset
+							{t('characterSheet.heroReset')}
 						</BoxResetButton>
 					)}
 				</BoxTitle>
 				<StatCard
-					label="Hit Points"
+					label={t('characterSheet.heroHitPoints')}
 					current={currentHP}
 					max={maxHP}
 					temp={tempHP}
@@ -331,20 +333,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 				transition={{ delay: 0.2 }}
 			>
 				<BoxTitle>
-					<span>Resources</span>
+				<span>{t('characterSheet.heroResources')}</span>
 					{hasResourcesOverride && onResourcesReset && (
 						<BoxResetButton
 							onClick={onResourcesReset}
 							whileHover={{ scale: 1.05 }}
 							whileTap={{ scale: 0.95 }}
 						>
-							↺ Reset
+							{t('characterSheet.heroReset')}
 						</BoxResetButton>
 					)}
 				</BoxTitle>
 				<ResourcesGroup>
 					<StatCard
-						label="Mana Points"
+					label={t('characterSheet.heroManaPoints')}
 						current={currentMana}
 						max={maxMana}
 						color="mana"
@@ -356,7 +358,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 						onMouseLeave={onManaMouseLeave}
 					/>
 					<StatCard
-						label="Stamina Points"
+					label={t('characterSheet.heroStaminaPoints')}
 						current={currentStamina}
 						max={maxStamina}
 						color="stamina"
@@ -377,20 +379,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 				transition={{ delay: 0.3 }}
 			>
 				<BoxTitle>
-					<span>Recovery</span>
+				<span>{t('characterSheet.heroRecovery')}</span>
 					{hasRecoveryOverride && onRecoveryReset && (
 						<BoxResetButton
 							onClick={onRecoveryReset}
 							whileHover={{ scale: 1.05 }}
 							whileTap={{ scale: 0.95 }}
 						>
-							↺ Reset
+							{t('characterSheet.heroReset')}
 						</BoxResetButton>
 					)}
 				</BoxTitle>
 				<ResourcesGroup>
 					<StatCard
-						label="Rest Points"
+					label={t('characterSheet.heroRestPoints')}
 						current={currentRest}
 						max={maxRest}
 						color="grit"
@@ -402,7 +404,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 						onMouseLeave={onRestMouseLeave}
 					/>
 					<StatCard
-						label="Grit Points"
+					label={t('characterSheet.heroGritPoints')}
 						current={currentGrit}
 						max={maxGrit}
 						color="grit"
@@ -423,14 +425,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 				transition={{ delay: 0.4 }}
 			>
 				<BoxTitle>
-					<span>Combat Stats</span>
+				<span>{t('characterSheet.heroCombatStats')}</span>
 					{hasCombatStatsOverride && onCombatStatsReset && (
 						<BoxResetButton
 							onClick={onCombatStatsReset}
 							whileHover={{ scale: 1.05 }}
 							whileTap={{ scale: 0.95 }}
 						>
-							↺ Reset
+							{t('characterSheet.heroReset')}
 						</BoxResetButton>
 					)}
 				</BoxTitle>
@@ -441,7 +443,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							onMouseEnter={onPrecisionADMouseEnter}
 							onMouseLeave={onPrecisionADMouseLeave}
 						>
-							<DefenseLabel>Precision AD</DefenseLabel>
+							<DefenseLabel>{t('characterSheet.heroPrecisionAD')}</DefenseLabel>
 							<EditableDefenseValue
 								value={precisionAD}
 								onChange={(e) => onPrecisionADChange?.(Number(e.target.value))}
@@ -453,7 +455,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							onMouseEnter={onPrecisionDRMouseEnter}
 							onMouseLeave={onPrecisionDRMouseLeave}
 						>
-							<DefenseLabel>Precision DR</DefenseLabel>
+							<DefenseLabel>{t('characterSheet.heroPrecisionDR')}</DefenseLabel>
 							<EditableDefenseValue
 								value={precisionDR}
 								onChange={(e) => onPrecisionDRChange?.(Number(e.target.value))}
@@ -465,7 +467,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							onMouseEnter={onAreaADMouseEnter}
 							onMouseLeave={onAreaADMouseLeave}
 						>
-							<DefenseLabel>Area AD</DefenseLabel>
+							<DefenseLabel>{t('characterSheet.heroAreaAD')}</DefenseLabel>
 							<EditableDefenseValue
 								value={areaAD}
 								onChange={(e) => onAreaADChange?.(Number(e.target.value))}
@@ -481,7 +483,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							onMouseEnter={onAttackMouseEnter}
 							onMouseLeave={onAttackMouseLeave}
 						>
-							<DefenseLabel>Attack/Spell</DefenseLabel>
+					<DefenseLabel>{t('characterSheet.heroAttackSpell')}</DefenseLabel>
 							<DefenseValue $isPrimary>+{attackBonus}</DefenseValue>
 							{attackBadges.length > 0 && (
 								<BadgesContainer>
@@ -497,7 +499,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							)}
 						</DefenseItem>
 						<DefenseItem whileHover={{ scale: 1.05 }}>
-							<DefenseLabel>Save DC</DefenseLabel>
+					<DefenseLabel>{t('characterSheet.heroSaveDC')}</DefenseLabel>
 							<DefenseValue $isPrimary>{saveDC}</DefenseValue>
 						</DefenseItem>
 						<DefenseItem
@@ -505,7 +507,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							$clickable
 							onClick={() => onSkillClick?.('Initiative', initiative)}
 						>
-							<DefenseLabel>Initiative</DefenseLabel>
+					<DefenseLabel>{t('characterSheet.heroInitiative')}</DefenseLabel>
 							<DefenseValue $isPrimary>+{initiative}</DefenseValue>
 						</DefenseItem>
 					</DefensesGrid>

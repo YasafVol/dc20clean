@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { SavedCharacter } from '../../lib/types/dataContracts';
 import { getInitializedCharacterState } from '../../lib/utils/storageUtils';
 import { getDefaultStorage } from '../../lib/storage';
@@ -44,6 +45,7 @@ import {
 } from './LoadCharacter.styled';
 
 function LoadCharacter() {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const [savedCharacters, setSavedCharacters] = useState<SavedCharacter[]>([]);
 	const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -173,7 +175,7 @@ function LoadCharacter() {
 
 	const handleImportCharacter = async () => {
 		if (!importJsonText.trim()) {
-			setImportMessage({ text: 'Please paste character JSON data', type: 'error' });
+			setImportMessage({ text: t('loadCharacter.errorPasteJson'), type: 'error' });
 			return;
 		}
 
@@ -186,14 +188,14 @@ function LoadCharacter() {
 
 			// Basic validation - check if it looks like a character
 			if (!parsedData || typeof parsedData !== 'object') {
-				throw new Error('Invalid character data: not a valid object');
+				throw new Error(t('loadCharacter.errorInvalidObject'));
 			}
 
 			// Check for essential character properties
 			const hasRequiredFields =
 				parsedData.finalName || parsedData.id || parsedData.ancestry1Id || parsedData.classId;
 			if (!hasRequiredFields) {
-				throw new Error('Invalid character data: missing required character fields');
+				throw new Error(t('loadCharacter.errorMissingFields'));
 			}
 
 			// Get current characters to check for duplicates
@@ -208,9 +210,9 @@ function LoadCharacter() {
 				// Generate new ID for duplicate
 				const newId = generateNewCharacterId();
 				characterToImport.id = newId;
-				characterToImport.finalName = `${parsedData.finalName || 'Imported Character'} (Copy)`;
+				characterToImport.finalName = `${parsedData.finalName || t('loadCharacter.importCharacter')} (Copy)`;
 				setImportMessage({
-					text: `Character with ID "${parsedData.id}" already exists. Importing as new character with ID "${newId}"`,
+					text: t('loadCharacter.infoDuplicateId', { id: parsedData.id, newId }),
 					type: 'info'
 				});
 			}
@@ -242,7 +244,7 @@ function LoadCharacter() {
 			setSavedCharacters(updatedCharacters);
 
 			setImportMessage({
-				text: `Successfully imported character "${characterToImport.finalName || characterToImport.id}"!`,
+				text: t('loadCharacter.successImported', { name: characterToImport.finalName || characterToImport.id }),
 				type: 'success'
 			});
 
@@ -252,9 +254,9 @@ function LoadCharacter() {
 			}, 2000);
 		} catch (error) {
 			console.error('Import error:', error);
-			const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+			const errorMessage = error instanceof Error ? error.message : t('loadCharacter.unknown');
 			setImportMessage({
-				text: `Failed to import character: ${errorMessage}`,
+				text: t('loadCharacter.errorImportFailed', { error: errorMessage }),
 				type: 'error'
 			});
 		} finally {
@@ -267,7 +269,7 @@ function LoadCharacter() {
 			const date = new Date(dateString);
 			// Check if the date is valid
 			if (isNaN(date.getTime())) {
-				return 'Unknown Date';
+				return t('loadCharacter.unknownDate');
 			}
 			return date.toLocaleDateString('en-US', {
 				year: 'numeric',
@@ -277,7 +279,7 @@ function LoadCharacter() {
 				minute: '2-digit'
 			});
 		} catch {
-			return 'Unknown Date';
+			return t('loadCharacter.unknownDate');
 		}
 	};
 
@@ -360,7 +362,7 @@ function LoadCharacter() {
 			URL.revokeObjectURL(url);
 		} catch (err) {
 			console.error('Export PDF failed', err);
-			alert('Failed to export PDF');
+			alert(t('loadCharacter.errorExportPdfFailed'));
 		}
 	};
 
@@ -377,14 +379,14 @@ function LoadCharacter() {
 						whileHover={{ scale: 1.05 }}
 						whileTap={{ scale: 0.95 }}
 					>
-						← Back to Menu
+						{t('loadCharacter.backToMenu')}
 					</SecondaryButton>
 					<SuccessButton
 						onClick={handleImportClick}
 						whileHover={{ scale: 1.05 }}
 						whileTap={{ scale: 0.95 }}
 					>
-						📥 Import from JSON
+						{t('loadCharacter.importFromJson')}
 					</SuccessButton>
 				</ButtonRow>
 			</Header>
@@ -394,7 +396,7 @@ function LoadCharacter() {
 				animate={{ opacity: 1, scale: 1 }}
 				transition={{ duration: 0.5, delay: 0.2 }}
 			>
-				Load Character
+				{t('loadCharacter.pageTitle')}
 			</PageTitle>
 
 			{savedCharacters.length === 0 ? (
@@ -403,11 +405,11 @@ function LoadCharacter() {
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.5, delay: 0.3 }}
 				>
-					<EmptyStateTitle>No Saved Characters</EmptyStateTitle>
+					<EmptyStateTitle>{t('loadCharacter.noCharactersTitle')}</EmptyStateTitle>
 					<EmptyStateText>
-						You haven't created any characters yet.
+						{t('loadCharacter.noCharactersText')}
 						<br />
-						Go back to the menu and create your first character!
+						{t('loadCharacter.noCharactersHelp')}
 					</EmptyStateText>
 				</EmptyState>
 			) : (
@@ -422,38 +424,38 @@ function LoadCharacter() {
 							whileHover={{ scale: 1.02 }}
 							whileTap={{ scale: 0.98 }}
 						>
-							<CharacterName>{character.finalName || 'Unnamed Character'}</CharacterName>
+							<CharacterName>{character.finalName || t('loadCharacter.unnamedCharacter')}</CharacterName>
 
-							<PlayerName>Player: {character.finalPlayerName || 'Unknown'}</PlayerName>
+							<PlayerName>{t('loadCharacter.playerPrefix')}{character.finalPlayerName || t('loadCharacter.unknown')}</PlayerName>
 
 							<CharacterStats>
 								<StatBlock>
-									<StatLabel>Race</StatLabel>
+									<StatLabel>{t('loadCharacter.raceLabel')}</StatLabel>
 									<StatValue>
 										{formatAncestry(
-											character.ancestry1Name || character.ancestry1Id || 'Unknown',
+											character.ancestry1Name || character.ancestry1Id || t('loadCharacter.unknown'),
 											character.ancestry2Name || character.ancestry2Id
 										)}
 									</StatValue>
 								</StatBlock>
 
 								<StatBlock>
-									<StatLabel>Class</StatLabel>
-									<StatValue>{character.className || character.classId || 'Unknown'}</StatValue>
+									<StatLabel>{t('loadCharacter.classLabel')}</StatLabel>
+									<StatValue>{character.className || character.classId || t('loadCharacter.unknown')}</StatValue>
 								</StatBlock>
 
 								<StatBlock>
-									<StatLabel>Level</StatLabel>
+									<StatLabel>{t('loadCharacter.levelLabel')}</StatLabel>
 									<StatValue>{character.level || 1}</StatValue>
 								</StatBlock>
 							</CharacterStats>
 
 							<CharacterDates>
-								Created: {formatDate(character.createdAt || character.completedAt)}
+								{t('loadCharacter.createdPrefix')}{formatDate(character.createdAt || character.completedAt)}
 								{character.lastModified &&
 									character.lastModified !== character.createdAt &&
 									character.lastModified !== character.completedAt && (
-										<span>Modified: {formatDate(character.lastModified)}</span>
+										<span>{t('loadCharacter.modifiedPrefix')}{formatDate(character.lastModified)}</span>
 									)}
 							</CharacterDates>
 
@@ -464,14 +466,14 @@ function LoadCharacter() {
 									whileHover={{ scale: 1.05 }}
 									whileTap={{ scale: 0.95 }}
 								>
-									View Sheet
+									{t('loadCharacter.viewSheet')}
 								</CardButton>
 								<CardButton
 									onClick={(e) => handleExportPdf(character, e)}
 									whileHover={{ scale: 1.05 }}
 									whileTap={{ scale: 0.95 }}
 								>
-									Export PDF
+									{t('loadCharacter.exportPdf')}
 								</CardButton>
 								<CardButton
 									onClick={(e) => {
@@ -481,14 +483,14 @@ function LoadCharacter() {
 									whileHover={{ scale: 1.05 }}
 									whileTap={{ scale: 0.95 }}
 								>
-									Edit
+									{t('loadCharacter.edit')}
 								</CardButton>
 								<CardButton
 									onClick={(e) => handleLevelUp(character, e)}
 									whileHover={{ scale: 1.05 }}
 									whileTap={{ scale: 0.95 }}
 								>
-									Level Up
+									{t('loadCharacter.levelUp')}
 								</CardButton>
 								<FullWidthButton
 									$variant="danger"
@@ -496,7 +498,7 @@ function LoadCharacter() {
 									whileHover={{ scale: 1.02 }}
 									whileTap={{ scale: 0.98 }}
 								>
-									Delete
+									{t('loadCharacter.delete')}
 								</FullWidthButton>
 							</ButtonGrid>
 						</CharacterCard>
@@ -521,9 +523,9 @@ function LoadCharacter() {
 							onClick={(e) => e.stopPropagation()}
 						>
 							<ModalHeader>
-								<ModalTitle $variant="success">Import Character from JSON</ModalTitle>
+								<ModalTitle $variant="success">{t('loadCharacter.importModalTitle')}</ModalTitle>
 								<ModalDescription>
-									Paste the character JSON data from the clipboard (exported from character sheet):
+									{t('loadCharacter.importModalDescription')}
 								</ModalDescription>
 							</ModalHeader>
 
@@ -531,7 +533,7 @@ function LoadCharacter() {
 								<TextArea
 									value={importJsonText}
 									onChange={(e) => setImportJsonText(e.target.value)}
-									placeholder="Paste character JSON data here..."
+									placeholder={t('loadCharacter.importPlaceholder')}
 								/>
 
 								{importMessage && (
@@ -551,7 +553,7 @@ function LoadCharacter() {
 									whileHover={{ scale: 1.05 }}
 									whileTap={{ scale: 0.95 }}
 								>
-									Cancel
+									{t('loadCharacter.cancel')}
 								</SecondaryButton>
 								<SuccessButton
 									onClick={handleImportCharacter}
@@ -559,7 +561,7 @@ function LoadCharacter() {
 									whileHover={{ scale: 1.05 }}
 									whileTap={{ scale: 0.95 }}
 								>
-									{isImporting ? 'Importing...' : 'Import Character'}
+									{isImporting ? t('loadCharacter.importing') : t('loadCharacter.importCharacter')}
 								</SuccessButton>
 							</ModalFooter>
 						</Modal>
@@ -584,12 +586,12 @@ function LoadCharacter() {
 							onClick={(e) => e.stopPropagation()}
 						>
 							<ModalHeader>
-								<ModalTitle $variant="danger">Delete Character</ModalTitle>
+								<ModalTitle $variant="danger">{t('loadCharacter.deleteModalTitle')}</ModalTitle>
 								<ModalDescription>
-									Are you sure you want to delete "{characterToDelete?.finalName || 'Unnamed Character'}
+									{t('loadCharacter.deleteModalQuestion')} "{characterToDelete?.finalName || t('loadCharacter.unnamedCharacter')}
 									"?
 									<br />
-									This action cannot be undone.
+									{t('loadCharacter.deleteModalWarning')}
 								</ModalDescription>
 							</ModalHeader>
 
@@ -599,7 +601,7 @@ function LoadCharacter() {
 									whileHover={{ scale: 1.05 }}
 									whileTap={{ scale: 0.95 }}
 								>
-									Cancel
+									{t('loadCharacter.cancel')}
 								</SecondaryButton>
 								<CardButton
 									$variant="danger"
@@ -607,7 +609,7 @@ function LoadCharacter() {
 									whileHover={{ scale: 1.05 }}
 									whileTap={{ scale: 0.95 }}
 								>
-									Delete
+									{t('loadCharacter.delete')}
 								</CardButton>
 							</ModalFooter>
 						</Modal>

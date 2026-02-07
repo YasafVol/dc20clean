@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useCharacterKnowledge, useCharacterTrades } from '../hooks/CharacterSheetProvider';
 import {
 	KnowledgeTradesSection,
@@ -30,6 +31,7 @@ const KnowledgeTrades: React.FC<KnowledgeTradesProps> = ({
 	onSkillClick,
 	isMobile = false
 }) => {
+	const { t } = useTranslation();
 	const knowledge = useCharacterKnowledge();
 	const trades = useCharacterTrades();
 
@@ -37,9 +39,9 @@ const KnowledgeTrades: React.FC<KnowledgeTradesProps> = ({
 		<>
 			{/* Knowledge Section */}
 			<KnowledgeTradesSection $isMobile={isMobile}>
-				<SectionTitle $isMobile={isMobile}>KNOWLEDGE</SectionTitle>
+				<SectionTitle $isMobile={isMobile}>{t('characterSheet.knowledgeTitle')}</SectionTitle>
 				<SectionDescription $isMobile={isMobile}>
-					Intelligence-based knowledge trades
+					{t('characterSheet.knowledgeDescription')}
 				</SectionDescription>
 				{knowledge.map((knowledgeItem) => (
 					<SkillRow
@@ -97,9 +99,9 @@ const KnowledgeTrades: React.FC<KnowledgeTradesProps> = ({
 
 			{/* Trades Section */}
 			<KnowledgeTradesSection $isMobile={isMobile}>
-				<SectionTitle $isMobile={isMobile}>TRADES</SectionTitle>
+				<SectionTitle $isMobile={isMobile}>{t('characterSheet.tradesTitle')}</SectionTitle>
 				<SectionDescription $isMobile={isMobile}>
-					Selected practical trades & crafts
+					{t('characterSheet.tradesDescription')}
 				</SectionDescription>
 				{trades.length > 0 ? (
 					trades.map((trade) => (

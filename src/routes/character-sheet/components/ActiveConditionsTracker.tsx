@@ -7,6 +7,7 @@
 
 import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import { ALL_CONDITIONS } from '../../../lib/rulesdata/conditions/conditions.data';
 import type {
 	ConditionDefinition,
@@ -262,6 +263,7 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 	onToggleCondition,
 	isMobile = false
 }) => {
+	const { t } = useTranslation();
 	const [searchTerm, setSearchTerm] = useState('');
 	const [activeTagFilters, setActiveTagFilters] = useState<Set<ConditionTag>>(new Set());
 	const [expandedConditions, setExpandedConditions] = useState<Set<string>>(new Set());
@@ -313,13 +315,13 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 	return (
 		<Container $isMobile={isMobile}>
 			<Header>
-				<Title>⚔️ Conditions</Title>
-				<ActiveCount>{activeConditions.length} active</ActiveCount>
+				<Title>⚔️ {t('characterSheet.conditionsTitle')}</Title>
+				<ActiveCount>{t('characterSheet.conditionsActive', { count: activeConditions.length })}</ActiveCount>
 			</Header>
 
 			<SearchInput
 				type="text"
-				placeholder="Search conditions..."
+				placeholder={t('characterSheet.conditionsSearch')}
 				value={searchTerm}
 				onChange={(e) => setSearchTerm(e.target.value)}
 			/>
@@ -338,7 +340,7 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 
 			<ConditionsList>
 				{filteredConditions.length === 0 ? (
-					<EmptyState>No conditions match your search</EmptyState>
+					<EmptyState>{t('characterSheet.conditionsNoMatch')}</EmptyState>
 				) : (
 					filteredConditions.map((condition) => {
 						const isActive = activeConditions.includes(condition.id);
@@ -368,7 +370,7 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 								{isExpanded && <ConditionDescription>{condition.description}</ConditionDescription>}
 
 								<ExpandButton onClick={() => toggleExpanded(condition.id)}>
-									{isExpanded ? '▲ Hide details' : '▼ Show details'}
+								{isExpanded ? t('characterSheet.conditionsHideDetails') : t('characterSheet.conditionsShowDetails')}
 								</ExpandButton>
 							</ConditionItem>
 						);

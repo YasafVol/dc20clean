@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	CurrencyContainer,
 	CurrencyTitle,
@@ -17,6 +18,7 @@ interface CurrencyProps {
 }
 
 const Currency: React.FC<CurrencyProps> = ({ isMobile = false }) => {
+	const { t } = useTranslation();
 	const { updateCurrency } = useCharacterSheet();
 	const inventory = useCharacterInventory();
 
@@ -26,7 +28,7 @@ const Currency: React.FC<CurrencyProps> = ({ isMobile = false }) => {
 	if (!inventory) {
 		return (
 			<CurrencyLoadingState>
-				<p>Loading currency...</p>
+				<p>{t('characterSheet.currencyLoading')}</p>
 			</CurrencyLoadingState>
 		);
 	}
@@ -74,21 +76,21 @@ const Currency: React.FC<CurrencyProps> = ({ isMobile = false }) => {
 	const currencyTypes = [
 		{
 			key: 'goldPieces',
-			label: 'Gold',
+			label: t('characterSheet.currencyGold'),
 			color: '#ffd700',
 			borderColor: '#b8860b',
 			value: canonicalCurrency.goldPieces
 		},
 		{
 			key: 'silverPieces',
-			label: 'Silver',
+			label: t('characterSheet.currencySilver'),
 			color: '#c0c0c0',
 			borderColor: '#a0a0a0',
 			value: canonicalCurrency.silverPieces
 		},
 		{
 			key: 'copperPieces',
-			label: 'Copper',
+			label: t('characterSheet.currencyCopper'),
 			color: '#b87333',
 			borderColor: theme.colors.accent.primary,
 			value: canonicalCurrency.copperPieces
@@ -97,7 +99,7 @@ const Currency: React.FC<CurrencyProps> = ({ isMobile = false }) => {
 
 	return (
 		<CurrencyContainer isMobile={effectiveIsMobile}>
-			<CurrencyTitle isMobile={effectiveIsMobile}>CURRENCY</CurrencyTitle>
+			<CurrencyTitle isMobile={effectiveIsMobile}>{t('characterSheet.currencyTitle')}</CurrencyTitle>
 
 			{currencyTypes.map(({ key, label, color, borderColor, value }) => (
 				<CurrencyRow key={key} isMobile={effectiveIsMobile}>

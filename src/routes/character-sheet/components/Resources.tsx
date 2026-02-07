@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Tooltip from './Tooltip';
 import { createHPTooltip, createMPTooltip, createSPTooltip } from './StatTooltips';
 import { createEnhancedTooltip } from './EnhancedStatTooltips';
@@ -38,13 +39,14 @@ interface ResourcesProps {
 }
 
 const Resources: React.FC<ResourcesProps> = ({ breakdowns, isMobile = false }) => {
+	const { t } = useTranslation();
 	const { updateHP, updateSP, updateMP, updateTempHP } = useCharacterSheet();
 	const resources = useCharacterResources();
 
 	if (!resources) {
 		return (
 			<div style={{ padding: '1rem', color: '#666', textAlign: 'center' }}>
-				<p>Loading character resources...</p>
+				<p>{t('characterSheet.resourcesLoading')}</p>
 			</div>
 		);
 	}
@@ -158,7 +160,7 @@ const Resources: React.FC<ResourcesProps> = ({ breakdowns, isMobile = false }) =
 							}}
 						>
 							<MobileResourceHeader>
-								<MobileResourceLabel>Temp HP</MobileResourceLabel>
+								<MobileResourceLabel>{t('characterSheet.resourcesTempHP')}</MobileResourceLabel>
 								<MobileResourceValue>{current.tempHP}</MobileResourceValue>
 							</MobileResourceHeader>
 							<MobileResourceControls>
@@ -402,7 +404,7 @@ const Resources: React.FC<ResourcesProps> = ({ breakdowns, isMobile = false }) =
 
 						{/* Temp HP Controls - Desktop */}
 						<TempHPControls>
-							<TempHPLabel>TEMP HP:</TempHPLabel>
+							<TempHPLabel>{t('characterSheet.resourcesTempHPLabel')}</TempHPLabel>
 							<StyledResourceButton
 								onClick={() => onAdjustResource('tempHP', -1)}
 								style={{ fontSize: '0.7rem', width: '20px', height: '20px', padding: '0' }}

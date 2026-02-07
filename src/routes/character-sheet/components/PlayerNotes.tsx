@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
 	StyledPlayerNotesContainer,
@@ -7,12 +8,13 @@ import {
 } from '../styles/PlayerNotes.styles';
 
 const PlayerNotes: React.FC = () => {
+	const { t } = useTranslation();
 	const { updateNotes, state } = useCharacterSheet();
 
 	if (!state.character) {
 		return (
 			<div style={{ padding: '1rem', color: '#666', textAlign: 'center' }}>
-				<p>Loading notes...</p>
+				<p>{t('characterSheet.notesLoading')}</p>
 			</div>
 		);
 	}
@@ -25,13 +27,13 @@ const PlayerNotes: React.FC = () => {
 
 	return (
 		<StyledPlayerNotesContainer>
-			<StyledPlayerNotesTitle>Player Notes</StyledPlayerNotesTitle>
+			<StyledPlayerNotesTitle>{t('characterSheet.notesTitle')}</StyledPlayerNotesTitle>
 
 			<StyledNotesContent>
 				<textarea
 					value={currentNotes}
 					onChange={handleNotesChange}
-					placeholder="Write your notes here..."
+					placeholder={t('characterSheet.notesPlaceholder')}
 					style={{
 						width: '100%',
 						minHeight: '200px',

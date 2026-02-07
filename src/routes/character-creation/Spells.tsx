@@ -5,6 +5,7 @@ import { SpellSchool, SpellSource, type SpellTag } from '../../lib/rulesdata/sch
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { theme } from '../character-sheet/styles/theme';
 import { SecondaryButton } from '../../components/styled/index';
+import { useTranslation } from 'react-i18next';
 import {
 	Container,
 	Header,
@@ -42,6 +43,7 @@ type SustainedFilter = 'all' | 'yes' | 'no';
 
 const Spells: React.FC = () => {
 	const { state, dispatch, calculationResult } = useCharacter();
+	const { t } = useTranslation();
 	const [selectedSpells, setSelectedSpells] = useState<Record<string, string>>({});
 	const [activeSlotId, setActiveSlotId] = useState<string | null>(null);
 	const isInitialLoad = useRef(true);

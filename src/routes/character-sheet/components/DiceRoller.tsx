@@ -1,4 +1,5 @@
 import React, { useState, useImperativeHandle, forwardRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyledDiceRollerContainer } from '../styles/DiceRoller';
 import { theme } from '../styles/theme';
 import { logger } from '../../../lib/utils/logger';
@@ -65,6 +66,7 @@ export interface DiceRollerRef {
 }
 
 const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) => {
+	const { t } = useTranslation();
 	const [rollMode, setRollMode] = useState<RollMode>('normal');
 	const [advantageCount, setAdvantageCount] = useState<number>(2);
 	const [disadvantageCount, setDisadvantageCount] = useState<number>(2);
@@ -288,31 +290,31 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 				<>
 					{/* Roll Mode Controls */}
 					<StyledDiceControls>
-						<div className="section-label">Roll Mode</div>
+						<div className="section-label">{t('characterSheet.diceRollMode')}</div>
 						<StyledModeButtonsContainer>
 							<StyledModeButton
 								$active={rollMode === 'normal'}
 								onClick={() => setRollMode('normal')}
 							>
-								Normal
+								{t('characterSheet.diceNormal')}
 							</StyledModeButton>
 							<StyledModeButton
 								$active={rollMode === 'advantage'}
 								onClick={() => setRollMode('advantage')}
 							>
-								Advantage
+								{t('characterSheet.diceAdvantage')}
 							</StyledModeButton>
 							<StyledModeButton
 								$active={rollMode === 'disadvantage'}
 								onClick={() => setRollMode('disadvantage')}
 							>
-								Disadvantage
+								{t('characterSheet.diceDisadvantage')}
 							</StyledModeButton>
 							<StyledModeButton
 								$active={rollMode === 'no-d20'}
 								onClick={() => setRollMode('no-d20')}
 							>
-								No D20
+								{t('characterSheet.diceNoD20')}
 							</StyledModeButton>
 						</StyledModeButtonsContainer>
 
@@ -320,7 +322,9 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 						{(rollMode === 'advantage' || rollMode === 'disadvantage') && (
 							<StyledCountControlsContainer>
 								<StyledCountLabel>
-									{rollMode === 'advantage' ? 'Advantage' : 'Disadvantage'} Count:
+									{t('characterSheet.diceCountLabel', { 
+										mode: rollMode === 'advantage' ? t('characterSheet.diceAdvantage') : t('characterSheet.diceDisadvantage')
+									})}
 								</StyledCountLabel>
 								<StyledCountButton
 									onClick={() => {
@@ -348,8 +352,10 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 									+
 								</StyledCountButton>
 								<StyledCountDescription>
-									(Roll {rollMode === 'advantage' ? advantageCount : disadvantageCount} dice, take{' '}
-									{rollMode === 'advantage' ? 'highest' : 'lowest'})
+									({rollMode === 'advantage' 
+										? t('characterSheet.diceRollTakeHighest', { count: advantageCount })
+										: t('characterSheet.diceRollTakeLowest', { count: disadvantageCount })
+									})
 								</StyledCountDescription>
 							</StyledCountControlsContainer>
 						)}
@@ -357,7 +363,7 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 
 					{/* Additional Dice Section */}
 					<StyledAddDiceSection>
-						<div className="section-label">Add Dice</div>
+						<div className="section-label">{t('characterSheet.diceAddDice')}</div>
 						<StyledDiceTypeGrid>
 							{(['d20', 'd12', 'd10', 'd8', 'd6', 'd4'] as DiceType[]).map((type) => (
 								<StyledDiceTypeButton key={type} onClick={() => addDice(type)} $diceType={type}>
@@ -370,7 +376,7 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 					{/* Current Dice Display */}
 					{additionalDice.length > 0 && (
 						<StyledDiceList>
-							<div className="section-label">Current Dice</div>
+							<div className="section-label">{t('characterSheet.diceCurrentDice')}</div>
 							{additionalDice.map(({ type, count }) => (
 								<StyledDiceItem key={type}>
 									<span>
@@ -381,7 +387,7 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 									</StyledRemoveDiceButton>
 								</StyledDiceItem>
 							))}
-							<StyledClearAllButton onClick={clearDice}>Clear All</StyledClearAllButton>
+							<StyledClearAllButton onClick={clearDice}>{t('characterSheet.diceClearAll')}</StyledClearAllButton>
 						</StyledDiceList>
 					)}
 
@@ -394,14 +400,14 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 								</StyledDiceIcon>
 								{rollMode !== 'normal' && (
 									<StyledRollModeText>
-										{rollMode === 'advantage' && `${advantageCount}x ADVANTAGE`}
-										{rollMode === 'disadvantage' && `${disadvantageCount}x DISADVANTAGE`}
+										{rollMode === 'advantage' && t('characterSheet.diceAdvantageCount', { count: advantageCount })}
+										{rollMode === 'disadvantage' && t('characterSheet.diceDisadvantageCount', { count: disadvantageCount })}
 									</StyledRollModeText>
 								)}
 							</>
 						)}
 						{rollMode === 'no-d20' && additionalDice.length === 0 && (
-							<StyledEmptyStateMessage>Add dice to roll!</StyledEmptyStateMessage>
+							<StyledEmptyStateMessage>{t('characterSheet.diceEmptyState')}</StyledEmptyStateMessage>
 						)}
 						{additionalDice.map(({ type, count }) => (
 							<StyledAdditionalDiceContainer key={type}>
@@ -420,14 +426,14 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 						disabled={isRolling || (rollMode === 'no-d20' && additionalDice.length === 0)}
 						$isRolling={isRolling}
 					>
-						{isRolling ? 'Rolling...' : 'ROLL DICE'}
+						{isRolling ? t('characterSheet.diceRolling') : t('characterSheet.diceRollButton')}
 					</StyledRollButton>
 
 					{/* Results Display */}
 					{total !== null && !isRolling && (
 						<StyledResultsDisplay>
 							<StyledTotalResult $isHighRoll={total >= 15}>
-								Total: {total}{' '}
+								{t('characterSheet.diceTotal', { total })}{' '}
 								{modifier !== 0 && (
 									<span style={{ fontSize: '0.85em', opacity: 0.8 }}>
 										{' '}
@@ -459,10 +465,10 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 					{/* Roll History */}
 					{rollHistory.length > 0 && (
 						<StyledDiceHistory>
-							<div className="section-label">Recent Rolls</div>
+							<div className="section-label">{t('characterSheet.diceRecentRolls')}</div>
 							{rollHistory.slice(0, 3).map((roll, index) => (
 								<StyledHistoryEntry key={index}>
-									{roll.mode !== 'normal' && `${roll.mode} `}Total: {roll.total}
+									{roll.mode !== 'normal' && `${roll.mode} `}{t('characterSheet.diceTotal', { total: roll.total })}
 								</StyledHistoryEntry>
 							))}
 						</StyledDiceHistory>

@@ -31,6 +31,7 @@ import { Dialog, DialogContent } from '../../components/ui/dialog';
 import { Check, ChevronRight } from 'lucide-react';
 import { SignIn, useIsAuthenticated } from '../../components/auth';
 import { debug } from '../../lib/utils/debug';
+import { useTranslation } from 'react-i18next';
 import {
 	PageContainer,
 	StepperHeader,
@@ -95,6 +96,7 @@ interface CharacterCreationProps {
 const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) => {
 	const navigate = useNavigate();
 	const location = useLocation();
+	const { t } = useTranslation();
 	// If editCharacter is not passed as prop, try to get it from location.state
 	const editChar = editCharacter || (location.state && (location.state as any).editCharacter);
 	// Check for level-up mode
@@ -282,42 +284,42 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			maneuversKnown: calculationResult?.levelBudgets?.totalManeuversKnown ?? 0
 		});
 
-		const steps: Array<{ number: number; label: string }> = [];
+		const steps: Array<{ number: number; id: string; label: string }> = [];
 		let stepNumber = 0;
 
 		// Step 1: Class (always)
 		stepNumber++;
-		steps.push({ number: stepNumber, label: 'Class' });
+		steps.push({ number: stepNumber, id: 'class', label: t('characterCreation.stepClass') });
 
 		// Step 2: Leveling (if level > 1)
 		if (state.level > 1) {
 			stepNumber++;
-			steps.push({ number: stepNumber, label: 'Leveling' });
+			steps.push({ number: stepNumber, id: 'leveling', label: t('characterCreation.stepLeveling') });
 		}
 
 		// Fixed steps: Ancestry, Attributes, Background
 		stepNumber++;
-		steps.push({ number: stepNumber, label: 'Ancestry' });
+		steps.push({ number: stepNumber, id: 'ancestry', label: t('characterCreation.stepAncestry') });
 		stepNumber++;
-		steps.push({ number: stepNumber, label: 'Attributes' });
+		steps.push({ number: stepNumber, id: 'attributes', label: t('characterCreation.stepAttributes') });
 		stepNumber++;
-		steps.push({ number: stepNumber, label: 'Background' });
+		steps.push({ number: stepNumber, id: 'background', label: t('characterCreation.stepBackground') });
 
 		// Conditional: Spells (if character has spell slots)
 		if (hasSpells) {
 			stepNumber++;
-			steps.push({ number: stepNumber, label: 'Spells' });
+			steps.push({ number: stepNumber, id: 'spells', label: t('characterCreation.stepSpells') });
 		}
 
 		// Conditional: Maneuvers (if character has maneuvers known)
 		if (hasManeuvers) {
 			stepNumber++;
-			steps.push({ number: stepNumber, label: 'Maneuvers' });
+			steps.push({ number: stepNumber, id: 'maneuvers', label: t('characterCreation.stepManeuvers') });
 		}
 
 		// Final step: Name (always)
 		stepNumber++;
-		steps.push({ number: stepNumber, label: 'Name' });
+		steps.push({ number: stepNumber, id: 'name', label: t('characterCreation.stepName') });
 
 		return steps;
 	};
@@ -339,7 +341,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 		if (state.currentStep === maxStep && areAllStepsCompleted()) {
 			if (isUsingConvex && !isAuthenticated) {
-				setSnackbarMessage('Sign in to save your character.');
+				setSnackbarMessage(t('characterCreation.signInToSave'));
 				setShowSnackbar(true);
 				setPendingSave(true); // Mark that we want to save after auth
 				setShowAuthDialog(true);
@@ -357,7 +359,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 				await completeCharacter(state, {
 				onShowSnackbar: (_message: string) => {
-						setSnackbarMessage('Character leveled up successfully!');
+						setSnackbarMessage(t('characterCreation.leveledUpSuccess'));
 						setShowSnackbar(true);
 					},
 					onNavigateToLoad: async () => {
@@ -426,7 +428,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 						`Class "${state.classId}" is not supported. All classes should be migrated to the enhanced calculator.`
 					);
 				}
-				setSnackbarMessage('Character updated successfully! Manual modifications preserved.');
+				setSnackbarMessage(t('characterCreation.updateSuccess'));
 				setShowSnackbar(true);
 				setTimeout(() => navigate('/load-character'), 2000);
 			} else {
@@ -461,7 +463,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		debug.character('Restarting character creation - clearing all data');
 		dispatch({ type: 'CLEAR_DRAFT' });
 		dispatch({ type: 'SET_STEP', step: 1 });
-		setSnackbarMessage('Character creation restarted');
+		setSnackbarMessage(t('characterCreation.restartSuccess'));
 		setShowSnackbar(true);
 		setShowRestartModal(false);
 	};
@@ -801,40 +803,40 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	};
 
 	const renderCurrentStep = () => {
-		// Build a mapping from step number to step label for dynamic routing
+		// Build a mapping from step number to step ID for dynamic routing (language-independent)
 		const stepMap = new Map<number, string>();
 		for (const step of steps) {
-			stepMap.set(step.number, step.label);
+			stepMap.set(step.number, step.id);
 		}
 
-		const currentStepLabel = stepMap.get(state.currentStep);
+		const currentStepId = stepMap.get(state.currentStep);
 
-		switch (currentStepLabel) {
-			case 'Class':
+		switch (currentStepId) {
+			case 'class':
 				return (
 					<>
 						<ClassSelector />
 						{state.classId && <ClassFeatures />}
 					</>
 				);
-			case 'Leveling':
+			case 'leveling':
 				return <LevelingChoices />;
-			case 'Ancestry':
+			case 'ancestry':
 				return (
 					<>
 						<AncestrySelector />
 						<SelectedAncestries />
 					</>
 				);
-			case 'Attributes':
+			case 'attributes':
 				return <Attributes />;
-			case 'Background':
+			case 'background':
 				return <Background />;
-			case 'Spells':
+			case 'spells':
 				return <Spells />;
-			case 'Maneuvers':
+			case 'maneuvers':
 				return <Maneuvers />;
-			case 'Name':
+			case 'name':
 				return <CharacterName />;
 			default:
 				return null;
@@ -851,20 +853,22 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				</MobileProgressBar>
 
 				<HeaderContent>
-				{/* Left: Previous Button and Restart */}
+{/* Left: Back to Menu, Previous Button and Restart */}
 				<NavSection $align="start">
-					<SecondaryButton onClick={handlePrevious} disabled={state.currentStep === 1}>
-						← <span style={{ marginLeft: '8px' }}>Previous</span>
+					<SecondaryButton onClick={() => navigate('/')} title={t('common.backToMenu')}>
+						← <span style={{ marginLeft: '8px' }}>{t('common.backToMenu')}</span>
 					</SecondaryButton>
-				<RestartButton onClick={handleRestart} title="Clear all progress and start over">
-					Restart
-				</RestartButton>
+					<SecondaryButton onClick={handlePrevious} disabled={state.currentStep === 1}>
+						{t('characterCreation.previous')}
+					</SecondaryButton>
 		</NavSection>
 
 		{/* Center: Stepper (Desktop) or Title (Mobile) */}
 		<NavSection $align="center" style={{ flex: 1, minWidth: 0 }}>
 					{/* Mobile Title */}
-					<MobileTitle>{editChar ? 'Edit' : 'Create'} Character</MobileTitle>
+					<MobileTitle>
+						{editChar ? t('characterCreation.editCharacter') : t('characterCreation.createCharacter')}
+					</MobileTitle>
 
 					{/* Desktop Stepper */}
 					<StepperContainer>
@@ -901,9 +905,18 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				{/* Right: Next Button */}
 				<NavSection $align="end">
 						<PrimaryButton onClick={handleNext}>
-							<span>{state.currentStep === maxStep ? 'Complete' : 'Next'}</span> →
+							<span>
+								{state.currentStep === maxStep
+									? t('characterCreation.complete')
+									: t('characterCreation.next')}
+							</span>{' '}
+							→
 						</PrimaryButton>
 					</NavSection>
+									<RestartButton onClick={handleRestart} title={t('characterCreation.restartTooltip')}>
+					{t('characterCreation.restart')}
+				</RestartButton>
+
 				</HeaderContent>
 			</StepperHeader>
 
@@ -918,10 +931,10 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 			<ConfirmationModal
 				isOpen={showRestartModal}
-				title="Restart Character Creation?"
-				message="Are you sure you want to restart? All your current progress will be lost."
-				confirmText="Yes, Restart"
-				cancelText="Cancel"
+				title={t('characterCreation.restartModalTitle')}
+				message={t('characterCreation.restartModalMessage')}
+				confirmText={t('characterCreation.yesRestart')}
+				cancelText={t('common.cancel')}
 				variant="danger"
 				onConfirm={confirmRestart}
 				onCancel={() => setShowRestartModal(false)}

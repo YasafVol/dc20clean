@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import type { AttackData } from '../../../types';
 import { weapons, type Weapon } from '../../../lib/rulesdata/inventoryItems';
 import { useCharacterAttacks, useCharacterSheet } from '../hooks/CharacterSheetProvider';
@@ -34,11 +35,12 @@ export interface AttacksProps {
 }
 
 const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
+	const { t } = useTranslation();
 	const { addAttack, removeAttack, updateAttack, state } = useCharacterSheet();
 	const attacks = useCharacterAttacks();
 
 	if (!state.character) {
-		return <div>Loading attacks...</div>;
+		return <div>{t('characterSheet.attacksLoading')}</div>;
 	}
 
 	// Mobile detection logic
@@ -129,37 +131,46 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 	return (
 		<StyledAttacksSection $isMobile={effectiveIsMobile}>
 			<StyledAttacksHeader $isMobile={effectiveIsMobile}>
-				<StyledAttacksTitle $isMobile={effectiveIsMobile}>ATTACKS</StyledAttacksTitle>
+				<StyledAttacksTitle $isMobile={effectiveIsMobile}>{t('characterSheet.attacksTitle')}</StyledAttacksTitle>
 				<StyledAddWeaponButton
 					$isMobile={effectiveIsMobile}
 					onClick={addWeaponSlot}
 					data-testid="add-weapon"
 				>
-					+ Add Weapon
+					+ {t('characterSheet.attacksAddWeapon')}
 				</StyledAddWeaponButton>
 			</StyledAttacksHeader>
 
 			<StyledAttacksContainer $isMobile={effectiveIsMobile}>
 				<StyledAttacksHeaderRow $isMobile={effectiveIsMobile}>
 					<span></span> {/* Empty column for remove button */}
-					<StyledHeaderColumn $isMobile={effectiveIsMobile}>Weapon</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.attacksColumnWeapon')}</StyledHeaderColumn>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile} align="center">
-						Base
-						<br />
-						Dmg
+						{t('characterSheet.attacksColumnBaseDmg').split(' ').map((word, i) => (
+							<React.Fragment key={i}>
+								{word}
+								{i === 0 && <br />}
+							</React.Fragment>
+						))}
 					</StyledHeaderColumn>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile} align="center">
-						Heavy
-						<br />
-						Dmg
+						{t('characterSheet.attacksColumnHeavyDmg').split(' ').map((word, i) => (
+							<React.Fragment key={i}>
+								{word}
+								{i === 0 && <br />}
+							</React.Fragment>
+						))}
 					</StyledHeaderColumn>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile} align="center">
-						Brutal
-						<br />
-						Dmg
+						{t('characterSheet.attacksColumnBrutalDmg').split(' ').map((word, i) => (
+							<React.Fragment key={i}>
+								{word}
+								{i === 0 && <br />}
+							</React.Fragment>
+						))}
 					</StyledHeaderColumn>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile} align="center">
-						Type
+						{t('characterSheet.attacksColumnType')}
 					</StyledHeaderColumn>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile} align="center">
 						<StyledInfoIcon $isMobile={effectiveIsMobile}>i</StyledInfoIcon>
@@ -168,7 +179,7 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 
 				{attacks.length === 0 ? (
 					<StyledEmptyState $isMobile={effectiveIsMobile}>
-						No weapons added. Click "Add Weapon" to add your first weapon.
+						{t('characterSheet.attacksNoWeapons')}
 					</StyledEmptyState>
 				) : (
 					attacks.map((attack, index) => {
@@ -181,7 +192,7 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 								{/* Remove Button */}
 								<DeleteButton
 									onClick={() => removeWeaponSlot(index)}
-									title="Remove weapon"
+									title={t('characterSheet.attacksRemoveWeapon')}
 									$isMobile={effectiveIsMobile}
 								/>
 
@@ -192,7 +203,7 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 									onChange={(e: any) => handleWeaponSelect(index, e.target.value)}
 									data-testid="weapon-name"
 								>
-									<option value="">Select Weapon...</option>
+									<option value="">{t('characterSheet.attacksSelectWeapon')}</option>
 									{weapons.map((weapon) => (
 										<option key={weapon.name} value={weapon.name}>
 											{weapon.name} ({weapon.handedness})

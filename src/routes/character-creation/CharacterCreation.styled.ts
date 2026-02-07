@@ -60,7 +60,7 @@ export const HeaderContent = styled.div`
   gap: ${theme.spacing[4]};
   padding: ${theme.spacing[2]} ${theme.spacing[4]};
   min-height: 80px;
-  max-width: 1400px;
+  max-width: 1460px;
   margin: 0 auto;
   width: 100%;
 `;
@@ -207,7 +207,7 @@ export const StepSeparator = styled.div`
 
 // Main content area
 export const MainContent = styled.main`
-  max-width: 1400px;
+  max-width: 1460px;
   width: 100%;
   margin: 0 auto;
   padding: ${theme.spacing[8]} ${theme.spacing[4]};

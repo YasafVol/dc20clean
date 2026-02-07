@@ -211,7 +211,7 @@ export const TabNav = styled.div`
 	background: ${theme.colors.bg.secondary};
 	overflow-x: auto;
 	scrollbar-width: thin;
-	scrollbar-color: ${theme.colors.border.default} transparent;
+	scrollbar-color: #7aa2f7 transparent;
 
 	&::-webkit-scrollbar {
 		height: 4px;
@@ -222,8 +222,12 @@ export const TabNav = styled.div`
 	}
 
 	&::-webkit-scrollbar-thumb {
-		background: ${theme.colors.border.default};
+		background: #7aa2f7;
 		border-radius: ${theme.borderRadius.full};
+	}
+
+	&::-webkit-scrollbar-thumb:hover {
+		background: #7dcfff;
 	}
 
 	/* Hide desktop tabs on mobile - use bottom nav instead */

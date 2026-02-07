@@ -65,22 +65,22 @@ const GlobalStyle = createGlobalStyle`
 		width: 12px;
 	}
 	::-webkit-scrollbar-track {
-		background: #1e1b4b;
+		background: #16161e;
 	}
 	::-webkit-scrollbar-thumb {
-		background: #fbbf24;
+		background: #7aa2f7;
 		border-radius: 6px;
 	}
 	::-webkit-scrollbar-thumb:hover {
-		background: #f1bf3eff;
+		background: #7dcfff;
 	}
 	::selection {
-		background: #fbbf24;
-		color: #1e1b4b;
+		background: #bb9af7;
+		color: #1a1b26;
 	}
 	::-moz-selection {
-		background: #fbbf24;
-		color: #1e1b4b;
+		background: #bb9af7;
+		color: #1a1b26;
 	}
 `;
 

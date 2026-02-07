@@ -33,7 +33,13 @@ export const theme = {
 		warningAlpha30: 'rgba(224, 175, 104, 0.3)',
 		warningAlpha40: 'rgba(224, 175, 104, 0.4)',
 
-		infoAlpha20: 'rgba(122, 162, 247, 0.2)'
+		infoAlpha20: 'rgba(122, 162, 247, 0.2)',
+		infoAlpha30: 'rgba(122, 162, 247, 0.3)',
+
+		secondaryAlpha10: 'rgba(187, 154, 247, 0.1)',
+		secondaryAlpha20: 'rgba(187, 154, 247, 0.2)',
+		secondaryAlpha30: 'rgba(187, 154, 247, 0.3)',
+		secondaryAlpha40: 'rgba(187, 154, 247, 0.4)'
 	},
 
 	// Resource colors

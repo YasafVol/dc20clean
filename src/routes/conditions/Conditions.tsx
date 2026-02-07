@@ -6,17 +6,18 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { theme } from '../character-sheet/styles/theme';
 import { ALL_CONDITIONS } from '../../lib/rulesdata/conditions/conditions.data';
 import type { ConditionTag } from '../../lib/rulesdata/conditions/conditions.types';
-import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 
 const PageContainer = styled.div`
 	min-height: 100vh;
-	background: url('/src/assets/BlackBG.jpg') center/cover no-repeat fixed;
-	padding: 2rem;
+	background: ${theme.colors.bg.primary};
+	color: ${theme.colors.text.primary};
+	font-family: ${theme.typography.fontFamily.primary};
+	padding: ${theme.spacing[8]} ${theme.spacing[4]};
 `;
 
 const BackButtonRow = styled.div`
@@ -30,95 +31,104 @@ const ContentWrapper = styled.div`
 `;
 
 const Title = styled.h1`
-	font-family: 'Cinzel', serif;
-	color: #fbbf24;
+	font-size: ${theme.typography.fontSize['3xl']};
+	font-weight: ${theme.typography.fontWeight.bold};
+	color: ${theme.colors.text.primary};
 	text-align: center;
-	margin-bottom: 0.5rem;
-	font-size: 1.875rem;
-	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+	margin: 0 0 ${theme.spacing[2]} 0;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
 `;
 
 const Subtitle = styled.p`
-	color: #e5e7eb;
+	color: ${theme.colors.text.secondary};
 	text-align: center;
-	margin-bottom: 2rem;
+	font-size: ${theme.typography.fontSize.base};
+	margin: 0 0 ${theme.spacing[6]} 0;
 `;
 
 const FilterCard = styled.div`
-	background: linear-gradient(to bottom right, #1e1b4b, #312e81);
-	border: 2px solid #a855f7;
-	border-radius: 0.75rem;
-	padding: 1.5rem;
-	margin-bottom: 1.5rem;
-	box-shadow: 0 10px 15px -3px rgba(168, 85, 247, 0.3);
+	background: ${theme.colors.bg.secondary};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.lg};
+	padding: ${theme.spacing[6]};
+	margin-bottom: ${theme.spacing[6]};
+	box-shadow: ${theme.shadows.md};
 `;
 
 const SearchInput = styled.input`
 	width: 100%;
-	padding: 0.75rem 1rem;
-	border: 1px solid rgba(168, 85, 247, 0.5);
-	border-radius: 0.5rem;
-	font-size: 1rem;
-	color: #fff;
-	background: rgba(0, 0, 0, 0.3);
-	margin-bottom: 1rem;
+	padding: ${theme.spacing[3]} ${theme.spacing[4]};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
+	font-size: ${theme.typography.fontSize.base};
+	color: ${theme.colors.text.primary};
+	background: ${theme.colors.bg.tertiary};
+	margin-bottom: ${theme.spacing[4]};
+	transition: all ${theme.transitions.fast};
 
 	&::placeholder {
-		color: #888;
+		color: ${theme.colors.text.muted};
 	}
 
 	&:focus {
 		outline: none;
-		border-color: #a855f7;
-		box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
+		border-color: ${theme.colors.border.focus};
+		box-shadow: 0 0 0 2px ${theme.colors.accent.primaryAlpha30};
 	}
 `;
 
 const TagFilters = styled.div`
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.5rem;
+	gap: ${theme.spacing[2]};
 `;
 
 const TagButton = styled.button<{ $active: boolean }>`
-	padding: 0.4rem 0.75rem;
-	border-radius: 1rem;
-	font-size: 0.85rem;
+	padding: ${theme.spacing[2]} ${theme.spacing[4]};
+	border-radius: ${theme.borderRadius.md};
+	font-size: ${theme.typography.fontSize.sm};
+	font-weight: ${theme.typography.fontWeight.medium};
 	cursor: pointer;
-	transition: all 0.15s ease;
-	border: 1px solid ${(props) => (props.$active ? '#a855f7' : 'rgba(255,255,255,0.2)')};
-	background: ${(props) => (props.$active ? '#a855f7' : 'transparent')};
-	color: ${(props) => (props.$active ? '#fff' : '#ccc')};
+	transition: all ${theme.transitions.fast};
+	border: 1px solid ${(props) => (props.$active ? theme.colors.accent.primary : theme.colors.border.default)};
+	background: ${(props) => (props.$active ? theme.colors.accent.primary : theme.colors.bg.tertiary)};
+	color: ${(props) => (props.$active ? theme.colors.text.inverse : theme.colors.text.primary)};
 
 	&:hover {
-		border-color: #a855f7;
-		background: ${(props) => (props.$active ? '#a855f7' : 'rgba(168, 85, 247, 0.2)')};
+		border-color: ${theme.colors.accent.primary};
+		background: ${(props) => (props.$active ? theme.colors.accent.primary : theme.colors.bg.elevated)};
+	}
+
+	&:active {
+		transform: scale(0.98);
 	}
 `;
 
 const ConditionsList = styled.div`
 	display: flex;
 	flex-direction: column;
-	gap: 0.75rem;
+	gap: ${theme.spacing[3]};
 `;
 
 const ConditionCard = styled.div<{ $expanded: boolean }>`
-	background: linear-gradient(to bottom right, #1e1b4b, #312e81);
-	border: 2px solid #a855f7;
-	border-radius: 0.75rem;
+	background: ${theme.colors.bg.secondary};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.lg};
 	overflow: hidden;
-	box-shadow: 0 10px 15px -3px rgba(168, 85, 247, 0.3);
-	transition: all 0.2s ease;
+	box-shadow: ${theme.shadows.md};
+	transition: all ${theme.transitions.fast};
 
 	&:hover {
 		transform: translateY(-2px);
-		box-shadow: 0 20px 25px -5px rgba(168, 85, 247, 0.4);
+		box-shadow: ${theme.shadows.lg};
+		border-color: ${theme.colors.accent.primary};
 	}
 `;
 
 const ConditionHeader = styled.button`
 	width: 100%;
-	padding: 1rem;
+	padding: ${theme.spacing[4]};
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -126,84 +136,82 @@ const ConditionHeader = styled.button`
 	border: none;
 	cursor: pointer;
 	text-align: left;
-	color: #fff;
+	color: ${theme.colors.text.primary};
 `;
 
 const ConditionName = styled.span`
-	font-weight: 600;
-	font-size: 1.1rem;
-	color: #fbbf24;
+	font-weight: ${theme.typography.fontWeight.bold};
+	font-size: ${theme.typography.fontSize.lg};
+	color: ${theme.colors.text.primary};
 `;
 
 const TypeBadge = styled.span<{ $type: string }>`
-	font-size: 0.7rem;
-	padding: 0.2rem 0.5rem;
-	border-radius: 0.5rem;
-	margin-left: 0.75rem;
+	font-size: ${theme.typography.fontSize.xs};
+	padding: ${theme.spacing[1]} ${theme.spacing[3]};
+	border-radius: ${theme.borderRadius.md};
+	margin-left: ${theme.spacing[3]};
 	text-transform: uppercase;
+	font-weight: ${theme.typography.fontWeight.semibold};
 	background: ${(props) => {
 		switch (props.$type) {
 			case 'stacking':
-				return 'rgba(251, 146, 60, 0.2)';
+				return theme.colors.accent.warning;
 			case 'overlapping':
-				return 'rgba(96, 165, 250, 0.2)';
+				return theme.colors.accent.info;
 			case 'absolute':
-				return 'rgba(167, 139, 250, 0.2)';
+				return theme.colors.accent.secondary;
 			default:
-				return 'rgba(255,255,255,0.1)';
+				return theme.colors.bg.tertiary;
 		}
 	}};
 	color: ${(props) => {
 		switch (props.$type) {
 			case 'stacking':
-				return '#fb923c';
 			case 'overlapping':
-				return '#60a5fa';
 			case 'absolute':
-				return '#a78bfa';
+				return theme.colors.text.inverse;
 			default:
-				return '#ccc';
+				return theme.colors.text.secondary;
 		}
 	}};
 `;
 
 const ExpandIcon = styled.span<{ $expanded: boolean }>`
-	font-size: 0.9rem;
-	color: #888;
-	transition: transform 0.2s ease;
+	font-size: ${theme.typography.fontSize.base};
+	color: ${theme.colors.text.secondary};
+	transition: transform ${theme.transitions.fast};
 	transform: ${(props) => (props.$expanded ? 'rotate(180deg)' : 'rotate(0)')};
 `;
 
 const ConditionDescription = styled.div`
-	padding: 0 1rem 1rem;
-	font-size: 0.95rem;
-	line-height: 1.6;
-	color: #ccc;
-	border-top: 1px solid rgba(255, 255, 255, 0.1);
-	padding-top: 0.75rem;
+	padding: ${theme.spacing[4]};
+	font-size: ${theme.typography.fontSize.sm};
+	line-height: ${theme.typography.lineHeight.relaxed};
+	color: ${theme.colors.text.primary};
+	border-top: 1px solid ${theme.colors.border.default};
 `;
 
 const ConditionTags = styled.div`
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.35rem;
-	margin-top: 0.5rem;
+	gap: ${theme.spacing[1]};
+	margin-top: ${theme.spacing[2]};
 `;
 
 const ConditionTagBadge = styled.span<{ $tag: string }>`
-	font-size: 0.7rem;
-	padding: 0.15rem 0.4rem;
-	border-radius: 0.35rem;
-	background: rgba(255, 255, 255, 0.1);
-	color: #aaa;
+	font-size: ${theme.typography.fontSize.xs};
+	padding: ${theme.spacing[1]} ${theme.spacing[3]};
+	border-radius: ${theme.borderRadius.md};
+	background: ${theme.colors.bg.tertiary};
+	color: ${theme.colors.text.secondary};
+	font-weight: ${theme.typography.fontWeight.medium};
 `;
 
 const EmptyState = styled.div`
 	text-align: center;
-	padding: 2rem;
-	color: #888;
-	font-size: 1rem;
-	font-style: italic;
+	padding: ${theme.spacing[12]} ${theme.spacing[4]};
+	color: ${theme.colors.text.muted};
+	font-size: ${theme.typography.fontSize.lg};
 `;
 
 const ALL_TAGS: ConditionTag[] = ['physical', 'mental', 'sensory', 'movement', 'damage'];
@@ -223,7 +231,6 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 const Conditions: React.FC = () => {
-	const navigate = useNavigate();
 	const { t } = useTranslation();
 	const [searchTerm, setSearchTerm] = useState('');
 	const [activeTagFilters, setActiveTagFilters] = useState<Set<ConditionTag>>(new Set());
@@ -276,11 +283,6 @@ const Conditions: React.FC = () => {
 
 	return (
 		<PageContainer>
-			<BackButtonRow>
-				<Button variant="secondary" onClick={() => navigate('/menu')} className="font-bold">
-					← {t('conditions.backToMenu')}
-				</Button>
-			</BackButtonRow>
 			<ContentWrapper>
 				<Title>{t('conditions.title')}</Title>
 				<Subtitle>{t('conditions.subtitle')}</Subtitle>

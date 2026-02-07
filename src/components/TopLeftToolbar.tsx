@@ -2,6 +2,7 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { theme } from '../routes/character-sheet/styles/theme';
 import LanguageSwitcher from './LanguageSwitcher';
 
 const ToolbarContainer = styled.div`
@@ -17,28 +18,26 @@ const ToolbarContainer = styled.div`
 const BackButton = styled.button`
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
-	padding: 0.5rem 0.75rem;
-	background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
-	border: 1px solid rgba(168, 85, 247, 0.3);
+	gap: ${theme.spacing[2]};
+	padding: ${theme.spacing[3]} ${theme.spacing[4]};
+	background: rgba(168, 85, 247, 0.05);
+	border: 1px solid rgba(168, 85, 247, 0.4);
 	border-radius: 8px;
 	color: #e0e7ff;
-	font-size: 0.875rem;
-	font-weight: 500;
+	font-size: ${theme.typography.fontSize.sm};
+	font-weight: ${theme.typography.fontWeight.medium};
 	cursor: pointer;
-	transition: all 0.2s ease;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	transition: all 0.3s ease;
+	backdrop-filter: blur(4px);
 
 	&:hover {
-		background: linear-gradient(145deg, #312e81 0%, #3730a3 100%);
-		border-color: rgba(168, 85, 247, 0.5);
-		transform: translateY(-1px);
-		box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+		background: rgba(168, 85, 247, 0.15);
+		border-color: #a855f7;
+		transform: translateY(-2px);
 	}
 
 	&:active {
-		transform: translateY(0);
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+		transform: scale(0.98);
 	}
 `;
 

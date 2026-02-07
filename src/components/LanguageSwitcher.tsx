@@ -90,9 +90,14 @@ export const LanguageSwitcher: React.FC = () => {
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	const changeLanguage = (lang: string) => {
-		i18n.changeLanguage(lang);
-		localStorage.setItem('preferredLanguage', lang);
-		setIsOpen(false);
+		// Safety check: ensure i18n is ready before changing language
+		if (i18n && typeof i18n.changeLanguage === 'function') {
+			i18n.changeLanguage(lang);
+			localStorage.setItem('preferredLanguage', lang);
+			setIsOpen(false);
+		} else {
+			console.error('[LanguageSwitcher] i18n not ready or changeLanguage not available');
+		}
 	};
 
 	const getFlagIcon = (lang: string) => {

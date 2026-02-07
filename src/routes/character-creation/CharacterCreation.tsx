@@ -853,11 +853,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				</MobileProgressBar>
 
 				<HeaderContent>
-{/* Left: Back to Menu, Previous Button and Restart */}
+				{/* Left: Previous Button and Restart */}
 				<NavSection $align="start">
-					<SecondaryButton onClick={() => navigate('/')} title={t('common.backToMenu')}>
-						← <span style={{ marginLeft: '8px' }}>{t('common.backToMenu')}</span>
-					</SecondaryButton>
 					<SecondaryButton onClick={handlePrevious} disabled={state.currentStep === 1}>
 						{t('characterCreation.previous')}
 					</SecondaryButton>

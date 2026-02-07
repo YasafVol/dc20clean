@@ -374,13 +374,6 @@ function LoadCharacter() {
 				transition={{ duration: 0.5 }}
 			>
 				<ButtonRow>
-					<SecondaryButton
-						onClick={() => navigate('/menu')}
-						whileHover={{ scale: 1.05 }}
-						whileTap={{ scale: 0.95 }}
-					>
-						{t('loadCharacter.backToMenu')}
-					</SecondaryButton>
 					<SuccessButton
 						onClick={handleImportClick}
 						whileHover={{ scale: 1.05 }}

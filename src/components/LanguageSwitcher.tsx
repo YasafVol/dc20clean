@@ -3,10 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 const SwitcherContainer = styled.div`
-	position: fixed;
-	top: 1rem;
-	left: 1rem;
-	z-index: 10000;
+	position: relative;
 `;
 
 const SwitcherButton = styled.button`

@@ -38,15 +38,15 @@ describe('characterReducer', () => {
 		expect(Array.isArray(result.selectedTraitIds)).toBe(true);
 	});
 
-	test('UPDATE_SPELLS_AND_MANEUVERS action stores native arrays', () => {
+	test('UPDATE_SPELLS_AND_MANEUVERS action stores correct types', () => {
 		const initialState: Partial<CharacterInProgressStoreData> = {
-			selectedSpells: [],
+			selectedSpells: {},
 			selectedManeuvers: []
 		};
 
 		const action = {
 			type: 'UPDATE_SPELLS_AND_MANEUVERS' as const,
-			spells: ['spell1', 'spell2'],
+			spells: { slot_0: 'spell_fireball', slot_1: 'spell_shield' } as Record<string, string>,
 			maneuvers: ['maneuver1']
 		};
 
@@ -56,9 +56,10 @@ describe('characterReducer', () => {
 			selectedManeuvers: action.maneuvers
 		};
 
-		expect(result.selectedSpells).toEqual(['spell1', 'spell2']);
+		expect(result.selectedSpells).toEqual({ slot_0: 'spell_fireball', slot_1: 'spell_shield' });
 		expect(result.selectedManeuvers).toEqual(['maneuver1']);
-		expect(Array.isArray(result.selectedSpells)).toBe(true);
+		expect(typeof result.selectedSpells).toBe('object');
+		expect(Array.isArray(result.selectedSpells)).toBe(false);
 		expect(Array.isArray(result.selectedManeuvers)).toBe(true);
 	});
 });

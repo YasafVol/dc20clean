@@ -253,7 +253,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			// Spells & Maneuvers
 			dispatch({
 				type: 'UPDATE_SPELLS_AND_MANEUVERS',
-				spells: contextData.selectedSpells || [],
+				spells: contextData.selectedSpells || {},
 				maneuvers: contextData.selectedManeuvers || []
 			});
 
@@ -469,22 +469,22 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	};
 
 	const isStepCompleted = (step: number) => {
-		// Build a mapping from step number to step label for dynamic validation
-		const stepMap = new Map<number, string>();
+		// Build a mapping from step number to step ID for language-independent validation
+		const stepIdMap = new Map<number, string>();
 		for (const s of steps) {
-			stepMap.set(s.number, s.label);
+			stepIdMap.set(s.number, s.id);
 		}
 
-		const stepLabel = stepMap.get(step);
+		const stepId = stepIdMap.get(step);
 
 		debug.state('isStepCompleted debug:', {
 			step,
-			stepLabel,
+			stepId,
 			'state.level': state.level
 		});
 
-		switch (stepLabel) {
-			case 'Class': {
+		switch (stepId) {
+			case 'class': {
 				if (state.classId === null) return false;
 
 				// Check if all required feature choices have been made
@@ -581,7 +581,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				return true;
 			}
 
-			case 'Leveling': {
+			case 'leveling': {
 				// L2: Validation bypass controlled by environment variable
 				const skipLevelingValidation = import.meta.env.VITE_SKIP_LEVELING_VALIDATION === 'true';
 				if (skipLevelingValidation) {
@@ -646,7 +646,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				}
 			}
 
-			case 'Ancestry': {
+			case 'ancestry': {
 				// Use centralized calculator for ancestry points validation
 				const ancestryData = calculationResult.ancestry || { ancestryPointsRemaining: 5 };
 				const { ancestryPointsRemaining } = ancestryData;
@@ -656,14 +656,14 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				const allPointsSpent = ancestryPointsRemaining === 0;
 				const isValid = hasAncestry && pointsValid && allPointsSpent;
 
-				debug.state('Ancestry validation:', { step, stepLabel, isValid });
+				debug.state('Ancestry validation:', { step, stepId, isValid });
 				return isValid;
 			}
 
-			case 'Attributes':
+			case 'attributes':
 				return attributePointsRemaining === 0;
 
-			case 'Background': {
+			case 'background': {
 				// Use calculator's background data instead of recalculating
 				const background = calculationResult?.background;
 				if (!background) {
@@ -741,7 +741,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				return isValid;
 			}
 
-			case 'Spells': {
+			case 'spells': {
 				// Validate all spell slots are filled
 				const spellSlots = calculationResult?.spellsKnownSlots || [];
 				const selectedSpells = state.selectedSpells || {};
@@ -756,7 +756,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				return isValid;
 			}
 
-			case 'Maneuvers': {
+			case 'maneuvers': {
 				// Validate selected maneuvers equals totalManeuversKnown
 				const totalManeuversKnown = calculationResult?.levelBudgets?.totalManeuversKnown || 0;
 				const selectedManeuvers = state.selectedManeuvers || [];
@@ -771,7 +771,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				return isValid;
 			}
 
-			case 'Name':
+			case 'name':
 				return (
 					state.finalName !== null &&
 					state.finalName !== '' &&

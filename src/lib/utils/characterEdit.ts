@@ -5,6 +5,7 @@ import type { CharacterInProgressStoreData } from '../stores/characterContext';
 import type { SavedCharacter } from '../types/dataContracts';
 import { getCharacterState, updateCharacterState } from './characterState';
 import { traitsData } from '../rulesdata/ancestries/traits';
+import { ALL_SPELLS as allSpells } from '../rulesdata/spells-data';
 import { getDefaultStorage } from '../storage';
 import { debug } from './debug';
 
@@ -58,8 +59,47 @@ export const convertCharacterToInProgress = (
 			!Array.isArray(savedCharacter.languagesData)
 				? savedCharacter.languagesData
 				: { common: { fluency: 'fluent' } },
-		selectedSpells: Array.isArray(savedCharacter.spells) ? savedCharacter.spells : [],
-		selectedManeuvers: Array.isArray(savedCharacter.maneuvers) ? savedCharacter.maneuvers : [],
+		// Convert SpellData[] back to Record<string, string> (slotId → spellId)
+		selectedSpells: (() => {
+			if (!Array.isArray(savedCharacter.spells) || savedCharacter.spells.length === 0) return {};
+			const record: Record<string, string> = {};
+			savedCharacter.spells.forEach((spell: any, index: number) => {
+				const spellName = spell.spellName || spell.name;
+				if (spellName) {
+					const catalogSpell = allSpells.find((s) => s.name === spellName);
+					if (catalogSpell) {
+						record[`restored_slot_${index}`] = catalogSpell.id;
+					}
+				}
+			});
+			return record;
+		})(),
+		// Convert ManeuverData[] back to string[] (maneuver names)
+		selectedManeuvers: Array.isArray(savedCharacter.maneuvers)
+			? savedCharacter.maneuvers.map((m: any) => (typeof m === 'string' ? m : m.name)).filter(Boolean)
+			: [],
+		// Mastery limit elevations (default empty - will be populated during editing)
+		skillMasteryLimitElevations: {},
+		tradeMasteryLimitElevations: {},
+		// CRITICAL: Restore leveling choices for path bonuses and stat calculation
+		pathPointAllocations: savedCharacter.pathPointAllocations || {},
+		selectedTalents: (() => {
+			// Convert string[] back to Record<string, number> if needed
+			const raw = savedCharacter.selectedTalents;
+			if (!raw) return {};
+			if (Array.isArray(raw)) {
+				const record: Record<string, number> = {};
+				raw.forEach((id: string) => {
+					record[id] = (record[id] || 0) + 1;
+				});
+				return record;
+			}
+			return typeof raw === 'object' ? raw : {};
+		})(),
+		selectedSubclass: savedCharacter.selectedSubclass,
+		selectedMulticlassOption: savedCharacter.selectedMulticlassOption,
+		selectedMulticlassClass: savedCharacter.selectedMulticlassClass,
+		selectedMulticlassFeature: savedCharacter.selectedMulticlassFeature,
 		// CRITICAL: Restore conversions for background step validation
 		skillToTradeConversions: savedCharacter.skillToTradeConversions || 0,
 		tradeToSkillConversions: savedCharacter.tradeToSkillConversions || 0,
@@ -148,9 +188,7 @@ export const completeCharacterEdit = async (
 				typeof newCharacterState.tradesData === 'object' ? newCharacterState.tradesData : {},
 			languagesData:
 				typeof newCharacterState.languagesData === 'object' ? newCharacterState.languagesData : {},
-			selectedSpells: Array.isArray(newCharacterState.selectedSpells)
-				? newCharacterState.selectedSpells
-				: [],
+			selectedSpells: newCharacterState.selectedSpells || {},
 			selectedManeuvers: Array.isArray(newCharacterState.selectedManeuvers)
 				? newCharacterState.selectedManeuvers
 				: [],
@@ -159,6 +197,13 @@ export const completeCharacterEdit = async (
 			skillToTradeConversions: newCharacterState.skillToTradeConversions || 0,
 			tradeToSkillConversions: newCharacterState.tradeToSkillConversions || 0,
 			tradeToLanguageConversions: newCharacterState.tradeToLanguageConversions || 0,
+			// CRITICAL: Include leveling choices so calculated stats include path/talent/subclass bonuses
+			pathPointAllocations: newCharacterState.pathPointAllocations || {},
+			selectedTalents: newCharacterState.selectedTalents || {},
+			selectedSubclass: newCharacterState.selectedSubclass,
+			selectedMulticlassOption: newCharacterState.selectedMulticlassOption,
+			selectedMulticlassClass: newCharacterState.selectedMulticlassClass,
+			selectedMulticlassFeature: newCharacterState.selectedMulticlassFeature,
 			lastModified: new Date().toISOString()
 		});
 
@@ -186,6 +231,13 @@ export const completeCharacterEdit = async (
 				tradeToSkillConversions: newCharacterState.tradeToSkillConversions || 0,
 				tradeToLanguageConversions: newCharacterState.tradeToLanguageConversions || 0,
 				usePrimeCapRule: !!newCharacterState.usePrimeCapRule,
+				// CRITICAL: Persist leveling choices for future editing round-trips
+				pathPointAllocations: newCharacterState.pathPointAllocations || {},
+				selectedTalents: newCharacterState.selectedTalents || {},
+				selectedSubclass: newCharacterState.selectedSubclass,
+				selectedMulticlassOption: newCharacterState.selectedMulticlassOption,
+				selectedMulticlassClass: newCharacterState.selectedMulticlassClass,
+				selectedMulticlassFeature: newCharacterState.selectedMulticlassFeature,
 				// ensure we carry over latest breakdowns if provided by calculator
 				breakdowns:
 					(newCalculatedCharacter as any).breakdowns || savedCharacters[characterIndex].breakdowns,

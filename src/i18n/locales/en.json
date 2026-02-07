@@ -31,7 +31,7 @@
 		"referenceToolsSection": "Reference Tools",
 		"spellbook": "Spellbook",
 		"conditions": "Conditions",
-		"equipage": "Equipage",
+		"equipage": "Custom Equipment",
 		"rulesVersion": "Rules: DC20 v0.10"
 	},
 	"auth": {
@@ -518,7 +518,64 @@
 	"dmTools": {
 		"encounters": "Encounters",
 		"monsters": "Monsters",
-		"backToMenu": "Back to Menu"
+		"backToMenu": "Back to Menu",
+		"encounterPlanner": {
+			"title": "Encounter Planner",
+			"createEncounter": "Create New Encounter",
+			"searchPlaceholder": "Search encounters...",
+			"noEncounters": "No encounters yet. Create your first one!",
+			"difficulty": "Difficulty",
+			"budget": "Budget",
+			"partySize": "Party Size",
+			"partyLevel": "Party Level",
+			"totalBudget": "Total Budget",
+			"usedBudget": "Used",
+			"remainingBudget": "Remaining",
+			"addMonster": "Add Monster",
+			"removeMonster": "Remove Monster",
+			"quantity": "Quantity",
+			"cost": "Cost",
+			"easy": "Easy",
+			"medium": "Medium",
+			"hard": "Hard",
+			"deadly": "Deadly",
+			"deleteEncounter": "Delete Encounter",
+			"confirmDelete": "Are you sure you want to delete this encounter?"
+		},
+		"monsterLab": {
+			"title": "Monster Laboratory",
+			"createMonster": "Create New Monster",
+			"searchPlaceholder": "Search monsters...",
+			"noMonsters": "No custom monsters yet. Create your first one!",
+			"basicInfo": "Basic Information",
+			"name": "Name",
+			"level": "Level",
+			"role": "Role",
+			"size": "Size",
+			"stats": "Stats",
+			"health": "Health",
+			"armor": "Armor",
+			"physicalDefense": "Physical Defense",
+			"mysticalDefense": "Mystical Defense",
+			"speed": "Speed",
+			"actions": "Actions",
+			"addAction": "Add Action",
+			"features": "Features",
+			"featurePoints": "Feature Points",
+			"available": "Available",
+			"spent": "Spent",
+			"preview": "Preview",
+			"deleteMonster": "Delete Monster",
+			"confirmDelete": "Are you sure you want to delete this monster?",
+			"roles": {
+				"controller": "Controller",
+				"defender": "Defender",
+				"lurker": "Lurker",
+				"skirmisher": "Skirmisher",
+				"striker": "Striker",
+				"supporter": "Supporter"
+			}
+		}
 	},
 	"snackbar": {
 		"closeAriaLabel": "Close"

@@ -35,6 +35,8 @@ const SwitcherButton = styled.button`
 const FlagIcon = styled.span`
 	font-size: 1.25rem;
 	line-height: 1;
+	/* Ensure proper emoji rendering on Windows */
+	font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', sans-serif;
 `;
 
 const Dropdown = styled.div<{ $isOpen: boolean }>`

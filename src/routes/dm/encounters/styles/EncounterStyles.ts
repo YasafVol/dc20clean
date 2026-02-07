@@ -1,8 +1,10 @@
 /**
  * Encounter Planner Styled Components
+ * Uses CSS variables for colors, theme tokens for spacing/typography
  */
 
 import styled from 'styled-components';
+import { theme } from '../../../character-sheet/styles/theme';
 
 // Reuse page layout from monsters
 export {
@@ -29,6 +31,9 @@ export {
 	ValidationIcon
 } from '../../monsters/styles/MonsterStyles';
 
+// Export design system buttons
+export { Button, IconButton } from '../../../../components/common/Button';
+
 // ============================================================================
 // ENCOUNTER LIST
 // ============================================================================
@@ -36,104 +41,94 @@ export {
 export const EncounterGrid = styled.div`
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-	gap: 1.25rem;
+	gap: ${theme.spacing[5]};
 `;
 
 export const EncounterCardContainer = styled.div<{ $difficulty?: string }>`
-	background: linear-gradient(
-		135deg,
-		${(props) =>
-				props.$difficulty === 'deadly'
-					? 'rgba(239, 68, 68, 0.15)'
-					: props.$difficulty === 'hard'
-						? 'rgba(234, 179, 8, 0.15)'
-						: 'rgba(30, 27, 75, 0.8)'}
-			0%,
-		rgba(30, 27, 75, 0.9) 100%
-	);
+	background: var(--bg-secondary);
 	border: 1px solid
 		${(props) =>
 			props.$difficulty === 'deadly'
-				? '#ef4444'
+				? 'var(--accent-danger)'
 				: props.$difficulty === 'hard'
-					? '#eab308'
-					: 'rgba(168, 85, 247, 0.4)'};
-	border-radius: 12px;
+					? 'var(--accent-warning)'
+					: 'var(--crystal-primary-30)'};
+	border-radius: ${theme.borderRadius.lg};
 	overflow: hidden;
-	transition: all 0.2s ease;
+	transition: all ${theme.transitions.fast};
 
 	&:hover {
 		transform: translateY(-2px);
 		border-color: ${(props) =>
 			props.$difficulty === 'deadly'
-				? '#f87171'
+				? 'var(--accent-danger)'
 				: props.$difficulty === 'hard'
-					? '#facc15'
-					: '#a855f7'};
-		box-shadow: 0 8px 24px -4px rgba(168, 85, 247, 0.3);
+					? 'var(--accent-warning)'
+					: 'var(--crystal-primary)'};
+		box-shadow: ${theme.shadows.lg};
 	}
 `;
 
 export const CardHeader = styled.div`
-	padding: 1rem;
-	border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+	padding: ${theme.spacing[4]};
+	border-bottom: 1px solid var(--crystal-primary-30);
 `;
 
 export const CardName = styled.h3`
-	font-family: 'Cinzel', serif;
-	color: #fbbf24;
-	font-size: 1.125rem;
-	font-weight: 600;
-	margin: 0 0 0.25rem;
+	font-family: ${theme.typography.fontFamily.secondary};
+	color: var(--text-primary);
+	font-size: ${theme.typography.fontSize.lg};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	margin: 0 0 ${theme.spacing[1]};
 `;
 
 export const CardMeta = styled.div`
 	display: flex;
-	gap: 0.75rem;
+	gap: ${theme.spacing[3]};
 	flex-wrap: wrap;
 `;
 
 export const MetaBadge = styled.span<{ $color?: string }>`
-	font-size: 0.75rem;
-	padding: 0.125rem 0.5rem;
-	border-radius: 9999px;
+	font-size: ${theme.typography.fontSize.xs};
+	padding: ${theme.spacing[1]} ${theme.spacing[2]};
+	border-radius: ${theme.borderRadius.full};
 	background: ${(props) =>
 		props.$color === 'red'
-			? 'rgba(239, 68, 68, 0.2)'
+			? 'rgba(247, 118, 142, 0.2)'
 			: props.$color === 'yellow'
-				? 'rgba(234, 179, 8, 0.2)'
+				? 'rgba(224, 175, 104, 0.2)'
 				: props.$color === 'green'
-					? 'rgba(74, 222, 128, 0.2)'
-					: 'rgba(168, 85, 247, 0.2)'};
+					? 'rgba(158, 206, 106, 0.2)'
+					: 'var(--crystal-primary-20)'};
 	color: ${(props) =>
 		props.$color === 'red'
-			? '#fca5a5'
+			? 'var(--accent-danger)'
 			: props.$color === 'yellow'
-				? '#fcd34d'
+				? 'var(--accent-warning)'
 				: props.$color === 'green'
-					? '#4ade80'
-					: '#c084fc'};
+					? 'var(--accent-success)'
+					: 'var(--crystal-primary)'};
 	border: 1px solid
 		${(props) =>
 			props.$color === 'red'
-				? 'rgba(239, 68, 68, 0.4)'
+				? 'rgba(247, 118, 142, 0.4)'
 				: props.$color === 'yellow'
-					? 'rgba(234, 179, 8, 0.4)'
+					? 'rgba(224, 175, 104, 0.4)'
 					: props.$color === 'green'
-						? 'rgba(74, 222, 128, 0.4)'
-						: 'rgba(168, 85, 247, 0.4)'};
+						? 'rgba(158, 206, 106, 0.4)'
+						: 'var(--crystal-primary-40)'};
 `;
 
 export const CardBody = styled.div`
-	padding: 1rem;
+	padding: ${theme.spacing[4]};
 `;
 
 export const CardFooter = styled.div`
-	padding: 0.75rem 1rem;
-	border-top: 1px solid rgba(168, 85, 247, 0.2);
+	padding: ${theme.spacing[3]} ${theme.spacing[4]};
+	border-top: 1px solid var(--crystal-primary-30);
 	display: flex;
 	justify-content: flex-end;
-	gap: 0.5rem;
+	gap: ${theme.spacing[2]};
 `;
 
 // ============================================================================
@@ -141,41 +136,41 @@ export const CardFooter = styled.div`
 // ============================================================================
 
 export const BudgetContainer = styled.div`
-	background: rgba(0, 0, 0, 0.3);
-	border: 1px solid rgba(168, 85, 247, 0.3);
-	border-radius: 12px;
-	padding: 1rem;
+	background: var(--bg-tertiary);
+	border: 1px solid var(--crystal-primary-30);
+	border-radius: ${theme.borderRadius.lg};
+	padding: ${theme.spacing[4]};
 `;
 
 export const BudgetHeader = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 0.75rem;
+	margin-bottom: ${theme.spacing[3]};
 `;
 
 export const BudgetLabel = styled.span`
-	color: #a1a1aa;
-	font-size: 0.875rem;
+	color: var(--text-secondary);
+	font-size: ${theme.typography.fontSize.sm};
 `;
 
 export const BudgetValue = styled.span<{ $status?: string }>`
-	font-weight: 600;
-	font-size: 1.25rem;
+	font-weight: ${theme.typography.fontWeight.semibold};
+	font-size: ${theme.typography.fontSize.xl};
 	color: ${(props) =>
 		props.$status === 'over'
-			? '#ef4444'
+			? 'var(--accent-danger)'
 			: props.$status === 'slightly_over'
-				? '#eab308'
+				? 'var(--accent-warning)'
 				: props.$status === 'under'
-					? '#60a5fa'
-					: '#4ade80'};
+					? 'var(--crystal-secondary)'
+					: 'var(--accent-success)'};
 `;
 
 export const BudgetBarContainer = styled.div`
 	height: 12px;
-	background: rgba(0, 0, 0, 0.4);
-	border-radius: 6px;
+	background: var(--bg-primary);
+	border-radius: ${theme.borderRadius.md};
 	overflow: hidden;
 	position: relative;
 `;
@@ -185,16 +180,16 @@ export const BudgetBar = styled.div<{ $percentage: number; $status?: string }>`
 	width: ${(props) => Math.min(100, props.$percentage)}%;
 	background: ${(props) =>
 		props.$status === 'over'
-			? 'linear-gradient(90deg, #ef4444, #dc2626)'
+			? 'var(--accent-danger)'
 			: props.$status === 'slightly_over'
-				? 'linear-gradient(90deg, #eab308, #ca8a04)'
+				? 'var(--accent-warning)'
 				: props.$status === 'under'
-					? 'linear-gradient(90deg, #60a5fa, #3b82f6)'
-					: 'linear-gradient(90deg, #4ade80, #22c55e)'};
-	border-radius: 6px;
+					? 'var(--crystal-secondary)'
+					: 'var(--accent-success)'};
+	border-radius: ${theme.borderRadius.md};
 	transition:
-		width 0.3s ease,
-		background 0.3s ease;
+		width ${theme.transitions.base},
+		background ${theme.transitions.base};
 `;
 
 export const BudgetThresholdMarker = styled.div<{ $position: number }>`
@@ -203,21 +198,21 @@ export const BudgetThresholdMarker = styled.div<{ $position: number }>`
 	top: 0;
 	bottom: 0;
 	width: 2px;
-	background: rgba(255, 255, 255, 0.3);
+	background: var(--white-30);
 `;
 
 export const BudgetStatusText = styled.div<{ $status?: string }>`
-	margin-top: 0.5rem;
-	font-size: 0.75rem;
+	margin-top: ${theme.spacing[2]};
+	font-size: ${theme.typography.fontSize.xs};
 	text-align: center;
 	color: ${(props) =>
 		props.$status === 'over'
-			? '#fca5a5'
+			? 'var(--accent-danger)'
 			: props.$status === 'slightly_over'
-				? '#fcd34d'
+				? 'var(--accent-warning)'
 				: props.$status === 'under'
-					? '#93c5fd'
-					: '#86efac'};
+					? 'var(--crystal-secondary)'
+					: 'var(--accent-success)'};
 `;
 
 // ============================================================================
@@ -227,7 +222,7 @@ export const BudgetStatusText = styled.div<{ $status?: string }>`
 export const DifficultyGrid = styled.div`
 	display: grid;
 	grid-template-columns: repeat(5, 1fr);
-	gap: 0.5rem;
+	gap: ${theme.spacing[2]};
 
 	@media (max-width: 768px) {
 		grid-template-columns: repeat(3, 1fr);
@@ -235,55 +230,55 @@ export const DifficultyGrid = styled.div`
 `;
 
 export const DifficultyButton = styled.button<{ $selected?: boolean; $difficulty?: string }>`
-	padding: 0.75rem 0.5rem;
-	border-radius: 8px;
+	padding: ${theme.spacing[3]} ${theme.spacing[2]};
+	border-radius: ${theme.borderRadius.md};
 	cursor: pointer;
-	transition: all 0.2s ease;
+	transition: all ${theme.transitions.fast};
 	text-align: center;
 	border: 1px solid
 		${(props) =>
 			props.$selected
 				? props.$difficulty === 'deadly'
-					? '#ef4444'
+					? 'var(--accent-danger)'
 					: props.$difficulty === 'hard'
-						? '#eab308'
+						? 'var(--accent-warning)'
 						: props.$difficulty === 'trivial' || props.$difficulty === 'easy'
-							? '#4ade80'
-							: '#a855f7'
-				: 'rgba(168, 85, 247, 0.2)'};
+							? 'var(--accent-success)'
+							: 'var(--crystal-primary)'
+				: 'var(--crystal-primary-30)'};
 	background: ${(props) =>
 		props.$selected
 			? props.$difficulty === 'deadly'
-				? 'rgba(239, 68, 68, 0.2)'
+				? 'rgba(247, 118, 142, 0.2)'
 				: props.$difficulty === 'hard'
-					? 'rgba(234, 179, 8, 0.2)'
+					? 'rgba(224, 175, 104, 0.2)'
 					: props.$difficulty === 'trivial' || props.$difficulty === 'easy'
-						? 'rgba(74, 222, 128, 0.2)'
-						: 'rgba(168, 85, 247, 0.2)'
-			: 'rgba(0, 0, 0, 0.3)'};
+						? 'rgba(158, 206, 106, 0.2)'
+						: 'var(--crystal-primary-20)'
+			: 'var(--bg-tertiary)'};
 
 	&:hover {
 		background: ${(props) =>
 			props.$difficulty === 'deadly'
-				? 'rgba(239, 68, 68, 0.15)'
+				? 'rgba(247, 118, 142, 0.2)'
 				: props.$difficulty === 'hard'
-					? 'rgba(234, 179, 8, 0.15)'
-					: 'rgba(168, 85, 247, 0.15)'};
+					? 'rgba(224, 175, 104, 0.2)'
+					: 'var(--crystal-primary-20)'};
 	}
 `;
 
 export const DifficultyName = styled.div<{ $selected?: boolean }>`
-	font-weight: 600;
-	font-size: 0.75rem;
+	font-weight: ${theme.typography.fontWeight.semibold};
+	font-size: ${theme.typography.fontSize.xs};
 	text-transform: uppercase;
-	color: ${(props) => (props.$selected ? '#fbbf24' : '#e5e7eb')};
-	margin-bottom: 0.25rem;
+	color: ${(props) => (props.$selected ? 'var(--text-primary)' : 'var(--text-secondary)')};
+	margin-bottom: ${theme.spacing[1]};
 `;
 
 export const DifficultyBudget = styled.div`
-	font-size: 1rem;
-	font-weight: 700;
-	color: #e5e7eb;
+	font-size: ${theme.typography.fontSize.base};
+	font-weight: ${theme.typography.fontWeight.bold};
+	color: var(--text-primary);
 `;
 
 // ============================================================================
@@ -293,18 +288,18 @@ export const DifficultyBudget = styled.div`
 export const MonsterSlotList = styled.div`
 	display: flex;
 	flex-direction: column;
-	gap: 0.75rem;
+	gap: ${theme.spacing[3]};
 `;
 
 export const MonsterSlotCard = styled.div<{ $isEmpty?: boolean }>`
-	background: ${(props) => (props.$isEmpty ? 'rgba(0, 0, 0, 0.2)' : 'rgba(30, 27, 75, 0.6)')};
-	border: 1px dashed
-		${(props) => (props.$isEmpty ? 'rgba(168, 85, 247, 0.3)' : 'rgba(168, 85, 247, 0.4)')};
-	border-radius: 8px;
-	padding: 1rem;
+	background: ${(props) => (props.$isEmpty ? 'var(--bg-primary)' : 'var(--bg-secondary)')};
+	border: 1px ${(props) => (props.$isEmpty ? 'dashed' : 'solid')}
+		var(--crystal-primary-30);
+	border-radius: ${theme.borderRadius.md};
+	padding: ${theme.spacing[4]};
 	display: flex;
 	align-items: center;
-	gap: 1rem;
+	gap: ${theme.spacing[4]};
 `;
 
 export const SlotMonsterInfo = styled.div`
@@ -312,20 +307,20 @@ export const SlotMonsterInfo = styled.div`
 `;
 
 export const SlotMonsterName = styled.div`
-	font-weight: 600;
-	color: #e5e7eb;
-	margin-bottom: 0.25rem;
+	font-weight: ${theme.typography.fontWeight.semibold};
+	color: var(--text-primary);
+	margin-bottom: ${theme.spacing[1]};
 `;
 
 export const SlotMonsterMeta = styled.div`
-	font-size: 0.75rem;
-	color: #71717a;
+	font-size: ${theme.typography.fontSize.xs};
+	color: var(--text-muted);
 `;
 
 export const SlotQuantityControl = styled.div`
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: ${theme.spacing[2]};
 `;
 
 export const QuantityButton = styled.button`
@@ -334,16 +329,16 @@ export const QuantityButton = styled.button`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: rgba(0, 0, 0, 0.4);
-	border: 1px solid rgba(168, 85, 247, 0.3);
-	border-radius: 4px;
-	color: #e5e7eb;
+	background: var(--bg-tertiary);
+	border: 1px solid var(--crystal-primary-30);
+	border-radius: ${theme.borderRadius.sm};
+	color: var(--text-primary);
 	cursor: pointer;
-	transition: all 0.2s;
+	transition: all ${theme.transitions.fast};
 
 	&:hover:not(:disabled) {
-		background: rgba(168, 85, 247, 0.2);
-		border-color: rgba(168, 85, 247, 0.5);
+		background: var(--crystal-primary-20);
+		border-color: var(--crystal-primary);
 	}
 
 	&:disabled {
@@ -355,20 +350,20 @@ export const QuantityButton = styled.button`
 export const QuantityValue = styled.span`
 	min-width: 32px;
 	text-align: center;
-	font-weight: 600;
-	color: #e5e7eb;
+	font-weight: ${theme.typography.fontWeight.semibold};
+	color: var(--text-primary);
 `;
 
 export const SlotCost = styled.div`
-	font-weight: 600;
-	color: #fbbf24;
+	font-weight: ${theme.typography.fontWeight.semibold};
+	color: var(--accent-warning);
 	min-width: 48px;
 	text-align: right;
 `;
 
 export const SlotActions = styled.div`
 	display: flex;
-	gap: 0.5rem;
+	gap: ${theme.spacing[2]};
 `;
 
 export const EmptySlotContent = styled.div`
@@ -376,7 +371,7 @@ export const EmptySlotContent = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 1rem;
+	gap: ${theme.spacing[4]};
 `;
 
 // ============================================================================
@@ -386,7 +381,7 @@ export const EmptySlotContent = styled.div`
 export const PartyConfigGrid = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 1fr auto;
-	gap: 1rem;
+	gap: ${theme.spacing[4]};
 	align-items: end;
 
 	@media (max-width: 640px) {
@@ -395,24 +390,24 @@ export const PartyConfigGrid = styled.div`
 `;
 
 export const PartyStatDisplay = styled.div`
-	background: rgba(0, 0, 0, 0.3);
-	border: 1px solid rgba(168, 85, 247, 0.3);
-	border-radius: 8px;
-	padding: 0.75rem 1rem;
+	background: var(--bg-tertiary);
+	border: 1px solid var(--crystal-primary-30);
+	border-radius: ${theme.borderRadius.md};
+	padding: ${theme.spacing[3]} ${theme.spacing[4]};
 	text-align: center;
 `;
 
 export const PartyStatLabel = styled.div`
-	font-size: 0.625rem;
-	color: #71717a;
+	font-size: ${theme.typography.fontSize.xs};
+	color: var(--text-muted);
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 `;
 
 export const PartyStatValue = styled.div`
-	font-size: 1.5rem;
-	font-weight: 700;
-	color: #fbbf24;
+	font-size: ${theme.typography.fontSize['2xl']};
+	font-weight: ${theme.typography.fontWeight.bold};
+	color: var(--accent-warning);
 `;
 
 // ============================================================================
@@ -422,7 +417,7 @@ export const PartyStatValue = styled.div`
 export const PlannerContainer = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 340px;
-	gap: 1.5rem;
+	gap: ${theme.spacing[6]};
 
 	@media (max-width: 1024px) {
 		grid-template-columns: 1fr;
@@ -432,14 +427,14 @@ export const PlannerContainer = styled.div`
 export const PlannerMain = styled.div`
 	display: flex;
 	flex-direction: column;
-	gap: 1.5rem;
+	gap: ${theme.spacing[6]};
 `;
 
 export const PlannerSidebar = styled.div`
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
+	gap: ${theme.spacing[4]};
 	position: sticky;
-	top: 1.5rem;
+	top: ${theme.spacing[6]};
 	height: fit-content;
 `;

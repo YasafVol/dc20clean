@@ -120,11 +120,41 @@
 	--crystal-secondary-90: rgba(90, 163, 217, 0.9);
 	--crystal-secondary-100: rgba(90, 163, 217, 1);
 
+	--crystal-tertiary-10: rgba(122, 162, 247, 0.1);
+	--crystal-tertiary-20: rgba(122, 162, 247, 0.2);
 	--crystal-tertiary-30: rgba(122, 162, 247, 0.3);
 	--crystal-tertiary-50: rgba(122, 162, 247, 0.5);
 	--crystal-tertiary-60: rgba(122, 162, 247, 0.6);
 	--crystal-tertiary-70: rgba(122, 162, 247, 0.7);
 	--crystal-tertiary-80: rgba(122, 162, 247, 0.8);
+	--crystal-tertiary-light: #b8d0ff;
+
+	--crystal-secondary-10: rgba(187, 154, 247, 0.1);
+	--crystal-secondary-20: rgba(187, 154, 247, 0.2);
+	--crystal-secondary-30: rgba(187, 154, 247, 0.3);
+	--crystal-secondary-40: rgba(187, 154, 247, 0.4);
+
+	/* Accent Alpha Variations */
+	--accent-danger-10: rgba(247, 118, 142, 0.1);
+	--accent-danger-20: rgba(247, 118, 142, 0.2);
+	--accent-danger-25: rgba(239, 68, 68, 0.25);
+	--accent-danger-30: rgba(247, 118, 142, 0.3);
+	--accent-danger-40: rgba(247, 118, 142, 0.4);
+	--accent-danger-60: rgba(239, 68, 68, 0.6);
+	--accent-danger-light: #ffb3b3;
+
+	--accent-warning-10: rgba(224, 175, 104, 0.1);
+	--accent-warning-20: rgba(224, 175, 104, 0.2);
+	--accent-warning-25: rgba(251, 191, 36, 0.25);
+	--accent-warning-30: rgba(224, 175, 104, 0.3);
+	--accent-warning-40: rgba(224, 175, 104, 0.4);
+	--accent-warning-light: #ffe8a3;
+
+	--accent-success-25: rgba(34, 197, 94, 0.25);
+	--accent-success-light: #b3ffcc;
+
+	/* Border Colors */
+	--border-default: #3b4261;
 
 	/* Dice Colors */
 	--dice-d20-bg: rgba(125, 207, 255, 0.3);

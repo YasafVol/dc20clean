@@ -6,13 +6,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button } from '../../../components/ui/button';
+import { useTranslation } from 'react-i18next';
 import { useEncounter, useEncounterMutations } from '../../../lib/hooks/useEncounters';
 import {
 	EncounterPlannerProvider,
 	useEncounterPlanner
 } from '../../../lib/hooks/useEncounterPlanner';
 import { BudgetMeter, DifficultySelector, PartyConfigForm, MonsterSlots } from './components';
+import { Button } from '../../../components/common/Button';
 import {
 	PageContainer,
 	Header,
@@ -37,6 +38,7 @@ import {
 
 const EncounterPlannerContent: React.FC = () => {
 	const navigate = useNavigate();
+	const { t } = useTranslation();
 	const { id } = useParams<{ id: string }>();
 	const isNew = id === 'new';
 
@@ -80,7 +82,7 @@ const EncounterPlannerContent: React.FC = () => {
 
 	const handleSave = async () => {
 		if (errors.length > 0) {
-			alert('Please fix validation errors before saving.');
+			alert(t('dmTools.encounterPlanner.confirmDelete'));
 			return;
 		}
 
@@ -112,7 +114,7 @@ const EncounterPlannerContent: React.FC = () => {
 		return (
 			<PageContainer>
 				<MainContent>
-					<div className="py-12 text-center text-zinc-500">Loading encounter...</div>
+					<div className="py-12 text-center text-zinc-500">{t('common.loading')}</div>
 				</MainContent>
 			</PageContainer>
 		);
@@ -123,15 +125,15 @@ const EncounterPlannerContent: React.FC = () => {
 			<Header>
 				<HeaderContent>
 					<HeaderLeft>
-						<Button variant="secondary" onClick={handleBack}>
-							← Back
-						</Button>
-						<Title>{isNew ? 'New Encounter' : 'Edit Encounter'}</Title>
+						<Button $variant="secondary" onClick={handleBack}>
+						← {t('common.back')}
+					</Button>
+					<Title>{isNew ? t('dmTools.encounterPlanner.createEncounter') : 'Edit Encounter'}</Title>
 					</HeaderLeft>
 					<HeaderRight>
 						{isDirty && <span className="text-xs text-amber-400">Unsaved changes</span>}
 						<Button
-							variant="secondary"
+							$variant="primary"
 							onClick={handleSave}
 							disabled={errors.length > 0 || isSaving}
 						>
@@ -148,11 +150,11 @@ const EncounterPlannerContent: React.FC = () => {
 						{/* Name & Description */}
 						<Section>
 							<SectionHeader>
-								<SectionTitle>Encounter Info</SectionTitle>
+							<SectionTitle>{t('dmTools.encounterPlanner.title')}</SectionTitle>
 							</SectionHeader>
 							<SectionContent>
 								<FormGroup>
-									<FormLabel>Name</FormLabel>
+								<FormLabel>{t('dmTools.monsterLab.name')}</FormLabel>
 									<input
 										type="text"
 										value={encounter.name}
@@ -192,7 +194,7 @@ const EncounterPlannerContent: React.FC = () => {
 						{/* Difficulty */}
 						<Section>
 							<SectionHeader>
-								<SectionTitle>Difficulty</SectionTitle>
+							<SectionTitle>{t('dmTools.encounterPlanner.difficulty')}</SectionTitle>
 							</SectionHeader>
 							<SectionContent>
 								<DifficultySelector

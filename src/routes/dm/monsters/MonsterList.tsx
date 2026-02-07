@@ -7,13 +7,14 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useMutation } from 'convex/react';
 import { api } from '../../../../convex/_generated/api';
-import { Button } from '../../../components/ui/button';
 import { useMonsters, useHomebrewMonsters } from '../../../lib/hooks/useMonsters';
 import type { SavedMonster } from '../../../lib/rulesdata/schemas/monster.schema';
 import { MonsterCard } from './components/MonsterCard';
 import { getSampleMonsters } from '../../../lib/rulesdata/dm/sampleMonsters';
+import { Button } from '../../../components/common/Button';
 import {
 	PageContainer,
 	Header,
@@ -33,6 +34,7 @@ type TabType = 'my-monsters' | 'homebrew' | 'trash';
 
 export const MonsterList: React.FC = () => {
 	const navigate = useNavigate();
+	const { t } = useTranslation();
 	const [activeTab, setActiveTab] = useState<TabType>('my-monsters');
 	const [isSeeding, setIsSeeding] = useState(false);
 	const seedMonstersMutation = useMutation(api.monsters.seedMonsters);
@@ -65,7 +67,7 @@ export const MonsterList: React.FC = () => {
 	};
 
 	const handleDelete = async (monster: SavedMonster) => {
-		if (confirm(`Delete "${monster.name}"? It will be moved to trash.`)) {
+		if (confirm(t('dmTools.monsterLab.confirmDelete'))) {
 			try {
 				await deleteMonster(monster.id);
 			} catch (error) {
@@ -81,10 +83,6 @@ export const MonsterList: React.FC = () => {
 		} catch (error) {
 			console.error('Failed to fork monster:', error);
 		}
-	};
-
-	const handleBack = () => {
-		navigate('/menu');
 	};
 
 	const handleSeedMonsters = async () => {
@@ -116,20 +114,17 @@ export const MonsterList: React.FC = () => {
 			<Header>
 				<HeaderContent>
 					<HeaderLeft>
-						<Button variant="secondary" onClick={handleBack}>
-							← Menu
-						</Button>
 						<div>
 							<Title>Monster Laboratory</Title>
 							<Subtitle>Design and manage your monsters</Subtitle>
 						</div>
 					</HeaderLeft>
 					<HeaderRight>
-						<Button variant="secondary" onClick={() => navigate('/dm/encounters')}>
-							War Room
-						</Button>
-						<Button variant="secondary" onClick={handleCreateNew}>
-							+ New Monster
+						<Button $variant="secondary" onClick={() => navigate('/dm/encounters')}>
+						{t('menu.encounterPlanner')}
+					</Button>
+					<Button $variant="primary" onClick={handleCreateNew}>
+						{t('dmTools.monsterLab.createMonster')}
 						</Button>
 					</HeaderRight>
 				</HeaderContent>
@@ -147,7 +142,7 @@ export const MonsterList: React.FC = () => {
 						}`}
 						onClick={() => setActiveTab('my-monsters')}
 					>
-						My Monsters ({myMonsters.length})
+						{t('dmTools.monsters')} ({myMonsters.length})
 					</button>
 					<button
 						type="button"
@@ -158,31 +153,31 @@ export const MonsterList: React.FC = () => {
 						}`}
 						onClick={() => setActiveTab('homebrew')}
 					>
-						Homebrew Library ({homebrewMonsters.length})
+						Homebrew ({homebrewMonsters.length})
 					</button>
 				</div>
 
 				{/* Content */}
 				{isLoading ? (
-					<div className="py-12 text-center text-zinc-500">Loading...</div>
+					<div className="py-12 text-center text-zinc-500">{t('common.loading')}</div>
 				) : monsters.length === 0 ? (
 					<EmptyState>
 						<EmptyStateTitle>
-							{activeTab === 'my-monsters' ? 'No Monsters Yet' : 'No Homebrew Monsters'}
+							{activeTab === 'my-monsters' ? t('dmTools.monsterLab.noMonsters') : 'No Homebrew Monsters'}
 						</EmptyStateTitle>
 						<EmptyStateText>
 							{activeTab === 'my-monsters'
-								? 'Create your first monster to get started!'
+								? t('dmTools.monsterLab.noMonsters')
 								: 'No community monsters have been approved yet.'}
 						</EmptyStateText>
 						{activeTab === 'my-monsters' && (
 							<div className="flex gap-3">
-								<Button variant="secondary" onClick={handleCreateNew}>
-									Create Monster
-								</Button>
-								<Button variant="secondary" onClick={handleSeedMonsters} disabled={isSeeding}>
-									{isSeeding ? 'Seeding...' : 'Seed Sample Monsters'}
-								</Button>
+							<Button $variant="primary" onClick={handleCreateNew}>
+								{t('dmTools.monsterLab.createMonster')}
+							</Button>
+							<Button $variant="secondary" onClick={handleSeedMonsters} disabled={isSeeding}>
+								{isSeeding ? t('common.loading') : 'Seed Sample Monsters'}
+							</Button>
 							</div>
 						)}
 					</EmptyState>

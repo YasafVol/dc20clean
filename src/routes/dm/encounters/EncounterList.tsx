@@ -56,18 +56,11 @@ export const EncounterList: React.FC = () => {
 		}
 	};
 
-	const handleBackToMonsters = () => {
-		navigate('/dm/monsters');
-	};
-
 	return (
 		<PageContainer>
 			<Header>
 				<HeaderContent>
 					<HeaderLeft>
-						<Button variant="secondary" onClick={handleBackToMonsters}>
-							← Monsters
-						</Button>
 						<div>
 							<Title>War Room</Title>
 							<Subtitle>Plan and balance your encounters</Subtitle>

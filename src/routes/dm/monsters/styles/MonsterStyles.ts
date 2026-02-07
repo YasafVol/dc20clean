@@ -3,6 +3,7 @@
  */
 
 import styled from 'styled-components';
+import { theme } from '../../../character-sheet/styles/theme';
 
 // ============================================================================
 // PAGE LAYOUT
@@ -10,13 +11,14 @@ import styled from 'styled-components';
 
 export const PageContainer = styled.div`
 	min-height: 100vh;
-	background: url('/src/assets/BlackBG.jpg') center/cover no-repeat;
+	background: ${theme.colors.bg.primary};
+	color: ${theme.colors.text.primary};
 `;
 
 export const Header = styled.div`
-	padding: 1.5rem 2rem;
-	border-bottom: 1px solid rgba(168, 85, 247, 0.3);
-	background: rgba(0, 0, 0, 0.4);
+	padding: ${theme.spacing[6]} ${theme.spacing[8]};
+	border-bottom: 1px solid ${theme.colors.border.default};
+	background: ${theme.colors.bg.secondary};
 `;
 
 export const HeaderContent = styled.div`
@@ -26,41 +28,40 @@ export const HeaderContent = styled.div`
 	justify-content: space-between;
 	align-items: center;
 	flex-wrap: wrap;
-	gap: 1rem;
+	gap: ${theme.spacing[4]};
 `;
 
 export const HeaderLeft = styled.div`
 	display: flex;
 	align-items: center;
-	gap: 1rem;
+	gap: ${theme.spacing[4]};
 `;
 
 export const HeaderRight = styled.div`
 	display: flex;
 	align-items: center;
-	gap: 0.75rem;
+	gap: ${theme.spacing[3]};
 `;
 
 export const Title = styled.h1`
-	font-family: 'Cinzel', serif;
-	color: #fbbf24;
-	font-size: 1.5rem;
-	font-weight: bold;
+	font-family: ${theme.typography.fontFamily.secondary};
+	color: ${theme.colors.text.primary};
+	font-size: ${theme.typography.fontSize['2xl']};
+	font-weight: ${theme.typography.fontWeight.bold};
 	letter-spacing: 0.05em;
-	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 	margin: 0;
 `;
 
 export const Subtitle = styled.p`
-	color: #a1a1aa;
-	font-size: 0.875rem;
+	color: ${theme.colors.text.secondary};
+	font-size: ${theme.typography.fontSize.sm};
 	margin: 0;
 `;
 
 export const MainContent = styled.div`
 	max-width: 80rem;
 	margin: 0 auto;
-	padding: 1.5rem;
+	padding: ${theme.spacing[6]};
 `;
 
 // ============================================================================
@@ -70,25 +71,25 @@ export const MainContent = styled.div`
 export const MonsterGrid = styled.div`
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-	gap: 1.25rem;
+	gap: ${theme.spacing[5]};
 `;
 
 export const EmptyState = styled.div`
 	text-align: center;
-	padding: 4rem 2rem;
-	color: #a1a1aa;
+	padding: ${theme.spacing[16]} ${theme.spacing[8]};
+	color: ${theme.colors.text.secondary};
 `;
 
 export const EmptyStateTitle = styled.h2`
-	font-family: 'Cinzel', serif;
-	color: #fbbf24;
-	font-size: 1.5rem;
-	margin-bottom: 0.5rem;
+	font-family: ${theme.typography.fontFamily.secondary};
+	color: ${theme.colors.text.primary};
+	font-size: ${theme.typography.fontSize['2xl']};
+	margin-bottom: ${theme.spacing[2]};
 `;
 
 export const EmptyStateText = styled.p`
-	color: #71717a;
-	margin-bottom: 1.5rem;
+	color: ${theme.colors.text.muted};
+	margin-bottom: ${theme.spacing[6]};
 `;
 
 // ============================================================================
@@ -96,39 +97,23 @@ export const EmptyStateText = styled.p`
 // ============================================================================
 
 export const MonsterCardContainer = styled.div<{ $tier?: string }>`
-	background: linear-gradient(
-		135deg,
-		${(props) =>
-				props.$tier === 'legendary'
-					? 'rgba(234, 179, 8, 0.15)'
-					: props.$tier === 'apex'
-						? 'rgba(168, 85, 247, 0.15)'
-						: 'rgba(30, 27, 75, 0.8)'}
-			0%,
-		rgba(30, 27, 75, 0.9) 100%
-	);
-	border: 1px solid
-		${(props) =>
-			props.$tier === 'legendary'
-				? '#eab308'
-				: props.$tier === 'apex'
-					? '#a855f7'
-					: 'rgba(168, 85, 247, 0.4)'};
-	border-radius: 12px;
+	background: ${theme.colors.bg.secondary};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.lg};
 	overflow: hidden;
-	transition: all 0.2s ease;
+	transition: all ${theme.transitions.fast};
+	box-shadow: ${theme.shadows.md};
 
 	&:hover {
 		transform: translateY(-2px);
-		border-color: ${(props) =>
-			props.$tier === 'legendary' ? '#facc15' : props.$tier === 'apex' ? '#c084fc' : '#a855f7'};
-		box-shadow: 0 8px 24px -4px rgba(168, 85, 247, 0.3);
+		border-color: ${theme.colors.accent.secondary};
+		box-shadow: ${theme.shadows.lg};
 	}
 `;
 
 export const CardHeader = styled.div`
-	padding: 1rem;
-	border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+	padding: ${theme.spacing[4]};
+	border-bottom: 1px solid ${theme.colors.border.default};
 `;
 
 export const CardTitleRow = styled.div`
@@ -139,96 +124,85 @@ export const CardTitleRow = styled.div`
 `;
 
 export const CardName = styled.h3`
-	font-family: 'Cinzel', serif;
-	color: #fbbf24;
-	font-size: 1.125rem;
-	font-weight: 600;
+	font-family: ${theme.typography.fontFamily.secondary};
+	color: ${theme.colors.text.primary};
+	font-size: ${theme.typography.fontSize.lg};
+	font-weight: ${theme.typography.fontWeight.semibold};
 	margin: 0;
 	flex: 1;
 `;
 
 export const CardBadges = styled.div`
 	display: flex;
-	gap: 0.375rem;
+	gap: ${theme.spacing[2]};
 	flex-wrap: wrap;
 `;
 
 export const TierBadge = styled.span<{ $tier?: string }>`
-	font-size: 0.625rem;
-	font-weight: 600;
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.semibold};
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
-	padding: 0.125rem 0.5rem;
-	border-radius: 9999px;
-	background: ${(props) =>
-		props.$tier === 'legendary'
-			? 'rgba(234, 179, 8, 0.2)'
-			: props.$tier === 'apex'
-				? 'rgba(168, 85, 247, 0.2)'
-				: 'rgba(74, 222, 128, 0.2)'};
-	color: ${(props) =>
-		props.$tier === 'legendary' ? '#facc15' : props.$tier === 'apex' ? '#c084fc' : '#4ade80'};
-	border: 1px solid
-		${(props) =>
-			props.$tier === 'legendary'
-				? 'rgba(234, 179, 8, 0.4)'
-				: props.$tier === 'apex'
-					? 'rgba(168, 85, 247, 0.4)'
-					: 'rgba(74, 222, 128, 0.4)'};
+	padding: ${theme.spacing[1]} ${theme.spacing[2]};
+	border-radius: ${theme.borderRadius.full};
+	background: ${theme.colors.accent.secondaryAlpha20};
+	color: ${theme.colors.accent.secondary};
+	border: 1px solid ${theme.colors.accent.secondaryAlpha40};
 `;
 
 export const LevelBadge = styled.span`
-	font-size: 0.625rem;
-	font-weight: 600;
-	padding: 0.125rem 0.5rem;
-	border-radius: 9999px;
-	background: rgba(59, 130, 246, 0.2);
-	color: #60a5fa;
-	border: 1px solid rgba(59, 130, 246, 0.4);
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	padding: ${theme.spacing[1]} ${theme.spacing[2]};
+	border-radius: ${theme.borderRadius.full};
+	background: ${theme.colors.accent.infoAlpha20};
+	color: ${theme.colors.accent.info};
+	border: 1px solid ${theme.colors.accent.infoAlpha30};
 `;
 
 export const CardSubtitle = styled.p`
-	color: #a1a1aa;
-	font-size: 0.75rem;
-	margin: 0.25rem 0 0;
+	color: ${theme.colors.text.secondary};
+	font-size: ${theme.typography.fontSize.sm};
+	margin: ${theme.spacing[1]} 0 0;
 `;
 
 export const CardBody = styled.div`
-	padding: 1rem;
+	padding: ${theme.spacing[4]};
 `;
 
 export const StatGrid = styled.div`
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	gap: 0.5rem;
+	gap: ${theme.spacing[2]};
 `;
 
 export const StatItem = styled.div`
 	text-align: center;
-	padding: 0.5rem;
-	background: rgba(0, 0, 0, 0.3);
-	border-radius: 6px;
+	padding: ${theme.spacing[2]};
+	background: ${theme.colors.bg.tertiary};
+	border-radius: ${theme.borderRadius.md};
+	border: 1px solid ${theme.colors.border.default};
 `;
 
 export const StatLabel = styled.div`
-	font-size: 0.625rem;
-	color: #71717a;
+	font-size: ${theme.typography.fontSize.xs};
+	color: ${theme.colors.text.muted};
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 `;
 
 export const StatValue = styled.div`
-	font-size: 1.125rem;
-	font-weight: 600;
-	color: #e5e7eb;
+	font-size: ${theme.typography.fontSize.lg};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	color: ${theme.colors.text.primary};
 `;
 
 export const CardFooter = styled.div`
-	padding: 0.75rem 1rem;
-	border-top: 1px solid rgba(168, 85, 247, 0.2);
+	padding: ${theme.spacing[3]} ${theme.spacing[4]};
+	border-top: 1px solid ${theme.colors.border.default};
 	display: flex;
 	justify-content: flex-end;
-	gap: 0.5rem;
+	gap: ${theme.spacing[2]};
 `;
 
 // ============================================================================
@@ -238,7 +212,7 @@ export const CardFooter = styled.div`
 export const DesignerContainer = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 320px;
-	gap: 1.5rem;
+	gap: ${theme.spacing[6]};
 
 	@media (max-width: 1024px) {
 		grid-template-columns: 1fr;
@@ -248,52 +222,53 @@ export const DesignerContainer = styled.div`
 export const DesignerMain = styled.div`
 	display: flex;
 	flex-direction: column;
-	gap: 1.5rem;
+	gap: ${theme.spacing[6]};
 `;
 
 export const DesignerSidebar = styled.div`
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
+	gap: ${theme.spacing[4]};
 	position: sticky;
-	top: 1.5rem;
+	top: ${theme.spacing[6]};
 	height: fit-content;
 `;
 
 export const Section = styled.div`
-	background: rgba(30, 27, 75, 0.8);
-	border: 1px solid rgba(168, 85, 247, 0.3);
-	border-radius: 12px;
+	background: ${theme.colors.bg.secondary};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.lg};
 	overflow: hidden;
+	box-shadow: ${theme.shadows.md};
 `;
 
 export const SectionHeader = styled.div`
-	padding: 0.75rem 1rem;
-	background: rgba(168, 85, 247, 0.1);
-	border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+	padding: ${theme.spacing[3]} ${theme.spacing[4]};
+	background: ${theme.colors.bg.tertiary};
+	border-bottom: 1px solid ${theme.colors.border.default};
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 `;
 
 export const SectionTitle = styled.h2`
-	font-family: 'Cinzel', serif;
-	color: #fbbf24;
-	font-size: 1rem;
-	font-weight: 600;
+	font-family: ${theme.typography.fontFamily.secondary};
+	color: ${theme.colors.text.primary};
+	font-size: ${theme.typography.fontSize.base};
+	font-weight: ${theme.typography.fontWeight.semibold};
 	margin: 0;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 `;
 
 export const SectionContent = styled.div`
-	padding: 1rem;
+	padding: ${theme.spacing[4]};
 `;
 
 export const FormRow = styled.div`
 	display: flex;
-	gap: 1rem;
-	margin-bottom: 1rem;
+	gap: ${theme.spacing[4]};
+	margin-bottom: ${theme.spacing[4]};
 
 	&:last-child {
 		margin-bottom: 0;
@@ -304,13 +279,13 @@ export const FormGroup = styled.div<{ $flex?: number }>`
 	flex: ${(props) => props.$flex ?? 1};
 	display: flex;
 	flex-direction: column;
-	gap: 0.375rem;
+	gap: ${theme.spacing[2]};
 `;
 
 export const FormLabel = styled.label`
-	font-size: 0.75rem;
-	color: #a1a1aa;
-	font-weight: 500;
+	font-size: ${theme.typography.fontSize.sm};
+	color: ${theme.colors.text.secondary};
+	font-weight: ${theme.typography.fontWeight.medium};
 `;
 
 // ============================================================================
@@ -318,30 +293,31 @@ export const FormLabel = styled.label`
 // ============================================================================
 
 export const PreviewCard = styled.div`
-	background: linear-gradient(135deg, rgba(30, 27, 75, 0.9) 0%, rgba(49, 46, 129, 0.9) 100%);
-	border: 1px solid rgba(168, 85, 247, 0.4);
-	border-radius: 12px;
+	background: ${theme.colors.bg.secondary};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.lg};
 	overflow: hidden;
+	box-shadow: ${theme.shadows.md};
 `;
 
 export const PreviewHeader = styled.div`
-	padding: 1rem;
-	background: rgba(168, 85, 247, 0.15);
-	border-bottom: 1px solid rgba(168, 85, 247, 0.3);
+	padding: ${theme.spacing[4]};
+	background: ${theme.colors.bg.tertiary};
+	border-bottom: 1px solid ${theme.colors.border.default};
 	text-align: center;
 `;
 
 export const PreviewName = styled.h2`
-	font-family: 'Cinzel', serif;
-	color: #fbbf24;
-	font-size: 1.25rem;
-	font-weight: bold;
-	margin: 0 0 0.25rem;
+	font-family: ${theme.typography.fontFamily.secondary};
+	color: ${theme.colors.text.primary};
+	font-size: ${theme.typography.fontSize.xl};
+	font-weight: ${theme.typography.fontWeight.bold};
+	margin: 0 0 ${theme.spacing[1]};
 `;
 
 export const PreviewSubtitle = styled.p`
-	color: #a1a1aa;
-	font-size: 0.75rem;
+	color: ${theme.colors.text.secondary};
+	font-size: ${theme.typography.fontSize.sm};
 	margin: 0;
 `;
 
@@ -356,9 +332,9 @@ export const PreviewStatGrid = styled.div`
 `;
 
 export const PreviewStatItem = styled.div<{ $highlight?: boolean }>`
-	background: ${(props) => (props.$highlight ? 'rgba(74, 222, 128, 0.1)' : 'rgba(0, 0, 0, 0.3)')};
+	background: ${(props) => (props.$highlight ? 'var(--crystal-primary-10)' : 'var(--black-30)')};
 	border: 1px solid
-		${(props) => (props.$highlight ? 'rgba(74, 222, 128, 0.3)' : 'rgba(168, 85, 247, 0.2)')};
+		${(props) => (props.$highlight ? 'var(--crystal-primary-30)' : 'var(--crystal-primary-20)')};
 	border-radius: 8px;
 	padding: 0.75rem;
 	text-align: center;
@@ -366,7 +342,7 @@ export const PreviewStatItem = styled.div<{ $highlight?: boolean }>`
 
 export const PreviewStatLabel = styled.div`
 	font-size: 0.625rem;
-	color: #71717a;
+	color: var(--text-muted);
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 	margin-bottom: 0.25rem;
@@ -375,26 +351,26 @@ export const PreviewStatLabel = styled.div`
 export const PreviewStatValue = styled.div<{ $highlight?: boolean }>`
 	font-size: 1.5rem;
 	font-weight: 700;
-	color: ${(props) => (props.$highlight ? '#4ade80' : '#e5e7eb')};
+	color: ${(props) => (props.$highlight ? 'var(--crystal-primary)' : 'var(--text-primary)')};
 `;
 
 export const PreviewDivider = styled.hr`
 	border: none;
-	border-top: 1px solid rgba(168, 85, 247, 0.2);
+	border-top: 1px solid var(--crystal-primary-20);
 	margin: 1rem 0;
 `;
 
 export const EncounterCost = styled.div`
 	text-align: center;
 	padding: 0.75rem;
-	background: rgba(234, 179, 8, 0.1);
-	border: 1px solid rgba(234, 179, 8, 0.3);
+	background: var(--crystal-primary-10);
+	border: 1px solid var(--crystal-primary-30);
 	border-radius: 8px;
 `;
 
 export const EncounterCostLabel = styled.div`
 	font-size: 0.625rem;
-	color: #a1a1aa;
+	color: var(--text-muted);
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 `;
@@ -402,7 +378,7 @@ export const EncounterCostLabel = styled.div`
 export const EncounterCostValue = styled.div`
 	font-size: 1.75rem;
 	font-weight: 700;
-	color: #fbbf24;
+	color: var(--crystal-primary);
 `;
 
 // ============================================================================
@@ -422,9 +398,9 @@ export const RoleGrid = styled.div`
 export const RoleCard = styled.button<{ $selected?: boolean }>`
 	background: ${(props) =>
 		props.$selected
-			? 'linear-gradient(135deg, rgba(168, 85, 247, 0.3) 0%, rgba(139, 92, 246, 0.2) 100%)'
-			: 'rgba(0, 0, 0, 0.3)'};
-	border: 1px solid ${(props) => (props.$selected ? '#a855f7' : 'rgba(168, 85, 247, 0.2)')};
+			? 'var(--crystal-primary-30)'
+			: 'var(--black-30)'};
+	border: 1px solid ${(props) => (props.$selected ? 'var(--crystal-primary)' : 'var(--crystal-primary-20)')};
 	border-radius: 8px;
 	padding: 0.75rem;
 	cursor: pointer;
@@ -434,22 +410,22 @@ export const RoleCard = styled.button<{ $selected?: boolean }>`
 	&:hover {
 		background: ${(props) =>
 			props.$selected
-				? 'linear-gradient(135deg, rgba(168, 85, 247, 0.4) 0%, rgba(139, 92, 246, 0.3) 100%)'
-				: 'rgba(168, 85, 247, 0.1)'};
-		border-color: ${(props) => (props.$selected ? '#c084fc' : 'rgba(168, 85, 247, 0.4)')};
+				? 'var(--crystal-primary-40)'
+				: 'var(--crystal-primary-10)'};
+		border-color: ${(props) => (props.$selected ? 'var(--crystal-primary-light)' : 'var(--crystal-primary-40)')};
 	}
 `;
 
 export const RoleName = styled.div<{ $selected?: boolean }>`
 	font-weight: 600;
-	color: ${(props) => (props.$selected ? '#fbbf24' : '#e5e7eb')};
+	color: ${(props) => (props.$selected ? 'var(--crystal-primary)' : 'var(--text-primary)')};
 	font-size: 0.875rem;
 	margin-bottom: 0.25rem;
 `;
 
 export const RoleModifiers = styled.div`
 	font-size: 0.8125rem;
-	color: #a1a1aa;
+	color: var(--text-muted);
 	margin-top: 0.25rem;
 `;
 
@@ -634,4 +610,68 @@ export const ValidationItem = styled.div<{ $type: 'error' | 'warning' | 'info' }
 
 export const ValidationIcon = styled.span`
 	flex-shrink: 0;
+`;
+// ============================================================================
+// BUTTONS
+// ============================================================================
+
+export const ActionButton = styled.button<{ $variant?: 'primary' | 'secondary' | 'danger' }>`
+	padding: ${theme.spacing[2]} ${theme.spacing[4]};
+	background: ${(props) =>
+		props.$variant === 'danger'
+			? theme.colors.accent.danger
+			: props.$variant === 'secondary'
+				? theme.colors.bg.tertiary
+				: theme.colors.accent.secondary};
+	border: 1px solid
+		${(props) =>
+			props.$variant === 'danger'
+				? theme.colors.accent.danger
+				: props.$variant === 'secondary'
+					? theme.colors.border.default
+					: theme.colors.accent.secondary};
+	border-radius: ${theme.borderRadius.md};
+	color: ${(props) => (props.$variant === 'secondary' ? theme.colors.text.primary : theme.colors.text.inverse)};
+	font-size: ${theme.typography.fontSize.sm};
+	font-weight: ${theme.typography.fontWeight.medium};
+	cursor: pointer;
+	transition: all ${theme.transitions.fast};
+
+	&:hover:not(:disabled) {
+		background: ${(props) =>
+			props.$variant === 'danger'
+				? theme.colors.accent.dangerAlpha80
+				: props.$variant === 'secondary'
+					? theme.colors.accent.secondaryAlpha20
+					: theme.colors.accent.secondaryAlpha80};
+		transform: translateY(-1px);
+	}
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+`;
+
+export const IconButton = styled.button`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: ${theme.spacing[2]};
+	background: ${theme.colors.bg.tertiary};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
+	color: ${theme.colors.text.primary};
+	cursor: pointer;
+	transition: all ${theme.transitions.fast};
+
+	&:hover:not(:disabled) {
+		background: ${theme.colors.accent.secondaryAlpha20};
+		border-color: ${theme.colors.accent.secondary};
+	}
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
 `;

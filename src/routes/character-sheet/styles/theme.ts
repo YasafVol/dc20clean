@@ -4,137 +4,137 @@
  */
 
 export const theme = {
-	// Background colors
+	// Background colors - reference CSS variables
 	colors: {
 		bg: {
-			primary: '#1A1B26',
-			secondary: '#24283B',
-			tertiary: '#414868',
-			elevated: '#2C2E3E'
+			primary: 'var(--bg-primary)',
+			secondary: 'var(--bg-secondary)',
+			tertiary: 'var(--bg-tertiary)',
+			elevated: 'var(--bg-elevated)'
 		},
 
-		// Accent colors
+		// Accent colors - reference CSS variables
 		accent: {
-			primary: '#7DCFFF',
-			secondary: '#BB9AF7',
-			warning: '#E0AF68',
-			danger: '#F7768E',
-		success: '#9ECE6A',
-		info: '#7AA2F7',
+			primary: 'var(--crystal-primary)',
+			secondary: 'var(--crystal-secondary)',
+			warning: 'var(--accent-warning)',
+			danger: 'var(--accent-danger)',
+		success: 'var(--accent-success)',
+		info: 'var(--crystal-tertiary)',
 
 		// Alpha variants for accent colors
-		dangerAlpha10: 'rgba(247, 118, 142, 0.1)',
-		dangerAlpha20: 'rgba(247, 118, 142, 0.2)',
-		dangerAlpha30: 'rgba(247, 118, 142, 0.3)',
-		dangerAlpha40: 'rgba(247, 118, 142, 0.4)',
+		dangerAlpha10: 'var(--accent-danger-10)',
+		dangerAlpha20: 'var(--accent-danger-20)',
+		dangerAlpha30: 'var(--accent-danger-30)',
+		dangerAlpha40: 'var(--accent-danger-40)',
 
-		warningAlpha10: 'rgba(224, 175, 104, 0.1)',
-		warningAlpha20: 'rgba(224, 175, 104, 0.2)',
-		warningAlpha30: 'rgba(224, 175, 104, 0.3)',
-		warningAlpha40: 'rgba(224, 175, 104, 0.4)',
+		warningAlpha10: 'var(--accent-warning-10)',
+		warningAlpha20: 'var(--accent-warning-20)',
+		warningAlpha30: 'var(--accent-warning-30)',
+		warningAlpha40: 'var(--accent-warning-40)',
 
-		infoAlpha20: 'rgba(122, 162, 247, 0.2)',
-		infoAlpha30: 'rgba(122, 162, 247, 0.3)',
+		infoAlpha20: 'var(--crystal-tertiary-20)',
+		infoAlpha30: 'var(--crystal-tertiary-30)',
 
-		secondaryAlpha10: 'rgba(187, 154, 247, 0.1)',
-		secondaryAlpha20: 'rgba(187, 154, 247, 0.2)',
-		secondaryAlpha30: 'rgba(187, 154, 247, 0.3)',
-		secondaryAlpha40: 'rgba(187, 154, 247, 0.4)'
+		secondaryAlpha10: 'var(--crystal-secondary-10)',
+		secondaryAlpha20: 'var(--crystal-secondary-20)',
+		secondaryAlpha30: 'var(--crystal-secondary-30)',
+		secondaryAlpha40: 'var(--crystal-secondary-40)'
 	},
 
-	// Resource colors
+	// Resource colors - reference CSS variables
 	resource: {
-		health: '#F7768E',
-		mana: '#7AA2F7',
-		stamina: '#E0AF68',
-		grit: '#9ECE6A'
+		health: 'var(--accent-danger)',
+		mana: 'var(--crystal-tertiary)',
+		stamina: 'var(--accent-warning)',
+		grit: 'var(--accent-success)'
 	},
 
-		// Text colors
+		// Text colors - reference CSS variables
 		text: {
-			primary: '#C0CAF5',
-			secondary: '#9AA5CE',
-			muted: '#565F89',
-			inverse: '#1A1B26'
+			primary: 'var(--text-primary)',
+			secondary: 'var(--text-secondary)',
+			muted: 'var(--text-muted)',
+			inverse: 'var(--bg-primary)'
 		},
 
-		// Attribute colors
+		// Attribute colors - reference CSS variables
 		attribute: {
-			might: '#F7768E',
-			agility: '#9ECE6A',
-			charisma: '#E0AF68',
-			intelligence: '#7DCFFF'
+			might: 'var(--accent-danger)',
+			agility: 'var(--accent-success)',
+			charisma: 'var(--accent-warning)',
+			intelligence: 'var(--crystal-primary)'
 		},
 
-		// Crystal/Icy theme colors (for dice roller and effects)
+		// Crystal/Icy theme colors (for dice roller and effects) - reference CSS variables
 		crystal: {
 			// Primary icy blue colors
-			primary: '#7DCFFF',
-			primaryLight: '#c0e7ff',
-			primaryDark: '#5aa3d9',
+			primary: 'var(--crystal-primary)',
+			primaryLight: 'var(--crystal-primary-light)',
+			primaryDark: 'var(--crystal-primary-dark)',
 
 			// Secondary crystal colors
-			secondary: '#7aa2f7',
-			tertiary: '#9aa5ce',
+			secondary: 'var(--crystal-secondary)',
+			tertiary: 'var(--crystal-tertiary)',
 
-// RGBA variations for transparency effects - flattened for dot notation access
-		primaryAlpha10: 'rgba(125, 207, 255, 0.1)',
-		primaryAlpha20: 'rgba(125, 207, 255, 0.2)',
-		primaryAlpha30: 'rgba(125, 207, 255, 0.3)',
-		primaryAlpha40: 'rgba(125, 207, 255, 0.4)',
-		primaryAlpha50: 'rgba(125, 207, 255, 0.5)',
-		primaryAlpha60: 'rgba(125, 207, 255, 0.6)',
-		primaryAlpha70: 'rgba(125, 207, 255, 0.7)',
-		primaryAlpha80: 'rgba(125, 207, 255, 0.8)',
-		primaryAlpha90: 'rgba(125, 207, 255, 0.9)',
+// RGBA variations for transparency effects - reference CSS variables
+		primaryAlpha10: 'var(--crystal-primary-10)',
+		primaryAlpha20: 'var(--crystal-primary-20)',
+		primaryAlpha30: 'var(--crystal-primary-30)',
+		primaryAlpha40: 'var(--crystal-primary-40)',
+		primaryAlpha50: 'var(--crystal-primary-50)',
+		primaryAlpha60: 'var(--crystal-primary-60)',
+		primaryAlpha70: 'var(--crystal-primary-70)',
+		primaryAlpha80: 'var(--crystal-primary-80)',
+		primaryAlpha90: 'var(--crystal-primary-90)',
 
-		secondaryAlpha30: 'rgba(90, 163, 217, 0.3)',
-		secondaryAlpha50: 'rgba(90, 163, 217, 0.5)',
-		secondaryAlpha60: 'rgba(90, 163, 217, 0.6)',
-		secondaryAlpha70: 'rgba(90, 163, 217, 0.7)',
-		secondaryAlpha80: 'rgba(90, 163, 217, 0.8)',
-		secondaryAlpha90: 'rgba(90, 163, 217, 0.9)',
-		secondaryAlpha100: 'rgba(90, 163, 217, 1)',
+		secondaryAlpha30: 'var(--crystal-secondary-30)',
+		secondaryAlpha50: 'var(--crystal-secondary-50)',
+		secondaryAlpha60: 'var(--crystal-secondary-60)',
+		secondaryAlpha70: 'var(--crystal-secondary-70)',
+		secondaryAlpha80: 'var(--crystal-secondary-80)',
+		secondaryAlpha90: 'var(--crystal-secondary-90)',
+		secondaryAlpha100: 'var(--crystal-secondary)',
 
-		tertiaryAlpha30: 'rgba(122, 162, 247, 0.3)',
-		tertiaryAlpha50: 'rgba(122, 162, 247, 0.5)',
-		tertiaryAlpha60: 'rgba(122, 162, 247, 0.6)',
-		tertiaryAlpha70: 'rgba(122, 162, 247, 0.7)',
-		tertiaryAlpha80: 'rgba(122, 162, 247, 0.8)',
+		tertiaryAlpha30: 'var(--crystal-tertiary-30)',
+		tertiaryAlpha50: 'var(--crystal-tertiary-50)',
+		tertiaryAlpha60: 'var(--crystal-tertiary-60)',
+		tertiaryAlpha70: 'var(--crystal-tertiary-70)',
+		tertiaryAlpha80: 'var(--crystal-tertiary-80)',
 
 			// Dice-specific colors (for visual differentiation)
 			dice: {
-				d20: { bg: 'rgba(125, 207, 255, 0.3)', text: '#c0e7ff' },
-				d12: { bg: 'rgba(122, 162, 247, 0.3)', text: '#b8d0ff' },
-				d10: { bg: 'rgba(251, 191, 36, 0.25)', text: '#ffe8a3' },
-				d8: { bg: 'rgba(34, 197, 94, 0.25)', text: '#b3ffcc' },
-				d6: { bg: 'rgba(239, 68, 68, 0.25)', text: '#ffb3b3' },
-				d4: { bg: 'rgba(154, 165, 206, 0.3)', text: '#c8cfed' },
-				default: { bg: 'rgba(139, 69, 19, 0.3)', text: '#ffffff' }
+				d20: { bg: 'var(--crystal-primary-30)', text: 'var(--crystal-primary-light)' },
+				d12: { bg: 'var(--crystal-tertiary-30)', text: 'var(--crystal-tertiary-light)' },
+				d10: { bg: 'var(--accent-warning-25)', text: 'var(--accent-warning-light)' },
+				d8: { bg: 'var(--accent-success-25)', text: 'var(--accent-success-light)' },
+				d6: { bg: 'var(--accent-danger-25)', text: 'var(--accent-danger-light)' },
+				d4: { bg: 'var(--crystal-tertiary-30)', text: 'var(--crystal-tertiary-light)' },
+				default: { bg: 'var(--black-30)', text: 'var(--text-primary)' }
 			},
 
 			// Result state colors
 			result: {
-				critSuccess: '#b3ffcc',
-				critSuccessBg: 'rgba(125, 207, 255, 0.8)',
-				critFail: '#ffb3b3',
-				critFailBg: 'rgba(239, 68, 68, 0.6)',
-				max: '#b3ffcc',
-				min: '#d4dbff'
+				critSuccess: 'var(--accent-success-light)',
+				critSuccessBg: 'var(--crystal-primary-80)',
+				critFail: 'var(--accent-danger-light)',
+				critFailBg: 'var(--accent-danger-60)',
+				max: 'var(--accent-success-light)',
+				min: 'var(--crystal-tertiary-light)'
 			},
 
 			// Glow effects
 			glow: {
-				primary: 'rgba(125, 207, 255, 0.6)',
-				secondary: 'rgba(125, 207, 255, 0.8)',
-				ember: 'rgba(125, 207, 255, 0.8)'
+				primary: 'var(--crystal-primary-60)',
+				secondary: 'var(--crystal-primary-80)',
+				ember: 'var(--crystal-primary-80)'
 			}
 		},
 
-		// Semantic colors
+		// Semantic colors - reference CSS variables
 		border: {
-			default: '#3B4261',
-			focus: '#7DCFFF'
+			default: 'var(--border-default)',
+			focus: 'var(--crystal-primary)'
 		}
 	},
 

@@ -31,18 +31,18 @@ export const StyledAttacksTitle = styled.div<MobileStyledProps>`
 
 export const StyledAddWeaponButton = styled.button<MobileStyledProps>`
 	padding: ${theme.spacing[2]} ${theme.spacing[4]};
-	border: 1px solid ${theme.colors.accent.primary};
+	border: 1px solid ${theme.colors.crystal.primary};
 	border-radius: ${theme.borderRadius.md};
 	background: ${theme.colors.bg.tertiary};
-	color: ${theme.colors.accent.primary};
+	color: ${theme.colors.crystal.primary};
 	font-size: ${theme.typography.fontSize.sm};
 	font-weight: ${theme.typography.fontWeight.semibold};
 	cursor: pointer;
 	transition: all ${theme.transitions.fast};
 
 	&:hover {
-		background: ${theme.colors.accent.primary};
-		color: ${theme.colors.text.inverse};
+		background: ${theme.colors.crystal.primary};
+		color: ${theme.colors.bg.primary};
 		transform: translateY(-1px);
 		box-shadow: ${theme.shadows.md};
 	}

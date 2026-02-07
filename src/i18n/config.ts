@@ -15,9 +15,17 @@ const i18nPromise = i18n
 			es: { translation: es }
 		},
 		fallbackLng: 'en',
+		// Set English as default, only use detected language if explicitly saved
+		lng: localStorage.getItem('preferredLanguage') || 'en',
 		debug: false,
 		interpolation: {
 			escapeValue: false // React already escapes
+		},
+		detection: {
+			// Only check localStorage (user's explicit choice), ignore browser settings
+			order: ['localStorage'],
+			caches: ['localStorage'],
+			lookupLocalStorage: 'preferredLanguage'
 		}
 	});
 

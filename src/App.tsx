@@ -11,6 +11,7 @@ import CustomEquipment from './routes/custom-equipment/CustomEquipment.tsx';
 import Conditions from './routes/conditions/Conditions.tsx';
 import { MonsterList, MonsterDesigner } from './routes/dm/monsters';
 import { EncounterList, EncounterPlanner } from './routes/dm/encounters';
+import SystemsExplorer from './routes/systems/SystemsExplorer.tsx';
 
 import { StyledApp } from './styles/App.styles';
 
@@ -118,6 +119,7 @@ function App() {
 						<Route path="/dm/monsters/:id" element={<MonsterDesigner />} />
 						<Route path="/dm/encounters" element={<EncounterList />} />
 						<Route path="/dm/encounters/:id" element={<EncounterPlanner />} />
+						<Route path="/systems" element={<SystemsExplorer />} />
 					</Routes>
 				</BrowserRouter>
 			</StyledApp>

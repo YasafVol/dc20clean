@@ -5,7 +5,6 @@ import {
 	Background,
 	Controls,
 	MarkerType,
-	MiniMap,
 	ReactFlow,
 	ReactFlowProvider,
 	type Edge,
@@ -28,12 +27,47 @@ import { buildSystemsGraph } from './graphBuilder';
 
 const PageContainer = styled.div`
 	height: 100vh;
-	width: 100%;
+	width: 50%;
 	position: relative;
+	margin: 0 auto;
+	min-width: 380px;
 	background:
 		radial-gradient(circle at 20% 20%, rgba(251, 191, 36, 0.12), transparent 38%),
 		radial-gradient(circle at 80% 15%, rgba(34, 211, 238, 0.12), transparent 32%),
 		linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0a0a0f 100%);
+
+	.react-flow__controls {
+		background: rgba(15, 23, 42, 0.9);
+		border: 1px solid rgba(251, 191, 36, 0.45);
+		border-radius: 0.65rem;
+		box-shadow: 0 12px 24px rgba(2, 6, 23, 0.5);
+		overflow: hidden;
+	}
+
+	.react-flow__controls-button {
+		background: rgba(30, 41, 59, 0.95);
+		border: none;
+		border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+		color: #f8fafc;
+		transition: background 0.18s ease;
+	}
+
+	.react-flow__controls-button:hover {
+		background: rgba(251, 191, 36, 0.2);
+	}
+
+	.react-flow__controls-button svg {
+		fill: #fbbf24;
+	}
+
+	.react-flow__attribution {
+		display: none;
+	}
+
+	@media (max-width: 1080px) {
+		width: 100%;
+		min-width: 0;
+	}
 `;
 
 const Overlay = styled.div`
@@ -145,8 +179,7 @@ function SystemsExplorerContent() {
 				proOptions={{ hideAttribution: true }}
 			>
 				<Controls />
-				<MiniMap pannable zoomable nodeStrokeWidth={2} />
-				<Background gap={18} size={1} />
+				<Background gap={18} size={1} color="rgba(148, 163, 184, 0.24)" />
 			</ReactFlow>
 		</PageContainer>
 	);

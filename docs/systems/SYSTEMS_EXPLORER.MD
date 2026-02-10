@@ -2,7 +2,7 @@
 
 > Purpose: Hidden internal route for visually exploring app systems from `docs/systems` using React Flow.
 > Status: Active
-> Last Updated: 2026-02-08
+> Last Updated: 2026-02-10
 
 ---
 
@@ -62,12 +62,19 @@ Selecting a view rebuilds and refits the graph for that slice.
 ## 5. Interaction
 
 - Pan/zoom canvas via React Flow controls
+- Minimap is intentionally disabled to keep focus on node exploration and reduce visual clutter
+- Canvas controls are styled to match the app's dark fantasy theme
 - Hover a node to see tooltip details:
   - system title
   - purpose summary
   - doc path
   - last-updated date
 - Dropdown overlay controls active system view
+
+## 5.1 Layout
+
+- Explorer canvas container is centered and constrained to roughly half-page width on desktop.
+- On smaller viewports, the canvas expands to full width for usability.
 
 ---
 

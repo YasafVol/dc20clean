@@ -80,8 +80,9 @@ Selecting a view rebuilds and refits the graph for that slice.
 
 ## 5.1 Layout
 
-- Explorer canvas container is centered and constrained to roughly half-page width on desktop.
-- On smaller viewports, the canvas expands to full width for usability.
+- Explorer canvas remains full-page width.
+- Title/info overlay container is constrained to roughly half-page width on desktop.
+- On smaller viewports, the title/info container expands to full width for usability.
 
 ---
 

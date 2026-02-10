@@ -27,10 +27,8 @@ import { buildSystemsGraph } from './graphBuilder';
 
 const PageContainer = styled.div`
 	height: 100vh;
-	width: 50%;
+	width: 100%;
 	position: relative;
-	margin: 0 auto;
-	min-width: 380px;
 	background:
 		radial-gradient(circle at 20% 20%, rgba(251, 191, 36, 0.12), transparent 38%),
 		radial-gradient(circle at 80% 15%, rgba(34, 211, 238, 0.12), transparent 32%),
@@ -66,7 +64,6 @@ const PageContainer = styled.div`
 
 	@media (max-width: 1080px) {
 		width: 100%;
-		min-width: 0;
 	}
 `;
 
@@ -97,7 +94,11 @@ const OverlayCard = styled.div`
 	border-radius: 0.75rem;
 	padding: 0.6rem 0.75rem;
 	color: #e2e8f0;
-	max-width: 680px;
+	width: min(50%, 920px);
+
+	@media (max-width: 1080px) {
+		width: 100%;
+	}
 `;
 
 const Title = styled.h1`

@@ -1,5 +1,6 @@
 export type SystemsViewId =
 	| 'all'
+	| 'calculationFocus'
 	| 'architecture'
 	| 'characterCreation'
 	| 'characterSheet'
@@ -23,6 +24,9 @@ export interface SystemDocNode {
 	lastUpdated: string;
 	category: SystemsCategory;
 	relatedSystemIds: string[];
+	keyCodePaths?: string[];
+	howItWorks?: string[];
+	integrationSummary?: string[];
 }
 
 export interface SystemsView {
@@ -36,6 +40,11 @@ export const SYSTEMS_VIEWS: SystemsView[] = [
 		id: 'all',
 		label: 'All Systems',
 		description: 'All documented systems and their relationships.'
+	},
+	{
+		id: 'calculationFocus',
+		label: 'Calculation Integration',
+		description: 'Focused view of the calculator pipeline and its system connections.'
 	},
 	{
 		id: 'architecture',
@@ -88,7 +97,11 @@ export const SYSTEM_DOCS: SystemDocNode[] = [
 		docPath: 'docs/systems/EFFECT_SYSTEM.MD',
 		lastUpdated: '2026-02-06',
 		category: 'architecture',
-		relatedSystemIds: ['calculation_system', 'class_system', 'traits_system']
+		relatedSystemIds: ['calculation_system', 'class_system', 'traits_system'],
+		keyCodePaths: [
+			'src/lib/rulesdata/schemas/character.schema.ts',
+			'src/lib/services/calculatorModules/effectCollection.ts'
+		]
 	},
 	{
 		id: 'calculation_system',
@@ -98,7 +111,36 @@ export const SYSTEM_DOCS: SystemDocNode[] = [
 		docPath: 'docs/systems/CALCULATION_SYSTEM.MD',
 		lastUpdated: '2026-02-06',
 		category: 'architecture',
-		relatedSystemIds: ['background_system', 'effect_system']
+		relatedSystemIds: [
+			'background_system',
+			'effect_system',
+			'class_system',
+			'traits_system',
+			'ancestry_system',
+			'leveling_system',
+			'spells_system',
+			'martials_system',
+			'character_creation_flow',
+			'character_sheet',
+			'pdf_export_system',
+			'equipment_system',
+			'database_system'
+		],
+		keyCodePaths: [
+			'src/lib/services/enhancedCharacterCalculator.ts',
+			'src/lib/services/calculatorModules/*',
+			'src/lib/hooks/useCharacterBuilder.ts'
+		],
+		howItWorks: [
+			'Runs a staged pipeline: collect effects, aggregate progression, calculate derived stats, then validate.',
+			'Combines class progression, ancestry/trait effects, path allocations, and user selections into one result.',
+			'Generates stat breakdowns and validation errors that the UI uses for tooltips and step gating.'
+		],
+		integrationSummary: [
+			'Consumes effects and progression data from Class, Ancestry, Traits, Leveling, Spells, and Martials systems.',
+			'Drives Character Creation completion checks (points, budgets, spell slots, maneuver counts).',
+			'Feeds Character Sheet computed display and PDF Export transformation inputs.'
+		]
 	},
 	{
 		id: 'character_creation_flow',
@@ -108,7 +150,7 @@ export const SYSTEM_DOCS: SystemDocNode[] = [
 		docPath: 'docs/systems/CHARACTER_CREATION_FLOW.MD',
 		lastUpdated: '2026-02-06',
 		category: 'characterCreation',
-		relatedSystemIds: ['leveling_system']
+		relatedSystemIds: ['leveling_system', 'calculation_system']
 	},
 	{
 		id: 'class_system',
@@ -117,7 +159,7 @@ export const SYSTEM_DOCS: SystemDocNode[] = [
 		docPath: 'docs/systems/CLASS_SYSTEM.MD',
 		lastUpdated: '2026-02-06',
 		category: 'characterCreation',
-		relatedSystemIds: ['effect_system']
+		relatedSystemIds: ['effect_system', 'calculation_system']
 	},
 	{
 		id: 'ancestry_system',
@@ -127,7 +169,7 @@ export const SYSTEM_DOCS: SystemDocNode[] = [
 		docPath: 'docs/systems/ANCESTRY_SYSTEM.MD',
 		lastUpdated: '2026-02-06',
 		category: 'characterCreation',
-		relatedSystemIds: ['traits_system', 'effect_system']
+		relatedSystemIds: ['traits_system', 'effect_system', 'calculation_system']
 	},
 	{
 		id: 'background_system',
@@ -147,7 +189,12 @@ export const SYSTEM_DOCS: SystemDocNode[] = [
 		docPath: 'docs/systems/LEVELING_SYSTEM.MD',
 		lastUpdated: '2026-02-06',
 		category: 'characterCreation',
-		relatedSystemIds: ['character_creation_flow', 'class_system', 'martials_system']
+		relatedSystemIds: [
+			'character_creation_flow',
+			'class_system',
+			'martials_system',
+			'calculation_system'
+		]
 	},
 	{
 		id: 'spells_system',
@@ -156,7 +203,7 @@ export const SYSTEM_DOCS: SystemDocNode[] = [
 		docPath: 'docs/systems/SPELLS_SYSTEM.MD',
 		lastUpdated: '2026-02-06',
 		category: 'characterCreation',
-		relatedSystemIds: []
+		relatedSystemIds: ['calculation_system']
 	},
 	{
 		id: 'martials_system',
@@ -166,7 +213,7 @@ export const SYSTEM_DOCS: SystemDocNode[] = [
 		docPath: 'docs/systems/MARTIALS_SYSTEM.MD',
 		lastUpdated: '2026-02-06',
 		category: 'characterCreation',
-		relatedSystemIds: ['class_system', 'effect_system', 'leveling_system']
+		relatedSystemIds: ['class_system', 'effect_system', 'leveling_system', 'calculation_system']
 	},
 	{
 		id: 'traits_system',
@@ -176,7 +223,7 @@ export const SYSTEM_DOCS: SystemDocNode[] = [
 		docPath: 'docs/systems/TRAITS_SYSTEM.MD',
 		lastUpdated: '2026-02-06',
 		category: 'characterCreation',
-		relatedSystemIds: ['effect_system']
+		relatedSystemIds: ['effect_system', 'calculation_system']
 	},
 	{
 		id: 'equipment_system',
@@ -269,7 +316,10 @@ const CATEGORY_ORDER: SystemsCategory[] = [
 	'conventions'
 ];
 
-const VIEW_CATEGORY_MAP: Record<Exclude<SystemsViewId, 'all'>, SystemsCategory> = {
+const VIEW_CATEGORY_MAP: Record<
+	Exclude<SystemsViewId, 'all' | 'calculationFocus'>,
+	SystemsCategory
+> = {
 	architecture: 'architecture',
 	characterCreation: 'characterCreation',
 	characterSheet: 'characterSheet',
@@ -292,8 +342,35 @@ export function getSystemsForView(viewId: SystemsViewId): SystemDocNode[] {
 		});
 	}
 
+	if (viewId === 'calculationFocus') {
+		const calculationFocusIds = new Set([
+			'calculation_system',
+			'effect_system',
+			'class_system',
+			'ancestry_system',
+			'traits_system',
+			'background_system',
+			'leveling_system',
+			'spells_system',
+			'martials_system',
+			'character_creation_flow',
+			'character_sheet',
+			'equipment_system',
+			'pdf_export_system',
+			'database_system'
+		]);
+
+		return SYSTEM_DOCS.filter((system) => calculationFocusIds.has(system.id)).sort((a, b) =>
+			a.title.localeCompare(b.title)
+		);
+	}
+
 	const category = VIEW_CATEGORY_MAP[viewId];
 	return SYSTEM_DOCS.filter((system) => system.category === category).sort((a, b) =>
 		a.title.localeCompare(b.title)
 	);
+}
+
+export function getSystemById(id: string): SystemDocNode | undefined {
+	return SYSTEM_DOCS.find((system) => system.id === id);
 }

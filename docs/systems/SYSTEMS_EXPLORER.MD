@@ -38,6 +38,9 @@ Each system node includes:
 - `lastUpdated`
 - `category`
 - `relatedSystemIds`
+- `keyCodePaths?`
+- `howItWorks?`
+- `integrationSummary?`
 
 This data is intentionally docs-driven and mirrors the current `docs/systems` catalog.
 
@@ -48,6 +51,7 @@ This data is intentionally docs-driven and mirrors the current `docs/systems` ca
 Supported views:
 
 - All Systems
+- Calculation Integration (focused dependency map around calculator pipeline)
 - Architecture & Cross-Cutting
 - Character Creation
 - Character Sheet
@@ -67,6 +71,9 @@ Selecting a view rebuilds and refits the graph for that slice.
 - Hover a node to see tooltip details:
   - system title
   - purpose summary
+  - how-it-works bullets (when available)
+  - integration summary bullets (when available)
+  - related system list
   - doc path
   - last-updated date
 - Dropdown overlay controls active system view

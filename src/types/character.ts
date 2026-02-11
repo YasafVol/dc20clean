@@ -282,8 +282,12 @@ export interface SpellData {
 
 export interface InventoryItemData {
 	id: string;
-	itemType: 'Weapon' | 'Armor' | 'Shield' | 'Adventuring Supply' | 'Potion' | '';
+	itemType: 'Weapon' | 'Armor' | 'Shield' | 'Adventuring Supply' | 'Potion' | 'Custom' | '';
 	itemName: string;
 	count: number;
 	cost?: string;
+	/** Links to a saved Equipage item's id (when picked from custom equipment storage) */
+	customEquipmentId?: string;
+	/** User-written description for custom freeform items */
+	description?: string;
 }

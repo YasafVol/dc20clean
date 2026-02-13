@@ -219,7 +219,8 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		updateDefenseOverrides: updateDefenseOverridesContext,
 		setRageActive,
 		saveStatus,
-		retryFailedSave
+		retryFailedSave,
+		updateInventory
 	} = useCharacterSheet();
 
 	logger.debug('ui', 'CharacterSheet render', { saveStatus });
@@ -278,6 +279,23 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 	const closeInventoryPopup = () => {
 		setSelectedInventoryItem(null);
+	};
+
+	/** Update a custom freeform inventory item's description or cost from the popup */
+	const handleUpdateCustomItem = (
+		itemId: string,
+		updates: Partial<Pick<InventoryItemData, 'description' | 'cost'>>
+	) => {
+		const inventory = state.character?.characterState?.inventory?.items || [];
+		const updatedItems = inventory.map((item: InventoryItemData) =>
+			item.id === itemId ? { ...item, ...updates } : item
+		);
+		updateInventory(updatedItems);
+		// Also update the local popup state so it stays in sync
+		setSelectedInventoryItem((prev) => {
+			if (!prev || prev.inventoryData.id !== itemId) return prev;
+			return { ...prev, inventoryData: { ...prev.inventoryData, ...updates } };
+		});
 	};
 
 	const handleMouseEnter = (
@@ -945,7 +963,11 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				)}
 			</MainContent>
 			<WeaponPopup weapon={selectedWeapon} onClose={closeWeaponPopup} />
-			<InventoryPopup selectedInventoryItem={selectedInventoryItem} onClose={closeInventoryPopup} />
+			<InventoryPopup
+				selectedInventoryItem={selectedInventoryItem}
+				onClose={closeInventoryPopup}
+				onUpdateCustomItem={handleUpdateCustomItem}
+			/>
 			<CalculationTooltip
 				title={tooltipData.title}
 				breakdown={tooltipData.breakdown}

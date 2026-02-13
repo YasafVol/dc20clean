@@ -138,6 +138,28 @@ export const StyledInventoryInput = styled.input<MobileStyledProps>`
 	}
 `;
 
+export const StyledInventoryTextInput = styled.input<MobileStyledProps>`
+	padding: ${theme.spacing[1]};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.sm};
+	font-size: ${theme.typography.fontSize.sm};
+	text-align: left;
+	width: 100%;
+	box-sizing: border-box;
+	background-color: ${theme.colors.bg.primary};
+	color: ${theme.colors.text.primary};
+	transition: border-color 0.2s;
+
+	&:focus {
+		outline: none;
+		border-color: ${theme.colors.border.focus};
+	}
+
+	&::placeholder {
+		color: ${theme.colors.text.muted};
+	}
+`;
+
 export const StyledInventoryInfoIcon = styled.span<MobileStyledProps>`
 	background: transparent;
 	color: ${theme.colors.accent.primary};

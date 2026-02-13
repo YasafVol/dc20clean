@@ -659,10 +659,6 @@ export function useCharacterSheetReducer() {
 		dispatch({ type: 'ADD_ATTACK', attack });
 	}, []);
 
-	const setConditionToggle = useCallback((conditionId: string, active: boolean) => {
-		dispatch({ type: 'SET_CONDITION_TOGGLE', conditionId, active });
-	}, []);
-
 	const removeAttack = useCallback((attackId: string) => {
 		dispatch({ type: 'REMOVE_ATTACK', attackId });
 	}, []);

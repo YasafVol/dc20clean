@@ -25,8 +25,8 @@ export const sorcererProgression: ClassProgressionLevel[] = [
 			classFeatures: [
 				'sorcerer_spellcasting_path',
 				'sorcerer_innate_power',
-				'sorcerer_meta_magic',
-				'sorcerer_magical_nature'
+				'sorcerer_overload_magic',
+				'sorcerer_sorcery_spell'
 			]
 		}
 	},
@@ -43,7 +43,7 @@ export const sorcererProgression: ClassProgressionLevel[] = [
 		gains: {
 			talents: 1,
 			pathProgression: true,
-			classFeatures: ['sorcerer_magical_overflow']
+			classFeatures: ['sorcerer_meta_magic']
 		}
 	},
 	{

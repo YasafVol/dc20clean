@@ -1,17 +1,47 @@
 # DC20Clean – Calculation & Derived Stats System
 
-> Purpose
-> Definitive guide to derived stat formulas, effect application order, mastery cap validation, and breakdown output.
+> Purpose: Definitive guide to derived stat formulas, effect application order, mastery cap validation, and breakdown output.
+> Status: Active
+> Last Updated: 2026-02-06
 
 ---
 
 ## 1. Key Files & Roles
 
-- `src/lib/services/enhancedCharacterCalculator.ts` — core engine
+- `src/lib/services/enhancedCharacterCalculator.ts` — orchestrator (~500 lines) calling modules in sequence
+- `src/lib/services/calculatorModules/` — 8 specialized calculation modules:
+  - `abilityCollection.ts` — collects granted abilities, movements, resistances, senses, combat training, conditional modifiers
+  - `breakdownGeneration.ts` — creates stat breakdowns for tooltips
+  - `spellSystem.ts` — global magic profile and spell slot generation
+  - `effectCollection.ts` — aggregates attributed effects and resolves choices
+  - `progressionAggregation.ts` — aggregates progression gains and path benefits
+  - `budgetCalculation.ts` — skill/trade/language/ancestry point budgets
+  - `statCalculation.ts` — derived stats (attributes, defenses, resources, saves, movement)
+  - `validation.ts` — attribute limits, mastery cap, spell slot validation
 - `src/lib/hooks/useCharacterBuilder.ts` — exposes calculation results to UI
 - `src/lib/rulesdata/schemas/character.schema.ts` — canonical `Effect` union
 - `src/lib/rulesdata/attributes.ts` — base attributes and modifiers
 - `src/lib/rulesdata/progression/levelCaps.ts` — **single source of truth** for attribute/mastery caps by level
+
+  ***
+
+## 1.1. Calculator Architecture
+
+The calculator was refactored into 8 specialized modules plus an orchestrator:
+
+**Orchestrator**: `enhancedCharacterCalculator.ts` (~500 lines) coordinates the calculation pipeline by calling modules in sequence.
+
+**Modules** (in `src/lib/services/calculatorModules/`):
+- `abilityCollection.ts` — collects granted abilities, movements, resistances, senses, combat training, conditional modifiers
+- `breakdownGeneration.ts` — creates stat breakdowns for tooltips
+- `spellSystem.ts` — global magic profile and spell slot generation
+- `effectCollection.ts` — aggregates attributed effects and resolves choices
+- `progressionAggregation.ts` — aggregates progression gains and path benefits
+- `budgetCalculation.ts` — skill/trade/language/ancestry point budgets
+- `statCalculation.ts` — derived stats (attributes, defenses, resources, saves, movement)
+- `validation.ts` — attribute limits, mastery cap, spell slot validation
+
+This modular structure improves maintainability and makes the calculation pipeline easier to understand and test.
 
   ***
 
@@ -87,7 +117,7 @@
 
 **Spellcaster Path:**
 
-- Level 1: +2 MP, +1 cantrip, +1 spell
+- Level 1: +3 MP, +1 cantrip, +1 spell
 - Level 2: +2 MP, +1 cantrip
 - Level 3: +2 MP, +1 cantrip, +1 spell
 - Level 4: +2 MP, +1 spell
@@ -155,7 +185,7 @@ All cap logic now references `src/lib/rulesdata/progression/levelCaps.ts`:
 
 - Increasing a trait that grants `+1 mpMax` increases MP Max and appears in the breakdown with correct source label.
 - Attempting to exceed mastery cap without exceptions yields `MASTERY_CAP_EXCEEDED` and disables submit.
-- Save DC formula matches `8 + Combat Mastery + Prime` for casters.
+- Save DC formula matches `10 + Combat Mastery + Prime Attribute`.
 
 ---
 
@@ -204,9 +234,18 @@ Input Data (buildData)
 ├── tradesData (ranks)
 └── languagesData
 
-Effects Aggregation
+Effects Aggregation (effectCollection.ts)
 ├── aggregateAttributedEffects() → rawEffects
 └── resolveEffectChoices() → resolvedEffects
+
+Effect Collection (abilityCollection.ts)
+├── collectGrantedAbilities() → abilities (GRANT_ABILITY)
+├── collectMovements() → movements (GRANT_MOVEMENT)
+├── collectResistances() → resistances (GRANT_RESISTANCE)
+├── collectVulnerabilities() → vulnerabilities (GRANT_VULNERABILITY)
+├── collectSenses() → senses (GRANT_SENSE)
+├── collectCombatTraining() → combatTraining (GRANT_COMBAT_TRAINING)
+└── collectConditionalModifiers() → conditionalModifiers
 ```
 
 #### Stage 2: Base Values (No Dependencies)
@@ -416,7 +455,7 @@ progressionGains
 
 ### 9.3. Movement Processing
 
-**Location**: `enhancedCharacterCalculator.ts:1314-1334`
+**Location**: `calculatorModules/abilityCollection.ts`, called after all stats are finalized
 
 After all stats are finalized (including `finalMoveSpeed`), `GRANT_MOVEMENT` effects are processed:
 
@@ -436,11 +475,20 @@ const movements = resolvedEffects
 	});
 ```
 
+**Default Climb/Swim Injection:**
+
+Characters without Climb or Swim speed automatically receive half ground speed for these movement types, per DC20 CH3 Slowed 1 rule. The `injectDefaultMovements()` function adds these defaults with `isDefault: true` flag:
+
+- If no Climb speed exists: adds Climb at `floor(groundSpeed / 2)` with `isDefault: true`
+- If no Swim speed exists: adds Swim at `floor(groundSpeed / 2)` with `isDefault: true`
+- Fly/Burrow/Glide are not auto-granted (require explicit `GRANT_MOVEMENT` effects)
+
 **Key Points:**
 
 - Movement processing occurs AFTER `finalMoveSpeed` is calculated
 - `equal_to_speed` converts to numeric value of ground speed
-- Result is array of `{ type, speed, source }` objects
+- Default Climb/Swim speeds are injected if not already granted
+- Result is array of `{ type, speed, source, isDefault? }` objects
 - Consumed by PDF export to populate movement checkboxes
 
 **See**: `docs/systems/EFFECT_SYSTEM.MD#2.1` for full GRANT_MOVEMENT documentation
@@ -451,19 +499,19 @@ const movements = resolvedEffects
 
 **Previous (Incorrect) Order:**
 
-1. Line 903: `finalHPMax = finalMight + progressionGains.totalHP` (= 18)
-2. Line 944: `finalRestPoints = finalHPMax` (= 18) ❌
-3. Line 950: `breakdowns.hpMax = createStatBreakdown(...)` (applies +1 from trait)
-4. Line 964: `finalHPMax = breakdowns.hpMax.total` (= 19) ✅
-5. **Result**: HP Max = 19, Rest Points = 18 ❌
+1. `finalHPMax = finalMight + progressionGains.totalHP` (= 18)
+2. `finalRestPoints = finalHPMax` (= 18) -- assigned too early
+3. `breakdowns.hpMax = createStatBreakdown(...)` (applies +1 from trait)
+4. `finalHPMax = breakdowns.hpMax.total` (= 19)
+5. **Result**: HP Max = 19, Rest Points = 18 -- mismatch
 
 **Current (Correct) Order:**
 
-1. Line 903: `finalHPMax = finalMight + progressionGains.totalHP`
-2. Line 949: `breakdowns.hpMax = createStatBreakdown(...)`
-3. Line 963: `finalHPMax = breakdowns.hpMax.total` (= 19)
-4. **Line 971**: `finalRestPoints = finalHPMax` (= 19) ✅
-5. **Result**: HP Max = 19, Rest Points = 19 ✅
+1. `finalHPMax = finalMight + progressionGains.totalHP`
+2. `breakdowns.hpMax = createStatBreakdown(...)`
+3. `finalHPMax = breakdowns.hpMax.total` (= 19)
+4. `finalRestPoints = finalHPMax` (= 19) -- assigned after breakdown
+5. **Result**: HP Max = 19, Rest Points = 19 -- correct
 
 ### 9.5. Correct Calculation Order
 
@@ -504,7 +552,7 @@ For values that depend on breakdowns, the order must be:
 
 ---
 
-> Last updated: 2026-02-05 (Conditional defense modifiers documented)
+> Last updated: 2026-02-06
 > Maintainer: @DC20Clean-Team
 
 

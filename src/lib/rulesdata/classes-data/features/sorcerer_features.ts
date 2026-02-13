@@ -6,6 +6,7 @@ export const sorcererClass: ClassDefinition = {
 	startingEquipment: {
 		weaponsOrShields: ['1 Weapon'],
 		armor: '1 set of Light Armor',
+		tradeTools: ['1 set of Trade Tools'],
 		packs: 'X or Y "Packs" (Adventuring Packs Coming Soon)'
 	},
 	spellcasterPath: {
@@ -23,6 +24,14 @@ export const sorcererClass: ClassDefinition = {
 		}
 	},
 	coreFeatures: [
+		{
+			id: 'sorcerer_spellcasting_path',
+			featureName: 'Spellcasting Path',
+			levelGained: 1,
+			description:
+				'You gain the ability to cast spells from the Arcane, Divine, or Primal spell lists.',
+			effects: [{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }]
+		},
 		{
 			id: 'sorcerer_innate_power',
 			featureName: 'Innate Power',
@@ -217,10 +226,10 @@ export const sorcererClass: ClassDefinition = {
 		{
 			subclassName: 'Angelic',
 			features: [
-				{
-					featureName: 'Celestial Spark',
-					levelGained: 1,
-					description:
+			{
+				featureName: 'Celestial Spark',
+				levelGained: 3,
+				description:
 						'You can use a Minor Action to emit Bright Light within a 5 Space Radius and can end the effect at any time. You also gain the following abilities:',
 					benefits: [
 						{
@@ -260,9 +269,9 @@ export const sorcererClass: ClassDefinition = {
 						}
 					]
 				},
-				{
-					featureName: 'Celestial Appearance (Flavor Feature)',
-					levelGained: 1,
+			{
+				featureName: 'Celestial Appearance (Flavor Feature)',
+				levelGained: 3,
 					isFlavor: true,
 					description:
 						"You gain additional angelic features such as sparkling skin, feathers, a faint halo, or other changes of your choice. If you already have these features, they're enhanced or expanded upon. Additionally, if you're already Fluent in Celestial, you gain 1 level of Language Mastery in another Language of your choice.",
@@ -280,9 +289,9 @@ export const sorcererClass: ClassDefinition = {
 		{
 			subclassName: 'Draconic',
 			features: [
-				{
-					featureName: 'Draconic Spark',
-					levelGained: 1,
+			{
+				featureName: 'Draconic Spark',
+				levelGained: 3,
 					description: 'You gain the following abilities:',
 					benefits: [
 						{
@@ -329,9 +338,9 @@ export const sorcererClass: ClassDefinition = {
 						}
 					]
 				},
-				{
-					featureName: 'Draconic Appearance (Flavor Feature)',
-					levelGained: 1,
+			{
+				featureName: 'Draconic Appearance (Flavor Feature)',
+				levelGained: 3,
 					isFlavor: true,
 					description:
 						"You gain additional draconic features such as scales, fangs, claws, or other changes of your choice. If you already have these features, they're enhanced or expanded upon. Additionally, you gain 1 level of Language Mastery in Draconic. If you're already Fluent in Draconic, you gain 1 level of Language Mastery in another Language of your choice.",

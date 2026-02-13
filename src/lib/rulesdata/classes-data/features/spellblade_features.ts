@@ -5,11 +5,12 @@ export const spellbladeClass: ClassDefinition = {
 	classCategory: 'hybrid',
 	startingEquipment: {
 		weaponsOrShields: [
-			'2 Weapons or Light Shields',
+			'3 Weapons or Light Shields',
 			'Heavy Shields (if you learn the Warrior Discipline)'
 		],
 		rangedWeapons: ['Ranged Weapon with 20 Ammo', '3 Weapons with the Toss or Thrown Property'],
 		armor: ['Light Armor', 'Heavy Armor (if you learn the Warrior Discipline)'],
+		tradeTools: ['1 set of Trade Tools'],
 		packs: 'X or Y Packs (Adventuring Packs Coming Soon)'
 	},
 	martialPath: {
@@ -49,6 +50,27 @@ export const spellbladeClass: ClassDefinition = {
 		}
 	},
 	coreFeatures: [
+		{
+			id: 'spellblade_martial_path',
+			featureName: 'Martial Path',
+			levelGained: 1,
+			description:
+				'You gain combat training in weapons, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.',
+			effects: [
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Shields', value: true },
+				{ type: 'GRANT_MANEUVERS', target: 'all_attack', value: 4 }
+			]
+		},
+		{
+			id: 'spellblade_spellcasting_path',
+			featureName: 'Spellcasting Path',
+			levelGained: 1,
+			description:
+				'You gain the ability to cast spells. Choose 2 Spell Schools; you can learn spells from those Schools or with Weapon/Ward tags.',
+			effects: []
+		},
 		{
 			id: 'spellblade_source_of_power',
 			featureName: 'Source of Power',
@@ -356,7 +378,7 @@ export const spellbladeClass: ClassDefinition = {
 											type: 'GRANT_ABILITY',
 											target: 'spellblade_rune_weapon_frostbite',
 											value:
-												'When you Smite a creature, it must make a Physical Save or be Grappled by ice until the end of your next turn; it may spend 1 AP to attempt an Athletics Check against your Save DC to break free.'
+												'When you Smite a creature, it must make a Physical Save or be Immobilized for 1 Round.'
 										},
 										{
 											type: 'GRANT_ABILITY',
@@ -391,7 +413,7 @@ export const spellbladeClass: ClassDefinition = {
 											type: 'GRANT_ABILITY',
 											target: 'spellblade_rune_weapon_wave',
 											value:
-												'When you Smite a creature, you may spend 1 AP to force a Physical Save; on failure, the target is knocked Prone.'
+												'When you Smite a creature, it must make a Physical Save or be knocked Prone.'
 										},
 										{
 											type: 'GRANT_ABILITY',

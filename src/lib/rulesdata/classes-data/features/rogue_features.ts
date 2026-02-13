@@ -4,9 +4,10 @@ export const rogueClass: ClassDefinition = {
 	className: 'Rogue',
 	classCategory: 'martial',
 	startingEquipment: {
-		weaponsOrShields: ['2 Weapons or Light Shields'],
+		weaponsOrShields: ['3 Weapons or Light Shields'],
 		rangedWeapons: ['Ranged Weapon with 20 Ammo', '3 Weapons with the Toss or Thrown Property'],
 		armor: ['1 set of Light Armor'],
+		tradeTools: ['1 set of Trade Tools'],
 		packs: ['X or Y Packs (Adventuring Packs Coming Soon)']
 	},
 	martialPath: {
@@ -40,8 +41,8 @@ export const rogueClass: ClassDefinition = {
 			id: 'rogue_debilitating_strike',
 			featureName: 'Debilitating Strike',
 			levelGained: 1,
-			description:
-				'When you hit with a weapon attack you may spend 1 SP. The target makes a Physical Save vs your Save DC; on failure, choose Deafened, Exposed, Hindered, or Slowed 2. The effect lasts until the start of your next turn and different choices may stack but not duplicates.'
+		description:
+			'When you hit with a weapon attack you may spend 1 SP. The target makes a Physical Save vs your Save DC; on failure, choose Deafened, Exposed, Hindered, or Slowed 2. The effect lasts for 1 Round and different choices may stack but not duplicates.'
 		},
 		{
 			id: 'rogue_roguish_finesse',
@@ -172,9 +173,9 @@ export const rogueClass: ClassDefinition = {
 							]
 						},
 						{
-							name: 'Taunting Shot',
-							description:
-								'Once per turn when attacking a conditioned foe, forgo Cheap Shot damage to force a Charisma Save or Taunt the target until your next turn ends.',
+					name: 'Taunting Shot',
+						description:
+							'Once per round when attacking a conditioned foe, forgo Cheap Shot damage to force a Charisma Save or Taunt the target until your next turn ends.',
 							effects: [
 								{
 									type: 'GRANT_ABILITY',

@@ -344,7 +344,89 @@ export const Conditions: React.FC<ConditionsProps> = ({ conditionStatuses, isMob
 		);
 	};
 
-	return <ConditionsContainer $isMobile={isMobile}></ConditionsContainer>;
+	// Modal for condition details
+	const selectedCondition = selectedConditionId ? getConditionById(selectedConditionId) : null;
+
+	return (
+		<ConditionsContainer $isMobile={isMobile}>
+			<SectionHeader>
+				<SectionTitle>Condition Interactions</SectionTitle>
+				<SearchInput
+					type="text"
+					placeholder="Search..."
+					value={searchTerm}
+					onChange={(e) => setSearchTerm(e.target.value)}
+				/>
+			</SectionHeader>
+
+			{!hasAnyInteractions && (
+				<EmptyMessage>
+					{searchTerm ? 'No matching conditions found.' : 'No condition interactions.'}
+				</EmptyMessage>
+			)}
+
+			{/* Immunities */}
+			{renderConditionGroup('Immunities', '🛡️', 'immunity', filteredConditions.immunities)}
+
+			{/* Resistances */}
+			{renderConditionGroup('Resistances', '🔵', 'resistance', filteredConditions.resistances)}
+
+			{/* Vulnerabilities */}
+			{renderConditionGroup(
+				'Vulnerabilities',
+				'🔴',
+				'vulnerability',
+				filteredConditions.vulnerabilities
+			)}
+
+			{/* Expandable view for conditions with no special interactions */}
+			{filteredConditions.noInteractions.length > 0 && (
+				<>
+					<ExpandButton onClick={() => setExpandedView(!expandedView)}>
+						{expandedView ? 'Hide' : 'Show'} Other Conditions (
+						{filteredConditions.noInteractions.length})
+					</ExpandButton>
+					{expandedView && (
+						<GroupContainer>
+							<ConditionsList>
+								{filteredConditions.noInteractions.map((cs) => {
+									const condition = getConditionById(cs.conditionId);
+									return (
+										<ConditionItem key={cs.conditionId}>
+											<ConditionName
+												onClick={() => setSelectedConditionId(cs.conditionId)}
+											>
+												{condition?.name || cs.conditionId}
+											</ConditionName>
+										</ConditionItem>
+									);
+								})}
+							</ConditionsList>
+						</GroupContainer>
+					)}
+				</>
+			)}
+
+			{/* Condition Detail Modal */}
+			{selectedCondition && (
+				<ConditionModal onClick={() => setSelectedConditionId(null)}>
+					<ModalContent onClick={(e) => e.stopPropagation()}>
+						<ModalTitle>{selectedCondition.name}</ModalTitle>
+						<ModalDescription>{selectedCondition.description}</ModalDescription>
+						<ModalMeta>
+							{selectedCondition.type && (
+								<ModalTag>{selectedCondition.type}</ModalTag>
+							)}
+							{selectedCondition.tags?.map((tag: string) => (
+								<ModalTag key={tag}>{tag}</ModalTag>
+							))}
+						</ModalMeta>
+						<CloseButton onClick={() => setSelectedConditionId(null)}>Close</CloseButton>
+					</ModalContent>
+				</ConditionModal>
+			)}
+		</ConditionsContainer>
+	);
 };
 
 export default Conditions;

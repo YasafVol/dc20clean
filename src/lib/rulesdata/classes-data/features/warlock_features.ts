@@ -7,6 +7,7 @@ export const warlockClass: ClassDefinition = {
 		weaponsOrShields: ['1 Weapon or Light Shield'],
 		armor: ['1 set of Light Armor'],
 		spellFocus: ['1 Spell Focus'],
+		tradeTools: ['1 set of Trade Tools'],
 		packs: 'Adventuring Pack (Coming Soon)'
 	},
 	spellcasterPath: {
@@ -27,6 +28,22 @@ export const warlockClass: ClassDefinition = {
 		}
 	},
 	coreFeatures: [
+		{
+			id: 'warlock_spellcasting_path',
+			featureName: 'Spellcasting Path',
+			levelGained: 1,
+			description:
+				'You gain the ability to cast spells. Choose 3 Spell Schools; when you learn a new Spell, you can choose any Spell from those Schools.',
+			effects: [{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }]
+		},
+		{
+			id: 'warlock_beseech_patron',
+			featureName: 'Beseech Patron',
+			levelGained: 1,
+			isFlavor: true,
+			description:
+				'You can beseech your Patron for aid when you are in need. Your Patron may or may not answer, and may demand something in return. The nature of this interaction is determined by your relationship with your Patron and is at the discretion of the GM.'
+		},
 		{
 			id: 'warlock_contract',
 			featureName: 'Warlock Contract',
@@ -213,16 +230,16 @@ export const warlockClass: ClassDefinition = {
 							]
 						},
 						{
-							name: 'Forbidden Knowledge',
-							description:
-								'When you complete a Short or Long Rest, you temporarily learn any Spell of your choice. When you cast that Spell, its MP cost is reduced by 1 (minimum of 0). You forget the Spell immediately after you cast it.',
-							effects: [
-								{
-									type: 'GRANT_ABILITY',
-									target: 'forbidden_knowledge',
-									value: 'Temporarily learn any spell after a rest with a 1 MP cost reduction.'
-								}
-							]
+					name: 'Forbidden Knowledge',
+						description:
+							'When you complete a Short or Long Rest, you temporarily learn any Spell of your choice. When you cast that Spell, its MP cost is reduced by 2 (minimum of 0). You forget the Spell immediately after you cast it.',
+						effects: [
+							{
+								type: 'GRANT_ABILITY',
+								target: 'forbidden_knowledge',
+								value: 'Temporarily learn any spell after a rest with a 2 MP cost reduction.'
+							}
+						]
 						},
 						{
 							name: 'Eldritch Bargain',
@@ -322,6 +339,13 @@ export const warlockClass: ClassDefinition = {
 							]
 						}
 					]
+				},
+				{
+					featureName: 'Dream Walker',
+					levelGained: 3,
+					isFlavor: true,
+					description:
+						'You can enter and interact with the dreams of sleeping creatures you can see within 5 Spaces. You have ADV on Checks to influence or navigate dreams.'
 				}
 			]
 		}

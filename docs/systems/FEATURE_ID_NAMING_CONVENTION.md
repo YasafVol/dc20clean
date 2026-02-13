@@ -1,8 +1,8 @@
 # Feature ID Naming Convention
 
-## Purpose
-
-This document defines the standard naming convention for feature IDs in class definitions to ensure consistency, maintainability, and easy reference across progression files.
+> Purpose: Standard naming convention for feature IDs in class definitions.
+> Status: Active
+> Last Updated: 2026-02-06
 
 ## Convention Rules
 
@@ -119,11 +119,9 @@ Feature IDs are referenced in:
 
 - Feature IDs should remain stable once defined
 - Changing a feature ID requires updating all progression files that reference it
-- Use the validation script (M1.6) to verify consistency after changes
-- Document any breaking changes in the CHANGELOG
+- Verify consistency after changes by running `npm run test:unit` (rulesdata tests check ID references)
+- Document any breaking changes in commit messages
 
 ---
 
-**Version:** 1.0  
-**Last Updated:** September 30, 2025  
-**Status:** Active
+> Maintainer: @DC20Clean-Team

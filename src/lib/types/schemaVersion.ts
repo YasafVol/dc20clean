@@ -7,7 +7,7 @@
  * - Patch: Bug fixes (fully compatible)
  */
 
-export const CURRENT_SCHEMA_VERSION = '2.1.0';
+export const CURRENT_SCHEMA_VERSION = '2.2.0';
 
 export interface SchemaVersion {
 	major: number;

@@ -25,7 +25,7 @@ export const commanderProgression: ClassProgressionLevel[] = [
 			classFeatures: [
 				'commander_martial_path',
 				'commander_inspiring_presence',
-				'commander_call',
+				'commander_commanders_call',
 				'commander_natural_leader'
 			]
 		}

@@ -12,6 +12,7 @@ export const druidClass: ClassDefinition = {
 		weaponsOrShields: ['1 Weapon'],
 		armor: ['1 set of Light Armor (non-metal)'],
 		spellFocus: ['1 Spell Focus (Druidic Focus)'],
+		tradeTools: ['1 set of Trade Tools'],
 		packs: 'Adventuring Pack (Coming Soon)'
 	},
 	spellcasterPath: {

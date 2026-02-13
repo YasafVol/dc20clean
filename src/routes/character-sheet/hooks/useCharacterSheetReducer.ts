@@ -28,6 +28,8 @@ export type SheetAction =
 	| { type: 'SET_MANUAL_DEFENSE'; pd?: number; ad?: number; pdr?: number }
 	| { type: 'SET_CONDITION_TOGGLE'; conditionId: string; active: boolean }
 	| { type: 'ADD_ATTACK'; attack: AttackData }
+	| { type: 'SET_CONDITION_TOGGLE'; conditionId: string; active: boolean }
+	| { type: 'ADD_ATTACK'; attack: AttackData }
 	| { type: 'REMOVE_ATTACK'; attackId: string }
 	| { type: 'UPDATE_ATTACK'; attackId: string; attack: AttackData }
 	| { type: 'RESET_ATTACKS' }
@@ -556,18 +558,37 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 				}
 			};
 
-		case 'UPDATE_DEFENSE_OVERRIDES':
-			if (!state.character) return state;
-			return {
-				...state,
-				character: {
-					...state.character,
-					characterState: {
-						...state.character.characterState,
-						defenseOverrides: action.overrides
+			case 'UPDATE_DEFENSE_OVERRIDES':
+				if (!state.character) return state;
+				return {
+					...state,
+					character: {
+						...state.character,
+						characterState: {
+							...state.character.characterState,
+							defenseOverrides: action.overrides
+						}
 					}
-				}
-			};
+				};
+
+			case 'SET_RAGE_ACTIVE':
+				if (!state.character) return state;
+				return {
+					...state,
+					character: {
+						...state.character,
+						characterState: {
+							...state.character.characterState,
+							ui: {
+								...(state.character.characterState.ui || { manualDefenseOverrides: {} }),
+								combatToggles: {
+									...state.character.characterState.ui?.combatToggles,
+									isRaging: action.isRaging
+								}
+							}
+						}
+					}
+				};
 
 		case 'SET_RAGE_ACTIVE':
 			if (!state.character) return state;
@@ -636,6 +657,10 @@ export function useCharacterSheetReducer() {
 
 	const addAttack = useCallback((attack: AttackData) => {
 		dispatch({ type: 'ADD_ATTACK', attack });
+	}, []);
+
+	const setConditionToggle = useCallback((conditionId: string, active: boolean) => {
+		dispatch({ type: 'SET_CONDITION_TOGGLE', conditionId, active });
 	}, []);
 
 	const removeAttack = useCallback((attackId: string) => {

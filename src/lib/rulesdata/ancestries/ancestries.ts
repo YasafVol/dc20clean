@@ -272,7 +272,7 @@ export const ancestriesData: Ancestry[] = [
 		name: 'Beastborn',
 		description: 'Beastborn are a diverse folk, who take on the characteristics of various beasts.',
 		rulesSource: 'DC20Beta0.10',
-		defaultTraitIds: [],
+		defaultTraitIds: ['beastborn_beastkind'],
 		expandedTraitIds: [
 			// Senses
 			'beastborn_darkvision',
@@ -292,12 +292,14 @@ export const ancestriesData: Ancestry[] = [
 			'beastborn_burrow_speed',
 			// Jumping
 			'beastborn_jumper',
+			'beastborn_strong_jumper',
 			// Flying
 			'beastborn_glide_speed',
 			'beastborn_limited_flight',
 			'beastborn_full_flight',
 			'beastborn_flyby',
 			'beastborn_winged_arms',
+			'beastborn_stealth_feathers',
 			// Body
 			'beastborn_tough',
 			'beastborn_thick_skinned',
@@ -309,6 +311,7 @@ export const ancestriesData: Ancestry[] = [
 			'beastborn_hazardous_hide',
 			'beastborn_natural_armor',
 			'beastborn_hard_shell',
+			'beastborn_shell_retreat',
 			'beastborn_camouflage',
 			'beastborn_prowler',
 			'beastborn_cold_resistance',
@@ -328,7 +331,8 @@ export const ancestriesData: Ancestry[] = [
 			'beastborn_fast_reflexes',
 			'beastborn_mimicry',
 			'beastborn_intimidating_shout',
-			'beastborn_toxic_fortitude'
+			'beastborn_toxic_fortitude',
+			'beastborn_shoot_webs'
 		],
 		origin: {
 			prompt: 'Choose a type of Beast you are modeled after:',

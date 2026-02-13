@@ -48,13 +48,47 @@ function SelectedAncestries() {
 	}
 
 	// Check if all prerequisites for a trait are met
+	// Uses structured `requirements` (supersedes deprecated `prerequisites` array)
 	function arePrerequisitesMet(trait: ITrait, currentSelectedTraits: string[]): boolean {
+		if (trait.requirements) {
+			const req = trait.requirements;
+			// hasTrait: any-of semantics (.some)
+			if (req.hasTrait && req.hasTrait.length > 0) {
+				if (!req.hasTrait.some((id) => currentSelectedTraits.includes(id))) return false;
+			}
+			// hasAllTraits: all-of semantics (.every)
+			if (req.hasAllTraits && req.hasAllTraits.length > 0) {
+				if (!req.hasAllTraits.every((id) => currentSelectedTraits.includes(id))) return false;
+			}
+			// prohibitsTraits: none selected
+			if (req.prohibitsTraits && req.prohibitsTraits.length > 0) {
+				if (req.prohibitsTraits.some((id) => currentSelectedTraits.includes(id))) return false;
+			}
+			return true;
+		}
+		// Fall back to deprecated `prerequisites` array (all-of)
 		if (!trait.prerequisites || trait.prerequisites.length === 0) return true;
 		return trait.prerequisites.every((prereqId) => currentSelectedTraits.includes(prereqId));
 	}
 
 	// Get list of missing prerequisites for display
 	function getMissingPrerequisites(trait: ITrait, currentSelectedTraits: string[]): string[] {
+		if (trait.requirements) {
+			const req = trait.requirements;
+			const missing: string[] = [];
+			if (req.hasTrait && req.hasTrait.length > 0) {
+				if (!req.hasTrait.some((id) => currentSelectedTraits.includes(id))) {
+					missing.push(...req.hasTrait);
+				}
+			}
+			if (req.hasAllTraits && req.hasAllTraits.length > 0) {
+				missing.push(...req.hasAllTraits.filter((id) => !currentSelectedTraits.includes(id)));
+			}
+			if (req.prohibitsTraits && req.prohibitsTraits.length > 0) {
+				missing.push(...req.prohibitsTraits.filter((id) => currentSelectedTraits.includes(id)));
+			}
+			return missing;
+		}
 		if (!trait.prerequisites) return [];
 		return trait.prerequisites.filter((prereqId) => !currentSelectedTraits.includes(prereqId));
 	}
@@ -72,10 +106,20 @@ function SelectedAncestries() {
 		const dependents: string[] = [];
 		for (const selectedId of currentSelectedTraits) {
 			const trait = getTrait(selectedId);
-			if (trait?.prerequisites?.includes(traitId)) {
-				dependents.push(selectedId);
-				// Recursively find traits that depend on this dependent
-				dependents.push(...getDependentTraits(selectedId, currentSelectedTraits));
+			if (!trait) continue;
+			// Check structured requirements
+			const depViaRequirements =
+				trait.requirements?.hasTrait?.includes(traitId) ||
+				trait.requirements?.hasAllTraits?.includes(traitId);
+			// Check deprecated prerequisites
+			const depViaPrereqs = trait.prerequisites?.includes(traitId);
+			if (depViaRequirements || depViaPrereqs) {
+				// Only cascade-deselect if removing traitId would break the prerequisite
+				const remainingTraits = currentSelectedTraits.filter((id) => id !== traitId);
+				if (!arePrerequisitesMet(trait, remainingTraits)) {
+					dependents.push(selectedId);
+					dependents.push(...getDependentTraits(selectedId, currentSelectedTraits));
+				}
 			}
 		}
 		return dependents;
@@ -134,7 +178,9 @@ function SelectedAncestries() {
 			>
 				<TraitHeader>
 					<TraitName $isSelected={isSelected}>{trait.name}</TraitName>
-					<TraitCost $cost={trait.cost}>{trait.cost} {t('characterCreation.pts')}</TraitCost>
+					<TraitCost $cost={trait.cost}>
+						{trait.cost} {t('characterCreation.pts')}
+					</TraitCost>
 				</TraitHeader>
 				<TraitDescription>{trait.description}</TraitDescription>
 				{wouldExceedBudget && !hasUnmetPrerequisites && (
@@ -142,7 +188,9 @@ function SelectedAncestries() {
 				)}
 				{hasUnmetPrerequisites && (
 					<PrerequisiteWarning>
-						{t('characterCreation.requires')}: {missingPrereqNames.join(', ')}
+						{trait.requirements?.hasTrait
+							? `${t('characterCreation.requires')} any of: ${missingPrereqNames.join(', ')}`
+							: `${t('characterCreation.requires')}: ${missingPrereqNames.join(', ')}`}
 					</PrerequisiteWarning>
 				)}
 				{isSelected &&

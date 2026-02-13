@@ -22,7 +22,7 @@ export const hunterProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			classFeatures: ['hunter_martial_path', 'hunter_mark', 'hunter_favored_terrain']
+			classFeatures: ['hunter_martial_path', 'hunter_mark', 'hunter_favored_terrain', 'hunter_bestiary']
 		}
 	},
 	{

@@ -1,9 +1,8 @@
-# DC20Clean – Traits System (Vertical Slice)
+# DC20Clean – Traits System
 
-> Purpose  
-> This document is the single authoritative reference ("bible") for everything related to Traits: their data shape, effect typing, validation, runtime processing, and UI usage.
-> • Humans can follow the numbered guides & check-lists.  
-> • AI agents can parse the File Maps and Mermaid graphs to discover dependencies.
+> Purpose: Single reference for Traits: data shape, effect typing, validation, runtime processing, and UI usage.
+> Status: Active
+> Last Updated: 2026-02-06
 
 ---
 
@@ -148,13 +147,13 @@ When a new type is created:
 
 **Location**: `src/lib/rulesdata/ancestries/ancestries.test.ts`
 
-**Coverage**: 34 comprehensive tests validating all trait data.
+**Coverage**: Comprehensive tests (including Phase 8c tests) validating all trait data.
 
 #### Test Categories
 
 **Trait Data Structure**
 
-- ✅ Trait data loads successfully (239 traits)
+- ✅ Trait data loads successfully (244 traits)
 - ✅ Required fields present (`id`, `name`, `description`, `cost`, `effects`)
 - ✅ Unique trait IDs (no duplicates)
 - ✅ Valid cost values (numeric)
@@ -188,7 +187,7 @@ When a new type is created:
 **Statistics**
 
 - 17 ancestries defined
-- 239 traits defined
+- 244 traits defined
 - Effect type distribution tracked
 - Cost distribution tracked
 
@@ -279,7 +278,35 @@ When deselecting a base trait:
 
 ### 7.4 Data Schema
 
-Prerequisites are defined in the trait data using the `prerequisites` field:
+Prerequisites are defined using the `requirements` field (preferred) or the legacy `prerequisites` array:
+
+#### Preferred: `requirements` Object
+
+The `requirements` field provides structured prerequisite logic:
+
+```typescript
+{
+  id: 'beastborn_enhanced_flight',
+  name: 'Enhanced Flight',
+  description: '...',
+  cost: 2,
+  requirements: {
+    hasTrait: ['beastborn_winged_arms', 'beastborn_webbed_hands'], // Requires ANY of these (OR logic)
+    hasAllTraits: ['beastborn_winged_arms', 'beastborn_strong_wings'], // Requires ALL of these (AND logic)
+    prohibitsTraits: ['beastborn_grounded'] // Cannot be taken if any of these are selected
+  },
+  effects: [...]
+}
+```
+
+**Field Descriptions:**
+- `requirements.hasTrait: string[]` — Trait requires any ONE of the listed traits (OR logic). This supersedes the simple `prerequisites` array for "any-of" scenarios.
+- `requirements.hasAllTraits: string[]` — Trait requires ALL listed traits to be selected (AND logic).
+- `requirements.prohibitsTraits: string[]` — Trait cannot be taken if any of these traits are selected.
+
+#### Legacy: `prerequisites` Array
+
+The `prerequisites` field is still supported for simple single-trait requirements:
 
 ```typescript
 {
@@ -287,10 +314,12 @@ Prerequisites are defined in the trait data using the `prerequisites` field:
   name: 'Spider Climb',
   description: '...',
   cost: 1,
-  prerequisites: ['beastborn_climb_speed'], // Array of required trait IDs
+  prerequisites: ['beastborn_climb_speed'], // Simple array: requires this trait
   effects: [...]
 }
 ```
+
+**Migration Note:** New traits should use `requirements.hasTrait` for "any-of" scenarios instead of `prerequisites`.
 
 ---
 
@@ -299,9 +328,8 @@ Prerequisites are defined in the trait data using the `prerequisites` field:
 - Effect Processor unification may centralize trait effect resolution across ancestries and classes.
 - Schema-driven editors may auto-render trait forms from `Trait` and `Effect` metadata.
 - Integration tests may validate that trait effects correctly modify character stats in the calculator.
-- Migration from legacy `prerequisites: string[]` to structured `requirements: TraitRequirements` format.
 
 ---
 
-> Last updated: 2026-02-01 (DC20 v0.10 - prerequisite validation implemented)
+> Last updated: 2026-02-06
 > Maintainer: @DC20Clean-Team

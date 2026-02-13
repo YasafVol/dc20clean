@@ -1,19 +1,18 @@
 # Project Technical Overview
 
-## Scope
-
-This document centralizes the technical details for the DC20Clean codebase: stack,
-scripts, testing, project structure, and contribution expectations.
+> Purpose: Technical overview of the DC20Clean codebase: stack, scripts, testing, project structure, and contribution expectations.
+> Status: Active
+> Last Updated: 2026-02-08
 
 ## Tech Stack
 
 - Framework: React 19 + TypeScript
 - Build Tool: Vite 6
-- Styling: Tailwind CSS 4 + styled-components + Emotion
+- Styling: Material-UI (MUI) + Emotion + Tailwind CSS 4
 - State Management: React Context API
-- Persistence: Browser localStorage (default) and Convex cloud storage (optional)
-  - Convex is enabled when `VITE_USE_CONVEX=true` and `VITE_CONVEX_URL` is configured
-  - Migration notes: `docs/archive/CONVEX_MIGRATION.md`
+- Persistence: Hybrid storage
+  - localStorage is active by default (anonymous/offline-first)
+  - Convex cloud storage is active when `VITE_USE_CONVEX=true` and `VITE_CONVEX_URL` is set
 - Testing: Vitest (browser + node environments), Playwright
 - Code Quality: ESLint + Prettier
 
@@ -25,32 +24,49 @@ scripts, testing, project structure, and contribution expectations.
 ## Development Scripts
 
 Development and build:
-- `npm run dev` - Start Vite dev server
-- `npm run build` - Production build to `dist/`
-- `npm run preview` - Preview production build on port 4173
+
+- `npm run dev` — Start Vite dev server
+- `npm run build` — Production build to `dist/`
+- `npm run preview` — Preview production build on port 4173
+- `npm run convex:dev` — Start Convex development server (continuous)
+- `npx convex dev --once` — Validate/deploy Convex functions and regenerate client types
+
+Convex seeding:
+
+- `npm run seed` — Seed all official data (monsters + features)
+- `npm run seed:monsters` — Seed official monsters only
+- `npm run seed:features` — Seed official features only
 
 Code quality:
-- `npm run lint` - Prettier check + ESLint
-- `npm run format` - Auto-format with Prettier (Tailwind plugin enabled)
+
+- `npm run lint` — Prettier check + ESLint
+- `npm run format` — Auto-format with Prettier (Tailwind plugin enabled)
 
 Testing:
-- `npm run test:unit` - Run Vitest unit tests
-- `npm run test:e2e` - Run Playwright E2E tests
-- `npm run test:e2e:ui` - Run E2E tests with interactive UI
-- `npm run test:e2e:headed` - Run E2E tests in headed browser mode
-- `npm run test:e2e:debug` - Run E2E tests in debug mode
-- `npm run test` - Run unit tests (run mode) then E2E tests
+
+- `npm run test:unit` — Run Vitest unit tests
+- `npm run test:e2e` — Run Playwright E2E tests
+- `npm run test:e2e:ui` — E2E with interactive UI
+- `npm run test:e2e:headed` — E2E in headed browser mode
+- `npm run test:e2e:debug` — E2E in debug mode
+- `npm run test` — Run unit tests (run mode) then E2E tests
+
+E2E per-project and parallel:
+
+- `npm run e2e:desktop` / `e2e:mobile` / `e2e:all` — Single-worker E2E by project
+- `npm run e2e:parallel:desktop` / `e2e:parallel:mobile` / `e2e:parallel:all` — Multi-worker E2E (default 4 workers)
+- `npm run e2e:parallel:auto` — Auto-detect worker count from CPU cores
+
+PDF export:
+
+- `npm run export:list-fields` — Extract PDF form field names
+- `npm run export:local` — Run local PDF export proof-of-concept
 
 Single test execution:
+
 ```
 npx vitest -t "should calculate health correctly"
-npx vitest src/lib/services/enhancedCharacterCalculator.spec.ts
-```
-
-E2E test optimization:
-```
-PLAYWRIGHT_SKIP_BUILD=1 npm run test:e2e
-E2E_WORKERS=4 npm run test:e2e
+npx vitest src/lib/services/enhancedCharacterCalculator.test.ts
 ```
 
 ## CI Status
@@ -62,21 +78,59 @@ Workflows still run for signal and will be restored to blocking once the release
 
 ```
 src/
-├── routes/                    # Application routes
-│   ├── character-creation/    # Multi-step character creation wizard
-│   └── character-sheet/       # Character sheet interface
+├── routes/                        # Application routes
+│   ├── character-creation/        # Multi-step character creation wizard
+│   ├── character-sheet/           # Character sheet (desktop + mobile)
+│   │   ├── components/            #   Section components (50+)
+│   │   ├── components/mobile/     #   Mobile-specific sections
+│   │   ├── components/shared/     #   Shared UI utilities
+│   │   ├── hooks/                 #   Provider, reducer, breakpoint
+│   │   ├── styles/                #   Styled components
+│   │   └── utils/                 #   Sheet utilities
+│   ├── conditions/                # Conditions reference page
+│   ├── custom-equipment/          # Equipment builder wizard
+│   ├── dm/                        # DM tools
+│   │   ├── encounters/            #   Encounter planner
+│   │   └── monsters/              #   Monster designer
+│   ├── systems/                   # Hidden systems explorer
+│   └── spellbook/                 # Spell reference browser
 ├── lib/
-│   ├── services/              # Business logic (calculators, completion)
-│   ├── rulesdata/             # DC20 rules data (classes, ancestries, spells, etc.)
-│   ├── hooks/                 # Custom React hooks
-│   ├── stores/                # React Context providers
-│   ├── types/                 # TypeScript interfaces
-│   └── utils/                 # Utility functions
-├── components/                # Shared UI components
-└── api/                       # API endpoints (minimal)
+│   ├── config/                    # Feature flags
+│   ├── hooks/                     # Custom React hooks (useCharacterBuilder, useMonsters, etc.)
+│   ├── pdf/                       # PDF export pipeline (transformers, field maps, templates)
+│   ├── rulesdata/                 # DC20 rules data
+│   │   ├── ancestries/            #   Ancestry + trait definitions
+│   │   ├── classes-data/          #   Features, progressions, talents, templates
+│   │   ├── conditions/            #   Condition definitions
+│   │   ├── equipment/             #   Equipment schemas, validation, storage
+│   │   ├── martials/              #   Maneuver data
+│   │   ├── progression/           #   Leveling, paths, multiclass
+│   │   ├── schemas/               #   TypeScript + Zod schemas
+│   │   └── spells-data/           #   125 spells organized by school
+│   ├── services/                  # Business logic (calculator, spell assignment, monster calc)
+│   ├── storage/                   # Storage adapters (localStorage, Convex)
+│   ├── stores/                    # React Context providers
+│   ├── types/                     # TypeScript interfaces (effectSystem, pdfExport, etc.)
+│   └── utils/                     # Utility functions (debug, migrations, storage)
+├── components/                    # Shared UI components
+│   ├── auth/                      #   Auth components (SignIn, UserMenu, AuthGuard)
+│   └── ui/                        #   shadcn/ui primitives (button, card, dialog, etc.)
+├── assets/                        # Images and SVGs
+├── debug/                         # Debug/test components
+└── styles/                        # Global styles
 
-e2e/                           # Playwright E2E tests
-docs/systems/                  # System documentation
+convex/                            # Convex backend
+├── schema.ts                      #   Database schema
+├── characters.ts                  #   Character CRUD
+├── monsters.ts                    #   Monster CRUD
+├── encounters.ts                  #   Encounter management
+├── features.ts                    #   Feature data
+├── auth.ts                        #   Authentication handlers
+└── seed.ts                        #   Data seeding functions
+
+e2e/                               # Playwright E2E tests
+scripts/                           # Build/utility scripts
+docs/systems/                      # System documentation
 ```
 
 ## Code Style and Standards
@@ -106,7 +160,3 @@ docs/systems/                  # System documentation
   - `docs: update documentation`
 - PR contents: Include clear description, linked issues, test plan, and screenshots for UI changes
 - Stacked PRs: Optional Graphite workflow supported (see `AGENTS.md` for details)
-
----
-
-**Last Updated:** January 25, 2026

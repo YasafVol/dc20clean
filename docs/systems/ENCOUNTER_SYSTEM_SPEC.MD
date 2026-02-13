@@ -1,8 +1,9 @@
 # DC20 Encounter System (DM Tools)
 
-> **Status:** Implementation Complete  
-> **Last Updated:** 2026-01-31  
-> **Related:** [MONSTER_SYSTEM_SPEC.MD](./MONSTER_SYSTEM_SPEC.MD)
+> Purpose: Encounter planner using DC20's budget system: party size x level formulas, difficulty scaling, monster slotting, and validation.
+> Status: Active
+> Last Updated: 2026-02-06
+> Related: [MONSTER_SYSTEM_SPEC.MD](./MONSTER_SYSTEM_SPEC.MD)
 
 ---
 
@@ -348,6 +349,7 @@ Budget recalculates when:
 | `encounters.softDelete`        | `id`                               | `void`   | Move to trash        |
 | `encounters.restore`           | `id`                               | `void`   | Restore from trash   |
 | `encounters.hardDelete`        | `id`                               | `void`   | Permanent delete     |
+| `encounters.duplicate`         | `id`                               | `newId`  | Duplicate encounter  |
 | `encounters.fork`              | `sourceId, sourceType, sourceData` | `newId`  | Fork encounter       |
 | `encounters.submitForReview`   | `id, visibility`                   | `void`   | Submit to homebrew   |
 

@@ -1,9 +1,8 @@
-# DC20Clean – Ancestry & Trait System (Vertical Slice)
+# DC20Clean – Ancestry & Trait System
 
-> **Purpose**  
-> This document is the _single authoritative reference_ (“bible”) for everything related to **Ancestries** and **Traits**.  
-> • Humans can follow the numbered guides & check-lists.  
-> • AI agents can parse the 🗂 _File Maps_ and ⬢ _Mermaid_ graphs to discover dependencies.
+> Purpose: Single reference for Ancestries and Traits: data pipeline, effect typing, and selection UI.
+> Status: Active
+> Last Updated: 2026-02-06
 
 ---
 
@@ -49,7 +48,8 @@ flowchart LR
 | Layer                     | File / Dir                                                                                | Responsibility                                             |
 | ------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
 | **Rule Data (canonical)** | `src/lib/rulesdata/ancestries/traits.ts`                                                  | Declarative list of `traitsData` objects                   |
-|                           | `src/lib/rulesdata/ancestries/ancestries.ts`                                              | Declarative list of `ancestriesData` objects               |
+|                           | `src/lib/rulesdata/ancestries/ancestries.ts`                                              | Declarative list of `ancestriesData` (16 ancestries)       |
+|                           | `src/lib/rulesdata/ancestries/sharedTraits.ts`                                            | Shared trait definitions used across ancestries            |
 | **Type Contracts**        | `src/lib/rulesdata/schemas/types.ts`                                                      | TS interfaces `ITrait`, `IAncestry`, `ITraitEffect`        |
 |                           | `src/lib/rulesdata/schemas/character.schema.ts`                                           | Zod schema used for validation & effect typing             |
 | **Validation Tests**      | `src/lib/rulesdata/rulesdata.spec.ts`                                                     | Loads every trait / ancestry and asserts schema compliance |
@@ -179,8 +179,8 @@ Note: Class features can modify ancestry budgets via effects (e.g., Cleric “An
 
 #### Data Coverage Statistics
 
-- ✅ Reports total ancestry count (17)
-- ✅ Reports total trait count (239)
+- ✅ Reports total ancestry count (16)
+- ✅ Reports total trait count (244)
 - ✅ Reports trait distribution per ancestry
 - ✅ Reports effect type usage distribution
 - ✅ Reports cost distribution
@@ -220,12 +220,51 @@ The test suite enforces strict data quality rules:
 
 ---
 
-## 7 Future Evolution
+## 7 Beastborn Traits
+
+The Beastborn ancestry includes a diverse set of traits representing various animal adaptations. Recent additions include:
+
+- `beastborn_web_walk` — Walk on webs and similar surfaces
+- `beastborn_prehensile_tail` — Use tail as an additional limb
+- `beastborn_camouflage` — Blend into natural environments
+- `beastborn_echolocation` — Navigate using sound waves
+- `beastborn_pack_tactics` — Gain advantage when fighting alongside allies
+
+### 7.1 Prerequisite Patterns: `requirements.hasTrait`
+
+Some traits use the `requirements.hasTrait` pattern for "any-of" prerequisites (OR logic), which supersedes the simple `prerequisites` array. This allows a trait to require any one of multiple possible traits:
+
+```typescript
+{
+  id: 'beastborn_enhanced_flight',
+  name: 'Enhanced Flight',
+  prerequisites: ['beastborn_winged_arms'], // Legacy: requires this specific trait
+  // OR
+  requirements: {
+    hasTrait: ['beastborn_winged_arms', 'beastborn_webbed_hands'] // Requires ANY of these traits
+  }
+}
+```
+
+When `requirements.hasTrait` is present, the trait requires any ONE of the listed traits to be selected (OR logic), making it more flexible than the single-trait `prerequisites` array.
+
+## 8 Variant Traits
+
+Some ancestries have `variantTraits` arrays containing alternative trait sets. These are not separate ancestries but optional trait replacements:
+
+- `angelborn` → `angelborn_fallen` variant
+- `fiendborn` → `fiendborn_redeemed` variant
+
+Variant traits follow the same schema as regular traits and are available for selection alongside default/expanded traits.
+
+---
+
+## 9 Future Evolution
 
 - **Effect Processor** integration will further centralise logic—update §3 Step 4 when landed.
 - **Schema-driven forms** may auto-render trait editors using this document's file maps.
 
 ---
 
-> _Last updated: 2025-10-08_  
+> _Last updated: 2026-02-06_  
 > Maintainer: @DC20Clean-Team

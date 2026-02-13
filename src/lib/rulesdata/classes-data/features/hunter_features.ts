@@ -9,9 +9,10 @@ export const hunterClass: ClassDefinition = {
 	className: 'Hunter',
 	classCategory: 'martial',
 	startingEquipment: {
-		weaponsOrShields: ['2 Weapons or Light Shields'],
+		weaponsOrShields: ['3 Weapons or Light Shields'],
 		rangedWeapons: ['Ranged Weapon with 20 Ammo'],
 		armor: ['1 set of Light Armor'],
+		tradeTools: ['1 set of Trade Tools'],
 		packs: 'Adventuring Pack (Coming Soon)'
 	},
 	martialPath: {

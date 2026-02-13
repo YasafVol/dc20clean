@@ -253,6 +253,7 @@ export interface EnhancedCalculationResult {
 		type: string;
 		speed: string;
 		source: EffectSource;
+		isDefault?: boolean;
 	}>;
 
 	// Background point calculations for UI consumption

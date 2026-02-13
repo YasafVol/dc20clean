@@ -22,7 +22,7 @@ export const warlockProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 6,
 		gainedSpellsKnown: 4,
 		gains: {
-			classFeatures: ['warlock_spellcasting_path', 'warlock_pact_boon', 'warlock_occult_knowledge']
+			classFeatures: ['warlock_spellcasting_path', 'warlock_pact_boon', 'warlock_beseech_patron']
 		}
 	},
 	{

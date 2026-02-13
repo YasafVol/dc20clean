@@ -9,9 +9,10 @@ export const commanderClass: ClassDefinition = {
 	className: 'Commander',
 	classCategory: 'martial',
 	startingEquipment: {
-		weaponsOrShields: ['2 Weapons or Shields'],
+		weaponsOrShields: ['3 Weapons or Shields'],
 		rangedWeapons: ['Ranged Weapon with 20 Ammo', '3 Weapons with Toss or Thrown Property'],
 		armor: ['1 set of any Armor'],
+		tradeTools: ['1 set of Trade Tools'],
 		packs: 'Adventuring Pack (Coming Soon)'
 	},
 	martialPath: {
@@ -207,9 +208,10 @@ export const commanderClass: ClassDefinition = {
 			subclassName: 'Crusader',
 			description: 'Holy warriors who protect and inspire their allies.',
 			features: [
-				{
-					featureName: 'Virtuous Vanguard',
-					levelGained: 3,
+			{
+				id: 'commander_crusader_virtuous_vanguard',
+				featureName: 'Virtuous Vanguard',
+				levelGained: 3,
 					description: 'You become a beacon of courage and protection.',
 					benefits: [
 						{
@@ -249,9 +251,10 @@ export const commanderClass: ClassDefinition = {
 						}
 					]
 				},
-				{
-					featureName: 'Gallant Hero',
-					levelGained: 3,
+			{
+				id: 'commander_crusader_gallant_hero',
+				featureName: 'Gallant Hero',
+				levelGained: 3,
 					description: 'Your presence is a symbol of hope and safety.',
 					isFlavor: true,
 					effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'convince_not_afraid', value: 'ADV' }]
@@ -262,9 +265,10 @@ export const commanderClass: ClassDefinition = {
 			subclassName: 'Warlord',
 			description: 'Tactical masters who excel at aggressive battlefield control.',
 			features: [
-				{
-					featureName: 'Offensive Tactics',
-					levelGained: 3,
+			{
+				id: 'commander_warlord_offensive_tactics',
+				featureName: 'Offensive Tactics',
+				levelGained: 3,
 					description: 'You gain aggressive battlefield abilities.',
 					benefits: [
 						{
@@ -307,9 +311,10 @@ export const commanderClass: ClassDefinition = {
 						}
 					]
 				},
-				{
-					featureName: 'Battlefield Tactician',
-					levelGained: 3,
+			{
+				id: 'commander_warlord_battlefield_tactician',
+				featureName: 'Battlefield Tactician',
+				levelGained: 3,
 					description: "You've mastered military history and strategy.",
 					isFlavor: true,
 					effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'military_knowledge', value: 'ADV' }]

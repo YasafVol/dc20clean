@@ -129,6 +129,7 @@ export interface FeatureData {
 	id: string;
 	name: string;
 	description: string;
+	benefits?: Array<{ name: string; description: string }>;
 	source: 'ancestry' | 'class' | 'choice';
 	sourceDetail?: string; // e.g., "Human (Default)", "Barbarian Lvl 1", etc.
 }

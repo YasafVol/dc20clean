@@ -4,6 +4,7 @@
  */
 
 import { SpellSchool, SpellList } from '../schemas/spell.schema';
+import type { ContentTag } from '../schemas/content.schema';
 import {
 	type IClassFeature,
 	type IClassFeatureChoice,
@@ -12,6 +13,7 @@ import {
 } from '../schemas/types';
 import { traitsData } from '../ancestries/traits';
 import { parseJsonSafe } from '../../utils/storageUtils';
+import { normalizeClassDefinitionContent } from '../contentTagging';
 
 // Define interfaces for the new class features structure
 export interface ClassFeatureChoice {
@@ -41,6 +43,8 @@ export interface ClassFeature {
 	levelGained: number;
 	description: string;
 	isFlavor?: boolean;
+	contentTags?: ContentTag[];
+	contentSourceRef?: string;
 	choices?: ClassFeatureChoice[];
 	benefits?: ClassFeatureBenefit[];
 	effects?: {
@@ -55,11 +59,15 @@ export interface ClassFeature {
 export interface ClassSubclass {
 	subclassName: string;
 	description?: string;
+	contentTags?: ContentTag[];
+	contentSourceRef?: string;
 	features: ClassFeature[];
 }
 
 export interface ClassDefinition {
 	className: string;
+	contentTags?: ContentTag[];
+	contentSourceRef?: string;
 	startingEquipment?: {
 		weaponsOrShields?: string | string[];
 		rangedWeapon?: string | string[];
@@ -155,7 +163,9 @@ console.log('🔍 Class Features Debug:', {
 });
 
 // Export the class features data
-export const classFeaturesData: ClassDefinition[] = rawClassFeatures;
+export const classFeaturesData: ClassDefinition[] = rawClassFeatures.map(
+	(classDefinition) => normalizeClassDefinitionContent(classDefinition)
+);
 
 // Helper function to get available spell schools for a class
 export function getAvailableSpellSchools(classData: ClassDefinition): SpellSchool[] {

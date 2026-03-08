@@ -75,6 +75,8 @@ export interface IClassFeature {
 	name: string;
 	description: string;
 	level: number; // Level at which the feature is gained
+	contentTags?: Array<'SRD' | 'MAGAZINE'>;
+	contentSourceRef?: string;
 	effects?: ITraitEffect[]; // Effects granted by the feature
 }
 
@@ -83,6 +85,8 @@ export interface IClassDefinition {
 	id: string;
 	name: string;
 	description: string;
+	contentTags?: Array<'SRD' | 'MAGAZINE'>;
+	contentSourceRef?: string;
 	// Base stats granted by the class at Level 1
 	baseHpContribution: number;
 	startingSP: number;

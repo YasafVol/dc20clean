@@ -1,5 +1,7 @@
 ### Character Creation Flow System Spec
 
+> Last Updated: 2026-03-06
+
 #### Purpose
 
 - Establish a canonical reference for the multi-stage character creation wizard so future specs (e.g., Level-Up) reuse the same structure and terminology
@@ -96,6 +98,12 @@
   - `SET_SUBCLASS` records `selectedSubclass`
   - `SET_CROSS_PATH_SPELL_LIST` records `selectedCrossPathSpellList`
 - Navigation gating relies on calculator validation; failure to resolve choices keeps the step marked incomplete.
+
+#### Level-Up Persistence Behavior
+
+- Level-up flow initializes creation state from saved character data via `convertSavedCharacterToContext`.
+- Maneuver selections are rehydrated by canonical maneuver names, matching selection/completion pipeline usage.
+- On level-up completion, runtime `characterState` (inventory, notes, attacks/conditions/manual overrides) is preserved from the source character while max resource caps are refreshed to leveled values.
 
 #### State Extension Schema
 

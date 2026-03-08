@@ -18,6 +18,7 @@ import { completeCharacter } from '../../lib/services/characterCompletion';
 import { completeCharacterEdit, convertCharacterToInProgress } from '../../lib/utils/characterEdit';
 import type { SavedCharacter } from '../../lib/types/dataContracts';
 import { convertSavedCharacterToContext } from '../../lib/utils/characterToContext';
+import { mergeCharacterStateForLevelUp } from '../../lib/utils/levelUpStateMerge';
 import { getDefaultStorage } from '../../lib/storage';
 import {
 	convertToEnhancedBuildData,
@@ -355,7 +356,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				// Create a custom onNavigateToLoad that updates instead of creates
 				const originalId = state.sourceCharacterId;
 				const allChars = await storage.getAllCharacters();
-				const originalCreatedAt = allChars.find((c) => c.id === originalId)?.createdAt;
+				const originalCharacter = allChars.find((c) => c.id === originalId);
+				const originalCreatedAt = originalCharacter?.createdAt;
 
 				await completeCharacter(state, {
 				onShowSnackbar: (_message: string) => {
@@ -373,10 +375,16 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 							.map((char) => {
 								if (char.id === originalId) {
 									// Replace original with updated data
+									const mergedCharacterState = mergeCharacterStateForLevelUp(
+										originalCharacter?.characterState,
+										newChar
+									);
+
 									return {
 										...newChar,
 										id: originalId,
-										createdAt: originalCreatedAt || char.createdAt
+										createdAt: originalCreatedAt || char.createdAt,
+										characterState: mergedCharacterState
 									};
 								}
 								return char;

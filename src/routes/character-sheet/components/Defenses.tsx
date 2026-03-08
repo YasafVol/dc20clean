@@ -194,6 +194,10 @@ const Defenses: React.FC<DefensesProps> = ({ isMobile = false }) => {
 	return (
 		<>
 			<DefensesContainer $isMobile={isMobile}>
+				<AutoCalculatedNote $isMobile={isMobile}>
+					Armor and shield PD/AD bonuses are applied manually here for now.
+				</AutoCalculatedNote>
+
 				{/* Precision Defense */}
 				<DefenseItem $isMobile={isMobile}>
 					<DefenseLabelContainer $isMobile={isMobile}>

@@ -45,7 +45,10 @@ export function convertSavedCharacterToContext(
 
 		// Spells & Maneuvers
 		selectedSpells: character.spells?.map((s) => s.id) || [],
-		selectedManeuvers: character.maneuvers?.map((m) => m.id) || [],
+		selectedManeuvers:
+			character.maneuvers
+				?.map((m) => (typeof m === 'string' ? m : m.name))
+				.filter((name): name is string => Boolean(name)) || [],
 
 		// Character Name
 		finalName: character.finalName,

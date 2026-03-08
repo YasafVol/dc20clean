@@ -7,6 +7,7 @@
 import React, { useState } from 'react';
 import { Button } from '../../../../components/ui/button';
 import { useMonsterList } from '../../../../lib/hooks/useMonsters';
+import { generateContentId } from '../../../../lib/utils/idGenerator';
 import type { EncounterMonsterSlot } from '../../../../lib/rulesdata/schemas/encounter.schema';
 import type { SavedMonster, MonsterTier } from '../../../../lib/rulesdata/schemas/monster.schema';
 import {
@@ -29,7 +30,7 @@ import {
 
 export interface MonsterSlotsProps {
 	slots: EncounterMonsterSlot[];
-	onAddSlot: () => void;
+	onAddSlot: (slot?: EncounterMonsterSlot) => void;
 	onRemoveSlot: (slotId: string) => void;
 	onSetMonster: (slotId: string, monsterId: string, level: number, tier: MonsterTier) => void;
 	onClearMonster: (slotId: string) => void;
@@ -121,7 +122,7 @@ export const MonsterSlots: React.FC<MonsterSlotsProps> = ({
 	onSetQuantity
 }) => {
 	const [pickerSlotId, setPickerSlotId] = useState<string | null>(null);
-	const { monsters } = useMonsterList();
+	const { monsters, isLoading } = useMonsterList();
 
 	const getMonsterById = (id: string) => monsters.find((m) => m.id === id);
 
@@ -131,13 +132,24 @@ export const MonsterSlots: React.FC<MonsterSlotsProps> = ({
 		}
 	};
 
+	const handleAddAndSelectMonster = () => {
+		const slotId = generateContentId('slot');
+		onAddSlot({
+			id: slotId,
+			monsterId: null,
+			quantity: 1,
+			cost: 0
+		});
+		setPickerSlotId(slotId);
+	};
+
 	return (
 		<>
 			<MonsterSlotList>
 				{slots.map((slot) => {
 					const monster = slot.monsterId ? getMonsterById(slot.monsterId) : null;
 
-					if (!monster) {
+					if (!slot.monsterId) {
 						// Empty slot
 						return (
 							<MonsterSlotCard key={slot.id} $isEmpty>
@@ -154,6 +166,37 @@ export const MonsterSlots: React.FC<MonsterSlotsProps> = ({
 										Remove
 									</Button>
 								</EmptySlotContent>
+							</MonsterSlotCard>
+						);
+					}
+
+					if (!monster) {
+						// Slot has a selected monster id, but list hydration has not resolved this monster yet.
+						return (
+							<MonsterSlotCard key={slot.id}>
+								<SlotMonsterInfo>
+									<SlotMonsterName>
+										{isLoading ? 'Loading monster...' : 'Selected monster unavailable'}
+									</SlotMonsterName>
+									<SlotMonsterMeta>
+										{isLoading
+											? 'Fetching monster data for this slot'
+											: 'You can reselect or clear this slot.'}
+									</SlotMonsterMeta>
+								</SlotMonsterInfo>
+								<SlotActions>
+									<Button variant="secondary" size="sm" onClick={() => setPickerSlotId(slot.id)}>
+										Change
+									</Button>
+									<Button
+										variant="secondary"
+										size="sm"
+										onClick={() => onClearMonster(slot.id)}
+										className="text-red-400 hover:text-red-300"
+									>
+										✕
+									</Button>
+								</SlotActions>
 							</MonsterSlotCard>
 						);
 					}
@@ -202,8 +245,21 @@ export const MonsterSlots: React.FC<MonsterSlotsProps> = ({
 				})}
 			</MonsterSlotList>
 
-			<div className="mt-4">
-				<Button variant="secondary" onClick={onAddSlot} className="w-full">
+			{slots.length === 0 && (
+				<Section>
+					<SectionHeader>
+						<SectionTitle>No monster slots yet</SectionTitle>
+					</SectionHeader>
+					<SectionContent>
+						<Button variant="secondary" onClick={handleAddAndSelectMonster} className="w-full">
+							Add & Select Monster
+						</Button>
+					</SectionContent>
+				</Section>
+			)}
+
+			<div className={slots.length === 0 ? 'mt-3' : 'mt-4'}>
+				<Button variant="secondary" onClick={() => onAddSlot()} className="w-full">
 					+ Add Monster Slot
 				</Button>
 			</div>

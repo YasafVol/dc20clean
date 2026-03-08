@@ -2,7 +2,7 @@
 
 > Purpose: Single reference for spell data model, assignment rules, UI flows, and validation.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-03-06
 
 ---
 
@@ -30,6 +30,8 @@ interface Spell {
 	sources: SpellSource[]; // Arcane, Divine, Primal
 	school: SpellSchool; // 8 schools
 	tags: SpellTag[]; // Burning, Cold, Healing, etc.
+	contentTags?: ContentTag[]; // SRD, MAGAZINE
+	contentSourceRef?: string; // Optional publication reference
 	isCantrip: boolean;
 	isRitual?: boolean;
 	cost: SpellCost; // { ap: number; mp?: number }
@@ -41,6 +43,14 @@ interface Spell {
 	enhancements: SpellEnhancement[];
 }
 ```
+
+### Content Provenance Tags
+
+- `contentTags` provides publication/source metadata for future entitlement gates.
+- Current canonical tags: `SRD`, `MAGAZINE`.
+- Tag defaults are normalized at runtime through `src/lib/rulesdata/contentTagging.ts`.
+- Unannotated spells are currently normalized to include `SRD`.
+- Explicit per-spell overrides can be declared in `src/lib/rulesdata/contentTagRegistry.ts`.
 
 ### Spell Sources (3)
 
@@ -185,5 +195,5 @@ getNonCantrips(): Spell[]
 
 ---
 
-> Last updated: 2026-02-06
+> Last updated: 2026-03-06
 > Maintainer: @DC20Clean-Team

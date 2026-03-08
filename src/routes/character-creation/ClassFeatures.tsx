@@ -15,6 +15,7 @@ import {
 import { SubclassSelector } from './SubclassSelector';
 import { cn } from '../../lib/utils';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
+import { Badge as UIBadge } from '../../components/ui/badge';
 
 function ClassFeatures() {
 	const { state, dispatch } = useCharacter();
@@ -459,6 +460,15 @@ function ClassFeatures() {
 			<h2 className="text-primary border-primary mb-4 border-b-2 pb-2 text-center text-xl font-bold tracking-wide">
 				{selectedClass.name} Features
 			</h2>
+			{selectedClassFeatures.contentTags && selectedClassFeatures.contentTags.length > 0 && (
+				<div className="mb-4 flex justify-center gap-2">
+					{selectedClassFeatures.contentTags.map((contentTag) => (
+						<UIBadge key={contentTag} variant="outline">
+							{contentTag}
+						</UIBadge>
+					))}
+				</div>
+			)}
 
 			{/* Starting Equipment Section */}
 			{selectedClassFeatures.startingEquipment && (
@@ -705,9 +715,18 @@ function ClassFeatures() {
 							{features.map((feature, index) => (
 								<Card key={index} className="mb-4 border-2">
 									<CardHeader className="pb-2">
-										<CardTitle className="text-primary text-xl font-bold">
-											{feature.featureName}
-										</CardTitle>
+										<div className="flex items-center justify-between gap-2">
+											<CardTitle className="text-primary text-xl font-bold">
+												{feature.featureName}
+											</CardTitle>
+											<div className="flex gap-1">
+												{feature.contentTags?.map((contentTag) => (
+													<UIBadge key={contentTag} variant="outline" className="text-[10px]">
+														{contentTag}
+													</UIBadge>
+												))}
+											</div>
+										</div>
 									</CardHeader>
 									<CardContent>
 										<p className="text-foreground leading-relaxed">{feature.description}</p>

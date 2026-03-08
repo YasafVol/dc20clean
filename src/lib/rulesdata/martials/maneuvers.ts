@@ -21,8 +21,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Attack,
 		cost: { ap: 1, sp: 1 },
 		range: 'Weapon or Unarmed Strike',
-		description:
-			"Make a Melee Martial Attack against the PD of a target within range, and it makes a Might Save against your Save DC. Hit: The target takes the damage of your Weapon or Unarmed Strike. Save Failure: The target is pushed 1 Space away from you. Save Failure (each 5): The target is pushed up to 1 additional Space. Knock Prone: After the result, you can choose to reduce the total distance a target is pushed by 1 Space to knock them Prone instead. Airborne: When you choose to push them upward into the air, the distance they're pushed is halved.",
+		description: 'Make a Melee Martial Attack against the PD of a target within range, and it makes a Might Save against your Save DC. Hit: The target takes the damage of your Weapon or Unarmed Strike. Save Failure: The target is pushed 1 Space away from you. Save Failure (each 5): The target is pushed up to 1 additional Space. Knock Prone: After the result, you can choose to reduce the total distance a target is pushed by 1 Space to knock them Prone instead. Airborne: When you choose to push them upward into the air, the distance they\'re pushed is halved.',
 		isReaction: false,
 		enhancements: [
 			{
@@ -36,8 +35,7 @@ export const maneuvers: Maneuver[] = [
 				name: 'Bowling Ball',
 				costString: '1 SP',
 				sp: 1,
-				description:
-					'If the target collides with another creature as part of this movement, they both take Collision Damage as normal, and the creature it collides with must make a Might Save against your Save DC. Save Failure: The target is knocked Prone. Save Failure (each 5): The target is also pushed 1 Space away from you.'
+				description: 'If the target collides with another creature as part of this movement, they both take Collision Damage as normal, and the creature it collides with must make a Might Save against your Save DC. Save Failure: The target is knocked Prone. Save Failure (each 5): The target is also pushed 1 Space away from you.'
 			}
 		]
 	},
@@ -47,8 +45,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Attack,
 		cost: { ap: 1, sp: 1 },
 		range: 'Weapon or Unarmed Strike',
-		description:
-			'Make a Martial Attack against the PD of a target within range, and it makes a Repeated Physical Save against your Save DC. Hit: The target takes the damage of your Weapon or Unarmed Strike. Save Failure: The target becomes Impaired for 1 minute or begins Bleeding (your choice).',
+		description: 'Make a Martial Attack against the PD of a target within range, and it makes a Repeated Physical Save against your Save DC. Hit: The target takes the damage of your Weapon or Unarmed Strike. Save Failure: The target becomes Impaired for 1 minute or begins Bleeding (your choice).',
 		isReaction: false,
 		enhancements: [
 			{
@@ -79,8 +76,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Attack,
 		cost: { ap: 1, sp: 2 },
 		range: 'Weapon or Unarmed Strike',
-		description:
-			'Make a Martial Attack against the PD of a target within range, and it makes a Physical Save against your Save DC. Hit: The target takes the damage of your Weapon or Unarmed Strike. Save Failure: The target gains Physical Vulnerability (1) for 1 Round.',
+		description: 'Make a Martial Attack against the PD of a target within range, and it makes a Physical Save against your Save DC. Hit: The target takes the damage of your Weapon or Unarmed Strike. Save Failure: The target gains Physical Vulnerability (1) for 1 Round.',
 		isReaction: false,
 		enhancements: [
 			{
@@ -94,13 +90,13 @@ export const maneuvers: Maneuver[] = [
 				name: 'Break DR',
 				costString: '1 SP',
 				sp: 1,
-				description: "The target doesn't benefit from PDR for the duration."
+				description: 'The target doesn\'t benefit from PDR for the duration.'
 			},
 			{
 				name: 'Break Resistance',
 				costString: '2 SP',
 				sp: 2,
-				description: "The target doesn't benefit from Physical Resistance for the duration."
+				description: 'The target doesn\'t benefit from Physical Resistance for the duration.'
 			}
 		]
 	},
@@ -110,15 +106,14 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Attack,
 		cost: { ap: 1, sp: 1 },
 		range: 'Weapon or Unarmed Strike',
-		description:
-			'You move a number of Spaces up to your Speed and make a Melee Martial Attack against the PD of 1 target within your Melee Range at any point during this movement. Hit: The target takes the damage of your Weapon or Unarmed Strike.',
+		description: 'You move a number of Spaces up to your Speed and make a Melee Martial Attack against the PD of 1 target within your Melee Range at any point during this movement. Hit: The target takes the damage of your Weapon or Unarmed Strike.',
 		isReaction: false,
 		enhancements: [
 			{
 				name: 'Disengage',
 				costString: '1 SP',
 				sp: 1,
-				description: "This movement doesn't provoke Opportunity Attacks."
+				description: 'This movement doesn\'t provoke Opportunity Attacks.'
 			},
 			{
 				name: 'Subsequent Strike',
@@ -126,8 +121,7 @@ export const maneuvers: Maneuver[] = [
 				sp: 1,
 				ap: 1,
 				repeatable: true,
-				description:
-					'You gain additional movement equal to half your Speed and you can target an additional creature using the same Attack Check.'
+				description: 'You gain additional movement equal to half your Speed and you can target an additional creature using the same Attack Check.'
 			}
 		]
 	},
@@ -137,8 +131,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Attack,
 		cost: { ap: 1, sp: 1 },
 		range: 'Weapon or Unarmed Strike',
-		description:
-			"Your Jump Distance increases by 2, you Jump up to your Jump Distance without spending movement (provided you can move), and make a Melee Martial Attack against a target within range at any point during your jump or where you land. Reaction: You can spend an additional 1 SP to perform this Maneuver as a Reaction to a creature being forcibly moved into a Space within your Jump Distance that's at least 1 Space above the ground. DC Tip: Remember, your Long Jump Distance equals your Jump Distance in Spaces, and your High Jump distance equals your Jump Distance in feet.",
+		description: 'Your Jump Distance increases by 2, you Jump up to your Jump Distance without spending movement (provided you can move), and make a Melee Martial Attack against a target within range at any point during your jump or where you land. Reaction: You can spend an additional 1 SP to perform this Maneuver as a Reaction to a creature being forcibly moved into a Space within your Jump Distance that\'s at least 1 Space above the ground. DC Tip: Remember, your Long Jump Distance equals your Jump Distance in Spaces, and your High Jump distance equals your Jump Distance in feet.',
 		isReaction: true,
 		enhancements: [
 			{
@@ -146,23 +139,20 @@ export const maneuvers: Maneuver[] = [
 				costString: '1 SP, Repeatable',
 				sp: 1,
 				repeatable: true,
-				description:
-					'If the target is in the air, it makes a Physical Save against your Save DC. Save Failure: The creature is knocked downward 2 Spaces.'
+				description: 'If the target is in the air, it makes a Physical Save against your Save DC. Save Failure: The creature is knocked downward 2 Spaces.'
 			},
 			{
 				name: 'Falling Strike',
 				costString: '1 SP',
 				sp: 1,
-				description:
-					'The creature makes a Physical Save against your Save DC. Save Failure: The creature falls Prone.'
+				description: 'The creature makes a Physical Save against your Save DC. Save Failure: The creature falls Prone.'
 			},
 			{
 				name: 'Impact Crater',
 				costString: '1 AP + 1 SP',
 				sp: 1,
 				ap: 1,
-				description:
-					'All creatures within 1 Space of where you land must make a Physical Save against your Save DC. Save Failure: The creature falls Prone.'
+				description: 'All creatures within 1 Space of where you land must make a Physical Save against your Save DC. Save Failure: The creature falls Prone.'
 			}
 		]
 	},
@@ -172,8 +162,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Attack,
 		cost: { ap: 2 },
 		range: '1 Space Arc (Self)',
-		description:
-			'Make an Area Martial Attack against the AD of every target within range. Hit: The target takes the damage of your Weapon or Unarmed Strike. Reach Weapon: If you have a Reach Weapon, you can extend the Point of Origin 1 Space away from you. The Arc must still be facing away from you.',
+		description: 'Make an Area Martial Attack against the AD of every target within range. Hit: The target takes the damage of your Weapon or Unarmed Strike. Reach Weapon: If you have a Reach Weapon, you can extend the Point of Origin 1 Space away from you. The Arc must still be facing away from you.',
 		isReaction: false,
 		enhancements: [
 			{
@@ -205,8 +194,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Attack,
 		cost: { ap: 2, sp: 1 },
 		range: '1 Space Aura',
-		description:
-			"Make an Area Martial Attack using a Melee Weapon or Unarmed Strike against the AD of every target within range. Hit: The target takes the damage of your Weapon or Unarmed Strike. Reach Weapon: If you have a Reach Weapon, you can choose to increase the Aura by 1 Space. When you do, you can't Attack targets within 1 Space of you.",
+		description: 'Make an Area Martial Attack using a Melee Weapon or Unarmed Strike against the AD of every target within range. Hit: The target takes the damage of your Weapon or Unarmed Strike. Reach Weapon: If you have a Reach Weapon, you can choose to increase the Aura by 1 Space. When you do, you can\'t Attack targets within 1 Space of you.',
 		isReaction: false,
 		enhancements: [
 			{
@@ -228,8 +216,7 @@ export const maneuvers: Maneuver[] = [
 				costString: '2 SP, Repeatable',
 				sp: 2,
 				repeatable: true,
-				description:
-					'Each target makes a Might Save. Save Failure: The target is pushed up to 1 Space horizontally in a direction of your choice. The target is moved 1 additional Space each time you use this Enhancement.'
+				description: 'Each target makes a Might Save. Save Failure: The target is pushed up to 1 Space horizontally in a direction of your choice. The target is moved 1 additional Space each time you use this Enhancement.'
 			}
 		]
 	},
@@ -239,8 +226,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Attack,
 		cost: { ap: 2, sp: 1 },
 		range: '4 Space Line (Self)',
-		description:
-			'Make an Area Martial Attack with a Melee Weapon or Unarmed Strike against the AD of every target in a 4 Space Line. Hit: The target takes the damage of your Weapon or Unarmed Strike. After Attacking, you can move to any Space within 1 Space of the area without provoking Opportunity Attacks from the targets and without spending your movement. Reach Weapon: If you have a Reach Weapon, you can extend the Point of Origin 1 Space away from you. When you do, the Line must extend in a direction away from you.',
+		description: 'Make an Area Martial Attack with a Melee Weapon or Unarmed Strike against the AD of every target in a 4 Space Line. Hit: The target takes the damage of your Weapon or Unarmed Strike. After Attacking, you can move to any Space within 1 Space of the area without provoking Opportunity Attacks from the targets and without spending your movement. Reach Weapon: If you have a Reach Weapon, you can extend the Point of Origin 1 Space away from you. When you do, the Line must extend in a direction away from you.',
 		isReaction: false,
 		enhancements: [
 			{
@@ -262,8 +248,7 @@ export const maneuvers: Maneuver[] = [
 				costString: '2 SP, Repeatable',
 				sp: 2,
 				repeatable: true,
-				description:
-					'Each target makes a Might Save. Save Failure: The target is pushed 1 Space horizontally out of the area in a direction of your choice. The target is moved 1 additional Space each time you use this Enhancement.'
+				description: 'Each target makes a Might Save. Save Failure: The target is pushed 1 Space horizontally out of the area in a direction of your choice. The target is moved 1 additional Space each time you use this Enhancement.'
 			}
 		]
 	},
@@ -273,8 +258,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Attack,
 		cost: { ap: 2 },
 		range: 'Ranged Weapon',
-		description:
-			"Make an Area Martial Attack against the AD of every target within a 4 Space Line that's Point of Origin is within Range. The Line must extend away from you. Hit: The target takes the damage of your Weapon.",
+		description: 'Make an Area Martial Attack against the AD of every target within a 4 Space Line that\'s Point of Origin is within Range. The Line must extend away from you. Hit: The target takes the damage of your Weapon.',
 		isReaction: false,
 		enhancements: [
 			{
@@ -295,8 +279,7 @@ export const maneuvers: Maneuver[] = [
 				name: 'Penetrating Shot',
 				costString: '1 SP',
 				sp: 1,
-				description:
-					'The Attack ignores Cover but is blocked by 6 inches (15 cm) of wood or soft earth (dirt, mud, or sand), or 1 inch (25 mm) of metal or rock.'
+				description: 'The Attack ignores Cover but is blocked by 6 inches (15 cm) of wood or soft earth (dirt, mud, or sand), or 1 inch (25 mm) of metal or rock.'
 			}
 		]
 	},
@@ -306,8 +289,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Attack,
 		cost: { ap: 2 },
 		range: 'Ranged Weapon',
-		description:
-			"Make an Area Martial Attack against the AD of every target within a 2 Space Diameter Sphere that's Point of Origin is within Range. Hit: The target takes the damage of your Weapon.",
+		description: 'Make an Area Martial Attack against the AD of every target within a 2 Space Diameter Sphere that\'s Point of Origin is within Range. Hit: The target takes the damage of your Weapon.',
 		isReaction: false,
 		enhancements: [
 			{
@@ -328,15 +310,13 @@ export const maneuvers: Maneuver[] = [
 				name: 'Rain of Fire',
 				costString: '1 SP',
 				sp: 1,
-				description:
-					"Targets within the area don't gain the benefits of 1/2 Cover against this Attack."
+				description: 'Targets within the area don\'t gain the benefits of 1/2 Cover against this Attack.'
 			},
 			{
 				name: 'Suppressive Fire',
 				costString: '2 SP',
 				sp: 2,
-				description:
-					'Each creature makes a Charisma Save. Save Failure: The creature becomes Hindered until the end of their next turn.'
+				description: 'Each creature makes a Charisma Save. Save Failure: The creature becomes Hindered until the end of their next turn.'
 			}
 		]
 	},
@@ -346,23 +326,21 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Defense,
 		cost: { ap: 1 },
 		range: 'Self (or 1 Space if wielding a Melee Weapon or Shield)',
-		description: 'You deflect an attack.',
+		description: 'You deflect an attack. Reaction: You grant the target a +5 bonus to its PD against this Attack.',
 		isReaction: true,
-		trigger:
-			'A target you can see within range (including yourself) is targeted by an Attack against its PD.',
+		trigger: 'A target you can see within range (including yourself) is targeted by an Attack against its PD.',
 		enhancements: [
 			{
 				name: 'Alert',
 				costString: '1 SP',
 				sp: 1,
-				description: "The Attacker's next Attack this turn against the target has DisADV."
+				description: 'The Attacker\'s next Attack this turn against the target has DisADV.'
 			},
 			{
 				name: 'Disarm',
 				costString: '1 SP',
 				sp: 1,
-				description:
-					'If the Attacker is within 1 Space of you or the target, they make a Physical Save. Save Failure: The target drops the Weapon used for the Attack to the ground once the Attack is resolved. Save Failure (5): You gain possession of the Weapon, provided you have a free hand to hold it.'
+				description: 'If the Attacker is within 1 Space of you or the target, they make a Physical Save. Save Failure: The target drops the Weapon used for the Attack to the ground once the Attack is resolved. Save Failure (5): You gain possession of the Weapon, provided you have a free hand to hold it.'
 			}
 		]
 	},
@@ -372,25 +350,22 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Defense,
 		cost: { ap: 1 },
 		range: 'Self (or 1 Space if wielding a Shield)',
-		description: 'You stand firm against an attack.',
+		description: 'You stand firm against an attack. Reaction: You grant the target a +5 bonus to its AD against this Attack.',
 		isReaction: true,
-		trigger:
-			'A target you can see within range (including yourself) is targeted by an Attack against its AD.',
+		trigger: 'A target you can see within range (including yourself) is targeted by an Attack against its AD.',
 		enhancements: [
 			{
 				name: 'Targets',
 				costString: '1 AP, Repeatable',
 				ap: 1,
 				repeatable: true,
-				description:
-					"You can target 1 additional creature within range that's also targeted by the same Attack."
+				description: 'You can target 1 additional creature within range that\'s also targeted by the same Attack.'
 			},
 			{
 				name: 'Grapple',
 				costString: '1 SP',
 				sp: 1,
-				description:
-					'If the Attacker is within 1 Space of you, they make a Physical Save. Save Failure: The Attacker becomes Grappled by you once the Attack is resolved.'
+				description: 'If the Attacker is within 1 Space of you, they make a Physical Save. Save Failure: The Attacker becomes Grappled by you once the Attack is resolved.'
 			}
 		]
 	},
@@ -400,9 +375,9 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Defense,
 		cost: { ap: 1 },
 		range: 'Self',
-		description: 'You avoid an enemy attack by quick repositioning.',
+		description: 'You avoid an enemy attack by quick repositioning. Reaction: You impose DisADV on the Attack against you. You can move 1 Space after the Attack, provided you stay within range of the Attack.',
 		isReaction: true,
-		trigger: "You're targeted by an Attack.",
+		trigger: 'You\'re targeted by an Attack.',
 		enhancements: [
 			{
 				name: 'Evasion',
@@ -414,14 +389,13 @@ export const maneuvers: Maneuver[] = [
 				name: 'Disengage',
 				costString: '1 SP',
 				sp: 1,
-				description: "Movement made as part of this Maneuver doesn't provoke Opportunity Attacks."
+				description: 'Movement made as part of this Maneuver doesn\'t provoke Opportunity Attacks.'
 			},
 			{
 				name: 'Slip Away',
 				costString: '1 SP',
 				sp: 1,
-				description:
-					'You can move up to your Speed instead of 1 Space and you no longer need to stay in range of the Attack.'
+				description: 'You can move up to your Speed instead of 1 Space and you no longer need to stay in range of the Attack.'
 			}
 		]
 	},
@@ -431,7 +405,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Defense,
 		cost: { ap: 1 },
 		range: '1 Space',
-		description: 'You take damage for a nearby ally.',
+		description: 'You take damage for a nearby ally. Reaction: The damage of the Attack is shared between you and the target. The damage you take bypasses any Damage Reduction you have.',
 		isReaction: true,
 		trigger: 'A target you can see within range is Hit by an Attack.',
 		enhancements: [
@@ -440,29 +414,25 @@ export const maneuvers: Maneuver[] = [
 				costString: '1 AP, Repeatable',
 				ap: 1,
 				repeatable: true,
-				description:
-					"You can target 1 additional creature within range that's also targeted by the same Attack."
+				description: 'You can target 1 additional creature within range that\'s also targeted by the same Attack.'
 			},
 			{
 				name: 'Taunt',
 				costString: '1 SP',
 				sp: 1,
-				description:
-					"The attacker makes a Charisma Save. Save Failure: They're Taunted by you for 1 Round."
+				description: 'The attacker makes a Charisma Save. Save Failure: They\'re Taunted by you for 1 Round.'
 			},
 			{
 				name: 'Heroic Protect',
 				costString: '2 SP',
 				sp: 2,
-				description:
-					'You become the target of the Attack, taking all of the damage and effects instead of the target. If the Attack is accompanied by a Save (as with a Dynamic Attack Save), you make the Save instead of the target.'
+				description: 'You become the target of the Attack, taking all of the damage and effects instead of the target. If the Attack is accompanied by a Save (as with a Dynamic Attack Save), you make the Save instead of the target.'
 			},
 			{
 				name: 'Resistance',
 				costString: '1 SP',
 				sp: 1,
-				description:
-					'You gain Resistance (Half) to any damage you take from using this Maneuver. The cost of this Enhancement increases by 1 SP if you use the Heroic Protect Enhancement.'
+				description: 'You gain Resistance (Half) to any damage you take from using this Maneuver. The cost of this Enhancement increases by 1 SP if you use the Heroic Protect Enhancement.'
 			}
 		]
 	},
@@ -472,7 +442,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Defense,
 		cost: { ap: 1, sp: 1 },
 		range: 'Self (or 1 Space if wielding a Shield)',
-		description: 'You push through an attack.',
+		description: 'You push through an attack. Reaction: The target takes 1 less damage from the Attack.',
 		isReaction: true,
 		trigger: 'A target you can see within range (including yourself) is Hit by an Attack.',
 		enhancements: [
@@ -487,14 +457,13 @@ export const maneuvers: Maneuver[] = [
 				name: 'Steadfast',
 				costString: '1 SP',
 				sp: 1,
-				description: "The target isn't Vulnerable to damage from the Attack."
+				description: 'The target isn\'t Vulnerable to damage from the Attack.'
 			},
 			{
 				name: 'Repel',
 				costString: '1 SP',
 				sp: 1,
-				description:
-					'After the Attack, if the Attacker is within 1 Space of you or the target, they make a Might Save against your Save DC. Save Failure: They are pushed 1 Space away. Save Failure (each 5): +1 Space pushed.'
+				description: 'After the Attack, if the Attacker is within 1 Space of you or the target, they make a Might Save against your Save DC. Save Failure: They are pushed 1 Space away. Save Failure (each 5): +1 Space pushed.'
 			}
 		]
 	},
@@ -504,8 +473,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Defense,
 		cost: { ap: 1, sp: 1 },
 		range: 'Self',
-		description:
-			'Make a DC 10 Martial Check. Failure: You gain 1 Temp HP for 1 Round. Success: You gain 2 Temp HP for 1 Round. Success (each 5): +1 Temp HP.',
+		description: 'Make a DC 10 Martial Check. Failure: You gain 1 Temp HP for 1 Round. Success: You gain 2 Temp HP for 1 Round. Success (each 5): +1 Temp HP.',
 		isReaction: false,
 		enhancements: [
 			{
@@ -534,8 +502,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Defense,
 		cost: { ap: 1 },
 		range: '1 Space',
-		description:
-			'You swap Spaces with a willing creature within range. If you or the target creature provoke Opportunity Attacks as a result of swapping Spaces, those Attacks are all made against you. Reaction: You can spend an additional 1 SP to perform this Maneuver as a Reaction in response to a creature within 1 Space being Attacked. When you do, you also impose DisADV on the Attack against them.',
+		description: 'You swap Spaces with a willing creature within range. If you or the target creature provoke Opportunity Attacks as a result of swapping Spaces, those Attacks are all made against you. Reaction: You can spend an additional 1 SP to perform this Maneuver as a Reaction in response to a creature within 1 Space being Attacked. When you do, you also impose DisADV on the Attack against them.',
 		isReaction: true,
 		enhancements: [
 			{
@@ -548,7 +515,7 @@ export const maneuvers: Maneuver[] = [
 				name: 'Seamless Swap',
 				costString: '1 SP',
 				sp: 1,
-				description: "Swapping Spaces doesn't provoke any Opportunity Attacks."
+				description: 'Swapping Spaces doesn\'t provoke any Opportunity Attacks.'
 			}
 		]
 	},
@@ -558,8 +525,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Grapple,
 		cost: { ap: 1 },
 		range: 'Melee',
-		description:
-			"Make a Melee Martial Attack against the target's AD. Hit: The target takes 1 Bludgeoning damage.",
+		description: 'Make a Melee Martial Attack against the target\'s AD. Hit: The target takes 1 Bludgeoning damage.',
 		isReaction: false,
 		enhancements: [
 			{
@@ -576,8 +542,7 @@ export const maneuvers: Maneuver[] = [
 				sp: 1,
 				ap: 1,
 				repeatable: true,
-				description:
-					'You move up to your Speed pulling the Grappled creatures with you. 1 Grappled creature takes additional damage equal to the number of Spaces moved as you slam them.'
+				description: 'You move up to your Speed pulling the Grappled creatures with you. 1 Grappled creature takes additional damage equal to the number of Spaces moved as you slam them.'
 			},
 			{
 				name: 'Wall Rake',
@@ -585,8 +550,7 @@ export const maneuvers: Maneuver[] = [
 				sp: 1,
 				ap: 1,
 				repeatable: true,
-				description:
-					'You slam 1 Grappled creature into a wall within 1 Space and move up to your Speed along the wall, ending your movement within 1 Space of the wall. The target makes a Repeated Might Save against your Save DC. Save Failure: They gain 1 stack of Bleeding per Space moved.'
+				description: 'You slam 1 Grappled creature into a wall within 1 Space and move up to your Speed along the wall, ending your movement within 1 Space of the wall. The target makes a Repeated Might Save against your Save DC. Save Failure: They gain 1 stack of Bleeding per Space moved.'
 			}
 		]
 	},
@@ -596,23 +560,20 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Grapple,
 		cost: { ap: 1, sp: 1 },
 		range: 'Melee',
-		description:
-			"You make a Martial Check against the target's Repeated Physical Save. Contest Success: The target is Restrained until the Grapple ends or they succeed on their Repeated Save. DC Tip: A creature can spend 1 AP to attempt to break a Grapple (see 'Grapple' on page 43 for more information).",
+		description: 'You make a Martial Check against the target\'s Repeated Physical Save. Contest Success: The target is Restrained until the Grapple ends or they succeed on their Repeated Save. DC Tip: A creature can spend 1 AP to attempt to break a Grapple (see \'Grapple\' on page 43 for more information).',
 		isReaction: false,
 		enhancements: [
 			{
 				name: 'Prone',
 				costString: '1 SP',
 				sp: 1,
-				description:
-					"The target also falls Prone (you don't fall Prone unless you choose to do so)."
+				description: 'The target also falls Prone (you don\'t fall Prone unless you choose to do so).'
 			},
 			{
 				name: 'Chokehold',
 				costString: '2 SP',
 				sp: 2,
-				description:
-					"The target also can't speak or breathe until they are no longer Restrained by you."
+				description: 'The target also can\'t speak or breathe until they are no longer Restrained by you.'
 			}
 		]
 	},
@@ -622,16 +583,15 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Grapple,
 		cost: { ap: 1, sp: 1 },
 		range: 'Melee',
-		description: 'You reposition a grappled creature to shield yourself from damage.',
+		description: 'You reposition a grappled creature to shield yourself from damage. Reaction: Make a Martial Check against the Grappled target\'s Might Save. Check Success: The damage from the Attack is shared by you and the Grappled creature, and you can move the Grappled creature to any Space adjacent to you immediately afterwards.',
 		isReaction: true,
-		trigger: "A creature that's not Grappled by you Hits you with an Attack.",
+		trigger: 'A creature that\'s not Grappled by you Hits you with an Attack.',
 		enhancements: [
 			{
 				name: 'Switch',
 				costString: '1 SP',
 				sp: 1,
-				description:
-					"After you complete the Reaction, you switch places with the Grappled target. This movement doesn't provoke Opportunity Attacks against either you or the target."
+				description: 'After you complete the Reaction, you switch places with the Grappled target. This movement doesn\'t provoke Opportunity Attacks against either you or the target.'
 			},
 			{
 				name: 'Partial Block',
@@ -653,8 +613,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Grapple,
 		cost: { ap: 1 },
 		range: 'Melee',
-		description:
-			"When you throw a creature using the Throwing rules, you can add the following Maneuver Enhancements. When you do, you're considered to be performing a Maneuver. See 'Throwing' on page 130 for more information. DC Tip: Remember, throwing a creature ends the Grapple.",
+		description: 'When you throw a creature using the Throwing rules, you can add the following Maneuver Enhancements. When you do, you\'re considered to be performing a Maneuver. See \'Throwing\' on page 130 for more information. DC Tip: Remember, throwing a creature ends the Grapple.',
 		isReaction: false,
 		enhancements: [
 			{
@@ -668,7 +627,7 @@ export const maneuvers: Maneuver[] = [
 				name: 'Skyward',
 				costString: '2 SP',
 				sp: 2,
-				description: "Your throw distance isn't halved for vertical throws."
+				description: 'Your throw distance isn\'t halved for vertical throws.'
 			},
 			{
 				name: 'Prone',
@@ -684,8 +643,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Utility,
 		cost: { ap: 1 },
 		range: 'Self',
-		description:
-			'You attempt to spend Rest Points to regain HP equal to the Rest Points spent. Make a DC 15 Martial Check. Failure: You can spend 2 Rest Points. Success: You can spend up to 3 Rest Points. Success (each 5): You can spend 1 additional Rest Point.',
+		description: 'You attempt to spend Rest Points to regain HP equal to the Rest Points spent. Make a DC 15 Martial Check. Failure: You can spend 2 Rest Points. Success: You can spend up to 3 Rest Points. Success (each 5): You can spend 1 additional Rest Point.',
 		isReaction: false,
 		enhancements: [
 			{
@@ -701,7 +659,7 @@ export const maneuvers: Maneuver[] = [
 				costString: '1 AP or 1 SP',
 				sp: 1,
 				ap: 1,
-				description: "You can repeat a Save against an effect you're subjected to."
+				description: 'You can repeat a Save against an effect you\'re subjected to.'
 			}
 		]
 	},
@@ -711,16 +669,14 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Utility,
 		cost: { ap: 2 },
 		range: 'Self',
-		description:
-			"You move in a Line up to your Speed. Make a Martial Check. Each creature within the Line must make a Martial Check contested against your Check when you attempt to move through its Space. Contest Success: You can move through the creature's Space. Contest Failure: You're unable to move through the creature's Space, preventing you from moving any further. Example: You make a Martial Check with a result of 15. If your Speed is 5, you can move up to 5 Spaces in a straight Line. If there are 3 creatures in that Line, your Martial Check of 15 would be compared to a Martial Check each creature makes as you attempt to pass through their Space, one by one. If the first creature in your path gets a 15 or higher, you can't pass through their Space and stop moving.",
+		description: 'You move in a Line up to your Speed. Make a Martial Check. Each creature within the Line must make a Martial Check contested against your Check when you attempt to move through its Space. Contest Success: You can move through the creature\'s Space. Contest Failure: You\'re unable to move through the creature\'s Space, preventing you from moving any further. Example: You make a Martial Check with a result of 15. If your Speed is 5, you can move up to 5 Spaces in a straight Line. If there are 3 creatures in that Line, your Martial Check of 15 would be compared to a Martial Check each creature makes as you attempt to pass through their Space, one by one. If the first creature in your path gets a 15 or higher, you can\'t pass through their Space and stop moving.',
 		isReaction: false,
 		enhancements: [
 			{
 				name: 'Brush Past',
 				costString: '2 SP',
 				sp: 2,
-				description:
-					"The Space of every creature who fails the contest isn't considered Difficult Terrain for this movement. You don't provoke an Opportunity Attack from them if you leave their reach as part of the same movement."
+				description: 'The Space of every creature who fails the contest isn\'t considered Difficult Terrain for this movement. You don\'t provoke an Opportunity Attack from them if you leave their reach as part of the same movement.'
 			},
 			{
 				name: 'Trample',
@@ -736,24 +692,21 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Utility,
 		cost: { ap: 1, sp: 1 },
 		range: 'Self',
-		description:
-			"Make a DC 15 Martial Check. Success: You move up to twice your Speed ignoring Difficult Terrain. Failure: You move up to your Speed ignoring Difficult Terrain. Reaction: You can spend an additional 1 SP to perform this Maneuver as a Reaction at the end of a creature's Turn moving half as much as normal.",
+		description: 'Make a DC 15 Martial Check. Success: You move up to twice your Speed ignoring Difficult Terrain. Failure: You move up to your Speed ignoring Difficult Terrain. Reaction: You can spend an additional 1 SP to perform this Maneuver as a Reaction at the end of a creature\'s Turn moving half as much as normal.',
 		isReaction: true,
 		enhancements: [
 			{
 				name: 'Passthrough',
 				costString: '2 SP',
 				sp: 2,
-				description:
-					'Each creature whose Space you attempt to move through must make a Martial Check against the result of your Martial Check. Failure: You move through their Space.'
+				description: 'Each creature whose Space you attempt to move through must make a Martial Check against the result of your Martial Check. Failure: You move through their Space.'
 			},
 			{
 				name: 'Coordinated Movement',
 				costString: '2 SP, Repeatable',
 				sp: 2,
 				repeatable: true,
-				description:
-					"A willing creature of your choice within 1 Space can move without spending its own movement, provided they're able to move and they end their movement within 1 Space of your destination."
+				description: 'A willing creature of your choice within 1 Space can move without spending its own movement, provided they\'re able to move and they end their movement within 1 Space of your destination.'
 			}
 		]
 	},
@@ -763,8 +716,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Utility,
 		cost: { ap: 1 },
 		range: 'Taunt Action (10 Spaces)',
-		description:
-			"When you take the Taunt Action, you can add the following Maneuver Enhancements. When you add a Maneuver Enhancement, you're considered to be performing a Maneuver.",
+		description: 'When you take the Taunt Action, you can add the following Maneuver Enhancements. When you add a Maneuver Enhancement, you\'re considered to be performing a Maneuver.',
 		isReaction: false,
 		enhancements: [
 			{
@@ -783,16 +735,14 @@ export const maneuvers: Maneuver[] = [
 				name: 'Legendary Taunt',
 				costString: '1 SP',
 				sp: 1,
-				description:
-					"Creatures other than you have Resistance (Half) to damage dealt by the Taunted targets, provided the target isn't also Taunted by those creatures."
+				description: 'Creatures other than you have Resistance (Half) to damage dealt by the Taunted targets, provided the target isn\'t also Taunted by those creatures.'
 			},
 			{
 				name: 'Mass Taunt',
 				costString: '1 AP + 1 SP',
 				sp: 1,
 				ap: 1,
-				description:
-					'You instead target each creature of your choice within 5 Spaces that can see or hear you. When you choose this Enhancement, the cost of all other Enhancements (except Sustained) is doubled.'
+				description: 'You instead target each creature of your choice within 5 Spaces that can see or hear you. When you choose this Enhancement, the cost of all other Enhancements (except Sustained) is doubled.'
 			}
 		]
 	},
@@ -802,8 +752,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Utility,
 		cost: { ap: 1 },
 		range: 'Intimidate Action (10 Spaces)',
-		description:
-			"When you take the Intimidate Action, you can add the following Maneuver Enhancements. When you add a Maneuver Enhancement, you're considered to be performing a Maneuver.",
+		description: 'When you take the Intimidate Action, you can add the following Maneuver Enhancements. When you add a Maneuver Enhancement, you\'re considered to be performing a Maneuver.',
 		isReaction: false,
 		enhancements: [
 			{
@@ -829,8 +778,7 @@ export const maneuvers: Maneuver[] = [
 				costString: '1 AP + 1 SP',
 				sp: 1,
 				ap: 1,
-				description:
-					'You instead target each creature of your choice within 5 Spaces that can see or hear you. When you choose this Enhancement, the cost of all other Enhancements (except Sustained) is doubled.'
+				description: 'You instead target each creature of your choice within 5 Spaces that can see or hear you. When you choose this Enhancement, the cost of all other Enhancements (except Sustained) is doubled.'
 			}
 		]
 	},
@@ -840,8 +788,7 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Utility,
 		cost: { ap: 1 },
 		range: 'Shove Action (1 Space)',
-		description:
-			'When you take the Shove Action, you can add the following Maneuver Enhancements. When you add a Maneuver Enhancement, you are considered to be performing a Maneuver.',
+		description: 'When you take the Shove Action, you can add the following Maneuver Enhancements. When you add a Maneuver Enhancement, you are considered to be performing a Maneuver.',
 		isReaction: false,
 		enhancements: [
 			{
@@ -855,16 +802,14 @@ export const maneuvers: Maneuver[] = [
 				name: 'Stand Up',
 				costString: '1 SP',
 				sp: 1,
-				description:
-					"If you're Prone, you can stand up before or after making the Check without spending movement."
+				description: 'If you\'re Prone, you can stand up before or after making the Check without spending movement.'
 			},
 			{
 				name: 'Mass Shove',
 				costString: '1 AP + 1 SP',
 				sp: 1,
 				ap: 1,
-				description:
-					'You instead target each creature of your choice within a 1 Space Aura. When you choose this Enhancement, the cost of all other Enhancements (except Stand Up) is doubled.'
+				description: 'You instead target each creature of your choice within a 1 Space Aura. When you choose this Enhancement, the cost of all other Enhancements (except Stand Up) is doubled.'
 			}
 		]
 	},
@@ -874,15 +819,14 @@ export const maneuvers: Maneuver[] = [
 		type: ManeuverType.Utility,
 		cost: { ap: 1 },
 		range: 'Self',
-		description:
-			"When you take the Extend Jump Action, you can add the following Maneuver Enhancements. When you add a Maneuver Enhancement (or perform the Action using SP), you're considered to be performing a Maneuver. Stamina Action: You can now spend 1 SP instead of 1 AP to perform the Extend Jump Action.",
+		description: 'When you take the Extend Jump Action, you can add the following Maneuver Enhancements. When you add a Maneuver Enhancement (or perform the Action using SP), you\'re considered to be performing a Maneuver. Stamina Action: You can now spend 1 SP instead of 1 AP to perform the Extend Jump Action.',
 		isReaction: false,
 		enhancements: [
 			{
 				name: 'Instant Jump',
 				costString: '1 SP',
 				sp: 1,
-				description: "If performing a Standing Jump, your Jump Distances isn't halved."
+				description: 'If performing a Standing Jump, your Jump Distances isn\'t halved.'
 			},
 			{
 				name: 'Increased Jump',

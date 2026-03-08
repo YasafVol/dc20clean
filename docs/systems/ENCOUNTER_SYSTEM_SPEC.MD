@@ -2,7 +2,7 @@
 
 > Purpose: Encounter planner using DC20's budget system: party size x level formulas, difficulty scaling, monster slotting, and validation.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-03-06
 > Related: [MONSTER_SYSTEM_SPEC.MD](./MONSTER_SYSTEM_SPEC.MD)
 
 ---
@@ -121,6 +121,8 @@ Budget: 16 / 20 (Hard)
    - Or click "Design" → opens Monster Designer with pre-filled level
 3. Set quantity per slot
 4. Budget meter updates in real-time
+
+**UX note:** when no slots exist, planner provides a combined action to create the first slot and immediately open the monster picker (`Add & Select Monster`).
 
 ### 4.4 Step 4: Save & Export
 
@@ -297,6 +299,8 @@ const TIER_COST_MULTIPLIERS: Record<MonsterTier, number> = {
 3. Filter by: level range, tier, role, name search
 4. Suggested level filter: party level ± 2
 5. Click monster → adds to slot with quantity 1
+
+If a slot has a `monsterId` that is temporarily not hydrated by list data, the slot remains visible with a recoverable state (`Change` / `Clear`) rather than appearing as an empty slot.
 
 ### 7.2 Design Bridge
 

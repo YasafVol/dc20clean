@@ -2,7 +2,7 @@
 
 > Purpose: Single reference for Classes, Features, Talents, and Level Progression.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-03-06
 
 ---
 
@@ -57,6 +57,7 @@ flowchart LR
 | | `classes-data/talents/talent.loader.ts` | Loads and indexes talents by class |
 | | `classes-data/talents/talents.data.ts` | Combined talent data export |
 | **Progression Resolver** | `classes-data/classProgressionResolver.ts` | Resolves progression up to target level; returns budgets, features, choices |
+| **Content Tagging** | `contentTagging.ts`, `contentTagRegistry.ts` | Normalizes class/feature content tags (`SRD`, `MAGAZINE`) and applies per-ID overrides |
 | **Class Utilities** | `classes-data/classUtils.ts` | Helper functions for class/subclass data lookup |
 | **Progression Types** | `classes-data/progressionTypes.ts` | `ClassProgressionGains`, `ClassProgressionLevel` interfaces |
 | **Type Contracts** | `schemas/types.ts` | TS interfaces `IClassDefinition`, `IClassFeature`, `IClassFeatureChoice` |
@@ -68,6 +69,16 @@ flowchart LR
 | **UI** | `routes/character-creation/*` (selection), `routes/character-sheet/*` (display) | Imports `classesData` / `classFeaturesData` |
 
 All paths above are relative to `src/lib/rulesdata/` unless otherwise noted.
+
+### Content Tagging (Classes and Features)
+
+- `ClassDefinition`, `Subclass`, and `ClassFeature` support:
+  - `contentTags?: ContentTag[]`
+  - `contentSourceRef?: string`
+- Runtime normalization in `contentTagging.ts` guarantees content tags are present.
+- Initial canonical tags are `SRD` and `MAGAZINE`.
+- Level rule implemented: level 1-2 features that are not explicitly `MAGAZINE` are normalized to include `SRD`.
+- Explicit per-class/per-feature tagging overrides are centralized in `contentTagRegistry.ts`.
 
 ---
 
@@ -218,5 +229,5 @@ Each class has a `<class>.talents.ts` file (13 files) plus shared data in `talen
 
 ---
 
-> _Last updated: 2026-02-06_  
+> _Last updated: 2026-03-06_  
 > Maintainer: @DC20Clean-Team

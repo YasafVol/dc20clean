@@ -272,6 +272,9 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 	return (
 		<StyledInventorySection $isMobile={isMobile}>
 			<StyledInventoryTitle $isMobile={isMobile}>{t('characterSheet.inventoryTitle')}</StyledInventoryTitle>
+			<div className="mb-2 text-xs text-zinc-400">
+				Armor and shield PD/AD bonuses are not auto-applied yet. Add them in Defenses.
+			</div>
 
 			{/* Add Item Button */}
 			<StyledAddItemButton $isMobile={isMobile} onClick={addInventorySlot} data-testid="add-item">

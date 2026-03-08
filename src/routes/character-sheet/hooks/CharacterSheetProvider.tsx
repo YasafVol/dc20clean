@@ -635,16 +635,17 @@ export function useCharacterFeatures() {
 		const selectedClassFeatures = findClassByName(character.className);
 
 		if (selectedClassFeatures) {
-			// Add level 1 core features
+			// Add unlocked core features up to current level
 			selectedClassFeatures.coreFeatures
-				.filter((feature: any) => feature.levelGained === 1)
+				.filter((feature: any) => (feature.levelGained ?? 1) <= (character.level ?? 1))
 				.forEach((feature: any) => {
 					features.push({
-						id: feature.featureName,
+						id: feature.id || feature.featureName,
 						name: feature.featureName,
 						description: feature.description,
+						benefits: feature.benefits,
 						source: 'class',
-						sourceDetail: `${selectedClassFeatures.className} (Lvl 1)`
+						sourceDetail: `${selectedClassFeatures.className} (Lvl ${feature.levelGained ?? 1})`
 					});
 				});
 

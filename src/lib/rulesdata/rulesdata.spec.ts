@@ -6,6 +6,8 @@ import { ancestriesData as newAncestriesData } from './ancestries/ancestries';
 import { ALL_SPELLS as allSpells } from './spells-data';
 import { allManeuvers } from './martials/maneuvers';
 import { allItems } from './inventoryItems';
+import { classFeaturesData } from './loaders/class-features.loader';
+import { resolveClassProgression } from './classes-data/classProgressionResolver';
 
 describe('Rules Data Validation', () => {
 	it('should load and validate all class data against the Zod schema', () => {
@@ -41,6 +43,62 @@ describe('Rules Data Validation', () => {
 			expect(spell).toHaveProperty('school');
 			expect(spell).toHaveProperty('cost');
 			expect(spell).toHaveProperty('effects');
+		});
+	});
+
+	it('should ensure all spells resolve with at least one content tag', () => {
+		allSpells.forEach((spell) => {
+			expect(spell.contentTags).toBeDefined();
+			expect(spell.contentTags?.length).toBeGreaterThan(0);
+		});
+	});
+
+	it('should ensure all class definitions resolve with at least one content tag', () => {
+		classFeaturesData.forEach((classDefinition) => {
+			expect(classDefinition.contentTags).toBeDefined();
+			expect(classDefinition.contentTags?.length).toBeGreaterThan(0);
+		});
+	});
+
+	it('should ensure all class features resolve with at least one content tag', () => {
+		classFeaturesData.forEach((classDefinition) => {
+			classDefinition.coreFeatures.forEach((feature) => {
+				expect(feature.contentTags).toBeDefined();
+				expect(feature.contentTags?.length).toBeGreaterThan(0);
+			});
+			classDefinition.subclasses.forEach((subclass) => {
+				subclass.features.forEach((feature) => {
+					expect(feature.contentTags).toBeDefined();
+					expect(feature.contentTags?.length).toBeGreaterThan(0);
+				});
+			});
+		});
+	});
+
+	it('should tag level 1-2 unlocked features as SRD unless explicitly MAGAZINE', () => {
+		const classIds = [
+			'barbarian',
+			'bard',
+			'champion',
+			'cleric',
+			'commander',
+			'druid',
+			'hunter',
+			'monk',
+			'rogue',
+			'sorcerer',
+			'spellblade',
+			'warlock',
+			'wizard'
+		];
+
+		classIds.forEach((classId) => {
+			const progression = resolveClassProgression(classId, 2);
+			progression.unlockedFeatures.forEach((feature) => {
+				if (feature.levelGained <= 2 && !feature.contentTags?.includes('MAGAZINE')) {
+					expect(feature.contentTags).toContain('SRD');
+				}
+			});
 		});
 	});
 

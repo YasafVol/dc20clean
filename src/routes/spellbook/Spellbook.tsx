@@ -694,6 +694,11 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 					<Badge variant="outline" className="shrink-0 text-xs">
 						{spell.school}
 					</Badge>
+					{spell.contentTags?.map((contentTag) => (
+						<Badge key={contentTag} variant="outline" className="shrink-0 text-xs">
+							{contentTag}
+						</Badge>
+					))}
 				</S.SpellBadgesContainer>
 			</S.SpellHeader>
 			<S.SpellMeta>

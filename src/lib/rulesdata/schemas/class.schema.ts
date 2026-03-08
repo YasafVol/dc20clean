@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+const contentTagSchema = z.enum(['SRD', 'MAGAZINE']);
+const contentTagsSchema = z.array(contentTagSchema).optional();
+
 // Schema for IEffect
 const effectSchema = z.object({
 	type: z.string(),
@@ -47,6 +50,8 @@ const classFeatureSchema = z.object({
 	name: z.string(),
 	description: z.string(),
 	level: z.number(),
+	contentTags: contentTagsSchema,
+	contentSourceRef: z.string().optional(),
 	effects: z.array(effectSchema).optional(),
 	benefits: z.array(benefitSchema).optional()
 });
@@ -125,6 +130,8 @@ export const classSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	description: z.string(),
+	contentTags: contentTagsSchema,
+	contentSourceRef: z.string().optional(),
 
 	level1Stats: z.object({
 		healthPoints: z.number(),

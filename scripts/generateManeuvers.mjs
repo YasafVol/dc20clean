@@ -46,7 +46,7 @@ while ((match = maneuverRegex.exec(maneuverSection)) !== null) {
 
 function parseManeuver(name, body) {
 	// Parse cost
-	const costMatch = body.match(/\*\s+\*\*Cost:\*\*\s*([^\n]+)/);
+	const costMatch = body.match(/[-*]\s+\*\*Cost:\*\*\s*([^\n]+)/);
 	if (!costMatch) return null;
 
 	const costStr = costMatch[1];
@@ -59,11 +59,11 @@ function parseManeuver(name, body) {
 	};
 
 	// Parse range
-	const rangeMatch = body.match(/\*\s+\*\*Range:\*\*\s*([^\n]+)/);
+	const rangeMatch = body.match(/[-*]\s+\*\*Range:\*\*\s*([^\n]+)/);
 	const range = rangeMatch ? rangeMatch[1].trim() : 'Self';
 
 	// Parse trigger (for reactions)
-	const triggerMatch = body.match(/\*\s+\*\*Trigger:\*\*\s*([^\n]+)/);
+	const triggerMatch = body.match(/[-*]\s+\*\*Trigger:\*\*\s*([^\n]+)/);
 	const trigger = triggerMatch ? triggerMatch[1].trim() : undefined;
 
 	// Check if it's a reaction
@@ -76,14 +76,14 @@ function parseManeuver(name, body) {
 	let pastBullets = false;
 
 	for (const line of lines) {
-		if (line.startsWith('*   **')) {
+		if (/^[-*]\s+\*\*/.test(line)) {
 			inBullets = true;
 			continue;
 		}
-		if (inBullets && !line.startsWith('*') && line.trim()) {
+		if (inBullets && !/^[-*]\s/.test(line) && line.trim()) {
 			pastBullets = true;
 		}
-		if (pastBullets && !line.startsWith('**Maneuver') && !line.startsWith('*   ')) {
+		if (pastBullets && !line.startsWith('**Maneuver') && !/^[-*]\s+/.test(line)) {
 			if (line.trim()) {
 				descLines.push(line.trim());
 			}
@@ -95,6 +95,30 @@ function parseManeuver(name, body) {
 	if (!description) {
 		const firstPara = body.split('\n').find((l) => l.trim() && !l.startsWith('*'));
 		description = firstPara ? firstPara.trim().replace(/\*\*/g, '') : name;
+	}
+
+	// Include reaction mechanics in the description for reaction maneuvers.
+	const reactionMatch = body.match(/\*\*Reaction:\*\*\s*([^\n]+)/);
+	if (reactionMatch) {
+		const reactionText = reactionMatch[1].trim().replace(/\*\*/g, '');
+		const firstNarrativeLine = body
+			.split('\n')
+			.find(
+				(line) =>
+					line.trim() &&
+					!/^[-*]\s+\*\*/.test(line) &&
+					!line.trim().startsWith('**') &&
+					!line.trim().startsWith('#')
+			);
+		const flavorText = firstNarrativeLine?.trim().replace(/\*\*/g, '');
+
+		if (flavorText && description.startsWith('Reaction:')) {
+			description = flavorText;
+		}
+
+		if (reactionText && !description.includes('Reaction:')) {
+			description = `${description} Reaction: ${reactionText}`;
+		}
 	}
 
 	// Parse enhancements
@@ -120,7 +144,7 @@ function parseEnhancements(body) {
 	let currentEnh = null;
 
 	for (const line of enhLines) {
-		const enhMatch = line.match(/^\*\s+\*\*([^:]+):\*\*\s*\(([^)]+)\)\s*(.*)$/);
+		const enhMatch = line.match(/^[-*]\s+\*\*([^:]+):\*\*\s*\(([^)]+)\)\s*(.*)$/);
 		if (enhMatch) {
 			if (currentEnh) enhancements.push(currentEnh);
 
@@ -137,7 +161,7 @@ function parseEnhancements(body) {
 				repeatable,
 				description: desc.trim().replace(/\*\*/g, '')
 			};
-		} else if (currentEnh && line.trim() && !line.startsWith('*   **DC')) {
+		} else if (currentEnh && line.trim() && !/^[-*]\s+\*\*DC/.test(line)) {
 			currentEnh.description += ' ' + line.trim().replace(/\*\*/g, '');
 		}
 	}
@@ -184,6 +208,18 @@ function getManeuverType(name, index) {
 	if (grappleManeuvers.includes(name)) return 'Grapple';
 	return 'Utility';
 }
+
+function assertReactionDescriptions(maneuvers) {
+	const mustIncludeReactionText = ['Parry', 'Brace'];
+	for (const maneuverName of mustIncludeReactionText) {
+		const maneuver = maneuvers.find((m) => m.name === maneuverName);
+		if (!maneuver || !maneuver.description.includes('Reaction:')) {
+			throw new Error(`Missing reaction mechanics in generated description for ${maneuverName}`);
+		}
+	}
+}
+
+assertReactionDescriptions(maneuvers);
 
 // Generate output
 let output = `/**

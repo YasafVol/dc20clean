@@ -2,7 +2,7 @@
 
 > Purpose: End-to-end map of Character Sheet UI: architecture, components, data sources, and interactions.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-03-06
 
 ---
 
@@ -150,6 +150,14 @@ The `Movement.tsx` component displays multiple panels with combat-relevant infor
 - **Spells** shown when `calculationResult.spellsKnownSlots.length > 0` or saved spells exist
 - **Maneuvers** shown when `calculationResult.levelBudgets.totalManeuversKnown > 0` or saved maneuvers exist
 - **Rage toggle** visible when character has a Rage class feature
+
+---
+
+## 5.1 Feature and Defense Notes
+
+- **Class feature listing:** Class features shown on the sheet include all unlocked core features up to current character level (not only level 1).
+- **Feature popup details:** Feature popups can render structured feature benefits when present (for example, `Roguish Finesse` benefit entries).
+- **Armor/shield PD/AD workflow:** Equipment PD/AD bonuses are currently user-applied via Defenses manual override fields; inventory shows item bonuses for reference.
 
 ---
 

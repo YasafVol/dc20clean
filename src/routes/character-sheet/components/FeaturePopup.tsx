@@ -29,7 +29,18 @@ const FeaturePopup: React.FC<FeaturePopupProps> = ({ feature, onClose }) => {
 						×
 					</StyledFeaturePopupClose>
 				</StyledFeaturePopupHeader>
-				<StyledFeaturePopupDescription>{feature.description}</StyledFeaturePopupDescription>
+				<StyledFeaturePopupDescription>
+					<div>{feature.description}</div>
+					{feature.benefits && feature.benefits.length > 0 && (
+						<ul className="mt-3 list-disc space-y-2 pl-5">
+							{feature.benefits.map((benefit) => (
+								<li key={benefit.name}>
+									<strong>{benefit.name}:</strong> {benefit.description}
+								</li>
+							))}
+						</ul>
+					)}
+				</StyledFeaturePopupDescription>
 				{feature.sourceDetail && (
 					<StyledFeaturePopupSourceInfo>
 					{t('characterSheet.featureSource')} {feature.sourceDetail}

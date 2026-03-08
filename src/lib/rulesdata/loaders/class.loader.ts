@@ -1,4 +1,5 @@
 import { classesDataSchema, type IClassDefinition } from '../schemas/class.schema';
+import { normalizeContentTags } from '../contentTagging';
 
 interface ProgressionLevel {
 	level: number;
@@ -175,6 +176,7 @@ const compatibleData = Object.entries(progressionDataByKey)
 			id: classKey,
 			name: metadata.name,
 			description: metadata.description,
+			contentTags: normalizeContentTags(undefined),
 
 			level1Stats: {
 				healthPoints: level1?.healthPoints ?? 0,

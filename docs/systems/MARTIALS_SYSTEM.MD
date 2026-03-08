@@ -2,7 +2,7 @@
 
 > Purpose: Canonical reference for maneuver data, budget calculation, and creation/sheet integration.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-03-06
 
 ---
 
@@ -11,6 +11,7 @@
 | File | Role |
 | --- | --- |
 | `src/lib/rulesdata/martials/maneuvers.ts` | Maneuver catalog (28 maneuvers), exports `allManeuvers`, `getManeuverById()`, `getManeuversByType()` |
+| `scripts/generateManeuvers.mjs` | Source parser/generator for maneuver catalog from `docs/assets/DC20 0.10 full.md` |
 | `src/lib/rulesdata/schemas/maneuver.schema.ts` | TypeScript interfaces: `Maneuver`, `ManeuverCost`, `ManeuverEnhancement`, `ManeuverType` enum |
 | `src/lib/rulesdata/martials/monk-stances.ts` | Monk-specific stances (currently empty placeholder) |
 | `src/lib/services/enhancedCharacterCalculator.ts` | Budget calculation and `GRANT_MANEUVERS` processing |
@@ -48,6 +49,11 @@ interface Maneuver {
   enhancements: ManeuverEnhancement[];
 }
 ```
+
+### Description Content Rule
+
+- Generated maneuver descriptions must include mechanical reaction text when present in source markdown (`**Reaction:** ...`), not only flavor text.
+- Generator has a guard assertion for known reaction maneuvers (currently `Parry`, `Brace`) to prevent regressions during regeneration.
 
 ### Maneuver Counts (28 total)
 

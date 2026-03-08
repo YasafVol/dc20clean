@@ -26,22 +26,23 @@ import { warlockClass } from './features/warlock_features';
 import { bardClass } from './features/bard_features';
 import { druidClass } from './features/druid_features';
 import { commanderClass } from './features/commander_features';
+import { normalizeClassDefinitionContent } from '../contentTagging';
 
 // Map of class IDs to their feature definitions
 const CLASS_FEATURES_MAP: Record<string, any> = {
-	barbarian: barbarianClass,
-	cleric: clericClass,
-	hunter: hunterClass,
-	champion: championClass,
-	wizard: wizardClass,
-	monk: monkClass,
-	rogue: rogueClass,
-	sorcerer: sorcererClass,
-	spellblade: spellbladeClass,
-	warlock: warlockClass,
-	bard: bardClass,
-	druid: druidClass,
-	commander: commanderClass
+	barbarian: normalizeClassDefinitionContent(barbarianClass),
+	cleric: normalizeClassDefinitionContent(clericClass),
+	hunter: normalizeClassDefinitionContent(hunterClass),
+	champion: normalizeClassDefinitionContent(championClass),
+	wizard: normalizeClassDefinitionContent(wizardClass),
+	monk: normalizeClassDefinitionContent(monkClass),
+	rogue: normalizeClassDefinitionContent(rogueClass),
+	sorcerer: normalizeClassDefinitionContent(sorcererClass),
+	spellblade: normalizeClassDefinitionContent(spellbladeClass),
+	warlock: normalizeClassDefinitionContent(warlockClass),
+	bard: normalizeClassDefinitionContent(bardClass),
+	druid: normalizeClassDefinitionContent(druidClass),
+	commander: normalizeClassDefinitionContent(commanderClass)
 };
 
 /**

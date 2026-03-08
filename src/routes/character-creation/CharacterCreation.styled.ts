@@ -65,7 +65,8 @@ export const HeaderContent = styled.div`
   width: 100%;
 
   ${media.mobile} {
-    padding: ${theme.spacing[2]} ${theme.spacing[4]};
+    /* Reserve space for the fixed auth chip in the app shell on mobile. */
+    padding: ${theme.spacing[2]} 9rem ${theme.spacing[2]} ${theme.spacing[3]};
   }
 `;
 

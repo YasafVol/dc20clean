@@ -802,7 +802,18 @@ const Spells: React.FC = () => {
 										
 										<StyledCardHeader>
 											<SpellName $isSelected={isSelected}>{spell.name}</SpellName>
-											<Badge $variant="school">{spell.school}</Badge>
+											<div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
+												<Badge $variant="school">{spell.school}</Badge>
+												{spell.contentTags?.map((contentTag) => (
+													<ShadcnBadge
+														key={contentTag}
+														variant="outline"
+														className="text-[10px]"
+													>
+														{contentTag}
+													</ShadcnBadge>
+												))}
+											</div>
 										</StyledCardHeader>
 
 										<SpellBadges>

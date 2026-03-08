@@ -2,6 +2,7 @@
  * @file src/lib/rulesdata/schemas/character.schema.ts
  * @description The definitive schema for all character creation data, designed for robust, machine-readable processing.
  */
+import type { ContentTag } from './content.schema';
 
 // ================================================================= //
 // I. CORE EFFECT MODEL - The Heart of the System
@@ -294,6 +295,10 @@ export interface ClassFeature {
 	levelGained: number;
 	description: string;
 	isFlavor?: boolean;
+	/** Content provenance tags used for entitlement and filtering */
+	contentTags?: ContentTag[];
+	/** Optional source reference (for example a specific magazine issue) */
+	contentSourceRef?: string;
 	/** Direct effects of the feature, applied automatically. */
 	effects?: Effect[];
 	/** Named sub-sections of a feature, each with its own effects. */
@@ -306,12 +311,20 @@ export interface ClassFeature {
 export interface Subclass {
 	subclassName: string;
 	description?: string;
+	/** Content provenance tags used for entitlement and filtering */
+	contentTags?: ContentTag[];
+	/** Optional source reference (for example a specific magazine issue) */
+	contentSourceRef?: string;
 	features: ClassFeature[];
 }
 
 /** The complete, robust definition for a single class. */
 export interface ClassDefinition {
 	className: string;
+	/** Content provenance tags used for entitlement and filtering */
+	contentTags?: ContentTag[];
+	/** Optional source reference (for example a specific magazine issue) */
+	contentSourceRef?: string;
 	/** If true, this class is experimental/unreleased and should be hidden from normal selection */
 	experimental?: boolean;
 	/**

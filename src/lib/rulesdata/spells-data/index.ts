@@ -31,6 +31,7 @@ export type {
 	SpellTag
 } from '../schemas/spell.schema';
 export { SpellSchool, SpellSource, SpellcasterClass } from '../schemas/spell.schema';
+export type { ContentTag } from '../schemas/content.schema';
 
 // Import all school spell arrays
 import { astromancySpells } from './astromancy';
@@ -43,6 +44,7 @@ import { nullificationSpells } from './nullification';
 import { transmutationSpells } from './transmutation';
 
 import type { Spell } from '../schemas/spell.schema';
+import { normalizeSpellContent } from '../contentTagging';
 
 // All spells combined (125 total)
 export const ALL_SPELLS: Spell[] = [
@@ -54,7 +56,7 @@ export const ALL_SPELLS: Spell[] = [
 	...invocationSpells,
 	...nullificationSpells,
 	...transmutationSpells
-];
+].map(normalizeSpellContent);
 
 // Lookup utilities
 export function getSpellById(id: string): Spell | undefined {

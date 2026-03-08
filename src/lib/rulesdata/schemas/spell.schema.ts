@@ -6,6 +6,7 @@
  * - School: Organizational category (Astromancy, Conjuration, etc.)
  * - Tags: Damage types and effect tags (Fire, Cold, Burning, etc.)
  */
+import type { ContentTag } from './content.schema';
 
 /**
  * Spell Schools in DC20 v0.10
@@ -284,6 +285,10 @@ export interface Spell {
 	school: SpellSchool;
 	/** Tags for damage types and effects */
 	tags?: SpellTag[];
+	/** Content provenance tags used for entitlement and filtering */
+	contentTags?: ContentTag[];
+	/** Optional source reference (for example a specific magazine issue) */
+	contentSourceRef?: string;
 	/** Is this a ritual? */
 	isRitual?: boolean;
 	/** Base cost to cast */

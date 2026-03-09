@@ -2,7 +2,7 @@
 
 > Purpose: End-to-end map of Character Sheet UI: architecture, components, data sources, and interactions.
 > Status: Active
-> Last Updated: 2026-03-06
+> Last Updated: 2026-03-08
 
 ---
 
@@ -58,7 +58,7 @@ The character sheet uses a **context provider pattern** with a reducer for state
 | --- | --- | --- |
 | `components/Spells.tsx` | `SavedCharacter.spells` + Spells System data | Spellbook with filtering/management |
 | `components/Maneuvers.tsx` | `SavedCharacter.maneuvers` + Martials data | Maneuver management with type filtering |
-| `components/Features.tsx` | Class/trait feature definitions | Character features/traits display |
+| `components/Features.tsx` | Class/trait feature definitions | Character features grouped by gameplay type (Passive, Active, Flavor) |
 | `components/EnhancedFeatures.tsx` | Feature definitions + effect attribution | Enhanced features with source attribution |
 
 ### Background
@@ -157,6 +157,10 @@ The `Movement.tsx` component displays multiple panels with combat-relevant infor
 
 - **Class feature listing:** Class features shown on the sheet include all unlocked core features up to current character level (not only level 1).
 - **Feature popup details:** Feature popups can render structured feature benefits when present (for example, `Roguish Finesse` benefit entries).
+- **Feature classification view:** `Features.tsx` groups entries by gameplay role rather than source:
+  - Passive Abilities (always-on mechanics)
+  - Active Abilities (resource/triggered abilities, typically AP/SP/MP or limited cadence)
+  - Flavor Features (narrative/non-mechanical emphasis)
 - **Armor/shield PD/AD workflow:** Equipment PD/AD bonuses are currently user-applied via Defenses manual override fields; inventory shows item bonuses for reference.
 
 ---

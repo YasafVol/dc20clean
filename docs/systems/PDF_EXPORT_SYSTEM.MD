@@ -1,5 +1,8 @@
 # DC20Clean – PDF Export System
 
+> Status: Active
+> Last Updated: 2026-03-08
+>
 > Purpose
 >
 > Capture the architecture, scope, and acceptance criteria for exporting a calculated character sheet to the official DC20 fillable PDF. This document is the system overview aligned with existing docs (no separate planning spec is currently tracked in-repo).
@@ -56,6 +59,22 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 - Field maps are versioned:
   - `fieldMap.dc20-0.10.ts` — Maps for v0.10 PDF template
   - `fieldMap.dc20-0.9.5.ts` — Maps for v0.9.5 PDF template (legacy)
+
+### 3.3 Features Field Composition
+
+The exported "features" text block is assembled in `src/lib/pdf/transformers.ts` and now includes the following sections when data exists:
+
+- `[Class Features]`
+- `[Ancestry Traits]`
+- `[Resistances]`
+- `[Vulnerabilities]`
+- `[Senses]`
+- `[Combat Training]`
+- `[Talents]`
+- `[Spells]`
+- `[Maneuvers]`
+
+This lets the PDF retain the same high-value combat context shown on the character sheet (especially resistances, senses, and training grants).
 
 ---
 
@@ -188,5 +207,5 @@ import { FeatureGateButton } from '@/components/auth';
 
 ---
 
-> Last updated: 2026-01-25 (Added authentication gating)
+> Last updated: 2026-03-08 (Added features field composition docs and refreshed system metadata)
 > Maintainer: @DC20Clean-Team

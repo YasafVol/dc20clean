@@ -344,7 +344,8 @@ const Spellbook: React.FC = () => {
 							<S.FilterLabel $color="info">{t('spellbook.source')}</S.FilterLabel>
 							<S.FilterChips>
 								{Object.values(SpellSource).map((source) => {
-									const isSelected = sourceFilter.includes(source);
+									const isSelected =
+										sourceFilter.includes(source) || classFacetFilters.sources.includes(source);
 									return (
 										<S.FilterChip
 											key={source}
@@ -367,7 +368,8 @@ const Spellbook: React.FC = () => {
 							<S.FilterLabel $color="secondary">{t('spellbook.school')}</S.FilterLabel>
 							<S.FilterChips>
 								{Object.values(SpellSchool).map((school) => {
-									const isSelected = schoolFilter.includes(school);
+									const isSelected =
+										schoolFilter.includes(school) || classFacetFilters.schools.includes(school);
 									return (
 										<S.FilterChip
 											key={school}
@@ -389,7 +391,8 @@ const Spellbook: React.FC = () => {
 							<S.FilterLabel $color="success">{t('spellbook.tag')}</S.FilterLabel>
 							<S.FilterChips style={{ gap: '0.5rem' }}>
 								{displayedTags.map((tag) => {
-									const isSelected = tagFilter.includes(tag);
+									const isSelected =
+										tagFilter.includes(tag) || classFacetFilters.tags.includes(tag);
 									return (
 										<S.FilterChip
 											key={tag}

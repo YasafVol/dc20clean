@@ -25,13 +25,19 @@ export function calculateGlobalMagicProfile(
 ): GlobalMagicProfile {
 	// Get spell restrictions from class features (single source of truth)
 	const classFeatures = findClassByName(buildData.classId || '');
-	const spellList = (classFeatures as any)?.spellcastingPath?.spellList;
+	const spellList =
+		(classFeatures as any)?.spellcasterPath?.spellList ??
+		(classFeatures as any)?.spellcastingPath?.spellList ??
+		(classFeatures as any)?.hybridPath?.spellcastingAspect?.spellList;
 
 	const profile: GlobalMagicProfile = {
 		// DC20 v0.10: No source restriction - filtering is by school/tag only
 		sources: [],
 		schools: (spellList?.specificSchools as SpellSchool[]) || [],
-		tags: (spellList?.spellTags as SpellTag[]) || []
+		tags: [
+			...((spellList?.spellTags as SpellTag[]) || []),
+			...((spellList?.tags as SpellTag[]) || [])
+		]
 	};
 
 	// Process Expansion Effects (talents/features that expand spell access)
@@ -151,8 +157,7 @@ export function generateSpellsKnownSlots(
 				// Surgical grants
 				if (target === 'druidcraft') slot.specificRestrictions!.exactSpellId = 'druidcraft';
 				if (target === 'Sorcery') slot.specificRestrictions!.exactSpellId = 'sorcery';
-				if (target === 'find_familiar')
-					slot.specificRestrictions!.exactSpellId = 'find_familiar';
+				if (target === 'find_familiar') slot.specificRestrictions!.exactSpellId = 'find_familiar';
 
 				// Bard Magical Secrets (Special case: no restrictions)
 				if (target === 'any_source' || effect.source.id === 'bard_magical_secrets') {

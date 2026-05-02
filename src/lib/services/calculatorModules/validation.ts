@@ -22,6 +22,7 @@ import { attributesData } from '../../rulesdata/attributes';
 import { getLevelCaps } from '../../rulesdata/progression/levelCaps';
 import { getSpellById } from '../../rulesdata/spells-data';
 import { BuildStep } from '../../types/effectSystem';
+import { matchesGlobalMagicProfile, matchesSpellRestrictions } from '../spellFiltering';
 
 /**
  * Validate attribute limits against level caps
@@ -402,41 +403,27 @@ export function runValidation(input: ValidationInput): ValidationResult {
 				return;
 			}
 
-			if (slot.specificRestrictions) {
-				const { schools, tags } = slot.specificRestrictions;
+			if (
+				slot.specificRestrictions &&
+				!matchesSpellRestrictions(spell, slot.specificRestrictions)
+			) {
+				const { exactSpellId, schools, tags } = slot.specificRestrictions;
+				const allowedParts = [
+					exactSpellId ? `exact spell ${exactSpellId}` : null,
+					schools?.length ? `schools: ${schools.join(', ')}` : null,
+					tags?.length ? `tags: ${tags.join(', ')}` : null
+				].filter(Boolean);
 
-				if (schools && schools.length > 0) {
-					if (!schools.includes(spell.school)) {
-						errors.push({
-							step: BuildStep.SpellsAndManeuvers,
-							field: slotId,
-							code: 'SCHOOL_RESTRICTION' as any,
-							message: `${spell.name} (${spell.school}) does not match allowed schools for ${slot.sourceName}: ${schools.join(', ')}`
-						});
-					}
-				}
-
-				if (tags && tags.length > 0) {
-					const hasValidTag = tags.some((tag: any) => spell.tags?.includes(tag));
-					if (!hasValidTag) {
-						errors.push({
-							step: BuildStep.SpellsAndManeuvers,
-							field: slotId,
-							code: 'TAG_RESTRICTION' as any,
-							message: `${spell.name} does not have any required tags for ${slot.sourceName}: ${tags.join(', ')}`
-						});
-					}
-				}
+				errors.push({
+					step: BuildStep.SpellsAndManeuvers,
+					field: slotId,
+					code: 'SCHOOL_RESTRICTION' as any,
+					message: `${spell.name} does not match restrictions for ${slot.sourceName}: ${allowedParts.join(' or ')}`
+				});
 			}
 
 			if (slot.isGlobal && globalMagicProfile) {
-				const { sources, schools, tags } = globalMagicProfile;
-				const matchesSource = sources.some((src: any) => spell.sources.includes(src));
-				const matchesSchool = schools.length === 0 || schools.includes(spell.school);
-				const matchesTags =
-					tags.length === 0 || tags.some((tag: any) => spell.tags?.includes(tag));
-
-				if (!matchesSource || !matchesSchool || !matchesTags) {
+				if (!matchesGlobalMagicProfile(spell, globalMagicProfile)) {
 					errors.push({
 						step: BuildStep.SpellsAndManeuvers,
 						field: slotId,

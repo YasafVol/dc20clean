@@ -2,7 +2,7 @@
 
 > Purpose: Single reference for spell data model, assignment rules, UI flows, and validation.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-05-02
 
 ---
 
@@ -135,7 +135,7 @@ getNonCantrips(): Spell[]
 ### 4.3 Validation Rules
 
 - **Type Mismatch**: Cantrips cannot fit into Spell slots and vice-versa.
-- **Restriction Mismatch**: Selected spells must match both the specific slot restrictions AND the Global Magic Profile.
+- **Restriction Mismatch**: Selected spells must match slot restrictions and the Global Magic Profile. Source restrictions narrow only when present; school and tag restrictions are OR-based, so a spell can qualify by matching an allowed school or an allowed tag. Exact spell restrictions remain exact-only.
 - **Exhaustion**: All available slots must be validly filled.
 
 ---
@@ -146,9 +146,10 @@ getNonCantrips(): Spell[]
 
 - The Spells stage appears conditionally only when the calculator reports `spellsKnownSlots.length > 0`.
 - Each slot is an individual spell picker that respects:
-  - Slot-level restrictions (specific school, source, or tag requirements)
-  - Global Magic Profile (character's general spellcasting bounds)
+  - Slot-level restrictions (specific school/source/tag requirements, with school/tag as OR)
+  - Global Magic Profile (source if present, then school or tag)
   - Type matching (cantrip slots only accept cantrips, spell slots only accept spells)
+- Source, school, and tag browsing filters are OR-based across selected facets; cost and sustained filters continue to narrow the result set.
 - Spell selection is tracked as `Record<SlotID, SpellID>` in `characterContext.tsx`.
 
 ### Sheet (`character-sheet/components/Spells.tsx`)
@@ -160,7 +161,7 @@ getNonCantrips(): Spell[]
 ### Spellbook (`routes/spellbook/Spellbook.tsx`)
 
 - Dedicated route for browsing all spells
-- Filterable by school, source, tags, and cantrip/spell type
+- Filterable by class, source, school, tags, cost, and sustained status. Class/source/school/tag filters are OR-based across selected facets; cost and sustained filters narrow the result set.
 
 ### Cross-Path Spell List
 

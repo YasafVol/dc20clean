@@ -3,6 +3,13 @@ import { useCharacter } from '../../lib/stores/characterContext';
 import { ALL_SPELLS as allSpells } from '../../lib/rulesdata/spells-data';
 import { SpellSchool, SpellSource, type SpellTag } from '../../lib/rulesdata/schemas/spell.schema';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
+import {
+	matchesGlobalMagicProfile,
+	matchesSpellCost,
+	matchesSpellRestrictions,
+	matchesSpellSustained,
+	matchesUserSpellFacets
+} from '../../lib/services/spellFiltering';
 import { theme } from '../character-sheet/styles/theme';
 import { SecondaryButton } from '../../components/styled/index';
 import { useTranslation } from 'react-i18next';
@@ -136,49 +143,9 @@ const Spells: React.FC = () => {
 			});
 		}
 
-		const filtered = allSpells.filter((spell) => {
-			// Source must always match (if sources are defined)
-			const hasMatchingSource =
-				globalMagicProfile.sources.length === 0 ||
-				spell.sources.some((source) => globalMagicProfile.sources.includes(source));
-
-			// School OR Tag logic: spell qualifies if it matches school OR has a qualifying tag
-			const schoolsEmpty = globalMagicProfile.schools.length === 0;
-			const tagsEmpty = globalMagicProfile.tags.length === 0;
-
-			const matchesSchool = globalMagicProfile.schools.includes(spell.school);
-			const matchesTag = spell.tags?.some((tag) => globalMagicProfile.tags.includes(tag)) ?? false;
-
-			// DC20 Logic: Source AND (School OR Tag)
-			// - If both schools and tags are empty, allow all spells from matching source
-			// - If only schools defined, must match school
-			// - If only tags defined, must match tag
-			// - If both defined, can match either (OR logic - tags expand access)
-			const passesSchoolOrTag =
-				(schoolsEmpty && tagsEmpty) || // No restrictions
-				(!schoolsEmpty && matchesSchool) || // Matches allowed school
-				(!tagsEmpty && matchesTag); // Matches allowed tag (expands access)
-
-			const passes = hasMatchingSource && passesSchoolOrTag;
-
-			// Debug first few spells
-			if (allSpells.indexOf(spell) < 3) {
-				console.log(`🔮 [Spells] Filtering "${spell.name}":`, {
-					spellSources: spell.sources,
-					spellSchool: spell.school,
-					spellTags: spell.tags,
-					profileSchools: globalMagicProfile.schools,
-					profileTags: globalMagicProfile.tags,
-					hasMatchingSource,
-					matchesSchool,
-					matchesTag,
-					passesSchoolOrTag,
-					passes
-				});
-			}
-
-			return passes;
-		});
+		const filtered = allSpells.filter((spell) =>
+			matchesGlobalMagicProfile(spell, globalMagicProfile)
+		);
 
 		debug.spells('Filtered spells result', { count: filtered.length, total: allSpells.length });
 		return filtered;
@@ -201,42 +168,31 @@ const Spells: React.FC = () => {
 	const filteredSpells = useMemo(() => {
 		let spells = availableSpells;
 
-		// Filter by source
-		if (sourceFilter !== 'all') {
-			spells = spells.filter((spell) => spell.sources.includes(sourceFilter));
-		}
-
-		// Filter by school
-		if (schoolFilter !== 'all') {
-			spells = spells.filter((spell) => spell.school === schoolFilter);
-		}
-
-		// Filter by tag
-		if (tagFilter !== 'all') {
-			spells = spells.filter((spell) => spell.tags?.includes(tagFilter));
-		}
+		spells = spells.filter((spell) =>
+			matchesUserSpellFacets(spell, {
+				sources: sourceFilter === 'all' ? [] : [sourceFilter],
+				schools: schoolFilter === 'all' ? [] : [schoolFilter],
+				tags: tagFilter === 'all' ? [] : [tagFilter]
+			})
+		);
 
 		// Filter by cost
 		if (costFilter !== 'all') {
 			switch (costFilter) {
 				case '1mp':
-					spells = spells.filter((spell) => spell.cost.mp === 1);
+					spells = spells.filter((spell) => matchesSpellCost(spell, { mpCosts: [1] }));
 					break;
 				case '2mp':
-					spells = spells.filter((spell) => spell.cost.mp === 2);
+					spells = spells.filter((spell) => matchesSpellCost(spell, { mpCosts: [2] }));
 					break;
 				case '3mp+':
-					spells = spells.filter((spell) => (spell.cost.mp ?? 0) >= 3);
+					spells = spells.filter((spell) => matchesSpellCost(spell, { minMpCost: 3 }));
 					break;
 			}
 		}
 
 		// Filter by sustained
-		if (sustainedFilter !== 'all') {
-			spells = spells.filter((spell) =>
-				sustainedFilter === 'yes' ? spell.sustained : !spell.sustained
-			);
-		}
+		spells = spells.filter((spell) => matchesSpellSustained(spell, sustainedFilter));
 
 		// --- Smart Slot Filtering (M3.20) ---
 		if (activeSlotId) {
@@ -244,34 +200,11 @@ const Spells: React.FC = () => {
 			if (activeSlot) {
 				spells = spells.filter((spell) => {
 					// 1. Check Specific Restrictions
-					if (activeSlot.specificRestrictions) {
-						const sr = activeSlot.specificRestrictions;
-						if (sr.exactSpellId && spell.id !== sr.exactSpellId) return false;
-						if (
-							sr.sources &&
-							sr.sources.length > 0 &&
-							!spell.sources.some((s) => sr.sources!.includes(s))
-						)
-							return false;
-						if (sr.schools && sr.schools.length > 0 && !sr.schools.includes(spell.school))
-							return false;
-						if (sr.tags && sr.tags.length > 0 && !spell.tags?.some((t) => sr.tags!.includes(t)))
-							return false;
-					}
+					if (!matchesSpellRestrictions(spell, activeSlot.specificRestrictions)) return false;
 
 					// 3. Check Global Profile (if the slot is global)
 					if (activeSlot.isGlobal && globalMagicProfile) {
-						const hasMatchingSource = spell.sources.some((source) =>
-							globalMagicProfile.sources.includes(source)
-						);
-						const isInAvailableSchool =
-							globalMagicProfile.schools.length === 0 ||
-							globalMagicProfile.schools.includes(spell.school);
-						const hasMatchingTag =
-							globalMagicProfile.tags.length === 0 ||
-							spell.tags?.some((tag) => globalMagicProfile.tags.includes(tag));
-
-						return hasMatchingSource && isInAvailableSchool && hasMatchingTag;
+						return matchesGlobalMagicProfile(spell, globalMagicProfile);
 					}
 
 					return true;
@@ -347,18 +280,7 @@ const Spells: React.FC = () => {
 				// Restriction check
 				let fitsRestrictions = true;
 				if (slot.specificRestrictions) {
-					const sr = slot.specificRestrictions;
-					if (sr.exactSpellId && spell.id !== sr.exactSpellId) fitsRestrictions = false;
-					if (
-						sr.sources &&
-						sr.sources.length > 0 &&
-						!spell.sources.some((s) => sr.sources!.includes(s))
-					)
-						fitsRestrictions = false;
-					if (sr.schools && sr.schools.length > 0 && !sr.schools.includes(spell.school))
-						fitsRestrictions = false;
-					if (sr.tags && sr.tags.length > 0 && !spell.tags?.some((t) => sr.tags!.includes(t)))
-						fitsRestrictions = false;
+					fitsRestrictions = matchesSpellRestrictions(spell, slot.specificRestrictions);
 				}
 
 				if (fitsRestrictions) {
@@ -565,127 +487,127 @@ const Spells: React.FC = () => {
 					{/* Filter Section */}
 					<FilterSection>
 						<FilterGrid>
-								{/* Source Filter */}
-								<FilterGroup>
-									<FilterLabel>Source</FilterLabel>
-									<select
-										value={sourceFilter}
-										onChange={(e) => setSourceFilter(e.target.value as SpellSource | 'all')}
-										style={{
-											width: '100%',
-											padding: '0.5rem 0.75rem',
-											background: theme.colors.bg.primary,
-											border: `1px solid ${theme.colors.bg.elevated}`,
-											borderRadius: '0.375rem',
-											color: theme.colors.text.primary,
-											fontSize: '0.875rem'
-										}}
-									>
-										<option value="all">All Sources</option>
-										{Object.values(SpellSource).map((source) => (
-											<option key={source} value={source}>
-												{source}
-											</option>
-										))}
-									</select>
-								</FilterGroup>
+							{/* Source Filter */}
+							<FilterGroup>
+								<FilterLabel>Source</FilterLabel>
+								<select
+									value={sourceFilter}
+									onChange={(e) => setSourceFilter(e.target.value as SpellSource | 'all')}
+									style={{
+										width: '100%',
+										padding: '0.5rem 0.75rem',
+										background: theme.colors.bg.primary,
+										border: `1px solid ${theme.colors.bg.elevated}`,
+										borderRadius: '0.375rem',
+										color: theme.colors.text.primary,
+										fontSize: '0.875rem'
+									}}
+								>
+									<option value="all">All Sources</option>
+									{Object.values(SpellSource).map((source) => (
+										<option key={source} value={source}>
+											{source}
+										</option>
+									))}
+								</select>
+							</FilterGroup>
 
-								{/* School Filter */}
-								<FilterGroup>
-									<FilterLabel>School</FilterLabel>
-									<select
-										value={schoolFilter}
-										onChange={(e) => setSchoolFilter(e.target.value as SpellSchool | 'all')}
-										style={{
-											width: '100%',
-											padding: '0.5rem 0.75rem',
-											background: theme.colors.bg.primary,
-											border: `1px solid ${theme.colors.bg.elevated}`,
-											borderRadius: '0.375rem',
-											color: theme.colors.text.primary,
-											fontSize: '0.875rem'
-										}}
-									>
-										<option value="all">All Schools</option>
-										{Object.values(SpellSchool).map((school) => (
-											<option key={school} value={school}>
-												{school}
-											</option>
-										))}
-									</select>
-								</FilterGroup>
+							{/* School Filter */}
+							<FilterGroup>
+								<FilterLabel>School</FilterLabel>
+								<select
+									value={schoolFilter}
+									onChange={(e) => setSchoolFilter(e.target.value as SpellSchool | 'all')}
+									style={{
+										width: '100%',
+										padding: '0.5rem 0.75rem',
+										background: theme.colors.bg.primary,
+										border: `1px solid ${theme.colors.bg.elevated}`,
+										borderRadius: '0.375rem',
+										color: theme.colors.text.primary,
+										fontSize: '0.875rem'
+									}}
+								>
+									<option value="all">All Schools</option>
+									{Object.values(SpellSchool).map((school) => (
+										<option key={school} value={school}>
+											{school}
+										</option>
+									))}
+								</select>
+							</FilterGroup>
 
-								{/* Tag Filter */}
-								<FilterGroup>
-									<FilterLabel>Tag</FilterLabel>
-									<select
-										value={tagFilter}
-										onChange={(e) => setTagFilter(e.target.value as SpellTag | 'all')}
-										style={{
-											width: '100%',
-											padding: '0.5rem 0.75rem',
-											background: theme.colors.bg.primary,
-											border: `1px solid ${theme.colors.bg.elevated}`,
-											borderRadius: '0.375rem',
-											color: theme.colors.text.primary,
-											fontSize: '0.875rem'
-										}}
-									>
-										<option value="all">All Tags</option>
-										{availableTags.map((tag) => (
-											<option key={tag} value={tag}>
-												{tag}
-											</option>
-										))}
-									</select>
-								</FilterGroup>
+							{/* Tag Filter */}
+							<FilterGroup>
+								<FilterLabel>Tag</FilterLabel>
+								<select
+									value={tagFilter}
+									onChange={(e) => setTagFilter(e.target.value as SpellTag | 'all')}
+									style={{
+										width: '100%',
+										padding: '0.5rem 0.75rem',
+										background: theme.colors.bg.primary,
+										border: `1px solid ${theme.colors.bg.elevated}`,
+										borderRadius: '0.375rem',
+										color: theme.colors.text.primary,
+										fontSize: '0.875rem'
+									}}
+								>
+									<option value="all">All Tags</option>
+									{availableTags.map((tag) => (
+										<option key={tag} value={tag}>
+											{tag}
+										</option>
+									))}
+								</select>
+							</FilterGroup>
 
-								{/* Cost Filter */}
-								<FilterGroup>
-									<FilterLabel>Type/Cost</FilterLabel>
-									<select
-										value={costFilter}
-										onChange={(e) => setCostFilter(e.target.value as CostFilter)}
-										style={{
-											width: '100%',
-											padding: '0.5rem 0.75rem',
-											background: theme.colors.bg.primary,
-											border: `1px solid ${theme.colors.bg.elevated}`,
-											borderRadius: '0.375rem',
-											color: theme.colors.text.primary,
-											fontSize: '0.875rem'
-										}}
-									>
-										<option value="all">Any Cost</option>
-										<option value="1mp">1 MP Spells</option>
-										<option value="2mp">2 MP Spells</option>
-										<option value="3mp+">3+ MP Spells</option>
-									</select>
-								</FilterGroup>
+							{/* Cost Filter */}
+							<FilterGroup>
+								<FilterLabel>Type/Cost</FilterLabel>
+								<select
+									value={costFilter}
+									onChange={(e) => setCostFilter(e.target.value as CostFilter)}
+									style={{
+										width: '100%',
+										padding: '0.5rem 0.75rem',
+										background: theme.colors.bg.primary,
+										border: `1px solid ${theme.colors.bg.elevated}`,
+										borderRadius: '0.375rem',
+										color: theme.colors.text.primary,
+										fontSize: '0.875rem'
+									}}
+								>
+									<option value="all">Any Cost</option>
+									<option value="1mp">1 MP Spells</option>
+									<option value="2mp">2 MP Spells</option>
+									<option value="3mp+">3+ MP Spells</option>
+								</select>
+							</FilterGroup>
 
-								{/* Sustained Filter */}
-								<FilterGroup>
-									<FilterLabel>Duration</FilterLabel>
-									<select
-										value={sustainedFilter}
-										onChange={(e) => setSustainedFilter(e.target.value as SustainedFilter)}
-										style={{
-											width: '100%',
-											padding: '0.5rem 0.75rem',
-											background: theme.colors.bg.primary,
-											border: `1px solid ${theme.colors.bg.elevated}`,
-											borderRadius: '0.375rem',
-											color: theme.colors.text.primary,
-											fontSize: '0.875rem'
-										}}
-									>
-										<option value="all">Any Duration</option>
-										<option value="yes">Sustained Only</option>
-										<option value="no">Instant Only</option>
-									</select>
-								</FilterGroup>
-							</FilterGrid>
-						</FilterSection>
+							{/* Sustained Filter */}
+							<FilterGroup>
+								<FilterLabel>Duration</FilterLabel>
+								<select
+									value={sustainedFilter}
+									onChange={(e) => setSustainedFilter(e.target.value as SustainedFilter)}
+									style={{
+										width: '100%',
+										padding: '0.5rem 0.75rem',
+										background: theme.colors.bg.primary,
+										border: `1px solid ${theme.colors.bg.elevated}`,
+										borderRadius: '0.375rem',
+										color: theme.colors.text.primary,
+										fontSize: '0.875rem'
+									}}
+								>
+									<option value="all">Any Duration</option>
+									<option value="yes">Sustained Only</option>
+									<option value="no">Instant Only</option>
+								</select>
+							</FilterGroup>
+						</FilterGrid>
+					</FilterSection>
 
 					{/* Results Summary */}
 					<div
@@ -799,7 +721,7 @@ const Spells: React.FC = () => {
 								return (
 									<SpellCard key={spell.id} $isSelected={isSelected}>
 										{isSelected && <KnownBadge>KNOWN</KnownBadge>}
-										
+
 										<StyledCardHeader>
 											<SpellName $isSelected={isSelected}>{spell.name}</SpellName>
 											<Badge $variant="school">{spell.school}</Badge>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ALL_SPELLS } from '../../lib/rulesdata/spells-data';
 import type { ClassDefinition } from '../../lib/rulesdata/schemas/character.schema';
@@ -16,12 +16,16 @@ import { sorcererClass } from '../../lib/rulesdata/classes-data/features/sorcere
 import { warlockClass } from '../../lib/rulesdata/classes-data/features/warlock_features';
 import { wizardClass } from '../../lib/rulesdata/classes-data/features/wizard_features';
 import { spellbladeClass } from '../../lib/rulesdata/classes-data/features/spellblade_features';
+import {
+	matchesSpellCost,
+	matchesSpellSustained,
+	matchesUserSpellFacets,
+	type MpCostFilter
+} from '../../lib/services/spellFiltering';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { useTranslation } from 'react-i18next';
 import * as S from './Spellbook.styles';
-
-type MpCostFilter = number | 'none';
 
 const CLASS_DEFINITIONS: Record<SpellcasterClass, ClassDefinition> = {
 	[SpellcasterClass.Bard]: bardClass,
@@ -161,21 +165,7 @@ const Spellbook: React.FC = () => {
 		return Array.from(tags).sort();
 	}, [availableTags, classBasedTags]);
 
-	const toggleSelection = <T extends string | number>(
-		value: T,
-		selected: T[],
-		setSelected: React.Dispatch<React.SetStateAction<T[]>>
-	) => {
-		setSelected((prev) =>
-			prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
-		);
-	};
-
-	useEffect(() => {
-		if (classFilter.length === 0) {
-			return;
-		}
-
+	const classFacetFilters = useMemo(() => {
 		const sources = new Set<SpellSource>();
 		const schools = new Set<SpellSchool>();
 		const tags = new Set<SpellTag>();
@@ -187,10 +177,22 @@ const Spellbook: React.FC = () => {
 			rules?.tags?.forEach((tag) => tags.add(tag));
 		});
 
-		setSourceFilter((prev) => Array.from(new Set([...prev, ...sources])));
-		setSchoolFilter((prev) => Array.from(new Set([...prev, ...schools])));
-		setTagFilter((prev) => Array.from(new Set([...prev, ...tags])));
+		return {
+			sources: Array.from(sources),
+			schools: Array.from(schools),
+			tags: Array.from(tags)
+		};
 	}, [classFilter, classFilterRules]);
+
+	const toggleSelection = <T extends string | number>(
+		value: T,
+		selected: T[],
+		setSelected: React.Dispatch<React.SetStateAction<T[]>>
+	) => {
+		setSelected((prev) =>
+			prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
+		);
+	};
 
 	const toggleNumberSelection = (
 		value: number,
@@ -216,46 +218,26 @@ const Spellbook: React.FC = () => {
 			);
 		}
 
-		// Filter by source
-		if (sourceFilter.length > 0) {
-			spells = spells.filter((spell) =>
-				sourceFilter.some((source) => spell.sources.includes(source))
-			);
-		}
-
-		// Filter by school
-		if (schoolFilter.length > 0) {
-			spells = spells.filter((spell) => schoolFilter.includes(spell.school));
-		}
-
-		// Filter by tag
-		if (tagFilter.length > 0) {
-			spells = spells.filter((spell) => spell.tags?.some((tag) => tagFilter.includes(tag)));
-		}
+		spells = spells.filter((spell) =>
+			matchesUserSpellFacets(spell, {
+				sources: Array.from(new Set([...sourceFilter, ...classFacetFilters.sources])),
+				schools: Array.from(new Set([...schoolFilter, ...classFacetFilters.schools])),
+				tags: Array.from(new Set([...tagFilter, ...classFacetFilters.tags]))
+			})
+		);
 
 		// Filter by AP cost
-		if (apCostFilter.length > 0) {
-			spells = spells.filter((spell) => apCostFilter.includes(spell.cost.ap));
-		}
-
-		// Filter by MP cost
-		if (mpCostFilter.length > 0) {
-			spells = spells.filter((spell) => {
-				const mpCost = spell.cost.mp;
-				return mpCostFilter.some((filter) =>
-					filter === 'none' ? mpCost === undefined : mpCost === filter
-				);
-			});
-		}
+		spells = spells.filter((spell) =>
+			matchesSpellCost(spell, { apCosts: apCostFilter, mpCosts: mpCostFilter })
+		);
 
 		// Filter by sustained
-		if (sustainedOnly) {
-			spells = spells.filter((spell) => spell.sustained);
-		}
+		spells = spells.filter((spell) => matchesSpellSustained(spell, sustainedOnly));
 
 		return spells;
 	}, [
 		searchQuery,
+		classFacetFilters,
 		sourceFilter,
 		schoolFilter,
 		tagFilter,
@@ -335,303 +317,323 @@ const Spellbook: React.FC = () => {
 
 					{/* Filter Chips */}
 					<S.FiltersContainer>
-							{/* Class Filter */}
-							<S.FilterSection $borderColor="primary">
-								<S.FilterLabel $color="primary">{t('spellbook.class')}</S.FilterLabel>
-								<S.FilterChips>
-									{Object.values(SpellcasterClass).map((className) => {
-										const isSelected = classFilter.includes(className);
-										return (
-											<S.FilterChip
-												key={className}
-												type="button"
-												onClick={() => toggleSelection(className, classFilter, setClassFilter)}
-												aria-pressed={isSelected}
-												$selected={isSelected}
-												$color="primary"
-											>
-												{className}
-											</S.FilterChip>
-										);
-									})}
-								</S.FilterChips>
-							</S.FilterSection>
-
-							{/* Source Filter */}
-							<S.FilterSection $borderColor="info">
-								<S.FilterLabel $color="info">{t('spellbook.source')}</S.FilterLabel>
-								<S.FilterChips>
-									{Object.values(SpellSource).map((source) => {
-										const isSelected = sourceFilter.includes(source);
-										return (
-											<S.FilterChip
-												key={source}
-												type="button"
-												onClick={() => toggleSelection(source, sourceFilter, setSourceFilter)}
-												aria-pressed={isSelected}
-												$selected={isSelected}
-												$color="info"
-												style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}
-											>
-												{source}
-											</S.FilterChip>
-										);
-									})}
-								</S.FilterChips>
-							</S.FilterSection>
-
-							{/* School Filter */}
-							<S.FilterSection $borderColor="secondary">
-								<S.FilterLabel $color="secondary">{t('spellbook.school')}</S.FilterLabel>
-								<S.FilterChips>
-									{Object.values(SpellSchool).map((school) => {
-										const isSelected = schoolFilter.includes(school);
-										return (
-											<S.FilterChip
-												key={school}
-												type="button"
-												onClick={() => toggleSelection(school, schoolFilter, setSchoolFilter)}
-												aria-pressed={isSelected}
-												$selected={isSelected}
-												$color="secondary"
-											>
-												{school}
-											</S.FilterChip>
-										);
-									})}
-								</S.FilterChips>
-							</S.FilterSection>
-
-							{/* Tag Filter */}
-							<S.FilterSection $borderColor="success">
-								<S.FilterLabel $color="success">{t('spellbook.tag')}</S.FilterLabel>
-								<S.FilterChips style={{ gap: '0.5rem' }}>
-									{displayedTags.map((tag) => {
-										const isSelected = tagFilter.includes(tag);
-										return (
-											<S.FilterChip
-												key={tag}
-												type="button"
-												onClick={() => toggleSelection(tag, tagFilter, setTagFilter)}
-												aria-pressed={isSelected}
-												$selected={isSelected}
-												$color="success"
-												style={{ padding: '0.375rem 0.75rem', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}
-											>
-												{tag}
-											</S.FilterChip>
-										);
-									})}
-								</S.FilterChips>
-							</S.FilterSection>
-
-							{/* Cost Filter */}
-							<S.FilterSection $borderColor="warning">
-								<S.FilterLabel $color="warning">{t('spellbook.cost')}</S.FilterLabel>
-								<S.FilterChips style={{ alignItems: 'center' }}>
-									<span style={{ fontSize: '0.875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', opacity: 0.8 }}>
-										{t('spellbook.apLabel')}
-									</span>
-									{availableApCosts.map((cost) => {
-										const isSelected = apCostFilter.includes(cost);
-										return (
-											<S.FilterChip
-												key={`ap-${cost}`}
-												type="button"
-												onClick={() => toggleNumberSelection(cost, apCostFilter, setApCostFilter)}
-												aria-pressed={isSelected}
-												$selected={isSelected}
-												$color="warning"
-											>
-												{cost}
-											</S.FilterChip>
-										);
-									})}
-									<span style={{ marginLeft: '0.5rem', fontSize: '0.875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', opacity: 0.8 }}>
-										MP
-									</span>
-									{availableMpCosts.costs.map((cost) => {
-										const isSelected = mpCostFilter.includes(cost);
-										return (
-											<S.FilterChip
-												key={`mp-${cost}`}
-												type="button"
-												onClick={() => toggleSelection(cost, mpCostFilter, setMpCostFilter)}
-												aria-pressed={isSelected}
-												$selected={isSelected}
-												$color="warning"
-											>
-												{cost}
-											</S.FilterChip>
-										);
-									})}
-									{availableMpCosts.hasNone && (
+						{/* Class Filter */}
+						<S.FilterSection $borderColor="primary">
+							<S.FilterLabel $color="primary">{t('spellbook.class')}</S.FilterLabel>
+							<S.FilterChips>
+								{Object.values(SpellcasterClass).map((className) => {
+									const isSelected = classFilter.includes(className);
+									return (
 										<S.FilterChip
-											key="mp-none"
+											key={className}
 											type="button"
-											onClick={() => toggleSelection('none', mpCostFilter, setMpCostFilter)}
-											aria-pressed={mpCostFilter.includes('none')}
-											$selected={mpCostFilter.includes('none')}
+											onClick={() => toggleSelection(className, classFilter, setClassFilter)}
+											aria-pressed={isSelected}
+											$selected={isSelected}
+											$color="primary"
+										>
+											{className}
+										</S.FilterChip>
+									);
+								})}
+							</S.FilterChips>
+						</S.FilterSection>
+
+						{/* Source Filter */}
+						<S.FilterSection $borderColor="info">
+							<S.FilterLabel $color="info">{t('spellbook.source')}</S.FilterLabel>
+							<S.FilterChips>
+								{Object.values(SpellSource).map((source) => {
+									const isSelected = sourceFilter.includes(source);
+									return (
+										<S.FilterChip
+											key={source}
+											type="button"
+											onClick={() => toggleSelection(source, sourceFilter, setSourceFilter)}
+											aria-pressed={isSelected}
+											$selected={isSelected}
+											$color="info"
+											style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}
+										>
+											{source}
+										</S.FilterChip>
+									);
+								})}
+							</S.FilterChips>
+						</S.FilterSection>
+
+						{/* School Filter */}
+						<S.FilterSection $borderColor="secondary">
+							<S.FilterLabel $color="secondary">{t('spellbook.school')}</S.FilterLabel>
+							<S.FilterChips>
+								{Object.values(SpellSchool).map((school) => {
+									const isSelected = schoolFilter.includes(school);
+									return (
+										<S.FilterChip
+											key={school}
+											type="button"
+											onClick={() => toggleSelection(school, schoolFilter, setSchoolFilter)}
+											aria-pressed={isSelected}
+											$selected={isSelected}
+											$color="secondary"
+										>
+											{school}
+										</S.FilterChip>
+									);
+								})}
+							</S.FilterChips>
+						</S.FilterSection>
+
+						{/* Tag Filter */}
+						<S.FilterSection $borderColor="success">
+							<S.FilterLabel $color="success">{t('spellbook.tag')}</S.FilterLabel>
+							<S.FilterChips style={{ gap: '0.5rem' }}>
+								{displayedTags.map((tag) => {
+									const isSelected = tagFilter.includes(tag);
+									return (
+										<S.FilterChip
+											key={tag}
+											type="button"
+											onClick={() => toggleSelection(tag, tagFilter, setTagFilter)}
+											aria-pressed={isSelected}
+											$selected={isSelected}
+											$color="success"
+											style={{
+												padding: '0.375rem 0.75rem',
+												fontSize: '0.75rem',
+												textTransform: 'uppercase',
+												letterSpacing: '0.05em'
+											}}
+										>
+											{tag}
+										</S.FilterChip>
+									);
+								})}
+							</S.FilterChips>
+						</S.FilterSection>
+
+						{/* Cost Filter */}
+						<S.FilterSection $borderColor="warning">
+							<S.FilterLabel $color="warning">{t('spellbook.cost')}</S.FilterLabel>
+							<S.FilterChips style={{ alignItems: 'center' }}>
+								<span
+									style={{
+										fontSize: '0.875rem',
+										fontWeight: 600,
+										textTransform: 'uppercase',
+										letterSpacing: '0.05em',
+										opacity: 0.8
+									}}
+								>
+									{t('spellbook.apLabel')}
+								</span>
+								{availableApCosts.map((cost) => {
+									const isSelected = apCostFilter.includes(cost);
+									return (
+										<S.FilterChip
+											key={`ap-${cost}`}
+											type="button"
+											onClick={() => toggleNumberSelection(cost, apCostFilter, setApCostFilter)}
+											aria-pressed={isSelected}
+											$selected={isSelected}
 											$color="warning"
 										>
-											{t('spellbook.noMp')}
+											{cost}
 										</S.FilterChip>
-									)}
-								</S.FilterChips>
-							</S.FilterSection>
-
-							{/* Sustained Filter */}
-							<S.FilterSection $borderColor="warning" style={{ flexDirection: 'row', alignItems: 'center', padding: '1rem' }}>
-								<input
-									type="checkbox"
-									id="sustained-only"
-									checked={sustainedOnly}
-									onChange={(e) => setSustainedOnly(e.target.checked)}
-									style={{ height: '1.25rem', width: '1.25rem', cursor: 'pointer' }}
-								/>
-								<S.FilterLabel
-									htmlFor="sustained-only"
-									$color="warning"
-									style={{ cursor: 'pointer', margin: 0 }}
+									);
+								})}
+								<span
+									style={{
+										marginLeft: '0.5rem',
+										fontSize: '0.875rem',
+										fontWeight: 600,
+										textTransform: 'uppercase',
+										letterSpacing: '0.05em',
+										opacity: 0.8
+									}}
 								>
-									{t('spellbook.sustainedOnly')}
-								</S.FilterLabel>
-							</S.FilterSection>
+									MP
+								</span>
+								{availableMpCosts.costs.map((cost) => {
+									const isSelected = mpCostFilter.includes(cost);
+									return (
+										<S.FilterChip
+											key={`mp-${cost}`}
+											type="button"
+											onClick={() => toggleSelection(cost, mpCostFilter, setMpCostFilter)}
+											aria-pressed={isSelected}
+											$selected={isSelected}
+											$color="warning"
+										>
+											{cost}
+										</S.FilterChip>
+									);
+								})}
+								{availableMpCosts.hasNone && (
+									<S.FilterChip
+										key="mp-none"
+										type="button"
+										onClick={() => toggleSelection('none', mpCostFilter, setMpCostFilter)}
+										aria-pressed={mpCostFilter.includes('none')}
+										$selected={mpCostFilter.includes('none')}
+										$color="warning"
+									>
+										{t('spellbook.noMp')}
+									</S.FilterChip>
+								)}
+							</S.FilterChips>
+						</S.FilterSection>
+
+						{/* Sustained Filter */}
+						<S.FilterSection
+							$borderColor="warning"
+							style={{ flexDirection: 'row', alignItems: 'center', padding: '1rem' }}
+						>
+							<input
+								type="checkbox"
+								id="sustained-only"
+								checked={sustainedOnly}
+								onChange={(e) => setSustainedOnly(e.target.checked)}
+								style={{ height: '1.25rem', width: '1.25rem', cursor: 'pointer' }}
+							/>
+							<S.FilterLabel
+								htmlFor="sustained-only"
+								$color="warning"
+								style={{ cursor: 'pointer', margin: 0 }}
+							>
+								{t('spellbook.sustainedOnly')}
+							</S.FilterLabel>
+						</S.FilterSection>
 					</S.FiltersContainer>
 
-						{/* Active Filters Summary */}
-						{hasActiveFilters && (
-							<div className="flex flex-wrap items-center gap-3 pt-2">
-								<span className="text-muted-foreground text-base font-semibold">
-									{t('spellbook.activeFilters')}
-								</span>
-								{searchQuery.trim() && (
-									<Badge variant="secondary" className="gap-1 text-sm">
-										"{searchQuery}"
-										<button
-											onClick={() => setSearchQuery('')}
-											className="hover:text-destructive ml-1"
-										>
-											x
-										</button>
-									</Badge>
-								)}
-								{classFilter.map((className) => (
-									<Badge key={`class-${className}`} variant="secondary" className="gap-1 text-sm">
-										{className}
-										<button
-											onClick={() =>
-												setClassFilter((prev) => prev.filter((item) => item !== className))
-											}
-											className="hover:text-destructive ml-1"
-										>
-											x
-										</button>
-									</Badge>
-								))}
-								{sourceFilter.map((source) => (
-									<Badge key={'source-' + source} variant="secondary" className="gap-1 text-sm">
-										{source}
-										<button
-											onClick={() =>
-												setSourceFilter((prev) => prev.filter((item) => item !== source))
-											}
-											className="hover:text-destructive ml-1"
-										>
-											x
-										</button>
-									</Badge>
-								))}
-								{schoolFilter.map((school) => (
-									<Badge key={'school-' + school} variant="secondary" className="gap-1 text-sm">
-										{school}
-										<button
-											onClick={() =>
-												setSchoolFilter((prev) => prev.filter((item) => item !== school))
-											}
-											className="hover:text-destructive ml-1"
-										>
-											x
-										</button>
-									</Badge>
-								))}
-								{tagFilter.map((tag) => (
-									<Badge key={'tag-' + tag} variant="secondary" className="gap-1 text-sm">
-										{tag}
-										<button
-											onClick={() => setTagFilter((prev) => prev.filter((item) => item !== tag))}
-											className="hover:text-destructive ml-1"
-										>
-											x
-										</button>
-									</Badge>
-								))}
-								{apCostFilter.map((cost) => (
-									<Badge key={`ap-${cost}`} variant="secondary" className="gap-1 text-sm">
-										{cost} AP
-										<button
-											onClick={() =>
-												setApCostFilter((prev) => prev.filter((item) => item !== cost))
-											}
-											className="hover:text-destructive ml-1"
-										>
-											x
-										</button>
-									</Badge>
-								))}
-								{mpCostFilter.map((cost) => (
-									<Badge key={`mp-${cost}`} variant="secondary" className="gap-1 text-sm">
-										{cost === 'none' ? t('spellbook.noMp') : `${cost} ${t('spellbook.mpLabel')}`}
-										<button
-											onClick={() =>
-												setMpCostFilter((prev) => prev.filter((item) => item !== cost))
-											}
-											className="hover:text-destructive ml-1"
-										>
-											x
-										</button>
-									</Badge>
-								))}
-								{sustainedOnly && (
-									<Badge
-										variant="secondary"
-										className="gap-1 bg-amber-500/20 text-sm text-amber-400"
+					{/* Active Filters Summary */}
+					{hasActiveFilters && (
+						<div className="flex flex-wrap items-center gap-3 pt-2">
+							<span className="text-muted-foreground text-base font-semibold">
+								{t('spellbook.activeFilters')}
+							</span>
+							{searchQuery.trim() && (
+								<Badge variant="secondary" className="gap-1 text-sm">
+									"{searchQuery}"
+									<button
+										onClick={() => setSearchQuery('')}
+										className="hover:text-destructive ml-1"
 									>
-										{t('spellbook.sustained')}
-										<button
-											onClick={() => setSustainedOnly(false)}
-											className="hover:text-destructive ml-1"
-										>
-											x
-										</button>
-									</Badge>
-								)}
-								<Button
-									variant="ghost"
-									size="sm"
-									onClick={clearFilters}
-									className="text-muted-foreground hover:text-foreground text-xs"
-								>
-									{t('spellbook.clearAll')}
-								</Button>
-							</div>
-						)}
+										x
+									</button>
+								</Badge>
+							)}
+							{classFilter.map((className) => (
+								<Badge key={`class-${className}`} variant="secondary" className="gap-1 text-sm">
+									{className}
+									<button
+										onClick={() =>
+											setClassFilter((prev) => prev.filter((item) => item !== className))
+										}
+										className="hover:text-destructive ml-1"
+									>
+										x
+									</button>
+								</Badge>
+							))}
+							{sourceFilter.map((source) => (
+								<Badge key={'source-' + source} variant="secondary" className="gap-1 text-sm">
+									{source}
+									<button
+										onClick={() =>
+											setSourceFilter((prev) => prev.filter((item) => item !== source))
+										}
+										className="hover:text-destructive ml-1"
+									>
+										x
+									</button>
+								</Badge>
+							))}
+							{schoolFilter.map((school) => (
+								<Badge key={'school-' + school} variant="secondary" className="gap-1 text-sm">
+									{school}
+									<button
+										onClick={() =>
+											setSchoolFilter((prev) => prev.filter((item) => item !== school))
+										}
+										className="hover:text-destructive ml-1"
+									>
+										x
+									</button>
+								</Badge>
+							))}
+							{tagFilter.map((tag) => (
+								<Badge key={'tag-' + tag} variant="secondary" className="gap-1 text-sm">
+									{tag}
+									<button
+										onClick={() => setTagFilter((prev) => prev.filter((item) => item !== tag))}
+										className="hover:text-destructive ml-1"
+									>
+										x
+									</button>
+								</Badge>
+							))}
+							{apCostFilter.map((cost) => (
+								<Badge key={`ap-${cost}`} variant="secondary" className="gap-1 text-sm">
+									{cost} AP
+									<button
+										onClick={() => setApCostFilter((prev) => prev.filter((item) => item !== cost))}
+										className="hover:text-destructive ml-1"
+									>
+										x
+									</button>
+								</Badge>
+							))}
+							{mpCostFilter.map((cost) => (
+								<Badge key={`mp-${cost}`} variant="secondary" className="gap-1 text-sm">
+									{cost === 'none' ? t('spellbook.noMp') : `${cost} ${t('spellbook.mpLabel')}`}
+									<button
+										onClick={() => setMpCostFilter((prev) => prev.filter((item) => item !== cost))}
+										className="hover:text-destructive ml-1"
+									>
+										x
+									</button>
+								</Badge>
+							))}
+							{sustainedOnly && (
+								<Badge variant="secondary" className="gap-1 bg-amber-500/20 text-sm text-amber-400">
+									{t('spellbook.sustained')}
+									<button
+										onClick={() => setSustainedOnly(false)}
+										className="hover:text-destructive ml-1"
+									>
+										x
+									</button>
+								</Badge>
+							)}
+							<Button
+								variant="ghost"
+								size="sm"
+								onClick={clearFilters}
+								className="text-muted-foreground hover:text-foreground text-xs"
+							>
+								{t('spellbook.clearAll')}
+							</Button>
+						</div>
+					)}
 				</S.FiltersCard>
 
 				{/* Results Summary */}
 				<S.Subtitle style={{ textAlign: 'center', fontSize: '0.875rem' }}>
-					{t('spellbook.showing')} {filteredSpells.length} {t('spellbook.of')} {ALL_SPELLS.length} {t('spellbook.spells')}
-					{schoolFilter.length === 0 && ` • ${Object.keys(spellsBySchool).length} ${t('spellbook.schools')}`}
+					{t('spellbook.showing')} {filteredSpells.length} {t('spellbook.of')} {ALL_SPELLS.length}{' '}
+					{t('spellbook.spells')}
+					{schoolFilter.length === 0 &&
+						` • ${Object.keys(spellsBySchool).length} ${t('spellbook.schools')}`}
 				</S.Subtitle>
 
 				{/* Spells Display */}
 				{filteredSpells.length === 0 ? (
 					<S.EmptyState>
-						<h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>{t('spellbook.noSpellsFound')}</h3>
+						<h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
+							{t('spellbook.noSpellsFound')}
+						</h3>
 						<p>{t('spellbook.adjustFilters')}</p>
-						<S.ClearButton onClick={clearFilters}>
-							{t('spellbook.clearFilters')}
-						</S.ClearButton>
+						<S.ClearButton onClick={clearFilters}>{t('spellbook.clearFilters')}</S.ClearButton>
 					</S.EmptyState>
 				) : schoolFilter.length === 1 ? (
 					// Single school view - show all spells in a grid
@@ -655,7 +657,7 @@ const Spellbook: React.FC = () => {
 									<h2 className="font-cinzel text-primary border-primary/30 mb-4 border-b pb-2 text-2xl font-bold">
 										{school}
 										<span className="text-muted-foreground ml-2 text-base font-normal">
-										({spells.length} {t('spellbook.spells')})
+											({spells.length} {t('spellbook.spells')})
 										</span>
 									</h2>
 									<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -698,11 +700,10 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 			</S.SpellHeader>
 			<S.SpellMeta>
 				<S.SpellBadge $variant="cost">
-					{spell.cost.ap} {t('spellbook.apLabel')}{spell.cost.mp ? ` + ${spell.cost.mp} ${t('spellbook.mpLabel')}` : ''}
+					{spell.cost.ap} {t('spellbook.apLabel')}
+					{spell.cost.mp ? ` + ${spell.cost.mp} ${t('spellbook.mpLabel')}` : ''}
 				</S.SpellBadge>
-				<S.SpellBadge>
-					{spell.range}
-				</S.SpellBadge>
+				<S.SpellBadge>{spell.range}</S.SpellBadge>
 				{spell.sustained && (
 					<S.SpellBadge $variant="sustained">{t('spellbook.sustained')}</S.SpellBadge>
 				)}
@@ -715,9 +716,7 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 			{spell.tags && spell.tags.length > 0 && (
 				<S.SpellTags>
 					{spell.tags.slice(0, isExpanded ? undefined : 3).map((tag) => (
-						<S.SpellTag key={tag}>
-							{tag}
-						</S.SpellTag>
+						<S.SpellTag key={tag}>{tag}</S.SpellTag>
 					))}
 					{!isExpanded && spell.tags.length > 3 && (
 						<span style={{ fontSize: '0.75rem', opacity: 0.6 }}>+{spell.tags.length - 3}</span>
@@ -725,7 +724,18 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 				</S.SpellTags>
 			)}
 
-			<S.SpellShortDescription style={!isExpanded ? { display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' } : {}}>
+			<S.SpellShortDescription
+				style={
+					!isExpanded
+						? {
+								display: '-webkit-box',
+								WebkitLineClamp: 3,
+								WebkitBoxOrient: 'vertical',
+								overflow: 'hidden'
+							}
+						: {}
+				}
+			>
 				{spell.effects[0]?.description || t('spellbook.noDescription')}
 			</S.SpellShortDescription>
 
@@ -743,8 +753,17 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 					{spell.effects.length > 1 && (
 						<div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
 							{spell.effects.slice(1).map((effect, index) => (
-								<S.SpellSection key={index} style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '0.75rem', borderRadius: '0.375rem' }}>
-									<S.SpellSectionTitle style={{ fontSize: '0.875rem' }}>{effect.title}</S.SpellSectionTitle>
+								<S.SpellSection
+									key={index}
+									style={{
+										background: 'rgba(255, 255, 255, 0.05)',
+										padding: '0.75rem',
+										borderRadius: '0.375rem'
+									}}
+								>
+									<S.SpellSectionTitle style={{ fontSize: '0.875rem' }}>
+										{effect.title}
+									</S.SpellSectionTitle>
 									<S.SpellSectionContent>{effect.description}</S.SpellSectionContent>
 								</S.SpellSection>
 							))}
@@ -759,9 +778,21 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 								{spell.enhancements.map((enhancement, index) => (
 									<div
 										key={index}
-										style={{ border: '1px solid rgba(99, 102, 241, 0.2)', background: 'rgba(99, 102, 241, 0.05)', borderRadius: '0.375rem', padding: '0.75rem' }}
+										style={{
+											border: '1px solid rgba(99, 102, 241, 0.2)',
+											background: 'rgba(99, 102, 241, 0.05)',
+											borderRadius: '0.375rem',
+											padding: '0.75rem'
+										}}
 									>
-										<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+										<div
+											style={{
+												display: 'flex',
+												alignItems: 'center',
+												gap: '0.5rem',
+												flexWrap: 'wrap'
+											}}
+										>
 											<Badge variant="outline" className="text-xs">
 												{enhancement.cost} {enhancement.type}
 											</Badge>
@@ -772,9 +803,7 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 												<Badge className="bg-blue-500/20 text-xs text-blue-400">Repeatable</Badge>
 											)}
 											{enhancement.variable && (
-												<Badge className="bg-purple-500/20 text-xs text-purple-400">
-													Variable
-												</Badge>
+												<Badge className="bg-purple-500/20 text-xs text-purple-400">Variable</Badge>
 											)}
 										</div>
 										<S.SpellSectionContent style={{ marginTop: '0.25rem' }}>
@@ -788,7 +817,13 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 
 					{/* Spell Passive */}
 					{spell.spellPassive && (
-						<S.SpellSection style={{ background: 'rgba(34, 197, 94, 0.1)', padding: '0.75rem', borderRadius: '0.375rem' }}>
+						<S.SpellSection
+							style={{
+								background: 'rgba(34, 197, 94, 0.1)',
+								padding: '0.75rem',
+								borderRadius: '0.375rem'
+							}}
+						>
 							<S.SpellSectionTitle style={{ color: '#4ade80' }}>Spell Passive</S.SpellSectionTitle>
 							<S.SpellSectionContent>{spell.spellPassive}</S.SpellSectionContent>
 						</S.SpellSection>

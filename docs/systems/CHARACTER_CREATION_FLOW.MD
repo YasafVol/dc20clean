@@ -1,5 +1,7 @@
 ### Character Creation Flow System Spec
 
+> Last Updated: 2026-05-02
+
 #### Purpose
 
 - Establish a canonical reference for the multi-stage character creation wizard so future specs (e.g., Level-Up) reuse the same structure and terminology
@@ -48,6 +50,7 @@
 - **Stage 6 – Spells & Maneuvers** (`SpellsAndManeuvers.tsx`)
   - Inputs: `allSpells`, `allManeuvers`, class level progression (JSON today → resolver later), `state.selectedSpells`, `state.selectedManeuvers`
   - Completion rule: selected counts meet per-level requirements (cantrips + spells, maneuvers)
+  - Spell filtering: source, school, and tag browsing filters are OR-based across selected facets; cost and sustained filters narrow results. Slot and Global Magic Profile eligibility use source restrictions only when present, then school-or-tag matching.
   - Outputs: `state.selectedSpells`, `state.selectedManeuvers`
 
 - **Stage 7 – Character Name** (`CharacterName.tsx`)

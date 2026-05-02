@@ -27,27 +27,24 @@ describe('Spell System - Global Magic Profile', () => {
 		const result = calculateCharacterWithBreakdowns(build as any);
 
 		expect(result.globalMagicProfile).toBeDefined();
-		expect(result.globalMagicProfile?.sources).toContain('Natural');
-		expect(result.globalMagicProfile?.sources).not.toContain('Arcane');
+		expect(result.globalMagicProfile?.sources).toEqual([]);
 	});
 
-	it('should include class sources for spellcasters', () => {
+	it('should leave sources empty for source-unrestricted spell access', () => {
 		const build = createBaseBuild({ classId: 'wizard' });
 		const result = calculateCharacterWithBreakdowns(build as any);
 
-		expect(result.globalMagicProfile?.sources).toContain('Arcane');
+		expect(result.globalMagicProfile?.sources).toEqual([]);
 	});
 
-	it('should expand schools via features (e.g., Wizard Expanded School)', () => {
+	it('should read class spell school and tag rules into the profile', () => {
 		const build = createBaseBuild({
-			classId: 'wizard',
-			featureChoices: {
-				wizard_expanded_school_choice: 'Invocation'
-			}
+			classId: 'bard'
 		});
 		const result = calculateCharacterWithBreakdowns(build as any);
 
-		expect(result.globalMagicProfile?.schools).toContain('Invocation');
+		expect(result.globalMagicProfile?.schools).toContain('Enchantment');
+		expect(result.globalMagicProfile?.tags).toContain('Healing');
 	});
 });
 
@@ -76,6 +73,50 @@ describe('Spell System - Spells Known Slots', () => {
 });
 
 describe('Spell System - Validations', () => {
+	it('should allow global slots when profile sources are empty and school matches', () => {
+		const baseBuild = createBaseBuild({ classId: 'wizard', level: 1 });
+		const result = calculateCharacterWithBreakdowns(baseBuild as any);
+		const globalSlot = result.spellsKnownSlots.find((slot) => slot.isGlobal);
+
+		expect(globalSlot).toBeDefined();
+
+		const resultWithSelection = calculateCharacterWithBreakdowns(
+			createBaseBuild({
+				classId: 'wizard',
+				level: 1,
+				selectedSpells: { [globalSlot!.id]: 'arcane-bolt' }
+			}) as any
+		);
+
+		const error = resultWithSelection.validation.errors.find(
+			(e) => (e.code as string) === 'PROFILE_MISMATCH'
+		);
+		expect(error).toBeUndefined();
+	});
+
+	it('should allow global slots when a spell matches an allowed tag but not an allowed school', () => {
+		const baseBuild = createBaseBuild({ classId: 'bard', level: 1 });
+		const result = calculateCharacterWithBreakdowns(baseBuild as any);
+		const globalSlot = result.spellsKnownSlots.find((slot) => slot.isGlobal);
+
+		expect(result.globalMagicProfile?.schools).toContain('Enchantment');
+		expect(result.globalMagicProfile?.tags).toContain('Healing');
+		expect(globalSlot).toBeDefined();
+
+		const resultWithSelection = calculateCharacterWithBreakdowns(
+			createBaseBuild({
+				classId: 'bard',
+				level: 1,
+				selectedSpells: { [globalSlot!.id]: 'heal' }
+			}) as any
+		);
+
+		const error = resultWithSelection.validation.errors.find(
+			(e) => (e.code as string) === 'PROFILE_MISMATCH'
+		);
+		expect(error).toBeUndefined();
+	});
+
 	it('should error when school restriction is violated', () => {
 		// Slot that requires 'Elemental' schools
 		const build = createBaseBuild({

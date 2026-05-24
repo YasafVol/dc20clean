@@ -9,6 +9,7 @@ import {
 	StyledFeaturePopupDescription,
 	StyledFeaturePopupSourceInfo
 } from '../styles/FeaturePopup';
+import RichDescription from './RichDescription';
 
 interface SpellPopupProps {
 	spell: Spell | null;
@@ -47,12 +48,17 @@ const SpellPopup: React.FC<SpellPopupProps> = ({ spell, onClose }) => {
 						</>
 					)}
 					<br />
-					{spell.effects?.[0]?.description || 'No description available.'}
+					{spell.effects?.[0]?.description ? (
+						<RichDescription text={spell.effects[0].description} />
+					) : (
+						'No description available.'
+					)}
 					{spell.spellPassive && (
 						<>
 							<br />
 							<br />
-							<strong>Spell Passive:</strong> {spell.spellPassive}
+							<strong>Spell Passive:</strong>{' '}
+							<RichDescription text={spell.spellPassive} />
 						</>
 					)}
 				</StyledFeaturePopupDescription>

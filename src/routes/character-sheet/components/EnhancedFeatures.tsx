@@ -9,6 +9,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 import type { EnhancedCalculationResult } from '../../../lib/types/effectSystem';
 import { theme } from '../styles/theme';
+import RichDescription from './RichDescription';
 
 // Styled components
 const FeaturesContainer = styled.div`
@@ -267,7 +268,9 @@ const EnhancedFeatures: React.FC<EnhancedFeaturesProps> = ({ calculationResult }
 								<FeatureType $type="passive">Passive</FeatureType>
 							</FeatureHeader>
 
-							<FeatureDescription>{ability.description}</FeatureDescription>
+							<FeatureDescription>
+								<RichDescription text={ability.description} />
+							</FeatureDescription>
 
 							<FeatureSource>
 								<span>
@@ -294,7 +297,9 @@ const EnhancedFeatures: React.FC<EnhancedFeaturesProps> = ({ calculationResult }
 								<FeatureType $type="active">Active</FeatureType>
 							</FeatureHeader>
 
-							<FeatureDescription>{ability.description}</FeatureDescription>
+							<FeatureDescription>
+								<RichDescription text={ability.description} />
+							</FeatureDescription>
 
 							<FeatureSource>
 								<span>
@@ -321,7 +326,9 @@ const EnhancedFeatures: React.FC<EnhancedFeaturesProps> = ({ calculationResult }
 								<FeatureType $type="resistance">Resistance</FeatureType>
 							</FeatureHeader>
 
-							<FeatureDescription>{ability.description}</FeatureDescription>
+							<FeatureDescription>
+								<RichDescription text={ability.description} />
+							</FeatureDescription>
 
 							<FeatureSource>
 								<span>
@@ -373,7 +380,9 @@ const EnhancedFeatures: React.FC<EnhancedFeaturesProps> = ({ calculationResult }
 								<FeatureType $type="advantage">Advantage</FeatureType>
 							</FeatureHeader>
 
-							<FeatureDescription>{ability.description}</FeatureDescription>
+							<FeatureDescription>
+								<RichDescription text={ability.description} />
+							</FeatureDescription>
 
 							<FeatureSource>
 								<span>

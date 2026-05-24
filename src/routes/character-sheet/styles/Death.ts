@@ -4,31 +4,43 @@ interface MobileStyledProps {
 	$isMobile?: boolean;
 }
 
+// Compact horizontal row: title + status badge + threshold flow inline and
+// are centered as a single cluster (wraps when the box is too narrow).
 export const StyledDeathContainer = styled.div<MobileStyledProps>`
-	flex: 1;
-	border: 2px solid ${(props) => (props.$isMobile ? 'var(--mobile-border)' : '#414868')};
-	border-radius: 8px;
-	padding: 1rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+	border: 1px solid ${(props) => (props.$isMobile ? 'var(--mobile-border)' : '#414868')};
+	border-radius: 6px;
+	padding: 0.4rem 0.6rem;
 	background: ${(props) => (props.$isMobile ? 'var(--mobile-bg-primary)' : '#24283B')};
-	text-align: center;
+	min-height: 36px;
 `;
 
 export const StyledDeathTitle = styled.div<MobileStyledProps>`
-	font-size: 0.9rem;
+	font-size: 0.7rem;
 	font-weight: bold;
 	color: #7dcfff;
-	margin-bottom: 0.5rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
 	font-family: 'Inter', sans-serif;
+	white-space: nowrap;
+	margin: 0;
 `;
 
-export const StyledHealthStatus = styled.div<{
+// Inline status badge (small chip rather than full-width block).
+export const StyledHealthStatus = styled.span<{
 	status: 'healthy' | 'bloodied' | 'well-bloodied' | 'deaths-door' | 'dead';
 }>`
-	font-size: 0.8rem;
+	display: inline-block;
+	font-size: 0.7rem;
 	font-weight: bold;
-	margin-bottom: 0.3rem;
-	padding: 0.2rem 0.4rem;
+	margin: 0;
+	padding: 0.15rem 0.5rem;
 	border-radius: 4px;
+	line-height: 1.2;
 	color: ${(props) => {
 		switch (props.status) {
 			case 'healthy':
@@ -63,11 +75,13 @@ export const StyledHealthStatus = styled.div<{
 	}};
 `;
 
-export const StyledDeathThreshold = styled.div<MobileStyledProps>`
-	font-size: 1.5rem;
+// Inline numeric threshold (e.g. "-4") shown next to its label on the same row.
+export const StyledDeathThreshold = styled.span<MobileStyledProps>`
+	display: inline-block;
+	font-size: 1rem;
 	font-weight: bold;
 	color: #c0caf5;
-	margin-bottom: 0.5rem;
+	margin: 0;
 `;
 
 export const StyledDeathStepsContainer = styled.div<MobileStyledProps>`

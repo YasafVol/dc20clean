@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import type { SpellData } from '../../../types';
 import type { Spell } from '../../../lib/rulesdata/schemas/spell.schema';
 import { ALL_SPELLS as allSpells } from '../../../lib/rulesdata/spells-data';
@@ -31,6 +32,47 @@ import {
 	StyledSpellToggleContainer,
 	StyledSpellToggleButton
 } from '../styles/Spells';
+import { theme } from '../styles/theme';
+import RichDescription from './RichDescription';
+
+/** Sentinel dropdown value that switches a spell row into freeform custom mode. */
+const CUSTOM_SPELL_VALUE = '__custom_spell__';
+
+// Compact cell inputs used by custom spell rows. Sized to match the surrounding
+// table cells so the row keeps the same column widths as catalog spells.
+const SpellCellInput = styled.input`
+	width: 100%;
+	background: ${theme.colors.bg.primary};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.sm};
+	color: ${theme.colors.text.primary};
+	font-size: ${theme.typography.fontSize.sm};
+	padding: 2px 6px;
+	box-sizing: border-box;
+
+	&:focus {
+		outline: none;
+		border-color: ${theme.colors.accent.primary};
+	}
+`;
+
+const SpellDescriptionTextarea = styled.textarea`
+	width: 100%;
+	min-height: 80px;
+	background: ${theme.colors.bg.primary};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.sm};
+	color: ${theme.colors.text.primary};
+	font-size: ${theme.typography.fontSize.sm};
+	padding: ${theme.spacing[2]};
+	resize: vertical;
+	font-family: inherit;
+
+	&:focus {
+		outline: none;
+		border-color: ${theme.colors.accent.primary};
+	}
+`;
 
 export interface SpellsProps {
 	onSpellClick: (spell: Spell) => void;
@@ -65,6 +107,30 @@ const Spells: React.FC<SpellsProps> = ({
 		});
 		return expanded;
 	});
+
+	// Track which spell rows are in custom freeform mode. Re-derived from data on
+	// load: any saved spell whose name doesn't match the catalog is custom.
+	const [customSpellIds, setCustomSpellIds] = useState<Set<string>>(() => {
+		const ids = new Set<string>();
+		spells.forEach((spell) => {
+			if (spell.spellName && !allSpells.find((s) => s.name === spell.spellName)) {
+				ids.add(spell.id);
+			}
+		});
+		return ids;
+	});
+
+	useEffect(() => {
+		setCustomSpellIds((prev) => {
+			const next = new Set(prev);
+			spells.forEach((spell) => {
+				if (spell.spellName && !allSpells.find((s) => s.name === spell.spellName)) {
+					next.add(spell.id);
+				}
+			});
+			return next;
+		});
+	}, [spells]);
 
 	// Filter spells based on selected school
 	const filteredSpells = useMemo(() => {
@@ -110,10 +176,33 @@ const Spells: React.FC<SpellsProps> = ({
 		const spell = spells[index];
 		if (!spell) return;
 
+		if (field === 'spellName' && value === CUSTOM_SPELL_VALUE) {
+			// User picked "Custom Spell..." — flip this row into freeform mode and
+			// clear any previously-selected catalog spell data.
+			setCustomSpellIds((prev) => new Set(prev).add(spell.id));
+			updateSpell(spell.id, 'spellName', '');
+			updateSpell(spell.id, 'school', '');
+			updateSpell(spell.id, 'cost', { ap: 0 });
+			updateSpell(spell.id, 'range', '');
+			updateSpell(spell.id, 'duration', '');
+			updateSpell(spell.id, 'effects', undefined as any);
+			updateSpell(spell.id, 'enhancements', undefined as any);
+			updateSpell(spell.id, 'isRitual', false);
+			updateSpell(spell.id, 'spellPassive', undefined as any);
+			setExpandedSpells((prev) => new Set(prev).add(spell.id));
+			return;
+		}
+
 		if (field === 'spellName' && value) {
 			// When spell is selected, populate all fields from spell data
 			const selectedSpell = allSpells.find((spell) => spell.name === value);
 			if (selectedSpell) {
+				// Make sure we're not in custom mode anymore for this row
+				setCustomSpellIds((prev) => {
+					const next = new Set(prev);
+					next.delete(spell.id);
+					return next;
+				});
 				updateSpell(spell.id, 'spellName', selectedSpell.name);
 				updateSpell(spell.id, 'school', selectedSpell.school);
 				updateSpell(spell.id, 'cost', selectedSpell.cost);
@@ -140,6 +229,19 @@ const Spells: React.FC<SpellsProps> = ({
 		} else {
 			updateSpell(spell.id, field, value);
 		}
+	};
+
+	/** Update cost.ap / cost.mp on a spell row (keeps the cost object shape intact). */
+	const updateSpellCost = (spellId: string, key: 'ap' | 'mp', value: number) => {
+		const spell = spells.find((s) => s.id === spellId);
+		if (!spell) return;
+		const nextCost = { ...(spell.cost || { ap: 0 }), [key]: value };
+		updateSpell(spellId, 'cost', nextCost);
+	};
+
+	/** Update the description text for a custom spell (uses effects[0].description). */
+	const updateCustomSpellDescription = (spellId: string, description: string) => {
+		updateSpell(spellId, 'effects', [{ description }] as any);
 	};
 
 	const handleSchoolFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -256,6 +358,7 @@ const Spells: React.FC<SpellsProps> = ({
 						const selectedSpell = spell.spellName
 							? allSpells.find((s) => s.name === spell.spellName)
 							: null;
+						const isCustom = customSpellIds.has(spell.id);
 
 						return (
 							<React.Fragment key={spell.id}>
@@ -268,11 +371,22 @@ const Spells: React.FC<SpellsProps> = ({
 										/>
 									)}
 
-									{/* Spell Name - show as text in read-only mode, dropdown in edit mode */}
+									{/* Spell Name */}
 									{readOnly ? (
 										<StyledBoldSpellCell $isMobile={effectiveIsMobile} $boldMobile={true}>
 											{spell.spellName || 'Unknown Spell'}
 										</StyledBoldSpellCell>
+									) : isCustom ? (
+										// Custom freeform spell — text input for the name
+										<SpellCellInput
+											type="text"
+											value={spell.spellName}
+											placeholder={t('characterSheet.spellsCustomNamePlaceholder')}
+											onChange={(e) =>
+												updateSpell(spell.id, 'spellName', e.target.value)
+											}
+											autoFocus={!spell.spellName}
+										/>
 									) : (
 										<StyledSpellSelect
 											$isMobile={effectiveIsMobile}
@@ -303,32 +417,88 @@ const Spells: React.FC<SpellsProps> = ({
 														{spellOption.name}
 													</option>
 												))}
+											<option value={CUSTOM_SPELL_VALUE}>
+												{t('characterSheet.spellsCustomSpellOption')}
+											</option>
 										</StyledSpellSelect>
 									)}
 
 									{/* School */}
-									<StyledSpellCell $isMobile={effectiveIsMobile}>{spell.school}</StyledSpellCell>
+									<StyledSpellCell $isMobile={effectiveIsMobile}>
+										{isCustom && !readOnly ? (
+											<SpellCellInput
+												type="text"
+												value={spell.school}
+												placeholder={t('characterSheet.spellsSchoolPlaceholder')}
+												onChange={(e) => updateSpell(spell.id, 'school', e.target.value)}
+											/>
+										) : (
+											spell.school
+										)}
+									</StyledSpellCell>
 
 									{/* Duration */}
 									<StyledSpellCell $isMobile={effectiveIsMobile}>
-										{spell.duration || '-'}
+										{isCustom && !readOnly ? (
+											<SpellCellInput
+												type="text"
+												value={spell.duration}
+												placeholder="Instant"
+												onChange={(e) => updateSpell(spell.id, 'duration', e.target.value)}
+											/>
+										) : (
+											spell.duration || '-'
+										)}
 									</StyledSpellCell>
 
 									{/* AP Cost */}
 									<StyledSpellCell $isMobile={effectiveIsMobile}>
-										{spell.cost?.ap || '-'}
+										{isCustom && !readOnly ? (
+											<SpellCellInput
+												type="number"
+												min="0"
+												value={spell.cost?.ap ?? 0}
+												onChange={(e) =>
+													updateSpellCost(spell.id, 'ap', parseInt(e.target.value) || 0)
+												}
+											/>
+										) : (
+											spell.cost?.ap || '-'
+										)}
 									</StyledSpellCell>
 
 									{/* MP Cost */}
 									<StyledSpellCell $isMobile={effectiveIsMobile}>
-										{spell.cost?.mp || '-'}
+										{isCustom && !readOnly ? (
+											<SpellCellInput
+												type="number"
+												min="0"
+												value={spell.cost?.mp ?? 0}
+												onChange={(e) =>
+													updateSpellCost(spell.id, 'mp', parseInt(e.target.value) || 0)
+												}
+											/>
+										) : (
+											spell.cost?.mp || '-'
+										)}
 									</StyledSpellCell>
 
 									{/* Range */}
-									<StyledSpellCell $isMobile={effectiveIsMobile}></StyledSpellCell>
+									<StyledSpellCell $isMobile={effectiveIsMobile}>
+										{isCustom && !readOnly ? (
+											<SpellCellInput
+												type="text"
+												value={spell.range}
+												placeholder="Self"
+												onChange={(e) => updateSpell(spell.id, 'range', e.target.value)}
+											/>
+										) : (
+											spell.range || ''
+										)}
+									</StyledSpellCell>
 								</StyledSpellRow>
 
-								{/* Expandable Description Section */}
+								{/* Expandable Description Section — catalog spell */}
 								{selectedSpell && expandedSpells.has(spell.id) && (
 									<StyledSpellDescriptionContainer $isMobile={effectiveIsMobile}>
 										{/* Spell Name Header */}
@@ -343,14 +513,15 @@ const Spells: React.FC<SpellsProps> = ({
 												<StyledSpellEffect key={effectIndex} $isMobile={effectiveIsMobile}>
 													{effect.title && <strong>{effect.title}:</strong>}
 													<br />
-													{effect.description}
+													<RichDescription text={effect.description} />
 												</StyledSpellEffect>
 											)) || 'No description available.'}
 
 											{selectedSpell.spellPassive && (
 												<>
 													<br />
-													<strong>Spell Passive:</strong> {selectedSpell.spellPassive}
+													<strong>Spell Passive:</strong>{' '}
+													<RichDescription text={selectedSpell.spellPassive} />
 												</>
 											)}
 
@@ -364,7 +535,7 @@ const Spells: React.FC<SpellsProps> = ({
 															<strong>{enhancement.name}</strong> ({enhancement.type}{' '}
 															{enhancement.cost})
 															<br />
-															{enhancement.description}
+															<RichDescription text={enhancement.description} />
 														</StyledSpellEnhancement>
 													))}
 												</>
@@ -373,8 +544,33 @@ const Spells: React.FC<SpellsProps> = ({
 									</StyledSpellDescriptionContainer>
 								)}
 
-								{/* Toggle Description Button */}
-								{selectedSpell && (
+								{/* Expandable Description Section — custom freeform spell */}
+								{isCustom && expandedSpells.has(spell.id) && (
+									<StyledSpellDescriptionContainer $isMobile={effectiveIsMobile}>
+										<StyledSpellDescriptionHeader $isMobile={effectiveIsMobile}>
+											{spell.spellName || t('characterSheet.spellsCustomHeader')}
+										</StyledSpellDescriptionHeader>
+										<StyledSpellDescriptionContent $isMobile={effectiveIsMobile}>
+											<strong>{t('characterSheet.spellsDescriptionLabel')}</strong>
+											{readOnly ? (
+												<div style={{ whiteSpace: 'pre-wrap', marginTop: '0.5rem' }}>
+													{spell.effects?.[0]?.description || ''}
+												</div>
+											) : (
+												<SpellDescriptionTextarea
+													value={spell.effects?.[0]?.description || ''}
+													placeholder={t('characterSheet.spellsCustomDescriptionPlaceholder')}
+													onChange={(e) =>
+														updateCustomSpellDescription(spell.id, e.target.value)
+													}
+												/>
+											)}
+										</StyledSpellDescriptionContent>
+									</StyledSpellDescriptionContainer>
+								)}
+
+								{/* Toggle Description Button — show for catalog and custom spells alike */}
+								{(selectedSpell || isCustom) && (
 									<StyledSpellToggleContainer>
 										<StyledSpellToggleButton
 											onClick={() => toggleSpellExpansion(spell.id)}

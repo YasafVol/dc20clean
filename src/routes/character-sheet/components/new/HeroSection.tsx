@@ -6,6 +6,7 @@ import { theme } from '../../styles/theme';
 import { StatCard } from './StatCard';
 import DeathExhaustion from '../DeathExhaustion';
 import { ConditionBadge } from '../ConditionBadge';
+import CompactUtility from './CompactUtility';
 import { getConditionBadgesForAttribute } from '../../../../lib/services/conditionEffectsAnalyzer';
 
 interface HeroSectionProps {
@@ -87,9 +88,10 @@ interface HeroSectionProps {
 
 const Container = styled(motion.section)`
 	display: grid;
-	grid-template-columns: repeat(4, 1fr);
-	gap: ${theme.spacing[6]};
-	margin-bottom: ${theme.spacing[6]};
+	grid-template-columns: repeat(3, 1fr);
+	gap: ${theme.spacing[4]};
+	margin-bottom: ${theme.spacing[4]};
+	align-items: stretch;
 
 	@media (max-width: 1200px) {
 		grid-template-columns: 1fr 1fr;
@@ -100,24 +102,54 @@ const Container = styled(motion.section)`
 	}
 `;
 
+// Wraps two BoxCards vertically inside a single grid column.
+// Used to stack Resources + Recovery (middle column) and Combat Stats + Utility (right column).
+const StackedColumn = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: ${theme.spacing[4]};
+	height: 100%;
+	min-width: 0;
+`;
+
 const BoxCard = styled(motion.div)`
 	background: ${theme.colors.bg.elevated};
 	border-radius: ${theme.borderRadius.xl};
-	padding: ${theme.spacing[6]};
+	padding: ${theme.spacing[4]};
 	box-shadow: ${theme.shadows.xl};
 	border: 1px solid ${theme.colors.border.default};
 	display: flex;
 	flex-direction: column;
-	gap: ${theme.spacing[4]};
+	gap: ${theme.spacing[3]};
+`;
+
+// Equal-share variant for the middle column so Mana/Stamina and Rest/Grit
+// take up the same vertical space without sticking to their content height.
+const EqualShareBoxCard = styled(BoxCard)`
+	flex: 1 1 0;
+`;
+
+// Combat Stats card stays sized to its content; the Utility area below it
+// expands to fill the remaining column height so the right column looks balanced.
+const FlexBoxCard = styled(BoxCard)`
+	flex: 1 1 auto;
+`;
+
+// Inner sub-section that lives under Combat Stats and hosts the previous Utility tab content.
+// Intentionally tight: CompactUtility owns its own internal spacing.
+const UtilitySection = styled.div`
+	margin-top: ${theme.spacing[3]};
+	padding-top: ${theme.spacing[3]};
+	border-top: 1px solid ${theme.colors.border.default};
 `;
 
 const BoxTitle = styled.h3`
 	color: ${theme.colors.text.primary};
-	font-size: ${theme.typography.fontSize.lg};
+	font-size: ${theme.typography.fontSize.base};
 	font-weight: ${theme.typography.fontWeight.bold};
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
-	margin: 0 0 ${theme.spacing[2]} 0;
+	margin: 0 0 ${theme.spacing[1]} 0;
 	padding-bottom: ${theme.spacing[2]};
 	border-bottom: 2px solid ${theme.colors.border.default};
 	display: flex;
@@ -129,6 +161,24 @@ const ResourcesGroup = styled.div`
 	display: flex;
 	flex-direction: column;
 	gap: ${theme.spacing[3]};
+`;
+
+// Horizontal layout for the inner pair (Mana | Stamina, Rest | Grit).
+// Each StatCard takes equal width and is allowed to shrink (min-width: 0).
+const ResourcesPairRow = styled.div`
+	display: flex;
+	flex-direction: row;
+	gap: ${theme.spacing[3]};
+	align-items: stretch;
+
+	& > * {
+		flex: 1 1 0;
+		min-width: 0;
+	}
+
+	@media (max-width: 480px) {
+		flex-direction: column;
+	}
 `;
 
 const DefensesGrid = styled.div<{ $withMarginTop?: boolean }>`
@@ -145,7 +195,7 @@ const DefensesGrid = styled.div<{ $withMarginTop?: boolean }>`
 const DefenseItem = styled(motion.div)<{ $clickable?: boolean }>`
 	background: ${theme.colors.bg.secondary};
 	border-radius: ${theme.borderRadius.lg};
-	padding: ${theme.spacing[4]};
+	padding: ${theme.spacing[3]} ${theme.spacing[2]};
 	text-align: center;
 	border: 2px solid transparent;
 	transition: all ${theme.transitions.base};
@@ -164,8 +214,8 @@ const DefenseLabel = styled.div`
 	font-weight: ${theme.typography.fontWeight.medium};
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
-	margin-bottom: ${theme.spacing[2]};
-	height: 35px;
+	margin-bottom: ${theme.spacing[1]};
+	min-height: 28px;
 `;
 
 const BoxResetButton = styled(motion.button)<{ disabled?: boolean }>`
@@ -394,100 +444,101 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 				<DeathExhaustion isMobile={false} />
 			</BoxCard>
 
-			{/* Box 2: Mana + Stamina */}
-			<BoxCard
-				initial={{ opacity: 0, y: -20 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ delay: 0.2 }}
-			>
-				<BoxTitle>
-				<span>{t('characterSheet.heroResources')}</span>
-					{hasResourcesOverride && onResourcesReset && (
-						<BoxResetButton
-							onClick={onResourcesReset}
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-						>
-							{t('characterSheet.heroReset')}
-						</BoxResetButton>
-					)}
-				</BoxTitle>
-				<ResourcesGroup>
-					<StatCard
-					label={t('characterSheet.heroManaPoints')}
-						current={currentMana}
-						max={maxMana}
-						color="mana"
-						size="medium"
-						showProgressBar
-						editable
-						onChange={onManaChange}
-						onMouseEnter={onManaMouseEnter}
-						onMouseLeave={onManaMouseLeave}
-					/>
-					<StatCard
-					label={t('characterSheet.heroStaminaPoints')}
-						current={currentStamina}
-						max={maxStamina}
-						color="stamina"
-						size="medium"
-						showProgressBar
-						editable
-						onChange={onStaminaChange}
-						onMouseEnter={onStaminaMouseEnter}
-						onMouseLeave={onStaminaMouseLeave}
-					/>
-				</ResourcesGroup>
-			</BoxCard>
+			{/* Column 2: Resources (Mana + Stamina) stacked above Recovery (Rest + Grit) */}
+			<StackedColumn>
+				<EqualShareBoxCard
+					initial={{ opacity: 0, y: -20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ delay: 0.2 }}
+				>
+					<BoxTitle>
+						<span>{t('characterSheet.heroResources')}</span>
+						{hasResourcesOverride && onResourcesReset && (
+							<BoxResetButton
+								onClick={onResourcesReset}
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+							>
+								{t('characterSheet.heroReset')}
+							</BoxResetButton>
+						)}
+					</BoxTitle>
+					<ResourcesPairRow>
+						<StatCard
+							label={t('characterSheet.heroManaPoints')}
+							current={currentMana}
+							max={maxMana}
+							color="mana"
+							size="medium"
+							showProgressBar
+							editable
+							onChange={onManaChange}
+							onMouseEnter={onManaMouseEnter}
+							onMouseLeave={onManaMouseLeave}
+						/>
+						<StatCard
+							label={t('characterSheet.heroStaminaPoints')}
+							current={currentStamina}
+							max={maxStamina}
+							color="stamina"
+							size="medium"
+							showProgressBar
+							editable
+							onChange={onStaminaChange}
+							onMouseEnter={onStaminaMouseEnter}
+							onMouseLeave={onStaminaMouseLeave}
+						/>
+					</ResourcesPairRow>
+				</EqualShareBoxCard>
 
-			{/* Box 3: Recovery (Rest + Grit) */}
-			<BoxCard
-				initial={{ opacity: 0, y: -20 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ delay: 0.3 }}
-			>
-				<BoxTitle>
-				<span>{t('characterSheet.heroRecovery')}</span>
-					{hasRecoveryOverride && onRecoveryReset && (
-						<BoxResetButton
-							onClick={onRecoveryReset}
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-						>
-							{t('characterSheet.heroReset')}
-						</BoxResetButton>
-					)}
-				</BoxTitle>
-				<ResourcesGroup>
-					<StatCard
-					label={t('characterSheet.heroRestPoints')}
-						current={currentRest}
-						max={maxRest}
-						color="grit"
-						size="medium"
-						showProgressBar
-						editable
-						onChange={onRestChange}
-						onMouseEnter={onRestMouseEnter}
-						onMouseLeave={onRestMouseLeave}
-					/>
-					<StatCard
-					label={t('characterSheet.heroGritPoints')}
-						current={currentGrit}
-						max={maxGrit}
-						color="grit"
-						size="medium"
-						showProgressBar
-						editable
-						onChange={onGritChange}
-						onMouseEnter={onGritMouseEnter}
-						onMouseLeave={onGritMouseLeave}
-					/>
-				</ResourcesGroup>
-			</BoxCard>
+				<EqualShareBoxCard
+					initial={{ opacity: 0, y: -20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ delay: 0.3 }}
+				>
+					<BoxTitle>
+						<span>{t('characterSheet.heroRecovery')}</span>
+						{hasRecoveryOverride && onRecoveryReset && (
+							<BoxResetButton
+								onClick={onRecoveryReset}
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+							>
+								{t('characterSheet.heroReset')}
+							</BoxResetButton>
+						)}
+					</BoxTitle>
+					<ResourcesPairRow>
+						<StatCard
+							label={t('characterSheet.heroRestPoints')}
+							current={currentRest}
+							max={maxRest}
+							color="grit"
+							size="medium"
+							showProgressBar
+							editable
+							onChange={onRestChange}
+							onMouseEnter={onRestMouseEnter}
+							onMouseLeave={onRestMouseLeave}
+						/>
+						<StatCard
+							label={t('characterSheet.heroGritPoints')}
+							current={currentGrit}
+							max={maxGrit}
+							color="grit"
+							size="medium"
+							showProgressBar
+							editable
+							onChange={onGritChange}
+							onMouseEnter={onGritMouseEnter}
+							onMouseLeave={onGritMouseLeave}
+						/>
+					</ResourcesPairRow>
+				</EqualShareBoxCard>
+			</StackedColumn>
 
-			{/* Box 4: Combat Stats (Defenses + Combat Info) */}
-			<BoxCard
+			{/* Column 3: Combat Stats (Defenses + Combat Info) with Utility section docked below */}
+			<FlexBoxCard
 				initial={{ opacity: 0, x: 20 }}
 				animate={{ opacity: 1, x: 0 }}
 				transition={{ delay: 0.4 }}
@@ -583,7 +634,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 						</DefenseItem>
 					</DefensesGrid>
 				</ResourcesGroup>
-			</BoxCard>
+
+				{/* Utility sub-section: formerly the Utility tab. Compact horizontal layout with
+				    Move/Jump stats, currency row, and optional chips for senses/resistances/training. */}
+				<UtilitySection>
+					<CompactUtility />
+				</UtilitySection>
+			</FlexBoxCard>
 		</Container>
 	);
 };

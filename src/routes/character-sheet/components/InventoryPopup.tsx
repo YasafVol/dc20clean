@@ -13,6 +13,7 @@ import {
 } from '../styles/FeaturePopup';
 import { theme } from '../styles/theme';
 import { getInventoryItemInfo } from '../utils/inventoryItemInfo';
+import RichDescription from './RichDescription';
 
 // ---------------------------------------------------------------------------
 // Styled components for the editable custom item form
@@ -172,7 +173,12 @@ const InventoryPopup: React.FC<InventoryPopupProps> = ({
 						<ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
 							{infoList.map((info) => (
 								<li key={info.label} style={{ marginBottom: '0.5em' }}>
-									<strong>{info.label}:</strong> {info.value}
+									<strong>{info.label}:</strong>{' '}
+									{typeof info.value === 'string' ? (
+										<RichDescription text={info.value} />
+									) : (
+										info.value
+									)}
 								</li>
 							))}
 						</ul>

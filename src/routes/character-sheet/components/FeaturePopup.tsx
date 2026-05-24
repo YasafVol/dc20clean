@@ -10,6 +10,7 @@ import {
 	StyledFeaturePopupDescription,
 	StyledFeaturePopupSourceInfo
 } from '../styles/FeaturePopup';
+import RichDescription from './RichDescription';
 
 interface FeaturePopupProps {
 	feature: FeatureData | null;
@@ -29,7 +30,9 @@ const FeaturePopup: React.FC<FeaturePopupProps> = ({ feature, onClose }) => {
 						×
 					</StyledFeaturePopupClose>
 				</StyledFeaturePopupHeader>
-				<StyledFeaturePopupDescription>{feature.description}</StyledFeaturePopupDescription>
+				<StyledFeaturePopupDescription>
+					<RichDescription text={feature.description} />
+				</StyledFeaturePopupDescription>
 				{feature.sourceDetail && (
 					<StyledFeaturePopupSourceInfo>
 					{t('characterSheet.featureSource')} {feature.sourceDetail}

@@ -2,7 +2,36 @@
 
 > Purpose: End-to-end map of Character Sheet UI: architecture, components, data sources, and interactions.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-05-24
+
+## Recent UX additions (2026-05-24)
+
+- **Hero strip restructured to 3 columns**: `HeroSection` (`components/new/HeroSection.tsx`) now uses `grid-template-columns: repeat(3, 1fr)` with `align-items: stretch`. New `StackedColumn` wrapper holds two `BoxCard`s vertically:
+  - **Col 1**: Health (HP + Temp HP + Health Status + Exhaustion) — unchanged.
+  - **Col 2**: Resources (Mana | Stamina horizontal) above Recovery (Rest | Grit horizontal) as two equal-height rows (`EqualShareBoxCard` with `flex: 1 1 0`). Inner `ResourcesPairRow` styled component renders the pair side-by-side with `flex: 1 1 0; min-width: 0`; collapses to vertical at <=480px.
+  - **Col 3**: Combat Stats (defenses + combat info) with a compact `UtilitySection` docked beneath it. The Combat Stats card uses `flex: 1 1 auto` to fill the column height alongside the utility content.
+  - Responsive: 2 columns at <=1200px, 1 column at <=768px.
+- **CompactUtility component** (`components/new/CompactUtility.tsx`): purpose-built compact replacement for `<Movement />` + `<Currency />` inside the hero strip. Three sections, each conditionally rendered:
+  1. Move | Jump as two mini stat cards in one row.
+  2. GP | SP | CP inline editable pills in one row (uses `updateCurrency` from `useCharacterSheet`).
+  3. Optional chip row for alt movements, senses, resistances (blue), vulnerabilities (red), and combat training — only rendered when data is present. Each chip is wrapped in a `Tooltip` showing its source.
+  - Reads from `useCharacterCalculatedData()` and `useCharacterInventory()` directly.
+  - The original full-detail `Movement` and `Currency` components are no longer rendered anywhere; the Utility tab itself was removed (see below).
+- **Utility tab removed from navigation**: The `'utility'` tab was deleted from `TabId`, the desktop `tabs[]` array, and the `hamburgerMenuItems[]` array in `CharacterSheetRedesign.tsx` (tab count: 9 → 8). The two `activeTab === 'utility'` render blocks (desktop + mobile) were deleted. `Movement` and `Currency` imports removed from `CharacterSheetRedesign.tsx`.
+
+## Earlier UX additions (2026-05-23)
+
+- **Header actions**: Added `Long Rest` (full reset of HP/MP/SP/Rest Points + clears temp HP and Exhaustion via reducer methods) and `Rulebook` (opens `RulebookPanel`, a slide-in side panel embedding the DC20 core rulebook PDF in the browser's native viewer for built-in search).
+- **Hero section initial layout pass**: Boxes used `align-self: start` and tighter padding/gaps so they no longer stretched vertically; the tab container below has `max-height: calc(100vh - 260px)` with `overflow-y: auto` so long lists (Spells, Inventory, etc.) scroll independently while the page keeps its natural flow. (Superseded by the 3-column rework above — `align-self: start` removed in favour of `align-items: stretch`.)
+- **Utility tab crash**: Fixed crash caused by `Movement.tsx` calling `useTranslation()` without importing it.
+- **Attacks**: Weapon dropdown now defaults to weapons present in the character's inventory, with a "Show all weapons" toggle to reveal the full catalog. Selecting the default "Select Weapon..." option now clears the row instead of silently doing nothing. Saved weapons no longer in inventory remain visible in the dropdown with a "(not in inventory)" label.
+- **Inventory**: Each row shows a compact inline summary (e.g. `1B • Versatile • Reach`, `PD +11 • AD +10`) below the item name. Custom items with a description get a gold accent variant of the info icon so annotated items are visible at a glance.
+- **Notes**: Replaced the single textarea with a multi-note list (per-note title + body, delete with confirm, "+ New Note" button). Backwards-compatible: legacy single-string notes are auto-wrapped on first load; storage uses a `__NOTES_V2__` JSON marker prefix inside the existing `notes.playerNotes` string so no reducer/schema changes were required.
+- **Spells**: Added a "✏️ Custom Spell..." dropdown option that flips a spell row into freeform editable mode (name + school + duration + AP/MP + range + description). Detection is automatic on reload — any spell name not in the catalog renders as custom.
+- **Condition keyword tooltips**: New shared `RichDescription` component scans description text for condition names (handles stacking suffix e.g. `Slowed 2`, `Burning 3`) and renders matched tokens as accent-coloured, hover/tap-activated tooltip targets. Wired into `FeaturePopup`, `SpellPopup`, inline spell descriptions in `Spells.tsx`, `Maneuvers.tsx`, `InventoryPopup` info rows, and `EnhancedFeatures` ability descriptions. Mobile uses tap-to-toggle; desktop uses hover with click-outside dismiss. Catalog source: `src/lib/rulesdata/conditions/conditions.data.ts`.
+
+New files: `components/RulebookPanel.tsx`, `components/RichDescription.tsx`. Rulebook PDF imported via Vite `?url` from `docs/assets/DC20 RPG 0.10 Beta v1.0.pdf`.
+
 
 ---
 

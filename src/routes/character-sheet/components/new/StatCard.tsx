@@ -138,22 +138,41 @@ const ProgressBar = styled(motion.div)<{ $color: string }>`
 	transition: width ${theme.transitions.base};
 `;
 
-const Controls = styled.div`
+// Row that holds the Main +/- and (when present) a small Temp HP pill. Both
+// groups are centered as a single cluster; if the card is too narrow the
+// pill wraps to its own line below — still centered.
+const ControlsRow = styled.div`
 	display: flex;
-	gap: ${theme.spacing[2]};
-	margin-top: ${theme.spacing[3]};
+	align-items: center;
 	justify-content: center;
+	gap: ${theme.spacing[3]};
+	margin-top: ${theme.spacing[3]};
 	flex-wrap: wrap;
 `;
 
-const ControlLabel = styled.div`
+// Compact inline group: "MAIN  −  +" sitting flush-left on its own row.
+const InlineControlGroup = styled.div`
+	display: flex;
+	align-items: center;
+	gap: ${theme.spacing[2]};
+`;
+
+// Same inline group but framed as its own small box so Temp HP visually
+// reads as a distinct mini-stat next to Main HP.
+const TempInlineGroup = styled(InlineControlGroup)`
+	background: ${theme.colors.bg.primary};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
+	padding: ${theme.spacing[1]} ${theme.spacing[2]};
+`;
+
+const InlineControlLabel = styled.span`
 	color: ${theme.colors.text.secondary};
 	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.semibold};
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
-	width: 100%;
-	text-align: center;
-	margin-bottom: ${theme.spacing[1]};
+	white-space: nowrap;
 `;
 
 const ControlButton = styled(motion.button)`
@@ -161,10 +180,10 @@ const ControlButton = styled(motion.button)`
 	color: ${theme.colors.text.primary};
 	border: none;
 	border-radius: ${theme.borderRadius.md};
-	width: 32px;
-	height: 32px;
+	width: 28px;
+	height: 28px;
 	cursor: pointer;
-	font-size: ${theme.typography.fontSize.lg};
+	font-size: ${theme.typography.fontSize.base};
 	font-weight: ${theme.typography.fontWeight.bold};
 	display: flex;
 	align-items: center;
@@ -267,53 +286,57 @@ export const StatCard: React.FC<StatCardProps> = ({
 			)}
 
 			{editable && onChange && (
-				<Controls>
-					<ControlLabel>Main</ControlLabel>
-					<ControlButton
-						onClick={handleDecrement}
-						whileHover={{ scale: 1.1 }}
-						whileTap={{ scale: 0.95 }}
-					>
-						−
-					</ControlButton>
-					<ControlButton
-						onClick={handleIncrement}
-						whileHover={{ scale: 1.1 }}
-						whileTap={{ scale: 0.95 }}
-					>
-						+
-					</ControlButton>
-				</Controls>
-			)}
+				<ControlsRow>
+					{/* Left: MAIN −/+ flush to the left edge of the card. */}
+					<InlineControlGroup>
+						<InlineControlLabel>Main</InlineControlLabel>
+						<ControlButton
+							onClick={handleDecrement}
+							whileHover={{ scale: 1.1 }}
+							whileTap={{ scale: 0.95 }}
+						>
+							−
+						</ControlButton>
+						<ControlButton
+							onClick={handleIncrement}
+							whileHover={{ scale: 1.1 }}
+							whileTap={{ scale: 0.95 }}
+						>
+							+
+						</ControlButton>
+					</InlineControlGroup>
 
-			{editable && onTempChange && temp !== undefined && (
-				<Controls>
-					<ControlLabel>Temp HP</ControlLabel>
-					<ControlButton
-						onClick={() => {
-							const newTemp = temp - 1;
-							onTempChange(newTemp);
-							// If reducing temp HP causes current to exceed new max, clamp current
-							if (onChange && max !== undefined) {
-								const newEffectiveMax = max + newTemp;
-								if (current > newEffectiveMax) {
-									setTimeout(() => onChange(newEffectiveMax), 0);
-								}
-							}
-						}}
-						whileHover={{ scale: 1.1 }}
-						whileTap={{ scale: 0.95 }}
-					>
-						−
-					</ControlButton>
-					<ControlButton
-						onClick={() => onTempChange(temp + 1)}
-						whileHover={{ scale: 1.1 }}
-						whileTap={{ scale: 0.95 }}
-					>
-						+
-					</ControlButton>
-				</Controls>
+					{/* Right: TEMP HP in its own little framed box, only when supported. */}
+					{onTempChange && temp !== undefined && (
+						<TempInlineGroup>
+							<InlineControlLabel>Temp HP</InlineControlLabel>
+							<ControlButton
+								onClick={() => {
+									const newTemp = temp - 1;
+									onTempChange(newTemp);
+									// If reducing temp HP causes current to exceed new max, clamp current
+									if (onChange && max !== undefined) {
+										const newEffectiveMax = max + newTemp;
+										if (current > newEffectiveMax) {
+											setTimeout(() => onChange(newEffectiveMax), 0);
+										}
+									}
+								}}
+								whileHover={{ scale: 1.1 }}
+								whileTap={{ scale: 0.95 }}
+							>
+								−
+							</ControlButton>
+							<ControlButton
+								onClick={() => onTempChange(temp + 1)}
+								whileHover={{ scale: 1.1 }}
+								whileTap={{ scale: 0.95 }}
+							>
+								+
+							</ControlButton>
+						</TempInlineGroup>
+					)}
+				</ControlsRow>
 			)}
 		</Container>
 	);

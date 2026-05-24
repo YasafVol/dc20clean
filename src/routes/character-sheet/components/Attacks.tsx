@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import type { AttackData } from '../../../types';
 import { weapons, type Weapon } from '../../../lib/rulesdata/inventoryItems';
-import { useCharacterAttacks, useCharacterSheet } from '../hooks/CharacterSheetProvider';
+import {
+	useCharacterAttacks,
+	useCharacterInventory,
+	useCharacterSheet
+} from '../hooks/CharacterSheetProvider';
 import { logger } from '../../../lib/utils/logger';
 import DeleteButton from './shared/DeleteButton';
 import {
@@ -28,6 +33,30 @@ import {
 	StyledInfoIcon,
 	StyledDamageTypeCell
 } from '../styles/Attacks';
+import { theme } from '../styles/theme';
+
+const FilterToggleRow = styled.label`
+	display: inline-flex;
+	align-items: center;
+	gap: ${theme.spacing[2]};
+	font-size: ${theme.typography.fontSize.sm};
+	color: ${theme.colors.text.secondary};
+	cursor: pointer;
+	user-select: none;
+	margin-left: ${theme.spacing[3]};
+
+	input {
+		cursor: pointer;
+		accent-color: ${theme.colors.accent.primary};
+	}
+`;
+
+const InlineEmptyHint = styled.div`
+	font-size: ${theme.typography.fontSize.xs};
+	color: ${theme.colors.text.muted};
+	font-style: italic;
+	padding: ${theme.spacing[2]} 0;
+`;
 
 export interface AttacksProps {
 	onAttackClick: (attack: AttackData, weapon: Weapon | null) => void;
@@ -38,6 +67,20 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 	const { t } = useTranslation();
 	const { addAttack, removeAttack, updateAttack, state } = useCharacterSheet();
 	const attacks = useCharacterAttacks();
+	const inventory = useCharacterInventory();
+	const [showAllWeapons, setShowAllWeapons] = useState(false);
+
+	// Build the list of weapons currently in the character's inventory by matching
+	// inventory item names against the global weapons catalog. This becomes the
+	// default dropdown source so players only see what they actually own.
+	const inventoryWeapons = useMemo(() => {
+		const inventoryWeaponNames = new Set(
+			(inventory?.items || [])
+				.filter((item) => item.itemType === 'Weapon' && item.itemName)
+				.map((item) => item.itemName)
+		);
+		return weapons.filter((w) => inventoryWeaponNames.has(w.name));
+	}, [inventory?.items]);
 
 	if (!state.character) {
 		return <div>{t('characterSheet.attacksLoading')}</div>;
@@ -47,6 +90,8 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
 
 	const characterData = state.character;
+	const visibleWeapons = showAllWeapons ? weapons : inventoryWeapons;
+	const showNoInventoryWeaponsHint = !showAllWeapons && inventoryWeapons.length === 0;
 	const addWeaponSlot = () => {
 		const newAttack: AttackData = {
 			id: `attack_${Date.now()}`,
@@ -72,6 +117,20 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 
 	const handleWeaponSelect = (attackIndex: number, weaponName: string) => {
 		logger.debug('ui', 'Selecting weapon', { weaponName });
+		const attackToUpdate = attacks[attackIndex];
+		if (!attackToUpdate) return;
+
+		// Selecting the default "Select Weapon..." option clears the row back to
+		// an empty attack rather than silently doing nothing.
+		if (!weaponName) {
+			const cleared: AttackData = {
+				...createEmptyAttackData(''),
+				id: attackToUpdate.id
+			};
+			updateAttack(attackToUpdate.id, cleared);
+			return;
+		}
+
 		const weapon = weapons.find((w) => w.name === weaponName);
 		if (!weapon) {
 			logger.error('ui', 'Weapon not found', { weaponName });
@@ -80,12 +139,8 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 		logger.debug('ui', 'Found weapon', { weaponName: weapon.name });
 
 		const newAttackData = calculateAttackData(weapon);
-
-		const attackToUpdate = attacks[attackIndex];
-		if (attackToUpdate) {
-			const updatedAttack = { ...newAttackData, id: attackToUpdate.id };
-			updateAttack(attackToUpdate.id, updatedAttack);
-		}
+		const updatedAttack = { ...newAttackData, id: attackToUpdate.id };
+		updateAttack(attackToUpdate.id, updatedAttack);
 	};
 
 	const calculateAttackData = (weapon: Weapon): AttackData => {
@@ -132,14 +187,27 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 		<StyledAttacksSection $isMobile={effectiveIsMobile}>
 			<StyledAttacksHeader $isMobile={effectiveIsMobile}>
 				<StyledAttacksTitle $isMobile={effectiveIsMobile}>{t('characterSheet.attacksTitle')}</StyledAttacksTitle>
-				<StyledAddWeaponButton
-					$isMobile={effectiveIsMobile}
-					onClick={addWeaponSlot}
-					data-testid="add-weapon"
-				>
-					+ {t('characterSheet.attacksAddWeapon')}
-				</StyledAddWeaponButton>
+				<div style={{ display: 'flex', alignItems: 'center' }}>
+					<FilterToggleRow>
+						<input
+							type="checkbox"
+							checked={showAllWeapons}
+							onChange={(e) => setShowAllWeapons(e.target.checked)}
+						/>
+						{t('characterSheet.attacksShowAllWeapons')}
+					</FilterToggleRow>
+					<StyledAddWeaponButton
+						$isMobile={effectiveIsMobile}
+						onClick={addWeaponSlot}
+						data-testid="add-weapon"
+					>
+						+ {t('characterSheet.attacksAddWeapon')}
+					</StyledAddWeaponButton>
+				</div>
 			</StyledAttacksHeader>
+			{showNoInventoryWeaponsHint && attacks.length > 0 && (
+				<InlineEmptyHint>{t('characterSheet.attacksNoInventoryWeapons')}</InlineEmptyHint>
+			)}
 
 			<StyledAttacksContainer $isMobile={effectiveIsMobile}>
 				<StyledAttacksHeaderRow $isMobile={effectiveIsMobile}>
@@ -204,11 +272,19 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 									data-testid="weapon-name"
 								>
 									<option value="">{t('characterSheet.attacksSelectWeapon')}</option>
-									{weapons.map((weapon) => (
+									{visibleWeapons.map((weapon) => (
 										<option key={weapon.name} value={weapon.name}>
 											{weapon.name} ({weapon.handedness})
 										</option>
 									))}
+									{/* Keep the saved weapon visible even if it's no longer in
+									    inventory (e.g. user sold it) so the row doesn't appear blank. */}
+									{attack.weaponName &&
+										!visibleWeapons.some((w) => w.name === attack.weaponName) && (
+											<option key={attack.weaponName} value={attack.weaponName}>
+												{attack.weaponName} {t('characterSheet.attacksNotInInventory')}
+											</option>
+										)}
 								</StyledWeaponSelect>
 
 								{/* Base Damage */}

@@ -6,7 +6,7 @@ import { theme } from '../styles/theme';
 // Vite bundles this PDF and gives us a hashed URL we can load into an iframe.
 // The browser's built-in PDF viewer provides search, navigation and zoom for
 // free, so we don't need to ship pdfjs-dist for this MVP.
-import rulebookUrl from '../../../../docs/assets/DC20 RPG 0.10 Beta v1.0.pdf?url';
+import rulebookUrl from '../../../../docs/assets/DC20 RPG 0.10.5 Beta v1.pdf?url';
 
 const Backdrop = styled(motion.div)`
 	position: fixed;

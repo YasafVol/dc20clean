@@ -771,15 +771,22 @@ export const maneuvers: Maneuver[] = [
 		cost: { ap: 1, sp: 1 },
 		range: 'Self',
 		description:
-			"Make a DC 15 Martial Check. Success: You move up to twice your Speed ignoring Difficult Terrain. Failure: You move up to your Speed ignoring Difficult Terrain. Reaction: You can spend an additional 1 SP to perform this Maneuver as a Reaction at the end of a creature's Turn moving half as much as normal.",
+			'Sprint across the battlefield. Reaction: When a creature ends their turn, you immediately move up to your Speed.',
 		isReaction: true,
+		trigger: 'A creature ends their turn.',
 		enhancements: [
 			{
-				name: 'Passthrough',
-				costString: '2 SP',
-				sp: 2,
+				name: 'Agile',
+				costString: '1 SP',
+				sp: 1,
+				description: 'You ignore Difficult Terrain during this movement.'
+			},
+			{
+				name: 'Disengage',
+				costString: '1 AP',
+				ap: 1,
 				description:
-					'Each creature whose Space you attempt to move through must make a Martial Check against the result of your Martial Check. Failure: You move through their Space.'
+					'You gain the benefits of the Disengage Action for the Movement. When you use this Enhancement, you can spend 1 additional SP to gain the benefits of the Full Disengage Action instead.'
 			},
 			{
 				name: 'Coordinated Movement',
@@ -941,9 +948,10 @@ export const allManeuvers = maneuvers;
 
 /** Get maneuver by ID */
 export function getManeuverById(id: string): Maneuver | undefined {
+	const resolvedId = resolveAliasId('maneuver', id);
 	return (
-		maneuvers.find((m) => m.id === id) ??
-		maneuvers.find((m) => m.id === resolveAliasId('maneuver', id))
+		maneuvers.find((m) => m.id === id || m.name === id) ??
+		maneuvers.find((m) => m.id === resolvedId || m.name === resolvedId)
 	);
 }
 

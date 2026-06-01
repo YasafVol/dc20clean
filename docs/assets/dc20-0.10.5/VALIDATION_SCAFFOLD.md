@@ -87,8 +87,8 @@ This file does not imply that implementation has started.
 
 - [x] `Whirlwind` and `Pathcarver` structured costs are asserted
 - [x] `Scattershot` exists and is selectable
-- [ ] renamed maneuver fixtures render correctly if aliases are approved
-- [ ] `Reposition` stays blocked from implementation until semantic review is complete
+- [x] `Brace` remains a current maneuver and does not alias to Champion `Fortify`
+- [x] `Reposition` v0.10.5 rewrite is asserted
 
 ### Ancestry / traits
 

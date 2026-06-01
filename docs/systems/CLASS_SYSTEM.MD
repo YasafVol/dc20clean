@@ -223,6 +223,12 @@ Each class has a `<class>.talents.ts` file (13 files) plus shared data in `talen
 - Those IDs are intentionally retained as compatibility aliases for saved v0.10 characters and progression references; only the displayed feature name, description, benefits, and modeled effects changed.
 - Universal mechanical benefits use existing effect types (`MODIFY_STAT`, `GRANT_SPELL`, `GRANT_MANEUVERS`, `GRANT_ABILITY`) so character creation, sheet rendering, calculator breakdowns, and PDF export consume the same data path.
 
+**Champion Fighting Spirit Contract**:
+
+- v0.10.5 renames the Champion Fighting Spirit option `Brace` to `Fortify` to avoid confusion with the still-current Brace maneuver.
+- `Advance` now grants ADV on the next Martial Attack or Physical Check.
+- The rulesdata effect target is `combat_readiness_fortify`; legacy references to `combat_readiness_brace` are treated as a feature alias, not a maneuver alias.
+
 **Key Changes from v0.9.5/v0.10**:
 
 - Techniques have been removed entirely from the game
@@ -236,6 +242,7 @@ Each class has a `<class>.talents.ts` file (13 files) plus shared data in `talen
 
 - **Level 5 Expert Features**: Replaced all level 5 class placeholders with explicit v0.10.5 Expert Feature blocks while preserving the legacy placeholder IDs for saved-character compatibility.
 - **v0.10.5 Progression Tables**: Updated caster MP gains, Spellblade starting/capstone MP, and levels 6-10 feature/talent/path/ancestry schedule.
+- **Champion Fighting Spirit**: Updated Combat Readiness to use `Fortify` and Advance's Martial Attack / Physical Check wording while preserving the Brace maneuver as a separate current maneuver.
 - **Path Progression Display**: `class.loader.ts` now surfaces `pathProgression: true` as "Path Progression" in formatted level rows.
 - **Progression Tests**: Added v0.10.5 resolver coverage for caster/hybrid MP totals, level 6-10 schedule, and level 5 Expert Feature coverage/effects.
 

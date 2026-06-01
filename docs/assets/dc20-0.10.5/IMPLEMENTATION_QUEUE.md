@@ -273,13 +273,13 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 - Source: `docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md`, page 268, lines 17555-17580
 - Baseline: targeted v0.10 class sections only
 - Systems: Class / Leveling / Effect / Character Sheet
-- Current implementation: several affected classes already persist feature choices and progression references by stable ID.
+- Current implementation: several affected classes already persist feature choices and progression references by stable ID. Champion Fighting Spirit now uses the v0.10.5 `Fortify` option wording and Advance's Martial Attack / Physical Check wording while preserving the separate Brace maneuver.
 - Required change:
   - `Elemental Fury`
   - `Elemental Blast` semantics
   - `Swift Berserker` removal
-  - `Brace -> Fortify`
-  - `Advance` mechanic update
+  - Champion Fighting Spirit `Brace -> Fortify` option rename: implemented
+  - `Advance` mechanic update: implemented for Champion Fighting Spirit
   - Cleric / Commander semantic deltas
 - Data shape impact: unknown
 - Stable ID / alias impact: confirmed
@@ -357,29 +357,32 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 
 ### VRR-012: Maneuver Rewrite / Rename Compatibility
 
-- Status: `HITL required`
+- Status: `implemented`
 - Source: `docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md`, page 269, line 17639 and related maneuver lines
 - Baseline: targeted maneuver comparison required
 - Systems: Martials / Character Creation / Character Sheet
-- Current implementation: maneuver persistence and some grants are name-sensitive.
+- Current implementation: `Reposition` reflects the v0.10.5 rewrite, `getManeuverById()` resolves IDs and display names for saved name-based selections, and `Brace` remains a current Defense maneuver. `Fortify` is handled as a Champion Fighting Spirit feature alias, not as a maneuver alias.
 - Required change:
-  - classify `Reposition` complete rewrite
-  - classify `Brace -> Fortify` rename for compatibility impact
+  - classify `Reposition` complete rewrite: implemented
+  - classify `Brace -> Fortify` rename for compatibility impact: implemented as class feature alias/no-op maneuver
 - Data shape impact: none expected
 - Stable ID / alias impact: confirmed
-- Calculator/effect impact: possible
+- Calculator/effect impact: confirmed for Champion `GRANT_ABILITY` target/text
 - UI impact: confirmed
 - Storage/export impact: possible
-- HITL decision: required
+- HITL decision: source comparison showed `Brace` is still a maneuver and `Fortify` is only the Champion Fighting Spirit option rename
 - Code touchpoints:
+  - `src/lib/rulesdata/classes-data/features/champion_features.ts`
   - `src/lib/rulesdata/martials/maneuvers.ts`
-  - `src/lib/services/characterCompletion.ts`
-  - `src/lib/utils/characterEdit.ts`
-  - `src/lib/pdf/transformers.ts`
+  - `src/lib/rulesdata/versioning/aliases.ts`
 - System docs to update:
+  - `docs/systems/CLASS_SYSTEM.MD`
+  - `docs/systems/EFFECT_SYSTEM.MD`
   - `docs/systems/MARTIALS_SYSTEM.MD`
 - Validation:
-  - renamed maneuver compatibility fixtures
+  - Brace maneuver compatibility fixture
+  - Reposition rewrite fixture
+  - Champion Fighting Spirit semantics fixture
   - sheet render regression
 
 ### VRR-013: Ancestry Trait Delta Pass

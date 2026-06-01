@@ -119,6 +119,41 @@ describe('rules version compatibility', () => {
 		});
 	});
 
+	it('does not treat the still-valid Brace maneuver as the Champion Fortify rename', () => {
+		expect(
+			resolveRulesAlias('maneuver', 'Brace', {
+				fromRulesVersion: 'dc20-0.10',
+				toRulesVersion: 'dc20-0.10.5'
+			})
+		).toBeUndefined();
+
+		const result = assessCharacterCompatibility({
+			id: 'old-brace-maneuver',
+			rulesVersion: 'dc20-0.10',
+			schemaVersion: '2.2.0',
+			selectedManeuvers: ['Brace'],
+			maneuvers: [{ id: 'maneuver_1', name: 'Brace' }]
+		});
+
+		expect(result.state).toBe('upgrade-required');
+		expect(result.reasons).not.toContain('maneuver:Brace requires view-only.');
+	});
+
+	it('routes the Champion Combat Readiness rename through feature aliases', () => {
+		const alias = resolveRulesAlias('feature', 'combat_readiness_brace', {
+			fromRulesVersion: 'dc20-0.10',
+			toRulesVersion: 'dc20-0.10.5'
+		});
+
+		expect(alias).toMatchObject({
+			domain: 'feature',
+			fromId: 'combat_readiness_brace',
+			toId: 'combat_readiness_fortify',
+			status: 'alias',
+			compatibilityState: 'editable'
+		});
+	});
+
 	it('returns state-only auto-save for upgrade-required characters', () => {
 		expect(
 			getCharacterAutoSaveMode({

@@ -91,13 +91,13 @@ export const championClass: ClassDefinition = {
 				{
 					name: 'Combat Readiness',
 					description:
-						'At the start of your first turn in Combat, you gain one of the following benefits: Brace (Dodge Action + ADV on next Save) or Advance (Move Action + ADV on next Physical Check).',
+						'At the start of your first turn in Combat, you gain one of the following benefits: Fortify (Dodge Action + ADV on next Save) or Advance (Move Action + ADV on next Martial Attack or Physical Check).',
 					effects: [
 						{
 							type: 'GRANT_ABILITY',
-							target: 'combat_readiness_brace',
+							target: 'combat_readiness_fortify',
 							value:
-								'First turn in Combat: choose Brace (Dodge + ADV on Save) or Advance (Move + ADV on Physical Check).'
+								'First turn in Combat: choose Fortify (Dodge + ADV on next Save) or Advance (Move + ADV on next Martial Attack or Physical Check).'
 						}
 					]
 				},

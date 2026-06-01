@@ -8,14 +8,14 @@
 
 ## 1) Key Files
 
-| File                                                  | Role                                                                                                 |
-| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `src/lib/rulesdata/martials/maneuvers.ts`             | Maneuver catalog (29 maneuvers), exports `allManeuvers`, `getManeuverById()`, `getManeuversByType()` |
-| `src/lib/rulesdata/schemas/maneuver.schema.ts`        | TypeScript interfaces: `Maneuver`, `ManeuverCost`, `ManeuverEnhancement`, `ManeuverType` enum        |
-| `src/lib/rulesdata/martials/monk-stances.ts`          | Monk-specific stances (currently empty placeholder)                                                  |
-| `src/lib/services/enhancedCharacterCalculator.ts`     | Budget calculation and `GRANT_MANEUVERS` processing                                                  |
-| `src/routes/character-creation/Maneuvers.tsx`         | Creation UI: filter by type, select up to budget                                                     |
-| `src/routes/character-sheet/components/Maneuvers.tsx` | Sheet display with type filtering                                                                    |
+| File                                                  | Role                                                                                                                      |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `src/lib/rulesdata/martials/maneuvers.ts`             | Maneuver catalog (29 maneuvers), exports `allManeuvers`, alias/name-aware `getManeuverById()`, and `getManeuversByType()` |
+| `src/lib/rulesdata/schemas/maneuver.schema.ts`        | TypeScript interfaces: `Maneuver`, `ManeuverCost`, `ManeuverEnhancement`, `ManeuverType` enum                             |
+| `src/lib/rulesdata/martials/monk-stances.ts`          | Monk-specific stances (currently empty placeholder)                                                                       |
+| `src/lib/services/enhancedCharacterCalculator.ts`     | Budget calculation and `GRANT_MANEUVERS` processing                                                                       |
+| `src/routes/character-creation/Maneuvers.tsx`         | Creation UI: filter by type, select up to budget                                                                          |
+| `src/routes/character-sheet/components/Maneuvers.tsx` | Sheet display with type filtering                                                                                         |
 
 ---
 
@@ -106,7 +106,9 @@ import { allManeuvers, getManeuverById, getManeuversByType } from './martials/ma
 - No maneuver budget should be inflated by duplicating equivalent grants in both a parent feature and its nested benefit entries.
 - v0.10.5 removes the base SP cost from `Whirlwind` and `Pathcarver`.
 - v0.10.5 adds `Scattershot` as an Attack maneuver.
-- `Reposition` rewrite and `Brace -> Fortify` compatibility remain HITL-gated and are not part of the automatic catalog pass.
+- v0.10.5 rewrites `Reposition` as a reaction triggered when a creature ends its turn, with `Agile`, `Disengage`, and `Coordinated Movement` enhancements.
+- The `Brace` maneuver remains a current Defense maneuver in v0.10.5. `Fortify` is the renamed Champion Fighting Spirit option, not a maneuver catalog rename.
+- `getManeuverById()` resolves both IDs and display names so saved name-based maneuver selections such as `Brace` remain renderable.
 
 ---
 

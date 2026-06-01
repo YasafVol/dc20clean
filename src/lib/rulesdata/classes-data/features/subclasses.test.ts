@@ -202,3 +202,24 @@ describe('Class Subclass Availability at Level 3', () => {
 		});
 	});
 });
+
+describe('v0.10.5 class feature semantics', () => {
+	it('uses Fortify for Champion Fighting Spirit while preserving the Brace maneuver name for maneuvers', () => {
+		const fightingSpirit = championClass.coreFeatures.find(
+			(feature: any) => feature.featureName === 'Fighting Spirit'
+		);
+		const combatReadiness = fightingSpirit?.benefits?.find(
+			(benefit: any) => benefit.name === 'Combat Readiness'
+		);
+
+		expect(combatReadiness?.description).toContain('Fortify');
+		expect(combatReadiness?.description).not.toContain('Brace (Dodge');
+		expect(combatReadiness?.description).toContain('next Martial Attack or Physical Check');
+		expect(combatReadiness?.effects?.[0]).toMatchObject({
+			type: 'GRANT_ABILITY',
+			target: 'combat_readiness_fortify'
+		});
+		expect(combatReadiness?.effects?.[0]?.value).toContain('Fortify');
+		expect(combatReadiness?.effects?.[0]?.value).toContain('Martial Attack');
+	});
+});

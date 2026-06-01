@@ -66,7 +66,8 @@ Primary persistence and runtime surfaces:
 | Talent         | `multiclass_grandmaster`                                      | removed from selectable catalog           | deprecate + compatibility policy            | do not hard-delete without load policy                              |
 | Talent         | `multiclass_legendary`                                        | removed from selectable catalog           | deprecate + compatibility policy            | same as above                                                       |
 | Class feature  | `swift_berserker`                                             | removed                                   | deprecate + compatibility policy            | saved characters may already reference it                           |
-| Maneuver       | `Brace`                                                       | `Fortify`                                 | HITL required                               | current maneuver persistence is name-sensitive                      |
+| Class feature  | `combat_readiness_brace` / `Brace`                            | `combat_readiness_fortify` / `Fortify`    | implemented alias                           | Champion Fighting Spirit option rename; not a maneuver alias        |
+| Maneuver       | `brace` / `Brace`                                             | `brace` / `Brace`                         | no-op                                       | Brace remains a current v0.10.5 Defense maneuver                    |
 | Spell          | `summon-familiar` / `Summon Familiar`                         | `call-familiar` / `Call Familiar`         | implemented alias                           | exact rename; old IDs route for lookup, saved IDs are not rewritten |
 | Spell          | `fly` / `Fly`                                                 | `blessing-of-air` / `Blessing of Air`     | implemented alias                           | exact rename; old IDs route for lookup, saved IDs are not rewritten |
 | Spell          | `vicious-mockery` / `Vicious Mockery`                         | `mockery` / `Mockery`                     | implemented alias                           | exact rename; old IDs route for lookup, saved IDs are not rewritten |
@@ -100,8 +101,8 @@ Primary persistence and runtime surfaces:
 ### Maneuver IDs
 
 - Current repo usage indicates name-sensitive maneuver behavior in parts of the stack.
-- `Brace -> Fortify` is not just a label change until persistence is normalized.
-- `Reposition` should be treated as a semantic rewrite, not an alias-only task.
+- `Brace` remains a current Defense maneuver. The `Fortify` rename applies to Champion Fighting Spirit's Combat Readiness option, not the maneuver catalog.
+- `Reposition` is a semantic rewrite and is implemented as current v0.10.5 rules data, not an alias-only task.
 
 ### Trait IDs
 

@@ -90,6 +90,8 @@ Stacking rules: Numeric effects (`MODIFY_STAT`, `MODIFY_ATTRIBUTE`) sum. Grants 
 
 Level 5 Expert Features use existing effect types only. Modeled universal bonuses are expressed as `MODIFY_STAT`, `GRANT_SPELL`, and `GRANT_MANEUVERS`; rules text that does not have a calculator-backed representation is surfaced as `GRANT_ABILITY`. Benefit-level effects are aggregated the same way as direct feature effects, with source attribution using the parent feature and benefit names.
 
+Champion Fighting Spirit's v0.10.5 Combat Readiness text is represented as a `GRANT_ABILITY` with target `combat_readiness_fortify`. The old `combat_readiness_brace` identity is a feature alias only; it must not be treated as a maneuver alias because `Brace` remains a current Defense maneuver.
+
 ---
 
 ## 2.1. GRANT_MOVEMENT Effect

@@ -52,14 +52,24 @@ export const RULES_ALIASES: RulesAliasEntry[] = [
 		note: 'Removed in v0.10.5; old saved characters should not silently drop it.'
 	},
 	{
-		domain: 'maneuver',
+		domain: 'feature',
+		fromId: 'combat_readiness_brace',
+		toId: 'combat_readiness_fortify',
+		fromRulesVersion: RULES_VERSION_010,
+		toRulesVersion: RULES_VERSION_010_5,
+		status: 'alias',
+		compatibilityState: 'editable',
+		note: 'Champion Fighting Spirit option rename; this is not the Brace maneuver.'
+	},
+	{
+		domain: 'feature',
 		fromId: 'Brace',
 		toId: 'Fortify',
 		fromRulesVersion: RULES_VERSION_010,
 		toRulesVersion: RULES_VERSION_010_5,
-		status: 'ambiguous',
-		compatibilityState: 'view-only',
-		note: 'Name-sensitive persistence needs HITL classification before this can be a safe alias.'
+		status: 'alias',
+		compatibilityState: 'editable',
+		note: 'Display-name form of the Champion Fighting Spirit option rename.'
 	},
 	{
 		domain: 'spell',

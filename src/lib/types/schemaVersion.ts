@@ -15,12 +15,40 @@ export interface SchemaVersion {
 	patch: number;
 }
 
-export function parseSchemaVersion(version: string): SchemaVersion {
-	const [major = 0, minor = 0, patch = 0] = version.split('.').map(Number);
+export function normalizeSchemaVersion(version: unknown): string {
+	if (version === undefined || version === null || version === '') {
+		return '2.0.0';
+	}
+
+	if (version === 2 || version === '2') {
+		return CURRENT_SCHEMA_VERSION;
+	}
+
+	if (typeof version === 'number') {
+		return `${version}.0.0`;
+	}
+
+	if (typeof version !== 'string') {
+		return '2.0.0';
+	}
+
+	const trimmed = version.trim();
+	if (/^\d+$/.test(trimmed)) {
+		return trimmed === '2' ? CURRENT_SCHEMA_VERSION : `${trimmed}.0.0`;
+	}
+	if (/^\d+\.\d+$/.test(trimmed)) {
+		return `${trimmed}.0`;
+	}
+	return trimmed;
+}
+
+export function parseSchemaVersion(version: unknown): SchemaVersion {
+	const normalized = normalizeSchemaVersion(version);
+	const [major = 0, minor = 0, patch = 0] = normalized.split('.').map(Number);
 	return { major, minor, patch };
 }
 
-export function compareSchemaVersions(v1: string, v2: string): number {
+export function compareSchemaVersions(v1: unknown, v2: unknown): number {
 	const parsed1 = parseSchemaVersion(v1);
 	const parsed2 = parseSchemaVersion(v2);
 
@@ -37,10 +65,10 @@ export interface CompatibilityCheck {
 }
 
 export function checkSchemaCompatibility(
-	characterVersion: string | undefined,
+	characterVersion: string | number | undefined,
 	currentVersion: string = CURRENT_SCHEMA_VERSION
 ): CompatibilityCheck {
-	if (!characterVersion || characterVersion === '2') {
+	if (!characterVersion || characterVersion === '2' || characterVersion === 2) {
 		// Legacy characters without proper semver
 		return {
 			isCompatible: true,

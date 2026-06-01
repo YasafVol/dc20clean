@@ -43,6 +43,7 @@ import { nullificationSpells } from './nullification';
 import { transmutationSpells } from './transmutation';
 
 import type { Spell } from '../schemas/spell.schema';
+import { resolveAliasId } from '../versioning/aliases';
 
 // All spells combined (125 total)
 export const ALL_SPELLS: Spell[] = [
@@ -58,7 +59,10 @@ export const ALL_SPELLS: Spell[] = [
 
 // Lookup utilities
 export function getSpellById(id: string): Spell | undefined {
-	return ALL_SPELLS.find((s) => s.id === id);
+	return (
+		ALL_SPELLS.find((s) => s.id === id) ??
+		ALL_SPELLS.find((s) => s.id === resolveAliasId('spell', id))
+	);
 }
 
 export function getSpellsBySchool(school: string): Spell[] {

@@ -2,7 +2,7 @@
 
 > Purpose: Persistence architecture for characters and DM Tools: hybrid localStorage/Convex storage, schemas, auth, migrations.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-06-01
 
 ---
 
@@ -35,16 +35,16 @@ The primary data structure for character persistence. Defined in `src/lib/types/
 
 **Key sections:**
 
-| Section        | Fields                                                                   | Description                        |
-| -------------- | ------------------------------------------------------------------------ | ---------------------------------- |
-| Identity       | `id`, `finalName`, `finalPlayerName`, `level`                            | Core character info                |
-| Class/Ancestry | `classId`, `className`, `ancestry1Id`, `ancestry1Name`, etc.             | Build choices                      |
-| Attributes     | `finalMight`, `finalAgility`, `finalCharisma`, `finalIntelligence`       | Core stats                         |
-| Derived Stats  | `finalHPMax`, `finalSPMax`, `finalMPMax`, `finalPD`, `finalAD`, etc.     | Calculated values                  |
-| Selections     | `selectedTraitIds`, `selectedFeatureChoices`, `skillsData`, `tradesData` | User choices                       |
-| Game State     | `characterState`                                                         | Current HP, inventory, notes, etc. |
-| Display Arrays | `resistances?`, `vulnerabilities?`, `senses?`, `combatTraining?`         | Calculated display data (v2.2.0+)  |
-| Metadata       | `createdAt`, `lastModified`, `schemaVersion`                             | Timestamps and version             |
+| Section        | Fields                                                                   | Description                                     |
+| -------------- | ------------------------------------------------------------------------ | ----------------------------------------------- |
+| Identity       | `id`, `finalName`, `finalPlayerName`, `level`                            | Core character info                             |
+| Class/Ancestry | `classId`, `className`, `ancestry1Id`, `ancestry1Name`, etc.             | Build choices                                   |
+| Attributes     | `finalMight`, `finalAgility`, `finalCharisma`, `finalIntelligence`       | Core stats                                      |
+| Derived Stats  | `finalHPMax`, `finalSPMax`, `finalMPMax`, `finalPD`, `finalAD`, etc.     | Calculated values                               |
+| Selections     | `selectedTraitIds`, `selectedFeatureChoices`, `skillsData`, `tradesData` | User choices                                    |
+| Game State     | `characterState`                                                         | Current HP, inventory, notes, etc.              |
+| Display Arrays | `resistances?`, `vulnerabilities?`, `senses?`, `combatTraining?`         | Calculated display data (v2.2.0+)               |
+| Metadata       | `createdAt`, `lastModified`, `schemaVersion`, `rulesVersion`             | Timestamps, storage shape, rules interpretation |
 
 ### 2.2 Display Arrays (v2.2.0+)
 
@@ -365,14 +365,36 @@ const CURRENT_SCHEMA_VERSION = '2.2.0';
 character.schemaVersion = CURRENT_SCHEMA_VERSION;
 ```
 
-**Current Version**: `2.2.0` (as of 2026-02-06)
+**Current Version**: `2.2.0` (as of 2026-06-01)
+
+`schemaVersion` is only the storage-shape version. It must not be used to infer which DC20 rules text a character was built under. Numeric legacy values such as `2` are normalized to semver strings during load/save.
 
 **Version History**:
+
 - `2.0.0`: Initial schema
 - `2.1.0`: Added `selectedFeatureChoices`, migrated `selectedTalents` from array to count-based record
 - `2.2.0`: Added optional display arrays (`resistances`, `vulnerabilities`, `senses`, `combatTraining`)
 
-### 6.2 Auto-Migration
+### 6.2 Rules Versioning
+
+```typescript
+const CURRENT_RULES_VERSION = 'dc20-0.10';
+
+// Missing rulesVersion is inferred as the legacy v0.10 ruleset.
+character.rulesVersion ?? 'dc20-0.10';
+```
+
+`rulesVersion` is the rules interpretation fence. It is additive and is preserved on load, import, save, Convex normalization, draft state, character sheet auto-save, and PDF export routing.
+
+Compatibility states are computed at runtime:
+
+| State              | Load | Sheet render | Edit / level up                | Auto-save                                       | PDF export                       |
+| ------------------ | ---- | ------------ | ------------------------------ | ----------------------------------------------- | -------------------------------- |
+| `editable`         | Yes  | Yes          | Yes                            | Full character save with recalculation          | Yes                              |
+| `upgrade-required` | Yes  | Yes          | Blocked until explicit upgrade | `characterState` only, no recalculation rewrite | Yes                              |
+| `view-only`        | Yes  | Best effort  | Blocked                        | Disabled                                        | Yes if export route is available |
+
+### 6.3 Auto-Migration
 
 When loading characters, `migrateCharacterSchema()` automatically:
 
@@ -382,7 +404,7 @@ When loading characters, `migrateCharacterSchema()` automatically:
 
 **Migration to v2.2.0**: Characters migrating from v2.1.0 or earlier automatically receive empty arrays for the new display fields (`resistances`, `vulnerabilities`, `senses`, `combatTraining`). No user action required — migration happens transparently on load.
 
-### 6.3 localStorage → Convex Migration
+### 6.4 localStorage → Convex Migration
 
 **Not automatic** - users must:
 
@@ -390,7 +412,7 @@ When loading characters, `migrateCharacterSchema()` automatically:
 2. Sign in to Convex
 3. Import characters (existing feature)
 
-### 6.4 Convex Schema Update Workflow
+### 6.5 Convex Schema Update Workflow
 
 When validators or table definitions change in `convex/`:
 
@@ -472,6 +494,5 @@ const saveCharacterData = async (character: SavedCharacter) => {
 
 ---
 
-> Last updated: 2026-02-06
+> Last updated: 2026-06-01
 > Maintainer: @DC20Clean-Team
-

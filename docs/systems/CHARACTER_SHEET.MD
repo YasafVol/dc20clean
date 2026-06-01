@@ -2,7 +2,7 @@
 
 > Purpose: End-to-end map of Character Sheet UI: architecture, components, data sources, and interactions.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-06-01
 
 ---
 
@@ -11,95 +11,111 @@
 The character sheet uses a **context provider pattern** with a reducer for state management:
 
 1. `CharacterSheetRouter.tsx` ? entry point; wraps everything in `CharacterSheetProvider`
-2. `CharacterSheetProvider` (in `hooks/`) ? loads character from storage, runs `calculateCharacterWithBreakdowns()`, provides computed state via context
+2. `CharacterSheetProvider` (in `hooks/`) ? loads character from storage, checks compatibility, runs `calculateCharacterWithBreakdowns()` only when full recalculation is allowed, provides computed state via context
 3. `useCharacterSheetReducer` ? reducer for local sheet state (resource changes, condition toggles, inventory edits)
 4. Layout components render sections based on breakpoint
 
-**Data flow**: Storage ? `CharacterSheetProvider` ? `calculateCharacterWithBreakdowns()` ? context ? section components
+**Data flow**: Storage ? `CharacterSheetProvider` ? compatibility classifier ? calculator/context ? section components
+
+Compatibility states from the rules-version fence affect sheet persistence:
+
+| State              | Sheet behavior                                                                                                            |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| `editable`         | Normal render and full auto-save with recalculated values                                                                 |
+| `upgrade-required` | Render allowed; auto-save is limited to `characterState` so old rules data is not silently recalculated under newer rules |
+| `view-only`        | Render allowed where possible; auto-save is disabled                                                                      |
 
 ---
 
 ## 2. Key Files
 
-| File | Role |
-| --- | --- |
-| `CharacterSheetRouter.tsx` | Entry point; provides context, routes to layout |
-| `CharacterSheetRedesign.tsx` | Primary responsive layout (mobile/tablet/desktop via CSS) |
-| `CharacterSheetDesktop.tsx` | Desktop-only layout variant |
-| `CharacterSheetMobile.tsx` | Mobile layout with tab navigation |
-| `CharacterSheetClean.tsx` | Legacy clean layout (desktop/mobile conditional) |
-| `hooks/CharacterSheetProvider.tsx` | Context provider with state management, auto-save, selector hooks |
-| `hooks/useCharacterSheetReducer.ts` | Reducer for local character sheet state |
-| `hooks/useBreakpoint.ts` | Responsive breakpoint detection |
+| File                                | Role                                                              |
+| ----------------------------------- | ----------------------------------------------------------------- |
+| `CharacterSheetRouter.tsx`          | Entry point; provides context, routes to layout                   |
+| `CharacterSheetRedesign.tsx`        | Primary responsive layout (mobile/tablet/desktop via CSS)         |
+| `CharacterSheetDesktop.tsx`         | Desktop-only layout variant                                       |
+| `CharacterSheetMobile.tsx`          | Mobile layout with tab navigation                                 |
+| `CharacterSheetClean.tsx`           | Legacy clean layout (desktop/mobile conditional)                  |
+| `hooks/CharacterSheetProvider.tsx`  | Context provider with state management, auto-save, selector hooks |
+| `hooks/useCharacterSheetReducer.ts` | Reducer for local character sheet state                           |
+| `hooks/useBreakpoint.ts`            | Responsive breakpoint detection                                   |
 
 ---
 
 ## 3. Sections and Data Sources
 
 ### Core Stats
-| Component | Data Source | Description |
-| --- | --- | --- |
-| `components/new/HeroSection.tsx` | Calculator breakdowns | HP/SP/MP/Rest/Grit points and defenses |
-| `components/new/AttributeCard.tsx` | Calculator `finalAttributes` | Individual attribute display |
-| `components/Attributes.tsx` | Calculator attributes + skills | Attributes with grouped skills |
-| `components/Resources.tsx` | Calculator breakdowns, class tables | HP/SP/MP resource management (potion-style UI) |
-| `components/Defenses.tsx` | Calculator `pd`/`ad` breakdowns | PD, AD with manual override support |
+
+| Component                          | Data Source                         | Description                                    |
+| ---------------------------------- | ----------------------------------- | ---------------------------------------------- |
+| `components/new/HeroSection.tsx`   | Calculator breakdowns               | HP/SP/MP/Rest/Grit points and defenses         |
+| `components/new/AttributeCard.tsx` | Calculator `finalAttributes`        | Individual attribute display                   |
+| `components/Attributes.tsx`        | Calculator attributes + skills      | Attributes with grouped skills                 |
+| `components/Resources.tsx`         | Calculator breakdowns, class tables | HP/SP/MP resource management (potion-style UI) |
+| `components/Defenses.tsx`          | Calculator `pd`/`ad` breakdowns     | PD, AD with manual override support            |
 
 ### Combat
-| Component | Data Source | Description |
-| --- | --- | --- |
-| `components/Combat.tsx` | Calculator combat stats | Action points, combat stats, condition toggles |
-| `components/Attacks.tsx` | Persisted `characterState.attacks` | Weapon attack management |
-| `components/Movement.tsx` | Calculator `movements`, `senses`, `resistances`, `vulnerabilities`, `combatTraining` arrays | Movement speeds (ground, fly, swim, climb, burrow), alternative movements, senses, resistances/vulnerabilities, combat training badges |
-| `components/DiceRoller.tsx` | User input | Dice rolling with modifiers |
+
+| Component                   | Data Source                                                                                 | Description                                                                                                                            |
+| --------------------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `components/Combat.tsx`     | Calculator combat stats                                                                     | Action points, combat stats, condition toggles                                                                                         |
+| `components/Attacks.tsx`    | Persisted `characterState.attacks`                                                          | Weapon attack management                                                                                                               |
+| `components/Movement.tsx`   | Calculator `movements`, `senses`, `resistances`, `vulnerabilities`, `combatTraining` arrays | Movement speeds (ground, fly, swim, climb, burrow), alternative movements, senses, resistances/vulnerabilities, combat training badges |
+| `components/DiceRoller.tsx` | User input                                                                                  | Dice rolling with modifiers                                                                                                            |
 
 ### Abilities
-| Component | Data Source | Description |
-| --- | --- | --- |
-| `components/Spells.tsx` | `SavedCharacter.spells` + Spells System data | Spellbook with filtering/management |
-| `components/Maneuvers.tsx` | `SavedCharacter.maneuvers` + Martials data | Maneuver management with type filtering |
-| `components/Features.tsx` | Class/trait feature definitions | Character features/traits display |
-| `components/EnhancedFeatures.tsx` | Feature definitions + effect attribution | Enhanced features with source attribution |
+
+| Component                         | Data Source                                  | Description                               |
+| --------------------------------- | -------------------------------------------- | ----------------------------------------- |
+| `components/Spells.tsx`           | `SavedCharacter.spells` + Spells System data | Spellbook with filtering/management       |
+| `components/Maneuvers.tsx`        | `SavedCharacter.maneuvers` + Martials data   | Maneuver management with type filtering   |
+| `components/Features.tsx`         | Class/trait feature definitions              | Character features/traits display         |
+| `components/EnhancedFeatures.tsx` | Feature definitions + effect attribution     | Enhanced features with source attribution |
 
 ### Background
-| Component | Data Source | Description |
-| --- | --- | --- |
-| `components/KnowledgeTrades.tsx` | Calculator mastery data | Knowledge and trade skills |
-| `components/Languages.tsx` | Calculator language data | Language proficiencies |
+
+| Component                        | Data Source              | Description                |
+| -------------------------------- | ------------------------ | -------------------------- |
+| `components/KnowledgeTrades.tsx` | Calculator mastery data  | Knowledge and trade skills |
+| `components/Languages.tsx`       | Calculator language data | Language proficiencies     |
 
 ### Inventory and Tracking
-| Component | Data Source | Description |
-| --- | --- | --- |
-| `components/Inventory.tsx` | `characterState.inventory` | Inventory item management |
-| `components/Currency.tsx` | `characterState.inventory.currency` | Gold/silver/copper tracker |
-| `components/DeathExhaustion.tsx` | Calculator + persisted state | Death saves and exhaustion tracking |
-| `components/PlayerNotes.tsx` | Persisted notes field | Player notes textarea |
+
+| Component                        | Data Source                         | Description                         |
+| -------------------------------- | ----------------------------------- | ----------------------------------- |
+| `components/Inventory.tsx`       | `characterState.inventory`          | Inventory item management           |
+| `components/Currency.tsx`        | `characterState.inventory.currency` | Gold/silver/copper tracker          |
+| `components/DeathExhaustion.tsx` | Calculator + persisted state        | Death saves and exhaustion tracking |
+| `components/PlayerNotes.tsx`     | Persisted notes field               | Player notes textarea               |
 
 ### Conditions
-| Component | Data Source | Description |
-| --- | --- | --- |
-| `components/Conditions.tsx` | `conditionAggregator` output | Condition immunities/resistances/vulnerabilities (wired up, displays grouped condition interactions) |
-| `components/ActiveConditionsTracker.tsx` | Local state | Active condition toggle tracker |
-| `components/ConditionsReference.tsx` | `conditions.data.ts` | Complete conditions reference guide |
-| `components/ConditionBadge.tsx` | Effect data | ADV/DisADV condition badges |
+
+| Component                                | Data Source                  | Description                                                                                          |
+| ---------------------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `components/Conditions.tsx`              | `conditionAggregator` output | Condition immunities/resistances/vulnerabilities (wired up, displays grouped condition interactions) |
+| `components/ActiveConditionsTracker.tsx` | Local state                  | Active condition toggle tracker                                                                      |
+| `components/ConditionsReference.tsx`     | `conditions.data.ts`         | Complete conditions reference guide                                                                  |
+| `components/ConditionBadge.tsx`          | Effect data                  | ADV/DisADV condition badges                                                                          |
 
 ### Popups/Modals
-| Component | Description |
-| --- | --- |
-| `components/FeaturePopup.tsx` | Feature details |
-| `components/SpellPopup.tsx` | Spell details |
-| `components/AttackPopup.tsx` | Attack/weapon details |
-| `components/WeaponPopup.tsx` | Weapon details |
-| `components/InventoryPopup.tsx` | Inventory item details |
+
+| Component                           | Description             |
+| ----------------------------------- | ----------------------- |
+| `components/FeaturePopup.tsx`       | Feature details         |
+| `components/SpellPopup.tsx`         | Spell details           |
+| `components/AttackPopup.tsx`        | Attack/weapon details   |
+| `components/WeaponPopup.tsx`        | Weapon details          |
+| `components/InventoryPopup.tsx`     | Inventory item details  |
 | `components/DefenseChangeModal.tsx` | Defense manual override |
 
 ### UI Utilities
-| Component | Description |
-| --- | --- |
-| `components/AutoSaveIndicator.tsx` | Auto-save status display |
-| `components/StatTooltips.tsx` | Stat breakdown tooltips |
+
+| Component                             | Description                               |
+| ------------------------------------- | ----------------------------------------- |
+| `components/AutoSaveIndicator.tsx`    | Auto-save status display                  |
+| `components/StatTooltips.tsx`         | Stat breakdown tooltips                   |
 | `components/EnhancedStatTooltips.tsx` | Enhanced tooltips with effect attribution |
-| `components/FloatingBackground.tsx` | Background image |
+| `components/FloatingBackground.tsx`   | Background image                          |
 
 ### Mobile-Specific (`components/mobile/`)
 
@@ -117,18 +133,21 @@ Mobile components mirror desktop sections with touch-optimized layouts:
 The `Movement.tsx` component displays multiple panels with combat-relevant information:
 
 ### Alternative Movements
+
 - **Climb and Swim**: Always displayed (even if default/slowed), with "(Slowed)" label for default values
 - **Fly, Burrow, Glide**: Only shown when granted (non-default)
 - Each movement shows speed in Spaces with source attribution via tooltip
 - Data source: `calculation.movements[]` array
 
 ### Senses
+
 - Lists all granted senses (Darkvision, Tremorsense, etc.) with range in Spaces
 - Each sense shows source attribution via tooltip
 - Data source: `calculation.senses[]` array
 - Only displayed when `senses.length > 0`
 
 ### Resistances/Vulnerabilities
+
 - Lists damage resistances and vulnerabilities with source attribution
 - Resistances shown in blue, vulnerabilities in red
 - Format: "Fire Resistance (Half)" or "Radiant Vulnerability (1)"
@@ -137,6 +156,7 @@ The `Movement.tsx` component displays multiple panels with combat-relevant infor
 - Only displayed when at least one resistance or vulnerability exists
 
 ### Combat Training
+
 - Shows weapon/armor/shield training as badges
 - Displays training types (e.g., "Weapons", "Heavy Armor", "All Shields")
 - Each badge shows source attribution via tooltip
@@ -160,6 +180,7 @@ The `Movement.tsx` component displays multiple panels with combat-relevant infor
 - Feature info buttons open details from class/trait definitions
 - Spells/maneuvers add/remove persist and remain in sync after refresh
 - Auto-save triggers on state changes
+- Old characters with a different `rulesVersion` do not receive a full recalculation save unless classified as `editable`
 
 ---
 

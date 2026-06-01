@@ -21,6 +21,7 @@ import {
 	calculateCharacterWithBreakdowns,
 	convertToEnhancedBuildData
 } from '../../../lib/services/enhancedCharacterCalculator';
+import { assessCharacterCompatibility } from '../../../lib/rulesdata/versioning/compatibility';
 import { ancestriesData } from '../../../lib/rulesdata/ancestries/ancestries';
 import { traitsData } from '../../../lib/rulesdata/ancestries/traits';
 import { tradesData } from '../../../lib/rulesdata/trades';
@@ -251,6 +252,26 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 
 			logger.debug('storage', 'Setting save status', { status: 'saving' });
 			try {
+				const compatibility = assessCharacterCompatibility(character);
+				if (compatibility.autoSaveMode === 'none') {
+					logger.warn('storage', 'Auto-save skipped for view-only character', {
+						characterId: character.id,
+						reasons: compatibility.reasons
+					});
+					lastSavedHash.current = currentHash;
+					setSaveStatus('idle');
+					return;
+				}
+
+				if (compatibility.autoSaveMode === 'characterState') {
+					await storage.saveCharacterState(character.id, character.characterState);
+					lastSavedHash.current = currentHash;
+					setSaveStatus('saved');
+					if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+					saveTimeoutRef.current = setTimeout(() => setSaveStatus('idle'), 2000);
+					return;
+				}
+
 				// Run enhanced calculator to get updated stats
 				const calculationData = convertToEnhancedBuildData(character);
 				const calculationResult = calculateCharacterWithBreakdowns(calculationData);
@@ -280,6 +301,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 
 				// Save the entire character (includes spells, maneuvers, etc.)
 				await storage.saveCharacter(updatedCharacter);
+				lastSavedHash.current = currentHash;
 
 				logger.debug('storage', 'Character save successful', { characterId: character.id });
 				logger.debug('storage', 'Character sheet data saved successfully', {
@@ -1024,4 +1046,3 @@ export function useCharacterConditions() {
 		return calculateCharacterConditions(input);
 	}, [state.character]);
 }
-

@@ -3,6 +3,7 @@
 > Purpose
 >
 > Capture the architecture, scope, and acceptance criteria for exporting a calculated character sheet to the official DC20 fillable PDF. This document is the system overview aligned with existing docs (no separate planning spec is currently tracked in-repo).
+> Last Updated: 2026-06-01
 
 ---
 
@@ -11,6 +12,7 @@
 - Deliver an entirely client-side export flow that produces an editable PDF.
 - **Default version: DC20 v0.10** (with v0.9.5 fallback available)
 - Keep the PDF field mapping and DTO definitions versioned so we can evolve the sheet without breaking prior exports.
+- Route PDF template selection from character `rulesVersion`; v0.10 and v0.10.5 currently both route to the checked-in v0.10 fillable template until a v0.10.5 template and field map exist.
 - Minimize bundle impact through lazy loading and on-demand work.
 - **Authentication Required**: PDF export is gated behind user authentication (see Section 10).
 
@@ -26,6 +28,7 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
   - `src/lib/pdf/fieldMap.dc20-0.10.ts` — Default v0.10 field map
   - `src/lib/pdf/fieldMap.dc20-0.9.5.ts` — Legacy v0.9.5 field map
 - **PDF Filler** — `src/lib/pdf/fillPdf.ts` loads the template, applies the field map with `pdf-lib`, and returns a Blob (optionally flattened). Supports version selection.
+- **Rules Version Routing** — `src/lib/rulesdata/versioning/compatibility.ts` maps a character `rulesVersion` to the supported PDF template version.
 - **PDF Templates**:
   - `src/lib/pdf/010/DC20 Beta 0.10 (fillable) Character Sheet.pdf`
   - `src/lib/pdf/095/DC20_Beta_0_9_5_(fillable)_Character_Sheet.pdf`
@@ -62,10 +65,10 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 ## 4. Runtime Flow
 
 1. **Trigger** — User clicks “Export PDF” in the character sheet UI.
-2. **Preparation** — UI gathers the current editable character, normalizes it with `convertToEnhancedBuildData`, and runs `calculateCharacterWithBreakdowns`.
+2. **Preparation** — UI gathers the current character, checks compatibility, normalizes it with `convertToEnhancedBuildData`, and runs `calculateCharacterWithBreakdowns` only when the compatibility policy allows it.
 3. **Transformation** — `transformCalculatedCharacterToPdfData(characterResult)` produces a validated `PdfExportData` object.
 4. **Lazy Load** — UI dynamically imports `fillPdfFromData` (and `pdf-lib`) to avoid upfront bundle cost.
-5. **Fill & Save** — `fillPdfFromData` loads the template via `?url`, fills fields based on the versioned map (default: v0.10), optionally flattens, and returns a Blob for download.
+5. **Fill & Save** — `fillPdfFromData` loads the template via `?url`, fills fields based on the rules-version-routed map (default: v0.10), optionally flattens, and returns a Blob for download.
 6. **Download** — UI uses `URL.createObjectURL` (or `file-saver`) to prompt the user with a sanitized filename (e.g., `Aela_Level_6_Ranger.pdf`).
 7. **Feedback** — UI surfaces success or error notifications, resetting loading state accordingly.
 
@@ -188,5 +191,5 @@ import { FeatureGateButton } from '@/components/auth';
 
 ---
 
-> Last updated: 2026-01-25 (Added authentication gating)
+> Last updated: 2026-06-01
 > Maintainer: @DC20Clean-Team

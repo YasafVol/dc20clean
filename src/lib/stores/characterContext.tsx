@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useReducer, useMemo, useEffect, ReactNode } from 'react';
 import type { CharacterInProgress } from '../types/characterProgress.types';
+import { CURRENT_SCHEMA_VERSION, normalizeSchemaVersion } from '../types/schemaVersion';
+import { CURRENT_RULES_VERSION, normalizeRulesVersion } from '../rulesdata/versioning/rulesVersion';
 
 import {
 	calculateCharacterWithBreakdowns,
@@ -46,7 +48,8 @@ export interface CharacterInProgressStoreData
 	skillToTradeConversions?: number;
 	tradeToSkillConversions?: number;
 	tradeToLanguageConversions?: number;
-	schemaVersion?: number;
+	schemaVersion?: string;
+	rulesVersion?: string;
 	selectedTalents?: Record<string, number>; // Changed from string[] to count-based
 	pathPointAllocations?: { martial?: number; spellcasting?: number };
 	selectedMulticlassOption?:
@@ -109,7 +112,8 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
 	skillToTradeConversions: 0,
 	tradeToSkillConversions: 0,
 	tradeToLanguageConversions: 0,
-	schemaVersion: 2
+	schemaVersion: CURRENT_SCHEMA_VERSION,
+	rulesVersion: CURRENT_RULES_VERSION
 };
 
 /**
@@ -154,6 +158,8 @@ function loadCharacterDraft(): CharacterInProgressStoreData | null {
 		// Convert date strings back to Date objects
 		return {
 			...draft,
+			schemaVersion: normalizeSchemaVersion(draft.schemaVersion || CURRENT_SCHEMA_VERSION),
+			rulesVersion: normalizeRulesVersion(draft.rulesVersion),
 			createdAt: draft.createdAt ? new Date(draft.createdAt) : new Date(),
 			updatedAt: draft.updatedAt ? new Date(draft.updatedAt) : new Date(),
 			// Ensure cache is cleared
@@ -345,8 +351,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 	const getCurrentFlowType = (): 'create' | 'levelup' => {
 		// Check if we're in level-up mode by looking at window.location
 		const isLevelUpPath =
-			window.location.pathname.includes('level-up') ||
-			window.location.search.includes('levelup');
+			window.location.pathname.includes('level-up') || window.location.search.includes('levelup');
 		return isLevelUpPath ? 'levelup' : 'create';
 	};
 

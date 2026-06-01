@@ -14,9 +14,7 @@ import type {
 } from '../types/effectSystem';
 // SpellSource, SpellSchool, SpellTag moved to calculatorModules/spellSystem.ts
 // ModifyMasteryCapEffect, IncreaseMasteryCapEffect moved to calculatorModules/validation.ts
-import {
-	resolveClassProgression
-} from '../rulesdata/classes-data/classProgressionResolver';
+import { resolveClassProgression } from '../rulesdata/classes-data/classProgressionResolver';
 import { classesData } from '../rulesdata/loaders/class.loader';
 // findTalentById moved to calculatorModules/effectCollection.ts
 // getLevelCaps moved to calculatorModules/validation.ts and statCalculation.ts
@@ -70,6 +68,7 @@ import {
 import { calculateBudgets } from './calculatorModules/budgetCalculation';
 import { calculateDerivedStats } from './calculatorModules/statCalculation';
 import { runValidation } from './calculatorModules/validation';
+import { normalizeSelectedTalents } from '../utils/storageUtils';
 
 // CrossPathGrants, aggregatePathBenefits, checkFlavorFeatureAutoGrant moved to calculatorModules/progressionAggregation.ts
 
@@ -105,7 +104,7 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 		featureChoices: contextData.selectedFeatureChoices ?? {},
 		selectedTalents:
 			contextData.selectedTalents && typeof contextData.selectedTalents === 'object'
-				? contextData.selectedTalents
+				? normalizeSelectedTalents(contextData.selectedTalents)
 				: {},
 		selectedSubclass: contextData.selectedSubclass,
 
@@ -124,9 +123,7 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 		manualPD: contextData.manualPD,
 		manualAD: contextData.manualAD,
 		manualPDR: contextData.manualPDR,
-		activeConditions: Object.entries(
-			contextData.characterState?.ui?.activeConditions ?? {}
-		)
+		activeConditions: Object.entries(contextData.characterState?.ui?.activeConditions ?? {})
 			.filter(([, isActive]) => Boolean(isActive))
 			.map(([conditionId]) => conditionId),
 
@@ -301,16 +298,42 @@ export function calculateCharacterWithBreakdowns(
 	);
 
 	// 4. Calculate all derived stats and breakdowns (via statCalculation module)
-	const derivedStats = calculateDerivedStats(buildData, resolvedEffects, activeConditions, progressionGains);
+	const derivedStats = calculateDerivedStats(
+		buildData,
+		resolvedEffects,
+		activeConditions,
+		progressionGains
+	);
 	const {
-		finalMight, finalAgility, finalCharisma, finalIntelligence,
-		combatMastery, primeModifier, primeAttribute, usePrimeCapRule,
-		finalPD, finalAD, finalPDR,
-		finalSaveDC, finalSaveMight, finalSaveAgility, finalSaveCharisma, finalSaveIntelligence,
-		finalDeathThreshold, finalGritPoints, finalInitiativeBonus,
-		attackSpellCheckBase, breakdowns,
-		finalHPMax, finalSPMax, finalMPMax, finalMoveSpeed, finalJumpDistance,
-		finalAttributePoints, finalRestPoints, finalMartialCheck
+		finalMight,
+		finalAgility,
+		finalCharisma,
+		finalIntelligence,
+		combatMastery,
+		primeModifier,
+		primeAttribute,
+		usePrimeCapRule,
+		finalPD,
+		finalAD,
+		finalPDR,
+		finalSaveDC,
+		finalSaveMight,
+		finalSaveAgility,
+		finalSaveCharisma,
+		finalSaveIntelligence,
+		finalDeathThreshold,
+		finalGritPoints,
+		finalInitiativeBonus,
+		attackSpellCheckBase,
+		breakdowns,
+		finalHPMax,
+		finalSPMax,
+		finalMPMax,
+		finalMoveSpeed,
+		finalJumpDistance,
+		finalAttributePoints,
+		finalRestPoints,
+		finalMartialCheck
 	} = derivedStats;
 
 	// --- Spell System (M3.20) ---
@@ -533,4 +556,3 @@ export function calculateCharacterWithBreakdowns(
 		isFromCache: false
 	};
 }
-

@@ -13,6 +13,7 @@
 
 import type { Maneuver, ManeuverEnhancement } from '../schemas/maneuver.schema';
 import { ManeuverType } from '../schemas/maneuver.schema';
+import { resolveAliasId } from '../versioning/aliases';
 
 export const maneuvers: Maneuver[] = [
 	{
@@ -907,7 +908,10 @@ export const allManeuvers = maneuvers;
 
 /** Get maneuver by ID */
 export function getManeuverById(id: string): Maneuver | undefined {
-	return maneuvers.find((m) => m.id === id);
+	return (
+		maneuvers.find((m) => m.id === id) ??
+		maneuvers.find((m) => m.id === resolveAliasId('maneuver', id))
+	);
 }
 
 /** Get maneuvers by type */

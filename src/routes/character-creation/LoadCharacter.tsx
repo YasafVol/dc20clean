@@ -3,8 +3,13 @@ import { useTranslation } from 'react-i18next';
 import type { SavedCharacter } from '../../lib/types/dataContracts';
 import { getInitializedCharacterState } from '../../lib/utils/storageUtils';
 import { getDefaultStorage } from '../../lib/storage';
-import { checkSchemaCompatibility } from '../../lib/types/schemaVersion';
+import { checkSchemaCompatibility, normalizeSchemaVersion } from '../../lib/types/schemaVersion';
 import { migrateCharacterSchema } from '../../lib/utils/schemaMigration';
+import {
+	assessCharacterCompatibility,
+	getPdfVersionForCharacter
+} from '../../lib/rulesdata/versioning/compatibility';
+import { normalizeRulesVersion } from '../../lib/rulesdata/versioning/rulesVersion';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 // Shared UI components
@@ -86,6 +91,11 @@ function LoadCharacter() {
 	}, [storage]);
 
 	const handleCharacterClick = (character: SavedCharacter) => {
+		const compatibility = assessCharacterCompatibility(character);
+		if (!compatibility.canEdit) {
+			alert(compatibility.reasons[0] || 'This character must be upgraded before editing.');
+			return;
+		}
 		// Edit character
 		navigate(`/character/${character.id}/edit`, { state: { editCharacter: character } });
 	};
@@ -98,6 +108,11 @@ function LoadCharacter() {
 	// Level up handler
 	const handleLevelUp = async (character: SavedCharacter, event: React.MouseEvent) => {
 		event.stopPropagation();
+		const rulesCompatibility = assessCharacterCompatibility(character);
+		if (!rulesCompatibility.canLevelUp) {
+			alert(rulesCompatibility.reasons[0] || 'This character must be upgraded before leveling up.');
+			return;
+		}
 
 		// Check schema compatibility
 		const compatibility = checkSchemaCompatibility(character.schemaVersion);
@@ -224,7 +239,8 @@ function LoadCharacter() {
 				id: characterToImport.id || generateNewCharacterId(),
 				importedAt: currentTime,
 				lastModified: currentTime, // Always update to current time when importing
-				schemaVersion: 2,
+				schemaVersion: normalizeSchemaVersion(characterToImport.schemaVersion),
+				rulesVersion: normalizeRulesVersion(characterToImport.rulesVersion),
 				// Ensure character state exists
 				characterState:
 					characterToImport.characterState || getInitializedCharacterState(characterToImport),
@@ -244,7 +260,9 @@ function LoadCharacter() {
 			setSavedCharacters(updatedCharacters);
 
 			setImportMessage({
-				text: t('loadCharacter.successImported', { name: characterToImport.finalName || characterToImport.id }),
+				text: t('loadCharacter.successImported', {
+					name: characterToImport.finalName || characterToImport.id
+				}),
 				type: 'success'
 			});
 
@@ -346,7 +364,10 @@ function LoadCharacter() {
 				saved: character,
 				denorm
 			});
-			const blob = await fillPdfFromData(pdfData, { flatten: false, version: '0.10' });
+			const blob = await fillPdfFromData(pdfData, {
+				flatten: false,
+				version: getPdfVersionForCharacter(character)
+			});
 			const safeName = (character.finalName || character.id || 'Character')
 				.replace(/[^A-Za-z0-9]+/g, '_')
 				.replace(/^_+|_+$/g, '')
@@ -417,16 +438,23 @@ function LoadCharacter() {
 							whileHover={{ scale: 1.02 }}
 							whileTap={{ scale: 0.98 }}
 						>
-							<CharacterName>{character.finalName || t('loadCharacter.unnamedCharacter')}</CharacterName>
+							<CharacterName>
+								{character.finalName || t('loadCharacter.unnamedCharacter')}
+							</CharacterName>
 
-							<PlayerName>{t('loadCharacter.playerPrefix')}{character.finalPlayerName || t('loadCharacter.unknown')}</PlayerName>
+							<PlayerName>
+								{t('loadCharacter.playerPrefix')}
+								{character.finalPlayerName || t('loadCharacter.unknown')}
+							</PlayerName>
 
 							<CharacterStats>
 								<StatBlock>
 									<StatLabel>{t('loadCharacter.raceLabel')}</StatLabel>
 									<StatValue>
 										{formatAncestry(
-											character.ancestry1Name || character.ancestry1Id || t('loadCharacter.unknown'),
+											character.ancestry1Name ||
+												character.ancestry1Id ||
+												t('loadCharacter.unknown'),
 											character.ancestry2Name || character.ancestry2Id
 										)}
 									</StatValue>
@@ -434,7 +462,9 @@ function LoadCharacter() {
 
 								<StatBlock>
 									<StatLabel>{t('loadCharacter.classLabel')}</StatLabel>
-									<StatValue>{character.className || character.classId || t('loadCharacter.unknown')}</StatValue>
+									<StatValue>
+										{character.className || character.classId || t('loadCharacter.unknown')}
+									</StatValue>
 								</StatBlock>
 
 								<StatBlock>
@@ -444,11 +474,15 @@ function LoadCharacter() {
 							</CharacterStats>
 
 							<CharacterDates>
-								{t('loadCharacter.createdPrefix')}{formatDate(character.createdAt || character.completedAt)}
+								{t('loadCharacter.createdPrefix')}
+								{formatDate(character.createdAt || character.completedAt)}
 								{character.lastModified &&
 									character.lastModified !== character.createdAt &&
 									character.lastModified !== character.completedAt && (
-										<span>{t('loadCharacter.modifiedPrefix')}{formatDate(character.lastModified)}</span>
+										<span>
+											{t('loadCharacter.modifiedPrefix')}
+											{formatDate(character.lastModified)}
+										</span>
 									)}
 							</CharacterDates>
 
@@ -517,9 +551,7 @@ function LoadCharacter() {
 						>
 							<ModalHeader>
 								<ModalTitle $variant="success">{t('loadCharacter.importModalTitle')}</ModalTitle>
-								<ModalDescription>
-									{t('loadCharacter.importModalDescription')}
-								</ModalDescription>
+								<ModalDescription>{t('loadCharacter.importModalDescription')}</ModalDescription>
 							</ModalHeader>
 
 							<ModalContent>
@@ -581,7 +613,8 @@ function LoadCharacter() {
 							<ModalHeader>
 								<ModalTitle $variant="danger">{t('loadCharacter.deleteModalTitle')}</ModalTitle>
 								<ModalDescription>
-									{t('loadCharacter.deleteModalQuestion')} "{characterToDelete?.finalName || t('loadCharacter.unnamedCharacter')}
+									{t('loadCharacter.deleteModalQuestion')} "
+									{characterToDelete?.finalName || t('loadCharacter.unnamedCharacter')}
 									"?
 									<br />
 									{t('loadCharacter.deleteModalWarning')}

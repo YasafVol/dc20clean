@@ -246,25 +246,41 @@ const characterValidator = {
 	),
 
 	// Calculated display arrays (optional, regenerated from calculator)
-	resistances: v.optional(v.array(v.object({
-		type: v.string(),
-		value: v.union(v.number(), v.string()),
-		source: v.string()
-	}))),
-	vulnerabilities: v.optional(v.array(v.object({
-		type: v.string(),
-		value: v.union(v.number(), v.string()),
-		source: v.string()
-	}))),
-	senses: v.optional(v.array(v.object({
-		type: v.string(),
-		range: v.number(),
-		source: v.string()
-	}))),
-	combatTraining: v.optional(v.array(v.object({
-		type: v.string(),
-		source: v.string()
-	}))),
+	resistances: v.optional(
+		v.array(
+			v.object({
+				type: v.string(),
+				value: v.union(v.number(), v.string()),
+				source: v.string()
+			})
+		)
+	),
+	vulnerabilities: v.optional(
+		v.array(
+			v.object({
+				type: v.string(),
+				value: v.union(v.number(), v.string()),
+				source: v.string()
+			})
+		)
+	),
+	senses: v.optional(
+		v.array(
+			v.object({
+				type: v.string(),
+				range: v.number(),
+				source: v.string()
+			})
+		)
+	),
+	combatTraining: v.optional(
+		v.array(
+			v.object({
+				type: v.string(),
+				source: v.string()
+			})
+		)
+	),
 
 	// Spells and maneuvers at root level
 	spells: v.array(v.any()), // SpellData[]
@@ -285,7 +301,8 @@ const characterValidator = {
 	createdAt: v.string(),
 	lastModified: v.string(),
 	completedAt: v.string(),
-	schemaVersion: v.string()
+	schemaVersion: v.string(),
+	rulesVersion: v.optional(v.string())
 };
 
 // ============================================================================
@@ -630,4 +647,3 @@ export default defineSchema({
 		.index('by_approval_status', ['approvalStatus'])
 		.index('by_user_and_deleted', ['userId', 'deletedAt'])
 });
-

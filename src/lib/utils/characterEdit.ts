@@ -4,6 +4,9 @@
 import type { CharacterInProgressStoreData } from '../stores/characterContext';
 import type { SavedCharacter } from '../types/dataContracts';
 import { getCharacterState, updateCharacterState } from './characterState';
+import { CURRENT_SCHEMA_VERSION, normalizeSchemaVersion } from '../types/schemaVersion';
+import { normalizeRulesVersion } from '../rulesdata/versioning/rulesVersion';
+import { normalizeSelectedTalents } from './storageUtils';
 import { traitsData } from '../rulesdata/ancestries/traits';
 import { ALL_SPELLS as allSpells } from '../rulesdata/spells-data';
 import { getDefaultStorage } from '../storage';
@@ -76,26 +79,16 @@ export const convertCharacterToInProgress = (
 		})(),
 		// Convert ManeuverData[] back to string[] (maneuver names)
 		selectedManeuvers: Array.isArray(savedCharacter.maneuvers)
-			? savedCharacter.maneuvers.map((m: any) => (typeof m === 'string' ? m : m.name)).filter(Boolean)
+			? savedCharacter.maneuvers
+					.map((m: any) => (typeof m === 'string' ? m : m.name))
+					.filter(Boolean)
 			: [],
 		// Mastery limit elevations (default empty - will be populated during editing)
 		skillMasteryLimitElevations: {},
 		tradeMasteryLimitElevations: {},
 		// CRITICAL: Restore leveling choices for path bonuses and stat calculation
 		pathPointAllocations: savedCharacter.pathPointAllocations || {},
-		selectedTalents: (() => {
-			// Convert string[] back to Record<string, number> if needed
-			const raw = savedCharacter.selectedTalents;
-			if (!raw) return {};
-			if (Array.isArray(raw)) {
-				const record: Record<string, number> = {};
-				raw.forEach((id: string) => {
-					record[id] = (record[id] || 0) + 1;
-				});
-				return record;
-			}
-			return typeof raw === 'object' ? raw : {};
-		})(),
+		selectedTalents: normalizeSelectedTalents(savedCharacter.selectedTalents as any),
 		selectedSubclass: savedCharacter.selectedSubclass,
 		selectedMulticlassOption: savedCharacter.selectedMulticlassOption,
 		selectedMulticlassClass: savedCharacter.selectedMulticlassClass,
@@ -104,8 +97,8 @@ export const convertCharacterToInProgress = (
 		skillToTradeConversions: savedCharacter.skillToTradeConversions || 0,
 		tradeToSkillConversions: savedCharacter.tradeToSkillConversions || 0,
 		tradeToLanguageConversions: savedCharacter.tradeToLanguageConversions || 0,
-		schemaVersion:
-			typeof savedCharacter.schemaVersion === 'number' ? savedCharacter.schemaVersion : 2
+		schemaVersion: normalizeSchemaVersion(savedCharacter.schemaVersion || CURRENT_SCHEMA_VERSION),
+		rulesVersion: normalizeRulesVersion(savedCharacter.rulesVersion)
 	};
 };
 

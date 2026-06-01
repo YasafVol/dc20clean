@@ -7,6 +7,9 @@
 
 import type { SavedCharacter } from '../types/dataContracts';
 import type { CharacterInProgressStoreData } from '../stores/characterContext';
+import { normalizeRulesVersion } from '../rulesdata/versioning/rulesVersion';
+import { normalizeSelectedTalents } from './storageUtils';
+import { normalizeSchemaVersion } from '../types/schemaVersion';
 
 export function convertSavedCharacterToContext(
 	character: SavedCharacter
@@ -38,7 +41,7 @@ export function convertSavedCharacterToContext(
 		tradeToLanguageConversions: character.tradeToLanguageConversions || 0,
 
 		// Leveling
-		selectedTalents: character.selectedTalents || {},
+		selectedTalents: normalizeSelectedTalents(character.selectedTalents as any),
 		pathPointAllocations: character.pathPointAllocations || { martial: 0, spellcasting: 0 },
 		selectedSubclass: character.selectedSubclass,
 		selectedFeatureChoices: character.selectedFeatureChoices || {},
@@ -49,6 +52,8 @@ export function convertSavedCharacterToContext(
 
 		// Character Name
 		finalName: character.finalName,
-		finalPlayerName: character.finalPlayerName || null
+		finalPlayerName: character.finalPlayerName || null,
+		rulesVersion: normalizeRulesVersion(character.rulesVersion),
+		schemaVersion: normalizeSchemaVersion(character.schemaVersion)
 	};
 }

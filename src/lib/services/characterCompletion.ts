@@ -13,6 +13,7 @@ import { getDefaultStorage } from '../storage';
 import type { SavedCharacter } from '../types/dataContracts';
 import { denormalizeMastery } from './denormalizeMastery';
 import { CURRENT_SCHEMA_VERSION } from '../types/schemaVersion';
+import { CURRENT_RULES_VERSION } from '../rulesdata/versioning/rulesVersion';
 import { logger } from '../utils/logger';
 
 /**
@@ -259,7 +260,8 @@ export const completeCharacter = async (
 			createdAt: new Date().toISOString(),
 			lastModified: new Date().toISOString(),
 			completedAt: new Date().toISOString(),
-			schemaVersion: CURRENT_SCHEMA_VERSION
+			schemaVersion: CURRENT_SCHEMA_VERSION,
+			rulesVersion: CURRENT_RULES_VERSION
 		};
 
 		logger.debug('calculation', 'Character stats calculated', {

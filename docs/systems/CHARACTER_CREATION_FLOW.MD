@@ -1,6 +1,6 @@
 ### Character Creation Flow System Spec
 
-> Last Updated: 2026-05-02
+> Last Updated: 2026-06-01
 
 #### Purpose
 
@@ -12,6 +12,8 @@
 
 - Ordering is fixed: 1) Class & Features → 2) Leveling (conditional when level > 1) → 3) Ancestry → 4) Attributes → 5) Background → 6) Spells & Maneuvers → 7) Character Name
 - State lives in `characterContext.tsx`; each stage must read/write through the reducer actions (`SET_CLASS`, `SET_TRAITS`, `UPDATE_SKILLS`, etc.)
+- Draft state carries both `schemaVersion` and `rulesVersion`; missing `rulesVersion` is inferred as `dc20-0.10`.
+- Edit and level-up entry points must check the runtime compatibility state before initializing the wizard. Characters classified as `upgrade-required` or `view-only` cannot be edited or leveled up until an explicit upgrade path exists.
 - Validation gating: `CharacterCreation.tsx` calls `isStepCompleted(stepNumber)` before allowing navigation; each stage enforces completion via calculator outputs (ancestry/background budgets, attribute points remaining, spell counts)
 - Calculator contract: `calculateCharacterWithBreakdowns(convertToEnhancedBuildData(state))` runs on every state change and returns:
   - `stats.finalAttributePoints`, `background`, `ancestry`, `breakdowns`, `validation`
@@ -102,16 +104,18 @@
 
 #### State Extension Schema
 
-| Store Field                  | Type                                                                 | Source Stage     | Description                                                  | Downstream Consumers                           |
-| ---------------------------- | -------------------------------------------------------------------- | ---------------- | ------------------------------------------------------------ | ---------------------------------------------- |
-| `level`                      | number                                                               | Class & Features | User-selected target level (default 1)                       | Calculator, Leveling Choices, Spells/Maneuvers |
-| `selectedTalents`            | `Record<string, number>`                                             | Leveling         | Counts per talent ID                                         | Calculator effects, character sheet            |
-| `pathPointAllocations`       | `{ martial?: number; spellcasting?: number }`                        | Leveling         | Points allocated per path                                    | Calculator path benefits, sheet display        |
-| `selectedMulticlassOption`   | `'novice' \| 'adept' \| 'expert' \| 'master' \| 'grandmaster' \| 'legendary' \| null` | Leveling | Current multiclass tier                                      | Calculator effects, UI                         |
-| `selectedMulticlassClass`    | `string`                                                             | Leveling         | Target class for multiclass feature                          | Calculator effects, UI                         |
-| `selectedMulticlassFeature`  | `string`                                                             | Leveling         | Selected feature ID                                          | Calculator effects, UI                         |
-| `selectedSubclass`           | `string`                                                             | Leveling         | Subclass name when required (e.g., level 3)                  | Calculator effects, ClassFeatures recap        |
-| `selectedCrossPathSpellList` | `string`                                                             | Leveling         | Spell list for martial class taking spellcaster path         | Calculator effects, sheet display              |
+| Store Field                  | Type                                                                                  | Source Stage     | Description                                          | Downstream Consumers                           |
+| ---------------------------- | ------------------------------------------------------------------------------------- | ---------------- | ---------------------------------------------------- | ---------------------------------------------- |
+| `level`                      | number                                                                                | Class & Features | User-selected target level (default 1)               | Calculator, Leveling Choices, Spells/Maneuvers |
+| `selectedTalents`            | `Record<string, number>`                                                              | Leveling         | Counts per talent ID                                 | Calculator effects, character sheet            |
+| `pathPointAllocations`       | `{ martial?: number; spellcasting?: number }`                                         | Leveling         | Points allocated per path                            | Calculator path benefits, sheet display        |
+| `selectedMulticlassOption`   | `'novice' \| 'adept' \| 'expert' \| 'master' \| 'grandmaster' \| 'legendary' \| null` | Leveling         | Current multiclass tier                              | Calculator effects, UI                         |
+| `selectedMulticlassClass`    | `string`                                                                              | Leveling         | Target class for multiclass feature                  | Calculator effects, UI                         |
+| `selectedMulticlassFeature`  | `string`                                                                              | Leveling         | Selected feature ID                                  | Calculator effects, UI                         |
+| `selectedSubclass`           | `string`                                                                              | Leveling         | Subclass name when required (e.g., level 3)          | Calculator effects, ClassFeatures recap        |
+| `selectedCrossPathSpellList` | `string`                                                                              | Leveling         | Spell list for martial class taking spellcaster path | Calculator effects, sheet display              |
+| `schemaVersion`              | `string`                                                                              | Persistence      | Storage-shape version, normalized to semver          | Storage migration                              |
+| `rulesVersion`               | `string`                                                                              | Persistence      | DC20 rules interpretation version                    | Compatibility gates, PDF routing               |
 
 > Leveling selections are stored directly in `characterContext.tsx` and reused by the calculator and character sheet.
 

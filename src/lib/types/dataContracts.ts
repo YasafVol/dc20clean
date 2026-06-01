@@ -160,6 +160,7 @@ export interface SavedCharacter {
 
 	// TYPED DATA: No more JSON strings
 	selectedTraitIds: string[];
+	selectedTraitChoices?: Record<string, string>;
 	selectedFeatureChoices: Record<string, string>;
 	skillsData: Record<string, number>;
 	tradesData: Record<string, number>;
@@ -167,7 +168,7 @@ export interface SavedCharacter {
 	languagesData: any;
 
 	// LEVEL PROGRESSION DATA (M2.7)
-	selectedTalents?: string[]; // IDs of talents chosen
+	selectedTalents?: Record<string, number> | string[]; // Count-based talent selections; arrays are legacy
 	pathPointAllocations?: { martial?: number; spellcasting?: number }; // Path point distribution
 	unlockedFeatureIds?: string[]; // Features gained from leveling
 	selectedSubclass?: string; // Subclass name if chosen
@@ -260,6 +261,7 @@ export interface SavedCharacter {
 	lastModified: string;
 	completedAt: string;
 	schemaVersion: string; // For migration tracking
+	rulesVersion?: string; // Rules interpretation, separate from storage schema
 }
 
 /**
@@ -299,5 +301,3 @@ export interface LegacyCharacter {
 	// All other fields from SavedCharacter
 	[key: string]: any;
 }
-
-

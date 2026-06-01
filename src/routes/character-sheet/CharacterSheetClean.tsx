@@ -104,6 +104,7 @@ import { ALL_SPELLS as allSpells } from '../../lib/rulesdata/spells-data';
 import { allManeuvers } from '../../lib/rulesdata/martials/maneuvers';
 
 import { logger } from '../../lib/utils/logger';
+import { getPdfVersionForCharacter } from '../../lib/rulesdata/versioning/compatibility';
 
 type AttributeKey = 'might' | 'agility' | 'charisma' | 'intelligence';
 
@@ -959,7 +960,10 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 				saved: characterData,
 				denorm
 			});
-			const blob = await fillPdfFromData(pdfData, { flatten: false, version: '0.10' });
+			const blob = await fillPdfFromData(pdfData, {
+				flatten: false,
+				version: getPdfVersionForCharacter(characterData)
+			});
 
 			const safeName = (characterData.finalName || characterData.id || 'Character')
 				.replace(/[^A-Za-z0-9]+/g, '_')

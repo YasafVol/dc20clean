@@ -1,5 +1,5 @@
 /**
- * DC20 v0.10 Rogue Class Progression
+ * DC20 v0.10.5 Rogue Class Progression
  *
  * Rogue is a Martial class with variable HP per level.
  *
@@ -101,8 +101,8 @@ export const rogueProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			pathProgression: true,
-			subclassFeatureChoice: true
+			talents: 1,
+			pathProgression: true
 		}
 	},
 	{
@@ -116,8 +116,7 @@ export const rogueProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			talents: 1,
-			ancestryPoints: 2
+			subclassFeatureChoice: true
 		}
 	},
 	{
@@ -131,8 +130,9 @@ export const rogueProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
+			talents: 1,
 			pathProgression: true,
-			classFeatures: ['rogue_level_8_capstone_placeholder']
+			ancestryPoints: 2
 		}
 	},
 	{
@@ -146,7 +146,7 @@ export const rogueProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			subclassFeatureChoice: true // Subclass capstone
+			classFeatures: ['rogue_level_8_capstone_placeholder']
 		}
 	},
 	{
@@ -160,8 +160,7 @@ export const rogueProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			talents: 1,
-			epicBoon: true
+			subclassFeatureChoice: true
 		}
 	}
 ];

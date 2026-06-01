@@ -1,5 +1,5 @@
 /**
- * DC20 v0.10 Monk Class Progression
+ * DC20 v0.10.5 Monk Class Progression
  *
  * Monk is a Martial class using the martial template.
  *
@@ -96,8 +96,8 @@ export const monkProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			pathProgression: true,
-			subclassFeatureChoice: true
+			talents: 1,
+			pathProgression: true
 		}
 	},
 	{
@@ -111,8 +111,7 @@ export const monkProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			talents: 1,
-			ancestryPoints: 2
+			subclassFeatureChoice: true
 		}
 	},
 	{
@@ -126,8 +125,9 @@ export const monkProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
+			talents: 1,
 			pathProgression: true,
-			classFeatures: ['monk_level_8_capstone_placeholder']
+			ancestryPoints: 2
 		}
 	},
 	{
@@ -141,7 +141,7 @@ export const monkProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			subclassFeatureChoice: true // Subclass capstone
+			classFeatures: ['monk_level_8_capstone_placeholder']
 		}
 	},
 	{
@@ -155,8 +155,7 @@ export const monkProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			talents: 1,
-			epicBoon: true
+			subclassFeatureChoice: true
 		}
 	}
 ];

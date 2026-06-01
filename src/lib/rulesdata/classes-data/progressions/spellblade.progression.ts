@@ -1,12 +1,12 @@
 /**
- * DC20 v0.10 Spellblade Class Progression
+ * DC20 v0.10.5 Spellblade Class Progression
  *
  * Spellblade is a Hybrid class with both Martial and Spellcasting paths.
  *
  * HP: 8, 1, 2, 1, 2, 1, 2, 1, 2, 1 = 21 total
  * SP: 1, 0, 0, 0, 1, 0, 0, 0, 1, 0 = 3 total
  * Maneuvers: 1, 0, 1, 0, 0, 0, 1, 0, 0, 1 = 4 total
- * MP: 2, 0, 2, 0, 1, 0, 2, 0, 1, 1 = 9 total
+ * MP: 3, 0, 2, 0, 1, 0, 2, 0, 1, 2 = 11 total
  * Spells: 2, 0, 0, 0, 1, 0, 0, 0, 1, 0 = 4 total
  */
 
@@ -21,7 +21,7 @@ export const spellbladeProgression: ClassProgressionLevel[] = [
 		gainedTradePoints: 0,
 		gainedStaminaPoints: 1,
 		gainedManeuversKnown: 1,
-		gainedManaPoints: 2,
+		gainedManaPoints: 3,
 		gainedSpellsKnown: 2,
 		gains: {
 			classFeatures: [
@@ -104,8 +104,8 @@ export const spellbladeProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			pathProgression: true,
-			subclassFeatureChoice: true
+			talents: 1,
+			pathProgression: true
 		}
 	},
 	{
@@ -119,8 +119,7 @@ export const spellbladeProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 2,
 		gainedSpellsKnown: 0,
 		gains: {
-			talents: 1,
-			ancestryPoints: 2
+			subclassFeatureChoice: true
 		}
 	},
 	{
@@ -134,8 +133,9 @@ export const spellbladeProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
+			talents: 1,
 			pathProgression: true,
-			classFeatures: ['spellblade_level_8_capstone_placeholder']
+			ancestryPoints: 2
 		}
 	},
 	{
@@ -149,7 +149,7 @@ export const spellbladeProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 1,
 		gainedSpellsKnown: 1,
 		gains: {
-			subclassFeatureChoice: true // Subclass capstone
+			classFeatures: ['spellblade_level_8_capstone_placeholder']
 		}
 	},
 	{
@@ -160,11 +160,10 @@ export const spellbladeProgression: ClassProgressionLevel[] = [
 		gainedTradePoints: 1,
 		gainedStaminaPoints: 0,
 		gainedManeuversKnown: 1,
-		gainedManaPoints: 1,
+		gainedManaPoints: 2,
 		gainedSpellsKnown: 0,
 		gains: {
-			talents: 1,
-			epicBoon: true
+			subclassFeatureChoice: true
 		}
 	}
 ];

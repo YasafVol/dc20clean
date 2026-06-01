@@ -10,6 +10,20 @@ import {
 	getAvailableSubclasses,
 	resolveSubclassFeatures
 } from './classProgressionResolver';
+import { classesData } from '../loaders/class.loader';
+
+const martialClassIds = ['barbarian', 'champion', 'commander', 'hunter', 'monk', 'rogue'];
+const casterClassIds = ['bard', 'cleric', 'druid', 'sorcerer', 'warlock', 'wizard'];
+const hybridClassIds = ['spellblade'];
+const v0105ClassIds = [...martialClassIds, ...casterClassIds, ...hybridClassIds];
+
+function getLevelData(classId: string, level: number) {
+	const classData = classesData.find((entry) => entry.id === classId);
+	if (!classData) throw new Error(`Missing class data for ${classId}`);
+	const levelData = classData.levelProgression.find((entry) => entry.level === level);
+	if (!levelData) throw new Error(`Missing level ${level} data for ${classId}`);
+	return levelData;
+}
 
 describe('Class Progression Resolver (UT-2)', () => {
 	describe('resolveClassProgression - Basic Functionality', () => {
@@ -279,6 +293,60 @@ describe('Class Progression Resolver (UT-2)', () => {
 
 			// No duplicates
 			expect(featureIds.length).toBe(uniqueIds.size);
+		});
+	});
+
+	describe('DC20 v0.10.5 progression table', () => {
+		casterClassIds.forEach((classId) => {
+			it(`${classId} uses the v0.10.5 caster MP gains`, () => {
+				expect(getLevelData(classId, 3).manaPoints).toBe(3);
+				expect(getLevelData(classId, 7).manaPoints).toBe(3);
+				expect(getLevelData(classId, 10).manaPoints).toBe(3);
+				expect(resolveClassProgression(classId, 10).budgets.totalMP).toBe(21);
+			});
+		});
+
+		it('uses the v0.10.5 hybrid starting and capstone MP gains', () => {
+			expect(getLevelData('spellblade', 1).manaPoints).toBe(3);
+			expect(getLevelData('spellblade', 10).manaPoints).toBe(2);
+			expect(resolveClassProgression('spellblade', 10).budgets.totalMP).toBe(11);
+		});
+
+		v0105ClassIds.forEach((classId) => {
+			it(`${classId} follows the v0.10.5 level 6-10 feature schedule`, () => {
+				const level6Gains = getLevelData(classId, 6).gains;
+				const level7Gains = getLevelData(classId, 7).gains;
+				const level8Gains = getLevelData(classId, 8).gains;
+				const level9Gains = getLevelData(classId, 9).gains;
+				const level10Gains = getLevelData(classId, 10).gains;
+
+				expect(level6Gains?.talents).toBe(1);
+				expect(level6Gains?.pathProgression).toBe(true);
+				expect(level6Gains?.subclassFeatureChoice).toBeFalsy();
+
+				expect(level7Gains?.subclassFeatureChoice).toBe(true);
+				expect(level7Gains?.talents).toBeFalsy();
+				expect(level7Gains?.ancestryPoints).toBeFalsy();
+				expect(level7Gains?.pathProgression).toBeFalsy();
+
+				expect(level8Gains?.talents).toBe(1);
+				expect(level8Gains?.pathProgression).toBe(true);
+				expect(level8Gains?.ancestryPoints).toBe(2);
+				expect(level8Gains?.classFeatures).toBeUndefined();
+
+				expect(level9Gains?.classFeatures?.length).toBeGreaterThan(0);
+				expect(level9Gains?.subclassFeatureChoice).toBeFalsy();
+
+				expect(level10Gains?.subclassFeatureChoice).toBe(true);
+				expect(level10Gains?.talents).toBeFalsy();
+				expect(level10Gains?.epicBoon).toBeFalsy();
+			});
+
+			it(`${classId} surfaces path progression in formatted level rows`, () => {
+				expect(getLevelData(classId, 2).features).toContain('Path Progression');
+				expect(getLevelData(classId, 6).features).toContain('Path Progression');
+				expect(getLevelData(classId, 8).features).toContain('Path Progression');
+			});
 		});
 	});
 });

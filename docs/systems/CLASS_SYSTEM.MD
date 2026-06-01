@@ -2,7 +2,7 @@
 
 > Purpose: Single reference for Classes, Features, Talents, and Level Progression.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-06-01
 
 ---
 
@@ -47,25 +47,25 @@ flowchart LR
 
 ## 2 Key Files & Their Roles
 
-| Layer | File / Dir | Responsibility |
-| --- | --- | --- |
-| **Features** | `classes-data/features/*_features.ts` (14 files) | Declarative definition of each class's core & subclass features |
-| **Progressions** | `classes-data/progressions/*.progression.ts` (13 files) | Level-by-level progression tables (HP, gains, features, etc.) |
-| **Progression Templates** | `classes-data/progressions/templates/` | Shared templates: `martial.template.ts` (Barbarian, Champion, Commander, Hunter, Monk), `caster.template.ts` (Bard, Cleric, Druid, Sorcerer, Warlock, Wizard), `spellblade.template.ts` (hybrid) |
-| **Talents** | `classes-data/talents/*.talents.ts` (13 class files) | Per-class talent definitions with prerequisites and effects |
-| **Talent Infrastructure** | `classes-data/talents/talent.types.ts` | `Talent` interface, `TalentCategory`, `TalentPrerequisites` |
-| | `classes-data/talents/talent.loader.ts` | Loads and indexes talents by class |
-| | `classes-data/talents/talents.data.ts` | Combined talent data export |
-| **Progression Resolver** | `classes-data/classProgressionResolver.ts` | Resolves progression up to target level; returns budgets, features, choices |
-| **Class Utilities** | `classes-data/classUtils.ts` | Helper functions for class/subclass data lookup |
-| **Progression Types** | `classes-data/progressionTypes.ts` | `ClassProgressionGains`, `ClassProgressionLevel` interfaces |
-| **Type Contracts** | `schemas/types.ts` | TS interfaces `IClassDefinition`, `IClassFeature`, `IClassFeatureChoice` |
-| | `schemas/class.schema.ts` | Zod schema for validation & effect typing |
-| **Validation** | `loaders/class.loader.ts` | Loads progression, features, `spellRestrictions`; validates against schema |
-| | `rulesdata.spec.ts` | Unit test asserting every class passes schema |
-| **Runtime** | `services/enhancedCharacterCalculator.ts` | Aggregates class effects, resolves choices, outputs stats |
-| **State** | `stores/characterContext.tsx`, `hooks/useCharacterBuilder.ts` | Provides calculated results to UI |
-| **UI** | `routes/character-creation/*` (selection), `routes/character-sheet/*` (display) | Imports `classesData` / `classFeaturesData` |
+| Layer                     | File / Dir                                                                      | Responsibility                                                                                                                                                                                   |
+| ------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Features**              | `classes-data/features/*_features.ts` (14 files)                                | Declarative definition of each class's core & subclass features                                                                                                                                  |
+| **Progressions**          | `classes-data/progressions/*.progression.ts` (13 files)                         | Level-by-level progression tables (HP, gains, features, etc.)                                                                                                                                    |
+| **Progression Templates** | `classes-data/progressions/templates/`                                          | Shared templates: `martial.template.ts` (Barbarian, Champion, Commander, Hunter, Monk), `caster.template.ts` (Bard, Cleric, Druid, Sorcerer, Warlock, Wizard), `spellblade.template.ts` (hybrid) |
+| **Talents**               | `classes-data/talents/*.talents.ts` (13 class files)                            | Per-class talent definitions with prerequisites and effects                                                                                                                                      |
+| **Talent Infrastructure** | `classes-data/talents/talent.types.ts`                                          | `Talent` interface, `TalentCategory`, `TalentPrerequisites`                                                                                                                                      |
+|                           | `classes-data/talents/talent.loader.ts`                                         | Loads and indexes talents by class                                                                                                                                                               |
+|                           | `classes-data/talents/talents.data.ts`                                          | Combined talent data export                                                                                                                                                                      |
+| **Progression Resolver**  | `classes-data/classProgressionResolver.ts`                                      | Resolves progression up to target level; returns budgets, features, choices                                                                                                                      |
+| **Class Utilities**       | `classes-data/classUtils.ts`                                                    | Helper functions for class/subclass data lookup                                                                                                                                                  |
+| **Progression Types**     | `classes-data/progressionTypes.ts`                                              | `ClassProgressionGains`, `ClassProgressionLevel` interfaces                                                                                                                                      |
+| **Type Contracts**        | `schemas/types.ts`                                                              | TS interfaces `IClassDefinition`, `IClassFeature`, `IClassFeatureChoice`                                                                                                                         |
+|                           | `schemas/class.schema.ts`                                                       | Zod schema for validation & effect typing                                                                                                                                                        |
+| **Validation**            | `loaders/class.loader.ts`                                                       | Loads progression, features, `spellRestrictions`; validates against schema                                                                                                                       |
+|                           | `rulesdata.spec.ts`                                                             | Unit test asserting every class passes schema                                                                                                                                                    |
+| **Runtime**               | `services/enhancedCharacterCalculator.ts`                                       | Aggregates class effects, resolves choices, outputs stats                                                                                                                                        |
+| **State**                 | `stores/characterContext.tsx`, `hooks/useCharacterBuilder.ts`                   | Provides calculated results to UI                                                                                                                                                                |
+| **UI**                    | `routes/character-creation/*` (selection), `routes/character-sheet/*` (display) | Imports `classesData` / `classFeaturesData`                                                                                                                                                      |
 
 All paths above are relative to `src/lib/rulesdata/` unless otherwise noted.
 
@@ -118,22 +118,22 @@ Talents are level-up choices that grant additional effects. They are defined per
 type TalentCategory = 'General' | 'Class' | 'Multiclass';
 
 interface TalentPrerequisites {
-  level?: number;
-  classId?: string;
-  feature?: string;
-  otherFeature?: string;
-  subclass?: string;
-  other?: string;
+	level?: number;
+	classId?: string;
+	feature?: string;
+	otherFeature?: string;
+	subclass?: string;
+	other?: string;
 }
 
 interface Talent {
-  id: string;
-  name: string;
-  category: TalentCategory;
-  description: string;
-  effects: Effect[];
-  prerequisites: TalentPrerequisites;
-  stackable?: boolean;
+	id: string;
+	name: string;
+	category: TalentCategory;
+	description: string;
+	effects: Effect[];
+	prerequisites: TalentPrerequisites;
+	stackable?: boolean;
 }
 ```
 
@@ -190,9 +190,9 @@ Each class has a `<class>.talents.ts` file (13 files) plus shared data in `talen
 
 ---
 
-## 8 DC20 v0.10 Notes
+## 8 DC20 v0.10.5 Notes
 
-**Level Cap**: DC20 v0.10 is a level 1-10 system (not 1-20). All class progressions have 10 levels.
+**Level Cap**: DC20 v0.10.5 is a level 1-10 system (not 1-20). All class progressions have 10 levels.
 
 **Classes Available** (14 feature files; Psion is data-only/incomplete):
 
@@ -200,7 +200,24 @@ Each class has a `<class>.talents.ts` file (13 files) plus shared data in `talen
 - Caster: Bard, Cleric, Druid, Psion, Sorcerer, Warlock, Wizard
 - Hybrid: Spellblade
 
-**Key Changes from v0.9.5**:
+**Key v0.10.5 Progression Contract**:
+
+- Martial starting resources: 2 SP at level 1.
+- Spellcaster starting resources: 6 MP at level 1, with +3 MP at levels 3, 5, 7, 9, and 10.
+- Hybrid starting resources: Spellblade starts with 1 SP and 3 MP, then totals 3 SP and 11 MP by level 10.
+- Shared feature schedule:
+  - Level 1: Class Features
+  - Level 2: Class Feature, Talent, Path Progression
+  - Level 3: Subclass Feature
+  - Level 4: Talent, 2 Ancestry Points, Path Progression
+  - Level 5: Class Expert Feature
+  - Level 6: Talent, Path Progression
+  - Level 7: Subclass Expert Feature
+  - Level 8: Talent, 2 Ancestry Points, Path Progression
+  - Level 9: Class Capstone Feature
+  - Level 10: Subclass Capstone Feature
+
+**Key Changes from v0.9.5/v0.10**:
 
 - Techniques have been removed entirely from the game
 - Spell schools reorganized to 8 schools (Astromancy, Conjuration, Divination, Elemental, Enchantment, Invocation, Nullification, Transmutation)
@@ -208,6 +225,12 @@ Each class has a `<class>.talents.ts` file (13 files) plus shared data in `talen
 - Class features updated with new effects and descriptions
 - **Slot-Based Spell System (M3.20)**: Classes now define individual spell/cantrip slots ("Pockets"), supporting highly specific restrictions (e.g., expanded schools) alongside broad global magic profiles.
 - **Data-Driven Spell Restrictions**: Classes now define `spellRestrictions` (allowed sources, schools, and tags) to automatically filter available spells in the character creator.
+
+**Recent Updates (2026-06-01)**:
+
+- **v0.10.5 Progression Tables**: Updated caster MP gains, Spellblade starting/capstone MP, and levels 6-10 feature/talent/path/ancestry schedule.
+- **Path Progression Display**: `class.loader.ts` now surfaces `pathProgression: true` as "Path Progression" in formatted level rows.
+- **Progression Tests**: Added v0.10.5 resolver coverage for caster/hybrid MP totals and level 6-10 schedule.
 
 **Recent Updates (2026-02-06)**:
 

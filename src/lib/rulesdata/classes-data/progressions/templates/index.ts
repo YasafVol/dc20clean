@@ -1,5 +1,5 @@
 /**
- * DC20 v0.10 Class Progression Templates
+ * DC20 v0.10.5 Class Progression Templates
  *
  * This module exports the base progression templates for all class types.
  * Individual class progressions should import these templates and customize
@@ -8,9 +8,10 @@
  * MAJOR CHANGES FROM v0.9.5:
  * 1. Techniques removed from game entirely
  * 2. Cantrips removed as a classification (all spells are just "spells" now)
- * 3. Path Progression moved from levels 7, 10 to levels 6, 8
- * 4. HP progressions adjusted across all classes
- * 5. SP/MP/Maneuver/Spell progressions rebalanced
+ * 3. Talent + Path Progression now land at levels 6 and 8
+ * 4. Subclass Features now land at levels 7 and 10
+ * 5. Class Capstone Features now land at level 9
+ * 6. Caster and hybrid MP progressions were raised
  */
 
 export { martialProgressionTemplate } from './martial.template';

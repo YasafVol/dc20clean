@@ -23,6 +23,7 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 ## 2. Systems & Touchpoints
 
 - **Character Calculation** — `src/lib/services/enhancedCharacterCalculator.ts` outputs `EnhancedCalculationResult`; this is the canonical source for values exported to the PDF.
+- **v0.10.5 Resource Totals** — PDF SP/MP fields consume calculated class progression totals. Martial characters start at 2 SP, spellcasters at 6 MP, and hybrids at 1 SP / 3 MP; v0.10.5 level 10 totals are 6 SP for martials, 21 MP for spellcasters, and 3 SP / 11 MP for hybrids.
 - **Transformation Layer** — `src/lib/pdf/transformers.ts` maps calculation results into a structured DTO that matches the PDF field list.
 - **PDF Field Maps** — Versioned field maps for different PDF versions:
   - `src/lib/pdf/fieldMap.dc20-0.10.ts` — Default v0.10 field map

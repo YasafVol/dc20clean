@@ -1,5 +1,5 @@
 /**
- * DC20 v0.10 Hunter Class Progression
+ * DC20 v0.10.5 Hunter Class Progression
  *
  * Hunter is a Martial class using the martial template.
  *
@@ -22,7 +22,12 @@ export const hunterProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			classFeatures: ['hunter_martial_path', 'hunter_mark', 'hunter_favored_terrain', 'hunter_bestiary']
+			classFeatures: [
+				'hunter_martial_path',
+				'hunter_mark',
+				'hunter_favored_terrain',
+				'hunter_bestiary'
+			]
 		}
 	},
 	{
@@ -96,8 +101,8 @@ export const hunterProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			pathProgression: true,
-			subclassFeatureChoice: true
+			talents: 1,
+			pathProgression: true
 		}
 	},
 	{
@@ -111,8 +116,7 @@ export const hunterProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			talents: 1,
-			ancestryPoints: 2
+			subclassFeatureChoice: true
 		}
 	},
 	{
@@ -126,8 +130,9 @@ export const hunterProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
+			talents: 1,
 			pathProgression: true,
-			classFeatures: ['hunter_level_8_capstone_placeholder']
+			ancestryPoints: 2
 		}
 	},
 	{
@@ -141,7 +146,7 @@ export const hunterProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			subclassFeatureChoice: true // Subclass capstone
+			classFeatures: ['hunter_level_8_capstone_placeholder']
 		}
 	},
 	{
@@ -155,8 +160,7 @@ export const hunterProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			talents: 1,
-			epicBoon: true
+			subclassFeatureChoice: true
 		}
 	}
 ];

@@ -99,11 +99,11 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 
 ### VRR-003: Refresh Progression Tables and Resource Budgets
 
-- Status: `implementation-ready`
+- Status: `implemented`
 - Source: `docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md`, page 268, lines 17544-17553
 - Baseline: targeted v0.10 progression and class tables only
 - Systems: Class / Leveling / Calculation / Character Creation / Character Sheet / PDF Export
-- Current implementation: v0.10 progression data drives resource totals and downstream stage budgets.
+- Current implementation: v0.10.5 progression data drives resource totals and downstream stage budgets, including caster/hybrid MP deltas and the level 6-10 schedule.
 - Required change:
   - caster `+1 MP` at levels 3, 7, 10
   - hybrid `+1 MP` at levels 1 and 10
@@ -156,11 +156,11 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 
 ### VRR-005: Character Creation Starting SP/MP Corrections
 
-- Status: `implementation-ready`
+- Status: `implemented`
 - Source: `docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md`, page 269, lines 17739-17741
 - Baseline: current Step 5 resource defaults
 - Systems: Character Creation / Calculation / PDF Export
-- Current implementation: Step 5 copy and/or starting defaults may not match v0.10.5.
+- Current implementation: calculated class progression totals align starting resources to Martial 2 SP, Spellcaster 6 MP, and Hybrid 1 SP / 3 MP. Character creation and PDF export consume those calculated totals.
 - Required change: verify and align starting resource defaults:
   - Martial: 2 SP
   - Spellcaster: 6 MP

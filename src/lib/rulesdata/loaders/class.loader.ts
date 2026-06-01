@@ -125,6 +125,9 @@ function formatGains(gains?: ProgressionLevel['gains'], legacy?: string): string
 	if (gains.pathPoints) {
 		parts.push(gains.pathPoints === 1 ? '1 Path Point' : `${gains.pathPoints} Path Points`);
 	}
+	if (gains.pathProgression) {
+		parts.push('Path Progression');
+	}
 	if (gains.ancestryPoints) {
 		parts.push(`${gains.ancestryPoints} Ancestry Points`);
 	}

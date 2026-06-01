@@ -1,11 +1,11 @@
 /**
- * DC20 v0.10 Spellcaster Class Progression Template
+ * DC20 v0.10.5 Spellcaster Class Progression Template
  *
  * Applies to: Bard, Cleric, Druid, Sorcerer, Warlock, Wizard
  *
  * Changes from 0.9.5:
  * - HP: +7 at level 1, +1 per level after
- * - MP progression: 6, 0, 2, 0, 3, 0, 2, 0, 3, 2 (total 18)
+ * - MP progression: 6, 0, 3, 0, 3, 0, 3, 0, 3, 3 (total 21)
  * - Spells Known: 4, 0, 1, 0, 1, 0, 1, 0, 1, 1 (total 9)
  * - Cantrips: REMOVED from game (no longer a classification)
  * - Path Progression now at levels 2, 4, 6, 8 (moved from 7, 10 to 6, 8)
@@ -55,7 +55,7 @@ export const casterProgressionTemplate: ClassProgressionLevel[] = [
 		gainedTradePoints: 1,
 		gainedStaminaPoints: 0,
 		gainedManeuversKnown: 0,
-		gainedManaPoints: 2,
+		gainedManaPoints: 3,
 		gainedSpellsKnown: 1,
 		gains: {
 			subclassFeatureChoice: true
@@ -102,8 +102,8 @@ export const casterProgressionTemplate: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			pathProgression: true, // NEW: Moved from level 7
-			subclassFeatureChoice: true
+			talents: 1,
+			pathProgression: true
 		}
 	},
 	{
@@ -114,11 +114,10 @@ export const casterProgressionTemplate: ClassProgressionLevel[] = [
 		gainedTradePoints: 0,
 		gainedStaminaPoints: 0,
 		gainedManeuversKnown: 0,
-		gainedManaPoints: 2,
+		gainedManaPoints: 3,
 		gainedSpellsKnown: 1,
 		gains: {
-			talents: 1,
-			ancestryPoints: 2
+			subclassFeatureChoice: true
 		}
 	},
 	{
@@ -132,8 +131,9 @@ export const casterProgressionTemplate: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			pathProgression: true, // NEW: Moved from level 10
-			classFeatures: [] // Add class capstone feature
+			talents: 1,
+			pathProgression: true,
+			ancestryPoints: 2
 		}
 	},
 	{
@@ -147,7 +147,7 @@ export const casterProgressionTemplate: ClassProgressionLevel[] = [
 		gainedManaPoints: 3,
 		gainedSpellsKnown: 1,
 		gains: {
-			subclassFeatureChoice: true // Subclass capstone
+			classFeatures: []
 		}
 	},
 	{
@@ -158,11 +158,10 @@ export const casterProgressionTemplate: ClassProgressionLevel[] = [
 		gainedTradePoints: 1,
 		gainedStaminaPoints: 0,
 		gainedManeuversKnown: 0,
-		gainedManaPoints: 2,
+		gainedManaPoints: 3,
 		gainedSpellsKnown: 1,
 		gains: {
-			talents: 1,
-			epicBoon: true
+			subclassFeatureChoice: true
 		}
 	}
 ];

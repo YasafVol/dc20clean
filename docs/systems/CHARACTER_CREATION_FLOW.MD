@@ -33,6 +33,7 @@
   - Inputs: calculator `resolvedFeatures` and `validation`, `state.selectedTalents`, `state.pathPointAllocations`, `state.selectedMulticlass*`, `state.selectedSubclass`
   - Completion rule: all leveling budgets spent and subclass choice (if required) selected
   - Outputs: `state.selectedTalents`, `state.pathPointAllocations`, `state.selectedMulticlassOption`, `state.selectedMulticlassClass`, `state.selectedMulticlassFeature`, `state.selectedSubclass`
+  - v0.10.5 schedule: Talent + Path Progression at levels 6 and 8; subclass choices at levels 3, 7, and 10; class features at levels 1, 2, 5, and 9.
 
 - **Stage 3 – Ancestry** (`AncestrySelector.tsx`, `SelectedAncestries.tsx`)
   - Inputs: `traitsData`, calculator `ancestry.ancestryPointsRemaining`
@@ -54,6 +55,7 @@
   - Completion rule: selected counts meet per-level requirements (cantrips + spells, maneuvers)
   - Spell filtering: source, school, and tag browsing filters are OR-based across selected facets; cost and sustained filters narrow results. Slot and Global Magic Profile eligibility use source restrictions only when present, then school-or-tag matching.
   - Outputs: `state.selectedSpells`, `state.selectedManeuvers`
+  - Starting resource expectations come from calculated class progression totals: Martial 2 SP, Spellcaster 6 MP, Hybrid 1 SP and 3 MP.
 
 - **Stage 7 – Character Name** (`CharacterName.tsx`)
   - Inputs: `state.finalName`, `state.finalPlayerName`

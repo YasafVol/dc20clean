@@ -4,10 +4,10 @@
 # DC20Clean – Leveling System
 
 > **Purpose**  
-> This document is the single authoritative reference for the character leveling system. It outlines the data flow, calculation logic, and UI interactions required to create a character at any level from 1 to 10 (DC20 v0.10 max level).
+> This document is the single authoritative reference for the character leveling system. It outlines the data flow, calculation logic, and UI interactions required to create a character at any level from 1 to 10 (DC20 v0.10.5 max level).
 >
-> **Status:** ✅ **Complete** - All core leveling functionality implemented, tested, and DC20 v0.10 compliant. All 29 gaps fixed per `docs/archive/LEVELING_GAPS_SPEC.md`.
-> **Last Updated:** January 25, 2026
+> **Status:** ✅ **Complete** - Core leveling functionality implemented with DC20 v0.10.5 progression tables.
+> **Last Updated:** 2026-06-01
 
 ---
 
@@ -50,17 +50,17 @@ flowchart TD
 
 ## 2. Key Files & Their Roles
 
-| Layer              | File / Dir                                                     | Responsibility                                                                                             |
-| ------------------ | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| **Rule Data**      | `src/lib/rulesdata/classes-data/progressions/*.progression.ts` | **(New)** Defines level-by-level stat gains and choices (Talents, Paths, etc.) for each class.             |
-|                    | `src/lib/rulesdata/classes-data/talents/`                      | **(New)** Defines all General, Class, and Multiclass Talents.                                              |
-|                    | `src/lib/rulesdata/progression/paths/`                         | Defines the Martial and Spellcaster Path progressions.                                                     |
-| **Type Contracts** | `src/lib/rulesdata/schemas/class.schema.ts`                    | Defines the `LevelGains` and `ClassLevel` interfaces for the new progression files.                        |
-|                    | `src/lib/rulesdata/classes-data/talents/talent.types.ts`        | Defines the `Talent` interface.                                                                            |
-| **Runtime Engine** | `src/lib/services/enhancedCharacterCalculator.ts`              | Aggregates all stats and choices from level 1 up to the user's selected target level.                      |
-| **State Layer**    | `src/lib/stores/characterContext.tsx`                          | Stores the user's target level and all their subsequent choices.                                           |
-| **UI**             | `src/routes/character-creation/CharacterCreation.tsx`          | Orchestrates the multi-stage flow, conditionally showing the "Leveling" stage.                             |
-|                    | `src/routes/character-creation/LevelingChoices.tsx`            | **(New)** A dedicated UI component for spending accumulated Talent and Path Points.                        |
+| Layer              | File / Dir                                                     | Responsibility                                                                                 |
+| ------------------ | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| **Rule Data**      | `src/lib/rulesdata/classes-data/progressions/*.progression.ts` | **(New)** Defines level-by-level stat gains and choices (Talents, Paths, etc.) for each class. |
+|                    | `src/lib/rulesdata/classes-data/talents/`                      | **(New)** Defines all General, Class, and Multiclass Talents.                                  |
+|                    | `src/lib/rulesdata/progression/paths/`                         | Defines the Martial and Spellcaster Path progressions.                                         |
+| **Type Contracts** | `src/lib/rulesdata/schemas/class.schema.ts`                    | Defines the `LevelGains` and `ClassLevel` interfaces for the new progression files.            |
+|                    | `src/lib/rulesdata/classes-data/talents/talent.types.ts`       | Defines the `Talent` interface.                                                                |
+| **Runtime Engine** | `src/lib/services/enhancedCharacterCalculator.ts`              | Aggregates all stats and choices from level 1 up to the user's selected target level.          |
+| **State Layer**    | `src/lib/stores/characterContext.tsx`                          | Stores the user's target level and all their subsequent choices.                               |
+| **UI**             | `src/routes/character-creation/CharacterCreation.tsx`          | Orchestrates the multi-stage flow, conditionally showing the "Leveling" stage.                 |
+|                    | `src/routes/character-creation/LevelingChoices.tsx`            | **(New)** A dedicated UI component for spending accumulated Talent and Path Points.            |
 
 ---
 
@@ -70,7 +70,7 @@ flowchart TD
 
 - A dropdown will be added to **Stage 1: Class & Features** allowing the user to select a starting level from 1 to 10.
 - This selection is stored in the `characterContext` and is a primary input for the `enhancedCharacterCalculator`.
-- **Note**: DC20 v0.10 is a level 1-10 system (not 1-20).
+- **Note**: DC20 v0.10.5 is a level 1-10 system (not 1-20).
 
 ### 3.2. Aggregation Engine
 
@@ -86,6 +86,31 @@ flowchart TD
   1.  **Talent Selection:** Allows the user to choose from General, Class, and Multiclass talents until their `talentsToChoose` budget is 0.
   2.  **Path Point Allocation:** Allows the user to spend their `pathPointsToSpend` budget on the Martial and Spellcaster paths.
 - The "Next" button for this stage will be disabled until all points are spent.
+
+### 3.3.1. DC20 v0.10.5 Level Schedule
+
+The class progression tables use the v0.10.5 schedule:
+
+| Level | Progression Gains                           |
+| ----- | ------------------------------------------- |
+| 1     | Class Features                              |
+| 2     | Class Feature, Talent, Path Progression     |
+| 3     | Subclass Feature                            |
+| 4     | Talent, 2 Ancestry Points, Path Progression |
+| 5     | Class Expert Feature                        |
+| 6     | Talent, Path Progression                    |
+| 7     | Subclass Expert Feature                     |
+| 8     | Talent, 2 Ancestry Points, Path Progression |
+| 9     | Class Capstone Feature                      |
+| 10    | Subclass Capstone Feature                   |
+
+Resource totals follow the class tables:
+
+| Class Category | Level 1 Resources | Level 10 Resource Totals |
+| -------------- | ----------------- | ------------------------ |
+| Martial        | 2 SP              | 6 SP                     |
+| Spellcaster    | 6 MP              | 21 MP                    |
+| Hybrid         | 1 SP, 3 MP        | 3 SP, 11 MP              |
 
 ### 3.4. Path Point Bonuses (M3.9 - ✅ IMPLEMENTED)
 
@@ -159,7 +184,7 @@ Path points grant immediate bonuses to character resources based on allocation:
 
 ---
 
-> _Last updated: January 25, 2026_  
+> _Last updated: 2026-06-01_  
 > _Maintainer: @DC20Clean-Team_
 
 ---

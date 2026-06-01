@@ -1,10 +1,10 @@
 /**
- * DC20 v0.10 Warlock Class Progression
+ * DC20 v0.10.5 Warlock Class Progression
  *
  * Warlock is a hybrid Caster class with variable HP per level.
  *
  * HP: 8, 1, 2, 1, 2, 1, 2, 1, 2, 1 = 21 total
- * MP: 6, 0, 2, 0, 3, 0, 2, 0, 3, 2 = 18 total
+ * MP: 6, 0, 3, 0, 3, 0, 3, 0, 3, 3 = 21 total
  * Spells: 4, 0, 1, 0, 1, 0, 1, 0, 1, 1 = 9 total
  */
 
@@ -49,7 +49,7 @@ export const warlockProgression: ClassProgressionLevel[] = [
 		gainedTradePoints: 1,
 		gainedStaminaPoints: 0,
 		gainedManeuversKnown: 0,
-		gainedManaPoints: 2,
+		gainedManaPoints: 3,
 		gainedSpellsKnown: 1,
 		gains: {
 			subclassFeatureChoice: true
@@ -96,8 +96,8 @@ export const warlockProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			pathProgression: true,
-			subclassFeatureChoice: true
+			talents: 1,
+			pathProgression: true
 		}
 	},
 	{
@@ -108,11 +108,10 @@ export const warlockProgression: ClassProgressionLevel[] = [
 		gainedTradePoints: 0,
 		gainedStaminaPoints: 0,
 		gainedManeuversKnown: 0,
-		gainedManaPoints: 2,
+		gainedManaPoints: 3,
 		gainedSpellsKnown: 1,
 		gains: {
-			talents: 1,
-			ancestryPoints: 2
+			subclassFeatureChoice: true
 		}
 	},
 	{
@@ -126,8 +125,9 @@ export const warlockProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
+			talents: 1,
 			pathProgression: true,
-			classFeatures: ['warlock_level_8_capstone_placeholder']
+			ancestryPoints: 2
 		}
 	},
 	{
@@ -141,7 +141,7 @@ export const warlockProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 3,
 		gainedSpellsKnown: 1,
 		gains: {
-			subclassFeatureChoice: true // Subclass capstone
+			classFeatures: ['warlock_level_8_capstone_placeholder']
 		}
 	},
 	{
@@ -152,11 +152,10 @@ export const warlockProgression: ClassProgressionLevel[] = [
 		gainedTradePoints: 1,
 		gainedStaminaPoints: 0,
 		gainedManeuversKnown: 0,
-		gainedManaPoints: 2,
+		gainedManaPoints: 3,
 		gainedSpellsKnown: 1,
 		gains: {
-			talents: 1,
-			epicBoon: true
+			subclassFeatureChoice: true
 		}
 	}
 ];

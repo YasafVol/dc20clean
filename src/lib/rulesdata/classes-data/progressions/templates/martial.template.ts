@@ -1,5 +1,5 @@
 /**
- * DC20 v0.10 Martial Class Progression Template
+ * DC20 v0.10.5 Martial Class Progression Template
  *
  * Applies to: Barbarian, Champion, Commander, Hunter, Monk
  *
@@ -102,8 +102,8 @@ export const martialProgressionTemplate: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			pathProgression: true, // NEW: Moved from level 7
-			subclassFeatureChoice: true
+			talents: 1,
+			pathProgression: true
 		}
 	},
 	{
@@ -117,9 +117,7 @@ export const martialProgressionTemplate: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			talents: 1,
-			ancestryPoints: 2
-			// NOTE: Path Progression moved to level 6
+			subclassFeatureChoice: true
 		}
 	},
 	{
@@ -133,8 +131,9 @@ export const martialProgressionTemplate: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			pathProgression: true, // NEW: Moved from level 10
-			classFeatures: [] // Add class capstone feature
+			talents: 1,
+			pathProgression: true,
+			ancestryPoints: 2
 		}
 	},
 	{
@@ -148,7 +147,7 @@ export const martialProgressionTemplate: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			subclassFeatureChoice: true // Subclass capstone
+			classFeatures: []
 		}
 	},
 	{
@@ -162,9 +161,7 @@ export const martialProgressionTemplate: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			talents: 1,
-			epicBoon: true
-			// NOTE: Path Progression moved to level 8
+			subclassFeatureChoice: true
 		}
 	}
 ];

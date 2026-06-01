@@ -1,5 +1,5 @@
 /**
- * DC20 v0.10 Barbarian Class Progression
+ * DC20 v0.10.5 Barbarian Class Progression
  *
  * Barbarian is a Martial class using the martial template.
  *
@@ -104,8 +104,8 @@ export const barbarianProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			pathProgression: true, // Moved from level 7
-			subclassFeatureChoice: true
+			talents: 1,
+			pathProgression: true
 		}
 	},
 	{
@@ -119,8 +119,7 @@ export const barbarianProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			talents: 1,
-			ancestryPoints: 2
+			subclassFeatureChoice: true
 		}
 	},
 	{
@@ -134,8 +133,9 @@ export const barbarianProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			pathProgression: true, // Moved from level 10
-			classFeatures: ['barbarian_level_8_capstone_placeholder']
+			talents: 1,
+			pathProgression: true,
+			ancestryPoints: 2
 		}
 	},
 	{
@@ -149,7 +149,7 @@ export const barbarianProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			subclassFeatureChoice: true // Subclass capstone
+			classFeatures: ['barbarian_level_8_capstone_placeholder']
 		}
 	},
 	{
@@ -163,8 +163,7 @@ export const barbarianProgression: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			talents: 1,
-			epicBoon: true
+			subclassFeatureChoice: true
 		}
 	}
 ];

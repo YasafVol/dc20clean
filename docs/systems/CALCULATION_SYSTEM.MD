@@ -2,7 +2,7 @@
 
 > Purpose: Definitive guide to derived stat formulas, effect application order, mastery cap validation, and breakdown output.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-06-01
 
 ---
 
@@ -32,6 +32,7 @@ The calculator was refactored into 8 specialized modules plus an orchestrator:
 **Orchestrator**: `enhancedCharacterCalculator.ts` (~500 lines) coordinates the calculation pipeline by calling modules in sequence.
 
 **Modules** (in `src/lib/services/calculatorModules/`):
+
 - `abilityCollection.ts` — collects granted abilities, movements, resistances, senses, combat training, conditional modifiers
 - `breakdownGeneration.ts` — creates stat breakdowns for tooltips
 - `spellSystem.ts` — global magic profile and spell slot generation
@@ -43,7 +44,7 @@ The calculator was refactored into 8 specialized modules plus an orchestrator:
 
 This modular structure improves maintainability and makes the calculation pipeline easier to understand and test.
 
-  ***
+---
 
 ## 2. Formula Summary
 
@@ -105,6 +106,18 @@ This modular structure improves maintainability and makes the calculation pipeli
 - **Attribute Points** = `12 + sum(progressionGains.totalAttributePoints) + sum(effects.attributePoints)`
 
 **Note**: Techniques have been removed in DC20 v0.10.
+
+### DC20 v0.10.5 Resource Progression
+
+The calculator reads class tables through `classesData` and aggregates levels 1 through target level:
+
+| Class Category | Level 1 Resources | Level 10 Resource Totals |
+| -------------- | ----------------- | ------------------------ |
+| Martial        | 2 SP              | 6 SP                     |
+| Spellcaster    | 6 MP              | 21 MP                    |
+| Hybrid         | 1 SP, 3 MP        | 3 SP, 11 MP              |
+
+The v0.10.5 shared schedule grants Talents at levels 2, 4, 6, and 8; Path Progression at levels 2, 4, 6, and 8; Ancestry Points at levels 4 and 8; subclass choices at levels 3, 7, and 10; and class features at levels 1, 2, 5, and 9.
 
 ### Path Bonuses (M3.9)
 
@@ -554,5 +567,3 @@ For values that depend on breakdowns, the order must be:
 
 > Last updated: 2026-02-06
 > Maintainer: @DC20Clean-Team
-
-

@@ -2,7 +2,7 @@
 
 > Purpose: Technical overview of the DC20Clean codebase: stack, scripts, testing, project structure, and contribution expectations.
 > Status: Active
-> Last Updated: 2026-02-08
+> Last Updated: 2026-06-01
 
 ## Tech Stack
 
@@ -92,7 +92,6 @@ src/
 │   ├── dm/                        # DM tools
 │   │   ├── encounters/            #   Encounter planner
 │   │   └── monsters/              #   Monster designer
-│   ├── systems/                   # Hidden systems explorer
 │   └── spellbook/                 # Spell reference browser
 ├── lib/
 │   ├── config/                    # Feature flags

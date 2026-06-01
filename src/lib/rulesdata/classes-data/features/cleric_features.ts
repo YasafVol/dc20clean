@@ -91,14 +91,17 @@ export const clericClass: ClassDefinition = {
 						{
 							name: 'Magic',
 							description:
-								'Your maximum MP increases by 1. Choose a Spell Tag (such as Fire, Holy, or Undeath). You learn 1 Spell with the chosen Spell Tag, and when you learn a new Spell you can choose any Spell that also has the chosen Spell Tag.',
+								'Your maximum MP increases by 1. Choose a Spell Tag (such as Fire, Healing, or Spirit). You learn 1 Spell with the chosen Spell Tag, and when you learn a new Spell you can choose any Spell that also has the chosen Spell Tag.',
 							effects: [
 								{ type: 'MODIFY_STAT', target: 'mpMax', value: 1 },
 								{
 									type: 'GRANT_SPELL',
 									target: 'by_tag',
 									value: 1,
-									userChoice: { prompt: 'Choose a Spell Tag', options: ['Fire', 'Holy', 'Undeath'] }
+									userChoice: {
+										prompt: 'Choose a Spell Tag',
+										options: ['Fire', 'Healing', 'Spirit']
+									}
 								}
 							]
 						},
@@ -168,7 +171,7 @@ export const clericClass: ClassDefinition = {
 						{
 							name: 'Chaos',
 							description:
-								'When you make a Spell Check you can choose to give yourself ADV on it, but you must also roll on the Wild Magic Table. You can use this Feature once per Long Rest, and regain the ability to use it again when you roll for Initiative.',
+								'When you make a Spell Attack or a Spell Check you can choose to give yourself ADV, but you must also roll on the Wild Magic Table. You can use this Feature once per Long Rest, and regain the ability to use it again when you roll for Initiative.',
 							effects: []
 						},
 						{
@@ -223,7 +226,7 @@ export const clericClass: ClassDefinition = {
 				{
 					name: 'Destruction',
 					description:
-						"(1 MP) The target takes 3 Divine damage, provided that the result of your Spell Check is equal to or higher than the target's AD. If the Spell doesn't normally require a Spell Check, then you must make one when you apply this blessing.",
+						"(1 MP) The target takes 3 Divine damage, provided that the result of the Check used to cast the Spell is equal to or higher than the target's AD. If the Spell doesn't normally require a Check, then you must make a Spell Attack Check when you apply this blessing.",
 					effects: []
 				},
 				{
@@ -252,18 +255,18 @@ export const clericClass: ClassDefinition = {
 			featureName: 'Channel Divinity',
 			levelGained: 2,
 			description:
-				'You gain the ability to channel the direct power of your deity. When you use this Feature, choose 1 of the options below. You can use this Feature once per Short Rest.',
+				'You gain the ability to channel the direct power of your deity. When you use this Feature, choose 1 of the options below. You can use this Feature once per Long Rest, and regain the ability to use it again when you roll for Initiative.',
 			benefits: [
 				{
 					name: 'Divine Rebuke',
 					description:
-						"You can spend 2 AP to censure all creatures of your choice who can see or hear you within 5 Spaces. Make a Spell Check against each target's AD, and each target makes a Repeated Mental Save against your Save DC. Attack Hit: The target takes Divine Damage equal to your Prime Modifier. Save Failure: The target becomes Intimidated by you for 1 minute or until it takes damage again.",
+						"You can spend 2 AP to censure all creatures of your choice who can see or hear you within 5 Spaces. Make a Spell Attack against each target's AD, and each target makes a Repeated Mental Save against your Save DC. Hit: The target takes 1 Divine Damage. Save Failure: The target becomes Intimidated by you for 1 minute or until it takes damage again.",
 					effects: []
 				},
 				{
 					name: 'Lesser Divine Intervention',
 					description:
-						'You can spend 2 AP to call on your deity to intervene on your behalf when your need is great to replenish you and your allies. Make a DC 15 Spell Check. Success: You gain a pool of healing equal to your Prime Modifier that you can use to restore HP to any number of creatures within 5 Spaces, distributing the HP among them. Additionally, you regain 1 MP. Success (each 5): Increase the amount healed by an amount equal to your Prime Modifier. Failure: You can only gain a pool of healing equal to your Prime Modifier.',
+						'You can spend 2 AP to call on your deity to intervene on your behalf when your need is great to replenish you and your allies. You gain a pool of HP which you can distribute to creatures of your choice within 5 Spaces to restore their HP in increments of 1 HP. Make a DC 15 Spell Check. Failure: You gain a pool of 3 HP. Success: You gain a pool of 3 HP and you regain 1 MP. Success (5): Your pool of HP increases 2.',
 					effects: []
 				}
 			]

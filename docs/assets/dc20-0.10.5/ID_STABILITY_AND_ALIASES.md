@@ -65,7 +65,7 @@ Primary persistence and runtime surfaces:
 | Class features | placeholder level-5 / capstone IDs                            | concrete feature IDs                      | alias needed if placeholders were persisted | verify actual saved-character exposure first                        |
 | Talent         | `multiclass_grandmaster`                                      | removed from selectable catalog           | deprecate + compatibility policy            | do not hard-delete without load policy                              |
 | Talent         | `multiclass_legendary`                                        | removed from selectable catalog           | deprecate + compatibility policy            | same as above                                                       |
-| Class feature  | `swift_berserker`                                             | removed                                   | deprecate + compatibility policy            | saved characters may already reference it                           |
+| Talent         | `barbarian_swift_berserker` / `swift_berserker`               | removed from selectable catalog           | implemented deprecated/loadable fence       | old saved characters remain loadable and upgrade-required           |
 | Class feature  | `combat_readiness_brace` / `Brace`                            | `combat_readiness_fortify` / `Fortify`    | implemented alias                           | Champion Fighting Spirit option rename; not a maneuver alias        |
 | Maneuver       | `brace` / `Brace`                                             | `brace` / `Brace`                         | no-op                                       | Brace remains a current v0.10.5 Defense maneuver                    |
 | Spell          | `summon-familiar` / `Summon Familiar`                         | `call-familiar` / `Call Familiar`         | implemented alias                           | exact rename; old IDs route for lookup, saved IDs are not rewritten |
@@ -78,7 +78,8 @@ Primary persistence and runtime surfaces:
 | Spell          | `absorb-element` / `Absorb Element`                           | `absorb-elements` / `Absorb Elements`     | implemented alias                           | singular-to-plural compatibility route                              |
 | Spell          | `force-dome` / `Force Dome`                                   | ambiguous `Forcefield` target             | implemented view-only fence                 | no silent remap                                                     |
 | Spell          | `wall-of-force` / `Wall of Force`                             | ambiguous `Forcefield` target             | implemented view-only fence                 | no silent remap                                                     |
-| Trait          | `hazardous_hide`                                              | still `Hazardous Hide` if unchanged       | likely no-op                                | current repo already contains the trait; confirm semantics only     |
+| Trait          | `beastborn_hazardous_hide`                                    | still `Hazardous Hide`                    | implemented no-op identity                  | source-confirmed returned trait; text/effect value refreshed        |
+| Trait          | `beastborn_additional_limb`, `beastborn_capable_limb`         | stable IDs, v0.10.5 wording/costs         | implemented no alias                        | `Capable Limb` is cost 2 and includes Spell Focus/Somatic use       |
 | Equipment      | Toss / Thrown / Returning property IDs                        | unchanged IDs, new costs / prerequisite   | no alias expected                           | preserve IDs, update validation only                                |
 
 ## Domain Notes
@@ -87,7 +88,8 @@ Primary persistence and runtime surfaces:
 
 - Follow `docs/systems/FEATURE_ID_NAMING_CONVENTION.md`.
 - The highest-risk class issue is replacing placeholder IDs with final IDs after they may already be referenced by progression files or saved characters.
-- Removing `Grandmaster` and `Legendary Multiclass` from v0.10.5 selection must not erase their historical presence in already-saved characters.
+- Removing `Grandmaster`, `Legendary Multiclass`, and `Swift Berserker` from v0.10.5 selection must not erase their historical presence in already-saved characters.
+- Deprecated talents remain in `allTalents` for lookup/effect attribution and are omitted from `selectableTalents` for character creation.
 
 ### Spell IDs
 
@@ -108,7 +110,8 @@ Primary persistence and runtime surfaces:
 
 - Trait IDs are persisted directly in `selectedTraitIds`.
 - Any rename or split/merge of trait identities needs alias review first.
-- `Hazardous Hide returned` is a semantic verification item, not automatically an alias item.
+- `Hazardous Hide returned` is implemented as stable ID reuse, not an alias item.
+- `Additional Limb` and `Capable Limb` keep their IDs while their rendered rules text and point costs match v0.10.5.
 
 ### Equipment IDs
 

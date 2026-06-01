@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { resolveClassProgression } from '../../lib/rulesdata/classes-data/classProgressionResolver';
-import { allTalents } from '../../lib/rulesdata/classes-data/talents/talent.loader';
+import { selectableTalents } from '../../lib/rulesdata/classes-data/talents/talent.loader';
 import { generalTalents } from '../../lib/rulesdata/classes-data/talents/talents.data';
 import { CHARACTER_PATHS } from '../../lib/rulesdata/progression/paths/paths.data';
 import { MULTICLASS_TIERS, type MulticlassTier } from '../../lib/rulesdata/progression/multiclass';
@@ -105,7 +105,7 @@ function LevelingChoices() {
 	});
 
 	// Filter class talents
-	const classTalents = allTalents.filter(
+	const classTalents = selectableTalents.filter(
 		(t) =>
 			t.category === 'Class' &&
 			t.prerequisites?.classId === state.classId &&

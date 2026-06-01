@@ -2,7 +2,7 @@
 
 > Purpose: Single reference for Traits: data shape, effect typing, validation, runtime processing, and UI usage.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-06-01
 
 ---
 
@@ -329,7 +329,13 @@ The `prerequisites` field is still supported for simple single-trait requirement
 - Schema-driven editors may auto-render trait forms from `Trait` and `Effect` metadata.
 - Integration tests may validate that trait effects correctly modify character stats in the calculator.
 
+## 9 DC20 v0.10.5 Notes
+
+- `beastborn_hazardous_hide` remains the stable ID for Hazardous Hide. It is a current v0.10.5 Beastborn Body trait, not an alias or resurrected saved-data rewrite.
+- `beastborn_additional_limb` now reflects the v0.10.5 1 Space limb, object handling, push/pull/grapple, and no Weapon/Shield/Spell Focus/Somatic use limitations.
+- `beastborn_capable_limb` costs 2 points and upgrades an Additional Limb to use Weapons, Shields, Spell Focuses, and Somatic Components. Its prerequisite remains `beastborn_additional_limb`.
+
 ---
 
-> Last updated: 2026-02-06
+> Last updated: 2026-06-01
 > Maintainer: @DC20Clean-Team

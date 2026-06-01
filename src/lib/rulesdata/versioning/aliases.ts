@@ -52,6 +52,15 @@ export const RULES_ALIASES: RulesAliasEntry[] = [
 		note: 'Removed in v0.10.5; old saved characters should not silently drop it.'
 	},
 	{
+		domain: 'talent',
+		fromId: 'barbarian_swift_berserker',
+		fromRulesVersion: RULES_VERSION_010,
+		toRulesVersion: RULES_VERSION_010_5,
+		status: 'deprecated',
+		compatibilityState: 'upgrade-required',
+		note: 'Swift Berserker was removed from the v0.10.5 selectable catalog; old saved characters remain loadable.'
+	},
+	{
 		domain: 'feature',
 		fromId: 'combat_readiness_brace',
 		toId: 'combat_readiness_fortify',

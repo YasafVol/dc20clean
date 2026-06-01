@@ -53,7 +53,7 @@ flowchart TD
 | Layer              | File / Dir                                                     | Responsibility                                                                                 |
 | ------------------ | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | **Rule Data**      | `src/lib/rulesdata/classes-data/progressions/*.progression.ts` | **(New)** Defines level-by-level stat gains and choices (Talents, Paths, etc.) for each class. |
-|                    | `src/lib/rulesdata/classes-data/talents/`                      | **(New)** Defines all General, Class, and Multiclass Talents.                                  |
+|                    | `src/lib/rulesdata/classes-data/talents/`                      | **(New)** Defines all General, Class, and Multiclass Talents. `allTalents` remains compatibility lookup; `selectableTalents` filters deprecated talents from current choices. |
 |                    | `src/lib/rulesdata/progression/paths/`                         | Defines the Martial and Spellcaster Path progressions.                                         |
 | **Type Contracts** | `src/lib/rulesdata/schemas/class.schema.ts`                    | Defines the `LevelGains` and `ClassLevel` interfaces for the new progression files.            |
 |                    | `src/lib/rulesdata/classes-data/talents/talent.types.ts`       | Defines the `Talent` interface.                                                                |
@@ -86,6 +86,7 @@ flowchart TD
   1.  **Talent Selection:** Allows the user to choose from General, Class, and Multiclass talents until their `talentsToChoose` budget is 0.
   2.  **Path Point Allocation:** Allows the user to spend their `pathPointsToSpend` budget on the Martial and Spellcaster paths.
 - The "Next" button for this stage will be disabled until all points are spent.
+- Removed v0.10 talents can remain in `allTalents` for saved-character rendering and calculation while `selectableTalents` keeps them hidden from v0.10.5 character creation and level-up selection.
 
 ### 3.3.1. DC20 v0.10.5 Level Schedule
 

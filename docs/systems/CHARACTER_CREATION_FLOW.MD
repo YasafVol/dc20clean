@@ -35,6 +35,7 @@
   - Completion rule: all leveling budgets spent and subclass choice (if required) selected
   - Outputs: `state.selectedTalents`, `state.pathPointAllocations`, `state.selectedMulticlassOption`, `state.selectedMulticlassClass`, `state.selectedMulticlassFeature`, `state.selectedSubclass`
   - v0.10.5 schedule: Talent + Path Progression at levels 6 and 8; subclass choices at levels 3, 7, and 10; class features at levels 1, 2, 5, and 9.
+  - Talent list source: `LevelingChoices.tsx` uses `selectableTalents` so deprecated/loadable legacy talents such as Swift Berserker do not appear as new v0.10.5 choices.
 
 - **Stage 3 – Ancestry** (`AncestrySelector.tsx`, `SelectedAncestries.tsx`)
   - Inputs: `traitsData`, calculator `ancestry.ancestryPointsRemaining`

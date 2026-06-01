@@ -229,6 +229,12 @@ Each class has a `<class>.talents.ts` file (13 files) plus shared data in `talen
 - `Advance` now grants ADV on the next Martial Attack or Physical Check.
 - The rulesdata effect target is `combat_readiness_fortify`; legacy references to `combat_readiness_brace` are treated as a feature alias, not a maneuver alias.
 
+**Removed Talent Contract**:
+
+- `Swift Berserker` is removed from v0.10.5 selection and marked deprecated in `barbarian.talents.ts`.
+- Deprecated talents remain in `allTalents` and `findTalentById()` so old saved characters can still load, render, calculate existing effects, and export.
+- Character creation uses `selectableTalents`, which filters deprecated talents out of new or level-up choices.
+
 **Key Changes from v0.9.5/v0.10**:
 
 - Techniques have been removed entirely from the game
@@ -243,6 +249,8 @@ Each class has a `<class>.talents.ts` file (13 files) plus shared data in `talen
 - **Level 5 Expert Features**: Replaced all level 5 class placeholders with explicit v0.10.5 Expert Feature blocks while preserving the legacy placeholder IDs for saved-character compatibility.
 - **v0.10.5 Progression Tables**: Updated caster MP gains, Spellblade starting/capstone MP, and levels 6-10 feature/talent/path/ancestry schedule.
 - **Champion Fighting Spirit**: Updated Combat Readiness to use `Fortify` and Advance's Martial Attack / Physical Check wording while preserving the Brace maneuver as a separate current maneuver.
+- **Feature Semantics Pass**: Updated Elemental Blast, Cleric, Commander, Monk, Rogue, and Spellblade feature text/effects to the source-confirmed v0.10.5 behavior while preserving existing feature IDs.
+- **Swift Berserker Removal**: Deprecated Swift Berserker for compatibility lookup while hiding it from current character creation selections.
 - **Path Progression Display**: `class.loader.ts` now surfaces `pathProgression: true` as "Path Progression" in formatted level rows.
 - **Progression Tests**: Added v0.10.5 resolver coverage for caster/hybrid MP totals, level 6-10 schedule, and level 5 Expert Feature coverage/effects.
 

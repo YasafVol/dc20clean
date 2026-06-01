@@ -1073,7 +1073,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Dwa
     "pendingFeatureChoices": [],
     "unlockedFeatures": [
       {
-        "description": "When you hit with a weapon attack you may spend 1 SP. The target makes a Physical Save vs your Save DC; on failure, choose Deafened, Exposed, Hindered, or Slowed 2. The effect lasts for 1 Round and different choices may stack but not duplicates.",
+        "description": "When you make a Weapon Attack, you can spend 1 SP to force the target to make a Physical Save against your Save DC. Save Failure: the target suffers Deafened, Exposed, Hindered, or Slowed 2 for 1 Round. A target cannot be affected by the same option more than once at a time.",
         "featureName": "Debilitating Strike",
         "id": "rogue_debilitating_strike",
         "levelGained": 1,
@@ -1127,7 +1127,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Dwa
         "levelGained": 1,
       },
       {
-        "description": "You deal +1 damage on Martial Attacks against targets that are Flanked, Prone, conditioned (except Invisible), or unaware of you due to being Hidden.",
+        "description": "You deal +1 damage on Martial Attacks against creatures that are Flanked or Prone, have any Condition other than Invisible, or are targets you are Hidden from.",
         "featureName": "Cheap Shot",
         "id": "rogue_cheap_shot",
         "levelGained": 2,
@@ -1441,7 +1441,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
     {
       "source": {
         "category": "Spellblade Level 1",
-        "description": "You gain combat training in weapons, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.",
+        "description": "You gain combat training in weapons, spell focuses, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.",
         "id": "Martial Path",
         "name": "Martial Path",
         "type": "class_feature",
@@ -1451,7 +1451,17 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
     {
       "source": {
         "category": "Spellblade Level 1",
-        "description": "You gain combat training in weapons, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.",
+        "description": "You gain combat training in weapons, spell focuses, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.",
+        "id": "Martial Path",
+        "name": "Martial Path",
+        "type": "class_feature",
+      },
+      "type": "Spell_Focuses",
+    },
+    {
+      "source": {
+        "category": "Spellblade Level 1",
+        "description": "You gain combat training in weapons, spell focuses, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.",
         "id": "Martial Path",
         "name": "Martial Path",
         "type": "class_feature",
@@ -1461,7 +1471,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
     {
       "source": {
         "category": "Spellblade Level 1",
-        "description": "You gain combat training in weapons, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.",
+        "description": "You gain combat training in weapons, spell focuses, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.",
         "id": "Martial Path",
         "name": "Martial Path",
         "type": "class_feature",
@@ -1496,6 +1506,19 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
         "description": "Spend 1 or more SP to deal +1 Bound Damage per SP spent. Also gain the benefits of 1 Martial Enhancement of your choice for free.",
         "id": "Bound Weapon_Smite",
         "name": "Smite",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+    {
+      "description": "Use your Bound Weapon to perform Somatic Components of Spells.",
+      "isConditional": false,
+      "name": "spellblade_bound_weapon_somatic_weapon",
+      "source": {
+        "category": "Spellblade Level 1",
+        "description": "You can use your Bound Weapon to perform the Somatic Components of a Spell.",
+        "id": "Bound Weapon_Somatic Weapon",
+        "name": "Somatic Weapon",
         "type": "class_feature",
       },
       "type": "active",
@@ -1595,7 +1618,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
               "name": "Magus",
             },
             {
-              "description": "Gain heavy armor and shield training and additional maneuvers.",
+              "description": "Gain heavy armor and shield training and learn 1 Maneuver.",
               "effects": [
                 {
                   "target": "Heavy_Armor",
@@ -1610,7 +1633,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
                 {
                   "target": "spellblade_warrior_maneuvers",
                   "type": "GRANT_MANEUVERS",
-                  "value": 2,
+                  "value": 1,
                 },
               ],
               "name": "Warrior",
@@ -1638,12 +1661,12 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
               "name": "Hex Warrior",
             },
             {
-              "description": "Duel spell attacks with martial skill.",
+              "description": "Initiate Spell Duels with your weapon and martial skill.",
               "effects": [
                 {
                   "target": "spellblade_spell_breaker",
                   "type": "GRANT_ABILITY",
-                  "value": "Spend 2 AP to initiate a Spell Duel using your weapon against a spell attack within range. Make an Attack Check, adding SP and MP spent (up to your mana spend limit) as a bonus; gain ADV if within 1 space of the spell’s initiator.",
+                  "value": "Initiate a Spell Duel as the Challenger without spending MP using a weapon you wield if the caster or a target is within weapon range or you are between them. Make a Martial Check instead of a Spell Check. Spend SP for +1 bonus per SP and MP as normal for +2 bonus per MP. You have ADV if within 1 Space of the caster.",
                 },
               ],
               "name": "Spell Breaker",
@@ -1654,7 +1677,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
                 {
                   "target": "spellblade_spell_warder",
                   "type": "GRANT_ABILITY",
-                  "value": "When you deal Elemental or Mystical damage with an attack, gain Resistance (1) to that damage type until the start of your next turn; replace or maintain the resistance on subsequent triggers.",
+                  "value": "When you deal Elemental or Mystical damage with an Attack, gain Resistance (1) to that damage type for 1 Round; replace or maintain the resistance on subsequent triggers.",
                 },
               ],
               "name": "Spell Warder",
@@ -1697,7 +1720,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
                   "name": "Magus",
                 },
                 {
-                  "description": "Gain heavy armor and shield training and additional maneuvers.",
+                  "description": "Gain heavy armor and shield training and learn 1 Maneuver.",
                   "effects": [
                     {
                       "target": "Heavy_Armor",
@@ -1712,7 +1735,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
                     {
                       "target": "spellblade_warrior_maneuvers",
                       "type": "GRANT_MANEUVERS",
-                      "value": 2,
+                      "value": 1,
                     },
                   ],
                   "name": "Warrior",
@@ -1740,12 +1763,12 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
                   "name": "Hex Warrior",
                 },
                 {
-                  "description": "Duel spell attacks with martial skill.",
+                  "description": "Initiate Spell Duels with your weapon and martial skill.",
                   "effects": [
                     {
                       "target": "spellblade_spell_breaker",
                       "type": "GRANT_ABILITY",
-                      "value": "Spend 2 AP to initiate a Spell Duel using your weapon against a spell attack within range. Make an Attack Check, adding SP and MP spent (up to your mana spend limit) as a bonus; gain ADV if within 1 space of the spell’s initiator.",
+                      "value": "Initiate a Spell Duel as the Challenger without spending MP using a weapon you wield if the caster or a target is within weapon range or you are between them. Make a Martial Check instead of a Spell Check. Spend SP for +1 bonus per SP and MP as normal for +2 bonus per MP. You have ADV if within 1 Space of the caster.",
                     },
                   ],
                   "name": "Spell Breaker",
@@ -1756,7 +1779,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
                     {
                       "target": "spellblade_spell_warder",
                       "type": "GRANT_ABILITY",
-                      "value": "When you deal Elemental or Mystical damage with an attack, gain Resistance (1) to that damage type until the start of your next turn; replace or maintain the resistance on subsequent triggers.",
+                      "value": "When you deal Elemental or Mystical damage with an Attack, gain Resistance (1) to that damage type for 1 Round; replace or maintain the resistance on subsequent triggers.",
                     },
                   ],
                   "name": "Spell Warder",
@@ -1787,10 +1810,15 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
     "subclassChoiceLevel": 3,
     "unlockedFeatures": [
       {
-        "description": "You gain combat training in weapons, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.",
+        "description": "You gain combat training in weapons, spell focuses, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.",
         "effects": [
           {
             "target": "Weapons",
+            "type": "GRANT_COMBAT_TRAINING",
+            "value": true,
+          },
+          {
+            "target": "Spell_Focuses",
             "type": "GRANT_COMBAT_TRAINING",
             "value": true,
           },
@@ -1833,6 +1861,17 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
               },
             ],
             "name": "Smite",
+          },
+          {
+            "description": "You can use your Bound Weapon to perform the Somatic Components of a Spell.",
+            "effects": [
+              {
+                "target": "spellblade_bound_weapon_somatic_weapon",
+                "type": "GRANT_ABILITY",
+                "value": "Use your Bound Weapon to perform Somatic Components of Spells.",
+              },
+            ],
+            "name": "Somatic Weapon",
           },
           {
             "description": "Emit or adjust bright/dim light in a 5-space radius from the bonded weapon at will.",
@@ -1885,7 +1924,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
                 "name": "Magus",
               },
               {
-                "description": "Gain heavy armor and shield training and additional maneuvers.",
+                "description": "Gain heavy armor and shield training and learn 1 Maneuver.",
                 "effects": [
                   {
                     "target": "Heavy_Armor",
@@ -1900,7 +1939,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
                   {
                     "target": "spellblade_warrior_maneuvers",
                     "type": "GRANT_MANEUVERS",
-                    "value": 2,
+                    "value": 1,
                   },
                 ],
                 "name": "Warrior",
@@ -1928,12 +1967,12 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
                 "name": "Hex Warrior",
               },
               {
-                "description": "Duel spell attacks with martial skill.",
+                "description": "Initiate Spell Duels with your weapon and martial skill.",
                 "effects": [
                   {
                     "target": "spellblade_spell_breaker",
                     "type": "GRANT_ABILITY",
-                    "value": "Spend 2 AP to initiate a Spell Duel using your weapon against a spell attack within range. Make an Attack Check, adding SP and MP spent (up to your mana spend limit) as a bonus; gain ADV if within 1 space of the spell’s initiator.",
+                    "value": "Initiate a Spell Duel as the Challenger without spending MP using a weapon you wield if the caster or a target is within weapon range or you are between them. Make a Martial Check instead of a Spell Check. Spend SP for +1 bonus per SP and MP as normal for +2 bonus per MP. You have ADV if within 1 Space of the caster.",
                   },
                 ],
                 "name": "Spell Breaker",
@@ -1944,7 +1983,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
                   {
                     "target": "spellblade_spell_warder",
                     "type": "GRANT_ABILITY",
-                    "value": "When you deal Elemental or Mystical damage with an attack, gain Resistance (1) to that damage type until the start of your next turn; replace or maintain the resistance on subsequent triggers.",
+                    "value": "When you deal Elemental or Mystical damage with an Attack, gain Resistance (1) to that damage type for 1 Round; replace or maintain the resistance on subsequent triggers.",
                   },
                 ],
                 "name": "Spell Warder",
@@ -1977,7 +2016,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
         "levelGained": 1,
       },
       {
-        "description": "Once per turn, combine a Martial Attack with a spell, reducing the spell’s AP cost and resolving them as one harmonic strike.",
+        "description": "Once on each of your turns when you make a Martial Attack, you can also cast a Spell as part of the same Action, spending 1 AP less than normal. Converged Action: the Spell can only target 1 creature who must be a target of the Attack, and the range of the Attack cannot exceed the range of the Spell. If the Spell requires a Check, it uses your Attack Check instead; Saves use your Save DC. Harmonic Strike: the Martial Attack and Spell are treated as 1 Attack and can benefit from Martial Enhancements and Spell Enhancements; the Spell does not require Somatic Components.",
         "featureName": "Spellstrike",
         "id": "spellblade_spellstrike",
         "levelGained": 2,

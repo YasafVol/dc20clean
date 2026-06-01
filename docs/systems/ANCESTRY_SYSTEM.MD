@@ -2,7 +2,7 @@
 
 > Purpose: Single reference for Ancestries and Traits: data pipeline, effect typing, and selection UI.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-06-01
 
 ---
 
@@ -264,7 +264,13 @@ Variant traits follow the same schema as regular traits and are available for se
 - **Effect Processor** integration will further centralise logic—update §3 Step 4 when landed.
 - **Schema-driven forms** may auto-render trait editors using this document's file maps.
 
+## 10 DC20 v0.10.5 Notes
+
+- `Hazardous Hide` is present under the stable `beastborn_hazardous_hide` ID and source-confirmed as a returned v0.10.5 Beastborn Body trait.
+- `Additional Limb` and `Capable Limb` keep their stable Beastborn IDs while matching v0.10.5 wording. `Capable Limb` costs 2 points and allows Weapons, Shields, Spell Focuses, and Somatic Components once per Additional Limb.
+- No trait alias was required for this pass; saved trait IDs remain stable.
+
 ---
 
-> _Last updated: 2026-02-06_  
+> _Last updated: 2026-06-01_
 > Maintainer: @DC20Clean-Team

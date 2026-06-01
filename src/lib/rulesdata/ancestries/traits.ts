@@ -1726,7 +1726,8 @@ export const traitsData: Trait[] = [
 			{
 				type: 'GRANT_ABILITY',
 				target: 'hazardous_hide',
-				value: 'Grapplers take 1 damage (chosen type) per turn.'
+				value:
+					'Choose Corrosion, Piercing, or Poison. While physically Grappled, your Grappler takes 1 damage of the chosen type at the start of each of its turns; creatures Grappled by you take the same damage at the start of their turns.'
 			}
 		]
 	},
@@ -1902,13 +1903,14 @@ export const traitsData: Trait[] = [
 		id: 'beastborn_additional_limb',
 		name: 'Additional Limb',
 		description:
-			'You have an additional limb (arm, tentacle, tail, etc.) that can hold objects but cannot wield Weapons with the Heavy Property or Shields.',
+			"You have an additional limb (such as an extra arm or prehensile tail or trunk) that has a range of 1 Space. You can use it to lift, hold, or drop objects, and to push, pull, or grapple creatures. It can't wield Weapons, Shields, or Spell Focuses, and you can't use it to perform the Somatic Components of Spells. You can choose this Trait multiple times.",
 		cost: 1,
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
 				target: 'additional_limb',
-				value: 'Additional limb that can hold objects (no Heavy weapons or Shields).'
+				value:
+					"Additional limb with 1 Space range can lift, hold, drop, push, pull, or grapple. It can't wield Weapons, Shields, or Spell Focuses, or perform Somatic Components."
 			}
 		]
 	},
@@ -1916,14 +1918,15 @@ export const traitsData: Trait[] = [
 		id: 'beastborn_capable_limb',
 		name: 'Capable Limb',
 		description:
-			'Your Additional Limb is now capable of wielding any weapon or shield, including those with the Heavy Property.',
-		cost: 1,
+			'Your Additional Limb can now wield Weapons, Shields, or Spell Focuses, and perform the Somatic Components of Spells. You can choose this Trait multiple times, but only once per Additional Limb.',
+		cost: 2,
 		prerequisites: ['beastborn_additional_limb'],
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
 				target: 'capable_limb',
-				value: 'Additional Limb can wield any weapon or shield.'
+				value:
+					'Additional Limb can wield Weapons, Shields, or Spell Focuses, and perform Somatic Components. Choose once per Additional Limb.'
 			}
 		]
 	},

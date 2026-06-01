@@ -269,24 +269,24 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 
 ### VRR-009: Class Rename / Removal / Rewrite Set
 
-- Status: `HITL required`
+- Status: `implemented`
 - Source: `docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md`, page 268, lines 17555-17580
 - Baseline: targeted v0.10 class sections only
 - Systems: Class / Leveling / Effect / Character Sheet
-- Current implementation: several affected classes already persist feature choices and progression references by stable ID. Champion Fighting Spirit now uses the v0.10.5 `Fortify` option wording and Advance's Martial Attack / Physical Check wording while preserving the separate Brace maneuver.
+- Current implementation: affected class feature and talent identities preserve legacy IDs where needed. Champion Fighting Spirit now uses the v0.10.5 `Fortify` option wording and Advance's Martial Attack / Physical Check wording while preserving the separate Brace maneuver. Elemental Blast is modeled as an Area Spell Attack. Swift Berserker remains loadable for old characters through the deprecated talent catalog and compatibility alias, but is hidden from v0.10.5 selection.
 - Required change:
-  - `Elemental Fury`
-  - `Elemental Blast` semantics
-  - `Swift Berserker` removal
+  - `Elemental Fury`: implemented
+  - `Elemental Blast` semantics: implemented as Area Spell Attack
+  - `Swift Berserker` removal: implemented as deprecated/loadable, not selectable
   - Champion Fighting Spirit `Brace -> Fortify` option rename: implemented
   - `Advance` mechanic update: implemented for Champion Fighting Spirit
-  - Cleric / Commander semantic deltas
-- Data shape impact: unknown
+  - Cleric / Commander semantic deltas: implemented
+- Data shape impact: additive `deprecated` talent metadata only
 - Stable ID / alias impact: confirmed
 - Calculator/effect impact: confirmed
 - UI impact: confirmed
 - Storage/export impact: confirmed
-- HITL decision: required before code changes
+- HITL decision: resolved by targeted v0.10.5 source comparison; no destructive saved-character rewrite
 - Code touchpoints:
   - `src/lib/rulesdata/classes-data/features/*.ts`
   - `src/lib/rulesdata/classes-data/progressions/*.progression.ts`
@@ -297,24 +297,24 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
   - `docs/systems/EFFECT_SYSTEM.MD`
   - `docs/systems/CALCULATION_SYSTEM.MD`
 - Validation:
-  - alias resolution tests
-  - progression-to-feature linkage tests
-  - old character compatibility checks
+  - alias resolution tests: implemented
+  - progression-to-feature linkage tests: covered by existing resolver tests
+  - old character compatibility checks: Swift Berserker legacy selection is upgrade-required and loadable
 
 ### VRR-010: Feature Semantics Baseline Pass
 
-- Status: `needs baseline comparison`
+- Status: `implemented`
 - Source: `docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md`, page 268, lines 17567-17598
 - Baseline: targeted old-vs-new section comparison required
 - Systems: Class / Effect / Character Sheet
-- Current implementation: changelog is summary-level for Cleric, Commander, Monk, Rogue, and Spellblade semantics.
-- Required change: confirm exact mechanical deltas before touching rulesdata or runtime behavior.
-- Data shape impact: unknown
-- Stable ID / alias impact: possible
-- Calculator/effect impact: possible
-- UI impact: possible
+- Current implementation: targeted source comparisons are reflected in class feature data and tests. Cleric Magic/Chaos/Divine Blessing/Channel Divinity, Commander Inspiring Presence, Monk Spiritual Balance/Stances/Shifting Tide, Rogue Debilitating Strike/Cheap Shot/Swashbuckler, and Spellblade Martial Path/Bound Weapon/Disciplines/Spellstrike now match v0.10.5 semantics where the app renders or models those features.
+- Required change: confirm exact mechanical deltas before touching rulesdata or runtime behavior: implemented
+- Data shape impact: none
+- Stable ID / alias impact: none beyond Swift Berserker deprecation in VRR-009
+- Calculator/effect impact: confirmed through existing effect types only
+- UI impact: confirmed for rendered feature/talent text and selectable talent list
 - Storage/export impact: possible
-- HITL decision: after targeted baseline comparison
+- HITL decision: source comparison completed before mutation
 - Code touchpoints:
   - `src/lib/rulesdata/classes-data/features/*.ts`
   - `src/lib/services/enhancedCharacterCalculator.ts`
@@ -322,7 +322,7 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
   - `docs/systems/CLASS_SYSTEM.MD`
   - `docs/systems/EFFECT_SYSTEM.MD`
 - Validation:
-  - focused per-feature regression tests after classification
+  - focused per-feature regression tests after classification: implemented in `subclasses.test.ts`
 
 ### VRR-011: Spell Rename / Remove / Add Migration Pass
 
@@ -387,20 +387,20 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 
 ### VRR-013: Ancestry Trait Delta Pass
 
-- Status: `HITL required`
+- Status: `implemented`
 - Source: `docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md`, page 269, lines 17743-17746
 - Baseline: targeted ancestry/trait comparison required
 - Systems: Ancestry / Traits / Character Creation
-- Current implementation: trait IDs are persisted and current data already includes `Hazardous Hide`.
+- Current implementation: trait IDs are persisted and current data includes source-confirmed `Hazardous Hide`. Beastborn `Additional Limb` and `Capable Limb` now match v0.10.5 wording/costs, including Spell Focus and Somatic Component capability.
 - Required change:
-  - confirm whether `Hazardous Hide returned` is already represented correctly
-  - classify any required effect, cost, or choice changes
-- Data shape impact: unknown
-- Stable ID / alias impact: possible
-- Calculator/effect impact: possible
-- UI impact: possible
-- Storage/export impact: possible
-- HITL decision: required
+  - confirm whether `Hazardous Hide returned` is already represented correctly: implemented
+  - classify any required effect, cost, or choice changes: implemented
+- Data shape impact: none
+- Stable ID / alias impact: none; trait IDs are stable
+- Calculator/effect impact: no new effect type
+- UI impact: confirmed for displayed trait text and point cost
+- Storage/export impact: stable IDs retained
+- HITL decision: source comparison completed before mutation
 - Code touchpoints:
   - `src/lib/rulesdata/ancestries/traits.ts`
   - `src/lib/rulesdata/ancestries/ancestries.ts`
@@ -409,8 +409,8 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
   - `docs/systems/ANCESTRY_SYSTEM.MD`
   - `docs/systems/TRAITS_SYSTEM.MD`
 - Validation:
-  - ancestry data tests
-  - trait choice resolution tests if needed
+  - ancestry data tests: implemented
+  - trait choice resolution tests if needed: not required; no choice shape changed
 
 ## No-Op / Deferred Guidance
 

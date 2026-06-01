@@ -14,6 +14,9 @@ const classTalents: Talent[] = Object.values(classTalentModules).flatMap((module
 // Combine all talents into a single array
 export const allTalents: Talent[] = [...generalTalents, ...multiclassTalents, ...classTalents];
 
+// Current-rule selection surfaces must hide deprecated talents while lookup remains compatible.
+export const selectableTalents: Talent[] = allTalents.filter((talent) => !talent.deprecated);
+
 // Helper function to find a talent by its ID
 export function findTalentById(talentId: string): Talent | undefined {
 	return allTalents.find((t) => t.id === talentId);

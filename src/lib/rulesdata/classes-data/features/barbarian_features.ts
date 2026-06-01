@@ -291,6 +291,34 @@ export const barbarianClass: ClassDefinition = {
 					featureName: 'Raging Elements',
 					levelGained: 3,
 					description: 'You can surround yourself with the elements while raging.',
+					benefits: [
+						{
+							name: 'Erupting Elements',
+							description:
+								'When a creature within your Aura deals damage to you, they immediately take 1 Elemental Rage damage.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'elemental_fury_erupting_elements',
+									value:
+										'While Raging, creatures in your Aura that damage you immediately take 1 Elemental Rage damage.'
+								}
+							]
+						},
+						{
+							name: 'Elemental Blast',
+							description:
+								"You can spend 1 AP and 1 SP to make an Area Spell Attack against the AD of creatures of your choice within your Aura. Hit: 1 Elemental Rage damage. Single Target: If the Attack only targets 1 creature, it targets the target's PD and deals 2 damage.",
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'elemental_fury_elemental_blast',
+									value:
+										"Spend 1 AP and 1 SP to make an Area Spell Attack against chosen creatures in your Aura. Hit: 1 Elemental Rage damage. Single target attacks the target's PD and deals 2 damage."
+								}
+							]
+						}
+					],
 					choices: [
 						{
 							id: 'barbarian_elemental_rage_damage_type',

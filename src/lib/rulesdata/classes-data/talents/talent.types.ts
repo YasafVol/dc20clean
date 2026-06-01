@@ -20,4 +20,7 @@ export interface Talent {
 	prerequisites?: TalentPrerequisites;
 	/** If false, talent can only be taken once. Defaults to true for General talents. */
 	stackable?: boolean;
+	/** Deprecated talents remain loadable for legacy characters but are hidden from new selections. */
+	deprecated?: boolean;
+	deprecationReason?: string;
 }

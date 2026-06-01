@@ -42,7 +42,7 @@ export const rogueClass: ClassDefinition = {
 			featureName: 'Debilitating Strike',
 			levelGained: 1,
 			description:
-				'When you hit with a weapon attack you may spend 1 SP. The target makes a Physical Save vs your Save DC; on failure, choose Deafened, Exposed, Hindered, or Slowed 2. The effect lasts for 1 Round and different choices may stack but not duplicates.'
+				'When you make a Weapon Attack, you can spend 1 SP to force the target to make a Physical Save against your Save DC. Save Failure: the target suffers Deafened, Exposed, Hindered, or Slowed 2 for 1 Round. A target cannot be affected by the same option more than once at a time.'
 		},
 		{
 			id: 'rogue_roguish_finesse',
@@ -95,7 +95,7 @@ export const rogueClass: ClassDefinition = {
 			featureName: 'Cheap Shot',
 			levelGained: 2,
 			description:
-				'You deal +1 damage on Martial Attacks against targets that are Flanked, Prone, conditioned (except Invisible), or unaware of you due to being Hidden.'
+				'You deal +1 damage on Martial Attacks against creatures that are Flanked or Prone, have any Condition other than Invisible, or are targets you are Hidden from.'
 		},
 		{
 			id: 'rogue_talent_level_2',
@@ -203,13 +203,13 @@ export const rogueClass: ClassDefinition = {
 						{
 							name: 'Taunting Shot',
 							description:
-								'Once per round when attacking a conditioned foe, forgo Cheap Shot damage to force a Charisma Save or Taunt the target until your next turn ends.',
+								'Once per round when you make an Attack against a creature that fulfills the criteria for Cheap Shot, you can forgo your Cheap Shot damage to force a Charisma Save. Failure: the target is Taunted by you until the end of your next turn.',
 							effects: [
 								{
 									type: 'GRANT_ABILITY',
 									target: 'rogue_taunting_shot',
 									value:
-										'When an attack targets a creature with a Condition, you may forego Cheap Shot damage to force a Charisma Save. Failure: the creature is Taunted until the end of your next turn.'
+										'Once per round when an Attack targets a creature that fulfills the criteria for Cheap Shot, forego Cheap Shot damage to force a Charisma Save. Failure: the creature is Taunted until the end of your next turn.'
 								}
 							]
 						},

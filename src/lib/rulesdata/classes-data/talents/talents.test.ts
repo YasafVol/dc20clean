@@ -10,7 +10,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { allTalents } from './talent.loader';
+import { allTalents, findTalentById, selectableTalents } from './talent.loader';
 import { generalTalents, multiclassTalents } from './talents.data';
 import { MULTICLASS_TIERS } from '../../progression/multiclass';
 
@@ -353,6 +353,14 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 				expect(talent.category).toBeDefined();
 				expect(['General', 'Class', 'Multiclass']).toContain(talent.category);
 			}
+		});
+
+		it('keeps removed v0.10 talents loadable while excluding them from v0.10.5 selection', () => {
+			expect(findTalentById('barbarian_swift_berserker')).toBeDefined();
+			expect(findTalentById('barbarian_swift_berserker')?.deprecated).toBe(true);
+			expect(selectableTalents.find((talent) => talent.id === 'barbarian_swift_berserker')).toBe(
+				undefined
+			);
 		});
 
 		it('should handle missing files gracefully', () => {

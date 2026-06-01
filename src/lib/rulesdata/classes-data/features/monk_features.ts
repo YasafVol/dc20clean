@@ -111,47 +111,56 @@ export const monkClass: ClassDefinition = {
 					options: [
 						{
 							name: 'Bear Stance',
-							description: 'Big Hits - Your attacks deal massive damage with overwhelming force.',
+							description:
+								'You deal +1 damage on Heavy Hits or higher and Critical Hits on Martial Attacks made using Unarmed Strikes or Melee Weapons. When you Miss using a Melee Martial Attack, you gain ADV on the next Melee Martial Attack you make before the end of your turn, once on each of your turns.',
 							effects: []
 						},
 						{
 							name: 'Bull Stance',
-							description: 'Knockback - Drive enemies backward with powerful strikes.',
+							description:
+								'When you Succeed on a Physical Check to push a target, it also takes 1 Bludgeoning damage. When you push a target, it is pushed 1 additional Space, and you can move in a straight line with the target without provoking Opportunity Attacks or spending movement.',
 							effects: []
 						},
 						{
 							name: 'Cobra Stance',
-							description: 'Counter - Strike back at opponents who dare attack you.',
+							description:
+								'You deal +1 damage on Martial Attacks made using Unarmed Strikes or Melee Weapons against creatures that have damaged you since the start of your last turn. When a creature within your Melee Range misses you with a Melee Attack, you can spend 1 AP as a Reaction to make a Melee Martial Attack against it.',
 							effects: []
 						},
 						{
 							name: 'Gazelle Stance',
-							description: 'Nimble - Move with exceptional grace and speed.',
+							description:
+								'Your Speed and Jump Distance increase by 1. You ignore Difficult Terrain. You gain ADV on Acrobatics Checks and Agility Saves.',
 							effects: []
 						},
 						{
 							name: 'Mantis Stance',
-							description: 'Grapple - Seize and control your opponents with superior technique.',
+							description:
+								'You have ADV on Checks and Saves made to initiate, maintain, or escape Grapples. When you start your turn with at least 1 creature Grappled, you gain +1 AP to use on a Grapple Maneuver against a creature you have Grappled.',
 							effects: []
 						},
 						{
 							name: 'Mongoose Stance',
-							description: 'Multi - Execute rapid combinations of attacks.',
+							description:
+								'Your Melee Martial Attacks deal +1 damage while you are Flanked. When you make a Melee Martial Attack, choose a second target within your Melee Range and make a single Attack Check against both targets.',
 							effects: []
 						},
 						{
 							name: 'Scorpion Stance',
-							description: 'Quick Strike - Attack with blinding speed before opponents can react.',
+							description:
+								'Creatures provoke Opportunity Attacks from you when they enter your Melee Range. When you make a Melee Martial Attack, you can spend 1 AP to deal +1 damage and force a Physical Save against your Save DC. Failure: the target is Impaired on the next Physical Check before the end of your next turn.',
 							effects: []
 						},
 						{
 							name: 'Turtle Stance',
-							description: 'Sturdy - Become an immovable fortress of defense.',
+							description:
+								'Your Speed becomes 1 unless it is already lower. You gain PDR, EDR, and MDR. You have ADV on Might Saves and Saves against being moved or knocked Prone.',
 							effects: []
 						},
 						{
 							name: 'Wolf Stance',
-							description: 'Hit & Run - Strike swiftly and escape before retaliation.',
+							description:
+								'After you make an Attack with an Unarmed Strike or a Melee Weapon, you can immediately move up to 1 Space without spending movement. You have ADV on Opportunity Attacks, and creatures have DisADV on Opportunity Attacks made against you.',
 							effects: []
 						}
 					]
@@ -176,19 +185,19 @@ export const monkClass: ClassDefinition = {
 				{
 					name: 'Ki Points',
 					description:
-						'You have Ki Points equal to your Stamina Points; spent Ki replenishes when combat ends or instantly outside combat.',
+						'You have Ki Points equal to your Stamina Points. When you spend a Stamina Point on your turn, you regain a Ki Point. You regain all spent Ki Points when Combat ends.',
 					effects: [
 						{
 							type: 'GRANT_ABILITY',
 							target: 'monk_ki_points',
 							value:
-								'Whenever you spend a Stamina Point on your turn, regain a Ki Point. All Ki Points return when combat ends; outside of combat, Ki spent replenishes immediately.'
+								'Ki maximum equals Stamina Points. When you spend a Stamina Point on your turn, regain 1 Ki Point. Regain all spent Ki Points when Combat ends.'
 						}
 					]
 				},
 				{
 					name: 'Ki Actions',
-					description: 'Spend 1 Ki to perform Deflect Attack, Slow Fall, or Uncanny Dodge.',
+					description: 'Spend Ki Points to perform Deflect Attack, Slow Fall, or Uncanny Dodge.',
 					effects: [
 						{
 							type: 'GRANT_ABILITY',
@@ -205,7 +214,7 @@ export const monkClass: ClassDefinition = {
 							type: 'GRANT_ABILITY',
 							target: 'monk_uncanny_dodge',
 							value:
-								'When a creature makes an Attack against you, spend 2 Ki to impose DisADV on the attack.'
+								'When a creature makes an Attack against you, spend 1 Ki Point to impose DisADV on the attack.'
 						}
 					]
 				}
@@ -349,13 +358,13 @@ export const monkClass: ClassDefinition = {
 						{
 							name: 'Flow',
 							description:
-								'When you use Uncanny Dodge against a Melee Attack, spend 1 AP to make an Opportunity Attack against the attacker.',
+								"When you use Uncanny Dodge against a Melee Attack, you can spend 1 AP to make an Opportunity Attack against the attacker, provided they're within range.",
 							effects: [
 								{
 									type: 'GRANT_ABILITY',
 									target: 'monk_flow_counter',
 									value:
-										'If Uncanny Dodge is used against a melee attack, spend 1 AP to make an Opportunity Attack against the attacker.'
+										"If Uncanny Dodge is used against a melee attack, spend 1 AP to make an Opportunity Attack against the attacker, provided they're within range."
 								}
 							]
 						},

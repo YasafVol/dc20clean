@@ -92,6 +92,8 @@ Level 5 Expert Features use existing effect types only. Modeled universal bonuse
 
 Champion Fighting Spirit's v0.10.5 Combat Readiness text is represented as a `GRANT_ABILITY` with target `combat_readiness_fortify`. The old `combat_readiness_brace` identity is a feature alias only; it must not be treated as a maneuver alias because `Brace` remains a current Defense maneuver.
 
+Class semantic deltas that are descriptive or action-granting continue to use `GRANT_ABILITY` rather than new effect types. Current v0.10.5 examples include Barbarian `elemental_fury_elemental_blast`, Commander `inspiring_presence`, Monk Ki/stance reaction abilities, Rogue `rogue_taunting_shot`, and Spellblade Bound Weapon/Discipline/Spellstrike abilities. Numeric or training deltas reuse existing effect types such as `GRANT_COMBAT_TRAINING`, `GRANT_MANEUVERS`, and `MODIFY_STAT`.
+
 ---
 
 ## 2.1. GRANT_MOVEMENT Effect

@@ -55,9 +55,10 @@ export const spellbladeClass: ClassDefinition = {
 			featureName: 'Martial Path',
 			levelGained: 1,
 			description:
-				'You gain combat training in weapons, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.',
+				'You gain combat training in weapons, spell focuses, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.',
 			effects: [
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Spell_Focuses', value: true },
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true },
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Shields', value: true },
 				{ type: 'GRANT_MANEUVERS', target: 'all_attack', value: 4 }
@@ -96,6 +97,17 @@ export const spellbladeClass: ClassDefinition = {
 							target: 'spellblade_bound_weapon_smite',
 							value:
 								'Spend 1+ SP on a Martial Attack with bound weapon: +1 Bound Damage per SP, and gain 1 Martial Enhancement free.'
+						}
+					]
+				},
+				{
+					name: 'Somatic Weapon',
+					description: 'You can use your Bound Weapon to perform the Somatic Components of a Spell.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'spellblade_bound_weapon_somatic_weapon',
+							value: 'Use your Bound Weapon to perform Somatic Components of Spells.'
 						}
 					]
 				},
@@ -148,11 +160,11 @@ export const spellbladeClass: ClassDefinition = {
 						},
 						{
 							name: 'Warrior',
-							description: 'Gain heavy armor and shield training and additional maneuvers.',
+							description: 'Gain heavy armor and shield training and learn 1 Maneuver.',
 							effects: [
 								{ type: 'GRANT_COMBAT_TRAINING', target: 'Heavy_Armor', value: true },
 								{ type: 'GRANT_COMBAT_TRAINING', target: 'Heavy_Shields', value: true },
-								{ type: 'GRANT_MANEUVERS', target: 'spellblade_warrior_maneuvers', value: 2 }
+								{ type: 'GRANT_MANEUVERS', target: 'spellblade_warrior_maneuvers', value: 1 }
 							]
 						},
 						{
@@ -181,13 +193,13 @@ export const spellbladeClass: ClassDefinition = {
 						},
 						{
 							name: 'Spell Breaker',
-							description: 'Duel spell attacks with martial skill.',
+							description: 'Initiate Spell Duels with your weapon and martial skill.',
 							effects: [
 								{
 									type: 'GRANT_ABILITY',
 									target: 'spellblade_spell_breaker',
 									value:
-										'Spend 2 AP to initiate a Spell Duel using your weapon against a spell attack within range. Make an Attack Check, adding SP and MP spent (up to your mana spend limit) as a bonus; gain ADV if within 1 space of the spell’s initiator.'
+										'Initiate a Spell Duel as the Challenger without spending MP using a weapon you wield if the caster or a target is within weapon range or you are between them. Make a Martial Check instead of a Spell Check. Spend SP for +1 bonus per SP and MP as normal for +2 bonus per MP. You have ADV if within 1 Space of the caster.'
 								}
 							]
 						},
@@ -199,7 +211,7 @@ export const spellbladeClass: ClassDefinition = {
 									type: 'GRANT_ABILITY',
 									target: 'spellblade_spell_warder',
 									value:
-										'When you deal Elemental or Mystical damage with an attack, gain Resistance (1) to that damage type until the start of your next turn; replace or maintain the resistance on subsequent triggers.'
+										'When you deal Elemental or Mystical damage with an Attack, gain Resistance (1) to that damage type for 1 Round; replace or maintain the resistance on subsequent triggers.'
 								}
 							]
 						},
@@ -232,7 +244,7 @@ export const spellbladeClass: ClassDefinition = {
 			featureName: 'Spellstrike',
 			levelGained: 2,
 			description:
-				'Once per turn, combine a Martial Attack with a spell, reducing the spell’s AP cost and resolving them as one harmonic strike.'
+				'Once on each of your turns when you make a Martial Attack, you can also cast a Spell as part of the same Action, spending 1 AP less than normal. Converged Action: the Spell can only target 1 creature who must be a target of the Attack, and the range of the Attack cannot exceed the range of the Spell. If the Spell requires a Check, it uses your Attack Check instead; Saves use your Save DC. Harmonic Strike: the Martial Attack and Spell are treated as 1 Attack and can benefit from Martial Enhancements and Spell Enhancements; the Spell does not require Somatic Components.'
 		},
 		{
 			id: 'spellblade_talent_level_2',

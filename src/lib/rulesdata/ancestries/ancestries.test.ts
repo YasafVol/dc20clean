@@ -601,3 +601,34 @@ describe('Ancestry & Trait System', () => {
 		});
 	});
 });
+
+describe('DC20 v0.10.5 ancestry trait deltas', () => {
+	it('keeps Hazardous Hide returned with the v0.10.5 grapple damage contract', () => {
+		const hazardousHide = traitsData.find((trait) => trait.id === 'beastborn_hazardous_hide');
+
+		expect(hazardousHide).toBeDefined();
+		expect(hazardousHide?.cost).toBe(1);
+		expect(hazardousHide?.description).toContain('Corrosion, Piercing, or Poison');
+		expect(hazardousHide?.description).toContain('While you');
+		expect(hazardousHide?.description).toContain('physically Grappled');
+		expect(hazardousHide?.description).toContain('Creatures that start their turn Grappled by you');
+		expect(hazardousHide?.effects?.[0]?.value).toContain('Corrosion, Piercing, or Poison');
+		expect(hazardousHide?.effects?.[0]?.value).toContain('Grappled by you');
+	});
+
+	it('uses v0.10.5 Additional Limb and Capable Limb wording and costs', () => {
+		const additionalLimb = traitsData.find((trait) => trait.id === 'beastborn_additional_limb');
+		const capableLimb = traitsData.find((trait) => trait.id === 'beastborn_capable_limb');
+
+		expect(additionalLimb?.cost).toBe(1);
+		expect(additionalLimb?.description).toContain('range of 1 Space');
+		expect(additionalLimb?.description).toContain("can't wield Weapons, Shields, or Spell Focuses");
+		expect(additionalLimb?.description).toContain("can't use it to perform the Somatic Components");
+
+		expect(capableLimb?.cost).toBe(2);
+		expect(capableLimb?.description).toContain('Weapons, Shields, or Spell Focuses');
+		expect(capableLimb?.description).toContain('Somatic Components');
+		expect(capableLimb?.description).toContain('only once per Additional Limb');
+		expect(capableLimb?.prerequisites).toEqual(['beastborn_additional_limb']);
+	});
+});

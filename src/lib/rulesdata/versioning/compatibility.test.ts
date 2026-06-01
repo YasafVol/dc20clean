@@ -154,6 +154,34 @@ describe('rules version compatibility', () => {
 		});
 	});
 
+	it('keeps removed Swift Berserker loadable but upgrade-required for legacy characters', () => {
+		const alias = resolveRulesAlias('talent', 'barbarian_swift_berserker', {
+			fromRulesVersion: 'dc20-0.10',
+			toRulesVersion: 'dc20-0.10.5'
+		});
+
+		expect(alias).toMatchObject({
+			domain: 'talent',
+			fromId: 'barbarian_swift_berserker',
+			status: 'deprecated',
+			compatibilityState: 'upgrade-required'
+		});
+
+		const result = assessCharacterCompatibility({
+			id: 'old-swift-berserker',
+			rulesVersion: 'dc20-0.10',
+			schemaVersion: '2.2.0',
+			selectedTalents: { barbarian_swift_berserker: 1 }
+		});
+
+		expect(result.state).toBe('upgrade-required');
+		expect(result.canLoad).toBe(true);
+		expect(result.canRenderSheet).toBe(true);
+		expect(result.canEdit).toBe(false);
+		expect(result.canExportPdf).toBe(true);
+		expect(result.aliasDecisions).toEqual(expect.arrayContaining([expect.objectContaining(alias!)]));
+	});
+
 	it('returns state-only auto-save for upgrade-required characters', () => {
 		expect(
 			getCharacterAutoSaveMode({

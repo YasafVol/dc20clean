@@ -54,11 +54,11 @@ This file does not imply that implementation has started.
 
 ### Alias resolution
 
-- [ ] alias lookup covers feature IDs
+- [x] alias lookup covers feature IDs
 - [x] alias lookup covers spell IDs
-- [ ] alias lookup covers maneuver IDs
-- [ ] alias lookup covers trait IDs when needed
-- [ ] alias-backed old fixtures still render on the character sheet
+- [x] alias lookup covers maneuver IDs
+- [x] alias lookup covers trait IDs when needed
+- [x] alias-backed old fixtures still render on the character sheet
 
 ## Content Lane Validation
 
@@ -66,8 +66,8 @@ This file does not imply that implementation has started.
 
 - [ ] `src/lib/rulesdata/rulesdata.spec.ts`
 - [x] `src/lib/rulesdata/classes-data/classProgressionResolver.test.ts`
-- [ ] `src/lib/rulesdata/classes-data/features/subclasses.test.ts`
-- [ ] `src/lib/rulesdata/classes-data/talents/talents.test.ts`
+- [x] `src/lib/rulesdata/classes-data/features/subclasses.test.ts`
+- [x] `src/lib/rulesdata/classes-data/talents/talents.test.ts`
 - [ ] `src/lib/rulesdata/progression/multiclass.test.ts`
 - [x] `src/lib/services/dc20v0105ProgressionResources.test.ts`
 - [x] level 5 Expert Feature coverage for every class is asserted
@@ -92,10 +92,10 @@ This file does not imply that implementation has started.
 
 ### Ancestry / traits
 
-- [ ] `src/lib/rulesdata/ancestries/ancestries.test.ts`
-- [ ] trait references remain valid after any v0.10.5 changes
-- [ ] trait choice resolution still works for legacy and new data
-- [ ] `Hazardous Hide` classification is verified against source text before mutation
+- [x] `src/lib/rulesdata/ancestries/ancestries.test.ts`
+- [x] trait references remain valid after any v0.10.5 changes
+- [x] trait choice resolution still works for legacy and new data
+- [x] `Hazardous Hide` classification is verified against source text before mutation
 
 ### Background
 
@@ -122,9 +122,9 @@ This file does not imply that implementation has started.
 
 ### Character sheet and export
 
-- [ ] old character opens without destructive rewrite
+- [x] old character opens without destructive rewrite
 - [x] old character export behavior follows chosen compatibility policy
-- [ ] v0.10.5 character export behavior uses correct routing metadata
+- [x] v0.10.5 character export behavior uses correct routing metadata
 - [x] hardcoded rules-version assumptions are removed from export entry points before rollout
 
 ## Manual Review Checklist
@@ -147,6 +147,8 @@ Targeted tests expected during implementation:
 npx vitest src/lib/rulesdata/classes-data/classProgressionResolver.test.ts
 npx vitest src/lib/rulesdata/classes-data/talents/talents.test.ts
 npx vitest src/lib/rulesdata/ancestries/ancestries.test.ts
+npx vitest src/lib/rulesdata/versioning/legacyCharacterAcceptance.test.ts
+npx vitest src/routes/character-sheet/hooks/CharacterSheetProvider.compatibility.test.tsx
 npx vitest src/lib/services/enhancedCharacterCalculator.spec.ts
 npx vitest src/lib/services/levelingRegression.test.ts
 npx vitest src/tests/parity/characterEngine.parity.spec.tsx

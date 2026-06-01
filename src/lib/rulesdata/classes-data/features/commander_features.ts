@@ -74,13 +74,14 @@ export const commanderClass: ClassDefinition = {
 			id: 'commander_inspiring_presence',
 			featureName: 'Inspiring Presence',
 			levelGained: 1,
-			description: 'Whenever you spend SP while in Combat, you can restore HP to nearby allies.',
+			description:
+				"Once per Round during Combat, when you spend SP you can restore 1 HP to a creature of your choice within 10 Spaces (including yourself) that can see or hear you. If the creature is on Death's Door, they regain 1 additional HP.",
 			effects: [
 				{
 					type: 'GRANT_ABILITY',
 					target: 'inspiring_presence',
 					value:
-						'When spending SP in combat: restore HP equal to SP spent, divide among allies within 5 Spaces.'
+						"Once per Round in combat when you spend SP: restore 1 HP to a creature within 10 Spaces that can see or hear you; Death's Door targets regain 1 additional HP."
 				}
 			]
 		},

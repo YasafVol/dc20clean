@@ -37,16 +37,16 @@ This file does not imply that implementation has started.
 
 ### Version contract
 
-- [ ] saved character contract supports additive `rulesVersion`
-- [ ] draft character state carries `rulesVersion` or explicit compatibility metadata
+- [x] saved character contract supports additive `rulesVersion`
+- [x] draft character state carries `rulesVersion` or explicit compatibility metadata
 - [ ] imported characters preserve incoming version metadata
-- [ ] `schemaVersion` handling is internally consistent
+- [x] `schemaVersion` handling is internally consistent
 
 ### Compatibility policy
 
-- [ ] old characters can be classified as editable, upgrade-required, or view-only
-- [ ] no old character is silently reinterpreted by current rules without a version fence
-- [ ] compatibility state is enforced in:
+- [x] old characters can be classified as editable, upgrade-required, or view-only
+- [x] no old character is silently reinterpreted by current rules without a version fence
+- [x] compatibility state is enforced in:
   - load
   - level up
   - auto-save
@@ -123,9 +123,9 @@ This file does not imply that implementation has started.
 ### Character sheet and export
 
 - [ ] old character opens without destructive rewrite
-- [ ] old character export behavior follows chosen compatibility policy
+- [x] old character export behavior follows chosen compatibility policy
 - [ ] v0.10.5 character export behavior uses correct routing metadata
-- [ ] hardcoded rules-version assumptions are removed from export entry points before rollout
+- [x] hardcoded rules-version assumptions are removed from export entry points before rollout
 
 ## Manual Review Checklist
 

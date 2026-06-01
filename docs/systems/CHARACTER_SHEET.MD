@@ -25,6 +25,8 @@ Compatibility states from the rules-version fence affect sheet persistence:
 | `upgrade-required` | Render allowed; auto-save is limited to `characterState` so old rules data is not silently recalculated under newer rules |
 | `view-only`        | Render allowed where possible; auto-save is disabled                                                                      |
 
+For `upgrade-required` and `view-only` characters, the sheet suppresses fresh calculator output for display/export helpers that would reinterpret the character under the current rules data. PDF export falls back to stored `SavedCharacter` values for those compatibility states.
+
 ---
 
 ## 2. Key Files

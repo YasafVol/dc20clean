@@ -51,6 +51,11 @@ import { getDiceModifierForAction } from '../../lib/services/conditionEffectsAna
 
 // Import skills data
 import { skillsData } from '../../lib/rulesdata/skills';
+import {
+	assessCharacterCompatibility,
+	getPdfVersionForCharacter
+} from '../../lib/rulesdata/versioning/compatibility';
+import { normalizeRulesVersion } from '../../lib/rulesdata/versioning/rulesVersion';
 
 // Import existing components
 import Spells from './components/Spells';
@@ -481,66 +486,80 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		if (!characterData) return;
 
 		try {
-			const [pdf, calc, denormMod] = await Promise.all([
-				import('../../lib/pdf/transformers'),
-				import('../../lib/services/enhancedCharacterCalculator'),
-				import('../../lib/services/denormalizeMastery')
-			]);
+			const compatibility = assessCharacterCompatibility(characterData);
+			const pdf = await import('../../lib/pdf/transformers');
 			const { fillPdfFromData } = await import('../../lib/pdf/fillPdf');
+			let pdfData;
 
-			const buildData = calc.convertToEnhancedBuildData({
-				...characterData,
-				attribute_might: characterData.finalMight,
-				attribute_agility: characterData.finalAgility,
-				attribute_charisma: characterData.finalCharisma,
-				attribute_intelligence: characterData.finalIntelligence,
-				classId: characterData.classId,
-				ancestry1Id: characterData.ancestry1Id,
-				ancestry2Id: characterData.ancestry2Id,
-				selectedTraitIds: characterData.selectedTraitIds || [],
-				selectedTraitChoices: (characterData as any).selectedTraitChoices || {},
-				featureChoices: characterData.selectedFeatureChoices || {},
-				skillsData: characterData.skillsData || {},
-				tradesData: characterData.tradesData || {},
-				languagesData: characterData.languagesData || { common: { fluency: 'fluent' } }
+			if (compatibility.autoSaveMode === 'full') {
+				const [calc, denormMod] = await Promise.all([
+					import('../../lib/services/enhancedCharacterCalculator'),
+					import('../../lib/services/denormalizeMastery')
+				]);
+
+				const buildData = calc.convertToEnhancedBuildData({
+					...characterData,
+					attribute_might: characterData.finalMight,
+					attribute_agility: characterData.finalAgility,
+					attribute_charisma: characterData.finalCharisma,
+					attribute_intelligence: characterData.finalIntelligence,
+					classId: characterData.classId,
+					ancestry1Id: characterData.ancestry1Id,
+					ancestry2Id: characterData.ancestry2Id,
+					selectedTraitIds: characterData.selectedTraitIds || [],
+					selectedTraitChoices: (characterData as any).selectedTraitChoices || {},
+					featureChoices: characterData.selectedFeatureChoices || {},
+					skillsData: characterData.skillsData || {},
+					tradesData: characterData.tradesData || {},
+					languagesData: characterData.languagesData || { common: { fluency: 'fluent' } }
+				});
+				const calcResult = calc.calculateCharacterWithBreakdowns(buildData);
+
+				const denorm =
+					characterData.masteryLadders &&
+					characterData.skillTotals &&
+					characterData.knowledgeTradeMastery &&
+					characterData.languageMastery
+						? ({
+								masteryLadders: characterData.masteryLadders,
+								skillTotals: (characterData as any).skillTotals,
+								knowledgeTradeMastery: (characterData as any).knowledgeTradeMastery,
+								languageMastery: (characterData as any).languageMastery
+							} as any)
+						: denormMod.denormalizeMastery({
+								finalAttributes: {
+									might: calcResult.stats.finalMight,
+									agility: calcResult.stats.finalAgility,
+									charisma: calcResult.stats.finalCharisma,
+									intelligence: calcResult.stats.finalIntelligence,
+									prime: calcResult.stats.finalPrimeModifierValue
+								},
+								skillsRanks: characterData.skillsData || {},
+								tradesRanks: characterData.tradesData || {},
+								languagesData: characterData.languagesData || { common: { fluency: 'fluent' } }
+							});
+
+				pdfData = pdf.transformCalculatedCharacterToPdfData(calcResult, {
+					saved: characterData,
+					denorm
+				});
+			} else {
+				pdfData = pdf.transformSavedCharacterToPdfData(characterData);
+			}
+			const blob = await fillPdfFromData(pdfData, {
+				flatten: false,
+				version: getPdfVersionForCharacter(characterData)
 			});
-			const calcResult = calc.calculateCharacterWithBreakdowns(buildData);
-
-			const denorm =
-				characterData.masteryLadders &&
-				characterData.skillTotals &&
-				characterData.knowledgeTradeMastery &&
-				characterData.languageMastery
-					? ({
-							masteryLadders: characterData.masteryLadders,
-							skillTotals: (characterData as any).skillTotals,
-							knowledgeTradeMastery: (characterData as any).knowledgeTradeMastery,
-							languageMastery: (characterData as any).languageMastery
-						} as any)
-					: denormMod.denormalizeMastery({
-							finalAttributes: {
-								might: calcResult.stats.finalMight,
-								agility: calcResult.stats.finalAgility,
-								charisma: calcResult.stats.finalCharisma,
-								intelligence: calcResult.stats.finalIntelligence,
-								prime: calcResult.stats.finalPrimeModifierValue
-							},
-							skillsRanks: characterData.skillsData || {},
-							tradesRanks: characterData.tradesData || {},
-							languagesData: characterData.languagesData || { common: { fluency: 'fluent' } }
-						});
-
-			const pdfData = pdf.transformCalculatedCharacterToPdfData(calcResult, {
-				saved: characterData,
-				denorm
-			});
-			const blob = await fillPdfFromData(pdfData, { flatten: false, version: '0.10' });
 
 			const safeName = (characterData.finalName || characterData.id || 'Character')
 				.replace(/[^A-Za-z0-9]+/g, '_')
 				.replace(/^_+|_+$/g, '')
 				.slice(0, 60);
-			const fileName = `${safeName}_vDC20-0.10.pdf`;
+			const rulesVersionLabel = normalizeRulesVersion(characterData.rulesVersion).replace(
+				'dc20-',
+				''
+			);
+			const fileName = `${safeName}_vDC20-${rulesVersionLabel}.pdf`;
 
 			const url = URL.createObjectURL(blob);
 			const a = document.createElement('a');

@@ -8,16 +8,34 @@ import {
 import { resolveRulesAlias } from './aliases';
 
 describe('rules version compatibility', () => {
-	it('treats characters without rulesVersion as v0.10 and editable under the current v0.10 runtime', () => {
+	it('treats characters without rulesVersion as legacy v0.10 and upgrade-required under the current v0.10.5 runtime', () => {
 		const result = assessCharacterCompatibility({
 			id: 'legacy-v010',
 			finalName: 'Legacy v0.10',
 			schemaVersion: 2
 		});
 
-		expect(CURRENT_RULES_VERSION).toBe('dc20-0.10');
+		expect(CURRENT_RULES_VERSION).toBe('dc20-0.10.5');
 		expect(result.rulesVersion).toBe('dc20-0.10');
 		expect(result.schemaVersion).toBe('2.2.0');
+		expect(result.state).toBe('upgrade-required');
+		expect(result.canLoad).toBe(true);
+		expect(result.canRenderSheet).toBe(true);
+		expect(result.canEdit).toBe(false);
+		expect(result.canLevelUp).toBe(false);
+		expect(result.canAutoSave).toBe(true);
+		expect(result.autoSaveMode).toBe('characterState');
+		expect(result.pdfVersion).toBe('0.10');
+	});
+
+	it('treats v0.10.5 characters as editable under the current v0.10.5 runtime', () => {
+		const result = assessCharacterCompatibility({
+			id: 'current-v0105',
+			finalName: 'Current v0.10.5',
+			rulesVersion: 'dc20-0.10.5',
+			schemaVersion: '2.2.0'
+		});
+
 		expect(result.state).toBe('editable');
 		expect(result.canLoad).toBe(true);
 		expect(result.canRenderSheet).toBe(true);
@@ -103,14 +121,11 @@ describe('rules version compatibility', () => {
 
 	it('returns state-only auto-save for upgrade-required characters', () => {
 		expect(
-			getCharacterAutoSaveMode(
-				{
-					id: 'old-rules',
-					rulesVersion: 'dc20-0.10',
-					schemaVersion: '2.2.0'
-				},
-				{ currentRulesVersion: 'dc20-0.10.5' }
-			)
+			getCharacterAutoSaveMode({
+				id: 'old-rules',
+				rulesVersion: 'dc20-0.10',
+				schemaVersion: '2.2.0'
+			})
 		).toBe('characterState');
 	});
 });

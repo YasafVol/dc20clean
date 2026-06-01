@@ -43,7 +43,7 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 - Source: `docs/assets/dc20-0.10.5/DATA_SHAPE_REVIEW.md`; `docs/assets/dc20-0.10.5/CHANGE_AUDIT.md`, `AUDIT-001`
 - Baseline: current repo persists `schemaVersion` but not `rulesVersion`
 - Systems: Database / Storage / Character Creation / Character Sheet / PDF Export
-- Current implementation: saved characters, draft state, sheet load, and export flows are not rules-version-aware.
+- Current implementation: saved characters, draft state, sheet load, auto-save, edit/level-up gates, and export flows are rules-version-aware. Current rules are `dc20-0.10.5`; missing or explicit `dc20-0.10` characters are treated as legacy.
 - Required change: add additive `rulesVersion` metadata and treat it as the routing spine for runtime behavior.
 - Data shape impact: additive
 - Stable ID / alias impact: none directly

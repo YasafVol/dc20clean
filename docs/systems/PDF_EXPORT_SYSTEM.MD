@@ -67,7 +67,7 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 ## 4. Runtime Flow
 
 1. **Trigger** — User clicks “Export PDF” in the character sheet UI.
-2. **Preparation** — UI gathers the current character, checks compatibility, normalizes it with `convertToEnhancedBuildData`, and runs `calculateCharacterWithBreakdowns` only when the compatibility policy allows it.
+2. **Preparation** — UI gathers the current character and checks compatibility. `editable` characters are normalized with `convertToEnhancedBuildData` and recalculated; `upgrade-required` and `view-only` characters export from stored `SavedCharacter` values to avoid reinterpreting old rules data.
 3. **Transformation** — `transformCalculatedCharacterToPdfData(characterResult)` produces a validated `PdfExportData` object.
 4. **Lazy Load** — UI dynamically imports `fillPdfFromData` (and `pdf-lib`) to avoid upfront bundle cost.
 5. **Fill & Save** — `fillPdfFromData` loads the template via `?url`, fills fields based on the rules-version-routed map (default: v0.10), optionally flattens, and returns a Blob for download.

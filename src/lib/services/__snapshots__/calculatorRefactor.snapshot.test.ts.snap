@@ -214,8 +214,8 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Bar
       "conditionalTotal": 6,
       "effects": [
         {
-          "condition": "raging",
-          "description": "Reduced Defense: -5 (raging)",
+          "condition": "while_raging",
+          "description": "Reduced Defense: -5 (while_raging)",
           "isActive": false,
           "source": {
             "category": "Barbarian Level 1",
@@ -333,10 +333,10 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Bar
       "affectedStats": [
         "pd",
       ],
-      "condition": "raging",
-      "description": "Reduced Defense: -5 pd while raging",
+      "condition": "while_raging",
+      "description": "Reduced Defense: -5 pd while while_raging",
       "effect": {
-        "condition": "raging",
+        "condition": "while_raging",
         "resolved": true,
         "source": {
           "category": "Barbarian Level 1",
@@ -590,7 +590,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Bar
             "description": "Your PD decreases by 5.",
             "effects": [
               {
-                "condition": "raging",
+                "condition": "while_raging",
                 "target": "pd",
                 "type": "MODIFY_STAT",
                 "value": -5,
@@ -1409,11 +1409,11 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
       "total": 5,
     },
     "mpMax": {
-      "base": 7,
-      "conditionalTotal": 7,
+      "base": 8,
+      "conditionalTotal": 8,
       "effects": [],
       "statName": "mpMax",
-      "total": 7,
+      "total": 8,
     },
     "pd": {
       "base": 13,
@@ -1481,7 +1481,10 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
   "globalMagicProfile": {
     "schools": [],
     "sources": [],
-    "tags": [],
+    "tags": [
+      "Weapon",
+      "Ward",
+    ],
   },
   "grantedAbilities": [
     {
@@ -2016,7 +2019,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
     "finalInitiativeBonus": 3,
     "finalIntelligence": 2,
     "finalJumpDistance": 1,
-    "finalMPMax": 7,
+    "finalMPMax": 8,
     "finalMartialCheck": 2,
     "finalMight": 2,
     "finalMoveSpeed": 5,
@@ -2274,11 +2277,11 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Wiz
       "total": 5,
     },
     "mpMax": {
-      "base": 20,
-      "conditionalTotal": 20,
+      "base": 21,
+      "conditionalTotal": 21,
       "effects": [],
       "statName": "mpMax",
-      "total": 20,
+      "total": 21,
     },
     "pd": {
       "base": 15,
@@ -2362,6 +2365,45 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Wiz
         "category": "Wizard Level 2",
         "description": "When you complete a Long Rest, choose 1 Spell you know to become your Prepared Spell.",
         "id": "Prepared Spell",
+        "name": "Prepared Spell",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+    {
+      "description": "Signature School reduces MP cost by an additional 1.",
+      "isConditional": false,
+      "name": "expert_wizard_signature_school",
+      "source": {
+        "category": "Wizard Level 5",
+        "description": "You learn 1 additional Arcane Spell from your chosen School. Signature School reduces MP cost by an additional 1.",
+        "id": "Expert Wizard_Spell School Initiate",
+        "name": "Spell School Initiate",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+    {
+      "description": "Spell Tag adds 1 additional School or Tag per MP; Area increases diameter by 1 Space per MP.",
+      "isConditional": false,
+      "name": "expert_wizard_arcane_sigil",
+      "source": {
+        "category": "Wizard Level 5",
+        "description": "Spell Tag (X MP) adds 1 additional School or Tag per MP spent. Area (X MP) increases the diameter by 1 Space per MP spent.",
+        "id": "Expert Wizard_Arcane Sigil",
+        "name": "Arcane Sigil",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+    {
+      "description": "Choose 1 additional known Spell after a Long Rest; both are Prepared Spells, but only one Mana Limit Break.",
+      "isConditional": false,
+      "name": "expert_wizard_prepared_spell",
+      "source": {
+        "category": "Wizard Level 5",
+        "description": "After a Long Rest, choose 1 additional known Spell. Both chosen Spells become Prepared Spells, but you still only have one Mana Limit Break.",
+        "id": "Expert Wizard_Prepared Spell",
         "name": "Prepared Spell",
         "type": "class_feature",
       },
@@ -2896,10 +2938,49 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Wiz
         "levelGained": 2,
       },
       {
-        "description": "Placeholder feature for Level 5. See CH6 for final design.",
-        "featureName": "Arcane Mastery (Placeholder)",
+        "benefits": [
+          {
+            "description": "You learn 1 additional Arcane Spell from your chosen School. Signature School reduces MP cost by an additional 1.",
+            "effects": [
+              {
+                "target": "chosen_school",
+                "type": "GRANT_SPELL",
+                "value": 1,
+              },
+              {
+                "target": "expert_wizard_signature_school",
+                "type": "GRANT_ABILITY",
+                "value": "Signature School reduces MP cost by an additional 1.",
+              },
+            ],
+            "name": "Spell School Initiate",
+          },
+          {
+            "description": "Spell Tag (X MP) adds 1 additional School or Tag per MP spent. Area (X MP) increases the diameter by 1 Space per MP spent.",
+            "effects": [
+              {
+                "target": "expert_wizard_arcane_sigil",
+                "type": "GRANT_ABILITY",
+                "value": "Spell Tag adds 1 additional School or Tag per MP; Area increases diameter by 1 Space per MP.",
+              },
+            ],
+            "name": "Arcane Sigil",
+          },
+          {
+            "description": "After a Long Rest, choose 1 additional known Spell. Both chosen Spells become Prepared Spells, but you still only have one Mana Limit Break.",
+            "effects": [
+              {
+                "target": "expert_wizard_prepared_spell",
+                "type": "GRANT_ABILITY",
+                "value": "Choose 1 additional known Spell after a Long Rest; both are Prepared Spells, but only one Mana Limit Break.",
+              },
+            ],
+            "name": "Prepared Spell",
+          },
+        ],
+        "description": "You gain the following benefits for your Wizard Class Features.",
+        "featureName": "Expert Wizard",
         "id": "wizard_level_5_placeholder",
-        "isFlavor": true,
         "levelGained": 5,
       },
     ],
@@ -2960,6 +3041,13 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Wiz
       "sourceName": "Wizard Progression",
       "type": "spell",
     },
+    {
+      "id": "specialized_Expert Wizard_Spell School Initiate_4_0",
+      "isGlobal": false,
+      "sourceName": "Spell School Initiate",
+      "specificRestrictions": {},
+      "type": "spell",
+    },
   ],
   "stats": {
     "className": "Wizard",
@@ -2975,7 +3063,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Wiz
     "finalInitiativeBonus": 3,
     "finalIntelligence": 4,
     "finalJumpDistance": 0,
-    "finalMPMax": 20,
+    "finalMPMax": 21,
     "finalMartialCheck": 0,
     "finalMight": -1,
     "finalMoveSpeed": 5,

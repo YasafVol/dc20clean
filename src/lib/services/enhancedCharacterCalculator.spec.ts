@@ -48,7 +48,7 @@ describe('enhancedCharacterCalculator Mastery Cap Logic', () => {
 		const { validation } = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
 		// Should have errors for exceeding mastery cap
 		expect(validation.errors.some((e) => e.code === 'MASTERY_CAP_EXCEEDED')).toBe(true);
-		expect(validation.errors.some((e) => e.message.includes('Adept level'))).toBe(true);
+		expect(validation.errors.some((e) => e.message.includes('feature mastery grants'))).toBe(true);
 	});
 
 	it('should allow Adept skills for a Level 5 character', () => {
@@ -70,11 +70,11 @@ describe('enhancedCharacterCalculator Mastery Cap Logic', () => {
 
 	it('should handle a combination of Rogue Expertise and Human Skill Expertise', () => {
 		// Use real Rogue class with Expertise + Human Skill Expertise trait
-		const character = createTestCharacter(1, { athletics: 2, stealth: 2, investigation: 2 }, []);
-		character.classId = 'rogue'; // Rogue gets 2 INCREASE_SKILL_MASTERY_CAP from Expertise
+		const character = createTestCharacter(1, { athletics: 2, stealth: 2 }, []);
+		character.classId = 'rogue'; // Rogue gets 1 INCREASE_SKILL_MASTERY_CAP from Expertise
 		character.selectedTraitIds = ['human_skill_expertise']; // Human gets 1 more INCREASE_SKILL_MASTERY_CAP
 
-		// Total: 3 skills can be Adept (2 from Rogue + 1 from Human)
+		// Total: 2 skills can be Adept (1 from Rogue + 1 from Human)
 		const { validation } = calculateCharacterWithBreakdowns(character, skillsData, tradesData);
 		console.log('Test 5 - Rogue + Human Expertise validation errors:', validation.errors);
 		expect(validation.errors.length).toBe(0);

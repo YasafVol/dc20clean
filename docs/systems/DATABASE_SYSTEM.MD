@@ -378,13 +378,13 @@ character.schemaVersion = CURRENT_SCHEMA_VERSION;
 ### 6.2 Rules Versioning
 
 ```typescript
-const CURRENT_RULES_VERSION = 'dc20-0.10';
+const CURRENT_RULES_VERSION = 'dc20-0.10.5';
 
 // Missing rulesVersion is inferred as the legacy v0.10 ruleset.
 character.rulesVersion ?? 'dc20-0.10';
 ```
 
-`rulesVersion` is the rules interpretation fence. It is additive and is preserved on load, import, save, Convex normalization, draft state, character sheet auto-save, and PDF export routing.
+`rulesVersion` is the rules interpretation fence. It is additive and is preserved on load, import, save, Convex normalization, draft state, character sheet auto-save, and PDF export routing. New characters are saved as `dc20-0.10.5`; missing or explicit `dc20-0.10` characters are legacy and classify as `upgrade-required` under the current runtime.
 
 Compatibility states are computed at runtime:
 

@@ -1,7 +1,7 @@
 export const RULES_VERSION_010 = 'dc20-0.10' as const;
 export const RULES_VERSION_010_5 = 'dc20-0.10.5' as const;
 
-export const CURRENT_RULES_VERSION = RULES_VERSION_010;
+export const CURRENT_RULES_VERSION = RULES_VERSION_010_5;
 
 export const KNOWN_RULES_VERSIONS = [RULES_VERSION_010, RULES_VERSION_010_5] as const;
 

@@ -109,7 +109,7 @@ export const barbarianClass: ClassDefinition = {
 							type: 'MODIFY_STAT',
 							target: 'pd',
 							value: -5,
-							condition: 'raging'
+							condition: 'while_raging'
 						}
 					]
 				},

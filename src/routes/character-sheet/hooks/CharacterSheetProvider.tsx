@@ -833,6 +833,8 @@ export function useCharacterCalculatedData() {
 
 	return useMemo(() => {
 		if (!state.character) return null;
+		const compatibility = assessCharacterCompatibility(state.character);
+		if (compatibility.autoSaveMode !== 'full') return null;
 
 		// Convert SavedCharacter to EnhancedCharacterBuildData
 		const buildData = convertToEnhancedBuildData(state.character);

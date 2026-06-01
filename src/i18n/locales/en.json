@@ -32,7 +32,7 @@
 		"spellbook": "Spellbook",
 		"conditions": "Conditions",
 		"equipage": "Equipage",
-		"rulesVersion": "Rules: DC20 v0.10"
+		"rulesVersion": "Rules: DC20 v0.10.5"
 	},
 	"auth": {
 		"signIn": "Sign In",

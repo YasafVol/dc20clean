@@ -8,22 +8,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import ClassFeatures from './ClassFeatures';
 
-// Create a minimal wrapper that provides context
-const TestWrapper = ({ children, characterState }: any) => {
-	// Mock useCharacter hook
-	const mockDispatch = vi.fn();
-
-	// Override useCharacter for this test
-	vi.mock('../../lib/stores/characterContext', () => ({
-		useCharacter: () => ({
-			state: characterState,
-			dispatch: mockDispatch
-		})
-	}));
-
-	return <div>{children}</div>;
-};
-
 // Mock the router
 vi.mock('react-router-dom', () => ({
 	useNavigate: () => vi.fn(),
@@ -31,22 +15,24 @@ vi.mock('react-router-dom', () => ({
 }));
 
 // Mock useCharacter hook at module level
-const mockDispatch = vi.fn();
-const mockState = {
-	id: 'test-char',
-	finalName: 'Test Monk',
-	level: 1,
-	classId: 'monk',
-	attribute_might: 0,
-	attribute_agility: 0,
-	attribute_charisma: 0,
-	attribute_intelligence: 0,
-	selectedTraitIds: [],
-	selectedFeatureChoices: {},
-	skillsData: {},
-	tradesData: {},
-	languagesData: { common: { fluency: 'fluent' } }
-};
+const { mockDispatch, mockState } = vi.hoisted(() => ({
+	mockDispatch: vi.fn(),
+	mockState: {
+		id: 'test-char',
+		finalName: 'Test Monk',
+		level: 1,
+		classId: 'monk',
+		attribute_might: 0,
+		attribute_agility: 0,
+		attribute_charisma: 0,
+		attribute_intelligence: 0,
+		selectedTraitIds: [],
+		selectedFeatureChoices: {},
+		skillsData: {},
+		tradesData: {},
+		languagesData: { common: { fluency: 'fluent' } }
+	}
+}));
 
 vi.mock('../../lib/stores/characterContext', () => ({
 	useCharacter: () => ({

@@ -1,10 +1,10 @@
 # DC20 0.10.5 ID Stability And Aliases
 
-Last Updated: 2026-05-10
+Last Updated: 2026-06-01
 
 ## Purpose
 
-This document records the stable ID surfaces that must be protected before any v0.10.5 rulesdata mutation. It is an audit artifact only. No alias implementation is implied yet.
+This document records the stable ID surfaces that must be protected before any v0.10.5 rulesdata mutation. It is the source-of-record for whether a legacy ID can route silently, requires upgrade review, or must remain view-only.
 
 ## Current Rule
 
@@ -59,26 +59,26 @@ Primary persistence and runtime surfaces:
 
 ## Alias Decision Table
 
-| Domain | Current / old identity | v0.10.5 identity | Status | Notes |
-| --- | --- | --- | --- | --- |
-| Rules version | no persisted `rulesVersion` | additive `rulesVersion` metadata | required | runtime gate before rulesdata mutation |
-| Class features | placeholder level-5 / capstone IDs | concrete feature IDs | alias needed if placeholders were persisted | verify actual saved-character exposure first |
-| Talent | `multiclass_grandmaster` | removed from selectable catalog | deprecate + compatibility policy | do not hard-delete without load policy |
-| Talent | `multiclass_legendary` | removed from selectable catalog | deprecate + compatibility policy | same as above |
-| Class feature | `swift_berserker` | removed | deprecate + compatibility policy | saved characters may already reference it |
-| Maneuver | `Brace` | `Fortify` | HITL required | current maneuver persistence is name-sensitive |
-| Spell | `summon-familiar` / `Summon Familiar` | `call-familiar` / `Call Familiar` | alias candidate | exact current ID must be confirmed before mutation |
-| Spell | `fly` / `Fly` | `blessing-of-air` / `Blessing of Air` | alias candidate | verify existing ID form in repo |
-| Spell | `vicious-mockery` / `Vicious Mockery` | `mockery` / `Mockery` | alias candidate | current repo still contains `vicious-mockery` |
-| Spell | `toxic-aura` / `Toxic Aura` | `toxic-burst` / `Toxic Burst` | alias candidate | needs current ID confirmation |
-| Spell | `close-wound` / `Close Wound` | `close-wounds` / `Close Wounds` | alias candidate | current repo already uses plural |
-| Spell | `earth-blessing` / `Earth Blessing` | `blessing-of-earth` / `Blessing of Earth` | alias candidate | current ID confirmation required |
-| Spell | `gravity-sinkhole` / `Gravity Sinkhole` | `gravity-well` / `Gravity Well` | alias candidate | rework implied, not just rename |
-| Spell | `absorb-element` / `Absorb Element` | `absorb-elements` / `Absorb Elements` | alias candidate | current repo already uses plural |
-| Spell | `force-dome` / `Force Dome` | ambiguous `Forcefield` target | HITL required | may not be a simple 1:1 rename |
-| Spell | `wall-of-force` / `Wall of Force` | ambiguous `Forcefield` target | HITL required | same ambiguity |
-| Trait | `hazardous_hide` | still `Hazardous Hide` if unchanged | likely no-op | current repo already contains the trait; confirm semantics only |
-| Equipment | Toss / Thrown / Returning property IDs | unchanged IDs, new costs / prerequisite | no alias expected | preserve IDs, update validation only |
+| Domain         | Current / old identity                                        | v0.10.5 identity                          | Status                                      | Notes                                                               |
+| -------------- | ------------------------------------------------------------- | ----------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------- |
+| Rules version  | no persisted `rulesVersion`                                   | additive `rulesVersion` metadata          | required                                    | runtime gate before rulesdata mutation                              |
+| Class features | placeholder level-5 / capstone IDs                            | concrete feature IDs                      | alias needed if placeholders were persisted | verify actual saved-character exposure first                        |
+| Talent         | `multiclass_grandmaster`                                      | removed from selectable catalog           | deprecate + compatibility policy            | do not hard-delete without load policy                              |
+| Talent         | `multiclass_legendary`                                        | removed from selectable catalog           | deprecate + compatibility policy            | same as above                                                       |
+| Class feature  | `swift_berserker`                                             | removed                                   | deprecate + compatibility policy            | saved characters may already reference it                           |
+| Maneuver       | `Brace`                                                       | `Fortify`                                 | HITL required                               | current maneuver persistence is name-sensitive                      |
+| Spell          | `summon-familiar` / `Summon Familiar`                         | `call-familiar` / `Call Familiar`         | implemented alias                           | exact rename; old IDs route for lookup, saved IDs are not rewritten |
+| Spell          | `fly` / `Fly`                                                 | `blessing-of-air` / `Blessing of Air`     | implemented alias                           | exact rename; old IDs route for lookup, saved IDs are not rewritten |
+| Spell          | `vicious-mockery` / `Vicious Mockery`                         | `mockery` / `Mockery`                     | implemented alias                           | exact rename; old IDs route for lookup, saved IDs are not rewritten |
+| Spell          | `toxic-aura` / `Toxic Aura`                                   | `toxic-burst` / `Toxic Burst`             | implemented alias                           | exact rename; old IDs route for lookup, saved IDs are not rewritten |
+| Spell          | `close-wound` / `Close Wound`                                 | `close-wounds` / `Close Wounds`           | implemented alias                           | singular-to-plural compatibility route                              |
+| Spell          | `earth-blessing` / `Earth Blessing`                           | `blessing-of-earth` / `Blessing of Earth` | implemented alias                           | exact rename; old IDs route for lookup, saved IDs are not rewritten |
+| Spell          | `gravity-sinkhole`, `gravity-sink-hole` / `Gravity Sink Hole` | `gravity-well` / `Gravity Well`           | implemented rework fence                    | upgrade-required; no silent remap                                   |
+| Spell          | `absorb-element` / `Absorb Element`                           | `absorb-elements` / `Absorb Elements`     | implemented alias                           | singular-to-plural compatibility route                              |
+| Spell          | `force-dome` / `Force Dome`                                   | ambiguous `Forcefield` target             | implemented view-only fence                 | no silent remap                                                     |
+| Spell          | `wall-of-force` / `Wall of Force`                             | ambiguous `Forcefield` target             | implemented view-only fence                 | no silent remap                                                     |
+| Trait          | `hazardous_hide`                                              | still `Hazardous Hide` if unchanged       | likely no-op                                | current repo already contains the trait; confirm semantics only     |
+| Equipment      | Toss / Thrown / Returning property IDs                        | unchanged IDs, new costs / prerequisite   | no alias expected                           | preserve IDs, update validation only                                |
 
 ## Domain Notes
 

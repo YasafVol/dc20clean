@@ -1,7 +1,8 @@
 /**
- * DC20 v0.10 Spells - Main Export
+ * DC20 v0.10.5 Spells - Main Export
  *
- * All 125 spells organized by their magical School:
+ * Base v0.10 spells are organized by magical School, then the current
+ * selectable catalog is produced by the v0.10.5 compatibility overlay:
  * - Astromancy (10) - Space, time, and force magic
  * - Conjuration (14) - Creation and summoning
  * - Divination (2) - Knowledge and foresight
@@ -44,9 +45,10 @@ import { transmutationSpells } from './transmutation';
 
 import type { Spell } from '../schemas/spell.schema';
 import { resolveAliasId } from '../versioning/aliases';
+import { applyV0105SpellCatalog } from './v0105Catalog';
 
-// All spells combined (125 total)
-export const ALL_SPELLS: Spell[] = [
+// Base v0.10 catalog, kept as the non-destructive source for legacy aliases.
+const BASE_SPELLS: Spell[] = [
 	...astromancySpells,
 	...conjurationSpells,
 	...divinationSpells,
@@ -57,11 +59,15 @@ export const ALL_SPELLS: Spell[] = [
 	...transmutationSpells
 ];
 
+// Current selectable spell catalog.
+export const ALL_SPELLS: Spell[] = applyV0105SpellCatalog(BASE_SPELLS);
+
 // Lookup utilities
 export function getSpellById(id: string): Spell | undefined {
+	const resolvedId = resolveAliasId('spell', id);
 	return (
 		ALL_SPELLS.find((s) => s.id === id) ??
-		ALL_SPELLS.find((s) => s.id === resolveAliasId('spell', id))
+		ALL_SPELLS.find((s) => s.id === resolvedId || s.name === resolvedId)
 	);
 }
 

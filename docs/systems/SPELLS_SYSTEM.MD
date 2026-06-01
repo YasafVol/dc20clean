@@ -8,8 +8,10 @@
 
 ## 1. Key Files & Roles
 
-- `src/lib/rulesdata/spells-data/<school>/*.ts`: 125 spell definitions organized by school
-- `src/lib/rulesdata/spells-data/index.ts`: Main export with utility functions
+- `src/lib/rulesdata/spells-data/<school>/*.ts`: base v0.10 spell definitions organized by school
+- `src/lib/rulesdata/spells-data/v0105Catalog.ts`: non-destructive v0.10.5 spell catalog overlay, including approved renames, additions, removals, and source-list moves
+- `src/lib/rulesdata/spells-data/index.ts`: main export with current selectable catalog and alias-aware lookup utilities
+- `src/lib/rulesdata/versioning/aliases.ts`: stable ID routing policy for old saved spell IDs and display names
 - `src/lib/rulesdata/schemas/spell.schema.ts`: Spell TypeScript types and enums
 - `src/lib/services/spellAssignment.ts`: Assignment logic (availability, limits, helpers)
 - `src/lib/services/enhancedCharacterCalculator.ts`: Aggregates class/trait effects that alter MP
@@ -71,14 +73,15 @@ interface Spell {
 
 ```
 src/lib/rulesdata/spells-data/
-├── astromancy/          # 10 spells
-├── conjuration/         # 14 spells
-├── divination/          # 2 spells
-├── elemental/           # 41 spells
-├── enchantment/         # 12 spells
-├── invocation/          # 14 spells
-├── nullification/       # 16 spells
-├── transmutation/       # 16 spells
+├── astromancy/          # base v0.10 spells
+├── conjuration/         # base v0.10 spells
+├── divination/          # base v0.10 spells
+├── elemental/           # base v0.10 spells
+├── enchantment/         # base v0.10 spells
+├── invocation/          # base v0.10 spells
+├── nullification/       # base v0.10 spells
+├── transmutation/       # base v0.10 spells
+├── v0105Catalog.ts      # v0.10.5 overlay
 └── index.ts             # Main export + utilities
 ```
 
@@ -86,7 +89,7 @@ src/lib/rulesdata/spells-data/
 
 ```typescript
 // Get all spells
-import { allSpells } from './spells-data';
+import { ALL_SPELLS } from './spells-data';
 
 // Lookup functions
 getSpellById(id: string): Spell | undefined
@@ -121,7 +124,12 @@ getNonCantrips(): Spell[]
 
 - `Poison` is a canonical spell tag and damage tag, not a legacy alias.
 - `Blight Bomb` carries both `Ailment` and `Poison` tags for structured filtering.
-- Renamed, removed, reworked, or added spells remain compatibility-gated until their ID and migration policy is explicitly approved.
+- The current selectable catalog is `applyV0105SpellCatalog(BASE_SPELLS)`, not a destructive rewrite of the base v0.10 school files.
+- True spell renames route through `getSpellById()` via `RULES_ALIASES`; saved IDs are not rewritten during lookup.
+- Changelog-confirmed new v0.10.5 spells are added through the overlay.
+- Removed spells and source-list moves are applied only to the current selectable catalog. Historical saved spell objects remain renderable/exportable from saved character data.
+- Reworked or ambiguous spell identities, including `gravity-sink-hole`, `force-dome`, and `wall-of-force`, are compatibility-classified but are not silently remapped to v0.10.5 spells.
+- Character completion and PDF export use alias-aware spell lookup for legacy spell IDs before falling back to saved display text.
 
 ---
 

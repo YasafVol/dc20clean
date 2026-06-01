@@ -6,7 +6,7 @@ import type { SpellData, ManeuverData, InventoryItemData } from '../../types/cha
 import { traitsData } from '../rulesdata/ancestries/traits';
 import { findTalentById } from '../rulesdata/classes-data/talents/talent.loader';
 import { findClassByName } from '../rulesdata/loaders/class-features.loader';
-import { ALL_SPELLS } from '../rulesdata/spells-data';
+import { ALL_SPELLS, getSpellById } from '../rulesdata/spells-data';
 import { logger } from '../utils/logger';
 
 // =========================================================================
@@ -34,7 +34,7 @@ const pickList = <T>(primary: unknown, fallback: unknown): T[] => {
 const resolveSpellEntry = (entry: unknown): { spellName: string; isCantrip: boolean } | null => {
 	if (!entry) return null;
 	if (typeof entry === 'string') {
-		const byId = ALL_SPELLS.find((spell) => spell.id === entry);
+		const byId = getSpellById(entry);
 		if (byId) return { spellName: byId.name, isCantrip: !!byId.isCantrip };
 		const byName = ALL_SPELLS.find((spell) => spell.name.toLowerCase() === entry.toLowerCase());
 		if (byName) return { spellName: byName.name, isCantrip: !!byName.isCantrip };
@@ -54,7 +54,7 @@ const resolveSpellEntry = (entry: unknown): { spellName: string; isCantrip: bool
 			return { spellName: spellLike.name, isCantrip: !!spellLike.isCantrip };
 		}
 		if (spellLike.id) {
-			const byId = ALL_SPELLS.find((spell) => spell.id === spellLike.id);
+			const byId = getSpellById(spellLike.id);
 			if (byId) return { spellName: byId.name, isCantrip: !!byId.isCantrip };
 		}
 	}
@@ -434,18 +434,14 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 
 	// Senses (Phase 7)
 	if (character.senses && character.senses.length > 0) {
-		const senseLines = character.senses.map(
-			(s) => `${s.type} ${s.range} Spaces [${s.source}]`
-		);
+		const senseLines = character.senses.map((s) => `${s.type} ${s.range} Spaces [${s.source}]`);
 		featuresParts.push('[Senses]');
 		featuresParts.push(senseLines.join(', '));
 	}
 
 	// Combat Training (Phase 7)
 	if (character.combatTraining && character.combatTraining.length > 0) {
-		const trainingLines = character.combatTraining.map(
-			(t) => `${t.type} [${t.source}]`
-		);
+		const trainingLines = character.combatTraining.map((t) => `${t.type} [${t.source}]`);
 		featuresParts.push('[Combat Training]');
 		featuresParts.push(trainingLines.join(', '));
 	}
@@ -989,18 +985,14 @@ export function transformCalculatedCharacterToPdfData(
 
 	// Senses (Phase 7)
 	if (result.senses && result.senses.length > 0) {
-		const senseLines = result.senses.map(
-			(s) => `${s.type} ${s.range} Spaces [${s.source.name}]`
-		);
+		const senseLines = result.senses.map((s) => `${s.type} ${s.range} Spaces [${s.source.name}]`);
 		featuresParts.push('[Senses]');
 		featuresParts.push(senseLines.join(', '));
 	}
 
 	// Combat Training (Phase 7)
 	if (result.combatTraining && result.combatTraining.length > 0) {
-		const trainingLines = result.combatTraining.map(
-			(t) => `${t.type} [${t.source.name}]`
-		);
+		const trainingLines = result.combatTraining.map((t) => `${t.type} [${t.source.name}]`);
 		featuresParts.push('[Combat Training]');
 		featuresParts.push(trainingLines.join(', '));
 	}

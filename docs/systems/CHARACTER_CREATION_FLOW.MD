@@ -52,10 +52,11 @@
   - Outputs: skills/trades/languages plus conversion values (`SET_CONVERSIONS`)
 
 - **Stage 6 – Spells & Maneuvers** (`SpellsAndManeuvers.tsx`)
-  - Inputs: `allSpells`, `allManeuvers`, class level progression (JSON today → resolver later), `state.selectedSpells`, `state.selectedManeuvers`
+  - Inputs: `ALL_SPELLS`, `allManeuvers`, class level progression (JSON today → resolver later), `state.selectedSpells`, `state.selectedManeuvers`
   - Completion rule: selected counts meet per-level requirements (cantrips + spells, maneuvers)
   - Spell filtering: source, school, and tag browsing filters are OR-based across selected facets; cost and sustained filters narrow results. Slot and Global Magic Profile eligibility use source restrictions only when present, then school-or-tag matching.
   - Outputs: `state.selectedSpells`, `state.selectedManeuvers`
+  - Character completion resolves spell IDs through `getSpellById()` before falling back to exact display-name matches, so approved legacy v0.10 spell aliases can still produce valid saved spell data when encountered.
   - Starting resource expectations come from calculated class progression totals: Martial 2 SP, Spellcaster 6 MP, Hybrid 1 SP and 3 MP.
 
 - **Stage 7 – Character Name** (`CharacterName.tsx`)

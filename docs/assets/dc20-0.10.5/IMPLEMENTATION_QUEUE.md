@@ -326,21 +326,21 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 
 ### VRR-011: Spell Rename / Remove / Add Migration Pass
 
-- Status: `HITL required`
+- Status: `implemented`
 - Source: `docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md`, page 269, lines 17662-17727
 - Baseline: targeted v0.10 spell comparisons only
 - Systems: Spells / Character Creation / Character Sheet / PDF Export
-- Current implementation: saved characters persist spell selections by stable spell IDs.
+- Current implementation: the v0.10 base school files are preserved and the current selectable catalog is produced by the v0.10.5 overlay in `src/lib/rulesdata/spells-data/v0105Catalog.ts`. Approved spell renames route through `RULES_ALIASES` and `getSpellById()` without rewriting saved IDs. Removed spells are omitted from the current selectable catalog, list-moved spells have source overrides, and reworked/ambiguous IDs are fenced as `upgrade-required` or `view-only`.
 - Required change:
-  - renamed and reworked spells
-  - removed or list-moved spells
-  - new spell additions
+  - renamed and reworked spells: implemented with alias/rework/view-only classification
+  - removed or list-moved spells: implemented in the catalog overlay
+  - new spell additions: implemented in the catalog overlay
 - Data shape impact: none expected, but migration-sensitive
 - Stable ID / alias impact: confirmed
 - Calculator/effect impact: possible
 - UI impact: confirmed
 - Storage/export impact: confirmed
-- HITL decision: required before any ID mutation
+- HITL decision: user approved moving forward with compatibility-first spell replacement; ambiguous Forcefield and reworked Gravity Well identities remain fenced instead of silently remapped
 - Code touchpoints:
   - `src/lib/rulesdata/spells-data/**/*.ts`
   - `src/lib/rulesdata/spells-data/index.ts`
@@ -352,7 +352,8 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
   - `docs/systems/CHARACTER_SHEET.MD`
 - Validation:
   - alias-backed spell lookup fixtures
-  - old saved character spell render/export fixtures
+  - old saved character spell export fixtures
+  - current catalog addition/removal/source-list fixtures
 
 ### VRR-012: Maneuver Rewrite / Rename Compatibility
 

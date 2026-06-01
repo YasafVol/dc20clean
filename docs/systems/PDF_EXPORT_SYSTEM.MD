@@ -26,6 +26,7 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 - **v0.10.5 Resource Totals** — PDF SP/MP fields consume calculated class progression totals. Martial characters start at 2 SP, spellcasters at 6 MP, and hybrids at 1 SP / 3 MP; v0.10.5 level 10 totals are 6 SP for martials, 21 MP for spellcasters, and 3 SP / 11 MP for hybrids.
 - **v0.10.5 Expert Feature Effects** — level 5 Expert Features keep their legacy placeholder IDs but now contribute modeled effects through the calculator before export, including skill point, HP/MP, speed/jump, spell, and maneuver grants where those mechanics are structured.
 - **Transformation Layer** — `src/lib/pdf/transformers.ts` maps calculation results into a structured DTO that matches the PDF field list.
+- **Spell Compatibility Lookup** — Spell IDs are resolved through `getSpellById()` before export so approved v0.10 spell aliases display as their v0.10.5 names. Unknown, reworked, or ambiguous historical spell strings fall back to the saved display text instead of forcing a silent rules reinterpretation.
 - **PDF Field Maps** — Versioned field maps for different PDF versions:
   - `src/lib/pdf/fieldMap.dc20-0.10.ts` — Default v0.10 field map
   - `src/lib/pdf/fieldMap.dc20-0.9.5.ts` — Legacy v0.9.5 field map

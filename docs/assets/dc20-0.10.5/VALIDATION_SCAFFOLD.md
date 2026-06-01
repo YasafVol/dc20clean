@@ -55,7 +55,7 @@ This file does not imply that implementation has started.
 ### Alias resolution
 
 - [ ] alias lookup covers feature IDs
-- [ ] alias lookup covers spell IDs
+- [x] alias lookup covers spell IDs
 - [ ] alias lookup covers maneuver IDs
 - [ ] alias lookup covers trait IDs when needed
 - [ ] alias-backed old fixtures still render on the character sheet
@@ -78,10 +78,10 @@ This file does not imply that implementation has started.
 
 - [x] spell schema covers v0.10.5 tag/source metadata
 - [x] `Poison` tag is filterable and valid
-- [ ] renamed spell fixtures resolve by alias when allowed
-- [ ] removed or list-moved spells are classified correctly
+- [x] renamed spell fixtures resolve by alias when allowed
+- [x] removed or list-moved spells are classified correctly
 - [ ] slot validation handles old spell IDs under compatibility rules
-- [ ] PDF/export still renders old and new spell selections as expected
+- [x] PDF/export still renders old and new spell selections as expected
 
 ### Maneuvers
 

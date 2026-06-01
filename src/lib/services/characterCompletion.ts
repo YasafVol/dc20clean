@@ -2,7 +2,7 @@
 // Handles the completion flow with proper stat calculation, snackbar, and navigation
 
 import { assignSpellsToCharacter } from './spellAssignment';
-import { ALL_SPELLS as allSpells } from '../rulesdata/spells-data';
+import { ALL_SPELLS as allSpells, getSpellById } from '../rulesdata/spells-data';
 import { allManeuvers } from '../rulesdata/martials/maneuvers';
 import {
 	convertToEnhancedBuildData,
@@ -305,8 +305,7 @@ export const completeCharacter = async (
 						.map((spellIdOrName: string) => {
 							// Try to find by ID first, then by name
 							const fullSpell =
-								allSpells.find((s) => s.id === spellIdOrName) ||
-								allSpells.find((s) => s.name === spellIdOrName);
+								getSpellById(spellIdOrName) || allSpells.find((s) => s.name === spellIdOrName);
 							if (fullSpell) {
 								return {
 									id: `spell_${Date.now()}_${Math.random()}`,

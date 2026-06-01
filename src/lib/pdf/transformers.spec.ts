@@ -118,6 +118,13 @@ describe('PDF Export Formatters', () => {
 			expect(result).toContain('Shield');
 		});
 
+		it('resolves legacy spell IDs through compatibility aliases', () => {
+			const result = formatSpellsAndManeuvers(['summon-familiar', 'absorb-element', 'Fly'], []);
+			expect(result).toContain('Call Familiar');
+			expect(result).toContain('Absorb Elements');
+			expect(result).toContain('Blessing of Air');
+		});
+
 		it('groups cantrips separately from leveled spells', () => {
 			const spells = [
 				{ id: 'fireball', spellName: 'Fireball', school: 'Evocation', isCantrip: false },
@@ -270,12 +277,22 @@ describe('PDF Export Formatters', () => {
 		// pattern used by transformCalculatedCharacterToPdfData.
 		it('should format resistances section correctly', () => {
 			const resistances = [
-				{ type: 'Fire', value: 'Half', source: { type: 'trait' as const, id: 'dragonborn_fire_resistance', name: 'Fire Resistance' } },
-				{ type: 'Poison', value: '2', source: { type: 'class_feature' as const, id: 'barbarian_rage', name: 'Rage' } }
+				{
+					type: 'Fire',
+					value: 'Half',
+					source: {
+						type: 'trait' as const,
+						id: 'dragonborn_fire_resistance',
+						name: 'Fire Resistance'
+					}
+				},
+				{
+					type: 'Poison',
+					value: '2',
+					source: { type: 'class_feature' as const, id: 'barbarian_rage', name: 'Rage' }
+				}
 			];
-			const lines = resistances.map(
-				(r) => `${r.type} Resistance (${r.value}) [${r.source.name}]`
-			);
+			const lines = resistances.map((r) => `${r.type} Resistance (${r.value}) [${r.source.name}]`);
 			const result = lines.join(', ');
 			expect(result).toContain('Fire Resistance (Half) [Fire Resistance]');
 			expect(result).toContain('Poison Resistance (2) [Rage]');
@@ -283,22 +300,36 @@ describe('PDF Export Formatters', () => {
 
 		it('should format senses section correctly', () => {
 			const senses = [
-				{ type: 'Darkvision', range: 10, source: { type: 'trait' as const, id: 'dragonborn_darkvision', name: 'Darkvision' } }
+				{
+					type: 'Darkvision',
+					range: 10,
+					source: { type: 'trait' as const, id: 'dragonborn_darkvision', name: 'Darkvision' }
+				}
 			];
-			const lines = senses.map(
-				(s) => `${s.type} ${s.range} Spaces [${s.source.name}]`
-			);
+			const lines = senses.map((s) => `${s.type} ${s.range} Spaces [${s.source.name}]`);
 			expect(lines[0]).toBe('Darkvision 10 Spaces [Darkvision]');
 		});
 
 		it('should format combat training section correctly', () => {
 			const combatTraining = [
-				{ type: 'Weapons', source: { type: 'class_feature' as const, id: 'champion_martial_path', name: 'Martial Path' } },
-				{ type: 'Heavy Armor', source: { type: 'class_feature' as const, id: 'champion_martial_path', name: 'Martial Path' } }
+				{
+					type: 'Weapons',
+					source: {
+						type: 'class_feature' as const,
+						id: 'champion_martial_path',
+						name: 'Martial Path'
+					}
+				},
+				{
+					type: 'Heavy Armor',
+					source: {
+						type: 'class_feature' as const,
+						id: 'champion_martial_path',
+						name: 'Martial Path'
+					}
+				}
 			];
-			const lines = combatTraining.map(
-				(t) => `${t.type} [${t.source.name}]`
-			);
+			const lines = combatTraining.map((t) => `${t.type} [${t.source.name}]`);
 			const result = lines.join(', ');
 			expect(result).toContain('Weapons [Martial Path]');
 			expect(result).toContain('Heavy Armor [Martial Path]');

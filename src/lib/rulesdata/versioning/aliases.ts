@@ -93,6 +93,16 @@ export const RULES_ALIASES: RulesAliasEntry[] = [
 	},
 	{
 		domain: 'spell',
+		fromId: 'Fly',
+		toId: 'Blessing of Air',
+		fromRulesVersion: RULES_VERSION_010,
+		toRulesVersion: RULES_VERSION_010_5,
+		status: 'alias',
+		compatibilityState: 'editable',
+		note: 'Display-name alias for saved spell arrays.'
+	},
+	{
+		domain: 'spell',
 		fromId: 'vicious-mockery',
 		toId: 'mockery',
 		fromRulesVersion: RULES_VERSION_010,
@@ -100,6 +110,16 @@ export const RULES_ALIASES: RulesAliasEntry[] = [
 		status: 'alias',
 		compatibilityState: 'editable',
 		note: 'Candidate true rename.'
+	},
+	{
+		domain: 'spell',
+		fromId: 'Vicious Mockery',
+		toId: 'Mockery',
+		fromRulesVersion: RULES_VERSION_010,
+		toRulesVersion: RULES_VERSION_010_5,
+		status: 'alias',
+		compatibilityState: 'editable',
+		note: 'Display-name alias for saved spell arrays.'
 	},
 	{
 		domain: 'spell',
@@ -113,6 +133,36 @@ export const RULES_ALIASES: RulesAliasEntry[] = [
 	},
 	{
 		domain: 'spell',
+		fromId: 'Toxic Aura',
+		toId: 'Toxic Burst',
+		fromRulesVersion: RULES_VERSION_010,
+		toRulesVersion: RULES_VERSION_010_5,
+		status: 'alias',
+		compatibilityState: 'editable',
+		note: 'Display-name alias for saved spell arrays.'
+	},
+	{
+		domain: 'spell',
+		fromId: 'close-wound',
+		toId: 'close-wounds',
+		fromRulesVersion: RULES_VERSION_010,
+		toRulesVersion: RULES_VERSION_010_5,
+		status: 'alias',
+		compatibilityState: 'editable',
+		note: 'Singular-to-plural spell rename.'
+	},
+	{
+		domain: 'spell',
+		fromId: 'Close Wound',
+		toId: 'Close Wounds',
+		fromRulesVersion: RULES_VERSION_010,
+		toRulesVersion: RULES_VERSION_010_5,
+		status: 'alias',
+		compatibilityState: 'editable',
+		note: 'Display-name alias for saved spell arrays.'
+	},
+	{
+		domain: 'spell',
 		fromId: 'earth-blessing',
 		toId: 'blessing-of-earth',
 		fromRulesVersion: RULES_VERSION_010,
@@ -123,6 +173,16 @@ export const RULES_ALIASES: RulesAliasEntry[] = [
 	},
 	{
 		domain: 'spell',
+		fromId: 'Earth Blessing',
+		toId: 'Blessing of Earth',
+		fromRulesVersion: RULES_VERSION_010,
+		toRulesVersion: RULES_VERSION_010_5,
+		status: 'alias',
+		compatibilityState: 'editable',
+		note: 'Display-name alias for saved spell arrays.'
+	},
+	{
+		domain: 'spell',
 		fromId: 'gravity-sinkhole',
 		toId: 'gravity-well',
 		fromRulesVersion: RULES_VERSION_010,
@@ -130,6 +190,46 @@ export const RULES_ALIASES: RulesAliasEntry[] = [
 		status: 'reworked',
 		compatibilityState: 'upgrade-required',
 		note: 'Rework implied; do not silently reinterpret old selections.'
+	},
+	{
+		domain: 'spell',
+		fromId: 'gravity-sink-hole',
+		toId: 'gravity-well',
+		fromRulesVersion: RULES_VERSION_010,
+		toRulesVersion: RULES_VERSION_010_5,
+		status: 'reworked',
+		compatibilityState: 'upgrade-required',
+		note: 'Current repo legacy ID form for Gravity Sink Hole.'
+	},
+	{
+		domain: 'spell',
+		fromId: 'Gravity Sink Hole',
+		toId: 'Gravity Well',
+		fromRulesVersion: RULES_VERSION_010,
+		toRulesVersion: RULES_VERSION_010_5,
+		status: 'reworked',
+		compatibilityState: 'upgrade-required',
+		note: 'Display-name form of reworked gravity spell.'
+	},
+	{
+		domain: 'spell',
+		fromId: 'absorb-element',
+		toId: 'absorb-elements',
+		fromRulesVersion: RULES_VERSION_010,
+		toRulesVersion: RULES_VERSION_010_5,
+		status: 'alias',
+		compatibilityState: 'editable',
+		note: 'Singular-to-plural spell rename.'
+	},
+	{
+		domain: 'spell',
+		fromId: 'Absorb Element',
+		toId: 'Absorb Elements',
+		fromRulesVersion: RULES_VERSION_010,
+		toRulesVersion: RULES_VERSION_010_5,
+		status: 'alias',
+		compatibilityState: 'editable',
+		note: 'Display-name alias for saved spell arrays.'
 	},
 	{
 		domain: 'spell',

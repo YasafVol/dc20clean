@@ -22,6 +22,20 @@ import { getSpellFocusProperty, SPELL_FOCUS_RULES } from '../options/spellFocusO
 // WEAPON VALIDATION
 // ================================================================= //
 
+function getWeaponPropertyName(propertyId: string): string {
+	return (
+		MELEE_WEAPON_PROPERTIES.find((p) => p.id === propertyId)?.name ||
+		RANGED_WEAPON_PROPERTIES.find((p) => p.id === propertyId)?.name ||
+		propertyId
+	);
+}
+
+function formatOneOfRequirement(propertyIds: string[]): string {
+	const names = propertyIds.map((propertyId) => `"${getWeaponPropertyName(propertyId)}"`);
+	if (names.length <= 1) return names[0] || '';
+	return `${names.slice(0, -1).join(', ')} or ${names[names.length - 1]}`;
+}
+
 export function validateWeapon(weapon: Partial<CustomWeapon>): ValidationResult {
 	const errors: ValidationError[] = [];
 	const warnings: string[] = [];
@@ -97,27 +111,31 @@ export function validateWeapon(weapon: Partial<CustomWeapon>): ValidationResult 
 		if (property.requires) {
 			for (const required of property.requires) {
 				if (!weapon.properties.includes(required)) {
-					const requiredProp =
-						MELEE_WEAPON_PROPERTIES.find((p) => p.id === required) ||
-						RANGED_WEAPON_PROPERTIES.find((p) => p.id === required);
 					errors.push({
 						propertyId: propId,
-						message: `Property "${property.name}" requires "${requiredProp?.name || required}"`
+						message: `Property "${property.name}" requires "${getWeaponPropertyName(required)}"`
 					});
 				}
 			}
+		}
+
+		if (
+			property.requiresOneOf &&
+			!property.requiresOneOf.some((required) => weapon.properties!.includes(required))
+		) {
+			errors.push({
+				propertyId: propId,
+				message: `Property "${property.name}" requires one of ${formatOneOfRequirement(property.requiresOneOf)}`
+			});
 		}
 
 		// Check exclusions
 		if (property.excludes) {
 			for (const excluded of property.excludes) {
 				if (weapon.properties.includes(excluded)) {
-					const excludedProp =
-						MELEE_WEAPON_PROPERTIES.find((p) => p.id === excluded) ||
-						RANGED_WEAPON_PROPERTIES.find((p) => p.id === excluded);
 					errors.push({
 						propertyId: propId,
-						message: `Property "${property.name}" cannot be combined with "${excludedProp?.name || excluded}"`
+						message: `Property "${property.name}" cannot be combined with "${getWeaponPropertyName(excluded)}"`
 					});
 				}
 			}

@@ -2,20 +2,20 @@
 
 > Purpose: Canonical reference for maneuver data, budget calculation, and creation/sheet integration.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-06-01
 
 ---
 
 ## 1) Key Files
 
-| File | Role |
-| --- | --- |
-| `src/lib/rulesdata/martials/maneuvers.ts` | Maneuver catalog (28 maneuvers), exports `allManeuvers`, `getManeuverById()`, `getManeuversByType()` |
-| `src/lib/rulesdata/schemas/maneuver.schema.ts` | TypeScript interfaces: `Maneuver`, `ManeuverCost`, `ManeuverEnhancement`, `ManeuverType` enum |
-| `src/lib/rulesdata/martials/monk-stances.ts` | Monk-specific stances (currently empty placeholder) |
-| `src/lib/services/enhancedCharacterCalculator.ts` | Budget calculation and `GRANT_MANEUVERS` processing |
-| `src/routes/character-creation/Maneuvers.tsx` | Creation UI: filter by type, select up to budget |
-| `src/routes/character-sheet/components/Maneuvers.tsx` | Sheet display with type filtering |
+| File                                                  | Role                                                                                                 |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `src/lib/rulesdata/martials/maneuvers.ts`             | Maneuver catalog (29 maneuvers), exports `allManeuvers`, `getManeuverById()`, `getManeuversByType()` |
+| `src/lib/rulesdata/schemas/maneuver.schema.ts`        | TypeScript interfaces: `Maneuver`, `ManeuverCost`, `ManeuverEnhancement`, `ManeuverType` enum        |
+| `src/lib/rulesdata/martials/monk-stances.ts`          | Monk-specific stances (currently empty placeholder)                                                  |
+| `src/lib/services/enhancedCharacterCalculator.ts`     | Budget calculation and `GRANT_MANEUVERS` processing                                                  |
+| `src/routes/character-creation/Maneuvers.tsx`         | Creation UI: filter by type, select up to budget                                                     |
+| `src/routes/character-sheet/components/Maneuvers.tsx` | Sheet display with type filtering                                                                    |
 
 ---
 
@@ -24,39 +24,47 @@
 ### Maneuver Schema (`maneuver.schema.ts`)
 
 ```typescript
-enum ManeuverType { Attack, Defense, Grapple, Utility }
+enum ManeuverType {
+	Attack,
+	Defense,
+	Grapple,
+	Utility
+}
 
-interface ManeuverCost { ap: number; sp?: number }
+interface ManeuverCost {
+	ap: number;
+	sp?: number;
+}
 
 interface ManeuverEnhancement {
-  name: string;
-  costString: string;
-  sp?: number;
-  ap?: number;
-  repeatable?: boolean;
-  description: string;
+	name: string;
+	costString: string;
+	sp?: number;
+	ap?: number;
+	repeatable?: boolean;
+	description: string;
 }
 
 interface Maneuver {
-  id: string;
-  name: string;
-  type: ManeuverType;
-  cost: ManeuverCost;
-  range: string;
-  description: string;
-  isReaction: boolean;
-  enhancements: ManeuverEnhancement[];
+	id: string;
+	name: string;
+	type: ManeuverType;
+	cost: ManeuverCost;
+	range: string;
+	description: string;
+	isReaction: boolean;
+	enhancements: ManeuverEnhancement[];
 }
 ```
 
-### Maneuver Counts (28 total)
+### Maneuver Counts (29 total)
 
-| Type | Count | Examples |
-| --- | --- | --- |
-| Attack | 10 | Disarm, Power Strike, Cleave |
-| Defense | 7 | Parry, Dodge, Shield Block |
-| Grapple | 4 | Grab, Pin, Throw |
-| Utility | 7 | Dash, Hide, Disengage |
+| Type    | Count | Examples                                  |
+| ------- | ----- | ----------------------------------------- |
+| Attack  | 11    | Disarm, Power Strike, Cleave, Scattershot |
+| Defense | 7     | Parry, Dodge, Shield Block                |
+| Grapple | 4     | Grab, Pin, Throw                          |
+| Utility | 7     | Dash, Hide, Disengage                     |
 
 ### Utility Functions
 
@@ -90,12 +98,15 @@ import { allManeuvers, getManeuverById, getManeuversByType } from './martials/ma
 
 ---
 
-## 5) Rule Alignment Notes (v0.10)
+## 5) Rule Alignment Notes (v0.10.5)
 
 - Techniques have been removed entirely in DC20 v0.10.
 - Class-table maneuver gains remain level-driven in progression files.
 - Path points increase maneuver budgets through path progression tiers.
 - No maneuver budget should be inflated by duplicating equivalent grants in both a parent feature and its nested benefit entries.
+- v0.10.5 removes the base SP cost from `Whirlwind` and `Pathcarver`.
+- v0.10.5 adds `Scattershot` as an Attack maneuver.
+- `Reposition` rewrite and `Brace -> Fortify` compatibility remain HITL-gated and are not part of the automatic catalog pass.
 
 ---
 

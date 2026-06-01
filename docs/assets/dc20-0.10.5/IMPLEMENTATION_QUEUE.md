@@ -1,6 +1,6 @@
 # DC20 0.10.5 Implementation Queue
 
-Last Updated: 2026-05-10
+Last Updated: 2026-06-01
 
 ## Purpose
 
@@ -39,7 +39,7 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 
 ### VRR-001: Add `rulesVersion` Metadata Spine
 
-- Status: `implementation-ready`
+- Status: `implemented`
 - Source: `docs/assets/dc20-0.10.5/DATA_SHAPE_REVIEW.md`; `docs/assets/dc20-0.10.5/CHANGE_AUDIT.md`, `AUDIT-001`
 - Baseline: current repo persists `schemaVersion` but not `rulesVersion`
 - Systems: Database / Storage / Character Creation / Character Sheet / PDF Export
@@ -188,7 +188,7 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 - Source: `docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md`, page 268-269, lines 17607-17644
 - Baseline: targeted maneuver entries only
 - Systems: Martials / Character Creation / Character Sheet
-- Current implementation: maneuver catalog includes existing cost data and no `Scattershot`.
+- Current implementation: maneuver catalog removes base SP cost from `Whirlwind` and `Pathcarver`, and includes `Scattershot`.
 - Required change:
   - update structured cost fields for `Whirlwind`
   - update structured cost fields for `Pathcarver`
@@ -206,17 +206,17 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 - System docs to update:
   - `docs/systems/MARTIALS_SYSTEM.MD`
 - Validation:
-  - catalog lookup tests
+  - `src/lib/rulesdata/martials/maneuvers.test.ts`
   - selection count regression
   - saved character render regression
 
 ### VRR-007: Equipment Property Cost and Requirement Pass
 
-- Status: `implementation-ready`
+- Status: `implemented`
 - Source: `docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md`, page 269, lines 17728-17733
 - Baseline: current equipment property schema and validator
 - Systems: Equipment
-- Current implementation: equipment builder holds property costs and prerequisites in static option/validation layers.
+- Current implementation: equipment builder uses v0.10.5 Toss / Thrown costs and validates Returning against Toss or Thrown.
 - Required change:
   - restore Toss and Thrown costs
   - enforce Returning requires Toss or Thrown
@@ -233,7 +233,7 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 - System docs to update:
   - `docs/systems/EQUIPMENT_SYSTEM.MD`
 - Validation:
-  - validator unit tests
+  - `src/lib/rulesdata/equipment/validation/equipmentValidator.test.ts`
   - import/export of existing equipment fixtures
 
 ### VRR-008: Spell Taxonomy Normalization

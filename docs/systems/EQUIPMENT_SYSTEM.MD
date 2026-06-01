@@ -2,7 +2,7 @@
 
 > Purpose: Central reference for custom equipment creation, data models, validation rules, storage, and UI flows.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-06-01
 >
 > **Menu Entry:** "Equipage" in Reference Tools section
 
@@ -101,25 +101,25 @@ Each style has a **Weapon Enhancement** costing 1 AP or 1 SP:
 
 ### Weapon Properties
 
-| Property      | Cost | Type   | Effect                            |
-| ------------- | ---- | ------ | --------------------------------- |
-| Concealable   | 1    | Melee  | ADV on first attack when drawn    |
-| Guard         | 1    | Melee  | +1 PD while wielding              |
-| Heavy         | 2    | Both   | +1 damage (requires Two-Handed)   |
-| Impact        | 1    | Both   | +1 damage on Heavy Hits           |
-| Multi-Faceted | 1    | Both   | Gain second weapon style          |
-| Reach         | 1    | Melee  | +1 Space melee range              |
-| Returning     | 1    | Melee  | Returns on miss (requires Toss)   |
-| Silent        | 1    | Both   | Stay hidden when attacking        |
-| Toss          | 0    | Melee  | Throw range 5/10                  |
-| Thrown        | 0    | Melee  | Throw range 10/20                 |
-| Two-Handed    | -1   | Both   | Requires 2 hands                  |
-| Unwieldy      | -1   | Both   | DisADV within 1 Space             |
-| Versatile     | 1    | Melee  | +2 to Hit with 2 hands            |
-| Deft          | 1    | Ranged | No DisADV when Prone              |
-| Long-Ranged   | 1    | Ranged | Range increases to 30/90          |
-| Reload        | -1   | Ranged | +1 damage, requires reload action |
-| Cumbersome    | -1   | Ranged | 1 AP to draw/stow                 |
+| Property      | Cost | Type   | Effect                                    |
+| ------------- | ---- | ------ | ----------------------------------------- |
+| Concealable   | 1    | Melee  | ADV on first attack when drawn            |
+| Guard         | 1    | Melee  | +1 PD while wielding                      |
+| Heavy         | 2    | Both   | +1 damage (requires Two-Handed)           |
+| Impact        | 1    | Both   | +1 damage on Heavy Hits                   |
+| Multi-Faceted | 1    | Both   | Gain second weapon style                  |
+| Reach         | 1    | Melee  | +1 Space melee range                      |
+| Returning     | 1    | Melee  | Returns on miss (requires Toss or Thrown) |
+| Silent        | 1    | Both   | Stay hidden when attacking                |
+| Toss          | 1    | Melee  | Throw range 5/10                          |
+| Thrown        | 2    | Melee  | Throw range 10/20                         |
+| Two-Handed    | -1   | Both   | Requires 2 hands                          |
+| Unwieldy      | -1   | Both   | DisADV within 1 Space                     |
+| Versatile     | 1    | Melee  | +2 to Hit with 2 hands                    |
+| Deft          | 1    | Ranged | No DisADV when Prone                      |
+| Long-Ranged   | 1    | Ranged | Range increases to 30/90                  |
+| Reload        | -1   | Ranged | +1 damage, requires reload action         |
+| Cumbersome    | -1   | Ranged | 1 AP to draw/stow                         |
 
 ### Preset Weapons (38)
 
@@ -272,6 +272,17 @@ Organized by category:
 	id: 'heavy',
 	cost: 2,
 	requires: ['two-handed']
+}
+```
+
+Some properties require one of several enablers instead of a single fixed property:
+
+```typescript
+// Example: Returning requires Toss or Thrown
+{
+	id: 'returning',
+	cost: 1,
+	requiresOneOf: ['toss', 'thrown']
 }
 ```
 

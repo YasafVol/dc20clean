@@ -253,7 +253,7 @@ export const MELEE_WEAPON_PROPERTIES: WeaponProperty[] = [
 		name: 'Returning',
 		description: 'When you Miss a Ranged Attack with the Weapon, it returns to your hand.',
 		cost: 1,
-		requires: ['toss'],
+		requiresOneOf: ['toss', 'thrown'],
 		meleeOnly: true
 	},
 	{
@@ -268,7 +268,7 @@ export const MELEE_WEAPON_PROPERTIES: WeaponProperty[] = [
 		name: 'Toss',
 		description:
 			"You can throw the Weapon to make a Ranged Martial Attack (5/10). If you throw it further than this range it's considered an Improvised Weapon.",
-		cost: 0, // Free property
+		cost: 1,
 		meleeOnly: true,
 		effect: 'Range: 5/10 when thrown'
 	},
@@ -277,7 +277,7 @@ export const MELEE_WEAPON_PROPERTIES: WeaponProperty[] = [
 		name: 'Thrown',
 		description:
 			"You can throw the Weapon to make a Ranged Martial Attack (10/20). If you throw it further than this range it's considered an Improvised Weapon.",
-		cost: 0, // Free property
+		cost: 2,
 		meleeOnly: true,
 		effect: 'Range: 10/20 when thrown'
 	},

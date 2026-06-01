@@ -1,8 +1,8 @@
 /**
- * Maneuvers - DC20 v0.10
+ * Maneuvers - DC20 v0.10.5
  *
- * 28 maneuvers organized by type:
- * - Attack (10) - Offensive strikes and area attacks
+ * 29 maneuvers organized by type:
+ * - Attack (11) - Offensive strikes and area attacks
  * - Defense (7) - Protection and damage mitigation
  * - Grapple (4) - Close-quarters control
  * - Utility (7) - Movement and battlefield control
@@ -204,7 +204,7 @@ export const maneuvers: Maneuver[] = [
 		id: 'whirlwind',
 		name: 'Whirlwind',
 		type: ManeuverType.Attack,
-		cost: { ap: 2, sp: 1 },
+		cost: { ap: 2 },
 		range: '1 Space Aura',
 		description:
 			"Make an Area Martial Attack using a Melee Weapon or Unarmed Strike against the AD of every target within range. Hit: The target takes the damage of your Weapon or Unarmed Strike. Reach Weapon: If you have a Reach Weapon, you can choose to increase the Aura by 1 Space. When you do, you can't Attack targets within 1 Space of you.",
@@ -238,7 +238,7 @@ export const maneuvers: Maneuver[] = [
 		id: 'pathcarver',
 		name: 'Pathcarver',
 		type: ManeuverType.Attack,
-		cost: { ap: 2, sp: 1 },
+		cost: { ap: 2 },
 		range: '4 Space Line (Self)',
 		description:
 			'Make an Area Martial Attack with a Melee Weapon or Unarmed Strike against the AD of every target in a 4 Space Line. Hit: The target takes the damage of your Weapon or Unarmed Strike. After Attacking, you can move to any Space within 1 Space of the area without provoking Opportunity Attacks from the targets and without spending your movement. Reach Weapon: If you have a Reach Weapon, you can extend the Point of Origin 1 Space away from you. When you do, the Line must extend in a direction away from you.',
@@ -298,6 +298,39 @@ export const maneuvers: Maneuver[] = [
 				sp: 1,
 				description:
 					'The Attack ignores Cover but is blocked by 6 inches (15 cm) of wood or soft earth (dirt, mud, or sand), or 1 inch (25 mm) of metal or rock.'
+			}
+		]
+	},
+	{
+		id: 'scattershot',
+		name: 'Scattershot',
+		type: ManeuverType.Attack,
+		cost: { ap: 2 },
+		range: 'Self',
+		description:
+			'Requirements: Ranged Weapon. Make an Area Martial Attack against the AD of every target within a 3 Space Cone. Hit: The target takes the damage of your Weapon.',
+		isReaction: false,
+		enhancements: [
+			{
+				name: 'Damage',
+				costString: '2 SP, Repeatable',
+				sp: 2,
+				repeatable: true,
+				description: 'The damage increases by 1.'
+			},
+			{
+				name: 'Area',
+				costString: '2 SP, Repeatable',
+				sp: 2,
+				repeatable: true,
+				description: 'The length of the Cone increases by 1 Space.'
+			},
+			{
+				name: 'Stagger',
+				costString: '1 SP',
+				sp: 1,
+				description:
+					'Each creature makes a Might Save. Save Failure: The target is unable to take Reactions for 1 Round.'
 			}
 		]
 	},

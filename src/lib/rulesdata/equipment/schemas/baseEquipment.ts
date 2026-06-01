@@ -21,6 +21,8 @@ export interface BaseProperty {
 	cost: PropertyCost;
 	/** Properties that must be present before this can be added */
 	requires?: string[];
+	/** At least one of these properties must be present before this can be added */
+	requiresOneOf?: string[];
 	/** Properties that cannot coexist with this one */
 	excludes?: string[];
 	/** Maximum times this property can be taken (default: 1) */

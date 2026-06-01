@@ -1,6 +1,6 @@
 # DC20 0.10.5 Validation Scaffold
 
-Last Updated: 2026-05-10
+Last Updated: 2026-06-01
 
 ## Purpose
 
@@ -84,8 +84,8 @@ This file does not imply that implementation has started.
 
 ### Maneuvers
 
-- [ ] `Whirlwind` and `Pathcarver` structured costs are asserted
-- [ ] `Scattershot` exists and is selectable
+- [x] `Whirlwind` and `Pathcarver` structured costs are asserted
+- [x] `Scattershot` exists and is selectable
 - [ ] renamed maneuver fixtures render correctly if aliases are approved
 - [ ] `Reposition` stays blocked from implementation until semantic review is complete
 
@@ -104,8 +104,8 @@ This file does not imply that implementation has started.
 
 ### Equipment
 
-- [ ] validator coverage for Toss / Thrown costs
-- [ ] validator coverage for Returning prerequisite
+- [x] validator coverage for Toss / Thrown costs
+- [x] validator coverage for Returning prerequisite
 - [ ] import/export tests for stored custom equipment with stable property IDs
 - [ ] backward compatibility check for existing saved equipment payloads
 

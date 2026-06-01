@@ -191,10 +191,48 @@ export const druidClass: ClassDefinition = {
 		},
 		{
 			id: 'druid_level_5_placeholder',
-			featureName: "Nature's Champion (Placeholder)",
+			featureName: 'Expert Druid',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+			description: 'You gain the following benefits for your Druid Class Features.',
+			benefits: [
+				{
+					name: 'Druid Domain',
+					description:
+						'Druid Domain spaces increase to 10 and vanish if you end your turn farther than 20 Spaces away. Spend MP to increase Domain spaces by 8 per MP. Wild Growth restores +1 HP per 2 MP spent.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_druid_druid_domain',
+							value:
+								'Druid Domain spaces increase to 10; vanish if you end your turn farther than 20 Spaces away; spend MP for +8 Spaces per MP; Wild Growth heals +1 HP per 2 MP.'
+						}
+					]
+				},
+				{
+					name: 'Wild Form',
+					description: 'Your Wild Form gains +1 HP and +1 Trait Point.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_druid_wild_form',
+							value: 'Wild Form gains +1 HP and +1 Trait Point.'
+						}
+					]
+				},
+				{
+					name: "Nature's Torrent",
+					description:
+						"Nature's Torrent range increases to 15 Spaces. You can spend 2 MP to apply +1 Vulnerability, or spend X MP to increase the Area diameter by X Spaces.",
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_druid_natures_torrent',
+							value:
+								"Nature's Torrent range 15 Spaces; spend 2 MP for +1 Vulnerability or X MP for +X Area diameter."
+						}
+					]
+				}
+			]
 		},
 		{
 			id: 'druid_level_8_capstone_placeholder',

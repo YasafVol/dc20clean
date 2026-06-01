@@ -70,7 +70,7 @@ This file does not imply that implementation has started.
 - [ ] `src/lib/rulesdata/classes-data/talents/talents.test.ts`
 - [ ] `src/lib/rulesdata/progression/multiclass.test.ts`
 - [x] `src/lib/services/dc20v0105ProgressionResources.test.ts`
-- [ ] level 5 Expert Feature coverage for every class is asserted
+- [x] level 5 Expert Feature coverage for every class is asserted
 - [x] caster and hybrid MP deltas are asserted by level
 - [ ] removed multiclass tiers remain compatible for old fixtures under the chosen policy
 

@@ -230,10 +230,48 @@ export const barbarianClass: ClassDefinition = {
 		},
 		{
 			id: 'barbarian_level_5_placeholder',
-			featureName: 'Primal Fury (Placeholder)',
+			featureName: 'Expert Barbarian',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+			description: 'You gain the following benefits for your Barbarian Class Features.',
+			benefits: [
+				{
+					name: 'Rage',
+					description:
+						'You can immediately enter Rage for free as a Reaction upon rolling for Initiative.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_barbarian_rage',
+							value: 'Reaction on Initiative: enter Rage for free.'
+						}
+					]
+				},
+				{
+					name: 'Berserker',
+					description:
+						'Charge now grants 3 Spaces of movement, and that movement ignores Difficult Terrain.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_barbarian_berserker',
+							value: 'Charge grants 3 Spaces of movement and ignores Difficult Terrain.'
+						}
+					]
+				},
+				{
+					name: 'Battlecry',
+					description:
+						'Battlecry range increases to 10 Spaces. You can spend additional SP to enhance Fortitude Shout, Fury Shout, or Urgent Shout.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_barbarian_battlecry',
+							value:
+								'Battlecry range 10 Spaces; Fortitude Shout can grant Resistance Half for 1 SP, Fury Shout can add +1 damage for 3 SP, and Urgent Shout can add +2 Speed per SP up to 2 SP.'
+						}
+					]
+				}
+			]
 		},
 		{
 			id: 'barbarian_level_8_capstone_placeholder',
@@ -468,7 +506,3 @@ export const barbarianClass: ClassDefinition = {
 		}
 	]
 };
-
-
-
-

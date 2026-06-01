@@ -291,10 +291,46 @@ export const hunterClass: ClassDefinition = {
 		},
 		{
 			id: 'hunter_level_5_placeholder',
-			featureName: 'Apex Predator (Placeholder)',
+			featureName: 'Expert Hunter',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+			description: 'You gain the following benefits for your Hunter Class Features.',
+			benefits: [
+				{
+					name: "Hunter's Mark",
+					description:
+						"Your Hunter's Mark Help Die is d10, and your first Martial Attack against the marked target ignores Physical Resistance.",
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_hunter_hunters_mark',
+							value:
+								"Hunter's Mark Help Die is d10; first Martial Attack ignores Physical Resistance."
+						}
+					]
+				},
+				{
+					name: 'Favored Terrain',
+					description: 'You gain 1 additional Favored Terrain.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_hunter_favored_terrain',
+							value: 'Choose 1 additional Favored Terrain.'
+						}
+					]
+				},
+				{
+					name: "Hunter's Strike",
+					description: "You can use up to 2 Hunter's Strike Enhancements on an Attack.",
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_hunter_hunters_strike',
+							value: "Use up to 2 Hunter's Strike Enhancements on an Attack."
+						}
+					]
+				}
+			]
 		},
 		{
 			id: 'hunter_level_8_capstone_placeholder',

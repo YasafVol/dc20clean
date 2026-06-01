@@ -244,10 +244,48 @@ export const spellbladeClass: ClassDefinition = {
 		},
 		{
 			id: 'spellblade_level_5_placeholder',
-			featureName: 'Martial Arcana (Placeholder)',
+			featureName: 'Expert Spellblade',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+			description: 'You gain the following benefits for your Spellblade Class Features.',
+			benefits: [
+				{
+					name: 'Bound Weapon',
+					description: 'Your Bound Damage ignores Resistance to its damage type.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_spellblade_bound_weapon',
+							value: 'Bound Damage ignores Resistance to its damage type.'
+						}
+					]
+				},
+				{
+					name: 'Spellblade Discipline',
+					description:
+						'You gain 1 additional Discipline. Acolyte healing increases by +2 per additional MP, Hex Warrior damage increases by +1 per MP, and Spell Warder can spend 1 MP to gain Resistance Half.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_spellblade_discipline',
+							value:
+								'Choose 1 additional Discipline; Acolyte +2 healing per MP, Hex Warrior +1 damage per MP, Spell Warder can spend 1 MP for Resistance Half.'
+						}
+					]
+				},
+				{
+					name: 'Spellstrike',
+					description:
+						'The Spell cast as part of Spellstrike can target multiple creatures or an Area if at least 1 Spell target is also a Martial Attack target.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_spellblade_spellstrike',
+							value:
+								'Spellstrike Spell can target multiple creatures or an Area when at least 1 Spell target is also a Martial Attack target.'
+						}
+					]
+				}
+			]
 		},
 		{
 			id: 'spellblade_level_8_capstone_placeholder',

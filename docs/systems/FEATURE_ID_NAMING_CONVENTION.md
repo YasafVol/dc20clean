@@ -2,7 +2,7 @@
 
 > Purpose: Standard naming convention for feature IDs in class definitions.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-06-01
 
 ## Convention Rules
 
@@ -78,6 +78,13 @@ Talent features gained at different levels include the level:
 
 - Format: `{class}_talent_level_{level}`
 - Examples: `barbarian_level_2_talent`, `wizard_talent_level_2`
+
+#### Compatibility-Retained Feature IDs
+
+Some IDs intentionally preserve an older placeholder-shaped slug when the ID may already exist in saved characters or progression references.
+
+- v0.10.5 level 5 Expert Features keep `<class>_level_5_placeholder` IDs while displaying `Expert <Class>` names.
+- Do not rename those IDs to `<class>_expert_<class>` without a compatibility alias and saved-character migration plan.
 
 ## Conversion Rules
 

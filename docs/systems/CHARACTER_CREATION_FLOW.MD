@@ -26,6 +26,7 @@
   - Completion rule: class selected AND all required feature choices resolved (per `findClassByName` metadata)
   - Outputs: `state.classId`, `state.selectedFeatureChoices`
   - Dependencies: handles feature choice IDs; level selection is part of this stage without changing completion logic
+  - v0.10.5 level 5 Expert Features render from the same persisted feature IDs previously used for placeholders (`<class>_level_5_placeholder`), so older saved level-5+ characters keep resolving while showing the updated Expert Feature names and benefits.
   - **Progressive Feature Display** (October 2025): `ClassFeatures.tsx` now displays features grouped by level from 1 up to current character level. Feature choices appear within their respective level sections rather than in a separate section at the bottom. This ensures proper ordering (e.g., Level 1 stance choices appear with Level 1 features, not after Level 3 features).
   - **Testing**: 29 comprehensive tests validate progressive display logic and choice ordering (14 logic tests + 15 component tests)
 

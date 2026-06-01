@@ -202,10 +202,43 @@ export const bardClass: ClassDefinition = {
 		},
 		{
 			id: 'bard_level_5_placeholder',
-			featureName: 'Virtuoso (Placeholder)',
+			featureName: 'Expert Bard',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+			description: 'You gain the following benefits for your Bard Class Features.',
+			benefits: [
+				{
+					name: 'Font of Inspiration',
+					description: 'Your Help Die starts at a d10.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_bard_font_of_inspiration',
+							value: 'Your Help Die starts at d10.'
+						}
+					]
+				},
+				{
+					name: 'Remarkable Repertoire',
+					description: 'You gain +2 Skill Points and learn any 2 Spells from any Spell List.',
+					effects: [
+						{ type: 'MODIFY_STAT', target: 'skillPoints', value: 2 },
+						{ type: 'GRANT_SPELL', target: 'any_spell_list', value: 2 }
+					]
+				},
+				{
+					name: 'Bardic Performance',
+					description:
+						'At the start of each of your turns you can change your performance for free. When you start a performance, you can spend 2 MP to improve the selected performance.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_bard_bardic_performance',
+							value:
+								'Free performance change at start of turn. Spend 2 MP when starting: Battle Ballad die becomes d8, Fast Tempo grants +2 Speed, Inspiring Performance grants +1 temp HP, or Emotional Performance grants resistance to its listed Conditions.'
+						}
+					]
+				}
+			]
 		},
 		{
 			id: 'bard_level_8_capstone_placeholder',
@@ -220,10 +253,10 @@ export const bardClass: ClassDefinition = {
 			subclassName: 'Eloquence',
 			description: 'Masters of persuasion and charm magic.',
 			features: [
-			{
-				id: 'bard_eloquence_beguiling_presence',
-				featureName: 'Beguiling Presence',
-				levelGained: 3,
+				{
+					id: 'bard_eloquence_beguiling_presence',
+					featureName: 'Beguiling Presence',
+					levelGained: 3,
 					description: 'You gain enhanced charm abilities and magical persuasion.',
 					benefits: [
 						{
@@ -265,10 +298,10 @@ export const bardClass: ClassDefinition = {
 						}
 					]
 				},
-			{
-				id: 'bard_eloquence_eloquent_orator',
-				featureName: 'Eloquent Orator',
-				levelGained: 3,
+				{
+					id: 'bard_eloquence_eloquent_orator',
+					featureName: 'Eloquent Orator',
+					levelGained: 3,
 					description:
 						'Your speech is magically enchanted. Creatures can always understand the words you speak, provided they speak at least 1 Language.',
 					isFlavor: true,
@@ -286,10 +319,10 @@ export const bardClass: ClassDefinition = {
 			subclassName: 'Jester',
 			description: 'Comedic performers who use humor and chaos in battle.',
 			features: [
-			{
-				id: 'bard_jester_antagonizing_act',
-				featureName: 'Antagonizing Act',
-				levelGained: 3,
+				{
+					id: 'bard_jester_antagonizing_act',
+					featureName: 'Antagonizing Act',
+					levelGained: 3,
 					description: 'You gain abilities that frustrate and distract enemies.',
 					benefits: [
 						{
@@ -330,10 +363,10 @@ export const bardClass: ClassDefinition = {
 						}
 					]
 				},
-			{
-				id: 'bard_jester_comedian',
-				featureName: 'Comedian',
-				levelGained: 3,
+				{
+					id: 'bard_jester_comedian',
+					featureName: 'Comedian',
+					levelGained: 3,
 					description: 'You have ADV on Checks to make other creatures laugh.',
 					isFlavor: true,
 					effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'comedy', value: 'ADV' }]

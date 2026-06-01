@@ -217,6 +217,12 @@ Each class has a `<class>.talents.ts` file (13 files) plus shared data in `talen
   - Level 9: Class Capstone Feature
   - Level 10: Subclass Capstone Feature
 
+**Level 5 Expert Feature Contract**:
+
+- Every implemented v0.10.5 class resolves a level 5 Expert Feature from the existing persisted ID shape (`<class>_level_5_placeholder`).
+- Those IDs are intentionally retained as compatibility aliases for saved v0.10 characters and progression references; only the displayed feature name, description, benefits, and modeled effects changed.
+- Universal mechanical benefits use existing effect types (`MODIFY_STAT`, `GRANT_SPELL`, `GRANT_MANEUVERS`, `GRANT_ABILITY`) so character creation, sheet rendering, calculator breakdowns, and PDF export consume the same data path.
+
 **Key Changes from v0.9.5/v0.10**:
 
 - Techniques have been removed entirely from the game
@@ -228,9 +234,10 @@ Each class has a `<class>.talents.ts` file (13 files) plus shared data in `talen
 
 **Recent Updates (2026-06-01)**:
 
+- **Level 5 Expert Features**: Replaced all level 5 class placeholders with explicit v0.10.5 Expert Feature blocks while preserving the legacy placeholder IDs for saved-character compatibility.
 - **v0.10.5 Progression Tables**: Updated caster MP gains, Spellblade starting/capstone MP, and levels 6-10 feature/talent/path/ancestry schedule.
 - **Path Progression Display**: `class.loader.ts` now surfaces `pathProgression: true` as "Path Progression" in formatted level rows.
-- **Progression Tests**: Added v0.10.5 resolver coverage for caster/hybrid MP totals and level 6-10 schedule.
+- **Progression Tests**: Added v0.10.5 resolver coverage for caster/hybrid MP totals, level 6-10 schedule, and level 5 Expert Feature coverage/effects.
 
 **Recent Updates (2026-02-06)**:
 
@@ -241,5 +248,5 @@ Each class has a `<class>.talents.ts` file (13 files) plus shared data in `talen
 
 ---
 
-> _Last updated: 2026-02-06_  
+> _Last updated: 2026-06-01_
 > Maintainer: @DC20Clean-Team

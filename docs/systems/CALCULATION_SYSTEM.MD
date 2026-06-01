@@ -119,6 +119,14 @@ The calculator reads class tables through `classesData` and aggregates levels 1 
 
 The v0.10.5 shared schedule grants Talents at levels 2, 4, 6, and 8; Path Progression at levels 2, 4, 6, and 8; Ancestry Points at levels 4 and 8; subclass choices at levels 3, 7, and 10; and class features at levels 1, 2, 5, and 9.
 
+Level 5 Expert Features are resolved from the class feature data using the existing persisted level-5 IDs. Their universal modeled effects flow through normal aggregation:
+
+- Bard and Rogue Expert Features add skill points through `MODIFY_STAT`.
+- Sorcerer and Warlock Expert Features add resource maximums through `MODIFY_STAT`.
+- Monk Expert Feature adds Speed and Jump Distance through `MODIFY_STAT`.
+- Bard and Wizard Expert Features add spell slots through `GRANT_SPELL`.
+- Champion Expert Feature adds maneuver capacity through `GRANT_MANEUVERS`.
+
 ### Path Bonuses (M3.9)
 
 **Martial Path:**

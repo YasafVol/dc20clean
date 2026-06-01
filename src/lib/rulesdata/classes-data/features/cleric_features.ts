@@ -278,10 +278,47 @@ export const clericClass: ClassDefinition = {
 		},
 		{
 			id: 'cleric_level_5_placeholder',
-			featureName: 'Divine Conduit (Placeholder)',
+			featureName: 'Expert Cleric',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+			description: 'You gain the following benefits for your Cleric Class Features.',
+			benefits: [
+				{
+					name: 'Cleric Order',
+					description: 'You gain 1 additional Divine Domain.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_cleric_additional_domain',
+							value: 'Choose 1 additional Divine Domain.'
+						}
+					]
+				},
+				{
+					name: 'Divine Blessing',
+					description:
+						'You can spend additional MP when using Divine Blessing. Destruction deals +2 damage per additional MP. Restoration restores +2 HP per additional MP.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_cleric_divine_blessing',
+							value:
+								'Divine Blessing can spend additional MP: Destruction +2 damage per MP, Restoration +2 healing per MP.'
+						}
+					]
+				},
+				{
+					name: 'Channel Divinity',
+					description:
+						'Divine Rebuke deals +1 damage. Lesser Divine Intervention has 2 additional HP in its pool.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_cleric_channel_divinity',
+							value: 'Divine Rebuke +1 damage; Lesser Divine Intervention HP pool increases by 2.'
+						}
+					]
+				}
+			]
 		},
 		{
 			id: 'cleric_level_8_capstone_placeholder',
@@ -296,18 +333,18 @@ export const clericClass: ClassDefinition = {
 			subclassName: 'Inquisitor',
 			description: 'You are an agent of divine justice, rooting out heresy and deception.',
 			features: [
-			{
-				id: 'cleric_inquisitor_vanquish_heresy',
-				featureName: 'Vanquish Heresy',
-				levelGained: 3,
+				{
+					id: 'cleric_inquisitor_vanquish_heresy',
+					featureName: 'Vanquish Heresy',
+					levelGained: 3,
 					description:
 						'You gain Resistance to Charmed, Intimidated, and Taunted. Creatures Intimidated by your Divine Rebuke don\'t stop being Intimidated if they take damage. You also gain the "Chastise" Divine Blessing option.',
 					effects: []
 				},
-			{
-				id: 'cleric_inquisitor_divine_interrogator',
-				featureName: 'Divine Interrogator (Flavor Feature)',
-				levelGained: 3,
+				{
+					id: 'cleric_inquisitor_divine_interrogator',
+					featureName: 'Divine Interrogator (Flavor Feature)',
+					levelGained: 3,
 					description:
 						"Once per Long Rest, you can interrogate a creature by asking it a Yes or No question. It makes a Charisma Save against your Save DC. Failure: It can't tell a lie to the question that you asked it.",
 					effects: []
@@ -318,18 +355,18 @@ export const clericClass: ClassDefinition = {
 			subclassName: 'Priest',
 			description: 'You are a beacon of faith, healing the wounded and protecting the innocent.',
 			features: [
-			{
-				id: 'cleric_priest_sanctification',
-				featureName: 'Sanctification',
-				levelGained: 3,
+				{
+					id: 'cleric_priest_sanctification',
+					featureName: 'Sanctification',
+					levelGained: 3,
 					description:
 						"When you spend MP to heal a creature beyond their HP maximum, they gain an amount of Temp HP equal to the remaining healing. When you spend MP to heal a creature on Death's Door, the HP restored is increased by an amount equal to your Prime Modifier. You also gain the 'Hand of Salvation' Channel Divinity option.",
 					effects: []
 				},
-			{
-				id: 'cleric_priest_all_that_ails',
-				featureName: 'All That Ails (Flavor Feature)',
-				levelGained: 3,
+				{
+					id: 'cleric_priest_all_that_ails',
+					featureName: 'All That Ails (Flavor Feature)',
+					levelGained: 3,
 					description:
 						'You have ADV on Checks made to identify or determine the effects of a Disease, Poison, or Curse affecting a creature.',
 					effects: []

@@ -190,10 +190,48 @@ export const commanderClass: ClassDefinition = {
 		},
 		{
 			id: 'commander_level_5_placeholder',
-			featureName: 'Tactical Mastery (Placeholder)',
+			featureName: 'Expert Commander',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+			description: 'You gain the following benefits for your Commander Class Features.',
+			benefits: [
+				{
+					name: "Commander's Call",
+					description:
+						"Commander's Call range increases to 10 Spaces. You can spend 2 additional SP to issue 1 additional command.",
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_commander_commanders_call',
+							value:
+								"Commander's Call range 10 Spaces; spend 2 additional SP to issue 1 additional command."
+						}
+					]
+				},
+				{
+					name: 'Inspiring Presence',
+					description: 'Inspiring Presence restores 1 additional HP.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_commander_inspiring_presence',
+							value: 'Inspiring Presence restores 1 additional HP.'
+						}
+					]
+				},
+				{
+					name: 'Commanding Aura',
+					description:
+						'Your Help Die starts at d10. Rally grants +1 temp HP per 2 SP spent. Reinforce can spend 1 SP to grant ADV on Saves made as part of the Attack.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_commander_commanding_aura',
+							value:
+								'Help Die starts at d10; Rally grants +1 temp HP per 2 SP; Reinforce can spend 1 SP to grant ADV on Saves made as part of the Attack.'
+						}
+					]
+				}
+			]
 		},
 		{
 			id: 'commander_level_8_capstone_placeholder',
@@ -208,10 +246,10 @@ export const commanderClass: ClassDefinition = {
 			subclassName: 'Crusader',
 			description: 'Holy warriors who protect and inspire their allies.',
 			features: [
-			{
-				id: 'commander_crusader_virtuous_vanguard',
-				featureName: 'Virtuous Vanguard',
-				levelGained: 3,
+				{
+					id: 'commander_crusader_virtuous_vanguard',
+					featureName: 'Virtuous Vanguard',
+					levelGained: 3,
 					description: 'You become a beacon of courage and protection.',
 					benefits: [
 						{
@@ -251,10 +289,10 @@ export const commanderClass: ClassDefinition = {
 						}
 					]
 				},
-			{
-				id: 'commander_crusader_gallant_hero',
-				featureName: 'Gallant Hero',
-				levelGained: 3,
+				{
+					id: 'commander_crusader_gallant_hero',
+					featureName: 'Gallant Hero',
+					levelGained: 3,
 					description: 'Your presence is a symbol of hope and safety.',
 					isFlavor: true,
 					effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'convince_not_afraid', value: 'ADV' }]
@@ -265,10 +303,10 @@ export const commanderClass: ClassDefinition = {
 			subclassName: 'Warlord',
 			description: 'Tactical masters who excel at aggressive battlefield control.',
 			features: [
-			{
-				id: 'commander_warlord_offensive_tactics',
-				featureName: 'Offensive Tactics',
-				levelGained: 3,
+				{
+					id: 'commander_warlord_offensive_tactics',
+					featureName: 'Offensive Tactics',
+					levelGained: 3,
 					description: 'You gain aggressive battlefield abilities.',
 					benefits: [
 						{
@@ -311,10 +349,10 @@ export const commanderClass: ClassDefinition = {
 						}
 					]
 				},
-			{
-				id: 'commander_warlord_battlefield_tactician',
-				featureName: 'Battlefield Tactician',
-				levelGained: 3,
+				{
+					id: 'commander_warlord_battlefield_tactician',
+					featureName: 'Battlefield Tactician',
+					levelGained: 3,
 					description: "You've mastered military history and strategy.",
 					isFlavor: true,
 					effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'military_knowledge', value: 'ADV' }]

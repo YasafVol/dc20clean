@@ -101,8 +101,8 @@ export const monkClass: ClassDefinition = {
 			id: 'monk_stance',
 			featureName: 'Monk Stance',
 			levelGained: 1,
-		description:
-			'You learn 2 Monk Stances. Start of turn: freely enter or swap stances. Spend 1 AP or 1 SP on your turn to change stance; only one stance active at a time.',
+			description:
+				'You learn 2 Monk Stances. Start of turn: freely enter or swap stances. Spend 1 AP or 1 SP on your turn to change stance; only one stance active at a time.',
 			choices: [
 				{
 					id: 'initial_stances',
@@ -221,10 +221,49 @@ export const monkClass: ClassDefinition = {
 		},
 		{
 			id: 'monk_level_5_placeholder',
-			featureName: 'Inner Harmony (Placeholder)',
+			featureName: 'Expert Monk',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+			description: 'You gain the following benefits for your Monk Class Features.',
+			benefits: [
+				{
+					name: 'Monk Training',
+					description:
+						'Iron Palm lets you choose an additional Melee Weapon Style, and your Unarmed Strike can use both Weapon Enhancements. Step of the Wind grants an additional +1 Speed and +1 Jump Distance.',
+					effects: [
+						{ type: 'MODIFY_STAT', target: 'moveSpeed', value: 1 },
+						{ type: 'MODIFY_STAT', target: 'jumpDistance', value: 1 },
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_monk_training',
+							value:
+								'Iron Palm gains an additional Melee Weapon Style and Unarmed Strike can use both Weapon Enhancements.'
+						}
+					]
+				},
+				{
+					name: 'Monk Stances',
+					description: 'You learn 1 additional Monk Stance.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_monk_stances',
+							value: 'Choose 1 additional Monk Stance.'
+						}
+					]
+				},
+				{
+					name: 'Spiritual Balance',
+					description:
+						'Your Ki Point maximum increases by 1. Whenever you regain Ki, you regain half your maximum Ki.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_monk_spiritual_balance',
+							value: 'Ki Point maximum +1; whenever you regain Ki, regain half your maximum Ki.'
+						}
+					]
+				}
+			]
 		},
 		{
 			id: 'monk_level_8_capstone_placeholder',

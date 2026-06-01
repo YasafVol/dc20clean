@@ -130,29 +130,31 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 
 ### VRR-004: Surface Level 5 Expert Features for All Classes
 
-- Status: `implementation-ready`
+- Status: `implemented`
 - Source: `docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md`, page 268, lines 17541-17545
 - Baseline: current class feature/progression data
 - Systems: Class / Leveling / Character Creation / Character Sheet / PDF Export
-- Current implementation: some class data still relies on placeholders or incomplete level-5 coverage.
+- Current implementation: every implemented class resolves a level-5 v0.10.5 Expert Feature block. The old `<class>_level_5_placeholder` IDs are intentionally retained for saved-character compatibility while names, descriptions, benefits, and modeled universal effects now reflect v0.10.5.
 - Required change: ensure every class has an explicit level-5 Expert Feature block with stable IDs and progression references.
 - Data shape impact: none
-- Stable ID / alias impact: possible, especially where placeholders are replaced
-- Calculator/effect impact: possible
+- Stable ID / alias impact: resolved by retaining existing placeholder IDs as compatibility IDs
+- Calculator/effect impact: confirmed for modeled universal Expert Feature bonuses
 - UI impact: confirmed
 - Storage/export impact: possible
 - HITL decision: no, unless replacing already-persisted placeholder IDs
 - Code touchpoints:
   - `src/lib/rulesdata/classes-data/features/*.ts`
-  - `src/lib/rulesdata/classes-data/progressions/*.progression.ts`
-  - `src/lib/rulesdata/loaders/class.loader.ts`
+  - `src/lib/rulesdata/classes-data/classProgressionResolver.test.ts`
 - System docs to update:
   - `docs/systems/CLASS_SYSTEM.MD`
+  - `docs/systems/CALCULATION_SYSTEM.MD`
   - `docs/systems/CHARACTER_CREATION_FLOW.MD`
   - `docs/systems/CHARACTER_SHEET.MD`
+  - `docs/systems/EFFECT_SYSTEM.MD`
+  - `docs/systems/FEATURE_ID_NAMING_CONVENTION.md`
 - Validation:
+  - `src/lib/rulesdata/classes-data/classProgressionResolver.test.ts`
   - `rulesdata.spec.ts`
-  - subclass/class feature resolver coverage
 
 ### VRR-005: Character Creation Starting SP/MP Corrections
 

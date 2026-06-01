@@ -11,11 +11,42 @@ import {
 	resolveSubclassFeatures
 } from './classProgressionResolver';
 import { classesData } from '../loaders/class.loader';
+import type { ClassFeature, Effect } from '../schemas/character.schema';
 
 const martialClassIds = ['barbarian', 'champion', 'commander', 'hunter', 'monk', 'rogue'];
 const casterClassIds = ['bard', 'cleric', 'druid', 'sorcerer', 'warlock', 'wizard'];
 const hybridClassIds = ['spellblade'];
 const v0105ClassIds = [...martialClassIds, ...casterClassIds, ...hybridClassIds];
+const v0105ExpertFeatureNames: Record<string, string> = {
+	barbarian: 'Expert Barbarian',
+	bard: 'Expert Bard',
+	champion: 'Expert Champion',
+	cleric: 'Expert Cleric',
+	commander: 'Expert Commander',
+	druid: 'Expert Druid',
+	hunter: 'Expert Hunter',
+	monk: 'Expert Monk',
+	rogue: 'Expert Rogue',
+	sorcerer: 'Expert Sorcerer',
+	spellblade: 'Expert Spellblade',
+	warlock: 'Expert Warlock',
+	wizard: 'Expert Wizard'
+};
+const v0105ExpertFeatureEffects: Record<string, Partial<Effect>[]> = {
+	bard: [
+		{ type: 'MODIFY_STAT', target: 'skillPoints', value: 2 },
+		{ type: 'GRANT_SPELL', target: 'any_spell_list', value: 2 }
+	],
+	champion: [{ type: 'GRANT_MANEUVERS', target: 'any_maneuver', value: 2 }],
+	monk: [
+		{ type: 'MODIFY_STAT', target: 'moveSpeed', value: 1 },
+		{ type: 'MODIFY_STAT', target: 'jumpDistance', value: 1 }
+	],
+	rogue: [{ type: 'MODIFY_STAT', target: 'skillPoints', value: 1 }],
+	sorcerer: [{ type: 'MODIFY_STAT', target: 'mpMax', value: 1 }],
+	warlock: [{ type: 'MODIFY_STAT', target: 'hpMax', value: 2 }],
+	wizard: [{ type: 'GRANT_SPELL', target: 'chosen_school', value: 1 }]
+};
 
 function getLevelData(classId: string, level: number) {
 	const classData = classesData.find((entry) => entry.id === classId);
@@ -23,6 +54,13 @@ function getLevelData(classId: string, level: number) {
 	const levelData = classData.levelProgression.find((entry) => entry.level === level);
 	if (!levelData) throw new Error(`Missing level ${level} data for ${classId}`);
 	return levelData;
+}
+
+function getAllFeatureEffects(feature: ClassFeature): Effect[] {
+	return [
+		...(feature.effects ?? []),
+		...(feature.benefits ?? []).flatMap((benefit) => benefit.effects)
+	];
 }
 
 describe('Class Progression Resolver (UT-2)', () => {
@@ -347,6 +385,34 @@ describe('Class Progression Resolver (UT-2)', () => {
 				expect(getLevelData(classId, 6).features).toContain('Path Progression');
 				expect(getLevelData(classId, 8).features).toContain('Path Progression');
 			});
+
+			it(`${classId} keeps the legacy level 5 feature ID but resolves to the v0.10.5 Expert Feature`, () => {
+				const expectedId = `${classId}_level_5_placeholder`;
+				const result = resolveClassProgression(classId, 5);
+				const expertFeature = result.unlockedFeatures.find((feature) => feature.id === expectedId);
+
+				expect(expertFeature).toBeDefined();
+				expect(expertFeature?.featureName).toBe(v0105ExpertFeatureNames[classId]);
+				expect(expertFeature?.isFlavor).not.toBe(true);
+				expect(expertFeature?.description).not.toMatch(/placeholder/i);
+				expect(expertFeature?.description).toMatch(/benefits/i);
+				expect(expertFeature?.benefits?.length).toBeGreaterThan(0);
+			});
 		});
+
+		for (const [classId, expectedEffects] of Object.entries(v0105ExpertFeatureEffects)) {
+			it(`${classId} applies the modeled v0.10.5 Expert Feature effects`, () => {
+				const expectedId = `${classId}_level_5_placeholder`;
+				const result = resolveClassProgression(classId, 5);
+				const expertFeature = result.unlockedFeatures.find((feature) => feature.id === expectedId);
+				if (!expertFeature) throw new Error(`Missing Expert Feature for ${classId}`);
+
+				const effects = getAllFeatureEffects(expertFeature);
+
+				for (const expectedEffect of expectedEffects) {
+					expect(effects).toContainEqual(expect.objectContaining(expectedEffect));
+				}
+			});
+		}
 	});
 });

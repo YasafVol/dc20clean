@@ -2,7 +2,7 @@
 
 > Purpose: Canonical catalog of `Effect.type` semantics, targets, choice resolution, and stacking rules used across Traits and Class Features.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-06-01
 
 ---
 
@@ -22,52 +22,52 @@ All effect types are defined in `character.schema.ts` as a discriminated union. 
 
 ### Numeric Modifiers
 
-| Type | Target | Value | Special Fields | Stacking |
-| --- | --- | --- | --- | --- |
-| `MODIFY_STAT` | stat name (`hpMax`, `spMax`, `mpMax`, `pd`, `ad`, `skillPoints`, `tradePoints`, `languagePoints`, `moveSpeed`, `jumpDistance`, `attackSpellCheck`, `saveDC`, `maneuversKnown`, `ancestryPoints`, `attributePoints`) | `number` | `condition?: string` (e.g., `while_raging`, `not_wearing_armor`) | Sums |
-| `MODIFY_ATTRIBUTE` | attribute name (`might`, `agility`, `charisma`, `intelligence`) | `number` | `userChoice?: { prompt, options? }` for `any_attribute` | Sums |
-| `SET_VALUE` | stat name | `string \| number` | -- | Overwrites |
+| Type               | Target                                                                                                                                                                                                              | Value              | Special Fields                                                   | Stacking   |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------- | ---------- |
+| `MODIFY_STAT`      | stat name (`hpMax`, `spMax`, `mpMax`, `pd`, `ad`, `skillPoints`, `tradePoints`, `languagePoints`, `moveSpeed`, `jumpDistance`, `attackSpellCheck`, `saveDC`, `maneuversKnown`, `ancestryPoints`, `attributePoints`) | `number`           | `condition?: string` (e.g., `while_raging`, `not_wearing_armor`) | Sums       |
+| `MODIFY_ATTRIBUTE` | attribute name (`might`, `agility`, `charisma`, `intelligence`)                                                                                                                                                     | `number`           | `userChoice?: { prompt, options? }` for `any_attribute`          | Sums       |
+| `SET_VALUE`        | stat name                                                                                                                                                                                                           | `string \| number` | --                                                               | Overwrites |
 
 ### Grants
 
-| Type | Target | Value | Special Fields | Stacking |
-| --- | --- | --- | --- | --- |
-| `GRANT_ABILITY` | ability name | `string` (description) | -- | De-duplicates |
-| `GRANT_RESISTANCE` | damage type | `string \| number \| boolean` | `optional?: string` | De-duplicates; **collected by `abilityCollection.ts`** |
-| `GRANT_VULNERABILITY` | damage type | `number` | -- | De-duplicates; **collected by `abilityCollection.ts`** |
-| `GRANT_ADV_ON_SAVE` | save type | `string \| boolean` | -- | De-duplicates |
-| `GRANT_ADV_ON_CHECK` | check type | `string \| boolean` | -- | De-duplicates |
-| `GRANT_COMBAT_TRAINING` | training type (e.g., `Weapons`, `Spell_Focuses`) | `boolean` | -- | De-duplicates; **collected by `abilityCollection.ts`** |
-| `GRANT_SENSE` | sense type (e.g., `darkvision`) | `number` (range) | -- | De-duplicates; **collected by `abilityCollection.ts`** |
-| `GRANT_MOVEMENT` | movement type (`climb`, `swim`, `fly`, `burrow`, `glide`) | `string \| number` (`equal_to_speed`, `half_speed`, numeric) | -- | De-duplicates |
-| `GRANT_CHOICE` | choice category | `number` | `userChoice?: { prompt, options? }` | Per-choice |
-| `GRANT_SKILL_EXPERTISE` | skill name | `{ capIncrease, levelIncrease }` | `userChoice?: { prompt, count? }` | Per-skill |
-| `GRANT_TRADE_EXPERTISE` | trade name | `{ capIncrease, levelIncrease }` | `userChoice?: { prompt }` | Per-trade |
+| Type                    | Target                                                    | Value                                                        | Special Fields                      | Stacking                                               |
+| ----------------------- | --------------------------------------------------------- | ------------------------------------------------------------ | ----------------------------------- | ------------------------------------------------------ |
+| `GRANT_ABILITY`         | ability name                                              | `string` (description)                                       | --                                  | De-duplicates                                          |
+| `GRANT_RESISTANCE`      | damage type                                               | `string \| number \| boolean`                                | `optional?: string`                 | De-duplicates; **collected by `abilityCollection.ts`** |
+| `GRANT_VULNERABILITY`   | damage type                                               | `number`                                                     | --                                  | De-duplicates; **collected by `abilityCollection.ts`** |
+| `GRANT_ADV_ON_SAVE`     | save type                                                 | `string \| boolean`                                          | --                                  | De-duplicates                                          |
+| `GRANT_ADV_ON_CHECK`    | check type                                                | `string \| boolean`                                          | --                                  | De-duplicates                                          |
+| `GRANT_COMBAT_TRAINING` | training type (e.g., `Weapons`, `Spell_Focuses`)          | `boolean`                                                    | --                                  | De-duplicates; **collected by `abilityCollection.ts`** |
+| `GRANT_SENSE`           | sense type (e.g., `darkvision`)                           | `number` (range)                                             | --                                  | De-duplicates; **collected by `abilityCollection.ts`** |
+| `GRANT_MOVEMENT`        | movement type (`climb`, `swim`, `fly`, `burrow`, `glide`) | `string \| number` (`equal_to_speed`, `half_speed`, numeric) | --                                  | De-duplicates                                          |
+| `GRANT_CHOICE`          | choice category                                           | `number`                                                     | `userChoice?: { prompt, options? }` | Per-choice                                             |
+| `GRANT_SKILL_EXPERTISE` | skill name                                                | `{ capIncrease, levelIncrease }`                             | `userChoice?: { prompt, count? }`   | Per-skill                                              |
+| `GRANT_TRADE_EXPERTISE` | trade name                                                | `{ capIncrease, levelIncrease }`                             | `userChoice?: { prompt }`           | Per-trade                                              |
 
 ### Spell and Maneuver Grants
 
-| Type | Target | Value | Special Fields | Stacking |
-| --- | --- | --- | --- | --- |
-| `GRANT_SPELL` | spell restriction or specific spell | `number \| string` | `userChoice?: { prompt, options? }` | Per-slot |
-| `GRANT_CANTRIP` | cantrip restriction | `number` | -- | Per-slot |
-| `GRANT_MANEUVERS` | maneuver type or `all_attack` (access grant) | `number` | -- | Access grants don't add to budget; specific grants do |
+| Type              | Target                                       | Value              | Special Fields                      | Stacking                                              |
+| ----------------- | -------------------------------------------- | ------------------ | ----------------------------------- | ----------------------------------------------------- |
+| `GRANT_SPELL`     | spell restriction or specific spell          | `number \| string` | `userChoice?: { prompt, options? }` | Per-slot                                              |
+| `GRANT_CANTRIP`   | cantrip restriction                          | `number`           | --                                  | Per-slot                                              |
+| `GRANT_MANEUVERS` | maneuver type or `all_attack` (access grant) | `number`           | --                                  | Access grants don't add to budget; specific grants do |
 
 ### Mastery Cap Effects
 
-| Type | Fields | Purpose |
-| --- | --- | --- |
-| `MODIFY_SKILL_MASTERY_CAP` | `tier` (`Adept` \| `Expert` \| `Master` \| `Grandmaster`), `count`, `options?` | Grant N skill slots at specified tier |
-| `MODIFY_TRADE_MASTERY_CAP` | `tier`, `count`, `options?` | Grant N trade slots at specified tier |
-| `INCREASE_SKILL_MASTERY_CAP` | `value` (number), `count`, `options?` | Increase mastery cap by value for N skills |
-| `INCREASE_TRADE_MASTERY_CAP` | `value`, `count`, `options?` | Increase mastery cap by value for N trades |
+| Type                         | Fields                                                                         | Purpose                                    |
+| ---------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------ |
+| `MODIFY_SKILL_MASTERY_CAP`   | `tier` (`Adept` \| `Expert` \| `Master` \| `Grandmaster`), `count`, `options?` | Grant N skill slots at specified tier      |
+| `MODIFY_TRADE_MASTERY_CAP`   | `tier`, `count`, `options?`                                                    | Grant N trade slots at specified tier      |
+| `INCREASE_SKILL_MASTERY_CAP` | `value` (number), `count`, `options?`                                          | Increase mastery cap by value for N skills |
+| `INCREASE_TRADE_MASTERY_CAP` | `value`, `count`, `options?`                                                   | Increase mastery cap by value for N trades |
 
 ### Condition Interaction Effects (v0.10)
 
-| Type | Target | Value | Purpose |
-| --- | --- | --- | --- |
-| `GRANT_CONDITION_IMMUNITY` | condition ID | -- | Full immunity to condition |
-| `GRANT_CONDITION_RESISTANCE` | condition ID | `advantage` \| `reduction` \| `half` | Partial resistance |
-| `GRANT_CONDITION_VULNERABILITY` | condition ID | `disadvantage` \| `double` | Increased susceptibility |
+| Type                            | Target       | Value                                | Purpose                    |
+| ------------------------------- | ------------ | ------------------------------------ | -------------------------- |
+| `GRANT_CONDITION_IMMUNITY`      | condition ID | --                                   | Full immunity to condition |
+| `GRANT_CONDITION_RESISTANCE`    | condition ID | `advantage` \| `reduction` \| `half` | Partial resistance         |
+| `GRANT_CONDITION_VULNERABILITY` | condition ID | `disadvantage` \| `double`           | Increased susceptibility   |
 
 ### Effect Processing Pipeline
 
@@ -85,6 +85,10 @@ All effect types are defined in `character.schema.ts` as a discriminated union. 
 5. **Condition Aggregation** (`conditionAggregator.ts`): Scans all effects for condition interactions and groups them by condition ID.
 
 Stacking rules: Numeric effects (`MODIFY_STAT`, `MODIFY_ATTRIBUTE`) sum. Grants de-duplicate by target. Mastery cap effects accumulate slots.
+
+### Current v0.10.5 Class Feature Usage
+
+Level 5 Expert Features use existing effect types only. Modeled universal bonuses are expressed as `MODIFY_STAT`, `GRANT_SPELL`, and `GRANT_MANEUVERS`; rules text that does not have a calculator-backed representation is surfaced as `GRANT_ABILITY`. Benefit-level effects are aggregated the same way as direct feature effects, with source attribution using the parent feature and benefit names.
 
 ---
 

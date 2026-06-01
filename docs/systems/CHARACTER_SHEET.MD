@@ -72,6 +72,8 @@ Compatibility states from the rules-version fence affect sheet persistence:
 | `components/Features.tsx`         | Class/trait feature definitions              | Character features/traits display         |
 | `components/EnhancedFeatures.tsx` | Feature definitions + effect attribution     | Enhanced features with source attribution |
 
+v0.10.5 level 5 Expert Features intentionally keep the old `<class>_level_5_placeholder` IDs. Saved characters that already reference those IDs render the updated Expert Feature names, benefits, and modeled effects without needing a destructive ID rewrite.
+
 ### Background
 
 | Component                        | Data Source              | Description                |

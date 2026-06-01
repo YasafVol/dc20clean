@@ -193,10 +193,40 @@ export const warlockClass: ClassDefinition = {
 		},
 		{
 			id: 'warlock_level_5_placeholder',
-			featureName: 'Dark Pact (Placeholder)',
+			featureName: 'Expert Warlock',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+			description: 'You gain the following benefits for your Warlock Class Features.',
+			benefits: [
+				{
+					name: 'Warlock Contract',
+					description: 'Your maximum HP increases by 2.',
+					effects: [{ type: 'MODIFY_STAT', target: 'hpMax', value: 2 }]
+				},
+				{
+					name: 'Pact Boon',
+					description:
+						'Your Pact Boon improves. Pact Weapon gains an additional 1-point Weapon Property, learns 1 Attack Maneuver, and can spend MP on Martial Enhancements or Maneuvers. Pact Armor gains an additional 1-point Armor Property, learns 1 Defense Maneuver, and can spend MP on Defense Maneuvers. Pact Spell learns 2 Spells from any source, chooses another Pact Spell, and can change either or both after a Long Rest. Pact Familiar gains 3 additional Trait Points and cannot take Negative Traits.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_warlock_pact_boon',
+							value:
+								'Chosen Pact Boon improves: Weapon/Armor gain a 1-point property and MP conversion, Pact Spell gains 2 any-source Spells and another Pact Spell, or Pact Familiar gains 3 Trait Points and no Negative Traits.'
+						}
+					]
+				},
+				{
+					name: 'Life Tap',
+					description: 'You gain ADV on the Check to produce the effect.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_warlock_life_tap',
+							value: 'Life Tap grants ADV on the Check to produce the effect.'
+						}
+					]
+				}
+			]
 		},
 		{
 			id: 'warlock_level_8_capstone_placeholder',
@@ -230,16 +260,16 @@ export const warlockClass: ClassDefinition = {
 							]
 						},
 						{
-					name: 'Forbidden Knowledge',
-						description:
-							'When you complete a Short or Long Rest, you temporarily learn any Spell of your choice. When you cast that Spell, its MP cost is reduced by 2 (minimum of 0). You forget the Spell immediately after you cast it.',
-						effects: [
-							{
-								type: 'GRANT_ABILITY',
-								target: 'forbidden_knowledge',
-								value: 'Temporarily learn any spell after a rest with a 2 MP cost reduction.'
-							}
-						]
+							name: 'Forbidden Knowledge',
+							description:
+								'When you complete a Short or Long Rest, you temporarily learn any Spell of your choice. When you cast that Spell, its MP cost is reduced by 2 (minimum of 0). You forget the Spell immediately after you cast it.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'forbidden_knowledge',
+									value: 'Temporarily learn any spell after a rest with a 2 MP cost reduction.'
+								}
+							]
 						},
 						{
 							name: 'Eldritch Bargain',

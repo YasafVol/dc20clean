@@ -209,10 +209,51 @@ export const sorcererClass: ClassDefinition = {
 		},
 		{
 			id: 'sorcerer_level_5_placeholder',
-			featureName: 'Arcane Surge (Placeholder)',
+			featureName: 'Expert Sorcerer',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+			description: 'You gain the following benefits for your Sorcerer Class Features.',
+			benefits: [
+				{
+					name: 'Innate Power',
+					description:
+						'Your maximum MP increases by 1. You also gain an additional 1-point Focus Property choice and can change either or both chosen properties on a Long Rest.',
+					effects: [
+						{ type: 'MODIFY_STAT', target: 'mpMax', value: 1 },
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_sorcerer_innate_power',
+							value:
+								'Gain an additional 1-point Focus Property choice; change either or both chosen properties on a Long Rest.'
+						}
+					]
+				},
+				{
+					name: 'Overload Magic',
+					description:
+						'You no longer need to make an Attribute Save when you use Overload, but you still make the save at the start of each turn while Overloaded.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_sorcerer_overload_magic',
+							value:
+								'No Attribute Save when you use Overload; still save at the start of each turn while Overloaded.'
+						}
+					]
+				},
+				{
+					name: 'Meta Magic',
+					description:
+						'You learn 1 additional Meta Magic option and can use 2 different Meta Magic Spell Enhancements at a time.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_sorcerer_meta_magic',
+							value:
+								'Learn 1 additional Meta Magic option and use 2 different Meta Magic Spell Enhancements at a time.'
+						}
+					]
+				}
+			]
 		},
 		{
 			id: 'sorcerer_level_8_capstone_placeholder',
@@ -226,10 +267,10 @@ export const sorcererClass: ClassDefinition = {
 		{
 			subclassName: 'Angelic',
 			features: [
-			{
-				featureName: 'Celestial Spark',
-				levelGained: 3,
-				description:
+				{
+					featureName: 'Celestial Spark',
+					levelGained: 3,
+					description:
 						'You can use a Minor Action to emit Bright Light within a 5 Space Radius and can end the effect at any time. You also gain the following abilities:',
 					benefits: [
 						{
@@ -269,9 +310,9 @@ export const sorcererClass: ClassDefinition = {
 						}
 					]
 				},
-			{
-				featureName: 'Celestial Appearance (Flavor Feature)',
-				levelGained: 3,
+				{
+					featureName: 'Celestial Appearance (Flavor Feature)',
+					levelGained: 3,
 					isFlavor: true,
 					description:
 						"You gain additional angelic features such as sparkling skin, feathers, a faint halo, or other changes of your choice. If you already have these features, they're enhanced or expanded upon. Additionally, if you're already Fluent in Celestial, you gain 1 level of Language Mastery in another Language of your choice.",
@@ -289,9 +330,9 @@ export const sorcererClass: ClassDefinition = {
 		{
 			subclassName: 'Draconic',
 			features: [
-			{
-				featureName: 'Draconic Spark',
-				levelGained: 3,
+				{
+					featureName: 'Draconic Spark',
+					levelGained: 3,
 					description: 'You gain the following abilities:',
 					benefits: [
 						{
@@ -338,9 +379,9 @@ export const sorcererClass: ClassDefinition = {
 						}
 					]
 				},
-			{
-				featureName: 'Draconic Appearance (Flavor Feature)',
-				levelGained: 3,
+				{
+					featureName: 'Draconic Appearance (Flavor Feature)',
+					levelGained: 3,
 					isFlavor: true,
 					description:
 						"You gain additional draconic features such as scales, fangs, claws, or other changes of your choice. If you already have these features, they're enhanced or expanded upon. Additionally, you gain 1 level of Language Mastery in Draconic. If you're already Fluent in Draconic, you gain 1 level of Language Mastery in another Language of your choice.",

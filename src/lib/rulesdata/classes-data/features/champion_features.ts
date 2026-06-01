@@ -148,10 +148,38 @@ export const championClass: ClassDefinition = {
 		},
 		{
 			id: 'champion_level_5_placeholder',
-			featureName: 'Veteran Tactics (Placeholder)',
+			featureName: 'Expert Champion',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+			description: 'You gain the following benefits for your Champion Class Features.',
+			benefits: [
+				{
+					name: 'Master-at-Arms',
+					description: 'You learn 2 additional Maneuvers.',
+					effects: [{ type: 'GRANT_MANEUVERS', target: 'any_maneuver', value: 2 }]
+				},
+				{
+					name: 'Fighting Spirit',
+					description: 'Second Wind restores an additional 2 HP and 2 SP.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_champion_fighting_spirit',
+							value: 'Second Wind restores an additional 2 HP and 2 SP.'
+						}
+					]
+				},
+				{
+					name: 'Adaptive Tactics',
+					description: 'Your Tactical Die is a d10.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_champion_adaptive_tactics',
+							value: 'Your Tactical Die is d10.'
+						}
+					]
+				}
+			]
 		},
 		{
 			id: 'champion_level_8_capstone_placeholder',

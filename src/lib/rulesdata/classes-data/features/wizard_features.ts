@@ -205,10 +205,50 @@ export const wizardClass: ClassDefinition = {
 		},
 		{
 			id: 'wizard_level_5_placeholder',
-			featureName: 'Arcane Mastery (Placeholder)',
+			featureName: 'Expert Wizard',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
+			description: 'You gain the following benefits for your Wizard Class Features.',
+			benefits: [
+				{
+					name: 'Spell School Initiate',
+					description:
+						'You learn 1 additional Arcane Spell from your chosen School. Signature School reduces MP cost by an additional 1.',
+					effects: [
+						{ type: 'GRANT_SPELL', target: 'chosen_school', value: 1 },
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_wizard_signature_school',
+							value: 'Signature School reduces MP cost by an additional 1.'
+						}
+					]
+				},
+				{
+					name: 'Arcane Sigil',
+					description:
+						'Spell Tag (X MP) adds 1 additional School or Tag per MP spent. Area (X MP) increases the diameter by 1 Space per MP spent.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_wizard_arcane_sigil',
+							value:
+								'Spell Tag adds 1 additional School or Tag per MP; Area increases diameter by 1 Space per MP.'
+						}
+					]
+				},
+				{
+					name: 'Prepared Spell',
+					description:
+						'After a Long Rest, choose 1 additional known Spell. Both chosen Spells become Prepared Spells, but you still only have one Mana Limit Break.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_wizard_prepared_spell',
+							value:
+								'Choose 1 additional known Spell after a Long Rest; both are Prepared Spells, but only one Mana Limit Break.'
+						}
+					]
+				}
+			]
 		},
 		{
 			id: 'wizard_level_8_capstone_placeholder',

@@ -71,7 +71,7 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 
 ### VRR-002: Normalize `schemaVersion` and Persisted Choice Shapes
 
-- Status: `implementation-ready`
+- Status: `implemented`
 - Source: repo architecture inspection; `docs/assets/dc20-0.10.5/DATA_SHAPE_REVIEW.md`
 - Baseline: `schemaVersion` handling is inconsistent and `selectedTalents` shape differs across draft state, saved character, and Convex.
 - Systems: Database / Storage / Character Creation / Character Sheet
@@ -242,7 +242,7 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 - Source: `docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md`, page 269, lines 17653, 17658-17660
 - Baseline: current spell schema and filters
 - Systems: Spells / Character Sheet
-- Current implementation: spell schema already models tags and sources, but v0.10.5 adds `Poison` and adjusts tag naming/usage.
+- Current implementation: spell schema treats `Poison` as canonical, `Poison` is filterable, and source-confirmed `Blight Bomb` tag metadata includes `Ailment`.
 - Required change:
   - verify canonical `Poison` tag support
   - normalize tag/source metadata where it affects structured filtering and assignment
@@ -260,7 +260,7 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 - System docs to update:
   - `docs/systems/SPELLS_SYSTEM.MD`
 - Validation:
-  - tag filter tests
+  - `src/lib/rulesdata/spells-data/spellTaxonomy.test.ts`
   - spell slot validation tests
 
 ## HITL Or Baseline-Comparison Queue

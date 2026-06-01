@@ -1,8 +1,8 @@
-# DC20Clean – Spells System (v0.10)
+# DC20Clean – Spells System (v0.10.5)
 
 > Purpose: Single reference for spell data model, assignment rules, UI flows, and validation.
 > Status: Active
-> Last Updated: 2026-05-02
+> Last Updated: 2026-06-01
 
 ---
 
@@ -19,7 +19,7 @@
 
 ---
 
-## 2. Data Shapes (v0.10)
+## 2. Data Shapes (v0.10.5)
 
 ### Spell Schema
 
@@ -65,7 +65,7 @@ interface Spell {
 
 ### Spell Tags (Examples)
 
-`Burning`, `Cold`, `Lightning`, `Acid`, `Fire`, `Radiant`, `Necrotic`, `Poison`, `Psychic`, `Force`, `Healing`, `Teleportation`, `Summoning`, `Illusion`, `Embolden`, `Enfeeble`, `Sound`
+`Burning`, `Cold`, `Lightning`, `Corrosion`, `Fire`, `Radiant`, `Umbral`, `Poison`, `Psychic`, `True`, `Healing`, `Teleportation`, `Summoning`, `Illusion`, `Embolden`, `Enfeeble`, `Sound`
 
 ### File Structure
 
@@ -116,6 +116,12 @@ getNonCantrips(): Spell[]
 - **Sustained Property**: Added `sustained` flag to all spells (maintain action each turn).
 - **Spellbook App**: New dedicated route for managing character spellbooks.
 - **Smart Pockets**: UI redesigned with individual spell slots that support specialized filtering.
+
+## 3.1 v0.10.5 Taxonomy Notes
+
+- `Poison` is a canonical spell tag and damage tag, not a legacy alias.
+- `Blight Bomb` carries both `Ailment` and `Poison` tags for structured filtering.
+- Renamed, removed, reworked, or added spells remain compatibility-gated until their ID and migration policy is explicitly approved.
 
 ---
 
@@ -186,5 +192,5 @@ getNonCantrips(): Spell[]
 
 ---
 
-> Last updated: 2026-02-06
+> Last updated: 2026-06-01
 > Maintainer: @DC20Clean-Team

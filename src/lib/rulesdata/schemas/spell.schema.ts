@@ -46,7 +46,7 @@ export enum SpellSource {
  *
  * Categories:
  * - Physical Damage: Bludgeoning, Piercing, Slashing
- * - Elemental: Air, Cold, Corrosion, Earth, Fire, Lightning, Water
+ * - Elemental: Air, Cold, Corrosion, Earth, Fire, Lightning, Poison, Water
  * - Energy: Psychic, Radiant, Umbral, True (damage type)
  * - Conditions: Blinded, Bleeding, Burning, Charmed, Dazed, Deafened, Disoriented,
  *               Doomed, Exhaustion, Exposed, Frightened, Hindered, Immobilized,
@@ -66,7 +66,6 @@ export enum SpellSource {
  * - Thunder → use Sound
  * - Sonic → use Sound
  * - Acid → use Corrosion
- * - Poison → use Ailment (or keep for damage type)
  * - Necrotic → use Death or Umbral
  * - Force → use True
  * - Detection → use Sense
@@ -83,6 +82,7 @@ export type SpellTag =
 	| 'Earth'
 	| 'Fire'
 	| 'Lightning'
+	| 'Poison'
 	| 'Water'
 	// Energy
 	| 'Psychic'
@@ -166,7 +166,6 @@ export type SpellTag =
 	| 'Thunder' // → Sound
 	| 'Sonic' // → Sound
 	| 'Acid' // → Corrosion
-	| 'Poison' // kept for damage type distinction
 	| 'Necrotic' // → Death or Umbral
 	| 'Force' // → True
 	| 'Detection'; // → Sense

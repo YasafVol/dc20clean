@@ -75,8 +75,8 @@ This file does not imply that implementation has started.
 
 ### Spells
 
-- [ ] spell schema covers v0.10.5 tag/source metadata
-- [ ] `Poison` tag is filterable and valid
+- [x] spell schema covers v0.10.5 tag/source metadata
+- [x] `Poison` tag is filterable and valid
 - [ ] renamed spell fixtures resolve by alias when allowed
 - [ ] removed or list-moved spells are classified correctly
 - [ ] slot validation handles old spell IDs under compatibility rules

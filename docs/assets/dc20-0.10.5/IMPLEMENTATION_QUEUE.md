@@ -184,7 +184,7 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 
 ### VRR-006: Maneuver Cost and Catalog Pass
 
-- Status: `implementation-ready`
+- Status: `implemented`
 - Source: `docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md`, page 268-269, lines 17607-17644
 - Baseline: targeted maneuver entries only
 - Systems: Martials / Character Creation / Character Sheet
@@ -238,7 +238,7 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 
 ### VRR-008: Spell Taxonomy Normalization
 
-- Status: `implementation-ready`
+- Status: `implemented`
 - Source: `docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md`, page 269, lines 17653, 17658-17660
 - Baseline: current spell schema and filters
 - Systems: Spells / Character Sheet

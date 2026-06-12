@@ -14,6 +14,10 @@ import type {
 	SkillData
 } from '../../types';
 import type { Spell } from '../../lib/rulesdata/schemas/spell.schema';
+import {
+	formatSpellCost,
+	formatSpellEnhancementCost
+} from '../../lib/rulesdata/spells-data/spellCost';
 import type { Maneuver } from '../../lib/rulesdata/martials/maneuvers';
 import { logger } from '../../lib/utils/logger';
 interface CalculatedDefenses {
@@ -558,7 +562,7 @@ export const handlePrintCharacterSheet = (
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;">
                             <div>
                                 <span style="font-weight: bold; color: #7f8c8d; font-size: 0.8rem; text-transform: uppercase;">Cost</span><br>
-                                <span style="color: #2c3e50; font-size: 0.9rem;">${spell.cost?.ap ?? '-'} AP${spell.cost?.mp ? `, ${spell.cost.mp} MP` : ''}</span>
+                                <span style="color: #2c3e50; font-size: 0.9rem;">${spell.cost ? formatSpellCost(spell.cost) : '-'}</span>
                             </div>
                             <div>
                                 <span style="font-weight: bold; color: #7f8c8d; font-size: 0.8rem; text-transform: uppercase;">Range</span><br>
@@ -610,7 +614,7 @@ export const handlePrintCharacterSheet = (
 																	.map(
 																		(enhancement) => `
                                     <div style="margin-top: 10px; padding: 10px; background-color: #f0f0f0; border-radius: 4px;">
-                                        <strong style="color: #2c3e50; font-size: 0.95rem;">${enhancement.name}</strong> (${enhancement.type} ${enhancement.cost})
+                                        <strong style="color: #2c3e50; font-size: 0.95rem;">${enhancement.name}</strong> (${formatSpellEnhancementCost(enhancement)})
                                         <br />
                                         <span style="color: #34495e; line-height: 1.6; font-size: 0.9rem;">${enhancement.description}</span>
                                     </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Spell } from '../../../lib/rulesdata/schemas/spell.schema';
+import { formatSpellCost } from '../../../lib/rulesdata/spells-data/spellCost';
 import {
 	StyledFeaturePopupOverlay,
 	StyledFeaturePopupContent,
@@ -28,14 +29,8 @@ const SpellPopup: React.FC<SpellPopupProps> = ({ spell, onClose }) => {
 				<StyledFeaturePopupDescription>
 					<strong>School:</strong> {spell.school}
 					<br />
-					<strong>AP Cost:</strong> {spell.cost.ap}
+					<strong>Cost:</strong> {formatSpellCost(spell.cost)}
 					<br />
-					{spell.cost.mp && (
-						<>
-							<strong>MP Cost:</strong> {spell.cost.mp}
-							<br />
-						</>
-					)}
 					<strong>Range:</strong> {spell.range}
 					<br />
 					<strong>Duration:</strong> {spell.duration}

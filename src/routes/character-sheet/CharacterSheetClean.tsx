@@ -22,6 +22,10 @@ import type {
 	InventoryItemData
 } from '../../types';
 import type { Spell } from '../../lib/rulesdata/schemas/spell.schema';
+import {
+	formatSpellCost,
+	formatSpellEnhancementCost
+} from '../../lib/rulesdata/spells-data/spellCost';
 import type { Weapon } from '../../lib/rulesdata/inventoryItems';
 import type { InventoryItem } from '../../lib/rulesdata/inventoryItems';
 import type { Maneuver } from '../../lib/rulesdata/martials/maneuvers';
@@ -1424,14 +1428,8 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 						<StyledFeaturePopupDescription>
 							<strong>School:</strong> {selectedSpell.school}
 							<br />
-							<strong>AP Cost:</strong> {selectedSpell.cost.ap}
+							<strong>Cost:</strong> {formatSpellCost(selectedSpell.cost)}
 							<br />
-							{selectedSpell.cost.mp && (
-								<>
-									<strong>MP Cost:</strong> {selectedSpell.cost.mp}
-									<br />
-								</>
-							)}
 							<strong>Range:</strong> {selectedSpell.range}
 							<br />
 							<strong>Duration:</strong> {selectedSpell.duration}
@@ -1474,7 +1472,8 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 												borderRadius: '4px'
 											}}
 										>
-											<strong>{enhancement.name}</strong> ({enhancement.type} {enhancement.cost})
+											<strong>{enhancement.name}</strong> ({formatSpellEnhancementCost(enhancement)}
+											)
 											<br />
 											{enhancement.description}
 										</div>

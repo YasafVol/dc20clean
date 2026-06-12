@@ -1,11 +1,23 @@
 import { describe, expect, it } from 'vitest';
+import { V0105_SPELLS } from './generated/v0105.generated';
 import { ALL_SPELLS, getSpellById, SpellSource } from './index';
+import { formatSpellCost, formatSpellEnhancementCost } from './spellCost';
 
 function spellByName(name: string) {
 	return ALL_SPELLS.find((spell) => spell.name === name);
 }
 
-describe('DC20 v0.10.5 spell catalog migration', () => {
+describe('generated DC20 v0.10.5 spell catalog', () => {
+	it('Given the application loads spells, then the generated v0.10.5 catalog is the sole runtime set', () => {
+		expect(ALL_SPELLS).toBe(V0105_SPELLS);
+	});
+
+	it('contains the complete validated source inventory', () => {
+		expect(ALL_SPELLS).toHaveLength(160);
+		expect(ALL_SPELLS.reduce((count, spell) => count + spell.enhancements.length, 0)).toBe(709);
+		expect(new Set(ALL_SPELLS.map((spell) => spell.id)).size).toBe(160);
+	});
+
 	it('surfaces changelog-confirmed renamed spells under their v0.10.5 identities', () => {
 		const renamedSpells = [
 			['summon-familiar', 'Call Familiar'],
@@ -109,5 +121,39 @@ describe('DC20 v0.10.5 spell catalog migration', () => {
 				'Poison Cloud'
 			])
 		);
+	});
+
+	it('preserves variable, mixed, alternative, and sustained costs', () => {
+		const dispelMagic = spellByName('Dispel Magic');
+		expect(dispelMagic?.cost).toEqual({
+			ap: 1,
+			mp: 'X',
+			minimumMp: 1,
+			raw: '1 AP + X MP (minimum of 1)'
+		});
+		expect(formatSpellCost(dispelMagic!.cost)).toBe('1 AP + X MP (minimum of 1)');
+
+		const arcaneMissiles = spellByName('Arcane Bolt')?.enhancements.find(
+			(enhancement) => enhancement.name === 'Arcane Missiles'
+		);
+		expect(arcaneMissiles?.cost).toEqual({ ap: 1, mp: 'X' });
+		expect(formatSpellEnhancementCost(arcaneMissiles!)).toBe('1 AP + X MP');
+
+		const alternativeCost = ALL_SPELLS.flatMap((spell) => spell.enhancements).find(
+			(enhancement) => enhancement.costText === '1 AP or 2 AP'
+		);
+		expect(alternativeCost?.alternativeCosts).toEqual([{ ap: 2 }]);
+
+		const sustainedEnhancement = ALL_SPELLS.flatMap((spell) => spell.enhancements).find(
+			(enhancement) => enhancement.rawCost === 'X MP, Sustained'
+		);
+		expect(sustainedEnhancement?.sustained).toBe(true);
+	});
+
+	it('retains rich nested spell content without creating false spell boundaries', () => {
+		const familiar = spellByName('Call Familiar');
+		expect(familiar?.effects[0].description).toContain('## Familiar');
+		expect(familiar?.effects[0].description).toContain('## Expanded Familiar Traits');
+		expect(familiar?.enhancements).toHaveLength(1);
 	});
 });

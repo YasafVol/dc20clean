@@ -4,6 +4,7 @@ import type { SpellData } from '../../../types';
 import type { Spell } from '../../../lib/rulesdata/schemas/spell.schema';
 import { ALL_SPELLS as allSpells } from '../../../lib/rulesdata/spells-data';
 import { SpellSchool } from '../../../lib/rulesdata/schemas/spell.schema';
+import { formatSpellEnhancementCost } from '../../../lib/rulesdata/spells-data/spellCost';
 import { useCharacterSpells, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import { logger } from '../../../lib/utils/logger';
 import DeleteButton from './shared/DeleteButton';
@@ -229,24 +230,36 @@ const Spells: React.FC<SpellsProps> = ({
 			<StyledSpellsContainer $isMobile={effectiveIsMobile} data-testid="spells-container">
 				<StyledSpellsHeaderRow $isMobile={effectiveIsMobile}>
 					<span></span> {/* Empty column for remove button */}
-			<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.spellsColumnName')}</StyledHeaderColumn>
-			<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.spellsColumnSchool')}</StyledHeaderColumn>
-			<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.spellsColumnDuration')}</StyledHeaderColumn>
-			<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.spellsColumnAP')}</StyledHeaderColumn>
-			<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.spellsColumnMP')}</StyledHeaderColumn>
-			<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.spellsColumnRange')}</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.spellsColumnName')}
+					</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.spellsColumnSchool')}
+					</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.spellsColumnDuration')}
+					</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.spellsColumnAP')}
+					</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.spellsColumnMP')}
+					</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.spellsColumnRange')}
+					</StyledHeaderColumn>
 				</StyledSpellsHeaderRow>
 
 				{filteredCharacterSpells.length === 0 ? (
 					<StyledEmptyState $isMobile={effectiveIsMobile}>
 						{schoolFilter !== 'all'
-						? t('characterSheet.spellsNoSpellsFilter', { 
-								school: schoolFilter, 
-								action: readOnly ? '' : t('characterSheet.spellsClickToAdd') 
-							})
-						: readOnly
-							? t('characterSheet.spellsNoSpellsKnown')
-							: t('characterSheet.spellsNoSpellsSelected')}
+							? t('characterSheet.spellsNoSpellsFilter', {
+									school: schoolFilter,
+									action: readOnly ? '' : t('characterSheet.spellsClickToAdd')
+								})
+							: readOnly
+								? t('characterSheet.spellsNoSpellsKnown')
+								: t('characterSheet.spellsNoSpellsSelected')}
 					</StyledEmptyState>
 				) : (
 					filteredCharacterSpells.map((spell) => {
@@ -361,8 +374,8 @@ const Spells: React.FC<SpellsProps> = ({
 													<strong>Enhancements:</strong>
 													{selectedSpell.enhancements.map((enhancement, enhancementIndex) => (
 														<StyledSpellEnhancement key={enhancementIndex}>
-															<strong>{enhancement.name}</strong> ({enhancement.type}{' '}
-															{enhancement.cost})
+															<strong>{enhancement.name}</strong> (
+															{formatSpellEnhancementCost(enhancement)})
 															<br />
 															{enhancement.description}
 														</StyledSpellEnhancement>

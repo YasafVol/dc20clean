@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { ALL_SPELLS as allSpells } from '../../lib/rulesdata/spells-data';
+import { formatSpellCost } from '../../lib/rulesdata/spells-data/spellCost';
 import { SpellSchool, SpellSource, type SpellTag } from '../../lib/rulesdata/schemas/spell.schema';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import {
@@ -728,9 +729,7 @@ const Spells: React.FC = () => {
 										</StyledCardHeader>
 
 										<SpellBadges>
-											<Badge $variant="cost">
-												{spell.cost.ap} AP{spell.cost.mp ? ` + ${spell.cost.mp} MP` : ''}
-											</Badge>
+											<Badge $variant="cost">{formatSpellCost(spell.cost)}</Badge>
 											<Badge $variant="range">{spell.range}</Badge>
 											{spell.sustained && <Badge $variant="sustained">Sustained</Badge>}
 										</SpellBadges>

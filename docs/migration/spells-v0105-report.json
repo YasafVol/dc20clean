@@ -1,0 +1,27 @@
+{
+	"source": "docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md",
+	"spellCount": 160,
+	"enhancementCount": 709,
+	"schools": {
+		"Astromancy": 15,
+		"Conjuration": 29,
+		"Divination": 7,
+		"Elemental": 43,
+		"Enchantment": 13,
+		"Invocation": 17,
+		"Nullification": 18,
+		"Transmutation": 18
+	},
+	"exceptions": [
+		{
+			"spell": "Nature's Tether",
+			"reason": "The clean Markdown contains OCR spacing around the apostrophe in the spell heading.",
+			"sourceName": "Nature ' s Tether"
+		},
+		{
+			"spell": "Dispel Magic",
+			"duration": "See Effect",
+			"reason": "The source omits Duration because MP effects and magic items use different durations."
+		}
+	]
+}

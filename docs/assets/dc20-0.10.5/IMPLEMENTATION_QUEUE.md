@@ -330,7 +330,7 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 - Source: `docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md`, page 269, lines 17662-17727
 - Baseline: targeted v0.10 spell comparisons only
 - Systems: Spells / Character Creation / Character Sheet / PDF Export
-- Current implementation: the v0.10 base school files are preserved and the current selectable catalog is produced by the v0.10.5 overlay in `src/lib/rulesdata/spells-data/v0105Catalog.ts`. Approved spell renames route through `RULES_ALIASES` and `getSpellById()` without rewriting saved IDs. Removed spells are omitted from the current selectable catalog, list-moved spells have source overrides, and reworked/ambiguous IDs are fenced as `upgrade-required` or `view-only`.
+- Current implementation: the v0.10 base school files are preserved for historical comparison, while the current selectable catalog is deterministically generated from `DC20 0.10.5 clean.md` by `scripts/spells/dc20-0105-spells.mjs`. The generator validates 160 spells and 709 enhancements before replacing `v0105.generated.ts`. Approved spell renames route through `RULES_ALIASES` and `getSpellById()` without rewriting saved IDs, while reworked/ambiguous IDs remain fenced as `upgrade-required` or `view-only`.
 - Required change:
   - renamed and reworked spells: implemented with alias/rework/view-only classification
   - removed or list-moved spells: implemented in the catalog overlay

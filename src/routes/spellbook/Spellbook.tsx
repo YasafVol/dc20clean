@@ -22,6 +22,10 @@ import {
 	matchesUserSpellFacets,
 	type MpCostFilter
 } from '../../lib/services/spellFiltering';
+import {
+	formatSpellCost,
+	formatSpellEnhancementCost
+} from '../../lib/rulesdata/spells-data/spellCost';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { useTranslation } from 'react-i18next';
@@ -73,8 +77,10 @@ const Spellbook: React.FC = () => {
 		ALL_SPELLS.forEach((spell) => {
 			if (spell.cost.mp === undefined) {
 				hasNone = true;
-			} else {
+			} else if (typeof spell.cost.mp === 'number') {
 				costs.add(spell.cost.mp);
+			} else if (spell.cost.minimumMp !== undefined) {
+				costs.add(spell.cost.minimumMp);
 			}
 		});
 		return {
@@ -119,7 +125,7 @@ const Spellbook: React.FC = () => {
 			} else if (spellList.type === 'schools') {
 				const specifiedSchools = spellList.specificSchools ?? [];
 				specifiedSchools.forEach((school: string) => {
-					if (spellSchools.has(school)) {
+					if (spellSchools.has(school as SpellSchool)) {
 						schools.add(school as SpellSchool);
 					}
 				});
@@ -702,10 +708,7 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 				</S.SpellBadgesContainer>
 			</S.SpellHeader>
 			<S.SpellMeta>
-				<S.SpellBadge $variant="cost">
-					{spell.cost.ap} {t('spellbook.apLabel')}
-					{spell.cost.mp ? ` + ${spell.cost.mp} ${t('spellbook.mpLabel')}` : ''}
-				</S.SpellBadge>
+				<S.SpellBadge $variant="cost">{formatSpellCost(spell.cost)}</S.SpellBadge>
 				<S.SpellBadge>{spell.range}</S.SpellBadge>
 				{spell.sustained && (
 					<S.SpellBadge $variant="sustained">{t('spellbook.sustained')}</S.SpellBadge>
@@ -797,7 +800,7 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, isExpanded, onToggle }) =>
 											}}
 										>
 											<Badge variant="outline" className="text-xs">
-												{enhancement.cost} {enhancement.type}
+												{formatSpellEnhancementCost(enhancement)}
 											</Badge>
 											<span style={{ fontSize: '0.875rem', fontWeight: 500 }}>
 												{enhancement.name}

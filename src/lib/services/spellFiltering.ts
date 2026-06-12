@@ -52,9 +52,9 @@ export const matchesUserSpellFacets = (spell: Spell, filters: SpellFacetFilters)
 	}
 
 	return (
-		(hasSources && filters.sources.some((source) => spell.sources.includes(source))) ||
-		(hasSchools && filters.schools.includes(spell.school)) ||
-		(hasTags && filters.tags.some((tag) => spell.tags?.includes(tag)))
+		(hasSources && filters.sources!.some((source) => spell.sources.includes(source))) ||
+		(hasSchools && filters.schools!.includes(spell.school)) ||
+		(hasTags && filters.tags!.some((tag) => spell.tags?.includes(tag)))
 	);
 };
 
@@ -65,16 +65,18 @@ export const matchesSpellCost = (spell: Spell, filters: SpellCostFilters): boole
 
 	if (hasValues(filters.mpCosts)) {
 		const mpCost = spell.cost.mp;
+		const comparableMpCost = mpCost === 'X' ? spell.cost.minimumMp : mpCost;
 		if (
 			!filters.mpCosts.some((filter) =>
-				filter === 'none' ? mpCost === undefined : mpCost === filter
+				filter === 'none' ? mpCost === undefined : comparableMpCost === filter
 			)
 		) {
 			return false;
 		}
 	}
 
-	return filters.minMpCost === undefined || (spell.cost.mp ?? 0) >= filters.minMpCost;
+	const minimumMpCost = spell.cost.mp === 'X' ? (spell.cost.minimumMp ?? 0) : (spell.cost.mp ?? 0);
+	return filters.minMpCost === undefined || minimumMpCost >= filters.minMpCost;
 };
 
 export const matchesSpellSustained = (spell: Spell, filter: SustainedFilter): boolean => {

@@ -2,15 +2,16 @@
 
 > Purpose: Single reference for spell data model, assignment rules, UI flows, and validation.
 > Status: Active
-> Last Updated: 2026-06-01
+> Last Updated: 2026-06-12
 
 ---
 
 ## 1. Key Files & Roles
 
-- `src/lib/rulesdata/spells-data/<school>/*.ts`: base v0.10 spell definitions organized by school
-- `src/lib/rulesdata/spells-data/v0105Catalog.ts`: non-destructive v0.10.5 spell catalog overlay, including approved renames, additions, removals, and source-list moves
-- `src/lib/rulesdata/spells-data/index.ts`: main export with current selectable catalog and alias-aware lookup utilities
+- `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`: authoritative v0.10.5 spell source
+- `scripts/spells/dc20-0105-spells.mjs`: deterministic parser, validator, report writer, and TypeScript generator
+- `src/lib/rulesdata/spells-data/generated/v0105.generated.ts`: generated 160-spell selectable catalog; never edit manually
+- `src/lib/rulesdata/spells-data/index.ts`: main export with generated current catalog and alias-aware lookup utilities
 - `src/lib/rulesdata/versioning/aliases.ts`: stable ID routing policy for old saved spell IDs and display names
 - `src/lib/rulesdata/schemas/spell.schema.ts`: Spell TypeScript types and enums
 - `src/lib/services/spellAssignment.ts`: Assignment logic (availability, limits, helpers)
@@ -32,15 +33,15 @@ interface Spell {
 	sources: SpellSource[]; // Arcane, Divine, Primal
 	school: SpellSchool; // 8 schools
 	tags: SpellTag[]; // Burning, Cold, Healing, etc.
-	isCantrip: boolean;
+	isCantrip?: boolean;
 	isRitual?: boolean;
-	cost: SpellCost; // { ap: number; mp?: number }
+	cost: SpellCost; // numeric AP; numeric or variable MP with an optional minimum
 	range: string;
 	duration: string;
 	sustained: boolean; // Maintain action each turn
 	effects: SpellEffect[];
 	cantripPassive?: string;
-	enhancements: SpellEnhancement[];
+	enhancements: SpellEnhancement[]; // structured mixed/variable/alternative costs
 }
 ```
 
@@ -73,16 +74,10 @@ interface Spell {
 
 ```
 src/lib/rulesdata/spells-data/
-├── astromancy/          # base v0.10 spells
-├── conjuration/         # base v0.10 spells
-├── divination/          # base v0.10 spells
-├── elemental/           # base v0.10 spells
-├── enchantment/         # base v0.10 spells
-├── invocation/          # base v0.10 spells
-├── nullification/       # base v0.10 spells
-├── transmutation/       # base v0.10 spells
-├── v0105Catalog.ts      # v0.10.5 overlay
-└── index.ts             # Main export + utilities
+├── generated/
+│   └── v0105.generated.ts # current v0.10.5 catalog
+├── spellCost.ts           # canonical cost formatting helpers
+└── index.ts               # main export + utilities
 ```
 
 ### Utility Functions
@@ -124,12 +119,33 @@ getNonCantrips(): Spell[]
 
 - `Poison` is a canonical spell tag and damage tag, not a legacy alias.
 - `Blight Bomb` carries both `Ailment` and `Poison` tags for structured filtering.
-- The current selectable catalog is `applyV0105SpellCatalog(BASE_SPELLS)`, not a destructive rewrite of the base v0.10 school files.
+- The current selectable catalog is generated directly from the clean v0.10.5 Markdown source.
+- Generation recognizes spell boundaries through metadata-qualified headings, so nested headings and summon statblocks remain attached to their parent spell.
+- Validation fails unless the source produces exactly 160 unique spells and 709 enhancements with known schools, sources, tags, and cost grammar.
+- Source exceptions are explicit and reported: `Dispel Magic` uses `See Effect` for its omitted duration, and the OCR-spaced `Nature ' s Tether` heading is normalized to `Nature's Tether`.
+- Enhancement costs retain mixed AP/MP costs, variable `X` costs, alternatives, repeatability, sustained state, prerequisites, and the original cost text.
 - True spell renames route through `getSpellById()` via `RULES_ALIASES`; saved IDs are not rewritten during lookup.
-- Changelog-confirmed new v0.10.5 spells are added through the overlay.
+- Changelog-confirmed new v0.10.5 spells are present in the generated source catalog.
 - Removed spells and source-list moves are applied only to the current selectable catalog. Historical saved spell objects remain renderable/exportable from saved character data.
 - Reworked or ambiguous spell identities, including `gravity-sink-hole`, `force-dome`, and `wall-of-force`, are compatibility-classified but are not silently remapped to v0.10.5 spells.
 - Character completion and PDF export use alias-aware spell lookup for legacy spell IDs before falling back to saved display text.
+
+### 3.2 Generation Workflow
+
+```bash
+# Parse and print the validation report without writing files
+npm run spells:extract:0105
+
+# Regenerate the committed catalog and migration report
+npm run spells:generate:0105
+
+# Fail when the source is invalid or committed output is stale
+npm run spells:validate:0105
+```
+
+Generated output and `docs/migration/spells-v0105-report.json` are committed. The old
+v0.10 school catalogs and overlay are not exported at runtime; `ALL_SPELLS` is the sole
+spell dataset.
 
 ---
 
@@ -200,5 +216,5 @@ getNonCantrips(): Spell[]
 
 ---
 
-> Last updated: 2026-06-01
+> Last updated: 2026-06-12
 > Maintainer: @DC20Clean-Team

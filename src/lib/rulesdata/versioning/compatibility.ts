@@ -71,6 +71,9 @@ function collectAliasCandidateIds(character: any): Array<{ domain: AliasDomain; 
 			for (const nested of value) addStringIds(ids, 'feature', nested);
 		}
 	}
+	for (const featureId of character?.unlockedFeatureIds ?? []) {
+		addStringIds(ids, 'feature', featureId);
+	}
 
 	for (const traitId of character?.selectedTraitIds ?? []) {
 		addStringIds(ids, 'trait', traitId);
@@ -95,11 +98,28 @@ function collectAliasCandidateIds(character: any): Array<{ domain: AliasDomain; 
 			addStringIds(ids, 'spell', spell?.name);
 		}
 	}
+	for (const spell of character?.characterState?.spells ?? []) {
+		if (typeof spell === 'string') {
+			addStringIds(ids, 'spell', spell);
+		} else {
+			addStringIds(ids, 'spell', spell?.id);
+			addStringIds(ids, 'spell', spell?.spellName);
+			addStringIds(ids, 'spell', spell?.name);
+		}
+	}
 
 	for (const maneuverId of character?.selectedManeuvers ?? []) {
 		addStringIds(ids, 'maneuver', maneuverId);
 	}
 	for (const maneuver of character?.maneuvers ?? []) {
+		if (typeof maneuver === 'string') {
+			addStringIds(ids, 'maneuver', maneuver);
+		} else {
+			addStringIds(ids, 'maneuver', maneuver?.id);
+			addStringIds(ids, 'maneuver', maneuver?.name);
+		}
+	}
+	for (const maneuver of character?.characterState?.maneuvers ?? []) {
 		if (typeof maneuver === 'string') {
 			addStringIds(ids, 'maneuver', maneuver);
 		} else {

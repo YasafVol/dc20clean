@@ -262,6 +262,9 @@ export interface SavedCharacter {
 	completedAt: string;
 	schemaVersion: string; // For migration tracking
 	rulesVersion?: string; // Rules interpretation, separate from storage schema
+	rulesUpgradeBackupOf?: string; // Original character ID when this record is an upgrade backup
+	rulesUpgradeSourceVersion?: string; // Previous rules version for an upgraded character
+	rulesUpgradedAt?: string; // Timestamp of the explicit rules upgrade
 }
 
 /**

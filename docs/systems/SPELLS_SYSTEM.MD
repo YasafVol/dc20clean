@@ -13,6 +13,7 @@
 - `src/lib/rulesdata/spells-data/generated/v0105.generated.ts`: generated 160-spell selectable catalog; never edit manually
 - `src/lib/rulesdata/spells-data/index.ts`: main export with generated current catalog and alias-aware lookup utilities
 - `src/lib/rulesdata/versioning/aliases.ts`: stable ID routing policy for old saved spell IDs and display names
+- `src/lib/rulesdata/versioning/characterUpgrade.ts`: explicit saved-character conversion planner and deterministic ID rewriter
 - `src/lib/rulesdata/schemas/spell.schema.ts`: Spell TypeScript types and enums
 - `src/lib/services/spellAssignment.ts`: Assignment logic (availability, limits, helpers)
 - `src/lib/services/enhancedCharacterCalculator.ts`: Aggregates class/trait effects that alter MP
@@ -127,8 +128,9 @@ getNonCantrips(): Spell[]
 - True spell renames route through `getSpellById()` via `RULES_ALIASES`; saved IDs are not rewritten during lookup.
 - Changelog-confirmed new v0.10.5 spells are present in the generated source catalog.
 - Removed spells and source-list moves are applied only to the current selectable catalog. Historical saved spell objects remain renderable/exportable from saved character data.
-- Reworked or ambiguous spell identities, including `gravity-sink-hole`, `force-dome`, and `wall-of-force`, are compatibility-classified but are not silently remapped to v0.10.5 spells.
+- Reworked or ambiguous spell identities are never silently remapped during normal load. The explicit character upgrade reports and maps approved reworks such as `gravity-sink-hole` to `gravity-well`; ambiguous identities such as `force-dome` and `wall-of-force` block automated conversion.
 - Character completion and PDF export use alias-aware spell lookup for legacy spell IDs before falling back to saved display text.
+- The upgrade rewrites spell IDs and saved display-name forms across slot selections, top-level spell arrays, and `characterState.spells`, while preserving a separate v0.10 backup.
 
 ### 3.2 Generation Workflow
 

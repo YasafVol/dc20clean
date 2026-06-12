@@ -367,17 +367,17 @@ export const saveCharacterState = (characterId: string, state: CharacterState): 
 export const saveCharacter = (character: SavedCharacter): void => {
 	const characters = getAllSavedCharacters();
 	const characterIndex = characters.findIndex((char) => char.id === character.id);
-
-	if (characterIndex === -1) {
-		logger.warn('storage', 'Character not found for update', { characterId: character.id });
-		return;
-	}
-
-	// Update the entire character with new lastModified timestamp
-	characters[characterIndex] = {
+	const characterToSave = {
 		...character,
 		lastModified: new Date().toISOString()
 	};
+
+	if (characterIndex === -1) {
+		characters.push(characterToSave);
+		logger.info('storage', 'Creating character', { characterId: character.id });
+	} else {
+		characters[characterIndex] = characterToSave;
+	}
 
 	saveAllCharacters(characters);
 };

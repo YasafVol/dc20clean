@@ -179,7 +179,29 @@ describe('rules version compatibility', () => {
 		expect(result.canRenderSheet).toBe(true);
 		expect(result.canEdit).toBe(false);
 		expect(result.canExportPdf).toBe(true);
-		expect(result.aliasDecisions).toEqual(expect.arrayContaining([expect.objectContaining(alias!)]));
+		expect(result.aliasDecisions).toEqual(
+			expect.arrayContaining([expect.objectContaining(alias!)])
+		);
+	});
+
+	it('scans unlocked features and character-state spell arrays for upgrade decisions', () => {
+		const result = assessCharacterCompatibility({
+			id: 'nested-legacy-selections',
+			rulesVersion: 'dc20-0.10',
+			schemaVersion: '2.2.0',
+			unlockedFeatureIds: ['swift_berserker'],
+			characterState: {
+				spells: [{ id: 'force-dome', name: 'Force Dome' }]
+			}
+		});
+
+		expect(result.state).toBe('view-only');
+		expect(result.aliasDecisions).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({ domain: 'feature', fromId: 'swift_berserker' }),
+				expect.objectContaining({ domain: 'spell', fromId: 'force-dome' })
+			])
+		);
 	});
 
 	it('returns state-only auto-save for upgrade-required characters', () => {

@@ -2,7 +2,7 @@
 
 > Purpose: Persistence architecture for characters and DM Tools: hybrid localStorage/Convex storage, schemas, auth, migrations.
 > Status: Active
-> Last Updated: 2026-06-01
+> Last Updated: 2026-06-12
 
 ---
 
@@ -394,6 +394,25 @@ Compatibility states are computed at runtime:
 | `upgrade-required` | Yes  | Yes          | Blocked until explicit upgrade | `characterState` only, no recalculation rewrite | Yes                              |
 | `view-only`        | Yes  | Best effort  | Blocked                        | Disabled                                        | Yes if export route is available |
 
+#### Explicit v0.10 to v0.10.5 Upgrade
+
+`LoadCharacter.tsx` exposes an upgrade action for legacy characters. The action is planned
+and applied by `src/lib/rulesdata/versioning/characterUpgrade.ts`:
+
+1. Inspect every persisted feature, trait, talent, spell, and maneuver selection through the
+   versioned alias catalog.
+2. Show automatic renames, reworked selections, deprecated removals, and unresolved blockers
+   before writing data.
+3. Refuse the upgrade when an identity is ambiguous or the source rules version is unsupported.
+4. Save a separate v0.10 backup record first. Backup records carry `rulesUpgradeBackupOf`, remain
+   legacy/read-only, and do not expose another upgrade action.
+5. Rewrite approved aliases, explicitly map listed reworks, remove listed deprecated selections,
+   and set the original character to `dc20-0.10.5`.
+
+The upgraded original records `rulesUpgradeSourceVersion` and `rulesUpgradedAt`. Its stored game
+state, notes, inventory, and resources are preserved. Derived values are interpreted and
+recalculated by the normal v0.10.5 sheet/editor pipeline after the upgrade.
+
 ### 6.3 Auto-Migration
 
 When loading characters, `migrateCharacterSchema()` automatically:
@@ -426,15 +445,16 @@ When validators or table definitions change in `convex/`:
 
 ### 7.1 Character Storage
 
-| File                                     | Purpose                              |
-| ---------------------------------------- | ------------------------------------ |
-| `src/lib/types/dataContracts.ts`         | SavedCharacter, CharacterState types |
-| `src/lib/utils/storageUtils.ts`          | localStorage CRUD operations         |
-| `src/lib/storage/characterStorage.ts`    | Storage interface definition         |
-| `src/lib/storage/localStorageAdapter.ts` | localStorage adapter                 |
-| `src/lib/storage/index.ts`               | Backend selector                     |
-| `convex/schema.ts`                       | Convex schema (all tables)           |
-| `convex/characters.ts`                   | Character mutations/queries          |
+| File                                               | Purpose                                  |
+| -------------------------------------------------- | ---------------------------------------- |
+| `src/lib/types/dataContracts.ts`                   | SavedCharacter, CharacterState types     |
+| `src/lib/utils/storageUtils.ts`                    | localStorage CRUD operations             |
+| `src/lib/storage/characterStorage.ts`              | Storage interface definition             |
+| `src/lib/storage/localStorageAdapter.ts`           | localStorage adapter                     |
+| `src/lib/storage/index.ts`                         | Backend selector                         |
+| `src/lib/rulesdata/versioning/characterUpgrade.ts` | Explicit rules upgrade planner/converter |
+| `convex/schema.ts`                                 | Convex schema (all tables)               |
+| `convex/characters.ts`                             | Character mutations/queries              |
 
 ### 7.2 DM Tools Storage
 
@@ -494,5 +514,5 @@ const saveCharacterData = async (character: SavedCharacter) => {
 
 ---
 
-> Last updated: 2026-06-01
+> Last updated: 2026-06-12
 > Maintainer: @DC20Clean-Team

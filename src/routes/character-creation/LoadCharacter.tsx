@@ -9,6 +9,10 @@ import {
 	assessCharacterCompatibility,
 	getPdfVersionForCharacter
 } from '../../lib/rulesdata/versioning/compatibility';
+import {
+	planCharacterUpgrade,
+	upgradeCharacterToCurrentRules
+} from '../../lib/rulesdata/versioning/characterUpgrade';
 import { normalizeRulesVersion } from '../../lib/rulesdata/versioning/rulesVersion';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
@@ -46,7 +50,9 @@ import {
 	CharacterDates,
 	ButtonGrid,
 	CardButton,
-	FullWidthButton
+	FullWidthButton,
+	CompatibilityBadge,
+	UpgradeSummary
 } from './LoadCharacter.styled';
 
 function LoadCharacter() {
@@ -55,6 +61,13 @@ function LoadCharacter() {
 	const [savedCharacters, setSavedCharacters] = useState<SavedCharacter[]>([]);
 	const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 	const [characterToDelete, setCharacterToDelete] = useState<SavedCharacter | null>(null);
+	const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+	const [characterToUpgrade, setCharacterToUpgrade] = useState<SavedCharacter | null>(null);
+	const [isUpgrading, setIsUpgrading] = useState(false);
+	const [upgradeMessage, setUpgradeMessage] = useState<{
+		text: string;
+		type: 'error' | 'success' | 'info';
+	} | null>(null);
 
 	// Import functionality state
 	const [importModalOpen, setImportModalOpen] = useState(false);
@@ -168,6 +181,60 @@ function LoadCharacter() {
 	const handleCancelDelete = () => {
 		setDeleteModalOpen(false);
 		setCharacterToDelete(null);
+	};
+
+	const handleUpgradeClick = (character: SavedCharacter, event: React.MouseEvent) => {
+		event.stopPropagation();
+		setCharacterToUpgrade(character);
+		setUpgradeModalOpen(true);
+		setUpgradeMessage(null);
+	};
+
+	const handleUpgradeCancel = () => {
+		if (isUpgrading) return;
+		setUpgradeModalOpen(false);
+		setCharacterToUpgrade(null);
+	};
+
+	const handleConfirmUpgrade = async () => {
+		if (!characterToUpgrade) return;
+
+		setIsUpgrading(true);
+		setUpgradeMessage(null);
+		try {
+			const result = upgradeCharacterToCurrentRules(characterToUpgrade);
+
+			// Save the legacy copy first. If the current-rules save fails, the
+			// original remains untouched and the recovery copy is still available.
+			await storage.saveCharacter(result.backupCharacter);
+			await storage.saveCharacter(result.upgradedCharacter);
+
+			setSavedCharacters((characters) =>
+				characters.flatMap((character) =>
+					character.id === characterToUpgrade.id
+						? [result.upgradedCharacter, result.backupCharacter]
+						: [character]
+				)
+			);
+			setUpgradeMessage({
+				text: t('loadCharacter.upgradeSuccess', {
+					name: result.upgradedCharacter.finalName
+				}),
+				type: 'success'
+			});
+			setUpgradeModalOpen(false);
+			setCharacterToUpgrade(null);
+		} catch (error) {
+			console.error('Character rules upgrade failed', error);
+			setUpgradeMessage({
+				text: t('loadCharacter.upgradeError', {
+					error: error instanceof Error ? error.message : t('loadCharacter.unknown')
+				}),
+				type: 'error'
+			});
+		} finally {
+			setIsUpgrading(false);
+		}
 	};
 
 	// Import functionality handlers
@@ -413,6 +480,16 @@ function LoadCharacter() {
 				{t('loadCharacter.pageTitle')}
 			</PageTitle>
 
+			{upgradeMessage && (
+				<Message
+					$type={upgradeMessage.type}
+					initial={{ opacity: 0, y: -10 }}
+					animate={{ opacity: 1, y: 0 }}
+				>
+					{upgradeMessage.text}
+				</Message>
+			)}
+
 			{savedCharacters.length === 0 ? (
 				<EmptyState
 					initial={{ opacity: 0, y: 20 }}
@@ -428,110 +505,254 @@ function LoadCharacter() {
 				</EmptyState>
 			) : (
 				<CharacterGrid>
-					{savedCharacters.map((character, index) => (
-						<CharacterCard
-							key={character.id}
-							onClick={() => handleCharacterClick(character)}
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.5, delay: 0.1 * index }}
-							whileHover={{ scale: 1.02 }}
-							whileTap={{ scale: 0.98 }}
-						>
-							<CharacterName>
-								{character.finalName || t('loadCharacter.unnamedCharacter')}
-							</CharacterName>
+					{savedCharacters.map((character, index) => {
+						const compatibility = assessCharacterCompatibility(character);
+						const isBackup = Boolean(character.rulesUpgradeBackupOf);
+						return (
+							<CharacterCard
+								key={character.id}
+								onClick={() => handleCharacterClick(character)}
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ duration: 0.5, delay: 0.1 * index }}
+								whileHover={{ scale: 1.02 }}
+								whileTap={{ scale: 0.98 }}
+							>
+								{isBackup ? (
+									<CompatibilityBadge $variant="backup">
+										{t('loadCharacter.legacyBackup')}
+									</CompatibilityBadge>
+								) : compatibility.state !== 'editable' ? (
+									<CompatibilityBadge
+										$variant={compatibility.state === 'view-only' ? 'blocked' : 'warning'}
+									>
+										{compatibility.state === 'view-only'
+											? t('loadCharacter.upgradeBlocked')
+											: t('loadCharacter.upgradeRequired')}
+									</CompatibilityBadge>
+								) : null}
+								<CharacterName>
+									{character.finalName || t('loadCharacter.unnamedCharacter')}
+								</CharacterName>
 
-							<PlayerName>
-								{t('loadCharacter.playerPrefix')}
-								{character.finalPlayerName || t('loadCharacter.unknown')}
-							</PlayerName>
+								<PlayerName>
+									{t('loadCharacter.playerPrefix')}
+									{character.finalPlayerName || t('loadCharacter.unknown')}
+								</PlayerName>
 
-							<CharacterStats>
-								<StatBlock>
-									<StatLabel>{t('loadCharacter.raceLabel')}</StatLabel>
-									<StatValue>
-										{formatAncestry(
-											character.ancestry1Name ||
-												character.ancestry1Id ||
-												t('loadCharacter.unknown'),
-											character.ancestry2Name || character.ancestry2Id
+								<CharacterStats>
+									<StatBlock>
+										<StatLabel>{t('loadCharacter.raceLabel')}</StatLabel>
+										<StatValue>
+											{formatAncestry(
+												character.ancestry1Name ||
+													character.ancestry1Id ||
+													t('loadCharacter.unknown'),
+												character.ancestry2Name || character.ancestry2Id
+											)}
+										</StatValue>
+									</StatBlock>
+
+									<StatBlock>
+										<StatLabel>{t('loadCharacter.classLabel')}</StatLabel>
+										<StatValue>
+											{character.className || character.classId || t('loadCharacter.unknown')}
+										</StatValue>
+									</StatBlock>
+
+									<StatBlock>
+										<StatLabel>{t('loadCharacter.levelLabel')}</StatLabel>
+										<StatValue>{character.level || 1}</StatValue>
+									</StatBlock>
+								</CharacterStats>
+
+								<CharacterDates>
+									{t('loadCharacter.createdPrefix')}
+									{formatDate(character.createdAt || character.completedAt)}
+									{character.lastModified &&
+										character.lastModified !== character.createdAt &&
+										character.lastModified !== character.completedAt && (
+											<span>
+												{t('loadCharacter.modifiedPrefix')}
+												{formatDate(character.lastModified)}
+											</span>
 										)}
-									</StatValue>
-								</StatBlock>
+								</CharacterDates>
 
-								<StatBlock>
-									<StatLabel>{t('loadCharacter.classLabel')}</StatLabel>
-									<StatValue>
-										{character.className || character.classId || t('loadCharacter.unknown')}
-									</StatValue>
-								</StatBlock>
-
-								<StatBlock>
-									<StatLabel>{t('loadCharacter.levelLabel')}</StatLabel>
-									<StatValue>{character.level || 1}</StatValue>
-								</StatBlock>
-							</CharacterStats>
-
-							<CharacterDates>
-								{t('loadCharacter.createdPrefix')}
-								{formatDate(character.createdAt || character.completedAt)}
-								{character.lastModified &&
-									character.lastModified !== character.createdAt &&
-									character.lastModified !== character.completedAt && (
-										<span>
-											{t('loadCharacter.modifiedPrefix')}
-											{formatDate(character.lastModified)}
-										</span>
+								<ButtonGrid>
+									<CardButton
+										$variant="primary"
+										onClick={(e) => handleViewCharacterSheet(character, e)}
+										whileHover={{ scale: 1.05 }}
+										whileTap={{ scale: 0.95 }}
+									>
+										{t('loadCharacter.viewSheet')}
+									</CardButton>
+									<CardButton
+										onClick={(e) => handleExportPdf(character, e)}
+										whileHover={{ scale: 1.05 }}
+										whileTap={{ scale: 0.95 }}
+									>
+										{t('loadCharacter.exportPdf')}
+									</CardButton>
+									<CardButton
+										onClick={(e) => {
+											e.stopPropagation();
+											handleCharacterClick(character);
+										}}
+										disabled={!compatibility.canEdit}
+										whileHover={{ scale: 1.05 }}
+										whileTap={{ scale: 0.95 }}
+									>
+										{t('loadCharacter.edit')}
+									</CardButton>
+									<CardButton
+										onClick={(e) => handleLevelUp(character, e)}
+										disabled={!compatibility.canLevelUp}
+										whileHover={{ scale: 1.05 }}
+										whileTap={{ scale: 0.95 }}
+									>
+										{t('loadCharacter.levelUp')}
+									</CardButton>
+									{compatibility.state !== 'editable' && !isBackup && (
+										<FullWidthButton
+											$variant={compatibility.state === 'view-only' ? 'danger' : 'primary'}
+											onClick={(e) => handleUpgradeClick(character, e)}
+											whileHover={{ scale: 1.02 }}
+											whileTap={{ scale: 0.98 }}
+										>
+											{compatibility.state === 'view-only'
+												? t('loadCharacter.reviewUpgrade')
+												: t('loadCharacter.upgradeCharacter')}
+										</FullWidthButton>
 									)}
-							</CharacterDates>
-
-							<ButtonGrid>
-								<CardButton
-									$variant="primary"
-									onClick={(e) => handleViewCharacterSheet(character, e)}
-									whileHover={{ scale: 1.05 }}
-									whileTap={{ scale: 0.95 }}
-								>
-									{t('loadCharacter.viewSheet')}
-								</CardButton>
-								<CardButton
-									onClick={(e) => handleExportPdf(character, e)}
-									whileHover={{ scale: 1.05 }}
-									whileTap={{ scale: 0.95 }}
-								>
-									{t('loadCharacter.exportPdf')}
-								</CardButton>
-								<CardButton
-									onClick={(e) => {
-										e.stopPropagation();
-										handleCharacterClick(character);
-									}}
-									whileHover={{ scale: 1.05 }}
-									whileTap={{ scale: 0.95 }}
-								>
-									{t('loadCharacter.edit')}
-								</CardButton>
-								<CardButton
-									onClick={(e) => handleLevelUp(character, e)}
-									whileHover={{ scale: 1.05 }}
-									whileTap={{ scale: 0.95 }}
-								>
-									{t('loadCharacter.levelUp')}
-								</CardButton>
-								<FullWidthButton
-									$variant="danger"
-									onClick={(e) => handleDeleteClick(character, e)}
-									whileHover={{ scale: 1.02 }}
-									whileTap={{ scale: 0.98 }}
-								>
-									{t('loadCharacter.delete')}
-								</FullWidthButton>
-							</ButtonGrid>
-						</CharacterCard>
-					))}
+									<FullWidthButton
+										$variant="danger"
+										onClick={(e) => handleDeleteClick(character, e)}
+										whileHover={{ scale: 1.02 }}
+										whileTap={{ scale: 0.98 }}
+									>
+										{t('loadCharacter.delete')}
+									</FullWidthButton>
+								</ButtonGrid>
+							</CharacterCard>
+						);
+					})}
 				</CharacterGrid>
 			)}
+
+			{/* Rules Upgrade Modal */}
+			<AnimatePresence>
+				{upgradeModalOpen &&
+					characterToUpgrade &&
+					(() => {
+						const plan = planCharacterUpgrade(characterToUpgrade);
+						return (
+							<ModalOverlay
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								exit={{ opacity: 0 }}
+								onClick={handleUpgradeCancel}
+							>
+								<Modal
+									initial={{ scale: 0.9, opacity: 0 }}
+									animate={{ scale: 1, opacity: 1 }}
+									exit={{ scale: 0.9, opacity: 0 }}
+									onClick={(e) => e.stopPropagation()}
+								>
+									<ModalHeader>
+										<ModalTitle>{t('loadCharacter.upgradeModalTitle')}</ModalTitle>
+										<ModalDescription>
+											{t('loadCharacter.upgradeModalDescription', {
+												name: characterToUpgrade.finalName,
+												from: plan.sourceRulesVersion,
+												to: plan.targetRulesVersion
+											})}
+										</ModalDescription>
+									</ModalHeader>
+									<ModalContent>
+										<UpgradeSummary>
+											<p>{t('loadCharacter.upgradeBackupNote')}</p>
+											{plan.automaticRenames.length > 0 && (
+												<section>
+													<h3>{t('loadCharacter.automaticRenames')}</h3>
+													<ul>
+														{plan.automaticRenames.map((alias) => (
+															<li key={`${alias.domain}:${alias.fromId}`}>
+																{alias.fromId} → {alias.toId}
+															</li>
+														))}
+													</ul>
+												</section>
+											)}
+											{plan.reworkedSelections.length > 0 && (
+												<section>
+													<h3>{t('loadCharacter.reworkedSelections')}</h3>
+													<ul>
+														{plan.reworkedSelections.map((alias) => (
+															<li key={`${alias.domain}:${alias.fromId}`}>
+																{alias.fromId} → {alias.toId}
+															</li>
+														))}
+													</ul>
+												</section>
+											)}
+											{plan.deprecatedSelections.length > 0 && (
+												<section>
+													<h3>{t('loadCharacter.deprecatedRemoved')}</h3>
+													<ul>
+														{plan.deprecatedSelections.map((alias) => (
+															<li key={`${alias.domain}:${alias.fromId}`}>{alias.fromId}</li>
+														))}
+													</ul>
+												</section>
+											)}
+											{plan.blockers.length > 0 && (
+												<section>
+													<h3>{t('loadCharacter.upgradeBlockers')}</h3>
+													<p>{t('loadCharacter.upgradeBlockedDescription')}</p>
+													<ul>
+														{plan.blockers.map((alias) => (
+															<li key={`${alias.domain}:${alias.fromId}`}>
+																{alias.fromId}: {alias.note}
+															</li>
+														))}
+													</ul>
+												</section>
+											)}
+											{plan.automaticRenames.length === 0 &&
+												plan.reworkedSelections.length === 0 &&
+												plan.deprecatedSelections.length === 0 &&
+												plan.blockers.length === 0 && (
+													<p>{t('loadCharacter.noSelectionChanges')}</p>
+												)}
+										</UpgradeSummary>
+									</ModalContent>
+									<ModalFooter>
+										<SecondaryButton
+											onClick={handleUpgradeCancel}
+											disabled={isUpgrading}
+											whileHover={{ scale: 1.05 }}
+											whileTap={{ scale: 0.95 }}
+										>
+											{t('loadCharacter.cancel')}
+										</SecondaryButton>
+										<SuccessButton
+											onClick={handleConfirmUpgrade}
+											disabled={isUpgrading || !plan.canUpgrade}
+											whileHover={{ scale: 1.05 }}
+											whileTap={{ scale: 0.95 }}
+										>
+											{isUpgrading
+												? t('loadCharacter.upgrading')
+												: t('loadCharacter.confirmUpgrade')}
+										</SuccessButton>
+									</ModalFooter>
+								</Modal>
+							</ModalOverlay>
+						);
+					})()}
+			</AnimatePresence>
 
 			{/* Import Character Modal */}
 			<AnimatePresence>

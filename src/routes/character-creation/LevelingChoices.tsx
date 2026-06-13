@@ -1,10 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
-import { resolveClassProgression } from '../../lib/rulesdata/classes-data/classProgressionResolver';
+import {
+	resolveClassProgression,
+	type ResolvedProgression
+} from '../../lib/rulesdata/classes-data/classProgressionResolver';
 import { selectableTalents } from '../../lib/rulesdata/classes-data/talents/talent.loader';
 import { generalTalents } from '../../lib/rulesdata/classes-data/talents/talents.data';
 import { CHARACTER_PATHS } from '../../lib/rulesdata/progression/paths/paths.data';
-import { MULTICLASS_TIERS, type MulticlassTier } from '../../lib/rulesdata/progression/multiclass';
+import {
+	MULTICLASS_TIERS,
+	countOwnedSubclassFeatures,
+	type MulticlassTier
+} from '../../lib/rulesdata/progression/multiclass';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
 import { getFeatureChoiceKey } from '../../lib/rulesdata/classes-data/classUtils';
@@ -35,7 +42,7 @@ function LevelingChoices() {
 	const [pathPoints, setPathPoints] = useState(
 		state.pathPointAllocations || { martial: 0, spellcasting: 0 }
 	);
-	const [resolvedProgression, setResolvedProgression] = useState<any>(null);
+	const [resolvedProgression, setResolvedProgression] = useState<ResolvedProgression | null>(null);
 
 	// Multiclass state - restore from context if available (UI3 fix)
 	const [selectedMulticlassOption, setSelectedMulticlassOption] = useState<MulticlassTier | null>(
@@ -78,7 +85,9 @@ function LevelingChoices() {
 	if (!resolvedProgression) {
 		return (
 			<div className="mx-auto max-w-4xl p-8 text-center">
-				<p className="text-muted-foreground text-lg italic">{t('characterCreation.loadingLevelingOptions')}</p>
+				<p className="text-muted-foreground text-lg italic">
+					{t('characterCreation.loadingLevelingOptions')}
+				</p>
 			</div>
 		);
 	}
@@ -139,10 +148,7 @@ function LevelingChoices() {
 	const getOwnedSubclassFeatures = (targetClassId: string): number => {
 		if (!state.classId || !state.level) return 0;
 		if (targetClassId === state.classId && state.selectedSubclass && resolvedProgression) {
-			if (state.level >= 3) {
-				const subclassLevels = [3, 6, 9, 12, 15, 18].filter((lvl) => lvl <= state.level);
-				return subclassLevels.length;
-			}
+			return countOwnedSubclassFeatures(state.level);
 		}
 		return 0;
 	};

@@ -4,11 +4,13 @@ export const warlockClass: ClassDefinition = {
 	className: 'Warlock',
 	classCategory: 'spellcaster',
 	startingEquipment: {
-		weaponsOrShields: ['1 Weapon or Light Shield'],
-		armor: ['1 set of Light Armor'],
-		spellFocus: ['1 Spell Focus'],
-		tradeTools: ['1 set of Trade Tools'],
-		packs: 'Adventuring Pack (Coming Soon)'
+		spellFocuses:
+			'2 Spell Focuses. You can choose Weapons if you choose the Pact Weapon option of the Pact Boon Feature.',
+		armor:
+			'1 set of Light Armor. You can choose 1 set of Heavy Armor instead if you choose the Pact Armor option of the Pact Boon Feature.',
+		tradeTools:
+			"Choose 2 of any of the following items: Alchemist's Supplies, Disguise Kit, Jeweler's Tools, or Sculptor's Tools.",
+		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	spellcasterPath: {
 		spellList: {

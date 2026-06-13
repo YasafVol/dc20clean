@@ -142,6 +142,15 @@ function convertTalents(
 	return converted;
 }
 
+function convertMulticlassOption(
+	value: SavedCharacter['selectedMulticlassOption']
+): SavedCharacter['selectedMulticlassOption'] {
+	if (typeof value !== 'string') return value;
+	const convertedTalentId = convertSelection('talent', `multiclass_${value}`);
+	if (!convertedTalentId) return undefined;
+	return value;
+}
+
 function convertSelectionRecord(
 	domain: AliasDomain,
 	values: unknown
@@ -155,6 +164,31 @@ function convertSelectionRecord(
 		if (convertedValue) converted[key] = convertedValue;
 	}
 	return converted;
+}
+
+function convertLanguages(values: unknown): SavedCharacter['languagesData'] | undefined {
+	if (!values || typeof values !== 'object' || Array.isArray(values)) return undefined;
+
+	const converted: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(values)) {
+		const convertedKey = convertSelection('language', key);
+		if (!convertedKey) continue;
+
+		const existing = converted[convertedKey];
+		const existingFluency =
+			existing && typeof existing === 'object' && !Array.isArray(existing)
+				? (existing as Record<string, unknown>).fluency
+				: undefined;
+		const nextFluency =
+			value && typeof value === 'object' && !Array.isArray(value)
+				? (value as Record<string, unknown>).fluency
+				: undefined;
+
+		if (!existing || existingFluency !== 'fluent' || nextFluency === 'fluent') {
+			converted[convertedKey] = value;
+		}
+	}
+	return converted as SavedCharacter['languagesData'];
 }
 
 function convertDisplayEntry(domain: AliasDomain, entry: unknown): unknown {
@@ -197,6 +231,9 @@ export function upgradeCharacterToCurrentRules(
 		selectedSpells?: Record<string, string>;
 		selectedManeuvers?: string[];
 	};
+	const selectedMulticlassOption = convertMulticlassOption(character.selectedMulticlassOption);
+	const removedMulticlassSelection =
+		typeof character.selectedMulticlassOption === 'string' && !selectedMulticlassOption;
 
 	const upgradedCharacter = {
 		...character,
@@ -212,8 +249,14 @@ export function upgradeCharacterToCurrentRules(
 		) as SavedCharacter['selectedFeatureChoices'],
 		unlockedFeatureIds: convertStringArray('feature', character.unlockedFeatureIds),
 		selectedTalents: convertTalents(character.selectedTalents),
-		selectedMulticlassFeature:
-			typeof character.selectedMulticlassFeature === 'string'
+		languagesData: convertLanguages(character.languagesData) ?? character.languagesData,
+		selectedMulticlassOption,
+		selectedMulticlassClass: removedMulticlassSelection
+			? undefined
+			: character.selectedMulticlassClass,
+		selectedMulticlassFeature: removedMulticlassSelection
+			? undefined
+			: typeof character.selectedMulticlassFeature === 'string'
 				? convertSelection('feature', character.selectedMulticlassFeature)
 				: character.selectedMulticlassFeature,
 		selectedSpells: convertSelectionRecord('spell', original.selectedSpells),

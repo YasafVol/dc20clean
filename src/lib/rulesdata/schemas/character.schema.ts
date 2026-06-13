@@ -323,9 +323,14 @@ export interface ClassDefinition {
 	 */
 	classCategory?: 'martial' | 'spellcaster' | 'hybrid';
 	startingEquipment?: {
+		arsenal?: string | string[];
 		weaponsOrShields?: string | string[];
 		rangedWeapons?: string | string[];
+		rangedWeapon?: string | string[];
+		spellFocuses?: string | string[];
+		spellFocus?: string | string[];
 		armor?: string | string[];
+		tradeTools?: string | string[];
 		packs?: string | string[];
 		[key: string]: unknown;
 	};

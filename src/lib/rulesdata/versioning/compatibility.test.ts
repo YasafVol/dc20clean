@@ -205,6 +205,63 @@ describe('rules version compatibility', () => {
 		);
 	});
 
+	it('scans retired persisted multiclass options as deprecated talents', () => {
+		const result = assessCharacterCompatibility({
+			id: 'legacy-grandmaster-multiclass',
+			rulesVersion: 'dc20-0.10',
+			schemaVersion: '2.2.0',
+			selectedMulticlassOption: 'grandmaster',
+			selectedMulticlassClass: 'fighter',
+			selectedMulticlassFeature: 'fighter_legendary_feature'
+		});
+
+		expect(result.state).toBe('upgrade-required');
+		expect(result.aliasDecisions).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					domain: 'talent',
+					fromId: 'multiclass_grandmaster',
+					status: 'deprecated'
+				})
+			])
+		);
+	});
+
+	it('classifies renamed and removed legacy languages for explicit upgrade', () => {
+		const result = assessCharacterCompatibility({
+			id: 'legacy-languages',
+			rulesVersion: 'dc20-0.10',
+			schemaVersion: '2.2.0',
+			languagesData: {
+				primordial: { fluency: 'fluent' },
+				abyssal: { fluency: 'limited' },
+				undercommon: { fluency: 'limited' }
+			}
+		});
+
+		expect(result.aliasDecisions).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					domain: 'language',
+					fromId: 'primordial',
+					toId: 'elemental',
+					status: 'alias'
+				}),
+				expect.objectContaining({
+					domain: 'language',
+					fromId: 'abyssal',
+					toId: 'fiendish',
+					status: 'reworked'
+				}),
+				expect.objectContaining({
+					domain: 'language',
+					fromId: 'undercommon',
+					status: 'deprecated'
+				})
+			])
+		);
+	});
+
 	it('returns state-only auto-save for upgrade-required characters', () => {
 		expect(
 			getCharacterAutoSaveMode({

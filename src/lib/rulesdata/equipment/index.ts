@@ -1,7 +1,7 @@
 /**
  * @file src/lib/rulesdata/equipment/index.ts
  * @description Main entry point for the equipment customization system.
- * DC20 Rules Version: 0.10
+ * DC20 Rules Version: 0.10.5
  */
 
 // Schemas

@@ -1,10 +1,10 @@
 /**
  * @file src/lib/rulesdata/equipment/schemas/baseEquipment.ts
  * @description Base schemas and types for all equipment customization.
- * DC20 Rules Version: 0.10
+ * DC20 Rules Version: 0.10.5
  */
 
-export const EQUIPMENT_RULES_VERSION = '0.10';
+export const EQUIPMENT_RULES_VERSION = '0.10.5';
 
 // ================================================================= //
 // SHARED TYPES

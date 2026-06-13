@@ -9,11 +9,11 @@ export const bardClass: ClassDefinition = {
 	className: 'Bard',
 	classCategory: 'spellcaster',
 	startingEquipment: {
-		weaponsOrShields: ['1 Weapon or Light Shield'],
-		armor: ['1 set of Light Armor'],
-		spellFocus: ['1 Spell Focus (Musical Instrument)'],
-		tradeTools: ['1 set of Trade Tools'],
-		packs: 'Adventuring Pack (Coming Soon)'
+		arsenal: 'Choose 3 of any of the following items: Spell Focus, Weapon, or Light Shield.',
+		armor: '1 set of Light Armor.',
+		tradeTools:
+			"Choose 1 of any of the following items: Calligrapher's Supplies, Disguise Kit, Gaming Kit, Musical Instrument, or Sculptor's Tools.",
+		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	spellcasterPath: {
 		combatTraining: {

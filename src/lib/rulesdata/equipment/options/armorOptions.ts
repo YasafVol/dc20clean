@@ -1,6 +1,6 @@
 /**
  * @file src/lib/rulesdata/equipment/options/armorOptions.ts
- * @description Armor types, properties, and presets from DC20 0.10.
+ * @description Armor types, properties, and presets from DC20 0.10.5.
  */
 
 import { ArmorTypeDefinition, ArmorProperty, PresetArmor } from '../schemas/armorSchema';

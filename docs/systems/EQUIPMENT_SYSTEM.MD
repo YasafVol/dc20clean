@@ -2,7 +2,7 @@
 
 > Purpose: Central reference for custom equipment creation, data models, validation rules, storage, and UI flows.
 > Status: Active
-> Last Updated: 2026-06-01
+> Last Updated: 2026-06-13
 >
 > **Menu Entry:** "Equipage" in Reference Tools section
 
@@ -32,6 +32,12 @@
 ### Storage (`src/lib/rulesdata/equipment/storage/`)
 
 - `equipmentStorage.ts` — localStorage CRUD, export/import JSON
+
+Stored custom equipment keeps stable property IDs across the v0.10.5 update. Existing
+`toss`, `thrown`, and `returning` selections are preserved on import/export; current
+validation applies the v0.10.5 point costs and Returning prerequisite when edited.
+Exports include an additive `rulesVersion`: legacy payloads without it are identified as
+`0.10`, while new or edited equipment is stamped `0.10.5`.
 
 ### UI (`src/routes/custom-equipment/`)
 
@@ -321,6 +327,7 @@ Some properties require one of several enablers instead of a single fixed proper
 ```typescript
 interface StoredEquipmentData {
 	version: number;
+	rulesVersion: string;
 	weapons: CustomWeapon[];
 	armor: CustomArmor[];
 	shields: CustomShield[];

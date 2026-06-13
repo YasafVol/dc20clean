@@ -8,6 +8,7 @@ export type AliasDomain =
 	| 'maneuver'
 	| 'trait'
 	| 'talent'
+	| 'language'
 	| 'equipment';
 
 export type AliasStatus = 'alias' | 'deprecated' | 'ambiguous' | 'reworked';
@@ -24,6 +25,54 @@ export interface RulesAliasEntry {
 }
 
 export const RULES_ALIASES: RulesAliasEntry[] = [
+	{
+		domain: 'language',
+		fromId: 'primordial',
+		toId: 'elemental',
+		fromRulesVersion: RULES_VERSION_010,
+		toRulesVersion: RULES_VERSION_010_5,
+		status: 'alias',
+		compatibilityState: 'editable',
+		note: 'Primordial is named Elemental in the v0.10.5 language catalog.'
+	},
+	{
+		domain: 'language',
+		fromId: 'abyssal',
+		toId: 'fiendish',
+		fromRulesVersion: RULES_VERSION_010,
+		toRulesVersion: RULES_VERSION_010_5,
+		status: 'reworked',
+		compatibilityState: 'upgrade-required',
+		note: 'Abyssal and Infernal are consolidated into Fiendish in v0.10.5.'
+	},
+	{
+		domain: 'language',
+		fromId: 'infernal',
+		toId: 'fiendish',
+		fromRulesVersion: RULES_VERSION_010,
+		toRulesVersion: RULES_VERSION_010_5,
+		status: 'reworked',
+		compatibilityState: 'upgrade-required',
+		note: 'Abyssal and Infernal are consolidated into Fiendish in v0.10.5.'
+	},
+	{
+		domain: 'language',
+		fromId: 'goblin',
+		fromRulesVersion: RULES_VERSION_010,
+		toRulesVersion: RULES_VERSION_010_5,
+		status: 'deprecated',
+		compatibilityState: 'upgrade-required',
+		note: 'Goblin is not present in the v0.10.5 selectable language catalog.'
+	},
+	{
+		domain: 'language',
+		fromId: 'undercommon',
+		fromRulesVersion: RULES_VERSION_010,
+		toRulesVersion: RULES_VERSION_010_5,
+		status: 'deprecated',
+		compatibilityState: 'upgrade-required',
+		note: 'Undercommon is not present in the v0.10.5 selectable language catalog.'
+	},
 	{
 		domain: 'talent',
 		fromId: 'multiclass_grandmaster',

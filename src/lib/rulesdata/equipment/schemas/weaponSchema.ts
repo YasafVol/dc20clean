@@ -1,7 +1,7 @@
 /**
  * @file src/lib/rulesdata/equipment/schemas/weaponSchema.ts
  * @description Schema definitions for custom weapons.
- * DC20 Rules Version: 0.10
+ * DC20 Rules Version: 0.10.5
  */
 
 import { BaseEquipment, BaseProperty, PhysicalDamageType } from './baseEquipment';

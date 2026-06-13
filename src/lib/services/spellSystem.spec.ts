@@ -94,6 +94,28 @@ describe('Spell System - Validations', () => {
 		expect(error).toBeUndefined();
 	});
 
+	it('should resolve approved legacy spell IDs during slot validation', () => {
+		const baseBuild = createBaseBuild({ classId: 'wizard', level: 1 });
+		const result = calculateCharacterWithBreakdowns(baseBuild as any);
+		const globalSlot = result.spellsKnownSlots.find((slot) => slot.isGlobal);
+
+		expect(globalSlot).toBeDefined();
+
+		const resultWithLegacySelection = calculateCharacterWithBreakdowns(
+			createBaseBuild({
+				classId: 'wizard',
+				level: 1,
+				selectedSpells: { [globalSlot!.id]: 'summon-familiar' }
+			}) as any
+		);
+
+		expect(
+			resultWithLegacySelection.validation.errors.find(
+				(error) => (error.code as string) === 'INVALID_SPELL'
+			)
+		).toBeUndefined();
+	});
+
 	it('should allow global slots when a spell matches an allowed tag but not an allowed school', () => {
 		const baseBuild = createBaseBuild({ classId: 'bard', level: 1 });
 		const result = calculateCharacterWithBreakdowns(baseBuild as any);

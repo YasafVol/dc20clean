@@ -4,14 +4,13 @@ export const spellbladeClass: ClassDefinition = {
 	className: 'Spellblade',
 	classCategory: 'hybrid',
 	startingEquipment: {
-		weaponsOrShields: [
-			'3 Weapons or Light Shields',
-			'Heavy Shields (if you learn the Warrior Discipline)'
-		],
-		rangedWeapons: ['Ranged Weapon with 20 Ammo', '3 Weapons with the Toss or Thrown Property'],
-		armor: ['Light Armor', 'Heavy Armor (if you learn the Warrior Discipline)'],
-		tradeTools: ['1 set of Trade Tools'],
-		packs: 'X or Y Packs (Adventuring Packs Coming Soon)'
+		arsenal:
+			'Choose 3 of any of the following items: Spell Focus, Weapon, or Light Shield. You can also choose Heavy Shield if you choose the Warrior Discipline option of the Spellblade Disciplines Feature.',
+		armor:
+			'1 set of Light Armor. You can choose 1 set of Heavy Armor instead if you choose the Warrior Discipline option of the Spellblade Disciplines Feature.',
+		tradeTools:
+			"Choose 1 of any of the following items: Blacksmith's Tools, Jeweler's Tools, Leatherworker's Tools, or Tinkerer's Tools.",
+		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	martialPath: {
 		combatTraining: {
@@ -102,7 +101,8 @@ export const spellbladeClass: ClassDefinition = {
 				},
 				{
 					name: 'Somatic Weapon',
-					description: 'You can use your Bound Weapon to perform the Somatic Components of a Spell.',
+					description:
+						'You can use your Bound Weapon to perform the Somatic Components of a Spell.',
 					effects: [
 						{
 							type: 'GRANT_ABILITY',

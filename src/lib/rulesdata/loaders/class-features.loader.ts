@@ -61,12 +61,16 @@ export interface ClassSubclass {
 export interface ClassDefinition {
 	className: string;
 	startingEquipment?: {
+		arsenal?: string | string[];
 		weaponsOrShields?: string | string[];
+		rangedWeapons?: string | string[];
 		rangedWeapon?: string | string[];
-		alternativeWeapons?: string | string[];
+		spellFocuses?: string | string[];
+		spellFocus?: string | string[];
 		armor?: string | string[];
+		tradeTools?: string | string[];
 		packs?: string | string[];
-		[key: string]: any;
+		[key: string]: unknown;
 	};
 	martialPath?: {
 		combatTraining?: {

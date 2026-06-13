@@ -9,11 +9,11 @@ export const druidClass: ClassDefinition = {
 	className: 'Druid',
 	classCategory: 'spellcaster',
 	startingEquipment: {
-		weaponsOrShields: ['1 Weapon'],
-		armor: ['1 set of Light Armor (non-metal)'],
-		spellFocus: ['1 Spell Focus (Druidic Focus)'],
-		tradeTools: ['1 set of Trade Tools'],
-		packs: 'Adventuring Pack (Coming Soon)'
+		spellFocuses: '2 Spell Focuses.',
+		armor: '1 set of Light Armor.',
+		tradeTools:
+			"Choose 2 of any of the following items: Herbalist's Supplies, Leatherworker's Tools, Sculptor's Tools, or Weaver's Tools.",
+		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	spellcasterPath: {
 		spellList: {

@@ -1,6 +1,6 @@
 ### Character Creation Flow System Spec
 
-> Last Updated: 2026-06-12
+> Last Updated: 2026-06-13
 
 #### Purpose
 
@@ -14,7 +14,7 @@
 - State lives in `characterContext.tsx`; each stage must read/write through the reducer actions (`SET_CLASS`, `SET_TRAITS`, `UPDATE_SKILLS`, etc.)
 - Draft state carries both `schemaVersion` and `rulesVersion`; missing `rulesVersion` is inferred as `dc20-0.10`.
 - Edit and level-up entry points check runtime compatibility before initializing the wizard. `upgrade-required` v0.10 characters can use the explicit upgrade action on the load-character page; unsupported rules versions remain view-only.
-- The explicit v0.10 to v0.10.5 action shows its conversion report, creates a separate read-only v0.10 backup, applies approved aliases/reworks (including the Force Dome and Wall of Force merge into Forcefield), removes disclosed deprecated selections, and only then unlocks edit and level-up for the upgraded original.
+- The explicit v0.10 to v0.10.5 action shows its conversion report, creates a separate read-only v0.10 backup, applies approved aliases/reworks (including the Force Dome and Wall of Force merge into Forcefield), removes disclosed deprecated selections, and only then unlocks edit and level-up for the upgraded original. Consolidated language aliases keep the strongest fluency; removed languages no longer consume points and remain recoverable from the backup.
 - Validation gating: `CharacterCreation.tsx` calls `isStepCompleted(stepNumber)` before allowing navigation; each stage enforces completion via calculator outputs (ancestry/background budgets, attribute points remaining, spell counts)
 - Calculator contract: `calculateCharacterWithBreakdowns(convertToEnhancedBuildData(state))` runs on every state change and returns:
   - `stats.finalAttributePoints`, `background`, `ancestry`, `breakdowns`, `validation`
@@ -27,6 +27,7 @@
   - Completion rule: class selected AND all required feature choices resolved (per `findClassByName` metadata)
   - Outputs: `state.classId`, `state.selectedFeatureChoices`
   - Dependencies: handles feature choice IDs; level selection is part of this stage without changing completion logic
+  - Starting equipment rendering is driven directly from each class feature file's `startingEquipment` block and now supports the current structured fields `arsenal`, `rangedWeapons`, `spellFocuses`, `armor`, `tradeTools`, and `packs`, with fallback support for older singular field names still present in legacy data.
   - v0.10.5 level 5 Expert Features render from the same persisted feature IDs previously used for placeholders (`<class>_level_5_placeholder`), so older saved level-5+ characters keep resolving while showing the updated Expert Feature names and benefits.
   - **Progressive Feature Display** (October 2025): `ClassFeatures.tsx` now displays features grouped by level from 1 up to current character level. Feature choices appear within their respective level sections rather than in a separate section at the bottom. This ensures proper ordering (e.g., Level 1 stance choices appear with Level 1 features, not after Level 3 features).
   - **Testing**: 29 comprehensive tests validate progressive display logic and choice ordering (14 logic tests + 15 component tests)

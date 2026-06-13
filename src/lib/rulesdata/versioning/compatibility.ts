@@ -79,6 +79,10 @@ function collectAliasCandidateIds(character: any): Array<{ domain: AliasDomain; 
 		addStringIds(ids, 'trait', traitId);
 	}
 
+	for (const languageId of Object.keys(character?.languagesData ?? {})) {
+		addStringIds(ids, 'language', languageId);
+	}
+
 	const selectedTalents = character?.selectedTalents;
 	if (Array.isArray(selectedTalents)) {
 		for (const talentId of selectedTalents) addStringIds(ids, 'talent', talentId);
@@ -128,6 +132,9 @@ function collectAliasCandidateIds(character: any): Array<{ domain: AliasDomain; 
 		}
 	}
 
+	if (typeof character?.selectedMulticlassOption === 'string') {
+		addStringIds(ids, 'talent', `multiclass_${character.selectedMulticlassOption}`);
+	}
 	addStringIds(ids, 'feature', character?.selectedMulticlassFeature);
 
 	return ids;

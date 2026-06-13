@@ -2,7 +2,7 @@
 
 > Purpose: Single reference for Traits: data shape, effect typing, validation, runtime processing, and UI usage.
 > Status: Active
-> Last Updated: 2026-06-01
+> Last Updated: 2026-06-13
 
 ---
 
@@ -186,7 +186,7 @@ When a new type is created:
 
 **Statistics**
 
-- 17 ancestries defined
+- 16 ancestries defined
 - 244 traits defined
 - Effect type distribution tracked
 - Cost distribution tracked
@@ -300,6 +300,7 @@ The `requirements` field provides structured prerequisite logic:
 ```
 
 **Field Descriptions:**
+
 - `requirements.hasTrait: string[]` — Trait requires any ONE of the listed traits (OR logic). This supersedes the simple `prerequisites` array for "any-of" scenarios.
 - `requirements.hasAllTraits: string[]` — Trait requires ALL listed traits to be selected (AND logic).
 - `requirements.prohibitsTraits: string[]` — Trait cannot be taken if any of these traits are selected.

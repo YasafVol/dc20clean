@@ -1,6 +1,6 @@
 /**
  * @file src/lib/rulesdata/equipment/options/shieldOptions.ts
- * @description Shield types, properties, and presets from DC20 0.10.
+ * @description Shield types, properties, and presets from DC20 0.10.5.
  */
 
 import { ShieldTypeDefinition, ShieldProperty, PresetShield } from '../schemas/shieldSchema';

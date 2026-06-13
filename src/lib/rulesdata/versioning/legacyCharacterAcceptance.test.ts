@@ -190,3 +190,29 @@ describe('legacy v0.10 character runtime acceptance', () => {
 		expect(JSON.stringify(legacyCharacter)).toBe(beforeTransform);
 	});
 });
+
+describe('current v0.10.5 character export acceptance', () => {
+	it('renders current spell IDs through the supported PDF route', () => {
+		const currentCharacter = {
+			...makeLegacyV010Character(),
+			id: 'current-v0105-acceptance',
+			finalName: 'Current v0.10.5 Acceptance',
+			rulesVersion: 'dc20-0.10.5',
+			selectedTalents: {},
+			selectedSpells: {
+				slot1: 'call-familiar',
+				slot2: 'absorb-elements'
+			}
+		} as SavedCharacter;
+
+		const compatibility = assessCharacterCompatibility(currentCharacter);
+		const pdfData = transformSavedCharacterToPdfData(currentCharacter);
+
+		expect(compatibility.state).toBe('editable');
+		expect(compatibility.canExportPdf).toBe(true);
+		expect(compatibility.pdfVersion).toBe('0.10');
+		expect(PdfExportDataSchema.safeParse(pdfData).success).toBe(true);
+		expect(pdfData.features).toContain('Call Familiar');
+		expect(pdfData.features).toContain('Absorb Elements');
+	});
+});

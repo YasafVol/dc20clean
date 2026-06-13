@@ -10,11 +10,13 @@ export const clericClass: ClassDefinition = {
 	className: 'Cleric',
 	classCategory: 'spellcaster',
 	startingEquipment: {
-		weaponsOrShields: ['1 Weapon or Light Shield'],
-		armor: ['1 set of Light Armor'],
-		spellFocus: ['1 Spell Focus (Holy Symbol)'],
-		tradeTools: ['1 set of Trade Tools'],
-		packs: 'Adventuring Pack (Coming Soon)'
+		arsenal:
+			'Choose 3 of any of the following items: Spell Focus, Weapon, or Light Shield. You can also choose Heavy Shield if you choose the Peace Domain option of the Cleric Order Feature.',
+		armor:
+			'1 set of Light Armor. You can choose 1 set of Heavy Armor instead if you choose the Peace Domain option of the Cleric Order Feature.',
+		tradeTools:
+			"Choose 1 of any of the following items: Brewer's Supplies, Calligrapher's Supplies, Herbalist's Supplies, Musical Instrument, or Sculptor's Tools.",
+		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	spellcasterPath: {
 		combatTraining: {

@@ -34,7 +34,12 @@ describe('v0.10 character upgrade', () => {
 				second: 'gravity-sink-hole',
 				third: 'force-dome'
 			},
-			selectedTalents: { barbarian_swift_berserker: 1 }
+			selectedTalents: { barbarian_swift_berserker: 1 },
+			languagesData: {
+				abyssal: { fluency: 'limited' },
+				infernal: { fluency: 'fluent' },
+				goblin: { fluency: 'limited' }
+			}
 		});
 
 		const plan = planCharacterUpgrade(character);
@@ -46,11 +51,16 @@ describe('v0.10 character upgrade', () => {
 		expect(plan.reworkedSelections).toEqual(
 			expect.arrayContaining([
 				expect.objectContaining({ fromId: 'gravity-sink-hole' }),
-				expect.objectContaining({ fromId: 'force-dome', toId: 'forcefield' })
+				expect.objectContaining({ fromId: 'force-dome', toId: 'forcefield' }),
+				expect.objectContaining({ fromId: 'abyssal', toId: 'fiendish' }),
+				expect.objectContaining({ fromId: 'infernal', toId: 'fiendish' })
 			])
 		);
 		expect(plan.deprecatedSelections).toEqual(
-			expect.arrayContaining([expect.objectContaining({ fromId: 'barbarian_swift_berserker' })])
+			expect.arrayContaining([
+				expect.objectContaining({ fromId: 'barbarian_swift_berserker' }),
+				expect.objectContaining({ fromId: 'goblin' })
+			])
 		);
 	});
 
@@ -63,6 +73,19 @@ describe('v0.10 character upgrade', () => {
 			},
 			unlockedFeatureIds: ['combat_readiness_brace', 'swift_berserker'],
 			selectedTalents: { barbarian_swift_berserker: 1, durable: 1 },
+			selectedMulticlassOption: 'grandmaster',
+			selectedMulticlassClass: 'fighter',
+			selectedMulticlassFeature: 'fighter_legendary_feature',
+			skillsData: { awareness: 1, insight: 2 },
+			tradesData: { arcana: 1, blacksmithing: 1 },
+			languagesData: {
+				common: { fluency: 'fluent' },
+				elvish: { fluency: 'limited' },
+				primordial: { fluency: 'fluent' },
+				abyssal: { fluency: 'limited' },
+				infernal: { fluency: 'fluent' },
+				goblin: { fluency: 'limited' }
+			},
 			selectedSpells: {
 				first: 'summon-familiar',
 				second: 'gravity-sink-hole',
@@ -99,6 +122,7 @@ describe('v0.10 character upgrade', () => {
 			barbarian_swift_berserker: 1,
 			durable: 1
 		});
+		expect(result.backupCharacter.selectedMulticlassOption).toBe('grandmaster');
 		expect(upgraded.rulesVersion).toBe('dc20-0.10.5');
 		expect(upgraded.rulesUpgradeSourceVersion).toBe('dc20-0.10');
 		expect(upgraded.rulesUpgradedAt).toBe('2026-06-12T10:00:00.000Z');
@@ -108,6 +132,18 @@ describe('v0.10 character upgrade', () => {
 		});
 		expect(upgraded.unlockedFeatureIds).toEqual(['combat_readiness_fortify']);
 		expect(upgraded.selectedTalents).toEqual({ durable: 1 });
+		expect(upgraded.selectedMulticlassOption).toBeUndefined();
+		expect(upgraded.selectedMulticlassClass).toBeUndefined();
+		expect(upgraded.selectedMulticlassFeature).toBeUndefined();
+		expect(upgraded.skillsData).toEqual(character.skillsData);
+		expect(upgraded.tradesData).toEqual(character.tradesData);
+		expect(result.backupCharacter.languagesData).toEqual(character.languagesData);
+		expect(upgraded.languagesData).toEqual({
+			common: { fluency: 'fluent' },
+			elvish: { fluency: 'limited' },
+			elemental: { fluency: 'fluent' },
+			fiendish: { fluency: 'fluent' }
+		});
 		expect(upgraded.selectedSpells).toEqual({
 			first: 'call-familiar',
 			second: 'gravity-well',

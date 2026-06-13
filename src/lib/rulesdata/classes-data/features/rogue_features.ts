@@ -4,11 +4,11 @@ export const rogueClass: ClassDefinition = {
 	className: 'Rogue',
 	classCategory: 'martial',
 	startingEquipment: {
-		weaponsOrShields: ['3 Weapons or Light Shields'],
-		rangedWeapons: ['Ranged Weapon with 20 Ammo', '3 Weapons with the Toss or Thrown Property'],
-		armor: ['1 set of Light Armor'],
-		tradeTools: ['1 set of Trade Tools'],
-		packs: ['X or Y Packs (Adventuring Packs Coming Soon)']
+		arsenal: 'Choose 3 of any of the following items: Weapon or Light Shield.',
+		armor: '1 set of Light Armor.',
+		tradeTools:
+			"Choose 1 of any of the following items: Cryptographer's Tools, Disguise Kit, Herbalist's Supplies, or Lockpicking Tools.",
+		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	martialPath: {
 		combatTraining: {

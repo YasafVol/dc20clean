@@ -2,7 +2,7 @@
 
 > Purpose: Single reference for Classes, Features, Talents, and Level Progression.
 > Status: Active
-> Last Updated: 2026-06-01
+> Last Updated: 2026-06-13
 
 ---
 
@@ -253,6 +253,10 @@ Each class has a `<class>.talents.ts` file (13 files) plus shared data in `talen
 - **Swift Berserker Removal**: Deprecated Swift Berserker for compatibility lookup while hiding it from current character creation selections.
 - **Path Progression Display**: `class.loader.ts` now surfaces `pathProgression: true` as "Path Progression" in formatted level rows.
 - **Progression Tests**: Added v0.10.5 resolver coverage for caster/hybrid MP totals, level 6-10 schedule, and level 5 Expert Feature coverage/effects.
+
+**Recent Updates (2026-06-13)**:
+
+- **Starting Equipment Migration**: Canonical class data now stores v0.10.5 starting equipment in structured `startingEquipment` blocks using `arsenal`, `spellFocuses`, `armor`, `tradeTools`, and `packs`, with conditional Heavy Armor/Heavy Shield language preserved where the source ties it to specific level-1 feature choices.
 
 **Recent Updates (2026-02-06)**:
 

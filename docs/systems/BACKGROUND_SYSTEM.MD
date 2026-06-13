@@ -1,5 +1,7 @@
 # DC20Clean – Background System (Skills, Trades, Languages)
 
+> Last Updated: 2026-06-13
+>
 > Purpose  
 > This document is the single authoritative reference ("bible") for everything related to Background: Skill/Trade/Language data, point budgets, conversions, validation, and UI wiring.
 > • Humans can follow the numbered guides & check-lists.  
@@ -58,7 +60,7 @@ flowchart LR
 - Skills: `ISkillData { id, name, attributeAssociation, description }`
 - Trades: `ITradeData { id, name, primaryAttribute, attributeAssociations[], description, tools? }`
   - For multi-attribute trades, see `docs/archive/TRADES_MULTI_ATTRIBUTE_SPEC.md` (canonical field: `attributeAssociations: string[]`).
-- Languages: `ILanguageData { id, name, type: 'standard'|'exotic', description }`
+- Languages: `ILanguageData { id, name, family: 'mortal'|'exotic'|'divine'|'outer', description, typicalSpeakers, checkDc, legacyIds? }`
 
 Background allocations in store:
 
@@ -66,6 +68,14 @@ Background allocations in store:
 - `tradesData: Record<string, number>` – mastery levels per trade
 - `languagesData: Record<string, { fluency: 'limited' | 'fluent' }>` – per-language fluency
 - Conversions: `{ skillToTrade, tradeToSkill, tradeToLanguage }` numbers on the store
+
+DC20 0.10.5 language catalog notes:
+
+- Selectable languages come from the official 0.10.5 families: Mortal, Exotic, Divine, and Outer.
+- Limited-language checks use family DCs from the rules text: Mortal 10, Exotic 15, Divine 15, Outer 20.
+- Legacy save IDs are preserved where practical for unchanged entries, and renamed families may expose alias metadata (`legacyIds`) so the current picker can surface old selections without reintroducing retired names into the catalog.
+- The explicit v0.10 upgrade reports both sides of consolidated languages before confirmation. When Abyssal and Infernal both convert to Fiendish, the converter keeps the strongest purchased fluency.
+- Unsupported legacy selections (for example `goblin` or `undercommon`) are disclosed as removals before confirmation, excluded from the upgraded allocation so their points are available for reselection, and preserved in the separate v0.10 backup.
 
 ---
 
@@ -143,6 +153,7 @@ Validation also exposes a `masteryLimits` block with:
 4. UI Wiring  
    – UI components should read `calculationResult.background` and disable submit when over budget.  
    – Languages: treat `common` as always fluent and free unless rules change.
+   – Do not expose removed language names in selection UIs; if a legacy save uses an aliased ID, map it onto the current 0.10.5 language card.
 
 5. Tests  
    – Add unit tests for any formula changes or new conversions.  
@@ -177,5 +188,5 @@ Validation also exposes a `masteryLimits` block with:
 
 ---
 
-> Last updated: 2026-01-25  
+> Last updated: 2026-06-13
 > Maintainer: @DC20Clean-Team

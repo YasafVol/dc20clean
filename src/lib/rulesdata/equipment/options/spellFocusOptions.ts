@@ -1,6 +1,6 @@
 /**
  * @file src/lib/rulesdata/equipment/options/spellFocusOptions.ts
- * @description Spell focus properties and presets from DC20 0.10.
+ * @description Spell focus properties and presets from DC20 0.10.5.
  */
 
 import { SpellFocusProperty, PresetSpellFocus } from '../schemas/spellFocusSchema';

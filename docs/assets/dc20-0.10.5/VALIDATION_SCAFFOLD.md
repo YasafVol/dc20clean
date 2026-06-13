@@ -1,6 +1,6 @@
 # DC20 0.10.5 Validation Scaffold
 
-Last Updated: 2026-06-12
+Last Updated: 2026-06-13
 
 ## Purpose
 
@@ -63,15 +63,15 @@ implementation and migration.
 
 ### Classes / progression / talents
 
-- [ ] `src/lib/rulesdata/rulesdata.spec.ts`
+- [x] `src/lib/rulesdata/rulesdata.spec.ts`
 - [x] `src/lib/rulesdata/classes-data/classProgressionResolver.test.ts`
 - [x] `src/lib/rulesdata/classes-data/features/subclasses.test.ts`
 - [x] `src/lib/rulesdata/classes-data/talents/talents.test.ts`
-- [ ] `src/lib/rulesdata/progression/multiclass.test.ts`
+- [x] `src/lib/rulesdata/progression/multiclass.test.ts`
 - [x] `src/lib/services/dc20v0105ProgressionResources.test.ts`
 - [x] level 5 Expert Feature coverage for every class is asserted
 - [x] caster and hybrid MP deltas are asserted by level
-- [ ] removed multiclass tiers remain compatible for old fixtures under the chosen policy
+- [x] removed multiclass tiers remain loadable for old fixtures but absent from current selection
 
 ### Spells
 
@@ -98,25 +98,25 @@ implementation and migration.
 
 ### Background
 
-- [ ] `src/lib/services/enhancedCharacterCalculator.spec.ts`
-- [ ] background budgets and mastery-cap rules still match system expectations
-- [ ] stored skill/trade/language fixtures remain valid under compatibility policy
+- [x] `src/lib/services/enhancedCharacterCalculator.spec.ts`
+- [x] background budgets and mastery-cap rules still match system expectations
+- [x] stored skill/trade/language fixtures remain valid under compatibility policy
 
 ### Equipment
 
 - [x] validator coverage for Toss / Thrown costs
 - [x] validator coverage for Returning prerequisite
-- [ ] import/export tests for stored custom equipment with stable property IDs
-- [ ] backward compatibility check for existing saved equipment payloads
+- [x] import/export tests for stored custom equipment with stable property IDs
+- [x] backward compatibility check for existing saved equipment payloads
 
 ## Integration Validation
 
 ### Calculator and validation pipeline
 
-- [ ] `src/lib/services/enhancedCharacterCalculator.aggregation.test.ts`
-- [ ] `src/lib/services/enhancedCharacterCalculator.spec.ts`
-- [ ] `src/lib/services/levelingRegression.test.ts`
-- [ ] `src/tests/parity/characterEngine.parity.spec.tsx`
+- [x] `src/lib/services/enhancedCharacterCalculator.aggregation.test.ts`
+- [x] `src/lib/services/enhancedCharacterCalculator.spec.ts`
+- [x] `src/lib/services/levelingRegression.test.ts`
+- [x] `src/tests/parity/characterEngine.parity.spec.tsx`
 - [x] version-aware fixtures exist for old and new rules versions
 
 ### Character sheet and export
@@ -137,18 +137,27 @@ implementation and migration.
 ## Verification Command Bundle
 
 ```bash
-npm run test:unit
+npm run test:unit -- --run
+npm run build
+npm run spells:validate:0105
 ```
 
 Targeted tests expected during implementation:
 
 ```bash
-npx vitest src/lib/rulesdata/classes-data/classProgressionResolver.test.ts
-npx vitest src/lib/rulesdata/classes-data/talents/talents.test.ts
-npx vitest src/lib/rulesdata/ancestries/ancestries.test.ts
-npx vitest src/lib/rulesdata/versioning/legacyCharacterAcceptance.test.ts
-npx vitest src/routes/character-sheet/hooks/CharacterSheetProvider.compatibility.test.tsx
-npx vitest src/lib/services/enhancedCharacterCalculator.spec.ts
-npx vitest src/lib/services/levelingRegression.test.ts
-npx vitest src/tests/parity/characterEngine.parity.spec.tsx
+npx vitest run --project server \
+  src/lib/rulesdata/classes-data/classProgressionResolver.test.ts \
+  src/lib/rulesdata/classes-data/talents/talents.test.ts \
+  src/lib/rulesdata/ancestries/ancestries.test.ts \
+  src/lib/rulesdata/versioning/compatibility.test.ts \
+  src/lib/rulesdata/versioning/characterUpgrade.test.ts \
+  src/lib/rulesdata/versioning/legacyCharacterAcceptance.test.ts \
+  src/lib/rulesdata/equipment/storage/equipmentStorage.test.ts \
+  src/lib/rulesdata/equipment/validation/equipmentValidator.test.ts \
+  src/lib/services/enhancedCharacterCalculator.spec.ts \
+  src/lib/services/levelingRegression.test.ts
+
+npx vitest run --project client \
+  src/routes/character-sheet/hooks/CharacterSheetProvider.compatibility.test.tsx \
+  src/tests/parity/characterEngine.parity.spec.tsx
 ```

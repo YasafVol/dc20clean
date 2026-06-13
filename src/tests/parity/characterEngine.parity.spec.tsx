@@ -101,7 +101,7 @@ const fixtures: CharacterInProgressStoreData[] = [
 			investigation: 1
 		},
 		tradesData: {
-			scribing: 1
+			illustration: 1
 		},
 		languagesData: {
 			common: { fluency: 'fluent' },
@@ -183,7 +183,7 @@ function runLegacyCalculations(fixtureState: CharacterInProgressStoreData) {
 	const languagePointsUsed = Object.entries(
 		fixtureState.languagesData || { common: { fluency: 'fluent' } }
 	).reduce(
-		(sum, [id, d]: [string, any]) =>
+		(sum, [id, d]: [string, { fluency?: string }]) =>
 			id === 'common' ? sum : sum + (d.fluency === 'limited' ? 1 : 2),
 		0
 	);

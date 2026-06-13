@@ -4,10 +4,11 @@ export const monkClass: ClassDefinition = {
 	className: 'Monk',
 	classCategory: 'martial',
 	startingEquipment: {
-		weaponsOrShields: ['3 Weapons', '3 Weapons with the Toss or Thrown Property'],
-		armor: ['1 set of Light Armor'],
-		tradeTools: ['1 set of Trade Tools'],
-		packs: ['X or Y Packs (Adventuring Packs Coming Soon)']
+		arsenal: '2 Weapons.',
+		armor: '1 set of Light Armor.',
+		tradeTools:
+			"Choose 2 of any of the following items: Brewer's Supplies, Calligrapher's Supplies, Cooking Utensils, or Weaver's Tools.",
+		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	martialPath: {
 		combatTraining: {

@@ -59,9 +59,13 @@ vi.mock('../../lib/rulesdata/loaders/class-features.loader', () => ({
 			return {
 				className: 'Monk',
 				startingEquipment: {
-					weaponsOrShields: ['2 Weapons'],
-					armor: ['1 set of Light Armor'],
-					packs: ['Adventuring Pack']
+					arsenal: 'Choose 2 Weapons.',
+					rangedWeapons: ['Shortbow with 20 Ammo', '3 Throwing Knives'],
+					spellFocuses: '2 Spell Focuses.',
+					armor: '1 set of Light Armor.',
+					tradeTools:
+						"Choose 2 of any of the following items: Brewer's Supplies or Weaver's Tools.",
+					packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 				},
 				martialPath: {
 					combatTraining: {
@@ -375,13 +379,29 @@ describe('ClassFeatures Component - Progressive Display', () => {
 	});
 
 	describe('Starting Equipment Section', () => {
-		it('should display starting equipment section', () => {
+		it('should display starting equipment section with all supported fields', () => {
 			mockState.level = 1;
 
 			render(<ClassFeatures />);
 
 			expect(screen.getByText('Starting Equipment')).toBeInTheDocument();
 			expect(screen.getByText('Equipment Package')).toBeInTheDocument();
+			expect(screen.getByText('Arsenal')).toBeInTheDocument();
+			expect(screen.getByText('Choose 2 Weapons.')).toBeInTheDocument();
+			expect(screen.getByText('Ranged Weapons')).toBeInTheDocument();
+			expect(screen.getByText('Shortbow with 20 Ammo, 3 Throwing Knives')).toBeInTheDocument();
+			expect(screen.getByText('Spell Focuses')).toBeInTheDocument();
+			expect(screen.getByText('2 Spell Focuses.')).toBeInTheDocument();
+			expect(screen.getByText('Trade Tools')).toBeInTheDocument();
+			expect(
+				screen.getByText(
+					"Choose 2 of any of the following items: Brewer's Supplies or Weaver's Tools."
+				)
+			).toBeInTheDocument();
+			expect(screen.getByText('Adventuring Pack')).toBeInTheDocument();
+			expect(
+				screen.getByText('Choose 1 of the following packs: (Adventuring Packs Coming Soon).')
+			).toBeInTheDocument();
 		});
 	});
 

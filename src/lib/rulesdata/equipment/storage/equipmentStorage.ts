@@ -8,12 +8,14 @@ import { CustomWeapon } from '../schemas/weaponSchema';
 import { CustomArmor } from '../schemas/armorSchema';
 import { CustomShield } from '../schemas/shieldSchema';
 import { CustomSpellFocus } from '../schemas/spellFocusSchema';
+import { EQUIPMENT_RULES_VERSION } from '../schemas/baseEquipment';
 
 const STORAGE_KEY = 'customEquipment';
 const STORAGE_VERSION = 1;
 
 interface StoredEquipmentData {
 	version: number;
+	rulesVersion: string;
 	weapons: CustomWeapon[];
 	armor: CustomArmor[];
 	shields: CustomShield[];
@@ -27,6 +29,7 @@ interface StoredEquipmentData {
 function getDefaultStorageData(): StoredEquipmentData {
 	return {
 		version: STORAGE_VERSION,
+		rulesVersion: EQUIPMENT_RULES_VERSION,
 		weapons: [],
 		armor: [],
 		shields: [],
@@ -46,6 +49,7 @@ function loadStorageData(): StoredEquipmentData {
 		// Ensure all arrays exist (migration safety)
 		return {
 			version: parsed.version || STORAGE_VERSION,
+			rulesVersion: parsed.rulesVersion || '0.10',
 			weapons: parsed.weapons || [],
 			armor: parsed.armor || [],
 			shields: parsed.shields || [],
@@ -65,6 +69,10 @@ function saveStorageData(data: StoredEquipmentData): void {
 	}
 }
 
+function markCurrentRules(data: StoredEquipmentData): void {
+	data.rulesVersion = EQUIPMENT_RULES_VERSION;
+}
+
 // ================================================================= //
 // PUBLIC API - WEAPONS
 // ================================================================= //
@@ -79,6 +87,7 @@ export function getCustomWeapon(id: string): CustomWeapon | undefined {
 
 export function saveCustomWeapon(weapon: CustomWeapon): void {
 	const data = loadStorageData();
+	markCurrentRules(data);
 	const existingIndex = data.weapons.findIndex((w) => w.id === weapon.id);
 
 	if (existingIndex >= 0) {
@@ -96,6 +105,7 @@ export function saveCustomWeapon(weapon: CustomWeapon): void {
 
 export function deleteCustomWeapon(id: string): void {
 	const data = loadStorageData();
+	markCurrentRules(data);
 	data.weapons = data.weapons.filter((w) => w.id !== id);
 	saveStorageData(data);
 }
@@ -114,6 +124,7 @@ export function getCustomArmor(id: string): CustomArmor | undefined {
 
 export function saveCustomArmor(armor: CustomArmor): void {
 	const data = loadStorageData();
+	markCurrentRules(data);
 	const existingIndex = data.armor.findIndex((a) => a.id === armor.id);
 
 	if (existingIndex >= 0) {
@@ -131,6 +142,7 @@ export function saveCustomArmor(armor: CustomArmor): void {
 
 export function deleteCustomArmor(id: string): void {
 	const data = loadStorageData();
+	markCurrentRules(data);
 	data.armor = data.armor.filter((a) => a.id !== id);
 	saveStorageData(data);
 }
@@ -149,6 +161,7 @@ export function getCustomShield(id: string): CustomShield | undefined {
 
 export function saveCustomShield(shield: CustomShield): void {
 	const data = loadStorageData();
+	markCurrentRules(data);
 	const existingIndex = data.shields.findIndex((s) => s.id === shield.id);
 
 	if (existingIndex >= 0) {
@@ -166,6 +179,7 @@ export function saveCustomShield(shield: CustomShield): void {
 
 export function deleteCustomShield(id: string): void {
 	const data = loadStorageData();
+	markCurrentRules(data);
 	data.shields = data.shields.filter((s) => s.id !== id);
 	saveStorageData(data);
 }
@@ -184,6 +198,7 @@ export function getCustomSpellFocus(id: string): CustomSpellFocus | undefined {
 
 export function saveCustomSpellFocus(focus: CustomSpellFocus): void {
 	const data = loadStorageData();
+	markCurrentRules(data);
 	const existingIndex = data.spellFocuses.findIndex((f) => f.id === focus.id);
 
 	if (existingIndex >= 0) {
@@ -201,6 +216,7 @@ export function saveCustomSpellFocus(focus: CustomSpellFocus): void {
 
 export function deleteCustomSpellFocus(id: string): void {
 	const data = loadStorageData();
+	markCurrentRules(data);
 	data.spellFocuses = data.spellFocuses.filter((f) => f.id !== id);
 	saveStorageData(data);
 }
@@ -276,6 +292,7 @@ export function importEquipmentFromJson(jsonString: string): { success: boolean;
 
 		saveStorageData({
 			version: STORAGE_VERSION,
+			rulesVersion: parsed.rulesVersion || '0.10',
 			weapons: parsed.weapons,
 			armor: parsed.armor,
 			shields: parsed.shields,

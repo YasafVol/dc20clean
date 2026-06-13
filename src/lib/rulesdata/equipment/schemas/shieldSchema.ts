@@ -1,7 +1,7 @@
 /**
  * @file src/lib/rulesdata/equipment/schemas/shieldSchema.ts
  * @description Schema definitions for custom shields.
- * DC20 Rules Version: 0.10
+ * DC20 Rules Version: 0.10.5
  */
 
 import { BaseEquipment, BaseProperty } from './baseEquipment';

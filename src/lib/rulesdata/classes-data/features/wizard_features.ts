@@ -9,11 +9,11 @@ export const wizardClass: ClassDefinition = {
 	className: 'Wizard',
 	classCategory: 'spellcaster',
 	startingEquipment: {
-		weaponsOrShields: ['1 Weapon'],
-		armor: ['1 set of Light Armor'],
-		spellFocus: ['1 Spell Focus (Arcane Focus or Spellbook)'],
-		tradeTools: ['1 set of Trade Tools'],
-		packs: 'Adventuring Pack (Coming Soon)'
+		spellFocuses: '2 Spell Focuses.',
+		armor: '1 set of Light Armor.',
+		tradeTools:
+			"Choose 2 of any of the following items: Alchemist's Supplies, Calligrapher's Supplies, Glassblower's Tools, or Herbalist's Supplies.",
+		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	spellcasterPath: {
 		spellList: {

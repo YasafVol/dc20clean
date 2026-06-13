@@ -2,7 +2,7 @@
 
 > Purpose: Single reference for spell data model, assignment rules, UI flows, and validation.
 > Status: Active
-> Last Updated: 2026-06-12
+> Last Updated: 2026-06-13
 
 ---
 
@@ -106,7 +106,7 @@ getNonCantrips(): Spell[]
 - **Sources Added**: Arcane/Divine/Primal determine class access
 - **Tags System**: Flexible tagging for filtering and class access
 - **Enhancement System**: Spells have enhancement options with AP/MP costs
-- **125 Spells**: Complete extraction from v0.10 rules (counts per school updated 2026-02-06)
+- **160 Spells / 709 Enhancements**: Deterministically generated from the v0.10.5 source
 
 **Class Access Changes:**
 
@@ -213,11 +213,12 @@ spell dataset.
 
 ## 7. Troubleshooting
 
-- Spell not visible: confirm it's exported via the school's `index.ts` and main `index.ts`.
+- Spell not visible: run `npm run spells:validate:0105`, then confirm the source entry is
+  present in `generated/v0105.generated.ts` and exported through the main `index.ts`.
 - MP not matching: ensure effects target `mpMax`; calculator aggregates into `finalMpMax`.
 - Class access issues: verify class spell access rules match source/school/tag combinations.
 
 ---
 
-> Last updated: 2026-06-12
+> Last updated: 2026-06-13
 > Maintainer: @DC20Clean-Team

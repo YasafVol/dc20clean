@@ -12,7 +12,7 @@
 import { describe, it, expect } from 'vitest';
 import { allTalents, findTalentById, selectableTalents } from './talent.loader';
 import { generalTalents, multiclassTalents } from './talents.data';
-import { MULTICLASS_TIERS } from '../../progression/multiclass';
+import { ALL_MULTICLASS_TIERS, MULTICLASS_TIERS } from '../../progression/multiclass';
 
 // Import all class-specific talents
 import { barbarianTalents } from './barbarian.talents';
@@ -235,7 +235,7 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 		});
 
 		it('should have valid prerequisites when present', () => {
-			for (const { name, talents } of allClassTalents) {
+			for (const { talents } of allClassTalents) {
 				for (const talent of talents) {
 					if (talent.prerequisites) {
 						// Prerequisites can be an object with classId, feature, subclass, level fields
@@ -263,7 +263,7 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 		});
 
 		it('should reference valid multiclass tiers', () => {
-			const validTierIds = MULTICLASS_TIERS.map((t) => t.id);
+			const validTierIds = ALL_MULTICLASS_TIERS.map((t) => t.id);
 
 			for (const talent of multiclassTalents) {
 				expect(talent.id).toMatch(/^multiclass_/);
@@ -277,7 +277,7 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 		it('should have correct level requirements', () => {
 			for (const talent of multiclassTalents) {
 				const tierId = talent.id.replace('multiclass_', '');
-				const tier = MULTICLASS_TIERS.find((t) => t.id === tierId);
+				const tier = ALL_MULTICLASS_TIERS.find((t) => t.id === tierId);
 
 				if (tier && talent.levelRequired !== undefined) {
 					expect(talent.levelRequired, `${talent.name} level requirement should match tier`).toBe(
@@ -361,6 +361,10 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 			expect(selectableTalents.find((talent) => talent.id === 'barbarian_swift_berserker')).toBe(
 				undefined
 			);
+			for (const id of ['multiclass_grandmaster', 'multiclass_legendary']) {
+				expect(findTalentById(id)?.deprecated).toBe(true);
+				expect(selectableTalents.find((talent) => talent.id === id)).toBeUndefined();
+			}
 		});
 
 		it('should handle missing files gracefully', () => {

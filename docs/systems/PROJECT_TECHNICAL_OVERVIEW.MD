@@ -2,7 +2,7 @@
 
 > Purpose: Technical overview of the DC20Clean codebase: stack, scripts, testing, project structure, and contribution expectations.
 > Status: Active
-> Last Updated: 2026-06-01
+> Last Updated: 2026-06-13
 
 ## Tech Stack
 
@@ -105,7 +105,7 @@ src/
 │   │   ├── martials/              #   Maneuver data
 │   │   ├── progression/           #   Leveling, paths, multiclass
 │   │   ├── schemas/               #   TypeScript + Zod schemas
-│   │   └── spells-data/           #   125 spells organized by school
+│   │   └── spells-data/           #   160 generated v0.10.5 spells
 │   ├── services/                  # Business logic (calculator, spell assignment, monster calc)
 │   ├── storage/                   # Storage adapters (localStorage, Convex)
 │   ├── stores/                    # React Context providers

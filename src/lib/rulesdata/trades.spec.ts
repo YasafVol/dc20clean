@@ -2,11 +2,11 @@ import { describe, it, expect } from 'vitest';
 import { tradesData } from './trades';
 
 describe('tradesData', () => {
-	it('should contain exactly 28 trades as per DC20 0.95 rules', () => {
+	it('contains the 28 trades listed in DC20 v0.10.5', () => {
 		expect(tradesData).toHaveLength(28);
 	});
 
-	it('should contain all official DC20 0.95 trades', () => {
+	it('contains every official DC20 v0.10.5 trade', () => {
 		const tradeIds = tradesData.map((t) => t.id);
 
 		// Artistry (3)

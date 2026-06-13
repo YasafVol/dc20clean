@@ -1,6 +1,6 @@
 /**
  * @file src/lib/rulesdata/equipment/options/weaponOptions.ts
- * @description Weapon types, styles, properties, and presets from DC20 0.10.
+ * @description Weapon types, styles, properties, and presets from DC20 0.10.5.
  */
 
 import {

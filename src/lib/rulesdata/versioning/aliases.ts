@@ -253,38 +253,42 @@ export const RULES_ALIASES: RulesAliasEntry[] = [
 	{
 		domain: 'spell',
 		fromId: 'force-dome',
+		toId: 'forcefield',
 		fromRulesVersion: RULES_VERSION_010,
 		toRulesVersion: RULES_VERSION_010_5,
-		status: 'ambiguous',
-		compatibilityState: 'view-only',
-		note: 'Ambiguous Forcefield target; HITL decision required.'
+		status: 'reworked',
+		compatibilityState: 'upgrade-required',
+		note: 'Force Dome and Wall of Force were merged into the reworked v0.10.5 Forcefield spell.'
 	},
 	{
 		domain: 'spell',
 		fromId: 'Force Dome',
+		toId: 'Forcefield',
 		fromRulesVersion: RULES_VERSION_010,
 		toRulesVersion: RULES_VERSION_010_5,
-		status: 'ambiguous',
-		compatibilityState: 'view-only',
-		note: 'Display-name form of ambiguous Forcefield target.'
+		status: 'reworked',
+		compatibilityState: 'upgrade-required',
+		note: 'Display-name form of the explicit Forcefield rework.'
 	},
 	{
 		domain: 'spell',
 		fromId: 'wall-of-force',
+		toId: 'forcefield',
 		fromRulesVersion: RULES_VERSION_010,
 		toRulesVersion: RULES_VERSION_010_5,
-		status: 'ambiguous',
-		compatibilityState: 'view-only',
-		note: 'Ambiguous Forcefield target; HITL decision required.'
+		status: 'reworked',
+		compatibilityState: 'upgrade-required',
+		note: 'Force Dome and Wall of Force were merged into the reworked v0.10.5 Forcefield spell.'
 	},
 	{
 		domain: 'spell',
 		fromId: 'Wall of Force',
+		toId: 'Forcefield',
 		fromRulesVersion: RULES_VERSION_010,
 		toRulesVersion: RULES_VERSION_010_5,
-		status: 'ambiguous',
-		compatibilityState: 'view-only',
-		note: 'Display-name form of ambiguous Forcefield target.'
+		status: 'reworked',
+		compatibilityState: 'upgrade-required',
+		note: 'Display-name form of the explicit Forcefield rework.'
 	}
 ];
 

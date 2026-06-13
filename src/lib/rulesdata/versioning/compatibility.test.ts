@@ -105,7 +105,7 @@ describe('rules version compatibility', () => {
 		});
 	});
 
-	it('flags ambiguous aliases as view-only decisions', () => {
+	it('classifies Force Dome as an explicit-upgrade rework to Forcefield', () => {
 		const alias = resolveRulesAlias('spell', 'force-dome', {
 			fromRulesVersion: 'dc20-0.10',
 			toRulesVersion: 'dc20-0.10.5'
@@ -114,8 +114,9 @@ describe('rules version compatibility', () => {
 		expect(alias).toMatchObject({
 			domain: 'spell',
 			fromId: 'force-dome',
-			status: 'ambiguous',
-			compatibilityState: 'view-only'
+			toId: 'forcefield',
+			status: 'reworked',
+			compatibilityState: 'upgrade-required'
 		});
 	});
 
@@ -195,7 +196,7 @@ describe('rules version compatibility', () => {
 			}
 		});
 
-		expect(result.state).toBe('view-only');
+		expect(result.state).toBe('upgrade-required');
 		expect(result.aliasDecisions).toEqual(
 			expect.arrayContaining([
 				expect.objectContaining({ domain: 'feature', fromId: 'swift_berserker' }),

@@ -1,12 +1,11 @@
 # DC20 0.10.5 Validation Scaffold
 
-Last Updated: 2026-06-01
+Last Updated: 2026-06-12
 
 ## Purpose
 
-This scaffold defines the validation work needed before and after any future v0.10.5 implementation. It is grouped by audit lane so work can be executed in parallel later.
-
-This file does not imply that implementation has started.
+This scaffold records completed and remaining validation for the v0.10.5
+implementation and migration.
 
 ## Validation Principles
 
@@ -19,19 +18,19 @@ This file does not imply that implementation has started.
 
 ### Source bundle integrity
 
-- [ ] `DC20 0.10.5 clean.md` exists and has page markers
-- [ ] `chunks.json` exists and is parseable
-- [ ] `page-index.json` exists and is parseable
-- [ ] `CLEANUP_REPORT.md` and `CHANGELOG_RECONSTRUCTION.md` agree on known high-risk table/chunk areas
-- [ ] `CHANGE_AUDIT.md` entry count mismatch is documented and resolved at the queue level
+- [x] `DC20 0.10.5 clean.md` exists and has page markers
+- [x] `chunks.json` exists and is parseable
+- [x] `page-index.json` exists and is parseable
+- [x] `CLEANUP_REPORT.md` and `CHANGELOG_RECONSTRUCTION.md` identify known high-risk table/chunk areas
+- [x] `CHANGE_AUDIT.md` entry count mismatch is documented and resolved at the queue level
 
 ### Artifact completeness
 
-- [ ] `IMPLEMENTATION_QUEUE.md` exists
-- [ ] `ID_STABILITY_AND_ALIASES.md` exists
-- [ ] `VALIDATION_SCAFFOLD.md` exists
-- [ ] every implementation queue item has a source reference
-- [ ] every rename/removal has a compatibility classification
+- [x] `IMPLEMENTATION_QUEUE.md` exists
+- [x] `ID_STABILITY_AND_ALIASES.md` exists
+- [x] `VALIDATION_SCAFFOLD.md` exists
+- [x] every implementation queue item has a source reference
+- [x] every rename/removal has a compatibility classification
 
 ## Runtime Compatibility Validation
 
@@ -39,7 +38,7 @@ This file does not imply that implementation has started.
 
 - [x] saved character contract supports additive `rulesVersion`
 - [x] draft character state carries `rulesVersion` or explicit compatibility metadata
-- [ ] imported characters preserve incoming version metadata
+- [x] imported characters preserve incoming version metadata
 - [x] `schemaVersion` handling is internally consistent
 
 ### Compatibility policy
@@ -80,7 +79,7 @@ This file does not imply that implementation has started.
 - [x] `Poison` tag is filterable and valid
 - [x] renamed spell fixtures resolve by alias when allowed
 - [x] removed or list-moved spells are classified correctly
-- [ ] slot validation handles old spell IDs under compatibility rules
+- [x] slot validation handles old spell IDs under compatibility rules
 - [x] PDF/export still renders old and new spell selections as expected
 
 ### Maneuvers
@@ -118,7 +117,7 @@ This file does not imply that implementation has started.
 - [ ] `src/lib/services/enhancedCharacterCalculator.spec.ts`
 - [ ] `src/lib/services/levelingRegression.test.ts`
 - [ ] `src/tests/parity/characterEngine.parity.spec.tsx`
-- [ ] version-aware fixtures exist for old and new rules versions
+- [x] version-aware fixtures exist for old and new rules versions
 
 ### Character sheet and export
 
@@ -129,13 +128,13 @@ This file does not imply that implementation has started.
 
 ## Manual Review Checklist
 
-- [ ] inspect every queue item marked `HITL required`
-- [ ] approve or reject every alias candidate
-- [ ] approve the old-character compatibility policy
-- [ ] confirm which items are `no-op`
-- [ ] confirm which items are deferred to v11
+- [x] inspect every queue item marked `HITL required`
+- [x] approve or reject every alias candidate
+- [x] approve the old-character compatibility policy
+- [x] confirm which items are `no-op`
+- [x] confirm which items are deferred to v11
 
-## Suggested Command Bundle For Future Implementation
+## Verification Command Bundle
 
 ```bash
 npm run test:unit

@@ -13,8 +13,8 @@
 - Ordering is fixed: 1) Class & Features → 2) Leveling (conditional when level > 1) → 3) Ancestry → 4) Attributes → 5) Background → 6) Spells & Maneuvers → 7) Character Name
 - State lives in `characterContext.tsx`; each stage must read/write through the reducer actions (`SET_CLASS`, `SET_TRAITS`, `UPDATE_SKILLS`, etc.)
 - Draft state carries both `schemaVersion` and `rulesVersion`; missing `rulesVersion` is inferred as `dc20-0.10`.
-- Edit and level-up entry points check runtime compatibility before initializing the wizard. `upgrade-required` characters can use the explicit upgrade action on the load-character page; `view-only` characters remain blocked until every ambiguous selection has an approved mapping.
-- The explicit v0.10 to v0.10.5 action shows its conversion report, creates a separate read-only v0.10 backup, applies approved aliases/reworks, removes disclosed deprecated selections, and only then unlocks edit and level-up for the upgraded original.
+- Edit and level-up entry points check runtime compatibility before initializing the wizard. `upgrade-required` v0.10 characters can use the explicit upgrade action on the load-character page; unsupported rules versions remain view-only.
+- The explicit v0.10 to v0.10.5 action shows its conversion report, creates a separate read-only v0.10 backup, applies approved aliases/reworks (including the Force Dome and Wall of Force merge into Forcefield), removes disclosed deprecated selections, and only then unlocks edit and level-up for the upgraded original.
 - Validation gating: `CharacterCreation.tsx` calls `isStepCompleted(stepNumber)` before allowing navigation; each stage enforces completion via calculator outputs (ancestry/background budgets, attribute points remaining, spell counts)
 - Calculator contract: `calculateCharacterWithBreakdowns(convertToEnhancedBuildData(state))` runs on every state change and returns:
   - `stats.finalAttributePoints`, `background`, `ancestry`, `breakdowns`, `validation`

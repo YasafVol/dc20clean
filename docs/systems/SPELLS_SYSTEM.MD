@@ -128,7 +128,7 @@ getNonCantrips(): Spell[]
 - True spell renames route through `getSpellById()` via `RULES_ALIASES`; saved IDs are not rewritten during lookup.
 - Changelog-confirmed new v0.10.5 spells are present in the generated source catalog.
 - Removed spells and source-list moves are applied only to the current selectable catalog. Historical saved spell objects remain renderable/exportable from saved character data.
-- Reworked or ambiguous spell identities are never silently remapped during normal load. The explicit character upgrade reports and maps approved reworks such as `gravity-sink-hole` to `gravity-well`; ambiguous identities such as `force-dome` and `wall-of-force` block automated conversion.
+- Reworked spell identities are never silently remapped during normal load. The explicit character upgrade reports and maps approved reworks: `gravity-sink-hole` to `gravity-well`, and both `force-dome` and `wall-of-force` to `forcefield`.
 - Character completion and PDF export use alias-aware spell lookup for legacy spell IDs before falling back to saved display text.
 - The upgrade rewrites spell IDs and saved display-name forms across slot selections, top-level spell arrays, and `characterState.spells`, while preserving a separate v0.10 backup.
 
@@ -207,6 +207,7 @@ spell dataset.
 
 - `e2e/09-spells.e2e.spec.ts` — Adds a spell, filters, and deletes; validates mobile/desktop fallbacks.
 - `e2e/12-exhaustion-info.e2e.spec.ts` — Feature info buttons include class feature info affecting spells.
+- `e2e/13-character-upgrade.e2e.spec.ts` — Exercises the explicit v0.10 to v0.10.5 upgrade, approved spell rewrites, deprecated-selection removal, backup creation, reload persistence, and unsupported-version blockers.
 
 ---
 

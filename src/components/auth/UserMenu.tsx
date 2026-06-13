@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useConvexAuth } from 'convex/react';
 import { useAuthActions } from '@convex-dev/auth/react';
 import styled from 'styled-components';
 import { theme } from '../../routes/character-sheet/styles/theme';
 import { logger } from '../../lib/utils/logger';
 import { useTranslation } from 'react-i18next';
+import { useAppAuth } from './AuthModeContext';
 
 export interface UserMenuProps {
 	/** Additional class names */
@@ -108,7 +108,7 @@ export function UserMenu({ className, onSignOut }: UserMenuProps) {
 	const [isLoading, setIsLoading] = React.useState(false);
 	const { t } = useTranslation();
 
-	const { isAuthenticated: isConvexAuthenticated, isLoading: isAuthLoading } = useConvexAuth();
+	const { isAuthenticated: isConvexAuthenticated, isLoading: isAuthLoading } = useAppAuth();
 	const { signOut } = useAuthActions();
 	const bypassAuth = import.meta.env.VITE_BYPASS_AUTH === 'true';
 	const isAuthenticated = bypassAuth ? true : isConvexAuthenticated;

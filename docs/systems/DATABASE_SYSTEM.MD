@@ -145,6 +145,11 @@ The storage backend is selected via environment variable:
 const storage = getDefaultStorage();
 ```
 
+Local mode does not create a Convex client or mount Convex authentication, so
+`VITE_CONVEX_URL` is not required for the default localStorage application.
+When `VITE_USE_CONVEX=true`, startup requires `VITE_CONVEX_URL` and fails with a
+configuration error if it is missing.
+
 ---
 
 ## 4. localStorage Implementation
@@ -277,6 +282,8 @@ encounters: defineTable({
 - **Google OAuth** and **GitHub OAuth** via Convex Auth
 - User ID linked to all records
 - Data only visible to owner (except approved homebrew)
+- Convex authentication is mounted only when `VITE_USE_CONVEX=true`; local mode
+  uses an unauthenticated app-auth context and keeps cloud-only routes hidden.
 
 ### 5.6 Auth UI & Access Control
 

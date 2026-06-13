@@ -1,6 +1,6 @@
 # DC20 0.10.5 Implementation Queue
 
-Last Updated: 2026-06-01
+Last Updated: 2026-06-12
 
 ## Purpose
 
@@ -330,17 +330,17 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 - Source: `docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md`, page 269, lines 17662-17727
 - Baseline: targeted v0.10 spell comparisons only
 - Systems: Spells / Character Creation / Character Sheet / PDF Export
-- Current implementation: the v0.10 base school files are preserved for historical comparison, while the current selectable catalog is deterministically generated from `DC20 0.10.5 clean.md` by `scripts/spells/dc20-0105-spells.mjs`. The generator validates 160 spells and 709 enhancements before replacing `v0105.generated.ts`. Approved spell renames route through `RULES_ALIASES` and `getSpellById()` without rewriting saved IDs, while reworked/ambiguous IDs remain fenced as `upgrade-required` or `view-only`.
+- Current implementation: the current selectable catalog is deterministically generated from `DC20 0.10.5 clean.md` by `scripts/spells/dc20-0105-spells.mjs`. The generator validates 160 spells and 709 enhancements before replacing `v0105.generated.ts`; the old v0.10 school catalogs are not exported at runtime. Approved spell renames route through `RULES_ALIASES` and `getSpellById()` without rewriting saved IDs. Material reworks remain `upgrade-required` until the user confirms the explicit conversion, which creates a backup before rewriting approved IDs.
 - Required change:
   - renamed and reworked spells: implemented with alias/rework/view-only classification
-  - removed or list-moved spells: implemented in the catalog overlay
-  - new spell additions: implemented in the catalog overlay
+  - removed or list-moved spells: implemented in the generated current catalog
+  - new spell additions: implemented in the generated current catalog
 - Data shape impact: none expected, but migration-sensitive
 - Stable ID / alias impact: confirmed
 - Calculator/effect impact: possible
 - UI impact: confirmed
 - Storage/export impact: confirmed
-- HITL decision: user approved moving forward with compatibility-first spell replacement; ambiguous Forcefield and reworked Gravity Well identities remain fenced instead of silently remapped
+- HITL decision: resolved. Gravity Sink Hole rewrites to Gravity Well, and both Force Dome and Wall of Force rewrite to Forcefield during explicit upgrade only; normal lookup never mutates saved IDs.
 - Code touchpoints:
   - `src/lib/rulesdata/spells-data/**/*.ts`
   - `src/lib/rulesdata/spells-data/index.ts`
@@ -354,6 +354,7 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
   - alias-backed spell lookup fixtures
   - old saved character spell export fixtures
   - current catalog addition/removal/source-list fixtures
+  - explicit upgrade unit and E2E fixtures, including Forcefield merge inputs and backup persistence
 
 ### VRR-012: Maneuver Rewrite / Rename Compatibility
 
@@ -415,7 +416,7 @@ It replaces the broad `CHANGE_AUDIT.md` ledger as the execution-facing artifact.
 ## No-Op / Deferred Guidance
 
 - Treat typo, copy, layout, and example-only fixes as `no-op` unless the app renders the exact prose.
-- Defer destructive schema work, immutable versioned storage, and forced conversion flows to v11 unless a new requirement proves otherwise.
+- Defer destructive schema work and immutable versioned storage to v11. The v0.10.5 conversion remains explicit and user-confirmed rather than forced.
 
 ## Secondary Verification Backlog
 

@@ -11,7 +11,7 @@
 import * as React from 'react';
 import { SignIn } from './SignIn';
 import { Dialog, DialogContent } from '../ui/dialog';
-import { useConvexAuth } from 'convex/react';
+import { useAppAuth } from './AuthModeContext';
 
 export interface AuthGuardProps {
 	/** Content to show when authenticated */
@@ -26,9 +26,9 @@ export interface AuthGuardProps {
  * Feature gate that shows sign-in when user tries to access protected feature
  */
 export function AuthGuard({ children, fallback, feature = 'general' }: AuthGuardProps) {
-	const { isAuthenticated, isLoading } = useConvexAuth();
+	const { isConvexEnabled, isAuthenticated, isLoading } = useAppAuth();
 	const bypassAuth = import.meta.env.VITE_BYPASS_AUTH === 'true';
-	const isAllowed = bypassAuth ? true : isAuthenticated;
+	const isAllowed = !isConvexEnabled || bypassAuth ? true : isAuthenticated;
 
 	if (isLoading) {
 		return null;
@@ -48,7 +48,7 @@ export function AuthGuard({ children, fallback, feature = 'general' }: AuthGuard
  * Use this to conditionally show/hide features
  */
 export function useIsAuthenticated(): boolean {
-	const { isAuthenticated, isLoading } = useConvexAuth();
+	const { isAuthenticated, isLoading } = useAppAuth();
 	const bypassAuth = import.meta.env.VITE_BYPASS_AUTH === 'true';
 	return !isLoading && (bypassAuth ? true : isAuthenticated);
 }

@@ -31,7 +31,8 @@ describe('v0.10 character upgrade', () => {
 		const character = makeCharacter({
 			selectedSpells: {
 				first: 'summon-familiar',
-				second: 'gravity-sink-hole'
+				second: 'gravity-sink-hole',
+				third: 'force-dome'
 			},
 			selectedTalents: { barbarian_swift_berserker: 1 }
 		});
@@ -43,7 +44,10 @@ describe('v0.10 character upgrade', () => {
 			expect.arrayContaining([expect.objectContaining({ fromId: 'summon-familiar' })])
 		);
 		expect(plan.reworkedSelections).toEqual(
-			expect.arrayContaining([expect.objectContaining({ fromId: 'gravity-sink-hole' })])
+			expect.arrayContaining([
+				expect.objectContaining({ fromId: 'gravity-sink-hole' }),
+				expect.objectContaining({ fromId: 'force-dome', toId: 'forcefield' })
+			])
 		);
 		expect(plan.deprecatedSelections).toEqual(
 			expect.arrayContaining([expect.objectContaining({ fromId: 'barbarian_swift_berserker' })])
@@ -61,7 +65,8 @@ describe('v0.10 character upgrade', () => {
 			selectedTalents: { barbarian_swift_berserker: 1, durable: 1 },
 			selectedSpells: {
 				first: 'summon-familiar',
-				second: 'gravity-sink-hole'
+				second: 'gravity-sink-hole',
+				third: 'force-dome'
 			},
 			spells: [
 				{ id: 'summon-familiar', name: 'Summon Familiar' },
@@ -105,7 +110,8 @@ describe('v0.10 character upgrade', () => {
 		expect(upgraded.selectedTalents).toEqual({ durable: 1 });
 		expect(upgraded.selectedSpells).toEqual({
 			first: 'call-familiar',
-			second: 'gravity-well'
+			second: 'gravity-well',
+			third: 'forcefield'
 		});
 		expect(upgraded.spells).toEqual([
 			{ id: 'call-familiar', name: 'Call Familiar' },
@@ -119,20 +125,20 @@ describe('v0.10 character upgrade', () => {
 		expect(assessCharacterCompatibility(upgraded).state).toBe('editable');
 	});
 
-	it('given an ambiguous legacy selection, when planning or upgrading, then conversion is blocked', () => {
+	it('given an unsupported rules version, when planning or upgrading, then conversion is blocked', () => {
 		const character = makeCharacter({
-			selectedSpells: { first: 'force-dome' }
+			rulesVersion: 'dc20-9.99'
 		});
 
 		const plan = planCharacterUpgrade(character);
 
 		expect(plan.canUpgrade).toBe(false);
 		expect(plan.blockers).toEqual(
-			expect.arrayContaining([expect.objectContaining({ fromId: 'force-dome' })])
+			expect.arrayContaining([expect.objectContaining({ fromId: 'dc20-9.99' })])
 		);
 		expect(() => upgradeCharacterToCurrentRules(character)).toThrow(
-			'Character has unresolved upgrade blockers: force-dome'
+			'Character has unresolved upgrade blockers: dc20-9.99'
 		);
-		expect(character.rulesVersion).toBe('dc20-0.10');
+		expect(character.rulesVersion).toBe('dc20-9.99');
 	});
 });

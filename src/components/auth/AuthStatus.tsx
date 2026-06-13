@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useConvexAuth } from 'convex/react';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent } from '../ui/dialog';
 import { SignIn } from './SignIn';
 import { UserMenu } from './UserMenu';
 import { useTranslation } from 'react-i18next';
+import { useAppAuth } from './AuthModeContext';
 
 export interface AuthStatusProps {
 	/** Additional class names */
@@ -12,11 +12,15 @@ export interface AuthStatusProps {
 }
 
 export function AuthStatus({ className }: AuthStatusProps) {
-	const { isAuthenticated, isLoading } = useConvexAuth();
+	const { isConvexEnabled, isAuthenticated, isLoading } = useAppAuth();
 	const [showSignIn, setShowSignIn] = React.useState(false);
 	const bypassAuth = import.meta.env.VITE_BYPASS_AUTH === 'true';
 	const isAllowed = bypassAuth ? true : isAuthenticated;
 	const { t } = useTranslation();
+
+	if (!isConvexEnabled) {
+		return null;
+	}
 
 	if (isLoading) {
 		return null;

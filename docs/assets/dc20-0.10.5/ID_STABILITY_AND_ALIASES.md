@@ -1,6 +1,6 @@
 # DC20 0.10.5 ID Stability And Aliases
 
-Last Updated: 2026-06-01
+Last Updated: 2026-06-12
 
 ## Purpose
 
@@ -76,8 +76,8 @@ Primary persistence and runtime surfaces:
 | Spell          | `earth-blessing` / `Earth Blessing`                           | `blessing-of-earth` / `Blessing of Earth` | implemented alias                           | exact rename; old IDs route for lookup, saved IDs are not rewritten |
 | Spell          | `gravity-sinkhole`, `gravity-sink-hole` / `Gravity Sink Hole` | `gravity-well` / `Gravity Well`           | implemented rework fence                    | upgrade-required; no silent remap                                   |
 | Spell          | `absorb-element` / `Absorb Element`                           | `absorb-elements` / `Absorb Elements`     | implemented alias                           | singular-to-plural compatibility route                              |
-| Spell          | `force-dome` / `Force Dome`                                   | ambiguous `Forcefield` target             | implemented view-only fence                 | no silent remap                                                     |
-| Spell          | `wall-of-force` / `Wall of Force`                             | ambiguous `Forcefield` target             | implemented view-only fence                 | no silent remap                                                     |
+| Spell          | `force-dome` / `Force Dome`                                   | `forcefield` / `Forcefield`               | implemented rework fence                    | upgrade-required; explicit upgrade only                             |
+| Spell          | `wall-of-force` / `Wall of Force`                             | `forcefield` / `Forcefield`               | implemented rework fence                    | upgrade-required; explicit upgrade only                             |
 | Trait          | `beastborn_hazardous_hide`                                    | still `Hazardous Hide`                    | implemented no-op identity                  | source-confirmed returned trait; text/effect value refreshed        |
 | Trait          | `beastborn_additional_limb`, `beastborn_capable_limb`         | stable IDs, v0.10.5 wording/costs         | implemented no alias                        | `Capable Limb` is cost 2 and includes Spell Focus/Somatic use       |
 | Equipment      | Toss / Thrown / Returning property IDs                        | unchanged IDs, new costs / prerequisite   | no alias expected                           | preserve IDs, update validation only                                |
@@ -119,21 +119,23 @@ Primary persistence and runtime surfaces:
 - Current v0.10.5 equipment changes appear to be cost and prerequisite changes, not identity changes.
 - Saved custom equipment still needs compatibility review because it stores selected property IDs under a fixed v0.10 rules version.
 
-## Required Decisions Before Implementation
+## Resolved Migration Policy
 
-1. Which renamed items are true aliases versus reworked entities?
-2. Which removed items remain loadable but no longer selectable?
-3. Which old characters remain editable under v0.10.5?
-4. Which old characters become view-only but exportable?
-5. Whether alias resolution happens:
-   - on load
-   - at lookup time
-   - during explicit upgrade
-   - or some combination
+- True renames resolve additively at lookup time so historical characters remain
+  renderable without storage mutation.
+- Material reworks remain `upgrade-required` and are rewritten only through the
+  explicit v0.10 to v0.10.5 upgrade flow.
+- `Force Dome` and `Wall of Force` are approved merge inputs for `Forcefield`;
+  both original identities are disclosed in the conversion report.
+- Removed selections remain loadable for compatibility but are removed during
+  explicit upgrade when no v0.10.5 selection exists.
+- Unsupported rules versions remain view-only and are not offered an automated
+  conversion.
 
-## Recommended Minimum Alias Policy
+## Minimum Alias Policy
 
 - Additive alias registries only.
 - No destructive rewrite of saved data on first load.
-- Preserve raw original IDs in storage until an explicit upgrade path exists.
+- Preserve raw original IDs in storage until the user confirms an explicit
+  upgrade.
 - If semantics changed materially, surface compatibility state instead of silently remapping.

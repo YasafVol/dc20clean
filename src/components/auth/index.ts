@@ -19,3 +19,4 @@ export {
 } from './AuthGuard';
 export { UserMenu, type UserMenuProps } from './UserMenu';
 export { AuthStatus, type AuthStatusProps } from './AuthStatus';
+export { ConvexAppAuthProvider, LocalAppAuthProvider, useAppAuth } from './AuthModeContext';

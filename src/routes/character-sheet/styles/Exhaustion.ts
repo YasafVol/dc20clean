@@ -6,15 +6,15 @@ interface MobileStyledProps {
 
 export const StyledExhaustionContainer = styled.div<MobileStyledProps>`
 	display: flex;
-	justify-content: center;
-	gap: 0.3rem;
-	margin-top: 0.5rem;
+	align-items: center;
+	gap: 0.25rem;
+	margin: 0;
 `;
 
 export const StyledExhaustionLevel = styled.div<{ filled: boolean; $isMobile?: boolean }>`
 	position: relative;
-	width: 24px;
-	height: 24px;
+	width: 22px;
+	height: 22px;
 	border: 2px solid ${(props) => (props.$isMobile ? 'var(--mobile-border)' : 'var(--bg-tertiary)')};
 	background: ${(props) => {
 		if (props.filled) {

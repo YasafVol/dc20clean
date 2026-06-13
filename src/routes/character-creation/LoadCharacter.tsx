@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAppAuth } from '../../components/auth';
 import type { SavedCharacter } from '../../lib/types/dataContracts';
 import { getInitializedCharacterState } from '../../lib/utils/storageUtils';
 import { getDefaultStorage } from '../../lib/storage';
@@ -58,6 +59,7 @@ import {
 function LoadCharacter() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
+	const { isAuthenticated, isLoading: authLoading } = useAppAuth();
 	const [savedCharacters, setSavedCharacters] = useState<SavedCharacter[]>([]);
 	const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 	const [characterToDelete, setCharacterToDelete] = useState<SavedCharacter | null>(null);
@@ -80,8 +82,10 @@ function LoadCharacter() {
 	const storage = useMemo(() => getDefaultStorage(), []);
 
 	useEffect(() => {
+		if (authLoading) return;
 		console.log('[GIMLI DEBUG] 🎬 LoadCharacter: Fetching characters...', {
-			storageType: storage.constructor.name
+			storageType: storage.constructor.name,
+			isAuthenticated
 		});
 
 		let isMounted = true;
@@ -101,7 +105,7 @@ function LoadCharacter() {
 		return () => {
 			isMounted = false;
 		};
-	}, [storage]);
+	}, [storage, isAuthenticated, authLoading]);
 
 	const handleCharacterClick = (character: SavedCharacter) => {
 		const compatibility = assessCharacterCompatibility(character);
@@ -490,7 +494,7 @@ function LoadCharacter() {
 				</Message>
 			)}
 
-			{savedCharacters.length === 0 ? (
+			{authLoading ? null : savedCharacters.length === 0 ? (
 				<EmptyState
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}

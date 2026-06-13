@@ -7,6 +7,7 @@ import { useCharacterManeuvers, useCharacterSheet } from '../hooks/CharacterShee
 import { logger } from '../../../lib/utils/logger';
 import { theme } from '../styles/theme';
 import DeleteButton from './shared/DeleteButton';
+import RichDescription from './RichDescription';
 import {
 	StyledManeuversSection,
 	StyledManeuversHeader,
@@ -336,19 +337,21 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 										<StyledManeuverDescriptionText $isMobile={effectiveIsMobile}>
 											<strong>{selectedManeuver.name}:</strong>
 											<br />
-											{selectedManeuver.description}
+											<RichDescription text={selectedManeuver.description} />
 										</StyledManeuverDescriptionText>
 										{/* Requirements */}
 										{selectedManeuver.requirement && (
 											<StyledManeuverMetaInfo $isMobile={effectiveIsMobile}>
-											<strong>{t('characterSheet.maneuversRequirements')}</strong> {selectedManeuver.requirement}
+											<strong>{t('characterSheet.maneuversRequirements')}</strong>{' '}
+											<RichDescription text={selectedManeuver.requirement} />
 										</StyledManeuverMetaInfo>
 									)}
 
 									{/* Trigger */}
 									{selectedManeuver.trigger && (
 										<StyledManeuverMetaInfo $isMobile={effectiveIsMobile}>
-											<strong>{t('characterSheet.maneuversTrigger')}</strong> {selectedManeuver.trigger}
+											<strong>{t('characterSheet.maneuversTrigger')}</strong>{' '}
+											<RichDescription text={selectedManeuver.trigger} />
 											</StyledManeuverMetaInfo>
 										)}
 									</StyledManeuverDescriptionContainer>

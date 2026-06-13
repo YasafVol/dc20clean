@@ -24,7 +24,6 @@ import {
 	Tab,
 	TabContent,
 	SectionCard,
-	SectionTitle,
 	LoadingContainer,
 	ErrorContainer
 } from './CharacterSheetRedesign.styled';
@@ -64,14 +63,14 @@ import Attacks from './components/Attacks';
 import Inventory from './components/Inventory';
 import Features from './components/Features';
 import ActiveConditionsTracker from './components/ActiveConditionsTracker';
-import Currency from './components/Currency';
 import PlayerNotes from './components/PlayerNotes';
 import DiceRoller, { DiceRollerRef } from './components/DiceRoller';
 import { AutoSaveIndicator } from './components/AutoSaveIndicator';
-import Movement from './components/Movement';
+// Movement & Currency are now rendered inside HeroSection (the Utility tab was merged into the hero strip).
 import FeaturePopup from './components/FeaturePopup';
 import WeaponPopup from './components/WeaponPopup';
 import InventoryPopup from './components/InventoryPopup';
+import RulebookPanel from './components/RulebookPanel';
 import CalculationTooltip from './components/shared/CalculationTooltip';
 import KnowledgeTrades from './components/KnowledgeTrades';
 import Languages from './components/Languages';
@@ -96,7 +95,6 @@ type TabId =
 	| 'features'
 	| 'conditions'
 	| 'knowledge'
-	| 'utility'
 	| 'notes';
 
 const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ characterId, onBack }) => {
@@ -109,6 +107,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 	const [activeTab, setActiveTab] = useState<TabId>('attacks');
 	const [hamburgerDrawerOpen, setHamburgerDrawerOpen] = useState(false);
+	const [rulebookOpen, setRulebookOpen] = useState(false);
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 	const [snackbarVariant, setSnackbarVariant] = useState<'success' | 'error' | 'info'>('success');
 	const [showSnackbar, setShowSnackbar] = useState(false);
@@ -220,6 +219,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		updateTempHP,
 		updateGritPoints,
 		updateRestPoints,
+		updateExhaustion,
 		toggleActiveCondition,
 		updateDefenseOverrides: updateDefenseOverridesContext,
 		setRageActive,
@@ -459,7 +459,6 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		{ id: 'features', label: t('characterSheet.tabFeatures'), emoji: '✨' },
 		{ id: 'conditions', label: t('characterSheet.tabConditions'), emoji: '🎭', badge: activeConditionsCount },
 		{ id: 'knowledge', label: t('characterSheet.tabKnowledge'), emoji: '📚' },
-		{ id: 'utility', label: t('characterSheet.tabUtility'), emoji: '🔧' },
 		{ id: 'notes', label: t('characterSheet.tabNotes'), emoji: '📝' }
 	];
 
@@ -477,7 +476,6 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		{ id: 'conditions', label: t('characterSheet.tabConditions'), emoji: '🎭', badge: activeConditionsCount },
 		{ id: 'maneuvers', label: t('characterSheet.tabManeuvers'), emoji: '⚡' },
 		{ id: 'knowledge', label: t('characterSheet.tabKnowledge'), emoji: '📚' },
-		{ id: 'utility', label: t('characterSheet.tabUtility'), emoji: '🔧' },
 		{ id: 'notes', label: t('characterSheet.tabNotes'), emoji: '📝' }
 	];
 
@@ -576,6 +574,24 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			);
 			setShowSnackbar(true);
 		}
+	};
+
+	// Long Rest: full reset of all combat resources.
+	// Per DC20 rules a long rest restores HP/MP/SP to max, restores Rest Points,
+	// and removes all levels of Exhaustion. Temp HP is consumed on rest.
+	const handleLongRest = () => {
+		if (!characterData) return;
+		const confirmed = window.confirm(t('characterSheet.longRestConfirm'));
+		if (!confirmed) return;
+
+		updateHP(maxHP);
+		updateMP(maxMP);
+		updateSP(maxSP);
+		updateRestPoints(maxRest);
+		updateTempHP(0);
+		updateExhaustion(0);
+
+		showSnackbarWithMessage(t('characterSheet.longRestDone'), 'success');
 	};
 
 	// Copy character summary to clipboard
@@ -716,6 +732,22 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 								← {t('characterSheet.back')}
 							</BackButton>
 						)}
+						<ActionButton
+							onClick={() => setRulebookOpen(true)}
+							whileHover={{ scale: 1.05 }}
+							whileTap={{ scale: 0.95 }}
+							title={t('characterSheet.rulebookOpenTitle')}
+						>
+							📖 {t('characterSheet.rulebook')}
+						</ActionButton>
+						<ActionButton
+							onClick={handleLongRest}
+							whileHover={{ scale: 1.05 }}
+							whileTap={{ scale: 0.95 }}
+							title={t('characterSheet.longRestTitle')}
+						>
+							🌙 {t('characterSheet.longRest')}
+						</ActionButton>
 						<ActionButton whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
 							🔄 {t('characterSheet.revertAll')}
 						</ActionButton>
@@ -881,26 +913,6 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 														<Languages languages={languages || []} isMobile={isMobile} />
 													</SectionCard>
 												</>
-											)}{' '}
-											{activeTab === 'utility' && (
-												<>
-													<SectionCard
-														initial={{ opacity: 0 }}
-														animate={{ opacity: 1 }}
-														$withMarginBottom
-													>
-														<SectionTitle>{t('characterSheet.movement')}</SectionTitle>
-														<Movement />
-													</SectionCard>
-													<SectionCard
-														initial={{ opacity: 0 }}
-														animate={{ opacity: 1 }}
-														$withMarginBottom
-													>
-														<SectionTitle>{t('characterSheet.currency')}</SectionTitle>
-														<Currency />
-													</SectionCard>
-												</>
 											)}
 											{activeTab === 'notes' && <PlayerNotes />}
 										</TabContent>
@@ -955,26 +967,6 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 										</SectionCard>
 									</>
 								)}
-								{activeTab === 'utility' && (
-									<>
-										<SectionCard
-											initial={{ opacity: 0 }}
-											animate={{ opacity: 1 }}
-											$withMarginBottom
-										>
-											<SectionTitle>{t('characterSheet.movement')}</SectionTitle>
-											<Movement />
-										</SectionCard>
-										<SectionCard
-											initial={{ opacity: 0 }}
-											animate={{ opacity: 1 }}
-											$withMarginBottom
-										>
-											<SectionTitle>{t('characterSheet.currency')}</SectionTitle>
-											<Currency />
-										</SectionCard>
-									</>
-								)}
 								{activeTab === 'notes' && <PlayerNotes />}
 							</TabContent>
 						</AnimatePresence>
@@ -987,6 +979,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				onClose={closeInventoryPopup}
 				onUpdateCustomItem={handleUpdateCustomItem}
 			/>
+			<RulebookPanel open={rulebookOpen} onClose={() => setRulebookOpen(false)} />
 			<CalculationTooltip
 				title={tooltipData.title}
 				breakdown={tooltipData.breakdown}

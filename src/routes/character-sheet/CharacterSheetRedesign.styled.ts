@@ -189,7 +189,7 @@ export const LeftColumn = styled.div`
 export const RightColumn = styled.div`
 	display: flex;
 	flex-direction: column;
-	gap: ${theme.spacing[6]};
+	gap: ${theme.spacing[4]};
 `;
 
 export const TabContainer = styled.div`
@@ -281,10 +281,37 @@ export const Tab = styled(motion.button)<{ $active: boolean }>`
 export const TabContent = styled(motion.div)`
 	padding: ${theme.spacing[6]};
 	overflow-x: hidden;
+	overflow-y: auto;
 	max-width: 100%;
+	max-height: calc(100vh - 260px);
+	scrollbar-width: thin;
+	scrollbar-color: #7aa2f7 transparent;
+
+	&::-webkit-scrollbar {
+		width: 8px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: #7aa2f7;
+		border-radius: ${theme.borderRadius.full};
+	}
+
+	&::-webkit-scrollbar-thumb:hover {
+		background: #7dcfff;
+	}
+
+	${media.tablet} {
+		max-height: calc(100vh - 220px);
+	}
 
 	${media.mobile} {
 		padding: ${theme.spacing[4]};
+		max-height: none;
+		overflow-y: visible;
 	}
 `;
 

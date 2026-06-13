@@ -571,25 +571,6 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 					}
 				};
 
-			case 'SET_RAGE_ACTIVE':
-				if (!state.character) return state;
-				return {
-					...state,
-					character: {
-						...state.character,
-						characterState: {
-							...state.character.characterState,
-							ui: {
-								...(state.character.characterState.ui || { manualDefenseOverrides: {} }),
-								combatToggles: {
-									...state.character.characterState.ui?.combatToggles,
-									isRaging: action.isRaging
-								}
-							}
-						}
-					}
-				};
-
 		case 'SET_RAGE_ACTIVE':
 			if (!state.character) return state;
 			return {
@@ -776,4 +757,3 @@ export function useCharacterSheetReducer() {
 		setRageActive
 	};
 }
-

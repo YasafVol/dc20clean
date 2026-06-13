@@ -5,33 +5,45 @@ interface MobileStyledProps {
 	$isMobile?: boolean;
 }
 
+// Stack the Health-Status row and Exhaustion row vertically inside the Health
+// card so they read as two short horizontal strips instead of two tall boxes.
 export const StyledDeathExhaustionContainer = styled.div<MobileStyledProps>`
 	display: flex;
-	gap: 1rem;
-	margin-bottom: 1.5rem;
+	flex-direction: column;
+	gap: ${theme.spacing[2]};
+	margin-bottom: 0;
 `;
 
+// Compact horizontal row container — label left, value(s) right.
 export const StyledExhaustionOnlyContainer = styled.div<MobileStyledProps>`
-	flex: 1;
-	border: 2px solid ${(props) => (props.$isMobile ? 'var(--mobile-border)' : '#414868')};
-	border-radius: 8px;
-	padding: 1rem;
+	display: flex;
+	align-items: center;
+	gap: ${theme.spacing[2]};
+	border: 1px solid ${(props) => (props.$isMobile ? 'var(--mobile-border)' : '#414868')};
+	border-radius: ${theme.borderRadius.md};
+	padding: ${theme.spacing[2]} ${theme.spacing[3]};
 	background: ${(props) => (props.$isMobile ? 'var(--mobile-bg-primary)' : '#24283B')};
-	text-align: center;
+	min-height: 36px;
 `;
 
 export const StyledExhaustionOnlyTitle = styled.div<MobileStyledProps>`
-	font-size: 0.9rem;
+	font-size: ${theme.typography.fontSize.xs};
 	font-weight: bold;
 	color: #7dcfff;
-	margin-bottom: 0.5rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
 	font-family: 'Inter', sans-serif;
+	white-space: nowrap;
+	margin: 0;
 `;
 
-export const StyledDeathThresholdLabel = styled.div`
-	font-size: 0.8rem;
+export const StyledDeathThresholdLabel = styled.span`
+	font-size: ${theme.typography.fontSize.xs};
 	color: ${theme.colors.accent.primary};
-	margin-bottom: 0.3rem;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	margin: 0;
+	white-space: nowrap;
 `;
 
 export const StyledExhaustionHeader = styled.div`

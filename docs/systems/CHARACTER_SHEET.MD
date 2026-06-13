@@ -2,7 +2,29 @@
 
 > Purpose: End-to-end map of Character Sheet UI: architecture, components, data sources, and interactions.
 > Status: Active
-> Last Updated: 2026-06-01
+> Last Updated: 2026-06-13
+
+## Recent UX additions
+
+- **Hero strip restructured to 3 columns**: `HeroSection` uses a responsive three-column layout:
+  - **Col 1**: Health (HP + Temp HP + Health Status + Exhaustion) — unchanged.
+  - **Col 2**: Resources (Mana and Stamina) above Recovery (Rest and Grit).
+  - **Col 3**: Combat Stats with compact movement, currency, senses, resistances, vulnerabilities, and combat training.
+  - Responsive: 2 columns at <=1200px, 1 column at <=768px.
+- **CompactUtility component** (`components/new/CompactUtility.tsx`): compact replacement for the old Utility tab:
+  1. Move | Jump as two mini stat cards in one row.
+  2. GP | SP | CP inline editable pills.
+  3. Optional chips for alternate movements, senses, resistances, vulnerabilities, and combat training with source tooltips.
+- **Utility tab removed from navigation**: movement and currency are integrated into the hero strip.
+
+- **Header actions**: Added `Long Rest` (full reset of HP/MP/SP/Rest Points + clears temp HP and Exhaustion via reducer methods) and `Rulebook` (opens `RulebookPanel`, a slide-in side panel embedding the DC20 core rulebook PDF in the browser's native viewer for built-in search).
+- **Attacks**: Weapon dropdown now defaults to weapons present in the character's inventory, with a "Show all weapons" toggle to reveal the full catalog. Selecting the default "Select Weapon..." option now clears the row instead of silently doing nothing. Saved weapons no longer in inventory remain visible in the dropdown with a "(not in inventory)" label.
+- **Inventory**: Each row shows a compact inline summary (e.g. `1B • Versatile • Reach`, `PD +11 • AD +10`) below the item name. Custom items with a description get a gold accent variant of the info icon so annotated items are visible at a glance.
+- **Notes**: Replaced the single textarea with a multi-note list (per-note title + body, delete with confirm, "+ New Note" button). Backwards-compatible: legacy single-string notes are auto-wrapped on first load; storage uses a `__NOTES_V2__` JSON marker prefix inside the existing `notes.playerNotes` string so no reducer/schema changes were required.
+- **Spells**: Added a "✏️ Custom Spell..." dropdown option that flips a spell row into freeform editable mode (name + school + duration + AP/MP + range + description). Detection is automatic on reload — any spell name not in the catalog renders as custom.
+- **Condition keyword tooltips**: New shared `RichDescription` component scans description text for condition names (handles stacking suffix e.g. `Slowed 2`, `Burning 3`) and renders matched tokens as accent-coloured, hover/tap-activated tooltip targets. Wired into `FeaturePopup`, `SpellPopup`, inline spell descriptions in `Spells.tsx`, `Maneuvers.tsx`, `InventoryPopup` info rows, and `EnhancedFeatures` ability descriptions. Mobile uses tap-to-toggle; desktop uses hover with click-outside dismiss. Catalog source: `src/lib/rulesdata/conditions/conditions.data.ts`.
+
+New files: `components/RulebookPanel.tsx`, `components/RichDescription.tsx`. Rulebook PDF imported via Vite `?url` from `docs/assets/DC20 RPG 0.10.5 Beta v1.pdf`.
 
 ---
 

@@ -25,6 +25,7 @@ import { assessCharacterCompatibility } from '../../../lib/rulesdata/versioning/
 import { ancestriesData } from '../../../lib/rulesdata/ancestries/ancestries';
 import { traitsData } from '../../../lib/rulesdata/ancestries/traits';
 import { tradesData } from '../../../lib/rulesdata/trades';
+import { findTalentById } from '../../../lib/rulesdata/classes-data/talents/talent.loader';
 import {
 	findClassByName,
 	getLegacyChoiceId,
@@ -32,6 +33,7 @@ import {
 } from '../../../lib/rulesdata/loaders/class-features.loader';
 import { getDetailedClassFeatureDescription } from '../../../lib/utils/classFeatureDescriptions';
 import { calculateCharacterConditions } from '../../../lib/services/conditionAggregator';
+import { normalizeSelectedTalents } from '../../../lib/utils/storageUtils';
 
 /**
  * Converts the movements array from calculator into the movement structure for SavedCharacter
@@ -147,6 +149,139 @@ function sortTradeAttributeTotals(a: TradeAttributeTotal, b: TradeAttributeTotal
 	return ATTRIBUTE_TIEBREAKER_INDEX[a.attribute] - ATTRIBUTE_TIEBREAKER_INDEX[b.attribute];
 }
 
+type ConditionFeatureEntry = {
+	id: string;
+	featureName: string;
+	effects?: any[];
+	levelGained?: number;
+};
+
+type ConditionChoiceOption = {
+	name: string;
+	effects?: any[];
+};
+
+function parseSelectedFeatureChoices(rawChoices: unknown): Record<string, unknown> {
+	if (rawChoices && typeof rawChoices === 'object' && !Array.isArray(rawChoices)) {
+		return rawChoices as Record<string, unknown>;
+	}
+
+	if (typeof rawChoices !== 'string' || rawChoices.trim().length === 0) {
+		return {};
+	}
+
+	try {
+		const parsed = JSON.parse(rawChoices);
+		return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+			? (parsed as Record<string, unknown>)
+			: {};
+	} catch {
+		return {};
+	}
+}
+
+function normalizeChoiceSelections(rawValue: unknown): string[] {
+	if (Array.isArray(rawValue)) {
+		return rawValue
+			.filter((value): value is string => typeof value === 'string')
+			.map((value) => value.trim())
+			.filter((value) => value.length > 0);
+	}
+
+	if (typeof rawValue !== 'string') {
+		return [];
+	}
+
+	const trimmed = rawValue.trim();
+	if (!trimmed) {
+		return [];
+	}
+
+	try {
+		const parsed = JSON.parse(trimmed);
+		if (Array.isArray(parsed)) {
+			return normalizeChoiceSelections(parsed);
+		}
+		if (typeof parsed === 'string') {
+			return normalizeChoiceSelections(parsed);
+		}
+	} catch {
+		// Fall through to comma-separated handling.
+	}
+
+	return trimmed
+		.split(',')
+		.map((value) => value.trim())
+		.filter((value) => value.length > 0);
+}
+
+function appendConditionFeatureEntries(
+	target: ConditionFeatureEntry[],
+	features: any[],
+	selectedChoices: Record<string, unknown>,
+	options: {
+		className: string;
+		classId?: string;
+		subclassKey?: string;
+	}
+): void {
+	for (const feature of features) {
+		if (feature.effects?.length) {
+			target.push({
+				id: feature.id || feature.featureName,
+				featureName: feature.featureName,
+				effects: feature.effects,
+				levelGained: feature.levelGained
+			});
+		}
+
+		for (const benefit of feature.benefits ?? []) {
+			if (benefit.effects?.length) {
+				target.push({
+					id: `${feature.id || feature.featureName}:${benefit.name}`,
+					featureName: `${feature.featureName}: ${benefit.name}`,
+					effects: benefit.effects,
+					levelGained: feature.levelGained
+				});
+			}
+		}
+
+		for (let choiceIndex = 0; choiceIndex < (feature.choices?.length ?? 0); choiceIndex++) {
+			const choice = feature.choices[choiceIndex];
+			const selectionKeys = [
+				choice.id,
+				getLegacyChoiceId(options.className, feature.featureName, choiceIndex),
+				options.classId && options.subclassKey && choice.id
+					? `${options.classId}_${options.subclassKey}_${choice.id}`
+					: undefined
+			].filter((value): value is string => Boolean(value));
+
+			const selectedOptionNames = Array.from(
+				new Set(
+					selectionKeys.flatMap((selectionKey) =>
+						normalizeChoiceSelections(selectedChoices[selectionKey])
+					)
+				)
+			);
+
+			for (const selectedOptionName of selectedOptionNames) {
+				const selectedOption = choice.options?.find(
+					(option: ConditionChoiceOption) => option.name === selectedOptionName
+				);
+
+				if (selectedOption?.effects?.length) {
+					target.push({
+						id: `${feature.id || feature.featureName}:${choice.id || choiceIndex}:${selectedOptionName}`,
+						featureName: `${feature.featureName}: ${selectedOptionName}`,
+						effects: selectedOption.effects,
+						levelGained: feature.levelGained
+					});
+				}
+			}
+		}
+	}
+}
+
 // Context type that components will consume
 interface CharacterSheetContextType {
 	state: SheetState;
@@ -179,6 +314,7 @@ interface CharacterSheetContextType {
 	updateGritPoints: (grit: number) => void;
 	updateRestPoints: (rest: number) => void;
 	toggleActiveCondition: (conditionId: string) => void;
+	setActiveConditionStacks: (conditionId: string, stacks: number) => void;
 	updateDefenseOverrides: (overrides: {
 		precisionAD?: number;
 		areaAD?: number;
@@ -230,6 +366,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		updateGritPoints,
 		updateRestPoints,
 		toggleActiveCondition,
+		setActiveConditionStacks,
 		updateDefenseOverrides,
 		setRageActive
 	} = useCharacterSheetReducer();
@@ -442,6 +579,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		updateGritPoints,
 		updateRestPoints,
 		toggleActiveCondition,
+		setActiveConditionStacks,
 		updateDefenseOverrides,
 		setRageActive,
 		saveNow,
@@ -975,6 +1113,11 @@ export function useCharacterConditions() {
 		if (!state.character) return [];
 
 		const character = state.character;
+		const legacySubclass = character as SavedCharacter & {
+			subclassId?: string;
+			subclassName?: string;
+		};
+		const selectedFeatureChoices = parseSelectedFeatureChoices(character.selectedFeatureChoices);
 
 		// Build input for condition aggregator
 		const input = {
@@ -986,7 +1129,7 @@ export function useCharacterConditions() {
 				effects?: any[];
 				levelGained?: number;
 			}>,
-			subclassName: character.subclassName,
+			subclassName: legacySubclass.subclassName,
 			subclassFeatures: [] as Array<{
 				id: string;
 				featureName: string;
@@ -1015,33 +1158,58 @@ export function useCharacterConditions() {
 		if (character.className) {
 			const classDef = findClassByName(character.className);
 			if (classDef?.coreFeatures) {
-				classDef.coreFeatures.forEach((feature) => {
-					if (feature.levelGained <= character.level) {
-						input.classFeatures.push({
-							id: feature.id,
-							featureName: feature.featureName,
-							effects: feature.effects,
-							levelGained: feature.levelGained
-						});
+				appendConditionFeatureEntries(
+					input.classFeatures,
+					classDef.coreFeatures.filter((feature) => feature.levelGained <= character.level),
+					selectedFeatureChoices,
+					{
+						className: classDef.className,
+						classId: character.classId
 					}
-				});
+				);
 			}
 
-			// Gather subclass features
-			if (character.subclassId && classDef?.subclasses) {
-				const subclass = classDef.subclasses.find((s) => s.id === character.subclassId);
+			// Gather subclass features, benefits, and selected choices
+			const selectedSubclassKey =
+				character.selectedSubclass || legacySubclass.subclassId || legacySubclass.subclassName;
+			if (selectedSubclassKey && classDef?.subclasses) {
+				const subclass = classDef.subclasses.find(
+					(s: any) =>
+						s.id === selectedSubclassKey ||
+						s.subclassName === selectedSubclassKey ||
+						s.subclassName === legacySubclass.subclassName
+				);
 				if (subclass?.features) {
-					subclass.features.forEach((feature) => {
-						if (feature.levelGained <= character.level) {
-							input.subclassFeatures.push({
-								id: feature.id,
-								featureName: feature.featureName,
-								effects: feature.effects,
-								levelGained: feature.levelGained
-							});
+					input.subclassName = subclass.subclassName || legacySubclass.subclassName;
+					appendConditionFeatureEntries(
+						input.subclassFeatures,
+						subclass.features.filter((feature: any) => feature.levelGained <= character.level),
+						selectedFeatureChoices,
+						{
+							className: classDef.className,
+							classId: character.classId,
+							subclassKey: String(selectedSubclassKey)
 						}
-					});
+					);
 				}
+			}
+		}
+
+		// Gather selected talents (count-based, with legacy array support)
+		for (const [talentId, count] of Object.entries(
+			normalizeSelectedTalents(character.selectedTalents as any)
+		)) {
+			const talent = findTalentById(talentId);
+			if (!talent?.effects || count <= 0) {
+				continue;
+			}
+
+			for (let index = 0; index < count; index++) {
+				input.selectedTalents.push({
+					id: `${talentId}:${index}`,
+					name: talent.name,
+					effects: talent.effects
+				});
 			}
 		}
 

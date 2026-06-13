@@ -35,8 +35,12 @@ export const druidClass: ClassDefinition = {
 			id: 'druid_spellcasting_path',
 			featureName: 'Spellcasting Path',
 			levelGained: 1,
-			description: 'You gain the ability to cast primal spells.',
-			effects: [{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }]
+			description:
+				'You gain the ability to cast primal spells. You gain Combat Training with Spell Focuses and Light Armor.',
+			effects: [
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Spell_Focuses', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }
+			]
 		},
 		{
 			id: 'druid_domain',
@@ -236,10 +240,11 @@ export const druidClass: ClassDefinition = {
 		},
 		{
 			id: 'druid_level_8_capstone_placeholder',
-			featureName: 'Primal Avatar (Placeholder)',
-			levelGained: 8,
+			featureName: 'Class Capstone (Source Unpublished)',
+			levelGained: 9,
 			isFlavor: true,
-			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
+			description:
+				'The v0.10.5 class progression grants a Class Capstone Feature at level 9, but this source packet does not publish class-specific capstone mechanics. This entry is intentionally non-mechanical and preserves the legacy ID for saved-character compatibility.'
 		}
 	],
 	subclasses: [

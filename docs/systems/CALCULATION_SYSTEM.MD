@@ -2,7 +2,7 @@
 
 > Purpose: Definitive guide to derived stat formulas, effect application order, mastery cap validation, and breakdown output.
 > Status: Active
-> Last Updated: 2026-06-01
+> Last Updated: 2026-06-13
 
 ---
 
@@ -258,6 +258,7 @@ Input Data (buildData)
 Effects Aggregation (effectCollection.ts)
 ├── aggregateAttributedEffects() → rawEffects
 └── resolveEffectChoices() → resolvedEffects
+   └── resolves nested class feature choice effects and leaves unresolved spell grants inactive
 
 Effect Collection (abilityCollection.ts)
 ├── collectGrantedAbilities() → abilities (GRANT_ABILITY)
@@ -268,6 +269,8 @@ Effect Collection (abilityCollection.ts)
 ├── collectCombatTraining() → combatTraining (GRANT_COMBAT_TRAINING)
 └── collectConditionalModifiers() → conditionalModifiers
 ```
+
+Class feature effect aggregation includes direct feature effects, benefit-level effects, selected subclass effects, selected feature-choice option effects, and selected talent effects. Intro-only flavor features such as Monk/Rogue/Spellblade `Source of Power` are excluded from automatic multiclass flavor-feature grants. Level 9 class capstone records remain non-mechanical when the source has not published class-specific mechanics.
 
 #### Stage 2: Base Values (No Dependencies)
 

@@ -47,6 +47,7 @@ export type SheetAction =
 	| { type: 'UPDATE_CURRENT_GRIT_POINTS'; grit: number }
 	| { type: 'UPDATE_CURRENT_REST_POINTS'; rest: number }
 	| { type: 'TOGGLE_ACTIVE_CONDITION'; conditionId: string }
+	| { type: 'SET_ACTIVE_CONDITION_STACKS'; conditionId: string; stacks: number }
 	| {
 			type: 'UPDATE_DEFENSE_OVERRIDES';
 			overrides: { precisionAD?: number; areaAD?: number; precisionDR?: number };
@@ -558,18 +559,42 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 				}
 			};
 
-			case 'UPDATE_DEFENSE_OVERRIDES':
-				if (!state.character) return state;
-				return {
-					...state,
-					character: {
-						...state.character,
-						characterState: {
-							...state.character.characterState,
-							defenseOverrides: action.overrides
-						}
+		case 'SET_ACTIVE_CONDITION_STACKS':
+			if (!state.character) return state;
+			const baseConditionId = action.conditionId;
+			const stackPrefix = baseConditionId.replace(/-x$/, '');
+			const nextConditions = (state.character.characterState.activeConditions || []).filter(
+				(id) => id !== baseConditionId && !id.startsWith(`${stackPrefix}-`)
+			);
+			const nextStacks = Math.max(0, Math.floor(action.stacks));
+			const nextConditionId =
+				nextStacks > 0 ? baseConditionId.replace(/-x$/, `-${nextStacks}`) : undefined;
+
+			return {
+				...state,
+				character: {
+					...state.character,
+					characterState: {
+						...state.character.characterState,
+						activeConditions: nextConditionId
+							? [...nextConditions, nextConditionId]
+							: nextConditions
 					}
-				};
+				}
+			};
+
+		case 'UPDATE_DEFENSE_OVERRIDES':
+			if (!state.character) return state;
+			return {
+				...state,
+				character: {
+					...state.character,
+					characterState: {
+						...state.character.characterState,
+						defenseOverrides: action.overrides
+					}
+				}
+			};
 
 		case 'SET_RAGE_ACTIVE':
 			if (!state.character) return state;
@@ -711,6 +736,10 @@ export function useCharacterSheetReducer() {
 		dispatch({ type: 'TOGGLE_ACTIVE_CONDITION', conditionId });
 	}, []);
 
+	const setActiveConditionStacks = useCallback((conditionId: string, stacks: number) => {
+		dispatch({ type: 'SET_ACTIVE_CONDITION_STACKS', conditionId, stacks });
+	}, []);
+
 	const updateDefenseOverrides = useCallback(
 		(overrides: { precisionAD?: number; areaAD?: number; precisionDR?: number }) => {
 			dispatch({ type: 'UPDATE_DEFENSE_OVERRIDES', overrides });
@@ -753,6 +782,7 @@ export function useCharacterSheetReducer() {
 		updateGritPoints,
 		updateRestPoints,
 		toggleActiveCondition,
+		setActiveConditionStacks,
 		updateDefenseOverrides,
 		setRageActive
 	};

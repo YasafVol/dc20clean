@@ -12,8 +12,29 @@ import type {
 	SpellsKnownSlot
 } from '../../types/effectSystem';
 import type { SpellSource, SpellSchool, SpellTag } from '../../rulesdata/schemas/spell.schema';
+import { ALL_SPELLS, getSpellById } from '../../rulesdata/spells-data';
 import { findClassByName } from '../../rulesdata/loaders/class-features.loader';
 import type { ClassDefinition } from '../../rulesdata/schemas/character.schema';
+
+const normalizeSpellLookupKey = (value: string): string =>
+	value
+		.trim()
+		.toLowerCase()
+		.replace(/[_\s]+/g, ' ');
+
+function getExactSpellIdForTarget(target: string): string | undefined {
+	const directMatch = getSpellById(target);
+	if (directMatch) {
+		return directMatch.id;
+	}
+
+	const normalizedTarget = normalizeSpellLookupKey(target);
+	const normalizedIdTarget = normalizedTarget.replace(/\s+/g, '-');
+	return ALL_SPELLS.find(
+		(spell) =>
+			spell.id === normalizedIdTarget || normalizeSpellLookupKey(spell.name) === normalizedTarget
+	)?.id;
+}
 
 /**
  * Aggregates the character's global magic profile by combining class defaults
@@ -112,6 +133,8 @@ export function generateSpellsKnownSlots(
 	// 2. Generate Specialized Slots from GRANT_SPELL effects
 	effects.forEach((effect, index) => {
 		if ((effect as any).type === 'GRANT_SPELL' || (effect as any).type === 'GRANT_CANTRIP') {
+			if (!effect.resolved) return;
+
 			const count = Number((effect as any).value) || 1;
 
 			for (let i = 0; i < count; i++) {
@@ -148,16 +171,20 @@ export function generateSpellsKnownSlots(
 					slot.specificRestrictions!.sources = ['Divine' as SpellSource];
 
 				if (target === 'curse_tag') slot.specificRestrictions!.tags = ['Curse' as SpellTag];
+				if (target === 'any_psychic_tag') slot.specificRestrictions!.tags = ['Psychic' as SpellTag];
 				if (target === 'by_tag' && (effect as any).userChoice) {
-					const choiceKey = `${buildData.classId}_Magic_${effect.source.id}`;
-					const chosenTag = buildData.featureChoices?.[choiceKey];
+					const chosenTag =
+						(effect as any).resolvedValue ??
+						((effect as any).dependsOnChoice
+							? buildData.featureChoices?.[(effect as any).dependsOnChoice]
+							: undefined);
 					if (chosenTag) slot.specificRestrictions!.tags = [chosenTag as SpellTag];
 				}
 
 				// Surgical grants
 				if (target === 'druidcraft') slot.specificRestrictions!.exactSpellId = 'druidcraft';
 				if (target === 'Sorcery') slot.specificRestrictions!.exactSpellId = 'sorcery';
-				if (target === 'find_familiar') slot.specificRestrictions!.exactSpellId = 'find_familiar';
+				slot.specificRestrictions!.exactSpellId ??= getExactSpellIdForTarget(target);
 
 				// Bard Magical Secrets (Special case: no restrictions)
 				if (target === 'any_source' || effect.source.id === 'bard_magical_secrets') {

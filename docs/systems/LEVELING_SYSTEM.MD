@@ -101,6 +101,8 @@ The class progression tables use the v0.10.5 schedule:
 | 9     | Class Capstone Feature                      |
 | 10    | Subclass Capstone Feature                   |
 
+The current bundled v0.10.5 source schedules level 9 class capstones and level 7/10 subclass features, but does not publish all class/subclass-specific mechanics for those slots. Class capstone records therefore resolve as non-mechanical `Class Capstone (Source Unpublished)` entries at level 9 while preserving legacy IDs; do not fill those slots with invented mechanics.
+
 Resource totals follow the class tables:
 
 | Class Category | Level 1 Resources | Level 10 Resource Totals |

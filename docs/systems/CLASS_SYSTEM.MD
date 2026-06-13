@@ -223,6 +223,12 @@ Each class has a `<class>.talents.ts` file (13 files) plus shared data in `talen
 - Those IDs are intentionally retained as compatibility aliases for saved v0.10 characters and progression references; only the displayed feature name, description, benefits, and modeled effects changed.
 - Universal mechanical benefits use existing effect types (`MODIFY_STAT`, `GRANT_SPELL`, `GRANT_MANEUVERS`, `GRANT_ABILITY`) so character creation, sheet rendering, calculator breakdowns, and PDF export consume the same data path.
 
+**Level 9 Class Capstone Contract**:
+
+- The bundled v0.10.5 source tables schedule a Class Capstone Feature at level 9, but do not publish class-specific capstone mechanics.
+- Implemented classes keep their existing `<class>_level_8_capstone_placeholder` IDs for saved-character and progression-reference compatibility, but the feature metadata now displays `Class Capstone (Source Unpublished)`, `levelGained: 9`, and no mechanical effects.
+- Do not invent class capstone mechanics from names or older placeholder text. Add mechanics only when a source publishes them.
+
 **Champion Fighting Spirit Contract**:
 
 - v0.10.5 renames the Champion Fighting Spirit option `Brace` to `Fortify` to avoid confusion with the still-current Brace maneuver.
@@ -257,6 +263,9 @@ Each class has a `<class>.talents.ts` file (13 files) plus shared data in `talen
 **Recent Updates (2026-06-13)**:
 
 - **Starting Equipment Migration**: Canonical class data now stores v0.10.5 starting equipment in structured `startingEquipment` blocks using `arsenal`, `spellFocuses`, `armor`, `tradeTools`, and `packs`, with conditional Heavy Armor/Heavy Shield language preserved where the source ties it to specific level-1 feature choices.
+- **Class Spell/Training Grants**: Exact spell grants now resolve to canonical generated spell IDs, unresolved class spell choices no longer create unrestricted slots, Wizard/Sorcerer/Warlock/Druid grant `Spell_Focuses` training, and Cleric Chastise / Hand of Salvation render as granted abilities.
+- **Intro Flavor Guard**: Monk, Rogue, and Spellblade `Source of Power` flavor entries are excluded from automatic multiclass flavor-feature grants.
+- **Level 9 Capstone Source Gap**: Class capstones are represented as source-unpublished non-mechanical records at level 9 while preserving legacy placeholder IDs.
 
 **Recent Updates (2026-02-06)**:
 
@@ -267,5 +276,5 @@ Each class has a `<class>.talents.ts` file (13 files) plus shared data in `talen
 
 ---
 
-> _Last updated: 2026-06-01_
+> _Last updated: 2026-06-13_
 > Maintainer: @DC20Clean-Team

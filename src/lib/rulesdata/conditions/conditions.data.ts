@@ -1,5 +1,5 @@
 // Filename: conditions.data.ts
-import { ConditionDefinition } from './conditions.types';
+import type { ConditionDefinition, ResolvedConditionDefinition } from './conditions.types';
 
 export const ALL_CONDITIONS: ConditionDefinition[] = [
 	{
@@ -45,7 +45,7 @@ export const ALL_CONDITIONS: ConditionDefinition[] = [
 		id: 'deafened',
 		name: 'Deafened',
 		description:
-			'You can’t hear (see the Unheard section for more information). You have Resistance (Half) to Sonic damage.',
+			'You are subjected to the following effects: You can’t hear (see the Unheard section for more information).',
 		type: 'absolute',
 		tags: ['physical', 'sensory']
 	},
@@ -142,17 +142,9 @@ export const ALL_CONDITIONS: ConditionDefinition[] = [
 		id: 'petrified',
 		name: 'Petrified',
 		description:
-			'You and your mundane belongings are turned into an inanimate substance (often stone). While Petrified, you count as both an object and a creature, and you’re subjected to the following effects: You’re not aware of your surroundings, you’re 10 times heavier than normal, you’re Incapacitated, you automatically fail Physical Saves, attacks against you have ADV, you gain Bludgeoning Vulnerability (Double) and Resistance (Half) to all other damage, and Curses, Diseases, Poisons, or Conditions afflicting you are suspended.',
+			'You and your mundane belongings are turned into an inanimate substance (often stone). While Petrified, you count as both an object and a creature, and you’re subjected to the following effects: You’re not aware of your surroundings, you’re 10 times heavier than normal, you’re Incapacitated, you automatically fail Physical Saves, attacks against you have ADV, you gain Bludgeoning Vulnerability (Double) and Resistance (Half) to all other damage, and Curses, Diseases, Poisons, or Conditions afflicting you are suspended (unless it imposed the Petrified Condition), and you’re immune to gaining new ones.',
 		type: 'absolute',
 		tags: ['physical']
-	},
-	{
-		id: 'poisoned',
-		name: 'Poisoned',
-		description:
-			'You’re Impaired (DisADV on Physical Checks). You take 1 Poison damage at the start of each of your turns.',
-		type: 'overlapping',
-		tags: ['physical', 'damage']
 	},
 	{
 		id: 'restrained',
@@ -222,3 +214,75 @@ export const ALL_CONDITIONS: ConditionDefinition[] = [
 		tags: ['physical']
 	}
 ];
+
+export const EFFECT_SPECIFIC_AFFLICTIONS: ConditionDefinition[] = [
+	{
+		id: 'poisoned',
+		name: 'Poisoned',
+		description:
+			'Poisoned is not a universal condition in DC20 v0.10.5. Individual poisons define their own duration, damage, and rider effects.',
+		type: 'overlapping',
+		tags: ['physical', 'damage'],
+		scope: 'effect-specific'
+	}
+];
+
+const UNIVERSAL_CONDITION_MAP = new Map(
+	ALL_CONDITIONS.map((condition) => [condition.id, condition])
+);
+const EFFECT_SPECIFIC_AFFLICTION_MAP = new Map(
+	EFFECT_SPECIFIC_AFFLICTIONS.map((condition) => [condition.id, condition])
+);
+
+const STACKING_ID_PATTERN = /^(.*)-(\d+)$/;
+
+export function normalizeConditionId(conditionId: string): string {
+	const stackedMatch = conditionId.match(STACKING_ID_PATTERN);
+	if (!stackedMatch) {
+		return conditionId;
+	}
+
+	const normalizedId = `${stackedMatch[1]}-x`;
+	if (
+		UNIVERSAL_CONDITION_MAP.has(normalizedId) ||
+		EFFECT_SPECIFIC_AFFLICTION_MAP.has(normalizedId)
+	) {
+		return normalizedId;
+	}
+
+	return conditionId;
+}
+
+export function getConditionDefinition(
+	conditionId: string,
+	options: { includeEffectSpecific?: boolean } = {}
+): ConditionDefinition | undefined {
+	const normalizedId = normalizeConditionId(conditionId);
+
+	return (
+		UNIVERSAL_CONDITION_MAP.get(conditionId) ??
+		UNIVERSAL_CONDITION_MAP.get(normalizedId) ??
+		(options.includeEffectSpecific
+			? (EFFECT_SPECIFIC_AFFLICTION_MAP.get(conditionId) ??
+				EFFECT_SPECIFIC_AFFLICTION_MAP.get(normalizedId))
+			: undefined)
+	);
+}
+
+export function resolveConditionDefinition(
+	conditionId: string,
+	options: { includeEffectSpecific?: boolean } = {}
+): ResolvedConditionDefinition {
+	const normalizedId = normalizeConditionId(conditionId);
+	const stackedMatch = conditionId.match(STACKING_ID_PATTERN);
+
+	return {
+		inputId: conditionId,
+		normalizedId,
+		definition: getConditionDefinition(conditionId, options),
+		stackValue:
+			stackedMatch && normalizedId === `${stackedMatch[1]}-x`
+				? Number.parseInt(stackedMatch[2], 10)
+				: undefined
+	};
+}

@@ -203,6 +203,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		if (actionType && activeConditions.length > 0) {
 			const diceModifier = getDiceModifierForAction(activeConditions, actionType);
 			rollMode = diceModifier.mode;
+			bonus -= diceModifier.penalty;
 			logger.debug('ui', 'Applying condition-based dice modifier', { actionType, diceModifier });
 		}
 
@@ -221,6 +222,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		updateRestPoints,
 		updateExhaustion,
 		toggleActiveCondition,
+		setActiveConditionStacks,
 		updateDefenseOverrides: updateDefenseOverridesContext,
 		setRageActive,
 		saveStatus,
@@ -372,9 +374,11 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 	// Rest and Grit values
 	const currentRest = resources?.current?.currentRestPoints ?? 0;
-	const maxRest = calculatedData?.breakdowns?.restPoints?.total ?? characterData.finalRestPoints ?? 0;
+	const maxRest =
+		calculatedData?.breakdowns?.restPoints?.total ?? characterData.finalRestPoints ?? 0;
 	const currentGrit = resources?.current?.currentGritPoints ?? 0;
-	const maxGrit = calculatedData?.breakdowns?.gritPoints?.total ?? characterData.finalGritPoints ?? 0;
+	const maxGrit =
+		calculatedData?.breakdowns?.gritPoints?.total ?? characterData.finalGritPoints ?? 0;
 
 	const primeAttribute = characterData.finalPrimeModifierAttribute || 'charisma';
 	const primeValue = characterData.finalPrimeModifierValue || 0;
@@ -393,7 +397,10 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	const basePrecisionDR = characterData.finalPDR ?? 0;
 	const ragePdPenalty = hasRageFeature && isRaging ? 5 : 0;
 
-	const precisionAD = Math.max(0, (defenseOverrides.precisionAD ?? basePrecisionAD) - ragePdPenalty);
+	const precisionAD = Math.max(
+		0,
+		(defenseOverrides.precisionAD ?? basePrecisionAD) - ragePdPenalty
+	);
 	const precisionADHeavyThreshold = precisionAD + 5;
 	const precisionADBrutalThreshold = precisionAD + 10;
 	const areaAD = defenseOverrides.areaAD ?? baseAreaAD;
@@ -457,7 +464,12 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		{ id: 'inventory', label: t('characterSheet.tabInventory'), emoji: '🎒' },
 		{ id: 'maneuvers', label: t('characterSheet.tabManeuvers'), emoji: '⚡' },
 		{ id: 'features', label: t('characterSheet.tabFeatures'), emoji: '✨' },
-		{ id: 'conditions', label: t('characterSheet.tabConditions'), emoji: '🎭', badge: activeConditionsCount },
+		{
+			id: 'conditions',
+			label: t('characterSheet.tabConditions'),
+			emoji: '🎭',
+			badge: activeConditionsCount
+		},
 		{ id: 'knowledge', label: t('characterSheet.tabKnowledge'), emoji: '📚' },
 		{ id: 'notes', label: t('characterSheet.tabNotes'), emoji: '📝' }
 	];
@@ -473,7 +485,12 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	// Overflow tabs shown in hamburger menu on mobile (includes inventory)
 	const hamburgerMenuItems: { id: string; label: string; emoji: string; badge?: number }[] = [
 		{ id: 'inventory', label: t('characterSheet.tabInventory'), emoji: '🎒' },
-		{ id: 'conditions', label: t('characterSheet.tabConditions'), emoji: '🎭', badge: activeConditionsCount },
+		{
+			id: 'conditions',
+			label: t('characterSheet.tabConditions'),
+			emoji: '🎭',
+			badge: activeConditionsCount
+		},
 		{ id: 'maneuvers', label: t('characterSheet.tabManeuvers'), emoji: '⚡' },
 		{ id: 'knowledge', label: t('characterSheet.tabKnowledge'), emoji: '📚' },
 		{ id: 'notes', label: t('characterSheet.tabNotes'), emoji: '📝' }
@@ -710,11 +727,14 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			>
 				<HeaderContent>
 					<CharacterIdentity>
-						<CharacterName>{characterData.finalName || t('characterSheet.unnamedCharacter')}</CharacterName>
+						<CharacterName>
+							{characterData.finalName || t('characterSheet.unnamedCharacter')}
+						</CharacterName>
 						<CharacterMeta>
 							<MetaItem>{characterData.finalPlayerName || t('characterSheet.player')}</MetaItem>
 							<MetaItem>
-								{t('characterSheet.level')} {characterData.level || 1} {characterData.className || t('characterSheet.adventurer')}
+								{t('characterSheet.level')} {characterData.level || 1}{' '}
+								{characterData.className || t('characterSheet.adventurer')}
 							</MetaItem>
 							<MetaItem>
 								{characterData.ancestry1Name || t('characterSheet.unknown')}{' '}
@@ -897,6 +917,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 															state.character?.characterState?.activeConditions || []
 														}
 														onToggleCondition={toggleActiveCondition}
+														onSetConditionStacks={setActiveConditionStacks}
 													/>
 												</>
 											)}
@@ -951,6 +972,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 									<ActiveConditionsTracker
 										activeConditions={state.character?.characterState?.activeConditions || []}
 										onToggleCondition={toggleActiveCondition}
+										onSetConditionStacks={setActiveConditionStacks}
 									/>
 								)}
 								{activeTab === 'knowledge' && (

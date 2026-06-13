@@ -60,7 +60,8 @@ describe('Level Progression Aggregation (UT-1)', () => {
 			const result = calculateCharacterWithBreakdowns(char);
 
 			const ragePdModifier = result.conditionalModifiers.find(
-				(modifier) => (modifier.effect as any).target === 'pd' && modifier.condition === 'while_raging'
+				(modifier) =>
+					(modifier.effect as any).target === 'pd' && modifier.condition === 'while_raging'
 			);
 
 			expect(ragePdModifier).toBeDefined();
@@ -114,6 +115,53 @@ describe('Level Progression Aggregation (UT-1)', () => {
 			// MP should increase with level (L1: 6, L3: 8)
 			expect(result.stats.finalMPMax).toBeGreaterThan(6);
 			expect(result.levelBudgets?.totalSpellsKnown).toBeGreaterThanOrEqual(4); // L1: 4, L3: 5
+		});
+
+		it('should grant spell focus combat training to source-based spellcasters', () => {
+			for (const classId of ['wizard', 'sorcerer', 'warlock', 'druid']) {
+				const result = calculateCharacterWithBreakdowns(createTestCharacter(classId, 1));
+				expect(result.combatTraining.map((training) => training.type)).toContain('Spell_Focuses');
+			}
+		});
+	});
+
+	describe('Subclass Feature Aggregation', () => {
+		it('should surface Chastise and Hand of Salvation as granted abilities', () => {
+			const inquisitor = calculateCharacterWithBreakdowns({
+				...createTestCharacter('cleric', 3),
+				selectedSubclass: 'Inquisitor'
+			});
+			expect(
+				inquisitor.grantedAbilities.some((ability) => ability.source.name === 'Chastise')
+			).toBe(true);
+
+			const priest = calculateCharacterWithBreakdowns({
+				...createTestCharacter('cleric', 3),
+				selectedSubclass: 'Priest'
+			});
+			expect(
+				priest.grantedAbilities.some((ability) => ability.source.name === 'Hand of Salvation')
+			).toBe(true);
+		});
+
+		it('should not auto-grant intro-only Source of Power blurbs as flavor features', () => {
+			const expectations: Array<{
+				classId: string;
+				expectedFlavorFeature: string;
+			}> = [
+				{ classId: 'monk', expectedFlavorFeature: 'Meditation' },
+				{ classId: 'rogue', expectedFlavorFeature: 'Cypher Speech' },
+				{ classId: 'spellblade', expectedFlavorFeature: 'Sense Magic' }
+			];
+
+			for (const { classId, expectedFlavorFeature } of expectations) {
+				const result = calculateCharacterWithBreakdowns(createTestCharacter(classId, 2));
+				const autoGrantedNames =
+					result.autoGrantedFlavorFeatures?.map((feature) => feature.featureName) ?? [];
+
+				expect(autoGrantedNames).toContain(expectedFlavorFeature);
+				expect(autoGrantedNames).not.toContain('Source of Power');
+			}
 		});
 	});
 
@@ -403,5 +451,3 @@ describe('Spells & Maneuvers Step Gating (T1)', () => {
 		});
 	});
 });
-
-

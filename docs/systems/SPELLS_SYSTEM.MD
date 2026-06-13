@@ -163,6 +163,9 @@ spell dataset.
 - Can have **Specific Restrictions** (e.g., "Must be from the Elemental school").
 - Sources: Class Progression, Subclass Features, Talents (Grant Spell effect).
 - Selection is tracked per-slot: `Record<SlotID, SpellID>`.
+- Exact class grants such as `Charm` and `Call Familiar` resolve to canonical generated spell IDs instead of broad unrestricted slots.
+- `GRANT_SPELL` / `GRANT_CANTRIP` effects with unresolved `userChoice` metadata are skipped until the choice is present; resolved nested choices can narrow a slot by selected tag or school.
+- Tag-targeted grants such as Warlock Eldritch `any_psychic_tag` create tag-restricted slots rather than falling back to the global profile.
 
 ### 4.3 Validation Rules
 

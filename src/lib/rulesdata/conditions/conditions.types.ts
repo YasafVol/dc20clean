@@ -9,6 +9,12 @@
 export type ConditionType = 'stacking' | 'overlapping' | 'absolute';
 
 /**
+ * Indicates whether a condition is part of the universal rules catalog or is
+ * only used as effect-specific affliction text.
+ */
+export type ConditionScope = 'universal' | 'effect-specific';
+
+/**
  * Optional tags for filtering and categorization in your UI.
  */
 export type ConditionTag = 'physical' | 'mental' | 'sensory' | 'movement' | 'damage';
@@ -30,6 +36,19 @@ export interface ConditionDefinition {
 	type: ConditionType;
 	/** An array of descriptive tags for easier filtering. */
 	tags: ConditionTag[];
+	/** Whether the entry is part of the universal condition catalog. */
+	scope?: ConditionScope;
+}
+
+export interface ResolvedConditionDefinition {
+	/** The original condition ID that was requested. */
+	inputId: string;
+	/** The normalized ID matched against the catalog. */
+	normalizedId: string;
+	/** The resolved condition definition, if one exists. */
+	definition?: ConditionDefinition;
+	/** Numeric stack value when the input used an active stacked ID such as slowed-2. */
+	stackValue?: number;
 }
 
 /**

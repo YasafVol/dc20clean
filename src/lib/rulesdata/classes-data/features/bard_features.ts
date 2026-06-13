@@ -16,10 +16,6 @@ export const bardClass: ClassDefinition = {
 		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	spellcasterPath: {
-		combatTraining: {
-			armor: ['Light_Armor'],
-			shields: ['Light_Shields']
-		},
 		spellList: {
 			description:
 				'When you learn a new Spell, you can choose any Spell from the Enchantment Spell School or with the following Spell Tags: Embolden, Enfeeble, Healing, Illusion, or Sound.',
@@ -242,10 +238,11 @@ export const bardClass: ClassDefinition = {
 		},
 		{
 			id: 'bard_level_8_capstone_placeholder',
-			featureName: 'Magnum Opus (Placeholder)',
-			levelGained: 8,
+			featureName: 'Class Capstone (Source Unpublished)',
+			levelGained: 9,
 			isFlavor: true,
-			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
+			description:
+				'The v0.10.5 class progression grants a Class Capstone Feature at level 9, but this source packet does not publish class-specific capstone mechanics. This entry is intentionally non-mechanical and preserves the legacy ID for saved-character compatibility.'
 		}
 	],
 	subclasses: [
@@ -264,7 +261,7 @@ export const bardClass: ClassDefinition = {
 							description:
 								"You learn the Charm Spell, and it doesn't end as a result of the target taking damage. If you already know it, you instead learn another spell with the Charmed Tag.",
 							effects: [
-								{ type: 'GRANT_SPELL', target: 'charm', value: 1 },
+								{ type: 'GRANT_SPELL', target: 'Charm', value: 1 },
 								{
 									type: 'GRANT_ABILITY',
 									target: 'enhanced_charm',

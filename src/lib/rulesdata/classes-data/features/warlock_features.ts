@@ -35,8 +35,11 @@ export const warlockClass: ClassDefinition = {
 			featureName: 'Spellcasting Path',
 			levelGained: 1,
 			description:
-				'You gain the ability to cast spells. Choose 3 Spell Schools; when you learn a new Spell, you can choose any Spell from those Schools.',
-			effects: [{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }]
+				'You gain the ability to cast spells. Choose 3 Spell Schools; when you learn a new Spell, you can choose any Spell from those Schools. You gain Combat Training with Spell Focuses and Light Armor.',
+			effects: [
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Spell_Focuses', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }
+			]
 		},
 		{
 			id: 'warlock_beseech_patron',
@@ -150,9 +153,9 @@ export const warlockClass: ClassDefinition = {
 						{
 							name: 'Pact Familiar',
 							description:
-								'You learn the Find Familiar Spell. When you cast it, your Familiar gains 3 additional Familiar Traits of your choice for free.',
+								'You learn the Call Familiar Spell. When you cast it, your Familiar gains 3 additional Familiar Traits of your choice for free.',
 							effects: [
-								{ type: 'GRANT_SPELL', target: 'Find Familiar', value: 1 },
+								{ type: 'GRANT_SPELL', target: 'Call Familiar', value: 1 },
 								{
 									type: 'GRANT_ABILITY',
 									target: 'pact_familiar_bonus',
@@ -232,10 +235,11 @@ export const warlockClass: ClassDefinition = {
 		},
 		{
 			id: 'warlock_level_8_capstone_placeholder',
-			featureName: "Patron's Vessel (Placeholder)",
-			levelGained: 8,
+			featureName: 'Class Capstone (Source Unpublished)',
+			levelGained: 9,
 			isFlavor: true,
-			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
+			description:
+				'The v0.10.5 class progression grants a Class Capstone Feature at level 9, but this source packet does not publish class-specific capstone mechanics. This entry is intentionally non-mechanical and preserves the legacy ID for saved-character compatibility.'
 		}
 	],
 	subclasses: [

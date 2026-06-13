@@ -11,7 +11,11 @@ export const sorcererClass: ClassDefinition = {
 		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	spellcasterPath: {
-		spellList: ['Arcane', 'Divine', 'Primal'],
+		spellList: {
+			type: 'any',
+			description:
+				'Choose 1 Spell Source (Arcane, Divine, or Primal). When you learn a new Spell, you can choose any Spell from the chosen Spell Source.'
+		},
 		cantrips: {
 			description:
 				'The number of Cantrips you know increases as shown in the Cantrips Known column of the Sorcerer Class Table.'
@@ -30,8 +34,11 @@ export const sorcererClass: ClassDefinition = {
 			featureName: 'Spellcasting Path',
 			levelGained: 1,
 			description:
-				'You gain the ability to cast spells from the Arcane, Divine, or Primal spell lists.',
-			effects: [{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }]
+				'You gain the ability to cast spells. Choose 1 Spell Source (Arcane, Divine, or Primal). You gain Combat Training with Spell Focuses and Light Armor.',
+			effects: [
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Spell_Focuses', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }
+			]
 		},
 		{
 			id: 'sorcerer_innate_power',
@@ -258,10 +265,11 @@ export const sorcererClass: ClassDefinition = {
 		},
 		{
 			id: 'sorcerer_level_8_capstone_placeholder',
-			featureName: 'Reality Shaper (Placeholder)',
-			levelGained: 8,
+			featureName: 'Class Capstone (Source Unpublished)',
+			levelGained: 9,
 			isFlavor: true,
-			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
+			description:
+				'The v0.10.5 class progression grants a Class Capstone Feature at level 9, but this source packet does not publish class-specific capstone mechanics. This entry is intentionally non-mechanical and preserves the legacy ID for saved-character compatibility.'
 		}
 	],
 	subclasses: [

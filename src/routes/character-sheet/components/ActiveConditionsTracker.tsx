@@ -8,7 +8,10 @@
 import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { ALL_CONDITIONS } from '../../../lib/rulesdata/conditions/conditions.data';
+import {
+	ALL_CONDITIONS,
+	normalizeConditionId
+} from '../../../lib/rulesdata/conditions/conditions.data';
 import type {
 	ConditionDefinition,
 	ConditionTag
@@ -18,6 +21,7 @@ import { theme } from '../styles/theme';
 interface ActiveConditionsTrackerProps {
 	activeConditions: string[];
 	onToggleCondition: (conditionId: string) => void;
+	onSetConditionStacks?: (conditionId: string, stacks: number) => void;
 	isMobile?: boolean;
 }
 
@@ -190,39 +194,39 @@ const TagLabel = styled.span<{ $tag: ConditionTag }>`
 	text-transform: capitalize;
 `;
 
-const TagsContainer = styled.div`
-	display: flex;
-	gap: ${theme.spacing[1]};
-	flex-wrap: wrap;
-	margin-top: ${theme.spacing[1]};
-`;
-
-const TypeBadge = styled.span<{ $type: string }>`
-	background: ${(props) => {
-		switch (props.$type) {
-			case 'stacking':
-				return '#3b82f6';
-			case 'overlapping':
-				return '#f59e0b';
-			case 'absolute':
-				return '#ef4444';
-			default:
-				return theme.colors.text.muted;
-		}
-	}};
-	color: white;
-	padding: 2px 6px;
-	border-radius: ${theme.borderRadius.sm};
-	font-size: ${theme.typography.fontSize.xs};
-	font-weight: ${theme.typography.fontWeight.semibold};
-	text-transform: uppercase;
-`;
-
 const ConditionDescription = styled.p`
 	color: ${theme.colors.text.secondary};
 	font-size: ${theme.typography.fontSize.xs};
 	margin: 0;
 	line-height: ${theme.typography.lineHeight.relaxed};
+`;
+
+const StackControls = styled.div`
+	display: flex;
+	align-items: center;
+	gap: ${theme.spacing[1]};
+	margin-top: ${theme.spacing[1]};
+`;
+
+const StackButton = styled.button`
+	background: ${theme.colors.bg.primary};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.sm};
+	color: ${theme.colors.text.primary};
+	width: 24px;
+	height: 24px;
+	cursor: pointer;
+	font-weight: ${theme.typography.fontWeight.bold};
+
+	&:hover {
+		border-color: ${theme.colors.accent.primary};
+	}
+`;
+
+const StackValue = styled.span`
+	color: ${theme.colors.text.secondary};
+	font-size: ${theme.typography.fontSize.xs};
+	min-width: 4.5rem;
 `;
 
 const ExpandButton = styled.button`
@@ -261,6 +265,7 @@ const TAG_LABELS: Record<ConditionTag, string> = {
 export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = ({
 	activeConditions,
 	onToggleCondition,
+	onSetConditionStacks,
 	isMobile = false
 }) => {
 	const { t } = useTranslation();
@@ -312,11 +317,38 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 		});
 	};
 
+	const getActiveConditionEntry = (condition: ConditionDefinition): string | undefined => {
+		if (condition.type !== 'stacking') {
+			return activeConditions.includes(condition.id) ? condition.id : undefined;
+		}
+
+		return activeConditions.find(
+			(conditionId) => normalizeConditionId(conditionId) === condition.id
+		);
+	};
+
+	const getStackValue = (conditionId: string | undefined): number => {
+		if (!conditionId) return 0;
+		const match = conditionId.match(/-(\d+)$/);
+		return match ? Number.parseInt(match[1], 10) : 1;
+	};
+
+	const setConditionStacks = (conditionId: string, stacks: number) => {
+		if (onSetConditionStacks) {
+			onSetConditionStacks(conditionId, stacks);
+			return;
+		}
+
+		onToggleCondition(conditionId);
+	};
+
 	return (
 		<Container $isMobile={isMobile}>
 			<Header>
 				<Title>⚔️ {t('characterSheet.conditionsTitle')}</Title>
-				<ActiveCount>{t('characterSheet.conditionsActive', { count: activeConditions.length })}</ActiveCount>
+				<ActiveCount>
+					{t('characterSheet.conditionsActive', { count: activeConditions.length })}
+				</ActiveCount>
 			</Header>
 
 			<SearchInput
@@ -343,7 +375,9 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 					<EmptyState>{t('characterSheet.conditionsNoMatch')}</EmptyState>
 				) : (
 					filteredConditions.map((condition) => {
-						const isActive = activeConditions.includes(condition.id);
+						const activeConditionEntry = getActiveConditionEntry(condition);
+						const isActive = Boolean(activeConditionEntry);
+						const stackValue = getStackValue(activeConditionEntry);
 						const isExpanded = expandedConditions.has(condition.id);
 
 						return (
@@ -353,7 +387,11 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 										<Checkbox
 											type="checkbox"
 											checked={isActive}
-											onChange={() => onToggleCondition(condition.id)}
+											onChange={() =>
+												condition.type === 'stacking'
+													? setConditionStacks(condition.id, isActive ? 0 : 1)
+													: onToggleCondition(condition.id)
+											}
 											onClick={(e) => e.stopPropagation()}
 										/>
 										<ConditionName $active={isActive}>{condition.name}</ConditionName>
@@ -367,10 +405,30 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 									</ConditionHeaderRight>
 								</ConditionHeader>
 
+								{condition.type === 'stacking' && isActive && (
+									<StackControls onClick={(e) => e.stopPropagation()}>
+										<StackButton
+											type="button"
+											onClick={() => setConditionStacks(condition.id, stackValue - 1)}
+										>
+											-
+										</StackButton>
+										<StackValue>Stacks: {stackValue}</StackValue>
+										<StackButton
+											type="button"
+											onClick={() => setConditionStacks(condition.id, stackValue + 1)}
+										>
+											+
+										</StackButton>
+									</StackControls>
+								)}
+
 								{isExpanded && <ConditionDescription>{condition.description}</ConditionDescription>}
 
 								<ExpandButton onClick={() => toggleExpanded(condition.id)}>
-								{isExpanded ? t('characterSheet.conditionsHideDetails') : t('characterSheet.conditionsShowDetails')}
+									{isExpanded
+										? t('characterSheet.conditionsHideDetails')
+										: t('characterSheet.conditionsShowDetails')}
 								</ExpandButton>
 							</ConditionItem>
 						);

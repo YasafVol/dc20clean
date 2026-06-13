@@ -70,6 +70,169 @@ describe('Spell System - Spells Known Slots', () => {
 		const spells = result.spellsKnownSlots.filter((s) => s.type === 'spell');
 		expect(spells.length).toBeGreaterThanOrEqual(4);
 	});
+
+	it('restricts the Cleric Magic domain spell slot to the selected nested spell tag', () => {
+		const featureChoices = {
+			cleric_cleric_order_1: ['Knowledge', 'Magic'],
+			cleric_cleric_order_choice_1_option_1_effect_1_user_choice: 'Fire'
+		};
+		const result = calculateCharacterWithBreakdowns(
+			createBaseBuild({
+				classId: 'cleric',
+				level: 1,
+				featureChoices
+			}) as any
+		);
+		const magicDomainSlot = result.spellsKnownSlots.find((slot) =>
+			slot.specificRestrictions?.tags?.includes('Fire' as any)
+		);
+
+		expect(magicDomainSlot).toBeDefined();
+
+		const validResult = calculateCharacterWithBreakdowns(
+			createBaseBuild({
+				classId: 'cleric',
+				level: 1,
+				featureChoices,
+				selectedSpells: { [magicDomainSlot!.id]: 'fire-bolt' }
+			}) as any
+		);
+		expect(
+			validResult.validation.errors.find((error) => error.code === 'TAG_RESTRICTION')
+		).toBeUndefined();
+
+		const invalidResult = calculateCharacterWithBreakdowns(
+			createBaseBuild({
+				classId: 'cleric',
+				level: 1,
+				featureChoices,
+				selectedSpells: { [magicDomainSlot!.id]: 'heal' }
+			}) as any
+		);
+		expect(
+			invalidResult.validation.errors.find((error) => error.code === 'SCHOOL_RESTRICTION')
+		).toBeDefined();
+	});
+
+	it('restricts Bard Eloquence charm grants to the exact Charm spell', () => {
+		const result = calculateCharacterWithBreakdowns(
+			createBaseBuild({
+				classId: 'bard',
+				level: 3,
+				selectedSubclass: 'Eloquence'
+			}) as any
+		);
+		const charmSlot = result.spellsKnownSlots.find(
+			(slot) => slot.specificRestrictions?.exactSpellId === 'charm'
+		);
+
+		expect(charmSlot).toBeDefined();
+
+		const validResult = calculateCharacterWithBreakdowns(
+			createBaseBuild({
+				classId: 'bard',
+				level: 3,
+				selectedSubclass: 'Eloquence',
+				selectedSpells: { [charmSlot!.id]: 'charm' }
+			}) as any
+		);
+		expect(
+			validResult.validation.errors.find((error) => error.field === charmSlot!.id)
+		).toBeUndefined();
+
+		const invalidResult = calculateCharacterWithBreakdowns(
+			createBaseBuild({
+				classId: 'bard',
+				level: 3,
+				selectedSubclass: 'Eloquence',
+				selectedSpells: { [charmSlot!.id]: 'heal' }
+			}) as any
+		);
+		expect(
+			invalidResult.validation.errors.find((error) => error.field === charmSlot!.id)
+		).toBeDefined();
+	});
+
+	it('restricts Pact Familiar to the exact Call Familiar spell', () => {
+		const featureChoices = {
+			warlock_pact_boon_0: 'Pact Familiar'
+		};
+		const result = calculateCharacterWithBreakdowns(
+			createBaseBuild({
+				classId: 'warlock',
+				level: 1,
+				featureChoices
+			}) as any
+		);
+		const familiarSlot = result.spellsKnownSlots.find(
+			(slot) => slot.specificRestrictions?.exactSpellId === 'call-familiar'
+		);
+
+		expect(familiarSlot).toBeDefined();
+
+		const validResult = calculateCharacterWithBreakdowns(
+			createBaseBuild({
+				classId: 'warlock',
+				level: 1,
+				featureChoices,
+				selectedSpells: { [familiarSlot!.id]: 'call-familiar' }
+			}) as any
+		);
+		expect(
+			validResult.validation.errors.find((error) => error.field === familiarSlot!.id)
+		).toBeUndefined();
+
+		const invalidResult = calculateCharacterWithBreakdowns(
+			createBaseBuild({
+				classId: 'warlock',
+				level: 1,
+				featureChoices,
+				selectedSpells: { [familiarSlot!.id]: 'arcane-bolt' }
+			}) as any
+		);
+		expect(
+			invalidResult.validation.errors.find((error) => error.field === familiarSlot!.id)
+		).toBeDefined();
+	});
+
+	it('restricts Eldritch Warlock psychic spellcasting to Psychic-tagged spells', () => {
+		const result = calculateCharacterWithBreakdowns(
+			createBaseBuild({
+				classId: 'warlock',
+				level: 3,
+				selectedSubclass: 'Eldritch'
+			}) as any
+		);
+		const psychicSlot = result.spellsKnownSlots.find((slot) =>
+			slot.specificRestrictions?.tags?.includes('Psychic' as any)
+		);
+
+		expect(psychicSlot).toBeDefined();
+
+		const validResult = calculateCharacterWithBreakdowns(
+			createBaseBuild({
+				classId: 'warlock',
+				level: 3,
+				selectedSubclass: 'Eldritch',
+				selectedSpells: { [psychicSlot!.id]: 'psychic-wave' }
+			}) as any
+		);
+		expect(
+			validResult.validation.errors.find((error) => error.field === psychicSlot!.id)
+		).toBeUndefined();
+
+		const invalidResult = calculateCharacterWithBreakdowns(
+			createBaseBuild({
+				classId: 'warlock',
+				level: 3,
+				selectedSubclass: 'Eldritch',
+				selectedSpells: { [psychicSlot!.id]: 'heal' }
+			}) as any
+		);
+		expect(
+			invalidResult.validation.errors.find((error) => error.field === psychicSlot!.id)
+		).toBeDefined();
+	});
 });
 
 describe('Spell System - Validations', () => {

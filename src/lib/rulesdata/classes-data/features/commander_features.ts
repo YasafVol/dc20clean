@@ -236,10 +236,11 @@ export const commanderClass: ClassDefinition = {
 		},
 		{
 			id: 'commander_level_8_capstone_placeholder',
-			featureName: 'Supreme Commander (Placeholder)',
-			levelGained: 8,
+			featureName: 'Class Capstone (Source Unpublished)',
+			levelGained: 9,
 			isFlavor: true,
-			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
+			description:
+				'The v0.10.5 class progression grants a Class Capstone Feature at level 9, but this source packet does not publish class-specific capstone mechanics. This entry is intentionally non-mechanical and preserves the legacy ID for saved-character compatibility.'
 		}
 	],
 	subclasses: [

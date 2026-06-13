@@ -42,9 +42,7 @@ export function aggregateAttributedEffects(
 						category: 'Selected Trait'
 					},
 					resolved: !(effect as any).userChoice,
-					dependsOnChoice: (effect as any).userChoice
-						? `${traitId}-${effectIndex}`
-						: undefined
+					dependsOnChoice: (effect as any).userChoice ? `${traitId}-${effectIndex}` : undefined
 				} as AttributedEffect);
 			}
 		}
@@ -82,12 +80,61 @@ export function aggregateAttributedEffects(
 		);
 
 		for (const feature of subclassFeatures) {
+			if (feature.effects) {
+				for (const effect of feature.effects) {
+					effects.push({
+						...effect,
+						source: {
+							type: 'class_feature',
+							id: feature.id || feature.featureName,
+							name: feature.featureName,
+							description: feature.description,
+							category: `${buildData.selectedSubclass} Level ${feature.levelGained}`
+						},
+						resolved: !(effect as any).userChoice,
+						dependsOnChoice: (effect as any).userChoice
+							? `${buildData.classId}_${buildData.selectedSubclass}_${feature.id || feature.featureName}`
+							: undefined
+					} as AttributedEffect);
+				}
+			}
+
+			if (feature.benefits) {
+				for (const benefit of feature.benefits) {
+					if (!benefit.effects) continue;
+
+					for (const effect of benefit.effects) {
+						effects.push({
+							...effect,
+							source: {
+								type: 'class_feature',
+								id: `${feature.id || feature.featureName}_${benefit.name}`,
+								name: benefit.name,
+								description: benefit.description,
+								category: `${buildData.selectedSubclass} Level ${feature.levelGained}`
+							},
+							resolved: !(effect as any).userChoice,
+							dependsOnChoice: (effect as any).userChoice
+								? `${buildData.classId}_${buildData.selectedSubclass}_${feature.id || feature.featureName}_${benefit.name}`
+								: undefined
+						} as AttributedEffect);
+					}
+				}
+			}
+
 			if (feature.choices) {
 				for (const choice of feature.choices) {
-					const choiceKey = `${buildData.classId}_${buildData.selectedSubclass}_${choice.id}`;
-					const selections = buildData.featureChoices[choiceKey] || [];
+					const selections =
+						buildData.featureChoices[
+							`${buildData.classId}_${buildData.selectedSubclass}_${choice.id}`
+						];
+					const selectedOptionNames = Array.isArray(selections)
+						? selections
+						: selections
+							? [selections]
+							: [];
 
-					for (const selectedOptionName of selections) {
+					for (const selectedOptionName of selectedOptionNames) {
 						const option = choice.options?.find((opt) => opt.name === selectedOptionName);
 						if (option?.effects) {
 							for (const effect of option.effects) {
@@ -193,22 +240,24 @@ export function aggregateAttributedEffects(
 			if (feature.choices) {
 				for (let choiceIndex = 0; choiceIndex < feature.choices.length; choiceIndex++) {
 					const choice = feature.choices[choiceIndex];
-					const legacyKey = getLegacyChoiceId(
-						classDef.className,
-						feature.featureName,
-						choiceIndex
-					);
+					const legacyKey = getLegacyChoiceId(classDef.className, feature.featureName, choiceIndex);
 					const userChoice =
 						(buildData as any).featureChoices?.[choice.id] ??
 						(buildData as any).featureChoices?.[legacyKey];
 					if (userChoice) {
-						for (const option of choice.options) {
+						for (const [optionIndex, option] of choice.options.entries()) {
 							const isSelected =
 								userChoice === option.name ||
 								(Array.isArray(userChoice) && userChoice.includes(option.name));
 							if (isSelected) {
 								if (option.effects) {
-									for (const effect of option.effects) {
+									for (const [effectIndex, effect] of option.effects.entries()) {
+										const nestedChoiceKey = (effect as any).userChoice
+											? `${classDef.className.toLowerCase()}_${feature.featureName.toLowerCase().replace(/\s+/g, '_')}_choice_${choiceIndex}_option_${optionIndex}_effect_${effectIndex}_user_choice`
+											: undefined;
+										const resolvedValue = nestedChoiceKey
+											? (buildData as any).featureChoices?.[nestedChoiceKey]
+											: undefined;
 										effects.push({
 											...effect,
 											source: {
@@ -218,7 +267,9 @@ export function aggregateAttributedEffects(
 												description: option.description,
 												category: `${classDef.className} Choice`
 											},
-											resolved: true
+											resolved: !(effect as any).userChoice || Boolean(resolvedValue),
+											dependsOnChoice: nestedChoiceKey,
+											resolvedValue
 										} as AttributedEffect);
 									}
 								}
@@ -238,10 +289,13 @@ export function aggregateAttributedEffects(
  */
 export function resolveEffectChoices(
 	effects: AttributedEffect[],
-	choices: TraitChoiceStorage
+	choices: TraitChoiceStorage = {}
 ): AttributedEffect[] {
 	return effects.map((effect) => {
 		if (!(effect as any).userChoice || !effect.dependsOnChoice) {
+			return effect;
+		}
+		if (effect.resolved && (effect as any).resolvedValue !== undefined) {
 			return effect;
 		}
 
@@ -252,10 +306,7 @@ export function resolveEffectChoices(
 
 		// Resolve the choice
 		const resolvedEffect = { ...effect } as any;
-		if (
-			(effect as any).target === 'any_attribute' &&
-			(effect as any).type === 'MODIFY_ATTRIBUTE'
-		) {
+		if ((effect as any).target === 'any_attribute' && (effect as any).type === 'MODIFY_ATTRIBUTE') {
 			resolvedEffect.target = chosenValue;
 			resolvedEffect.resolved = true;
 			resolvedEffect.resolvedValue = chosenValue;
@@ -271,6 +322,9 @@ export function resolveEffectChoices(
 			(effect as any).type === 'GRANT_TRADE_EXPERTISE'
 		) {
 			resolvedEffect.target = chosenValue;
+			resolvedEffect.resolved = true;
+			resolvedEffect.resolvedValue = chosenValue;
+		} else {
 			resolvedEffect.resolved = true;
 			resolvedEffect.resolvedValue = chosenValue;
 		}

@@ -2,7 +2,7 @@
 
 > Purpose: Canonical catalog of `Effect.type` semantics, targets, choice resolution, and stacking rules used across Traits and Class Features.
 > Status: Active
-> Last Updated: 2026-06-01
+> Last Updated: 2026-06-13
 
 ---
 
@@ -35,7 +35,7 @@ All effect types are defined in `character.schema.ts` as a discriminated union. 
 | `GRANT_ABILITY`         | ability name                                              | `string` (description)                                       | --                                  | De-duplicates                                          |
 | `GRANT_RESISTANCE`      | damage type                                               | `string \| number \| boolean`                                | `optional?: string`                 | De-duplicates; **collected by `abilityCollection.ts`** |
 | `GRANT_VULNERABILITY`   | damage type                                               | `number`                                                     | --                                  | De-duplicates; **collected by `abilityCollection.ts`** |
-| `GRANT_ADV_ON_SAVE`     | save type                                                 | `string \| boolean`                                          | --                                  | De-duplicates                                          |
+| `GRANT_ADV_ON_SAVE`     | save type or condition target                             | `string \| boolean`                                          | --                                  | De-duplicates; condition targets normalize by ID/name  |
 | `GRANT_ADV_ON_CHECK`    | check type                                                | `string \| boolean`                                          | --                                  | De-duplicates                                          |
 | `GRANT_COMBAT_TRAINING` | training type (e.g., `Weapons`, `Spell_Focuses`)          | `boolean`                                                    | --                                  | De-duplicates; **collected by `abilityCollection.ts`** |
 | `GRANT_SENSE`           | sense type (e.g., `darkvision`)                           | `number` (range)                                             | --                                  | De-duplicates; **collected by `abilityCollection.ts`** |
@@ -63,16 +63,16 @@ All effect types are defined in `character.schema.ts` as a discriminated union. 
 
 ### Condition Interaction Effects (v0.10)
 
-| Type                            | Target       | Value                                | Purpose                    |
-| ------------------------------- | ------------ | ------------------------------------ | -------------------------- |
-| `GRANT_CONDITION_IMMUNITY`      | condition ID | --                                   | Full immunity to condition |
-| `GRANT_CONDITION_RESISTANCE`    | condition ID | `advantage` \| `reduction` \| `half` | Partial resistance         |
-| `GRANT_CONDITION_VULNERABILITY` | condition ID | `disadvantage` \| `double`           | Increased susceptibility   |
+| Type                            | Target            | Value                                | Purpose                    |
+| ------------------------------- | ----------------- | ------------------------------------ | -------------------------- |
+| `GRANT_CONDITION_IMMUNITY`      | condition ID/name | --                                   | Full immunity to condition |
+| `GRANT_CONDITION_RESISTANCE`    | condition ID/name | `advantage` \| `reduction` \| `half` | Partial resistance         |
+| `GRANT_CONDITION_VULNERABILITY` | condition ID/name | `disadvantage` \| `double`           | Increased susceptibility   |
 
 ### Effect Processing Pipeline
 
 1. **Aggregation** (`effectCollection.ts::aggregateAttributedEffects()`): Collects effects from ancestry traits, class features, subclass features, talents, and feature choices. Each effect is tagged with its source.
-2. **Choice Resolution** (`effectCollection.ts::resolveEffectChoices()`): Resolves effects with `userChoice` metadata (e.g., `any_attribute` → specific attribute based on user selection).
+2. **Choice Resolution** (`effectCollection.ts::resolveEffectChoices()`): Resolves effects with `userChoice` metadata (e.g., `any_attribute` → specific attribute based on user selection). Nested class feature option effects use stable generated keys so a parent class choice can expose a second user choice such as a spell tag or school.
 3. **Stat Application** (`statCalculation.ts::createStatBreakdown()`): Applies `MODIFY_STAT` and `MODIFY_ATTRIBUTE` effects to base values, producing breakdowns with per-source attribution.
 4. **Grant Collection** (`abilityCollection.ts`): Collects all grant-type effects:
    - `collectGrantedAbilities()` — `GRANT_ABILITY` effects
@@ -82,7 +82,7 @@ All effect types are defined in `character.schema.ts` as a discriminated union. 
    - `collectSenses()` — `GRANT_SENSE` effects (previously hardcoded empty)
    - `collectCombatTraining()` — `GRANT_COMBAT_TRAINING` effects (previously hardcoded empty)
    - `collectConditionalModifiers()` — conditional modifiers from `MODIFY_STAT` effects
-5. **Condition Aggregation** (`conditionAggregator.ts`): Scans all effects for condition interactions and groups them by condition ID.
+5. **Condition Aggregation** (`conditionAggregator.ts`): Scans all effects for condition interactions and groups them by canonical condition ID. It accepts condition IDs, display names, and concrete stacking IDs such as `slowed-2`; `GRANT_ADV_ON_SAVE`, `GRANT_RESISTANCE`, and `GRANT_VULNERABILITY` also contribute when their target names a condition.
 
 Stacking rules: Numeric effects (`MODIFY_STAT`, `MODIFY_ATTRIBUTE`) sum. Grants de-duplicate by target. Mastery cap effects accumulate slots.
 
@@ -242,14 +242,15 @@ interface GrantConditionVulnerabilityEffect {
 }
 ```
 
-> **Note:** The `conditionAggregator.ts` currently only checks effect types without processing the `value` field. Future enhancement should use the value to determine the specific kind of resistance/vulnerability.
+`Poisoned` is not part of the universal v0.10.5 condition catalog. It remains available to the aggregator as an effect-specific affliction target for poisons and legacy authored effects, without adding universal Poisoned mechanics to active condition analysis.
 
 ### Processing Flow
 
 1. **Aggregation** (`conditionAggregator.ts`):
    - Scans ancestry traits, class features, subclass features, and talents
    - Collects all condition-related effects with source attribution
-   - Groups interactions by condition ID
+   - Groups interactions by canonical condition ID, including stacking IDs normalized to `*-x`
+   - Preserves resistance/vulnerability detail text from effect values
 
 2. **UI Display** (`Conditions.tsx`):
    - Shows immunities, resistances, and vulnerabilities separately
@@ -258,7 +259,9 @@ interface GrantConditionVulnerabilityEffect {
 
 ### Condition IDs (from `conditions.data.ts`)
 
-`bleeding`, `blinded`, `burning`, `charmed`, `dazed-x`, `deafened`, `disoriented-x`, `exhaustion`, `frightened`, `grappled`, `hidden`, `immobilized`, `impaired-x`, `incapacitated`, `intimidated`, `invisible`, `paralyzed`, `petrified`, `poisoned-x`, `prone`, `restrained`, `slowed-x`, `stunned-x`, `surprised`, `taunted`, `terrified`, `unconscious`, `weakened-x`
+Universal: `bleeding`, `blinded`, `burning-x`, `charmed`, `dazed-x`, `deafened`, `disoriented-x`, `exhaustion-x`, `frightened`, `grappled`, `hidden`, `immobilized`, `impaired-x`, `incapacitated`, `intimidated`, `invisible`, `paralyzed`, `petrified`, `prone`, `restrained`, `slowed-x`, `stunned-x`, `surprised`, `taunted`, `terrified`, `unconscious`, `weakened-x`
+
+Effect-specific affliction target: `poisoned`.
 
 ### Example Usage
 
@@ -266,7 +269,7 @@ interface GrantConditionVulnerabilityEffect {
 // Dwarf trait: Dwarven Resilience
 {
   type: 'GRANT_CONDITION_RESISTANCE',
-  target: 'poisoned-x',
+  target: 'poisoned',
   value: 'advantage'  // ADV on saves vs Poisoned
 }
 

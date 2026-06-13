@@ -19,10 +19,6 @@ export const clericClass: ClassDefinition = {
 		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	spellcasterPath: {
-		combatTraining: {
-			armor: ['Light_Armor'],
-			shields: ['Light_Shields']
-		},
 		spellList: {
 			description:
 				'When you learn a new Spell, you can choose any Spell on the Divine Spell Source.',
@@ -327,10 +323,11 @@ export const clericClass: ClassDefinition = {
 		},
 		{
 			id: 'cleric_level_8_capstone_placeholder',
-			featureName: 'Avatar of Faith (Placeholder)',
-			levelGained: 8,
+			featureName: 'Class Capstone (Source Unpublished)',
+			levelGained: 9,
 			isFlavor: true,
-			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
+			description:
+				'The v0.10.5 class progression grants a Class Capstone Feature at level 9, but this source packet does not publish class-specific capstone mechanics. This entry is intentionally non-mechanical and preserves the legacy ID for saved-character compatibility.'
 		}
 	],
 	subclasses: [
@@ -344,6 +341,21 @@ export const clericClass: ClassDefinition = {
 					levelGained: 3,
 					description:
 						'You gain Resistance to Charmed, Intimidated, and Taunted. Creatures Intimidated by your Divine Rebuke don\'t stop being Intimidated if they take damage. You also gain the "Chastise" Divine Blessing option.',
+					benefits: [
+						{
+							name: 'Chastise',
+							description:
+								'(1 MP) Brand the target as a heretic for 1 minute. You have ADV on Insight and Intimidation Checks against it, and once per round when you Hit it with an Attack you can deal +1 Divine Damage.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'cleric_chastise',
+									value:
+										'1 MP: Brand the target as a heretic for 1 minute; gain ADV on Insight and Intimidation Checks against it, and once per round on a hit you can deal +1 Divine Damage.'
+								}
+							]
+						}
+					],
 					effects: []
 				},
 				{
@@ -366,6 +378,21 @@ export const clericClass: ClassDefinition = {
 					levelGained: 3,
 					description:
 						"When you spend MP to heal a creature beyond their HP maximum, they gain an amount of Temp HP equal to the remaining healing. When you spend MP to heal a creature on Death's Door, the HP restored is increased by an amount equal to your Prime Modifier. You also gain the 'Hand of Salvation' Channel Divinity option.",
+					benefits: [
+						{
+							name: 'Hand of Salvation',
+							description:
+								'When another creature you can see within 5 Spaces would be Hit by an Attack, you can spend 2 AP as a Reaction to pull the willing creature to an unoccupied Space within 1 Space of you. The Attack misses, has no effect, and the creature is immune to all damage during the movement.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'cleric_hand_of_salvation',
+									value:
+										'Reaction, 2 AP: Pull a willing creature within 5 Spaces to an unoccupied Space within 1 Space of you when it would be Hit; the Attack misses and it is immune to all damage during the movement.'
+								}
+							]
+						}
+					],
 					effects: []
 				},
 				{

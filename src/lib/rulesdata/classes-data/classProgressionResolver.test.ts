@@ -398,6 +398,24 @@ describe('Class Progression Resolver (UT-2)', () => {
 				expect(expertFeature?.description).toMatch(/benefits/i);
 				expect(expertFeature?.benefits?.length).toBeGreaterThan(0);
 			});
+
+			it(`${classId} treats the level 9 Class Capstone as source-unpublished and non-mechanical`, () => {
+				const expectedId = `${classId}_level_8_capstone_placeholder`;
+				const level9Gains = getLevelData(classId, 9).gains;
+				const result = resolveClassProgression(classId, 9);
+				const capstoneFeature = result.unlockedFeatures.find(
+					(feature) => feature.id === expectedId
+				);
+
+				expect(level9Gains?.classFeatures).toContain(expectedId);
+				expect(capstoneFeature).toBeDefined();
+				expect(capstoneFeature?.featureName).toBe('Class Capstone (Source Unpublished)');
+				expect(capstoneFeature?.levelGained).toBe(9);
+				expect(capstoneFeature?.isFlavor).toBe(true);
+				expect(capstoneFeature?.description).toMatch(/does not publish/i);
+				expect(capstoneFeature?.description).not.toMatch(/Level 8|placeholder/i);
+				expect(getAllFeatureEffects(capstoneFeature as ClassFeature)).toEqual([]);
+			});
 		});
 
 		for (const [classId, expectedEffects] of Object.entries(v0105ExpertFeatureEffects)) {

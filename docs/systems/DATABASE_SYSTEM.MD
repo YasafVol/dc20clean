@@ -2,7 +2,7 @@
 
 > Purpose: Persistence architecture for characters and DM Tools: hybrid localStorage/Convex storage, schemas, auth, migrations.
 > Status: Active
-> Last Updated: 2026-06-12
+> Last Updated: 2026-06-13
 
 ---
 
@@ -92,6 +92,8 @@ interface CharacterState {
 	maneuvers?: ManeuverData[];
 }
 ```
+
+`activeConditions` stores universal condition IDs. Stacking conditions use concrete IDs such as `slowed-2` or `exhaustion-4` in the same string array and normalize back to their catalog IDs at runtime. No Convex schema migration is required for this because `convex/schema.ts` already validates the field as `v.optional(v.array(v.string()))`.
 
 ---
 

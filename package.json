@@ -28,7 +28,10 @@
 		"export:local": "node scripts/localExportPOC.mjs",
 		"spells:extract:0105": "node scripts/spells/dc20-0105-spells.mjs",
 		"spells:validate:0105": "node scripts/spells/dc20-0105-spells.mjs --check",
-		"spells:generate:0105": "node scripts/spells/dc20-0105-spells.mjs --write"
+		"spells:generate:0105": "node scripts/spells/dc20-0105-spells.mjs --write",
+		"martials:extract:0105": "node scripts/martials/dc20-0105-maneuvers.mjs",
+		"martials:validate:0105": "node scripts/martials/dc20-0105-maneuvers.mjs --check",
+		"martials:generate:0105": "node scripts/martials/dc20-0105-maneuvers.mjs --write"
 	},
 	"files": [
 		"dist",

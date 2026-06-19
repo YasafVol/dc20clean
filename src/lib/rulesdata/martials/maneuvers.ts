@@ -1,11 +1,11 @@
 /**
  * Maneuvers - DC20 v0.10.5
  *
- * 29 maneuvers organized by type:
+ * 30 maneuvers organized by type:
  * - Attack (11) - Offensive strikes and area attacks
  * - Defense (7) - Protection and damage mitigation
  * - Grapple (4) - Close-quarters control
- * - Utility (7) - Movement and battlefield control
+ * - Utility (8) - Movement and battlefield control
  *
  * Note: Techniques have been REMOVED in v0.10 - only Maneuvers remain.
  * Baseline generated from docs/assets/DC20 0.10 full.md with v0.10.5 deltas
@@ -23,7 +23,7 @@ export const MANEUVER_RULES_SOURCE = {
 	currentRulesArtifact: 'docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md',
 	changelogArtifact: 'docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md',
 	changelogSection: 'Maneuvers',
-	catalogStatus: 'baseline-plus-v0105-deltas'
+	catalogStatus: 'source-audited-v0105'
 } as const;
 
 export const maneuvers: Maneuver[] = [
@@ -39,9 +39,7 @@ export const maneuvers: Maneuver[] = [
 		enhancements: [
 			{
 				name: 'Increased Distance',
-				costString: '1 SP, Repeatable',
-				sp: 1,
-				repeatable: true,
+				costString: 'X SP',
 				description: 'The distance pushed increases by 1 Space.'
 			},
 			{
@@ -65,16 +63,12 @@ export const maneuvers: Maneuver[] = [
 		enhancements: [
 			{
 				name: 'Improved Bleed',
-				costString: '1 SP, Repeatable',
-				sp: 1,
-				repeatable: true,
+				costString: 'X SP',
 				description: 'The target gains a stack of Bleeding.'
 			},
 			{
 				name: 'Improved Impaired',
-				costString: '1 SP, Repeatable',
-				sp: 1,
-				repeatable: true,
+				costString: 'X SP',
 				description: 'The target gains a stack of Impaired.'
 			},
 			{
@@ -134,7 +128,7 @@ export const maneuvers: Maneuver[] = [
 			},
 			{
 				name: 'Subsequent Strike',
-				costString: '1 AP and 1 SP, Repeatable',
+				costString: '1 AP + 1 SP, Repeatable',
 				sp: 1,
 				ap: 1,
 				repeatable: true,
@@ -154,19 +148,18 @@ export const maneuvers: Maneuver[] = [
 		isReaction: true,
 		enhancements: [
 			{
-				name: 'Slam Down',
-				costString: '1 SP, Repeatable',
-				sp: 1,
-				repeatable: true,
-				description:
-					'If the target is in the air, it makes a Physical Save against your Save DC. Save Failure: The creature is knocked downward 2 Spaces.'
-			},
-			{
 				name: 'Falling Strike',
 				costString: '1 SP',
 				sp: 1,
 				description:
 					'The creature makes a Physical Save against your Save DC. Save Failure: The creature falls Prone.'
+			},
+			{
+				name: 'Slam Down',
+				costString: '1 SP, Requires Falling Strike',
+				sp: 1,
+				description:
+					'If the target is in the air, it makes a Physical Save against your Save DC. Save Failure: The creature is knocked downward 2 Spaces.'
 			},
 			{
 				name: 'Impact Crater',
@@ -175,6 +168,13 @@ export const maneuvers: Maneuver[] = [
 				ap: 1,
 				description:
 					'All creatures within 1 Space of where you land must make a Physical Save against your Save DC. Save Failure: The creature falls Prone.'
+			},
+			{
+				name: 'Larger Crater',
+				costString: '2 SP, Repeatable, Requires Impact Crater',
+				sp: 2,
+				repeatable: true,
+				description: 'The crater increases by 1 Space.'
 			}
 		]
 	},
@@ -183,7 +183,7 @@ export const maneuvers: Maneuver[] = [
 		name: 'Cleave',
 		type: ManeuverType.Attack,
 		cost: { ap: 2 },
-		range: '1 Space Arc (Self)',
+		range: '2 Space Arc (Self)',
 		description:
 			'Make an Area Martial Attack against the AD of every target within range. Hit: The target takes the damage of your Weapon or Unarmed Strike. Reach Weapon: If you have a Reach Weapon, you can extend the Point of Origin 1 Space away from you. The Arc must still be facing away from you.',
 		isReaction: false,
@@ -204,10 +204,15 @@ export const maneuvers: Maneuver[] = [
 			},
 			{
 				name: 'Careful Cleave',
-				costString: '1 SP, Repeatable',
-				sp: 1,
-				repeatable: true,
+				costString: 'X SP',
 				description: 'You can choose 1 target in the area to avoid with the Attack.'
+			},
+			{
+				name: 'Sweep',
+				costString: '2 SP',
+				sp: 2,
+				description:
+					'Targets Hit by the Attack must make a Might Save. Save Failure: They fall Prone.'
 			}
 		]
 	},
@@ -284,7 +289,7 @@ export const maneuvers: Maneuver[] = [
 		name: 'Piercing Shot',
 		type: ManeuverType.Attack,
 		cost: { ap: 2 },
-		range: 'Ranged Weapon',
+		range: 'Ranged Weapon or Weapon with the Toss or Thrown Property',
 		description:
 			"Make an Area Martial Attack against the AD of every target within a 4 Space Line that's Point of Origin is within Range. The Line must extend away from you. Hit: The target takes the damage of your Weapon.",
 		isReaction: false,
@@ -523,9 +528,7 @@ export const maneuvers: Maneuver[] = [
 		enhancements: [
 			{
 				name: 'Heroic Endure',
-				costString: '1 SP, Repeatable',
-				sp: 1,
-				repeatable: true,
+				costString: 'X SP',
 				description: 'The target takes 1 less damage from the Attack.'
 			},
 			{
@@ -536,8 +539,7 @@ export const maneuvers: Maneuver[] = [
 			},
 			{
 				name: 'Repel',
-				costString: '1 SP',
-				sp: 1,
+				costString: 'X SP',
 				description:
 					'After the Attack, if the Attacker is within 1 Space of you or the target, they make a Might Save against your Save DC. Save Failure: They are pushed 1 Space away. Save Failure (each 5): +1 Space pushed.'
 			}
@@ -555,8 +557,9 @@ export const maneuvers: Maneuver[] = [
 		enhancements: [
 			{
 				name: 'Increased Temp HP',
-				costString: '1 SP',
+				costString: '1 SP, Repeatable',
 				sp: 1,
+				repeatable: true,
 				description: 'You gain + 2 Temp HP.'
 			},
 			{
@@ -594,6 +597,12 @@ export const maneuvers: Maneuver[] = [
 				costString: '1 SP',
 				sp: 1,
 				description: "Swapping Spaces doesn't provoke any Opportunity Attacks."
+			},
+			{
+				name: 'Hostile Swap',
+				costString: '1 SP',
+				sp: 1,
+				description: 'You can target an unwilling creature.'
 			}
 		]
 	},
@@ -608,28 +617,21 @@ export const maneuvers: Maneuver[] = [
 		isReaction: false,
 		enhancements: [
 			{
-				name: 'Multi-Slam',
-				costString: '1 AP + 1 SP, Repeatable',
+				name: 'Finishing Slam',
+				costString: '1 SP',
 				sp: 1,
-				ap: 1,
-				repeatable: true,
-				description: 'This Attack targets another creature you have Grappled.'
+				description: 'If this Attack reduces the target to 0 HP, you can end the Grapple.'
 			},
 			{
-				name: 'Charging Slam',
-				costString: '1 AP + 1 SP, Repeatable',
-				sp: 1,
-				ap: 1,
+				name: 'Stunned',
+				costString: '2 SP, Repeatable',
+				sp: 2,
 				repeatable: true,
-				description:
-					'You move up to your Speed pulling the Grappled creatures with you. 1 Grappled creature takes additional damage equal to the number of Spaces moved as you slam them.'
+				description: 'The target gains a stack of Stunned.'
 			},
 			{
 				name: 'Wall Rake',
-				costString: '1 AP + 1 SP, Repeatable',
-				sp: 1,
-				ap: 1,
-				repeatable: true,
+				costString: 'X SP',
 				description:
 					'You slam 1 Grappled creature into a wall within 1 Space and move up to your Speed along the wall, ending your movement within 1 Space of the wall. The target makes a Repeated Might Save against your Save DC. Save Failure: They gain 1 stack of Bleeding per Space moved.'
 			}
@@ -704,9 +706,7 @@ export const maneuvers: Maneuver[] = [
 		enhancements: [
 			{
 				name: 'Increased Throw',
-				costString: '1 SP, Repeatable',
-				sp: 1,
-				repeatable: true,
+				costString: 'X SP',
 				description: 'The target is thrown 1 Space further.'
 			},
 			{
@@ -751,27 +751,54 @@ export const maneuvers: Maneuver[] = [
 		]
 	},
 	{
+		id: 'heroic-pass-through',
+		name: 'Heroic Pass Through',
+		type: ManeuverType.Utility,
+		cost: { ap: 1 },
+		range: 'Pass Through Action',
+		description:
+			"When you take the Pass Through Action, you can add the following Maneuver Enhancements. When you add a Maneuver Enhancement (or perform the Action using SP), you're considered to be performing a Maneuver. Stamina Action: You can spend SP instead of AP to perform the Pass Through Action.",
+		isReaction: false,
+		enhancements: [
+			{
+				name: 'Brush Past',
+				costString: '1 SP',
+				sp: 1,
+				description:
+					"The creature's Space isn't considered Difficult Terrain for this movement and you don't provoke an Opportunity Attack from them if you leave their reach as part of the same movement."
+			},
+			{
+				name: "Let's Go",
+				costString: '1 SP',
+				sp: 1,
+				description:
+					'On a Success, you can pull a willing creature within 1 Space of you to an unoccupied Space within 1 Space of the creature you pass.'
+			}
+		]
+	},
+	{
 		id: 'line-run',
 		name: 'Line Run',
 		type: ManeuverType.Utility,
-		cost: { ap: 2 },
+		cost: { ap: 2, sp: 1 },
 		range: 'Self',
 		description:
 			"You move in a Line up to your Speed. Make a Martial Check. Each creature within the Line must make a Martial Check contested against your Check when you attempt to move through its Space. Contest Success: You can move through the creature's Space. Contest Failure: You're unable to move through the creature's Space, preventing you from moving any further. Example: You make a Martial Check with a result of 15. If your Speed is 5, you can move up to 5 Spaces in a straight Line. If there are 3 creatures in that Line, your Martial Check of 15 would be compared to a Martial Check each creature makes as you attempt to pass through their Space, one by one. If the first creature in your path gets a 15 or higher, you can't pass through their Space and stop moving.",
 		isReaction: false,
 		enhancements: [
 			{
-				name: 'Brush Past',
-				costString: '2 SP',
-				sp: 2,
-				description:
-					"The Space of every creature who fails the contest isn't considered Difficult Terrain for this movement. You don't provoke an Opportunity Attack from them if you leave their reach as part of the same movement."
+				name: 'Distance',
+				costString: '1 SP, Repeatable',
+				sp: 1,
+				repeatable: true,
+				description: 'You move 1 Space further.'
 			},
 			{
-				name: 'Trample',
-				costString: '2 SP',
-				sp: 2,
-				description: 'Every creature who fails the contest is knocked Prone.'
+				name: 'Brush Past',
+				costString: '1 SP',
+				sp: 1,
+				description:
+					"The Space of every creature who fails the contest isn't considered Difficult Terrain for this movement. You don't provoke an Opportunity Attack from them if you leave their reach as part of the same movement."
 			}
 		]
 	},
@@ -898,9 +925,7 @@ export const maneuvers: Maneuver[] = [
 		enhancements: [
 			{
 				name: 'Increased Push',
-				costString: '1 SP, Repeatable',
-				sp: 1,
-				repeatable: true,
+				costString: 'X SP',
 				description: 'The distance pushed increases by 1 Space.'
 			},
 			{

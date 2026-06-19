@@ -8,16 +8,18 @@
 
 ## 1) Key Files
 
-| File                                                  | Role                                                                                                                      |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `src/lib/rulesdata/martials/maneuvers.ts`             | Maneuver catalog (29 maneuvers), `MANEUVER_RULES_SOURCE`, exports `allManeuvers`, alias/name-aware `getManeuverById()`, and `getManeuversByType()` |
-| `src/lib/rulesdata/martials/maneuverFormatting.ts`    | Shared AP/SP and enhancement-cost display helpers                                                                         |
-| `src/lib/rulesdata/schemas/maneuver.schema.ts`        | TypeScript interfaces: `Maneuver`, `ManeuverCost`, `ManeuverEnhancement`, `ManeuverType` enum                             |
-| `src/lib/rulesdata/martials/monk-stances.ts`          | Monk-specific stances (currently empty placeholder)                                                                       |
-| `src/lib/services/enhancedCharacterCalculator.ts`     | Budget calculation and `GRANT_MANEUVERS` processing                                                                       |
-| `src/routes/character-creation/Maneuvers.tsx`         | Creation UI: filter by type, select up to budget                                                                          |
-| `src/routes/character-sheet/components/Maneuvers.tsx` | Sheet display with type filtering                                                                                         |
-| `src/routes/martial-manual/MartialManual.tsx`         | Standalone maneuver reference, parallel to Spellbook                                                                      |
+| File                                                  | Role                                                                                                                                               |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/lib/rulesdata/martials/maneuvers.ts`             | Maneuver catalog (30 maneuvers), `MANEUVER_RULES_SOURCE`, exports `allManeuvers`, alias/name-aware `getManeuverById()`, and `getManeuversByType()` |
+| `src/lib/rulesdata/martials/maneuverFormatting.ts`    | Shared AP/SP and enhancement-cost display helpers                                                                                                  |
+| `scripts/martials/dc20-0105-maneuvers.mjs`            | Source parser/audit generator for the v0.10.5 clean Markdown maneuver chapter                                                                      |
+| `docs/migration/maneuvers-v0105-report.json`          | Generated source audit report used by tests to detect runtime catalog drift                                                                        |
+| `src/lib/rulesdata/schemas/maneuver.schema.ts`        | TypeScript interfaces: `Maneuver`, `ManeuverCost`, `ManeuverEnhancement`, `ManeuverType` enum                                                      |
+| `src/lib/rulesdata/martials/monk-stances.ts`          | Monk-specific stances (currently empty placeholder)                                                                                                |
+| `src/lib/services/enhancedCharacterCalculator.ts`     | Budget calculation and `GRANT_MANEUVERS` processing                                                                                                |
+| `src/routes/character-creation/Maneuvers.tsx`         | Creation UI: filter by type, select up to budget                                                                                                   |
+| `src/routes/character-sheet/components/Maneuvers.tsx` | Sheet display with type filtering                                                                                                                  |
+| `src/routes/martial-manual/MartialManual.tsx`         | Standalone maneuver reference, parallel to Spellbook                                                                                               |
 
 ---
 
@@ -59,14 +61,14 @@ interface Maneuver {
 }
 ```
 
-### Maneuver Counts (29 total)
+### Maneuver Counts (30 total)
 
-| Type    | Count | Examples                                  |
-| ------- | ----- | ----------------------------------------- |
-| Attack  | 11    | Disarm, Power Strike, Cleave, Scattershot |
-| Defense | 7     | Parry, Dodge, Shield Block                |
-| Grapple | 4     | Grab, Pin, Throw                          |
-| Utility | 7     | Dash, Hide, Disengage                     |
+| Type    | Count | Examples                                 |
+| ------- | ----- | ---------------------------------------- |
+| Attack  | 11    | Heroic Bash, Whirlwind, Scattershot      |
+| Defense | 7     | Parry, Brace, Protect                    |
+| Grapple | 4     | Slam, Restrain, Throw Creature           |
+| Utility | 8     | Recover, Heroic Pass Through, Reposition |
 
 ### Utility Functions
 
@@ -109,6 +111,7 @@ import { allManeuvers, getManeuverById, getManeuversByType } from './martials/ma
 - Each v0.10.5 maneuver has maneuver-specific enhancements. This follows the same reference pattern as spell enhancements: the catalog must carry them, character creation must expose them for review, persisted maneuver rows must not discard them, and the character sheet/reference UI must display them.
 - v0.10.5 removes the base SP cost from `Whirlwind` and `Pathcarver`.
 - v0.10.5 adds `Scattershot` as an Attack maneuver.
+- v0.10.5 includes `Heroic Pass Through` as a Utility maneuver. Its source entry is action-style and omits explicit `Cost:`/`Range:` lines, so the parser records it as `Pass Through Action (1 AP)` with range `Pass Through Action`.
 - v0.10.5 rewrites `Reposition` as a reaction triggered when a creature ends its turn, with `Agile`, `Disengage`, and `Coordinated Movement` enhancements.
 - The `Brace` maneuver remains a current Defense maneuver in v0.10.5. `Fortify` is the renamed Champion Fighting Spirit option, not a maneuver catalog rename.
 - `getManeuverById()` resolves both IDs and display names so saved name-based maneuver selections such as `Brace` remain renderable.
@@ -123,9 +126,13 @@ import { allManeuvers, getManeuverById, getManeuversByType } from './martials/ma
 - Baseline artifact: `docs/assets/DC20 0.10 full.md`
 - Current rules artifact: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`
 - Changelog artifact/section: `docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md`, section `Maneuvers`
-- Catalog status: baseline catalog plus audited v0.10.5 maneuver deltas
+- Catalog status: source-audited v0.10.5
 
-The current catalog is not generated end-to-end from the clean v0.10.5 Markdown in the same way spells are. The deterministic audit covers catalog shape, source metadata, and known v0.10.5 deltas; semantic comparison to the source remains human-reviewed.
+`npm run martials:generate:0105` parses the clean v0.10.5 Markdown and writes `docs/migration/maneuvers-v0105-report.json`.
+
+`npm run martials:validate:0105` re-parses the source and fails if the report is stale.
+
+The runtime catalog is still hand-authored TypeScript, but `maneuvers.test.ts` compares every runtime maneuver's id, name, type, base cost, range, reaction state, trigger, enhancement count, enhancement names, and enhancement cost strings against the generated source report.
 
 ---
 
@@ -134,12 +141,14 @@ The current catalog is not generated end-to-end from the clean v0.10.5 Markdown 
 Run the martials audit from most deterministic to most UI-dependent:
 
 1. Catalog shape
-   - Confirm exactly 29 maneuvers: 11 Attack, 7 Defense, 4 Grapple, 7 Utility.
+   - Run `npm run martials:validate:0105`.
+   - Confirm exactly 30 maneuvers: 11 Attack, 7 Defense, 4 Grapple, 8 Utility.
    - Confirm every maneuver has stable `id`, `name`, `type`, `cost`, `range`, `description`, `isReaction`, and an `enhancements` array.
    - Confirm enhancement entries have `name`, `costString`, parsed AP/SP fields when applicable, repeatability when applicable, and description text.
 2. 0.10.5 deltas
    - Confirm removed Techniques stay absent.
    - Confirm `Scattershot` exists.
+   - Confirm `Heroic Pass Through` exists.
    - Confirm `Whirlwind` and `Pathcarver` have no base SP cost.
    - Confirm `Reposition` is the current reaction version and includes `Agile`, `Disengage`, and `Coordinated Movement`.
    - Confirm `Brace` remains a maneuver and `Fortify` is not added as a maneuver alias.
@@ -155,8 +164,7 @@ Run the martials audit from most deterministic to most UI-dependent:
 
 Current audit gaps:
 
-- No deterministic generator/report exists for the full maneuver catalog equivalent to `spells:validate:0105`.
-- Semantic comparison of every maneuver and enhancement against the v0.10.5 source is still human-reviewed.
+- Runtime descriptions are still human-reviewed against the source text to avoid storing full source prose in the generated audit report.
 - Sheet does not yet validate in-play enhancement spend against Stamina Spend Limit.
 
 ---

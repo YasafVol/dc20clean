@@ -1,0 +1,689 @@
+{
+	"source": "docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md",
+	"maneuverCount": 30,
+	"enhancementCount": 88,
+	"typeCounts": { "Attack": 11, "Defense": 7, "Grapple": 4, "Utility": 8 },
+	"maneuvers": [
+		{
+			"id": "heroic-bash",
+			"name": "Heroic Bash",
+			"type": "Attack",
+			"cost": { "display": "1 AP + 1 SP", "ap": 1, "sp": 1 },
+			"range": "Weapon or Unarmed Strike",
+			"isReaction": false,
+			"enhancementCount": 2,
+			"enhancements": [
+				{
+					"id": "increased-distance",
+					"name": "Increased Distance",
+					"costString": "X SP",
+					"variable": true
+				},
+				{ "id": "bowling-ball", "name": "Bowling Ball", "costString": "1 SP", "sp": 1 }
+			],
+			"provenance": { "startLine": 2500, "endLine": 2518 }
+		},
+		{
+			"id": "savage-strike",
+			"name": "Savage Strike",
+			"type": "Attack",
+			"cost": { "display": "1 AP + 1 SP", "ap": 1, "sp": 1 },
+			"range": "Weapon or Unarmed Strike",
+			"isReaction": false,
+			"enhancementCount": 3,
+			"enhancements": [
+				{
+					"id": "improved-bleed",
+					"name": "Improved Bleed",
+					"costString": "X SP",
+					"variable": true
+				},
+				{
+					"id": "improved-impaired",
+					"name": "Improved Impaired",
+					"costString": "X SP",
+					"variable": true
+				},
+				{ "id": "weakened", "name": "Weakened", "costString": "2 SP", "sp": 2 }
+			],
+			"provenance": { "startLine": 2519, "endLine": 2535 }
+		},
+		{
+			"id": "sunder-strike",
+			"name": "Sunder Strike",
+			"type": "Attack",
+			"cost": { "display": "1 AP + 2 SP", "ap": 1, "sp": 2 },
+			"range": "Weapon or Unarmed Strike",
+			"isReaction": false,
+			"enhancementCount": 3,
+			"enhancements": [
+				{
+					"id": "improved-vulnerability",
+					"name": "Improved Vulnerability",
+					"costString": "2 SP, Repeatable",
+					"sp": 2,
+					"repeatable": true
+				},
+				{ "id": "break-dr", "name": "Break DR", "costString": "1 SP", "sp": 1 },
+				{ "id": "break-resistance", "name": "Break Resistance", "costString": "2 SP", "sp": 2 }
+			],
+			"provenance": { "startLine": 2536, "endLine": 2552 }
+		},
+		{
+			"id": "swift-strike",
+			"name": "Swift Strike",
+			"type": "Attack",
+			"cost": { "display": "1 AP + 1 SP", "ap": 1, "sp": 1 },
+			"range": "Weapon or Unarmed Strike",
+			"isReaction": false,
+			"enhancementCount": 2,
+			"enhancements": [
+				{ "id": "disengage", "name": "Disengage", "costString": "1 SP", "sp": 1 },
+				{
+					"id": "subsequent-strike",
+					"name": "Subsequent Strike",
+					"costString": "1 AP + 1 SP, Repeatable",
+					"ap": 1,
+					"sp": 1,
+					"repeatable": true
+				}
+			],
+			"provenance": { "startLine": 2553, "endLine": 2568 }
+		},
+		{
+			"id": "meteor-strike",
+			"name": "Meteor Strike",
+			"type": "Attack",
+			"cost": { "display": "1 AP + 1 SP", "ap": 1, "sp": 1 },
+			"range": "Weapon or Unarmed Strike",
+			"isReaction": true,
+			"enhancementCount": 4,
+			"enhancements": [
+				{ "id": "falling-strike", "name": "Falling Strike", "costString": "1 SP", "sp": 1 },
+				{
+					"id": "slam-down",
+					"name": "Slam Down",
+					"costString": "1 SP, Requires Falling Strike",
+					"sp": 1,
+					"requires": ["falling-strike"]
+				},
+				{
+					"id": "impact-crater",
+					"name": "Impact Crater",
+					"costString": "1 AP + 1 SP",
+					"ap": 1,
+					"sp": 1
+				},
+				{
+					"id": "larger-crater",
+					"name": "Larger Crater",
+					"costString": "2 SP, Repeatable, Requires Impact Crater",
+					"sp": 2,
+					"repeatable": true,
+					"requires": ["impact-crater"]
+				}
+			],
+			"provenance": { "startLine": 2569, "endLine": 2591 }
+		},
+		{
+			"id": "cleave",
+			"name": "Cleave",
+			"type": "Attack",
+			"cost": { "display": "2 AP", "ap": 2 },
+			"range": "2 Space Arc (Self)",
+			"isReaction": false,
+			"enhancementCount": 4,
+			"enhancements": [
+				{
+					"id": "damage",
+					"name": "Damage",
+					"costString": "2 SP, Repeatable",
+					"sp": 2,
+					"repeatable": true
+				},
+				{
+					"id": "area",
+					"name": "Area",
+					"costString": "2 SP, Repeatable",
+					"sp": 2,
+					"repeatable": true
+				},
+				{
+					"id": "careful-cleave",
+					"name": "Careful Cleave",
+					"costString": "X SP",
+					"variable": true
+				},
+				{ "id": "sweep", "name": "Sweep", "costString": "2 SP", "sp": 2 }
+			],
+			"provenance": { "startLine": 2592, "endLine": 2612 }
+		},
+		{
+			"id": "whirlwind",
+			"name": "Whirlwind",
+			"type": "Attack",
+			"cost": { "display": "2 AP", "ap": 2 },
+			"range": "1 Space Aura",
+			"isReaction": false,
+			"enhancementCount": 3,
+			"enhancements": [
+				{
+					"id": "damage",
+					"name": "Damage",
+					"costString": "2 SP, Repeatable",
+					"sp": 2,
+					"repeatable": true
+				},
+				{
+					"id": "area",
+					"name": "Area",
+					"costString": "2 SP, Repeatable",
+					"sp": 2,
+					"repeatable": true
+				},
+				{
+					"id": "vortex",
+					"name": "Vortex",
+					"costString": "2 SP, Repeatable",
+					"sp": 2,
+					"repeatable": true
+				}
+			],
+			"provenance": { "startLine": 2613, "endLine": 2631 }
+		},
+		{
+			"id": "pathcarver",
+			"name": "Pathcarver",
+			"type": "Attack",
+			"cost": { "display": "2 AP", "ap": 2 },
+			"range": "4 Space Line (Self)",
+			"isReaction": false,
+			"enhancementCount": 3,
+			"enhancements": [
+				{
+					"id": "damage",
+					"name": "Damage",
+					"costString": "2 SP, Repeatable",
+					"sp": 2,
+					"repeatable": true
+				},
+				{
+					"id": "increase-length",
+					"name": "Increase Length",
+					"costString": "1 SP, Repeatable",
+					"sp": 1,
+					"repeatable": true
+				},
+				{
+					"id": "carved-path",
+					"name": "Carved Path",
+					"costString": "2 SP, Repeatable",
+					"sp": 2,
+					"repeatable": true
+				}
+			],
+			"provenance": { "startLine": 2632, "endLine": 2653 }
+		},
+		{
+			"id": "piercing-shot",
+			"name": "Piercing Shot",
+			"type": "Attack",
+			"cost": { "display": "2 AP", "ap": 2 },
+			"range": "Ranged Weapon or Weapon with the Toss or Thrown Property",
+			"isReaction": false,
+			"enhancementCount": 3,
+			"enhancements": [
+				{
+					"id": "damage",
+					"name": "Damage",
+					"costString": "2 SP, Repeatable",
+					"sp": 2,
+					"repeatable": true
+				},
+				{
+					"id": "area",
+					"name": "Area",
+					"costString": "1 SP, Repeatable",
+					"sp": 1,
+					"repeatable": true
+				},
+				{ "id": "penetrating-shot", "name": "Penetrating Shot", "costString": "1 SP", "sp": 1 }
+			],
+			"provenance": { "startLine": 2654, "endLine": 2674 }
+		},
+		{
+			"id": "scattershot",
+			"name": "Scattershot",
+			"type": "Attack",
+			"cost": { "display": "2 AP", "ap": 2 },
+			"range": "Self",
+			"requirement": "Ranged Weapon",
+			"isReaction": false,
+			"enhancementCount": 3,
+			"enhancements": [
+				{
+					"id": "damage",
+					"name": "Damage",
+					"costString": "2 SP, Repeatable",
+					"sp": 2,
+					"repeatable": true
+				},
+				{
+					"id": "area",
+					"name": "Area",
+					"costString": "2 SP, Repeatable",
+					"sp": 2,
+					"repeatable": true
+				},
+				{ "id": "stagger", "name": "Stagger", "costString": "1 SP", "sp": 1 }
+			],
+			"provenance": { "startLine": 2675, "endLine": 2692 }
+		},
+		{
+			"id": "volley",
+			"name": "Volley",
+			"type": "Attack",
+			"cost": { "display": "2 AP", "ap": 2 },
+			"range": "Ranged Weapon",
+			"isReaction": false,
+			"enhancementCount": 4,
+			"enhancements": [
+				{
+					"id": "damage",
+					"name": "Damage",
+					"costString": "2 SP, Repeatable",
+					"sp": 2,
+					"repeatable": true
+				},
+				{
+					"id": "area",
+					"name": "Area",
+					"costString": "2 SP, Repeatable",
+					"sp": 2,
+					"repeatable": true
+				},
+				{ "id": "rain-of-fire", "name": "Rain of Fire", "costString": "1 SP", "sp": 1 },
+				{ "id": "suppressive-fire", "name": "Suppressive Fire", "costString": "2 SP", "sp": 2 }
+			],
+			"provenance": { "startLine": 2693, "endLine": 2716 }
+		},
+		{
+			"id": "parry",
+			"name": "Parry",
+			"type": "Defense",
+			"cost": { "display": "1 AP", "ap": 1 },
+			"range": "Self (or 1 Space if wielding a Melee Weapon or Shield)",
+			"isReaction": true,
+			"trigger": "A target you can see within range (including yourself) is targeted by an Attack against its PD.",
+			"enhancementCount": 2,
+			"enhancements": [
+				{ "id": "alert", "name": "Alert", "costString": "1 SP", "sp": 1 },
+				{ "id": "disarm", "name": "Disarm", "costString": "1 SP", "sp": 1 }
+			],
+			"provenance": { "startLine": 2723, "endLine": 2739 }
+		},
+		{
+			"id": "brace",
+			"name": "Brace",
+			"type": "Defense",
+			"cost": { "display": "1 AP", "ap": 1 },
+			"range": "Self (or 1 Space if wielding a Shield)",
+			"isReaction": true,
+			"trigger": "A target you can see within range (including yourself) is targeted by an Attack against its AD.",
+			"enhancementCount": 2,
+			"enhancements": [
+				{
+					"id": "targets",
+					"name": "Targets",
+					"costString": "1 AP, Repeatable",
+					"ap": 1,
+					"repeatable": true
+				},
+				{ "id": "grapple", "name": "Grapple", "costString": "1 SP", "sp": 1 }
+			],
+			"provenance": { "startLine": 2740, "endLine": 2756 }
+		},
+		{
+			"id": "side-step",
+			"name": "Side Step",
+			"type": "Defense",
+			"cost": { "display": "1 AP", "ap": 1 },
+			"range": "Self",
+			"isReaction": true,
+			"trigger": "You’re targeted by an Attack.",
+			"enhancementCount": 3,
+			"enhancements": [
+				{ "id": "evasion", "name": "Evasion", "costString": "1 SP", "sp": 1 },
+				{ "id": "disengage", "name": "Disengage", "costString": "1 SP", "sp": 1 },
+				{ "id": "slip-away", "name": "Slip Away", "costString": "1 SP", "sp": 1 }
+			],
+			"provenance": { "startLine": 2757, "endLine": 2775 }
+		},
+		{
+			"id": "protect",
+			"name": "Protect",
+			"type": "Defense",
+			"cost": { "display": "1 AP", "ap": 1 },
+			"range": "1 Space",
+			"isReaction": true,
+			"trigger": "A target you can see within range is Hit by an Attack.",
+			"enhancementCount": 4,
+			"enhancements": [
+				{
+					"id": "targets",
+					"name": "Targets",
+					"costString": "1 AP, Repeatable",
+					"ap": 1,
+					"repeatable": true
+				},
+				{ "id": "taunt", "name": "Taunt", "costString": "1 SP", "sp": 1 },
+				{ "id": "heroic-protect", "name": "Heroic Protect", "costString": "2 SP", "sp": 2 },
+				{ "id": "resistance", "name": "Resistance", "costString": "1 SP", "sp": 1 }
+			],
+			"provenance": { "startLine": 2776, "endLine": 2797 }
+		},
+		{
+			"id": "endure",
+			"name": "Endure",
+			"type": "Defense",
+			"cost": { "display": "1 AP + 1 SP", "ap": 1, "sp": 1 },
+			"range": "Self (or 1 Space if wielding a Shield)",
+			"isReaction": true,
+			"trigger": "A target you can see within range (including yourself) is Hit by an Attack.",
+			"enhancementCount": 3,
+			"enhancements": [
+				{ "id": "heroic-endure", "name": "Heroic Endure", "costString": "X SP", "variable": true },
+				{ "id": "steadfast", "name": "Steadfast", "costString": "1 SP", "sp": 1 },
+				{ "id": "repel", "name": "Repel", "costString": "X SP", "variable": true }
+			],
+			"provenance": { "startLine": 2798, "endLine": 2816 }
+		},
+		{
+			"id": "resolve",
+			"name": "Resolve",
+			"type": "Defense",
+			"cost": { "display": "1 AP + 1 SP", "ap": 1, "sp": 1 },
+			"range": "Self",
+			"isReaction": false,
+			"enhancementCount": 3,
+			"enhancements": [
+				{
+					"id": "increased-temp-hp",
+					"name": "Increased Temp HP",
+					"costString": "1 SP, Repeatable",
+					"sp": 1,
+					"repeatable": true
+				},
+				{ "id": "physical-resolve", "name": "Physical Resolve", "costString": "1 SP", "sp": 1 },
+				{ "id": "mental-resolve", "name": "Mental Resolve", "costString": "1 SP", "sp": 1 }
+			],
+			"provenance": { "startLine": 2817, "endLine": 2833 }
+		},
+		{
+			"id": "swap",
+			"name": "Swap",
+			"type": "Defense",
+			"cost": { "display": "1 AP", "ap": 1 },
+			"range": "1 Space",
+			"isReaction": true,
+			"enhancementCount": 3,
+			"enhancements": [
+				{ "id": "escape", "name": "Escape", "costString": "1 SP", "sp": 1 },
+				{ "id": "seamless-swap", "name": "Seamless Swap", "costString": "1 SP", "sp": 1 },
+				{ "id": "hostile-swap", "name": "Hostile Swap", "costString": "1 SP", "sp": 1 }
+			],
+			"provenance": { "startLine": 2834, "endLine": 2853 }
+		},
+		{
+			"id": "slam",
+			"name": "Slam",
+			"type": "Grapple",
+			"cost": { "display": "1 AP", "ap": 1 },
+			"range": "Melee",
+			"isReaction": false,
+			"enhancementCount": 3,
+			"enhancements": [
+				{ "id": "finishing-slam", "name": "Finishing Slam", "costString": "1 SP", "sp": 1 },
+				{
+					"id": "stunned",
+					"name": "Stunned",
+					"costString": "2 SP, Repeatable",
+					"sp": 2,
+					"repeatable": true
+				},
+				{ "id": "wall-rake", "name": "Wall Rake", "costString": "X SP", "variable": true }
+			],
+			"provenance": { "startLine": 2858, "endLine": 2874 }
+		},
+		{
+			"id": "restrain",
+			"name": "Restrain",
+			"type": "Grapple",
+			"cost": { "display": "1 AP + 1 SP", "ap": 1, "sp": 1 },
+			"range": "Melee",
+			"isReaction": false,
+			"enhancementCount": 2,
+			"enhancements": [
+				{ "id": "prone", "name": "Prone", "costString": "1 SP", "sp": 1 },
+				{ "id": "chokehold", "name": "Chokehold", "costString": "2 SP", "sp": 2 }
+			],
+			"provenance": { "startLine": 2875, "endLine": 2893 }
+		},
+		{
+			"id": "body-block",
+			"name": "Body Block",
+			"type": "Grapple",
+			"cost": { "display": "1 AP + 1 SP", "ap": 1, "sp": 1 },
+			"range": "Melee",
+			"isReaction": true,
+			"trigger": "A creature that's not Grappled by you Hits you with an Attack.",
+			"enhancementCount": 3,
+			"enhancements": [
+				{ "id": "switch", "name": "Switch", "costString": "1 SP", "sp": 1 },
+				{ "id": "partial-block", "name": "Partial Block", "costString": "1 SP", "sp": 1 },
+				{ "id": "full-block", "name": "Full Block", "costString": "2 SP", "sp": 2 }
+			],
+			"provenance": { "startLine": 2894, "endLine": 2914 }
+		},
+		{
+			"id": "throw-creature",
+			"name": "Throw Creature",
+			"type": "Grapple",
+			"cost": { "display": "Throw (1 AP)", "ap": 1 },
+			"range": "Melee",
+			"isReaction": false,
+			"enhancementCount": 3,
+			"enhancements": [
+				{
+					"id": "increased-throw",
+					"name": "Increased Throw",
+					"costString": "X SP",
+					"variable": true
+				},
+				{ "id": "skyward", "name": "Skyward", "costString": "2 SP", "sp": 2 },
+				{ "id": "prone", "name": "Prone", "costString": "1 SP", "sp": 1 }
+			],
+			"provenance": { "startLine": 2915, "endLine": 2932 }
+		},
+		{
+			"id": "recover",
+			"name": "Recover",
+			"type": "Utility",
+			"cost": { "display": "1 AP", "ap": 1 },
+			"range": "Self",
+			"isReaction": false,
+			"enhancementCount": 2,
+			"enhancements": [
+				{
+					"id": "increased-healing",
+					"name": "Increased Healing",
+					"costString": "1 AP or 1 SP, Repeatable",
+					"ap": 1,
+					"repeatable": true,
+					"alternativeCosts": [{ "sp": 1 }]
+				},
+				{
+					"id": "repeat-save",
+					"name": "Repeat Save",
+					"costString": "1 AP or 1 SP",
+					"ap": 1,
+					"alternativeCosts": [{ "sp": 1 }]
+				}
+			],
+			"provenance": { "startLine": 2937, "endLine": 2951 }
+		},
+		{
+			"id": "heroic-pass-through",
+			"name": "Heroic Pass Through",
+			"type": "Utility",
+			"cost": { "display": "Pass Through Action (1 AP)", "ap": 1 },
+			"range": "Pass Through Action",
+			"isReaction": false,
+			"enhancementCount": 2,
+			"enhancements": [
+				{ "id": "brush-past", "name": "Brush Past", "costString": "1 SP", "sp": 1 },
+				{ "id": "lets-go", "name": "Let's Go", "costString": "1 SP", "sp": 1 }
+			],
+			"provenance": { "startLine": 2952, "endLine": 2963 }
+		},
+		{
+			"id": "line-run",
+			"name": "Line Run",
+			"type": "Utility",
+			"cost": { "display": "2 AP + 1 SP", "ap": 2, "sp": 1 },
+			"range": "Self",
+			"isReaction": false,
+			"enhancementCount": 2,
+			"enhancements": [
+				{
+					"id": "distance",
+					"name": "Distance",
+					"costString": "1 SP, Repeatable",
+					"sp": 1,
+					"repeatable": true
+				},
+				{ "id": "brush-past", "name": "Brush Past", "costString": "1 SP", "sp": 1 }
+			],
+			"provenance": { "startLine": 2964, "endLine": 2980 }
+		},
+		{
+			"id": "reposition",
+			"name": "Reposition",
+			"type": "Utility",
+			"cost": { "display": "1 AP + 1 SP", "ap": 1, "sp": 1 },
+			"range": "Self",
+			"isReaction": true,
+			"trigger": "A creature ends their turn.",
+			"enhancementCount": 3,
+			"enhancements": [
+				{ "id": "agile", "name": "Agile", "costString": "1 SP", "sp": 1 },
+				{ "id": "disengage", "name": "Disengage", "costString": "1 AP", "ap": 1 },
+				{
+					"id": "coordinated-movement",
+					"name": "Coordinated Movement",
+					"costString": "2 SP, Repeatable",
+					"sp": 2,
+					"repeatable": true
+				}
+			],
+			"provenance": { "startLine": 2981, "endLine": 3000 }
+		},
+		{
+			"id": "heroic-taunt",
+			"name": "Heroic Taunt",
+			"type": "Utility",
+			"cost": { "display": "Taunt Action (1 AP)", "ap": 1 },
+			"range": "Taunt Action (10 Spaces)",
+			"isReaction": false,
+			"enhancementCount": 4,
+			"enhancements": [
+				{
+					"id": "sustained",
+					"name": "Sustained",
+					"costString": "1 SP, Sustained",
+					"sp": 1,
+					"sustained": true
+				},
+				{ "id": "increased-range", "name": "Increased Range", "costString": "1 SP", "sp": 1 },
+				{ "id": "legendary-taunt", "name": "Legendary Taunt", "costString": "1 SP", "sp": 1 },
+				{ "id": "mass-taunt", "name": "Mass Taunt", "costString": "1 AP + 1 SP", "ap": 1, "sp": 1 }
+			],
+			"provenance": { "startLine": 3001, "endLine": 3019 }
+		},
+		{
+			"id": "heroic-intimidate",
+			"name": "Heroic Intimidate",
+			"type": "Utility",
+			"cost": { "display": "Intimidate Action (1 AP)", "ap": 1 },
+			"range": "Intimidate Action (10 Spaces)",
+			"isReaction": false,
+			"enhancementCount": 4,
+			"enhancements": [
+				{
+					"id": "sustained",
+					"name": "Sustained",
+					"costString": "1 SP, Sustained",
+					"sp": 1,
+					"sustained": true
+				},
+				{ "id": "increased-range", "name": "Increased Range", "costString": "1 SP", "sp": 1 },
+				{ "id": "frightened", "name": "Frightened", "costString": "1 SP", "sp": 1 },
+				{
+					"id": "mass-intimidate",
+					"name": "Mass Intimidate",
+					"costString": "1 AP + 1 SP",
+					"ap": 1,
+					"sp": 1
+				}
+			],
+			"provenance": { "startLine": 3020, "endLine": 3038 }
+		},
+		{
+			"id": "heroic-shove",
+			"name": "Heroic Shove",
+			"type": "Utility",
+			"cost": { "display": "Shove Action (1 AP)", "ap": 1 },
+			"range": "Shove Action (1 Space)",
+			"isReaction": false,
+			"enhancementCount": 3,
+			"enhancements": [
+				{
+					"id": "increased-push",
+					"name": "Increased Push",
+					"costString": "X SP",
+					"variable": true
+				},
+				{ "id": "stand-up", "name": "Stand Up", "costString": "1 SP", "sp": 1 },
+				{ "id": "mass-shove", "name": "Mass Shove", "costString": "1 AP + 1 SP", "ap": 1, "sp": 1 }
+			],
+			"provenance": { "startLine": 3039, "endLine": 3055 }
+		},
+		{
+			"id": "heroic-extend-jump",
+			"name": "Heroic Extend Jump",
+			"type": "Utility",
+			"cost": { "display": "Extend Jump Action (1 AP)", "ap": 1 },
+			"range": "Self",
+			"isReaction": false,
+			"enhancementCount": 3,
+			"enhancements": [
+				{ "id": "instant-jump", "name": "Instant Jump", "costString": "1 SP", "sp": 1 },
+				{
+					"id": "increased-jump",
+					"name": "Increased Jump",
+					"costString": "1 SP, Repeatable",
+					"sp": 1,
+					"repeatable": true
+				},
+				{
+					"id": "heroic-landing",
+					"name": "Heroic Landing",
+					"costString": "1 SP, Repeatable",
+					"sp": 1,
+					"repeatable": true
+				}
+			],
+			"provenance": { "startLine": 3056, "endLine": 3075 }
+		}
+	]
+}

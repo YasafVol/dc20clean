@@ -1,19 +1,23 @@
 import { describe, expect, it } from 'vitest';
+import maneuverReport from '../../../../docs/migration/maneuvers-v0105-report.json';
 import { ManeuverType } from '../schemas/maneuver.schema';
 import { CURRENT_RULES_VERSION } from '../versioning/rulesVersion';
 import { MANEUVER_RULES_SOURCE, allManeuvers, getManeuverById } from './maneuvers';
+
+const normalizeSourceText = (value?: string) => value?.replace(/[’]/g, "'");
 
 describe('v0.10.5 maneuver catalog', () => {
 	it('declares rules source metadata', () => {
 		expect(MANEUVER_RULES_SOURCE).toMatchObject({
 			rulesVersion: CURRENT_RULES_VERSION,
 			currentRulesArtifact: 'docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md',
-			changelogSection: 'Maneuvers'
+			changelogSection: 'Maneuvers',
+			catalogStatus: 'source-audited-v0105'
 		});
 	});
 
 	it('has complete maneuver and enhancement coverage', () => {
-		expect(allManeuvers).toHaveLength(29);
+		expect(allManeuvers).toHaveLength(30);
 		expect(new Set(allManeuvers.map((maneuver) => maneuver.id)).size).toBe(allManeuvers.length);
 		expect(new Set(allManeuvers.map((maneuver) => maneuver.name)).size).toBe(allManeuvers.length);
 
@@ -29,7 +33,7 @@ describe('v0.10.5 maneuver catalog', () => {
 			[ManeuverType.Attack]: 11,
 			[ManeuverType.Defense]: 7,
 			[ManeuverType.Grapple]: 4,
-			[ManeuverType.Utility]: 7
+			[ManeuverType.Utility]: 8
 		});
 
 		for (const maneuver of allManeuvers) {
@@ -44,10 +48,10 @@ describe('v0.10.5 maneuver catalog', () => {
 				expect(enhancement.costString, `${maneuver.name}: ${enhancement.name}`).toBeTruthy();
 				expect(enhancement.description, `${maneuver.name}: ${enhancement.name}`).toBeTruthy();
 
-				if (enhancement.costString.includes('AP')) {
+				if (enhancement.costString.includes('AP') && !enhancement.costString.includes('X AP')) {
 					expect(enhancement.ap, `${maneuver.name}: ${enhancement.name}`).toBeGreaterThan(0);
 				}
-				if (enhancement.costString.includes('SP')) {
+				if (enhancement.costString.includes('SP') && !enhancement.costString.includes('X SP')) {
 					expect(enhancement.sp, `${maneuver.name}: ${enhancement.name}`).toBeGreaterThan(0);
 				}
 				if (enhancement.costString.includes('Repeatable')) {
@@ -55,6 +59,44 @@ describe('v0.10.5 maneuver catalog', () => {
 				}
 			}
 		}
+	});
+
+	it('matches the generated v0.10.5 source audit report', () => {
+		const normalizeRuntime = () =>
+			allManeuvers.map((maneuver) => ({
+				id: maneuver.id,
+				name: maneuver.name,
+				type: maneuver.type,
+				cost: maneuver.cost,
+				range: maneuver.range,
+				isReaction: maneuver.isReaction,
+				...(maneuver.trigger ? { trigger: normalizeSourceText(maneuver.trigger) } : {}),
+				enhancementCount: maneuver.enhancements.length,
+				enhancements: maneuver.enhancements.map((enhancement) => ({
+					name: enhancement.name,
+					costString: enhancement.costString
+				}))
+			}));
+		const normalizeReport = () =>
+			maneuverReport.maneuvers.map((maneuver) => ({
+				id: maneuver.id,
+				name: maneuver.name,
+				type: maneuver.type,
+				cost: {
+					ap: maneuver.cost.ap,
+					...(maneuver.cost.sp ? { sp: maneuver.cost.sp } : {})
+				},
+				range: maneuver.range,
+				isReaction: maneuver.isReaction,
+				...(maneuver.trigger ? { trigger: normalizeSourceText(maneuver.trigger) } : {}),
+				enhancementCount: maneuver.enhancementCount,
+				enhancements: maneuver.enhancements.map((enhancement) => ({
+					name: enhancement.name,
+					costString: enhancement.costString
+				}))
+			}));
+
+		expect(normalizeRuntime()).toEqual(normalizeReport());
 	});
 
 	it('removes base SP costs from Whirlwind and Pathcarver', () => {

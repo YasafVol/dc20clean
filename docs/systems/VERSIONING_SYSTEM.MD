@@ -70,6 +70,10 @@ Required behavior:
 
 Migration UX must show the plan before creating the draft: automatic renames, reworks, retired selections, blockers, source rules version, target rules version, and the new draft identity.
 
+If a legacy character already has a current-rules copy, the default action opens the existing copy. Creating another migrated copy must be an explicit secondary action.
+
+`rulesUpgradeStatus: "needs-review"` applies to any risky migration result, including removed selections, reworked selections, unresolved validation, or failed recalculation.
+
 ## 5. Schema Version Policy
 
 `schemaVersion` is only the saved-data shape version.
@@ -85,7 +89,8 @@ PDF versioning follows available fillable templates and field maps.
 
 - Rules versions route to PDF versions through `getPdfVersionForRulesVersion()`.
 - `dc20-0.10.5` currently routes to the `0.10` PDF template because no separate checked-in v0.10.5 fillable template/field map exists.
-- Exporting legacy characters must avoid current-rules recalculation unless compatibility is `editable`.
+- PDF export always reads stored `SavedCharacter` values and must not run current-rules recalculation during export.
+- Unsupported or future rules versions may export on a best-effort basis when the routing layer can map them to an available template.
 
 ## 7. System Source Metadata
 

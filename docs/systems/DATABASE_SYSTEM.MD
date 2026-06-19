@@ -404,28 +404,36 @@ Compatibility states are computed at runtime:
 | State              | Load | Sheet render | Edit / level up                | Auto-save                                       | PDF export                       |
 | ------------------ | ---- | ------------ | ------------------------------ | ----------------------------------------------- | -------------------------------- |
 | `editable`         | Yes  | Yes          | Yes                            | Full character save with recalculation          | Yes                              |
-| `upgrade-required` | Yes  | Yes          | Blocked until explicit upgrade | `characterState` only, no recalculation rewrite | Yes                              |
-| `view-only`        | Yes  | Best effort  | Blocked                        | Disabled                                        | Yes if export route is available |
+| `upgrade-required` | Yes  | Yes          | Blocked                        | Disabled                                        | Best-effort stored-value export  |
+| `view-only`        | Yes  | Best effort  | Blocked                        | Disabled                                        | Best-effort stored-value export  |
 
-#### Explicit v0.10 to v0.10.5 Upgrade
+#### Explicit v0.10 to Current-Version Copy
 
-`LoadCharacter.tsx` exposes an upgrade action for legacy characters. The action is planned
+`LoadCharacter.tsx` exposes an update-to-current-version action for legacy characters. The action is planned
 and applied by `src/lib/rulesdata/versioning/characterUpgrade.ts`:
 
 1. Inspect every persisted feature, trait, talent, spell, and maneuver selection through the
    versioned alias catalog.
 2. Show automatic renames, reworked selections, deprecated removals, and unresolved blockers
    before writing data.
-3. Refuse the upgrade when an identity is ambiguous or the source rules version is unsupported.
+3. Refuse copy creation when an identity is ambiguous or the source rules version is unsupported.
 4. Create a new current-rules copy with lineage metadata (`rulesUpgradeSourceId`,
    `rulesUpgradeSourceVersion`, `rulesUpgradedAt`) while leaving the legacy source record
    locked and unchanged.
 5. Rewrite approved aliases, explicitly map listed reworks, remove listed deprecated selections
    in the new copy, and set that copy to `dc20-0.10.5`.
+6. Mark the new copy `rulesUpgradeStatus: "needs-review"` for any risky result: removed
+   choices, reworked choices, unresolved validation, or failed recalculation.
 
-The legacy source remains view/export/delete only. The new copy preserves stored game state,
+Migration never mutates the old instance. The legacy source remains view/export/delete only. The new copy preserves stored game state,
 notes, inventory, and resources where possible; derived values are interpreted and recalculated
 by the normal v0.10.5 sheet/editor pipeline after migration.
+
+If a legacy character already has a current-rules copy, the default UI action opens that copy.
+Users can explicitly create another copy from a secondary action.
+
+PDF export always reads stored `SavedCharacter` values. It does not run the current calculator
+during export for either legacy or current characters.
 
 ### 6.3 Auto-Migration
 
@@ -528,5 +536,5 @@ const saveCharacterData = async (character: SavedCharacter) => {
 
 ---
 
-> Last updated: 2026-06-12
+> Last updated: 2026-06-19
 > Maintainer: @DC20Clean-Team

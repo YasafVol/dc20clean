@@ -49,7 +49,7 @@ Compatibility states from the rules-version fence affect sheet persistence:
 | `upgrade-required` | Render/export allowed from stored values; auto-save is disabled until an explicit current-rules copy is created             |
 | `view-only`        | Render allowed where possible; auto-save is disabled                                                                      |
 
-For `upgrade-required` and `view-only` characters, the sheet suppresses fresh calculator output for display/export helpers that would reinterpret the character under the current rules data. PDF export falls back to stored `SavedCharacter` values for those compatibility states.
+For `upgrade-required` and `view-only` characters, the sheet suppresses fresh calculator output for display/export helpers that would reinterpret the character under the current rules data. PDF export always uses stored `SavedCharacter` values for every rules version; it does not recalculate during export.
 
 ---
 
@@ -94,7 +94,7 @@ For `upgrade-required` and `view-only` characters, the sheet suppresses fresh ca
 | Component                         | Data Source                                  | Description                               |
 | --------------------------------- | -------------------------------------------- | ----------------------------------------- |
 | `components/Spells.tsx`           | `SavedCharacter.spells` + Spells System data | Spellbook with filtering/management       |
-| `components/Maneuvers.tsx`        | `SavedCharacter.maneuvers` + Martials data   | Maneuver management with type filtering   |
+| `components/Maneuvers.tsx`        | `SavedCharacter.maneuvers` + Martials data   | Maneuver management with type filtering, AP/SP cost, range, trigger, and enhancement display |
 | `components/Features.tsx`         | Class/trait feature definitions              | Character features/traits display         |
 | `components/EnhancedFeatures.tsx` | Feature definitions + effect attribution     | Enhanced features with source attribution |
 
@@ -102,6 +102,13 @@ For `upgrade-required` and `view-only` characters, the sheet suppresses fresh ca
 
 - Add a pure sheet-facing helper that builds calculated spell presentation stats from the saved spell, character calculation output, active effects, and equipped spell focus effects. The UI should consume this helper for spell attack/check bonuses, focus-driven damage/range adjustments, and any "applies in play" notes instead of duplicating rules logic inside `components/Spells.tsx` or `SpellPopup.tsx`.
 - Add a Character Sheet flow for opening the Spellbook to review, select, and replace known spells. Replacement should respect spell-slot restrictions from the calculator and must remain disabled for locked legacy characters.
+
+#### Maneuver Sheet Notes
+
+- Maneuver rows preserve and render catalog AP/SP cost, range, reaction trigger, and enhancement text. Older saved rows can still resolve details from the current catalog by maneuver name.
+- The standalone `/martial-manual` route provides a Spellbook-like reference surface for all maneuvers and enhancements.
+- TODO: Add a Character Sheet flow for opening full maneuver cards from known maneuver rows, reusing the Martial Manual card presentation where practical.
+- TODO: Add sheet-side in-play enhancement spend validation against Stamina Spend Limit once the sheet models selected enhancements for a performed maneuver.
 
 v0.10.5 level 5 Expert Features intentionally keep the old `<class>_level_5_placeholder` IDs. Saved characters that already reference those IDs render the updated Expert Feature names, benefits, and modeled effects without needing a destructive ID rewrite.
 
@@ -213,7 +220,7 @@ The `Movement.tsx` component displays multiple panels with combat-relevant infor
 - Feature info buttons open details from class/trait definitions
 - Spells/maneuvers add/remove persist and remain in sync after refresh
 - Auto-save triggers on state changes
-- Old characters with a different `rulesVersion` do not receive a full recalculation save unless classified as `editable`
+- Old characters with a different `rulesVersion` do not auto-save or receive a recalculation save unless the user creates and opens a current-version copy
 
 ---
 

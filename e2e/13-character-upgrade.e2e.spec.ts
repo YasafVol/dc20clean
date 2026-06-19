@@ -2,7 +2,12 @@ import { expect, test, type BrowserContext } from '@playwright/test';
 
 interface PersistedUpgradeCharacter {
 	id?: string;
+	rulesVersion?: string;
+	rulesUpgradeSourceId?: string;
 	rulesUpgradeBackupOf?: string;
+	selectedSpells?: Record<string, string>;
+	selectedFeatureChoices?: Record<string, string>;
+	selectedTalents?: Record<string, number>;
 	characterState?: {
 		notes?: {
 			playerNotes?: string;
@@ -107,7 +112,7 @@ async function seedCharacters(context: BrowserContext, characters: unknown[]) {
 	}, characters);
 }
 
-test('upgrades a legacy character, maps Forcefield reworks, and persists its backup', async ({
+test('creates a current-version copy, maps Forcefield reworks, and preserves the source', async ({
 	context,
 	page
 }) => {
@@ -119,37 +124,49 @@ test('upgrades a legacy character, maps Forcefield reworks, and persists its bac
 		.locator('..');
 	await expect(legacyCard.getByText('v0.10 upgrade required')).toBeVisible();
 	await expect(legacyCard.getByRole('button', { name: 'Edit' })).toBeDisabled();
-	await legacyCard.getByRole('button', { name: 'Upgrade to v0.10.5' }).click();
+	await legacyCard.getByRole('button', { name: 'Update to current version' }).click();
 
 	await expect(page.getByRole('heading', { name: 'Reworked selections to accept' })).toBeVisible();
 	await expect(page.getByText('force-dome → forcefield')).toBeVisible();
 	await expect(page.getByText('wall-of-force → forcefield')).toBeVisible();
 	await expect(page.getByText('barbarian_swift_berserker')).toBeVisible();
-	await page.getByRole('button', { name: 'Create Backup & Upgrade' }).click();
+	await page.getByRole('button', { name: 'Create Current Copy' }).click();
 
-	await expect(page.getByText(/Upgraded "Upgrade E2E Hero" to v0\.10\.5/)).toBeVisible();
+	await expect(page.getByText(/Created current-rules draft/)).toBeVisible();
 	await page.reload();
 
-	const upgradedCard = page
+	const sourceCard = page
 		.getByRole('heading', { name: 'Upgrade E2E Hero', exact: true })
 		.locator('..');
-	const backupCard = page
-		.getByRole('heading', { name: 'Upgrade E2E Hero (v0.10 backup)', exact: true })
+	const copyCard = page
+		.getByRole('heading', { name: 'Upgrade E2E Hero (v0.10.5 draft)', exact: true })
 		.locator('..');
-	await expect(upgradedCard.getByRole('button', { name: 'Edit' })).toBeEnabled();
-	await expect(upgradedCard.getByRole('button', { name: 'Level Up' })).toBeEnabled();
-	await expect(backupCard.getByText('Legacy backup')).toBeVisible();
-	await expect(backupCard.getByRole('button', { name: 'Edit' })).toBeDisabled();
+	await expect(sourceCard.getByRole('button', { name: 'Edit' })).toBeDisabled();
+	await expect(sourceCard.getByRole('button', { name: 'Level Up' })).toBeDisabled();
+	await expect(sourceCard.getByRole('button', { name: 'Open current version' })).toBeVisible();
+	await expect(sourceCard.getByRole('button', { name: 'Create another copy' })).toBeVisible();
+	await expect(copyCard.getByText('Needs review')).toBeVisible();
+	await expect(copyCard.getByRole('button', { name: 'Edit' })).toBeEnabled();
+	await expect(copyCard.getByRole('button', { name: 'Level Up' })).toBeEnabled();
 
 	const saved = (await page.evaluate(() => {
 		return JSON.parse(localStorage.getItem('savedCharacters') || '[]');
 	})) as PersistedUpgradeCharacter[];
-	const upgraded = saved.find((character) => character.id === 'upgrade-e2e-character');
-	const backup = saved.find(
-		(character) => character.rulesUpgradeBackupOf === 'upgrade-e2e-character'
+	const source = saved.find((character) => character.id === 'upgrade-e2e-character');
+	const copy = saved.find(
+		(character) => character.rulesUpgradeSourceId === 'upgrade-e2e-character'
 	);
-	expect(upgraded).toMatchObject({
+	expect(source).toMatchObject({
+		rulesVersion: 'dc20-0.10',
+		selectedSpells: {
+			dome: 'force-dome',
+			wall: 'wall-of-force'
+		}
+	});
+	expect(copy).toMatchObject({
+		id: 'upgrade-e2e-character__dc20_0_10_5_draft',
 		rulesVersion: 'dc20-0.10.5',
+		rulesUpgradeSourceId: 'upgrade-e2e-character',
 		selectedSpells: {
 			dome: 'forcefield',
 			wall: 'forcefield'
@@ -159,12 +176,7 @@ test('upgrades a legacy character, maps Forcefield reworks, and persists its bac
 		},
 		selectedTalents: {}
 	});
-	expect(upgraded?.characterState?.notes?.playerNotes).toBe('Preserve this note.');
-	expect(backup).toMatchObject({
-		finalName: 'Upgrade E2E Hero (v0.10 backup)',
-		rulesVersion: 'dc20-0.10',
-		rulesUpgradeBackupOf: 'upgrade-e2e-character'
-	});
+	expect(copy?.characterState?.notes?.playerNotes).toBe('Preserve this note.');
 });
 
 test('blocks automated conversion for an unsupported rules version', async ({ context, page }) => {
@@ -185,5 +197,5 @@ test('blocks automated conversion for an unsupported rules version', async ({ co
 	await expect(card.getByText('Upgrade blocked')).toBeVisible();
 	await card.getByRole('button', { name: 'Review upgrade blockers' }).click();
 	await expect(page.getByText('No automated upgrade path exists from dc20-9.99.')).toBeVisible();
-	await expect(page.getByRole('button', { name: 'Create Backup & Upgrade' })).toBeDisabled();
+	await expect(page.getByRole('button', { name: 'Create Current Copy' })).toBeDisabled();
 });

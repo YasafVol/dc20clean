@@ -50,10 +50,7 @@ import { getDiceModifierForAction } from '../../lib/services/conditionEffectsAna
 
 // Import skills data
 import { skillsData } from '../../lib/rulesdata/skills';
-import {
-	assessCharacterCompatibility,
-	getPdfVersionForCharacter
-} from '../../lib/rulesdata/versioning/compatibility';
+import { getPdfVersionForCharacter } from '../../lib/rulesdata/versioning/compatibility';
 import { normalizeRulesVersion } from '../../lib/rulesdata/versioning/rulesVersion';
 
 // Import existing components
@@ -81,6 +78,7 @@ import Snackbar from '../../components/Snackbar';
 
 // Import theme
 import { logger } from '../../lib/utils/logger';
+import { getDefaultStorage } from '../../lib/storage';
 
 interface CharacterSheetRedesignProps {
 	characterId: string;
@@ -496,81 +494,26 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		{ id: 'notes', label: t('characterSheet.tabNotes'), emoji: '📝' }
 	];
 
-	// Export PDF handler - mirrors CharacterSheetClean behavior and exports current sheet state.
+	// Export PDF from stored character values only.
 	const handleExportPdf = async () => {
 		if (!characterData) return;
 
 		try {
-			const compatibility = assessCharacterCompatibility(characterData);
 			const pdf = await import('../../lib/pdf/transformers');
 			const { fillPdfFromData } = await import('../../lib/pdf/fillPdf');
-			let pdfData;
-
-			if (compatibility.autoSaveMode === 'full') {
-				const [calc, denormMod] = await Promise.all([
-					import('../../lib/services/enhancedCharacterCalculator'),
-					import('../../lib/services/denormalizeMastery')
-				]);
-
-				const buildData = calc.convertToEnhancedBuildData({
-					...characterData,
-					attribute_might: characterData.finalMight,
-					attribute_agility: characterData.finalAgility,
-					attribute_charisma: characterData.finalCharisma,
-					attribute_intelligence: characterData.finalIntelligence,
-					classId: characterData.classId,
-					ancestry1Id: characterData.ancestry1Id,
-					ancestry2Id: characterData.ancestry2Id,
-					selectedTraitIds: characterData.selectedTraitIds || [],
-					selectedTraitChoices: (characterData as any).selectedTraitChoices || {},
-					featureChoices: characterData.selectedFeatureChoices || {},
-					skillsData: characterData.skillsData || {},
-					tradesData: characterData.tradesData || {},
-					languagesData: characterData.languagesData || { common: { fluency: 'fluent' } }
-				});
-				const calcResult = calc.calculateCharacterWithBreakdowns(buildData);
-
-				const denorm =
-					characterData.masteryLadders &&
-					characterData.skillTotals &&
-					characterData.knowledgeTradeMastery &&
-					characterData.languageMastery
-						? ({
-								masteryLadders: characterData.masteryLadders,
-								skillTotals: (characterData as any).skillTotals,
-								knowledgeTradeMastery: (characterData as any).knowledgeTradeMastery,
-								languageMastery: (characterData as any).languageMastery
-							} as any)
-						: denormMod.denormalizeMastery({
-								finalAttributes: {
-									might: calcResult.stats.finalMight,
-									agility: calcResult.stats.finalAgility,
-									charisma: calcResult.stats.finalCharisma,
-									intelligence: calcResult.stats.finalIntelligence,
-									prime: calcResult.stats.finalPrimeModifierValue
-								},
-								skillsRanks: characterData.skillsData || {},
-								tradesRanks: characterData.tradesData || {},
-								languagesData: characterData.languagesData || { common: { fluency: 'fluent' } }
-							});
-
-				pdfData = pdf.transformCalculatedCharacterToPdfData(calcResult, {
-					saved: characterData,
-					denorm
-				});
-			} else {
-				pdfData = pdf.transformSavedCharacterToPdfData(characterData);
-			}
+			const storedCharacter =
+				(await getDefaultStorage().getCharacterById(characterData.id)) ?? characterData;
+			const pdfData = pdf.transformSavedCharacterToPdfData(storedCharacter);
 			const blob = await fillPdfFromData(pdfData, {
 				flatten: false,
-				version: getPdfVersionForCharacter(characterData)
+				version: getPdfVersionForCharacter(storedCharacter)
 			});
 
-			const safeName = (characterData.finalName || characterData.id || 'Character')
+			const safeName = (storedCharacter.finalName || storedCharacter.id || 'Character')
 				.replace(/[^A-Za-z0-9]+/g, '_')
 				.replace(/^_+|_+$/g, '')
 				.slice(0, 60);
-			const rulesVersionLabel = normalizeRulesVersion(characterData.rulesVersion).replace(
+			const rulesVersionLabel = normalizeRulesVersion(storedCharacter.rulesVersion).replace(
 				'dc20-',
 				''
 			);
@@ -625,6 +568,33 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				error: err instanceof Error ? err.message : String(err)
 			});
 			showSnackbarWithMessage('Failed to copy to clipboard', 'error');
+		}
+	};
+
+	const downloadCharacterJson = () => {
+		if (!state.character) return;
+
+		try {
+			const characterJson = JSON.stringify(state.character, null, 2);
+			const blob = new Blob([characterJson], { type: 'application/json' });
+			const safeName = (state.character.finalName || state.character.id || 'Character')
+				.replace(/[^A-Za-z0-9]+/g, '_')
+				.replace(/^_+|_+$/g, '')
+				.slice(0, 60);
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `${safeName || 'Character'}.json`;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+			showSnackbarWithMessage('Character JSON downloaded!', 'success');
+		} catch (err) {
+			logger.error('ui', 'Failed to download JSON', {
+				error: err instanceof Error ? err.message : String(err)
+			});
+			showSnackbarWithMessage('Failed to download JSON', 'error');
 		}
 	};
 
@@ -777,6 +747,13 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 							whileTap={{ scale: 0.95 }}
 						>
 							📋 {t('characterSheet.copy')}
+						</ActionButton>
+						<ActionButton
+							onClick={downloadCharacterJson}
+							whileHover={{ scale: 1.05 }}
+							whileTap={{ scale: 0.95 }}
+						>
+							⬇️ {t('characterSheet.downloadJson')}
 						</ActionButton>
 						<ActionButton
 							onClick={handleExportPdf}

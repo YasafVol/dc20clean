@@ -8,6 +8,7 @@ import { checkSchemaCompatibility, normalizeSchemaVersion } from '../../lib/type
 import { migrateCharacterSchema } from '../../lib/utils/schemaMigration';
 import {
 	assessCharacterCompatibility,
+	CURRENT_RULES_VERSION,
 	getPdfVersionForCharacter
 } from '../../lib/rulesdata/versioning/compatibility';
 import {
@@ -65,6 +66,7 @@ function LoadCharacter() {
 	const [characterToDelete, setCharacterToDelete] = useState<SavedCharacter | null>(null);
 	const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
 	const [characterToUpgrade, setCharacterToUpgrade] = useState<SavedCharacter | null>(null);
+	const [forceCreateUpgradeCopy, setForceCreateUpgradeCopy] = useState(false);
 	const [isUpgrading, setIsUpgrading] = useState(false);
 	const [upgradeMessage, setUpgradeMessage] = useState<{
 		text: string;
@@ -121,6 +123,13 @@ function LoadCharacter() {
 		event.stopPropagation();
 		navigate(`/character/${character.id}`);
 	};
+
+	const findCurrentRulesCopy = (character: SavedCharacter, characters = savedCharacters) =>
+		characters.find(
+			(candidate) =>
+				candidate.rulesUpgradeSourceId === character.id &&
+				normalizeRulesVersion(candidate.rulesVersion) === CURRENT_RULES_VERSION
+		);
 
 	// Level up handler
 	const handleLevelUp = async (character: SavedCharacter, event: React.MouseEvent) => {
@@ -187,9 +196,22 @@ function LoadCharacter() {
 		setCharacterToDelete(null);
 	};
 
-	const handleUpgradeClick = (character: SavedCharacter, event: React.MouseEvent) => {
+	const handleOpenCurrentCopy = (character: SavedCharacter, event: React.MouseEvent) => {
+		event.stopPropagation();
+		const existingCopy = findCurrentRulesCopy(character);
+		if (existingCopy) {
+			navigate(`/character/${existingCopy.id}`);
+		}
+	};
+
+	const handleUpgradeClick = (
+		character: SavedCharacter,
+		event: React.MouseEvent,
+		options: { forceCreateCopy?: boolean } = {}
+	) => {
 		event.stopPropagation();
 		setCharacterToUpgrade(character);
+		setForceCreateUpgradeCopy(Boolean(options.forceCreateCopy));
 		setUpgradeModalOpen(true);
 		setUpgradeMessage(null);
 	};
@@ -198,6 +220,7 @@ function LoadCharacter() {
 		if (isUpgrading) return;
 		setUpgradeModalOpen(false);
 		setCharacterToUpgrade(null);
+		setForceCreateUpgradeCopy(false);
 	};
 
 	const handleConfirmUpgrade = async () => {
@@ -206,7 +229,32 @@ function LoadCharacter() {
 		setIsUpgrading(true);
 		setUpgradeMessage(null);
 		try {
-			const result = upgradeCharacterToCurrentRules(characterToUpgrade);
+			if (!forceCreateUpgradeCopy) {
+				const existingCopy = findCurrentRulesCopy(characterToUpgrade);
+				if (existingCopy) {
+					setUpgradeModalOpen(false);
+					setCharacterToUpgrade(null);
+					setForceCreateUpgradeCopy(false);
+					navigate(`/character/${existingCopy.id}`);
+					return;
+				}
+			}
+
+			const existingCopyCount = savedCharacters.filter(
+				(character) =>
+					character.rulesUpgradeSourceId === characterToUpgrade.id &&
+					normalizeRulesVersion(character.rulesVersion) === CURRENT_RULES_VERSION
+			).length;
+			const copyNumber = existingCopyCount + 1;
+			const result = upgradeCharacterToCurrentRules(
+				characterToUpgrade,
+				forceCreateUpgradeCopy
+					? {
+							draftIdSuffix: `draft_${copyNumber}`,
+							draftNameSuffix: `(v0.10.5 draft ${copyNumber})`
+						}
+					: undefined
+			);
 
 			// Save a new current-rules draft. The legacy source record remains
 			// locked and unchanged until the user chooses to delete it.
@@ -227,6 +275,7 @@ function LoadCharacter() {
 			});
 			setUpgradeModalOpen(false);
 			setCharacterToUpgrade(null);
+			setForceCreateUpgradeCopy(false);
 		} catch (error) {
 			console.error('Character rules upgrade failed', error);
 			setUpgradeMessage({
@@ -237,6 +286,56 @@ function LoadCharacter() {
 			});
 		} finally {
 			setIsUpgrading(false);
+		}
+	};
+
+	const createJsonExport = (character: SavedCharacter) =>
+		JSON.stringify(
+			{
+				...character,
+				exportedAt: new Date().toISOString(),
+				exportVersion: '1.0'
+			},
+			null,
+			2
+		);
+
+	const getSafeCharacterFileName = (character: SavedCharacter, extension: string) => {
+		const safeName = (character.finalName || character.id || 'Character')
+			.replace(/[^A-Za-z0-9]+/g, '_')
+			.replace(/^_+|_+$/g, '')
+			.slice(0, 60);
+		const rulesVersionLabel = normalizeRulesVersion(character.rulesVersion).replace('dc20-', '');
+		return `${safeName || 'Character'}_vDC20-${rulesVersionLabel}.${extension}`;
+	};
+
+	const handleCopyJson = async (character: SavedCharacter, event: React.MouseEvent) => {
+		event.stopPropagation();
+		try {
+			await navigator.clipboard.writeText(createJsonExport(character));
+		} catch (error) {
+			console.error('Copy JSON failed', error);
+			alert(t('loadCharacter.errorCopyJsonFailed'));
+		}
+	};
+
+	const handleDownloadJson = (character: SavedCharacter, event: React.MouseEvent) => {
+		event.stopPropagation();
+		try {
+			const blob = new Blob([createJsonExport(character)], {
+				type: 'application/json'
+			});
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = getSafeCharacterFileName(character, 'json');
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+		} catch (error) {
+			console.error('Download JSON failed', error);
+			alert(t('loadCharacter.errorDownloadJsonFailed'));
 		}
 	};
 
@@ -382,67 +481,14 @@ function LoadCharacter() {
 	const handleExportPdf = async (character: SavedCharacter, event: React.MouseEvent) => {
 		event.stopPropagation();
 		try {
-			const [pdf, calc, denormMod] = await Promise.all([
-				import('../../lib/pdf/transformers'),
-				import('../../lib/services/enhancedCharacterCalculator'),
-				import('../../lib/services/denormalizeMastery')
-			]);
+			const pdf = await import('../../lib/pdf/transformers');
 			const { fillPdfFromData } = await import('../../lib/pdf/fillPdf');
-			// Build enhanced data from saved character and compute fresh stats
-			const buildData = calc.convertToEnhancedBuildData({
-				...character,
-				attribute_might: character.finalMight,
-				attribute_agility: character.finalAgility,
-				attribute_charisma: character.finalCharisma,
-				attribute_intelligence: character.finalIntelligence,
-				classId: character.classId,
-				ancestry1Id: character.ancestry1Id,
-				ancestry2Id: character.ancestry2Id,
-				selectedTraitIds: character.selectedTraitIds || [],
-				selectedTraitChoices: (character as any).selectedTraitChoices || {},
-				featureChoices: character.selectedFeatureChoices || {},
-				skillsData: character.skillsData || {},
-				tradesData: character.tradesData || {},
-				languagesData: character.languagesData || { common: { fluency: 'fluent' } }
-			});
-			const calcResult = calc.calculateCharacterWithBreakdowns(buildData);
-			// Use existing denorm if present; otherwise compute now to avoid PDF-only math
-			const denorm =
-				character.masteryLadders &&
-				character.skillTotals &&
-				character.knowledgeTradeMastery &&
-				character.languageMastery
-					? ({
-							masteryLadders: character.masteryLadders,
-							skillTotals: (character as any).skillTotals,
-							knowledgeTradeMastery: (character as any).knowledgeTradeMastery,
-							languageMastery: (character as any).languageMastery
-						} as any)
-					: denormMod.denormalizeMastery({
-							finalAttributes: {
-								might: calcResult.stats.finalMight,
-								agility: calcResult.stats.finalAgility,
-								charisma: calcResult.stats.finalCharisma,
-								intelligence: calcResult.stats.finalIntelligence,
-								prime: calcResult.stats.finalPrimeModifierValue
-							},
-							skillsRanks: character.skillsData || {},
-							tradesRanks: character.tradesData || {},
-							languagesData: character.languagesData || { common: { fluency: 'fluent' } }
-						});
-			const pdfData = pdf.transformCalculatedCharacterToPdfData(calcResult, {
-				saved: character,
-				denorm
-			});
+			const pdfData = pdf.transformSavedCharacterToPdfData(character);
 			const blob = await fillPdfFromData(pdfData, {
 				flatten: false,
 				version: getPdfVersionForCharacter(character)
 			});
-			const safeName = (character.finalName || character.id || 'Character')
-				.replace(/[^A-Za-z0-9]+/g, '_')
-				.replace(/^_+|_+$/g, '')
-				.slice(0, 60);
-			const fileName = `${safeName}_vDC20-0.10.pdf`;
+			const fileName = getSafeCharacterFileName(character, 'pdf');
 			const url = URL.createObjectURL(blob);
 			const a = document.createElement('a');
 			a.href = url;
@@ -511,6 +557,7 @@ function LoadCharacter() {
 					{savedCharacters.map((character, index) => {
 						const compatibility = assessCharacterCompatibility(character);
 						const isBackup = Boolean(character.rulesUpgradeBackupOf);
+						const existingCurrentCopy = findCurrentRulesCopy(character);
 						return (
 							<CharacterCard
 								key={character.id}
@@ -521,7 +568,11 @@ function LoadCharacter() {
 								whileHover={{ scale: 1.02 }}
 								whileTap={{ scale: 0.98 }}
 							>
-								{isBackup ? (
+								{character.rulesUpgradeStatus === 'needs-review' ? (
+									<CompatibilityBadge $variant="warning">
+										{t('loadCharacter.needsReview')}
+									</CompatibilityBadge>
+								) : isBackup ? (
 									<CompatibilityBadge $variant="backup">
 										{t('loadCharacter.legacyBackup')}
 									</CompatibilityBadge>
@@ -599,6 +650,20 @@ function LoadCharacter() {
 										{t('loadCharacter.exportPdf')}
 									</CardButton>
 									<CardButton
+										onClick={(e) => handleCopyJson(character, e)}
+										whileHover={{ scale: 1.05 }}
+										whileTap={{ scale: 0.95 }}
+									>
+										{t('loadCharacter.copyJson')}
+									</CardButton>
+									<CardButton
+										onClick={(e) => handleDownloadJson(character, e)}
+										whileHover={{ scale: 1.05 }}
+										whileTap={{ scale: 0.95 }}
+									>
+										{t('loadCharacter.downloadJson')}
+									</CardButton>
+									<CardButton
 										onClick={(e) => {
 											e.stopPropagation();
 											handleCharacterClick(character);
@@ -617,18 +682,40 @@ function LoadCharacter() {
 									>
 										{t('loadCharacter.levelUp')}
 									</CardButton>
-									{compatibility.state !== 'editable' && !isBackup && (
-										<FullWidthButton
-											$variant={compatibility.state === 'view-only' ? 'danger' : 'primary'}
-											onClick={(e) => handleUpgradeClick(character, e)}
-											whileHover={{ scale: 1.02 }}
-											whileTap={{ scale: 0.98 }}
-										>
-											{compatibility.state === 'view-only'
-												? t('loadCharacter.reviewUpgrade')
-												: t('loadCharacter.upgradeCharacter')}
-										</FullWidthButton>
-									)}
+									{compatibility.state !== 'editable' &&
+										!isBackup &&
+										(existingCurrentCopy ? (
+											<>
+												<FullWidthButton
+													$variant="primary"
+													onClick={(e) => handleOpenCurrentCopy(character, e)}
+													whileHover={{ scale: 1.02 }}
+													whileTap={{ scale: 0.98 }}
+												>
+													{t('loadCharacter.openCurrentCopy')}
+												</FullWidthButton>
+												<FullWidthButton
+													onClick={(e) =>
+														handleUpgradeClick(character, e, { forceCreateCopy: true })
+													}
+													whileHover={{ scale: 1.02 }}
+													whileTap={{ scale: 0.98 }}
+												>
+													{t('loadCharacter.createAnotherCopy')}
+												</FullWidthButton>
+											</>
+										) : (
+											<FullWidthButton
+												$variant={compatibility.state === 'view-only' ? 'danger' : 'primary'}
+												onClick={(e) => handleUpgradeClick(character, e)}
+												whileHover={{ scale: 1.02 }}
+												whileTap={{ scale: 0.98 }}
+											>
+												{compatibility.state === 'view-only'
+													? t('loadCharacter.reviewUpgrade')
+													: t('loadCharacter.updateToCurrentVersion')}
+											</FullWidthButton>
+										))}
 									<FullWidthButton
 										$variant="danger"
 										onClick={(e) => handleDeleteClick(character, e)}

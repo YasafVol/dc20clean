@@ -27,6 +27,8 @@ export interface CharacterUpgradeResult {
 
 interface CharacterUpgradeOptions {
 	now?: Date;
+	draftIdSuffix?: string;
+	draftNameSuffix?: string;
 }
 
 function uniqueAliases(aliases: RulesAliasEntry[]): RulesAliasEntry[] {
@@ -245,39 +247,45 @@ function processMovementsToStructure(
 	return movement as SavedCharacter['movement'];
 }
 
-function recalculateDraftCharacter(character: SavedCharacter): SavedCharacter {
+function recalculateDraftCharacter(character: SavedCharacter): {
+	character: SavedCharacter;
+	hasValidationIssues: boolean;
+} {
 	try {
 		const calculationData = convertToEnhancedBuildData(character);
 		const calculationResult = calculateCharacterWithBreakdowns(calculationData);
 
 		return {
-			...character,
-			...calculationResult.stats,
-			grantedAbilities: calculationResult.grantedAbilities,
-			conditionalModifiers: calculationResult.conditionalModifiers,
-			breakdowns: calculationResult.breakdowns,
-			movement: processMovementsToStructure(
-				calculationResult.movements || [],
-				calculationResult.stats.finalMoveSpeed
-			),
-			holdBreath: calculationResult.stats.finalMight,
-			characterState: {
-				...character.characterState,
-				resources: {
-					...character.characterState?.resources,
-					original: {
-						...character.characterState?.resources?.original,
-						maxHP: calculationResult.stats.finalHPMax || 0,
-						maxSP: calculationResult.stats.finalSPMax || 0,
-						maxMP: calculationResult.stats.finalMPMax || 0,
-						maxGritPoints: calculationResult.stats.finalGritPoints || 0,
-						maxRestPoints: calculationResult.stats.finalRestPoints || 0
+			character: {
+				...character,
+				...calculationResult.stats,
+				grantedAbilities: calculationResult.grantedAbilities,
+				conditionalModifiers: calculationResult.conditionalModifiers,
+				breakdowns: calculationResult.breakdowns,
+				movement: processMovementsToStructure(
+					calculationResult.movements || [],
+					calculationResult.stats.finalMoveSpeed
+				),
+				holdBreath: calculationResult.stats.finalMight,
+				characterState: {
+					...character.characterState,
+					resources: {
+						...character.characterState?.resources,
+						original: {
+							...character.characterState?.resources?.original,
+							maxHP: calculationResult.stats.finalHPMax || 0,
+							maxSP: calculationResult.stats.finalSPMax || 0,
+							maxMP: calculationResult.stats.finalMPMax || 0,
+							maxGritPoints: calculationResult.stats.finalGritPoints || 0,
+							maxRestPoints: calculationResult.stats.finalRestPoints || 0
+						}
 					}
 				}
-			}
+			},
+			hasValidationIssues: !calculationResult.validation?.isValid
 		};
 	} catch {
-		return character;
+		return { character, hasValidationIssues: true };
 	}
 }
 
@@ -297,6 +305,9 @@ export function upgradeCharacterToCurrentRules(
 	const now = options.now ?? new Date();
 	const timestamp = now.toISOString();
 	const targetRulesVersionSlug = CURRENT_RULES_VERSION.replace(/[^a-zA-Z0-9]+/g, '_');
+	const draftIdSuffix = options.draftIdSuffix ?? 'draft';
+	const draftNameSuffix = options.draftNameSuffix ?? '(v0.10.5 draft)';
+	const sourceName = character.finalName || character.id || 'Character';
 	const original = character as SavedCharacter & {
 		selectedSpells?: Record<string, string>;
 		selectedManeuvers?: string[];
@@ -307,8 +318,8 @@ export function upgradeCharacterToCurrentRules(
 
 	const convertedDraft = {
 		...character,
-		id: `${character.id}__${targetRulesVersionSlug}_draft`,
-		finalName: `${character.finalName} (v0.10.5 draft)`,
+		id: `${character.id}__${targetRulesVersionSlug}_${draftIdSuffix}`,
+		finalName: `${sourceName} ${draftNameSuffix}`,
 		rulesVersion: CURRENT_RULES_VERSION,
 		schemaVersion: normalizeSchemaVersion(character.schemaVersion ?? CURRENT_SCHEMA_VERSION),
 		createdAt: timestamp,
@@ -316,7 +327,9 @@ export function upgradeCharacterToCurrentRules(
 		rulesUpgradeSourceVersion: RULES_VERSION_010,
 		rulesUpgradeSourceId: character.id,
 		rulesUpgradeStatus:
-			plan.deprecatedSelections.length > 0 ? 'needs-review' : 'draft',
+			plan.deprecatedSelections.length > 0 || plan.reworkedSelections.length > 0
+				? 'needs-review'
+				: 'draft',
 		rulesUpgradedAt: timestamp,
 		rulesUpgradeBackupOf: undefined,
 		selectedTraitIds: convertStringArray('trait', character.selectedTraitIds) ?? [],
@@ -346,7 +359,13 @@ export function upgradeCharacterToCurrentRules(
 		}
 	} as SavedCharacter;
 
-	const upgradedCharacter = recalculateDraftCharacter(convertedDraft);
+	const recalculated = recalculateDraftCharacter(convertedDraft);
+	const upgradedCharacter = {
+		...recalculated.character,
+		rulesUpgradeStatus: recalculated.hasValidationIssues
+			? 'needs-review'
+			: recalculated.character.rulesUpgradeStatus
+	} as SavedCharacter;
 
 	return { upgradedCharacter, sourceCharacter: character, plan };
 }

@@ -171,6 +171,38 @@ describe('v0.10 character upgrade', () => {
 		expect(assessCharacterCompatibility(upgraded).state).toBe('editable');
 	});
 
+	it('given a reworked selection without removals, when upgrading, then it still needs review', () => {
+		const character = makeCharacter({
+			selectedSpells: {
+				first: 'force-dome'
+			}
+		});
+
+		const result = upgradeCharacterToCurrentRules(character, {
+			now: new Date('2026-06-12T10:00:00.000Z')
+		});
+
+		expect(result.plan.reworkedSelections).toEqual(
+			expect.arrayContaining([expect.objectContaining({ fromId: 'force-dome' })])
+		);
+		expect(result.plan.deprecatedSelections).toEqual([]);
+		expect(result.upgradedCharacter.rulesUpgradeStatus).toBe('needs-review');
+	});
+
+	it('given an explicit extra-copy request, when upgrading, then it uses the requested draft identity', () => {
+		const character = makeCharacter();
+
+		const result = upgradeCharacterToCurrentRules(character, {
+			now: new Date('2026-06-12T10:00:00.000Z'),
+			draftIdSuffix: 'draft_2',
+			draftNameSuffix: '(v0.10.5 draft 2)'
+		});
+
+		expect(result.upgradedCharacter.id).toBe('legacy-upgrade__dc20_0_10_5_draft_2');
+		expect(result.upgradedCharacter.finalName).toBe('Legacy Upgrade (v0.10.5 draft 2)');
+		expect(character.id).toBe('legacy-upgrade');
+	});
+
 	it('given an unsupported rules version, when planning or upgrading, then conversion is blocked', () => {
 		const character = makeCharacter({
 			rulesVersion: 'dc20-9.99'

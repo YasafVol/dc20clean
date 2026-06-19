@@ -23,7 +23,7 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 
 ## 2. Systems & Touchpoints
 
-- **Character Calculation** — `src/lib/services/enhancedCharacterCalculator.ts` outputs `EnhancedCalculationResult`; this is the canonical source for values exported to the PDF.
+- **Stored Character Values** — `SavedCharacter` fields are the canonical source for values exported to the PDF. Export does not run the current calculator.
 - **v0.10.5 Resource Totals** — PDF SP/MP fields consume calculated class progression totals. Martial characters start at 2 SP, spellcasters at 6 MP, and hybrids at 1 SP / 3 MP; v0.10.5 level 10 totals are 6 SP for martials, 21 MP for spellcasters, and 3 SP / 11 MP for hybrids.
 - **v0.10.5 Expert Feature Effects** — level 5 Expert Features keep their legacy placeholder IDs but now contribute modeled effects through the calculator before export, including skill point, HP/MP, speed/jump, spell, and maneuver grants where those mechanics are structured.
 - **Transformation Layer** — `src/lib/pdf/transformers.ts` maps calculation results into a structured DTO that matches the PDF field list.
@@ -69,12 +69,14 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 ## 4. Runtime Flow
 
 1. **Trigger** — User clicks “Export PDF” in the character sheet UI.
-2. **Preparation** — UI gathers the current character and checks compatibility. `editable` characters are normalized with `convertToEnhancedBuildData` and recalculated; `upgrade-required` and `view-only` characters export from stored `SavedCharacter` values to avoid reinterpreting old rules data.
-3. **Transformation** — `transformCalculatedCharacterToPdfData(characterResult)` produces a validated `PdfExportData` object.
+2. **Preparation** — UI reads the stored character record and routes the PDF version from `rulesVersion`.
+3. **Transformation** — `transformSavedCharacterToPdfData(character)` produces a validated `PdfExportData` object.
 4. **Lazy Load** — UI dynamically imports `fillPdfFromData` (and `pdf-lib`) to avoid upfront bundle cost.
 5. **Fill & Save** — `fillPdfFromData` loads the template via `?url`, fills fields based on the rules-version-routed map (default: v0.10), optionally flattens, and returns a Blob for download.
 6. **Download** — UI uses `URL.createObjectURL` (or `file-saver`) to prompt the user with a sanitized filename (e.g., `Aela_Level_6_Ranger.pdf`).
 7. **Feedback** — UI surfaces success or error notifications, resetting loading state accordingly.
+
+PDF export is best effort for unsupported or future rules versions. If the routing layer can map the character to an available template, export proceeds from stored values; it must not recalculate under current rules.
 
 ---
 
@@ -101,7 +103,7 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
   - Provide success/error messaging and dynamic filename.
 - **Milestone 3 – Testing (Planned)**
   - Add Playwright spec for export/download validation (no export E2E spec in repo yet).
-  - Consider unit tests for `transformCalculatedCharacterToPdfData` covering key sections.
+  - Consider unit tests for `transformSavedCharacterToPdfData` covering key sections.
 
 ---
 

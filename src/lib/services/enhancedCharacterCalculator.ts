@@ -72,6 +72,14 @@ import { normalizeSelectedTalents } from '../utils/storageUtils';
 
 // CrossPathGrants, aggregatePathBenefits, checkFlavorFeatureAutoGrant moved to calculatorModules/progressionAggregation.ts
 
+function getInventoryRows(contextData: any): any[] {
+	const inventory = contextData.characterState?.inventory ?? contextData.inventory;
+	if (Array.isArray(inventory?.items)) return inventory.items;
+	if (Array.isArray(inventory?.current)) return inventory.current;
+	if (Array.isArray(inventory)) return inventory;
+	return [];
+}
+
 /**
  * Convert character context data to enhanced build data
  */
@@ -126,6 +134,7 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 		activeConditions: Object.entries(contextData.characterState?.ui?.activeConditions ?? {})
 			.filter(([, isActive]) => Boolean(isActive))
 			.map(([conditionId]) => conditionId),
+		equipmentInventory: getInventoryRows(contextData),
 
 		// Conversions between point pools (for Background step)
 		conversions: {

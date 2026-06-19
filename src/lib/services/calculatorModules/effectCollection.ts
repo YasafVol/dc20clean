@@ -17,6 +17,7 @@ import { findTalentById } from '../../rulesdata/classes-data/talents/talent.load
 import { getLegacyChoiceId, findClassByName } from '../../rulesdata/loaders/class-features.loader';
 import { traitsData } from '../../rulesdata/ancestries/traits';
 import type { ClassDefinition } from '../../rulesdata/schemas/character.schema';
+import { aggregateEquipmentEffects } from '../../rulesdata/equipment/equipmentEffects';
 
 /**
  * Aggregate all effects with source attribution
@@ -70,6 +71,9 @@ export function aggregateAttributedEffects(
 			}
 		}
 	}
+
+	// Add effects from equipped inventory rows. Carried but unequipped items do not contribute.
+	effects.push(...aggregateEquipmentEffects(buildData.equipmentInventory));
 
 	// Add effects from subclass feature choices
 	if (buildData.selectedSubclass && buildData.featureChoices) {

@@ -16,6 +16,7 @@ import {
 import { PHYSICAL_DAMAGE_TYPES } from '../../../lib/rulesdata/equipment/schemas/baseEquipment';
 import { validateWeapon } from '../../../lib/rulesdata/equipment/validation/equipmentValidator';
 import { saveCustomWeapon } from '../../../lib/rulesdata/equipment/storage/equipmentStorage';
+import { withEquipmentEffects } from '../../../lib/rulesdata/equipment/equipmentEffects';
 import type {
 	CustomWeapon,
 	WeaponType,
@@ -58,7 +59,7 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 	const [name, setName] = useState('');
 	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
 
-	const maxPoints = 2;
+	const maxPoints = weaponType === 'ranged' ? 1 : 2;
 
 	const pointsSpent = useMemo(() => {
 		return selectedProperties.reduce((total, propId) => {
@@ -89,9 +90,13 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 			properties: selectedProperties,
 			maxPoints
 		});
-	}, [weaponType, style, secondaryStyle, damageType, selectedProperties, hasMultiFaceted]);
+	}, [weaponType, style, secondaryStyle, damageType, selectedProperties, maxPoints, hasMultiFaceted]);
 
 	const toggleProperty = (propId: string) => {
+		if (weaponType === 'ranged' && propId === 'ammo') {
+			return;
+		}
+
 		if (selectedProperties.includes(propId)) {
 			setSelectedProperties((prev) => prev.filter((p) => p !== propId));
 			// If removing multi-faceted, clear secondary style
@@ -161,7 +166,7 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 	const buildWeapon = (): CustomWeapon => {
 		const styleData = WEAPON_STYLES.find((s) => s.id === style);
 
-		return {
+		const weapon: CustomWeapon = {
 			id: `custom-weapon-${Date.now()}`,
 			category: 'weapon',
 			name: name || 'Custom Weapon',
@@ -184,6 +189,8 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 			createdAt: new Date().toISOString(),
 			updatedAt: new Date().toISOString()
 		};
+
+		return withEquipmentEffects(weapon);
 	};
 
 	const handleSave = () => {
@@ -403,6 +410,7 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 						{availableProperties.map((property) => {
 							const isSelected = selectedProperties.includes(property.id);
 							const wouldExceedPoints = !isSelected && pointsSpent + property.cost > maxPoints;
+							const isLocked = weaponType === 'ranged' && property.id === 'ammo';
 
 							// Check requirements
 							const requirementsMet =
@@ -413,6 +421,7 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 								property.excludes.some((exc) => selectedProperties.includes(exc));
 
 							const isDisabled =
+								isLocked ||
 								(wouldExceedPoints && !isSelected) ||
 								(!isSelected && (!requirementsMet || hasExcluded));
 
@@ -437,6 +446,7 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 									{property.effect && (
 										<div className="mt-2 text-xs text-amber-400">{property.effect}</div>
 									)}
+									{isLocked && <div className="mt-2 text-xs text-gray-500">Inherent</div>}
 									{property.requires && (
 										<div className="mt-2 text-xs text-gray-500">
 											Requires: {property.requires.join(', ')}

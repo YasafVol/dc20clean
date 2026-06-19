@@ -2,7 +2,7 @@
 
 > Purpose: Definitive guide to derived stat formulas, effect application order, mastery cap validation, and breakdown output.
 > Status: Active
-> Last Updated: 2026-06-13
+> Last Updated: 2026-06-19
 
 ---
 
@@ -22,6 +22,8 @@
 - `src/lib/rulesdata/schemas/character.schema.ts` — canonical `Effect` union
 - `src/lib/rulesdata/attributes.ts` — base attributes and modifiers
 - `src/lib/rulesdata/progression/levelCaps.ts` — **single source of truth** for attribute/mastery caps by level
+- `src/lib/rulesdata/equipment/equipmentEffects.ts` — converts equipped inventory
+  rows and Equipage items into canonical attributed effects
 
   ***
 
@@ -68,6 +70,8 @@ This modular structure improves maintainability and makes the calculation pipeli
 
 - **PD** = `8 + Combat Mastery + Agility + Intelligence + sum(always-on effects.pd)`
 - **AD** = `8 + Combat Mastery + Might + Charisma + sum(always-on effects.ad)`
+- Equipped armor, shields, and weapons contribute through the same effect sums. For
+  example, an equipped Guard weapon adds `MODIFY_STAT pd +1`.
 - Conditional modifiers (for example `while_raging` or `not_wearing_armor`) are surfaced under `conditionalModifiers` and are not applied to always-on totals.
 - **Save DC** = `10 + Combat Mastery + Prime Attribute`
 - **Death Threshold** = `Prime Attribute + Combat Mastery`
@@ -109,7 +113,7 @@ This modular structure improves maintainability and makes the calculation pipeli
 
 ### DC20 v0.10.5 Resource Progression
 
-The calculator reads class tables through `classesData` and aggregates levels 1 through target level:
+The calculator reads resolved class progressions through `classesData` and aggregates levels 1 through target level. Per-class progression exports are built from shared martial, spellcaster, or hybrid templates plus class-specific feature IDs before they reach the calculator:
 
 | Class Category | Level 1 Resources | Level 10 Resource Totals |
 | -------------- | ----------------- | ------------------------ |
@@ -147,7 +151,7 @@ Level 5 Expert Features are resolved from the class feature data using the exist
 
 ## 3. Effect Application Order
 
-1.  Aggregate class features and ancestry traits into `Effect[]`
+1.  Aggregate class features, ancestry traits, talents, choices, and equipped equipment into `Effect[]`
 2.  Resolve user-choice effects (e.g., any_attribute/any_skill)
 3.  Apply numeric modifiers to base stats and resource maximums
 4.  Compute background budgets and conversions

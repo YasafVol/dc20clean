@@ -2,7 +2,7 @@
 
 > Purpose: Canonical catalog of `Effect.type` semantics, targets, choice resolution, and stacking rules used across Traits and Class Features.
 > Status: Active
-> Last Updated: 2026-06-13
+> Last Updated: 2026-06-19
 
 ---
 
@@ -12,7 +12,7 @@
 - `src/lib/services/enhancedCharacterCalculator.ts` — orchestrator calling effect collection modules
 - `src/lib/services/calculatorModules/effectCollection.ts` — effect aggregation and choice resolution
 - `src/lib/services/calculatorModules/abilityCollection.ts` — collects grants (abilities, movements, resistances, vulnerabilities, senses, combat training)
-- Producers: Traits (`ancestries/traits.ts`), Class Features (`classes-data/features/*`)
+- Producers: Traits (`ancestries/traits.ts`), Class Features (`classes-data/features/*`), equipped equipment (`rulesdata/equipment/*`)
 
 ---
 
@@ -71,7 +71,7 @@ All effect types are defined in `character.schema.ts` as a discriminated union. 
 
 ### Effect Processing Pipeline
 
-1. **Aggregation** (`effectCollection.ts::aggregateAttributedEffects()`): Collects effects from ancestry traits, class features, subclass features, talents, and feature choices. Each effect is tagged with its source.
+1. **Aggregation** (`effectCollection.ts::aggregateAttributedEffects()`): Collects effects from ancestry traits, class features, subclass features, talents, feature choices, and equipped equipment. Each effect is tagged with its source.
 2. **Choice Resolution** (`effectCollection.ts::resolveEffectChoices()`): Resolves effects with `userChoice` metadata (e.g., `any_attribute` → specific attribute based on user selection). Nested class feature option effects use stable generated keys so a parent class choice can expose a second user choice such as a spell tag or school.
 3. **Stat Application** (`statCalculation.ts::createStatBreakdown()`): Applies `MODIFY_STAT` and `MODIFY_ATTRIBUTE` effects to base values, producing breakdowns with per-source attribution.
 4. **Grant Collection** (`abilityCollection.ts`): Collects all grant-type effects:
@@ -85,6 +85,23 @@ All effect types are defined in `character.schema.ts` as a discriminated union. 
 5. **Condition Aggregation** (`conditionAggregator.ts`): Scans all effects for condition interactions and groups them by canonical condition ID. It accepts condition IDs, display names, and concrete stacking IDs such as `slowed-2`; `GRANT_ADV_ON_SAVE`, `GRANT_RESISTANCE`, and `GRANT_VULNERABILITY` also contribute when their target names a condition.
 
 Stacking rules: Numeric effects (`MODIFY_STAT`, `MODIFY_ATTRIBUTE`) sum. Grants de-duplicate by target. Mastery cap effects accumulate slots.
+
+### Equipment Effects
+
+Equipage properties and saved custom equipment use the same `Effect` union as traits
+and class features. Equipment effects are source-attributed with
+`source.type === 'equipment'` and only enter the calculator from inventory rows marked
+`isEquipped`.
+
+Supported first-pass calculator mappings:
+
+- Weapon Guard: `MODIFY_STAT` targeting `pd`.
+- Armor and shield PD/AD bonuses: `MODIFY_STAT` targeting `pd` or `ad`.
+- Armor and shield Speed penalties: `MODIFY_STAT` targeting `moveSpeed`.
+- PDR/EDR/MDR-style reductions: `GRANT_RESISTANCE` with `physical`, `elemental`, or
+  `mystical` targets and `half` value.
+- Rule-text or spell-specific properties without dedicated numeric output fields:
+  `GRANT_ABILITY`.
 
 ### Current v0.10.5 Class Feature Usage
 

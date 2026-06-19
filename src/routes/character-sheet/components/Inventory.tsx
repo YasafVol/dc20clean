@@ -19,7 +19,8 @@ import {
 	StyledInventoryTextInput,
 	StyledInventoryInfoIcon,
 	StyledInventoryCost,
-	StyledEmptyInventory
+	StyledEmptyInventory,
+	StyledInventoryCheckbox
 } from '../styles/Inventory';
 import { theme } from '../styles/theme';
 
@@ -58,6 +59,21 @@ const StyledInventoryInfoIconAccent = styled(StyledInventoryInfoIcon)`
 
 /** Sentinel value used in the Custom name dropdown to trigger freeform text input */
 const CUSTOM_FREEFORM_VALUE = '__custom_freeform__';
+
+function formatCustomEquipmentCategory(category?: InventoryItemData['customEquipmentCategory']): string {
+	switch (category) {
+		case 'weapon':
+			return 'Custom Weapon';
+		case 'armor':
+			return 'Custom Armor';
+		case 'shield':
+			return 'Custom Shield';
+		case 'spellFocus':
+			return 'Custom Spell Focus';
+		default:
+			return 'Custom';
+	}
+}
 
 export interface InventoryProps {
 	onItemClick: (inventoryData: InventoryItemData, item: InventoryItem | null) => void;
@@ -99,7 +115,8 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 			itemType: '',
 			itemName: '',
 			count: 1,
-			cost: '-'
+			cost: '-',
+			isEquipped: false
 		};
 		updateInventory([...inventory, newInventoryItem]);
 	};
@@ -128,7 +145,15 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 			const itemType = itemTypeOrName as InventoryItemData['itemType'];
 			const updatedInventory = inventory.map((item, index) =>
 				index === inventoryIndex
-					? { ...item, itemType, itemName: '', cost: '-', customEquipmentId: undefined }
+					? {
+							...item,
+							itemType,
+							itemName: '',
+							cost: '-',
+							customEquipmentId: undefined,
+							customEquipmentCategory: undefined,
+							isEquipped: false
+						}
 					: item
 			);
 			updateInventory(updatedInventory);
@@ -151,7 +176,9 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 							itemName: itemTypeOrName,
 							itemType: selectedItem?.itemType || item.itemType,
 							cost: getItemCost(selectedItem),
-							customEquipmentId: undefined
+							customEquipmentId: undefined,
+							customEquipmentCategory: undefined,
+							isEquipped: false
 						}
 					: item
 			);
@@ -171,7 +198,14 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 			// Clear any previous name/link
 			const updatedInventory = inventory.map((item, index) =>
 				index === inventoryIndex
-					? { ...item, itemName: '', customEquipmentId: undefined, cost: '-' }
+					? {
+							...item,
+							itemName: '',
+							customEquipmentId: undefined,
+							customEquipmentCategory: undefined,
+							cost: '-',
+							isEquipped: false
+						}
 					: item
 			);
 			updateInventory(updatedInventory);
@@ -185,7 +219,9 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 								...item,
 								itemName: equipment.name,
 								customEquipmentId: equipment.id,
-								cost: '-'
+								customEquipmentCategory: equipment.category,
+								cost: '-',
+								isEquipped: false
 							}
 						: item
 				);
@@ -206,7 +242,13 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 	const handleCustomNameChange = (inventoryIndex: number, name: string) => {
 		const updatedInventory = inventory.map((item, index) =>
 			index === inventoryIndex
-				? { ...item, itemName: name, customEquipmentId: undefined }
+				? {
+						...item,
+						itemName: name,
+						customEquipmentId: undefined,
+						customEquipmentCategory: undefined,
+						isEquipped: false
+					}
 				: item
 		);
 		updateInventory(updatedInventory);
@@ -215,6 +257,13 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 	const handleInventoryCountChange = (inventoryIndex: number, count: number) => {
 		const updatedInventory = inventory.map((item, index) =>
 			index === inventoryIndex ? { ...item, count: Math.max(1, count) } : item
+		);
+		updateInventory(updatedInventory);
+	};
+
+	const handleEquippedChange = (inventoryIndex: number, isEquipped: boolean) => {
+		const updatedInventory = inventory.map((item, index) =>
+			index === inventoryIndex ? { ...item, isEquipped } : item
 		);
 		updateInventory(updatedInventory);
 	};
@@ -270,6 +319,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 				const eq = customEquipment.find((e) => e.id === invData.customEquipmentId);
 				if (eq) {
 					const bits: string[] = [];
+					bits.push(formatCustomEquipmentCategory(eq.category));
 					if ((eq as any).finalDamage) bits.push(String((eq as any).finalDamage));
 					if ((eq as any).pdBonus !== undefined) bits.push(`PD +${(eq as any).pdBonus}`);
 					if ((eq as any).adBonus !== undefined) bits.push(`AD +${(eq as any).adBonus}`);
@@ -404,6 +454,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 			<StyledInventoryContainer $isMobile={isMobile}>
 				<StyledInventoryHeaderRow>
 					<span></span> {/* Empty column for remove button */}
+					<StyledInventoryHeaderColumn align="center">Eq.</StyledInventoryHeaderColumn>
 					<StyledInventoryHeaderColumn>{t('characterSheet.inventoryColumnType')}</StyledInventoryHeaderColumn>
 					<StyledInventoryHeaderColumn>{t('characterSheet.inventoryColumnItem')}</StyledInventoryHeaderColumn>
 					<StyledInventoryHeaderColumn align="center">{t('characterSheet.inventoryColumnCount')}</StyledInventoryHeaderColumn>
@@ -436,6 +487,16 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 									$isMobile={isMobile}
 								/>
 
+								<StyledInventoryCheckbox
+									$isMobile={isMobile}
+									type="checkbox"
+									checked={!!item.isEquipped}
+									disabled={!item.itemName}
+									onChange={(e) => handleEquippedChange(index, e.target.checked)}
+									title="Equipped"
+									aria-label={`item-equipped-${index + 1}`}
+								/>
+
 								{/* Item Type */}
 								<StyledInventorySelect
 									$isMobile={isMobile}
@@ -448,7 +509,11 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 									<option value="Shield">Shield</option>
 									<option value="Adventuring Supply">Adventuring Supply</option>
 									<option value="Potion">Healing Potion</option>
-									<option value="Custom">Custom</option>
+									<option value="Custom">
+										{isCustomType
+											? formatCustomEquipmentCategory(item.customEquipmentCategory)
+											: 'Custom'}
+									</option>
 								</StyledInventorySelect>
 
 								{/* Item Name + inline summary stacked in the same grid cell */}

@@ -13,6 +13,7 @@ import {
 } from '../../../lib/rulesdata/equipment/options/shieldOptions';
 import { validateShield } from '../../../lib/rulesdata/equipment/validation/equipmentValidator';
 import { saveCustomShield } from '../../../lib/rulesdata/equipment/storage/equipmentStorage';
+import { withEquipmentEffects } from '../../../lib/rulesdata/equipment/equipmentEffects';
 import type {
 	CustomShield,
 	ShieldType
@@ -133,7 +134,7 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 			}
 		}
 
-		setSelectedProperties(preset.properties);
+		setSelectedProperties(props);
 		setName(preset.name);
 		setStep(3);
 	};
@@ -158,7 +159,7 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 	const buildShield = (): CustomShield => {
 		const stats = calculateStats();
 
-		return {
+		const shield: CustomShield = {
 			id: `custom-shield-${Date.now()}`,
 			category: 'shield',
 			name: name || 'Custom Shield',
@@ -177,6 +178,8 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 			createdAt: new Date().toISOString(),
 			updatedAt: new Date().toISOString()
 		};
+
+		return withEquipmentEffects(shield);
 	};
 
 	const handleSave = () => {

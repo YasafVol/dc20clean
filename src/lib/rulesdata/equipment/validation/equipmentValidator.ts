@@ -36,6 +36,10 @@ function formatOneOfRequirement(propertyIds: string[]): string {
 	return `${names.slice(0, -1).join(', ')} or ${names[names.length - 1]}`;
 }
 
+function getDefaultWeaponMaxPoints(weaponType: CustomWeapon['weaponType'] | undefined): number {
+	return weaponType === 'ranged' ? 1 : 2;
+}
+
 export function validateWeapon(weapon: Partial<CustomWeapon>): ValidationResult {
 	const errors: ValidationError[] = [];
 	const warnings: string[] = [];
@@ -56,6 +60,13 @@ export function validateWeapon(weapon: Partial<CustomWeapon>): ValidationResult 
 	if (!weapon.properties) {
 		errors.push({ message: 'Properties array is required' });
 		return { isValid: false, errors, warnings };
+	}
+
+	if (weapon.weaponType === 'ranged' && !weapon.properties.includes('ammo')) {
+		errors.push({
+			propertyId: 'ammo',
+			message: 'Ranged weapons automatically include "Ammo"'
+		});
 	}
 
 	// Get available properties for this weapon type
@@ -80,14 +91,18 @@ export function validateWeapon(weapon: Partial<CustomWeapon>): ValidationResult 
 		}
 
 		// Check if property is available for this weapon type
-		if (weapon.weaponType === 'melee' && property.rangedOnly) {
+		const weaponTypeMismatch =
+			weapon.weaponType &&
+			property.weaponTypes &&
+			!property.weaponTypes.includes(weapon.weaponType);
+		if (weapon.weaponType === 'melee' && (property.rangedOnly || weaponTypeMismatch)) {
 			errors.push({
 				propertyId: propId,
 				message: `Property "${property.name}" is only available for ranged weapons`
 			});
 		}
 
-		if (weapon.weaponType === 'ranged' && property.meleeOnly) {
+		if (weapon.weaponType === 'ranged' && (property.meleeOnly || weaponTypeMismatch)) {
 			errors.push({
 				propertyId: propId,
 				message: `Property "${property.name}" is only available for melee weapons`
@@ -145,7 +160,7 @@ export function validateWeapon(weapon: Partial<CustomWeapon>): ValidationResult 
 	}
 
 	// Check points budget
-	const maxPoints = weapon.maxPoints || 2;
+	const maxPoints = weapon.maxPoints ?? getDefaultWeaponMaxPoints(weapon.weaponType);
 	if (pointsSpent > maxPoints) {
 		errors.push({
 			message: `Points spent (${pointsSpent}) exceeds maximum (${maxPoints})`
@@ -202,14 +217,18 @@ export function validateArmor(armor: Partial<CustomArmor>): ValidationResult {
 		}
 
 		// Check if property is available for this armor type
-		if (armor.armorType === 'light' && property.heavyOnly) {
+		const armorTypeMismatch =
+			armor.armorType &&
+			property.armorTypes &&
+			!property.armorTypes.includes(armor.armorType);
+		if (armor.armorType === 'light' && (property.heavyOnly || armorTypeMismatch)) {
 			errors.push({
 				propertyId: propId,
 				message: `Property "${property.name}" is only available for heavy armor`
 			});
 		}
 
-		if (armor.armorType === 'heavy' && property.lightOnly) {
+		if (armor.armorType === 'heavy' && (property.lightOnly || armorTypeMismatch)) {
 			errors.push({
 				propertyId: propId,
 				message: `Property "${property.name}" is only available for light armor`
@@ -287,14 +306,18 @@ export function validateShield(shield: Partial<CustomShield>): ValidationResult 
 		}
 
 		// Check if property is available for this shield type
-		if (shield.shieldType === 'light' && property.heavyOnly) {
+		const shieldTypeMismatch =
+			shield.shieldType &&
+			property.shieldTypes &&
+			!property.shieldTypes.includes(shield.shieldType);
+		if (shield.shieldType === 'light' && (property.heavyOnly || shieldTypeMismatch)) {
 			errors.push({
 				propertyId: propId,
 				message: `Property "${property.name}" is only available for heavy shields`
 			});
 		}
 
-		if (shield.shieldType === 'heavy' && property.lightOnly) {
+		if (shield.shieldType === 'heavy' && (property.lightOnly || shieldTypeMismatch)) {
 			errors.push({
 				propertyId: propId,
 				message: `Property "${property.name}" is only available for light shields`
@@ -381,8 +404,8 @@ export function validateSpellFocus(focus: Partial<CustomSpellFocus>): Validation
 	}
 
 	// Check points budget
-	// Two-Handed effectively gives +1 point (costs -1)
-	const maxPoints = focus.hands === 'two-handed' ? 2 : SPELL_FOCUS_RULES.maxPoints;
+	// Two-Handed is a -1 property against the same 1-point base budget.
+	const maxPoints = SPELL_FOCUS_RULES.maxPoints;
 	if (pointsSpent > maxPoints) {
 		errors.push({
 			message: `Points spent (${pointsSpent}) exceeds maximum (${maxPoints})`

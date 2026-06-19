@@ -27,6 +27,8 @@ export interface ArmorTypeDefinition {
 // ================================================================= //
 
 export interface ArmorProperty extends BaseProperty {
+	/** Armor types this property is available for. Omitted means all armor types. */
+	armorTypes?: ArmorType[];
 	/** Whether this property is only available for light armor */
 	lightOnly?: boolean;
 	/** Whether this property is only available for heavy armor */

@@ -17,8 +17,8 @@ export type SpellFocusHands = 'one-handed' | 'two-handed';
 // ================================================================= //
 
 export interface SpellFocusProperty extends BaseProperty {
-	/** The mechanical effect of this property */
-	effect?: string;
+	/** Spell focus hand requirements this property is available for. Omitted means all focus types. */
+	focusHands?: SpellFocusHands[];
 }
 
 // ================================================================= //

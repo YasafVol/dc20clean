@@ -2,9 +2,25 @@
 
 > Purpose: Central reference for custom equipment creation, data models, validation rules, storage, and UI flows.
 > Status: Active
-> Last Updated: 2026-06-13
+> Last Updated: 2026-06-19
 >
 > **Menu Entry:** "Equipage" in Reference Tools section
+
+---
+
+## 0. Rules Source & Version
+
+- Rules version: `0.10.5`
+- Runtime constant: `EQUIPMENT_RULES_VERSION`
+- Source artifact: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`
+- Source sections:
+  - Weapons: Weapon Properties / Creating Weapons, around lines 10565-10777
+  - Spell Focuses: Spell Focus Properties / Creating Spell Focuses, around lines 10798-10868
+  - Armor: Armor Properties / Creating Armor, around lines 10923-10935
+  - Shields: Shield Properties / Creating Shields, around lines 10980-11015
+
+Stored custom equipment exports include `rulesVersion`; legacy exports without it are
+treated as `0.10`, while current saves are stamped `0.10.5`.
 
 ---
 
@@ -12,7 +28,7 @@
 
 ### Schemas (`src/lib/rulesdata/equipment/schemas/`)
 
-- `baseEquipment.ts` — Shared types, validation interfaces, equipment categories, damage types
+- `baseEquipment.ts` — Shared types, validation interfaces, equipment categories, damage types, rules version/source metadata
 - `weaponSchema.ts` — Weapon types, styles, properties, CustomWeapon interface
 - `armorSchema.ts` — Armor types, properties, CustomArmor interface
 - `shieldSchema.ts` — Shield types, properties, CustomShield interface
@@ -36,9 +52,10 @@
 Stored custom equipment keeps stable property IDs across the v0.10.5 update. Existing
 `toss`, `thrown`, and `returning` selections are preserved on import/export; current
 validation applies the v0.10.5 point costs and Returning prerequisite when edited.
-Exports include an additive `rulesVersion`: legacy payloads without it are identified as
-`0.10`, while new or edited equipment is stamped `0.10.5`.
-
+Ranged custom weapons use a 1-point base budget, automatically include locked `ammo`,
+and start with `two-handed` selected as a `-1` property. Keeping Two-Handed opens the
+second positive property point; removing it leaves the ranged weapon with only its
+1-point base budget.
 ### UI (`src/routes/custom-equipment/`)
 
 - `CustomEquipment.tsx` — Main page, category selection, tabs
@@ -62,10 +79,23 @@ interface BaseEquipment {
 	properties: string[]; // Array of property IDs
 	pointsSpent: number;
 	maxPoints: number;
+	effects?: Effect[]; // Calculator effects applied when equipped/wielded
 	createdAt: string;
 	updatedAt: string;
 }
 ```
+
+Equipment properties now expose structured mechanical effects in addition to display text.
+Newly saved custom equipment persists a canonical `effects` array. Older saved equipment
+without `effects` is still supported: the calculator derives effects from stored item
+fields and property IDs when the item is equipped from the character sheet inventory.
+
+Character inventory rows include an explicit `isEquipped` flag. Only equipped/wielded
+items contribute equipment effects; carried inventory does not affect calculations.
+Rows linked to saved Equipage items keep `itemType: 'Custom'` for selector compatibility
+and also store `customEquipmentCategory` (`weapon`, `armor`, `shield`, or `spellFocus`)
+so the inventory can label them as Custom Weapon, Custom Armor, Custom Shield, or
+Custom Spell Focus.
 
 ### Equipment Categories (4)
 
@@ -127,6 +157,16 @@ Each style has a **Weapon Enhancement** costing 1 AP or 1 SP:
 | Reload        | -1   | Ranged | +1 damage, requires reload action         |
 | Cumbersome    | -1   | Ranged | 1 AP to draw/stow                         |
 
+Ranged custom weapons start from a 1-point base budget and automatically include Ammo
+and Two-Handed. Ammo is locked. Two-Handed can be removed, but because it is the `-1`
+property that grants the second positive property point, removing it leaves only the
+1-point base budget.
+
+Weapon property availability is represented with explicit applicability arrays
+(`weaponTypes`) instead of relying only on negative flags. Guard is now a structured
+equipment effect: equipped/wielded weapons with Guard add `MODIFY_STAT pd +1` to the
+calculator.
+
 ### Preset Weapons (38)
 
 Organized by category:
@@ -158,6 +198,10 @@ Organized by category:
 | EDR         | 2    | Both  | Elemental Damage Reduction |
 | Bulky       | -1   | Heavy | Speed -1                   |
 | Rigid       | -1   | Heavy | DisADV on Agility Checks   |
+
+Armor property availability is represented with explicit `armorTypes` arrays. Equipped
+armor contributes PD, AD, Speed penalties, PDR/EDR as resistances, Agility disadvantage
+as a granted ability, and Heavy Armor's unarmed Heavy Hit special as a granted ability.
 
 ### Preset Armor (7)
 
@@ -202,6 +246,11 @@ Organized by category:
 | Bulky       | -1   | Heavy | Speed -1                          |
 | Rigid       | -1   | Heavy | DisADV on Agility Checks          |
 
+Shield property availability is represented with explicit `shieldTypes` arrays.
+Equipped shields contribute structured effects for PD, AD, Speed penalties, PDR/EDR
+as resistances, and descriptive granted abilities such as Grasp, Toss, Mounted, and
+Rigid.
+
 ### Preset Shields (5)
 
 | Name          | Type  | PD  | AD  | Properties |
@@ -238,6 +287,31 @@ Organized by category:
 | Two-Handed     | -1   | Requires 2 hands                           |
 | Vicious        | 1    | +1 to hit with Spell Attacks               |
 | Warded         | 1    | MDR (Mystical Damage Reduction)            |
+
+Spell focus properties now expose structured effects. Protective contributes `AD +1`
+when equipped, Warded contributes Mystical resistance, and spell-specific bonuses such
+as Channeling, Vicious, Powerful, Reach, Long-Ranged, Muffled, Reactive, and Close
+Quarters are surfaced as granted abilities until the calculator has separate
+spell-attack/spell-check/range output fields.
+
+### Spell Focus Effect TODO
+
+Apply as many spell focus properties as possible as real equipped effects instead of
+plain ability notes:
+
+- `Vicious` should calculate on the character sheet when the focus is equipped,
+  contributing to spell attack/to-hit output rather than only appearing as text.
+- `Channeling` should calculate on the character sheet when the focus is equipped,
+  contributing to spell check output once that output is separated from general
+  attack/spell check.
+- `Powerful` should be indicated when viewing spells and spell attacks, because it
+  changes Spell Attack damage by `+1`.
+- `Reach` should be indicated when viewing spells with Range `1`, because their range
+  increases by `1 Space`.
+- `Long-Ranged` should be indicated when viewing spells with Range greater than `1`,
+  because their range increases by `5 Spaces`.
+- Keep `Close Quarters`, `Muffled`, and `Reactive` visible as equipped focus effects;
+  promote them from generic ability notes if the sheet gains richer spell-context UI.
 
 ### Preset Spell Focuses (13)
 

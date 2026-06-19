@@ -286,8 +286,12 @@ export interface InventoryItemData {
 	itemName: string;
 	count: number;
 	cost?: string;
+	/** Whether this row is currently equipped/wielded and should affect calculations */
+	isEquipped?: boolean;
 	/** Links to a saved Equipage item's id (when picked from custom equipment storage) */
 	customEquipmentId?: string;
+	/** Saved Equipage category for display and effect fallback labeling */
+	customEquipmentCategory?: 'weapon' | 'armor' | 'shield' | 'spellFocus';
 	/** User-written description for custom freeform items */
 	description?: string;
 }

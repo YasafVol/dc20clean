@@ -13,6 +13,7 @@ import {
 } from '../../../lib/rulesdata/equipment/options/spellFocusOptions';
 import { validateSpellFocus } from '../../../lib/rulesdata/equipment/validation/equipmentValidator';
 import { saveCustomSpellFocus } from '../../../lib/rulesdata/equipment/storage/equipmentStorage';
+import { withEquipmentEffects } from '../../../lib/rulesdata/equipment/equipmentEffects';
 import type {
 	CustomSpellFocus,
 	SpellFocusHands
@@ -96,7 +97,7 @@ const SpellFocusBuilder: React.FC<SpellFocusBuilderProps> = ({ onBack }) => {
 		const props =
 			hands === 'two-handed' ? [...selectedProperties, 'two-handed-focus'] : selectedProperties;
 
-		return {
+		const focus: CustomSpellFocus = {
 			id: `custom-focus-${Date.now()}`,
 			category: 'spellFocus',
 			name: name || 'Custom Spell Focus',
@@ -119,6 +120,8 @@ const SpellFocusBuilder: React.FC<SpellFocusBuilderProps> = ({ onBack }) => {
 			createdAt: new Date().toISOString(),
 			updatedAt: new Date().toISOString()
 		};
+
+		return withEquipmentEffects(focus);
 	};
 
 	const handleSave = () => {

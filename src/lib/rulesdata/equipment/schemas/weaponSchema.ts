@@ -63,12 +63,12 @@ export interface WeaponStyleDefinition {
 // ================================================================= //
 
 export interface WeaponProperty extends BaseProperty {
+	/** Weapon types this property is available for. Omitted means all weapon types. */
+	weaponTypes?: WeaponType[];
 	/** Whether this property is only available for melee weapons */
 	meleeOnly?: boolean;
 	/** Whether this property is only available for ranged weapons */
 	rangedOnly?: boolean;
-	/** The mechanical effect of this property */
-	effect?: string;
 }
 
 // ================================================================= //

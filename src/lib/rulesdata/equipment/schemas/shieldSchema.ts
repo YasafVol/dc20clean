@@ -23,6 +23,8 @@ export interface ShieldTypeDefinition {
 // ================================================================= //
 
 export interface ShieldProperty extends BaseProperty {
+	/** Shield types this property is available for. Omitted means all shield types. */
+	shieldTypes?: ShieldType[];
 	/** Whether this property is only available for light shields */
 	lightOnly?: boolean;
 	/** Whether this property is only available for heavy shields */

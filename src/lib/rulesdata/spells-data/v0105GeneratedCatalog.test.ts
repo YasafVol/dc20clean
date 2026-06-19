@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import spellAuditReport from '../../../../docs/migration/spells-v0105-report.json';
 import { V0105_SPELLS } from './generated/v0105.generated';
 import { ALL_SPELLS, getSpellById, SpellSource } from './index';
 import { formatSpellCost, formatSpellEnhancementCost } from './spellCost';
@@ -18,33 +19,52 @@ describe('generated DC20 v0.10.5 spell catalog', () => {
 		expect(new Set(ALL_SPELLS.map((spell) => spell.id)).size).toBe(160);
 	});
 
-	it('surfaces changelog-confirmed renamed spells under their v0.10.5 identities', () => {
-		const renamedSpells = [
-			['summon-familiar', 'Call Familiar'],
-			['fly', 'Blessing of Air'],
-			['vicious-mockery', 'Mockery'],
-			['toxic-aura', 'Toxic Burst'],
+	it('keeps the deterministic audit report aligned with the generated catalog', () => {
+		expect(spellAuditReport.spellCount).toBe(160);
+		expect(spellAuditReport.enhancementCount).toBe(709);
+		expect(spellAuditReport.spells).toHaveLength(160);
+
+		const reportById = new Map(spellAuditReport.spells.map((spell) => [spell.id, spell]));
+		for (const spell of ALL_SPELLS) {
+			const reportEntry = reportById.get(spell.id);
+
+			expect(reportEntry, spell.id).toBeDefined();
+			expect(reportEntry).toMatchObject({
+				name: spell.name,
+				sources: spell.sources,
+				school: spell.school,
+				tags: spell.tags,
+				cost: spell.cost,
+				range: spell.range,
+				duration: spell.duration,
+				sustained: spell.sustained,
+				isCantrip: spell.isCantrip,
+				enhancementCount: spell.enhancements.length
+			});
+			expect(reportEntry?.provenance.startLine, spell.id).toBeGreaterThan(0);
+			expect(reportEntry?.provenance.endLine, spell.id).toBeGreaterThan(
+				reportEntry?.provenance.startLine ?? 0
+			);
+		}
+	});
+
+	it('surfaces verified pure spell aliases under their v0.10.5 identities', () => {
+		const pureRenameSpells = [
 			['close-wound', 'Close Wounds'],
-			['earth-blessing', 'Blessing of Earth'],
 			['absorb-element', 'Absorb Elements']
 		] as const;
 
-		for (const [legacyId, currentName] of renamedSpells) {
+		for (const [legacyId, currentName] of pureRenameSpells) {
 			expect(spellByName(currentName), currentName).toBeDefined();
 			expect(getSpellById(legacyId)?.name).toBe(currentName);
 		}
 
-		const renamedDisplayNames = [
-			['Summon Familiar', 'Call Familiar'],
-			['Fly', 'Blessing of Air'],
-			['Vicious Mockery', 'Mockery'],
-			['Toxic Aura', 'Toxic Burst'],
+		const pureRenameDisplayNames = [
 			['Close Wound', 'Close Wounds'],
-			['Earth Blessing', 'Blessing of Earth'],
 			['Absorb Element', 'Absorb Elements']
 		] as const;
 
-		for (const [legacyName, currentName] of renamedDisplayNames) {
+		for (const [legacyName, currentName] of pureRenameDisplayNames) {
 			expect(getSpellById(legacyName)?.name).toBe(currentName);
 		}
 
@@ -57,6 +77,21 @@ describe('generated DC20 v0.10.5 spell catalog', () => {
 				'Earth Blessing'
 			])
 		);
+	});
+
+	it('does not silently resolve functional spell reworks through normal lookup', () => {
+		for (const legacyId of [
+			'summon-familiar',
+			'fly',
+			'vicious-mockery',
+			'toxic-aura',
+			'earth-blessing',
+			'gravity-sink-hole',
+			'force-dome',
+			'wall-of-force'
+		]) {
+			expect(getSpellById(legacyId), legacyId).toBeUndefined();
+		}
 	});
 
 	it('adds the changelog-confirmed new v0.10.5 spells to the current selectable catalog', () => {

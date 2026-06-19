@@ -1,6 +1,6 @@
 # DC20Clean – Background System (Skills, Trades, Languages)
 
-> Last Updated: 2026-06-13
+> Last Updated: 2026-06-19
 >
 > Purpose  
 > This document is the single authoritative reference ("bible") for everything related to Background: Skill/Trade/Language data, point budgets, conversions, validation, and UI wiring.
@@ -75,7 +75,7 @@ DC20 0.10.5 language catalog notes:
 - Limited-language checks use family DCs from the rules text: Mortal 10, Exotic 15, Divine 15, Outer 20.
 - Legacy save IDs are preserved where practical for unchanged entries, and renamed families may expose alias metadata (`legacyIds`) so the current picker can surface old selections without reintroducing retired names into the catalog.
 - The explicit v0.10 upgrade reports both sides of consolidated languages before confirmation. When Abyssal and Infernal both convert to Fiendish, the converter keeps the strongest purchased fluency.
-- Unsupported legacy selections (for example `goblin` or `undercommon`) are disclosed as removals before confirmation, excluded from the upgraded allocation so their points are available for reselection, and preserved in the separate v0.10 backup.
+- Unsupported legacy selections (for example `goblin` or `undercommon`) are disclosed as removals before confirmation, excluded from the migrated copy so their points are available for reselection, and preserved on the locked legacy source record.
 
 ---
 

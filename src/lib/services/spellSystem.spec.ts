@@ -257,7 +257,7 @@ describe('Spell System - Validations', () => {
 		expect(error).toBeUndefined();
 	});
 
-	it('should resolve approved legacy spell IDs during slot validation', () => {
+	it('should resolve approved pure legacy spell aliases during slot validation', () => {
 		const baseBuild = createBaseBuild({ classId: 'wizard', level: 1 });
 		const result = calculateCharacterWithBreakdowns(baseBuild as any);
 		const globalSlot = result.spellsKnownSlots.find((slot) => slot.isGlobal);
@@ -268,7 +268,7 @@ describe('Spell System - Validations', () => {
 			createBaseBuild({
 				classId: 'wizard',
 				level: 1,
-				selectedSpells: { [globalSlot!.id]: 'summon-familiar' }
+				selectedSpells: { [globalSlot!.id]: 'absorb-element' }
 			}) as any
 		);
 

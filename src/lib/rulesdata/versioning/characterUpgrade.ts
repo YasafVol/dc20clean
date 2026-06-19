@@ -1,5 +1,9 @@
 import type { SavedCharacter } from '../../types/dataContracts';
 import { CURRENT_SCHEMA_VERSION, normalizeSchemaVersion } from '../../types/schemaVersion';
+import {
+	calculateCharacterWithBreakdowns,
+	convertToEnhancedBuildData
+} from '../../services/enhancedCharacterCalculator';
 import { assessCharacterCompatibility } from './compatibility';
 import { resolveRulesAlias, type AliasDomain, type RulesAliasEntry } from './aliases';
 import { CURRENT_RULES_VERSION, RULES_VERSION_010, normalizeRulesVersion } from './rulesVersion';
@@ -17,7 +21,7 @@ export interface CharacterUpgradePlan {
 
 export interface CharacterUpgradeResult {
 	upgradedCharacter: SavedCharacter;
-	backupCharacter: SavedCharacter;
+	sourceCharacter: SavedCharacter;
 	plan: CharacterUpgradePlan;
 }
 
@@ -211,6 +215,72 @@ function convertDisplayArray(domain: AliasDomain, values: unknown): unknown[] | 
 		.filter((entry) => entry !== undefined);
 }
 
+function processMovementsToStructure(
+	movements: Array<{ type: string; speed: string; source: any }>,
+	groundSpeed: number
+): SavedCharacter['movement'] {
+	const movement = {
+		burrow: { half: false, full: false },
+		swim: { half: false, full: false },
+		fly: { half: false, full: false },
+		climb: { half: false, full: false },
+		glide: { half: false, full: false }
+	};
+
+	for (const entry of movements) {
+		const type = entry.type as keyof typeof movement;
+		if (!movement[type]) continue;
+
+		const speedValue = parseInt(entry.speed, 10);
+		if (Number.isNaN(speedValue)) continue;
+
+		const halfSpeed = Math.floor(groundSpeed / 2);
+		if (speedValue >= groundSpeed) {
+			movement[type].full = true;
+		} else if (speedValue >= halfSpeed) {
+			movement[type].half = true;
+		}
+	}
+
+	return movement as SavedCharacter['movement'];
+}
+
+function recalculateDraftCharacter(character: SavedCharacter): SavedCharacter {
+	try {
+		const calculationData = convertToEnhancedBuildData(character);
+		const calculationResult = calculateCharacterWithBreakdowns(calculationData);
+
+		return {
+			...character,
+			...calculationResult.stats,
+			grantedAbilities: calculationResult.grantedAbilities,
+			conditionalModifiers: calculationResult.conditionalModifiers,
+			breakdowns: calculationResult.breakdowns,
+			movement: processMovementsToStructure(
+				calculationResult.movements || [],
+				calculationResult.stats.finalMoveSpeed
+			),
+			holdBreath: calculationResult.stats.finalMight,
+			characterState: {
+				...character.characterState,
+				resources: {
+					...character.characterState?.resources,
+					original: {
+						...character.characterState?.resources?.original,
+						maxHP: calculationResult.stats.finalHPMax || 0,
+						maxSP: calculationResult.stats.finalSPMax || 0,
+						maxMP: calculationResult.stats.finalMPMax || 0,
+						maxGritPoints: calculationResult.stats.finalGritPoints || 0,
+						maxRestPoints: calculationResult.stats.finalRestPoints || 0
+					}
+				}
+			}
+		};
+	} catch {
+		return character;
+	}
+}
+
 export function upgradeCharacterToCurrentRules(
 	character: SavedCharacter,
 	options: CharacterUpgradeOptions = {}
@@ -226,7 +296,7 @@ export function upgradeCharacterToCurrentRules(
 
 	const now = options.now ?? new Date();
 	const timestamp = now.toISOString();
-	const timestampId = now.getTime();
+	const targetRulesVersionSlug = CURRENT_RULES_VERSION.replace(/[^a-zA-Z0-9]+/g, '_');
 	const original = character as SavedCharacter & {
 		selectedSpells?: Record<string, string>;
 		selectedManeuvers?: string[];
@@ -235,12 +305,18 @@ export function upgradeCharacterToCurrentRules(
 	const removedMulticlassSelection =
 		typeof character.selectedMulticlassOption === 'string' && !selectedMulticlassOption;
 
-	const upgradedCharacter = {
+	const convertedDraft = {
 		...character,
+		id: `${character.id}__${targetRulesVersionSlug}_draft`,
+		finalName: `${character.finalName} (v0.10.5 draft)`,
 		rulesVersion: CURRENT_RULES_VERSION,
 		schemaVersion: normalizeSchemaVersion(character.schemaVersion ?? CURRENT_SCHEMA_VERSION),
+		createdAt: timestamp,
 		lastModified: timestamp,
 		rulesUpgradeSourceVersion: RULES_VERSION_010,
+		rulesUpgradeSourceId: character.id,
+		rulesUpgradeStatus:
+			plan.deprecatedSelections.length > 0 ? 'needs-review' : 'draft',
 		rulesUpgradedAt: timestamp,
 		rulesUpgradeBackupOf: undefined,
 		selectedTraitIds: convertStringArray('trait', character.selectedTraitIds) ?? [],
@@ -270,13 +346,7 @@ export function upgradeCharacterToCurrentRules(
 		}
 	} as SavedCharacter;
 
-	const backupCharacter = {
-		...character,
-		id: `${character.id}__v010_backup__${timestampId}`,
-		finalName: `${character.finalName} (v0.10 backup)`,
-		lastModified: timestamp,
-		rulesUpgradeBackupOf: character.id
-	};
+	const upgradedCharacter = recalculateDraftCharacter(convertedDraft);
 
-	return { upgradedCharacter, backupCharacter, plan };
+	return { upgradedCharacter, sourceCharacter: character, plan };
 }

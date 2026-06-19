@@ -208,15 +208,14 @@ function LoadCharacter() {
 		try {
 			const result = upgradeCharacterToCurrentRules(characterToUpgrade);
 
-			// Save the legacy copy first. If the current-rules save fails, the
-			// original remains untouched and the recovery copy is still available.
-			await storage.saveCharacter(result.backupCharacter);
+			// Save a new current-rules draft. The legacy source record remains
+			// locked and unchanged until the user chooses to delete it.
 			await storage.saveCharacter(result.upgradedCharacter);
 
 			setSavedCharacters((characters) =>
 				characters.flatMap((character) =>
 					character.id === characterToUpgrade.id
-						? [result.upgradedCharacter, result.backupCharacter]
+						? [character, result.upgradedCharacter]
 						: [character]
 				)
 			);

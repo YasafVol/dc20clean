@@ -2,7 +2,7 @@
 
 > Purpose: End-to-end map of Character Sheet UI: architecture, components, data sources, and interactions.
 > Status: Active
-> Last Updated: 2026-06-13
+> Last Updated: 2026-06-19
 
 ## Recent UX additions
 
@@ -46,7 +46,7 @@ Compatibility states from the rules-version fence affect sheet persistence:
 | State              | Sheet behavior                                                                                                            |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------- |
 | `editable`         | Normal render and full auto-save with recalculated values                                                                 |
-| `upgrade-required` | Render allowed; auto-save is limited to `characterState` so old rules data is not silently recalculated under newer rules |
+| `upgrade-required` | Render/export allowed from stored values; auto-save is disabled until an explicit current-rules copy is created             |
 | `view-only`        | Render allowed where possible; auto-save is disabled                                                                      |
 
 For `upgrade-required` and `view-only` characters, the sheet suppresses fresh calculator output for display/export helpers that would reinterpret the character under the current rules data. PDF export falls back to stored `SavedCharacter` values for those compatibility states.
@@ -97,6 +97,11 @@ For `upgrade-required` and `view-only` characters, the sheet suppresses fresh ca
 | `components/Maneuvers.tsx`        | `SavedCharacter.maneuvers` + Martials data   | Maneuver management with type filtering   |
 | `components/Features.tsx`         | Class/trait feature definitions              | Character features/traits display         |
 | `components/EnhancedFeatures.tsx` | Feature definitions + effect attribution     | Enhanced features with source attribution |
+
+#### Spell Sheet TODOs
+
+- Add a pure sheet-facing helper that builds calculated spell presentation stats from the saved spell, character calculation output, active effects, and equipped spell focus effects. The UI should consume this helper for spell attack/check bonuses, focus-driven damage/range adjustments, and any "applies in play" notes instead of duplicating rules logic inside `components/Spells.tsx` or `SpellPopup.tsx`.
+- Add a Character Sheet flow for opening the Spellbook to review, select, and replace known spells. Replacement should respect spell-slot restrictions from the calculator and must remain disabled for locked legacy characters.
 
 v0.10.5 level 5 Expert Features intentionally keep the old `<class>_level_5_placeholder` IDs. Saved characters that already reference those IDs render the updated Expert Feature names, benefits, and modeled effects without needing a destructive ID rewrite.
 

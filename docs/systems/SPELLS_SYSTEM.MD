@@ -2,7 +2,7 @@
 
 > Purpose: Single reference for spell data model, assignment rules, UI flows, and validation.
 > Status: Active
-> Last Updated: 2026-06-13
+> Last Updated: 2026-06-19
 
 ---
 
@@ -15,11 +15,26 @@
 - `src/lib/rulesdata/versioning/aliases.ts`: stable ID routing policy for old saved spell IDs and display names
 - `src/lib/rulesdata/versioning/characterUpgrade.ts`: explicit saved-character conversion planner and deterministic ID rewriter
 - `src/lib/rulesdata/schemas/spell.schema.ts`: Spell TypeScript types and enums
-- `src/lib/services/spellAssignment.ts`: Assignment logic (availability, limits, helpers)
+- `src/lib/services/spellAssignment.ts`: Legacy fallback auto-assignment helper; not canonical for real player choices
 - `src/lib/services/enhancedCharacterCalculator.ts`: Aggregates class/trait effects that alter MP
 - UI selection and display:
   - `src/routes/character-creation/*` (spell pickers where applicable)
   - `src/routes/character-sheet/*` (spell list, filters, actions)
+
+### Equipage Integration TODO
+
+Equipped Spell Focus properties should be reflected in spell viewing wherever possible:
+
+- `Powerful`: show Spell Attack damage as increased by `+1`.
+- `Reach`: flag or adjust spells with Range `1` to show `+1 Space`.
+- `Long-Ranged`: flag or adjust spells with Range greater than `1` to show `+5 Spaces`.
+- `Vicious`: include the equipped focus bonus in spell attack/to-hit display once the
+  sheet exposes a distinct spell attack bonus.
+- `Channeling`: include the equipped focus bonus in spell check display once spell
+  checks are modeled separately from the generic attack/spell check.
+
+This belongs with the Equipage effect pipeline: the focus effects should come from
+equipped inventory rows, not from every saved focus in Equipage storage.
 
 ---
 
@@ -125,12 +140,13 @@ getNonCantrips(): Spell[]
 - Validation fails unless the source produces exactly 160 unique spells and 709 enhancements with known schools, sources, tags, and cost grammar.
 - Source exceptions are explicit and reported: `Dispel Magic` uses `See Effect` for its omitted duration, and the OCR-spaced `Nature ' s Tether` heading is normalized to `Nature's Tether`.
 - Enhancement costs retain mixed AP/MP costs, variable `X` costs, alternatives, repeatability, sustained state, prerequisites, and the original cost text.
-- True spell renames route through `getSpellById()` via `RULES_ALIASES`; saved IDs are not rewritten during lookup.
+- Verified pure spell renames route through `getSpellById()` via `RULES_ALIASES`; saved IDs are not rewritten during lookup.
+- Spell changes that may alter function, cost, range, tags, or rules meaning must be classified as `reworked`, not `alias`. Reworked spells render from stored legacy data until the explicit character migration flow creates a current-rules copy.
 - Changelog-confirmed new v0.10.5 spells are present in the generated source catalog.
 - Removed spells and source-list moves are applied only to the current selectable catalog. Historical saved spell objects remain renderable/exportable from saved character data.
-- Reworked spell identities are never silently remapped during normal load. The explicit character upgrade reports and maps approved reworks: `gravity-sink-hole` to `gravity-well`, and both `force-dome` and `wall-of-force` to `forcefield`.
+- Reworked spell identities are never silently remapped during normal load. The explicit character upgrade reports and maps approved reworks such as `gravity-sink-hole` to `gravity-well`, and both `force-dome` and `wall-of-force` to `forcefield`.
 - Character completion and PDF export use alias-aware spell lookup for legacy spell IDs before falling back to saved display text.
-- The upgrade rewrites spell IDs and saved display-name forms across slot selections, top-level spell arrays, and `characterState.spells`, while preserving a separate v0.10 backup.
+- The upgrade creates a current-rules copy and rewrites approved spell IDs/display-name forms across slot selections, top-level spell arrays, and `characterState.spells`; the legacy source character remains locked and unchanged.
 
 ### 3.2 Generation Workflow
 
@@ -145,9 +161,26 @@ npm run spells:generate:0105
 npm run spells:validate:0105
 ```
 
-Generated output and `docs/migration/spells-v0105-report.json` are committed. The old
-v0.10 school catalogs and overlay are not exported at runtime; `ALL_SPELLS` is the sole
-spell dataset.
+Generated output and `docs/migration/spells-v0105-report.json` are committed. The report is
+the deterministic audit artifact: it includes counts, school totals, parser exceptions, and
+one entry per spell with ID, source, school, tags, cost, range, duration, sustained/cantrip
+flags, enhancement count, and source line provenance. The old v0.10 school catalogs and
+overlay are not exported at runtime; `ALL_SPELLS` is the sole spell dataset.
+
+### 3.3 Deterministic Audit Boundary
+
+Code can deterministically verify:
+
+- Generated output is current with the checked-in v0.10.5 Markdown source.
+- Spell and enhancement counts match the expected source inventory.
+- IDs are unique.
+- Sources, schools, tags, costs, duration presence, and enhancement grammar are valid.
+- Alias and rework targets point to current spell IDs or names.
+- `alias` entries are limited to verified pure identity renames.
+
+Human review is still required for semantic equivalence: if function, cost, range, tags,
+or rules meaning may have changed, the mapping belongs in `reworked` and must go through
+explicit character migration.
 
 ---
 
@@ -210,7 +243,7 @@ spell dataset.
 
 - `e2e/09-spells.e2e.spec.ts` — Adds a spell, filters, and deletes; validates mobile/desktop fallbacks.
 - `e2e/12-exhaustion-info.e2e.spec.ts` — Feature info buttons include class feature info affecting spells.
-- `e2e/13-character-upgrade.e2e.spec.ts` — Exercises the explicit v0.10 to v0.10.5 upgrade, approved spell rewrites, deprecated-selection removal, backup creation, reload persistence, and unsupported-version blockers.
+- `e2e/13-character-upgrade.e2e.spec.ts` — Exercises the explicit v0.10 to v0.10.5 upgrade, approved spell rewrites, deprecated-selection review, current-rules copy creation, reload persistence, and unsupported-version blockers.
 
 ---
 

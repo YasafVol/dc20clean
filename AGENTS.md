@@ -1,6 +1,6 @@
 # Repository Guidelines
 
-> Last updated: 2026-02-06
+> Last updated: 2026-06-19
 
 ## Rule
 
@@ -39,6 +39,7 @@ Read these first for any feature work -- they define how data flows and how effe
 | Doc | What it covers | Key code |
 | --- | --- | --- |
 | `docs/systems/PROJECT_TECHNICAL_OVERVIEW.MD` | Tech stack (React 19, Vite 6, Tailwind 4), project structure, dev scripts, CI, PR guidelines, code style | repo-wide |
+| `docs/systems/VERSIONING_SYSTEM.MD` | Internal versioning policy: app/package, schemaVersion, rulesVersion, PDF version, subsystem source metadata, compatibility and upgrade rules | `src/lib/rulesdata/versioning/*`, `src/lib/types/schemaVersion.ts` |
 | `docs/systems/EFFECT_SYSTEM.MD` | Canonical effect type catalog, stacking rules, choice resolution, condition interaction effects (v0.10). Read whenever adding or modifying any effect. | `src/lib/types/effectSystem.ts`, calculator effect analyzers |
 | `docs/systems/CALCULATION_SYSTEM.MD` | 13-stage derived stat pipeline: formulas, dependency graph, mastery cap validation, breakdown output. Read whenever changing how stats are computed. | `src/lib/services/enhancedCharacterCalculator.ts`, `src/lib/utils/characterState.ts` |
 
@@ -106,6 +107,7 @@ Use this routing table to find the 2-4 docs relevant to your task.
 | Working on **DM encounter planner** | `ENCOUNTER_SYSTEM_SPEC`, `MONSTER_SYSTEM_SPEC`, `DATABASE_SYSTEM` |
 | Modifying **storage or persistence** | `DATABASE_SYSTEM` |
 | Working on **PDF export** | `PDF_EXPORT_SYSTEM`, `CALCULATION_SYSTEM` |
+| Changing **versioning, migrations, compatibility, or rules upgrades** | `VERSIONING_SYSTEM`, `DATABASE_SYSTEM`, `PDF_EXPORT_SYSTEM` |
 
 ---
 

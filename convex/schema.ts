@@ -302,7 +302,12 @@ const characterValidator = {
 	lastModified: v.string(),
 	completedAt: v.string(),
 	schemaVersion: v.string(),
-	rulesVersion: v.optional(v.string())
+	rulesVersion: v.optional(v.string()),
+	rulesUpgradeBackupOf: v.optional(v.string()),
+	rulesUpgradeSourceId: v.optional(v.string()),
+	rulesUpgradeSourceVersion: v.optional(v.string()),
+	rulesUpgradeStatus: v.optional(v.string()),
+	rulesUpgradedAt: v.optional(v.string())
 };
 
 // ============================================================================

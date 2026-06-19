@@ -3,7 +3,7 @@
 > Purpose
 >
 > Capture the architecture, scope, and acceptance criteria for exporting a calculated character sheet to the official DC20 fillable PDF. This document is the system overview aligned with existing docs (no separate planning spec is currently tracked in-repo).
-> Last Updated: 2026-06-01
+> Last Updated: 2026-06-19
 
 ---
 
@@ -13,6 +13,7 @@
 - **Default version: DC20 v0.10** (with v0.9.5 fallback available)
 - Keep the PDF field mapping and DTO definitions versioned so we can evolve the sheet without breaking prior exports.
 - Route PDF template selection from character `rulesVersion`; v0.10 and v0.10.5 currently both route to the checked-in v0.10 fillable template until a v0.10.5 template and field map exist.
+- Internal versioning lanes and routing policy are centralized in `docs/systems/VERSIONING_SYSTEM.MD`.
 - Minimize bundle impact through lazy loading and on-demand work.
 - **Authentication Required**: PDF export is gated behind user authentication (see Section 10).
 

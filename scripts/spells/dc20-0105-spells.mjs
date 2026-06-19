@@ -470,12 +470,27 @@ function createReport(spells) {
 	const exceptions = spells
 		.filter((spell) => spell.sourceException)
 		.map((spell) => ({ spell: spell.name, ...spell.sourceException }));
+	const spellAudit = spells.map((spell) => ({
+		id: spell.id,
+		name: spell.name,
+		sources: spell.sources,
+		school: spell.school,
+		tags: spell.tags,
+		cost: spell.cost,
+		range: spell.range,
+		duration: spell.duration,
+		sustained: spell.sustained,
+		isCantrip: spell.isCantrip,
+		enhancementCount: spell.enhancements.length,
+		provenance: spell.provenance
+	}));
 	return {
 		source: 'docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md',
 		spellCount: spells.length,
 		enhancementCount,
 		schools,
-		exceptions
+		exceptions,
+		spells: spellAudit
 	};
 }
 

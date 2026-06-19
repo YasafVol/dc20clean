@@ -391,7 +391,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 			try {
 				const compatibility = assessCharacterCompatibility(character);
 				if (compatibility.autoSaveMode === 'none') {
-					logger.warn('storage', 'Auto-save skipped for view-only character', {
+					logger.warn('storage', 'Auto-save skipped for locked character', {
 						characterId: character.id,
 						reasons: compatibility.reasons
 					});

@@ -135,9 +135,9 @@ export const RULES_ALIASES: RulesAliasEntry[] = [
 		toId: 'call-familiar',
 		fromRulesVersion: RULES_VERSION_010,
 		toRulesVersion: RULES_VERSION_010_5,
-		status: 'alias',
-		compatibilityState: 'editable',
-		note: 'Candidate true rename; saved IDs should remain unchanged until explicit upgrade.'
+		status: 'reworked',
+		compatibilityState: 'upgrade-required',
+		note: 'Requires explicit migration verification because the current spell may differ beyond naming.'
 	},
 	{
 		domain: 'spell',
@@ -145,9 +145,9 @@ export const RULES_ALIASES: RulesAliasEntry[] = [
 		toId: 'Call Familiar',
 		fromRulesVersion: RULES_VERSION_010,
 		toRulesVersion: RULES_VERSION_010_5,
-		status: 'alias',
-		compatibilityState: 'editable',
-		note: 'Display-name alias for saved spell arrays.'
+		status: 'reworked',
+		compatibilityState: 'upgrade-required',
+		note: 'Display-name form requiring explicit migration verification.'
 	},
 	{
 		domain: 'spell',
@@ -155,9 +155,9 @@ export const RULES_ALIASES: RulesAliasEntry[] = [
 		toId: 'blessing-of-air',
 		fromRulesVersion: RULES_VERSION_010,
 		toRulesVersion: RULES_VERSION_010_5,
-		status: 'alias',
-		compatibilityState: 'editable',
-		note: 'Candidate true rename pending final source verification.'
+		status: 'reworked',
+		compatibilityState: 'upgrade-required',
+		note: 'Requires explicit migration verification because the current spell may differ beyond naming.'
 	},
 	{
 		domain: 'spell',
@@ -165,9 +165,9 @@ export const RULES_ALIASES: RulesAliasEntry[] = [
 		toId: 'Blessing of Air',
 		fromRulesVersion: RULES_VERSION_010,
 		toRulesVersion: RULES_VERSION_010_5,
-		status: 'alias',
-		compatibilityState: 'editable',
-		note: 'Display-name alias for saved spell arrays.'
+		status: 'reworked',
+		compatibilityState: 'upgrade-required',
+		note: 'Display-name form requiring explicit migration verification.'
 	},
 	{
 		domain: 'spell',
@@ -175,9 +175,9 @@ export const RULES_ALIASES: RulesAliasEntry[] = [
 		toId: 'mockery',
 		fromRulesVersion: RULES_VERSION_010,
 		toRulesVersion: RULES_VERSION_010_5,
-		status: 'alias',
-		compatibilityState: 'editable',
-		note: 'Candidate true rename.'
+		status: 'reworked',
+		compatibilityState: 'upgrade-required',
+		note: 'Requires explicit migration verification because the current spell may differ beyond naming.'
 	},
 	{
 		domain: 'spell',
@@ -185,9 +185,9 @@ export const RULES_ALIASES: RulesAliasEntry[] = [
 		toId: 'Mockery',
 		fromRulesVersion: RULES_VERSION_010,
 		toRulesVersion: RULES_VERSION_010_5,
-		status: 'alias',
-		compatibilityState: 'editable',
-		note: 'Display-name alias for saved spell arrays.'
+		status: 'reworked',
+		compatibilityState: 'upgrade-required',
+		note: 'Display-name form requiring explicit migration verification.'
 	},
 	{
 		domain: 'spell',
@@ -195,9 +195,9 @@ export const RULES_ALIASES: RulesAliasEntry[] = [
 		toId: 'toxic-burst',
 		fromRulesVersion: RULES_VERSION_010,
 		toRulesVersion: RULES_VERSION_010_5,
-		status: 'alias',
-		compatibilityState: 'editable',
-		note: 'Candidate true rename pending final source verification.'
+		status: 'reworked',
+		compatibilityState: 'upgrade-required',
+		note: 'Requires explicit migration verification because the current spell may differ beyond naming.'
 	},
 	{
 		domain: 'spell',
@@ -205,9 +205,9 @@ export const RULES_ALIASES: RulesAliasEntry[] = [
 		toId: 'Toxic Burst',
 		fromRulesVersion: RULES_VERSION_010,
 		toRulesVersion: RULES_VERSION_010_5,
-		status: 'alias',
-		compatibilityState: 'editable',
-		note: 'Display-name alias for saved spell arrays.'
+		status: 'reworked',
+		compatibilityState: 'upgrade-required',
+		note: 'Display-name form requiring explicit migration verification.'
 	},
 	{
 		domain: 'spell',
@@ -235,9 +235,9 @@ export const RULES_ALIASES: RulesAliasEntry[] = [
 		toId: 'blessing-of-earth',
 		fromRulesVersion: RULES_VERSION_010,
 		toRulesVersion: RULES_VERSION_010_5,
-		status: 'alias',
-		compatibilityState: 'editable',
-		note: 'Candidate true rename.'
+		status: 'reworked',
+		compatibilityState: 'upgrade-required',
+		note: 'Requires explicit migration verification because the current spell may differ beyond naming.'
 	},
 	{
 		domain: 'spell',
@@ -245,9 +245,9 @@ export const RULES_ALIASES: RulesAliasEntry[] = [
 		toId: 'Blessing of Earth',
 		fromRulesVersion: RULES_VERSION_010,
 		toRulesVersion: RULES_VERSION_010_5,
-		status: 'alias',
-		compatibilityState: 'editable',
-		note: 'Display-name alias for saved spell arrays.'
+		status: 'reworked',
+		compatibilityState: 'upgrade-required',
+		note: 'Display-name form requiring explicit migration verification.'
 	},
 	{
 		domain: 'spell',

@@ -4,7 +4,7 @@
 > This document is the single authoritative reference for the character leveling system. It outlines the data flow, calculation logic, and UI interactions required to create a character at any level from 1 to 10 (DC20 v0.10.5 max level).
 >
 > **Status:** ✅ **Complete** - Core leveling functionality implemented with DC20 v0.10.5 progression tables.
-> **Last Updated:** 2026-06-13
+> **Last Updated:** 2026-06-18
 
 ---
 
@@ -23,7 +23,7 @@ flowchart TD
     end
 
     subgraph "Data Sources"
-        C1["/rulesdata/classes-data/progressions/*.progression.ts"]
+        C1["/rulesdata/classes-data/progressions/*.progression.ts\n(template-derived)"]
         C2["/rulesdata/classes-data/talents/*.ts"]
         C3["/rulesdata/progression/paths/*.ts"]
     end
@@ -48,7 +48,8 @@ flowchart TD
 
 | Layer              | File / Dir                                                     | Responsibility                                                                                                                                                      |
 | ------------------ | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Rule Data**      | `src/lib/rulesdata/classes-data/progressions/*.progression.ts` | Defines level-by-level stat gains and choices (Talents, Paths, etc.) for each class.                                                                                |
+| **Rule Data**      | `src/lib/rulesdata/classes-data/progressions/*.progression.ts` | Exports resolved per-class progression arrays. These are generated from shared martial/caster/hybrid templates plus a per-class feature-ID schedule.                |
+|                    | `src/lib/rulesdata/classes-data/progressions/templates/`       | Defines the shared v0.10.5 resource and schedule templates used by class progressions.                                                                              |
 |                    | `src/lib/rulesdata/classes-data/talents/`                      | Defines all General, Class, and Multiclass Talents. `allTalents` remains compatibility lookup; `selectableTalents` filters deprecated talents from current choices. |
 |                    | `src/lib/rulesdata/progression/paths/`                         | Defines the Martial and Spellcaster Path progressions.                                                                                                              |
 | **Type Contracts** | `src/lib/rulesdata/schemas/class.schema.ts`                    | Defines the `LevelGains` and `ClassLevel` interfaces for the new progression files.                                                                                 |
@@ -71,7 +72,8 @@ flowchart TD
 ### 3.2. Aggregation Engine
 
 - The calculator reads the character's `classId` and `level`.
-- It iterates through the corresponding `...progression.ts` file from `level: 1` to the target `level`.
+- It iterates through the corresponding resolved `...progression.ts` export from `level: 1` to the target `level`.
+- Per-class progression exports are generated from the shared martial, caster, or hybrid template and then overlaid with class-specific feature IDs, so resource timing stays centralized while feature unlocks remain class-specific.
 - In each iteration, it sums the values from the `gained...` properties (e.g., `gainedHealth`, `gainedAttributePoints`) and the `gains` object (e.g., `talents`, `pathPoints`).
 - The final output is a single set of budgets that represents the character's total resources for their level.
 
@@ -183,7 +185,7 @@ Path points grant immediate bonuses to character resources based on allocation:
 
 ---
 
-> _Last updated: 2026-06-13_
+> _Last updated: 2026-06-18_
 > _Maintainer: @DC20Clean-Team_
 
 ---

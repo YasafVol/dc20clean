@@ -32,7 +32,8 @@ describe('v0.10 character upgrade', () => {
 			selectedSpells: {
 				first: 'summon-familiar',
 				second: 'gravity-sink-hole',
-				third: 'force-dome'
+				third: 'force-dome',
+				fourth: 'absorb-element'
 			},
 			selectedTalents: { barbarian_swift_berserker: 1 },
 			languagesData: {
@@ -46,10 +47,11 @@ describe('v0.10 character upgrade', () => {
 
 		expect(plan.canUpgrade).toBe(true);
 		expect(plan.automaticRenames).toEqual(
-			expect.arrayContaining([expect.objectContaining({ fromId: 'summon-familiar' })])
+			expect.arrayContaining([expect.objectContaining({ fromId: 'absorb-element' })])
 		);
 		expect(plan.reworkedSelections).toEqual(
 			expect.arrayContaining([
+				expect.objectContaining({ fromId: 'summon-familiar', toId: 'call-familiar' }),
 				expect.objectContaining({ fromId: 'gravity-sink-hole' }),
 				expect.objectContaining({ fromId: 'force-dome', toId: 'forcefield' }),
 				expect.objectContaining({ fromId: 'abyssal', toId: 'fiendish' }),
@@ -64,7 +66,7 @@ describe('v0.10 character upgrade', () => {
 		);
 	});
 
-	it('given a convertible legacy character, when upgrading, then it creates a backup and rewrites all known selection surfaces', () => {
+	it('given a convertible legacy character, when upgrading, then it creates a current-rules draft and rewrites all known selection surfaces', () => {
 		const character = makeCharacter({
 			selectedFeatureChoices: {
 				champion_choice: 'combat_readiness_brace',
@@ -112,19 +114,20 @@ describe('v0.10 character upgrade', () => {
 			selectedSpells: Record<string, string>;
 		};
 
-		expect(result.backupCharacter).toMatchObject({
-			id: 'legacy-upgrade__v010_backup__1781258400000',
-			finalName: 'Legacy Upgrade (v0.10 backup)',
-			rulesVersion: 'dc20-0.10',
-			rulesUpgradeBackupOf: 'legacy-upgrade'
-		});
-		expect(result.backupCharacter.selectedTalents).toEqual({
+		expect(result.sourceCharacter).toBe(character);
+		expect(character.rulesVersion).toBe('dc20-0.10');
+		expect(character.id).toBe('legacy-upgrade');
+		expect(character.selectedTalents).toEqual({
 			barbarian_swift_berserker: 1,
 			durable: 1
 		});
-		expect(result.backupCharacter.selectedMulticlassOption).toBe('grandmaster');
+		expect(character.selectedMulticlassOption).toBe('grandmaster');
+		expect(upgraded.id).toBe('legacy-upgrade__dc20_0_10_5_draft');
+		expect(upgraded.finalName).toBe('Legacy Upgrade (v0.10.5 draft)');
 		expect(upgraded.rulesVersion).toBe('dc20-0.10.5');
 		expect(upgraded.rulesUpgradeSourceVersion).toBe('dc20-0.10');
+		expect(upgraded.rulesUpgradeSourceId).toBe('legacy-upgrade');
+		expect(upgraded.rulesUpgradeStatus).toBe('needs-review');
 		expect(upgraded.rulesUpgradedAt).toBe('2026-06-12T10:00:00.000Z');
 		expect(upgraded.selectedFeatureChoices).toEqual({
 			champion_choice: 'combat_readiness_fortify',
@@ -137,7 +140,14 @@ describe('v0.10 character upgrade', () => {
 		expect(upgraded.selectedMulticlassFeature).toBeUndefined();
 		expect(upgraded.skillsData).toEqual(character.skillsData);
 		expect(upgraded.tradesData).toEqual(character.tradesData);
-		expect(result.backupCharacter.languagesData).toEqual(character.languagesData);
+		expect(character.languagesData).toEqual({
+			common: { fluency: 'fluent' },
+			elvish: { fluency: 'limited' },
+			primordial: { fluency: 'fluent' },
+			abyssal: { fluency: 'limited' },
+			infernal: { fluency: 'fluent' },
+			goblin: { fluency: 'limited' }
+		});
 		expect(upgraded.languagesData).toEqual({
 			common: { fluency: 'fluent' },
 			elvish: { fluency: 'limited' },

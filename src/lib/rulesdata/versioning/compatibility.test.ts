@@ -23,8 +23,8 @@ describe('rules version compatibility', () => {
 		expect(result.canRenderSheet).toBe(true);
 		expect(result.canEdit).toBe(false);
 		expect(result.canLevelUp).toBe(false);
-		expect(result.canAutoSave).toBe(true);
-		expect(result.autoSaveMode).toBe('characterState');
+		expect(result.canAutoSave).toBe(false);
+		expect(result.autoSaveMode).toBe('none');
 		expect(result.pdfVersion).toBe('0.10');
 	});
 
@@ -62,8 +62,8 @@ describe('rules version compatibility', () => {
 		expect(result.canRenderSheet).toBe(true);
 		expect(result.canEdit).toBe(false);
 		expect(result.canLevelUp).toBe(false);
-		expect(result.canAutoSave).toBe(true);
-		expect(result.autoSaveMode).toBe('characterState');
+		expect(result.canAutoSave).toBe(false);
+		expect(result.autoSaveMode).toBe('none');
 		expect(result.canExportPdf).toBe(true);
 		expect(result.pdfVersion).toBe('0.10');
 	});
@@ -90,7 +90,22 @@ describe('rules version compatibility', () => {
 		expect(getPdfVersionForRulesVersion('dc20-0.10.5')).toBe('0.10');
 	});
 
-	it('resolves approved aliases without rewriting saved IDs', () => {
+	it('resolves approved pure aliases without rewriting saved IDs', () => {
+		const alias = resolveRulesAlias('spell', 'absorb-element', {
+			fromRulesVersion: 'dc20-0.10',
+			toRulesVersion: 'dc20-0.10.5'
+		});
+
+		expect(alias).toMatchObject({
+			domain: 'spell',
+			fromId: 'absorb-element',
+			toId: 'absorb-elements',
+			status: 'alias',
+			compatibilityState: 'editable'
+		});
+	});
+
+	it('classifies uncertain spell changes as explicit-upgrade reworks', () => {
 		const alias = resolveRulesAlias('spell', 'summon-familiar', {
 			fromRulesVersion: 'dc20-0.10',
 			toRulesVersion: 'dc20-0.10.5'
@@ -100,8 +115,8 @@ describe('rules version compatibility', () => {
 			domain: 'spell',
 			fromId: 'summon-familiar',
 			toId: 'call-familiar',
-			status: 'alias',
-			compatibilityState: 'editable'
+			status: 'reworked',
+			compatibilityState: 'upgrade-required'
 		});
 	});
 
@@ -262,13 +277,13 @@ describe('rules version compatibility', () => {
 		);
 	});
 
-	it('returns state-only auto-save for upgrade-required characters', () => {
+	it('disables auto-save for upgrade-required characters', () => {
 		expect(
 			getCharacterAutoSaveMode({
 				id: 'old-rules',
 				rulesVersion: 'dc20-0.10',
 				schemaVersion: '2.2.0'
 			})
-		).toBe('characterState');
+		).toBe('none');
 	});
 });

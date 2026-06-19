@@ -131,7 +131,7 @@ describe('CharacterSheetProvider compatibility fence', () => {
 		cleanup();
 	});
 
-	it('loads legacy v0.10 characters from stored data and autosaves only characterState', async () => {
+	it('loads legacy v0.10 characters from stored data without saving mutations', async () => {
 		mockGetCharacterById.mockResolvedValue(makeLegacyV010Character());
 		mockSaveCharacter.mockResolvedValue(undefined);
 		mockSaveCharacterState.mockResolvedValue(undefined);
@@ -152,17 +152,9 @@ describe('CharacterSheetProvider compatibility fence', () => {
 		fireEvent.click(screen.getByRole('button', { name: 'Save Now' }));
 
 		await waitFor(() => {
-			expect(mockSaveCharacterState).toHaveBeenCalledWith(
-				'legacy-v010-sheet',
-				expect.objectContaining({
-					resources: expect.objectContaining({
-						current: expect.objectContaining({
-							currentHP: 7
-						})
-					})
-				})
-			);
+			expect(screen.getByTestId('save-status')).toHaveTextContent('idle');
 		});
+		expect(mockSaveCharacterState).not.toHaveBeenCalled();
 		expect(mockSaveCharacter).not.toHaveBeenCalled();
 		expect(mockConvertToEnhancedBuildData).not.toHaveBeenCalled();
 		expect(mockCalculateCharacterWithBreakdowns).not.toHaveBeenCalled();

@@ -2,7 +2,7 @@
 
 > Purpose: Technical overview of the DC20Clean codebase: stack, scripts, testing, project structure, and contribution expectations.
 > Status: Active
-> Last Updated: 2026-06-13
+> Last Updated: 2026-06-19
 
 ## Tech Stack
 
@@ -73,6 +73,16 @@ npx vitest src/lib/services/enhancedCharacterCalculator.test.ts
 
 CI checks are temporarily non-blocking while the 0.10 rules release is in flight.
 Workflows still run for signal and will be restored to blocking once the release stabilizes.
+
+## Internal Versioning
+
+Versioning policy is centralized in `docs/systems/VERSIONING_SYSTEM.MD`.
+
+- App/package version, storage schema version, rules version, PDF template version, and
+  subsystem rules-source metadata are separate lanes.
+- `rulesVersion` fences rules interpretation and compatibility.
+- `schemaVersion` only describes saved-data shape.
+- PDF routing is versioned independently through the compatibility layer.
 
 ## Project Structure
 

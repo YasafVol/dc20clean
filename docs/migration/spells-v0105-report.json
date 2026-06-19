@@ -23,5 +23,4245 @@
 			"duration": "See Effect",
 			"reason": "The source omits Duration because MP effects and magic items use different durations."
 		}
+	],
+	"spells": [
+		{
+			"id": "arcane-bolt",
+			"name": "Arcane Bolt",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Astromancy",
+			"tags": [
+				"Bludgeoning",
+				"Piercing",
+				"Slashing"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 4212,
+				"endLine": 4237
+			}
+		},
+		{
+			"id": "arcane-wave",
+			"name": "Arcane Wave",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Astromancy",
+			"tags": [
+				"Bludgeoning",
+				"Deafened",
+				"Motion",
+				"Piercing",
+				"Slashing"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 4238,
+				"endLine": 4263
+			}
+		},
+		{
+			"id": "banish",
+			"name": "Banish",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Astromancy",
+			"tags": [
+				"Incapacitated",
+				"Planes",
+				"Psychic",
+				"Teleportation"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 2
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 3,
+			"provenance": {
+				"startLine": 4264,
+				"endLine": 4289
+			}
+		},
+		{
+			"id": "blessing-of-air",
+			"name": "Blessing of Air",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Astromancy",
+			"tags": [
+				"Air",
+				"Embolden",
+				"Gravity",
+				"Motion"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "10 Minutes (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 4290,
+				"endLine": 4323
+			}
+		},
+		{
+			"id": "blessing-of-zephyr",
+			"name": "Blessing of Zephyr",
+			"sources": [
+				"Primal"
+			],
+			"school": "Astromancy",
+			"tags": [
+				"Embolden",
+				"Motion"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "10 Minutes",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 4324,
+				"endLine": 4353
+			}
+		},
+		{
+			"id": "gravity-shift",
+			"name": "Gravity Shift",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Astromancy",
+			"tags": [
+				"Dazed",
+				"Gravity",
+				"Hindered",
+				"Motion"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 4
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 4354,
+				"endLine": 4389
+			}
+		},
+		{
+			"id": "gravity-well",
+			"name": "Gravity Well",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Astromancy",
+			"tags": [
+				"Gravity",
+				"Motion",
+				"Restrained"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 4390,
+				"endLine": 4419
+			}
+		},
+		{
+			"id": "haste",
+			"name": "Haste",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Astromancy",
+			"tags": [
+				"Embolden",
+				"Motion",
+				"Time"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 4420,
+				"endLine": 4449
+			}
+		},
+		{
+			"id": "increase-gravity",
+			"name": "Increase Gravity",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Astromancy",
+			"tags": [
+				"Bludgeoning",
+				"Gravity",
+				"Immobilized",
+				"Hindered",
+				"Prone",
+				"Slowed"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 2
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 4450,
+				"endLine": 4482
+			}
+		},
+		{
+			"id": "slow-time",
+			"name": "Slow Time",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Astromancy",
+			"tags": [
+				"Dazed",
+				"Enfeeble",
+				"Hindered",
+				"Impaired",
+				"Slowed",
+				"Paralyzed",
+				"Time"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 4483,
+				"endLine": 4514
+			}
+		},
+		{
+			"id": "telekinesis",
+			"name": "Telekinesis",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Astromancy",
+			"tags": [
+				"Immobilized",
+				"Motion",
+				"Restrained"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 3,
+			"provenance": {
+				"startLine": 4515,
+				"endLine": 4551
+			}
+		},
+		{
+			"id": "teleport",
+			"name": "Teleport",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Astromancy",
+			"tags": [
+				"Teleportation",
+				"Motion",
+				"Slowed"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 4552,
+				"endLine": 4579
+			}
+		},
+		{
+			"id": "time-stop",
+			"name": "Time Stop",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Astromancy",
+			"tags": [
+				"Time",
+				"Paralyzed"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 2
+			},
+			"range": "Self",
+			"duration": "End of Turn",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 3,
+			"provenance": {
+				"startLine": 4580,
+				"endLine": 4603
+			}
+		},
+		{
+			"id": "translocation",
+			"name": "Translocation",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Astromancy",
+			"tags": [
+				"Teleportation"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 4604,
+				"endLine": 4635
+			}
+		},
+		{
+			"id": "reduce-inertia",
+			"name": "Reduce Inertia",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Astromancy",
+			"tags": [
+				"Embolden",
+				"Gravity",
+				"Motion",
+				"Ward"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 4636,
+				"endLine": 4670
+			}
+		},
+		{
+			"id": "arcane-barrier",
+			"name": "Arcane Barrier",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Embolden",
+				"Ward"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "5 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 4671,
+				"endLine": 4698
+			}
+		},
+		{
+			"id": "arcane-weapon",
+			"name": "Arcane Weapon",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Enfeeble",
+				"Bludgeoning",
+				"Piercing",
+				"Slashing",
+				"Weapon"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 4699,
+				"endLine": 4731
+			}
+		},
+		{
+			"id": "bind",
+			"name": "Bind",
+			"sources": [
+				"Arcane",
+				"Divine",
+				"Primal"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Bludgeoning",
+				"Immobilized",
+				"Restrained"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 3,
+			"provenance": {
+				"startLine": 4732,
+				"endLine": 4755
+			}
+		},
+		{
+			"id": "chaos-bomb",
+			"name": "Chaos Bomb",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Chaos"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 4756,
+				"endLine": 4807
+			}
+		},
+		{
+			"id": "call-familiar",
+			"name": "Call Familiar",
+			"sources": [
+				"Arcane",
+				"Divine",
+				"Primal"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Sense",
+				"Summoning"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "1 Space",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 1,
+			"provenance": {
+				"startLine": 4808,
+				"endLine": 4902
+			}
+		},
+		{
+			"id": "disguise-self",
+			"name": "Disguise Self",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Communication",
+				"Illusion"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "Self",
+			"duration": "10 Minutes",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 4903,
+				"endLine": 4931
+			}
+		},
+		{
+			"id": "entangle",
+			"name": "Entangle",
+			"sources": [
+				"Primal"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Immobilized",
+				"Plants",
+				"Piercing",
+				"Restrained"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 4932,
+				"endLine": 4963
+			}
+		},
+		{
+			"id": "elemental-weapon",
+			"name": "Elemental Weapon",
+			"sources": [
+				"Primal"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Cold",
+				"Corrosion",
+				"Enfeeble",
+				"Fire",
+				"Lightning",
+				"Poison",
+				"Weapon"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 4964,
+				"endLine": 4998
+			}
+		},
+		{
+			"id": "forcefield",
+			"name": "Forcefield",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Antimagic",
+				"Sound",
+				"Summoning"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 4999,
+				"endLine": 5033
+			}
+		},
+		{
+			"id": "illusory-duplicate",
+			"name": "Illusory Duplicate",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Communication",
+				"Illusion",
+				"Teleportation",
+				"Sense"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 5034,
+				"endLine": 5070
+			}
+		},
+		{
+			"id": "illusory-image",
+			"name": "Illusory Image",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Illusion",
+				"Scent",
+				"Sound",
+				"Trap"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 5071,
+				"endLine": 5104
+			}
+		},
+		{
+			"id": "illusory-writing",
+			"name": "Illusory Writing",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Communication",
+				"Illusion",
+				"Trap"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Hour",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 5105,
+				"endLine": 5137
+			}
+		},
+		{
+			"id": "mage-armor",
+			"name": "Mage Armor",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Embolden",
+				"Ward"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Hour",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 5138,
+				"endLine": 5163
+			}
+		},
+		{
+			"id": "mystical-weapon",
+			"name": "Mystical Weapon",
+			"sources": [
+				"Divine"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Enfeeble",
+				"Psychic",
+				"Radiant",
+				"Umbral",
+				"Weapon"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 5164,
+				"endLine": 5195
+			}
+		},
+		{
+			"id": "natures-tether",
+			"name": "Nature's Tether",
+			"sources": [
+				"Primal"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Bleeding",
+				"Motion",
+				"Plant",
+				"Restrained",
+				"Tethered"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 5196,
+				"endLine": 5231
+			}
+		},
+		{
+			"id": "oil-slick",
+			"name": "Oil Slick",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Burning",
+				"Trap"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 5232,
+				"endLine": 5261
+			}
+		},
+		{
+			"id": "tendrils-from-beyond",
+			"name": "Tendrils from Beyond",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Aberration",
+				"Bludgeoning",
+				"Madness",
+				"Psychic"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 5262,
+				"endLine": 5298
+			}
+		},
+		{
+			"id": "unholy-aura",
+			"name": "Unholy Aura",
+			"sources": [
+				"Divine"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Death",
+				"Doomed",
+				"Shadow",
+				"Tethered"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "Self",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 5299,
+				"endLine": 5337
+			}
+		},
+		{
+			"id": "summon-aberration",
+			"name": "Summon Aberration",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Aberration",
+				"Cold",
+				"Psychic",
+				"Summoning"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "10 Minutes (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 5338,
+				"endLine": 5405
+			}
+		},
+		{
+			"id": "summon-beast",
+			"name": "Summon Beast",
+			"sources": [
+				"Primal"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Beast",
+				"Bludgeoning",
+				"Piercing",
+				"Slashing",
+				"Summoning"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "10 Minutes (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 5406,
+				"endLine": 5479
+			}
+		},
+		{
+			"id": "summon-celestial",
+			"name": "Summon Celestial",
+			"sources": [
+				"Divine"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Celestial",
+				"Fire",
+				"Radiant",
+				"Summoning"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "10 Minutes (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 5480,
+				"endLine": 5547
+			}
+		},
+		{
+			"id": "summon-construct",
+			"name": "Summon Construct",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Bludgeoning",
+				"Construct",
+				"Piercing",
+				"Slashing",
+				"Summoning"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "10 Minutes (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 5548,
+				"endLine": 5615
+			}
+		},
+		{
+			"id": "summon-dragon",
+			"name": "Summon Dragon",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Dragon",
+				"Piercing",
+				"Slashing",
+				"Summoning"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "10 Minutes (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 5616,
+				"endLine": 5690
+			}
+		},
+		{
+			"id": "summon-elemental",
+			"name": "Summon Elemental",
+			"sources": [
+				"Primal"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Bludgeoning",
+				"Cold",
+				"Corrosion",
+				"Elemental",
+				"Fire",
+				"Lightning",
+				"Piercing",
+				"Slashing",
+				"Summoning"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "10 Minutes (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 5691,
+				"endLine": 5768
+			}
+		},
+		{
+			"id": "summon-fey",
+			"name": "Summon Fey",
+			"sources": [
+				"Primal"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Fey",
+				"Psychic",
+				"Slashing",
+				"Summoning"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "10 Minutes (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 5769,
+				"endLine": 5838
+			}
+		},
+		{
+			"id": "summon-fiend",
+			"name": "Summon Fiend",
+			"sources": [
+				"Divine"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Corrosion",
+				"Fiend",
+				"Fire",
+				"Poison",
+				"Summoning"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "10 Minutes (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 5839,
+				"endLine": 5910
+			}
+		},
+		{
+			"id": "summon-ooze",
+			"name": "Summon Ooze",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Corrosion",
+				"Ooze",
+				"Summoning"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "10 Minutes (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 5911,
+				"endLine": 5974
+			}
+		},
+		{
+			"id": "summon-plant",
+			"name": "Summon Plant",
+			"sources": [
+				"Primal"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Bludgeoning",
+				"Plants",
+				"Piercing",
+				"Poison",
+				"Summoning"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "10 Minutes (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 5975,
+				"endLine": 6042
+			}
+		},
+		{
+			"id": "summon-undead",
+			"name": "Summon Undead",
+			"sources": [
+				"Divine"
+			],
+			"school": "Conjuration",
+			"tags": [
+				"Bludgeoning",
+				"Umbral",
+				"Undead",
+				"Summoning"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "10 Minutes (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 6043,
+				"endLine": 6158
+			}
+		},
+		{
+			"id": "bless",
+			"name": "Bless",
+			"sources": [
+				"Divine"
+			],
+			"school": "Divination",
+			"tags": [
+				"Embolden"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 6159,
+				"endLine": 6189
+			}
+		},
+		{
+			"id": "danger-sense",
+			"name": "Danger Sense",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Divination",
+			"tags": [
+				"Embolden",
+				"Emotions",
+				"Knowledge",
+				"Sense",
+				"Surprised",
+				"Ward"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Hour",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 6190,
+				"endLine": 6218
+			}
+		},
+		{
+			"id": "detect-magic",
+			"name": "Detect Magic",
+			"sources": [
+				"Arcane",
+				"Divine",
+				"Primal"
+			],
+			"school": "Divination",
+			"tags": [
+				"Antimagic",
+				"Knowledge",
+				"Sense"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "Self",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 6219,
+				"endLine": 6248
+			}
+		},
+		{
+			"id": "empowered-sight",
+			"name": "Empowered Sight",
+			"sources": [
+				"Arcane",
+				"Primal",
+				"Divine"
+			],
+			"school": "Divination",
+			"tags": [
+				"Embolden",
+				"Sense"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Hour",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 6249,
+				"endLine": 6276
+			}
+		},
+		{
+			"id": "foresight",
+			"name": "Foresight",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Divination",
+			"tags": [
+				"Time",
+				"Embolden"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 6277,
+				"endLine": 6303
+			}
+		},
+		{
+			"id": "locate-target",
+			"name": "Locate Target",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Divination",
+			"tags": [
+				"Knowledge",
+				"Planes",
+				"Sense"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "1 Mile (1.6 km)",
+			"duration": "1 Round",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 2,
+			"provenance": {
+				"startLine": 6304,
+				"endLine": 6333
+			}
+		},
+		{
+			"id": "scrying",
+			"name": "Scrying",
+			"sources": [
+				"Divine"
+			],
+			"school": "Divination",
+			"tags": [
+				"Knowledge",
+				"Sense",
+				"Communication"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "Plane of Existence",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 6334,
+				"endLine": 6370
+			}
+		},
+		{
+			"id": "absorb-elements",
+			"name": "Absorb Elements",
+			"sources": [
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Embolden",
+				"Ward"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 6371,
+				"endLine": 6400
+			}
+		},
+		{
+			"id": "acid-stream",
+			"name": "Acid Stream",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Corrosion",
+				"Enfeeble",
+				"Hindered"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 6401,
+				"endLine": 6432
+			}
+		},
+		{
+			"id": "air-slash",
+			"name": "Air Slash",
+			"sources": [
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Air",
+				"Bleeding",
+				"Slashing"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 6433,
+				"endLine": 6463
+			}
+		},
+		{
+			"id": "blight-bomb",
+			"name": "Blight Bomb",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Ailment",
+				"Impaired",
+				"Poison"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 6464,
+				"endLine": 6497
+			}
+		},
+		{
+			"id": "cloud-cover",
+			"name": "Cloud Cover",
+			"sources": [
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Cold",
+				"Shadow",
+				"Slashing"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "10 Minutes (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 6498,
+				"endLine": 6526
+			}
+		},
+		{
+			"id": "cold-wave",
+			"name": "Cold Wave",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Cold",
+				"Slowed",
+				"Trap"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 6527,
+				"endLine": 6558
+			}
+		},
+		{
+			"id": "cone-of-cold",
+			"name": "Cone of Cold",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Cold",
+				"Slowed",
+				"Stunned"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 6559,
+				"endLine": 6590
+			}
+		},
+		{
+			"id": "corrosive-bolt",
+			"name": "Corrosive Bolt",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Corrosion",
+				"Enfeeble",
+				"Hindered"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 6591,
+				"endLine": 6621
+			}
+		},
+		{
+			"id": "corrosive-cascade",
+			"name": "Corrosive Cascade",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Corrosion",
+				"Enfeeble"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 6622,
+				"endLine": 6659
+			}
+		},
+		{
+			"id": "corrosive-wave",
+			"name": "Corrosive Wave",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Corrosion",
+				"Enfeeble",
+				"Exposed"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 6660,
+				"endLine": 6689
+			}
+		},
+		{
+			"id": "elemental-shield",
+			"name": "Elemental Shield",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Embolden",
+				"Ward"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "Self",
+			"duration": "1 Hour",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 6690,
+				"endLine": 6720
+			}
+		},
+		{
+			"id": "eruption",
+			"name": "Eruption",
+			"sources": [
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Bludgeoning",
+				"Earth",
+				"Motion"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 6721,
+				"endLine": 6754
+			}
+		},
+		{
+			"id": "fireball",
+			"name": "Fireball",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Burning",
+				"Fire",
+				"Shadow"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 6755,
+				"endLine": 6793
+			}
+		},
+		{
+			"id": "fire-blast",
+			"name": "Fire Blast",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Burning",
+				"Fire"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 3,
+			"provenance": {
+				"startLine": 6794,
+				"endLine": 6823
+			}
+		},
+		{
+			"id": "fire-bolt",
+			"name": "Fire Bolt",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Burning",
+				"Fire"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 6824,
+				"endLine": 6855
+			}
+		},
+		{
+			"id": "fire-torrent",
+			"name": "Fire Torrent",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Burning",
+				"Fire",
+				"Motion"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 6856,
+				"endLine": 6886
+			}
+		},
+		{
+			"id": "freeze",
+			"name": "Freeze",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Cold",
+				"Enfeeble",
+				"Immobilized",
+				"Slowed",
+				"Stunned"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 6887,
+				"endLine": 6916
+			}
+		},
+		{
+			"id": "frost-bolt",
+			"name": "Frost Bolt",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Cold",
+				"Slowed"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 6917,
+				"endLine": 6946
+			}
+		},
+		{
+			"id": "frost-storm",
+			"name": "Frost Storm",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Cold",
+				"Slowed"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 6947,
+				"endLine": 6979
+			}
+		},
+		{
+			"id": "gust",
+			"name": "Gust",
+			"sources": [
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Air",
+				"Motion"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 6980,
+				"endLine": 7012
+			}
+		},
+		{
+			"id": "hydro-lance",
+			"name": "Hydro Lance",
+			"sources": [
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Bleeding",
+				"Motion",
+				"Piercing",
+				"Water"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 7013,
+				"endLine": 7040
+			}
+		},
+		{
+			"id": "inflict-poison",
+			"name": "Inflict Poison",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Ailment",
+				"Dazed",
+				"Frightened",
+				"Impaired",
+				"Slowed",
+				"Stunned"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 7041,
+				"endLine": 7069
+			}
+		},
+		{
+			"id": "lightning-blast",
+			"name": "Lightning Blast",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Lightning"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 7070,
+				"endLine": 7101
+			}
+		},
+		{
+			"id": "lightning-bolt",
+			"name": "Lightning Bolt",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Lightning",
+				"Stunned"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 7102,
+				"endLine": 7132
+			}
+		},
+		{
+			"id": "lightning-storm",
+			"name": "Lightning Storm",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Deafened",
+				"Lightning",
+				"Sound"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 7133,
+				"endLine": 7166
+			}
+		},
+		{
+			"id": "lightning-torrent",
+			"name": "Lightning Torrent",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Dazed",
+				"Lightning"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 7167,
+				"endLine": 7197
+			}
+		},
+		{
+			"id": "lightning-rod",
+			"name": "Lightning Rod",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Lightning",
+				"Tethered"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": true,
+			"enhancementCount": 3,
+			"provenance": {
+				"startLine": 7198,
+				"endLine": 7223
+			}
+		},
+		{
+			"id": "living-bomb",
+			"name": "Living Bomb",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Burning",
+				"Fire",
+				"Trap"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 7224,
+				"endLine": 7256
+			}
+		},
+		{
+			"id": "maelstrom",
+			"name": "Maelstrom",
+			"sources": [
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Motion",
+				"Slowed",
+				"Water"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 7257,
+				"endLine": 7284
+			}
+		},
+		{
+			"id": "mold-earth",
+			"name": "Mold Earth",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Earth",
+				"Motion"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 7285,
+				"endLine": 7321
+			}
+		},
+		{
+			"id": "poison-bolt",
+			"name": "Poison Bolt",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Ailment",
+				"Hindered",
+				"Impaired",
+				"Poison"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 7322,
+				"endLine": 7353
+			}
+		},
+		{
+			"id": "spike-bolt",
+			"name": "Spike Bolt",
+			"sources": [
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Earth",
+				"Impaired",
+				"Piercing",
+				"Plants"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Space",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 7354,
+				"endLine": 7384
+			}
+		},
+		{
+			"id": "spike-cluster",
+			"name": "Spike Cluster",
+			"sources": [
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Earth",
+				"Immobilized",
+				"Impaired",
+				"Piercing",
+				"Plants"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 7385,
+				"endLine": 7418
+			}
+		},
+		{
+			"id": "spike-surge",
+			"name": "Spike Surge",
+			"sources": [
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Earth",
+				"Impaired",
+				"Piercing",
+				"Plants"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 7419,
+				"endLine": 7450
+			}
+		},
+		{
+			"id": "tornado",
+			"name": "Tornado",
+			"sources": [
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Air",
+				"Blinded",
+				"Chaos",
+				"Lightning",
+				"Motion",
+				"Slowed"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 7451,
+				"endLine": 7485
+			}
+		},
+		{
+			"id": "toxic-burst",
+			"name": "Toxic Burst",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Ailment",
+				"Enfeeble",
+				"Poison"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 7486,
+				"endLine": 7515
+			}
+		},
+		{
+			"id": "wall-of-fire",
+			"name": "Wall of Fire",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Burning",
+				"Fire",
+				"Shadow"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 7516,
+				"endLine": 7552
+			}
+		},
+		{
+			"id": "wall-of-earth",
+			"name": "Wall of Earth",
+			"sources": [
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Earth",
+				"Motion",
+				"Summoning"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 7553,
+				"endLine": 7586
+			}
+		},
+		{
+			"id": "wall-of-water",
+			"name": "Wall of Water",
+			"sources": [
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Motion",
+				"Water"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 7587,
+				"endLine": 7626
+			}
+		},
+		{
+			"id": "water-bolt",
+			"name": "Water Bolt",
+			"sources": [
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Bludgeoning",
+				"Motion",
+				"Water"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 7627,
+				"endLine": 7656
+			}
+		},
+		{
+			"id": "wind-blade",
+			"name": "Wind Blade",
+			"sources": [
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Air",
+				"Bleeding",
+				"Motion",
+				"Slashing"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 7657,
+				"endLine": 7688
+			}
+		},
+		{
+			"id": "wind-burst",
+			"name": "Wind Burst",
+			"sources": [
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Air",
+				"Bleeding",
+				"Motion",
+				"Slashing"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 7689,
+				"endLine": 7723
+			}
+		},
+		{
+			"id": "wind-tunnel",
+			"name": "Wind Tunnel",
+			"sources": [
+				"Primal"
+			],
+			"school": "Elemental",
+			"tags": [
+				"Air",
+				"Motion",
+				"Slowed"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 7724,
+				"endLine": 7764
+			}
+		},
+		{
+			"id": "charm",
+			"name": "Charm",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Enchantment",
+			"tags": [
+				"Charmed",
+				"Communication",
+				"Emotions",
+				"Thoughts"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 7765,
+				"endLine": 7792
+			}
+		},
+		{
+			"id": "command",
+			"name": "Command",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Enchantment",
+			"tags": [
+				"Communication",
+				"Emotion",
+				"Motion",
+				"Thoughts"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 7793,
+				"endLine": 7827
+			}
+		},
+		{
+			"id": "confusion",
+			"name": "Confusion",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Enchantment",
+			"tags": [
+				"Chaos",
+				"Emotions",
+				"Madness",
+				"Thoughts"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 2
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 3,
+			"provenance": {
+				"startLine": 7828,
+				"endLine": 7858
+			}
+		},
+		{
+			"id": "fear",
+			"name": "Fear",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Enchantment",
+			"tags": [
+				"Emotions",
+				"Frightened",
+				"Motion",
+				"Psychic",
+				"Terrified"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 7859,
+				"endLine": 7886
+			}
+		},
+		{
+			"id": "hex",
+			"name": "Hex",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Enchantment",
+			"tags": [
+				"Curse",
+				"Enfeeble"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 7887,
+				"endLine": 7915
+			}
+		},
+		{
+			"id": "message",
+			"name": "Message",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Enchantment",
+			"tags": [
+				"Communication",
+				"Thoughts"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 3,
+			"provenance": {
+				"startLine": 7916,
+				"endLine": 7939
+			}
+		},
+		{
+			"id": "mind-blast",
+			"name": "Mind Blast",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Enchantment",
+			"tags": [
+				"Dazed",
+				"Psychic",
+				"Sense"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 7940,
+				"endLine": 7969
+			}
+		},
+		{
+			"id": "mockery",
+			"name": "Mockery",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Enchantment",
+			"tags": [
+				"Blinded",
+				"Deafened",
+				"Emotions",
+				"Taunted"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 2,
+			"provenance": {
+				"startLine": 7970,
+				"endLine": 7993
+			}
+		},
+		{
+			"id": "planar-protection",
+			"name": "Planar Protection",
+			"sources": [
+				"Divine"
+			],
+			"school": "Enchantment",
+			"tags": [
+				"Cleansing",
+				"Embolden",
+				"Thoughts",
+				"Ward"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "5 Spaces",
+			"duration": "1 Hour",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 7994,
+				"endLine": 8026
+			}
+		},
+		{
+			"id": "psi-bolt",
+			"name": "Psi Bolt",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Enchantment",
+			"tags": [
+				"Dazed",
+				"Intimidated",
+				"Psychic",
+				"Thoughts"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 8027,
+				"endLine": 8058
+			}
+		},
+		{
+			"id": "psychic-wave",
+			"name": "Psychic Wave",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Enchantment",
+			"tags": [
+				"Enfeeble",
+				"Motion",
+				"Psychic"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 8059,
+				"endLine": 8092
+			}
+		},
+		{
+			"id": "shatter-reality",
+			"name": "Shatter Reality",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Enchantment",
+			"tags": [
+				"Chaos",
+				"Dazed",
+				"Madness",
+				"Psychic"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 8093,
+				"endLine": 8134
+			}
+		},
+		{
+			"id": "slumber",
+			"name": "Slumber",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Enchantment",
+			"tags": [
+				"Emotions",
+				"Enfeeble",
+				"Incapacitated",
+				"Unconscious"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 2
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 8135,
+				"endLine": 8167
+			}
+		},
+		{
+			"id": "cleanse",
+			"name": "Cleanse",
+			"sources": [
+				"Divine",
+				"Primal"
+			],
+			"school": "Invocation",
+			"tags": [
+				"Cleansing"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 8168,
+				"endLine": 8197
+			}
+		},
+		{
+			"id": "close-wounds",
+			"name": "Close Wounds",
+			"sources": [
+				"Arcane",
+				"Divine",
+				"Primal"
+			],
+			"school": "Invocation",
+			"tags": [
+				"Cleansing",
+				"Healing",
+				"Time"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 3,
+			"provenance": {
+				"startLine": 8198,
+				"endLine": 8219
+			}
+		},
+		{
+			"id": "death-ward",
+			"name": "Death Ward",
+			"sources": [
+				"Divine"
+			],
+			"school": "Invocation",
+			"tags": [
+				"Cleansing",
+				"Death",
+				"Embolden",
+				"Ward"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "10 Minutes",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 8220,
+				"endLine": 8248
+			}
+		},
+		{
+			"id": "divine-protection",
+			"name": "Divine Protection",
+			"sources": [
+				"Divine"
+			],
+			"school": "Invocation",
+			"tags": [
+				"Death",
+				"Ward"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "1 Space",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 3,
+			"provenance": {
+				"startLine": 8249,
+				"endLine": 8278
+			}
+		},
+		{
+			"id": "heal",
+			"name": "Heal",
+			"sources": [
+				"Divine"
+			],
+			"school": "Invocation",
+			"tags": [
+				"Healing"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 3,
+			"provenance": {
+				"startLine": 8279,
+				"endLine": 8302
+			}
+		},
+		{
+			"id": "healing-wave",
+			"name": "Healing Wave",
+			"sources": [
+				"Primal"
+			],
+			"school": "Invocation",
+			"tags": [
+				"Healing",
+				"Cleansing"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 8303,
+				"endLine": 8329
+			}
+		},
+		{
+			"id": "illuminate",
+			"name": "Illuminate",
+			"sources": [
+				"Divine",
+				"Primal"
+			],
+			"school": "Invocation",
+			"tags": [
+				"Blinded",
+				"Exposed",
+				"Light",
+				"Sense"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 8330,
+				"endLine": 8355
+			}
+		},
+		{
+			"id": "life-transfer",
+			"name": "Life Transfer",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Invocation",
+			"tags": [
+				"Blood",
+				"Cleansing",
+				"Healing"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 3,
+			"provenance": {
+				"startLine": 8356,
+				"endLine": 8377
+			}
+		},
+		{
+			"id": "light",
+			"name": "Light",
+			"sources": [
+				"Arcane",
+				"Divine",
+				"Primal"
+			],
+			"school": "Invocation",
+			"tags": [
+				"Blinded",
+				"Light"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "10 Minutes (Sustained)",
+			"sustained": true,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 8378,
+				"endLine": 8408
+			}
+		},
+		{
+			"id": "luminous-burst",
+			"name": "Luminous Burst",
+			"sources": [
+				"Divine"
+			],
+			"school": "Invocation",
+			"tags": [
+				"Exposed",
+				"Light",
+				"Radiant",
+				"Tethered"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 8409,
+				"endLine": 8442
+			}
+		},
+		{
+			"id": "mass-heal",
+			"name": "Mass Heal",
+			"sources": [
+				"Divine"
+			],
+			"school": "Invocation",
+			"tags": [
+				"Healing",
+				"Ward"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 8443,
+				"endLine": 8470
+			}
+		},
+		{
+			"id": "radiant-bolt",
+			"name": "Radiant Bolt",
+			"sources": [
+				"Divine"
+			],
+			"school": "Invocation",
+			"tags": [
+				"Blinded",
+				"Exposed",
+				"Light",
+				"Radiant"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 8471,
+				"endLine": 8503
+			}
+		},
+		{
+			"id": "regenerate",
+			"name": "Regenerate",
+			"sources": [
+				"Primal"
+			],
+			"school": "Invocation",
+			"tags": [
+				"Cleansing",
+				"Healing"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "5 Spaces",
+			"duration": "1 Round",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 8504,
+				"endLine": 8529
+			}
+		},
+		{
+			"id": "revivify",
+			"name": "Revivify",
+			"sources": [
+				"Divine",
+				"Primal"
+			],
+			"school": "Invocation",
+			"tags": [
+				"Cleansing",
+				"Resurrection",
+				"Spirit"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 2
+			},
+			"range": "1 Space",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 3,
+			"provenance": {
+				"startLine": 8530,
+				"endLine": 8553
+			}
+		},
+		{
+			"id": "solar-beam",
+			"name": "Solar Beam",
+			"sources": [
+				"Divine",
+				"Primal"
+			],
+			"school": "Invocation",
+			"tags": [
+				"Blinded",
+				"Burning",
+				"Light",
+				"Radiant"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 8554,
+				"endLine": 8586
+			}
+		},
+		{
+			"id": "spirit-link",
+			"name": "Spirit Link",
+			"sources": [
+				"Divine"
+			],
+			"school": "Invocation",
+			"tags": [
+				"Blood",
+				"Communication",
+				"Curse",
+				"Spirit",
+				"Ward"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 8587,
+				"endLine": 8622
+			}
+		},
+		{
+			"id": "sunburst",
+			"name": "Sunburst",
+			"sources": [
+				"Divine",
+				"Primal"
+			],
+			"school": "Invocation",
+			"tags": [
+				"Blinded",
+				"Exposed",
+				"Light",
+				"Radiant"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 7,
+			"provenance": {
+				"startLine": 8623,
+				"endLine": 8664
+			}
+		},
+		{
+			"id": "arcane-shield",
+			"name": "Arcane Shield",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Nullification",
+			"tags": [
+				"Ward"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "1 Space",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 2,
+			"provenance": {
+				"startLine": 8665,
+				"endLine": 8690
+			}
+		},
+		{
+			"id": "bane",
+			"name": "Bane",
+			"sources": [
+				"Divine"
+			],
+			"school": "Nullification",
+			"tags": [
+				"Curse",
+				"Enfeeble"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 8691,
+				"endLine": 8721
+			}
+		},
+		{
+			"id": "corpse-explosion",
+			"name": "Corpse Explosion",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Nullification",
+			"tags": [
+				"Ailment",
+				"Death",
+				"Enfeeble",
+				"Umbral"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 8722,
+				"endLine": 8751
+			}
+		},
+		{
+			"id": "darkness",
+			"name": "Darkness",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Nullification",
+			"tags": [
+				"Shadow",
+				"Slowed"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "5 Spaces",
+			"duration": "10 Minutes (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 8752,
+				"endLine": 8783
+			}
+		},
+		{
+			"id": "death",
+			"name": "Death",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Nullification",
+			"tags": [
+				"Curse",
+				"Death",
+				"Doomed",
+				"Exhaustion"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 8784,
+				"endLine": 8813
+			}
+		},
+		{
+			"id": "death-bolt",
+			"name": "Death Bolt",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Nullification",
+			"tags": [
+				"Curse",
+				"Doomed",
+				"Umbral"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 8814,
+				"endLine": 8848
+			}
+		},
+		{
+			"id": "disintegrating-beam",
+			"name": "Disintegrating Beam",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Nullification",
+			"tags": [
+				"Death",
+				"Enfeeble",
+				"True",
+				"Weakened"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 8849,
+				"endLine": 8879
+			}
+		},
+		{
+			"id": "disintegrate",
+			"name": "Disintegrate",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Nullification",
+			"tags": [
+				"Death",
+				"Enfeeble",
+				"True",
+				"Weakened"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 2
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 8880,
+				"endLine": 8909
+			}
+		},
+		{
+			"id": "dispel-magic",
+			"name": "Dispel Magic",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Nullification",
+			"tags": [
+				"Antimagic",
+				"Cleansing"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": "X",
+				"minimumMp": 1,
+				"raw": "1 AP + X MP (minimum of 1)"
+			},
+			"range": "10 Spaces",
+			"duration": "See Effect",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 1,
+			"provenance": {
+				"startLine": 8910,
+				"endLine": 8935
+			}
+		},
+		{
+			"id": "enfeeble",
+			"name": "Enfeeble",
+			"sources": [
+				"Divine",
+				"Primal"
+			],
+			"school": "Nullification",
+			"tags": [
+				"Curse",
+				"Enfeeble"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 8936,
+				"endLine": 8961
+			}
+		},
+		{
+			"id": "muffle",
+			"name": "Muffle",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Nullification",
+			"tags": [
+				"Communication",
+				"Deafened",
+				"Disoriented",
+				"Sound"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 8962,
+				"endLine": 8989
+			}
+		},
+		{
+			"id": "sanctuary",
+			"name": "Sanctuary",
+			"sources": [
+				"Divine"
+			],
+			"school": "Nullification",
+			"tags": [
+				"Embolden",
+				"Spirit",
+				"Ward"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 8990,
+				"endLine": 9020
+			}
+		},
+		{
+			"id": "sphere-of-death",
+			"name": "Sphere of Death",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Nullification",
+			"tags": [
+				"Death",
+				"Doomed",
+				"Exhaustion",
+				"Shadow",
+				"Umbral"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 9021,
+				"endLine": 9056
+			}
+		},
+		{
+			"id": "umbral-burst",
+			"name": "Umbral Burst",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Nullification",
+			"tags": [
+				"Death",
+				"Doomed",
+				"Shadow",
+				"Umbral"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 9057,
+				"endLine": 9088
+			}
+		},
+		{
+			"id": "umbral-wave",
+			"name": "Umbral Wave",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Nullification",
+			"tags": [
+				"Doomed",
+				"Shadow",
+				"Umbral",
+				"Undead"
+			],
+			"cost": {
+				"ap": 2
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 9089,
+				"endLine": 9121
+			}
+		},
+		{
+			"id": "vampiric-touch",
+			"name": "Vampiric Touch",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Nullification",
+			"tags": [
+				"Blood",
+				"Doomed",
+				"Healing",
+				"Slowed",
+				"Umbral"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "1 Space",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 9122,
+				"endLine": 9147
+			}
+		},
+		{
+			"id": "wild-guard",
+			"name": "Wild Guard",
+			"sources": [
+				"Primal"
+			],
+			"school": "Nullification",
+			"tags": [
+				"Motion",
+				"Ward"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "1 Space",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 2,
+			"provenance": {
+				"startLine": 9148,
+				"endLine": 9173
+			}
+		},
+		{
+			"id": "zone-of-peace",
+			"name": "Zone of Peace",
+			"sources": [
+				"Divine"
+			],
+			"school": "Nullification",
+			"tags": [
+				"Emotions",
+				"Tethered",
+				"Ward"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "Self",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 9174,
+				"endLine": 9206
+			}
+		},
+		{
+			"id": "acid-imbued",
+			"name": "Acid Imbued",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Transmutation",
+			"tags": [
+				"Corrosion",
+				"Enfeeble",
+				"Hindered",
+				"Strike",
+				"Weapon"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "Self",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 9207,
+				"endLine": 9236
+			}
+		},
+		{
+			"id": "alter-size",
+			"name": "Alter Size",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Transmutation",
+			"tags": [
+				"Embolden",
+				"Enfeeble",
+				"Metamorphosis"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 3,
+			"provenance": {
+				"startLine": 9237,
+				"endLine": 9277
+			}
+		},
+		{
+			"id": "blessing-of-earth",
+			"name": "Blessing of Earth",
+			"sources": [
+				"Primal"
+			],
+			"school": "Transmutation",
+			"tags": [
+				"Earth",
+				"Embolden",
+				"Motion",
+				"Sense"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "10 Minutes (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 9278,
+				"endLine": 9313
+			}
+		},
+		{
+			"id": "blessing-of-water",
+			"name": "Blessing of Water",
+			"sources": [
+				"Primal"
+			],
+			"school": "Transmutation",
+			"tags": [
+				"Embolden",
+				"Metamorphosis",
+				"Motion",
+				"Water"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "10 minutes",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 9314,
+				"endLine": 9344
+			}
+		},
+		{
+			"id": "chaos-bolt",
+			"name": "Chaos Bolt",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Transmutation",
+			"tags": [
+				"Chaos"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 3,
+			"provenance": {
+				"startLine": 9345,
+				"endLine": 9389
+			}
+		},
+		{
+			"id": "chaos-torrent",
+			"name": "Chaos Torrent",
+			"sources": [
+				"Arcane"
+			],
+			"school": "Transmutation",
+			"tags": [
+				"Chaos",
+				"Enfeeble"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "Self",
+			"duration": "Instantaneous",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 9390,
+				"endLine": 9425
+			}
+		},
+		{
+			"id": "cold-imbued",
+			"name": "Cold Imbued",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Transmutation",
+			"tags": [
+				"Cold",
+				"Slowed",
+				"Strike",
+				"Weapon"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "Self",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 9426,
+				"endLine": 9455
+			}
+		},
+		{
+			"id": "enhance-ability",
+			"name": "Enhance Ability",
+			"sources": [
+				"Divine",
+				"Primal"
+			],
+			"school": "Transmutation",
+			"tags": [
+				"Embolden"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 9456,
+				"endLine": 9484
+			}
+		},
+		{
+			"id": "fire-imbued",
+			"name": "Fire Imbued",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Transmutation",
+			"tags": [
+				"Burning",
+				"Fire",
+				"Strike",
+				"Weapon"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "Self",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 9485,
+				"endLine": 9514
+			}
+		},
+		{
+			"id": "invisibility",
+			"name": "Invisibility",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Transmutation",
+			"tags": [
+				"Illusion",
+				"Invisible",
+				"Shadow"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 9515,
+				"endLine": 9543
+			}
+		},
+		{
+			"id": "lightning-imbued",
+			"name": "Lightning Imbued",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Transmutation",
+			"tags": [
+				"Lightning",
+				"Strike",
+				"Trap",
+				"Weapon"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "Self",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 9544,
+				"endLine": 9573
+			}
+		},
+		{
+			"id": "poison-imbued",
+			"name": "Poison Imbued",
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
+			"school": "Transmutation",
+			"tags": [
+				"Ailment",
+				"Impaired",
+				"Poison",
+				"Strike",
+				"Weapon"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "Self",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 9574,
+				"endLine": 9605
+			}
+		},
+		{
+			"id": "primal-hide",
+			"name": "Primal Hide",
+			"sources": [
+				"Primal"
+			],
+			"school": "Transmutation",
+			"tags": [
+				"Embolden",
+				"Ward"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Hour",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 9606,
+				"endLine": 9632
+			}
+		},
+		{
+			"id": "psychic-imbued",
+			"name": "Psychic Imbued",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Transmutation",
+			"tags": [
+				"Dazed",
+				"Deafened",
+				"Psychic",
+				"Strike",
+				"Weapon"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "Self",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 9633,
+				"endLine": 9662
+			}
+		},
+		{
+			"id": "quicksand",
+			"name": "Quicksand",
+			"sources": [
+				"Primal"
+			],
+			"school": "Transmutation",
+			"tags": [
+				"Earth",
+				"Hindered",
+				"Illusion",
+				"Slowed",
+				"Tethered"
+			],
+			"cost": {
+				"ap": 2,
+				"mp": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": false,
+			"enhancementCount": 4,
+			"provenance": {
+				"startLine": 9663,
+				"endLine": 9691
+			}
+		},
+		{
+			"id": "radiant-imbued",
+			"name": "Radiant Imbued",
+			"sources": [
+				"Divine"
+			],
+			"school": "Transmutation",
+			"tags": [
+				"Light",
+				"Radiant",
+				"Strike",
+				"Weapon"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "Self",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 9692,
+				"endLine": 9721
+			}
+		},
+		{
+			"id": "shadowbind",
+			"name": "Shadowbind",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Transmutation",
+			"tags": [
+				"Doomed",
+				"Immobilized",
+				"Shadow",
+				"Tethered"
+			],
+			"cost": {
+				"ap": 1
+			},
+			"range": "10 Spaces",
+			"duration": "1 Minute",
+			"sustained": false,
+			"isCantrip": true,
+			"enhancementCount": 5,
+			"provenance": {
+				"startLine": 9722,
+				"endLine": 9749
+			}
+		},
+		{
+			"id": "umbral-imbued",
+			"name": "Umbral Imbued",
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
+			"school": "Transmutation",
+			"tags": [
+				"Blood",
+				"Doomed",
+				"Healing",
+				"Strike",
+				"Umbral",
+				"Weapon"
+			],
+			"cost": {
+				"ap": 1,
+				"mp": 1
+			},
+			"range": "Self",
+			"duration": "1 Minute (Sustained)",
+			"sustained": true,
+			"isCantrip": false,
+			"enhancementCount": 6,
+			"provenance": {
+				"startLine": 9750,
+				"endLine": 9780
+			}
+		}
 	]
 }

@@ -2,7 +2,7 @@
 
 > Purpose: Persistence architecture for characters and DM Tools: hybrid localStorage/Convex storage, schemas, auth, migrations.
 > Status: Active
-> Last Updated: 2026-06-13
+> Last Updated: 2026-06-19
 
 ---
 
@@ -365,6 +365,10 @@ Key implementation: `src/routes/character-creation/CharacterCreation.tsx`
 
 ## 6. Migration & Compatibility
 
+Internal versioning policy is defined in `docs/systems/VERSIONING_SYSTEM.MD`. This
+storage system owns `schemaVersion` persistence and participates in `rulesVersion`
+compatibility, but it must not conflate those lanes.
+
 ### 6.1 Schema Versioning
 
 ```typescript
@@ -413,14 +417,15 @@ and applied by `src/lib/rulesdata/versioning/characterUpgrade.ts`:
 2. Show automatic renames, reworked selections, deprecated removals, and unresolved blockers
    before writing data.
 3. Refuse the upgrade when an identity is ambiguous or the source rules version is unsupported.
-4. Save a separate v0.10 backup record first. Backup records carry `rulesUpgradeBackupOf`, remain
-   legacy/read-only, and do not expose another upgrade action.
-5. Rewrite approved aliases, explicitly map listed reworks, remove listed deprecated selections,
-   and set the original character to `dc20-0.10.5`.
+4. Create a new current-rules copy with lineage metadata (`rulesUpgradeSourceId`,
+   `rulesUpgradeSourceVersion`, `rulesUpgradedAt`) while leaving the legacy source record
+   locked and unchanged.
+5. Rewrite approved aliases, explicitly map listed reworks, remove listed deprecated selections
+   in the new copy, and set that copy to `dc20-0.10.5`.
 
-The upgraded original records `rulesUpgradeSourceVersion` and `rulesUpgradedAt`. Its stored game
-state, notes, inventory, and resources are preserved. Derived values are interpreted and
-recalculated by the normal v0.10.5 sheet/editor pipeline after the upgrade.
+The legacy source remains view/export/delete only. The new copy preserves stored game state,
+notes, inventory, and resources where possible; derived values are interpreted and recalculated
+by the normal v0.10.5 sheet/editor pipeline after migration.
 
 ### 6.3 Auto-Migration
 

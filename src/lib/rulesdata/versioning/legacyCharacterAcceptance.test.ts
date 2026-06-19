@@ -100,7 +100,7 @@ const makeLegacyV010Character = (): SavedCharacter =>
 				}
 			},
 			notes: {
-				playerNotes: 'Legacy notes must remain state-only editable.'
+				playerNotes: 'Legacy notes remain inspectable until migration creates a current draft.'
 			},
 			ui: {
 				manualDefenseOverrides: {},
@@ -121,9 +121,9 @@ describe('legacy v0.10 character runtime acceptance', () => {
 		expect(compatibility.canRenderSheet).toBe(true);
 		expect(compatibility.canEdit).toBe(false);
 		expect(compatibility.canLevelUp).toBe(false);
-		expect(compatibility.canAutoSave).toBe(true);
-		expect(compatibility.autoSaveMode).toBe('characterState');
-		expect(getCharacterAutoSaveMode(legacyCharacter)).toBe('characterState');
+		expect(compatibility.canAutoSave).toBe(false);
+		expect(compatibility.autoSaveMode).toBe('none');
+		expect(getCharacterAutoSaveMode(legacyCharacter)).toBe('none');
 		expect(compatibility.canExportPdf).toBe(true);
 		expect(compatibility.pdfVersion).toBe('0.10');
 		expect(compatibility.aliasDecisions).toEqual(
@@ -138,13 +138,14 @@ describe('legacy v0.10 character runtime acceptance', () => {
 					domain: 'spell',
 					fromId: 'summon-familiar',
 					toId: 'call-familiar',
-					compatibilityState: 'editable'
+					status: 'reworked',
+					compatibilityState: 'upgrade-required'
 				})
 			])
 		);
 	});
 
-	it('routes legacy IDs for sheet/PDF display without rewriting the saved character', () => {
+	it('renders legacy spell data without silently applying functional reworks', () => {
 		const legacyCharacter = makeLegacyV010Character();
 		const beforeTransform = JSON.stringify(legacyCharacter);
 
@@ -155,7 +156,8 @@ describe('legacy v0.10 character runtime acceptance', () => {
 		expect(
 			selectableTalents.find((talent) => talent.id === 'barbarian_swift_berserker')
 		).toBeUndefined();
-		expect(getSpellById('summon-familiar')?.name).toBe('Call Familiar');
+		expect(getSpellById('summon-familiar')).toBeUndefined();
+		expect(getSpellById('absorb-element')?.name).toBe('Absorb Elements');
 		expect(traitsData.find((trait) => trait.id === 'beastborn_hazardous_hide')?.name).toBe(
 			'Hazardous Hide'
 		);
@@ -167,7 +169,7 @@ describe('legacy v0.10 character runtime acceptance', () => {
 			'Hazardous Hide'
 		);
 		expect(formatSpellsAndManeuvers(['summon-familiar'], legacyCharacter.maneuvers)).toContain(
-			'Call Familiar'
+			'summon-familiar'
 		);
 
 		const pdfData = transformSavedCharacterToPdfData(legacyCharacter);
@@ -183,7 +185,7 @@ describe('legacy v0.10 character runtime acceptance', () => {
 		expect(pdfData.features).toContain('[Talents]');
 		expect(pdfData.features).toContain('Swift Berserker');
 		expect(pdfData.features).toContain('[Spells]');
-		expect(pdfData.features).toContain('Call Familiar');
+		expect(pdfData.features).toContain('summon-familiar');
 		expect(pdfData.features).toContain('Absorb Elements');
 		expect(pdfData.features).toContain('[Maneuvers]');
 		expect(pdfData.features).toContain('Brace');

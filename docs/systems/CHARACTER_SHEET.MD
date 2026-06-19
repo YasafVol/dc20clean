@@ -43,11 +43,11 @@ The character sheet uses a **context provider pattern** with a reducer for state
 
 Compatibility states from the rules-version fence affect sheet persistence:
 
-| State              | Sheet behavior                                                                                                            |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| `editable`         | Normal render and full auto-save with recalculated values                                                                 |
-| `upgrade-required` | Render/export allowed from stored values; auto-save is disabled until an explicit current-rules copy is created             |
-| `view-only`        | Render allowed where possible; auto-save is disabled                                                                      |
+| State              | Sheet behavior                                                                                                  |
+| ------------------ | --------------------------------------------------------------------------------------------------------------- |
+| `editable`         | Normal render and full auto-save with recalculated values                                                       |
+| `upgrade-required` | Render/export allowed from stored values; auto-save is disabled until an explicit current-rules copy is created |
+| `view-only`        | Render allowed where possible; auto-save is disabled                                                            |
 
 For `upgrade-required` and `view-only` characters, the sheet suppresses fresh calculator output for display/export helpers that would reinterpret the character under the current rules data. PDF export always uses stored `SavedCharacter` values for every rules version; it does not recalculate during export.
 
@@ -91,12 +91,12 @@ For `upgrade-required` and `view-only` characters, the sheet suppresses fresh ca
 
 ### Abilities
 
-| Component                         | Data Source                                  | Description                               |
-| --------------------------------- | -------------------------------------------- | ----------------------------------------- |
-| `components/Spells.tsx`           | `SavedCharacter.spells` + Spells System data | Spellbook with filtering/management       |
+| Component                         | Data Source                                  | Description                                                                                  |
+| --------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `components/Spells.tsx`           | `SavedCharacter.spells` + Spells System data | Spellbook with filtering/management                                                          |
 | `components/Maneuvers.tsx`        | `SavedCharacter.maneuvers` + Martials data   | Maneuver management with type filtering, AP/SP cost, range, trigger, and enhancement display |
-| `components/Features.tsx`         | Class/trait feature definitions              | Character features/traits display         |
-| `components/EnhancedFeatures.tsx` | Feature definitions + effect attribution     | Enhanced features with source attribution |
+| `components/Features.tsx`         | Class/trait feature definitions              | Character features/traits display                                                            |
+| `components/EnhancedFeatures.tsx` | Feature definitions + effect attribution     | Enhanced features with source attribution                                                    |
 
 #### Spell Sheet TODOs
 
@@ -109,6 +109,16 @@ For `upgrade-required` and `view-only` characters, the sheet suppresses fresh ca
 - The standalone `/martial-manual` route provides a Spellbook-like reference surface for all maneuvers and enhancements.
 - TODO: Add a Character Sheet flow for opening full maneuver cards from known maneuver rows, reusing the Martial Manual card presentation where practical.
 - TODO: Add sheet-side in-play enhancement spend validation against Stamina Spend Limit once the sheet models selected enhancements for a performed maneuver.
+
+#### Effects Sheet TODOs
+
+- Add a centralized sheet-facing effect presentation service that takes `EnhancedCalculationResult` plus source-attributed effects and returns categorized rows for:
+  - calculator-applied effects already represented in stat/budget breakdowns,
+  - collected sheet effects (`movements`, `senses`, `resistances`, `vulnerabilities`, `combatTraining`),
+  - manual in-game effects (`GRANT_ABILITY`, `conditionalModifiers`, `GRANT_ADV_ON_CHECK`, non-condition `GRANT_ADV_ON_SAVE`),
+  - unsupported or weakly mapped effects such as `SET_VALUE:size` and `MODIFY_STAT:deathThresholdModifier`.
+- Wire that service into a Character Sheet “Effects / Rules Notes” surface so every selected trait, feature, talent, and equipped item effect has a visible home even when it is not numerically automated.
+- Keep `calculatorModules/effectCollection.ts` as the source-attributed aggregation layer. The new service should be presentation-oriented and should not duplicate stat math from `calculateCharacterWithBreakdowns()`.
 
 v0.10.5 level 5 Expert Features intentionally keep the old `<class>_level_5_placeholder` IDs. Saved characters that already reference those IDs render the updated Expert Feature names, benefits, and modeled effects without needing a destructive ID rewrite.
 

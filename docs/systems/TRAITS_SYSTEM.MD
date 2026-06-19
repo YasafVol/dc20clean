@@ -2,7 +2,7 @@
 
 > Purpose: Single reference for Traits: data shape, effect typing, validation, runtime processing, and UI usage.
 > Status: Active
-> Last Updated: 2026-06-13
+> Last Updated: 2026-06-19
 
 ---
 
@@ -42,15 +42,17 @@ flowchart LR
 
 ## 2 Key Files & Their Roles
 
-| Layer                 | File / Dir                                                                                | Responsibility                                             |
-| --------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| Rule Data (canonical) | `src/lib/rulesdata/ancestries/traits.ts`                                                  | Declarative list of `traitsData` objects                   |
-| Type Contracts        | `src/lib/rulesdata/schemas/types.ts`                                                      | TS interfaces `ITrait`, `ITraitEffect` (legacy/aux typing) |
-|                       | `src/lib/rulesdata/schemas/character.schema.ts`                                           | Canonical `Effect` union and `Trait` interface             |
-| Validation Tests      | `src/lib/rulesdata/rulesdata.spec.ts`                                                     | Loads trait data and asserts required fields are present   |
-| Runtime Engine        | `src/lib/services/enhancedCharacterCalculator.ts`                                         | Aggregates effects, resolves choices, computes breakdowns  |
-| State Layer           | `src/lib/stores/characterContext.tsx`<br>`src/lib/hooks/useCharacterBuilder.ts`           | Provides calculated results and selected choices to UI     |
-| UI                    | `src/routes/character-creation/*` (selection)<br>`src/routes/character-sheet/*` (display) | Components import `traitsData` results via context         |
+| Layer                 | File / Dir                                                                                | Responsibility                                                           |
+| --------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Rule Data (canonical) | `src/lib/rulesdata/ancestries/traits.ts`                                                  | Declarative list of core `traitsData` objects                            |
+|                       | `scripts/ancestries/dc20-0105-ancestries.mjs`                                             | Source parser/audit generator for the v0.10.5 ancestry and trait chapter |
+|                       | `docs/migration/ancestries-v0105-report.json`                                             | Generated core ancestry/trait source audit report                        |
+| Type Contracts        | `src/lib/rulesdata/schemas/types.ts`                                                      | TS interfaces `ITrait`, `ITraitEffect` (legacy/aux typing)               |
+|                       | `src/lib/rulesdata/schemas/character.schema.ts`                                           | Canonical `Effect` union and `Trait` interface                           |
+| Validation Tests      | `src/lib/rulesdata/rulesdata.spec.ts`                                                     | Loads trait data and asserts required fields are present                 |
+| Runtime Engine        | `src/lib/services/enhancedCharacterCalculator.ts`                                         | Aggregates effects, resolves choices, computes breakdowns                |
+| State Layer           | `src/lib/stores/characterContext.tsx`<br>`src/lib/hooks/useCharacterBuilder.ts`           | Provides calculated results and selected choices to UI                   |
+| UI                    | `src/routes/character-creation/*` (selection)<br>`src/routes/character-sheet/*` (display) | Components import `traitsData` results via context                       |
 
 Notes:
 
@@ -153,7 +155,7 @@ When a new type is created:
 
 **Trait Data Structure**
 
-- ✅ Trait data loads successfully (244 traits)
+- ✅ Trait data loads successfully (178 `traitsData` entries; 180 source traits including Fallen/Redeemed variant traits)
 - ✅ Required fields present (`id`, `name`, `description`, `cost`, `effects`)
 - ✅ Unique trait IDs (no duplicates)
 - ✅ Valid cost values (numeric)
@@ -186,10 +188,12 @@ When a new type is created:
 
 **Statistics**
 
-- 16 ancestries defined
-- 244 traits defined
+- 11 core ancestries defined
+- 178 `traitsData` entries defined
+- 180 source traits tracked in `docs/migration/ancestries-v0105-report.json` including Fallen/Redeemed variant traits
 - Effect type distribution tracked
 - Cost distribution tracked
+- Core runtime trait names and costs are compared against the generated v0.10.5 source report
 
 ### 6.2 Running Tests
 
@@ -247,12 +251,6 @@ Traits with prerequisites require the base trait to be selected before the enhan
 | Darkvision             | Superior Darkvision                                                                                                                               |
 | **Giantborn**          |                                                                                                                                                   |
 | Giant's Resolve        | Giant's Fortitude                                                                                                                                 |
-| **Terraborn**          |                                                                                                                                                   |
-| Tremorsense            | Superior Tremorsense                                                                                                                              |
-| **Shadowborn**         |                                                                                                                                                   |
-| Darkvision             | Superior Darkvision                                                                                                                               |
-| **Psyborn**            |                                                                                                                                                   |
-| Telepathy              | Telepathic Reach, Telepathic Link                                                                                                                 |
 
 ### 7.2 Multi-Level Chains
 
@@ -332,11 +330,16 @@ The `prerequisites` field is still supported for simple single-trait requirement
 
 ## 9 DC20 v0.10.5 Notes
 
+- Core trait runtime scope is limited to the 11 core v0.10.5 ancestries. Magazine/non-core traits for Gremlin, Goblin, Terraborn, Shadowborn, and Psyborn are not exported in `traitsData`.
+- `npm run ancestries:generate:0105` parses the source ancestry chapter and writes `docs/migration/ancestries-v0105-report.json`.
+- `npm run ancestries:validate:0105` fails if that report is stale.
+- `ancestries.test.ts` compares runtime core trait names and point costs against the generated source report. Runtime descriptions/effects remain human-reviewed.
 - `beastborn_hazardous_hide` remains the stable ID for Hazardous Hide. It is a current v0.10.5 Beastborn Body trait, not an alias or resurrected saved-data rewrite.
 - `beastborn_additional_limb` now reflects the v0.10.5 1 Space limb, object handling, push/pull/grapple, and no Weapon/Shield/Spell Focus/Somatic use limitations.
 - `beastborn_capable_limb` costs 2 points and upgrades an Additional Limb to use Weapons, Shields, Spell Focuses, and Somatic Components. Its prerequisite remains `beastborn_additional_limb`.
+- `beastborn_natural_weapon_style` is the current v0.10.5 Natural Weapon trait. The stale `beastborn_natural_weapon_passive` record was removed.
 
 ---
 
-> Last updated: 2026-06-01
+> Last updated: 2026-06-19
 > Maintainer: @DC20Clean-Team

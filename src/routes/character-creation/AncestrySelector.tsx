@@ -37,7 +37,6 @@ const ancestryIcons: { [key: string]: string } = {
 	'half-orc': '👹',
 	tiefling: '😈',
 	orc: '🗡️',
-	goblin: '👺',
 	kobold: '🦎',
 	default: '🌟'
 };
@@ -56,11 +55,6 @@ const ancestryQuotes: { [key: string]: string } = {
 	fiendborn: 'Darkness flows within, but our choices define us.',
 	beastborn: "Nature's gifts shape our bodies and spirits.",
 	penguinborn: 'We waddle with pride through ice and water.',
-	gremlin: 'Small but fierce, we thrive in chaos.',
-	goblin: 'Clever tactics over brute strength.',
-	terraborn: 'Earth is our ally, stone our sanctuary.',
-	shadowborn: 'We embrace the darkness others fear.',
-	psyborn: "The mind's potential knows no limits.",
 	default: 'A proud lineage with unique talents.'
 };
 
@@ -150,9 +144,7 @@ function AncestrySelector() {
 								<IconWrapper>{getAncestryIcon(ancestry.id)}</IconWrapper>
 								<AncestryTitle $isSelected={isSelected}>{ancestry.name}</AncestryTitle>
 							</CardHeader>
-							<QuoteText $isSelected={isSelected}>
-								"{getAncestryQuote(ancestry.id)}"
-							</QuoteText>
+							<QuoteText $isSelected={isSelected}>"{getAncestryQuote(ancestry.id)}"</QuoteText>
 							<p
 								style={{
 									fontSize: '0.875rem',

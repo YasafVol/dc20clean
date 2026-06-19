@@ -1,0 +1,1549 @@
+{
+	"source": "docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md",
+	"rulesVersion": "dc20-0.10.5",
+	"scope": "core-rules-ancestries",
+	"ancestryCount": 11,
+	"traitCount": 180,
+	"ancestries": [
+		{
+			"id": "human",
+			"name": "Human",
+			"traitCount": 8,
+			"traitCounts": { "default": 4, "expanded": 4, "origin": 0, "variant": 0 },
+			"traits": [
+				{
+					"name": "Attribute Increase",
+					"id": "attribute_increase",
+					"cost": 2,
+					"description": "Choose an Attribute. The chosen Attribute increases by 1 (up to the Attribute Limit).",
+					"category": "default",
+					"sourceLine": 12436
+				},
+				{
+					"name": "Skill Expertise",
+					"id": "skill_expertise",
+					"cost": 2,
+					"description": "Choose a Skill. Your Mastery Cap and Mastery Level in the chosen Skill both increase by 1. You can only benefit from 1 Feature that increases your Skill Mastery Limit at a time.",
+					"category": "default",
+					"sourceLine": 12437
+				},
+				{
+					"name": "Human Resolve",
+					"id": "human_resolve",
+					"cost": 1,
+					"description": "Your Death's Door Threshold value is expanded by 1.",
+					"category": "default",
+					"sourceLine": 12438
+				},
+				{
+					"name": "Undying",
+					"id": "undying",
+					"cost": 0,
+					"description": "You have ADV on Saves against the Doomed Condition.",
+					"category": "default",
+					"sourceLine": 12439
+				},
+				{
+					"name": "Trade Expertise",
+					"id": "trade_expertise",
+					"cost": 1,
+					"description": "Choose a Trade. Your Mastery Cap and Mastery Level in the chosen Trade both increase by 1. You can only benefit from 1 Feature that increases your Trade Mastery Limit at a time.",
+					"category": "expanded",
+					"sourceLine": 12443
+				},
+				{
+					"name": "Human Determination",
+					"id": "human_determination",
+					"cost": 1,
+					"description": "Once per Combat, you can give yourself ADV on an Attack, Martial, or Spell Check while Bloodied.",
+					"category": "expanded",
+					"sourceLine": 12444
+				},
+				{
+					"name": "Unbreakable",
+					"id": "unbreakable",
+					"cost": 1,
+					"description": "You have ADV on Death Saves.",
+					"category": "expanded",
+					"sourceLine": 12445
+				},
+				{
+					"name": "Attribute Decrease",
+					"id": "attribute_decrease",
+					"cost": -1,
+					"description": "Choose an Attribute. You decrease the chosen Attribute by 1 (to a minimum of -2).",
+					"category": "expanded",
+					"sourceLine": 12446
+				}
+			],
+			"provenance": { "startLine": 12432, "endLine": 12449 }
+		},
+		{
+			"id": "elf",
+			"name": "Elf",
+			"traitCount": 13,
+			"traitCounts": { "default": 4, "expanded": 9, "origin": 0, "variant": 0 },
+			"traits": [
+				{
+					"name": "Elven Will",
+					"id": "elven_will",
+					"cost": 1,
+					"description": "You have ADV on Checks and Saves against being Charmed and put to Sleep.",
+					"category": "default",
+					"sourceLine": 12454
+				},
+				{
+					"name": "Nimble",
+					"id": "nimble",
+					"cost": 2,
+					"description": "When you take the Dodge Action, you instead gain the benefits of the Full Dodge Action.",
+					"category": "default",
+					"sourceLine": 12455
+				},
+				{
+					"name": "Agile Explorer",
+					"id": "agile_explorer",
+					"cost": 2,
+					"description": "You’re not affected by Difficult Terrain.",
+					"category": "default",
+					"sourceLine": 12456
+				},
+				{
+					"name": "Discerning Sight",
+					"id": "discerning_sight",
+					"cost": 0,
+					"description": "You have ADV on Checks and Saves made to discern through visual illusions.",
+					"category": "default",
+					"sourceLine": 12457
+				},
+				{
+					"name": "Quick Reactions",
+					"id": "quick_reactions",
+					"cost": 1,
+					"description": "While you aren't wearing Armor, you gain +1 PD.",
+					"category": "expanded",
+					"sourceLine": 12461
+				},
+				{
+					"name": "Peerless Sight",
+					"id": "peerless_sight",
+					"cost": 1,
+					"description": "You don't have DisADV as a result of making an Attack with a Weapon at Long Range",
+					"category": "expanded",
+					"sourceLine": 12462
+				},
+				{
+					"name": "Climb Speed",
+					"id": "climb_speed",
+					"cost": 1,
+					"description": "You gain a Climb Speed equal to your Movement Speed.",
+					"category": "expanded",
+					"sourceLine": 12463
+				},
+				{
+					"name": "Speed Increase",
+					"id": "speed_increase",
+					"cost": 2,
+					"description": "Your Speed increases by 1 Space.",
+					"category": "expanded",
+					"sourceLine": 12464
+				},
+				{
+					"name": "Trade Expertise",
+					"id": "trade_expertise",
+					"cost": 1,
+					"description": "Choose a Trade. Your Mastery Cap and Mastery Level in the chosen Trade both increase by 1. You can only benefit from 1 Feature that increases your Trade Mastery Limit at a time.",
+					"category": "expanded",
+					"sourceLine": 12465
+				},
+				{
+					"name": "Plant Knowledge",
+					"id": "plant_knowledge",
+					"cost": 1,
+					"description": "While within forests, jungles, and swamps, you have ADV on Survival Checks. Additionally, you have ADV on Nature Checks made to recall information about plants.",
+					"category": "expanded",
+					"sourceLine": 12466
+				},
+				{
+					"name": "Brittle",
+					"id": "brittle",
+					"cost": -1,
+					"description": "Your AD decreases by 1.",
+					"category": "expanded",
+					"sourceLine": 12467
+				},
+				{
+					"name": "Frail",
+					"id": "frail",
+					"cost": -1,
+					"description": "Your HP maximum decreases by 2.",
+					"category": "expanded",
+					"sourceLine": 12468
+				},
+				{
+					"name": "Might Attribute Decrease",
+					"id": "might_attribute_decrease",
+					"cost": -1,
+					"description": "You decrease your Might by 1 (to a minimum of -2).",
+					"category": "expanded",
+					"sourceLine": 12469
+				}
+			],
+			"provenance": { "startLine": 12450, "endLine": 12471 }
+		},
+		{
+			"id": "dwarf",
+			"name": "Dwarf",
+			"traitCount": 13,
+			"traitCounts": { "default": 4, "expanded": 9, "origin": 0, "variant": 0 },
+			"traits": [
+				{
+					"name": "Tough",
+					"id": "tough",
+					"cost": 1,
+					"description": "Your HP maximum increases by 1.",
+					"category": "default",
+					"sourceLine": 12476
+				},
+				{
+					"name": "Toxic Fortitude",
+					"id": "toxic_fortitude",
+					"cost": 2,
+					"description": "You have Poison Resistance (Half) and ADV on Saves against being Poisoned.",
+					"category": "default",
+					"sourceLine": 12477
+				},
+				{
+					"name": "Physically Sturdy",
+					"id": "physically_sturdy",
+					"cost": 2,
+					"description": "You have ADV on Saves against being Impaired, Deafened, or Petrified.",
+					"category": "default",
+					"sourceLine": 12478
+				},
+				{
+					"name": "Iron Stomach",
+					"id": "iron_stomach",
+					"cost": 0,
+					"description": "You have ADV on Saves against effects that come from consuming food or liquids.",
+					"category": "default",
+					"sourceLine": 12479
+				},
+				{
+					"name": "Thick-Skinned",
+					"id": "thick_skinned",
+					"cost": 1,
+					"description": "While you aren't wearing Armor, you gain +1 AD.",
+					"category": "expanded",
+					"sourceLine": 12483
+				},
+				{
+					"name": "Natural Combatant",
+					"id": "natural_combatant",
+					"cost": 1,
+					"description": "You gain Combat Training with Heavy Armor and All Shields.",
+					"category": "expanded",
+					"sourceLine": 12484
+				},
+				{
+					"name": "Stone Blood",
+					"id": "stone_blood",
+					"cost": 1,
+					"description": "You have ADV on Saves against Bleeding. Additionally, you can spend 1 AP to end the Bleeding Condition on yourself.",
+					"category": "expanded",
+					"sourceLine": 12485
+				},
+				{
+					"name": "Minor Tremorsense",
+					"id": "minor_tremorsense",
+					"cost": 1,
+					"description": "You have Tremorsense 3 Spaces.",
+					"category": "expanded",
+					"sourceLine": 12486
+				},
+				{
+					"name": "Stubborn",
+					"id": "stubborn",
+					"cost": 2,
+					"description": "You have ADV on Saves against being Taunted and against being forcibly moved.",
+					"category": "expanded",
+					"sourceLine": 12487
+				},
+				{
+					"name": "Trade Expertise",
+					"id": "trade_expertise",
+					"cost": 1,
+					"description": "Choose a Crafting or Services Trade. Your Mastery Cap and Mastery Level in the chosen Trade both increase by 1.",
+					"category": "expanded",
+					"sourceLine": 12488
+				},
+				{
+					"name": "Earthen Knowledge",
+					"id": "earthen_knowledge",
+					"cost": 1,
+					"description": "While within mountainous and subterranean environments, you have ADV on Survival Checks. Additionally, you have ADV on Nature Checks made to recall information about rocks, soil, crystals, and gems.",
+					"category": "expanded",
+					"sourceLine": 12489
+				},
+				{
+					"name": "Charisma Attribute Decrease",
+					"id": "charisma_attribute_decrease",
+					"cost": -1,
+					"description": "You decrease your Charisma by 1 (to a minimum of -2).",
+					"category": "expanded",
+					"sourceLine": 12490
+				},
+				{
+					"name": "Short-Legged",
+					"id": "short_legged",
+					"cost": -1,
+					"description": "Your Speed decreases by 1 Space.",
+					"category": "expanded",
+					"sourceLine": 12491
+				}
+			],
+			"provenance": { "startLine": 12472, "endLine": 12493 }
+		},
+		{
+			"id": "halfling",
+			"name": "Halfling",
+			"traitCount": 13,
+			"traitCounts": { "default": 6, "expanded": 7, "origin": 0, "variant": 0 },
+			"traits": [
+				{
+					"name": "Small-Sized",
+					"id": "small_sized",
+					"cost": -1,
+					"description": "Your Size is considered Small.",
+					"category": "default",
+					"sourceLine": 12498
+				},
+				{
+					"name": "Elusive",
+					"id": "elusive",
+					"cost": 2,
+					"description": "When you take the Disengage Action, you instead gain the benefits of the Full Disengage Action.",
+					"category": "default",
+					"sourceLine": 12499
+				},
+				{
+					"name": "Halfling Bravery",
+					"id": "halfling_bravery",
+					"cost": 2,
+					"description": "You have ADV on Saves against being Frightened, Intimidated, or Terrified.",
+					"category": "default",
+					"sourceLine": 12500
+				},
+				{
+					"name": "Halfling Endurance",
+					"id": "halfling_endurance",
+					"cost": 1,
+					"description": "You have Exhaustion Resistance.",
+					"category": "default",
+					"sourceLine": 12501
+				},
+				{
+					"name": "Deft Footwork",
+					"id": "deft_footwork",
+					"cost": 1,
+					"description": "You can move through the space of a hostile creature 1 size larger than you as if it were Difficult Terrain.",
+					"category": "default",
+					"sourceLine": 12502
+				},
+				{
+					"name": "Beast Whisperer",
+					"id": "beast_whisperer",
+					"cost": 0,
+					"description": "You can speak to Beasts in a limited manner. They can understand the meanings of simple words, concepts, or states of emotion. You don't have a special ability to understand them in return.",
+					"category": "default",
+					"sourceLine": 12503
+				},
+				{
+					"name": "Beast Insight",
+					"id": "beast_insight",
+					"cost": 1,
+					"description": "You can understand Beasts in a limited manner. You can understand the meaning of their noises and behaviors, though they have no special ability to understand you in return.",
+					"category": "expanded",
+					"sourceLine": 12507
+				},
+				{
+					"name": "Burst of Bravery",
+					"id": "burst_of_bravery",
+					"cost": 1,
+					"description": "Once per Combat, you can end the Frightened, Intimidated, or Terrified Condition on yourself for free at any time.",
+					"category": "expanded",
+					"sourceLine": 12508
+				},
+				{
+					"name": "Trade Expertise",
+					"id": "trade_expertise",
+					"cost": 1,
+					"description": "Choose a Trade. Your Mastery Cap and Mastery Level in the chosen Trade both increase by 1. You can only benefit from 1 Feature that increases your Trade Mastery Limit at a time.",
+					"category": "expanded",
+					"sourceLine": 12509
+				},
+				{
+					"name": "Critter Knowledge",
+					"id": "critter_knowledge",
+					"cost": 1,
+					"description": "You have ADV on Nature, Survival, and Animal Checks involving Small size creatures and smaller.",
+					"category": "expanded",
+					"sourceLine": 12510
+				},
+				{
+					"name": "Brittle",
+					"id": "brittle",
+					"cost": -1,
+					"description": "Your AD decreases by 1.",
+					"category": "expanded",
+					"sourceLine": 12511
+				},
+				{
+					"name": "Intelligence Attribute Decrease",
+					"id": "intelligence_attribute_decrease",
+					"cost": -1,
+					"description": "You decrease your Intelligence by 1 (to a minimum of -2).",
+					"category": "expanded",
+					"sourceLine": 12512
+				},
+				{
+					"name": "Short-Legged",
+					"id": "short_legged",
+					"cost": -1,
+					"description": "Your Speed decreases by 1 Space.",
+					"category": "expanded",
+					"sourceLine": 12513
+				}
+			],
+			"provenance": { "startLine": 12494, "endLine": 12514 }
+		},
+		{
+			"id": "gnome",
+			"name": "Gnome",
+			"traitCount": 13,
+			"traitCounts": { "default": 6, "expanded": 7, "origin": 0, "variant": 0 },
+			"traits": [
+				{
+					"name": "Small-Sized",
+					"id": "small_sized",
+					"cost": -1,
+					"description": "Your Size is considered Small.",
+					"category": "default",
+					"sourceLine": 12517
+				},
+				{
+					"name": "Escape Artist",
+					"id": "escape_artist",
+					"cost": 2,
+					"description": "You have ADV on Checks and Saves to avoid or escape being Grappled or Restrained.",
+					"category": "default",
+					"sourceLine": 12518
+				},
+				{
+					"name": "Magnified Vision",
+					"id": "magnified_vision",
+					"cost": 1,
+					"description": "You have ADV on Investigation Checks made on something you're holding or touching.",
+					"category": "default",
+					"sourceLine": 12519
+				},
+				{
+					"name": "Mental Clarity",
+					"id": "mental_clarity",
+					"cost": 2,
+					"description": "You have ADV on Saves against being Dazed or Stunned.",
+					"category": "default",
+					"sourceLine": 12520
+				},
+				{
+					"name": "Strong-Minded",
+					"id": "strong_minded",
+					"cost": 1,
+					"description": "You gain Psychic Resistance (1).",
+					"category": "default",
+					"sourceLine": 12521
+				},
+				{
+					"name": "Predict Weather",
+					"id": "predict_weather",
+					"cost": 0,
+					"description": "You can naturally tell what the weather is going to be in the next hour in the area within 1 mile of you. You don't have DisADV on Checks or Saves as a result of naturally occurring weather.",
+					"category": "default",
+					"sourceLine": 12522
+				},
+				{
+					"name": "Mana Increase",
+					"id": "mana_increase",
+					"cost": 1,
+					"description": "Your MP maximum increases by 1.",
+					"category": "expanded",
+					"sourceLine": 12526
+				},
+				{
+					"name": "Trapper",
+					"id": "trapper",
+					"cost": 1,
+					"description": "You have ADV on Investigation Checks to spot Traps and on Trickery Checks to Hide Traps.",
+					"category": "expanded",
+					"sourceLine": 12527
+				},
+				{
+					"name": "Lightning Insulation",
+					"id": "lightning_insulation",
+					"cost": 2,
+					"description": "You have Lightning Resistance (Half) and can't be struck by natural lightning.",
+					"category": "expanded",
+					"sourceLine": 12528
+				},
+				{
+					"name": "Trade Expertise",
+					"id": "trade_expertise",
+					"cost": 1,
+					"description": "Choose a Crafting or Subterfuge Trade. Your Mastery Cap and Mastery Level in the chosen Trade both increase by 1.",
+					"category": "expanded",
+					"sourceLine": 12529
+				},
+				{
+					"name": "Storm Knowledge",
+					"id": "storm_knowledge",
+					"cost": 1,
+					"description": "While within rainy, snowy, or stormy environments, you have ADV on Survival Checks. Additionally, you have ADV on Knowledge Checks made to recall information about rain, snow, and storms.",
+					"category": "expanded",
+					"sourceLine": 12530
+				},
+				{
+					"name": "Agility Attribute Decrease",
+					"id": "agility_attribute_decrease",
+					"cost": -1,
+					"description": "You decrease your Agility by 1 (to a minimum of -2).",
+					"category": "expanded",
+					"sourceLine": 12531
+				},
+				{
+					"name": "Short-Legged",
+					"id": "short_legged",
+					"cost": -1,
+					"description": "Your Speed decreases by 1 Space.",
+					"category": "expanded",
+					"sourceLine": 12532
+				}
+			],
+			"provenance": { "startLine": 12515, "endLine": 12533 }
+		},
+		{
+			"id": "orc",
+			"name": "Orc",
+			"traitCount": 12,
+			"traitCounts": { "default": 6, "expanded": 6, "origin": 0, "variant": 0 },
+			"traits": [
+				{
+					"name": "Cursed Mind",
+					"id": "cursed_mind",
+					"cost": -1,
+					"description": "You gain Psychic Vulnerability (1).",
+					"category": "default",
+					"sourceLine": 12538
+				},
+				{
+					"name": "Orc Rush",
+					"id": "orc_rush",
+					"cost": 2,
+					"description": "Once per Combat when you willingly move toward an enemy, you can spend 1 AP to gain Temp HP equal to your Prime Modifier.",
+					"category": "default",
+					"sourceLine": 12539
+				},
+				{
+					"name": "Brutal Strikes",
+					"id": "brutal_strikes",
+					"cost": 2,
+					"description": "You deal +1 damage when you score a Brutal or Critical Hit with a Melee Weapon or Unarmed Strike.",
+					"category": "default",
+					"sourceLine": 12540
+				},
+				{
+					"name": "Tough",
+					"id": "tough",
+					"cost": 1,
+					"description": "Your HP maximum increases by 1.",
+					"category": "default",
+					"sourceLine": 12541
+				},
+				{
+					"name": "Orcish Resolve",
+					"id": "orcish_resolve",
+					"cost": 1,
+					"description": "You gain 1 additional AP while on Death's Door.",
+					"category": "default",
+					"sourceLine": 12542
+				},
+				{
+					"name": "Already Cursed",
+					"id": "already_cursed",
+					"cost": 0,
+					"description": "You have ADV on Saves against Curses.",
+					"category": "default",
+					"sourceLine": 12543
+				},
+				{
+					"name": "Intimidating Shout",
+					"id": "intimidating_shout",
+					"cost": 2,
+					"description": "Once per Combat, you can spend 1 AP to let out an Intimidating Shout. All creatures within 5 Spaces that can hear you must make a Charisma Save contested by your Attack Check. Failure: A target is Hindered on the next Attack Check or Spell Attack it makes before the start of your next turn.",
+					"category": "expanded",
+					"sourceLine": 12547
+				},
+				{
+					"name": "Orc Dash",
+					"id": "orc_dash",
+					"cost": 1,
+					"description": "Once per Combat you can use your Minor Action to move, as long as that movement is towards an enemy.",
+					"category": "expanded",
+					"sourceLine": 12548
+				},
+				{
+					"name": "Finishing Blow",
+					"id": "finishing_blow",
+					"cost": 1,
+					"description": "You deal +1 damage to creatures who are Well-Bloodied.",
+					"category": "expanded",
+					"sourceLine": 12549
+				},
+				{
+					"name": "Imposing Presence",
+					"id": "imposing_presence",
+					"cost": 1,
+					"description": "Once per Combat when a creature makes an Attack against you, you can force them to make a Charisma Save. Save Failure: They must choose a new target for the Attack. If there are no other targets, then the Attack is wasted.",
+					"category": "expanded",
+					"sourceLine": 12550
+				},
+				{
+					"name": "Provocation",
+					"id": "provocation",
+					"cost": -1,
+					"description": "You have DisADV on Checks and Saves against being Taunted.",
+					"category": "expanded",
+					"sourceLine": 12551
+				},
+				{
+					"name": "Reckless",
+					"id": "reckless",
+					"cost": -1,
+					"description": "Your PD decreases by 1.",
+					"category": "expanded",
+					"sourceLine": 12552
+				}
+			],
+			"provenance": { "startLine": 12534, "endLine": 12554 }
+		},
+		{
+			"id": "dragonborn",
+			"name": "Dragonborn",
+			"traitCount": 14,
+			"traitCounts": { "default": 4, "expanded": 10, "origin": 0, "variant": 0 },
+			"traits": [
+				{
+					"name": "Darkvision",
+					"id": "darkvision",
+					"cost": 1,
+					"description": "You have Darkvision 10 Spaces.",
+					"category": "default",
+					"sourceLine": 12566
+				},
+				{
+					"name": "Draconic Resistance",
+					"id": "draconic_resistance",
+					"cost": 2,
+					"description": "You gain Resistance (Half) to your Draconic damage type.",
+					"category": "default",
+					"sourceLine": 12568
+				},
+				{
+					"name": "Draconic Breath Weapon",
+					"id": "draconic_breath_weapon",
+					"cost": 2,
+					"description": "You gain a Breath Weapon that you can use by spending 2 AP to exhale destructive power in an Area or Focused against a specific target. You can use this ability once per Long Rest, and regain the ability to use it again when you roll for Initiative. Area: Make a Spell Attack against every target's AD within a 3 Space Cone or 6 Space Line. Hit: The target takes 2 Draconic damage. Focused: Make a Spell Attack against 1 target's PD within 6 Spaces. Hit: The target takes 4 Draconic damage. Before you make your Spell Check, you can spend 1 or more SP, MP, or a combination of both to increase the damage. When you do, the Area damage increases by 1 per 2 SP spent or 1 MP spent, and the Focused damage increases by 1 per SP spent and by 2 per MP spent.",
+					"category": "default",
+					"sourceLine": 12570
+				},
+				{
+					"name": "Reptilian Superiority",
+					"id": "reptilian_superiority",
+					"cost": 0,
+					"description": "You have ADV on Intimidation Checks against reptilian creatures of Medium Size and smaller (not including other Dragonborn).",
+					"category": "default",
+					"sourceLine": 12577
+				},
+				{
+					"name": "Mana Increase",
+					"id": "mana_increase",
+					"cost": 1,
+					"description": "Your MP maximum increases by 1.",
+					"category": "expanded",
+					"sourceLine": 12581
+				},
+				{
+					"name": "Thick-Skinned",
+					"id": "thick_skinned",
+					"cost": 1,
+					"description": "While you aren't wearing Armor, you gain +1 AD.",
+					"category": "expanded",
+					"sourceLine": 12583
+				},
+				{
+					"name": "Second Breath",
+					"id": "second_breath",
+					"cost": 2,
+					"description": "(requires Draconic Breath Weapon) You can now use your Draconic Breath Weapon twice per Combat. Additionally, whenever you use your Draconic Breath Weapon, you can spend 2 uses to increase the damage by 2 if it's an Area, or by 4 if it's Focused.",
+					"category": "expanded",
+					"sourceLine": 12585
+				},
+				{
+					"name": "Concussive Breath",
+					"id": "concussive_breath",
+					"cost": 1,
+					"description": "(requires Draconic Breath Weapon) When you use your Draconic Breath Weapon, you can force all targets to make a Physical Save. Save Failure: The target is pushed 1 Space away +1 additional Space for every 5 it fails its Save by.",
+					"category": "expanded",
+					"sourceLine": 12587
+				},
+				{
+					"name": "Draconic Affinity",
+					"id": "draconic_affinity",
+					"cost": 1,
+					"description": "When you take damage of the same type as your Draconic damage, your next Draconic Breath Weapon deals +1 bonus damage.",
+					"category": "expanded",
+					"sourceLine": 12589
+				},
+				{
+					"name": "Dying Breath",
+					"id": "dying_breath",
+					"cost": 1,
+					"description": "(requires Draconic Breath Weapon) Once per Combat when you enter Death's Door, you regain a use of your Draconic Breath Weapon and can immediately use it as a Reaction for free (0 AP).",
+					"category": "expanded",
+					"sourceLine": 12591
+				},
+				{
+					"name": "Draconic Ward",
+					"id": "draconic_ward",
+					"cost": 1,
+					"description": "Once per Combat when you enter Death's Door, you gain 2 Temp HP. Whenever you're Hit by a Melee Attack while you have this Temp HP, your Attacker takes 1 Draconic damage.",
+					"category": "expanded",
+					"sourceLine": 12593
+				},
+				{
+					"name": "Draconic Protection",
+					"id": "draconic_protection",
+					"cost": 1,
+					"description": "Once per Combat, when an ally within 20 Spaces is on Death's Door, you begin to surge with an ancient power. While they remain on Death's Door their PD and AD increases by 5 until Combat ends.",
+					"category": "expanded",
+					"sourceLine": 12595
+				},
+				{
+					"name": "Glide Speed",
+					"id": "glide_speed",
+					"cost": 2,
+					"description": "You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren't Incapacitated, you gain the following benefits while in the air: Controlled Falling: You suffer no damage from Controlled Falling. Altitude Drop: If you end your turn midair, you Controlled Fall 4 Spaces. Glide Speed: You can use your movement to glide horizontally.",
+					"category": "expanded",
+					"sourceLine": 12597
+				},
+				{
+					"name": "Guardian's Bond",
+					"id": "guardians_bond",
+					"cost": -1,
+					"description": "Once per Combat when an ally enters Death's Door within 20 Spaces of you, you take an amount of True damage equal to your Prime Modifier.",
+					"category": "expanded",
+					"sourceLine": 12603
+				}
+			],
+			"provenance": { "startLine": 12555, "endLine": 12605 }
+		},
+		{
+			"id": "giantborn",
+			"name": "Giantborn",
+			"traitCount": 14,
+			"traitCounts": { "default": 5, "expanded": 9, "origin": 0, "variant": 0 },
+			"traits": [
+				{
+					"name": "Tough",
+					"id": "tough",
+					"cost": 1,
+					"description": "Your HP maximum increases by 1.",
+					"category": "default",
+					"sourceLine": 12610
+				},
+				{
+					"name": "Powerful Build",
+					"id": "powerful_build",
+					"cost": 2,
+					"description": "You increase by 1 Size, but you occupy the Space of a creature 1 Size smaller.",
+					"category": "default",
+					"sourceLine": 12611
+				},
+				{
+					"name": "Unstoppable",
+					"id": "unstoppable",
+					"cost": 1,
+					"description": "You have ADV on Saves against being Slowed or Stunned.",
+					"category": "default",
+					"sourceLine": 12612
+				},
+				{
+					"name": "Giant's Resolve",
+					"id": "giants_resolve",
+					"cost": 1,
+					"description": "While on Death's Door, you reduce all damage taken by 1.",
+					"category": "default",
+					"sourceLine": 12613
+				},
+				{
+					"name": "Unyielding Movement",
+					"id": "unyielding_movement",
+					"cost": 0,
+					"description": "You're immune to being Slowed 2 (or higher).",
+					"category": "default",
+					"sourceLine": 12614
+				},
+				{
+					"name": "Giant's Fortitude",
+					"id": "giants_fortitude",
+					"cost": 2,
+					"description": "(requires Giant's Resolve) You also gain the benefits of your Giant's Resolve Trait while Well-Bloodied.",
+					"category": "expanded",
+					"sourceLine": 12618
+				},
+				{
+					"name": "Strong Body",
+					"id": "strong_body",
+					"cost": 2,
+					"description": "Once per Combat when you take damage from an Attack, you can reduce the damage taken by an amount equal to your Might or Agility (your choice).",
+					"category": "expanded",
+					"sourceLine": 12620
+				},
+				{
+					"name": "Mighty Hurl",
+					"id": "mighty_hurl",
+					"cost": 1,
+					"description": "You throw creatures 1 Space farther than normal, and objects (including Weapons) 5 Spaces farther than normal.",
+					"category": "expanded",
+					"sourceLine": 12621
+				},
+				{
+					"name": "Titanic Toss",
+					"id": "titanic_toss",
+					"cost": 1,
+					"description": "You have ADV on Checks made to throw creatures. Additionally, you don't have DisADV as a result of making an Attack with a Weapon with the Toss or Thrown Property at Long Range.",
+					"category": "expanded",
+					"sourceLine": 12622
+				},
+				{
+					"name": "Mighty Leap",
+					"id": "mighty_leap",
+					"cost": 1,
+					"description": "You can use your Might instead of Agility to determine your Jump Distance and the damage you take from Falling.",
+					"category": "expanded",
+					"sourceLine": 12623
+				},
+				{
+					"name": "Brute",
+					"id": "brute",
+					"cost": 1,
+					"description": "Once per Combat, you can take the Shove or Grapple Action as a Minor Action.",
+					"category": "expanded",
+					"sourceLine": 12624
+				},
+				{
+					"name": "Heavy Riser",
+					"id": "heavy_riser",
+					"cost": -1,
+					"description": "You have to spend 4 Spaces of movement to stand up from Prone.",
+					"category": "expanded",
+					"sourceLine": 12625
+				},
+				{
+					"name": "Clumsiness",
+					"id": "clumsiness",
+					"cost": -1,
+					"description": "You have DisADV on Agility Checks.",
+					"category": "expanded",
+					"sourceLine": 12626
+				},
+				{
+					"name": "Intelligence Attribute Decrease",
+					"id": "intelligence_attribute_decrease",
+					"cost": -1,
+					"description": "You decrease your Intelligence by 1 (to a minimum of -2).",
+					"category": "expanded",
+					"sourceLine": 12627
+				}
+			],
+			"provenance": { "startLine": 12606, "endLine": 12629 }
+		},
+		{
+			"id": "angelborn",
+			"name": "Angelborn",
+			"traitCount": 13,
+			"traitCounts": { "default": 4, "expanded": 8, "origin": 0, "variant": 1 },
+			"traits": [
+				{
+					"name": "Fallen",
+					"id": "fallen",
+					"cost": 0,
+					"description": "You can now spend your Ancestry Points on Fiendborn Traits.",
+					"category": "variant",
+					"sourceLine": 12638
+				},
+				{
+					"name": "Radiant Resistance",
+					"id": "radiant_resistance",
+					"cost": 1,
+					"description": "You have Resistance (Half) to Radiant damage.",
+					"category": "default",
+					"sourceLine": 12644
+				},
+				{
+					"name": "Celestial Magic",
+					"id": "celestial_magic",
+					"cost": 2,
+					"description": "You learn 1 Spell of your choice from the Divine Spell List. Once per Long Rest, you can cast the chosen Spell spending 1 less MP than normal (minimum of 0 MP). The Spells total MP cost (before all reductions) still can't exceed your Mana Spend Limit.",
+					"category": "default",
+					"sourceLine": 12646
+				},
+				{
+					"name": "Healing Touch",
+					"id": "healing_touch",
+					"cost": 2,
+					"description": "Once per Combat, you can spend 1 AP to touch a creature and Heal it. Make a DC 10 Spell Check. Success: You can restore up to 2 HP to the target. Success (each 5): +1 HP. Failure: You only restore 1 HP.",
+					"category": "default",
+					"sourceLine": 12648
+				},
+				{
+					"name": "Divine Glow",
+					"id": "divine_glow",
+					"cost": 0,
+					"description": "Your body can emit a Bright Light in a 5 Space radius around you at will.",
+					"category": "default",
+					"sourceLine": 12650
+				},
+				{
+					"name": "Mana Increase",
+					"id": "mana_increase",
+					"cost": 1,
+					"description": "Your MP maximum increases by 1.",
+					"category": "expanded",
+					"sourceLine": 12654
+				},
+				{
+					"name": "Celestial Clarity",
+					"id": "celestial_clarity",
+					"cost": 1,
+					"description": "You have ADV on Saves against being Blinded or Deafened.",
+					"category": "expanded",
+					"sourceLine": 12656
+				},
+				{
+					"name": "Angelic Insight",
+					"id": "angelic_insight",
+					"cost": 1,
+					"description": "Once per Long Rest you can grant yourself ADV on an Insight Check to see if someone is lying.",
+					"category": "expanded",
+					"sourceLine": 12658
+				},
+				{
+					"name": "Gift of the Angels",
+					"id": "gift_of_the_angels",
+					"cost": 2,
+					"description": "Once per Combat you can spend 1 AP and 1 MP and touch a creature to heal them over time. The creature recovers 1 HP at the start of each of their turns for 1 minute (5 Rounds).",
+					"category": "expanded",
+					"sourceLine": 12660
+				},
+				{
+					"name": "Blinding Light",
+					"id": "blinding_light",
+					"cost": 1,
+					"description": "Once per Combat, you can spend 1 AP to choose a creature within 5 Spaces and make a Spell Check contested by its Physical Save. Success: The target is Blinded until the end of your next turn.",
+					"category": "expanded",
+					"sourceLine": 12662
+				},
+				{
+					"name": "Glide Speed",
+					"id": "glide_speed",
+					"cost": 2,
+					"description": "You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren't Incapacitated, you gain the following benefits while in the air: Controlled Falling: You suffer no damage from Controlled Falling. Altitude Drop: If you end your turn midair, you Controlled Fall 4 Spaces. Glide Speed: You can use your movement to glide horizontally.",
+					"category": "expanded",
+					"sourceLine": 12664
+				},
+				{
+					"name": "Pacifist",
+					"id": "pacifist",
+					"cost": -1,
+					"description": "Your divine call is to put others before yourself and resist doing harm. You suffer a -1 penalty to all Checks and Saves made during the first round of Combat.",
+					"category": "expanded",
+					"sourceLine": 12670
+				},
+				{
+					"name": "Umbral Weakness",
+					"id": "umbral_weakness",
+					"cost": -1,
+					"description": "You have Umbral Vulnerability (1).",
+					"category": "expanded",
+					"sourceLine": 12672
+				}
+			],
+			"provenance": { "startLine": 12630, "endLine": 12674 }
+		},
+		{
+			"id": "fiendborn",
+			"name": "Fiendborn",
+			"traitCount": 15,
+			"traitCounts": { "default": 4, "expanded": 10, "origin": 0, "variant": 1 },
+			"traits": [
+				{
+					"name": "Redeemed",
+					"id": "redeemed",
+					"cost": 0,
+					"description": "You can now spend your Ancestry Points on Angelborn Traits.",
+					"category": "variant",
+					"sourceLine": 12687
+				},
+				{
+					"name": "Fiendish Resistance",
+					"id": "fiendish_resistance",
+					"cost": 2,
+					"description": "You gain Resistance (Half) to your Fiendish damage type.",
+					"category": "default",
+					"sourceLine": 12693
+				},
+				{
+					"name": "Fiendish Magic",
+					"id": "fiendish_magic",
+					"cost": 2,
+					"description": "You learn 1 Spell of your choice from the Arcane Spell List from the Elemental or Enchantment Spell Schools. If the Spell deals damage, it must be the same damage type as your Fiendish damage. Once per Long Rest, you can cast the chosen Spell spending 1 less MP than normal (minimum of 0 MP). The Spell's total MP cost (before all reductions) still can't exceed your Mana Spend Limit.",
+					"category": "default",
+					"sourceLine": 12695
+				},
+				{
+					"name": "Darkvision",
+					"id": "darkvision",
+					"cost": 1,
+					"description": "You have a Darkvision of 10 Spaces.",
+					"category": "default",
+					"sourceLine": 12697
+				},
+				{
+					"name": "Light's Bane",
+					"id": "lights_bane",
+					"cost": 0,
+					"description": "You can spend 1 AP to snuff out a mundane light source within 5 Spaces of you.",
+					"category": "default",
+					"sourceLine": 12698
+				},
+				{
+					"name": "Mana Increase",
+					"id": "mana_increase",
+					"cost": 1,
+					"description": "Your MP maximum increases by 1.",
+					"category": "expanded",
+					"sourceLine": 12702
+				},
+				{
+					"name": "Silver-Tongued",
+					"id": "silver_tongued",
+					"cost": 1,
+					"description": "Once per Long Rest you can grant yourself ADV on an Influence Check when trying to deceive someone.",
+					"category": "expanded",
+					"sourceLine": 12703
+				},
+				{
+					"name": "Fiendish Aura",
+					"id": "fiendish_aura",
+					"cost": 1,
+					"description": "You learn the Sorcery Cantrip, but you must choose the type of energy that's the same as your Fiendish Origin.",
+					"category": "expanded",
+					"sourceLine": 12704
+				},
+				{
+					"name": "Superior Darkvision",
+					"id": "superior_darkvision",
+					"cost": 1,
+					"requires": "Darkvision",
+					"description": "Your Darkvision increases to 20 Spaces.",
+					"category": "expanded",
+					"sourceLine": 12705
+				},
+				{
+					"name": "Infernal Bravery",
+					"id": "infernal_bravery",
+					"cost": 1,
+					"description": "You have ADV on Saves against being Intimidated.",
+					"category": "expanded",
+					"sourceLine": 12706
+				},
+				{
+					"name": "Intimidator",
+					"id": "intimidator",
+					"cost": 1,
+					"description": "Once per Combat you can take the Intimidate Action as a Minor Action.",
+					"category": "expanded",
+					"sourceLine": 12707
+				},
+				{
+					"name": "Charming Gaze",
+					"id": "charming_gaze",
+					"cost": 1,
+					"description": "You can spend 1 AP to gaze upon a creature you can see within 10 Spaces that can also see you. Make a Spell Check contested by the target's Repeated Charisma Save. Success: The creature becomes Charmed by you for 1 minute. You can use this ability once per Long Rest, and when you roll for Initiative, or meet some other unique criteria at the GM's discretion, this ability recharges.",
+					"category": "expanded",
+					"sourceLine": 12709
+				},
+				{
+					"name": "Glide Speed",
+					"id": "glide_speed",
+					"cost": 2,
+					"description": "You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren't Incapacitated, you gain the following benefits while in the air: Controlled Falling: You suffer no damage from Controlled Falling. Altitude Drop: If you end your turn midair, you Controlled Fall 4 Spaces. Glide Speed: You can use your movement to glide horizontally.",
+					"category": "expanded",
+					"sourceLine": 12711
+				},
+				{
+					"name": "Radiant Weakness",
+					"id": "radiant_weakness",
+					"cost": -1,
+					"description": "You have Radiant Vulnerability (1).",
+					"category": "expanded",
+					"sourceLine": 12715
+				},
+				{
+					"name": "Divine Dampening",
+					"id": "divine_dampening",
+					"cost": -1,
+					"description": "You recover 1 less HP when healed from divine sources.",
+					"category": "expanded",
+					"sourceLine": 12716
+				}
+			],
+			"provenance": { "startLine": 12675, "endLine": 12718 }
+		},
+		{
+			"id": "beastborn",
+			"name": "Beastborn",
+			"traitCount": 52,
+			"traitCounts": { "default": 0, "expanded": 51, "origin": 1, "variant": 0 },
+			"traits": [
+				{
+					"name": "Beastkind",
+					"id": "beastkind",
+					"cost": 0,
+					"description": "You can understand and speak to (in a limited capacity) the species of Beast your Beastborn is modeled after. You can understand the meaning of their noises and behaviors, and they understand the meanings of simple words, concepts, or states of emotion. Below is a list of Beast Traits. You can only choose a Beast Trait once unless it says otherwise.",
+					"category": "origin",
+					"sourceLine": 12729
+				},
+				{
+					"name": "Darkvision",
+					"id": "darkvision",
+					"cost": 1,
+					"description": "You have Darkvision 10 Spaces.",
+					"category": "expanded",
+					"sourceLine": 12739
+				},
+				{
+					"name": "Echolocation",
+					"id": "echolocation",
+					"cost": 1,
+					"description": "You can spend 1 AP to roar, scream, or screech to gain Blindsight in a 10 Spaces radius that lasts until the start of your next turn. The sound can be heard from up to 100 Spaces away. You gain no benefit from this Trait in an area of Silence.",
+					"category": "expanded",
+					"sourceLine": 12741
+				},
+				{
+					"name": "Keen Sense",
+					"id": "keen_sense",
+					"cost": 1,
+					"description": "Choose 1 of the following senses: hearing, sight, or smell. You make Awareness Checks with ADV using the chosen sense. You can choose this trait multiple times, choosing a different sense each time.",
+					"category": "expanded",
+					"sourceLine": 12743
+				},
+				{
+					"name": "Sunlight Sensitivity",
+					"id": "sunlight_sensitivity",
+					"cost": -2,
+					"description": "While you or your target is in sunlight, you have DisADV on Attacks and Awareness Checks that rely on sight.",
+					"category": "expanded",
+					"sourceLine": 12745
+				},
+				{
+					"name": "Quick Reactions",
+					"id": "quick_reactions",
+					"cost": 1,
+					"description": "While you aren't wearing Armor, you gain +1 PD.",
+					"category": "expanded",
+					"sourceLine": 12749
+				},
+				{
+					"name": "Climb Speed",
+					"id": "climb_speed",
+					"cost": 1,
+					"description": "You gain a Climb Speed equal to your Ground Speed.",
+					"category": "expanded",
+					"sourceLine": 12751
+				},
+				{
+					"name": "Spider Climb",
+					"id": "spider_climb",
+					"cost": 1,
+					"description": "(requires Climb Speed) You can walk without falling on the ceiling and vertical surfaces normally without needing to Climb.",
+					"category": "expanded",
+					"sourceLine": 12753
+				},
+				{
+					"name": "Web Walk",
+					"id": "web_walk",
+					"cost": 1,
+					"description": "You can walk along and through webs unimpeded. Additionally, you know the location of any creature that's in contact with the same web.",
+					"category": "expanded",
+					"sourceLine": 12755
+				},
+				{
+					"name": "Water Breathing",
+					"id": "water_breathing",
+					"cost": 1,
+					"description": "You can breathe underwater.",
+					"category": "expanded",
+					"sourceLine": 12757
+				},
+				{
+					"name": "Swim Speed",
+					"id": "swim_speed",
+					"cost": 1,
+					"description": "You gain a Swim Speed equal to your Ground Speed. Additionally, your Breath Duration increases by 3.",
+					"category": "expanded",
+					"sourceLine": 12759
+				},
+				{
+					"name": "Speed Increase",
+					"id": "speed_increase",
+					"cost": 2,
+					"description": "Your Speed increases by 1 Space.",
+					"category": "expanded",
+					"sourceLine": 12761
+				},
+				{
+					"name": "Sprint",
+					"id": "sprint",
+					"cost": 2,
+					"description": "You can use your Minor Action to take the Move Action. Once you use this Trait, you can't use it again until you take a turn without taking the Move Action.",
+					"category": "expanded",
+					"sourceLine": 12763
+				},
+				{
+					"name": "Charge",
+					"id": "charge",
+					"cost": 2,
+					"description": "If you move at least 2 Spaces in a straight line before making a Melee Attack, the damage of the Attack increases by 1.",
+					"category": "expanded",
+					"sourceLine": 12765
+				},
+				{
+					"name": "Burrow Speed",
+					"id": "burrow_speed",
+					"cost": 2,
+					"description": "You gain a Burrow Speed equal to half your Movement Speed.",
+					"category": "expanded",
+					"sourceLine": 12767
+				},
+				{
+					"name": "Jumper",
+					"id": "jumper",
+					"cost": 1,
+					"description": "Your Jump Distance increases by 2, and you can take the Jump Action as a Minor Action.",
+					"category": "expanded",
+					"sourceLine": 12771
+				},
+				{
+					"name": "Strong Jumper",
+					"id": "strong_jumper",
+					"cost": 1,
+					"description": "You no longer need to move 2 Spaces before performing a Running Jump, and you take 0 damage from Controlled Falling 5 Spaces or less.",
+					"category": "expanded",
+					"sourceLine": 12773
+				},
+				{
+					"name": "Glide Speed",
+					"id": "glide_speed",
+					"cost": 2,
+					"description": "You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren't Incapacitated, you gain the following benefits while in the air: Controlled Falling: You suffer no damage from Controlled Falling. Altitude Drop: If you end your turn midair, you Controlled Fall 4 Spaces. Glide Speed: You can use your movement to glide horizontally.",
+					"category": "expanded",
+					"sourceLine": 12777
+				},
+				{
+					"name": "Limited Flight",
+					"id": "limited_flight",
+					"cost": 2,
+					"description": "(requires Glide Speed) You have a set of wings that grant you limited flight. Provided you aren't Incapacitated, you gain the following benefits: Vertical Ascent: You can spend 2 Spaces of movement to ascend 1 Space vertically. Hover: When you end your turn in the air, you maintain your altitude.",
+					"category": "expanded",
+					"sourceLine": 12783
+				},
+				{
+					"name": "Full Flight",
+					"id": "full_flight",
+					"cost": 2,
+					"description": "(requires Limited Flight) You have a Fly Speed equal to your Ground Speed.",
+					"category": "expanded",
+					"sourceLine": 12788
+				},
+				{
+					"name": "Flyby",
+					"id": "flyby",
+					"cost": 1,
+					"description": "(requires Limited Flight) You don't provoke Opportunity Attacks when you Fly out of an enemy's reach.",
+					"category": "expanded",
+					"sourceLine": 12790
+				},
+				{
+					"name": "Stealth Feathers",
+					"id": "stealth_feathers",
+					"cost": 2,
+					"description": "(requires Limited Flight) You have ADV on Stealth Checks while Flying.",
+					"category": "expanded",
+					"sourceLine": 12792
+				},
+				{
+					"name": "Winged Arms",
+					"id": "winged_arms",
+					"cost": -1,
+					"description": "(requires any Flying Beast Trait) Your arms are also your wings. Anytime you use a Glide Speed or Flying Speed, you can't hold anything in your hands.",
+					"category": "expanded",
+					"sourceLine": 12794
+				},
+				{
+					"name": "Tough",
+					"id": "tough",
+					"cost": 1,
+					"description": "Your HP maximum increases by 1.",
+					"category": "expanded",
+					"sourceLine": 12798
+				},
+				{
+					"name": "Thick-Skinned",
+					"id": "thick_skinned",
+					"cost": 1,
+					"description": "While you aren't wearing Armor, you gain +1 AD.",
+					"category": "expanded",
+					"sourceLine": 12800
+				},
+				{
+					"name": "Hazardous Hide",
+					"id": "hazardous_hide",
+					"cost": 1,
+					"description": "You have spikes, retractable barbs, poisonous skin, or some other form of defense mechanism to keep creatures from touching you. Choose 1 of the following damage types: Corrosion, Piercing, or Poison. While you're physically Grappled, your Grappler takes 1 damage of the chosen type at the start of each of its turns. Creatures that start their turn Grappled by you also take this damage.",
+					"category": "expanded",
+					"sourceLine": 12802
+				},
+				{
+					"name": "Powerful Build",
+					"id": "powerful_build",
+					"cost": 2,
+					"description": "You increase by 1 Size, but you occupy the Space of a creature 1 Size smaller.",
+					"category": "expanded",
+					"sourceLine": 12804
+				},
+				{
+					"name": "Long-Limbed",
+					"id": "long_limbed",
+					"cost": 3,
+					"description": "When you make a Melee Martial Attack, your reach is 1 Space greater than normal.",
+					"category": "expanded",
+					"sourceLine": 12806
+				},
+				{
+					"name": "Additional Limb",
+					"id": "additional_limb",
+					"cost": 1,
+					"description": "You have an additional limb (such as an extra arm or prehensile tail or trunk) that has a range of 1 Space. You can use it to lift, hold, or drop objects, and to push, pull, or grapple creatures. It can't wield Weapons, Shields, or Spell Focuses, and you can't use it to perform the Somatic Components of Spells. You can choose this Trait multiple times.",
+					"category": "expanded",
+					"sourceLine": 12808
+				},
+				{
+					"name": "Capable Limb",
+					"id": "capable_limb",
+					"cost": 2,
+					"description": "(requires Additional Limb) You can now use your limb to wield Weapons, Shields, or Spell Focuses, and perform the Somatic Components of Spells. You can choose this Trait multiple times, but only once per Additional Limb.",
+					"category": "expanded",
+					"sourceLine": 12810
+				},
+				{
+					"name": "Natural Armor",
+					"id": "natural_armor",
+					"cost": 2,
+					"description": "(requires Thick-Skinned) While not wearing Armor, you gain PDR.",
+					"category": "expanded",
+					"sourceLine": 12812
+				},
+				{
+					"name": "Hard Shell",
+					"id": "hard_shell",
+					"cost": 1,
+					"description": "(requires Thick-Skinned) You have a large shell around your body for protection. Your AD increases by 1 (while you're not wearing Armor), your Movement Speed decreases by 1, and you're immune to being Flanked.",
+					"category": "expanded",
+					"sourceLine": 12814
+				},
+				{
+					"name": "Shell Retreat",
+					"id": "shell_retreat",
+					"cost": 1,
+					"description": "(requires Hard Shell) Your body has a shell that you can retreat into. You can spend 1 AP to retreat into or come back out of your shell. You gain +5 PD and AD, PDR, EDR and ADV on Might Saves. While in your shell, you're Prone, you can't move, you have DisADV on Agility Saves, and you can't take Reactions.",
+					"category": "expanded",
+					"sourceLine": 12816
+				},
+				{
+					"name": "Camouflage",
+					"id": "camouflage",
+					"cost": 2,
+					"description": "You can change the color and pattern of your body. You have ADV on Stealth Checks while motionless.",
+					"category": "expanded",
+					"sourceLine": 12818
+				},
+				{
+					"name": "Prowler",
+					"id": "prowler",
+					"cost": 1,
+					"description": "You have ADV on Stealth Checks while in Darkness.",
+					"category": "expanded",
+					"sourceLine": 12820
+				},
+				{
+					"name": "Cold Resistance",
+					"id": "cold_resistance",
+					"cost": 2,
+					"description": "You have Cold Resistance (Half) and Resistance to Exhaustion from cold temperatures.",
+					"category": "expanded",
+					"sourceLine": 12822
+				},
+				{
+					"name": "Fire Resistance",
+					"id": "fire_resistance",
+					"cost": 2,
+					"description": "You have Fire Resistance (Half) and Resistance to Exhaustion from hot temperatures.",
+					"category": "expanded",
+					"sourceLine": 12824
+				},
+				{
+					"name": "Short-Legged",
+					"id": "short_legged",
+					"cost": -1,
+					"description": "Your Speed decreases by 1 Space.",
+					"category": "expanded",
+					"sourceLine": 12826
+				},
+				{
+					"name": "Small-Sized",
+					"id": "small_sized",
+					"cost": -1,
+					"description": "Your Size is considered Small.",
+					"category": "expanded",
+					"sourceLine": 12827
+				},
+				{
+					"name": "Reckless",
+					"id": "reckless",
+					"cost": -1,
+					"description": "Your PD decreases by 1.",
+					"category": "expanded",
+					"sourceLine": 12828
+				},
+				{
+					"name": "Natural Weapon",
+					"id": "natural_weapon",
+					"cost": 1,
+					"description": "You have up to 2 Natural Weapons (claws, horns, fangs, tail, etc.) which you can use to make Unarmed Strikes that deal 1 Bludgeoning, Piercing, or Slashing damage (your choice upon gaining this Trait). You can perform Martial Enhancements with your Natural Weapons. The following Traits require the Natural Weapon Trait:",
+					"category": "expanded",
+					"sourceLine": 12832
+				},
+				{
+					"name": "Extended Natural Weapon",
+					"id": "extended_natural_weapon",
+					"cost": 2,
+					"description": "Your Natural Weapon now has the Reach Property.",
+					"category": "expanded",
+					"sourceLine": 12836
+				},
+				{
+					"name": "Natural Projectile",
+					"id": "natural_projectile",
+					"cost": 1,
+					"description": "You can use your Natural Weapon to make a Ranged Martial Attack with a Range of 10 Spaces. The Natural Weapon might produce a spine, barb, fluid, or other harmful projectile (your choice).",
+					"category": "expanded",
+					"sourceLine": 12837
+				},
+				{
+					"name": "Natural Weapon Style",
+					"id": "natural_weapon_style",
+					"cost": 1,
+					"description": "You can choose 1 Weapon Style that fits your desired Natural Weapon. You can use the chosen Style's Weapon Enhancement when attacking with your Natural Weapon.",
+					"category": "expanded",
+					"sourceLine": 12838
+				},
+				{
+					"name": "Rend",
+					"id": "rend",
+					"cost": 1,
+					"description": "You can spend 1 AP when making an Attack Check with your Natural Weapon to force the target to make a Physical Save. Failure: Target begins Bleeding.",
+					"category": "expanded",
+					"sourceLine": 12839
+				},
+				{
+					"name": "Retractable Natural Weapon",
+					"id": "retractable_natural_weapon",
+					"cost": 1,
+					"description": "Your Natural Weapon is able to be concealed or retracted and gains the Concealable Property (gain ADV on the first Attack Check you make in Combat).",
+					"category": "expanded",
+					"sourceLine": 12840
+				},
+				{
+					"name": "Venomous Natural Weapon",
+					"id": "venomous_natural_weapon",
+					"cost": 1,
+					"description": "When you Hit a creature with your Natural Weapon, they make a Physical Save against your Save DC. Failure: The target becomes Impaired until the start of your next turn.",
+					"category": "expanded",
+					"sourceLine": 12841
+				},
+				{
+					"name": "Fast Reflexes",
+					"id": "fast_reflexes",
+					"cost": 2,
+					"description": "You gain ADV on Initiative Checks and on the first Attack Check you make in Combat.",
+					"category": "expanded",
+					"sourceLine": 12845
+				},
+				{
+					"name": "Mimicry",
+					"id": "mimicry",
+					"cost": 1,
+					"description": "You can mimic simple sounds that you've heard (such as a baby's crying, the creak of a door, or single words) and repeat short 3 word phrases that sound identical to what you heard. A creature can make an Insight Check contested by your Trickery Check to determine if this sound is real.",
+					"category": "expanded",
+					"sourceLine": 12847
+				},
+				{
+					"name": "Intimidating Shout",
+					"id": "intimidating_shout",
+					"cost": 2,
+					"description": "Once per Combat, you can spend 1 AP to let out an Intimidating Shout. All creatures within 5 Spaces that can hear you must make a Charisma Save contested by your Attack Check. Failure: A target is Hindered on the next Attack Check or Spell Attack it makes before the start of your next turn.",
+					"category": "expanded",
+					"sourceLine": 12849
+				},
+				{
+					"name": "Toxic Fortitude",
+					"id": "toxic_fortitude",
+					"cost": 2,
+					"description": "You have Poison Resistance (Half) and ADV on Saves against being Poisoned.",
+					"category": "expanded",
+					"sourceLine": 12851
+				},
+				{
+					"name": "Shoot Webs",
+					"id": "shoot_webs",
+					"cost": 2,
+					"description": "You can spend 1 AP to shoot web at a target within 5 Spaces. Make an Attack Check contested by the target's Physical Save. Success: The target is Restrained by webbing and can spend 1 AP on their turn to attempt to escape (Acrobatics or Athletics Check vs your Save DC). The webbing can also be attacked and destroyed (PD 5, AD 10, 2 HP; Immunity to Bludgeoning, Poison, and Psychic damage).",
+					"category": "expanded",
+					"sourceLine": 12853
+				}
+			],
+			"provenance": { "startLine": 12719, "endLine": 12856 }
+		}
+	]
+}

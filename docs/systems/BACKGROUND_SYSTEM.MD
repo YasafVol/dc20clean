@@ -47,6 +47,8 @@ flowchart LR
 | Rule Data (canonical) | `src/lib/rulesdata/skills.ts`                           | Declarative `skillsData` array                                                          |
 |                       | `src/lib/rulesdata/trades.ts`                           | Declarative `tradesData` array (see also `docs/archive/TRADES_MULTI_ATTRIBUTE_SPEC.md`) |
 |                       | `src/lib/rulesdata/languages.ts`                        | Declarative `languagesData` array                                                       |
+|                       | `scripts/background/dc20-0105-background.mjs`           | Source parser/audit generator for the v0.10.5 background chapter                        |
+|                       | `docs/migration/background-v0105-report.json`           | Generated source audit report for skills, trades, languages, budgets, and conversions   |
 | Type Contracts        | `src/lib/rulesdata/schemas/types.ts`                    | `ISkillData`, `ITradeData`, `ILanguageData`                                             |
 | Runtime Engine        | `src/lib/services/enhancedCharacterCalculator.ts`       | Computes base budgets, applies trait bonuses, conversions, and usage                    |
 | State Layer           | `src/lib/stores/characterContext.tsx`                   | Stores background point allocations and conversion counts                               |
@@ -68,6 +70,10 @@ Background allocations in store:
 - `tradesData: Record<string, number>` – mastery levels per trade
 - `languagesData: Record<string, { fluency: 'limited' | 'fluent' }>` – per-language fluency
 - Conversions: `{ skillToTrade, tradeToSkill, tradeToLanguage }` numbers on the store
+
+Source-audit note: v0.10.5 explicitly supports `skillToTrade` and `tradeToLanguage`.
+The current app also supports `tradeToSkill`; that is an open audit finding and should be
+removed or migrated only with an explicit compatibility decision.
 
 DC20 0.10.5 language catalog notes:
 
@@ -188,5 +194,24 @@ Validation also exposes a `masteryLimits` block with:
 
 ---
 
-> Last updated: 2026-06-13
+## 8 DC20 v0.10.5 Audit Path
+
+- Rules version: `dc20-0.10.5`
+- Source artifact: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`
+- Generated report: `docs/migration/background-v0105-report.json`
+- Generate: `npm run background:generate:0105`
+- Validate report freshness: `npm run background:validate:0105`
+
+Current report coverage:
+
+- 12 skills with source attributes.
+- 28 trades with tools and common attribute associations.
+- 15 selectable languages with family DCs.
+- Background budgets: 5 Skill Points plus Intelligence, 3 Trade Points, Common Fluency plus 2 Language Points.
+- Source conversions: `1 Skill Point -> 2 Trade Points`, `1 Trade Point -> 2 Language Points`.
+
+Open finding:
+
+- The app currently exposes and calculates `tradeToSkill` (`2 Trade Points -> 1 Skill Point`), but the v0.10.5 source says Skill Points can convert to Trade Points “but not the other way around.” Treat this as rules drift until removed or intentionally preserved behind legacy compatibility.
+
 > Maintainer: @DC20Clean-Team

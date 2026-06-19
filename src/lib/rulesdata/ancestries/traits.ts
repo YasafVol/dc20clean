@@ -189,7 +189,7 @@ export const traitsData: Trait[] = [
 	},
 	{
 		id: 'elf_trade_expertise_elf',
-		name: 'Trade Expertise (Elf)',
+		name: 'Trade Expertise',
 		description:
 			'Choose a Trade. Your Mastery Cap and Mastery Level in the chosen Trade both increase by 1. You can only benefit from 1 Feature that increases your Trade Mastery Limit at a time.',
 		cost: 1,
@@ -239,7 +239,7 @@ export const traitsData: Trait[] = [
 	},
 	{
 		id: 'elf_might_decrease',
-		name: 'Might Decrease',
+		name: 'Might Attribute Decrease',
 		description: 'Your Might decreases by 1 (to a minimum of -2).**',
 		cost: -1,
 		isNegative: true,
@@ -358,7 +358,7 @@ export const traitsData: Trait[] = [
 	},
 	{
 		id: 'dwarf_charisma_attribute_decrease',
-		name: 'Charisma Decrease',
+		name: 'Charisma Attribute Decrease',
 		description: 'Your Charisma decreases by 1 (to a minimum of -2).**',
 		cost: -1,
 		isNegative: true,
@@ -515,7 +515,7 @@ export const traitsData: Trait[] = [
 	},
 	{
 		id: 'halfling_intelligence_attribute_decrease',
-		name: 'Intelligence Decrease',
+		name: 'Intelligence Attribute Decrease',
 		description: 'Your Intelligence decreases by 1 (to a minimum of -2).**',
 		cost: -1,
 		isNegative: true,
@@ -810,7 +810,8 @@ export const traitsData: Trait[] = [
 			{
 				type: 'GRANT_ABILITY',
 				target: 'healing_touch',
-				value: 'Once per Combat, 1 AP: Touch heal (DC 10 Spell Check), 2+ HP on success, 1 HP on failure.'
+				value:
+					'Once per Combat, 1 AP: Touch heal (DC 10 Spell Check), 2+ HP on success, 1 HP on failure.'
 			}
 		]
 	},
@@ -944,7 +945,7 @@ export const traitsData: Trait[] = [
 	// Gnome Traits
 	{
 		id: 'gnome_agility_attribute_decrease',
-		name: 'Agility Decrease',
+		name: 'Agility Attribute Decrease',
 		description: 'You decrease your Agility by 1 (to a minimum of -2).**',
 		cost: -1,
 		isNegative: true,
@@ -1397,7 +1398,7 @@ export const traitsData: Trait[] = [
 	},
 	{
 		id: 'giantborn_intelligence_attribute_decrease',
-		name: 'Intelligence Decrease',
+		name: 'Intelligence Attribute Decrease',
 		description: 'You decrease your Intelligence by 1 (to a minimum of -2).**',
 		cost: -1,
 		isNegative: true,
@@ -1595,7 +1596,7 @@ export const traitsData: Trait[] = [
 		id: 'beastborn_natural_armor',
 		name: 'Natural Armor',
 		description: "While you aren't wearing Armor, you gain +1 AD.",
-		cost: 1,
+		cost: 2,
 		effects: [{ type: 'MODIFY_STAT', target: 'ad', value: 1, condition: 'not_wearing_armor' }]
 	},
 	{
@@ -1639,7 +1640,7 @@ export const traitsData: Trait[] = [
 		id: 'beastborn_speed_increase',
 		name: 'Speed Increase',
 		description: 'Your Speed increases by 1 Space.',
-		cost: 1,
+		cost: 2,
 		effects: [{ type: 'MODIFY_STAT', target: 'moveSpeed', value: 1 }]
 	},
 
@@ -1804,17 +1805,17 @@ export const traitsData: Trait[] = [
 		]
 	},
 	{
-		id: 'beastborn_natural_weapon_passive',
-		name: 'Natural Weapon Passive',
+		id: 'beastborn_natural_weapon_style',
+		name: 'Natural Weapon Style',
 		description:
-			"You can choose 1 Weapon Style that fits your desired Natural Weapon. You can benefit from the chosen Weapon Style's passive with your Natural Weapon.",
+			"You can choose 1 Weapon Style that fits your desired Natural Weapon. You can use the chosen Style's Weapon Enhancement when attacking with your Natural Weapon.",
 		cost: 1,
 		prerequisites: ['beastborn_natural_weapon'],
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
-				target: 'weapon_style_passive',
-				value: 'Natural Weapon gains chosen Weapon Style passive.'
+				target: 'natural_weapon_style',
+				value: "Natural Weapon can use the chosen Style's Weapon Enhancement."
 			}
 		]
 	},
@@ -1828,20 +1829,6 @@ export const traitsData: Trait[] = [
 				type: 'GRANT_ABILITY',
 				target: 'powerful_build',
 				value: '+1 Size but occupy smaller space.'
-			}
-		]
-	},
-	{
-		id: 'beastborn_prehensile_appendage',
-		name: 'Prehensile Appendage',
-		description:
-			"You have a prehensile tail or trunk that has a reach of 1 Space and can lift up an amount of pounds equal to your Might times 5 (or half as many kilograms). You can use it to lift, hold, or drop objects, and to push, pull, or grapple creatures. It can't wield Weapons or Shields, you can't use tools with it that require manual precision, and you can't use it in place of Somatic Components for Spells.",
-		cost: 1,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'prehensile_appendage',
-				value: 'Prehensile tail/trunk (1 Space reach, Might×5 lbs capacity).'
 			}
 		]
 	},
@@ -2092,7 +2079,8 @@ export const traitsData: Trait[] = [
 			{
 				type: 'GRANT_ABILITY',
 				target: 'shell_retreat',
-				value: 'Retreat into shell (Minor Action): +2 AD, Speed 0, no hand Actions. Emerge as Minor Action.'
+				value:
+					'Retreat into shell (Minor Action): +2 AD, Speed 0, no hand Actions. Emerge as Minor Action.'
 			}
 		]
 	},
@@ -2100,13 +2088,14 @@ export const traitsData: Trait[] = [
 		id: 'beastborn_shoot_webs',
 		name: 'Shoot Webs',
 		description:
-			'You can spend 1 AP to shoot a web at a creature within 5 Spaces. Make an Attack Check vs the target\'s PD. Hit: The target is Restrained until it uses 1 AP to make an Athletics Check against your Save DC to break free.',
+			"You can spend 1 AP to shoot a web at a creature within 5 Spaces. Make an Attack Check vs the target's PD. Hit: The target is Restrained until it uses 1 AP to make an Athletics Check against your Save DC to break free.",
 		cost: 2,
 		effects: [
 			{
 				type: 'GRANT_ABILITY',
 				target: 'shoot_webs',
-				value: '1 AP: Web attack (5 Spaces, Attack vs PD). Hit: Restrained (Athletics Check to break free).'
+				value:
+					'1 AP: Web attack (5 Spaces, Attack vs PD). Hit: Restrained (Athletics Check to break free).'
 			}
 		]
 	},
@@ -2117,672 +2106,6 @@ export const traitsData: Trait[] = [
 		cost: -1,
 		isNegative: true,
 		effects: [{ type: 'MODIFY_STAT', target: 'moveSpeed', value: -1 }]
-	},
-	// --- Gremlin Traits ---
-	{
-		id: 'gremlin_small_sized',
-		name: 'Small-Sized',
-		description: 'Your Size is considered Small.',
-		cost: -1,
-		isNegative: true,
-		effects: [{ type: 'SET_VALUE', target: 'size', value: 'small' }]
-	},
-	{
-		id: 'gremlin_sneaky',
-		name: 'Sneaky',
-		description: 'You can Hide while only Partially Concealed or behind 1/2 Cover.',
-		cost: 2,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'Sneaky',
-				value: 'You can Hide while only Partially Concealed or behind 1/2 Cover.'
-			}
-		]
-	},
-	{
-		id: 'gremlin_thriller',
-		name: 'Thriller',
-		description:
-			'Once per Round, when a hostile creature within 5 Spaces becomes Intimidated, Frightened, or Terrified, you gain ADV on the next Check or Save you make.',
-		cost: 2,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'Thriller',
-				value:
-					'Once per Round, when a hostile creature within 5 Spaces becomes Intimidated, Frightened, or Terrified, you gain ADV on the next Check or Save you make.'
-			}
-		]
-	},
-	{
-		id: 'gremlin_surprise',
-		name: 'Surprise!',
-		description:
-			"You have ADV on Checks to impose Fear conditions on creatures you're Hidden from.",
-		cost: 1,
-		effects: [
-			{ type: 'GRANT_ADV_ON_CHECK', target: 'Impose_Fear_Conditions_while_Hidden', value: 'ADV' }
-		]
-	},
-	{
-		id: 'gremlin_deft_footwork',
-		name: 'Deft Footwork',
-		description:
-			'You can move through the space of a hostile creature 1 size larger than you as Difficult Terrain.',
-		cost: 1,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'Deft Footwork',
-				value:
-					'You can move through the space of a hostile creature 1 size larger than you as Difficult Terrain.'
-			}
-		]
-	},
-	{
-		id: 'gremlin_halfling_disguise',
-		name: 'Halfling Disguise',
-		description:
-			'You can spend 1 AP to change appearance to look like a Halfling (reverts under stress).',
-		cost: 0,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'Halfling Disguise',
-				value:
-					'You can spend 1 AP to change appearance to look like a Halfling (reverts under stress).'
-			}
-		]
-	},
-	{
-		id: 'gremlin_bravery',
-		name: 'Bravery',
-		description: 'ADV on Saves against Fear conditions.',
-		cost: 2,
-		effects: [
-			{ type: 'GRANT_ADV_ON_SAVE', target: 'Intimidated', value: 'ADV' },
-			{ type: 'GRANT_ADV_ON_SAVE', target: 'Frightened', value: 'ADV' },
-			{ type: 'GRANT_ADV_ON_SAVE', target: 'Terrified', value: 'ADV' }
-		]
-	},
-	{
-		id: 'gremlin_give_chase',
-		name: 'Give Chase',
-		description: 'When near a fearful creature, Speed +1.',
-		cost: 1,
-		effects: [
-			{
-				type: 'MODIFY_STAT',
-				target: 'moveSpeed',
-				value: 1,
-				condition: 'start_turn_near_fearful_creature'
-			}
-		]
-	},
-	{
-		id: 'gremlin_quick_reactions',
-		name: 'Quick Reactions',
-		description: 'While not wearing Armor, +1 PD.',
-		cost: 1,
-		effects: [{ type: 'MODIFY_STAT', target: 'pd', value: 1, condition: 'not_wearing_armor' }]
-	},
-	{
-		id: 'gremlin_fearsome',
-		name: 'Fearsome',
-		description: 'Enhanced Intimidate Action.',
-		cost: 2,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Fearsome', value: 'Enhanced Intimidate Action.' }]
-	},
-	{
-		id: 'gremlin_natural_weapon',
-		name: 'Natural Weapon',
-		description: 'Natural Weapons for Unarmed Strikes.',
-		cost: 1,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'Natural Weapon',
-				value: 'Natural Weapons for Unarmed Strikes.'
-			}
-		]
-	},
-	{
-		id: 'gremlin_climb_speed',
-		name: 'Climb Speed',
-		description: 'Climb Speed equal to Movement.',
-		cost: 1,
-		effects: [{ type: 'GRANT_MOVEMENT', target: 'climb', value: 'equal_to_speed' }]
-	},
-	{
-		id: 'gremlin_critter_knowledge',
-		name: 'Critter Knowledge',
-		description: 'ADV on Nature/Survival/Animal Checks about small creatures.',
-		cost: 1,
-		effects: [
-			{
-				type: 'GRANT_ADV_ON_CHECK',
-				target: 'Nature_Survival_Animal_involving_Small_Creatures',
-				value: 'ADV'
-			}
-		]
-	},
-	// --- Goblin Traits ---
-	{
-		id: 'goblin_small_sized',
-		name: 'Small-Sized',
-		description: 'Your Size is considered Small.',
-		cost: -1,
-		isNegative: true,
-		effects: [{ type: 'SET_VALUE', target: 'size', value: 'small' }]
-	},
-	{
-		id: 'goblin_escape_artist',
-		name: 'Escape Artist',
-		description:
-			'You have ADV on Checks and Saves to avoid or escape being Grappled or Restrained.',
-		cost: 2,
-		effects: [
-			{ type: 'GRANT_ADV_ON_CHECK', target: 'Avoid_or_Escape_Grapple_Restrained', value: 'ADV' },
-			{ type: 'GRANT_ADV_ON_SAVE', target: 'Avoid_or_Escape_Grapple_Restrained', value: 'ADV' }
-		]
-	},
-	{
-		id: 'goblin_aggressive',
-		name: 'Aggressive',
-		description:
-			'Once per Round, you can gain ADV on a Melee Attack. You are Exposed on the next Attack against you until the start of your next turn.',
-		cost: 2,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'Aggressive',
-				value:
-					'Once per Round, you can gain ADV on a Melee Attack. You are Exposed on the next Attack against you until the start of your next turn.'
-			}
-		]
-	},
-	{
-		id: 'goblin_eager_for_combat',
-		name: 'Eager for Combat',
-		description: 'You have ADV on Initiative Checks.',
-		cost: 1,
-		effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'Initiative', value: 'ADV' }]
-	},
-	{
-		id: 'goblin_small_fury',
-		name: 'Small Fury',
-		description: 'You deal +1 damage to Large or larger creatures on a Heavy or Critical Hit.',
-		cost: 1,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'Small Fury',
-				value: 'You deal +1 damage to Large or larger creatures on a Heavy or Critical Hit.'
-			}
-		]
-	},
-	{
-		id: 'goblin_natural_trapper',
-		name: 'Natural Trapper',
-		description: 'You have ADV on Checks to gather materials for Traps and to build them.',
-		cost: 0,
-		effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'Gather_and_Build_Traps', value: 'ADV' }]
-	},
-	{
-		id: 'goblin_hit_and_run',
-		name: 'Hit and Run',
-		description:
-			'When you Hit a creature with a Melee Attack, you can spend 1 AP to immediately move up to your Speed without provoking Opportunity Attacks from the target.',
-		cost: 2,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'Hit and Run',
-				value:
-					'When you Hit a creature with a Melee Attack, you can spend 1 AP to immediately move up to your Speed without provoking Opportunity Attacks from the target.'
-			}
-		]
-	},
-	{
-		id: 'goblin_pack_tactics',
-		name: 'Pack Tactics',
-		description: 'You gain an additional +2 bonus to Attacks against creatures you are Flanking.',
-		cost: 2,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'Pack Tactics',
-				value: 'You gain an additional +2 bonus to Attacks against creatures you are Flanking.'
-			}
-		]
-	},
-	{
-		id: 'goblin_trapper',
-		name: 'Trapper',
-		description:
-			'You have ADV on Investigation Checks to spot Traps and Trickery Checks to Hide Traps.',
-		cost: 1,
-		effects: [
-			{ type: 'GRANT_ADV_ON_CHECK', target: 'Investigation_to_spot_Traps', value: 'ADV' },
-			{ type: 'GRANT_ADV_ON_CHECK', target: 'Trickery_to_Hide_Traps', value: 'ADV' }
-		]
-	},
-	{
-		id: 'goblin_trade_expertise',
-		name: 'Trade Expertise',
-		description:
-			'Choose a Crafting or Subterfuge Trade. Your Mastery Cap and Mastery Level in the chosen Trade both increase by 1. You can only benefit from 1 Feature that increases your Trade Mastery Limit at a time.',
-		cost: 1,
-		// Note: Restricted to Crafting or Subterfuge trades
-		effects: [
-			{
-				type: 'INCREASE_TRADE_MASTERY_CAP',
-				count: 1,
-				value: 1
-			},
-			{
-				type: 'MODIFY_STAT',
-				target: 'tradePoints',
-				value: 1
-			}
-		]
-	},
-	{
-		id: 'goblin_mischievous_hands',
-		name: 'Mischievous Hands',
-		description: 'You have ADV on Trickery checks made to conceal or steal objects.',
-		cost: 1,
-		effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'Trickery_Conceal_or_Steal', value: 'ADV' }]
-	},
-	{
-		id: 'goblin_sneaky',
-		name: 'Sneaky',
-		description: 'You can Hide while only Partially Concealed or behind 1/2 Cover.',
-		cost: 2,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'Sneaky',
-				value: 'You can Hide while only Partially Concealed or behind 1/2 Cover.'
-			}
-		]
-	},
-	{
-		id: 'goblin_reckless',
-		name: 'Reckless',
-		description: 'Your PD decreases by 1.',
-		cost: -1,
-		isNegative: true,
-		effects: [{ type: 'MODIFY_STAT', target: 'pd', value: -1 }]
-	},
-	// --- Terraborn Traits ---
-	{
-		id: 'terraborn_burrow_speed',
-		name: 'Burrow Speed',
-		description: 'You gain a Burrow Speed equal to half your Movement Speed.',
-		cost: 2,
-		effects: [{ type: 'GRANT_MOVEMENT', target: 'burrow', value: 'half_speed' }]
-	},
-	{
-		id: 'terraborn_resilient_form',
-		name: 'Resilient Form',
-		description:
-			'You have ADV on Saves against being Impaired, Petrified, and transformed against your will.',
-		cost: 2,
-		effects: [
-			{ type: 'GRANT_ADV_ON_SAVE', target: 'Impaired', value: 'ADV' },
-			{ type: 'GRANT_ADV_ON_SAVE', target: 'Petrified', value: 'ADV' },
-			{ type: 'GRANT_ADV_ON_SAVE', target: 'Involuntary_Transformation', value: 'ADV' }
-		]
-	},
-	{
-		id: 'terraborn_tremorsense',
-		name: 'Tremorsense',
-		description: 'You have Tremorsense 3 Spaces.',
-		cost: 1,
-		effects: [{ type: 'GRANT_SENSE', target: 'tremorsense', value: 3 }]
-	},
-	{
-		id: 'terraborn_mold_earth',
-		name: 'Mold Earth',
-		description:
-			"You can use your hands as Sculptor's Tools or Mason's Tools to shape soil, sand, stone, or rock. When you do, you can use your Prime Modifier instead of the normal Attribute on any Checks you make.",
-		cost: 0,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'Mold Earth',
-				value:
-					"You can use your hands as Sculptor's Tools or Mason's Tools to shape soil, sand, stone, or rock. When you do, you can use your Prime Modifier instead of the normal Attribute on any Checks you make."
-			}
-		]
-	},
-	{
-		id: 'terraborn_stone_blood',
-		name: 'Stone Blood',
-		description:
-			'You have ADV on Saves against Bleeding. Additionally, you can spend 1 AP to end the Bleeding Condition on yourself.',
-		cost: 1,
-		effects: [
-			{ type: 'GRANT_ADV_ON_SAVE', target: 'Bleeding', value: 'ADV' },
-			{
-				type: 'GRANT_ABILITY',
-				target: 'End Bleeding (1 AP)',
-				value: 'You can spend 1 AP to end the Bleeding Condition on yourself.'
-			}
-		]
-	},
-	{
-		id: 'terraborn_tunnel_explorer',
-		name: 'Tunnel Explorer',
-		description: 'You have ADV on Stealth and Survival Checks while in caves or mines.',
-		cost: 1,
-		effects: [
-			{
-				type: 'GRANT_ADV_ON_CHECK',
-				target: 'Stealth_Survival_in_Caves_Mines',
-				value: 'ADV'
-			}
-		]
-	},
-	{
-		id: 'terraborn_earth_walker',
-		name: 'Earth Walker',
-		description: "You're not affected by Difficult Terrain created by rock, dirt, mud, or sand.",
-		cost: 1,
-		effects: [
-			{
-				type: 'GRANT_ABILITY',
-				target: 'Earth Walker',
-				value: "You're not affected by Difficult Terrain created by rock, dirt, mud, or sand."
-			}
-		]
-	},
-	{
-		id: 'terraborn_superior_tremorsense',
-		name: 'Superior Tremorsense',
-		description: 'Your Tremorsense increases by 2 Spaces.',
-		cost: 1,
-		prerequisites: ['terraborn_tremorsense'],
-		effects: [{ type: 'MODIFY_STAT', target: 'tremorsense', value: 2 }]
-	},
-	{
-		id: 'terraborn_tough',
-		name: 'Tough',
-		description: 'Your HP maximum increases by 1.',
-		cost: 1,
-		effects: [{ type: 'MODIFY_STAT', target: 'hpMax', value: 1 }]
-	},
-	{
-		id: 'terraborn_toxic_fortitude',
-		name: 'Toxic Fortitude',
-		description: 'You have Poison Resistance (Half) and ADV on Saves against being Poisoned.',
-		cost: 2,
-		effects: [
-			{ type: 'GRANT_RESISTANCE', target: 'Poison', value: 'half' },
-			{ type: 'GRANT_ADV_ON_SAVE', target: 'Poisoned', value: 'ADV' }
-		]
-	},
-	{
-		id: 'terraborn_insulated_skin',
-		name: 'Insulated Skin',
-		description: 'You gain EDR.',
-		cost: 2,
-		effects: [{ type: 'MODIFY_STAT', target: 'edr', value: 1 }]
-	},
-	{
-		id: 'terraborn_natural_armor',
-		name: 'Natural Armor',
-		description: 'You gain PDR.',
-		cost: 2,
-		effects: [{ type: 'MODIFY_STAT', target: 'pdr', value: 1 }]
-	},
-	{
-		id: 'terraborn_thick_skinned',
-		name: 'Thick-Skinned',
-		description: 'You gain +1 AD.',
-		cost: 1,
-		effects: [{ type: 'MODIFY_STAT', target: 'ad', value: 1 }]
-	},
-	{
-		id: 'terraborn_bludgeoning_weakness',
-		name: 'Bludgeoning Weakness',
-		description: 'You have Bludgeoning Vulnerability (1).',
-		cost: -1,
-		isNegative: true,
-		effects: [{ type: 'GRANT_VULNERABILITY', target: 'Bludgeoning', value: 1 }]
-	},
-	{
-		id: 'terraborn_slow_moving',
-		name: 'Slow Moving',
-		description: 'Your Speed decreases by 1 Space',
-		cost: -1,
-		isNegative: true,
-		effects: [{ type: 'MODIFY_STAT', target: 'moveSpeed', value: -1 }]
-	},
-	// --- Shadowborn Traits ---
-	{
-		id: 'shadowborn_shadow_cloak',
-		name: 'Shadow Cloak',
-		description:
-			'While in Darkness, taking the Hide Action makes you Invisible in addition to being Hidden until you take an Action or make a noise.',
-		cost: 2,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Shadow Cloak', value: 'ADV' }]
-	},
-	{
-		id: 'shadowborn_umbral_resistance',
-		name: 'Umbral Resistance',
-		description: 'You have Umbral Resistance (Half).',
-		cost: 2,
-		effects: [{ type: 'GRANT_RESISTANCE', target: 'Umbral', value: 'half' }]
-	},
-	{
-		id: 'shadowborn_darkvision',
-		name: 'Darkvision',
-		description: 'You have Darkvision 10 Spaces. If you already have Darkvision, increase it by 5.',
-		cost: 1,
-		effects: [{ type: 'GRANT_SENSE', target: 'darkvision', value: 10 }]
-	},
-	{
-		id: 'shadowborn_sleepless',
-		name: 'Sleepless',
-		description:
-			"You don't sleep as others do. Instead, you drift into a state of semi-consciousness and become shrouded in a veil of darkness. While within this state, you appear inert but can still see and hear as normal. Taking any action, other than speaking, interrupts this state.",
-		cost: 0,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Sleepless', value: 'ADV' }]
-	},
-	{
-		id: 'shadowborn_escape_artist',
-		name: 'Escape Artist',
-		description:
-			'You have ADV on Checks and Saves to avoid or escape being Grappled or Restrained.',
-		cost: 2,
-		effects: [
-			{ type: 'GRANT_ADV_ON_CHECK', target: 'Avoid_or_Escape_Grapple_Restrained', value: 'ADV' },
-			{ type: 'GRANT_ADV_ON_SAVE', target: 'Avoid_or_Escape_Grapple_Restrained', value: 'ADV' }
-		]
-	},
-	{
-		id: 'shadowborn_illusory_magic',
-		name: 'Illusory Magic',
-		description:
-			"You learn 1 Spell of your choice from the Illusion School. Once per Long Rest, you can cast the chosen Spell for 1 less MP than normal (minimum of 0 MP). The Spell's total MP cost, before all reductions, cannot exceed your Mana Spend Limit.",
-		cost: 2,
-		effects: [
-			{
-				type: 'GRANT_SPELL',
-				target: 'any',
-				value: 1,
-				userChoice: { prompt: 'Choose 1 spell from the Illusion School.' }
-			},
-			{
-				type: 'GRANT_ABILITY',
-				target: 'Illusory Magic Discount',
-				value: 'Once per Long Rest, you can cast your chosen Illusion spell for 1 less MP.'
-			}
-		]
-	},
-	{
-		id: 'shadowborn_indiscernible',
-		name: 'Indiscernible',
-		description:
-			"Effects can't sense your emotions, and Insight Checks made against you have DisADV.",
-		cost: 1,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Indiscernible', value: 'ADV' }]
-	},
-	{
-		id: 'shadowborn_mana_increase',
-		name: 'Mana Increase',
-		description: 'Your MP maximum increases by 1.',
-		cost: 1,
-		effects: [{ type: 'MODIFY_STAT', target: 'mpMax', value: 1 }]
-	},
-	{
-		id: 'shadowborn_superior_darkvision',
-		name: 'Superior Darkvision',
-		description: 'Your Darkvision increases by 10 Spaces.',
-		cost: 1,
-		prerequisites: ['shadowborn_darkvision'],
-		effects: [{ type: 'MODIFY_STAT', target: 'darkvision', value: 10 }]
-	},
-	{
-		id: 'shadowborn_sunlight_sensitivity',
-		name: 'Sunlight Sensitivity',
-		description:
-			'While you or your target is in sunlight, you have DisADV on Attacks and Awareness Checks that rely on sight.',
-		cost: -2,
-		isNegative: true,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Sunlight Sensitivity', value: 'ADV' }]
-	},
-	{
-		id: 'shadowborn_radiant_weakness',
-		name: 'Radiant Weakness',
-		description: 'You have Radiant Vulnerability (1).',
-		cost: -1,
-		isNegative: true,
-		effects: [{ type: 'GRANT_VULNERABILITY', target: 'Radiant', value: 1 }]
-	},
-	// --- Psyborn Traits ---
-	{
-		id: 'psyborn_psychic_resistance',
-		name: 'Psychic Resistance',
-		description: 'You gain Psychic Resistance (Half).',
-		cost: 2,
-		effects: [{ type: 'GRANT_RESISTANCE', target: 'Psychic', value: 'half' }]
-	},
-	{
-		id: 'psyborn_telepathy',
-		name: 'Telepathy',
-		description:
-			'You can communicate telepathically with any creature you can see within 10 Spaces. If it understands at least 1 language, it can respond to you telepathically.',
-		cost: 1,
-		effects: [{ type: 'GRANT_SENSE', target: 'telepathy', value: 10 }]
-	},
-	{
-		id: 'psyborn_psionic_hand',
-		name: 'Psionic Hand',
-		description:
-			'You learn the Mage Hand Cantrip. When you cast the Spell, you can choose to make the hand Invisible.',
-		cost: 1,
-		effects: [
-			{ type: 'GRANT_CANTRIP', target: 'Mage Hand', value: 1 },
-			{
-				type: 'GRANT_ABILITY',
-				target: 'Invisible Mage Hand',
-				value: 'When you cast Mage Hand, you can make the hand invisible.'
-			}
-		]
-	},
-	{
-		id: 'psyborn_strong_minded',
-		name: 'Strong Minded',
-		description: 'Your MD increases by 1.',
-		cost: 1,
-		effects: [{ type: 'MODIFY_STAT', target: 'md', value: 1 }]
-	},
-	{
-		id: 'psyborn_shrouded_mind',
-		name: 'Shrouded Mind',
-		description:
-			"Your surface thoughts can't be read against your will, and you have ADV on Checks or Saves to resist attempts to read deeper into your mind.",
-		cost: 0,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Shrouded Mind', value: 'ADV' }]
-	},
-	{
-		id: 'psyborn_telepathic_reach',
-		name: 'Telepathic Reach',
-		description: 'The range of your Telepathy is increased to 100 Spaces.',
-		cost: 1,
-		prerequisites: ['psyborn_telepathy'],
-		effects: [{ type: 'MODIFY_STAT', target: 'telepathy', value: 90 }]
-	},
-	{
-		id: 'psyborn_telepathic_link',
-		name: 'Telepathic Link',
-		description:
-			'You can spend 1 AP to establish a Telepathic Link with a creature that you can see within your Telepathy range. The target must make an Intelligence Save contested by your Spell Check. Save Failure: For the next hour, you can communicate telepathically with them as long as they remain within range and on the same plane of existence. The connection ends if you use this Trait again.',
-		cost: 1,
-		prerequisites: ['psyborn_telepathy'],
-		effects: [{ type: 'GRANT_ABILITY', target: 'Telepathic Link', value: 'ADV' }]
-	},
-	{
-		id: 'psyborn_psionic_leap',
-		name: 'Psionic Leap',
-		description:
-			'You can use your Intelligence instead of Agility to determine your Jump Distance and the damage you take from Falling.',
-		cost: 1,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Psionic Leap', value: 'ADV' }]
-	},
-	{
-		id: 'psyborn_psionic_magic',
-		name: 'Psionic Magic',
-		description:
-			"You learn 1 Spell of your choice with the Psychic or Gravity Spell Tag. Once per Long Rest, you can cast the chosen Spell spending 1 less MP than normal (minimum of 0 MP). The Spell's total MP cost (before all reductions) still can't exceed your Mana Spend Limit.",
-		cost: 2,
-		effects: [
-			{
-				type: 'GRANT_SPELL',
-				target: 'any',
-				value: 1
-			},
-			{
-				type: 'GRANT_ABILITY',
-				target: 'Psionic Magic Discount',
-				value: 'Once per Long Rest, you can cast your chosen spell for 1 less MP.'
-			}
-		]
-	},
-	{
-		id: 'psyborn_psionic_grit',
-		name: 'Psionic Grit',
-		description:
-			'You can now also spend 1 Grit Point when an ally that you can see within 10 Spaces of you takes damage to reduce the damage by 1.',
-		cost: 1,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Psionic Grit', value: 'ADV' }]
-	},
-	{
-		id: 'psyborn_strong_mind',
-		name: 'Strong Mind',
-		description:
-			'Once per Combat, when you take damage that targets your MD, you can reduce the damage taken by an amount equal to your Intelligence or Charisma (your choice).',
-		cost: 2,
-		effects: [{ type: 'GRANT_ABILITY', target: 'Strong Mind', value: 'ADV' }]
-	},
-	{
-		id: 'psyborn_iron_mind',
-		name: 'Iron Mind',
-		description: 'You have ADV on Saves to maintain your Concentration.',
-		cost: 1,
-		effects: [{ type: 'GRANT_ADV_ON_SAVE', target: 'Concentration', value: 'ADV' }]
-	},
-	{
-		id: 'psyborn_frail',
-		name: 'Frail',
-		description: 'Your HP maximum decreases by 2',
-		cost: -1,
-		isNegative: true,
-		effects: [{ type: 'MODIFY_STAT', target: 'hpMax', value: -2 }]
 	}
 ];
 

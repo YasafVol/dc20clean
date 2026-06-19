@@ -123,7 +123,7 @@ export const languagesData: ILanguageData[] = [
 		id: 'celestial',
 		name: 'Celestial',
 		family: 'divine',
-		typicalSpeakers: 'Angels, Archons',
+		typicalSpeakers: 'Angels & Archons',
 		checkDc: languageCheckDcByFamily.divine,
 		description: 'A radiant language spoken by Angels, Archons, and other divine beings.'
 	},
@@ -131,7 +131,7 @@ export const languagesData: ILanguageData[] = [
 		id: 'fiendish',
 		name: 'Fiendish',
 		family: 'divine',
-		typicalSpeakers: 'Devils, Demons',
+		typicalSpeakers: 'Devils & Demons',
 		checkDc: languageCheckDcByFamily.divine,
 		legacyIds: ['abyssal', 'infernal'],
 		description: 'A corrupt divine language shared by Devils, Demons, and other fiends.'

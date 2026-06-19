@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import ancestryReport from '../../../../docs/migration/ancestries-v0105-report.json';
 import { ancestriesData } from './ancestries';
 import { traitsData } from './traits';
 import type { Ancestry, Trait, Effect } from '../schemas/character.schema';
@@ -17,6 +18,18 @@ import type { Ancestry, Trait, Effect } from '../schemas/character.schema';
  * 5. Cost & Budget Calculations
  * 6. Schema Compliance
  */
+
+const CORE_ANCESTRY_IDS = ancestryReport.ancestries.map((ancestry) => ancestry.id);
+const NON_CORE_ANCESTRY_IDS = ['gremlin', 'goblin', 'terraborn', 'shadowborn', 'psyborn'];
+
+const normalizeSourceName = (value: string) =>
+	value
+		.toLowerCase()
+		.normalize('NFKD')
+		.replace(/[’']/g, '')
+		.replace(/&/g, ' and ')
+		.replace(/[^a-z0-9]+/g, ' ')
+		.trim();
 
 describe('Ancestry & Trait System', () => {
 	// ============================================================================
@@ -79,15 +92,6 @@ describe('Ancestry & Trait System', () => {
 		});
 
 		it('should have valid rulesSource values', () => {
-			const validSources = [
-				'DC20Beta0.10',
-				'DC20Beta0.95',
-				'DC20Beta0.9',
-				'Custom',
-				'Homebrew',
-				'DC20Magazine14',
-				'DC20Magazine01'
-			];
 			ancestriesData.forEach((ancestry: Ancestry) => {
 				// Should at least have a non-empty string
 				expect(ancestry.rulesSource.length).toBeGreaterThan(0);
@@ -599,6 +603,44 @@ describe('Ancestry & Trait System', () => {
 				console.log(`  Cost ${cost}: ${count} traits`);
 			});
 		});
+	});
+});
+
+describe('DC20 v0.10.5 source ancestry audit', () => {
+	it('exposes only core rules ancestries', () => {
+		expect(ancestriesData.map((ancestry) => ancestry.id)).toEqual(CORE_ANCESTRY_IDS);
+
+		for (const ancestryId of NON_CORE_ANCESTRY_IDS) {
+			expect(ancestriesData.some((ancestry) => ancestry.id === ancestryId)).toBe(false);
+			expect(traitsData.some((trait) => trait.id.startsWith(`${ancestryId}_`))).toBe(false);
+		}
+	});
+
+	it('matches source trait names and costs for every core ancestry', () => {
+		for (const sourceAncestry of ancestryReport.ancestries) {
+			const ancestry = ancestriesData.find((entry) => entry.id === sourceAncestry.id);
+			expect(ancestry, sourceAncestry.name).toBeDefined();
+
+			const runtimeTraits = [...ancestry!.defaultTraitIds, ...ancestry!.expandedTraitIds].map(
+				(traitId) => {
+					const trait = traitsData.find((entry) => entry.id === traitId);
+					expect(trait, traitId).toBeDefined();
+					return trait!;
+				}
+			);
+			runtimeTraits.push(...(ancestry!.variantTraits ?? []));
+
+			const normalizeTrait = (trait: { name: string; cost: number }) => ({
+				name: normalizeSourceName(trait.name),
+				cost: trait.cost
+			});
+
+			expect(
+				runtimeTraits.map(normalizeTrait).sort((a, b) => a.name.localeCompare(b.name))
+			).toEqual(
+				sourceAncestry.traits.map(normalizeTrait).sort((a, b) => a.name.localeCompare(b.name))
+			);
+		}
 	});
 });
 

@@ -307,7 +307,6 @@ export const ancestriesData: Ancestry[] = [
 			'beastborn_long_limbed',
 			'beastborn_additional_limb',
 			'beastborn_capable_limb',
-			'beastborn_prehensile_appendage',
 			'beastborn_hazardous_hide',
 			'beastborn_natural_armor',
 			'beastborn_hard_shell',
@@ -323,7 +322,7 @@ export const ancestriesData: Ancestry[] = [
 			'beastborn_natural_weapon',
 			'beastborn_extended_natural_weapon',
 			'beastborn_natural_projectile',
-			'beastborn_natural_weapon_passive',
+			'beastborn_natural_weapon_style',
 			'beastborn_rend',
 			'beastborn_retractable_natural_weapon',
 			'beastborn_venomous_natural_weapon',
@@ -338,125 +337,6 @@ export const ancestriesData: Ancestry[] = [
 			prompt: 'Choose a type of Beast you are modeled after:',
 			options: []
 		}
-	},
-	{
-		id: 'gremlin',
-		name: 'Gremlin',
-		description: 'Gremlins are small, sneaky creatures that thrive on surprise and intimidation.',
-		rulesSource: 'DC20Magazine14',
-		defaultTraitIds: [
-			'gremlin_small_sized',
-			'gremlin_sneaky',
-			'gremlin_thriller',
-			'gremlin_surprise',
-			'gremlin_deft_footwork',
-			'gremlin_halfling_disguise'
-		],
-		expandedTraitIds: [
-			'gremlin_bravery',
-			'gremlin_give_chase',
-			'gremlin_quick_reactions',
-			'gremlin_fearsome',
-			'gremlin_natural_weapon',
-			'gremlin_climb_speed',
-			'gremlin_critter_knowledge'
-		]
-	},
-	{
-		id: 'goblin',
-		name: 'Goblin',
-		description:
-			'Goblins are aggressive and eager combatants, known for their cunning traps and pack tactics.',
-		rulesSource: 'DC20Magazine14',
-		defaultTraitIds: [
-			'goblin_small_sized',
-			'goblin_escape_artist',
-			'goblin_aggressive',
-			'goblin_eager_for_combat',
-			'goblin_small_fury',
-			'goblin_natural_trapper'
-		],
-		expandedTraitIds: [
-			'goblin_hit_and_run',
-			'goblin_pack_tactics',
-			'goblin_trapper',
-			'goblin_trade_expertise',
-			'goblin_mischievous_hands',
-			'goblin_sneaky',
-			'goblin_reckless'
-		]
-	},
-	{
-		id: 'terraborn',
-		name: 'Terraborn',
-		description:
-			'Terraborn are resilient beings of earth and stone, able to burrow through the ground and sense vibrations.',
-		rulesSource: 'DC20Magazine14',
-		defaultTraitIds: [
-			'terraborn_burrow_speed',
-			'terraborn_resilient_form',
-			'terraborn_tremorsense',
-			'terraborn_mold_earth'
-		],
-		expandedTraitIds: [
-			'terraborn_stone_blood',
-			'terraborn_tunnel_explorer',
-			'terraborn_earth_walker',
-			'terraborn_superior_tremorsense',
-			'terraborn_tough',
-			'terraborn_toxic_fortitude',
-			'terraborn_insulated_skin',
-			'terraborn_natural_armor',
-			'terraborn_thick_skinned',
-			'terraborn_bludgeoning_weakness',
-			'terraborn_slow_moving'
-		]
-	},
-	{
-		id: 'shadowborn',
-		name: 'Shadowborn',
-		description:
-			'Shadowborn are creatures of darkness, able to cloak themselves in shadow and resist umbral energies.',
-		rulesSource: 'DC20Magazine14',
-		defaultTraitIds: [
-			'shadowborn_shadow_cloak',
-			'shadowborn_umbral_resistance',
-			'shadowborn_darkvision',
-			'shadowborn_sleepless'
-		],
-		expandedTraitIds: [
-			'shadowborn_escape_artist',
-			'shadowborn_illusory_magic',
-			'shadowborn_indiscernible',
-			'shadowborn_mana_increase',
-			'shadowborn_superior_darkvision',
-			'shadowborn_sunlight_sensitivity',
-			'shadowborn_radiant_weakness'
-		]
-	},
-	{
-		id: 'psyborn',
-		name: 'Psyborn',
-		description:
-			'Psyborn possess powerful minds, capable of telepathic communication and psionic feats.',
-		rulesSource: 'DC20Magazine01',
-		defaultTraitIds: [
-			'psyborn_psychic_resistance',
-			'psyborn_telepathy',
-			'psyborn_psionic_hand',
-			'psyborn_strong_minded',
-			'psyborn_shrouded_mind'
-		],
-		expandedTraitIds: [
-			'psyborn_telepathic_reach',
-			'psyborn_telepathic_link',
-			'psyborn_psionic_leap',
-			'psyborn_psionic_magic',
-			'psyborn_psionic_grit',
-			'psyborn_strong_mind',
-			'psyborn_iron_mind',
-			'psyborn_frail'
-		]
 	}
 ];
 

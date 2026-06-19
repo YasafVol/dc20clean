@@ -31,7 +31,13 @@
 		"spells:generate:0105": "node scripts/spells/dc20-0105-spells.mjs --write",
 		"martials:extract:0105": "node scripts/martials/dc20-0105-maneuvers.mjs",
 		"martials:validate:0105": "node scripts/martials/dc20-0105-maneuvers.mjs --check",
-		"martials:generate:0105": "node scripts/martials/dc20-0105-maneuvers.mjs --write"
+		"martials:generate:0105": "node scripts/martials/dc20-0105-maneuvers.mjs --write",
+		"ancestries:extract:0105": "node scripts/ancestries/dc20-0105-ancestries.mjs",
+		"ancestries:validate:0105": "node scripts/ancestries/dc20-0105-ancestries.mjs --check",
+		"ancestries:generate:0105": "node scripts/ancestries/dc20-0105-ancestries.mjs --write",
+		"background:extract:0105": "node scripts/background/dc20-0105-background.mjs",
+		"background:validate:0105": "node scripts/background/dc20-0105-background.mjs --check",
+		"background:generate:0105": "node scripts/background/dc20-0105-background.mjs --write"
 	},
 	"files": [
 		"dist",

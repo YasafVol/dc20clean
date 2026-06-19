@@ -292,6 +292,44 @@ export const StyledManeuverMetaInfo = styled.div<MobileStyledProps>`
 	}
 `;
 
+export const StyledManeuverEnhancements = styled.div<MobileStyledProps>`
+	display: flex;
+	flex-direction: column;
+	gap: ${theme.spacing[2]};
+	margin-top: ${theme.spacing[3]};
+	padding-top: ${theme.spacing[3]};
+	border-top: 1px solid ${theme.colors.border.default};
+`;
+
+export const StyledManeuverEnhancement = styled.div<MobileStyledProps>`
+	padding: ${theme.spacing[3]};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
+	background: ${theme.colors.bg.secondary};
+	color: ${theme.colors.text.primary};
+	font-size: ${theme.typography.fontSize.sm};
+	line-height: ${theme.typography.lineHeight.relaxed};
+`;
+
+export const StyledManeuverEnhancementHeader = styled.div<MobileStyledProps>`
+	display: flex;
+	flex-wrap: wrap;
+	gap: ${theme.spacing[2]};
+	align-items: center;
+	margin-bottom: ${theme.spacing[1]};
+`;
+
+export const StyledManeuverEnhancementCost = styled.span<MobileStyledProps>`
+	padding: 0.125rem 0.5rem;
+	border: 1px solid rgba(224, 175, 104, 0.3);
+	border-radius: ${theme.borderRadius.sm};
+	background: rgba(224, 175, 104, 0.1);
+	color: ${theme.colors.accent.warning};
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	text-transform: uppercase;
+`;
+
 export const StyledManeuverDescriptionCollapsed = styled.div<MobileStyledProps>`
 	text-align: center;
 	padding: ${theme.spacing[2]};

@@ -4,6 +4,10 @@
  */
 
 import type { Maneuver } from '../../../lib/rulesdata/martials/maneuvers';
+import {
+	formatManeuverCost,
+	formatManeuverEnhancementCost
+} from '../../../lib/rulesdata/martials/maneuverFormatting';
 import type { InventoryItem } from '../../../lib/rulesdata/inventoryItems';
 
 /**
@@ -104,8 +108,12 @@ export const convertManeuverToCharacterData = (ruleManeuver: Maneuver, maneuverI
 	id: maneuverId,
 	name: ruleManeuver.name,
 	type: ruleManeuver.type,
-	cost: ruleManeuver.cost.toString(),
+	cost: ruleManeuver.cost,
+	range: ruleManeuver.range,
 	description: ruleManeuver.description,
+	isReaction: ruleManeuver.isReaction,
+	trigger: ruleManeuver.trigger,
+	enhancements: ruleManeuver.enhancements,
 	isPending: false
 });
 
@@ -128,10 +136,18 @@ export const convertInventoryItemToCharacterData = (ruleItem: InventoryItem, ite
 export const showManeuverDetails = (maneuver: any, allManeuvers: Maneuver[]) => {
 	const maneuverDetails = allManeuvers.find((m) => m.name === maneuver.name);
 	if (maneuverDetails) {
-		const info = `${maneuverDetails.name}\n\nType: ${maneuverDetails.type}\nCost: ${maneuverDetails.cost}\n\nDescription: ${maneuverDetails.description}\n\nRequirement: ${maneuverDetails.requirement || 'None'}\nTrigger: ${maneuverDetails.trigger || 'N/A'}`;
+		const enhancements = maneuverDetails.enhancements
+			.map(
+				(enhancement) =>
+					`- ${enhancement.name} (${formatManeuverEnhancementCost(enhancement)}): ${enhancement.description}`
+			)
+			.join('\n');
+		const info = `${maneuverDetails.name}\n\nType: ${maneuverDetails.type}\nCost: ${formatManeuverCost(maneuverDetails.cost)}\nRange: ${maneuverDetails.range}\n\nDescription: ${maneuverDetails.description}\n\nTrigger: ${maneuverDetails.trigger || 'N/A'}\n\nEnhancements:\n${enhancements}`;
 		alert(info);
 	} else {
-		alert(`${maneuver.name}\n\nType: ${maneuver.type || '?'}\nCost: ${maneuver.cost || '?'}`);
+		alert(
+			`${maneuver.name}\n\nType: ${maneuver.type || '?'}\nCost: ${formatManeuverCost(maneuver.cost)}`
+		);
 	}
 };
 

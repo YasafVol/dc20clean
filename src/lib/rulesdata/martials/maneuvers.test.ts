@@ -1,8 +1,62 @@
 import { describe, expect, it } from 'vitest';
 import { ManeuverType } from '../schemas/maneuver.schema';
-import { allManeuvers, getManeuverById } from './maneuvers';
+import { CURRENT_RULES_VERSION } from '../versioning/rulesVersion';
+import { MANEUVER_RULES_SOURCE, allManeuvers, getManeuverById } from './maneuvers';
 
 describe('v0.10.5 maneuver catalog', () => {
+	it('declares rules source metadata', () => {
+		expect(MANEUVER_RULES_SOURCE).toMatchObject({
+			rulesVersion: CURRENT_RULES_VERSION,
+			currentRulesArtifact: 'docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md',
+			changelogSection: 'Maneuvers'
+		});
+	});
+
+	it('has complete maneuver and enhancement coverage', () => {
+		expect(allManeuvers).toHaveLength(29);
+		expect(new Set(allManeuvers.map((maneuver) => maneuver.id)).size).toBe(allManeuvers.length);
+		expect(new Set(allManeuvers.map((maneuver) => maneuver.name)).size).toBe(allManeuvers.length);
+
+		expect(
+			allManeuvers.reduce(
+				(counts, maneuver) => ({
+					...counts,
+					[maneuver.type]: (counts[maneuver.type] ?? 0) + 1
+				}),
+				{} as Record<ManeuverType, number>
+			)
+		).toEqual({
+			[ManeuverType.Attack]: 11,
+			[ManeuverType.Defense]: 7,
+			[ManeuverType.Grapple]: 4,
+			[ManeuverType.Utility]: 7
+		});
+
+		for (const maneuver of allManeuvers) {
+			expect(maneuver.id, maneuver.name).toBeTruthy();
+			expect(maneuver.name, maneuver.id).toBeTruthy();
+			expect(maneuver.range, maneuver.name).toBeTruthy();
+			expect(maneuver.description, maneuver.name).toBeTruthy();
+			expect(maneuver.enhancements.length, maneuver.name).toBeGreaterThan(0);
+
+			for (const enhancement of maneuver.enhancements) {
+				expect(enhancement.name, maneuver.name).toBeTruthy();
+				expect(enhancement.costString, `${maneuver.name}: ${enhancement.name}`).toBeTruthy();
+				expect(enhancement.description, `${maneuver.name}: ${enhancement.name}`).toBeTruthy();
+
+				if (enhancement.costString.includes('AP')) {
+					expect(enhancement.ap, `${maneuver.name}: ${enhancement.name}`).toBeGreaterThan(0);
+				}
+				if (enhancement.costString.includes('SP')) {
+					expect(enhancement.sp, `${maneuver.name}: ${enhancement.name}`).toBeGreaterThan(0);
+				}
+				if (enhancement.costString.includes('Repeatable')) {
+					expect(enhancement.repeatable, `${maneuver.name}: ${enhancement.name}`).toBe(true);
+				}
+			}
+		}
+	});
+
 	it('removes base SP costs from Whirlwind and Pathcarver', () => {
 		expect(getManeuverById('whirlwind')?.cost).toEqual({ ap: 2 });
 		expect(getManeuverById('pathcarver')?.cost).toEqual({ ap: 2 });

@@ -8,12 +8,23 @@
  * - Utility (7) - Movement and battlefield control
  *
  * Note: Techniques have been REMOVED in v0.10 - only Maneuvers remain.
- * Generated from docs/assets/DC20 0.10 full.md
+ * Baseline generated from docs/assets/DC20 0.10 full.md with v0.10.5 deltas
+ * tracked in docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md.
  */
 
 import type { Maneuver, ManeuverEnhancement } from '../schemas/maneuver.schema';
 import { ManeuverType } from '../schemas/maneuver.schema';
 import { resolveAliasId } from '../versioning/aliases';
+import { CURRENT_RULES_VERSION } from '../versioning/rulesVersion';
+
+export const MANEUVER_RULES_SOURCE = {
+	rulesVersion: CURRENT_RULES_VERSION,
+	baselineArtifact: 'docs/assets/DC20 0.10 full.md',
+	currentRulesArtifact: 'docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md',
+	changelogArtifact: 'docs/assets/dc20-0.10.5/CHANGELOG_RECONSTRUCTION.md',
+	changelogSection: 'Maneuvers',
+	catalogStatus: 'baseline-plus-v0105-deltas'
+} as const;
 
 export const maneuvers: Maneuver[] = [
 	{

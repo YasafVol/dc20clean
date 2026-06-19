@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { allManeuvers, ManeuverType } from '../../lib/rulesdata/martials/maneuvers';
+import { formatManeuverEnhancementCost } from '../../lib/rulesdata/martials/maneuverFormatting';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { Sword, Filter } from 'lucide-react';
 import { debug } from '../../lib/utils/debug';
@@ -22,6 +23,10 @@ import {
 	ManeuverName,
 	TypeBadge,
 	ManeuverDescription,
+	ManeuverEnhancementCost,
+	ManeuverEnhancementItem,
+	ManeuverEnhancements,
+	ManeuverEnhancementsTitle,
 	EmptyState,
 	EmptyStateIcon,
 	EmptyStateTitle,
@@ -260,6 +265,21 @@ const Maneuvers: React.FC = () => {
 												)}
 											</CostBadgesContainer>
 											<ManeuverDescription>{maneuver.description}</ManeuverDescription>
+											{maneuver.enhancements.length > 0 && (
+												<ManeuverEnhancements>
+													<ManeuverEnhancementsTitle>Enhancements</ManeuverEnhancementsTitle>
+													{maneuver.enhancements.map((enhancement) => (
+														<ManeuverEnhancementItem key={enhancement.name}>
+															<ManeuverEnhancementCost>
+																{formatManeuverEnhancementCost(enhancement)}
+															</ManeuverEnhancementCost>
+															<span>
+																<strong>{enhancement.name}</strong>: {enhancement.description}
+															</span>
+														</ManeuverEnhancementItem>
+													))}
+												</ManeuverEnhancements>
+											)}
 										</CardContent>
 										<ButtonFooter>
 											<ManeuverButton

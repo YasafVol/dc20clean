@@ -16,6 +16,11 @@
 - Testing: Vitest (browser + node environments), Playwright
 - Code Quality: ESLint + Prettier
 
+## UI System TODOs
+
+- Replace ad hoc hand-drawn SVG icons across the app with a consistent icon set, preferably `lucide-react` where an appropriate icon exists. Start with menu/reference-tool icons, then sheet action icons, builders, and popups.
+- Create a dedicated `docs/systems/UI_SYSTEM.MD` if UI conventions continue to grow beyond this overview. It should cover layout grids, icon usage, responsive rules, shared primitives, and visual QA expectations.
+
 ## Local Setup
 
 - Node.js 20 or higher

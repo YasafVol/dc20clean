@@ -373,8 +373,11 @@ export const completeCharacter = async (
 									name: fullManeuver.name,
 									type: fullManeuver.type,
 									cost: fullManeuver.cost,
+									range: fullManeuver.range,
 									description: fullManeuver.description,
 									isReaction: fullManeuver.isReaction,
+									trigger: fullManeuver.trigger,
+									enhancements: fullManeuver.enhancements,
 									notes: ''
 								};
 							}

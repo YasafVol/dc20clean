@@ -7,6 +7,7 @@ import CharacterSheetRouter from './routes/character-sheet/CharacterSheetRouter'
 import LevelUp from './routes/character-creation/LevelUp';
 import Menu from './components/Menu.tsx';
 import Spellbook from './routes/spellbook/Spellbook.tsx';
+import MartialManual from './routes/martial-manual/MartialManual.tsx';
 import CustomEquipment from './routes/custom-equipment/CustomEquipment.tsx';
 import Conditions from './routes/conditions/Conditions.tsx';
 import { MonsterList, MonsterDesigner } from './routes/dm/monsters';
@@ -109,6 +110,7 @@ function App() {
 						/>
 						<Route path="/load-character" element={<LoadCharacter />} />
 						<Route path="/spellbook" element={<Spellbook />} />
+						<Route path="/martial-manual" element={<MartialManual />} />
 						<Route path="/conditions" element={<Conditions />} />
 						<Route path="/custom-equipment" element={<CustomEquipment />} />
 						<Route path="/character/:id" element={<CharacterSheetRouteWrapper />} />

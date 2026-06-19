@@ -171,6 +171,38 @@ export const ManeuverDescription = styled.p`
   line-height: 1.5;
 `;
 
+export const ManeuverEnhancements = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing[2]};
+  padding-top: ${theme.spacing[2]};
+  border-top: 1px solid rgba(169, 177, 214, 0.12);
+`;
+
+export const ManeuverEnhancementsTitle = styled.div`
+  font-size: ${theme.typography.fontSize.xs};
+  font-weight: ${theme.typography.fontWeight.bold};
+  color: ${theme.colors.text.primary};
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+`;
+
+export const ManeuverEnhancementItem = styled.div`
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: ${theme.spacing[2]};
+  align-items: start;
+  font-size: ${theme.typography.fontSize.xs};
+  color: ${theme.colors.text.secondary};
+  line-height: 1.4;
+`;
+
+export const ManeuverEnhancementCost = styled.span`
+  white-space: nowrap;
+  color: ${theme.colors.accent.warning};
+  font-weight: ${theme.typography.fontWeight.semibold};
+`;
+
 export const EmptyState = styled.div`
   grid-column: 1 / -1;
   text-align: center;

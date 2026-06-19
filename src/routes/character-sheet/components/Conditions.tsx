@@ -393,9 +393,7 @@ export const Conditions: React.FC<ConditionsProps> = ({ conditionStatuses, isMob
 									const condition = getConditionById(cs.conditionId);
 									return (
 										<ConditionItem key={cs.conditionId}>
-											<ConditionName
-												onClick={() => setSelectedConditionId(cs.conditionId)}
-											>
+											<ConditionName onClick={() => setSelectedConditionId(cs.conditionId)}>
 												{condition?.name || cs.conditionId}
 											</ConditionName>
 										</ConditionItem>
@@ -414,9 +412,6 @@ export const Conditions: React.FC<ConditionsProps> = ({ conditionStatuses, isMob
 						<ModalTitle>{selectedCondition.name}</ModalTitle>
 						<ModalDescription>{selectedCondition.description}</ModalDescription>
 						<ModalMeta>
-							{selectedCondition.type && (
-								<ModalTag>{selectedCondition.type}</ModalTag>
-							)}
 							{selectedCondition.tags?.map((tag: string) => (
 								<ModalTag key={tag}>{tag}</ModalTag>
 							))}

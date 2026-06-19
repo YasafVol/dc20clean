@@ -63,7 +63,7 @@ for (const condition of ALL_KNOWN_CONDITIONS) {
 		normalizeLookupKey(condition.name)
 	]);
 
-	if (condition.type === 'stacking') {
+	if (condition.usesStacks) {
 		aliases.add(stripStackSuffix(normalizeLookupKey(condition.id)));
 		aliases.add(stripStackSuffix(normalizeLookupKey(condition.name)));
 	}

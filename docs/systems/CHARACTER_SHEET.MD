@@ -2,7 +2,7 @@
 
 > Purpose: End-to-end map of Character Sheet UI: architecture, components, data sources, and interactions.
 > Status: Active
-> Last Updated: 2026-06-19
+> Last Updated: 2026-06-20
 
 ## Recent UX additions
 
@@ -24,7 +24,7 @@
 - **Spells**: Added a "✏️ Custom Spell..." dropdown option that flips a spell row into freeform editable mode (name + school + duration + AP/MP + range + description). Detection is automatic on reload — any spell name not in the catalog renders as custom.
 - **Compatibility-preserving sheet fallbacks**: `CompactUtility` now falls back to stored `SavedCharacter.finalMoveSpeed`, `SavedCharacter.finalJumpDistance`, and persisted inventory currency when compatibility fences suppress fresh calculator output. The spells table resolves legacy spell display-name aliases through the canonical spell catalog before deciding a row is custom, so renamed legacy spells still render with catalog details.
 - **Condition keyword tooltips**: New shared `RichDescription` component scans description text for condition names (handles stacking suffix e.g. `Slowed 2`, `Burning 3`) and renders matched tokens as accent-coloured, hover/tap-activated tooltip targets. Wired into `FeaturePopup`, `SpellPopup`, inline spell descriptions in `Spells.tsx`, `Maneuvers.tsx`, `InventoryPopup` info rows, and `EnhancedFeatures` ability descriptions. Mobile uses tap-to-toggle; desktop uses hover with click-outside dismiss. Catalog source: `src/lib/rulesdata/conditions/conditions.data.ts`.
-- **Active condition mechanics**: `ActiveConditionsTracker` stores absolute/overlap conditions by base ID and stacking conditions as concrete IDs like `slowed-2`. `conditionEffectsAnalyzer` normalizes those IDs for badges and rolls, applies Disoriented only to mental saves, Weakened only to physical saves, Restrained as immobilized, and Exhaustion as a flat numeric penalty on checks/saves.
+- **Active condition mechanics**: `ActiveConditionsTracker` stores non-stacking conditions by base ID and stack-using conditions as concrete IDs like `slowed-2`. `conditionEffectsAnalyzer` normalizes those IDs for badges and rolls, applies Disoriented only to mental saves, Weakened only to physical saves, Restrained as immobilized, and Exhaustion as a flat numeric penalty on checks/saves.
 
 New files: `components/RulebookPanel.tsx`, `components/RichDescription.tsx`. Rulebook PDF imported via Vite `?url` from `docs/assets/DC20 RPG 0.10.5 Beta v1.pdf`.
 
@@ -140,11 +140,13 @@ v0.10.5 level 5 Expert Features intentionally keep the old `<class>_level_5_plac
 
 ### Conditions
 
+See `docs/systems/CONDITIONS_SYSTEM.MD` for the source audit, catalog contract, and current automation gaps.
+
 | Component                                | Data Source                  | Description                                                                                          |
 | ---------------------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------- |
 | `components/Conditions.tsx`              | `conditionAggregator` output | Condition immunities/resistances/vulnerabilities (wired up, displays grouped condition interactions) |
-| `components/ActiveConditionsTracker.tsx` | Local state                  | Active condition toggle tracker with stack controls for stacking conditions                          |
-| `components/ConditionsReference.tsx`     | `conditions.data.ts`         | Complete conditions reference guide                                                                  |
+| `components/ActiveConditionsTracker.tsx` | Local state                  | Active condition toggle tracker with stack controls for stack-using conditions                       |
+| `components/ConditionsReference.tsx`     | `conditions.data.ts`         | Flat conditions reference guide filtered by descriptive condition tags                               |
 | `components/ConditionBadge.tsx`          | Effect data                  | ADV/DisADV condition badges                                                                          |
 
 ### Popups/Modals

@@ -1,18 +1,16 @@
 // Filename: conditions.types.ts
 
 /**
- * Defines the core mechanical behavior of a condition.
- * - stacking: Effects intensify with multiple applications (e.g., Exhaustion X).
- * - overlapping: Can be applied by multiple sources, but effects don't intensify. Lasts until all sources are gone.
- * - absolute: A simple on/off state that doesn't stack or overlap (e.g., Blinded).
- */
-export type ConditionType = 'stacking' | 'overlapping' | 'absolute';
-
-/**
  * Indicates whether a condition is part of the universal rules catalog or is
  * only used as effect-specific affliction text.
  */
 export type ConditionScope = 'universal' | 'effect-specific';
+
+/**
+ * Source-audit metadata tags from the v0.10.5 condition rules section.
+ * These tags are descriptive provenance, not runtime behavior categories.
+ */
+export type ConditionSourceTag = 'stacking' | 'overlapping' | 'excluded' | 'catalog-only';
 
 /**
  * Optional tags for filtering and categorization in your UI.
@@ -29,11 +27,10 @@ export interface ConditionDefinition {
 	name: string;
 	/** The full rules description of the condition. */
 	description: string;
-	/**
-	 * The core mechanical type that governs its behavior.
-	 * If type is 'stacking', it implies the condition uses an "X" value.
-	 */
-	type: ConditionType;
+	/** Whether active instances use numeric stack controls such as Slowed 2. */
+	usesStacks: boolean;
+	/** Source-audit metadata tags. Not used as mechanical categories. */
+	sourceTags?: ConditionSourceTag[];
 	/** An array of descriptive tags for easier filtering. */
 	tags: ConditionTag[];
 	/** Whether the entry is part of the universal condition catalog. */

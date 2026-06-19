@@ -20,11 +20,6 @@ const PageContainer = styled.div`
 	padding: ${theme.spacing[8]} ${theme.spacing[4]};
 `;
 
-const BackButtonRow = styled.div`
-	max-width: 900px;
-	margin: 0 auto 2rem;
-`;
-
 const ContentWrapper = styled.div`
 	max-width: 900px;
 	margin: 0 auto;
@@ -91,13 +86,16 @@ const TagButton = styled.button<{ $active: boolean }>`
 	font-weight: ${theme.typography.fontWeight.medium};
 	cursor: pointer;
 	transition: all ${theme.transitions.fast};
-	border: 1px solid ${(props) => (props.$active ? theme.colors.accent.primary : theme.colors.border.default)};
-	background: ${(props) => (props.$active ? theme.colors.accent.primary : theme.colors.bg.tertiary)};
+	border: 1px solid
+		${(props) => (props.$active ? theme.colors.accent.primary : theme.colors.border.default)};
+	background: ${(props) =>
+		props.$active ? theme.colors.accent.primary : theme.colors.bg.tertiary};
 	color: ${(props) => (props.$active ? theme.colors.text.inverse : theme.colors.text.primary)};
 
 	&:hover {
 		border-color: ${theme.colors.accent.primary};
-		background: ${(props) => (props.$active ? theme.colors.accent.primary : theme.colors.bg.elevated)};
+		background: ${(props) =>
+			props.$active ? theme.colors.accent.primary : theme.colors.bg.elevated};
 	}
 
 	&:active {
@@ -143,37 +141,6 @@ const ConditionName = styled.span`
 	font-weight: ${theme.typography.fontWeight.bold};
 	font-size: ${theme.typography.fontSize.lg};
 	color: ${theme.colors.text.primary};
-`;
-
-const TypeBadge = styled.span<{ $type: string }>`
-	font-size: ${theme.typography.fontSize.xs};
-	padding: ${theme.spacing[1]} ${theme.spacing[3]};
-	border-radius: ${theme.borderRadius.md};
-	margin-left: ${theme.spacing[3]};
-	text-transform: uppercase;
-	font-weight: ${theme.typography.fontWeight.semibold};
-	background: ${(props) => {
-		switch (props.$type) {
-			case 'stacking':
-				return theme.colors.accent.warning;
-			case 'overlapping':
-				return theme.colors.accent.info;
-			case 'absolute':
-				return theme.colors.accent.secondary;
-			default:
-				return theme.colors.bg.tertiary;
-		}
-	}};
-	color: ${(props) => {
-		switch (props.$type) {
-			case 'stacking':
-			case 'overlapping':
-			case 'absolute':
-				return theme.colors.text.inverse;
-			default:
-				return theme.colors.text.secondary;
-		}
-	}};
 `;
 
 const ExpandIcon = styled.span<{ $expanded: boolean }>`
@@ -222,12 +189,6 @@ const TAG_LABELS: Record<ConditionTag, string> = {
 	sensory: '👁️ Sensory',
 	movement: '🏃 Movement',
 	damage: '⚔️ Damage'
-};
-
-const TYPE_LABELS: Record<string, string> = {
-	stacking: 'Stacks (X)',
-	overlapping: 'Overlapping',
-	absolute: 'On/Off'
 };
 
 const Conditions: React.FC = () => {
@@ -319,7 +280,6 @@ const Conditions: React.FC = () => {
 									<ConditionHeader onClick={() => toggleCondition(condition.id)}>
 										<div style={{ display: 'flex', alignItems: 'center' }}>
 											<ConditionName>{condition.name}</ConditionName>
-											<TypeBadge $type={condition.type}>{TYPE_LABELS[condition.type]}</TypeBadge>
 										</div>
 										<ExpandIcon $expanded={isExpanded}>▼</ExpandIcon>
 									</ConditionHeader>

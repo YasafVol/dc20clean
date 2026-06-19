@@ -318,7 +318,7 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 	};
 
 	const getActiveConditionEntry = (condition: ConditionDefinition): string | undefined => {
-		if (condition.type !== 'stacking') {
+		if (!condition.usesStacks) {
 			return activeConditions.includes(condition.id) ? condition.id : undefined;
 		}
 
@@ -388,7 +388,7 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 											type="checkbox"
 											checked={isActive}
 											onChange={() =>
-												condition.type === 'stacking'
+												condition.usesStacks
 													? setConditionStacks(condition.id, isActive ? 0 : 1)
 													: onToggleCondition(condition.id)
 											}
@@ -405,7 +405,7 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 									</ConditionHeaderRight>
 								</ConditionHeader>
 
-								{condition.type === 'stacking' && isActive && (
+								{condition.usesStacks && isActive && (
 									<StackControls onClick={(e) => e.stopPropagation()}>
 										<StackButton
 											type="button"

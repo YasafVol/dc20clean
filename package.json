@@ -37,7 +37,10 @@
 		"ancestries:generate:0105": "node scripts/ancestries/dc20-0105-ancestries.mjs --write",
 		"background:extract:0105": "node scripts/background/dc20-0105-background.mjs",
 		"background:validate:0105": "node scripts/background/dc20-0105-background.mjs --check",
-		"background:generate:0105": "node scripts/background/dc20-0105-background.mjs --write"
+		"background:generate:0105": "node scripts/background/dc20-0105-background.mjs --write",
+		"conditions:extract:0105": "node scripts/conditions/dc20-0105-conditions.mjs",
+		"conditions:validate:0105": "node scripts/conditions/dc20-0105-conditions.mjs --check",
+		"conditions:generate:0105": "node scripts/conditions/dc20-0105-conditions.mjs --write"
 	},
 	"files": [
 		"dist",

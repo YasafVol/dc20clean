@@ -47,7 +47,15 @@ export const warlockClass: ClassDefinition = {
 			levelGained: 1,
 			isFlavor: true,
 			description:
-				'You can beseech your Patron for aid when you are in need. Your Patron may or may not answer, and may demand something in return. The nature of this interaction is determined by your relationship with your Patron and is at the discretion of the GM.'
+				'You can beseech your Patron for aid when you are in need. Your Patron may or may not answer, and may demand something in return. The nature of this interaction is determined by your relationship with your Patron and is at the discretion of the GM.',
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'warlock_beseech_patron',
+					value:
+						'Beseech your Patron for aid when in need. The Patron may answer, demand something in return, or decline at GM discretion.'
+				}
+			]
 		},
 		{
 			id: 'warlock_contract',
@@ -129,7 +137,7 @@ export const warlockClass: ClassDefinition = {
 									value: 'Considered to have Training with your Pact Armor.'
 								},
 								{ type: 'GRANT_CHOICE', target: 'maneuver_defensive', value: 3 },
-								{ type: 'MODIFY_STAT', target: 'mdr', value: 1 },
+								{ type: 'GRANT_RESISTANCE', target: 'mystical', value: true },
 								{
 									type: 'GRANT_ABILITY',
 									target: 'pact_armor_summon',
@@ -183,20 +191,6 @@ export const warlockClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'warlock_talent_level_2',
-			featureName: 'Talent',
-			levelGained: 2,
-			description:
-				'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
-			effects: [
-				{
-					type: 'GRANT_CHOICE',
-					target: 'talent',
-					value: 1
-				}
-			]
-		},
-		{
 			id: 'warlock_level_5_placeholder',
 			featureName: 'Expert Warlock',
 			levelGained: 5,
@@ -232,14 +226,6 @@ export const warlockClass: ClassDefinition = {
 					]
 				}
 			]
-		},
-		{
-			id: 'warlock_level_8_capstone_placeholder',
-			featureName: 'Class Capstone (Source Unpublished)',
-			levelGained: 9,
-			isFlavor: true,
-			description:
-				'The v0.10.5 class progression grants a Class Capstone Feature at level 9, but this source packet does not publish class-specific capstone mechanics. This entry is intentionally non-mechanical and preserves the legacy ID for saved-character compatibility.'
 		}
 	],
 	subclasses: [
@@ -327,12 +313,24 @@ export const warlockClass: ClassDefinition = {
 								{
 									name: 'Charmed',
 									description: 'Your Fey Aspect is the Charmed condition.',
-									effects: []
+									effects: [
+										{
+											type: 'GRANT_ABILITY',
+											target: 'warlock_fey_aspect_charmed',
+											value: 'Your Fey Aspect Condition is Charmed.'
+										}
+									]
 								},
 								{
 									name: 'Intimidated',
 									description: 'Your Fey Aspect is the Intimidated condition.',
-									effects: []
+									effects: [
+										{
+											type: 'GRANT_ABILITY',
+											target: 'warlock_fey_aspect_intimidated',
+											value: 'Your Fey Aspect Condition is Intimidated.'
+										}
+									]
 								}
 							]
 						}
@@ -381,7 +379,14 @@ export const warlockClass: ClassDefinition = {
 					levelGained: 3,
 					isFlavor: true,
 					description:
-						'You can enter and interact with the dreams of sleeping creatures you can see within 5 Spaces. You have ADV on Checks to influence or navigate dreams.'
+						'You can enter and interact with the dreams of sleeping creatures you can see within 5 Spaces. You have ADV on Checks to influence or navigate dreams.',
+					effects: [
+						{
+							type: 'GRANT_ADV_ON_CHECK',
+							target: 'influence_or_navigate_dreams',
+							value: 'ADV'
+						}
+					]
 				}
 			]
 		}

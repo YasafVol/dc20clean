@@ -90,7 +90,15 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 			properties: selectedProperties,
 			maxPoints
 		});
-	}, [weaponType, style, secondaryStyle, damageType, selectedProperties, maxPoints, hasMultiFaceted]);
+	}, [
+		weaponType,
+		style,
+		secondaryStyle,
+		damageType,
+		selectedProperties,
+		maxPoints,
+		hasMultiFaceted
+	]);
 
 	const toggleProperty = (propId: string) => {
 		if (weaponType === 'ranged' && propId === 'ammo') {

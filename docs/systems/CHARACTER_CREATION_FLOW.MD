@@ -1,6 +1,6 @@
 ### Character Creation Flow System Spec
 
-> Last Updated: 2026-06-19
+> Last Updated: 2026-06-22
 
 #### Purpose
 
@@ -37,6 +37,7 @@
   - Completion rule: all leveling budgets spent and subclass choice (if required) selected
   - Outputs: `state.selectedTalents`, `state.pathPointAllocations`, `state.selectedMulticlassOption`, `state.selectedMulticlassClass`, `state.selectedMulticlassFeature`, `state.selectedSubclass`
   - v0.10.5 schedule: Talent + Path Progression at levels 6 and 8; subclass choices at levels 3, 7, and 10; class features at levels 1, 2, 5, and 9.
+  - Talent budgets come from progression `gains.talents`, not generic class feature records. The stage spends those budgets through `selectedTalents`.
   - Talent list source: `LevelingChoices.tsx` uses `selectableTalents` so deprecated/loadable legacy talents such as Swift Berserker do not appear as new v0.10.5 choices.
 
 - **Stage 3 – Ancestry** (`AncestrySelector.tsx`, `SelectedAncestries.tsx`)
@@ -55,14 +56,14 @@
   - Outputs: skills/trades/languages plus conversion values (`SET_CONVERSIONS`)
 
 - **Stage 6 – Spells & Maneuvers** (`SpellsAndManeuvers.tsx`)
-	- Inputs: `ALL_SPELLS`, `allManeuvers`, class level progression (JSON today → resolver later), `state.selectedSpells`, `state.selectedManeuvers`
-	- Completion rule: selected counts meet per-level requirements (cantrips + spells, maneuvers)
-	- Spell filtering: source, school, and tag browsing filters are OR-based across selected facets; cost and sustained filters narrow results. Slot and Global Magic Profile eligibility use source restrictions only when present, then school-or-tag matching.
-	- Maneuver cards display base AP/SP cost and maneuver enhancements for review before selection.
-	- Outputs: `state.selectedSpells`, `state.selectedManeuvers`
-	- Character completion resolves spell IDs through `getSpellById()` before falling back to exact display-name matches, so approved legacy v0.10 spell aliases can still produce valid saved spell data when encountered.
-	- Character completion persists selected maneuvers with base cost, range, reaction trigger, and enhancements so the sheet and Martial Manual-style displays do not lose rules text.
-	- Starting resource expectations come from calculated class progression totals: Martial 2 SP, Spellcaster 6 MP, Hybrid 1 SP and 3 MP.
+  - Inputs: `ALL_SPELLS`, `allManeuvers`, class level progression (JSON today → resolver later), `state.selectedSpells`, `state.selectedManeuvers`
+  - Completion rule: selected counts meet per-level requirements (cantrips + spells, maneuvers)
+  - Spell filtering: source, school, and tag browsing filters are OR-based across selected facets; cost and sustained filters narrow results. Slot and Global Magic Profile eligibility use source restrictions only when present, then school-or-tag matching.
+  - Maneuver cards display base AP/SP cost and maneuver enhancements for review before selection.
+  - Outputs: `state.selectedSpells`, `state.selectedManeuvers`
+  - Character completion resolves spell IDs through `getSpellById()` before falling back to exact display-name matches, so approved legacy v0.10 spell aliases can still produce valid saved spell data when encountered.
+  - Character completion persists selected maneuvers with base cost, range, reaction trigger, and enhancements so the sheet and Martial Manual-style displays do not lose rules text.
+  - Starting resource expectations come from calculated class progression totals: Martial 2 SP, Spellcaster 6 MP, Hybrid 1 SP and 3 MP.
 
 - **Stage 7 – Character Name** (`CharacterName.tsx`)
   - Inputs: `state.finalName`, `state.finalPlayerName`

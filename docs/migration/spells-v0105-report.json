@@ -28,15 +28,9 @@
 		{
 			"id": "arcane-bolt",
 			"name": "Arcane Bolt",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Astromancy",
-			"tags": [
-				"Bludgeoning",
-				"Piercing",
-				"Slashing"
-			],
+			"tags": ["Bludgeoning", "Piercing", "Slashing"],
 			"cost": {
 				"ap": 1
 			},
@@ -53,17 +47,9 @@
 		{
 			"id": "arcane-wave",
 			"name": "Arcane Wave",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Astromancy",
-			"tags": [
-				"Bludgeoning",
-				"Deafened",
-				"Motion",
-				"Piercing",
-				"Slashing"
-			],
+			"tags": ["Bludgeoning", "Deafened", "Motion", "Piercing", "Slashing"],
 			"cost": {
 				"ap": 2
 			},
@@ -80,17 +66,9 @@
 		{
 			"id": "banish",
 			"name": "Banish",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Astromancy",
-			"tags": [
-				"Incapacitated",
-				"Planes",
-				"Psychic",
-				"Teleportation"
-			],
+			"tags": ["Incapacitated", "Planes", "Psychic", "Teleportation"],
 			"cost": {
 				"ap": 1,
 				"mp": 2
@@ -108,17 +86,9 @@
 		{
 			"id": "blessing-of-air",
 			"name": "Blessing of Air",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Astromancy",
-			"tags": [
-				"Air",
-				"Embolden",
-				"Gravity",
-				"Motion"
-			],
+			"tags": ["Air", "Embolden", "Gravity", "Motion"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -136,14 +106,9 @@
 		{
 			"id": "blessing-of-zephyr",
 			"name": "Blessing of Zephyr",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Astromancy",
-			"tags": [
-				"Embolden",
-				"Motion"
-			],
+			"tags": ["Embolden", "Motion"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -161,16 +126,9 @@
 		{
 			"id": "gravity-shift",
 			"name": "Gravity Shift",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Astromancy",
-			"tags": [
-				"Dazed",
-				"Gravity",
-				"Hindered",
-				"Motion"
-			],
+			"tags": ["Dazed", "Gravity", "Hindered", "Motion"],
 			"cost": {
 				"ap": 2,
 				"mp": 4
@@ -188,15 +146,9 @@
 		{
 			"id": "gravity-well",
 			"name": "Gravity Well",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Astromancy",
-			"tags": [
-				"Gravity",
-				"Motion",
-				"Restrained"
-			],
+			"tags": ["Gravity", "Motion", "Restrained"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -214,15 +166,9 @@
 		{
 			"id": "haste",
 			"name": "Haste",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Astromancy",
-			"tags": [
-				"Embolden",
-				"Motion",
-				"Time"
-			],
+			"tags": ["Embolden", "Motion", "Time"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -240,18 +186,9 @@
 		{
 			"id": "increase-gravity",
 			"name": "Increase Gravity",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Astromancy",
-			"tags": [
-				"Bludgeoning",
-				"Gravity",
-				"Immobilized",
-				"Hindered",
-				"Prone",
-				"Slowed"
-			],
+			"tags": ["Bludgeoning", "Gravity", "Immobilized", "Hindered", "Prone", "Slowed"],
 			"cost": {
 				"ap": 2,
 				"mp": 2
@@ -269,19 +206,9 @@
 		{
 			"id": "slow-time",
 			"name": "Slow Time",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Astromancy",
-			"tags": [
-				"Dazed",
-				"Enfeeble",
-				"Hindered",
-				"Impaired",
-				"Slowed",
-				"Paralyzed",
-				"Time"
-			],
+			"tags": ["Dazed", "Enfeeble", "Hindered", "Impaired", "Slowed", "Paralyzed", "Time"],
 			"cost": {
 				"ap": 1
 			},
@@ -298,15 +225,9 @@
 		{
 			"id": "telekinesis",
 			"name": "Telekinesis",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Astromancy",
-			"tags": [
-				"Immobilized",
-				"Motion",
-				"Restrained"
-			],
+			"tags": ["Immobilized", "Motion", "Restrained"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -324,15 +245,9 @@
 		{
 			"id": "teleport",
 			"name": "Teleport",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Astromancy",
-			"tags": [
-				"Teleportation",
-				"Motion",
-				"Slowed"
-			],
+			"tags": ["Teleportation", "Motion", "Slowed"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -350,14 +265,9 @@
 		{
 			"id": "time-stop",
 			"name": "Time Stop",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Astromancy",
-			"tags": [
-				"Time",
-				"Paralyzed"
-			],
+			"tags": ["Time", "Paralyzed"],
 			"cost": {
 				"ap": 1,
 				"mp": 2
@@ -375,13 +285,9 @@
 		{
 			"id": "translocation",
 			"name": "Translocation",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Astromancy",
-			"tags": [
-				"Teleportation"
-			],
+			"tags": ["Teleportation"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -399,16 +305,9 @@
 		{
 			"id": "reduce-inertia",
 			"name": "Reduce Inertia",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Astromancy",
-			"tags": [
-				"Embolden",
-				"Gravity",
-				"Motion",
-				"Ward"
-			],
+			"tags": ["Embolden", "Gravity", "Motion", "Ward"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -426,14 +325,9 @@
 		{
 			"id": "arcane-barrier",
 			"name": "Arcane Barrier",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Conjuration",
-			"tags": [
-				"Embolden",
-				"Ward"
-			],
+			"tags": ["Embolden", "Ward"],
 			"cost": {
 				"ap": 2
 			},
@@ -450,17 +344,9 @@
 		{
 			"id": "arcane-weapon",
 			"name": "Arcane Weapon",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Conjuration",
-			"tags": [
-				"Enfeeble",
-				"Bludgeoning",
-				"Piercing",
-				"Slashing",
-				"Weapon"
-			],
+			"tags": ["Enfeeble", "Bludgeoning", "Piercing", "Slashing", "Weapon"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -478,17 +364,9 @@
 		{
 			"id": "bind",
 			"name": "Bind",
-			"sources": [
-				"Arcane",
-				"Divine",
-				"Primal"
-			],
+			"sources": ["Arcane", "Divine", "Primal"],
 			"school": "Conjuration",
-			"tags": [
-				"Bludgeoning",
-				"Immobilized",
-				"Restrained"
-			],
+			"tags": ["Bludgeoning", "Immobilized", "Restrained"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -506,13 +384,9 @@
 		{
 			"id": "chaos-bomb",
 			"name": "Chaos Bomb",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Conjuration",
-			"tags": [
-				"Chaos"
-			],
+			"tags": ["Chaos"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -530,16 +404,9 @@
 		{
 			"id": "call-familiar",
 			"name": "Call Familiar",
-			"sources": [
-				"Arcane",
-				"Divine",
-				"Primal"
-			],
+			"sources": ["Arcane", "Divine", "Primal"],
 			"school": "Conjuration",
-			"tags": [
-				"Sense",
-				"Summoning"
-			],
+			"tags": ["Sense", "Summoning"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -557,15 +424,9 @@
 		{
 			"id": "disguise-self",
 			"name": "Disguise Self",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Conjuration",
-			"tags": [
-				"Communication",
-				"Illusion"
-			],
+			"tags": ["Communication", "Illusion"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -583,16 +444,9 @@
 		{
 			"id": "entangle",
 			"name": "Entangle",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Conjuration",
-			"tags": [
-				"Immobilized",
-				"Plants",
-				"Piercing",
-				"Restrained"
-			],
+			"tags": ["Immobilized", "Plants", "Piercing", "Restrained"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -610,19 +464,9 @@
 		{
 			"id": "elemental-weapon",
 			"name": "Elemental Weapon",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Conjuration",
-			"tags": [
-				"Cold",
-				"Corrosion",
-				"Enfeeble",
-				"Fire",
-				"Lightning",
-				"Poison",
-				"Weapon"
-			],
+			"tags": ["Cold", "Corrosion", "Enfeeble", "Fire", "Lightning", "Poison", "Weapon"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -640,15 +484,9 @@
 		{
 			"id": "forcefield",
 			"name": "Forcefield",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Conjuration",
-			"tags": [
-				"Antimagic",
-				"Sound",
-				"Summoning"
-			],
+			"tags": ["Antimagic", "Sound", "Summoning"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -666,16 +504,9 @@
 		{
 			"id": "illusory-duplicate",
 			"name": "Illusory Duplicate",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Conjuration",
-			"tags": [
-				"Communication",
-				"Illusion",
-				"Teleportation",
-				"Sense"
-			],
+			"tags": ["Communication", "Illusion", "Teleportation", "Sense"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -693,17 +524,9 @@
 		{
 			"id": "illusory-image",
 			"name": "Illusory Image",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Conjuration",
-			"tags": [
-				"Illusion",
-				"Scent",
-				"Sound",
-				"Trap"
-			],
+			"tags": ["Illusion", "Scent", "Sound", "Trap"],
 			"cost": {
 				"ap": 1
 			},
@@ -720,15 +543,9 @@
 		{
 			"id": "illusory-writing",
 			"name": "Illusory Writing",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Conjuration",
-			"tags": [
-				"Communication",
-				"Illusion",
-				"Trap"
-			],
+			"tags": ["Communication", "Illusion", "Trap"],
 			"cost": {
 				"ap": 1
 			},
@@ -745,14 +562,9 @@
 		{
 			"id": "mage-armor",
 			"name": "Mage Armor",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Conjuration",
-			"tags": [
-				"Embolden",
-				"Ward"
-			],
+			"tags": ["Embolden", "Ward"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -770,17 +582,9 @@
 		{
 			"id": "mystical-weapon",
 			"name": "Mystical Weapon",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Conjuration",
-			"tags": [
-				"Enfeeble",
-				"Psychic",
-				"Radiant",
-				"Umbral",
-				"Weapon"
-			],
+			"tags": ["Enfeeble", "Psychic", "Radiant", "Umbral", "Weapon"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -798,17 +602,9 @@
 		{
 			"id": "natures-tether",
 			"name": "Nature's Tether",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Conjuration",
-			"tags": [
-				"Bleeding",
-				"Motion",
-				"Plant",
-				"Restrained",
-				"Tethered"
-			],
+			"tags": ["Bleeding", "Motion", "Plant", "Restrained", "Tethered"],
 			"cost": {
 				"ap": 1
 			},
@@ -825,15 +621,9 @@
 		{
 			"id": "oil-slick",
 			"name": "Oil Slick",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Conjuration",
-			"tags": [
-				"Burning",
-				"Trap"
-			],
+			"tags": ["Burning", "Trap"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -851,16 +641,9 @@
 		{
 			"id": "tendrils-from-beyond",
 			"name": "Tendrils from Beyond",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Conjuration",
-			"tags": [
-				"Aberration",
-				"Bludgeoning",
-				"Madness",
-				"Psychic"
-			],
+			"tags": ["Aberration", "Bludgeoning", "Madness", "Psychic"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -878,16 +661,9 @@
 		{
 			"id": "unholy-aura",
 			"name": "Unholy Aura",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Conjuration",
-			"tags": [
-				"Death",
-				"Doomed",
-				"Shadow",
-				"Tethered"
-			],
+			"tags": ["Death", "Doomed", "Shadow", "Tethered"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -905,16 +681,9 @@
 		{
 			"id": "summon-aberration",
 			"name": "Summon Aberration",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Conjuration",
-			"tags": [
-				"Aberration",
-				"Cold",
-				"Psychic",
-				"Summoning"
-			],
+			"tags": ["Aberration", "Cold", "Psychic", "Summoning"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -932,17 +701,9 @@
 		{
 			"id": "summon-beast",
 			"name": "Summon Beast",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Conjuration",
-			"tags": [
-				"Beast",
-				"Bludgeoning",
-				"Piercing",
-				"Slashing",
-				"Summoning"
-			],
+			"tags": ["Beast", "Bludgeoning", "Piercing", "Slashing", "Summoning"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -960,16 +721,9 @@
 		{
 			"id": "summon-celestial",
 			"name": "Summon Celestial",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Conjuration",
-			"tags": [
-				"Celestial",
-				"Fire",
-				"Radiant",
-				"Summoning"
-			],
+			"tags": ["Celestial", "Fire", "Radiant", "Summoning"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -987,17 +741,9 @@
 		{
 			"id": "summon-construct",
 			"name": "Summon Construct",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Conjuration",
-			"tags": [
-				"Bludgeoning",
-				"Construct",
-				"Piercing",
-				"Slashing",
-				"Summoning"
-			],
+			"tags": ["Bludgeoning", "Construct", "Piercing", "Slashing", "Summoning"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1015,16 +761,9 @@
 		{
 			"id": "summon-dragon",
 			"name": "Summon Dragon",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Conjuration",
-			"tags": [
-				"Dragon",
-				"Piercing",
-				"Slashing",
-				"Summoning"
-			],
+			"tags": ["Dragon", "Piercing", "Slashing", "Summoning"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1042,9 +781,7 @@
 		{
 			"id": "summon-elemental",
 			"name": "Summon Elemental",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Conjuration",
 			"tags": [
 				"Bludgeoning",
@@ -1074,16 +811,9 @@
 		{
 			"id": "summon-fey",
 			"name": "Summon Fey",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Conjuration",
-			"tags": [
-				"Fey",
-				"Psychic",
-				"Slashing",
-				"Summoning"
-			],
+			"tags": ["Fey", "Psychic", "Slashing", "Summoning"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1101,17 +831,9 @@
 		{
 			"id": "summon-fiend",
 			"name": "Summon Fiend",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Conjuration",
-			"tags": [
-				"Corrosion",
-				"Fiend",
-				"Fire",
-				"Poison",
-				"Summoning"
-			],
+			"tags": ["Corrosion", "Fiend", "Fire", "Poison", "Summoning"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1129,15 +851,9 @@
 		{
 			"id": "summon-ooze",
 			"name": "Summon Ooze",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Conjuration",
-			"tags": [
-				"Corrosion",
-				"Ooze",
-				"Summoning"
-			],
+			"tags": ["Corrosion", "Ooze", "Summoning"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1155,17 +871,9 @@
 		{
 			"id": "summon-plant",
 			"name": "Summon Plant",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Conjuration",
-			"tags": [
-				"Bludgeoning",
-				"Plants",
-				"Piercing",
-				"Poison",
-				"Summoning"
-			],
+			"tags": ["Bludgeoning", "Plants", "Piercing", "Poison", "Summoning"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1183,16 +891,9 @@
 		{
 			"id": "summon-undead",
 			"name": "Summon Undead",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Conjuration",
-			"tags": [
-				"Bludgeoning",
-				"Umbral",
-				"Undead",
-				"Summoning"
-			],
+			"tags": ["Bludgeoning", "Umbral", "Undead", "Summoning"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1210,13 +911,9 @@
 		{
 			"id": "bless",
 			"name": "Bless",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Divination",
-			"tags": [
-				"Embolden"
-			],
+			"tags": ["Embolden"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1234,19 +931,9 @@
 		{
 			"id": "danger-sense",
 			"name": "Danger Sense",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Divination",
-			"tags": [
-				"Embolden",
-				"Emotions",
-				"Knowledge",
-				"Sense",
-				"Surprised",
-				"Ward"
-			],
+			"tags": ["Embolden", "Emotions", "Knowledge", "Sense", "Surprised", "Ward"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1264,17 +951,9 @@
 		{
 			"id": "detect-magic",
 			"name": "Detect Magic",
-			"sources": [
-				"Arcane",
-				"Divine",
-				"Primal"
-			],
+			"sources": ["Arcane", "Divine", "Primal"],
 			"school": "Divination",
-			"tags": [
-				"Antimagic",
-				"Knowledge",
-				"Sense"
-			],
+			"tags": ["Antimagic", "Knowledge", "Sense"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1292,16 +971,9 @@
 		{
 			"id": "empowered-sight",
 			"name": "Empowered Sight",
-			"sources": [
-				"Arcane",
-				"Primal",
-				"Divine"
-			],
+			"sources": ["Arcane", "Primal", "Divine"],
 			"school": "Divination",
-			"tags": [
-				"Embolden",
-				"Sense"
-			],
+			"tags": ["Embolden", "Sense"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1319,15 +991,9 @@
 		{
 			"id": "foresight",
 			"name": "Foresight",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Divination",
-			"tags": [
-				"Time",
-				"Embolden"
-			],
+			"tags": ["Time", "Embolden"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1345,16 +1011,9 @@
 		{
 			"id": "locate-target",
 			"name": "Locate Target",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Divination",
-			"tags": [
-				"Knowledge",
-				"Planes",
-				"Sense"
-			],
+			"tags": ["Knowledge", "Planes", "Sense"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1372,15 +1031,9 @@
 		{
 			"id": "scrying",
 			"name": "Scrying",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Divination",
-			"tags": [
-				"Knowledge",
-				"Sense",
-				"Communication"
-			],
+			"tags": ["Knowledge", "Sense", "Communication"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1398,14 +1051,9 @@
 		{
 			"id": "absorb-elements",
 			"name": "Absorb Elements",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Embolden",
-				"Ward"
-			],
+			"tags": ["Embolden", "Ward"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1423,16 +1071,9 @@
 		{
 			"id": "acid-stream",
 			"name": "Acid Stream",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Corrosion",
-				"Enfeeble",
-				"Hindered"
-			],
+			"tags": ["Corrosion", "Enfeeble", "Hindered"],
 			"cost": {
 				"ap": 2
 			},
@@ -1449,15 +1090,9 @@
 		{
 			"id": "air-slash",
 			"name": "Air Slash",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Air",
-				"Bleeding",
-				"Slashing"
-			],
+			"tags": ["Air", "Bleeding", "Slashing"],
 			"cost": {
 				"ap": 1
 			},
@@ -1474,16 +1109,9 @@
 		{
 			"id": "blight-bomb",
 			"name": "Blight Bomb",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Ailment",
-				"Impaired",
-				"Poison"
-			],
+			"tags": ["Ailment", "Impaired", "Poison"],
 			"cost": {
 				"ap": 2
 			},
@@ -1500,15 +1128,9 @@
 		{
 			"id": "cloud-cover",
 			"name": "Cloud Cover",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Cold",
-				"Shadow",
-				"Slashing"
-			],
+			"tags": ["Cold", "Shadow", "Slashing"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -1526,16 +1148,9 @@
 		{
 			"id": "cold-wave",
 			"name": "Cold Wave",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Cold",
-				"Slowed",
-				"Trap"
-			],
+			"tags": ["Cold", "Slowed", "Trap"],
 			"cost": {
 				"ap": 2
 			},
@@ -1552,16 +1167,9 @@
 		{
 			"id": "cone-of-cold",
 			"name": "Cone of Cold",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Cold",
-				"Slowed",
-				"Stunned"
-			],
+			"tags": ["Cold", "Slowed", "Stunned"],
 			"cost": {
 				"ap": 2
 			},
@@ -1578,16 +1186,9 @@
 		{
 			"id": "corrosive-bolt",
 			"name": "Corrosive Bolt",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Corrosion",
-				"Enfeeble",
-				"Hindered"
-			],
+			"tags": ["Corrosion", "Enfeeble", "Hindered"],
 			"cost": {
 				"ap": 1
 			},
@@ -1604,15 +1205,9 @@
 		{
 			"id": "corrosive-cascade",
 			"name": "Corrosive Cascade",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Corrosion",
-				"Enfeeble"
-			],
+			"tags": ["Corrosion", "Enfeeble"],
 			"cost": {
 				"ap": 2
 			},
@@ -1629,16 +1224,9 @@
 		{
 			"id": "corrosive-wave",
 			"name": "Corrosive Wave",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Corrosion",
-				"Enfeeble",
-				"Exposed"
-			],
+			"tags": ["Corrosion", "Enfeeble", "Exposed"],
 			"cost": {
 				"ap": 2
 			},
@@ -1655,15 +1243,9 @@
 		{
 			"id": "elemental-shield",
 			"name": "Elemental Shield",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Embolden",
-				"Ward"
-			],
+			"tags": ["Embolden", "Ward"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1681,15 +1263,9 @@
 		{
 			"id": "eruption",
 			"name": "Eruption",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Bludgeoning",
-				"Earth",
-				"Motion"
-			],
+			"tags": ["Bludgeoning", "Earth", "Motion"],
 			"cost": {
 				"ap": 2
 			},
@@ -1706,16 +1282,9 @@
 		{
 			"id": "fireball",
 			"name": "Fireball",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Burning",
-				"Fire",
-				"Shadow"
-			],
+			"tags": ["Burning", "Fire", "Shadow"],
 			"cost": {
 				"ap": 2
 			},
@@ -1732,15 +1301,9 @@
 		{
 			"id": "fire-blast",
 			"name": "Fire Blast",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Burning",
-				"Fire"
-			],
+			"tags": ["Burning", "Fire"],
 			"cost": {
 				"ap": 2
 			},
@@ -1757,15 +1320,9 @@
 		{
 			"id": "fire-bolt",
 			"name": "Fire Bolt",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Burning",
-				"Fire"
-			],
+			"tags": ["Burning", "Fire"],
 			"cost": {
 				"ap": 1
 			},
@@ -1782,16 +1339,9 @@
 		{
 			"id": "fire-torrent",
 			"name": "Fire Torrent",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Burning",
-				"Fire",
-				"Motion"
-			],
+			"tags": ["Burning", "Fire", "Motion"],
 			"cost": {
 				"ap": 2
 			},
@@ -1808,18 +1358,9 @@
 		{
 			"id": "freeze",
 			"name": "Freeze",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Cold",
-				"Enfeeble",
-				"Immobilized",
-				"Slowed",
-				"Stunned"
-			],
+			"tags": ["Cold", "Enfeeble", "Immobilized", "Slowed", "Stunned"],
 			"cost": {
 				"ap": 1
 			},
@@ -1836,15 +1377,9 @@
 		{
 			"id": "frost-bolt",
 			"name": "Frost Bolt",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Cold",
-				"Slowed"
-			],
+			"tags": ["Cold", "Slowed"],
 			"cost": {
 				"ap": 1
 			},
@@ -1861,15 +1396,9 @@
 		{
 			"id": "frost-storm",
 			"name": "Frost Storm",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Cold",
-				"Slowed"
-			],
+			"tags": ["Cold", "Slowed"],
 			"cost": {
 				"ap": 2
 			},
@@ -1886,14 +1415,9 @@
 		{
 			"id": "gust",
 			"name": "Gust",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Air",
-				"Motion"
-			],
+			"tags": ["Air", "Motion"],
 			"cost": {
 				"ap": 1
 			},
@@ -1910,16 +1434,9 @@
 		{
 			"id": "hydro-lance",
 			"name": "Hydro Lance",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Bleeding",
-				"Motion",
-				"Piercing",
-				"Water"
-			],
+			"tags": ["Bleeding", "Motion", "Piercing", "Water"],
 			"cost": {
 				"ap": 2
 			},
@@ -1936,19 +1453,9 @@
 		{
 			"id": "inflict-poison",
 			"name": "Inflict Poison",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Ailment",
-				"Dazed",
-				"Frightened",
-				"Impaired",
-				"Slowed",
-				"Stunned"
-			],
+			"tags": ["Ailment", "Dazed", "Frightened", "Impaired", "Slowed", "Stunned"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1966,14 +1473,9 @@
 		{
 			"id": "lightning-blast",
 			"name": "Lightning Blast",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Lightning"
-			],
+			"tags": ["Lightning"],
 			"cost": {
 				"ap": 2
 			},
@@ -1990,15 +1492,9 @@
 		{
 			"id": "lightning-bolt",
 			"name": "Lightning Bolt",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Lightning",
-				"Stunned"
-			],
+			"tags": ["Lightning", "Stunned"],
 			"cost": {
 				"ap": 1
 			},
@@ -2015,16 +1511,9 @@
 		{
 			"id": "lightning-storm",
 			"name": "Lightning Storm",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Deafened",
-				"Lightning",
-				"Sound"
-			],
+			"tags": ["Deafened", "Lightning", "Sound"],
 			"cost": {
 				"ap": 2
 			},
@@ -2041,15 +1530,9 @@
 		{
 			"id": "lightning-torrent",
 			"name": "Lightning Torrent",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Dazed",
-				"Lightning"
-			],
+			"tags": ["Dazed", "Lightning"],
 			"cost": {
 				"ap": 2
 			},
@@ -2066,15 +1549,9 @@
 		{
 			"id": "lightning-rod",
 			"name": "Lightning Rod",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Lightning",
-				"Tethered"
-			],
+			"tags": ["Lightning", "Tethered"],
 			"cost": {
 				"ap": 1
 			},
@@ -2091,16 +1568,9 @@
 		{
 			"id": "living-bomb",
 			"name": "Living Bomb",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Burning",
-				"Fire",
-				"Trap"
-			],
+			"tags": ["Burning", "Fire", "Trap"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2118,15 +1588,9 @@
 		{
 			"id": "maelstrom",
 			"name": "Maelstrom",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Motion",
-				"Slowed",
-				"Water"
-			],
+			"tags": ["Motion", "Slowed", "Water"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -2144,15 +1608,9 @@
 		{
 			"id": "mold-earth",
 			"name": "Mold Earth",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Earth",
-				"Motion"
-			],
+			"tags": ["Earth", "Motion"],
 			"cost": {
 				"ap": 1
 			},
@@ -2169,17 +1627,9 @@
 		{
 			"id": "poison-bolt",
 			"name": "Poison Bolt",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Ailment",
-				"Hindered",
-				"Impaired",
-				"Poison"
-			],
+			"tags": ["Ailment", "Hindered", "Impaired", "Poison"],
 			"cost": {
 				"ap": 1
 			},
@@ -2196,16 +1646,9 @@
 		{
 			"id": "spike-bolt",
 			"name": "Spike Bolt",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Earth",
-				"Impaired",
-				"Piercing",
-				"Plants"
-			],
+			"tags": ["Earth", "Impaired", "Piercing", "Plants"],
 			"cost": {
 				"ap": 1
 			},
@@ -2222,17 +1665,9 @@
 		{
 			"id": "spike-cluster",
 			"name": "Spike Cluster",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Earth",
-				"Immobilized",
-				"Impaired",
-				"Piercing",
-				"Plants"
-			],
+			"tags": ["Earth", "Immobilized", "Impaired", "Piercing", "Plants"],
 			"cost": {
 				"ap": 2
 			},
@@ -2249,16 +1684,9 @@
 		{
 			"id": "spike-surge",
 			"name": "Spike Surge",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Earth",
-				"Impaired",
-				"Piercing",
-				"Plants"
-			],
+			"tags": ["Earth", "Impaired", "Piercing", "Plants"],
 			"cost": {
 				"ap": 2
 			},
@@ -2275,18 +1703,9 @@
 		{
 			"id": "tornado",
 			"name": "Tornado",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Air",
-				"Blinded",
-				"Chaos",
-				"Lightning",
-				"Motion",
-				"Slowed"
-			],
+			"tags": ["Air", "Blinded", "Chaos", "Lightning", "Motion", "Slowed"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -2304,16 +1723,9 @@
 		{
 			"id": "toxic-burst",
 			"name": "Toxic Burst",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Ailment",
-				"Enfeeble",
-				"Poison"
-			],
+			"tags": ["Ailment", "Enfeeble", "Poison"],
 			"cost": {
 				"ap": 2
 			},
@@ -2330,16 +1742,9 @@
 		{
 			"id": "wall-of-fire",
 			"name": "Wall of Fire",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Burning",
-				"Fire",
-				"Shadow"
-			],
+			"tags": ["Burning", "Fire", "Shadow"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -2357,15 +1762,9 @@
 		{
 			"id": "wall-of-earth",
 			"name": "Wall of Earth",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Earth",
-				"Motion",
-				"Summoning"
-			],
+			"tags": ["Earth", "Motion", "Summoning"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -2383,14 +1782,9 @@
 		{
 			"id": "wall-of-water",
 			"name": "Wall of Water",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Motion",
-				"Water"
-			],
+			"tags": ["Motion", "Water"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -2408,15 +1802,9 @@
 		{
 			"id": "water-bolt",
 			"name": "Water Bolt",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Bludgeoning",
-				"Motion",
-				"Water"
-			],
+			"tags": ["Bludgeoning", "Motion", "Water"],
 			"cost": {
 				"ap": 1
 			},
@@ -2433,16 +1821,9 @@
 		{
 			"id": "wind-blade",
 			"name": "Wind Blade",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Air",
-				"Bleeding",
-				"Motion",
-				"Slashing"
-			],
+			"tags": ["Air", "Bleeding", "Motion", "Slashing"],
 			"cost": {
 				"ap": 2
 			},
@@ -2459,16 +1840,9 @@
 		{
 			"id": "wind-burst",
 			"name": "Wind Burst",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Air",
-				"Bleeding",
-				"Motion",
-				"Slashing"
-			],
+			"tags": ["Air", "Bleeding", "Motion", "Slashing"],
 			"cost": {
 				"ap": 2
 			},
@@ -2485,15 +1859,9 @@
 		{
 			"id": "wind-tunnel",
 			"name": "Wind Tunnel",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Elemental",
-			"tags": [
-				"Air",
-				"Motion",
-				"Slowed"
-			],
+			"tags": ["Air", "Motion", "Slowed"],
 			"cost": {
 				"ap": 2
 			},
@@ -2510,17 +1878,9 @@
 		{
 			"id": "charm",
 			"name": "Charm",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Enchantment",
-			"tags": [
-				"Charmed",
-				"Communication",
-				"Emotions",
-				"Thoughts"
-			],
+			"tags": ["Charmed", "Communication", "Emotions", "Thoughts"],
 			"cost": {
 				"ap": 1
 			},
@@ -2537,17 +1897,9 @@
 		{
 			"id": "command",
 			"name": "Command",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Enchantment",
-			"tags": [
-				"Communication",
-				"Emotion",
-				"Motion",
-				"Thoughts"
-			],
+			"tags": ["Communication", "Emotion", "Motion", "Thoughts"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2565,17 +1917,9 @@
 		{
 			"id": "confusion",
 			"name": "Confusion",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Enchantment",
-			"tags": [
-				"Chaos",
-				"Emotions",
-				"Madness",
-				"Thoughts"
-			],
+			"tags": ["Chaos", "Emotions", "Madness", "Thoughts"],
 			"cost": {
 				"ap": 1,
 				"mp": 2
@@ -2593,18 +1937,9 @@
 		{
 			"id": "fear",
 			"name": "Fear",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Enchantment",
-			"tags": [
-				"Emotions",
-				"Frightened",
-				"Motion",
-				"Psychic",
-				"Terrified"
-			],
+			"tags": ["Emotions", "Frightened", "Motion", "Psychic", "Terrified"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2622,15 +1957,9 @@
 		{
 			"id": "hex",
 			"name": "Hex",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Enchantment",
-			"tags": [
-				"Curse",
-				"Enfeeble"
-			],
+			"tags": ["Curse", "Enfeeble"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2648,15 +1977,9 @@
 		{
 			"id": "message",
 			"name": "Message",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Enchantment",
-			"tags": [
-				"Communication",
-				"Thoughts"
-			],
+			"tags": ["Communication", "Thoughts"],
 			"cost": {
 				"ap": 1
 			},
@@ -2673,16 +1996,9 @@
 		{
 			"id": "mind-blast",
 			"name": "Mind Blast",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Enchantment",
-			"tags": [
-				"Dazed",
-				"Psychic",
-				"Sense"
-			],
+			"tags": ["Dazed", "Psychic", "Sense"],
 			"cost": {
 				"ap": 2
 			},
@@ -2699,16 +2015,9 @@
 		{
 			"id": "mockery",
 			"name": "Mockery",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Enchantment",
-			"tags": [
-				"Blinded",
-				"Deafened",
-				"Emotions",
-				"Taunted"
-			],
+			"tags": ["Blinded", "Deafened", "Emotions", "Taunted"],
 			"cost": {
 				"ap": 1
 			},
@@ -2725,16 +2034,9 @@
 		{
 			"id": "planar-protection",
 			"name": "Planar Protection",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Enchantment",
-			"tags": [
-				"Cleansing",
-				"Embolden",
-				"Thoughts",
-				"Ward"
-			],
+			"tags": ["Cleansing", "Embolden", "Thoughts", "Ward"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2752,17 +2054,9 @@
 		{
 			"id": "psi-bolt",
 			"name": "Psi Bolt",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Enchantment",
-			"tags": [
-				"Dazed",
-				"Intimidated",
-				"Psychic",
-				"Thoughts"
-			],
+			"tags": ["Dazed", "Intimidated", "Psychic", "Thoughts"],
 			"cost": {
 				"ap": 1
 			},
@@ -2779,16 +2073,9 @@
 		{
 			"id": "psychic-wave",
 			"name": "Psychic Wave",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Enchantment",
-			"tags": [
-				"Enfeeble",
-				"Motion",
-				"Psychic"
-			],
+			"tags": ["Enfeeble", "Motion", "Psychic"],
 			"cost": {
 				"ap": 2
 			},
@@ -2805,17 +2092,9 @@
 		{
 			"id": "shatter-reality",
 			"name": "Shatter Reality",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Enchantment",
-			"tags": [
-				"Chaos",
-				"Dazed",
-				"Madness",
-				"Psychic"
-			],
+			"tags": ["Chaos", "Dazed", "Madness", "Psychic"],
 			"cost": {
 				"ap": 2
 			},
@@ -2832,16 +2111,9 @@
 		{
 			"id": "slumber",
 			"name": "Slumber",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Enchantment",
-			"tags": [
-				"Emotions",
-				"Enfeeble",
-				"Incapacitated",
-				"Unconscious"
-			],
+			"tags": ["Emotions", "Enfeeble", "Incapacitated", "Unconscious"],
 			"cost": {
 				"ap": 1,
 				"mp": 2
@@ -2859,14 +2131,9 @@
 		{
 			"id": "cleanse",
 			"name": "Cleanse",
-			"sources": [
-				"Divine",
-				"Primal"
-			],
+			"sources": ["Divine", "Primal"],
 			"school": "Invocation",
-			"tags": [
-				"Cleansing"
-			],
+			"tags": ["Cleansing"],
 			"cost": {
 				"ap": 1
 			},
@@ -2883,17 +2150,9 @@
 		{
 			"id": "close-wounds",
 			"name": "Close Wounds",
-			"sources": [
-				"Arcane",
-				"Divine",
-				"Primal"
-			],
+			"sources": ["Arcane", "Divine", "Primal"],
 			"school": "Invocation",
-			"tags": [
-				"Cleansing",
-				"Healing",
-				"Time"
-			],
+			"tags": ["Cleansing", "Healing", "Time"],
 			"cost": {
 				"ap": 1
 			},
@@ -2910,16 +2169,9 @@
 		{
 			"id": "death-ward",
 			"name": "Death Ward",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Invocation",
-			"tags": [
-				"Cleansing",
-				"Death",
-				"Embolden",
-				"Ward"
-			],
+			"tags": ["Cleansing", "Death", "Embolden", "Ward"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2937,14 +2189,9 @@
 		{
 			"id": "divine-protection",
 			"name": "Divine Protection",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Invocation",
-			"tags": [
-				"Death",
-				"Ward"
-			],
+			"tags": ["Death", "Ward"],
 			"cost": {
 				"ap": 1
 			},
@@ -2961,13 +2208,9 @@
 		{
 			"id": "heal",
 			"name": "Heal",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Invocation",
-			"tags": [
-				"Healing"
-			],
+			"tags": ["Healing"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2985,14 +2228,9 @@
 		{
 			"id": "healing-wave",
 			"name": "Healing Wave",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Invocation",
-			"tags": [
-				"Healing",
-				"Cleansing"
-			],
+			"tags": ["Healing", "Cleansing"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -3010,17 +2248,9 @@
 		{
 			"id": "illuminate",
 			"name": "Illuminate",
-			"sources": [
-				"Divine",
-				"Primal"
-			],
+			"sources": ["Divine", "Primal"],
 			"school": "Invocation",
-			"tags": [
-				"Blinded",
-				"Exposed",
-				"Light",
-				"Sense"
-			],
+			"tags": ["Blinded", "Exposed", "Light", "Sense"],
 			"cost": {
 				"ap": 2
 			},
@@ -3037,16 +2267,9 @@
 		{
 			"id": "life-transfer",
 			"name": "Life Transfer",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Invocation",
-			"tags": [
-				"Blood",
-				"Cleansing",
-				"Healing"
-			],
+			"tags": ["Blood", "Cleansing", "Healing"],
 			"cost": {
 				"ap": 1
 			},
@@ -3063,16 +2286,9 @@
 		{
 			"id": "light",
 			"name": "Light",
-			"sources": [
-				"Arcane",
-				"Divine",
-				"Primal"
-			],
+			"sources": ["Arcane", "Divine", "Primal"],
 			"school": "Invocation",
-			"tags": [
-				"Blinded",
-				"Light"
-			],
+			"tags": ["Blinded", "Light"],
 			"cost": {
 				"ap": 1
 			},
@@ -3089,16 +2305,9 @@
 		{
 			"id": "luminous-burst",
 			"name": "Luminous Burst",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Invocation",
-			"tags": [
-				"Exposed",
-				"Light",
-				"Radiant",
-				"Tethered"
-			],
+			"tags": ["Exposed", "Light", "Radiant", "Tethered"],
 			"cost": {
 				"ap": 2
 			},
@@ -3115,14 +2324,9 @@
 		{
 			"id": "mass-heal",
 			"name": "Mass Heal",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Invocation",
-			"tags": [
-				"Healing",
-				"Ward"
-			],
+			"tags": ["Healing", "Ward"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -3140,16 +2344,9 @@
 		{
 			"id": "radiant-bolt",
 			"name": "Radiant Bolt",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Invocation",
-			"tags": [
-				"Blinded",
-				"Exposed",
-				"Light",
-				"Radiant"
-			],
+			"tags": ["Blinded", "Exposed", "Light", "Radiant"],
 			"cost": {
 				"ap": 1
 			},
@@ -3166,14 +2363,9 @@
 		{
 			"id": "regenerate",
 			"name": "Regenerate",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Invocation",
-			"tags": [
-				"Cleansing",
-				"Healing"
-			],
+			"tags": ["Cleansing", "Healing"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3191,16 +2383,9 @@
 		{
 			"id": "revivify",
 			"name": "Revivify",
-			"sources": [
-				"Divine",
-				"Primal"
-			],
+			"sources": ["Divine", "Primal"],
 			"school": "Invocation",
-			"tags": [
-				"Cleansing",
-				"Resurrection",
-				"Spirit"
-			],
+			"tags": ["Cleansing", "Resurrection", "Spirit"],
 			"cost": {
 				"ap": 1,
 				"mp": 2
@@ -3218,17 +2403,9 @@
 		{
 			"id": "solar-beam",
 			"name": "Solar Beam",
-			"sources": [
-				"Divine",
-				"Primal"
-			],
+			"sources": ["Divine", "Primal"],
 			"school": "Invocation",
-			"tags": [
-				"Blinded",
-				"Burning",
-				"Light",
-				"Radiant"
-			],
+			"tags": ["Blinded", "Burning", "Light", "Radiant"],
 			"cost": {
 				"ap": 2
 			},
@@ -3245,17 +2422,9 @@
 		{
 			"id": "spirit-link",
 			"name": "Spirit Link",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Invocation",
-			"tags": [
-				"Blood",
-				"Communication",
-				"Curse",
-				"Spirit",
-				"Ward"
-			],
+			"tags": ["Blood", "Communication", "Curse", "Spirit", "Ward"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3273,17 +2442,9 @@
 		{
 			"id": "sunburst",
 			"name": "Sunburst",
-			"sources": [
-				"Divine",
-				"Primal"
-			],
+			"sources": ["Divine", "Primal"],
 			"school": "Invocation",
-			"tags": [
-				"Blinded",
-				"Exposed",
-				"Light",
-				"Radiant"
-			],
+			"tags": ["Blinded", "Exposed", "Light", "Radiant"],
 			"cost": {
 				"ap": 2
 			},
@@ -3300,13 +2461,9 @@
 		{
 			"id": "arcane-shield",
 			"name": "Arcane Shield",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Nullification",
-			"tags": [
-				"Ward"
-			],
+			"tags": ["Ward"],
 			"cost": {
 				"ap": 1
 			},
@@ -3323,14 +2480,9 @@
 		{
 			"id": "bane",
 			"name": "Bane",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Nullification",
-			"tags": [
-				"Curse",
-				"Enfeeble"
-			],
+			"tags": ["Curse", "Enfeeble"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3348,17 +2500,9 @@
 		{
 			"id": "corpse-explosion",
 			"name": "Corpse Explosion",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Nullification",
-			"tags": [
-				"Ailment",
-				"Death",
-				"Enfeeble",
-				"Umbral"
-			],
+			"tags": ["Ailment", "Death", "Enfeeble", "Umbral"],
 			"cost": {
 				"ap": 2
 			},
@@ -3375,15 +2519,9 @@
 		{
 			"id": "darkness",
 			"name": "Darkness",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Nullification",
-			"tags": [
-				"Shadow",
-				"Slowed"
-			],
+			"tags": ["Shadow", "Slowed"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -3401,17 +2539,9 @@
 		{
 			"id": "death",
 			"name": "Death",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Nullification",
-			"tags": [
-				"Curse",
-				"Death",
-				"Doomed",
-				"Exhaustion"
-			],
+			"tags": ["Curse", "Death", "Doomed", "Exhaustion"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3429,16 +2559,9 @@
 		{
 			"id": "death-bolt",
 			"name": "Death Bolt",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Nullification",
-			"tags": [
-				"Curse",
-				"Doomed",
-				"Umbral"
-			],
+			"tags": ["Curse", "Doomed", "Umbral"],
 			"cost": {
 				"ap": 1
 			},
@@ -3455,16 +2578,9 @@
 		{
 			"id": "disintegrating-beam",
 			"name": "Disintegrating Beam",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Nullification",
-			"tags": [
-				"Death",
-				"Enfeeble",
-				"True",
-				"Weakened"
-			],
+			"tags": ["Death", "Enfeeble", "True", "Weakened"],
 			"cost": {
 				"ap": 2,
 				"mp": 2
@@ -3482,16 +2598,9 @@
 		{
 			"id": "disintegrate",
 			"name": "Disintegrate",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Nullification",
-			"tags": [
-				"Death",
-				"Enfeeble",
-				"True",
-				"Weakened"
-			],
+			"tags": ["Death", "Enfeeble", "True", "Weakened"],
 			"cost": {
 				"ap": 1,
 				"mp": 2
@@ -3509,14 +2618,9 @@
 		{
 			"id": "dispel-magic",
 			"name": "Dispel Magic",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Nullification",
-			"tags": [
-				"Antimagic",
-				"Cleansing"
-			],
+			"tags": ["Antimagic", "Cleansing"],
 			"cost": {
 				"ap": 1,
 				"mp": "X",
@@ -3536,15 +2640,9 @@
 		{
 			"id": "enfeeble",
 			"name": "Enfeeble",
-			"sources": [
-				"Divine",
-				"Primal"
-			],
+			"sources": ["Divine", "Primal"],
 			"school": "Nullification",
-			"tags": [
-				"Curse",
-				"Enfeeble"
-			],
+			"tags": ["Curse", "Enfeeble"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3562,17 +2660,9 @@
 		{
 			"id": "muffle",
 			"name": "Muffle",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Nullification",
-			"tags": [
-				"Communication",
-				"Deafened",
-				"Disoriented",
-				"Sound"
-			],
+			"tags": ["Communication", "Deafened", "Disoriented", "Sound"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -3590,15 +2680,9 @@
 		{
 			"id": "sanctuary",
 			"name": "Sanctuary",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Nullification",
-			"tags": [
-				"Embolden",
-				"Spirit",
-				"Ward"
-			],
+			"tags": ["Embolden", "Spirit", "Ward"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3616,18 +2700,9 @@
 		{
 			"id": "sphere-of-death",
 			"name": "Sphere of Death",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Nullification",
-			"tags": [
-				"Death",
-				"Doomed",
-				"Exhaustion",
-				"Shadow",
-				"Umbral"
-			],
+			"tags": ["Death", "Doomed", "Exhaustion", "Shadow", "Umbral"],
 			"cost": {
 				"ap": 2
 			},
@@ -3644,17 +2719,9 @@
 		{
 			"id": "umbral-burst",
 			"name": "Umbral Burst",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Nullification",
-			"tags": [
-				"Death",
-				"Doomed",
-				"Shadow",
-				"Umbral"
-			],
+			"tags": ["Death", "Doomed", "Shadow", "Umbral"],
 			"cost": {
 				"ap": 2
 			},
@@ -3671,17 +2738,9 @@
 		{
 			"id": "umbral-wave",
 			"name": "Umbral Wave",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Nullification",
-			"tags": [
-				"Doomed",
-				"Shadow",
-				"Umbral",
-				"Undead"
-			],
+			"tags": ["Doomed", "Shadow", "Umbral", "Undead"],
 			"cost": {
 				"ap": 2
 			},
@@ -3698,18 +2757,9 @@
 		{
 			"id": "vampiric-touch",
 			"name": "Vampiric Touch",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Nullification",
-			"tags": [
-				"Blood",
-				"Doomed",
-				"Healing",
-				"Slowed",
-				"Umbral"
-			],
+			"tags": ["Blood", "Doomed", "Healing", "Slowed", "Umbral"],
 			"cost": {
 				"ap": 1
 			},
@@ -3726,14 +2776,9 @@
 		{
 			"id": "wild-guard",
 			"name": "Wild Guard",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Nullification",
-			"tags": [
-				"Motion",
-				"Ward"
-			],
+			"tags": ["Motion", "Ward"],
 			"cost": {
 				"ap": 1
 			},
@@ -3750,15 +2795,9 @@
 		{
 			"id": "zone-of-peace",
 			"name": "Zone of Peace",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Nullification",
-			"tags": [
-				"Emotions",
-				"Tethered",
-				"Ward"
-			],
+			"tags": ["Emotions", "Tethered", "Ward"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -3776,18 +2815,9 @@
 		{
 			"id": "acid-imbued",
 			"name": "Acid Imbued",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Transmutation",
-			"tags": [
-				"Corrosion",
-				"Enfeeble",
-				"Hindered",
-				"Strike",
-				"Weapon"
-			],
+			"tags": ["Corrosion", "Enfeeble", "Hindered", "Strike", "Weapon"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3805,16 +2835,9 @@
 		{
 			"id": "alter-size",
 			"name": "Alter Size",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Transmutation",
-			"tags": [
-				"Embolden",
-				"Enfeeble",
-				"Metamorphosis"
-			],
+			"tags": ["Embolden", "Enfeeble", "Metamorphosis"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3832,16 +2855,9 @@
 		{
 			"id": "blessing-of-earth",
 			"name": "Blessing of Earth",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Transmutation",
-			"tags": [
-				"Earth",
-				"Embolden",
-				"Motion",
-				"Sense"
-			],
+			"tags": ["Earth", "Embolden", "Motion", "Sense"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3859,16 +2875,9 @@
 		{
 			"id": "blessing-of-water",
 			"name": "Blessing of Water",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Transmutation",
-			"tags": [
-				"Embolden",
-				"Metamorphosis",
-				"Motion",
-				"Water"
-			],
+			"tags": ["Embolden", "Metamorphosis", "Motion", "Water"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3886,13 +2895,9 @@
 		{
 			"id": "chaos-bolt",
 			"name": "Chaos Bolt",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Transmutation",
-			"tags": [
-				"Chaos"
-			],
+			"tags": ["Chaos"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3910,14 +2915,9 @@
 		{
 			"id": "chaos-torrent",
 			"name": "Chaos Torrent",
-			"sources": [
-				"Arcane"
-			],
+			"sources": ["Arcane"],
 			"school": "Transmutation",
-			"tags": [
-				"Chaos",
-				"Enfeeble"
-			],
+			"tags": ["Chaos", "Enfeeble"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -3935,17 +2935,9 @@
 		{
 			"id": "cold-imbued",
 			"name": "Cold Imbued",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Transmutation",
-			"tags": [
-				"Cold",
-				"Slowed",
-				"Strike",
-				"Weapon"
-			],
+			"tags": ["Cold", "Slowed", "Strike", "Weapon"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3963,14 +2955,9 @@
 		{
 			"id": "enhance-ability",
 			"name": "Enhance Ability",
-			"sources": [
-				"Divine",
-				"Primal"
-			],
+			"sources": ["Divine", "Primal"],
 			"school": "Transmutation",
-			"tags": [
-				"Embolden"
-			],
+			"tags": ["Embolden"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3988,17 +2975,9 @@
 		{
 			"id": "fire-imbued",
 			"name": "Fire Imbued",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Transmutation",
-			"tags": [
-				"Burning",
-				"Fire",
-				"Strike",
-				"Weapon"
-			],
+			"tags": ["Burning", "Fire", "Strike", "Weapon"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -4016,16 +2995,9 @@
 		{
 			"id": "invisibility",
 			"name": "Invisibility",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Transmutation",
-			"tags": [
-				"Illusion",
-				"Invisible",
-				"Shadow"
-			],
+			"tags": ["Illusion", "Invisible", "Shadow"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -4043,17 +3015,9 @@
 		{
 			"id": "lightning-imbued",
 			"name": "Lightning Imbued",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Transmutation",
-			"tags": [
-				"Lightning",
-				"Strike",
-				"Trap",
-				"Weapon"
-			],
+			"tags": ["Lightning", "Strike", "Trap", "Weapon"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -4071,18 +3035,9 @@
 		{
 			"id": "poison-imbued",
 			"name": "Poison Imbued",
-			"sources": [
-				"Arcane",
-				"Primal"
-			],
+			"sources": ["Arcane", "Primal"],
 			"school": "Transmutation",
-			"tags": [
-				"Ailment",
-				"Impaired",
-				"Poison",
-				"Strike",
-				"Weapon"
-			],
+			"tags": ["Ailment", "Impaired", "Poison", "Strike", "Weapon"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -4100,14 +3055,9 @@
 		{
 			"id": "primal-hide",
 			"name": "Primal Hide",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Transmutation",
-			"tags": [
-				"Embolden",
-				"Ward"
-			],
+			"tags": ["Embolden", "Ward"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -4125,18 +3075,9 @@
 		{
 			"id": "psychic-imbued",
 			"name": "Psychic Imbued",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Transmutation",
-			"tags": [
-				"Dazed",
-				"Deafened",
-				"Psychic",
-				"Strike",
-				"Weapon"
-			],
+			"tags": ["Dazed", "Deafened", "Psychic", "Strike", "Weapon"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -4154,17 +3095,9 @@
 		{
 			"id": "quicksand",
 			"name": "Quicksand",
-			"sources": [
-				"Primal"
-			],
+			"sources": ["Primal"],
 			"school": "Transmutation",
-			"tags": [
-				"Earth",
-				"Hindered",
-				"Illusion",
-				"Slowed",
-				"Tethered"
-			],
+			"tags": ["Earth", "Hindered", "Illusion", "Slowed", "Tethered"],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -4182,16 +3115,9 @@
 		{
 			"id": "radiant-imbued",
 			"name": "Radiant Imbued",
-			"sources": [
-				"Divine"
-			],
+			"sources": ["Divine"],
 			"school": "Transmutation",
-			"tags": [
-				"Light",
-				"Radiant",
-				"Strike",
-				"Weapon"
-			],
+			"tags": ["Light", "Radiant", "Strike", "Weapon"],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -4209,17 +3135,9 @@
 		{
 			"id": "shadowbind",
 			"name": "Shadowbind",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Transmutation",
-			"tags": [
-				"Doomed",
-				"Immobilized",
-				"Shadow",
-				"Tethered"
-			],
+			"tags": ["Doomed", "Immobilized", "Shadow", "Tethered"],
 			"cost": {
 				"ap": 1
 			},
@@ -4236,19 +3154,9 @@
 		{
 			"id": "umbral-imbued",
 			"name": "Umbral Imbued",
-			"sources": [
-				"Arcane",
-				"Divine"
-			],
+			"sources": ["Arcane", "Divine"],
 			"school": "Transmutation",
-			"tags": [
-				"Blood",
-				"Doomed",
-				"Healing",
-				"Strike",
-				"Umbral",
-				"Weapon"
-			],
+			"tags": ["Blood", "Doomed", "Healing", "Strike", "Umbral", "Weapon"],
 			"cost": {
 				"ap": 1,
 				"mp": 1

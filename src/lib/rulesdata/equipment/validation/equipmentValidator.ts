@@ -218,9 +218,7 @@ export function validateArmor(armor: Partial<CustomArmor>): ValidationResult {
 
 		// Check if property is available for this armor type
 		const armorTypeMismatch =
-			armor.armorType &&
-			property.armorTypes &&
-			!property.armorTypes.includes(armor.armorType);
+			armor.armorType && property.armorTypes && !property.armorTypes.includes(armor.armorType);
 		if (armor.armorType === 'light' && (property.heavyOnly || armorTypeMismatch)) {
 			errors.push({
 				propertyId: propId,

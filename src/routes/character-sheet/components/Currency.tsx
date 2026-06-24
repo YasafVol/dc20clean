@@ -99,7 +99,9 @@ const Currency: React.FC<CurrencyProps> = ({ isMobile = false }) => {
 
 	return (
 		<CurrencyContainer isMobile={effectiveIsMobile}>
-			<CurrencyTitle isMobile={effectiveIsMobile}>{t('characterSheet.currencyTitle')}</CurrencyTitle>
+			<CurrencyTitle isMobile={effectiveIsMobile}>
+				{t('characterSheet.currencyTitle')}
+			</CurrencyTitle>
 
 			{currencyTypes.map(({ key, label, color, borderColor, value }) => (
 				<CurrencyRow key={key} isMobile={effectiveIsMobile}>

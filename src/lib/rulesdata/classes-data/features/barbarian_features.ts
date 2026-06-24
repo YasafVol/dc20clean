@@ -33,12 +33,6 @@ export const barbarianClass: ClassDefinition = {
 			featureName: 'Martial Path',
 			levelGained: 1,
 			description: 'You gain combat training and martial prowess.',
-			effects: [
-				{ type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
-				{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Armor', value: true },
-				{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Shields', value: true },
-				{ type: 'GRANT_MANEUVERS', target: 'all_attack', value: 4 }
-			],
 			benefits: [
 				{
 					name: 'Combat Training',
@@ -52,8 +46,7 @@ export const barbarianClass: ClassDefinition = {
 				{
 					name: 'Maneuver Knowledge',
 					description:
-						'You learn all Attack maneuvers plus additional maneuvers as shown on the Barbarian Class Table.',
-					effects: []
+						'You learn all Attack maneuvers plus additional maneuvers as shown on the Barbarian Class Table.'
 				},
 				{
 					name: 'Stamina Regeneration',
@@ -221,14 +214,6 @@ export const barbarianClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'barbarian_level_2_talent',
-			featureName: 'Talent',
-			levelGained: 2,
-			description:
-				'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
-			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
-		},
-		{
 			id: 'barbarian_level_5_placeholder',
 			featureName: 'Expert Barbarian',
 			levelGained: 5,
@@ -272,14 +257,6 @@ export const barbarianClass: ClassDefinition = {
 					]
 				}
 			]
-		},
-		{
-			id: 'barbarian_level_8_capstone_placeholder',
-			featureName: 'Class Capstone (Source Unpublished)',
-			levelGained: 9,
-			isFlavor: true,
-			description:
-				'The v0.10.5 class progression grants a Class Capstone Feature at level 9, but this source packet does not publish class-specific capstone mechanics. This entry is intentionally non-mechanical and preserves the legacy ID for saved-character compatibility.'
 		}
 	],
 	subclasses: [

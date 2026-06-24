@@ -7,12 +7,7 @@ import { InlineError } from './components/ValidationFeedback';
 import { BuildStep } from '../../lib/types/effectSystem';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { useTranslation } from 'react-i18next';
-import {
-	Container,
-	Header,
-	Title,
-	TabsContainer
-} from './Background.styled';
+import { Container, Header, Title, TabsContainer } from './Background.styled';
 
 type TabType = 'skills' | 'trades' | 'languages';
 
@@ -83,21 +78,18 @@ const Background: React.FC = () => {
 			}
 		},
 		convertTradeToSkill: () => {
-			const currentTradeToSkill = state.tradeToSkillConversions || 0;
-			const { availableTradePoints } = background;
-
-			// Calculate current trade points used
+			const currentSkillToTrade = state.skillToTradeConversions || 0;
 			const tradePointsUsed = Object.values(state.tradesData || {}).reduce(
 				(sum, level) => sum + level,
 				0
 			);
-			const remainingTradePoints = availableTradePoints - tradePointsUsed;
+			const remainingTradePoints = background.availableTradePoints - tradePointsUsed;
 
-			// Only allow conversion if we have at least 2 trade points remaining (costs 2 trade = 1 skill)
-			if (remainingTradePoints >= 2) {
+			// Source allows Skill -> Trade only; this action only undoes that conversion.
+			if (currentSkillToTrade > 0 && remainingTradePoints >= 2) {
 				dispatch({
 					type: 'SET_CONVERSIONS',
-					conversions: { tradeToSkill: currentTradeToSkill + 2 }
+					conversions: { skillToTrade: currentSkillToTrade - 1, tradeToSkill: 0 }
 				});
 			}
 		},
@@ -259,41 +251,42 @@ const Background: React.FC = () => {
 								color: skillPointsRemaining < 0 ? '#F7768E' : undefined
 							}}
 						>
-						{t('characterCreation.skills')} ({skillPointsRemaining} {t('characterCreation.left')})
-					</TabsTrigger>
-					<TabsTrigger
-						value="trades"
-						style={{
-							color: tradePointsRemaining < 0 ? '#F7768E' : undefined
-						}}
-					>
-						{t('characterCreation.trades')} ({tradePointsRemaining} {t('characterCreation.left')})
-					</TabsTrigger>
-					<TabsTrigger
-						value="languages"
-						style={{
-							color: languagePointsRemaining < 0 ? '#F7768E' : undefined
-						}}
-					>
-						{t('characterCreation.languages')} ({languagePointsRemaining} {t('characterCreation.left')})
-					</TabsTrigger>
-				</TabsList>
+							{t('characterCreation.skills')} ({skillPointsRemaining} {t('characterCreation.left')})
+						</TabsTrigger>
+						<TabsTrigger
+							value="trades"
+							style={{
+								color: tradePointsRemaining < 0 ? '#F7768E' : undefined
+							}}
+						>
+							{t('characterCreation.trades')} ({tradePointsRemaining} {t('characterCreation.left')})
+						</TabsTrigger>
+						<TabsTrigger
+							value="languages"
+							style={{
+								color: languagePointsRemaining < 0 ? '#F7768E' : undefined
+							}}
+						>
+							{t('characterCreation.languages')} ({languagePointsRemaining}{' '}
+							{t('characterCreation.left')})
+						</TabsTrigger>
+					</TabsList>
 
-				<TabsContent value="skills">
-					<SkillsTab
-						currentSkills={currentSkills}
-						pointsData={background}
-						conversions={{
-							skillToTradeConversions: background.conversions.skillToTrade,
-							tradeToSkillConversions: background.conversions.tradeToSkill,
-							tradeToLanguageConversions: background.conversions.tradeToLanguage
-						}}
-						actions={actions}
-						masteryLimits={masteryLimits}
-						onSkillChange={handleSkillChange}
-						onSkillLimitElevationChange={handleSkillLimitElevationChange}
-					/>
-				</TabsContent>
+					<TabsContent value="skills">
+						<SkillsTab
+							currentSkills={currentSkills}
+							pointsData={background}
+							conversions={{
+								skillToTradeConversions: background.conversions.skillToTrade,
+								tradeToSkillConversions: background.conversions.tradeToSkill,
+								tradeToLanguageConversions: background.conversions.tradeToLanguage
+							}}
+							actions={actions}
+							masteryLimits={masteryLimits}
+							onSkillChange={handleSkillChange}
+							onSkillLimitElevationChange={handleSkillLimitElevationChange}
+						/>
+					</TabsContent>
 
 					<TabsContent value="trades">
 						<TradesTab

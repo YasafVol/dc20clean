@@ -164,7 +164,8 @@ function ClassSelector() {
 
 			{isLevelUpMode && originalLevel && (
 				<LevelUpBanner>
-					⬆️ {t('characterCreation.levelingUpFrom')} {originalLevel} {t('characterCreation.to')} {t('characterCreation.level')} {selectedLevel}
+					⬆️ {t('characterCreation.levelingUpFrom')} {originalLevel} {t('characterCreation.to')}{' '}
+					{t('characterCreation.level')} {selectedLevel}
 				</LevelUpBanner>
 			)}
 
@@ -212,11 +213,7 @@ function ClassSelector() {
 						>
 							<CardHeader>
 								<IconWrapper $isSelected={isSelected}>
-									<ClassIcon
-										src={classInfo?.icon}
-										alt={classDef.name}
-										$isSelected={isSelected}
-									/>
+									<ClassIcon src={classInfo?.icon} alt={classDef.name} $isSelected={isSelected} />
 								</IconWrapper>
 								<ClassTitle $isSelected={isSelected}>{classDef.name}</ClassTitle>
 							</CardHeader>

@@ -60,18 +60,18 @@ const Attributes: React.FC<AttributesProps> = ({
 
 	const getSkillTranslationKey = (skillName: string): string => {
 		const skillMap: Record<string, string> = {
-			'Awareness': 'skillAwareness',
-			'Athletics': 'skillAthletics',
-			'Intimidation': 'skillIntimidation',
-			'Acrobatics': 'skillAcrobatics',
-			'Trickery': 'skillTrickery',
-			'Stealth': 'skillStealth',
-			'Animal': 'skillAnimal',
-			'Insight': 'skillInsight',
-			'Influence': 'skillInfluence',
-			'Investigation': 'skillInvestigation',
-			'Medicine': 'skillMedicine',
-			'Survival': 'skillSurvival'
+			Awareness: 'skillAwareness',
+			Athletics: 'skillAthletics',
+			Intimidation: 'skillIntimidation',
+			Acrobatics: 'skillAcrobatics',
+			Trickery: 'skillTrickery',
+			Stealth: 'skillStealth',
+			Animal: 'skillAnimal',
+			Insight: 'skillInsight',
+			Influence: 'skillInfluence',
+			Investigation: 'skillInvestigation',
+			Medicine: 'skillMedicine',
+			Survival: 'skillSurvival'
 		};
 		return skillMap[skillName] || 'skillAwareness';
 	};
@@ -84,7 +84,9 @@ const Attributes: React.FC<AttributesProps> = ({
 				onClick={() => onSkillClick?.(skill.name, skill.bonus || 0)}
 				style={{ cursor: onSkillClick ? 'pointer' : 'default' }}
 			>
-				<SkillName $isMobile={isMobile}>{t(`characterSheet.${getSkillTranslationKey(skill.name)}`).toUpperCase()}</SkillName>
+				<SkillName $isMobile={isMobile}>
+					{t(`characterSheet.${getSkillTranslationKey(skill.name)}`).toUpperCase()}
+				</SkillName>
 				<SkillBonusContainer>
 					<StyledProficiencyDots>
 						{[1, 2, 3, 4, 5].map((level) => (
@@ -125,7 +127,9 @@ const Attributes: React.FC<AttributesProps> = ({
 			<AttributeSection $isMobile={isMobile}>
 				<AttributeHeader>
 					<AttributeBox $isMobile={isMobile}>
-						<AttributeAbbreviation $isMobile={isMobile}>{t('characterSheet.attrMightAbbr')}</AttributeAbbreviation>
+						<AttributeAbbreviation $isMobile={isMobile}>
+							{t('characterSheet.attrMightAbbr')}
+						</AttributeAbbreviation>
 						<Tooltip
 							content={
 								breakdowns?.attribute_might
@@ -156,7 +160,9 @@ const Attributes: React.FC<AttributesProps> = ({
 			<AttributeSection $isMobile={isMobile}>
 				<AttributeHeader>
 					<AttributeBox $isMobile={isMobile}>
-						<AttributeAbbreviation $isMobile={isMobile}>{t('characterSheet.attrAgilityAbbr')}</AttributeAbbreviation>
+						<AttributeAbbreviation $isMobile={isMobile}>
+							{t('characterSheet.attrAgilityAbbr')}
+						</AttributeAbbreviation>
 						<Tooltip
 							content={
 								breakdowns?.attribute_agility
@@ -187,7 +193,9 @@ const Attributes: React.FC<AttributesProps> = ({
 			<AttributeSection $isMobile={isMobile}>
 				<AttributeHeader>
 					<AttributeBox $isMobile={isMobile}>
-						<AttributeAbbreviation $isMobile={isMobile}>{t('characterSheet.attrCharismaAbbr')}</AttributeAbbreviation>
+						<AttributeAbbreviation $isMobile={isMobile}>
+							{t('characterSheet.attrCharismaAbbr')}
+						</AttributeAbbreviation>
 						<Tooltip
 							content={
 								breakdowns?.attribute_charisma
@@ -218,7 +226,9 @@ const Attributes: React.FC<AttributesProps> = ({
 			<AttributeSection $isMobile={isMobile}>
 				<AttributeHeader>
 					<AttributeBox $isMobile={isMobile}>
-						<AttributeAbbreviation $isMobile={isMobile}>{t('characterSheet.attrIntelligenceAbbr')}</AttributeAbbreviation>
+						<AttributeAbbreviation $isMobile={isMobile}>
+							{t('characterSheet.attrIntelligenceAbbr')}
+						</AttributeAbbreviation>
 						<Tooltip
 							content={
 								breakdowns?.attribute_intelligence
@@ -233,7 +243,9 @@ const Attributes: React.FC<AttributesProps> = ({
 						</Tooltip>
 					</AttributeBox>
 					<AttributeInfo $isMobile={isMobile}>
-						<AttributeName $isMobile={isMobile}>{t('characterSheet.attrIntelligence')}</AttributeName>
+						<AttributeName $isMobile={isMobile}>
+							{t('characterSheet.attrIntelligence')}
+						</AttributeName>
 						<AttributeSave
 							$isMobile={isMobile}
 							onClick={() =>

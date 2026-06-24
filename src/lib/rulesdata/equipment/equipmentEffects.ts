@@ -43,7 +43,7 @@ function stat(target: string, value: number): Effect {
 	return { type: 'MODIFY_STAT', target, value };
 }
 
-function resistance(target: string, value: string): Effect {
+function resistance(target: string, value: string | boolean): Effect {
 	return { type: 'GRANT_RESISTANCE', target, value };
 }
 
@@ -63,14 +63,18 @@ function propertyEffects(
 		const property = getProperty(propertyId);
 		if (!property) continue;
 
-		const structured = cloneEffects(property.effects).filter((effect) => !omitTypes.has(effect.type));
+		const structured = cloneEffects(property.effects).filter(
+			(effect) => !omitTypes.has(effect.type)
+		);
 		if (structured.length > 0) {
 			result.push(...structured);
 			continue;
 		}
 
 		if (options.includeFallbackAbilities && property.effect) {
-			result.push(ability(`equipment_property_${propertyId}`, `${property.name}: ${property.effect}`));
+			result.push(
+				ability(`equipment_property_${propertyId}`, `${property.name}: ${property.effect}`)
+			);
 		}
 	}
 
@@ -85,7 +89,9 @@ export function getCustomEquipmentEffects(equipment: CustomEquipment): Effect[] 
 	switch (equipment.category) {
 		case 'weapon': {
 			const weapon = equipment as CustomWeapon;
-			return propertyEffects(weapon.properties, getWeaponProperty, { includeFallbackAbilities: true });
+			return propertyEffects(weapon.properties, getWeaponProperty, {
+				includeFallbackAbilities: true
+			});
 		}
 		case 'armor': {
 			const armor = equipment as CustomArmor;
@@ -94,12 +100,15 @@ export function getCustomEquipmentEffects(equipment: CustomEquipment): Effect[] 
 				...repeatStat('ad', 1, armor.adBonus)
 			];
 
-			if (armor.hasPdr) effects.push(resistance('physical', 'half'));
-			if (armor.hasEdr) effects.push(resistance('elemental', 'half'));
+			if (armor.hasPdr) effects.push(resistance('physical', true));
+			if (armor.hasEdr) effects.push(resistance('elemental', true));
 			if (armor.speedPenalty) effects.push(stat('moveSpeed', armor.speedPenalty));
 			if (armor.hasAgilityDisadvantage) {
 				effects.push(
-					ability('armor_agility_disadvantage', 'You have DisADV on Agility Checks while wearing this Armor.')
+					ability(
+						'armor_agility_disadvantage',
+						'You have DisADV on Agility Checks while wearing this Armor.'
+					)
 				);
 			}
 			if (armor.armorType === 'heavy') {
@@ -118,8 +127,8 @@ export function getCustomEquipmentEffects(equipment: CustomEquipment): Effect[] 
 			return [
 				...repeatStat('pd', 1, shield.pdBonus),
 				...repeatStat('ad', 1, shield.adBonus),
-				...(shield.hasPdr ? [resistance('physical', 'half')] : []),
-				...(shield.hasEdr ? [resistance('elemental', 'half')] : []),
+				...(shield.hasPdr ? [resistance('physical', true)] : []),
+				...(shield.hasEdr ? [resistance('elemental', true)] : []),
 				...(shield.speedPenalty ? [stat('moveSpeed', shield.speedPenalty)] : []),
 				...(shield.hasAgilityDisadvantage
 					? [
@@ -137,7 +146,9 @@ export function getCustomEquipmentEffects(equipment: CustomEquipment): Effect[] 
 		}
 		case 'spellFocus': {
 			const focus = equipment as CustomSpellFocus;
-			return propertyEffects(focus.properties, getSpellFocusProperty, { includeFallbackAbilities: true });
+			return propertyEffects(focus.properties, getSpellFocusProperty, {
+				includeFallbackAbilities: true
+			});
 		}
 	}
 }
@@ -173,7 +184,7 @@ function effectsForStandardItem(item: InventoryItem): Effect[] {
 			return [
 				...repeatStat('pd', 1, armor.pdBonus),
 				...repeatStat('ad', 1, armor.adBonus),
-				...(armor.pdr ? [resistance('physical', 'half')] : []),
+				...(armor.pdr ? [resistance('physical', true)] : []),
 				...(armor.speedPenalty ? [stat('moveSpeed', armor.speedPenalty)] : []),
 				...(armor.agilityCheckDisadvantage
 					? [

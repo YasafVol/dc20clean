@@ -1018,10 +1018,7 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 				>
 					📋 Copy to Clipboard
 				</StyledActionButton>
-				<StyledActionButton
-					onClick={downloadCharacterJson}
-					title="Download character data as JSON"
-				>
+				<StyledActionButton onClick={downloadCharacterJson} title="Download character data as JSON">
 					⬇️ Download JSON
 				</StyledActionButton>
 				<StyledActionButton onClick={handlePrint} title="Export character sheet to a fillable PDF">

@@ -1,6 +1,6 @@
 # DC20Clean – Background System (Skills, Trades, Languages)
 
-> Last Updated: 2026-06-19
+> Last Updated: 2026-06-24
 >
 > Purpose  
 > This document is the single authoritative reference ("bible") for everything related to Background: Skill/Trade/Language data, point budgets, conversions, validation, and UI wiring.
@@ -42,18 +42,21 @@ flowchart LR
 
 ## 2 Key Files & Their Roles
 
-| Layer                 | File / Dir                                              | Responsibility                                                                          |
-| --------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| Rule Data (canonical) | `src/lib/rulesdata/skills.ts`                           | Declarative `skillsData` array                                                          |
-|                       | `src/lib/rulesdata/trades.ts`                           | Declarative `tradesData` array (see also `docs/archive/TRADES_MULTI_ATTRIBUTE_SPEC.md`) |
-|                       | `src/lib/rulesdata/languages.ts`                        | Declarative `languagesData` array                                                       |
-|                       | `scripts/background/dc20-0105-background.mjs`           | Source parser/audit generator for the v0.10.5 background chapter                        |
-|                       | `docs/migration/background-v0105-report.json`           | Generated source audit report for skills, trades, languages, budgets, and conversions   |
-| Type Contracts        | `src/lib/rulesdata/schemas/types.ts`                    | `ISkillData`, `ITradeData`, `ILanguageData`                                             |
-| Runtime Engine        | `src/lib/services/enhancedCharacterCalculator.ts`       | Computes base budgets, applies trait bonuses, conversions, and usage                    |
-| State Layer           | `src/lib/stores/characterContext.tsx`                   | Stores background point allocations and conversion counts                               |
-| Hook                  | `src/lib/hooks/useCharacterBuilder.ts`                  | Runs calculator and returns `calculationResult.background`                              |
-| UI                    | `src/routes/character-creation/Background.tsx` and tabs | Renders editors for skills/trades/languages                                             |
+| Layer                 | File / Dir                                                 | Responsibility                                                                          |
+| --------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Rule Data (canonical) | `src/lib/rulesdata/skills.ts`                              | Declarative `skillsData` array                                                          |
+|                       | `src/lib/rulesdata/trades.ts`                              | Declarative `tradesData` array (see also `docs/archive/TRADES_MULTI_ATTRIBUTE_SPEC.md`) |
+|                       | `src/lib/rulesdata/languages.ts`                           | Declarative `languagesData` array                                                       |
+|                       | `scripts/background/dc20-0105-background.mjs`              | Source parser/audit generator for the v0.10.5 background chapter                        |
+|                       | `scripts/background/dc20-0105-background-names.ts`         | App-data name validator for skills, trades, and languages against the generated report  |
+|                       | `scripts/background/dc20-0105-background-trait-effects.ts` | Trait impact audit for Background point pools and mastery caps                          |
+|                       | `docs/migration/background-v0105-report.json`              | Generated source audit report for skills, trades, languages, budgets, and conversions   |
+|                       | `docs/migration/background-trait-effects-v0105.json`       | Generated report of ancestry trait effects that modify Background                       |
+| Type Contracts        | `src/lib/rulesdata/schemas/types.ts`                       | `ISkillData`, `ITradeData`, `ILanguageData`                                             |
+| Runtime Engine        | `src/lib/services/enhancedCharacterCalculator.ts`          | Computes base budgets, applies trait bonuses, conversions, and usage                    |
+| State Layer           | `src/lib/stores/characterContext.tsx`                      | Stores background point allocations and conversion counts                               |
+| Hook                  | `src/lib/hooks/useCharacterBuilder.ts`                     | Runs calculator and returns `calculationResult.background`                              |
+| UI                    | `src/routes/character-creation/Background.tsx` and tabs    | Renders editors for skills/trades/languages                                             |
 
 ---
 
@@ -72,8 +75,9 @@ Background allocations in store:
 - Conversions: `{ skillToTrade, tradeToSkill, tradeToLanguage }` numbers on the store
 
 Source-audit note: v0.10.5 explicitly supports `skillToTrade` and `tradeToLanguage`.
-The current app also supports `tradeToSkill`; that is an open audit finding and should be
-removed or migrated only with an explicit compatibility decision.
+`tradeToSkill` is not a legal source conversion. It is retained only as a legacy/undo
+field and is normalized by the calculator so it can cancel prior `skillToTrade` entries
+but can never create Skill Points from base Trade Points.
 
 DC20 0.10.5 language catalog notes:
 
@@ -99,8 +103,10 @@ Within `calculateCharacterWithBreakdowns`:
   - Trade Points = `3 + bonus('tradePoints')`
   - Language Points = `2 + bonus('languagePoints')`
 - Conversions applied:
-  - `availableSkillPoints = baseSkillPoints - skillToTrade + floor(tradeToSkill/2)`
-  - `availableTradePoints = baseTradePoints - tradeToSkill + skillToTrade*2 - tradeToLanguage`
+  - `tradeToSkillUndo = min(tradeToSkill, skillToTrade*2)`
+  - `effectiveSkillToTrade = skillToTrade - floor(tradeToSkillUndo/2)`
+  - `availableSkillPoints = baseSkillPoints - effectiveSkillToTrade`
+  - `availableTradePoints = baseTradePoints + effectiveSkillToTrade*2 - tradeToLanguage`
   - `availableLanguagePoints = baseLanguagePoints + tradeToLanguage*2`
 - Usage:
   - `skillPointsUsed = sum(levels in skillsData)`
@@ -121,6 +127,7 @@ Traits can modify these pools using effects:
 - **Mastery Cap Effects** ✅ **NEW**:
   - `MODIFY_SKILL_MASTERY_CAP` / `MODIFY_TRADE_MASTERY_CAP`: Grant specific tier unlocks
   - `INCREASE_SKILL_MASTERY_CAP` / `INCREASE_TRADE_MASTERY_CAP`: Increase cap by value
+  - Class features can constrain cap increases with `options`; Cleric Knowledge Domain uses `INCREASE_TRADE_MASTERY_CAP` for Arcana, History, Nature, Occultism, and Religion.
 
 The calculator exposes a `background` block with:  
 `{ baseSkillPoints, baseTradePoints, baseLanguagePoints, availableSkillPoints, availableTradePoints, availableLanguagePoints, skillPointsUsed, tradePointsUsed, languagePointsUsed, conversions }`.
@@ -191,6 +198,7 @@ Validation also exposes a `masteryLimits` block with:
 - Schema-driven editors for Skills/Trades/Languages.
 - ✅ **COMPLETED**: Mastery cap validation and granular control implemented
 - UI enhancements: Dynamic mastery cap indicators in skill/trade selection
+- TODO: Encode trait choice restrictions for Trade Expertise variants when the UI supports constrained background-effect choices. Current known restrictions include Dwarf (`Crafting or Services`) and Gnome (`Crafting or Subterfuge`).
 
 ---
 
@@ -201,6 +209,9 @@ Validation also exposes a `masteryLimits` block with:
 - Generated report: `docs/migration/background-v0105-report.json`
 - Generate: `npm run background:generate:0105`
 - Validate report freshness: `npm run background:validate:0105`
+- Validate app data names: `npm run background:names:validate:0105`
+- Generate trait impact report: `npm run background:traits:generate:0105`
+- Validate trait impact report freshness: `npm run background:traits:validate:0105`
 
 Current report coverage:
 
@@ -209,9 +220,7 @@ Current report coverage:
 - 15 selectable languages with family DCs.
 - Background budgets: 5 Skill Points plus Intelligence, 3 Trade Points, Common Fluency plus 2 Language Points.
 - Source conversions: `1 Skill Point -> 2 Trade Points`, `1 Trade Point -> 2 Language Points`.
-
-Open finding:
-
-- The app currently exposes and calculates `tradeToSkill` (`2 Trade Points -> 1 Skill Point`), but the v0.10.5 source says Skill Points can convert to Trade Points “but not the other way around.” Treat this as rules drift until removed or intentionally preserved behind legacy compatibility.
+- `tradeToSkill` is bounded undo-only compatibility state, not a selectable rule conversion.
+- Background-affecting ancestry trait effects are reported in `docs/migration/background-trait-effects-v0105.json`.
 
 > Maintainer: @DC20Clean-Team

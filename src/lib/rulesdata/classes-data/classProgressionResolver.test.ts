@@ -10,6 +10,7 @@ import {
 	getAvailableSubclasses,
 	resolveSubclassFeatures
 } from './classProgressionResolver';
+import { CLASS_PROGRESSION_DEFINITIONS } from './progressions/classProgressionDefinitions';
 import { classesData } from '../loaders/class.loader';
 import type { ClassFeature, Effect } from '../schemas/character.schema';
 
@@ -47,6 +48,35 @@ const v0105ExpertFeatureEffects: Record<string, Partial<Effect>[]> = {
 	warlock: [{ type: 'MODIFY_STAT', target: 'hpMax', value: 2 }],
 	wizard: [{ type: 'GRANT_SPELL', target: 'chosen_school', value: 1 }]
 };
+const v0105CombatTrainingTargets: Record<string, string[]> = {
+	barbarian: ['All_Armor', 'All_Shields', 'Weapons'],
+	bard: ['Light_Armor', 'Light_Shields', 'Spell_Focuses'],
+	champion: ['All_Armor', 'All_Shields', 'Weapons'],
+	cleric: [
+		'Heavy_Armor',
+		'Heavy_Shields',
+		'Light_Armor',
+		'Light_Shields',
+		'Spell_Focuses',
+		'Weapons'
+	],
+	commander: ['All_Armor', 'All_Shields', 'Weapons'],
+	druid: ['Light_Armor', 'Spell_Focuses'],
+	hunter: ['Light_Armor', 'Light_Shields', 'Weapons'],
+	monk: ['Light_Armor', 'Weapons'],
+	rogue: ['Light_Armor', 'Light_Shields', 'Weapons'],
+	sorcerer: ['Light_Armor', 'Spell_Focuses'],
+	spellblade: [
+		'Heavy_Armor',
+		'Heavy_Shields',
+		'Light_Armor',
+		'Light_Shields',
+		'Spell_Focuses',
+		'Weapons'
+	],
+	warlock: ['Light_Armor', 'Spell_Focuses'],
+	wizard: ['Light_Armor', 'Spell_Focuses']
+};
 
 function getLevelData(classId: string, level: number) {
 	const classData = classesData.find((entry) => entry.id === classId);
@@ -59,8 +89,28 @@ function getLevelData(classId: string, level: number) {
 function getAllFeatureEffects(feature: ClassFeature): Effect[] {
 	return [
 		...(feature.effects ?? []),
-		...(feature.benefits ?? []).flatMap((benefit) => benefit.effects)
+		...(feature.benefits ?? []).flatMap((benefit) => benefit.effects ?? []),
+		...(feature.choices ?? []).flatMap((choice) =>
+			(choice.options ?? []).flatMap((option) => option.effects ?? [])
+		)
 	];
+}
+
+function getProgressionFeatureIds(classId: string): string[] {
+	const classData = classesData.find((entry) => entry.id === classId);
+	if (!classData) throw new Error(`Missing class data for ${classId}`);
+	return classData.levelProgression.flatMap((level) => level.gains?.classFeatures ?? []);
+}
+
+function getCombatTrainingTargets(features: ClassFeature[]): string[] {
+	return Array.from(
+		new Set(
+			features
+				.flatMap(getAllFeatureEffects)
+				.filter((effect) => effect.type === 'GRANT_COMBAT_TRAINING')
+				.map((effect) => effect.target)
+		)
+	).sort();
 }
 
 describe('Class Progression Resolver (UT-2)', () => {
@@ -135,16 +185,17 @@ describe('Class Progression Resolver (UT-2)', () => {
 			expect(typeof firstFeature.levelGained).toBe('number');
 		});
 
-		it('should include feature effects', () => {
+		it('should include feature and benefit effects', () => {
 			const result = resolveClassProgression('barbarian', 1);
 
-			// Find a feature with effects (Martial Path has combat training effects)
+			// Martial Path stores combat training under benefits so it is not double-counted.
 			const martialPath = result.unlockedFeatures.find(
 				(f) => f.id === 'barbarian_martial_path' || f.featureName === 'Martial Path'
 			);
+			const effects = getAllFeatureEffects(martialPath as ClassFeature);
 
 			expect(martialPath).toBeDefined();
-			expect(martialPath?.effects).toBeDefined();
+			expect(effects.length).toBeGreaterThan(0);
 		});
 
 		it('should track pending feature choices', () => {
@@ -200,6 +251,17 @@ describe('Class Progression Resolver (UT-2)', () => {
 			const l4 = resolveClassProgression('barbarian', 4);
 
 			expect(l4.budgets.totalTalents).toBeGreaterThan(l2.budgets.totalTalents);
+		});
+
+		it('should grant talent budgets from progression, not class feature records', () => {
+			for (const classId of v0105ClassIds) {
+				const result = resolveClassProgression(classId, 10);
+				expect(result.budgets.totalTalents, `${classId} should have four talent points`).toBe(4);
+				expect(
+					result.unlockedFeatures.some((feature) => feature.featureName === 'Talent'),
+					`${classId} should not expose generic Talent as a class feature`
+				).toBe(false);
+			}
 		});
 	});
 
@@ -291,6 +353,12 @@ describe('Class Progression Resolver (UT-2)', () => {
 		allClasses.forEach((classId) => {
 			it(`should resolve all progression feature IDs to actual features for ${classId}`, () => {
 				const result = resolveClassProgression(classId, 10);
+				const resolvedFeatureIds = new Set(result.unlockedFeatures.map((feature) => feature.id));
+				const missingFeatureIds = getProgressionFeatureIds(classId).filter(
+					(featureId) => !resolvedFeatureIds.has(featureId)
+				);
+
+				expect(missingFeatureIds).toEqual([]);
 
 				result.unlockedFeatures.forEach((feature) => {
 					// Every unlocked feature should have a name (resolved from data)
@@ -311,6 +379,16 @@ describe('Class Progression Resolver (UT-2)', () => {
 				}
 			});
 		});
+
+		for (const [classId, expectedTargets] of Object.entries(v0105CombatTrainingTargets)) {
+			it(`${classId} combat training matches the v0.10.5 source`, () => {
+				const result = resolveClassProgression(classId, 10);
+
+				expect(getCombatTrainingTargets(result.unlockedFeatures)).toEqual(
+					[...expectedTargets].sort()
+				);
+			});
+		}
 	});
 
 	describe('Budgets Consistency', () => {
@@ -335,6 +413,22 @@ describe('Class Progression Resolver (UT-2)', () => {
 	});
 
 	describe('DC20 v0.10.5 progression table', () => {
+		it('defines runtime progression classification for every current class', () => {
+			expect(Object.keys(CLASS_PROGRESSION_DEFINITIONS).sort()).toEqual([...v0105ClassIds].sort());
+		});
+
+		it('uses full explicit progression tables only for source exceptions', () => {
+			const explicitClassIds = Object.entries(CLASS_PROGRESSION_DEFINITIONS)
+				.filter(([, definition]) => Boolean(definition.explicitProgression))
+				.map(([classId]) => classId)
+				.sort();
+
+			expect(explicitClassIds).toEqual(['rogue', 'warlock']);
+			expect(CLASS_PROGRESSION_DEFINITIONS.barbarian.category).toBe('fullMartial');
+			expect(CLASS_PROGRESSION_DEFINITIONS.wizard.category).toBe('fullCaster');
+			expect(CLASS_PROGRESSION_DEFINITIONS.spellblade.category).toBe('hybrid');
+		});
+
 		casterClassIds.forEach((classId) => {
 			it(`${classId} uses the v0.10.5 caster MP gains`, () => {
 				expect(getLevelData(classId, 3).manaPoints).toBe(3);
@@ -348,6 +442,20 @@ describe('Class Progression Resolver (UT-2)', () => {
 			expect(getLevelData('spellblade', 1).manaPoints).toBe(3);
 			expect(getLevelData('spellblade', 10).manaPoints).toBe(2);
 			expect(resolveClassProgression('spellblade', 10).budgets.totalMP).toBe(11);
+		});
+
+		it('uses Rogue explicit source HP progression instead of the full martial HP table', () => {
+			expect(
+				[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((level) => getLevelData('rogue', level).healthPoints)
+			).toEqual([8, 1, 2, 1, 2, 1, 2, 1, 2, 1]);
+			expect(resolveClassProgression('rogue', 10).budgets.totalHP).toBe(21);
+		});
+
+		it('uses Warlock explicit source HP progression instead of the full caster HP table', () => {
+			expect(
+				[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((level) => getLevelData('warlock', level).healthPoints)
+			).toEqual([8, 1, 2, 1, 2, 1, 2, 1, 2, 1]);
+			expect(resolveClassProgression('warlock', 10).budgets.totalHP).toBe(21);
 		});
 
 		v0105ClassIds.forEach((classId) => {
@@ -372,7 +480,7 @@ describe('Class Progression Resolver (UT-2)', () => {
 				expect(level8Gains?.ancestryPoints).toBe(2);
 				expect(level8Gains?.classFeatures).toBeUndefined();
 
-				expect(level9Gains?.classFeatures?.length).toBeGreaterThan(0);
+				expect(level9Gains?.classFeatures ?? []).toEqual([]);
 				expect(level9Gains?.subclassFeatureChoice).toBeFalsy();
 
 				expect(level10Gains?.subclassFeatureChoice).toBe(true);
@@ -399,22 +507,19 @@ describe('Class Progression Resolver (UT-2)', () => {
 				expect(expertFeature?.benefits?.length).toBeGreaterThan(0);
 			});
 
-			it(`${classId} treats the level 9 Class Capstone as source-unpublished and non-mechanical`, () => {
-				const expectedId = `${classId}_level_8_capstone_placeholder`;
+			it(`${classId} does not resolve unpublished level 9 Class Capstone placeholders`, () => {
 				const level9Gains = getLevelData(classId, 9).gains;
 				const result = resolveClassProgression(classId, 9);
-				const capstoneFeature = result.unlockedFeatures.find(
-					(feature) => feature.id === expectedId
-				);
 
-				expect(level9Gains?.classFeatures).toContain(expectedId);
-				expect(capstoneFeature).toBeDefined();
-				expect(capstoneFeature?.featureName).toBe('Class Capstone (Source Unpublished)');
-				expect(capstoneFeature?.levelGained).toBe(9);
-				expect(capstoneFeature?.isFlavor).toBe(true);
-				expect(capstoneFeature?.description).toMatch(/does not publish/i);
-				expect(capstoneFeature?.description).not.toMatch(/Level 8|placeholder/i);
-				expect(getAllFeatureEffects(capstoneFeature as ClassFeature)).toEqual([]);
+				expect(level9Gains?.classFeatures ?? []).toEqual([]);
+				expect(
+					result.unlockedFeatures.some((feature) =>
+						feature.id?.endsWith('_level_8_capstone_placeholder')
+					)
+				).toBe(false);
+				expect(
+					result.unlockedFeatures.some((feature) => /capstone/i.test(feature.featureName))
+				).toBe(false);
 			});
 		});
 

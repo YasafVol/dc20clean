@@ -2,7 +2,7 @@
 
 > Purpose: Canonical policy for schema, rules, PDF, and system-source versioning.
 > Status: Active
-> Last Updated: 2026-06-19
+> Last Updated: 2026-06-23
 
 ---
 
@@ -10,13 +10,13 @@
 
 DC20Clean uses separate version lanes. Do not collapse them into one field.
 
-| Lane | Field / Constant | Meaning | Current |
-| --- | --- | --- | --- |
-| App/package | `package.json.version` | Release/package version of the app itself | `0.10.5` |
-| Storage schema | `schemaVersion`, `CURRENT_SCHEMA_VERSION` | Shape of saved character data | `2.2.0` |
-| Rules interpretation | `rulesVersion`, `CURRENT_RULES_VERSION` | DC20 ruleset used to interpret saved choices | `dc20-0.10.5` |
-| PDF target | `PdfVersion`, field maps | Fillable PDF template/field-map target | `0.10` |
-| System source | system constants/docs | Source artifact and section used for a subsystem | system-specific |
+| Lane                 | Field / Constant                          | Meaning                                          | Current         |
+| -------------------- | ----------------------------------------- | ------------------------------------------------ | --------------- |
+| App/package          | `package.json.version`                    | Release/package version of the app itself        | `0.10.5`        |
+| Storage schema       | `schemaVersion`, `CURRENT_SCHEMA_VERSION` | Shape of saved character data                    | `2.2.0`         |
+| Rules interpretation | `rulesVersion`, `CURRENT_RULES_VERSION`   | DC20 ruleset used to interpret saved choices     | `dc20-0.10.5`   |
+| PDF target           | `PdfVersion`, field maps                  | Fillable PDF template/field-map target           | `0.10`          |
+| System source        | system constants/docs                     | Source artifact and section used for a subsystem | system-specific |
 
 ## 2. Canonical Formats
 
@@ -28,16 +28,16 @@ DC20Clean uses separate version lanes. Do not collapse them into one field.
 
 ## 3. Ownership
 
-| Concern | Source of truth |
-| --- | --- |
-| Known/current rules versions | `src/lib/rulesdata/versioning/rulesVersion.ts` |
-| Character compatibility gates | `src/lib/rulesdata/versioning/compatibility.ts` |
-| Rules aliases and upgrade decisions | `src/lib/rulesdata/versioning/aliases.ts` |
-| Explicit character upgrade flow | `src/lib/rulesdata/versioning/characterUpgrade.ts` |
-| Storage schema version | `src/lib/types/schemaVersion.ts` |
-| Character storage shape | `src/lib/types/dataContracts.ts`, `docs/systems/DATABASE_SYSTEM.MD` |
-| PDF routing | `src/lib/rulesdata/versioning/compatibility.ts`, `docs/systems/PDF_EXPORT_SYSTEM.MD` |
-| Equipage source/version metadata | `src/lib/rulesdata/equipment/schemas/baseEquipment.ts` |
+| Concern                             | Source of truth                                                                      |
+| ----------------------------------- | ------------------------------------------------------------------------------------ |
+| Known/current rules versions        | `src/lib/rulesdata/versioning/rulesVersion.ts`                                       |
+| Character compatibility gates       | `src/lib/rulesdata/versioning/compatibility.ts`                                      |
+| Rules aliases and upgrade decisions | `src/lib/rulesdata/versioning/aliases.ts`                                            |
+| Explicit character upgrade flow     | `src/lib/rulesdata/versioning/characterUpgrade.ts`                                   |
+| Storage schema version              | `src/lib/types/schemaVersion.ts`                                                     |
+| Character storage shape             | `src/lib/types/dataContracts.ts`, `docs/systems/DATABASE_SYSTEM.MD`                  |
+| PDF routing                         | `src/lib/rulesdata/versioning/compatibility.ts`, `docs/systems/PDF_EXPORT_SYSTEM.MD` |
+| Equipage source/version metadata    | `src/lib/rulesdata/equipment/schemas/baseEquipment.ts`                               |
 
 ## 4. Rules Version Policy
 
@@ -90,6 +90,7 @@ PDF versioning follows available fillable templates and field maps.
 - Rules versions route to PDF versions through `getPdfVersionForRulesVersion()`.
 - `dc20-0.10.5` currently routes to the `0.10` PDF template because no separate checked-in v0.10.5 fillable template/field map exists.
 - PDF export always reads stored `SavedCharacter` values and must not run current-rules recalculation during export.
+- PDF export must not apply compatibility aliases or rules-upgrade decisions. It can format exact current catalog IDs for display, but legacy/reworked saved IDs remain the stored value.
 - Unsupported or future rules versions may export on a best-effort basis when the routing layer can map them to an available template.
 
 ## 7. System Source Metadata

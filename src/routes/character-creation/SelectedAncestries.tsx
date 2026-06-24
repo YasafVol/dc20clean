@@ -262,8 +262,8 @@ function SelectedAncestries() {
 						color: ancestryPointsRemaining < 0 ? '#F7768E' : '#A9B1D6'
 					}}
 				>
-					{t('characterCreation.spent')}: {ancestryPointsSpent} | {t('characterCreation.remaining')}: {ancestryPointsRemaining}/
-					{ancestryPointsSpent + ancestryPointsRemaining}
+					{t('characterCreation.spent')}: {ancestryPointsSpent} | {t('characterCreation.remaining')}
+					: {ancestryPointsRemaining}/{ancestryPointsSpent + ancestryPointsRemaining}
 					{ancestryPointsRemaining < 0 && <span> {t('characterCreation.overBudget')}</span>}
 				</PointsDisplay>
 			</Header>

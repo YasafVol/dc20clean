@@ -102,6 +102,7 @@ export interface GrantSenseEffect {
 	type: 'GRANT_SENSE';
 	target: string;
 	value: number;
+	mode?: 'set' | 'increase' | 'increase_existing';
 }
 
 export interface GrantChoiceEffect {
@@ -294,6 +295,8 @@ export interface ClassFeature {
 	levelGained: number;
 	description: string;
 	isFlavor?: boolean;
+	/** Text mirrors progression-table grants rather than adding independent effects. */
+	isProgressionDerived?: boolean;
 	/** Direct effects of the feature, applied automatically. */
 	effects?: Effect[];
 	/** Named sub-sections of a feature, each with its own effects. */

@@ -231,29 +231,29 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 				<StyledManeuversHeaderRow $isMobile={effectiveIsMobile}>
 					<span></span> {/* Empty column for remove button */}
 					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
-					{t('characterSheet.maneuversColumnName')}
-				</StyledManeuverHeaderColumn>
-				<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
-					{t('characterSheet.maneuversColumnType')}
-				</StyledManeuverHeaderColumn>
-				<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
-					{t('characterSheet.maneuversColumnCost')}
-				</StyledManeuverHeaderColumn>
-				<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
-					{t('characterSheet.maneuversColumnTiming')}
-				</StyledManeuverHeaderColumn>
-			</StyledManeuversHeaderRow>
+						{t('characterSheet.maneuversColumnName')}
+					</StyledManeuverHeaderColumn>
+					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.maneuversColumnType')}
+					</StyledManeuverHeaderColumn>
+					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.maneuversColumnCost')}
+					</StyledManeuverHeaderColumn>
+					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.maneuversColumnTiming')}
+					</StyledManeuverHeaderColumn>
+				</StyledManeuversHeaderRow>
 
-			{filteredCharacterManeuvers.length === 0 ? (
+				{filteredCharacterManeuvers.length === 0 ? (
 					<StyledManeuverEmptyState $isMobile={effectiveIsMobile}>
 						{typeFilter !== 'all'
-						? t('characterSheet.maneuversNoManeuversFilter', { 
-								type: typeFilter, 
-								action: readOnly ? '' : t('characterSheet.maneuversClickToAdd') 
-							})
-						: readOnly
-							? ''
-							: t('characterSheet.maneuversNoManeuvers')}
+							? t('characterSheet.maneuversNoManeuversFilter', {
+									type: typeFilter,
+									action: readOnly ? '' : t('characterSheet.maneuversClickToAdd')
+								})
+							: readOnly
+								? ''
+								: t('characterSheet.maneuversNoManeuvers')}
 					</StyledManeuverEmptyState>
 				) : (
 					filteredCharacterManeuvers.map((maneuver) => {
@@ -343,13 +343,13 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 									<StyledManeuverDescriptionContainer $isMobile={effectiveIsMobile}>
 										<StyledManeuverDescriptionHeader $isMobile={effectiveIsMobile}>
 											<StyledManeuverDescriptionLabel $isMobile={effectiveIsMobile}>
-											{t('characterSheet.maneuversDescription')}
-										</StyledManeuverDescriptionLabel>
-										<StyledManeuverToggleButton
-											$isMobile={effectiveIsMobile}
-											onClick={() => toggleManeuverExpansion(maneuver.id)}
-										>
-											{t('characterSheet.maneuversHideDescription')}
+												{t('characterSheet.maneuversDescription')}
+											</StyledManeuverDescriptionLabel>
+											<StyledManeuverToggleButton
+												$isMobile={effectiveIsMobile}
+												onClick={() => toggleManeuverExpansion(maneuver.id)}
+											>
+												{t('characterSheet.maneuversHideDescription')}
 											</StyledManeuverToggleButton>
 										</StyledManeuverDescriptionHeader>
 										<StyledManeuverDescriptionText $isMobile={effectiveIsMobile}>
@@ -360,16 +360,16 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 										{/* Requirements */}
 										{(maneuverDetails as any).requirement && (
 											<StyledManeuverMetaInfo $isMobile={effectiveIsMobile}>
-											<strong>{t('characterSheet.maneuversRequirements')}</strong>{' '}
-											<RichDescription text={(maneuverDetails as any).requirement} />
-										</StyledManeuverMetaInfo>
-									)}
+												<strong>{t('characterSheet.maneuversRequirements')}</strong>{' '}
+												<RichDescription text={(maneuverDetails as any).requirement} />
+											</StyledManeuverMetaInfo>
+										)}
 
-									{/* Trigger */}
-									{maneuverDetails.trigger && (
-										<StyledManeuverMetaInfo $isMobile={effectiveIsMobile}>
-											<strong>{t('characterSheet.maneuversTrigger')}</strong>{' '}
-											<RichDescription text={maneuverDetails.trigger} />
+										{/* Trigger */}
+										{maneuverDetails.trigger && (
+											<StyledManeuverMetaInfo $isMobile={effectiveIsMobile}>
+												<strong>{t('characterSheet.maneuversTrigger')}</strong>{' '}
+												<RichDescription text={maneuverDetails.trigger} />
 											</StyledManeuverMetaInfo>
 										)}
 										{maneuverEnhancements.length > 0 && (

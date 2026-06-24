@@ -58,18 +58,94 @@ export const clericClass: ClassDefinition = {
 					prompt: 'Choose your Divine Damage type',
 					count: 1,
 					options: [
-						{ name: 'Fire', description: 'Your Divine Damage type is Fire.', effects: [] },
-						{ name: 'Cold', description: 'Your Divine Damage type is Cold.', effects: [] },
+						{
+							name: 'Fire',
+							description: 'Your Divine Damage type is Fire.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'cleric_divine_damage_fire',
+									value: 'Your Divine Damage type is Fire.'
+								}
+							]
+						},
+						{
+							name: 'Cold',
+							description: 'Your Divine Damage type is Cold.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'cleric_divine_damage_cold',
+									value: 'Your Divine Damage type is Cold.'
+								}
+							]
+						},
 						{
 							name: 'Lightning',
 							description: 'Your Divine Damage type is Lightning.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'cleric_divine_damage_lightning',
+									value: 'Your Divine Damage type is Lightning.'
+								}
+							]
 						},
-						{ name: 'Acid', description: 'Your Divine Damage type is Corrosion.', effects: [] },
-						{ name: 'Poison', description: 'Your Divine Damage type is Poison.', effects: [] },
-						{ name: 'Radiant', description: 'Your Divine Damage type is Radiant.', effects: [] },
-						{ name: 'Umbral', description: 'Your Divine Damage type is Umbral.', effects: [] },
-						{ name: 'Psychic', description: 'Your Divine Damage type is Psychic.', effects: [] }
+						{
+							name: 'Acid',
+							description: 'Your Divine Damage type is Corrosion.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'cleric_divine_damage_corrosion',
+									value: 'Your Divine Damage type is Corrosion.'
+								}
+							]
+						},
+						{
+							name: 'Poison',
+							description: 'Your Divine Damage type is Poison.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'cleric_divine_damage_poison',
+									value: 'Your Divine Damage type is Poison.'
+								}
+							]
+						},
+						{
+							name: 'Radiant',
+							description: 'Your Divine Damage type is Radiant.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'cleric_divine_damage_radiant',
+									value: 'Your Divine Damage type is Radiant.'
+								}
+							]
+						},
+						{
+							name: 'Umbral',
+							description: 'Your Divine Damage type is Umbral.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'cleric_divine_damage_umbral',
+									value: 'Your Divine Damage type is Umbral.'
+								}
+							]
+						},
+						{
+							name: 'Psychic',
+							description: 'Your Divine Damage type is Psychic.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'cleric_divine_damage_psychic',
+									value: 'Your Divine Damage type is Psychic.'
+								}
+							]
+						}
 					]
 				},
 				{
@@ -82,7 +158,12 @@ export const clericClass: ClassDefinition = {
 							description:
 								'Your Mastery Limit increases by 1 for all Knowledge Trades. Additionally, you gain 2 Skill Points.',
 							effects: [
-								{ type: 'MODIFY_STAT', target: 'knowledgeMasteryLimit', value: 1 },
+								{
+									type: 'INCREASE_TRADE_MASTERY_CAP',
+									count: 5,
+									value: 1,
+									options: ['arcana', 'history', 'nature', 'occultism', 'religion']
+								},
 								{ type: 'MODIFY_STAT', target: 'skillPoints', value: 2 }
 							]
 						},
@@ -98,8 +179,105 @@ export const clericClass: ClassDefinition = {
 									value: 1,
 									userChoice: {
 										prompt: 'Choose a Spell Tag',
-										options: ['Fire', 'Healing', 'Spirit']
+										options: [
+											'Aberration',
+											'Ailment',
+											'Air',
+											'Antimagic',
+											'Beast',
+											'Bleeding',
+											'Blinded',
+											'Blood',
+											'Bludgeoning',
+											'Burning',
+											'Celestial',
+											'Chaos',
+											'Charmed',
+											'Cleansing',
+											'Cold',
+											'Communication',
+											'Construct',
+											'Corrosion',
+											'Curse',
+											'Dazed',
+											'Deafened',
+											'Death',
+											'Disoriented',
+											'Doomed',
+											'Dragon',
+											'Earth',
+											'Elemental',
+											'Embolden',
+											'Emotion',
+											'Emotions',
+											'Enfeeble',
+											'Exhaustion',
+											'Exposed',
+											'Fey',
+											'Fiend',
+											'Fire',
+											'Frightened',
+											'Gravity',
+											'Healing',
+											'Hindered',
+											'Illusion',
+											'Immobilized',
+											'Impaired',
+											'Incapacitated',
+											'Intimidated',
+											'Invisible',
+											'Knowledge',
+											'Light',
+											'Lightning',
+											'Madness',
+											'Metamorphosis',
+											'Motion',
+											'Ooze',
+											'Paralyzed',
+											'Piercing',
+											'Planes',
+											'Plant',
+											'Plants',
+											'Poison',
+											'Prone',
+											'Psychic',
+											'Radiant',
+											'Restrained',
+											'Resurrection',
+											'Scent',
+											'Sense',
+											'Shadow',
+											'Slashing',
+											'Slowed',
+											'Sound',
+											'Spirit',
+											'Strike',
+											'Stunned',
+											'Summoning',
+											'Surprised',
+											'Taunted',
+											'Teleportation',
+											'Terrified',
+											'Tethered',
+											'Thoughts',
+											'Time',
+											'Trap',
+											'True',
+											'Umbral',
+											'Unconscious',
+											'Undead',
+											'Ward',
+											'Water',
+											'Weakened',
+											'Weapon'
+										]
 									}
+								},
+								{
+									type: 'GRANT_ABILITY',
+									target: 'cleric_magic_domain_spell_access',
+									value:
+										'When you learn a new Spell, you can choose any Spell with the chosen Spell Tag.'
 								}
 							]
 						},
@@ -107,25 +285,53 @@ export const clericClass: ClassDefinition = {
 							name: 'Life',
 							description:
 								'When you produce an MP Effect that restores HP to at least 1 creature, you can restore 1 HP to 1 creature of your choice within 1 Space of you (including yourself).',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'cleric_life_domain_healing',
+									value:
+										'When you produce an MP Effect that restores HP to at least 1 creature, restore 1 HP to 1 creature within 1 Space.'
+								}
+							]
 						},
 						{
 							name: 'Death',
 							description:
 								"Enemy creatures within 10 Spaces of you take an additional 1 damage from Attacks while they're Well-Bloodied.",
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'cleric_death_domain_well_bloodied_damage',
+									value:
+										"Enemy creatures within 10 Spaces take +1 damage from Attacks while they're Well-Bloodied."
+								}
+							]
 						},
 						{
 							name: 'Grave',
 							description:
 								"Allied creatures within 10 Spaces of you take 1 less damage from Attacks while they're Well-Bloodied.",
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'cleric_grave_domain_well_bloodied_reduction',
+									value:
+										"Allied creatures within 10 Spaces take 1 less damage from Attacks while they're Well-Bloodied."
+								}
+							]
 						},
 						{
 							name: 'Light',
 							description:
 								'When you produce an MP Effect that targets at least 1 creature, you can force 1 target to make a Might or Charisma Save. Failure: Until the end of their next turn, they shed a 1 Space Aura of Bright Light and are Hindered on their next Attack.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'cleric_light_domain_hindering_light',
+									value:
+										'When you produce an MP Effect that targets at least 1 creature, force 1 target to make a Might or Charisma Save. Failure: target sheds a 1 Space Aura of Bright Light and is Hindered on its next Attack until end of next turn.'
+								}
+							]
 						},
 						{
 							name: 'Dark',
@@ -133,6 +339,7 @@ export const clericClass: ClassDefinition = {
 								'You gain 10 Space Darkvision (or increase it by 5). While in Dim Light, you can take the Hide Action to Hide from creatures that can see you. On a Success, you remain Hidden until you move or the area becomes Bright Light.',
 							effects: [
 								{ type: 'GRANT_SENSE', target: 'darkvision', value: 10 },
+								{ type: 'GRANT_SENSE', target: 'darkvision', value: 5, mode: 'increase_existing' },
 								{
 									type: 'GRANT_ABILITY',
 									target: 'shadow_hide',
@@ -164,13 +371,27 @@ export const clericClass: ClassDefinition = {
 							name: 'Order',
 							description:
 								'Once per turn, when a creature you can see within 10 Spaces of you makes a Check, you can spend 1 AP as a Reaction to remove all instances of ADV and DisADV from that Check.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'cleric_order_domain_balance_check',
+									value:
+										'Once per turn, when a creature you can see within 10 Spaces makes a Check, spend 1 AP as a Reaction to remove all instances of ADV and DisADV from that Check.'
+								}
+							]
 						},
 						{
 							name: 'Chaos',
 							description:
 								'When you make a Spell Attack or a Spell Check you can choose to give yourself ADV, but you must also roll on the Wild Magic Table. You can use this Feature once per Long Rest, and regain the ability to use it again when you roll for Initiative.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'cleric_chaos_domain_wild_magic_advantage',
+									value:
+										'Once per Long Rest, when you make a Spell Attack or Spell Check, give yourself ADV and roll on the Wild Magic Table. Regain when you roll Initiative.'
+								}
+							]
 						},
 						{
 							name: 'Divination',
@@ -178,9 +399,8 @@ export const clericClass: ClassDefinition = {
 								"You can't be Flanked. When you spend MP, you gain the ability to see Invisible creatures and objects until the start of your next turn.",
 							effects: [
 								{
-									type: 'GRANT_ABILITY',
-									target: 'condition_immunity_flanked',
-									value: "You can't be Flanked."
+									type: 'GRANT_CONDITION_IMMUNITY',
+									target: 'flanked'
 								},
 								{
 									type: 'GRANT_ABILITY',
@@ -194,7 +414,14 @@ export const clericClass: ClassDefinition = {
 							name: 'Trickery',
 							description:
 								'When you produce an MP Effect that targets at least 1 creature, you can choose 1 of the targets and create an illusory duplicate of it that lasts until the start of your next turn. The next Attack made against the target has DisADV, and causes the illusory duplicate to disappear.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'cleric_trickery_domain_illusory_duplicate',
+									value:
+										'When you produce an MP Effect that targets at least 1 creature, create an illusory duplicate of 1 target until the start of your next turn. The next Attack against that target has DisADV and removes the duplicate.'
+								}
+							]
 						},
 						{
 							name: 'Ancestral',
@@ -212,7 +439,14 @@ export const clericClass: ClassDefinition = {
 			levelGained: 1,
 			description:
 				'When you deal damage with a Spell you can convert the damage to your Divine Damage type. Additionally, you gain Resistance (1) to your Divine Damage type.',
-			effects: []
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'cleric_divine_damage_expansion',
+					value:
+						'When you deal damage with a Spell, you can convert it to your Divine Damage type. You also gain Resistance (1) to your Divine Damage type.'
+				}
+			]
 		},
 		{
 			id: 'cleric_divine_blessing',
@@ -225,18 +459,38 @@ export const clericClass: ClassDefinition = {
 					name: 'Destruction',
 					description:
 						"(1 MP) The target takes 3 Divine damage, provided that the result of the Check used to cast the Spell is equal to or higher than the target's AD. If the Spell doesn't normally require a Check, then you must make a Spell Attack Check when you apply this blessing.",
-					effects: []
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'cleric_divine_blessing_destruction',
+							value:
+								'1 MP: Target takes 3 Divine damage if the Spell Check equals or exceeds AD; make a Spell Attack Check if the Spell normally has no Check.'
+						}
+					]
 				},
 				{
 					name: 'Guidance',
 					description:
 						'(1 MP) The target gains a d8 Help Die that they can add to 1 Check of their choice they make within the next minute. When they use this Help Die, the Check gains ADV.',
-					effects: []
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'cleric_divine_blessing_guidance',
+							value:
+								'1 MP: Target gains a d8 Help Die for 1 Check within 1 minute; that Check gains ADV when the die is used.'
+						}
+					]
 				},
 				{
 					name: 'Restoration',
 					description: '(1 MP) The target regains 3 HP.',
-					effects: []
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'cleric_divine_blessing_restoration',
+							value: '1 MP: Target regains 3 HP.'
+						}
+					]
 				}
 			]
 		},
@@ -246,7 +500,14 @@ export const clericClass: ClassDefinition = {
 			levelGained: 1,
 			description:
 				'Once per Long Rest, you can spend 10 minutes to commune with your Deity and ask one yes-or-no question.',
-			effects: []
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'cleric_divine_omen',
+					value:
+						'Once per Long Rest, spend 10 minutes communing with your Deity to ask one yes-or-no question.'
+				}
+			]
 		},
 		{
 			id: 'cleric_channel_divinity',
@@ -259,23 +520,29 @@ export const clericClass: ClassDefinition = {
 					name: 'Divine Rebuke',
 					description:
 						"You can spend 2 AP to censure all creatures of your choice who can see or hear you within 5 Spaces. Make a Spell Attack against each target's AD, and each target makes a Repeated Mental Save against your Save DC. Hit: The target takes 1 Divine Damage. Save Failure: The target becomes Intimidated by you for 1 minute or until it takes damage again.",
-					effects: []
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'cleric_channel_divinity_divine_rebuke',
+							value:
+								'2 AP: Censure chosen creatures within 5 Spaces that can see or hear you. Spell Attack vs AD for 1 Divine Damage; repeated Mental Save failure Intimidates for 1 minute or until damage.'
+						}
+					]
 				},
 				{
 					name: 'Lesser Divine Intervention',
 					description:
 						'You can spend 2 AP to call on your deity to intervene on your behalf when your need is great to replenish you and your allies. You gain a pool of HP which you can distribute to creatures of your choice within 5 Spaces to restore their HP in increments of 1 HP. Make a DC 15 Spell Check. Failure: You gain a pool of 3 HP. Success: You gain a pool of 3 HP and you regain 1 MP. Success (5): Your pool of HP increases 2.',
-					effects: []
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'cleric_channel_divinity_lesser_divine_intervention',
+							value:
+								'2 AP: Make a DC 15 Spell Check for an HP pool to distribute within 5 Spaces. Failure: pool 3 HP. Success: pool 3 HP and regain 1 MP. Success (5): pool +2 HP.'
+						}
+					]
 				}
 			]
-		},
-		{
-			id: 'cleric_talent_level_2',
-			featureName: 'Talent',
-			levelGained: 2,
-			description:
-				'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
-			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
 		},
 		{
 			id: 'cleric_level_5_placeholder',
@@ -320,14 +587,6 @@ export const clericClass: ClassDefinition = {
 					]
 				}
 			]
-		},
-		{
-			id: 'cleric_level_8_capstone_placeholder',
-			featureName: 'Class Capstone (Source Unpublished)',
-			levelGained: 9,
-			isFlavor: true,
-			description:
-				'The v0.10.5 class progression grants a Class Capstone Feature at level 9, but this source packet does not publish class-specific capstone mechanics. This entry is intentionally non-mechanical and preserves the legacy ID for saved-character compatibility.'
 		}
 	],
 	subclasses: [
@@ -356,7 +615,29 @@ export const clericClass: ClassDefinition = {
 							]
 						}
 					],
-					effects: []
+					effects: [
+						{
+							type: 'GRANT_CONDITION_RESISTANCE',
+							target: 'charmed',
+							value: 'advantage'
+						},
+						{
+							type: 'GRANT_CONDITION_RESISTANCE',
+							target: 'intimidated',
+							value: 'advantage'
+						},
+						{
+							type: 'GRANT_CONDITION_RESISTANCE',
+							target: 'taunted',
+							value: 'advantage'
+						},
+						{
+							type: 'GRANT_ABILITY',
+							target: 'cleric_vanquish_heresy_intimidated_persistence',
+							value:
+								"Creatures Intimidated by your Divine Rebuke don't stop being Intimidated when they take damage."
+						}
+					]
 				},
 				{
 					id: 'cleric_inquisitor_divine_interrogator',
@@ -364,7 +645,14 @@ export const clericClass: ClassDefinition = {
 					levelGained: 3,
 					description:
 						"Once per Long Rest, you can interrogate a creature by asking it a Yes or No question. It makes a Charisma Save against your Save DC. Failure: It can't tell a lie to the question that you asked it.",
-					effects: []
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'cleric_divine_interrogator',
+							value:
+								"Once per Long Rest, ask an interrogated creature a yes-or-no question. On failed Charisma Save, it can't lie to that question."
+						}
+					]
 				}
 			]
 		},
@@ -393,7 +681,14 @@ export const clericClass: ClassDefinition = {
 							]
 						}
 					],
-					effects: []
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'cleric_sanctification_overheal',
+							value:
+								"MP healing beyond a creature's HP maximum becomes Temp HP; MP healing on Death's Door restores additional HP equal to your Prime Modifier."
+						}
+					]
 				},
 				{
 					id: 'cleric_priest_all_that_ails',
@@ -401,7 +696,13 @@ export const clericClass: ClassDefinition = {
 					levelGained: 3,
 					description:
 						'You have ADV on Checks made to identify or determine the effects of a Disease, Poison, or Curse affecting a creature.',
-					effects: []
+					effects: [
+						{
+							type: 'GRANT_ADV_ON_CHECK',
+							target: 'identify_disease_poison_curse',
+							value: 'ADV'
+						}
+					]
 				}
 			]
 		}

@@ -606,6 +606,10 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 						...state.character.characterState,
 						ui: {
 							...(state.character.characterState.ui || { manualDefenseOverrides: {} }),
+							activeConditions: {
+								...(state.character.characterState.ui?.activeConditions || {}),
+								while_raging: action.isRaging
+							},
 							combatToggles: {
 								...state.character.characterState.ui?.combatToggles,
 								isRaging: action.isRaging

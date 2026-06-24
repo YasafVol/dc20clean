@@ -143,7 +143,7 @@ export const HEAVY_SHIELD_PROPERTIES: ShieldProperty[] = [
 		cost: 2,
 		shieldTypes: ['heavy'],
 		heavyOnly: true,
-		effects: [{ type: 'GRANT_RESISTANCE', target: 'physical', value: 'half' }]
+		effects: [{ type: 'GRANT_RESISTANCE', target: 'physical', value: true }]
 	},
 	{
 		id: 'edr-shield',
@@ -152,7 +152,7 @@ export const HEAVY_SHIELD_PROPERTIES: ShieldProperty[] = [
 		cost: 2,
 		shieldTypes: ['heavy'],
 		heavyOnly: true,
-		effects: [{ type: 'GRANT_RESISTANCE', target: 'elemental', value: 'half' }]
+		effects: [{ type: 'GRANT_RESISTANCE', target: 'elemental', value: true }]
 	},
 	{
 		id: 'bulky-shield',

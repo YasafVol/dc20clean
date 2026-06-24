@@ -56,7 +56,6 @@ This is the implementation gate for v10.5 rules work. Do not update rules assets
   - `docs/systems/DATABASE_SYSTEM.MD`
 - Test coverage needed: Add version metadata and routing tests before rules-data changes.
 
-
 ## Character Schema / SavedCharacter
 
 ### AUDIT-002: Confirm v10.5 SavedCharacter Shape Compatibility
@@ -74,7 +73,6 @@ This is the implementation gate for v10.5 rules work. Do not update rules assets
 - System docs to update:
   - `docs/systems/DATABASE_SYSTEM.MD`
 - Test coverage needed: Add version metadata and routing tests before rules-data changes.
-
 
 ## Calculation / Effects
 
@@ -3308,7 +3306,6 @@ This is the implementation gate for v10.5 rules work. Do not update rules assets
   - `docs/systems/EFFECT_SYSTEM.MD`
 - Test coverage needed: Add or refresh focused validation after HITL classification.
 
-
 ## Character Creation Flow
 
 ### AUDIT-668: Character Creation
@@ -3326,7 +3323,6 @@ This is the implementation gate for v10.5 rules work. Do not update rules assets
 - System docs to update:
   - `docs/systems/CHARACTER_CREATION_FLOW.MD`
 - Test coverage needed: Add or refresh focused validation after HITL classification.
-
 
 ## Classes / Leveling / Talents
 
@@ -7614,7 +7610,6 @@ This is the implementation gate for v10.5 rules work. Do not update rules assets
   - `docs/systems/FEATURE_ID_NAMING_CONVENTION.md`
 - Test coverage needed: Add or refresh focused validation after HITL classification.
 
-
 ## Ancestry / Traits
 
 ### AUDIT-017: Attribute: Intelligence
@@ -8769,7 +8764,6 @@ This is the implementation gate for v10.5 rules work. Do not update rules assets
   - `docs/systems/TRAITS_SYSTEM.MD`
 - Test coverage needed: Add or refresh focused validation after HITL classification.
 
-
 ## Background / Skills / Trades / Languages
 
 ### AUDIT-009: Charisma
@@ -9550,7 +9544,6 @@ This is the implementation gate for v10.5 rules work. Do not update rules assets
   - `docs/systems/BACKGROUND_SYSTEM.MD`
   - `docs/systems/CALCULATION_SYSTEM.MD`
 - Test coverage needed: Add or refresh focused validation after HITL classification.
-
 
 ## Spells
 
@@ -18994,7 +18987,6 @@ This is the implementation gate for v10.5 rules work. Do not update rules assets
   - `docs/systems/SPELLS_SYSTEM.MD`
 - Test coverage needed: Add or refresh focused validation after HITL classification.
 
-
 ## Martials / Maneuvers
 
 ### AUDIT-072: Maneuvers
@@ -20581,7 +20573,6 @@ This is the implementation gate for v10.5 rules work. Do not update rules assets
   - `docs/systems/MARTIALS_SYSTEM.MD`
 - Test coverage needed: Add or refresh focused validation after HITL classification.
 
-
 ## Equipment
 
 ### AUDIT-060: Medicine Kit (Equipment)
@@ -20808,7 +20799,6 @@ This is the implementation gate for v10.5 rules work. Do not update rules assets
   - `docs/systems/EQUIPMENT_SYSTEM.MD`
 - Test coverage needed: Add or refresh focused validation after HITL classification.
 
-
 ## Character Sheet
 
 No automated section-level candidates were identified for this system.
@@ -20846,7 +20836,6 @@ No automated section-level candidates were identified for this system.
 - System docs to update:
   - `docs/systems/PDF_EXPORT_SYSTEM.MD`
 - Test coverage needed: Add or refresh focused validation after HITL classification.
-
 
 ## Storage / Convex / localStorage
 

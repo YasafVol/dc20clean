@@ -105,7 +105,7 @@ function Attributes() {
 							style={{
 								display: 'block',
 								fontSize: theme.typography.fontSize.xs,
-								color: theme.colors.text.secondary,
+								color: theme.colors.text.secondary
 							}}
 						>
 							{t('characterCreation.primeCapRuleDescription')}
@@ -131,7 +131,8 @@ function Attributes() {
 
 			{!calculation.isValid && (
 				<ErrorBox>
-					{t('characterCreation.invalidBuild')}: {Math.abs(calculation.pointsRemaining)} {t('characterCreation.pointsOverBudget')}
+					{t('characterCreation.invalidBuild')}: {Math.abs(calculation.pointsRemaining)}{' '}
+					{t('characterCreation.pointsOverBudget')}
 				</ErrorBox>
 			)}
 
@@ -153,7 +154,11 @@ function Attributes() {
 					const canDecrease = currentValue > -2;
 
 					return (
-						<AttributeCard key={attribute.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+						<AttributeCard
+							key={attribute.id}
+							whileHover={{ scale: 1.02 }}
+							whileTap={{ scale: 0.98 }}
+						>
 							<AttributeName>{attribute.name}</AttributeName>
 
 							<p
@@ -161,7 +166,7 @@ function Attributes() {
 									color: 'rgba(169, 177, 214, 0.7)',
 									fontSize: '0.875rem',
 									minHeight: '3rem',
-									marginBottom: '1rem',
+									marginBottom: '1rem'
 								}}
 							>
 								{attribute.description}
@@ -211,10 +216,12 @@ function Attributes() {
 										display: 'flex',
 										alignItems: 'center',
 										justifyContent: 'space-between',
-										marginTop: '0.75rem',
+										marginTop: '0.75rem'
 									}}
 								>
-									<span style={{ color: 'rgba(169, 177, 214, 0.7)' }}>{t('characterCreation.base')}: {currentValue}</span>
+									<span style={{ color: 'rgba(169, 177, 214, 0.7)' }}>
+										{t('characterCreation.base')}: {currentValue}
+									</span>
 									<span style={{ color: '#7DCFFF', fontWeight: 'bold' }}>
 										{t('characterCreation.effective')}: {effectiveValue}
 									</span>
@@ -223,7 +230,9 @@ function Attributes() {
 
 							{(limit.traitBonuses > 0 || breakdown) && (
 								<EffectsList>
-									<EffectItem>{t('characterCreation.basePoints')}: {currentValue}</EffectItem>
+									<EffectItem>
+										{t('characterCreation.basePoints')}: {currentValue}
+									</EffectItem>
 									{limit.traitBonuses > 0 && (
 										<EffectItem style={{ color: '#7DCFFF' }}>
 											{t('characterCreation.traitBonuses')}: +{limit.traitBonuses}
@@ -233,7 +242,7 @@ function Attributes() {
 										style={{
 											borderTop: '1px solid rgba(255, 255, 255, 0.05)',
 											paddingTop: '0.25rem',
-											fontWeight: 'bold',
+											fontWeight: 'bold'
 										}}
 									>
 										{t('characterCreation.total')}: {limit.current}
@@ -252,12 +261,13 @@ function Attributes() {
 										border: '1px solid rgba(224, 175, 104, 0.2)',
 										background: 'rgba(224, 175, 104, 0.1)',
 										padding: '0.5rem',
-										color: '#E0AF68',
+										color: '#E0AF68'
 									}}
 								>
 									<AlertTriangle size={12} style={{ marginTop: '0.125rem', flexShrink: 0 }} />
 									<span style={{ fontSize: '0.75rem' }}>
-										{t('characterCreation.forcedToMinimum')}: {forcedAdjustment.pointsCost} {t('characterCreation.pts')}
+										{t('characterCreation.forcedToMinimum')}: {forcedAdjustment.pointsCost}{' '}
+										{t('characterCreation.pts')}
 									</span>
 								</div>
 							)}
@@ -269,7 +279,7 @@ function Attributes() {
 										textAlign: 'center',
 										fontWeight: 'bold',
 										marginTop: '0.5rem',
-										animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+										animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
 									}}
 								>
 									{t('characterCreation.exceedsMaximumLimit')} +{limit.max}
@@ -282,7 +292,7 @@ function Attributes() {
 										textAlign: 'center',
 										color: '#E0AF68',
 										marginTop: '0.5rem',
-										fontSize: '0.875rem',
+										fontSize: '0.875rem'
 									}}
 								>
 									{t('characterCreation.cannotIncreaseFurtherDueToTraits')}

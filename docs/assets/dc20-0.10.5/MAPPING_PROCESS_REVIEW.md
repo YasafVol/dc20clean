@@ -221,22 +221,22 @@ This could become a reusable `rules-update <> schema mapping` utility with these
 
 ## Parallelizable Slices And Dependencies
 
-| Slice | Can Run In Parallel? | Depends On | Output |
-| --- | --- | --- | --- |
-| Extraction cleanup | No, first stage | Source PDF/Markdown | Clean rules source, page index, chunks |
-| Chunk metrics and heading index | Yes after cleanup | Clean rules source | Chunk inventory and flags |
-| Changelog reconstruction | Yes after cleanup | Changelog chunks | High-impact cut list |
-| System classification | Yes after chunks | Chunk inventory, system maps | System-scoped audit entries |
-| Schema inventory refresh | Yes anytime | Codebase | Current schemas and ID surfaces |
-| Class progression audit | Yes after cut list | Changelog, class tables, class data | Progression/resource delta tasks |
-| Spell catalog audit | Yes after cut list | Changelog, spell sections, spell data | Rename/remove/add/tag tasks |
-| Maneuver audit | Yes after cut list | Changelog, maneuver sections, maneuver data | Cost/rewrite/new maneuver tasks |
-| Equipment audit | Yes after cut list | Changelog, equipment sections/data | Property cost/requirement tasks |
-| Ancestry/trait audit | Yes after cut list | Changelog, trait sections/data | Trait availability/effect tasks |
-| Rules-version schema routing | No, should precede data mutation | `DATA_SHAPE_REVIEW.md`, database/storage specs | Additive routing task |
-| HITL approval | Blocks ambiguous implementation | Audit slices | Approved/no-op/deferred task statuses |
-| Implementation | Parallel by system after gates | Approved tasks, version routing | Code/data/docs changes |
-| Validation | Parallel by system after implementation | Code changes | Focused tests and manual checks |
+| Slice                           | Can Run In Parallel?                    | Depends On                                     | Output                                 |
+| ------------------------------- | --------------------------------------- | ---------------------------------------------- | -------------------------------------- |
+| Extraction cleanup              | No, first stage                         | Source PDF/Markdown                            | Clean rules source, page index, chunks |
+| Chunk metrics and heading index | Yes after cleanup                       | Clean rules source                             | Chunk inventory and flags              |
+| Changelog reconstruction        | Yes after cleanup                       | Changelog chunks                               | High-impact cut list                   |
+| System classification           | Yes after chunks                        | Chunk inventory, system maps                   | System-scoped audit entries            |
+| Schema inventory refresh        | Yes anytime                             | Codebase                                       | Current schemas and ID surfaces        |
+| Class progression audit         | Yes after cut list                      | Changelog, class tables, class data            | Progression/resource delta tasks       |
+| Spell catalog audit             | Yes after cut list                      | Changelog, spell sections, spell data          | Rename/remove/add/tag tasks            |
+| Maneuver audit                  | Yes after cut list                      | Changelog, maneuver sections, maneuver data    | Cost/rewrite/new maneuver tasks        |
+| Equipment audit                 | Yes after cut list                      | Changelog, equipment sections/data             | Property cost/requirement tasks        |
+| Ancestry/trait audit            | Yes after cut list                      | Changelog, trait sections/data                 | Trait availability/effect tasks        |
+| Rules-version schema routing    | No, should precede data mutation        | `DATA_SHAPE_REVIEW.md`, database/storage specs | Additive routing task                  |
+| HITL approval                   | Blocks ambiguous implementation         | Audit slices                                   | Approved/no-op/deferred task statuses  |
+| Implementation                  | Parallel by system after gates          | Approved tasks, version routing                | Code/data/docs changes                 |
+| Validation                      | Parallel by system after implementation | Code changes                                   | Focused tests and manual checks        |
 
 Dependency rule: version routing and ID/migration decisions should happen before mutating rules data that could affect saved characters.
 

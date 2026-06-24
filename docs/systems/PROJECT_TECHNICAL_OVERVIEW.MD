@@ -2,7 +2,7 @@
 
 > Purpose: Technical overview of the DC20Clean codebase: stack, scripts, testing, project structure, and contribution expectations.
 > Status: Active
-> Last Updated: 2026-06-19
+> Last Updated: 2026-06-22
 
 ## Tech Stack
 
@@ -55,6 +55,8 @@ Testing:
 - `npm run test:e2e:headed` — E2E in headed browser mode
 - `npm run test:e2e:debug` — E2E in debug mode
 - `npm run test` — Run unit tests (run mode) then E2E tests
+
+Testing policy and coverage rules are centralized in `docs/systems/TESTING_SYSTEM.MD`.
 
 E2E per-project and parallel:
 
@@ -164,6 +166,7 @@ docs/systems/                      # System documentation
 - E2E tests: Add to `e2e/` directory with `.e2e.spec.ts` extension
 - Test approval: Never modify existing tests without explicit written approval
 - Coverage: Update or add tests when modifying behavior
+- Rules behavior should be proven first with source-audit validators and focused calculator tests; add E2E only for user-flow, persistence, and visible-sheet acceptance.
 
 ## Pull Request Guidelines
 

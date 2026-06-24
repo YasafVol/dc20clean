@@ -110,7 +110,7 @@ describe('equipment effects in calculator', () => {
 		expect(result.resistances).toContainEqual(
 			expect.objectContaining({
 				type: 'mystical',
-				value: 'half',
+				value: 'true',
 				source: expect.objectContaining({ type: 'equipment', name: 'Protective Relic' })
 			})
 		);

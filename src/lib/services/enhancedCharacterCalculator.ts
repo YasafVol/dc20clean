@@ -80,10 +80,44 @@ function getInventoryRows(contextData: any): any[] {
 	return [];
 }
 
+function hasEquippedArmor(inventoryRows: any[]): boolean {
+	return inventoryRows.some((item) => {
+		if (!item?.isEquipped) return false;
+		if (item.itemType === 'Armor') return true;
+		return item.itemType === 'Custom' && item.customEquipmentCategory === 'armor';
+	});
+}
+
+function getActiveConditions(contextData: any, inventoryRows: any[]): string[] {
+	const conditions = new Set<string>();
+
+	for (const conditionId of contextData.characterState?.activeConditions ?? []) {
+		if (typeof conditionId === 'string' && conditionId) conditions.add(conditionId);
+	}
+
+	for (const [conditionId, isActive] of Object.entries(
+		contextData.characterState?.ui?.activeConditions ?? {}
+	)) {
+		if (isActive) conditions.add(conditionId);
+	}
+
+	if (contextData.characterState?.ui?.combatToggles?.isRaging) {
+		conditions.add('while_raging');
+	}
+
+	if (!hasEquippedArmor(inventoryRows)) {
+		conditions.add('not_wearing_armor');
+	}
+
+	return Array.from(conditions);
+}
+
 /**
  * Convert character context data to enhanced build data
  */
 export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterBuildData {
+	const equipmentInventory = getInventoryRows(contextData);
+
 	return {
 		id: contextData.id || '',
 		finalName: contextData.finalName || '',
@@ -131,10 +165,8 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 		manualPD: contextData.manualPD,
 		manualAD: contextData.manualAD,
 		manualPDR: contextData.manualPDR,
-		activeConditions: Object.entries(contextData.characterState?.ui?.activeConditions ?? {})
-			.filter(([, isActive]) => Boolean(isActive))
-			.map(([conditionId]) => conditionId),
-		equipmentInventory: getInventoryRows(contextData),
+		activeConditions: getActiveConditions(contextData, equipmentInventory),
+		equipmentInventory,
 
 		// Conversions between point pools (for Background step)
 		conversions: {
@@ -279,6 +311,11 @@ export function calculateCharacterWithBreakdowns(
 	// 2. Resolve user choices
 	const resolvedEffects = resolveEffectChoices(rawEffects, buildData.selectedTraitChoices);
 	const activeConditions = new Set(buildData.activeConditions ?? []);
+	if (hasEquippedArmor(buildData.equipmentInventory ?? [])) {
+		activeConditions.delete('not_wearing_armor');
+	} else {
+		activeConditions.add('not_wearing_armor');
+	}
 
 	// 3. Resolve class progression (budgets + features) - only if class is selected
 	let resolvedProgression = null;

@@ -45,7 +45,7 @@ export interface ClassProgressionLevel {
 
 /**
  * Standard martial progression template (v0.10.5)
- * Used by: Barbarian, Champion, Commander, Hunter, Rogue
+ * Used by category-derived martial classes. Rogue has an explicit source table.
  *
  * HP: +8/+2/+2/+2/+2/+2/+2/+2/+2/+2 (26 total)
  * SP: +2/0/+1/0/0/0/+1/0/+1/+1 (6 total)
@@ -59,7 +59,7 @@ export interface ClassProgressionLevel {
 
 /**
  * Standard caster progression template (v0.10.5)
- * Used by: Bard, Cleric, Wizard (and similar)
+ * Used by category-derived caster classes. Warlock has an explicit source table.
  *
  * HP: +7/+1/+1/+1/+1/+1/+1/+1/+1/+1 (16 total)
  * MP: +6/0/+3/0/+3/0/+3/0/+3/+3 (21 total)

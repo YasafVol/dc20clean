@@ -1,7 +1,7 @@
 /**
  * DC20 v0.10.5 Spellcaster Class Progression Template
  *
- * Applies to: Bard, Cleric, Druid, Sorcerer, Warlock, Wizard
+ * Applies by default to full caster classes. Warlock uses a full explicit source table.
  *
  * Changes from 0.9.5:
  * - HP: +7 at level 1, +1 per level after
@@ -10,8 +10,8 @@
  * - Cantrips: REMOVED from game (no longer a classification)
  * - Path Progression now at levels 2, 4, 6, 8 (moved from 7, 10 to 6, 8)
  *
- * Common progression shared by all spellcaster classes.
- * Class-specific features should be added in the 'gains.classFeatures' array.
+ * Common progression table for category-derived caster classes.
+ * Class-specific features are overlaid by classProgressionDefinitions.ts.
  */
 
 import type { ClassProgressionLevel } from '../../progressionTypes';

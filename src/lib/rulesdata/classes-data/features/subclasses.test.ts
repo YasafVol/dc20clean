@@ -364,7 +364,9 @@ describe('v0.10.5 class feature semantics', () => {
 		expect(debilitatingStrike?.description).toContain('When you make a Weapon Attack');
 		expect(debilitatingStrike?.description).not.toContain('When you hit');
 		expect(cheapShot?.description).toContain('any Condition other than Invisible');
-		expect(tauntingShot?.description).toContain('creature that fulfills the criteria for Cheap Shot');
+		expect(tauntingShot?.description).toContain(
+			'creature that fulfills the criteria for Cheap Shot'
+		);
 		expect(tauntingShot?.description).toContain('Once per round');
 		expect(tauntingShot?.effects?.[0]?.value).toContain('criteria for Cheap Shot');
 		expect(tauntingShot?.effects?.[0]?.value).not.toContain('creature with a Condition');

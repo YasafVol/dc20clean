@@ -136,7 +136,7 @@
 	},
 	"bloodied": false,
 	"wellBloodied": false,
-	"reduction": { "physical": false, "elemental": false, "mental": false },
+	"reduction": { "physical": false, "elemental": false, "mystical": false },
 
 	"moveSpeed": 0,
 	"movement": {

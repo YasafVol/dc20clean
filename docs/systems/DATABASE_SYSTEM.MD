@@ -401,11 +401,11 @@ character.rulesVersion ?? 'dc20-0.10';
 
 Compatibility states are computed at runtime:
 
-| State              | Load | Sheet render | Edit / level up                | Auto-save                                       | PDF export                       |
-| ------------------ | ---- | ------------ | ------------------------------ | ----------------------------------------------- | -------------------------------- |
-| `editable`         | Yes  | Yes          | Yes                            | Full character save with recalculation          | Yes                              |
-| `upgrade-required` | Yes  | Yes          | Blocked                        | Disabled                                        | Best-effort stored-value export  |
-| `view-only`        | Yes  | Best effort  | Blocked                        | Disabled                                        | Best-effort stored-value export  |
+| State              | Load | Sheet render | Edit / level up | Auto-save                              | PDF export                      |
+| ------------------ | ---- | ------------ | --------------- | -------------------------------------- | ------------------------------- |
+| `editable`         | Yes  | Yes          | Yes             | Full character save with recalculation | Yes                             |
+| `upgrade-required` | Yes  | Yes          | Blocked         | Disabled                               | Best-effort stored-value export |
+| `view-only`        | Yes  | Best effort  | Blocked         | Disabled                               | Best-effort stored-value export |
 
 #### Explicit v0.10 to Current-Version Copy
 

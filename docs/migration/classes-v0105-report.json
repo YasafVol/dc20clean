@@ -1,0 +1,2692 @@
+{
+	"source": "docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md",
+	"rulesVersion": "dc20-0.10.5",
+	"scope": "core-rules-classes",
+	"classCount": 13,
+	"detailedClassCount": 12,
+	"sourceCoreFeatureCandidateCount": 100,
+	"parserNotes": [
+		"Class source uses flat ## headings for both feature names and nested option headings. coreFeatureCandidates is intentionally broad; runtime validation matches implemented feature names against these candidates."
+	],
+	"classes": [
+		{
+			"id": "barbarian",
+			"name": "Barbarian",
+			"category": "martial",
+			"sourceStatus": "detailed",
+			"description": "Barbarians charge into battle with reckless abandon, ignoring their own safety as they brush off damage and deal even more in return. They trade defense for more offense and let out blood-crazed battle cries.\n\nSource of Power: Barbarians become overtaken by a surge of strength called Rage. This can manifest as rage, possession, primal power, or something else entirely. A protective Barbarian could tap into their power if their friends are in danger. A frightened Barbarian could lash out when they're scared. There are many possibilities for where a Barbarian's power of Rage comes from.\n\nDC Tip: Or of course an ANGRY Barbarian might want to smash everything in sight!",
+			"classTable": {
+				"columns": [
+					"Char Level",
+					"Health Points",
+					"Attribute Points",
+					"Skill Points",
+					"Trade Points",
+					"Stamina Points",
+					"Maneuvers Known",
+					"Features"
+				],
+				"rows": [
+					{
+						"Char Level": "1",
+						"Health Points": "+8",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+2",
+						"Maneuvers Known": "+2",
+						"Features": "Class Features"
+					},
+					{
+						"Char Level": "2",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Class Feature, Talent, Path Progression"
+					},
+					{
+						"Char Level": "3",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Subclass Feature"
+					},
+					{
+						"Char Level": "4",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "5",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Stamina Points": "",
+						"Maneuvers Known": "+1",
+						"Features": "Class Expert Feature"
+					},
+					{
+						"Char Level": "6",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "+1",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Talent, Path Progression"
+					},
+					{
+						"Char Level": "7",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Subclass Expert Feature"
+					},
+					{
+						"Char Level": "8",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "9",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Class Capstone Feature"
+					},
+					{
+						"Char Level": "10",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Subclass Capstone Feature"
+					}
+				],
+				"provenance": { "startLine": 13096, "endLine": 13107 }
+			},
+			"startingEquipment": {
+				"arsenal": {
+					"label": "Arsenal",
+					"text": "Choose 3 of any of the following items: Weapon or Shield."
+				},
+				"armor": { "label": "Armor", "text": "1 set of Armor." },
+				"trade-tools": {
+					"label": "Trade Tools",
+					"text": "Choose 1 of any of the following items: Brewer's Supplies, Cooking Utensils, Leatherworker's Tools, or Sculptor's Tools."
+				},
+				"adventuring-pack": {
+					"label": "Adventuring Pack",
+					"text": "Choose 1 of the following packs: (Adventuring Packs Coming Soon)."
+				}
+			},
+			"path": {
+				"type": "martial",
+				"fields": {
+					"combat-training": {
+						"label": "Combat Training",
+						"text": "Weapons, All Armor, All Shields"
+					},
+					"maneuvers": {
+						"label": "Maneuvers",
+						"text": "The number of Maneuvers you know increases as shown in the Maneuvers Known column of the Barbarian Class Table."
+					},
+					"stamina-points": {
+						"label": "Stamina Points",
+						"text": "Your maximum number of Stamina Points increases as shown in the Stamina Points column of the Barbarian Class Table."
+					},
+					"stamina-regen": {
+						"label": "Stamina Regen",
+						"text": "Once per round, you can regain up to half your maximum SP when:"
+					}
+				}
+			},
+			"coreFeatureCandidates": [
+				{ "id": "rage", "name": "Rage", "level": 1, "isFlavor": false, "sourceLine": 13139 },
+				{
+					"id": "berserker",
+					"name": "Berserker",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 13152
+				},
+				{
+					"id": "shattering-force",
+					"name": "Shattering Force",
+					"level": 1,
+					"isFlavor": true,
+					"sourceLine": 13164
+				},
+				{
+					"id": "battlecry",
+					"name": "Battlecry",
+					"level": 2,
+					"isFlavor": false,
+					"sourceLine": 13170
+				},
+				{
+					"id": "expert-barbarian",
+					"name": "Expert Barbarian",
+					"level": 5,
+					"isFlavor": false,
+					"sourceLine": 13214
+				}
+			],
+			"subclassChoices": [
+				{ "id": "elemental-fury", "name": "Elemental Fury", "sourceLine": 13192 },
+				{ "id": "spirit-guardian", "name": "Spirit Guardian", "sourceLine": 13193 },
+				{ "id": "paragon", "name": "Paragon", "sourceLine": 13194 }
+			],
+			"provenance": { "startLine": 13086, "endLine": 13293 }
+		},
+		{
+			"id": "bard",
+			"name": "Bard",
+			"category": "spellcaster",
+			"sourceStatus": "detailed",
+			"description": "Bards utilize artistic expression through various forms to connect with the emotions and heart of magic. This includes a wide range of mediums such as musical instruments, singing, dancing, drawing, painting, sculpting, poetry, storytelling, inspirational speech, and more. They are great at bringing the best out in those around them through both helping and performing, showcasing high proficiency across multiple disciplines. Bards are remarkably flexible and adaptable spellcasters, capable of tapping into a wide array of magical abilities with the appropriate artistic expression.\n\nBard Flavor: Bards compile a repertoire of artistic expressions that they manifest as Spells. Musician Bards utilize specific songs or instruments to cast Spells, while dancer Bards perform particular dance moves that represent different Spells. Storyteller Bards initiate combat by narrating tales of wonder and adventure, seamlessly weaving Spells into key points of the story. Painter Bards fluidly and freely paint images, each triggering a specific Spell.\n\nSource of Power: Bards derive their power from harnessing their emotions and force of will, as well as those of others around them. The feeling you get when listening to a stirring song, hearing masterfully read poetry, or witnessing a captivating performance that gives you chills, elevates your heart rate, and provokes you to dance, that passion is what fuels their potential. A Bard's emotion, determination, and willpower flows through their unique artistic expression, touching the hearts and minds of those around them and bringing their magic to life.",
+			"classTable": {
+				"columns": [
+					"Char Level",
+					"Health Points",
+					"Attribute Points",
+					"Skill Points",
+					"Trade Points",
+					"Mana Points",
+					"Spells Known",
+					"Features"
+				],
+				"rows": [
+					{
+						"Char Level": "1",
+						"Health Points": "+7",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "+6",
+						"Spells Known": "+4",
+						"Features": "Class Features"
+					},
+					{
+						"Char Level": "2",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Class Feature, Talent, Path Progression"
+					},
+					{
+						"Char Level": "3",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Subclass Feature"
+					},
+					{
+						"Char Level": "4",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "5",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Class Feature"
+					},
+					{
+						"Char Level": "6",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "+1",
+						"Trade Points": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Talent, Path Progression"
+					},
+					{
+						"Char Level": "7",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Subclass Expert Feature"
+					},
+					{
+						"Char Level": "8",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "9",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Class Capstone Feature"
+					},
+					{
+						"Char Level": "10",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Subclass Capstone Feature"
+					}
+				],
+				"provenance": { "startLine": 13304, "endLine": 13315 }
+			},
+			"startingEquipment": {
+				"arsenal": {
+					"label": "Arsenal",
+					"text": "Choose 3 of any of the following items: Spell Focus, Weapon, or Light Shield."
+				},
+				"armor": { "label": "Armor", "text": "1 set of Light Armor." },
+				"trade-tools": {
+					"label": "Trade Tools",
+					"text": "Choose 1 of any of the following items: Calligrapher's Supplies, Disguise Kit, Gaming Kit, Musical Instrument, or Sculptor's Tools."
+				},
+				"adventuring-pack": {
+					"label": "Adventuring Pack",
+					"text": "Choose 1 of the following packs: (Adventuring Packs Coming Soon)."
+				}
+			},
+			"path": {
+				"type": "spellcasting",
+				"fields": {
+					"combat-training": {
+						"label": "Combat Training",
+						"text": "Spell Focuses, Light Armor, Light Shields"
+					},
+					"spell-list": {
+						"label": "Spell List",
+						"text": "When you learn a new Spell, you can choose any Spell from the Enchantment Spell School or with the following Spell Tags: Embolden, Enfeeble, Healing, Illusion, or Sound."
+					},
+					"spells-known": {
+						"label": "Spells Known",
+						"text": "The number of Spells you know increases as shown in the Spells Known column of the Bard Class Table."
+					},
+					"mana-points": {
+						"label": "Mana Points",
+						"text": "Your maximum number of Mana Points increases as shown in the Mana Points column of the Bard Class Table."
+					}
+				}
+			},
+			"coreFeatureCandidates": [
+				{
+					"id": "font-of-inspiration",
+					"name": "Font of Inspiration",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 13341
+				},
+				{
+					"id": "remarkable-repertoire",
+					"name": "Remarkable Repertoire",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 13350
+				},
+				{
+					"id": "crowd-pleaser",
+					"name": "Crowd Pleaser",
+					"level": 1,
+					"isFlavor": true,
+					"sourceLine": 13363
+				},
+				{
+					"id": "bardic-performance",
+					"name": "Bardic Performance",
+					"level": 2,
+					"isFlavor": false,
+					"sourceLine": 13371
+				},
+				{
+					"id": "expert-bard",
+					"name": "Expert Bard",
+					"level": 5,
+					"isFlavor": false,
+					"sourceLine": 13420
+				}
+			],
+			"subclassChoices": [
+				{ "id": "eloquence", "name": "Eloquence", "sourceLine": 13398 },
+				{ "id": "jester", "name": "Jester", "sourceLine": 13399 },
+				{ "id": "paragon", "name": "Paragon", "sourceLine": 13400 }
+			],
+			"provenance": { "startLine": 13294, "endLine": 13488 }
+		},
+		{
+			"id": "champion",
+			"name": "Champion",
+			"category": "martial",
+			"sourceStatus": "detailed",
+			"description": "Champions are weapon and armor specialists that push themselves to the limit in combat. They are able to master a wide variety of weapon types and learn their enemies as they fight them.\n\nSource of Power: Champions train intensely to master all types of weapons and armor. They could be outfitted in heavy armor and a shield, swing a greatsword with ease, or become a highly trained archer.",
+			"classTable": {
+				"columns": [
+					"Char Level",
+					"Health Points",
+					"Attribute Points",
+					"Skill Points",
+					"Trade Points",
+					"Stamina Points",
+					"Maneuvers Known",
+					"Features"
+				],
+				"rows": [
+					{
+						"Char Level": "1",
+						"Health Points": "+8",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+2",
+						"Maneuvers Known": "+2",
+						"Features": "Class Features"
+					},
+					{
+						"Char Level": "2",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Class Feature, Talent, Path Progression"
+					},
+					{
+						"Char Level": "3",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Subclass Feature"
+					},
+					{
+						"Char Level": "4",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "5",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Stamina Points": "",
+						"Maneuvers Known": "+1",
+						"Features": "Class Feature"
+					},
+					{
+						"Char Level": "6",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "+1",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Talent, Path Progression"
+					},
+					{
+						"Char Level": "7",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Subclass Expert Feature"
+					},
+					{
+						"Char Level": "8",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "9",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Class Capstone Feature"
+					},
+					{
+						"Char Level": "10",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Subclass Capstone Feature"
+					}
+				],
+				"provenance": { "startLine": 13497, "endLine": 13508 }
+			},
+			"startingEquipment": {
+				"arsenal": {
+					"label": "Arsenal",
+					"text": "Choose 3 of any of the following items: Weapon or Shield."
+				},
+				"armor": { "label": "Armor", "text": "1 set of Armor." },
+				"trade-tools": {
+					"label": "Trade Tools",
+					"text": "Choose 1 of any of the following items: Carpenter's Tools, Cartographer's Tools, Gaming Kit, or Mason's Tools."
+				},
+				"adventuring-pack": {
+					"label": "Adventuring Pack",
+					"text": "Choose 1 of the following packs: (Adventuring Packs Coming Soon)."
+				}
+			},
+			"path": {
+				"type": "martial",
+				"fields": {
+					"combat-training": {
+						"label": "Combat Training",
+						"text": "Weapons, All Armor, All Shields"
+					},
+					"maneuvers": {
+						"label": "Maneuvers",
+						"text": "The number of Maneuvers you know increases as shown in the Maneuvers Known column of the Champion Class Table."
+					},
+					"stamina-points": {
+						"label": "Stamina Points",
+						"text": "Your maximum number of Stamina Points increases as shown in the Stamina Points column of the Champion Class Table."
+					},
+					"stamina-regen": {
+						"label": "Stamina Regen",
+						"text": "Once per Round, you can regain up to half your maximum SP when you perform a Maneuver."
+					}
+				}
+			},
+			"coreFeatureCandidates": [
+				{
+					"id": "master-at-arms",
+					"name": "Master-at-Arms",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 13534
+				},
+				{
+					"id": "fighting-spirit",
+					"name": "Fighting Spirit",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 13541
+				},
+				{
+					"id": "know-your-enemy",
+					"name": "Know Your Enemy",
+					"level": 1,
+					"isFlavor": true,
+					"sourceLine": 13550
+				},
+				{
+					"id": "adaptive-tactics",
+					"name": "Adaptive Tactics",
+					"level": 2,
+					"isFlavor": false,
+					"sourceLine": 13560
+				},
+				{
+					"id": "expert-champion",
+					"name": "Expert Champion",
+					"level": 5,
+					"isFlavor": false,
+					"sourceLine": 13603
+				}
+			],
+			"subclassChoices": [
+				{ "id": "hero", "name": "Hero", "sourceLine": 13581 },
+				{ "id": "sentinel", "name": "Sentinel", "sourceLine": 13582 },
+				{ "id": "paragon", "name": "Paragon", "sourceLine": 13583 }
+			],
+			"provenance": { "startLine": 13489, "endLine": 13953 }
+		},
+		{
+			"id": "cleric",
+			"name": "Cleric",
+			"category": "spellcaster",
+			"sourceStatus": "listed-only",
+			"coreFeatureCandidates": [],
+			"subclassChoices": [],
+			"provenance": null
+		},
+		{
+			"id": "commander",
+			"name": "Commander",
+			"category": "martial",
+			"sourceStatus": "detailed",
+			"description": "Commanders are the leaders of the battlefield, inspiring their allies and leading them to victory. They can command their allies to attack or move around the battlefield, and are even able to \"heal\" allies by making them dig deep within themselves to push forward in combat.\n\nSource of Power: Commanders utilize their extensive leadership skills and tactical battle knowledge. This could come from being a war veteran, inspiring leader, or a tactical mastermind.",
+			"classTable": {
+				"columns": [
+					"Char Level",
+					"Health Points",
+					"Attribute Points",
+					"Skill Points",
+					"Trade Points",
+					"Stamina Points",
+					"Maneuvers Known",
+					"Features"
+				],
+				"rows": [
+					{
+						"Char Level": "1",
+						"Health Points": "+8",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+2",
+						"Maneuvers Known": "+2",
+						"Features": "Class Features"
+					},
+					{
+						"Char Level": "2",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Class Feature, Talent, Path Progression"
+					},
+					{
+						"Char Level": "3",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Subclass Feature"
+					},
+					{
+						"Char Level": "4",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "5",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Stamina Points": "",
+						"Maneuvers Known": "+1",
+						"Features": "Class Feature"
+					},
+					{
+						"Char Level": "6",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "+1",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Talent, Path Progression"
+					},
+					{
+						"Char Level": "7",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Subclass Expert Feature"
+					},
+					{
+						"Char Level": "8",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "9",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Class Capstone Feature"
+					},
+					{
+						"Char Level": "10",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Subclass Capstone Feature"
+					}
+				],
+				"provenance": { "startLine": 13962, "endLine": 13973 }
+			},
+			"startingEquipment": {
+				"arsenal": {
+					"label": "Arsenal",
+					"text": "Choose 3 of any of the following items: Weapon or Shield."
+				},
+				"armor": { "label": "Armor", "text": "1 set of Armor." },
+				"trade-tools": {
+					"label": "Trade Tools",
+					"text": "Choose 1 of any of the following items: Cartographer's Tools, Calligrapher's, Cryptographer's Tools, or Gaming Set."
+				},
+				"adventuring-pack": {
+					"label": "Adventuring Pack",
+					"text": "Choose 1 of the following packs: (Adventuring Packs Coming Soon)."
+				}
+			},
+			"path": {
+				"type": "martial",
+				"fields": {
+					"combat-training": {
+						"label": "Combat Training",
+						"text": "Weapons, All Armor, All Shields"
+					},
+					"maneuvers": {
+						"label": "Maneuvers",
+						"text": "The number of Maneuvers you know increases as shown in the Maneuvers Known column of the Commander Class Table."
+					},
+					"stamina-points": {
+						"label": "Stamina Points",
+						"text": "Your maximum number of Stamina Points increases as shown in the Stamina Points column of the Commander Class Table."
+					},
+					"stamina-regen": {
+						"label": "Stamina Regen",
+						"text": "Once per Round, you can regain up to half your maximum SP when you grant a creature a Help Die."
+					}
+				}
+			},
+			"coreFeatureCandidates": [
+				{
+					"id": "inspiring-presence",
+					"name": "Inspiring Presence",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 13999
+				},
+				{
+					"id": "commander-s-call",
+					"name": "Commander ' s Call",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14003
+				},
+				{
+					"id": "natural-leader",
+					"name": "Natural Leader",
+					"level": 1,
+					"isFlavor": true,
+					"sourceLine": 14011
+				},
+				{
+					"id": "commanding-aura",
+					"name": "Commanding Aura",
+					"level": 2,
+					"isFlavor": false,
+					"sourceLine": 14017
+				},
+				{
+					"id": "expert-commander",
+					"name": "Expert Commander",
+					"level": 5,
+					"isFlavor": false,
+					"sourceLine": 14061
+				}
+			],
+			"subclassChoices": [
+				{ "id": "crusader", "name": "Crusader", "sourceLine": 14039 },
+				{ "id": "warlord", "name": "Warlord", "sourceLine": 14040 },
+				{ "id": "paragon", "name": "Paragon", "sourceLine": 14041 }
+			],
+			"provenance": { "startLine": 13954, "endLine": 14138 }
+		},
+		{
+			"id": "druid",
+			"name": "Druid",
+			"category": "spellcaster",
+			"sourceStatus": "detailed",
+			"description": "Druids tap into the power of nature, drawing upon the energies that flow through the world and creatures around them. and connect to plants, animals, and the plane itself. They can channel both the restorative and destructive forces of nature and shapeshift into wild beasts.\n\nSource of Power: A Druid's connection to nature can come from a deep respect, love, and appreciation of the natural world. Some Druids are blessed by a god or spirit of nature, granting them innate magical abilities. Others immerse themselves in nature by living in the wild, communing with the land and creatures to gain power and insight. They can sense and connect to nature and use its magic as their own.",
+			"classTable": {
+				"columns": [
+					"Char Level",
+					"Health Points",
+					"Attribute Points",
+					"Skill Points",
+					"Trade Points",
+					"Mana Points",
+					"Spells Known",
+					"Features"
+				],
+				"rows": [
+					{
+						"Char Level": "1",
+						"Health Points": "+7",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "+6",
+						"Spells Known": "+4",
+						"Features": "Class Features"
+					},
+					{
+						"Char Level": "2",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Class Feature, Talent, Path Progression"
+					},
+					{
+						"Char Level": "3",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Subclass Feature"
+					},
+					{
+						"Char Level": "4",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "5",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Class Feature"
+					},
+					{
+						"Char Level": "6",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "+1",
+						"Trade Points": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Talent, Path Progression"
+					},
+					{
+						"Char Level": "7",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Subclass Expert Feature"
+					},
+					{
+						"Char Level": "8",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "9",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Class Capstone Feature"
+					},
+					{
+						"Char Level": "10",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Subclass Capstone Feature"
+					}
+				],
+				"provenance": { "startLine": 14147, "endLine": 14158 }
+			},
+			"startingEquipment": {
+				"arsenal": { "label": "Arsenal", "text": "2 Spell Focuses." },
+				"armor": { "label": "Armor", "text": "1 set of Light Armor." },
+				"trade-tools": {
+					"label": "Trade Tools",
+					"text": "Choose 2 of any of the following items: Herbalist's Supplies, Leatherworker's Tools, Sculptor's Tools, or Weaver's Tools."
+				},
+				"adventuring-pack": {
+					"label": "Adventuring Pack",
+					"text": "Choose 1 of the following packs: (Adventuring Packs Coming Soon)."
+				}
+			},
+			"path": {
+				"type": "spellcasting",
+				"fields": {
+					"combat-training": { "label": "Combat Training", "text": "Spell Focuses, Light Armor" },
+					"spell-list": {
+						"label": "Spell List",
+						"text": "When you learn a new Spell, you can choose any Spell on the Primal Spell Source."
+					},
+					"spells-known": {
+						"label": "Spells Known",
+						"text": "The number of Spells you know increases as shown in the Spells Known column of the Druid Class Table."
+					},
+					"mana-points": {
+						"label": "Mana Points",
+						"text": "Your maximum number of Mana Points increases as shown in the Mana Points column of the Druid Class Table."
+					}
+				}
+			},
+			"coreFeatureCandidates": [
+				{
+					"id": "druid-domain",
+					"name": "Druid Domain",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14184
+				},
+				{
+					"id": "domain-actions",
+					"name": "Domain Actions",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14192
+				},
+				{
+					"id": "wild-form",
+					"name": "Wild Form",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14203
+				},
+				{
+					"id": "true-form",
+					"name": "True Form",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14207
+				},
+				{
+					"id": "wild-form",
+					"name": "Wild Form",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14211
+				},
+				{
+					"id": "statistics",
+					"name": "Statistics",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14219
+				},
+				{
+					"id": "wild-form-stat-block",
+					"name": "Wild Form Stat Block",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14232
+				},
+				{
+					"id": "wild-speech-flavor",
+					"name": "Wild Speech (Flavor)",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14247
+				},
+				{
+					"id": "wild-speech-sidebar",
+					"name": "WILD SPEECH SIDEBAR",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14255
+				},
+				{
+					"id": "communicating-with-animals",
+					"name": "Communicating with Animals",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14259
+				},
+				{
+					"id": "communicating-with-plants",
+					"name": "Communicating with Plants",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14267
+				},
+				{
+					"id": "wild-form-templates-sidebar",
+					"name": "WILD FORM TEMPLATES SIDEBAR",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14277
+				},
+				{
+					"id": "defensive",
+					"name": "Defensive",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14281
+				},
+				{
+					"id": "grappler",
+					"name": "Grappler",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14289
+				},
+				{ "id": "parkour", "name": "Parkour", "level": 1, "isFlavor": false, "sourceLine": 14295 },
+				{
+					"id": "infiltrator",
+					"name": "Infiltrator",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14303
+				},
+				{
+					"id": "nature-s-torrent",
+					"name": "Nature ' s Torrent",
+					"level": 2,
+					"isFlavor": false,
+					"sourceLine": 14311
+				},
+				{
+					"id": "wild-form-traits",
+					"name": "Wild Form Traits",
+					"level": 2,
+					"isFlavor": false,
+					"sourceLine": 14325
+				},
+				{
+					"id": "unique-traits",
+					"name": "Unique Traits",
+					"level": 2,
+					"isFlavor": false,
+					"sourceLine": 14329
+				},
+				{
+					"id": "repeatable-traits",
+					"name": "Repeatable Traits",
+					"level": 2,
+					"isFlavor": false,
+					"sourceLine": 14333
+				},
+				{
+					"id": "expert-druid",
+					"name": "Expert Druid",
+					"level": 5,
+					"isFlavor": false,
+					"sourceLine": 14377
+				}
+			],
+			"subclassChoices": [
+				{ "id": "phoenix", "name": "Phoenix", "sourceLine": 14357 },
+				{ "id": "rampant-growth", "name": "Rampant Growth", "sourceLine": 14358 },
+				{ "id": "paragon", "name": "Paragon", "sourceLine": 14359 }
+			],
+			"provenance": { "startLine": 14139, "endLine": 14449 }
+		},
+		{
+			"id": "hunter",
+			"name": "Hunter",
+			"category": "martial",
+			"sourceStatus": "detailed",
+			"description": "Hunters are master survivalists and natural explorers. They mark their targets to better track them and take them down, using their mastery over terrain, traps, and weapons to their advantage.\n\nSource of Power: Hunters use their experience and knowledge of the dangers of nature and the creatures that live within it. They can adapt to all sorts of environments and use what they learn to their advantage.",
+			"classTable": {
+				"columns": [
+					"Char Level",
+					"Health Points",
+					"Attribute Points",
+					"Skill Points",
+					"Trade Points",
+					"Stamina Points",
+					"Maneuvers Known",
+					"Features"
+				],
+				"rows": [
+					{
+						"Char Level": "1",
+						"Health Points": "+8",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+2",
+						"Maneuvers Known": "+2",
+						"Features": "Class Features"
+					},
+					{
+						"Char Level": "2",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Class Feature, Talent, Path Progression"
+					},
+					{
+						"Char Level": "3",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Subclass Feature"
+					},
+					{
+						"Char Level": "4",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "5",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Stamina Points": "",
+						"Maneuvers Known": "+1",
+						"Features": "Class Feature"
+					},
+					{
+						"Char Level": "6",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "+1",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Talent, Path Progression"
+					},
+					{
+						"Char Level": "7",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Subclass Expert Feature"
+					},
+					{
+						"Char Level": "8",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "9",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Class Capstone Feature"
+					},
+					{
+						"Char Level": "10",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Subclass Capstone Feature"
+					}
+				],
+				"provenance": { "startLine": 14458, "endLine": 14469 }
+			},
+			"startingEquipment": {
+				"arsenal": {
+					"label": "Arsenal",
+					"text": "Choose 3 of any of the following items: Weapon or Light Shield."
+				},
+				"armor": { "label": "Armor", "text": "1 set of Light Armor." },
+				"trade-tools": {
+					"label": "Trade Tools",
+					"text": "Choose 1 of any of the following items: Disguise Kit, Herbalist's Supplies, Leatherworker's Tools, or Sculptor's Tools."
+				},
+				"adventuring-pack": {
+					"label": "Adventuring Pack",
+					"text": "Choose 1 of the following packs: (Adventuring Packs Coming Soon)."
+				}
+			},
+			"path": {
+				"type": "martial",
+				"fields": {
+					"combat-training": {
+						"label": "Combat Training",
+						"text": "Weapons, Light Armor, Light Shields"
+					},
+					"maneuvers": {
+						"label": "Maneuvers",
+						"text": "The number of Maneuvers you know increases as shown in the Maneuvers Known column of the Hunter Class Table."
+					},
+					"stamina-points": {
+						"label": "Stamina Points",
+						"text": "Your maximum number of Stamina Points increases as shown in the Stamina Points column of the Hunter Class Table."
+					},
+					"stamina-regen": {
+						"label": "Stamina Regen",
+						"text": "Once per Round, you can regain up to half your maximum SP when:"
+					}
+				}
+			},
+			"coreFeatureCandidates": [
+				{
+					"id": "hunter-s-mark",
+					"name": "Hunter ' s Mark",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14500
+				},
+				{
+					"id": "favored-terrain",
+					"name": "Favored Terrain",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14512
+				},
+				{ "id": "bestiary", "name": "Bestiary", "level": 1, "isFlavor": true, "sourceLine": 14532 },
+				{
+					"id": "hunter-s-strike",
+					"name": "Hunter ' s Strike",
+					"level": 2,
+					"isFlavor": false,
+					"sourceLine": 14544
+				},
+				{
+					"id": "expert-hunter",
+					"name": "Expert Hunter",
+					"level": 5,
+					"isFlavor": false,
+					"sourceLine": 14593
+				}
+			],
+			"subclassChoices": [
+				{ "id": "monster-slayer", "name": "Monster Slayer", "sourceLine": 14572 },
+				{ "id": "trapper", "name": "Trapper", "sourceLine": 14574 },
+				{ "id": "paragon", "name": "Paragon", "sourceLine": 14575 }
+			],
+			"provenance": { "startLine": 14450, "endLine": 14714 }
+		},
+		{
+			"id": "monk",
+			"name": "Monk",
+			"category": "martial",
+			"sourceStatus": "detailed",
+			"description": "Monks are master martial artists that perfect their mind and bodies utilizing the ebb and flow of their inner energy. They use their body as a weapon and can enter into different stances that drastically change their combat abilities.\n\nSource of Power: Monks have become enlightened and in touch with their inner Ki energy to hone their bodies and minds. Their journey to become a Monk could be from being trained in a monastery, mentored by a mysterious figure, or their own deep meditation.",
+			"classTable": {
+				"columns": [
+					"Char Level",
+					"Health Points",
+					"Attribute Points",
+					"Skill Points",
+					"Trade Points",
+					"Stamina Points",
+					"Maneuvers Known",
+					"Features"
+				],
+				"rows": [
+					{
+						"Char Level": "1",
+						"Health Points": "+8",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+2",
+						"Maneuvers Known": "+2",
+						"Features": "Class Features"
+					},
+					{
+						"Char Level": "2",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Class Feature, Talent, Path Progression"
+					},
+					{
+						"Char Level": "3",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Subclass Feature"
+					},
+					{
+						"Char Level": "4",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "5",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Stamina Points": "",
+						"Maneuvers Known": "+1",
+						"Features": "Class Feature"
+					},
+					{
+						"Char Level": "6",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "+1",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Talent, Path Progression"
+					},
+					{
+						"Char Level": "7",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Subclass Expert Feature"
+					},
+					{
+						"Char Level": "8",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "9",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Class Capstone Feature"
+					},
+					{
+						"Char Level": "10",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Subclass Capstone Feature"
+					}
+				],
+				"provenance": { "startLine": 14723, "endLine": 14734 }
+			},
+			"startingEquipment": {
+				"arsenal": { "label": "Arsenal", "text": "2 Weapons." },
+				"armor": { "label": "Armor", "text": "1 set of Light Armor." },
+				"trade-tools": {
+					"label": "Trade Tools",
+					"text": "Choose 2 of any of the following items: Brewer's Supplies, Calligrapher's Supplies, Cooking Utensils, or Weaver's Tools."
+				},
+				"adventuring-pack": {
+					"label": "Adventuring Pack",
+					"text": "Choose 1 of the following packs: (Adventuring Packs Coming Soon)."
+				}
+			},
+			"path": {
+				"type": "martial",
+				"fields": {
+					"combat-training": { "label": "Combat Training", "text": "Weapons, Light Armor" },
+					"maneuvers": {
+						"label": "Maneuvers",
+						"text": "The number of Maneuvers you know increases as shown in the Maneuvers Known column of the Monk Class Table."
+					},
+					"stamina-points": {
+						"label": "Stamina Points",
+						"text": "Your maximum number of Stamina Points increases as shown in the Stamina Points column of the Monk Class Table."
+					},
+					"stamina-regen": {
+						"label": "Stamina Regen",
+						"text": "Once per Round, you can regain up to half your maximum SP when you succeed on an Athletics Check, Acrobatics Check, or Hit on a Martial Attack."
+					}
+				}
+			},
+			"coreFeatureCandidates": [
+				{
+					"id": "monk-training",
+					"name": "Monk Training",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14760
+				},
+				{
+					"id": "monk-stance",
+					"name": "Monk Stance",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14776
+				},
+				{
+					"id": "bear-stance",
+					"name": "Bear Stance",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14782
+				},
+				{
+					"id": "bull-stance",
+					"name": "Bull Stance",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14787
+				},
+				{
+					"id": "cobra-stance",
+					"name": "Cobra Stance",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14792
+				},
+				{
+					"id": "gazelle-stance",
+					"name": "Gazelle Stance",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14797
+				},
+				{
+					"id": "mantis-stance",
+					"name": "Mantis Stance",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14803
+				},
+				{
+					"id": "mongoose-stance",
+					"name": "Mongoose Stance",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14808
+				},
+				{
+					"id": "scorpion-stance",
+					"name": "Scorpion Stance",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14813
+				},
+				{
+					"id": "turtle-stance",
+					"name": "Turtle Stance",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14818
+				},
+				{
+					"id": "wolf-stance",
+					"name": "Wolf Stance",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 14824
+				},
+				{
+					"id": "meditation",
+					"name": "Meditation",
+					"level": 1,
+					"isFlavor": true,
+					"sourceLine": 14831
+				},
+				{
+					"id": "spiritual-balance",
+					"name": "Spiritual Balance",
+					"level": 2,
+					"isFlavor": false,
+					"sourceLine": 14837
+				},
+				{
+					"id": "ki-points",
+					"name": "Ki Points",
+					"level": 2,
+					"isFlavor": false,
+					"sourceLine": 14841
+				},
+				{
+					"id": "ki-actions",
+					"name": "Ki Actions",
+					"level": 2,
+					"isFlavor": false,
+					"sourceLine": 14847
+				},
+				{
+					"id": "expert-monk",
+					"name": "Expert Monk",
+					"level": 5,
+					"isFlavor": false,
+					"sourceLine": 14895
+				}
+			],
+			"subclassChoices": [
+				{ "id": "astral-self", "name": "Astral Self", "sourceLine": 14875 },
+				{ "id": "shifting-tide", "name": "Shifting Tide", "sourceLine": 14876 },
+				{ "id": "paragon", "name": "Paragon", "sourceLine": 14877 }
+			],
+			"provenance": { "startLine": 14715, "endLine": 14959 }
+		},
+		{
+			"id": "rogue",
+			"name": "Rogue",
+			"category": "martial",
+			"sourceStatus": "detailed",
+			"description": "Rogues are skilled, evasive, and cunning. They impose conditions onto enemies, then exploit those weaknesses to inflict even more harm.\n\nSource of Power: Rogues can pinpoint and take advantage of the weaknesses of their enemies and use their nimbleness and cunning to get what they want, in combat and out. They could learn this from being a petty thief, a former noble, or an assassin in training.",
+			"classTable": {
+				"columns": [
+					"Char Level",
+					"Health Points",
+					"Attribute Points",
+					"Skill Points",
+					"Trade Points",
+					"Stamina Points",
+					"Maneuvers Known",
+					"Features"
+				],
+				"rows": [
+					{
+						"Char Level": "1",
+						"Health Points": "+8",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+2",
+						"Maneuvers Known": "+2",
+						"Features": "Class Features"
+					},
+					{
+						"Char Level": "2",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Class Feature, Talent, Path Progression"
+					},
+					{
+						"Char Level": "3",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Subclass Feature"
+					},
+					{
+						"Char Level": "4",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "5",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Stamina Points": "",
+						"Maneuvers Known": "+1",
+						"Features": "Class Feature"
+					},
+					{
+						"Char Level": "6",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "+1",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Talent, Path Progression"
+					},
+					{
+						"Char Level": "7",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Subclass Expert Feature"
+					},
+					{
+						"Char Level": "8",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "9",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Class Capstone Feature"
+					},
+					{
+						"Char Level": "10",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Features": "Subclass Capstone Feature"
+					}
+				],
+				"provenance": { "startLine": 14968, "endLine": 14979 }
+			},
+			"startingEquipment": {
+				"arsenal": {
+					"label": "Arsenal",
+					"text": "Choose 3 of any of the following items: Weapon or Light Shield."
+				},
+				"armor": { "label": "Armor", "text": "1 set of Light Armor." },
+				"trade-tools": {
+					"label": "Trade Tools",
+					"text": "Choose 1 of any of the following items: Cryptographer's Tools, Disguise Kit, Herbalist's Supplies, or Lockpicking Tools."
+				},
+				"adventuring-pack": {
+					"label": "Adventuring Pack",
+					"text": "Choose 1 of the following packs: (Adventuring Packs Coming Soon)."
+				}
+			},
+			"path": {
+				"type": "martial",
+				"fields": {
+					"combat-training": {
+						"label": "Combat Training",
+						"text": "Weapons, Light Armor, Light Shields"
+					},
+					"maneuvers": {
+						"label": "Maneuvers",
+						"text": "The number of Maneuvers you know increases as shown in the Maneuvers Known column of the Rogue Class Table."
+					},
+					"stamina-points": {
+						"label": "Stamina Points",
+						"text": "Your maximum number of Stamina Points increases as shown in the Stamina Points column of the Rogue Class Table."
+					},
+					"stamina-regen": {
+						"label": "Stamina Regen",
+						"text": "Once per Round, you can regain up to half your maximum SP when:"
+					}
+				}
+			},
+			"coreFeatureCandidates": [
+				{
+					"id": "debilitating-strike",
+					"name": "Debilitating Strike",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15010
+				},
+				{
+					"id": "roguish-finesse",
+					"name": "Roguish Finesse",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15014
+				},
+				{
+					"id": "cypher-speech",
+					"name": "Cypher Speech",
+					"level": 1,
+					"isFlavor": true,
+					"sourceLine": 15022
+				},
+				{
+					"id": "cheap-shot",
+					"name": "Cheap Shot",
+					"level": 2,
+					"isFlavor": false,
+					"sourceLine": 15030
+				},
+				{
+					"id": "expert-rogue",
+					"name": "Expert Rogue",
+					"level": 5,
+					"isFlavor": false,
+					"sourceLine": 15074
+				}
+			],
+			"subclassChoices": [
+				{ "id": "long-death", "name": "Long Death", "sourceLine": 15052 },
+				{ "id": "swashbuckler", "name": "Swashbuckler", "sourceLine": 15053 },
+				{ "id": "paragon", "name": "Paragon", "sourceLine": 15054 }
+			],
+			"provenance": { "startLine": 14960, "endLine": 15133 }
+		},
+		{
+			"id": "sorcerer",
+			"name": "Sorcerer",
+			"category": "spellcaster",
+			"sourceStatus": "detailed",
+			"description": "Sorcerers tap into the raw magic in their own bodies as a conduit to harness, manipulate, and sculpt magic with wild resolve. They can overload themselves and even cast Spells without Mana, pushing the limits of magic and their own bodies.\n\nSource of Power: A Sorcerer's magic is in their blood, allowing them to tap into it naturally and use it in ways others can't. This could come from a lineage of angels, dragons, demons, or something else. Some Sorcerers' power could come from an incident that caused their body to be suffused with magic (such as a magical explosion, a blessing, or curse).",
+			"classTable": {
+				"columns": [
+					"Char Level",
+					"Health Points",
+					"Attribute Points",
+					"Skill Points",
+					"Trade Points",
+					"Mana Points",
+					"Spells Known",
+					"Features"
+				],
+				"rows": [
+					{
+						"Char Level": "1",
+						"Health Points": "+7",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "+6",
+						"Spells Known": "+4",
+						"Features": "Class Features"
+					},
+					{
+						"Char Level": "2",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Class Feature, Talent, Path Progression"
+					},
+					{
+						"Char Level": "3",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Subclass Feature"
+					},
+					{
+						"Char Level": "4",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "5",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Class Feature"
+					},
+					{
+						"Char Level": "6",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "+1",
+						"Trade Points": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Talent, Path Progression"
+					},
+					{
+						"Char Level": "7",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Subclass Expert Feature"
+					},
+					{
+						"Char Level": "8",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "9",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Class Capstone Feature"
+					},
+					{
+						"Char Level": "10",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Subclass Capstone Feature"
+					}
+				],
+				"provenance": { "startLine": 15142, "endLine": 15153 }
+			},
+			"startingEquipment": {
+				"arsenal": { "label": "Arsenal", "text": "2 Spell Focuses." },
+				"armor": { "label": "Armor", "text": "1 set of Light Armor." },
+				"trade-tools": {
+					"label": "Trade Tools",
+					"text": "Choose 2 of any of the following items: Alchemist's Supplies, Calligrapher's Supplies, Jeweler's Tools, or Weaver's Tools."
+				},
+				"adventuring-pack": {
+					"label": "Adventuring Pack",
+					"text": "Choose 1 of the following packs: (Adventuring Packs Coming Soon)."
+				}
+			},
+			"path": {
+				"type": "spellcasting",
+				"fields": {
+					"combat-training": { "label": "Combat Training", "text": "Spell Focuses, Light Armor" },
+					"spell-list": {
+						"label": "Spell List",
+						"text": "You choose 1 Spell Source (Arcane, Divine, or Primal). When you learn a new Spell, you can choose any Spell from the chosen Spell Source."
+					},
+					"spells-known": {
+						"label": "Spells Known",
+						"text": "The number of Spells you know increases as shown in the Spells Known column of the Sorcerer Class Table."
+					},
+					"mana-points": {
+						"label": "Mana Points",
+						"text": "Your maximum number of Mana Points increases as shown in the Mana Points column of the Sorcerer Class Table."
+					}
+				}
+			},
+			"coreFeatureCandidates": [
+				{
+					"id": "innate-power",
+					"name": "Innate Power",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15179
+				},
+				{
+					"id": "sorcerous-origins",
+					"name": "Sorcerous Origins",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15186
+				},
+				{
+					"id": "sorcerer-wild-magic-table",
+					"name": "Sorcerer Wild Magic Table",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15192
+				},
+				{
+					"id": "overload-magic",
+					"name": "Overload Magic",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15216
+				},
+				{ "id": "sorcery", "name": "Sorcery", "level": 1, "isFlavor": true, "sourceLine": 15223 },
+				{
+					"id": "meta-magic",
+					"name": "Meta Magic",
+					"level": 2,
+					"isFlavor": false,
+					"sourceLine": 15231
+				},
+				{
+					"id": "expert-sorcerer",
+					"name": "Expert Sorcerer",
+					"level": 5,
+					"isFlavor": false,
+					"sourceLine": 15280
+				}
+			],
+			"subclassChoices": [
+				{ "id": "angelic", "name": "Angelic", "sourceLine": 15260 },
+				{ "id": "draconic", "name": "Draconic", "sourceLine": 15261 },
+				{ "id": "paragon", "name": "Paragon", "sourceLine": 15262 }
+			],
+			"provenance": { "startLine": 15134, "endLine": 15346 }
+		},
+		{
+			"id": "spellblade",
+			"name": "Spellblade",
+			"category": "hybrid",
+			"sourceStatus": "detailed",
+			"description": "Spellblades combine their combat prowess with their ability to harness and channel magic into weapons. They can form a bond with a weapon to imbue it with damage, call it back to them, and more. Spellblades can learn a wide range of disciplines depending on their unique combination of martial and spellcasting prowess. They even gain the ability to cast spells through their weapons.\n\nSource of Power: Spellblades are unique in that there are a variety of ways and sources for them to harness their power. They could draw this magic from a wide variety of sources. Here are just a few examples:\n\n- Power bestowed by a patron, deity, or some powerful entity that takes an interest in them.\n- An external or supernatural force that even they don't fully understand.\n- Their own bloodline or connections to the past.\n- Their careful study and practice of both swords and spells.\n- They take up their blade in honor of a deity, cause, or goal.\n- They make an oath or vow to someone (or themselves) to stand for or against something.\n- An expression of emotion through artistic flourishes with their weapon.\n- A strange weapon they pulled from a stone granted them the powers of a Spellblade.",
+			"classTable": {
+				"columns": [
+					"Char Level",
+					"Health Points",
+					"Attribute Points",
+					"Skill Points",
+					"Trade Points",
+					"Stamina Points",
+					"Maneuvers Known",
+					"Mana Points",
+					"Spells Known",
+					"Features"
+				],
+				"rows": [
+					{
+						"Char Level": "1",
+						"Health Points": "+8",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "+1",
+						"Mana Points": "+3",
+						"Spells Known": "+2",
+						"Features": "Class Features"
+					},
+					{
+						"Char Level": "2",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Class Feature, Talent, Path Progression"
+					},
+					{
+						"Char Level": "3",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Stamina Points": "",
+						"Maneuvers Known": "+1",
+						"Mana Points": "+2",
+						"Spells Known": "",
+						"Features": "Subclass Feature"
+					},
+					{
+						"Char Level": "4",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "5",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "",
+						"Mana Points": "+1",
+						"Spells Known": "+1",
+						"Features": "Class Feature"
+					},
+					{
+						"Char Level": "6",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "+1",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Talent, Path Progression"
+					},
+					{
+						"Char Level": "7",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "",
+						"Maneuvers Known": "+1",
+						"Mana Points": "+2",
+						"Spells Known": "",
+						"Features": "Subclass Expert Feature"
+					},
+					{
+						"Char Level": "8",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Stamina Points": "",
+						"Maneuvers Known": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "9",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Stamina Points": "+1",
+						"Maneuvers Known": "",
+						"Mana Points": "+1",
+						"Spells Known": "+1",
+						"Features": "Class Capstone Feature"
+					},
+					{
+						"Char Level": "10",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Stamina Points": "",
+						"Maneuvers Known": "+1",
+						"Mana Points": "+2",
+						"Spells Known": "",
+						"Features": "Subclass Capstone Feature"
+					}
+				],
+				"provenance": { "startLine": 15364, "endLine": 15375 }
+			},
+			"startingEquipment": {
+				"arsenal": {
+					"label": "Arsenal",
+					"text": "Choose 3 of any of the following items: Spell Focus, Weapon, or Light Shield. You can also choose Heavy Shield if you choose the Warrior Discipline option of the Spellblade Disciplines Feature."
+				},
+				"armor": {
+					"label": "Armor",
+					"text": "1 set of Light Armor. You can choose 1 set of Heavy Armor instead if you choose the Warrior Discipline option of the Spellblade Disciplines Feature."
+				},
+				"trade-tools": {
+					"label": "Trade Tools",
+					"text": "Choose 1 of any of the following items: Blacksmith's Tools, Jeweler's Tools, Leatherworker's Tools, or Tinkerer's Tools."
+				},
+				"adventuring-pack": {
+					"label": "Adventuring Pack",
+					"text": "Choose 1 of the following packs: (Adventuring Packs Coming Soon)."
+				}
+			},
+			"path": {
+				"type": "martial",
+				"fields": {
+					"combat-training": {
+						"label": "Combat Training",
+						"text": "Weapons, Spell Focuses, Light Armor, Light Shields"
+					},
+					"maneuvers": {
+						"label": "Maneuvers",
+						"text": "The number of Maneuvers you know increases as shown in the Maneuvers Known column of the Spellblade Class Table."
+					},
+					"stamina-points": {
+						"label": "Stamina Points",
+						"text": "Your maximum number of Stamina Points increases as shown in the Stamina Points column of the Spellblade Class Table."
+					},
+					"stamina-regen": {
+						"label": "Stamina Regen",
+						"text": "Once per Round, you can regain up to half your maximum SP when you Hit with a Spell Attack or succeed on a Spell Check."
+					},
+					"spell-list": {
+						"label": "Spell List",
+						"text": "Choose 2 Spell Schools. When you learn a new Spell, you can choose any Spell from the chosen Spell Schools or that have the Weapon or Ward Spell Tags."
+					},
+					"spells-known": {
+						"label": "Spells Known",
+						"text": "The number of Spells you know increases as shown in the Spells Known column of the Spellblade Class Table."
+					},
+					"mana-points": {
+						"label": "Mana Points",
+						"text": "Your maximum number of Mana Points increases as shown in the Mana Points column of the Spellblade Class Table."
+					}
+				}
+			},
+			"coreFeatureCandidates": [
+				{
+					"id": "bound-weapon",
+					"name": "Bound Weapon",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15409
+				},
+				{
+					"id": "spellblade-disciplines",
+					"name": "Spellblade Disciplines",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15422
+				},
+				{ "id": "magus", "name": "Magus", "level": 1, "isFlavor": false, "sourceLine": 15426 },
+				{ "id": "warrior", "name": "Warrior", "level": 1, "isFlavor": false, "sourceLine": 15433 },
+				{ "id": "acolyte", "name": "Acolyte", "level": 1, "isFlavor": false, "sourceLine": 15440 },
+				{
+					"id": "hex-warrior",
+					"name": "Hex Warrior",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15450
+				},
+				{
+					"id": "spell-breaker",
+					"name": "Spell Breaker",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15454
+				},
+				{
+					"id": "spell-warder",
+					"name": "Spell Warder",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15458
+				},
+				{
+					"id": "blink-blade",
+					"name": "Blink Blade",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15462
+				},
+				{
+					"id": "sense-magic",
+					"name": "Sense Magic",
+					"level": 1,
+					"isFlavor": true,
+					"sourceLine": 15466
+				},
+				{
+					"id": "spellstrike",
+					"name": "Spellstrike",
+					"level": 2,
+					"isFlavor": false,
+					"sourceLine": 15474
+				},
+				{
+					"id": "expert-spellblade",
+					"name": "Expert Spellblade",
+					"level": 5,
+					"isFlavor": false,
+					"sourceLine": 15524
+				}
+			],
+			"subclassChoices": [
+				{ "id": "paladin", "name": "Paladin", "sourceLine": 15504 },
+				{ "id": "rune-knight", "name": "Rune Knight", "sourceLine": 15505 },
+				{ "id": "paragon", "name": "Paragon", "sourceLine": 15506 }
+			],
+			"provenance": { "startLine": 15347, "endLine": 15654 }
+		},
+		{
+			"id": "warlock",
+			"name": "Warlock",
+			"category": "spellcaster",
+			"sourceStatus": "detailed",
+			"description": "Warlocks make a pact with a powerful entity that grants them magic. Their body and soul are a part of this contract and as such, they can tap into their own life force to enhance and amplify their magic and capabilities as well as drain the life force of other living creatures. They also choose a type of pact to be made that grants more powers.\n\nSource of Power: Warlocks gain their power through a pact with a powerful entity. By making a deal with this entity (and following the conditions), they gain access to magic that they can channel as their own. Unlike a Cleric (who believes in, follows, and has a true relationship with their deity), Warlocks simply make a deal and have more of a transactional or business relationship with their patron. Pacts can be made with all sorts of entities of all ranges of power levels as well, such as gods, devils, fey creatures, otherworldly beings, dragons, and even other powerful Warlocks.\n\nWarlock Flavor: A Warlock pact could be made by choice or by force, could be demanding or simple, and could be made with a good, neutral, or evil entity (which might be unknown by the Warlock). The Character might have to accomplish certain tasks in order to keep their powers, or the entity might take a more passive role and not ask much from them.",
+			"classTable": {
+				"columns": [
+					"Char Level",
+					"Health Points",
+					"Attribute Points",
+					"Skill Points",
+					"Trade Points",
+					"Mana Points",
+					"Spells Known",
+					"Features"
+				],
+				"rows": [
+					{
+						"Char Level": "1",
+						"Health Points": "+8",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "+6",
+						"Spells Known": "+4",
+						"Features": "Class Features"
+					},
+					{
+						"Char Level": "2",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Class Feature, Talent, Path Progression"
+					},
+					{
+						"Char Level": "3",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Subclass Feature"
+					},
+					{
+						"Char Level": "4",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "5",
+						"Health Points": "+2",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Class Feature"
+					},
+					{
+						"Char Level": "6",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "+1",
+						"Trade Points": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Talent, Path Progression"
+					},
+					{
+						"Char Level": "7",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Subclass Expert Feature"
+					},
+					{
+						"Char Level": "8",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "9",
+						"Health Points": "+2",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Class Capstone Feature"
+					},
+					{
+						"Char Level": "10",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Subclass Capstone Feature"
+					}
+				],
+				"provenance": { "startLine": 15665, "endLine": 15676 }
+			},
+			"startingEquipment": {
+				"arsenal": {
+					"label": "Arsenal",
+					"text": "2 Spell Focuses. You can choose Weapons if you choose the Pact Weapon option of the Pact Boon Feature."
+				},
+				"armor": {
+					"label": "Armor",
+					"text": "1 set of Light Armor. You can choose 1 set of Heavy Armor instead if you choose the Pact Armor option of the Pact Boon Feature."
+				},
+				"trade-tools": {
+					"label": "Trade Tools",
+					"text": "Choose 2 of any of the following items: Alchemist's Supplies, Disguise Kit, Jeweler's Tools, or Sculptor's Tools."
+				},
+				"adventuring-pack": {
+					"label": "Adventuring Pack",
+					"text": "Choose 1 of the following packs: (Adventuring Packs Coming Soon)."
+				}
+			},
+			"path": {
+				"type": "spellcasting",
+				"fields": {
+					"combat-training": { "label": "Combat Training", "text": "Spell Focuses, Light Armor" },
+					"spell-list": {
+						"label": "Spell List",
+						"text": "Choose 3 Spell Schools. When you learn a new Spell, you can choose any Spell from the chosen Spell Schools."
+					},
+					"spells-known": {
+						"label": "Spells Known",
+						"text": "The number of Spells you know increases as shown in the Spells Known column of the Warlock Class Table."
+					},
+					"mana-points": {
+						"label": "Mana Points",
+						"text": "Your maximum number of Mana Points increases as shown in the Mana Points column of the Warlock Class Table."
+					}
+				}
+			},
+			"coreFeatureCandidates": [
+				{
+					"id": "warlock-contract",
+					"name": "Warlock Contract",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15702
+				},
+				{
+					"id": "pact-boon",
+					"name": "Pact Boon",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15710
+				},
+				{
+					"id": "pact-weapon",
+					"name": "Pact Weapon",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15714
+				},
+				{
+					"id": "pact-armor",
+					"name": "Pact Armor",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15729
+				},
+				{
+					"id": "pact-spell",
+					"name": "Pact Spell",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15741
+				},
+				{
+					"id": "pact-familiar",
+					"name": "Pact Familiar",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15751
+				},
+				{
+					"id": "beseech-patron",
+					"name": "Beseech Patron",
+					"level": 1,
+					"isFlavor": true,
+					"sourceLine": 15757
+				},
+				{
+					"id": "life-tap",
+					"name": "Life Tap",
+					"level": 2,
+					"isFlavor": false,
+					"sourceLine": 15769
+				},
+				{
+					"id": "expert-warlock",
+					"name": "Expert Warlock",
+					"level": 5,
+					"isFlavor": false,
+					"sourceLine": 15807
+				}
+			],
+			"subclassChoices": [
+				{ "id": "eldritch", "name": "Eldritch", "sourceLine": 15787 },
+				{ "id": "fey", "name": "Fey", "sourceLine": 15788 },
+				{ "id": "paragon", "name": "Paragon", "sourceLine": 15789 }
+			],
+			"provenance": { "startLine": 15655, "endLine": 15897 }
+		},
+		{
+			"id": "wizard",
+			"name": "Wizard",
+			"category": "spellcaster",
+			"sourceStatus": "detailed",
+			"description": "Wizards learn to master each of the Spell Schools to control them in a structured and efficient way. They utilize sigils on the ground to enhance certain types of magic while they push spells to their limits.\n\nSource of Power: Wizards learn to use magic from a dedicated study of the arcane through practicing lessons and reading tomes. This knowledge could come from a wizard school they attend, a family tome that has been passed down through the generations, or even from a spell book they stole and just kept practicing with.",
+			"classTable": {
+				"columns": [
+					"Char Level",
+					"Health Points",
+					"Attribute Points",
+					"Skill Points",
+					"Trade Points",
+					"Mana Points",
+					"Spells Known",
+					"Features"
+				],
+				"rows": [
+					{
+						"Char Level": "1",
+						"Health Points": "+7",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "+6",
+						"Spells Known": "+4",
+						"Features": "Class Features"
+					},
+					{
+						"Char Level": "2",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Class Feature, Talent, Path Progression"
+					},
+					{
+						"Char Level": "3",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Subclass Feature"
+					},
+					{
+						"Char Level": "4",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "5",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Class Feature"
+					},
+					{
+						"Char Level": "6",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "+1",
+						"Trade Points": "",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Talent, Path Progression"
+					},
+					{
+						"Char Level": "7",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Subclass Expert Feature"
+					},
+					{
+						"Char Level": "8",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+1",
+						"Trade Points": "+1",
+						"Mana Points": "",
+						"Spells Known": "",
+						"Features": "Talent, 2 Ancestry Points, Path Progression"
+					},
+					{
+						"Char Level": "9",
+						"Health Points": "+1",
+						"Attribute Points": "",
+						"Skill Points": "",
+						"Trade Points": "",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Class Capstone Feature"
+					},
+					{
+						"Char Level": "10",
+						"Health Points": "+1",
+						"Attribute Points": "+1",
+						"Skill Points": "+2",
+						"Trade Points": "+1",
+						"Mana Points": "+3",
+						"Spells Known": "+1",
+						"Features": "Subclass Capstone Feature"
+					}
+				],
+				"provenance": { "startLine": 15906, "endLine": 15917 }
+			},
+			"startingEquipment": {
+				"arsenal": { "label": "Arsenal", "text": "2 Spell Focuses." },
+				"armor": { "label": "Armor", "text": "1 set of Light Armor." },
+				"trade-tools": {
+					"label": "Trade Tools",
+					"text": "Choose 2 of any of the following items: Alchemist’s Supplies, Calligrapher’s Supplies, Glassblower’s Tools, or Herbalist’s Supplies."
+				},
+				"adventuring-pack": {
+					"label": "Adventuring Pack",
+					"text": "Choose 1 of the following packs: (Adventuring Packs Coming Soon)."
+				}
+			},
+			"path": {
+				"type": "spellcasting",
+				"fields": {
+					"combat-training": { "label": "Combat Training", "text": "Spell Focuses, Light Armor" },
+					"spell-list": {
+						"label": "Spell List",
+						"text": "When you learn a new Spell, you can choose any Spell on the Arcane Spell Source."
+					},
+					"spells-known": {
+						"label": "Spells Known",
+						"text": "The number of Spells you know increases as shown in the Spells Known column of the Wizard Class Table."
+					},
+					"mana-points": {
+						"label": "Mana Points",
+						"text": "Your maximum number of Mana Points increases as shown in the Mana Points column of the Wizard Class Table."
+					}
+				}
+			},
+			"coreFeatureCandidates": [
+				{
+					"id": "spell-school-initiate",
+					"name": "Spell School Initiate",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15943
+				},
+				{
+					"id": "arcane-sigil",
+					"name": "Arcane Sigil",
+					"level": 1,
+					"isFlavor": false,
+					"sourceLine": 15951
+				},
+				{
+					"id": "ritual-caster",
+					"name": "Ritual Caster",
+					"level": 1,
+					"isFlavor": true,
+					"sourceLine": 15963
+				},
+				{
+					"id": "prepared-spell",
+					"name": "Prepared Spell",
+					"level": 2,
+					"isFlavor": false,
+					"sourceLine": 15971
+				},
+				{
+					"id": "expert-wizard",
+					"name": "Expert Wizard",
+					"level": 5,
+					"isFlavor": false,
+					"sourceLine": 16015
+				}
+			],
+			"subclassChoices": [
+				{ "id": "portal-mage", "name": "Portal Mage", "sourceLine": 15993 },
+				{ "id": "witch", "name": "Witch", "sourceLine": 15994 },
+				{ "id": "paragon", "name": "Paragon", "sourceLine": 15995 }
+			],
+			"provenance": { "startLine": 15898, "endLine": 16093 }
+		}
+	],
+	"findings": [
+		{
+			"severity": "info",
+			"className": "Cleric",
+			"message": "Class is part of the core class list but has no detailed class chapter in the parsed source range."
+		}
+	]
+}

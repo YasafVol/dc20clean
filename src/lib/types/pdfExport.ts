@@ -60,7 +60,7 @@ const resourceSchema = z.object({
 const reductionSchema = z.object({
 	physical: z.boolean(),
 	elemental: z.boolean(),
-	mental: z.boolean()
+	mystical: z.boolean()
 });
 
 const languageEntrySchema = z.object({

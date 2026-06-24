@@ -80,7 +80,7 @@ describe('equipmentEffects', () => {
 		expect(getCustomEquipmentEffects(focus)).toEqual(
 			expect.arrayContaining([
 				{ type: 'MODIFY_STAT', target: 'ad', value: 1 },
-				{ type: 'GRANT_RESISTANCE', target: 'mystical', value: 'half' }
+				{ type: 'GRANT_RESISTANCE', target: 'mystical', value: true }
 			])
 		);
 	});

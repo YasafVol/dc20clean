@@ -165,53 +165,78 @@ export const sorcererClass: ClassDefinition = {
 							name: 'Careful Spell',
 							description:
 								"(1 MP) When you Cast a Spell that targets an area, choose to exclude creatures of your choice from the Spell's damage and effects.",
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'sorcerer_meta_magic_careful_spell',
+									value:
+										"1 MP: When casting an area Spell, exclude creatures of your choice from the Spell's damage and effects."
+								}
+							]
 						},
 						{
 							name: 'Distant Spell',
 							description:
 								"(1 MP) Increase a Spell's range by 2 Spaces (if 1 Space) or 10 Spaces (if greater).",
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'sorcerer_meta_magic_distant_spell',
+									value:
+										"1 MP: Increase a Spell's range by 2 Spaces if 1 Space, or 10 Spaces if greater."
+								}
+							]
 						},
 						{
 							name: 'Quickened Spell',
 							description: '(1 MP) Reduce the AP cost of a Spell by 1 (minimum of 1 AP).',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'sorcerer_meta_magic_quickened_spell',
+									value: '1 MP: Reduce the AP cost of a Spell by 1, minimum 1 AP.'
+								}
+							]
 						},
 						{
 							name: 'Subtle Spell',
 							description:
 								'(1 MP) Cast the Spell without requiring any Somatic and Verbal Components.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'sorcerer_meta_magic_subtle_spell',
+									value: '1 MP: Cast the Spell without requiring Somatic or Verbal Components.'
+								}
+							]
 						},
 						{
 							name: 'Transmuted Spell',
 							description:
 								"(1 MP) Change a Spell's damage type to any other damage type (except True damage).",
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'sorcerer_meta_magic_transmuted_spell',
+									value:
+										"1 MP: Change a Spell's damage type to any other damage type except True damage."
+								}
+							]
 						},
 						{
 							name: 'Vicious Spell',
 							description:
 								'(1 MP) When casting a Spell that forces a Save, 1 target of your choice has DisADV on its first Save against the Spell.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'sorcerer_meta_magic_vicious_spell',
+									value:
+										'1 MP: When casting a Spell that forces a Save, 1 target has DisADV on its first Save against the Spell.'
+								}
+							]
 						}
 					]
-				}
-			]
-		},
-		{
-			id: 'sorcerer_talent_level_2',
-			featureName: 'Talent',
-			levelGained: 2,
-			description:
-				'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
-			effects: [
-				{
-					type: 'GRANT_CHOICE',
-					target: 'talent',
-					value: 1,
-					userChoice: { prompt: 'Choose 1 Talent' }
 				}
 			]
 		},
@@ -262,14 +287,6 @@ export const sorcererClass: ClassDefinition = {
 					]
 				}
 			]
-		},
-		{
-			id: 'sorcerer_level_8_capstone_placeholder',
-			featureName: 'Class Capstone (Source Unpublished)',
-			levelGained: 9,
-			isFlavor: true,
-			description:
-				'The v0.10.5 class progression grants a Class Capstone Feature at level 9, but this source packet does not publish class-specific capstone mechanics. This entry is intentionally non-mechanical and preserves the legacy ID for saved-character compatibility.'
 		}
 	],
 	subclasses: [

@@ -184,8 +184,8 @@ const Maneuvers: React.FC = () => {
 			<Header>
 				<Title>Learn Maneuvers</Title>
 				<Subtitle>
-					Master martial techniques. Choose the maneuvers that will define your character's
-					combat prowess.
+					Master martial techniques. Choose the maneuvers that will define your character's combat
+					prowess.
 				</Subtitle>
 			</Header>
 

@@ -68,7 +68,11 @@ export const Section = styled.section`
 
 // Card container
 export const Card = styled(motion.div)`
-	background: linear-gradient(135deg, ${theme.colors.bg.secondary} 0%, ${theme.colors.bg.primary} 100%);
+	background: linear-gradient(
+		135deg,
+		${theme.colors.bg.secondary} 0%,
+		${theme.colors.bg.primary} 100%
+	);
 	border: 2px solid ${theme.colors.bg.tertiary};
 	border-radius: 12px;
 	padding: ${theme.spacing[6]};

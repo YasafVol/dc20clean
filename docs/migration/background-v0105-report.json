@@ -11,84 +11,84 @@
 			"name": "Athletics",
 			"attribute": "might",
 			"description": "Athletics covers activities that involve physical prowess, such as climbing, swimming, and jumping in difficult circumstances, or participating in a Grapple.",
-			"provenance": { "startLine": 250, "endLine": 261 }
+			"provenance": { "startLine": 257, "endLine": 268 }
 		},
 		{
 			"id": "intimidation",
 			"name": "Intimidation",
 			"attribute": "might",
 			"description": "Intimidation covers attempts to influence a creature's behavior using threats, hostile actions, and physical violence.",
-			"provenance": { "startLine": 262, "endLine": 269 }
+			"provenance": { "startLine": 269, "endLine": 276 }
 		},
 		{
 			"id": "acrobatics",
 			"name": "Acrobatics",
 			"attribute": "agility",
 			"description": "Acrobatics covers activities that require flexibility, nimbleness, and balance.",
-			"provenance": { "startLine": 272, "endLine": 281 }
+			"provenance": { "startLine": 279, "endLine": 288 }
 		},
 		{
 			"id": "trickery",
 			"name": "Trickery",
 			"attribute": "agility",
 			"description": "Trickery covers non-verbal means of deceiving others, such as pickpocketing things, concealing an object on your person, or other forms of physical deception.",
-			"provenance": { "startLine": 282, "endLine": 293 }
+			"provenance": { "startLine": 289, "endLine": 300 }
 		},
 		{
 			"id": "stealth",
 			"name": "Stealth",
 			"attribute": "agility",
 			"description": "Stealth covers attempts to avoid being seen or heard by other creatures, such as sneaking about or hiding behind cover. These Checks occur during the moment of possible discovery when a creature might be heard or seen.",
-			"provenance": { "startLine": 294, "endLine": 301 }
+			"provenance": { "startLine": 301, "endLine": 308 }
 		},
 		{
 			"id": "animal",
 			"name": "Animal",
 			"attribute": "charisma",
 			"description": "Animal covers interactions such as corralling, training, calming, and gauging the intention of Beasts.",
-			"provenance": { "startLine": 339, "endLine": 346 }
+			"provenance": { "startLine": 346, "endLine": 353 }
 		},
 		{
 			"id": "insight",
 			"name": "Insight",
 			"attribute": "charisma",
 			"description": "Insight governs your ability to discern intentions. This could be from observing a creature's body language, facial cues, and mannerisms. Alternatively, Insight can represent a gut feeling or intuition about a situation.",
-			"provenance": { "startLine": 347, "endLine": 354 }
+			"provenance": { "startLine": 354, "endLine": 361 }
 		},
 		{
 			"id": "influence",
 			"name": "Influence",
 			"attribute": "charisma",
 			"description": "Influence covers your attempts to manipulate a creature's behavior using compelling arguments based on truth, halftruths, lies, or some combination in between.",
-			"provenance": { "startLine": 355, "endLine": 366 }
+			"provenance": { "startLine": 362, "endLine": 373 }
 		},
 		{
 			"id": "investigation",
 			"name": "Investigation",
 			"attribute": "intelligence",
 			"description": "Investigation covers using your senses to search for and discover things that are not readily observable. You look for clues and then make deductions on those clues to try and discern the locations of things or how they work (finding hidden objects, secret doors, or weak points in structures). It also covers the process of researching information through various texts.",
-			"provenance": { "startLine": 304, "endLine": 311 }
+			"provenance": { "startLine": 311, "endLine": 318 }
 		},
 		{
 			"id": "medicine",
 			"name": "Medicine",
 			"attribute": "intelligence",
 			"description": "Medicine covers activities that involve medical knowledge and application, such as treating a wounded creature, diagnosing an illness, or identifying a cure to an ailment.",
-			"provenance": { "startLine": 312, "endLine": 321 }
+			"provenance": { "startLine": 319, "endLine": 328 }
 		},
 		{
 			"id": "survival",
 			"name": "Survival",
 			"attribute": "intelligence",
 			"description": "Survival covers the activities required to survive in the wilderness, such as tracking quarry, foraging for food and water, and navigating through uncharted territory.",
-			"provenance": { "startLine": 322, "endLine": 336 }
+			"provenance": { "startLine": 329, "endLine": 343 }
 		},
 		{
 			"id": "awareness",
 			"name": "Awareness",
 			"attribute": "prime",
 			"description": "Awareness governs your ability to detect the presence of other creatures or objects using your sight, hearing, smell, or other senses. You can attempt to detect a creature that's visible, making noise, giving off a distinct smell, or otherwise causing a disturbance in the environment (such as causing the ground to shake, the water to ripple, or the air to blow).",
-			"provenance": { "startLine": 369, "endLine": 379 }
+			"provenance": { "startLine": 376, "endLine": 387 }
 		}
 	],
 	"trades": [
@@ -100,7 +100,7 @@
 			"primaryAttribute": "agility",
 			"attributeAssociations": ["agility"],
 			"description": "Illustration is the ability to put ink or paint to paper to create beautiful art in drawings, paintings, and calligraphy.",
-			"provenance": { "startLine": 412, "endLine": 425 }
+			"provenance": { "startLine": 420, "endLine": 433 }
 		},
 		{
 			"id": "musician",
@@ -110,7 +110,7 @@
 			"primaryAttribute": "agility",
 			"attributeAssociations": ["agility", "charisma"],
 			"description": "Musicians are skilled in the use of a variety of instruments, which they can use to make impressive performances of sound.",
-			"provenance": { "startLine": 426, "endLine": 447 }
+			"provenance": { "startLine": 434, "endLine": 455 }
 		},
 		{
 			"id": "theatre",
@@ -120,7 +120,7 @@
 			"primaryAttribute": "charisma",
 			"attributeAssociations": ["charisma"],
 			"description": "Theatre is the art of expressive performance, through acting, dancing, singing, or even juggling or other dazzling displays.",
-			"provenance": { "startLine": 448, "endLine": 468 }
+			"provenance": { "startLine": 456, "endLine": 477 }
 		},
 		{
 			"id": "alchemy",
@@ -130,7 +130,7 @@
 			"primaryAttribute": "intelligence",
 			"attributeAssociations": ["intelligence", "agility"],
 			"description": "Alchemy is the practice of creating something by combining or changing other things, such as creating magical potions or changing one element into another.",
-			"provenance": { "startLine": 471, "endLine": 482 }
+			"provenance": { "startLine": 480, "endLine": 491 }
 		},
 		{
 			"id": "blacksmithing",
@@ -140,7 +140,7 @@
 			"primaryAttribute": "might",
 			"attributeAssociations": ["might"],
 			"description": "Blacksmithing is the practice of melting and shaping metal into objects, such as nails, horse shoes, or armor and weapons.",
-			"provenance": { "startLine": 483, "endLine": 494 }
+			"provenance": { "startLine": 492, "endLine": 503 }
 		},
 		{
 			"id": "glassblowing",
@@ -150,7 +150,7 @@
 			"primaryAttribute": "agility",
 			"attributeAssociations": ["agility", "might"],
 			"description": "Glassblowing is the practice of blowing molten sand into glass objects, such as cups, bowls, vases, ornaments, lenses, window panes, and other objects.",
-			"provenance": { "startLine": 495, "endLine": 502 }
+			"provenance": { "startLine": 504, "endLine": 511 }
 		},
 		{
 			"id": "herbalism",
@@ -160,7 +160,7 @@
 			"primaryAttribute": "intelligence",
 			"attributeAssociations": ["intelligence"],
 			"description": "Herbalism is the practice of combining various mundane plants to create concoctions that can be used to treat afflictions, heal wounds, or poison enemies.",
-			"provenance": { "startLine": 503, "endLine": 518 }
+			"provenance": { "startLine": 512, "endLine": 527 }
 		},
 		{
 			"id": "jeweler",
@@ -170,7 +170,7 @@
 			"primaryAttribute": "agility",
 			"attributeAssociations": ["agility"],
 			"description": "Jewelers can beautify, identify, and even price various gems, stones, and jewelry, and can identify magical gems or the magical uses of mundane gems.",
-			"provenance": { "startLine": 519, "endLine": 526 }
+			"provenance": { "startLine": 528, "endLine": 535 }
 		},
 		{
 			"id": "leatherworking",
@@ -180,7 +180,7 @@
 			"primaryAttribute": "agility",
 			"attributeAssociations": ["agility"],
 			"description": "Leatherworking is the practice of making leather from animal skins or making leather into useable items, such as clothing, armor, weapons sheathes, and other objects.",
-			"provenance": { "startLine": 527, "endLine": 534 }
+			"provenance": { "startLine": 536, "endLine": 543 }
 		},
 		{
 			"id": "sculpting",
@@ -190,7 +190,7 @@
 			"primaryAttribute": "agility",
 			"attributeAssociations": ["agility"],
 			"description": "Sculpting is the practice of shaping bone, clay, glass, stone, or wood into figures, tools, idols, or simple weapons.",
-			"provenance": { "startLine": 535, "endLine": 550 }
+			"provenance": { "startLine": 544, "endLine": 559 }
 		},
 		{
 			"id": "tinkering",
@@ -200,7 +200,7 @@
 			"primaryAttribute": "agility",
 			"attributeAssociations": ["agility", "intelligence"],
 			"description": "Tinkering is the practice of making, repairing, or operating mechanisms, such as traps, and clockwork devices.",
-			"provenance": { "startLine": 551, "endLine": 562 }
+			"provenance": { "startLine": 560, "endLine": 571 }
 		},
 		{
 			"id": "weaving",
@@ -210,7 +210,7 @@
 			"primaryAttribute": "agility",
 			"attributeAssociations": ["agility"],
 			"description": "Weaving is the practice of creating material for clothing or using such material to create clothes, curtains, tapestries, and other woven objects.",
-			"provenance": { "startLine": 563, "endLine": 571 }
+			"provenance": { "startLine": 572, "endLine": 581 }
 		},
 		{
 			"id": "arcana",
@@ -220,7 +220,7 @@
 			"primaryAttribute": "intelligence",
 			"attributeAssociations": ["intelligence"],
 			"description": "Arcane knowledge encompasses the study of arcane magic, the planes of existence, and the underlying principles that govern reality beyond mundane understanding",
-			"provenance": { "startLine": 578, "endLine": 587 }
+			"provenance": { "startLine": 588, "endLine": 597 }
 		},
 		{
 			"id": "engineering",
@@ -230,7 +230,7 @@
 			"primaryAttribute": "intelligence",
 			"attributeAssociations": ["intelligence"],
 			"description": "Engineering represents a character's understanding of mechanics, construction, and the application of scientific principles in a world that blends magic and technology.",
-			"provenance": { "startLine": 588, "endLine": 596 }
+			"provenance": { "startLine": 598, "endLine": 606 }
 		},
 		{
 			"id": "history",
@@ -240,7 +240,7 @@
 			"primaryAttribute": "intelligence",
 			"attributeAssociations": ["intelligence"],
 			"description": "History involves the study of past events, including recorded events, ancient lore, and provides insight into how civilizations, cultures, and legends have shaped the present world.",
-			"provenance": { "startLine": 597, "endLine": 606 }
+			"provenance": { "startLine": 607, "endLine": 616 }
 		},
 		{
 			"id": "nature",
@@ -250,7 +250,7 @@
 			"primaryAttribute": "intelligence",
 			"attributeAssociations": ["intelligence"],
 			"description": "Nature represents a character's understanding of the natural world, including the elements, weather patterns, and magical and mundane ecosystems.",
-			"provenance": { "startLine": 607, "endLine": 616 }
+			"provenance": { "startLine": 617, "endLine": 626 }
 		},
 		{
 			"id": "occultism",
@@ -260,7 +260,7 @@
 			"primaryAttribute": "intelligence",
 			"attributeAssociations": ["intelligence"],
 			"description": "Occultism represents a character's understanding of forbidden magic, secret cults, and the dealings of sinister creatures.",
-			"provenance": { "startLine": 617, "endLine": 626 }
+			"provenance": { "startLine": 627, "endLine": 636 }
 		},
 		{
 			"id": "religion",
@@ -270,7 +270,7 @@
 			"primaryAttribute": "intelligence",
 			"attributeAssociations": ["intelligence"],
 			"description": "Religion represents a character's understanding of divine magic, deities, and religious organizations.",
-			"provenance": { "startLine": 627, "endLine": 637 }
+			"provenance": { "startLine": 637, "endLine": 648 }
 		},
 		{
 			"id": "brewing",
@@ -280,7 +280,7 @@
 			"primaryAttribute": "agility",
 			"attributeAssociations": ["agility", "intelligence", "charisma"],
 			"description": "Brewing is the practice of producing alcohol, especially beer, mead, and wine.",
-			"provenance": { "startLine": 640, "endLine": 647 }
+			"provenance": { "startLine": 651, "endLine": 658 }
 		},
 		{
 			"id": "carpentry",
@@ -290,7 +290,7 @@
 			"primaryAttribute": "agility",
 			"attributeAssociations": ["agility", "might"],
 			"description": "Carpentry is the practice of measuring, cutting, and installing pieces of wood to creature structures that form buildings, bridges, ships, and other large structures.",
-			"provenance": { "startLine": 648, "endLine": 655 }
+			"provenance": { "startLine": 659, "endLine": 666 }
 		},
 		{
 			"id": "cartography",
@@ -300,7 +300,7 @@
 			"primaryAttribute": "intelligence",
 			"attributeAssociations": ["intelligence", "agility"],
 			"description": "Cartography is the practice of drawing and understanding maps.",
-			"provenance": { "startLine": 656, "endLine": 663 }
+			"provenance": { "startLine": 667, "endLine": 674 }
 		},
 		{
 			"id": "cooking",
@@ -310,7 +310,7 @@
 			"primaryAttribute": "agility",
 			"attributeAssociations": ["agility", "intelligence", "charisma"],
 			"description": "Cooking is the practice of preparing, mixing, and heating edible ingredients to create meals.",
-			"provenance": { "startLine": 664, "endLine": 671 }
+			"provenance": { "startLine": 675, "endLine": 682 }
 		},
 		{
 			"id": "masonry",
@@ -320,7 +320,7 @@
 			"primaryAttribute": "might",
 			"attributeAssociations": ["might"],
 			"description": "Masonry is the practice of working and installing stone into structures that form buildings, bridges, furnaces, and other large structures.",
-			"provenance": { "startLine": 672, "endLine": 679 }
+			"provenance": { "startLine": 683, "endLine": 690 }
 		},
 		{
 			"id": "vehicles",
@@ -330,7 +330,7 @@
 			"primaryAttribute": "agility",
 			"attributeAssociations": ["agility", "intelligence", "might"],
 			"description": "Vehicles covers the practice of managing, operating, and steering vehicles, whether on land, sea, or air.",
-			"provenance": { "startLine": 680, "endLine": 693 }
+			"provenance": { "startLine": 691, "endLine": 704 }
 		},
 		{
 			"id": "cryptography",
@@ -340,7 +340,7 @@
 			"primaryAttribute": "intelligence",
 			"attributeAssociations": ["intelligence"],
 			"description": "Cryptography is the process of converting messages into secret or disguised words to protect them from being understood. The message must be deciphered to discern its true meaning.",
-			"provenance": { "startLine": 696, "endLine": 703 }
+			"provenance": { "startLine": 707, "endLine": 714 }
 		},
 		{
 			"id": "disguise",
@@ -350,7 +350,7 @@
 			"primaryAttribute": "agility",
 			"attributeAssociations": ["agility", "charisma"],
 			"description": "The art of disguise is in the ability to alter one's appearance to conceal identity or appear as someone else.",
-			"provenance": { "startLine": 704, "endLine": 711 }
+			"provenance": { "startLine": 715, "endLine": 722 }
 		},
 		{
 			"id": "gaming",
@@ -360,7 +360,7 @@
 			"primaryAttribute": "intelligence",
 			"attributeAssociations": ["intelligence", "charisma"],
 			"description": "Gaming is the practice of playing games skillfully, for money or for entertainment.",
-			"provenance": { "startLine": 712, "endLine": 725 }
+			"provenance": { "startLine": 723, "endLine": 736 }
 		},
 		{
 			"id": "lockpicking",
@@ -370,7 +370,7 @@
 			"primaryAttribute": "agility",
 			"attributeAssociations": ["agility", "intelligence"],
 			"description": "Lockpicking is the practice of opening devices secured by interworking mechanisms, such as locks and traps.",
-			"provenance": { "startLine": 726, "endLine": 738 }
+			"provenance": { "startLine": 737, "endLine": 750 }
 		}
 	],
 	"languages": [
@@ -381,7 +381,7 @@
 			"typicalSpeakers": "Civilized Societies",
 			"checkDc": 10,
 			"description": "This is a very simple and universal language which is why all PCs start off being able to speak it Fluently without issue. This language's lack of complexity makes it perfect for using across the entire world. You can assume that all humanoid creatures that can speak know Common. A group would have to be isolated or stubborn not to know this simple language.",
-			"provenance": { "startLine": 785, "endLine": 790 }
+			"provenance": { "startLine": 797, "endLine": 802 }
 		},
 		{
 			"id": "commonsign",
@@ -390,7 +390,7 @@
 			"typicalSpeakers": "Deaf, Hard of Hearing, Military, Spies",
 			"checkDc": 10,
 			"description": "The Common language serves as a universal trade tongue, enabling communication between different cultures and species. This sign-based language is composed of intricate gestures, facial expressions, and hand movements that mirror the structure and nuances of spoken Common.",
-			"provenance": { "startLine": 791, "endLine": 796 }
+			"provenance": { "startLine": 803, "endLine": 808 }
 		},
 		{
 			"id": "human",
@@ -399,7 +399,7 @@
 			"typicalSpeakers": "Humans",
 			"checkDc": 10,
 			"description": "There are many dialects of the Human language based on the distance and developments of different human civilizations.",
-			"provenance": { "startLine": 797, "endLine": 802 }
+			"provenance": { "startLine": 809, "endLine": 814 }
 		},
 		{
 			"id": "dwarvish",
@@ -408,7 +408,7 @@
 			"typicalSpeakers": "Dwarves",
 			"checkDc": 10,
 			"description": "",
-			"provenance": { "startLine": 803, "endLine": 806 }
+			"provenance": { "startLine": 815, "endLine": 818 }
 		},
 		{
 			"id": "elvish",
@@ -417,7 +417,7 @@
 			"typicalSpeakers": "Elves",
 			"checkDc": 10,
 			"description": "",
-			"provenance": { "startLine": 807, "endLine": 810 }
+			"provenance": { "startLine": 819, "endLine": 822 }
 		},
 		{
 			"id": "gnomish",
@@ -426,7 +426,7 @@
 			"typicalSpeakers": "Gnomes",
 			"checkDc": 10,
 			"description": "",
-			"provenance": { "startLine": 811, "endLine": 814 }
+			"provenance": { "startLine": 823, "endLine": 826 }
 		},
 		{
 			"id": "halfling",
@@ -435,7 +435,7 @@
 			"typicalSpeakers": "Halflings",
 			"checkDc": 10,
 			"description": "",
-			"provenance": { "startLine": 815, "endLine": 818 }
+			"provenance": { "startLine": 827, "endLine": 830 }
 		},
 		{
 			"id": "orcish",
@@ -444,7 +444,7 @@
 			"typicalSpeakers": "Orcs",
 			"checkDc": 10,
 			"description": "",
-			"provenance": { "startLine": 819, "endLine": 822 }
+			"provenance": { "startLine": 831, "endLine": 834 }
 		},
 		{
 			"id": "giant",
@@ -453,7 +453,7 @@
 			"typicalSpeakers": "Giants, Giantkin",
 			"checkDc": 15,
 			"description": "",
-			"provenance": { "startLine": 825, "endLine": 828 }
+			"provenance": { "startLine": 837, "endLine": 840 }
 		},
 		{
 			"id": "draconic",
@@ -462,7 +462,7 @@
 			"typicalSpeakers": "Dragons, Dragonkin",
 			"checkDc": 15,
 			"description": "",
-			"provenance": { "startLine": 829, "endLine": 832 }
+			"provenance": { "startLine": 841, "endLine": 844 }
 		},
 		{
 			"id": "fey",
@@ -471,7 +471,7 @@
 			"typicalSpeakers": "Fey",
 			"checkDc": 15,
 			"description": "",
-			"provenance": { "startLine": 833, "endLine": 836 }
+			"provenance": { "startLine": 845, "endLine": 848 }
 		},
 		{
 			"id": "elemental",
@@ -480,7 +480,7 @@
 			"typicalSpeakers": "Elementals",
 			"checkDc": 15,
 			"description": "",
-			"provenance": { "startLine": 837, "endLine": 840 }
+			"provenance": { "startLine": 849, "endLine": 852 }
 		},
 		{
 			"id": "celestial",
@@ -489,7 +489,7 @@
 			"typicalSpeakers": "Angels & Archons",
 			"checkDc": 15,
 			"description": "",
-			"provenance": { "startLine": 843, "endLine": 846 }
+			"provenance": { "startLine": 855, "endLine": 858 }
 		},
 		{
 			"id": "fiendish",
@@ -498,7 +498,7 @@
 			"typicalSpeakers": "Devils & Demons",
 			"checkDc": 15,
 			"description": "",
-			"provenance": { "startLine": 847, "endLine": 850 }
+			"provenance": { "startLine": 859, "endLine": 862 }
 		},
 		{
 			"id": "deepspeech",
@@ -507,7 +507,7 @@
 			"typicalSpeakers": "Aberrations",
 			"checkDc": 20,
 			"description": "",
-			"provenance": { "startLine": 853, "endLine": 857 }
+			"provenance": { "startLine": 865, "endLine": 870 }
 		}
 	],
 	"rules": {

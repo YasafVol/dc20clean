@@ -166,7 +166,9 @@ function CharacterName() {
 		<Container>
 			<Header>
 				<Title>{t('characterCreation.nameYourCharacter')}</Title>
-				<Subtitle>{t('characterCreation.creating')}: {getCharacterDescription()}</Subtitle>
+				<Subtitle>
+					{t('characterCreation.creating')}: {getCharacterDescription()}
+				</Subtitle>
 			</Header>
 
 			<FormCard>
@@ -213,20 +215,17 @@ function CharacterName() {
 
 					<GeneratorSection>
 						<GeneratorTitle>{t('characterCreation.nameGenerator')}</GeneratorTitle>
-						<GeneratorText>
-							{t('characterCreation.nameGeneratorDescription')}
-						</GeneratorText>
+						<GeneratorText>{t('characterCreation.nameGeneratorDescription')}</GeneratorText>
 						<PrimaryButton onClick={generateNames} disabled={isGenerating}>
-							{isGenerating ? t('characterCreation.generating') : t('characterCreation.generateNames')}
+							{isGenerating
+								? t('characterCreation.generating')
+								: t('characterCreation.generateNames')}
 						</PrimaryButton>
 
 						{suggestions.length > 0 ? (
 							<SuggestionsGrid>
 								{suggestions.map((name, index) => (
-									<SuggestionButton
-										key={index}
-										onClick={() => selectSuggestion(name)}
-									>
+									<SuggestionButton key={index} onClick={() => selectSuggestion(name)}>
 										{name}
 									</SuggestionButton>
 								))}

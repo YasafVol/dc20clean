@@ -346,12 +346,20 @@ const EnhancedFeatures: React.FC<EnhancedFeaturesProps> = ({ calculationResult }
 					{calculationResult.resistances.map((resistance, index) => (
 						<FeatureCard key={`direct-resistance-${index}`}>
 							<FeatureHeader>
-								<FeatureName>{resistance.type} Resistance</FeatureName>
-								<FeatureType $type="resistance">Resistance</FeatureType>
+								<FeatureName>
+									{resistance.value === 'true'
+										? `${resistance.type} Damage Reduction`
+										: `${resistance.type} Resistance`}
+								</FeatureName>
+								<FeatureType $type="resistance">
+									{resistance.value === 'true' ? 'Reduction' : 'Resistance'}
+								</FeatureType>
 							</FeatureHeader>
 
 							<FeatureDescription>
-								Resistance ({resistance.value}) to {resistance.type} damage
+								{resistance.value === 'true'
+									? `Damage Reduction against ${resistance.type} damage`
+									: `Resistance (${resistance.value}) to ${resistance.type} damage`}
 							</FeatureDescription>
 
 							<FeatureSource>

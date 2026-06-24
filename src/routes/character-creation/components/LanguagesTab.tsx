@@ -70,9 +70,7 @@ const LanguagesTab: React.FC<LanguagesTabProps> = ({
 	);
 
 	const hasConversions =
-		conversions.skillToTradeConversions > 0 ||
-		conversions.tradeToSkillConversions > 0 ||
-		conversions.tradeToLanguageConversions > 0;
+		conversions.skillToTradeConversions > 0 || conversions.tradeToLanguageConversions > 0;
 
 	const languagePointsRemaining =
 		pointsData.availableLanguagePoints - pointsData.languagePointsUsed;

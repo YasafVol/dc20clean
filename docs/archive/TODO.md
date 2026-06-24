@@ -217,7 +217,7 @@
 | 4. FE Migration         | ❌ Not Started | 0%         |
 | 5. Extract Hook         | 🟡 Optional    | N/A        |
 | 6. Multiclass Expansion | ❌ Not Started | 0%         |
-| 7. Convex Migration     | ✅ Complete     | 100%       |
+| 7. Convex Migration     | ✅ Complete    | 100%       |
 
 **Overall: 3 of 6 active tasks complete (50%), 0 in progress**
 
@@ -252,6 +252,7 @@
 **Status:** Implemented behind `VITE_USE_CONVEX=true` with `VITE_CONVEX_URL` configured.
 
 **Implemented:**
+
 - ✅ Convex schema (`convex/schema.ts`)
 - ✅ Character CRUD mutations/queries (`convex/characters.ts`)
 - ✅ Auth config (`convex/auth.config.ts`)
@@ -260,6 +261,7 @@
 - ✅ Convex packages installed (`convex`, `@convex-dev/auth`)
 
 **Operational notes:**
+
 - Enable Convex by setting `VITE_USE_CONVEX=true` and `VITE_CONVEX_URL`.
 - localStorage remains the default when Convex is disabled.
 

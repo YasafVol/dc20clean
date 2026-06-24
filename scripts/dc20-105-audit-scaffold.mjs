@@ -103,12 +103,12 @@ const CLASS_HEADINGS = new Set([
 ]);
 
 const SYSTEM_DOCS = {
-	'Rules Versioning': ['docs/systems/PROJECT_TECHNICAL_OVERVIEW.MD', 'docs/systems/DATABASE_SYSTEM.MD'],
-	'Character Schema / SavedCharacter': ['docs/systems/DATABASE_SYSTEM.MD'],
-	'Calculation / Effects': [
-		'docs/systems/CALCULATION_SYSTEM.MD',
-		'docs/systems/EFFECT_SYSTEM.MD'
+	'Rules Versioning': [
+		'docs/systems/PROJECT_TECHNICAL_OVERVIEW.MD',
+		'docs/systems/DATABASE_SYSTEM.MD'
 	],
+	'Character Schema / SavedCharacter': ['docs/systems/DATABASE_SYSTEM.MD'],
+	'Calculation / Effects': ['docs/systems/CALCULATION_SYSTEM.MD', 'docs/systems/EFFECT_SYSTEM.MD'],
 	'Character Creation Flow': ['docs/systems/CHARACTER_CREATION_FLOW.MD'],
 	'Classes / Leveling / Talents': [
 		'docs/systems/CLASS_SYSTEM.MD',
@@ -140,7 +140,10 @@ const TOUCHPOINTS = {
 		'src/lib/types/effectSystem.ts',
 		'src/lib/rulesdata/schemas/character.schema.ts'
 	],
-	'Character Creation Flow': ['src/routes/character-creation/', 'src/lib/stores/characterContext.tsx'],
+	'Character Creation Flow': [
+		'src/routes/character-creation/',
+		'src/lib/stores/characterContext.tsx'
+	],
 	'Classes / Leveling / Talents': [
 		'src/lib/rulesdata/classes-data/',
 		'src/lib/rulesdata/progression/'
@@ -153,11 +156,18 @@ const TOUCHPOINTS = {
 		'src/lib/rulesdata/languages.ts'
 	],
 	Spells: ['src/lib/rulesdata/spells-data/', 'src/lib/services/spellAssignment.ts'],
-	'Martials / Maneuvers': ['src/lib/rulesdata/martials/', 'src/routes/character-creation/Maneuvers.tsx'],
+	'Martials / Maneuvers': [
+		'src/lib/rulesdata/martials/',
+		'src/routes/character-creation/Maneuvers.tsx'
+	],
 	Equipment: ['src/lib/rulesdata/equipment/', 'src/routes/custom-equipment/'],
 	'Character Sheet': ['src/routes/character-sheet/'],
 	'PDF Export': ['src/lib/pdf/', 'src/lib/types/pdfExport.ts'],
-	'Storage / Convex / localStorage': ['src/lib/storage/', 'src/lib/utils/storageUtils.ts', 'convex/schema.ts']
+	'Storage / Convex / localStorage': [
+		'src/lib/storage/',
+		'src/lib/utils/storageUtils.ts',
+		'convex/schema.ts'
+	]
 };
 
 function normalizeHeading(value) {
@@ -255,7 +265,10 @@ function changedEnough(oldSection, newSection) {
 
 function classifySystem(section) {
 	const titleKey = normalizeHeading(section.title);
-	if (CLASS_HEADINGS.has(titleKey) || /class table|talent|leveling|path progression/.test(titleKey)) {
+	if (
+		CLASS_HEADINGS.has(titleKey) ||
+		/class table|talent|leveling|path progression/.test(titleKey)
+	) {
 		return 'Classes / Leveling / Talents';
 	}
 	if (SPELL_HEADINGS.has(titleKey) || /spell|cantrip|mana|mp\b|magic/.test(titleKey)) {
@@ -268,13 +281,20 @@ function classifySystem(section) {
 	const text = `${section.title}\n${section.text.slice(0, 2000)}`.toLowerCase();
 	if (/spell|magic|mana|mp\b|cantrip/.test(text)) return 'Spells';
 	if (/maneuver|martial|stamina|sp\b/.test(text)) return 'Martials / Maneuvers';
-	if (/class|barbarian|bard|champion|cleric|druid|hunter|monk|rogue|sorcerer|spellblade|warlock|wizard|talent|leveling|path progression/.test(text)) {
+	if (
+		/class|barbarian|bard|champion|cleric|druid|hunter|monk|rogue|sorcerer|spellblade|warlock|wizard|talent|leveling|path progression/.test(
+			text
+		)
+	) {
 		return 'Classes / Leveling / Talents';
 	}
 	if (/ancestr|trait|beastborn|elf|dwarf|human/.test(text)) return 'Ancestry / Traits';
-	if (/background|skill|trade|language/.test(text)) return 'Background / Skills / Trades / Languages';
+	if (/background|skill|trade|language/.test(text))
+		return 'Background / Skills / Trades / Languages';
 	if (/equipment|weapon|armor|shield|item|gold|silver|copper/.test(text)) return 'Equipment';
-	if (/save dc|pd\b|ad\b|hp\b|grit|rest point|death threshold|calculation|formula|effect/.test(text)) {
+	if (
+		/save dc|pd\b|ad\b|hp\b|grit|rest point|death threshold|calculation|formula|effect/.test(text)
+	) {
 		return 'Calculation / Effects';
 	}
 	if (/character sheet|pdf|fillable|export/.test(text)) return 'PDF Export';
@@ -299,7 +319,10 @@ function categoryForSystem(system, oldSection) {
 	if (!oldSection) return 'data-only';
 	if (system === 'Calculation / Effects') return 'calculator';
 	if (system === 'PDF Export') return 'export';
-	if (system === 'Storage / Convex / localStorage' || system === 'Character Schema / SavedCharacter') {
+	if (
+		system === 'Storage / Convex / localStorage' ||
+		system === 'Character Schema / SavedCharacter'
+	) {
 		return 'schema';
 	}
 	if (system === 'Character Sheet' || system === 'Character Creation Flow') return 'UI';
@@ -307,7 +330,15 @@ function categoryForSystem(system, oldSection) {
 }
 
 function statusForSystem(system) {
-	if (['Classes / Leveling / Talents', 'Spells', 'Martials / Maneuvers', 'Ancestry / Traits', 'Equipment'].includes(system)) {
+	if (
+		[
+			'Classes / Leveling / Talents',
+			'Spells',
+			'Martials / Maneuvers',
+			'Ancestry / Traits',
+			'Equipment'
+		].includes(system)
+	) {
 		return 'HITL required';
 	}
 	return 'pending';
@@ -464,8 +495,12 @@ ${entries.length === 0 ? 'No automated section-level candidates were identified 
 
 async function buildDataShapeReview() {
 	const dataContracts = await readIfExists(path.join(ROOT, 'src/lib/types/dataContracts.ts'));
-	const characterStateHasRulesVersion = /interface\s+CharacterState[\s\S]*rulesVersion/.test(dataContracts);
-	const savedCharacterHasRulesVersion = /interface\s+SavedCharacter[\s\S]*rulesVersion/.test(dataContracts);
+	const characterStateHasRulesVersion = /interface\s+CharacterState[\s\S]*rulesVersion/.test(
+		dataContracts
+	);
+	const savedCharacterHasRulesVersion = /interface\s+SavedCharacter[\s\S]*rulesVersion/.test(
+		dataContracts
+	);
 	const schema = await readIfExists(path.join(ROOT, 'convex/schema.ts'));
 	const convexHasRulesVersion = /rulesVersion/.test(schema);
 	const pdfExport = await readIfExists(path.join(ROOT, 'src/lib/types/pdfExport.ts'));
@@ -551,7 +586,12 @@ async function main() {
 	let counter = 1;
 
 	for (const entry of mandatoryEntries(counter)) {
-		const systemMatch = counter === 1 ? 'Rules Versioning' : counter === 2 ? 'Character Schema / SavedCharacter' : 'PDF Export';
+		const systemMatch =
+			counter === 1
+				? 'Rules Versioning'
+				: counter === 2
+					? 'Character Schema / SavedCharacter'
+					: 'PDF Export';
 		entriesBySystem.get(systemMatch)?.push(entry);
 		counter += 1;
 	}

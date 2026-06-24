@@ -201,9 +201,9 @@ Every class has placeholder TODOs in progression files:
 
 ### Immediate (26 file changes)
 
-1. **Add placeholder features to all 13 classes** for L5 and L8
-   - Add 2 features to each `*_features.ts` (26 total features)
-   - Update each `*.progression.ts` to reference new IDs
+1. **Add/verify level 5 Expert Feature compatibility IDs** for all 13 classes
+   - Keep the existing `<class>_level_5_placeholder` ID shape only as a saved-data compatibility alias.
+   - Do not add level 8/9 capstone placeholders without source-published mechanics.
 
 2. **Add startingEquipment to 9 classes**
    - Barbarian, Bard, Champion, Cleric, Commander, Druid, Hunter, Warlock, Wizard
@@ -214,23 +214,23 @@ Every class has placeholder TODOs in progression files:
 2. Audit CLASS_SPELL_CONFIG entries per class vs v0.10 spell access rules
 3. Document Psion as experimental or remove from release build
 
-## Proposed Placeholder Features
+## Level 5 Expert Feature Compatibility IDs
 
-| Class      | L5 ID                            | L5 Name                         | L8 ID                                     | L8 Name                         |
-| ---------- | -------------------------------- | ------------------------------- | ----------------------------------------- | ------------------------------- |
-| Barbarian  | `barbarian_level_5_placeholder`  | Primal Fury (Placeholder)       | `barbarian_level_8_capstone_placeholder`  | Savage Apex (Placeholder)       |
-| Bard       | `bard_level_5_placeholder`       | Virtuoso (Placeholder)          | `bard_level_8_capstone_placeholder`       | Magnum Opus (Placeholder)       |
-| Champion   | `champion_level_5_placeholder`   | Veteran Tactics (Placeholder)   | `champion_level_8_capstone_placeholder`   | Unbreakable (Placeholder)       |
-| Cleric     | `cleric_level_5_placeholder`     | Divine Conduit (Placeholder)    | `cleric_level_8_capstone_placeholder`     | Avatar of Faith (Placeholder)   |
-| Commander  | `commander_level_5_placeholder`  | Tactical Mastery (Placeholder)  | `commander_level_8_capstone_placeholder`  | Supreme Commander (Placeholder) |
-| Druid      | `druid_level_5_placeholder`      | Nature's Champion (Placeholder) | `druid_level_8_capstone_placeholder`      | Primal Avatar (Placeholder)     |
-| Hunter     | `hunter_level_5_placeholder`     | Apex Predator (Placeholder)     | `hunter_level_8_capstone_placeholder`     | Perfect Hunt (Placeholder)      |
-| Monk       | `monk_level_5_placeholder`       | Inner Harmony (Placeholder)     | `monk_level_8_capstone_placeholder`       | Transcendence (Placeholder)     |
-| Rogue      | `rogue_level_5_placeholder`      | Shadow Master (Placeholder)     | `rogue_level_8_capstone_placeholder`      | Perfect Crime (Placeholder)     |
-| Sorcerer   | `sorcerer_level_5_placeholder`   | Arcane Surge (Placeholder)      | `sorcerer_level_8_capstone_placeholder`   | Reality Shaper (Placeholder)    |
-| Spellblade | `spellblade_level_5_placeholder` | Martial Arcana (Placeholder)    | `spellblade_level_8_capstone_placeholder` | Arcane Apex (Placeholder)       |
-| Warlock    | `warlock_level_5_placeholder`    | Dark Pact (Placeholder)         | `warlock_level_8_capstone_placeholder`    | Patron's Vessel (Placeholder)   |
-| Wizard     | `wizard_level_5_placeholder`     | Arcane Mastery (Placeholder)    | `wizard_level_8_capstone_placeholder`     | Grand Magister (Placeholder)    |
+| Class      | L5 ID                            |
+| ---------- | -------------------------------- |
+| Barbarian  | `barbarian_level_5_placeholder`  |
+| Bard       | `bard_level_5_placeholder`       |
+| Champion   | `champion_level_5_placeholder`   |
+| Cleric     | `cleric_level_5_placeholder`     |
+| Commander  | `commander_level_5_placeholder`  |
+| Druid      | `druid_level_5_placeholder`      |
+| Hunter     | `hunter_level_5_placeholder`     |
+| Monk       | `monk_level_5_placeholder`       |
+| Rogue      | `rogue_level_5_placeholder`      |
+| Sorcerer   | `sorcerer_level_5_placeholder`   |
+| Spellblade | `spellblade_level_5_placeholder` |
+| Warlock    | `warlock_level_5_placeholder`    |
+| Wizard     | `wizard_level_5_placeholder`     |
 
 ## Proposed startingEquipment (9 classes)
 

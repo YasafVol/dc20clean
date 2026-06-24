@@ -239,6 +239,9 @@ describe('useCharacterSheetReducer', () => {
 		});
 
 		expect(result.current.state.character?.characterState.ui.combatToggles?.isRaging).toBe(true);
+		expect(result.current.state.character?.characterState.ui.activeConditions?.while_raging).toBe(
+			true
+		);
 	});
 	it('should provide helper functions', () => {
 		const { result } = renderHook(() => useCharacterSheetReducer());
@@ -343,4 +346,3 @@ describe('useCharacterSheetReducer', () => {
 		expect(typeof result.current.updateInventory).toBe('function');
 	});
 });
-

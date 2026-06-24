@@ -186,7 +186,7 @@ describe('legacy v0.10 character runtime acceptance', () => {
 		expect(pdfData.features).toContain('Swift Berserker');
 		expect(pdfData.features).toContain('[Spells]');
 		expect(pdfData.features).toContain('summon-familiar');
-		expect(pdfData.features).toContain('Absorb Elements');
+		expect(pdfData.features).toContain('absorb-element');
 		expect(pdfData.features).toContain('[Maneuvers]');
 		expect(pdfData.features).toContain('Brace');
 		expect(JSON.stringify(legacyCharacter)).toBe(beforeTransform);

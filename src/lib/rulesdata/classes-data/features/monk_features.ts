@@ -13,7 +13,7 @@ export const monkClass: ClassDefinition = {
 	martialPath: {
 		combatTraining: {
 			weapons: ['Weapons'],
-			armor: ['Light Armor']
+			armor: ['Light_Armor']
 		},
 		maneuvers: {
 			learnsAllAttack: true,
@@ -29,12 +29,30 @@ export const monkClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
+			id: 'monk_martial_path',
+			featureName: 'Martial Path',
+			levelGained: 1,
+			description: 'You gain Combat Training with Weapons and Light Armor.',
+			effects: [
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }
+			]
+		},
+		{
 			id: 'monk_source_of_power',
 			featureName: 'Source of Power',
 			levelGained: 1,
 			isFlavor: true,
 			description:
-				'Monks harness their inner Ki through training, mentorship, or deep meditation, perfecting both mind and body.'
+				'Monks harness their inner Ki through training, mentorship, or deep meditation, perfecting both mind and body.',
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'monk_source_of_power',
+					value:
+						'Monks harness inner Ki through training, mentorship, or deep meditation, perfecting both mind and body.'
+				}
+			]
 		},
 		{
 			id: 'monk_training',
@@ -114,55 +132,118 @@ export const monkClass: ClassDefinition = {
 							name: 'Bear Stance',
 							description:
 								'You deal +1 damage on Heavy Hits or higher and Critical Hits on Martial Attacks made using Unarmed Strikes or Melee Weapons. When you Miss using a Melee Martial Attack, you gain ADV on the next Melee Martial Attack you make before the end of your turn, once on each of your turns.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'monk_stance_bear',
+									value:
+										'Active stance: +1 damage on Heavy Hits or higher and Critical Hits with Unarmed Strikes or Melee Weapons; once per turn, after missing a Melee Martial Attack, gain ADV on the next Melee Martial Attack before end of turn.'
+								}
+							]
 						},
 						{
 							name: 'Bull Stance',
 							description:
 								'When you Succeed on a Physical Check to push a target, it also takes 1 Bludgeoning damage. When you push a target, it is pushed 1 additional Space, and you can move in a straight line with the target without provoking Opportunity Attacks or spending movement.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'monk_stance_bull',
+									value:
+										'Active stance: Successful Physical Checks to push also deal 1 Bludgeoning damage; pushed targets move 1 additional Space, and you can move in a straight line with the target without Opportunity Attacks or spending movement.'
+								}
+							]
 						},
 						{
 							name: 'Cobra Stance',
 							description:
 								'You deal +1 damage on Martial Attacks made using Unarmed Strikes or Melee Weapons against creatures that have damaged you since the start of your last turn. When a creature within your Melee Range misses you with a Melee Attack, you can spend 1 AP as a Reaction to make a Melee Martial Attack against it.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'monk_stance_cobra',
+									value:
+										'Active stance: +1 damage with Unarmed Strike or Melee Weapon Martial Attacks against creatures that damaged you since the start of your last turn; when a creature in Melee Range misses you with a Melee Attack, spend 1 AP as a Reaction to make a Melee Martial Attack against it.'
+								}
+							]
 						},
 						{
 							name: 'Gazelle Stance',
 							description:
 								'Your Speed and Jump Distance increase by 1. You ignore Difficult Terrain. You gain ADV on Acrobatics Checks and Agility Saves.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'monk_stance_gazelle',
+									value:
+										'Active stance: Speed and Jump Distance +1, ignore Difficult Terrain, and gain ADV on Acrobatics Checks and Agility Saves.'
+								}
+							]
 						},
 						{
 							name: 'Mantis Stance',
 							description:
 								'You have ADV on Checks and Saves made to initiate, maintain, or escape Grapples. When you start your turn with at least 1 creature Grappled, you gain +1 AP to use on a Grapple Maneuver against a creature you have Grappled.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'monk_stance_mantis',
+									value:
+										'Active stance: ADV on Checks and Saves to initiate, maintain, or escape Grapples; when you start your turn with at least 1 creature Grappled, gain +1 AP for a Grapple Maneuver against a creature you have Grappled.'
+								}
+							]
 						},
 						{
 							name: 'Mongoose Stance',
 							description:
 								'Your Melee Martial Attacks deal +1 damage while you are Flanked. When you make a Melee Martial Attack, choose a second target within your Melee Range and make a single Attack Check against both targets.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'monk_stance_mongoose',
+									value:
+										'Active stance: Melee Martial Attacks deal +1 damage while Flanked; when making a Melee Martial Attack, choose a second target within Melee Range and make one Attack Check against both targets.'
+								}
+							]
 						},
 						{
 							name: 'Scorpion Stance',
 							description:
 								'Creatures provoke Opportunity Attacks from you when they enter your Melee Range. When you make a Melee Martial Attack, you can spend 1 AP to deal +1 damage and force a Physical Save against your Save DC. Failure: the target is Impaired on the next Physical Check before the end of your next turn.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'monk_stance_scorpion',
+									value:
+										'Active stance: Creatures provoke Opportunity Attacks when entering your Melee Range. On Melee Martial Attack, spend 1 AP for +1 damage and a Physical Save; failure Impairs the target on its next Physical Check before end of your next turn.'
+								}
+							]
 						},
 						{
 							name: 'Turtle Stance',
 							description:
 								'Your Speed becomes 1 unless it is already lower. You gain PDR, EDR, and MDR. You have ADV on Might Saves and Saves against being moved or knocked Prone.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'monk_stance_turtle',
+									value:
+										'Active stance: Speed becomes 1 unless already lower; gain PDR, EDR, and MDR; gain ADV on Might Saves and Saves against being moved or knocked Prone.'
+								}
+							]
 						},
 						{
 							name: 'Wolf Stance',
 							description:
 								'After you make an Attack with an Unarmed Strike or a Melee Weapon, you can immediately move up to 1 Space without spending movement. You have ADV on Opportunity Attacks, and creatures have DisADV on Opportunity Attacks made against you.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'monk_stance_wolf',
+									value:
+										'Active stance: After attacking with an Unarmed Strike or Melee Weapon, immediately move up to 1 Space without spending movement; gain ADV on Opportunity Attacks, and creatures have DisADV on Opportunity Attacks against you.'
+								}
+							]
 						}
 					]
 				}
@@ -174,7 +255,15 @@ export const monkClass: ClassDefinition = {
 			levelGained: 1,
 			isFlavor: true,
 			description:
-				'During a Short Rest or longer, meditate to temporarily increase the Mastery level of a chosen Charisma or Intelligence skill by 1 (up to its cap). You stay alert while meditating.'
+				'During a Short Rest or longer, meditate to temporarily increase the Mastery level of a chosen Charisma or Intelligence skill by 1 (up to its cap). You stay alert while meditating.',
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'monk_meditation',
+					value:
+						'During a Short Rest or longer, temporarily increase the Mastery level of a chosen Charisma or Intelligence skill by 1 up to its cap. You stay alert while meditating.'
+				}
+			]
 		},
 		{
 			id: 'monk_spiritual_balance',
@@ -222,14 +311,6 @@ export const monkClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'monk_talent_level_2',
-			featureName: 'Talent',
-			levelGained: 2,
-			description:
-				'You gain 1 Talent of your choice. You must meet any prerequisites to select it.',
-			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
-		},
-		{
 			id: 'monk_level_5_placeholder',
 			featureName: 'Expert Monk',
 			levelGained: 5,
@@ -274,14 +355,6 @@ export const monkClass: ClassDefinition = {
 					]
 				}
 			]
-		},
-		{
-			id: 'monk_level_8_capstone_placeholder',
-			featureName: 'Class Capstone (Source Unpublished)',
-			levelGained: 9,
-			isFlavor: true,
-			description:
-				'The v0.10.5 class progression grants a Class Capstone Feature at level 9, but this source packet does not publish class-specific capstone mechanics. This entry is intentionally non-mechanical and preserves the legacy ID for saved-character compatibility.'
 		}
 	],
 	subclasses: [
@@ -331,7 +404,15 @@ export const monkClass: ClassDefinition = {
 					levelGained: 3,
 					isFlavor: true,
 					description:
-						'While Unconscious, your astral self remains aware and can converse. During sleep, you may awaken instantly.'
+						'While Unconscious, your astral self remains aware and can converse. During sleep, you may awaken instantly.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'monk_astral_watch',
+							value:
+								'While Unconscious, your astral self remains aware and can converse. During sleep, you may awaken instantly.'
+						}
+					]
 				}
 			]
 		},
@@ -390,7 +471,14 @@ export const monkClass: ClassDefinition = {
 					featureName: 'Fluid Movement',
 					levelGained: 3,
 					isFlavor: true,
-					description: 'You move through spaces as though you were one size smaller.'
+					description: 'You move through spaces as though you were one size smaller.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'monk_fluid_movement',
+							value: 'Move through spaces as though you were one size smaller.'
+						}
+					]
 				}
 			]
 		}

@@ -335,7 +335,9 @@ function Menu() {
 			</StyledMenuSection>
 
 			{/* Rules Version Note */}
-			<div className="absolute right-4 bottom-4 text-xs text-white/50">{t('menu.rulesVersion')}</div>
+			<div className="absolute right-4 bottom-4 text-xs text-white/50">
+				{t('menu.rulesVersion')}
+			</div>
 		</StyledContainer>
 	);
 }

@@ -144,7 +144,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	// via getCurrentFlowType() and smart initialization logic. We no longer need
 	// to manually clear drafts here - the context will automatically clear mismatched
 	// flows and preserve drafts within the same flow.
-	
+
 	// Only set flowType to 'create' on mount for new characters (not editing/leveling)
 	useEffect(() => {
 		if (!editChar && !isLevelUpMode && !levelUpCharacter) {
@@ -294,16 +294,28 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		// Step 2: Leveling (if level > 1)
 		if (state.level > 1) {
 			stepNumber++;
-			steps.push({ number: stepNumber, id: 'leveling', label: t('characterCreation.stepLeveling') });
+			steps.push({
+				number: stepNumber,
+				id: 'leveling',
+				label: t('characterCreation.stepLeveling')
+			});
 		}
 
 		// Fixed steps: Ancestry, Attributes, Background
 		stepNumber++;
 		steps.push({ number: stepNumber, id: 'ancestry', label: t('characterCreation.stepAncestry') });
 		stepNumber++;
-		steps.push({ number: stepNumber, id: 'attributes', label: t('characterCreation.stepAttributes') });
+		steps.push({
+			number: stepNumber,
+			id: 'attributes',
+			label: t('characterCreation.stepAttributes')
+		});
 		stepNumber++;
-		steps.push({ number: stepNumber, id: 'background', label: t('characterCreation.stepBackground') });
+		steps.push({
+			number: stepNumber,
+			id: 'background',
+			label: t('characterCreation.stepBackground')
+		});
 
 		// Conditional: Spells (if character has spell slots)
 		if (hasSpells) {
@@ -314,7 +326,11 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		// Conditional: Maneuvers (if character has maneuvers known)
 		if (hasManeuvers) {
 			stepNumber++;
-			steps.push({ number: stepNumber, id: 'maneuvers', label: t('characterCreation.stepManeuvers') });
+			steps.push({
+				number: stepNumber,
+				id: 'maneuvers',
+				label: t('characterCreation.stepManeuvers')
+			});
 		}
 
 		// Final step: Name (always)
@@ -358,7 +374,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				const originalCreatedAt = allChars.find((c) => c.id === originalId)?.createdAt;
 
 				await completeCharacter(state, {
-				onShowSnackbar: (_message: string) => {
+					onShowSnackbar: (_message: string) => {
 						setSnackbarMessage(t('characterCreation.leveledUpSuccess'));
 						setShowSnackbar(true);
 					},
@@ -853,22 +869,24 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				</MobileProgressBar>
 
 				<HeaderContent>
-				{/* Left: Previous Button and Restart */}
-				<NavSection $align="start">
-					<SecondaryButton onClick={handlePrevious} disabled={state.currentStep === 1}>
-						{t('characterCreation.previous')}
-					</SecondaryButton>
-		</NavSection>
+					{/* Left: Previous Button and Restart */}
+					<NavSection $align="start">
+						<SecondaryButton onClick={handlePrevious} disabled={state.currentStep === 1}>
+							{t('characterCreation.previous')}
+						</SecondaryButton>
+					</NavSection>
 
-		{/* Center: Stepper (Desktop) or Title (Mobile) */}
-		<NavSection $align="center" style={{ flex: 1, minWidth: 0 }}>
-					{/* Mobile Title */}
-					<MobileTitle>
-						{editChar ? t('characterCreation.editCharacter') : t('characterCreation.createCharacter')}
-					</MobileTitle>
+					{/* Center: Stepper (Desktop) or Title (Mobile) */}
+					<NavSection $align="center" style={{ flex: 1, minWidth: 0 }}>
+						{/* Mobile Title */}
+						<MobileTitle>
+							{editChar
+								? t('characterCreation.editCharacter')
+								: t('characterCreation.createCharacter')}
+						</MobileTitle>
 
-					{/* Desktop Stepper */}
-					<StepperContainer>
+						{/* Desktop Stepper */}
+						<StepperContainer>
 							{steps.map(({ number, label }, index) => {
 								const isActive = state.currentStep === number;
 								const isCompleted = isStepCompleted(number);
@@ -897,10 +915,10 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 								);
 							})}
 						</StepperContainer>
-				</NavSection>
+					</NavSection>
 
-				{/* Right: Next Button */}
-				<NavSection $align="end">
+					{/* Right: Next Button */}
+					<NavSection $align="end">
 						<PrimaryButton onClick={handleNext}>
 							<span>
 								{state.currentStep === maxStep
@@ -910,10 +928,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 							→
 						</PrimaryButton>
 					</NavSection>
-									<RestartButton onClick={handleRestart} title={t('characterCreation.restartTooltip')}>
-					{t('characterCreation.restart')}
-				</RestartButton>
-
+					<RestartButton onClick={handleRestart} title={t('characterCreation.restartTooltip')}>
+						{t('characterCreation.restart')}
+					</RestartButton>
 				</HeaderContent>
 			</StepperHeader>
 

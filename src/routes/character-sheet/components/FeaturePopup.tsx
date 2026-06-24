@@ -35,7 +35,7 @@ const FeaturePopup: React.FC<FeaturePopupProps> = ({ feature, onClose }) => {
 				</StyledFeaturePopupDescription>
 				{feature.sourceDetail && (
 					<StyledFeaturePopupSourceInfo>
-					{t('characterSheet.featureSource')} {feature.sourceDetail}
+						{t('characterSheet.featureSource')} {feature.sourceDetail}
 					</StyledFeaturePopupSourceInfo>
 				)}
 			</StyledFeaturePopupContent>

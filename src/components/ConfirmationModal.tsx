@@ -24,7 +24,7 @@ interface ConfirmationModalProps {
 
 /**
  * Confirmation Modal Component
- * 
+ *
  * Tokyo Night themed modal for confirmation dialogs.
  * Uses the same styling pattern as feature/weapon/spell popups.
  */
@@ -63,8 +63,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 						</ModalHeader>
 
 						<ModalFooter>
-						<SecondaryButton onClick={onCancel}>{finalCancelText}</SecondaryButton>
-						<PrimaryButton onClick={onConfirm}>{finalConfirmText}</PrimaryButton>
+							<SecondaryButton onClick={onCancel}>{finalCancelText}</SecondaryButton>
+							<PrimaryButton onClick={onConfirm}>{finalConfirmText}</PrimaryButton>
 						</ModalFooter>
 					</Modal>
 				</ModalOverlay>

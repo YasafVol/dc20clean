@@ -97,8 +97,7 @@ const PdfFrame = styled.iframe`
 	background: ${theme.colors.bg.primary};
 `;
 
-const isMac =
-	typeof navigator !== 'undefined' && /Mac|iPhone|iPad/i.test(navigator.platform || '');
+const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/i.test(navigator.platform || '');
 
 interface RulebookPanelProps {
 	open: boolean;

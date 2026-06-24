@@ -47,7 +47,7 @@ export const list = query({
 		}
 
 		return [...officialFeatures, ...userFeatures];
-	},
+	}
 });
 
 /**
@@ -55,7 +55,7 @@ export const list = query({
  */
 export const listOfficial = query({
 	args: {
-		pointCost: v.optional(v.number()),
+		pointCost: v.optional(v.number())
 	},
 	handler: async (ctx, args) => {
 		let query = ctx.db
@@ -68,7 +68,7 @@ export const listOfficial = query({
 		}
 
 		return await query.collect();
-	},
+	}
 });
 
 /**
@@ -82,9 +82,7 @@ export const getById = query({
 		// Check for official feature first
 		const officialFeature = await ctx.db
 			.query('features')
-			.filter((q) =>
-				q.and(q.eq(q.field('id'), args.id), q.eq(q.field('isOfficial'), true))
-			)
+			.filter((q) => q.and(q.eq(q.field('id'), args.id), q.eq(q.field('isOfficial'), true)))
 			.first();
 
 		if (officialFeature) {
@@ -133,7 +131,7 @@ export const listHomebrew = query({
 		}
 
 		return await query.collect();
-	},
+	}
 });
 
 /**
@@ -357,7 +355,7 @@ export const fork = mutation({
 	args: {
 		sourceId: v.string(),
 		sourceType: v.union(v.literal('official'), v.literal('custom'), v.literal('homebrew')),
-		sourceData: v.optional(v.any()),
+		sourceData: v.optional(v.any())
 	},
 	handler: async (ctx, args) => {
 		const userId = await getAuthUserId(ctx);
@@ -389,8 +387,8 @@ export const fork = mutation({
 				await ctx.db.patch(dbFeature._id, {
 					forkStats: {
 						forkCount: (dbFeature.forkStats?.forkCount ?? 0) + 1,
-						lastForkedAt: now,
-					},
+						lastForkedAt: now
+					}
 				});
 			}
 		}
@@ -416,7 +414,7 @@ export const fork = mutation({
 				type: args.sourceType,
 				name: sourceName,
 				userId: sourceUserId,
-				forkedAt: now,
+				forkedAt: now
 			},
 			forkStats: undefined,
 			deletedAt: undefined,
@@ -428,13 +426,13 @@ export const fork = mutation({
 			approvedBy: undefined,
 			createdAt: now,
 			lastModified: now,
-			schemaVersion: '1.0.0',
+			schemaVersion: '1.0.0'
 		};
 
 		const docId = await ctx.db.insert('features', forkedFeature);
 
 		return { id: newId, _id: docId };
-	},
+	}
 });
 
 /**
@@ -492,7 +490,7 @@ export const submitForReview = mutation({
  */
 export const seedOfficialFeatures = mutation({
 	args: {
-		features: v.array(v.any()),
+		features: v.array(v.any())
 	},
 	handler: async (ctx, args) => {
 		// Note: In production, add admin role check here
@@ -504,12 +502,7 @@ export const seedOfficialFeatures = mutation({
 				// Check if official feature with same ID already exists
 				const existing = await ctx.db
 					.query('features')
-					.filter((q) =>
-						q.and(
-							q.eq(q.field('id'), feature.id),
-							q.eq(q.field('isOfficial'), true)
-						)
-					)
+					.filter((q) => q.and(q.eq(q.field('id'), feature.id), q.eq(q.field('isOfficial'), true)))
 					.first();
 
 				if (existing) {
@@ -518,13 +511,13 @@ export const seedOfficialFeatures = mutation({
 						...feature,
 						isOfficial: true,
 						userId: undefined,
-						lastModified: now,
+						lastModified: now
 					});
 					results.push({
 						id: feature.id,
 						name: feature.name,
 						success: true,
-						error: 'Updated existing',
+						error: 'Updated existing'
 					});
 					continue;
 				}
@@ -539,26 +532,26 @@ export const seedOfficialFeatures = mutation({
 					isHomebrew: false,
 					createdAt: now,
 					lastModified: now,
-					schemaVersion: '1.0.0',
+					schemaVersion: '1.0.0'
 				});
 
 				results.push({
 					id: feature.id,
 					name: feature.name,
-					success: true,
+					success: true
 				});
 			} catch (err) {
 				results.push({
 					id: feature.id,
 					name: feature.name,
 					success: false,
-					error: err instanceof Error ? err.message : 'Unknown error',
+					error: err instanceof Error ? err.message : 'Unknown error'
 				});
 			}
 		}
 
 		return results;
-	},
+	}
 });
 
 /**
@@ -578,5 +571,5 @@ export const clearOfficialFeatures = mutation({
 		}
 
 		return { deleted: officialFeatures.length };
-	},
+	}
 });

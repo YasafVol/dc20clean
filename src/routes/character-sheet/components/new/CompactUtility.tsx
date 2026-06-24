@@ -166,6 +166,16 @@ const Chip = styled.span<{ $tone?: 'default' | 'resist' | 'vuln' }>`
 // Replace underscores with spaces so the chip reads naturally; capitalize is applied via CSS.
 const formatLabel = (value: string): string => value.replace(/_/g, ' ');
 
+const formatResistanceChip = (type: string, value: string): string => {
+	const normalizedType = type.toLowerCase();
+	if (value === 'true') {
+		if (normalizedType === 'physical') return 'PDR';
+		if (normalizedType === 'elemental') return 'EDR';
+		if (normalizedType === 'mystical' || normalizedType === 'mental') return 'MDR';
+	}
+	return `${formatLabel(type)} ${value === 'half' ? '(½)' : `(${value})`}`;
+};
+
 interface CompactUtilityCalculationData {
 	stats?: {
 		finalMoveSpeed?: number;
@@ -319,9 +329,7 @@ const CompactUtility: React.FC = () => {
 					))}
 					{resistances.map((r: any) => (
 						<Tooltip key={`r-${r.type}`} content={`Source: ${r.source?.name ?? ''}`} position="top">
-							<Chip $tone="resist">
-								{formatLabel(r.type)} {r.value === 'half' ? '(½)' : `(${r.value})`}
-							</Chip>
+							<Chip $tone="resist">{formatResistanceChip(r.type, r.value)}</Chip>
 						</Tooltip>
 					))}
 					{vulnerabilities.map((v: any) => (

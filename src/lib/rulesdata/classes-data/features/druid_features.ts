@@ -186,14 +186,6 @@ export const druidClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'druid_talent_level_2',
-			featureName: 'Talent',
-			levelGained: 2,
-			description:
-				'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
-			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
-		},
-		{
 			id: 'druid_level_5_placeholder',
 			featureName: 'Expert Druid',
 			levelGained: 5,
@@ -237,14 +229,6 @@ export const druidClass: ClassDefinition = {
 					]
 				}
 			]
-		},
-		{
-			id: 'druid_level_8_capstone_placeholder',
-			featureName: 'Class Capstone (Source Unpublished)',
-			levelGained: 9,
-			isFlavor: true,
-			description:
-				'The v0.10.5 class progression grants a Class Capstone Feature at level 9, but this source packet does not publish class-specific capstone mechanics. This entry is intentionally non-mechanical and preserves the legacy ID for saved-character compatibility.'
 		}
 	],
 	subclasses: [

@@ -1,7 +1,7 @@
 /**
  * DC20 v0.10.5 Martial Class Progression Template
  *
- * Applies to: Barbarian, Champion, Commander, Hunter, Monk
+ * Applies by default to full martial classes. Rogue uses a full explicit source table.
  *
  * Changes from 0.9.5:
  * - HP: +8 at level 1, +2 per level after
@@ -10,8 +10,8 @@
  * - Techniques: REMOVED from game
  * - Path Progression now at levels 2, 4, 6, 8 (moved from 7, 10 to 6, 8)
  *
- * Common progression shared by all martial classes.
- * Class-specific features should be added in the 'gains.classFeatures' array.
+ * Common progression table for category-derived martial classes.
+ * Class-specific features are overlaid by classProgressionDefinitions.ts.
  */
 
 import type { ClassProgressionLevel } from '../../progressionTypes';

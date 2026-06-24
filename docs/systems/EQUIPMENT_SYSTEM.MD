@@ -2,7 +2,7 @@
 
 > Purpose: Central reference for custom equipment creation, data models, validation rules, storage, and UI flows.
 > Status: Active
-> Last Updated: 2026-06-19
+> Last Updated: 2026-06-23
 >
 > **Menu Entry:** "Equipage" in Reference Tools section
 
@@ -56,6 +56,7 @@ Ranged custom weapons use a 1-point base budget, automatically include locked `a
 and start with `two-handed` selected as a `-1` property. Keeping Two-Handed opens the
 second positive property point; removing it leaves the ranged weapon with only its
 1-point base budget.
+
 ### UI (`src/routes/custom-equipment/`)
 
 - `CustomEquipment.tsx` — Main page, category selection, tabs
@@ -289,10 +290,10 @@ Rigid.
 | Warded         | 1    | MDR (Mystical Damage Reduction)            |
 
 Spell focus properties now expose structured effects. Protective contributes `AD +1`
-when equipped, Warded contributes Mystical resistance, and spell-specific bonuses such
-as Channeling, Vicious, Powerful, Reach, Long-Ranged, Muffled, Reactive, and Close
-Quarters are surfaced as granted abilities until the calculator has separate
-spell-attack/spell-check/range output fields.
+when equipped, Warded contributes binary MDR (Mystical Damage Reduction), and
+spell-specific bonuses such as Channeling, Vicious, Powerful, Reach, Long-Ranged,
+Muffled, Reactive, and Close Quarters are surfaced as granted abilities until the
+calculator has separate spell-attack/spell-check/range output fields.
 
 ### Spell Focus Effect TODO
 

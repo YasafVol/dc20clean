@@ -237,7 +237,7 @@ export interface SavedCharacter {
 		D?: { name: string; limited: boolean; fluent: boolean };
 	};
 	// Calculated display arrays (optional, regenerated from calculator)
-	resistances?: Array<{ type: string; value: number | 'half'; source: string }>;
+	resistances?: Array<{ type: string; value: number | 'half' | boolean; source: string }>;
 	vulnerabilities?: Array<{ type: string; value: number | 'half'; source: string }>;
 	senses?: Array<{ type: string; range: number; source: string }>;
 	combatTraining?: Array<{ type: string; source: string }>;

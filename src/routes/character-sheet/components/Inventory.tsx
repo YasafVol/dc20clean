@@ -60,7 +60,9 @@ const StyledInventoryInfoIconAccent = styled(StyledInventoryInfoIcon)`
 /** Sentinel value used in the Custom name dropdown to trigger freeform text input */
 const CUSTOM_FREEFORM_VALUE = '__custom_freeform__';
 
-function formatCustomEquipmentCategory(category?: InventoryItemData['customEquipmentCategory']): string {
+function formatCustomEquipmentCategory(
+	category?: InventoryItemData['customEquipmentCategory']
+): string {
 	switch (category) {
 		case 'weapon':
 			return 'Custom Weapon';
@@ -305,10 +307,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 	// Build a short single-line summary shown right under the item name. Keeps
 	// the most useful stats per item type so players don't have to open the
 	// popup just to remember what a weapon does.
-	const buildInlineSummary = (
-		item: InventoryItem | null,
-		invData: InventoryItemData
-	): string => {
+	const buildInlineSummary = (item: InventoryItem | null, invData: InventoryItemData): string => {
 		// Custom items: prefer freeform description, fall back to Equipage description
 		if (invData.itemType === 'Custom') {
 			if (invData.description) {
@@ -402,20 +401,20 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 		if (isCustomFreeform(item)) {
 			// Freeform text input mode
 			return (
-			<StyledInventoryTextInput
-				$isMobile={isMobile}
-				type="text"
-				placeholder="Enter item name..."
-				value={item.itemName}
-				onChange={(e) => handleCustomNameChange(index, e.target.value)}
-				onKeyDown={(e) => {
-					if (e.key === 'Enter') {
-						(e.target as HTMLInputElement).blur();
-					}
-				}}
-				data-testid="item-name"
-				autoFocus
-			/>
+				<StyledInventoryTextInput
+					$isMobile={isMobile}
+					type="text"
+					placeholder="Enter item name..."
+					value={item.itemName}
+					onChange={(e) => handleCustomNameChange(index, e.target.value)}
+					onKeyDown={(e) => {
+						if (e.key === 'Enter') {
+							(e.target as HTMLInputElement).blur();
+						}
+					}}
+					data-testid="item-name"
+					autoFocus
+				/>
 			);
 		}
 
@@ -444,7 +443,9 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 
 	return (
 		<StyledInventorySection $isMobile={isMobile}>
-			<StyledInventoryTitle $isMobile={isMobile}>{t('characterSheet.inventoryTitle')}</StyledInventoryTitle>
+			<StyledInventoryTitle $isMobile={isMobile}>
+				{t('characterSheet.inventoryTitle')}
+			</StyledInventoryTitle>
 
 			{/* Add Item Button */}
 			<StyledAddItemButton $isMobile={isMobile} onClick={addInventorySlot} data-testid="add-item">
@@ -455,25 +456,32 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 				<StyledInventoryHeaderRow>
 					<span></span> {/* Empty column for remove button */}
 					<StyledInventoryHeaderColumn align="center">Eq.</StyledInventoryHeaderColumn>
-					<StyledInventoryHeaderColumn>{t('characterSheet.inventoryColumnType')}</StyledInventoryHeaderColumn>
-					<StyledInventoryHeaderColumn>{t('characterSheet.inventoryColumnItem')}</StyledInventoryHeaderColumn>
-					<StyledInventoryHeaderColumn align="center">{t('characterSheet.inventoryColumnCount')}</StyledInventoryHeaderColumn>
+					<StyledInventoryHeaderColumn>
+						{t('characterSheet.inventoryColumnType')}
+					</StyledInventoryHeaderColumn>
+					<StyledInventoryHeaderColumn>
+						{t('characterSheet.inventoryColumnItem')}
+					</StyledInventoryHeaderColumn>
+					<StyledInventoryHeaderColumn align="center">
+						{t('characterSheet.inventoryColumnCount')}
+					</StyledInventoryHeaderColumn>
 					<StyledInventoryHeaderColumn align="center">
 						<StyledInventoryInfoIcon>i</StyledInventoryInfoIcon>
 					</StyledInventoryHeaderColumn>
-					<StyledInventoryHeaderColumn align="center">{t('characterSheet.inventoryColumnCost')}</StyledInventoryHeaderColumn>
+					<StyledInventoryHeaderColumn align="center">
+						{t('characterSheet.inventoryColumnCost')}
+					</StyledInventoryHeaderColumn>
 				</StyledInventoryHeaderRow>
 
 				{inventory.length === 0 ? (
-					<StyledEmptyInventory>
-						{t('characterSheet.inventoryNoItems')}
-					</StyledEmptyInventory>
+					<StyledEmptyInventory>{t('characterSheet.inventoryNoItems')}</StyledEmptyInventory>
 				) : (
 					inventory.map((item, index) => {
 						const isCustomType = item.itemType === 'Custom';
-						const selectedItem = (!isCustomType && item.itemName)
-							? allItems.find((i) => i.name === item.itemName)
-							: null;
+						const selectedItem =
+							!isCustomType && item.itemName
+								? allItems.find((i) => i.name === item.itemName)
+								: null;
 
 						// For Custom items, determine if the info icon should be clickable
 						const hasCustomInfo = isCustomType && !!item.itemName;
@@ -597,7 +605,9 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 								</div>
 
 								{/* Cost */}
-								<StyledInventoryCost>{isCustomType ? (item.cost || '-') : getItemCost(selectedItem, item.count)}</StyledInventoryCost>
+								<StyledInventoryCost>
+									{isCustomType ? item.cost || '-' : getItemCost(selectedItem, item.count)}
+								</StyledInventoryCost>
 							</StyledInventoryRow>
 						);
 					})

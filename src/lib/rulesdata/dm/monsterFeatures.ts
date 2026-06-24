@@ -59,7 +59,7 @@ const FEATURE_IDS = {
 	dimensionalDisruption: 'feat_c1d2e3f4-9abc-4234-5678-567890cdefab',
 	immutableForm: 'feat_d2e3f4a5-abcd-4345-6789-678901defabc',
 	soulCollector: 'feat_v3e1f2a3-ffff-4fff-ffff-ffffffffffff',
-	waterBody: 'feat_v3e2f3a4-0000-4000-0000-000000000000',
+	waterBody: 'feat_v3e2f3a4-0000-4000-0000-000000000000'
 } as const;
 
 // ============================================================================
@@ -77,9 +77,9 @@ const ONE_POINT_FEATURES: MonsterFeature[] = [
 			{
 				type: 'advantage',
 				target: 'awareness_smell',
-				description: 'Advantage on smell-based Awareness Checks',
-			},
-		],
+				description: 'Advantage on smell-based Awareness Checks'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.keenSight,
@@ -91,9 +91,9 @@ const ONE_POINT_FEATURES: MonsterFeature[] = [
 			{
 				type: 'advantage',
 				target: 'awareness_sight',
-				description: 'Advantage on sight-based Awareness Checks',
-			},
-		],
+				description: 'Advantage on sight-based Awareness Checks'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.largeLungs,
@@ -105,9 +105,9 @@ const ONE_POINT_FEATURES: MonsterFeature[] = [
 			{
 				type: 'hold_breath',
 				value: 60, // minutes
-				description: 'Can hold breath for 1 hour',
-			},
-		],
+				description: 'Can hold breath for 1 hour'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.falseAppearance,
@@ -119,9 +119,9 @@ const ONE_POINT_FEATURES: MonsterFeature[] = [
 			{
 				type: 'stealth',
 				target: 'disguise',
-				description: 'Appears as an object while motionless',
-			},
-		],
+				description: 'Appears as an object while motionless'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.hover,
@@ -133,9 +133,9 @@ const ONE_POINT_FEATURES: MonsterFeature[] = [
 			{
 				type: 'movement',
 				target: 'hover',
-				description: 'Maintains flight even when Prone',
-			},
-		],
+				description: 'Maintains flight even when Prone'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.brightEnergy,
@@ -148,9 +148,9 @@ const ONE_POINT_FEATURES: MonsterFeature[] = [
 				type: 'light',
 				target: 'bright',
 				value: 3, // spaces
-				description: 'Emits bright light in 3-space radius',
-			},
-		],
+				description: 'Emits bright light in 3-space radius'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.forestStride,
@@ -163,9 +163,9 @@ const ONE_POINT_FEATURES: MonsterFeature[] = [
 				type: 'movement',
 				target: 'ignore_difficult_terrain',
 				value: 'plants',
-				description: 'Ignores plant-based difficult terrain',
-			},
-		],
+				description: 'Ignores plant-based difficult terrain'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.amorphous,
@@ -178,9 +178,9 @@ const ONE_POINT_FEATURES: MonsterFeature[] = [
 				type: 'movement',
 				target: 'squeeze',
 				value: 1, // inches
-				description: 'Can fit through 1-inch gaps without squeezing',
-			},
-		],
+				description: 'Can fit through 1-inch gaps without squeezing'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.keenSenses,
@@ -192,14 +192,14 @@ const ONE_POINT_FEATURES: MonsterFeature[] = [
 			{
 				type: 'advantage',
 				target: 'awareness_hearing',
-				description: 'Advantage on hearing-based Awareness Checks',
+				description: 'Advantage on hearing-based Awareness Checks'
 			},
 			{
 				type: 'advantage',
 				target: 'awareness_smell',
-				description: 'Advantage on smell-based Awareness Checks',
-			},
-		],
+				description: 'Advantage on smell-based Awareness Checks'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.troopTactics,
@@ -212,14 +212,15 @@ const ONE_POINT_FEATURES: MonsterFeature[] = [
 				type: 'help_dice',
 				target: 'starting_die',
 				value: 10,
-				description: 'Help Dice start as d10 instead of d4',
-			},
-		],
+				description: 'Help Dice start as d10 instead of d4'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.drawnToSound,
 		name: 'Drawn to Sound',
-		description: 'Taunted by high-pitched sounds (music, screams, verbal components) within 10 spaces.',
+		description:
+			'Taunted by high-pitched sounds (music, screams, verbal components) within 10 spaces.',
 		pointCost: 1,
 		isOfficial: true,
 		effects: [
@@ -227,9 +228,9 @@ const ONE_POINT_FEATURES: MonsterFeature[] = [
 				type: 'vulnerability',
 				target: 'sound',
 				value: 10,
-				description: 'Taunted by high-pitched sounds within 10 spaces',
-			},
-		],
+				description: 'Taunted by high-pitched sounds within 10 spaces'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.sweetScent,
@@ -242,10 +243,10 @@ const ONE_POINT_FEATURES: MonsterFeature[] = [
 				type: 'aura',
 				target: 'allies',
 				value: { radius: 5, attackBonus: 1 },
-				description: 'Allies within 5 spaces gain +1 to attack rolls',
-			},
-		],
-	},
+				description: 'Allies within 5 spaces gain +1 to attack rolls'
+			}
+		]
+	}
 ];
 
 // ============================================================================
@@ -264,15 +265,15 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 			{
 				type: 'movement',
 				target: 'incorporeal',
-				description: 'Can move through creatures and objects as difficult terrain',
+				description: 'Can move through creatures and objects as difficult terrain'
 			},
 			{
 				type: 'damage',
 				target: 'self',
 				value: { min: 3, max: 10, type: 'true' },
-				description: 'Takes True Damage if ending turn inside solid object',
-			},
-		],
+				description: 'Takes True Damage if ending turn inside solid object'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.wispyForm,
@@ -284,9 +285,9 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 			{
 				type: 'defense',
 				target: 'opportunity_attacks',
-				description: 'Attackers have disadvantage on opportunity attacks',
-			},
-		],
+				description: 'Attackers have disadvantage on opportunity attacks'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.fieryRetribution,
@@ -299,9 +300,9 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 				type: 'retribution',
 				target: 'melee_attackers',
 				value: { amount: 1, type: 'fire' },
-				description: 'Deals 1 Fire damage to melee attackers',
-			},
-		],
+				description: 'Deals 1 Fire damage to melee attackers'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.forceful,
@@ -313,19 +314,19 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 			{
 				type: 'advantage',
 				target: 'grapple',
-				description: 'Advantage on Grapple checks',
+				description: 'Advantage on Grapple checks'
 			},
 			{
 				type: 'advantage',
 				target: 'shove',
-				description: 'Advantage on Shove checks',
+				description: 'Advantage on Shove checks'
 			},
 			{
 				type: 'impose_disadvantage',
 				target: 'saves_vs_grapple_shove',
-				description: 'Targets have disadvantage on saves against grapple/shove',
-			},
-		],
+				description: 'Targets have disadvantage on saves against grapple/shove'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.packTactics,
@@ -338,9 +339,9 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 				type: 'attack_bonus',
 				target: 'flanking',
 				value: 2,
-				description: '+2 to attack rolls when flanking',
-			},
-		],
+				description: '+2 to attack rolls when flanking'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.telepathicLink,
@@ -353,9 +354,9 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 				type: 'telepathy',
 				target: 'master',
 				value: 'same_plane',
-				description: 'Telepathic communication with master anywhere on same plane',
-			},
-		],
+				description: 'Telepathic communication with master anywhere on same plane'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.tunneler,
@@ -368,9 +369,9 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 				type: 'movement',
 				target: 'burrow_stone',
 				value: 1, // spaces
-				description: 'Can burrow through stone, leaving 1-space tunnel',
-			},
-		],
+				description: 'Can burrow through stone, leaving 1-space tunnel'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.spiderClimb,
@@ -382,9 +383,9 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 			{
 				type: 'movement',
 				target: 'climb',
-				description: 'Can walk on ceilings and walls without Athletics check',
-			},
-		],
+				description: 'Can walk on ceilings and walls without Athletics check'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.webWalk,
@@ -396,14 +397,14 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 			{
 				type: 'movement',
 				target: 'web',
-				description: 'Moves freely through webs',
+				description: 'Moves freely through webs'
 			},
 			{
 				type: 'sense',
 				target: 'web_sense',
-				description: 'Knows location of creatures touching same web',
-			},
-		],
+				description: 'Knows location of creatures touching same web'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.reconstitution,
@@ -416,9 +417,9 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 				type: 'reaction',
 				target: 'self_or_ally',
 				value: { range: 15, tempHP: 2, trigger: 'on_damage' },
-				description: 'Grant 2 Temp HP to self or allied Thrall when damaged',
-			},
-		],
+				description: 'Grant 2 Temp HP to self or allied Thrall when damaged'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.invisibility,
@@ -431,9 +432,9 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 				type: 'stealth',
 				target: 'invisibility',
 				value: { condition: 'dim_light_or_darkness' },
-				description: 'Becomes invisible in dim light or darkness',
-			},
-		],
+				description: 'Becomes invisible in dim light or darkness'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.shadowMerge,
@@ -446,9 +447,9 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 				type: 'stealth',
 				target: 'invisibility',
 				value: { condition: 'hide_in_dim_light' },
-				description: 'Becomes invisible when hiding in dim light',
-			},
-		],
+				description: 'Becomes invisible when hiding in dim light'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.fieryWake,
@@ -461,9 +462,9 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 				type: 'trail',
 				target: 'movement',
 				value: { damageType: 'fire', damage: 1 },
-				description: 'Movement leaves flames dealing 1 Fire damage',
-			},
-		],
+				description: 'Movement leaves flames dealing 1 Fire damage'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.elementalSiphon,
@@ -476,9 +477,9 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 				type: 'reaction',
 				target: 'damage_sharing',
 				value: { damageType: 'lightning' },
-				description: 'Can split lightning damage with nearby creature',
-			},
-		],
+				description: 'Can split lightning damage with nearby creature'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.plagueBody,
@@ -491,9 +492,9 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 				type: 'aura',
 				target: 'enemies',
 				value: { disease: 'rot_plague', trigger: 'end_turn' },
-				description: 'Creatures ending turn nearby contract Rot Plague',
-			},
-		],
+				description: 'Creatures ending turn nearby contract Rot Plague'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.frostAura,
@@ -506,9 +507,9 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 				type: 'aura',
 				target: 'mixed',
 				value: { selfHeal: 1, enemyCondition: 'slowed', trigger: 'start_turn' },
-				description: 'Regain 1 HP and slow enemies at start of turn',
-			},
-		],
+				description: 'Regain 1 HP and slow enemies at start of turn'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.telepathicLure,
@@ -521,9 +522,9 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 				type: 'aura',
 				target: 'humanoids',
 				value: { radius: 10, condition: 'taunted', saveNegates: true },
-				description: 'Humanoids within 10 spaces must save or be taunted',
-			},
-		],
+				description: 'Humanoids within 10 spaces must save or be taunted'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.toxicGrowth,
@@ -536,9 +537,9 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 				type: 'stacking',
 				target: 'attacks',
 				value: { triggers: ['corrosion', 'poison'], bonusPerStack: 1 },
-				description: '+1 Attack per Toxic Mass stack from Corrosion/Poison damage',
-			},
-		],
+				description: '+1 Attack per Toxic Mass stack from Corrosion/Poison damage'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.toxicVines,
@@ -551,9 +552,9 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 				type: 'passive_damage',
 				target: 'conditioned_enemies',
 				value: { damage: 1, damageType: 'poison', trigger: 'start_turn' },
-				description: 'Conditioned creatures take 1 Poison at start of turn',
-			},
-		],
+				description: 'Conditioned creatures take 1 Poison at start of turn'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.wranglingVines,
@@ -566,10 +567,10 @@ const TWO_POINT_FEATURES: MonsterFeature[] = [
 				type: 'grapple',
 				target: 'capacity',
 				value: 4,
-				description: 'Can grapple up to 4 creatures simultaneously',
-			},
-		],
-	},
+				description: 'Can grapple up to 4 creatures simultaneously'
+			}
+		]
+	}
 ];
 
 // ============================================================================
@@ -587,15 +588,15 @@ const THREE_POINT_FEATURES: MonsterFeature[] = [
 			{
 				type: 'restriction',
 				target: 'opportunity_attacks',
-				description: 'Cannot make Opportunity Attacks',
+				description: 'Cannot make Opportunity Attacks'
 			},
 			{
 				type: 'bonus',
 				target: 'spell_duel',
 				value: 2,
-				description: '+2 to Spell Duel checks',
-			},
-		],
+				description: '+2 to Spell Duel checks'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.unrelenting,
@@ -608,9 +609,9 @@ const THREE_POINT_FEATURES: MonsterFeature[] = [
 				type: 'damage_threshold',
 				target: 'hp_minimum',
 				value: 1,
-				description: 'Cannot be reduced below 1 HP except by Heavy Hit or Radiant damage',
-			},
-		],
+				description: 'Cannot be reduced below 1 HP except by Heavy Hit or Radiant damage'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.stress,
@@ -623,9 +624,9 @@ const THREE_POINT_FEATURES: MonsterFeature[] = [
 				type: 'stress_weakness',
 				target: 'defenses',
 				value: { threshold: 3, defense_penalty: -5, lose_dr: true },
-				description: 'At 3 Stress: loses DR and -5 to all Defenses',
-			},
-		],
+				description: 'At 3 Stress: loses DR and -5 to all Defenses'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.dimensionalDisruption,
@@ -637,9 +638,9 @@ const THREE_POINT_FEATURES: MonsterFeature[] = [
 			{
 				type: 'vulnerability',
 				target: 'radiant',
-				description: 'Radiant damage disables Engulf and Swallow abilities',
-			},
-		],
+				description: 'Radiant damage disables Engulf and Swallow abilities'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.immutableForm,
@@ -651,9 +652,9 @@ const THREE_POINT_FEATURES: MonsterFeature[] = [
 			{
 				type: 'immunity',
 				target: 'form_alteration',
-				description: 'Immune to polymorph, petrification, and other form-altering effects',
-			},
-		],
+				description: 'Immune to polymorph, petrification, and other form-altering effects'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.soulCollector,
@@ -666,9 +667,9 @@ const THREE_POINT_FEATURES: MonsterFeature[] = [
 				type: 'passive',
 				target: 'soul_harvest',
 				value: { radius: 5 },
-				description: 'Collects souls of creatures that die within 5 spaces',
-			},
-		],
+				description: 'Collects souls of creatures that die within 5 spaces'
+			}
+		]
 	},
 	{
 		id: FEATURE_IDS.waterBody,
@@ -681,10 +682,10 @@ const THREE_POINT_FEATURES: MonsterFeature[] = [
 				type: 'body',
 				target: 'engulf',
 				value: { damage: 2, damageType: 'corrosion', condition: 'slowed' },
-				description: 'Can occupy same space; creatures inside take 2 Corrosion and are Slowed',
-			},
-		],
-	},
+				description: 'Can occupy same space; creatures inside take 2 Corrosion and are Slowed'
+			}
+		]
+	}
 ];
 
 // ============================================================================
@@ -697,7 +698,7 @@ const THREE_POINT_FEATURES: MonsterFeature[] = [
 export const OFFICIAL_MONSTER_FEATURES: readonly MonsterFeature[] = [
 	...ONE_POINT_FEATURES,
 	...TWO_POINT_FEATURES,
-	...THREE_POINT_FEATURES,
+	...THREE_POINT_FEATURES
 ] as const;
 
 /**
@@ -720,7 +721,7 @@ const OFFICIAL_FEATURES_BY_NAME: ReadonlyMap<string, MonsterFeature> = new Map(
 export const FEATURES_BY_COST: Readonly<Record<number, readonly MonsterFeature[]>> = {
 	1: ONE_POINT_FEATURES,
 	2: TWO_POINT_FEATURES,
-	3: THREE_POINT_FEATURES,
+	3: THREE_POINT_FEATURES
 } as const;
 
 // ============================================================================
@@ -804,7 +805,7 @@ export function validateFeatureBudget(
 		valid: spent <= maxPoints,
 		spent,
 		remaining: Math.max(0, remaining),
-		overBy,
+		overBy
 	};
 }
 

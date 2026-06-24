@@ -183,9 +183,7 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 	};
 
 	const hasConversions =
-		conversions.skillToTradeConversions > 0 ||
-		conversions.tradeToSkillConversions > 0 ||
-		conversions.tradeToLanguageConversions > 0;
+		conversions.skillToTradeConversions > 0 || conversions.tradeToLanguageConversions > 0;
 
 	const skillPointsRemaining = pointsData.availableSkillPoints - pointsData.skillPointsUsed;
 	const canConvertSkillToTrade = skillPointsRemaining >= 1;
@@ -219,14 +217,7 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 						{conversions.skillToTradeConversions > 0
 							? `${conversions.skillToTradeConversions} skill → ${conversions.skillToTradeConversions * 2} trade`
 							: ''}
-						{conversions.skillToTradeConversions > 0 &&
-						(conversions.tradeToSkillConversions > 0 || conversions.tradeToLanguageConversions > 0)
-							? ', '
-							: ''}
-						{conversions.tradeToSkillConversions > 0
-							? `${conversions.tradeToSkillConversions} trade → ${Math.floor(conversions.tradeToSkillConversions / 2)} skill`
-							: ''}
-						{conversions.tradeToSkillConversions > 0 && conversions.tradeToLanguageConversions > 0
+						{conversions.skillToTradeConversions > 0 && conversions.tradeToLanguageConversions > 0
 							? ', '
 							: ''}
 						{conversions.tradeToLanguageConversions > 0
@@ -303,9 +294,9 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 													handleSkillChange(skill.id, level);
 												}
 											}}
-$isActive={isActive}
-$isDisabled={isDisabled}
-$needsElevation={needsElevation && canSelect}
+											$isActive={isActive}
+											$isDisabled={isDisabled}
+											$needsElevation={needsElevation && canSelect}
 										>
 											{level}
 											{needsElevation && canSelect && <ElevationIndicator>⬆</ElevationIndicator>}

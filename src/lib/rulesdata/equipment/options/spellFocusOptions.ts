@@ -163,7 +163,7 @@ export const SPELL_FOCUS_PROPERTIES: SpellFocusProperty[] = [
 		description: 'You have MDR (Mystical Damage Reduction).',
 		cost: 1,
 		effect: 'MDR',
-		effects: [{ type: 'GRANT_RESISTANCE', target: 'mystical', value: 'half' }]
+		effects: [{ type: 'GRANT_RESISTANCE', target: 'mystical', value: true }]
 	}
 ];
 

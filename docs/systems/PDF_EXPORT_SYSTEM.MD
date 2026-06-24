@@ -3,7 +3,7 @@
 > Purpose
 >
 > Capture the architecture, scope, and acceptance criteria for exporting a calculated character sheet to the official DC20 fillable PDF. This document is the system overview aligned with existing docs (no separate planning spec is currently tracked in-repo).
-> Last Updated: 2026-06-19
+> Last Updated: 2026-06-23
 
 ---
 
@@ -27,7 +27,7 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 - **v0.10.5 Resource Totals** — PDF SP/MP fields consume calculated class progression totals. Martial characters start at 2 SP, spellcasters at 6 MP, and hybrids at 1 SP / 3 MP; v0.10.5 level 10 totals are 6 SP for martials, 21 MP for spellcasters, and 3 SP / 11 MP for hybrids.
 - **v0.10.5 Expert Feature Effects** — level 5 Expert Features keep their legacy placeholder IDs but now contribute modeled effects through the calculator before export, including skill point, HP/MP, speed/jump, spell, and maneuver grants where those mechanics are structured.
 - **Transformation Layer** — `src/lib/pdf/transformers.ts` maps calculation results into a structured DTO that matches the PDF field list.
-- **Spell Compatibility Lookup** — Spell IDs are resolved through `getSpellById()` before export so approved v0.10 spell aliases display as their v0.10.5 names. Unknown, reworked, or ambiguous historical spell strings fall back to the saved display text instead of forcing a silent rules reinterpretation.
+- **Spell Display Lookup** — PDF export is a pure consumer of stored character data. It may resolve exact current catalog IDs to display names, but it must not apply compatibility aliases or migration decisions. Legacy, reworked, deprecated, or ambiguous spell IDs are exported as the stored value until an explicit rules-upgrade draft changes the saved data.
 - **PDF Field Maps** — Versioned field maps for different PDF versions:
   - `src/lib/pdf/fieldMap.dc20-0.10.ts` — Default v0.10 field map
   - `src/lib/pdf/fieldMap.dc20-0.9.5.ts` — Legacy v0.9.5 field map
@@ -56,6 +56,10 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 - **Movement**: Ground speed, jump distance, hold breath, movement types (burrow, swim, fly, climb, glide) with half/full speed indicators
 - **Languages**: Up to 4 languages with limited/fluent mastery
 - **Equipment & Inventory**: Attacks, equipped items, attunement, carried items (carried field also includes feature names)
+- **Damage Reduction**: `reduction.physical`, `reduction.elemental`, and
+  `reduction.mystical` are binary DTO flags. The current v0.10/v0.9.5 PDF template
+  field for mystical reduction is named `Mental-Damage-Reduction`; the field map keeps
+  that external name while the internal contract uses `mystical`.
 
 ### 3.2 PDF Field Manifest
 

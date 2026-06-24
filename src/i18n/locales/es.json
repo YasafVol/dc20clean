@@ -1,21 +1,21 @@
 {
-  "common": {
-    "cancel": "Cancelar",
-    "confirm": "Confirmar",
-    "delete": "Eliminar",
-    "edit": "Editar",
-    "save": "Guardar",
-    "close": "Cerrar",
-    "back": "Atrás",
-    "next": "Siguiente",
-    "previous": "Anterior",
-    "complete": "Completar",
-    "restart": "Reiniciar",
-    "yes": "Sí",
-    "no": "No",
-    "loading": "Cargando...",
-    "error": "Error",
-    "success": "Éxito"
+	"common": {
+		"cancel": "Cancelar",
+		"confirm": "Confirmar",
+		"delete": "Eliminar",
+		"edit": "Editar",
+		"save": "Guardar",
+		"close": "Cerrar",
+		"back": "Atrás",
+		"next": "Siguiente",
+		"previous": "Anterior",
+		"complete": "Completar",
+		"restart": "Reiniciar",
+		"yes": "Sí",
+		"no": "No",
+		"loading": "Cargando...",
+		"error": "Error",
+		"success": "Éxito"
 	},
 	"menu": {
 		"title": "Creador de Personajes DC20",
@@ -596,5 +596,5 @@
 	},
 	"snackbar": {
 		"closeAriaLabel": "Cerrar"
-    }
+	}
 }

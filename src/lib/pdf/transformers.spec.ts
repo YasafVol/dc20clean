@@ -118,11 +118,11 @@ describe('PDF Export Formatters', () => {
 			expect(result).toContain('Shield');
 		});
 
-		it('resolves legacy spell IDs through compatibility aliases', () => {
+		it('keeps legacy spell IDs as stored values', () => {
 			const result = formatSpellsAndManeuvers(['summon-familiar', 'absorb-element', 'Fly'], []);
-			expect(result).toContain('Call Familiar');
-			expect(result).toContain('Absorb Elements');
-			expect(result).toContain('Blessing of Air');
+			expect(result).toContain('summon-familiar');
+			expect(result).toContain('absorb-element');
+			expect(result).toContain('Fly');
 		});
 
 		it('groups cantrips separately from leveled spells', () => {

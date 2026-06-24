@@ -27,13 +27,19 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		stats: { hp: 80, pd: 11, ad: 15, attack: 6, saveDC: 16 },
 		features: [
 			{ name: 'Keen Smell', description: 'ADV on Awareness Checks using smell.' },
-			{ name: 'Large Lungs', description: 'Can hold breath for up to 1 hour.' },
+			{ name: 'Large Lungs', description: 'Can hold breath for up to 1 hour.' }
 		],
 		actions: [
 			{ name: 'Maul', ap: 1, targetDefense: 'PD', damage: 3, traits: ['Heavy Hit (+1)'] },
 			{ name: 'Crash', ap: 1, targetDefense: 'AD', damage: 3, traits: ['2 Space Line'] },
-			{ name: 'Spray', ap: 2, targetDefense: 'AD', damage: 2, traits: ['5 Space Line', 'Knockdown'] },
-		],
+			{
+				name: 'Spray',
+				ap: 2,
+				targetDefense: 'AD',
+				damage: 2,
+				traits: ['5 Space Line', 'Knockdown']
+			}
+		]
 	},
 	{
 		id: 'mon_v2_necro_002',
@@ -48,8 +54,8 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 			{ name: 'Spellcaster', description: '+2 bonus to Spell Duels.' },
 			{
 				name: 'Reconstitution',
-				description: 'Reaction: Self or Thrall within 15 spaces gains 2 Temp HP on damage.',
-			},
+				description: 'Reaction: Self or Thrall within 15 spaces gains 2 Temp HP on damage.'
+			}
 		],
 		actions: [
 			{ name: 'Umbral Bolt', ap: 1, targetDefense: 'PD', damage: 2, traits: ['Sap Enhancement'] },
@@ -57,15 +63,15 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 				name: 'Command Thrall',
 				ap: 2,
 				targetDefense: 'None',
-				description: 'One Thrall moves and attacks with ADV.',
+				description: 'One Thrall moves and attacks with ADV.'
 			},
 			{
 				name: 'Create Undead',
 				ap: 2,
 				targetDefense: 'None',
-				description: 'Summon 1 Thrall within 5 spaces.',
-			},
-		],
+				description: 'Summon 1 Thrall within 5 spaces.'
+			}
+		]
 	},
 	{
 		id: 'mon_v2_collector_003',
@@ -78,12 +84,18 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		stats: { hp: 70, pd: 14, ad: 17, attack: 8, saveDC: 18 },
 		features: [
 			{ name: 'Soul Collector', description: 'Collects souls of those who die within 5 spaces.' },
-			{ name: 'Invisibility', description: 'Invisible while in Dim Light or Darkness.' },
+			{ name: 'Invisibility', description: 'Invisible while in Dim Light or Darkness.' }
 		],
 		actions: [
 			{ name: 'Dark Claws', ap: 1, targetDefense: 'PD', damage: 3 },
-			{ name: 'Doom Call', ap: 2, targetDefense: 'AD', damage: 1, traits: ['5 Space Aura', 'Doomed'] },
-		],
+			{
+				name: 'Doom Call',
+				ap: 2,
+				targetDefense: 'AD',
+				damage: 1,
+				traits: ['5 Space Aura', 'Doomed']
+			}
+		]
 	},
 	{
 		id: 'mon_v2_penguin_004',
@@ -101,9 +113,9 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 				ap: 2,
 				targetDefense: 'AD',
 				damage: 2,
-				traits: ['10 Space Line', 'Immobilized'],
-			},
-		],
+				traits: ['10 Space Line', 'Immobilized']
+			}
+		]
 	},
 	{
 		id: 'mon_v2_blightq_005',
@@ -121,9 +133,9 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 				ap: 2,
 				targetDefense: 'AD',
 				damage: 1,
-				traits: ['5 Space Cone', 'Burning'],
-			},
-		],
+				traits: ['5 Space Cone', 'Burning']
+			}
+		]
 	},
 	{
 		id: 'mon_v2_shadow_006',
@@ -137,13 +149,13 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		features: [
 			{
 				name: 'Shadow Merge',
-				description: 'Become Invisible when taking the Hide action in Dim Light.',
-			},
+				description: 'Become Invisible when taking the Hide action in Dim Light.'
+			}
 		],
 		actions: [
 			{ name: 'Soul Rend', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Doomed'] },
-			{ name: 'Night Stride', ap: 1, description: 'Teleport 5 spaces between shadows.' },
-		],
+			{ name: 'Night Stride', ap: 1, description: 'Teleport 5 spaces between shadows.' }
+		]
 	},
 	{
 		id: 'mon_v2_cinder_007',
@@ -160,9 +172,9 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 				name: 'Ember Drift',
 				ap: 3,
 				targetDefense: 'AD',
-				description: 'Fly 5 spaces, applying Burning and Blinded.',
-			},
-		],
+				description: 'Fly 5 spaces, applying Burning and Blinded.'
+			}
+		]
 	},
 	{
 		id: 'mon_v2_serpent_008',
@@ -174,7 +186,7 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		type: 'Elemental',
 		stats: { hp: 13, pd: 12, ad: 12, attack: 4, saveDC: 14 },
 		features: [
-			{ name: 'Fiery Wake', description: 'Leaves a trail of flames that deal 1 Fire damage.' },
+			{ name: 'Fiery Wake', description: 'Leaves a trail of flames that deal 1 Fire damage.' }
 		],
 		actions: [
 			{ name: 'Bite', ap: 1, targetDefense: 'PD', damage: 2, traits: ['Fire'] },
@@ -183,9 +195,9 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 				ap: 3,
 				targetDefense: 'AD',
 				damage: 1,
-				traits: ['3 Space Aura', 'Burning'],
-			},
-		],
+				traits: ['3 Space Aura', 'Burning']
+			}
+		]
 	},
 	{
 		id: 'mon_v2_gargoyle_009',
@@ -202,9 +214,9 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 				name: 'Ram',
 				ap: 2,
 				targetDefense: 'AD',
-				description: 'Move and Strike, pushing target 1 space.',
-			},
-		],
+				description: 'Move and Strike, pushing target 1 space.'
+			}
+		]
 	},
 	{
 		id: 'mon_v2_lbug_010',
@@ -218,8 +230,8 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		features: [
 			{
 				name: 'Elemental Siphon',
-				description: 'Reaction: Split lightning damage with a nearby creature.',
-			},
+				description: 'Reaction: Split lightning damage with a nearby creature.'
+			}
 		],
 		actions: [
 			{ name: 'Lightning Bolt', ap: 1, targetDefense: 'PD', damage: 2 },
@@ -228,9 +240,9 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 				ap: 2,
 				targetDefense: 'AD',
 				damage: 1,
-				traits: ['3 Space Aura', 'Teleport'],
-			},
-		],
+				traits: ['3 Space Aura', 'Teleport']
+			}
+		]
 	},
 	{
 		id: 'mon_v2_phound_011',
@@ -242,12 +254,12 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		type: 'Monstrosity',
 		stats: { hp: 12, pd: 11, ad: 8, attack: 4, saveDC: 14 },
 		features: [
-			{ name: 'Plague Body', description: 'Creatures ending turn nearby contract Rot Plague.' },
+			{ name: 'Plague Body', description: 'Creatures ending turn nearby contract Rot Plague.' }
 		],
 		actions: [
 			{ name: 'Rend', ap: 1, targetDefense: 'PD', damage: 2, traits: ['Poisoned'] },
-			{ name: 'Plague Breath', ap: 3, targetDefense: 'AD', damage: 2, traits: ['3 Space Cone'] },
-		],
+			{ name: 'Plague Breath', ap: 3, targetDefense: 'AD', damage: 2, traits: ['3 Space Cone'] }
+		]
 	},
 	{
 		id: 'mon_v2_sentinel_012',
@@ -261,13 +273,13 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		features: [
 			{
 				name: 'Frost Aura',
-				description: 'Regain 1 HP and slow nearby enemies at start of turn.',
-			},
+				description: 'Regain 1 HP and slow nearby enemies at start of turn.'
+			}
 		],
 		actions: [
 			{ name: 'Frost Slam', ap: 1, targetDefense: 'PD', damage: 2 },
-			{ name: 'Arctic Winds', ap: 3, targetDefense: 'AD', damage: 1, traits: ['Frost Aura Area'] },
-		],
+			{ name: 'Arctic Winds', ap: 3, targetDefense: 'AD', damage: 1, traits: ['Frost Aura Area'] }
+		]
 	},
 	{
 		id: 'mon_v2_rug_013',
@@ -280,8 +292,8 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		stats: { hp: 10, pd: 11, ad: 13, attack: 4, saveDC: 14 },
 		actions: [
 			{ name: 'Wrap', ap: 1, targetDefense: 'AD', damage: 0, traits: ['Grapple'] },
-			{ name: 'Squeeze', ap: 1, targetDefense: 'AD', damage: 1, traits: ['ADV vs Grappled'] },
-		],
+			{ name: 'Squeeze', ap: 1, targetDefense: 'AD', damage: 1, traits: ['ADV vs Grappled'] }
+		]
 	},
 	{
 		id: 'mon_v2_wardrobe_014',
@@ -294,8 +306,8 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		stats: { hp: 15, pd: 14, ad: 14, attack: 4, saveDC: 14 },
 		actions: [
 			{ name: 'Door Slam', ap: 1, targetDefense: 'PD', damage: 2, traits: ['Dazed'] },
-			{ name: 'Grasping Clothes', ap: 1, targetDefense: 'None', traits: ['Contest', 'Grapple'] },
-		],
+			{ name: 'Grasping Clothes', ap: 1, targetDefense: 'None', traits: ['Contest', 'Grapple'] }
+		]
 	},
 	{
 		id: 'mon_v2_twig_015',
@@ -311,9 +323,9 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 			{
 				name: 'Entangling Vines',
 				ap: 2,
-				description: 'Creates difficult terrain in a 2-space sphere.',
-			},
-		],
+				description: 'Creates difficult terrain in a 2-space sphere.'
+			}
+		]
 	},
 	{
 		id: 'mon_v2_cwisp_016',
@@ -326,8 +338,8 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		stats: { hp: 10, pd: 13, ad: 10, attack: 4, saveDC: 14 },
 		actions: [
 			{ name: 'Discharge', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Exposed'] },
-			{ name: "Nature's Healing", ap: 2, description: 'Target regains 1-2 HP.' },
-		],
+			{ name: "Nature's Healing", ap: 2, description: 'Target regains 1-2 HP.' }
+		]
 	},
 	{
 		id: 'mon_v2_corwisp_017',
@@ -340,8 +352,8 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		stats: { hp: 10, pd: 13, ad: 10, attack: 4, saveDC: 14 },
 		actions: [
 			{ name: 'Corrupted Discharge', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Necrosis'] },
-			{ name: 'Manipulation', ap: 1, description: 'Force target to move or attack.' },
-		],
+			{ name: 'Manipulation', ap: 1, description: 'Force target to move or attack.' }
+		]
 	},
 	{
 		id: 'mon_v2_zombie_018',
@@ -355,13 +367,13 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		features: [
 			{
 				name: 'Unrelenting',
-				description: 'Only reduced below 1 HP by Heavy Hits or Radiant damage.',
-			},
+				description: 'Only reduced below 1 HP by Heavy Hits or Radiant damage.'
+			}
 		],
 		actions: [
 			{ name: 'Bite or Slam', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Infect'] },
-			{ name: 'Slam (Grappled)', ap: 1, targetDefense: 'AD', damage: 1 },
-		],
+			{ name: 'Slam (Grappled)', ap: 1, targetDefense: 'AD', damage: 1 }
+		]
 	},
 	{
 		id: 'mon_v2_goblin_019',
@@ -374,8 +386,8 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		stats: { hp: 8, pd: 11, ad: 11, attack: 3, saveDC: 13 },
 		actions: [
 			{ name: 'Knife', ap: 1, targetDefense: 'PD', damage: 1 },
-			{ name: 'Shortbow', ap: 1, targetDefense: 'PD', damage: 1 },
-		],
+			{ name: 'Shortbow', ap: 1, targetDefense: 'PD', damage: 1 }
+		]
 	},
 	{
 		id: 'mon_v2_kobold_020',
@@ -389,8 +401,8 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		features: [{ name: 'Troop Tactics', description: 'Help Dice granted start as a d10.' }],
 		actions: [
 			{ name: 'Spear', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Extend Attack'] },
-			{ name: 'Trap', ap: 1, description: 'Set a hidden trap within 5 spaces.' },
-		],
+			{ name: 'Trap', ap: 1, description: 'Set a hidden trap within 5 spaces.' }
+		]
 	},
 	{
 		id: 'mon_v2_dummy_021',
@@ -403,8 +415,8 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		stats: { hp: 6, pd: 12, ad: 12, attack: 2, saveDC: 12 },
 		actions: [
 			{ name: 'Slam', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Grab'] },
-			{ name: 'Whirlwind', ap: 2, targetDefense: 'AD', damage: 1, traits: ['1 Space Aura'] },
-		],
+			{ name: 'Whirlwind', ap: 2, targetDefense: 'AD', damage: 1, traits: ['1 Space Aura'] }
+		]
 	},
 	{
 		id: 'mon_v2_rat_022',
@@ -417,8 +429,8 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		stats: { hp: 5, pd: 10, ad: 10, attack: 2, saveDC: 12 },
 		actions: [
 			{ name: 'Bite', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Impair'] },
-			{ name: 'Dart Around', ap: 1, description: 'Take Disengage and Move actions.' },
-		],
+			{ name: 'Dart Around', ap: 1, description: 'Take Disengage and Move actions.' }
+		]
 	},
 	{
 		id: 'mon_v2_hhound_023',
@@ -431,8 +443,8 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		stats: { hp: 5, pd: 11, ad: 9, attack: 2, saveDC: 12 },
 		actions: [
 			{ name: 'Bite', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Pin'] },
-			{ name: 'Intimidate', ap: 1, description: 'Contest to Intimidate target.' },
-		],
+			{ name: 'Intimidate', ap: 1, description: 'Contest to Intimidate target.' }
+		]
 	},
 	{
 		id: 'mon_v2_thief_024',
@@ -445,8 +457,8 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		stats: { hp: 4, pd: 12, ad: 8, attack: 2, saveDC: 12 },
 		actions: [
 			{ name: 'Dart', ap: 1, targetDefense: 'PD', damage: 0, traits: ['Hinder'] },
-			{ name: 'Dagger', ap: 1, targetDefense: 'PD', damage: 1 },
-		],
+			{ name: 'Dagger', ap: 1, targetDefense: 'PD', damage: 1 }
+		]
 	},
 	{
 		id: 'mon_v2_thug_025',
@@ -459,8 +471,8 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		stats: { hp: 8, pd: 11, ad: 11, attack: 3, saveDC: 13 },
 		actions: [
 			{ name: 'Fist', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Trip', 'Grapple'] },
-			{ name: 'Slam (Grappled)', ap: 1, targetDefense: 'AD', damage: 1 },
-		],
+			{ name: 'Slam (Grappled)', ap: 1, targetDefense: 'AD', damage: 1 }
+		]
 	},
 	{
 		id: 'mon_v2_thrall_026',
@@ -472,8 +484,8 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		type: 'Undead',
 		stats: { hp: 5, pd: 10, ad: 14, attack: 4, saveDC: 14 },
 		actions: [
-			{ name: 'Attack', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Physical or Umbral'] },
-		],
+			{ name: 'Attack', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Physical or Umbral'] }
+		]
 	},
 	{
 		id: 'mon_v2_penguin_basic_027',
@@ -486,8 +498,8 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		stats: { hp: 5, pd: 10, ad: 10, attack: 3, saveDC: 13 },
 		actions: [
 			{ name: 'Beak', ap: 1, targetDefense: 'PD', damage: 1 },
-			{ name: 'Slip and Slide', ap: 2, description: 'Move up to swim speed while prone.' },
-		],
+			{ name: 'Slip and Slide', ap: 2, description: 'Move up to swim speed while prone.' }
+		]
 	},
 	{
 		id: 'mon_v2_mmaker_028',
@@ -498,9 +510,7 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		size: 'Tiny',
 		type: 'Fey',
 		stats: { hp: 20, pd: 20, ad: 20, attack: 5, saveDC: 15 },
-		features: [
-			{ name: 'Stress', description: 'Loses DR and -5 Defenses at 3 Stress points.' },
-		],
+		features: [{ name: 'Stress', description: 'Loses DR and -5 Defenses at 3 Stress points.' }],
 		actions: [
 			{ name: 'Mocking Joke', ap: 1, description: 'Target is Taunted for 1 minute.' },
 			{
@@ -508,9 +518,9 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 				ap: 2,
 				targetDefense: 'AD',
 				damage: 1,
-				traits: ['1 Space Aura', 'Teleport'],
-			},
-		],
+				traits: ['1 Space Aura', 'Teleport']
+			}
+		]
 	},
 
 	// ============================================================================
@@ -529,20 +539,26 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 			{ name: 'Keen Sight', description: 'ADV on Awareness Checks using sight.' },
 			{
 				name: 'Telepathic Link',
-				description: 'Telepathic link with master at any distance on the same plane.',
-			},
+				description: 'Telepathic link with master at any distance on the same plane.'
+			}
 		],
 		actions: [
 			{ name: 'Talons', ap: 1, targetDefense: 'PD', damage: 2, traits: ['Blinded Enhancement'] },
-			{ name: 'Eye Beam', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Fire', 'Heavy Hit (+1)'] },
+			{
+				name: 'Eye Beam',
+				ap: 1,
+				targetDefense: 'PD',
+				damage: 1,
+				traits: ['Fire', 'Heavy Hit (+1)']
+			},
 			{
 				name: 'Elemental Ray',
 				ap: 2,
 				targetDefense: 'AD',
 				damage: 1,
-				traits: ['10 Space Line', 'Fire'],
-			},
-		],
+				traits: ['10 Space Line', 'Fire']
+			}
+		]
 	},
 	{
 		id: 'mon_v3_screecher_030',
@@ -557,8 +573,8 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 			{
 				name: 'Drawn to Sound',
 				description:
-					'Taunted by high-pitched sounds (music, screams, verbal components) within 10 spaces.',
-			},
+					'Taunted by high-pitched sounds (music, screams, verbal components) within 10 spaces.'
+			}
 		],
 		actions: [
 			{ name: 'Claw', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Bleed', 'Grab'] },
@@ -567,16 +583,16 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 				ap: 1,
 				targetDefense: 'AD',
 				damage: 1,
-				traits: ['Requires Grappled', 'Doomed 1'],
+				traits: ['Requires Grappled', 'Doomed 1']
 			},
 			{
 				name: 'Sonic Screech',
 				ap: 2,
 				targetDefense: 'AD',
 				damage: 1,
-				traits: ['5 Space Cone', 'Dazed'],
-			},
-		],
+				traits: ['5 Space Cone', 'Dazed']
+			}
+		]
 	},
 	{
 		id: 'mon_v3_mawworm_031',
@@ -590,9 +606,9 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		features: [
 			{
 				name: 'Dimensional Disruption',
-				description: 'Radiant damage prevents Engulf until next turn.',
+				description: 'Radiant damage prevents Engulf until next turn.'
 			},
-			{ name: 'Tunneler', description: 'Burrow through solid stone leaving a 1-space tunnel.' },
+			{ name: 'Tunneler', description: 'Burrow through solid stone leaving a 1-space tunnel.' }
 		],
 		actions: [
 			{ name: 'Bite', ap: 1, targetDefense: 'PD', damage: 2, traits: ['Grapple'] },
@@ -601,9 +617,9 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 				name: 'Engulf',
 				ap: 2,
 				description:
-					'Target Grappled must make Might Save or be Swallowed into interdimensional space.',
-			},
-		],
+					'Target Grappled must make Might Save or be Swallowed into interdimensional space.'
+			}
+		]
 	},
 	{
 		id: 'mon_v3_mreaper_032',
@@ -618,8 +634,8 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 			{ name: 'Spider Climb', description: 'Walk on ceilings/vertical surfaces normally.' },
 			{
 				name: 'Web Walk',
-				description: 'Walk through webs unimpeded; sense creatures on same web.',
-			},
+				description: 'Walk through webs unimpeded; sense creatures on same web.'
+			}
 		],
 		actions: [
 			{
@@ -627,17 +643,23 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 				ap: 1,
 				targetDefense: 'PD',
 				damage: 2,
-				traits: ['Corrosion', 'Poisoned (Limb Effects)'],
+				traits: ['Corrosion', 'Poisoned (Limb Effects)']
 			},
-			{ name: 'Leg Spear', ap: 1, targetDefense: 'PD', damage: 3, traits: ['3 Space Range', 'Pull'] },
+			{
+				name: 'Leg Spear',
+				ap: 1,
+				targetDefense: 'PD',
+				damage: 3,
+				traits: ['3 Space Range', 'Pull']
+			},
 			{
 				name: 'Marrow Drain',
 				ap: 2,
 				targetDefense: 'PD',
 				damage: 3,
-				traits: ['Requires Poisoned', 'Heal'],
-			},
-		],
+				traits: ['Requires Poisoned', 'Heal']
+			}
+		]
 	},
 	{
 		id: 'mon_v3_psymanta_033',
@@ -651,8 +673,8 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		features: [
 			{
 				name: 'Telepathic Lure',
-				description: '10 Space Aura: Humanoids must Save or be Taunted by familiar voices.',
-			},
+				description: '10 Space Aura: Humanoids must Save or be Taunted by familiar voices.'
+			}
 		],
 		actions: [
 			{
@@ -660,16 +682,16 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 				ap: 1,
 				targetDefense: 'PD',
 				damage: 2,
-				traits: ['Psychic', 'Dazed'],
+				traits: ['Psychic', 'Dazed']
 			},
 			{
 				name: 'Psychic Pulse',
 				ap: 2,
 				targetDefense: 'AD',
 				damage: 1,
-				traits: ['2 Space Aura', 'Force Movement'],
-			},
-		],
+				traits: ['2 Space Aura', 'Force Movement']
+			}
+		]
 	},
 	{
 		id: 'mon_v3_aooze_034',
@@ -684,12 +706,12 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 			{
 				name: 'Water Body',
 				description:
-					'Occupy same space as others. Creatures inside take 2 Corrosion and are Slowed.',
+					'Occupy same space as others. Creatures inside take 2 Corrosion and are Slowed.'
 			},
 			{
 				name: 'False Appearance',
-				description: 'Indistinguishable from regular water while motionless.',
-			},
+				description: 'Indistinguishable from regular water while motionless.'
+			}
 		],
 		actions: [
 			{
@@ -697,16 +719,16 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 				ap: 1,
 				targetDefense: 'PD',
 				damage: 1,
-				traits: ['3 Space Range', 'Pull'],
+				traits: ['3 Space Range', 'Pull']
 			},
 			{
 				name: 'Drown',
 				ap: 1,
 				targetDefense: 'AD',
 				damage: 1,
-				traits: ['Targets in Space', 'Suffocating'],
-			},
-		],
+				traits: ['Targets in Space', 'Suffocating']
+			}
+		]
 	},
 	{
 		id: 'mon_v3_tslime_035',
@@ -720,14 +742,14 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		features: [
 			{
 				name: 'Toxic Growth',
-				description: 'Gain Toxic Mass stacks from Corrosion/Poison damage; +1 to Attacks per stack.',
-			},
+				description: 'Gain Toxic Mass stacks from Corrosion/Poison damage; +1 to Attacks per stack.'
+			}
 		],
 		actions: [
 			{ name: 'Toxic Limb', ap: 1, targetDefense: 'PD', damage: 4, traits: ['Corrosion'] },
 			{ name: 'Spit Slime', ap: 1, targetDefense: 'PD', damage: 2, traits: ['Summon Mini Slime'] },
-			{ name: 'Decay', ap: 2, targetDefense: 'AD', damage: 2, traits: ['2 Space Aura', 'Poisoned'] },
-		],
+			{ name: 'Decay', ap: 2, targetDefense: 'AD', damage: 2, traits: ['2 Space Aura', 'Poisoned'] }
+		]
 	},
 	{
 		id: 'mon_v3_cooze_036',
@@ -744,21 +766,21 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 				ap: 1,
 				targetDefense: 'PD',
 				damage: 3,
-				traits: ['Umbral', 'Heal if target Bleeding'],
+				traits: ['Umbral', 'Heal if target Bleeding']
 			},
 			{
 				name: 'Sanguine Split',
 				ap: 1,
-				description: 'Spend 7 HP to create an exact copy of self with 7 HP.',
+				description: 'Spend 7 HP to create an exact copy of self with 7 HP.'
 			},
 			{
 				name: 'Blood Pulse',
 				ap: 2,
 				targetDefense: 'AD',
 				damage: 1,
-				traits: ['2 Space Aura', 'Bleeding'],
-			},
-		],
+				traits: ['2 Space Aura', 'Bleeding']
+			}
+		]
 	},
 	{
 		id: 'mon_v3_pshambler_037',
@@ -772,18 +794,24 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 		features: [
 			{
 				name: 'Toxic Vines',
-				description: 'Creatures with conditions from you take 1 Poison damage at start of turn.',
-			},
+				description: 'Creatures with conditions from you take 1 Poison damage at start of turn.'
+			}
 		],
 		actions: [
 			{ name: 'Slam', ap: 1, targetDefense: 'PD', damage: 3, traits: ['Knockback'] },
-			{ name: 'Vine', ap: 1, targetDefense: 'PD', damage: 2, traits: ['10 Space Range', 'Tethered'] },
+			{
+				name: 'Vine',
+				ap: 1,
+				targetDefense: 'PD',
+				damage: 2,
+				traits: ['10 Space Range', 'Tethered']
+			},
 			{
 				name: 'Entangling Terrain',
 				ap: 2,
-				description: '5 Space Sphere: Targets make Save or are Restrained.',
-			},
-		],
+				description: '5 Space Sphere: Targets make Save or are Restrained.'
+			}
+		]
 	},
 	{
 		id: 'mon_v3_cbloom_038',
@@ -798,18 +826,18 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 			{ name: 'Sweet Scent', description: '5 Space Aura: Allies gain +1 to Attacks.' },
 			{
 				name: 'Wrangling Vines',
-				description: 'Can Grapple up to 4 different creatures at once.',
-			},
+				description: 'Can Grapple up to 4 different creatures at once.'
+			}
 		],
 		actions: [
 			{ name: 'Bite', ap: 1, targetDefense: 'PD', damage: 1, traits: ['Grapple'] },
 			{
 				name: 'Swallow',
 				ap: 1,
-				description: 'Grappled target makes Save or is Swallowed; takes Corrosion damage.',
+				description: 'Grappled target makes Save or is Swallowed; takes Corrosion damage.'
 			},
-			{ name: 'Empowering Sap', ap: 1, description: 'Ally gains 2 Temp HP and ADV on next attack.' },
-		],
+			{ name: 'Empowering Sap', ap: 1, description: 'Ally gains 2 Temp HP and ADV on next attack.' }
+		]
 	},
 	{
 		id: 'mon_v3_sporebloom_039',
@@ -826,15 +854,15 @@ const RAW_BESTIARY_MONSTERS: RawSeedMonster[] = [
 				ap: 1,
 				targetDefense: 'AD',
 				damage: 2,
-				traits: ['2 Space Aura', 'Poison', 'Stunned'],
+				traits: ['2 Space Aura', 'Poison', 'Stunned']
 			},
 			{
 				name: 'Spore Cloud',
 				ap: 2,
-				description: 'Create 5 Space Aura of spores; area is Heavily Obscured.',
-			},
-		],
-	},
+				description: 'Create 5 Space Aura of spores; area is Heavily Obscured.'
+			}
+		]
+	}
 ];
 
 /**

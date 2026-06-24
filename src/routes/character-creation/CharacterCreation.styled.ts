@@ -9,139 +9,141 @@ import { theme, media } from '../character-sheet/styles/theme';
 
 // Main page container with background
 export const PageContainer = styled.div`
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: url('/src/assets/BlackBG.jpg') center/cover fixed;
-  font-family: ${theme.typography.fontFamily.primary};
-  color: ${theme.colors.text.primary};
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	background: url('/src/assets/BlackBG.jpg') center/cover fixed;
+	font-family: ${theme.typography.fontFamily.primary};
+	color: ${theme.colors.text.primary};
 `;
 
 // Sticky header with stepper navigation
 export const StepperHeader = styled.header`
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  width: 100%;
-  background: ${theme.colors.bg.primary}ee;
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid ${theme.colors.bg.tertiary};
+	position: sticky;
+	top: 0;
+	z-index: 50;
+	width: 100%;
+	background: ${theme.colors.bg.primary}ee;
+	backdrop-filter: blur(12px);
+	border-bottom: 1px solid ${theme.colors.bg.tertiary};
 `;
 
 // Mobile progress bar (hidden on desktop)
 export const MobileProgressBar = styled.div`
-  height: 4px;
-  width: 100%;
-  background: ${theme.colors.bg.secondary};
-  position: relative;
-  overflow: hidden;
+	height: 4px;
+	width: 100%;
+	background: ${theme.colors.bg.secondary};
+	position: relative;
+	overflow: hidden;
 
-  ${media.desktop} {
-    display: none;
-  }
+	${media.desktop} {
+		display: none;
+	}
 `;
 
 export const ProgressFill = styled(motion.div)<{ $progress: number }>`
-  height: 100%;
-  width: ${(props) => props.$progress}%;
-  background: linear-gradient(
-    90deg,
-    ${theme.colors.crystal.primary},
-    ${theme.colors.crystal.secondary}
-  );
-  transition: width 0.3s ease;
+	height: 100%;
+	width: ${(props) => props.$progress}%;
+	background: linear-gradient(
+		90deg,
+		${theme.colors.crystal.primary},
+		${theme.colors.crystal.secondary}
+	);
+	transition: width 0.3s ease;
 `;
 
 // Header content wrapper
 export const HeaderContent = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: ${theme.spacing[4]};
-  padding: ${theme.spacing[2]} 13rem ${theme.spacing[2]} ${theme.spacing[4]};
-  min-height: 80px;
-  max-width: 1460px;
-  margin: 0 auto;
-  width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: ${theme.spacing[4]};
+	padding: ${theme.spacing[2]} 13rem ${theme.spacing[2]} ${theme.spacing[4]};
+	min-height: 80px;
+	max-width: 1460px;
+	margin: 0 auto;
+	width: 100%;
 
-  ${media.mobile} {
-    padding: ${theme.spacing[2]} ${theme.spacing[4]};
-  }
+	${media.mobile} {
+		padding: ${theme.spacing[2]} ${theme.spacing[4]};
+	}
 `;
 
 // Navigation sections
 export const NavSection = styled.div<{ $align?: 'start' | 'center' | 'end' }>`
-  display: flex;
-  align-items: center;
-  width: 140px;
-  flex-shrink: 0;
-  justify-content: ${(props) => props.$align || 'start'};
-  gap: ${theme.spacing[3]};
-  position: relative;
-  z-index: 10;
-  overflow: visible; /* Ensure buttons aren't clipped */
+	display: flex;
+	align-items: center;
+	width: 140px;
+	flex-shrink: 0;
+	justify-content: ${(props) => props.$align || 'start'};
+	gap: ${theme.spacing[3]};
+	position: relative;
+	z-index: 10;
+	overflow: visible; /* Ensure buttons aren't clipped */
 
-  /* Center section should not overflow and block other sections */
-  ${(props) => props.$align === 'center' && `
+	/* Center section should not overflow and block other sections */
+	${(props) =>
+		props.$align === 'center' &&
+		`
     overflow: hidden;
     z-index: 5; /* Lower than left/right sections */
   `}
 
-  ${media.mobile} {
-    width: auto;
-  }
+	${media.mobile} {
+		width: auto;
+	}
 `;
 
 // Mobile title (shown instead of stepper on small screens)
 export const MobileTitle = styled.span`
-  font-size: ${theme.typography.fontSize.lg};
-  font-weight: ${theme.typography.fontWeight.bold};
-  color: ${theme.colors.crystal.primary};
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
+	font-size: ${theme.typography.fontSize.lg};
+	font-weight: ${theme.typography.fontWeight.bold};
+	color: ${theme.colors.crystal.primary};
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 
-  ${media.desktop} {
-    display: none;
-  }
+	${media.desktop} {
+		display: none;
+	}
 `;
 
 // Desktop stepper container
 export const StepperContainer = styled.div`
-  display: none;
-  align-items: center;
-  justify-content: center;
-  gap: ${theme.spacing[1]};
-  flex: 1;
-  min-width: 0;
-  overflow-x: auto;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	gap: ${theme.spacing[1]};
+	flex: 1;
+	min-width: 0;
+	overflow-x: auto;
 
-  ${media.desktop} {
-    display: flex;
-    flex-wrap: wrap;
-  }
+	${media.desktop} {
+		display: flex;
+		flex-wrap: wrap;
+	}
 `;
 
 // Individual step item
 export const StepItem = styled(motion.div)<{ $isActive?: boolean; $isCompleted?: boolean }>`
-  display: flex;
-  align-items: center;
-  gap: ${theme.spacing[2]};
-  padding: ${theme.spacing[1.5]} ${theme.spacing[2]};
-  border-radius: 9999px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s ease;
+	display: flex;
+	align-items: center;
+	gap: ${theme.spacing[2]};
+	padding: ${theme.spacing[1.5]} ${theme.spacing[2]};
+	border-radius: 9999px;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: all 0.2s ease;
 
-  ${(props) => {
-    if (props.$isActive) {
-      return `
+	${(props) => {
+		if (props.$isActive) {
+			return `
         background: ${theme.colors.crystal.primaryAlpha50};
         color: ${theme.colors.crystal.primary};
         box-shadow: 0 4px 12px ${theme.colors.crystal.primaryAlpha30};
       `;
-    } else if (props.$isCompleted) {
-      return `
+		} else if (props.$isCompleted) {
+			return `
         background: ${theme.colors.crystal.primaryAlpha20};
         color: ${theme.colors.crystal.primary};
         
@@ -149,8 +151,8 @@ export const StepItem = styled(motion.div)<{ $isActive?: boolean; $isCompleted?:
           background: ${theme.colors.crystal.primaryAlpha30};
         }
       `;
-    } else {
-      return `
+		} else {
+			return `
         color: ${theme.colors.text.secondary};
         
         &:hover {
@@ -158,101 +160,100 @@ export const StepItem = styled(motion.div)<{ $isActive?: boolean; $isCompleted?:
           color: ${theme.colors.text.primary};
         }
       `;
-    }
-  }}
+		}
+	}}
 `;
 
 // Step number circle
 export const StepNumber = styled.div<{ $isActive?: boolean; $isCompleted?: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  font-size: ${theme.typography.fontSize.xs};
-  font-weight: ${theme.typography.fontWeight.bold};
-  transition: all 0.2s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.bold};
+	transition: all 0.2s ease;
 
-  ${(props) => {
-    if (props.$isActive) {
-      return `
+	${(props) => {
+		if (props.$isActive) {
+			return `
         background: ${theme.colors.bg.primary};
         color: ${theme.colors.crystal.primary};
       `;
-    } else if (props.$isCompleted) {
-      return `
+		} else if (props.$isCompleted) {
+			return `
         background: ${theme.colors.crystal.primary};
         color: ${theme.colors.bg.primary};
       `;
-    } else {
-      return `
+		} else {
+			return `
         background: ${theme.colors.bg.tertiary}40;
         color: ${theme.colors.text.secondary};
       `;
-    }
-  }}
+		}
+	}}
 `;
 
 // Step label text
 export const StepLabel = styled.span<{ $isActive?: boolean }>`
-  font-size: ${theme.typography.fontSize.sm};
-  font-weight: ${(props) =>
-    props.$isActive ? theme.typography.fontWeight.bold : theme.typography.fontWeight.medium};
+	font-size: ${theme.typography.fontSize.sm};
+	font-weight: ${(props) =>
+		props.$isActive ? theme.typography.fontWeight.bold : theme.typography.fontWeight.medium};
 `;
 
 // Chevron separator between steps
 export const StepSeparator = styled.div`
-  color: ${theme.colors.text.muted};
-  opacity: 0.3;
-  margin: 0 ${theme.spacing[1]};
-  flex-shrink: 0;
+	color: ${theme.colors.text.muted};
+	opacity: 0.3;
+	margin: 0 ${theme.spacing[1]};
+	flex-shrink: 0;
 `;
 
 // Main content area
 export const MainContent = styled.main`
-  max-width: 1460px;
-  width: 100%;
-  margin: 0 auto;
-  padding: ${theme.spacing[8]} ${theme.spacing[4]};
-  flex: 1;
+	max-width: 1460px;
+	width: 100%;
+	margin: 0 auto;
+	padding: ${theme.spacing[8]} ${theme.spacing[4]};
+	flex: 1;
 
-  ${media.mobile} {
-    padding: ${theme.spacing[4]} ${theme.spacing[2]};
-  }
+	${media.mobile} {
+		padding: ${theme.spacing[4]} ${theme.spacing[2]};
+	}
 `;
 
 // Auth status wrapper (hidden on mobile)
 export const AuthWrapper = styled.div`
-  display: none;
+	display: none;
 
-  ${media.wide} {
-    display: block;
-  }
+	${media.wide} {
+		display: block;
+	}
 `;
 
 // Restart button - minimal transparent style
 export const RestartButton = styled.button`
-  background: transparent;
-  border: none;
-  color: ${theme.colors.text.muted};
-  cursor: pointer;
-  font-size: ${theme.typography.fontSize.sm};
-  padding: ${theme.spacing[2]};
-  text-decoration: underline;
-  margin-left: ${theme.spacing[2]};
-  transition: all 0.2s ease;
-  position: relative;
-  z-index: 100; /* Ensure it's above stepper */
-  pointer-events: auto; /* Ensure it catches clicks */
+	background: transparent;
+	border: none;
+	color: ${theme.colors.text.muted};
+	cursor: pointer;
+	font-size: ${theme.typography.fontSize.sm};
+	padding: ${theme.spacing[2]};
+	text-decoration: underline;
+	margin-left: ${theme.spacing[2]};
+	transition: all 0.2s ease;
+	position: relative;
+	z-index: 100; /* Ensure it's above stepper */
+	pointer-events: auto; /* Ensure it catches clicks */
 
-  &:hover {
-    color: ${theme.colors.text.secondary};
-    text-decoration: none;
-  }
+	&:hover {
+		color: ${theme.colors.text.secondary};
+		text-decoration: none;
+	}
 
-  &:active {
-    color: ${theme.colors.accent.danger};
-  }
+	&:active {
+		color: ${theme.colors.accent.danger};
+	}
 `;
-

@@ -15,8 +15,8 @@ export const spellbladeClass: ClassDefinition = {
 	martialPath: {
 		combatTraining: {
 			weapons: ['Weapons'],
-			armor: ['Light Armor'],
-			shields: ['Light Shields']
+			armor: ['Light_Armor'],
+			shields: ['Light_Shields']
 		},
 		maneuvers: {
 			learnsAllAttack: true,
@@ -55,12 +55,12 @@ export const spellbladeClass: ClassDefinition = {
 			levelGained: 1,
 			description:
 				'You gain combat training in weapons, spell focuses, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.',
+			isProgressionDerived: true,
 			effects: [
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Spell_Focuses', value: true },
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true },
-				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Shields', value: true },
-				{ type: 'GRANT_MANEUVERS', target: 'all_attack', value: 4 }
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Shields', value: true }
 			]
 		},
 		{
@@ -69,6 +69,7 @@ export const spellbladeClass: ClassDefinition = {
 			levelGained: 1,
 			description:
 				'You gain the ability to cast spells. Choose 2 Spell Schools; you can learn spells from those Schools or with Weapon/Ward tags.',
+			isProgressionDerived: true,
 			effects: []
 		},
 		{
@@ -77,7 +78,15 @@ export const spellbladeClass: ClassDefinition = {
 			levelGained: 1,
 			isFlavor: true,
 			description:
-				'Spellblades wield magic drawn from patrons, oaths, bloodlines, personal study, artistic expression, or mysterious relics.'
+				'Spellblades wield magic drawn from patrons, oaths, bloodlines, personal study, artistic expression, or mysterious relics.',
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'spellblade_source_of_power',
+					value:
+						'Spellblades wield magic drawn from patrons, oaths, bloodlines, personal study, artistic expression, or mysterious relics.'
+				}
+			]
 		},
 		{
 			id: 'spellblade_bound_weapon',
@@ -237,22 +246,30 @@ export const spellbladeClass: ClassDefinition = {
 			levelGained: 1,
 			isFlavor: true,
 			description:
-				'Focus for 1 minute to detect certain creature types within 20 spaces; Spell Checks reveal their nature and location until the end of your next turn.'
+				'Focus for 1 minute to detect certain creature types within 20 spaces; Spell Checks reveal their nature and location until the end of your next turn.',
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'spellblade_sense_magic',
+					value:
+						'Focus for 1 minute to detect certain creature types within 20 spaces; Spell Checks reveal their nature and location until the end of your next turn.'
+				}
+			]
 		},
 		{
 			id: 'spellblade_spellstrike',
 			featureName: 'Spellstrike',
 			levelGained: 2,
 			description:
-				'Once on each of your turns when you make a Martial Attack, you can also cast a Spell as part of the same Action, spending 1 AP less than normal. Converged Action: the Spell can only target 1 creature who must be a target of the Attack, and the range of the Attack cannot exceed the range of the Spell. If the Spell requires a Check, it uses your Attack Check instead; Saves use your Save DC. Harmonic Strike: the Martial Attack and Spell are treated as 1 Attack and can benefit from Martial Enhancements and Spell Enhancements; the Spell does not require Somatic Components.'
-		},
-		{
-			id: 'spellblade_talent_level_2',
-			featureName: 'Talent',
-			levelGained: 2,
-			description:
-				'You gain 1 Talent of your choice. You must meet any prerequisites to select it.',
-			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
+				'Once on each of your turns when you make a Martial Attack, you can also cast a Spell as part of the same Action, spending 1 AP less than normal. Converged Action: the Spell can only target 1 creature who must be a target of the Attack, and the range of the Attack cannot exceed the range of the Spell. If the Spell requires a Check, it uses your Attack Check instead; Saves use your Save DC. Harmonic Strike: the Martial Attack and Spell are treated as 1 Attack and can benefit from Martial Enhancements and Spell Enhancements; the Spell does not require Somatic Components.',
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'spellblade_spellstrike',
+					value:
+						'Once per turn when making a Martial Attack, cast a Spell as part of the same Action for 1 AP less. The Spell must target 1 creature targeted by the Attack, cannot exceed the Spell range, uses the Attack Check if it requires a Check, and uses your Save DC for Saves. The combined attack can benefit from Martial and Spell Enhancements and does not require Somatic Components.'
+				}
+			]
 		},
 		{
 			id: 'spellblade_level_5_placeholder',
@@ -298,14 +315,6 @@ export const spellbladeClass: ClassDefinition = {
 					]
 				}
 			]
-		},
-		{
-			id: 'spellblade_level_8_capstone_placeholder',
-			featureName: 'Class Capstone (Source Unpublished)',
-			levelGained: 9,
-			isFlavor: true,
-			description:
-				'The v0.10.5 class progression grants a Class Capstone Feature at level 9, but this source packet does not publish class-specific capstone mechanics. This entry is intentionally non-mechanical and preserves the legacy ID for saved-character compatibility.'
 		}
 	],
 	subclasses: [
@@ -364,7 +373,14 @@ export const spellbladeClass: ClassDefinition = {
 					levelGained: 3,
 					isFlavor: true,
 					description:
-						'You swear tenets such as Heart of Bravery, Light in the Darkness, Instill Pain, Peacekeeper, Protect the Weak, Unrelenting Effort, or Vengeance. While upholding your oath, you have ADV on Checks to rally non-hostile allies to your cause.'
+						'You swear tenets such as Heart of Bravery, Light in the Darkness, Instill Pain, Peacekeeper, Protect the Weak, Unrelenting Effort, or Vengeance. While upholding your oath, you have ADV on Checks to rally non-hostile allies to your cause.',
+					effects: [
+						{
+							type: 'GRANT_ADV_ON_CHECK',
+							target: 'rally_non_hostile_allies',
+							value: 'ADV'
+						}
+					]
 				}
 			]
 		},
@@ -500,7 +516,14 @@ export const spellbladeClass: ClassDefinition = {
 					levelGained: 3,
 					isFlavor: true,
 					description:
-						'You have ADV on checks to interpret or understand magical runes you can see.'
+						'You have ADV on checks to interpret or understand magical runes you can see.',
+					effects: [
+						{
+							type: 'GRANT_ADV_ON_CHECK',
+							target: 'interpret_magical_runes',
+							value: 'ADV'
+						}
+					]
 				},
 				{
 					id: 'spellblade_rune_names',
@@ -508,7 +531,15 @@ export const spellbladeClass: ClassDefinition = {
 					levelGained: 3,
 					isFlavor: true,
 					description:
-						'Common rune names include: Earth (Uruz/Terra), Flame (Ild/Ignis), Frost (Isaz/Frigus), Lightning (Thurisaz/Fulmen), Water (Laquz/Aqua), Wind (Ansuz/Ventus).'
+						'Common rune names include: Earth (Uruz/Terra), Flame (Ild/Ignis), Frost (Isaz/Frigus), Lightning (Thurisaz/Fulmen), Water (Laquz/Aqua), Wind (Ansuz/Ventus).',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'spellblade_rune_names',
+							value:
+								'Common rune names include: Earth (Uruz/Terra), Flame (Ild/Ignis), Frost (Isaz/Frigus), Lightning (Thurisaz/Fulmen), Water (Laquz/Aqua), Wind (Ansuz/Ventus).'
+						}
+					]
 				}
 			]
 		}

@@ -19,7 +19,9 @@ const MartialManual: React.FC = () => {
 	const [expandedManeuvers, setExpandedManeuvers] = useState<Set<string>>(new Set());
 
 	const availableApCosts = useMemo(() => {
-		return Array.from(new Set(allManeuvers.map((maneuver) => maneuver.cost.ap))).sort((a, b) => a - b);
+		return Array.from(new Set(allManeuvers.map((maneuver) => maneuver.cost.ap))).sort(
+			(a, b) => a - b
+		);
 	}, []);
 
 	const availableSpCosts = useMemo(() => {

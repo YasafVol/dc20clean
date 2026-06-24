@@ -87,7 +87,10 @@ interface InventoryPopupProps {
 	} | null;
 	onClose: () => void;
 	/** Called when a custom freeform item's editable fields are changed */
-	onUpdateCustomItem?: (itemId: string, updates: Partial<Pick<InventoryItemData, 'description' | 'cost'>>) => void;
+	onUpdateCustomItem?: (
+		itemId: string,
+		updates: Partial<Pick<InventoryItemData, 'description' | 'cost'>>
+	) => void;
 }
 
 const InventoryPopup: React.FC<InventoryPopupProps> = ({
@@ -112,8 +115,7 @@ const InventoryPopup: React.FC<InventoryPopupProps> = ({
 	if (!selectedInventoryItem) return null;
 
 	const { inventoryData, item } = selectedInventoryItem;
-	const isEditableCustom =
-		inventoryData.itemType === 'Custom' && !inventoryData.customEquipmentId;
+	const isEditableCustom = inventoryData.itemType === 'Custom' && !inventoryData.customEquipmentId;
 
 	const infoList = getInventoryItemInfo(item, inventoryData);
 
@@ -134,9 +136,7 @@ const InventoryPopup: React.FC<InventoryPopupProps> = ({
 			<StyledFeaturePopupContent onClick={(e) => e.stopPropagation()}>
 				<StyledFeaturePopupHeader>
 					<StyledFeaturePopupTitle>
-						{item?.name ||
-							inventoryData.itemName ||
-							t('characterSheet.inventoryUnknownItem')}
+						{item?.name || inventoryData.itemName || t('characterSheet.inventoryUnknownItem')}
 					</StyledFeaturePopupTitle>
 					<StyledFeaturePopupClose onClick={onClose}>×</StyledFeaturePopupClose>
 				</StyledFeaturePopupHeader>

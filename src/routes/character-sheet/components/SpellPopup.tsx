@@ -52,8 +52,7 @@ const SpellPopup: React.FC<SpellPopupProps> = ({ spell, onClose }) => {
 						<>
 							<br />
 							<br />
-							<strong>Spell Passive:</strong>{' '}
-							<RichDescription text={spell.spellPassive} />
+							<strong>Spell Passive:</strong> <RichDescription text={spell.spellPassive} />
 						</>
 					)}
 				</StyledFeaturePopupDescription>

@@ -71,7 +71,7 @@ export const LIGHT_ARMOR_PROPERTIES: ArmorProperty[] = [
 		cost: 2,
 		armorTypes: ['light'],
 		lightOnly: true,
-		effects: [{ type: 'GRANT_RESISTANCE', target: 'elemental', value: 'half' }]
+		effects: [{ type: 'GRANT_RESISTANCE', target: 'elemental', value: true }]
 	}
 ];
 
@@ -105,7 +105,7 @@ export const HEAVY_ARMOR_PROPERTIES: ArmorProperty[] = [
 		cost: 2,
 		armorTypes: ['heavy'],
 		heavyOnly: true,
-		effects: [{ type: 'GRANT_RESISTANCE', target: 'physical', value: 'half' }]
+		effects: [{ type: 'GRANT_RESISTANCE', target: 'physical', value: true }]
 	},
 	{
 		id: 'edr-heavy',
@@ -114,7 +114,7 @@ export const HEAVY_ARMOR_PROPERTIES: ArmorProperty[] = [
 		cost: 2,
 		armorTypes: ['heavy'],
 		heavyOnly: true,
-		effects: [{ type: 'GRANT_RESISTANCE', target: 'elemental', value: 'half' }]
+		effects: [{ type: 'GRANT_RESISTANCE', target: 'elemental', value: true }]
 	},
 	{
 		id: 'bulky',

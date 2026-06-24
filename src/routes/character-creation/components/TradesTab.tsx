@@ -187,12 +187,10 @@ const TradesTab: React.FC<TradesTabProps> = ({
 	};
 
 	const hasConversions =
-		conversions.skillToTradeConversions > 0 ||
-		conversions.tradeToSkillConversions > 0 ||
-		conversions.tradeToLanguageConversions > 0;
+		conversions.skillToTradeConversions > 0 || conversions.tradeToLanguageConversions > 0;
 
 	const tradePointsRemaining = pointsData.availableTradePoints - pointsData.tradePointsUsed;
-	const canConvertTradeToSkill = tradePointsRemaining >= 2;
+	const canUndoSkillToTrade = conversions.skillToTradeConversions > 0 && tradePointsRemaining >= 2;
 	const canConvertTradeToLanguage = tradePointsRemaining >= 1;
 
 	return (
@@ -221,14 +219,7 @@ const TradesTab: React.FC<TradesTabProps> = ({
 						{conversions.skillToTradeConversions > 0
 							? `${conversions.skillToTradeConversions} skill → ${conversions.skillToTradeConversions * 2} trade`
 							: ''}
-						{conversions.skillToTradeConversions > 0 &&
-						(conversions.tradeToSkillConversions > 0 || conversions.tradeToLanguageConversions > 0)
-							? ', '
-							: ''}
-						{conversions.tradeToSkillConversions > 0
-							? `${conversions.tradeToSkillConversions} trade → ${Math.floor(conversions.tradeToSkillConversions / 2)} skill`
-							: ''}
-						{conversions.tradeToSkillConversions > 0 && conversions.tradeToLanguageConversions > 0
+						{conversions.skillToTradeConversions > 0 && conversions.tradeToLanguageConversions > 0
 							? ', '
 							: ''}
 						{conversions.tradeToLanguageConversions > 0
@@ -241,10 +232,10 @@ const TradesTab: React.FC<TradesTabProps> = ({
 						variant="outline"
 						size="sm"
 						onClick={actions.convertTradeToSkill}
-						disabled={!canConvertTradeToSkill}
+						disabled={!canUndoSkillToTrade}
 						className="border-white/50 bg-transparent"
 					>
-						Convert 2 Trade → 1 Skill Point
+						Undo 1 Skill → 2 Trade
 					</Button>
 					<Button
 						variant="outline"

@@ -2,7 +2,7 @@
 
 > Purpose: End-to-end map of Character Sheet UI: architecture, components, data sources, and interactions.
 > Status: Active
-> Last Updated: 2026-06-20
+> Last Updated: 2026-06-23
 
 ## Recent UX additions
 
@@ -25,6 +25,10 @@
 - **Compatibility-preserving sheet fallbacks**: `CompactUtility` now falls back to stored `SavedCharacter.finalMoveSpeed`, `SavedCharacter.finalJumpDistance`, and persisted inventory currency when compatibility fences suppress fresh calculator output. The spells table resolves legacy spell display-name aliases through the canonical spell catalog before deciding a row is custom, so renamed legacy spells still render with catalog details.
 - **Condition keyword tooltips**: New shared `RichDescription` component scans description text for condition names (handles stacking suffix e.g. `Slowed 2`, `Burning 3`) and renders matched tokens as accent-coloured, hover/tap-activated tooltip targets. Wired into `FeaturePopup`, `SpellPopup`, inline spell descriptions in `Spells.tsx`, `Maneuvers.tsx`, `InventoryPopup` info rows, and `EnhancedFeatures` ability descriptions. Mobile uses tap-to-toggle; desktop uses hover with click-outside dismiss. Catalog source: `src/lib/rulesdata/conditions/conditions.data.ts`.
 - **Active condition mechanics**: `ActiveConditionsTracker` stores non-stacking conditions by base ID and stack-using conditions as concrete IDs like `slowed-2`. `conditionEffectsAnalyzer` normalizes those IDs for badges and rolls, applies Disoriented only to mental saves, Weakened only to physical saves, Restrained as immobilized, and Exhaustion as a flat numeric penalty on checks/saves.
+- **Rage toggle condition mapping**: the Rage button writes both `ui.combatToggles.isRaging` and `ui.activeConditions.while_raging`, so calculator-visible Rage effects use the same state as the sheet toggle.
+- **Damage reduction display**: `calculation.resistances[]` entries with value `true` and type `physical`, `elemental`, or `mystical` are displayed as binary PDR, EDR, or MDR instead of resistance values.
+- **Advantage note display**: `GRANT_ADV_ON_CHECK` effects are collected into `calculation.grantedAbilities` with type `advantage`, giving class features such as Commander Natural Leader a sheet-visible note without changing roll math.
+- **Collected rules notes**: Class features that are descriptive, flavor, or in-game-only should still enter calculator output through collected effects. `GRANT_ABILITY` and `GRANT_ADV_ON_CHECK` notes give the future Effects / Rules Notes surface deterministic source-attributed data instead of prose-only feature records.
 
 New files: `components/RulebookPanel.tsx`, `components/RichDescription.tsx`. Rulebook PDF imported via Vite `?url` from `docs/assets/DC20 RPG 0.10.5 Beta v1.pdf`.
 
@@ -115,10 +119,14 @@ For `upgrade-required` and `view-only` characters, the sheet suppresses fresh ca
 - Add a centralized sheet-facing effect presentation service that takes `EnhancedCalculationResult` plus source-attributed effects and returns categorized rows for:
   - calculator-applied effects already represented in stat/budget breakdowns,
   - collected sheet effects (`movements`, `senses`, `resistances`, `vulnerabilities`, `combatTraining`),
-  - manual in-game effects (`GRANT_ABILITY`, `conditionalModifiers`, `GRANT_ADV_ON_CHECK`, non-condition `GRANT_ADV_ON_SAVE`),
+  - manual in-game effects (`GRANT_ABILITY`, `conditionalModifiers`, non-condition `GRANT_ADV_ON_SAVE`),
   - unsupported or weakly mapped effects such as `SET_VALUE:size` and `MODIFY_STAT:deathThresholdModifier`.
 - Wire that service into a Character Sheet “Effects / Rules Notes” surface so every selected trait, feature, talent, and equipped item effect has a visible home even when it is not numerically automated.
 - Keep `calculatorModules/effectCollection.ts` as the source-attributed aggregation layer. The new service should be presentation-oriented and should not duplicate stat math from `calculateCharacterWithBreakdowns()`.
+
+#### Attack Sheet TODOs
+
+- Add a sheet-facing attack presentation helper that can apply active attack-scoped effects to rendered attack rows. First target: Barbarian Rage `MODIFY_STAT:martial_melee_damage +1 while_raging`, applied only to Unarmed Strike and melee weapon attacks. Current attack rows are persisted string data and do not safely encode the weapon category needed for this calculation.
 
 v0.10.5 level 5 Expert Features intentionally keep the old `<class>_level_5_placeholder` IDs. Saved characters that already reference those IDs render the updated Expert Feature names, benefits, and modeled effects without needing a destructive ID rewrite.
 
@@ -202,7 +210,7 @@ The `Movement.tsx` component displays multiple panels with combat-relevant infor
 
 - Lists damage resistances and vulnerabilities with source attribution
 - Resistances shown in blue, vulnerabilities in red
-- Format: "Fire Resistance (Half)" or "Radiant Vulnerability (1)"
+- Format: "Fire Resistance (Half)" or "Radiant Vulnerability (1)"; binary reductions display as PDR, EDR, or MDR.
 - Each entry shows source via tooltip
 - Data sources: `calculation.resistances[]` and `calculation.vulnerabilities[]` arrays
 - Only displayed when at least one resistance or vulnerability exists
@@ -221,7 +229,7 @@ The `Movement.tsx` component displays multiple panels with combat-relevant infor
 
 - **Spells** shown when `calculationResult.spellsKnownSlots.length > 0` or saved spells exist
 - **Maneuvers** shown when `calculationResult.levelBudgets.totalManeuversKnown > 0` or saved maneuvers exist
-- **Rage toggle** visible when character has a Rage class feature
+- **Rage toggle** visible when character has a Rage class feature; active Rage maps to calculator condition `while_raging`
 
 ---
 

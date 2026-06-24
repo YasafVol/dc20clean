@@ -42,12 +42,7 @@ export const hunterClass: ClassDefinition = {
 			effects: [
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true },
-				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Shields', value: true },
-				{
-					type: 'GRANT_ABILITY',
-					target: 'learns_all_attack_maneuvers',
-					value: 'You learn all Attack Maneuvers.'
-				}
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Shields', value: true }
 			]
 		},
 		{
@@ -201,7 +196,9 @@ export const hunterClass: ClassDefinition = {
 								'You gain Darkvision 10 Spaces. If you already have Darkvision, its range is increased by 5 Spaces. Additionally, you also gain a Tremorsense of 3 Spaces. If you already have a Tremorsense, it increases by 2 Spaces.',
 							effects: [
 								{ type: 'GRANT_SENSE', target: 'darkvision', value: 10 },
+								{ type: 'GRANT_SENSE', target: 'darkvision', value: 5, mode: 'increase_existing' },
 								{ type: 'GRANT_SENSE', target: 'tremorsense', value: 3 },
+								{ type: 'GRANT_SENSE', target: 'tremorsense', value: 2, mode: 'increase_existing' },
 								{
 									type: 'GRANT_ABILITY',
 									target: 'favored_terrain_subterranean',
@@ -247,29 +244,171 @@ export const hunterClass: ClassDefinition = {
 						{
 							name: 'Aberration',
 							description: 'Twisted creatures of unnatural origin.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'hunter_bestiary_aberration',
+									value:
+										'Bestiary starting entry: Aberration. You have ADV on Checks to learn or recall information about Aberrations recorded in your Bestiary.'
+								}
+							]
 						},
-						{ name: 'Beast', description: 'Natural animals and creatures.', effects: [] },
-						{ name: 'Celestial', description: 'Divine and holy beings.', effects: [] },
-						{ name: 'Construct', description: 'Artificial and animated creations.', effects: [] },
+						{
+							name: 'Beast',
+							description: 'Natural animals and creatures.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'hunter_bestiary_beast',
+									value:
+										'Bestiary starting entry: Beast. You have ADV on Checks to learn or recall information about Beasts recorded in your Bestiary.'
+								}
+							]
+						},
+						{
+							name: 'Celestial',
+							description: 'Divine and holy beings.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'hunter_bestiary_celestial',
+									value:
+										'Bestiary starting entry: Celestial. You have ADV on Checks to learn or recall information about Celestials recorded in your Bestiary.'
+								}
+							]
+						},
+						{
+							name: 'Construct',
+							description: 'Artificial and animated creations.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'hunter_bestiary_construct',
+									value:
+										'Bestiary starting entry: Construct. You have ADV on Checks to learn or recall information about Constructs recorded in your Bestiary.'
+								}
+							]
+						},
 						{
 							name: 'Dragon',
 							description: 'Ancient reptilian beings of immense power.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'hunter_bestiary_dragon',
+									value:
+										'Bestiary starting entry: Dragon. You have ADV on Checks to learn or recall information about Dragons recorded in your Bestiary.'
+								}
+							]
 						},
 						{
 							name: 'Elemental',
 							description: 'Living manifestations of natural forces.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'hunter_bestiary_elemental',
+									value:
+										'Bestiary starting entry: Elemental. You have ADV on Checks to learn or recall information about Elementals recorded in your Bestiary.'
+								}
+							]
 						},
-						{ name: 'Fey', description: 'Magical beings from the Feywild.', effects: [] },
-						{ name: 'Fiend', description: 'Evil entities from lower planes.', effects: [] },
-						{ name: 'Giant', description: 'Massive humanoid creatures.', effects: [] },
-						{ name: 'Humanoid', description: 'Bipedal civilized species.', effects: [] },
-						{ name: 'Monstrosity', description: 'Frightening creatures of legend.', effects: [] },
-						{ name: 'Ooze', description: 'Amorphous and corrosive beings.', effects: [] },
-						{ name: 'Plant', description: 'Botanical and fungal creatures.', effects: [] },
-						{ name: 'Undead', description: 'Reanimated dead and spirits.', effects: [] }
+						{
+							name: 'Fey',
+							description: 'Magical beings from the Feywild.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'hunter_bestiary_fey',
+									value:
+										'Bestiary starting entry: Fey. You have ADV on Checks to learn or recall information about Fey recorded in your Bestiary.'
+								}
+							]
+						},
+						{
+							name: 'Fiend',
+							description: 'Evil entities from lower planes.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'hunter_bestiary_fiend',
+									value:
+										'Bestiary starting entry: Fiend. You have ADV on Checks to learn or recall information about Fiends recorded in your Bestiary.'
+								}
+							]
+						},
+						{
+							name: 'Giant',
+							description: 'Massive humanoid creatures.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'hunter_bestiary_giant',
+									value:
+										'Bestiary starting entry: Giant. You have ADV on Checks to learn or recall information about Giants recorded in your Bestiary.'
+								}
+							]
+						},
+						{
+							name: 'Humanoid',
+							description: 'Bipedal civilized species.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'hunter_bestiary_humanoid',
+									value:
+										'Bestiary starting entry: Humanoid. You have ADV on Checks to learn or recall information about Humanoids recorded in your Bestiary.'
+								}
+							]
+						},
+						{
+							name: 'Monstrosity',
+							description: 'Frightening creatures of legend.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'hunter_bestiary_monstrosity',
+									value:
+										'Bestiary starting entry: Monstrosity. You have ADV on Checks to learn or recall information about Monstrosities recorded in your Bestiary.'
+								}
+							]
+						},
+						{
+							name: 'Ooze',
+							description: 'Amorphous and corrosive beings.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'hunter_bestiary_ooze',
+									value:
+										'Bestiary starting entry: Ooze. You have ADV on Checks to learn or recall information about Oozes recorded in your Bestiary.'
+								}
+							]
+						},
+						{
+							name: 'Plant',
+							description: 'Botanical and fungal creatures.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'hunter_bestiary_plant',
+									value:
+										'Bestiary starting entry: Plant. You have ADV on Checks to learn or recall information about Plants recorded in your Bestiary.'
+								}
+							]
+						},
+						{
+							name: 'Undead',
+							description: 'Reanimated dead and spirits.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'hunter_bestiary_undead',
+									value:
+										'Bestiary starting entry: Undead. You have ADV on Checks to learn or recall information about Undead recorded in your Bestiary.'
+								}
+							]
+						}
 					]
 				}
 			]
@@ -331,14 +470,6 @@ export const hunterClass: ClassDefinition = {
 					]
 				}
 			]
-		},
-		{
-			id: 'hunter_level_8_capstone_placeholder',
-			featureName: 'Class Capstone (Source Unpublished)',
-			levelGained: 9,
-			isFlavor: true,
-			description:
-				'The v0.10.5 class progression grants a Class Capstone Feature at level 9, but this source packet does not publish class-specific capstone mechanics. This entry is intentionally non-mechanical and preserves the legacy ID for saved-character compatibility.'
 		}
 		// Note: Level 2 Talent is granted via progression table, not hardcoded here
 	],

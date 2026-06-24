@@ -76,7 +76,9 @@ const Combat: React.FC<CombatProps> = ({ isMobile }) => {
 
 	return (
 		<StyledCombatSection $isMobile={effectiveIsMobile}>
-			<StyledCombatTitle $isMobile={effectiveIsMobile}>{t('characterSheet.combatTitle')}</StyledCombatTitle>
+			<StyledCombatTitle $isMobile={effectiveIsMobile}>
+				{t('characterSheet.combatTitle')}
+			</StyledCombatTitle>
 
 			{/* Action Points */}
 			<StyledActionPointsContainer $isMobile={effectiveIsMobile}>
@@ -91,9 +93,7 @@ const Combat: React.FC<CombatProps> = ({ isMobile }) => {
 			{/* Combat Toggles */}
 			{hasRageFeature && (
 				<StyledCombatToggleRow $isMobile={effectiveIsMobile}>
-					<StyledCombatToggleLabel $isMobile={effectiveIsMobile}>
-						RAGE
-					</StyledCombatToggleLabel>
+					<StyledCombatToggleLabel $isMobile={effectiveIsMobile}>RAGE</StyledCombatToggleLabel>
 					<StyledCombatToggleButton
 						type="button"
 						$isActive={isRaging}

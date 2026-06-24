@@ -365,16 +365,19 @@ function cleanTextArtifacts(lines) {
 	const cleaned = lines.map((line) => {
 		const entityCount = (line.match(/&(amp|lt|gt|quot|#39);/g) ?? []).length;
 		const urlCount =
-			(line.match(/https?:\/\/\s*[A-Za-z0-9-]+(?:\s*\.\s*[A-Za-z0-9-]+)+(?:\/[^\s)]*)?/gi) ?? []).length +
-			(line.match(/\b[A-Za-z0-9-]+(?:\s*\.\s*[A-Za-z0-9-]+)+\/[^\s)]*/g) ?? []).length;
+			(line.match(/https?:\/\/\s*[A-Za-z0-9-]+(?:\s*\.\s*[A-Za-z0-9-]+)+(?:\/[^\s)]*)?/gi) ?? [])
+				.length + (line.match(/\b[A-Za-z0-9-]+(?:\s*\.\s*[A-Za-z0-9-]+)+\/[^\s)]*/g) ?? []).length;
 		const escapeCount = (line.match(/\\[_*[\]`]/g) ?? []).length;
-		const punctuationCount = (line.match(/\s+[,.;:!?]|\b[A-Za-z]\s+'\s+(?:s|t|re|ve|ll|d)\b/g) ?? [])
-			.length;
+		const punctuationCount = (
+			line.match(/\s+[,.;:!?]|\b[A-Za-z]\s+'\s+(?:s|t|re|ve|ll|d)\b/g) ?? []
+		).length;
 		removed.htmlEntities += entityCount;
 		removed.urls += urlCount;
 		removed.markdownEscapes += escapeCount;
 		removed.punctuationSpacingCandidates += punctuationCount;
-		return normalizePunctuationSpacing(removeMarkdownEscapes(removeUrls(decodeCommonEntities(line))));
+		return normalizePunctuationSpacing(
+			removeMarkdownEscapes(removeUrls(decodeCommonEntities(line)))
+		);
 	});
 	return { lines: cleaned, removed };
 }
@@ -659,12 +662,16 @@ ${removedRows ? `| Removed line | Occurrences |\n| --- | ---: |\n${removedRows}`
 
 ## Human Review Queue
 
-${reviewChunks.length === 0 ? 'No chunks were automatically flagged.' : reviewChunks
-	.map(
-		(chunk) =>
-			`- \`${chunk.chunkId}\` ${chunk.heading} (${chunk.reviewReasons.join(', ') || 'review requested'})`
-	)
-	.join('\n')}
+${
+	reviewChunks.length === 0
+		? 'No chunks were automatically flagged.'
+		: reviewChunks
+				.map(
+					(chunk) =>
+						`- \`${chunk.chunkId}\` ${chunk.heading} (${chunk.reviewReasons.join(', ') || 'review requested'})`
+				)
+				.join('\n')
+}
 
 ## Notes
 
@@ -696,14 +703,19 @@ async function main() {
 	const emptyPageCleanup = removeEmptyPageMarkers(pageMarkedLines);
 	pageMarkedLines = emptyPageCleanup.lines;
 	const pageMarkers = allPageMarkers.filter(
-		(page) => !tocCleanup.removed.pages.includes(page) && !emptyPageCleanup.removedPages.includes(page)
+		(page) =>
+			!tocCleanup.removed.pages.includes(page) && !emptyPageCleanup.removedPages.includes(page)
 	);
 	const cleanText = collapseBlankLines(pageMarkedLines.join('\n'));
 	const chunks = createChunks(cleanText);
 
 	await writeFile(CLEAN_MD, cleanText, 'utf8');
 	await writeFile(CHUNKS_JSON, JSON.stringify(chunks, null, 2) + '\n', 'utf8');
-	await writeFile(PAGE_INDEX_JSON, JSON.stringify(jsonPageIndex ?? { source: 'none', pages: [] }, null, 2) + '\n', 'utf8');
+	await writeFile(
+		PAGE_INDEX_JSON,
+		JSON.stringify(jsonPageIndex ?? { source: 'none', pages: [] }, null, 2) + '\n',
+		'utf8'
+	);
 	await writeFile(
 		CLEANUP_REPORT,
 		buildReport({

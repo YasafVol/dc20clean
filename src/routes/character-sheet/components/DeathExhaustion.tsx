@@ -126,10 +126,7 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 
 			{/* Row 2: Exhaustion — title | 1 2 3 4 5 (inline) */}
 			<StyledExhaustionOnlyContainer data-testid="exhaustion-btn" $isMobile={effectiveIsMobile}>
-				<StyledExhaustionOnlyTitle
-					data-testid="exhaustion-btn"
-					$isMobile={effectiveIsMobile}
-				>
+				<StyledExhaustionOnlyTitle data-testid="exhaustion-btn" $isMobile={effectiveIsMobile}>
 					{t('characterSheet.exhaustionTitle')}
 				</StyledExhaustionOnlyTitle>
 				<StyledExhaustionContainer $isMobile={effectiveIsMobile} style={{ marginLeft: 'auto' }}>
@@ -165,7 +162,10 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 			{/* Optional Row 3b: Death Steps (only when character is on Death's Door) */}
 			{healthStatus.status === 'deaths-door' && (
 				<StyledDeathContainer $isMobile={effectiveIsMobile}>
-					<StyledDeathStepsContainer $isMobile={effectiveIsMobile} style={{ marginTop: 0, width: '100%' }}>
+					<StyledDeathStepsContainer
+						$isMobile={effectiveIsMobile}
+						style={{ marginTop: 0, width: '100%' }}
+					>
 						<StyledDeathStepsTitle $isMobile={effectiveIsMobile}>
 							{t('characterSheet.deathSteps')} ({actualCurrentStep}/{deathSteps.maxSteps})
 						</StyledDeathStepsTitle>

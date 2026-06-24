@@ -202,60 +202,64 @@ export function SubclassSelector({
 																				)}
 																			>
 																				{isComplete
-																? t('characterCreation.complete')
-																: `${currentSelections.length}/${choice.count}`}
-														</Badge>
-													</div>
-													<p className="text-foreground/60 mb-3 text-xs">
-														{t('characterCreation.selectOptions', { count: choice.count })}
-													</p>
+																					? t('characterCreation.complete')
+																					: `${currentSelections.length}/${choice.count}`}
+																			</Badge>
+																		</div>
+																		<p className="text-foreground/60 mb-3 text-xs">
+																			{t('characterCreation.selectOptions', {
+																				count: choice.count
+																			})}
+																		</p>
 
-													<div className="mt-3 space-y-2">
-														{choice.options.map((option) => {
-															const isOptionSelected = currentSelections.includes(option.name);
-															return (
-																<div
-																	key={option.name}
-																	onClick={(e) => {
-																		e.stopPropagation(); // Prevent subclass click
-																		handleOptionClick(option.name);
-																	}}
-																	className={cn(
-																		'relative cursor-pointer rounded-lg border-2 p-3 transition-all hover:-translate-y-0.5',
-																		isOptionSelected
-																			? 'border-primary bg-primary/10'
-																			: 'border-primary/30 hover:border-primary/60'
-																	)}
-																>
-																	<h6 className="text-primary text-sm font-semibold">
-																		{option.name}
-																	</h6>
-																	<p className="text-foreground/80 text-xs leading-relaxed">
-																		{option.description}
-																	</p>
-																	{isOptionSelected && (
-																		<span className="text-primary absolute top-2 right-2 text-lg">
-																			✓
-																		</span>
-																	)}
-																</div>
-															);
-														})}
-													</div>
-												</div>
-											);
-										})}
+																		<div className="mt-3 space-y-2">
+																			{choice.options.map((option) => {
+																				const isOptionSelected = currentSelections.includes(
+																					option.name
+																				);
+																				return (
+																					<div
+																						key={option.name}
+																						onClick={(e) => {
+																							e.stopPropagation(); // Prevent subclass click
+																							handleOptionClick(option.name);
+																						}}
+																						className={cn(
+																							'relative cursor-pointer rounded-lg border-2 p-3 transition-all hover:-translate-y-0.5',
+																							isOptionSelected
+																								? 'border-primary bg-primary/10'
+																								: 'border-primary/30 hover:border-primary/60'
+																						)}
+																					>
+																						<h6 className="text-primary text-sm font-semibold">
+																							{option.name}
+																						</h6>
+																						<p className="text-foreground/80 text-xs leading-relaxed">
+																							{option.description}
+																						</p>
+																						{isOptionSelected && (
+																							<span className="text-primary absolute top-2 right-2 text-lg">
+																								✓
+																							</span>
+																						)}
+																					</div>
+																				);
+																			})}
+																		</div>
+																	</div>
+																);
+															})}
+														</div>
+													)}
+											</div>
+										))}
 									</div>
 								)}
-						</div>
-					))}
-				</div>
-			)}
-		</CardContent>
-	</Card>
-);
-})}
-</div>
-</div>
+							</CardContent>
+						</Card>
+					);
+				})}
+			</div>
+		</div>
 	);
 }

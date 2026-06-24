@@ -13,8 +13,8 @@ export const rogueClass: ClassDefinition = {
 	martialPath: {
 		combatTraining: {
 			weapons: ['Weapons'],
-			armor: ['Light Armor'],
-			shields: ['Light Shields']
+			armor: ['Light_Armor'],
+			shields: ['Light_Shields']
 		},
 		maneuvers: {
 			learnsAllAttack: true,
@@ -30,19 +30,46 @@ export const rogueClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
+			id: 'rogue_martial_path',
+			featureName: 'Martial Path',
+			levelGained: 1,
+			description: 'You gain Combat Training with Weapons, Light Armor, and Light Shields.',
+			effects: [
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Shields', value: true }
+			]
+		},
+		{
 			id: 'rogue_source_of_power',
 			featureName: 'Source of Power',
 			levelGained: 1,
 			isFlavor: true,
 			description:
-				'Rogues exploit weakness through nimbleness and cunning, whether learned as thieves, nobles, or assassins.'
+				'Rogues exploit weakness through nimbleness and cunning, whether learned as thieves, nobles, or assassins.',
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'rogue_source_of_power',
+					value:
+						'Rogues exploit weakness through nimbleness and cunning, whether learned as thieves, nobles, or assassins.'
+				}
+			]
 		},
 		{
 			id: 'rogue_debilitating_strike',
 			featureName: 'Debilitating Strike',
 			levelGained: 1,
 			description:
-				'When you make a Weapon Attack, you can spend 1 SP to force the target to make a Physical Save against your Save DC. Save Failure: the target suffers Deafened, Exposed, Hindered, or Slowed 2 for 1 Round. A target cannot be affected by the same option more than once at a time.'
+				'When you make a Weapon Attack, you can spend 1 SP to force the target to make a Physical Save against your Save DC. Save Failure: the target suffers Deafened, Exposed, Hindered, or Slowed 2 for 1 Round. A target cannot be affected by the same option more than once at a time.',
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'rogue_debilitating_strike',
+					value:
+						'When making a Weapon Attack, spend 1 SP to force a Physical Save. Failure: target suffers Deafened, Exposed, Hindered, or Slowed 2 for 1 Round; same option cannot affect a target more than once at a time.'
+				}
+			]
 		},
 		{
 			id: 'rogue_roguish_finesse',
@@ -88,22 +115,30 @@ export const rogueClass: ClassDefinition = {
 			levelGained: 1,
 			isFlavor: true,
 			description:
-				'Become fluent in a Mortal language and craft hidden messages for a demographic of your choice, embedding simple directives in speech or writing.'
+				'Become fluent in a Mortal language and craft hidden messages for a demographic of your choice, embedding simple directives in speech or writing.',
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'rogue_cypher_speech',
+					value:
+						'Become fluent in a Mortal language and craft hidden messages for a demographic of your choice, embedding simple directives in speech or writing.'
+				}
+			]
 		},
 		{
 			id: 'rogue_cheap_shot',
 			featureName: 'Cheap Shot',
 			levelGained: 2,
 			description:
-				'You deal +1 damage on Martial Attacks against creatures that are Flanked or Prone, have any Condition other than Invisible, or are targets you are Hidden from.'
-		},
-		{
-			id: 'rogue_talent_level_2',
-			featureName: 'Talent',
-			levelGained: 2,
-			description:
-				'You gain 1 Talent of your choice. You must meet any prerequisites to select it.',
-			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
+				'You deal +1 damage on Martial Attacks against creatures that are Flanked or Prone, have any Condition other than Invisible, or are targets you are Hidden from.',
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'rogue_cheap_shot',
+					value:
+						'+1 damage on Martial Attacks against creatures that are Flanked or Prone, have any Condition other than Invisible, or are targets you are Hidden from.'
+				}
+			]
 		},
 		{
 			id: 'rogue_level_5_placeholder',
@@ -139,14 +174,6 @@ export const rogueClass: ClassDefinition = {
 					]
 				}
 			]
-		},
-		{
-			id: 'rogue_level_8_capstone_placeholder',
-			featureName: 'Class Capstone (Source Unpublished)',
-			levelGained: 9,
-			isFlavor: true,
-			description:
-				'The v0.10.5 class progression grants a Class Capstone Feature at level 9, but this source packet does not publish class-specific capstone mechanics. This entry is intentionally non-mechanical and preserves the legacy ID for saved-character compatibility.'
 		}
 	],
 	subclasses: [
@@ -175,7 +202,14 @@ export const rogueClass: ClassDefinition = {
 					levelGained: 3,
 					isFlavor: true,
 					description:
-						'Gain ADV on checks to determine causes of death or ways to kill, including identifying poisons, toxins, or lethal materials.'
+						'Gain ADV on checks to determine causes of death or ways to kill, including identifying poisons, toxins, or lethal materials.',
+					effects: [
+						{
+							type: 'GRANT_ADV_ON_CHECK',
+							target: 'cause_of_death_or_ways_to_kill',
+							value: 'ADV'
+						}
+					]
 				}
 			]
 		},
@@ -235,7 +269,15 @@ export const rogueClass: ClassDefinition = {
 					levelGained: 3,
 					isFlavor: true,
 					description:
-						'Spin captivating stories for up to five minutes to distract non-hostile crowds, giving them DisADV on Awareness Checks while enthralled.'
+						'Spin captivating stories for up to five minutes to distract non-hostile crowds, giving them DisADV on Awareness Checks while enthralled.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'rogue_tall_tales',
+							value:
+								'Spin captivating stories for up to five minutes to distract non-hostile crowds, giving them DisADV on Awareness Checks while enthralled.'
+						}
+					]
 				}
 			]
 		}

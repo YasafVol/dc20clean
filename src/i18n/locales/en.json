@@ -1,22 +1,22 @@
 {
-  "common": {
-    "cancel": "Cancel",
-    "confirm": "Confirm",
-    "delete": "Delete",
-    "edit": "Edit",
-    "save": "Save",
-    "close": "Close",
-    "back": "Back",
-    "next": "Next",
-    "previous": "Previous",
-    "complete": "Complete",
-    "restart": "Restart",
-    "yes": "Yes",
-    "no": "No",
-    "loading": "Loading...",
-    "error": "Error",
-    "success": "Success",
-    "backToMenu": "Back to Menu"
+	"common": {
+		"cancel": "Cancel",
+		"confirm": "Confirm",
+		"delete": "Delete",
+		"edit": "Edit",
+		"save": "Save",
+		"close": "Close",
+		"back": "Back",
+		"next": "Next",
+		"previous": "Previous",
+		"complete": "Complete",
+		"restart": "Restart",
+		"yes": "Yes",
+		"no": "No",
+		"loading": "Loading...",
+		"error": "Error",
+		"success": "Success",
+		"backToMenu": "Back to Menu"
 	},
 	"menu": {
 		"title": "DC20 Character Creator",
@@ -597,5 +597,5 @@
 	},
 	"snackbar": {
 		"closeAriaLabel": "Close"
-    }
+	}
 }

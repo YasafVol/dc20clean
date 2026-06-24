@@ -2,7 +2,7 @@
 
 > Purpose: Definitive guide to derived stat formulas, effect application order, mastery cap validation, and breakdown output.
 > Status: Active
-> Last Updated: 2026-06-19
+> Last Updated: 2026-06-24
 
 ---
 
@@ -73,6 +73,7 @@ This modular structure improves maintainability and makes the calculation pipeli
 - Equipped armor, shields, and weapons contribute through the same effect sums. For
   example, an equipped Guard weapon adds `MODIFY_STAT pd +1`.
 - Conditional modifiers (for example `while_raging` or `not_wearing_armor`) are surfaced under `conditionalModifiers` and are not applied to always-on totals.
+- Sheet combat toggles and active-condition maps feed `activeConditions`. Rage maps to `while_raging`; `not_wearing_armor` is inferred automatically when no equipped Armor or custom Equipage armor row exists.
 - **Save DC** = `10 + Combat Mastery + Prime Attribute`
 - **Death Threshold** = `Prime Attribute + Combat Mastery`
 - **Initiative** = `Combat Mastery + Agility`
@@ -91,7 +92,7 @@ This modular structure improves maintainability and makes the calculation pipeli
 ### Movement
 
 - **Move Speed** = `5 + sum(effects.moveSpeed)`
-- **Jump Distance** = `Agility + sum(effects.jumpDistance)`
+- **Jump Distance** = `Agility + sum(effects.jumpDistance)`, except effects that set `jumpCalculationAttribute` to `might` use the higher of Might or Agility as the base.
 
 ### Background Budgets
 
@@ -274,6 +275,8 @@ Effect Collection (abilityCollection.ts)
 └── collectConditionalModifiers() → conditionalModifiers
 ```
 
+Sense grants are grouped by sense type. The calculator keeps the highest base range, adds unconditional increases, and supports conditional "increase if already present" grants for rules such as Cleric Dark Domain Darkvision and Hunter Subterranean Favored Terrain.
+
 Class feature effect aggregation includes direct feature effects, benefit-level effects, selected subclass effects, selected feature-choice option effects, and selected talent effects. Intro-only flavor features such as Monk/Rogue/Spellblade `Source of Power` are excluded from automatic multiclass flavor-feature grants. Level 9 class capstone records remain non-mechanical when the source has not published class-specific mechanics.
 
 #### Stage 2: Base Values (No Dependencies)
@@ -406,9 +409,10 @@ Dependencies: finalIntelligence, progressionGains, resolvedEffects, buildData
 ├── baseSkillPoints = 5 + progressionGains.totalSkillPoints + finalIntelligence + skillPointsBonus
 ├── baseTradePoints = 3 + progressionGains.totalTradePoints + tradePointsBonus
 ├── baseLanguagePoints = 2 + languagePointsBonus
-├── conversions (skillToTrade, tradeToSkill, tradeToLanguage)
-├── availableSkillPoints (after conversions)
-├── availableTradePoints (after conversions)
+├── conversions (skillToTrade, tradeToSkill undo compatibility, tradeToLanguage)
+├── effectiveSkillToTrade = skillToTrade - floor(min(tradeToSkill, skillToTrade*2)/2)
+├── availableSkillPoints = baseSkillPoints - effectiveSkillToTrade
+├── availableTradePoints = baseTradePoints + effectiveSkillToTrade*2 - tradeToLanguage
 └── availableLanguagePoints (after conversions)
 ```
 

@@ -36,7 +36,7 @@ export const bardClass: ClassDefinition = {
 			featureName: 'Spellcasting Path',
 			levelGained: 1,
 			description:
-				'You gain spellcasting abilities. You can choose Spells from the Enchantment School or with Embolden, Enfeeble, Healing, Illusion, or Sound tags.',
+				'You gain Combat Training with Spell Focuses, Light Armor, and Light Shields. When you learn a new Spell, you can choose any Spell from the Enchantment Spell School or with the Embolden, Enfeeble, Healing, Illusion, or Sound tags.',
 			effects: [
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Spell_Focuses', value: true },
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true },
@@ -189,14 +189,6 @@ export const bardClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'bard_talent_level_2',
-			featureName: 'Talent',
-			levelGained: 2,
-			description:
-				'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
-			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
-		},
-		{
 			id: 'bard_level_5_placeholder',
 			featureName: 'Expert Bard',
 			levelGained: 5,
@@ -235,14 +227,6 @@ export const bardClass: ClassDefinition = {
 					]
 				}
 			]
-		},
-		{
-			id: 'bard_level_8_capstone_placeholder',
-			featureName: 'Class Capstone (Source Unpublished)',
-			levelGained: 9,
-			isFlavor: true,
-			description:
-				'The v0.10.5 class progression grants a Class Capstone Feature at level 9, but this source packet does not publish class-specific capstone mechanics. This entry is intentionally non-mechanical and preserves the legacy ID for saved-character compatibility.'
 		}
 	],
 	subclasses: [

@@ -2,7 +2,7 @@
 
 > Purpose: Canonical catalog of `Effect.type` semantics, targets, choice resolution, and stacking rules used across Traits and Class Features.
 > Status: Active
-> Last Updated: 2026-06-19
+> Last Updated: 2026-06-24
 
 ---
 
@@ -22,27 +22,27 @@ All effect types are defined in `character.schema.ts` as a discriminated union. 
 
 ### Numeric Modifiers
 
-| Type               | Target                                                                                                                                                                                                              | Value              | Special Fields                                                   | Stacking   |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------- | ---------- |
-| `MODIFY_STAT`      | stat name (`hpMax`, `spMax`, `mpMax`, `pd`, `ad`, `skillPoints`, `tradePoints`, `languagePoints`, `moveSpeed`, `jumpDistance`, `attackSpellCheck`, `saveDC`, `maneuversKnown`, `ancestryPoints`, `attributePoints`) | `number`           | `condition?: string` (e.g., `while_raging`, `not_wearing_armor`) | Sums       |
-| `MODIFY_ATTRIBUTE` | attribute name (`might`, `agility`, `charisma`, `intelligence`)                                                                                                                                                     | `number`           | `userChoice?: { prompt, options? }` for `any_attribute`          | Sums       |
-| `SET_VALUE`        | stat name                                                                                                                                                                                                           | `string \| number` | --                                                               | Overwrites |
+| Type               | Target                                                                                                                                                                                                              | Value              | Special Fields                                                   | Stacking            |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------- | ------------------- |
+| `MODIFY_STAT`      | stat name (`hpMax`, `spMax`, `mpMax`, `pd`, `ad`, `skillPoints`, `tradePoints`, `languagePoints`, `moveSpeed`, `jumpDistance`, `attackSpellCheck`, `saveDC`, `maneuversKnown`, `ancestryPoints`, `attributePoints`) | `number`           | `condition?: string` (e.g., `while_raging`, `not_wearing_armor`) | Sums                |
+| `MODIFY_ATTRIBUTE` | attribute name (`might`, `agility`, `charisma`, `intelligence`)                                                                                                                                                     | `number`           | `userChoice?: { prompt, options? }` for `any_attribute`          | Sums                |
+| `SET_VALUE`        | stat name (`jumpCalculationAttribute` supported)                                                                                                                                                                    | `string \| number` | --                                                               | Overrides base rule |
 
 ### Grants
 
-| Type                    | Target                                                    | Value                                                        | Special Fields                      | Stacking                                               |
-| ----------------------- | --------------------------------------------------------- | ------------------------------------------------------------ | ----------------------------------- | ------------------------------------------------------ |
-| `GRANT_ABILITY`         | ability name                                              | `string` (description)                                       | --                                  | De-duplicates                                          |
-| `GRANT_RESISTANCE`      | damage type                                               | `string \| number \| boolean`                                | `optional?: string`                 | De-duplicates; **collected by `abilityCollection.ts`** |
-| `GRANT_VULNERABILITY`   | damage type                                               | `number`                                                     | --                                  | De-duplicates; **collected by `abilityCollection.ts`** |
-| `GRANT_ADV_ON_SAVE`     | save type or condition target                             | `string \| boolean`                                          | --                                  | De-duplicates; condition targets normalize by ID/name  |
-| `GRANT_ADV_ON_CHECK`    | check type                                                | `string \| boolean`                                          | --                                  | De-duplicates                                          |
-| `GRANT_COMBAT_TRAINING` | training type (e.g., `Weapons`, `Spell_Focuses`)          | `boolean`                                                    | --                                  | De-duplicates; **collected by `abilityCollection.ts`** |
-| `GRANT_SENSE`           | sense type (e.g., `darkvision`)                           | `number` (range)                                             | --                                  | De-duplicates; **collected by `abilityCollection.ts`** |
-| `GRANT_MOVEMENT`        | movement type (`climb`, `swim`, `fly`, `burrow`, `glide`) | `string \| number` (`equal_to_speed`, `half_speed`, numeric) | --                                  | De-duplicates                                          |
-| `GRANT_CHOICE`          | choice category                                           | `number`                                                     | `userChoice?: { prompt, options? }` | Per-choice                                             |
-| `GRANT_SKILL_EXPERTISE` | skill name                                                | `{ capIncrease, levelIncrease }`                             | `userChoice?: { prompt, count? }`   | Per-skill                                              |
-| `GRANT_TRADE_EXPERTISE` | trade name                                                | `{ capIncrease, levelIncrease }`                             | `userChoice?: { prompt }`           | Per-trade                                              |
+| Type                    | Target                                                    | Value                                                        | Special Fields                                      | Stacking                                                                       |
+| ----------------------- | --------------------------------------------------------- | ------------------------------------------------------------ | --------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `GRANT_ABILITY`         | ability name                                              | `string` (description)                                       | --                                                  | De-duplicates                                                                  |
+| `GRANT_RESISTANCE`      | damage type                                               | `string \| number \| boolean`                                | `optional?: string`                                 | De-duplicates; **collected by `abilityCollection.ts`**                         |
+| `GRANT_VULNERABILITY`   | damage type                                               | `number`                                                     | --                                                  | De-duplicates; **collected by `abilityCollection.ts`**                         |
+| `GRANT_ADV_ON_SAVE`     | save type or condition target                             | `string \| boolean`                                          | --                                                  | De-duplicates; condition targets normalize by ID/name                          |
+| `GRANT_ADV_ON_CHECK`    | check type                                                | `string \| boolean`                                          | --                                                  | De-duplicates; collected as sheet-facing advantage text                        |
+| `GRANT_COMBAT_TRAINING` | training type (e.g., `Weapons`, `Spell_Focuses`)          | `boolean`                                                    | --                                                  | De-duplicates; **collected by `abilityCollection.ts`**                         |
+| `GRANT_SENSE`           | sense type (e.g., `darkvision`)                           | `number` (range)                                             | `mode?: 'set' \| 'increase' \| 'increase_existing'` | Highest set range wins; increases add; **collected by `abilityCollection.ts`** |
+| `GRANT_MOVEMENT`        | movement type (`climb`, `swim`, `fly`, `burrow`, `glide`) | `string \| number` (`equal_to_speed`, `half_speed`, numeric) | --                                                  | De-duplicates                                                                  |
+| `GRANT_CHOICE`          | choice category                                           | `number`                                                     | `userChoice?: { prompt, options? }`                 | Per-choice                                                                     |
+| `GRANT_SKILL_EXPERTISE` | skill name                                                | `{ capIncrease, levelIncrease }`                             | `userChoice?: { prompt, count? }`                   | Per-skill                                                                      |
+| `GRANT_TRADE_EXPERTISE` | trade name                                                | `{ capIncrease, levelIncrease }`                             | `userChoice?: { prompt }`                           | Per-trade                                                                      |
 
 ### Spell and Maneuver Grants
 
@@ -73,13 +73,13 @@ All effect types are defined in `character.schema.ts` as a discriminated union. 
 
 1. **Aggregation** (`effectCollection.ts::aggregateAttributedEffects()`): Collects effects from ancestry traits, class features, subclass features, talents, feature choices, and equipped equipment. Each effect is tagged with its source.
 2. **Choice Resolution** (`effectCollection.ts::resolveEffectChoices()`): Resolves effects with `userChoice` metadata (e.g., `any_attribute` → specific attribute based on user selection). Nested class feature option effects use stable generated keys so a parent class choice can expose a second user choice such as a spell tag or school.
-3. **Stat Application** (`statCalculation.ts::createStatBreakdown()`): Applies `MODIFY_STAT` and `MODIFY_ATTRIBUTE` effects to base values, producing breakdowns with per-source attribution.
+3. **Stat Application** (`statCalculation.ts::createStatBreakdown()`): Applies `MODIFY_STAT` and `MODIFY_ATTRIBUTE` effects to base values, producing breakdowns with per-source attribution. `SET_VALUE:jumpCalculationAttribute=might` changes Jump Distance base selection to the higher of Might or Agility.
 4. **Grant Collection** (`abilityCollection.ts`): Collects all grant-type effects:
-   - `collectGrantedAbilities()` — `GRANT_ABILITY` effects
+   - `collectGrantedAbilities()` — `GRANT_ABILITY` effects and `GRANT_ADV_ON_CHECK` sheet-facing advantage notes
    - `collectMovements()` — `GRANT_MOVEMENT` effects (with default Climb/Swim injection)
    - `collectResistances()` — `GRANT_RESISTANCE` effects (previously hardcoded empty)
    - `collectVulnerabilities()` — `GRANT_VULNERABILITY` effects (previously hardcoded empty)
-   - `collectSenses()` — `GRANT_SENSE` effects (previously hardcoded empty)
+   - `collectSenses()` — `GRANT_SENSE` effects. Senses are grouped by type; the highest `set` range wins, `increase` always adds, and `increase_existing` adds only when another source already grants that sense.
    - `collectCombatTraining()` — `GRANT_COMBAT_TRAINING` effects (previously hardcoded empty)
    - `collectConditionalModifiers()` — conditional modifiers from `MODIFY_STAT` effects
 5. **Condition Aggregation** (`conditionAggregator.ts`): Scans all effects for condition interactions and groups them by canonical condition ID. It accepts condition IDs, display names, and concrete stacking IDs such as `slowed-2`; `GRANT_ADV_ON_SAVE`, `GRANT_RESISTANCE`, and `GRANT_VULNERABILITY` also contribute when their target names a condition.
@@ -99,7 +99,10 @@ Supported first-pass calculator mappings:
 - Armor and shield PD/AD bonuses: `MODIFY_STAT` targeting `pd` or `ad`.
 - Armor and shield Speed penalties: `MODIFY_STAT` targeting `moveSpeed`.
 - PDR/EDR/MDR-style reductions: `GRANT_RESISTANCE` with `physical`, `elemental`, or
-  `mystical` targets and `half` value.
+  `mystical` targets and boolean `true` value. The effect is collected through the
+  resistance pipeline, but presented/exported as binary Damage Reduction. MDR means
+  Mystical Damage Reduction, even when the current PDF template field is named
+  `Mental-Damage-Reduction`.
 - Rule-text or spell-specific properties without dedicated numeric output fields:
   `GRANT_ABILITY`.
 
@@ -107,9 +110,23 @@ Supported first-pass calculator mappings:
 
 Level 5 Expert Features use existing effect types only. Modeled universal bonuses are expressed as `MODIFY_STAT`, `GRANT_SPELL`, and `GRANT_MANEUVERS`; rules text that does not have a calculator-backed representation is surfaced as `GRANT_ABILITY`. Benefit-level effects are aggregated the same way as direct feature effects, with source attribution using the parent feature and benefit names.
 
+Class feature audit reports flag duplicate always-on effects when the same effect is authored both directly on a feature and again on one of its benefits. Choice-option effects are excluded from this duplicate check because choices are not always active together. Keep a mechanical effect in the most specific source location that should appear on the sheet/audit output.
+
+Class feature audit reports use `progression-derived` for feature records whose
+rules text mirrors class progression-table output rather than adding independent
+resource effects. Spellblade Martial Path still carries baseline combat-training
+effects for Weapons, Spell Focuses, Light Armor, and Light Shields; its SP and
+Maneuver counts remain progression-derived. Spellblade Spellcasting Path remains
+resource-derived from the hybrid progression, while its stamina regen remains
+class data.
+
+Current sheet TODO target: `MODIFY_STAT:martial_melee_damage` is recognized as an attack-row presentation effect, but not yet applied to persisted attack rows. It needs a sheet helper that knows whether the row is an Unarmed Strike or melee weapon before applying conditional bonuses such as Rage.
+
 Champion Fighting Spirit's v0.10.5 Combat Readiness text is represented as a `GRANT_ABILITY` with target `combat_readiness_fortify`. The old `combat_readiness_brace` identity is a feature alias only; it must not be treated as a maneuver alias because `Brace` remains a current Defense maneuver.
 
-Class semantic deltas that are descriptive or action-granting continue to use `GRANT_ABILITY` rather than new effect types. Current v0.10.5 examples include Barbarian `elemental_fury_elemental_blast`, Commander `inspiring_presence`, Monk Ki/stance reaction abilities, Rogue `rogue_taunting_shot`, and Spellblade Bound Weapon/Discipline/Spellstrike abilities. Numeric or training deltas reuse existing effect types such as `GRANT_COMBAT_TRAINING`, `GRANT_MANEUVERS`, and `MODIFY_STAT`.
+Class semantic deltas that are descriptive or action-granting continue to use `GRANT_ABILITY` rather than new effect types. Current v0.10.5 examples include Barbarian `elemental_fury_elemental_blast`, Commander `inspiring_presence`, Monk Ki/stance reaction abilities, Rogue `rogue_taunting_shot`, and Spellblade Bound Weapon/Discipline/Spellstrike abilities. Numeric or training deltas reuse existing effect types such as `GRANT_COMBAT_TRAINING`, `GRANT_MANEUVERS`, and `MODIFY_STAT`. Class check-ADV text such as Commander Natural Leader uses `GRANT_ADV_ON_CHECK`, which is collected for sheet presentation but does not alter roll math automatically. Prose-only class features should be avoided; if a feature is descriptive, flavor, or in-game-only, model it as a collected note effect so the sheet can surface it deterministically.
+
+Cleric Domain choices use existing effects where possible: Knowledge uses `INCREASE_TRADE_MASTERY_CAP` for the five Knowledge Trades, Dark uses `GRANT_SENSE` with `increase_existing` for Darkvision, Divination uses `GRANT_CONDITION_IMMUNITY:flanked`, and descriptive in-game effects are surfaced as `GRANT_ABILITY`. Hunter Subterranean Favored Terrain uses the same `GRANT_SENSE` pattern for Darkvision and Tremorsense.
 
 ---
 

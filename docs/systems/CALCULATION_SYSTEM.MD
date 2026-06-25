@@ -2,7 +2,7 @@
 
 > Purpose: Definitive guide to derived stat formulas, effect application order, mastery cap validation, and breakdown output.
 > Status: Active
-> Last Updated: 2026-06-24
+> Last Updated: 2026-06-26
 
 ---
 
@@ -95,6 +95,7 @@ This modular structure improves maintainability and makes the calculation pipeli
 
 - **Move Speed** = `5 + sum(effects.moveSpeed)`
 - **Jump Distance** = `Agility + sum(effects.jumpDistance)`, except effects that set `jumpCalculationAttribute` to `might` use the higher of Might or Agility as the base.
+- **Hold Breath** = `max(1, Might)`; zero or negative Might still yields a Breath Duration of 1.
 
 ### Background Budgets
 

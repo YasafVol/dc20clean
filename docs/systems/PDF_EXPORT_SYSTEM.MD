@@ -3,7 +3,7 @@
 > Purpose
 >
 > Capture the architecture, scope, and acceptance criteria for exporting a calculated character sheet to the official DC20 fillable PDF. This document is the system overview aligned with existing docs (no separate planning spec is currently tracked in-repo).
-> Last Updated: 2026-06-25
+> Last Updated: 2026-06-26
 
 ---
 
@@ -159,7 +159,7 @@ Movement types are now fully integrated with PDF export:
 
 - `movement` object with 5 movement types (burrow, swim, fly, climb, glide)
 - Each type has `half` and `full` boolean flags
-- `holdBreath` stored as numeric value (equals Might attribute)
+- `holdBreath` stored as numeric value (equals Might attribute, minimum 1)
 
 ### PDF Field Mapping
 
@@ -177,7 +177,7 @@ Movement checkboxes in `fieldMap.dc20-0.9.5.ts`:
 1. **Calculator** (`enhancedCharacterCalculator.ts`) processes `GRANT_MOVEMENT` effects
 2. **Transformer** (`transformers.ts`) converts to movement structure via `processMovementsToStructure()`
 3. **Character Completion** (`characterCompletion.ts`) saves movement data to `SavedCharacter`
-4. **Character Sheet Autosave** (`CharacterSheetProvider.tsx`) refreshes movement and collected effect arrays when recalculating a current editable character
+4. **Character Sheet Autosave** (`CharacterSheetProvider.tsx`) refreshes movement, hold breath, and collected effect arrays when recalculating a current editable character
 5. **PDF Export** reads saved movement data and maps to form fields
 
 **See**: `docs/systems/EFFECT_SYSTEM.MD#2.1` for GRANT_MOVEMENT effect documentation

@@ -34,6 +34,7 @@ import {
 import { getDetailedClassFeatureDescription } from '../../../lib/utils/classFeatureDescriptions';
 import { calculateCharacterConditions } from '../../../lib/services/conditionAggregator';
 import { normalizeSelectedTalents } from '../../../lib/utils/storageUtils';
+import { calculateHoldBreath } from '../../../lib/utils/holdBreath';
 
 /**
  * Converts the movements array from calculator into the movement structure for SavedCharacter
@@ -429,7 +430,7 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 						calculationResult.movements || [],
 						calculationResult.stats.finalMoveSpeed
 					),
-					holdBreath: calculationResult.stats.finalMight,
+					holdBreath: calculateHoldBreath(calculationResult.stats.finalMight),
 					resistances: calculationResult.resistances.map((resistance) => ({
 						type: resistance.type,
 						value: resistance.value,

@@ -16,7 +16,8 @@ import {
 	formatSpellsAndManeuvers,
 	formatTalents,
 	formatInventory,
-	formatFeatureChoices
+	formatFeatureChoices,
+	transformSavedCharacterToPdfData
 } from './transformers';
 
 describe('PDF Export Formatters', () => {
@@ -333,6 +334,25 @@ describe('PDF Export Formatters', () => {
 			const result = lines.join(', ');
 			expect(result).toContain('Weapons [Martial Path]');
 			expect(result).toContain('Heavy Armor [Martial Path]');
+		});
+	});
+
+	describe('transformSavedCharacterToPdfData', () => {
+		it('clamps saved hold breath to a minimum of 1', () => {
+			const result = transformSavedCharacterToPdfData({
+				finalName: 'Low Might',
+				finalMight: 0,
+				holdBreath: 0,
+				characterState: { resources: { current: {} }, inventory: { items: [], currency: {} } },
+				resistances: [],
+				vulnerabilities: [],
+				senses: [],
+				combatTraining: [],
+				spells: [],
+				maneuvers: []
+			} as any);
+
+			expect(result.holdBreath).toBe(1);
 		});
 	});
 

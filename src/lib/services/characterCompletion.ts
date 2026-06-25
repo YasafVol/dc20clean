@@ -15,6 +15,7 @@ import { denormalizeMastery } from './denormalizeMastery';
 import { CURRENT_SCHEMA_VERSION } from '../types/schemaVersion';
 import { CURRENT_RULES_VERSION } from '../rulesdata/versioning/rulesVersion';
 import { logger } from '../utils/logger';
+import { calculateHoldBreath } from '../utils/holdBreath';
 
 /**
  * Converts the movements array from calculator into the movement structure for SavedCharacter
@@ -202,7 +203,7 @@ export const completeCharacter = async (
 				calculationResult.movements || [],
 				calculationResult.stats.finalMoveSpeed
 			),
-			holdBreath: calculationResult.stats.finalMight,
+			holdBreath: calculateHoldBreath(calculationResult.stats.finalMight),
 			resistances: calculationResult.resistances.map((resistance) => ({
 				type: resistance.type,
 				value: resistance.value,

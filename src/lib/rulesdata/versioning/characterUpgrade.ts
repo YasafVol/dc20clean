@@ -7,6 +7,7 @@ import {
 import { assessCharacterCompatibility } from './compatibility';
 import { resolveRulesAlias, type AliasDomain, type RulesAliasEntry } from './aliases';
 import { CURRENT_RULES_VERSION, RULES_VERSION_010, normalizeRulesVersion } from './rulesVersion';
+import { calculateHoldBreath } from '../../utils/holdBreath';
 
 export interface CharacterUpgradePlan {
 	sourceRulesVersion: string;
@@ -275,7 +276,7 @@ function recalculateDraftCharacter(character: SavedCharacter): {
 					calculationResult.movements || [],
 					calculationResult.stats.finalMoveSpeed
 				),
-				holdBreath: calculationResult.stats.finalMight,
+				holdBreath: calculateHoldBreath(calculationResult.stats.finalMight),
 				resistances: calculationResult.resistances.map((resistance) => ({
 					type: resistance.type,
 					value: resistance.value,

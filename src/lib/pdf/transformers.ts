@@ -8,6 +8,7 @@ import { findTalentById } from '../rulesdata/classes-data/talents/talent.loader'
 import { findClassByName } from '../rulesdata/loaders/class-features.loader';
 import { ALL_SPELLS } from '../rulesdata/spells-data';
 import { logger } from '../utils/logger';
+import { calculateHoldBreath } from '../utils/holdBreath';
 
 // =========================================================================
 // PDF EXPORT FORMATTERS
@@ -79,9 +80,7 @@ const formatResistanceOrReduction = (entry: {
 const findExactCurrentSpell = (value: string) =>
 	ALL_SPELLS.find(
 		(spell) =>
-			spell.id === value ||
-			spell.name === value ||
-			spell.name.toLowerCase() === value.toLowerCase()
+			spell.id === value || spell.name === value || spell.name.toLowerCase() === value.toLowerCase()
 	);
 
 const resolveSpellEntry = (entry: unknown): { spellName: string; isCantrip: boolean } | null => {
@@ -783,7 +782,7 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 		glide: { half: false, full: false }
 	};
 	const jumpDistance = character.finalJumpDistance ?? 0;
-	const holdBreath = character.holdBreath ?? 0;
+	const holdBreath = calculateHoldBreath(character.holdBreath ?? character.finalMight);
 
 	// Exhaustion
 	const exLevel = character.characterState?.resources?.current?.exhaustionLevel ?? 0;
@@ -1248,7 +1247,7 @@ export function transformCalculatedCharacterToPdfData(
 	const moveSpeed = stats.finalMoveSpeed ?? 0;
 	const movement = saved.movement || processMovements(result.movements || [], moveSpeed);
 	const jumpDistance = stats.finalJumpDistance ?? 0;
-	const holdBreath = saved.holdBreath ?? stats.finalMight ?? 0;
+	const holdBreath = calculateHoldBreath(saved.holdBreath ?? stats.finalMight);
 
 	// Exhaustion
 	const exLevel = saved.characterState?.resources?.current?.exhaustionLevel ?? 0;

@@ -39,6 +39,7 @@ import { Dialog, DialogContent } from '../../components/ui/dialog';
 import { Check, ChevronRight } from 'lucide-react';
 import { SignIn, useIsAuthenticated } from '../../components/auth';
 import { debug } from '../../lib/utils/debug';
+import { calculateHoldBreath } from '../../lib/utils/holdBreath';
 import { useTranslation } from 'react-i18next';
 import {
 	PageContainer,
@@ -434,7 +435,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					enhancedResult.movements || [],
 					enhancedResult.stats.finalMoveSpeed
 				),
-				holdBreath: enhancedResult.stats.finalMight
+				holdBreath: calculateHoldBreath(enhancedResult.stats.finalMight)
 			});
 			await completeCharacterEdit(editChar.id, state, enhancedCalculatorFn);
 			localStorage.setItem('dc20_reload', String(Date.now()));

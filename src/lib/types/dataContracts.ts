@@ -142,7 +142,7 @@ export interface SavedCharacter {
 		climb: { half: boolean; full: boolean };
 		glide: { half: boolean; full: boolean };
 	};
-	holdBreath?: number; // Equals Might attribute
+	holdBreath?: number; // Equals Might attribute, minimum 1
 
 	// Derived thresholds
 	finalPDHeavyThreshold?: number;

@@ -2,13 +2,13 @@
 
 > Purpose: Technical overview of the DC20Clean codebase: stack, scripts, testing, project structure, and contribution expectations.
 > Status: Active
-> Last Updated: 2026-06-22
+> Last Updated: 2026-06-25
 
 ## Tech Stack
 
 - Framework: React 19 + TypeScript
 - Build Tool: Vite 6
-- Styling: Material-UI (MUI) + Emotion + Tailwind CSS 4
+- Styling: styled-components + Tailwind CSS 4 + shadcn/Radix primitives; Emotion packages remain installed for compatibility, but MUI is not part of the active stack.
 - State Management: React Context API
 - Persistence: Hybrid storage
   - localStorage is active by default (anonymous/offline-first)
@@ -69,6 +69,18 @@ PDF export:
 - `npm run export:list-fields` — Extract PDF form field names
 - `npm run export:local` — Run local PDF export proof-of-concept
 
+Rules source audits:
+
+- `npm run spells:validate:0105`
+- `npm run martials:validate:0105`
+- `npm run ancestries:validate:0105`
+- `npm run background:validate:0105`
+- `npm run conditions:validate:0105`
+- `npm run classes:validate:0105`
+- `npm run classes:effects:validate`
+- `npm run classes:audit:validate`
+- `npm run leveling:review:validate:0105`
+
 Single test execution:
 
 ```
@@ -106,6 +118,7 @@ src/
 │   │   └── utils/                 #   Sheet utilities
 │   ├── conditions/                # Conditions reference page
 │   ├── custom-equipment/          # Equipment builder wizard
+│   ├── martial-manual/            # Maneuver reference browser
 │   ├── dm/                        # DM tools
 │   │   ├── encounters/            #   Encounter planner
 │   │   └── monsters/              #   Monster designer
@@ -122,7 +135,8 @@ src/
 │   │   ├── martials/              #   Maneuver data
 │   │   ├── progression/           #   Leveling, paths, multiclass
 │   │   ├── schemas/               #   TypeScript + Zod schemas
-│   │   └── spells-data/           #   160 generated v0.10.5 spells
+│   │   ├── spells-data/           #   160 generated v0.10.5 spells
+│   │   └── versioning/            #   Rules version gates, aliases, upgrade copies
 │   ├── services/                  # Business logic (calculator, spell assignment, monster calc)
 │   ├── storage/                   # Storage adapters (localStorage, Convex)
 │   ├── stores/                    # React Context providers
@@ -133,6 +147,7 @@ src/
 │   └── ui/                        #   shadcn/ui primitives (button, card, dialog, etc.)
 ├── assets/                        # Images and SVGs
 ├── debug/                         # Debug/test components
+├── i18n/                          # Locale configuration and translations
 └── styles/                        # Global styles
 
 convex/                            # Convex backend

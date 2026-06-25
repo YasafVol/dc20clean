@@ -370,7 +370,7 @@ export function calculateCharacterWithBreakdowns(
 		finalDeathThreshold,
 		finalGritPoints,
 		finalInitiativeBonus,
-		attackSpellCheckBase,
+		finalAttackSpellCheck,
 		breakdowns,
 		finalHPMax,
 		finalSPMax,
@@ -500,7 +500,7 @@ export function calculateCharacterWithBreakdowns(
 			staminaSpendLimit: combatMastery,
 
 			// Combat stats with breakdowns
-			finalAttackSpellCheck: attackSpellCheckBase,
+			finalAttackSpellCheck,
 			finalMartialCheck: finalMartialCheck,
 
 			// Class and ancestry info for UI

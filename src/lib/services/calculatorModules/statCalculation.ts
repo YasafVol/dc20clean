@@ -70,6 +70,7 @@ export interface DerivedStats {
 	finalGritPoints: number;
 	finalInitiativeBonus: number;
 	attackSpellCheckBase: number;
+	finalAttackSpellCheck: number;
 
 	// Breakdowns
 	breakdowns: Record<string, EnhancedStatBreakdown>;
@@ -167,12 +168,12 @@ export function calculateDerivedStats(
 	const primeAttribute = usePrimeCapRule ? 'prime' : attributePrime;
 
 	// Saves and other derived
-	const finalSaveDC = 10 + combatMastery + primeModifier;
+	const baseSaveDC = 10 + combatMastery + primeModifier;
 	const finalSaveMight = finalMight + combatMastery;
 	const finalSaveAgility = finalAgility + combatMastery;
 	const finalSaveCharisma = finalCharisma + combatMastery;
 	const finalSaveIntelligence = finalIntelligence + combatMastery;
-	const finalDeathThreshold = primeModifier + combatMastery;
+	const baseDeathThreshold = primeModifier + combatMastery;
 	const baseMoveSpeed = 5;
 	const baseJumpDistance = hasMightJumpOverride(resolvedEffects)
 		? Math.max(finalAgility, finalMight)
@@ -227,10 +228,20 @@ export function calculateDerivedStats(
 	);
 	breakdowns.save_dc = createStatBreakdown(
 		'saveDC',
-		finalSaveDC,
+		baseSaveDC,
 		resolvedEffects,
 		activeConditions
 	);
+	breakdowns.death_threshold = createStatBreakdown(
+		'deathThresholdModifier',
+		baseDeathThreshold,
+		resolvedEffects,
+		activeConditions
+	);
+	breakdowns.death_threshold.statName = 'deathThreshold';
+	const finalAttackSpellCheck = breakdowns.attack_spell_check.total;
+	const finalSaveDC = breakdowns.save_dc.total;
+	const finalDeathThreshold = breakdowns.death_threshold.total;
 
 	// Initiative breakdown
 	breakdowns.initiative = createInitiativeBreakdown(
@@ -283,6 +294,7 @@ export function calculateDerivedStats(
 		finalGritPoints,
 		finalInitiativeBonus,
 		attackSpellCheckBase,
+		finalAttackSpellCheck,
 		breakdowns,
 		finalHPMax,
 		finalSPMax,

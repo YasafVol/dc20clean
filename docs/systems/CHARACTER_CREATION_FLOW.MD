@@ -1,6 +1,6 @@
 ### Character Creation Flow System Spec
 
-> Last Updated: 2026-06-22
+> Last Updated: 2026-06-25
 
 #### Purpose
 
@@ -10,12 +10,14 @@
 
 #### Stage Contract
 
-- Ordering is fixed: 1) Class & Features → 2) Leveling (conditional when level > 1) → 3) Ancestry → 4) Attributes → 5) Background → 6) Spells & Maneuvers → 7) Character Name
+- Ordering is data-driven and uses stable step IDs: 1) Class & Features → 2) Leveling (conditional when level > 1) → 3) Ancestry → 4) Attributes → 5) Background → 6) Spells (conditional) → 7) Maneuvers (conditional) → 8) Character Name. A leveled hybrid can therefore have eight visible steps.
 - State lives in `characterContext.tsx`; each stage must read/write through the reducer actions (`SET_CLASS`, `SET_TRAITS`, `UPDATE_SKILLS`, etc.)
+- Step navigation is gated. Users can move backward, but cannot jump forward through the stepper until prior steps are complete.
+- Class changes clear downstream class/level-dependent selections. Level changes clear level-dependent selections such as talents, path points, multiclass choice, cross-path spell list, spells, and maneuvers.
 - Draft state carries both `schemaVersion` and `rulesVersion`; missing `rulesVersion` is inferred as `dc20-0.10`.
 - Edit and level-up entry points check runtime compatibility before initializing the wizard. `upgrade-required` v0.10 characters can use the explicit upgrade action on the load-character page; unsupported rules versions remain view-only.
 - The explicit v0.10 to current-version action shows its migration plan, creates a new current-rules draft, applies approved aliases/reworks (including the Force Dome and Wall of Force merge into Forcefield), removes disclosed deprecated selections, and unlocks edit/level-up only on the new copy. Migration never mutates the old instance. Consolidated language aliases keep the strongest fluency; removed languages no longer consume points and mark the new copy as `needs-review`.
-- Validation gating: `CharacterCreation.tsx` calls `isStepCompleted(stepNumber)` before allowing navigation; each stage enforces completion via calculator outputs (ancestry/background budgets, attribute points remaining, spell counts)
+- Validation gating: `CharacterCreation.tsx` calls `isStepCompleted(stepNumber)` before allowing navigation; each stage enforces completion via calculator outputs (ancestry/background budgets, attribute points remaining, spell slot validity, maneuver validity)
 - Calculator contract: `calculateCharacterWithBreakdowns(convertToEnhancedBuildData(state))` runs on every state change and returns:
   - `stats.finalAttributePoints`, `background`, `ancestry`, `breakdowns`, `validation`
   - `validation.errors` drive blocking messages (POINTS_OVERBUDGET, MASTERY_CAP_EXCEEDED)
@@ -29,6 +31,7 @@
   - Dependencies: handles feature choice IDs; level selection is part of this stage without changing completion logic
   - Starting equipment rendering is driven directly from each class feature file's `startingEquipment` block and now supports the current structured fields `arsenal`, `rangedWeapons`, `spellFocuses`, `armor`, `tradeTools`, and `packs`, with fallback support for older singular field names still present in legacy data.
   - v0.10.5 level 5 Expert Features render from the same persisted feature IDs previously used for placeholders (`<class>_level_5_placeholder`), so older saved level-5+ characters keep resolving while showing the updated Expert Feature names and benefits.
+  - Agent/browser hooks: class feature choice inputs expose `data-testid="feature-choice-{choiceId}-{optionId}"`, `data-choice-id`, and `data-option-id`; subclass cards expose `data-testid="subclass-card-{subclassId}"` and `data-subclass-id`.
   - **Progressive Feature Display** (October 2025): `ClassFeatures.tsx` now displays features grouped by level from 1 up to current character level. Feature choices appear within their respective level sections rather than in a separate section at the bottom. This ensures proper ordering (e.g., Level 1 stance choices appear with Level 1 features, not after Level 3 features).
   - **Testing**: 29 comprehensive tests validate progressive display logic and choice ordering (14 logic tests + 15 component tests)
 
@@ -39,36 +42,49 @@
   - v0.10.5 schedule: Talent + Path Progression at levels 6 and 8; subclass choices at levels 3, 7, and 10; class features at levels 1, 2, 5, and 9.
   - Talent budgets come from progression `gains.talents`, not generic class feature records. The stage spends those budgets through `selectedTalents`.
   - Talent list source: `LevelingChoices.tsx` uses `selectableTalents` so deprecated/loadable legacy talents such as Swift Berserker do not appear as new v0.10.5 choices.
+  - Agent/browser hooks: leveling tabs expose `leveling-talents-tab` and `leveling-path-points-tab`; talent cards and controls expose `talent-card-{talentId}`, `talent-{talentId}-increase|decrease`; path cards and controls expose `path-card-{pathId}`, `path-{pathId}-increase|decrease`.
 
 - **Stage 3 – Ancestry** (`AncestrySelector.tsx`, `SelectedAncestries.tsx`)
   - Inputs: `traitsData`, calculator `ancestry.ancestryPointsRemaining`
   - Completion rule: at least one ancestry chosen, ancestry points ≥ 0, and remaining == 0
   - Outputs: `state.ancestry1Id`, `state.ancestry2Id`, `state.selectedTraitIds`, `state.selectedTraitChoices`
+  - Agent/browser hooks: trait cards expose `data-testid="trait-card-{traitId}"`, `data-trait-id`, `data-option-id`, and `aria-disabled`.
 
 - **Stage 4 – Attributes** (`Attributes.tsx`)
   - Inputs: reducer state for each attribute, calculator `attributePointsRemaining`
   - Completion rule: remaining points == 0
   - Outputs: attribute values via `UPDATE_ATTRIBUTE`
+  - Agent/browser hooks: attribute cards expose `data-field-id="attribute-{attributeId}"`; increment/decrement controls expose `data-testid="{attributeId}-increase|decrease"` and matching `data-action-id`.
 
 - **Stage 5 – Background** (`Background.tsx`, `SkillsTab.tsx`, `TradesTab.tsx`, `LanguagesTab.tsx`)
   - Inputs: `state.skillsData`, `state.tradesData`, `state.languagesData`, calculator `background` budgets, mastery limits
   - Completion rule: skill points spent exactly, trade/language points <= remaining (UI allows overspend but completion requires <= 0 remaining)
   - Outputs: skills/trades/languages plus conversion values (`SET_CONVERSIONS`)
+  - Agent/browser hooks: background tab controls expose `skills-tab`, `trades-tab`, and `languages-tab`; skill/trade mastery buttons expose `skill-{id}-mastery-{level}` and `trade-{id}-mastery-{level}` test IDs.
+  - Conversion controls expose `convert-skill-to-trade`, `convert-trade-to-language`, `undo-skill-to-trade`, and `reset-background-conversions`.
 
-- **Stage 6 – Spells & Maneuvers** (`SpellsAndManeuvers.tsx`)
-  - Inputs: `ALL_SPELLS`, `allManeuvers`, class level progression (JSON today → resolver later), `state.selectedSpells`, `state.selectedManeuvers`
-  - Completion rule: selected counts meet per-level requirements (cantrips + spells, maneuvers)
+- **Stage 6 – Spells** (`Spells.tsx`, conditional)
+  - Inputs: `ALL_SPELLS`, calculator spell slots/global magic profile, `state.selectedSpells`
+  - Completion rule: every current spell slot has a valid selected spell ID, no duplicate selected spells exist, global magic profile restrictions match, and slot-specific restrictions match.
   - Spell filtering: source, school, and tag browsing filters are OR-based across selected facets; cost and sustained filters narrow results. Slot and Global Magic Profile eligibility use source restrictions only when present, then school-or-tag matching.
-  - Maneuver cards display base AP/SP cost and maneuver enhancements for review before selection.
-  - Outputs: `state.selectedSpells`, `state.selectedManeuvers`
+  - Outputs: `state.selectedSpells`
+  - Agent/browser hooks: spell cards expose `data-testid="spell-card-{spellId}"`, `data-spell-id`, and `data-option-id`; learn/forget controls expose `data-testid="spell-{spellId}-learn|forget"` and matching `data-action-id`.
   - Character completion resolves spell IDs through `getSpellById()` before falling back to exact display-name matches, so approved legacy v0.10 spell aliases can still produce valid saved spell data when encountered.
+
+- **Stage 7 – Maneuvers** (`Maneuvers.tsx`, conditional)
+  - Inputs: `allManeuvers`, calculator `levelBudgets.totalManeuversKnown`, `state.selectedManeuvers`
+  - Completion rule: selected maneuver names are unique, exist in the current maneuver catalog, and match `totalManeuversKnown`.
+  - Maneuver cards display base AP/SP cost and maneuver enhancements for review before selection.
+  - Outputs: `state.selectedManeuvers`
+  - Agent/browser hooks: maneuver cards expose `data-testid="maneuver-card-{maneuverId}"`, `data-maneuver-id`, and `data-option-id`; learn/forget controls expose `data-testid="maneuver-{maneuverId}-learn|forget"` and matching `data-action-id`.
   - Character completion persists selected maneuvers with base cost, range, reaction trigger, and enhancements so the sheet and Martial Manual-style displays do not lose rules text.
   - Starting resource expectations come from calculated class progression totals: Martial 2 SP, Spellcaster 6 MP, Hybrid 1 SP and 3 MP.
 
-- **Stage 7 – Character Name** (`CharacterName.tsx`)
+- **Final Stage – Character Name** (`CharacterName.tsx`)
   - Inputs: `state.finalName`, `state.finalPlayerName`
   - Completion rule: both fields non-empty
   - Outputs: final naming data for persistence
+  - Agent/browser hooks: name fields expose `data-testid="character-name-input"` / `data-field-id="character-name"` and `data-testid="player-name-input"` / `data-field-id="player-name"`.
 
 #### Leveling Stage (Implemented)
 

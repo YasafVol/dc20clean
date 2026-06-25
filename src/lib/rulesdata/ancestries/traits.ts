@@ -894,7 +894,7 @@ export const traitsData: Trait[] = [
 		description:
 			"You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren't Incapacitated, you gain the following benefits while in the air: Controlled Falling: You suffer no damage from Controlled Falling. Altitude Drop: If you end your turn midair, you Controlled Fall 4 Spaces. Glide Speed: You can use your movement to glide horizontally.",
 		cost: 2,
-		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'wings' }]
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'equal_to_speed' }]
 	},
 	{
 		id: 'angelborn_pacifist',
@@ -1137,7 +1137,7 @@ export const traitsData: Trait[] = [
 		description:
 			"You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren't Incapacitated, you gain the following benefits while in the air: Controlled Falling: You suffer no damage from Controlled Falling. Altitude Drop: If you end your turn midair, you Controlled Fall 4 Spaces. Glide Speed: You can use your movement to glide horizontally.",
 		cost: 2,
-		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'wings' }]
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'equal_to_speed' }]
 	},
 	{
 		id: 'dragonborn_guardians_bond',
@@ -1260,7 +1260,7 @@ export const traitsData: Trait[] = [
 		description:
 			"You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren't Incapacitated, you gain the following benefits while in the air: Controlled Falling: You suffer no damage from Controlled Falling. Altitude Drop: If you end your turn midair, you Controlled Fall 4 Spaces. Glide Speed: You can use your movement to glide horizontally.",
 		cost: 2,
-		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'wings' }]
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'equal_to_speed' }]
 	},
 	{
 		id: 'fiendborn_infernal_bravery',
@@ -1702,7 +1702,7 @@ export const traitsData: Trait[] = [
 		description:
 			"You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren't Incapacitated, you gain the following benefits while in the air: Controlled Falling: You suffer no damage from Controlled Falling. Altitude Drop: If you end your turn midair, you Controlled Fall 4 Spaces. Glide Speed: You can use your movement to glide horizontally.",
 		cost: 2,
-		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'wings' }]
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'equal_to_speed' }]
 	},
 	{
 		id: 'beastborn_hard_shell',
@@ -1766,7 +1766,14 @@ export const traitsData: Trait[] = [
 			"You have a set of wings that grant you limited flight. Provided you aren't Incapacitated, you gain the following benefits: Vertical Ascent: You can spend 2 Spaces of movement to ascend 1 Space vertically. Hover: When you end your turn in the air, you maintain your altitude.",
 		cost: 2,
 		prerequisites: ['beastborn_glide_speed'],
-		effects: [{ type: 'GRANT_MOVEMENT', target: 'limited_flight', value: 'vertical_ascent_hover' }]
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'limited_flight',
+				value:
+					'Vertical Ascent: spend 2 Spaces of movement to ascend 1 Space vertically. Hover: maintain altitude when ending your turn in the air.'
+			}
+		]
 	},
 	{
 		id: 'beastborn_long_limbed',

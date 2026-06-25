@@ -75,6 +75,7 @@ const uiStateValidator = v.object({
 		AD: v.optional(v.number()),
 		PDR: v.optional(v.number())
 	}),
+	activeConditions: v.optional(v.record(v.string(), v.boolean())),
 	combatToggles: v.optional(
 		v.object({
 			isRaging: v.optional(v.boolean())
@@ -100,6 +101,13 @@ const characterStateValidator = v.object({
 	inventory: inventoryValidator,
 	notes: notesValidator,
 	activeConditions: v.optional(v.array(v.string())),
+	defenseOverrides: v.optional(
+		v.object({
+			precisionAD: v.optional(v.number()),
+			areaAD: v.optional(v.number()),
+			precisionDR: v.optional(v.number())
+		})
+	),
 	attacks: v.optional(v.array(v.any())),
 	spells: v.optional(v.array(v.any())),
 	maneuvers: v.optional(v.array(v.any()))
@@ -190,6 +198,7 @@ const characterValidator = {
 
 	// Typed data (no JSON strings)
 	selectedTraitIds: v.array(v.string()),
+	selectedTraitChoices: v.optional(v.record(v.string(), v.string())),
 	selectedFeatureChoices: v.any(), // Record<string, string>
 	skillsData: v.any(), // Record<string, number>
 	tradesData: v.any(), // Record<string, number>

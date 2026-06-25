@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { SavedCharacter } from '../../types/dataContracts';
 import { assessCharacterCompatibility } from './compatibility';
 import { planCharacterUpgrade, upgradeCharacterToCurrentRules } from './characterUpgrade';
@@ -27,6 +27,10 @@ function makeCharacter(overrides: Record<string, unknown> = {}): SavedCharacter 
 }
 
 describe('v0.10 character upgrade', () => {
+	afterEach(() => {
+		vi.unstubAllGlobals();
+	});
+
 	it('given approved, reworked, and deprecated selections, when planning, then it reports each action', () => {
 		const character = makeCharacter({
 			selectedSpells: {
@@ -125,6 +129,7 @@ describe('v0.10 character upgrade', () => {
 		expect(upgraded.id).toBe('legacy-upgrade__dc20_0_10_5_draft');
 		expect(upgraded.finalName).toBe('Legacy Upgrade (v0.10.5 draft)');
 		expect(upgraded.rulesVersion).toBe('dc20-0.10.5');
+		expect(upgraded.schemaVersion).toBe('2.2.0');
 		expect(upgraded.rulesUpgradeSourceVersion).toBe('dc20-0.10');
 		expect(upgraded.rulesUpgradeSourceId).toBe('legacy-upgrade');
 		expect(upgraded.rulesUpgradeStatus).toBe('needs-review');
@@ -169,6 +174,82 @@ describe('v0.10 character upgrade', () => {
 		]);
 		expect(upgraded.characterState.maneuvers).toEqual([{ id: 'brace', name: 'Brace' }]);
 		expect(assessCharacterCompatibility(upgraded).state).toBe('editable');
+	});
+
+	it('given an older schema source with calculable collected effects, when upgrading, then the draft is current schema and stores collected arrays', () => {
+		vi.stubGlobal('localStorage', {
+			getItem: (key: string) =>
+				key === 'customEquipment'
+					? JSON.stringify({
+							version: 1,
+							rulesVersion: '0.10.5',
+							weapons: [],
+							armor: [],
+							shields: [],
+							spellFocuses: [
+								{
+									id: 'upgrade-protective-relic',
+									category: 'spellFocus',
+									name: 'Upgrade Protective Relic',
+									hands: 'one-handed',
+									properties: ['warded'],
+									pointsSpent: 1,
+									maxPoints: 2,
+									spellCheckBonus: 0,
+									spellAttackBonus: 0,
+									spellDamageBonus: 0,
+									adBonus: 0,
+									hasMdr: true,
+									longRangeBonus: 0,
+									reachBonus: 0,
+									hasCloseQuarters: false,
+									hasMuffled: false,
+									hasReactive: false,
+									createdAt: '2026-06-19T00:00:00.000Z',
+									updatedAt: '2026-06-19T00:00:00.000Z'
+								}
+							]
+						})
+					: null,
+			setItem: vi.fn(),
+			removeItem: vi.fn(),
+			clear: vi.fn()
+		});
+
+		const character = makeCharacter({
+			schemaVersion: '2.1.0',
+			characterState: {
+				resources: { current: {} },
+				ui: { manualDefenseOverrides: {} },
+				inventory: {
+					items: [
+						{
+							id: 'focus-row',
+							itemType: 'Custom',
+							itemName: 'Upgrade Protective Relic',
+							customEquipmentId: 'upgrade-protective-relic',
+							customEquipmentCategory: 'spellFocus',
+							isEquipped: true
+						}
+					],
+					currency: {}
+				},
+				notes: { playerNotes: 'Keep this note.' },
+				spells: [],
+				maneuvers: []
+			}
+		});
+
+		const result = upgradeCharacterToCurrentRules(character);
+
+		expect(result.upgradedCharacter.schemaVersion).toBe('2.2.0');
+		expect(result.upgradedCharacter.resistances).toContainEqual(
+			expect.objectContaining({
+				type: 'mystical',
+				value: 'true',
+				source: 'Upgrade Protective Relic'
+			})
+		);
 	});
 
 	it('given a reworked selection without removals, when upgrading, then it still needs review', () => {

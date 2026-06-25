@@ -2,7 +2,7 @@
 
 > Purpose: Persistence architecture for characters and DM Tools: hybrid localStorage/Convex storage, schemas, auth, migrations.
 > Status: Active
-> Last Updated: 2026-06-19
+> Last Updated: 2026-06-24
 
 ---
 
@@ -41,7 +41,7 @@ The primary data structure for character persistence. Defined in `src/lib/types/
 | Class/Ancestry | `classId`, `className`, `ancestry1Id`, `ancestry1Name`, etc.             | Build choices                                   |
 | Attributes     | `finalMight`, `finalAgility`, `finalCharisma`, `finalIntelligence`       | Core stats                                      |
 | Derived Stats  | `finalHPMax`, `finalSPMax`, `finalMPMax`, `finalPD`, `finalAD`, etc.     | Calculated values                               |
-| Selections     | `selectedTraitIds`, `selectedFeatureChoices`, `skillsData`, `tradesData` | User choices                                    |
+| Selections     | `selectedTraitIds`, `selectedTraitChoices`, `selectedFeatureChoices`, `skillsData`, `tradesData` | User choices                                    |
 | Game State     | `characterState`                                                         | Current HP, inventory, notes, etc.              |
 | Display Arrays | `resistances?`, `vulnerabilities?`, `senses?`, `combatTraining?`         | Calculated display data (v2.2.0+)               |
 | Metadata       | `createdAt`, `lastModified`, `schemaVersion`, `rulesVersion`             | Timestamps, storage shape, rules interpretation |
@@ -93,7 +93,7 @@ interface CharacterState {
 }
 ```
 
-`activeConditions` stores universal condition IDs. Stacking conditions use concrete IDs such as `slowed-2` or `exhaustion-4` in the same string array and normalize back to their catalog IDs at runtime. No Convex schema migration is required for this because `convex/schema.ts` already validates the field as `v.optional(v.array(v.string()))`.
+`activeConditions` stores universal condition IDs. Stacking conditions use concrete IDs such as `slowed-2` or `exhaustion-4` in the same string array and normalize back to their catalog IDs at runtime. `characterState.ui.activeConditions` stores older toggle-style UI condition state for compatibility. `defenseOverrides` stores manual precision/area defense overrides from the redesigned sheet.
 
 ---
 
@@ -437,13 +437,18 @@ during export for either legacy or current characters.
 
 ### 6.3 Auto-Migration
 
-When loading characters, `migrateCharacterSchema()` automatically:
+When loading characters, local storage deserialization automatically normalizes:
 
 1. Adds missing fields with defaults
 2. Converts legacy formats (object → array)
 3. Updates schema version
+4. Applies the same normalization to pasted character JSON import before saving
 
-**Migration to v2.2.0**: Characters migrating from v2.1.0 or earlier automatically receive empty arrays for the new display fields (`resistances`, `vulnerabilities`, `senses`, `combatTraining`). No user action required — migration happens transparently on load.
+This is read-time normalization. It becomes durable when the normalized character is later saved. The legacy attacks object-map migration is the only localStorage migration currently persisted immediately on single-character lookup.
+
+**Migration to v2.2.0**: Characters migrating from v2.1.0 or earlier receive empty/default-compatible display fields (`resistances`, `vulnerabilities`, `senses`, `combatTraining`) when loaded and are persisted on the next full save.
+
+Imported older JSON is normalized through the same deserializer before duplicate-ID handling and save, so legacy stringified arrays, missing `rulesVersion`, and older talent shapes follow the same compatibility path as existing localStorage records.
 
 ### 6.4 localStorage → Convex Migration
 
@@ -495,16 +500,7 @@ When validators or table definitions change in `convex/`:
 
 ## 8. Usage Examples
 
-### 8.1 Loading Characters (Current)
-
-```typescript
-// In LoadCharacter.tsx
-import { getAllSavedCharacters } from '@/lib/utils/storageUtils';
-
-const characters = getAllSavedCharacters();
-```
-
-### 8.2 Loading Characters (Future with Abstraction)
+### 8.1 Loading Characters
 
 ```typescript
 import { getDefaultStorage } from '@/lib/storage';
@@ -513,14 +509,15 @@ const storage = getDefaultStorage();
 const characters = await storage.getAllCharacters();
 ```
 
-### 8.3 Saving Character State
+### 8.2 Saving Character State
 
 ```typescript
 // Auto-save in CharacterSheetProvider
-import { saveCharacter } from '@/lib/utils/storageUtils';
+import { getDefaultStorage } from '@/lib/storage';
 
 const saveCharacterData = async (character: SavedCharacter) => {
-	await saveCharacter(updatedCharacter);
+	const storage = getDefaultStorage();
+	await storage.saveCharacter(updatedCharacter);
 };
 ```
 

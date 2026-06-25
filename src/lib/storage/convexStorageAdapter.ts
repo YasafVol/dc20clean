@@ -61,6 +61,7 @@ function sanitizeCharacterStateForConvex(
 		...state,
 		ui: {
 			manualDefenseOverrides: state.ui?.manualDefenseOverrides ?? {},
+			activeConditions: state.ui?.activeConditions ?? {},
 			combatToggles: {
 				isRaging: state.ui?.combatToggles?.isRaging ?? false
 			}

@@ -126,6 +126,23 @@ describe('Level Progression Aggregation (UT-1)', () => {
 			expect(agilityBased.stats.finalJumpDistance).toBe(4);
 		});
 
+		it('should apply death threshold modifiers to the final threshold magnitude', () => {
+			const withoutResolve = calculateCharacterWithBreakdowns(
+				createTestCharacter('barbarian', 1, { might: 3 })
+			);
+			const withResolve = calculateCharacterWithBreakdowns({
+				...createTestCharacter('barbarian', 1, { might: 3 }),
+				selectedTraitIds: ['human_resolve']
+			});
+
+			expect(withResolve.stats.finalDeathThreshold).toBe(
+				withoutResolve.stats.finalDeathThreshold + 1
+			);
+			expect(withResolve.breakdowns.death_threshold?.total).toBe(
+				withResolve.stats.finalDeathThreshold
+			);
+		});
+
 		it('should aggregate Level 2 stats correctly', () => {
 			const char = createTestCharacter('barbarian', 2, { might: 3 });
 			const result = calculateCharacterWithBreakdowns(char);

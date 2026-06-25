@@ -75,6 +75,15 @@ function processMovementsToStructure(
 	return movement;
 }
 
+function sourceName(source: unknown): string {
+	if (typeof source === 'string') return source;
+	if (source && typeof source === 'object' && 'name' in source) {
+		const name = (source as { name?: unknown }).name;
+		if (typeof name === 'string' && name.length > 0) return name;
+	}
+	return 'Unknown Source';
+}
+
 // Simple debounce utility
 function useDebounce<T extends (...args: any[]) => any>(
 	callback: T,
@@ -421,6 +430,25 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 						calculationResult.stats.finalMoveSpeed
 					),
 					holdBreath: calculationResult.stats.finalMight,
+					resistances: calculationResult.resistances.map((resistance) => ({
+						type: resistance.type,
+						value: resistance.value,
+						source: sourceName(resistance.source)
+					})),
+					vulnerabilities: calculationResult.vulnerabilities.map((vulnerability) => ({
+						type: vulnerability.type,
+						value: vulnerability.value,
+						source: sourceName(vulnerability.source)
+					})),
+					senses: calculationResult.senses.map((sense) => ({
+						type: sense.type,
+						range: sense.range,
+						source: sourceName(sense.source)
+					})),
+					combatTraining: calculationResult.combatTraining.map((training) => ({
+						type: training.type,
+						source: sourceName(training.source)
+					})),
 					characterState: {
 						...character.characterState,
 						resources: {

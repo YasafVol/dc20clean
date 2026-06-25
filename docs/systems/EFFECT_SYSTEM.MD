@@ -39,7 +39,7 @@ All effect types are defined in `character.schema.ts` as a discriminated union. 
 | `GRANT_ADV_ON_CHECK`    | check type                                                | `string \| boolean`                                          | --                                                  | De-duplicates; collected as sheet-facing advantage text                        |
 | `GRANT_COMBAT_TRAINING` | training type (e.g., `Weapons`, `Spell_Focuses`)          | `boolean`                                                    | --                                                  | De-duplicates; **collected by `abilityCollection.ts`**                         |
 | `GRANT_SENSE`           | sense type (e.g., `darkvision`)                           | `number` (range)                                             | `mode?: 'set' \| 'increase' \| 'increase_existing'` | Highest set range wins; increases add; **collected by `abilityCollection.ts`** |
-| `GRANT_MOVEMENT`        | movement type (`climb`, `swim`, `fly`, `burrow`, `glide`) | `string \| number` (`equal_to_speed`, `half_speed`, numeric) | --                                                  | De-duplicates                                                                  |
+| `GRANT_MOVEMENT`        | movement type (`climb`, `swim`, `fly`, `burrow`, `glide`) | speed formula or numeric spaces                              | --                                                  | De-duplicates                                                                  |
 | `GRANT_CHOICE`          | choice category                                           | `number`                                                     | `userChoice?: { prompt, options? }`                 | Per-choice                                                                     |
 | `GRANT_SKILL_EXPERTISE` | skill name                                                | `{ capIncrease, levelIncrease }`                             | `userChoice?: { prompt, count? }`                   | Per-skill                                                                      |
 | `GRANT_TRADE_EXPERTISE` | trade name                                                | `{ capIncrease, levelIncrease }`                             | `userChoice?: { prompt }`                           | Per-trade                                                                      |
@@ -82,7 +82,7 @@ All effect types are defined in `character.schema.ts` as a discriminated union. 
    - `collectSenses()` — `GRANT_SENSE` effects. Senses are grouped by type; the highest `set` range wins, `increase` always adds, and `increase_existing` adds only when another source already grants that sense.
    - `collectCombatTraining()` — `GRANT_COMBAT_TRAINING` effects (previously hardcoded empty)
    - `collectConditionalModifiers()` — conditional modifiers from `MODIFY_STAT` effects
-5. **Condition Aggregation** (`conditionAggregator.ts`): Scans all effects for condition interactions and groups them by canonical condition ID. It accepts condition IDs, display names, and concrete stacking IDs such as `slowed-2`; `GRANT_ADV_ON_SAVE`, `GRANT_RESISTANCE`, and `GRANT_VULNERABILITY` also contribute when their target names a condition.
+5. **Condition Aggregation** (`conditionAggregator.ts`): Rebuilds condition interactions for the character sheet from selected traits, class features, subclass features, and talents, then groups them by canonical condition ID. It accepts condition IDs, display names, and concrete stacking IDs such as `slowed-2`; `GRANT_ADV_ON_SAVE`, `GRANT_RESISTANCE`, and `GRANT_VULNERABILITY` also contribute when their target names a condition. This is intentionally a weak drift risk rather than a current blocker: it does not consume the calculator's resolved attributed effect list, so future condition-affecting sources such as equipment must either be added to this collector or the sheet should switch to calculator-resolved effects.
 
 Stacking rules: Numeric effects (`MODIFY_STAT`, `MODIFY_ATTRIBUTE`) sum. Grants de-duplicate by target. Mastery cap effects accumulate slots.
 
@@ -141,8 +141,8 @@ The `GRANT_MOVEMENT` effect grants characters special movement types beyond stan
 ```typescript
 {
   type: 'GRANT_MOVEMENT',
-  target: string,  // movement type: 'climb' | 'swim' | 'fly' | 'burrow' | 'glide'
-  value: string | number  // speed value or formula
+  target: 'climb' | 'swim' | 'fly' | 'burrow' | 'glide',
+  value: 'equal_to_speed' | 'half_speed' | 'double_speed' | number
 }
 ```
 
@@ -152,7 +152,11 @@ The `GRANT_MOVEMENT` effect grants characters special movement types beyond stan
 - `'half_speed'`: Movement speed equals half of ground speed (rounded down)
 - `'double_speed'`: Movement speed equals double ground speed
 - Numeric value (e.g., `6`): Explicit movement speed in spaces
-- Other strings (e.g., `'wings'`): Passed through as-is for special handling
+
+Rules that do not grant one of the five supported movement speeds should use
+`GRANT_ABILITY` instead. Example: limited flight/hover rules are not PDF movement
+checkboxes and should remain sheet-facing rules text until a dedicated surface
+exists.
 
 ### Processing Flow
 
@@ -221,9 +225,9 @@ Character with ground speed 6 gains burrow speed 3 (half speed).
 ### Implementation Notes
 
 - Movement types are case-sensitive: use lowercase `'climb'`, not `'Climb'`
-- Movement speeds are stored as strings in the movements array for flexibility
+- Movement speeds are emitted as strings in the calculator output after formula resolution
 - PDF export only recognizes: `burrow`, `swim`, `fly`, `climb`, `glide`
-- Unrecognized movement types are ignored in PDF export
+- Unrecognized movement types should not be authored as `GRANT_MOVEMENT`
 
 ### Related Effects
 

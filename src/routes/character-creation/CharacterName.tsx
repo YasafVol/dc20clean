@@ -178,6 +178,8 @@ function CharacterName() {
 						<Input
 							id="characterName"
 							type="text"
+							data-field-id="character-name"
+							data-testid="character-name-input"
 							value={characterName}
 							onChange={(e) => {
 								const value = e.target.value;
@@ -198,6 +200,8 @@ function CharacterName() {
 						<Input
 							id="playerName"
 							type="text"
+							data-field-id="player-name"
+							data-testid="player-name-input"
 							value={playerName}
 							onChange={(e) => {
 								const value = e.target.value;

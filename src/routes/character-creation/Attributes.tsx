@@ -156,6 +156,8 @@ function Attributes() {
 					return (
 						<AttributeCard
 							key={attribute.id}
+							data-field-id={`attribute-${attribute.id}`}
+							data-option-id={attribute.id}
 							whileHover={{ scale: 1.02 }}
 							whileTap={{ scale: 0.98 }}
 						>
@@ -177,6 +179,9 @@ function Attributes() {
 									$disabled={!canDecrease}
 									onClick={() => canDecrease && decreaseAttribute(attributeKey)}
 									title={!canDecrease ? t('characterCreation.cannotDecreaseBelow') : ''}
+									aria-disabled={!canDecrease}
+									data-action-id={`attribute-${attribute.id}-decrease`}
+									data-testid={`${attribute.id}-decrease`}
 								>
 									<Minus size={20} />
 								</IconButton>
@@ -188,6 +193,9 @@ function Attributes() {
 								<IconButton
 									$disabled={!canIncrease}
 									onClick={() => canIncrease && increaseAttribute(attributeKey)}
+									aria-disabled={!canIncrease}
+									data-action-id={`attribute-${attribute.id}-increase`}
+									data-testid={`${attribute.id}-increase`}
 									title={
 										!canIncrease
 											? attributePointsRemaining <= 0

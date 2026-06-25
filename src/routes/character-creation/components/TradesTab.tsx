@@ -233,6 +233,8 @@ const TradesTab: React.FC<TradesTabProps> = ({
 						size="sm"
 						onClick={actions.convertTradeToSkill}
 						disabled={!canUndoSkillToTrade}
+						data-testid="undo-skill-to-trade"
+						data-action-id="undo-skill-to-trade"
 						className="border-white/50 bg-transparent"
 					>
 						Undo 1 Skill → 2 Trade
@@ -242,6 +244,8 @@ const TradesTab: React.FC<TradesTabProps> = ({
 						size="sm"
 						onClick={actions.convertTradeToLanguage}
 						disabled={!canConvertTradeToLanguage}
+						data-testid="convert-trade-to-language"
+						data-action-id="convert-trade-to-language"
 						className="border-white/50 bg-transparent"
 					>
 						Convert 1 Trade → 2 Language Points
@@ -251,6 +255,8 @@ const TradesTab: React.FC<TradesTabProps> = ({
 						size="sm"
 						onClick={actions.resetConversions}
 						disabled={!hasConversions}
+						data-testid="reset-background-conversions"
+						data-action-id="reset-background-conversions"
 						className={`border-white/50 bg-transparent ${hasConversions ? 'hover:border-destructive hover:text-destructive' : ''}`}
 					>
 						Reset Conversions
@@ -317,6 +323,9 @@ const TradesTab: React.FC<TradesTabProps> = ({
 											$isActive={isActive}
 											$isDisabled={isDisabled}
 											$needsElevation={needsElevation && canSelect}
+											aria-disabled={isDisabled}
+											data-action-id={`trade-${trade.id}-mastery-${level}`}
+											data-testid={`trade-${trade.id}-mastery-${level}`}
 										>
 											{level}
 											{needsElevation && canSelect && <ElevationIndicator>⬆</ElevationIndicator>}

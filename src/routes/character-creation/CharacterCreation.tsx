@@ -14,6 +14,7 @@ import Maneuvers from './Maneuvers.tsx';
 import CharacterName from './CharacterName.tsx';
 import Snackbar from '../../components/Snackbar.tsx';
 import ConfirmationModal from '../../components/ConfirmationModal.tsx';
+import { buildCharacterCreationSteps } from './characterCreationFlow';
 import { completeCharacter } from '../../lib/services/characterCompletion';
 import { completeCharacterEdit, convertCharacterToInProgress } from '../../lib/utils/characterEdit';
 import type { SavedCharacter } from '../../lib/types/dataContracts';
@@ -25,6 +26,9 @@ import {
 } from '../../lib/services/enhancedCharacterCalculator';
 import { validateSubclassChoicesComplete } from '../../lib/rulesdata/classes-data/classUtils';
 import { resolveClassProgression } from '../../lib/rulesdata/classes-data/classProgressionResolver';
+import { ALL_SPELLS } from '../../lib/rulesdata/spells-data';
+import { allManeuvers } from '../../lib/rulesdata/martials/maneuvers';
+import { matchesGlobalMagicProfile, matchesSpellRestrictions } from '../../lib/services/spellFiltering';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { SecondaryButton, PrimaryButton } from '../../components/styled/index';
 import { Dialog, DialogContent } from '../../components/ui/dialog';
@@ -284,67 +288,39 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			maneuversKnown: calculationResult?.levelBudgets?.totalManeuversKnown ?? 0
 		});
 
-		const steps: Array<{ number: number; id: string; label: string }> = [];
-		let stepNumber = 0;
-
-		// Step 1: Class (always)
-		stepNumber++;
-		steps.push({ number: stepNumber, id: 'class', label: t('characterCreation.stepClass') });
-
-		// Step 2: Leveling (if level > 1)
-		if (state.level > 1) {
-			stepNumber++;
-			steps.push({
-				number: stepNumber,
-				id: 'leveling',
-				label: t('characterCreation.stepLeveling')
+			return buildCharacterCreationSteps({
+				level: state.level,
+				hasSpells,
+				hasManeuvers,
+				labels: {
+					class: t('characterCreation.stepClass'),
+					leveling: t('characterCreation.stepLeveling'),
+					ancestry: t('characterCreation.stepAncestry'),
+					attributes: t('characterCreation.stepAttributes'),
+					background: t('characterCreation.stepBackground'),
+					spells: t('characterCreation.stepSpells'),
+					maneuvers: t('characterCreation.stepManeuvers'),
+					name: t('characterCreation.stepName')
+				}
 			});
-		}
-
-		// Fixed steps: Ancestry, Attributes, Background
-		stepNumber++;
-		steps.push({ number: stepNumber, id: 'ancestry', label: t('characterCreation.stepAncestry') });
-		stepNumber++;
-		steps.push({
-			number: stepNumber,
-			id: 'attributes',
-			label: t('characterCreation.stepAttributes')
-		});
-		stepNumber++;
-		steps.push({
-			number: stepNumber,
-			id: 'background',
-			label: t('characterCreation.stepBackground')
-		});
-
-		// Conditional: Spells (if character has spell slots)
-		if (hasSpells) {
-			stepNumber++;
-			steps.push({ number: stepNumber, id: 'spells', label: t('characterCreation.stepSpells') });
-		}
-
-		// Conditional: Maneuvers (if character has maneuvers known)
-		if (hasManeuvers) {
-			stepNumber++;
-			steps.push({
-				number: stepNumber,
-				id: 'maneuvers',
-				label: t('characterCreation.stepManeuvers')
-			});
-		}
-
-		// Final step: Name (always)
-		stepNumber++;
-		steps.push({ number: stepNumber, id: 'name', label: t('characterCreation.stepName') });
-
-		return steps;
-	};
+		};
 
 	const steps = getSteps();
 	const maxStep = steps[steps.length - 1].number;
 
+	useEffect(() => {
+		if (state.currentStep > maxStep) {
+			dispatch({ type: 'SET_STEP', step: maxStep, maxStep });
+		}
+	}, [state.currentStep, maxStep, dispatch]);
+
 	const handleStepClick = (step: number) => {
-		dispatch({ type: 'SET_STEP', step });
+		if (!canNavigateToStep(step)) {
+			setSnackbarMessage('Please complete prior steps before jumping ahead.');
+			setShowSnackbar(true);
+			return;
+		}
+		dispatch({ type: 'SET_STEP', step, maxStep });
 	};
 
 	const handleNext = async () => {
@@ -459,7 +435,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			}
 			return;
 		} else {
-			dispatch({ type: 'NEXT_STEP' });
+			dispatch({ type: 'NEXT_STEP', maxStep });
 		}
 	};
 
@@ -478,10 +454,62 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	const confirmRestart = () => {
 		debug.character('Restarting character creation - clearing all data');
 		dispatch({ type: 'CLEAR_DRAFT' });
-		dispatch({ type: 'SET_STEP', step: 1 });
+		dispatch({ type: 'SET_STEP', step: 1, maxStep });
 		setSnackbarMessage(t('characterCreation.restartSuccess'));
 		setShowSnackbar(true);
 		setShowRestartModal(false);
+	};
+
+	const canNavigateToStep = (targetStep: number) => {
+		if (targetStep <= state.currentStep) return true;
+		return steps
+			.filter((step) => step.number < targetStep)
+			.every((step) => isStepCompleted(step.number));
+	};
+
+	const getValidSpellSelections = () => {
+		const spellSlots = calculationResult?.spellsKnownSlots || [];
+		const selectedSpells = state.selectedSpells || {};
+		const slotIds = new Set(spellSlots.map((slot: any) => slot.id));
+		const entries = Object.entries(selectedSpells).filter(
+			([slotId, spellId]) => slotIds.has(slotId) && typeof spellId === 'string' && spellId.length > 0
+		);
+		const uniqueSpellIds = new Set(entries.map(([, spellId]) => spellId));
+
+		const validEntries = entries.filter(([slotId, spellId]) => {
+			const slot = spellSlots.find((candidate: any) => candidate.id === slotId) as any;
+			const spell = ALL_SPELLS.find((candidate) => candidate.id === spellId);
+			if (!slot || !spell) return false;
+			if (slot.specificRestrictions && !matchesSpellRestrictions(spell, slot.specificRestrictions)) {
+				return false;
+			}
+			if (slot.isGlobal && calculationResult?.globalMagicProfile) {
+				return matchesGlobalMagicProfile(spell, calculationResult.globalMagicProfile);
+			}
+			return true;
+		});
+
+		return {
+			totalSlots: spellSlots.length,
+			validCount: validEntries.length,
+			selectedCount: Object.keys(selectedSpells).length,
+			hasDuplicates: uniqueSpellIds.size !== entries.length
+		};
+	};
+
+	const getValidManeuverSelections = () => {
+		const selectedManeuvers = state.selectedManeuvers || [];
+		const maneuverNames = new Set(allManeuvers.map((maneuver) => maneuver.name));
+		const uniqueNames = new Set(selectedManeuvers);
+		const validCount = selectedManeuvers.filter((maneuverName) =>
+			maneuverNames.has(maneuverName)
+		).length;
+
+		return {
+			selectedCount: selectedManeuvers.length,
+			validCount,
+			hasDuplicates: uniqueNames.size !== selectedManeuvers.length
+		};
 	};
 
 	const isStepCompleted = (step: number) => {
@@ -599,11 +627,11 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 			case 'leveling': {
 				// L2: Validation bypass controlled by environment variable
-				const skipLevelingValidation = import.meta.env.VITE_SKIP_LEVELING_VALIDATION === 'true';
-				if (skipLevelingValidation) {
-					console.warn('⚠️ Leveling validation skipped (VITE_SKIP_LEVELING_VALIDATION=true)');
-					return true;
-				}
+					const skipLevelingValidation = import.meta.env.VITE_SKIP_LEVELING_VALIDATION === 'true';
+					if (skipLevelingValidation) {
+						debug.warn('State', 'Leveling validation skipped (VITE_SKIP_LEVELING_VALIDATION=true)');
+						return true;
+					}
 
 				// Get available budgets from progression resolver
 				if (!state.classId || state.level <= 1) {
@@ -656,11 +684,11 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					}
 
 					return true;
-				} catch (error) {
-					console.error('Failed to resolve progression for validation:', error);
-					return true; // Allow progression if validation fails to avoid blocking
+					} catch (error) {
+						debug.error('State', 'Failed to resolve progression for validation', error);
+						return true; // Allow progression if validation fails to avoid blocking
+					}
 				}
-			}
 
 			case 'ancestry': {
 				// Use centralized calculator for ancestry points validation
@@ -681,11 +709,11 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 			case 'background': {
 				// Use calculator's background data instead of recalculating
-				const background = calculationResult?.background;
-				if (!background) {
-					console.warn('⚠️ Background validation: calculator result not available');
-					return false;
-				}
+					const background = calculationResult?.background;
+					if (!background) {
+						debug.warn('State', 'Background validation: calculator result not available');
+						return false;
+					}
 
 				// Calculate current usage
 				let skillPointsUsed = 0;
@@ -757,35 +785,41 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				return isValid;
 			}
 
-			case 'spells': {
-				// Validate all spell slots are filled
-				const spellSlots = calculationResult?.spellsKnownSlots || [];
-				const selectedSpells = state.selectedSpells || {};
-				const filledSlots = Object.keys(selectedSpells).length;
+				case 'spells': {
+					const spellSelections = getValidSpellSelections();
 
-				const isValid = filledSlots === spellSlots.length;
-				debug.spells('Spells step validation:', {
-					totalSlots: spellSlots.length,
-					filledSlots,
-					isValid
-				});
-				return isValid;
-			}
+					const isValid =
+						spellSelections.selectedCount === spellSelections.totalSlots &&
+						spellSelections.validCount === spellSelections.totalSlots &&
+						!spellSelections.hasDuplicates;
+					debug.spells('Spells step validation:', {
+						totalSlots: spellSelections.totalSlots,
+						selectedCount: spellSelections.selectedCount,
+						validCount: spellSelections.validCount,
+						hasDuplicates: spellSelections.hasDuplicates,
+						isValid
+					});
+					return isValid;
+				}
 
-			case 'maneuvers': {
-				// Validate selected maneuvers equals totalManeuversKnown
-				const totalManeuversKnown = calculationResult?.levelBudgets?.totalManeuversKnown || 0;
-				const selectedManeuvers = state.selectedManeuvers || [];
-				const selectedCount = selectedManeuvers.length;
+				case 'maneuvers': {
+					// Validate selected maneuvers equals totalManeuversKnown
+					const totalManeuversKnown = calculationResult?.levelBudgets?.totalManeuversKnown || 0;
+					const maneuverSelections = getValidManeuverSelections();
 
-				const isValid = selectedCount === totalManeuversKnown;
-				debug.calculation('Maneuvers step validation:', {
-					totalManeuversKnown,
-					selectedCount,
-					isValid
-				});
-				return isValid;
-			}
+					const isValid =
+						maneuverSelections.selectedCount === totalManeuversKnown &&
+						maneuverSelections.validCount === totalManeuversKnown &&
+						!maneuverSelections.hasDuplicates;
+					debug.calculation('Maneuvers step validation:', {
+						totalManeuversKnown,
+						selectedCount: maneuverSelections.selectedCount,
+						validCount: maneuverSelections.validCount,
+						hasDuplicates: maneuverSelections.hasDuplicates,
+						isValid
+					});
+					return isValid;
+				}
 
 			case 'name':
 				return (
@@ -870,11 +904,15 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 				<HeaderContent>
 					{/* Left: Previous Button and Restart */}
-					<NavSection $align="start">
-						<SecondaryButton onClick={handlePrevious} disabled={state.currentStep === 1}>
-							{t('characterCreation.previous')}
-						</SecondaryButton>
-					</NavSection>
+						<NavSection $align="start">
+							<SecondaryButton
+								onClick={handlePrevious}
+								disabled={state.currentStep === 1}
+								data-testid="creation-previous"
+							>
+								{t('characterCreation.previous')}
+							</SecondaryButton>
+						</NavSection>
 
 					{/* Center: Stepper (Desktop) or Title (Mobile) */}
 					<NavSection $align="center" style={{ flex: 1, minWidth: 0 }}>
@@ -885,23 +923,30 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 								: t('characterCreation.createCharacter')}
 						</MobileTitle>
 
-						{/* Desktop Stepper */}
-						<StepperContainer>
-							{steps.map(({ number, label }, index) => {
-								const isActive = state.currentStep === number;
-								const isCompleted = isStepCompleted(number);
-								const isLast = index === steps.length - 1;
+							{/* Desktop Stepper */}
+							<StepperContainer>
+								{steps.map(({ number, id, label }, index) => {
+									const isActive = state.currentStep === number;
+									const isCompleted = isStepCompleted(number);
+									const isLast = index === steps.length - 1;
 
 								return (
 									<React.Fragment key={number}>
-										<StepItem
-											$isActive={isActive}
-											$isCompleted={isCompleted}
-											onClick={() => handleStepClick(number)}
-											whileHover={{ scale: 1.02 }}
-											whileTap={{ scale: 0.98 }}
+											<StepItem
+												$isActive={isActive}
+												$isCompleted={isCompleted}
+												data-testid={`creation-step-${id}`}
+												data-step-id={id}
+												aria-current={isActive ? 'step' : undefined}
+												onClick={() => handleStepClick(number)}
+												whileHover={{ scale: 1.02 }}
+												whileTap={{ scale: 0.98 }}
 										>
-											<StepNumber $isActive={isActive} $isCompleted={isCompleted}>
+												<StepNumber
+													$isActive={isActive}
+													$isCompleted={isCompleted}
+													data-testid={`creation-step-number-${id}`}
+												>
 												{isCompleted && !isActive ? <Check size={14} /> : number}
 											</StepNumber>
 											<StepLabel $isActive={isActive}>{label}</StepLabel>
@@ -917,9 +962,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 						</StepperContainer>
 					</NavSection>
 
-					{/* Right: Next Button */}
-					<NavSection $align="end">
-						<PrimaryButton onClick={handleNext}>
+						{/* Right: Next Button */}
+						<NavSection $align="end">
+							<PrimaryButton onClick={handleNext} data-testid="creation-next">
 							<span>
 								{state.currentStep === maxStep
 									? t('characterCreation.complete')

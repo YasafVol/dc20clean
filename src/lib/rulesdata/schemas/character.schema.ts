@@ -94,8 +94,8 @@ export interface GrantCombatTrainingEffect {
 
 export interface GrantMovementEffect {
 	type: 'GRANT_MOVEMENT';
-	target: string;
-	value: string;
+	target: 'climb' | 'swim' | 'fly' | 'burrow' | 'glide';
+	value: 'equal_to_speed' | 'half_speed' | 'double_speed' | number;
 }
 
 export interface GrantSenseEffect {

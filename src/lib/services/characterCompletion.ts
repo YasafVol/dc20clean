@@ -56,6 +56,15 @@ function processMovementsToStructure(
 	return movement;
 }
 
+function sourceName(source: unknown): string {
+	if (typeof source === 'string') return source;
+	if (source && typeof source === 'object' && 'name' in source) {
+		const name = (source as { name?: unknown }).name;
+		if (typeof name === 'string' && name.length > 0) return name;
+	}
+	return 'Unknown Source';
+}
+
 /**
  * Converts count-based talents Record to array format for database storage.
  * Example: {talent1: 2, talent2: 1} → ['talent1', 'talent1', 'talent2']
@@ -193,6 +202,25 @@ export const completeCharacter = async (
 				calculationResult.stats.finalMoveSpeed
 			),
 			holdBreath: calculationResult.stats.finalMight,
+			resistances: calculationResult.resistances.map((resistance) => ({
+				type: resistance.type,
+				value: resistance.value,
+				source: sourceName(resistance.source)
+			})),
+			vulnerabilities: calculationResult.vulnerabilities.map((vulnerability) => ({
+				type: vulnerability.type,
+				value: vulnerability.value,
+				source: sourceName(vulnerability.source)
+			})),
+			senses: calculationResult.senses.map((sense) => ({
+				type: sense.type,
+				range: sense.range,
+				source: sourceName(sense.source)
+			})),
+			combatTraining: calculationResult.combatTraining.map((training) => ({
+				type: training.type,
+				source: sourceName(training.source)
+			})),
 
 			// Derived thresholds and bloodied values
 			finalPDHeavyThreshold: calculationResult.stats.finalPD + 5,

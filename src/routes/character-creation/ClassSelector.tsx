@@ -175,18 +175,23 @@ function ClassSelector() {
 				</LevelLabel>
 				<LevelSelectWrapper>
 					<Select value={selectedLevel.toString()} onValueChange={handleLevelChange}>
-						<SelectTrigger
-							id="level-select"
-							className="bg-background/50 border-primary/50 text-foreground"
-						>
+							<SelectTrigger
+								id="level-select"
+								data-testid="starting-level-select"
+								className="bg-background/50 border-primary/50 text-foreground"
+							>
 							<SelectValue placeholder={t('characterCreation.selectLevel')} />
 						</SelectTrigger>
 						<SelectContent>
-							{availableLevels.map((level) => (
-								<SelectItem key={level} value={level.toString()}>
-									{`${t('characterCreation.level')} ${level}`}
-								</SelectItem>
-							))}
+								{availableLevels.map((level) => (
+									<SelectItem
+										key={level}
+										value={level.toString()}
+										data-testid={`starting-level-option-${level}`}
+									>
+										{`${t('characterCreation.level')} ${level}`}
+									</SelectItem>
+								))}
 						</SelectContent>
 					</Select>
 				</LevelSelectWrapper>

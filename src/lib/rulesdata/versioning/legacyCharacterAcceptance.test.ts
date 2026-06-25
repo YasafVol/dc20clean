@@ -217,4 +217,30 @@ describe('current v0.10.5 character export acceptance', () => {
 		expect(pdfData.features).toContain('Call Familiar');
 		expect(pdfData.features).toContain('Absorb Elements');
 	});
+
+	it('exports stored collected effect arrays without recalculating', () => {
+		const currentCharacter = {
+			...makeLegacyV010Character(),
+			id: 'current-v0105-collected-effects',
+			rulesVersion: 'dc20-0.10.5',
+			resistances: [
+				{ type: 'pdr', value: 'damage_reduction', source: 'Heavy Armor' },
+				{ type: 'mdr', value: 'damage_reduction', source: 'Mystic Ward' }
+			],
+			vulnerabilities: [{ type: 'fire', value: 'half', source: 'Feature Test' }],
+			senses: [{ type: 'darkvision', range: 10, source: 'Ancestry Test' }],
+			combatTraining: [{ type: 'Spell_Focuses', source: 'Class Test' }]
+		} as SavedCharacter;
+
+		const pdfData = transformSavedCharacterToPdfData(currentCharacter);
+
+		expect(pdfData.reduction.physical).toBe(true);
+		expect(pdfData.reduction.elemental).toBe(false);
+		expect(pdfData.reduction.mystical).toBe(true);
+		expect(pdfData.features).toContain('PDR [Heavy Armor]');
+		expect(pdfData.features).toContain('MDR [Mystic Ward]');
+		expect(pdfData.features).toContain('[Vulnerabilities]');
+		expect(pdfData.features).toContain('[Senses]');
+		expect(pdfData.features).toContain('[Combat Training]');
+	});
 });

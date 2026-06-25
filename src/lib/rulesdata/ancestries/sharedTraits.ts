@@ -79,7 +79,7 @@ export const sharedTraitsData: Trait[] = [
 		description:
 			"You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren't Incapacitated, you gain the following benefits while in the air: Controlled Falling: You suffer no damage from Controlled Falling. Altitude Drop: If you end your turn midair, you Controlled Fall 4 Spaces. Glide Speed: You can use your movement to glide horizontally.",
 		cost: 2,
-		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'wings' }]
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'equal_to_speed' }]
 	},
 
 	// ============================================

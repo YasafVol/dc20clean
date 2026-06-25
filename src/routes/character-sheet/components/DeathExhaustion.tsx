@@ -32,7 +32,6 @@ import { StyledExhaustionImpact } from '../styles/ExhaustionImpact.styles';
 
 import {
 	getHealthStatus,
-	calculateDeathThreshold,
 	getDeathSteps
 } from '../../../lib/rulesdata/death';
 
@@ -55,6 +54,9 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
 
 	const currentValues = resources.current;
+	const deathThresholdMagnitude =
+		characterData.finalDeathThreshold ??
+		characterData.finalPrimeModifierValue + characterData.finalCombatMastery;
 
 	const onExhaustionChange = (level: number) => {
 		updateExhaustion(level);
@@ -62,10 +64,7 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 
 	const onDeathStepChange = (step: number) => {
 		// Calculate death threshold and max steps
-		const deathThreshold = calculateDeathThreshold(
-			characterData.finalPrimeModifierValue,
-			characterData.finalCombatMastery
-		);
+		const deathThreshold = -deathThresholdMagnitude;
 		const deathSteps = getDeathSteps(currentValues.currentHP, deathThreshold);
 
 		// Check if clicking on final step should mark as dead
@@ -88,10 +87,7 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 	// Pre-compute Health Status / Death Threshold here so the JSX below stays
 	// flat and we can render Death Steps as a third row when (and only when)
 	// the character is actually on Death's Door.
-	const deathThreshold = calculateDeathThreshold(
-		characterData.finalPrimeModifierValue,
-		characterData.finalCombatMastery
-	);
+	const deathThreshold = -deathThresholdMagnitude;
 	const healthStatus = getHealthStatus(
 		currentValues.currentHP,
 		characterData.finalHPMax,

@@ -21,6 +21,8 @@ function ClassFeatures() {
 
 	const formatEquipmentValue = (value?: string | string[]) =>
 		Array.isArray(value) ? value.join(', ') : value;
+	const optionTestId = (choiceId: string, value: string) =>
+		`feature-choice-${choiceId}-${value.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
 	// Helper function to render a single choice card
 	const renderChoiceCard = (choice: any) => (
@@ -62,6 +64,9 @@ function ClassFeatures() {
 										value={option.value}
 										checked={isSelected}
 										onChange={() => handleFeatureChoice(choice.id, option.value)}
+										data-testid={optionTestId(choice.id, option.value)}
+										data-choice-id={choice.id}
+										data-option-id={option.value}
 										className="accent-primary mt-1 h-4 w-4 shrink-0 cursor-pointer"
 									/>
 									<div className="flex flex-col gap-1">
@@ -116,6 +121,9 @@ function ClassFeatures() {
 										onChange={(e) =>
 											handleMultipleFeatureChoice(choice.id, option.value, e.target.checked)
 										}
+										data-testid={optionTestId(choice.id, option.value)}
+										data-choice-id={choice.id}
+										data-option-id={option.value}
 										className="accent-primary mt-1 h-4 w-4 shrink-0 cursor-pointer"
 									/>
 									<div className="flex flex-col gap-1">

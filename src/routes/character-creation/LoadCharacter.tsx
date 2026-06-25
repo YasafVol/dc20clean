@@ -2,7 +2,10 @@ import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppAuth } from '../../components/auth';
 import type { SavedCharacter } from '../../lib/types/dataContracts';
-import { getInitializedCharacterState } from '../../lib/utils/storageUtils';
+import {
+	deserializeCharacterFromStorage,
+	getInitializedCharacterState
+} from '../../lib/utils/storageUtils';
 import { getDefaultStorage } from '../../lib/storage';
 import { checkSchemaCompatibility, normalizeSchemaVersion } from '../../lib/types/schemaVersion';
 import { migrateCharacterSchema } from '../../lib/utils/schemaMigration';
@@ -382,13 +385,18 @@ function LoadCharacter() {
 				throw new Error(t('loadCharacter.errorMissingFields'));
 			}
 
+			const normalizedCharacter = deserializeCharacterFromStorage(JSON.stringify(parsedData));
+			if (!normalizedCharacter) {
+				throw new Error(t('loadCharacter.errorInvalidObject'));
+			}
+
 			// Get current characters to check for duplicates
 			const existingCharacters = await storage.getAllCharacters();
 
 			// Check if character with same ID already exists
-			const existingCharacter = existingCharacters.find((char) => char.id === parsedData.id);
+			const existingCharacter = existingCharacters.find((char) => char.id === normalizedCharacter.id);
 
-			let characterToImport = { ...parsedData };
+			let characterToImport = { ...normalizedCharacter };
 
 			if (existingCharacter) {
 				// Generate new ID for duplicate

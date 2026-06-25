@@ -29,6 +29,7 @@ import {
 } from '../../components/ui/select';
 import { cn } from '../../lib/utils';
 import { Check, Plus, Minus } from 'lucide-react';
+import { debug } from '../../lib/utils/debug';
 
 type ActiveTab = 'talents' | 'pathPoints';
 
@@ -67,7 +68,7 @@ function LevelingChoices() {
 				const progression = resolveClassProgression(state.classId, state.level);
 				setResolvedProgression(progression);
 			} catch (error) {
-				console.error('Failed to resolve progression:', error);
+				debug.error('Calculation', 'Failed to resolve progression', error);
 			}
 		}
 	}, [state.classId, state.level]);
@@ -108,7 +109,7 @@ function LevelingChoices() {
 
 	// General talents are now imported from canonical source (talents.data.ts)
 	// This ensures DC20 v0.10 correct values: Ancestry +4, Attribute +2, Skill +4
-	console.log('🎯 LevelingChoices: Using canonical generalTalents', {
+	debug.calculation('LevelingChoices using canonical general talents', {
 		count: generalTalents.length,
 		talents: generalTalents.map((t) => t.name)
 	});
@@ -135,7 +136,7 @@ function LevelingChoices() {
 		// If we have a multiclass feature selected for this class, add it to the count
 		if (state.selectedMulticlassClass === targetClassId && state.selectedMulticlassFeature) {
 			count += 1;
-			console.log('🔢 Multiclass feature counted:', {
+			debug.calculation('Multiclass feature counted', {
 				targetClassId,
 				feature: state.selectedMulticlassFeature,
 				totalCount: count
@@ -321,12 +322,14 @@ function LevelingChoices() {
 				<TabsList className="border-border mx-auto mb-8 grid w-full max-w-md grid-cols-2 border bg-black/40">
 					<TabsTrigger
 						value="talents"
+						data-testid="leveling-talents-tab"
 						className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary font-cinzel text-base"
 					>
 						Talents ({totalTalentsUsed} / {availableTalentPoints})
 					</TabsTrigger>
 					<TabsTrigger
 						value="pathPoints"
+						data-testid="leveling-path-points-tab"
 						className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary font-cinzel text-base"
 					>
 						Path Points ({usedPathPoints} / {availablePathPoints})
@@ -345,6 +348,8 @@ function LevelingChoices() {
 								return (
 									<Card
 										key={talent.id}
+										data-testid={`talent-card-${talent.id}`}
+										data-talent-id={talent.id}
 										className={cn(
 											'border-l-4 transition-all',
 											count > 0
@@ -376,6 +381,8 @@ function LevelingChoices() {
 													size="icon"
 													onClick={() => handleGeneralTalentDecrement(talent.id)}
 													disabled={count === 0}
+													data-testid={`talent-${talent.id}-decrease`}
+													data-action-id={`talent-${talent.id}-decrease`}
 													className="h-8 w-8"
 												>
 													<Minus className="h-4 w-4" />
@@ -385,6 +392,8 @@ function LevelingChoices() {
 													size="icon"
 													onClick={() => handleGeneralTalentIncrement(talent.id)}
 													disabled={totalTalentsUsed >= availableTalentPoints}
+													data-testid={`talent-${talent.id}-increase`}
+													data-action-id={`talent-${talent.id}-increase`}
 													className="ml-auto h-8 w-8"
 												>
 													<Plus className="h-4 w-4" />
@@ -411,6 +420,8 @@ function LevelingChoices() {
 									return (
 										<Card
 											key={talent.id}
+											data-testid={`talent-card-${talent.id}`}
+											data-talent-id={talent.id}
 											className={cn(
 												'hover:border-primary/50 cursor-pointer border-l-4 transition-all',
 												isSelected
@@ -713,7 +724,7 @@ function LevelingChoices() {
 											onValueChange={(value) => {
 												setSelectedCrossPathSpellList(value);
 												dispatch({ type: 'SET_CROSS_PATH_SPELL_LIST', spellList: value });
-												console.log('✨ Cross-path Spell List selected:', value);
+												debug.spells('Cross-path spell list selected', { value });
 											}}
 										>
 											<SelectTrigger className="w-full">
@@ -758,7 +769,12 @@ function LevelingChoices() {
 								path.id === 'martial_path' ? pathPoints.martial || 0 : pathPoints.spellcasting || 0;
 
 							return (
-								<Card key={path.id} className="border-border bg-black/20">
+								<Card
+									key={path.id}
+									className="border-border bg-black/20"
+									data-testid={`path-card-${path.id}`}
+									data-path-id={path.id}
+								>
 									<CardHeader>
 										<div className="flex items-center justify-between">
 											<CardTitle className="font-cinzel text-primary text-2xl">
@@ -774,6 +790,8 @@ function LevelingChoices() {
 														)
 													}
 													disabled={currentLevel === 0}
+													data-testid={`path-${path.id}-decrease`}
+													data-action-id={`path-${path.id}-decrease`}
 													className="h-8 w-8"
 												>
 													<Minus className="h-4 w-4" />
@@ -788,6 +806,8 @@ function LevelingChoices() {
 														)
 													}
 													disabled={usedPathPoints >= availablePathPoints}
+													data-testid={`path-${path.id}-increase`}
+													data-action-id={`path-${path.id}-increase`}
 													className="h-8 w-8"
 												>
 													<Plus className="h-4 w-4" />

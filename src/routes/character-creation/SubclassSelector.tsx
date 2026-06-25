@@ -90,6 +90,8 @@ export function SubclassSelector({
 						<Card
 							key={subclass.subclassName}
 							onClick={() => onSelect(subclass.subclassName)}
+							data-testid={`subclass-card-${subclass.subclassName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+							data-subclass-id={subclass.subclassName}
 							className={cn(
 								'cursor-pointer border-2 transition-all hover:-translate-y-0.5 hover:shadow-lg',
 								isSelected

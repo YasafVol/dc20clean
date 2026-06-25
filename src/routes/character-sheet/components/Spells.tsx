@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import type { SpellData } from '../../../types';
 import type { Spell } from '../../../lib/rulesdata/schemas/spell.schema';
 import { ALL_SPELLS as allSpells, getSpellById } from '../../../lib/rulesdata/spells-data';
+import { RULES_ALIASES } from '../../../lib/rulesdata/versioning/aliases';
 import { SpellSchool } from '../../../lib/rulesdata/schemas/spell.schema';
 import { formatSpellEnhancementCost } from '../../../lib/rulesdata/spells-data/spellCost';
 import { useCharacterSpells, useCharacterSheet } from '../hooks/CharacterSheetProvider';
@@ -42,7 +43,24 @@ const CUSTOM_SPELL_VALUE = '__custom_spell__';
 export function resolveCatalogSpell(spellName: string | null | undefined): Spell | undefined {
 	const candidate = spellName?.trim();
 	if (!candidate) return undefined;
-	return getSpellById(candidate);
+
+	const directMatch =
+		getSpellById(candidate) ??
+		allSpells.find((spell) => spell.name.toLowerCase() === candidate.toLowerCase());
+	if (directMatch) return directMatch;
+
+	const spellAlias = RULES_ALIASES.find(
+		(alias) =>
+			alias.domain === 'spell' &&
+			alias.toId &&
+			alias.fromId.toLowerCase() === candidate.toLowerCase()
+	);
+	if (!spellAlias?.toId) return undefined;
+
+	return (
+		getSpellById(spellAlias.toId) ??
+		allSpells.find((spell) => spell.name.toLowerCase() === spellAlias.toId?.toLowerCase())
+	);
 }
 
 export function isCustomSpellName(spellName: string | null | undefined): boolean {

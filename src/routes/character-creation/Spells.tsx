@@ -228,15 +228,15 @@ const Spells: React.FC = () => {
 
 	// Handle spell selection with Smart Allocation (M3.20)
 	const handleSpellToggle = (spellId: string) => {
-		console.log('🔮 [Spells] handleSpellToggle called:', { spellId });
+		debug.spells('Spell toggle requested', { spellId });
 
 		const spell = allSpells.find((s) => s.id === spellId);
 		if (!spell) {
-			console.warn('🔮 [Spells] Spell not found:', spellId);
+			debug.warn('Spells', 'Spell not found', { spellId });
 			return;
 		}
 
-		console.log('🔮 [Spells] Spell found:', {
+		debug.spells('Spell found', {
 			name: spell.name,
 			availableSlots: spellSlots.length,
 			currentSelections: Object.keys(selectedSpells).length
@@ -286,12 +286,12 @@ const Spells: React.FC = () => {
 
 				if (fitsRestrictions) {
 					newSelected[slot.id] = spellId;
-					console.log('🔮 [Spells] Spell auto-allocated:', { spellId, slotId: slot.id });
+					debug.spells('Spell auto-allocated', { spellId, slotId: slot.id });
 					return newSelected;
 				}
 			}
 
-			console.warn('🔮 [Spells] No valid slot found for spell:', {
+			debug.warn('Spells', 'No valid slot found for spell', {
 				spellId,
 				spellName: spell.name,
 				emptySlotCount: emptySlots.length
@@ -302,7 +302,7 @@ const Spells: React.FC = () => {
 
 	// Save selections to character state
 	useEffect(() => {
-		console.log('🔮 [Spells] Save effect triggered:', {
+		debug.spells('Save effect triggered', {
 			isInitialLoad: isInitialLoad.current,
 			hasInitialized: hasInitialized.current,
 			selectedSpellsCount: Object.keys(selectedSpells).length
@@ -310,13 +310,13 @@ const Spells: React.FC = () => {
 
 		// Skip on initial load to prevent infinite loops
 		if (isInitialLoad.current) {
-			console.log('🔮 [Spells] Skipping - initial load');
+			debug.spells('Skipping save effect during initial load');
 			return;
 		}
 
 		// Skip if we haven't initialized yet
 		if (!hasInitialized.current) {
-			console.log('🔮 [Spells] Skipping - not initialized');
+			debug.spells('Skipping save effect before initialization');
 			return;
 		}
 
@@ -325,14 +325,14 @@ const Spells: React.FC = () => {
 		// For Record comparison, we can use a simple JSON stringify
 		const spellsChanged = JSON.stringify(selectedSpells) !== JSON.stringify(currentStateSpells);
 
-		console.log('🔮 [Spells] Checking for changes:', {
+		debug.spells('Checking for selection changes', {
 			spellsChanged,
 			selectedSpells,
 			currentStateSpells
 		});
 
 		if (spellsChanged) {
-			console.log('🔮 [Spells] Dispatching update:', { spells: selectedSpells });
+			debug.spells('Dispatching spell selection update', { spells: selectedSpells });
 			dispatch({
 				type: 'UPDATE_SPELLS_AND_MANEUVERS',
 				spells: selectedSpells,
@@ -720,7 +720,13 @@ const Spells: React.FC = () => {
 								const isSelected = Object.values(selectedSpells).includes(spell.id);
 
 								return (
-									<SpellCard key={spell.id} $isSelected={isSelected}>
+									<SpellCard
+										key={spell.id}
+										$isSelected={isSelected}
+										data-testid={`spell-card-${spell.id}`}
+										data-spell-id={spell.id}
+										data-option-id={spell.id}
+									>
 										{isSelected && <KnownBadge>KNOWN</KnownBadge>}
 
 										<StyledCardHeader>
@@ -747,6 +753,9 @@ const Spells: React.FC = () => {
 											<SpellButton
 												$variant={isSelected ? 'forget' : 'learn'}
 												onClick={() => handleSpellToggle(spell.id)}
+												data-testid={`spell-${spell.id}-${isSelected ? 'forget' : 'learn'}`}
+												data-action-id={`spell-${spell.id}-${isSelected ? 'forget' : 'learn'}`}
+												data-spell-id={spell.id}
 											>
 												{isSelected ? 'FORGET' : 'LEARN'}
 											</SpellButton>

@@ -2,7 +2,7 @@
 
 > Purpose: End-to-end map of Character Sheet UI: architecture, components, data sources, and interactions.
 > Status: Active
-> Last Updated: 2026-06-23
+> Last Updated: 2026-06-24
 
 ## Recent UX additions
 
@@ -29,6 +29,9 @@
 - **Damage reduction display**: `calculation.resistances[]` entries with value `true` and type `physical`, `elemental`, or `mystical` are displayed as binary PDR, EDR, or MDR instead of resistance values.
 - **Advantage note display**: `GRANT_ADV_ON_CHECK` effects are collected into `calculation.grantedAbilities` with type `advantage`, giving class features such as Commander Natural Leader a sheet-visible note without changing roll math.
 - **Collected rules notes**: Class features that are descriptive, flavor, or in-game-only should still enter calculator output through collected effects. `GRANT_ABILITY` and `GRANT_ADV_ON_CHECK` notes give the future Effects / Rules Notes surface deterministic source-attributed data instead of prose-only feature records.
+- **Death threshold display**: `DeathExhaustion` consumes the saved/calculated
+  `finalDeathThreshold` magnitude and displays/applies it as a negative HP
+  threshold. This preserves calculator-applied modifiers such as Human Resolve.
 
 New files: `components/RulebookPanel.tsx`, `components/RichDescription.tsx`. Rulebook PDF imported via Vite `?url` from `docs/assets/DC20 RPG 0.10.5 Beta v1.pdf`.
 
@@ -122,6 +125,7 @@ For `upgrade-required` and `view-only` characters, the sheet suppresses fresh ca
   - manual in-game effects (`GRANT_ABILITY`, `conditionalModifiers`, non-condition `GRANT_ADV_ON_SAVE`),
   - unsupported or weakly mapped effects such as `SET_VALUE:size` and `MODIFY_STAT:deathThresholdModifier`.
 - Wire that service into a Character Sheet “Effects / Rules Notes” surface so every selected trait, feature, talent, and equipped item effect has a visible home even when it is not numerically automated.
+- Add a dedicated Size pane/field on the Character Sheet. `SET_VALUE:size` is currently acceptable as a collected/unapplied effect because the sheet has no dedicated size surface; once the surface exists, consume the resolved size effect there.
 - Keep `calculatorModules/effectCollection.ts` as the source-attributed aggregation layer. The new service should be presentation-oriented and should not duplicate stat math from `calculateCharacterWithBreakdowns()`.
 
 #### Attack Sheet TODOs

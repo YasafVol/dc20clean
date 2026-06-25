@@ -250,6 +250,9 @@ const Maneuvers: React.FC = () => {
 									<ManeuverCard
 										key={maneuver.name}
 										$isSelected={isSelected}
+										data-testid={`maneuver-card-${maneuver.id}`}
+										data-maneuver-id={maneuver.id}
+										data-option-id={maneuver.id}
 										whileHover={{ y: -4 }}
 										whileTap={{ scale: 0.98 }}
 									>
@@ -286,6 +289,9 @@ const Maneuvers: React.FC = () => {
 												$variant={isSelected ? 'forget' : 'learn'}
 												onClick={() => handleManeuverToggle(maneuver.name)}
 												disabled={!isSelected && !canSelect}
+												data-testid={`maneuver-${maneuver.id}-${isSelected ? 'forget' : 'learn'}`}
+												data-action-id={`maneuver-${maneuver.id}-${isSelected ? 'forget' : 'learn'}`}
+												data-maneuver-id={maneuver.id}
 											>
 												{isSelected ? 'FORGET' : 'LEARN'}
 											</ManeuverButton>

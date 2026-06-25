@@ -173,6 +173,10 @@ function SelectedAncestries() {
 				$disabled={isDisabled}
 				$cost={trait.cost}
 				onClick={() => !isDisabled && handleToggleTrait(traitId)}
+				aria-disabled={isDisabled}
+				data-testid={`trait-card-${traitId}`}
+				data-option-id={traitId}
+				data-trait-id={traitId}
 				whileHover={{ scale: isDisabled ? 1 : 1.01 }}
 				whileTap={{ scale: isDisabled ? 1 : 0.99 }}
 			>

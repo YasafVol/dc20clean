@@ -184,7 +184,7 @@ export function clearCharacterDraft(): void {
 }
 
 // Action types
-type CharacterAction =
+export type CharacterAction =
 	| { type: 'UPDATE_ATTRIBUTE'; attribute: string; value: number }
 	| { type: 'UPDATE_SKILLS'; skillsData: Record<string, number> }
 	| { type: 'UPDATE_TRADES'; tradesData: Record<string, number> }
@@ -207,9 +207,9 @@ type CharacterAction =
 	| { type: 'UPDATE_SPELLS_AND_MANEUVERS'; spells: Record<string, string>; maneuvers: string[] }
 	| { type: 'UPDATE_STORE'; updates: Partial<CharacterInProgressStoreData> }
 	| { type: 'INITIALIZE_FROM_SAVED'; character: CharacterInProgressStoreData }
-	| { type: 'NEXT_STEP' }
-	| { type: 'PREVIOUS_STEP' }
-	| { type: 'SET_STEP'; step: number }
+		| { type: 'NEXT_STEP'; maxStep?: number }
+		| { type: 'PREVIOUS_STEP' }
+		| { type: 'SET_STEP'; step: number; maxStep?: number }
 	| { type: 'TOGGLE_PRIME_CAP_RULE'; value?: boolean }
 	| {
 			type: 'SET_CONVERSIONS';
@@ -230,7 +230,7 @@ type CharacterAction =
 	| { type: 'RESTORE_FROM_DRAFT'; draft: CharacterInProgressStoreData };
 
 // Reducer function
-function characterReducer(
+export function characterReducer(
 	state: CharacterInProgressStoreData,
 	action: CharacterAction
 ): CharacterInProgressStoreData {
@@ -247,10 +247,35 @@ function characterReducer(
 			return { ...state, skillMasteryLimitElevations: action.elevations };
 		case 'UPDATE_TRADE_LIMIT_ELEVATIONS':
 			return { ...state, tradeMasteryLimitElevations: action.elevations };
-		case 'SET_CLASS':
-			return { ...state, classId: action.classId };
-		case 'SET_LEVEL':
-			return { ...state, level: action.level };
+			case 'SET_CLASS':
+				return {
+					...state,
+					classId: action.classId,
+					selectedFeatureChoices: {},
+					selectedTalents: {},
+					pathPointAllocations: { martial: 0, spellcasting: 0 },
+					selectedMulticlassOption: null,
+					selectedMulticlassClass: undefined,
+					selectedMulticlassFeature: undefined,
+					selectedSubclass: undefined,
+					selectedCrossPathSpellList: undefined,
+					selectedSpells: {},
+					selectedManeuvers: []
+				};
+			case 'SET_LEVEL':
+				return {
+					...state,
+					level: action.level,
+					selectedTalents: {},
+					pathPointAllocations: { martial: 0, spellcasting: 0 },
+					selectedMulticlassOption: null,
+					selectedMulticlassClass: undefined,
+					selectedMulticlassFeature: undefined,
+					selectedSubclass: action.level >= 3 ? state.selectedSubclass : undefined,
+					selectedCrossPathSpellList: undefined,
+					selectedSpells: {},
+					selectedManeuvers: []
+				};
 		case 'SET_SELECTED_TALENTS':
 			return { ...state, selectedTalents: action.talents };
 		case 'SET_PATH_POINTS':
@@ -303,12 +328,18 @@ function characterReducer(
 			return { ...state, ...action.updates };
 		case 'INITIALIZE_FROM_SAVED':
 			return { ...action.character };
-		case 'NEXT_STEP':
-			return { ...state, currentStep: Math.min(state.currentStep + 1, 7) };
-		case 'PREVIOUS_STEP':
-			return { ...state, currentStep: Math.max(state.currentStep - 1, 1) };
-		case 'SET_STEP':
-			return { ...state, currentStep: Math.max(1, Math.min(action.step, 7)) };
+			case 'NEXT_STEP':
+				return {
+					...state,
+					currentStep: Math.min(state.currentStep + 1, action.maxStep ?? Number.MAX_SAFE_INTEGER)
+				};
+			case 'PREVIOUS_STEP':
+				return { ...state, currentStep: Math.max(state.currentStep - 1, 1) };
+			case 'SET_STEP':
+				return {
+					...state,
+					currentStep: Math.max(1, Math.min(action.step, action.maxStep ?? Number.MAX_SAFE_INTEGER))
+				};
 		case 'SET_CONVERSIONS':
 			return {
 				...state,

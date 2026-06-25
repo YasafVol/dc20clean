@@ -94,6 +94,8 @@ const LanguagesTab: React.FC<LanguagesTabProps> = ({
 						size="sm"
 						onClick={actions.convertTradeToLanguage}
 						disabled={!canConvertTradeToLanguage}
+						data-testid="convert-trade-to-language"
+						data-action-id="convert-trade-to-language"
 						className="border-white/50 bg-transparent"
 					>
 						Convert 1 Trade → 2 Language Points
@@ -103,6 +105,8 @@ const LanguagesTab: React.FC<LanguagesTabProps> = ({
 						size="sm"
 						onClick={actions.resetConversions}
 						disabled={!hasConversions}
+						data-testid="reset-background-conversions"
+						data-action-id="reset-background-conversions"
 						className={cn(
 							'border-white/50 bg-transparent',
 							hasConversions && 'hover:border-destructive hover:text-destructive'

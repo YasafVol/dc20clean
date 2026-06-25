@@ -75,7 +75,9 @@ This modular structure improves maintainability and makes the calculation pipeli
 - Conditional modifiers (for example `while_raging` or `not_wearing_armor`) are surfaced under `conditionalModifiers` and are not applied to always-on totals.
 - Sheet combat toggles and active-condition maps feed `activeConditions`. Rage maps to `while_raging`; `not_wearing_armor` is inferred automatically when no equipped Armor or custom Equipage armor row exists.
 - **Save DC** = `10 + Combat Mastery + Prime Attribute`
-- **Death Threshold** = `Prime Attribute + Combat Mastery`
+- **Death Threshold magnitude** = `Prime Attribute + Combat Mastery + sum(effects.deathThresholdModifier)`.
+  Sheet Death's Door comparisons use the negative HP threshold, e.g. a magnitude of
+  `4` means death at `-4 HP`.
 - **Initiative** = `Combat Mastery + Agility`
 - **Attack/Spell Check** = `Combat Mastery + Prime Attribute + sum(effects.attackSpellCheck)`
 - **Martial Check** = `max(Acrobatics total, Athletics total)`
@@ -202,7 +204,9 @@ All cap logic now references `src/lib/rulesdata/progression/levelCaps.ts`:
 ## 5. Output Structure
 
 - `calculationResult`: top-level object consumed by context/UI
-- `breakdowns`: per-stat arrays with `{ source, delta, total }`
+- `breakdowns`: per-stat arrays with `{ source, delta, total }`. Current combat
+  breakdown keys include `attack_spell_check`, `save_dc`, `death_threshold`,
+  `initiative`, and `martial_check`.
 - `validation`: background overspend, mastery cap errors
 
 ---

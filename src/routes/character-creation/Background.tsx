@@ -247,6 +247,8 @@ const Background: React.FC = () => {
 					<TabsList>
 						<TabsTrigger
 							value="skills"
+							data-testid="skills-tab"
+							data-action-id="background-tab-skills"
 							style={{
 								color: skillPointsRemaining < 0 ? '#F7768E' : undefined
 							}}
@@ -255,6 +257,8 @@ const Background: React.FC = () => {
 						</TabsTrigger>
 						<TabsTrigger
 							value="trades"
+							data-testid="trades-tab"
+							data-action-id="background-tab-trades"
 							style={{
 								color: tradePointsRemaining < 0 ? '#F7768E' : undefined
 							}}
@@ -263,6 +267,8 @@ const Background: React.FC = () => {
 						</TabsTrigger>
 						<TabsTrigger
 							value="languages"
+							data-testid="languages-tab"
+							data-action-id="background-tab-languages"
 							style={{
 								color: languagePointsRemaining < 0 ? '#F7768E' : undefined
 							}}
